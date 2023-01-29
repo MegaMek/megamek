@@ -98,3 +98,35 @@ Jihad
 <tonnage>
 65.0
 </tonnage>
+
+<capabilities>
+To make room for the engine, the tank is only protected by ten and a half tons of armor. The internal combustion engine also reduces the top speed of the tank to 54 km/h.
+</capabilities>
+
+<overview>
+The Axel series of heavy tanks are based on the popular Rommel design, but uses an internal combustion engine.
+</overview>
+
+<deployment>
+Created during the Jihad, this version of the Axel uses a fusion engine to reach a top speed of 64 km/h. The weaponry has been completely replaced with Clan equipment. The weapons include an AP Gauss Rifle, Large Pulse Laser, and two LRM-15 missile launchers equipped with Artemis IV fire control systems. The tank is protected by an ECM Suite, CASE and eleven and a half tons of ferro-fibrous armor. 
+</deployment>
+
+<history>
+The tank was produced by engineers working for the Free Rasalhague Republic. Despite the lighter armor and lower top speed, the Axel family was widely used by the Free Rasalhague Republic.
+</history>
+
+<manufacturer>
+Benson and Bjorn
+</manufacturer>
+
+<primaryFactory>
+Spittal
+</primaryFactory>
+
+<source>
+Rec Guide:ilClan #27 - Jihad
+</source>
+
+<tonnage>
+65.0
+</tonnage>

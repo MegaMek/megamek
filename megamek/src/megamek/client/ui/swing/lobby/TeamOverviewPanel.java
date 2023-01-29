@@ -36,7 +36,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Vector;
+import java.util.List;
 
 import static megamek.client.ui.swing.util.UIUtil.*;
 
@@ -190,7 +190,7 @@ public class TeamOverviewPanel extends JPanel {
         /** Updates the stored data from the provided game. */
         public void updateTable(Game game) {
             clearData();
-            for (Team team: game.getTeamsVector()) {
+            for (Team team : game.getTeams()) {
                 teams.add(team);
                 teamID.add(team.getId());
                 teamNames.add(team.toString());
@@ -202,11 +202,11 @@ public class TeamOverviewPanel extends JPanel {
                 int hiddenBv = 0;
                 boolean[] unitCritical = { false, false, false, false, false };
                 boolean[] unitWarnings = { false, false, false, false, false };
-                for (Player teamMember: team.getPlayersVector()) {
+                for (Player teamMember : team.players()) {
                     // Get the "real" player object, as the team's may be wrong
                     Player player = game.getPlayer(teamMember.getId());
                     bv += player.getBV();
-                    for (Entity entity: game.getPlayerEntities(player, false)) {
+                    for (Entity entity : game.getPlayerEntities(player, false)) {
                         // Avoid counting fighters in squadrons twice 
                         if (entity instanceof FighterSquadron) {
                             continue;
@@ -260,8 +260,8 @@ public class TeamOverviewPanel extends JPanel {
             String result = ""; 
             for (int i = 0; i < counts.length; i++) {
                 if (counts[i] > 0) {
-                    result += criticals[i] ? criticalSign() + " ": "";
-                    result += warnings[i] ? warningSign() + " ": "";
+                    result += criticals[i] ? criticalSign() + " " : "";
+                    result += warnings[i] ? warningSign() + " " : "";
                     result += Messages.getString("ChatLounge.teamOverview.unitSum" + i) + " " + counts[i];
                     result += "<BR>";
                 }
@@ -307,7 +307,7 @@ public class TeamOverviewPanel extends JPanel {
             TOMCOLS column = TOMCOLS.values()[col];
             switch (column) {
                 case TEAM:
-                    boolean isEnemy = !teams.get(row).getPlayersVector().contains(clientGui.getClient().getLocalPlayer());
+                    boolean isEnemy = !teams.get(row).players().contains(clientGui.getClient().getLocalPlayer());
                     Color color = isEnemy ? GUIPreferences.getInstance().getEnemyUnitColor() : GUIPreferences.getInstance().getMyUnitColor();
                     result.append(guiScaledFontHTML(color, textSizeDelta) + "&nbsp;");
                     result.append(teamNames.get(row) + "</FONT>");
@@ -335,7 +335,7 @@ public class TeamOverviewPanel extends JPanel {
                     break;
 
                 case MEMBERS:
-                    return teams.get(row).getPlayersVector();
+                    return teams.get(row).players();
 
                 case BV:
                     result.append(guiScaledFontHTML(textSizeDelta) + "<CENTER>");
@@ -354,7 +354,7 @@ public class TeamOverviewPanel extends JPanel {
                 case HIDDEN:
                     result.append(guiScaledFontHTML(textSizeDelta) + "<CENTER>");
                     var percentage = hidden.get(row);
-                    result.append(percentage == 0 ? "--": NumberFormat.getPercentInstance().format(percentage));
+                    result.append(percentage == 0 ? "--" : NumberFormat.getPercentInstance().format(percentage));
 
                 default:
                     break;
@@ -408,16 +408,16 @@ public class TeamOverviewPanel extends JPanel {
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, 
                 boolean hasFocus, int row, int column) {
 
-            if (!(value instanceof Vector<?>)) {
+            if (!(value instanceof List<?>)) {
                 return null;
             }
             removeAll();
             add(Box.createVerticalGlue());
-            Vector<?> playerList = (Vector<?>) value;
+            List<?> playerList = (List<?>) value;
             int baseSize = FONT_SCALE1 - (isDetached ? 2 : 0);
             int size = scaleForGUI(2 * baseSize);
             Font font = new Font(MMConstants.FONT_DIALOG, Font.PLAIN, scaleForGUI(baseSize));
-            for (Object obj: playerList) {
+            for (Object obj : playerList) {
                 if (!(obj instanceof Player)) {
                     continue;
                 }

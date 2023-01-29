@@ -103,3 +103,65 @@ ISSRM4
 <source>
 XTRO Primitives II - Age of War
 </source>
+
+<capabilities>
+The chassis for missile carriers vary in basic design, but they are all essentially military transport vehicles, tracked being the most common, adapted to carry the huge missile launchers and loading equipment. Those adaptations generally consist of reinforcing the suspension systems and armoring the crew and critical components areas enough to survive the back blast from so many missiles. With an average top speed of 54 km/h and armor unable to survive counterbattery fire, if forced to engage in direct combat a carrier's life expectancy is measured in seconds.
+</capabilities>
+
+<overview>
+Ever since the development of the first rocket centuries ago, military units have used mobile missile systems to provide cheap and effective fire support. Along with its LRM counterpart, the SRM Carrier serves in every military action across the Inner Sphere in a variety of shapes and forms.
+</overview>
+
+<deployment>
+This Age of War design (introduced in 2440) inspired further generations of the SRM Carrier vehicle. It used three tons of BAR 6 armor to provide protection. It mounted Advanced Fire Control systems to guide the nine SRM-4 launchers mounted on the vehicle's front side. Eight tons of ammunition provided plenty of staying power.
+</deployment>
+
+<history>
+Manufactured by almost every major military supplier, the modern SRM Carrier is derived from those developed in the Age of War by Quik Products Inc, the future Quikscell Company. In many cases derived a little too closely; during the Succession Wars era many manufacturers were producing little more than shoddy direct copies that fell below even Quikscell's low quality standards. After the end of the Fourth Succession War Quikscell lodged lawsuits against those manufacturing clones of Quik based carriers, resulting the closure of many smaller manufacturers and larger manufacturers ending production. While those who produced their own designs were not affected, Quikscell's elimination of much of its competitors and its offer to exchange any missile carrier not produced by them for legitimate Quikscell versions and parts made it the number one player of the missile carrier market.
+</history>
+
+<manufacturer>
+Various
+</manufacturer>
+
+<primaryFactory>
+Various
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:InterComBust 165 ICE
+ARMOR:Simple Armor Plate 6
+COMMUNICATIONS:Communicator
+TARGETING:FireScan with IndirecTrack
+</systemManufacturers>
+
+<capabilities>
+The chassis for missile carriers vary in basic design, but they are all essentially military transport vehicles, tracked being the most common, adapted to carry the huge missile launchers and loading equipment. Those adaptations generally consist of reinforcing the suspension systems and armoring the crew and critical components areas enough to survive the back blast from so many missiles. With an average top speed of 54 km/h and armor unable to survive counterbattery fire, if forced to engage in direct combat a carrier's life expectancy is measured in seconds.
+</capabilities>
+
+<overview>
+Ever since the development of the first rocket centuries ago, military units have used mobile missile systems to provide cheap and effective fire support. Along with its LRM counterpart, the SRM Carrier serves in every military action across the Inner Sphere in a variety of shapes and forms.
+</overview>
+
+<deployment>
+This Age of War design (introduced in 2440) inspired further generations of the SRM Carrier vehicle. It used three tons of BAR 6 armor to provide protection. It mounted Advanced Fire Control systems to guide the nine SRM-4 launchers mounted on the vehicle's front side. Eight tons of ammunition provided plenty of staying power.
+</deployment>
+
+<history>
+Manufactured by almost every major military supplier, the modern SRM Carrier is derived from those developed in the Age of War by Quik Products Inc, the future Quikscell Company. In many cases derived a little too closely; during the Succession Wars era many manufacturers were producing little more than shoddy direct copies that fell below even Quikscell's low quality standards. After the end of the Fourth Succession War Quikscell lodged lawsuits against those manufacturing clones of Quik based carriers, resulting the closure of many smaller manufacturers and larger manufacturers ending production. While those who produced their own designs were not affected, Quikscell's elimination of much of its competitors and its offer to exchange any missile carrier not produced by them for legitimate Quikscell versions and parts made it the number one player of the missile carrier market.
+</history>
+
+<manufacturer>
+Various
+</manufacturer>
+
+<primaryFactory>
+Various
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:InterComBust 165 ICE
+ARMOR:Simple Armor Plate 6
+COMMUNICATIONS:Communicator
+TARGETING:FireScan with IndirecTrack
+</systemManufacturers>

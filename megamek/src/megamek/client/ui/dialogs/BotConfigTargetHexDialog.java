@@ -18,24 +18,28 @@
  */
 package megamek.client.ui.dialogs;
 
-import static megamek.common.Terrains.*;
-
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.event.*;
-import java.util.*;
-
-import javax.swing.*;
-
+import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.util.UIUtil.TipList;
 import megamek.client.ui.swing.util.UIUtil.TipTextField;
-import megamek.client.ui.Messages;
-import megamek.common.*;
+import megamek.common.Board;
+import megamek.common.Building;
+import megamek.common.Coords;
+import megamek.common.Hex;
 import megamek.common.annotations.Nullable;
-import megamek.common.enums.GamePhase;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.List;
+
+import static megamek.common.Terrains.*;
 
 public class BotConfigTargetHexDialog extends AbstractButtonDialog {
 
@@ -53,7 +57,7 @@ public class BotConfigTargetHexDialog extends AbstractButtonDialog {
         super(frame, "BotConfigTargetUnitDialog", "BotConfigDialog.bcthdTitle");
         clientGui = cg;
         if (clientGui != null) {
-            if (clientGui.getClient().getGame().getPhase() == GamePhase.LOUNGE) {
+            if (clientGui.getClient().getGame().getPhase().isLounge()) {
                 board = clientGui.chatlounge.getPossibleGameBoard(true);
             } else {
                 board = clientGui.getClient().getBoard();

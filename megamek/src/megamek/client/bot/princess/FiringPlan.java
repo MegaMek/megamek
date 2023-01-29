@@ -161,9 +161,9 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
         Set<Integer> targets = new HashSet<>();
         // loop through all the targets for this firing plan, only show each target once.
         for (WeaponFireInfo weaponFireInfo : this) {
-            if (!targets.contains(weaponFireInfo.getTarget().getTargetId())) {
+            if (!targets.contains(weaponFireInfo.getTarget().getId())) {
                 description.append(weaponFireInfo.getTarget().getDisplayName()).append(", ");
-                targets.add(weaponFireInfo.getTarget().getTargetId());
+                targets.add(weaponFireInfo.getTarget().getId());
             }
         }
         

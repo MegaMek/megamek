@@ -726,6 +726,13 @@ Vector (Attack)|Vector Combat Support VTOL (Attack)
 Vector (EW)|Vector Combat Support VTOL (EW)
 Vector (Scout)|Vector Combat Support VTOL (Scout)
 Vector (Transport)|Vector Combat Support VTOL (Transport)
+LTV-4 Hover Tank (Standard)|Hawk Hover Tank (LTV-4)
+Falcon Hover Tank (Standard)|Falcon Hover Tank
+Command Van (Standard)|Command Van
+Mobile Long Tom Artillery Ammunition Trailer LT-MOB-25|Mobile Long Tom Artillery LT-MOB-25 (Ammunition Carriage)
+Mobile Long Tom Artillery Support Carriage LT-MOB-25|Mobile Long Tom Artillery LT-MOB-25 (Support Carriage)
+Mobile Long Tom Artillery (Unofficial) (+ Carriage)|Mobile Long Tom Artillery (+Carriages)(Unofficial)
+
 
 #Warships
 Aegis Heavy Cruiser (Clan)|Aegis Heavy Cruiser (2843)

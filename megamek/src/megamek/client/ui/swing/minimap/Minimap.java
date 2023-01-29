@@ -34,7 +34,6 @@ import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
-import megamek.common.enums.GamePhase;
 import megamek.common.event.*;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
@@ -163,7 +162,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                 GUIP.setMinimapEnabled(false);
             }
         });
-        
+
         result.add(new Minimap(result, game, bv, cg));
         result.pack();
         return result;
@@ -510,8 +509,8 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                     }
                     addRoadElements(h, j, k);
                     // Color invalid hexes red when in the Map Editor
-                    if ((game != null) && (game.getPhase() == GamePhase.UNKNOWN) && !h.isValid(null)) {
-                        gg.setColor(GUIPreferences.getInstance().getWarningColor());
+                    if ((game != null) && game.getPhase().isUnknown() && !h.isValid(null)) {
+                        gg.setColor(GUIP.getWarningColor());
                         paintCoord(gg, j, k, true);
                     }
                 }
@@ -571,8 +570,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
     
     /** Indicates the deployment hexes. */
     private void drawDeploymentZone(Graphics g) {
-        if ((null != client) && (null != game) 
-                && (GamePhase.DEPLOYMENT == game.getPhase()) && (dialog != null) 
+        if ((null != client) && (null != game) && game.getPhase().isDeployment() && (dialog != null)
                 && (bv.getDeployingEntity() != null)) {
             GameTurn turn = game.getTurn();
             if ((turn != null) && (turn.getPlayerNum() == client.getLocalPlayer().getId())) {
@@ -1344,10 +1342,12 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
     private final GameListener gameListener = new GameListenerAdapter() {
         @Override
         public void gamePhaseChange(GamePhaseChangeEvent e) {
-            if (GUIPreferences.getInstance().getGameSummaryMinimap() && ((e.getOldPhase() == GamePhase.DEPLOYMENT)
-                    || (e.getOldPhase() == GamePhase.MOVEMENT) || (e.getOldPhase() == GamePhase.TARGETING)
-                    || (e.getOldPhase() == GamePhase.PREMOVEMENT) || (e.getOldPhase() == GamePhase.PREFIRING)
-                    || (e.getOldPhase() == GamePhase.FIRING) || (e.getOldPhase() == GamePhase.PHYSICAL))) {
+            if (GUIP.getGameSummaryMinimap()
+                    && (e.getOldPhase().isDeployment() || e.getOldPhase().isMovement()
+                            || e.getOldPhase().isTargeting() || e.getOldPhase().isPremovement()
+                            || e.getOldPhase().isPrefiring() || e.getOldPhase().isFiring()
+                            || e.getOldPhase().isPhysical())) {
+
                 File dir = new File(Configuration.gameSummaryImagesMMDir(), game.getUUIDString());
                 if (!dir.exists()) {
                     dir.mkdirs();
@@ -1359,7 +1359,6 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                 } catch (Exception ex) {
                     LogManager.getLogger().error("", ex);
                 }
-
             }
             refreshMap();
         }

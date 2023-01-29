@@ -31,7 +31,7 @@ public class ThrashAttackAction extends AbstractAttackAction {
     }
 
     public ThrashAttackAction(int entityId, Targetable target) {
-        super(entityId, target.getTargetType(), target.getTargetId());
+        super(entityId, target.getTargetType(), target.getId());
     }
 
     /**

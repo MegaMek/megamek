@@ -14,7 +14,6 @@
 package megamek.client.bot;
 
 import megamek.MegaMek;
-import megamek.common.util.EncodeControl;
 
 import java.text.MessageFormat;
 import java.util.MissingResourceException;
@@ -23,7 +22,7 @@ import java.util.ResourceBundle;
 public class Messages {
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("megamek.client.bot.messages",
-            MegaMek.getMMOptions().getLocale(), new EncodeControl());
+            MegaMek.getMMOptions().getLocale());
 
     private Messages() {
     }

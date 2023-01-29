@@ -98,8 +98,8 @@ public class ASBattleArmorDamageConverter extends ASDamageConverter {
     }
 
     @Override
-    protected int[] assembleHeatDamage() {
-        int[] heatDmg = super.assembleHeatDamage();
+    protected int[] assembleHeatDamage(int location) {
+        int[] heatDmg = super.assembleHeatDamage(location);
         String rawValues = formatAsVector(heatDmg[0], heatDmg[1], heatDmg[2], 0, HT);
         heatDmg[0] *= troopFactor;
         heatDmg[1] *= troopFactor;

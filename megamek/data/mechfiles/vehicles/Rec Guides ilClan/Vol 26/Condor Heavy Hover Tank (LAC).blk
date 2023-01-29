@@ -1,0 +1,139 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Condor Heavy Hover Tank
+</Name>
+
+<Model>
+(LAC)
+</Model>
+
+<mul id:>
+9310
+</mul id:>
+
+<year>
+3140
+</year>
+
+<originalBuildYear>
+3140
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+8
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+36
+28
+28
+23
+28
+</armor>
+
+<Body Equipment>
+ISTargeting Computer
+ISAMS Ammo
+IS Ammo LAC/5
+IS Ammo LAC/5
+</Body Equipment>
+
+<Front Equipment>
+ISAntiMissileSystem
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Light Auto Cannon/5
+Medium Re-engineered Laser
+Medium Re-engineered Laser
+</Turret Equipment>
+
+<capabilities>
+Although expensive to buy and to maintain, this immense hovercraft is capable of a flank speed of 129 km/h and a cruising speed of 86 km/h, making it one of the fastest vehicles in its weight class and as fast as the speediest 'Mechs and vehicles. Six tons of StarSlab/9.5 Mk II armor give the Condor considerable protection for its role, though the bulk is concentrated on the front and turret, notably weakening the sides. Unlike tracked or wheeled vehicles of the same weight, the Condor is intended to attack enemies "on the fly" at medium ranges,
+</capabilities>
+
+<overview>
+A heavy cavalry unit designed for rapid reaction to a shifting battle, the Condor is one of the few heavy hover tanks available.
+</overview>
+
+<deployment>
+No Details on this Variant
+</deployment>
+
+<history>
+Introduced a few short years before the formation of the original Star League, the Condor remained one of Red Devil Industries main sellers for centuries and was widely distributed across the Inner Sphere, with the militaries of the Lyran Commonwealth, Federated Suns and Capellan Confederation fielding the majority during the Succession Wars. With the loss of Red Devil's factories with the capture of Pandora by Clan Jade Falcon in 3064, the design was secured by Quikscell Company, who developed an advanced new-tech refresh of the venerable and still highly popular design, even selling the unassembled components of the tank in kit form in effort to keep up with demand. Red Devil actually builds their own under license. Originally, Defiance Industries declined to allow the company to do so, which led to Red Devil offering a bounty for used or slightly damaged lasers taken in combat to recondition and install on new Condors. When Defiance noticed that some of its flagship BattleMech designs, such as the Zeus, attracted undue fire from foes attempting to cash in on the bounty, they quickly relented. Not nearly as notable, the reliable SureFire MiniGun, mounted on the body, is intended as an anti-personnel weapon.
+</history>
+
+<manufacturer>
+Jalastar Aerospace
+</manufacturer>
+
+<primaryFactory>
+Panpour
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Core Tek 215 XL fusion engine
+ARMOR:StarSlab/9.5 Ferro-Fibrous Mk II
+COMMUNICATIONS:TharHes KR-A P/Comm
+TARGETING:TharHes Mars 1 with TAG
+</systemManufacturers>
+
+<source>
+Rec Guide:ilClan #26 - Dark Ages
+</source>
+
+<tonnage>
+50.0
+</tonnage>
+

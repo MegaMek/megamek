@@ -115,7 +115,7 @@ public class MultiTargetFireControl extends FireControl {
         
         for (Targetable target : getTargetableEnemyEntities(weapon.getEntity(), owner.getGame(), owner.getFireControlState())) {
             final int ownerID = (target instanceof Entity) ? ((Entity) target).getOwnerId() : -1;
-            if (owner.getHonorUtil().isEnemyBroken(target.getTargetId(), ownerID, owner.getBehaviorSettings().isForcedWithdrawal())) {
+            if (owner.getHonorUtil().isEnemyBroken(target.getId(), ownerID, owner.getBehaviorSettings().isForcedWithdrawal())) {
                 LogManager.getLogger().info(target.getDisplayName() + " is broken - ignoring");
                 continue;
             }

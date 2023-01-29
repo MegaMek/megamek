@@ -8,7 +8,6 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.*;
 import megamek.common.*;
-import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
@@ -472,7 +471,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
 
                         if ((m.getType() instanceof MiscType)
                                 && m.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE)
-                                && (clientgui.getClient().getGame().getPhase() != GamePhase.MOVEMENT)) {
+                                && !clientgui.getClient().getGame().getPhase().isMovement()) {
                             clientgui.systemMessage(Messages.getString("MechDisplay.RetractableBladeModePhase"));
                             return;
                         }
@@ -498,7 +497,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
                             this.unitDisplay.wPan.displayMech(en);
                             this.unitDisplay.wPan.selectWeapon(weap);
                         } else {
-                            if (GamePhase.DEPLOYMENT == clientgui.getClient().getGame().getPhase()) {
+                            if (clientgui.getClient().getGame().getPhase().isDeployment()) {
                                 clientgui.systemMessage(Messages.getString("MechDisplay.willSwitchAtStart",
                                         m.getName(), m.pendingMode().getDisplayableName()));
                             } else {
@@ -735,8 +734,8 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
                 if ((m != null)
                         && bOwner
                         && (m.getType() instanceof AmmoType)
-                        && (client.getGame().getPhase() != GamePhase.DEPLOYMENT)
-                        && (client.getGame().getPhase() != GamePhase.MOVEMENT)
+                        && !client.getGame().getPhase().isDeployment()
+                        && !client.getGame().getPhase().isMovement()
                         && (m.getUsableShotsLeft() > 0)
                         && !m.isDumping()
                         && en.isActive()

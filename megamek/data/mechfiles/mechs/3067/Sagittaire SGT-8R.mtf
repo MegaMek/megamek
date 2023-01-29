@@ -6,7 +6,7 @@ mul id:4967
 Config:Biped
 techbase:Inner Sphere
 era:3063
-source:TRO 3067
+source:TRO 3067 - Civil War
 rules level:2
 
 mass:95
@@ -156,14 +156,15 @@ Jump Jet
 
 overview:The Sagittaire is built to fight in the confines of an urban battlefield.
 
-capabilities:Weighing in at a massive ninety-five tons, the Sagittaire started production in mid 3063 and began to trickle out to units clamoring for close combat 'Mechs in the midst of the FedCom Civil War. As a power source, the 'Mech has a Pitban 285 XL engine. The XL engine saves weight at the cost of survivability and gives the 'Mech a top speed of 54.0 km/h while its mobility is enhanced with three HildCo LFT 9-X jump jets, allowing the 'Mech to jump up to ninety meters. The Sagittaire has seventeen double heat sinks to handle its massive heat load, and is protected by eighteen tons of Starshield Special Heavy armor, allowing the 'Mech to stand up to a great deal of punishment in spite of its engine.
+capabilities:The laser-heavy Sagittaire is powered by a Pitban extralight engine and has a top speed of 54 kph, which is comparable to 'Mechs of similar weight. The HildCo lifters fitted in the legs and midline, however, make the Sagittaire one of the few assault 'Mechs with jumping capacity, offering it a great deal of tactical versatility. That, of course, does not account for the psychological impact of witnessing a 95-ton BattleMech fly through the air on inexperienced troops. As if that weren't enough, the Sagittaire's pulse-technology lasers combined with the targeting computer enable a MechWarrior to retain a high rate of movement while still outperforming most other BattleMechs. With eighteen tons of armor, the need for such a strategy is questionable. The design is truly deadly when the Sagittaire's feet are firmly planted on the earth.
 
 deployment:The Sagittaire has a large and varied arsenal built around energy weapons. For long-range combat, it has a single Defiance 1001 ER PPC. Once the Sagittaire gets its opponent in medium to close ranges it can bring its full fury to bear. Its primary weapons are a pair of Magna 900P Large Pulse Lasers backed up by five Magna 600P Medium Pulse Lasers, two of which are rear mounted, and finally a single Magna 200P Small Pulse Laser. All of these weapons are linked to an advanced Targeting Computer, allowing the Sagittaire to eviscerate its opponents in close combat.
 
-history:Production of the Sagittaire was halted due to the damage inflicted on Robinson Standard BattleWorks during the Jihad.
-manufacturer:Robinson Standard BattleWorks
+history:When it was originally deployed from Robinson BattleWorks in 3063, the machine saw considerable battle against House Kurita as Duke James Sandoval dedicated heavy resources to taking and retaining a half-dozen Combine worlds. The Sagittaire was crucial in the attack on Proserpina, where one of these robots slaughtered a company of Ninth Benjamin Regulars samurai in a series of ill-fated one-on-one duels. Later, following House Kurita's successful counter-assault, the Dragon made a deliberate effort to acquire or salvage multiple Sagittaire-designed 'Mechs for its own usage. Duke Sandoval later permitted additional of these vehicles to be sold into her loyalist army as Katherine Steiner-Davion tightened her grip on the Draconis March. This was short-lived, since Tancred Sandoval removed his father as March Lord not long after. He then directed the entire Sagittaire line to reinforce his own soldiers as well as the regiments supporting Victor Steiner-Davion. As an illustration of the Sagittaire's broad appeal, an allied company and a loyalist company were stationed on New Avalon, each with a lance of Sagittaires. During the battle for the continental capital of Flensburg, only three allied robots escaped under their own power. They were all Sagittarius. They were responsible for eight "kills" out of twelve enemy 'Mechs.
 
+manufacturer:Robinson Standard BattleWorks
 primaryfactory:Robinson
+
 systemmanufacturer:CHASSIS:Skuel Heavy TRQ
 systemmanufacturer:ENGINE:Pitban 285 XL
 systemmanufacturer:ARMOR:Starshield Special Heavy

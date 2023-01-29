@@ -334,10 +334,10 @@ public class WeaponFireInfo {
         if (!(getWeapon().getType().hasFlag(WeaponType.F_ARTILLERY) 
                 || (getWeapon().getType() instanceof CapitalMissileWeapon
                         && Compute.isGroundToGround(shooter, target)))) {
-            return new WeaponAttackAction(getShooter().getId(), getTarget().getTargetType(), getTarget().getTargetId(),
+            return new WeaponAttackAction(getShooter().getId(), getTarget().getTargetType(), getTarget().getId(),
                                           getShooter().getEquipmentNum(getWeapon()));
         } else {
-            return new ArtilleryAttackAction(getShooter().getId(), getTarget().getTargetType(), getTarget().getTargetId(),
+            return new ArtilleryAttackAction(getShooter().getId(), getTarget().getTargetType(), getTarget().getId(),
                     getShooter().getEquipmentNum(getWeapon()), getGame());
         }
     }
@@ -345,7 +345,7 @@ public class WeaponFireInfo {
     private WeaponAttackAction buildBombAttackAction(final int[] bombPayload) {
         final WeaponAttackAction diveBomb = new WeaponAttackAction(getShooter().getId(),
                                                                    getTarget().getTargetType(),
-                                                                   getTarget().getTargetId(),
+                                                                   getTarget().getId(),
                                                                    getShooter().getEquipmentNum(getWeapon()));
         
         diveBomb.setBombPayload(bombPayload);
@@ -645,11 +645,11 @@ public class WeaponFireInfo {
         if (!(getWeapon().getType().hasFlag(WeaponType.F_ARTILLERY)
                 || (getWeapon().getType() instanceof CapitalMissileWeapon
                         && Compute.isGroundToGround(shooter, target)))) {
-            setAction(new WeaponAttackAction(getShooter().getId(), getTarget().getTargetId(),
+            setAction(new WeaponAttackAction(getShooter().getId(), getTarget().getId(),
                     getShooter().getEquipmentNum(getWeapon())));
         } else {
             setAction(new ArtilleryAttackAction(getShooter().getId(), getTarget().getTargetType(),
-                    getTarget().getTargetId(), getShooter().getEquipmentNum(getWeapon()),
+                    getTarget().getId(), getShooter().getEquipmentNum(getWeapon()),
                     getGame()));
         }
         if (getAction() == null) {

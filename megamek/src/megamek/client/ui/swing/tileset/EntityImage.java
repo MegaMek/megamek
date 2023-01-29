@@ -18,6 +18,7 @@ package megamek.client.ui.swing.tileset;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.icons.Camouflage;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.AbstractDirectory;
@@ -284,7 +285,7 @@ public class EntityImage {
         return icon;
     }
 
-    public Image loadPreviewImage() {
+    public @Nullable Image loadPreviewImage(final boolean showDamage) {
         if (base == null) {
             return null;
         }
@@ -292,7 +293,7 @@ public class EntityImage {
         base = applyColor(getBase(), 0);
 
         // Add damage scars and smoke/fire; not to Infantry
-        if (!isInfantry && GUIPreferences.getInstance().getShowDamageDecal()) {
+        if (showDamage && !isInfantry && GUIPreferences.getInstance().getShowDamageDecal()) {
             base = applyDamageDecal(getBase());
             // No smoke in the lobby
             if (!isPreview) {
@@ -307,6 +308,7 @@ public class EntityImage {
         if (image == null) {
             return null;
         }
+        final boolean hasCamouflage = !getCamouflage().hasDefaultCategory();
         final boolean colourCamouflage = getCamouflage().isColourCamouflage();
         final int colour = colourCamouflage ? PlayerColour.parseFromString(getCamouflage().getFilename()).getHex() : -1;
 
@@ -315,64 +317,65 @@ public class EntityImage {
         int[] pCamo = new int[IMG_SIZE];
         try {
             grabImagePixels(image, pMech);
-            if (!colourCamouflage) {
-                grabImagePixels(camouflage.getImage(), pCamo);
+            if (!colourCamouflage && hasCamouflage) {
+                grabImagePixels(getCamouflage().getImage(), pCamo);
             }
-        } catch (Exception e) {
-            LogManager.getLogger().error("Failed to grab pixels for an image to apply the camo." + e.getMessage());
+        } catch (Exception ex) {
+            LogManager.getLogger().error("Failed to grab pixels for an image to apply the camo.", ex);
             return image;
         }
 
-        // Overlay the camo or color
-        for (int i = 0; i < IMG_SIZE; i++) {
-            int pixel = pMech[i];
-            int alpha = (pixel >> 24) & 0xff;
-            int red = (pixel >> 16) & 0xff;
-            int green = (pixel >> 8) & 0xff;
-            int blue = (pixel) & 0xff;
+        if (hasCamouflage) {
+            // Overlay the camo or color
+            for (int i = 0; i < IMG_SIZE; i++) {
+                int pixel = pMech[i];
+                int alpha = (pixel >> 24) & 0xff;
+                int red = (pixel >> 16) & 0xff;
+                int green = (pixel >> 8) & 0xff;
+                int blue = (pixel) & 0xff;
 
-            // Don't apply the camo over colored (not gray) pixels
-            if (!(red == green && green == blue)) {
-                continue;
-            }
-
-            // Apply the camo only on the icon pixels, not on transparent pixels
-            if (alpha != 0) {
-                int pixel1 = colourCamouflage ? colour : pCamo[i];
-                int red1 = (pixel1 >> 16) & 0xff;
-                int green1 = (pixel1 >> 8) & 0xff;
-                int blue1 = (pixel1) & 0xff;
-
-                // Pretreat with the camo overlay (but not Infantry, they're too small, it'll just darken them)
-                int oalpha = 128;
-                if (GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_USE_CAMO_OVERLAY)
-                        && !isInfantry) {
-                    oalpha = pOverlays[facing][i] & 0xff;
+                // Don't apply the camo over colored (not gray) pixels
+                if (!(red == green && green == blue)) {
+                    continue;
                 }
-                
-                // "Overlay" image combination formula
-                if (oalpha < 128) {
-                    red1 = red1 * 2 * oalpha / 255;
-                    green1 = green1 * 2 * oalpha / 255;
-                    blue1 = blue1 * 2 * oalpha / 255;
-                } else {
-                    red1 = 255 - 2 * (255 - red1) * (255 - oalpha) / 255;
-                    green1 = 255 - 2 * (255 - green1) * (255 - oalpha) / 255;
-                    blue1 = 255 - 2 * (255 - blue1) * (255 - oalpha) / 255;
+
+                // Apply the camo only on the icon pixels, not on transparent pixels
+                if (alpha != 0) {
+                    int pixel1 = colourCamouflage ? colour : pCamo[i];
+                    int red1 = (pixel1 >> 16) & 0xff;
+                    int green1 = (pixel1 >> 8) & 0xff;
+                    int blue1 = (pixel1) & 0xff;
+
+                    // Pretreat with the camo overlay (but not Infantry, they're too small, it'll just darken them)
+                    int oalpha = 128;
+                    if (GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_USE_CAMO_OVERLAY)
+                            && !isInfantry) {
+                        oalpha = pOverlays[facing][i] & 0xff;
+                    }
+
+                    // "Overlay" image combination formula
+                    if (oalpha < 128) {
+                        red1 = red1 * 2 * oalpha / 255;
+                        green1 = green1 * 2 * oalpha / 255;
+                        blue1 = blue1 * 2 * oalpha / 255;
+                    } else {
+                        red1 = 255 - 2 * (255 - red1) * (255 - oalpha) / 255;
+                        green1 = 255 - 2 * (255 - green1) * (255 - oalpha) / 255;
+                        blue1 = 255 - 2 * (255 - blue1) * (255 - oalpha) / 255;
+                    }
+
+                    int red2 = red1 * blue / 255;
+                    int green2 = green1 * blue / 255;
+                    int blue2 = blue1 * blue / 255;
+                    pMech[i] = (alpha << 24) | (red2 << 16) | (green2 << 8) | blue2;
                 }
-                
-                int red2 = red1 * blue / 255;
-                int green2 = green1 * blue / 255;
-                int blue2 = blue1 * blue / 255;
-                pMech[i] = (alpha << 24) | (red2 << 16) | (green2 << 8) | blue2;
             }
         }
         
-        Image result = parent.createImage(new MemoryImageSource(IMG_WIDTH,
-                IMG_HEIGHT, pMech, 0, IMG_WIDTH));
+        Image result = parent.createImage(new MemoryImageSource(IMG_WIDTH, IMG_HEIGHT, pMech, 0, IMG_WIDTH));
         return ImageUtil.createAcceleratedImage(result);
     }
-    
+
     /** Applies the damage decal image to the icon. */
     private Image applyDamageDecal(Image image) {
         if (image == null) {

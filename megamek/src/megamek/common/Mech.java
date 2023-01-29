@@ -33,6 +33,7 @@ import org.apache.logging.log4j.LogManager;
 import java.io.PrintWriter;
 import java.math.BigInteger;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -825,19 +826,6 @@ public abstract class Mech extends Entity {
     }
 
     /**
-     * does this mech have SCM?
-     */
-    public boolean hasSCM() {
-        for (Mounted m : getEquipment()) {
-            if ((m.getType() instanceof MiscType)
-                    && m.getType().hasFlag(MiscType.F_SCM)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * does this mech have industrial TSM=
      *
      * @return
@@ -1169,8 +1157,8 @@ public abstract class Mech extends Entity {
      */
     @Override
     public int getSprintHeat() {
-        int extra = bDamagedCoolantSystem?1:0;
-        return extra + (hasEngine() ? getEngine().getSprintHeat() : 0);
+        int extra = bDamagedCoolantSystem ? 1 : 0;
+        return extra + (hasEngine() ? getEngine().getSprintHeat(this) : 0);
     }
 
     /**
@@ -1230,15 +1218,21 @@ public abstract class Mech extends Entity {
         return Math.max(jump, 0);
     }
 
-    /**
-     * Gives the bonus to Jump MP conferred by a mech partial wing.
-     *
-     * @param mount
-     *            The mounted location of the Wing
-     * @return The Jump MP bonus conferred by the wing
-     */
-    public int getPartialWingJumpBonus(Mounted mount) {
+
+    public int getPartialWingJumpWeightClassBonus()  {
         int bonus;
+
+        if ((getWeightClass() <= EntityWeightClass.WEIGHT_MEDIUM)) {
+            bonus = 2;
+        } else {
+            bonus = 1;
+        }
+
+        return bonus;
+    }
+    public int getPartialWingJumpAtmoBonus()  {
+        int bonus;
+
         if (game != null) {
             if ((getWeightClass() <= EntityWeightClass.WEIGHT_MEDIUM)) {
                 switch (game.getPlanetaryConditions().getAtmosphere()) {
@@ -1275,12 +1269,23 @@ public abstract class Mech extends Entity {
                 }
             }
         } else {
-            if ((getWeightClass() <= EntityWeightClass.WEIGHT_MEDIUM)) {
-                bonus = 2;
-            } else {
-                bonus = 1;
-            }
+            bonus = getPartialWingJumpWeightClassBonus();
         }
+
+        return bonus;
+    }
+
+    /**
+     * Gives the bonus to Jump MP conferred by a mech partial wing.
+     *
+     * @param mount
+     *            The mounted location of the Wing
+     * @return The Jump MP bonus conferred by the wing
+     */
+    public int getPartialWingJumpBonus(Mounted mount) {
+        int bonus;
+
+        bonus = getPartialWingJumpAtmoBonus();
 
         // subtract jumping bonus for damaged criticals
         bonus -= getBadCriticals(CriticalSlot.TYPE_EQUIPMENT,
@@ -1667,10 +1672,10 @@ public abstract class Mech extends Entity {
         return "Heat Sink";
     }
 
-    public int getHeatCapacity(boolean includePartialWing,
-            boolean includeRadicalHeatSink) {
+    public int getHeatCapacity(boolean includePartialWing, boolean includeRadicalHeatSink) {
         int capacity = 0;
         int activeCount = getActiveSinks();
+        boolean isDoubleHeatSink = false;
 
         for (Mounted mounted : getMisc()) {
             if (mounted.isDestroyed() || mounted.isBreached()) {
@@ -1684,9 +1689,11 @@ public abstract class Mech extends Entity {
                     && mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
                 activeCount--;
                 capacity += 2;
+                isDoubleHeatSink = true;
             } else if (mounted.getType().hasFlag(
                     MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
                 capacity += 2;
+                isDoubleHeatSink = true;
             } else if (includePartialWing
                     && mounted.getType().hasFlag(MiscType.F_PARTIAL_WING)
                     && // unless all crits are destroyed, we get the bonus
@@ -1699,6 +1706,7 @@ public abstract class Mech extends Entity {
                                             // once.
             }
         }
+        capacity -= damagedSCMCritCount() * (isDoubleHeatSink ? 2 : 1);
         // AirMech mode for LAMs confers the same heat benefits as a partial wing.
         if (includePartialWing && movementMode == EntityMovementMode.WIGE) {
             capacity += getPartialWingHeatBonus();
@@ -1708,7 +1716,7 @@ public abstract class Mech extends Entity {
             capacity += (int) Math.ceil(getActiveSinks() * 0.4);
         }
 
-        return capacity;
+        return Math.max(capacity, 0);
     }
 
     /**
@@ -3841,19 +3849,33 @@ public abstract class Mech extends Entity {
     }
 
     /**
-     * @return Returns the autoEject.
+     * @return unit has an ejection seat
      */
-    public boolean isAutoEject() {
-        boolean hasEjectSeat = (getCockpitType() != COCKPIT_TORSO_MOUNTED) && !hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT);
+    public boolean hasEjectSeat() {
+        // Ejection Seat
+        boolean result = true;
+        // torso mounted cockpits don't have an ejection seat
+        if (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED
+                || hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT)) {
+            result = false;
+        }
         if (isIndustrial()) {
+            result = false;
             // industrials can only eject when they have an ejection seat
-            for (Mounted misc : miscList) {
+            for (Mounted misc : getMisc()) {
                 if (misc.getType().hasFlag(MiscType.F_EJECTION_SEAT)) {
-                    hasEjectSeat = true;
+                    result = true;
                 }
             }
         }
-        return autoEject && hasEjectSeat;
+        return result;
+    }
+
+    /**
+     * @return Returns the autoEject.
+     */
+    public boolean isAutoEject() {
+        return autoEject && hasEjectSeat();
     }
 
     /**
@@ -6533,6 +6555,16 @@ public abstract class Mech extends Entity {
     @Override
     public int getSpriteDrawPriority() {
         return 6;
+    }
+
+    @Override
+    public boolean isMek() {
+        return true;
+    }
+
+    @Override
+    public boolean isIndustrialMek() {
+        return isIndustrial();
     }
 
     @Override

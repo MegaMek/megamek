@@ -26,7 +26,6 @@ import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
-import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
@@ -93,6 +92,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     // is the shift key held?
     private boolean turnMode = false;
     private boolean assaultDropPreference = false;
+
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     /** Creates and lays out a new deployment phase display for the specified client. */
     public DeploymentDisplay(ClientGUI clientgui) {      
@@ -225,11 +226,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     private void endMyTurn() {
         final Game game = clientgui.getClient().getGame();
         Entity next = game.getNextEntity(game.getTurnIndex());
-        if ((GamePhase.DEPLOYMENT == game.getPhase())
-                && (null != next)
-                && (null != ce())
+        if (game.getPhase().isDeployment() && (null != next) && (null != ce())
                 && (next.getOwnerId() != ce().getOwnerId())) {
-            clientgui.setUnitDisplayVisible(false);
+            clientgui.maybeShowUnitDisplay();
         }
         cen = Entity.NONE;
         clientgui.getBoardView().select(null);
@@ -288,12 +287,12 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
         // Check nag for doomed planetary conditions
         String reason = game.getPlanetaryConditions().whyDoomed(en, game);
-        if ((reason != null) && GUIPreferences.getInstance().getNagForDoomed()) {
+        if ((reason != null) && GUIP.getNagForDoomed()) {
             String title = Messages.getString("DeploymentDisplay.ConfirmDoomed.title"); 
             String body = Messages.getString("DeploymentDisplay.ConfirmDoomed.message", new Object[] {reason}); 
             ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
             if (!response.getShowAgain()) {
-                GUIPreferences.getInstance().setNagForDoomed(false);
+                GUIP.setNagForDoomed(false);
             }
             if (!response.getAnswer()) {
                 return;
@@ -370,7 +369,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 && (game.getTurnIndex() != 0)) {
             return;
         }
-        if (game.getPhase() != GamePhase.DEPLOYMENT) {
+
+        if (!game.getPhase().isDeployment()) {
             // ignore
             return;
         }
@@ -398,14 +398,15 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         clientgui.getBoardView().markDeploymentHexesFor(null);
         
        // In case of a /reset command, ensure the state gets reset
-        if (clientgui.getClient().getGame().getPhase() == GamePhase.LOUNGE) {
+        if (clientgui.getClient().getGame().getPhase().isLounge()) {
             endMyTurn();
         }
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
         }
-        if (clientgui.getClient().getGame().getPhase() == GamePhase.DEPLOYMENT) {
+
+        if (clientgui.getClient().getGame().getPhase().isDeployment()) {
             setStatusBarText(Messages.getString("DeploymentDisplay.waitingForDeploymentPhase")); 
         }
     }

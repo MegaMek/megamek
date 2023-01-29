@@ -101,7 +101,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             return true;
         }
         ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
-        if (phase == GamePhase.TARGETING) {
+        if (phase.isTargeting()) {
             if (!handledAmmoAndReport) {
                 addHeat();
                 // Report the firing itself
@@ -129,7 +129,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         }
         Entity entityTarget = (aaa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) aaa
                 .getTarget(game) : null;
-        if (game.getPhase() == GamePhase.FIRING && entityTarget == null) {
+        if (game.getPhase().isFiring() && entityTarget == null) {
             convertHexTargetToEntityTarget(vPhaseReport);
             entityTarget = (aaa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) aaa
                     .getTarget(game) : null;
@@ -398,7 +398,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         targetCoords = tc;
         // Set the original missile target data. AMS and to-hit table calculations need this.
         aaa.setOldTargetCoords(tc);
-        aaa.setOriginalTargetId(target.getTargetId());
+        aaa.setOriginalTargetId(target.getId());
         aaa.setOriginalTargetType(target.getTargetType());
         int missileFacing = ae.getPosition().direction(tc);
         Targetable newTarget = null;
@@ -492,7 +492,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             int choice = gameManager.processTeleguidedMissileCFR(ae.getOwnerId(), targetIds, toHitValues);
             newTarget = targets.get(choice);
             target = newTarget;
-            aaa.setTargetId(target.getTargetId());
+            aaa.setTargetId(target.getId());
             aaa.setTargetType(target.getTargetType());
             // Run this again, otherwise toHit is left set to the value for the last target in the list...
             setToHit(target);
@@ -573,7 +573,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             }
             // Now, assign our chosen target to the missile
             target = newTarget;
-            aaa.setTargetId(target.getTargetId());
+            aaa.setTargetId(target.getId());
             aaa.setTargetType(target.getTargetType());
             setToHit(target);
             gameManager.assignAMS();

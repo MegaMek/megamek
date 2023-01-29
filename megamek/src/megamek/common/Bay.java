@@ -14,8 +14,6 @@
 */
 package megamek.common;
 
-import megamek.common.enums.GamePhase;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -222,7 +220,7 @@ public class Bay implements Transporter, ITechnology {
         }
 
         currentSpace -= spaceForUnit(unit);
-        if ((unit.game.getPhase() != GamePhase.DEPLOYMENT) && (unit.game.getPhase() != GamePhase.LOUNGE)) {
+        if (!unit.getGame().getPhase().isDeployment() && !unit.getGame().getPhase().isLounge()) {
             loadedThisTurn += 1;
         }
 

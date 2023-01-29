@@ -1525,4 +1525,9 @@ public class Protomech extends Entity {
     public int getBraceMPCost() {
         return 0;
     }
+
+    @Override
+    public boolean isProtoMek() {
+        return true;
+    }
 }

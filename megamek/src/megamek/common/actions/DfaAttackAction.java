@@ -193,7 +193,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
         Entity te = null;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity) target;
-            targetId = target.getTargetId();
+            targetId = target.getId();
         } else {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Invalid Target");
         }

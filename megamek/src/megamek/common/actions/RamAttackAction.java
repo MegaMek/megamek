@@ -32,7 +32,7 @@ public class RamAttackAction extends AbstractAttackAction {
     private static final long serialVersionUID = -3549351664290057785L;
 
     public RamAttackAction(Entity attacker, Targetable target) {
-        this(attacker.getId(), target.getTargetType(), target.getTargetId(), target.getPosition());
+        this(attacker.getId(), target.getTargetType(), target.getId(), target.getPosition());
     }
 
     public RamAttackAction(int entityId, int targetType, int targetId, Coords targetPos) {

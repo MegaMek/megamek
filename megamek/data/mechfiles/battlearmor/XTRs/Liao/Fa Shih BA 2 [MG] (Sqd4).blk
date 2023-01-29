@@ -54,27 +54,9 @@ BA-Magnetic Clamp:LA
 BABasicManipulatorMineClearance:LA
 BABasicManipulatorMineClearance:RA
 CLBAMyomerBooster:Body
+ISBAMineDispenser:LA
+ISBAMineDispenser:RA
 </Squad Equipment>
-
-<Trooper 1 Equipment>
-Mine:RA
-Mine:RA
-</Trooper 1 Equipment>
-
-<Trooper 2 Equipment>
-Mine:RA
-Mine:RA
-</Trooper 2 Equipment>
-
-<Trooper 3 Equipment>
-Mine:RA
-Mine:RA
-</Trooper 3 Equipment>
-
-<Trooper 4 Equipment>
-Mine:RA
-Mine:RA
-</Trooper 4 Equipment>
 
 <source>
 XTRO Liao - Jihad

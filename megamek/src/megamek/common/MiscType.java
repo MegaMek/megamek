@@ -559,7 +559,7 @@ public class MiscType extends EquipmentType {
                     return defaultRounding.round(e.getWeightEngine(entity, defaultRounding) / 10.0, entity);
                 }
 
-                return RoundWeight.nearestTon(entity.getWeight() * (isClan() ? 0.04 : 0.05));
+                return Math.max(RoundWeight.nearestTon(entity.getWeight() * (isClan() ? 0.04 : 0.05)), 1);
             }
         } else if (hasFlag(F_QUAD_TURRET) || hasFlag(F_SHOULDER_TURRET) || hasFlag(F_HEAD_TURRET)) {
             // Turrets weight 10% of the weight of equipment in them, not counting Heat Sinks, Ammo and Armor
@@ -1085,9 +1085,9 @@ public class MiscType extends EquipmentType {
             return 1 + (int) Math.ceil(entity.getWeight() / 20.0);
         } else if (hasFlag(F_MASC)) {
             if (TechConstants.isClan(getTechLevel(entity.getTechLevelYear()))) {
-                return (int) Math.round(entity.getWeight() / 25.0);
+                return Math.max((int) Math.round(entity.getWeight() / 25.0), 1);
             }
-            return (int) Math.round(entity.getWeight() / 20.0);
+            return Math.max((int) Math.round(entity.getWeight() / 20.0), 1);
 
         } else if ((entity instanceof Aero)
                 && (hasFlag(F_REACTIVE) || hasFlag(F_REFLECTIVE) || hasFlag(F_ANTI_PENETRATIVE_ABLATIVE)
@@ -6909,6 +6909,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.flags = misc.flags.or(F_HEAT_SINK).or(F_COMPACT_HEAT_SINK);
         misc.bv = 0;
+        misc.cost = 3000;
         misc.rulesRefs = "316, TO";
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TECH_BASE_IS)
@@ -6928,6 +6929,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("IS2 Compact Heat Sinks");
         misc.tonnage = 3.0f;
         misc.criticals = 1;
+        misc.cost = 6000;
         misc.flags = misc.flags.or(F_DOUBLE_HEAT_SINK).or(F_COMPACT_HEAT_SINK);
         misc.bv = 0;
         misc.rulesRefs = "316, TO";
@@ -8282,6 +8284,7 @@ public class MiscType extends EquipmentType {
         misc.name = "HarJel Repair Systems (HarJel II)";
         misc.setInternalName(misc.name);
         misc.addLookupName("HarJel II Self-Repair System");
+        misc.shortName = "Harjel II";
         misc.tonnage = 2;
         misc.criticals = 1;
         misc.cost = 240000;
@@ -8306,6 +8309,7 @@ public class MiscType extends EquipmentType {
         misc.name = "HarJel Repair Systems (HarJel III)";
         misc.addLookupName("HarJel III Self-Repair System");
         misc.setInternalName(misc.name);
+        misc.shortName = "Harjel III";
         misc.tonnage = 3;
         misc.criticals = 2;
         misc.cost = 360000;
@@ -8789,7 +8793,7 @@ public class MiscType extends EquipmentType {
         misc.omniFixedOnly = true;
         misc.bv = 0;
         // TODO: add game rules, BV rules are implemented
-        misc.rulesRefs = "92, IO";
+        misc.rulesRefs = "94, IO";
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_F)
                 .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
                 .setISAdvancement(3133, DATE_NONE, DATE_NONE, 3138, DATE_NONE)

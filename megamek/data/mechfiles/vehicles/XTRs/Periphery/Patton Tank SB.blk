@@ -33,7 +33,7 @@ Patton Tank
 </originalBuildYear>
 
 <type>
-IS Level 4
+IS Level 2
 </type>
 
 <motion_type>
@@ -103,3 +103,41 @@ XTRO Periphery - Jihad
 65.0
 </tonnage>
 
+<capabilities>
+The Patton mounts an AC/10, giving it twice the ammunition capacity and superior firing range while also enabling it to be fitted with more armor. The Patton is capable of fighting in short-ranged and urban environments, but is far more suited than the Rommel to engaging targets at medium to long range.
+</capabilities>
+
+<overview>
+The Patton tank is a 65-ton armored combat vehicle, specializing in conventional armored warfare. Identical to its twin, the Rommel, in every way but armament and armor configuration, the Patton has primarily served with the Lyran Commonwealth and the Lyran Alliance.
+</overview>
+
+<deployment>
+This version of the Patton was built with the intent of functioning in hostile environments like the vacuum of space. Environmental Sealing protects the crew from hostile environments. An XL fusion engine with Supercharger allows the Patton-SB to perform sprints of up to 86 km/h to reposition quickly. It retains the LRM-5, but replaces the other weaponry with a pair of ER medium lasers and a Silver Bullet Gauss Rifle with three tons of ammunition. The tank is protected by eleven and a half tons of Heavy Ferro-Fibrous armor. 
+</deployment>
+
+<history>
+Designed concurrently with the Rommel, Defiance Industries decided that a vehicle to replace 'Mechs was needed in the early 3000s. Since 'Mech production was nearly at a standstill, the ability to produce and field armored vehicles became a necessity no Successor State could ignore.
+</history>
+
+<manufacturer>
+Defiance Industries, General Motors
+</manufacturer>
+
+<primaryFactory>
+Hesperus II,Salem
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:Magna 260 XL
+ARMOR:Durallex Special Heavy Ferro-Fibrous
+COMMUNICATIONS:TharHes Muse 54-58K
+TARGETING:TharHes Mars5
+</systemManufacturers>
+
+<source>
+TRO 3039 - Succession Wars
+</source>
+
+<tonnage>
+65.0
+</tonnage>

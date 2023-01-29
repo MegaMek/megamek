@@ -123,6 +123,15 @@ public class Crew implements Serializable {
     public static final String HUMANTRO_VEE = "Vee";
     public static final String HUMANTRO_BA = "BA";
 
+    // SPA Environmental Specialist types
+    public static final String ENVSPC_NONE = "None";
+    public static final String ENVSPC_FOG = "Fog";
+    public static final String ENVSPC_HAIL = "Hail";
+    public static final String ENVSPC_LIGHT = "Light";
+    public static final String ENVSPC_RAIN = "Rain";
+    public static final String ENVSPC_SNOW = "Snow";
+    public static final String ENVSPC_WIND = "Wind";
+
     public static final String SPECIAL_NONE = "None";
     public static final String SPECIAL_ENERGY = "Energy";
     public static final String SPECIAL_BALLISTIC = "Ballistic";

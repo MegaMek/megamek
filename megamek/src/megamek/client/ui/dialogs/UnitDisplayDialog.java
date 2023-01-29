@@ -20,36 +20,71 @@ package megamek.client.ui.dialogs;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
+import megamek.client.ui.swing.util.UIUtil;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class UnitDisplayDialog extends JDialog {
     //region Variable Declarations
-    private UnitDisplay unitDisplay;
-
     private final ClientGUI clientGUI;
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     //endregion Variable Declarations
 
     //region Constructors
-    public UnitDisplayDialog(final JFrame frame, final UnitDisplay unitDisplay,
-                             final ClientGUI clientGUI) {
-        super(frame, Messages.getString("ClientGUI.MechDisplay"), false);
-        setUnitDisplay(unitDisplay);
+    public UnitDisplayDialog(final JFrame frame, final ClientGUI clientGUI) {
+        super(frame, "", false);
+        this.setTitle(Messages.getString("ClientGUI.MechDisplay"));
+
+        if (GUIP.getUnitDisplayStartTabbed()) {
+            this.setLocation(GUIP.getUnitDisplayPosX(), GUIP.getUnitDisplayPosY());
+            this.setSize(GUIP.getUnitDisplaySizeWidth(), GUIP.getUnitDisplaySizeHeight());
+        }
+        else {
+            this.setLocation(GUIP.getUnitDisplayNontabbedPosX(), GUIP.getUnitDisplayNontabbedPosY());
+            this.setSize(GUIP.getUnitDisplayNonTabbedSizeWidth(), GUIP.getUnitDisplayNonTabbedSizeHeight());
+        }
+
+        UIUtil.updateWindowBounds(this);
+        this.setResizable(true);
+        this.setFocusable(false);
+        this.setFocusableWindowState(false);
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                GUIP.setUnitDisplayEnabled(false);
+            }
+        });
+
         this.clientGUI = clientGUI;
     }
     //endregion Constructors
 
-    //region Getters/Setters
-    public UnitDisplay getUnitDisplay() {
-        return unitDisplay;
+    @Override
+    protected void processWindowEvent(WindowEvent e) {
+        super.processWindowEvent(e);
+        if ((e.getID() == WindowEvent.WINDOW_DEACTIVATED) || (e.getID() == WindowEvent.WINDOW_CLOSING)) {
+            if ((getSize().width * getSize().height) > 0) {
+                if (GUIP.getUnitDisplayStartTabbed()) {
+                    GUIP.setUnitDisplayPosX(getLocation().x);
+                    GUIP.setUnitDisplayPosY(getLocation().y);
+                    GUIP.setUnitDisplaySizeWidth(getSize().width);
+                    GUIP.setUnitDisplaySizeHeight(getSize().height);
+                } else {
+                    GUIP.setUnitDisplayNontabbedPosX(getLocation().x);
+                    GUIP.setUnitDisplayNontabbedPosY(getLocation().y);
+                    GUIP.setUnitDisplayNonTabbedSizeWidth(getSize().width);
+                    GUIP.setUnitDisplayNonTabbedSizeHeight(getSize().height);
+                    clientGUI.getUnitDisplay().saveSplitterLoc();
+                }
+            }
+        }
     }
-
-    public void setUnitDisplay(final UnitDisplay unitDisplay) {
-        this.unitDisplay = unitDisplay;
-    }
-    //endregion Getters/Setters
 
     /**
      * In addition to the default Dialog processKeyEvent, this method

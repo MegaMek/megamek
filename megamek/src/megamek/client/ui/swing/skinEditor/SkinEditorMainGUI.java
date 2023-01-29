@@ -409,16 +409,6 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         // Handle phase-specific items.
         switch (phase) {
             case LOUNGE:
-                // reset old report tabs and images, if any
-                ReportDisplay rD = (ReportDisplay) phaseComponents.get(String
-                        .valueOf(GamePhase.INITIATIVE_REPORT));
-                if (rD != null) {
-                    rD.resetTabs();
-                }
-                //ChatLounge cl = (ChatLounge) phaseComponents.get(
-                //        String.valueOf(Game.Phase.LOUNGE));
-                // cb.setDoneButton(cl.butDone);
-                // cl.add(cb.getComponent(), BorderLayout.SOUTH);
                 getBoardView().getTilesetManager().reset();
                 break;
             case DEPLOY_MINEFIELDS:
@@ -437,11 +427,6 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
             case PHYSICAL_REPORT:
             case END_REPORT:
             case VICTORY:
-                rD = (ReportDisplay) phaseComponents.get(String
-                        .valueOf(GamePhase.INITIATIVE_REPORT));
-                // cb.setDoneButton(rD.butDone);
-                //rD.add(cb.getComponent(), GBC.eol().fill(
-                //        GridBagConstraints.HORIZONTAL));
                 break;
             default:
                 break;
@@ -674,7 +659,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
      */
     public void doAlertDialog(String title, String message) {
         JTextPane textArea = new JTextPane();
-        ReportDisplay.setupStylesheet(textArea);
+        Report.setupStylesheet(textArea);
 
         textArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(textArea,

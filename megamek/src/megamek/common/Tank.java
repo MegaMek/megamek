@@ -278,6 +278,24 @@ public class Tank extends Entity {
             if (weatherMod != 0) {
                 j = Math.max(j + weatherMod, 0);
             }
+            if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_SNOW)) {
+                if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM)) {
+                    j += 2;
+                }
+
+                if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_SLEET)
+                        || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_LIGHT_SNOW)
+                        || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_MOD_SNOW)
+                        || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW)
+                        || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES)) {
+                    j += 1;
+                }
+            }
+
+            if(getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
+                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_TORNADO_F13)) {
+                j += 1;
+            }
         }
 
         if (!ignoremodulararmor && hasModularArmor()) {
@@ -3055,6 +3073,11 @@ public class Tank extends Entity {
                     || hasWorkingMisc(MiscType.F_HITCH);
         }
         return false;
+    }
+
+    @Override
+    public boolean isCombatVehicle() {
+        return !isSupportVehicle();
     }
 
     @Override

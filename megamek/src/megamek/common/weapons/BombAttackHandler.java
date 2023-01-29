@@ -93,7 +93,7 @@ public class BombAttackHandler extends WeaponHandler {
             boolean laserGuided = false;
             if (type == BombType.B_LG) {
                 for (TagInfo ti : game.getTagInfo()) {
-                    if (target.getTargetId() == ti.target.getTargetId()) {
+                    if (target.getId() == ti.target.getId()) {
                         typeModifiedToHit.addModifier(-2,
                                 "laser-guided bomb against tagged target");
                         laserGuided = true;
@@ -207,7 +207,7 @@ public class BombAttackHandler extends WeaponHandler {
                         // Retrieve facing at current step in flight path
                         int facing = ae.getPassedThroughFacing().get(idx);
                         // Scatter, based on location and facing
-                        drop = Compute.scatterAltitudeBombs(coords, facing);
+                        drop = Compute.scatterAltitudeBombs(coords, facing, moF);
                     } else {
                         drop = Compute.scatterDiveBombs(coords, moF);
                     }

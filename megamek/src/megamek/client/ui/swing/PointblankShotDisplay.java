@@ -479,10 +479,9 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
         // end my turn, then.
         Game game = clientgui.getClient().getGame();
         Entity next = game.getNextEntity(game.getTurnIndex());
-        if ((game.getPhase() == GamePhase.FIRING)
-            && (next != null) && (ce() != null)
-            && (next.getOwnerId() != ce().getOwnerId())) {
-            clientgui.setUnitDisplayVisible(false);
+        if (game.getPhase().isFiring() && (next != null) && (ce() != null)
+                && (next.getOwnerId() != ce().getOwnerId())) {
+            clientgui.maybeShowUnitDisplay();
         }
         cen = Entity.NONE;
         target(null);
@@ -686,10 +685,10 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
                 || (mounted.getType() instanceof CapitalMissileWeapon
                         && Compute.isGroundToGround(ce(), target)))) {
             waa = new WeaponAttackAction(cen, target.getTargetType(),
-                    target.getTargetId(), weaponNum);
+                    target.getId(), weaponNum);
         } else {
             waa = new ArtilleryAttackAction(cen, target.getTargetType(),
-                    target.getTargetId(), weaponNum, game);
+                    target.getId(), weaponNum, game);
         }
 
         if ((mounted.getLinked() != null)

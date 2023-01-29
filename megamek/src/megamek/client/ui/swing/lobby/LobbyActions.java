@@ -656,7 +656,7 @@ public class LobbyActions {
         Set<Force> finalFoDelete = new HashSet<>(foDelete);
         // Remove redundant entities = entities in the given forces
         Set<Entity> inForces = new HashSet<>();
-        foDelete.stream().map(forces::getFullEntities).forEach(inForces::addAll);
+        foDelete.stream().map(forces::getFullEntities).map(ForceAssignable::filterToEntityList).forEach(inForces::addAll);
         enDelete.removeIf(inForces::contains);
         Set<Entity> finalEnDelete = new HashSet<>(enDelete);
         

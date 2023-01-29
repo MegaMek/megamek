@@ -4323,6 +4323,7 @@ Mobile Headquarters (ICE):NONE
 Mobile Headquarters (LL):NONE
 Mobile Headquarters (LRM):NONE
 Mobile Headquarters (Standard):NONE
+Mobile Long Tom Artillery LT-MOB-25:MISSILE_BOAT
 Mobile Long Tom Artillery (Unofficial) (+ Carriage):MISSILE_BOAT
 Mobile Long Tom Artillery Ammunition Trailer LT-MOB-25:NONE
 Mobile Long Tom Artillery Support Carriage LT-MOB-25:NONE
@@ -7592,3 +7593,110 @@ Phantom R:STRIKER
 Nightsky NGS-7S:STRIKER
 Penetrator PTR-8D:BRAWLER
 Gunslinger GUN-3ERD:JUGGERNAUT
+TinStar BattleArmor (Standard)(Sqd4):AMBUSHER
+TinStar BattleArmor (Standard)(Sqd5):AMBUSHER
+TinStar BattleArmor (Standard)(Sqd6):AMBUSHER
+TinStar BattleArmor (Original)(Sqd4):AMBUSHER
+TinStar BattleArmor (Original)(Sqd5):AMBUSHER
+TinStar BattleArmor (Original)(Sqd6):AMBUSHER
+Skulker Wheeled Scout Tank C:SCOUT
+Warrior Attack Helicopter H-7F:SCOUT
+Whirlwind Scout Hover Tank:SCOUT
+Whirlwind Scout Hover Tank (IFV):SCOUT
+Whirlwind Scout Hover Tank (AAA):SCOUT
+Mobile Long Tom Artillery LT-MOB-25F:MISSILE_BOAT
+SturmFeur Heavy Tank (Cell):MISSILE_BOAT
+SturmFeur Heavy Tank (Heavy Gauss):JUGGERNAUT
+SturmFeur Heavy Tank (WoB):JUGGERNAUT
+SturmFeur Heavy Tank (Steiner):JUGGERNAUT
+SturmFeur Heavy Tank (Assault):SNIPER
+SturmFeur Heavy Tank (Support) 'Gilmore':MISSILE_BOAT
+Firestarter FS9-M 'Mirage II':STRIKER
+Spector SPR-6F:STRIKER
+Cicada CDA-4A:STRIKER
+Devastator DVS-11:JUGGERNAUT
+Dragoon Battle Armor (Sqd4):AMBUSHER
+Dragoon Battle Armor (Sqd5):AMBUSHER
+Dragoon Battle Armor (Sqd6):AMBUSHER
+Dragoon Battle Armor (Advanced) (Sqd4):AMBUSHER
+Dragoon Battle Armor (Advanced) (Sqd4):AMBUSHER
+Dragoon Battle Armor (Advanced) (Sqd4):AMBUSHER
+Command Van:SCOUT
+Command Van (ICE):SCOUT
+Command Van (Q-Vehicle):SCOUT
+Browning Mobile Headquarters:SCOUT
+Browning Mobile Headquarters (Half-Track):SCOUT
+Hetzer Wheeled Assault Gun (Cell):AMBUSHER
+Hetzer Wheeled Assault Gun C:AMBUSHER
+Eurus MBT Prime:BRAWLER
+Eurus MBT A:BRAWLER
+Eurus MBT B:SNIPER
+Eurus MBT C:BRAWLER
+Eurus MBT D:BRAWLER
+Ontos Heavy Tank (Chem Laser):JUGGERNAUT
+Firefly FFL-5A:STRIKER
+Assassin ASN-109:SCOUT
+Dervish DV-11DK:MISSILE_BOAT
+Charger C:SCOUT
+Sagittaire SGT-14R:JUGGERNAUT
+Griffin GRF-1RG:MISSILE_BOAT
+Griffin GRF-3RG:SKIRMISHER
+Griffin GRF-6R:SNIPER
+Behemoth BHN-6H:JUGGERNAUT
+BattleMaster BLR-6R:BRAWLER
+Cricket RWN-02:SCOUT
+Cataphract CTF-5LL:SNIPER
+Archer C 2:BRAWLER
+Stinger C:SCOUT
+Stinger C 2:SCOUT
+Stormbird Battle Armor (Sqd4):AMBUSHER
+Stormbird Battle Armor (Sqd5):AMBUSHER
+Stormbird Battle Armor (Sqd6):AMBUSHER
+Stormbird Battle Armor (Jade Falcon)(Sqd4):AMBUSHER
+Stormbird Battle Armor (Jade Falcon)(Sqd5):AMBUSHER
+Stormbird Battle Armor (Jade Falcon)(Sqd6):AMBUSHER
+Onuris Attack VTOL Prime:STRIKER
+Onuris Attack VTOL A:SNIPER
+Onuris Attack VTOL B:MISSILE_BOAT
+Onuris Attack VTOL C:STRIKER
+Onuris Attack VTOL D:STRIKER
+Onuris Attack VTOL E:STRIKER
+Pike Support Vehicle (LB-X):SNIPER
+Pike Support Vehicle (Clan):SNIPER
+Pike Support Vehicle (RAC) 'Assault Pike':SNIPER
+Pike Support Vehicle (Plasma):SNIPER
+SRM Carrier C:MISSILE_BOAT
+LRM Carrier C:MISSILE_BOAT
+Vulcan VT-7T:SCOUT
+Whitworth WTH-2H:BRAWLER
+Hellcat (Hellhound II):SKIRMISHER
+Hellhound (Conjurer) 6:SKIRMISHER
+Hellhound II-P (Hellcat-P):SKIRMISHER
+Hoplite HOP-5C:BRAWLER
+Grizzly 3:SKIRMISHER
+Highlander IIC 4:MISSILE_BOAT
+Behemoth Heavy Tank (Davion):JUGGERNAUT
+Behemoth Heavy Tank (Kurita Upgrade):JUGGERNAUT
+Behemoth Heavy Tank (Liao):JUGGERNAUT
+Behemoth Heavy Tank (Refit):JUGGERNAUT
+Callisto A [Bearhunter]:AMBUSHER
+Callisto A [ER Laser]:AMBUSHER
+Callisto A [HMG]:AMBUSHER
+Callisto B [MRR]:AMBUSHER
+Callisto B [SRM]:AMBUSHER
+Clint CLNT-3-4T::STRIKER
+Harrier Hover Tank (Original):STRIKER
+Harrier Hover Tank (PPC):STRIKER
+Harrier Hover Tank (Re-Laser):STRIKER
+J. Edgar Light Hover Tank (Chemical):STRIKER
+J. Edgar Light Hover Tank (Kurita):STRIKER
+J. Edgar Light Hover Tank (LAC):STRIKER
+J. Edgar Light Hover Tank (Light PPC):SNIPER
+J. Edgar Light Hover Tank (TAG):SCOUT
+Javelin JVN-12N:SCOUT
+Manticore Heavy Tank (XL): Brawler
+Pillager PLG-6Z:JUGGERNAUT
+Savannah Master Hovercraft (Reflective):SCOUT
+Shogun C 3:SNIPER
+Skimmer:SCOUT
+

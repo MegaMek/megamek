@@ -86,8 +86,9 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
                     if (isIgnoringEvents()) {
                         return;
                     }
-                    if (clientgui.getClient().isMyTurn()
-                            || (clientgui.getClient().getGame().getTurn() == null)) {
+                    if ((clientgui.getClient().isMyTurn())
+                            || (clientgui.getClient().getGame().getTurn() == null)
+                            || (clientgui.getClient().getGame().getPhase().isReport())) {
                         ready();
                         // When the turn is ended, we could miss a key release
                         // event

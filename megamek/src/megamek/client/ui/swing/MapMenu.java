@@ -29,7 +29,6 @@ import megamek.common.actions.BreakGrappleAttackAction;
 import megamek.common.actions.GrappleAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
-import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.other.CLFireExtinguisher;
 import megamek.common.weapons.other.ISFireExtinguisher;
@@ -209,7 +208,7 @@ public class MapMenu extends JPopupMenu {
                 }
             });
 
-            if (game.getPhase() == GamePhase.MOVEMENT) {
+            if (game.getPhase().isMovement()) {
                 add(item);
             }
         }
@@ -312,7 +311,7 @@ public class MapMenu extends JPopupMenu {
         item.addActionListener(evt -> {
             try {
                 selectedEntity = game.getEntity(Integer.parseInt(evt.getActionCommand()));
-                GUIPreferences.getInstance().showUnitDisplay();
+                GUIPreferences.getInstance().setUnitDisplayEnabled(true);
                 gui.getUnitDisplay().displayEntity(selectedEntity);
             } catch (Exception ex) {
                 LogManager.getLogger().error("", ex);
@@ -701,7 +700,7 @@ public class MapMenu extends JPopupMenu {
                     int weaponNum = weapToId.get(weapon);
                     // Used to determine if attack is valid
                     WeaponAttackAction waa = new WeaponAttackAction(myEntity.getId(),
-                            target.getTargetType(), target.getTargetId(), weaponNum);
+                            target.getTargetType(), target.getId(), weaponNum);
                     // Only fire weapons that have a chance to hit
                     int toHitVal = waa.toHit(game).getValue();
                     if (toHitVal <= 12) {

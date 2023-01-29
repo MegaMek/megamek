@@ -315,7 +315,7 @@ public class Princess extends BotClient {
     }
 
     double getDamageAlreadyAssigned(final Targetable target) {
-        final Integer targetId = target.getTargetId();
+        final Integer targetId = target.getId();
         if (damageMap.containsKey(targetId)) {
             return damageMap.get(targetId);
         }
@@ -607,7 +607,7 @@ public class Princess extends BotClient {
                     // damageMap for the target enemy.
                     // while we're looping through all the shots anyway, send any firing mode changes
                     for (WeaponFireInfo shot : plan) {
-                        Integer targetId = shot.getTarget().getTargetId();
+                        Integer targetId = shot.getTarget().getId();
                         double existingTargetDamage = damageMap.getOrDefault(targetId, 0.0);
                         double newDamage = existingTargetDamage + shot.getExpectedDamage();
                         damageMap.put(targetId, newDamage);
@@ -1327,7 +1327,7 @@ public class Princess extends BotClient {
             final List<Targetable> potentialTargets = FireControl.getAllTargetableEnemyEntities(getLocalPlayer(),
                     getGame(), getFireControlState());
             for (final Targetable target : potentialTargets) {
-                damageMap.put(target.getTargetId(), 0d);
+                damageMap.put(target.getId(), 0d);
             }
 
             getFireControlState().clearTransientData();
@@ -1457,7 +1457,7 @@ public class Princess extends BotClient {
                         continue;
                     }
 
-                    if (getHonorUtil().isEnemyBroken(entity.getTargetId(), entity.getOwnerId(),
+                    if (getHonorUtil().isEnemyBroken(entity.getId(), entity.getOwnerId(),
                             getForcedWithdrawal()) || !entity.isMilitary()) {
                         // If he'd just continued running, I would have let him 
                         // go, but the bastard shot at me!
@@ -1569,7 +1569,7 @@ public class Princess extends BotClient {
             final List<Targetable> potentialTargets = FireControl.getAllTargetableEnemyEntities(
                     getLocalPlayer(), getGame(), fireControlState);
             for (final Targetable target : potentialTargets) {
-                damageMap.put(target.getTargetId(), 0d);
+                damageMap.put(target.getId(), 0d);
             }
         } catch (Exception ignored) {
 

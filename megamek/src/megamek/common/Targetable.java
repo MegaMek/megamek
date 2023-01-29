@@ -18,7 +18,7 @@ import java.util.Map;
 
 import megamek.common.annotations.Nullable;
 
-public interface Targetable extends Serializable {
+public interface Targetable extends InGameObject, Serializable {
     int TYPE_ENTITY = 0;
     int TYPE_HEX_CLEAR = 1;
     int TYPE_HEX_IGNITE = 2;
@@ -40,8 +40,6 @@ public interface Targetable extends Serializable {
     int TYPE_HEX_AERO_BOMB = 18;
 
     int getTargetType();
-
-    int getTargetId();
 
     /** @return the coordinates of the hex containing the target */
     Coords getPosition();
@@ -89,18 +87,6 @@ public interface Targetable extends Serializable {
     /** @return if this is off the board */
     boolean isOffBoard();
 
-    /** @return True if this is a conventional infantry unit (not BattleArmor) and can safely be cast to Infantry. */
-    default boolean isConventionalInfantry() {
-        return false;
-    }
-
-    /**
-     * @return if this is an <code>Entity</code> capable of aerospace movement
-     */
-    default boolean isAero() {
-        return false;
-    }
-    
     /**
      * @return if this is an <code>Entity</code> capable of carrying and using bombs
      */

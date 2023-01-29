@@ -35,7 +35,6 @@ import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
 import megamek.common.actions.RamAttackAction;
 import megamek.common.annotations.Nullable;
-import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.AbstractOptions;
@@ -78,6 +77,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     public static final int CMD_NON_VECTORED = CMD_MECH | CMD_TANK | CMD_VTOL | CMD_INF | CMD_AERO;
     public static final int CMD_ALL = CMD_MECH | CMD_TANK | CMD_VTOL | CMD_INF | CMD_AERO | CMD_AERO_VECTORED;
     public static final int CMD_NON_INF = CMD_MECH | CMD_TANK | CMD_VTOL | CMD_AERO | CMD_AERO_VECTORED;
+
+    private boolean isUnJammingRAC;
 
     /**
      * This enumeration lists all of the possible ActionCommands that can be carried out during the
@@ -186,6 +187,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
          * Priority that determines this buttons order
          */
         public int priority;
+
+        private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
         MoveCommand(String c, int f) {
             cmd = c;
@@ -312,6 +315,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         buttons = new HashMap<>((int) (MoveCommand.values().length * 1.25 + 0.5));
         for (MoveCommand cmd : MoveCommand.values()) {
             String title = Messages.getString("MovementDisplay." + cmd.getCmd());
+            if ((clientgui != null) &&
+                    (cmd == MoveCommand.MOVE_UNJAM) &&
+                    (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UNJAM_UAC))) {
+                title += Messages.getString("BoardView1.Tooltip.AndAC");
+            }
             MegamekButton newButton = new MegamekButton(title, UIComponents.PhaseDisplayButton.getComp());
             String ttKey = "MovementDisplay." + cmd.getCmd() + ".tooltip";
             if (Messages.keyExists(ttKey)) {
@@ -528,19 +536,16 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                                     cmd.addStep(MoveStepType.START_JUMP);
                                 }
                                 gear = MovementDisplay.GEAR_JUMP;
-                                Color jumpColor = GUIPreferences.getInstance().getColor(
-                                        GUIPreferences.ADVANCED_MOVE_JUMP_COLOR);
+                                Color jumpColor = GUIP.getColor(GUIPreferences.ADVANCED_MOVE_JUMP_COLOR);
                                 clientgui.getBoardView().setHighlightColor(jumpColor);
                             } else {
-                                Color walkColor = GUIPreferences.getInstance().getColor(
-                                        GUIPreferences.ADVANCED_MOVE_DEFAULT_COLOR);
+                                Color walkColor = GUIP.getColor(GUIPreferences.ADVANCED_MOVE_DEFAULT_COLOR);
                                 clientgui.getBoardView().setHighlightColor(walkColor);
                                 gear = MovementDisplay.GEAR_LAND;
                                 clear();
                             }
                         } else {
-                            Color walkColor = GUIPreferences.getInstance().getColor(
-                                    GUIPreferences.ADVANCED_MOVE_DEFAULT_COLOR);
+                            Color walkColor = GUIP.getColor(GUIPreferences.ADVANCED_MOVE_DEFAULT_COLOR);
                             clientgui.getBoardView().setHighlightColor(walkColor);
                             gear = MovementDisplay.GEAR_LAND;
                             clear();
@@ -638,7 +643,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             Game game = clientgui.getClient().getGame();
             Player localPlayer = clientgui.getClient().getLocalPlayer();
             forwardIni = (game.getTeamForPlayer(localPlayer) != null)
-                    && (game.getTeamForPlayer(localPlayer).getSize() > 1);
+                    && (game.getTeamForPlayer(localPlayer).size() > 1);
             opts = game.getOptions();
         }
 
@@ -701,7 +706,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         cen = en;
         clientgui.setSelectedEntityNum(en);
         gear = MovementDisplay.GEAR_LAND;
-        Color walkColor = GUIPreferences.getInstance().getColor(GUIPreferences.ADVANCED_MOVE_DEFAULT_COLOR);
+        Color walkColor = GUIP.getColor(GUIPreferences.ADVANCED_MOVE_DEFAULT_COLOR);
         clientgui.getBoardView().setHighlightColor(walkColor);
         clear();
         
@@ -958,7 +963,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 && (null != next)
                 && (null != ce)
                 && (next.getOwnerId() != ce.getOwnerId())) {
-            clientgui.setUnitDisplayVisible(false);
+            clientgui.maybeShowUnitDisplay();
         }
         cen = Entity.NONE;
         clientgui.getBoardView().select(null);
@@ -1064,7 +1069,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         ce.setCarefulStand(false);
         ce.setIsJumpingNow(false);
         ce.setConvertingNow(false);
-        ce.setClimbMode(GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_MOVE_DEFAULT_CLIMB_MODE));
+        ce.setClimbMode(GUIP.getBoolean(GUIPreferences.ADVANCED_MOVE_DEFAULT_CLIMB_MODE));
 
         // switch back from swimming to normal mode.
         if (ce.getMovementMode() == EntityMovementMode.BIPED_SWIM) {
@@ -1080,8 +1085,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // set to "walk," or the equivalent
         if (gear != MovementDisplay.GEAR_JUMP) {
             gear = MovementDisplay.GEAR_LAND;
-            Color walkColor = GUIPreferences.getInstance().getColor(
-                    GUIPreferences.ADVANCED_MOVE_DEFAULT_COLOR);
+            Color walkColor = GUIP.getColor(GUIPreferences.ADVANCED_MOVE_DEFAULT_COLOR);
             clientgui.getBoardView().setHighlightColor(walkColor);
         } else if (!cmd.isJumping()) {
             cmd.addStep(MoveStepType.START_JUMP);
@@ -1191,22 +1195,35 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             return;
         }
 
+        if ((ce().canUnjamRAC()) && (GUIPreferences.getInstance().getNagForNoUnJamRAC()) && (!isUnJammingRAC)){
+            // confirm this action
+            String title = Messages.getString("MovementDisplay.ConfirmUnJamRACDlg.title");
+            String body = Messages.getString("MovementDisplay.ConfirmUnJamRACDlg.message");
+            ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
+            if (!response.getShowAgain()) {
+                GUIPreferences.getInstance().setNagForNoUnJamRAC(false);
+            }
+
+            if (!response.getAnswer()) {
+                return;
+            }
+        }
+
         cmd.clipToPossible();
-        if ((cmd.length() == 0) && !ce().isAirborne()
-                && GUIPreferences.getInstance().getNagForNoAction()) {
+        if ((cmd.length() == 0) && !ce().isAirborne() && GUIP.getNagForNoAction()) {
             // Hmm... no movement steps, confirm this action
             String title = Messages.getString("MovementDisplay.ConfirmNoMoveDlg.title");
             String body = Messages.getString("MovementDisplay.ConfirmNoMoveDlg.message");
             ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
             if (!response.getShowAgain()) {
-                GUIPreferences.getInstance().setNagForNoAction(false);
+                GUIP.setNagForNoAction(false);
             }
             if (!response.getAnswer()) {
                 return;
             }
         }
 
-        if (GUIPreferences.getInstance().getNagForMASC() && cmd.hasActiveMASC()) {
+        if (GUIP.getNagForMASC() && cmd.hasActiveMASC()) {
             // pop up are you sure dialog
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
                     Messages.getString("MovementDisplay.areYouSure"),
@@ -1216,15 +1233,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             if (nag.getAnswer()) {
                 // do they want to be bothered again?
                 if (!nag.getShowAgain()) {
-                    GUIPreferences.getInstance().setNagForMASC(false);
+                    GUIP.setNagForMASC(false);
                 }
             } else {
                 return;
             }
         }
 
-        if (GUIPreferences.getInstance().getNagForMASC() && !(ce() instanceof VTOL)
-                && cmd.hasActiveSupercharger()) {
+        if (GUIP.getNagForMASC() && !(ce() instanceof VTOL) && cmd.hasActiveSupercharger()) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
                     Messages.getString("MovementDisplay.areYouSure"),
                     Messages.getString("MovementDisplay.ConfirmSuperchargerRoll", ce().getSuperchargerTarget()),
@@ -1233,7 +1249,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             if (nag.getAnswer()) {
                 // do they want to be bothered again?
                 if (!nag.getShowAgain()) {
-                    GUIPreferences.getInstance().setNagForMASC(false);
+                    GUIP.setNagForMASC(false);
                 }
             } else {
                 return;
@@ -1242,12 +1258,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         if ((cmd.getLastStepMovementType() == EntityMovementType.MOVE_SPRINT
                 || cmd.getLastStepMovementType() == EntityMovementType.MOVE_VTOL_SPRINT)
-                && GUIPreferences.getInstance().getNagForSprint()
+                && GUIP.getNagForSprint()
                 // no need to nag for vehicles using overdrive if they already get a PSR nag
                 && !((cmd.getEntity() instanceof Tank
                         || (cmd.getEntity() instanceof QuadVee
                                 && cmd.getEntity().getConversionMode() == QuadVee.CONV_MODE_VEHICLE)
-                        && GUIPreferences.getInstance().getNagForPSR()))) {
+                        && GUIP.getNagForPSR()))) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
                     Messages.getString("MovementDisplay.areYouSure"),
                     Messages.getString("MovementDisplay.ConfirmSprint"), true);
@@ -1255,14 +1271,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             if (nag.getAnswer()) {
                 // do they want to be bothered again?
                 if (!nag.getShowAgain()) {
-                    GUIPreferences.getInstance().setNagForSprint(false);
+                    GUIP.setNagForSprint(false);
                 }
             } else {
                 return;
             }
         }
         String check = SharedUtility.doPSRCheck(cmd);
-        if (!check.isBlank() && GUIPreferences.getInstance().getNagForPSR()) {
+        if (!check.isBlank() && GUIP.getNagForPSR()) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
                     Messages.getString("MovementDisplay.areYouSure"),
                     Messages.getString("MovementDisplay.ConfirmPilotingRoll") +
@@ -1271,7 +1287,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             if (nag.getAnswer()) {
                 // do they want to be bothered again?
                 if (!nag.getShowAgain()) {
-                    GUIPreferences.getInstance().setNagForPSR(false);
+                    GUIP.setNagForPSR(false);
                 }
             } else {
                 return;
@@ -1279,8 +1295,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
 
         // Should we nag about taking fall damage with mechanical jump boosters?
-        if (cmd.shouldMechanicalJumpCauseFallDamage()
-                && GUIPreferences.getInstance().getNagForMechanicalJumpFallDamage()) {
+        if (cmd.shouldMechanicalJumpCauseFallDamage() && GUIP.getNagForMechanicalJumpFallDamage()) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
                     Messages.getString("MovementDisplay.areYouSure"),
                     Messages.getString("MovementDisplay.ConfirmMechanicalJumpFallDamage",
@@ -1290,7 +1305,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             if (nag.getAnswer()) {
                 // do they want to be bothered again?
                 if (!nag.getShowAgain()) {
-                    GUIPreferences.getInstance().setNagForMechanicalJumpFallDamage(false);
+                    GUIP.setNagForMechanicalJumpFallDamage(false);
                 }
             } else {
                 return;
@@ -1299,7 +1314,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         // check for G-forces
         check = SharedUtility.doThrustCheck(cmd, clientgui.getClient());
-        if (!check.isBlank() && GUIPreferences.getInstance().getNagForPSR()) {
+        if (!check.isBlank() && GUIP.getNagForPSR()) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
                     Messages.getString("MovementDisplay.areYouSure"),
                     Messages.getString("MovementDisplay.ConfirmPilotingRoll") + check,
@@ -1308,7 +1323,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             if (nag.getAnswer()) {
                 // do they want to be bothered again?
                 if (!nag.getShowAgain()) {
-                    GUIPreferences.getInstance().setNagForPSR(false);
+                    GUIP.setNagForPSR(false);
                 }
             } else {
                 return;
@@ -1333,7 +1348,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 if (nag.getAnswer()) {
                     // do they want to be bothered again?
                     if (!nag.getShowAgain()) {
-                        GUIPreferences.getInstance().setNagForPSR(false);
+                        GUIP.setNagForPSR(false);
                     }
                 } else {
                     return;
@@ -1357,7 +1372,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             if (nag.getAnswer()) {
                 // do they want to be bothered again?
                 if (!nag.getShowAgain()) {
-                    GUIPreferences.getInstance().setNagForPSR(false);
+                    GUIP.setNagForPSR(false);
                 }
             } else {
                 return;
@@ -1406,8 +1421,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             cmd = SharedUtility.moveAero(cmd, clientgui.getClient());
         }
 
-        if (cmd.willCrushBuildings()
-            && GUIPreferences.getInstance().getNagForCrushingBuildings()) {
+        if (cmd.willCrushBuildings() && GUIP.getNagForCrushingBuildings()) {
             ConfirmDialog nag = new ConfirmDialog(
                     clientgui.frame,
                     Messages.getString("MovementDisplay.areYouSure"),
@@ -1417,7 +1431,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             if (nag.getAnswer()) {
                 // do they want to be bothered again?
                 if (!nag.getShowAgain()) {
-                    GUIPreferences.getInstance().setNagForCrushingBuildings(false);
+                    GUIP.setNagForCrushingBuildings(false);
                 }
             } else {
                 return;
@@ -1451,8 +1465,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             return;
         }
         
-        if (cmd.automaticWiGELanding(true)
-                && GUIPreferences.getInstance().getNagForWiGELanding()) {
+        if (cmd.automaticWiGELanding(true) && GUIP.getNagForWiGELanding()) {
             ConfirmDialog nag = new ConfirmDialog(
                     clientgui.frame,
                     Messages.getString("MovementDisplay.areYouSure"),
@@ -1462,7 +1475,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             if (nag.getAnswer()) {
                 // do they want to be bothered again?
                 if (!nag.getShowAgain()) {
-                    GUIPreferences.getInstance().setNagForWiGELanding(false);
+                    GUIP.setNagForWiGELanding(false);
                 }
             } else {
                 return;
@@ -1721,7 +1734,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 cmd.addStep(MoveStepType.RAM);
 
                 ToHitData toHit = new RamAttackAction(cen,
-                        target.getTargetType(), target.getTargetId(),
+                        target.getTargetType(), target.getId(),
                         target.getPosition()).toHit(clientgui.getClient().getGame(), cmd);
                 if (toHit.getValue() != TargetRoll.IMPOSSIBLE) {
                     // Determine how much damage the charger will take.
@@ -1772,11 +1785,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 ToHitData toHit = null;
                 if (ce.isAirborneVTOLorWIGE()) {
                     toHit = new AirmechRamAttackAction(cen,
-                            target.getTargetType(), target.getTargetId(),
+                            target.getTargetType(), target.getId(),
                             target.getPosition()).toHit(clientgui.getClient().getGame(), cmd);
                 } else {
                     toHit = new ChargeAttackAction(cen,
-                            target.getTargetType(), target.getTargetId(),
+                            target.getTargetType(), target.getId(),
                             target.getPosition()).toHit(clientgui.getClient().getGame(), cmd);
                 }
 
@@ -1987,6 +2000,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         if (ce == null) {
             return;
         }
+        isUnJammingRAC = false;
         GameOptions opts = clientgui.getClient().getGame().getOptions();
         setUnjamEnabled(ce.canUnjamRAC()
                 && ((gear == MovementDisplay.GEAR_LAND)
@@ -3431,8 +3445,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     continue;
                 }
                 int numChoices = choiceDialog.getChoices().length;
-                if ((numChoices > currentBay.getSafeLaunchRate())
-                    && GUIPreferences.getInstance().getNagForLaunchDoors()) {
+                if ((numChoices > currentBay.getSafeLaunchRate()) && GUIP.getNagForLaunchDoors()) {
                     int aerosPerDoor = numChoices / doors;
                     int remainder = numChoices % doors;
                     // Determine PSRs
@@ -3454,7 +3467,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     nag.setVisible(true);
                     doIt = nag.getAnswer();
                     if (!nag.getShowAgain()) {
-                        GUIPreferences.getInstance().setNagForLaunchDoors(false);
+                        GUIP.setNagForLaunchDoors(false);
                     }
                 } else {
                     doIt = true;
@@ -4099,7 +4112,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             return;
         }
 
-        if (clientgui.getClient().getGame().getPhase() != GamePhase.MOVEMENT) {
+        if (!clientgui.getClient().getGame().getPhase().isMovement()) {
             // ignore
             return;
         }
@@ -4158,8 +4171,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      */
     public void computeMovementEnvelope(Entity suggestion) {
         // do nothing if deactivated in the settings
-        if (!GUIPreferences.getInstance()
-                .getBoolean(GUIPreferences.MOVE_ENVELOPE)) {
+        if (!GUIP.getBoolean(GUIPreferences.MOVE_ENVELOPE)) {
             clientgui.getBoardView().clearMovementEnvelope();
             return;
         }
@@ -4298,6 +4310,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 setUnjamEnabled(false);
             } else  if (clientgui.doYesNoDialog(title, msg)) {
                 cmd.addStep(MoveStepType.UNJAM_RAC);
+                isUnJammingRAC = true;
                 ready();
                 // If ready() fires, it will call endMyTurn, which sets cen to
                 // Entity.NONE. If this doesn't happen, it means that the
@@ -4315,7 +4328,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 gear = MovementDisplay.GEAR_LAND;
                 clear();
             }
-            Color walkColor = GUIPreferences.getInstance().getColor(GUIPreferences.ADVANCED_MOVE_DEFAULT_COLOR);
+            Color walkColor = GUIP.getColor(GUIPreferences.ADVANCED_MOVE_DEFAULT_COLOR);
             clientgui.getBoardView().setHighlightColor(walkColor);
             gear = MovementDisplay.GEAR_LAND;
             computeMovementEnvelope(ce);
@@ -4330,7 +4343,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 cmd.addStep(MoveStepType.START_JUMP);
             }
             gear = MovementDisplay.GEAR_JUMP;
-            Color jumpColor = GUIPreferences.getInstance().getColor(GUIPreferences.ADVANCED_MOVE_JUMP_COLOR);
+            Color jumpColor = GUIP.getColor(GUIPreferences.ADVANCED_MOVE_JUMP_COLOR);
             clientgui.getBoardView().setHighlightColor(jumpColor);
             computeMovementEnvelope(ce);
         } else if (actionCmd.equals(MoveCommand.MOVE_SWIM.getCmd())) {
@@ -4387,8 +4400,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 clear();
             }
             gear = MovementDisplay.GEAR_BACKUP; // on purpose...
-            Color backColor = GUIPreferences.getInstance().getColor(
-                    GUIPreferences.ADVANCED_MOVE_BACK_COLOR);
+            Color backColor = GUIP.getColor(GUIPreferences.ADVANCED_MOVE_BACK_COLOR);
             clientgui.getBoardView().setHighlightColor(backColor);
             computeMovementEnvelope(ce);
         } else if (actionCmd.equals(MoveCommand.MOVE_LONGEST_RUN.getCmd())) {
@@ -4709,8 +4721,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                         && ce.getMovementMode().equals(EntityMovementMode.INF_JUMP)) {
                     cmd.addStep(MoveStepType.START_JUMP);
                     gear = GEAR_JUMP;
-                    Color jumpColor = GUIPreferences.getInstance().getColor(
-                            GUIPreferences.ADVANCED_MOVE_JUMP_COLOR);
+                    Color jumpColor = GUIP.getColor(GUIPreferences.ADVANCED_MOVE_JUMP_COLOR);
                     clientgui.getBoardView().setHighlightColor(jumpColor);
                     computeMovementEnvelope(ce);
                 }

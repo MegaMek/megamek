@@ -205,7 +205,7 @@ public class MoveStep implements Serializable {
     public MoveStep(MovePath path, MoveStepType type, Targetable target,
                     Coords pos) {
         this(path, type);
-        targetId = target.getTargetId();
+        targetId = target.getId();
         targetType = target.getTargetType();
         targetPos = pos;
         if ((type == MoveStepType.UNLOAD) || (type == MoveStepType.LAUNCH)
@@ -227,7 +227,7 @@ public class MoveStep implements Serializable {
      */
     public MoveStep(MovePath path, MoveStepType type, Targetable target) {
         this(path, type);
-        targetId = target.getTargetId();
+        targetId = target.getId();
         targetType = target.getTargetType();
         if ((type == MoveStepType.UNLOAD) || (type == MoveStepType.LAUNCH)
                 || (type == MoveStepType.DROP) || (type == MoveStepType.UNDOCK)
@@ -418,7 +418,7 @@ public class MoveStep implements Serializable {
             targetId = Entity.NONE;
             targetType = Targetable.TYPE_ENTITY;
         } else {
-            targetId = target.getTargetId();
+            targetId = target.getId();
             targetType = target.getTargetType();
         }
     }
@@ -2906,6 +2906,7 @@ public class MoveStep implements Serializable {
         final int prevEl = prevStep.getElevation();
         final EntityMovementMode moveMode = getEntity()
                 .getMovementMode();
+        final Entity en = getEntity();
         final Hex srcHex = game.getBoard().getHex(prev);
         final Hex destHex = game.getBoard().getHex(getPosition());
         final boolean isInfantry = getEntity() instanceof Infantry;
@@ -2917,6 +2918,8 @@ public class MoveStep implements Serializable {
         final boolean isMech = getEntity() instanceof Mech;
         final boolean isAmphibious = cachedEntityState.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) || 
                 cachedEntityState.hasWorkingMisc(MiscType.F_LIMITED_AMPHIBIOUS);
+        final boolean isFogSpecialist = en.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_FOG);
+        final boolean isLightSpecialist = en.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_LIGHT);
         int nSrcEl = srcHex.getLevel() + prevEl;
         int nDestEl = destHex.getLevel() + elevation;
 
@@ -2946,22 +2949,38 @@ public class MoveStep implements Serializable {
             // Fog
             switch (game.getPlanetaryConditions().getFog()) {
                 case PlanetaryConditions.FOG_LIGHT:
-                    mp += 1;
+                    if (!isFogSpecialist) {
+                        mp += 1;
+                    }
                     break;
                 case PlanetaryConditions.FOG_HEAVY:
-                    mp += 2;
+                    if (!isFogSpecialist) {
+                        mp += 2;
+                    } else {
+                        mp += 1;
+                    }
                     break;
             }
             // Light
             switch (game.getPlanetaryConditions().getLight()) {
                 case PlanetaryConditions.L_FULL_MOON:
-                    mp += 1;
+                    if (!isLightSpecialist) {
+                        mp += 1;
+                    }
                     break;
                 case  PlanetaryConditions.L_MOONLESS:
-                    mp += 2;
+                    if (!isLightSpecialist) {
+                        mp += 2;
+                    } else {
+                        mp += 1;
+                    }
                     break;
                 case PlanetaryConditions.L_PITCH_BLACK:
-                    mp += 3;
+                    if (!isLightSpecialist) {
+                        mp += 3;
+                    } else {
+                        mp += 1;
+                    }
                     break;
             }
         }

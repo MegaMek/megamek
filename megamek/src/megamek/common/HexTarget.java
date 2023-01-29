@@ -45,8 +45,13 @@ public class HexTarget implements Targetable {
     }
 
     @Override
-    public int getTargetId() {
+    public int getId() {
         return HexTarget.coordsToId(m_coords);
+    }
+
+    @Override
+    public int getOwnerId() {
+        return Player.PLAYER_NONE;
     }
 
     @Override

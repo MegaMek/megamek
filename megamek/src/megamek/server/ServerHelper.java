@@ -404,36 +404,31 @@ public class ServerHelper {
 
 	public static void adjustHeatExtremeTemp(Game game, Entity entity, Vector<Report> vPhaseReport) {
         Report r;
-		int tempDiff = game.getPlanetaryConditions().getTemperatureDifference(50, -30);
+        int tempDiff = game.getPlanetaryConditions().getTemperatureDifference(50, -30);
+        boolean heatArmor = false;
+        boolean laserHS = false;
 
-        if (game.getBoard().inSpace()) {
-            return;
-        } else if (tempDiff == 0) {
+        if (entity instanceof Mech) {
+            laserHS = ((Mech) entity).hasLaserHeatSinks();
+            heatArmor = ((Mech) entity).hasIntactHeatDissipatingArmor();
+        }
+
+        if (game.getBoard().inSpace() || (tempDiff == 0) || laserHS) {
             return;
         } else {
-            if (entity instanceof Mech) {
-                if (((Mech) entity).hasLaserHeatSinks()) {
-                    return;
-                }
-            }
-
             if (game.getPlanetaryConditions().getTemperature() > 50) {
                 int heatToAdd = tempDiff;
-                if (entity instanceof Mech) {
-                    if (((Mech) entity).hasIntactHeatDissipatingArmor()) {
-                        heatToAdd /= 2;
-                    }
+                if (heatArmor) {
+                    heatToAdd /= 2;
                 }
                 entity.heatFromExternal += heatToAdd;
                 r = new Report(5020);
                 r.subject = entity.getId();
                 r.add(heatToAdd);
                 vPhaseReport.add(r);
-                if (entity instanceof Mech) {
-                    if (((Mech) entity).hasIntactHeatDissipatingArmor()) {
-                        r = new Report(5550);
-                        vPhaseReport.add(r);
-                    }
+                if (heatArmor) {
+                    r = new Report(5550);
+                    vPhaseReport.add(r);
                 }
             } else {
                 entity.heatFromExternal -= tempDiff;
@@ -700,6 +695,30 @@ public class ServerHelper {
                 entity.setBloodStalkerTarget(Entity.BLOOD_STALKER_TARGET_CLEARED);
                 gameManager.entityUpdate(entity.getId());
             }
+        }
+    }
+
+    /**
+     * Returns the target number to avoid Radical Heat Sink Failure for the given number of rounds
+     * of consecutive use, IO p.89. The first round of use means consecutiveRounds = 1; this is
+     * the minimum as 0 rounds of use would not trigger a roll.
+     * @param consecutiveRounds The rounds the RHS has been used
+     * @return The roll target number to avoid failure
+     */
+    public static int radicalHeatSinkSuccessTarget(int consecutiveRounds) {
+        switch (consecutiveRounds) {
+            case 1:
+                return 3;
+            case 2:
+                return 5;
+            case 3:
+                return 7;
+            case 4:
+                return 10;
+            case 5:
+                return 11;
+            default:
+                return TargetRoll.AUTOMATIC_FAIL;
         }
     }
 }

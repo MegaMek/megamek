@@ -1,46 +1,45 @@
-Version:1.0
+Version:1.3
 Hoplite
 HOP-4B
 mul id:4330
-
 Config:Biped
-TechBase:Inner Sphere
-Era:2581
-Source:TRO 3050 - Star League
-Rules Level:1
+techbase:Inner Sphere
+era:2581
+source:TRO 3050 - Star League
+rules level:1
 
-Mass:55
-Engine:220 Fusion Engine
-Structure:Standard
-Myomer:Standard
+mass:55
+engine:220 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:16 Single
-Walk MP:4
-Jump MP:0
+heat sinks:16 Single
+walk mp:4
+jump mp:0
 
-Armor:Standard Armor
-LA Armor:18
-RA Armor:18
-LT Armor:18
-RT Armor:18
-CT Armor:26
-HD Armor:9
-LL Armor:26
-RL Armor:26
-RTL Armor:8
-RTR Armor:8
-RTC Armor:9
+armor:Standard(Inner Sphere)
+LA armor:18
+RA armor:18
+LT armor:18
+RT armor:18
+CT armor:26
+HD armor:9
+LL armor:26
+RL armor:26
+RTL armor:8
+RTR armor:8
+RTC armor:9
 
 Weapons:2
-1 ISPPC, Right Arm
-1 ISLRM15, Left Arm, Ammo:16
+LRM 15, Left Arm
+PPC, Right Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISLRM15
-ISLRM15
-ISLRM15
+LRM 15
+LRM 15
+LRM 15
 -Empty-
 -Empty-
 -Empty-
@@ -52,9 +51,9 @@ ISLRM15
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISPPC
-ISPPC
-ISPPC
+PPC
+PPC
+PPC
 -Empty-
 -Empty-
 -Empty-
@@ -102,8 +101,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISLRM15 Ammo
-ISLRM15 Ammo
+IS Ammo LRM-15
+IS Ammo LRM-15
 
 Head:
 Life Support
@@ -146,4 +145,20 @@ Heat Sink
 -Empty-
 -Empty-
 -Empty-
+
+overview:Martinson Armaments designed the Hoplite as a support 'Mech for deployment alongside the infantry divisions of the newly formed Star League Defense Force.	
+
+capabilities:The Hoplite is slow for a medium 'Mech, with a top speed of only 64.8 km/h. However its 11.5 tons of armor and heavy arsenal, both impressive for a 'Mech of its size, makes the Hoplite a rugged machine able to fight its way out of most situations using superior firepower.
+
+deployment:The 4B variant of the Hoplite is an early variant of the 'Mech that attempts to both alleviate the ammunition dependence of its primary weapon and increase its long-range damage potential. This is done by mounting a Magna Hellstar PPC as the primary weapon that is backed up by a massive Mitchell Systems LRM-15 launcher with two tons of reloads, giving it excellent long-range and indirect fire support capabilities.
+
+history:The Hoplite first saw service with the newly formed Star League Defense Force during the Reunification War before being relegated to Terran Hegemony militia units in the twenty-seventh century. While every Hoplite in the Inner Sphere was destroyed during the Amaris Crisis and the early Succession Wars, Aleksandr Kerensky's SLDF exiles found the simple and rugged design ideal for bolstering their forces in the months prior to the Exodus Civil War. Selected by Wolf's Dragoons in the belief that the ancient design wouldn't arouse undue attention, it had the complete opposite effect, and only raised more questions as to the Dragoons' origins when they arrived in 3005. After the mercenaries cut ties with the Clan Homeworlds in 3020, they also lost access to replacement Hoplites, with attrition bringing the design close to extinction by the Jihad. During the Jihad, when the surviving Dragoons relocated to Arc-Royal, experimental refits were performed on the remaining Hoplites, which continued after the conflict's end.
+
+manufacturer:Martinson Armaments
+primaryfactory:Terra
+systemmanufacturer:CHASSIS:Star League HO-01a
+systemmanufacturer:ENGINE:DAV 220
+systemmanufacturer:ARMOR:DuraShield 12-b.1
+systemmanufacturer:COMMUNICATIONS:MultiGab 2000
+systemmanufacturer:TARGETING:Dalban HiRez II
 

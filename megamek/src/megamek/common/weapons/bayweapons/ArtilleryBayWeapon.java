@@ -15,7 +15,6 @@ package megamek.common.weapons.bayweapons;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.enums.GamePhase;
 import megamek.common.weapons.*;
 import megamek.server.GameManager;
 
@@ -70,11 +69,11 @@ public class ArtilleryBayWeapon extends AmmoBayWeapon {
             break;
         }
         if (useHoming) {
-            if (game.getPhase() == GamePhase.FIRING) {
+            if (game.getPhase().isFiring()) {
                 return new ArtilleryBayWeaponDirectHomingHandler(toHit, waa, game, manager);
             }
             return new ArtilleryBayWeaponIndirectHomingHandler(toHit, waa, game, manager);
-        } else if (game.getPhase() == GamePhase.FIRING) {
+        } else if (game.getPhase().isFiring()) {
             return new ArtilleryBayWeaponDirectFireHandler(toHit, waa, game, manager);
         } else {
             return new ArtilleryBayWeaponIndirectFireHandler(toHit, waa, game, manager);

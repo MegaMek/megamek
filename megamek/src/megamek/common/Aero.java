@@ -17,7 +17,6 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.battlevalue.AeroBVCalculator;
 import megamek.common.cost.AeroCostCalculator;
 import megamek.common.enums.AimingMode;
-import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import org.apache.logging.log4j.LogManager;
 
@@ -350,9 +349,13 @@ public class Aero extends Entity implements IAero, IBomber {
             if (weatherMod != 0) {
                 j = Math.max(j + weatherMod, 0);
             }
+            if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
+                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_TORNADO_F13)) {
+                j += 1;
+            }
         }
         // get bomb load
-        j = Math.max(0, j - (int) Math.ceil(getBombPoints() / 5.0));
+        j = reduceMPByBombLoad(j);
 
         if (hasModularArmor()) {
             j--;
@@ -390,7 +393,7 @@ public class Aero extends Entity implements IAero, IBomber {
             }
         }
         // get bomb load
-        j = Math.max(0, j - (int) Math.ceil(getBombPoints() / 5.0));
+        j = reduceMPByBombLoad(j);
 
         if (hasModularArmor()) {
             j--;
@@ -518,6 +521,11 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public void clearBombChoices() {
         Arrays.fill(bombChoices, 0);
+    }
+
+    @Override
+    public int reduceMPByBombLoad(int t) {
+        return Math.max(0, t - (int) Math.ceil(getBombPoints() / 5.0));
     }
 
     public void setWhoFirst() {
@@ -2296,7 +2304,7 @@ public class Aero extends Entity implements IAero, IBomber {
         // capital fighters can load other capital fighters (becoming squadrons)
         // but not in the deployment phase
         if (isCapitalFighter() && !unit.isEnemyOf(this) && unit.isCapitalFighter() && (getId() != unit.getId())
-                && (game.getPhase() != GamePhase.DEPLOYMENT)) {
+                && !getGame().getPhase().isDeployment()) {
             return true;
         }
 
@@ -3026,6 +3034,11 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     @Override
+    public boolean isFighter() {
+        return true;
+    }
+
+    @Override
     public int availableBombLocation(int cost) {
         return LOC_NOSE;
     }
@@ -3176,12 +3189,17 @@ public class Aero extends Entity implements IAero, IBomber {
     
     // autoejection methods
     /**
+     * @return unit has an ejection seat
+     */
+    public boolean hasEjectSeat() {
+        return !hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT);
+    }
+
+    /**
      * @return Returns the autoEject.
      */
     public boolean isAutoEject() {
-        boolean hasEjectSeat = !hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT);
-
-        return autoEject && hasEjectSeat;
+        return autoEject && hasEjectSeat();
     }
 
     /**

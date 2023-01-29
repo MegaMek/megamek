@@ -452,8 +452,6 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         try {
             gameManager = new GameManager();
             server = new Server(serverPassword, port, gameManager, isRegister, metaServer, mailer, false);
-            MegaMek.printToOut(Messages.getFormattedString("MegaMek.ServerStarted",
-                    server.getHost(), server.getPort(), server.isPassworded() ? "enabled" : "disabled") + "\n");
         } catch (IOException ex) {
             LogManager.getLogger().error("Could not create server socket on port " + port, ex);
             JOptionPane.showMessageDialog(frame,
@@ -512,10 +510,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             client.die();
             gui.die();
             frame.setVisible(true);
-            MegaMek.printToOut(String.format("Client failed to connect to %s:%d", client.getHost(), client.getPort()));
             return;
         }
-        MegaMek.printToOut(String.format("Client connected to %s:%d", client.getHost(), client.getPort()));
 
         // free some memory that's only needed in lounge
         // This normally happens in the deployment phase in Client, but
@@ -696,7 +692,6 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                     Messages.getFormattedString("MegaMek.LoadGameAlert.message", file.getAbsolutePath()),
                     Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
             frame.setVisible(true);
-            MegaMek.printToOut(Messages.getFormattedString("MegaMek.LoadGameAlert.message", file.getAbsolutePath()) + "\n");
             return;
         }
 
@@ -853,12 +848,12 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             if (playerTypes[x] == ScenarioDialog.T_BOT) {
                 LogManager.getLogger().info("Adding bot "  + pa[x].getName() + " as Princess");
                 BotClient c = new Princess(pa[x].getName(), MMConstants.LOCALHOST, port);
-                c.getGame().addGameListener(new BotGUI(c));
+                c.getGame().addGameListener(new BotGUI(frame, c));
                 c.connect();                
             } else if (playerTypes[x] == ScenarioDialog.T_OBOT) {
                 LogManager.getLogger().info("Adding bot "  + pa[x].getName() + " as TestBot");
                 BotClient c = new TestBot(pa[x].getName(), MMConstants.LOCALHOST, port);
-                c.getGame().addGameListener(new BotGUI(c));
+                c.getGame().addGameListener(new BotGUI(frame, c));
                 c.connect();
             }
         }
@@ -874,7 +869,6 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 }
             }
         }
-
     }
 
     /**
@@ -905,7 +899,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             return; 
         }
         client = Princess.createPrincess(bcd.getBotName(), cd.getServerAddress(), cd.getPort(), bcd.getBehaviorSettings());
-        client.getGame().addGameListener(new BotGUI((BotClient) client));
+        client.getGame().addGameListener(new BotGUI(frame, (BotClient) client));
         ClientGUI gui = new ClientGUI(client, controller);
         controller.clientgui = gui;
         gui.initialize();

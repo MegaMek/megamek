@@ -15,7 +15,6 @@
 package megamek.client.ui;
 
 import megamek.MegaMek;
-import megamek.common.util.EncodeControl;
 import org.apache.logging.log4j.LogManager;
 
 import java.text.MessageFormat;
@@ -24,7 +23,7 @@ import java.util.ResourceBundle;
 
 public class Messages {
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("megamek.client.messages",
-            MegaMek.getMMOptions().getLocale(), new EncodeControl());
+            MegaMek.getMMOptions().getLocale());
 
     // All static class, should never be instantiated
     private Messages() { }

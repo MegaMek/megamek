@@ -21,7 +21,6 @@ package megamek.common.enums;
 import megamek.MegaMek;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
-import megamek.common.util.EncodeControl;
 
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -63,7 +62,7 @@ public enum GamePhase {
     //region Constructors
     GamePhase(final String name) {
         final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages",
-                MegaMek.getMMOptions().getLocale(), new EncodeControl());
+                MegaMek.getMMOptions().getLocale());
         this.name = resources.getString(name);
     }
     //endregion Constructors
@@ -182,6 +181,7 @@ public enum GamePhase {
             case FIRING_REPORT:
             case PHYSICAL_REPORT:
             case END_REPORT:
+            case VICTORY:
                 return true;
             default:
                 return false;
@@ -203,6 +203,14 @@ public enum GamePhase {
             case PHYSICAL:
             case DEPLOY_MINEFIELDS:
             case SET_ARTILLERY_AUTOHIT_HEXES:
+            case INITIATIVE_REPORT:
+            case TARGETING_REPORT:
+            case MOVEMENT_REPORT:
+            case OFFBOARD_REPORT:
+            case FIRING_REPORT:
+            case PHYSICAL_REPORT:
+            case END_REPORT:
+            case VICTORY:
                 return true;
             default:
                 return false;

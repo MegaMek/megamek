@@ -1,0 +1,135 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Mobile Long Tom Artillery
+</Name>
+
+<Model>
+LT-MOB-25F (Ammunition Loader Carriage)
+</Model>
+
+<mul id:>
+9366
+</mul id:>
+
+<year>
+2695
+</year>
+
+<originalBuildYear>
+2695
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+0
+</cruiseMP>
+
+<engine_type>
+8
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+15
+16
+16
+15
+</armor>
+
+<Body Equipment>
+ISCASE
+ISLongTomAmmo
+ISLongTomAmmo
+</Body Equipment>
+
+<Front Equipment>
+Hitch
+Lift Hoist/Arresting Hoist
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+Hitch
+</Rear Equipment>
+
+<tonnage>
+10.0
+</tonnage>
+
+<hasNoControlSystems>
+1
+</hasNoControlSystems>
+
+<trailer>
+1
+</trailer>
+
+<capabilities>
+The main unit was a 65-ton tracked vehicle and the only one in the convoy that possessed an, admittedly meager, engine capable of only 25.6 km/h and requiring constant refueling. This piloting cab also served as the targeting center, featuring an additional ton of communication equipment and the mounted weaponry. However the vehicle was protected by a scant four tons of armor, though it was not supposed to be anywhere near combat. For this reason the Long Tom relied on defensive units for anti-air support. Included in the artillery system was a variety support carriages. The purpose of these was to carry support personnel who directed the fire of the Long Tom.
+</capabilities>
+
+<overview>
+The Mobile Long Tom was essentially an artillery piece on wheels. Known in official Star League records as the LT-MOB-25, it is actually six vehicles all hooked together as part of a massive convoy.
+</overview>
+
+<deployment>
+A component trailer of the Mobile Long Tom Battery. Carries 2 extra tons of Long Tom ammunition and specialized equipment for loading the heavy shells into this and other trailers. 
+</deployment>
+
+<history>
+This combat vehicle was first produced for the Star League Defense Force and the design soon became common in the every military throughout the Inner Sphere and Periphery.
+</history>
+
+<manufacturer>
+Bithinian Ballistics, Lycomb IntroTech, Austen-Armstrong Industries, Taurus Territorial Industries
+</manufacturer>
+
+<primaryFactory>
+Bithinia, New Avalon, Bainsville, Sterope
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:Robel 195 ICE
+ARMOR:StarSlab/1 Ferro-Fibrous
+COMMUNICATIONS:ROMTECH 100
+TARGETING:O/P 10-40 LTR
+</systemManufacturers>
+
+<source>
+Rec Guide:ilClan #28 - Star League
+</source>

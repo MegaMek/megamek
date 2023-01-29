@@ -316,6 +316,13 @@ public class UnitEditorDialog extends JDialog {
                 hits += entity.getDamagedCriticals(CriticalSlot.TYPE_EQUIPMENT,
                         eqNum, m.getSecondLocation());
             }
+            if (m.getType().hasFlag(MiscType.F_PARTIAL_WING)) {
+                hits = entity.getDamagedCriticals(CriticalSlot.TYPE_EQUIPMENT,
+                        eqNum, Mech.LOC_LT);
+                hits += entity.getDamagedCriticals(CriticalSlot.TYPE_EQUIPMENT,
+                        eqNum, Mech.LOC_RT);
+            }
+
             if (!(entity instanceof Mech)) {
                 nCrits = 1;
                 if (hits > 1) {
@@ -1153,6 +1160,31 @@ public class UnitEditorDialog extends JDialog {
         }
     }
 
+    /** Applies the given number of total crits to a Super-Cooled Myomer (which is spread over 6 locations). */
+    public void damageSCM(Entity entity, int eqNum, int hits) {
+        int nhits = 0;
+        Mounted m = entity.getEquipment(eqNum);
+        for (int loc = 0; loc < entity.locations(); loc++) {
+            for (int i = 0; i < entity.getNumberOfCriticals(loc); i++) {
+                CriticalSlot cs = entity.getCritical(loc, i);
+                if ((cs == null) || (cs.getType() != CriticalSlot.TYPE_EQUIPMENT)
+                        || ((m != cs.getMount()) && (m != cs.getMount2()))) {
+                    continue;
+                }
+
+                if (nhits < hits) {
+                    cs.setHit(true);
+                    cs.setDestroyed(true);
+                    nhits++;
+                } else {
+                    cs.setHit(false);
+                    cs.setDestroyed(false);
+                    cs.setRepairable(true);
+                }
+            }
+        }
+    }
+
     private void btnOkayActionPerformed(java.awt.event.ActionEvent evt) {
         for (int i = 0; i < entity.locations(); i++) {
             if (null != spnInternal[i]) {
@@ -1186,9 +1218,15 @@ public class UnitEditorDialog extends JDialog {
             CheckCritPanel crit = equipCrits.get(eqNum);
             if (null != crit) {
                 int hits = crit.getHits();
-                m.setDestroyed(hits > 0);
-                m.setHit(hits > 0);
-                entity.damageSystem(CriticalSlot.TYPE_EQUIPMENT, eqNum, hits);
+                if (m.is(EquipmentTypeLookup.SCM)) {
+                    m.setDestroyed(hits >= 6);
+                    m.setHit(hits >= 6);
+                    damageSCM(entity, eqNum, hits);
+                } else {
+                    m.setDestroyed(hits > 0);
+                    m.setHit(hits > 0);
+                    entity.damageSystem(CriticalSlot.TYPE_EQUIPMENT, eqNum, hits);
+                }
             }
         }
         if (entity instanceof Infantry) {

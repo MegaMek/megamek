@@ -29,6 +29,16 @@ public class MMOptions extends SuiteOptions {
     }
     //endregion Constructors
 
+    //region Nag Tab
+    public boolean getNagDialogIgnore(final String key) {
+        return userPreferences.node(MMConstants.NAG_NODE).getBoolean(key, false);
+    }
+
+    public void setNagDialogIgnore(final String key, final boolean value) {
+        userPreferences.node(MMConstants.NAG_NODE).putBoolean(key, value);
+    }
+    //endregion Nag Tab
+
     //region Temporary
     /**
      * This is a temporary Locale getter, which sets the stage for suite-wide localization.

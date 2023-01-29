@@ -648,8 +648,8 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);
                 weapon.setUsedThisRound(false);
-                WeaponAttackAction newWaa = new WeaponAttackAction(ae.getId(), entity.getTargetId(),
-                        waa.getWeaponId());
+                WeaponAttackAction newWaa = new WeaponAttackAction(ae.getId(),
+                        entity.getId(), waa.getWeaponId());
                 newWaa.setNemesisConfused(true);
                 Mounted m = ae.getEquipment(waa.getWeaponId());
                 Weapon w = (Weapon) m.getType();

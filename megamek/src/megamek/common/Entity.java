@@ -12801,6 +12801,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
+     * Determines if the pilot has the Nightwalker SPA
+     * @return true when pilots have the SPA and are not
+     * in a flying vehicle.
+     */
+
+    public boolean isNightwalker() {
+        return getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_NIGHTWALKER);
+    }
+
+    /**
      * used to set the source of the creation of this entity, i.e RS PPU Custom
      * what not Fluff for MMLab
      *

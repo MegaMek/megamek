@@ -2961,27 +2961,32 @@ public class MoveStep implements Serializable {
                     }
                     break;
             }
+
             // Light
-            switch (game.getPlanetaryConditions().getLight()) {
-                case PlanetaryConditions.L_FULL_MOON:
-                    if (!isLightSpecialist) {
-                        mp += 1;
-                    }
-                    break;
-                case  PlanetaryConditions.L_MOONLESS:
-                    if (!isLightSpecialist) {
-                        mp += 2;
-                    } else {
-                        mp += 1;
-                    }
-                    break;
-                case PlanetaryConditions.L_PITCH_BLACK:
-                    if (!isLightSpecialist) {
-                        mp += 3;
-                    } else {
-                        mp += 1;
-                    }
-                    break;
+            if (!entity.isNightwalker()) {
+                switch (game.getPlanetaryConditions().getLight()) {
+                    case PlanetaryConditions.L_FULL_MOON:
+                        if (!isLightSpecialist) {
+                            mp += 1;
+                        }
+                        break;
+                    case PlanetaryConditions.L_MOONLESS:
+                        if (!isLightSpecialist) {
+                            mp += 2;
+                        } else {
+                            mp += 1;
+                        }
+                        break;
+                    case PlanetaryConditions.L_PITCH_BLACK:
+                        if (!isLightSpecialist) {
+                            mp += 3;
+                        } else {
+                            mp += 1;
+                        }
+                        break;
+                }
+            } else if (game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DUSK) {
+                setRunProhibited(true);
             }
         }
 

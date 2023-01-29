@@ -400,7 +400,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         c.anchor = GridBagConstraints.NORTHWEST;
         c.fill = GridBagConstraints.NONE;
         c.gridx = 0; c.gridy = 0;
-        c.insets = new Insets(50, 10, 0, 0);
+        c.insets = new Insets(20, 10, 0, 0);
 
         c.gridwidth  = 4;
         JPanel p0Panel = new JPanel();
@@ -624,7 +624,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         c.weighty = 0;
         c.anchor = GridBagConstraints.NORTHWEST;
         c.fill = GridBagConstraints.NONE;
-        c.insets = new Insets(50, 10, 0, 0);
+        c.insets = new Insets(20, 10, 0, 0);
         c.gridx = 0; c.gridy++;;
         JPanel quirkPanel = new JPanel(new BorderLayout());
         JPanel quirkIEPanel = new JPanel(new FlowLayout());
@@ -737,7 +737,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         c.weighty = 0;
         c.anchor = GridBagConstraints.NORTHWEST;
         c.fill = GridBagConstraints.NONE;
-        c.insets = new Insets(50, 10, 0, 0);
+        c.insets = new Insets(20, 10, 0, 0);
         c.gridwidth  = 1;
         c.gridx = 0; c.gridy = 0;
         JPanel filterProtoMechPanel = new JPanel();

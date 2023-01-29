@@ -414,14 +414,6 @@ public final class UIUtil {
                 JPanel panel = (JPanel) comp;
                 Border border = panel.getBorder();
                 setTitledBorder(border, sf);
-                if ((border instanceof EmptyBorder)) {
-                    Insets i = ((EmptyBorder) border).getBorderInsets();
-                    int top = i.top;
-                    int bottom = i.bottom;
-                    int left = i.left;
-                    int right = i.right;
-                    panel.setBorder(BorderFactory.createEmptyBorder(top, left, bottom, right));
-                }
                 adjustContainer(panel, fontSize);
             } else if (comp instanceof JTabbedPane) {
                 if ((comp.getFont() != null) && (sf != comp.getFont().getSize())) {

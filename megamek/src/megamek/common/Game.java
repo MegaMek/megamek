@@ -403,6 +403,13 @@ public class Game extends AbstractGame implements Serializable {
     @Override
     public void addPlayer(int id, Player player) {
         player.setGame(this);
+
+        if ((player.isBot()) && (!player.getSingleBlind())) {
+            boolean sbb = getOptions().booleanOption(OptionsConstants.ADVANCED_SINGLE_BLIND_BOTS);
+            boolean db = getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND);
+            player.setSingleBlind(sbb && db);
+        }
+      
         players.put(id, player);
         setupTeams();
         updatePlayer(player);

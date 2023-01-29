@@ -20,12 +20,16 @@ Mobile Long Tom Artillery
 LT-MOB-25F
 </Model>
 
+<mul id:>
+9365
+</mul id:>
+
 <year>
-2570
+2695
 </year>
 
 <originalBuildYear>
-2570
+2695
 </originalBuildYear>
 
 <type>
@@ -117,6 +121,10 @@ ARMOR:StarSlab/1 Ferro-Fibrous
 COMMUNICATIONS:ROMTECH 100
 TARGETING:O/P 10-40 LTR
 </systemManufacturers>
+
+<source>
+Rec Guide:ilClan #28 - Star League
+</source>
 
 <tonnage>
 65.0

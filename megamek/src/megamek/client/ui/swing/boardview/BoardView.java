@@ -5587,18 +5587,6 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             }
         }
 
-        // check if it's on any attacks
-        for (AttackSprite aSprite : attackSprites) {
-            if (aSprite.isInside(mcoords)) {
-                f = aSprite.getTooltip().toString();
-                t = guiScaledFontHTML(uiBlack()) + f + "</FONT>";
-                String col = "<TD>" + t + "</TD>";
-                String row = "<TR>" + col + "</TR>";
-                String table = "<TABLE BORDER=0 BGCOLOR=" + ALT_BGCOLOR + " width=100%>" + row + "</TABLE>";
-                result += table;
-            }
-        }
-
         // Add wreck info
         var wreckList = useIsometric() ? isometricWreckSprites : wreckSprites;
         for (var wSprite : wreckList) {
@@ -5643,6 +5631,18 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             String row = "<TR>" + col + "</TR>";
             String table = "<TABLE BORDER=0 BGCOLOR=" + BLOCK_BGCOLOR + " width=100%>" + row + "</TABLE>";
             result += table;
+        }
+
+        // check if it's on any attacks
+        for (AttackSprite aSprite : attackSprites) {
+            if (aSprite.isInside(mcoords)) {
+                f = aSprite.getTooltip().toString();
+                t = guiScaledFontHTML(uiBlack()) + f + "</FONT>";
+                String col = "<TD>" + t + "</TD>";
+                String row = "<TR>" + col + "</TR>";
+                String table = "<TABLE BORDER=0 BGCOLOR=" + ALT_BGCOLOR + " width=100%>" + row + "</TABLE>";
+                result += table;
+            }
         }
 
         // Artillery attacks

@@ -173,7 +173,7 @@ public final class PilotToolTip {
         String result = "";
         String f = "";
         Crew crew = entity.getCrew();
-        f = getOptionList(crew.getOptions().getGroups(), crew::countOptions, detailed).toString();
+        f = getOptionList(crew.getOptions().getGroups(), crew::countOptions, detailed);
         result = guiScaledFontHTML(uiQuirksColor(), UnitToolTip.TT_SMALLFONT_DELTA) + f + "</FONT>";
         return new StringBuilder().append(result);
     }

@@ -138,7 +138,6 @@ public class SummaryPanel extends PicMap {
             // also allow cells do have bg colors
             StringBuffer hexTxt = new StringBuffer("");
             hexTxt.append(PilotToolTip.getPilotTipDetailed(entity, true));
-            StringBuffer p = new StringBuffer();
             hexTxt.append(UnitToolTip.getEntityTipUnitDisplay(entity, localPlayer));
 
             String col = "";

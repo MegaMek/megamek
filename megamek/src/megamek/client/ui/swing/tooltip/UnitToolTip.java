@@ -867,7 +867,7 @@ public final class UnitToolTip {
                     || (game.getPhase().isPhysicalReport())) {
                 int tmm = Compute.getTargetMovementModifier(game, entity.getId()).getValue();
                 if (entity.moved == EntityMovementType.MOVE_NONE) {
-                    i = addToTT("NoMove", BR, tmm).toString().toString();
+                    i = addToTT("NoMove", BR, tmm).toString();
                     f = "<I>" + i + "</I>";
                 } else {
                     i = addToTT("MovementF", BR, entity.getMovementString(entity.moved),

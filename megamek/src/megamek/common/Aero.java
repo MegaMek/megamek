@@ -3185,12 +3185,17 @@ public class Aero extends Entity implements IAero, IBomber {
     
     // autoejection methods
     /**
+     * @return unit has an ejection seat
+     */
+    public boolean hasEjectSeat() {
+        return !hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT);
+    }
+
+    /**
      * @return Returns the autoEject.
      */
     public boolean isAutoEject() {
-        boolean hasEjectSeat = !hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT);
-
-        return autoEject && hasEjectSeat;
+        return autoEject && hasEjectSeat();
     }
 
     /**

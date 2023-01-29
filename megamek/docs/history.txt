@@ -11,7 +11,7 @@ VERSION HISTORY:
 + Data: Rec Guide 27 and other unit fixes.
 + Issue #4066: Incorrect item size on BA AP Gauss Rifle
 + PR #4087: Alpha Strike damage conversion will now ignore ammo weapons that lack ammo
-+ PR #4074, #4103: Alpha Strike conversion updates
++ PR #4074, #4103, #4136, #4137: Alpha Strike conversion updates
 + PR #4084: Java 17: Manifest File Add-Opens
 + Issue #4088: Improved Autocannon/2 on ASF is listed as doing 20/0/0 damage
 + PR #4096: Fix Unit Display weapon order bugs
@@ -25,7 +25,12 @@ VERSION HISTORY:
 + MHQ Issue #3558: Track RATs Using a Final HashMap to Prevent Null Issues
 + Issue #4098: Adding Sprite Camouflage and Damage Export Options
 + Issue #4060: Improving Initiative Report
++ PR #4092: Lobby updates
++ PR #4097: Attack Tool Tip update
 + PR #4113: AS Conversion: BA with jump MP reduced to 0 count as non-jumping
++ PR #4112: BaseComponents: Adding Nag Dialog Setup
++ PR #4130: show movement for all entity types on unit tool tip
++ PR #4132: Fixing Tripod Movement and Mini Crit Display
 + Updating XStream to 1.4.19 from 1.4.14
  
 0.49.11 (2022-12-22 1500 UTC)

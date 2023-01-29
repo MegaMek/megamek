@@ -1,13 +1,12 @@
-Version:1.1
+Version:1.3
 Raven
 RVN-5L
 mul id:7524
-
 Config:Biped
 techbase:Inner Sphere
 era:3125
-rules level:4
 source:Rec Guide:ilClan #6 - Dark Age
+rules level:2
 
 mass:35
 engine:280 XL Engine(IS)

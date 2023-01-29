@@ -5589,7 +5589,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
         // check if it's on any attacks
         for (AttackSprite aSprite : attackSprites) {
-            if (aSprite.isInside(point)) {
+            if (aSprite.isInside(mcoords)) {
                 f = aSprite.getTooltip().toString();
                 t = guiScaledFontHTML(uiBlack()) + f + "</FONT>";
                 String col = "<TD>" + t + "</TD>";
@@ -5598,7 +5598,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 result += table;
             }
         }
-        
+
         // Add wreck info
         var wreckList = useIsometric() ? isometricWreckSprites : wreckSprites;
         for (var wSprite : wreckList) {

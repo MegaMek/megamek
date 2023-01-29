@@ -31,6 +31,10 @@ public final class MMConstants extends SuiteConstants {
     //endregion GUI Constants
 
     //region MMOptions
+    //region Nag Tab
+    public static final String NAG_NODE = "megamek/prefs/nags";
+    public static final String NAG_BOT_README = "nagBotReadme";
+    //endregion Nag Tab
     //endregion MMOptions
 
     //region File Paths

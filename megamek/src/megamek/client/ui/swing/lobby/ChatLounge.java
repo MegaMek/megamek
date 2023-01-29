@@ -457,6 +457,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         unitSorters.add(new TypeSorter());
         unitSorters.add(new PlayerTonnageSorter(clientgui, MekTableSorter.Sorting.ASCENDING));
         unitSorters.add(new PlayerTonnageSorter(clientgui, MekTableSorter.Sorting.DESCENDING));
+        unitSorters.add(new PlayerUnitRoleSorter(clientgui, MekTableSorter.Sorting.ASCENDING));
+        unitSorters.add(new PlayerUnitRoleSorter(clientgui, MekTableSorter.Sorting.DESCENDING));
         unitSorters.add(new TonnageSorter(MekTableSorter.Sorting.ASCENDING));
         unitSorters.add(new TonnageSorter(MekTableSorter.Sorting.DESCENDING));
         unitSorters.add(new C3IDSorter(clientgui));
@@ -1963,7 +1965,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         Princess botClient = Princess.createPrincess(bcd.getBotName(), client().getHost(), 
                 client().getPort(), bcd.getBehaviorSettings());
         botClient.setClientGUI(clientgui);
-        botClient.getGame().addGameListener(new BotGUI(botClient));
+        botClient.getGame().addGameListener(new BotGUI(getClientgui().getFrame(), botClient));
         try {
             botClient.connect();
             clientgui.getBots().put(bcd.getBotName(), botClient);

@@ -293,7 +293,8 @@ public final class UnitToolTip {
                     col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, loc, msg_abbr_foot).toString();
                     break;
                 case 6:
-                case 7:
+                case 7:                
+                case 8:
                     col3 = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, loc, msg_abbr_hip).toString();
                     col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, loc, msg_abbr_upperleg).toString();
                     col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, loc, msg_abbr_lowerleg).toString();
@@ -1184,11 +1185,9 @@ public final class UnitToolTip {
                 }
             }
 
-            if (entity instanceof Tank) {
-                d += DOT_SPACER;
-                f = entity.getMovementModeAsString();
-                d += guiScaledFontHTML(uiWhite()) + f + "</FONT>";
-            }
+            d += DOT_SPACER;
+            f = entity.getMovementModeAsString();
+            d += guiScaledFontHTML(uiWhite()) + f + "</FONT>";
 
             if (entity instanceof IBomber) {
                 int bombMod = 0;

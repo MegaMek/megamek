@@ -1130,7 +1130,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     @Override
     public int reduceMPByBombLoad(int t) {
         // bombs don't impact movement
-        return 0;
+        return t;
     }
 
     @Override

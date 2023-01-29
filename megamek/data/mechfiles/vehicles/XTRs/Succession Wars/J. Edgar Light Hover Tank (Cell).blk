@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -28,13 +28,20 @@ J. Edgar Light Hover Tank
 2998
 </year>
 
+<originalBuildYear>
+2998
+</originalBuildYear>
+
 <type>
-IS Level 4
+IS Level 3
 </type>
 
 <motion_type>
 Hover
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 11
@@ -70,7 +77,7 @@ IS Machine Gun Ammo - Half
 </Rear Equipment>
 
 <Turret Equipment>
-Light Rifle
+Rifle (Cannon, Light)
 Machine Gun
 Machine Gun
 </Turret Equipment>
@@ -82,3 +89,4 @@ XTRO Succession Wars - Succession Wars
 <tonnage>
 25.0
 </tonnage>
+

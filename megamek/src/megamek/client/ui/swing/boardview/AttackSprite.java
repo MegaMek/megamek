@@ -7,6 +7,8 @@ import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.image.ImageObserver;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.StraightArrowPolygon;
@@ -60,6 +62,12 @@ class AttackSprite extends Sprite {
 
     private final Targetable target;
 
+    private Coords aCoord;
+    private Coords tCoord;
+    private IdealHex aHex;
+    private IdealHex tHex;
+
+
     public AttackSprite(BoardView boardView1, final AttackAction attack) {
         super(boardView1);
         this.boardView1 = boardView1;
@@ -68,6 +76,10 @@ class AttackSprite extends Sprite {
         targetId = attack.getTargetId();
         ae = this.boardView1.game.getEntity(attack.getEntityId());
         target = this.boardView1.game.getTarget(targetType, targetId);
+        aCoord = ae.getPosition();
+        tCoord = target.getPosition();
+        aHex = new IdealHex(aCoord);
+        tHex = new IdealHex(tCoord);
 
         // color?
         attackColor = ae.getOwner().getColour().getColour();
@@ -239,6 +251,12 @@ class AttackSprite extends Sprite {
         return attackPoly.contains(point.x - bounds.x, point.y - bounds.y);
     }
 
+    public boolean isInside(Coords mcoords) {
+        IdealHex mHex = new IdealHex(mcoords);
+
+        return ((mHex.isIntersectedBy(aHex.cx, aHex.cy, tHex.cx, tHex.cy)) && (mcoords.between(aCoord, tCoord)));
+    }
+
     public int getEntityId() {
         return entityId;
     }
@@ -255,8 +273,23 @@ class AttackSprite extends Sprite {
         final WeaponType wtype = (WeaponType) entity.getEquipment(
                 attack.getWeaponId()).getType();
         final String roll = attack.toHit(this.boardView1.game).getValueAsString();
-        final String table = attack.toHit(this.boardView1.game).getTableDesc();
-        weaponDescs.add(wtype.getName() + Messages.getString("BoardView1.needs") + roll + " " + table);
+        String table = attack.toHit(this.boardView1.game).getTableDesc();
+        if (!table.isEmpty()) {
+            table = " " + table;
+        }
+        boolean b = false;
+        ListIterator<String> i = weaponDescs.listIterator();
+        while (i.hasNext()) {
+             String s = i.next();
+            if (s.contains(wtype.getName())) {
+                i.set(s + ", " + roll + table);
+                b = true;
+            }
+        }
+
+        if (!b) {
+            weaponDescs.add(wtype.getName() + Messages.getString("BoardView1.needs") + roll + table);
+        }
     }
 
     public void addWeapon(KickAttackAction attack) {

@@ -136,3 +136,19 @@ Lower Leg Actuator
 Foot Actuator
 Stealth Armor
 Stealth Armor
+
+overview:The Cataphract is a heavy BattleMech and one of the first original designs since the start of the Succession Wars.	
+
+capabilities:The Cataphract, with its armor layers, can easily absorb damage, but it can also deal it. The CeresArms Smasher PPC (taken from the Vindicator) and the SarLon MaxiCannon combine to deliver a brutal punch at greater ranges. A quartet of CeresArms medium lasers close in to give short-range firepower to both the front and rear.
+
+deployment:Magestrix Naomi Centrella's customized variant used during Jihad battles on Sian and later Canopus IV, the 'Mech has been equipped with a heavy PPC in its right torso and a plasma rifle with 2 tons of ammo found its right arm. Also, it has four one-shot ten-tube rocket launchers, mounted in pairs in the side torsos. As secondary weaponry, it has been given a medium pulse laser in its left torso and extended-range medium laser in the right arm. To handle the heat load the 'Mech has 15 double heat sinks. To better protect the life of the Magestrix, the 'Mech is encased with stealth armor with its required Guardian ECM suite. To give it mobility, the customized machine has four jump jets mounted into its torsos.
+
+history:Desperate for a heavy 'Mech design that could be produced and maintained sustainably by their deteriorating infrastructure, the Capellan Confederation built the Cataphract in 3025 to be assembled from pieces they could still manufacture. The Cataphract, dubbed a FrankenMech for its appearance and built with parts from the Marauder, Shadow Hawk, and Phoenix Hawk, was destined to become the Confederation's new standard heavy 'Mech. It entered service just before the Fourth Succession War, when the Tikonov production line was taken over by the Federated Suns. This humiliating defeat was exacerbated when numerous Davion troops, especially the Crucis Lancers, adopted the Cataphract as their own. Tikonov's product quality, on the other hand, left the Federated Suns wanting (at least in part due to deliberate obstruction by workers still loyal to the Confederation). The Confederation finally restored the lost plant with one on Betelgeuse in 3032, building their own Cataphracts in time for the Andurien Crisis. Shortly after seizing Tikonov, the Federated Commonwealth began development of the CTF-3D, which was designed to compete with an attack 'Mech while being as adaptable as feasible. Despite the modifications, the CTF-3D was only used sparingly by the Armed Forces of the Federated Commonwealth before being consigned to the Crucis March Militia as an affront to the Capellans. When the Clan Invasion began, everything that was still in production, including the Cataphract, was rushed to the front lines. The Capellans, for their part, were able to manufacture the CTF-3D from stolen schematics and went on to create their own variant, the CTF-3L, which would go on to account for 25% of all newly acquired heavy 'Mechs during the 3050s. The design's popularity would decrease in the years that followed, while a few new varieties would continue to be created as new technologies and demands arose.
+
+manufacturer:Refit
+primaryfactory:Sian 
+systemmanufacturer:CHASSIS:Earthwerks CTF
+systemmanufacturer:ENGINE:280 GM XL
+systemmanufacturer:ARMOR:Ceres Heavy Stealth
+systemmanufacturer:COMMUNICATIONS:CommuTech Multi-Channel 10
+systemmanufacturer:TARGETING:BlazeFire Sightlock

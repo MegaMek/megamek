@@ -223,8 +223,7 @@ public class OptionsConstants {
     public static final String UNOFF_ALLWEATHER = "allweather"; 
     public static final String UNOFF_BLIND_FIGHTER = "blind_fighter"; 
     public static final String UNOFF_SENSOR_GEEK = "sensor_geek"; 
-    public static final String UNOFF_SMALL_PILOT = "small_pilot"; 
-
+    public static final String UNOFF_SMALL_PILOT = "small_pilot";
     
       //EDGE 
     public static final String EDGE = "edge";  
@@ -327,7 +326,8 @@ public class OptionsConstants {
 
     public static final String ADVANCED_MINEFIELDS= "minefields";  
     public static final String ADVANCED_HIDDEN_UNITS= "hidden_units";  
-    public static final String ADVANCED_DOUBLE_BLIND= "double_blind";  
+    public static final String ADVANCED_DOUBLE_BLIND= "double_blind";
+    public static final String ADVANCED_SINGLE_BLIND_BOTS= "single_blind_bots";
     public static final String ADVANCED_TACOPS_SENSORS= "tacops_sensors";  
     public static final String ADVANCED_SUPRESS_ALL_DB_MESSAGES= "supress_all_double_blind_messages";  
     public static final String ADVANCED_SUPPRESS_DB_BV= "suppress_double_blind_bv";  

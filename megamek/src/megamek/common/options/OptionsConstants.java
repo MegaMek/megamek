@@ -200,7 +200,7 @@ public class OptionsConstants {
     // 
     // public static final String MISC_DEMORALIZER= "demoralizer"; 
     public static final String MISC_EAGLE_EYES = "eagle_eyes"; 
-    // public static final String MISC_ENV_SPECIALIST= "env_specialist";
+    public static final String MISC_ENV_SPECIALIST= "env_specialist";
     // 
     public static final String MISC_FORWARD_OBSERVER = "forward_observer"; 
     public static final String MISC_HUMAN_TRO= "human_tro"; 

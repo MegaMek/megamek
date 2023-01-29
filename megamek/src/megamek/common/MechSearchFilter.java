@@ -49,10 +49,22 @@ public class MechSearchFilter {
     public String sEndTroopSpace;
     public String sStartASFBays;
     public String sEndASFBays;
+    public String sStartASFDoors;
+    public String sEndASFDoors;
+    public String sStartASFUnits;
+    public String sEndASFUnits;
     public String sStartSmallCraftBays;
     public String sEndSmallCraftBays;
+    public String sStartSmallCraftDoors;
+    public String sEndSmallCraftDoors;
+    public String sStartSmallCraftUnits;
+    public String sEndSmallCraftUnits;
     public String sStartMechBays;
     public String sEndMechBays;
+    public String sStartMechDoors;
+    public String sEndMechDoors;
+    public String sStartMechUnits;
+    public String sEndMechUnits;
     public String sStartDockingCollars;
     public String sEndDockingCollars;
     public String sStartBattleArmorHandles;
@@ -768,6 +780,34 @@ public class MechSearchFilter {
             return false;
         }
 
+        int startASFDoors = Integer.MIN_VALUE;
+        int endASFDoors = Integer.MAX_VALUE;
+        try {
+            startASFDoors = Integer.parseInt(f.sStartASFDoors);
+        } catch (Exception ignored) {
+        }
+        try {
+            endASFDoors = Integer.parseInt(f.sEndASFDoors);
+        } catch (Exception ignored) {
+        }
+        if ((mech.getASFDoors() < startASFDoors) || (mech.getASFDoors() > endASFDoors)) {
+            return false;
+        }
+
+        int startASFUnits = Integer.MIN_VALUE;
+        int endASFUnits = Integer.MAX_VALUE;
+        try {
+            startASFUnits = Integer.parseInt(f.sStartASFUnits);
+        } catch (Exception ignored) {
+        }
+        try {
+            endASFUnits = Integer.parseInt(f.sEndASFUnits);
+        } catch (Exception ignored) {
+        }
+        if ((mech.getASFUnits() < startASFUnits) || (mech.getASFUnits() > endASFUnits)) {
+            return false;
+        }
+
         int startSmallCraftBays = Integer.MIN_VALUE;
         int endSmallCraftBays = Integer.MAX_VALUE;
         try {
@@ -782,6 +822,34 @@ public class MechSearchFilter {
             return false;
         }
 
+        int startSmallCraftDoors = Integer.MIN_VALUE;
+        int endSmallCraftDoors = Integer.MAX_VALUE;
+        try {
+            startSmallCraftDoors = Integer.parseInt(f.sStartSmallCraftDoors);
+        } catch (Exception ignored) {
+        }
+        try {
+            endSmallCraftDoors = Integer.parseInt(f.sEndSmallCraftDoors);
+        } catch (Exception ignored) {
+        }
+        if ((mech.getSmallCraftDoors() < startSmallCraftDoors) || (mech.getSmallCraftDoors() > endSmallCraftDoors)) {
+            return false;
+        }
+
+        int startSmallCraftUnits = Integer.MIN_VALUE;
+        int endSmallCraftUnits = Integer.MAX_VALUE;
+        try {
+            startSmallCraftUnits = Integer.parseInt(f.sStartSmallCraftUnits);
+        } catch (Exception ignored) {
+        }
+        try {
+            endSmallCraftUnits = Integer.parseInt(f.sEndSmallCraftUnits);
+        } catch (Exception ignored) {
+        }
+        if ((mech.getSmallCraftUnits() < startSmallCraftUnits) || (mech.getSmallCraftUnits() > endSmallCraftUnits)) {
+            return false;
+        }
+
         int startMechBays = Integer.MIN_VALUE;
         int endMechBays = Integer.MAX_VALUE;
         try {
@@ -793,6 +861,34 @@ public class MechSearchFilter {
         } catch (Exception ignored) {
         }
         if ((mech.getMechBays() < startMechBays) || (mech.getMechBays() > endMechBays)) {
+            return false;
+        }
+
+        int startMechDoors = Integer.MIN_VALUE;
+        int endMechDoors = Integer.MAX_VALUE;
+        try {
+            startMechDoors = Integer.parseInt(f.sStartMechDoors);
+        } catch (Exception ignored) {
+        }
+        try {
+            endMechDoors = Integer.parseInt(f.sEndMechDoors);
+        } catch (Exception ignored) {
+        }
+        if ((mech.getMechDoors() < startMechDoors) || (mech.getMechDoors() > endMechDoors)) {
+            return false;
+        }
+
+        int startMechUnits = Integer.MIN_VALUE;
+        int endMechUnits = Integer.MAX_VALUE;
+        try {
+            startMechUnits = Integer.parseInt(f.sStartMechUnits);
+        } catch (Exception ignored) {
+        }
+        try {
+        endMechUnits = Integer.parseInt(f.sEndMechUnits);
+        } catch (Exception ignored) {
+        }
+        if ((mech.getMechUnits() < startMechUnits) || (mech.getMechUnits() > endMechUnits)) {
             return false;
         }
 

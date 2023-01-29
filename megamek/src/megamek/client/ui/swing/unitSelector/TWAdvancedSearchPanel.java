@@ -83,12 +83,30 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JLabel lblASFBays = new JLabel(Messages.getString("MechSelectorDialog.Search.ASFBays"));
     private JTextField tStartASFBays = new JTextField(4);
     private JTextField tEndASFBays  = new JTextField(4);
+    private JLabel lblASFDoors = new JLabel(Messages.getString("MechSelectorDialog.Search.Doors"));
+    private JTextField tStartASFDoors = new JTextField(4);
+    private JTextField tEndASFDoors  = new JTextField(4);
+    private JLabel lblASFUnitss = new JLabel(Messages.getString("MechSelectorDialog.Search.Units"));
+    private JTextField tStartASFUnits = new JTextField(4);
+    private JTextField tEndASFUnits  = new JTextField(4);
     private JLabel lblSmallCraftBays = new JLabel(Messages.getString("MechSelectorDialog.Search.SmallCraftBays"));
     private JTextField tStartSmallCraftBays = new JTextField(4);
     private JTextField tEndSmallCraftBays  = new JTextField(4);
+    private JLabel lblSmallCraftDoors = new JLabel(Messages.getString("MechSelectorDialog.Search.Doors"));
+    private JTextField tStartSmallCraftDoors = new JTextField(4);
+    private JTextField tEndSmallCraftDoors  = new JTextField(4);
+    private JLabel lblSmallCraftUnits = new JLabel(Messages.getString("MechSelectorDialog.Search.Units"));
+    private JTextField tStartSmallCraftUnits = new JTextField(4);
+    private JTextField tEndSmallCraftUnits = new JTextField(4);
     private JLabel lblMechBays = new JLabel(Messages.getString("MechSelectorDialog.Search.MechBays"));
     private JTextField tStartMechBays = new JTextField(4);
     private JTextField tEndMechBays  = new JTextField(4);
+    private JLabel lblMechDoors = new JLabel(Messages.getString("MechSelectorDialog.Search.Doors"));
+    private JTextField tStartMechDoors = new JTextField(4);
+    private JTextField tEndMechDoors  = new JTextField(4);
+    private JLabel lblMechUnitss = new JLabel(Messages.getString("MechSelectorDialog.Search.Units"));
+    private JTextField tStartMechUnits = new JTextField(4);
+    private JTextField tEndMechUnitss  = new JTextField(4);
     private JLabel lblDockingCollars = new JLabel(Messages.getString("MechSelectorDialog.Search.DockingCollars"));
     private JTextField tStartDockingCollars = new JTextField(4);
     private JTextField tEndDockingCollars  = new JTextField(4);
@@ -235,14 +253,17 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         JPanel weaponEqPanel = createWeaponEqPanel();
         JPanel unitTypePanel = createUnitTypePanel();
         JPanel quirkPanel = createQuirkPanel();
+        JPanel transportsPanel = createTransportsPanel();
         String msg_base = Messages.getString("MechSelectorDialog.Search.Base");
         String msg_weaponEq = Messages.getString("MechSelectorDialog.Search.WeaponEq");
         String msg_unitType = Messages.getString("MechSelectorDialog.Search.unitType");
         String msg_quirkType = Messages.getString("MechSelectorDialog.Search.Quirks");
+        String msg_transports = Messages.getString("MechSelectorDialog.Search.Transports");
         twSearchPane.addTab(msg_base, basePanel);
         twSearchPane.addTab(msg_weaponEq, weaponEqPanel);
         twSearchPane.addTab(msg_unitType, unitTypePanel);
         twSearchPane.addTab(msg_quirkType, quirkPanel);
+        twSearchPane.addTab(msg_transports, transportsPanel);
         this.add(twSearchPane, BorderLayout.NORTH);
     }
 
@@ -413,7 +434,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         p0Panel.add(lblOmni);
         p0Panel.add(cOmni);
         basePanel.add(p0Panel, c);
-        c.insets = new Insets(0, 10, 0, 0);
+        c.insets = new Insets(5, 10, 0, 0);
         c.gridwidth  = 1;
         c.gridx = 0; c.gridy++;
         JPanel yearPanel = new JPanel();
@@ -455,52 +476,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         jumpPanel.add(new Label("-"));
         jumpPanel.add(tEndJump);
         basePanel.add(jumpPanel, c);
-        c.gridx = 0; c.gridy++;
-        JPanel mbPanel = new JPanel();
-        mbPanel.add(lblMechBays);
-        mbPanel.add(tStartMechBays);
-        mbPanel.add(new Label("-"));
-        mbPanel.add(tEndMechBays);
-        basePanel.add(mbPanel, c);
-        c.gridx = 1;
-        JPanel abPanel = new JPanel();
-        abPanel.add(lblASFBays);
-        abPanel.add(tStartASFBays);
-        abPanel.add(new Label("-"));
-        abPanel.add(tEndASFBays);
-        basePanel.add(abPanel, c);
-        c.gridx = 0; c.gridy++;
-        JPanel scbPanel = new JPanel();
-        scbPanel.add(lblSmallCraftBays);
-        scbPanel.add(tStartSmallCraftBays);
-        scbPanel.add(new Label("-"));
-        scbPanel.add(tEndSmallCraftBays);
-        basePanel.add(scbPanel, c);
-        c.gridx = 1;
-        JPanel dcPanel = new JPanel();
-        dcPanel.add(lblDockingCollars);
-        dcPanel.add(tStartDockingCollars);
-        dcPanel.add(new Label("-"));
-        dcPanel.add(tEndDockingCollars);
-        basePanel.add(dcPanel, c);
-        c.gridx = 0; c.gridy++;
-        JPanel tsPanel = new JPanel();
-        tsPanel.add(lblTroopSpace);
-        tsPanel.add(tStartTroopSpace);
-        tsPanel.add(new Label("-"));
-        tsPanel.add(tEndTroopSpace);
-        basePanel.add(tsPanel, c);
-        c.gridx = 1;
-        JPanel bahPanel = new JPanel();
-        bahPanel.add(lblBattleArmorHandles);
-        bahPanel.add(tStartBattleArmorHandles);
-        bahPanel.add(new Label("-"));
-        bahPanel.add(tEndBattleArmorHandles);
-        basePanel.add(bahPanel, c);
 
         c.gridx = 0; c.gridy++;;
-        c.gridwidth  = 4;
-        c.insets = new Insets(0, 10, 0, 0);
+        c.gridwidth  = 1;
         JPanel cockpitPanel = new JPanel(new BorderLayout());
         cockpitPanel.add(lblCockpitType, BorderLayout.NORTH);
         cockpitPanel.add(spCockpitType, BorderLayout.CENTER);
@@ -524,11 +502,98 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         clanEnginePanel.add(cClanEngine);
         enginePanel.add(clanEnginePanel, BorderLayout.SOUTH);
         basePanel.add(enginePanel, c);
+
         c.weighty = 1;
         JPanel blankPanel = new JPanel();
         basePanel.add(blankPanel, c);
 
         return basePanel;
+    }
+
+    private JPanel createTransportsPanel() {
+        JPanel transportsPanel = new JPanel();
+        GridBagConstraints c = new GridBagConstraints();
+        transportsPanel.setLayout(new GridBagLayout());
+
+        c.weighty = 0;
+        c.anchor = GridBagConstraints.NORTHWEST;
+        c.fill = GridBagConstraints.NONE;
+        c.insets = new Insets(20, 10, 0, 0);
+
+        c.gridwidth  = 1;
+        c.gridx = 0; c.gridy++;
+        JPanel mbPanel = new JPanel();
+        mbPanel.add(lblMechBays);
+        mbPanel.add(tStartMechBays);
+        mbPanel.add(new Label("-"));
+        mbPanel.add(tEndMechBays);
+        mbPanel.add(lblMechDoors);
+        mbPanel.add(tStartMechDoors);
+        mbPanel.add(new Label("-"));
+        mbPanel.add(tEndMechDoors);
+        mbPanel.add(lblMechUnitss);
+        mbPanel.add(tStartMechUnits);
+        mbPanel.add(new Label("-"));
+        mbPanel.add(tEndMechUnitss);
+        transportsPanel.add(mbPanel, c);
+        c.insets = new Insets(5, 10, 0, 0);
+        c.gridx = 0; c.gridy++;
+        JPanel abPanel = new JPanel();
+        abPanel.add(lblASFBays);
+        abPanel.add(tStartASFBays);
+        abPanel.add(new Label("-"));
+        abPanel.add(tEndASFBays);
+        abPanel.add(lblASFDoors);
+        abPanel.add(tStartASFDoors);
+        abPanel.add(new Label("-"));
+        abPanel.add(tEndASFDoors);
+        abPanel.add(lblASFUnitss);
+        abPanel.add(tStartASFUnits);
+        abPanel.add(new Label("-"));
+        abPanel.add(tEndASFUnits);
+        transportsPanel.add(abPanel, c);
+        c.gridx = 0; c.gridy++;
+        JPanel scbPanel = new JPanel();
+        scbPanel.add(lblSmallCraftBays);
+        scbPanel.add(tStartSmallCraftBays);
+        scbPanel.add(new Label("-"));
+        scbPanel.add(tEndSmallCraftBays);
+        scbPanel.add(lblSmallCraftDoors);
+        scbPanel.add(tStartSmallCraftDoors);
+        scbPanel.add(new Label("-"));
+        scbPanel.add(tEndSmallCraftDoors);
+        scbPanel.add(lblSmallCraftUnits);
+        scbPanel.add(tStartSmallCraftUnits);
+        scbPanel.add(new Label("-"));
+        scbPanel.add(tEndSmallCraftUnits);
+        transportsPanel.add(scbPanel, c);
+        c.gridx = 0; c.gridy++;
+        JPanel dcPanel = new JPanel();
+        dcPanel.add(lblDockingCollars);
+        dcPanel.add(tStartDockingCollars);
+        dcPanel.add(new Label("-"));
+        dcPanel.add(tEndDockingCollars);
+        transportsPanel.add(dcPanel, c);
+        c.gridx = 0; c.gridy++;
+        JPanel tsPanel = new JPanel();
+        tsPanel.add(lblTroopSpace);
+        tsPanel.add(tStartTroopSpace);
+        tsPanel.add(new Label("-"));
+        tsPanel.add(tEndTroopSpace);
+        transportsPanel.add(tsPanel, c);
+        c.gridx = 0; c.gridy++;
+        JPanel bahPanel = new JPanel();
+        bahPanel.add(lblBattleArmorHandles);
+        bahPanel.add(tStartBattleArmorHandles);
+        bahPanel.add(new Label("-"));
+        bahPanel.add(tEndBattleArmorHandles);
+        transportsPanel.add(bahPanel, c);
+
+        c.weighty = 1;
+        JPanel blankPanel = new JPanel();
+        transportsPanel.add(blankPanel, c);
+
+        return transportsPanel;
     }
 
     private JPanel createQuirkPanel() {
@@ -1527,10 +1592,22 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         tEndTroopSpace.setText("");
         tStartASFBays.setText("");
         tEndASFBays.setText("");
+        tStartASFDoors.setText("");
+        tEndASFDoors.setText("");
+        tStartASFUnits.setText("");
+        tEndASFUnits.setText("");
         tStartSmallCraftBays.setText("");
         tEndSmallCraftBays.setText("");
+        tStartSmallCraftDoors.setText("");
+        tEndSmallCraftDoors.setText("");
+        tStartSmallCraftUnits.setText("");
+        tEndSmallCraftUnits.setText("");
         tStartMechBays.setText("");
         tEndMechBays.setText("");
+        tStartMechDoors.setText("");
+        tEndMechDoors.setText("");
+        tStartMechUnits.setText("");
+        tEndMechUnitss.setText("");
         tStartDockingCollars.setText("");
         tEndDockingCollars.setText("");
         tStartBattleArmorHandles.setText("");
@@ -1698,12 +1775,24 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
 
         mechFilter.sStartASFBays = tStartASFBays.getText();
         mechFilter.sEndASFBays = tEndASFBays.getText();
+        mechFilter.sStartASFDoors = tStartASFDoors.getText();
+        mechFilter.sEndASFDoors = tEndASFDoors.getText();
+        mechFilter.sStartASFUnits = tStartASFUnits.getText();
+        mechFilter.sEndASFUnits = tEndASFUnits.getText();
 
         mechFilter.sStartSmallCraftBays = tStartSmallCraftBays.getText();
         mechFilter.sEndSmallCraftBays = tEndSmallCraftBays.getText();
+        mechFilter.sStartSmallCraftDoors = tStartSmallCraftDoors.getText();
+        mechFilter.sEndSmallCraftDoors = tEndSmallCraftDoors.getText();
+        mechFilter.sStartSmallCraftUnits = tStartSmallCraftUnits.getText();
+        mechFilter.sEndSmallCraftUnits = tEndSmallCraftUnits.getText();
 
         mechFilter.sStartMechBays = tStartMechBays.getText();
         mechFilter.sEndMechBays = tEndMechBays.getText();
+        mechFilter.sStartMechDoors = tStartMechDoors.getText();
+        mechFilter.sEndMechDoors = tEndMechDoors.getText();
+        mechFilter.sStartMechUnits = tStartMechUnits.getText();
+        mechFilter.sEndMechUnits = tEndMechUnitss.getText();
 
         mechFilter.sStartDockingCollars = tStartDockingCollars.getText();
         mechFilter.sEndDockingCollars = tEndDockingCollars.getText();

@@ -520,33 +520,51 @@ public class MechSummaryCache {
         ts += e.getPodMountedTroopCarryingSpace();
         ms.setTroopCarryingSpace(ts);
 
-        int ab = 0;
-        int scb = 0;
+        int aBays = 0;
+        int aDoors = 0;
+        int aUnits = 0;
+        int scBays = 0;
+        int scDoors = 0;
+        int scUnits = 0;
         int dc = 0;
-        int mb = 0;
+        int mBays = 0;
+        int mDoors = 0;
+        int mUnits = 0;
         int bah = 0;
         Vector<Transporter>  trs = e.getTransports();
         for (Transporter t : trs) {
             if (t instanceof ASFBay) {
-                ab++;
+                aBays++;
+                aDoors += ((ASFBay) t).getCurrentDoors();
+                aUnits +=  t.getUnused();
             }
             if (t instanceof SmallCraftBay) {
-                scb++;
+                scBays++;
+                scDoors += ((SmallCraftBay) t).getCurrentDoors();
+                scUnits +=  t.getUnused();
             }
             if (t instanceof DockingCollar) {
                 dc++;
             }
             if (t instanceof MechBay) {
-                mb++;
+                mBays++;
+                mDoors += ((MechBay) t).getCurrentDoors();
+                mUnits +=  t.getUnused();
             }
             if (t instanceof BattleArmorHandles) {
                 bah++;
             }
         }
-        ms.setASFBays(ab);
-        ms.setSmallCraftBays(scb);
+        ms.setASFBays(aBays);
+        ms.setASFDoors(aDoors);
+        ms.setASFUnits(aUnits);
+        ms.setSmallCraftBays(scBays);
+        ms.setSmallCraftDoors(scDoors);
+        ms.setSmallCraftUnits(scUnits);
         ms.setDockingCollars(dc);
-        ms.setMechBays(mb);
+        ms.setMechBays(mBays);
+        ms.setMechDoors(mDoors);
+        ms.setMechUnits(mUnits);
         ms.setBattleArmorHandles(bah);
 
         if (ASConverter.canConvert(e)) {

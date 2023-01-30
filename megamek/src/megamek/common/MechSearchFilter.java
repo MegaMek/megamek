@@ -65,10 +65,44 @@ public class MechSearchFilter {
     public String sEndMechDoors;
     public String sStartMechUnits;
     public String sEndMechUnits;
+    public String sStartHeavyVehicleBays;
+    public String sEndHeavyVehicleBays;
+    public String sStartHeavyVehicleDoors;
+    public String sEndHeavyVehicleDoors;
+    public String sStartHeavyVehicleUnits;
+    public String sEndHeavyVehicleUnits;
+    public String sStartLightVehicleBays;
+    public String sEndLightVehicleBays;
+    public String sStartLightVehicleDoors;
+    public String sEndLightVehicleDoors;
+    public String sStartLightVehicleUnits;
+    public String sEndLightVehicleUnits;
+    public String sStartProtomechBays;
+    public String sEndProtomechBays;
+    public String sStartProtomechDoors;
+    public String sEndProtomechDoors;
+    public String sStartProtomechUnits;
+    public String sEndProtomechUnits;
+    public String sStartBattleArmorBays;
+    public String sEndBattleArmorBays;
+    public String sStartBattleArmorDoors;
+    public String sEndBattleArmorDoors;
+    public String sStartBattleArmorUnits;
+    public String sEndBattleArmorUnits;
+    public String sStartInfantryBays;
+    public String sEndInfantryBays;
+    public String sStartInfantryDoors;
+    public String sEndInfantryDoors;
+    public String sStartInfantryUnits;
+    public String sEndInfantryUnits;
     public String sStartDockingCollars;
     public String sEndDockingCollars;
     public String sStartBattleArmorHandles;
     public String sEndBattleArmorHandles;
+    public String sStartCargoBayUnits;
+    public String sEndCargoBayUnits;
+    public String sStartNavalRepairFacilities;
+    public String sEndNavalRepairFacilities;
     public String sStartYear;
     public String sEndYear;
     public String sStartTons;
@@ -759,11 +793,79 @@ public class MechSearchFilter {
             return false;
         }
 
+        if (!isBetween(mech.getHeavyVehicleBays(), f.sStartHeavyVehicleBays, f.sEndHeavyVehicleBays)) {
+            return false;
+        }
+
+        if (!isBetween(mech.getHeavyVehicleDoors(), f.sStartHeavyVehicleDoors, f.sEndHeavyVehicleDoors)) {
+            return false;
+        }
+
+        if (!isBetween(mech.getHeavyVehicleUnits(), f.sStartHeavyVehicleUnits, f.sEndHeavyVehicleUnits)) {
+            return false;
+        }
+
+        if (!isBetween(mech.getLightVehicleBays(), f.sStartLightVehicleBays, f.sEndLightVehicleBays)) {
+            return false;
+        }
+
+        if (!isBetween(mech.getLightVehicleDoors(), f.sStartLightVehicleDoors, f.sEndLightVehicleDoors)) {
+            return false;
+        }
+
+        if (!isBetween(mech.getLightVehicleUnits(), f.sStartLightVehicleUnits, f.sEndLightVehicleUnits)) {
+            return false;
+        }
+
+        if (!isBetween(mech.getProtoMecheBays(), f.sStartProtomechBays, f.sEndProtomechBays)) {
+            return false;
+        }
+
+        if (!isBetween(mech.getProtoMechDoors(), f.sStartProtomechDoors, f.sEndProtomechDoors)) {
+            return false;
+        }
+
+        if (!isBetween(mech.getProtoMechUnits(), f.sStartProtomechUnits, f.sEndProtomechUnits)) {
+            return false;
+        }
+
+        if (!isBetween(mech.getBattleArmorBays(), f.sStartBattleArmorBays, f.sEndBattleArmorBays)) {
+            return false;
+        }
+
+        if (!isBetween(mech.getBattleArmorDoors(), f.sStartBattleArmorDoors, f.sEndBattleArmorDoors)) {
+            return false;
+        }
+
+        if (!isBetween(mech.getBattleArmorUnits(), f.sStartBattleArmorUnits, f.sEndBattleArmorUnits)) {
+            return false;
+        }
+
+        if (!isBetween(mech.getInfantryBays(), f.sStartInfantryBays, f.sEndInfantryBays)) {
+            return false;
+        }
+
+        if (!isBetween(mech.getInfantryDoors(), f.sStartInfantryDoors, f.sEndInfantryDoors)) {
+            return false;
+        }
+
+        if (!isBetween(mech.getInfantryUnits(), f.sStartInfantryUnits, f.sEndInfantryUnits)) {
+            return false;
+        }
+
         if (!isBetween(mech.getDockingCollars(), f.sStartDockingCollars, f.sEndDockingCollars)) {
             return false;
         }
 
         if (!isBetween(mech.getBattleArmorHandles(), f.sStartBattleArmorHandles, f.sEndBattleArmorHandles)) {
+            return false;
+        }
+
+        if (!isBetween(mech.getCargoBayUnits(), f.sStartCargoBayUnits, f.sEndCargoBayUnits)) {
+            return false;
+        }
+
+        if (!isBetween(mech.getNavalRepairFacilities(), f.sStartNavalRepairFacilities, f.sEndNavalRepairFacilities)) {
             return false;
         }
 

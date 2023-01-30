@@ -530,6 +530,23 @@ public class MechSummaryCache {
         int mBays = 0;
         int mDoors = 0;
         double mUnits = 0;
+        int hvBays = 0;
+        int hvDoors = 0;
+        double hvUnits = 0;
+        int lvBays = 0;
+        int lvDoors = 0;
+        double lvUnits = 0;
+        int pmBays = 0;
+        int pmDoors = 0;
+        double pmUnits = 0;
+        int baBays = 0;
+        int baDoors = 0;
+        double baUnits = 0;
+        int iBays = 0;
+        int iDoors = 0;
+        double iUnits = 0;
+        double cbUnits = 0;
+        int nrf = 0;
         int bah = 0;
         Vector<Transporter>  trs = e.getTransports();
         for (Transporter t : trs) {
@@ -551,8 +568,39 @@ public class MechSummaryCache {
                 mDoors += ((MechBay) t).getCurrentDoors();
                 mUnits +=  t.getUnused();
             }
+            if (t instanceof HeavyVehicleBay) {
+                hvBays++;
+                hvDoors += ((HeavyVehicleBay) t).getCurrentDoors();
+                hvUnits +=  t.getUnused();
+            }
+            if (t instanceof LightVehicleBay) {
+                lvBays++;
+                lvDoors += ((LightVehicleBay) t).getCurrentDoors();
+                lvUnits +=  t.getUnused();
+            }
+            if (t instanceof ProtomechBay) {
+                pmBays++;
+                pmDoors += ((ProtomechBay) t).getCurrentDoors();
+                pmUnits +=  t.getUnused();
+            }
+            if (t instanceof BattleArmorBay) {
+                baBays++;
+                baDoors += ((BattleArmorBay) t).getCurrentDoors();
+                baUnits +=  t.getUnused();
+            }
+            if (t instanceof InfantryBay) {
+                iBays++;
+                iDoors += ((InfantryBay) t).getCurrentDoors();
+                iUnits +=  ((InfantryBay) t).getUnusedSlots();
+            }
             if (t instanceof BattleArmorHandles) {
                 bah++;
+            }
+            if (t instanceof  CargoBay) {
+                cbUnits += t.getUnused();
+            }
+            if (t instanceof  NavalRepairFacility) {
+                nrf++;
             }
         }
         ms.setASFBays(aBays);
@@ -565,7 +613,24 @@ public class MechSummaryCache {
         ms.setMechBays(mBays);
         ms.setMechDoors(mDoors);
         ms.setMechUnits(mUnits);
+        ms.setHeavyVehicleBays(hvBays);
+        ms.setHeavyVehicleDoors(hvDoors);
+        ms.setHeavyVehicleUnits(hvUnits);
+        ms.setLightVehicleBays(lvBays);
+        ms.setLightVehicleDoors(lvDoors);
+        ms.setLightVehicleUnits(lvUnits);
+        ms.setProtoMecheBays(pmBays);
+        ms.setProtoMechDoors(pmDoors);
+        ms.setProtoMechUnits(pmUnits);
+        ms.setBattleArmorBays(baBays);
+        ms.setBattleArmorDoors(baDoors);
+        ms.setBattleArmorUnits(baUnits);
+        ms.setInfantryBays(iBays);
+        ms.setInfantryDoors(iDoors);
+        ms.setInfantryUnits(iUnits);
         ms.setBattleArmorHandles(bah);
+        ms.setCargoBayUnits(cbUnits);
+        ms.setNavalRepairFacilities(nrf);
 
         if (ASConverter.canConvert(e)) {
             AlphaStrikeElement element = ASConverter.convertForMechCache(e);

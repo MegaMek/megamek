@@ -416,7 +416,7 @@ public class Terrain implements Serializable {
                 if (isCrossCountry) {
                     if ((level == 1) && ((moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.WHEELED))) {
                         mp *= 2;
-                    } else {
+                    } else if (level > 1){
                         mp *= 2;
                     }
                 }

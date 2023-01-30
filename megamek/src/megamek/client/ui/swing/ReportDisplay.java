@@ -70,13 +70,9 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
         public String getHotKeyDesc() {
             String result = "";
 
-            switch (this) {
-                case REPORT_REPORT:
-                    result = "<BR>";
-                    result += "&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.ROUND_REPORT);
-                    break;
-                default:
-                    break;
+            if (this ==REPORT_REPORT) {
+                result = "<BR>";
+                result += "&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.ROUND_REPORT);
             }
 
             return result;

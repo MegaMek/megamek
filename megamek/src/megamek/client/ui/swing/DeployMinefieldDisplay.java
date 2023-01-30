@@ -75,9 +75,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         }
 
         public String getHotKeyDesc() {
-            String result = "";
-
-            return result;
+            return "";
         }
     }
 

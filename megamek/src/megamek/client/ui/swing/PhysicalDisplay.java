@@ -98,14 +98,10 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         public String getHotKeyDesc() {
             String result = "";
 
-            switch (this) {
-                case PHYSICAL_NEXT:
-                    result = "<BR>";
-                    result += "&nbsp;&nbsp;" + "Next" + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT);
-                    result += "&nbsp;&nbsp;" + "Previous" + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_UNIT);
-                    break;
-                default:
-                    break;
+            if (this == PHYSICAL_NEXT) {
+                result = "<BR>";
+                result += "&nbsp;&nbsp;" + "Next" + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT);
+                result += "&nbsp;&nbsp;" + "Previous" + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_UNIT);
             }
 
             return result;

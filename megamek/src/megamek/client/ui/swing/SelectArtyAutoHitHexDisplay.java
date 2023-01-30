@@ -82,14 +82,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         }
 
         public String getHotKeyDesc() {
-            String result = "";
-
-            switch (this) {
-                default:
-                    break;
-            }
-
-            return result;
+            return "";
         }
     }
     

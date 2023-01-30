@@ -34,6 +34,7 @@ VERSION HISTORY:
 + Issue #4143: Fixing Advanced Search Dialog Panels Expanding on Reload
 + PR #4101: SPA: Environmental Specialist
 + PR #4102: SPA: Terrain Master (Nightwalker)
++ PR #4142: Fix threading issues and add a SkinnedJPanel
 + Updating XStream to 1.4.19 from 1.4.14
  
 0.49.11 (2022-12-22 1500 UTC)

@@ -56,9 +56,9 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
      * @author arlith
      */
     public interface PhaseCommand {
-        public String getCmd();
-        public int getPriority();
-        public void setPriority(int p);
+        String getCmd();
+        int getPriority();
+        void setPriority(int p);
     }
     
     /**

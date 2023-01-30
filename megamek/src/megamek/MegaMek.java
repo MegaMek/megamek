@@ -244,19 +244,21 @@ public class MegaMek {
                 PreferenceManager.getClientPreferences().getLastPlayerName() );
         LogManager.getLogger().info("Starting Host Server. " + Arrays.toString(args));
 
-        MegaMekGUI mmg = new MegaMekGUI();
-        mmg.start(false);
-        File gameFile = null;
-        if (resolver.saveGameFileName != null ) {
-            gameFile = new File(resolver.saveGameFileName);
-            if (!gameFile.isAbsolute()) {
-                gameFile = new File("./savegames", resolver.saveGameFileName);
+        SwingUtilities.invokeLater(() -> {
+            MegaMekGUI mmg = new MegaMekGUI();
+            mmg.start(false);
+            File gameFile = null;
+            if (resolver.saveGameFileName != null ) {
+                gameFile = new File(resolver.saveGameFileName);
+                if (!gameFile.isAbsolute()) {
+                    gameFile = new File("./savegames", resolver.saveGameFileName);
+                }
             }
-        }
 
-        mmg.startHost(resolver.password, resolver.port, resolver.registerServer,
-                resolver.announceUrl, resolver.mailPropertiesFile, gameFile,
-                resolver.playerName );
+            mmg.startHost(resolver.password, resolver.port, resolver.registerServer,
+                    resolver.announceUrl, resolver.mailPropertiesFile, gameFile,
+                    resolver.playerName );
+        });
     }
 
     /**
@@ -264,9 +266,11 @@ public class MegaMek {
      */
     private static void startQuickLoad(String... args) {
         LogManager.getLogger().info("Starting Quick Load Host Server. " + Arrays.toString(args));
-        MegaMekGUI mmg = new MegaMekGUI();
-        mmg.start(false);
-        mmg.quickLoadGame();
+        SwingUtilities.invokeLater(() -> {
+            MegaMekGUI mmg = new MegaMekGUI();
+            mmg.start(false);
+            mmg.quickLoadGame();
+        });
     }
 
     /**
@@ -287,9 +291,11 @@ public class MegaMek {
                 PreferenceManager.getClientPreferences().getLastPlayerName());
 
         LogManager.getLogger().info("Starting Client Server. " + Arrays.toString(args));
-        MegaMekGUI mmg = new MegaMekGUI();
-        mmg.start(false);
-        mmg.startClient(resolver.playerName, resolver.serverAddress, resolver.port);
+        SwingUtilities.invokeLater(() -> {
+            MegaMekGUI mmg = new MegaMekGUI();
+            mmg.start(false);
+            mmg.startClient(resolver.playerName, resolver.serverAddress, resolver.port);
+        });
     }
 
     /**
@@ -297,7 +303,7 @@ public class MegaMek {
      */
     private static void startGUI() {
         LogManager.getLogger().info("Starting MegaMekGUI.");
-        new MegaMekGUI().start(true);
+        SwingUtilities.invokeLater(() -> new MegaMekGUI().start(true));
     }
 
     /**

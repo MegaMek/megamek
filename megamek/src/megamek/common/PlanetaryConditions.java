@@ -415,19 +415,6 @@ public class PlanetaryConditions implements Serializable {
     }
 
     /**
-     * piloting penalty for running/flanking/etc for light
-     */
-    public int getLightPilotPenalty() {
-        if (lightConditions == L_MOONLESS) {
-            return 1;
-        } else if (lightConditions == L_PITCH_BLACK) {
-            return 2;
-        } else {
-            return 0;
-        }
-    }
-
-    /**
      * to-hit penalty for weather
      */
     public int getWeatherHitPenalty(Entity en) {

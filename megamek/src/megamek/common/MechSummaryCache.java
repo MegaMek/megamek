@@ -545,6 +545,12 @@ public class MechSummaryCache {
         int iBays = 0;
         int iDoors = 0;
         double iUnits = 0;
+        int shvBays = 0;
+        int shvDoors = 0;
+        double shvUnits = 0;
+        int dBays = 0;
+        int dDoors = 0;
+        double dUnits = 0;
         double cbUnits = 0;
         int nrf = 0;
         int bah = 0;
@@ -553,7 +559,7 @@ public class MechSummaryCache {
             if (t instanceof ASFBay) {
                 aBays++;
                 aDoors += ((ASFBay) t).getCurrentDoors();
-                aUnits +=  t.getUnused();
+                aUnits += t.getUnused();
             }
             if (t instanceof SmallCraftBay) {
                 scBays++;
@@ -566,32 +572,42 @@ public class MechSummaryCache {
             if (t instanceof MechBay) {
                 mBays++;
                 mDoors += ((MechBay) t).getCurrentDoors();
-                mUnits +=  t.getUnused();
+                mUnits += t.getUnused();
             }
             if (t instanceof HeavyVehicleBay) {
                 hvBays++;
                 hvDoors += ((HeavyVehicleBay) t).getCurrentDoors();
-                hvUnits +=  t.getUnused();
+                hvUnits += t.getUnused();
             }
             if (t instanceof LightVehicleBay) {
                 lvBays++;
                 lvDoors += ((LightVehicleBay) t).getCurrentDoors();
-                lvUnits +=  t.getUnused();
+                lvUnits += t.getUnused();
             }
             if (t instanceof ProtomechBay) {
                 pmBays++;
                 pmDoors += ((ProtomechBay) t).getCurrentDoors();
-                pmUnits +=  t.getUnused();
+                pmUnits += t.getUnused();
             }
             if (t instanceof BattleArmorBay) {
                 baBays++;
                 baDoors += ((BattleArmorBay) t).getCurrentDoors();
-                baUnits +=  t.getUnused();
+                baUnits += t.getUnused();
             }
             if (t instanceof InfantryBay) {
                 iBays++;
                 iDoors += ((InfantryBay) t).getCurrentDoors();
-                iUnits +=  ((InfantryBay) t).getUnusedSlots();
+                iUnits += ((InfantryBay) t).getUnusedSlots();
+            }
+            if (t instanceof SuperHeavyVehicleBay) {
+                shvBays++;
+                shvDoors += ((SuperHeavyVehicleBay) t).getCurrentDoors();
+                shvUnits += t.getUnused();
+            }
+            if (t instanceof DropshuttleBay) {
+                dBays++;
+                dDoors += ((DropshuttleBay) t).getCurrentDoors();
+                dUnits += t.getUnused();
             }
             if (t instanceof BattleArmorHandles) {
                 bah++;
@@ -628,6 +644,12 @@ public class MechSummaryCache {
         ms.setInfantryBays(iBays);
         ms.setInfantryDoors(iDoors);
         ms.setInfantryUnits(iUnits);
+        ms.setSuperHeavyVehicleBays(shvBays);
+        ms.setSuperHeavyVehicleDoors(shvDoors);
+        ms.setSuperHeavyVehicleUnits(shvUnits);
+        ms.setDropshuttleBays(dBays);
+        ms.setDropshuttleDoors(dDoors);
+        ms.setDropshuttelUnits(dUnits);
         ms.setBattleArmorHandles(bah);
         ms.setCargoBayUnits(cbUnits);
         ms.setNavalRepairFacilities(nrf);

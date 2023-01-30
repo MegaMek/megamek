@@ -100,6 +100,12 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     private int infantryBays;
     private int infantryDoors;
     private double infantryUnits;
+    private int superHeavyVehicleBays;
+    private int superHeavyVehicleDoors;
+    private double superHeavyVehicleUnits;
+    private int dropshuttleBays;
+    private int dropshuttleDoors;
+    private double dropshuttelUnits;
     private int battleArmorHandles;
     private double cargoBayUnits;
     private int navalRepairFacilities;
@@ -339,6 +345,18 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     public int getInfantryDoors() { return infantryDoors; }
 
     public double getInfantryUnits() { return infantryUnits; }
+
+    public int getSuperHeavyVehicleBays() { return superHeavyVehicleBays; }
+
+    public int getSuperHeavyVehicleDoors() { return superHeavyVehicleDoors; }
+
+    public double getSuperHeavyVehicleUnits() { return superHeavyVehicleUnits; }
+
+    public int getDropshuttleBays() { return dropshuttleBays; }
+
+    public int getDropshuttleDoors() { return dropshuttleDoors; }
+
+    public double getDropshuttelUnits() { return dropshuttelUnits; }
 
     public int getBattleArmorHandles() {
         return battleArmorHandles;
@@ -601,6 +619,26 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public void setInfantryUnits(double d) {
         infantryUnits = d;
+    }
+
+    public void setSuperHeavyVehicleBays(int i) { superHeavyVehicleBays = i; }
+
+    public void setSuperHeavyVehicleDoors(int i) {
+        superHeavyVehicleDoors = i;
+    }
+
+    public void setSuperHeavyVehicleUnits(double d) {
+        superHeavyVehicleUnits = d;
+    }
+
+    public void setDropshuttleBays(int i) { dropshuttleBays = i; }
+
+    public void setDropshuttleDoors(int i) {
+        dropshuttleDoors = i;
+    }
+
+    public void setDropshuttelUnits(double d) {
+        dropshuttelUnits = d;
     }
 
     public void setBattleArmorHandles(int i) {

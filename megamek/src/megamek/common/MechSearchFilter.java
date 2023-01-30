@@ -95,6 +95,18 @@ public class MechSearchFilter {
     public String sEndInfantryDoors;
     public String sStartInfantryUnits;
     public String sEndInfantryUnits;
+    public String sStartSuperHeavyVehicleBays;
+    public String sEndSuperHeavyVehicleBays;
+    public String sStartSuperHeavyVehicleDoors;
+    public String sEndSuperHeavyVehicleDoors;
+    public String sStartSuperHeavyVehicleUnits;
+    public String sEndSuperHeavyVehicleUnits;
+    public String sStartDropshuttleBays;
+    public String sEndDropshuttleBays;
+    public String sStartDropshuttleDoors;
+    public String sEndDropshuttleDoors;
+    public String sStartDropshuttleUnits;
+    public String sEndDropshuttleUnits;
     public String sStartDockingCollars;
     public String sEndDockingCollars;
     public String sStartBattleArmorHandles;
@@ -850,6 +862,30 @@ public class MechSearchFilter {
         }
 
         if (!isBetween(mech.getInfantryUnits(), f.sStartInfantryUnits, f.sEndInfantryUnits)) {
+            return false;
+        }
+
+        if (!isBetween(mech.getSuperHeavyVehicleBays(), f.sStartSuperHeavyVehicleBays, f.sEndSuperHeavyVehicleBays)) {
+            return false;
+        }
+
+        if (!isBetween(mech.getSuperHeavyVehicleDoors(), f.sStartSuperHeavyVehicleDoors, f.sEndSuperHeavyVehicleDoors)) {
+            return false;
+        }
+
+        if (!isBetween(mech.getSuperHeavyVehicleUnits(), f.sStartSuperHeavyVehicleUnits, f.sEndSuperHeavyVehicleUnits)) {
+            return false;
+        }
+
+        if (!isBetween(mech.getDropshuttleBays(), f.sStartDropshuttleBays, f.sEndDropshuttleBays)) {
+            return false;
+        }
+
+        if (!isBetween(mech.getDropshuttleDoors(), f.sStartDropshuttleDoors, f.sEndDropshuttleDoors)) {
+            return false;
+        }
+
+        if (!isBetween(mech.getDropshuttelUnits(), f.sStartDropshuttleUnits, f.sEndDropshuttleUnits)) {
             return false;
         }
 

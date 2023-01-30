@@ -4,7 +4,7 @@ VERSION HISTORY:
 + PR #4062: Add OS Thunderbolts
 + Issue #2652: TacOps BA crits
 + Issue #2945: RHS failure chance errata
-+ PRs/Issues #4070, #4069, #4065, #4067, #4073: Alpha Strike conversion corrections (see Issue #3961)
++ PRs/Issues #4070, #4069, #4065, #4067, #4073, #4145: Alpha Strike conversion corrections (see Issue #3961)
 + Issue #4028: Update altitude bomb scatter handling to current errata (by MoF); 
                BA micro bomb attacks now use gunnery and only scatter one space per TW p228
 + PR #4077: Fix SmallCraft and DropShip landing lengths

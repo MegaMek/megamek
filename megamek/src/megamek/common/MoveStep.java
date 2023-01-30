@@ -2966,11 +2966,15 @@ public class MoveStep implements Serializable {
             if (!entity.isNightwalker()) {
                 switch (game.getPlanetaryConditions().getLight()) {
                     case PlanetaryConditions.L_FULL_MOON:
-                        if (!isLightSpecialist) {
+                        if (!isLightSpecialist || !en.isUsingSearchlight()) {
                             mp += 1;
                         }
                         break;
                     case PlanetaryConditions.L_MOONLESS:
+                        if (en.isUsingSearchlight()) {
+                            break;
+                        }
+
                         if (!isLightSpecialist) {
                             mp += 2;
                         } else {
@@ -2978,6 +2982,10 @@ public class MoveStep implements Serializable {
                         }
                         break;
                     case PlanetaryConditions.L_PITCH_BLACK:
+                        if (en.isUsingSearchlight()) {
+                            break;
+                        }
+
                         if (!isLightSpecialist) {
                             mp += 3;
                         } else {

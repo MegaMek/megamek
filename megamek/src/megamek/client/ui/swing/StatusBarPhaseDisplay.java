@@ -26,10 +26,15 @@ import java.util.*;
 
 import javax.swing.*;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.TurnTimer;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.*;
+import megamek.common.KeyBindParser;
 import megamek.common.preference.*;
+
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
 
 /**
  * This is a parent class for the button display for each phase.  Every phase 
@@ -119,12 +124,48 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         add(panStatus);
         
         GUIP.addPreferenceChangeListener(this);
+        KeyBindParser.addPreferenceChangeListener(this);
         ToolTipManager.sharedInstance().registerComponent(this);
     }
     
     
     /** Returns the list of buttons that should be displayed. */
     protected abstract ArrayList<MegamekButton> getButtonList();
+
+    /** set button that should be displayed. */
+    protected abstract void setButtons();
+
+    protected MegamekButton createButton(String cmd, String keyPrefix){
+        String title = Messages.getString(keyPrefix + cmd);
+        MegamekButton newButton = new MegamekButton(title, SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
+        newButton.addActionListener(this);
+        newButton.setActionCommand(cmd);
+        newButton.setEnabled(false);
+        return newButton;
+    }
+
+    /** set button tool tips that should be displayed. */
+    protected abstract void setButtonsTooltips();
+
+    protected String createToolTip(String cmd, String keyPrefix, String hotKeyDesc) {
+        String h  = "";
+        String ttKey = keyPrefix + cmd + ".tooltip";
+        String tt = hotKeyDesc;
+        if (!tt.isEmpty()) {
+            String title = Messages.getString(keyPrefix + cmd);
+            tt = guiScaledFontHTML(uiLightViolet()) + title + ": " + tt + "</FONT>";
+            tt += "<BR>";
+        }
+        if (Messages.keyExists(ttKey)) {
+            String msg_key = Messages.getString(ttKey);
+            tt += guiScaledFontHTML() + msg_key + "</FONT>";
+        }
+        if (!tt.isEmpty()) {
+            String b = "<BODY>" + tt + "</BODY>";
+            h = "<HTML>" + b + "</HTML>";
+        }
+        return h;
+    }
 
     /**
      * Adds buttons to the button panel.  The buttons to be added are retrieved
@@ -209,6 +250,8 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
             setupButtonPanel();
         } else if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
             adaptToGUIScale();
+        } else if (e.getName().equals(KeyBindParser.KEYBINDS_CHANGED)) {
+            setButtonsTooltips();
         }
     }
 

@@ -104,7 +104,9 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
     private JButton m_bClear = new JButton(Messages.getString("RandomArmyDialog.Clear"));
 
     private JTable m_lArmy;
+    private JLabel m_lArmyBVTotal;
     private JTable m_lUnits;
+    private JLabel m_lUnitsBVTotal;
     private JTable m_lRAT;
 
     private UnitTableModel armyModel;
@@ -496,14 +498,27 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
 
     private void createPreviewPanel() {
         // construct the preview panel
-        m_pPreview.setLayout(new GridBagLayout());
         unitsModel = new UnitTableModel();
         m_lUnits = new JTable();
         m_lUnits.setModel(unitsModel);
         m_lUnits.setIntercellSpacing(new Dimension(0, 0));
         m_lUnits.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         JScrollPane scroll = new JScrollPane(m_lUnits);
-        scroll.setBorder(BorderFactory.createTitledBorder(Messages.getString("RandomArmyDialog.SelectedUnits")));
+        scroll.setBorder(BorderFactory.createTitledBorder(Messages.getString("RandomArmyDialog.Army")));
+        m_lUnitsBVTotal = new JLabel("BV Total: 0");        armyModel = new UnitTableModel();
+        m_lArmy = new JTable();
+        m_lArmy.setModel(armyModel);
+        m_lArmy.setIntercellSpacing(new Dimension(0, 0));
+        m_lArmy.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        m_lArmyBVTotal = new JLabel("BV Total: 0");
+        JScrollPane scrollArmy = new JScrollPane(m_lArmy);
+        scrollArmy.setBorder(BorderFactory.createTitledBorder(Messages.getString("RandomArmyDialog.SelectedUnits")));
+        m_bRoll.addActionListener(this);
+        m_bAddAll.addActionListener(this);
+        m_bAdd.addActionListener(this);
+        m_bClear.addActionListener(this);
+
+        m_pPreview.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 0;
@@ -513,41 +528,40 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         c.weightx = 1.0;
         c.weighty = 1.0;
         m_pPreview.add(scroll, c);
+        c.gridy = 1;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        c.fill = GridBagConstraints.NONE;
+        m_pPreview.add(m_lUnitsBVTotal, c);
         c = new GridBagConstraints();
         c.gridx = 0;
-        c.gridy = 1;
+        c.gridy = 2;
         c.gridwidth = 1;
         c.fill = GridBagConstraints.BOTH;
         c.anchor = GridBagConstraints.NORTHWEST;
         c.weightx = 0.0;
         c.weighty = 0.0;
-        m_bRoll.addActionListener(this);
         m_pPreview.add(m_bRoll, c);
         c.gridx = 1;
-        m_bAddAll.addActionListener(this);
         m_pPreview.add(m_bAddAll, c);
         c.gridx = 2;
-        m_bAdd.addActionListener(this);
         m_pPreview.add(m_bAdd, c);
         c.gridx = 3;
-        m_bClear.addActionListener(this);
         m_pPreview.add(m_bClear, c);
-        armyModel = new UnitTableModel();
-        m_lArmy = new JTable();
-        m_lArmy.setModel(armyModel);
-        m_lArmy.setIntercellSpacing(new Dimension(0, 0));
-        m_lArmy.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        scroll = new JScrollPane(m_lArmy);
-        scroll.setBorder(BorderFactory.createTitledBorder(Messages.getString("RandomArmyDialog.Army")));
         c = new GridBagConstraints();
         c.gridx = 0;
-        c.gridy = 2;
+        c.gridy = 4;
         c.gridwidth = 4;
         c.fill = GridBagConstraints.BOTH;
         c.anchor = GridBagConstraints.NORTHWEST;
         c.weightx = 1.0;
         c.weighty = 1.0;
-        m_pPreview.add(scroll, c);
+        m_pPreview.add(scrollArmy, c);
+        c.gridy = 5;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        c.fill = GridBagConstraints.NONE;
+        m_pPreview.add(m_lArmyBVTotal, c);
         m_pPreview.setMinimumSize(new Dimension(0,0));
     }
 
@@ -569,6 +583,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
 
     @Override
     public void actionPerformed(ActionEvent ev) {
+        String msg_bvtotal = Messages.getString("RandomArmyDialog.BVTotal");
         if (ev.getSource().equals(m_bOK)) {
             if (m_pMain.getSelectedIndex() == TAB_FORCE_GENERATOR) {
                 m_pForceGen.addChosenUnits((String) m_chPlayer.getSelectedItem());
@@ -608,6 +623,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                 c.sendAddEntity(entities);
                 armyModel.clearData();
                 unitsModel.clearData();
+                m_lUnitsBVTotal.setText(msg_bvtotal + "0");
+                m_lArmyBVTotal.setText(msg_bvtotal + "0");
             }
             
             // Save preferences
@@ -631,19 +648,37 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         } else if (ev.getSource().equals(m_bClear)) {
             armyModel.clearData();
             unitsModel.clearData();
+            m_lUnitsBVTotal.setText(msg_bvtotal + "0");
+            m_lArmyBVTotal.setText(msg_bvtotal + "0");
         } else if (ev.getSource().equals(m_bCancel)) {
              armyModel.clearData();
              unitsModel.clearData();
+            m_lUnitsBVTotal.setText(msg_bvtotal + "0");
+            m_lArmyBVTotal.setText(msg_bvtotal + "0");
             setVisible(false);
         } else if (ev.getSource().equals(m_bAddAll)) {
             for (MechSummary m : unitsModel.getAllUnits()) {
                 armyModel.addUnit(m);
             }
+
+            int total = 0;
+            for(int i = 0; i < m_lArmy.getRowCount(); i++) {
+                total += Integer.parseInt(m_lArmy.getValueAt(i, 1)+"");
+            }
+
+            m_lArmyBVTotal.setText(msg_bvtotal + total);
         } else if (ev.getSource().equals(m_bAdd)) {
             for (int sel : m_lUnits.getSelectedRows()) {
                 MechSummary m = unitsModel.getUnitAt(sel);
                 armyModel.addUnit(m);
             }
+
+            int total = 0;
+            for(int i = 0; i < m_lArmy.getRowCount(); i++) {
+                total += Integer.parseInt(m_lArmy.getValueAt(i, 1)+"");
+            }
+
+            m_lArmyBVTotal.setText(msg_bvtotal + total);
         } else if (ev.getSource().equals(m_bAdvSearch)) {
             asd.showDialog();
             searchFilter=asd.getTWAdvancedSearch().getMechSearchFilter();
@@ -767,6 +802,13 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                     m_lVehicleCount.setText(String.format(msg_outof + sbVehicle));
                     m_lBattleArmorCount.setText(String.format(msg_outof + sbBattleArmor));
                     m_lInfantryCount.setText(String.format(msg_outof + sbInfantry));
+
+                    int total = 0;
+                    for(int i = 0; i < m_lUnits.getRowCount(); i++) {
+                        total += Integer.parseInt(m_lUnits.getValueAt(i, 1)+"");
+                    }
+
+                    m_lUnitsBVTotal.setText(msg_bvtotal + total);
                 }
             } catch (NumberFormatException ignored) {
 

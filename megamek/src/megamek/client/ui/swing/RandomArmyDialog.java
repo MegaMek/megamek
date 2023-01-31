@@ -30,6 +30,7 @@ import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
@@ -145,6 +146,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
     private RandomUnitGenerator rug;
     private UnitTable generatedRAT;
 
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
     public RandomArmyDialog(ClientGUI cl) {
         super(cl.frame, Messages.getString("RandomArmyDialog.title"), true);
         m_clientgui = cl;
@@ -157,22 +160,20 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
             m_ratStatus = new JLabel(Messages.getString("RandomArmyDialog.ratStatusLoading"));
         }
         updatePlayerChoice();
-        asd = new AdvancedSearchDialog2(m_clientgui.frame,
-                m_client.getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR));
-        
-        GUIPreferences guip = GUIPreferences.getInstance();
+        GameOptions gameOptions = m_client.getGame().getOptions();
+        asd = new AdvancedSearchDialog2(m_clientgui.frame, gameOptions.intOption(OptionsConstants.ALLOWED_YEAR));
+
         // set defaults
-        m_tMechs.setText(guip.getRATNumMechs());
-        m_tBVmin.setText(guip.getRATBVMin());
-        m_tBVmax.setText(guip.getRATBVMax());
-        m_tVees.setText(guip.getRATNumVees());
-        m_tBA.setText(guip.getRATNumBA());
-        m_tMinYear.setText(guip.getRATYearMin());
-        m_tMaxYear.setText(guip.getRATYearMax());
-        m_tInfantry.setText(guip.getRATNumInf());
-        m_chkPad.setSelected(guip.getRATPadBV());
-        m_chkCanon.setSelected(m_client.getGame().getOptions().booleanOption(
-        OptionsConstants.ALLOWED_CANON_ONLY));
+        m_tMechs.setText(GUIP.getRATNumMechs());
+        m_tBVmin.setText(GUIP.getRATBVMin());
+        m_tBVmax.setText(GUIP.getRATBVMax());
+        m_tVees.setText(GUIP.getRATNumVees());
+        m_tBA.setText(GUIP.getRATNumBA());
+        m_tMinYear.setText(GUIP.getRATYearMin());
+        m_tMaxYear.setText(GUIP.getRATYearMax());
+        m_tInfantry.setText(GUIP.getRATNumInf());
+        m_chkPad.setSelected(GUIP.getRATPadBV());
+        m_chkCanon.setSelected(gameOptions.booleanOption(OptionsConstants.ALLOWED_CANON_ONLY));
         updateTechChoice();
 
         // construct the buttons panel
@@ -366,8 +367,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         c.weightx = 1.0;
         c.weighty = 0.0;
         pRATGenTop.add(m_pRATGenOptions, c);
-        m_pRATGenOptions.setYear(m_clientgui.getClient().getGame().getOptions()
-                .intOption("year"));
+        m_pRATGenOptions.setYear(gameOptions.intOption("year"));
         
         c = new GridBagConstraints();
         c.gridx = 0;
@@ -428,8 +428,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         m_pFormations.setLayout(new BorderLayout());
 
         m_pFormations.add(new JScrollPane(m_pFormationOptions), BorderLayout.CENTER);
-        m_pFormationOptions.setYear(m_clientgui.getClient().getGame().getOptions()
-                .intOption("year"));
+        m_pFormationOptions.setYear(gameOptions.intOption("year"));
         
         m_pForceGen = new ForceGeneratorViewUi(cl);
 
@@ -488,7 +487,6 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         m_pPreview.add(scroll, c);
         m_pPreview.setMinimumSize(new Dimension(0,0));
 
-
         m_pMain.addTab(Messages.getString("RandomArmyDialog.BVtab"), m_spParameters);
         m_pMain.addTab(Messages.getString("RandomArmyDialog.RATtab"), m_pRAT);
         m_pMain.addTab(Messages.getString("RandomArmyDialog.RATGentab"), m_pRATGen);
@@ -519,9 +517,9 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         validate();
         setLocationRelativeTo(cl.frame);
         
-        m_pSplit.setDividerLocation(guip.getRndArmySplitPos());
-        setSize(guip.getRndArmySizeWidth(), guip.getRndArmySizeHeight());
-        setLocation(guip.getRndArmyPosX(), guip.getRndArmyPosY());
+        m_pSplit.setDividerLocation(GUIP.getRndArmySplitPos());
+        setSize(GUIP.getRndArmySizeWidth(), GUIP.getRndArmySizeHeight());
+        setLocation(GUIP.getRndArmyPosX(), GUIP.getRndArmyPosY());
 
         adaptToGUIScale();
         
@@ -589,21 +587,20 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
             }
             
             // Save preferences
-            GUIPreferences guip = GUIPreferences.getInstance();
-            guip.setRATBVMin(m_tBVmin.getText());
-            guip.setRATBVMax(m_tBVmax.getText());
-            guip.setRATNumMechs(m_tMechs.getText());
-            guip.setRATNumVees(m_tVees.getText());
-            guip.setRATNumBA(m_tBA.getText());
-            guip.setRATNumInf(m_tInfantry.getText());
-            guip.setRATYearMin(m_tMinYear.getText());
-            guip.setRATYearMax(m_tMaxYear.getText());
-            guip.setRATPadBV(m_chkPad.isSelected());
-            guip.setRATTechLevel(m_chType.getSelectedIndex());
+            GUIP.setRATBVMin(m_tBVmin.getText());
+            GUIP.setRATBVMax(m_tBVmax.getText());
+            GUIP.setRATNumMechs(m_tMechs.getText());
+            GUIP.setRATNumVees(m_tVees.getText());
+            GUIP.setRATNumBA(m_tBA.getText());
+            GUIP.setRATNumInf(m_tInfantry.getText());
+            GUIP.setRATYearMin(m_tMinYear.getText());
+            GUIP.setRATYearMax(m_tMaxYear.getText());
+            GUIP.setRATPadBV(m_chkPad.isSelected());
+            GUIP.setRATTechLevel(m_chType.getSelectedIndex());
             if (m_treeRAT.getSelectionPath() != null) {
-                guip.setRATSelectedRAT(m_treeRAT.getSelectionPath().toString());
+                GUIP.setRATSelectedRAT(m_treeRAT.getSelectionPath().toString());
             } else {
-                guip.setRATSelectedRAT("");
+                GUIP.setRATSelectedRAT("");
             }
             
             setVisible(false);
@@ -776,12 +773,11 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         }
 
         private void saveWindowSettings() {
-            GUIPreferences guip = GUIPreferences.getInstance();
-            guip.setRndArmySizeHeight(getSize().height);
-            guip.setRndArmySizeWidth(getSize().width);
-            guip.setRndArmyPosX(getLocation().x);
-            guip.setRndArmyPosY(getLocation().y);
-            guip.setRndArmySplitPos(m_pSplit.getDividerLocation());
+            GUIP.setRndArmySizeHeight(getSize().height);
+            GUIP.setRndArmySizeWidth(getSize().width);
+            GUIP.setRndArmyPosX(getLocation().x);
+            GUIP.setRndArmyPosY(getLocation().y);
+            GUIP.setRndArmySplitPos(m_pSplit.getDividerLocation());
         }
     };
     
@@ -836,7 +832,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         for (int i = 0; i <= maxTech; i++) {
             m_chType.addItem(TechConstants.getLevelDisplayableName(i));
         }
-        m_chType.setSelectedIndex(Math.min(GUIPreferences.getInstance().getRATTechLevel(), maxTech));
+        m_chType.setSelectedIndex(Math.min(GUIP.getRATTechLevel(), maxTech));
     }
 
     private void updateRATs() {
@@ -850,7 +846,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         createRatTreeNodes(root, ratTree);
         m_treeRAT.setModel(new DefaultTreeModel(root));
         
-        String selectedRATPath = GUIPreferences.getInstance().getRATSelectedRAT();
+        String selectedRATPath = GUIP.getRATSelectedRAT();
         if (!selectedRATPath.isBlank()) {
             String[] nodes = selectedRATPath.replace('[', ' ')
                     .replace(']', ' ').split(",");
@@ -860,7 +856,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
     }
     
     private void updateRATYear() {
-        int gameYear = m_clientgui.getClient().getGame().getOptions().intOption("year");
+        GameOptions gameOptions = m_client.getGame().getOptions();
+        int gameYear = gameOptions.intOption("year");
         m_pRATGenOptions.setYear(gameYear);
         m_pFormationOptions.setYear(gameYear);
         m_pForceGen.setYear(gameYear);

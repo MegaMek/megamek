@@ -118,6 +118,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     protected boolean allowInvalid = true;
     protected int gameTechLevel = TechConstants.T_SIMPLE_INTRO;
     protected int techLevelDisplayType = TECH_LEVEL_DISPLAY_IS_CLAN;
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     //endregion Variable Declarations
 
     protected AbstractUnitSelectorDialog(JFrame frame, UnitLoadingDialog unitLoadingDialog) {
@@ -137,31 +138,29 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
      * This has been set up to permit preference implementation in anything that extends this
      */
     private void setUserPreferences() {
-        GUIPreferences guiPreferences = GUIPreferences.getInstance();
+        comboUnitType.setSelectedIndex(GUIP.getMechSelectorUnitType());
 
-        comboUnitType.setSelectedIndex(guiPreferences.getMechSelectorUnitType());
+        comboWeight.setSelectedIndex(GUIP.getMechSelectorWeightClass());
 
-        comboWeight.setSelectedIndex(guiPreferences.getMechSelectorWeightClass());
-
-        updateTypeCombo(guiPreferences);
+        updateTypeCombo();
 
         List<SortKey> sortList = new ArrayList<>();
         try {
-            sortList.add(new SortKey(guiPreferences.getMechSelectorSortColumn(),
-                    SortOrder.valueOf(guiPreferences.getMechSelectorSortOrder())));
+            sortList.add(new SortKey(GUIP.getMechSelectorSortColumn(),
+                    SortOrder.valueOf(GUIP.getMechSelectorSortOrder())));
         } catch (Exception e) {
             LogManager.getLogger().error("Failed to set based on user preferences, attempting to use default", e);
 
-            sortList.add(new SortKey(guiPreferences.getMechSelectorDefaultSortColumn(),
-                    SortOrder.valueOf(guiPreferences.getMechSelectorDefaultSortOrder())));
+            sortList.add(new SortKey(GUIP.getMechSelectorDefaultSortColumn(),
+                    SortOrder.valueOf(GUIP.getMechSelectorDefaultSortOrder())));
         }
         tableUnits.getRowSorter().setSortKeys(sortList);
         ((DefaultRowSorter<?, ?>) tableUnits.getRowSorter()).sort();
 
         tableUnits.invalidate(); // force re-layout of window
-        splitPane.setDividerLocation(guiPreferences.getMechSelectorSplitPos());
-        setSize(guiPreferences.getMechSelectorSizeWidth(), guiPreferences.getMechSelectorSizeHeight());
-        setLocation(guiPreferences.getMechSelectorPosX(), guiPreferences.getMechSelectorPosY());
+        splitPane.setDividerLocation(GUIP.getMechSelectorSplitPos());
+        setSize(GUIP.getMechSelectorSizeWidth(), GUIP.getMechSelectorSizeHeight());
+        setLocation(GUIP.getMechSelectorPosX(), GUIP.getMechSelectorPosY());
     }
 
     protected void initialize() {
@@ -426,12 +425,12 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         rootPane.getActionMap().put(SELECT_ACTION, selectAction);
     }
 
-    private void updateTypeCombo(GUIPreferences preferences) {
+    private void updateTypeCombo() {
         listTechLevel.removeListSelectionListener(this);
         int[] selectedIndices = listTechLevel.getSelectedIndices();
 
         if (selectedIndices.length == 0) {
-            String option = preferences.getMechSelectorRulesLevels().replaceAll("[\\[\\]]", "");
+            String option = GUIP.getMechSelectorRulesLevels().replaceAll("[\\[\\]]", "");
             if (!option.isBlank()) {
                 String[] strSelections = option.split("[,]");
                 selectedIndices = new int[strSelections.length];
@@ -656,17 +655,16 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     protected void processWindowEvent(WindowEvent e) {
         super.processWindowEvent(e);
         if ((e.getID() == WindowEvent.WINDOW_DEACTIVATED) || (e.getID() == WindowEvent.WINDOW_CLOSING)) {
-            GUIPreferences guiPreferences = GUIPreferences.getInstance();
-            guiPreferences.setMechSelectorUnitType(comboUnitType.getSelectedIndex());
-            guiPreferences.setMechSelectorWeightClass(comboWeight.getSelectedIndex());
-            guiPreferences.setMechSelectorRulesLevels(Arrays.toString(listTechLevel.getSelectedIndices()));
-            guiPreferences.setMechSelectorSortColumn(tableUnits.getRowSorter().getSortKeys().get(0).getColumn());
-            guiPreferences.setMechSelectorSortOrder(tableUnits.getRowSorter().getSortKeys().get(0).getSortOrder().name());
-            guiPreferences.setMechSelectorSizeHeight(getSize().height);
-            guiPreferences.setMechSelectorSizeWidth(getSize().width);
-            guiPreferences.setMechSelectorPosX(getLocation().x);
-            guiPreferences.setMechSelectorPosY(getLocation().y);
-            guiPreferences.setMechSelectorSplitPos(splitPane.getDividerLocation());
+            GUIP.setMechSelectorUnitType(comboUnitType.getSelectedIndex());
+            GUIP.setMechSelectorWeightClass(comboWeight.getSelectedIndex());
+            GUIP.setMechSelectorRulesLevels(Arrays.toString(listTechLevel.getSelectedIndices()));
+            GUIP.setMechSelectorSortColumn(tableUnits.getRowSorter().getSortKeys().get(0).getColumn());
+            GUIP.setMechSelectorSortOrder(tableUnits.getRowSorter().getSortKeys().get(0).getSortOrder().name());
+            GUIP.setMechSelectorSizeHeight(getSize().height);
+            GUIP.setMechSelectorSizeWidth(getSize().width);
+            GUIP.setMechSelectorPosX(getLocation().x);
+            GUIP.setMechSelectorPosY(getLocation().y);
+            GUIP.setMechSelectorSplitPos(splitPane.getDividerLocation());
         }
     }
 

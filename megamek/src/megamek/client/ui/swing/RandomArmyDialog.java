@@ -152,6 +152,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         super(cl.frame, Messages.getString("RandomArmyDialog.title"), true);
         m_clientgui = cl;
         m_client = cl.getClient();
+
         rug = RandomUnitGenerator.getInstance();
         rug.registerListener(this);
         if (rug.isInitialized()) {
@@ -159,8 +160,74 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         } else {
             m_ratStatus = new JLabel(Messages.getString("RandomArmyDialog.ratStatusLoading"));
         }
-        updatePlayerChoice();
+
+        createButtonsPanel();
+
+        createBVPanel();
+        JScrollPane m_spParameters = new JScrollPane(m_pParameters);
+        createRATPanel();
+        createRATGenPanel();
+        createFormationPanel();
+
+        createPreviewPanel();
+        m_pForceGen = new ForceGeneratorViewUi(cl);
+
+        m_pMain.addTab(Messages.getString("RandomArmyDialog.BVtab"), m_spParameters);
+        m_pMain.addTab(Messages.getString("RandomArmyDialog.RATtab"), m_pRAT);
+        m_pMain.addTab(Messages.getString("RandomArmyDialog.RATGentab"), m_pRATGen);
+        m_pMain.addTab(Messages.getString("RandomArmyDialog.Formationtab"), m_pFormations);
+        m_pMain.addTab(Messages.getString("RandomArmyDialog.Forcetab"), m_pForceGen.getLeftPanel());
+        m_pMain.addChangeListener(ev -> {
+            if (m_pMain.getSelectedIndex() == TAB_FORCE_GENERATOR) {
+                m_lRightCards.show(m_pRightPane, CARD_FORCE_TREE);
+                this.m_bRandomSkills.setEnabled(false);
+            } else {
+                m_lRightCards.show(m_pRightPane, CARD_PREVIEW);
+                this.m_bRandomSkills.setEnabled(true);
+            }
+        });
+        
+        m_pRightPane.add(m_pPreview, CARD_PREVIEW);
+        m_pRightPane.add(m_pForceGen.getRightPanel(), CARD_FORCE_TREE);
+        m_pRightPane.setMinimumSize(new Dimension(0,0));
+
+        m_pSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, m_pMain, m_pRightPane);
+        m_pSplit.setOneTouchExpandable(false);
+        m_pSplit.setResizeWeight(0.5);
+
+        // construct the main dialog
+        setLayout(new BorderLayout());
+        add(m_pButtons, BorderLayout.SOUTH);
+        add(m_pSplit, BorderLayout.CENTER);
+        validate();
+        setLocationRelativeTo(cl.frame);
+        
+        m_pSplit.setDividerLocation(GUIP.getRndArmySplitPos());
+        setSize(GUIP.getRndArmySizeWidth(), GUIP.getRndArmySizeHeight());
+        setLocation(GUIP.getRndArmyPosX(), GUIP.getRndArmyPosY());
+
+        adaptToGUIScale();
+        
+        m_client.getGame().addGameListener(gameListener);
+        addWindowListener(windowListener);
+    }
+
+    private void createButtonsPanel() {
+        // construct the buttons panel
+        m_pButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
+        m_pButtons.add(m_bOK);
+        m_bOK.addActionListener(this);
+        m_pButtons.add(m_bCancel);
+        m_bCancel.addActionListener(this);
+        m_bRandomSkills.addActionListener(this);
+        m_pButtons.add(m_labelPlayer);
+        m_pButtons.add(m_chPlayer);
+        m_pButtons.add(m_bRandomSkills);
+    }
+
+    private void createBVPanel() {
         GameOptions gameOptions = m_client.getGame().getOptions();
+        updatePlayerChoice();
         asd = new AdvancedSearchDialog2(m_clientgui.frame, gameOptions.intOption(OptionsConstants.ALLOWED_YEAR));
 
         // set defaults
@@ -176,17 +243,6 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         m_chkCanon.setSelected(gameOptions.booleanOption(OptionsConstants.ALLOWED_CANON_ONLY));
         updateTechChoice();
 
-        // construct the buttons panel
-        m_pButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
-        m_pButtons.add(m_bOK);
-        m_bOK.addActionListener(this);
-        m_pButtons.add(m_bCancel);
-        m_bCancel.addActionListener(this);
-        m_bRandomSkills.addActionListener(this);
-        m_pButtons.add(m_labelPlayer);
-        m_pButtons.add(m_chPlayer);
-        m_pButtons.add(m_bRandomSkills);
-
         // construct the Adv Search Panel
         m_pAdvSearch.setLayout(new FlowLayout(FlowLayout.LEADING));
         m_pAdvSearch.add(m_bAdvSearch);
@@ -197,8 +253,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
 
         // construct the parameters panel
         GridBagLayout layout = new GridBagLayout();
-        m_pParameters.setLayout(layout);
         GridBagConstraints constraints = new GridBagConstraints();
+        m_pParameters.setLayout(layout);
         constraints.insets = new Insets(5, 5, 0, 0);
         constraints.weightx = 0.0;
         constraints.weighty = 0.0;
@@ -283,8 +339,9 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         constraints.weighty = 1.0;
         layout.setConstraints(m_pAdvSearch, constraints);
         m_pParameters.add(m_pAdvSearch);
-        JScrollPane m_spParameters = new JScrollPane(m_pParameters);
+    }
 
+    private void createRATPanel() {
         // construct the RAT panel
         m_pRAT.setLayout(new GridBagLayout());
         m_tUnits.setText("4");
@@ -308,7 +365,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         c.weightx = 0.0;
         c.weighty = 0.0;
         m_pRAT.add(m_tUnits, c);
-        
+
         c = new GridBagConstraints();
         c.gridx = 2;
         c.gridy = 0;
@@ -332,18 +389,22 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
 
         m_treeRAT.setRootVisible(false);
         m_treeRAT.getSelectionModel().setSelectionMode
-        (TreeSelectionModel.SINGLE_TREE_SELECTION);
+                (TreeSelectionModel.SINGLE_TREE_SELECTION);
         m_treeRAT.addTreeSelectionListener(this);
         //m_treeRAT.setPreferredSize(new Dimension(200, 100));
 
         JScrollPane treeViewRAT = new JScrollPane(m_treeRAT);
         treeViewRAT.setPreferredSize(new Dimension(300, 200));
         m_pRAT.add(treeViewRAT, c);
+    }
 
+    private void createRATGenPanel () {
+        GameOptions gameOptions = m_client.getGame().getOptions();
         // construct the RAT Generator panel
         m_pRATGen.setLayout(new GridBagLayout());
         //put the general options and the unit-specific options into a single panel so they scroll together.
         JPanel pRATGenTop = new JPanel(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
 
         c = new GridBagConstraints();
         c.gridx = 0;
@@ -354,10 +415,9 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         c.weightx = 1.0;
         c.weighty = 0.5;
         m_pRATGen.add(new JScrollPane(pRATGenTop), c);
-        
+
         m_pRATGenOptions = new ForceGenerationOptionsPanel(ForceGenerationOptionsPanel.Use.RAT_GENERATOR);
-        m_pFormationOptions = new ForceGenerationOptionsPanel(ForceGenerationOptionsPanel.Use.FORMATION_BUILDER);
-        
+
         c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 0;
@@ -368,7 +428,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         c.weighty = 0.0;
         pRATGenTop.add(m_pRATGenOptions, c);
         m_pRATGenOptions.setYear(gameOptions.intOption("year"));
-        
+
         c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 1;
@@ -390,7 +450,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         m_pRATGen.add(m_bGenerate, c);
         m_bGenerate.setToolTipText(Messages.getString("RandomArmyDialog.Generate.tooltip"));
         m_bGenerate.addActionListener(this);
-        
+
         c = new GridBagConstraints();
         c.gridx = 1;
         c.gridy = 1;
@@ -402,7 +462,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         m_pRATGen.add(m_bAddToForce, c);
         m_bAddToForce.setToolTipText(Messages.getString("RandomArmyDialog.AddToForce.tooltip"));
         m_bAddToForce.addActionListener(this);
-        
+
         ratModel = new RATTableModel();
         m_lRAT = new JTable();
         m_lRAT.setModel(ratModel);
@@ -423,15 +483,18 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         c.weightx = 1.0;
         c.weighty = 0.5;
         m_pRATGen.add(new JScrollPane(m_lRAT), c);
+    }
 
+    private void createFormationPanel() {
+        GameOptions gameOptions = m_client.getGame().getOptions();
         // formation builder tab
-        m_pFormations.setLayout(new BorderLayout());
-
-        m_pFormations.add(new JScrollPane(m_pFormationOptions), BorderLayout.CENTER);
+        m_pFormationOptions = new ForceGenerationOptionsPanel(ForceGenerationOptionsPanel.Use.FORMATION_BUILDER);
         m_pFormationOptions.setYear(gameOptions.intOption("year"));
-        
-        m_pForceGen = new ForceGeneratorViewUi(cl);
+        m_pFormations.setLayout(new BorderLayout());
+        m_pFormations.add(new JScrollPane(m_pFormationOptions), BorderLayout.CENTER);
+    }
 
+    private void createPreviewPanel() {
         // construct the preview panel
         m_pPreview.setLayout(new GridBagLayout());
         unitsModel = new UnitTableModel();
@@ -441,7 +504,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         m_lUnits.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         JScrollPane scroll = new JScrollPane(m_lUnits);
         scroll.setBorder(BorderFactory.createTitledBorder(Messages.getString("RandomArmyDialog.SelectedUnits")));
-        c = new GridBagConstraints();
+        GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 0;
         c.gridwidth = 4;
@@ -486,45 +549,6 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         c.weighty = 1.0;
         m_pPreview.add(scroll, c);
         m_pPreview.setMinimumSize(new Dimension(0,0));
-
-        m_pMain.addTab(Messages.getString("RandomArmyDialog.BVtab"), m_spParameters);
-        m_pMain.addTab(Messages.getString("RandomArmyDialog.RATtab"), m_pRAT);
-        m_pMain.addTab(Messages.getString("RandomArmyDialog.RATGentab"), m_pRATGen);
-        m_pMain.addTab(Messages.getString("RandomArmyDialog.Formationtab"), m_pFormations);
-        m_pMain.addTab(Messages.getString("RandomArmyDialog.Forcetab"), m_pForceGen.getLeftPanel());
-        m_pMain.addChangeListener(ev -> {
-            if (m_pMain.getSelectedIndex() == TAB_FORCE_GENERATOR) {
-                m_lRightCards.show(m_pRightPane, CARD_FORCE_TREE);
-                this.m_bRandomSkills.setEnabled(false);
-            } else {
-                m_lRightCards.show(m_pRightPane, CARD_PREVIEW);
-                this.m_bRandomSkills.setEnabled(true);
-            }
-        });
-        
-        m_pRightPane.add(m_pPreview, CARD_PREVIEW);
-        m_pRightPane.add(m_pForceGen.getRightPanel(), CARD_FORCE_TREE);
-        m_pRightPane.setMinimumSize(new Dimension(0,0));
-
-        m_pSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, m_pMain, m_pRightPane);
-        m_pSplit.setOneTouchExpandable(false);
-        m_pSplit.setResizeWeight(0.5);
-
-        // construct the main dialog
-        setLayout(new BorderLayout());
-        add(m_pButtons, BorderLayout.SOUTH);
-        add(m_pSplit, BorderLayout.CENTER);
-        validate();
-        setLocationRelativeTo(cl.frame);
-        
-        m_pSplit.setDividerLocation(GUIP.getRndArmySplitPos());
-        setSize(GUIP.getRndArmySizeWidth(), GUIP.getRndArmySizeHeight());
-        setLocation(GUIP.getRndArmyPosX(), GUIP.getRndArmyPosY());
-
-        adaptToGUIScale();
-        
-        m_client.getGame().addGameListener(gameListener);
-        addWindowListener(windowListener);
     }
 
     @Override

@@ -15,7 +15,6 @@
 */
 package megamek.common;
 
-import com.sun.source.tree.ExpressionTree;
 import megamek.client.ui.swing.unitSelector.TWAdvancedSearchPanel;
 import org.apache.logging.log4j.LogManager;
 
@@ -40,6 +39,7 @@ public class MechSearchFilter {
     public String sEndJump;
     public int iArmor;
     public int iOmni;
+    public int iMilitary;
     public int iClanEngine;
     public int iOfficial;
     public int iCanon;
@@ -728,6 +728,19 @@ public class MechSearchFilter {
             }
             if (f.iOmni == 2) {
                 if (mech.getOmni()) {
+                    return false;
+                }
+            }
+        }
+
+        if (f.iMilitary > 0) {
+            if (f.iMilitary == 1) {
+                if (!mech.getMilitary()) {
+                    return false;
+                }
+            }
+            if (f.iMilitary == 2) {
+                if (mech.getMilitary()) {
                     return false;
                 }
             }

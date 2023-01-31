@@ -186,6 +186,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JComboBox<String> cArmor = new JComboBox<>();
     private JLabel lblOmni = new JLabel(Messages.getString("MechSelectorDialog.Search.Omni"));
     private JComboBox<String> cOmni = new JComboBox<>();
+    private JLabel lblMilitary = new JLabel(Messages.getString("MechSelectorDialog.Search.Military"));
+    private JComboBox<String> cMilitary = new JComboBox<>();
     private JLabel lblOfficial = new JLabel(Messages.getString("MechSelectorDialog.Search.Official"));
     private JComboBox<String> cOfficial = new JComboBox<>();
     private JLabel lblCanon = new JLabel(Messages.getString("MechSelectorDialog.Search.Canon"));
@@ -373,6 +375,10 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         cOmni.addItem(Messages.getString("MechSelectorDialog.Search.Yes"));
         cOmni.addItem(Messages.getString("MechSelectorDialog.Search.No"));
 
+        cMilitary.addItem(Messages.getString("MechSelectorDialog.Search.Any"));
+        cMilitary.addItem(Messages.getString("MechSelectorDialog.Search.Yes"));
+        cMilitary.addItem(Messages.getString("MechSelectorDialog.Search.No"));
+
         cOfficial.addItem(Messages.getString("MechSelectorDialog.Search.Any"));
         cOfficial.addItem(Messages.getString("MechSelectorDialog.Search.Yes"));
         cOfficial.addItem(Messages.getString("MechSelectorDialog.Search.No"));
@@ -489,22 +495,30 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         c.weighty = 0;
         c.anchor = GridBagConstraints.NORTHWEST;
         c.fill = GridBagConstraints.NONE;
-        c.gridx = 0; c.gridy = 0;
+        c.gridwidth  = 1;
         c.insets = new Insets(20, 10, 0, 0);
-
-        c.gridwidth  = 4;
+        c.gridx = 0; c.gridy = 0;
         JPanel p0Panel = new JPanel();
         p0Panel.add(lblOfficial);
         p0Panel.add(cOfficial);
         p0Panel.add(lblCanon);
         p0Panel.add(cCanon);
-        p0Panel.add(lblSource);
-        p0Panel.add(tSource);
-        p0Panel.add(lblOmni);
-        p0Panel.add(cOmni);
         basePanel.add(p0Panel, c);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 1;
+        JPanel sPanel = new JPanel(new BorderLayout());
+        sPanel.add(lblSource, BorderLayout.WEST);
+        sPanel.add(tSource, BorderLayout.CENTER);
+        basePanel.add(sPanel, c);
+        c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(5, 10, 0, 0);
-        c.gridwidth  = 1;
+        c.gridx = 0; c.gridy++;
+        JPanel p1Panel = new JPanel();
+        p1Panel.add(lblOmni);
+        p1Panel.add(cOmni);
+        p1Panel.add(lblMilitary);
+        p1Panel.add(cMilitary);
+        basePanel.add(p1Panel, c);
         c.gridx = 0; c.gridy++;
         JPanel yearPanel = new JPanel();
         yearPanel.add(lblYear);
@@ -1851,6 +1865,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         cCanon.setSelectedIndex(0);
         cClanEngine.setSelectedIndex(0);
         cOmni.setSelectedIndex(0);
+        cMilitary.setSelectedIndex(0);
         tblWeapons.clearSelection();
         tblEquipment.clearSelection();
         txtEqExp.setText("");
@@ -2091,6 +2106,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
 
         mechFilter.iArmor = cArmor.getSelectedIndex();
         mechFilter.iOmni = cOmni.getSelectedIndex();
+        mechFilter.iMilitary = cMilitary.getSelectedIndex();
         mechFilter.iOfficial = cOfficial.getSelectedIndex();
         mechFilter.iCanon = cCanon.getSelectedIndex();
         mechFilter.iClanEngine = cClanEngine.getSelectedIndex();

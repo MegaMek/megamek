@@ -41,6 +41,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     private String fullAccurateUnitType;
     private Long entityType;
     private boolean omni;
+    private boolean military;
     private File sourceFile;
     private String source;
     private String entryName; // for files in zips
@@ -280,6 +281,10 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public boolean getOmni() {
         return omni;
+    }
+
+    public boolean getMilitary() {
+        return military;
     }
 
     public double getTroopCarryingSpace() {
@@ -531,6 +536,10 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public void setOmni(boolean b) {
         omni = b;
+    }
+
+    public void setMilitary(boolean b) {
+        military = b;
     }
 
     public void setTroopCarryingSpace(double d) {

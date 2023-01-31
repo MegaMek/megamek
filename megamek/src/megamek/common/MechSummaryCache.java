@@ -389,6 +389,7 @@ public class MechSummaryCache {
         ms.setFullAccurateUnitType(Entity.getEntityTypeName(e.getEntityType()));
         ms.setEntityType(e.getEntityType());
         ms.setOmni(e.isOmni());
+        ms.setMilitary(e.isMilitary());
         ms.setSourceFile(f);
         ms.setSource(e.getSource());
         ms.setEntryName(entry);

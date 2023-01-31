@@ -581,6 +581,17 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         }
     }
 
+    private int calculateTotal(JTable t){
+        int total = 0;
+        for(int i = 0; i < t.getRowCount(); i++) {
+            try {
+                total += Integer.parseInt(t.getValueAt(i, 1)+"");
+            } catch (Exception ignored) {
+            }
+        }
+        return total;
+    }
+
     @Override
     public void actionPerformed(ActionEvent ev) {
         String msg_bvtotal = Messages.getString("RandomArmyDialog.BVTotal");
@@ -661,24 +672,14 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                 armyModel.addUnit(m);
             }
 
-            int total = 0;
-            for(int i = 0; i < m_lArmy.getRowCount(); i++) {
-                total += Integer.parseInt(m_lArmy.getValueAt(i, 1)+"");
-            }
-
-            m_lArmyBVTotal.setText(msg_bvtotal + total);
+            m_lArmyBVTotal.setText(msg_bvtotal + calculateTotal(m_lArmy));
         } else if (ev.getSource().equals(m_bAdd)) {
             for (int sel : m_lUnits.getSelectedRows()) {
                 MechSummary m = unitsModel.getUnitAt(sel);
                 armyModel.addUnit(m);
             }
 
-            int total = 0;
-            for(int i = 0; i < m_lArmy.getRowCount(); i++) {
-                total += Integer.parseInt(m_lArmy.getValueAt(i, 1)+"");
-            }
-
-            m_lArmyBVTotal.setText(msg_bvtotal + total);
+            m_lArmyBVTotal.setText(msg_bvtotal + calculateTotal(m_lArmy));
         } else if (ev.getSource().equals(m_bAdvSearch)) {
             asd.showDialog();
             searchFilter=asd.getTWAdvancedSearch().getMechSearchFilter();
@@ -802,13 +803,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                     m_lVehicleCount.setText(String.format(msg_outof + sbVehicle));
                     m_lBattleArmorCount.setText(String.format(msg_outof + sbBattleArmor));
                     m_lInfantryCount.setText(String.format(msg_outof + sbInfantry));
-
-                    int total = 0;
-                    for(int i = 0; i < m_lUnits.getRowCount(); i++) {
-                        total += Integer.parseInt(m_lUnits.getValueAt(i, 1)+"");
-                    }
-
-                    m_lUnitsBVTotal.setText(msg_bvtotal + total);
+                    m_lUnitsBVTotal.setText(msg_bvtotal + calculateTotal(m_lUnits));
                 }
             } catch (NumberFormatException ignored) {
 

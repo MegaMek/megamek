@@ -26,6 +26,7 @@ import org.apache.logging.log4j.LogManager;
 import javax.swing.*;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * This is used for versioning, and to track the current Version the suite is running at.
@@ -54,6 +55,15 @@ public final class Version implements Comparable<Version>, Serializable {
     public Version(final @Nullable String text) {
         this();
         fillFromText(text);
+    }
+
+    public Version(final String release, final String major, final String minor,
+                   final String snapshot) throws NumberFormatException {
+        this();
+        setRelease(Integer.parseInt(release));
+        setMajor(Integer.parseInt(major));
+        setMinor(Integer.parseInt(minor));
+        setSnapshot(Boolean.parseBoolean(snapshot));
     }
     //endregion Constructors
 

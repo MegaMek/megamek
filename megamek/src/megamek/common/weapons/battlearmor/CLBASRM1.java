@@ -19,6 +19,7 @@
  */
 package megamek.common.weapons.battlearmor;
 
+import megamek.common.AmmoType;
 import megamek.common.weapons.srms.SRMWeapon;
 
 /**
@@ -33,6 +34,7 @@ public class CLBASRM1 extends SRMWeapon {
         setInternalName("CLBASRM1");
         addLookupName("Clan BA SRM-1");
         addLookupName("Clan BA SRM 1");
+        ammoType = AmmoType.T_SRM;
         rackSize = 1;
         shortRange = 3;
         mediumRange = 6;

@@ -24,7 +24,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ] # For Code QL running on *nix is sufficient
         java-distribution: [ temurin ]
-        java-version: [ 11 ]
+        java-version: [ 17 ]
 
     steps:
     # Checkout the Pull Request source and put it in: ./megamek

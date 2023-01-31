@@ -140,7 +140,7 @@ public class AlphaStrikeHelper {
                 || (element.isLargeAerospace() && (sua == STD))
                 || (element.usesCapitalWeapons() && sua.isAnyOf(MSL, SCAP, CAP))
                 || (element.isType(BM, PM) && (sua == SOA))
-                || (element.isType(CV, BM) && (sua == SRCH))
+                || (element.isBattleMek() && (sua == SRCH))
                 || (!element.isLargeAerospace() && sua.isDoor())
                 || (hasAutoSeal(element) && (sua == SEAL));
     }

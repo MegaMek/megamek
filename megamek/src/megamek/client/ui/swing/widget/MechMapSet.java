@@ -14,6 +14,7 @@
  */
 package megamek.client.ui.swing.widget;
 
+import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
@@ -144,9 +145,9 @@ public class MechMapSet implements DisplayMapSet {
 
     private Image heatImage;
 
-    private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN,
+    private static final Font FONT_LABEL = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
             GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize"));
-    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN,
+    private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
             GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize"));
 
     public MechMapSet(JComponent c, UnitDisplay unitDisplay) {
@@ -179,8 +180,7 @@ public class MechMapSet implements DisplayMapSet {
             a = m.getArmor(i);
             a0 = m.getOArmor(i);
             vLabels[i].setValue(m.getArmorString(i));
-            WidgetUtils.setAreaColor(areas[i], vLabels[i], (double) a
-                    / (double) a0);
+            WidgetUtils.setAreaColor(areas[i], vLabels[i], (double) a / (double) a0);
             if (m.hasRearArmor(i)) {
                 a = m.getArmor(i, true);
                 a0 = m.getOArmor(i, true);

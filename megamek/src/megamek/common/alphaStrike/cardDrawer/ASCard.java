@@ -18,11 +18,14 @@
  */
 package megamek.common.alphaStrike.cardDrawer;
 
+import megamek.MMConstants;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.FluffImageHelper;
 import megamek.client.ui.swing.util.StringDrawer;
 import megamek.common.Configuration;
-import megamek.common.alphaStrike.*;
+import megamek.common.alphaStrike.ASCardDisplayable;
+import megamek.common.alphaStrike.ASDamageVector;
+import megamek.common.alphaStrike.AlphaStrikeHelper;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -67,9 +70,9 @@ public class ASCard {
     protected final ASCardDisplayable element;
     protected final Image fluffImage;
 
-    protected Font lightFont = new Font(Font.SANS_SERIF, Font.PLAIN, 14);
-    protected Font boldFont = new Font(Font.SANS_SERIF, Font.BOLD, 14);
-    protected Font blackFont = new Font(Font.SANS_SERIF, Font.BOLD, 14);
+    protected Font lightFont = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 14);
+    protected Font boldFont = new Font(MMConstants.FONT_SANS_SERIF, Font.BOLD, 14);
+    protected Font blackFont = new Font(MMConstants.FONT_SANS_SERIF, Font.BOLD, 14);
 
     protected Font modelFont;
     protected Font chassisFont;
@@ -515,7 +518,7 @@ public class ASCard {
         }
 
         new StringDrawer("(C) " + LocalDate.now().getYear() + " The Topps Company. All rights reserved.").at(1014, copyrightY).rotate(-Math.PI / 2)
-                .font(new Font(Font.SANS_SERIF, Font.PLAIN, 12)).center().draw(g);
+                .font(new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 12)).center().draw(g);
 
         // Border
         g.setColor(Color.BLACK);

@@ -1249,6 +1249,14 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISThunderBolt10());
         EquipmentType.addType(new ISThunderBolt15());
         EquipmentType.addType(new ISThunderBolt20());
+        EquipmentType.addType(new ISThunderbolt5OS());
+        EquipmentType.addType(new ISThunderbolt10OS());
+        EquipmentType.addType(new ISThunderbolt15OS());
+        EquipmentType.addType(new ISThunderbolt20OS());
+        EquipmentType.addType(new ISThunderbolt5IOS());
+        EquipmentType.addType(new ISThunderbolt10IOS());
+        EquipmentType.addType(new ISThunderbolt15IOS());
+        EquipmentType.addType(new ISThunderbolt20IOS());
         // Taser
         EquipmentType.addType(new ISMekTaser());
 

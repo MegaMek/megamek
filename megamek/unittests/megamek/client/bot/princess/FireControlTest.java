@@ -1668,7 +1668,7 @@ public class FireControlTest {
         // Test fighter's at altitude
         final ConvFighter mockFighter = mock(ConvFighter.class);
         when(mockFighter.getAltitude()).thenReturn(3);
-        when(mockFighter.getTargetId()).thenReturn(2);
+        when(mockFighter.getId()).thenReturn(2);
         final EntityState mockFighterState = mock(EntityState.class);
         when(mockFighterState.isAirborneAero()).thenReturn(true);
         when(mockFighterState.isBuilding()).thenReturn(false);
@@ -1678,7 +1678,7 @@ public class FireControlTest {
         expected.addModifier(FireControl.TH_LONG_RANGE);
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter,
                 mockShooterState, mockFighter, mockFighterState, mockWeapon, mockGame));
-        when(mockFighter.getTargetId()).thenReturn(1); // Target aero is also firing on shooter.
+        when(mockFighter.getId()).thenReturn(1); // Target aero is also firing on shooter.
         expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
         expected.addModifier(FireControl.TH_SHORT_RANGE);
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter,

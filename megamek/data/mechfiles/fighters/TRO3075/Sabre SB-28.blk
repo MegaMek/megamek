@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -56,7 +56,7 @@ Aerodyne
 </heatsinks>
 
 <sink_type>
-0
+1
 </sink_type>
 
 <fuel>
@@ -103,14 +103,6 @@ Medium Laser
 <Fuselage Equipment>
 </Fuselage Equipment>
 
-<source>
-TRO 3075 - Star League
-</source>
-
-<tonnage>
-25.0
-</tonnage>
-
 <capabilities>
 While extremely short-ranged when first developed, the Sabre was well-regarded for its exceptional speed and maneuverability. The original manufacturer, Raimei, continued to upgrade the fighter as technology advanced; the final version produced by Raimei was the SB-27 model which featured a Nissan 225 Fusion Engine, double the fuel capacity of the previous model and replace the previous primitive armor with four tons of BattleMech grade armor, giving the same protection for less weight.
 </capabilities>
@@ -142,3 +134,12 @@ ARMOR:Nimakachi Type 3 Ferro-Aluminum
 COMMUNICATIONS:BipStar 49-G
 TARGETING:Ki-II TTS
 </systemManufacturers>
+
+<source>
+TRO 3075 - Star League
+</source>
+
+<tonnage>
+25.0
+</tonnage>
+

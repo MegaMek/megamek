@@ -379,6 +379,35 @@ public class Infantry extends Entity {
                 mp = Math.max(mp + weatherMod, 0);
             }
         }
+
+        if (null != game) {
+            if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_GUSTING_RAIN)
+                    && getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_RAIN)) {
+                if ((mp !=0) || getMovementMode().isMotorizedInfantry()) {
+                    mp += 1;
+                }
+            }
+
+            if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_SNOW)) {
+                if (((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES)
+                        || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM))
+                        && (getOriginalWalkMP() != 0)) {
+                    mp += 1;
+                }
+            }
+
+            if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)) {
+                if (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_MOD_GALE) {
+                    mp += 1;
+                }
+
+                if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_STRONG_GALE)
+                        && ((mp != 0) || getMovementMode().isMotorizedInfantry())) {
+                    mp += 1;
+                }
+            }
+        }
+
         if (gravity) {
             mp = applyGravityEffectsOnMP(mp);
         }
@@ -416,12 +445,21 @@ public class Infantry extends Entity {
         if (gravity) {
             mp = applyGravityEffectsOnMP(mp);
         }
+
         if (null != game) {
             int windCond = game.getPlanetaryConditions().getWindStrength();
             if (windCond >= PlanetaryConditions.WI_STRONG_GALE) {
                 return 0;
-            } else if (windCond == PlanetaryConditions.WI_MOD_GALE) {
+            } else if ((windCond == PlanetaryConditions.WI_MOD_GALE)
+                    && !getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)) {
                 mp--;
+            }
+
+            if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_SNOW)) {
+                if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES)
+                        && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM)) {
+                    mp += 1;
+                }
             }
         }
         return Math.max(mp, 0);
@@ -723,15 +761,12 @@ public class Infantry extends Entity {
     public Vector<Report> victoryReport() {
         Vector<Report> vDesc = new Vector<>();
 
-        Report r = new Report(7025);
-        r.type = Report.PUBLIC;
+        Report r = new Report(7025, Report.PUBLIC);
         r.addDesc(this);
         vDesc.addElement(r);
 
-        r = new Report(7041);
-        r.type = Report.PUBLIC;
+        r = new Report(7041, Report.PUBLIC);
         r.add(getCrew().getGunnery());
-        r.newlines = 0;
         vDesc.addElement(r);
 
         r = new Report(7070, Report.PUBLIC);
@@ -1031,13 +1066,13 @@ public class Infantry extends Entity {
 
     @Override
     public boolean isEligibleFor(GamePhase phase) {
-        if ((turnsLayingExplosives > 0) && (phase != GamePhase.PHYSICAL)) {
+        if ((turnsLayingExplosives > 0) && !phase.isPhysical()) {
             return false;
-        }
-        if ((dugIn != DUG_IN_COMPLETE) && (dugIn != DUG_IN_NONE)) {
+        } else if ((dugIn != DUG_IN_COMPLETE) && (dugIn != DUG_IN_NONE)) {
             return false;
+        } else {
+            return super.isEligibleFor(phase);
         }
-        return super.isEligibleFor(phase);
     }
 
     @Override
@@ -1495,6 +1530,16 @@ public class Infantry extends Entity {
 
     public boolean isSquad() {
         return squadCount == 1;
+    }
+
+    @Override
+    public boolean isEligibleForPavementBonus() {
+        if ((game != null)
+                && game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_INF_PAVE_BONUS)) {
+            return movementMode == EntityMovementMode.TRACKED || movementMode == EntityMovementMode.WHEELED || movementMode == EntityMovementMode.INF_MOTORIZED || movementMode == EntityMovementMode.HOVER;
+        } else {
+            return false;
+        }
     }
 
     @Override

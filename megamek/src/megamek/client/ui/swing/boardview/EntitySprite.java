@@ -18,25 +18,17 @@
  */
 package megamek.client.ui.swing.boardview;
 
-import java.awt.AlphaComposite;
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsEnvironment;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Stroke;
-import java.awt.Transparency;
-import java.util.*;
+import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.EntityWreckHelper;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
-import megamek.common.enums.GamePhase;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Set;
 
 /**
  * Sprite for an entity. Changes whenever the entity changes. Consists of an
@@ -225,7 +217,7 @@ class EntitySprite extends Sprite {
         }
         
         int face = (entity.isCommander() && !onlyDetectedBySensors()) ? Font.ITALIC : Font.PLAIN;
-        labelFont = new Font("SansSerif", face, (int) (10 * Math.max(bv.scale, 0.9)));
+        labelFont = new Font(MMConstants.FONT_SANS_SERIF, face, (int) (10 * Math.max(bv.scale, 0.9)));
         
         // Check the hexes in directions 2, 5, 1, 4 if they are free of entities
         // and place the label in the direction of the first free hex
@@ -358,8 +350,8 @@ class EntitySprite extends Sprite {
 
         // When zoomed far out, status wouldn't be readable, therefore
         // draw a big "!" (and the label is red)
-        if (bv.scale < 0.55 && criticalStatus) {
-            Font bigFont = new Font("SansSerif", Font.BOLD, (int) (42 * bv.scale));
+        if ((bv.scale < 0.55) && criticalStatus) {
+            Font bigFont = new Font(MMConstants.FONT_SANS_SERIF, Font.BOLD, (int) (42 * bv.scale));
             g.setFont(bigFont);
             Point pos = new Point(bv.hex_size.width / 2, bv.hex_size.height / 2);
             bv.drawTextShadow(g, "!", pos, bigFont);
@@ -368,7 +360,7 @@ class EntitySprite extends Sprite {
         }
         
         // Critical status text
-        Font boldFont = new Font("SansSerif",Font.BOLD,(int) (12 * bv.scale));
+        Font boldFont = new Font(MMConstants.FONT_SANS_SERIF, Font.BOLD, (int) (12 * bv.scale));
         g.setFont(boldFont);
         int y = (int) (bv.hex_size.height * 0.6);
         for (Status curStatus: statusStrings) {
@@ -704,7 +696,7 @@ class EntitySprite extends Sprite {
                             && !((Infantry) entity).isTakingCover())
                     && !(isAero && ((IAero) entity).isSpheroid() && !board.inSpace())) {
                 // Indicate a stacked unit with the same facing that can still move
-                if (shouldIndicateNotDone() && (bv.game.getPhase() == GamePhase.MOVEMENT)) {
+                if (shouldIndicateNotDone() && bv.game.getPhase().isMovement()) {
                     var tr = graph.getTransform();
                     // rotate the arrow slightly
                     graph.scale(1 / bv.scale, 1 / bv.scale);
@@ -717,7 +709,7 @@ class EntitySprite extends Sprite {
                     graph.setTransform(tr);
                 }
                 
-                if (!entity.isDone() && (bv.game.getPhase() == GamePhase.MOVEMENT)) {
+                if (!entity.isDone() && bv.game.getPhase().isMovement()) {
                     graph.setColor(GUIPreferences.getInstance().getWarningColor());
                     graph.fill(bv.facingPolys[entity.getFacing()]);
                     graph.setColor(Color.WHITE);

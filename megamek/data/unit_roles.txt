@@ -1282,7 +1282,7 @@ Condor Heavy Hover Tank (Laser):STRIKER
 Condor Heavy Hover Tank (Liao):STRIKER
 Condor Heavy Hover Tank (Standard):STRIKER
 Condor Heavy Hover Tank (Upgrade) (Laser):MISSILE_BOAT
-Condor Heavy Hover Tank (Upgrade) (Standard):MISSILE_BOAT
+Condor Heavy Hover Tank (Upgrade):MISSILE_BOAT
 Condor Multi-Purpose Tank (Reactive):STRIKER
 Condor Multi-Purpose Tank (Standard):STRIKER
 Condottiere Assault Craft (Standard):NONE
@@ -4323,12 +4323,13 @@ Mobile Headquarters (ICE):NONE
 Mobile Headquarters (LL):NONE
 Mobile Headquarters (LRM):NONE
 Mobile Headquarters (Standard):NONE
+Mobile Long Tom Artillery LT-MOB-25:MISSILE_BOAT
 Mobile Long Tom Artillery (Unofficial) (+ Carriage):MISSILE_BOAT
 Mobile Long Tom Artillery Ammunition Trailer LT-MOB-25:NONE
 Mobile Long Tom Artillery Support Carriage LT-MOB-25:NONE
 Model 96 'Elephant' (Standard):NONE
 Model 96 'Elephant' Mk I:NONE
-Model 96C “Howdah” SDS Command Ship:NONE
+Model 96C 'Howdah' SDS Command Ship:NONE
 Model 97 'Octopus' (3051):NONE
 Molniya Corvette (2951):NONE
 Moltke MBT M1:SNIPER
@@ -7511,3 +7512,191 @@ Motorized Platoon, Taurian (MG):AMBUSHER
 Motorized Platoon, Taurian (Rifle):AMBUSHER
 Motorized Platoon, Taurian (SRM):AMBUSHER
 Motorized Platoon, Taurian (LRM):AMBUSHER
+Kamisori Light Tank Prime:SCOUT
+Kamisori Light Tank A:SNIPER
+Kamisori Light Tank B:SCOUT
+Kamisori Light Tank C:SCOUT
+Kamisori Light Tank R:SCOUT
+Galleon Light Tank GAL-106:SCOUT
+Galleon Light Tank GAL-106M:SCOUT
+Galleon Light Tank GAL-200R:AMBUSHER
+Galleon Light Tank GAL-201:SCOUT
+Galleon Light Tank GAL-300:STRIKER
+Galleon Light Tank C:STRIKER
+Buzzard Hover Tank :STRIKER
+Falcon Hover Tank :STRIKER
+Hawk Hover Tank (LTV-4):STRIKER
+Axel Heavy Tank IIC :BRAWLER
+Axel Heavy Tank IIC (XL):BRAWLER
+Patton Tank (Taurian):BRAWLER
+Patton Tank (Ultra):BRAWLER
+Patton Tank (XL):BRAWLER
+Phantom T:SCOUT
+Phantom F:STRIKER
+Phantom G:SCOUT
+Phantom I:SCOUT
+Phantom J:STRIKER
+Phantom K:SNIPER
+Phantom L:SCOUT
+Phantom R:STRIKER
+Nightsky NGS-7S:STRIKER
+Penetrator PTR-8D:BRAWLER
+Gunslinger GUN-3ERD:JUGGERNAUT
+Condor Heavy Hover Tank (Ultra):STRIKER
+Condor Heavy Hover Tank (Fusion):STRIKER
+Condor Heavy Hover Tank (Laser):STRIKER
+Condor Heavy Hover Tank (LAC):STRIKER
+Condor Heavy Hover Tank C:STRIKER
+Maxim Heavy Hover Transport (Escort):STRIKER
+Flea FLE-21:STRIKER
+Hermes II HER-7A:SNIPER
+Starslayer STY-4C:SKIRMISHER
+Merlin MLN-1D:SNIPER
+Merlin MLN-1E:SNIPER
+Merlin MLN-1P:JUGGERNAUT
+Merlin C:BRAWLER
+Quickdraw QKD-9G:SKIRMISHER
+Caesar CES-5R:BRAWLER
+Naga II Prime:BRAWLER
+Naga II A:BRAWLER
+Naga II B:MISSILE_BOAT
+Naga II C:BRAWLER
+Naga II H:BRAWLER
+Naga II W:SNIPER
+Kamisori Light Tank Prime:SCOUT
+Kamisori Light Tank A:SNIPER
+Kamisori Light Tank B:SCOUT
+Kamisori Light Tank C:SCOUT
+Kamisori Light Tank R:SCOUT
+Galleon Light Tank GAL-106:SCOUT
+Galleon Light Tank GAL-106M:SCOUT
+Galleon Light Tank GAL-200R:AMBUSHER
+Galleon Light Tank GAL-201:SCOUT
+Galleon Light Tank GAL-300:STRIKER
+Galleon Light Tank C:STRIKER
+Buzzard Hover Tank :STRIKER
+Falcon Hover Tank :STRIKER
+Hawk Hover Tank (LTV-4):STRIKER
+Axel Heavy Tank IIC :BRAWLER
+Axel Heavy Tank IIC (XL):BRAWLER
+Patton Tank (Taurian):BRAWLER
+Patton Tank (Ultra):BRAWLER
+Patton Tank (XL):BRAWLER
+Phantom T:SCOUT
+Phantom F:STRIKER
+Phantom G:SCOUT
+Phantom I:SCOUT
+Phantom J:STRIKER
+Phantom K:SNIPER
+Phantom L:SCOUT
+Phantom R:STRIKER
+Nightsky NGS-7S:STRIKER
+Penetrator PTR-8D:BRAWLER
+Gunslinger GUN-3ERD:JUGGERNAUT
+TinStar BattleArmor (Standard)(Sqd4):AMBUSHER
+TinStar BattleArmor (Standard)(Sqd5):AMBUSHER
+TinStar BattleArmor (Standard)(Sqd6):AMBUSHER
+TinStar BattleArmor (Original)(Sqd4):AMBUSHER
+TinStar BattleArmor (Original)(Sqd5):AMBUSHER
+TinStar BattleArmor (Original)(Sqd6):AMBUSHER
+Skulker Wheeled Scout Tank C:SCOUT
+Warrior Attack Helicopter H-7F:SCOUT
+Whirlwind Scout Hover Tank:SCOUT
+Whirlwind Scout Hover Tank (IFV):SCOUT
+Whirlwind Scout Hover Tank (AAA):SCOUT
+Mobile Long Tom Artillery LT-MOB-25F:MISSILE_BOAT
+SturmFeur Heavy Tank (Cell):MISSILE_BOAT
+SturmFeur Heavy Tank (Heavy Gauss):JUGGERNAUT
+SturmFeur Heavy Tank (WoB):JUGGERNAUT
+SturmFeur Heavy Tank (Steiner):JUGGERNAUT
+SturmFeur Heavy Tank (Assault):SNIPER
+SturmFeur Heavy Tank (Support) 'Gilmore':MISSILE_BOAT
+Firestarter FS9-M 'Mirage II':STRIKER
+Spector SPR-6F:STRIKER
+Cicada CDA-4A:STRIKER
+Devastator DVS-11:JUGGERNAUT
+Dragoon Battle Armor (Sqd4):AMBUSHER
+Dragoon Battle Armor (Sqd5):AMBUSHER
+Dragoon Battle Armor (Sqd6):AMBUSHER
+Dragoon Battle Armor (Advanced) (Sqd4):AMBUSHER
+Dragoon Battle Armor (Advanced) (Sqd4):AMBUSHER
+Dragoon Battle Armor (Advanced) (Sqd4):AMBUSHER
+Command Van:SCOUT
+Command Van (ICE):SCOUT
+Command Van (Q-Vehicle):SCOUT
+Browning Mobile Headquarters:SCOUT
+Browning Mobile Headquarters (Half-Track):SCOUT
+Hetzer Wheeled Assault Gun (Cell):AMBUSHER
+Hetzer Wheeled Assault Gun C:AMBUSHER
+Eurus MBT Prime:BRAWLER
+Eurus MBT A:BRAWLER
+Eurus MBT B:SNIPER
+Eurus MBT C:BRAWLER
+Eurus MBT D:BRAWLER
+Ontos Heavy Tank (Chem Laser):JUGGERNAUT
+Firefly FFL-5A:STRIKER
+Assassin ASN-109:SCOUT
+Dervish DV-11DK:MISSILE_BOAT
+Charger C:SCOUT
+Sagittaire SGT-14R:JUGGERNAUT
+Griffin GRF-1RG:MISSILE_BOAT
+Griffin GRF-3RG:SKIRMISHER
+Griffin GRF-6R:SNIPER
+Behemoth BHN-6H:JUGGERNAUT
+BattleMaster BLR-6R:BRAWLER
+Cricket RWN-02:SCOUT
+Cataphract CTF-5LL:SNIPER
+Archer C 2:BRAWLER
+Stinger C:SCOUT
+Stinger C 2:SCOUT
+Stormbird Battle Armor (Sqd4):AMBUSHER
+Stormbird Battle Armor (Sqd5):AMBUSHER
+Stormbird Battle Armor (Sqd6):AMBUSHER
+Stormbird Battle Armor (Jade Falcon)(Sqd4):AMBUSHER
+Stormbird Battle Armor (Jade Falcon)(Sqd5):AMBUSHER
+Stormbird Battle Armor (Jade Falcon)(Sqd6):AMBUSHER
+Onuris Attack VTOL Prime:STRIKER
+Onuris Attack VTOL A:SNIPER
+Onuris Attack VTOL B:MISSILE_BOAT
+Onuris Attack VTOL C:STRIKER
+Onuris Attack VTOL D:STRIKER
+Onuris Attack VTOL E:STRIKER
+Pike Support Vehicle (LB-X):SNIPER
+Pike Support Vehicle (Clan):SNIPER
+Pike Support Vehicle (RAC) 'Assault Pike':SNIPER
+Pike Support Vehicle (Plasma):SNIPER
+SRM Carrier C:MISSILE_BOAT
+LRM Carrier C:MISSILE_BOAT
+Vulcan VT-7T:SCOUT
+Whitworth WTH-2H:BRAWLER
+Hellcat (Hellhound II):SKIRMISHER
+Hellhound (Conjurer) 6:SKIRMISHER
+Hellhound II-P (Hellcat-P):SKIRMISHER
+Hoplite HOP-5C:BRAWLER
+Grizzly 3:SKIRMISHER
+Highlander IIC 4:MISSILE_BOAT
+Behemoth Heavy Tank (Davion):JUGGERNAUT
+Behemoth Heavy Tank (Kurita Upgrade):JUGGERNAUT
+Behemoth Heavy Tank (Liao):JUGGERNAUT
+Behemoth Heavy Tank (Refit):JUGGERNAUT
+Callisto A [Bearhunter]:AMBUSHER
+Callisto A [ER Laser]:AMBUSHER
+Callisto A [HMG]:AMBUSHER
+Callisto B [MRR]:AMBUSHER
+Callisto B [SRM]:AMBUSHER
+Clint CLNT-3-4T::STRIKER
+Harrier Hover Tank (Original):STRIKER
+Harrier Hover Tank (PPC):STRIKER
+Harrier Hover Tank (Re-Laser):STRIKER
+J. Edgar Light Hover Tank (Chemical):STRIKER
+J. Edgar Light Hover Tank (Kurita):STRIKER
+J. Edgar Light Hover Tank (LAC):STRIKER
+J. Edgar Light Hover Tank (Light PPC):SNIPER
+J. Edgar Light Hover Tank (TAG):SCOUT
+Javelin JVN-12N:SCOUT
+Manticore Heavy Tank (XL): Brawler
+Pillager PLG-6Z:JUGGERNAUT
+Savannah Master Hovercraft (Reflective):SCOUT
+Shogun C 3:SNIPER
+Skimmer:SCOUT
+

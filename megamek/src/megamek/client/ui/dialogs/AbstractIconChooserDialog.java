@@ -25,7 +25,6 @@ import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.panels.AbstractIconChooser;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
-import megamek.common.util.EncodeControl;
 
 import javax.swing.*;
 import java.awt.*;
@@ -52,7 +51,7 @@ public abstract class AbstractIconChooserDialog extends AbstractButtonDialog {
     public AbstractIconChooserDialog(final JFrame frame, final String name, final String title,
                                      final AbstractIconChooser chooser, final boolean doubleClick) {
         this(frame, true, ResourceBundle.getBundle("megamek.client.messages",
-                MegaMek.getMMOptions().getLocale(), new EncodeControl()), name,
+                MegaMek.getMMOptions().getLocale()), name,
                 title, chooser, doubleClick);
     }
 

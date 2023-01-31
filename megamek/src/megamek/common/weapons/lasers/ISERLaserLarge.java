@@ -15,6 +15,7 @@ package megamek.common.weapons.lasers;
 
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
@@ -62,15 +63,16 @@ public class ISERLaserLarge extends LaserWeapon {
 
     @Override
     public int getLongRange() {
-        GameOptions options = getGameOptions();
-        if (options == null) {
-            return super.getLongRange();
-        } else if (options.getOption(OptionsConstants.ADVCOMBAT_INCREASED_ISERLL_RANGE) == null) {
+        if (Server.getServerInstance() == null) {
             return super.getLongRange();
         }
-        if (options.getOption(OptionsConstants.ADVCOMBAT_INCREASED_ISERLL_RANGE).booleanValue()) {
+        final GameOptions options = Server.getServerInstance().getGame().getOptions();
+        if (options.getOption(OptionsConstants.ADVCOMBAT_INCREASED_ISERLL_RANGE) == null) {
+            return super.getLongRange();
+        } else if (options.getOption(OptionsConstants.ADVCOMBAT_INCREASED_ISERLL_RANGE).booleanValue()) {
             return 21;
+        } else {
+            return super.getLongRange();
         }
-        return super.getLongRange();
     }
 }

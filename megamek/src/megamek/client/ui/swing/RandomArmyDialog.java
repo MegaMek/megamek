@@ -22,8 +22,8 @@ import megamek.client.generator.RandomUnitGenerator.RatTreeNode;
 import megamek.client.ratgenerator.*;
 import megamek.client.ratgenerator.UnitTable.Parameters;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
-import megamek.common.enums.GamePhase;
 import megamek.common.enums.Gender;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
@@ -267,6 +267,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         constraints.weighty = 1.0;
         layout.setConstraints(m_pAdvSearch, constraints);
         m_pParameters.add(m_pAdvSearch);
+        JScrollPane m_spParameters = new JScrollPane(m_pParameters);
 
         // construct the RAT panel
         m_pRAT.setLayout(new GridBagLayout());
@@ -471,8 +472,10 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         c.weightx = 1.0;
         c.weighty = 1.0;
         m_pPreview.add(scroll, c);
+        m_pPreview.setMinimumSize(new Dimension(0,0));
 
-        m_pMain.addTab(Messages.getString("RandomArmyDialog.BVtab"), m_pParameters);
+
+        m_pMain.addTab(Messages.getString("RandomArmyDialog.BVtab"), m_spParameters);
         m_pMain.addTab(Messages.getString("RandomArmyDialog.RATtab"), m_pRAT);
         m_pMain.addTab(Messages.getString("RandomArmyDialog.RATGentab"), m_pRATGen);
         m_pMain.addTab(Messages.getString("RandomArmyDialog.Formationtab"), m_pFormations);
@@ -489,7 +492,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         
         m_pRightPane.add(m_pPreview, CARD_PREVIEW);
         m_pRightPane.add(m_pForceGen.getRightPanel(), CARD_FORCE_TREE);
-        
+        m_pRightPane.setMinimumSize(new Dimension(0,0));
+
         m_pSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, m_pMain, m_pRightPane);
         m_pSplit.setOneTouchExpandable(false);
         m_pSplit.setResizeWeight(0.5);
@@ -504,6 +508,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         m_pSplit.setDividerLocation(guip.getRndArmySplitPos());
         setSize(guip.getRndArmySizeWidth(), guip.getRndArmySizeHeight());
         setLocation(guip.getRndArmyPosX(), guip.getRndArmyPosY());
+
+        adaptToGUIScale();
         
         m_client.getGame().addGameListener(gameListener);
         addWindowListener(windowListener);
@@ -548,7 +554,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
       
                         autoSetSkillsAndName(e);
                         e.setOwner(c.getLocalPlayer());
-                        if (c.getGame().getPhase() != GamePhase.LOUNGE) {
+                        if (!c.getGame().getPhase().isLounge()) {
                             e.setDeployRound(c.getGame().getRoundCount() + 1);
                             e.setGame(c.getGame());
                             // Set these to true, otherwise units reinforced in
@@ -899,6 +905,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
             updateTechChoice();
             updateRATs();
         }
+
+        adaptToGUIScale();
         super.setVisible(show);
     }
 
@@ -1105,5 +1113,9 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
             }
             return "";
         }
+    }
+
+    private void adaptToGUIScale() {
+        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
     }
 }

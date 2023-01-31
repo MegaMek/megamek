@@ -136,23 +136,7 @@ public class EquipChoicePanel extends JPanel {
         if (entity instanceof Mech) {
             Mech mech = (Mech) entity;
 
-            // Ejection Seat
-            boolean hasEjectSeat = true;
-            // torso mounted cockpits don't have an ejection seat
-            if (mech.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED
-                    || mech.hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT)) {
-                hasEjectSeat = false;
-            }
-            if (mech.isIndustrial()) {
-                hasEjectSeat = false;
-                // industrials can only eject when they have an ejection seat
-                for (Mounted misc : mech.getMisc()) {
-                    if (misc.getType().hasFlag(MiscType.F_EJECTION_SEAT)) {
-                        hasEjectSeat = true;
-                    }
-                }
-            }
-            if (hasEjectSeat) {
+            if (mech.hasEjectSeat()) {
                 add(labAutoEject, GBC.std());
                 add(chAutoEject, GBC.eol());
                 chAutoEject.setSelected(!mech.isAutoEject());
@@ -160,7 +144,7 @@ public class EquipChoicePanel extends JPanel {
 
             // Conditional Ejections
             if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
-                    && hasEjectSeat) {
+                    && mech.hasEjectSeat()) {
                 add(labCondEjectAmmo, GBC.std());
                 add(chCondEjectAmmo, GBC.eol());
                 chCondEjectAmmo.setSelected(mech.isCondEjectAmmo());
@@ -178,8 +162,7 @@ public class EquipChoicePanel extends JPanel {
             Aero aero = (Aero) entity;
 
             // Ejection Seat
-            boolean hasEjectSeat = !(entity.hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT));
-            if (hasEjectSeat) {
+            if (aero.hasEjectSeat()) {
                 add(labAutoEject, GBC.std());
                 add(chAutoEject, GBC.eol());
                 chAutoEject.setSelected(!aero.isAutoEject());
@@ -187,7 +170,7 @@ public class EquipChoicePanel extends JPanel {
 
             // Conditional Ejections
             if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
-                    && hasEjectSeat) {
+                    && aero.hasEjectSeat()) {
                 add(labCondEjectAmmo, GBC.std());
                 add(chCondEjectAmmo, GBC.eol());
                 chCondEjectAmmo.setSelected(aero.isCondEjectAmmo());
@@ -278,7 +261,8 @@ public class EquipChoicePanel extends JPanel {
         }
 
         // Set up searchlight
-        if (clientgui.getClient().getGame().getPlanetaryConditions().getLight() > PlanetaryConditions.L_DUSK) {
+        if (!entity.getsAutoExternalSearchlight()
+                && (client.getGame().getPlanetaryConditions().getLight() > PlanetaryConditions.L_DUSK)) {
             add(labSearchlight, GBC.std());
             add(chSearchlight, GBC.eol());
             chSearchlight.setSelected(entity.hasSearchlight()
@@ -376,8 +360,10 @@ public class EquipChoicePanel extends JPanel {
         }
 
         // update searchlight setting
-        entity.setExternalSearchlight(chSearchlight.isSelected());
-        entity.setSearchlightState(chSearchlight.isSelected());
+        if (!entity.getsAutoExternalSearchlight()) {
+            entity.setExternalSearchlight(chSearchlight.isSelected());
+            entity.setSearchlightState(chSearchlight.isSelected());
+        }
 
         if (entity.hasC3() && (choC3.getSelectedIndex() > -1)) {
             Entity chosen = client.getEntity(entityCorrespondance[choC3.getSelectedIndex()]);

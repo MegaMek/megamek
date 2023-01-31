@@ -133,19 +133,19 @@ Foot Actuator
 Stealth Armor
 Stealth Armor
 
-Overview: The Assassin, though a serviceable BattleMech, was the result of industrial corruption and corner-cutting at its finest. Embellished and aggrandized, the capabilities of the Assassin were exaggerated enough for the BattleMech to enter production for the SLDF. Once its true capabilites were known, however, the 'Mech was quickly relegated to inferior markets, often ending up in the hands of militia or periphery units.
+overview:Many military finance experts outside the Star League saw the Assassin as more of a political pork project than a powerful fighting machine, yet it turned out to be a strong 'Mech in combat against light lances.
 
-Capabilities: With its paltry array of weaponry, the Assassin was originally sold as a heavier alterative to the Stinger or the Wasp. In this, the 'Mech works as intended, but its reliance on ammunition led to its disfavor in many commands. On paper, however, the Assassin remains a popular alternative to these lighter 'Mechs due to its tougher armor, increased speed, and higher firepower. The design would find little favor amongst MechWarriors, though. With its intensely cramped cockpit and sub-par life support system, MechWarriors despised being forced to pilot the design. As if not enough, a common ammunition feed problem affecting the SRM launcher hardly helped the Assassin's already questionable popularity.
+capabilities:The Assassin was able to destroy these lighter 'Mechs due to its good speed and maneuverability, good armor coverage (in comparison to the 'Mechs it was built to battle against), and strong weaponry. The weapons of the 'Mechs is essentially comprised of three systems: the long-range missile rack, the short-range missile rack, and the arm-mounted Martell midrange laser. The design is limited in durability unless assigned supply units for support because it can only carry a total of seventy-four salvos for both launchers. The most significant disadvantage for most pilots is the incredibly tight cockpit—one of the most confined cockpit designs in the Inner Sphere.
 
-Deployment: Hellespont Industries, after acquiring the rights to the Assassin, began mass production of the proven-though-lackluster ASN-23. They have used the chassis as a testbed, however, and the ASN-99 reflects many of their experimentations. The design has since left testing status, and has entered battlefields under the banner of the Capellan Confederation and their close ally, the Magistracy of Canopus.
+deployment:When Hellespont 'Mech Works first acquired the Assassin from the Maltex Corporation, the ASN-99 was the original testbed design. Incorporating more armor than any previous variant, thanks in large part to the inclusion of an XL engine, its long-range punch is provided by a light PPC, while it can rely upon two SRM-2s at close range. Target Acquisition Gear enables it to call down supporting fire should the Assassin find itself embroiled in a fight. This variant also mounts stealth armor and a sword. 
 
-systemmanufacturer:CHASSIS:Hellespont
-systemmode:CHASSIS:Type A 40 series
-systemmanufacturer:ENGINE:VOX
-systemmode:ENGINE:280
-systemmanufacturer:ARMOR:AFVTA
-systemmode:ARMOR:100
-systemmanufacturer:COMMUNICATIONS:Ceres Metals
-systemmode:COMMUNICATIONS:Model 668
-systemmanufacturer:TARGETING:Apple Churchill
-systemmode:TARGETING:2000
+history:Maltex has changed the cockpit cooling system dozens of times over the Assassin's four hundred year service history in a bid to provide extra elbow room, but none of the attempts have been effective. As a result, most pilots experience a tight, painful ride that limits in-cockpit time to half that of most other conventional designs; many ex-Assassin pilots have established a history of back issues that will bother them for the rest of their lives. The ammo feed system for the short-range missile rack was the only other issue with the Assassin (mostly those made up to 2815). It commonly failed during high-heat settings due to chronic jamming and could only be repaired through total disassembly in a mechanical bay. Under significant corporate pressure, Holly ultimately introduced a new feed system in 2815 and even paid several years of recall repairs; nonetheless, there are still a huge number of individually owned Assassins that may still mount the problematic system. Maltex produced only a few hundred ASN-21s after their launch. Due to a lack of spare parts, those Assassins in service were utilized sparingly, however House Marik enthusiastically used the 'Mech late in the Third Succession War. When a rush of new BattleMech types entered the markets after 3058, the Assassin was nearly phased out of service. Those that have stayed in service are usually family heirlooms with some modifications.
+
+manufacturer:Hellespont 'Mech Works
+primaryfactory:Sian
+systemmanufacturer:CHASSIS:Hellespont Type A 40 series
+systemmanufacturer:ENGINE:VOX 280 XL
+systemmanufacturer:ARMOR:Ceres Stealth
+systemmanufacturer:JUMPJET:Lox Lift Series 1
+systemmanufacturer:COMMUNICATIONS:Garret T15 B with ECM
+systemmanufacturer:TARGETING:Garret 500S

@@ -14,7 +14,6 @@
 package megamek.common;
 
 import megamek.client.ui.swing.util.PlayerColour;
-import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePlayerChangeEvent;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.OptionsConstants;
@@ -265,14 +264,11 @@ public final class Player extends TurnOrdered {
      */
     public void setGameMaster(boolean gameMaster) {
         this.gameMaster = gameMaster;
-        if (game != null && game.getTeamForPlayer(this) != null) {
-            game.getTeamForPlayer(this).cacheObserverStatus();
-        }
     }
 
     /** @return true if {@link #observer} flag is true and not in VICTORY phase*/
     public boolean isObserver() {
-        if ((game != null) && (game.getPhase() == GamePhase.VICTORY)) {
+        if ((game != null) && game.getPhase().isVictory()) {
             return false;
         }
         return observer;
@@ -313,9 +309,6 @@ public final class Player extends TurnOrdered {
     /** set the {@link #observer} flag. Observers have no units ad no team */
     public void setObserver(boolean observer) {
         this.observer = observer;
-        if (game != null && game.getTeamForPlayer(this) != null) {
-            game.getTeamForPlayer(this).cacheObserverStatus();
-        }
     }
 
     /**
@@ -690,6 +683,8 @@ public final class Player extends TurnOrdered {
         copy.singleBlind = singleBlind;
 
         copy.startingPos = startingPos;
+        copy.startOffset = startOffset;
+        copy.startWidth = startWidth;
 
         copy.numMfConv = numMfConv;
         copy.numMfCmd = numMfCmd;

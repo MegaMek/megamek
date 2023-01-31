@@ -20,7 +20,6 @@ package megamek.common.enums;
 
 import megamek.MegaMek;
 import megamek.common.*;
-import megamek.common.util.EncodeControl;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.Comparator;
@@ -44,7 +43,7 @@ public enum WeaponSortOrder {
     //region Constructors
     WeaponSortOrder(final String name) {
         final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages",
-                MegaMek.getMMOptions().getLocale(), new EncodeControl());
+                MegaMek.getMMOptions().getLocale());
         this.name = resources.getString(name);
     }
     //endregion Constructors

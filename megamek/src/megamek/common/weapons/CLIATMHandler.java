@@ -31,22 +31,11 @@ public class CLIATMHandler extends ATMHandler {
     private static final long serialVersionUID = 5476183194060709574L;
     boolean isAngelECMAffected;
 
-    /**
-     * @param t
-     * @param w
-     * @param g
-     * @param m
-     */
     public CLIATMHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
         super(t, w, g, m);
         isAngelECMAffected = ComputeECM.isAffectedByAngelECM(ae, ae.getPosition(), target.getPosition());
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
-     */
     @Override
     protected int calcDamagePerHit() {
         double toReturn;
@@ -83,24 +72,16 @@ public class CLIATMHandler extends ATMHandler {
         return (int) toReturn;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
-     */
     @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
-        // conventional infantry gets hit in one lump - gets calculated in the
-        // sub functions
+        // conventional infantry gets hit in one lump - gets calculated in the sub functions
         // don't need to check for BAs, because BA can't mount ATMs
-        int hits;
         AmmoType atype = (AmmoType) ammo.getType();
         // TacOPs p.84 Cluster Hit Penalites will only effect ATM HE
         // I'm doing my own hit calcs here. Special ammo gets its own method.
 
-        // compute ammount of missiles hit - this is the same for all ATM ammo
-        // types.
-        hits = calcMissileHits(vPhaseReport);
+        // compute ammount of missiles hit - this is the same for all ATM ammo types.
+        int hits = calcMissileHits(vPhaseReport);
 
         // If we use IIW or IMP we are done.
         if ((atype.getMunitionType() == AmmoType.M_IATM_IIW)
@@ -125,15 +106,10 @@ public class CLIATMHandler extends ATMHandler {
      */
     @Override
     protected int calcAttackValue() {
-        // TODO: Should handle speical munitions AV
+        // TODO: Should handle specical munitions AV
         return super.calcAttackValue();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
-     */
     protected int calcMissileHits(Vector<Report> vPhaseReport) {
         AmmoType atype = (AmmoType) ammo.getType();
 
@@ -145,8 +121,7 @@ public class CLIATMHandler extends ATMHandler {
                 Report r = new Report(3325);
                 r.newlines = 0;
                 r.subject = subjectId;
-                r.add(wtype.getRackSize()
-                      * ((BattleArmor) ae).getShootingStrength());
+                r.add(wtype.getRackSize() * ((BattleArmor) ae).getShootingStrength());
                 r.add(sSalvoType);
                 r.add(toHit.getTableDesc());
                 vPhaseReport.add(r);
@@ -182,10 +157,9 @@ public class CLIATMHandler extends ATMHandler {
 
         // Only apply if not all shots hit. IATM IMP have HE ranges and thus
         // suffer from spread too
-        if (((atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) || (atype
-                .getMunitionType() == AmmoType.M_IATM_IMP))
-            && tacopscluster
-            && !allShotsHit()) {
+        if (((atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE)
+                || (atype.getMunitionType() == AmmoType.M_IATM_IMP))
+            && tacopscluster && !allShotsHit()) {
             if (nRange <= 1) {
                 nMissilesModifier += 1;
             } else if (nRange <= ranges[RangeType.RANGE_MEDIUM]) {
@@ -198,7 +172,7 @@ public class CLIATMHandler extends ATMHandler {
         // //////
         // This applies even with streaks.
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
-            && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             nMissilesModifier -= 2;
         }
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
@@ -309,8 +283,7 @@ public class CLIATMHandler extends ATMHandler {
     // I don't think i need to change anything here for iATMs. Seems just to
     // handle Minefield clearance
     @Override
-    protected boolean specialResolution(Vector<Report> vPhaseReport,
-                                        Entity entityTarget) {
+    protected boolean specialResolution(Vector<Report> vPhaseReport, Entity entityTarget) {
         if (!bMissed
             && (target.getTargetType() == Targetable.TYPE_MINEFIELD_CLEAR)) {
             Report r = new Report(3255);
@@ -319,13 +292,11 @@ public class CLIATMHandler extends ATMHandler {
             vPhaseReport.addElement(r);
             Coords coords = target.getPosition();
 
-            Enumeration<Minefield> minefields = game.getMinefields(coords)
-                                                    .elements();
+            Enumeration<Minefield> minefields = game.getMinefields(coords).elements();
             ArrayList<Minefield> mfRemoved = new ArrayList<>();
             while (minefields.hasMoreElements()) {
                 Minefield mf = minefields.nextElement();
-                if (gameManager.clearMinefield(mf, ae,
-                        Minefield.CLEAR_NUMBER_WEAPON, vPhaseReport)) {
+                if (gameManager.clearMinefield(mf, ae, Minefield.CLEAR_NUMBER_WEAPON, vPhaseReport)) {
                     mfRemoved.add(mf);
                 }
             }
@@ -339,11 +310,6 @@ public class CLIATMHandler extends ATMHandler {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#allShotsHit()
-     */
     @Override
     protected boolean allShotsHit() {
         // If we IDF, we don't get the streak bonus
@@ -354,11 +320,6 @@ public class CLIATMHandler extends ATMHandler {
         return super.allShotsHit() || !isAngelECMAffected;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#addHeat()
-     */
     @Override
     protected void addHeat() {
         // call super function if we are in IDF mode since we don't have streak
@@ -374,11 +335,6 @@ public class CLIATMHandler extends ATMHandler {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#UseAmmo()
-     */
     @Override
     protected void useAmmo() {
         // call super function if we are in IDF mode, since we don't have streak
@@ -405,11 +361,6 @@ public class CLIATMHandler extends ATMHandler {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#reportMiss(java.util.Vector)
-     */
     @Override
     protected void reportMiss(Vector<Report> vPhaseReport) {
         // again, call super if we are in IDF mode.
@@ -629,7 +580,7 @@ public class CLIATMHandler extends ATMHandler {
                     vPhaseReport.addElement(r);
                     weapon.setUsedThisRound(false);
                     WeaponAttackAction newWaa = new WeaponAttackAction(
-                            ae.getId(), entity.getTargetId(), waa.getWeaponId());
+                            ae.getId(), entity.getId(), waa.getWeaponId());
                     newWaa.setNemesisConfused(true);
                     Mounted m = ae.getEquipment(waa.getWeaponId());
                     Weapon w = (Weapon) m.getType();

@@ -38,6 +38,7 @@ public class ASWeaponDamageList {
                     &&!(etype instanceof BayWeapon)) {
                 wpLine = new ArrayList<>();
                 wpLine.add(etype.getName());
+                wpLine.add(etype.getInternalName());
                 wpLine.add(etype.isClan()? "-Clan-" : "-IS-");
                 double mult = etype.hasFlag(WeaponType.F_ONESHOT) ? 0.1 : 1;
                 double s = mult * ((WeaponType)etype).getBattleForceDamage(AlphaStrikeElement.SHORT_RANGE, null);

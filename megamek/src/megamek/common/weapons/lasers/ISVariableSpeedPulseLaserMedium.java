@@ -52,10 +52,11 @@ public class ISVariableSpeedPulseLaserMedium extends VariableSpeedPulseLaserWeap
         shortAV = 7;
         maxRange = RANGE_SHORT;
         rulesRefs = "321, TO";
+        //Nov 22 - CGL requested we move to Standard for Simple Tech Level 
         techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
                 .setISAdvancement(3070, 3072, 3080).setPrototypeFactions(F_FW, F_WB)
-                .setProductionFactions(F_FW, F_WB).setStaticTechLevel(SimpleTechLevel.ADVANCED);
+                .setProductionFactions(F_FW, F_WB).setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
     @Override

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -28,13 +28,20 @@ H-7C
 2974
 </year>
 
+<originalBuildYear>
+2974
+</originalBuildYear>
+
 <type>
-IS Level 1
+IS Level 2
 </type>
 
 <motion_type>
 VTOL
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 9
@@ -75,6 +82,37 @@ LRM 10
 <Rotor Equipment>
 </Rotor Equipment>
 
+<capabilities>
+The aircraft itself is a standard rotary wing design. The two counter-rotating rotor systems negate the need for a tail rotor, as there is no drive torque to be canceled. Capable of speeds of 162 km/h, the Warrior can range across the battlefield with ease, Weapons are mated to an N&D Handsfree targeting and tracking system linked to the pilot's helmet, allowing the pilot to merely look at what he wants to target and pull the trigger. One ton of reloads each give the helicopter decent endurance in combat.
+</capabilities>
+
+<overview>
+First produced in 2950, the Warrior H-7 attack helicopter is a common sight across the Inner Sphere, serving as a highly mobile fire support unit.
+</overview>
+
+<deployment>
+The Warrior H-7C substitutes a Valiant Heavy CrossBow LRM-10 rack with two tons of reloads in place of the Sarlon AutoCannon.
+</deployment>
+
+<history>
+Privately designed by Lockheed-CBM as a cheaper and more easily produced substitute for light BattleMechs in the notoriously top-heavy and sluggish Lyran Commonwealth Armed Forces' Third Succession War–era BattleMech regiments, the Lyran High Command originally dismissed the Warrior as a worthless "flying toy" in 2957 until the Ninth Battle of Hesperus that same year damaged Defiance Industries' facilities to the point the LCAF were desperate for any military hardware, placing heavy orders and ensuring continued production since.
+</history>
+
+<manufacturer>
+Lockheed/CBM Corp.
+</manufacturer>
+
+<primaryFactory>
+Furillo
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:Omni 50 ICE
+ARMOR:Longanecker PlastiSteel
+COMMUNICATIONS:Xilex-2000
+TARGETING:N&D Handsfree
+</systemManufacturers>
+
 <source>
 TRO 3039 - Succession Wars
 </source>
@@ -82,3 +120,8 @@ TRO 3039 - Succession Wars
 <tonnage>
 21.0
 </tonnage>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+

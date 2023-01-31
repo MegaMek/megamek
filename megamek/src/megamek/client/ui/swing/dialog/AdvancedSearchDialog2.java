@@ -21,6 +21,7 @@ package megamek.client.ui.swing.dialog;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
 import megamek.client.ui.swing.unitSelector.ASAdvancedSearchPanel;
 import megamek.client.ui.swing.unitSelector.TWAdvancedSearchPanel;
+import megamek.client.ui.swing.util.UIUtil;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -50,6 +51,9 @@ public class AdvancedSearchDialog2 extends AbstractButtonDialog {
     @Override
     public void setVisible(boolean b) {
         alphaStrikeTab.saveValues();
+        if (b) {
+            adaptToGUIScale();
+        }
         super.setVisible(b);
     }
 
@@ -75,7 +79,8 @@ public class AdvancedSearchDialog2 extends AbstractButtonDialog {
 
     @Override
     protected Container createCenterPane() {
-        return advancedSearchPane;
+        JScrollPane advScrollpane = new JScrollPane(advancedSearchPane);
+        return advScrollpane;
     }
 
     /** Deactivates the search fields in both search tabs so that no units are filtered out. */
@@ -90,5 +95,10 @@ public class AdvancedSearchDialog2 extends AbstractButtonDialog {
 
     public TWAdvancedSearchPanel getTWAdvancedSearch() {
         return totalWarTab;
+    }
+
+    private void adaptToGUIScale() {
+        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
+        totalWarTab.adaptToGUIScale();
     }
 }

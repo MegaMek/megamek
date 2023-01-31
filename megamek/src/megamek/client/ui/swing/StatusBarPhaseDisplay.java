@@ -26,9 +26,15 @@ import java.util.*;
 
 import javax.swing.*;
 
+import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.TurnTimer;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.*;
+import megamek.common.KeyBindParser;
 import megamek.common.preference.*;
+
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
 
 /**
  * This is a parent class for the button display for each phase.  Every phase 
@@ -43,15 +49,21 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     protected static final Dimension MIN_BUTTON_SIZE = new Dimension(32, 32);
     protected static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final int BUTTON_ROWS = 2;
+    private static final String SBPD_KEY_CLEARBUTTON = "clearButton";
+
+    /**
+     * timer that ends turn if time limit set in options is over
+     */
+    private TurnTimer tt;
 
     /**
      * Interface that defines what a command for a phase is.
      * @author arlith
      */
     public interface PhaseCommand {
-        public String getCmd();
-        public int getPriority();
-        public void setPriority(int p);
+        String getCmd();
+        int getPriority();
+        void setPriority(int p);
     }
     
     /**
@@ -79,12 +91,11 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     
     protected int buttonsPerRow = GUIP.getInt(GUIPreferences.ADVANCED_BUTTONS_PER_ROW);
     protected int buttonsPerGroup = BUTTON_ROWS * buttonsPerRow;
-    
 
     protected StatusBarPhaseDisplay(ClientGUI cg) {
         super(cg);
-        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "clearButton");
-        getActionMap().put("clearButton", new AbstractAction() {
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), SBPD_KEY_CLEARBUTTON);
+        getActionMap().put(SBPD_KEY_CLEARBUTTON, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (isIgnoringEvents()) {
@@ -113,12 +124,48 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         add(panStatus);
         
         GUIP.addPreferenceChangeListener(this);
+        KeyBindParser.addPreferenceChangeListener(this);
         ToolTipManager.sharedInstance().registerComponent(this);
     }
     
     
     /** Returns the list of buttons that should be displayed. */
     protected abstract ArrayList<MegamekButton> getButtonList();
+
+    /** set button that should be displayed. */
+    protected abstract void setButtons();
+
+    protected MegamekButton createButton(String cmd, String keyPrefix){
+        String title = Messages.getString(keyPrefix + cmd);
+        MegamekButton newButton = new MegamekButton(title, SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
+        newButton.addActionListener(this);
+        newButton.setActionCommand(cmd);
+        newButton.setEnabled(false);
+        return newButton;
+    }
+
+    /** set button tool tips that should be displayed. */
+    protected abstract void setButtonsTooltips();
+
+    protected String createToolTip(String cmd, String keyPrefix, String hotKeyDesc) {
+        String h  = "";
+        String ttKey = keyPrefix + cmd + ".tooltip";
+        String tt = hotKeyDesc;
+        if (!tt.isEmpty()) {
+            String title = Messages.getString(keyPrefix + cmd);
+            tt = guiScaledFontHTML(uiLightViolet()) + title + ": " + tt + "</FONT>";
+            tt += "<BR>";
+        }
+        if (Messages.keyExists(ttKey)) {
+            String msg_key = Messages.getString(ttKey);
+            tt += guiScaledFontHTML() + msg_key + "</FONT>";
+        }
+        if (!tt.isEmpty()) {
+            String b = "<BODY>" + tt + "</BODY>";
+            h = "<HTML>" + b + "</HTML>";
+        }
+        return h;
+    }
 
     /**
      * Adds buttons to the button panel.  The buttons to be added are retrieved
@@ -170,6 +217,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
                 
         panButtons.add(buttonsPanel);
         panButtons.add(donePanel);
+        adaptToGUIScale();
         panButtons.validate();
         panButtons.repaint();
     }
@@ -188,13 +236,22 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     protected void setStatusBarText(String text) {
         labStatus.setText(text);
     }
-    
+
+    private void adaptToGUIScale() {
+        UIUtil.adjustContainer(panButtons, UIUtil.FONT_SCALE1);
+        UIUtil.adjustContainer(panStatus, UIUtil.FONT_SCALE2);
+    }
+
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
         if (e.getName().equals(GUIPreferences.ADVANCED_BUTTONS_PER_ROW)) {
             buttonsPerRow = GUIP.getInt(GUIPreferences.ADVANCED_BUTTONS_PER_ROW);
             buttonsPerGroup = 2 * buttonsPerRow;
             setupButtonPanel();
+        } else if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
+            adaptToGUIScale();
+        } else if (e.getName().equals(KeyBindParser.KEYBINDS_CHANGED)) {
+            setButtonsTooltips();
         }
     }
 
@@ -224,4 +281,17 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
 
     @Override
     public void mouseExited(MouseEvent e) { }
+
+    public void startTimer() {
+        // check if there should be a turn timer running
+        tt = TurnTimer.init(this, clientgui.getClient());
+    }
+
+    public void stopTimer() {
+        //get rid of still running timer, if turn is concluded before time is up
+        if (tt != null) {
+            tt.stopTimer();
+            tt = null;
+        }
+    }
 }

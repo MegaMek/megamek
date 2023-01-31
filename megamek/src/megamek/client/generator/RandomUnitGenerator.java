@@ -48,15 +48,11 @@ import java.util.zip.ZipFile;
 public class RandomUnitGenerator implements Serializable {
     private static final long serialVersionUID = 5765118329881301375L;
 
-    // The RATs are stored in a hashmap of string vectors. The keys are the RAT
-    // names
-    // and the vectors just contain the unit names listed a number of times
-    // equal to
-    // the frequency
-    private Map<String, RatEntry> rats;
+    // The RATs are stored in a hashmap of string vectors. The keys are the RAT names
+    // and the vectors just contain the unit names listed a number of times equal to the frequency
+    private final Map<String, RatEntry> rats = new HashMap<>();
     private static RandomUnitGenerator rug;
     private static boolean interrupted = false;
-    private static boolean dispose = false;
     private Thread loader;
     private boolean initialized;
     private boolean initializing;
@@ -88,7 +84,6 @@ public class RandomUnitGenerator implements Serializable {
      * its change of appearing (weight).
      *
      * @author arlith
-     *
      */
     protected class RatEntry {
         private Vector<String> units;
@@ -125,16 +120,11 @@ public class RandomUnitGenerator implements Serializable {
         listeners = new ArrayList<>();
     }
 
-    protected void initRats() {
-        rats = new HashMap<>();
-    }
-
     protected void initRatTree() {
         ratTree = new RatTreeNode("Random Assignment Tables");
     }
 
     public synchronized void populateUnits() {
-        initRats();
         initRatTree();
 
         // Give the MSC some time to initialize
@@ -154,22 +144,12 @@ public class RandomUnitGenerator implements Serializable {
             rug.initialized = true;
             rug.notifyListenersOfInitialization();
         }
-
-        if (dispose) {
-            clear();
-            dispose = false;
-        }
     }
 
     public synchronized void registerListener(ActionListener l) {
         listeners.add(l);
     }
 
-
-    // todo Not being used.  Is this really needed?
-    public synchronized void removeListener(ActionListener l) {
-        listeners.remove(l);
-    }
 
     /**
      * Notifies all the listeners that initialization is finished
@@ -477,9 +457,6 @@ public class RandomUnitGenerator implements Serializable {
     }
 
     public Iterator<String> getRatList() {
-        if (null == rats) {
-            return null;
-        }
         return rats.keySet().iterator();
     }
 
@@ -487,30 +464,14 @@ public class RandomUnitGenerator implements Serializable {
         return ratTree;
     }
 
-    public void dispose() {
-        interrupted = true;
-        dispose = true;
-        if (initialized) {
-            clear();
-        }
-    }
-
-    public void clear() {
-        rug = null;
-        rats = null;
-        ratTree = null;
-        initialized = false;
-        initializing = false;
-    }
-
     public static synchronized RandomUnitGenerator getInstance() {
         if (null == rug) {
             rug = new RandomUnitGenerator();
         }
+
         if (!rug.initialized && !rug.initializing) {
             rug.initializing = true;
             interrupted = false;
-            dispose = false;
             rug.loader = new Thread(() -> {
                 long start = System.currentTimeMillis();
                 rug.populateUnits();

@@ -18,6 +18,7 @@
  */
 package megamek.common.alphaStrike;
 
+import megamek.common.BTObject;
 import megamek.common.UnitRole;
 import megamek.common.strategicBattleSystems.BattleForceSUAFormatter;
 
@@ -38,7 +39,7 @@ import static megamek.common.alphaStrike.BattleForceSUA.*;
  * These return an undamaged state by default and thus require overriding in AlphaStrikeElement
  * (e.g. {@link #getCurrentArmor()}.
  */
-public interface ASCardDisplayable extends BattleForceSUAFormatter {
+public interface ASCardDisplayable extends BattleForceSUAFormatter, BTObject {
 
     // TODO : Must also be able to return more "current" values for MV, Dmg, crits etc.
 
@@ -146,39 +147,50 @@ public interface ASCardDisplayable extends BattleForceSUAFormatter {
         return getMovement().containsKey(mode);
     }
 
-    /** @return True if this AS element is a fighter (AF, CF). */
+    /** @return True if this AS element is a fighter (AF, CF) or an Aero SV (Fixed Wing Support). */
     default boolean isFighter() {
-        return getASUnitType().isFighter();
+        return getASUnitType().isAnyOf(AF, CF) || isAerospaceSV();
     }
 
     /** @return True if this AS element is a BattleMek or Industrial Mek (BM, IM). */
+    @Override
     default boolean isMek() {
         return getASUnitType().isMek();
     }
 
     /** @return True if this AS element is a BattleMek (BM). */
+    @Override
     default boolean isBattleMek() {
         return getASUnitType().isBattleMek();
     }
 
     /** @return True if this AS element is a ProtoMek (PM). */
+    @Override
     default boolean isProtoMek() {
         return getASUnitType().isProtoMek();
     }
 
     /** @return True if this AS element is a large Aerospace unit, i.e. SC, DS, DA, SS, JS, WS. */
+    @Override
     default boolean isLargeAerospace() {
         return getASUnitType().isLargeAerospace();
     }
 
     /** @return True if this AS element is a BattleArmor unit, i.e. BA. */
+    @Override
     default boolean isBattleArmor() {
         return getASUnitType().isBattleArmor();
     }
 
     /** @return True if this AS element is a Conventional Infantry unit, i.e. CI. */
+    @Override
     default boolean isConventionalInfantry() {
         return getASUnitType().isConventionalInfantry();
+    }
+
+    @Override
+    default boolean isAero() {
+        return isAerospace() || hasMovementMode("a");
     }
 
     /**
@@ -187,45 +199,20 @@ public interface ASCardDisplayable extends BattleForceSUAFormatter {
      *
      * @return True if this AS element is an aerospace SV.
      */
+    @Override
     default boolean isAerospaceSV() {
         return isSupportVehicle() && (hasMovementMode("a") || hasMovementMode("k")
                 || hasMovementMode("i") || hasMovementMode("p"));
     }
 
     /** @return True if this AS element is a support vehicle of any kind (SV). */
+    @Override
     default boolean isSupportVehicle() {
         return getASUnitType().isSupportVehicle();
     }
 
-    /** @return True if this AS element is Infantry (BA or CI). */
-    default boolean isInfantry() {
-        return getASUnitType().isInfantry();
-    }
-
-    /**
-     * @return True if this AS element is a ground unit. An AS element is a ground unit when it is not
-     * an aerospace unit. See {@link #isAerospace()}
-     */
-    default boolean isGround() {
-        return !isAerospace();
-    }
-
-    /**
-     * Returns true if this AS element is an aerospace unit, i.e. a fighter, a capital aerospace
-     * element or an aerospace SV. See {@link #isAerospaceSV()}.
-     *
-     * @return True if this AS element is an aerospace unit (including aero SV units).
-     */
-    default boolean isAerospace() {
-        return isFighter() || isLargeAerospace() || isAerospaceSV();
-    }
-
-    /** @return True if this AS element is a combat vehicle or ground support vehicle (CV, ground SV incl. VTOL). */
-    default boolean isVehicle() {
-        return isGround() && (isCombatVehicle() || isSupportVehicle());
-    }
-
     /** @return True if this AS element is a combat vehicle (CV, not support vehicle). */
+    @Override
     default boolean isCombatVehicle() {
         return getASUnitType().isCombatVehicle();
     }

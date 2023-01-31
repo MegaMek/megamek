@@ -40,7 +40,6 @@ import java.util.Vector;
  * @author Andrew Hunter
  */
 public class WeaponHandler implements AttackHandler, Serializable {
-
     private static final long serialVersionUID = 7137408139594693559L;
     public ToHitData toHit;
     protected HitData hit;
@@ -91,7 +90,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected boolean isStrafing = false;
 
     /**
-     * Boolean flag that determiens if this shot was the first one by a
+     * Boolean flag that determines if this shot was the first one by a
      * particular weapon in a strafing run. Used to ensure that heat is only
      * added once.
      */
@@ -400,10 +399,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
      */
     @Override
     public boolean cares(GamePhase phase) {
-        if (phase == GamePhase.FIRING) {
-            return true;
-        }
-        return false;
+        return phase.isFiring();
     }
 
     /**
@@ -428,21 +424,19 @@ public class WeaponHandler implements AttackHandler, Serializable {
         out.defaultWriteObject();
     }
 
-    private void readObject(ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
 
         gameManager = (GameManager) Server.getServerInstance().getGameManager();
     }
 
     /**
-     * @return a <code>boolean</code> value indicating wether or not this attack
+     * @return a <code>boolean</code> value indicating whether or not this attack
      *         needs further calculating, like a missed shot hitting a building,
      *         or an AMS only shooting down some missiles.
      */
-    protected boolean handleSpecialMiss(Entity entityTarget,
-            boolean bldgDamagedOnMiss, Building bldg,
-            Vector<Report> vPhaseReport) {
+    protected boolean handleSpecialMiss(Entity entityTarget, boolean bldgDamagedOnMiss,
+                                        Building bldg, Vector<Report> vPhaseReport) {
         // Shots that miss an entity can set fires.
         // Buildings can't be accidentally ignited,
         // and some weapons can't ignite fires.
@@ -481,7 +475,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if ((ae instanceof BattleArmor)
                 && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
                 && !(weapon.isSquadSupportWeapon())
-                && !(ae.getSwarmTargetId() == target.getTargetId())) {
+                && !(ae.getSwarmTargetId() == target.getId())) {
             bSalvo = true;
             int toReturn = allShotsHit() ? ((BattleArmor) ae)
                     .getShootingStrength() : Compute
@@ -1090,13 +1084,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     int nDamage;
                     if ((target.getTargetType() == Targetable.TYPE_HEX_TAG)
                             || (target.getTargetType() == Targetable.TYPE_BLDG_TAG)) {
-
-                        TagInfo info = new TagInfo(ae.getId(),
-                                target.getTargetType(), target, false);
+                        TagInfo info = new TagInfo(ae.getId(), target.getTargetType(), target, false);
                         game.addTagInfo(info);
                         
                         ae.setSpotting(true);
-                        ae.setSpotTargetId(target.getTargetId());
+                        ae.setSpotTargetId(target.getId());
                         
                         r = new Report(3390);
                         r.subject = subjectId;
@@ -1116,12 +1108,10 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     } else if (target.getTargetType() == Targetable.TYPE_BUILDING) {
                         // The building takes the full brunt of the attack.
                         nDamage = nDamPerHit * hits;
-                        handleBuildingDamage(vPhaseReport, bldg, nDamage,
-                                target.getPosition());
+                        handleBuildingDamage(vPhaseReport, bldg, nDamage, target.getPosition());
                         hits = 0;
                     } else if (entityTarget != null) {
-                        handleEntityDamage(entityTarget, vPhaseReport, bldg,
-                                hits, nCluster, bldgAbsorbs);
+                        handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
                         gameManager.creditKill(entityTarget, ae);
                         hits -= nCluster;
                         firstHit = false;
@@ -1133,7 +1123,6 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     }
                 } // Handle the next cluster.
             } else { // We missed, but need to handle special miss cases
-
                 // When shooting at a non-infantry unit in a building and the
                 // shot misses, the building is damaged instead, TW pg 171
                 if (bldgDamagedOnMiss) {
@@ -1153,6 +1142,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     hits = 0;
                 }
             }
+
             if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UAC_TWOROLLS)
                     && ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype
                             .getAmmoType() == AmmoType.T_AC_ULTRA_THB))
@@ -1418,18 +1408,16 @@ public class WeaponHandler implements AttackHandler, Serializable {
         } else if (damageableCoverType == LosEffects.DAMAGABLE_COVER_BUILDING) {
             // Normal damage
             int nDamage = nDamPerHit * Math.min(nCluster, hits);
-            Vector<Report> buildingReport = gameManager.damageBuilding(
-                    coverBuilding, nDamage, " blocks the shot and takes ",
-                    coverLoc);
+            Vector<Report> buildingReport = gameManager.damageBuilding(coverBuilding, nDamage,
+                    " blocks the shot and takes ", coverLoc);
             for (Report report : buildingReport) {
                 report.subject = subjectId;
                 report.indent();
             }
             vPhaseReport.addAll(buildingReport);
             // Damage any infantry in the building.
-            Vector<Report> infantryReport = gameManager.damageInfantryIn(
-                    coverBuilding, nDamage, coverLoc,
-                    wtype.getInfantryDamageClass());
+            Vector<Report> infantryReport = gameManager.damageInfantryIn(coverBuilding, nDamage,
+                    coverLoc, wtype.getInfantryDamageClass());
             for (Report report : infantryReport) {
                 report.indent(2);
             }
@@ -1545,13 +1533,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 hit.makeGlancingBlow();
             }
             
-            vPhaseReport
-                    .addAll(gameManager.damageEntity(entityTarget, hit, nDamage,
-                            false, ae.getSwarmTargetId() == entityTarget
-                                    .getId() ? DamageType.IGNORE_PASSENGER
-                                    : damageType, false, false, throughFront,
-                            underWater, nukeS2S));
-            if (damageType.equals(DamageType.ANTI_TSM) && (target instanceof Mech) && entityTarget.antiTSMVulnerable()) {
+            vPhaseReport.addAll(gameManager.damageEntity(entityTarget, hit, nDamage, false,
+                    ae.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER : damageType,
+                    false, false, throughFront, underWater, nukeS2S));
+            if (damageType.equals(DamageType.ANTI_TSM) && (target instanceof Mech)
+                    && entityTarget.antiTSMVulnerable()) {
                 vPhaseReport.addAll(gameManager.doGreenSmokeDamage(entityTarget));
             }
             // for salvo shots, report that the aimed location was hit after
@@ -1594,13 +1580,13 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 (entityTarget.getElevation() < targetHex.ceiling()) &&
                 (entityTarget.relHeight() >= targetHex.ceiling());
     }
-    
+
     /**
      * Worker function to (maybe) have a building absorb damage meant for the entity
      */
-    protected int absorbBuildingDamage(int nDamage, Entity entityTarget, int bldgAbsorbs, 
-            Vector<Report> vPhaseReport, Building bldg, boolean targetStickingOutOfBuilding) {
-
+    protected int absorbBuildingDamage(int nDamage, Entity entityTarget, int bldgAbsorbs,
+                                       Vector<Report> vPhaseReport, Building bldg,
+                                       boolean targetStickingOutOfBuilding) {
         // if the building will absorb some damage and the target is actually
         // entirely inside the building:
         if ((bldgAbsorbs > 0) && !targetStickingOutOfBuilding) {            
@@ -1635,8 +1621,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         return nDamage;
     }
 
-    protected void handleIgnitionDamage(Vector<Report> vPhaseReport,
-            Building bldg, int hits) {
+    protected void handleIgnitionDamage(Vector<Report> vPhaseReport, Building bldg, int hits) {
         if (!bSalvo) {
             // hits!
             Report r = new Report(2270);
@@ -1652,13 +1637,12 @@ public class WeaponHandler implements AttackHandler, Serializable {
         }
     }
 
-    protected void handleClearDamage(Vector<Report> vPhaseReport,
-            Building bldg, int nDamage) {
+    protected void handleClearDamage(Vector<Report> vPhaseReport, Building bldg, int nDamage) {
         handleClearDamage(vPhaseReport, bldg, nDamage, true);
     }
 
-    protected void handleClearDamage(Vector<Report> vPhaseReport,
-            Building bldg, int nDamage, boolean hitReport) {
+    protected void handleClearDamage(Vector<Report> vPhaseReport, Building bldg, int nDamage,
+                                     boolean hitReport) {
         if (!bSalvo && hitReport) {
             // hits!
             Report r = new Report(2270);
@@ -1679,14 +1663,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // a 5 or less
         // you do a normal ignition as though for intentional fires
         if ((bldg != null)
-                && gameManager.tryIgniteHex(target.getPosition(), subjectId, false,
-                        false,
-                        new TargetRoll(wtype.getFireTN(), wtype.getName()), 5,
-                        vPhaseReport)) {
+                && gameManager.tryIgniteHex(target.getPosition(), subjectId, false, false,
+                        new TargetRoll(wtype.getFireTN(), wtype.getName()), 5, vPhaseReport)) {
             return;
         }
-        Vector<Report> clearReports = gameManager.tryClearHex(target.getPosition(),
-                nDamage, subjectId);
+        Vector<Report> clearReports = gameManager.tryClearHex(target.getPosition(), nDamage, subjectId);
         if (!clearReports.isEmpty()) {
             vPhaseReport.lastElement().newlines = 0;
         }

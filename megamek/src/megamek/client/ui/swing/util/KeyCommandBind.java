@@ -98,10 +98,11 @@ public enum KeyCommandBind {
     DRAW_LABELS(true, "toggleDrawLabels", VK_B, CTRL_DOWN_MASK),
     HEX_COORDS(true, "toggleHexCoords", VK_G, CTRL_DOWN_MASK),
     MINIMAP(true, "toggleMinimap", VK_M, CTRL_DOWN_MASK),
-    LOS_SETTING(true, "viewLosSetting", VK_L, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
+    LOS_SETTING(true, "viewLosSetting", VK_L, CTRL_DOWN_MASK | ALT_DOWN_MASK),
     UNIT_DISPLAY(true, "toggleUnitDisplay", VK_D, CTRL_DOWN_MASK),
     UNIT_OVERVIEW(true, "toggleUnitOverview", VK_U, CTRL_DOWN_MASK),
     KEY_BINDS(true, "toggleKeybinds", VK_K, CTRL_DOWN_MASK),
+    PLANETARY_CONDITIONS(true, "togglePlanetaryConditions", VK_P, CTRL_DOWN_MASK),
     CLIENT_SETTINGS(true, "clientSettings", VK_C, ALT_DOWN_MASK),
     INC_GUISCALE(true, "incGuiScale", VK_ADD, CTRL_DOWN_MASK),
     DEC_GUISCALE(true, "decGuiScale", VK_SUBTRACT, CTRL_DOWN_MASK),
@@ -200,5 +201,12 @@ public enum KeyCommandBind {
     /** Returns a KeyStroke for a given KeyCommandBind. */
     public static KeyStroke keyStroke(KeyCommandBind bind) {
         return KeyStroke.getKeyStroke(bind.key, bind.modifiers);
+    }
+
+    /** returns formatted mod + key for display*/
+    public static String getDesc(KeyCommandBind k) {
+        String mod = getModifiersExText(k.modifiers);
+        String key = getKeyText(k.key);
+        return (mod.isEmpty() ? "" : mod + "+") + key;
     }
 }

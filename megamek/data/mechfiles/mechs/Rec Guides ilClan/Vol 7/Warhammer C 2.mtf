@@ -1,0 +1,156 @@
+Version:1.3
+Warhammer
+C 2
+mul id:7565
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3052
+source:Rec Guide:ilClan #7 - Clan Invasion
+rules level:3
+
+mass:70
+engine:280 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:18 IS Double
+walk mp:4
+jump mp:0
+
+armor:Standard(Clan)
+LA armor:20
+RA armor:20
+LT armor:17
+RT armor:17
+CT armor:22
+HD armor:9
+LL armor:15
+RL armor:15
+RTL armor:8
+RTR armor:8
+RTC armor:9
+
+Weapons:9
+ER PPC, Left Arm
+ER PPC, Right Arm
+Medium Pulse Laser, Left Torso
+ER Small Laser, Left Torso
+Small Pulse Laser, Left Torso
+Streak SRM 6, Right Torso
+Medium Pulse Laser, Right Torso
+ER Small Laser, Right Torso
+Small Pulse Laser, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+CLERPPC
+CLERPPC
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+CLERPPC
+CLERPPC
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+CLMediumPulseLaser
+CLERSmallLaser
+CLSmallPulseLaser
+
+Right Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+CLStreakSRM6
+CLStreakSRM6
+CLMediumPulseLaser
+CLERSmallLaser
+CLSmallPulseLaser
+Clan Streak SRM 6 Ammo
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

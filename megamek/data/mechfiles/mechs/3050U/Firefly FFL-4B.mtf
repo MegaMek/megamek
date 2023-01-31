@@ -150,3 +150,19 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:The Firefly is a well-armed recon 'Mech that tips the scales at thirty tons, with a maximum ground speed of 86.4 km/h, the and ability to jump up to 120 meters. As a scout 'Mech, the Firefly gives average performance with its energy weapon-heavy arsenal and is useful in both a recon and guerrilla fighter role.
+
+capabilities: Although it was slow in comparison to other 'Mechs of its weight class, it was powerfully armed and armored, and it frequently served as an anvil against which opposing forces' recon units were smashed. 
+
+deployment:The Firefly is armed with a Coventry Five-Tube LRM-5 for long-range firepower and to attempt to keep enemies at a distance. If facing a determined enemy that is intent on closing, the Firefly carries three Martell medium lasers, which can cause a considerable amount of damage. Finally, to protect against missile attacks, the Firefly carries a SureFire 444 anti-missile system in the left arm, with a "false" AMS in the right arm.
+
+history:The Firefly, which entered service in the late 27th century, was one of the SLDF's primary light 'Mechs in its later years.Cases occurred in all House forces, but not in the numbers deployed by the SLDF, and all were presumed destroyed by the end of the Second Succession War, save for tales of anomalous examples in the Periphery. The design reappeared with Wolf's Dragoons in the early 31st century, raising eyebrows, yet the secret of the Firefly's origin was revealed when the Dragoons' Clan origins were revealed. In the 3040s, the advent of a small number of Fireflys with the Com Guard forces elicited a similar reaction.
+
+manufacturer:Refit
+primaryfactory:Various
+systemmanufacturer:CHASSIS:Earthwerks Firefly
+systemmanufacturer:ENGINE:GM 150
+systemmanufacturer:ARMOR:StarSlab/1
+systemmanufacturer:JUMPJET:Lexington Lifters
+systemmanufacturer:COMMUNICATIONS:Datcom 18
+systemmanufacturer:TARGETING:Radcom TXX

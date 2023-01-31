@@ -13,20 +13,7 @@
 */  
 package megamek.client.ui.swing.boardview;
 
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Composite;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Rectangle;
-import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import megamek.MMConstants;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
@@ -44,6 +31,14 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.ImageUtil;
 import org.apache.logging.log4j.LogManager;
 
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.font.TextAttribute;
+import java.text.AttributedString;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /** 
  * An overlay for the Boardview that displays a selection of keybinds
  * for the current game situation 
@@ -51,7 +46,7 @@ import org.apache.logging.log4j.LogManager;
  * @author SJuliez
  */
 public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListener {
-    private static final Font FONT = new Font("SansSerif", Font.PLAIN, 13);
+    private static final Font FONT = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 13);
     private static final int DIST_TOP = 30;
     private static final int DIST_SIDE = 30;
     private static final int PADDING_X = 10;
@@ -65,17 +60,19 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
     private static final List<KeyCommandBind> BINDS_FIRE = Arrays.asList(
             KeyCommandBind.NEXT_WEAPON,
             KeyCommandBind.PREV_WEAPON,
+            KeyCommandBind.UNDO_LAST_STEP,
             KeyCommandBind.NEXT_TARGET,
             KeyCommandBind.NEXT_TARGET_VALID,
             KeyCommandBind.NEXT_TARGET_NOALLIES,
             KeyCommandBind.NEXT_TARGET_VALID_NO_ALLIES
-            );
+    );
 
     /** The keybinds to be shown during the movement phase */
     private static final List<KeyCommandBind> BINDS_MOVE = Arrays.asList(
             KeyCommandBind.TOGGLE_MOVEMODE,
+            KeyCommandBind.UNDO_LAST_STEP,
             KeyCommandBind.TOGGLE_CONVERSIONMODE
-            );
+    );
 
     /** The keybinds to be shown in all phases during the local player's turn */
     private static final List<KeyCommandBind> BINDS_MY_TURN = Arrays.asList(
@@ -84,19 +81,19 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
             KeyCommandBind.NEXT_UNIT,
             KeyCommandBind.PREV_UNIT,
             KeyCommandBind.CENTER_ON_SELECTED
-            );
+    );
 
     /** The keybinds to be shown in all phases during any player's turn */
     private static final List<KeyCommandBind> BINDS_ANY_TURN = Arrays.asList(
             KeyCommandBind.TOGGLE_CHAT,
             KeyCommandBind.DRAW_LABELS,
             KeyCommandBind.HEX_COORDS
-            );
+    );
     
     /** The keybinds to be shown in the Board Editor */
     private static final List<KeyCommandBind> BINDS_BOARD_EDITOR = Arrays.asList(
             KeyCommandBind.HEX_COORDS
-            );
+    );
 
     private static final List<String> ADDTL_BINDS = Arrays.asList(
             Messages.getString("KeyBindingsDisplay.fixedBinds").split("\n"));
@@ -106,6 +103,7 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
 
 
     ClientGUI clientGui;
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     /** True when the overlay is displayed or fading in. */
     private boolean visible;
@@ -127,11 +125,12 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
      * for the current game situation. 
      */
     public KeyBindingsOverlay(Game game, ClientGUI cg) {
-        visible = GUIPreferences.getInstance().getBoolean(GUIPreferences.SHOW_KEYBINDS_OVERLAY);
+        visible = GUIP.getBoolean(GUIPreferences.SHOW_KEYBINDS_OVERLAY);
         currentPhase = game.getPhase();
         game.addGameListener(gameListener);
         clientGui = cg;
         KeyBindParser.addPreferenceChangeListener(this);
+        GUIP.addPreferenceChangeListener(this);
     }
 
     @Override
@@ -146,12 +145,13 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
             changed = false;
             
             // calculate the size from the text lines, font and padding
-            graph.setFont(FONT);
-            FontMetrics fm = graph.getFontMetrics(FONT);
+            Font newFont = FONT.deriveFont(FONT.getSize() * GUIP.getGUIScale());
+            graph.setFont(newFont);
+            FontMetrics fm = graph.getFontMetrics(newFont);
             List<String> allLines = assembleTextLines();
             Rectangle r = getSize(graph, allLines, fm);
             r = new Rectangle(r.width + 2 * PADDING_X, r.height + 2 * PADDING_Y);
-            
+
             displayImage = ImageUtil.createAcceleratedImage(r.width, r.height);
             Graphics intGraph = displayImage.getGraphics();
             GUIPreferences.AntiAliasifSet(intGraph);
@@ -190,6 +190,10 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
         int width = 0;
         for (String line: lines) {
             if (fm.stringWidth(line) > width) {
+                if (line.startsWith("#") && line.length() > 7) {
+                    line = line.substring(7);
+                }
+
                 width = fm.stringWidth(line);
             }
         }
@@ -200,11 +204,8 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
     /** Returns an ArrayList of all text lines to be shown. */
     private List<String> assembleTextLines() {
         List<String> result = new ArrayList<>();
-        
-        KeyCommandBind kcb = KeyCommandBind.KEY_BINDS;
-        String mod = KeyEvent.getModifiersExText(kcb.modifiers);
-        String key = KeyEvent.getKeyText(kcb.key);
-        String toggleKey = (mod.isEmpty() ? "" : mod + "+") + key;
+
+        String toggleKey = KeyCommandBind.getDesc(KeyCommandBind.KEY_BINDS);
         result.add(Messages.getString("KeyBindingsDisplay.heading", toggleKey));
         
         if (clientGui != null) {
@@ -244,9 +245,8 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
         List<String> result = new ArrayList<>();
         for (KeyCommandBind kcb: kcbs) {
             String label = Messages.getString("KeyBinds.cmdNames." + kcb.cmd);
-            String mod = KeyEvent.getModifiersExText(kcb.modifiers);
-            String key = KeyEvent.getKeyText(kcb.key);
-            result.add(label + ": " + (mod.isEmpty() ? "" : mod + "+") + key);
+            String d = KeyCommandBind.getDesc(kcb);
+            result.add(label + ": " + d);
         }
         return result;
     }
@@ -267,15 +267,21 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
                 int grn = Integer.parseInt(s.substring(3, 5), 16);
                 int blu = Integer.parseInt(s.substring(5, 7), 16);
                 textColor = new Color(red, grn, blu);
-            } catch (Exception e) {
-                LogManager.getLogger().error("", e);
+            } catch (Exception ex) {
+                LogManager.getLogger().error("", ex);
             }
             s = s.substring(7);
         }
-        graph.setColor(SHADOW_COLOR);
-        graph.drawString(s, x + 1, y + 1);
-        graph.setColor(textColor);
-        graph.drawString(s, x, y);
+
+        if (s.length() > 0) {
+            AttributedString text = new AttributedString(s);
+            text.addAttribute(TextAttribute.FONT, new Font(FONT.getFontName(), Font.PLAIN, (int) (FONT.getSize() * GUIP.getGUIScale())), 0, s.length());
+
+            graph.setColor(SHADOW_COLOR);
+            graph.drawString(text.getIterator(), x + 1, y + 1);
+            graph.setColor(textColor);
+            graph.drawString(text.getIterator(), x, y);
+        }
     }
     
     /** 
@@ -285,7 +291,7 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
      * */
     public void setVisible(boolean vis) {
         visible = vis;
-        GUIPreferences.getInstance().setValue(GUIPreferences.SHOW_KEYBINDS_OVERLAY, vis);
+        GUIP.setValue(GUIPreferences.SHOW_KEYBINDS_OVERLAY, vis);
         if (vis) {
             fadingIn = true;
             fadingOut = false;
@@ -341,9 +347,8 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
 
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
-        if (e.getName().equals(KeyBindParser.KEYBINDS_CHANGED)) {
-            changed = true;
-        }
+        // change on any preference change
+        changed = true;
     }
 
 }

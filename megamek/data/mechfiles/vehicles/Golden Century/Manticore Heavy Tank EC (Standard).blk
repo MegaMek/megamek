@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -13,10 +13,11 @@ Tank
 </UnitType>
 
 <Name>
-Manticore Heavy Tank EC
+Manticore Heavy Tank
 </Name>
 
 <Model>
+EC
 </Model>
 
 <mul id:>
@@ -32,7 +33,7 @@ Manticore Heavy Tank EC
 </originalBuildYear>
 
 <type>
-Mixed (IS Chassis) Experimental
+Mixed (IS Chassis) Advanced
 </type>
 
 <motion_type>
@@ -49,10 +50,6 @@ Tracked
 <engine_type>
 0
 </engine_type>
-
-<clan_engine>
-false
-</clan_engine>
 
 <armor>
 42
@@ -97,3 +94,4 @@ Succession Wars
 <tonnage>
 60.0
 </tonnage>
+

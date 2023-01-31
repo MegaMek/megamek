@@ -159,6 +159,10 @@ public class RandomArmyCreator {
     }
 
     public static void main(String[] args) {
+        StringBuilder sbMech = new StringBuilder();
+        StringBuilder sbVehicle = new StringBuilder();
+        StringBuilder sbBattleArmor = new StringBuilder();
+        StringBuilder sbInfantry = new StringBuilder();
         Parameters p = new Parameters();
         p.mechs = 4;
         p.tanks = 4;
@@ -171,7 +175,7 @@ public class RandomArmyCreator {
         p.tech = TechConstants.T_IS_TW_NON_BOX;
         p.canon = true;
         p.padWithInfantry = true;
-        List<MechSummary> units = generateArmy(p);
+        List<MechSummary> units = generateArmy(p, sbMech, sbVehicle, sbBattleArmor, sbInfantry);
 
         int totalBV = 0;
         for (MechSummary m : units) {
@@ -184,10 +188,9 @@ public class RandomArmyCreator {
         }
         System.out.print("Total: ");
         System.out.println(totalBV);
-
     }
 
-    public static List<MechSummary> generateArmy(Parameters p) {
+    public static List<MechSummary> generateArmy(Parameters p, StringBuilder sbMech, StringBuilder sbVehicle, StringBuilder sbBattleArmor, StringBuilder sbInfantry) {
         int allowedVariance = java.lang.Math.abs(p.maxBV - p.minBV);
         MechSummary[] all = MechSummaryCache.getInstance().getAllMechs();
         List<MechSummary> allMechs = new ArrayList<>();
@@ -247,7 +250,6 @@ public class RandomArmyCreator {
             if (p.canon && !m.isCanon()) {
                 continue;
             }
-
 
             //ignoring infantry, BA and Proto for advancedSearch filter
             if (((!m.getUnitType().equals(UnitType.getTypeName(UnitType.INFANTRY)))
@@ -327,6 +329,11 @@ public class RandomArmyCreator {
             units.addAll(generateArmy(allInfantry, p.infantry, p.maxBV
                     - countBV(units), allowedVariance));
         }
+
+        sbMech.append(allMechs.size());
+        sbVehicle.append(allTanks.size());
+        sbBattleArmor.append(allBA.size());
+        sbInfantry.append(allInfantry.size());
         return units;
     }
 }

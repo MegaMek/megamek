@@ -73,6 +73,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     private JButton buttonResetSearch;
     private final JToggleButton buttonPvToggle = new JToggleButton(Messages.getString("MechSelectorDialog.TogglePV"));
     protected JList<String> listTechLevel = new JList<>();
+    private JLabel lblCount;
     /**
      * We need to map the selected index of listTechLevel to the actual TL it
      * belongs to
@@ -356,6 +357,11 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         gridBagConstraintsWest.gridy = 0;
         panelSearchButtons.add(buttonPvToggle, gridBagConstraintsWest);
 
+        lblCount = new JLabel("");
+        gridBagConstraintsWest.gridx = 3;
+        gridBagConstraintsWest.gridy = 0;
+        panelSearchButtons.add(lblCount, gridBagConstraintsWest);
+
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -567,6 +573,8 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             return;
         }
         sorter.setRowFilter(unitTypeFilter);
+        String msg_unitcount = Messages.getString("MechSelectorDialog.UnitCount");
+        lblCount.setText(String.format(" %s %d", msg_unitcount, sorter.getViewRowCount()));
     }
 
     /**

@@ -86,6 +86,10 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
     private JButton m_bRandomSkills = new JButton(Messages.getString("SkillGenerationDialog.title"));
     private JButton m_bAdvSearch = new JButton(Messages.getString("RandomArmyDialog.AdvancedSearch"));
     private JButton m_bAdvSearchClear = new JButton(Messages.getString("RandomArmyDialog.AdvancedSearchClear"));
+    private JLabel m_lMechCount = new JLabel();
+    private JLabel m_lVehicleCount = new JLabel();
+    private JLabel m_lBattleArmorCount = new JLabel();
+    private JLabel m_lInfantryCount = new JLabel();
     private JButton m_bGenerate = new JButton(Messages.getString("RandomArmyDialog.Generate"));
     private JButton m_bAddToForce = new JButton(Messages.getString("RandomArmyDialog.AddToForce"));
 
@@ -194,6 +198,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         GridBagLayout layout = new GridBagLayout();
         m_pParameters.setLayout(layout);
         GridBagConstraints constraints = new GridBagConstraints();
+        constraints.insets = new Insets(5, 5, 0, 0);
         constraints.weightx = 0.0;
         constraints.weighty = 0.0;
         constraints.anchor = GridBagConstraints.WEST;
@@ -207,6 +212,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         constraints.weightx = 0.0;
         layout.setConstraints(m_labBV, constraints);
         m_pParameters.add(m_labBV);
+        layout.setConstraints(m_tBVmin, constraints);
         m_pParameters.add(m_tBVmin);
         JLabel dash = new JLabel("-");
         layout.setConstraints(dash, constraints);
@@ -219,34 +225,42 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         constraints.weightx = 0.0;
         layout.setConstraints(m_labMechs, constraints);
         m_pParameters.add(m_labMechs);
-        constraints.gridwidth = GridBagConstraints.REMAINDER;
-        constraints.weightx = 1.0;
         layout.setConstraints(m_tMechs, constraints);
         m_pParameters.add(m_tMechs);
+        constraints.gridwidth = GridBagConstraints.REMAINDER;
+        constraints.weightx = 1.0;
+        layout.setConstraints(m_lMechCount, constraints);
+        m_pParameters.add(m_lMechCount);
         constraints.gridwidth = 1;
         constraints.weightx = 0.0;
         layout.setConstraints(m_labVees, constraints);
         m_pParameters.add(m_labVees);
-        constraints.gridwidth = GridBagConstraints.REMAINDER;
-        constraints.weightx = 1.0;
         layout.setConstraints(m_tVees, constraints);
         m_pParameters.add(m_tVees);
+        constraints.gridwidth = GridBagConstraints.REMAINDER;
+        constraints.weightx = 1.0;
+        layout.setConstraints(m_lVehicleCount, constraints);
+        m_pParameters.add(m_lVehicleCount);
         constraints.gridwidth = 1;
         constraints.weightx = 0.0;
         layout.setConstraints(m_labBA, constraints);
         m_pParameters.add(m_labBA);
-        constraints.gridwidth = GridBagConstraints.REMAINDER;
-        constraints.weightx = 1.0;
         layout.setConstraints(m_tBA, constraints);
         m_pParameters.add(m_tBA);
+        constraints.gridwidth = GridBagConstraints.REMAINDER;
+        constraints.weightx = 1.0;
+        layout.setConstraints(m_lBattleArmorCount, constraints);
+        m_pParameters.add(m_lBattleArmorCount);
         constraints.gridwidth = 1;
         constraints.weightx = 0.0;
         layout.setConstraints(m_labInfantry, constraints);
         m_pParameters.add(m_labInfantry);
-        constraints.gridwidth = GridBagConstraints.REMAINDER;
-        constraints.weightx = 1.0;
         layout.setConstraints(m_tInfantry, constraints);
         m_pParameters.add(m_tInfantry);
+        constraints.gridwidth = GridBagConstraints.REMAINDER;
+        constraints.weightx = 1.0;
+        layout.setConstraints(m_lInfantryCount, constraints);
+        m_pParameters.add(m_lInfantryCount);
         constraints.gridwidth = 1;
         constraints.weightx = 0.0;
         layout.setConstraints(m_labYear, constraints);
@@ -314,7 +328,6 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         c.weightx = 1.0;
         c.weighty = 1.0;
         c.insets = new java.awt.Insets(5, 5, 5, 5);
-
 
         m_treeRAT.setRootVisible(false);
         m_treeRAT.getSelectionModel().setSelectionMode
@@ -709,6 +722,10 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                     unitsModel.setData(unitList);
                     m_pFormationOptions.updateGeneratedUnits(unitList);
                 } else {
+                    StringBuilder sbMech = new StringBuilder();
+                    StringBuilder sbVehicle = new StringBuilder();
+                    StringBuilder sbBattleArmor = new StringBuilder();
+                    StringBuilder sbInfantry = new StringBuilder();
                     RandomArmyCreator.Parameters p = new RandomArmyCreator.Parameters();
                     p.advancedSearchFilter = searchFilter;
                     p.asPanel = asd.getASAdvancedSearch();
@@ -723,7 +740,12 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                     p.tech = m_chType.getSelectedIndex();
                     p.minYear = Integer.parseInt(m_tMinYear.getText());
                     p.maxYear = Integer.parseInt(m_tMaxYear.getText());
-                    unitsModel.setData(RandomArmyCreator.generateArmy(p));
+                    unitsModel.setData(RandomArmyCreator.generateArmy(p, sbMech, sbVehicle, sbBattleArmor, sbInfantry));
+                    String msg_outof = Messages.getString("RandomArmyDialog.OutOf");
+                    m_lMechCount.setText(String.format(msg_outof + sbMech));
+                    m_lVehicleCount.setText(String.format(msg_outof + sbVehicle));
+                    m_lBattleArmorCount.setText(String.format(msg_outof + sbBattleArmor));
+                    m_lInfantryCount.setText(String.format(msg_outof + sbInfantry));
                 }
             } catch (NumberFormatException ignored) {
 

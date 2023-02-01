@@ -1,0 +1,114 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Stormbird Battle Armor
+</Name>
+
+<Model>
+(Sqd4)
+</Model>
+
+<mul id:>
+9412
+</mul id:>
+
+<year>
+3092
+</year>
+
+<originalBuildYear>
+3092
+</originalBuildYear>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Leg
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<armor_type>
+35
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<Point Equipment>
+CLAdvancedSRM3:Body
+BABasicManipulator:LA
+BA-Advanced SRM-3 Ammo:Body:Shots4#
+BA-Advanced SRM-3 Ammo:Body:Shots1#
+BA Fire Resistant:LA
+BA Fire Resistant:Body
+BA Fire Resistant:LA
+BA Fire Resistant:RA
+BA Fire Resistant:RA
+CLBAHeavyFlamer:RA
+</Point Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<manufacturer>
+CSR Battle Armor Facility Beta, Olivetti Weaponry
+</manufacturer>
+
+<primaryFactory>
+Quatre Belle (CSR Beta), Sudeten (Olivetti
+</primaryFactory>
+
+<source>
+Rec Guide:ilClan #30 - Early Republic
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+13
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+3
+</weightclass>
+

@@ -35,6 +35,7 @@ public class CLBARecoillessRifleMedium extends Weapon {
         addLookupName("ISBAMedium Recoilless Rifle");
         addLookupName("ISBAMediumRecoillessRifle");
         sortingName = "Recoilless Rifle C";
+        shortName = "Medium Recoiless Rifle";
         heat = 0;
         damage = 3;
         infDamageClass = WeaponType.WEAPON_BURST_2D6;

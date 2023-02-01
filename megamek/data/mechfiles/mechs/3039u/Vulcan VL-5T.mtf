@@ -151,20 +151,20 @@ Heat Sink
 -Empty-
 -Empty-
 
-Overview: Republican forces fought tooth and nail to defend the Terran Hegemony worlds they had taken over. Close-quarters fighting in urban environments allowed their infantry to shine the brightest, and scores of Star League Defense Force 'Mechs were disabled or destroyed by ambushes and assaults. An anti-infantry platform was quickly commissioned in response, and the Vulcan entered SLDF forces only shortly before the end of the way. With its original designer, MartherTechno Inc, facing destruction just a matter of months after the fall of the Star League, the Vulcan spread throughout the Sphere with schematics for the design falling into Lyran and Free Worlds hands.
+overview:The Vulcan was designed as an anti-infantry 'Mech in 2775 during the closing years of the Amaris Civil War. 
 
-Capabilities: Above all an urban combatant, the Vulcan is highly maneuverable and built around anti-infantry firepower. Commonly fielding a longer-ranged ballistic weapon as well, this larger gun is commonly used as an anti-'Mech or anti-building weapon. While its armor is underwhelming for a 'Mech of its size, its protection is more than adequate for its role.
+capabilities:The Vulcan is lightly armored at only five tons, though this is typically sufficient when facing infantry forces and its narrow profile makes it a harder target to hit. A cruising speed of 97.2 km/h is enhanced by six jump jets mounted in the rear of the Vulcan's torso, specially vented to reduce heat buildup, giving it a jumping range of 180 meters.
 
-Deployment: The Lyran Commonwealth and Free Worlds League are the primary users of the Vulcan. As they control both primary manufacturing plants for the design, their Vulcans are commonly in better repair than those fielded by other interstellar powers. Even so, the design remains in use throughout all of human space, with its speed and specialist role ensuring that many remain in relatively good condition. The VL-5T is a common variant, one fielded in large numbers by the Armed Forces of the Federated Suns. Replacing the larger autocannon with more lasers and armor, it is often used in line or heavy scouting roles.
+deployment:The Vulcan's primary weapons are a Firestorm Flamer mounted in the right arm and a Sperry Browning Machine Gun in the left arm, fed by one ton of ammunition stored in the left torso. To give it some anti-'Mech firepower the Vulcan was given a reliable Armstrong Autocannon/2 with one ton of ammo, both mounted in the right torso, however it performed poorly in this regard and was most often employed as an anti-building weapon. A Randell medium laser in the left torso served as a backup weapon for the autocannon, while ten heat sinks are used to keep the 'Mech cool. Its one true deficiency was the lack of manipulative hands, limiting its ability to engage in close combat fighting with other 'Mechs.
 
-systemmanufacturer:CHASSIS:Mather Tech
-systemmode:CHASSIS:500
-systemmanufacturer:ENGINE:Pitban
-systemmode:ENGINE:240
-systemmanufacturer:ARMOR:StarGuard
-systemmode:ARMOR:I
-systemmanufacturer:COMMUNICATIONS:Hartford
-systemmode:COMMUNICATIONS:200S
-systemmanufacturer:TARGETING:Hartford
-systemmode:TARGETING:TA10
+history:As the SLDF battled Republican troops in the streets and thoroughfares of the Terran Hegemony, many 'Mechs were destroyed by dug-in infantry during these urban battles. In response to this problem, MatherTechno Inc. designed the Vulcan to pack weaponry capable of taking out large numbers of enemy troops and capable of unparalleled mobility in an urban environment, though not intended to engage in all-out battles with larger 'Mechs. The Vulcan's distinct profile would eventually give rise to its nickname "Scarecrow." Production of the Vulcan began as soon as MatherTechno's factory on Northwind was liberated by the SLDF, with Aleksandr Kerensky himself specifically ordering their production lines converted to produce the Vulcan. The design's baptism of fire came during Operation Liberation, the final battle of the civil war to liberate Terra from Stefan Amaris, where it served as part of the Volunteer Regiments and earned its reputation as a tough city fighter. Each of the Great Houses had a sizable number of Vulcans at the start of the First Succession War when, just a few months into the conflict, MatherTechno's factory on Northwind was destroyed. Only the Lyran Commonwealth and Free Worlds League managed to acquire the design specifications for the Vulcan and keep it in limited production throughout the rest of the Succession Wars, with the League awarding the schematics to Nimakachi Fusion Products Limited and the Commonwealth giving theirs to Coventry Metal Works. Of the other Great Houses the Capellan Confederation had the fewest number of Vulcans as a result of the loss of Sappho, where the majority of their Vulcans were stationed, to House Marik during the Second Succession War. The Federated Suns kept their Vulcans going thanks to several spare part supply dumps located in their territory, and used the 'Mech extensively during the reconquest of Kentares IV. The majority of the Draconis Combine's Vulcan inventory was used during a raid on Dobson in 3020 where they decimated several key Davion aerospace fighter bases. Following the recovery of several lostech components Nimakachi was able to create a new variant, the VT-5M, and begin limited production in 3050,eventually increasing their lines to produce twenty a month. Coventry Metal Works produced their own upgraded variant around the same time, the VT-5S, which played a pivotal role during the FedCom Civil War as part of the Allied forces. The Word of Blake purchased a number of Vulcans in preparation for their seizure of Terra in 3058, codenamed Operation Odysseus. The Blakists would go on to seize more Vulcans after the start of the Jihad following their sacking of Nimakachi's Tematagi plant in 3069, with many transferred to the Protectorate Militia for policing duties.
+
+manufacturer:MaltherTechno Inc.
+primaryfactory:Northwind
+systemmanufacturer:CHASSIS:Mather Tech 500
+systemmanufacturer:ENGINE:Pitban 240
+systemmanufacturer:ARMOR:StarGuard I
+systemmanufacturer:COMMUNICATIONS:Hartford 200S
+systemmanufacturer:TARGETING:Hartford TA10
+systemmanufacturer:JUMPJET:Model 9 Pitban
 

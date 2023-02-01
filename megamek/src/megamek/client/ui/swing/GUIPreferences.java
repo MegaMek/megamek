@@ -13,7 +13,6 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.client.ui.Messages;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.boardview.LabelDisplayStyle;
 import megamek.client.ui.swing.util.PlayerColour;
@@ -218,7 +217,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MINIMUM_SIZE_WIDTH = "MinimumSizeWidth";
     public static final String MOUSE_WHEEL_ZOOM = "MouseWheelZoom";
     public static final String MOUSE_WHEEL_ZOOM_FLIP = "MouseWheelZoomFlip";
-    public static final String NAG_FOR_BOT_README = "NagForBotReadme";
     public static final String NAG_FOR_CRUSHING_BUILDINGS = "NagForCrushingBuildings";
     public static final String NAG_FOR_MAP_ED_README = "NagForMapEdReadme";
     public static final String NAG_FOR_MASC = "NagForMASC";
@@ -535,7 +533,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MOUSE_WHEEL_ZOOM, true);
         store.setDefault(MOUSE_WHEEL_ZOOM_FLIP, true);
 
-        store.setDefault(NAG_FOR_BOT_README, true);
         store.setDefault(NAG_FOR_CRUSHING_BUILDINGS, true);
         store.setDefault(NAG_FOR_MAP_ED_README, true);
         store.setDefault(NAG_FOR_MASC, true);
@@ -1030,10 +1027,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getMouseWheelZoomFlip() {
         return store.getBoolean(MOUSE_WHEEL_ZOOM_FLIP);
-    }
-
-    public boolean getNagForBotReadme() {
-        return store.getBoolean(NAG_FOR_BOT_README);
     }
 
     public boolean getNagForCrushingBuildings() {
@@ -1637,10 +1630,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setMouseWheelZoomFlip(boolean b) {
         store.setValue(MOUSE_WHEEL_ZOOM_FLIP, b);
-    }
-
-    public void setNagForBotReadme(boolean b) {
-        store.setValue(NAG_FOR_BOT_README, b);
     }
 
     public void setNagForCrushingBuildings(boolean b) {

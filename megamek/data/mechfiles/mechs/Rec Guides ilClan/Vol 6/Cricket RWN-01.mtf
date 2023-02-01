@@ -1,13 +1,12 @@
-Version:1.1
+Version:1.3
 Cricket
 RWN-01
 mul id:7523
-
 Config:Biped
 techbase:Inner Sphere
 era:3132
-rules level:4
 source:Rec Guide:ilClan #6 - Dark Age
+rules level:3
 
 mass:30
 engine:210 XXL Engine(IS)
@@ -149,4 +148,16 @@ IS Ballistic-Reinforced
 -Empty-
 -Empty-
 
+overview:The Cricket 'Mech was developed by the DCMS as a raider and harasser. 
+capabilities:The Cricket was constructed using every delicate, weight-saving technique available. These technologies are frequently derided as being too risky for use in line units. The spindly Cricket, on the other hand, is designed to harass opposing forces, following in the footsteps of long-time Kuritan favorites the Spider and Venom. The 'Mech makes good use of the weight saved by its delicate internals. When employing MASC, it can achieve even greater ground speed than its forefathers, but it also integrates as much ballistic-reinforced plate as could be put on its shell before the frame buckled. In this sense, the designers may have made a mistake: the Cricket has become renowned as a hanger queen, frequently requiring costly chassis work. Despite its all-energy weapon loadout, it has proven unpopular as a scout or guerilla unit due to its tiny cockpit, which makes extended durations in the field exhausting. However, the Cricket's mix of speed and lethal precise long-range PPCs has made it a favorite among DCMS skirmishers.
+deployment:Built on a composite chassis and equipped with a small cockpit, XL gyro, and XXL engine, the Cricket carries a pair of light PPCs tied into an advanced targeting computer to allow accurate long-ranged fire. The smaller, lighter equipment allows the Cricket to carry nine tons of ballistic reinforced armor. This makes it resistant to the weapons often employed by the AFFS. The downside to these advanced systems is increased maintenance times; The Cricket has developed a reputation as a "hangar queen".
+history:The Cricket made its debut on Dieron during 3132's confusing free for all, one of the first actions after the Blackout. Though Katana Tormark's Dragon's Fury received no official Kuritan help, LAW surreptitiously deployed a lance of Cricket prototypes to assist her (and generate valuable field-test data). It was not a good start: the prototypes spent nearly as much time on gantries as they did in the field. When they were operational, however, they were incredibly effective at distracting Exarch Redburn's forces. In one memorable instance, a Cricket landed squarely in the sights of a Republic Legionnaire and took a full barrage of rotary autocannon fire, only to shake it off, giggle mockingly, and run away. Such interactions aided in convincing the DCMS that the 'Mech was worthy of production.
+manufacturer:Luthien Armor Works
+primaryfactory:New Samarkand
+systemmanufacturer:CHASSIS:New Samarkand Class 22 Composite
+systemmanufacturer:ENGINE:GM 210 XXL
+systemmanufacturer:ARMOR:Durallex Ballistic-Reinforced
+systemmanufacturer:JUMPJET:Icarus 81
+systemmanufacturer:COMMUNICATIONS:Sipher CommSys 4
+systemmanufacturer:TARGETING:Dynatec 990 with Targeting Computer
 

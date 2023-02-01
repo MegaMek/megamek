@@ -108,11 +108,14 @@ public class ASSpecialAbilityConverter {
 
     protected void processMiscMounted(Mounted misc) {
         MiscType miscType = (MiscType) misc.getType();
-        if (miscType.isAnyOf(Sensor.BAP, Sensor.BAPP, Sensor.CLAN_AP)) {
+        if (miscType.is(Sensor.EW_EQUIPMENT)) {
+            assign(misc, ECM);
+            assign(misc, LPRB);
+        } else if (miscType.isAnyOf(Sensor.BAP, Sensor.BAPP, Sensor.CLAN_AP)) {
             assign(misc, PRB);
         } else if (miscType.isAnyOf(Sensor.CLIMPROVED, Sensor.ISIMPROVED)) {
             assign(misc, RCN);
-        } else if (miscType.isAnyOf(Sensor.LIGHT_AP, Sensor.ISBALIGHT_AP, Sensor.EW_EQUIPMENT)) {
+        } else if (miscType.isAnyOf(Sensor.LIGHT_AP, Sensor.ISBALIGHT_AP)) {
             assign(misc, LPRB);
         } else if (miscType.isAnyOf(Sensor.BLOODHOUND)) {
             assign(misc, BH);
@@ -234,6 +237,8 @@ public class ASSpecialAbilityConverter {
             assign(misc, BHJ2);
         } else if (miscType.hasFlag(F_HARJEL_III)) {
             assign(misc, BHJ3);
+        } else if (miscType.is(EquipmentTypeLookup.P_TSM)) {
+            assign(misc, TSMX);
         } else if (miscType.hasFlag(F_INDUSTRIAL_TSM)) {
             assign(misc, ITSM);
         } else if (miscType.hasFlag(F_TSM)) {
@@ -292,11 +297,11 @@ public class ASSpecialAbilityConverter {
     protected void processATMO() { }
 
     protected boolean hasSoaCapableEngine() {
-        if (entity.hasEngine()) {
+        if (!entity.hasEngine()) {
             return false;
         }
         int engineType = entity.getEngine().getEngineType();
-        return (engineType != Engine.COMBUSTION_ENGINE) && (engineType != Engine.STEAM);
+        return entity.getEngine().isFusion() || (engineType == Engine.FUEL_CELL) || (engineType == Engine.FISSION);
     }
 
     protected void processUnitFeatures() {

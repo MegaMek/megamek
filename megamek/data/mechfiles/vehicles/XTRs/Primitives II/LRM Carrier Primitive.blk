@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -28,29 +28,28 @@ LRM Carrier
 2440
 </year>
 
+<originalBuildYear>
+2440
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
-
-<tonnage>
-55.0
-</tonnage>
 
 <motion_type>
 Tracked
 </motion_type>
 
-<engine_type>
-1
-</engine_type>
-
-<fuel>
-1
-</fuel>
+<transporters>
+</transporters>
 
 <cruiseMP>
 3
 </cruiseMP>
+
+<engine_type>
+1
+</engine_type>
 
 <armor>
 22
@@ -59,27 +58,19 @@ Tracked
 12
 </armor>
 
-<barrating>
-6
-</barrating>
-
-<structural_tech_rating>
-3
-</structural_tech_rating>
-
 <Body Equipment>
 Advanced Fire Control
-ISLRM15 Ammo
-ISLRM15 Ammo
-ISLRM15 Ammo
-ISLRM15 Ammo
-ISLRM15 Ammo
+IS Ammo LRM-15
+IS Ammo LRM-15
+IS Ammo LRM-15
+IS Ammo LRM-15
+IS Ammo LRM-15
 </Body Equipment>
 
 <Front Equipment>
-ISLRM15
-ISLRM15
-ISLRM15
+LRM 15
+LRM 15
+LRM 15
 </Front Equipment>
 
 <Right Equipment>
@@ -91,6 +82,66 @@ ISLRM15
 <Rear Equipment>
 </Rear Equipment>
 
+<barrating>
+6
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<engine_tech_rating>
+3
+</engine_tech_rating>
+
+<armor_tech_rating>
+3
+</armor_tech_rating>
+
+<capabilities>
+The chassis for missile carriers vary in basic design, but they are all essentially military transport vehicles, tracked being the most common, adapted to carry the huge missile launchers and loading equipment. Those adaptations generally consist of reinforcing the suspension systems and armoring the crew and critical components areas enough to survive the back blast from so many missiles. With an average top speed of 54 km/h and armor unable to survive counterbattery fire, if forced to engage in direct combat a carrier's life expectancy is measured in seconds.
+</capabilities>
+
+<overview>
+Ever since the development of the first rocket centuries ago, military units have used mobile missile systems to provide cheap and effective fire support. Along with its SRM counterpart, the LRM Carrier serves in every military action across the Inner Sphere in a variety of shapes and forms.
+</overview>
+
+<deployment>
+This Age of War design uses three tons of BAR 6 armor to provide protection. First constructed in 2440, it was built with Primitive Technology, which is similar to methods used to make modern Support Vehicles. It mounted Advanced Fire Control systems to guide the three LRM-15 launchers mounted on the vehicle's front side. Five tons of ammunition kept the early LRM Carrier in the fight.
+</deployment>
+
+<history>
+Manufactured by almost every major military supplier, the modern LRM Carrier is derived from those developed in the Age of War by Quik Products Inc, the future Quikscell Company. In many cases derived a little too closely, during the Succession Wars era many manufacturers were producing little more than shoddy direct copies that fell below even Quikscell's low quality standards. After the end of the Fourth Succession War Quikscell lodged lawsuits against those manufacturing clones of Quik based carriers, resulting the closure of many smaller manufacturers and larger manufacturers ending production. While those who produced their own designs were not affected, Quikscell's elimination of much of its competitors and its offer to exchange any missile carrier not produced by them for legit Quikscell versions and parts made it the number one player of the missile carrier market.
+</history>
+
+<manufacturer>
+Various
+</manufacturer>
+
+<primaryFactory>
+Various
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:InterComBust 180 ICE
+ARMOR:Simple Armor Plate 6
+COMMUNICATIONS:Communicator
+TARGETING:FireScan with IndirecTrack
+</systemManufacturers>
+
 <source>
 XTRO Primitives II - Age of War
 </source>
+
+<tonnage>
+55.0
+</tonnage>
+
+<fuel>
+1.0
+</fuel>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+

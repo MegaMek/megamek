@@ -5456,6 +5456,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         Hex mhex = game.getBoard().getHex(mcoords);
 
         StringBuffer txt = new StringBuffer(HTML_BEGIN);
+        txt.append("<div WIDTH=500>");
         // Hex Terrain
         if (GUIP.getShowMapHexPopup() && (mhex != null)) {
             appendTerrainTooltip(txt, mhex);
@@ -5543,11 +5544,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             }
 
             // Add a hint with keybind that the zones can be shown graphically
-            String keybindText = KeyEvent.getModifiersExText(KeyCommandBind.getBindByCmd("autoArtyDeployZone").modifiers);
-            if (!keybindText.isEmpty()) {
-                keybindText += "+";
-            }
-            keybindText += KeyEvent.getKeyText(KeyCommandBind.getBindByCmd("autoArtyDeployZone").key);
+            String keybindText = KeyCommandBind.getDesc(KeyCommandBind.getBindByCmd("autoArtyDeployZone"));
             txt.append(Messages.getString("BoardView1.Tooltip.ArtyAutoHint", keybindText));
 
             txt.append("</TD></TR></TABLE>");
@@ -5561,15 +5558,6 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             }
         }
 
-        // check if it's on any attacks
-        for (AttackSprite aSprite : attackSprites) {
-            if (aSprite.isInside(point)) {
-                txt.append("<TABLE BORDER=0 BGCOLOR=" + ALT_BGCOLOR + " width=100%><TR><TD><FONT color=\"black\">");
-                txt.append(aSprite.getTooltip().toString());
-                txt.append("</FONT></TD></TR></TABLE>");
-            }
-        }
-        
         // Add wreck info
         var wreckList = useIsometric() ? isometricWreckSprites : wreckSprites;
         for (var wSprite : wreckList) {
@@ -5605,6 +5593,15 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             }
             txt.append(" in this hex...</FONT>");
             txt.append("</TD></TR></TABLE>");
+        }
+
+        // check if it's on any attacks
+        for (AttackSprite aSprite : attackSprites) {
+            if (aSprite.isInside(mcoords)) {
+                txt.append("<TABLE BORDER=0 BGCOLOR=" + ALT_BGCOLOR + " width=100%><TR><TD><FONT color=\"black\">");
+                txt.append(aSprite.getTooltip().toString());
+                txt.append("</FONT></TD></TR></TABLE>");
+            }
         }
 
         // Artillery attacks
@@ -5683,6 +5680,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             }
         }
 
+        txt.append("</div>");
         txt.append(HTML_END);
 
         // Check to see if the tool tip is completely empty
@@ -5856,7 +5854,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         txt.append(" width=6></TD><TD>");
 
         // Entity tooltip
-        txt.append("<div WIDTH=500>" +  UnitToolTip.getEntityTipGame(entity, getLocalPlayer()) + "</div");
+        txt.append(UnitToolTip.getEntityTipGame(entity, getLocalPlayer()));
         txt.append("</TD></TR></TABLE>");
     }
 

@@ -349,6 +349,10 @@ public class Aero extends Entity implements IAero, IBomber {
             if (weatherMod != 0) {
                 j = Math.max(j + weatherMod, 0);
             }
+            if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
+                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_TORNADO_F13)) {
+                j += 1;
+            }
         }
         // get bomb load
         j = reduceMPByBombLoad(j);
@@ -2058,6 +2062,11 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     @Override
+    public boolean isNightwalker() {
+        return false;
+    }
+
+    @Override
     public boolean isSpheroid() {
         return spheroid;
     }
@@ -3185,12 +3194,17 @@ public class Aero extends Entity implements IAero, IBomber {
     
     // autoejection methods
     /**
+     * @return unit has an ejection seat
+     */
+    public boolean hasEjectSeat() {
+        return !hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT);
+    }
+
+    /**
      * @return Returns the autoEject.
      */
     public boolean isAutoEject() {
-        boolean hasEjectSeat = !hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT);
-
-        return autoEject && hasEjectSeat;
+        return autoEject && hasEjectSeat();
     }
 
     /**

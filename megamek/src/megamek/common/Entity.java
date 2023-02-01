@@ -6802,6 +6802,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             case BIPED:
             case BIPED_SWIM:
                 return "Biped";
+            case TRIPOD:
+                return "Tripod";
             case QUAD:
             case QUAD_SWIM:
                 return "Quad";
@@ -6996,19 +6998,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         PlanetaryConditions conditions = game.getPlanetaryConditions();
-        // check light conditions for "running" entities
-        if ((moveType == EntityMovementType.MOVE_RUN)
-                || (moveType == EntityMovementType.MOVE_SPRINT)
-                || (moveType == EntityMovementType.MOVE_VTOL_RUN)
-                || (moveType == EntityMovementType.MOVE_OVER_THRUST)
-                || (moveType == EntityMovementType.MOVE_VTOL_SPRINT)) {
-            int lightPenalty = conditions.getLightPilotPenalty();
-            if (lightPenalty > 0) {
-                roll.addModifier(lightPenalty,
-                        conditions.getLightDisplayableName());
-            }
-        }
-
         // check weather conditions for all entities
         int weatherMod = conditions.getWeatherPilotPenalty();
         if ((weatherMod != 0) && !game.getBoard().inSpace()
@@ -7021,6 +7010,73 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if ((windMod != 0) && !game.getBoard().inSpace()
                 && ((null == crew) || !hasAbility(OptionsConstants.UNOFF_ALLWEATHER))) {
             roll.addModifier(windMod, conditions.getWindDisplayableName());
+        }
+
+        if (!hasAbility(OptionsConstants.UNOFF_ALLWEATHER)
+                && getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_RAIN)) {
+            if (conditions.getWeather() == PlanetaryConditions.WE_GUSTING_RAIN) {
+                if ((this instanceof Mech) || isAirborne()
+                        || (getMovementMode() == EntityMovementMode.WHEELED)
+                        || (getMovementMode() == EntityMovementMode.TRACKED)) {
+                    roll.addModifier(-1, Messages.getString("WeaponAttackAction.RainSpec"));
+                }
+
+                if (isAirborneVTOLorWIGE() || (getMovementMode() == EntityMovementMode.HOVER)) {
+                    roll.addModifier(-2, Messages.getString("WeaponAttackAction.RainSpec"));
+                }
+            }
+
+            if ((conditions.getWeather() == PlanetaryConditions.WE_DOWNPOUR)
+                    ||(conditions.getWeather() == PlanetaryConditions.WE_HEAVY_RAIN)) {
+                roll.addModifier(-1, Messages.getString("WeaponAttackAction.RainSpec"));
+            }
+        }
+
+        if (!hasAbility(OptionsConstants.UNOFF_ALLWEATHER)
+                && getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_SNOW)) {
+            if (conditions.getWeather() == PlanetaryConditions.WE_HEAVY_SNOW) {
+                roll.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
+            }
+
+            if (((conditions.getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES)
+                    || (conditions.getWeather() == PlanetaryConditions.WE_SLEET)
+                    || (conditions.getWeather() == PlanetaryConditions.WE_ICE_STORM))
+                    && isAirborneVTOLorWIGE()) {
+                roll.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
+            }
+        }
+
+        if (!hasAbility(OptionsConstants.UNOFF_ALLWEATHER)
+                && getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)) {
+            if ((conditions.getWeather() == PlanetaryConditions.WI_MOD_GALE) && isAirborneVTOLorWIGE()) {
+                roll.addModifier(-1, Messages.getString("WeaponAttackAction.WindSpec"));
+            }
+
+            if (conditions.getWeather() == PlanetaryConditions.WI_STRONG_GALE) {
+                if ((this instanceof Mech) || isAirborne()
+                        || isAirborneVTOLorWIGE() || (getMovementMode() == EntityMovementMode.HOVER)) {
+                    roll.addModifier(-1, Messages.getString("WeaponAttackAction.WindSpec"));
+                }
+            }
+
+            if (conditions.getWeather() == PlanetaryConditions.WI_STORM) {
+                if ((this instanceof Mech) || isAirborneVTOLorWIGE()
+                        || (getMovementMode() == EntityMovementMode.HOVER)) {
+                    roll.addModifier(-2, Messages.getString("WeaponAttackAction.WindSpec"));
+                }
+
+                if (isAirborne()) {
+                    roll.addModifier(-1, Messages.getString("WeaponAttackAction.WindSpec"));
+                }
+            }
+
+            if (conditions.getWeather() == PlanetaryConditions.WI_TORNADO_F13) {
+                roll.addModifier(-2, Messages.getString("WeaponAttackAction.WindSpec"));
+            }
+
+            if (conditions.getWeather() == PlanetaryConditions.WI_TORNADO_F4) {
+                roll.addModifier(-3, Messages.getString("WeaponAttackAction.WindSpec"));
+            }
         }
 
         return roll;
@@ -9253,7 +9309,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (getOriginalJumpMP() > 0) {
             str += " Jump: " + getJumpMP();
         }
-        str += " Owner: " + owner.getName() + " Armor: " + getTotalArmor()
+        str += " Owner: " + getOwner().getName() + " Armor: " + getTotalArmor()
               + "/" + getTotalOArmor() + " Internal Structure: "
               + getTotalInternal() + "/" + getTotalOInternal();
 
@@ -12732,6 +12788,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
+     * Determines if the pilot has the Nightwalker SPA
+     * @return true when pilots have the SPA and are not
+     * in a flying vehicle.
+     */
+
+    public boolean isNightwalker() {
+        return getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_NIGHTWALKER);
+    }
+
+    /**
      * used to set the source of the creation of this entity, i.e RS PPU Custom
      * what not Fluff for MMLab
      *
@@ -12958,7 +13024,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public int getStartingPos(boolean inheritFromOwner) {
         if (inheritFromOwner && startingPos == Board.START_NONE) {
-            return owner.getStartingPos();
+            return getOwner().getStartingPos();
         }
         return startingPos;
     }
@@ -14313,11 +14379,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public void damageSystem(int type, int slot, int hits) {
         for (int loc = 0; loc < locations(); loc++) {
-            damageSystem(type, slot, loc, hits);
+            hits -= damageSystem(type, slot, loc, hits);
         }
     }
 
-    public void damageSystem(int type, int slot, int loc, int hits) {
+    public int damageSystem(int type, int slot, int loc, int hits) {
         int nhits = 0;
         for (int i = 0; i < getNumberOfCriticals(loc); i++) {
             CriticalSlot cs = getCritical(loc, i);
@@ -14343,6 +14409,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 }
             }
         }
+        return nhits;
     }
 
     // Most units cannot eject.
@@ -15346,7 +15413,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // if we are given permission to use the owner's settings
         // and have specified entity-specific settings, use the owner's settings
         if (inheritFromOwner && (startingPos == Board.START_NONE)) {
-            return owner.getStartOffset();
+            return getOwner().getStartOffset();
         }
         
         return startingOffset;
@@ -15364,7 +15431,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // if we are given permission to use the owner's settings
         // and have specified entity-specific settings, use the owner's settings
         if (inheritFromOwner && (startingPos == Board.START_NONE)) {
-            return owner.getStartWidth();
+            return getOwner().getStartWidth();
         }
         
         return startingWidth;

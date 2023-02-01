@@ -40,6 +40,8 @@ public class MechSearchFilter {
     public int iArmor;
     public int iOmni;
     public int iMilitary;
+    public String sStartTankTurrets;
+    public String sEndTankTurrets;
     public int iClanEngine;
     public int iOfficial;
     public int iCanon;
@@ -744,6 +746,10 @@ public class MechSearchFilter {
                     return false;
                 }
             }
+        }
+
+        if (!isBetween(mech.getTankTurrets(), f.sStartTankTurrets, f.sEndTankTurrets)) {
+            return false;
         }
 
         if (f.iOfficial > 0) {

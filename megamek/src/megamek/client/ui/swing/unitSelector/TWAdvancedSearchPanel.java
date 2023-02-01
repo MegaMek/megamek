@@ -77,6 +77,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JLabel lblJump = new JLabel(Messages.getString("MechSelectorDialog.Search.Jump"));
     private JTextField tStartJump = new JTextField(4);
     private JTextField tEndJump = new JTextField(4);
+    private JLabel lblTankTurrets = new JLabel(Messages.getString("MechSelectorDialog.Search.TankTurrets"));
+    private JTextField tStartTankTurrets = new JTextField(4);
+    private JTextField tEndTankTurrets= new JTextField(4);
     private JLabel lblTroopSpace = new JLabel(Messages.getString("MechSelectorDialog.Search.TroopSpace"));
     private JTextField tStartTroopSpace  = new JTextField(4);
     private JTextField tEndTroopSpace  = new JTextField(4);
@@ -519,6 +522,13 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         p1Panel.add(lblMilitary);
         p1Panel.add(cMilitary);
         basePanel.add(p1Panel, c);
+        c.gridx = 1;
+        JPanel p1bPanel = new JPanel();
+        p1bPanel.add(lblTankTurrets);
+        p1bPanel.add(tStartTankTurrets);
+        p1bPanel.add(new Label("-"));
+        p1bPanel.add(tEndTankTurrets);
+        basePanel.add(p1bPanel, c);
         c.gridx = 0; c.gridy++;
         JPanel yearPanel = new JPanel();
         yearPanel.add(lblYear);
@@ -869,7 +879,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
 
         listWeaponQuirkType.setModel(dlmw);
 
-        listWeaponQuirkType.setVisibleRowCount(25);
+        listWeaponQuirkType.setVisibleRowCount(17);
         listWeaponQuirkType.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         listWeaponQuirkType.setSelectionModel(new NoSelectionModel());
         listWeaponQuirkType.addMouseListener(new MouseAdapter() {
@@ -1866,6 +1876,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         cClanEngine.setSelectedIndex(0);
         cOmni.setSelectedIndex(0);
         cMilitary.setSelectedIndex(0);
+        tStartTankTurrets.setText("");
+        tEndTankTurrets.setText("");
         tblWeapons.clearSelection();
         tblEquipment.clearSelection();
         txtEqExp.setText("");
@@ -2107,6 +2119,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         mechFilter.iArmor = cArmor.getSelectedIndex();
         mechFilter.iOmni = cOmni.getSelectedIndex();
         mechFilter.iMilitary = cMilitary.getSelectedIndex();
+        mechFilter.sStartTankTurrets = tStartTankTurrets.getText();
+        mechFilter.sEndTankTurrets = tEndTankTurrets.getText();
         mechFilter.iOfficial = cOfficial.getSelectedIndex();
         mechFilter.iCanon = cCanon.getSelectedIndex();
         mechFilter.iClanEngine = cClanEngine.getSelectedIndex();

@@ -42,6 +42,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     private Long entityType;
     private boolean omni;
     private boolean military;
+    private int tankTurrets;
     private File sourceFile;
     private String source;
     private String entryName; // for files in zips
@@ -285,6 +286,10 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public boolean getMilitary() {
         return military;
+    }
+
+    public int getTankTurrets() {
+        return tankTurrets;
     }
 
     public double getTroopCarryingSpace() {
@@ -540,6 +545,10 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public void setMilitary(boolean b) {
         military = b;
+    }
+
+    public void setTankTurrets(int i) {
+        tankTurrets = i;
     }
 
     public void setTroopCarryingSpace(double d) {

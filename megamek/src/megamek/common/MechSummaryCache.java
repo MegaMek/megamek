@@ -390,6 +390,15 @@ public class MechSummaryCache {
         ms.setEntityType(e.getEntityType());
         ms.setOmni(e.isOmni());
         ms.setMilitary(e.isMilitary());
+        int tankTurrets = 0;
+        if (e instanceof Tank) {
+            if (!((Tank) e).hasNoDualTurret()) {
+                tankTurrets = 2;
+            } else if (!((Tank) e).hasNoTurret()) {
+                tankTurrets = 1;
+            }
+        }
+        ms.setTankTurrets(tankTurrets);
         ms.setSourceFile(f);
         ms.setSource(e.getSource());
         ms.setEntryName(entry);

@@ -217,7 +217,7 @@ public class SBFUnitConverter {
         report.addLine("Special Abilites:", "");
         addUnitSUAsIfAny(WAT, PRB, AECM, BHJ2, BHJ3, BH, BT, ECM, HPG, LPRB, LECM, TAG);
         addUnitSUAsIfHalf(AMS, ARM, ARS, BAR, BFC, CR, ENG, RBT, SRCH, SHLD);
-        addUnitSUAsIfAll(AMP, AM, BHJ, XMEC, MCS, UCS, MEC, PARA, SAW, TRN);
+        addUnitSUAsIfAll(AMP, AM, BHJ, XMEC, MCS, UCS, MEC, PAR, SAW, TRN);
         sumUnitSUAs(CAR, CK, CT, IT, CRW, DCC, MDS, MASH, RSD, VTM, VTH,
                 VTS, AT, DT, MT, PT, ST, SCR);
         sumUnitSUAsDivideBy3(ATAC, BOMB, PNT, IF);

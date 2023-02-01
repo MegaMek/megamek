@@ -23,6 +23,7 @@ import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.swing.util.SpringUtilities;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.annotations.Nullable;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFUnit;
 
@@ -33,7 +34,7 @@ import java.util.Collection;
 public class SBFViewPanel {
 
     public static final int DEFAULT_HEIGHT = 600;
-    public static final int COLS = 13;
+    public static final int COLUMNS = 13;
     
     private final JFrame parent;
     private final boolean showElements;
@@ -56,6 +57,8 @@ public class SBFViewPanel {
         for (SBFFormation formation : formations) {
             contentPane.add(formationPanel(formation));
         }
+        contentPane.revalidate();
+        contentPane.repaint();
     }
 
     private Component formationPanel(SBFFormation formation) {
@@ -63,7 +66,7 @@ public class SBFViewPanel {
         JPanel summaryPanel = new JPanel(new SpringLayout());
 
         addFormationHeaders(summaryPanel);
-        addGridElement(summaryPanel, formation.getName(), UIUtil.uiDarkBlue(), FlowLayout.LEFT);
+        addGroupName(summaryPanel, formation.getName());
         addGridElement(summaryPanel, formation.getType().toString(), UIUtil.uiDarkBlue());
         addGridElement(summaryPanel, formation.getSize() + "", UIUtil.uiDarkBlue());
         addGridElement(summaryPanel, formation.getMovement() + formation.getMovementCode() + "", UIUtil.uiDarkBlue());
@@ -96,14 +99,13 @@ public class SBFViewPanel {
             addGridElement(summaryPanel, unit.getSpecialsDisplayString(", ", unit), bgColor, FlowLayout.LEFT);
             addGridElement(summaryPanel, "", bgColor);
         }
-        SpringUtilities.makeCompactGrid(summaryPanel, summaryPanel.getComponentCount() / COLS, COLS, 5, 5, 1, 5);
+        SpringUtilities.makeCompactGrid(summaryPanel, summaryPanel.getComponentCount() / COLUMNS, COLUMNS, 5, 5, 1, 5);
         formationPanel.add(summaryPanel);
 
         if (showElements) {
-            for (SBFUnit unit : formation.getUnits()) {
-                var p = new AlphaStrikeStatsTablePanel(unit.getElements());
-                formationPanel.add(p);
-            }
+            var p = new AlphaStrikeStatsTablePanel(null, false);
+            formation.getUnits().forEach(u -> p.add(u.getElements(), u.getName()));
+            formationPanel.add(p.getPanel());
         }
         formationPanel.add(Box.createVerticalStrut(25));
         return formationPanel;
@@ -120,45 +122,51 @@ public class SBFViewPanel {
         targetPanel.add(panel);
     }
 
-    private void addGridElement(JComponent targetPanel, String text) {
-        addGridElement(targetPanel, text, null, FlowLayout.CENTER);
-    }
-
     private void addGridElement(JComponent targetPanel, String text, Color bgColor) {
         addGridElement(targetPanel, text, bgColor, FlowLayout.CENTER);
     }
 
-    private void addGridElement(JComponent targetPanel, String text, int alignment) {
-        addGridElement(targetPanel, text,null, alignment);
+    private void addGridElement(JComponent targetPanel, String text, Color bgColor, int alignment) {
+        writeGridElement(targetPanel, text, bgColor, alignment, null);
     }
 
-    private void addGridElement(JComponent targetPanel, String text, Color bgColor, int alignment) {
+    private void writeGridElement(JComponent targetPanel, String text, Color bgColor,
+                                  int alignment, @Nullable Color textColor) {
         var panel = new UIUtil.FixedYPanel(new FlowLayout(alignment));
         panel.setBackground(bgColor);
-        panel.add(new JLabel(text));
+        panel.setForeground(textColor);
+        var textLabel = new JLabel(text);
+        textLabel.setForeground(textColor);
+        panel.add(textLabel);
         targetPanel.add(panel);
     }
 
     private void addHeader(JComponent targetPanel, String text, float alignment) {
-        var panel = new UIUtil.FixedYPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
-        var textLabel = new JLabel(text);
-        textLabel.setAlignmentX(alignment);
-//        textLabel.setFont(sbfPane.getFont().deriveFont(Font.BOLD));
-        textLabel.setForeground(UIUtil.uiLightBlue());
-        panel.add(Box.createVerticalStrut(8));
-        panel.add(textLabel);
-        panel.add(Box.createVerticalStrut(5));
-        panel.add(new JSeparator());
-        targetPanel.add(panel);
+        writeHeader(targetPanel, text, alignment, UIUtil.uiLightBlue());
     }
 
     private void addHeader(JComponent targetPanel, String text) {
         addHeader(targetPanel, text, JComponent.CENTER_ALIGNMENT);
     }
 
+    private void addGroupName(JComponent targetPanel, String text) {
+        writeGridElement(targetPanel, text, UIUtil.uiDarkBlue(), FlowLayout.LEFT, UIUtil.uiLightGreen());
+    }
+
+    private void writeHeader(JComponent targetPanel, String text, float alignment, Color color) {
+        var namePanel = new UIUtil.FixedYPanel();
+        namePanel.setLayout(new BoxLayout(namePanel, BoxLayout.PAGE_AXIS));
+        var textLabel = new JLabel(text);
+        textLabel.setAlignmentX(alignment);
+        textLabel.setForeground(color);
+        namePanel.add(textLabel);
+        namePanel.add(Box.createVerticalStrut(5));
+        namePanel.add(new JSeparator());
+        targetPanel.add(namePanel);
+    }
+
     private void addFormationHeaders(JComponent targetPanel) {
-        addHeader(targetPanel, " Formation", JComponent.LEFT_ALIGNMENT);
+        addHeader(targetPanel, "SBF Formation", JComponent.LEFT_ALIGNMENT);
         addHeader(targetPanel, "Type");
         addHeader(targetPanel, "Size");
         addHeader(targetPanel, "Move");

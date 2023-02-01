@@ -22,6 +22,7 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
 import megamek.common.Entity;
+import megamek.common.ForceAssignable;
 import megamek.common.Game;
 import megamek.common.alphaStrike.ASDamage;
 import megamek.common.alphaStrike.AlphaStrikeElement;
@@ -71,9 +72,11 @@ public final class SBFFormationConverter {
         for (Force subforce : forces.getFullSubForces(force)) {
             var thisUnit = new ArrayList<AlphaStrikeElement>();
             var thisUnitBaseSkill = new ArrayList<AlphaStrikeElement>();
-            for (Entity entity : forces.getFullEntities(subforce)) {
-                thisUnit.add(ASConverter.convert(entity, includePilots));
-                thisUnitBaseSkill.add(ASConverter.convert(entity, false));
+            for (ForceAssignable entity : forces.getFullEntities(subforce)) {
+                if (entity instanceof Entity) {
+                    thisUnit.add(ASConverter.convert((Entity) entity, includePilots));
+                    thisUnitBaseSkill.add(ASConverter.convert((Entity) entity, false));
+                }
             }
             SBFUnit convertedUnit = new SBFUnitConverter(thisUnit, subforce.getName(), thisUnitBaseSkill, report).createSbfUnit();
             formation.getUnits().add(convertedUnit);
@@ -154,21 +157,21 @@ public final class SBFFormationConverter {
         Forces forces = game.getForces();
         // The force must not have direct subordinate entities
         boolean invalid = !force.getEntities().isEmpty();
-        List<Entity> entities = forces.getFullEntities(force);
+        List<ForceAssignable> entities = forces.getFullEntities(force);
         List<Force> subforces = forces.getFullSubForces(force);
         invalid |= entities.size() > 20;
         invalid |= (subforces.size() > 4) || subforces.isEmpty();
         invalid |= subforces.stream().anyMatch(f -> f.getEntities().isEmpty());
         invalid |= subforces.stream().anyMatch(f -> f.getEntities().size() > 6);
         invalid |= subforces.stream().anyMatch(f -> !f.getSubForces().isEmpty());
-        invalid |= entities.stream().anyMatch(e -> !ASConverter.canConvert(e));
+        invalid |= entities.stream().anyMatch(e -> !ASConverter.canConvert((Entity) e));
         // Avoid some checks in the code below
         if (invalid) {
             return false;
         }
         for (Force subforce : subforces) {
             var elementsList = new ArrayList<AlphaStrikeElement>();
-            forces.getFullEntities(subforce).stream().map(ASConverter::convert).forEach(elementsList::add);
+            forces.getFullEntities(subforce).stream().map(e -> ASConverter.convert((Entity) e)).forEach(elementsList::add);
             invalid |= elementsList.stream().anyMatch(a -> a.hasSUA(LG)) && elementsList.size() > 2;
             invalid |= elementsList.stream().anyMatch(a -> a.hasAnySUAOf(VLG, SLG)) && elementsList.size() > 1;
             SBFUnit unit = new SBFUnitConverter(elementsList, "temporary", elementsList, new DummyCalculationReport()).createSbfUnit();
@@ -183,7 +186,7 @@ public final class SBFFormationConverter {
         addFormationSpasIfAny(formation, DN, XMEC, COM, HPG, LEAD, MCS, UCS, MEC, MAS, LMAS,
                 MSW, MFB, SAW, SDS, TRN, FD, HELI, SDCS);
         addFormationSpasIf2Thirds(formation, AC3, PRB, AECM, ECM, ENG, LPRB, LECM, ORO, RCN, SRCH, SHLD, TAG, WAT);
-        addFormationSpasIfAll(formation, AMP, BH, EE, FC, SEAL, MAG, PARA, RAIL, RBT, UMU);
+        addFormationSpasIfAll(formation, AMP, BH, EE, FC, SEAL, MAG, PAR, RAIL, RBT, UMU);
         sumFormationSpas(SBF_OMNI, CAR, CK, CT, IT, CRW, DCC, MDS, MASH, RSD, VTM, VTH,
                 VTS, AT, BOMB, DT, MT, PT, ST, SCR, PNT, IF, MHQ);
 

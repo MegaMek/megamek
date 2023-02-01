@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -23,26 +23,28 @@ import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.swing.util.SpringUtilities;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
-import megamek.common.alphaStrike.conversion.ASConverter;
+import megamek.common.ForceAssignable;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.conversion.ASConverter;
+import megamek.common.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 import java.util.*;
 
-/**
- * This panel shows a table of AlphaStrike stats for list of AlphaStrike elements.
- * When calling this panel with a list of Entities, these will be converted and conversion
- * reports are offered as part of the table. When calling this panel with a list of
- * AlphaStrikeElements, conversion reports are unavailable.
- */
-public class AlphaStrikeStatsTablePanel extends JPanel {
-    
-    private int columns;
-    private final List<AlphaStrikeElement> elementList = new ArrayList<>();
+public class AlphaStrikeStatsTablePanel {
+
+    private final int COLUMNS = 15;
+    private final static Color GROUP_NAME_COLOR = UIUtil.uiLightGreen();
+    private final static Color HEADER_COLOR = UIUtil.uiLightBlue();
+
+    private final JPanel panel = new JPanel(new SpringLayout());
+    private int rows;
+    private final boolean usePilotSkill;
+    private final List<EntityGroup> groups = new ArrayList<>();
     private final JFrame frame;
-    private final Map<AlphaStrikeElement, FlexibleCalculationReport> reports = new HashMap<>();
+
 
     /**
      * Returns a panel with a table of AlphaStrike stats for the given entities after AlphaStrike
@@ -50,36 +52,64 @@ public class AlphaStrikeStatsTablePanel extends JPanel {
      * collection will be filtered for convertible units.
      *
      * @param frame The parent frame (important for giving a parent to conversion report dialogs)
-     * @param entities a collection of entities to convert and show
-     * @param includePilot When true, the entity crew will be factored into the AS SKILL value
      */
-    public AlphaStrikeStatsTablePanel(JFrame frame, Collection<Entity> entities, boolean includePilot) {
-        for (Entity entity : entities) {
-            if (ASConverter.canConvert(entity)) {
-                FlexibleCalculationReport report = new FlexibleCalculationReport();
-                AlphaStrikeElement element = ASConverter.convert(entity, includePilot, report);
-                elementList.add(element);
-                reports.put(element, report);
-            }
-        }
+    public AlphaStrikeStatsTablePanel(JFrame frame, boolean usePilotSkill) {
         this.frame = frame;
-        initialize();
+        this.usePilotSkill = usePilotSkill;
     }
 
     /**
-     * Returns a panel with a table of AlphaStrike stats for the given elements.
+     * Returns a panel with a table of AlphaStrike stats for the given entities after AlphaStrike
+     * conversion. The table will show buttons for calling up conversion reports. The given entity
+     * collection will be filtered for convertible units.
      *
-     * @param elements a collection of AlphaStrike elements to show
+     * @param entities a collection of entities to convert and show
      */
-    public AlphaStrikeStatsTablePanel(Collection<AlphaStrikeElement> elements) {
-        elementList.addAll(elements);
-        this.frame = null;
-        initialize();
+    public AlphaStrikeStatsTablePanel add(Collection<? extends ForceAssignable> entities, @Nullable String name) {
+        groups.add(new EntityGroup(entities, name));
+        return this;
     }
 
-    private void initialize() {
-        setLayout(new SpringLayout());
-        addHeader(" Unit", JComponent.LEFT_ALIGNMENT);
+    public AlphaStrikeStatsTablePanel add(Collection<? extends ForceAssignable> entities) {
+        groups.add(new EntityGroup(entities, ""));
+        return this;
+    }
+
+    public JPanel getPanel() {
+        constructPanel();
+        return panel;
+    }
+
+    private void constructPanel() {
+        addVerticalSpace(20);
+        for (EntityGroup group : groups) {
+            addGrouptoPanel(group);
+        }
+        finalizePanel();
+    }
+
+    private void addGrouptoPanel(EntityGroup group) {
+        // Conversion to AlphaStrike
+        final List<AlphaStrikeElement> elementList = new ArrayList<>();
+        final Map<AlphaStrikeElement, FlexibleCalculationReport> reports = new HashMap<>();
+        for (ForceAssignable unit : group.entities) {
+            AlphaStrikeElement element = null;
+            if (unit instanceof AlphaStrikeElement) {
+                element = (AlphaStrikeElement) unit;
+            } else if ((unit instanceof Entity) && (ASConverter.canConvert((Entity) unit))) {
+                element = ASConverter.convert((Entity) unit, usePilotSkill);
+            }
+            if (element != null) {
+                elementList.add(element);
+                if (element.hasConversionReport()) {
+                    reports.put(element, (FlexibleCalculationReport) element.getConversionReport());
+                }
+            }
+        }
+
+        // Print the elements
+        rows++;
+        addGroupName(group.name);
         addHeader("Type");
         addHeader("SZ");
         addHeader("TMM");
@@ -94,86 +124,80 @@ public class AlphaStrikeStatsTablePanel extends JPanel {
         addHeader("PV");
         addHeader("Specials");
         addHeader("Conversion");
-        
-        int row = 1;
+        addLine();
+
         for (AlphaStrikeElement element : elementList) {
-            if (element != null) {
-                boolean oddRow = (row++ % 2) == 1;
-                addGridElementLeftAlign(element.getName(), oddRow);
-                addGridElement(element.getASUnitType() + "", oddRow);
-                addGridElement(element.getSize() + "", oddRow);
-                addGridElement(element.isAerospace() ? "" : element.getTMM() + "", oddRow);
-                addGridElement(element.getMovementAsString(), oddRow);
-                addGridElement(element.getRole() + "", oddRow);
-                addGridElement(element.usesArcs() ? "" : element.getStandardDamage() + "", oddRow);
-                addGridElement(element.usesOV() ? element.getOV() + "" : "", oddRow);
-                addGridElement(element.getFullArmor() + "", oddRow);
-                addGridElement(element.getFullStructure() + "", oddRow);
-                addGridElement(element.usesThreshold() ? element.getThreshold() + "" : " ", oddRow);
-                addGridElement(element.getSkill() + "", oddRow);
-                addGridElement(element.getPointValue() + "", oddRow);
-                if (element.usesArcs()) {
-                    addGridElementLeftAlign(getArcedSpecials(element), oddRow);
-                } else {
-                    addGridElementLeftAlign(element.getSpecialsDisplayString(element), oddRow);
-                }
-                addConversionInfo(oddRow, reports.get(element), element, frame);
+            boolean oddRow = (rows++ % 2) == 1;
+            addGridElementLeftAlign(element.getName(), oddRow);
+            addGridElement(element.getASUnitType() + "", oddRow);
+            addGridElement(element.getSize() + "", oddRow);
+            addGridElement(element.isAerospace() ? "" : element.getTMM() + "", oddRow);
+            addGridElement(element.getMovementAsString(), oddRow);
+            addGridElement(element.getRole() + "", oddRow);
+            addGridElement(element.usesArcs() ? "" : element.getStandardDamage() + "", oddRow);
+            addGridElement(element.usesOV() ? element.getOV() + "" : "", oddRow);
+            addGridElement(element.getFullArmor() + "", oddRow);
+            addGridElement(element.getFullStructure() + "", oddRow);
+            addGridElement(element.usesThreshold() ? element.getThreshold() + "" : " ", oddRow);
+            addGridElement(element.getSkill() + "", oddRow);
+            addGridElement(element.getPointValue() + "", oddRow);
+            if (element.usesArcs()) {
+                addGridElementLeftAlign(getArcedSpecials(element), oddRow);
+            } else {
+                addGridElementLeftAlign(element.getSpecialsDisplayString(element), oddRow);
             }
+            addConversionInfo(oddRow, reports.get(element), element, frame);
         }
 
-        SpringUtilities.makeCompactGrid(this, row, columns, 5, 5, 1, 5);
+        addVerticalSpace(20);
+    }
+
+    private void finalizePanel() {
+        SpringUtilities.makeCompactGrid(panel, rows, COLUMNS, 5, 5, 1, 5);
     }
 
     private void addConversionInfo(boolean coloredBG, FlexibleCalculationReport conversionReport,
                                    AlphaStrikeElement element, JFrame frame) {
-        var panel = new UIUtil.FixedYPanel();
+        var conversionPanel = new UIUtil.FixedYPanel();
         if (coloredBG) {
-            panel.setBackground(UIUtil.alternateTableBGColor());
+            conversionPanel.setBackground(UIUtil.alternateTableBGColor());
         }
         JButton button = new JButton("?");
         button.setEnabled(conversionReport != null);
         button.addActionListener(e -> new ASConversionInfoDialog(frame, conversionReport, element, true).setVisible(true));
-        panel.add(button);
-        add(panel);
+        conversionPanel.add(button);
+        panel.add(conversionPanel);
     }
-    
+
     private void addGridElement(String text, boolean coloredBG) {
-        var panel = new UIUtil.FixedYPanel();
-        if (coloredBG) {
-            panel.setBackground(UIUtil.alternateTableBGColor());
-        }
-        panel.add(new JLabel(text));
-        add(panel);
+        writeGridElement(text, coloredBG, null, FlowLayout.CENTER);
     }
-    
+
     private void addGridElementLeftAlign(String text, boolean coloredBG) {
-        var panel = new UIUtil.FixedYPanel(new FlowLayout(FlowLayout.LEFT));
+        writeGridElement(text, coloredBG, null, FlowLayout.LEFT);
+    }
+
+    private void writeGridElement(String text, boolean coloredBG, Color color, int alignment) {
+        var elementPanel = new UIUtil.FixedYPanel(new FlowLayout(alignment));
         if (coloredBG) {
-            panel.setBackground(UIUtil.alternateTableBGColor());
+            elementPanel.setBackground(UIUtil.alternateTableBGColor());
         }
         var textLabel = new JLabel(text);
-        panel.add(textLabel);
-        add(panel);
+        textLabel.setForeground(color);
+        elementPanel.add(textLabel);
+        panel.add(elementPanel);
     }
-    
-    private void addHeader(String text, float alignment) {
-        columns++;
-        var panel = new UIUtil.FixedYPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
-        var textLabel = new JLabel(text);
-        textLabel.setAlignmentX(alignment);
-        textLabel.setFont(getFont().deriveFont(Font.BOLD));
-        textLabel.setForeground(UIUtil.uiLightBlue());
-        panel.add(textLabel);
-        panel.add(Box.createVerticalStrut(5));
-        panel.add(new JSeparator());
-        add(panel);
+
+    private void addGroupName(String text) {
+        writeGridElement(text, false, GROUP_NAME_COLOR, FlowLayout.LEFT);
     }
-    
+
     private void addHeader(String text) {
-        addHeader(text, JComponent.CENTER_ALIGNMENT);
+        var textLabel = new JLabel(text, SwingConstants.CENTER);
+        textLabel.setForeground(HEADER_COLOR);
+        panel.add(textLabel);
     }
-   
+
     private String getArcedSpecials(AlphaStrikeElement element) {
         return "<HTML>" + element.getSpecialsDisplayString(element) +
                 "<BR>FRONT(" + element.getFrontArc().getSpecialsExportString(", ", element) + ")" +
@@ -181,4 +205,33 @@ public class AlphaStrikeStatsTablePanel extends JPanel {
                 "<BR>RIGHT(" + element.getRightArc().getSpecialsExportString(", ", element) + ")" +
                 "<BR>REAR(" + element.getRearArc().getSpecialsExportString(", ", element) + ")";
     }
+
+    private void addVerticalSpace(int height) {
+        rows++;
+        for (int col = 0; col < COLUMNS; col++) {
+            panel.add(Box.createVerticalStrut(height));
+        }
+    }
+
+    private void addLine() {
+        rows++;
+        for (int col = 0; col < COLUMNS; col++) {
+            var spacerPanel = new UIUtil.FixedYPanel();
+            spacerPanel.setLayout(new BoxLayout(spacerPanel, BoxLayout.PAGE_AXIS));
+            spacerPanel.add(new JSeparator());
+            spacerPanel.add(Box.createVerticalStrut(2));
+            panel.add(spacerPanel);
+        }
+    }
+
+    private static class EntityGroup {
+        private final List<ForceAssignable> entities;
+        private final String name;
+
+        private EntityGroup(Collection<? extends ForceAssignable> entities, String name) {
+            this.entities = new ArrayList<>(entities);
+            this.name = Objects.requireNonNullElse(name, "");
+        }
+    }
+
 }

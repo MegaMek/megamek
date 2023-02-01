@@ -40,7 +40,7 @@ import java.util.Set;
  * @author Simon (Juliez)
  */
 public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSpecialAbilityCollector,
-        BattleForceSUAFormatter {
+        BattleForceSUAFormatter, ForceAssignable {
 
     static final int RANGEBANDS_SML = 3;
     static final int RANGEBANDS_SMLE = 4;

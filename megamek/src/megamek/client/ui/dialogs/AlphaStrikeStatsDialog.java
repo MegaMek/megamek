@@ -23,9 +23,9 @@ import megamek.client.ui.swing.AlphaStrikeStatsTablePanel;
 import megamek.client.ui.swing.MMToggleButton;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.AlphaStrikeHelper;
 import megamek.common.alphaStrike.conversion.ASConverter;
-import megamek.common.alphaStrike.AlphaStrikeElement;
 
 import javax.swing.*;
 import java.awt.*;
@@ -86,7 +86,8 @@ public class AlphaStrikeStatsDialog extends AbstractDialog {
     
     private void setupTable() {
         centerPanel.remove(scrollPane);
-        var asPanel = new AlphaStrikeStatsTablePanel(getFrame(), entities, pilotToggle.isSelected());
+//        var asPanel = new AlphaStrikeStatsTablePanel(getFrame(), entities, pilotToggle.isSelected());
+        JPanel asPanel = new AlphaStrikeStatsTablePanel(getFrame(), pilotToggle.isSelected()).add(entities, "Selected Units").getPanel();
         scrollPane.setViewportView(asPanel);
         centerPanel.add(scrollPane);
         adaptToGUIScale();

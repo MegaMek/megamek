@@ -19,11 +19,10 @@
 package megamek.client.ui.dialogs;
 
 import megamek.client.ui.baseComponents.AbstractDialog;
-import megamek.client.ui.swing.AlphaStrikeStatsTablePanel;
 import megamek.client.ui.swing.MMToggleButton;
 import megamek.client.ui.swing.SBFViewPanel;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.*;
+import megamek.common.Game;
 import megamek.common.force.Force;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFFormationConverter;
@@ -51,7 +50,7 @@ public class StrategicBattleForceStatsDialog extends AbstractDialog {
         forceList = fo;
         game = gm;
         initialize();
-        UIUtil.adjustDialog(this);
+//        UIUtil.adjustDialog(this);
     }
 
     @Override
@@ -67,26 +66,28 @@ public class StrategicBattleForceStatsDialog extends AbstractDialog {
         elementsToggle.addActionListener(e -> setupTable());
         clipBoardButton.addActionListener(e -> copyToClipboard());
 
-        setupTable();
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-
         centerPanel.add(Box.createVerticalStrut(15));
         centerPanel.add(optionsPanel);
         centerPanel.add(Box.createVerticalStrut(15));
         centerPanel.add(scrollPane);
+
+        setupTable();
         return centerPanel;
     }
 
     private void setupTable() {
-        centerPanel.remove(scrollPane);
+//        centerPanel.remove(scrollPane);
         formations = forceList.stream()
                 .map(f -> new SBFFormationConverter(f, game, pilotToggle.isSelected()).convert())
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         statsPanel = new SBFViewPanel(getFrame(), formations, elementsToggle.isSelected());
         scrollPane.setViewportView(statsPanel.getPanel());
-        centerPanel.add(scrollPane);
-        UIUtil.adjustDialog(this);
+        scrollPane.invalidate();
+        scrollPane.repaint();
+//        centerPanel.add(scrollPane);
+        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
     }
 
     private void copyToClipboard() {

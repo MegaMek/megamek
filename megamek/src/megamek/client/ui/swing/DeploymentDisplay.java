@@ -405,6 +405,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         if (clientgui.getClient().isMyTurn()) {
             if (cen == Entity.NONE) {
                 beginMyTurn();
+                clientgui.bingMyTurn();
             }
             setStatusBarText(Messages.getString("DeploymentDisplay.its_your_turn")); 
         } else {
@@ -416,6 +417,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 playerName = "Unknown";
             }
             setStatusBarText(Messages.getString("DeploymentDisplay.its_others_turn", playerName));
+            clientgui.bingOthersTurn();
         }
         
     }

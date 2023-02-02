@@ -272,7 +272,6 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     //
     @Override
     public void gameTurnChange(GameTurnChangeEvent e) {
-
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
@@ -283,6 +282,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         if (clientgui.getClient().isMyTurn()) {
             beginMyTurn();
             setStatusBarText(Messages.getString("SelectArtyAutoHitHexDisplay.its_your_turn"));
+            clientgui.bingMyTurn();
         } else {
             String playerName;
             if (e.getPlayer() != null) {
@@ -290,8 +290,8 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
             } else {
                 playerName = "Unknown";
             }
-            setStatusBarText(Messages.getString("SelectArtyAutoHitHexDisplay.its_others_turn",
-                    playerName));
+            setStatusBarText(Messages.getString("SelectArtyAutoHitHexDisplay.its_others_turn", playerName));
+            clientgui.bingOthersTurn();
         }
     }
 

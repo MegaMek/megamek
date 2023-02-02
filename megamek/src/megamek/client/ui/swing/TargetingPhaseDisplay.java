@@ -1351,11 +1351,12 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                     beginMyTurn();
                 }
                 setStatusBarText(Messages.getString("TargetingPhaseDisplay.its_your_turn"));
+                clientgui.bingMyTurn();
             } else {
                 endMyTurn();
                 if (e.getPlayer() != null) {
-                    setStatusBarText(Messages.getString("TargetingPhaseDisplay.its_others_turn",
-                            e.getPlayer().getName()));
+                    setStatusBarText(Messages.getString("TargetingPhaseDisplay.its_others_turn", e.getPlayer().getName()));
+                    clientgui.bingOthersTurn();
                 }
             }
         }

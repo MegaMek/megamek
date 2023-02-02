@@ -249,6 +249,8 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
                 setStatusBarText(phase.toString());
                 break;
         }
+
+        clientgui.bingMyTurn();
     }
 
     /**

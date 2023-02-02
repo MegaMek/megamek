@@ -2192,6 +2192,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                     beginMyTurn();
                 }
                 setStatusBarText(Messages.getString("FiringDisplay.its_your_turn"));
+                clientgui.bingMyTurn();
             } else {
                 endMyTurn();
                 String playerName;
@@ -2201,6 +2202,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                     playerName = "Unknown";
                 }
                 setStatusBarText(Messages.getString("FiringDisplay.its_others_turn", playerName));
+                clientgui.bingOthersTurn();
             }
         }
     }

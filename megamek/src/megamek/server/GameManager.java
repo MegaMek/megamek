@@ -582,7 +582,7 @@ public class GameManager implements IGameManager {
         // send full update
         send(createFullEntitiesPacket());
     }
-    
+
     private void resetEntityRound() {
         for (Iterator<Entity> e = game.getEntities(); e.hasNext(); ) {
             Entity entity = e.next();
@@ -593,11 +593,11 @@ public class GameManager implements IGameManager {
     public void send(Packet p) {
         Server.getServerInstance().send(p);
     }
-    
+
     public void send(int connId, Packet p) {
         Server.getServerInstance().send(connId, p);
     }
-    
+
     public void transmitPlayerUpdate(Player p) {
         Server.getServerInstance().transmitPlayerUpdate(p);
     }
@@ -945,7 +945,7 @@ public class GameManager implements IGameManager {
                 break;
         }
     }
-    
+
     /**
      * Check a list of entity Ids for doomed entities and destroy those.
      */
@@ -7411,7 +7411,7 @@ public class GameManager implements IGameManager {
             }
 
             // check for revealed minefields;
-            // unless we get errata about it, we assume that the check is done 
+            // unless we get errata about it, we assume that the check is done
             // every time we enter a new hex
             if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BAP)
                     && !lastPos.equals(curPos)) {
@@ -7824,8 +7824,8 @@ public class GameManager implements IGameManager {
                     : 0))))) {
 
                 // per TacOps, if the mech is walking backwards over an elevation change and falls
-                // it falls into the lower hex. The caveat is if it already fell from some other PSR in this 
-                // invocation of processMovement, then it can't fall again. 
+                // it falls into the lower hex. The caveat is if it already fell from some other PSR in this
+                // invocation of processMovement, then it can't fall again.
                 if ((entity instanceof Mech)
                         && (curHex.getLevel() < game.getBoard().getHex(lastPos).getLevel())
                         && !entity.hasFallen()) {
@@ -8083,7 +8083,7 @@ public class GameManager implements IGameManager {
 
             firstStep = false;
 
-            // if we moved at all, we are no longer bracing "for free", except for when 
+            // if we moved at all, we are no longer bracing "for free", except for when
             // the current step IS bracing
             if ((mpUsed > 0) && (step.getType() != MovePath.MoveStepType.BRACE)) {
                 entity.setBraceLocation(Entity.LOC_NONE);
@@ -26786,7 +26786,7 @@ public class GameManager implements IGameManager {
      */
     public Vector<Report> destroyEntity(Entity entity, String reason, boolean survivable,
                                         boolean canSalvage) {
-        // can't destroy an entity if it's already been destroyed        
+        // can't destroy an entity if it's already been destroyed
         if (entity.isDestroyed()) {
             return new Vector<>();
         }
@@ -28852,7 +28852,7 @@ public class GameManager implements IGameManager {
         @SuppressWarnings("unchecked")
         final List<Entity> entities = (List<Entity>) c.getObject(0);
         List<Integer> entityIds = new ArrayList<>(entities.size());
-        // Map client-received to server-given IDs: 
+        // Map client-received to server-given IDs:
         Map<Integer, Integer> idMap = new HashMap<>();
         // Map MUL force ids to real Server-given force ids;
         Map<Integer, Integer> forceMapping = new HashMap<>();
@@ -29074,7 +29074,7 @@ public class GameManager implements IGameManager {
         }
 
         // Now restore the transport settings from the entities' transporter IDs
-        // With anything other than bays, MULs only show the carrier, not the carried units 
+        // With anything other than bays, MULs only show the carrier, not the carried units
         for (final Entity entity : entities) {
             // Don't correct those that are already corrected
             if (transportCorrected.contains(entity)) {
@@ -29084,7 +29084,7 @@ public class GameManager implements IGameManager {
             int origTrsp = entity.getTransportId();
             // Only act if the unit thinks it is transported
             if (origTrsp != Entity.NONE) {
-                // If the transporter is among the new units, go on with loading 
+                // If the transporter is among the new units, go on with loading
                 if (idMap.containsKey(origTrsp)) {
                     // The wrong transporter doesn't know of anything and does not need an update
                     Entity carrier = game.getEntity(idMap.get(origTrsp));
@@ -29106,7 +29106,7 @@ public class GameManager implements IGameManager {
 
         // Set the "loaded keepers" which is apparently used for deployment unloading to
         // differentiate between units loaded in the lobby and other carried units
-        // When entering a game from the lobby, this list is generated again, but not when 
+        // When entering a game from the lobby, this list is generated again, but not when
         // the added entities are loaded during a game. When getting loaded units from a MUL,
         // act as if they were loaded in the lobby.
         for (final Entity entity : entities) {
@@ -31929,7 +31929,7 @@ public class GameManager implements IGameManager {
         }
         // Not all targets are Entities.
         Targetable target = game.getTarget(aaa.getTargetType(), aaa.getTargetId());
-        
+
         if ((target != null) && (target instanceof Entity)) {
             Entity targetEntity = (Entity) target;
             targetEntity.setStruck(true);
@@ -33890,7 +33890,7 @@ public class GameManager implements IGameManager {
                     r.addDesc(inf);
                     r.subject = inf.getId();
                     addReport(r);
-                } else if (dig == Infantry.DUG_IN_FORTIFYING2) {
+                } else if (dig == Infantry.DUG_IN_FORTIFYING4) {
                     Coords c = inf.getPosition();
                     r = new Report(5305);
                     r.addDesc(inf);
@@ -34184,6 +34184,6 @@ public class GameManager implements IGameManager {
 
     public Set<Coords> getHexUpdateSet() {
         return hexUpdateSet;
-    
+
     }
 }

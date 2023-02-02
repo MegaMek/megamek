@@ -2172,9 +2172,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
         @Override
         public void gamePlayerChat(GamePlayerChatEvent e) {
-            if (!GUIP.getSoundMuteChat()) {
-                bingChat();
-            }
+            bingChat();
         }
 
         @Override

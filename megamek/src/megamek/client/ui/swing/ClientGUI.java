@@ -2122,7 +2122,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      * Make a "bing" sound.
      */
     public void bingChat() {
-        if ((!GUIP.getSoundMuteChat()) && (bingClipMyTurn != null)) {
+        if (!GUIP.getSoundMuteChat() && (bingClipMyTurn != null)) {
             bingClipChat.setFramePosition(0);
             bingClipChat.start();
         }

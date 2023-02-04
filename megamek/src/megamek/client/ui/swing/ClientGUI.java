@@ -408,7 +408,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     /**
      * Try to load the "bing" sound clip.
      */
-    private Clip loadSoundClip(String filename) {
+    private @Nullable Clip loadSoundClip(@Nullable String filename) {
         Clip clip = null;
 
         if (filename == null) {

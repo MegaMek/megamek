@@ -29836,8 +29836,9 @@ public class GameManager implements IGameManager {
      * Creates a packet containing a Vector of Reports that represent a Tactical
      * Genius re-roll request which needs to update a current phase's report.
      */
-    private Packet createTacticalGeniusReportPacket() {
-        return new Packet(PacketCommand.SENDING_REPORTS_TACTICAL_GENIUS, vPhaseReport.clone());
+    private Packet createTacticalGeniusReportPacket(Player p) {
+        return new Packet(PacketCommand.SENDING_REPORTS_TACTICAL_GENIUS,
+                (p == null) || !doBlind() ? vPhaseReport.clone() : filterReportVector(vPhaseReport, p));
     }
 
     /**
@@ -30125,7 +30126,7 @@ public class GameManager implements IGameManager {
         }
 
         for (Player p : game.getPlayersVector()) {
-            send(p.getId(), tacticalGeniusReport ? createTacticalGeniusReportPacket() : createReportPacket(p));
+            send(p.getId(), tacticalGeniusReport ? createTacticalGeniusReportPacket(p) : createReportPacket(p));
         }
     }
 

@@ -31,10 +31,7 @@ import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.*;
@@ -44,14 +41,12 @@ public final class SBFFormationConverter {
 
     private final Force force;
     private final Game game;
-    private final boolean includePilots;
     private final CalculationReport report;
     private final SBFFormation formation = new SBFFormation();
 
-    public SBFFormationConverter(Force force, Game game, boolean includePilots) {
+    public SBFFormationConverter(Force force, Game game) {
         this.force = force;
         this.game = game;
-        this.includePilots = includePilots;
         this.report = new FlexibleCalculationReport();
     }
 
@@ -74,7 +69,7 @@ public final class SBFFormationConverter {
             var thisUnitBaseSkill = new ArrayList<AlphaStrikeElement>();
             for (ForceAssignable entity : forces.getFullEntities(subforce)) {
                 if (entity instanceof Entity) {
-                    thisUnit.add(ASConverter.convert((Entity) entity, includePilots));
+                    thisUnit.add(ASConverter.convert((Entity) entity, new FlexibleCalculationReport()));
                     thisUnitBaseSkill.add(ASConverter.convert((Entity) entity, false));
                 }
             }
@@ -136,7 +131,7 @@ public final class SBFFormationConverter {
                 "= " + skill);
         formation.setSkill(skill);
         formation.setMorale(3 + formation.getSkill());
-        report.addLine("Morale:", "", "= " + formation.getMorale());
+        report.addLine("Morale:", "3 + " + formation.getSkill(), "= " + formation.getMorale());
 
         calcFormationSpecialAbilities();
         calcFormationTactics();
@@ -307,25 +302,31 @@ public final class SBFFormationConverter {
 
     private void setMovementMode() {
         SBFMovementMode currentMode = SBFMovementMode.UNKNOWN;
+        Set<String> unitModes = new HashSet<>();
         for (SBFUnit unit : formation.getUnits()) {
             SBFMovementMode newMode = unit.getMovementMode();
+            unitModes.add(newMode.code.isBlank() ? "(Walk)" : newMode.code);
             if (newMode.rank < currentMode.rank) {
                 currentMode = newMode;
             }
         }
-        report.addLine("Movement Mode:", currentMode.code);
+        report.addLine("Movement Mode:",
+                "Most restrictive of: " + String.join(", ", unitModes), currentMode.code);
         formation.setMovementMode(currentMode);
     }
 
     private void setTrspMovementMode() {
         SBFMovementMode currentMode = SBFMovementMode.UNKNOWN;
+        Set<String> unitModes = new HashSet<>();
         for (SBFUnit unit : formation.getUnits()) {
             SBFMovementMode newMode = unit.getTrspMovementMode();
+            unitModes.add(newMode.code.isBlank() ? "(Walk)" : newMode.code);
             if (newMode.rank < currentMode.rank) {
                 currentMode = newMode;
             }
         }
-        report.addLine("Movement Mode:", currentMode.code);
+        report.addLine("Movement Mode:",
+                "Most restrictive of: " + String.join(", ", unitModes), currentMode.code);
         formation.setTrspMovementMode(currentMode);
     }
 }

@@ -25,6 +25,7 @@ import megamek.common.options.OptionsConstants;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static java.util.stream.Collectors.*;
 import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
@@ -47,7 +48,6 @@ public class SBFUnitConverter {
         unit.setName(Objects.requireNonNullElse(name, "Unknown"));
         this.elementsBaseSkill = elementsBaseSkill;
         this.report = report;
-
     }
 
     /**
@@ -67,13 +67,13 @@ public class SBFUnitConverter {
 
         calcUnitType();
         calcUnitSize();
-        calcUnitArmor();
         calcUnitMove();
         setMovementMode();
         calcUnitJumpMove();
-        calcUnitSpecialAbilities();
         calcTransportMove();
         calcUnitTMM();
+        calcUnitArmor();
+        calcUnitSpecialAbilities();
 
         unit.setDamage(calcUnitDamage());
         calcUnitSkill();
@@ -522,7 +522,7 @@ public class SBFUnitConverter {
                 report.addLine("Movement:", "");
                 String elementsSum = elements.stream().map(e -> e.getPrimaryMovementValue() + "").collect(joining(" + "));
                 report.addLine("- Average Move", "(" + elementsSum + ") / " + elements.size() + " / 2, rn",
-                        "= " + formatForReport(averageMove));
+                        "= " + formatForReport(roundedAverageMove));
                 report.addLine("- Minimum Infantry Move", "", minInfantryMove + "");
                 report.addLine("Final Movement Value", "", finalMove + "");
                 unit.setMovement(finalMove);
@@ -542,25 +542,47 @@ public class SBFUnitConverter {
     }
 
     private void calcTransportMove() {
-        int transportMove = unit.getMovement();
-        if (unit.getCAR() <= unit.getIT()) {
-            double averageMove = elements.stream()
-                    .filter(e -> !e.isInfantry())
+        List<AlphaStrikeElement> nonTransportableElements = elements.stream()
+                .filter(Predicate.not(isGroundTransportable)).collect(toList());
+        if (nonTransportableElements.isEmpty()) {
+            report.addLine("Transport Movement:", "No transport-capable elements",
+                    unit.getMovement() + unit.getMovementMode().code);
+            unit.setTrspMovement(unit.getMovement());
+            unit.setTrspMovementMode(unit.getMovementMode());
+
+        } else if (!hasGroundTransportableElements(unit)) {
+            report.addLine("Transport Movement:", "No transportable elements",
+                    unit.getMovement() + unit.getMovementMode().code);
+            unit.setTrspMovement(unit.getMovement());
+            unit.setTrspMovementMode(unit.getMovementMode());
+
+        } else if (unit.getCAR() <= unit.getIT()) { // TODO : this is missing MEC and XMEC checks
+            double averageMove = nonTransportableElements.stream()
                     .mapToInt(AlphaStrikeElement::getPrimaryMovementValue)
                     .average().orElse(0);
-            transportMove = (int) Math.round(averageMove / 2);
-            report.addLine("Transport Movement:", "");
-            String elementsSum = elements.stream()
-                    .filter(e -> !e.isInfantry())
+            int transportMove = (int) Math.round(averageMove / 2);
+            String movesList = nonTransportableElements.stream()
                     .map(e -> e.getPrimaryMovementValue() + "")
-                    .collect(joining(" + "));
-            report.addLine("- Average Move", "(" + elementsSum + ") / " + elements.size() + " / 2, rn",
-                    "= " + formatForReport(averageMove));
-            report.addLine("Final Movement Value", "", transportMove + "");
+                    .collect(joining(", "));
+            report.addLine("Transport Movement:", "(" + movesList + ") / " + elements.size() + " / 2, rn",
+                    "= " + formatForReport(transportMove));
+            unit.setTrspMovement(transportMove);
+            setTransportMovementMode(nonTransportableElements);
+
+        } else {
+            // TBD more complicated, only some elements transportable
+            report.addLine("Transport Movement:", "[TBD]", "");
+            // TODO : replace the following:
+            unit.setTrspMovement(unit.getMovement());
+            unit.setTrspMovementMode(unit.getMovementMode());
         }
-        unit.setTrspMovement(transportMove);
-        unit.setTrspMovementMode(unit.getMovementMode());
     }
+
+    private boolean hasGroundTransportableElements(SBFUnit unit) {
+        return unit.getElements().stream().anyMatch(isGroundTransportable);
+    }
+
+    private final Predicate<AlphaStrikeElement> isGroundTransportable = e -> e.hasAnySUAOf(MEC, XMEC, CAR);
 
     private void calcUnitJumpMove() {
         double averageJump = elements.stream().mapToInt(AlphaStrikeElement::getJumpMove).average().orElse(0);
@@ -575,14 +597,34 @@ public class SBFUnitConverter {
 
     private void setMovementMode() {
         SBFMovementMode currentMode = SBFMovementMode.UNKNOWN;
+        Set<String> elementModes = new HashSet<>();
         for (AlphaStrikeElement element : elements) {
             SBFMovementMode newMode = SBFMovementMode.modeForElement(unit, element);
+            String asMode = element.getPrimaryMovementMode();
+            elementModes.add(element.getASUnitType() + "/" + (asMode.isBlank() ? "(Walk)" : asMode));
             if (newMode.rank < currentMode.rank) {
                 currentMode = newMode;
             }
         }
-        report.addLine("Movement Mode:", currentMode.code);
+        report.addLine("Movement Mode:",
+                "Most restrictive of: " + String.join(", ", elementModes), currentMode.code);
         unit.setMovementMode(currentMode);
+    }
+
+    private void setTransportMovementMode(List<AlphaStrikeElement> nonTransportedElements) {
+        SBFMovementMode currentMode = SBFMovementMode.UNKNOWN;
+        Set<String> elementModes = new HashSet<>();
+        for (AlphaStrikeElement element : nonTransportedElements) {
+            SBFMovementMode newMode = SBFMovementMode.modeForElement(unit, element);
+            String asMode = element.getPrimaryMovementMode();
+            elementModes.add(element.getASUnitType() + "/" + (asMode.isBlank() ? "(Walk)" : asMode));
+            if (newMode.rank < currentMode.rank) {
+                currentMode = newMode;
+            }
+        }
+        report.addLine("Transport Movement Mode:",
+                "Most restrictive of: " + String.join(", ", elementModes), currentMode.code);
+        unit.setTrspMovementMode(currentMode);
     }
 
     private void calcUnitArmor() {
@@ -634,10 +676,12 @@ public class SBFUnitConverter {
         String skillCalculation = "";
         if (unit.getSkill() > 4) {
             result = (1.0d - (unit.getSkill() - 4) * 0.1) * intermediate;
-            skillCalculation += intermediate + " x (1 - (" + unit.getSkill() + " - 4) x 0.1) = " + result + ", rn";
+            skillCalculation += intermediate + " x (1 - (" + unit.getSkill() + " - 4) x 0.1) = "
+                    + formatForReport(result) + ", rn";
         } else if (unit.getSkill() < 4) {
             result = (1.0d + (4 - unit.getSkill()) * 0.2) * intermediate;
-            skillCalculation += intermediate + " x (1 + (4 - " + unit.getSkill() + ") x 0.2) = " + result + ", rn, Min "
+            skillCalculation += intermediate + " x (1 + (4 - " + unit.getSkill() + ") x 0.2) = "
+                    + formatForReport(result) + ", rn, Min "
                     + (intermediate + 4 - unit.getSkill());
             result = Math.max(intermediate + 4 - unit.getSkill(), result);
         }

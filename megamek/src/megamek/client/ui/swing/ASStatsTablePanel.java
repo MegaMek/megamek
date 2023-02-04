@@ -33,7 +33,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.*;
 
-public class AlphaStrikeStatsTablePanel {
+public class ASStatsTablePanel {
 
     private final int COLUMNS = 15;
     private final static Color GROUP_NAME_COLOR = UIUtil.uiLightGreen();
@@ -41,53 +41,70 @@ public class AlphaStrikeStatsTablePanel {
 
     private final JPanel panel = new JPanel(new SpringLayout());
     private int rows;
-    private final boolean usePilotSkill;
     private final List<EntityGroup> groups = new ArrayList<>();
     private final JFrame frame;
 
-
     /**
-     * Returns a panel with a table of AlphaStrike stats for the given entities after AlphaStrike
-     * conversion. The table will show buttons for calling up conversion reports. The given entity
-     * collection will be filtered for convertible units.
+     * Constructs a panel with a table of AlphaStrike stats for any units that are added to it.
+     * To add units to it, call {@link #add(Collection)} or {@link #add(Collection, String)}. These
+     * calls can be stringed. The panel can be obtained with {@link #getPanel()}.
+     *
+     * The table will show buttons for calling up conversion reports. The given frame is needed as a
+     * parent to the conversion report windows. Pilot skills will be included when converting TW units.
      *
      * @param frame The parent frame (important for giving a parent to conversion report dialogs)
      */
-    public AlphaStrikeStatsTablePanel(JFrame frame, boolean usePilotSkill) {
+    public ASStatsTablePanel(JFrame frame) {
         this.frame = frame;
-        this.usePilotSkill = usePilotSkill;
     }
 
     /**
-     * Returns a panel with a table of AlphaStrike stats for the given entities after AlphaStrike
-     * conversion. The table will show buttons for calling up conversion reports. The given entity
-     * collection will be filtered for convertible units.
+     * Adds a block of units to the panel. AlphaStrikeElements are shown as they are, Entities are
+     * converted first. All other types of unit are ignored. This block of units is shown with the
+     * given name.
      *
-     * @param entities a collection of entities to convert and show
+     * @param name The name of this block of units
+     * @param units a collection of units to (convert and) show
+     * @return This panel to allow stringing.
      */
-    public AlphaStrikeStatsTablePanel add(Collection<? extends ForceAssignable> entities, @Nullable String name) {
-        groups.add(new EntityGroup(entities, name));
+    public ASStatsTablePanel add(Collection<? extends ForceAssignable> units, @Nullable String name) {
+        groups.add(new EntityGroup(units, name));
         return this;
     }
 
-    public AlphaStrikeStatsTablePanel add(Collection<? extends ForceAssignable> entities) {
-        groups.add(new EntityGroup(entities, ""));
+    /**
+     * Adds a block of units to the panel. AlphaStrikeElements are shown as they are, Entities are
+     * converted first. All other types of unit are ignored. This block of units is shown without a name.
+     *
+     * @param units a collection of units to (convert and) show
+     * @return This panel to allow stringing.
+     */
+    public ASStatsTablePanel add(Collection<? extends ForceAssignable> units) {
+        groups.add(new EntityGroup(units, ""));
         return this;
     }
 
+    /**
+     * Returns the fully constructed JPanel with all units added through the add() methods to add to
+     * any other Container.
+     *
+     * @return The swing JPanel
+     */
     public JPanel getPanel() {
         constructPanel();
         return panel;
     }
 
+    /** Assembles the JPanel. It is empty before calling this method. */
     private void constructPanel() {
-        addVerticalSpace(20);
+        addVerticalSpace();
         for (EntityGroup group : groups) {
             addGrouptoPanel(group);
         }
         finalizePanel();
     }
 
+    /** Adds one group of units to the JPanel. */
     private void addGrouptoPanel(EntityGroup group) {
         // Conversion to AlphaStrike
         final List<AlphaStrikeElement> elementList = new ArrayList<>();
@@ -97,7 +114,7 @@ public class AlphaStrikeStatsTablePanel {
             if (unit instanceof AlphaStrikeElement) {
                 element = (AlphaStrikeElement) unit;
             } else if ((unit instanceof Entity) && (ASConverter.canConvert((Entity) unit))) {
-                element = ASConverter.convert((Entity) unit, usePilotSkill);
+                element = ASConverter.convert((Entity) unit, new FlexibleCalculationReport());
             }
             if (element != null) {
                 elementList.add(element);
@@ -149,11 +166,13 @@ public class AlphaStrikeStatsTablePanel {
             addConversionInfo(oddRow, reports.get(element), element, frame);
         }
 
-        addVerticalSpace(20);
+        addVerticalSpace();
     }
 
+    /** Finalizes the JPanel by constructing the Swing layout table. */
     private void finalizePanel() {
         SpringUtilities.makeCompactGrid(panel, rows, COLUMNS, 5, 5, 1, 5);
+        panel.revalidate();
     }
 
     private void addConversionInfo(boolean coloredBG, FlexibleCalculationReport conversionReport,
@@ -184,6 +203,7 @@ public class AlphaStrikeStatsTablePanel {
         }
         var textLabel = new JLabel(text);
         textLabel.setForeground(color);
+        textLabel.setFont(UIUtil.getScaledFont());
         elementPanel.add(textLabel);
         panel.add(elementPanel);
     }
@@ -195,6 +215,7 @@ public class AlphaStrikeStatsTablePanel {
     private void addHeader(String text) {
         var textLabel = new JLabel(text, SwingConstants.CENTER);
         textLabel.setForeground(HEADER_COLOR);
+        textLabel.setFont(UIUtil.getScaledFont());
         panel.add(textLabel);
     }
 
@@ -206,13 +227,14 @@ public class AlphaStrikeStatsTablePanel {
                 "<BR>REAR(" + element.getRearArc().getSpecialsExportString(", ", element) + ")";
     }
 
-    private void addVerticalSpace(int height) {
+    private void addVerticalSpace() {
         rows++;
         for (int col = 0; col < COLUMNS; col++) {
-            panel.add(Box.createVerticalStrut(height));
+            panel.add(Box.createVerticalStrut(20));
         }
     }
 
+    /** Adds a line of JSeperators to the panel. The additional strut is required for the line to show. */
     private void addLine() {
         rows++;
         for (int col = 0; col < COLUMNS; col++) {
@@ -224,6 +246,7 @@ public class AlphaStrikeStatsTablePanel {
         }
     }
 
+    /** A record to store added groups of units before constructing the panel. */
     private static class EntityGroup {
         private final List<ForceAssignable> entities;
         private final String name;
@@ -233,5 +256,4 @@ public class AlphaStrikeStatsTablePanel {
             this.name = Objects.requireNonNullElse(name, "");
         }
     }
-
 }

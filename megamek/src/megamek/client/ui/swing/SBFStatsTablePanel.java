@@ -22,7 +22,6 @@ import megamek.client.ui.dialogs.ASConversionInfoDialog;
 import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.swing.util.SpringUtilities;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.annotations.Nullable;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFUnit;
@@ -31,9 +30,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Collection;
 
-public class SBFViewPanel {
+public class SBFStatsTablePanel {
 
-    public static final int DEFAULT_HEIGHT = 600;
     public static final int COLUMNS = 13;
     
     private final JFrame parent;
@@ -41,18 +39,18 @@ public class SBFViewPanel {
     private final Collection<SBFFormation> formations;
     private final Box contentPane = Box.createVerticalBox();
 
-    public SBFViewPanel(JFrame parent, Collection<SBFFormation> formations, boolean showElements) {
+    public SBFStatsTablePanel(JFrame parent, Collection<SBFFormation> formations, boolean showElements) {
         this.parent = parent;
         this.formations = formations;
         this.showElements = showElements;
-        updatePanel2();
+        updatePanel();
     }
 
     public JComponent getPanel() {
         return contentPane;
     }
 
-    private void updatePanel2() {
+    private void updatePanel() {
         contentPane.removeAll();
         for (SBFFormation formation : formations) {
             contentPane.add(formationPanel(formation));
@@ -78,7 +76,7 @@ public class SBFViewPanel {
         addGridElement(summaryPanel, formation.getSkill() + "", UIUtil.uiDarkBlue());
         addGridElement(summaryPanel, formation.getPointValue() + "", UIUtil.uiDarkBlue());
         addGridElement(summaryPanel, formation.getSpecialsDisplayString(", ", formation) + "", UIUtil.uiDarkBlue(), FlowLayout.LEFT);
-        addConversionInfo(summaryPanel, (FlexibleCalculationReport) formation.getConversionReport(), null, parent);
+        addConversionInfo(summaryPanel, (FlexibleCalculationReport) formation.getConversionReport(), parent);
 
         addUnitHeaders(summaryPanel);
         int row = 1;
@@ -103,7 +101,7 @@ public class SBFViewPanel {
         formationPanel.add(summaryPanel);
 
         if (showElements) {
-            var p = new AlphaStrikeStatsTablePanel(null, false);
+            var p = new ASStatsTablePanel(null);
             formation.getUnits().forEach(u -> p.add(u.getElements(), u.getName()));
             formationPanel.add(p.getPanel());
         }
@@ -113,7 +111,7 @@ public class SBFViewPanel {
 
 
     private void addConversionInfo(JComponent targetPanel, FlexibleCalculationReport conversionReport,
-                                   AlphaStrikeElement element, JFrame frame) {
+                                   JFrame frame) {
         var panel = new UIUtil.FixedYPanel();
         JButton button = new JButton("?");
         button.setEnabled(conversionReport != null);
@@ -137,6 +135,7 @@ public class SBFViewPanel {
         panel.setForeground(textColor);
         var textLabel = new JLabel(text);
         textLabel.setForeground(textColor);
+        textLabel.setFont(UIUtil.getScaledFont());
         panel.add(textLabel);
         targetPanel.add(panel);
     }
@@ -159,6 +158,7 @@ public class SBFViewPanel {
         var textLabel = new JLabel(text);
         textLabel.setAlignmentX(alignment);
         textLabel.setForeground(color);
+        textLabel.setFont(UIUtil.getScaledFont());
         namePanel.add(textLabel);
         namePanel.add(Box.createVerticalStrut(5));
         namePanel.add(new JSeparator());

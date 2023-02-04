@@ -25,9 +25,9 @@ import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.Messages;
-import megamek.client.ui.dialogs.AlphaStrikeStatsDialog;
+import megamek.client.ui.dialogs.ASStatsDialog;
 import megamek.client.ui.dialogs.CamoChooserDialog;
-import megamek.client.ui.dialogs.StrategicBattleForceStatsDialog;
+import megamek.client.ui.dialogs.SBFStatsDialog;
 import megamek.client.ui.swing.CustomMechDialog;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.UnitEditorDialog;
@@ -1046,12 +1046,12 @@ public class LobbyActions {
             LobbyErrors.showSBFConversion(frame());
             return;
         }
-        new StrategicBattleForceStatsDialog(frame(), fo, lobby.game()).setVisible(true);
+        new SBFStatsDialog(frame(), fo, lobby.game()).setVisible(true);
     }
 
     /** Shows a non-modal dialog window with the AlphaStrike stats of the given entities. */
     void showAlphaStrikeView(Collection<Entity> en) {
-        new AlphaStrikeStatsDialog(frame(), en).setVisible(true);
+        new ASStatsDialog(frame(), en).setVisible(true);
     }
 
     /**

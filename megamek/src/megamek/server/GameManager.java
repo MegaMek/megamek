@@ -33890,7 +33890,7 @@ public class GameManager implements IGameManager {
                     r.addDesc(inf);
                     r.subject = inf.getId();
                     addReport(r);
-                } else if (dig == Infantry.DUG_IN_FORTIFYING4) {
+                } else if (dig == Infantry.DUG_IN_FORTIFYING3) {
                     Coords c = inf.getPosition();
                     r = new Report(5305);
                     r.addDesc(inf);

@@ -115,7 +115,6 @@ public class Infantry extends Entity {
     public static final int DUG_IN_FORTIFYING1 = 3; // no protection, can't attack
     public static final int DUG_IN_FORTIFYING2 = 4; // no protection, can't attack
     public static final int DUG_IN_FORTIFYING3 = 5; // no protection, can't attack
-    public static final int DUG_IN_FORTIFYING4 = 6; // no protection, can't attack
     private int dugIn = DUG_IN_NONE;
 
     private boolean isTakingCover = false;
@@ -1097,7 +1096,7 @@ public class Infantry extends Entity {
 
         if ((dugIn != DUG_IN_COMPLETE) && (dugIn != DUG_IN_NONE)) {
             dugIn++;
-            if (dugIn > DUG_IN_FORTIFYING4) {
+            if (dugIn > DUG_IN_FORTIFYING3) {
                 dugIn = DUG_IN_NONE;
             }
         }

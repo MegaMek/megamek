@@ -1770,9 +1770,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setSoundMuteChat(boolean state) {
         store.setValue(SOUND_MUTE_CHAT, state);
     }
+
     public void setSoundMuteMyTurn(boolean state) {
         store.setValue(SOUND_MUTE_MY_TURN, state);
     }
+
     public void setSoundMuteOthersTurn(boolean state) {
         store.setValue(SOUND_MUTE_OTHERS_TURN, state);
     }

@@ -1758,9 +1758,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setSoundBingFilenameChat(String name) {
         store.setValue(SOUND_BING_FILENAME_CHAT, name);
     }
+
     public void setSoundBingFilenameMyTurn(String name) {
         store.setValue(SOUND_BING_FILENAME_MY_TURN, name);
     }
+
     public void setSoundBingFilenameOthersTurn(String name) {
         store.setValue(SOUND_BING_FILENAME_OTHERS_TURN, name);
     }

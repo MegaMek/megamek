@@ -2136,7 +2136,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     }
 
     public void bingOthersTurn() {
-        if ((!GUIP.getSoundMuteOthersTurn()) && (bingClipMyTurn != null)) {
+        if (!GUIP.getSoundMuteOthersTurn() && (bingClipMyTurn != null)) {
             bingClipOthersTurn.setFramePosition(0);
             bingClipOthersTurn.start();
         }

@@ -1167,7 +1167,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(SOUND_MUTE_OTHERS_TURN);
     }
 
-
     public int getTooltipDelay() {
         return store.getInt(TOOLTIP_DELAY);
     }

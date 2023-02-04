@@ -353,9 +353,11 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         if (bingClipChat != null) {
             bingClipChat.close();
         }
+
         if (bingClipMyTurn != null) {
             bingClipMyTurn.close();
         }
+
         if (bingClipOthersTurn != null) {
             bingClipOthersTurn.close();
         }
@@ -409,8 +411,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      * Try to load the "bing" sound clip.
      */
     private @Nullable Clip loadSoundClip(@Nullable String filename) {
-        Clip clip = null;
-
         if (filename == null) {
             return null;
         }
@@ -421,16 +421,15 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         }
 
         try {
-            clip = AudioSystem.getClip();
+            Clip clip = AudioSystem.getClip();
             try (AudioInputStream ais = AudioSystem.getAudioInputStream(file)) {
                 clip.open(ais);
+                return clip;
             }
         } catch (Exception ex) {
             LogManager.getLogger().error("", ex);
-            clip = null;
+            return null;
         }
-
-        return clip;
     }
 
     /**

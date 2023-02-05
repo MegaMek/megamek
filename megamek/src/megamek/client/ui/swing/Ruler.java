@@ -14,6 +14,7 @@
 package megamek.client.ui.swing;
 
 import megamek.client.Client;
+import megamek.client.TwGameClient;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.Messages;
@@ -41,7 +42,7 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
     private Color startColor;
     private Color endColor;
     private int distance;
-    private Client client;
+    private TwGameClient client;
     private BoardView bv;
     private boolean flip;
 
@@ -69,7 +70,7 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
     private JCheckBox cboIsMech2 = 
         new JCheckBox(Messages.getString("Ruler.isMech"));
 
-    public Ruler(JFrame f, Client c, BoardView b) {
+    public Ruler(JFrame f, TwGameClient c, BoardView b) {
         super(f, Messages.getString("Ruler.title"), false);
         enableEvents(AWTEvent.WINDOW_EVENT_MASK);
 

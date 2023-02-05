@@ -267,10 +267,6 @@ public class Precognition implements Runnable {
                     GameVictoryEvent gve = new GameVictoryEvent(this, getGame());
                     getGame().processGameEvent(gve);
                     break;
-                default:
-                    LogManager.getLogger().error("Attempted to parse unknown PacketCommand of "
-                            + c.getCommand().name());
-                    break;
             }
         } catch (Exception ex) {
             LogManager.getLogger().error("", ex);

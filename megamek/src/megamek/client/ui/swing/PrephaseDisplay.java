@@ -33,6 +33,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import megamek.client.Client;
+import megamek.client.TwGameClient;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.CommandAction;
@@ -235,7 +236,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         if (en != cen) {
             refreshAll();
         }
-        Client client = clientgui.getClient();
+        TwGameClient client = clientgui.getClient();
 
         if (client.getGame().getEntity(en) != null) {
 

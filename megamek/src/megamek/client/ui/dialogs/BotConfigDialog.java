@@ -20,6 +20,7 @@
 package megamek.client.ui.dialogs;
 
 import megamek.client.Client;
+import megamek.client.TwGameClient;
 import megamek.client.bot.princess.*;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
@@ -108,7 +109,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
     private final ClientGUI clientGui;
     
     /** Convenience field for clientGui.getClient(). */
-    private final Client client;
+    private final TwGameClient client;
     
     public BotConfigDialog(JFrame parent, @Nullable String botName) {
         this(parent, botName, null, null);
@@ -208,7 +209,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         String name = baseName;
         if (client != null) {
             int counter = 0;
-            Set<String> playerNames = client.getGame().getPlayersVector().stream().map(Player::getName).collect(Collectors.toSet());
+            Set<String> playerNames = client.getIGame().getPlayersVector().stream().map(Player::getName).collect(Collectors.toSet());
             while (playerNames.contains(name) && counter < 1000) {
                 counter++;
                 name = baseName + counter;
@@ -487,7 +488,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         // adding ".2" when necessary. But it has to be unique among local bots as otherwise
         // the connection between the client.bots stored name and the server-given name 
         // gets lost. It doesn't hurt to check against all players though.
-        boolean playerNameTaken = (client != null) && client.getGame().getPlayersVector().stream()
+        boolean playerNameTaken = (client != null) && client.getIGame().getPlayersVector().stream()
                 .anyMatch(p -> p.getName().equals(nameField.getText()));
         if (isNewBot && playerNameTaken) {
             JOptionPane.showMessageDialog(getFrame(), Messages.getString("ChatLounge.AlertExistsBot.message"));
@@ -596,7 +597,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
     
     /** Copies the Configuration from another local bot player. */
     private void copyFromOtherBot(String botName) {
-        var bc = client.bots.get(botName);
+        var bc = client.getBots().get(botName);
         if (bc instanceof Princess) {
             try {
                 princessBehavior = ((Princess) bc).getBehaviorSettings().getCopy();
@@ -719,7 +720,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         // Other local bot Configurations
         if (client != null) {
             // Find if there actually are other bots 
-            Set<String> otherBots = new HashSet<>(client.bots.keySet());
+            Set<String> otherBots = new HashSet<>(client.getBots().keySet());
             if (fixedBotPlayerName != null) {
                 otherBots.remove(fixedBotPlayerName);
             }

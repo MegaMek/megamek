@@ -20,6 +20,7 @@
 package megamek.client.ui.swing;
 
 import megamek.client.Client;
+import megamek.client.TwGameClient;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.common.*;
@@ -50,14 +51,14 @@ public class MapMenu extends JPopupMenu {
     Game game;
     Component currentPanel;
     private Board board;
-    Client client;
+    TwGameClient client;
     ClientGUI gui;
     Entity selectedEntity;
     Entity myEntity;
     Targetable myTarget = null;
     private boolean hasMenu;
 
-    public MapMenu(Coords coords, Client client, Component panel, ClientGUI gui) {
+    public MapMenu(Coords coords, TwGameClient client, Component panel, ClientGUI gui) {
         this.coords = coords;
         game = client.getGame();
         currentPanel = panel;

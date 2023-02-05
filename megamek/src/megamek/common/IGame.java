@@ -20,6 +20,8 @@ package megamek.common;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
+import megamek.common.event.GameEvent;
+import megamek.common.event.GameListener;
 import megamek.common.force.Forces;
 import megamek.common.options.GameOptions;
 
@@ -38,6 +40,10 @@ public interface IGame {
 
     GamePhase getPhase();
 
+    void fireGameEvent(GameEvent event);
+
+    void addGameListener(GameListener listener);
+
     /**
      * @return Whether there is an active claim for victory.
      */
@@ -46,7 +52,7 @@ public interface IGame {
     /** @return The Forces present in this game. Can be empty, but not null. */
     Forces getForces();
 
-    // PLAYERS //////////////
+    //region Players
 
     /**
      * @param id a player id
@@ -67,11 +73,21 @@ public interface IGame {
 
     /**
      * Adds the given Player to the game with the given game-unique id.
+     * // TODO : Can this be made a default method?
      *
      * @param id The game-unique id of this player
      * @param player The Player object
      */
     void addPlayer(int id, Player player);
+
+    /**
+     * Sets the given Player to the given game-unique id.
+     * // TODO : Is this method useful? Why not use addPlayer that also sets single-blind info?
+     *
+     * @param id The game-unique id of this player
+     * @param player The Player object
+     */
+    void setPlayer(int id, Player player);
 
     /**
      * Removes the player with the id from the game.
@@ -83,7 +99,9 @@ public interface IGame {
     /** @return The current number of active players in the game. This includes observers but not ghosts. */
     int getNoOfPlayers();
 
-    // TEAMS //////////////
+    //endregion
+
+    //region Teams
 
     /** @return The teams in the game. Implementations should make sure that this list can be safely modified. */
     List<Team> getTeams();
@@ -93,7 +111,23 @@ public interface IGame {
 
     void setupTeams();
 
-    // UNITS //////////////
+    /**
+     * @return a player's team, which may be null if they do not have a team
+     */
+    default @Nullable Team getTeamForPlayer(Player p) {
+        for (Team team : getTeams()) {
+            for (Player player : team.players()) {
+                if (player.equals(p)) {
+                    return team;
+                }
+            }
+        }
+        return null;
+    }
+
+    //endregion
+
+    //region Units
 
     /** @return The next free id for InGameObjects (units and others). */
     int getNextEntityId();
@@ -118,4 +152,6 @@ public interface IGame {
     default List<InGameObject> getInGameObjects(Collection<Integer> idList) {
         return getInGameObjects().stream().filter(o -> idList.contains(o.getId())).collect(Collectors.toList());
     }
+
+    //endregion
 }

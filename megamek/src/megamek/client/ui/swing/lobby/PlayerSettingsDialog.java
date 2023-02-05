@@ -20,6 +20,7 @@
 package megamek.client.ui.swing.lobby;
 
 import megamek.client.Client;
+import megamek.client.TwGameClient;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
@@ -59,7 +60,7 @@ import static megamek.client.ui.swing.util.UIUtil.*;
  */
 public class PlayerSettingsDialog extends AbstractButtonDialog {
 
-    public PlayerSettingsDialog(ClientGUI cg, Client cl) {
+    public PlayerSettingsDialog(ClientGUI cg, TwGameClient cl) {
         super(cg.frame, "PlayerSettingsDialog", "PlayerSettingsDialog.title");
         client = cl;
         clientgui = cg;
@@ -134,7 +135,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
     // PRIVATE
 
-    private final Client client;
+    private final TwGameClient client;
     private final ClientGUI clientgui;
     
     // Initiative Section

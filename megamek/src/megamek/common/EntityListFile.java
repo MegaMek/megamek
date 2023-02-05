@@ -15,6 +15,7 @@ package megamek.common;
 
 import megamek.MMConstants;
 import megamek.client.Client;
+import megamek.client.TwGameClient;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.force.Force;
 import megamek.common.options.OptionsConstants;
@@ -541,7 +542,7 @@ public class EntityListFile {
      * @throws IOException
      *             is thrown on any error.
      */
-    public static void saveTo(File file, Client client) throws IOException {
+    public static void saveTo(File file, TwGameClient client) throws IOException {
         if (null == client.getGame()) {
             return;
         }

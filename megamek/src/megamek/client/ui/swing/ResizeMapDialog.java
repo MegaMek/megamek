@@ -14,6 +14,7 @@
 package megamek.client.ui.swing;
 
 import megamek.client.Client;
+import megamek.client.TwGameClient;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.VerifyInRange;
 import megamek.client.ui.swing.widget.VerifiableTextField;
@@ -44,7 +45,7 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
     // External helpers.
     private final JFrame PARENT;
     private final IMapSettingsObserver MAP_SETTINGS_OBSERVER;
-    private final Client CLIENT;
+    private final TwGameClient CLIENT;
 
     // How the map will be set up.
     private MapSettings mapSettings;
@@ -89,7 +90,7 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
      *                            server-based game.
      * @param mapSettings         The {@link MapSettings} describing the map to be generated.
      */
-    public ResizeMapDialog(JFrame parent, IMapSettingsObserver mapSettingsObserver, Client client,
+    public ResizeMapDialog(JFrame parent, IMapSettingsObserver mapSettingsObserver, TwGameClient client,
                            MapSettings mapSettings) {
         super(parent, Messages.getString("ExpandMapDialog.title"), true);
         this.mapSettings = mapSettings;

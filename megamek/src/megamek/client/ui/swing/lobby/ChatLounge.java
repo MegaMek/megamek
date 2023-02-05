@@ -22,6 +22,7 @@ package megamek.client.ui.swing.lobby;
 
 import megamek.MMConstants;
 import megamek.client.Client;
+import megamek.client.TwGameClient;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
@@ -1510,16 +1511,16 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      * For a unit that cannot be configured (owned by a remote player) the client
      * of the local player is returned.
      */
-    Client getLocalClient(Entity entity) {
+    TwGameClient getLocalClient(Entity entity) {
         if (clientgui.getBots().containsKey(entity.getOwner().getName())) {
-            return clientgui.getBots().get(entity.getOwner().getName());
+            return (TwGameClient) clientgui.getBots().get(entity.getOwner().getName());
         } else {
             return clientgui.getClient();
         }
     }
 
     public void configPlayer() {
-        Client c = getSelectedClient();
+        TwGameClient c = getSelectedClient();
         if (null == c) {
             return;
         }
@@ -1767,7 +1768,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             } else if (ev.getSource().equals(butSaveList)) {
                 // Allow the player to save their current
                 // list of entities to a file.
-                Client c = getSelectedClient();
+                TwGameClient c = getSelectedClient();
                 if (c == null) {
                     clientgui.doAlertDialog(Messages.getString("ChatLounge.ImproperCommand"),
                             Messages.getString("ChatLounge.SelectBotOrPlayer"));
@@ -2048,7 +2049,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     
     private void removeBot() {
         Client c = getSelectedClient();
-        if (!client().bots.containsValue(c)) {
+        if (!client().getBots().containsValue(c)) {
             LobbyErrors.showOnlyOwnBot(clientgui.frame);
             return;
         }
@@ -2190,12 +2191,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     
     @Override
     public void ready() {
-        final Client client = clientgui.getClient();
+        final TwGameClient client = clientgui.getClient();
         final Game game = client.getGame();
         final GameOptions gOpts = game.getOptions();
         
         // enforce exclusive deployment zones in double blind
-        for (Player player: client.getGame().getPlayersVector()) {
+        for (Player player: game.getPlayersVector()) {
             if (!isValidStartPos(game, player)) {
                 clientgui.doAlertDialog(Messages.getString("ChatLounge.OverlapDeploy.title"),
                         Messages.getString("ChatLounge.OverlapDeploy.msg"));
@@ -2236,7 +2237,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
     }
 
-    Client getSelectedClient() {
+    TwGameClient getSelectedClient() {
         if ((tablePlayers == null) || (tablePlayers.getSelectedRowCount() == 0)) {
             return null;
         }
@@ -2244,11 +2245,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         Player player = playerModel.getPlayerAt(tablePlayers.getSelectedRow());
         if (localPlayer().equals(player)) {
             return client();
-        } else if (client().bots.containsKey(player.getName())) {
-            return client().bots.get(player.getName());
-        } else {
-            return null;
-        }
+        } else return (TwGameClient) client().getBots().getOrDefault(player.getName(), null);
     }
 
     /**
@@ -3601,7 +3598,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     }
     
     /** Convenience for clientgui.getClient() */
-    Client client() {
+    TwGameClient client() {
         return clientgui.getClient();
     }
     

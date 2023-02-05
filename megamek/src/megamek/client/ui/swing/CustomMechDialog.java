@@ -14,6 +14,7 @@
 package megamek.client.ui.swing;
 
 import megamek.client.Client;
+import megamek.client.TwGameClient;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.UIUtil;
@@ -175,7 +176,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     private int status = CustomMechDialog.DONE;
 
     private final ClientGUI clientgui;
-    private final Client client;
+    private final TwGameClient client;
     private final boolean space;
 
     private PilotOptions options;
@@ -197,7 +198,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     /**
      * Creates new CustomMechDialog
      */
-    public CustomMechDialog(ClientGUI clientgui, Client client, List<Entity> entities,
+    public CustomMechDialog(ClientGUI clientgui, TwGameClient client, List<Entity> entities,
                             boolean editable) {
         super(clientgui.frame, Messages.getString("CustomMechDialog.title"), true);
 

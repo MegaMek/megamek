@@ -14,11 +14,12 @@
 package megamek.common.actions;
 
 import megamek.client.Client;
+import megamek.client.TwGameClient;
 
 public interface EntityAction {
     int getEntityId();
 
     void setEntityId(int entityId);
 
-    String toDisplayableString(Client client);
+    String toDisplayableString(TwGameClient client);
 }

@@ -17,6 +17,7 @@
 package megamek.client.commands;
 
 import megamek.client.Client;
+import megamek.client.TwGameClient;
 import megamek.common.Coords;
 
 /**
@@ -27,7 +28,7 @@ public class DeployCommand extends ClientCommand {
     /**
      * @param client
      */
-    public DeployCommand(Client client) {
+    public DeployCommand(TwGameClient client) {
         super(
                 client,
                 "deploy",

@@ -15,6 +15,7 @@
 package megamek.client.commands;
 
 import megamek.client.Client;
+import megamek.client.TwGameClient;
 import megamek.client.ui.swing.MovementDisplay;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -42,7 +43,7 @@ public class MoveCommand extends ClientCommand {
     private int cen = Entity.NONE;
     int gear;
 
-    public MoveCommand(Client client) {
+    public MoveCommand(TwGameClient client) {
         super(client, "move",
                 "Move your units. Use #move HELP for more information.");
     }

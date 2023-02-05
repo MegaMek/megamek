@@ -17,6 +17,7 @@ package megamek.client.ui.swing;
 import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.client.TimerSingleton;
+import megamek.client.TwGameClient;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
 import megamek.client.bot.princess.BehaviorSettings;
@@ -257,7 +258,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      */
     private JFileChooser dlgLoadList;
     private JFileChooser dlgSaveList;
-    private Client client;
+    private TwGameClient client;
 
     private File curfileBoardImage;
     private File curfileBoard;
@@ -333,7 +334,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      * clean up after itself as much as possible, but will not call
      * System.exit().
      */
-    public ClientGUI(Client client, MegaMekController c) {
+    public ClientGUI(TwGameClient client, MegaMekController c) {
         super(new BorderLayout());
         this.addComponentListener(this);
         this.client = client;
@@ -506,7 +507,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             panTop.add(splitPaneA, BorderLayout.CENTER);
 
             bv.addBoardViewListener(this);
-            client.setBoardView(bv);
+//            client.setBoardView(bv);
         } catch (Exception ex) {
             LogManager.getLogger().fatal("", ex);
             doAlertDialog(Messages.getString("ClientGUI.FatalError.title"),
@@ -2506,12 +2507,18 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         }
     };
 
-    public Client getClient() {
+    public TwGameClient getClient() {
         return client;
     }
 
+    /**
+     * Returns the map containing this Client's local bots, wherein the key is the bot's player name and the value
+     * the Client.
+     *
+     * @return This Client's local bots mapped to their player name
+     */
     public Map<String, Client> getBots() {
-        return client.bots;
+        return client.getBots();
     }
 
     /**

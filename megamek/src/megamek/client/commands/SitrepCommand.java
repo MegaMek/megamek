@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import megamek.client.Client;
+import megamek.client.TwGameClient;
 import megamek.common.Entity;
 
 /**
@@ -17,7 +18,7 @@ import megamek.common.Entity;
 public class SitrepCommand extends ClientCommand {
     private static final int DEFAULT_HEX_RANGE = -1;
     
-    public SitrepCommand(Client client) {
+    public SitrepCommand(TwGameClient client) {
         super(client, "sitrep", "Display visible board state relative to this entity. Use #sitrep HELP for more information.");
     }
 

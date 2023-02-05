@@ -21,15 +21,16 @@ package megamek.client.ui.swing.lobby.sorters;
 import java.util.Comparator;
 
 import megamek.client.Client;
+import megamek.client.TwGameClient;
 import megamek.common.*;
 import megamek.common.force.*;
 
 /** A Comparator for the top level entries of the Mek Tree (forces and force-less entities). */
 public class MekTreeTopLevelSorter implements Comparator<Object> {
 
-    private Client client;
+    private TwGameClient client;
 
-    public MekTreeTopLevelSorter(Client cl) {
+    public MekTreeTopLevelSorter(TwGameClient cl) {
         client = cl;
     }
 
@@ -63,8 +64,8 @@ public class MekTreeTopLevelSorter implements Comparator<Object> {
             idB = ((Entity) b).getId();
         }
 
-        boolean isLocalBotA = (ownerA != null) && client.bots.containsKey(ownerA.getName());
-        boolean isLocalBotB = (ownerB != null) && client.bots.containsKey(ownerB.getName());
+        boolean isLocalBotA = (ownerA != null) && client.getBots().containsKey(ownerA.getName());
+        boolean isLocalBotB = (ownerB != null) && client.getBots().containsKey(ownerB.getName());
 
 
         boolean isLocalAllyA = (ownerA) != null && !ownerA.equals(localPlayer) && !ownerA.isEnemyOf(localPlayer);

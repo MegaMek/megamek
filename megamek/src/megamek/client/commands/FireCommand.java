@@ -15,6 +15,7 @@
 package megamek.client.commands;
 
 import megamek.client.Client;
+import megamek.client.TwGameClient;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.*;
@@ -37,7 +38,7 @@ public class FireCommand extends ClientCommand {
     /**
      * @param client
      */
-    public FireCommand(Client client) {
+    public FireCommand(TwGameClient client) {
         super(client, "fire", "used to shoot. See #fire HELP for more details.");
         attacks = new Vector<>();
     }

@@ -14,6 +14,7 @@
 package megamek.client.ui.swing;
 
 import megamek.client.Client;
+import megamek.client.TwGameClient;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.BASE64ToolKit;
 import megamek.client.ui.swing.util.UIUtil;
@@ -54,7 +55,7 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
     private JComboBox<String> comboEntity = new JComboBox<>();
     private JComboBox<String> comboQuick = new JComboBox<>();
     private ClientGUI currentClientgui;
-    private Client currentClient;
+    private TwGameClient currentClient;
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final ClientPreferences CP =  PreferenceManager.getClientPreferences();
 
@@ -68,7 +69,7 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
 
         currentClientgui = clientgui;
         currentClient = clientgui.getClient();
-        currentClient.getGame().addGameListener(gameListener);
+        currentClient.getIGame().addGameListener(gameListener);
 
         butSwitchLocation = new JButton(Messages.getString("MiniReportDisplay.SwitchLocation"));
         butSwitchLocation.addActionListener(this);
@@ -177,7 +178,7 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
         lastChoice = (lastChoice != null ? lastChoice : name);
         comboPlayer.removeAllItems();
         comboPlayer.setEnabled(true);
-        List<Player> sortedPlayerList = currentClient.getGame().getPlayersList();
+        List<Player> sortedPlayerList = currentClient.getIGame().getPlayersList();
         sortedPlayerList.sort(Comparator.comparingInt(Player::getId));
         for (Player player : sortedPlayerList) {
             String playerDisplay = String.format("%-12s", player.getName());

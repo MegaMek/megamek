@@ -14,6 +14,7 @@
 package megamek.client.ui.swing;
 
 import megamek.client.Client;
+import megamek.client.TwGameClient;
 import megamek.client.ratgenerator.ForceDescriptor;
 import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.Ruleset;
@@ -217,9 +218,9 @@ public class ForceGeneratorViewUi {
         }
         
         List<Entity> entities = new ArrayList<>(modelChosen.allEntities().size());
-        Client c = null;
+        TwGameClient c = null;
         if (null != playerName) {
-            c = clientGui.getBots().get(playerName);
+            c = (TwGameClient) clientGui.getBots().get(playerName);
         }
         if (null == c) {
             c = clientGui.getClient();

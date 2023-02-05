@@ -329,20 +329,6 @@ public class Game extends AbstractGame implements Serializable {
     }
 
     /**
-     * @return a player's team, which may be null if they do not have a team
-     */
-    public @Nullable Team getTeamForPlayer(Player p) {
-        for (Team team : teams) {
-            for (Player player : team.players()) {
-                if (player.equals(p)) {
-                    return team;
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
      * Set up the teams vector. Each player on a team (Team 1 .. Team X) is
      * placed in the appropriate vector. Any player on 'No Team', is placed in
      * their own object
@@ -669,6 +655,11 @@ public class Game extends AbstractGame implements Serializable {
     @Override
     public GamePhase getPhase() {
         return phase;
+    }
+
+    @Override
+    public void fireGameEvent(GameEvent event) {
+        processGameEvent(event);
     }
 
     public void setPhase(GamePhase phase) {

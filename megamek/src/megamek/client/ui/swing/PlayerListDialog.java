@@ -106,12 +106,12 @@ public class PlayerListDialog extends JDialog implements ActionListener, IPrefer
             Client client, boolean displayTeam) {
         ((DefaultListModel<String>) playerList.getModel()).removeAllElements();
 
-        for (Player player : sortedPlayerList(client.getGame())) {
+        for (Player player : sortedPlayerList(client.getIGame())) {
             StringBuffer playerDisplay = new StringBuffer(String.format("%-12s", player.getName()));
 
             // Append team information
             if (displayTeam) {
-                Team team = client.getGame().getTeamForPlayer(player);
+                Team team = client.getIGame().getTeamForPlayer(player);
                 if (team != null) {
                     if (team.getId() == Player.TEAM_NONE) {
                         playerDisplay.append(Messages.getString("PlayerListDialog.NoTeam"));
@@ -167,7 +167,7 @@ public class PlayerListDialog extends JDialog implements ActionListener, IPrefer
 
     public Player getSelected() {
         if (!playerList.isSelectionEmpty()) {
-            return sortedPlayerList(client.getGame()).get(playerList.getSelectedIndex());
+            return sortedPlayerList(client.getIGame()).get(playerList.getSelectedIndex());
         }
 
         return null;

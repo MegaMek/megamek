@@ -1793,11 +1793,11 @@ public class Princess extends BotClient {
     }
 
     @Override
-    protected void handlePacket(final Packet c) {
-        final StringBuilder msg = new StringBuilder("Received packet, cmd: " + c.getCommand());
+    protected void handlePacket(final Packet packet) {
+        final StringBuilder msg = new StringBuilder("Received packet, cmd: " + packet.getCommand());
         try {
-            super.handlePacket(c);
-            getPrecognition().handlePacket(c);
+            super.handlePacket(packet);
+            getPrecognition().handlePacket(packet);
         }
         finally {
             LogManager.getLogger().trace(msg.toString());

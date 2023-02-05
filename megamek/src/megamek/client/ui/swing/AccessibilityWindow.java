@@ -20,6 +20,7 @@ package megamek.client.ui.swing;
 
 import megamek.MMConstants;
 import megamek.client.Client;
+import megamek.client.TwGameClient;
 import megamek.client.ui.Messages;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -38,7 +39,7 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
     public static final int MAX_HISTORY = 10;
     public static final String ACCESSIBLE_GUI_SHORTCUT = ".";
 
-    Client client;
+    TwGameClient client;
     ClientGUI gui;
     JTextArea chatArea;
 

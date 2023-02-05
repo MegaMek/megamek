@@ -14,6 +14,7 @@
 package megamek.client.bot;
 
 import megamek.client.Client;
+import megamek.client.TwGameClient;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.ReportDisplay;
@@ -35,7 +36,7 @@ import javax.swing.*;
 import java.io.*;
 import java.util.*;
 
-public abstract class BotClient extends Client {
+public abstract class BotClient extends TwGameClient {
     public static final int BOT_TURN_RETRY_COUNT = 3;
 
     private List<Entity> currentTurnEnemyEntities;

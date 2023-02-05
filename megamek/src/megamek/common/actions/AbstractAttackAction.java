@@ -15,6 +15,7 @@
 package megamek.common.actions;
 
 import megamek.client.Client;
+import megamek.client.TwGameClient;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.IlluminationLevel;
@@ -211,7 +212,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
     }
 
     @Override
-    public String toDisplayableString(final Client client) {
+    public String toDisplayableString(final TwGameClient client) {
         final Targetable target = getTarget(client.getGame());
         return (target == null) ? "Attacking Null Target with id " + getTargetId()
                 : "Attacking " + target.getDisplayName();

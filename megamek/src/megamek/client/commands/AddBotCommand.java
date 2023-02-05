@@ -15,6 +15,7 @@
 package megamek.client.commands;
 
 import megamek.client.Client;
+import megamek.client.TwGameClient;
 import megamek.common.util.AddBotUtil;
 
 /**
@@ -24,7 +25,7 @@ public class AddBotCommand extends ClientCommand {
     /**
      * @param client the client this command will be registered to.
      */
-    public AddBotCommand(Client client) {
+    public AddBotCommand(TwGameClient client) {
         super(client, AddBotUtil.COMMAND, AddBotUtil.USAGE);
     }
 

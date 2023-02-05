@@ -15,6 +15,7 @@
 package megamek.client.ui.swing;
 
 import megamek.client.Client;
+import megamek.client.TwGameClient;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.client.generator.RandomUnitGenerator;
@@ -57,7 +58,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
     private static final String CARD_FORCE_TREE = "card_force_tree";
     
     private ClientGUI m_clientgui;
-    private Client m_client;
+    private TwGameClient m_client;
     AdvancedSearchDialog asd;
 
     private MechSearchFilter searchFilter;
@@ -539,10 +540,10 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
             } else {
                 ArrayList<Entity> entities = new ArrayList<>(
                         armyModel.getAllUnits().size());
-                Client c = null;
+                TwGameClient c = null;
                 if (m_chPlayer.getSelectedIndex() > 0) {
                     String name = (String) m_chPlayer.getSelectedItem();
-                    c = m_clientgui.getBots().get(name);
+                    c = (TwGameClient) m_clientgui.getBots().get(name);
                 }
                 if (c == null) {
                     c = m_client;
@@ -554,7 +555,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
       
                         autoSetSkillsAndName(e);
                         e.setOwner(c.getLocalPlayer());
-                        if (!c.getGame().getPhase().isLounge()) {
+                        if (!c.getIGame().getPhase().isLounge()) {
                             e.setDeployRound(c.getGame().getRoundCount() + 1);
                             e.setGame(c.getGame());
                             // Set these to true, otherwise units reinforced in

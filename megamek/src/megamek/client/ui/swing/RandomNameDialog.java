@@ -25,6 +25,7 @@ import java.util.Vector;
 import javax.swing.*;
 
 import megamek.client.Client;
+import megamek.client.TwGameClient;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.Messages;
@@ -140,13 +141,13 @@ public class RandomNameDialog extends JDialog implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ev) {
         if (ev.getSource().equals(butOkay)) {
-            Client c = null;
+            TwGameClient c = null;
             if (chPlayer.getSelectedIndex() > 0) {
                 String name = (String) chPlayer.getSelectedItem();
-                c = clientgui.getBots().get(name);
+                c = (TwGameClient) clientgui.getBots().get(name);
             }
             if (c == null) {
-                c = client;
+                c = (TwGameClient) client;
             }
             saveSettings();
             // go through all of the units provided for this player and assign random names

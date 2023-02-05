@@ -19,6 +19,7 @@
 package megamek.client.ui.swing;
 
 import megamek.client.Client;
+import megamek.client.TwGameClient;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
 import megamek.client.ui.baseComponents.MMButton;
 import megamek.client.ui.baseComponents.MMComboBox;
@@ -86,7 +87,7 @@ public class SkillGenerationDialog extends AbstractButtonDialog {
                     resources.getString("SkillGenerationDialog.btnRandomize.toolTipText"),
                     evt -> {
                 getSkillGenerationOptionsPanel().updateClient();
-                final Client client = getSkillGenerationOptionsPanel().getClient();
+                final TwGameClient client = getSkillGenerationOptionsPanel().getClient();
                 for (final Entity entity : getEntities()) {
                     if (entity.getOwnerId() != client.getLocalPlayer().getId()) {
                         continue;
@@ -117,7 +118,7 @@ public class SkillGenerationDialog extends AbstractButtonDialog {
         comboClients.setEnabled(comboClients.getItemCount() > 1);
         comboClients.addActionListener(evt -> getSkillGenerationOptionsPanel().changeClient(
                 (comboClients.getSelectedIndex() > 0)
-                        ? getClientGUI().getBots().get(comboClients.getSelectedItem())
+                        ? (TwGameClient) getClientGUI().getBots().get(comboClients.getSelectedItem())
                         : getClientGUI().getClient()));
         panel.add(comboClients);
         return panel;

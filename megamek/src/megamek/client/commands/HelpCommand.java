@@ -17,6 +17,7 @@ package megamek.client.commands;
 import java.util.Enumeration;
 
 import megamek.client.Client;
+import megamek.client.TwGameClient;
 import megamek.client.ui.IClientCommandHandler;
 
 /**
@@ -24,10 +25,10 @@ import megamek.client.ui.IClientCommandHandler;
  */
 public class HelpCommand extends ClientCommand {
 
-    private IClientCommandHandler cmdHandler;
+    private Client cmdHandler;
 
     /** Creates new HelpCommand */
-    public HelpCommand(Client client) {
+    public HelpCommand(TwGameClient client) {
         super(
                 client,
                 "help",

@@ -15,24 +15,25 @@
 package megamek.client.commands;
 
 import megamek.client.Client;
+import megamek.client.TwGameClient;
 
 /**
  * @author dirk
  */
 public abstract class ClientCommand {
-    protected Client client;
+    protected TwGameClient client;
 
     private String name;
     private String helpText;
 
     /** Creates new ServerCommand */
-    public ClientCommand(Client client, String name, String helpText) {
+    public ClientCommand(TwGameClient client, String name, String helpText) {
         this.client = client;
         this.name = name;
         this.helpText = helpText;
     }
 
-    public Client getClient() {
+    public TwGameClient getClient() {
         return client;
     }
 

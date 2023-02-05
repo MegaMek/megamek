@@ -19,6 +19,7 @@
 package megamek.client.ui.swing.dialog;
 
 import megamek.client.Client;
+import megamek.client.TwGameClient;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.Messages;
@@ -99,10 +100,10 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
     protected void select(boolean close) {
         Entity e = getSelectedEntity();
         if (e != null) {
-            Client client = null;
+            TwGameClient client = null;
             if (comboPlayer.getSelectedIndex() > 0) {
                 String name = (String) comboPlayer.getSelectedItem();
-                client = clientGUI.getBots().get(name);
+                client = (TwGameClient) clientGUI.getBots().get(name);
             }
 
             if (client == null) {

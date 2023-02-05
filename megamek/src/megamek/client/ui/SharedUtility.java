@@ -15,6 +15,7 @@
 package megamek.client.ui;
 
 import megamek.client.Client;
+import megamek.client.TwGameClient;
 import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.annotations.Nullable;
@@ -631,7 +632,7 @@ public class SharedUtility {
     /**
      * Checks to see if piloting skill rolls are needed for excessive use of thrust.
      */
-    public static String doThrustCheck(MovePath md, Client client) {
+    public static String doThrustCheck(MovePath md, TwGameClient client) {
         StringBuffer nagReport = new StringBuffer();
         List<TargetRoll> psrList = new ArrayList<>();
 
@@ -686,7 +687,7 @@ public class SharedUtility {
 
     }
 
-    public static MovePath moveAero(MovePath md, Client client) {
+    public static MovePath moveAero(MovePath md, TwGameClient client) {
         final Entity entity = md.getEntity();
         final Game game = entity.getGame();
         // Don't process further unless the entity belongs in space
@@ -786,7 +787,7 @@ public class SharedUtility {
      * Add steps for advanced vector movement based on the given vectors when
      * splitting hexes, choose the hex with less tonnage in case OOC
      */
-    private static MovePath addSteps(MovePath md, Client client) {
+    private static MovePath addSteps(MovePath md, TwGameClient client) {
         Entity en = md.getEntity();
         Game game = en.getGame();
 

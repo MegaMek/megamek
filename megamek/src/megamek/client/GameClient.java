@@ -5,10 +5,7 @@ import megamek.common.IGame;
 import megamek.common.InGameObject;
 import megamek.common.Player;
 
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public interface GameClient {
 
@@ -29,34 +26,45 @@ public interface GameClient {
 
     //region Game Content
 
+    /**
+     * Returns the game of this client as a game-type independent IGame. Note that the game
+     * object is only updated, not replaced and a reference to it can therefore be kept.
+     *
+     * @return The game of this client
+     */
     IGame getIGame();
 
+    /** @return The in-game object associated with the given ID. */
     default Optional<InGameObject> getInGameObject(int id) {
         return getIGame().getInGameObject(id);
     }
 
-    /**
-     * Returns an enumeration of the entities in game.entities
-     */
+    /** @return A list of all in-game objects of the game. This list is copied and may be safely modified. */
     default List<InGameObject> getInGameObjects() {
         return getIGame().getInGameObjects();
     }
-
-    int getLocalPlayerNumber() ;
-
-    void setLocalPlayerNumber(int localPlayerNumber);
 
     /** @return The player with the given ID, or null if there is no such player. */
     default Player getPlayer(int id) {
         return getIGame().getPlayer(id);
     }
 
+    /** @return The ID of the player playing at this Client. */
+    int getLocalPlayerNumber();
+
+    /**
+     * Sets the ID of the player playing at this Client.
+     * // TODO : only used by AddBotUtil -> could be included in a bot's constructor and removed here
+     * @param localPlayerNumber
+     */
+    void setLocalPlayerNumber(int localPlayerNumber);
+
     /** @return The local player (playing at this Client). */
     default Player getLocalPlayer() {
         return getPlayer(getLocalPlayerNumber());
     }
 
-    /** @return True when there is a player (incl. bot) with the given ID in this Client's game. */
+    /** @return True when there is a player (incl. bot) with the given ID in the game. */
     default boolean playerExists(int id) {
         return getPlayer(id) != null;
     }
@@ -90,17 +98,16 @@ public interface GameClient {
 
     //endregion
 
+    /** Sends a "this player is done/not done" message to the server. */
     void sendDone(boolean done);
-
-    void sendNextPlayer(); // ??????
 
     //region ClientCommands
 
+    /** @return The client chat command associated with the given name. */
     ClientCommand getCommand(String name);
 
-    Enumeration<String> getAllCommandNames();
-
-    void registerCommand(ClientCommand command);
+    /** @return All registered client chat command associated with the given name. */
+    Set<String> getAllCommandNames();
 
     //endregion
 

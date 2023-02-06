@@ -14,11 +14,8 @@
  */
 package megamek.client.commands;
 
-import java.util.Enumeration;
-
 import megamek.client.Client;
 import megamek.client.TwGameClient;
-import megamek.client.ui.IClientCommandHandler;
 
 /**
  * @author dirk
@@ -54,17 +51,6 @@ public class HelpCommand extends ClientCommand {
     }
 
     private String commandList() {
-        StringBuffer commandList = new StringBuffer();
-
-        for (Enumeration<String> i = cmdHandler.getAllCommandNames(); i
-                .hasMoreElements();) {
-            ClientCommand command = cmdHandler.getCommand(i.nextElement());
-            if (commandList.length() > 0) {
-                commandList.append(", ");
-            }
-            commandList.append(command.getName());
-        }
-
-        return commandList.toString();
+        return String.join(", ", cmdHandler.getAllCommandNames());
     }
 }

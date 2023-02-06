@@ -71,7 +71,7 @@ public class TwGameClient extends Client {
         ShowTileCommand tileCommand = new ShowTileCommand(this);
         registerCommand(tileCommand);
         for (String direction : ShowTileCommand.directions) {
-            commandsHash.put(direction.toLowerCase(), tileCommand);
+            clientCommands.put(direction.toLowerCase(), tileCommand);
         }
     }
 

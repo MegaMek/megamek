@@ -57,7 +57,7 @@ public abstract class Client implements GameClient {
 	/** The ID of the local player (the player connected through this client) */
     protected int localPlayerNumber = -1;
 
-    protected Hashtable<String, ClientCommand> commandsHash = new Hashtable<>();
+    protected Map<String, ClientCommand> clientCommands = new HashMap<>();
 
 	protected GameLog log;
     public String phaseReport;
@@ -172,7 +172,6 @@ public abstract class Client implements GameClient {
     /**
      * give the initiative to the next player on the team.
      */
-    @Override
     public void sendNextPlayer() {
         send(new Packet(PacketCommand.FORWARD_INITIATIVE));
     }
@@ -200,9 +199,7 @@ public abstract class Client implements GameClient {
         flushConn();
     }
 
-    /**
-     * Sends a "player done" message to the server.
-     */
+    @Override
     public synchronized void sendDone(boolean done) {
         send(new Packet(PacketCommand.PLAYER_READY, done));
         flushConn();
@@ -314,28 +311,27 @@ public abstract class Client implements GameClient {
      *            removed, and the string tokenized.
      */
     public String runCommand(String[] args) {
-        if ((args != null) && (args.length > 0) && commandsHash.containsKey(args[0])) {
-            return commandsHash.get(args[0]).run(args);
+        if ((args != null) && (args.length > 0) && clientCommands.containsKey(args[0])) {
+            return clientCommands.get(args[0]).run(args);
         }
         return "Unknown Client Command.";
     }
 
     /** Registers a new command in the client command table. */
-    @Override
     public void registerCommand(ClientCommand command) {
         // Warning, the special direction commands are registered separately
-        commandsHash.put(command.getName(), command);
+        clientCommands.put(command.getName(), command);
     }
 
     /** Returns the command associated with the specified name. */
     @Override
     public ClientCommand getCommand(String commandName) {
-        return commandsHash.get(commandName);
+        return clientCommands.get(commandName);
     }
 
     @Override
-    public Enumeration<String> getAllCommandNames() {
-        return commandsHash.keys();
+    public Set<String> getAllCommandNames() {
+        return clientCommands.keySet();
     }
 
     protected void handlePacket(Packet packet) {
@@ -350,7 +346,7 @@ public abstract class Client implements GameClient {
                 if (packet.getObject(i + 1) instanceof Packet) {
                     handleSinglePacket((Packet) packet.getObject(i + 1));
                 } else {
-                    LogManager.getLogger().error("Wrong object in MULTI_PACKET command! ");
+                    LogManager.getLogger().error("Wrong object in MULTI_PACKET command!");
                 }
             }
         } else {
@@ -446,7 +442,7 @@ public abstract class Client implements GameClient {
 
     @Override
     public Map<String, Client> getBots() {
-        // TODO : Make this an unmodifiable map return - check write accesses to it
+        // TODO : Make this an unmodifiable map return - but there are legacy write accesses to it
         return bots;
     }
 

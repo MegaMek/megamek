@@ -23,15 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import megamek.common.AmmoType;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.HexTarget;
-import megamek.common.Game;
-import megamek.common.Mounted;
-import megamek.common.Targetable;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.options.OptionsConstants;
 
@@ -334,10 +326,14 @@ public class ArtilleryTargetingControl {
                 if (!topValuedFireInfos.isEmpty()) {
                     WeaponFireInfo actualFireInfo = topValuedFireInfos.get(Compute.randomInt(topValuedFireInfos.size()));
                     ArtilleryAttackAction aaa = (ArtilleryAttackAction) actualFireInfo.buildWeaponAttackAction();
-                    int ammoID = findAmmo(shooter, currentWeapon, game);
+                    Object[] tmp = findAmmo(shooter, currentWeapon, game);
+                    int ammoID = (int) tmp[0];
+                    long ammoMunitionType = (long) tmp[1];
+
                     if (ammoID > NO_AMMO) {
                         //This can happen if princess is towing ammo trailers, which she really shouldn't be doing...
                         aaa.setAmmoId(ammoID);
+                        aaa.setAmmoMunitionType(ammoMunitionType);
                         aaa.setAmmoCarrier(shooter.getId());
                         actualFireInfo.setAction(aaa);
                         retval.add(actualFireInfo);
@@ -390,8 +386,9 @@ public class ArtilleryTargetingControl {
      * @param game The current {@link Game}
      * @return
      */
-    private int findAmmo(Entity shooter, Mounted currentWeapon, Game game) {
+    private Object[] findAmmo(Entity shooter, Mounted currentWeapon, Game game) {
         int ammoEquipmentNum = NO_AMMO;
+        long ammoMunitionType = -1;
         
         // simply grab the first valid ammo and let 'er rip.
         for (Mounted ammo : shooter.getAmmo()) {
@@ -400,13 +397,14 @@ public class ArtilleryTargetingControl {
             }
             
             ammoEquipmentNum = shooter.getEquipmentNum(ammo);
+            ammoMunitionType = ((AmmoType) ammo.getType()).getMunitionType();
             break;
             
             // TODO: Attempt to select homing ammo if the target is tagged. 
             // To do so, check ammoType.getMunitionType() == AmmoType.M_HOMING
         }
         
-        return ammoEquipmentNum;
+        return new Object[]{ammoEquipmentNum, ammoMunitionType};
     }
 
     /**

@@ -326,7 +326,7 @@ public class ArtilleryTargetingControl {
                 if (!topValuedFireInfos.isEmpty()) {
                     WeaponFireInfo actualFireInfo = topValuedFireInfos.get(Compute.randomInt(topValuedFireInfos.size()));
                     ArtilleryAttackAction aaa = (ArtilleryAttackAction) actualFireInfo.buildWeaponAttackAction();
-                    Object[] tmp = findAmmo(shooter, currentWeapon, game);
+                    Object[] tmp = findAmmo(shooter, currentWeapon);
                     int ammoID = (int) tmp[0];
                     long ammoMunitionType = (long) tmp[1];
 
@@ -383,10 +383,9 @@ public class ArtilleryTargetingControl {
      * Worker function that selects the appropriate ammo for the given entity and weapon.
      * @param shooter
      * @param currentWeapon
-     * @param game The current {@link Game}
      * @return
      */
-    private Object[] findAmmo(Entity shooter, Mounted currentWeapon, Game game) {
+    private Object[] findAmmo(Entity shooter, Mounted currentWeapon) {
         int ammoEquipmentNum = NO_AMMO;
         long ammoMunitionType = -1;
         

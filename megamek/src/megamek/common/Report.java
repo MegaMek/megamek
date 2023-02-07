@@ -349,7 +349,7 @@ public class Report implements Serializable {
                 ownerName = entity.getOwner().getName();
             } else {
                 ownerColor = uiGray();
-                ownerName = "Unknown ownner";
+                ownerName = ReportMessages.getString("report.unknownOwner");
             }
 
             String unitName = href(ENTITY_LINK + entity.getId(), entity.getShortName());

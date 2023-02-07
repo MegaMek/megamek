@@ -2187,11 +2187,12 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         }
 
         if (clientgui.getClient().getGame().getPhase().isFiring()) {
+            String s = getRemainingPlayerWithTurns();
             if (clientgui.getClient().isMyTurn()) {
                 if (cen == Entity.NONE) {
                     beginMyTurn();
                 }
-                setStatusBarText(Messages.getString("FiringDisplay.its_your_turn"));
+                setStatusBarText(Messages.getString("FiringDisplay.its_your_turn") + s);
             } else {
                 endMyTurn();
                 String playerName;
@@ -2200,7 +2201,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                 } else {
                     playerName = "Unknown";
                 }
-                setStatusBarText(Messages.getString("FiringDisplay.its_others_turn", playerName));
+                setStatusBarText(Messages.getString("FiringDisplay.its_others_turn", playerName) + s);
             }
         }
     }

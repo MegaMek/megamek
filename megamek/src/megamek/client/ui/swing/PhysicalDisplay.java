@@ -1439,11 +1439,13 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             return;
         }
 
+        String s = getRemainingPlayerWithTurns();
+
         if (clientgui.getClient().isMyTurn()) {
             if (cen == Entity.NONE) {
                 beginMyTurn();
             }
-            setStatusBarText(Messages.getString("PhysicalDisplay.its_your_turn"));
+            setStatusBarText(Messages.getString("PhysicalDisplay.its_your_turn") + s);
         } else {
             endMyTurn();
             String playerName;
@@ -1452,7 +1454,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             } else {
                 playerName = "Unknown";
             }
-            setStatusBarText(Messages.getString("PhysicalDisplay.its_others_turn", playerName));
+            setStatusBarText(Messages.getString("PhysicalDisplay.its_others_turn", playerName) + s);
         }
     }
 

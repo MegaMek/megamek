@@ -333,11 +333,11 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         String msg_unitType = Messages.getString("MechSelectorDialog.Search.unitType");
         String msg_quirkType = Messages.getString("MechSelectorDialog.Search.Quirks");
         String msg_transports = Messages.getString("MechSelectorDialog.Search.Transports");
+        twSearchPane.addTab(msg_unitType, unitTypePanel);
         twSearchPane.addTab(msg_base, basePanel);
         twSearchPane.addTab(msg_weaponEq, weaponEqPanel);
-        twSearchPane.addTab(msg_unitType, unitTypePanel);
-        twSearchPane.addTab(msg_quirkType, quirkPanel);
         twSearchPane.addTab(msg_transports, transportsPanel);
+        twSearchPane.addTab(msg_quirkType, quirkPanel);
         this.add(twSearchPane, BorderLayout.NORTH);
     }
 

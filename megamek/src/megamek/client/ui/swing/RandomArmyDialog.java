@@ -581,11 +581,11 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         }
     }
 
-    private int calculateTotal(JTable t){
+    private int calculateTotal(JTable t, int col){
         int total = 0;
         for(int i = 0; i < t.getRowCount(); i++) {
             try {
-                total += Integer.parseInt(t.getValueAt(i, 1)+"");
+                total += Integer.parseInt(t.getValueAt(i, col)+"");
             } catch (Exception ignored) {
             }
         }
@@ -672,14 +672,14 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                 armyModel.addUnit(m);
             }
 
-            m_lArmyBVTotal.setText(msg_bvtotal + calculateTotal(m_lArmy));
+            m_lArmyBVTotal.setText(msg_bvtotal + calculateTotal(m_lArmy, 1));
         } else if (ev.getSource().equals(m_bAdd)) {
             for (int sel : m_lUnits.getSelectedRows()) {
                 MechSummary m = unitsModel.getUnitAt(sel);
                 armyModel.addUnit(m);
             }
 
-            m_lArmyBVTotal.setText(msg_bvtotal + calculateTotal(m_lArmy));
+            m_lArmyBVTotal.setText(msg_bvtotal + calculateTotal(m_lArmy, 1));
         } else if (ev.getSource().equals(m_bAdvSearch)) {
             asd.showDialog();
             searchFilter=asd.getTWAdvancedSearch().getMechSearchFilter();
@@ -803,7 +803,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                     m_lVehicleCount.setText(String.format(msg_outof + sbVehicle));
                     m_lBattleArmorCount.setText(String.format(msg_outof + sbBattleArmor));
                     m_lInfantryCount.setText(String.format(msg_outof + sbInfantry));
-                    m_lUnitsBVTotal.setText(msg_bvtotal + calculateTotal(m_lUnits));
+                    m_lUnitsBVTotal.setText(msg_bvtotal + calculateTotal(m_lUnits, 1));
                 }
             } catch (NumberFormatException ignored) {
 

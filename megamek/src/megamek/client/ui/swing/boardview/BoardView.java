@@ -5455,27 +5455,22 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
         Hex mhex = game.getBoard().getHex(mcoords);
 
-        String b = "";
-        String f = "";
-        String t = "";
         String result = "";
-        String i = "";
-        StringBuffer sb = new StringBuffer();
         //StringBuffer txt = new StringBuffer();
 
         // Hex Terrain
         if (GUIP.getShowMapHexPopup() && (mhex != null)) {
-            sb = new StringBuffer();
-            appendTerrainTooltip(sb, mhex);
-            f += sb.toString();
+            StringBuffer sbTerrain = new StringBuffer();
+            appendTerrainTooltip(sbTerrain, mhex);
+            String sTrerain = sbTerrain.toString();
 
             // Distance from the selected unit and a planned movement end point
             if ((selectedEntity != null) && (selectedEntity.getPosition() != null)) {
                 int distance = selectedEntity.getPosition().distance(mcoords);
                 if (distance == 1) {
-                    f += Messages.getString("BoardView1.Tooltip.Distance1");
+                    sTrerain += Messages.getString("BoardView1.Tooltip.Distance1");
                 } else {
-                    f += Messages.getString("BoardView1.Tooltip.DistanceN", distance);
+                    sTrerain += Messages.getString("BoardView1.Tooltip.DistanceN", distance);
                 }
 
                 if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
@@ -5489,49 +5484,50 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                     if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE)) {
                         minSensorRange = 0;
                     }
-                    f += "<BR>";
+                    sTrerain += "<BR>";
                     if ((distance > minSensorRange) && (distance <= maxSensorRange)) {
-                        f += Messages.getString("BoardView1.Tooltip.SensorsHexInRange");
+                        sTrerain += Messages.getString("BoardView1.Tooltip.SensorsHexInRange");
                     } else {
-                        f += Messages.getString("BoardView1.Tooltip.SensorsHexNotInRange1");
+                        sTrerain += Messages.getString("BoardView1.Tooltip.SensorsHexNotInRange1");
                         String tmp = Messages.getString("BoardView1.Tooltip.SensorsHexNotInRange2");
-                        f += guiScaledFontHTML(GUIP.getWarningColor()) + tmp + "<FONT>";
-                        f += Messages.getString("BoardView1.Tooltip.SensorsHexNotInRange3");
+                        sTrerain += guiScaledFontHTML(GUIP.getWarningColor()) + tmp + "<FONT>";
+                        sTrerain += Messages.getString("BoardView1.Tooltip.SensorsHexNotInRange3");
                     }
                 }
 
                 if (game.getPhase().isMovement() && (movementTarget != null)) {
-                    f += "<BR>";
+                    sTrerain += "<BR>";
                     int disPM = movementTarget.distance(mcoords);
+                    String sDinstanceMove = "";
                     if (disPM == 1) {
-                        i = Messages.getString("BoardView1.Tooltip.DistanceMove1");
+                        sDinstanceMove = Messages.getString("BoardView1.Tooltip.DistanceMove1");
                     } else {
-                        i = Messages.getString("BoardView1.Tooltip.DistanceMoveN", disPM);
+                        sDinstanceMove = Messages.getString("BoardView1.Tooltip.DistanceMoveN", disPM);
                     }
-                    f += "<I>" + i + "</I>";
+                    sTrerain += "<I>" + sDinstanceMove + "</I>";
                 }
             }
 
-            t = guiScaledFontHTML(uiBlack()) + f + "</FONT>";
-            String col = "<TD>" + t + "</TD>";
+            sTrerain = guiScaledFontHTML(uiBlack()) + sTrerain + "</FONT>";
+            String col = "<TD>" + sTrerain + "</TD>";
             String row = "<TR>" + col + "</TR>";
             String table = "<TABLE BORDER=0 BGCOLOR=" + TERRAIN_BGCOLOR + " width=100%>" + row + "</TABLE>";
             result += table;
 
-            sb = new StringBuffer();
-            appendBuildingsTooltip(sb, mhex);
-            result += sb.toString();
+            StringBuffer sbBuildings = new StringBuffer();
+            appendBuildingsTooltip(sbBuildings, mhex);
+            result += sbBuildings.toString();
 
             if (displayInvalidHexInfo) {
                 StringBuffer errBuff = new StringBuffer();
                 if (!mhex.isValid(errBuff)) {
-                    f = Messages.getString("BoardView1.invalidHex");
-                    f += "<BR>";
+                    String sInvalidHex = Messages.getString("BoardView1.invalidHex");
+                    sInvalidHex += "<BR>";
                     String errors = errBuff.toString();
                     errors = errors.replace("\n", "<BR>");
-                    f += errors;
-                    f = guiScaledFontHTML(uiWhite()) + f + "</FONT>";
-                    result += "<BR>" + f;
+                    sInvalidHex += errors;
+                    sInvalidHex = guiScaledFontHTML(uiWhite()) + sInvalidHex + "</FONT>";
+                    result += "<BR>" + sInvalidHex;
                 }
             }
         }
@@ -5539,7 +5535,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         // Show the player(s) that may deploy here
         // in the artillery autohit designation phase
         if (game.getPhase().isSetArtilleryAutohitHexes() && (mhex != null)) {
-            t = "";
+            String sAttilleryAutoHix = "";
             Enumeration<Player> allP = game.getPlayers();
             boolean foundPlayer = false;
             // loop through all players
@@ -5548,29 +5544,29 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 if (game.getBoard().isLegalDeployment(mcoords, cp)) {
                     if (!foundPlayer) {
                         foundPlayer = true;
-                        t += Messages.getString("BoardView1.Tooltip.ArtyAutoHeader") + "<BR>";
+                        sAttilleryAutoHix += Messages.getString("BoardView1.Tooltip.ArtyAutoHeader") + "<BR>";
                     }
 
-                    f = "&nbsp;&nbsp;" + cp.getName();
-                    b = guiScaledFontHTML(cp.getColour().getColour()) + f + "</FONT>";
-                    t += "<B>"  + b + "</B>";
-                    t += "<BR>";
+                    String sName = "&nbsp;&nbsp;" + cp.getName();
+                    sName = guiScaledFontHTML(cp.getColour().getColour()) + sName + "</FONT>";
+                    sAttilleryAutoHix += "<B>"  + sName + "</B>";
+                    sAttilleryAutoHix += "<BR>";
                 }
             }
             if (foundPlayer) {
-                t += "<BR>";
+                sAttilleryAutoHix += "<BR>";
             }
 
             // Add a hint with keybind that the zones can be shown graphically
             String keybindText = KeyCommandBind.getDesc(KeyCommandBind.getBindByCmd("autoArtyDeployZone"));
-            i = Messages.getString("BoardView1.Tooltip.ArtyAutoHint1") + "<BR>";
-            i += Messages.getString("BoardView1.Tooltip.ArtyAutoHint2") + "<BR>";
-            i += Messages.getString("BoardView1.Tooltip.ArtyAutoHint3", keybindText);
-            t += "<I>" + i + "</I>";
+            String msg_artyautohit = Messages.getString("BoardView1.Tooltip.ArtyAutoHint1") + "<BR>";
+            msg_artyautohit += Messages.getString("BoardView1.Tooltip.ArtyAutoHint2") + "<BR>";
+            msg_artyautohit += Messages.getString("BoardView1.Tooltip.ArtyAutoHint3", keybindText);
+            sAttilleryAutoHix += "<I>" + msg_artyautohit + "</I>";
 
-            t = guiScaledFontHTML(uiWhite()) + t + "</FONT>";
+            sAttilleryAutoHix = guiScaledFontHTML(uiWhite()) + sAttilleryAutoHix + "</FONT>";
 
-            String col = "<TD>" + t + "</TD>";
+            String col = "<TD>" + sAttilleryAutoHix + "</TD>";
             String row = "<TR>" + col + "</TR>";
             String table = "<TABLE BORDER=0 width=100%>" + row + "</TABLE>";
             result += table;
@@ -5587,9 +5583,9 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         var wreckList = useIsometric() ? isometricWreckSprites : wreckSprites;
         for (var wSprite : wreckList) {
             if (wSprite.getPosition().equals(mcoords)) {
-                f = wSprite.getTooltip().toString();
-                t = guiScaledFontHTML(uiBlack()) + f + "</FONT>";
-                String col = "<TD>" + t + "</TD>";
+                String sWreck = wSprite.getTooltip().toString();
+                sWreck = guiScaledFontHTML(uiBlack()) + sWreck + "</FONT>";
+                String col = "<TD>" + sWreck + "</TD>";
                 String row = "<TR>" + col + "</TR>";
                 String table = "<TABLE BORDER=0 BGCOLOR=" + ALT_BGCOLOR + " width=100%>" + row + "</TABLE>";
                 result += table;
@@ -5607,23 +5603,23 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
             // List only the first four units
             if (entityCount <= maxShown) {
-                sb = new StringBuffer();
-                appendEntityTooltip(sb, entity);
-                result += sb.toString();
+                StringBuffer sbEntity = new StringBuffer();
+                appendEntityTooltip(sbEntity, entity);
+                result += sbEntity.toString();
             }
         }
         // Info block if there are more than 4 units in that hex
         if (entityCount > maxShown) {
-            f = "There ";
+            String sUnitsInfo = "There ";
             if (entityCount-maxShown == 1) {
-                f += "is 1 more<BR>unit";
+                sUnitsInfo += "is 1 more<BR>unit";
             } else {
-                f += "are " + (entityCount - maxShown) + " more<BR>units";
+                sUnitsInfo += "are " + (entityCount - maxShown) + " more<BR>units";
             }
-            f += " in this hex...";
+            sUnitsInfo += " in this hex...";
 
-            t = guiScaledFontHTML(UIUtil.uiWhite()) + f + "</FONT>";
-            String col = "<TD>" + t + "</TD>";
+            sUnitsInfo = guiScaledFontHTML(UIUtil.uiWhite()) + sUnitsInfo + "</FONT>";
+            String col = "<TD>" + sUnitsInfo + "</TD>";
             String row = "<TR>" + col + "</TR>";
             String table = "<TABLE BORDER=0 BGCOLOR=" + BLOCK_BGCOLOR + " width=100%>" + row + "</TABLE>";
             result += table;
@@ -5632,9 +5628,9 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         // check if it's on any attacks
         for (AttackSprite aSprite : attackSprites) {
             if (aSprite.isInside(mcoords)) {
-                f = aSprite.getTooltip().toString();
-                t = guiScaledFontHTML(uiBlack()) + f + "</FONT>";
-                String col = "<TD>" + t + "</TD>";
+                String sAttackSprite = aSprite.getTooltip().toString();
+                sAttackSprite = guiScaledFontHTML(uiBlack()) + sAttackSprite + "</FONT>";
+                String col = "<TD>" + sAttackSprite + "</TD>";
                 String row = "<TR>" + col + "</TR>";
                 String table = "<TABLE BORDER=0 BGCOLOR=" + ALT_BGCOLOR + " width=100%>" + row + "</TABLE>";
                 result += table;
@@ -5658,18 +5654,20 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 }
             }
 
+            String msg_artilleryatack;
+
             if (aaa.getTurnsTilHit() == 1) {
-                f = Messages.getString("BoardView1.Tooltip.ArtilleryAttackOne1", wpName);
-                f += "<BR>&nbsp;&nbsp;";
-                f += Messages.getString("BoardView1.Tooltip.ArtilleryAttackOne2", ammoName);
+                msg_artilleryatack = Messages.getString("BoardView1.Tooltip.ArtilleryAttackOne1", wpName);
+                msg_artilleryatack += "<BR>&nbsp;&nbsp;";
+                msg_artilleryatack += Messages.getString("BoardView1.Tooltip.ArtilleryAttackOne2", ammoName);
             } else {
-                f = Messages.getString("BoardView1.Tooltip.ArtilleryAttackN1", wpName, aaa.getTurnsTilHit());
-                f += "<BR>&nbsp;&nbsp;";
-                f += Messages.getString("BoardView1.Tooltip.ArtilleryAttackN2", ammoName);
+                msg_artilleryatack = Messages.getString("BoardView1.Tooltip.ArtilleryAttackN1", wpName, aaa.getTurnsTilHit());
+                msg_artilleryatack += "<BR>&nbsp;&nbsp;";
+                msg_artilleryatack += Messages.getString("BoardView1.Tooltip.ArtilleryAttackN2", ammoName);
             }
 
-            t = guiScaledFontHTML(UIUtil.uiWhite()) + f + "</FONT>";
-            String col = "<TD>" + t + "</TD>";
+            msg_artilleryatack = guiScaledFontHTML(UIUtil.uiWhite()) + msg_artilleryatack + "</FONT>";
+            String col = "<TD>" + msg_artilleryatack + "</TD>";
             String row = "<TR>" + col + "</TR>";
             String table = "<TABLE BORDER=0 BGCOLOR=" + BLOCK_BGCOLOR + " width=100%>" + row + "</TABLE>";
             result += table;
@@ -5687,19 +5685,21 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 amod = selectedEntity.aTracker.getModifier(curWeapon, mcoords);
             }
 
+            String msg_artilleryautohit;
+
             if (amod == TargetRoll.AUTOMATIC_SUCCESS) {
-                f = Messages.getString("BoardView1.ArtilleryAutohit");
+                msg_artilleryautohit = Messages.getString("BoardView1.ArtilleryAutohit");
             } else {
-                f = Messages.getString("BoardView1.ArtilleryAdjustment", amod);
+                msg_artilleryautohit = Messages.getString("BoardView1.ArtilleryAdjustment", amod);
             }
-            f = guiScaledFontHTML(UIUtil.uiWhite()) + f + "</FONT>";
-            result += f + "<BR>";
+            msg_artilleryautohit = guiScaledFontHTML(UIUtil.uiWhite()) + msg_artilleryautohit + "</FONT>";
+            result += msg_artilleryautohit + "<BR>";
         }
 
         final Collection<SpecialHexDisplay> shdList = game.getBoard().getSpecialHexDisplay(mcoords);
         int round = game.getRoundCount();
         if (shdList != null) {
-            f = "";
+            String sSpecialHex = "";
             boolean isHexAutoHit = localPlayer.getArtyAutoHitHexes().contains(mcoords);
             for (SpecialHexDisplay shd : shdList) {
                 boolean isTypeAutoHit = shd.getType() == SpecialHexDisplay.Type.ARTILLERY_AUTOHIT;
@@ -5713,25 +5713,25 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                                 || (isHexAutoHit && isTypeAutoHit))) {
                     if (shd.getType() == SpecialHexDisplay.Type.PLAYER_NOTE) {
                         if (localPlayer.equals(shd.getOwner())) {
-                            f += "Note: ";
+                            sSpecialHex += "Note: ";
                         } else {
-                            f += "Note (" + shd.getOwner().getName() + "): ";
+                            sSpecialHex += "Note (" + shd.getOwner().getName() + "): ";
                         }
                     }
                     String buf = shd.getInfo();
                     buf = buf.replaceAll("\\n", "<BR>");
-                    f += buf;
-                    f = guiScaledFontHTML(UIUtil.uiWhite()) + f + "</FONT>";
-                    f += "<BR>";
+                    sSpecialHex += buf;
+                    sSpecialHex = guiScaledFontHTML(UIUtil.uiWhite()) + sSpecialHex + "</FONT>";
+                    sSpecialHex += "<BR>";
                 }
             }
 
-            result += f;
+            result += sSpecialHex;
         }
 
-        String d = "<DIV WIDTH=" + UIUtil.scaleForGUI(500) + ">" + result + "</DIV>";
+        String div = "<DIV WIDTH=" + UIUtil.scaleForGUI(500) + ">" + result + "</DIV>";
         StringBuffer txt = new StringBuffer();
-        txt.append(HTML_BEGIN + d + HTML_END);
+        txt.append(HTML_BEGIN + div + HTML_END);
 
         // Check to see if the tool tip is completely empty
         if (txt.toString().equals(HTML_BEGIN +HTML_END)) {
@@ -5759,11 +5759,8 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         }
 
         Coords mcoords = mhex.getCoords();
-
         String result = "";
-        String f = "";
-
-        f += Messages.getString("BoardView1.Tooltip.Hex", mcoords.getBoardNum(), mhex.getLevel()) + "<BR>";
+        String sTerrian = Messages.getString("BoardView1.Tooltip.Hex", mcoords.getBoardNum(), mhex.getLevel()) + "<BR>";
 
         // cycle through the terrains and report types found
         for (int terType: mhex.getTerrainTypes()) {
@@ -5773,11 +5770,11 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             if (name != null) {
                 String msg_tf =  Messages.getString("BoardView1.Tooltip.TF");
                 name += (tf > 0) ? " (" + msg_tf + ": " + tf + ")" : "";
-                f += name + "<BR>";
+                sTerrian += name + "<BR>";
             }
         }
 
-        result += guiScaledFontHTML(UIUtil.uiBlack()) + f + "</FONT>";
+        result += guiScaledFontHTML(UIUtil.uiBlack()) + sTerrian + "</FONT>";
         txt.append(result);
     }
 
@@ -5789,29 +5786,29 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             return;
         }
         Coords mcoords = mhex.getCoords();
-        String f = "";
+
         String result = "";
-        String t = "";
 
         // Fuel Tank
         if (mhex.containsTerrain(Terrains.FUEL_TANK)) {
+            String sFuelTank = "";
             // In the BoardEditor, buildings have no entry in the
             // buildings list of the board, so get the info from the hex
             if (clientgui == null) {
-                f = Messages.getString("BoardView1.Tooltip.FuelTank",
+                sFuelTank = Messages.getString("BoardView1.Tooltip.FuelTank",
                         mhex.terrainLevel(Terrains.FUEL_TANK_ELEV),
                         Terrains.getEditorName(Terrains.FUEL_TANK),
                         mhex.terrainLevel(Terrains.FUEL_TANK_CF),
                         mhex.terrainLevel(Terrains.FUEL_TANK_MAGN));
             } else {
                 FuelTank bldg = (FuelTank) game.getBoard().getBuildingAt(mcoords);
-                f = Messages.getString("BoardView1.Tooltip.FuelTank",
+                sFuelTank = Messages.getString("BoardView1.Tooltip.FuelTank",
                         mhex.terrainLevel(Terrains.FUEL_TANK_ELEV), bldg.toString(),
                         bldg.getCurrentCF(mcoords), bldg.getMagnitude());
             }
 
-            t = guiScaledFontHTML(uiBlack()) + f + "</FONT>";
-            String col = "<TD>" + t + "</TD>";
+            sFuelTank = guiScaledFontHTML(uiBlack()) + sFuelTank + "</FONT>";
+            String col = "<TD>" + sFuelTank + "</TD>";
             String row = "<TR>" + col + "</TR>";
             String table = "<TABLE BORDER=0 BGCOLOR=" + LIGHT_BGCOLOR + " width=100%>" + row + "</TABLE>";
             result += table;
@@ -5819,30 +5816,31 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
         // Building
         if (mhex.containsTerrain(Terrains.BUILDING)) {
+            String sBuilding;
             // In the BoardEditor, buildings have no entry in the
             // buildings list of the board, so get the info from the hex
             if (clientgui == null) {
-                f = Messages.getString("BoardView1.Tooltip.Building",
+                sBuilding = Messages.getString("BoardView1.Tooltip.Building",
                         mhex.terrainLevel(Terrains.BLDG_ELEV), Terrains.getEditorName(Terrains.BUILDING),
                         mhex.terrainLevel(Terrains.BLDG_CF), Math.max(mhex.terrainLevel(Terrains.BLDG_ARMOR), 0),
                         BasementType.getType(mhex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).toString());
-                t = guiScaledFontHTML(uiBlack()) + f + "</FONT>";
-                String col = "<TD>" + t + "</TD>";
+                sBuilding = guiScaledFontHTML(uiBlack()) + sBuilding + "</FONT>";
+                String col = "<TD>" + sBuilding + "</TD>";
                 String row = "<TR>" + col + "</TR>";
                 String table = "<TABLE BORDER=0 BGCOLOR=" + LIGHT_BGCOLOR + " width=100%>" + row + "</TABLE>";
                 result += table;
             } else {
                 Building bldg = game.getBoard().getBuildingAt(mcoords);
-                f = Messages.getString("BoardView1.Tooltip.Building",
+                sBuilding = Messages.getString("BoardView1.Tooltip.Building",
                         mhex.terrainLevel(Terrains.BLDG_ELEV), bldg.toString(),
                         bldg.getCurrentCF(mcoords), bldg.getArmor(mcoords),
                         bldg.getBasement(mcoords).toString());
 
                 if (bldg.getBasementCollapsed(mcoords)) {
-                    f += Messages.getString("BoardView1.Tooltip.BldgBasementCollapsed");
+                    sBuilding += Messages.getString("BoardView1.Tooltip.BldgBasementCollapsed");
                 }
-                t = guiScaledFontHTML(uiBlack()) + f + "</FONT>";
-                String col = "<TD>" + t + "</TD>";
+                sBuilding = guiScaledFontHTML(uiBlack()) + sBuilding + "</FONT>";
+                String col = "<TD>" + sBuilding + "</TD>";
                 String row = "<TR>" + col + "</TR>";
                 String table = "<TABLE BORDER=0 BGCOLOR=" + BUILDING_BGCOLOR + " width=100%>" + row + "</TABLE>";
                 result += table;
@@ -5851,19 +5849,20 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
         // Bridge
         if (mhex.containsTerrain(Terrains.BRIDGE)) {
+            String sBridge;
             // In the BoardEditor, buildings have no entry in the
             // buildings list of the board, so get the info from the hex
             if (clientgui == null) {
-                f =Messages.getString("BoardView1.Tooltip.Bridge",
+                sBridge = Messages.getString("BoardView1.Tooltip.Bridge",
                         mhex.terrainLevel(Terrains.BRIDGE_ELEV), Terrains.getEditorName(Terrains.BRIDGE),
                         mhex.terrainLevel(Terrains.BRIDGE_CF));
             } else {
                 Building bldg = game.getBoard().getBuildingAt(mcoords);
-                f = Messages.getString("BoardView1.Tooltip.Bridge",
+                sBridge = Messages.getString("BoardView1.Tooltip.Bridge",
                         mhex.terrainLevel(Terrains.BRIDGE_ELEV), bldg.toString(), bldg.getCurrentCF(mcoords));
             }
-            t = guiScaledFontHTML(uiBlack()) + f + "</FONT>";
-            String col = "<TD>" + t + "</TD>";
+            sBridge = guiScaledFontHTML(uiBlack()) + sBridge + "</FONT>";
+            String col = "<TD>" + sBridge + "</TD>";
             String row = "<TR>" + col + "</TR>";
             String table = "<TABLE BORDER=0 BGCOLOR=" + LIGHT_BGCOLOR + " width=100%>" + row + "</TABLE>";
             result += table;
@@ -5874,28 +5873,28 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             for (int i = 0; i < minefields.size(); i++) {
                 Minefield mf = minefields.elementAt(i);
                 String owner = " (" + game.getPlayer(mf.getPlayerId()).getName() + ")";
-                f = mf.getName() + " " + Messages.getString("BoardView1.minefield") + " (" + mf.getDensity()+ ")";
+                String sMinefield = mf.getName() + " " + Messages.getString("BoardView1.minefield") + " (" + mf.getDensity()+ ")";
 
                 switch (mf.getType()) {
                     case Minefield.TYPE_CONVENTIONAL:
                     case Minefield.TYPE_COMMAND_DETONATED:
                     case Minefield.TYPE_ACTIVE:
                     case Minefield.TYPE_INFERNO:
-                        f += " " + owner;
+                        sMinefield += " " + owner;
                         break;
                     case Minefield.TYPE_VIBRABOMB:
                         if (mf.getPlayerId() == localPlayer.getId()) {
-                            f += "("  + mf.getSetting() + ") " + owner;
+                            sMinefield += "("  + mf.getSetting() + ") " + owner;
                         } else {
-                            f += owner;
+                            sMinefield += owner;
                         }
                         break;
                     default:
                         break;
                 }
 
-                f = guiScaledFontHTML(UIUtil.uiWhite()) + f + "</FONT>";
-                result += f;
+                sMinefield = guiScaledFontHTML(UIUtil.uiWhite()) + sMinefield + "</FONT>";
+                result += sMinefield;
                 result += "<BR>";
             }
         }

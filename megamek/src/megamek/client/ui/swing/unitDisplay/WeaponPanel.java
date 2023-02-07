@@ -295,6 +295,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     private Targetable prevTarget = null;
     private JPanel panelMain;
     private JScrollPane tWeaponScroll;
+    private JPanel wPanel;
     private JComboBox<String> m_chAmmo;
     public JComboBox<String> m_chBayWeapon;
 
@@ -391,10 +392,14 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         weaponList.addMouseMotionListener(mouseAdapter);
         weaponList.setVisibleRowCount(GUIP.getUnitDisplayWeaponListCount());
         tWeaponScroll = new JScrollPane(weaponList);
-        panelMain.add(tWeaponScroll,
+        wPanel = new JPanel(new BorderLayout());
+        wPanel.setOpaque(false);
+        wPanel.setMinimumSize(new Dimension(200, UIUtil.scaleForGUI(200)));
+        wPanel.add(tWeaponScroll, BorderLayout.WEST);
+        panelMain.add(wPanel,
             GBC.eol().insets(15, 9, 15, 9)
                .fill(GridBagConstraints.HORIZONTAL)
-               .anchor(GridBagConstraints.CENTER).gridy(gridy)
+               .anchor(GridBagConstraints.WEST).gridy(gridy)
                .gridx(0));
         gridy++;
         weaponList.resetKeyboardActions();
@@ -698,8 +703,6 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                .insets(1, 9, 9, 1).gridy(gridy).gridx(4));
 
         gridy++;
-
-
 
         // target panel
         wTargetL = new JLabel(Messages.getString("MechDisplay.Target"), SwingConstants.CENTER);
@@ -2699,6 +2702,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             adaptToGUIScale();
         } else if (e.getName().equals(GUIPreferences.ADVANCED_UNIT_DISPLAY_WEAPON_LIST_COUNT)) {
             weaponList.setVisibleRowCount(GUIP.getUnitDisplayWeaponListCount());
+            wPanel.setMinimumSize(new Dimension(200, UIUtil.scaleForGUI(200)));
             weaponList.revalidate();
             weaponList.repaint();
         }

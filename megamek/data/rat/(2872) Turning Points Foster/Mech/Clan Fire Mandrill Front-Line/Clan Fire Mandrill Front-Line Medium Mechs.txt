@@ -9,10 +9,9 @@ Coyotl A, 4
 Coyotl B, 4
 Wyvern WVE-5Nb, 5
 Goshawk (Vapor Eagle) (Standard), 6
-Wyvern IIC, 5
-Shadow Hawk IIC, 4
-Night Chanter Prime, 3
+Wyvern IIC (Standard), 5
+Shadow Hawk IIC (Standard), 4
+Night Chanter Prime, 6
 Night Chanter A, 3
-Night Chanter B, 3
 Hellhound (Conjurer) 7, 2
 Sentinel STN-3Lb, 1

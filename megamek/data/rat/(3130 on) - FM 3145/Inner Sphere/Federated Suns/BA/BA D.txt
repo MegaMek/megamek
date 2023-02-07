@@ -1,5 +1,5 @@
 Federated Suns Battle Armor D - 3145
-Tunnel Rat Mining Exoskeleton IV [Battle Claw/GL],1
+Tunnel Rat IV Mining Exoskeleton [Battle Claw/GL](Sqd4),1
 Sloth Battle Armor (Interdictor),2
 Infiltrator Mk. II Battle Armor (Magnetic),3
 PAB-28 Sniper Suit (Standard),4

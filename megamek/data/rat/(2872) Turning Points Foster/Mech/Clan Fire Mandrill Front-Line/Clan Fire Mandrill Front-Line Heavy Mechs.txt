@@ -1,15 +1,14 @@
 Clan Fire Mandrill Front-Line Heavy Mechs
 Rifleman IIC (Standard), 1
-Spirit Walker Prime, 2
+Spirit Walker Prime, 4
 Spirit Walker A, 2
-Spirit Walker B, 2
 Champion CHP-1Nb, 3
 Lupus Prime, 4
 Lupus A, 4
 Lupus B, 4
 Cestus CTS-6Y, 5
 Lancelot C, 6
-Ostwar OTL-2Mb, 5
+Ostwar OWR-2Mb, 5
 Black Knight BL-6-KNT, 4
 Thunderbolt TDR-5Sb, 3
 Lancelot C 2, 2

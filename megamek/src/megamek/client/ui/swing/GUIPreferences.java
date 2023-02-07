@@ -114,6 +114,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_UNITTOOLTIP_SEENBYRESOLUTION = "AdvancedUnitToolTipSeenByResolution";
     public static final String ADVANCED_DOCK_ON_LEFT = "AdvancedDockOnLeft";
     public static final String ADVANCED_DOCK_MULTIPLE_ON_Y_AXIS = "AdvancedDockMultipleOnYAxis";
+    public static final String ADVANCED_PLAYERS_REMAINING_TO_SHOW = "AdvancedPlayersRemainingToShow";
+    public static final String ADVANCED_UNIT_DISPLAY_WEAPON_LIST_COUNT = "AdvancedUnitDisplayWeaponListCount";
 
     /* --End advanced settings-- */
 
@@ -210,6 +212,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MINI_MAP_POS_X = "MinimapPosX";
     public static final String MINI_MAP_POS_Y = "MinimapPosY";
     public static final String MINI_MAP_ZOOM = "MinimapZoom";
+    public static final String MINI_MAP_HEIGHT_DISPLAY_MODE = "MinimapHeightDisplayMode";
     public static final String MINI_MAP_AUTO_DISPLAY_REPORT_PHASE = "MinimapAutoDiplayReportPhase";
     public static final String MINI_MAP_AUTO_DISPLAY_NONREPORT_PHASE = "MinimapAutoDiplayNonReportPhase";
     public static final String MINIMUM_SIZE_HEIGHT = "MinimumSizeHeight";
@@ -434,6 +437,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_UNITTOOLTIP_SEENBYRESOLUTION, 3);
         setDefault(ADVANCED_DOCK_ON_LEFT, true);
         setDefault(ADVANCED_DOCK_MULTIPLE_ON_Y_AXIS, true);
+        setDefault(ADVANCED_PLAYERS_REMAINING_TO_SHOW, 3);
+
+        setDefault(ADVANCED_UNIT_DISPLAY_WEAPON_LIST_COUNT, 10);
 
         store.setDefault(FOV_HIGHLIGHT_RINGS_RADII, "5 10 15 20 25");
         store.setDefault(FOV_HIGHLIGHT_RINGS_COLORS_HSB, "0.3 1.0 1.0 ; 0.45 1.0 1.0 ; 0.6 1.0 1.0 ; 0.75 1.0 1.0 ; 0.9 1.0 1.0 ; 1.05 1.0 1.0 ");
@@ -747,6 +753,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(UNIT_DISPLAY_ENABLED);
     }
 
+    public int getUnitDisplayWeaponListCount() {
+        return store.getInt(ADVANCED_UNIT_DISPLAY_WEAPON_LIST_COUNT);
+    }
+
     public int getUnitDisplayLocaton() {
         return store.getInt(UNIT_DISPLAY_LOCATION);
     }
@@ -953,6 +963,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public int getMinimapZoom() {
         return store.getInt(MINI_MAP_ZOOM);
+    }
+
+    public int getMinimapHeightDisplayMode() {
+        return store.getInt(MINI_MAP_HEIGHT_DISPLAY_MODE);
     }
 
     public boolean getMiniReportEnabled() {
@@ -1366,6 +1380,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(UNIT_DISPLAY_ENABLED, b);
     }
 
+    public void setUnitDisplayWeaponListCount(int i) {
+        store.setValue(ADVANCED_UNIT_DISPLAY_WEAPON_LIST_COUNT, i);
+    }
+
     public void toggleUnitDisplayLocation() {
         store.setValue(UNIT_DISPLAY_LOCATION, ((getInt(UNIT_DISPLAY_LOCATION)+1)%2));
     }
@@ -1560,6 +1578,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setMinimapZoom(int zoom) {
         store.setValue(MINI_MAP_ZOOM, zoom);
+    }
+
+    public void setMinimapHeightDisplayMode(int zoom) {
+        store.setValue(MINI_MAP_HEIGHT_DISPLAY_MODE, zoom);
     }
 
     public void setMinimapAutoDisplayReportPhase(int i) {
@@ -1995,6 +2017,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return getBoolean(ADVANCED_DOCK_MULTIPLE_ON_Y_AXIS);
     }
 
+    public int getAdvancedPlayersRemainingToShow() {
+        return getInt(ADVANCED_PLAYERS_REMAINING_TO_SHOW);
+    }
+
     public void setReportLinkColor(Color color) {
         store.setValue(ADVANCED_REPORT_COLOR_LINK, getColorString(color));
     }
@@ -2089,6 +2115,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setAdvancedDockMultipleOnYAxis(Boolean state) {
         store.setValue(ADVANCED_DOCK_MULTIPLE_ON_Y_AXIS, state);
+    }
+
+    public void setAdvancedPlayersRemainingToShow(Boolean state) {
+        store.setValue(ADVANCED_PLAYERS_REMAINING_TO_SHOW, state);
     }
 
     /**

@@ -183,13 +183,17 @@ public class PlayerListDialog extends JDialog implements ActionListener, IPrefer
         }
     }
 
+    public void saveSettings() {
+        GUIP.setPlayerListPosX(getLocation().x);
+        GUIP.setPlayerListPosY(getLocation().y);
+    }
+
     @Override
     protected void processWindowEvent(WindowEvent e) {
         super.processWindowEvent(e);
         if ((e.getID() == WindowEvent.WINDOW_DEACTIVATED) || (e.getID() == WindowEvent.WINDOW_CLOSING)) {
             if (!modal) {
-                GUIP.setPlayerListPosX(getLocation().x);
-                GUIP.setPlayerListPosY(getLocation().y);
+                saveSettings();
             }
         }
     }

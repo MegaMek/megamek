@@ -86,6 +86,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
     private static final int[] HALF_ROAD_WIDTH = {0, 0, 0, 1, 2, 3, 3};
     private static final int[] UNIT_SIZES = {4, 5, 6, 7, 8, 9, 10};
     private static final int[] UNIT_SCALE = {7, 8, 9, 11, 12, 14, 16};
+    private static final int MIM_ZOOM = 0;
     private static final int MAX_ZOOM = HEX_SIDE.length - 1;
     
     private static final int SHOW_NO_HEIGHT = 0;
@@ -125,7 +126,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
     /** A list of information on hexes with roads or bridges. */
     private final List<int[]> roadHexes = new ArrayList<>();
     private int zoom = GUIP.getMinimapZoom();
-    private int heightDisplayMode = SHOW_NO_HEIGHT;
+    private int heightDisplayMode = GUIP.getMinimapHeightDisplayMode();
     
     private Coords firstLOS;
     private Coords secondLOS;
@@ -1272,6 +1273,12 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         }
     }
 
+    public void resetZoom() {
+        zoom = MIM_ZOOM;
+        initializeMap();
+        GUIP.setMinimapZoom(zoom);
+    }
+
     private void processMouseRelease(int x, int y, int modifiers) {
         if (!new Rectangle(getSize()).contains(x, y)) {
             return;
@@ -1297,6 +1304,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                     zoomOut();
                 } else if ((x < 2 * BUTTON_HEIGHT) && (zoom > 3)) {
                     heightDisplayMode = ((++heightDisplayMode) > NBR_MODES) ? 0 : heightDisplayMode;
+                    GUIP.setMinimapHeightDisplayMode(heightDisplayMode);
                     initializeMap();
                 } else if (x > (getSize().width - BUTTON_HEIGHT)) {
                     zoomIn();

@@ -1345,17 +1345,21 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
+        String s = getRemainingPlayerWithTurns();
+
         if (clientgui.getClient().getGame().getPhase() == phase) {
             if (clientgui.getClient().isMyTurn()) {
                 if (cen == Entity.NONE) {
                     beginMyTurn();
                 }
-                setStatusBarText(Messages.getString("TargetingPhaseDisplay.its_your_turn"));
-                clientgui.bingMyTurn();
+
+                setStatusBarText(Messages.getString("TargetingPhaseDisplay.its_your_turn") + s);
+                clientgui.bingOthersTurn();
             } else {
                 endMyTurn();
                 if (e.getPlayer() != null) {
-                    setStatusBarText(Messages.getString("TargetingPhaseDisplay.its_others_turn", e.getPlayer().getName()));
+                    setStatusBarText(Messages.getString("TargetingPhaseDisplay.its_others_turn",
+                            e.getPlayer().getName()) + s);
                     clientgui.bingOthersTurn();
                 }
             }

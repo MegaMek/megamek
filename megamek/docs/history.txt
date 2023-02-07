@@ -37,6 +37,12 @@ VERSION HISTORY:
 + PR #4101: SPA: Environmental Specialist
 + PR #4102: SPA: Terrain Master (Nightwalker)
 + PR #4142: Fix threading issues and add a SkinnedJPanel
++ PR #4123: Expanding Primary Dialog Preferences
++ Issue #4148: Infantry Fortify option takes one turn instead of three
++ Issue #4032: Filter Tactical Genius Double Blind Report Message
++ Issue #3151: Unit Display Weapon List Count Option
++ Issue #4160: Correct issue with weapon list visible row count
++ Issue #4128: Status bar update for players remaining  
 + Updating XStream to 1.4.19 from 1.4.14
  
 0.49.11 (2022-12-22 1500 UTC)

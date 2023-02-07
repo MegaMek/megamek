@@ -387,6 +387,14 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         this.unitDisplayDialog = unitDisplayDialog;
     }
 
+    public JDialog getMiniMapDialog() {
+        return minimapW;
+    }
+
+    public void setMiniMapDialog(final JDialog miniMapDialog) {
+        this.minimapW = miniMapDialog;
+    }
+
     public MiniReportDisplay getMiniReportDisplay() {
         return miniReportDisplay;
     }
@@ -399,12 +407,16 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         return miniReportDisplayDialog;
     }
 
+    public void setMiniReportDisplayDialog(final MiniReportDisplayDialog miniReportDisplayDialog) {
+        this.miniReportDisplayDialog = miniReportDisplayDialog;
+    }
+
     public PlayerListDialog getPlayerListDialog() {
         return playerListDialog;
     }
 
-    public void setMiniReportDisplayDialog(final MiniReportDisplayDialog miniReportDisplayDialog) {
-        this.miniReportDisplayDialog = miniReportDisplayDialog;
+    public void setPlayerListDialog(final PlayerListDialog playerListDialog) {
+        this.playerListDialog = playerListDialog;
     }
 
     /**
@@ -588,7 +600,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         setMiniReportDisplayDialog(new MiniReportDisplayDialog(getFrame(), this));
         getMiniReportDisplayDialog().setVisible(false);
 
-        playerListDialog = new PlayerListDialog(frame, client, false);
+        setPlayerListDialog(new PlayerListDialog(frame, client, false));
 
         Ruler.color1 = GUIP.getRulerColor1();
         Ruler.color2 = GUIP.getRulerColor2();
@@ -597,7 +609,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         ruler.setSize(GUIP.getRulerSizeHeight(), GUIP.getRulerSizeWidth());
         UIUtil.updateWindowBounds(ruler);
 
-        minimapW = Minimap.createMinimap(frame, getBoardView(), getClient().getGame(), this);
+        setMiniMapDialog(Minimap.createMinimap(frame, getBoardView(), getClient().getGame(), this));
         cb = new ChatterBox(this);
         cb.setChatterBox2(cb2);
         cb2.setChatterBox(cb);
@@ -701,16 +713,16 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      * Called when the user selects the "View->Player List" menu item.
      */
     public void showPlayerList() {
-        if (playerListDialog == null) {
-            playerListDialog = new PlayerListDialog(frame, client, false);
+        if (getPlayerListDialog() == null) {
+            setPlayerListDialog(new PlayerListDialog(frame, client, false));
         }
-        playerListDialog.setVisible(true);
+        getPlayerListDialog().setVisible(true);
     }
 
     public void miniReportDisplayAddReportPages() {
         ignoreHotKeys = true;
-        if (miniReportDisplay != null) {
-            miniReportDisplay.addReportPages();
+        if (getMiniReportDisplay() != null) {
+            getMiniReportDisplay().addReportPages();
         }
         ignoreHotKeys = false;
     }
@@ -729,18 +741,34 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         }
     }
 
+    private boolean resetMiniMapZoom(Container c) {
+        for (Component comp : c.getComponents()) {
+            if (comp instanceof Minimap) {
+                Minimap mm = (Minimap) comp;
+                mm.resetZoom();
+                return true;
+            } else {
+                if (resetMiniMapZoom((Container) comp)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public void resetWindowPositions() {
-        if (minimapW != null) {
-            minimapW.setBounds(0, 0, minimapW.getWidth(), minimapW.getHeight());
+        if (getMiniMapDialog() != null) {
+            getMiniMapDialog().setBounds(0, 0, getMiniMapDialog().getWidth(), getMiniMapDialog().getHeight());
+            resetMiniMapZoom(getMiniMapDialog());
         }
         if (getUnitDisplayDialog() != null) {
             getUnitDisplayDialog().setBounds(0, 0, getUnitDisplay().getWidth(), getUnitDisplay().getHeight());
         }
-        if (miniReportDisplayDialog!= null) {
-            miniReportDisplayDialog.setBounds(0, 0, miniReportDisplayDialog.getWidth(), miniReportDisplayDialog.getHeight());
+        if (getMiniReportDisplayDialog() != null) {
+            getMiniReportDisplayDialog().setBounds(0, 0, getMiniReportDisplayDialog().getWidth(), getMiniReportDisplayDialog().getHeight());
         }
-        if (playerListDialog != null) {
-            playerListDialog.setBounds(0, 0, playerListDialog.getWidth(), playerListDialog.getHeight());
+        if (getPlayerListDialog() != null) {
+            getPlayerListDialog().setBounds(0, 0, getPlayerListDialog().getWidth(), getPlayerListDialog().getHeight());
         }
         if (gameOptionsDialog!= null) {
             gameOptionsDialog.setBounds(0, 0, gameOptionsDialog.getWidth(), gameOptionsDialog.getHeight());
@@ -1016,30 +1044,26 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         GUIP.setWindowSizeWidth(frame.getSize().width);
         GUIP.setWindowSizeHeight(frame.getSize().height);
 
-        // Minimap
-        if ((minimapW != null) && ((minimapW.getSize().width * minimapW.getSize().height) > 0)) {
-            GUIP.setMinimapPosX(minimapW.getLocation().x);
-            GUIP.setMinimapPosY(minimapW.getLocation().y);
+        // Minimap Dialog
+        if ((getMiniMapDialog() != null) && ((getMiniMapDialog().getSize().width * getMiniMapDialog().getSize().height) > 0)) {
+            GUIP.setMinimapPosX(getMiniMapDialog().getLocation().x);
+            GUIP.setMinimapPosY(getMiniMapDialog().getLocation().y);
         }
 
-        // Mek display
-        if ((getUnitDisplayDialog() != null)
-                && ((getUnitDisplayDialog().getSize().width * getUnitDisplayDialog().getSize().height) > 0)) {
-            if (GUIP.getUnitDisplayStartTabbed()) {
-                GUIP.setUnitDisplayPosX(getUnitDisplayDialog().getLocation().x);
-                GUIP.setUnitDisplayPosY(getUnitDisplayDialog().getLocation().y);
-                GUIP.setUnitDisplaySizeWidth(getUnitDisplayDialog().getSize().width);
-                GUIP.setUnitDisplaySizeHeight(getUnitDisplayDialog().getSize().height);
-            }
-            else {
-                GUIP.setUnitDisplayNontabbedPosX(getUnitDisplayDialog().getLocation().x);
-                GUIP.setUnitDisplayNontabbedPosY(getUnitDisplayDialog().getLocation().y);
-                GUIP.setUnitDisplayNonTabbedSizeWidth(getUnitDisplayDialog().getSize().width);
-                GUIP.setUnitDisplayNonTabbedSizeHeight(getUnitDisplayDialog().getSize().height);
-                unitDisplay.saveSplitterLoc();
-            }
-
+        // Unit Display Dialog
+        if (getUnitDisplayDialog() != null) {
+            getUnitDisplayDialog().saveSettings();
             saveSplitPaneLocations();
+        }
+
+        // Mini Report Dialog
+        if (getMiniReportDisplayDialog() != null) {
+            getMiniReportDisplayDialog().saveSettings();
+        }
+
+        // Player List Dialog
+        if (getPlayerListDialog() != null) {
+            getPlayerListDialog().saveSettings();
         }
 
         // Ruler display
@@ -1515,8 +1539,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      * Does not change the menu setting. 
      */
     void setMapVisible(boolean visible) {
-        if (minimapW != null) {
-            minimapW.setVisible(visible);
+        if (getMiniMapDialog() != null) {
+            getMiniMapDialog().setVisible(visible);
         }
     }
 
@@ -1530,8 +1554,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         if (visible) {
             showPlayerList();
         } else {
-            if (playerListDialog != null) {
-                playerListDialog.setVisible(visible);
+            if (getPlayerListDialog() != null) {
+                getPlayerListDialog().setVisible(visible);
             }
         }
     }
@@ -2158,6 +2182,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         public void gamePlayerChange(GamePlayerChangeEvent evt) {
              if (playerListDialog != null) {
                  playerListDialog.refreshPlayerList();
+
+                 if (currPhaseDisplay != null) {
+                     currPhaseDisplay.setStatusBarWithNotDonePlayers();
+                 }
              }
         }
 

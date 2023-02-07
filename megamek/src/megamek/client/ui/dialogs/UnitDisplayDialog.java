@@ -65,24 +65,28 @@ public class UnitDisplayDialog extends JDialog {
     }
     //endregion Constructors
 
+    public void saveSettings() {
+        if ((getSize().width * getSize().height) > 0) {
+            if (GUIP.getUnitDisplayStartTabbed()) {
+                GUIP.setUnitDisplayPosX(getLocation().x);
+                GUIP.setUnitDisplayPosY(getLocation().y);
+                GUIP.setUnitDisplaySizeWidth(getSize().width);
+                GUIP.setUnitDisplaySizeHeight(getSize().height);
+            } else {
+                GUIP.setUnitDisplayNontabbedPosX(getLocation().x);
+                GUIP.setUnitDisplayNontabbedPosY(getLocation().y);
+                GUIP.setUnitDisplayNonTabbedSizeWidth(getSize().width);
+                GUIP.setUnitDisplayNonTabbedSizeHeight(getSize().height);
+                clientGUI.getUnitDisplay().saveSplitterLoc();
+            }
+        }
+    }
+
     @Override
     protected void processWindowEvent(WindowEvent e) {
         super.processWindowEvent(e);
         if ((e.getID() == WindowEvent.WINDOW_DEACTIVATED) || (e.getID() == WindowEvent.WINDOW_CLOSING)) {
-            if ((getSize().width * getSize().height) > 0) {
-                if (GUIP.getUnitDisplayStartTabbed()) {
-                    GUIP.setUnitDisplayPosX(getLocation().x);
-                    GUIP.setUnitDisplayPosY(getLocation().y);
-                    GUIP.setUnitDisplaySizeWidth(getSize().width);
-                    GUIP.setUnitDisplaySizeHeight(getSize().height);
-                } else {
-                    GUIP.setUnitDisplayNontabbedPosX(getLocation().x);
-                    GUIP.setUnitDisplayNontabbedPosY(getLocation().y);
-                    GUIP.setUnitDisplayNonTabbedSizeWidth(getSize().width);
-                    GUIP.setUnitDisplayNonTabbedSizeHeight(getSize().height);
-                    clientGUI.getUnitDisplay().saveSplitterLoc();
-                }
-            }
+            saveSettings();
         }
     }
 

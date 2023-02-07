@@ -401,22 +401,26 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             // ignore
             return;
         }
+
+        String s = getRemainingPlayerWithTurns();
         
         if (clientgui.getClient().isMyTurn()) {
             if (cen == Entity.NONE) {
                 beginMyTurn();
                 clientgui.bingMyTurn();
             }
-            setStatusBarText(Messages.getString("DeploymentDisplay.its_your_turn")); 
+            setStatusBarText(Messages.getString("DeploymentDisplay.its_your_turn") + s);
         } else {
             endMyTurn();
             String playerName;
+          
             if (e.getPlayer() != null) {
                 playerName = e.getPlayer().getName();
             } else {
                 playerName = "Unknown";
             }
-            setStatusBarText(Messages.getString("DeploymentDisplay.its_others_turn", playerName));
+
+            setStatusBarText(Messages.getString("DeploymentDisplay.its_others_turn", playerName) + s);
             clientgui.bingOthersTurn();
         }
         

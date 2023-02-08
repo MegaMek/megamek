@@ -34,6 +34,7 @@ public class CLBARecoillessRifleHeavy extends Weapon {
         addLookupName("ISHeavy Recoilless Rifle");
         addLookupName("ISBAHeavy Recoilless Rifle");
         sortingName = "Recoilless Rifle D";
+        shortName = "Heavy Recoiless Rifle";
         damage = 3;
         infDamageClass = WeaponType.WEAPON_BURST_2D6;
         ammoType = AmmoType.T_NA;

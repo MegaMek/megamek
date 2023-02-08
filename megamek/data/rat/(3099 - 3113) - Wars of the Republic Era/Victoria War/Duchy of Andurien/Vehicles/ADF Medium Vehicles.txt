@@ -1,6 +1,6 @@
 Victoria War Duchy of Andurien Medium Vehicles
 R10 Mechanized ICV (Prime),1
-Condor Heavy Hover Tank (Upgrade) (Standard),2
+Condor Heavy Hover Tank (Upgrade),2
 Regulator Hovertank (Standard),3
 Danai Support Vehicle (Standard),4
 Vedette Medium Tank (LB-X),5

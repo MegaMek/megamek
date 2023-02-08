@@ -23,6 +23,10 @@ import megamek.common.actions.PunchAttackAction;
 import megamek.common.actions.PushAttackAction;
 import megamek.common.actions.SearchlightAttackAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.GamePhase;
+
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.util.UIUtil.uiBlack;
 
 /**
  * Sprite and info for an attack. Does not actually use the image buffer as
@@ -402,16 +406,19 @@ class AttackSprite extends Sprite {
 
     @Override
     public StringBuffer getTooltip() {
-        StringBuffer tipString = new StringBuffer();
-        tipString.append("<FONT COLOR=#");
-        tipString.append(Integer.toHexString(attackColor.getRGB() & 0xFFFFFF));
-        tipString.append(">");
-        tipString.append(attackerDesc
-                + "<BR>&nbsp;&nbsp;" + Messages.getString("BoardView1.on") + "&nbsp;&nbsp;" + targetDesc);
-        tipString.append("</FONT>");
-        for (String wpD: weaponDescs) {
-            tipString.append("<BR>"+wpD);
+        GamePhase phase = this.boardView1.game.getPhase();
+        String result = "";
+        String sAttacherDesc = "";
+
+        sAttacherDesc = attackerDesc + "<BR>&nbsp;&nbsp;" + Messages.getString("BoardView1.on") + " " + targetDesc;
+        result = guiScaledFontHTML(attackColor) + sAttacherDesc + "</FONT>";
+        String sAttacks = "";
+        if ((phase.isFiring()) || (phase.isPhysical())) {
+            for (String wpD : weaponDescs) {
+                sAttacks += "<BR>" + wpD;
+            }
+            result += guiScaledFontHTML(uiBlack()) + sAttacks + "</FONT>";
         }
-        return tipString;
+        return new StringBuffer().append(result);
     }
 }

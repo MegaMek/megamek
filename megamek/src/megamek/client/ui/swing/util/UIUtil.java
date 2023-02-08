@@ -255,6 +255,24 @@ public final class UIUtil {
     public static Color uiYellow() {
         return uiBgBrightness() > 130 ? LIGHTUI_YELLOW : DARKUI_YELLOW;
     }
+
+    /**
+     * Returns a light red color suitable as a text color. The supplied
+     * color depends on the UI look and feel and will be lighter for a
+     * dark UI LAF than for a light UI LAF.
+     */
+    public static Color uiBlack() {
+        return uiBgBrightness() > 130 ? LIGHTUI_BLACK : DARKUI_BLACK;
+    }
+
+    /**
+     * Returns a light red color suitable as a text color. The supplied
+     * color depends on the UI look and feel and will be lighter for a
+     * dark UI LAF than for a light UI LAF.
+     */
+    public static Color uiWhite() {
+        return uiBgBrightness() > 130 ? LIGHTUI_WHITE : DARKUI_WHITE;
+    }
     
     /** 
      * Returns a color for the UI display of Quirks/Advantages. Different 
@@ -414,14 +432,6 @@ public final class UIUtil {
                 JPanel panel = (JPanel) comp;
                 Border border = panel.getBorder();
                 setTitledBorder(border, sf);
-                if ((border instanceof EmptyBorder)) {
-                    Insets i = ((EmptyBorder) border).getBorderInsets();
-                    int top = scaleForGUI(i.top);
-                    int bottom = scaleForGUI(i.bottom);
-                    int left = scaleForGUI(i.left);
-                    int right = scaleForGUI(i.right);
-                    panel.setBorder(BorderFactory.createEmptyBorder(top, left, bottom, right));
-                }
                 adjustContainer(panel, fontSize);
             } else if (comp instanceof JTabbedPane) {
                 if ((comp.getFont() != null) && (sf != comp.getFont().getSize())) {
@@ -1138,6 +1148,10 @@ public final class UIUtil {
     private final static Color DARKUI_LIGHTGREEN = new Color(150, 210, 150);
     private final static Color LIGHTUI_DARKBLUE = new Color(225, 225, 245);
     private final static Color DARKUI_DARKBLUE = new Color(50, 50, 80);
+    private final static Color LIGHTUI_BLACK = new Color(0, 0, 0);
+    private final static Color DARKUI_BLACK = new Color(0, 0, 0);
+    private final static Color LIGHTUI_WHITE = new Color(255, 255, 255);
+    private final static Color DARKUI_WHITE = new Color(255, 255, 255);
 
     /** Returns an HTML FONT Size String, according to GUIScale (e.g. "style=font-size:22"). */
     private static String sizeString() {

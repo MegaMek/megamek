@@ -1,6 +1,6 @@
 Victoria War Orient Protectorate Medium Vehicles
 R10 Mechanized ICV (Prime),1
-Condor Heavy Hover Tank (Upgrade) (Standard),2
+Condor Heavy Hover Tank (Upgrade),2
 Regulator Hovertank (Standard),3
 Condor Heavy Hover Tank (Laser),4
 Vedette Medium Tank (LB-X),5

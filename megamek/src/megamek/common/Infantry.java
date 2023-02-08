@@ -114,6 +114,7 @@ public class Infantry extends Entity {
     public static final int DUG_IN_COMPLETE = 2; // protected, restricted arc
     public static final int DUG_IN_FORTIFYING1 = 3; // no protection, can't attack
     public static final int DUG_IN_FORTIFYING2 = 4; // no protection, can't attack
+    public static final int DUG_IN_FORTIFYING3 = 5; // no protection, can't attack
     private int dugIn = DUG_IN_NONE;
 
     private boolean isTakingCover = false;
@@ -379,6 +380,35 @@ public class Infantry extends Entity {
                 mp = Math.max(mp + weatherMod, 0);
             }
         }
+
+        if (null != game) {
+            if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_GUSTING_RAIN)
+                    && getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_RAIN)) {
+                if ((mp !=0) || getMovementMode().isMotorizedInfantry()) {
+                    mp += 1;
+                }
+            }
+
+            if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_SNOW)) {
+                if (((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES)
+                        || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM))
+                        && (getOriginalWalkMP() != 0)) {
+                    mp += 1;
+                }
+            }
+
+            if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)) {
+                if (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_MOD_GALE) {
+                    mp += 1;
+                }
+
+                if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_STRONG_GALE)
+                        && ((mp != 0) || getMovementMode().isMotorizedInfantry())) {
+                    mp += 1;
+                }
+            }
+        }
+
         if (gravity) {
             mp = applyGravityEffectsOnMP(mp);
         }
@@ -416,12 +446,21 @@ public class Infantry extends Entity {
         if (gravity) {
             mp = applyGravityEffectsOnMP(mp);
         }
+
         if (null != game) {
             int windCond = game.getPlanetaryConditions().getWindStrength();
             if (windCond >= PlanetaryConditions.WI_STRONG_GALE) {
                 return 0;
-            } else if (windCond == PlanetaryConditions.WI_MOD_GALE) {
+            } else if ((windCond == PlanetaryConditions.WI_MOD_GALE)
+                    && !getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)) {
                 mp--;
+            }
+
+            if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_SNOW)) {
+                if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES)
+                        && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM)) {
+                    mp += 1;
+                }
             }
         }
         return Math.max(mp, 0);
@@ -1054,9 +1093,10 @@ public class Infantry extends Entity {
                 turnsLayingExplosives = -1; // give up if no longer in a building
             }
         }
+
         if ((dugIn != DUG_IN_COMPLETE) && (dugIn != DUG_IN_NONE)) {
             dugIn++;
-            if (dugIn > DUG_IN_FORTIFYING2) {
+            if (dugIn > DUG_IN_FORTIFYING3) {
                 dugIn = DUG_IN_NONE;
             }
         }
@@ -1758,7 +1798,7 @@ public class Infantry extends Entity {
         // Add equipment slots for ammo switching of field guns and field artillery
         addCritical(loc, new CriticalSlot(mounted));
     }
-    
+
     @Override
     public boolean isConventionalInfantry() {
         return true;

@@ -6,7 +6,7 @@ Firefly C, 4
 Mongoose MON-66, 5
 Mandrill (Standard), 6
 Stinger STG-3Gb, 5
-Ice Storm (Standard), 4
+Icestorm (Standard), 4
 Drift Shag (Standard), 3
 Mongoose C, 2
 Night Hawk NTK-2Q, 1

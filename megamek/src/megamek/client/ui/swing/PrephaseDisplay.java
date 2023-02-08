@@ -40,13 +40,15 @@ import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
-import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import org.apache.logging.log4j.LogManager;
+
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
 
 /**
  * Targeting Phase Display. Breaks naming convention because TargetingDisplay is too easy to confuse
@@ -99,6 +101,21 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         public String toString() {
             return Messages.getString("PrephaseDisplay." + getCmd());
         }
+
+        public String getHotKeyDesc() {
+            String result = "";
+
+            String msg_next= Messages.getString("Next");
+            String msg_previous = Messages.getString("Previous");
+
+            if (this == PREPHASE_NEXT) {
+                result = "<BR>";
+                result += "&nbsp;&nbsp;" + msg_next + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT);
+                result += "&nbsp;&nbsp;" + msg_previous + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_UNIT);
+            }
+
+            return result;
+        }
     }
 
     // buttons
@@ -120,34 +137,42 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         super(clientgui);
         this.phase = phase;
 
-        setupStatusBar(Messages
-                .getFormattedString("PrephaseDisplay.waitingForPrephasePhase", phase.toString()));
+        setupStatusBar(Messages.getFormattedString("PrephaseDisplay.waitingForPrephasePhase", phase.toString()));
 
-        buttons = new HashMap<>(
-                (int) (PrephaseCommand.values().length * 1.25 + 0.5));
-        for (PrephaseCommand cmd : PrephaseCommand.values()) {
-            String title = Messages.getString("PrephaseDisplay."
-                    + cmd.getCmd());
-            MegamekButton newButton = new MegamekButton(title,
-                    SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
-            String ttKey = "PrephaseDisplay." + cmd.getCmd() + ".tooltip";
-            if (Messages.keyExists(ttKey)) {
-                newButton.setToolTipText(Messages.getString(ttKey));
-            }
-            newButton.addActionListener(this);
-            newButton.setActionCommand(cmd.getCmd());
-            newButton.setEnabled(false);
-
-            buttons.put(cmd, newButton);
-        }
-        numButtonGroups = (int) Math.ceil((buttons.size() + 0.0)
-                / buttonsPerGroup);
+        setButtons();
+        setButtonsTooltips();
 
         butDone.setText(Messages.getString("PrephaseDisplay.Done"));
+        String f = guiScaledFontHTML(uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
+        butDone.setToolTipText("<html><body>" + f + "</body></html>");
         butDone.setEnabled(false);
 
         setupButtonPanel();
 
+        registerKeyCommands();
+    }
+
+    @Override
+    protected void setButtons() {
+        buttons = new HashMap<>((int) (PrephaseCommand.values().length * 1.25 + 0.5));
+        for (PrephaseCommand cmd : PrephaseCommand.values()) {
+            buttons.put(cmd, createButton(cmd.getCmd(), "PrephaseDisplay."));
+        }
+        numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
+    }
+
+    @Override
+    protected void setButtonsTooltips() {
+        for (PrephaseCommand cmd : PrephaseCommand.values()) {
+            String tt = createToolTip(cmd.getCmd(), "PrephaseDisplay.", cmd.getHotKeyDesc());
+            buttons.get(cmd).setToolTipText(tt);
+        }
+    }
+
+    /**
+     * Register all of the <code>CommandAction</code>s for this panel display.
+     */
+    protected void registerKeyCommands() {
         MegaMekController controller = clientgui.controller;
         final StatusBarPhaseDisplay display = this;
 

@@ -8,5 +8,5 @@ Vedette Medium Tank (Cell), 6
 JES I Tactical Missile Carrier (3082 Upgrade), 5
 Drillson Heavy Hover Tank (Streak), 4
 Maxim Mk II Transport (Infantry Support) 'Shiloh', 3
-Condor Heavy Hover Tank (Upgrade) (Standard), 2
+Condor Heavy Hover Tank (Upgrade), 2
 Bishop Transport VTOL (Standard), 1

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022, 2023 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -23,6 +23,9 @@ import megamek.common.alphaStrike.AlphaStrikeElement;
 
 import static megamek.common.alphaStrike.BattleForceSUA.*;
 
+/**
+ * Represents the movement modes used in Strategic Battle Force
+ */
 public enum SBFMovementMode {
 
     UNKNOWN("Unknown", "Unknown", Integer.MAX_VALUE),

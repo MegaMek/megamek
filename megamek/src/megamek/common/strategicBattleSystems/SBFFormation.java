@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022, 2023 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -21,17 +21,21 @@ package megamek.common.strategicBattleSystems;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.alphaStrike.ASDamageVector;
+import megamek.common.alphaStrike.ASSpecialAbilityCollection;
 import megamek.common.alphaStrike.ASSpecialAbilityCollector;
 import megamek.common.alphaStrike.BattleForceSUA;
-import megamek.common.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static megamek.common.alphaStrike.BattleForceSUA.*;
-import static megamek.common.strategicBattleSystems.SBFElementType.*;
+import static megamek.common.strategicBattleSystems.SBFElementType.AS;
+import static megamek.common.strategicBattleSystems.SBFElementType.LA;
 
+/**
+ * Represents a Strategic Battle Force Formation composed of one or more SBF Units.
+ */
 public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFormatter {
     
     private List<SBFUnit> units = new ArrayList<>();
@@ -49,7 +53,7 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
     private int skill;
     private int pointValue;
     private CalculationReport conversionReport = new DummyCalculationReport();
-    private final SBFSpecialAbilityCollection specialAbilities = new SBFSpecialAbilityCollection();
+    private final ASSpecialAbilityCollection specialAbilities = new ASSpecialAbilityCollection();
 
 
     public String getName() {
@@ -140,7 +144,7 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
         this.pointValue = pointValue;
     }
 
-    public SBFSpecialAbilityCollection getSpecialAbilities() {
+    public ASSpecialAbilityCollection getSpecialAbilities() {
         return specialAbilities;
     }
 
@@ -183,20 +187,6 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
     public String getTrspMovementCode() {
         return trspMovementMode.code;
     }
-
-    public static String formatSPAString(BattleForceSUA spa, @Nullable Object spaObject) {
-        if (spa == TUR) {
-            return "TUR(" + spaObject + ")";
-//        } else if (spa == BIM || spa == LAM) {
-//            return lamString(spa, spaObject);
-        } else if ((spa == C3BSS) || (spa == C3M) || (spa == C3BSM) || (spa == C3EM)
-                || (spa == INARC) || (spa == CNARC) || (spa == SNARC)) {
-            return spa.toString() + ((int) spaObject == 1 ? "" : (int) spaObject);
-        } else {
-            return spa.toString() + (spaObject != null ? spaObject : "");
-        }
-    }
-
 
     /**
      * Returns the Artillery Special's SBF damage (standard, not homing missile damage).
@@ -275,7 +265,7 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
 
     @Override
     public String formatSUA(BattleForceSUA sua, String delimiter, ASSpecialAbilityCollector collection) {
-        return formatAbility(sua, collection, this, delimiter);
+        return formatAbility(sua);
     }
 
     /**
@@ -284,40 +274,28 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
      * an arc of a large aerospace unit.
      *
      * @param sua The Special Unit Ability to process
-     * @param collection The SUA collection that the SUA is part of
-     * @param element The AlphaStrikeElement that the collection is part of
-     * @param delimiter The delimiter to insert between entries (only relevant for TUR)
      * @return The complete formatted Special Unit Ability string such as "LRM1/1/-" or "CK15D2".
      */
-    public String formatAbility(BattleForceSUA sua, ASSpecialAbilityCollector collection,
-                                       @Nullable SBFFormation element, String delimiter) {
-        if (!collection.hasSUA(sua)) {
+    private String formatAbility(BattleForceSUA sua) {
+        if (!specialAbilities.hasSUA(sua)) {
             return "";
         }
-        Object suaObject = collection.getSUA(sua);
+        Object suaObject = specialAbilities.getSUA(sua);
         if (!sua.isValidAbilityObject(suaObject)) {
             return "ERROR - wrong ability object (" + sua + ")";
-        }
-        if (sua == TUR) {
-            return "";
-//            return "TUR(" + collection.getTUR().getSpecialsDisplayString(delimiter, element) + ")";
-//        } else if (sua == BIM) {
-//            return lamString(sua, collection.getBIM());
-//        } else if (sua == LAM) {
-//            return lamString(sua, collection.getLAM());
         } else if (sua.isAnyOf(C3BSS, C3M, C3BSM, C3EM, INARC, CNARC, SNARC)) {
             return sua.toString() + ((int) suaObject == 1 ? "" : (int) suaObject);
         } else if (sua.isAnyOf(CAP, SCAP, MSL)) {
             return sua.toString();
         } else if (sua == FLK) {
-            ASDamageVector flkDamage = collection.getFLK();
+            ASDamageVector flkDamage = specialAbilities.getFLK();
             return sua.toString() + flkDamage.M.damage + "/" + flkDamage.L.damage;
         } else if (sua.isTransport()) {
             String result = sua + suaObject.toString();
             BattleForceSUA door = sua.getDoor();
-            if ((element == null || element.isType(SBFElementType.LA))
-                    && collection.hasSUA(door) && ((int) collection.getSUA(door) > 0)) {
-                result += door.toString() + collection.getSUA(door);
+            if (this.isType(SBFElementType.LA)
+                    && specialAbilities.hasSUA(door) && ((int) specialAbilities.getSUA(door) > 0)) {
+                result += door.toString() + specialAbilities.getSUA(door);
             }
             return result;
         } else {

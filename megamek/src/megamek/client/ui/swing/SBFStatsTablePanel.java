@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2021-2023 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -30,6 +30,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Collection;
 
+/**
+ * A panel with a table of Strategic Battle Force stats for any SBF Formations that are added to it.
+ * The table will show buttons for calling up conversion reports.
+ */
 public class SBFStatsTablePanel {
 
     public static final int COLUMNS = 13;
@@ -39,6 +43,14 @@ public class SBFStatsTablePanel {
     private final Collection<SBFFormation> formations;
     private final Box contentPane = Box.createVerticalBox();
 
+    /**
+     * Constructs the panel for the given formations. The given frame is needed as a parent to the conversion
+     * report windows.
+     *
+     * @param formations The SBF formations to show
+     * @param parent The parent frame (important for giving a parent to conversion report dialogs)
+     * @param showElements When true, the elements in the formations are also listed
+     */
     public SBFStatsTablePanel(JFrame parent, Collection<SBFFormation> formations, boolean showElements) {
         this.parent = parent;
         this.formations = formations;
@@ -46,13 +58,12 @@ public class SBFStatsTablePanel {
         updatePanel();
     }
 
+    /** @return The contructed stats table panel. */
     public JComponent getPanel() {
         return contentPane;
     }
 
-    private void updatePanel() {
-        contentPane.removeAll();
-        // BETA note
+    private void addBetaInfo() {
         var betaLabel = new JLabel(UIUtil.WARNING_SIGN + " Please note: SBF conversion is currently in development " +
                 "and results may change in future releases.");
         betaLabel.setFont(UIUtil.getScaledFont());
@@ -61,7 +72,11 @@ public class SBFStatsTablePanel {
         contentPane.add(Box.createVerticalStrut(30));
         contentPane.add(betaLabel);
         contentPane.add(Box.createVerticalStrut(30));
-        //---
+    }
+
+    private void updatePanel() {
+        contentPane.removeAll();
+        addBetaInfo();
         for (SBFFormation formation : formations) {
             contentPane.add(formationPanel(formation));
         }

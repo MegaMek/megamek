@@ -283,9 +283,8 @@ public enum GamePhase {
         // is playable. This prevents issues from aerospace homing artillery with the aerospace
         // unit having left the field already, for example
         return game.getAttacksVector().stream()
-                .map(attackHandler -> attackHandler.getWaa().getEntity(game).getEquipment(attackHandler.getWaa().getAmmoId()))
-                .filter(Objects::nonNull).map(ammo -> (AmmoType) ammo.getType())
-                .anyMatch(ammoType -> ammoType.getMunitionType() == AmmoType.M_HOMING);
+                .map(attackHandler -> attackHandler.getWaa())
+                .filter(Objects::nonNull).anyMatch(waa -> waa.getAmmoMunitionType() == AmmoType.M_HOMING);
     }
 
     /**

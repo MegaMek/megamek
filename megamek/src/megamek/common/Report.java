@@ -27,6 +27,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import static megamek.client.ui.swing.util.UIUtil.uiGray;
+
 /**
  * This class defines a single server report. It holds information such as the
  * report ID, who the report is about, who should see the report, and some
@@ -340,7 +342,10 @@ public class Report implements Serializable {
                 imageCode = "<span id='" + entity.getId() + "'></span>";
             }
 
-            Color ownerColor = entity.getOwner().getColour().getColour();
+            Player owner = entity.getOwner();
+            Color ownerColor = (owner != null) ? owner.getColour().getColour() : uiGray();
+            String ownerName = (owner != null) ? owner.getName() : ReportMessages.getString("report.unknownOwner");
+
             String unitName = href(ENTITY_LINK + entity.getId(), entity.getShortName());
 
             if ((entity.getCrew().getSize() >= 1) && !entity.getCrew().getNickname().isBlank()) {
@@ -348,7 +353,7 @@ public class Report implements Serializable {
             }
 
             add(unitName, true);
-            add(bold(fgColor(ownerColor, entity.getOwner().getName())));
+            add(bold(fgColor(ownerColor, ownerName)));
         }
     }
 

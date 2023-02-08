@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.client;
 
 import megamek.client.commands.ClientCommand;
@@ -14,12 +32,16 @@ public interface GameClient {
     /** Attempt to connect to the specified host */
     boolean connect();
 
+    /** @return The name of Client, typically the same as the local player's name. */
     String getName();
 
+    /** @return The port that this Client uses to connect to the server. */
     int getPort();
 
+    /** @return The server host address. */
     String getHost();
 
+    /** Cleans up and closes resources of this Client. */
     void die();
 
     //endregion
@@ -55,7 +77,7 @@ public interface GameClient {
     /**
      * Sets the ID of the player playing at this Client.
      * // TODO : only used by AddBotUtil -> could be included in a bot's constructor and removed here
-     * @param localPlayerNumber
+     * @param localPlayerNumber The new local player's ID
      */
     void setLocalPlayerNumber(int localPlayerNumber);
 

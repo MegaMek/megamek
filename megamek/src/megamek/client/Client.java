@@ -36,7 +36,10 @@ import megamek.common.preference.PreferenceManager;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * This class is instantiated for each client and for each bot running on that
@@ -50,8 +53,9 @@ public abstract class Client implements GameClient {
     protected AbstractConnection connection;
 	protected Thread connThread;
     protected boolean connected = false;
-    protected String host;
-    protected int port;
+    protected boolean disconnectFlag = false;
+    protected final String host;
+    protected final int port;
 	private ConnectionHandler packetUpdate;
 
 	/** The ID of the local player (the player connected through this client) */
@@ -63,7 +67,6 @@ public abstract class Client implements GameClient {
     public String phaseReport;
     public String roundReport;
 
-    protected boolean disconnectFlag = false;
     protected final UnitNameTracker unitNameTracker = new UnitNameTracker();
 
     /** The bots controlled by the local player; maps a bot's name String to a bot's client. */

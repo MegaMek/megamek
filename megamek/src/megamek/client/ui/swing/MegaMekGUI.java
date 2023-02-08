@@ -500,9 +500,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         client = new TwGameClient(playerName, serverAddress, port);
         ClientGUI gui = new ClientGUI(client, controller);
         controller.clientgui = gui;
-        client.setBoardView(gui.getBoardView());
         frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         gui.initialize();
+        client.setBoardView(gui.getBoardView());
         frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         if (!client.connect()) {
             JOptionPane.showMessageDialog(frame,

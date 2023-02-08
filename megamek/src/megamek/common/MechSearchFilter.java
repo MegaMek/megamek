@@ -341,17 +341,26 @@ public class MechSearchFilter {
 
     }
 
+    private static int toInt(String s, int i) {
+        if (s.isEmpty()) {
+            return i;
+        }
+
+        try {
+            return Integer.parseInt(s);
+        } catch (Exception ignored) {
+            return i;
+        }
+    }
+
     private static boolean isBetween(double value, String sStart, String sEnd) {
-        int iStart = Integer.MIN_VALUE;
-        int iEnd = Integer.MAX_VALUE;
-        try {
-            iStart = Integer.parseInt(sStart);
-        } catch (Exception ignored) {
+        if (sStart.isEmpty() && sEnd.isEmpty()) {
+            return true;
         }
-        try {
-            iEnd = Integer.parseInt(sEnd);
-        } catch (Exception ignored) {
-        }
+
+        int iStart = toInt(sStart, Integer.MIN_VALUE);
+        int iEnd = toInt(sEnd, Integer.MAX_VALUE);
+
         if ((value < iStart) || (value > iEnd)) {
             return false;
         }
@@ -364,6 +373,99 @@ public class MechSearchFilter {
             return b;
         } else if (i == 2) {
             return !b;
+        }
+
+        return true;
+    }
+
+    private static boolean checkA(List<String> list, String search, boolean b) {
+        if (list.isEmpty()) {
+            return true;
+        }
+
+        boolean match = false;
+
+        for (String s : list) {
+            if (search.contains(s) == b) {
+                match = true;
+                break;
+            }
+        }
+
+        if (!match) {
+            return false;
+        }
+
+        return match;
+    }
+
+    private static boolean checkB(List<String> list, String search, boolean b) {
+        for (String s : list) {
+            if (search.contains(s) == b) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static boolean checkA(List<Integer> list, int search) {
+        if (list.isEmpty()) {
+            return true;
+        }
+
+        boolean match = false;
+
+        for (int s : list) {
+            if (search == s) {
+                match = true;
+                break;
+            }
+        }
+
+        if (!match) {
+            return false;
+        }
+
+        return match;
+    }
+
+    private static boolean checkB(List<Integer> list, int search) {
+        for (int s : list) {
+            if (search == s) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static boolean checkA(List<Integer> list, HashSet<Integer> search) {
+        if (list.isEmpty()) {
+            return true;
+        }
+
+        boolean match = false;
+
+        for (int s : list) {
+            if (search.contains(s)) {
+                match = true;
+                break;
+            }
+        }
+
+        if (!match) {
+            return false;
+        }
+
+        return match;
+    }
+
+    private static boolean checkB(List<Integer> list, HashSet<Integer> search) {
+        for (int s : list) {
+            if (search.contains(s)) {
+                return false;
+            }
         }
 
         return true;
@@ -601,141 +703,75 @@ public class MechSearchFilter {
             return false;
         }
 
-        boolean eMatch = false;
-        for (String s : f.engineType) {
-            if (mech.getEngineName().contains(s)) {
-                eMatch = true;
-                break;
-            }
-        }
-        if ((!f.engineType.isEmpty()) && ((!eMatch) || (mech.getEngineName().isEmpty()))) {
+        if(!checkA(f.engineType, mech.getEngineName(), true)) {
             return false;
         }
 
-        for (String s : f.engineTypeExclude) {
-            if (mech.getEngineName().contains(s)) {
-                return false;
-            }
-        }
-
-        if ((!f.internalsType.isEmpty()) && (!f.internalsType.contains(mech.getInternalsType()))) {
+        if(!checkB(f.engineTypeExclude, mech.getEngineName(), true)) {
             return false;
         }
 
-        for (int i : f.internalsTypeExclude) {
-            if (mech.getInternalsType() == i) {
-                return false;
-            }
-        }
-
-        boolean aMatch = false;
-        for (int i : f.armorType) {
-            if (mech.getArmorType().contains(i)) {
-                aMatch = true;
-                break;
-            }
-        }
-        if ((!f.armorType.isEmpty()) && ((!aMatch) || (mech.getArmorType().isEmpty()))) {
+        if(!checkA(f.internalsType, mech.getInternalsType())) {
             return false;
         }
 
-        for (int i : f.armorTypeExclude) {
-            if (mech.getArmorType().contains(i)) {
-                return false;
-            }
-        }
-
-        if ((!f.cockpitType.isEmpty()) && (!f.cockpitType.contains(mech.getCockpitType()))) {
+        if(!checkB(f.internalsTypeExclude, mech.getInternalsType())) {
             return false;
         }
 
-        for (int i : f.cockpitTypeExclude) {
-            if (mech.getCockpitType() == i) {
-                return false;
-            }
+        if(!checkA(f.cockpitType, mech.getCockpitType())) {
+            return false;
+        }
+
+        if(!checkB(f.cockpitTypeExclude, mech.getCockpitType())) {
+            return false;
+        }
+
+        if(!checkA(f.armorType, mech.getArmorType())) {
+            return false;
+        }
+
+        if(!checkB(f.armorTypeExclude, mech.getArmorType())) {
+            return false;
         }
 
         if (f.quirkInclude == 0) {
-            // AND
-            for (String s : f.quirkType) {
-                if (!mech.getQuirkNames().contains(s)) {
-                    return false;
-                }
+            if(!checkB(f.quirkType, mech.getQuirkNames(), false)) {
+                return false;
             }
         } else {
-            // OR
-            boolean qMatch = false;
-            for (String s : f.quirkType) {
-                if (mech.getQuirkNames().contains(s)) {
-                    qMatch = true;
-                    break;
-                }
-            }
-            if ((!f.quirkType.isEmpty()) && ((!qMatch) || (mech.getQuirkNames().isEmpty()))) {
+            if(!checkA(f.quirkType, mech.getQuirkNames(), true)) {
                 return false;
             }
         }
 
         if (f.quirkExclude == 0) {
-            // AND
-            boolean qMatch = false;
-            for (String s : f.quirkTypeExclude) {
-                if (!mech.getQuirkNames().contains(s)) {
-                    qMatch = true;
-                    break;
-                }
-            }
-            if ((!f.quirkTypeExclude.isEmpty()) && ((!qMatch) || (mech.getQuirkNames().isEmpty()))) {
+            if(!checkA(f.quirkTypeExclude, mech.getQuirkNames(), false)) {
                 return false;
             }
         } else {
-            // OR
-            for (String s : f.quirkTypeExclude) {
-                if (mech.getQuirkNames().contains(s)) {
-                    return false;
-                }
+            if(!checkB(f.quirkTypeExclude, mech.getQuirkNames(), true)) {
+                return false;
             }
         }
 
         if (f.weaponQuirkInclude == 0) {
-            // AND
-            for (String s : f.weaponQuirkType) {
-                if (!mech.getWeaponQuirkNames().contains(s)) {
-                    return false;
-                }
+            if(!checkB(f.weaponQuirkType, mech.getWeaponQuirkNames(), false)) {
+                return false;
             }
         } else {
-            // OR
-            boolean wqMatch = false;
-            for (String s : f.weaponQuirkType) {
-                if (mech.getWeaponQuirkNames().contains(s)) {
-                    wqMatch = true;
-                    break;
-                }
-            }
-            if ((!f.weaponQuirkType.isEmpty()) && ((!wqMatch) || (mech.getWeaponQuirkNames().isEmpty()))) {
+            if(!checkA(f.weaponQuirkType, mech.getWeaponQuirkNames(), true)) {
                 return false;
             }
         }
 
         if (f.weaponQuirkExclude == 0) {
-            // AND
-            boolean wqMatch = false;
-            for (String s : f.weaponQuirkTypeExclude) {
-                if (!mech.getWeaponQuirkNames().contains(s)) {
-                    wqMatch = true;
-                    break;
-                }
-            }
-            if ((!f.weaponQuirkTypeExclude.isEmpty()) && ((!wqMatch) || (mech.getWeaponQuirkNames().isEmpty()))) {
+            if(!checkA(f.weaponQuirkTypeExclude, mech.getWeaponQuirkNames(), false)) {
                 return false;
             }
         } else {
-            // OR
-            for (String s : f.weaponQuirkTypeExclude) {
-                if (mech.getWeaponQuirkNames().contains(s)) {
-                    return false;
-                }
+            if(!checkB(f.weaponQuirkTypeExclude, mech.getWeaponQuirkNames(), true)) {
+                return false;
             }
         }
 

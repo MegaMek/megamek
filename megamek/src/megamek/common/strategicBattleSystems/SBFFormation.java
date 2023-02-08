@@ -20,10 +20,12 @@ package megamek.common.strategicBattleSystems;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
+import megamek.common.ForceAssignable;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.ASSpecialAbilityCollection;
 import megamek.common.alphaStrike.ASSpecialAbilityCollector;
 import megamek.common.alphaStrike.BattleForceSUA;
+import megamek.common.force.Force;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,7 +38,7 @@ import static megamek.common.strategicBattleSystems.SBFElementType.LA;
 /**
  * Represents a Strategic Battle Force Formation composed of one or more SBF Units.
  */
-public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFormatter {
+public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFormatter, ForceAssignable {
     
     private List<SBFUnit> units = new ArrayList<>();
     private String name;
@@ -54,6 +56,11 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
     private int pointValue;
     private CalculationReport conversionReport = new DummyCalculationReport();
     private final ASSpecialAbilityCollection specialAbilities = new ASSpecialAbilityCollection();
+
+    private String forceString = "";
+    private int forceId = Force.NO_FORCE;
+    private int id;
+    private int ownerId;
 
 
     public String getName() {
@@ -233,7 +240,13 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
         return !isAerospace();
     }
 
+    @Override
+    public boolean isUnitGroup() {
+        return true;
+    }
+
     /** Returns true if this SBF Formation represents an aerospace Team. */
+    @Override
     public boolean isAerospace() {
         return isAnyTypeOf(AS, LA);
     }
@@ -301,5 +314,35 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
         } else {
             return sua.toString() + (suaObject != null ? suaObject : "");
         }
+    }
+
+    @Override
+    public int getId() {
+        return id;
+    }
+
+    @Override
+    public int getOwnerId() {
+        return ownerId;
+    }
+
+    @Override
+    public String getForceString() {
+        return forceString;
+    }
+
+    @Override
+    public void setForceString(String newForceString) {
+        forceString = newForceString;
+    }
+
+    @Override
+    public int getForceId() {
+        return forceId;
+    }
+
+    @Override
+    public void setForceId(int newId) {
+        forceId = newId;
     }
 }

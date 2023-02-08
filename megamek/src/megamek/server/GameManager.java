@@ -33918,7 +33918,7 @@ public class GameManager implements IGameManager {
                     // get it for free by fort
                     for (Entity ent2 : game.getEntitiesVector(c)) {
                         if (ent2 instanceof Infantry) {
-                            Infantry inf2 = (Infantry) ent;
+                            Infantry inf2 = (Infantry) ent2;
                             inf2.setDugIn(Infantry.DUG_IN_NONE);
                         }
                     }

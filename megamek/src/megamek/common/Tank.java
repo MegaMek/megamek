@@ -768,7 +768,7 @@ public class Tank extends Entity {
 
     @Override
     public boolean isEligibleFor(GamePhase phase) {
-        if ((dugIn != DUG_IN_FORTIFYING3) && (dugIn != DUG_IN_NONE)) {
+        if (dugIn != DUG_IN_NONE) {
             return false;
         } else {
             return super.isEligibleFor(phase);

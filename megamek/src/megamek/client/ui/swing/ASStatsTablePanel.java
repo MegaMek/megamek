@@ -183,6 +183,7 @@ public class ASStatsTablePanel {
         }
         JButton button = new JButton("?");
         button.setEnabled(conversionReport != null);
+        button.setFont(UIUtil.getScaledFont());
         button.addActionListener(e -> new ASConversionInfoDialog(frame, conversionReport, element, true).setVisible(true));
         conversionPanel.add(button);
         panel.add(conversionPanel);

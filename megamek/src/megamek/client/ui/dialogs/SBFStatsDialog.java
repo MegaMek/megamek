@@ -63,6 +63,7 @@ public class SBFStatsDialog extends AbstractDialog {
         elementsToggle.setFont(UIUtil.getScaledFont());
         clipBoardButton.addActionListener(e -> copyToClipboard());
         clipBoardButton.setFont(UIUtil.getScaledFont());
+        clipBoardButton.setEnabled(false);
 
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         centerPanel.add(Box.createVerticalStrut(15));

@@ -52,6 +52,16 @@ public class SBFStatsTablePanel {
 
     private void updatePanel() {
         contentPane.removeAll();
+        // BETA note
+        var betaLabel = new JLabel(UIUtil.WARNING_SIGN + " Please note: SBF conversion is currently in development " +
+                "and results may change in future releases.");
+        betaLabel.setFont(UIUtil.getScaledFont());
+        betaLabel.setForeground(UIUtil.uiYellow());
+        betaLabel.setAlignmentX(0.5f);
+        contentPane.add(Box.createVerticalStrut(30));
+        contentPane.add(betaLabel);
+        contentPane.add(Box.createVerticalStrut(30));
+        //---
         for (SBFFormation formation : formations) {
             contentPane.add(formationPanel(formation));
         }
@@ -114,6 +124,7 @@ public class SBFStatsTablePanel {
                                    JFrame frame) {
         var panel = new UIUtil.FixedYPanel();
         JButton button = new JButton("?");
+        button.setFont(UIUtil.getScaledFont());
         button.setEnabled(conversionReport != null);
         button.addActionListener(e -> new ASConversionInfoDialog(frame, conversionReport).setVisible(true));
         panel.add(button);

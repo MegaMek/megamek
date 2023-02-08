@@ -17,6 +17,7 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.battlevalue.CombatVehicleBVCalculator;
 import megamek.common.cost.CombatVehicleCostCalculator;
 import megamek.common.enums.AimingMode;
+import megamek.common.enums.GamePhase;
 import megamek.common.enums.MPBoosters;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
@@ -762,6 +763,15 @@ public class Tank extends Entity {
             Tank Tractor = (Tank) game.getEntity(getTractor());
             m_bImmobile = Tractor.m_bImmobile;
             m_bImmobileHit = Tractor.m_bImmobileHit;
+        }
+    }
+
+    @Override
+    public boolean isEligibleFor(GamePhase phase) {
+        if ((dugIn != DUG_IN_FORTIFYING3) && (dugIn != DUG_IN_NONE)) {
+            return false;
+        } else {
+            return super.isEligibleFor(phase);
         }
     }
 

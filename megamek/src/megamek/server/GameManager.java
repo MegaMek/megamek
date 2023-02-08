@@ -6934,7 +6934,7 @@ public class GameManager implements IGameManager {
                     inf.setDugIn(Infantry.DUG_IN_WORKING);
                     continue;
                 } else if (step.getType() == MovePath.MoveStepType.FORTIFY) {
-                    if (!entity.hasWorkingMisc(MiscType.F_TOOLS,
+                    if (!inf.hasWorkingMisc(MiscType.F_TOOLS,
                             MiscType.S_VIBROSHOVEL)) {
                         sendServerChat(entity.getDisplayName()
                                 + " failed to fortify because it is missing suitable equipment");

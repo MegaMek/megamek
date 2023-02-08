@@ -6934,8 +6934,7 @@ public class GameManager implements IGameManager {
                     inf.setDugIn(Infantry.DUG_IN_WORKING);
                     continue;
                 } else if (step.getType() == MovePath.MoveStepType.FORTIFY) {
-                    if (!inf.hasWorkingMisc(MiscType.F_TOOLS,
-                            MiscType.S_VIBROSHOVEL)) {
+                    if (!inf.hasWorkingMisc(MiscType.F_TRENCH_CAPABLE)) {
                         sendServerChat(entity.getDisplayName()
                                 + " failed to fortify because it is missing suitable equipment");
                     }
@@ -6964,14 +6963,14 @@ public class GameManager implements IGameManager {
             if (entity instanceof Tank) {
                 Tank tnk = (Tank) entity;
                 if (step.getType() == MovePath.MoveStepType.FORTIFY) {
-                    if (!tnk.hasWorkingMisc(MiscType.F_BULLDOZER)
-                            && !tnk.hasWorkingMisc("Backhoe")) {
+                    if (!tnk.hasWorkingMisc(MiscType.F_TRENCH_CAPABLE)) {
                         sendServerChat(entity.getDisplayName()
                                 + " failed to fortify because it is missing suitable equipment");
                     }
                     tnk.setDugIn(Tank.DUG_IN_FORTIFYING1);
                 }
             }
+
             // If we have turned, check whether we have fulfilled any turn mode requirements.
             if ((step.getType() == MovePath.MoveStepType.TURN_LEFT || step.getType() == MovePath.MoveStepType.TURN_RIGHT)
                     && entity.usesTurnMode()) {

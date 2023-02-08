@@ -33939,6 +33939,7 @@ public class GameManager implements IGameManager {
                     Hex hex = game.getBoard().getHex(c);
                     hex.addTerrain(new Terrain(Terrains.FORTIFIED, 1));
                     sendChangedHex(c);
+                    tnk.setDugIn(Tank.DUG_IN_NONE);
                     // Clear the dig in for any units in same hex, since they
                     // get it for free by fort
                     for (Entity ent2 : game.getEntitiesVector(c)) {

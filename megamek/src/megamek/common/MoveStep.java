@@ -2069,13 +2069,6 @@ public class MoveStep implements Serializable {
                 }
             }
 
-            if (isTank) {
-                Tank tnk = (Tank) entity;
-                if ((tnk.getDugIn() != Tank.DUG_IN_NONE) && (tnk.getDugIn() != Tank.DUG_IN_FORTIFYING3)) {
-                    return;
-                }
-            }
-
             if (game.getBoard().getHex(curPos)
                     .containsTerrain(Terrains.PAVEMENT)
                     || game.getBoard().getHex(curPos)

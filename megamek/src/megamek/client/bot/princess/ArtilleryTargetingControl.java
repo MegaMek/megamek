@@ -326,19 +326,17 @@ public class ArtilleryTargetingControl {
                 if (!topValuedFireInfos.isEmpty()) {
                     WeaponFireInfo actualFireInfo = topValuedFireInfos.get(Compute.randomInt(topValuedFireInfos.size()));
                     ArtilleryAttackAction aaa = (ArtilleryAttackAction) actualFireInfo.buildWeaponAttackAction();
-                    Object[] tmp = findAmmo(shooter, currentWeapon);
-                    int ammoID = (int) tmp[0];
-                    long ammoMunitionType = (long) tmp[1];
+                    HelperAmmo ammo= findAmmo(shooter, currentWeapon);
 
-                    if (ammoID > NO_AMMO) {
+                    if (ammo.equipmentNum > NO_AMMO) {
                         //This can happen if princess is towing ammo trailers, which she really shouldn't be doing...
-                        aaa.setAmmoId(ammoID);
-                        aaa.setAmmoMunitionType(ammoMunitionType);
+                        aaa.setAmmoId(ammo.equipmentNum);
+                        aaa.setAmmoMunitionType(ammo.munitionType);
                         aaa.setAmmoCarrier(shooter.getId());
                         actualFireInfo.setAction(aaa);
                         retval.add(actualFireInfo);
                         retval.setUtility(retval.getUtility() + maxDamage);
-                        owner.sendAmmoChange(shooter.getId(), shooter.getEquipmentNum(currentWeapon), ammoID);
+                        owner.sendAmmoChange(shooter.getId(), shooter.getEquipmentNum(currentWeapon), ammo.equipmentNum);
                     }
                 }
             } else if (currentWeapon.getType().hasFlag(WeaponType.F_TAG)) {
@@ -378,14 +376,24 @@ public class ArtilleryTargetingControl {
         
         return retval;
     }
-    
+
+    private class HelperAmmo {
+        public int equipmentNum;
+        public long munitionType;
+
+        public HelperAmmo(int equipmentNum, long munitionType) {
+            this.equipmentNum = equipmentNum;
+            this.munitionType = munitionType;
+        }
+    }
+
     /**
      * Worker function that selects the appropriate ammo for the given entity and weapon.
      * @param shooter
      * @param currentWeapon
      * @return
      */
-    private Object[] findAmmo(Entity shooter, Mounted currentWeapon) {
+    private HelperAmmo findAmmo(Entity shooter, Mounted currentWeapon) {
         int ammoEquipmentNum = NO_AMMO;
         long ammoMunitionType = -1;
         
@@ -403,7 +411,7 @@ public class ArtilleryTargetingControl {
             // To do so, check ammoType.getMunitionType() == AmmoType.M_HOMING
         }
         
-        return new Object[]{ammoEquipmentNum, ammoMunitionType};
+        return new HelperAmmo(ammoEquipmentNum, ammoMunitionType);
     }
 
     /**

@@ -342,15 +342,9 @@ public class Report implements Serializable {
                 imageCode = "<span id='" + entity.getId() + "'></span>";
             }
 
-            Color ownerColor;
-            String ownerName = "";
-            if (entity.getOwner() != null) {
-                ownerColor = entity.getOwner().getColour().getColour();
-                ownerName = entity.getOwner().getName();
-            } else {
-                ownerColor = uiGray();
-                ownerName = ReportMessages.getString("report.unknownOwner");
-            }
+            Player owner = entity.getOwner();
+            Color ownerColor = (owner != null) ? owner.getColour().getColour() : uiGray();
+            String ownerName = (owner != null) ? owner.getName() : ReportMessages.getString("report.unknownOwner");
 
             String unitName = href(ENTITY_LINK + entity.getId(), entity.getShortName());
 

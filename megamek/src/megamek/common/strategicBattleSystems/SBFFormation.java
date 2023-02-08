@@ -29,6 +29,7 @@ import megamek.common.force.Force;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static megamek.common.alphaStrike.BattleForceSUA.*;
@@ -156,7 +157,7 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
     }
 
     public List<SBFUnit> getUnits() {
-        return units;
+        return Collections.unmodifiableList(units);
     }
 
     public void setUnits(List<SBFUnit> units) {
@@ -233,11 +234,6 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
      */
     public static int getSbfArtilleryHomingDamage(BattleForceSUA spa) {
         return spa.isAnyOf(ARTAIS, ARTAC) ? 2 : 0;
-    }
-
-    /** Returns true if this SBF Formation represents a ground Team. */
-    public boolean isGround() {
-        return !isAerospace();
     }
 
     @Override

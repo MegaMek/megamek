@@ -203,13 +203,13 @@ public class ASAdvancedSearchPanel extends JPanel {
         } else if (useTMM.isSelected() && !(selectedTMMs().contains(mechSummary.getTMM()) && mechSummary.usesTMM())) {
             return false;
         } else if (useArmor.isSelected() && !((mechSummary.getFullArmor() >= armorFrom.getIntVal(-1))
-                && (mechSummary.getFullArmor() <= armorTo.getIntVal(-1)))) {
+                && (mechSummary.getFullArmor() <= armorTo.getIntVal(Integer.MAX_VALUE)))) {
             return false;
         } else if (useStructure.isSelected() && !((mechSummary.getFullStructure() >= structureFrom.getIntVal(-1))
-                && (mechSummary.getFullStructure() <= structureTo.getIntVal(-1)))) {
+                && (mechSummary.getFullStructure() <= structureTo.getIntVal(Integer.MAX_VALUE)))) {
             return false;
         } else if (useThreshold.isSelected() && !((mechSummary.getThreshold() >= thresholdFrom.getIntVal(-1))
-                && (mechSummary.getThreshold() <= thresholdTo.getIntVal(-1)))) {
+                && (mechSummary.getThreshold() <= thresholdTo.getIntVal(Integer.MAX_VALUE)))) {
             return false;
         }
 
@@ -233,14 +233,14 @@ public class ASAdvancedSearchPanel extends JPanel {
         } else if (useOV.isSelected() && !(selectedOVs().contains(mechSummary.getOV()) && mechSummary.usesOV())) {
             return false;
         } else if (usePV.isSelected() && !((mechSummary.getPointValue() >= pvFrom.getIntVal(-1))
-                && (mechSummary.getPointValue() <= pvTo.getIntVal(-1)))) {
+                && (mechSummary.getPointValue() <= pvTo.getIntVal(Integer.MAX_VALUE)))) {
             return false;
         }
 
         String moveMode = mvMode.getSelectedItem();
         if (useMV.isSelected() && !(mechSummary.hasMovementMode(moveMode)
                 && (mechSummary.getMovement().get(moveMode) >= mvFrom.getIntVal(-1))
-                && (mechSummary.getMovement().get(moveMode) <= mvTo.getIntVal(-1)))) {
+                && (mechSummary.getMovement().get(moveMode) <= mvTo.getIntVal(Integer.MAX_VALUE)))) {
             return false;
         } else if (useAbility1.isSelected() &&
                 !mechSummary.getSpecialAbilities().hasSUA(ability1.getSelectedItem())) {

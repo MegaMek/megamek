@@ -377,9 +377,9 @@ public class ArtilleryTargetingControl {
         return retval;
     }
 
-    private class HelperAmmo {
-        public int equipmentNum;
-        public long munitionType;
+    private static class HelperAmmo {
+        public static int equipmentNum;
+        public static long munitionType;
 
         public HelperAmmo(int equipmentNum, long munitionType) {
             this.equipmentNum = equipmentNum;

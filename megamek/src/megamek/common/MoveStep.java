@@ -1811,6 +1811,7 @@ public class MoveStep implements Serializable {
             final MoveStep prev, CachedEntityState cachedEntityState) {
         final MoveStepType stepType = getType();
         final boolean isInfantry = entity instanceof Infantry;
+        final boolean isTank = entity instanceof Tank;
 
         Coords curPos = getPosition();
         Coords lastPos = prev.getPosition();
@@ -2056,14 +2057,25 @@ public class MoveStep implements Serializable {
             movementType = EntityMovementType.MOVE_NONE;
         } else if ((type == MoveStepType.DIG_IN)
                 || (type == MoveStepType.FORTIFY)) {
-            if (!isInfantry || !isFirstStep()) {
+            if ((!isInfantry && !isTank) || !isFirstStep()) {
                 return; // can't dig in
             }
-            Infantry inf = (Infantry) entity;
-            if ((inf.getDugIn() != Infantry.DUG_IN_NONE)
-                    && (inf.getDugIn() != Infantry.DUG_IN_COMPLETE)) {
-                return; // already dug in
+
+            if (isInfantry) {
+                Infantry inf = (Infantry) entity;
+                if ((inf.getDugIn() != Infantry.DUG_IN_NONE)
+                        && (inf.getDugIn() != Infantry.DUG_IN_COMPLETE)) {
+                    return; // Already dug in
+                }
             }
+
+            if (isTank) {
+                Tank tnk = (Tank) entity;
+                if ((tnk.getDugIn() != Tank.DUG_IN_NONE) && (tnk.getDugIn() != Tank.DUG_IN_FORTIFYING3)) {
+                    return;
+                }
+            }
+
             if (game.getBoard().getHex(curPos)
                     .containsTerrain(Terrains.PAVEMENT)
                     || game.getBoard().getHex(curPos)

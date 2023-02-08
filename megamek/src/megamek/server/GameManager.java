@@ -6960,6 +6960,18 @@ public class GameManager implements IGameManager {
                 }
             }
 
+            // check for tank fortify
+            if (entity instanceof Tank) {
+                Tank tnk = (Tank) entity;
+                if (step.getType() == MovePath.MoveStepType.FORTIFY) {
+                    if (!tnk.hasWorkingMisc(MiscType.F_BULLDOZER)
+                            && !tnk.hasWorkingMisc("Backhoe")) {
+                        sendServerChat(entity.getDisplayName()
+                                + " failed to fortify because it is missing suitable equipment");
+                    }
+                    tnk.setDugIn(Tank.DUG_IN_FORTIFYING1);
+                }
+            }
             // If we have turned, check whether we have fulfilled any turn mode requirements.
             if ((step.getType() == MovePath.MoveStepType.TURN_LEFT || step.getType() == MovePath.MoveStepType.TURN_RIGHT)
                     && entity.usesTurnMode()) {
@@ -33907,6 +33919,31 @@ public class GameManager implements IGameManager {
                     for (Entity ent2 : game.getEntitiesVector(c)) {
                         if (ent2 instanceof Infantry) {
                             Infantry inf2 = (Infantry) ent;
+                            inf2.setDugIn(Infantry.DUG_IN_NONE);
+                        }
+                    }
+                }
+            }
+
+            if (ent instanceof Tank) {
+                Tank tnk = (Tank) ent;
+                int dig = tnk.getDugIn();
+                if (dig == Tank.DUG_IN_FORTIFYING3) {
+                    Coords c = tnk.getPosition();
+                    r = new Report(5305);
+                    r.addDesc(tnk);
+                    r.add(c.getBoardNum());
+                    r.subject = tnk.getId();
+                    addReport(r);
+                    // Fort complete, now add it to the map
+                    Hex hex = game.getBoard().getHex(c);
+                    hex.addTerrain(new Terrain(Terrains.FORTIFIED, 1));
+                    sendChangedHex(c);
+                    // Clear the dig in for any units in same hex, since they
+                    // get it for free by fort
+                    for (Entity ent2 : game.getEntitiesVector(c)) {
+                        if (ent2 instanceof Infantry) {
+                            Infantry inf2 = (Infantry) ent2;
                             inf2.setDugIn(Infantry.DUG_IN_NONE);
                         }
                     }

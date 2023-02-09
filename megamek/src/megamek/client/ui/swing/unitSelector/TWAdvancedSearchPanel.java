@@ -96,6 +96,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JComboBox<String> cboQty = new JComboBox<>();
 
     // Base
+    private JButton btnBaseClear = new JButton(Messages.getString("MechSelectorDialog.ClearTab"));
     private JLabel lblWalk = new JLabel(Messages.getString("MechSelectorDialog.Search.Walk"));
     private JTextField tStartWalk = new JTextField(4);
     private JTextField tEndWalk = new JTextField(4);
@@ -149,6 +150,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JScrollPane spEngineType = new JScrollPane(listEngineType);
 
     // Transports
+    private JButton btnTransportsClear = new JButton(Messages.getString("MechSelectorDialog.ClearTab"));
     private JLabel lblTroopSpace = new JLabel(Messages.getString("MechSelectorDialog.Search.TroopSpace"));
     private JTextField tStartTroopSpace  = new JTextField(4);
     private JTextField tEndTroopSpace = new JTextField(4);
@@ -256,6 +258,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JTextField tEndNavalRepairFacilities = new JTextField(4);
 
     // Quirks
+    private JButton btnQuirksClear = new JButton(Messages.getString("MechSelectorDialog.ClearTab"));
     private JLabel lblQuirkInclude = new JLabel("\u2611");
     private JComboBox<String> cQuirkInclue = new JComboBox<>();
     private JLabel lblQuirkExclude = new JLabel("\u2612");
@@ -272,6 +275,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JScrollPane spWeaponQuirkType = new JScrollPane(listWeaponQuirkType);
 
     // Unit Type
+    private JButton btnUnitTypeClear = new JButton(Messages.getString("MechSelectorDialog.ClearTab"));
     private JLabel lblFilterMech= new JLabel(Messages.getString("MechSelectorDialog.Search.Mech"));
     private JButton btnFilterMech = new JButton("\u2610");
     private JLabel lblFilterBipedMech= new JLabel(Messages.getString("MechSelectorDialog.Search.BipedMech"));
@@ -331,28 +335,31 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     public TWAdvancedSearchPanel(int year) {
         mechFilter = new MechSearchFilter();
         gameYear = year;
-
         filterToks = new Vector<>(30);
 
         // Layout
         setLayout(new BorderLayout());
 
         JTabbedPane twSearchPane = new JTabbedPane();
+
         JPanel basePanel = createBasePanel();
         JPanel weaponEqPanel = createWeaponEqPanel();
         JPanel unitTypePanel = createUnitTypePanel();
         JPanel quirkPanel = createQuirkPanel();
         JPanel transportsPanel = createTransportsPanel();
+
         String msg_base = Messages.getString("MechSelectorDialog.Search.Base");
         String msg_weaponEq = Messages.getString("MechSelectorDialog.Search.WeaponEq");
         String msg_unitType = Messages.getString("MechSelectorDialog.Search.unitType");
         String msg_quirkType = Messages.getString("MechSelectorDialog.Search.Quirks");
         String msg_transports = Messages.getString("MechSelectorDialog.Search.Transports");
+
         twSearchPane.addTab(msg_unitType, unitTypePanel);
         twSearchPane.addTab(msg_base, basePanel);
         twSearchPane.addTab(msg_weaponEq, weaponEqPanel);
         twSearchPane.addTab(msg_transports, transportsPanel);
         twSearchPane.addTab(msg_quirkType, quirkPanel);
+
         this.add(twSearchPane, BorderLayout.NORTH);
     }
 
@@ -371,17 +378,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     }
 
     private JPanel createBasePanel() {
-        // Initialize Items
-        btnWEAnd.addActionListener(this);
-        btnWEAdd.addActionListener(this);
-        btnWELeftParen.addActionListener(this);
-        btnWERightParen.addActionListener(this);
-        btnWEOr.addActionListener(this);
-        btnWEClear.addActionListener(this);
-        btnWEBack.addActionListener(this);
-
-        btnWEBack.setEnabled(false);
-        btnWEAdd.setEnabled(false);
+        btnBaseClear.addActionListener(this);
 
         cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Any"));
         cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor25"));
@@ -627,12 +624,16 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
 
         c.weighty = 1;
         JPanel blankPanel = new JPanel();
+        c.gridx = 0; c.gridy++;;
+        blankPanel.add(btnBaseClear, c);
         basePanel.add(blankPanel, c);
 
         return basePanel;
     }
 
     private JPanel createTransportsPanel() {
+        btnTransportsClear.addActionListener(this);
+
         JPanel transportsPanel = new JPanel();
         GridBagConstraints c = new GridBagConstraints();
         transportsPanel.setLayout(new GridBagLayout());
@@ -832,12 +833,16 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
 
         c.weighty = 1;
         JPanel blankPanel = new JPanel();
+        c.gridx = 0; c.gridy++;;
+        blankPanel.add(btnTransportsClear, c);
         transportsPanel.add(blankPanel, c);
 
         return transportsPanel;
     }
 
     private JPanel createQuirkPanel() {
+        btnQuirksClear.addActionListener(this);
+
         cQuirkInclue.addItem(Messages.getString("MechSelectorDialog.Search.and"));
         cQuirkInclue.addItem(Messages.getString("MechSelectorDialog.Search.or"));
         cQuirkExclude.addItem(Messages.getString("MechSelectorDialog.Search.and"));
@@ -957,12 +962,16 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         quirksPanel.add(weaponQuirkPanel, c);
         c.weighty = 1;
         JPanel blankPanel = new JPanel();
+        c.gridx = 0; c.gridy++;;
+        blankPanel.add(btnQuirksClear, c);
         quirksPanel.add(blankPanel, c);
 
         return quirksPanel;
     }
 
     private JPanel createUnitTypePanel() {
+        btnUnitTypeClear.addActionListener(this);
+
         Border emptyBorder = BorderFactory.createEmptyBorder();
         btnFilterMech.setBorder(emptyBorder);
         btnFilterMech.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
@@ -1173,12 +1182,26 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         unitTypePanel.add(filterSuperHeavyTankPanel, c);
         c.weighty = 1;
         JPanel blankPanel = new JPanel();
+        c.gridx = 0; c.gridy++;;
+        blankPanel.add(btnUnitTypeClear, c);
         unitTypePanel.add(blankPanel, c);
 
         return unitTypePanel;
     }
 
     private JPanel createWeaponEqPanel() {
+        // Initialize Items
+        btnWEAnd.addActionListener(this);
+        btnWEAdd.addActionListener(this);
+        btnWELeftParen.addActionListener(this);
+        btnWERightParen.addActionListener(this);
+        btnWEOr.addActionListener(this);
+        btnWEClear.addActionListener(this);
+        btnWEBack.addActionListener(this);
+
+        btnWEBack.setEnabled(false);
+        btnWEAdd.setEnabled(false);
+
         // Setup table filter combo boxes
         DefaultComboBoxModel<String> unitTypeModel = new DefaultComboBoxModel<>();
         unitTypeModel.addElement(Messages.getString("MechSelectorDialog.All"));
@@ -1194,9 +1217,11 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         cboUnitType.addActionListener(this);
 
         DefaultComboBoxModel<String> techLevelModel = new DefaultComboBoxModel<>();
+
         for (int i = 0; i < TechConstants.SIZE; i++) {
             techLevelModel.addElement(TechConstants.getLevelDisplayableName(i));
         }
+
         techLevelModel.setSelectedItem(TechConstants.getLevelDisplayableName(TechConstants.SIZE - 1));
         cboTechLevel.setModel(techLevelModel);
         cboTechLevel.addActionListener(this);
@@ -1222,9 +1247,11 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         tblWeaponType.addKeyListener(this);
         tblWeaponType.setFont(new Font(MMConstants.FONT_MONOSPACED, Font.PLAIN, 12));
         tblWeaponType.getSelectionModel().addListSelectionListener(this);
+
         for (int i = 0; i < weaponTypesModel.getColumnCount(); i++) {
             tblWeaponType.getColumnModel().getColumn(i).setPreferredWidth(weaponTypesModel.getPreferredWidth(i));
         }
+
         scrTableWeaponType.setViewportView(tblWeaponType);
 
         // Setup Weapons Table
@@ -1238,9 +1265,11 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         tblWeapons.addKeyListener(this);
         tblWeapons.setFont(new Font(MMConstants.FONT_MONOSPACED, Font.PLAIN, 12));
         tblWeapons.getSelectionModel().addListSelectionListener(this);
+
         for (int i = 0; i < weaponsModel.getColumnCount(); i++) {
             tblWeapons.getColumnModel().getColumn(i).setPreferredWidth(weaponsModel.getPreferredWidth(i));
         }
+
         scrTableWeapons.setViewportView(tblWeapons);
 
         // Setup Equipment Table
@@ -1254,9 +1283,11 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         tblEquipment.addKeyListener(this);
         tblEquipment.setFont(new Font(MMConstants.FONT_MONOSPACED, Font.PLAIN, 12));
         tblEquipment.getSelectionModel().addListSelectionListener(this);
+
         for (int i = 0; i < equipmentModel.getColumnCount(); i++) {
             tblEquipment.getColumnModel().getColumn(i).setPreferredWidth(equipmentModel.getPreferredWidth(i));
         }
+
         scrTableEquipment.setViewportView(tblEquipment);
 
         // Populate Tables
@@ -1284,6 +1315,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         JPanel weaponEqPanel = new JPanel();
         weaponEqPanel.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
+
         c.weighty = 0;
         c.anchor = GridBagConstraints.NORTHWEST;
         c.fill = GridBagConstraints.NONE;
@@ -1569,11 +1601,15 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
                 }
             }
         } else if (ev.getSource().equals(btnWEClear)) {
-            filterToks.clear();
-            txtWEEqExp.setText("");
-            btnWEBack.setEnabled(false);
-            disableOperationButtons();
-            enableSelectionButtons();
+            clearWeaponsEquipment();
+        } else if (ev.getSource().equals(btnBaseClear)) {
+            clearBase();
+        } else if (ev.getSource().equals(btnUnitTypeClear)) {
+            clearUnitType();
+        } else if (ev.getSource().equals(btnTransportsClear)) {
+            clearTransports();
+        } else if (ev.getSource().equals(btnQuirksClear)) {
+            clearQuirks();
         } else if (ev.getSource().equals(btnFilterMech)) {
             toggleText(btnFilterMech);
         } else if (ev.getSource().equals(btnFilterBipedMech)) {
@@ -1821,7 +1857,6 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         return mechFilter;
     }
 
-
     private void clearBase() {
         tStartWalk.setText("");
         tEndWalk.setText("");
@@ -2020,25 +2055,27 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         listWeaponQuirkType.setModel(dlmw);
     }
 
-    /**
-     *  Clear the filter.
-     */
-    public void clearValues() {
-        clearUnitType();
-        clearBase();
-        clearTransports();
-        clearQuirks();
-
+    private void clearWeaponsEquipment() {
+        filterToks.clear();
         tblWeapons.clearSelection();
         tblEquipment.clearSelection();
         txtWEEqExp.setText("");
         btnWEBack.setEnabled(false);
-
-        mechFilter = null;
-        filterToks.clear();
-
         disableOperationButtons();
         enableSelectionButtons();
+    }
+
+    /**
+     *  Clear the filter.
+     */
+    public void clearValues() {
+        mechFilter = null;
+
+        clearUnitType();
+        clearBase();
+        clearTransports();
+        clearQuirks();
+        clearWeaponsEquipment();
     }
 
     /**

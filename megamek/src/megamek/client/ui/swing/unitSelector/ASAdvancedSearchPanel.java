@@ -18,6 +18,7 @@
  */
 package megamek.client.ui.swing.unitSelector;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.swing.util.IntRangeTextField;
 import megamek.client.ui.swing.util.UIUtil;
@@ -31,6 +32,7 @@ import megamek.common.alphaStrike.BattleForceSUA;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -38,7 +40,7 @@ import java.util.List;
 /**
  * This panel shows advanced search filters for AlphaStrike values.
  */
-public class ASAdvancedSearchPanel extends JPanel {
+public class ASAdvancedSearchPanel extends JPanel implements ActionListener {
 
     private final static String BETWEEN = "between";
     private final static String AND = "and";
@@ -157,6 +159,8 @@ public class ASAdvancedSearchPanel extends JPanel {
     JToggleButton unitRoleTransport = new JToggleButton(UnitRole.TRANSPORT.toString());
     JToggleButton unitRoleNone = new JToggleButton(UnitRole.NONE.toString());
 
+    private JButton btnClear = new JButton(Messages.getString("MechSelectorDialog.ClearTab"));
+
     public ASAdvancedSearchPanel() {
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         add(unitTypePanel());
@@ -186,8 +190,12 @@ public class ASAdvancedSearchPanel extends JPanel {
         add(new DottedSeparator());
         add(simplePanel(useAbility1, ability1));
         add(simplePanel(useAbility2, ability2));
+        add(new DottedSeparator());
+        add(simplePanel(btnClear));
         initializeCombos();
         updateEnabled();
+
+        btnClear.addActionListener(this);
     }
 
     /** @return True when the given MechSummary matches the active search filters or true when no filters are active. */
@@ -323,6 +331,14 @@ public class ASAdvancedSearchPanel extends JPanel {
         JPanel panel = new SectionPanel();
         panel.setLayout(new FlowLayout(FlowLayout.LEFT));
         panel.add(checkBox);
+        panel.add(Box.createHorizontalStrut(15));
+        Arrays.stream(otherComponents).forEach(panel::add);
+        return panel;
+    }
+
+    private JComponent simplePanel(JComponent... otherComponents) {
+        JPanel panel = new SectionPanel();
+        panel.setLayout(new FlowLayout(FlowLayout.LEFT));
         panel.add(Box.createHorizontalStrut(15));
         Arrays.stream(otherComponents).forEach(panel::add);
         return panel;
@@ -819,6 +835,13 @@ public class ASAdvancedSearchPanel extends JPanel {
 
             useAbility2.setSelected(ability2Use);
             ability2.setSelectedItem(ability2Value);
+        }
+    }
+
+    @Override
+    public void actionPerformed(java.awt.event.ActionEvent ev) {
+        if (ev.getSource().equals(btnClear)) {
+            clearValues();
         }
     }
 }

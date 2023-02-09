@@ -59,18 +59,43 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     public MechSearchFilter mechFilter;
     private Vector<FilterTokens> filterToks;
 
-    private JButton btnLeftParen = new JButton("(");
-    private JButton btnRightParen = new JButton(")");
-    private JButton btnAdd = new JButton(Messages.getString("MechSelectorDialog.Search.add"));
-    private JButton btnAnd = new JButton(Messages.getString("MechSelectorDialog.Search.and"));
-    private JButton btnOr = new JButton(Messages.getString("MechSelectorDialog.Search.or"));
-    private JButton btnClear = new JButton(Messages.getString("MechSelectorDialog.Reset"));
-    private JButton btnBack = new JButton("Back");
-    private JLabel  lblEqExpTxt = new JLabel(Messages.getString("MechSelectorDialog.Search.FilterExpression"));
-    private JTextArea  txtEqExp = new JTextArea("");
-    private JScrollPane expScroller = new JScrollPane(txtEqExp,
+    // Weapons / Equipment
+    private JButton btnWELeftParen = new JButton("(");
+    private JButton btnWERightParen = new JButton(")");
+    private JButton btnWEAdd = new JButton(Messages.getString("MechSelectorDialog.Search.add"));
+    private JButton btnWEAnd = new JButton(Messages.getString("MechSelectorDialog.Search.and"));
+    private JButton btnWEOr = new JButton(Messages.getString("MechSelectorDialog.Search.or"));
+    private JButton btnWEClear = new JButton(Messages.getString("MechSelectorDialog.Reset"));
+    private JButton btnWEBack = new JButton("Back");
+    private JLabel  lblWEEqExpTxt = new JLabel(Messages.getString("MechSelectorDialog.Search.FilterExpression"));
+    private JTextArea  txtWEEqExp = new JTextArea("");
+    private JScrollPane expWEScroller = new JScrollPane(txtWEEqExp,
             JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
             JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    private JLabel lblUnitType = new JLabel(Messages.getString("MechSelectorDialog.Search.UnitType"));
+    private JLabel lblTechClass = new JLabel(Messages.getString("MechSelectorDialog.Search.TechClass"));
+    private JLabel lblTechLevel = new JLabel(Messages.getString("MechSelectorDialog.Search.TechLevel"));
+    private JComboBox<String> cboUnitType = new JComboBox<>();
+    private JComboBox<String> cboTechClass = new JComboBox<>();
+    private JComboBox<String> cboTechLevel = new JComboBox<>();
+    private JLabel lblWeaponClass = new JLabel(Messages.getString("MechSelectorDialog.Search.WeaponClass"));
+    private JScrollPane scrTableWeaponType = new JScrollPane();
+    private MegamekTable tblWeaponType;
+    private WeaponClassTableModel weaponTypesModel;
+    private TableRowSorter<WeaponClassTableModel> weaponTypesSorter;
+    private JLabel lblWeapons = new JLabel(Messages.getString("MechSelectorDialog.Search.Weapons"));
+    private JScrollPane scrTableWeapons = new JScrollPane();
+    private MegamekTable tblWeapons;
+    private WeaponsTableModel weaponsModel;
+    private TableRowSorter<WeaponsTableModel> weaponsSorter;
+    private JLabel lblEquipment = new JLabel(Messages.getString("MechSelectorDialog.Search.Equipment"));
+    private JScrollPane scrTableEquipment = new JScrollPane();
+    private MegamekTable tblEquipment;
+    private EquipmentTableModel equipmentModel;
+    private TableRowSorter<EquipmentTableModel> equipmentSorter;
+    private JComboBox<String> cboQty = new JComboBox<>();
+
+    // Base
     private JLabel lblWalk = new JLabel(Messages.getString("MechSelectorDialog.Search.Walk"));
     private JTextField tStartWalk = new JTextField(4);
     private JTextField tEndWalk = new JTextField(4);
@@ -86,6 +111,44 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JLabel lblHands = new JLabel(Messages.getString("MechSelectorDialog.Search.Hands"));
     private JTextField tStartHands = new JTextField(4);
     private JTextField tEndHands = new JTextField(4);
+    private JLabel lblArmor = new JLabel(Messages.getString("MechSelectorDialog.Search.Armor"));
+    private JComboBox<String> cArmor = new JComboBox<>();
+    private JLabel lblOmni = new JLabel(Messages.getString("MechSelectorDialog.Search.Omni"));
+    private JComboBox<String> cOmni = new JComboBox<>();
+    private JLabel lblMilitary = new JLabel(Messages.getString("MechSelectorDialog.Search.Military"));
+    private JComboBox<String> cMilitary = new JComboBox<>();
+    private JLabel lblOfficial = new JLabel(Messages.getString("MechSelectorDialog.Search.Official"));
+    private JComboBox<String> cOfficial = new JComboBox<>();
+    private JLabel lblCanon = new JLabel(Messages.getString("MechSelectorDialog.Search.Canon"));
+    private JComboBox<String> cCanon = new JComboBox<>();
+    private JLabel lblClanEngine = new JLabel(Messages.getString("MechSelectorDialog.Search.ClanEngine"));
+    private JComboBox<String> cClanEngine = new JComboBox<>();
+    private JLabel lblTableFilters = new JLabel(Messages.getString("MechSelectorDialog.Search.TableFilters"));
+    private JLabel lblSource = new JLabel(Messages.getString("MechSelectorDialog.Search.Source"));
+    private JTextField tSource = new JTextField(4);
+    private JLabel lblYear = new JLabel(Messages.getString("MechSelectorDialog.Search.Year"));
+    private JTextField tStartYear = new JTextField(4);
+    private JTextField tEndYear = new JTextField(4);
+    private JLabel lblTons = new JLabel(Messages.getString("MechSelectorDialog.Search.Tons"));
+    private JTextField tStartTons = new JTextField(4);
+    private JTextField tEndTons = new JTextField(4);
+    private JLabel lblBV = new JLabel(Messages.getString("MechSelectorDialog.Search.BV"));
+    private JTextField tStartBV = new JTextField(4);
+    private JTextField tEndBV = new JTextField(4);
+    private JLabel lblCockpitType = new JLabel(Messages.getString("MechSelectorDialog.Search.CockpitType"));
+    private JList<String> listCockpitType = new JList<>(new DefaultListModel<String>());
+    private JScrollPane spCockpitType = new JScrollPane(listCockpitType);
+    private JLabel lblArmorType = new JLabel(Messages.getString("MechSelectorDialog.Search.ArmorType"));
+    private JList<String> listArmorType = new JList<>(new DefaultListModel<String>());
+    private JScrollPane spArmorType = new JScrollPane(listArmorType);
+    private JLabel lblInternalsType = new JLabel(Messages.getString("MechSelectorDialog.Search.InternalsType"));
+    private JList<String> listInternalsType = new JList<>(new DefaultListModel<String>());
+    private JScrollPane spInternalsType = new JScrollPane(listInternalsType);
+    private JLabel lblEngineType = new JLabel(Messages.getString("MechSelectorDialog.Search.Engine"));
+    private JList<String> listEngineType = new JList<>(new DefaultListModel<String>());
+    private JScrollPane spEngineType = new JScrollPane(listEngineType);
+
+    // Transports
     private JLabel lblTroopSpace = new JLabel(Messages.getString("MechSelectorDialog.Search.TroopSpace"));
     private JTextField tStartTroopSpace  = new JTextField(4);
     private JTextField tEndTroopSpace = new JTextField(4);
@@ -191,63 +254,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JLabel lblNavalRepairFacilities = new JLabel(Messages.getString("MechSelectorDialog.Search.NavalRepairFacilities"));
     private JTextField tStartNavalRepairFacilities = new JTextField(4);
     private JTextField tEndNavalRepairFacilities = new JTextField(4);
-    private JLabel lblArmor = new JLabel(Messages.getString("MechSelectorDialog.Search.Armor"));
-    private JComboBox<String> cArmor = new JComboBox<>();
-    private JLabel lblOmni = new JLabel(Messages.getString("MechSelectorDialog.Search.Omni"));
-    private JComboBox<String> cOmni = new JComboBox<>();
-    private JLabel lblMilitary = new JLabel(Messages.getString("MechSelectorDialog.Search.Military"));
-    private JComboBox<String> cMilitary = new JComboBox<>();
-    private JLabel lblOfficial = new JLabel(Messages.getString("MechSelectorDialog.Search.Official"));
-    private JComboBox<String> cOfficial = new JComboBox<>();
-    private JLabel lblCanon = new JLabel(Messages.getString("MechSelectorDialog.Search.Canon"));
-    private JComboBox<String> cCanon = new JComboBox<>();
-    private JLabel lblClanEngine = new JLabel(Messages.getString("MechSelectorDialog.Search.ClanEngine"));
-    private JComboBox<String> cClanEngine = new JComboBox<>();
-    private JLabel lblTableFilters = new JLabel(Messages.getString("MechSelectorDialog.Search.TableFilters"));
-    private JLabel lblUnitType = new JLabel(Messages.getString("MechSelectorDialog.Search.UnitType"));
-    private JLabel lblTechClass = new JLabel(Messages.getString("MechSelectorDialog.Search.TechClass"));
-    private JLabel lblTechLevel = new JLabel(Messages.getString("MechSelectorDialog.Search.TechLevel"));
-    private JComboBox<String> cboUnitType = new JComboBox<>();
-    private JComboBox<String> cboTechClass = new JComboBox<>();
-    private JComboBox<String> cboTechLevel = new JComboBox<>();
-    private JLabel lblWeaponClass = new JLabel(Messages.getString("MechSelectorDialog.Search.WeaponClass"));
-    private JScrollPane scrTableWeaponType = new JScrollPane();
-    private MegamekTable tblWeaponType;
-    private WeaponClassTableModel weaponTypesModel;
-    private TableRowSorter<WeaponClassTableModel> weaponTypesSorter;
-    private JLabel lblWeapons = new JLabel(Messages.getString("MechSelectorDialog.Search.Weapons"));
-    private JScrollPane scrTableWeapons = new JScrollPane();
-    private MegamekTable tblWeapons;
-    private WeaponsTableModel weaponsModel;
-    private TableRowSorter<WeaponsTableModel> weaponsSorter;
-    private JLabel lblEquipment = new JLabel(Messages.getString("MechSelectorDialog.Search.Equipment"));
-    private JScrollPane scrTableEquipment = new JScrollPane();
-    private MegamekTable tblEquipment;
-    private EquipmentTableModel equipmentModel;
-    private TableRowSorter<EquipmentTableModel> equipmentSorter;
-    private JLabel lblSource = new JLabel(Messages.getString("MechSelectorDialog.Search.Source"));
-    private JTextField tSource = new JTextField(4);
-    private JLabel lblYear = new JLabel(Messages.getString("MechSelectorDialog.Search.Year"));
-    private JTextField tStartYear = new JTextField(4);
-    private JTextField tEndYear = new JTextField(4);
-    private JLabel lblTons = new JLabel(Messages.getString("MechSelectorDialog.Search.Tons"));
-    private JTextField tStartTons = new JTextField(4);
-    private JTextField tEndTons = new JTextField(4);
-    private JLabel lblBV = new JLabel(Messages.getString("MechSelectorDialog.Search.BV"));
-    private JTextField tStartBV = new JTextField(4);
-    private JTextField tEndBV = new JTextField(4);
-    private JLabel lblCockpitType = new JLabel(Messages.getString("MechSelectorDialog.Search.CockpitType"));
-    private JList<String> listCockpitType = new JList<>(new DefaultListModel<String>());
-    private JScrollPane spCockpitType = new JScrollPane(listCockpitType);
-    private JLabel lblArmorType = new JLabel(Messages.getString("MechSelectorDialog.Search.ArmorType"));
-    private JList<String> listArmorType = new JList<>(new DefaultListModel<String>());
-    private JScrollPane spArmorType = new JScrollPane(listArmorType);
-    private JLabel lblInternalsType = new JLabel(Messages.getString("MechSelectorDialog.Search.InternalsType"));
-    private JList<String> listInternalsType = new JList<>(new DefaultListModel<String>());
-    private JScrollPane spInternalsType = new JScrollPane(listInternalsType);
-    private JLabel lblEngineType = new JLabel(Messages.getString("MechSelectorDialog.Search.Engine"));
-    private JList<String> listEngineType = new JList<>(new DefaultListModel<String>());
-    private JScrollPane spEngineType = new JScrollPane(listEngineType);
+
+    // Quirks
     private JLabel lblQuirkInclude = new JLabel("\u2611");
     private JComboBox<String> cQuirkInclue = new JComboBox<>();
     private JLabel lblQuirkExclude = new JLabel("\u2612");
@@ -262,6 +270,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JLabel lblWeaponQuirkType = new JLabel(Messages.getString("MechSelectorDialog.Search.WeaponQuirk"));
     private JList<String> listWeaponQuirkType = new JList<>(new DefaultListModel<String>());
     private JScrollPane spWeaponQuirkType = new JScrollPane(listWeaponQuirkType);
+
+    // Unit Type
     private JLabel lblFilterMech= new JLabel(Messages.getString("MechSelectorDialog.Search.Mech"));
     private JButton btnFilterMech = new JButton("\u2610");
     private JLabel lblFilterBipedMech= new JLabel(Messages.getString("MechSelectorDialog.Search.BipedMech"));
@@ -311,7 +321,6 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JLabel lblFilterSuperHeavyTank = new JLabel(Messages.getString("MechSelectorDialog.Search.SuperHeavyTank"));
     private JButton btnFilterSuperHeavyTank = new JButton("\u2610");
 
-    private JComboBox<String> cboQty = new JComboBox<>();
 
     /** The game's current year. */
     private int gameYear;
@@ -363,16 +372,16 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
 
     private JPanel createBasePanel() {
         // Initialize Items
-        btnAnd.addActionListener(this);
-        btnAdd.addActionListener(this);
-        btnLeftParen.addActionListener(this);
-        btnRightParen.addActionListener(this);
-        btnOr.addActionListener(this);
-        btnClear.addActionListener(this);
-        btnBack.addActionListener(this);
+        btnWEAnd.addActionListener(this);
+        btnWEAdd.addActionListener(this);
+        btnWELeftParen.addActionListener(this);
+        btnWERightParen.addActionListener(this);
+        btnWEOr.addActionListener(this);
+        btnWEClear.addActionListener(this);
+        btnWEBack.addActionListener(this);
 
-        btnBack.setEnabled(false);
-        btnAdd.setEnabled(false);
+        btnWEBack.setEnabled(false);
+        btnWEAdd.setEnabled(false);
 
         cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Any"));
         cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor25"));
@@ -1267,9 +1276,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         ((DefaultRowSorter<?, ?>) tblEquipment.getRowSorter()).sort();
         tblEquipment.invalidate(); // force re-layout of window
 
-        txtEqExp.setEditable(false);
-        txtEqExp.setLineWrap(true);
-        txtEqExp.setWrapStyleWord(true);
+        txtWEEqExp.setEditable(false);
+        txtWEEqExp.setLineWrap(true);
+        txtWEEqExp.setWrapStyleWord(true);
 
         // table
         JPanel weaponEqPanel = new JPanel();
@@ -1335,13 +1344,13 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         c.gridx = 0; c.gridy++;
         c.gridwidth = 4;
         JPanel btnPanel = new JPanel();
-        btnPanel.add(btnAdd, c);
-        btnPanel.add(btnLeftParen, c);
-        btnPanel.add(btnRightParen, c);
-        btnPanel.add(btnAnd, c);
-        btnPanel.add(btnOr, c);
-        btnPanel.add(btnBack, c);
-        btnPanel.add(btnClear, c);
+        btnPanel.add(btnWEAdd, c);
+        btnPanel.add(btnWELeftParen, c);
+        btnPanel.add(btnWERightParen, c);
+        btnPanel.add(btnWEAnd, c);
+        btnPanel.add(btnWEOr, c);
+        btnPanel.add(btnWEBack, c);
+        btnPanel.add(btnWEClear, c);
         weaponEqPanel.add(btnPanel, c);
 
         // Filter Expression
@@ -1350,12 +1359,12 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.WEST;
         c.fill = GridBagConstraints.NONE;
-        weaponEqPanel.add(lblEqExpTxt, c);
+        weaponEqPanel.add(lblWEEqExpTxt, c);
         c.anchor = GridBagConstraints.CENTER;
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
         c.gridwidth = 3;
-        weaponEqPanel.add(expScroller, c);
+        weaponEqPanel.add(expWEScroller, c);
         c.weighty = 1;
         JPanel blankPanel = new JPanel();
         weaponEqPanel.add(blankPanel, c);
@@ -1385,7 +1394,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
             if ((tblWeapons.getSelectedRow() >= 0) && lastTokIsOperation) {
                 tblEquipment.clearSelection();
                 tblWeaponType.clearSelection();
-                btnAdd.setEnabled(true);
+                btnWEAdd.setEnabled(true);
             } else if (tblWeapons.getSelectedRow() >= 0) {
                 tblEquipment.clearSelection();
                 tblWeaponType.clearSelection();
@@ -1394,7 +1403,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
             if ((tblEquipment.getSelectedRow() >= 0) && lastTokIsOperation) {
                 tblWeapons.clearSelection();
                 tblWeaponType.clearSelection();
-                btnAdd.setEnabled(true);
+                btnWEAdd.setEnabled(true);
             } else if (tblEquipment.getSelectedRow() >= 0) {
                 tblWeapons.clearSelection();
                 tblWeaponType.clearSelection();
@@ -1403,7 +1412,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
             if ((tblWeaponType.getSelectedRow() >= 0) && lastTokIsOperation) {
                 tblWeapons.clearSelection();
                 tblEquipment.clearSelection();
-                btnAdd.setEnabled(true);
+                btnWEAdd.setEnabled(true);
             } else if (tblWeaponType.getSelectedRow() >= 0) {
                 tblWeapons.clearSelection();
                 tblEquipment.clearSelection();
@@ -1419,9 +1428,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         if ((tblWeapons.getSelectedRow() != -1) ||
                 (tblEquipment.getSelectedRow() != -1) ||
                 (tblWeaponType.getSelectedRow() != -1)) {
-            btnAdd.setEnabled(true);
+            btnWEAdd.setEnabled(true);
         }
-        btnLeftParen.setEnabled(true);
+        btnWELeftParen.setEnabled(true);
     }
 
     /**
@@ -1429,8 +1438,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
      * selection for filtering (btnAddEquipment, btnAddWeapon, etc)
      */
     private void disableSelectionButtons() {
-        btnAdd.setEnabled(false);
-        btnLeftParen.setEnabled(false);
+        btnWEAdd.setEnabled(false);
+        btnWELeftParen.setEnabled(false);
     }
 
     /**
@@ -1438,9 +1447,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
      * for filtering (btnAnd, btnOr, etc)
      */
     private void enableOperationButtons() {
-        btnOr.setEnabled(true);
-        btnAnd.setEnabled(true);
-        btnRightParen.setEnabled(true);
+        btnWEOr.setEnabled(true);
+        btnWEAnd.setEnabled(true);
+        btnWERightParen.setEnabled(true);
     }
 
     /**
@@ -1448,9 +1457,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
      * for filtering (btnAnd, btnOr, etc)
      */
     private void disableOperationButtons() {
-        btnOr.setEnabled(false);
-        btnAnd.setEnabled(false);
-        btnRightParen.setEnabled(false);
+        btnWEOr.setEnabled(false);
+        btnWEAnd.setEnabled(false);
+        btnWERightParen.setEnabled(false);
     }
 
     public void prepareFilter() {
@@ -1475,7 +1484,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
                 || ev.getSource().equals(cboTechLevel)
                 || ev.getSource().equals(cboTechClass)) {
             filterTables();
-        } else if (ev.getSource().equals(btnAdd)) {
+        } else if (ev.getSource().equals(btnWEAdd)) {
             int row = tblEquipment.getSelectedRow();
             if (row >= 0) {
                 String internalName = (String)
@@ -1486,8 +1495,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
                 int qty = Integer.parseInt((String)
                         tblEquipment.getValueAt(row, EquipmentTableModel.COL_QTY));
                 filterToks.add(new EquipmentFT(internalName, fullName, qty));
-                txtEqExp.setText(filterExpressionString());
-                btnBack.setEnabled(true);
+                txtWEEqExp.setText(filterExpressionString());
+                btnWEBack.setEnabled(true);
                 enableOperationButtons();
                 disableSelectionButtons();
             }
@@ -1501,8 +1510,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
                 int qty = Integer.parseInt((String)
                         tblWeapons.getValueAt(row, WeaponsTableModel.COL_QTY));
                 filterToks.add(new EquipmentFT(internalName, fullName, qty));
-                txtEqExp.setText(filterExpressionString());
-                btnBack.setEnabled(true);
+                txtWEEqExp.setText(filterExpressionString());
+                btnWEBack.setEnabled(true);
                 enableOperationButtons();
                 disableSelectionButtons();
             }
@@ -1510,45 +1519,45 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
             if (row >= 0) {
                 int qty = Integer.parseInt((String)tblWeaponType.getValueAt(row, WeaponClassTableModel.COL_QTY));
                 filterToks.add(new WeaponClassFT((WeaponClass)tblWeaponType.getModel().getValueAt(tblWeaponType.convertRowIndexToModel(row), WeaponClassTableModel.COL_VAL), qty));
-                txtEqExp.setText(filterExpressionString());
-                btnBack.setEnabled(true);
+                txtWEEqExp.setText(filterExpressionString());
+                btnWEBack.setEnabled(true);
                 enableOperationButtons();
                 disableSelectionButtons();
             }
-        } else if (ev.getSource().equals(btnLeftParen)) {
+        } else if (ev.getSource().equals(btnWELeftParen)) {
             filterToks.add(new ParensFT("("));
-            txtEqExp.setText(filterExpressionString());
-            btnBack.setEnabled(true);
+            txtWEEqExp.setText(filterExpressionString());
+            btnWEBack.setEnabled(true);
             disableOperationButtons();
             enableSelectionButtons();
-            btnLeftParen.setEnabled(false);
-            btnRightParen.setEnabled(false);
-        } else if (ev.getSource().equals(btnRightParen)) {
+            btnWELeftParen.setEnabled(false);
+            btnWERightParen.setEnabled(false);
+        } else if (ev.getSource().equals(btnWERightParen)) {
             filterToks.add(new ParensFT(")"));
-            txtEqExp.setText(filterExpressionString());
-            btnBack.setEnabled(true);
+            txtWEEqExp.setText(filterExpressionString());
+            btnWEBack.setEnabled(true);
             enableOperationButtons();
             disableSelectionButtons();
-            btnLeftParen.setEnabled(false);
-            btnRightParen.setEnabled(false);
-        } else if (ev.getSource().equals(btnAnd)) {
+            btnWELeftParen.setEnabled(false);
+            btnWERightParen.setEnabled(false);
+        } else if (ev.getSource().equals(btnWEAnd)) {
             filterToks.add(new OperationFT(MechSearchFilter.BoolOp.AND));
-            txtEqExp.setText(filterExpressionString());
-            btnBack.setEnabled(true);
+            txtWEEqExp.setText(filterExpressionString());
+            btnWEBack.setEnabled(true);
             disableOperationButtons();
             enableSelectionButtons();
-        } else if (ev.getSource().equals(btnOr)) {
+        } else if (ev.getSource().equals(btnWEOr)) {
             filterToks.add(new OperationFT(MechSearchFilter.BoolOp.OR));
-            txtEqExp.setText(filterExpressionString());
-            btnBack.setEnabled(true);
+            txtWEEqExp.setText(filterExpressionString());
+            btnWEBack.setEnabled(true);
             disableOperationButtons();
             enableSelectionButtons();
-        } else if (ev.getSource().equals(btnBack)) {
+        } else if (ev.getSource().equals(btnWEBack)) {
             if (!filterToks.isEmpty()) {
                 filterToks.remove(filterToks.size() - 1);
-                txtEqExp.setText(filterExpressionString());
+                txtWEEqExp.setText(filterExpressionString());
                 if (filterToks.isEmpty()) {
-                    btnBack.setEnabled(false);
+                    btnWEBack.setEnabled(false);
                 }
 
                 if ((filterToks.isEmpty()) || (filterToks.lastElement() instanceof OperationFT)) {
@@ -1559,10 +1568,10 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
                     disableSelectionButtons();
                 }
             }
-        } else if (ev.getSource().equals(btnClear)) {
+        } else if (ev.getSource().equals(btnWEClear)) {
             filterToks.clear();
-            txtEqExp.setText("");
-            btnBack.setEnabled(false);
+            txtWEEqExp.setText("");
+            btnWEBack.setEnabled(false);
             disableOperationButtons();
             enableSelectionButtons();
         } else if (ev.getSource().equals(btnFilterMech)) {
@@ -1794,7 +1803,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         // original filter state is saved.
         MechSearchFilter currFilter = mechFilter;
         mechFilter = new MechSearchFilter(currFilter);
-        txtEqExp.setText(mechFilter.getEquipmentExpression());
+        txtWEEqExp.setText(mechFilter.getEquipmentExpression());
         if ((filterToks == null) || filterToks.isEmpty()
                 || (filterToks.lastElement() instanceof OperationFT)) {
             disableOperationButtons();
@@ -1812,14 +1821,78 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         return mechFilter;
     }
 
-    /**
-     *  Clear the filter.
-     */
-    public void clearValues() {
+
+    private void clearBase() {
         tStartWalk.setText("");
         tEndWalk.setText("");
         tStartJump.setText("");
         tEndJump.setText("");
+        cArmor.setSelectedIndex(0);
+        cOfficial.setSelectedIndex(0);
+        cCanon.setSelectedIndex(0);
+        cClanEngine.setSelectedIndex(0);
+        cOmni.setSelectedIndex(0);
+        cMilitary.setSelectedIndex(0);
+        tStartTankTurrets.setText("");
+        tEndTankTurrets.setText("");
+        tStartLowerArms.setText("");
+        tEndLowerArms.setText("");
+        tStartHands.setText("");
+        tEndHands.setText("");
+        tStartYear.setText("");
+        tEndYear.setText("");
+        tStartTons.setText("");
+        tEndTons.setText("");
+        tStartBV.setText("");
+        tEndBV.setText("");
+        tSource.setText("");
+
+        ListModel<String> m = listArmorType.getModel();
+
+        DefaultListModel dlmwa  = new DefaultListModel();
+
+        for (int i = 0; i < m.getSize(); i++) {
+            String ms = m.getElementAt(i);
+            dlmwa.addElement("\u2610 " + ms.substring(2, ms.length()));
+        }
+
+        listArmorType.setModel(dlmwa);
+
+        m = listCockpitType.getModel();
+
+        DefaultListModel dlmc  = new DefaultListModel();
+
+        for (int i = 0; i < m.getSize(); i++) {
+            String ms = m.getElementAt(i);
+            dlmc.addElement("\u2610 " + ms.substring(2, ms.length()));
+        }
+
+        listCockpitType.setModel(dlmc);
+
+        m = listEngineType.getModel();
+
+        DefaultListModel dlme  = new DefaultListModel();
+
+        for (int i = 0; i < m.getSize(); i++) {
+            String ms = m.getElementAt(i);
+            dlme.addElement("\u2610 " + ms.substring(2, ms.length()));
+        }
+
+        listEngineType.setModel(dlme);
+
+        m = listInternalsType.getModel();
+
+        DefaultListModel dlmi  = new DefaultListModel();
+
+        for (int i = 0; i < m.getSize(); i++) {
+            String ms = m.getElementAt(i);
+            dlmi.addElement("\u2610 " + ms.substring(2, ms.length()));
+        }
+
+        listInternalsType.setModel(dlmi);
+    }
+
+    private void clearTransports() {
         tStartTroopSpace.setText("");
         tEndTroopSpace.setText("");
         tStartASFBays.setText("");
@@ -1890,21 +1963,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         tEndCargoBayUnits.setText("");
         tStartNavalRepairFacilities.setText("");
         tEndNavalRepairFacilities.setText("");
-        cArmor.setSelectedIndex(0);
-        cOfficial.setSelectedIndex(0);
-        cCanon.setSelectedIndex(0);
-        cClanEngine.setSelectedIndex(0);
-        cOmni.setSelectedIndex(0);
-        cMilitary.setSelectedIndex(0);
-        tStartTankTurrets.setText("");
-        tEndTankTurrets.setText("");
-        tStartLowerArms.setText("");
-        tEndLowerArms.setText("");
-        tStartHands.setText("");
-        tEndHands.setText("");
-        tblWeapons.clearSelection();
-        tblEquipment.clearSelection();
-        txtEqExp.setText("");
+    }
+
+    private void clearUnitType() {
         btnFilterMech.setText("\u2610");
         btnFilterBipedMech.setText("\u2610");
         btnFilterProtoMech.setText("\u2610");
@@ -1929,17 +1990,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         btnFilterSupportTank.setText("\u2610");
         btnFilterLargeSupportTank.setText("\u2610");
         btnFilterSuperHeavyTank.setText("\u2610");
-        tStartYear.setText("");
-        tEndYear.setText("");
-        tStartTons.setText("");
-        tEndTons.setText("");
-        tStartBV.setText("");
-        tEndBV.setText("");
-        tSource.setText("");
-        mechFilter = null;
-        filterToks.clear();
-        btnBack.setEnabled(false);
+    }
 
+    private void clearQuirks() {
         cQuirkInclue.setSelectedIndex(0);
         cQuirkExclude.setSelectedIndex(1);
         ListModel<String> m = listQuirkType.getModel();
@@ -1965,50 +2018,24 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         }
 
         listWeaponQuirkType.setModel(dlmw);
+    }
 
-        m = listArmorType.getModel();
+    /**
+     *  Clear the filter.
+     */
+    public void clearValues() {
+        clearUnitType();
+        clearBase();
+        clearTransports();
+        clearQuirks();
 
-        DefaultListModel dlmwa  = new DefaultListModel();
+        tblWeapons.clearSelection();
+        tblEquipment.clearSelection();
+        txtWEEqExp.setText("");
+        btnWEBack.setEnabled(false);
 
-        for (int i = 0; i < m.getSize(); i++) {
-            String ms = m.getElementAt(i);
-            dlmwa.addElement("\u2610 " + ms.substring(2, ms.length()));
-        }
-
-        listArmorType.setModel(dlmwa);
-
-        m = listCockpitType.getModel();
-
-        DefaultListModel dlmc  = new DefaultListModel();
-
-        for (int i = 0; i < m.getSize(); i++) {
-            String ms = m.getElementAt(i);
-            dlmc.addElement("\u2610 " + ms.substring(2, ms.length()));
-        }
-
-        listCockpitType.setModel(dlmc);
-
-        m = listEngineType.getModel();
-
-        DefaultListModel dlme  = new DefaultListModel();
-
-        for (int i = 0; i < m.getSize(); i++) {
-            String ms = m.getElementAt(i);
-            dlme.addElement("\u2610 " + ms.substring(2, ms.length()));
-        }
-
-        listEngineType.setModel(dlme);
-
-        m = listInternalsType.getModel();
-
-        DefaultListModel dlmi  = new DefaultListModel();
-
-        for (int i = 0; i < m.getSize(); i++) {
-            String ms = m.getElementAt(i);
-            dlmi.addElement("\u2610 " + ms.substring(2, ms.length()));
-        }
-
-        listInternalsType.setModel(dlmi);
+        mechFilter = null;
+        filterToks.clear();
 
         disableOperationButtons();
         enableSelectionButtons();
@@ -2043,18 +2070,85 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         return mechFilter;
     }
 
-    /**
-     * Update the search fields that aren't automatically updated.
-     */
-    protected void updateMechSearchFilter() {
-        mechFilter.isDisabled = false;
-
+    private void updateBase() {
         mechFilter.sStartWalk = tStartWalk.getText();
         mechFilter.sEndWalk = tEndWalk.getText();
 
         mechFilter.sStartJump = tStartJump.getText();
         mechFilter.sEndJump = tEndJump.getText();
 
+        mechFilter.iArmor = cArmor.getSelectedIndex();
+        mechFilter.iOmni = cOmni.getSelectedIndex();
+        mechFilter.iMilitary = cMilitary.getSelectedIndex();
+
+        mechFilter.sStartTankTurrets = tStartTankTurrets.getText();
+        mechFilter.sEndTankTurrets = tEndTankTurrets.getText();
+        mechFilter.sStartLowerArms = tStartLowerArms.getText();
+        mechFilter.sEndLowerArms = tEndLowerArms.getText();
+        mechFilter.sStartHands = tStartHands.getText();
+        mechFilter.sEndHands = tEndHands.getText();
+
+        mechFilter.iOfficial = cOfficial.getSelectedIndex();
+        mechFilter.iCanon = cCanon.getSelectedIndex();
+        mechFilter.iClanEngine = cClanEngine.getSelectedIndex();
+
+        mechFilter.source = tSource.getText();
+
+        mechFilter.sStartYear = tStartYear.getText();
+        mechFilter.sEndYear = tEndYear.getText();
+
+        mechFilter.sStartTons = tStartTons.getText();
+        mechFilter.sEndTons = tEndTons.getText();
+
+        mechFilter.sStartBV = tStartBV.getText();
+        mechFilter.sEndBV = tEndBV.getText();
+
+        ListModel<String> m = listArmorType.getModel();
+
+        for (int i = 0; i < m.getSize(); i++) {
+            String ms = m.getElementAt(i);
+            if (ms.contains("\u2611")) {
+                mechFilter.armorType.add(i);
+            } else if (ms.contains("\u2612")) {
+                mechFilter.armorTypeExclude.add(i);
+            }
+        }
+
+        m = listCockpitType.getModel();
+
+        for (int i = 0; i < m.getSize(); i++) {
+            String ms = m.getElementAt(i);
+            if (ms.contains("\u2611")) {
+                mechFilter.cockpitType.add(i);
+            } else if (ms.contains("\u2612")) {
+                mechFilter.cockpitTypeExclude.add(i);
+            }
+        }
+
+        m = listEngineType.getModel();
+
+        for (int i = 0; i < m.getSize(); i++) {
+            String ms = m.getElementAt(i);
+            if (ms.contains("\u2611")) {
+                mechFilter.engineType.add(ms.substring(2, ms.length()));
+            } else if (ms.contains("\u2612")) {
+                mechFilter.engineTypeExclude.add(ms.substring(2, ms.length()));
+            }
+        }
+
+        m = listInternalsType.getModel();
+
+        for (int i = 0; i < m.getSize(); i++) {
+            String ms = m.getElementAt(i);
+            if (ms.contains("\u2611")) {
+                mechFilter.internalsType.add(i);
+            } else if (ms.contains("\u2612")) {
+                mechFilter.internalsTypeExclude.add(i);
+            }
+        }
+    }
+
+    private void updateTransports() {
         mechFilter.sStartTroopSpace = tStartTroopSpace.getText();
         mechFilter.sEndTroopSpace = tEndTroopSpace.getText();
 
@@ -2139,33 +2233,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
 
         mechFilter.sStartNavalRepairFacilities = tStartNavalRepairFacilities.getText();
         mechFilter.sEndNavalRepairFacilities = tEndNavalRepairFacilities.getText();
+    }
 
-        mechFilter.iArmor = cArmor.getSelectedIndex();
-        mechFilter.iOmni = cOmni.getSelectedIndex();
-        mechFilter.iMilitary = cMilitary.getSelectedIndex();
-
-        mechFilter.sStartTankTurrets = tStartTankTurrets.getText();
-        mechFilter.sEndTankTurrets = tEndTankTurrets.getText();
-        mechFilter.sStartLowerArms = tStartLowerArms.getText();
-        mechFilter.sEndLowerArms = tEndLowerArms.getText();
-        mechFilter.sStartHands = tStartHands.getText();
-        mechFilter.sEndHands = tEndHands.getText();
-
-        mechFilter.iOfficial = cOfficial.getSelectedIndex();
-        mechFilter.iCanon = cCanon.getSelectedIndex();
-        mechFilter.iClanEngine = cClanEngine.getSelectedIndex();
-
-        mechFilter.source = tSource.getText();
-
-        mechFilter.sStartYear = tStartYear.getText();
-        mechFilter.sEndYear = tEndYear.getText();
-
-        mechFilter.sStartTons = tStartTons.getText();
-        mechFilter.sEndTons = tEndTons.getText();
-
-        mechFilter.sStartBV = tStartBV.getText();
-        mechFilter.sEndBV = tEndBV.getText();
-
+    private void updateQuirks() {
         mechFilter.quirkInclude = cQuirkInclue.getSelectedIndex();
         mechFilter.quirkExclude = cQuirkExclude.getSelectedIndex();
 
@@ -2193,51 +2263,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
                 mechFilter.weaponQuirkTypeExclude.add(ms.substring(2, ms.length()));
             }
         }
+    }
 
-        m = listArmorType.getModel();
-
-        for (int i = 0; i < m.getSize(); i++) {
-            String ms = m.getElementAt(i);
-            if (ms.contains("\u2611")) {
-                mechFilter.armorType.add(i);
-            } else if (ms.contains("\u2612")) {
-                mechFilter.armorTypeExclude.add(i);
-            }
-        }
-
-        m = listCockpitType.getModel();
-
-        for (int i = 0; i < m.getSize(); i++) {
-            String ms = m.getElementAt(i);
-            if (ms.contains("\u2611")) {
-                mechFilter.cockpitType.add(i);
-            } else if (ms.contains("\u2612")) {
-                mechFilter.cockpitTypeExclude.add(i);
-            }
-        }
-
-        m = listEngineType.getModel();
-
-        for (int i = 0; i < m.getSize(); i++) {
-            String ms = m.getElementAt(i);
-            if (ms.contains("\u2611")) {
-                mechFilter.engineType.add(ms.substring(2, ms.length()));
-            } else if (ms.contains("\u2612")) {
-                mechFilter.engineTypeExclude.add(ms.substring(2, ms.length()));
-            }
-        }
-
-        m = listInternalsType.getModel();
-
-        for (int i = 0; i < m.getSize(); i++) {
-            String ms = m.getElementAt(i);
-            if (ms.contains("\u2611")) {
-                mechFilter.internalsType.add(i);
-            } else if (ms.contains("\u2612")) {
-                mechFilter.internalsTypeExclude.add(i);
-            }
-        }
-
+    private void updateUnitTypes() {
         mechFilter.filterMech = getValue(btnFilterMech);
         mechFilter.filterBipedMech = getValue(btnFilterBipedMech);
         mechFilter.filterProtomech = getValue(btnFilterProtoMech);
@@ -2262,6 +2290,18 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         mechFilter.filterSupportTank = getValue(btnFilterSupportTank);
         mechFilter.filterLargeSupportTank = getValue(btnFilterLargeSupportTank);
         mechFilter.filterSuperHeavyTank = getValue(btnFilterSuperHeavyTank);
+    }
+
+    /**
+     * Update the search fields that aren't automatically updated.
+     */
+    protected void updateMechSearchFilter() {
+        mechFilter.isDisabled = false;
+
+        updateBase();
+        updateTransports();
+        updateQuirks();
+        updateUnitTypes();
     }
 
     public int getValue(JButton b) {

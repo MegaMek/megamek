@@ -24,10 +24,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.table.MegamekTable;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
-import megamek.common.options.IOption;
-import megamek.common.options.IOptionGroup;
-import megamek.common.options.Quirks;
-import megamek.common.options.WeaponQuirks;
+import megamek.common.options.*;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -137,16 +134,16 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JTextField tStartBV = new JTextField(4);
     private JTextField tEndBV = new JTextField(4);
     private JLabel lblCockpitType = new JLabel(Messages.getString("MechSelectorDialog.Search.CockpitType"));
-    private JList<String> listCockpitType = new JList<>(new DefaultListModel<String>());
+    private JList<TriStateItem> listCockpitType = new JList<>(new DefaultListModel<TriStateItem>());
     private JScrollPane spCockpitType = new JScrollPane(listCockpitType);
     private JLabel lblArmorType = new JLabel(Messages.getString("MechSelectorDialog.Search.ArmorType"));
-    private JList<String> listArmorType = new JList<>(new DefaultListModel<String>());
+    private JList<TriStateItem> listArmorType = new JList<>(new DefaultListModel<TriStateItem>());
     private JScrollPane spArmorType = new JScrollPane(listArmorType);
     private JLabel lblInternalsType = new JLabel(Messages.getString("MechSelectorDialog.Search.InternalsType"));
-    private JList<String> listInternalsType = new JList<>(new DefaultListModel<String>());
+    private JList<TriStateItem> listInternalsType = new JList<>(new DefaultListModel<TriStateItem>());
     private JScrollPane spInternalsType = new JScrollPane(listInternalsType);
     private JLabel lblEngineType = new JLabel(Messages.getString("MechSelectorDialog.Search.Engine"));
-    private JList<String> listEngineType = new JList<>(new DefaultListModel<String>());
+    private JList<TriStateItem> listEngineType = new JList<>(new DefaultListModel<TriStateItem>());
     private JScrollPane spEngineType = new JScrollPane(listEngineType);
 
     // Transports
@@ -264,14 +261,14 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JLabel lblQuirkExclude = new JLabel("\u2612");
     private JComboBox<String> cQuirkExclude = new JComboBox<>();
     private JLabel lblQuirkType = new JLabel(Messages.getString("MechSelectorDialog.Search.Quirk"));
-    private JList<String> listQuirkType = new JList<>(new DefaultListModel<String>());
+    private JList<TriStateItem> listQuirkType = new JList<>(new DefaultListModel<TriStateItem>());
     private JScrollPane spQuirkType = new JScrollPane(listQuirkType);
     private JLabel lblWeaponQuirkInclude = new JLabel("\u2611");
     private JComboBox<String> cWeaponQuirkInclue = new JComboBox<>();
     private JLabel lblWeaponQuirkExclude = new JLabel("\u2612");
     private JComboBox<String> cWeaponQuirkExclude = new JComboBox<>();
     private JLabel lblWeaponQuirkType = new JLabel(Messages.getString("MechSelectorDialog.Search.WeaponQuirk"));
-    private JList<String> listWeaponQuirkType = new JList<>(new DefaultListModel<String>());
+    private JList<TriStateItem> listWeaponQuirkType = new JList<>(new DefaultListModel<TriStateItem>());
     private JScrollPane spWeaponQuirkType = new JScrollPane(listWeaponQuirkType);
 
     // Unit Type
@@ -377,6 +374,52 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         public void setSelectionInterval(final int index0, final int index1) {}
     }
 
+    private static class TriStateItem {
+        public String state;
+        public String text;
+
+        public TriStateItem(String state, String text) {
+            this.state = state;
+            this.text = text;
+        }
+
+        @Override
+        public String toString() {
+            return state + " " + text;
+        }
+    }
+
+    private void loadTriStateItem(String[] s, JList l, int count) {
+        DefaultListModel dlma = new DefaultListModel();
+
+        for (int i = 0; i < s.length; i++) {
+            dlma.addElement(new TriStateItem("\u2610", s[i]));
+        }
+
+        l.setModel(dlma);
+
+        l.setVisibleRowCount(count);
+        l.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        l.setSelectionModel(new NoSelectionModel());
+        l.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    JList list = (JList) e.getSource();
+                    int index = list.locationToIndex(e.getPoint());
+                    toggleText(list, index);
+                }
+            }
+        });
+    }
+
+    private void loadYesNo(JComboBox<String> cb) {
+        cb.addItem(Messages.getString("MechSelectorDialog.Search.Any"));
+        cb.addItem(Messages.getString("MechSelectorDialog.Search.Yes"));
+        cb.addItem(Messages.getString("MechSelectorDialog.Search.No"));
+    }
+
     private JPanel createBasePanel() {
         btnBaseClear.addActionListener(this);
 
@@ -386,117 +429,16 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor75"));
         cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor90"));
 
-        cOmni.addItem(Messages.getString("MechSelectorDialog.Search.Any"));
-        cOmni.addItem(Messages.getString("MechSelectorDialog.Search.Yes"));
-        cOmni.addItem(Messages.getString("MechSelectorDialog.Search.No"));
+        loadYesNo(cOmni);
+        loadYesNo(cMilitary);
+        loadYesNo(cOfficial);
+        loadYesNo(cCanon);
+        loadYesNo(cClanEngine);
 
-        cMilitary.addItem(Messages.getString("MechSelectorDialog.Search.Any"));
-        cMilitary.addItem(Messages.getString("MechSelectorDialog.Search.Yes"));
-        cMilitary.addItem(Messages.getString("MechSelectorDialog.Search.No"));
-
-        cOfficial.addItem(Messages.getString("MechSelectorDialog.Search.Any"));
-        cOfficial.addItem(Messages.getString("MechSelectorDialog.Search.Yes"));
-        cOfficial.addItem(Messages.getString("MechSelectorDialog.Search.No"));
-
-        cCanon.addItem(Messages.getString("MechSelectorDialog.Search.Any"));
-        cCanon.addItem(Messages.getString("MechSelectorDialog.Search.Yes"));
-        cCanon.addItem(Messages.getString("MechSelectorDialog.Search.No"));
-
-        cClanEngine.addItem(Messages.getString("MechSelectorDialog.Search.Any"));
-        cClanEngine.addItem(Messages.getString("MechSelectorDialog.Search.Yes"));
-        cClanEngine.addItem(Messages.getString("MechSelectorDialog.Search.No"));
-
-        DefaultListModel dlma  = new DefaultListModel();
-
-        for (int i = 0; i < EquipmentType.armorNames.length; i++) {
-            dlma.addElement("\u2610 " + EquipmentType.armorNames[i]);
-        }
-
-        listArmorType.setModel(dlma);
-
-        listArmorType.setVisibleRowCount(7);
-        listArmorType.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        listArmorType.setSelectionModel(new NoSelectionModel());
-        listArmorType.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                if (e.getButton() == MouseEvent.BUTTON1) {
-                    JList list = (JList) e.getSource();
-                    int index = list.locationToIndex(e.getPoint());
-                    toggleText(list, index);
-                }
-            }
-        });
-
-        DefaultListModel dlmc  = new DefaultListModel();
-
-        for (int i = 0; i < Mech.COCKPIT_STRING.length; i++) {
-            dlmc.addElement("\u2610 " + Mech.COCKPIT_STRING[i]);
-        }
-
-        listCockpitType.setModel(dlmc);
-
-        listCockpitType.setVisibleRowCount(5);
-        listCockpitType.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        listCockpitType.setSelectionModel(new NoSelectionModel());
-        listCockpitType.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                if (e.getButton() == MouseEvent.BUTTON1) {
-                    JList list = (JList) e.getSource();
-                    int index = list.locationToIndex(e.getPoint());
-                    toggleText(list, index);
-                }
-            }
-        });
-
-        DefaultListModel dlme  = new DefaultListModel();
-
-        for (int i = 0; i < Engine.NUM_ENGINE_TYPES; i++) {
-            dlme.addElement("\u2610 " + Engine.getEngineType(i));
-        }
-
-        listEngineType.setModel(dlme);
-
-        listEngineType.setVisibleRowCount(5);
-        listEngineType.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        listEngineType.setSelectionModel(new NoSelectionModel());
-        listEngineType.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                if (e.getButton() == MouseEvent.BUTTON1) {
-                    JList list = (JList) e.getSource();
-                    int index = list.locationToIndex(e.getPoint());
-                    toggleText(list, index);
-                }
-            }
-        });
-
-        DefaultListModel dlmi  = new DefaultListModel();
-
-        for (int i = 0; i < EquipmentType.structureNames.length; i++) {
-            dlmi.addElement("\u2610 " + EquipmentType.structureNames[i]);
-        }
-
-        listInternalsType.setModel(dlmi);
-
-        listInternalsType.setVisibleRowCount(5);
-        listInternalsType.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        listInternalsType.setSelectionModel(new NoSelectionModel());
-        listInternalsType.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                if (e.getButton() == MouseEvent.BUTTON1) {
-                    JList list = (JList) e.getSource();
-                    int index = list.locationToIndex(e.getPoint());
-                    toggleText(list, index);
-                }
-            }
-        });
+        loadTriStateItem(EquipmentType.armorNames, listArmorType, 7);
+        loadTriStateItem(Mech.COCKPIT_STRING, listCockpitType, 7);
+        loadTriStateItem(EquipmentType.structureNames, listInternalsType, 7);
+        loadTriStateItem(Engine.getEngineTypes(), listEngineType, 5);
 
         for (int i = 1; i <= 20; i++) {
             cboQty.addItem(Integer.toString(i));
@@ -840,18 +782,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         return transportsPanel;
     }
 
-    private JPanel createQuirkPanel() {
-        btnQuirksClear.addActionListener(this);
-
-        cQuirkInclue.addItem(Messages.getString("MechSelectorDialog.Search.and"));
-        cQuirkInclue.addItem(Messages.getString("MechSelectorDialog.Search.or"));
-        cQuirkExclude.addItem(Messages.getString("MechSelectorDialog.Search.and"));
-        cQuirkExclude.addItem(Messages.getString("MechSelectorDialog.Search.or"));
-        cQuirkExclude.setSelectedIndex(1);
-
-        Quirks quirks = new Quirks();
+    private void loadTriStateItem(AbstractOptions s, JList l, int count) {
         List<String> qs = new ArrayList<>();
-        for (final Enumeration<IOptionGroup> optionGroups = quirks.getGroups(); optionGroups.hasMoreElements(); ) {
+        for (final Enumeration<IOptionGroup> optionGroups = s.getGroups(); optionGroups.hasMoreElements(); ) {
             final IOptionGroup group = optionGroups.nextElement();
             for (final Enumeration<IOption> options = group.getOptions(); options.hasMoreElements(); ) {
                 final IOption option = options.nextElement();
@@ -862,18 +795,17 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         }
         qs = qs.stream().sorted(String.CASE_INSENSITIVE_ORDER).collect(Collectors.toList());
 
-        DefaultListModel dlmq  = new DefaultListModel();
+        DefaultListModel dlm  = new DefaultListModel();
 
         for (String q : qs) {
-            dlmq.addElement("\u2610 " + q);
+            dlm.addElement(new TriStateItem("\u2610", q));
         }
+        l.setModel(dlm);
 
-        listQuirkType.setModel(dlmq);
-
-        listQuirkType.setVisibleRowCount(25);
-        listQuirkType.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        listQuirkType.setSelectionModel(new NoSelectionModel());
-        listQuirkType.addMouseListener(new MouseAdapter() {
+        l.setVisibleRowCount(count);
+        l.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        l.setSelectionModel(new NoSelectionModel());
+        l.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
@@ -884,49 +816,26 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
                 }
             }
         });
+    }
 
-        cWeaponQuirkInclue.addItem(Messages.getString("MechSelectorDialog.Search.and"));
-        cWeaponQuirkInclue.addItem(Messages.getString("MechSelectorDialog.Search.or"));
-        cWeaponQuirkExclude.addItem(Messages.getString("MechSelectorDialog.Search.and"));
-        cWeaponQuirkExclude.addItem(Messages.getString("MechSelectorDialog.Search.or"));
+    private void loadAndOr(JComboBox<String> cb, int index) {
+        cb.addItem(Messages.getString("MechSelectorDialog.Search.and"));
+        cb.addItem(Messages.getString("MechSelectorDialog.Search.or"));
+        cb.setSelectedIndex(index);
+    }
+
+    private JPanel createQuirkPanel() {
+        btnQuirksClear.addActionListener(this);
+
+        loadAndOr(cQuirkInclue, 0);
+        loadAndOr(cQuirkExclude, 1);
+        loadTriStateItem(new Quirks(), listQuirkType, 25);
+
+        loadAndOr(cWeaponQuirkInclue, 0);
+        loadAndOr(cWeaponQuirkExclude, 1);
         cWeaponQuirkExclude.setSelectedIndex(1);
 
-        WeaponQuirks weaponquirks = new WeaponQuirks();
-        List<String> wqs = new ArrayList<>();
-
-        for (final Enumeration<IOptionGroup> optionGroups = weaponquirks.getGroups(); optionGroups.hasMoreElements(); ) {
-            final IOptionGroup group = optionGroups.nextElement();
-            for (final Enumeration<IOption> options = group.getOptions(); options.hasMoreElements(); ) {
-                final IOption option = options.nextElement();
-                if (option != null) {
-                    wqs.add(option.getDisplayableNameWithValue());
-                }
-            }
-        }
-        wqs = wqs.stream().sorted(String.CASE_INSENSITIVE_ORDER).collect(Collectors.toList());
-
-        DefaultListModel dlmw  = new DefaultListModel();
-
-        for (String q : wqs) {
-            dlmw.addElement("\u2610 " + q);
-        }
-
-        listWeaponQuirkType.setModel(dlmw);
-
-        listWeaponQuirkType.setVisibleRowCount(17);
-        listWeaponQuirkType.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        listWeaponQuirkType.setSelectionModel(new NoSelectionModel());
-        listWeaponQuirkType.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                if (e.getButton() == MouseEvent.BUTTON1) {
-                    JList list = (JList) e.getSource();
-                    int index = list.locationToIndex(e.getPoint());
-                    toggleText(list, index);
-                }
-            }
-        });
+        loadTriStateItem(new WeaponQuirks(), listWeaponQuirkType, 17);
 
         JPanel quirksPanel = new JPanel();
         GridBagConstraints c = new GridBagConstraints();
@@ -972,83 +881,60 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JPanel createUnitTypePanel() {
         btnUnitTypeClear.addActionListener(this);
 
-        Border emptyBorder = BorderFactory.createEmptyBorder();
+        Border emptyBorder = BorderFactory.createEmptyBorder(1, 1, 1, 1);
         btnFilterMech.setBorder(emptyBorder);
-        btnFilterMech.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
         btnFilterMech.addActionListener(this);
         btnFilterBipedMech.setBorder(emptyBorder);
-        btnFilterBipedMech.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
         btnFilterBipedMech.addActionListener(this);
         btnFilterProtoMech.setBorder(emptyBorder);
-        btnFilterProtoMech.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
         btnFilterProtoMech.addActionListener(this);
         btnFilterLAM.setBorder(emptyBorder);
-        btnFilterLAM.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
         btnFilterLAM.addActionListener(this);
         btnFilterTripod.setBorder(emptyBorder);
-        btnFilterTripod.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
         btnFilterTripod.addActionListener(this);
         btnFilterQuad.setBorder(emptyBorder);
-        btnFilterQuad.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
         btnFilterQuad.addActionListener(this);
         btnFilterQuadVee.setBorder(emptyBorder);
-        btnFilterQuadVee.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
         btnFilterQuadVee.addActionListener(this);
         btnFilterAero.setBorder(emptyBorder);
-        btnFilterAero.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
         btnFilterAero.addActionListener(this);
         btnFilterFixedWingSupport.setBorder(emptyBorder);
-        btnFilterFixedWingSupport.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
         btnFilterFixedWingSupport.addActionListener(this);
         btnFilterConvFighter.setBorder(emptyBorder);
-        btnFilterConvFighter.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
         btnFilterConvFighter.addActionListener(this);
         btnFilterSmallCraft.setBorder(emptyBorder);
-        btnFilterSmallCraft.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
         btnFilterSmallCraft.addActionListener(this);
         btnFilterDropship.setBorder(emptyBorder);
-        btnFilterDropship.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
         btnFilterDropship.addActionListener(this);
         btnFilterJumpship.setBorder(emptyBorder);
-        btnFilterJumpship.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
         btnFilterJumpship.addActionListener(this);
         btnFilterWarship.setBorder(emptyBorder);
-        btnFilterWarship.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
         btnFilterWarship.addActionListener(this);
         btnFilterSpaceStation.setBorder(emptyBorder);
-        btnFilterSpaceStation.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
         btnFilterSpaceStation.addActionListener(this);
         btnFilterInfantry.setBorder(emptyBorder);
-        btnFilterInfantry.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
         btnFilterInfantry.addActionListener(this);
         btnFilterBattleArmor.setBorder(emptyBorder);
-        btnFilterBattleArmor.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
         btnFilterBattleArmor.addActionListener(this);
         btnFilterTank.setBorder(emptyBorder);
-        btnFilterTank.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
         btnFilterTank.addActionListener(this);
         btnFilterVTOL.setBorder(emptyBorder);
-        btnFilterVTOL.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
         btnFilterVTOL.addActionListener(this);
-        btnFilterSupportVTOL.setBorder(emptyBorder);
-        btnFilterSupportVTOL.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        btnFilterSupportVTOL.setBorder(emptyBorder);;
         btnFilterSupportVTOL.addActionListener(this);
         btnFilterGunEmplacement.setBorder(emptyBorder);
-        btnFilterGunEmplacement.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
         btnFilterGunEmplacement.addActionListener(this);
         btnFilterSupportTank.setBorder(emptyBorder);
-        btnFilterSupportTank.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
         btnFilterSupportTank.addActionListener(this);
-        btnFilterLargeSupportTank.setBorder(emptyBorder);
-        btnFilterLargeSupportTank.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        btnFilterLargeSupportTank.setBorder(emptyBorder);;
         btnFilterLargeSupportTank.addActionListener(this);
         btnFilterSuperHeavyTank.setBorder(emptyBorder);
-        btnFilterSuperHeavyTank.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
         btnFilterSuperHeavyTank.addActionListener(this);
 
         JPanel unitTypePanel = new JPanel();
         unitTypePanel.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
+
         c.weighty = 0;
         c.anchor = GridBagConstraints.NORTHWEST;
         c.fill = GridBagConstraints.NONE;
@@ -1676,19 +1562,19 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     }
 
     private void toggleText(JList list, int index) {
-        ListModel<String> m = list.getModel();
+        ListModel<TriStateItem> m = list.getModel();
         DefaultListModel dlm  = new DefaultListModel();
 
         for (int i = 0; i < m.getSize(); i++) {
-            String ms = m.getElementAt(i);
+            TriStateItem ms = m.getElementAt(i);
 
             if (index == i) {
-                if (ms.contains("\u2610")) {
-                    dlm.addElement("\u2611" + ms.substring(1, ms.length()));
-                } else if (ms.contains("\u2611")) {
-                    dlm.addElement("\u2612" + ms.substring(1, ms.length()));
-                } else if (ms.contains("\u2612")) {
-                    dlm.addElement("\u2610" + ms.substring(1, ms.length()));
+                if (ms.state.contains("\u2610")) {
+                    dlm.addElement(new TriStateItem("\u2611", ms.text));
+                } else if (ms.state.contains("\u2611")) {
+                    dlm.addElement(new TriStateItem("\u2612", ms.text));
+                } else if (ms.state.contains("\u2612")) {
+                    dlm.addElement(new TriStateItem("\u2610", ms.text));
                 }
             } else {
                 dlm.addElement(ms);
@@ -1857,6 +1743,19 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         return mechFilter;
     }
 
+    private void clearTriStateItem(JList l) {
+        ListModel<TriStateItem> m = l.getModel();
+        DefaultListModel dlm  = new DefaultListModel();
+
+        for (int i = 0; i < m.getSize(); i++) {
+            TriStateItem ms = m.getElementAt(i);
+            ms.state = "\u2610";
+            dlm.addElement(ms);
+        }
+
+        l.setModel(dlm);
+    }
+
     private void clearBase() {
         tStartWalk.setText("");
         tEndWalk.setText("");
@@ -1882,49 +1781,10 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         tEndBV.setText("");
         tSource.setText("");
 
-        ListModel<String> m = listArmorType.getModel();
-
-        DefaultListModel dlmwa  = new DefaultListModel();
-
-        for (int i = 0; i < m.getSize(); i++) {
-            String ms = m.getElementAt(i);
-            dlmwa.addElement("\u2610 " + ms.substring(2, ms.length()));
-        }
-
-        listArmorType.setModel(dlmwa);
-
-        m = listCockpitType.getModel();
-
-        DefaultListModel dlmc  = new DefaultListModel();
-
-        for (int i = 0; i < m.getSize(); i++) {
-            String ms = m.getElementAt(i);
-            dlmc.addElement("\u2610 " + ms.substring(2, ms.length()));
-        }
-
-        listCockpitType.setModel(dlmc);
-
-        m = listEngineType.getModel();
-
-        DefaultListModel dlme  = new DefaultListModel();
-
-        for (int i = 0; i < m.getSize(); i++) {
-            String ms = m.getElementAt(i);
-            dlme.addElement("\u2610 " + ms.substring(2, ms.length()));
-        }
-
-        listEngineType.setModel(dlme);
-
-        m = listInternalsType.getModel();
-
-        DefaultListModel dlmi  = new DefaultListModel();
-
-        for (int i = 0; i < m.getSize(); i++) {
-            String ms = m.getElementAt(i);
-            dlmi.addElement("\u2610 " + ms.substring(2, ms.length()));
-        }
-
-        listInternalsType.setModel(dlmi);
+        clearTriStateItem(listArmorType);
+        clearTriStateItem(listCockpitType);
+        clearTriStateItem(listEngineType);
+        clearTriStateItem(listInternalsType);
     }
 
     private void clearTransports() {
@@ -2030,12 +1890,12 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private void clearQuirks() {
         cQuirkInclue.setSelectedIndex(0);
         cQuirkExclude.setSelectedIndex(1);
-        ListModel<String> m = listQuirkType.getModel();
+        ListModel<TriStateItem> m = listQuirkType.getModel();
         DefaultListModel dlmq  = new DefaultListModel();
 
         for (int i = 0; i < m.getSize(); i++) {
-            String ms = m.getElementAt(i);
-            dlmq.addElement("\u2610 " + ms.substring(2, ms.length()));
+            TriStateItem ms = m.getElementAt(i);
+            dlmq.addElement(new TriStateItem("\u2610", ms.text));
         }
 
         listQuirkType.setModel(dlmq);
@@ -2048,8 +1908,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         DefaultListModel dlmw  = new DefaultListModel();
 
         for (int i = 0; i < m.getSize(); i++) {
-            String ms = m.getElementAt(i);
-            dlmw.addElement("\u2610 " + ms.substring(2, ms.length()));
+            TriStateItem ms = m.getElementAt(i);
+            dlmw.addElement(new TriStateItem("\u2610", ms.text));
         }
 
         listWeaponQuirkType.setModel(dlmw);
@@ -2107,6 +1967,32 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         return mechFilter;
     }
 
+    private void updateTriStateItemInteger(List<Integer> include, List<Integer> exclude,  JList l) {
+        ListModel<TriStateItem> m = l.getModel();
+
+        for (int i = 0; i < m.getSize(); i++) {
+            TriStateItem ms = m.getElementAt(i);
+            if (ms.state.contains("\u2611")) {
+                include.add(i);
+            } else if (ms.state.contains("\u2612")) {
+                exclude.add(i);
+            }
+        }
+    }
+
+    private void updateTriStateItemString(List<String> include, List<String> exclude, JList l) {
+        ListModel<TriStateItem> m = l.getModel();
+
+        for (int i = 0; i < m.getSize(); i++) {
+            TriStateItem ms = m.getElementAt(i);
+            if (ms.state.contains("\u2611")) {
+                include.add(ms.text);
+            } else if (ms.state.contains("\u2612")) {
+                exclude.add(ms.text);
+            }
+        }
+    }
+
     private void updateBase() {
         mechFilter.sStartWalk = tStartWalk.getText();
         mechFilter.sEndWalk = tEndWalk.getText();
@@ -2140,49 +2026,10 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         mechFilter.sStartBV = tStartBV.getText();
         mechFilter.sEndBV = tEndBV.getText();
 
-        ListModel<String> m = listArmorType.getModel();
-
-        for (int i = 0; i < m.getSize(); i++) {
-            String ms = m.getElementAt(i);
-            if (ms.contains("\u2611")) {
-                mechFilter.armorType.add(i);
-            } else if (ms.contains("\u2612")) {
-                mechFilter.armorTypeExclude.add(i);
-            }
-        }
-
-        m = listCockpitType.getModel();
-
-        for (int i = 0; i < m.getSize(); i++) {
-            String ms = m.getElementAt(i);
-            if (ms.contains("\u2611")) {
-                mechFilter.cockpitType.add(i);
-            } else if (ms.contains("\u2612")) {
-                mechFilter.cockpitTypeExclude.add(i);
-            }
-        }
-
-        m = listEngineType.getModel();
-
-        for (int i = 0; i < m.getSize(); i++) {
-            String ms = m.getElementAt(i);
-            if (ms.contains("\u2611")) {
-                mechFilter.engineType.add(ms.substring(2, ms.length()));
-            } else if (ms.contains("\u2612")) {
-                mechFilter.engineTypeExclude.add(ms.substring(2, ms.length()));
-            }
-        }
-
-        m = listInternalsType.getModel();
-
-        for (int i = 0; i < m.getSize(); i++) {
-            String ms = m.getElementAt(i);
-            if (ms.contains("\u2611")) {
-                mechFilter.internalsType.add(i);
-            } else if (ms.contains("\u2612")) {
-                mechFilter.internalsTypeExclude.add(i);
-            }
-        }
+        updateTriStateItemInteger(mechFilter.armorType, mechFilter.armorTypeExclude, listArmorType);
+        updateTriStateItemInteger(mechFilter.cockpitType, mechFilter.cockpitTypeExclude, listCockpitType);
+        updateTriStateItemInteger(mechFilter.internalsType, mechFilter.internalsTypeExclude, listInternalsType);
+        updateTriStateItemString(mechFilter.engineType, mechFilter.engineTypeExclude, listEngineType);
     }
 
     private void updateTransports() {
@@ -2276,30 +2123,12 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         mechFilter.quirkInclude = cQuirkInclue.getSelectedIndex();
         mechFilter.quirkExclude = cQuirkExclude.getSelectedIndex();
 
-        ListModel<String> m = listQuirkType.getModel();
-
-        for (int i = 0; i < m.getSize(); i++) {
-            String ms = m.getElementAt(i);
-            if (ms.contains("\u2611")) {
-                mechFilter.quirkType.add(ms.substring(2, ms.length()));
-            } else if (ms.contains("\u2612")) {
-                mechFilter.quirkTypeExclude.add(ms.substring(2, ms.length()));
-            }
-        }
+        updateTriStateItemString(mechFilter.quirkType, mechFilter.quirkTypeExclude, listQuirkType);
 
         mechFilter.weaponQuirkInclude = cWeaponQuirkInclue.getSelectedIndex();
         mechFilter.weaponQuirkExclude = cWeaponQuirkExclude.getSelectedIndex();
 
-        m = listWeaponQuirkType.getModel();
-
-        for (int i = 0; i < m.getSize(); i++) {
-            String ms = m.getElementAt(i);
-            if (ms.contains("\u2611")) {
-                mechFilter.weaponQuirkType.add(ms.substring(2, ms.length()));
-            } else if (ms.contains("\u2612")) {
-                mechFilter.weaponQuirkTypeExclude.add(ms.substring(2, ms.length()));
-            }
-        }
+        updateTriStateItemString(mechFilter.weaponQuirkType, mechFilter.weaponQuirkTypeExclude, listWeaponQuirkType);
     }
 
     private void updateUnitTypes() {

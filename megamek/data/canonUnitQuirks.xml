@@ -6690,6 +6690,13 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>unbalanced</quirk>
 		<quirk>obsolete</quirk>
 	</unit>
+	
+	<unit>
+		<chassis>Gladiator-B (Executioner-B)</chassis>
+		<unitType>Mech</unitType>
+		<quirk>distracting</quirk>
+		<quirk>poor_performance</quirk>
+	</unit>
 
 	<unit>
 		<chassis>Gladiator (Executioner)</chassis>
@@ -6953,100 +6960,6 @@ Example: You can define quirks that affect all units of a given chassis and then
 
 	<unit>
 		<chassis>Griffin</chassis>
-		<model>C</model>
-		<unitType>Mech</unitType>
-		<quirk>battle_fists_la</quirk>
-		<quirk>ubiquitous_is</quirk>
-	</unit>
-
-	<unit>
-		<chassis>Griffin</chassis>
-		<model>GRF-3N</model>
-		<unitType>Mech</unitType>
-		<quirk>battle_fists_la</quirk>
-		<quirk>rugged_1</quirk>
-		<quirk>ubiquitous_is</quirk>
-	</unit>
-
-	<unit>
-		<chassis>Griffin</chassis>
-		<model>GRF-5K</model>
-		<unitType>Mech</unitType>
-		<quirk>battle_fists_la</quirk>
-		<quirk>battle_fists_ra</quirk>
-		<quirk>rugged_1</quirk>
-		<quirk>ubiquitous_clan</quirk>
-		<quirk>ubiquitous_is</quirk>
-	</unit>
-
-	<unit>
-		<chassis>Griffin</chassis>
-		<model>GRF-6CS</model>
-		<unitType>Mech</unitType>
-		<quirk>battle_fists_la</quirk>
-		<quirk>battle_fists_ra</quirk>
-		<quirk>rugged_1</quirk>
-		<quirk>ubiquitous_clan</quirk>
-		<quirk>ubiquitous_is</quirk>
-	</unit>
-
-	<unit>
-		<chassis>Griffin</chassis>
-		<model>GRF-1S</model>
-		<unitType>Mech</unitType>
-		<quirk>battle_fists_la</quirk>
-		<quirk>battle_fists_ra</quirk>
-		<quirk>rugged_1</quirk>
-		<quirk>ubiquitous_clan</quirk>
-		<quirk>ubiquitous_is</quirk>
-	</unit>
-
-	<unit>
-		<chassis>Griffin</chassis>
-		<model>GRF-5L</model>
-		<unitType>Mech</unitType>
-		<quirk>battle_fists_la</quirk>
-		<quirk>battle_fists_ra</quirk>
-		<quirk>rugged_1</quirk>
-		<quirk>ubiquitous_clan</quirk>
-		<quirk>ubiquitous_is</quirk>
-	</unit>
-
-	<unit>
-		<chassis>Griffin</chassis>
-		<model>GRF-4N</model>
-		<unitType>Mech</unitType>
-		<quirk>battle_fists_la</quirk>
-		<quirk>battle_fists_ra</quirk>
-		<quirk>rugged_1</quirk>
-		<quirk>ubiquitous_clan</quirk>
-		<quirk>ubiquitous_is</quirk>
-	</unit>
-
-	<unit>
-		<chassis>Griffin</chassis>
-		<model>GRF-6S2</model>
-		<unitType>Mech</unitType>
-		<quirk>battle_fists_la</quirk>
-		<quirk>battle_fists_ra</quirk>
-		<quirk>rugged_1</quirk>
-		<quirk>ubiquitous_clan</quirk>
-		<quirk>ubiquitous_is</quirk>
-	</unit>
-
-	<unit>
-		<chassis>Griffin</chassis>
-		<model>GRF-3M</model>
-		<unitType>Mech</unitType>
-		<quirk>battle_fists_la</quirk>
-		<quirk>battle_fists_ra</quirk>
-		<quirk>rugged_1</quirk>
-		<quirk>ubiquitous_clan</quirk>
-		<quirk>ubiquitous_is</quirk>
-	</unit>
-
-	<unit>
-		<chassis>Griffin</chassis>
 		<model>GRF-1A</model>
 		<unitType>Mech</unitType>
 		<quirk>obsolete</quirk>
@@ -7061,6 +6974,231 @@ Example: You can define quirks that affect all units of a given chassis and then
 
 	<unit>
 		<chassis>Griffin</chassis>
+		<model>GRF-1E 'Sparky'</model>
+		<unitType>Mech</unitType>
+		<quirk>battle_fists_la</quirk>
+		<quirk>battle_fists_ra</quirk>
+		<quirk>rugged_1</quirk>
+		<quirk>ubiquitous_clan</quirk>
+		<quirk>ubiquitous_is</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>jettison_capable</weaponQuirkName>
+			<location>RA</location>
+			<slot>4</slot>
+			<weaponName>PPC</weaponName>
+		</weaponQuirk>
+	</unit>
+		
+	<unit>
+		<chassis>Griffin</chassis>
+		<model>GRF-1RG</model>
+		<unitType>Mech</unitType>
+		<quirk>battle_fists_la</quirk>
+		<quirk>battle_fists_ra</quirk>
+		<quirk>rugged_1</quirk>
+		<quirk>ubiquitous_clan</quirk>
+		<quirk>ubiquitous_is</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>jettison_capable</weaponQuirkName>
+			<location>RA</location>
+			<slot>4</slot>
+			<weaponName>Large Laser</weaponName>
+		</weaponQuirk>
+	</unit>
+	
+	<unit>
+		<chassis>Griffin</chassis>
+		<model>GRF-1S</model>
+		<unitType>Mech</unitType>
+		<quirk>battle_fists_la</quirk>
+		<quirk>battle_fists_ra</quirk>
+		<quirk>rugged_1</quirk>
+		<quirk>ubiquitous_clan</quirk>
+		<quirk>ubiquitous_is</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>jettison_capable</weaponQuirkName>
+			<location>RA</location>
+			<slot>4</slot>
+			<weaponName>Large Laser</weaponName>
+		</weaponQuirk>
+	</unit>
+	
+	<unit>
+		<chassis>Griffin</chassis>
+		<model>GRF-2N2</model>
+		<unitType>Mech</unitType>
+		<quirk>battle_fists_la</quirk>
+		<quirk>battle_fists_ra</quirk>
+		<quirk>rugged_1</quirk>
+		<quirk>ubiquitous_clan</quirk>
+		<quirk>ubiquitous_is</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>jettison_capable</weaponQuirkName>
+			<location>RA</location>
+			<slot>4</slot>
+			<weaponName>PPC</weaponName>
+		</weaponQuirk>
+	</unit>
+
+	<unit>
+		<chassis>Griffin</chassis>
+		<model>GRF-3N</model>
+		<unitType>Mech</unitType>
+		<quirk>battle_fists_la</quirk>
+		<quirk>battle_fists_ra</quirk>
+		<quirk>rugged_1</quirk>
+		<quirk>ubiquitous_clan</quirk>
+		<quirk>ubiquitous_is</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>jettison_capable</weaponQuirkName>
+			<location>RA</location>
+			<slot>4</slot>
+			<weaponName>ISERPPC</weaponName>
+		</weaponQuirk>
+	</unit>
+		
+	<unit>
+		<chassis>Griffin</chassis>
+		<model>GRF-3RG</model>
+		<unitType>Mech</unitType>
+		<quirk>battle_fists_la</quirk>
+		<quirk>battle_fists_ra</quirk>
+		<quirk>rugged_1</quirk>
+		<quirk>ubiquitous_clan</quirk>
+		<quirk>ubiquitous_is</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>jettison_capable</weaponQuirkName>
+			<location>RA</location>
+			<slot>4</slot>
+			<weaponName>ISLargePulseLaser</weaponName>
+		</weaponQuirk>
+	</unit>
+
+	<unit>
+		<chassis>Griffin</chassis>
+		<model>GRF-5K</model>
+		<unitType>Mech</unitType>
+		<quirk>battle_fists_la</quirk>
+		<quirk>battle_fists_ra</quirk>
+		<quirk>rugged_1</quirk>
+		<quirk>ubiquitous_clan</quirk>
+		<quirk>ubiquitous_is</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>jettison_capable</weaponQuirkName>
+			<location>RT</location>
+			<slot>8</slot>
+			<weaponName>LRM 10</weaponName>
+		</weaponQuirk>
+	</unit>
+		
+	<unit>
+		<chassis>Griffin</chassis>
+		<model>GRF-6CS</model>
+		<unitType>Mech</unitType>
+		<quirk>battle_fists_la</quirk>
+		<quirk>battle_fists_ra</quirk>
+		<quirk>rugged_1</quirk>
+		<quirk>ubiquitous_clan</quirk>
+		<quirk>ubiquitous_is</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>jettison_capable</weaponQuirkName>
+			<location>RA</location>
+			<slot>4</slot>
+			<weaponName>ISERPPC</weaponName>
+		</weaponQuirk>
+	</unit>
+	
+	<unit>
+		<chassis>Griffin</chassis>
+		<model>GRF-6R</model>
+		<unitType>Mech</unitType>
+		<quirk>battle_fists_la</quirk>
+		<quirk>battle_fists_ra</quirk>
+		<quirk>rugged_1</quirk>
+		<quirk>ubiquitous_clan</quirk>
+		<quirk>ubiquitous_is</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>jettison_capable</weaponQuirkName>
+			<location>RA</location>
+			<slot>4</slot>
+			<weaponName>ISRotaryAC2</weaponName>
+		</weaponQuirk>
+	</unit>
+
+
+
+
+
+	<unit>
+		<chassis>Griffin</chassis>
+		<model>GRF-4N</model>
+		<unitType>Mech</unitType>
+		<quirk>battle_fists_la</quirk>
+		<quirk>battle_fists_ra</quirk>
+		<quirk>rugged_1</quirk>
+		<quirk>ubiquitous_clan</quirk>
+		<quirk>ubiquitous_is</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>jettison_capable</weaponQuirkName>
+			<location>RA</location>
+			<slot>4</slot>
+			<weaponName>ISPlasmaRifle</weaponName>
+		</weaponQuirk>
+	</unit>
+
+	<unit>
+		<chassis>Griffin</chassis>
+		<model>GRF-5L</model>
+		<unitType>Mech</unitType>
+		<quirk>battle_fists_la</quirk>
+		<quirk>battle_fists_ra</quirk>
+		<quirk>rugged_1</quirk>
+		<quirk>ubiquitous_clan</quirk>
+		<quirk>ubiquitous_is</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>jettison_capable</weaponQuirkName>
+			<location>RA</location>
+			<slot>7</slot>
+			<weaponName>ISPlasmaRifle</weaponName>
+		</weaponQuirk>
+	</unit>
+
+	<unit>
+		<chassis>Griffin</chassis>
+		<model>GRF-6S2</model>
+		<unitType>Mech</unitType>
+		<quirk>battle_fists_la</quirk>
+		<quirk>battle_fists_ra</quirk>
+		<quirk>rugged_1</quirk>
+		<quirk>ubiquitous_clan</quirk>
+		<quirk>ubiquitous_is</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>jettison_capable</weaponQuirkName>
+			<location>RA</location>
+			<slot>4</slot>
+			<weaponName>ISERPPC</weaponName>
+		</weaponQuirk>
+	</unit>
+
+	<unit>
+		<chassis>Griffin</chassis>
+		<model>GRF-3M</model>
+		<unitType>Mech</unitType>
+		<quirk>battle_fists_la</quirk>
+		<quirk>battle_fists_ra</quirk>
+		<quirk>rugged_1</quirk>
+		<quirk>ubiquitous_clan</quirk>
+		<quirk>ubiquitous_is</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>jettison_capable</weaponQuirkName>
+			<location>RA</location>
+			<slot>7</slot>
+			<weaponName>ISERPPC</weaponName>
+		</weaponQuirk>
+	</unit>
+
+	<unit>
+		<chassis>Griffin</chassis>
 		<model>GRF-1DS</model>
 		<unitType>Mech</unitType>
 		<quirk>battle_fists_la</quirk>
@@ -7068,6 +7206,12 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>rugged_1</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>jettison_capable</weaponQuirkName>
+			<location>RA</location>
+			<slot>7</slot>
+			<weaponName>ISLargePulseLaser</weaponName>
+		</weaponQuirk>
 	</unit>
 
 	<unit>
@@ -7079,6 +7223,12 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>rugged_1</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>jettison_capable</weaponQuirkName>
+			<location>RA</location>
+			<slot>4</slot>
+			<weaponName>PPC</weaponName>
+		</weaponQuirk>
 	</unit>
 
 	<unit>
@@ -7090,6 +7240,12 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>rugged_1</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>jettison_capable</weaponQuirkName>
+			<location>RA</location>
+			<slot>7</slot>
+			<weaponName>ISLightGaussRifle</weaponName>
+		</weaponQuirk>
 	</unit>
 
 	<unit>
@@ -7101,6 +7257,12 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>rugged_1</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>jettison_capable</weaponQuirkName>
+			<location>RA</location>
+			<slot>4</slot>
+			<weaponName>ISERPPC</weaponName>
+		</weaponQuirk>
 	</unit>
 
 	<unit>
@@ -7112,6 +7274,12 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>rugged_1</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>jettison_capable</weaponQuirkName>
+			<location>RA</location>
+			<slot>4</slot>
+			<weaponName>ISSNPPC</weaponName>
+		</weaponQuirk>
 	</unit>
 
 	<unit>
@@ -7123,6 +7291,12 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>rugged_1</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>jettison_capable</weaponQuirkName>
+			<location>RA</location>
+			<slot>4</slot>
+			<weaponName>ISERPPC</weaponName>
+		</weaponQuirk>
 	</unit>
 
 	<unit>
@@ -7134,17 +7308,12 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>rugged_1</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
-	</unit>
-
-	<unit>
-		<chassis>Griffin</chassis>
-		<model>GRF-6S</model>
-		<unitType>Mech</unitType>
-		<quirk>battle_fists_la</quirk>
-		<quirk>battle_fists_ra</quirk>
-		<quirk>rugged_1</quirk>
-		<quirk>ubiquitous_clan</quirk>
-		<quirk>ubiquitous_is</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>jettison_capable</weaponQuirkName>
+			<location>RA</location>
+			<slot>4</slot>
+			<weaponName>ISSNPPC</weaponName>
+		</weaponQuirk>
 	</unit>
 
 	<unit>
@@ -7156,18 +7325,31 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>rugged_1</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>jettison_capable</weaponQuirkName>
+			<location>RA</location>
+			<slot>4</slot>
+			<weaponName>ISSNPPC</weaponName>
+		</weaponQuirk>
 	</unit>
 
 	<unit>
 		<chassis>Griffin</chassis>
-		<model>GRF-1E 'Sparky'</model>
+		<model>GRF-6S</model>
 		<unitType>Mech</unitType>
 		<quirk>battle_fists_la</quirk>
 		<quirk>battle_fists_ra</quirk>
 		<quirk>rugged_1</quirk>
 		<quirk>ubiquitous_clan</quirk>
 		<quirk>ubiquitous_is</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>jettison_capable</weaponQuirkName>
+			<location>RA</location>
+			<slot>4</slot>
+			<weaponName>ISERPPC</weaponName>
+		</weaponQuirk>
 	</unit>
+
 
 	<unit>
 		<chassis>Griffin IIC</chassis>
@@ -8157,6 +8339,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 	<unit>
 		<chassis>Icestorm</chassis>
 		<unitType>Mech</unitType>
+		<quirk>imp_sensors</quirk>
 		<quirk>rugged_1</quirk>
 	</unit>
 

@@ -2062,6 +2062,11 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     @Override
+    public boolean isNightwalker() {
+        return false;
+    }
+
+    @Override
     public boolean isSpheroid() {
         return spheroid;
     }

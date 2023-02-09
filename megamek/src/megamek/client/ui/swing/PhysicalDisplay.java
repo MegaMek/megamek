@@ -16,9 +16,9 @@ package megamek.client.ui.swing;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
+import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.widget.IndexedRadioButton;
 import megamek.client.ui.swing.widget.MegamekButton;
-import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
 import megamek.common.actions.*;
 import megamek.common.enums.AimingMode;
@@ -30,6 +30,9 @@ import org.apache.logging.log4j.LogManager;
 import javax.swing.*;
 import java.awt.event.*;
 import java.util.*;
+
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
 
 public class PhysicalDisplay extends StatusBarPhaseDisplay {
     private static final long serialVersionUID = -3274750006768636001L;
@@ -61,8 +64,6 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
 
         String cmd;
 
-        private static final GUIPreferences GUIP = GUIPreferences.getInstance();
-
         /**
          * Priority that determines this buttons order
          */
@@ -90,6 +91,18 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         @Override
         public String toString() {
             return Messages.getString("PhysicalDisplay." + getCmd());
+        }
+
+        public String getHotKeyDesc() {
+            String result = "";
+
+            if (this == PHYSICAL_NEXT) {
+                result = "<BR>";
+                result += "&nbsp;&nbsp;" + "Next" + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT);
+                result += "&nbsp;&nbsp;" + "Previous" + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_UNIT);
+            }
+
+            return result;
         }
     }
 
@@ -119,27 +132,33 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
 
         attacks = new Vector<>();
 
-        buttons = new HashMap<>((int) (PhysicalCommand.values().length * 1.25 + 0.5));
-        for (PhysicalCommand cmd : PhysicalCommand.values()) {
-            String title = Messages.getString("PhysicalDisplay." + cmd.getCmd());
-            MegamekButton newButton = new MegamekButton(title,
-                    SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
-            String ttKey = "PhysicalDisplay." + cmd.getCmd() + ".tooltip";
-            if (Messages.keyExists(ttKey)) {
-                newButton.setToolTipText(Messages.getString(ttKey));
-            }
-            newButton.addActionListener(this);
-            newButton.setActionCommand(cmd.getCmd());
-            newButton.setEnabled(false);
-            buttons.put(cmd, newButton);
-        }
-        numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
+        setButtons();
+        setButtonsTooltips();
 
-        butDone.setText("<html><b>" + Messages.getString("PhysicalDisplay.Done") + "</b></html>");
+        butDone.setText("<html><body>" + Messages.getString("PhysicalDisplay.Done") + "</body></html>");
+        String f = guiScaledFontHTML(uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
+        butDone.setToolTipText("<html><body>" + f + "</body></html>");
         butDone.setEnabled(false);
 
         setupButtonPanel();
 
+    }
+
+    @Override
+    protected void setButtons() {
+        buttons = new HashMap<>((int) (PhysicalCommand.values().length * 1.25 + 0.5));
+        for (PhysicalCommand cmd : PhysicalCommand.values()) {
+            buttons.put(cmd, createButton(cmd.getCmd(), "PhysicalDisplay."));
+        }
+        numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
+    }
+
+    @Override
+    protected void setButtonsTooltips() {
+        for (PhysicalCommand cmd : PhysicalCommand.values()) {
+            String tt = createToolTip(cmd.getCmd(), "PhysicalDisplay.", cmd.getHotKeyDesc());
+            buttons.get(cmd).setToolTipText(tt);
+        }
     }
 
     @Override
@@ -1353,7 +1372,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             boolean enemy2 = o2.isEnemyOf(ce());
             if (enemy1 && enemy2) {
                 return 0;
-            } else if (enemy1 && !enemy2) {
+            } else if (enemy1) {
                 return -1;
             } else {
                 return 1;
@@ -1420,11 +1439,13 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             return;
         }
 
+        String s = getRemainingPlayerWithTurns();
+
         if (clientgui.getClient().isMyTurn()) {
             if (cen == Entity.NONE) {
                 beginMyTurn();
             }
-            setStatusBarText(Messages.getString("PhysicalDisplay.its_your_turn"));
+            setStatusBarText(Messages.getString("PhysicalDisplay.its_your_turn") + s);
         } else {
             endMyTurn();
             String playerName;
@@ -1433,7 +1454,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             } else {
                 playerName = "Unknown";
             }
-            setStatusBarText(Messages.getString("PhysicalDisplay.its_others_turn", playerName));
+            setStatusBarText(Messages.getString("PhysicalDisplay.its_others_turn", playerName) + s);
         }
     }
 

@@ -23,13 +23,22 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.swing.*;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.TurnTimer;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.*;
+import megamek.common.GameTurn;
+import megamek.common.Player;
+import megamek.common.enums.GamePhase;
+import megamek.common.KeyBindParser;
 import megamek.common.preference.*;
+
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
 
 /**
  * This is a parent class for the button display for each phase.  Every phase 
@@ -56,9 +65,9 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
      * @author arlith
      */
     public interface PhaseCommand {
-        public String getCmd();
-        public int getPriority();
-        public void setPriority(int p);
+        String getCmd();
+        int getPriority();
+        void setPriority(int p);
     }
     
     /**
@@ -119,12 +128,48 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         add(panStatus);
         
         GUIP.addPreferenceChangeListener(this);
+        KeyBindParser.addPreferenceChangeListener(this);
         ToolTipManager.sharedInstance().registerComponent(this);
     }
     
     
     /** Returns the list of buttons that should be displayed. */
     protected abstract ArrayList<MegamekButton> getButtonList();
+
+    /** set button that should be displayed. */
+    protected abstract void setButtons();
+
+    protected MegamekButton createButton(String cmd, String keyPrefix){
+        String title = Messages.getString(keyPrefix + cmd);
+        MegamekButton newButton = new MegamekButton(title, SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
+        newButton.addActionListener(this);
+        newButton.setActionCommand(cmd);
+        newButton.setEnabled(false);
+        return newButton;
+    }
+
+    /** set button tool tips that should be displayed. */
+    protected abstract void setButtonsTooltips();
+
+    protected String createToolTip(String cmd, String keyPrefix, String hotKeyDesc) {
+        String h  = "";
+        String ttKey = keyPrefix + cmd + ".tooltip";
+        String tt = hotKeyDesc;
+        if (!tt.isEmpty()) {
+            String title = Messages.getString(keyPrefix + cmd);
+            tt = guiScaledFontHTML(uiLightViolet()) + title + ": " + tt + "</FONT>";
+            tt += "<BR>";
+        }
+        if (Messages.keyExists(ttKey)) {
+            String msg_key = Messages.getString(ttKey);
+            tt += guiScaledFontHTML() + msg_key + "</FONT>";
+        }
+        if (!tt.isEmpty()) {
+            String b = "<BODY>" + tt + "</BODY>";
+            h = "<HTML>" + b + "</HTML>";
+        }
+        return h;
+    }
 
     /**
      * Adds buttons to the button panel.  The buttons to be added are retrieved
@@ -209,6 +254,8 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
             setupButtonPanel();
         } else if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
             adaptToGUIScale();
+        } else if (e.getName().equals(KeyBindParser.KEYBINDS_CHANGED)) {
+            setButtonsTooltips();
         }
     }
 
@@ -249,6 +296,63 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         if (tt != null) {
             tt.stopTimer();
             tt = null;
+        }
+    }
+
+    public String getRemainingPlayerWithTurns() {
+        String s = "";
+        int r = GUIP.getAdvancedPlayersRemainingToShow();
+        if (r > 0) {
+            String m = "";
+            int gti = clientgui.getClient().getGame().getTurnIndex();
+            List<GameTurn> gtv = clientgui.getClient().getGame().getTurnVector();
+            int j = 0;
+            for (int i = gti + 1; i < gtv.size(); i++) {
+                GameTurn nt = gtv.get(i);
+                Player p = clientgui.getClient().getGame().getPlayer(nt.getPlayerNum());
+                s += p.getName() + ", ";
+                j++;
+                if (j >= r) {
+                    if (gtv.size() > r) {
+                        m = ",...";
+                    }
+                    break;
+                }
+            }
+            if (!s.isEmpty()) {
+                String msg_turns = Messages.getString("StatusBarPhaseDisplay.nextPlayerTurns");
+                s = "  " + msg_turns + " [" + s.substring(0, s.length() - 2) + m + "]";
+            }
+        }
+        return s;
+    }
+
+    public void setStatusBarWithNotDonePlayers() {
+        GamePhase phase = clientgui.getClient().getGame().getPhase();
+        if (phase.isReport()) {
+            int r = GUIP.getAdvancedPlayersRemainingToShow();
+            if (r > 0) {
+                List<Player> playerList = clientgui.getClient().getGame().getPlayersList().stream().filter(p -> ((!p.isBot()) && (!p.isObserver()) && (!p.isDone()))).collect(Collectors.toList());
+                playerList.sort(Comparator.comparingInt(Player::getId));
+                String s = "";
+                String m = "";
+                int j = 0;
+                for (Player player : playerList) {
+                    s += player.getName() + ", ";
+                    j++;
+                    if (j >= r) {
+                        if (playerList.size() > r) {
+                            m = ",...";
+                        }
+                        break;
+                    }
+                }
+                if (!s.isEmpty()) {
+                    String msg_notdone = Messages.getString("StatusBarPhaseDisplay.notDone");
+                    s = "  " + msg_notdone + " [" + s.substring(0, s.length() - 2) + m + "]";
+                }
+                setStatusBarText(phase.toString() + s);
+            }
         }
     }
 }

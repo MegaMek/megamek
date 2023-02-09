@@ -5,9 +5,8 @@ Lupus B, 1
 Galahad (Glass Spider) (Standard), 2
 Masauwu (Standard), 3
 Excalibur EXC-B2b, 4
-Spirit Walker Prime, 5
+Spirit Walker Prime, 10
 Spirit Walker A, 5
-Spirit Walker B, 5
 Lupus Prime, 6
 Lupus A, 6
 Lupus B, 6

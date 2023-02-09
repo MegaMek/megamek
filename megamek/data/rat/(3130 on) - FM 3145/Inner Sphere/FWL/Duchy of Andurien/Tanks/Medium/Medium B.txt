@@ -5,7 +5,7 @@ Partisan AA Vehicle (Standard), 3
 Vedette Medium Tank (Light Gauss), 4
 Regulator Hovertank (Standard), 5
 Stygian Strike Tank (Standard), 6
-Condor Heavy Hover Tank (Upgrade) (Standard), 5
+Condor Heavy Hover Tank (Upgrade), 5
 Danai Support Vehicle (Standard), 4
 Maxim Mk II Transport (Standard), 3
 JES I Tactical Missile Carrier (3082 Upgrade), 2

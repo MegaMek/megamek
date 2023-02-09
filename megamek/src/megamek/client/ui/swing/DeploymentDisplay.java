@@ -23,8 +23,8 @@ import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
+import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.widget.MegamekButton;
-import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
@@ -36,6 +36,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.util.*;
+
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
 
 public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
@@ -84,6 +87,24 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         public String toString() {
             return Messages.getString("DeploymentDisplay." + getCmd());
         }
+
+        public String getHotKeyDesc() {
+            String result = "";
+
+            String msg_next= Messages.getString("Next");
+            String msg_previous = Messages.getString("Previous");
+
+            switch (this) {
+                case DEPLOY_NEXT:
+                    result += "&nbsp;&nbsp;" + msg_next + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT);
+                    result += "&nbsp;&nbsp;" + msg_previous + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_UNIT);
+                    break;
+                default:
+                    break;
+            }
+
+            return result;
+        }
     }
 
     protected Map<DeployCommand,MegamekButton> buttons;
@@ -100,26 +121,32 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         super(clientgui);
         clientgui.getClient().getGame().addGameListener(this);
         clientgui.getBoardView().addBoardViewListener(this);
-        setupStatusBar(Messages.getString("DeploymentDisplay.waitingForDeploymentPhase")); 
-        
+        setupStatusBar(Messages.getString("DeploymentDisplay.waitingForDeploymentPhase"));
+
+        setButtons();
+        setButtonsTooltips();
+
+        butDone.setText("<html><body>" + Messages.getString("DeploymentDisplay.Deploy") + "</body></html>");
+        String f = guiScaledFontHTML(uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
+        butDone.setToolTipText("<html><body>" + f + "</body></html>");
+        butDone.setEnabled(false);
+        setupButtonPanel();
+    }
+
+    @Override
+    protected void setButtons() {
         buttons = new HashMap<>((int) (DeployCommand.values().length * 1.25 + 0.5));
         for (DeployCommand cmd : DeployCommand.values()) {
-            String title = Messages.getString("DeploymentDisplay." + cmd.getCmd());
-            MegamekButton newButton = new MegamekButton(title, SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
-            String ttKey = "DeploymentDisplay." + cmd.getCmd() + ".tooltip";
-            if (Messages.keyExists(ttKey)) {
-                newButton.setToolTipText(Messages.getString(ttKey));
-            }
-            newButton.addActionListener(this);
-            newButton.setActionCommand(cmd.getCmd());
-            newButton.setEnabled(false);
-            buttons.put(cmd, newButton);
-        }          
+            buttons.put(cmd, createButton(cmd.getCmd(), "DeploymentDisplay."));
+        }
         numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
-
-        butDone.setText("<html><b>" + Messages.getString("DeploymentDisplay.Deploy") + "</b></html>");
-        butDone.setEnabled(false);
-        setupButtonPanel();        
+    }
+    @Override
+    protected void setButtonsTooltips() {
+        for (DeployCommand cmd : DeployCommand.values()) {
+            String tt = createToolTip(cmd.getCmd(), "DeploymentDisplay.", cmd.getHotKeyDesc());
+            buttons.get(cmd).setToolTipText(tt);
+        }
     }
     
     @Override
@@ -374,12 +401,14 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             // ignore
             return;
         }
+
+        String s = getRemainingPlayerWithTurns();
         
         if (clientgui.getClient().isMyTurn()) {
             if (cen == Entity.NONE) {
                 beginMyTurn();
             }
-            setStatusBarText(Messages.getString("DeploymentDisplay.its_your_turn")); 
+            setStatusBarText(Messages.getString("DeploymentDisplay.its_your_turn") + s);
         } else {
             endMyTurn();
             String playerName;
@@ -388,7 +417,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             } else {
                 playerName = "Unknown";
             }
-            setStatusBarText(Messages.getString("DeploymentDisplay.its_others_turn", playerName));
+            setStatusBarText(Messages.getString("DeploymentDisplay.its_others_turn", playerName) + s);
         }
         
     }

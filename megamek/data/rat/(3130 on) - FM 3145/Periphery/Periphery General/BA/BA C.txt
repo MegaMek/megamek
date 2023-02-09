@@ -1,6 +1,6 @@
 Periphery Battle Armor C - 3145
-Tunnel Rat Mining Exoskeleton IV [Battle Claw/LMG],1
-Tunnel Rat Mining Exoskeleton IV [Battle Claw/LMG],2
+Tunnel Rat IV Mining Exoskeleton [Battle Claw/LMG](Sqd4),1
+Tunnel Rat IV Mining Exoskeleton [Battle Claw/LMG](Sqd4),2
 Infiltrator Mk. I Battle Armor 'Waddle',3
 Trinity Medium Battle Armor (Asterion)[PPC],4
 Trinity Medium Battle Armor (Asterion)[MRR],5

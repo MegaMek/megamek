@@ -4,7 +4,7 @@ Partisan AA Vehicle (Standard), 2
 Ranger Armored Fighting Vehicle VV1 (Interdictor), 3
 Demon Medium Tank (Armor), 4
 JES I Tactical Missile Carrier (Standard), 5
-Condor Heavy Hover Tank (Upgrade) (Standard), 6
+Condor Heavy Hover Tank (Upgrade), 6
 Regulator II Hovertank (Standard), 5
 Joust Medium Tank BE701, 4
 SM1 Tank Destroyer SM1, 3

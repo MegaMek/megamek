@@ -1,0 +1,130 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+VTOL
+</UnitType>
+
+<Name>
+Onuris Attack VTOL
+</Name>
+
+<Model>
+Prime
+</Model>
+
+<mul id:>
+9417
+</mul id:>
+
+<year>
+3145
+</year>
+
+<originalBuildYear>
+3145
+</originalBuildYear>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+VTOL
+</motion_type>
+
+<transporters>
+BattleArmorHandles - troopers:-1
+</transporters>
+
+<cruiseMP>
+8
+</cruiseMP>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+3
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
+31
+20
+20
+15
+2
+</armor>
+
+<Body Equipment>
+ISVTOLJetBooster
+CLPlasmaCannonAmmo:OMNI
+CLPlasmaCannonAmmo:OMNI
+Clan Ammo SRM-6:OMNI
+Clan Ammo SRM-6:OMNI
+Clan Ammo SRM-6:OMNI
+</Body Equipment>
+
+<Front Equipment>
+CLPlasmaCannon:OMNI
+CLSRM6:OMNI
+CLSRM6:OMNI
+CLSRM6:OMNI
+CLSRM6:OMNI
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Rotor Equipment>
+</Rotor Equipment>
+
+<overview>
+The Omni Version of the Anhur Transport
+</overview>
+
+<manufacturer>
+Manufacturing Plant SFF-NG3
+</manufacturer>
+
+<primaryFactory>
+Ingersoll
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:Fusion 100 XL
+ARMOR:Gamma Special Reflective
+COMMUNICATIONS:Khan-series (Type 2)
+TARGETING:Mark 12 IHADS
+</systemManufacturers>
+
+<source>
+Rec Guide:ilClan #30 - Dark Age
+</source>
+
+<tonnage>
+30.0
+</tonnage>
+

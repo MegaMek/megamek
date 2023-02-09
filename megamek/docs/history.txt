@@ -4,7 +4,7 @@ VERSION HISTORY:
 + PR #4062: Add OS Thunderbolts
 + Issue #2652: TacOps BA crits
 + Issue #2945: RHS failure chance errata
-+ PRs/Issues #4070, #4069, #4065, #4067, #4073: Alpha Strike conversion corrections (see Issue #3961)
++ PRs/Issues #4070, #4069, #4065, #4067, #4073, #4145: Alpha Strike conversion corrections (see Issue #3961)
 + Issue #4028: Update altitude bomb scatter handling to current errata (by MoF); 
                BA micro bomb attacks now use gunnery and only scatter one space per TW p228
 + PR #4077: Fix SmallCraft and DropShip landing lengths
@@ -17,6 +17,8 @@ VERSION HISTORY:
 + PR #4096: Fix Unit Display weapon order bugs
 + PR #4078: Various unit tooltip improvements
 + PR #4030: show game board in all the game phases 
++ PR #4125: Add tooltips showing shortcut keys to the in-game action buttons
++ Issue #4090: Fix TO:AR lighting conditions piloting skill and MP penalties
 + Issue #4093: (Errata) Ensure a minimum weight and crit count of 1 for MASC
 + Data: Various Data fixes (RAT name shortening, New Rec Guides)
 + PR #4100: Base Components: Adding JDisableablePanel
@@ -33,6 +35,17 @@ VERSION HISTORY:
 + PR #4132: Fixing Tripod Movement and Mini Crit Display
 + Issue #4143: Fixing Advanced Search Dialog Panels Expanding on Reload
 + PR #4101: SPA: Environmental Specialist
++ PR #4102: SPA: Terrain Master (Nightwalker)
++ PR #4142: Fix threading issues and add a SkinnedJPanel
++ PR #4123: Expanding Primary Dialog Preferences
++ Issue #4148: Infantry Fortify option takes one turn instead of three
++ Issue #4032: Filter Tactical Genius Double Blind Report Message
++ Issue #3151: Unit Display Weapon List Count Option
++ Issue #4160: Correct issue with weapon list visible row count
++ Issue #4128: Status bar update for players remaining
++ Issue #4129: Unit tool tip fixes #4129
++ Issue #4158: Fixing a bug in using ammo from a trailer
++ Issue #3026: Vehicles with suitable equipment are now able to create Trenches/Fieldworks
 + Updating XStream to 1.4.19 from 1.4.14
  
 0.49.11 (2022-12-22 1500 UTC)

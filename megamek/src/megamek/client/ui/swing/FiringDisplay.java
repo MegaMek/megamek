@@ -22,7 +22,6 @@ import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
-import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
 import megamek.common.actions.*;
 import megamek.common.enums.AimingMode;
@@ -40,6 +39,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.event.*;
 import java.util.*;
+
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
 
 public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener, ListSelectionListener {
     private static final long serialVersionUID = -5586388490027013723L;
@@ -102,6 +104,67 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         public String toString() {
             return Messages.getString("FiringDisplay." + getCmd());
         }
+
+        public String getHotKeyDesc() {
+            String result = "";
+
+            String msg_left = Messages.getString("Left");
+            String msg_right = Messages.getString("Right");
+            String msg_next= Messages.getString("Next");
+            String msg_previous = Messages.getString("Previous");
+            String msg_valid = Messages.getString("FiringDisplay.FireNextTarget.tooltip.Valid");
+            String msg_noallies = Messages.getString("FiringDisplay.FireNextTarget.tooltip.NoAllies");
+
+
+            switch (this) {
+                case FIRE_NEXT:
+                    result = "<BR>";
+                    result += "&nbsp;&nbsp;" + msg_next + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT);
+                    result += "&nbsp;&nbsp;" + msg_previous + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_UNIT);
+                    break;
+                case FIRE_TWIST:
+                    result = "<BR>";
+                    result += "&nbsp;&nbsp;" + msg_left + ": " + KeyCommandBind.getDesc(KeyCommandBind.TWIST_LEFT);
+                    result += "&nbsp;&nbsp;" + msg_right + ": " + KeyCommandBind.getDesc(KeyCommandBind.TWIST_RIGHT);
+                    break;
+                case FIRE_FIRE:
+                    result = "<BR>";
+                    result += "&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.FIRE);
+                    break;
+                case FIRE_NEXT_TARG:
+                    result = "<BR>";
+                    result += "&nbsp;&nbsp;" + msg_next + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_TARGET);
+                    result += "&nbsp;&nbsp;" + msg_previous + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_TARGET);
+                    result += "<BR>";
+                    result += "&nbsp;&nbsp;" + msg_valid + " " + msg_next + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_TARGET_VALID);
+                    result += "&nbsp;&nbsp;" + msg_previous + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_TARGET_VALID);
+                    result += "<BR>";
+                    result += "&nbsp;&nbsp;" + msg_noallies + " " + msg_next + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_TARGET_NOALLIES);
+                    result += "&nbsp;&nbsp;" + msg_previous + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_TARGET_NOALLIES);
+                    result += "<BR>";
+                    result += "&nbsp;&nbsp;" + msg_valid + " (" + msg_noallies + ") " + msg_next + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_TARGET_VALID_NO_ALLIES);
+                    result += "&nbsp;&nbsp;" + msg_previous + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_TARGET_VALID_NO_ALLIES);
+                    break;
+                case FIRE_SKIP:
+                    result = "<BR>";
+                    result +=  "&nbsp;&nbsp;" + msg_next + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_WEAPON);
+                    result += "&nbsp;&nbsp;" + msg_previous + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_WEAPON);
+                    break;
+                case FIRE_MODE:
+                    result = "<BR>";
+                    result += "&nbsp;&nbsp;" + msg_next + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_MODE);
+                    result += "&nbsp;&nbsp;" + msg_previous + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_MODE);
+                    break;
+                case FIRE_CANCEL:
+                    result = "<BR>";
+                    result += "&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.CANCEL);
+                    break;
+                default:
+                    break;
+            }
+
+            return result;
+        }
     }
 
     // buttons
@@ -153,23 +216,12 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
 
         setupStatusBar(Messages.getString("FiringDisplay.waitingForFiringPhase"));
 
-        buttons = new HashMap<>((int) (FiringCommand.values().length * 1.25 + 0.5));
-        for (FiringCommand cmd : FiringCommand.values()) {
-            String title = Messages.getString("FiringDisplay." + cmd.getCmd());
-            MegamekButton newButton = new MegamekButton(title,
-                    SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
-            String ttKey = "FiringDisplay." + cmd.getCmd() + ".tooltip";
-            if (Messages.keyExists(ttKey)) {
-                newButton.setToolTipText(Messages.getString(ttKey));
-            }
-            newButton.addActionListener(this);
-            newButton.setActionCommand(cmd.getCmd());
-            newButton.setEnabled(false);
-            buttons.put(cmd, newButton);
-        }
-        numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
+        setButtons();
+        setButtonsTooltips();
 
-        butDone.setText("<html><b>" + Messages.getString("FiringDisplay.Done") + "</b></html>");
+        butDone.setText("<html><body>" + Messages.getString("FiringDisplay.Done") + "</body></html>");
+        String f = guiScaledFontHTML(uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
+        butDone.setToolTipText("<html><body>" + f + "</body></html>");
         butDone.setEnabled(false);
 
         setupButtonPanel();
@@ -183,6 +235,23 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         ash = new AimedShotHandler(this);
 
         registerKeyCommands();
+    }
+
+    @Override
+    protected void setButtons() {
+        buttons = new HashMap<>((int) (FiringCommand.values().length * 1.25 + 0.5));
+        for (FiringCommand cmd : FiringCommand.values()) {
+            buttons.put(cmd, createButton(cmd.getCmd(), "FiringDisplay."));
+        }
+        numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
+    }
+
+    @Override
+    protected void setButtonsTooltips() {
+        for (FiringCommand cmd : FiringCommand.values()) {
+            String tt = createToolTip(cmd.getCmd(), "FiringDisplay.", cmd.getHotKeyDesc());
+            buttons.get(cmd).setToolTipText(tt);
+        }
     }
 
     /**
@@ -1187,6 +1256,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                     waa2.setAimingMode(waa.getAimingMode());
                     waa2.setOtherAttackInfo(waa.getOtherAttackInfo());
                     waa2.setAmmoId(waa.getAmmoId());
+                    waa2.setAmmoMunitionType(waa.getAmmoMunitionType());
                     waa2.setAmmoCarrier(waa.getAmmoCarrier());
                     waa2.setBombPayload(waa.getBombPayload());
                     waa2.setStrafing(waa.isStrafing());
@@ -1216,6 +1286,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                     waa2.setAimingMode(waa.getAimingMode());
                     waa2.setOtherAttackInfo(waa.getOtherAttackInfo());
                     waa2.setAmmoId(waa.getAmmoId());
+                    waa2.setAmmoMunitionType(waa.getAmmoMunitionType());
                     waa2.setAmmoCarrier(waa.getAmmoCarrier());
                     waa2.setBombPayload(waa.getBombPayload());
                     waa2.setStrafing(waa.isStrafing());
@@ -1568,8 +1639,10 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                 Mounted ammoMount = mounted.getLinked();
                 AmmoType ammoType = (AmmoType) ammoMount.getType();
                 waa.setAmmoId(ammoMount.getEntity().getEquipmentNum(ammoMount));
+                long ammoMunitionType = ammoType.getMunitionType();
+                waa.setAmmoMunitionType(ammoMunitionType);
                 waa.setAmmoCarrier(ammoMount.getEntity().getId());
-                if (((ammoType.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB) &&
+                if (((ammoMunitionType == AmmoType.M_THUNDER_VIBRABOMB) &&
                         ((ammoType.getAmmoType() == AmmoType.T_LRM)
                         || (ammoType.getAmmoType() == AmmoType.T_LRM_IMP)
                         || (ammoType.getAmmoType() == AmmoType.T_MML)))
@@ -2118,11 +2191,12 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         }
 
         if (clientgui.getClient().getGame().getPhase().isFiring()) {
+            String s = getRemainingPlayerWithTurns();
             if (clientgui.getClient().isMyTurn()) {
                 if (cen == Entity.NONE) {
                     beginMyTurn();
                 }
-                setStatusBarText(Messages.getString("FiringDisplay.its_your_turn"));
+                setStatusBarText(Messages.getString("FiringDisplay.its_your_turn") + s);
             } else {
                 endMyTurn();
                 String playerName;
@@ -2131,7 +2205,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                 } else {
                     playerName = "Unknown";
                 }
-                setStatusBarText(Messages.getString("FiringDisplay.its_others_turn", playerName));
+                setStatusBarText(Messages.getString("FiringDisplay.its_others_turn", playerName) + s);
             }
         }
     }

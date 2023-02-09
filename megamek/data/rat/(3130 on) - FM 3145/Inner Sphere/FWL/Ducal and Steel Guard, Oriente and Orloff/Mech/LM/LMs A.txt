@@ -4,7 +4,7 @@ Locust LCT-5W2,2
 Gambit GBT-1G,3
 Hermes HER-4K,4
 Havoc HVC-P6,5
-Phoenix Hawk L PXH-11K,6
+Phoenix Hawk L 'Fenikkusu Taka' PXH-11K,6
 Wasp WSP-8T,5
 Hammer HMR-3C 'Claw-Hammer',4
 Crimson Hawk 4,3

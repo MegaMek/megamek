@@ -297,11 +297,11 @@ public class ASSpecialAbilityConverter {
     protected void processATMO() { }
 
     protected boolean hasSoaCapableEngine() {
-        if (entity.hasEngine()) {
+        if (!entity.hasEngine()) {
             return false;
         }
         int engineType = entity.getEngine().getEngineType();
-        return (engineType != Engine.COMBUSTION_ENGINE) && (engineType != Engine.STEAM);
+        return entity.getEngine().isFusion() || (engineType == Engine.FUEL_CELL) || (engineType == Engine.FISSION);
     }
 
     protected void processUnitFeatures() {

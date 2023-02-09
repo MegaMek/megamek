@@ -165,6 +165,7 @@ public class OptionsConstants {
     public static final String PILOT_TM_FOREST_RANGER = "tm_forest_ranger";
     public static final String PILOT_TM_FROGMAN = "tm_frogman";
     public static final String PILOT_TM_MOUNTAINEER = "tm_mountaineer";
+    public static final String PILOT_TM_NIGHTWALKER = "tm_nightwalker";
     public static final String PILOT_TM_SWAMP_BEAST = "tm_swamp_beast";
     // public static final String PILOT_WIND_WALKER = "wind_walker";
     public static final String PILOT_ZWEIHANDER = "zweihander";

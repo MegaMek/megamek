@@ -1,6 +1,6 @@
 3085 Taurian Concordat Battle Armor C
 Infiltrator Mk. I Battle Armor 'Waddle',1
-Tunnel Rat Mining Exoskeleton IV [Armored Glove/GL],2
+Tunnel Rat IV Mining Exoskeleton [Armored Glove/GL](Sqd4),2
 Purifier Adaptive Battle Armor [Laser],3
 Gray Death Scout Suit (Standard),4
 IS Standard Battle Armor [Laser],5

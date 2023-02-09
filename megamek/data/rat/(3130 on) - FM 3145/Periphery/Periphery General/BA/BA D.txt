@@ -1,8 +1,8 @@
 Periphery Battle Armor D - 3145
 Ailette Zero-G Engineering Exoskeleton (Standard),1
 Gorilla Exoskeleton 'Falcata',2
-Tunnel Rat Mining Exoskeleton IV [Battle Claw/LMG],3
-Tunnel Rat Mining Exoskeleton IV [Battle Claw/LMG],4
+Tunnel Rat IV Mining Exoskeleton [Battle Claw/LMG](Sqd4),3
+Tunnel Rat IV Mining Exoskeleton [Battle Claw/LMG](Sqd4),4
 Infiltrator Mk. I Battle Armor 'Waddle',5
 Trinity Medium Battle Armor (Asterion)[PPC],6
 Trinity Medium Battle Armor (Asterion)[MRR],5

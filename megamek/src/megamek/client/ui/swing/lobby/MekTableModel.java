@@ -189,8 +189,10 @@ public class MekTableModel extends AbstractTableModel {
         } else {
             MapSettings mset = chatLounge.mapSettings;
             Player lPlayer = clientGui.getClient().getLocalPlayer();
-            unitTooltips.add( HTML_BEGIN + UnitToolTip.getEntityTipLobby(entity, lPlayer, mset) + HTML_END);
-            pilotTooltips.add(HTML_BEGIN + PilotToolTip.getPilotTipDetailed(entity, true) + PilotToolTip.getCrewAdvs(entity, true) + HTML_END);
+            String s = UnitToolTip.getEntityTipLobby(entity, lPlayer, mset).toString();
+            unitTooltips.add( HTML_BEGIN + s + HTML_END);
+            s = PilotToolTip.getPilotTipDetailed(entity, true).toString() + PilotToolTip.getCrewAdvs(entity, true).toString();
+            pilotTooltips.add(HTML_BEGIN + s + HTML_END);
         }
         final boolean rpgSkills = clientGui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
         if (chatLounge.isCompact()) {

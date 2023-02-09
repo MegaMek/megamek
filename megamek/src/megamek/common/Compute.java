@@ -3499,6 +3499,7 @@ public class Compute {
                             // Load weapon with specified bin
                             shooter.loadWeapon(shooter.getEquipment(atk.getWeaponId()), abin);
                             atk.setAmmoId(shooter.getEquipmentNum(abin));
+                            atk.setAmmoMunitionType(abin_type.getMunitionType());
 
                             // Get expected damage
                             ex_damage = Compute.getExpectedDamage(cgame, atk, false);
@@ -3680,9 +3681,9 @@ public class Compute {
 
             // Now that the best bin has been found, reload the weapon with
             // it
-            shooter.loadWeapon(shooter.getEquipment(atk.getWeaponId()),
-                               best_bin);
+            shooter.loadWeapon(shooter.getEquipment(atk.getWeaponId()), best_bin);
             atk.setAmmoId(shooter.getEquipmentNum(best_bin));
+            atk.setAmmoMunitionType(abin_type.getMunitionType());
         }
         return max_damage;
     }

@@ -280,6 +280,7 @@ public class LRMSwarmHandler extends LRMHandler {
                 newWaa.setOriginalTargetId(waa.getOriginalTargetId());
                 newWaa.setOriginalTargetType(waa.getOriginalTargetType());
                 newWaa.setAmmoId(waa.getAmmoId());
+                newWaa.setAmmoMunitionType(waa.getAmmoMunitionType());
                 newWaa.setAmmoCarrier(waa.getAmmoCarrier());
                 Mounted m = ae.getEquipment(waa.getWeaponId());
                 Weapon w = (Weapon) m.getType();
@@ -384,6 +385,7 @@ public class LRMSwarmHandler extends LRMHandler {
             newWaa.setOriginalTargetId(waa.getOriginalTargetId());
             newWaa.setOriginalTargetType(waa.getOriginalTargetType());
             newWaa.setAmmoId(waa.getAmmoId());
+            newWaa.setAmmoMunitionType(waa.getAmmoMunitionType());
             newWaa.setAmmoCarrier(waa.getAmmoCarrier());
             Mounted m = ae.getEquipment(waa.getWeaponId());
             Weapon w = (Weapon) m.getType();

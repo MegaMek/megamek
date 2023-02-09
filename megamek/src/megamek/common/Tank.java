@@ -17,6 +17,7 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.battlevalue.CombatVehicleBVCalculator;
 import megamek.common.cost.CombatVehicleCostCalculator;
 import megamek.common.enums.AimingMode;
+import megamek.common.enums.GamePhase;
 import megamek.common.enums.MPBoosters;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
@@ -83,6 +84,13 @@ public class Tank extends Entity {
     public static final int CRIT_TURRET_LOCK = 13;
     public static final int CRIT_TURRET_DESTROYED = 14;
 
+    //Fortify terrain just like infantry
+    public static final int DUG_IN_NONE = 0;
+    public static final int DUG_IN_FORTIFYING1 = 1;
+    public static final int DUG_IN_FORTIFYING2 = 2;
+    public static final int DUG_IN_FORTIFYING3 = 3;
+    private int dugIn = DUG_IN_NONE;
+
     // tanks have no critical slot limitations
     private static final int[] NUM_OF_SLOTS = { 25, 25, 25, 25, 25, 25, 25 };
 
@@ -93,9 +101,9 @@ public class Tank extends Entity {
 
     private static String[] LOCATION_NAMES_DUAL_TURRET = { "Body", "Front",
             "Right", "Left", "Rear", "Rear Turret", "Front Turret" };
-    
+
     // maps ToHitData - SIDE_X constants to LOC_X constants here for hull down fixed side hit locations
-    protected static final Map<Integer, Integer> SIDE_LOC_MAPPING = 
+    protected static final Map<Integer, Integer> SIDE_LOC_MAPPING =
         Map.of(ToHitData.SIDE_FRONT, LOC_FRONT,
                 ToHitData.SIDE_LEFT, LOC_LEFT,
                 ToHitData.SIDE_RIGHT, LOC_RIGHT,
@@ -226,17 +234,17 @@ public class Tank extends Entity {
     public void setMotivePenalty(int p) {
         motivePenalty = p;
     }
-    
+
     private static final TechAdvancement TA_COMBAT_VEHICLE = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_NONE, 2470, 2490).setProductionFactions(F_TH)
             .setTechRating(RATING_E).setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
             .setStaticTechLevel(SimpleTechLevel.INTRO);
-    
+
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
         return TA_COMBAT_VEHICLE;
     }
-    
+
     //Advanced turrets
     public static TechAdvancement getDualTurretTA() {
         return new TechAdvancement(TECH_BASE_ALL)
@@ -253,7 +261,7 @@ public class Tank extends Entity {
             ctl.addComponent(getDualTurretTA());
         }
     }
-    
+
     /**
      * Returns this entity's walking/cruising mp, factored for heat, extreme
      * temperatures, and gravity.
@@ -308,7 +316,7 @@ public class Tank extends Entity {
         if (gravity) {
             j = applyGravityEffectsOnMP(j);
         }
-        
+
         //If the unit is towing trailers, adjust its walkMP, TW p205
         if (!getAllTowedUnits().isEmpty()) {
             double trainWeight = getWeight();
@@ -334,7 +342,7 @@ public class Tank extends Entity {
         return j;
 
     }
-    
+
     @Override
     public boolean isEligibleForPavementBonus() {
         return movementMode == EntityMovementMode.TRACKED || movementMode == EntityMovementMode.WHEELED || movementMode == EntityMovementMode.HOVER;
@@ -379,7 +387,7 @@ public class Tank extends Entity {
         }
         return 7;
     }
-    
+
     @Override
     public int getBodyLocation() {
         return LOC_BODY;
@@ -462,11 +470,11 @@ public class Tank extends Entity {
     public void setCommanderHit(boolean hit) {
         commanderHit = hit;
     }
-    
+
     public boolean isUsingConsoleCommander() {
         return usingConsoleCommander;
     }
-    
+
     public void setUsingConsoleCommander(boolean b) {
         usingConsoleCommander = b;
     }
@@ -540,7 +548,7 @@ public class Tank extends Entity {
         }
         return m_bImmobile || super.isImmobile(checkCrew);
     }
-    
+
     /**
      * Whether this unit is irreversibly immobilized for the rest of the game.
      * Tanks have some additional criteria.
@@ -549,7 +557,7 @@ public class Tank extends Entity {
     public boolean isPermanentlyImmobilized(boolean checkCrew) {
         return super.isPermanentlyImmobilized(checkCrew) || isMovementHit();
     }
-    
+
     @Override
     public boolean hasCommandConsoleBonus() {
         if (!hasWorkingMisc(MiscType.F_COMMAND_CONSOLE) || isCommanderHit() || isUsingConsoleCommander()) {
@@ -664,11 +672,11 @@ public class Tank extends Entity {
                             || (hex.terrainLevel(Terrains.GEYSER) == 2);
                 }
             case HOVER:
-                if (isCrossCountry && !isSuperHeavy()) {
+               if (isCrossCountry && !isSuperHeavy()) {
                     return (hex.terrainLevel(Terrains.MAGMA) > 1);
                 }
 
-                if (!isSuperHeavy()) {                    
+                if (!isSuperHeavy()) {
                     return (hex.containsTerrain(Terrains.WOODS) && !hexHasRoad && !scoutBikeIntoLightWoods)
                             || (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad)
                             || (hex.terrainLevel(Terrains.MAGMA) > 1)
@@ -780,6 +788,15 @@ public class Tank extends Entity {
     }
 
     @Override
+    public boolean isEligibleFor(GamePhase phase) {
+        if (dugIn != DUG_IN_NONE) {
+            return false;
+        } else {
+            return super.isEligibleFor(phase);
+        }
+    }
+
+    @Override
     public void newRound(int roundNumber) {
         super.newRound(roundNumber);
 
@@ -794,6 +811,22 @@ public class Tank extends Entity {
         if (!m_bTurretLocked) {
             setSecondaryFacing(getFacing());
         }
+
+        // Continue to fortify
+        if (dugIn != DUG_IN_NONE) {
+            dugIn++;
+            if (dugIn > DUG_IN_FORTIFYING3) {
+                dugIn = DUG_IN_NONE;
+            }
+        }
+    }
+
+    public void setDugIn(int i) {
+        dugIn = i;
+    }
+
+    public int getDugIn() {
+        return dugIn;
     }
 
     /**
@@ -852,7 +885,7 @@ public class Tank extends Entity {
     public boolean hasRearArmor(int loc) {
         return false;
     }
-    
+
     @Override
     public int firstArmorIndex() {
         return LOC_FRONT;
@@ -1274,7 +1307,7 @@ public class Tank extends Entity {
 
         return prd;
     }
-    
+
     @Override
     public boolean usesTurnMode() {
         return game != null && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TURN_MODE);
@@ -1529,7 +1562,7 @@ public class Tank extends Entity {
     public int getSuspensionFactor() {
         return getSuspensionFactor(getMovementMode(), weight);
     }
-    
+
     /**
      * Static method to calculate suspension factor without needing a vehicle
      */
@@ -2134,7 +2167,7 @@ public class Tank extends Entity {
             addTransporter(new ClampMountTank());
         }
     }
-    
+
     /**
      * Add a transporter for each trailer hitch the unit is equipped with, with a maximum of
      * one each in the front and the rear. Any tractor that does not have an explicit hitch
@@ -2164,7 +2197,7 @@ public class Tank extends Entity {
             }
         }
     }
-    
+
     /**
      * Check to see if the unit has a trailer hitch transporter already
      * We need this to prevent duplicate transporters being created
@@ -2185,7 +2218,7 @@ public class Tank extends Entity {
     public boolean canSpot() {
         return super.canSpot() && (getStunnedTurns() == 0);
     }
-    
+
     /**
      * Convenience function that determines if this tank can issue an "unjam weapon" command.
      * @return True if there are any jammed weapons and the crew isn't stunned
@@ -2193,8 +2226,8 @@ public class Tank extends Entity {
     public boolean canUnjamWeapon() {
         return !getJammedWeapons().isEmpty() && getStunnedTurns() <= 0;
     }
-    
-    /** 
+
+    /**
      * Convenience function that determines if this tank can issue a "clear turret" command.
      * @return True if there are any jammed turrets and the crew isn't stunned
      */
@@ -3033,12 +3066,12 @@ public class Tank extends Entity {
     public int getSpriteDrawPriority() {
         return 4;
     }
-    
+
     //Specific road/rail train rules
-    
+
     /**
      * Used to determine if this vehicle can be towed by a tractor
-     * 
+     *
      * @return Whether the unit is constructed as a trailer
      */
     @Override
@@ -3055,11 +3088,11 @@ public class Tank extends Entity {
     public void setTrailer(boolean trailer) {
         this.trailer = trailer;
     }
-    
+
     /**
-     * Used to determine if this vehicle can be the engine/tractor 
+     * Used to determine if this vehicle can be the engine/tractor
      * for a bunch of trailers
-     * 
+     *
      * @return
      */
     @Override

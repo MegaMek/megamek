@@ -526,6 +526,19 @@ public class MechSummaryCache {
             ms.setMyomerName("None");
         }
 
+        int lowerArms = 0;
+        int hands = 0;
+
+        if (e instanceof Mech) {
+            lowerArms += e.hasSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_RARM) ? 1 : 0;
+            lowerArms += e.hasSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_LARM) ? 1 : 0;
+            hands += e.hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM) ? 1 : 0;
+            hands += e.hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM) ? 1 : 0;
+        }
+
+        ms.setLowerArms(lowerArms);
+        ms.setHands(hands);
+
         double ts = e.getTroopCarryingSpace();
         ts += e.getPodMountedTroopCarryingSpace();
         ms.setTroopCarryingSpace(ts);

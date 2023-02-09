@@ -76,6 +76,8 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     private String engineName;
     private int gyroType;
     private String myomerName;
+    private int lowerArms;
+    private int hands;
     private double troopCarryingSpace;
     private int aSFBays;
     private int aSFDoors;
@@ -180,13 +182,9 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     }
 
     @Override
-    public int getMulId() {
-        return mulId;
-    }
+    public int getMulId() { return mulId; }
 
-    public String getUnitType() {
-        return unitType;
-    }
+    public String getUnitType() { return unitType; }
 
     public boolean isCanon() {
         return canon;
@@ -292,6 +290,14 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         return tankTurrets;
     }
 
+    public int getLowerArms() {
+        return lowerArms;
+    }
+
+    public int getHands() {
+        return hands;
+    }
+
     public double getTroopCarryingSpace() {
         return troopCarryingSpace;
     }
@@ -299,9 +305,11 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     public int getASFBays() {
         return aSFBays;
     }
+
     public int getASFDoors() {
         return aSFDoors;
     }
+
     public double getASFUnits() {
         return aSFUnits;
     }
@@ -309,9 +317,11 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     public int getSmallCraftBays() {
         return smallCraftBays;
     }
+
     public int getSmallCraftDoors() {
         return smallCraftDoors;
     }
+
     public double getSmallCraftUnits() {
         return smallCraftUnits;
     }
@@ -551,9 +561,11 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         tankTurrets = i;
     }
 
-    public void setTroopCarryingSpace(double d) {
-        troopCarryingSpace = d;
-    }
+    public void setLowerArms(int i) { lowerArms = i; }
+
+    public void setHands(int i) { hands = i; }
+
+    public void setTroopCarryingSpace(double d) { troopCarryingSpace = d; }
 
     public void setASFBays(int i) { aSFBays = i; }
 
@@ -687,9 +699,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         this.unitType = sUnitType;
     }
 
-    public void setSourceFile(File sSourceFile) {
-        this.sourceFile = sSourceFile;
-    }
+    public void setSourceFile(File sSourceFile) { this.sourceFile = sSourceFile; }
 
     public void setSource(String sSource) {
         this.source = sSource;

@@ -42,6 +42,10 @@ public class MechSearchFilter {
     public int iMilitary;
     public String sStartTankTurrets;
     public String sEndTankTurrets;
+    public String sStartLowerArms;
+    public String sEndLowerArms;
+    public String sStartHands;
+    public String sEndHands;
     public int iClanEngine;
     public int iOfficial;
     public int iCanon;
@@ -560,6 +564,14 @@ public class MechSearchFilter {
         }
 
         if (!isBetween(mech.getTankTurrets(), f.sStartTankTurrets, f.sEndTankTurrets)) {
+            return false;
+        }
+
+        if (!isBetween(mech.getLowerArms(), f.sStartLowerArms, f.sEndLowerArms)) {
+            return false;
+        }
+
+        if (!isBetween(mech.getHands(), f.sStartHands, f.sEndHands)) {
             return false;
         }
 

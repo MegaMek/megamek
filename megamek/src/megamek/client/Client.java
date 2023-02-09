@@ -454,14 +454,14 @@ public abstract class Client implements GameClient {
         @Override
         public void disconnected(DisconnectedEvent event) {
             // Always handle events on the event dispatch thread to be effectively
-            // single-threaded and  avoid threading issues.
+            // single-threaded and avoid threading issues.
             SwingUtilities.invokeLater(Client.this::disconnected);
         }
 
         @Override
         public void packetReceived(final PacketReceivedEvent event) {
             // Always handle packets on the event dispatch thread to be effectively
-            // single-threaded and  avoid threading issues.
+            // single-threaded and avoid threading issues.
             SwingUtilities.invokeLater(() -> handlePacket(event.getPacket()));
         }
     };

@@ -1396,5 +1396,4 @@ public class TwGameClient extends Client {
     public void setSkillGenerator(final AbstractSkillGenerator skillGenerator) {
         this.skillGenerator = skillGenerator;
     }
-
 }

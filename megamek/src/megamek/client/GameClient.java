@@ -132,5 +132,4 @@ public interface GameClient {
     Set<String> getAllCommandNames();
 
     //endregion
-
 }

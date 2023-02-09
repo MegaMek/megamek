@@ -35,8 +35,7 @@ import java.util.Collection;
 
 /**
  * This non-modal dialog shows stats of one or more AlphaStrike elements in the form of a table.
- * It shows a toggle to include pilot stats when converting the units from TW to
- * AS. It also allows export of the table data (optimized for import into Excel).
+ * It also allows export of the table data (optimized for import into Excel).
  */
 public class ASStatsDialog extends AbstractDialog {
     

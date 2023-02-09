@@ -74,7 +74,7 @@ public final class SBFFormationConverter {
                 }
             }
             SBFUnit convertedUnit = new SBFUnitConverter(thisUnit, subforce.getName(), thisUnitBaseSkill, report).createSbfUnit();
-            formation.getUnits().add(convertedUnit);
+            formation.addUnit(convertedUnit);
         }
         formation.setName(force.getName());
         calcSbfFormationStats();

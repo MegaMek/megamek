@@ -160,6 +160,10 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
         return Collections.unmodifiableList(units);
     }
 
+    void addUnit(SBFUnit newUnit) {
+        units.add(newUnit);
+    }
+
     public void setUnits(List<SBFUnit> units) {
         this.units = units;
     }
@@ -292,8 +296,6 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
         Object suaObject = specialAbilities.getSUA(sua);
         if (!sua.isValidAbilityObject(suaObject)) {
             return "ERROR - wrong ability object (" + sua + ")";
-        } else if (sua.isAnyOf(C3BSS, C3M, C3BSM, C3EM, INARC, CNARC, SNARC)) {
-            return sua.toString() + ((int) suaObject == 1 ? "" : (int) suaObject);
         } else if (sua.isAnyOf(CAP, SCAP, MSL)) {
             return sua.toString();
         } else if (sua == FLK) {
@@ -302,7 +304,7 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
         } else if (sua.isTransport()) {
             String result = sua + suaObject.toString();
             BattleForceSUA door = sua.getDoor();
-            if (this.isType(SBFElementType.LA)
+            if (isType(SBFElementType.LA)
                     && specialAbilities.hasSUA(door) && ((int) specialAbilities.getSUA(door) > 0)) {
                 result += door.toString() + specialAbilities.getSUA(door);
             }

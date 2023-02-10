@@ -724,7 +724,6 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                 g.setColor(Color.green.darker());
                 g.drawLine(x, y0, x, h);
             }
-
         }
     }
 
@@ -743,10 +742,11 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             height = (h.containsAnyTerrainOf(BUILDING, FUEL_TANK)) ? h.ceiling() : h.floor();
         }
         if (height != 0) {
+            String sHeight = ((height > -1) && (height < 10)) ? " " + height : height + "";
             int baseX = (x * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom])) + leftMargin;
             int baseY = (((2 * y) + 1 + (x % 2)) * HEX_SIDE_BY_COS30[zoom]) + topMargin;
             g.setColor(Color.white);
-            g.drawString(height + "", baseX + 5, baseY + 5); 
+            g.drawString(sHeight, baseX + 5, baseY + 5);
         }
     }
     

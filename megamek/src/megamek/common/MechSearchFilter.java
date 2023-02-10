@@ -511,7 +511,7 @@ public class MechSearchFilter {
             return false;
         }
 
-        if ((f.source != null) && (!f.source.isEmpty())) {
+        if (!f.source.isEmpty()) {
             if (!mech.getSource().contains(f.source)) {
                 return false;
             }

@@ -1570,11 +1570,14 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
 
             if (index == i) {
                 if (ms.state.contains("\u2610")) {
-                    dlm.addElement(new TriStateItem("\u2611", ms.text));
+                    ms.state = "\u2611";
+                    dlm.addElement(ms);
                 } else if (ms.state.contains("\u2611")) {
-                    dlm.addElement(new TriStateItem("\u2612", ms.text));
+                    ms.state = "\u2612";
+                    dlm.addElement(ms);
                 } else if (ms.state.contains("\u2612")) {
-                    dlm.addElement(new TriStateItem("\u2610", ms.text));
+                    ms.state = "\u2610";
+                    dlm.addElement(ms);
                 }
             } else {
                 dlm.addElement(ms);
@@ -1890,29 +1893,11 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private void clearQuirks() {
         cQuirkInclue.setSelectedIndex(0);
         cQuirkExclude.setSelectedIndex(1);
-        ListModel<TriStateItem> m = listQuirkType.getModel();
-        DefaultListModel dlmq  = new DefaultListModel();
-
-        for (int i = 0; i < m.getSize(); i++) {
-            TriStateItem ms = m.getElementAt(i);
-            dlmq.addElement(new TriStateItem("\u2610", ms.text));
-        }
-
-        listQuirkType.setModel(dlmq);
+        clearTriStateItem(listQuirkType);
 
         cWeaponQuirkInclue.setSelectedIndex(0);
         cWeaponQuirkExclude.setSelectedIndex(1);
-
-        m = listWeaponQuirkType.getModel();
-
-        DefaultListModel dlmw  = new DefaultListModel();
-
-        for (int i = 0; i < m.getSize(); i++) {
-            TriStateItem ms = m.getElementAt(i);
-            dlmw.addElement(new TriStateItem("\u2610", ms.text));
-        }
-
-        listWeaponQuirkType.setModel(dlmw);
+        clearTriStateItem(listWeaponQuirkType);
     }
 
     private void clearWeaponsEquipment() {

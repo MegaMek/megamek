@@ -57,9 +57,7 @@ import java.io.StreamTokenizer;
 import java.util.List;
 import java.util.*;
 
-import static megamek.client.ui.swing.minimap.MinimapUnitSymbols.STRAT_BASERECT;
-import static megamek.client.ui.swing.minimap.MinimapUnitSymbols.STRAT_CX;
-import static megamek.client.ui.swing.minimap.MinimapUnitSymbols.STRAT_SYMBOLSIZE;
+import static megamek.client.ui.swing.minimap.MinimapUnitSymbols.*;
 import static megamek.common.Terrains.*;
 
 /**
@@ -711,8 +709,22 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                     default:
                         label = "";
                 }
-                g.drawString(label, 17, y0 + 12);
+                g.drawString(label, 17, y0 + 11);
+
+                // map size
+                int width = getFontMetrics(g.getFont()).stringWidth(label);
+                String mapSize = board.getWidth() + " " + Messages.getString("Minimap.X") + " " + board.getHeight();
+                int x = 24 + width;
+                g.drawString(mapSize, x, y0 + 11);
+                width = getFontMetrics(g.getFont()).stringWidth(mapSize);
+                x += width + 3;
+                g.setColor(Color.black);
+                g.drawLine(x, y0, x, h);
+                x += 1;
+                g.setColor(Color.green.darker());
+                g.drawLine(x, y0, x, h);
             }
+
         }
     }
 

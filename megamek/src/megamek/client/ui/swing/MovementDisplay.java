@@ -56,6 +56,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static megamek.common.options.OptionsConstants.ADVGRNDMOV_TACOPS_ZIPLINES;
+
 public class MovementDisplay extends StatusBarPhaseDisplay {
     private static final long serialVersionUID = -7246715124042905688L;
     
@@ -1113,11 +1115,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         updateLayMineButton();
 
         loadedUnits = ce.getLoadedUnits();
-        if (ce instanceof Aero) {
-            for (Entity e : ce.getUnitsUnloadableFromBays()) {
-                if (!loadedUnits.contains(e)) {
-                    loadedUnits.add(e);
-                }
+        for (Entity e : ce.getUnitsUnloadableFromBays()) {
+            if (!loadedUnits.contains(e)) {
+                loadedUnits.add(e);
             }
         }
         towedUnits = ce.getLoadedTrailers();
@@ -2602,21 +2602,67 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
     /** Updates the status of the Load, Unload, Mount, Tow and Disconnect buttons. */
     private synchronized void updateLoadButtons() {
-        final Game game = clientgui.getClient().getGame();
+        updateLoadButton();
+        updateUnloadButton();
+        updateTowingButtons();
+        updateMountButton();
+    }
+
+    /** Updates the status of the Load button. */
+    private void updateLoadButton() {
         final Entity ce = ce();
-        if (null == ce) {
+        if ((ce == null) || (ce instanceof SmallCraft) || (ce.getWalkMP() <= 0)) {
+            setLoadEnabled(false);
             return;
         }
 
-        if (ce instanceof SmallCraft) {
-            setUnloadEnabled(!ce.getUnitsUnloadableFromBays().isEmpty() && !ce.isAirborne());
-            setLoadEnabled(false);
+        final Coords currentPathEndpoint = cmd.getFinalCoords();
+        final boolean canLoad = game().getEntitiesVector(currentPathEndpoint).stream()
+                .filter(Entity::isLoadableThisTurn)
+                .filter(ce::canLoad)
+                .anyMatch(other -> !ce.canTow(other.getId()));
+        setLoadEnabled(canLoad);
+    }
+
+    /** Updates the status of the Unload button. */
+    private void updateUnloadButton() {
+        final Entity ce = ce();
+        if (ce == null) {
+            setUnloadEnabled(false);
+            return;
+        }
+
+        if ((ce instanceof SmallCraft) || ce.isSupportVehicle()) {
+            setUnloadEnabled(!loadedUnits.isEmpty() && !ce.isAirborne());
+            return;
+        }
+
+        final boolean legalGear = ((gear == GEAR_LAND) || (gear == GEAR_TURN) || (gear == GEAR_BACKUP) || (gear == GEAR_JUMP));
+        final int unloadEl = cmd.getFinalElevation();
+        final Hex hex = game().getBoard().getHex(cmd.getFinalCoords());
+        boolean finalCoordinatesOnBoard = game().getBoard().contains(cmd.getFinalCoords());
+        boolean canUnloadHere = false;
+
+        // A unit that has somehow exited the map is assumed to be unable to unload
+        if (finalCoordinatesOnBoard) {
+            canUnloadHere = loadedUnits.stream().anyMatch(en -> en.isElevationValid(unloadEl, hex) || (en.getJumpMP() > 0));
+            // Zip lines, TO pg 219
+            if (game().getOptions().booleanOption(ADVGRNDMOV_TACOPS_ZIPLINES) && (ce instanceof VTOL)) {
+                canUnloadHere |= loadedUnits.stream().filter(Entity::isInfantry).anyMatch(en -> !((Infantry) en).isMechanized());
+            }
+        }
+        setUnloadEnabled(legalGear && canUnloadHere && !loadedUnits.isEmpty());
+    }
+
+    /** Updates the status of the Mount button. */
+    private void updateMountButton() {
+        final Entity ce = ce();
+        if ((ce == null) || (ce instanceof SmallCraft)) {
             setMountEnabled(false);
             return;
         }
 
-        // Can this unit mount a DropShip / Small Craft / Train?
-        setMountEnabled(false);
+        final Game game = clientgui.getClient().getGame();
         Coords pos = ce.getPosition();
         int elev = ce.getElevation();
         int mpUsed = ce.mpUsed;
@@ -2625,95 +2671,36 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             elev = cmd.getFinalElevation();
             mpUsed = cmd.getMpUsed();
         }
-        if (!ce.isAirborne()
-                && (mpUsed <= Math.ceil((ce.getWalkMP() / 2.0)))
-                && game.getBoard().contains(pos)
-                && !Compute.getMountableUnits(ce, pos,
-                    elev + game.getBoard().getHex(pos).getLevel(), game).isEmpty()) {
-            setMountEnabled(true);
+        final boolean finalCoordinatesOnBoard = game.getBoard().contains(pos);
+        final boolean canMount = finalCoordinatesOnBoard && !ce.isAirborne() && (mpUsed <= Math.ceil((ce.getWalkMP() / 2.0)))
+                && !Compute.getMountableUnits(ce, pos, elev + game.getBoard().getHex(pos).getLevel(), game).isEmpty();
+        setMountEnabled(canMount);
+    }
+
+    /** Updates the status of the Tow and Disconnect buttons. */
+    private void updateTowingButtons() {
+        final Entity ce = ce();
+        if ((ce == null) || (ce instanceof SmallCraft)) {
+            setTowEnabled(false);
+            setDisconnectEnabled(false);
+            return;
         }
 
-        boolean legalGear = ((gear == MovementDisplay.GEAR_LAND)
-                             || (gear == MovementDisplay.GEAR_TURN)
-                             || (gear == MovementDisplay.GEAR_BACKUP)
-                             || (gear == MovementDisplay.GEAR_JUMP));
-        int unloadEl = cmd.getFinalElevation();
-        Hex hex = ce.getGame().getBoard().getHex(cmd.getFinalCoords());
-        
-        boolean finalCoordinatesOnBoard = ce.getGame().getBoard().contains(cmd.getFinalCoords());
-        boolean canUnloadHere = false;
-        
-        // if the path's final coordinate are off-board (as could be the case on space maps with advanced movement)
-        // we will say that it is not possible to unload units in such a situation.
-        if (finalCoordinatesOnBoard) {
-            for (Entity en : loadedUnits) {
-                if (ce.isSupportVehicle() || en.isElevationValid(unloadEl, hex) || (en.getJumpMP() > 0)) {
-                    canUnloadHere = true;
-                    break;
-                }
-                // Zip lines, TO pg 219
-                if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_ZIPLINES)
-                        && (ce() instanceof VTOL) && (en instanceof Infantry) 
-                        && !((Infantry) en).isMechanized()) {
-                    canUnloadHere = true;
-                    break;
-                }
-            }
-        }
-        
-        // Disable the "Unload" button if we're in the wrong gear or if the entity is not transporting units.
-        setUnloadEnabled(legalGear && canUnloadHere && !loadedUnits.isEmpty());
+        final boolean legalGear = ((gear == GEAR_LAND) || (gear == GEAR_TURN) || (gear == GEAR_BACKUP) || (gear == GEAR_JUMP));
+        final Hex hex = game().getBoard().getHex(cmd.getFinalCoords());
+        final int unloadEl = cmd.getFinalElevation();
+        final boolean finalCoordinatesOnBoard = game().getBoard().contains(cmd.getFinalCoords());
+        final boolean canDropTrailerHere = towedUnits.stream().anyMatch(en -> en.isElevationValid(unloadEl, hex));
+        setDisconnectEnabled(legalGear && finalCoordinatesOnBoard && canDropTrailerHere);
 
-        boolean canDropTrailerHere = false;
-        if (finalCoordinatesOnBoard) {
-            for (Entity en : towedUnits) {
-                if (en.isElevationValid(unloadEl, hex)) {
-                    canDropTrailerHere = true;
-                    break;
-                }
-            }
-        }
-        
-        // Disable the "Disconnect" button if we're in the wrong
-        // gear or if the entity is not transporting units.
-        setDisconnectEnabled(legalGear && canDropTrailerHere && !towedUnits.isEmpty());
-
-        // If the current entity has moved, disable "Load" and "Tow" buttons.
-        setLoadEnabled(false);
-        setTowEnabled(false);
-
-        Coords currentPathEndpoint = cmd.getFinalCoords();
-
-        // Check the other entities in the current hex for friendly units.
-        // If the other unit is friendly and not the current entity
-        // and the current entity has at least 1 MP, if it can
-        // transport the other unit, and if the other hasn't moved
-        // then enable the "Load" button. Towing gets handled later,
-        // and we don't want both buttons enabled.
-        if (ce.getWalkMP() > 0)
-        for (Entity other : game.getEntitiesVector(currentPathEndpoint)) {
-            if ((ce.getWalkMP() > 0) && ce.canLoad(other)
-                    && other.isLoadableThisTurn() && !ce.canTow(other.getId())) {
-                setLoadEnabled(true);
-                break;
-            }
-        }
-
-        // Now check all eligible hexes for towable trailers
+        boolean canTow = false;
         if (cmd.length() == 0) {
             for (Coords c : ce.getHitchLocations()) {
-                for (Entity other : game.getEntitiesVector(c)) {
-                    // If the other unit is friendly and not the current entity
-                    // if it can tow the other unit, and if the other hasn't moved
-                    // then enable the "Tow" button.
-                    if (ce.canTow(other.getId())) {
-                        setTowEnabled(true);
-                        break;
-                    }
-                }
+                canTow |= game().getEntitiesVector(c).stream().anyMatch(ce::canTow);
             }
         }
-    } // private void updateLoadButtons
+        setTowEnabled(canTow);
+    }
 
     private void updateLayMineButton() {
         final Entity ce = ce();
@@ -5524,5 +5511,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         } else {
             clientgui.getBoardView().setWeaponFieldofFire(unit.getFacing(), unit.getPosition());
         }
+    }
+
+    /** Shortcut to clientgui.getClient().getGame(). */
+    private Game game() {
+        return clientgui.getClient().getGame();
     }
 }

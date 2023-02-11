@@ -3943,8 +3943,8 @@ Lynx LNX-9R:SKIRMISHER
 Lyonesse Escort (Standard):NONE
 Lyonesse Escort M1:NONE
 Lyonesse Escort W1:NONE
-M.A.S.H. Truck (ICE):NONE
-M.A.S.H. Truck (Standard):NONE
+MASH Truck (ICE):NONE
+MASH Truck (Standard):NONE
 M-9 SDS Battle Station 'Pavise':NONE
 Machina Domini Interface Armor (Standard):NONE
 Mackie MSK-5S:SNIPER

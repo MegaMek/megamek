@@ -1921,8 +1921,16 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * Check for Laser Inhibiting smoke clouds
      */
     public int checkLI(int nDamage, Entity entityTarget, Vector<Report> vPhaseReport) {
+        if ((ae.getPosition() == null) || (entityTarget.getPosition() == null)) {
+            return nDamage;
+        }
+
         weapon = ae.getEquipment(waa.getWeaponId());
         wtype = (WeaponType) weapon.getType();
+
+        if (!wtype.hasFlag(WeaponType.F_ENERGY)) {
+            return nDamage;
+        }
 
         ArrayList<Coords> coords = Coords.intervening(ae.getPosition(), entityTarget.getPosition());
         int refrac = 0;
@@ -1943,9 +1951,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
             }
             Terrain smokeHex = game.getBoard().getHex(curr).getTerrain(Terrains.SMOKE);
             if (game.getBoard().getHex(curr).containsTerrain(Terrains.SMOKE)
-                    && wtype.hasFlag(WeaponType.F_ENERGY)
-                    && ((smokeHex.getLevel() == SmokeCloud.SMOKE_LI_LIGHT) || (smokeHex
-                            .getLevel() == SmokeCloud.SMOKE_LI_HEAVY))) {
+                    && ((smokeHex.getLevel() == SmokeCloud.SMOKE_LI_LIGHT)
+                    || (smokeHex.getLevel() == SmokeCloud.SMOKE_LI_HEAVY))) {
 
                 int levit = ((game.getBoard().getHex(curr).getLevel()) + 2);
 

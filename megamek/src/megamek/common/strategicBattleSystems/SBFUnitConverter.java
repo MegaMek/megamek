@@ -165,6 +165,7 @@ public class SBFUnitConverter {
         report.addLine(rangeType + ":", "(" + sCalculation + ") / 3, rn", Math.round(dmgS / 3) + "");
 
         double dmgM = elements.stream().map(AlphaStrikeElement::getStandardDamage).mapToDouble(d -> d.M.asDoubleValue()).sum();
+        ovValue = elements.stream().filter(e -> e.getStandardDamage().M.damage >= 1).mapToDouble(AlphaStrikeElement::getOV).sum() / 2;
         String mCalculation = elements.stream().map(u -> formatForReport(u.getStandardDamage().M.asDoubleValue())).collect(joining(" + "));
         rangeType = "M";
         if (ovValue > 0) {
@@ -182,11 +183,14 @@ public class SBFUnitConverter {
         double dmgL = elements.stream().map(AlphaStrikeElement::getStandardDamage).mapToDouble(d -> d.L.asDoubleValue()).sum();
         String lCalculation = elements.stream().map(u -> formatForReport(u.getStandardDamage().L.asDoubleValue())).collect(joining(" + "));
         rangeType = "L";
-        double ovLValue = elements.stream().filter(e -> e.hasSUA(OVL)).mapToDouble(AlphaStrikeElement::getOV).sum() / 2;
+        double ovLValue = elements.stream()
+                .filter(e -> e.hasSUA(OVL))
+                .filter(e -> e.getStandardDamage().L.damage >= 1)
+                .mapToDouble(AlphaStrikeElement::getOV).sum() / 2;
         if (ovLValue > 0) {
             dmgL += ovLValue;
             rangeType += " + OV";
-            lCalculation += " + " + formatForReport(ovValue);
+            lCalculation += " + " + formatForReport(ovLValue);
         }
         if (artTC + artLTC > 0) {
             dmgL += artTC + artLTC;

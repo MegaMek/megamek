@@ -1563,7 +1563,6 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
 
     private void toggleText(JList list, int index) {
         ListModel<TriStateItem> m = list.getModel();
-        DefaultListModel dlm  = new DefaultListModel();
 
         for (int i = 0; i < m.getSize(); i++) {
             TriStateItem ms = m.getElementAt(i);
@@ -1571,20 +1570,16 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
             if (index == i) {
                 if (ms.state.contains("\u2610")) {
                     ms.state = "\u2611";
-                    dlm.addElement(ms);
                 } else if (ms.state.contains("\u2611")) {
                     ms.state = "\u2612";
-                    dlm.addElement(ms);
                 } else if (ms.state.contains("\u2612")) {
                     ms.state = "\u2610";
-                    dlm.addElement(ms);
                 }
-            } else {
-                dlm.addElement(ms);
             }
         }
 
-        list.setModel(dlm);
+        list.setModel(m);
+        list.repaint();
     }
 
     private boolean matchTechLvl(int t1, int t2) {
@@ -1753,10 +1748,10 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         for (int i = 0; i < m.getSize(); i++) {
             TriStateItem ms = m.getElementAt(i);
             ms.state = "\u2610";
-            dlm.addElement(ms);
         }
 
-        l.setModel(dlm);
+        l.setModel(m);
+        l.repaint();
     }
 
     private void clearBase() {

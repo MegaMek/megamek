@@ -7558,7 +7558,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         PilotingRollData roll = getBasePilotingRoll(moveType);
         int bgMod = curHex.getBogDownModifier(getMovementMode(),
                 this instanceof LargeSupportTank);
-        
+
         // we check for bog down on entering a new hex or changing altitude
         // but not if we're jumping, above the "ground" (meaning the bottom of the lake), 
         // not susceptible to bog down as per getBogDownModifier,
@@ -7566,7 +7566,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if ((!lastPos.equals(curPos) || (step.getElevation() != lastElev))
                 && (bgMod != TargetRoll.AUTOMATIC_SUCCESS)
                 && (moveType != EntityMovementType.MOVE_JUMP)
-                && (step.getElevation() == 0) && !isPavementStep) {
+                && (step.getElevation() == curHex.depth()) && !isPavementStep) {
             
             roll.append(new PilotingRollData(getId(), bgMod, "avoid bogging down"));
             

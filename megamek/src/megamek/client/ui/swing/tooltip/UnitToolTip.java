@@ -79,15 +79,18 @@ public final class UnitToolTip {
 
         // Unit Chassis and Player
         Player owner = game.getPlayer(entity.getOwnerId());
+        Color ownerColor = (owner != null) ? owner.getColour().getColour() : uiGray();
+        String ownerName = (owner != null) ? owner.getName() : ReportMessages.getString("BoardView1.Tooltip.unknownOwner");
+
         String msg_clanbrackets =Messages.getString("BoardView1.Tooltip.ClanBrackets");
         String clanStr = entity.isClan() && !entity.isMixedTech() ? " " + msg_clanbrackets + " " : "";
         String sChassisPlayerInfo = entity.getChassis() + clanStr;
         sChassisPlayerInfo += " (" + (int) entity.getWeight() + "t)";
         sChassisPlayerInfo += "&nbsp;&nbsp;" + entity.getEntityTypeName(entity.getEntityType());
-        sChassisPlayerInfo += "<BR>" + owner.getName();
+        sChassisPlayerInfo += "<BR>" + ownerName;
         String msg_id = MessageFormat.format(" [ID: {0}]", entity.getId());
         sChassisPlayerInfo += UIUtil.guiScaledFontHTML(UIUtil.uiGray()) + msg_id + "</FONT>";
-        sChassisPlayerInfo = guiScaledFontHTML(entity.getOwner().getColour().getColour()) + sChassisPlayerInfo +  "</FONT>";
+        sChassisPlayerInfo = guiScaledFontHTML(ownerColor) + sChassisPlayerInfo +  "</FONT>";
 
         result += sChassisPlayerInfo;
 

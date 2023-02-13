@@ -40,7 +40,7 @@ import java.util.List;
 /**
  * This panel shows advanced search filters for AlphaStrike values.
  */
-public class ASAdvancedSearchPanel extends JPanel implements ActionListener {
+public class ASAdvancedSearchPanel extends JPanel {
 
     private final static String BETWEEN = "between";
     private final static String AND = "and";
@@ -195,7 +195,7 @@ public class ASAdvancedSearchPanel extends JPanel implements ActionListener {
         initializeCombos();
         updateEnabled();
 
-        btnClear.addActionListener(this);
+        btnClear.addActionListener(e -> clearValues());
     }
 
     /** @return True when the given MechSummary matches the active search filters or true when no filters are active. */
@@ -835,13 +835,6 @@ public class ASAdvancedSearchPanel extends JPanel implements ActionListener {
 
             useAbility2.setSelected(ability2Use);
             ability2.setSelectedItem(ability2Value);
-        }
-    }
-
-    @Override
-    public void actionPerformed(java.awt.event.ActionEvent ev) {
-        if (ev.getSource().equals(btnClear)) {
-            clearValues();
         }
     }
 }

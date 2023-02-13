@@ -511,10 +511,8 @@ public class MechSearchFilter {
             return false;
         }
 
-        if (!f.source.isEmpty()) {
-            if (!mech.getSource().contains(f.source)) {
-                return false;
-            }
+        if ((!f.source.isEmpty()) && (!mech.getSource().contains(f.source))) {
+            return false;
         }
 
         if (!isMatch(f.iOmni, mech.getOmni())) {
@@ -715,225 +713,225 @@ public class MechSearchFilter {
             return false;
         }
 
-        if(!checkA(f.engineType, mech.getEngineName(), true)) {
+        if (!checkA(f.engineType, mech.getEngineName(), true)) {
             return false;
         }
 
-        if(!checkB(f.engineTypeExclude, mech.getEngineName(), true)) {
+        if (!checkB(f.engineTypeExclude, mech.getEngineName(), true)) {
             return false;
         }
 
-        if(!checkA(f.internalsType, mech.getInternalsType())) {
+        if (!checkA(f.internalsType, mech.getInternalsType())) {
             return false;
         }
 
-        if(!checkB(f.internalsTypeExclude, mech.getInternalsType())) {
+        if (!checkB(f.internalsTypeExclude, mech.getInternalsType())) {
             return false;
         }
 
-        if(!checkA(f.cockpitType, mech.getCockpitType())) {
+        if (!checkA(f.cockpitType, mech.getCockpitType())) {
             return false;
         }
 
-        if(!checkB(f.cockpitTypeExclude, mech.getCockpitType())) {
+        if (!checkB(f.cockpitTypeExclude, mech.getCockpitType())) {
             return false;
         }
 
-        if(!checkA(f.armorType, mech.getArmorType())) {
+        if (!checkA(f.armorType, mech.getArmorType())) {
             return false;
         }
 
-        if(!checkB(f.armorTypeExclude, mech.getArmorType())) {
+        if (!checkB(f.armorTypeExclude, mech.getArmorType())) {
             return false;
         }
 
         if (f.quirkInclude == 0) {
-            if(!checkB(f.quirkType, mech.getQuirkNames(), false)) {
+            if (!checkB(f.quirkType, mech.getQuirkNames(), false)) {
                 return false;
             }
         } else {
-            if(!checkA(f.quirkType, mech.getQuirkNames(), true)) {
+            if (!checkA(f.quirkType, mech.getQuirkNames(), true)) {
                 return false;
             }
         }
 
         if (f.quirkExclude == 0) {
-            if(!checkA(f.quirkTypeExclude, mech.getQuirkNames(), false)) {
+            if (!checkA(f.quirkTypeExclude, mech.getQuirkNames(), false)) {
                 return false;
             }
         } else {
-            if(!checkB(f.quirkTypeExclude, mech.getQuirkNames(), true)) {
+            if (!checkB(f.quirkTypeExclude, mech.getQuirkNames(), true)) {
                 return false;
             }
         }
 
         if (f.weaponQuirkInclude == 0) {
-            if(!checkB(f.weaponQuirkType, mech.getWeaponQuirkNames(), false)) {
+            if (!checkB(f.weaponQuirkType, mech.getWeaponQuirkNames(), false)) {
                 return false;
             }
         } else {
-            if(!checkA(f.weaponQuirkType, mech.getWeaponQuirkNames(), true)) {
+            if (!checkA(f.weaponQuirkType, mech.getWeaponQuirkNames(), true)) {
                 return false;
             }
         }
 
         if (f.weaponQuirkExclude == 0) {
-            if(!checkA(f.weaponQuirkTypeExclude, mech.getWeaponQuirkNames(), false)) {
+            if (!checkA(f.weaponQuirkTypeExclude, mech.getWeaponQuirkNames(), false)) {
                 return false;
             }
         } else {
-            if(!checkB(f.weaponQuirkTypeExclude, mech.getWeaponQuirkNames(), true)) {
+            if (!checkB(f.weaponQuirkTypeExclude, mech.getWeaponQuirkNames(), true)) {
                 return false;
             }
         }
 
-        long l = 0;
+        long entityTypes = 0;
         if (f.filterMech == 1) {
-            l = l | Entity.ETYPE_MECH;
+            entityTypes = entityTypes | Entity.ETYPE_MECH;
         }
         if (f.filterBipedMech == 1) {
-            l = l | Entity.ETYPE_BIPED_MECH;
+            entityTypes = entityTypes | Entity.ETYPE_BIPED_MECH;
         }
         if (f.filterProtomech == 1) {
-            l = l | Entity.ETYPE_PROTOMECH;
+            entityTypes = entityTypes | Entity.ETYPE_PROTOMECH;
         }
         if (f.filterLAM == 1) {
-            l = l | Entity.ETYPE_LAND_AIR_MECH;
+            entityTypes = entityTypes | Entity.ETYPE_LAND_AIR_MECH;
         }
         if (f.filterTripod == 1) {
-            l = l | Entity.ETYPE_TRIPOD_MECH;
+            entityTypes = entityTypes | Entity.ETYPE_TRIPOD_MECH;
         }
         if (f.filterQuad == 1) {
-            l = l | Entity.ETYPE_QUAD_MECH;
+            entityTypes = entityTypes | Entity.ETYPE_QUAD_MECH;
         }
         if (f.filterAero == 1) {
-            l = l | Entity.ETYPE_AERO;
+            entityTypes = entityTypes | Entity.ETYPE_AERO;
         }
         if (f.filterFixedWingSupport == 1) {
-            l = l | Entity.ETYPE_FIXED_WING_SUPPORT;
+            entityTypes = entityTypes | Entity.ETYPE_FIXED_WING_SUPPORT;
         }
         if (f.filterConvFighter == 1) {
-            l = l | Entity.ETYPE_CONV_FIGHTER;
+            entityTypes = entityTypes | Entity.ETYPE_CONV_FIGHTER;
         }
         if (f.filterSmallCraft == 1) {
-            l = l | Entity.ETYPE_SMALL_CRAFT;
+            entityTypes = entityTypes | Entity.ETYPE_SMALL_CRAFT;
         }
         if (f.filterDropship == 1) {
-            l = l | Entity.ETYPE_DROPSHIP;
+            entityTypes = entityTypes | Entity.ETYPE_DROPSHIP;
         }
         if (f.filterJumpship == 1) {
-            l = l | Entity.ETYPE_JUMPSHIP;
+            entityTypes = entityTypes | Entity.ETYPE_JUMPSHIP;
         }
         if (f.filterWarship == 1) {
-            l = l | Entity.ETYPE_WARSHIP;
+            entityTypes = entityTypes | Entity.ETYPE_WARSHIP;
         }
         if (f.filterSpaceStation == 1) {
-            l = l | Entity.ETYPE_SPACE_STATION;
+            entityTypes = entityTypes | Entity.ETYPE_SPACE_STATION;
         }
         if (f.filterInfantry == 1) {
-            l = l | Entity.ETYPE_INFANTRY;
+            entityTypes = entityTypes | Entity.ETYPE_INFANTRY;
         }
         if (f.filterBattleArmor == 1) {
-            l = l | Entity.ETYPE_BATTLEARMOR;
+            entityTypes = entityTypes | Entity.ETYPE_BATTLEARMOR;
         }
         if (f.filterTank == 1) {
-            l = l | Entity.ETYPE_TANK;
+            entityTypes = entityTypes | Entity.ETYPE_TANK;
         }
         if (f.filterVTOL == 1) {
-            l = l | Entity.ETYPE_VTOL;
+            entityTypes = entityTypes | Entity.ETYPE_VTOL;
         }
         if (f.filterSupportVTOL == 1) {
-            l = l | Entity.ETYPE_SUPPORT_VTOL;
+            entityTypes = entityTypes | Entity.ETYPE_SUPPORT_VTOL;
         }
         if (f.filterGunEmplacement == 1) {
-            l = l | Entity.ETYPE_GUN_EMPLACEMENT;
+            entityTypes = entityTypes | Entity.ETYPE_GUN_EMPLACEMENT;
         }
         if (f.filterSupportTank == 1) {
-            l = l | Entity.ETYPE_SUPPORT_TANK;
+            entityTypes = entityTypes | Entity.ETYPE_SUPPORT_TANK;
         }
         if (f.filterLargeSupportTank == 1) {
-            l = l | Entity.ETYPE_LARGE_SUPPORT_TANK;
+            entityTypes = entityTypes | Entity.ETYPE_LARGE_SUPPORT_TANK;
         }
         if (f.filterSuperHeavyTank == 1) {
-            l = l | Entity.ETYPE_SUPER_HEAVY_TANK;
+            entityTypes = entityTypes | Entity.ETYPE_SUPER_HEAVY_TANK;
         }
 
-        if ((!((mech.getEntityType() & l) > 0)) && (l != 0)) {
+        if ((!((mech.getEntityType() & entityTypes) > 0)) && (entityTypes != 0)) {
             return false;
         }
 
-        l = 0;
+        entityTypes = 0;
         if (f.filterMech == 2) {
-            l = l | Entity.ETYPE_MECH;
+            entityTypes = entityTypes | Entity.ETYPE_MECH;
         }
         if (f.filterBipedMech == 2) {
-            l = l | Entity.ETYPE_BIPED_MECH;
+            entityTypes = entityTypes | Entity.ETYPE_BIPED_MECH;
         }
         if (f.filterProtomech == 2) {
-            l = l | Entity.ETYPE_PROTOMECH;
+            entityTypes = entityTypes | Entity.ETYPE_PROTOMECH;
         }
         if (f.filterLAM == 2) {
-            l = l | Entity.ETYPE_LAND_AIR_MECH;
+            entityTypes = entityTypes | Entity.ETYPE_LAND_AIR_MECH;
         }
         if (f.filterTripod == 2) {
-            l = l | Entity.ETYPE_TRIPOD_MECH;
+            entityTypes = entityTypes | Entity.ETYPE_TRIPOD_MECH;
         }
         if (f.filterQuad == 2) {
-            l = l | Entity.ETYPE_QUAD_MECH;
+            entityTypes = entityTypes | Entity.ETYPE_QUAD_MECH;
         }
         if (f.filterAero == 2) {
-            l = l | Entity.ETYPE_AERO;
+            entityTypes = entityTypes | Entity.ETYPE_AERO;
         }
         if (f.filterFixedWingSupport == 2) {
-            l = l | Entity.ETYPE_FIXED_WING_SUPPORT;
+            entityTypes = entityTypes | Entity.ETYPE_FIXED_WING_SUPPORT;
         }
         if (f.filterConvFighter == 2) {
-            l = l | Entity.ETYPE_CONV_FIGHTER;
+            entityTypes = entityTypes | Entity.ETYPE_CONV_FIGHTER;
         }
         if (f.filterSmallCraft == 2) {
-            l = l | Entity.ETYPE_SMALL_CRAFT;
+            entityTypes = entityTypes | Entity.ETYPE_SMALL_CRAFT;
         }
         if (f.filterDropship == 2) {
-            l = l | Entity.ETYPE_DROPSHIP;
+            entityTypes = entityTypes | Entity.ETYPE_DROPSHIP;
         }
         if (f.filterJumpship == 2) {
-            l = l | Entity.ETYPE_JUMPSHIP;
+            entityTypes = entityTypes | Entity.ETYPE_JUMPSHIP;
         }
         if (f.filterWarship == 2) {
-            l = l | Entity.ETYPE_WARSHIP;
+            entityTypes = entityTypes | Entity.ETYPE_WARSHIP;
         }
         if (f.filterSpaceStation == 2) {
-            l = l | Entity.ETYPE_SPACE_STATION;
+            entityTypes = entityTypes | Entity.ETYPE_SPACE_STATION;
         }
         if (f.filterInfantry == 2) {
-            l = l | Entity.ETYPE_INFANTRY;
+            entityTypes = entityTypes | Entity.ETYPE_INFANTRY;
         }
         if (f.filterBattleArmor == 2) {
-            l = l | Entity.ETYPE_BATTLEARMOR;
+            entityTypes = entityTypes | Entity.ETYPE_BATTLEARMOR;
         }
         if (f.filterTank == 2) {
-            l = l | Entity.ETYPE_TANK;
+            entityTypes = entityTypes | Entity.ETYPE_TANK;
         }
         if (f.filterVTOL == 2) {
-            l = l | Entity.ETYPE_VTOL;
+            entityTypes = entityTypes | Entity.ETYPE_VTOL;
         }
         if (f.filterSupportVTOL == 2) {
-            l = l | Entity.ETYPE_SUPPORT_VTOL;
+            entityTypes = entityTypes | Entity.ETYPE_SUPPORT_VTOL;
         }
         if (f.filterGunEmplacement == 2) {
-            l = l | Entity.ETYPE_GUN_EMPLACEMENT;
+            entityTypes = entityTypes | Entity.ETYPE_GUN_EMPLACEMENT;
         }
         if (f.filterSupportTank == 2) {
-            l = l | Entity.ETYPE_SUPPORT_TANK;
+            entityTypes = entityTypes | Entity.ETYPE_SUPPORT_TANK;
         }
         if (f.filterLargeSupportTank == 2) {
-            l = l | Entity.ETYPE_LARGE_SUPPORT_TANK;
+            entityTypes = entityTypes | Entity.ETYPE_LARGE_SUPPORT_TANK;
         }
         if (f.filterSuperHeavyTank == 2) {
-            l = l | Entity.ETYPE_SUPER_HEAVY_TANK;
+            entityTypes = entityTypes | Entity.ETYPE_SUPER_HEAVY_TANK;
         }
 
-        if (((mech.getEntityType() & l) > 0) && (l != 0)) {
+        if (((mech.getEntityType() & entityTypes) > 0) && (entityTypes != 0)) {
             return false;
         }
 

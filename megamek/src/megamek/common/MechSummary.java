@@ -182,9 +182,13 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     }
 
     @Override
-    public int getMulId() { return mulId; }
+    public int getMulId() {
+        return mulId;
+    }
 
-    public String getUnitType() { return unitType; }
+    public String getUnitType() {
+        return unitType;
+    }
 
     public boolean isCanon() {
         return canon;
@@ -330,53 +334,101 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         return dockingCollars;
     }
 
-    public int getMechBays() { return mechBays; }
+    public int getMechBays() {
+        return mechBays;
+    }
 
-    public int getMechDoors() { return mechDoors; }
+    public int getMechDoors() {
+        return mechDoors;
+    }
 
-    public double getMechUnits() { return mechUnits; }
+    public double getMechUnits() {
+        return mechUnits;
+    }
 
-    public int getHeavyVehicleBays() { return heavyVehicleBays; }
+    public int getHeavyVehicleBays() {
+        return heavyVehicleBays;
+    }
 
-    public int getHeavyVehicleDoors() { return heavyVehicleDoors; }
+    public int getHeavyVehicleDoors() {
+        return heavyVehicleDoors;
+    }
 
-    public double getHeavyVehicleUnits() { return heavyVehicleUnits; }
+    public double getHeavyVehicleUnits() {
+        return heavyVehicleUnits;
+    }
 
-    public int getLightVehicleBays() { return lightVehicleBays; }
+    public int getLightVehicleBays() {
+        return lightVehicleBays;
+    }
 
-    public int getLightVehicleDoors() { return lightVehicleDoors; }
+    public int getLightVehicleDoors() {
+        return lightVehicleDoors;
+    }
 
-    public double getLightVehicleUnits() { return lightVehicleUnits; }
+    public double getLightVehicleUnits() {
+        return lightVehicleUnits;
+    }
 
-    public int getProtoMecheBays() { return protoMecheBays; }
+    public int getProtoMecheBays() {
+        return protoMecheBays;
+    }
 
-    public int getProtoMechDoors() { return protoMechDoors; }
+    public int getProtoMechDoors() {
+        return protoMechDoors;
+    }
 
-    public double getProtoMechUnits() { return protoMechUnits; }
+    public double getProtoMechUnits() {
+        return protoMechUnits;
+    }
 
-    public int getBattleArmorBays() { return battleArmorBays; }
+    public int getBattleArmorBays() {
+        return battleArmorBays;
+    }
 
-    public int getBattleArmorDoors() { return battleArmorDoors; }
+    public int getBattleArmorDoors() {
+        return battleArmorDoors;
+    }
 
-    public double getBattleArmorUnits() { return battleArmorUnits; }
+    public double getBattleArmorUnits() {
+        return battleArmorUnits;
+    }
 
-    public int getInfantryBays() { return infantryBays; }
+    public int getInfantryBays() {
+        return infantryBays;
+    }
 
-    public int getInfantryDoors() { return infantryDoors; }
+    public int getInfantryDoors() {
+        return infantryDoors;
+    }
 
-    public double getInfantryUnits() { return infantryUnits; }
+    public double getInfantryUnits() {
+        return infantryUnits;
+    }
 
-    public int getSuperHeavyVehicleBays() { return superHeavyVehicleBays; }
+    public int getSuperHeavyVehicleBays() {
+        return superHeavyVehicleBays;
+    }
 
-    public int getSuperHeavyVehicleDoors() { return superHeavyVehicleDoors; }
+    public int getSuperHeavyVehicleDoors() {
+        return superHeavyVehicleDoors;
+    }
 
-    public double getSuperHeavyVehicleUnits() { return superHeavyVehicleUnits; }
+    public double getSuperHeavyVehicleUnits() {
+        return superHeavyVehicleUnits;
+    }
 
-    public int getDropshuttleBays() { return dropshuttleBays; }
+    public int getDropshuttleBays() {
+        return dropshuttleBays;
+    }
 
-    public int getDropshuttleDoors() { return dropshuttleDoors; }
+    public int getDropshuttleDoors() {
+        return dropshuttleDoors;
+    }
 
-    public double getDropshuttelUnits() { return dropshuttelUnits; }
+    public double getDropshuttelUnits() {
+        return dropshuttelUnits;
+    }
 
     public int getBattleArmorHandles() {
         return battleArmorHandles;
@@ -561,17 +613,29 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         tankTurrets = i;
     }
 
-    public void setLowerArms(int i) { lowerArms = i; }
+    public void setLowerArms(int i) {
+        lowerArms = i;
+    }
 
-    public void setHands(int i) { hands = i; }
+    public void setHands(int i) {
+        hands = i;
+    }
 
-    public void setTroopCarryingSpace(double d) { troopCarryingSpace = d; }
+    public void setTroopCarryingSpace(double d) {
+        troopCarryingSpace = d;
+    }
 
-    public void setASFBays(int i) { aSFBays = i; }
+    public void setASFBays(int i) {
+        aSFBays = i;
+    }
 
-    public void setASFDoors(int i) { aSFDoors = i; }
+    public void setASFDoors(int i) {
+        aSFDoors = i;
+    }
 
-    public void setASFUnits(double d) { aSFUnits = d; }
+    public void setASFUnits(double d) {
+        aSFUnits = d;
+    }
 
     public void setSmallCraftBays(int i) {
         smallCraftBays = i;
@@ -601,7 +665,9 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         mechUnits = d;
     }
 
-    public void setHeavyVehicleBays(int i) { heavyVehicleBays = i; }
+    public void setHeavyVehicleBays(int i) {
+        heavyVehicleBays = i;
+    }
 
     public void setHeavyVehicleDoors(int i) {
         heavyVehicleDoors = i;
@@ -611,7 +677,9 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         heavyVehicleUnits = d;
     }
 
-    public void setLightVehicleBays(int i) { lightVehicleBays = i; }
+    public void setLightVehicleBays(int i) {
+        lightVehicleBays = i;
+    }
 
     public void setLightVehicleDoors(int i) {
         lightVehicleDoors = i;
@@ -621,7 +689,9 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         lightVehicleUnits = d;
     }
 
-    public void setProtoMecheBays(int i) { protoMecheBays = i; }
+    public void setProtoMecheBays(int i) {
+        protoMecheBays = i;
+    }
 
     public void setProtoMechDoors(int i) {
         protoMechDoors = i;
@@ -631,7 +701,9 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         protoMechUnits = d;
     }
 
-    public void setBattleArmorBays(int i) { battleArmorBays = i; }
+    public void setBattleArmorBays(int i) {
+        battleArmorBays = i;
+    }
 
     public void setBattleArmorDoors(int i) {
         battleArmorDoors = i;
@@ -641,7 +713,9 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         battleArmorUnits = d;
     }
 
-    public void setInfantryBays(int i) { infantryBays = i; }
+    public void setInfantryBays(int i) {
+        infantryBays = i;
+    }
 
     public void setInfantryDoors(int i) {
         infantryDoors = i;
@@ -651,7 +725,9 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         infantryUnits = d;
     }
 
-    public void setSuperHeavyVehicleBays(int i) { superHeavyVehicleBays = i; }
+    public void setSuperHeavyVehicleBays(int i) {
+        superHeavyVehicleBays = i;
+    }
 
     public void setSuperHeavyVehicleDoors(int i) {
         superHeavyVehicleDoors = i;
@@ -661,7 +737,8 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         superHeavyVehicleUnits = d;
     }
 
-    public void setDropshuttleBays(int i) { dropshuttleBays = i; }
+    public void setDropshuttleBays(int i) {
+        dropshuttleBays = i; }
 
     public void setDropshuttleDoors(int i) {
         dropshuttleDoors = i;
@@ -675,9 +752,13 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         battleArmorHandles = i;
     }
 
-    public void setCargoBayUnits(double d) { cargoBayUnits = d; }
+    public void setCargoBayUnits(double d) {
+        cargoBayUnits = d;
+    }
 
-    public void setNavalRepairFacilities(int i) { navalRepairFacilities = i; }
+    public void setNavalRepairFacilities(int i) {
+        navalRepairFacilities = i;
+    }
 
     public void setName(String sName) {
         this.name = sName;
@@ -699,7 +780,9 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         this.unitType = sUnitType;
     }
 
-    public void setSourceFile(File sSourceFile) { this.sourceFile = sSourceFile; }
+    public void setSourceFile(File sSourceFile) {
+        this.sourceFile = sSourceFile;
+    }
 
     public void setSource(String sSource) {
         this.source = sSource;

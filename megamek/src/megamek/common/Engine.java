@@ -453,14 +453,14 @@ public class Engine implements Serializable, ITechnology {
     }
 
     public static String[] getEngineTypes() {
-        List<String> s = new ArrayList<String>();
+        List<String> engineTypes = new ArrayList<String>();
 
         for (int i = 0; i < Engine.NUM_ENGINE_TYPES; i++) {
-             s.add(Messages.getString("Engine." + TYPE_KEYS[i]));
+            engineTypes.add(Messages.getString("Engine." + TYPE_KEYS[i]));
         }
 
-        String[] result = new String[ s.size() ];
-        s.toArray(result);
+        String[] result = new String[ engineTypes.size() ];
+        engineTypes.toArray(result);
         return result;
     }
 

@@ -413,37 +413,6 @@ public class MechSearchFilter {
         return true;
     }
 
-    private static boolean checkA(List<Integer> list, int search) {
-        if (list.isEmpty()) {
-            return true;
-        }
-
-        boolean match = false;
-
-        for (int s : list) {
-            if (search == s) {
-                match = true;
-                break;
-            }
-        }
-
-        if (!match) {
-            return false;
-        }
-
-        return match;
-    }
-
-    private static boolean checkB(List<Integer> list, int search) {
-        for (int s : list) {
-            if (search == s) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     private static boolean checkA(List<Integer> list, HashSet<Integer> search) {
         if (list.isEmpty()) {
             return true;
@@ -713,27 +682,27 @@ public class MechSearchFilter {
             return false;
         }
 
+        if ((!f.internalsType.isEmpty()) && (!f.internalsType.contains(mech.getInternalsType()))) {
+            return false;
+        }
+
+        if (f.internalsTypeExclude.contains(mech.getInternalsType())) {
+            return false;
+        }
+
+        if ((!f.cockpitType.isEmpty()) && (!f.cockpitType.contains(mech.getCockpitType()))) {
+            return false;
+        }
+
+        if (f.cockpitTypeExclude.contains(mech.getCockpitType())) {
+            return false;
+        }
+
         if (!checkA(f.engineType, mech.getEngineName(), true)) {
             return false;
         }
 
         if (!checkB(f.engineTypeExclude, mech.getEngineName(), true)) {
-            return false;
-        }
-
-        if (!checkA(f.internalsType, mech.getInternalsType())) {
-            return false;
-        }
-
-        if (!checkB(f.internalsTypeExclude, mech.getInternalsType())) {
-            return false;
-        }
-
-        if (!checkA(f.cockpitType, mech.getCockpitType())) {
-            return false;
-        }
-
-        if (!checkB(f.cockpitTypeExclude, mech.getCockpitType())) {
             return false;
         }
 

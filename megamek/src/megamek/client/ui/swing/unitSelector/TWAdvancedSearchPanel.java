@@ -1743,7 +1743,6 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
 
     private void clearTriStateItem(JList l) {
         ListModel<TriStateItem> m = l.getModel();
-        DefaultListModel dlm  = new DefaultListModel();
 
         for (int i = 0; i < m.getSize(); i++) {
             TriStateItem ms = m.getElementAt(i);

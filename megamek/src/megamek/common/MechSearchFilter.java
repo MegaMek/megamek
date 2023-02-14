@@ -382,66 +382,15 @@ public class MechSearchFilter {
         return true;
     }
 
-    private static boolean checkA(List<String> list, String search, boolean b) {
-        if (list.isEmpty()) {
-            return true;
-        }
-
-        boolean match = false;
-
-        for (String s : list) {
-            if (search.contains(s) == b) {
-                match = true;
-                break;
-            }
-        }
-
-        if (!match) {
-            return false;
-        }
-
-        return match;
+    private static boolean anyMatch(List<String> list, String search) {
+        return list.stream().anyMatch(search::contains);
+    }
+    private static boolean allMatch(List<String> list, String search) {
+        return list.stream().allMatch(search::contains);
     }
 
-    private static boolean checkB(List<String> list, String search, boolean b) {
-        for (String s : list) {
-            if (search.contains(s) == b) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private static boolean checkA(List<Integer> list, HashSet<Integer> search) {
-        if (list.isEmpty()) {
-            return true;
-        }
-
-        boolean match = false;
-
-        for (int s : list) {
-            if (search.contains(s)) {
-                match = true;
-                break;
-            }
-        }
-
-        if (!match) {
-            return false;
-        }
-
-        return match;
-    }
-
-    private static boolean checkB(List<Integer> list, HashSet<Integer> search) {
-        for (int s : list) {
-            if (search.contains(s)) {
-                return false;
-            }
-        }
-
-        return true;
+    private static boolean anyMatch(List<Integer> list, HashSet<Integer> search) {
+        return list.stream().anyMatch(search::contains);
     }
 
     public static boolean isMatch(MechSummary mech, MechSearchFilter f) {
@@ -698,58 +647,58 @@ public class MechSearchFilter {
             return false;
         }
 
-        if (!checkA(f.engineType, mech.getEngineName(), true)) {
+        if ((!f.armorType.isEmpty()) && (!anyMatch(f.armorType, mech.getArmorType()))) {
             return false;
         }
 
-        if (!checkB(f.engineTypeExclude, mech.getEngineName(), true)) {
+        if ((!f.armorTypeExclude.isEmpty()) && (anyMatch(f.armorTypeExclude, mech.getArmorType()))) {
             return false;
         }
 
-        if (!checkA(f.armorType, mech.getArmorType())) {
+        if ((!f.engineType.isEmpty()) && (!anyMatch(f.engineType, mech.getEngineName()))) {
             return false;
         }
 
-        if (!checkB(f.armorTypeExclude, mech.getArmorType())) {
+        if ((!f.engineTypeExclude.isEmpty()) && (anyMatch(f.engineTypeExclude, mech.getEngineName()))) {
             return false;
         }
 
         if (f.quirkInclude == 0) {
-            if (!checkB(f.quirkType, mech.getQuirkNames(), false)) {
+            if ((!f.quirkType.isEmpty()) && (!allMatch(f.quirkType, mech.getQuirkNames()))) {
                 return false;
             }
         } else {
-            if (!checkA(f.quirkType, mech.getQuirkNames(), true)) {
+            if ((!f.quirkType.isEmpty()) && (!anyMatch(f.quirkType, mech.getQuirkNames()))) {
                 return false;
             }
         }
 
         if (f.quirkExclude == 0) {
-            if (!checkA(f.quirkTypeExclude, mech.getQuirkNames(), false)) {
+            if ((!f.quirkTypeExclude.isEmpty()) && (allMatch(f.quirkTypeExclude, mech.getQuirkNames()))) {
                 return false;
             }
         } else {
-            if (!checkB(f.quirkTypeExclude, mech.getQuirkNames(), true)) {
+            if ((!f.quirkTypeExclude.isEmpty()) && (anyMatch(f.quirkTypeExclude, mech.getQuirkNames()))) {
                 return false;
             }
         }
 
         if (f.weaponQuirkInclude == 0) {
-            if (!checkB(f.weaponQuirkType, mech.getWeaponQuirkNames(), false)) {
+            if ((!f.weaponQuirkType.isEmpty()) && (!allMatch(f.weaponQuirkType, mech.getWeaponQuirkNames()))) {
                 return false;
             }
         } else {
-            if (!checkA(f.weaponQuirkType, mech.getWeaponQuirkNames(), true)) {
+            if ((!f.weaponQuirkType.isEmpty()) && (!anyMatch(f.weaponQuirkType, mech.getWeaponQuirkNames()))) {
                 return false;
             }
         }
 
-        if (f.weaponQuirkExclude == 0) {
-            if (!checkA(f.weaponQuirkTypeExclude, mech.getWeaponQuirkNames(), false)) {
+        if (f.weaponQuirkInclude == 0) {
+            if ((!f.weaponQuirkTypeExclude.isEmpty()) && (allMatch(f.weaponQuirkTypeExclude, mech.getWeaponQuirkNames()))) {
                 return false;
             }
         } else {
-            if (!checkB(f.weaponQuirkTypeExclude, mech.getWeaponQuirkNames(), true)) {
+            if ((!f.weaponQuirkTypeExclude.isEmpty()) && (anyMatch(f.weaponQuirkTypeExclude, mech.getWeaponQuirkNames()))) {
                 return false;
             }
         }

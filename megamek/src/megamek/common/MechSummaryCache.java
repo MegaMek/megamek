@@ -18,7 +18,6 @@ package megamek.common;
 import megamek.common.alphaStrike.ASUnitType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.conversion.ASConverter;
-import megamek.common.loaders.EntityLoadingException;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.*;
 import org.apache.logging.log4j.LogManager;
@@ -97,6 +96,7 @@ public class MechSummaryCache {
         instance.initialized = false;
         interrupted = false;
         disposeInstance = false;
+
         File unit_cache_path = new MegaMekFile(getUnitCacheDir(), FILENAME_UNITS_CACHE).getFile();
         long lastModified = unit_cache_path.exists() ? unit_cache_path.lastModified() : 0L;
 
@@ -146,6 +146,12 @@ public class MechSummaryCache {
     private MechSummaryCache() {
         nameMap = new HashMap<>();
         fileNameMap = new HashMap<>();
+
+        try {
+            QuirksHandler.initQuirksList();
+        } catch (Exception e) {
+            LogManager.getLogger().error("Error initializing quirks", e);
+        }
     }
 
     public MechSummary[] getAllMechs() {
@@ -381,7 +387,20 @@ public class MechSummaryCache {
         ms.setMulId(e.getMulId());
         ms.setUnitType(UnitType.getTypeName(e.getUnitType()));
         ms.setFullAccurateUnitType(Entity.getEntityTypeName(e.getEntityType()));
+        ms.setEntityType(e.getEntityType());
+        ms.setOmni(e.isOmni());
+        ms.setMilitary(e.isMilitary());
+        int tankTurrets = 0;
+        if (e instanceof Tank) {
+            if (!((Tank) e).hasNoDualTurret()) {
+                tankTurrets = 2;
+            } else if (!((Tank) e).hasNoTurret()) {
+                tankTurrets = 1;
+            }
+        }
+        ms.setTankTurrets(tankTurrets);
         ms.setSourceFile(f);
+        ms.setSource(e.getSource());
         ms.setEntryName(entry);
         ms.setYear(e.getYear());
         ms.setType(e.getTechLevel());
@@ -433,6 +452,8 @@ public class MechSummaryCache {
             ms.setUnitSubType(e.getMovementModeAsString());
         }
         ms.setEquipment(e.getEquipment());
+        ms.setQuirkNames(e.getQuirks());
+        ms.setWeaponQuirkNames(e);
         ms.setTotalArmor(e.getTotalArmor());
         ms.setTotalInternal(e.getTotalInternal());
         ms.setInternalsType(e.getStructureType());
@@ -504,6 +525,157 @@ public class MechSummaryCache {
         } else {
             ms.setMyomerName("None");
         }
+
+        int lowerArms = 0;
+        int hands = 0;
+
+        if (e instanceof Mech) {
+            lowerArms += e.hasSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_RARM) ? 1 : 0;
+            lowerArms += e.hasSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_LARM) ? 1 : 0;
+            hands += e.hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM) ? 1 : 0;
+            hands += e.hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM) ? 1 : 0;
+        }
+
+        ms.setLowerArms(lowerArms);
+        ms.setHands(hands);
+
+        double ts = e.getTroopCarryingSpace();
+        ts += e.getPodMountedTroopCarryingSpace();
+        ms.setTroopCarryingSpace(ts);
+
+        int aBays = 0;
+        int aDoors = 0;
+        double aUnits = 0;
+        int scBays = 0;
+        int scDoors = 0;
+        double scUnits = 0;
+        int dc = 0;
+        int mBays = 0;
+        int mDoors = 0;
+        double mUnits = 0;
+        int hvBays = 0;
+        int hvDoors = 0;
+        double hvUnits = 0;
+        int lvBays = 0;
+        int lvDoors = 0;
+        double lvUnits = 0;
+        int pmBays = 0;
+        int pmDoors = 0;
+        double pmUnits = 0;
+        int baBays = 0;
+        int baDoors = 0;
+        double baUnits = 0;
+        int iBays = 0;
+        int iDoors = 0;
+        double iUnits = 0;
+        int shvBays = 0;
+        int shvDoors = 0;
+        double shvUnits = 0;
+        int dBays = 0;
+        int dDoors = 0;
+        double dUnits = 0;
+        double cbUnits = 0;
+        int nrf = 0;
+        int bah = 0;
+        Vector<Transporter>  trs = e.getTransports();
+        for (Transporter t : trs) {
+            if (t instanceof ASFBay) {
+                aBays++;
+                aDoors += ((ASFBay) t).getCurrentDoors();
+                aUnits += t.getUnused();
+            }
+            if (t instanceof SmallCraftBay) {
+                scBays++;
+                scDoors += ((SmallCraftBay) t).getCurrentDoors();
+                scUnits +=  t.getUnused();
+            }
+            if (t instanceof DockingCollar) {
+                dc++;
+            }
+            if (t instanceof MechBay) {
+                mBays++;
+                mDoors += ((MechBay) t).getCurrentDoors();
+                mUnits += t.getUnused();
+            }
+            if (t instanceof HeavyVehicleBay) {
+                hvBays++;
+                hvDoors += ((HeavyVehicleBay) t).getCurrentDoors();
+                hvUnits += t.getUnused();
+            }
+            if (t instanceof LightVehicleBay) {
+                lvBays++;
+                lvDoors += ((LightVehicleBay) t).getCurrentDoors();
+                lvUnits += t.getUnused();
+            }
+            if (t instanceof ProtomechBay) {
+                pmBays++;
+                pmDoors += ((ProtomechBay) t).getCurrentDoors();
+                pmUnits += t.getUnused();
+            }
+            if (t instanceof BattleArmorBay) {
+                baBays++;
+                baDoors += ((BattleArmorBay) t).getCurrentDoors();
+                baUnits += t.getUnused();
+            }
+            if (t instanceof InfantryBay) {
+                iBays++;
+                iDoors += ((InfantryBay) t).getCurrentDoors();
+                iUnits += ((InfantryBay) t).getUnusedSlots();
+            }
+            if (t instanceof SuperHeavyVehicleBay) {
+                shvBays++;
+                shvDoors += ((SuperHeavyVehicleBay) t).getCurrentDoors();
+                shvUnits += t.getUnused();
+            }
+            if (t instanceof DropshuttleBay) {
+                dBays++;
+                dDoors += ((DropshuttleBay) t).getCurrentDoors();
+                dUnits += t.getUnused();
+            }
+            if (t instanceof BattleArmorHandles) {
+                bah++;
+            }
+            if (t instanceof  CargoBay) {
+                cbUnits += t.getUnused();
+            }
+            if (t instanceof  NavalRepairFacility) {
+                nrf++;
+            }
+        }
+        ms.setASFBays(aBays);
+        ms.setASFDoors(aDoors);
+        ms.setASFUnits(aUnits);
+        ms.setSmallCraftBays(scBays);
+        ms.setSmallCraftDoors(scDoors);
+        ms.setSmallCraftUnits(scUnits);
+        ms.setDockingCollars(dc);
+        ms.setMechBays(mBays);
+        ms.setMechDoors(mDoors);
+        ms.setMechUnits(mUnits);
+        ms.setHeavyVehicleBays(hvBays);
+        ms.setHeavyVehicleDoors(hvDoors);
+        ms.setHeavyVehicleUnits(hvUnits);
+        ms.setLightVehicleBays(lvBays);
+        ms.setLightVehicleDoors(lvDoors);
+        ms.setLightVehicleUnits(lvUnits);
+        ms.setProtoMecheBays(pmBays);
+        ms.setProtoMechDoors(pmDoors);
+        ms.setProtoMechUnits(pmUnits);
+        ms.setBattleArmorBays(baBays);
+        ms.setBattleArmorDoors(baDoors);
+        ms.setBattleArmorUnits(baUnits);
+        ms.setInfantryBays(iBays);
+        ms.setInfantryDoors(iDoors);
+        ms.setInfantryUnits(iUnits);
+        ms.setSuperHeavyVehicleBays(shvBays);
+        ms.setSuperHeavyVehicleDoors(shvDoors);
+        ms.setSuperHeavyVehicleUnits(shvUnits);
+        ms.setDropshuttleBays(dBays);
+        ms.setDropshuttleDoors(dDoors);
+        ms.setDropshuttelUnits(dUnits);
+        ms.setBattleArmorHandles(bah);
+        ms.setCargoBayUnits(cbUnits);
+        ms.setNavalRepairFacilities(nrf);
 
         if (ASConverter.canConvert(e)) {
             AlphaStrikeElement element = ASConverter.convertForMechCache(e);

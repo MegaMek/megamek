@@ -389,7 +389,7 @@ public class Terrain implements Serializable {
                     mp = 1;
                 }
 
-                if (isCrossCountry) {
+                if (isCrossCountry && e.isGround() && e.isCombatVehicle()) {
                     if (((moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.TRACKED))
                             && (level == 6)) {
                         mp *= 2;
@@ -413,7 +413,7 @@ public class Terrain implements Serializable {
                 return Math.max(0, mp);
             case Terrains.WOODS:
                 mp = level;
-                if (isCrossCountry) {
+                if (isCrossCountry && e.isGround() && e.isCombatVehicle()) {
                     if ((level == 1) && ((moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.WHEELED))) {
                         mp *= 2;
                     } else if (level > 1){
@@ -442,7 +442,7 @@ public class Terrain implements Serializable {
                 return Math.max(0, mp);
             case Terrains.JUNGLE:
                 mp = level +1;
-                if (isCrossCountry) {
+                if (isCrossCountry && e.isGround() && e.isCombatVehicle()) {
                     mp *= 2;
                 }
 
@@ -527,7 +527,7 @@ public class Terrain implements Serializable {
                     mp = 1;
                 }
 
-                if (isCrossCountry) {
+                if (isCrossCountry && e.isGround() && e.isCombatVehicle()) {
                     if (((moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.TRACKED))
                             && (level == 2)) {
                         mp *= 2;

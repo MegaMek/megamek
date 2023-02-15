@@ -49,6 +49,7 @@ VERSION HISTORY:
 + Issue #3026: Vehicles with suitable equipment are now able to create Trenches/Fieldworks
 + Issue #4171: MM-J17: NPE at End of MM game 
 + PR #4131: Substantial additions to the advanced unit search
++ PR #4151: Allow configurable sounds to be played for some turn-related events 
 + Updating XStream to 1.4.19 from 1.4.14
  
 0.49.11 (2022-12-22 1500 UTC)

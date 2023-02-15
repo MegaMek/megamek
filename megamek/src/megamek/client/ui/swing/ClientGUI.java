@@ -265,7 +265,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     /**
      * Cache for the "bing" soundclip.
      */
-    private Clip bingClip;
+    private Clip bingClipChat;
+    private Clip bingClipMyTurn;
+    private Clip bingClipOthersTurn;
 
     /**
      * Map each phase to the name of the card for the main display area.
@@ -338,13 +340,31 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         this.addComponentListener(this);
         this.client = client;
         controller = c;
-        loadSoundClip();
+        loadSoundFiles();
         panMain.setLayout(cardsMain);
         panSecondary.setLayout(cardsSecondary);
         JPanel panDisplay = new JPanel(new BorderLayout());
         panDisplay.add(panMain, BorderLayout.CENTER);
         panDisplay.add(panSecondary, BorderLayout.SOUTH);
         add(panDisplay, BorderLayout.CENTER);
+    }
+
+    private void loadSoundFiles() {
+        if (bingClipChat != null) {
+            bingClipChat.close();
+        }
+
+        if (bingClipMyTurn != null) {
+            bingClipMyTurn.close();
+        }
+
+        if (bingClipOthersTurn != null) {
+            bingClipOthersTurn.close();
+        }
+
+        bingClipChat = loadSoundClip(GUIP.getSoundBingFilenameChat());
+        bingClipMyTurn = loadSoundClip(GUIP.getSoundBingFilenameMyTurn());
+        bingClipOthersTurn = loadSoundClip(GUIP.getSoundBingFilenameOthersTurn());
     }
 
     public BoardView getBoardView() {
@@ -402,27 +422,25 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     /**
      * Try to load the "bing" sound clip.
      */
-    private void loadSoundClip() {
-        if (GUIP.getSoundBingFilename() == null) {
-            return;
+    private @Nullable Clip loadSoundClip(@Nullable String filename) {
+        if (filename == null) {
+            return null;
         }
-        final File file = new File(GUIP.getSoundBingFilename());
+        final File file = new File(filename);
         if (!file.exists()) {
-            LogManager.getLogger().error(Messages.getString("ClientGUI.failedToLoadAudioFile") + " " + GUIP.getSoundBingFilename());
-            return;
+            LogManager.getLogger().error(Messages.getString("ClientGUI.failedToLoadAudioFile") + " " + filename);
+            return null;
         }
 
         try {
-            if (bingClip != null) {
-                bingClip.close();
-            }
-            bingClip = AudioSystem.getClip();
+            Clip clip = AudioSystem.getClip();
             try (AudioInputStream ais = AudioSystem.getAudioInputStream(file)) {
-                bingClip.open(ais);
+                clip.open(ais);
+                return clip;
             }
         } catch (Exception ex) {
             LogManager.getLogger().error("", ex);
-            bingClip = null;
+            return null;
         }
     }
 
@@ -2126,10 +2144,24 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     /**
      * Make a "bing" sound.
      */
-    void bing() {
-        if (!GUIP.getSoundMute() && (bingClip != null)) {
-            bingClip.setFramePosition(0);
-            bingClip.start();
+    public void bingChat() {
+        if (!GUIP.getSoundMuteChat() && (bingClipMyTurn != null)) {
+            bingClipChat.setFramePosition(0);
+            bingClipChat.start();
+        }
+    }
+
+    public void bingMyTurn() {
+        if (!GUIP.getSoundMuteMyTurn() && (bingClipMyTurn != null)) {
+            bingClipMyTurn.setFramePosition(0);
+            bingClipMyTurn.start();
+        }
+    }
+
+    public void bingOthersTurn() {
+        if (!GUIP.getSoundMuteOthersTurn() && (bingClipMyTurn != null)) {
+            bingClipOthersTurn.setFramePosition(0);
+            bingClipOthersTurn.start();
         }
     }
 
@@ -2167,7 +2199,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
         @Override
         public void gamePlayerChat(GamePlayerChatEvent e) {
-            bing();
+            bingChat();
         }
 
         @Override
@@ -2837,6 +2869,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         } else if (e.getName().equals(GUIPreferences.DEFAULT_WEAPON_SORT_ORDER)) {
             setWeaponOrderPrefs(true);
             getUnitDisplay().displayEntity(getUnitDisplay().getCurrentEntity());
+        } else if ((e.getName().equals(GUIPreferences.SOUND_BING_FILENAME_CHAT))
+                || (e.getName().equals(GUIPreferences.SOUND_BING_FILENAME_MY_TURN))
+                || (e.getName().equals(GUIPreferences.SOUND_BING_FILENAME_OTHERS_TURN))) {
+            loadSoundFiles();
         }
     }
 }

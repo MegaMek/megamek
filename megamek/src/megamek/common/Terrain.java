@@ -383,6 +383,8 @@ public class Terrain implements Serializable {
                 }
                 return 0;
             case Terrains.RUBBLE:
+                boolean allowRubbleHoverTracked = ((moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.TRACKED)) && (level == 6);
+
                 if (level == 6) {
                     mp = 2;
                 } else {
@@ -390,10 +392,7 @@ public class Terrain implements Serializable {
                 }
 
                 if (isCrossCountry && e.isGround() && e.isCombatVehicle()) {
-                    if (((moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.TRACKED))
-                            && (level == 6)) {
-                        mp *= 2;
-                    } else if ((moveMode == EntityMovementMode.WHEELED)) {
+                    if (allowRubbleHoverTracked || (moveMode == EntityMovementMode.WHEELED)) {
                         mp *= 2;
                     }
                 }
@@ -521,6 +520,8 @@ public class Terrain implements Serializable {
                 }
                 return Math.max(0, mp);
             case Terrains.ROUGH:
+                boolean allowRoughHoverTracked = ((moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.TRACKED)) && (level == 2);
+
                 if (level == 2) {
                     mp = 2;
                 } else {
@@ -528,10 +529,7 @@ public class Terrain implements Serializable {
                 }
 
                 if (isCrossCountry && e.isGround() && e.isCombatVehicle()) {
-                    if (((moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.TRACKED))
-                            && (level == 2)) {
-                        mp *= 2;
-                    } else if ((moveMode == EntityMovementMode.WHEELED)) {
+                    if ( allowRoughHoverTracked || (moveMode == EntityMovementMode.WHEELED)) {
                         mp *= 2;
                     }
                 }

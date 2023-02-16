@@ -425,7 +425,7 @@ public final class UnitToolTip {
         }
         if (bad > 0) {
             String sBad =repeat(dChar, bad);
-            result = guiScaledFontHTML(colorDamaged, TT_SMALLFONT_DELTA) + sBad + "</FONT>";
+            result += guiScaledFontHTML(colorDamaged, TT_SMALLFONT_DELTA) + sBad + "</FONT>";
         }
         return new StringBuilder().append(result);
     }

@@ -14,10 +14,7 @@
  */
 package megamek.common;
 
-import megamek.common.alphaStrike.ASCardDisplayable;
-import megamek.common.alphaStrike.ASDamageVector;
-import megamek.common.alphaStrike.ASSpecialAbilityCollection;
-import megamek.common.alphaStrike.ASUnitType;
+import megamek.common.alphaStrike.*;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.Quirks;
@@ -152,10 +149,10 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     private String primaryMovementMode = "";
     private ASDamageVector standardDamage = ASDamageVector.ZERO;
     private int overheat = 0;
-    private ASSpecialAbilityCollection frontArc = new ASSpecialAbilityCollection();
-    private ASSpecialAbilityCollection leftArc = new ASSpecialAbilityCollection();
-    private ASSpecialAbilityCollection rightArc = new ASSpecialAbilityCollection();
-    private ASSpecialAbilityCollection rearArc = new ASSpecialAbilityCollection();
+    private ASArcSummary frontArc = new ASArcSummary();
+    private ASArcSummary leftArc = new ASArcSummary();
+    private ASArcSummary rightArc = new ASArcSummary();
+    private ASArcSummary rearArc = new ASArcSummary();
     private int threshold;
     private int fullArmor;
     private int fullStructure;
@@ -544,22 +541,22 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     }
 
     @Override
-    public ASSpecialAbilityCollection getFrontArc() {
+    public ASArcSummary getFrontArc() {
         return frontArc;
     }
 
     @Override
-    public ASSpecialAbilityCollection getLeftArc() {
+    public ASArcSummary getLeftArc() {
         return leftArc;
     }
 
     @Override
-    public ASSpecialAbilityCollection getRightArc() {
+    public ASArcSummary getRightArc() {
         return rightArc;
     }
 
     @Override
-    public ASSpecialAbilityCollection getRearArc() {
+    public ASArcSummary getRearArc() {
         return rearArc;
     }
 
@@ -1114,19 +1111,19 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         this.overheat = overheat;
     }
 
-    public void setFrontArc(ASSpecialAbilityCollection frontArc) {
+    public void setFrontArc(ASArcSummary frontArc) {
         this.frontArc = frontArc;
     }
 
-    public void setLeftArc(ASSpecialAbilityCollection leftArc) {
+    public void setLeftArc(ASArcSummary leftArc) {
         this.leftArc = leftArc;
     }
 
-    public void setRightArc(ASSpecialAbilityCollection rightArc) {
+    public void setRightArc(ASArcSummary rightArc) {
         this.rightArc = rightArc;
     }
 
-    public void setRearArc(ASSpecialAbilityCollection rearArc) {
+    public void setRearArc(ASArcSummary rearArc) {
         this.rearArc = rearArc;
     }
 
@@ -1181,5 +1178,13 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         return Objects.hash(chassis, model, unitType, sourceFile);
     }
 
+    @Override
+    public boolean showSUA(BattleForceSUA sua) {
+        return !AlphaStrikeHelper.hideSpecial(sua, this);
+    }
 
+    @Override
+    public String formatSUA(BattleForceSUA sua, String delimiter, ASSpecialAbilityCollector collection) {
+        return AlphaStrikeHelper.formatAbility(sua, collection, this, delimiter);
+    }
 }

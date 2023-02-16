@@ -20,33 +20,31 @@ package megamek.common.alphaStrike;
 
 import megamek.common.strategicBattleSystems.BattleForceSUAFormatter;
 
-import java.io.Serializable;
 import java.util.stream.Collectors;
 
+import static megamek.common.alphaStrike.BattleForceSUA.*;
+
 /**
- * This class holds the AlphaStrike information for a turret (TUR) special ability.
- * It is a standard ASSpecialAbilityCollection except that for displaying the contents,
- * it places the standard damage in front.
+ * This class holds the AlphaStrike information for a firing arc of any element that uses arcs
+ * such as a WarShip (WS)..
+ * It is a standard ASSpecialAbilityCollection except that
+ * {@link #getSpecialsExportString(String, BattleForceSUAFormatter)} can be used to export the arc information
+ * including the STD, CAP, SCAP and MSL damage values which are otherwise not listed among the special abilities.
  *
  * @author Simon (Juliez)
  */
-public class ASTurretSummary extends ASSpecialAbilityCollection implements Serializable {
+public class ASArcSummary extends ASSpecialAbilityCollection {
 
-    @Override
-    public String getSpecialsDisplayString(String delimiter, BattleForceSUAFormatter element) {
-        String stdDamage = getStdDamage().hasDamage() ? getStdDamage() + "" : "";
-        String furtherSUAs = specialAbilities.keySet().stream()
+    /** @return A string formatted for export (listing the damage values of STD, SCAP, MSL and CAP for arcs). */
+    public String getSpecialsExportString(String delimiter, BattleForceSUAFormatter element) {
+        String damage = getStdDamage() + delimiter + CAP + getCAP().toString() + delimiter + SCAP + getSCAP() + delimiter
+                + MSL + getMSL();
+        String specials = specialAbilities.keySet().stream()
                 .filter(element::showSUA)
-                .filter(sua -> sua != BattleForceSUA.STD)
+                .filter(sua -> !sua.isAnyOf(STD, CAP, SCAP, MSL))
                 .map(sua -> element.formatSUA(sua, delimiter, this))
                 .sorted(String.CASE_INSENSITIVE_ORDER)
                 .collect(Collectors.joining(delimiter));
-        if (stdDamage.isBlank()) {
-            return furtherSUAs;
-        } else if (furtherSUAs.isBlank()) {
-            return stdDamage;
-        } else {
-            return stdDamage + delimiter + furtherSUAs;
-        }
+        return damage + (!specials.isBlank() ? delimiter + specials : "");
     }
 }

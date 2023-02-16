@@ -18,10 +18,12 @@
  */
 package megamek.client.ui.swing.unitSelector;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.swing.util.IntRangeTextField;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.MechSummary;
+import megamek.common.UnitRole;
 import megamek.common.alphaStrike.ASDamage;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.ASUnitType;
@@ -30,6 +32,7 @@ import megamek.common.alphaStrike.BattleForceSUA;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -138,9 +141,31 @@ public class ASAdvancedSearchPanel extends JPanel {
     JCheckBox useAbility2 = new JCheckBox("Special Ability");
     MMComboBox<BattleForceSUA> ability2 = new MMComboBox<>("Ability2", BattleForceSUA.values());
 
+    JCheckBox useUnitRole = new JCheckBox("Unit Role");
+    JToggleButton unitRoleUndetermined = new JToggleButton(UnitRole.UNDETERMINED.toString());
+    JToggleButton unitRoleAmbusher = new JToggleButton(UnitRole.AMBUSHER.toString());
+    JToggleButton unitRoleBrawler = new JToggleButton(UnitRole.BRAWLER.toString());
+    JToggleButton unitRoleJuggernaut = new JToggleButton(UnitRole.JUGGERNAUT.toString());
+    JToggleButton unitRoleMissileBoat = new JToggleButton(UnitRole.MISSILE_BOAT.toString());
+    JToggleButton unitRoleScout = new JToggleButton(UnitRole.SCOUT.toString());
+    JToggleButton unitRoleSkirmisher = new JToggleButton(UnitRole.SKIRMISHER.toString());
+    JToggleButton unitRoleSniper = new JToggleButton(UnitRole.SNIPER.toString());
+    JToggleButton unitRoleStriker = new JToggleButton(UnitRole.STRIKER.toString());
+    JToggleButton unitRoleAttackFighter = new JToggleButton(UnitRole.ATTACK_FIGHTER.toString());
+    JToggleButton unitRoleDogfighter = new JToggleButton(UnitRole.DOGFIGHTER.toString());
+    JToggleButton unitRoleFastDogfighter = new JToggleButton(UnitRole.FAST_DOGFIGHTER.toString());
+    JToggleButton unitRoleFireSupport = new JToggleButton(UnitRole.FIRE_SUPPORT.toString());
+    JToggleButton unitRoleInterceptor = new JToggleButton(UnitRole.INTERCEPTOR.toString());
+    JToggleButton unitRoleTransport = new JToggleButton(UnitRole.TRANSPORT.toString());
+    JToggleButton unitRoleNone = new JToggleButton(UnitRole.NONE.toString());
+
+    private JButton btnClear = new JButton(Messages.getString("MechSelectorDialog.ClearTab"));
+
     public ASAdvancedSearchPanel() {
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         add(unitTypePanel());
+        add(new DottedSeparator());
+        add(unitRolePanel());
         add(new DottedSeparator());
         add(simplePanel(useSize, size1, size2, size3, size4, size5));
         add(new DottedSeparator());
@@ -165,8 +190,12 @@ public class ASAdvancedSearchPanel extends JPanel {
         add(new DottedSeparator());
         add(simplePanel(useAbility1, ability1));
         add(simplePanel(useAbility2, ability2));
+        add(new DottedSeparator());
+        add(simplePanel(btnClear));
         initializeCombos();
         updateEnabled();
+
+        btnClear.addActionListener(e -> clearValues());
     }
 
     /** @return True when the given MechSummary matches the active search filters or true when no filters are active. */
@@ -175,18 +204,20 @@ public class ASAdvancedSearchPanel extends JPanel {
             return false;
         } else if (useUnitType.isSelected() && !selectedTypes().contains(mechSummary.getASUnitType())) {
             return false;
+        } else if (useUnitRole.isSelected() && !selectedRoles().contains(mechSummary.getRole())) {
+            return false;
         } else if (useSize.isSelected() && !selectedSizes().contains(mechSummary.getSize())) {
             return false;
         } else if (useTMM.isSelected() && !(selectedTMMs().contains(mechSummary.getTMM()) && mechSummary.usesTMM())) {
             return false;
         } else if (useArmor.isSelected() && !((mechSummary.getFullArmor() >= armorFrom.getIntVal(-1))
-                && (mechSummary.getFullArmor() <= armorTo.getIntVal(-1)))) {
+                && (mechSummary.getFullArmor() <= armorTo.getIntVal(Integer.MAX_VALUE)))) {
             return false;
         } else if (useStructure.isSelected() && !((mechSummary.getFullStructure() >= structureFrom.getIntVal(-1))
-                && (mechSummary.getFullStructure() <= structureTo.getIntVal(-1)))) {
+                && (mechSummary.getFullStructure() <= structureTo.getIntVal(Integer.MAX_VALUE)))) {
             return false;
         } else if (useThreshold.isSelected() && !((mechSummary.getThreshold() >= thresholdFrom.getIntVal(-1))
-                && (mechSummary.getThreshold() <= thresholdTo.getIntVal(-1)))) {
+                && (mechSummary.getThreshold() <= thresholdTo.getIntVal(Integer.MAX_VALUE)))) {
             return false;
         }
 
@@ -210,14 +241,14 @@ public class ASAdvancedSearchPanel extends JPanel {
         } else if (useOV.isSelected() && !(selectedOVs().contains(mechSummary.getOV()) && mechSummary.usesOV())) {
             return false;
         } else if (usePV.isSelected() && !((mechSummary.getPointValue() >= pvFrom.getIntVal(-1))
-                && (mechSummary.getPointValue() <= pvTo.getIntVal(-1)))) {
+                && (mechSummary.getPointValue() <= pvTo.getIntVal(Integer.MAX_VALUE)))) {
             return false;
         }
 
         String moveMode = mvMode.getSelectedItem();
         if (useMV.isSelected() && !(mechSummary.hasMovementMode(moveMode)
                 && (mechSummary.getMovement().get(moveMode) >= mvFrom.getIntVal(-1))
-                && (mechSummary.getMovement().get(moveMode) <= mvTo.getIntVal(-1)))) {
+                && (mechSummary.getMovement().get(moveMode) <= mvTo.getIntVal(Integer.MAX_VALUE)))) {
             return false;
         } else if (useAbility1.isSelected() &&
                 !mechSummary.getSpecialAbilities().hasSUA(ability1.getSelectedItem())) {
@@ -256,11 +287,58 @@ public class ASAdvancedSearchPanel extends JPanel {
         return panel;
     }
 
+    private JComponent unitRolePanel() {
+        useUnitRole.addActionListener(e -> updateEnabled());
+        JPanel ur1Row = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        ur1Row.add(unitRoleUndetermined);
+        ur1Row.add(unitRoleAmbusher);
+        ur1Row.add(unitRoleBrawler);
+        ur1Row.add(unitRoleJuggernaut);
+
+        JPanel ur2Row = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        ur2Row.add(unitRoleMissileBoat);
+        ur2Row.add(unitRoleScout);
+        ur2Row.add(unitRoleSkirmisher);
+        ur2Row.add(unitRoleSniper);
+
+        JPanel ur3Row = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        ur3Row.add(unitRoleStriker);
+        ur3Row.add(unitRoleAttackFighter);
+        ur3Row.add(unitRoleDogfighter);
+        ur3Row.add(unitRoleFastDogfighter);
+
+        JPanel ur4Row = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        ur4Row.add(unitRoleFireSupport);
+        ur4Row.add(unitRoleInterceptor);
+        ur4Row.add(unitRoleTransport);
+        ur4Row.add(unitRoleNone);
+
+        Box buttonPanel = Box.createVerticalBox();
+        buttonPanel.add(ur1Row);
+        buttonPanel.add(ur1Row);
+        buttonPanel.add(ur3Row);
+        buttonPanel.add(ur4Row);
+
+        JPanel panel = new SectionPanel();
+        panel.add(useUnitRole);
+        panel.add(Box.createHorizontalStrut(15));
+        panel.add(buttonPanel);
+        return panel;
+    }
+
     private JComponent simplePanel(JCheckBox checkBox, JComponent... otherComponents) {
         checkBox.addActionListener(e -> updateEnabled());
         JPanel panel = new SectionPanel();
         panel.setLayout(new FlowLayout(FlowLayout.LEFT));
         panel.add(checkBox);
+        panel.add(Box.createHorizontalStrut(15));
+        Arrays.stream(otherComponents).forEach(panel::add);
+        return panel;
+    }
+
+    private JComponent simplePanel(JComponent... otherComponents) {
+        JPanel panel = new SectionPanel();
+        panel.setLayout(new FlowLayout(FlowLayout.LEFT));
         panel.add(Box.createHorizontalStrut(15));
         Arrays.stream(otherComponents).forEach(panel::add);
         return panel;
@@ -316,6 +394,28 @@ public class ASAdvancedSearchPanel extends JPanel {
         return result;
     }
 
+    /** @return The currently selected unit roles as a List of UnitRole. */
+    private List<UnitRole> selectedRoles() {
+        List<UnitRole> result = new ArrayList<>();
+        addIfSelected(unitRoleUndetermined.isSelected(), result, UnitRole.UNDETERMINED);
+        addIfSelected(unitRoleAmbusher.isSelected(), result, UnitRole.AMBUSHER);
+        addIfSelected(unitRoleBrawler.isSelected(), result, UnitRole.BRAWLER);
+        addIfSelected(unitRoleJuggernaut.isSelected(), result, UnitRole.JUGGERNAUT);
+        addIfSelected(unitRoleMissileBoat.isSelected(), result, UnitRole.MISSILE_BOAT);
+        addIfSelected(unitRoleScout.isSelected(), result, UnitRole.SCOUT);
+        addIfSelected(unitRoleSkirmisher.isSelected(), result, UnitRole.SKIRMISHER);
+        addIfSelected(unitRoleSniper.isSelected(), result, UnitRole.SNIPER);
+        addIfSelected(unitRoleStriker.isSelected(), result, UnitRole.STRIKER);
+        addIfSelected(unitRoleAttackFighter.isSelected(), result, UnitRole.ATTACK_FIGHTER);
+        addIfSelected(unitRoleDogfighter.isSelected(), result, UnitRole.DOGFIGHTER);
+        addIfSelected(unitRoleFastDogfighter.isSelected(), result, UnitRole.FAST_DOGFIGHTER);
+        addIfSelected(unitRoleFireSupport.isSelected(), result, UnitRole.FIRE_SUPPORT);
+        addIfSelected(unitRoleInterceptor.isSelected(), result, UnitRole.INTERCEPTOR);
+        addIfSelected(unitRoleTransport.isSelected(), result, UnitRole.TRANSPORT);
+        addIfSelected(unitRoleNone.isSelected(), result, UnitRole.NONE);
+        return result;
+    }
+
     /** @return The currently selected unit sizes as a List of Integers. */
     private List<Integer> selectedSizes() {
         List<Integer> result = new ArrayList<>();
@@ -361,6 +461,23 @@ public class ASAdvancedSearchPanel extends JPanel {
         unitTypeSV.setEnabled(useUnitType.isSelected());
         unitTypeAF.setEnabled(useUnitType.isSelected());
         unitTypeCF.setEnabled(useUnitType.isSelected());
+
+        unitRoleUndetermined.setEnabled(useUnitRole.isSelected());
+        unitRoleAmbusher.setEnabled(useUnitRole.isSelected());
+        unitRoleBrawler.setEnabled(useUnitRole.isSelected());
+        unitRoleJuggernaut.setEnabled(useUnitRole.isSelected());
+        unitRoleMissileBoat.setEnabled(useUnitRole.isSelected());
+        unitRoleScout.setEnabled(useUnitRole.isSelected());
+        unitRoleSkirmisher.setEnabled(useUnitRole.isSelected());
+        unitRoleSniper.setEnabled(useUnitRole.isSelected());
+        unitRoleStriker.setEnabled(useUnitRole.isSelected());
+        unitRoleAttackFighter.setEnabled(useUnitRole.isSelected());
+        unitRoleDogfighter.setEnabled(useUnitRole.isSelected());
+        unitRoleFastDogfighter.setEnabled(useUnitRole.isSelected());
+        unitRoleFireSupport.setEnabled(useUnitRole.isSelected());
+        unitRoleInterceptor.setEnabled(useUnitRole.isSelected());
+        unitRoleTransport.setEnabled(useUnitRole.isSelected());
+        unitRoleNone.setEnabled(useUnitRole.isSelected());
 
         size1.setEnabled(useSize.isSelected());
         size2.setEnabled(useSize.isSelected());
@@ -439,6 +556,7 @@ public class ASAdvancedSearchPanel extends JPanel {
     /** Deactivates all AS search filters so that no units will be filtered out. */
     public void clearValues() {
         useUnitType.setSelected(false);
+        useUnitRole.setSelected(false);
         useSize.setSelected(false);
         useTMM.setSelected(false);
         useArmor.setSelected(false);
@@ -469,7 +587,7 @@ public class ASAdvancedSearchPanel extends JPanel {
 
     /** @return True when any of the search filters is activated so that units might be filtered out. */
     public boolean isActive() {
-        return useUnitType.isSelected() || useSize.isSelected() || useTMM.isSelected() || useArmor.isSelected()
+        return useUnitType.isSelected() || useUnitRole.isSelected() || useSize.isSelected() || useTMM.isSelected() || useArmor.isSelected()
                 || useStructure.isSelected() || useThreshold.isSelected() || useDamageS.isSelected() || useDamageM.isSelected()
                 || useDamageL.isSelected() || useDamageE.isSelected() || usePV.isSelected() || useMV.isSelected()
                 || useAbility1.isSelected() || useAbility2.isSelected() || useOV.isSelected();
@@ -508,7 +626,9 @@ public class ASAdvancedSearchPanel extends JPanel {
     private class UiValues {
 
         boolean unitTypeUse;
+        boolean unitRoleUse;
         List<ASUnitType> unitTypeSelected = new ArrayList<>();
+        List<UnitRole> unitRoleSelected = new ArrayList<>();
 
         boolean sizeUse;
         List<Integer> sizeSelected = new ArrayList<>();
@@ -565,6 +685,9 @@ public class ASAdvancedSearchPanel extends JPanel {
         void store() {
             unitTypeUse = useUnitType.isSelected();
             unitTypeSelected = selectedTypes();
+
+            unitRoleUse = useUnitType.isSelected();
+            unitRoleSelected = selectedRoles();
 
             sizeUse = useSize.isSelected();
             sizeSelected = selectedSizes();
@@ -629,6 +752,24 @@ public class ASAdvancedSearchPanel extends JPanel {
             unitTypePM.setSelected(unitTypeSelected.contains(ASUnitType.PM));
             unitTypeSV.setSelected(unitTypeSelected.contains(ASUnitType.SV));
             unitTypeAF.setSelected(unitTypeSelected.contains(ASUnitType.AF));
+
+            useUnitRole.setSelected(unitRoleUse);
+            unitRoleUndetermined.setSelected(unitRoleSelected.contains(UnitRole.UNDETERMINED));
+            unitRoleAmbusher.setSelected(unitRoleSelected.contains(UnitRole.AMBUSHER));
+            unitRoleBrawler.setSelected(unitRoleSelected.contains(UnitRole.BRAWLER));
+            unitRoleJuggernaut.setSelected(unitRoleSelected.contains(UnitRole.JUGGERNAUT));
+            unitRoleMissileBoat.setSelected(unitRoleSelected.contains(UnitRole.MISSILE_BOAT));
+            unitRoleScout.setSelected(unitRoleSelected.contains(UnitRole.SCOUT));
+            unitRoleSkirmisher.setSelected(unitRoleSelected.contains(UnitRole.SKIRMISHER));
+            unitRoleSniper.setSelected(unitRoleSelected.contains(UnitRole.SNIPER));
+            unitRoleStriker.setSelected(unitRoleSelected.contains(UnitRole.STRIKER));
+            unitRoleAttackFighter.setSelected(unitRoleSelected.contains(UnitRole.ATTACK_FIGHTER));
+            unitRoleDogfighter.setSelected(unitRoleSelected.contains(UnitRole.DOGFIGHTER));
+            unitRoleFastDogfighter.setSelected(unitRoleSelected.contains(UnitRole.FAST_DOGFIGHTER));
+            unitRoleFireSupport.setSelected(unitRoleSelected.contains(UnitRole.FIRE_SUPPORT));
+            unitRoleInterceptor.setSelected(unitRoleSelected.contains(UnitRole.INTERCEPTOR));
+            unitRoleTransport.setSelected(unitRoleSelected.contains(UnitRole.TRANSPORT));
+            unitRoleNone.setSelected(unitRoleSelected.contains(UnitRole.NONE));
 
             useSize.setSelected(sizeUse);
             size1.setSelected(sizeSelected.contains(1));

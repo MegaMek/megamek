@@ -3943,8 +3943,8 @@ Lynx LNX-9R:SKIRMISHER
 Lyonesse Escort (Standard):NONE
 Lyonesse Escort M1:NONE
 Lyonesse Escort W1:NONE
-M.A.S.H. Truck (ICE):NONE
-M.A.S.H. Truck (Standard):NONE
+MASH Truck (ICE):NONE
+MASH Truck (Standard):NONE
 M-9 SDS Battle Station 'Pavise':NONE
 Machina Domini Interface Armor (Standard):NONE
 Mackie MSK-5S:SNIPER
@@ -7684,8 +7684,8 @@ Callisto A [ER Laser]:AMBUSHER
 Callisto A [HMG]:AMBUSHER
 Callisto B [MRR]:AMBUSHER
 Callisto B [SRM]:AMBUSHER
-Clint CLNT-3-4T::STRIKER
-Harrier Hover Tank (Original):STRIKER
+Clint CLNT-3-4T:STRIKER
+Harrier Hover Tank:STRIKER
 Harrier Hover Tank (PPC):STRIKER
 Harrier Hover Tank (Re-Laser):STRIKER
 J. Edgar Light Hover Tank (Chemical):STRIKER
@@ -7694,7 +7694,7 @@ J. Edgar Light Hover Tank (LAC):STRIKER
 J. Edgar Light Hover Tank (Light PPC):SNIPER
 J. Edgar Light Hover Tank (TAG):SCOUT
 Javelin JVN-12N:SCOUT
-Manticore Heavy Tank (XL): Brawler
+Manticore Heavy Tank (XL):Brawler
 Pillager PLG-6Z:JUGGERNAUT
 Savannah Master Hovercraft (Reflective):SCOUT
 Shogun C 3:SNIPER

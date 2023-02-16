@@ -4,4 +4,4 @@ Zephyr Hovertank (Royal), 2
 Ares Medium Tank (Standard), 3
 Goblin Medium Tank (Standard), 3
 Hachiman Fire Support Tank (Standard), 2
-Maxim Heavy Hover Transport(Standard), 1
+Maxim Heavy Hover Transport (Standard), 1

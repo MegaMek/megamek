@@ -2,10 +2,10 @@
 Planetlifter Air Transport 'SuperPelican' aka 'Waddle',1
 Heavy Strike Fighter Meteor-G,2
 Bluehawk Combat Support Fighter MSF-42,3
-MechBuster (Standard),4
+Mechbuster (Standard),4
 Planetlifter Air Transport (Standard),5
 Heavy Strike Fighter Meteor,6
-MechBuster (Standard),5
+Mechbuster (Standard),5
 Heavy Strike Fighter Meteor,4
 Planetlifter Air Transport (Standard),3
 Protector Combat Support Fighter ASF-23,2

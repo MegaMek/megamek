@@ -143,7 +143,7 @@ public class OptionsConstants {
     public static final String PILOT_APTITUDE_GUNNERY = "aptitude_gunnery";
     public static final String PILOT_APTITUDE_PILOTING = "aptitude_piloting";
     public static final String PILOT_ANIMAL_MIMIC = "animal_mimic";
-    // public static final String PILOT_CROSS_COUNTRY = "cross_country";
+    public static final String PILOT_CROSS_COUNTRY = "cross_country";
     public static final String PILOT_DODGE_MANEUVER = "dodge_maneuver";
     // public static final String PILOT_DUST_OFF = "dust_off";
     // public static final String PILOT_HVY_LIFTER = "hvy_lifter";
@@ -169,6 +169,7 @@ public class OptionsConstants {
     public static final String PILOT_TM_SWAMP_BEAST = "tm_swamp_beast";
     // public static final String PILOT_WIND_WALKER = "wind_walker";
     public static final String PILOT_ZWEIHANDER = "zweihander";
+
 
     // GUNNERY SKILLS
     public static final String GUNNERY_BLOOD_STALKER = "blood_stalker";

@@ -386,8 +386,8 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
 
         if (clientgui.getClient().isMyTurn()) {
             beginMyTurn();
-            setStatusBarText(Messages
-                    .getString("DeployMinefieldDisplay.its_your_turn"));
+            setStatusBarText(Messages.getString("DeployMinefieldDisplay.its_your_turn"));
+            clientgui.bingMyTurn();
         } else {
             String playerName;
             if (e.getPlayer() != null) {
@@ -395,8 +395,8 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
             } else {
                 playerName = "Unknown";
             }
-            setStatusBarText(Messages.getString("DeployMinefieldDisplay."
-                    + "its_others_turn", playerName));
+            setStatusBarText(Messages.getString("DeployMinefieldDisplay.its_others_turn", playerName));
+            clientgui.bingOthersTurn();
         }
     }
 

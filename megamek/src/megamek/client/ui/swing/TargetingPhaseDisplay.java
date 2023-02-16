@@ -860,8 +860,10 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                 && (((WeaponType) mounted.getType()).getAmmoType() != AmmoType.T_NA)) {
             Mounted ammoMount = mounted.getLinked();
             waa.setAmmoId(ammoMount.getEntity().getEquipmentNum(ammoMount));
+            long ammoMunitionType = ((AmmoType) ammoMount.getType()).getMunitionType();
+            waa.setAmmoMunitionType(ammoMunitionType);
             waa.setAmmoCarrier(ammoMount.getEntity().getId());
-            if (((AmmoType) ammoMount.getType()).getMunitionType() == AmmoType.M_VIBRABOMB_IV) {
+            if (ammoMunitionType == AmmoType.M_VIBRABOMB_IV) {
                 VibrabombSettingDialog vsd = new VibrabombSettingDialog(clientgui.frame);
                 vsd.setVisible(true);
                 waa.setOtherAttackInfo(vsd.getSetting());
@@ -1345,17 +1347,22 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
+        String s = getRemainingPlayerWithTurns();
+
         if (clientgui.getClient().getGame().getPhase() == phase) {
             if (clientgui.getClient().isMyTurn()) {
                 if (cen == Entity.NONE) {
                     beginMyTurn();
                 }
-                setStatusBarText(Messages.getString("TargetingPhaseDisplay.its_your_turn"));
+
+                setStatusBarText(Messages.getString("TargetingPhaseDisplay.its_your_turn") + s);
+                clientgui.bingOthersTurn();
             } else {
                 endMyTurn();
                 if (e.getPlayer() != null) {
                     setStatusBarText(Messages.getString("TargetingPhaseDisplay.its_others_turn",
-                            e.getPlayer().getName()));
+                            e.getPlayer().getName()) + s);
+                    clientgui.bingOthersTurn();
                 }
             }
         }

@@ -114,6 +114,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_UNITTOOLTIP_SEENBYRESOLUTION = "AdvancedUnitToolTipSeenByResolution";
     public static final String ADVANCED_DOCK_ON_LEFT = "AdvancedDockOnLeft";
     public static final String ADVANCED_DOCK_MULTIPLE_ON_Y_AXIS = "AdvancedDockMultipleOnYAxis";
+    public static final String ADVANCED_PLAYERS_REMAINING_TO_SHOW = "AdvancedPlayersRemainingToShow";
+    public static final String ADVANCED_UNIT_DISPLAY_WEAPON_LIST_COUNT = "AdvancedUnitDisplayWeaponListCount";
 
     /* --End advanced settings-- */
 
@@ -210,6 +212,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MINI_MAP_POS_X = "MinimapPosX";
     public static final String MINI_MAP_POS_Y = "MinimapPosY";
     public static final String MINI_MAP_ZOOM = "MinimapZoom";
+    public static final String MINI_MAP_HEIGHT_DISPLAY_MODE = "MinimapHeightDisplayMode";
     public static final String MINI_MAP_AUTO_DISPLAY_REPORT_PHASE = "MinimapAutoDiplayReportPhase";
     public static final String MINI_MAP_AUTO_DISPLAY_NONREPORT_PHASE = "MinimapAutoDiplayNonReportPhase";
     public static final String MINIMUM_SIZE_HEIGHT = "MinimumSizeHeight";
@@ -243,8 +246,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SHOW_PILOT_PORTRAIT_TT = "showPilotPortraitTT";
     public static final String SHOW_MOVE_STEP = "ShowMoveStep";
     public static final String SHOW_WRECKS = "ShowWrecks";
-    public static final String SOUND_BING_FILENAME = "SoundBingFilename";
-    public static final String SOUND_MUTE = "SoundMute";
+    public static final String SOUND_BING_FILENAME_CHAT = "SoundBingFilenameChat";
+    public static final String SOUND_BING_FILENAME_MY_TURN = "SoundBingFilenameMyTurn";
+    public static final String SOUND_BING_FILENAME_OTHERS_TURN = "SoundBingFilenameOthersTurn";
+    public static final String SOUND_MUTE_CHAT = "SoundMuteChat";
+    public static final String SOUND_MUTE_MY_TURN = "SoundMuteMyTurn";
+    public static final String SOUND_MUTE_OTHERS_TURN = "SoundMuteOthersTurn";
     public static final String TOOLTIP_DELAY = "TooltipDelay";
     public static final String TOOLTIP_DISMISS_DELAY = "TooltipDismissDelay";
     public static final String TOOLTIP_DIST_SUPRESSION = "TooltipDistSupression";
@@ -430,6 +437,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_UNITTOOLTIP_SEENBYRESOLUTION, 3);
         setDefault(ADVANCED_DOCK_ON_LEFT, true);
         setDefault(ADVANCED_DOCK_MULTIPLE_ON_Y_AXIS, true);
+        setDefault(ADVANCED_PLAYERS_REMAINING_TO_SHOW, 3);
+
+        setDefault(ADVANCED_UNIT_DISPLAY_WEAPON_LIST_COUNT, 10);
 
         store.setDefault(FOV_HIGHLIGHT_RINGS_RADII, "5 10 15 20 25");
         store.setDefault(FOV_HIGHLIGHT_RINGS_COLORS_HSB, "0.3 1.0 1.0 ; 0.45 1.0 1.0 ; 0.6 1.0 1.0 ; 0.75 1.0 1.0 ; 0.9 1.0 1.0 ; 1.05 1.0 1.0 ");
@@ -557,8 +567,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(SHOW_MAPHEX_POPUP, true);
         store.setDefault(SHOW_MOVE_STEP, true);
         store.setDefault(SHOW_WRECKS, true);
-        store.setDefault(SOUND_BING_FILENAME, "data/sounds/call.wav");
-        store.setDefault(SOUND_MUTE, true);
+        store.setDefault(SOUND_BING_FILENAME_CHAT, "data/sounds/call.wav");
+        store.setDefault(SOUND_BING_FILENAME_MY_TURN, "data/sounds/call.wav");
+        store.setDefault(SOUND_BING_FILENAME_OTHERS_TURN, "data/sounds/call.wav");
+        store.setDefault(SOUND_MUTE_CHAT, true);
+        store.setDefault(SOUND_MUTE_MY_TURN, false);
+        store.setDefault(SOUND_MUTE_OTHERS_TURN, true);
 
         store.setDefault(TOOLTIP_DELAY, 1000);
         store.setDefault(TOOLTIP_DISMISS_DELAY, -1);
@@ -737,6 +751,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getUnitDisplayEnabled() {
         return store.getBoolean(UNIT_DISPLAY_ENABLED);
+    }
+
+    public int getUnitDisplayWeaponListCount() {
+        return store.getInt(ADVANCED_UNIT_DISPLAY_WEAPON_LIST_COUNT);
     }
 
     public int getUnitDisplayLocaton() {
@@ -947,6 +965,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getInt(MINI_MAP_ZOOM);
     }
 
+    public int getMinimapHeightDisplayMode() {
+        return store.getInt(MINI_MAP_HEIGHT_DISPLAY_MODE);
+    }
+
     public boolean getMiniReportEnabled() {
         return store.getBoolean(MINI_REPORT_ENABLED);
     }
@@ -1135,12 +1157,28 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(SHOW_WRECKS);
     }
 
-    public String getSoundBingFilename() {
-        return store.getString(SOUND_BING_FILENAME);
+    public String getSoundBingFilenameChat() {
+        return store.getString(SOUND_BING_FILENAME_CHAT);
     }
 
-    public boolean getSoundMute() {
-        return store.getBoolean(SOUND_MUTE);
+    public String getSoundBingFilenameMyTurn() {
+        return store.getString(SOUND_BING_FILENAME_MY_TURN);
+    }
+
+    public String getSoundBingFilenameOthersTurn() {
+        return store.getString(SOUND_BING_FILENAME_OTHERS_TURN);
+    }
+
+    public boolean getSoundMuteChat() {
+        return store.getBoolean(SOUND_MUTE_CHAT);
+    }
+
+    public boolean getSoundMuteMyTurn() {
+        return store.getBoolean(SOUND_MUTE_MY_TURN);
+    }
+
+    public boolean getSoundMuteOthersTurn() {
+        return store.getBoolean(SOUND_MUTE_OTHERS_TURN);
     }
 
     public int getTooltipDelay() {
@@ -1342,6 +1380,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(UNIT_DISPLAY_ENABLED, b);
     }
 
+    public void setUnitDisplayWeaponListCount(int i) {
+        store.setValue(ADVANCED_UNIT_DISPLAY_WEAPON_LIST_COUNT, i);
+    }
+
     public void toggleUnitDisplayLocation() {
         store.setValue(UNIT_DISPLAY_LOCATION, ((getInt(UNIT_DISPLAY_LOCATION)+1)%2));
     }
@@ -1538,6 +1580,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(MINI_MAP_ZOOM, zoom);
     }
 
+    public void setMinimapHeightDisplayMode(int zoom) {
+        store.setValue(MINI_MAP_HEIGHT_DISPLAY_MODE, zoom);
+    }
+
     public void setMinimapAutoDisplayReportPhase(int i) {
         store.setValue(MINI_MAP_AUTO_DISPLAY_REPORT_PHASE, i);
     }
@@ -1730,12 +1776,28 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(SHOW_WRECKS, state);
     }
 
-    public void setSoundBingFilename(String name) {
-        store.setValue(SOUND_BING_FILENAME, name);
+    public void setSoundBingFilenameChat(String name) {
+        store.setValue(SOUND_BING_FILENAME_CHAT, name);
     }
 
-    public void setSoundMute(boolean state) {
-        store.setValue(SOUND_MUTE, state);
+    public void setSoundBingFilenameMyTurn(String name) {
+        store.setValue(SOUND_BING_FILENAME_MY_TURN, name);
+    }
+
+    public void setSoundBingFilenameOthersTurn(String name) {
+        store.setValue(SOUND_BING_FILENAME_OTHERS_TURN, name);
+    }
+
+    public void setSoundMuteChat(boolean state) {
+        store.setValue(SOUND_MUTE_CHAT, state);
+    }
+
+    public void setSoundMuteMyTurn(boolean state) {
+        store.setValue(SOUND_MUTE_MY_TURN, state);
+    }
+
+    public void setSoundMuteOthersTurn(boolean state) {
+        store.setValue(SOUND_MUTE_OTHERS_TURN, state);
     }
 
     public void setTooltipDelay(int i) {
@@ -1955,6 +2017,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return getBoolean(ADVANCED_DOCK_MULTIPLE_ON_Y_AXIS);
     }
 
+    public int getAdvancedPlayersRemainingToShow() {
+        return getInt(ADVANCED_PLAYERS_REMAINING_TO_SHOW);
+    }
+
     public void setReportLinkColor(Color color) {
         store.setValue(ADVANCED_REPORT_COLOR_LINK, getColorString(color));
     }
@@ -2049,6 +2115,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setAdvancedDockMultipleOnYAxis(Boolean state) {
         store.setValue(ADVANCED_DOCK_MULTIPLE_ON_Y_AXIS, state);
+    }
+
+    public void setAdvancedPlayersRemainingToShow(Boolean state) {
+        store.setValue(ADVANCED_PLAYERS_REMAINING_TO_SHOW, state);
     }
 
     /**

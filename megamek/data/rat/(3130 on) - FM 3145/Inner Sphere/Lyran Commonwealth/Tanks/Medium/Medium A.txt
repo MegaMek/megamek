@@ -2,7 +2,7 @@
 JES I Tactical Missile Carrier (3082 Upgrade), 1
 Drillson Heavy Hover Tank (Streak), 2
 Maxim Mk II Transport (Infantry Support) 'Shiloh', 3
-Condor Heavy Hover Tank (Upgrade) (Standard), 4
+Condor Heavy Hover Tank (Upgrade), 4
 Bishop Transport VTOL (Standard), 5
 Vedette Medium Tank V7, 6
 Condor Heavy Hover Tank (Upgrade) (Laser), 5

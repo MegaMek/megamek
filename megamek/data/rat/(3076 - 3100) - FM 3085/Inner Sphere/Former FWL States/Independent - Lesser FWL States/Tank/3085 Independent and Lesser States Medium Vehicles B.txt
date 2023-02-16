@@ -8,5 +8,5 @@ Vedette Medium Tank (Cell),6
 Fulcrum Heavy Hovertank (Standard),5
 Condor Heavy Hover Tank (Laser),4
 Stygian Strike Tank (Standard),3
-Condor Heavy Hover Tank (Upgrade) (Standard),2
+Condor Heavy Hover Tank (Upgrade),2
 Danai Support Vehicle (Standard),1

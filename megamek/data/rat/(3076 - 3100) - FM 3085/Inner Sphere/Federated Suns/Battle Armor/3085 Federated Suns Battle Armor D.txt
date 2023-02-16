@@ -1,5 +1,5 @@
 3085 Federated Suns Battle Armor D
-Tunnel Rat Mining Exoskeleton IV [Battle Claw/LMG],1
+Tunnel Rat IV Mining Exoskeleton [Battle Claw/LMG](Sqd4),1
 IS Standard Battle Armor [Laser],2
 Infiltrator Mk. I Battle Armor 'Waddle',3
 Gray Death Scout Suit (Standard),4

@@ -1,0 +1,167 @@
+Version:1.3
+Vulcan
+VT-7T
+mul id:9427
+Config:Biped
+techbase:Inner Sphere
+era:3091
+source:Rec Guide:ilClan #30 - Rec Guide:ilClan #30 - 
+rules level:2
+
+mass:40
+engine:240 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:10 IS Double
+walk mp:6
+jump mp:6
+
+armor:Light Ferro-Fibrous(Inner Sphere)
+LA armor:10
+RA armor:10
+LT armor:10
+RT armor:10
+CT armor:12
+HD armor:9
+LL armor:12
+RL armor:12
+RTL armor:5
+RTR armor:5
+RTC armor:6
+
+Weapons:4
+Heavy Machine Gun, Left Arm
+Heavy Flamer, Right Arm
+ER Medium Laser, Left Torso
+Plasma Rifle, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Heavy Machine Gun
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Heavy Flamer
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Jump Jet
+Jump Jet
+ISERMediumLaser
+Supercharger
+ISTargeting Computer
+ISTargeting Computer
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+ISPlasmaRifle
+ISPlasmaRifle
+ISPlasmaRifleAmmo
+ISPlasmaRifleAmmo
+IS Heavy Machine Gun Ammo - Half
+IS Heavy Flamer Ammo
+ISCASEII
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Light Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Vulcan was designed as an anti-infantry 'Mech in 2775 during the closing years of the Amaris Civil War.
+
+capabilities:The Vulcan is lightly armored at only five tons, though this is typically sufficient when facing infantry forces and its narrow profile makes it a harder target to hit. A cruising speed of 97.2 km/h is enhanced by six jump jets mounted in the rear of the Vulcan's torso, specially vented to reduce heat buildup, giving it a jumping range of 180 meters.
+
+deployment:The new -7T entered markets with the incendiary payload of the Coventry versions and the endurance, heat dissipation, and accuracy of the Nimakachi builds.
+
+history:As the SLDF battled Republican troops in the streets and thoroughfares of the Terran Hegemony, many 'Mechs were destroyed by dug-in infantry during these urban battles. In response to this problem, MatherTechno Inc. designed the Vulcan to pack weaponry capable of taking out large numbers of enemy troops and capable of unparalleled mobility in an urban environment, though not intended to engage in all-out battles with larger 'Mechs. The Vulcan's distinct profile would eventually give rise to its nickname "Scarecrow." Production of the Vulcan began as soon as MatherTechno's factory on Northwind was liberated by the SLDF, with Aleksandr Kerensky himself specifically ordering their production lines converted to produce the Vulcan. The design's baptism of fire came during Operation Liberation, the final battle of the civil war to liberate Terra from Stefan Amaris, where it served as part of the Volunteer Regiments and earned its reputation as a tough city fighter. Each of the Great Houses had a sizable number of Vulcans at the start of the First Succession War when, just a few months into the conflict, MatherTechno's factory on Northwind was destroyed. Only the Lyran Commonwealth and Free Worlds League managed to acquire the design specifications for the Vulcan and keep it in limited production throughout the rest of the Succession Wars, with the League awarding the schematics to Nimakachi Fusion Products Limited and the Commonwealth giving theirs to Coventry Metal Works. Of the other Great Houses the Capellan Confederation had the fewest number of Vulcans as a result of the loss of Sappho, where the majority of their Vulcans were stationed, to House Marik during the Second Succession War. The Federated Suns kept their Vulcans going thanks to several spare part supply dumps located in their territory, and used the 'Mech extensively during the reconquest of Kentares IV. The majority of the Draconis Combine's Vulcan inventory was used during a raid on Dobson in 3020 where they decimated several key Davion aerospace fighter bases. Following the recovery of several lostech components Nimakachi was able to create a new variant, the VT-5M, and begin limited production in 3050,eventually increasing their lines to produce twenty a month. Coventry Metal Works produced their own upgraded variant around the same time, the VT-5S, which played a pivotal role during the FedCom Civil War as part of the Allied forces. The Word of Blake purchased a number of Vulcans in preparation for their seizure of Terra in 3058, codenamed Operation Odysseus. The Blakists would go on to seize more Vulcans after the start of the Jihad following their sacking of Nimakachi's Tematagi plant in 3069, with many transferred to the Protectorate Militia for policing duties.
+
+manufacturer:Nimakachi Fusion Products Ltd.,Coventry Metal Works
+primaryfactory:Tematagi, Coventry
+systemmanufacturer:CHASSIS:Crucis-II Delux Endo Steel
+systemmanufacturer:ENGINE:VOX 240 XL
+systemmanufacturer:ARMOR:StarSlab 1/d
+systemmanufacturer:JUMPJET:Model 9 Pitban
+systemmanufacturer:COMMUNICATIONS:Hartford 200S
+systemmanufacturer:TARGETING:Hartford TA10
+

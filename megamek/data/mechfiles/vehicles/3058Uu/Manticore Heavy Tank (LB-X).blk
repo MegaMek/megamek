@@ -2,16 +2,20 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Manticore Heavy Tank
 </Name>
+
 <Model>
 (LB-X)
 </Model>
@@ -19,50 +23,111 @@ Manticore Heavy Tank
 <mul id:>
 2019
 </mul id:>
-<Tonnage>
-60
-</Tonnage>
+
+<year>
+3060
+</year>
+
+<originalBuildYear>
+3060
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+</transporters>
+
 <cruiseMP>
 4
 </cruiseMP>
-<Armor>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
 43
 34
 34
 26
 42
-</Armor>
+</armor>
+
+<Body Equipment>
+IS LB 10-X AC Ammo
+IS LB 10-X AC Ammo
+IS LB 10-X Cluster Ammo
+IS Streak SRM 6 Ammo
+</Body Equipment>
+
+<Front Equipment>
+ISMediumPulseLaser
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
 <Turret Equipment>
 ISLBXAC10
 ISStreakSRM6
 </Turret Equipment>
-<Front Equipment>
-ISMediumPulseLaser
-</Front Equipment>
-<Body Equipment>
-ISLBXAC10 Ammo
-ISLBXAC10 Ammo
-ISLBXAC10 CL Ammo
-IS Streak SRM 6 Ammo
-</Body Equipment>
-<type>
-IS Level 2
-</type>
-<year>
-3060
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-Tracked
-</motion_type>
+
+<capabilities>
+Although the Manticore mounts a variety of weapons to handle a variety of combat roles and ranges, and is heavily armored for a vehicle of its weight, it is not equipped to deal with the raw firepower of super-heavy vehicles such as the Demolisher or the Behemoth. Despite this, the popularity of the Manticore has remained high, even during the Succession Wars era with its use of an expensive and rare fusion engine.
+</capabilities>
+
+<overview>
+The Manticore is one of the best-designed and most powerful tanks ever created, built to combat BattleMechs in support of infantry formations.
+</overview>
+
+<deployment>
+Manufactured by NETC based on unproduced plans licensed from Defiance Industries in 3060, this new construction variant replaces the Streak SRM-2 from Defiance's upgrade with a Medium Pulse Laser, mounting an LB 10-X AC and Streak SRM-6 in the turret, making it an effective anti-battle armor support unit during the FedCom Civil War.
+</deployment>
+
+<history>
+It was created by TechniCorp for the Star League member nations and quickly gained a reputation as a potent infantry-support weapon during the Reunification War. Following the destruction of TechniCorp's headquarters on Terra during the Amaris Coup, other weapon manufacturers absorbed TechniCorp's manufacturing plants around the Inner Sphere. The Manticore is now manufactured by six different companies, a testament to TechniCorp's robust design nearly five centuries after its creation. The Manticore's prominent, high profile, chosen to provide it superior angles of fire against towering BattleMechs, makes it clearly visible on the battlefield, for better or worse. Despite being more expensive than other frontline tanks such as the Bulldog, Manticores are frequently used to form entire companies and battalions. Many affluent lords who cannot afford a BattleMech formation will frequently pay for Manticores rather than any other conventional ground vehicle. The licensing of the vehicle to other corporations has carried the Manticore's notoriety to the most remote reaches of the Inner Sphere and the Periphery. Many have questioned Defiance Industries' choice to assist the Commonwealth's long-time foe, the Draconis Combine, in launching Manticore production on Proserpina. However, Defiance Industries has defended themselves by demonstrating that Bulldog Enterprises, a Combine weapons company, was already working to clone the vehicle for House Kurita, therefore it was better for the Commonwealth to wring every euro out of the design and keep the proceeds local.
+</history>
+
+<manufacturer>
+New Earth Trading Company
+</manufacturer>
+
+<primaryFactory>
+New Earth
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:Pitban 240 Fusion
+ARMOR:Durallex Super Ferro-Fibrous
+COMMUNICATIONS:O/P R Janxiir
+TARGETING:TargiTrack 717
+</systemManufacturers>
+
 <source>
-Clan Invasion
+TRO:3058 - Clan Invasion
 </source>
+
+<tonnage>
+60.0
+</tonnage>
+

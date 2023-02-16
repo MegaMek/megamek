@@ -3,6 +3,7 @@ VERSION HISTORY:
 0.49.12-SNAPSHOT
 + PR #4062: OS Thunderbolt Weapons are now available for construction and use
 + PR #4118: The Cross Country SPA is now available for vehicle pilots (effects on water movement is not yet implemented)
++ Issue #4149: Fix an error with the readme file for Princess
 + Issues #4169, #3568: Fixing a bug with firing weapons after having moved offboard
 + Issue #2652: TacOps BA crits
 + Issue #2945: RHS failure chance errata

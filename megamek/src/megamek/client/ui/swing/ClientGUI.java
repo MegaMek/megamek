@@ -79,7 +79,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     ActionListener, ComponentListener, IPreferenceChangeListener {
     //region Variable Declarations
     private static final long serialVersionUID = 3913466735610109147L;
-    
+
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final ClientPreferences CP = PreferenceManager.getClientPreferences();
 
@@ -87,10 +87,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     private static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png";
     private static final String FILENAME_ICON_48X48 = "megamek-icon-48x48.png";
     private static final String FILENAME_ICON_256X256 = "megamek-icon-256x256.png";
-    
-    /** The smallest GUI scaling value; smaller will make text unreadable */  
+
+    /** The smallest GUI scaling value; smaller will make text unreadable */
     public static final float MIN_GUISCALE = 0.7f;
-    /** The highest GUI scaling value; increase this for 16K monitors */  
+    /** The highest GUI scaling value; increase this for 16K monitors */
     public static final float MAX_GUISCALE = 2.4f;
 
     //region action commands
@@ -130,7 +130,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     public static final String BOARD_REMOVE_WATER = "boardRemoveWater";
     public static final String BOARD_REMOVE_BUILDINGS = "boardRemoveBuildings";
     public static final String BOARD_FLATTEN = "boardFlatten";
-    
+
     //unit list submenu
     public static final String FILE_UNITS_REINFORCE = "fileUnitsReinforce";
     public static final String FILE_UNITS_REINFORCE_RAT = "fileUnitsReinforceRAT";
@@ -675,9 +675,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             // Launch the help dialog.
             HelpDialog helpDialog = new HelpDialog(Messages.getString("ClientGUI.skinningHelpPath.title"), helpUrl);
             helpDialog.setVisible(true);
-        } catch (MalformedURLException e) {
-            doAlertDialog(e.getMessage(), Messages.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
-            LogManager.getLogger().error("", e);
+        } catch (MalformedURLException ex) {
+            LogManager.getLogger().error("", ex);
+            doAlertDialog(ex.getMessage(), Messages.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -1445,7 +1445,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         }
     }
 
-    /** 
+    /**
      * Switches the Minimap and the UnitDisplay an and off together.
      * If the UnitDisplay is active, both will be hidden, else both will be shown.
      */
@@ -1531,12 +1531,12 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         }
     }
 
-    /** 
-     * Shows or hides the Minimap based on the given visible. This works independently 
-     * of the current menu setting, so it should be used only when the Minimap is to 
+    /**
+     * Shows or hides the Minimap based on the given visible. This works independently
+     * of the current menu setting, so it should be used only when the Minimap is to
      * be shown or hidden without regard for the user setting, e.g. hiding it in the lobby
-     * or a report phase. 
-     * Does not change the menu setting. 
+     * or a report phase.
+     * Does not change the menu setting.
      */
     void setMapVisible(boolean visible) {
         if (getMiniMapDialog() != null) {
@@ -1559,7 +1559,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             }
         }
     }
-    
+
     /** Shows or hides the Unit Display based on the current menu setting. */
     public void maybeShowUnitDisplay() {
         GamePhase phase = getClient().getGame().getPhase();
@@ -1581,12 +1581,12 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         }
     }
 
-    /** 
-     * Shows or hides the Unit Display based on the given visible. This works independently 
-     * of the current menu setting, so it should be used only when the Unit Display is to 
+    /**
+     * Shows or hides the Unit Display based on the given visible. This works independently
+     * of the current menu setting, so it should be used only when the Unit Display is to
      * be shown or hidden without regard for the user setting, e.g. hiding it in the lobby
-     * or a report phase. 
-     * Does not change the menu setting. 
+     * or a report phase.
+     * Does not change the menu setting.
      */
     public void setUnitDisplayVisible(boolean visible) {
         // If no unit displayed, select a unit so display can be safely shown
@@ -1990,7 +1990,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         }
         return false;
     }
-    
+
     /** Developer Utility: Save game to quicksave.sav.gz without any prompts. */
     private boolean quickSaveGame() {
         client.sendChat(CG_CHATCOMMANDLOCALSAVE + " " + MMConstants.QUICKSAVE_FILE + " " + MMConstants.QUICKSAVE_PATH);
@@ -2214,7 +2214,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 bv.setLocalPlayer(client.getLocalPlayer());
             }
             // Make sure the ChatterBox starts out deactived.
-            bv.setChatterBoxActive(false);            
+            bv.setChatterBoxActive(false);
 
             // Swap to this phase's panel.
             GamePhase phase = getClient().getGame().getPhase();
@@ -2338,7 +2338,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         public void gameMapQuery(GameMapQueryEvent evt) {
 
         }
-        
+
         @Override
         public void gameClientFeedbackRequest(GameCFREvent evt) {
             Entity e = client.getGame().getEntity(evt.getEntityId());
@@ -2751,7 +2751,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     public void unitSelected(BoardViewEvent b) {
         // ignored
     }
-    
+
     /**
      * Returns true if a dialog is visible on top of the <code>ClientGUI</code>.
      * For example, the <code>MegaMekController</code> should ignore hotkeys
@@ -2759,7 +2759,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      * @return
      */
     public boolean shouldIgnoreHotKeys() {
-        return ignoreHotKeys 
+        return ignoreHotKeys
                 || ((gameOptionsDialog != null) && gameOptionsDialog.isVisible())
                 || ((about != null) && about.isVisible())
                 || ((help != null) && help.isVisible())
@@ -2779,7 +2779,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
     @Override
     public void componentResized(ComponentEvent evt) {
-        bv.setPreferredSize(getSize());        
+        bv.setPreferredSize(getSize());
     }
 
     @Override
@@ -2806,21 +2806,21 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         Map<String, BehaviorSettings> newBotSettings = rpd.getNewBots();
         for (String player : newBotSettings.keySet()) {
             StringBuilder message = new StringBuilder();
-            Princess princess = util.addBot(newBotSettings.get(player), player, 
+            Princess princess = util.addBot(newBotSettings.get(player), player,
                     client.getGame(), client.getHost(), client.getPort(), message);
             systemMessage(message.toString());
             // Make this princess a locally owned bot if in the lobby. This way it
             // can be configured, and it will faithfully press Done when the local player does.
             if ((princess != null) && client.getGame().getPhase().isLounge()) {
-                getBots().put(player, princess);   
-            } 
+                getBots().put(player, princess);
+            }
         }
     }
-    
+
     /**
      * The ClientGUI is split into the main panel (view) at the top, which takes up the majority of
      * the view and the "current panel" which has different controls based on the phase.
-     * 
+     *
      * @return the panel for the current phase
      */
     public JComponent getCurrentPanel() {

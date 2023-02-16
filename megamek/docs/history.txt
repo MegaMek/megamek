@@ -35,6 +35,7 @@ VERSION HISTORY:
 + PR #4112: BaseComponents: Adding Nag Dialog Setup
 + PR #4130: show movement for all entity types on unit tool tip
 + PR #4132: Fixing Tripod Movement and Mini Crit Display
++ PR #4168: The minimap now shows the map's size
 + Issue #4143: Fixing Advanced Search Dialog Panels Expanding on Reload
 + PR #4101: SPA: Environmental Specialist
 + PR #4102: SPA: Terrain Master (Nightwalker)

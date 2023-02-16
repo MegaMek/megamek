@@ -173,6 +173,7 @@ public class ASPointValueConverter {
         processOffensiveBT();
         processOffensiveSUAMod(IATM, e -> (double) ((ASDamageVector) element.getSUA(IATM)).L.damage);
         processOffensiveSUAMod(OVL, e -> 0.25 * element.getOV());
+        processOffensiveSUAMod(BOMB, e -> (double) (int) element.getSUA(BOMB));
         processOffensiveSUAMod(HT, e -> {
             ASDamageVector ht = element.getHT();
             return Math.max(ht.S.damage, Math.max(ht.M.damage, ht.L.damage)) + ((ht.M.damage > 0) ? 0.5 : 0);

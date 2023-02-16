@@ -413,9 +413,8 @@ public class Terrain implements Serializable {
             case Terrains.WOODS:
                 mp = level;
                 if (isCrossCountry && e.isGround() && e.isCombatVehicle()) {
-                    if ((level == 1) && ((moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.WHEELED))) {
-                        mp *= 2;
-                    } else if (level > 1){
+                    if (((level == 1) && ((moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.WHEELED)))
+                            || (level > 1)) {
                         mp *= 2;
                     }
                 }

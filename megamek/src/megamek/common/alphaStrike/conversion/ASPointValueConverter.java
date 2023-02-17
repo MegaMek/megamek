@@ -533,11 +533,11 @@ public class ASPointValueConverter {
             modifierList.add("LECM");
         }
         if (element.hasSUA(MHQ)) {
-            int mhqValue = (int) element.getSUA(MHQ);
+            int mhqValue = element.getMHQ();
             if (mhqValue <= 4) {
                 bonus += mhqValue;
             } else {
-                bonus += 4 + Math.ceil(0.2 * mhqValue);
+                bonus += 4 + Math.ceil(0.2 * (mhqValue - 5));
             }
             modifierList.add("MHQ");
         }

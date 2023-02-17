@@ -1,4 +1,10 @@
 size 16 17
+tag "Foliage (Auto)"
+tag "GrassTheme (Auto)"
+tag "Flat (Auto)"
+tag "MediumForest (Auto)"
+tag "Woods (Auto)"
+tag "SnowTerrain (Auto)"
 hex 0101 0 "snow:1" "grass"
 hex 0201 0 "snow:1" "grass"
 hex 0301 0 "snow:1" "grass"

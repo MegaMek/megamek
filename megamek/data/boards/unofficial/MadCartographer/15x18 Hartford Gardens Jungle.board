@@ -1,4 +1,9 @@
 size 15 18
+tag "Cliffs (Auto)"
+tag "Water (Auto)"
+tag "HighHills (Auto)"
+tag "TropicalTheme (Auto)"
+tag "Jungle (Auto)"
 hex 0101 5 "impassable:1" "tropical"
 hex 0201 5 "impassable:1" "tropical"
 hex 0301 5 "impassable:1" "tropical"

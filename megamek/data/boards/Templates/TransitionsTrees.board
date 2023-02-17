@@ -1,4 +1,8 @@
 size 26 17
+tag "Flat (Auto)"
+tag "DesertTheme (Auto)"
+tag "LightForest (Auto)"
+tag "Woods (Auto)"
 hex 0101 0 "ground_fluff:3:5" "desert"
 hex 0201 0 "ground_fluff:3:5" "desert"
 hex 0301 0 "ground_fluff:3:5" "desert"

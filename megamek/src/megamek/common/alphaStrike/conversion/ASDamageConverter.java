@@ -980,7 +980,9 @@ public class ASDamageConverter {
     }
 
     private static int getJumpHeat(Entity entity, AlphaStrikeElement element) {
-        if ((entity.getJumpType() == Mech.JUMP_IMPROVED)
+        if (entity.getJumpType() == Mech.JUMP_PROTOTYPE_IMPROVED) {
+            return Math.max(3, element.getJumpMove());
+        } else if ((entity.getJumpType() == Mech.JUMP_IMPROVED)
                 && (entity.getEngine().getEngineType() == Engine.XXL_ENGINE)) {
             return Math.max(3, element.getJumpMove() / 2);
         } else if (entity.getJumpType() == Mech.JUMP_IMPROVED) {

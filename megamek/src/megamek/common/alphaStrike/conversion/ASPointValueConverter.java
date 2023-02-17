@@ -437,7 +437,8 @@ public class ASPointValueConverter {
         double multiplier = 0;
         if (move >= 2 && !element.hasAnySUAOf(BT, ARTS, C3BSM, C3BSS, C3EM,
                 C3I, C3M, C3S, AC3, NC3, NOVA, C3RS, ECM, AECM, ARTAC, ARTAIS, ARTBA, ARTCM12, ARTCM5, ARTCM7,
-                ARTCM9, ARTLT, ARTLTC, ARTSC, ARTT, ARTTC)) {
+                ARTCM9, ARTLT, ARTLTC, ARTSC, ARTT, ARTTC, MEC, XMEC)
+                && !(element.hasSUA(CAR) && (element.getCAR() <= 8))) {
             double dmgS = pointValueSDamage(element);
             double dmgM = pointValueMDamage(element);
             double dmgL = pointValueLDamage(element);

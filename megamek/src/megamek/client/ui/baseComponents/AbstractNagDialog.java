@@ -39,8 +39,8 @@ public abstract class AbstractNagDialog extends AbstractButtonDialog {
                                 final String description, final String key) {
         super(frame, name, title);
         this.key = key;
-        setShow(checkNag());
         setDescription(description.isBlank() ? description : resources.getString(description));
+        setShow(checkNag());
         if (isShow()) {
             initialize();
         } else {

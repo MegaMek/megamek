@@ -1445,16 +1445,21 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             if (cen == Entity.NONE) {
                 beginMyTurn();
             }
+
             setStatusBarText(Messages.getString("PhysicalDisplay.its_your_turn") + s);
+            clientgui.bingMyTurn();
         } else {
             endMyTurn();
             String playerName;
+          
             if (e.getPlayer() != null) {
                 playerName = e.getPlayer().getName();
             } else {
                 playerName = "Unknown";
             }
+
             setStatusBarText(Messages.getString("PhysicalDisplay.its_others_turn", playerName) + s);
+            clientgui.bingOthersTurn();
         }
     }
 

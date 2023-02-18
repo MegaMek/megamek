@@ -11112,6 +11112,7 @@ public class MiscType extends EquipmentType {
         misc.industrial = true;
         // Going to assume this is something with building Bridges
         // Also the equipment used by infantry bridge builders.
+        misc.rulesRefs = "152, TO:AUE";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL);
         misc.techAdvancement.setISAdvancement(DATE_NONE, 2720, DATE_NONE);
         misc.techAdvancement.setTechRating(RATING_D);

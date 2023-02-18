@@ -872,10 +872,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         updateBombButton();
 
         // Bridge Building
-        if ((ce.entityIsQuad() || ce.isVehicle())
-                && (ce.hasWorkingMisc(MiscType.F_LIGHT_BRIDGE_LAYER)
-                    || ce.hasWorkingMisc(MiscType.F_MEDIUM_BRIDGE_LAYER)
-                    || ce.hasWorkingMisc(MiscType.F_HEAVY_BRIDGE_LAYER))) {
+        if ((ce.entityIsQuad() || ce.isVehicle()) && (ce.hasWorkingMisc(MiscType.F_BRIDGE_KIT))) {
             boolean isWaterForward = false;
             getBtn(MoveCommand.MOVE_LAY_BRIDGE).setEnabled(true);
         }

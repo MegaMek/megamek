@@ -42,6 +42,8 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     private int tankTurrets;
     private File sourceFile;
     private String source;
+    private boolean invalid;
+    private boolean failedToLoadEquipment;
     private String entryName; // for files in zips
     private int year;
     private int type;
@@ -239,6 +241,14 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public File getSourceFile() {
         return sourceFile;
+    }
+
+    public boolean getInvalid() {
+        return invalid;
+    }
+
+    public boolean getFailedToLoadEquipment() {
+        return failedToLoadEquipment;
     }
 
     public String getSource() {
@@ -779,6 +789,14 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public void setSourceFile(File sSourceFile) {
         this.sourceFile = sSourceFile;
+    }
+
+    public void setInvalid(boolean b) {
+        this.invalid = b;
+    }
+
+    public void setFailedToLoadEquipment(boolean b) {
+        this.failedToLoadEquipment = b;
     }
 
     public void setSource(String sSource) {

@@ -503,7 +503,12 @@ public class MechSummaryCache {
         if (testEntity != null &&
                 !testEntity.correctEntity(new StringBuffer())) {
             ms.setLevel("F");
+            ms.setInvalid(true);
+        } else {
+            ms.setInvalid(false);
         }
+
+        ms.setFailedToLoadEquipment(e.getFailedEquipment().hasNext());
 
         ms.setGyroType(e.getGyroType());
         if (e.hasEngine()) {

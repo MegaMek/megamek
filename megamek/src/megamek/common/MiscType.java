@@ -281,6 +281,8 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_PROTOTYPE = BigInteger.valueOf(1).shiftLeft(225);
     // Fortify Equipment
     public static final BigInteger F_TRENCH_CAPABLE = BigInteger.valueOf(1).shiftLeft(226);
+    // Engineering Equipment
+    public static final BigInteger F_BRIDGE_KIT = BigInteger.valueOf(1).shiftLeft(227);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR - Indicates an Improvised Club
@@ -7106,7 +7108,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(EquipmentTypeLookup.LIGHT_BRIDGE_LAYER);
         misc.sortingName = "Bridge B";
         misc.flags = misc.flags.or(F_LIGHT_BRIDGE_LAYER).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT)
-                .or(F_SUPPORT_TANK_EQUIPMENT);
+                .or(F_SUPPORT_TANK_EQUIPMENT).or(F_BRIDGE_KIT);
         misc.industrial = true;
         misc.rulesRefs = "242, TM";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
@@ -7129,7 +7131,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(EquipmentTypeLookup.MEDIUM_BRIDGE_LAYER);
         misc.sortingName = "Bridge C";
         misc.flags = misc.flags.or(F_MEDIUM_BRIDGE_LAYER).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT)
-                .or(F_SUPPORT_TANK_EQUIPMENT);
+                .or(F_SUPPORT_TANK_EQUIPMENT).or(F_BRIDGE_KIT);
         misc.industrial = true;
         misc.rulesRefs = "242, TM";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
@@ -7152,7 +7154,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(EquipmentTypeLookup.HEAVY_BRIDGE_LAYER);
         misc.sortingName = "Bridge D";
         misc.flags = misc.flags.or(F_HEAVY_BRIDGE_LAYER).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT)
-                .or(F_SUPPORT_TANK_EQUIPMENT);
+                .or(F_SUPPORT_TANK_EQUIPMENT).or(F_BRIDGE_KIT);
         misc.industrial = true;
         misc.rulesRefs = "242, TM";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
@@ -11103,7 +11105,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.flags = misc.flags.or(F_TOOLS).or(F_BA_EQUIPMENT);
+        misc.flags = misc.flags.or(F_TOOLS);
         misc.subType |= S_BRIDGE_KIT;
         misc.toHitModifier = 1;
         misc.bv = 0;

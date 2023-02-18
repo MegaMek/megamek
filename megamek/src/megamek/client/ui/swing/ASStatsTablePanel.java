@@ -19,6 +19,7 @@
 package megamek.client.ui.swing;
 
 import megamek.client.ui.dialogs.ASConversionInfoDialog;
+import megamek.client.ui.swing.alphaStrike.ASElementPrinter;
 import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.swing.util.SpringUtilities;
 import megamek.client.ui.swing.util.UIUtil;
@@ -30,10 +31,13 @@ import megamek.common.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
 import java.util.List;
 import java.util.*;
 
-public class ASStatsTablePanel {
+public class ASStatsTablePanel implements Printable {
 
     private final int COLUMNS = 15;
     private final static Color GROUP_NAME_COLOR = UIUtil.uiLightGreen();
@@ -43,6 +47,7 @@ public class ASStatsTablePanel {
     private int rows;
     private final List<EntityGroup> groups = new ArrayList<>();
     private final JFrame frame;
+    private final List<AlphaStrikeElement> elements = new ArrayList<>();
 
     /**
      * Constructs a panel with a table of AlphaStrike stats for any units that are added to it.
@@ -123,6 +128,7 @@ public class ASStatsTablePanel {
                 }
             }
         }
+        elements.addAll(elementList);
 
         // Print the elements
         rows++;
@@ -245,6 +251,11 @@ public class ASStatsTablePanel {
             spacerPanel.add(Box.createVerticalStrut(2));
             panel.add(spacerPanel);
         }
+    }
+
+    @Override
+    public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
+        return new ASElementPrinter(elements).print(graphics, pageFormat, pageIndex);
     }
 
     /** A record to store added groups of units before constructing the panel. */

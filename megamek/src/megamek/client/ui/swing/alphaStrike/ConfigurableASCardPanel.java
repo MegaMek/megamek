@@ -33,6 +33,8 @@ import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
 import java.net.URL;
 
 /**
@@ -45,6 +47,7 @@ public class ConfigurableASCardPanel extends JPanel {
     private final JComboBox<String> fontChooser = new JComboBox<>();
     private final JComboBox<Float> sizeChooser = new JComboBox<>();
     private final JButton copyButton = new JButton("Copy to Clipboard");
+    private final JButton printButton = new JButton("Print");
     private final JButton mulButton = new JButton("MUL");
     private final JButton conversionButton = new JButton("Conversion Report");
     private final ASCardPanel cardPanel = new ASCardPanel();
@@ -79,6 +82,7 @@ public class ConfigurableASCardPanel extends JPanel {
         sizeChooser.setRenderer((list, value, index, isSelected, cellHasFocus) -> new JLabel(Float.toString(value)));
 
         copyButton.addActionListener(ev -> copyCardToClipboard());
+        printButton.addActionListener(ev -> printCard());
 
         mulButton.addActionListener(ev -> showMUL());
         mulButton.setToolTipText("Show the Master Unit List entry for this unit. Opens a browser window.");
@@ -95,6 +99,8 @@ public class ConfigurableASCardPanel extends JPanel {
         chooserLine.add(sizeChooser);
         chooserLine.add(Box.createHorizontalStrut(15));
         chooserLine.add(copyButton);
+        chooserLine.add(Box.createHorizontalStrut(15));
+        chooserLine.add(printButton);
         chooserLine.add(Box.createHorizontalStrut(15));
         chooserLine.add(mulButton);
         chooserLine.add(Box.createHorizontalStrut(15));
@@ -163,6 +169,19 @@ public class ConfigurableASCardPanel extends JPanel {
             var dialog = new ASConversionInfoDialog(parent, ((AlphaStrikeElement) element).getConversionReport(), element);
             dialog.setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
             dialog.setVisible(true);
+        }
+    }
+
+    private void printCard() {
+        PrinterJob job = PrinterJob.getPrinterJob();
+        job.setPrintable(cardPanel.getCard());
+        boolean doPrint = job.printDialog();
+        if (doPrint) {
+            try {
+                job.print();
+            } catch (PrinterException ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 

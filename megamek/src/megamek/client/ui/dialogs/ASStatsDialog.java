@@ -30,8 +30,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
+import java.util.*;
 
 /**
  * This non-modal dialog shows stats of one or more AlphaStrike elements in the form of a table.
@@ -41,8 +42,10 @@ public class ASStatsDialog extends AbstractDialog {
     
     private final Collection<Entity> entities;
     private final JButton clipBoardButton = new JButton("Copy to Clipboard");
+    private final JButton printButton = new JButton("Print");
     private final JScrollPane scrollPane = new JScrollPane();
     private final JPanel centerPanel = new JPanel();
+    private ASStatsTablePanel tablePanel;
     private static final String COLUMN_SEPARATOR = "\t";
     private static final String INTERNAL_DELIMITER = ",";
 
@@ -68,7 +71,9 @@ public class ASStatsDialog extends AbstractDialog {
         var optionsPanel = new UIUtil.FixedYPanel(new FlowLayout(FlowLayout.LEFT));
         optionsPanel.add(Box.createVerticalStrut(25));
         optionsPanel.add(clipBoardButton);
+        optionsPanel.add(printButton);
         clipBoardButton.addActionListener(e -> copyToClipboard());
+        printButton.addActionListener(ev -> printCards());
         
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
@@ -81,8 +86,8 @@ public class ASStatsDialog extends AbstractDialog {
     
     private void setupTable() {
         centerPanel.remove(scrollPane);
-        JPanel asPanel = new ASStatsTablePanel(getFrame()).add(entities, "Selected Units").getPanel();
-        scrollPane.setViewportView(asPanel);
+        tablePanel = new ASStatsTablePanel(getFrame()).add(entities, "Selected Units");
+        scrollPane.setViewportView(tablePanel.getPanel());
         centerPanel.add(scrollPane);
         adaptToGUIScale();
     }
@@ -142,5 +147,18 @@ public class ASStatsDialog extends AbstractDialog {
 
     private void adaptToGUIScale() {
         UIUtil.adjustDialog(this,  UIUtil.FONT_SCALE1);
+    }
+
+    private void printCards() {
+        PrinterJob job = PrinterJob.getPrinterJob();
+        job.setPrintable(tablePanel);
+        boolean doPrint = job.printDialog();
+        if (doPrint) {
+            try {
+                job.print();
+            } catch (PrinterException ignored) {
+
+            }
+        }
     }
 }

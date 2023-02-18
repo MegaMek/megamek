@@ -116,4 +116,8 @@ public final class ASCardPanel extends JComponent {
         super.paintComponent(g);
         g.drawImage(cardImage, 0, 0, this);
     }
+
+    public ASCard getCard() {
+        return card;
+    }
 }

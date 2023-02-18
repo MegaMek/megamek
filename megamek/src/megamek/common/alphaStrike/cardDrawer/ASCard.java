@@ -33,6 +33,9 @@ import megamek.common.util.fileUtils.MegaMekFile;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
 import java.time.LocalDate;
 import java.util.Locale;
 
@@ -50,10 +53,11 @@ import static java.awt.Color.WHITE;
  * for Large Aerospace units the specific class can be used to have additional functionality for the two
  * card faces of these cards.
  */
-public class ASCard {
+public class ASCard implements Printable {
 
-    protected final static int WIDTH = 1050;
-    protected final static int HEIGHT = 750;
+    public final static int WIDTH = 1050;
+    public final static int HEIGHT = 750;
+    public final static double PRINT_SCALE = 3.5 * 72 / WIDTH; // 3.5" wide, 1/72 dots per inch
     protected final static int BORDER = 21;
     protected final static int ARMOR_PIP_SIZE = 22;
     protected final static int DAMAGE_PIP_SIZE = 18;
@@ -222,7 +226,7 @@ public class ASCard {
     }
 
     /** This method controls drawing the card. */
-    protected final void drawCard(Graphics g) {
+    public final void drawCard(Graphics g) {
         initializeFonts(lightFont, boldFont, blackFont);
         Graphics2D g2D = (Graphics2D) g;
         GUIPreferences.AntiAliasifSet(g);
@@ -553,6 +557,21 @@ public class ASCard {
             return FluffImageHelper.loadFluffImageHeuristic(element);
         } else {
             return null;
+        }
+    }
+
+    @Override
+    public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
+        if (pageIndex == 0) {
+            Graphics2D g2D = (Graphics2D) graphics;
+            double height = 2.5 * 72;
+            g2D.translate(pageFormat.getWidth() / 2, pageFormat.getHeight() / 2 - height / 2);
+            g2D.scale(ASCard.PRINT_SCALE, ASCard.PRINT_SCALE);
+            g2D.translate(-WIDTH / 2, 0);
+            drawCard(graphics);
+            return PAGE_EXISTS;
+        } else {
+            return NO_SUCH_PAGE;
         }
     }
 }

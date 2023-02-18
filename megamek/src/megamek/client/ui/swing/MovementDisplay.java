@@ -132,6 +132,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         MOVE_SHUTDOWN("moveShutDown", CMD_NON_INF),
         MOVE_STARTUP("moveStartup", CMD_NON_INF),
         MOVE_SELF_DESTRUCT("moveSelfDestruct", CMD_NON_INF),
+        MOVE_LAY_BRIDGE("moveLayBridge", CMD_MECH |CMD_TANK),
         // Infantry only
         MOVE_DIG_IN("moveDigIn", CMD_INF),
         MOVE_FORTIFY("moveFortify", CMD_INF | CMD_TANK),
@@ -869,6 +870,15 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         updateManeuverButton();
         updateStrafeButton();
         updateBombButton();
+
+        // Bridge Building
+        if ((ce.entityIsQuad() || ce.isVehicle())
+                && (ce.hasWorkingMisc(MiscType.F_LIGHT_BRIDGE_LAYER)
+                    || ce.hasWorkingMisc(MiscType.F_MEDIUM_BRIDGE_LAYER)
+                    || ce.hasWorkingMisc(MiscType.F_HEAVY_BRIDGE_LAYER))) {
+            boolean isWaterForward = false;
+            getBtn(MoveCommand.MOVE_LAY_BRIDGE).setEnabled(true);
+        }
 
         // Infantry and Tank - Fortify
         if (isInfantry
@@ -4785,6 +4795,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         } else if (actionCmd.equals(MoveCommand.MOVE_CALL_SUPPORT.getCmd())) {
             ((Infantry) ce).createLocalSupport();
             clientgui.getClient().sendUpdateEntity(ce());
+        } else if (actionCmd.equals(MoveCommand.MOVE_LAY_BRIDGE.getCmd())) {
+            cmd.addStep(MoveStepType.BRIDGING);
+            clientgui.getBoardView().drawMovementData(ce(), cmd);
         } else if (actionCmd.equals(MoveCommand.MOVE_DIG_IN.getCmd())) {
             cmd.addStep(MoveStepType.DIG_IN);
             clientgui.getBoardView().drawMovementData(ce(), cmd);

@@ -55,7 +55,7 @@ public class MovePath implements Cloneable, Serializable {
         NONE, FORWARDS, BACKWARDS, TURN_LEFT, TURN_RIGHT, GET_UP, GO_PRONE, START_JUMP, CHARGE, DFA,
         FLEE, LATERAL_LEFT, LATERAL_RIGHT, LATERAL_LEFT_BACKWARDS, LATERAL_RIGHT_BACKWARDS, UNJAM_RAC,
         LOAD, UNLOAD, EJECT, CLEAR_MINEFIELD, UP, DOWN, SEARCHLIGHT, LAY_MINE, HULL_DOWN, CLIMB_MODE_ON,
-        CLIMB_MODE_OFF, SWIM, DIG_IN, FORTIFY, SHAKE_OFF_SWARMERS, TAKEOFF, VTAKEOFF, LAND, ACC, DEC, EVADE,
+        CLIMB_MODE_OFF, SWIM, DIG_IN, FORTIFY, BRIDGING, SHAKE_OFF_SWARMERS, TAKEOFF, VTAKEOFF, LAND, ACC, DEC, EVADE,
         SHUTDOWN, STARTUP, SELF_DESTRUCT, ACCN, DECN, ROLL, OFF, RETURN, LAUNCH, THRUST, YAW, CRASH, RECOVER,
         RAM, HOVER, MANEUVER, LOOP, CAREFUL_STAND, JOIN, DROP, VLAND, MOUNT, UNDOCK, TAKE_COVER,
         CONVERT_MODE, BOOTLEGGER, TOW, DISCONNECT, BRACE;
@@ -1853,12 +1853,12 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     /**
-     * Worker function that counts the number of steps of the given type 
+     * Worker function that counts the number of steps of the given type
      * at the end of the given path before another step type occurs.
      */
     public int getEndStepCount(MoveStepType stepType) {
         int stepCount = 0;
-        
+
         for (int index = getStepVector().size() - 1; index >= 0; index--) {
             if (getStepVector().get(index).getType() == stepType) {
                 stepCount++;
@@ -1866,10 +1866,10 @@ public class MovePath implements Cloneable, Serializable {
                 break;
             }
         }
-        
+
         return stepCount;
     }
-    
+
     /**
      * Debugging method that calculates a destruction-aware move path to the destination coordinates
      */

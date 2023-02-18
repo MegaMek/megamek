@@ -92,12 +92,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_MAP_TEXT_COLOR = "AdvancedMapTextColor";
     public static final String ADVANCED_WARNING_COLOR = "AdvancedWarningColor";
     public static final String ADVANCED_TMM_PIP_MODE = "AdvancedTmmPipMode";
-    public static final String ADVANCED_HEAT_COLOR_5 = "AdvancedHeatColor5";
-    public static final String ADVANCED_HEAT_COLOR_10 = "AdvancedHeatColor10";
-    public static final String ADVANCED_HEAT_COLOR_15 = "AdvancedHeatColor15";
-    public static final String ADVANCED_HEAT_COLOR_20 = "AdvancedHeatColor20";
-    public static final String ADVANCED_HEAT_COLOR_25 = "AdvancedHeatColor25";
-    public static final String ADVANCED_HEAT_COLOR_30 = "AdvancedHeatColor30";
+    public static final String ADVANCED_HEAT_COLOR_4 = "AdvancedHeatColor4";
+    public static final String ADVANCED_HEAT_COLOR_7 = "AdvancedHeatColor7";
+    public static final String ADVANCED_HEAT_COLOR_9 = "AdvancedHeatColor9";
+    public static final String ADVANCED_HEAT_COLOR_12 = "AdvancedHeatColor12";
+    public static final String ADVANCED_HEAT_COLOR_13 = "AdvancedHeatColor13";
+    public static final String ADVANCED_HEAT_COLOR_14 = "AdvancedHeatColor14";
     public static final String ADVANCED_HEAT_COLOR_OVERHEAT = "AdvancedHeatColorOverheat";
     public static final String ADVANCED_REPORT_COLOR_LINK = "AdvancedReportColorLink";
 
@@ -324,12 +324,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
     private static final Color DEFAULT_MEDIUM_GREEN = new Color(100, 180, 100);
 
     // Heat Scale
-    private static final Color DEFAULT_HEAT_5_COLOR = new Color(64, 128, 255);
-    private static final Color DEFAULT_HEAT_10_COLOR = new Color(64, 164, 128);
-    private static final Color DEFAULT_HEAT_15_COLOR = new Color(48, 212, 48);
-    private static final Color DEFAULT_HEAT_20_COLOR = new Color(228, 198, 0);
-    private static final Color DEFAULT_HEAT_25_COLOR = new Color(248, 128, 0);
-    private static final Color DEFAULT_HEAT_30_COLOR = new Color(248, 64, 64);
+    private static final Color DEFAULT_HEAT_4_COLOR = new Color(64, 128, 255);
+    private static final Color DEFAULT_HEAT_7_COLOR = new Color(64, 164, 128);
+    private static final Color DEFAULT_HEAT_9_COLOR = new Color(48, 212, 48);
+    private static final Color DEFAULT_HEAT_12_COLOR = new Color(228, 198, 0);
+    private static final Color DEFAULT_HEAT_13_COLOR = new Color(248, 128, 0);
+    private static final Color DEFAULT_HEAT_14_COLOR = new Color(248, 64, 64);
     private static final Color DEFAULT_HEAT_OVERHEAT_COLOR = new Color(248, 12, 12);
 
     private static final Color DEFAULT_PLANETARY_CONDITIONS_TEXT_COLOR = new Color(200, 250, 200);
@@ -414,12 +414,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ADVANCED_BUTTONS_PER_ROW, 12);
         store.setDefault(ADVANCED_ROUND_REPORT_SPRITES, true);
 
-        setDefault(ADVANCED_HEAT_COLOR_5, DEFAULT_HEAT_5_COLOR);
-        setDefault(ADVANCED_HEAT_COLOR_10, DEFAULT_HEAT_10_COLOR);
-        setDefault(ADVANCED_HEAT_COLOR_15, DEFAULT_HEAT_15_COLOR);
-        setDefault(ADVANCED_HEAT_COLOR_20, DEFAULT_HEAT_20_COLOR);
-        setDefault(ADVANCED_HEAT_COLOR_25, DEFAULT_HEAT_25_COLOR);
-        setDefault(ADVANCED_HEAT_COLOR_20, DEFAULT_HEAT_30_COLOR);
+        setDefault(ADVANCED_HEAT_COLOR_4, DEFAULT_HEAT_4_COLOR);
+        setDefault(ADVANCED_HEAT_COLOR_7, DEFAULT_HEAT_7_COLOR);
+        setDefault(ADVANCED_HEAT_COLOR_9, DEFAULT_HEAT_9_COLOR);
+        setDefault(ADVANCED_HEAT_COLOR_12, DEFAULT_HEAT_12_COLOR);
+        setDefault(ADVANCED_HEAT_COLOR_13, DEFAULT_HEAT_13_COLOR);
+        setDefault(ADVANCED_HEAT_COLOR_14, DEFAULT_HEAT_14_COLOR);
         setDefault(ADVANCED_HEAT_COLOR_OVERHEAT, DEFAULT_HEAT_OVERHEAT_COLOR);
 
         setDefault(ADVANCED_PLANETARY_CONDITIONS_COLOR_TITLE, Color.WHITE);
@@ -2188,18 +2188,18 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public Color getColorForHeat(int heat, Color defaultColor) {
         if (heat <= 0) {
             return defaultColor;
-        } else if (heat <= 5) {
-            return getColor(ADVANCED_HEAT_COLOR_5);
-        } else if (heat <= 10) {
-            return getColor(ADVANCED_HEAT_COLOR_10);
-        } else if (heat <= 15) {
-            return getColor(ADVANCED_HEAT_COLOR_15);
-        } else if (heat <= 20) {
-            return  getColor(ADVANCED_HEAT_COLOR_20);
-        } else if (heat <= 25) {
-            return  getColor(ADVANCED_HEAT_COLOR_25);
-        } else if (heat <= 30) {
-            return  getColor(ADVANCED_HEAT_COLOR_30);
+        } else if (heat <= 4) {
+            return getColor(ADVANCED_HEAT_COLOR_4);
+        } else if (heat <= 7) {
+            return getColor(ADVANCED_HEAT_COLOR_7);
+        } else if (heat <= 9) {
+            return getColor(ADVANCED_HEAT_COLOR_9);
+        } else if (heat <= 12) {
+            return  getColor(ADVANCED_HEAT_COLOR_12);
+        } else if (heat <= 13) {
+            return  getColor(ADVANCED_HEAT_COLOR_13);
+        } else if (heat <= 14) {
+            return  getColor(ADVANCED_HEAT_COLOR_14);
         }
         return  getColor(ADVANCED_HEAT_COLOR_OVERHEAT);
     }

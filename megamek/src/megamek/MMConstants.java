@@ -33,7 +33,7 @@ public final class MMConstants extends SuiteConstants {
     //region MMOptions
     //region Nag Tab
     public static final String NAG_NODE = "megamek/prefs/nags";
-    public static final String NAG_BOT_README = "nagBotReadme534578453784717144";
+    public static final String NAG_BOT_README = "nagBotReadme";
     //endregion Nag Tab
     //endregion MMOptions
 

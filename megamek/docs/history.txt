@@ -56,6 +56,9 @@ VERSION HISTORY:
 + PR #4151: Allow configurable sounds to be played for some turn-related events 
 + Issue #4157: The lobby unit configuration dialog will now remember its size and position
 + Issues #4010, #3499: Fix an error where swamp bog down checks happened inconsistently
++ PR #4180: Hide External Windows in Lounge Phase
++ PR #4181: Fixing missing unit tooltip good crits when there is a bad crit
++ PR #4190: Adding Advanced Search invalid and failed to load equipment filters
 + Updating XStream to 1.4.19 from 1.4.14
  
 0.49.11 (2022-12-22 1500 UTC)

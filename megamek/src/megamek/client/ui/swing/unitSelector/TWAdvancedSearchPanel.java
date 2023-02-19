@@ -122,7 +122,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JLabel lblInvalid = new JLabel(Messages.getString("MechSelectorDialog.Search.Invalid"));
     private JComboBox<String> cInvalid = new JComboBox<>();
     private JLabel lblFailedToLoadEquipment = new JLabel(Messages.getString("MechSelectorDialog.Search.FailedToLoadEquipment"));
-    private JComboBox<String> cFailedToLoadEquipment= new JComboBox<>();
+    private JComboBox<String> cFailedToLoadEquipment = new JComboBox<>();
     private JLabel lblClanEngine = new JLabel(Messages.getString("MechSelectorDialog.Search.ClanEngine"));
     private JComboBox<String> cClanEngine = new JComboBox<>();
     private JLabel lblTableFilters = new JLabel(Messages.getString("MechSelectorDialog.Search.TableFilters"));

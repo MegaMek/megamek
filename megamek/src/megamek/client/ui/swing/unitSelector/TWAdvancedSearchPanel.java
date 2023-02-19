@@ -119,6 +119,10 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JComboBox<String> cOfficial = new JComboBox<>();
     private JLabel lblCanon = new JLabel(Messages.getString("MechSelectorDialog.Search.Canon"));
     private JComboBox<String> cCanon = new JComboBox<>();
+    private JLabel lblInvalid = new JLabel(Messages.getString("MechSelectorDialog.Search.Invalid"));
+    private JComboBox<String> cInvalid = new JComboBox<>();
+    private JLabel lblFailedToLoadEquipment = new JLabel(Messages.getString("MechSelectorDialog.Search.FailedToLoadEquipment"));
+    private JComboBox<String> cFailedToLoadEquipment = new JComboBox<>();
     private JLabel lblClanEngine = new JLabel(Messages.getString("MechSelectorDialog.Search.ClanEngine"));
     private JComboBox<String> cClanEngine = new JComboBox<>();
     private JLabel lblTableFilters = new JLabel(Messages.getString("MechSelectorDialog.Search.TableFilters"));
@@ -434,6 +438,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         loadYesNo(cOfficial);
         loadYesNo(cCanon);
         loadYesNo(cClanEngine);
+        loadYesNo(cInvalid);
+        loadYesNo(cFailedToLoadEquipment);
 
         loadTriStateItem(EquipmentType.armorNames, listArmorType, 7);
         loadTriStateItem(Mech.COCKPIT_STRING, listCockpitType, 7);
@@ -478,25 +484,11 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         basePanel.add(p1Panel, c);
         c.gridx = 1;
         JPanel p1bPanel = new JPanel();
-        p1bPanel.add(lblTankTurrets);
-        p1bPanel.add(tStartTankTurrets);
-        p1bPanel.add(new JLabel("-"));
-        p1bPanel.add(tEndTankTurrets);
+        p1bPanel.add(lblInvalid);
+        p1bPanel.add(cInvalid);
+        p1bPanel.add(lblFailedToLoadEquipment);
+        p1bPanel.add(cFailedToLoadEquipment);
         basePanel.add(p1bPanel, c);
-        c.gridx = 0; c.gridy++;
-        JPanel lowerArmsPanel = new JPanel();
-        lowerArmsPanel.add(lblLowerArms);
-        lowerArmsPanel.add(tStartLowerArms);
-        lowerArmsPanel.add(new JLabel("-"));
-        lowerArmsPanel.add(tEndLowerArms);
-        basePanel.add(lowerArmsPanel, c);
-        c.gridx = 1;
-        JPanel handsPanel = new JPanel();
-        handsPanel.add(lblHands);
-        handsPanel.add(tStartHands);
-        handsPanel.add(new JLabel("-"));
-        handsPanel.add(tEndHands);
-        basePanel.add(handsPanel, c);
         c.gridx = 0; c.gridy++;
         JPanel yearPanel = new JPanel();
         yearPanel.add(lblYear);
@@ -537,6 +529,27 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         jumpPanel.add(new JLabel("-"));
         jumpPanel.add(tEndJump);
         basePanel.add(jumpPanel, c);
+        c.gridx = 0; c.gridy++;
+        JPanel lowerArmsPanel = new JPanel();
+        lowerArmsPanel.add(lblLowerArms);
+        lowerArmsPanel.add(tStartLowerArms);
+        lowerArmsPanel.add(new JLabel("-"));
+        lowerArmsPanel.add(tEndLowerArms);
+        basePanel.add(lowerArmsPanel, c);
+        c.gridx = 1;
+        JPanel handsPanel = new JPanel();
+        handsPanel.add(lblHands);
+        handsPanel.add(tStartHands);
+        handsPanel.add(new JLabel("-"));
+        handsPanel.add(tEndHands);
+        basePanel.add(handsPanel, c);
+        c.gridx = 0; c.gridy++;
+        JPanel p2Panel = new JPanel();
+        p2Panel.add(lblTankTurrets);
+        p2Panel.add(tStartTankTurrets);
+        p2Panel.add(new JLabel("-"));
+        p2Panel.add(tEndTankTurrets);
+        basePanel.add(p2Panel, c);
 
         c.gridx = 0; c.gridy++;;
         c.gridwidth  = 1;
@@ -1761,6 +1774,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         cArmor.setSelectedIndex(0);
         cOfficial.setSelectedIndex(0);
         cCanon.setSelectedIndex(0);
+        cInvalid.setSelectedIndex(0);
+        cFailedToLoadEquipment.setSelectedIndex(0);
         cClanEngine.setSelectedIndex(0);
         cOmni.setSelectedIndex(0);
         cMilitary.setSelectedIndex(0);
@@ -1992,6 +2007,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
 
         mechFilter.iOfficial = cOfficial.getSelectedIndex();
         mechFilter.iCanon = cCanon.getSelectedIndex();
+        mechFilter.iInvalid = cInvalid.getSelectedIndex();
+        mechFilter.iFailedToLoadEquipment = cFailedToLoadEquipment.getSelectedIndex();
         mechFilter.iClanEngine = cClanEngine.getSelectedIndex();
 
         mechFilter.source = tSource.getText();

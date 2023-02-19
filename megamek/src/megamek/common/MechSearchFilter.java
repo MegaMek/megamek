@@ -49,8 +49,9 @@ public class MechSearchFilter {
     public int iClanEngine;
     public int iOfficial;
     public int iCanon;
-
     public String source;
+    public int iInvalid;
+    public int iFailedToLoadEquipment;
     public String sStartTroopSpace;
     public String sEndTroopSpace;
     public String sStartASFBays;
@@ -430,6 +431,14 @@ public class MechSearchFilter {
         }
 
         if ((!f.source.isEmpty()) && (!mech.getSource().contains(f.source))) {
+            return false;
+        }
+
+        if (!isMatch(f.iInvalid, mech.getInvalid())) {
+            return false;
+        }
+
+        if (!isMatch(f.iFailedToLoadEquipment, mech.getFailedToLoadEquipment())) {
             return false;
         }
 

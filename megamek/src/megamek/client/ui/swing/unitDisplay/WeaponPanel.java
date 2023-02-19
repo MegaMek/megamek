@@ -400,7 +400,6 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         WeaponListMouseAdapter mouseAdapter = new WeaponListMouseAdapter();
         weaponList.addMouseListener(mouseAdapter);
         weaponList.addMouseMotionListener(mouseAdapter);
-        //weaponList.setVisibleRowCount(GUIP.getUnitDisplayWeaponListCount());
         tWeaponScroll = new JScrollPane(weaponList);
         tWeaponScroll.setMinimumSize(new Dimension(500, GUIP.getUnitDisplayWeaponListHeight()));
         tWeaponScroll.setPreferredSize(new Dimension(500, GUIP.getUnitDisplayWeaponListHeight()));

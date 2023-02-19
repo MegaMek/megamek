@@ -1488,6 +1488,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             } else if (action == GUIPreferences.HIDE) {
                 GUIP.setMinimapEnabled(false);
             }
+        } else {
+            GUIP.setMinimapEnabled(false);
         }
     }
 
@@ -1508,6 +1510,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             } else if (action == GUIPreferences.HIDE) {
                 GUIP.setMiniReportEnabled(false);
             }
+        } else {
+            GUIP.setMiniReportEnabled(false);
         }
     }
 
@@ -1528,6 +1532,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             } else if (action == GUIPreferences.HIDE) {
                 GUIP.setPlayerListEnabled(false);
             }
+        } else {
+            GUIP.setPlayerListEnabled(false);
         }
     }
 
@@ -1578,6 +1584,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             } else if (action == GUIPreferences.HIDE) {
                 GUIP.setUnitDisplayEnabled(false);
             }
+        } else {
+            GUIP.setUnitDisplayEnabled(false);
         }
     }
 

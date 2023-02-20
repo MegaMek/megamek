@@ -2272,6 +2272,18 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 wLongR.setText("11 - 15");
                 wExtR.setText("16 - 20");
             }           
+        } else if ((atype.getAmmoType() == AmmoType.T_LRM) && (atype.getMunitionType() == AmmoType.M_DEAD_FIRE)) {
+            wMinR.setText("4");
+            wShortR.setText("1 - 5");
+            wMedR.setText("6 - 10");
+            wLongR.setText("11 - 15");
+            wExtR.setText("16 - 20");
+        } else if ((atype.getAmmoType() == AmmoType.T_SRM) && (atype.getMunitionType() == AmmoType.M_DEAD_FIRE)) {
+            wMinR.setText("---");
+            wShortR.setText("1 - 2");
+            wMedR.setText("3 - 4");
+            wLongR.setText("5 - 6");
+            wExtR.setText("7 - 8");
         }
 
         // Min range 0 for hotload

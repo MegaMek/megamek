@@ -2616,11 +2616,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             return;
         }
 
-        final Coords currentPathEndpoint = cmd.getFinalCoords();
-        final boolean canLoad = game().getEntitiesVector(currentPathEndpoint).stream()
+        final boolean canLoad = game().getEntitiesVector(finalPosition()).stream()
+                .filter(other -> !ce.canTow(other.getId()))
                 .filter(Entity::isLoadableThisTurn)
-                .filter(ce::canLoad)
-                .anyMatch(other -> !ce.canTow(other.getId()));
+                .anyMatch(ce::canLoad);
         setLoadEnabled(canLoad);
     }
 
@@ -2640,11 +2639,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         final boolean legalGear = ((gear == GEAR_LAND) || (gear == GEAR_TURN) || (gear == GEAR_BACKUP) || (gear == GEAR_JUMP));
         final int unloadEl = cmd.getFinalElevation();
         final Hex hex = game().getBoard().getHex(cmd.getFinalCoords());
-        boolean finalCoordinatesOnBoard = game().getBoard().contains(cmd.getFinalCoords());
         boolean canUnloadHere = false;
 
         // A unit that has somehow exited the map is assumed to be unable to unload
-        if (finalCoordinatesOnBoard) {
+        if (isFinalPositionOnBoard()) {
             canUnloadHere = loadedUnits.stream().anyMatch(en -> en.isElevationValid(unloadEl, hex) || (en.getJumpMP() > 0));
             // Zip lines, TO pg 219
             if (game().getOptions().booleanOption(ADVGRNDMOV_TACOPS_ZIPLINES) && (ce instanceof VTOL)) {
@@ -2663,16 +2661,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
 
         final Game game = clientgui.getClient().getGame();
-        Coords pos = ce.getPosition();
+        final Coords pos = finalPosition();
         int elev = ce.getElevation();
         int mpUsed = ce.mpUsed;
         if (null != cmd) {
-            pos = cmd.getFinalCoords();
             elev = cmd.getFinalElevation();
             mpUsed = cmd.getMpUsed();
         }
-        final boolean finalCoordinatesOnBoard = game.getBoard().contains(pos);
-        final boolean canMount = finalCoordinatesOnBoard && !ce.isAirborne() && (mpUsed <= Math.ceil((ce.getWalkMP() / 2.0)))
+        final boolean canMount = isFinalPositionOnBoard() && !ce.isAirborne() && (mpUsed <= Math.ceil((ce.getWalkMP() / 2.0)))
                 && !Compute.getMountableUnits(ce, pos, elev + game.getBoard().getHex(pos).getLevel(), game).isEmpty();
         setMountEnabled(canMount);
     }
@@ -2689,17 +2685,23 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         final boolean legalGear = ((gear == GEAR_LAND) || (gear == GEAR_TURN) || (gear == GEAR_BACKUP) || (gear == GEAR_JUMP));
         final Hex hex = game().getBoard().getHex(cmd.getFinalCoords());
         final int unloadEl = cmd.getFinalElevation();
-        final boolean finalCoordinatesOnBoard = game().getBoard().contains(cmd.getFinalCoords());
         final boolean canDropTrailerHere = towedUnits.stream().anyMatch(en -> en.isElevationValid(unloadEl, hex));
-        setDisconnectEnabled(legalGear && finalCoordinatesOnBoard && canDropTrailerHere);
+        setDisconnectEnabled(legalGear && isFinalPositionOnBoard() && canDropTrailerHere);
 
-        boolean canTow = false;
-        if (cmd.length() == 0) {
-            for (Coords c : ce.getHitchLocations()) {
-                canTow |= game().getEntitiesVector(c).stream().anyMatch(ce::canTow);
-            }
-        }
+        final boolean canTow = ce.getHitchLocations().stream()
+                .flatMap(c -> game().getEntitiesVector(c).stream())
+                .anyMatch(ce::canTow);
         setTowEnabled(canTow);
+    }
+
+    /** @return The end position of the current movement path if there is one, the current position otherwise. */
+    private Coords finalPosition() {
+        return cmd == null ? ce().getPosition() : cmd.getFinalCoords();
+    }
+
+    /** @return True when the endpoint of the current movement path is on the board. */
+    private boolean isFinalPositionOnBoard() {
+        return game().getBoard().contains(cmd == null ? ce().getPosition() : cmd.getFinalCoords());
     }
 
     private void updateLayMineButton() {

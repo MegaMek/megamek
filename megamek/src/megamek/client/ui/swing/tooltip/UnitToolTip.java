@@ -1178,6 +1178,13 @@ public final class UnitToolTip {
                 if (jumpMPModified > 0) {
                     sMove += "/" + jumpMPModified;
                 }
+            }
+
+            sMove += DOT_SPACER;
+            String sMoveMode = entity.getMovementModeAsString();
+            sMove += sMoveMode;
+
+            if ((walkMP != walkMPModified) || (runMP != runMPModified) || (jumpMP != jumpMPModified)) {
                 if (entity.getGame().getPlanetaryConditions().getGravity()  != 1.0) {
                     sMove += DOT_SPACER;
                     String sGravity =  entity.getGame().getPlanetaryConditions().getGravity() + "g";
@@ -1191,10 +1198,6 @@ public final class UnitToolTip {
                     sMove += guiScaledFontHTML(GUIP.getWarningColor()) + sHeat + "</FONT>";
                 }
             }
-
-            sMove += DOT_SPACER;
-            String sMoveMode = entity.getMovementModeAsString();
-            sMove += sMoveMode;
 
             if (entity instanceof IBomber) {
                 int bombMod = 0;

@@ -952,6 +952,10 @@ public final class UnitToolTip {
             result += guiScaledFontHTML(GUIP.getColorForHeat(heat)) + sHeat + "</FONT>";
         }
 
+        String searchLight = entity.isUsingSearchlight() ? DOT_SPACER +"\uD83D\uDD26" : "";
+        searchLight += entity.usedSearchlight() ? " \u2580\u2580" : "";
+        result += guiScaledFontHTML(uiYellow()) + searchLight + "</FONT>";
+
         // Gun Emplacement Status
         if (isGunEmplacement) {
             GunEmplacement emp = (GunEmplacement) entity; 

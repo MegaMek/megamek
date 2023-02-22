@@ -803,8 +803,9 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                     m_lVehicleCount.setText(String.format(msg_outof + sbVehicle));
                     m_lBattleArmorCount.setText(String.format(msg_outof + sbBattleArmor));
                     m_lInfantryCount.setText(String.format(msg_outof + sbInfantry));
-                    m_lUnitsBVTotal.setText(msg_bvtotal + calculateTotal(m_lUnits, 1));
                 }
+
+                m_lUnitsBVTotal.setText(msg_bvtotal + calculateTotal(m_lUnits, 1));
             } catch (NumberFormatException ignored) {
 
             } finally {

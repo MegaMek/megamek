@@ -819,6 +819,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                     armyModel.addUnit(ms);
                 }
             }
+
+            m_lArmyBVTotal.setText(msg_bvtotal + calculateTotal(m_lArmy, 1));
         } else if (ev.getSource().equals(rug)) {
             m_ratStatus.setText(Messages.getString("RandomArmyDialog.ratStatusDoneLoading"));
             updateRATs();

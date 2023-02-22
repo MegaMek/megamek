@@ -606,6 +606,15 @@ class EntitySprite extends Sprite {
                 }
             }
 
+            // Bridgelayer
+            if (entity.isVehicle() || entity.entityIsQuad()) {
+                int bridgeWork = entity.getBridgeWork();
+                if ((bridgeWork >= entity.BRIDGE_START) && (bridgeWork <= entity.BRIDGE_DONE)) {
+                    stStr.add(new Status(Color.YELLOW, "Working", DIRECT));
+                    stStr.add(new Status(Color.PINK, "D", SMALL));
+                }
+            }
+
             // Aero
             if (isAero) {
                 IAero a = (IAero) entity;

@@ -96,6 +96,7 @@ public class MoveStep implements Serializable {
     private boolean isStackingViolation = false;
     private boolean isDiggingIn = false;
     private boolean isTakingCover = false;
+    private boolean isBridgeBuilding = false;
     private int wigeBonus = 0;
     private int nWigeDescent = 0;
 
@@ -2047,6 +2048,20 @@ public class MoveStep implements Serializable {
 
             return;
         } // end AERO stuff
+
+        if (prev.isBridgeBuilding) {
+            if (!entity.isVehicle() && !entity.entityIsQuad()) {
+                return;
+            }
+            isBridgeBuilding = true;
+            movementType = EntityMovementType.MOVE_NONE;
+        } else if ((type == MoveStepType.BRIDGING)) {
+            if ((!entity.isVehicle() && !entity.entityIsQuad()) || !isFirstStep()) {
+                return;
+            }
+            isBridgeBuilding = true;
+            movementType = EntityMovementType.MOVE_NONE;
+        }
 
         if (prev.isDiggingIn) {
             isDiggingIn = true;

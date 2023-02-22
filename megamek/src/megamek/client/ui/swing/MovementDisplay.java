@@ -874,6 +874,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // Bridge Building
         if ((ce.entityIsQuad() || ce.isVehicle()) && (ce.hasWorkingMisc(MiscType.F_BRIDGE_KIT))) {
             boolean isWaterForward = false;
+            // Check for water in forward facing hex or chasm and make sure the connecting side is ON the water (for highest CF
+            // or that the connecting side has a height difference no greater than one.
             getBtn(MoveCommand.MOVE_LAY_BRIDGE).setEnabled(true);
         }
 
@@ -1104,6 +1106,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         getBtn(MoveCommand.MOVE_CLIMB_MODE).setEnabled(false);
         getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(false);
+        getBtn(MoveCommand.MOVE_LAY_BRIDGE).setEnabled(false);
         getBtn(MoveCommand.MOVE_CALL_SUPPORT).setEnabled(false);
     }
 

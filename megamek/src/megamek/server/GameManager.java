@@ -1783,7 +1783,9 @@ public class GameManager implements IGameManager {
                 checkForIndustrialEndOfTurn();
                 resolveMechWarriorPickUp();
                 resolveVeeINarcPodRemoval();
+                resolveBridging();
                 resolveFortify();
+                //resolveBridging();
 
                 // Moved this to the very end because it makes it difficult to see
                 // more important updates when you have 300+ messages of smoke filling
@@ -6924,6 +6926,13 @@ public class GameManager implements IGameManager {
                 if (entity.isAero()) {
                     IAero a = (IAero) entity;
                     a.setRolled(!a.isRolled());
+                }
+            }
+
+            // Bridge building
+            if (entity.isVehicle() || entity.entityIsQuad()) {
+                if ((step.getType() == MovePath.MoveStepType.BRIDGING)) {
+                    entity.setBridgeWork(entity.BRIDGE_START);
                 }
             }
 
@@ -33885,6 +33894,39 @@ public class GameManager implements IGameManager {
             Vector<Report> vDamageReport = deliverInfernoMissiles(ae, entity, 5);
             Report.indentAll(vDamageReport, 2);
             vPhaseReport.addAll(vDamageReport);
+        }
+    }
+
+    /**
+     * Resolve bridge building
+     */
+    void resolveBridging() {
+        //
+        Report r;
+        for (Entity ent : game.getEntitiesVector()) {
+            if (ent.isVehicle() || ent.entityIsQuad()) {
+                int layBridge = ent.getBridgeWork();
+                if (layBridge == ent.BRIDGE_DONE) {
+                    r = new Report(5300);
+                    r.addDesc(ent);
+                    r.subject = ent.getId();
+                    addReport(r);
+                    // Add the new bridge to the map
+                    Coords c = ent.getPosition().translated(ent.getFacing(), 1);
+                    Hex hex = game.getBoard().getHex(c);
+                    int height = hex.getLevel();
+                    int bridgeCF = 0;
+                    Hex frontHex = game.getBoard().getHex(c);
+                    if (ent.hasWorkingMisc(MiscType.F_HEAVY_BRIDGE_LAYER)) {
+                        bridgeCF = 45;
+                    }
+                    frontHex.addTerrain(new Terrain(Terrains.BRIDGE, 1));
+                    frontHex.addTerrain(new Terrain(Terrains.BRIDGE_CF, bridgeCF));
+                    frontHex.addTerrain(new Terrain(Terrains.BRIDGE_ELEV, height));
+                    //frontHex.addTerrain(new Terrain(Terrains.)
+                    sendChangedHex(c);
+                }
+            }
         }
     }
 

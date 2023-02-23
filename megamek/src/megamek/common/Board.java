@@ -2000,6 +2000,6 @@ public class Board implements Serializable {
     }
 
     public void addBuildingToHash (Coords c, Building bldg) {
-        bldgByCoords.putIfAbsent(c, bldg);
+        bldgByCoords.put(c, bldg);
     }
 }

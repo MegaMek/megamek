@@ -33927,7 +33927,6 @@ public class GameManager implements IGameManager {
                     game.getBoard().getBuildingsVector().add(bldg);
                     sendChangedBuildings(game.getBoard().getBuildingsVector());
                     game.getBoard().updateBuildings(game.getBoard().getBuildingsVector());
-                    //game.getBoard().getBuildingsVector().add(bldg);
                     game.getBoard().addBuildingToHash(c, bldg);
                     // There has to be a better way
                     // game.getBoard().addNewBuildingHash();

@@ -37,10 +37,7 @@ import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.util.BoardUtilities;
-import megamek.common.util.EmailService;
-import megamek.common.util.SerializationHelper;
-import megamek.common.util.StringUtil;
+import megamek.common.util.*;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.*;
 import megamek.common.weapons.*;
@@ -33914,17 +33911,28 @@ public class GameManager implements IGameManager {
                     // Add the new bridge to the map
                     Coords c = ent.getPosition().translated(ent.getFacing(), 1);
                     Hex hex = game.getBoard().getHex(c);
-                    int height = hex.getLevel();
+                    Hex entityHex = game.getBoard().getHex(ent.getPosition());
+                    int height = entityHex.getLevel();
                     int bridgeCF = 0;
                     Hex frontHex = game.getBoard().getHex(c);
                     if (ent.hasWorkingMisc(MiscType.F_HEAVY_BRIDGE_LAYER)) {
                         bridgeCF = 45;
                     }
-                    frontHex.addTerrain(new Terrain(Terrains.BRIDGE, 1));
+
+                    frontHex.addTerrain(new Terrain(Terrains.BRIDGE, Building.HEAVY, true, (9 & 63)));
                     frontHex.addTerrain(new Terrain(Terrains.BRIDGE_CF, bridgeCF));
                     frontHex.addTerrain(new Terrain(Terrains.BRIDGE_ELEV, height));
-                    //frontHex.addTerrain(new Terrain(Terrains.)
                     sendChangedHex(c);
+                    Building bldg = new Building(c, game.getBoard(), Terrains.BRIDGE, BasementType.NONE);
+                    game.getBoard().getBuildingsVector().add(bldg);
+                    sendChangedBuildings(game.getBoard().getBuildingsVector());
+                    game.getBoard().updateBuildings(game.getBoard().getBuildingsVector());
+                    //game.getBoard().getBuildingsVector().add(bldg);
+                    game.getBoard().addBuildingToHash(c, bldg);
+                    // There has to be a better way
+                    // game.getBoard().addNewBuildingHash();
+                    // Reverse engineering this might help?
+                    // game.getBoard().collapseBuilding();
                 }
             }
         }

@@ -24,6 +24,7 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.cardDrawer.ASCardPrinter;
 import megamek.common.annotations.Nullable;
 import org.apache.logging.log4j.LogManager;
 
@@ -36,6 +37,7 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.net.URL;
+import java.util.List;
 
 /**
  * This is a JPanel that displays an AlphaStrike unit card and elements to configure the display of
@@ -173,16 +175,7 @@ public class ConfigurableASCardPanel extends JPanel {
     }
 
     private void printCard() {
-        PrinterJob job = PrinterJob.getPrinterJob();
-        job.setPrintable(cardPanel.getCard());
-        boolean doPrint = job.printDialog();
-        if (doPrint) {
-            try {
-                job.print();
-            } catch (PrinterException ex) {
-                JOptionPane.showMessageDialog(this, ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
-            }
-        }
+        new ASCardPrinter(List.of(element), parent).printCards();
     }
 
     // Taken from https://alvinalexander.com/java/java-copy-image-to-clipboard-example/

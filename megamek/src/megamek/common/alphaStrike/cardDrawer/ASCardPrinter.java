@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -16,35 +16,40 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.client.ui.swing.alphaStrike;
+package megamek.common.alphaStrike.cardDrawer;
 
 import megamek.MMConstants;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.alphaStrike.ASCardDisplayable;
-import megamek.common.alphaStrike.cardDrawer.ASCard;
-import megamek.common.alphaStrike.cardDrawer.ASLargeAeroCard;
 
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class ASElementPrinter {
+public class ASCardPrinter implements Printable {
 
+    private final JFrame parent;
     private final List<CardSlot> cardSlots = new ArrayList<>();
+    private ProgressPopup progressPopup;
     private int row;
     private int column;
     private AffineTransform baseTransform;
     private int columnCount = 2;
     private int rowCount = 4;
 
-    public ASElementPrinter(Collection<? extends ASCardDisplayable> elements) {
+    public ASCardPrinter(Collection<? extends ASCardDisplayable> elements, JFrame parent) {
         Font userSelectedFont = userSelectedFont();
+        this.parent = parent;
         for (ASCardDisplayable element : elements) {
             ASCard card = ASCard.createCard(element);
             card.setFont(userSelectedFont);
@@ -52,6 +57,60 @@ public class ASElementPrinter {
             if (element.usesArcs()) {
                 cardSlots.add(new CardSlot(card, true));
             }
+        }
+    }
+
+    public void printCards() {
+        PrinterJob job = PrinterJob.getPrinterJob();
+        job.setPrintable(this);
+        boolean doPrint = job.printDialog();
+        if (doPrint) {
+            progressPopup = new ProgressPopup(cardSlots.size(), parent);
+            progressPopup.setVisible(true);
+            new PrintCardTask(job).execute();
+        }
+    }
+
+    private class PrintCardTask extends SwingWorker<Void, Integer> {
+
+        private final PrinterJob job;
+
+        PrintCardTask(PrinterJob job) {
+            this.job = job;
+        }
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            try {
+                job.print();
+            } catch (PrinterException ex) {
+                JOptionPane.showMessageDialog(parent, ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
+            }
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            progressPopup.setVisible(false);
+        }
+    }
+
+    private static class ProgressPopup extends JDialog {
+        private final JProgressBar progressBar = new JProgressBar();
+
+        ProgressPopup(int maximum, JFrame parent) {
+            super(parent, "Print Cards");
+            progressBar.setMaximum(maximum);
+            progressBar.setStringPainted(true);
+            progressBar.setBorder(new EmptyBorder(20, 40, 20, 40));
+            getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
+            add(Box.createVerticalStrut(20));
+            add(new JLabel("Printing Alpha Strike Cards...", JLabel.CENTER));
+            add(progressBar);
+
+            UIUtil.adjustDialog(ProgressPopup.this, UIUtil.FONT_SCALE1);
+            setLocationRelativeTo(null);
+            pack();
         }
     }
 
@@ -80,6 +139,9 @@ public class ASElementPrinter {
                 elementIndex++;
             }
 
+            final int doneCards = elementIndex;
+            SwingUtilities.invokeLater(() ->
+            progressPopup.progressBar.setValue(doneCards));
             return Printable.PAGE_EXISTS;
         } else {
             return Printable.NO_SUCH_PAGE;

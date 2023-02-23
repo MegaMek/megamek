@@ -33,9 +33,6 @@ import megamek.common.util.fileUtils.MegaMekFile;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.print.PageFormat;
-import java.awt.print.Printable;
-import java.awt.print.PrinterException;
 import java.time.LocalDate;
 import java.util.Locale;
 
@@ -53,7 +50,7 @@ import static java.awt.Color.WHITE;
  * for Large Aerospace units the specific class can be used to have additional functionality for the two
  * card faces of these cards.
  */
-public class ASCard implements Printable {
+public class ASCard {
 
     public final static int WIDTH = 1050;
     public final static int HEIGHT = 750;
@@ -557,21 +554,6 @@ public class ASCard implements Printable {
             return FluffImageHelper.loadFluffImageHeuristic(element);
         } else {
             return null;
-        }
-    }
-
-    @Override
-    public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
-        if (pageIndex == 0) {
-            Graphics2D g2D = (Graphics2D) graphics;
-            double height = 2.5 * 72;
-            g2D.translate(pageFormat.getWidth() / 2, pageFormat.getHeight() / 2 - height / 2);
-            g2D.scale(ASCard.PRINT_SCALE, ASCard.PRINT_SCALE);
-            g2D.translate(-WIDTH / 2, 0);
-            drawCard(graphics);
-            return PAGE_EXISTS;
-        } else {
-            return NO_SUCH_PAGE;
         }
     }
 }

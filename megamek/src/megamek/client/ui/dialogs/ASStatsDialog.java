@@ -24,15 +24,15 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.AlphaStrikeHelper;
+import megamek.common.alphaStrike.cardDrawer.ASCardPrinter;
 import megamek.common.alphaStrike.conversion.ASConverter;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.awt.print.PrinterException;
-import java.awt.print.PrinterJob;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * This non-modal dialog shows stats of one or more AlphaStrike elements in the form of a table.
@@ -150,15 +150,6 @@ public class ASStatsDialog extends AbstractDialog {
     }
 
     private void printCards() {
-        PrinterJob job = PrinterJob.getPrinterJob();
-        job.setPrintable(tablePanel);
-        boolean doPrint = job.printDialog();
-        if (doPrint) {
-            try {
-                job.print();
-            } catch (PrinterException ignored) {
-
-            }
-        }
+        new ASCardPrinter(tablePanel.getElements(), getFrame()).printCards();
     }
 }

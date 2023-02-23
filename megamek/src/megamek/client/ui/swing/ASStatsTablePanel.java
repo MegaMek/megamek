@@ -19,7 +19,6 @@
 package megamek.client.ui.swing;
 
 import megamek.client.ui.dialogs.ASConversionInfoDialog;
-import megamek.client.ui.swing.alphaStrike.ASElementPrinter;
 import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.swing.util.SpringUtilities;
 import megamek.client.ui.swing.util.UIUtil;
@@ -31,13 +30,10 @@ import megamek.common.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.print.PageFormat;
-import java.awt.print.Printable;
-import java.awt.print.PrinterException;
 import java.util.List;
 import java.util.*;
 
-public class ASStatsTablePanel implements Printable {
+public class ASStatsTablePanel {
 
     private final int COLUMNS = 15;
     private final static Color GROUP_NAME_COLOR = UIUtil.uiLightGreen();
@@ -98,6 +94,10 @@ public class ASStatsTablePanel implements Printable {
     public JPanel getPanel() {
         constructPanel();
         return panel;
+    }
+
+    public List<AlphaStrikeElement> getElements() {
+        return elements;
     }
 
     /** Assembles the JPanel. It is empty before calling this method. */
@@ -251,11 +251,6 @@ public class ASStatsTablePanel implements Printable {
             spacerPanel.add(Box.createVerticalStrut(2));
             panel.add(spacerPanel);
         }
-    }
-
-    @Override
-    public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
-        return new ASElementPrinter(elements).print(graphics, pageFormat, pageIndex);
     }
 
     /** A record to store added groups of units before constructing the panel. */

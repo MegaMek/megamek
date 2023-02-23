@@ -416,7 +416,7 @@ public final class UIUtil {
             if ((comp instanceof JButton) || (comp instanceof JLabel)
                     || (comp instanceof JComboBox<?>) || (comp instanceof JTextField) || (comp instanceof JSlider)
                     || (comp instanceof JSpinner) || (comp instanceof JTextArea) || (comp instanceof JToggleButton)
-                    || (comp instanceof JTable) || (comp instanceof JList)
+                    || (comp instanceof JTable) || (comp instanceof JList) || (comp instanceof JProgressBar)
                     || (comp instanceof JEditorPane) || (comp instanceof JTree)) {
                 if ((comp.getFont() != null) && (sf != comp.getFont().getSize())) {
                     comp.setFont(comp.getFont().deriveFont((float) sf));

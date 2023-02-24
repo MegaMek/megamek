@@ -33925,9 +33925,28 @@ public class GameManager implements IGameManager {
                     sendChangedHex(c);
                     Building bldg = new Building(c, game.getBoard(), Terrains.BRIDGE, BasementType.NONE);
                     game.getBoard().getBuildingsVector().add(bldg);
+                    //game.getBoard().addBuildingToHash(c, bldg);
+                    Map<Building, Vector<Coords>> update = new HashMap<>();
+                    Enumeration<Building> buildings = game.getBoard().getBuildings();
+                    while (buildings.hasMoreElements()) {
+                        Building bldg2 = buildings.nextElement();
+                        Vector<Coords> updateCoords = new Vector<>();
+                        Enumeration<Coords> buildingCoords = bldg2.getCoords();
+                        while (buildingCoords.hasMoreElements()) {
+                            Coords coords = buildingCoords.nextElement();
+                            if (bldg.getPhaseCF(coords) != bldg.getCurrentCF(coords)) {
+                                bldg.setPhaseCF(bldg.getCurrentCF(coords), coords);
+                                updateCoords.addElement(coords);
+                            }
+                        }
+                        update.put(bldg2, updateCoords);
+                    }
+                    createUpdateBuildingPacket(game.getBoard().getBuildingsVector());
+                    //game.getBoard().createNewBuildingHash();
+
                     sendChangedBuildings(game.getBoard().getBuildingsVector());
-                    game.getBoard().updateBuildings(game.getBoard().getBuildingsVector());
-                    game.getBoard().addBuildingToHash(c, bldg);
+                    //game.getBoard().updateBuildings(game.getBoard().getBuildingsVector());
+                    //game.getBoard().addBuildingToHash(c, bldg);
                     // There has to be a better way
                     // game.getBoard().addNewBuildingHash();
                     // Reverse engineering this might help?

@@ -1891,7 +1891,24 @@ public class Board implements Serializable {
         return Collections.unmodifiableSet(tags);
     }
 
-    public void addNewBuildingHash() {
+    public void createNewBuildingHash() {
+        // Make a new hashtable.
+        bldgByCoords.clear();
+        //bldgByCoords = new Hashtable<>();
+
+        // Walk through the vector of buildings.
+        Enumeration<Building> loop = buildings.elements();
+        while (loop.hasMoreElements()) {
+            final Building bldg = loop.nextElement();
+
+            // Each building identifies the hexes it covers.
+            Enumeration<Coords> iter = bldg.getCoords();
+            while (iter.hasMoreElements()) {
+                bldgByCoords.put(iter.nextElement(), bldg);
+            }
+        }
+    }
+    public void createNewBuildingHashOld() {
         StringBuffer errBuff = null;
         buildings.removeAllElements();
         if (bldgByCoords == null) {

@@ -1154,6 +1154,30 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return compositeTechLevel.getStaticTechLevel();
     }
 
+    public String getTechBaseDescription() {
+        String techBase = "";
+        if (isMixedTech()) {
+            if (isClan()) {
+                techBase += Messages.getString("Entity.MixedClan");
+            } else {
+                techBase += Messages.getString("Entity.MixedIS");
+            }
+        } else {
+            if (isClan()) {
+                techBase += Messages.getString("Entity.Clan");
+            } else {
+                techBase += Messages.getString("Entity.IS");
+            }
+        }
+
+        return techBase;
+    }
+
+    public static String[] getTechBaseDescriptions(){
+        return new String[] {Messages.getString("Entity.IS"), Messages.getString("Entity.Clan"),
+                Messages.getString("Entity.MixedIS"), Messages.getString("Entity.MixedClan")};
+    }
+
     @Override
     public int getBaseAvailability(int era) {
         return compositeTechLevel.getBaseAvailability(era);

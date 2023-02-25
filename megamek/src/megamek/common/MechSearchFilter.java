@@ -138,6 +138,12 @@ public class MechSearchFilter {
 
     public List<Integer> cockpitType = new ArrayList<>();
     public List<Integer> cockpitTypeExclude = new ArrayList<>();
+
+    public List<String> techLevel = new ArrayList<>();
+    public List<String> techLevelExclude = new ArrayList<>();
+
+    public List<String> techBase = new ArrayList<>();
+    public List<String> techBaseExclude = new ArrayList<>();
     public int quirkInclude;
     public int quirkExclude;
     public List<String> quirkType = new ArrayList<>();
@@ -669,6 +675,22 @@ public class MechSearchFilter {
         }
 
         if ((!f.engineTypeExclude.isEmpty()) && (anyMatch(f.engineTypeExclude, mech.getEngineName()))) {
+            return false;
+        }
+
+        if ((!f.techLevel.isEmpty()) && (!anyMatch(f.techLevel, mech.getTechLevel()))) {
+            return false;
+        }
+
+        if ((!f.techLevelExclude.isEmpty()) && (anyMatch(f.techLevelExclude, mech.getTechLevel()))) {
+            return false;
+        }
+
+        if ((!f.techBase.isEmpty()) && (!anyMatch(f.techBase, mech.getTechBase()))) {
+            return false;
+        }
+
+        if ((!f.techBaseExclude.isEmpty()) && (anyMatch(f.techBaseExclude, mech.getTechBase()))) {
             return false;
         }
 

@@ -508,6 +508,9 @@ public class MechSummaryCache {
             ms.setInvalid(false);
         }
 
+        ms.setTechLevel(e.getStaticTechLevel().toString());
+        ms.setTechBase(e.getTechBaseDescription());
+
         ms.setFailedToLoadEquipment(e.getFailedEquipment().hasNext());
 
         ms.setGyroType(e.getGyroType());

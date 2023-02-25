@@ -71,7 +71,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
             JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     private JLabel lblUnitType = new JLabel(Messages.getString("MechSelectorDialog.Search.UnitType"));
     private JLabel lblTechClass = new JLabel(Messages.getString("MechSelectorDialog.Search.TechClass"));
-    private JLabel lblTechLevel = new JLabel(Messages.getString("MechSelectorDialog.Search.TechLevel"));
+    private JLabel lblTechLevelBase = new JLabel(Messages.getString("MechSelectorDialog.Search.TechLevel"));
     private JComboBox<String> cboUnitType = new JComboBox<>();
     private JComboBox<String> cboTechClass = new JComboBox<>();
     private JComboBox<String> cboTechLevel = new JComboBox<>();
@@ -149,6 +149,12 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JLabel lblEngineType = new JLabel(Messages.getString("MechSelectorDialog.Search.Engine"));
     private JList<TriStateItem> listEngineType = new JList<>(new DefaultListModel<TriStateItem>());
     private JScrollPane spEngineType = new JScrollPane(listEngineType);
+    private JLabel lblTechLevel = new JLabel(Messages.getString("MechSelectorDialog.Search.TechLevel"));
+    private JList<TriStateItem> listTechLevel = new JList<>(new DefaultListModel<TriStateItem>());
+    private JScrollPane spTechLevel = new JScrollPane(listTechLevel);
+    private JLabel lblTechBase = new JLabel(Messages.getString("MechSelectorDialog.Search.TechBase"));
+    private JList<TriStateItem> listTechBase = new JList<>(new DefaultListModel<TriStateItem>());
+    private JScrollPane spTechBase = new JScrollPane(listTechBase);
 
     // Transports
     private JButton btnTransportsClear = new JButton(Messages.getString("MechSelectorDialog.ClearTab"));
@@ -445,6 +451,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         loadTriStateItem(Mech.COCKPIT_STRING, listCockpitType, 7);
         loadTriStateItem(EquipmentType.structureNames, listInternalsType, 7);
         loadTriStateItem(Engine.getEngineTypes(), listEngineType, 5);
+        loadTriStateItem(SimpleTechLevel.getDescriptions(), listTechLevel, 5);
+        loadTriStateItem(Entity.getTechBaseDescriptions(), listTechBase, 4);
 
         for (int i = 1; i <= 20; i++) {
             cboQty.addItem(Integer.toString(i));
@@ -576,6 +584,17 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         clanEnginePanel.add(cClanEngine);
         enginePanel.add(clanEnginePanel, BorderLayout.SOUTH);
         basePanel.add(enginePanel, c);
+
+        c.gridx = 0; c.gridy++;;
+        JPanel techLevelPanel = new JPanel(new BorderLayout());
+        techLevelPanel.add(lblTechLevel, BorderLayout.NORTH);
+        techLevelPanel.add(spTechLevel, BorderLayout.CENTER);
+        basePanel.add(techLevelPanel, c);
+        c.gridx = 1;
+        JPanel techBasePanel = new JPanel(new BorderLayout());
+        techBasePanel.add(lblTechBase, BorderLayout.NORTH);
+        techBasePanel.add(spTechBase, BorderLayout.CENTER);
+        basePanel.add(techBasePanel, c);
 
         c.weighty = 1;
         JPanel blankPanel = new JPanel();
@@ -1230,7 +1249,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         cboPanel.add(cboUnitType);
         cboPanel.add(lblTechClass);
         cboPanel.add(cboTechClass);
-        cboPanel.add(lblTechLevel, c);
+        cboPanel.add(lblTechLevelBase, c);
         cboPanel.add(cboTechLevel, c);
         weaponEqPanel.add(cboPanel, c);
         c.gridwidth = 1;
@@ -1797,6 +1816,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         clearTriStateItem(listCockpitType);
         clearTriStateItem(listEngineType);
         clearTriStateItem(listInternalsType);
+        clearTriStateItem(listTechLevel);
+        clearTriStateItem(listTechBase);
     }
 
     private void clearTransports() {
@@ -2026,6 +2047,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         updateTriStateItemInteger(mechFilter.cockpitType, mechFilter.cockpitTypeExclude, listCockpitType);
         updateTriStateItemInteger(mechFilter.internalsType, mechFilter.internalsTypeExclude, listInternalsType);
         updateTriStateItemString(mechFilter.engineType, mechFilter.engineTypeExclude, listEngineType);
+        updateTriStateItemString(mechFilter.techLevel, mechFilter.techLevelExclude, listTechLevel);
+        updateTriStateItemString(mechFilter.techBase, mechFilter.techBaseExclude, listTechBase);
     }
 
     private void updateTransports() {

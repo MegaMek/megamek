@@ -1891,7 +1891,7 @@ public class Board implements Serializable {
         return Collections.unmodifiableSet(tags);
     }
 
-    public void createNewBuildingHash() {
+    /* public void createNewBuildingHash() {
         // Make a new hashtable.
         bldgByCoords.clear();
         //bldgByCoords = new Hashtable<>();
@@ -2018,5 +2018,10 @@ public class Board implements Serializable {
 
     public void addBuildingToHash (Coords c, Building bldg) {
         bldgByCoords.put(c, bldg);
+    } */
+
+    public void addBuildings(Vector<Building> newBuildings) {
+        buildings.addAll(newBuildings);
+        createBldgByCoords();
     }
 }

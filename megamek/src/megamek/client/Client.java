@@ -633,7 +633,7 @@ public class Client implements IClientCommandHandler {
      * air units flight path. In the case of several equidistant hexes, the
      * attacker gets to choose. This method updates the server with the users
      * choice.
-     * 
+     *
      * @param targetId
      * @param attackerId
      * @param pos
@@ -741,7 +741,7 @@ public class Client implements IClientCommandHandler {
         }
         entity.setWeapOrderChanged(false);
     }
-    
+
     /** Sends the given forces to the server to be made top-level forces. */
     public void sendForceParent(Collection<Force> forceList, int newParentId) {
         send(new Packet(PacketCommand.FORCE_PARENT, forceList, newParentId));
@@ -802,25 +802,25 @@ public class Client implements IClientCommandHandler {
     public void sendUpdateEntity(Entity entity) {
         send(new Packet(PacketCommand.ENTITY_UPDATE, entity));
     }
-    
+
     /**
-     * Sends a packet containing multiple entity updates. Should only be used 
+     * Sends a packet containing multiple entity updates. Should only be used
      * in the lobby phase.
      */
     public void sendUpdateEntity(Collection<Entity> entities) {
         send(new Packet(PacketCommand.ENTITY_MULTIUPDATE, entities));
     }
-    
+
     /**
-     * Sends a packet containing multiple entity updates. Should only be used 
+     * Sends a packet containing multiple entity updates. Should only be used
      * in the lobby phase.
      */
     public void sendChangeOwner(Collection<Entity> entities, int newOwnerId) {
         send(new Packet(PacketCommand.ENTITY_ASSIGN, entities, newOwnerId));
     }
-    
+
     /**
-     * Sends a packet containing multiple entity updates. Should only be used 
+     * Sends a packet containing multiple entity updates. Should only be used
      * in the lobby phase.
      */
     public void sendChangeTeam(Collection<Player> players, int newTeamId) {
@@ -833,21 +833,21 @@ public class Client implements IClientCommandHandler {
     public void sendDeploymentUnload(Entity loader, Entity loaded) {
         send(new Packet(PacketCommand.ENTITY_DEPLOY_UNLOAD, loader.getId(), loaded.getId()));
     }
-    
+
     /**
      * Sends an "Update force" packet
      */
     public void sendUpdateForce(Collection<Force> changedForces, Collection<Entity> changedEntities) {
         send(new Packet(PacketCommand.FORCE_UPDATE, changedForces, changedEntities));
     }
-    
+
     /**
      * Sends an "Update force" packet
      */
     public void sendUpdateForce(Collection<Force> changedForces) {
         send(new Packet(PacketCommand.FORCE_UPDATE, changedForces, new ArrayList<>()));
     }
-    
+
     /**
      * Sends a packet instructing the server to add the given entities to the given force.
      * The server will handle this; the client does not have to implement the change.
@@ -855,7 +855,7 @@ public class Client implements IClientCommandHandler {
     public void sendAddEntitiesToForce(Collection<Entity> entities, int forceId) {
         send(new Packet(PacketCommand.FORCE_ADD_ENTITY, entities, forceId));
     }
-    
+
     /**
      * Sends a packet instructing the server to add the given entities to the given force.
      * The server will handle this; the client does not have to implement the change.
@@ -863,7 +863,7 @@ public class Client implements IClientCommandHandler {
     public void sendAssignForceFull(Collection<Force> forceList, int newOwnerId) {
         send(new Packet(PacketCommand.FORCE_ASSIGN_FULL, forceList, newOwnerId));
     }
-        
+
     /**
      * Sends a packet to the Server requesting to delete the given forces.
      */
@@ -873,7 +873,7 @@ public class Client implements IClientCommandHandler {
                 .boxed()
                 .collect(Collectors.toList())));
     }
-    
+
     /**
      * Sends an "Add force" packet
      */
@@ -979,7 +979,7 @@ public class Client implements IClientCommandHandler {
             cacheImgTag(e);
         }
     }
-    
+
     /**
      * Receives a force-related update containing affected forces and affected entities
      */
@@ -995,13 +995,13 @@ public class Client implements IClientCommandHandler {
             getGame().setEntity(entity.getId(), entity);
         }
     }
-    
+
     /** Receives a server packet commanding deletion of forces. Only valid in the lobby phase. */
     protected void receiveForcesDelete(Packet c) {
         @SuppressWarnings("unchecked")
         Collection<Integer> forceIds = (Collection<Integer>) c.getObject(0);
         Forces forces = game.getForces();
-        
+
         // Gather the forces and entities to be deleted
         Set<Force> delForces = new HashSet<>();
         Set<Entity> delEntities = new HashSet<>();
@@ -1019,7 +1019,7 @@ public class Client implements IClientCommandHandler {
             game.removeEntity(entity.getId(), IEntityRemovalConditions.REMOVE_NEVER_JOINED);
         }
     }
-    
+
     /**
      * Loads entity update data from the data in the net command.
      */
@@ -1031,9 +1031,9 @@ public class Client implements IClientCommandHandler {
         // Replace this entity in the game.
         getGame().setEntity(eindex, entity, movePath);
     }
-    
+
     /**
-     * Update multiple entities from the server. Used only in the lobby phase. 
+     * Update multiple entities from the server. Used only in the lobby phase.
      */
     @SuppressWarnings("unchecked")
     protected void receiveEntitiesUpdate(Packet c) {
@@ -1458,6 +1458,8 @@ public class Client implements IClientCommandHandler {
                     List<Hex> hexes = new ArrayList<>((Set<Hex>) c.getObject(1));
                     game.getBoard().setHexes(coords, hexes);
                     break;
+                case BLDG_ADD:
+                    receiveAddBuildings(c);
                 case BLDG_UPDATE:
                     receiveBuildingUpdate(c);
                     break;
@@ -1693,7 +1695,7 @@ public class Client implements IClientCommandHandler {
     public void sendTelemissileTargetCFRResponse(int index) {
         send(new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST, PacketCommand.CFR_TELEGUIDED_TARGET, index));
     }
-    
+
     public void sendTAGTargetCFRResponse(int index) {
         send(new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST, PacketCommand.CFR_TAG_TARGET, index));
     }
@@ -1866,17 +1868,21 @@ public class Client implements IClientCommandHandler {
     public void setCurrentHex(Coords hex) {
         currentHex = hex;
     }
-    
+
     /** Returns true when the player is a bot added/controlled by this client. */
     public boolean isLocalBot(Player player) {
         return bots.containsKey(player.getName());
     }
-    
-    /** 
+
+    /**
      * Returns the Client associated with the given local bot player. If
-     * the player is not a local bot, returns null. 
+     * the player is not a local bot, returns null.
      */
     public Client getBotClient(Player player) {
         return bots.get(player.getName());
+    }
+
+    protected void receiveAddBuildings(Packet packet) {
+        game.getBoard().addBuildings((Vector<Building>) packet.getObject(0));
     }
 }

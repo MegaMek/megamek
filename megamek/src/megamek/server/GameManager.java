@@ -33919,12 +33919,17 @@ public class GameManager implements IGameManager {
                         bridgeCF = 45;
                     }
 
-                    frontHex.addTerrain(new Terrain(Terrains.BRIDGE, Building.HEAVY, true, (9 & 63)));
+                    frontHex.addTerrain(new Terrain(Terrains.BRIDGE, Building.HEAVY, true, 9));
                     frontHex.addTerrain(new Terrain(Terrains.BRIDGE_CF, bridgeCF));
                     frontHex.addTerrain(new Terrain(Terrains.BRIDGE_ELEV, height));
                     sendChangedHex(c);
                     Building bldg = new Building(c, game.getBoard(), Terrains.BRIDGE, BasementType.NONE);
-                    game.getBoard().getBuildingsVector().add(bldg);
+                    Vector<Building> newBuildings = new Vector<>();
+                    newBuildings.add(bldg);
+                    game.getBoard().addBuildings(newBuildings);
+                    sendAddBuildings(newBuildings);
+
+                    /*game.getBoard().getBuildingsVector().add(bldg);
                     //game.getBoard().addBuildingToHash(c, bldg);
                     Map<Building, Vector<Coords>> update = new HashMap<>();
                     Enumeration<Building> buildings = game.getBoard().getBuildings();
@@ -33950,7 +33955,7 @@ public class GameManager implements IGameManager {
                     // There has to be a better way
                     // game.getBoard().addNewBuildingHash();
                     // Reverse engineering this might help?
-                    // game.getBoard().collapseBuilding();
+                    // game.getBoard().collapseBuilding(); */
                 }
             }
         }
@@ -34291,5 +34296,9 @@ public class GameManager implements IGameManager {
     public Set<Coords> getHexUpdateSet() {
         return hexUpdateSet;
 
+    }
+
+    public void sendAddBuildings(Vector<Building> buildings) {
+        send(new Packet(PacketCommand.BLDG_ADD, buildings));
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022-2023 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,6 +36,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * This class prints a collection of one or more Alpha Strike cards. The cards to be printed can be created
+ * from either an {@link megamek.common.alphaStrike.AlphaStrikeElement} or a {@link megamek.common.MechSummary}.
+ * It shows a progress bar dialog but the printing happens in the background and the calling window is not blocked.
+ */
 public class ASCardPrinter implements Printable {
 
     private final JFrame parent;
@@ -47,6 +52,11 @@ public class ASCardPrinter implements Printable {
     private int columnCount = 2;
     private int rowCount = 4;
 
+    /**
+     * Creates a new ASCardPrinter object for the given ASCardDisplayable elements (either
+     * {@link megamek.common.alphaStrike.AlphaStrikeElement} or {@link megamek.common.MechSummary}.
+     * The parent is used for the progress dialog. Print the cards by calling {@link #printCards()}.
+     */
     public ASCardPrinter(Collection<? extends ASCardDisplayable> elements, JFrame parent) {
         Font userSelectedFont = userSelectedFont();
         this.parent = parent;
@@ -60,6 +70,11 @@ public class ASCardPrinter implements Printable {
         }
     }
 
+    /**
+     * Starts a printing process for the carsd of this ASCardPrinter. This will display the usual printer
+     * selection dialog and a progress dialog. Printing itself happens in the background and the progress
+     * dialog can be closed.
+     */
     public void printCards() {
         PrinterJob job = PrinterJob.getPrinterJob();
         job.setPrintable(this);

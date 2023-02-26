@@ -3,7 +3,7 @@ Coyotl Prime, 1
 Coyotl A, 1
 Coyotl B, 1
 Phoenix Hawk C, 2
-Hellhound (Conjurer) Standard,3
+Hellhound (Conjurer) (Standard),3
 Starslayer STY-2C, 4
 Corvis (Standard), 5
 Black Hawk (Nova) Prime, 6

@@ -555,6 +555,7 @@ Black Hawk (Nova) S|Nova (Black Hawk) S
 Black Hawk (Standard)|Black Hawk (Standard)
 Black Hawk 2|Black Hawk (Standard) 2
 Black Hawk 3|Black Hawk (Standard) 3
+Blood Asp|Blood Asp (Star Adder)
 Cauldron-Born (Ebon Jaguar) A|Ebon Jaguar (Cauldron-Born) A
 Cauldron-Born (Ebon Jaguar) B|Ebon Jaguar (Cauldron-Born) B
 Cauldron-Born (Ebon Jaguar) C|Ebon Jaguar (Cauldron-Born) C
@@ -688,11 +689,18 @@ Warhammer IIC (Standard)|Warhammer IIC
 Boggart (Quad) 1|Boggart Ultraheavy ProtoMech (Standard)
 Boggart (Quad) 2|Boggart Ultraheavy ProtoMech 2
 Procyon (Quad)|Procyon ProtoMech (Quad)
+Procyon ProtoMech (Quad)|Procyon (Quad)
 Sprite (Standard)|Sprite Ultraheavy ProtoMech (Standard)
 Sprite 2|Sprite Ultraheavy ProtoMech 2
 Sprite 3|Sprite Ultraheavy ProtoMech 3
+Sprite Ultraheavy ProtoMech|(Standard) Sprite (Standard)
+Sprite Ultraheavy ProtoMech 2|Sprite 2
+Sprite Ultraheavy ProtoMech 3|Sprite 3
+
 Svartalfa Ultra ProtoMech (Standard)|Svartalfa (Standard)
 Svartalfa Ultra ProtoMech (LRM Variant)|/Svartalfa (LRM Variant)
+Svartalfa (LRM Variant)|Svartalfa 2
+
 
 #Space Stations
 Bastion System Defense Station (Standard)|Bastion System Defense Station (2584)

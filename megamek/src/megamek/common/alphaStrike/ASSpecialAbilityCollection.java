@@ -18,11 +18,11 @@
  */
 package megamek.common.alphaStrike;
 
+import megamek.common.strategicBattleSystems.BattleForceSUAFormatter;
+
 import java.io.Serializable;
 import java.util.EnumMap;
 import java.util.stream.Collectors;
-
-import static megamek.common.alphaStrike.BattleForceSUA.*;
 
 /**
  * This class encapsulates a block of AlphaStrike or Battleforce or SBF special abilities. Most
@@ -58,29 +58,12 @@ public class ASSpecialAbilityCollection implements Serializable, ASSpecialAbilit
     }
 
     @Override
-    public String getSpecialsDisplayString(String delimiter, ASCardDisplayable element) {
+    public String getSpecialsDisplayString(String delimiter, BattleForceSUAFormatter element) {
         return specialAbilities.keySet().stream()
-                .filter(sua -> !AlphaStrikeHelper.hideSpecial(sua, element))
-                .map(sua -> AlphaStrikeHelper.formatAbility(sua, this, element, delimiter))
+                .filter(element::showSUA)
+                .map(sua -> element.formatSUA(sua, delimiter, this))
                 .sorted(String.CASE_INSENSITIVE_ORDER)
                 .collect(Collectors.joining(delimiter));
-    }
-
-    /** @return A string formatted for export (listing the damage values of STD, SCAP, MSL and CAP for arcs). */
-    public String getSpecialsExportString(String delimiter, ASCardDisplayable element) {
-        if (element.usesArcs()) {
-            String damage = getStdDamage() + delimiter + CAP + getCAP().toString() + delimiter + SCAP + getSCAP() + delimiter
-                    + MSL + getMSL();
-            String specials = specialAbilities.keySet().stream()
-                    .filter(sua -> !AlphaStrikeHelper.hideSpecial(sua, element))
-                    .filter(sua -> !sua.isAnyOf(STD, CAP, SCAP, MSL))
-                    .map(sua -> AlphaStrikeHelper.formatAbility(sua, this, element, delimiter))
-                    .sorted(String.CASE_INSENSITIVE_ORDER)
-                    .collect(Collectors.joining(delimiter));
-            return damage + (!specials.isBlank() ? delimiter + specials : "");
-        } else {
-            return getSpecialsDisplayString(delimiter, element);
-        }
     }
 
     @Override
@@ -116,16 +99,25 @@ public class ASSpecialAbilityCollection implements Serializable, ASSpecialAbilit
     /**
      * Adds a Special Unit Ability associated with a possibly non-integer number such
      * as CT1.5. If that SUA is already present, the given number is added to the one already present.
-     * If the previosly present number was an integer, it will be converted to a Double type value.
+     * If the previously present number was an integer, it will be converted to a Double type value.
+     * If the resulting value would be 0, the SUA is removed.
      */
     public void mergeSUA(BattleForceSUA sua, double doubleValue) {
-        if (!specialAbilities.containsKey(sua)) {
-            specialAbilities.put(sua, doubleValue);
-        } else {
+        double resultingValue = doubleValue;
+        if (specialAbilities.containsKey(sua)) {
             if (specialAbilities.get(sua) instanceof Integer) {
-                specialAbilities.put(sua, (int) specialAbilities.get(sua) + doubleValue);
+                resultingValue += (int) specialAbilities.get(sua);
             } else if (specialAbilities.get(sua) instanceof Double) {
-                specialAbilities.put(sua, (double) specialAbilities.get(sua) + doubleValue);
+                resultingValue += (double) specialAbilities.get(sua);
+            }
+        }
+        if (resultingValue <= 0) {
+            specialAbilities.remove(sua);
+        } else {
+            if ((int) resultingValue == resultingValue) {
+                specialAbilities.put(sua, (int) resultingValue);
+            } else {
+                specialAbilities.put(sua, resultingValue);
             }
         }
     }

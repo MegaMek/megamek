@@ -1,0 +1,159 @@
+Version:1.3
+Hellcat (Hellhound II)
+
+mul id:9409
+Config:Biped
+techbase:Clan
+era:3133
+source:Rec Guide:ilClan #30 - Dark Age
+rules level:3
+
+mass:50
+engine:300 XXL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:14 Clan Double
+walk mp:6
+jump mp:0
+
+armor:Ferro-Fibrous(Clan)
+LA armor:14
+RA armor:14
+LT armor:19
+RT armor:19
+CT armor:23
+HD armor:9
+LL armor:24
+RL armor:24
+RTL armor:5
+RTR armor:5
+RTC armor:7
+
+Weapons:4
+LB 10-X AC, Right Arm
+ER Large Laser, Right Torso
+SRM 6, Left Torso
+ER Large Laser, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLERLargeLaser
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLLBXAC10
+CLLBXAC10
+CLLBXAC10
+CLLBXAC10
+CLLBXAC10
+Clan LB 10-X AC Ammo
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLSRM6
+Clan Ammo SRM-6
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLERLargeLaser
+Clan LB 10-X Cluster Ammo
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:Falcon engineers and scientists redesigned an unusual Conjurer variation to prioritize versatile firepower above the Nova Cat model's speed and energy-based armament.
+manufacturer:Kinetic Dynamics, Trellshire Heavy Industries
+primaryfactory:Graus, Twycross
+systemmanufacturer:CHASSIS:Puma Type Medium Endo Steel
+systemmanufacturer:ENGINE:Model 32d 300 XXL
+systemmanufacturer:ARMOR:Alpha Plate Special Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:JNE II Integrated
+systemmanufacturer:TARGETING:Build 4 CAT Advanced TTS
+

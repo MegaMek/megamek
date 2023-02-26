@@ -14,10 +14,11 @@
  */
 package megamek.common;
 
-import megamek.common.alphaStrike.ASCardDisplayable;
-import megamek.common.alphaStrike.ASDamageVector;
-import megamek.common.alphaStrike.ASSpecialAbilityCollection;
-import megamek.common.alphaStrike.ASUnitType;
+import megamek.common.alphaStrike.*;
+import megamek.common.options.IOption;
+import megamek.common.options.IOptionGroup;
+import megamek.common.options.Quirks;
+import megamek.common.options.WeaponQuirks;
 
 import java.io.File;
 import java.io.Serializable;
@@ -35,7 +36,14 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     private String unitType;
     private String unitSubType;
     private String fullAccurateUnitType;
+    private Long entityType;
+    private boolean omni;
+    private boolean military;
+    private int tankTurrets;
     private File sourceFile;
+    private String source;
+    private boolean invalid;
+    private boolean failedToLoadEquipment;
     private String entryName; // for files in zips
     private int year;
     private int type;
@@ -67,6 +75,43 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     private String engineName;
     private int gyroType;
     private String myomerName;
+    private int lowerArms;
+    private int hands;
+    private double troopCarryingSpace;
+    private int aSFBays;
+    private int aSFDoors;
+    private double aSFUnits;
+    private int smallCraftBays;
+    private int smallCraftDoors;
+    private double smallCraftUnits;
+    private int dockingCollars;
+    private int mechBays;
+    private int mechDoors;
+    private double mechUnits;
+    private int heavyVehicleBays;
+    private int heavyVehicleDoors;
+    private double heavyVehicleUnits;
+    private int lightVehicleBays;
+    private int lightVehicleDoors;
+    private double lightVehicleUnits;
+    private int protoMecheBays;
+    private int protoMechDoors;
+    private double protoMechUnits;
+    private int battleArmorBays;
+    private int battleArmorDoors;
+    private double battleArmorUnits;
+    private int infantryBays;
+    private int infantryDoors;
+    private double infantryUnits;
+    private int superHeavyVehicleBays;
+    private int superHeavyVehicleDoors;
+    private double superHeavyVehicleUnits;
+    private int dropshuttleBays;
+    private int dropshuttleDoors;
+    private double dropshuttelUnits;
+    private int battleArmorHandles;
+    private double cargoBayUnits;
+    private int navalRepairFacilities;
 
     /** For BattleArmor, we want to know the weight of an individual suit. */
     private double twSuitTons;
@@ -94,6 +139,9 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     /** The number of times the piece of equipment in the corresponding equipmentNames list appears. */
     private Vector<Integer> equipmentQuantities;
 
+    private String quirkNames;
+    private String weaponQuirkNames;
+
     // AlphaStrike values
     private int pointValue = 0;
     private ASUnitType asUnitType = ASUnitType.UNKNOWN;
@@ -103,10 +151,10 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     private String primaryMovementMode = "";
     private ASDamageVector standardDamage = ASDamageVector.ZERO;
     private int overheat = 0;
-    private ASSpecialAbilityCollection frontArc = new ASSpecialAbilityCollection();
-    private ASSpecialAbilityCollection leftArc = new ASSpecialAbilityCollection();
-    private ASSpecialAbilityCollection rightArc = new ASSpecialAbilityCollection();
-    private ASSpecialAbilityCollection rearArc = new ASSpecialAbilityCollection();
+    private ASArcSummary frontArc = new ASArcSummary();
+    private ASArcSummary leftArc = new ASArcSummary();
+    private ASArcSummary rightArc = new ASArcSummary();
+    private ASArcSummary rearArc = new ASArcSummary();
     private int threshold;
     private int fullArmor;
     private int fullStructure;
@@ -195,6 +243,18 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         return sourceFile;
     }
 
+    public boolean getInvalid() {
+        return invalid;
+    }
+
+    public boolean getFailedToLoadEquipment() {
+        return failedToLoadEquipment;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
     public String getEntryName() {
         return entryName;
     }
@@ -223,6 +283,170 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public String getFullAccurateUnitType() {
         return fullAccurateUnitType;
+    }
+
+    public long getEntityType() {
+        return entityType;
+    }
+
+    public boolean getOmni() {
+        return omni;
+    }
+
+    public boolean getMilitary() {
+        return military;
+    }
+
+    public int getTankTurrets() {
+        return tankTurrets;
+    }
+
+    public int getLowerArms() {
+        return lowerArms;
+    }
+
+    public int getHands() {
+        return hands;
+    }
+
+    public double getTroopCarryingSpace() {
+        return troopCarryingSpace;
+    }
+
+    public int getASFBays() {
+        return aSFBays;
+    }
+
+    public int getASFDoors() {
+        return aSFDoors;
+    }
+
+    public double getASFUnits() {
+        return aSFUnits;
+    }
+
+    public int getSmallCraftBays() {
+        return smallCraftBays;
+    }
+
+    public int getSmallCraftDoors() {
+        return smallCraftDoors;
+    }
+
+    public double getSmallCraftUnits() {
+        return smallCraftUnits;
+    }
+
+    public int getDockingCollars() {
+        return dockingCollars;
+    }
+
+    public int getMechBays() {
+        return mechBays;
+    }
+
+    public int getMechDoors() {
+        return mechDoors;
+    }
+
+    public double getMechUnits() {
+        return mechUnits;
+    }
+
+    public int getHeavyVehicleBays() {
+        return heavyVehicleBays;
+    }
+
+    public int getHeavyVehicleDoors() {
+        return heavyVehicleDoors;
+    }
+
+    public double getHeavyVehicleUnits() {
+        return heavyVehicleUnits;
+    }
+
+    public int getLightVehicleBays() {
+        return lightVehicleBays;
+    }
+
+    public int getLightVehicleDoors() {
+        return lightVehicleDoors;
+    }
+
+    public double getLightVehicleUnits() {
+        return lightVehicleUnits;
+    }
+
+    public int getProtoMecheBays() {
+        return protoMecheBays;
+    }
+
+    public int getProtoMechDoors() {
+        return protoMechDoors;
+    }
+
+    public double getProtoMechUnits() {
+        return protoMechUnits;
+    }
+
+    public int getBattleArmorBays() {
+        return battleArmorBays;
+    }
+
+    public int getBattleArmorDoors() {
+        return battleArmorDoors;
+    }
+
+    public double getBattleArmorUnits() {
+        return battleArmorUnits;
+    }
+
+    public int getInfantryBays() {
+        return infantryBays;
+    }
+
+    public int getInfantryDoors() {
+        return infantryDoors;
+    }
+
+    public double getInfantryUnits() {
+        return infantryUnits;
+    }
+
+    public int getSuperHeavyVehicleBays() {
+        return superHeavyVehicleBays;
+    }
+
+    public int getSuperHeavyVehicleDoors() {
+        return superHeavyVehicleDoors;
+    }
+
+    public double getSuperHeavyVehicleUnits() {
+        return superHeavyVehicleUnits;
+    }
+
+    public int getDropshuttleBays() {
+        return dropshuttleBays;
+    }
+
+    public int getDropshuttleDoors() {
+        return dropshuttleDoors;
+    }
+
+    public double getDropshuttelUnits() {
+        return dropshuttelUnits;
+    }
+
+    public int getBattleArmorHandles() {
+        return battleArmorHandles;
+    }
+
+    public double getCargoBayUnits() {
+        return cargoBayUnits;
+    }
+
+    public int getNavalRepairFacilities() {
+        return navalRepairFacilities;
     }
 
     public double getTons() {
@@ -327,22 +551,22 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     }
 
     @Override
-    public ASSpecialAbilityCollection getFrontArc() {
+    public ASArcSummary getFrontArc() {
         return frontArc;
     }
 
     @Override
-    public ASSpecialAbilityCollection getLeftArc() {
+    public ASArcSummary getLeftArc() {
         return leftArc;
     }
 
     @Override
-    public ASSpecialAbilityCollection getRightArc() {
+    public ASArcSummary getRightArc() {
         return rightArc;
     }
 
     @Override
-    public ASSpecialAbilityCollection getRearArc() {
+    public ASArcSummary getRearArc() {
         return rearArc;
     }
 
@@ -380,6 +604,169 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         fullAccurateUnitType = type;
     }
 
+    public void setEntityType(long type) {
+        entityType = type;
+    }
+
+    public void setOmni(boolean b) {
+        omni = b;
+    }
+
+    public void setMilitary(boolean b) {
+        military = b;
+    }
+
+    public void setTankTurrets(int i) {
+        tankTurrets = i;
+    }
+
+    public void setLowerArms(int i) {
+        lowerArms = i;
+    }
+
+    public void setHands(int i) {
+        hands = i;
+    }
+
+    public void setTroopCarryingSpace(double d) {
+        troopCarryingSpace = d;
+    }
+
+    public void setASFBays(int i) {
+        aSFBays = i;
+    }
+
+    public void setASFDoors(int i) {
+        aSFDoors = i;
+    }
+
+    public void setASFUnits(double d) {
+        aSFUnits = d;
+    }
+
+    public void setSmallCraftBays(int i) {
+        smallCraftBays = i;
+    }
+
+    public void setSmallCraftDoors(int i) {
+        smallCraftDoors = i;
+    }
+
+    public void setSmallCraftUnits(double d) {
+        smallCraftUnits = d;
+    }
+
+    public void setDockingCollars(int i) {
+        dockingCollars = i;
+    }
+
+    public void setMechBays(int i) {
+        mechBays = i;
+    }
+
+    public void setMechDoors(int i) {
+        mechDoors = i;
+    }
+
+    public void setMechUnits(double d) {
+        mechUnits = d;
+    }
+
+    public void setHeavyVehicleBays(int i) {
+        heavyVehicleBays = i;
+    }
+
+    public void setHeavyVehicleDoors(int i) {
+        heavyVehicleDoors = i;
+    }
+
+    public void setHeavyVehicleUnits(double d) {
+        heavyVehicleUnits = d;
+    }
+
+    public void setLightVehicleBays(int i) {
+        lightVehicleBays = i;
+    }
+
+    public void setLightVehicleDoors(int i) {
+        lightVehicleDoors = i;
+    }
+
+    public void setLightVehicleUnits(double d) {
+        lightVehicleUnits = d;
+    }
+
+    public void setProtoMecheBays(int i) {
+        protoMecheBays = i;
+    }
+
+    public void setProtoMechDoors(int i) {
+        protoMechDoors = i;
+    }
+
+    public void setProtoMechUnits(double d) {
+        protoMechUnits = d;
+    }
+
+    public void setBattleArmorBays(int i) {
+        battleArmorBays = i;
+    }
+
+    public void setBattleArmorDoors(int i) {
+        battleArmorDoors = i;
+    }
+
+    public void setBattleArmorUnits(double d) {
+        battleArmorUnits = d;
+    }
+
+    public void setInfantryBays(int i) {
+        infantryBays = i;
+    }
+
+    public void setInfantryDoors(int i) {
+        infantryDoors = i;
+    }
+
+    public void setInfantryUnits(double d) {
+        infantryUnits = d;
+    }
+
+    public void setSuperHeavyVehicleBays(int i) {
+        superHeavyVehicleBays = i;
+    }
+
+    public void setSuperHeavyVehicleDoors(int i) {
+        superHeavyVehicleDoors = i;
+    }
+
+    public void setSuperHeavyVehicleUnits(double d) {
+        superHeavyVehicleUnits = d;
+    }
+
+    public void setDropshuttleBays(int i) {
+        dropshuttleBays = i; }
+
+    public void setDropshuttleDoors(int i) {
+        dropshuttleDoors = i;
+    }
+
+    public void setDropshuttelUnits(double d) {
+        dropshuttelUnits = d;
+    }
+
+    public void setBattleArmorHandles(int i) {
+        battleArmorHandles = i;
+    }
+
+    public void setCargoBayUnits(double d) {
+        cargoBayUnits = d;
+    }
+
+    public void setNavalRepairFacilities(int i) {
+        navalRepairFacilities = i;
+    }
+
     public void setName(String sName) {
         this.name = sName;
     }
@@ -402,6 +789,18 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public void setSourceFile(File sSourceFile) {
         this.sourceFile = sSourceFile;
+    }
+
+    public void setInvalid(boolean b) {
+        this.invalid = b;
+    }
+
+    public void setFailedToLoadEquipment(boolean b) {
+        this.failedToLoadEquipment = b;
+    }
+
+    public void setSource(String sSource) {
+        this.source = sSource;
     }
 
     public void setEntryName(String sEntryName) {
@@ -552,6 +951,55 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         return equipmentQuantities;
     }
 
+    public void setQuirkNames(Quirks quirks) {
+        quirkNames = "";
+        for (final Enumeration<IOptionGroup> optionGroups = quirks.getGroups(); optionGroups.hasMoreElements();) {
+            final IOptionGroup group = optionGroups.nextElement();
+            for (final Enumeration<IOption> options = group.getOptions(); options.hasMoreElements(); ) {
+                final IOption option = options.nextElement();
+                if ((option != null) && option.booleanValue()) {
+                    if (!quirkNames.contains(option.getDisplayableNameWithValue())) {
+                        quirkNames += option.getDisplayableNameWithValue() + ";";
+                    }
+                }
+            }
+        }
+    }
+
+    public String getQuirkNames() {
+        return quirkNames;
+    }
+
+    public void setWeaponQuirkNames(Entity entity) {
+        HashMap<Integer, WeaponQuirks> wpnQks = new HashMap<>();
+        weaponQuirkNames = "";
+        for (Mounted m : entity.getWeaponList()) {
+            wpnQks.put(entity.getEquipmentNum(m), m.getQuirks());
+        }
+        Set<Integer> set = wpnQks.keySet();
+
+        Iterator<Integer> iter = set.iterator();
+        while (iter.hasNext()) {
+            int key = iter.next();
+            WeaponQuirks wpnQuirks = wpnQks.get(key);
+            for (Enumeration<IOptionGroup> i = wpnQuirks.getGroups(); i.hasMoreElements(); ) {
+                IOptionGroup group = i.nextElement();
+                for (Enumeration<IOption> j = group.getSortedOptions(); j.hasMoreElements(); ) {
+                    IOption option = j.nextElement();
+                    if ((option != null) && option.booleanValue()) {
+                        if (!weaponQuirkNames.contains(option.getDisplayableNameWithValue())) {
+                            weaponQuirkNames += option.getDisplayableNameWithValue() + ";";
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public String getWeaponQuirkNames() {
+        return weaponQuirkNames;
+    }
+
     public void setTotalArmor(int totalArmor) {
         this.totalArmor = totalArmor;
     }
@@ -681,19 +1129,19 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         this.overheat = overheat;
     }
 
-    public void setFrontArc(ASSpecialAbilityCollection frontArc) {
+    public void setFrontArc(ASArcSummary frontArc) {
         this.frontArc = frontArc;
     }
 
-    public void setLeftArc(ASSpecialAbilityCollection leftArc) {
+    public void setLeftArc(ASArcSummary leftArc) {
         this.leftArc = leftArc;
     }
 
-    public void setRightArc(ASSpecialAbilityCollection rightArc) {
+    public void setRightArc(ASArcSummary rightArc) {
         this.rightArc = rightArc;
     }
 
-    public void setRearArc(ASSpecialAbilityCollection rearArc) {
+    public void setRearArc(ASArcSummary rearArc) {
         this.rearArc = rearArc;
     }
 
@@ -748,5 +1196,13 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         return Objects.hash(chassis, model, unitType, sourceFile);
     }
 
+    @Override
+    public boolean showSUA(BattleForceSUA sua) {
+        return !AlphaStrikeHelper.hideSpecial(sua, this);
+    }
 
+    @Override
+    public String formatSUA(BattleForceSUA sua, String delimiter, ASSpecialAbilityCollector collection) {
+        return AlphaStrikeHelper.formatAbility(sua, collection, this, delimiter);
+    }
 }

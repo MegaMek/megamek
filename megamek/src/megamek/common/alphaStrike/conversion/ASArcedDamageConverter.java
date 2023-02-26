@@ -37,9 +37,9 @@ public class ASArcedDamageConverter extends ASAeroDamageConverter {
 
     protected ASArcedDamageConverter(Entity entity, AlphaStrikeElement element, CalculationReport report) {
         super(entity, element, report);
-        locations = new ASSpecialAbilityCollection[ASLocationMapper.damageLocationsCount(entity)];
+        locations = new ASArcSummary[ASLocationMapper.damageLocationsCount(entity)];
         for (int index = 0; index < locationNames.length; index++) {
-            locations[index] = new ASSpecialAbilityCollection();
+            locations[index] = new ASArcSummary();
         }
         // Flatten the weaponlist as weapon bays are not relevant for AS conversion
         List<Mounted> flattenedWeaponList = new ArrayList<>();
@@ -213,7 +213,7 @@ public class ASArcedDamageConverter extends ASAeroDamageConverter {
     @Override
     protected void writeLocationsToElement() {
         for (ASArcs arc : ASArcs.values()) {
-            element.setArc(arc, locations[ASConverter.toInt(arc)]);
+            element.setArc(arc, (ASArcSummary) locations[ASConverter.toInt(arc)]);
         }
     }
 }

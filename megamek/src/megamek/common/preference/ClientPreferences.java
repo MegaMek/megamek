@@ -15,7 +15,6 @@ package megamek.common.preference;
 
 import megamek.MMConstants;
 import megamek.common.MovePath;
-import megamek.common.util.LocaleParser;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.BufferedWriter;
@@ -305,11 +304,8 @@ public class ClientPreferences extends PreferenceStoreProxy {
     protected Locale locale = null;
 
     public void setLocale(String l) {
-        LocaleParser p = new LocaleParser();
-        if (!p.parse(l)) {
-            locale = new Locale(p.getLanguage(), p.getCountry(), p.getVariant());
-            store.setValue(LOCALE, getLocaleString());
-        }
+        locale = new Locale(l);
+        store.setValue(LOCALE, getLocaleString());
     }
 
     public Locale getLocale() {

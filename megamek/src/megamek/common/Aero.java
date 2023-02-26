@@ -349,6 +349,10 @@ public class Aero extends Entity implements IAero, IBomber {
             if (weatherMod != 0) {
                 j = Math.max(j + weatherMod, 0);
             }
+            if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
+                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_TORNADO_F13)) {
+                j += 1;
+            }
         }
         // get bomb load
         j = reduceMPByBombLoad(j);
@@ -2055,6 +2059,11 @@ public class Aero extends Entity implements IAero, IBomber {
                 || hex.containsTerrain(Terrains.RUBBLE) || hex.containsTerrain(Terrains.MAGMA)
                 || hex.containsTerrain(Terrains.JUNGLE) || (hex.terrainLevel(Terrains.SNOW) > 1)
                 || (hex.terrainLevel(Terrains.GEYSER) == 2);
+    }
+
+    @Override
+    public boolean isNightwalker() {
+        return false;
     }
 
     @Override

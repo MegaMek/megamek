@@ -1,7 +1,7 @@
 Turning Points Foster Heavy Vehicles
-Kokou Defense Tank (Standard), 1
+Kokou Defense Tank, 1
 Demon Tank (Standard), 2
 Oro Heavy Tank (Standard), 3
-Burke Defense Tank, 3
+Burke Defense Tank (Standard), 3
 Ishtar Heavy Fire Support Tank (Original), 2
 Von Luckner Heavy Tank (Star League), 1

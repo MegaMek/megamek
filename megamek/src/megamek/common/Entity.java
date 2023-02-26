@@ -6998,19 +6998,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         PlanetaryConditions conditions = game.getPlanetaryConditions();
-        // check light conditions for "running" entities
-        if ((moveType == EntityMovementType.MOVE_RUN)
-                || (moveType == EntityMovementType.MOVE_SPRINT)
-                || (moveType == EntityMovementType.MOVE_VTOL_RUN)
-                || (moveType == EntityMovementType.MOVE_OVER_THRUST)
-                || (moveType == EntityMovementType.MOVE_VTOL_SPRINT)) {
-            int lightPenalty = conditions.getLightPilotPenalty();
-            if (lightPenalty > 0) {
-                roll.addModifier(lightPenalty,
-                        conditions.getLightDisplayableName());
-            }
-        }
-
         // check weather conditions for all entities
         int weatherMod = conditions.getWeatherPilotPenalty();
         if ((weatherMod != 0) && !game.getBoard().inSpace()
@@ -7023,6 +7010,73 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if ((windMod != 0) && !game.getBoard().inSpace()
                 && ((null == crew) || !hasAbility(OptionsConstants.UNOFF_ALLWEATHER))) {
             roll.addModifier(windMod, conditions.getWindDisplayableName());
+        }
+
+        if (!hasAbility(OptionsConstants.UNOFF_ALLWEATHER)
+                && getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_RAIN)) {
+            if (conditions.getWeather() == PlanetaryConditions.WE_GUSTING_RAIN) {
+                if ((this instanceof Mech) || isAirborne()
+                        || (getMovementMode() == EntityMovementMode.WHEELED)
+                        || (getMovementMode() == EntityMovementMode.TRACKED)) {
+                    roll.addModifier(-1, Messages.getString("WeaponAttackAction.RainSpec"));
+                }
+
+                if (isAirborneVTOLorWIGE() || (getMovementMode() == EntityMovementMode.HOVER)) {
+                    roll.addModifier(-2, Messages.getString("WeaponAttackAction.RainSpec"));
+                }
+            }
+
+            if ((conditions.getWeather() == PlanetaryConditions.WE_DOWNPOUR)
+                    ||(conditions.getWeather() == PlanetaryConditions.WE_HEAVY_RAIN)) {
+                roll.addModifier(-1, Messages.getString("WeaponAttackAction.RainSpec"));
+            }
+        }
+
+        if (!hasAbility(OptionsConstants.UNOFF_ALLWEATHER)
+                && getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_SNOW)) {
+            if (conditions.getWeather() == PlanetaryConditions.WE_HEAVY_SNOW) {
+                roll.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
+            }
+
+            if (((conditions.getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES)
+                    || (conditions.getWeather() == PlanetaryConditions.WE_SLEET)
+                    || (conditions.getWeather() == PlanetaryConditions.WE_ICE_STORM))
+                    && isAirborneVTOLorWIGE()) {
+                roll.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
+            }
+        }
+
+        if (!hasAbility(OptionsConstants.UNOFF_ALLWEATHER)
+                && getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)) {
+            if ((conditions.getWeather() == PlanetaryConditions.WI_MOD_GALE) && isAirborneVTOLorWIGE()) {
+                roll.addModifier(-1, Messages.getString("WeaponAttackAction.WindSpec"));
+            }
+
+            if (conditions.getWeather() == PlanetaryConditions.WI_STRONG_GALE) {
+                if ((this instanceof Mech) || isAirborne()
+                        || isAirborneVTOLorWIGE() || (getMovementMode() == EntityMovementMode.HOVER)) {
+                    roll.addModifier(-1, Messages.getString("WeaponAttackAction.WindSpec"));
+                }
+            }
+
+            if (conditions.getWeather() == PlanetaryConditions.WI_STORM) {
+                if ((this instanceof Mech) || isAirborneVTOLorWIGE()
+                        || (getMovementMode() == EntityMovementMode.HOVER)) {
+                    roll.addModifier(-2, Messages.getString("WeaponAttackAction.WindSpec"));
+                }
+
+                if (isAirborne()) {
+                    roll.addModifier(-1, Messages.getString("WeaponAttackAction.WindSpec"));
+                }
+            }
+
+            if (conditions.getWeather() == PlanetaryConditions.WI_TORNADO_F13) {
+                roll.addModifier(-2, Messages.getString("WeaponAttackAction.WindSpec"));
+            }
+
+            if (conditions.getWeather() == PlanetaryConditions.WI_TORNADO_F4) {
+                roll.addModifier(-3, Messages.getString("WeaponAttackAction.WindSpec"));
+            }
         }
 
         return roll;
@@ -7504,10 +7558,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         PilotingRollData roll = getBasePilotingRoll(moveType);
         int bgMod = curHex.getBogDownModifier(getMovementMode(),
                 this instanceof LargeSupportTank);
-        
-        final boolean groundingVTOL = isAirborneVTOLorWIGE() && (step.getElevation() == 0);
-        boolean floorLevelGroundUnit = step.getElevation() == curHex.floor();
-        
+
         // we check for bog down on entering a new hex or changing altitude
         // but not if we're jumping, above the "ground" (meaning the bottom of the lake), 
         // not susceptible to bog down as per getBogDownModifier,
@@ -7515,7 +7566,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if ((!lastPos.equals(curPos) || (step.getElevation() != lastElev))
                 && (bgMod != TargetRoll.AUTOMATIC_SUCCESS)
                 && (moveType != EntityMovementType.MOVE_JUMP)
-                && (floorLevelGroundUnit || groundingVTOL) && !isPavementStep) {
+                && (step.getElevation() == -curHex.depth()) && !isPavementStep) {
             
             roll.append(new PilotingRollData(getId(), bgMod, "avoid bogging down"));
             
@@ -12731,6 +12782,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return (getMovementMode() == EntityMovementMode.NAVAL)
                 || (getMovementMode() == EntityMovementMode.HYDROFOIL)
                 || (getMovementMode() == EntityMovementMode.SUBMARINE);
+    }
+
+    /**
+     * Determines if the pilot has the Nightwalker SPA
+     * @return true when pilots have the SPA and are not
+     * in a flying vehicle.
+     */
+
+    public boolean isNightwalker() {
+        return getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_NIGHTWALKER);
     }
 
     /**

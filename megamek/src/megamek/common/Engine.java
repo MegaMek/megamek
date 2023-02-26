@@ -15,6 +15,8 @@
 package megamek.common;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class represents an engine, such as those driving 'Meks.
@@ -448,6 +450,18 @@ public class Engine implements Serializable, ITechnology {
         } else {
             return Messages.getString("Engine.invalid");
         }
+    }
+
+    public static String[] getEngineTypes() {
+        List<String> engineTypes = new ArrayList<String>();
+
+        for (int i = 0; i < Engine.NUM_ENGINE_TYPES; i++) {
+            engineTypes.add(Messages.getString("Engine." + TYPE_KEYS[i]));
+        }
+
+        String[] result = new String[ engineTypes.size() ];
+        engineTypes.toArray(result);
+        return result;
     }
 
     /**

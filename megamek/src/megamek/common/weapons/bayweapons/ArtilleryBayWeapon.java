@@ -61,6 +61,7 @@ public class ArtilleryBayWeapon extends AmmoBayWeapon {
             // check the currently loaded ammo
             Mounted bayWAmmo = bayW.getLinked();
             waa.setAmmoId(ae.getEquipmentNum(bayWAmmo));
+            waa.setAmmoMunitionType(((AmmoType) bayWAmmo.getType()).getMunitionType());
             waa.setAmmoCarrier(ae.getId());
             if (bayWAmmo.isHomingAmmoInHomingMode()) {
                 useHoming = true;

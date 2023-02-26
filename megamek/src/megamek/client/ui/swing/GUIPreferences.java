@@ -92,12 +92,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_MAP_TEXT_COLOR = "AdvancedMapTextColor";
     public static final String ADVANCED_WARNING_COLOR = "AdvancedWarningColor";
     public static final String ADVANCED_TMM_PIP_MODE = "AdvancedTmmPipMode";
-    public static final String ADVANCED_HEAT_COLOR_5 = "AdvancedHeatColor5";
-    public static final String ADVANCED_HEAT_COLOR_10 = "AdvancedHeatColor10";
-    public static final String ADVANCED_HEAT_COLOR_15 = "AdvancedHeatColor15";
-    public static final String ADVANCED_HEAT_COLOR_20 = "AdvancedHeatColor20";
-    public static final String ADVANCED_HEAT_COLOR_25 = "AdvancedHeatColor25";
-    public static final String ADVANCED_HEAT_COLOR_30 = "AdvancedHeatColor30";
+    public static final String ADVANCED_HEAT_COLOR_4 = "AdvancedHeatColor4";
+    public static final String ADVANCED_HEAT_COLOR_7 = "AdvancedHeatColor7";
+    public static final String ADVANCED_HEAT_COLOR_9 = "AdvancedHeatColor9";
+    public static final String ADVANCED_HEAT_COLOR_12 = "AdvancedHeatColor12";
+    public static final String ADVANCED_HEAT_COLOR_13 = "AdvancedHeatColor13";
+    public static final String ADVANCED_HEAT_COLOR_14 = "AdvancedHeatColor14";
     public static final String ADVANCED_HEAT_COLOR_OVERHEAT = "AdvancedHeatColorOverheat";
     public static final String ADVANCED_REPORT_COLOR_LINK = "AdvancedReportColorLink";
 
@@ -114,6 +114,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_UNITTOOLTIP_SEENBYRESOLUTION = "AdvancedUnitToolTipSeenByResolution";
     public static final String ADVANCED_DOCK_ON_LEFT = "AdvancedDockOnLeft";
     public static final String ADVANCED_DOCK_MULTIPLE_ON_Y_AXIS = "AdvancedDockMultipleOnYAxis";
+    public static final String ADVANCED_PLAYERS_REMAINING_TO_SHOW = "AdvancedPlayersRemainingToShow";
+    public static final String ADVANCED_UNIT_DISPLAY_WEAPON_LIST_HEIGHT = "AdvancedUnitDisplayWeaponListHeight";
 
     /* --End advanced settings-- */
 
@@ -210,6 +212,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MINI_MAP_POS_X = "MinimapPosX";
     public static final String MINI_MAP_POS_Y = "MinimapPosY";
     public static final String MINI_MAP_ZOOM = "MinimapZoom";
+    public static final String MINI_MAP_HEIGHT_DISPLAY_MODE = "MinimapHeightDisplayMode";
     public static final String MINI_MAP_AUTO_DISPLAY_REPORT_PHASE = "MinimapAutoDiplayReportPhase";
     public static final String MINI_MAP_AUTO_DISPLAY_NONREPORT_PHASE = "MinimapAutoDiplayNonReportPhase";
     public static final String MINIMUM_SIZE_HEIGHT = "MinimumSizeHeight";
@@ -243,8 +246,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SHOW_PILOT_PORTRAIT_TT = "showPilotPortraitTT";
     public static final String SHOW_MOVE_STEP = "ShowMoveStep";
     public static final String SHOW_WRECKS = "ShowWrecks";
-    public static final String SOUND_BING_FILENAME = "SoundBingFilename";
-    public static final String SOUND_MUTE = "SoundMute";
+    public static final String SOUND_BING_FILENAME_CHAT = "SoundBingFilenameChat";
+    public static final String SOUND_BING_FILENAME_MY_TURN = "SoundBingFilenameMyTurn";
+    public static final String SOUND_BING_FILENAME_OTHERS_TURN = "SoundBingFilenameOthersTurn";
+    public static final String SOUND_MUTE_CHAT = "SoundMuteChat";
+    public static final String SOUND_MUTE_MY_TURN = "SoundMuteMyTurn";
+    public static final String SOUND_MUTE_OTHERS_TURN = "SoundMuteOthersTurn";
     public static final String TOOLTIP_DELAY = "TooltipDelay";
     public static final String TOOLTIP_DISMISS_DELAY = "TooltipDismissDelay";
     public static final String TOOLTIP_DIST_SUPRESSION = "TooltipDistSupression";
@@ -317,12 +324,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
     private static final Color DEFAULT_MEDIUM_GREEN = new Color(100, 180, 100);
 
     // Heat Scale
-    private static final Color DEFAULT_HEAT_5_COLOR = new Color(64, 128, 255);
-    private static final Color DEFAULT_HEAT_10_COLOR = new Color(64, 164, 128);
-    private static final Color DEFAULT_HEAT_15_COLOR = new Color(48, 212, 48);
-    private static final Color DEFAULT_HEAT_20_COLOR = new Color(228, 198, 0);
-    private static final Color DEFAULT_HEAT_25_COLOR = new Color(248, 128, 0);
-    private static final Color DEFAULT_HEAT_30_COLOR = new Color(248, 64, 64);
+    private static final Color DEFAULT_HEAT_4_COLOR = new Color(64, 128, 255);
+    private static final Color DEFAULT_HEAT_7_COLOR = new Color(64, 164, 128);
+    private static final Color DEFAULT_HEAT_9_COLOR = new Color(48, 212, 48);
+    private static final Color DEFAULT_HEAT_12_COLOR = new Color(228, 198, 0);
+    private static final Color DEFAULT_HEAT_13_COLOR = new Color(248, 128, 0);
+    private static final Color DEFAULT_HEAT_14_COLOR = new Color(248, 64, 64);
     private static final Color DEFAULT_HEAT_OVERHEAT_COLOR = new Color(248, 12, 12);
 
     private static final Color DEFAULT_PLANETARY_CONDITIONS_TEXT_COLOR = new Color(200, 250, 200);
@@ -407,12 +414,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ADVANCED_BUTTONS_PER_ROW, 12);
         store.setDefault(ADVANCED_ROUND_REPORT_SPRITES, true);
 
-        setDefault(ADVANCED_HEAT_COLOR_5, DEFAULT_HEAT_5_COLOR);
-        setDefault(ADVANCED_HEAT_COLOR_10, DEFAULT_HEAT_10_COLOR);
-        setDefault(ADVANCED_HEAT_COLOR_15, DEFAULT_HEAT_15_COLOR);
-        setDefault(ADVANCED_HEAT_COLOR_20, DEFAULT_HEAT_20_COLOR);
-        setDefault(ADVANCED_HEAT_COLOR_25, DEFAULT_HEAT_25_COLOR);
-        setDefault(ADVANCED_HEAT_COLOR_20, DEFAULT_HEAT_30_COLOR);
+        setDefault(ADVANCED_HEAT_COLOR_4, DEFAULT_HEAT_4_COLOR);
+        setDefault(ADVANCED_HEAT_COLOR_7, DEFAULT_HEAT_7_COLOR);
+        setDefault(ADVANCED_HEAT_COLOR_9, DEFAULT_HEAT_9_COLOR);
+        setDefault(ADVANCED_HEAT_COLOR_12, DEFAULT_HEAT_12_COLOR);
+        setDefault(ADVANCED_HEAT_COLOR_13, DEFAULT_HEAT_13_COLOR);
+        setDefault(ADVANCED_HEAT_COLOR_14, DEFAULT_HEAT_14_COLOR);
         setDefault(ADVANCED_HEAT_COLOR_OVERHEAT, DEFAULT_HEAT_OVERHEAT_COLOR);
 
         setDefault(ADVANCED_PLANETARY_CONDITIONS_COLOR_TITLE, Color.WHITE);
@@ -430,6 +437,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_UNITTOOLTIP_SEENBYRESOLUTION, 3);
         setDefault(ADVANCED_DOCK_ON_LEFT, true);
         setDefault(ADVANCED_DOCK_MULTIPLE_ON_Y_AXIS, true);
+        setDefault(ADVANCED_PLAYERS_REMAINING_TO_SHOW, 3);
+
+        setDefault(ADVANCED_UNIT_DISPLAY_WEAPON_LIST_HEIGHT, 200);
 
         store.setDefault(FOV_HIGHLIGHT_RINGS_RADII, "5 10 15 20 25");
         store.setDefault(FOV_HIGHLIGHT_RINGS_COLORS_HSB, "0.3 1.0 1.0 ; 0.45 1.0 1.0 ; 0.6 1.0 1.0 ; 0.75 1.0 1.0 ; 0.9 1.0 1.0 ; 1.05 1.0 1.0 ");
@@ -557,8 +567,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(SHOW_MAPHEX_POPUP, true);
         store.setDefault(SHOW_MOVE_STEP, true);
         store.setDefault(SHOW_WRECKS, true);
-        store.setDefault(SOUND_BING_FILENAME, "data/sounds/call.wav");
-        store.setDefault(SOUND_MUTE, true);
+        store.setDefault(SOUND_BING_FILENAME_CHAT, "data/sounds/call.wav");
+        store.setDefault(SOUND_BING_FILENAME_MY_TURN, "data/sounds/call.wav");
+        store.setDefault(SOUND_BING_FILENAME_OTHERS_TURN, "data/sounds/call.wav");
+        store.setDefault(SOUND_MUTE_CHAT, true);
+        store.setDefault(SOUND_MUTE_MY_TURN, false);
+        store.setDefault(SOUND_MUTE_OTHERS_TURN, true);
 
         store.setDefault(TOOLTIP_DELAY, 1000);
         store.setDefault(TOOLTIP_DISMISS_DELAY, -1);
@@ -737,6 +751,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getUnitDisplayEnabled() {
         return store.getBoolean(UNIT_DISPLAY_ENABLED);
+    }
+
+    public int getUnitDisplayWeaponListHeight() {
+        return store.getInt(ADVANCED_UNIT_DISPLAY_WEAPON_LIST_HEIGHT);
     }
 
     public int getUnitDisplayLocaton() {
@@ -947,6 +965,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getInt(MINI_MAP_ZOOM);
     }
 
+    public int getMinimapHeightDisplayMode() {
+        return store.getInt(MINI_MAP_HEIGHT_DISPLAY_MODE);
+    }
+
     public boolean getMiniReportEnabled() {
         return store.getBoolean(MINI_REPORT_ENABLED);
     }
@@ -1135,12 +1157,28 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(SHOW_WRECKS);
     }
 
-    public String getSoundBingFilename() {
-        return store.getString(SOUND_BING_FILENAME);
+    public String getSoundBingFilenameChat() {
+        return store.getString(SOUND_BING_FILENAME_CHAT);
     }
 
-    public boolean getSoundMute() {
-        return store.getBoolean(SOUND_MUTE);
+    public String getSoundBingFilenameMyTurn() {
+        return store.getString(SOUND_BING_FILENAME_MY_TURN);
+    }
+
+    public String getSoundBingFilenameOthersTurn() {
+        return store.getString(SOUND_BING_FILENAME_OTHERS_TURN);
+    }
+
+    public boolean getSoundMuteChat() {
+        return store.getBoolean(SOUND_MUTE_CHAT);
+    }
+
+    public boolean getSoundMuteMyTurn() {
+        return store.getBoolean(SOUND_MUTE_MY_TURN);
+    }
+
+    public boolean getSoundMuteOthersTurn() {
+        return store.getBoolean(SOUND_MUTE_OTHERS_TURN);
     }
 
     public int getTooltipDelay() {
@@ -1342,6 +1380,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(UNIT_DISPLAY_ENABLED, b);
     }
 
+    public void setAdvancedUnitDisplayWeaponListHeight(int i) {
+        store.setValue(ADVANCED_UNIT_DISPLAY_WEAPON_LIST_HEIGHT, i);
+    }
+
     public void toggleUnitDisplayLocation() {
         store.setValue(UNIT_DISPLAY_LOCATION, ((getInt(UNIT_DISPLAY_LOCATION)+1)%2));
     }
@@ -1538,6 +1580,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(MINI_MAP_ZOOM, zoom);
     }
 
+    public void setMinimapHeightDisplayMode(int zoom) {
+        store.setValue(MINI_MAP_HEIGHT_DISPLAY_MODE, zoom);
+    }
+
     public void setMinimapAutoDisplayReportPhase(int i) {
         store.setValue(MINI_MAP_AUTO_DISPLAY_REPORT_PHASE, i);
     }
@@ -1730,12 +1776,28 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(SHOW_WRECKS, state);
     }
 
-    public void setSoundBingFilename(String name) {
-        store.setValue(SOUND_BING_FILENAME, name);
+    public void setSoundBingFilenameChat(String name) {
+        store.setValue(SOUND_BING_FILENAME_CHAT, name);
     }
 
-    public void setSoundMute(boolean state) {
-        store.setValue(SOUND_MUTE, state);
+    public void setSoundBingFilenameMyTurn(String name) {
+        store.setValue(SOUND_BING_FILENAME_MY_TURN, name);
+    }
+
+    public void setSoundBingFilenameOthersTurn(String name) {
+        store.setValue(SOUND_BING_FILENAME_OTHERS_TURN, name);
+    }
+
+    public void setSoundMuteChat(boolean state) {
+        store.setValue(SOUND_MUTE_CHAT, state);
+    }
+
+    public void setSoundMuteMyTurn(boolean state) {
+        store.setValue(SOUND_MUTE_MY_TURN, state);
+    }
+
+    public void setSoundMuteOthersTurn(boolean state) {
+        store.setValue(SOUND_MUTE_OTHERS_TURN, state);
     }
 
     public void setTooltipDelay(int i) {
@@ -1955,6 +2017,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return getBoolean(ADVANCED_DOCK_MULTIPLE_ON_Y_AXIS);
     }
 
+    public int getAdvancedPlayersRemainingToShow() {
+        return getInt(ADVANCED_PLAYERS_REMAINING_TO_SHOW);
+    }
+
     public void setReportLinkColor(Color color) {
         store.setValue(ADVANCED_REPORT_COLOR_LINK, getColorString(color));
     }
@@ -2051,6 +2117,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(ADVANCED_DOCK_MULTIPLE_ON_Y_AXIS, state);
     }
 
+    public void setAdvancedPlayersRemainingToShow(Boolean state) {
+        store.setValue(ADVANCED_PLAYERS_REMAINING_TO_SHOW, state);
+    }
+
     /**
      * Toggles the state of the user preference for the Keybinds overlay.
      */
@@ -2118,18 +2188,18 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public Color getColorForHeat(int heat, Color defaultColor) {
         if (heat <= 0) {
             return defaultColor;
-        } else if (heat <= 5) {
-            return getColor(ADVANCED_HEAT_COLOR_5);
-        } else if (heat <= 10) {
-            return getColor(ADVANCED_HEAT_COLOR_10);
-        } else if (heat <= 15) {
-            return getColor(ADVANCED_HEAT_COLOR_15);
-        } else if (heat <= 20) {
-            return  getColor(ADVANCED_HEAT_COLOR_20);
-        } else if (heat <= 25) {
-            return  getColor(ADVANCED_HEAT_COLOR_25);
-        } else if (heat <= 30) {
-            return  getColor(ADVANCED_HEAT_COLOR_30);
+        } else if (heat <= 4) {
+            return getColor(ADVANCED_HEAT_COLOR_4);
+        } else if (heat <= 7) {
+            return getColor(ADVANCED_HEAT_COLOR_7);
+        } else if (heat <= 9) {
+            return getColor(ADVANCED_HEAT_COLOR_9);
+        } else if (heat <= 12) {
+            return  getColor(ADVANCED_HEAT_COLOR_12);
+        } else if (heat <= 13) {
+            return  getColor(ADVANCED_HEAT_COLOR_13);
+        } else if (heat <= 14) {
+            return  getColor(ADVANCED_HEAT_COLOR_14);
         }
         return  getColor(ADVANCED_HEAT_COLOR_OVERHEAT);
     }

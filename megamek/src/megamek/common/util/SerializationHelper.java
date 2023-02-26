@@ -45,6 +45,7 @@ public class SerializationHelper {
         // Setup Permissions
         xStream.allowTypes(new Class[] {
                 megamek.client.bot.princess.BehaviorSettings.class,
+                megamek.common.ArtilleryTracker.ArtilleryModifier.class,
                 megamek.common.Board.class,
                 megamek.common.Coords.class,
                 megamek.common.CompositeTechLevel.DateRange.class,
@@ -61,6 +62,7 @@ public class SerializationHelper {
                 megamek.common.Team.class,
                 megamek.common.Terrain.class,
                 megamek.common.Report.class,
+                megamek.common.force.Force.class,
                 megamek.server.SmokeCloud.class,
         });
         xStream.allowTypeHierarchy(megamek.common.BTObject.class);

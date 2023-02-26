@@ -139,20 +139,19 @@ public class SBFRecordSheet implements Printable {
         int[] pointsX = new int[] { 732, 732, 756, 1401, 1424, 1424, 1401, 756, 732, 732 };
         int[] pointsY = new int[] { 60, 55, 32, 32, 55, 107, 130, 130, 107, 60 };
         g.drawPolyline(pointsX, pointsY, 10);
-        new StringDrawer("STRATEGIC BATTLEFORCE").at(1019, 60).maxWidth(440)
+        new StringDrawer("STRATEGIC BATTLEFORCE").at(1019, 63).maxWidth(440)
                 .font(headerFont.deriveFont(28f)).center().draw(g);
-        new StringDrawer("FORMATION RECORD SHEET").at(1019, 97).maxWidth(440)
+        new StringDrawer("FORMATION RECORD SHEET").at(1019, 100).maxWidth(440)
                 .font(headerFont.deriveFont(28f)).center().draw(g);
 
         // Formation frame
-        int topY = 167;
         g.setColor(SHADOW_COLOR);
         pointsX = new int[] { 1425, 1435, 1435, 1410, 30, 19, 1402, 1424 };
-        pointsY = new int[] {topY + 22, topY + 32, topY + 118, topY + 145, topY + 145, topY + 134, topY + 134, topY + 109};
+        pointsY = new int[] { 189, 199, 285, 312, 312, 301, 301, 276};
         g.fillPolygon(pointsX, pointsY, 8);
         g.setColor(Color.BLACK);
         pointsX = new int[] { 104, 1401, 1424, 1424, 1401, 24, 0, 0, 24, 104};
-        pointsY = new int[] {topY, topY, topY + 26, topY + 109, topY + 135, topY + 135, topY + 109, topY + 26, topY, topY};
+        pointsY = new int[] { 167, 167, 193, 276, 302, 302, 276, 193, 167, 167};
         g.drawPolyline(pointsX, pointsY, 10);
         pointsX = new int[] { 11, 30, 214, 233, 214, 30, 11};
         pointsY = new int[] { 198, 179, 179, 198, 217, 217, 198 };
@@ -197,15 +196,15 @@ public class SBFRecordSheet implements Printable {
 
         g.setColor(SHADOW_COLOR);
         int[] pointsX = new int[] { 1425, 1435, 1435, 1410, 443, 431, 1402, 1424 };
-        int[] pointsY = new int[]{  22,   32,   245,  269,  269, 259, 259,  235 };
+        int[] pointsY = new int[] { 22,   32,   245,  269,  269, 259, 259,  235 };
         g.fillPolygon(pointsX, pointsY, 8);
         pointsX = new int[] { 30,  20,  390, 400 };
-        pointsY = new int[]{  232, 222, 222, 232 };
+        pointsY = new int[] { 232, 222, 222, 232 };
         g.fillPolygon(pointsX, pointsY, 4);
         g.setColor(Color.BLACK);
         g.setStroke(new BasicStroke(5f));
         pointsX = new int[] { 104, 1401, 1424, 1424, 1401, 435, 388, 24,  0,   0,  24, 104 };
-        pointsY = new int[]{  0,   0,    26,   235,  259,  259, 222, 222, 196, 26, 0,  0 };
+        pointsY = new int[] { 0,   0,    26,   235,  259,  259, 222, 222, 196, 26, 0,  0 };
         g.drawPolyline(pointsX, pointsY, 12);
 
         new StringDrawer("Type").at(388, 35).maxWidth(58).font(headerFont).center().draw(g);
@@ -251,15 +250,15 @@ public class SBFRecordSheet implements Printable {
 
         g.setColor(SHADOW_COLOR);
         int[] pointsX = new int[] { 1425, 1435, 1435, 1410, 407, 397, 1402, 1424 };
-        int[] pointsY = new int[]{  61,   71,   317,  341,  341, 331, 331,  307 };
+        int[] pointsY = new int[] { 61,   71,   317,  341,  341, 331, 331,  307 };
         g.fillPolygon(pointsX, pointsY, 8);
         pointsX = new int[] { 30,  20,  376, 386 };
-        pointsY = new int[]{  320, 310, 310, 320 };
+        pointsY = new int[] { 320, 310, 310, 320 };
         g.fillPolygon(pointsX, pointsY, 4);
         g.setColor(Color.BLACK);
         g.setStroke(new BasicStroke(5f));
         pointsX = new int[] { 104, 333, 379, 1401, 1424, 1424, 1401, 401, 376, 24,  0,   0,  24, 104 };
-        pointsY = new int[]{  0,   0,   39,  39,   65,   307,  331,  331, 310, 310, 286, 26, 0,  0 };
+        pointsY = new int[] { 0,   0,   39,  39,   65,   307,  331,  331, 310, 310, 286, 26, 0,  0 };
         g.drawPolyline(pointsX, pointsY, 14);
 
         new StringDrawer("Alpha Strike Elements:").at(21, 77).maxWidth(320).font(headerFont).centerY().draw(g);

@@ -5856,10 +5856,6 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 sBridge = Messages.getString("BoardView1.Tooltip.Bridge",
                         mhex.terrainLevel(Terrains.BRIDGE_ELEV), Terrains.getEditorName(Terrains.BRIDGE),
                         mhex.terrainLevel(Terrains.BRIDGE_CF));
-            //} else if (game.getBoard().getBuildingAt(mcoords) == null) {
-            //    sBridge = Messages.getString("BoardView1.Tooltip.Bridge",
-            //           mhex.terrainLevel(Terrains.BRIDGE_ELEV), Terrains.getEditorName(Terrains.BRIDGE),
-            //            mhex.terrainLevel(Terrains.BRIDGE_CF));
             } else {
                 Building bldg = game.getBoard().getBuildingAt(mcoords);
                 sBridge = Messages.getString("BoardView1.Tooltip.Bridge",

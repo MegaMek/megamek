@@ -86,7 +86,12 @@ public class SmallCraft extends Aero {
     public boolean isPrimitive() {
         return getArmorType(LOC_NOSE) == EquipmentType.T_ARMOR_PRIMITIVE_AERO;
     }
-    
+
+    @Override
+    public boolean isSmallCraft() {
+        return true;
+    }
+
     @Override
     public void setNCrew(int crew) {
         nCrew = crew;

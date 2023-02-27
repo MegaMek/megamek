@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022-2023 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -67,6 +67,26 @@ public interface BTObject {
     }
 
     /**
+     * Returns true when this object is a Tripod Mek.
+     * Returns false for any type of unit group even if it consists only of Tripods.
+     *
+     * @return True when this is a Tripod Mek
+     */
+    default boolean isTripodMek() {
+        return false;
+    }
+
+    /**
+     * Returns true when this object is a Quad Mek.
+     * Returns false for any type of unit group even if it consists only of Quad Meks.
+     *
+     * @return True when this is a Quad (four-legged) Mek
+     */
+    default boolean isQuadMek() {
+        return false;
+    }
+
+    /**
      * Returns true when this object is an Industrial Mek or of type IM for Alpha Strike.
      * Returns false for any type of unit group even if it is of the right type.
      *
@@ -79,6 +99,7 @@ public interface BTObject {
     /**
      * Returns true when this object is a ground unit (all types of Mek, Infantry and Vehicle except aerospace
      * support vehicles such as Fixed-Wing Support). A unit is a ground unit if it is not {@link #isAerospace()}.
+     * This method should not require overriding.
      *
      * @return True when this is a ground unit or ground group (SBF)
      */
@@ -135,6 +156,60 @@ public interface BTObject {
      * @return True when this is an aerospace Support Vehicle
      */
     default boolean isAerospaceSV() {
+        return false;
+    }
+
+    /**
+     * Returns true when this object is a SmallCraft (but not a DropShip).
+     * Returns false for any type of unit group.
+     *
+     * @return True when this is a SmallCraft
+     */
+    default boolean isSmallCraft() {
+        return false;
+    }
+
+    /**
+     * Returns true when this object is a DropShip.
+     * Returns false for any type of unit group.
+     *
+     * @return True when this is a DropShip
+     */
+    default boolean isDropShip() {
+        return false;
+    }
+
+    /**
+     * Returns true when this object has the distinction between aerodyne and spheroid, i.e. if it
+     * is a DropShip or SmallCraft.
+     * Returns false for any type of unit group. This method should not require overriding.
+     *
+     * @return True when this is object can be aerodyne or spheroid
+     */
+    default boolean hasAerodyneSpheroidDistinction() {
+        return isDropShip() || isSmallCraft();
+    }
+
+    /**
+     * Returns true when this object has the distinction between aerodyne and spheroid, i.e. if it
+     * is a DropShip or SmallCraft and it is aerodyne.
+     * Returns false for any type of unit group and for any unit that does not have the distinction.
+     * This method refers to {@link #isSpheroid()} and should not require overriding.
+     *
+     * @return True when this is object is aerodyne
+     */
+    default boolean isAerodyne() {
+        return hasAerodyneSpheroidDistinction() && !isSpheroid();
+    }
+
+    /**
+     * Returns true when this object has the distinction between aerodyne and spheroid, i.e. if it
+     * is a DropShip or SmallCraft and it is spheroid.
+     * Returns false for any type of unit group and for any unit that does not have the distinction.
+     *
+     * @return True when this is object is spheroid
+     */
+    default boolean isSpheroid() {
         return false;
     }
 
@@ -226,6 +301,7 @@ public interface BTObject {
     /**
      * Returns true when this is a single unit such as a TW Entity or AlphaStrikeElement, false when it is a
      * group unit type, see {@link #isUnitGroup()}
+     * This method fowards to {@link #isUnitGroup()} and should not require overriding.
      *
      * @return True when this is a single unit or element.
      */

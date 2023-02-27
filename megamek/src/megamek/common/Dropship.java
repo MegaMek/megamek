@@ -89,6 +89,16 @@ public class Dropship extends SmallCraft {
     }
 
     @Override
+    public boolean isSmallCraft() {
+        return false;
+    }
+
+    @Override
+    public boolean isDropShip() {
+        return true;
+    }
+
+    @Override
     public CrewType defaultCrewType() {
         return CrewType.VESSEL;
     }

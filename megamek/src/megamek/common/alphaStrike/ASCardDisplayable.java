@@ -227,6 +227,31 @@ public interface ASCardDisplayable extends BattleForceSUAFormatter, BTObject {
         return isAerospace();
     }
 
+    @Override
+    default boolean isTripodMek() {
+        return getSpecialAbilities().hasSUA(BattleForceSUA.TRI);
+    }
+
+    @Override
+    default boolean isQuadMek() {
+        return getSpecialAbilities().hasSUA(BattleForceSUA.QUAD);
+    }
+
+    @Override
+    default boolean isSmallCraft() {
+        return isType(SC);
+    }
+
+    @Override
+    default boolean isDropShip() {
+        return isType(DS, DA);
+    }
+
+    @Override
+    default boolean isSpheroid() {
+        return isType(ASUnitType.DS) || (isType(ASUnitType.SC) && !getSpecialAbilities().hasSUA(BattleForceSUA.AERODYNESC));
+    }
+
     /**
      * Returns true if this unit uses the 4 firing arcs of Warships, Dropships and other units.
      * When this is the case, {@link #getStandardDamage()} will return zero damage and the actual

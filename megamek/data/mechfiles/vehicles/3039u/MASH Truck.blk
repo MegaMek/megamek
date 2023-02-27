@@ -1,0 +1,117 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+MASH Truck
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<mul id:>
+1971
+</mul id:>
+
+<year>
+2671
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<cruiseMP>
+5
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
+12
+16
+16
+10
+10
+</armor>
+
+<Body Equipment>
+MASH core component
+MASH Operation Theater
+MASH Operation Theater
+MASH Operation Theater
+MASH Operation Theater
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Small Laser
+Small Laser
+</Turret Equipment>
+
+<source>
+TRO 3039 - Star League
+</source>
+
+<tonnage>
+20.0
+</tonnage>
+
+<capabilities>
+The armament on a MASH truck is not intended to fight off an attacking 'Mech, but rather discourage theft. Due to their value, mercenary units will sometimes try to capture a MASH before or after battle, when they are not treating patients, by blockading them or killing the driver, hence the armament, but no unit will risk destroying a MASH. However, many doctors feel that arming a MASH truck violates their Hippocratic oath, and have the weapons removed.
+</capabilities>
+
+<overview>
+A MASH Truck is a generic term for any ground vehicle that carries MASH equipment. The concept of a MASH truck was pioneered on Terra, but the first modern MASH units were introduced during the Age of War.
+</overview>
+
+<deployment>
+The most common version of the MASH found in use.
+</deployment>
+
+<history>
+They were an immediate success, with a wounded soldier's chance for recovery improved by 300 percent. Several companies produce MASH trucks, but one of the best known is the MIT 23 produced for ComStar. The model described here is built by Talon Vehicles and is a representative sample of the broad category of MASH Trucks. The featured MASH truck in this article, introduced in 2671, carries seven and a half tons of advanced medical equipment, including five operating theaters for each of the five team doctors, which are folded out from the main vehicle to create a temporary structure. Each theater includes an automated surgery table, which can prep the patient and assist the surgeon during medical operations through multiple robotic hands. Each table can also be quickly converted to an airtight tube allowing for an emergency freezing procedure, with the temperature inside lowered and the tube filled with a clear, oxygen-rich liquid, while allowing the surgeon to continue operating through attached sleeves. Prior to an operation an onboard medical computer can suggest a plan of action using the results of medical tests, provide updated reports on the patient's condition during surgery including X-ray scans, and store data on post-op care for later access. A fully deployed MASH truck can be ready to move again in less than four hours, with room to carry essential medical supplies, six patients and one operating theater, and even when moving at high speeds some surgery can be performed. Four tons of armor protect the highly sensitive medical equipment in the MASH truck, however they are rarely attacked since they provide services to the wounded of both sides in a conflict.
+</history>
+
+<manufacturer>
+Various
+</manufacturer>
+
+<primaryFactory>
+Various
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:VOX 80 Fusion
+ARMOR:StarSlab/Sheet
+COMMUNICATIONS:Achernar Electronics HICK-4
+TARGETING:Various
+</systemManufacturers>

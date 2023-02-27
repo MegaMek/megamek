@@ -77,7 +77,7 @@ public interface BTObject {
     }
 
     /**
-     * Returns true when this object is a Quad Mek.
+     * Returns true when this object is a Quad Mek or QuadVee, regardless of conversion state.
      * Returns false for any type of unit group even if it consists only of Quad Meks.
      *
      * @return True when this is a Quad (four-legged) Mek
@@ -160,7 +160,7 @@ public interface BTObject {
     }
 
     /**
-     * Returns true when this object is a SmallCraft (but not a DropShip).
+     * Returns true when this object is a SmallCraft (not a DropShip).
      * Returns false for any type of unit group.
      *
      * @return True when this is a SmallCraft
@@ -181,7 +181,8 @@ public interface BTObject {
 
     /**
      * Returns true when this object has the distinction between aerodyne and spheroid, i.e. if it
-     * is a DropShip or SmallCraft.
+     * is a DropShip or SmallCraft. Returns false for fighters as they are always aerodyne and do not have
+     * the distinction.
      * Returns false for any type of unit group. This method should not require overriding.
      *
      * @return True when this is object can be aerodyne or spheroid
@@ -191,20 +192,21 @@ public interface BTObject {
     }
 
     /**
-     * Returns true when this object has the distinction between aerodyne and spheroid, i.e. if it
-     * is a DropShip or SmallCraft and it is aerodyne.
-     * Returns false for any type of unit group and for any unit that does not have the distinction.
+     * Returns true when this object is aerodyne. All fighters are aerodyne. Units
+     * that have the aerodyne/spheroid distinction, i.e. DropShips and SmallCraft return true when they are
+     * aerodyne.
+     * Returns false for any type of unit group.
      * This method refers to {@link #isSpheroid()} and should not require overriding.
      *
-     * @return True when this is object is aerodyne
+     * @return True when this is object is aerodyne (fighter, aerodyne DropShip or aerodyne SmallCraft)
      */
     default boolean isAerodyne() {
-        return hasAerodyneSpheroidDistinction() && !isSpheroid();
+        return isFighter() || (hasAerodyneSpheroidDistinction() && !isSpheroid());
     }
 
     /**
      * Returns true when this object has the distinction between aerodyne and spheroid, i.e. if it
-     * is a DropShip or SmallCraft and it is spheroid.
+     * is a DropShip or SmallCraft and it is spheroid, false for any other type of object.
      * Returns false for any type of unit group and for any unit that does not have the distinction.
      *
      * @return True when this is object is spheroid

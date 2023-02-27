@@ -1173,9 +1173,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return techBase;
     }
 
-    public static String[] getTechBaseDescriptions(){
-        return new String[] {Messages.getString("Entity.IS"), Messages.getString("Entity.Clan"),
-                Messages.getString("Entity.MixedIS"), Messages.getString("Entity.MixedClan")};
+    public static List<String> getTechBaseDescriptions(){
+        List<String> result = new ArrayList<>();
+        result.add(Messages.getString("Entity.IS"));
+        result.add(Messages.getString("Entity.Clan"));
+        result.add(Messages.getString("Entity.MixedIS"));
+        result.add(Messages.getString("Entity.MixedClan"));
+
+        return result;
     }
 
     @Override

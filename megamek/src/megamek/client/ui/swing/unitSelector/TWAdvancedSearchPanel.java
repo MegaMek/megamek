@@ -399,11 +399,11 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         }
     }
 
-    private void loadTriStateItem(String[] s, JList l, int count) {
+    private void loadTriStateItem(List<String> s, JList l, int count) {
         DefaultListModel dlma = new DefaultListModel();
 
-        for (int i = 0; i < s.length; i++) {
-            dlma.addElement(new TriStateItem("\u2610", s[i]));
+        for (int i = 0; i < s.size(); i++) {
+            dlma.addElement(new TriStateItem("\u2610", s.get(i)));
         }
 
         l.setModel(dlma);
@@ -447,9 +447,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         loadYesNo(cInvalid);
         loadYesNo(cFailedToLoadEquipment);
 
-        loadTriStateItem(EquipmentType.armorNames, listArmorType, 7);
-        loadTriStateItem(Mech.COCKPIT_STRING, listCockpitType, 7);
-        loadTriStateItem(EquipmentType.structureNames, listInternalsType, 7);
+        loadTriStateItem(EquipmentType.getArmorNames(), listArmorType, 7);
+        loadTriStateItem(Mech.getCockpitDescrtiption(), listCockpitType, 7);
+        loadTriStateItem(EquipmentType.getStructureNames(), listInternalsType, 7);
         loadTriStateItem(Engine.getEngineTypes(), listEngineType, 5);
         loadTriStateItem(SimpleTechLevel.getDescriptions(), listTechLevel, 5);
         loadTriStateItem(Entity.getTechBaseDescriptions(), listTechBase, 4);

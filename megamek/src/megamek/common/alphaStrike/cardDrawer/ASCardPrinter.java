@@ -49,6 +49,8 @@ public class ASCardPrinter implements Printable {
     private int row;
     private int column;
     private AffineTransform baseTransform;
+
+    // The column and row count depend on the page format of a given print job and are set anew for each print call
     private int columnCount = 2;
     private int rowCount = 4;
 
@@ -129,8 +131,8 @@ public class ASCardPrinter implements Printable {
         }
     }
 
-    public int print(Graphics graphics, PageFormat pageFormat, int pageIndex)
-            throws PrinterException {
+    @Override
+    public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
         double height = 2.5 * 72;
         rowCount = (int) (pageFormat.getImageableHeight() / height);
         columnCount = (int) (pageFormat.getImageableWidth() / (3.5 * 72));
@@ -178,6 +180,7 @@ public class ASCardPrinter implements Printable {
         return cardSlots.size() > pageStartSlotIndex(pageIndex);
     }
 
+    /** Sets the translate in the given g2D to the given card slot, going down the first column, then the second... */
     private void goToPrintSlot(int slot, Graphics2D g2D) {
         g2D.setTransform(baseTransform);
         column = slot / rowCount;
@@ -185,6 +188,7 @@ public class ASCardPrinter implements Printable {
         g2D.translate(-ASCard.WIDTH * columnCount / 2 + ASCard.WIDTH * column, ASCard.HEIGHT * row);
     }
 
+    /** Holds the card for a card slot on the page together with the info if this is the front or back side. */
     private static class CardSlot {
         ASCard card;
         boolean flipSide;

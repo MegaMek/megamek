@@ -402,8 +402,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private void loadTriStateItem(List<String> s, JList l, int count) {
         DefaultListModel dlma = new DefaultListModel();
 
-        for (int i = 0; i < s.size(); i++) {
-            dlma.addElement(new TriStateItem("\u2610", s.get(i)));
+        for (String desc : s) {
+            dlma.addElement(new TriStateItem("\u2610", desc));
         }
 
         l.setModel(dlma);

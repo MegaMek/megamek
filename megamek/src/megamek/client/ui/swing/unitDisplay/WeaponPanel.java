@@ -669,48 +669,48 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         pRange.add(wShortL,
             GBC.std().fill(GridBagConstraints.NONE)
                .anchor(GridBagConstraints.WEST)
-               .insets(1, 9, 9, 1).gridy(pgridy).gridx(1));
+               .insets(15, 9, 9, 1).gridy(pgridy).gridx(1));
 
         pRange.add(wMedL,
             GBC.std().fill(GridBagConstraints.NONE)
                .anchor(GridBagConstraints.WEST)
-               .insets(1, 9, 9, 1).gridy(pgridy).gridx(2));
+               .insets(15, 9, 9, 1).gridy(pgridy).gridx(2));
 
         pRange.add(wLongL,
             GBC.std().fill(GridBagConstraints.NONE)
                .anchor(GridBagConstraints.WEST)
-               .insets(1, 9, 9, 1).gridy(pgridy).gridx(3));
+               .insets(15, 9, 9, 1).gridy(pgridy).gridx(3));
 
         pRange.add(wExtL,
             GBC.std().fill(GridBagConstraints.NONE)
                .anchor(GridBagConstraints.WEST)
-               .insets(1, 9, 9, 1).gridy(pgridy).gridx(4));
+               .insets(15, 9, 9, 1).gridy(pgridy).gridx(4));
 
         pgridy++;
 
         pRange.add(wInfantryRange0L, GBC.std().fill(GridBagConstraints.NONE)
                 .anchor(GridBagConstraints.WEST)
-                .insets(1, 9, 9, 1).gridy(pgridy).gridx(0));
+                .insets(15, 9, 9, 1).gridy(pgridy).gridx(0));
 
         pRange.add(wInfantryRange1L, GBC.std().fill(GridBagConstraints.NONE)
                 .anchor(GridBagConstraints.WEST)
-                .insets(1, 9, 9, 1).gridy(pgridy).gridx(1));
+                .insets(15, 9, 9, 1).gridy(pgridy).gridx(1));
 
         pRange.add(wInfantryRange2L, GBC.std().fill(GridBagConstraints.NONE)
                 .anchor(GridBagConstraints.WEST)
-                .insets(1, 9, 9, 1).gridy(pgridy).gridx(2));
+                .insets(15, 9, 9, 1).gridy(pgridy).gridx(2));
 
         pRange.add(wInfantryRange3L, GBC.std().fill(GridBagConstraints.NONE)
                 .anchor(GridBagConstraints.WEST)
-                .insets(1, 9, 9, 1).gridy(pgridy).gridx(3));
+                .insets(15, 9, 9, 1).gridy(pgridy).gridx(3));
 
         pRange.add(wInfantryRange4L, GBC.std().fill(GridBagConstraints.NONE)
                 .anchor(GridBagConstraints.WEST)
-                .insets(1, 9, 9, 1).gridy(pgridy).gridx(4));
+                .insets(15, 9, 9, 1).gridy(pgridy).gridx(4));
 
         pRange.add(wInfantryRange5L, GBC.std().fill(GridBagConstraints.NONE)
                 .anchor(GridBagConstraints.WEST)
-                .insets(1, 9, 9, 1).gridy(pgridy).gridx(4));
+                .insets(15, 9, 9, 1).gridy(pgridy).gridx(4));
 
         pgridy++;
         // ----------------
@@ -723,46 +723,46 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         pRange.add(wShortR,
             GBC.std().fill(GridBagConstraints.NONE)
                .anchor(GridBagConstraints.WEST)
-               .insets(1, 1, 9, 1).gridy(pgridy).gridx(1));
+               .insets(15, 1, 9, 1).gridy(pgridy).gridx(1));
 
         pRange.add(wMedR,
             GBC.std().fill(GridBagConstraints.NONE)
                .anchor(GridBagConstraints.WEST)
-               .insets(1, 1, 9, 1).gridy(pgridy).gridx(2));
+               .insets(15, 1, 9, 1).gridy(pgridy).gridx(2));
 
         pRange.add(wLongR,
             GBC.std().fill(GridBagConstraints.NONE)
                .anchor(GridBagConstraints.WEST)
-               .insets(1, 1, 9, 1).gridy(pgridy).gridx(3));
+               .insets(15, 1, 9, 1).gridy(pgridy).gridx(3));
 
         pRange.add(wExtR,
             GBC.std().fill(GridBagConstraints.NONE)
                .anchor(GridBagConstraints.WEST)
-               .insets(1, 1, 9, 1).gridy(pgridy).gridx(4));
+               .insets(15, 1, 9, 1).gridy(pgridy).gridx(4));
 
         pRange.add(wInfantryRange0R, GBC.std().fill(GridBagConstraints.NONE)
                 .anchor(GridBagConstraints.WEST)
-                .insets(1, 1, 9, 1).gridy(pgridy).gridx(0));
+                .insets(15, 1, 9, 1).gridy(pgridy).gridx(0));
 
         pRange.add(wInfantryRange1R, GBC.std().fill(GridBagConstraints.NONE)
                 .anchor(GridBagConstraints.WEST)
-                .insets(1, 1, 9, 1).gridy(pgridy).gridx(1));
+                .insets(15, 1, 9, 1).gridy(pgridy).gridx(1));
 
         pRange.add(wInfantryRange2R, GBC.std().fill(GridBagConstraints.NONE)
                 .anchor(GridBagConstraints.WEST)
-                .insets(1, 1, 9, 1).gridy(pgridy).gridx(2));
+                .insets(15, 1, 9, 1).gridy(pgridy).gridx(2));
 
         pRange.add(wInfantryRange3R, GBC.std().fill(GridBagConstraints.NONE)
                 .anchor(GridBagConstraints.WEST)
-                .insets(1, 1, 9, 1).gridy(pgridy).gridx(3));
+                .insets(15, 1, 9, 1).gridy(pgridy).gridx(3));
 
         pRange.add(wInfantryRange4R, GBC.std().fill(GridBagConstraints.NONE)
                 .anchor(GridBagConstraints.WEST)
-                .insets(1, 1, 9, 1).gridy(pgridy).gridx(4));
+                .insets(15, 1, 9, 1).gridy(pgridy).gridx(4));
 
         pRange.add(wInfantryRange5R, GBC.std().fill(GridBagConstraints.NONE)
                 .anchor(GridBagConstraints.WEST)
-                .insets(1, 1, 9, 1).gridy(pgridy).gridx(5));
+                .insets(15, 1, 9, 1).gridy(pgridy).gridx(5));
 
         pgridy++;
         // ----------------
@@ -773,22 +773,22 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
         pRange.add(wShortAVR, GBC.std().fill(GridBagConstraints.NONE)
                 .anchor(GridBagConstraints.WEST)
-                .insets(1, 1, 9, 1).gridy(pgridy).gridx(1));
+                .insets(15, 1, 9, 1).gridy(pgridy).gridx(1));
 
         pRange.add(wMedAVR,
             GBC.std().fill(GridBagConstraints.NONE)
                .anchor(GridBagConstraints.WEST)
-               .insets(1, 1, 9, 1).gridy(pgridy).gridx(2));
+               .insets(15, 1, 9, 1).gridy(pgridy).gridx(2));
 
         pRange.add(wLongAVR,
             GBC.std().fill(GridBagConstraints.NONE)
                .anchor(GridBagConstraints.WEST)
-               .insets(1, 1, 9, 1).gridy(pgridy).gridx(3));
+               .insets(15, 1, 9, 1).gridy(pgridy).gridx(3));
 
         pRange.add(wExtAVR,
             GBC.std().fill(GridBagConstraints.NONE)
                .anchor(GridBagConstraints.WEST)
-               .insets(1, 1, 9, 1).gridy(pgridy).gridx(4));
+               .insets(15, 1, 9, 1).gridy(pgridy).gridx(4));
 
         panelMain.add(pRange, GBC.std().fill(GridBagConstraints.NONE)
                 .anchor(GridBagConstraints.WEST)

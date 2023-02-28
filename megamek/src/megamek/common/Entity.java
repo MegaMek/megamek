@@ -15560,4 +15560,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public boolean getsAutoExternalSearchlight() {
         return false;
     }
+
+    @Override
+    public int getStrength() {
+        return calculateBattleValue();
+    }
 }

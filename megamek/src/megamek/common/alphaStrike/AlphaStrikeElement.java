@@ -521,4 +521,9 @@ public final class AlphaStrikeElement implements Serializable, ASCardDisplayable
     public int getOwnerId() {
         return ownerId;
     }
+
+    @Override
+    public int getStrength() {
+        return getPointValue();
+    }
 }

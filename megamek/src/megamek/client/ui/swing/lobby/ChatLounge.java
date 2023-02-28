@@ -43,6 +43,8 @@ import megamek.client.ui.swing.util.ScalingPopup;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.*;
 import megamek.common.force.Force;
@@ -1249,6 +1251,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             boolean realBlindDrop = opts.booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
             if (localUnit || teamUnit || !realBlindDrop) {
                 mekModel.addUnit(entity);
+                ///////////// REMOVE THIS
+                AlphaStrikeElement element = ASConverter.convert(entity);
+                mekModel.addUnit(element);
+                //////////// -----------
             }
         }
         // Restore selection
@@ -2835,9 +2841,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         public void mouseClicked(MouseEvent e) {
             if (e.getClickCount() == 2) {
                 int row = mekTable.rowAtPoint(e.getPoint());
-                Entity entity = mekModel.getEntityAt(row);
-                if (entity != null && isEditable(entity)) {
-                    lobbyActions.customizeMech(entity);
+                InGameObject entity = mekModel.getEntityAt(row);
+                if (entity != null && entity instanceof Entity && isEditable((Entity) entity)) {
+                    lobbyActions.customizeMech((Entity) entity);
                 }
             }
         }
@@ -3262,7 +3268,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         ArrayList<Entity> result = new ArrayList<>();
         int[] rows = mekTable.getSelectedRows();
         for (int i = 0; i < rows.length; i++) {
-            result.add(mekModel.getEntityAt(rows[i]));
+            InGameObject unit = mekModel.getEntityAt(rows[i]);
+            if (unit instanceof Entity) {
+                result.add((Entity) unit);
+            }
         }
         return result;
     }

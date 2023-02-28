@@ -58,6 +58,7 @@ VERSION HISTORY:
 + Issues #4010, #3499: Fix an error where swamp bog down checks happened inconsistently
 + PR #4180: Hide External Windows in Lounge Phase
 + PR #4181: Fixing missing unit tooltip good crits when there is a bad crit
++ PR #4202: Fixing display bugs in the RAT Generator
 + PR #4190, #4207: Advanced Search: add invalid, failed to load equipment, tech base and tech level filters
 + Issue #3603: Off Board Artillery with Deployment Delay Doesn't Display Deployment Delay
 + Issue #3934: Deadfire LRM range brackets incorrect 0.49.10 

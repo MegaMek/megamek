@@ -230,7 +230,7 @@ public class ASSpecialAbilityConverter {
         } else if (miscType.hasFlag(F_VIRAL_JAMMER_HOMING)) {
             assign(misc, HJ);
         } else if (miscType.hasFlag(F_CARGO)) {
-            assign(misc, CT, (int) misc.getTonnage());
+            assign(misc, CT, misc.getTonnage());
         } else if (miscType.hasFlag(F_HARJEL)) {
             assign(misc, BHJ);
         } else if (miscType.hasFlag(F_HARJEL_II)) {
@@ -540,9 +540,10 @@ public class ASSpecialAbilityConverter {
                 element.getSpecialAbilities().removeSUA(CTxD);
                 report.addLine("Replace CT with CK",
                         AlphaStrikeHelper.formatAbility(CK, element.getSpecialAbilities(), element, ", "));
-            } else if (ctValue > 1) {
-                element.getSpecialAbilities().replaceSUA(CT, (int) Math.round(ctValue));
+            } else if (element.isLargeAerospace()) {
+                // Replace CT with a rounded value on large aerospace
                 if (ctValue != (int) ctValue) {
+                    element.getSpecialAbilities().replaceSUA(CT, (int) Math.round(ctValue));
                     report.addLine("Final CT value",
                             AlphaStrikeHelper.formatAbility(CT, element.getSpecialAbilities(), element, ", "));
                 }

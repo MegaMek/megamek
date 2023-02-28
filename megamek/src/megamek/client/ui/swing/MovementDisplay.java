@@ -4162,6 +4162,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         if (clientgui.getClient().getGame().getPlayerEntities(clientgui.getClient().getLocalPlayer(), false)
                 .stream().allMatch(Entity::isDone)) {
             setStatusBarTextOthersTurn(e.getPlayer(), s);
+            clientgui.bingOthersTurn();
             return;
         }
 
@@ -4178,6 +4179,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 setStatusBarText(Messages.getString("MovementDisplay.its_your_turn") + s);
                 beginMyTurn();
             }
+            clientgui.bingMyTurn();
         } else {
             endMyTurn();
             if ((e.getPlayer() == null)
@@ -4186,6 +4188,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             } else {
                 setStatusBarTextOthersTurn(e.getPlayer(), s);
             }
+            clientgui.bingOthersTurn();
         }
     }
 

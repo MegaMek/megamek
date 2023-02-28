@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -28,6 +28,10 @@ Behemoth Heavy Tank
 2952
 </year>
 
+<originalBuildYear>
+2952
+</originalBuildYear>
+
 <type>
 IS Level 1
 </type>
@@ -35,6 +39,9 @@ IS Level 1
 <motion_type>
 Tracked
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 2
@@ -95,20 +102,36 @@ Autocannon/10
 </Turret Equipment>
 
 <capabilities>
-The two turret-mounted SarLon MaxiCannon AC-10s enable the Behemoth to deal out a great deal of damage at a long distance. The four front-mounted LongFire Light Missile Racks increase this damage potential, particularly in the forward arc of fire. For closer targets, two Harvester 20K SRM-6 packs are mounted on the turret and the Behemoth boasts two ball turrets, each mounting one Harvester 2K SRM-2 and two MainFire MiniGuns. The final two Harvester 2K SRM-2 packs are mounted in a half-turret on the front of tank.
+Despite the fact that the initial design plan allowed for a whopping twenty-one tons of armor, only thirteen were used to offer greater weight for weaponry. Though not as thick as originally envisioned, the protection is adequate against the majority of threats. With a peak speed of only 32 kph, even the slowest 'Mech can readily catch up to the Behemoth if it's ready to face the firepower.
 </capabilities>
 
 <overview>
-Introduced in 2952, the Behemoth was designed for increased firepower and heavy armor rather than speed or maneuverability. The design allowed the Behemoth to engage both distant and short-range targets, while allowing it to stand up to almost any type of unit possible
+The Behemoth was designed for increased firepower and heavy armor rather than speed or maneuverability. The design allowed the Behemoth to engage both distant and short-range targets, while allowing it to stand up to almost any type of unit possible.
 </overview>
 
 <deployment>
-All over the place
+The two turret-mounted SarLon MaxiCannon AC-10s enable the Behemoth to deal out a great deal of damage at a long distance. The four front-mounted LongFire Light Missile Racks increase this damage potential, particularly in the forward arc of fire. For closer targets, two Harvester 20K SRM-6 packs are mounted on the turret and the Behemoth boasts two ball turrets, each mounting one Harvester 2K SRM-2 and two MainFire MiniGuns. The final two Harvester 2K SRM-2 packs are mounted in a half-turret on the front of tank
 </deployment>
 
 <history>
-
+House Davion's Federated Suns troops are noted for their quick deployments and quick combat strategies. AFFS opponents soon learn to expect their adversaries to arrive anywhere, at any moment. The idea of that army commissioning something as ponderous and unmaneuvrable as the Behemoth Heavy Tank is unthinkable to most Davion military planners, but Aldis Industries debuted the vehicle to the AFFS in 2952. At the time, the conventional vehicle's purpose on the 'Mech-equipped battlefield was debatable. A vehicle must either be fast enough to dodge the BattleMech's weaponry or carry guns capable of threatening the armor of a 'Mech. The Aldis team's approach was to equip the Behemoth with cannons powerful enough to overpower a 'Mech while also carrying enough backup weapons to keep it safe from secondary threats. Although the AFFS provided the initial commission, Aldis has always been happy to sell to any interested customer. To date, the Behemoth has infiltrated practically every Successor State military, with the AFFS and the Draconis Combine Mustered Soldiery having the highest concentrations.
+There are several accounts of Behemoth crews' bravery and determination.
 </history>
+
+<manufacturer>
+Aldis Industries,New Samarkand Metals,General Motors,Aldis Industries
+</manufacturer>
+
+<primaryFactory>
+Betelgeuse,New Samarkand,Salem,Terra
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:GM 200 ICE
+ARMOR:ArcShield Maxi II
+COMMUNICATIONS:Olmstead 30
+TARGETING:Cirxese Ballista- Check with Cirxese RockeCheck
+</systemManufacturers>
 
 <source>
 TRO 3039 - Succession Wars
@@ -117,3 +140,8 @@ TRO 3039 - Succession Wars
 <tonnage>
 100.0
 </tonnage>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+

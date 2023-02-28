@@ -10750,6 +10750,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(EquipmentTypeLookup.BA_JUMP_BOOSTER);
         misc.addLookupName("ISBAJumpBooster");
         misc.addLookupName("CLBAJumpBooster");
+        misc.shortName = "Jump Booster";
         misc.tonnage = 0.125;
         misc.criticals = 2;
         misc.cost = 75000;
@@ -10772,6 +10773,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Magnetic Clamps [BA]";
         misc.setInternalName("BA-Magnetic Clamp");
         misc.addLookupName("Magnetic Clamp");
+        misc.shortName = "Magnetic Clamps";
         misc.tonnage = .030;
         misc.criticals = 2;
         misc.cost = 2500;

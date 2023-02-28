@@ -386,7 +386,9 @@ class LobbyMekCellFormatter {
             result.append(getString("ChatLounge.deploysOffBoard"));
             result.append(",  " + entity.getOffBoardDirection());
             result.append(", " + entity.getOffBoardDistance());
-        } else if (entity.getDeployRound() > 0) {
+        }
+
+        if (entity.getDeployRound() > 0) {
             firstEntry = dotSpacer(result, firstEntry);
             result.append(getString("ChatLounge.deploysAfterRound", entity.getDeployRound()));
         }

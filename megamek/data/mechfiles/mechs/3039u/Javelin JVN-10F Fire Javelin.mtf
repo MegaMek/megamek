@@ -150,19 +150,18 @@ Jump Jet
 -Empty-
 
 
-Overview: The Javelin was introduced by Stormvanger Assemblies towards the end of the Star League. It was not well integrated into Great House armies at the start of the Succession Wars as a result, and its appearance and largely unknown capabilities often surprised combatants. Trial and error showed that Javelins operated best as a well-armed scout or ambusher, and even the destruction of its only production facility on Caph did little to lower its growing popularity. 
+overview:The Javelin was first built in 2751 by Stormvanger Assemblies as a recon 'Mech meant to be exported to the member states of the Star League. 
 
-Capabilities: The heavy firepower of most Javelins give it a surprising punch. Many light scouts that run afoul of one quickly learn to pull back rather than face a Javelin head on, as most Javelins lack the weapons to fight at range. Its speed average for most light 'Mechs, its armor is also scant better than many "bug" designs such as the Stinger or Wasp. If the Javelin has one flaw, however, it is the unusual center of gravity for the design. The Javelin's chest protrudes foward on the torso, and many MechWarriors new to the design can easily stumble or fall when running at higher speeds or on unstable terrain.
+capabilities:A compromise between speed and firepower, the Javelin was fast enough to avoid engagements with heavier 'Mechs while still having sufficient firepower to dissuade pursuit. In particular, the 'Mech's maneuverability meant that while its main function was to perform reconnaissance, the Javelin became adept at conducting ambushes, gaining a reputation for appearing out of nowhere and giving rise to the phrase "sneaky as a Javelin." Notably, the missiles and their ammunition stores are placed so far forward in the 'Mech's torso that the Javelin has a front-heavy center of gravity, causing MechWarriors unfamiliar with the design's forward-lean while running to be prone to falling over while moving at high speeds in difficult terrain.			
 
-Deployment: A widespread design, the Javlin can be found in nearly all  parts of the Inner Sphere. The only state to firmly embrace the design, the Federated Suns has a notably higher concentration of Javelins within their forces, with several regiments fielding dozens of the design. The "Fire Javelin" and its laser-based weaponry is a popular refit for the design. Its lack of ammunition make it well suited for raiding, though it does run hotter than the original design. Every army has tinkered with this model, and it is common enough to be easily-recognizable by most combatants.
+deployment:The second version of the Javelin to carry the moniker of Fire Javelin, this upgrade of the 10F was introduced following the Clan Invasion in 3053 and mounts seven medium lasers, using double heat sinks to counter the massive amount of heat that can build up from using so many energy weapons. The conventional armor was also swapped out for ferro-fibrous and an additional ton was added to increase the overall protection for the Javelin. This design was a field refit often seen after other units had cast off their old parts
 
-systemmanufacturer:CHASSIS:Duralyte
-systemmode:CHASSIS:446
-systemmanufacturer:ENGINE:GM
-systemmode:ENGINE:180
-systemmanufacturer:ARMOR:StarGuard
-systemmode:ARMOR:I
-systemmanufacturer:COMMUNICATIONS:Garret
-systemmode:COMMUNICATIONS:T10B
-systemmanufacturer:TARGETING:Dynatec
-systemmode:TARGETING:128C
+history:The Javelin had yet to be integrated into most SLDF regiments when the Amaris Civil War struck and Stormvanger Assemblies' factory on Caph was destroyed in 2774, ending all production of the Javelin design. Despite this, the Federated Suns - who had purchased the largest total number of Javelins from Stormvanger Assemblies - succeeded in their plans to incorporate the design into practically all of their 'Mech regiments at the start of the First Succession War, where its appearance took many enemy combatants off-guard. Though employed to varying degrees by the other Successor States, the Javelin quickly became synonymous with the Federated Suns, often anchoring scout lances, or, in certain units, teaming up with other Javelins to create mobile fire support lances. Following the creation of the Federated Commonwealth, the design was upgraded with newly-recovered lostech during the latter part of the 3040s, and at the behest of AFFC High Command, Jalastar Aerospace began production of new Javelins in 3055. Since then, the sturdy and reliable scout 'Mech has continued to serve with distinction on the battlefield; though the original's level of armor protection has been deemed as insufficient by some, new variants continue to be introduced as technology progresses, ensuring its continued service towards the end of the thirty-first century.
+
+manufacturer:Stormvanger Assemblies Light Division, Refit
+primaryfactory:Caph, Various
+systemmanufacturer:CHASSIS:Duralyte 246
+systemmanufacturer:ENGINE:GM 180
+systemmanufacturer:ARMOR:StarSlab-1 Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:Garret T10B
+systemmanufacturer:TARGETING:Dynatec 128C

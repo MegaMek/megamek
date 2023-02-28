@@ -2196,16 +2196,21 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                 if (cen == Entity.NONE) {
                     beginMyTurn();
                 }
+
                 setStatusBarText(Messages.getString("FiringDisplay.its_your_turn") + s);
+                clientgui.bingMyTurn();
             } else {
                 endMyTurn();
                 String playerName;
+              
                 if (e.getPlayer() != null) {
                     playerName = e.getPlayer().getName();
                 } else {
                     playerName = "Unknown";
                 }
+
                 setStatusBarText(Messages.getString("FiringDisplay.its_others_turn", playerName) + s);
+                clientgui.bingOthersTurn();
             }
         }
     }

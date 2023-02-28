@@ -36,7 +36,7 @@ public class PilotOptions extends AbstractOptions {
         IBasicOptionGroup adv = addGroup("adv", LVL3_ADVANTAGES);
 
         addOption(adv, OptionsConstants.PILOT_ANIMAL_MIMIC, false);
-        // addOption(adv, OptionsConstants.PILOT_CROSS_COUNTRY, false);
+        addOption(adv, OptionsConstants.PILOT_CROSS_COUNTRY, false);
         addOption(adv, OptionsConstants.PILOT_DODGE_MANEUVER, false);
         // addOption(adv, OptionsConstants.PILOT_DUST_OFF, false);
         // addOption(adv, OptionsConstants.PILOT_HVY_LIFTER, false);

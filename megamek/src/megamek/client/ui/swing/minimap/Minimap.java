@@ -57,9 +57,7 @@ import java.io.StreamTokenizer;
 import java.util.List;
 import java.util.*;
 
-import static megamek.client.ui.swing.minimap.MinimapUnitSymbols.STRAT_BASERECT;
-import static megamek.client.ui.swing.minimap.MinimapUnitSymbols.STRAT_CX;
-import static megamek.client.ui.swing.minimap.MinimapUnitSymbols.STRAT_SYMBOLSIZE;
+import static megamek.client.ui.swing.minimap.MinimapUnitSymbols.*;
 import static megamek.common.Terrains.*;
 
 /**
@@ -711,7 +709,20 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                     default:
                         label = "";
                 }
-                g.drawString(label, 17, y0 + 12);
+                g.drawString(label, 17, y0 + 11);
+
+                // map size
+                int width = getFontMetrics(g.getFont()).stringWidth(label);
+                String mapSize = board.getWidth() + " " + Messages.getString("Minimap.X") + " " + board.getHeight();
+                int x = 24 + width;
+                g.drawString(mapSize, x, y0 + 11);
+                width = getFontMetrics(g.getFont()).stringWidth(mapSize);
+                x += width + 3;
+                g.setColor(Color.black);
+                g.drawLine(x, y0, x, h);
+                x += 1;
+                g.setColor(Color.green.darker());
+                g.drawLine(x, y0, x, h);
             }
         }
     }
@@ -731,10 +742,11 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             height = (h.containsAnyTerrainOf(BUILDING, FUEL_TANK)) ? h.ceiling() : h.floor();
         }
         if (height != 0) {
+            String sHeight = ((height > -1) && (height < 10)) ? " " + height : height + "";
             int baseX = (x * (HEX_SIDE[zoom] + HEX_SIDE_BY_SIN30[zoom])) + leftMargin;
             int baseY = (((2 * y) + 1 + (x % 2)) * HEX_SIDE_BY_COS30[zoom]) + topMargin;
             g.setColor(Color.white);
-            g.drawString(height + "", baseX + 5, baseY + 5); 
+            g.drawString(sHeight, baseX + 5, baseY + 5);
         }
     }
     

@@ -1354,12 +1354,15 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                 if (cen == Entity.NONE) {
                     beginMyTurn();
                 }
+
                 setStatusBarText(Messages.getString("TargetingPhaseDisplay.its_your_turn") + s);
+                clientgui.bingOthersTurn();
             } else {
                 endMyTurn();
                 if (e.getPlayer() != null) {
                     setStatusBarText(Messages.getString("TargetingPhaseDisplay.its_others_turn",
                             e.getPlayer().getName()) + s);
+                    clientgui.bingOthersTurn();
                 }
             }
         }

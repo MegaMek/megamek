@@ -97,6 +97,14 @@ public class Protomech extends Entity {
     private boolean edpCharged = true;
 
     private int edpChargeTurns = 0;
+    
+    // jump types
+    public static final int JUMP_UNKNOWN = -1;
+    public static final int JUMP_NONE = 0;
+    public static final int JUMP_STANDARD = 1;
+    public static final int JUMP_IMPROVED = 2;
+    
+    private int jumpType = JUMP_UNKNOWN;
 
     private boolean isQuad = false;
     private boolean isGlider = false;
@@ -1530,4 +1538,25 @@ public class Protomech extends Entity {
     public boolean isProtoMek() {
         return true;
     }
+
+    
+    /**
+     * Returns the type of jump jet system the Protomech has.
+     */
+    @Override
+    public int getJumpType() {
+        jumpType = JUMP_NONE;
+        for (Mounted m : miscList) {
+            if (m.getType().hasFlag(MiscType.F_JUMP_JET)) {
+                if (m.getType().hasSubType(MiscType.S_IMPROVED)) {
+                    jumpType = JUMP_IMPROVED;
+                } else {
+                    jumpType = JUMP_STANDARD;
+                }
+            }
+
+        }
+        return jumpType;
+    }    
+  
 }

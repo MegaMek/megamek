@@ -610,10 +610,18 @@ public class Tank extends Entity {
         boolean isAmphibious = hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS);
         boolean hexHasRoad = hex.containsTerrain(Terrains.ROAD);
         boolean scoutBikeIntoLightWoods = (hex.terrainLevel(Terrains.WOODS) == 1) && hasQuirk(OptionsConstants.QUIRK_POS_SCOUT_BIKE);
+        boolean isCrossCountry = hasAbility(OptionsConstants.PILOT_CROSS_COUNTRY);
 
         // roads allow movement through hexes that you normally couldn't go through
         switch (movementMode) {
             case TRACKED:
+                if (isCrossCountry && !isSuperHeavy()) {
+                    return ((hex.terrainLevel(Terrains.WATER) > 0)
+                                    && !hex.containsTerrain(Terrains.ICE)
+                                    && !hasFlotationHull && !isAmphibious)
+                            || (hex.terrainLevel(Terrains.MAGMA) > 1);
+                }
+
                 if (!isSuperHeavy()) {
                     return ((hex.terrainLevel(Terrains.WOODS) > 1) && !hexHasRoad)
                             || ((hex.terrainLevel(Terrains.WATER) > 0)
@@ -632,6 +640,15 @@ public class Tank extends Entity {
                             || (hex.terrainLevel(Terrains.MAGMA) > 1);
                 }
             case WHEELED:
+                if (isCrossCountry && !isSuperHeavy()) {
+                    return ((hex.terrainLevel(Terrains.WATER) > 0)
+                                    && !hex.containsTerrain(Terrains.ICE)
+                                    && !hasFlotationHull && !isAmphibious)
+                            || hex.containsTerrain(Terrains.MAGMA)
+                            || ((hex.terrainLevel(Terrains.SNOW) > 1) && !hexHasRoad)
+                            || (hex.terrainLevel(Terrains.GEYSER) == 2);
+                }
+
                 if (!isSuperHeavy()) {
                     return (hex.containsTerrain(Terrains.WOODS) && !hexHasRoad && !scoutBikeIntoLightWoods)
                             || (hex.containsTerrain(Terrains.ROUGH) && !hexHasRoad)
@@ -655,6 +672,10 @@ public class Tank extends Entity {
                             || (hex.terrainLevel(Terrains.GEYSER) == 2);
                 }
             case HOVER:
+               if (isCrossCountry && !isSuperHeavy()) {
+                    return (hex.terrainLevel(Terrains.MAGMA) > 1);
+                }
+
                 if (!isSuperHeavy()) {
                     return (hex.containsTerrain(Terrains.WOODS) && !hexHasRoad && !scoutBikeIntoLightWoods)
                             || (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad)

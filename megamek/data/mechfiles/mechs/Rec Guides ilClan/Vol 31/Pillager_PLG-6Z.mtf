@@ -1,0 +1,170 @@
+Version:1.0
+Pillager
+PLG-6Z
+
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3142
+rules level:2
+Source:Rec Guide:ilClan #31 - Dark Age
+mul id:9464
+
+mass:100
+engine:300 Light Engine(IS)
+structure:IS Standard
+myomer:Triple-Strength
+
+heat sinks:12 IS Double
+walk mp:3
+jump mp:3
+
+armor:Standard(Inner Sphere)
+LA armor:34
+RA armor:34
+LT armor:32
+RT armor:32
+CT armor:52
+HD armor:9
+LL armor:42
+RL armor:42
+RTL armor:10
+RTR armor:10
+RTC armor:10
+
+Weapons:7
+ER Large Laser, Right Arm
+ER Medium Laser, Center Torso
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+Medium Pulse Laser, Head
+LB 20-X AC, Right Torso
+LB 20-X AC, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISERMediumLaser
+ISERMediumLaser
+Clan LB 20-X AC Ammo
+Clan LB 20-X Cluster Ammo
+Clan LB 20-X Cluster Ammo
+ISCASEII
+Triple Strength Myomer
+Triple Strength Myomer
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISERLargeLaser
+ISERLargeLaser
+Clan LB 20-X AC Ammo
+Clan LB 20-X AC Ammo
+Clan LB 20-X Cluster Ammo
+ISCASEII
+Triple Strength Myomer
+Triple Strength Myomer
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+CLLBXAC20
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+ISERMediumLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISMediumPulseLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Triple Strength Myomer
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Triple Strength Myomer
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The largest BattleMech ever built by HildCo Interplanetary, the Pillager is built as a larger version of the Victor, and is intended for assaulting urban centers and hardened fortifications.
+
+capabilities:Based on a range of engine types, the Pillager has average mobility for its size, with a top speed of 54 km/h. Three HildCo Model 13 jump jets allow the 'Mech to jump up to ninety meters, increasing its mobility. The Pillager possesses outstanding armor protection and more than enough heat sinks to meet the Pillager's needs.
+
+deployment:Clan LB 20-X autocannons were traded to the Capellan Confederation for germanium in the new variant. The PLG-6Z retains the previous variant's triple-strength myomer. This makes the 'Mech slightly faster and more lethal in melee combat. The ER big laser has limited long-range firepower. Inexperienced pilots may be doomed by this poor, lone backup armament. The Strategios issued an order to keep the new Pillager near support 'Mechs in open ground, but MechWarriors eager to battle the enemy ignored it.
+
+history:The Pillager was the largest 'Mech ever built by HildCo during the Reunification War. The destruction of the manufacturing facilities that produced the Pillager's advanced technologies halted production during the Second Succession War, but the decoding of the Gray Death memory core allowed the Pillager to be reintroduced to the Inner Sphere. The Pillager has a long and colorful battle history. From the Reunification Battle through the Succession Wars, it has seen action in every war. Records show that during those fights, enemy forces tended to retreat at the sight of approaching Pillagers. The Pillager most recently demonstrated its amazing strength during the FedCom and the Capellan/St. Ives Civil Wars. When a Pillager-led unit attacked, many strongholds and defenses crumbled. Even now, in the struggle between Hasek's Capellan March and House Liao, the Pillager is making an impact on the battlefield, just as it did during the Amaris Civil War. The Pillager now serves in the majority of house militaries and mercenary troops. Because of the reintegration of St. Ives, the Capellan military has the most brawny 'Mechs.
+
+manufacturer:General Motors,HildCo Interplanetary
+primaryfactory:Kathil,St. Ives
+systemmanufacturer:CHASSIS:HildCo Heavy Type VIIQT
+systemmanufacturer:ENGINE:Vlar 300 Light
+systemmanufacturer:ARMOR:StarSlab/9.5 Mk II
+systemmanufacturer:JUMPJET:HildCo Model 13
+systemmanufacturer:COMMUNICATIONS:CeresCom Recon Model 12K
+systemmanufacturer:TARGETING:C-Apple Churchill

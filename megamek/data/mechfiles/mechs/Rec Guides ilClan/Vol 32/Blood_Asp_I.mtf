@@ -1,0 +1,170 @@
+Version:1.0
+Blood Asp
+I
+
+Config:Biped Omnimech
+techbase:Mixed (Clan Chassis)
+era:3148
+rules level:2
+Source:Rec Guide:ilClan #32 - Dark Age 
+mul id:9485
+
+mass:90
+engine:360 XL (Clan) Engine
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:14 Clan Double
+base chassis heat sinks:14
+walk mp:4
+jump mp:0
+
+armor:Standard(Clan)
+LA armor:28
+RA armor:28
+LT armor:24
+RT armor:24
+CT armor:40
+HD armor:9
+LL armor:34
+RL armor:34
+RTL armor:11
+RTR armor:11
+RTC armor:13
+
+Weapons:7
+Large Re-engineered Laser, Left Arm
+Large Re-engineered Laser, Right Arm
+ER Small Laser, Left Torso
+ER Small Laser, Left Torso
+ER Small Laser, Left Torso
+ER Small Laser, Left Torso
+Improved Heavy Gauss Rifle, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Large Re-engineered Laser (OMNIPOD)
+Large Re-engineered Laser (OMNIPOD)
+Large Re-engineered Laser (OMNIPOD)
+Large Re-engineered Laser (OMNIPOD)
+Large Re-engineered Laser (OMNIPOD)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Large Re-engineered Laser (OMNIPOD)
+Large Re-engineered Laser (OMNIPOD)
+Large Re-engineered Laser (OMNIPOD)
+Large Re-engineered Laser (OMNIPOD)
+Large Re-engineered Laser (OMNIPOD)
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLERSmallLaser (OMNIPOD)
+CLERSmallLaser (OMNIPOD)
+CLERSmallLaser (OMNIPOD)
+CLERSmallLaser (OMNIPOD)
+ISImprovedHeavyGauss Ammo (OMNIPOD)
+ISImprovedHeavyGauss Ammo (OMNIPOD)
+ISImprovedHeavyGauss Ammo (OMNIPOD)
+ISImprovedHeavyGauss Ammo (OMNIPOD)
+Clan Endo Steel
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+ISImprovedHeavyGaussRifle (OMNIPOD)
+ISImprovedHeavyGaussRifle (OMNIPOD)
+ISImprovedHeavyGaussRifle (OMNIPOD)
+ISImprovedHeavyGaussRifle (OMNIPOD)
+ISImprovedHeavyGaussRifle (OMNIPOD)
+ISImprovedHeavyGaussRifle (OMNIPOD)
+ISImprovedHeavyGaussRifle (OMNIPOD)
+ISImprovedHeavyGaussRifle (OMNIPOD)
+ISImprovedHeavyGaussRifle (OMNIPOD)
+Clan Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISImprovedHeavyGaussRifle (OMNIPOD)
+ISImprovedHeavyGaussRifle (OMNIPOD)
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:One of the first 'Mechs to field the breakthrough Heavy Laser technology, the Blood Asp proves to be an offensive powerhouse. Delivering incredible damage at all ranges, the Blood Asp makes short work of any enemy regardless of size.
+
+capabilities:Based on the Kingfisher, the Blood Asp adds an XL engine, but space constraints forced the replacement of the Kingfisher's ferro-fibrous armor with standard plate. The Blood Asp incorporates sixteen tons of this armor and fourteen double heat sinks in the base chassis.
+
+deployment:No Information on this variant
+
+history:Created by Clan Star Adder as an insult to their enemies, Clan Blood Spirit, the Blood Asp has a large amount of available pod space for its size. 	
+
+manufacturer:Snow Raven Industrial Complex Alpha
+primaryfactory:Dante
+systemmanufacturer:CHASSIS:Type MAES-90 Light
+systemmanufacturer:ENGINE:Consolidated Fusion 360 XL
+systemmanufacturer:ARMOR:Forging ZZ7 Ceramic Plate
+systemmanufacturer:COMMUNICATIONS:Series D8 CC-25X
+systemmanufacturer:TARGETING:“Hermes” CT-42 Mk. II

@@ -372,6 +372,8 @@ public class Terrain implements Serializable {
     public int movementCost(Entity e) {
         EntityMovementMode moveMode = e.getMovementMode();
         int mp;
+        boolean isCrossCountry = e.hasAbility(OptionsConstants.PILOT_CROSS_COUNTRY);
+
         switch (type) {
             case Terrains.MAGMA:
                 return level - 1;
@@ -381,17 +383,28 @@ public class Terrain implements Serializable {
                 }
                 return 0;
             case Terrains.RUBBLE:
+                boolean allowRubbleHoverTracked = ((moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.TRACKED)) && (level == 6);
+
                 if (level == 6) {
                     mp = 2;
                 } else {
                     mp = 1;
                 }
+
+                if (isCrossCountry && e.isGround() && e.isCombatVehicle()) {
+                    if (allowRubbleHoverTracked || (moveMode == EntityMovementMode.WHEELED)) {
+                        mp *= 2;
+                    }
+                }
+
                 if ((e instanceof Mech) && e.isSuperHeavy()) {
                     mp -= 1;
                 }
+
                 if (e.hasAbility(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
                     mp -= 1;
                 }
+
                 if ((e.hasAbility(OptionsConstants.INFANTRY_FOOT_CAV)
                         && (moveMode == EntityMovementMode.INF_LEG))) {
                     mp -= 1;
@@ -399,16 +412,26 @@ public class Terrain implements Serializable {
                 return Math.max(0, mp);
             case Terrains.WOODS:
                 mp = level;
+                if (isCrossCountry && e.isGround() && e.isCombatVehicle()) {
+                    if (((level == 1) && ((moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.WHEELED)))
+                            || (level > 1)) {
+                        mp *= 2;
+                    }
+                }
+
                 if ((e instanceof Mech) && e.isSuperHeavy()) {
                     mp -= 1;
                 }
+
                 if (e.hasAbility(OptionsConstants.PILOT_TM_FOREST_RANGER)) {
                     mp -= 1;
                 }
+
                 if ((e.hasAbility(OptionsConstants.INFANTRY_FOOT_CAV)
                                 && (moveMode == EntityMovementMode.INF_LEG))) {
                     mp -= 1;
                 }
+
                 if (e.hasAbility(OptionsConstants.PILOT_ANIMAL_MIMIC)) {
                     if ((e.entityIsQuad()) || ((moveMode == EntityMovementMode.BIPED) && e.hasQuirk("animalistic"))) {
                         mp -= 1;
@@ -417,16 +440,23 @@ public class Terrain implements Serializable {
                 return Math.max(0, mp);
             case Terrains.JUNGLE:
                 mp = level +1;
+                if (isCrossCountry && e.isGround() && e.isCombatVehicle()) {
+                    mp *= 2;
+                }
+
                 if ((e instanceof Mech) && e.isSuperHeavy()) {
                     mp -= 1;
                 }
+
                 if (e.hasAbility(OptionsConstants.PILOT_TM_FOREST_RANGER)) {
                     mp -= 1;
                 }
+
                 if ((e.hasAbility(OptionsConstants.INFANTRY_FOOT_CAV)
                         && (moveMode == EntityMovementMode.INF_LEG))) {
                     mp -= 1;
                 }
+
                 if (e.hasAbility(OptionsConstants.PILOT_ANIMAL_MIMIC)) {
                     if ((e.entityIsQuad()) || ((moveMode == EntityMovementMode.BIPED) && e.hasQuirk("animalistic"))) {
                         mp -= 1;
@@ -489,17 +519,28 @@ public class Terrain implements Serializable {
                 }
                 return Math.max(0, mp);
             case Terrains.ROUGH:
+                boolean allowRoughHoverTracked = ((moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.TRACKED)) && (level == 2);
+
                 if (level == 2) {
                     mp = 2;
                 } else {
                     mp = 1;
                 }
+
+                if (isCrossCountry && e.isGround() && e.isCombatVehicle()) {
+                    if ( allowRoughHoverTracked || (moveMode == EntityMovementMode.WHEELED)) {
+                        mp *= 2;
+                    }
+                }
+
                 if ((e instanceof Mech) && e.isSuperHeavy()) {
                     mp -= 1;
                 }
+
                 if (e.hasAbility(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
                     mp -= 1;
                 }
+
                 if ((e.hasAbility(OptionsConstants.INFANTRY_FOOT_CAV)
                         && (moveMode == EntityMovementMode.INF_LEG))) {
                     mp -= 1;

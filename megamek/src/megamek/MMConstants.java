@@ -45,13 +45,14 @@ public final class MMConstants extends SuiteConstants {
     public static final String HISTORICAL_ETHNICITY_FILE = "data/names/historicalEthnicity.csv";
     public static final String GIVEN_NAME_MALE_FILE = "data/names/maleGivenNames.csv";
     public static final String SURNAME_FILE = "data/names/surnames.csv";
+    public static final String BOT_README_FILE_PATH = "docs/Bot Stuff/Princess Notes.txt";
+    public static final String SERIALKILLER_CONFIG_FILE = "mmconf/serialkiller.xml";
     public static final String USER_NAME_FACTIONS_DIRECTORY_PATH = "userdata/data/names/factions/";
     public static final String USER_CALLSIGN_FILE_PATH = "userdata/data/names/callsigns.csv";
     public static final String USER_GIVEN_NAME_FEMALE_FILE = "userdata/data/names/femaleGivenNames.csv";
     public static final String USER_HISTORICAL_ETHNICITY_FILE = "userdata/data/names/historicalEthnicity.csv";
     public static final String USER_GIVEN_NAME_MALE_FILE = "userdata/data/names/maleGivenNames.csv";
     public static final String USER_SURNAME_FILE = "userdata/data/names/surnames.csv";
-    public static final String SERIALKILLER_CONFIG_FILE = "mmconf/serialkiller.xml";
     //endregion File Paths
 
     //region ClientServer

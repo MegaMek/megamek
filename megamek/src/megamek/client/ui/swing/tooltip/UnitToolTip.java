@@ -91,15 +91,18 @@ public final class UnitToolTip {
 
         // Unit Chassis and Player
         Player owner = game.getPlayer(entity.getOwnerId());
+        Color ownerColor = (owner != null) ? owner.getColour().getColour() : uiGray();
+        String ownerName = (owner != null) ? owner.getName() : ReportMessages.getString("BoardView1.Tooltip.unknownOwner");
+
         String msg_clanbrackets =Messages.getString("BoardView1.Tooltip.ClanBrackets");
         String clanStr = entity.isClan() && !entity.isMixedTech() ? " " + msg_clanbrackets + " " : "";
         String sChassisPlayerInfo = entity.getChassis() + clanStr;
         sChassisPlayerInfo += " (" + (int) entity.getWeight() + "t)";
         sChassisPlayerInfo += "&nbsp;&nbsp;" + entity.getEntityTypeName(entity.getEntityType());
-        sChassisPlayerInfo += "<BR>" + owner.getName();
+        sChassisPlayerInfo += "<BR>" + ownerName;
         String msg_id = MessageFormat.format(" [ID: {0}]", entity.getId());
         sChassisPlayerInfo += UIUtil.guiScaledFontHTML(UIUtil.uiGray()) + msg_id + "</FONT>";
-        sChassisPlayerInfo = guiScaledFontHTML(entity.getOwner().getColour().getColour()) + sChassisPlayerInfo +  "</FONT>";
+        sChassisPlayerInfo = guiScaledFontHTML(ownerColor) + sChassisPlayerInfo +  "</FONT>";
 
         result += sChassisPlayerInfo;
 
@@ -434,7 +437,7 @@ public final class UnitToolTip {
         }
         if (bad > 0) {
             String sBad =repeat(dChar, bad);
-            result = guiScaledFontHTML(colorDamaged, TT_SMALLFONT_DELTA) + sBad + "</FONT>";
+            result += guiScaledFontHTML(colorDamaged, TT_SMALLFONT_DELTA) + sBad + "</FONT>";
         }
         return new StringBuilder().append(result);
     }
@@ -961,6 +964,10 @@ public final class UnitToolTip {
             result += guiScaledFontHTML(GUIP.getColorForHeat(heat)) + sHeat + "</FONT>";
         }
 
+        String searchLight = entity.isUsingSearchlight() ? DOT_SPACER +"\uD83D\uDD26" : "";
+        searchLight += entity.usedSearchlight() ? " \u2580\u2580" : "";
+        result += guiScaledFontHTML(uiYellow()) + searchLight + "</FONT>";
+
         // Gun Emplacement Status
         if (isGunEmplacement) {
             GunEmplacement emp = (GunEmplacement) entity; 
@@ -1183,6 +1190,13 @@ public final class UnitToolTip {
                 if (jumpMPModified > 0) {
                     sMove += "/" + jumpMPModified;
                 }
+            }
+
+            sMove += DOT_SPACER;
+            String sMoveMode = entity.getMovementModeAsString();
+            sMove += sMoveMode;
+
+            if ((walkMP != walkMPModified) || (runMP != runMPModified) || (jumpMP != jumpMPModified)) {
                 if (entity.getGame().getPlanetaryConditions().getGravity()  != 1.0) {
                     sMove += DOT_SPACER;
                     String sGravity =  entity.getGame().getPlanetaryConditions().getGravity() + "g";
@@ -1196,10 +1210,6 @@ public final class UnitToolTip {
                     sMove += guiScaledFontHTML(GUIP.getWarningColor()) + sHeat + "</FONT>";
                 }
             }
-
-            sMove += DOT_SPACER;
-            String sMoveMode = entity.getMovementModeAsString();
-            sMove += sMoveMode;
 
             if (entity instanceof IBomber) {
                 int bombMod = 0;

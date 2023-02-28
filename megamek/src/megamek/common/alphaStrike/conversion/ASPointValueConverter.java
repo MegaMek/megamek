@@ -173,6 +173,7 @@ public class ASPointValueConverter {
         processOffensiveBT();
         processOffensiveSUAMod(IATM, e -> (double) ((ASDamageVector) element.getSUA(IATM)).L.damage);
         processOffensiveSUAMod(OVL, e -> 0.25 * element.getOV());
+        processOffensiveSUAMod(BOMB, e -> (double) (int) element.getSUA(BOMB));
         processOffensiveSUAMod(HT, e -> {
             ASDamageVector ht = element.getHT();
             return Math.max(ht.S.damage, Math.max(ht.M.damage, ht.L.damage)) + ((ht.M.damage > 0) ? 0.5 : 0);
@@ -437,7 +438,8 @@ public class ASPointValueConverter {
         double multiplier = 0;
         if (move >= 2 && !element.hasAnySUAOf(BT, ARTS, C3BSM, C3BSS, C3EM,
                 C3I, C3M, C3S, AC3, NC3, NOVA, C3RS, ECM, AECM, ARTAC, ARTAIS, ARTBA, ARTCM12, ARTCM5, ARTCM7,
-                ARTCM9, ARTLT, ARTLTC, ARTSC, ARTT, ARTTC)) {
+                ARTCM9, ARTLT, ARTLTC, ARTSC, ARTT, ARTTC, MEC, XMEC)
+                && !(element.hasSUA(CAR) && (element.getCAR() <= 8))) {
             double dmgS = pointValueSDamage(element);
             double dmgM = pointValueMDamage(element);
             double dmgL = pointValueLDamage(element);
@@ -533,11 +535,11 @@ public class ASPointValueConverter {
             modifierList.add("LECM");
         }
         if (element.hasSUA(MHQ)) {
-            int mhqValue = (int) element.getSUA(MHQ);
+            int mhqValue = element.getMHQ();
             if (mhqValue <= 4) {
                 bonus += mhqValue;
             } else {
-                bonus += 4 + Math.ceil(0.2 * mhqValue);
+                bonus += 4 + Math.ceil(0.2 * (mhqValue - 5));
             }
             modifierList.add("MHQ");
         }

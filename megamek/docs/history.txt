@@ -64,6 +64,7 @@ VERSION HISTORY:
 + Issue #3934: Deadfire LRM range brackets incorrect 0.49.10 
 + Issue #4185: RFE: Visual GUI indicator that unit is using Searchlight.
 + Issue #4173: Heat Buildup colors in weapons fire tab are off by one
++ Issue #4141: Ejected Pilots at altitude no longer block ground unit movement
 + PR #4194: Show movement mode before move indicators
 + PR #4193: Show amount of heat over capacity on the weapon tab
  

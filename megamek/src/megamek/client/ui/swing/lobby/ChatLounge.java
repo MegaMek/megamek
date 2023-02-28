@@ -1251,10 +1251,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             boolean realBlindDrop = opts.booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
             if (localUnit || teamUnit || !realBlindDrop) {
                 mekModel.addUnit(entity);
-                ///////////// REMOVE THIS
-                AlphaStrikeElement element = ASConverter.convert(entity);
-                mekModel.addUnit(element);
-                //////////// -----------
             }
         }
         // Restore selection

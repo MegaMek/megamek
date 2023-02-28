@@ -1,16 +1,16 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
 <UnitType>
 Tank
 </UnitType>
-
-<blockversion>
-1
-</blockversion>
 
 <Name>
 Vedette Medium Tank
@@ -28,25 +28,28 @@ V-G7X
 3074
 </year>
 
+<originalBuildYear>
+3074
+</originalBuildYear>
+
 <type>
 IS Level 4
 </type>
-
-<tonnage>
-50.0
-</tonnage>
 
 <motion_type>
 Tracked
 </motion_type>
 
-<engine_type>
-2
-</engine_type>
+<transporters>
+</transporters>
 
 <cruiseMP>
 5
 </cruiseMP>
+
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
 2
@@ -94,3 +97,43 @@ Light Auto Cannon/5
 <Front Turret Equipment>
 Bombast Laser
 </Front Turret Equipment>
+
+<capabilities>
+Carrying only one anti-vehicle weapon does not make it a less effective vehicle than a newer tank, but does reduce its ability to deal with a wide variety of targets. The Vedette uses its speed to great effect by moving into optimum autocannon range, opening fire, and then retreating as fast as possible to another fire position.
+</capabilities>
+
+<overview>
+The yardstick against which all other tanks are judged, the Vedette medium tank is one of the most popular and common combat vehicles in the Inner Sphere.
+</overview>
+
+<deployment>
+A version created on Arc-Royal by Rolf Kalaska that uses Experimental Technology, the Vedette V-G7X uses a Supercharged XL engine to increase the tank's speed by 150% over the base model. Protected by eight and a half tons of Reactive Armor, the traditional weapon loadout has been replaced with a light autocannon/5, Bombast Laser, and a pair of Magshot Gauss rifles. The Light AC and Bombast Laser are each mounted in a separate turret, allowing them to track two totally different opponents. A Targeting Computer helps the crew make sense of the varying attack angles on each turret.
+</deployment>
+
+<history>
+There will be at least one Vedette wherever there are armored vehicles. It is not unrealistic to believe that this tank exists on every globe in the Inner Sphere.
+</history>
+
+<manufacturer>
+Field Refit
+</manufacturer>
+
+<primaryFactory>
+various
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:Hermes 250 XL
+ARMOR:Royal-7R Reactive
+COMMUNICATIONS:ComStar Rover
+TARGETING:ComStar Test-2
+</systemManufacturers>
+
+<source>
+XTRO Mercs - Jihad
+</source>
+
+<tonnage>
+50.0
+</tonnage>
+

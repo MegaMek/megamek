@@ -58,6 +58,7 @@ public class SerializationHelper {
                 megamek.common.Player.class,
                 megamek.common.Sensor.class,
                 megamek.common.SpecialHexDisplay.class,
+                megamek.common.TagInfo.class,
                 megamek.common.TargetRollModifier.class,
                 megamek.common.Team.class,
                 megamek.common.Terrain.class,
@@ -66,6 +67,7 @@ public class SerializationHelper {
                 megamek.server.SmokeCloud.class,
         });
         xStream.allowTypeHierarchy(megamek.common.BTObject.class);
+        xStream.allowTypeHierarchy(megamek.common.Building.class);
         xStream.allowTypeHierarchy(megamek.common.Crew.class);
         xStream.allowTypeHierarchy(megamek.common.GameTurn.class);
         xStream.allowTypeHierarchy(megamek.common.ITechnology.class);

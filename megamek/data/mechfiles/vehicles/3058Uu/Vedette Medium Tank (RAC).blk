@@ -2,16 +2,20 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Vedette Medium Tank
 </Name>
+
 <Model>
 (RAC)
 </Model>
@@ -19,44 +23,103 @@ Vedette Medium Tank
 <mul id:>
 3394
 </mul id:>
-<Tonnage>
-50
-</Tonnage>
+
+<year>
+3067
+</year>
+
+<originalBuildYear>
+3067
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+</transporters>
+
 <cruiseMP>
 5
 </cruiseMP>
-<Armor>
+
+<engine_type>
+1
+</engine_type>
+
+<armor>
 22
 14
 14
 10
 12
-</Armor>
-<Turret Equipment>
-ISRotaryAC5
-</Turret Equipment>
+</armor>
+
 <Body Equipment>
 ISRotaryAC5 Ammo
 ISRotaryAC5 Ammo
 </Body Equipment>
-<type>
-IS Level 2
-</type>
-<year>
-3067
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-0
-</armor_type>
-<engine_type>
-1
-</engine_type>
-<motion_type>
-Tracked
-</motion_type>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+ISRotaryAC5
+</Turret Equipment>
+
+<capabilities>
+Carrying only one anti-vehicle weapon does not make it a less effective vehicle than a newer tank, but does reduce its ability to deal with a wide variety of targets. The Vedette uses its speed to great effect by moving into optimum autocannon range, opening fire, and then retreating as fast as possible to another fire position.
+</capabilities>
+
+<overview>
+The yardstick against which all other tanks are judged, the Vedette medium tank is one of the most popular and common combat vehicles in the Inner Sphere.
+</overview>
+
+<deployment>
+An advanced variant to lure sales from Hellespont, it removed the Ultra AC and machine gun for a Rotary AC/5, boasting even heavier damage capacity.
+</deployment>
+
+<history>
+There will be at least one Vedette wherever there are armored vehicles. It is not unrealistic to believe that this tank exists on every globe in the Inner Sphere.
+</history>
+
+<manufacturer>
+New Earth Trading Company
+</manufacturer>
+
+<primaryFactory>
+New Earth
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:Locom-Pack 250 InterComBust ICE
+ARMOR:ProtecTech 6
+COMMUNICATIONS:ComStar Rover
+TARGETING:ComStar Test-2
+</systemManufacturers>
+
 <source>
-Civil War
+TRO 3058 - Civil War
 </source>
+
+<tonnage>
+50.0
+</tonnage>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+

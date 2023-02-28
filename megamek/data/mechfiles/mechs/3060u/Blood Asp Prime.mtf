@@ -1,36 +1,35 @@
-Version:1.0
+Version:1.3
 Blood Asp
 Prime
 mul id:406
-
 Config:Biped Omnimech
-TechBase:Clan
-Era:3060
-Source:TRO 3060
-Rules Level:2
+techbase:Clan
+era:3060
+source:TRO 3060 - Clan Invasion
+rules level:2
 
-Mass:90
-Engine:360 XL (Clan) Engine(IS)
-Structure:Clan Endo Steel
-Myomer:Standard
+mass:90
+engine:360 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
 
-Heat Sinks:18 Double
-Base Chassis Heat Sinks:14
-Walk MP:4
-Jump MP:0
+heat sinks:18 Clan Double
+base chassis heat sinks:14
+walk mp:4
+jump mp:0
 
-Armor:Standard(Clan)
-LA Armor:28
-RA Armor:28
-LT Armor:24
-RT Armor:24
-CT Armor:40
-HD Armor:9
-LL Armor:34
-RL Armor:34
-RTL Armor:11
-RTR Armor:11
-RTC Armor:13
+armor:Standard(Clan)
+LA armor:28
+RA armor:28
+LT armor:24
+RT armor:24
+CT armor:40
+HD armor:9
+LL armor:34
+RL armor:34
+RTL armor:11
+RTR armor:11
+RTC armor:13
 
 Weapons:9
 Heavy Medium Laser, Left Arm
@@ -47,11 +46,11 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLHeavyMediumLaser (omnipod)
-CLHeavyMediumLaser (omnipod)
-CLHeavyMediumLaser (omnipod)
-CLHeavyMediumLaser (omnipod)
-CLMediumPulseLaser (omnipod)
+CLHeavyMediumLaser (OMNIPOD)
+CLHeavyMediumLaser (OMNIPOD)
+CLHeavyMediumLaser (OMNIPOD)
+CLHeavyMediumLaser (OMNIPOD)
+CLMediumPulseLaser (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -61,41 +60,41 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLHeavyMediumLaser (omnipod)
-CLHeavyMediumLaser (omnipod)
-CLHeavyMediumLaser (omnipod)
-CLHeavyMediumLaser (omnipod)
-CLMediumPulseLaser (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLHeavyMediumLaser (OMNIPOD)
+CLHeavyMediumLaser (OMNIPOD)
+CLHeavyMediumLaser (OMNIPOD)
+CLHeavyMediumLaser (OMNIPOD)
+CLMediumPulseLaser (OMNIPOD)
 Clan Endo Steel
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLGaussRifle (omnipod)
-CLGaussRifle (omnipod)
-CLGaussRifle (omnipod)
-CLGaussRifle (omnipod)
-CLGaussRifle (omnipod)
-CLGaussRifle (omnipod)
-Clan Gauss Ammo (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+Clan Gauss Ammo (OMNIPOD)
 Clan Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLGaussRifle (omnipod)
-CLGaussRifle (omnipod)
-CLGaussRifle (omnipod)
-CLGaussRifle (omnipod)
-CLGaussRifle (omnipod)
-CLGaussRifle (omnipod)
-Clan Gauss Ammo (omnipod)
-Clan Streak SRM 6 Ammo (omnipod)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+Clan Gauss Ammo (OMNIPOD)
+Clan Streak SRM 6 Ammo (OMNIPOD)
 Clan Endo Steel
 -Empty-
 
@@ -110,8 +109,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLStreakSRM6 (omnipod)
-CLStreakSRM6 (omnipod)
+CLStreakSRM6 (OMNIPOD)
+CLStreakSRM6 (OMNIPOD)
 
 Head:
 Life Support
@@ -132,8 +131,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -146,8 +145,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -155,4 +154,19 @@ CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 
+overview:One of the first 'Mechs to field the breakthrough Heavy Laser technology, the Blood Asp proves to be an offensive powerhouse. Delivering incredible damage at all ranges, the Blood Asp makes short work of any enemy regardless of size.
+
+capabilities:Based on the Kingfisher, the Blood Asp adds an XL engine, but space constraints forced the replacement of the Kingfisher's ferro-fibrous armor with standard plate. The Blood Asp incorporates sixteen tons of this armor and fourteen double heat sinks in the base chassis.
+
+deployment:The Blood Asp's primary weapons are a pair of Gauss rifles that can strip off nearly a ton of armor at the range of six hundred and sixty meters, though they do not have a lot of ammunition, so MechWarriors must be sparing with their shots. These are backed up by four Heavy Medium Lasers, a pair of Medium Pulse Lasers, and a Streak SRM-6 for close-range work. To aid in heat dissipation, the primary configuration incorporates four additional heat sinks.
+
+history:Created by Clan Star Adder as an insult to their enemies, Clan Blood Spirit, the Blood Asp has a large amount of available pod space for its size. 	
+
+manufacturer:Sheridan LM-TA 8-10
+primaryfactory:Sheridan
+systemmanufacturer:CHASSIS:Type MAES-90 Light
+systemmanufacturer:ENGINE:Consolidated Fusion 360 XL
+systemmanufacturer:ARMOR:Forging ZZ7 Ceramic Plate
+systemmanufacturer:COMMUNICATIONS:Series D8 CC-25X
+systemmanufacturer:TARGETING:“Hermes” CT-42 Mk. II
 

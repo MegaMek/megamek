@@ -43,6 +43,8 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     private File sourceFile;
     private String source;
     private boolean invalid;
+    private String techLevel;
+    private String techBase;
     private boolean failedToLoadEquipment;
     private String entryName; // for files in zips
     private int year;
@@ -245,6 +247,14 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public boolean getInvalid() {
         return invalid;
+    }
+
+    public String getTechLevel() {
+        return techLevel;
+    }
+
+    public String getTechBase() {
+        return techBase;
     }
 
     public boolean getFailedToLoadEquipment() {
@@ -793,6 +803,14 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public void setInvalid(boolean b) {
         this.invalid = b;
+    }
+
+    public void setTechLevel(String s) {
+        this.techLevel = s;
+    }
+
+    public void setTechBase(String s) {
+        this.techBase = s;
     }
 
     public void setFailedToLoadEquipment(boolean b) {

@@ -2,16 +2,20 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Vedette Medium Tank
 </Name>
+
 <Model>
 (Ultra)
 </Model>
@@ -19,43 +23,110 @@ Vedette Medium Tank
 <mul id:>
 3396
 </mul id:>
-<Tonnage>
-50
-</Tonnage>
+
+<year>
+3054
+</year>
+
+<originalBuildYear>
+3054
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+</transporters>
+
 <cruiseMP>
 5
 </cruiseMP>
-<Armor>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
 25
 21
 21
 24
 25
-</Armor>
+</armor>
+
+<Body Equipment>
+IS Ultra AC/5 Ammo
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
 <Turret Equipment>
 ISUltraAC5
 </Turret Equipment>
-<Body Equipment>
-ISUltraAC5 Ammo
-</Body Equipment>
-<type>
-IS Level 2
-</type>
-<year>
-3054
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-1
-</engine_type>
-<motion_type>
-Tracked
-</motion_type>
+
+<capabilities>
+Carrying only one anti-vehicle weapon does not make it a less effective vehicle than a newer tank, but does reduce its ability to deal with a wide variety of targets. The Vedette uses its speed to great effect by moving into optimum autocannon range, opening fire, and then retreating as fast as possible to another fire position.
+</capabilities>
+
+<overview>
+The yardstick against which all other tanks are judged, the Vedette medium tank is one of the most popular and common combat vehicles in the Inner Sphere.
+</overview>
+
+<deployment>
+One the earliest third-party licensees of the Vedette, Hellespont Industrials of Sian was also the first to produce a version using advanced technology in 3054. A relatively simple and cost-effective upgrade, the machine gun was removed in exchange for more armor and the standard plate replaced with locally-produced Hellespont Lite ferro-fibrous, boosting the tank's overall protection by 20%. With regards to armaments, the Armstrong J11 autocannon was swapped for an Imperator Ultra series gun. This improvement in firepower allows the crew to attack with an increased rate of fire and at greater ranges than previously possible.
+</deployment>
+
+<history>
+There will be at least one Vedette wherever there are armored vehicles. It is not unrealistic to believe that this tank exists on every globe in the Inner Sphere.
+</history>
+
+<manufacturer>
+Hellespont Industrials
+</manufacturer>
+
+<primaryFactory>
+Sian
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:Locom-Pack 250 InterComBust ICE
+ARMOR:Hellespont Lite Ferro-Fibrous
+COMMUNICATIONS:ComStar Rover
+TARGETING:ComStar Test-2
+</systemManufacturers>
+
 <source>
-Clan Invasion
+TRO 3058 - Clan Invasion
 </source>
+
+<tonnage>
+50.0
+</tonnage>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+

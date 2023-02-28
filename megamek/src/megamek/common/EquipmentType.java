@@ -1512,4 +1512,12 @@ public class EquipmentType implements ITechnology {
     public boolean is(String typeInternalName) {
         return isAnyOf(typeInternalName);
     }
+
+    public static List<String> getStructureNames() {
+        return Arrays.stream(structureNames).collect(Collectors.toList());
+    }
+
+    public static List<String> getArmorNames() {
+        return Arrays.stream(armorNames).collect(Collectors.toList());
+    }
 }

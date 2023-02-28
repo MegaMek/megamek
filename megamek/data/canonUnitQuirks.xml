@@ -15938,6 +15938,15 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>distracting</quirk>
 		<quirk>easy_maintain</quirk>
 	</unit>
+	
+	<unit>
+		<chassis>Viper</chassis>
+		<unitType>Mech</unitType>
+		<quirk>imp_com</quirk>
+		<quirk>rugged_1</quirk>
+		<quirk>searchlight</quirk>
+		<quirk>difficult_eject</quirk>
+	</unit>
 
 	<unit>
 		<chassis>Viper (Black Python)</chassis>
@@ -18307,6 +18316,24 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<unitType>Tank</unitType>
 		<quirk>imp_target_long</quirk>
 	</unit>
+	
+	<unit>
+		<chassis>Schrek AC Carrier</chassis>
+		<unitType>Tank</unitType>
+		<quirk>low_profile</quirk>
+	</unit>
+
+	<unit>
+		<chassis>Schrek PPC Carrier</chassis>
+		<unitType>Tank</unitType>
+		<quirk>low_profile</quirk>
+	</unit>
+
+	<unit>
+		<chassis>Schrek Gauss Carrier</chassis>
+		<unitType>Tank</unitType>
+		<quirk>low_profile</quirk>
+	</unit>
 
 	<unit>
 		<chassis>Sea Skimmer Hydrofoil</chassis>
@@ -18558,6 +18585,12 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>bad_rep_clan</quirk>
 		<quirk>poor_performance</quirk>
 		<quirk>trailer_hitch</quirk>
+	</unit>
+
+	<unit>
+		<chassis>Von Luckner Heavy Tank</chassis>
+		<unitType>Tank</unitType>
+		<quirk>difficult_maintain</quirk>
 	</unit>
 
 	<unit>

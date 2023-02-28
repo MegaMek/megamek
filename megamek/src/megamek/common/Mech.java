@@ -6571,4 +6571,8 @@ public abstract class Mech extends Entity {
     public boolean getsAutoExternalSearchlight() {
         return true;
     }
+
+    public static List<String> getCockpitDescrtiption() {
+        return Arrays.stream(COCKPIT_STRING).collect(Collectors.toList());
+    }
 }

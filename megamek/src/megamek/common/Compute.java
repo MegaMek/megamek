@@ -510,8 +510,7 @@ public class Compute {
                 && !(ignoreInfantry && (inHex instanceof Infantry))
                 && inHex.isEnemyOf(entity) && !inHex.isMakingDfa()
                 && (enLowEl <= inHexEnHighEl) && (enHighEl >= inHexEnLowEl)
-                && (!(inHex instanceof EjectedCrew) || (crewOnGround))
-            ) {
+                && (!(inHex instanceof EjectedCrew) || (crewOnGround))) {
                 return true;
             }
         }

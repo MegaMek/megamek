@@ -160,15 +160,15 @@ public class SBFRecordSheet implements Printable {
         new StringDrawer("Type").at(470, 210).maxWidth(58).font(headerFont).center().draw(g);
         new StringDrawer("Size").at(535, 210).maxWidth(58).font(headerFont).center().draw(g);
         new StringDrawer("Move").at(604, 210).maxWidth(68).font(headerFont).center().draw(g);
-        new StringDrawer("JUMP").at(683, 210).maxWidth(68).font(headerFont).center().draw(g);
+        new StringDrawer("Jump").at(683, 210).maxWidth(68).font(headerFont).center().draw(g);
         new StringDrawer("Transport").at(762, 185).maxWidth(80).font(headerFont).center().draw(g);
         new StringDrawer("Move").at(762, 210).maxWidth(80).font(headerFont).center().draw(g);
         new StringDrawer("TMM").at(839, 210).maxWidth(65).font(headerFont).center().draw(g);
         new StringDrawer("Tactics").at(919, 210).maxWidth(81).font(headerFont).center().draw(g);
-        new StringDrawer("Morale").at(1012, 210).maxWidth(90).font(headerFont).center().draw(g);
-        new StringDrawer("Skill").at(1088, 210).maxWidth(59).font(headerFont).center().draw(g);
+        new StringDrawer("Morale").at(1012, 210).maxWidth(84).font(headerFont).center().draw(g);
+        new StringDrawer("Skill").at(1088, 210).maxWidth(52).font(headerFont).center().draw(g);
         new StringDrawer("PV").at(1150, 210).maxWidth(60).font(headerFont).center().draw(g);
-        new StringDrawer("Formation Specials").at(1196, 210).maxWidth(225).font(headerFont).centerY().draw(g);
+        new StringDrawer("Formation Specials").at(1196, 210).maxWidth(210).font(headerFont).centerY().draw(g);
 
         g.setColor(underlineColor);
         g.setStroke(new BasicStroke(3f));
@@ -207,17 +207,17 @@ public class SBFRecordSheet implements Printable {
         pointsY = new int[] { 0,   0,    26,   235,  259,  259, 222, 222, 196, 26, 0,  0 };
         g.drawPolyline(pointsX, pointsY, 12);
 
-        new StringDrawer("Type").at(388, 35).maxWidth(58).font(headerFont).center().draw(g);
-        new StringDrawer("Size").at(451, 35).maxWidth(58).font(headerFont).center().draw(g);
-        new StringDrawer("Move").at(514, 35).maxWidth(68).font(headerFont).center().draw(g);
-        new StringDrawer("JUMP").at(577, 35).maxWidth(68).font(headerFont).center().draw(g);
+        new StringDrawer("Type").at(388, 35).maxWidth(57).font(headerFont).center().draw(g);
+        new StringDrawer("Size").at(451, 35).maxWidth(57).font(headerFont).center().draw(g);
+        new StringDrawer("Move").at(514, 35).maxWidth(57).font(headerFont).center().draw(g);
+        new StringDrawer("Jump").at(577, 35).maxWidth(57).font(headerFont).center().draw(g);
         new StringDrawer("Trsp").at(639, 17).maxWidth(40).font(headerFont).center().draw(g);
-        new StringDrawer("Move").at(639, 35).maxWidth(80).font(headerFont).center().draw(g);
-        new StringDrawer("TMM").at(702, 35).maxWidth(65).font(headerFont).center().draw(g);
-        new StringDrawer("Arm").at(764, 35).maxWidth(81).font(headerFont).center().draw(g);
-        new StringDrawer("S/M/L/E").at(856, 35).maxWidth(90).font(headerFont).center().draw(g);
-        new StringDrawer("Skill").at(948, 35).maxWidth(59).font(headerFont).center().draw(g);
-        new StringDrawer("PV").at(1010, 35).maxWidth(60).font(headerFont).center().draw(g);
+        new StringDrawer("Move").at(639, 35).maxWidth(57).font(headerFont).center().draw(g);
+        new StringDrawer("TMM").at(702, 35).maxWidth(57).font(headerFont).center().draw(g);
+        new StringDrawer("Arm").at(764, 35).maxWidth(57).font(headerFont).center().draw(g);
+        new StringDrawer("S/M/L/E").at(856, 35).maxWidth(96).font(headerFont).center().draw(g);
+        new StringDrawer("Skill").at(948, 35).maxWidth(57).font(headerFont).center().draw(g);
+        new StringDrawer("PV").at(1010, 35).maxWidth(57).font(headerFont).center().draw(g);
         new StringDrawer("Unit Specials").at(1055, 35).maxWidth(345).font(headerFont).centerY().draw(g);
 
         g.setColor(underlineColor);
@@ -340,20 +340,20 @@ public class SBFRecordSheet implements Printable {
 
     private void writeFormationValues(Graphics2D g) {
         g.setColor(Color.BLACK);
-        new StringDrawer(formation.getName()).at(24, 260).maxWidth(350).font(formationValueFont).centerY().draw(g);
-        new StringDrawer(formation.getType() + "").at(470, 260).maxWidth(58).font(formationValueFont).center().draw(g);
-        new StringDrawer(formation.getSize() + "").at(535, 260).maxWidth(58).font(formationValueFont).center().draw(g);
-        new StringDrawer(formation.getMovement() + "").at(604, 260).maxWidth(68).font(formationValueFont).center().draw(g);
-        new StringDrawer(formation.getJumpMove() + "").at(683, 260).maxWidth(68).font(formationValueFont).center().draw(g);
+        new StringDrawer(formation.getName()).at(24, 260).maxWidth(390).font(formationValueFont).centerY().draw(g);
+        new StringDrawer(formation.getType() + "").at(470, 260).maxWidth(52).font(formationValueFont).center().draw(g);
+        new StringDrawer(formation.getSize() + "").at(535, 260).maxWidth(52).font(formationValueFont).center().draw(g);
+        new StringDrawer(formation.getMovement() + "").at(604, 260).maxWidth(62).font(formationValueFont).center().draw(g);
+        new StringDrawer(formation.getJumpMove() + "").at(683, 260).maxWidth(62).font(formationValueFont).center().draw(g);
         new StringDrawer(formation.getTrspMovement() + "").at(762, 260).maxWidth(80).font(formationValueFont).center().draw(g);
         if (!formation.isAerospace()) {
-            new StringDrawer(formation.getTmm() + "").at(839, 260).maxWidth(65).font(formationValueFont).center().draw(g);
+            new StringDrawer(formation.getTmm() + "").at(839, 260).maxWidth(58).font(formationValueFont).center().draw(g);
         }
-        new StringDrawer(formation.getTactics() + "").at(919, 260).maxWidth(81).font(formationValueFont).center().draw(g);
-        new StringDrawer(formation.getMorale() + "").at(1012, 260).maxWidth(90).font(formationValueFont).center().draw(g);
-        new StringDrawer(formation.getSkill() + "").at(1088, 260).maxWidth(59).font(formationValueFont).center().draw(g);
-        new StringDrawer(formation.getPointValue() + "").at(1150, 260).maxWidth(60).font(formationValueFont).center().draw(g);
-        new StringDrawer(formation.getSpecialsDisplayString(formation)).at(1196, 260).maxWidth(220).font(formationValueFont).centerY().draw(g);
+        new StringDrawer(formation.getTactics() + "").at(919, 260).maxWidth(72).font(formationValueFont).center().draw(g);
+        new StringDrawer(formation.getMorale() + "").at(1012, 260).maxWidth(80).font(formationValueFont).center().draw(g);
+        new StringDrawer(formation.getSkill() + "").at(1088, 260).maxWidth(52).font(formationValueFont).center().draw(g);
+        new StringDrawer(formation.getPointValue() + "").at(1150, 260).maxWidth(58).font(formationValueFont).center().draw(g);
+        new StringDrawer(formation.getSpecialsDisplayString(formation)).at(1196, 260).maxWidth(210).font(formationValueFont).centerY().draw(g);
     }
 
     private void writeUnitOverviewValues(Graphics2D g2D) {
@@ -362,19 +362,19 @@ public class SBFRecordSheet implements Printable {
         g.setColor(Color.BLACK);
         int y = 80;
         for (SBFUnit unit : formation.getUnits()) {
-            new StringDrawer(unit.getName()).at(34, y).maxWidth(350).font(unitValueFont).draw(g);
-            new StringDrawer(unit.getType() + "").at(388, y).maxWidth(58).font(unitValueFont).centerX().draw(g);
-            new StringDrawer(unit.getSize() + "").at(451, y).maxWidth(58).font(unitValueFont).centerX().draw(g);
-            new StringDrawer(unit.getMovement() + "").at(514, y).maxWidth(68).font(unitValueFont).centerX().draw(g);
-            new StringDrawer(unit.getJumpMove() + "").at(577, y).maxWidth(68).font(unitValueFont).centerX().draw(g);
-            new StringDrawer(unit.getTrspMovement() + "").at(639, y).maxWidth(80).font(unitValueFont).centerX().draw(g);
+            new StringDrawer(unit.getName()).at(34, y).maxWidth(315).font(unitValueFont).draw(g);
+            new StringDrawer(unit.getType() + "").at(388, y).maxWidth(52).font(unitValueFont).centerX().draw(g);
+            new StringDrawer(unit.getSize() + "").at(451, y).maxWidth(52).font(unitValueFont).centerX().draw(g);
+            new StringDrawer(unit.getMovement() + "").at(514, y).maxWidth(52).font(unitValueFont).centerX().draw(g);
+            new StringDrawer(unit.getJumpMove() + "").at(577, y).maxWidth(52).font(unitValueFont).centerX().draw(g);
+            new StringDrawer(unit.getTrspMovement() + "").at(639, y).maxWidth(52).font(unitValueFont).centerX().draw(g);
             if (!unit.isAerospace()) {
-                new StringDrawer(unit.getTmm() + "").at(702, y).maxWidth(65).font(unitValueFont).centerX().draw(g);
+                new StringDrawer(unit.getTmm() + "").at(702, y).maxWidth(52).font(unitValueFont).centerX().draw(g);
             }
-            new StringDrawer(unit.getArmor() + "").at(764, y).maxWidth(81).font(unitValueFont).centerX().draw(g);
+            new StringDrawer(unit.getArmor() + "").at(764, y).maxWidth(52).font(unitValueFont).centerX().draw(g);
             new StringDrawer(unit.getDamage() + "").at(856, y).maxWidth(90).font(unitValueFont).centerX().draw(g);
-            new StringDrawer(unit.getSkill() + "").at(948, y).maxWidth(59).font(unitValueFont).centerX().draw(g);
-            new StringDrawer(unit.getPointValue() + "").at(1010, y).maxWidth(60).font(unitValueFont).centerX().draw(g);
+            new StringDrawer(unit.getSkill() + "").at(948, y).maxWidth(52).font(unitValueFont).centerX().draw(g);
+            new StringDrawer(unit.getPointValue() + "").at(1010, y).maxWidth(52).font(unitValueFont).centerX().draw(g);
             new StringDrawer(unit.getSpecialsDisplayString(unit)).at(1055, y).maxWidth(340).font(unitValueFont).draw(g);
             y += 41;
         }
@@ -387,16 +387,16 @@ public class SBFRecordSheet implements Printable {
         g.setColor(Color.BLACK);
         int y = 124;
         for (AlphaStrikeElement element : unit.getElements()) {
-            new StringDrawer(element.getName()).at(34, y).maxWidth(350).font(valueFont).draw(g);
-            new StringDrawer(element.getASUnitType() + "").at(388, y).maxWidth(58).font(valueFont).centerX().draw(g);
-            new StringDrawer(element.getSize() + "").at(451, y).maxWidth(58).font(valueFont).centerX().draw(g);
-            new StringDrawer(element.getMovementAsString() + "").at(529, y).maxWidth(68).font(valueFont).centerX().draw(g);
-            new StringDrawer(element.getCurrentArmor() + "").at(607, y).maxWidth(68).font(valueFont).centerX().draw(g);
-            new StringDrawer(element.getCurrentStructure() + "").at(669, y).maxWidth(80).font(valueFont).centerX().draw(g);
+            new StringDrawer(element.getName()).at(34, y).maxWidth(315).font(valueFont).draw(g);
+            new StringDrawer(element.getASUnitType() + "").at(388, y).maxWidth(52).font(valueFont).centerX().draw(g);
+            new StringDrawer(element.getSize() + "").at(451, y).maxWidth(52).font(valueFont).centerX().draw(g);
+            new StringDrawer(element.getMovementAsString() + "").at(529, y).maxWidth(74).font(valueFont).centerX().draw(g);
+            new StringDrawer(element.getCurrentArmor() + "").at(607, y).maxWidth(52).font(valueFont).centerX().draw(g);
+            new StringDrawer(element.getCurrentStructure() + "").at(669, y).maxWidth(52).font(valueFont).centerX().draw(g);
             new StringDrawer(element.getStandardDamage() + "").at(761, y).maxWidth(100).font(valueFont).centerX().draw(g);
-            new StringDrawer(element.getOV() + "").at(853, y).maxWidth(81).font(valueFont).centerX().draw(g);
-            new StringDrawer(element.getSkill() + "").at(915, y).maxWidth(90).font(valueFont).centerX().draw(g);
-            new StringDrawer(element.getPointValue() + "").at(977, y).maxWidth(59).font(valueFont).centerX().draw(g);
+            new StringDrawer(element.getOV() + "").at(853, y).maxWidth(52).font(valueFont).centerX().draw(g);
+            new StringDrawer(element.getSkill() + "").at(915, y).maxWidth(52).font(valueFont).centerX().draw(g);
+            new StringDrawer(element.getPointValue() + "").at(977, y).maxWidth(52).font(valueFont).centerX().draw(g);
             new StringDrawer(element.getSpecialsDisplayString(element)).at(1019, y).maxWidth(380).font(valueFont).draw(g);
             y += 32;
         }

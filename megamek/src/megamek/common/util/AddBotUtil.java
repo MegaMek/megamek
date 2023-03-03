@@ -197,8 +197,10 @@ public class AddBotUtil {
         final Player target = possible.get();
         final Princess princess = new Princess(target.getName(), host, port);
         princess.setBehaviorSettings(behavior);
-        // FIXME : I should be able to use a frame through proper channels
-        princess.getGame().addGameListener(new BotGUI(new JFrame(), princess));
+        if (!GraphicsEnvironment.isHeadless()) {
+            // FIXME : I should be able to use a frame through proper channels
+            princess.getGame().addGameListener(new BotGUI(new JFrame(), princess));
+        }
         try {
             princess.connect();
         } catch (final Exception e) {

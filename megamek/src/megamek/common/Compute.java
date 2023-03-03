@@ -503,13 +503,14 @@ public class Compute {
         int enHighEl = enLowEl + entity.getHeight();
         for (Entity inHex : game.getEntitiesVector(coords)) {
             int inHexAlt = inHex.getAltitude();
+            boolean crewOnGround = (inHex instanceof EjectedCrew) && (inHexAlt == 0);
             int inHexEnLowEl = inHex.getElevation();
             int inHexEnHighEl = inHexEnLowEl + inHex.getHeight();
             if ((!onlyMechs || (inHex instanceof Mech))
                 && !(ignoreInfantry && (inHex instanceof Infantry))
                 && inHex.isEnemyOf(entity) && !inHex.isMakingDfa()
                 && (enLowEl <= inHexEnHighEl) && (enHighEl >= inHexEnLowEl)
-                && ((entity instanceof EjectedCrew) && (inHexAlt == 0))) {
+                && (!(inHex instanceof EjectedCrew) || (crewOnGround))) {
                 return true;
             }
         }

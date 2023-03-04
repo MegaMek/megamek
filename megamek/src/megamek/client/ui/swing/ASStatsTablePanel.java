@@ -43,6 +43,7 @@ public class ASStatsTablePanel {
     private int rows;
     private final List<EntityGroup> groups = new ArrayList<>();
     private final JFrame frame;
+    private final List<AlphaStrikeElement> elements = new ArrayList<>();
 
     /**
      * Constructs a panel with a table of AlphaStrike stats for any units that are added to it.
@@ -95,6 +96,10 @@ public class ASStatsTablePanel {
         return panel;
     }
 
+    public List<AlphaStrikeElement> getElements() {
+        return elements;
+    }
+
     /** Assembles the JPanel. It is empty before calling this method. */
     private void constructPanel() {
         addVerticalSpace();
@@ -123,6 +128,7 @@ public class ASStatsTablePanel {
                 }
             }
         }
+        elements.addAll(elementList);
 
         // Print the elements
         rows++;

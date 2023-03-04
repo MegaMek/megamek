@@ -18,6 +18,7 @@
  */
 package megamek.common.alphaStrike.cardDrawer;
 
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.StringDrawer;
 import megamek.common.alphaStrike.*;
 import megamek.common.util.ImageUtil;
@@ -48,8 +49,7 @@ public class ASLargeAeroCard extends ASCard {
     private Font arcSpecialsFont;
     private Font critTextFont;
 
-    private final StringDrawer.StringDrawerConfig damageValueConfig = new StringDrawer.StringDrawerConfig().centerX()
-            .scaleX(0.9f).color(Color.BLACK).font(damageFont);
+    private StringDrawer.StringDrawerConfig damageValueConfig;
 
     public ASLargeAeroCard(ASCardDisplayable element) {
         super(element);
@@ -89,6 +89,9 @@ public class ASLargeAeroCard extends ASCard {
 
         specialsHeaderConfig = new StringDrawer.StringDrawerConfig().color(Color.BLACK)
                 .font(blackFont.deriveFont((float)largeAeroSpecialFont.getSize()));
+
+        damageValueConfig = new StringDrawer.StringDrawerConfig().centerX()
+                .scaleX(0.9f).color(Color.BLACK).font(damageFont);
     }
 
     @Override
@@ -99,7 +102,13 @@ public class ASLargeAeroCard extends ASCard {
         fluffYCenter = 366;
     }
 
-    private void drawFlipside(Graphics2D g) {
+    public void drawFlipside(Graphics2D g) {
+        initializeFonts(lightFont, boldFont, blackFont);
+        GUIPreferences.AntiAliasifSet(g);
+        g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+        g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
         paintCardBackground(g, true);
         new StringDrawer("WEAPON CRITICALS").at(33, 629).font(arcTitleFont).maxWidth(220)
                 .outline(Color.BLACK, 0.4f).centerY().draw(g);

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -28,6 +28,10 @@ Surat (Gray Death) Solahma Suit
 3090
 </year>
 
+<originalBuildYear>
+3090
+</originalBuildYear>
+
 <type>
 Mixed (IS Chassis)
 </type>
@@ -35,6 +39,9 @@ Mixed (IS Chassis)
 <motion_type>
 Leg
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 3
@@ -52,43 +59,38 @@ Leg
 BABattleClaw:LA
 CLBAHeavySmallLaser:RA
 BAAPMount:LA
+InfantryAssaultRifle:APM
 SwarmMek
 SwarmWeaponMek
 StopSwarm
 LegAttack
 </Squad Equipment>
 
-<source>
-XTRO Republic I - Early Republic
-</source>
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
 
-<chassis>
-biped
-</chassis>
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
 
-<jumpingMP>
-0
-</jumpingMP>
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
 
-<armor>
-9
-</armor>
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
 
-<Trooper Count>
-6
-</Trooper Count>
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
 
-<weightclass>
-2
-</weightclass>
-
-<overview>
-The Gray Death Standard battle armor was developed by the technicians of the Gray Death Legion after the New Avalon Institute of Science sent them prototype battle armor suits, the progenitors of what eventually became the Inner Sphere Standard, for field testing. 
-</overview>
+<Trooper 6 Equipment>
+</Trooper 6 Equipment>
 
 <capabilities>
 The Legion decided to remove the suits' jump jets to make room for dedicated anti-infantry firepower, superior sensor systems, and reinforced myomer bundles to improve ground speed. While losing the ability to leap over obstacles, these changes made the suit easier to maintain and cheaper to build than the Inner Sphere Standard.
 </capabilities>
+
+<overview>
+The Gray Death Standard battle armor was developed by the technicians of the Gray Death Legion after the New Avalon Institute of Science sent them prototype battle armor suits, the progenitors of what eventually became the Inner Sphere Standard, for field testing.
+</overview>
 
 <deployment>
 This suit replaces the standard armor with lighter Clan-built armor. This in turn frees up space for heavier weapons. Most frequently a Heavy Small Laser is fitted to the suit. The suit itself is frequently used by solahma infantry formations in Clan toumans. Though it has a bad reputation among Clan Elementals, it is nevertheless an effective weapon.
@@ -114,3 +116,28 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<source>
+XTRO Republic I - Early Republic
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+9
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+

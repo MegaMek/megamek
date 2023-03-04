@@ -6999,6 +6999,7 @@ Victor VTR-9Ka:SKIRMISHER
 Victor VTR-9S:SKIRMISHER
 Victor VTR-C:SKIRMISHER
 Victor VTR-Cr:SKIRMISHER
+Victor VTR-9B (Kataga):BRAWLER
 Vidar Heavy Defense Tank (Standard):MISSILE_BOAT
 Vigilant Corvette (2320):NONE
 Viking IIC (Standard):MISSILE_BOAT

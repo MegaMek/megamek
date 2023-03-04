@@ -2091,7 +2091,7 @@ public class AmmoType extends EquipmentType {
                         .setStaticTechLevel(SimpleTechLevel.ADVANCED),
                 "370, TO"));
 
-        munitions.add(new MunitionMutator("(Clan) Multi-Purpose", 2, M_MULTI_PURPOSE,
+        munitions.add(new MunitionMutator("(Clan) Multi-Purpose", 1, M_MULTI_PURPOSE,
                 new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false).setUnofficial(true).setTechRating(RATING_F)
                         .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
                         .setClanAdvancement(3055, 3060, 3065, DATE_NONE, DATE_NONE)

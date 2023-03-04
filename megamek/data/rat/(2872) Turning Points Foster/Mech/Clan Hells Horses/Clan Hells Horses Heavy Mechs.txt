@@ -1,7 +1,7 @@
 Clan Hells Horses Heavy Mechs
 Guillotine GLT-3N, 1
 Crusader CRD-2R, 2
-Rifleman IIC, 3
+Rifleman IIC 6, 3
 Champion C, 4
 Thresher (Standard), 5
 Flashman FLS-8K, 6

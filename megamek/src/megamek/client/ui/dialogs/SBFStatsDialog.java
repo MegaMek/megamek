@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2021-2023 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -18,20 +18,26 @@
  */
 package megamek.client.ui.dialogs;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractDialog;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.MMToggleButton;
 import megamek.client.ui.swing.SBFStatsTablePanel;
 import megamek.client.ui.swing.util.UIUtil;
+import megamek.codeUtilities.StringUtility;
 import megamek.common.Game;
 import megamek.common.force.Force;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFFormationConverter;
+import megamek.common.strategicBattleSystems.SBFRecordSheetBook;
 import megamek.common.strategicBattleSystems.SBFUnit;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -47,8 +53,13 @@ public class SBFStatsDialog extends AbstractDialog {
     private final Collection<Force> forceList;
     private final Game game;
     private Collection<SBFFormation> formations;
-    private final MMToggleButton elementsToggle = new MMToggleButton("Show Elements");
-    private final JButton clipBoardButton = new JButton("Copy to Clipboard");
+    private final MMToggleButton elementsToggle = new MMToggleButton(Messages.getString("SBFStatsDialog.showElements"));
+    private final JButton clipBoardButton = new JButton(Messages.getString("SBFStatsDialog.copy"));
+    private final JButton printButton = new JButton(Messages.getString("SBFStatsDialog.print"));
+    private final JLabel headerFontLabel = new JLabel(Messages.getString("SBFStatsDialog.headerFont"));
+    private final JComboBox<String> headerFontChooser = new JComboBox<>();
+    private final JLabel valueFontLabel = new JLabel(Messages.getString("SBFStatsDialog.valueFont"));
+    private final JComboBox<String> valueFontChooser = new JComboBox<>();
     private final JScrollPane scrollPane = new JScrollPane();
     private final JPanel centerPanel = new JPanel();
     private SBFStatsTablePanel statsPanel;
@@ -79,14 +90,41 @@ public class SBFStatsDialog extends AbstractDialog {
         optionsPanel.add(Box.createHorizontalStrut(25));
         optionsPanel.add(elementsToggle);
         optionsPanel.add(clipBoardButton);
+
+        var printPanel = new UIUtil.FixedYPanel(new FlowLayout(FlowLayout.LEFT));
+        printPanel.add(Box.createHorizontalStrut(25));
+        printPanel.add(printButton);
+        printPanel.add(Box.createHorizontalStrut(10));
+        printPanel.add(headerFontLabel);
+        printPanel.add(headerFontChooser);
+        printPanel.add(Box.createHorizontalStrut(10));
+        printPanel.add(valueFontLabel);
+        printPanel.add(valueFontChooser);
+
         elementsToggle.addActionListener(e -> setupTable());
         elementsToggle.setFont(UIUtil.getScaledFont());
         clipBoardButton.addActionListener(e -> copyToClipboard());
         clipBoardButton.setFont(UIUtil.getScaledFont());
+        printButton.addActionListener(e -> printRecordSheets());
+        printButton.setFont(UIUtil.getScaledFont());
+        headerFontLabel.setFont(UIUtil.getScaledFont());
+        valueFontLabel.setFont(UIUtil.getScaledFont());
+
+        headerFontChooser.addItem("");
+        valueFontChooser.addItem("");
+        for (String family : GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()) {
+            headerFontChooser.addItem(family);
+            valueFontChooser.addItem(family);
+        }
+        headerFontChooser.setSelectedItem(GUIPreferences.getInstance().getSbfSheetHeaderFont());
+        valueFontChooser.setSelectedItem(GUIPreferences.getInstance().getSbfSheetValueFont());
+        headerFontChooser.setFont(UIUtil.getScaledFont());
+        valueFontChooser.setFont(UIUtil.getScaledFont());
 
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         centerPanel.add(Box.createVerticalStrut(15));
         centerPanel.add(optionsPanel);
+        centerPanel.add(printPanel);
         centerPanel.add(Box.createVerticalStrut(15));
         centerPanel.add(scrollPane);
 
@@ -101,6 +139,36 @@ public class SBFStatsDialog extends AbstractDialog {
                 .collect(Collectors.toList());
         statsPanel = new SBFStatsTablePanel(getFrame(), formations, elementsToggle.isSelected());
         scrollPane.setViewportView(statsPanel.getPanel());
+    }
+
+    public void printRecordSheets() {
+        PrinterJob job = PrinterJob.getPrinterJob();
+        boolean doPrint = job.printDialog();
+        if (doPrint) {
+            try {
+                var recordSheetBook = new SBFRecordSheetBook(formations, getSelectedTextFont(), getSelectedValueFont());
+                job.setPrintable(recordSheetBook);
+                job.print();
+            } catch (PrinterException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private Font getSelectedTextFont() {
+        String selectedFont = (String) headerFontChooser.getSelectedItem();
+        GUIPreferences.getInstance().setSbfSheetHeaderFont(selectedFont);
+        return decodeSelectedFont(selectedFont);
+    }
+
+    private Font getSelectedValueFont() {
+        String selectedFont = (String) valueFontChooser.getSelectedItem();
+        GUIPreferences.getInstance().setSbfSheetValueFont(selectedFont);
+        return decodeSelectedFont(selectedFont);
+    }
+
+    private Font decodeSelectedFont(String fontName) {
+        return StringUtility.isNullOrBlank(fontName) ? null : Font.decode(fontName);
     }
 
     private void copyToClipboard() {

@@ -50,6 +50,7 @@ public class SerializationHelper {
                 megamek.common.Coords.class,
                 megamek.common.CompositeTechLevel.DateRange.class,
                 megamek.common.CriticalSlot.class,
+                megamek.common.EquipmentMode.class,
                 megamek.common.Game.class,
                 megamek.common.Hex.class,
                 megamek.common.Minefield.class,

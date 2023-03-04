@@ -1,15 +1,28 @@
+/*
+ * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.client.ui.swing.boardview;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Shape;
-import java.awt.Stroke;
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.StringDrawer;
 import megamek.common.TargetRoll;
 import megamek.common.util.FiringSolution;
 
@@ -20,130 +33,101 @@ import megamek.common.util.FiringSolution;
  */
 class FiringSolutionSprite extends HexSprite {
     
-    // control values
-    // for modifier and range
-    private static final int fontSizeSmall = 25;
-    private static final int fontSizeRange = 20;
-    private static final Color fontColor = Color.CYAN;
-    // for the big X
-    private static final int fontSizeLarge = 40;
-    private static final Color xColor = Color.RED;
+    private static final int FONT_SIZE_SMALL = 25;
+    private static final int FONT_SIZE_RANGE = 20;
+    private static final int FONT_SIZE_LARGE = 40;
+    private static final Color TEXT_COLOR = Color.CYAN;
+    private static final Color X_COLOR = new Color(255, 40, 40, 140);
 
-    private static final Color hexIconColor = new Color(80, 80, 80, 140);
-    private static final Stroke hexIconStroke = new BasicStroke(1.5f);
+    private static final Color HEX_ICON_COLOR = new Color(80, 80, 80, 140);
+    private static final Stroke HEX_ICON_STROKE = new BasicStroke(1.5f);
 
-    private static final Color indirectDashColor1 = new Color(255,  0, 0, 140);
-    private static final Color indirectDashColor2 = new Color(255, 255, 0, 140);
-    private static final float[] dashPeriod = { 10.0f };
-    private static final BasicStroke indirectStroke1 = new BasicStroke(3.0f, BasicStroke.CAP_ROUND,
-            BasicStroke.JOIN_ROUND, 10.0f, dashPeriod, 0.0f);
-    private static final BasicStroke indirectStroke2 = new BasicStroke(3.0f, BasicStroke.CAP_ROUND,
-            BasicStroke.JOIN_ROUND, 10.0f, dashPeriod, 10.0f);
-    
-    // calculated statics
-    // text positions
-    private static Point centerHex = new Point(BoardView.HEX_W / 2,
-            BoardView.HEX_H / 2);
-    private static Point firstLine = new Point(BoardView.HEX_W / 2 - 2,
-            BoardView.HEX_H / 4 + 2);
-    private static Point secondLine = new Point(BoardView.HEX_W / 2 + 9,
-            BoardView.HEX_H * 3 / 4 - 2);
+    private static final Color INDIRECT_DASH_COLOR_1 = new Color(255,  0, 0, 140);
+    private static final Color INDIRECT_DASH_COLOR_2 = new Color(255, 255, 0, 140);
+    private static final float[] DASH_PERIOD = { 10.0f };
+    private static final BasicStroke INDIRECT_STROKE_1 = new BasicStroke(3.0f, BasicStroke.CAP_ROUND,
+            BasicStroke.JOIN_ROUND, 10.0f, DASH_PERIOD, 0.0f);
+    private static final BasicStroke INDIRECT_STROKE_2 = new BasicStroke(3.0f, BasicStroke.CAP_ROUND,
+            BasicStroke.JOIN_ROUND, 10.0f, DASH_PERIOD, 10.0f);
+
+    private static final int HEX_CENTER_X = BoardView.HEX_W / 2;
+    private static final int HEX_CENTER_Y = BoardView.HEX_H / 2;
+    private static final Point HEX_CENTER = new Point(HEX_CENTER_X, HEX_CENTER_Y);
+    private static final Point FIRST_LINE = new Point(HEX_CENTER_X - 2, BoardView.HEX_H / 4 + 2);
+    private static final Point SECOND_LINE = new Point(HEX_CENTER_X + 9, BoardView.HEX_H * 3 / 4 - 2);
 
     // sprite object data
-    private FiringSolution fsoln;
-    private String range;
-    private String toHitMod;
-    private boolean noHitPossible = false;
-    private Shape finalHex;
+    private final FiringSolution firingSolution;
+    private final String range;
+    private final String toHitMod;
+    private final boolean noHitPossible;
+    private final Shape finalHex;
+    private final StringDrawer bigXDrawer = new StringDrawer("X").at(HEX_CENTER).color(X_COLOR)
+            .outline(Color.BLACK, 1.5f).center();
 
-    public FiringSolutionSprite(BoardView boardView1, final FiringSolution fsoln) {
-        super(boardView1, fsoln.getToHitData().getLocation());
+    public FiringSolutionSprite(BoardView boardView1, final FiringSolution firingSolution) {
+        super(boardView1, firingSolution.getToHitData().getLocation());
         updateBounds();
-        
-        this.fsoln = fsoln;
-        // modifier
-        int thm = fsoln.getToHitData().getValue();
-        toHitMod = Integer.toString(thm);
-        if (thm >= 0) {
-            toHitMod = "+" + toHitMod;
-        }
-
-        if ((thm == TargetRoll.IMPOSSIBLE) || (thm == TargetRoll.AUTOMATIC_FAIL)) {
-            noHitPossible = true;
-        }
+        this.firingSolution = firingSolution;
+        int toHitModifier = firingSolution.getToHitData().getValue();
+        toHitMod = ((toHitModifier >= 0) ? "+" : "") + toHitModifier;
+        noHitPossible = (toHitModifier == TargetRoll.IMPOSSIBLE) || (toHitModifier == TargetRoll.AUTOMATIC_FAIL);
         
         // range
-        int r = fsoln.getToHitData().getRange();
-        range = Integer.toString(r);
+        int range = firingSolution.getToHitData().getRange();
+        this.range = Integer.toString(range);
 
         // create the small hex shape
-        AffineTransform at = AffineTransform.getTranslateInstance((r > 9) ? 25 : 30, secondLine.y + 2);
+        AffineTransform at = AffineTransform.getTranslateInstance((range > 9) ? 25 : 30, SECOND_LINE.y + 2);
         at.scale(0.17, 0.17);
-        at.translate(-BoardView.HEX_W/2, -BoardView.HEX_H/2);
+        at.translate(-HEX_CENTER_X, -HEX_CENTER_Y);
         finalHex = at.createTransformedShape(BoardView.hexPoly);
     }
 
     @Override
     public void prepare() {
-        // adjust bounds (image size) to board zoom
         updateBounds();
-        
-        // create image for buffer
         image = createNewHexImage();
         Graphics2D graph = (Graphics2D) image.getGraphics();
         GUIPreferences.AntiAliasifSet(graph);
-        
-        // scale the following draws according to board zoom
+        graph.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        graph.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+
         graph.scale(bv.scale, bv.scale);
         
-        // get the right font
         String fontName = GUIPreferences.getInstance().getString(GUIPreferences.ADVANCED_MOVE_FONT_TYPE);
         int fontStyle = GUIPreferences.getInstance().getInt(GUIPreferences.ADVANCED_MOVE_FONT_STYLE);
         
         if (noHitPossible) {  
-            // write big red X
-            graph.setFont(new Font(fontName, fontStyle, fontSizeLarge));
-            if (bv.scale > 0.7) {
-                // better translucent, the X is so big
-                bv.drawOutlineText(graph, "X", centerHex, fontSizeLarge, xColor, true, Color.BLACK);
-            } else {
-                // better readable at small scale
-                bv.drawCenteredText(graph, "X", centerHex, xColor, false);
-            }
-        } else {    
+            graph.setFont(new Font(fontName, fontStyle, FONT_SIZE_LARGE));
+            bigXDrawer.draw(graph);
+        } else {
             // hittable: write modifier and range
-            Font textFont = new Font(fontName, fontStyle, fontSizeSmall);
-            Font rangeFont = new Font(fontName, fontStyle, fontSizeRange);
-            
-            // shadows
-            bv.drawTextShadow(graph, toHitMod, firstLine, textFont);
-            bv.drawTextShadow(graph, range, secondLine, rangeFont);
-            
-            // text
-            bv.drawCenteredText(graph, toHitMod, firstLine, fontColor, false, textFont);
-            bv.drawCenteredText(graph, range, secondLine, fontColor, false, rangeFont);
+            Font textFont = new Font(fontName, fontStyle, FONT_SIZE_SMALL);
+            bv.drawTextShadow(graph, toHitMod, FIRST_LINE, textFont);
+            BoardView.drawCenteredText(graph, toHitMod, FIRST_LINE, TEXT_COLOR, false, textFont);
 
-            // a small hex shape for distance
-            // fill blueish
-            graph.setColor(hexIconColor);
+            Font rangeFont = new Font(fontName, fontStyle, FONT_SIZE_RANGE);
+            bv.drawTextShadow(graph, range, SECOND_LINE, rangeFont);
+            BoardView.drawCenteredText(graph, range, SECOND_LINE, TEXT_COLOR, false, rangeFont);
+
+            // Draw a small hex shape to indicate range
+            graph.setStroke(HEX_ICON_STROKE);
+            graph.setColor(HEX_ICON_COLOR);
             graph.fill(finalHex);
-            // hex border
-            graph.setStroke(hexIconStroke);
-            graph.setColor(fontColor);
+            graph.setColor(TEXT_COLOR);
             graph.draw(finalHex);
         }
         
-        if (fsoln.isTargetSpotted()) {
-            graph.setColor(indirectDashColor1);
-            graph.setStroke(indirectStroke1);
+        if (firingSolution.isTargetSpotted()) {
+            graph.setColor(INDIRECT_DASH_COLOR_1);
+            graph.setStroke(INDIRECT_STROKE_1);
             graph.draw(BoardView.hexPoly);
-
-            graph.setColor(indirectDashColor2);
-            graph.setStroke(indirectStroke2);
+            graph.setColor(INDIRECT_DASH_COLOR_2);
+            graph.setStroke(INDIRECT_STROKE_2);
             graph.draw(BoardView.hexPoly);
         }
 
         graph.dispose();
     }
-
 }

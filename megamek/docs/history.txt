@@ -70,9 +70,6 @@ VERSION HISTORY:
 + PR #4194: Show movement mode before move indicators
 + PR #4193: Show amount of heat over capacity on the weapon tab
 + Data Issues #4210, #4206, #4200, #4198, #4192, #4122, #4119, #3963, and #3919 fixed. 
- 
-
-
 + Updating XStream to 1.4.19 from 1.4.14
  
 0.49.11 (2022-12-22 1500 UTC)

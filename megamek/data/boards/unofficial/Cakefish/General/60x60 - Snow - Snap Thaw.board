@@ -1,5 +1,13 @@
 size 60 60
 option exit_roads_to_pavement false
+tag "Foliage (Auto)"
+tag "Water (Auto)"
+tag "GrassTheme (Auto)"
+tag "Roads (Auto)"
+tag "IceTerrain (Auto)"
+tag "LowHills (Auto)"
+tag "Woods (Auto)"
+tag "SnowTerrain (Auto)"
 hex 0101 2 "woods:1;foliage_elev:2" "snow"
 hex 0201 2 "woods:1;foliage_elev:1" "snow"
 hex 0301 2 "woods:1;foliage_elev:1" "snow"

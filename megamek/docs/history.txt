@@ -65,6 +65,8 @@ VERSION HISTORY:
 + Issue #4185: RFE: Visual GUI indicator that unit is using Searchlight.
 + Issue #4173: Heat Buildup colors in weapons fire tab are off by one
 + Issue #4141, #4218: Fixing a bug with ejected pilots at altitude blocking ground unit movement
++ PR #4209: Strategic BattleForce record sheets can now be printed from the conversion dialog window in MM's game lobby
++ PR #4211: Alpha Strike cards can now be printed from most card views and, for multiple units, from the conversion dialog in MM's game lobby
 + PR #4194: Show movement mode before move indicators
 + PR #4193: Show amount of heat over capacity on the weapon tab
  

@@ -55,7 +55,7 @@ public class ConvFighter extends Aero {
 
     @Override
     public int getFuelUsed(int thrust) {
-        if (!hasEngine() || (getEngine().isSolar())) {
+        if (!hasEngine() || getEngine().isSolar()) {
             return 0;
         }
         int overThrust = Math.max(thrust - getWalkMP(), 0);

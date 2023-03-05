@@ -308,7 +308,6 @@ public class Engine implements Serializable, ITechnology {
                 && (engineType != STEAM) && (engineType != MAGLEV) && (engineType != EXTERNAL);
     }
 
-    /** @return True if this engine is a Solar engine. */
     public boolean isSolar() {
         return engineType == SOLAR;
     }

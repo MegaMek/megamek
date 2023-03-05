@@ -13,7 +13,6 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.client.Client;
 import megamek.client.TwGameClient;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
@@ -30,9 +29,11 @@ import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
 import javax.swing.*;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
-
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.List;
 import java.util.*;
 
@@ -155,7 +156,7 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
     /**
      * Creates new CustomMechDialog
      */
-    public CustomMechDialog(ClientGUI clientgui, Client client, List<Entity> entities, boolean editable) {
+    public CustomMechDialog(ClientGUI clientgui, TwGameClient client, List<Entity> entities, boolean editable) {
         super(clientgui.getFrame(), "CustomizeMechDialog", "CustomMechDialog.title");
 
         this.entities = entities;

@@ -3,6 +3,8 @@ VERSION HISTORY:
 0.49.13-SNAPSHOT
 + Data: #4223 Illegal/overweight BA units
 + Data: #4206 Illegal armour type on the Kopis AI IIr
++ Data: Updates to Flynn map pack
++ Data: Updates to Spanish translation. 
 
 0.49.12 (2023-03-04 2200 UTC)
 + PR #4062: OS Thunderbolt Weapons are now available for construction and use

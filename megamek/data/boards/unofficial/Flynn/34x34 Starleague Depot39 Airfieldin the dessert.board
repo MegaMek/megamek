@@ -1,8 +1,8 @@
 size 34 34
 tag "Water (Auto)"
 tag "Roads (Auto)"
-tag "DesertTheme (Auto)"
 tag "HighHills (Auto)"
+tag "DesertTheme (Auto)"
 tag "LightForest (Auto)"
 tag "Woods (Auto)"
 hex 0101 1 "sand:1" "desert"

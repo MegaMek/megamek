@@ -69,8 +69,6 @@ public abstract class Client implements GameClient {
     /** The bots controlled by the local player; maps a bot's name String to a bot's client. */
     protected Map<String, Client> bots = new TreeMap<>(String::compareTo);
 
-    protected List<EventObject> eventQueue = new ArrayList<>();
-
     /**
      * Construct a client which will try to connect. If the connection fails, it
      * will alert the player, free resources and hide the frame.
@@ -413,7 +411,7 @@ public abstract class Client implements GameClient {
                 break;
             case CHAT:
                 possiblyWriteToLog((String) packet.getObject(0));
-                eventQueue.add(new GamePlayerChatEvent(this, null, (String) packet.getObject(0)));
+                getIGame().fireGameEvent(new GamePlayerChatEvent(this, null, (String) packet.getObject(0)));
                 break;
             default:
                 return false;

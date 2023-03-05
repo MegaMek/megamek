@@ -3902,28 +3902,21 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
     }
 
-    /**
-     * check for fuel and adjust buttons
-     */
+    /** Checks Aeros for remaining fuel and adjusts buttons when necessary. */
     private void checkFuel() {
         final Entity ce = ce();
-        if (null == ce) {
+        if ((ce == null) || !ce.isAero()) {
             return;
         }
 
-        if (!ce.isAero()) {
-            return;
-        }
-
-        IAero a = (IAero) ce;
-        if (a.getCurrentFuel() < 1) {
+        IAero aero = (IAero) ce;
+        if ((aero.getCurrentFuel() < 1) && !(ce.hasEngine() && ce.getEngine().isSolar())) {
             disableButtons();
             butDone.setEnabled(true);
             getBtn(MoveCommand.MOVE_NEXT).setEnabled(true);
             setForwardIniEnabled(true);
             if (ce instanceof Aero) {
-                setLaunchEnabled(!ce.getLaunchableFighters().isEmpty()
-                        || !ce.getLaunchableSmallCraft().isEmpty()
+                setLaunchEnabled(!ce.getLaunchableFighters().isEmpty() || !ce.getLaunchableSmallCraft().isEmpty()
                         || !ce.getLaunchableDropships().isEmpty());
             }
             updateRACButton();

@@ -52,8 +52,9 @@ import static java.awt.Color.WHITE;
  */
 public class ASCard {
 
-    protected final static int WIDTH = 1050;
-    protected final static int HEIGHT = 750;
+    public final static int WIDTH = 1050;
+    public final static int HEIGHT = 750;
+    public final static double PRINT_SCALE = 3.5 * 72 / WIDTH; // 3.5" wide, 1/72 dots per inch
     protected final static int BORDER = 21;
     protected final static int ARMOR_PIP_SIZE = 22;
     protected final static int DAMAGE_PIP_SIZE = 18;
@@ -222,7 +223,7 @@ public class ASCard {
     }
 
     /** This method controls drawing the card. */
-    protected final void drawCard(Graphics g) {
+    public final void drawCard(Graphics g) {
         initializeFonts(lightFont, boldFont, blackFont);
         Graphics2D g2D = (Graphics2D) g;
         GUIPreferences.AntiAliasifSet(g);

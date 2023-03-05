@@ -219,6 +219,10 @@ public class TROView {
             model.put("cruisingSpeed", entity.getWalkMP() * 10.8);
             model.put("maxSpeed", entity.getRunMP() * 10.8);
         }
+        if (entity.isMek() || (entity.isProtoMek() && entity.getOriginalJumpMP() > 0)) {
+            model.put("jumpDesc", formatSystemFluff(EntityFluff.System.JUMPJET, entity.getFluff(),
+                    () -> Messages.getString("TROView.Unknown")));
+        }
         model.put("armorDesc",
                 formatSystemFluff(EntityFluff.System.ARMOR, entity.getFluff(), () -> formatArmorType(entity, false)));
         final Map<String, Integer> weaponCount = new HashMap<>();

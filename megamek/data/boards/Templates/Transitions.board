@@ -1,4 +1,5 @@
 size 16 17
+tag "Flat (Auto)"
 hex 0101 0 "ground_fluff:2:4" "tropical"
 hex 0201 0 "ground_fluff:2:4" "tropical"
 hex 0301 0 "ground_fluff:2:5" "tropical"

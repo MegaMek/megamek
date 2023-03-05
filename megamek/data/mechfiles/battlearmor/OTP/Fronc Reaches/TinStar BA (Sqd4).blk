@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -52,7 +52,7 @@ Leg
 </armor_type>
 
 <armor_tech>
--1
+1
 </armor_tech>
 
 <Squad Equipment>
@@ -60,6 +60,7 @@ BABasicManipulator:LA
 BABasicManipulator:RA
 ISBASupportPPC:LA
 BADavidLightGaussRifle:RA
+InfantryAssaultRifle:APM
 BA-Magnetic Clamp:Body
 SwarmMek
 SwarmWeaponMek
@@ -67,6 +68,18 @@ StopSwarm
 LegAttack
 BAAPMount:LA
 </Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
 
 <overview>
 Fronc Reaches
@@ -103,3 +116,4 @@ biped
 <weightclass>
 2
 </weightclass>
+

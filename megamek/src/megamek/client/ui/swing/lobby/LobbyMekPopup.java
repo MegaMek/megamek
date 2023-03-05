@@ -90,6 +90,7 @@ class LobbyMekPopup {
     static final String LMP_FCREATESUB = "FCREATESUB";
     static final String LMP_FCREATETOP = "FCREATETOP";
     static final String LMP_FCREATEFROM = "FCREATEFROM";
+    static final String LMP_SBFFORMATION = "SBFFORMATION";
     static final String LMP_DELETE = "DELETE";
     static final String LMP_UNLOADALL = "UNLOADALL";
     static final String LMP_UNLOAD = "UNLOAD";
@@ -223,6 +224,7 @@ class LobbyMekPopup {
             popup.add(exportEntitySpriteMenu(clientGui.getFrame(), entities.get(0)));
         }
 
+        popup.add(menuItem("Convert to SBF Formation", LMP_SBFFORMATION + "|" + foToken(forces) + eIds, lobby.isForceView(), listener));
         popup.add(ScalingPopup.spacer());
         popup.add(menuItem("Delete", LMP_DELETE + "|" + foToken(forces) + seIds, !entities.isEmpty() && forces.isEmpty(), listener, KeyEvent.VK_D));
 
@@ -793,7 +795,7 @@ class LobbyMekPopup {
         }
     }
 
-    /** 
+    /**
      * Returns a command string token containing the IDs of the given entities and a leading |
      * E.g. |2,14,44,22
      */

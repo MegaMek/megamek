@@ -1154,6 +1154,35 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return compositeTechLevel.getStaticTechLevel();
     }
 
+    public String getTechBaseDescription() {
+        String techBase = "";
+        if (isMixedTech()) {
+            if (isClan()) {
+                techBase += Messages.getString("Entity.MixedClan");
+            } else {
+                techBase += Messages.getString("Entity.MixedIS");
+            }
+        } else {
+            if (isClan()) {
+                techBase += Messages.getString("Entity.Clan");
+            } else {
+                techBase += Messages.getString("Entity.IS");
+            }
+        }
+
+        return techBase;
+    }
+
+    public static List<String> getTechBaseDescriptions(){
+        List<String> result = new ArrayList<>();
+        result.add(Messages.getString("Entity.IS"));
+        result.add(Messages.getString("Entity.Clan"));
+        result.add(Messages.getString("Entity.MixedIS"));
+        result.add(Messages.getString("Entity.MixedClan"));
+
+        return result;
+    }
+
     @Override
     public int getBaseAvailability(int era) {
         return compositeTechLevel.getBaseAvailability(era);
@@ -7558,10 +7587,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         PilotingRollData roll = getBasePilotingRoll(moveType);
         int bgMod = curHex.getBogDownModifier(getMovementMode(),
                 this instanceof LargeSupportTank);
-        
-        final boolean groundingVTOL = isAirborneVTOLorWIGE() && (step.getElevation() == 0);
-        boolean floorLevelGroundUnit = step.getElevation() == curHex.floor();
-        
+
         // we check for bog down on entering a new hex or changing altitude
         // but not if we're jumping, above the "ground" (meaning the bottom of the lake), 
         // not susceptible to bog down as per getBogDownModifier,
@@ -7569,7 +7595,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if ((!lastPos.equals(curPos) || (step.getElevation() != lastElev))
                 && (bgMod != TargetRoll.AUTOMATIC_SUCCESS)
                 && (moveType != EntityMovementType.MOVE_JUMP)
-                && (floorLevelGroundUnit || groundingVTOL) && !isPavementStep) {
+                && (step.getElevation() == -curHex.depth()) && !isPavementStep) {
             
             roll.append(new PilotingRollData(getId(), bgMod, "avoid bogging down"));
             

@@ -18,6 +18,8 @@
  */
 package megamek.common.alphaStrike;
 
+import megamek.common.strategicBattleSystems.BattleForceSUAFormatter;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
@@ -69,7 +71,7 @@ public interface ASSpecialAbilityCollector {
      *
      * @return A formatted Special Unit Ability string
      */
-    default String getSpecialsDisplayString(ASCardDisplayable element) {
+    default String getSpecialsDisplayString(BattleForceSUAFormatter element) {
         return getSpecialsDisplayString(", ", element);
     }
 
@@ -79,7 +81,7 @@ public interface ASSpecialAbilityCollector {
      *
      * @return A formatted Special Unit Ability string
      */
-    String getSpecialsDisplayString(String delimiter, ASCardDisplayable element);
+    String getSpecialsDisplayString(String delimiter, BattleForceSUAFormatter element);
 
     /** @return The IF ability value of this collection or {@link ASDamage#ZERO}, if there is no IF. */
     default ASDamage getIF() {
@@ -158,6 +160,11 @@ public interface ASSpecialAbilityCollector {
         return hasSUA(SUBS) ? (Integer) getSUA(SUBS) : 0;
     }
 
+    /** @return The FUEL ability value of this element or 0 if it doesn't have FUEL. */
+    default int getFUEL() {
+        return hasSUA(FUEL) ? (Integer) getSUA(FUEL) : 0;
+    }
+
     /** @return The standard damage of this element or turret or the STD damage of this arc. */
     default ASDamageVector getStdDamage() {
         return hasSUA(STD) ? (ASDamageVector) getSUA(STD) : ASDamageVector.ZEROSPECIAL;
@@ -176,6 +183,39 @@ public interface ASSpecialAbilityCollector {
     /** @return The capital missile weapon (MSL) damage of this arc. */
     default ASDamageVector getMSL() {
         return hasSUA(MSL) ? (ASDamageVector) getSUA(MSL) : ASDamageVector.ZEROSPECIAL;
+    }
+
+    /** @return The CT transport ability value of this element or 0 if it doesn't have CT. */
+    default double getCT() {
+        if (hasSUA(CT)) {
+            Object ctValue = getSUA(CT);
+            if (ctValue instanceof Integer) {
+                return (Integer) ctValue;
+            } else {
+                return (Double) ctValue;
+            }
+        } else {
+            return 0;
+        }
+    }
+
+    /** @return The IT transport ability value of this element or 0 if it doesn't have IT. */
+    default double getIT() {
+        if (hasSUA(IT)) {
+            Object itValue = getSUA(IT);
+            if (itValue instanceof Integer) {
+                return (Integer) itValue;
+            } else {
+                return (Double) itValue;
+            }
+        } else {
+            return 0;
+        }
+    }
+
+    /** @return The CAR ability value of this element or 0 if it doesn't have CAR. */
+    default int getCAR() {
+        return hasSUA(CAR) ? (Integer) getSUA(CAR) : 0;
     }
 
 }

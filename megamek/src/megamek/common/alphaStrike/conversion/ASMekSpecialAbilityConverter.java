@@ -104,6 +104,10 @@ public class ASMekSpecialAbilityConverter extends ASSpecialAbilityConverter {
         if (element.isBattleMek()) {
             assign("BattleMek", SOA);
         }
+
+        if (entity.getWeight() > 100) {
+            assign("Superheavy Mek", LG);
+        }
     }
 
     @Override

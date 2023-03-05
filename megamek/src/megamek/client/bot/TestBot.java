@@ -1480,9 +1480,9 @@ public class TestBot extends BotClient {
                         super.sendModeChange(en.getId(),
                                              en.getEquipmentNum(a.weapon), spin_mode);
                     }
-                    Mounted cur_ammo = en
-                            .getEquipment(new_attack.getWeaponId()).getLinked();
+                    Mounted cur_ammo = en.getEquipment(new_attack.getWeaponId()).getLinked();
                     new_attack.setAmmoId(en.getEquipmentNum(cur_ammo));
+                    new_attack.setAmmoMunitionType(((AmmoType) cur_ammo.getType()).getMunitionType());
                     Compute.getAmmoAdjDamage(game, new_attack);
 
                 }

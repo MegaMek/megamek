@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022-2023 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -24,6 +24,7 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.cardDrawer.ASCardPrinter;
 import megamek.common.annotations.Nullable;
 import org.apache.logging.log4j.LogManager;
 
@@ -34,6 +35,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.net.URL;
+import java.util.List;
 
 /**
  * This is a JPanel that displays an AlphaStrike unit card and elements to configure the display of
@@ -45,6 +47,7 @@ public class ConfigurableASCardPanel extends JPanel {
     private final JComboBox<String> fontChooser = new JComboBox<>();
     private final JComboBox<Float> sizeChooser = new JComboBox<>();
     private final JButton copyButton = new JButton("Copy to Clipboard");
+    private final JButton printButton = new JButton("Print");
     private final JButton mulButton = new JButton("MUL");
     private final JButton conversionButton = new JButton("Conversion Report");
     private final ASCardPanel cardPanel = new ASCardPanel();
@@ -79,6 +82,7 @@ public class ConfigurableASCardPanel extends JPanel {
         sizeChooser.setRenderer((list, value, index, isSelected, cellHasFocus) -> new JLabel(Float.toString(value)));
 
         copyButton.addActionListener(ev -> copyCardToClipboard());
+        printButton.addActionListener(ev -> printCard());
 
         mulButton.addActionListener(ev -> showMUL());
         mulButton.setToolTipText("Show the Master Unit List entry for this unit. Opens a browser window.");
@@ -95,6 +99,8 @@ public class ConfigurableASCardPanel extends JPanel {
         chooserLine.add(sizeChooser);
         chooserLine.add(Box.createHorizontalStrut(15));
         chooserLine.add(copyButton);
+        chooserLine.add(Box.createHorizontalStrut(15));
+        chooserLine.add(printButton);
         chooserLine.add(Box.createHorizontalStrut(15));
         chooserLine.add(mulButton);
         chooserLine.add(Box.createHorizontalStrut(15));
@@ -164,6 +170,10 @@ public class ConfigurableASCardPanel extends JPanel {
             dialog.setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
             dialog.setVisible(true);
         }
+    }
+
+    private void printCard() {
+        new ASCardPrinter(List.of(element), parent).printCards();
     }
 
     // Taken from https://alvinalexander.com/java/java-copy-image-to-clipboard-example/

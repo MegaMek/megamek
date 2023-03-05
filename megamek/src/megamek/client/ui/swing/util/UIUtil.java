@@ -25,7 +25,6 @@ import megamek.common.util.ImageUtil;
 
 import javax.swing.*;
 import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
@@ -58,6 +57,7 @@ public final class UIUtil {
     public final static String QUIRKS_SIGN = " \u24E0 ";
     public static final String DOT_SPACER = " \u2B1D ";
     public static final String BOT_MARKER = " \u259A ";
+
 
     public static String repeat(String str, int count) {
         return String.valueOf(str).repeat(Math.max(0, count));
@@ -248,7 +248,7 @@ public final class UIUtil {
     }
     
     /** 
-     * Returns a light red color suitable as a text color. The supplied
+     * Returns a yellow color suitable as a text color. The supplied
      * color depends on the UI look and feel and will be lighter for a 
      * dark UI LAF than for a light UI LAF.
      */
@@ -374,7 +374,7 @@ public final class UIUtil {
         return "<HTML>" + UIUtil.guiScaledFontHTML() + Messages.getString(str) + "</FONT></HTML>";
     }
     
-    /** Call this for  {@link #adjustDialog(Container)} with a dialog as parameter. */
+    /** Call this for {@link #adjustContainer(Container, int)} with a dialog as parameter. */
     public static void adjustDialog(JDialog dialog, int fontSize) {
         adjustContainer(dialog.getContentPane(), fontSize);
     }
@@ -415,8 +415,8 @@ public final class UIUtil {
         for (Component comp: parentCon.getComponents()) {
             if ((comp instanceof JButton) || (comp instanceof JLabel)
                     || (comp instanceof JComboBox<?>) || (comp instanceof JTextField) || (comp instanceof JSlider)
-                    || (comp instanceof JSpinner) || (comp instanceof JTextArea) || (comp instanceof JTextPane)
-                    || (comp instanceof JToggleButton) || (comp instanceof JTable) || (comp instanceof JList)
+                    || (comp instanceof JSpinner) || (comp instanceof JTextArea) || (comp instanceof JToggleButton)
+                    || (comp instanceof JTable) || (comp instanceof JList) || (comp instanceof JProgressBar)
                     || (comp instanceof JEditorPane) || (comp instanceof JTree)) {
                 if ((comp.getFont() != null) && (sf != comp.getFont().getSize())) {
                     comp.setFont(comp.getFont().deriveFont((float) sf));
@@ -449,7 +449,7 @@ public final class UIUtil {
                 JTable table = (JTable) comp;
                 table.setRowHeight(calRowHeights(table, sf, pad));
                 JTableHeader header = table.getTableHeader();
-                if ((header instanceof JTableHeader)) {
+                if ((header != null)) {
                     header.setFont(comp.getFont().deriveFont((float) sf));
                 }
                 adjustContainer((Container) comp, fontSize);
@@ -481,7 +481,7 @@ public final class UIUtil {
 
     /**
      *
-     * @param currentMonitor
+     * @param currentMonitor The DisplayMode of the current monitor
      * @return the width of the screen taking into account display scaling
      */
     public static int getScaledScreenWidth(DisplayMode currentMonitor) {
@@ -492,7 +492,7 @@ public final class UIUtil {
 
     /**
      *
-     * @param currentMonitor
+     * @param currentMonitor The DisplayMode of the current monitor
      * @return The height of the screen taking into account display scaling
      */
     public static int getScaledScreenHeight(DisplayMode currentMonitor) {
@@ -511,7 +511,7 @@ public final class UIUtil {
 
     /**
      *
-     * @param currentMonitor
+     * @param currentMonitor The DisplayMode of the current monitor
      * @return The height of the screen taking into account display scaling
      */
     public static Dimension getScaledScreenSize(DisplayMode currentMonitor) {
@@ -597,7 +597,7 @@ public final class UIUtil {
     /**
      *
      * @param imgSplash an image
-     * @param observer
+     * @param observer An imageObserver
      * @param scaledMonitorSize the dimensions of the monitor taking into account display scaling
      * @return a JLabel setup to the correct size to act as a splash screen
      */
@@ -1254,11 +1254,14 @@ public final class UIUtil {
     }
 
     /*
-    * Calculates center of view port for a given point
+     * Calculates center of view port for a given point
      */
     public static int calculateCenter(int vh, int h, int th, int y) {
         y = Math.max(0, y - ((vh - th)/2));
         y = Math.min(y, h - vh);
         return y;
     }
+
+
+    private UIUtil() { }
 }

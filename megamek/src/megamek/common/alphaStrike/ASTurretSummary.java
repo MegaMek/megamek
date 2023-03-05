@@ -18,10 +18,10 @@
  */
 package megamek.common.alphaStrike;
 
+import megamek.common.strategicBattleSystems.BattleForceSUAFormatter;
+
 import java.io.Serializable;
 import java.util.stream.Collectors;
-
-import static megamek.common.alphaStrike.BattleForceSUA.STD;
 
 /**
  * This class holds the AlphaStrike information for a turret (TUR) special ability.
@@ -33,20 +33,20 @@ import static megamek.common.alphaStrike.BattleForceSUA.STD;
 public class ASTurretSummary extends ASSpecialAbilityCollection implements Serializable {
 
     @Override
-    public String getSpecialsDisplayString(String delimiter, ASCardDisplayable element) {
-        String result = getStdDamage().hasDamage() ? getStdDamage() + "" : "";
+    public String getSpecialsDisplayString(String delimiter, BattleForceSUAFormatter element) {
+        String stdDamage = getStdDamage().hasDamage() ? getStdDamage() + "" : "";
         String furtherSUAs = specialAbilities.keySet().stream()
-                .filter(sua -> !AlphaStrikeHelper.hideSpecial(sua, element))
-                .filter(sua -> sua != STD)
-                .map(sua -> AlphaStrikeHelper.formatAbility(sua, this, element, delimiter))
+                .filter(element::showSUA)
+                .filter(sua -> sua != BattleForceSUA.STD)
+                .map(sua -> element.formatSUA(sua, delimiter, this))
                 .sorted(String.CASE_INSENSITIVE_ORDER)
                 .collect(Collectors.joining(delimiter));
-        if (result.isBlank()) {
+        if (stdDamage.isBlank()) {
             return furtherSUAs;
         } else if (furtherSUAs.isBlank()) {
-            return result;
+            return stdDamage;
         } else {
-            return result + delimiter + furtherSUAs;
+            return stdDamage + delimiter + furtherSUAs;
         }
     }
 }

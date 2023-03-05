@@ -1,115 +1,115 @@
-Version:1.1
+Version:1.3
 Shogun
 SHG-2H
 mul id:2934
-
 Config:Biped
-TechBase:Inner Sphere
-Era:2777
-Rules Level:2
+techbase:Inner Sphere
+era:2777
+rules level:2
+Source:Hist:Op. Klondike - Succession Wars
 
-Mass:85
-Engine:255 Fusion Engine
-Structure:Standard
-Myomer:Standard
+mass:85
+engine:255 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:13 Double
-Walk MP:3
-Jump MP:3
+heat sinks:13 IS Double
+walk mp:3
+jump mp:3
 
-Armor:Ferro-Fibrous
-LA Armor:27
-RA Armor:27
-LT Armor:28
-RT Armor:28
-CT Armor:41
-HD Armor:9
-LL Armor:36
-RL Armor:36
-RTL Armor:8
-RTR Armor:8
-RTC Armor:11
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:27
+RA armor:27
+LT armor:28
+RT armor:28
+CT armor:41
+HD armor:9
+LL armor:36
+RL armor:36
+RTL armor:8
+RTR armor:8
+RTC armor:11
 
 Weapons:9
-1 ISERPPC, Right Torso
-1 ISMediumPulseLaser, Head
-1 ISMediumLaser, Center Torso
-1 ISStreakSRM2, Left Torso, Ammo:50
-1 ISStreakSRM2, Left Torso
-1 ISStreakSRM2, Right Torso
-1 ISStreakSRM2, Right Torso
-1 ISLRM15, Right Arm, Ammo:24
-1 ISLRM15, Left Arm
+LRM 15, Left Arm
+LRM 15, Right Arm
+Streak SRM 2, Left Torso
+Streak SRM 2, Left Torso
+ER PPC, Right Torso
+Streak SRM 2, Right Torso
+Streak SRM 2, Right Torso
+Medium Laser, Center Torso
+Medium Pulse Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISLRM15
-ISLRM15
-ISLRM15
+LRM 15
+LRM 15
+LRM 15
 ISArtemisIV
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISLRM15
-ISLRM15
-ISLRM15
+LRM 15
+LRM 15
+LRM 15
 ISArtemisIV
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Left Torso:
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISStreakSRM2
 ISStreakSRM2
-ISLRM15 Ammo Artemis-capable
-ISLRM15 Ammo Artemis-capable
+IS Ammo LRM-15 Artemis-capable
+IS Ammo LRM-15 Artemis-capable
 ISCASE
-Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Torso:
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISERPPC
 ISERPPC
 ISERPPC
 ISStreakSRM2
 ISStreakSRM2
-ISStreakSRM2 Ammo
-ISLRM15 Ammo Artemis-capable
+IS Streak SRM 2 Ammo
+IS Ammo LRM-15 Artemis-capable
 ISCASE
-Ferro-Fibrous
+IS Ferro-Fibrous
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Jump Jet
-ISMediumLaser
+Medium Laser
 
 Head:
 Life Support
@@ -118,6 +118,12 @@ Cockpit
 ISMediumPulseLaser
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
@@ -125,7 +131,13 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Jump Jet
-Ferro-Fibrous
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
@@ -133,4 +145,28 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Jump Jet
-Ferro-Fibrous
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The initial specifications for the 'Mech were for a "highly survivable multi-role assault BattleMech." When the Shogun project started the design phase in 2771, those needs had altered little, save to compensate for fundamental flaws in the Stalker's design.
+
+capabilities:Though the Shogun isn't any faster than its predecessor, the inclusion of jump jets allows it to be much more maneuverable. The Shogun's CASE and ferro fiber armor also make it significantly more survivable than the Stalker.
+
+deployment:The original 2777 Shogun model is similar to the 3050's era SHG-2F, adding Artemis IV fire control systems to the LRM racks. The SRM-6 racks are replaced with four Defiance Streak SRM-2 launchers, which share a single ton of ammunition. A head-mounted Blankenburg Medium Pulse Laser and a Magna Mk II medium laser in the center torso rounds out the weapons. Armorscale ferro-fibrous armor and CASE protect the 'Mech. 
+
+history:The Shogun's history was cloaked in myth and legend, at least until the Clan and Inner Sphere records could be compared. The SLDF issued the original requirements for the Shogun in the late 26th century, although the 'Mech itself did not reach construction for another two centuries. The success and widespread distribution of the Stalker—which served the role of the Shogun, if imperfectly—along with the outbreak of the Reunification War, and then the tranquility of the Star League's Golden Age, saw the original design criteria scrapped. After General Kerensky's conflict, the SLDF needed a new attack BattleMech to replenish its ranks. The Shogun had a good chance of succeeding the Stalker, but Kerensky's Exodus and the First Succession War interfered. Mitchell Vehicles, who won the design when the SLDF regained Graham IV, completed only eight manufacturing runs prior to the Exodus, and only a few more before their plants were destroyed in the First Succession War. That left the Shogun to slip into obscurity—at least until the Wolf's Dragoons returned a few to the Inner Sphere before the Exodus, and only a few more runs before their factories were destroyed in the First Succession War. As a result, the Shogun died quickly—at least until the Wolf's Dragoons returned a few to the Inner Sphere.
+
+manufacturer:Mitchell Vehicles
+primaryfactory:Graham IV
+systemmanufacturer:CHASSIS:Kitushi Shogun
+systemmanufacturer:ENGINE:Strand 255
+systemmanufacturer:ARMOR:Armorscale Ferro Fibrous with CASE
+systemmanufacturer:JUMPJET:Anderson Propulsion 21
+systemmanufacturer:COMMUNICATIONS:HartfordCo COM 4000
+systemmanufacturer:TARGETING:HartfordCo XKZ 1
+

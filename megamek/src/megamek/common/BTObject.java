@@ -39,9 +39,8 @@ public interface BTObject {
     /**
      * Returns true when this object is an aerospace unit (fighter, aerospace support vehicle or large craft)
      * or of type AS/CF/SC/DS/DA/WS/JS/SS for Alpha Strike. An aerospace unit is not {@link #isGround()}.
-     * Returns false for any type of unit group even if it is of the right type.
      *
-     * @return True when this is an aerospace unit (including aerospace support vehicles)
+     * @return True when this is an aerospace unit (including aerospace support vehicles) or aerospace group (SBF)
      */
     default boolean isAerospace() {
         return isFighter() || isLargeAerospace();
@@ -80,12 +79,11 @@ public interface BTObject {
     /**
      * Returns true when this object is a ground unit (all types of Mek, Infantry and Vehicle except aerospace
      * support vehicles such as Fixed-Wing Support). A unit is a ground unit if it is not {@link #isAerospace()}.
-     * Returns false for any type of unit group even if it is of the right type.
      *
-     * @return True when this is a ground unit
+     * @return True when this is a ground unit or ground group (SBF)
      */
     default boolean isGround() {
-        return !isAerospace() && isSingleUnit();
+        return !isAerospace();
     }
 
     /**
@@ -207,6 +205,7 @@ public interface BTObject {
     /**
      * Returns true when this object uses or can use aerospace movement. This includes all aerospace units as
      * well as LAMs (in fighter mode when in a TW game).
+     * Returns false for any type of unit group even if it is of the right type.
      *
      * @return True when this may use aerospace movement (aerospace and LAM units)
      */

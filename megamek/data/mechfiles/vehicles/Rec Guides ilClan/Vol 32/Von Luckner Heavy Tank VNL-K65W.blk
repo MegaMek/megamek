@@ -1,0 +1,144 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Von Luckner Heavy Tank
+</Name>
+
+<Model>
+VNL-K65W
+</Model>
+
+<year>
+3063
+</year>
+
+<originalBuildYear>
+3063
+</originalBuildYear>
+
+<mul id:>
+9482
+</mul id:>
+
+<source>
+Rec Guide:ilClan #32 - Jihad
+</source>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<engine_type>
+4
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+41
+40
+40
+31
+45
+</armor>
+
+<Body Equipment>
+ISCASE
+IS Ammo MML-5 LRM
+IS Ammo MML-5 SRM
+IS Ultra AC/20 Ammo
+IS Ultra AC/20 Ammo
+IS Ultra AC/20 Ammo
+IS Ultra AC/20 Ammo
+IS Streak SRM 4 Ammo
+IS Light Machine Gun Ammo - Half
+</Body Equipment>
+
+<Front Equipment>
+ISMML5
+ISMML5
+ISSmallPulseLaser
+ISArtemisIV
+ISArtemisIV
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+ISUltraAC20
+ISStreakSRM4
+ISStreakSRM4
+Light Machine Gun
+</Turret Equipment>
+
+<tonnage>
+75.0
+</tonnage>
+
+
+<capabilities>
+The Von Luckner's fusion power plant provides it with the same level of efficiency and mobility as a BattleMech of comparable weight, as well as the indefinite operating range that only fusion can deliver. The Von Luckner's primary armament is typically comprised of powerful autocannons supported by missile racks, as well as a variety of light close-in weaponry deployed to protect against infantry and battlearmor. Finally, its rather thick armor hide helps it to stay in a combat for an extended period of time.
+</capabilities>
+
+<overview>
+This heavily armored and armed vehicle was intended as a BattleMech without legs, fueled by a fusion reactor and equipped with enough firepower to threaten 'Mechs up to its own weight.
+</overview>
+
+<deployment>
+On Bryant, the Word of Blake surreptitiously began manufacturing the -K65W. With advanced Blakist technologies, packing a massive Ultra AC/20 and Streak SRM's and MML's this variation closely resembled the Star League's "Royal" design.
+</deployment>
+
+<history>
+After the Reunification War, HartfordCo Industries of Bryant produced the VNLK65N Von Luckner Heavy Tank. Count Felix von Luckner, a prominent twentieth-century Terran raider, inspired the name. The Von Luckner's power and resiliency make it a perfect choice for beefing up crucial defensive positions from the Terran Hegemony homeworlds to the far reaches of the Star League's newly gained Periphery territories. Though the Von Luckner became a mainstay of Terran and Star League defensive forces during the Star League's existence, the loss of the HartfordCo factories on Bryant in 2840—due to worsening global storms caused by the destruction of Bryant's Storm Inhibitors—instantly placed the vehicle on the endangered list. During the Amaris Coup and the First Succession War, several advanced Star League vehicles met this end. With many more cannibalized for BattleMech spare parts—an ironic twist on the vehicle's design standards—only a few Von Luckners remained in service as of 3030. Formerly common throughout the Inner Sphere, only Houses Davion, Steiner, Marik, and Kurita still deployed Von Luckners in significant numbers by 3039.
+</history>
+
+<manufacturer>
+HartfordCo
+</manufacturer>
+
+<primaryFactory>
+Bryant
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:VOX 225 Light
+ARMOR:StarSlab/4
+COMMUNICATIONS:O/P 300
+TARGETING:O/P GRNDSTAT 50A
+</systemManufacturers>

@@ -13,12 +13,16 @@ BattleArmor
 </UnitType>
 
 <Name>
-Callisto Battle Armor B
+Callisto Battle Armor
 </Name>
 
 <Model>
-[SRM](Sqd6)
+B [SRM](Sqd4)
 </Model>
+
+<mul id:>
+9449
+</mul id:>
 
 <year>
 3147
@@ -27,14 +31,6 @@ Callisto Battle Armor B
 <originalBuildYear>
 3147
 </originalBuildYear>
-
-<mul id:>
-9451
-</mul id:>
-
-<source>
-Rec Guide:ilClan #31 - Dark Age
-</source>
 
 <type>
 Clan Level 2
@@ -66,7 +62,7 @@ StopSwarm
 LegAttack
 CLBAERSmallLaser:RA
 CLBASRM4:SSWM:Body
-BA-SRM4 Ammo:Body:Shots4#
+BA-SRM4 Ammo:SSWM:Body:Shots4#
 BABattleClaw:LA
 </Point Equipment>
 
@@ -82,11 +78,9 @@ BABattleClaw:LA
 <Trooper 4 Equipment>
 </Trooper 4 Equipment>
 
-<Trooper 5 Equipment>
-</Trooper 5 Equipment>
-
-<Trooper 6 Equipment>
-</Trooper 6 Equipment>
+<source>
+Rec Guide:ilClan #31 - Dark Age
+</source>
 
 <chassis>
 biped
@@ -101,7 +95,7 @@ biped
 </armor>
 
 <Trooper Count>
-6
+4
 </Trooper Count>
 
 <weightclass>

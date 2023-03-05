@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -24,77 +24,80 @@ Kopis Assault Battle Armor
 6744
 </mul id:>
 
-<chassis>
-biped
-</chassis>
+<year>
+3117
+</year>
 
-<weightclass>
-4
-</weightclass>
-
-<Trooper Count>
-4
-</Trooper Count>
-
-<cruiseMP>
-1
-</cruiseMP>
-
-<Armor>
-10
-</Armor>
-
-<armor_type>
-2
-</armor_type>
-
-<Squad Equipment>
-BAHeavyBattleClaw:LA
-BAHeavyBattleClaw:RA
-ISBAHeavyGrenadeLauncher:LA
-ISBAHeavyGrenadeLauncher:RA
-ISBAMediumRecoillessRifle:Body
-ISBAMediumRecoillessRifle:Body
-IS BA Improved Sensors:Body
-</Squad Equipment>
+<originalBuildYear>
+3117
+</originalBuildYear>
 
 <type>
 IS Level 2
 </type>
 
-<year>
-3117
-</year>
-
 <motion_type>
 Leg
 </motion_type>
 
-<source>
-RS3145 NTNU - Dark Age
-</source>
+<transporters>
+</transporters>
+
+<cruiseMP>
+1
+</cruiseMP>
 
 <armor_type>
 38
 </armor_type>
+
 <armor_tech>
-3
+5
 </armor_tech>
 
-<overview>
-The Kopis battle armor was designed by StarCorps Industries as an assault unit. 
-</overview>
+<Squad Equipment>
+BAHeavyBattleClaw:LA
+BAHeavyBattleClaw:RA
+CLBAHeavyGrenadeLauncher:LA
+CLBAHeavyGrenadeLauncher:RA
+CLBAMedium Recoilless Rifle:Body
+CLBAMedium Recoilless Rifle:Body
+ISImprovedSensors:Body
+IS BA Reactive (Blazer):LA
+IS BA Reactive (Blazer):Body
+IS BA Reactive (Blazer):LA
+IS BA Reactive (Blazer):LA
+IS BA Reactive (Blazer):RA
+IS BA Reactive (Blazer):RA
+IS BA Reactive (Blazer):RA
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
 
 <capabilities>
 Slow but heavily armed, the Kopis can remain on the battlefield supporting friendly units for a long time. The advanced armor used by the Kopis designers allows it to stand up to most weaponry, shrugging off anything short of a PPC or AC/10 hit. The low top speed is mitigated through the use of VTOL transportation for offensive operations, while smart commanders use the Kopis as a defense unit for cities or other tight terrain. In those restricted environments the low top speed isn't a factor.
 </capabilities>
+
+<overview>
+The Kopis battle armor was designed by StarCorps Industries as an assault unit.
+</overview>
 
 <deployment>
 Introduced in 3117 this refit of the AI Mk II suit uses the same basic configuration, but downgrades the Heavy Recoilless Rifles to Medium Recoilless Rifles. The space and weight that this frees allows the suit to carry Reactive Armor.
 </deployment>
 
 <history>
- The standard model was given the nickname of "The Dark Alley".
+The standard model was given the nickname of "The Dark Alley".
 </history>
 
 <manufacturer>
@@ -102,7 +105,7 @@ Grumium Creations
 </manufacturer>
 
 <primaryFactory>
-Grumium	
+Grumium
 </primaryFactory>
 
 <systemManufacturers>
@@ -113,3 +116,28 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<source>
+RS3145 NTNU - Dark Age
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+10
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+4
+</weightclass>
+

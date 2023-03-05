@@ -736,14 +736,14 @@ Blitzkrieg BTZ-4F:SKIRMISHER
 Blizzard Hover Transport (SRM):SCOUT
 Blizzard Hover Transport (Standard):SCOUT
 Blizzard Hover Transport 'Black Blizzard':STRIKER
-Blood Asp (Star Adder) A:BRAWLER
-Blood Asp (Star Adder) B:MISSILE_BOAT
-Blood Asp (Star Adder) C:BRAWLER
-Blood Asp (Star Adder) D:BRAWLER
-Blood Asp (Star Adder) E:SKIRMISHER
-Blood Asp (Star Adder) F:BRAWLER
-Blood Asp (Star Adder) G:BRAWLER
-Blood Asp (Star Adder) Prime:BRAWLER
+Blood Asp A:BRAWLER
+Blood Asp B:MISSILE_BOAT
+Blood Asp C:BRAWLER
+Blood Asp D:BRAWLER
+Blood Asp E:SKIRMISHER
+Blood Asp F:BRAWLER
+Blood Asp G:BRAWLER
+Blood Asp Prime:BRAWLER
 Blood Kite (Standard):SNIPER
 Blood Kite 2:SNIPER
 Blood Reaper (Standard):SKIRMISHER

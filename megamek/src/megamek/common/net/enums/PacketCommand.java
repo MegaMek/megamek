@@ -120,8 +120,7 @@ public enum PacketCommand {
     CFR_HIDDEN_PBS,
     CFR_TELEGUIDED_TARGET,
     CFR_TAG_TARGET,
-    GAME_VICTORY_EVENT,
-    MULTI_PACKET;
+    GAME_VICTORY_EVENT;
     //endregion Enum Declarations
 
     //region Boolean Comparison Methods

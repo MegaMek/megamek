@@ -93,6 +93,7 @@ public class TwGameClient extends Client {
         }
     }
 
+    @Override
     public IGame getIGame() {
         return game;
     }

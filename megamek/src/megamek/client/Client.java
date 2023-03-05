@@ -36,10 +36,7 @@ import megamek.common.preference.PreferenceManager;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * This class is instantiated for each client and for each bot running on that
@@ -71,6 +68,8 @@ public abstract class Client implements GameClient {
 
     /** The bots controlled by the local player; maps a bot's name String to a bot's client. */
     protected Map<String, Client> bots = new TreeMap<>(String::compareTo);
+
+    protected List<EventObject> eventQueue = new ArrayList<>();
 
     /**
      * Construct a client which will try to connect. If the connection fails, it
@@ -337,27 +336,17 @@ public abstract class Client implements GameClient {
         return clientCommands.keySet();
     }
 
+    /**
+     * This method is the starting point that handles all received Packets. This method should only
+     * be overriden in very special cases such as in Princess to call Precognition.
+     *
+     * @param packet The packet to handle
+     */
     protected void handlePacket(Packet packet) {
         if (packet == null) {
             LogManager.getLogger().error("Client: Received null packet!");
             return;
         }
-
-        if (packet.getCommand() == PacketCommand.MULTI_PACKET) {
-            int packetCount = packet.getIntValue(0);
-            for (int i = 0; i < packetCount; i++) {
-                if (packet.getObject(i + 1) instanceof Packet) {
-                    handleSinglePacket((Packet) packet.getObject(i + 1));
-                } else {
-                    LogManager.getLogger().error("Wrong object in MULTI_PACKET command!");
-                }
-            }
-        } else {
-            handleSinglePacket(packet);
-        }
-    }
-
-    private void handleSinglePacket(Packet packet) {
         try {
             boolean isHandled = handleGameIndependentPacket(packet);
             isHandled |= handleGameSpecificPacket(packet);
@@ -424,7 +413,7 @@ public abstract class Client implements GameClient {
                 break;
             case CHAT:
                 possiblyWriteToLog((String) packet.getObject(0));
-                getIGame().fireGameEvent(new GamePlayerChatEvent(this, null, (String) packet.getObject(0)));
+                eventQueue.add(new GamePlayerChatEvent(this, null, (String) packet.getObject(0)));
                 break;
             default:
                 return false;

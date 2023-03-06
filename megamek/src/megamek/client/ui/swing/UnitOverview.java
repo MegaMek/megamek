@@ -26,7 +26,9 @@ import megamek.common.util.fileUtils.MegaMekFile;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 public class UnitOverview implements IDisplayable {
     private static final int UNKNOWN_UNITS_PER_PAGE = -1;
@@ -137,6 +139,11 @@ public class UnitOverview implements IDisplayable {
                     + BUTTON_PADDING;
         }
 
+        Comparator<Entity> comp = Comparator.comparingInt(Entity::getForceId);
+        comp = comp.thenComparing(Entity::isCommander);
+        comp = comp.thenComparing(Entity::getWeight).reversed();
+        v.sort(comp);
+
         for (int i = scrollOffset; (i < v.size())
                 && (i < actUnitsPerPage + scrollOffset); i++) {
             Entity e = v.get(i);
@@ -145,7 +152,7 @@ public class UnitOverview implements IDisplayable {
             Image i1 = clientgui.getBoardView().getTilesetManager().iconFor(e);
 
             graph.drawImage(i1, x, y, null);
-            printLine(graph, x + 3, y + 46, name);
+            printLine(graph, x + 3, y + 46, name, e.isCommander());
             drawBars(graph, e, x, y);
             drawHeat(graph, e, x, y);
             drawConditionStrings(graph, e, x, y);
@@ -362,13 +369,14 @@ public class UnitOverview implements IDisplayable {
         return Color.black;
     }
 
-    private void printLine(Graphics g, int x, int y, String s) {
+    private void printLine(Graphics g, int x, int y, String s, boolean b) {
         g.setColor(Color.black);
         g.drawString(s, x + 1, y);
         g.drawString(s, x - 1, y);
         g.drawString(s, x, y + 1);
         g.drawString(s, x, y - 1);
-        g.setColor(Color.white);
+        Color c = b ? Color.yellow : Color.white;
+        g.setColor(c);
         g.drawString(s, x, y);
     }
 
@@ -464,7 +472,7 @@ public class UnitOverview implements IDisplayable {
             int roundsLeft = entity.getDeployRound()
                     - clientgui.getClient().getGame().getRoundCount();
             if (roundsLeft > 0) {
-                printLine(graph, x + 25, y + 28, Integer.toString(roundsLeft));
+                printLine(graph, x + 25, y + 28, Integer.toString(roundsLeft), entity.isCommander());
             }
         }
     }

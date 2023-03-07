@@ -18,9 +18,15 @@ import megamek.client.ratgenerator.ForceDescriptor;
 import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.Ruleset;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
+import megamek.client.ui.swing.lobby.LobbyUtility;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
+import megamek.common.MechSummary;
+import megamek.common.MechSummaryCache;
 import megamek.common.UnitType;
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.SkillLevel;
 import org.apache.logging.log4j.LogManager;
@@ -35,10 +41,8 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -48,7 +52,7 @@ import java.util.stream.Collectors;
  * 
  * @author Neoancient
  */
-public class ForceGeneratorViewUi {
+public class ForceGeneratorViewUi implements ActionListener {
 
     private JPanel leftPanel;
     private JPanel rightPanel;
@@ -63,7 +67,12 @@ public class ForceGeneratorViewUi {
     private JTable tblChosen;
     private ChosenEntityModel modelChosen;
 
+    static final String FGV_BV = "FGV_BV";
+    static final String FGV_COST = "FGV_COST";
+    static final String FGV_VIEW = "FGV_VIEW";
+
     ClientGUI clientGui;
+    protected static MechSummaryCache mscInstance = MechSummaryCache.getInstance();
 
     public ForceGeneratorViewUi(ClientGUI gui) {
         clientGui = gui;
@@ -363,12 +372,50 @@ public class ForceGeneratorViewUi {
                     JMenuItem item = new JMenuItem("Remove");
                     item.addActionListener(ev -> modelChosen.removeEntities(tblChosen.getSelectedRows()));
                     menu.add(item);
+
+                    List<Integer> entities = LobbyUtility.getSelectedEntities(tblChosen);
+                    // All command strings should follow the layout COMMAND|INFO|ID1,ID2,I3...
+                    // and use -1 when something is not needed (COMMAND|-1|-1)
+                    String eIds = LobbyUtility.enToken(entities);
+
+                    String msg_view = Messages.getString("RandomArmyDialog.View");
+                    String msg_viewbv = Messages.getString("RandomArmyDialog.ViewBV");
+                    String msg_viewcost = Messages.getString("RandomArmyDialog.ViewCost");
+
+                    menu.add(UIUtil.menuItem(msg_view, FGV_VIEW + eIds, true, ForceGeneratorViewUi.this, KeyEvent.VK_V));
+                    menu.add(UIUtil.menuItem(msg_viewbv, FGV_BV + eIds, true, ForceGeneratorViewUi.this, KeyEvent.VK_B));
+                    menu.add(UIUtil.menuItem(msg_viewcost, FGV_COST + eIds, true, ForceGeneratorViewUi.this, Integer.MIN_VALUE));
+
                     UIUtil.scaleMenu(menu);
                     menu.show(evt.getComponent(), evt.getX(), evt.getY());
                 }
             }
         }
     };
+
+    @Override
+    public void actionPerformed(ActionEvent ev) {
+        StringTokenizer st = new StringTokenizer(ev.getActionCommand(), "|");
+        String command = "";
+
+        if (st.hasMoreTokens()) {
+            command = st.nextToken();
+        }
+
+        if (command.equals(FGV_VIEW)) {
+            // The entities list may be empty
+            Set<Entity> entities = LobbyUtility.getEntities(st.nextToken(), modelChosen);
+            LobbyUtility.mechReadoutAction(entities, true, true, clientGui.getFrame());
+        } else if (command.equals(FGV_BV)) {
+            // The entities list may be empty
+            Set<Entity> entities = LobbyUtility.getEntities(st.nextToken(), modelChosen);
+            LobbyUtility.mechBVAction(entities, true, true, clientGui.getFrame());
+        } else if (command.equals(FGV_COST)) {
+            // The entities list may be empty
+            Set<Entity> entities = LobbyUtility.getEntities(st.nextToken(), modelChosen);
+            LobbyUtility.mechCostAction(entities, true, true, clientGui.getFrame());
+        }
+    }
 
     private KeyListener tableKeyListener = new KeyListener() {
         @Override
@@ -514,11 +561,13 @@ public class ForceGeneratorViewUi {
         }
     }
 
-    private static class ChosenEntityModel extends AbstractTableModel {
+    public static class ChosenEntityModel extends AbstractTableModel {
         public static final int COL_ENTITY = 0;
         public static final int COL_BV     = 1;
         public static final int COL_MOVE   = 2;
-        public static final int NUM_COLS   = 3;
+        private static final int COL_TECH_BASE = 3;
+        private static final int COL_UNIT_ROLE = 4;
+        public static final int NUM_COLS   = 5;
 
         private List<Entity> entities = new ArrayList<>();
         private Set<String> entityIds = new HashSet<>();
@@ -586,6 +635,12 @@ public class ForceGeneratorViewUi {
                     return en.calculateBattleValue();
                 case COL_MOVE:
                     return en.getWalkMP() + "/" + en.getRunMPasString() + "/" + en.getJumpMP();
+                case COL_TECH_BASE:
+                    return en.getTechBaseDescription();
+                case COL_UNIT_ROLE:
+                    FlexibleCalculationReport report = new FlexibleCalculationReport();
+                    AlphaStrikeElement element = ASConverter.convert(en, false, report);
+                    return element.getRole();
                 default:
                     return "";
             }
@@ -600,9 +655,20 @@ public class ForceGeneratorViewUi {
                     return Messages.getString("RandomArmyDialog.colMove");
                 case COL_BV:
                     return Messages.getString("RandomArmyDialog.colBV");
+                case COL_TECH_BASE:
+                    return Messages.getString("RandomArmyDialog.colTechBase");
+                case COL_UNIT_ROLE:
+                    return Messages.getString("RandomArmyDialog.colUnitRole");
                 default:
                     return "??";
             }
+        }
+
+        public MechSummary getUnitAt(int row) {
+            Entity e = entities.get(row);
+            MechSummary ms = mscInstance.getMech(e.getShortNameRaw());
+
+            return ms;
         }
     }
 

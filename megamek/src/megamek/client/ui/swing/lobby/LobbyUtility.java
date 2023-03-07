@@ -23,6 +23,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.BVDisplayDialog;
 import megamek.client.ui.dialogs.CostDisplayDialog;
 import megamek.client.ui.dialogs.EntityReadoutDialog;
+import megamek.client.ui.swing.ForceGeneratorViewUi;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.RandomArmyDialog;
 import megamek.client.ui.swing.util.UIUtil;
@@ -480,6 +481,8 @@ public class LobbyUtility {
                 ms = ((RandomArmyDialog.UnitTableModel) utm).getUnitAt(id);
             } else if (utm instanceof RandomArmyDialog.RATTableModel) {
                 ms = ((RandomArmyDialog.RATTableModel) utm).getUnitAt(id);
+            }  else if (utm instanceof ForceGeneratorViewUi.ChosenEntityModel) {
+                ms = ((ForceGeneratorViewUi.ChosenEntityModel) utm).getUnitAt(id);
             }
 
             if (ms != null) {

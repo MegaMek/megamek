@@ -315,7 +315,7 @@ public class ASAdvancedSearchPanel extends JPanel {
 
         Box buttonPanel = Box.createVerticalBox();
         buttonPanel.add(ur1Row);
-        buttonPanel.add(ur1Row);
+        buttonPanel.add(ur2Row);
         buttonPanel.add(ur3Row);
         buttonPanel.add(ur4Row);
 

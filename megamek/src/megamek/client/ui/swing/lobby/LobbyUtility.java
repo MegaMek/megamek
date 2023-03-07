@@ -34,6 +34,7 @@ import megamek.common.options.OptionsConstants;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
+import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.io.File;
 import java.util.*;
@@ -461,7 +462,7 @@ public class LobbyUtility {
      * Converts an id list of the form 1,2,4,12 to a set of corresponding entities.
      * Ignores entity ids that don't exist. The resulting list may be empty but not null.
      */
-    public static HashSet<Entity> getEntities(String idList, RandomArmyDialog.UnitTableModel utm) {
+    public static HashSet<Entity> getEntities(String idList, AbstractTableModel utm) {
         StringTokenizer st = new StringTokenizer(idList, ",");
         HashSet<Entity> result = new HashSet<>();
 
@@ -473,7 +474,13 @@ public class LobbyUtility {
             } catch (NumberFormatException e){
             }
 
-            MechSummary ms = utm.getUnitAt(id);
+            MechSummary ms = null;
+
+            if (utm instanceof RandomArmyDialog.UnitTableModel) {
+                ms = ((RandomArmyDialog.UnitTableModel) utm).getUnitAt(id);
+            } else if (utm instanceof RandomArmyDialog.RATTableModel) {
+                ms = ((RandomArmyDialog.RATTableModel) utm).getUnitAt(id);
+            }
 
             try {
                 Entity e = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();

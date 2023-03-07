@@ -482,13 +482,15 @@ public class LobbyUtility {
                 ms = ((RandomArmyDialog.RATTableModel) utm).getUnitAt(id);
             }
 
-            try {
-                Entity e = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
-                e.setId(id);
-                result.add(e);
-            } catch (EntityLoadingException ex) {
-                LogManager.getLogger().error(String.format("Unable to load Mek: %s: %s",
-                        ms.getSourceFile(), ms.getEntryName()), ex);
+            if (ms != null) {
+                try {
+                    Entity e = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
+                    e.setId(id);
+                    result.add(e);
+                } catch (EntityLoadingException ex) {
+                    LogManager.getLogger().error(String.format("Unable to load Mek: %s: %s",
+                            ms.getSourceFile(), ms.getEntryName()), ex);
+                }
             }
         }
 

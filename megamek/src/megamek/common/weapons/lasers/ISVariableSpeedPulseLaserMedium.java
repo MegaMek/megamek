@@ -69,9 +69,4 @@ public class ISVariableSpeedPulseLaserMedium extends VariableSpeedPulseLaserWeap
             return 0;
         }
     }
-
-    public int getAlphaStrikeHeat() {
-        return 6;
-    }
-
 }

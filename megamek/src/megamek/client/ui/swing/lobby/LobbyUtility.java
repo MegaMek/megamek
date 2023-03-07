@@ -25,7 +25,6 @@ import megamek.client.ui.dialogs.CostDisplayDialog;
 import megamek.client.ui.dialogs.EntityReadoutDialog;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.RandomArmyDialog;
-import megamek.client.ui.swing.util.ScalingPopup;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.force.Force;
@@ -36,8 +35,6 @@ import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.*;
 import java.util.List;
@@ -469,14 +466,19 @@ public class LobbyUtility {
         HashSet<Entity> result = new HashSet<>();
 
         while (st.hasMoreTokens()) {
-            int id = Integer.parseInt(st.nextToken());
+            int id = -1;
+
+            try {
+                id = Integer.parseInt(st.nextToken());
+            } catch (NumberFormatException e){
+            }
+
             MechSummary ms = utm.getUnitAt(id);
 
             try {
                 Entity e = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
                 e.setId(id);
                 result.add(e);
-
             } catch (EntityLoadingException ex) {
                 LogManager.getLogger().error(String.format("Unable to load Mek: %s: %s",
                         ms.getSourceFile(), ms.getEntryName()), ex);

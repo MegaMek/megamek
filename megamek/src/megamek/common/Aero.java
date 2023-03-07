@@ -3044,6 +3044,11 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     @Override
+    public boolean isAerospaceFighter() {
+        return true;
+    }
+
+    @Override
     public int availableBombLocation(int cost) {
         return LOC_NOSE;
     }

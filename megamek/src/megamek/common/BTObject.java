@@ -98,6 +98,38 @@ public interface BTObject {
     }
 
     /**
+     * Returns true when this object is an aerospace fighter (not conventional, nor
+     * Fixed-Wing Support) or of type AF for Alpha Strike.
+     * Returns false for any type of unit group even if it is of the right type.
+     *
+     * @return True when this is an aerospace fighter
+     */
+    default boolean isAerospaceFighter() {
+        return false;
+    }
+
+    /**
+     * Returns true when this object is a conventional fighter (not aerospace, nor
+     * Fixed-Wing Support) or of type CF for Alpha Strike.
+     * Returns false for any type of unit group even if it is of the right type.
+     *
+     * @return True when this is a conventional fighter including fixed-wing support
+     */
+    default boolean isConventionalFighter() {
+        return false;
+    }
+
+    /**
+     * Returns true when this object is a Fixed-Wing Support or of type SV(MV a) for Alpha Strike.
+     * Returns false for any type of unit group even if it is of the right type.
+     *
+     * @return True when this is a fixed-wing support unit
+     */
+    default boolean isFixedWingSupport() {
+        return false;
+    }
+
+    /**
      * Returns true when this object is a large aerospace unit (SmallCraft, DropShip, JumpShip, WarShip, Space
      * Station).
      * Returns false for any type of unit group even if it is of the right type.

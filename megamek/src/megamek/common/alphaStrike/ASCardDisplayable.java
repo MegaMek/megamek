@@ -149,7 +149,7 @@ public interface ASCardDisplayable extends BattleForceSUAFormatter, BTObject {
 
     /** @return True if this AS element is a fighter (AF, CF) or an Aero SV (Fixed Wing Support). */
     default boolean isFighter() {
-        return getASUnitType().isAnyOf(AF, CF) || isAerospaceSV();
+        return getASUnitType().isAnyOf(AF, CF) || isFixedWingSupport();
     }
 
     /** @return True if this AS element is a BattleMek or Industrial Mek (BM, IM). */
@@ -209,6 +209,21 @@ public interface ASCardDisplayable extends BattleForceSUAFormatter, BTObject {
     @Override
     default boolean isSupportVehicle() {
         return getASUnitType().isSupportVehicle();
+    }
+
+    @Override
+    default boolean isConventionalFighter() {
+        return getASUnitType().isAnyOf(CF);
+    }
+
+    @Override
+    default boolean isAerospaceFighter() {
+        return getASUnitType().isAnyOf(AF);
+    }
+
+    @Override
+    default boolean isFixedWingSupport() {
+        return isSupportVehicle() && hasMovementMode("a");
     }
 
     /** @return True if this AS element is a combat vehicle (CV, not support vehicle). */

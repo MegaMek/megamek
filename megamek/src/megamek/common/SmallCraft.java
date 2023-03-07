@@ -892,6 +892,11 @@ public class SmallCraft extends Aero {
         return false;
     }
 
+    @Override
+    public boolean isAerospaceFighter() {
+        return false;
+    }
+
     /**
      * Do not recalculate walkMP when adding engine.
      */

@@ -111,10 +111,6 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JTextField tEndHands = new JTextField(4);
     private JLabel lblArmor = new JLabel(Messages.getString("MechSelectorDialog.Search.Armor"));
     private JComboBox<String> cArmor = new JComboBox<>();
-    private JLabel lblOmni = new JLabel(Messages.getString("MechSelectorDialog.Search.Omni"));
-    private JComboBox<String> cOmni = new JComboBox<>();
-    private JLabel lblMilitary = new JLabel(Messages.getString("MechSelectorDialog.Search.Military"));
-    private JComboBox<String> cMilitary = new JComboBox<>();
     private JLabel lblOfficial = new JLabel(Messages.getString("MechSelectorDialog.Search.Official"));
     private JComboBox<String> cOfficial = new JComboBox<>();
     private JLabel lblCanon = new JLabel(Messages.getString("MechSelectorDialog.Search.Canon"));
@@ -333,6 +329,16 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JButton btnFilterLargeSupportTank= new JButton("\u2610");
     private JLabel lblFilterSuperHeavyTank = new JLabel(Messages.getString("MechSelectorDialog.Search.SuperHeavyTank"));
     private JButton btnFilterSuperHeavyTank = new JButton("\u2610");
+    private JLabel lblFilterOmni = new JLabel(Messages.getString("MechSelectorDialog.Search.Omni"));
+    private JButton btnFilterOmni = new JButton("\u2610");
+    private JLabel lblFilterMilitary = new JLabel(Messages.getString("MechSelectorDialog.Search.Military"));
+    private JButton btnFilterMilitary = new JButton("\u2610");
+    private JLabel lblFilterIndustrial = new JLabel(Messages.getString("MechSelectorDialog.Search.Industrial"));
+    private JButton btnFilterIndustrial = new JButton("\u2610");
+    private JLabel lblFilterNaval = new JLabel(Messages.getString("MechSelectorDialog.Search.Naval"));
+    private JButton btnFilterNaval = new JButton("\u2610");
+    private JLabel lblFilterSupportVehicle = new JLabel(Messages.getString("MechSelectorDialog.Search.SupportVehicle"));
+    private JButton btnFilterSupportVehicle = new JButton("\u2610");
 
 
     /** The game's current year. */
@@ -441,8 +447,6 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor75"));
         cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor90"));
 
-        loadYesNo(cOmni);
-        loadYesNo(cMilitary);
         loadYesNo(cOfficial);
         loadYesNo(cCanon);
         loadYesNo(cClanEngine);
@@ -489,10 +493,6 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         c.insets = new Insets(5, 10, 0, 0);
         c.gridx = 0; c.gridy++;
         JPanel p1Panel = new JPanel();
-        p1Panel.add(lblOmni);
-        p1Panel.add(cOmni);
-        p1Panel.add(lblMilitary);
-        p1Panel.add(cMilitary);
         basePanel.add(p1Panel, c);
         c.gridx = 1;
         JPanel p1bPanel = new JPanel();
@@ -976,6 +976,16 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         btnFilterLargeSupportTank.addActionListener(this);
         btnFilterSuperHeavyTank.setBorder(emptyBorder);
         btnFilterSuperHeavyTank.addActionListener(this);
+        btnFilterOmni.setBorder(emptyBorder);
+        btnFilterOmni.addActionListener(this);
+        btnFilterMilitary.setBorder(emptyBorder);
+        btnFilterMilitary.addActionListener(this);
+        btnFilterIndustrial.setBorder(emptyBorder);
+        btnFilterIndustrial.addActionListener(this);
+        btnFilterNaval.setBorder(emptyBorder);
+        btnFilterNaval.addActionListener(this);
+        btnFilterSupportVehicle.setBorder(emptyBorder);
+        btnFilterSupportVehicle.addActionListener(this);
 
         JPanel unitTypePanel = new JPanel();
         unitTypePanel.setLayout(new GridBagLayout());
@@ -1112,11 +1122,36 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         filterSuperHeavyTankPanel.add(btnFilterSuperHeavyTank);
         filterSuperHeavyTankPanel.add(lblFilterSuperHeavyTank);
         unitTypePanel.add(filterSuperHeavyTankPanel, c);
-        c.weighty = 1;
+        c.gridy++;
+        c.gridx = 0;
+        c.fill = GridBagConstraints.BOTH;
+        c.gridwidth  = 4;
+        JPanel dotSep = new JPanel();
+        dotSep.setLayout(new BoxLayout(dotSep, BoxLayout.PAGE_AXIS));
+        dotSep.add(new ASAdvancedSearchPanel.DottedSeparator());
+        unitTypePanel.add(dotSep, c);
+        c.gridx = 0; c.gridy++;
+        c.fill = GridBagConstraints.NONE;
+        c.gridwidth  = 5;
+        JPanel filter1Panel = new JPanel();
+        filter1Panel.add(btnFilterOmni);
+        filter1Panel.add(lblFilterOmni);
+        filter1Panel.add(btnFilterMilitary);
+        filter1Panel.add(lblFilterMilitary);
+        filter1Panel.add(btnFilterIndustrial);
+        filter1Panel.add(lblFilterIndustrial);
+        filter1Panel.add(btnFilterNaval);
+        filter1Panel.add(lblFilterNaval);
+        filter1Panel.add(btnFilterSupportVehicle);
+        filter1Panel.add(lblFilterSupportVehicle);
+        unitTypePanel.add(filter1Panel, c);
+
         JPanel blankPanel = new JPanel();
         c.gridx = 0; c.gridy++;;
-        blankPanel.add(btnUnitTypeClear, c);
+        c.weighty = 1;
+        blankPanel.add(btnUnitTypeClear);
         unitTypePanel.add(blankPanel, c);
+
 
         return unitTypePanel;
     }
@@ -1592,6 +1627,16 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
             toggleText(btnFilterSupportTank);
         } else if (ev.getSource().equals(btnFilterLargeSupportTank)) {
             toggleText(btnFilterLargeSupportTank);
+        } else if (ev.getSource().equals(btnFilterOmni)) {
+            toggleText(btnFilterOmni);
+        } else if (ev.getSource().equals(btnFilterMilitary)) {
+            toggleText(btnFilterMilitary);
+        } else if (ev.getSource().equals(btnFilterIndustrial)) {
+            toggleText(btnFilterIndustrial);
+        } else if (ev.getSource().equals(btnFilterNaval)) {
+            toggleText(btnFilterNaval);
+        } else if (ev.getSource().equals(btnFilterSupportVehicle)) {
+            toggleText(btnFilterSupportVehicle);
         }
     }
 
@@ -1811,8 +1856,6 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         cInvalid.setSelectedIndex(0);
         cFailedToLoadEquipment.setSelectedIndex(0);
         cClanEngine.setSelectedIndex(0);
-        cOmni.setSelectedIndex(0);
-        cMilitary.setSelectedIndex(0);
         tStartTankTurrets.setText("");
         tEndTankTurrets.setText("");
         tStartLowerArms.setText("");
@@ -1933,6 +1976,11 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         btnFilterSupportTank.setText("\u2610");
         btnFilterLargeSupportTank.setText("\u2610");
         btnFilterSuperHeavyTank.setText("\u2610");
+        btnFilterOmni.setText("\u2610");
+        btnFilterMilitary.setText("\u2610");
+        btnFilterIndustrial.setText("\u2610");
+        btnFilterNaval.setText("\u2610");
+        btnFilterSupportVehicle.setText("\u2610");
     }
 
     private void clearQuirks() {
@@ -2031,8 +2079,6 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         mechFilter.sEndJump = tEndJump.getText();
 
         mechFilter.iArmor = cArmor.getSelectedIndex();
-        mechFilter.iOmni = cOmni.getSelectedIndex();
-        mechFilter.iMilitary = cMilitary.getSelectedIndex();
 
         mechFilter.sStartTankTurrets = tStartTankTurrets.getText();
         mechFilter.sEndTankTurrets = tEndTankTurrets.getText();
@@ -2191,6 +2237,11 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         mechFilter.filterSupportTank = getValue(btnFilterSupportTank);
         mechFilter.filterLargeSupportTank = getValue(btnFilterLargeSupportTank);
         mechFilter.filterSuperHeavyTank = getValue(btnFilterSuperHeavyTank);
+        mechFilter.iOmni = getValue(btnFilterOmni);
+        mechFilter.iMilitary = getValue(btnFilterMilitary);
+        mechFilter.iIndustrial = getValue(btnFilterIndustrial);
+        mechFilter.iNaval = getValue(btnFilterNaval);
+        mechFilter.iSupportVehicle = getValue(btnFilterSupportVehicle);
     }
 
     /**

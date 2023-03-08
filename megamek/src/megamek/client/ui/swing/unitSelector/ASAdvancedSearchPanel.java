@@ -600,7 +600,7 @@ public class ASAdvancedSearchPanel extends JPanel {
         }
     }
 
-    private static class DottedSeparator extends JSeparator {
+    public static class DottedSeparator extends JSeparator {
 
         @Override
         public Dimension getMaximumSize() {

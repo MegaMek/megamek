@@ -40,6 +40,9 @@ public class MechSearchFilter {
     public int iArmor;
     public int iOmni;
     public int iMilitary;
+    public int iIndustrial;
+    public int iNaval;
+    public int iSupportVehicle;
     public String sStartTankTurrets;
     public String sEndTankTurrets;
     public String sStartLowerArms;
@@ -454,6 +457,18 @@ public class MechSearchFilter {
         }
 
         if (!isMatch(f.iMilitary, mech.getMilitary())) {
+            return false;
+        }
+
+        if (!isMatch(f.iIndustrial, mech.getIndustrial())) {
+            return false;
+        }
+
+        if (!isMatch(f.iNaval, mech.getNaval())) {
+            return false;
+        }
+
+        if (!isMatch(f.iSupportVehicle, mech.getSupportVehicle())) {
             return false;
         }
 

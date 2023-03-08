@@ -66,6 +66,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     private int stdTechYear; // year after which the unit is standard level
     private String extinctRange;
     private boolean canon;
+    private boolean patchwork;
     private boolean clan;
     private boolean support;
     private int walkMp;
@@ -193,6 +194,10 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public boolean isCanon() {
         return canon;
+    }
+
+    public boolean isPatchwork() {
+        return patchwork;
     }
 
     public boolean isClan() {
@@ -883,6 +888,10 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public void setCanon(boolean canon) {
         this.canon = canon;
+    }
+
+    public void setPatchwork(boolean patchwork) {
+        this.patchwork = patchwork;
     }
 
     public void setClan(boolean clan) {

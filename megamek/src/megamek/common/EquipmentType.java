@@ -1518,6 +1518,6 @@ public class EquipmentType implements ITechnology {
     }
 
     public static List<String> getArmorNames() {
-        return Arrays.stream(armorNames).collect(Collectors.toList());
+        return Arrays.stream(armorNames).filter(s -> !s.equals("Patchwork")).collect(Collectors.toList());
     }
 }

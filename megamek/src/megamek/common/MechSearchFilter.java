@@ -49,6 +49,7 @@ public class MechSearchFilter {
     public int iClanEngine;
     public int iOfficial;
     public int iCanon;
+    public int iPatchwork;
     public String source;
     public int iInvalid;
     public int iFailedToLoadEquipment;
@@ -461,6 +462,10 @@ public class MechSearchFilter {
         }
 
         if (!isMatch(f.iCanon, mech.isCanon())) {
+            return false;
+        }
+
+        if (!isMatch(f.iPatchwork, mech.isPatchwork())) {
             return false;
         }
 

@@ -509,7 +509,7 @@ public class LobbyUtility {
         int[] rows = sTable.getSelectedRows();
 
         for (int i = 0; i < rows.length; i++) {
-            result.add(rows[i]);
+            result.add(sTable.convertRowIndexToModel(rows[i]));
         }
 
         return result;

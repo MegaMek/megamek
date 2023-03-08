@@ -45,6 +45,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableRowSorter;
 import javax.swing.tree.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -108,12 +109,15 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
 
     private JTable m_lArmy;
     private RandomArmyTableMouseAdapter armyTableMouseAdapter = new RandomArmyTableMouseAdapter();
+    protected TableRowSorter<UnitTableModel> armySorter;
     private JLabel m_lArmyBVTotal;
     private JTable m_lUnits;
     private RandomArmyTableMouseAdapter unitsTableMouseAdapter = new RandomArmyTableMouseAdapter();
+    protected TableRowSorter<UnitTableModel> unitsSorter;
     private JLabel m_lUnitsBVTotal;
     private JTable m_lRAT;
     private RandomArmyTableMouseAdapter ratTableMouseAdapter = new RandomArmyTableMouseAdapter();
+    protected TableRowSorter<RATTableModel> ratSorter;
 
     private UnitTableModel armyModel;
     private UnitTableModel unitsModel;
@@ -486,6 +490,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         m_lRAT.setName("RAT");
         m_lRAT.addMouseListener(ratTableMouseAdapter);
         m_lRAT.setModel(ratModel);
+        ratSorter = new TableRowSorter<>(ratModel);
+        m_lRAT.setRowSorter(ratSorter);
         m_lRAT.setIntercellSpacing(new Dimension(5, 0));
         m_lRAT.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         for (int i = 0; i < ratModel.getColumnCount(); i++) {
@@ -521,6 +527,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         m_lUnits.setName("Units");
         m_lUnits.addMouseListener(unitsTableMouseAdapter);
         m_lUnits.setModel(unitsModel);
+        unitsSorter = new TableRowSorter<>(unitsModel);
+        m_lUnits.setRowSorter(unitsSorter);
         m_lUnits.setIntercellSpacing(new Dimension(0, 0));
         m_lUnits.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         JScrollPane scroll = new JScrollPane(m_lUnits);
@@ -531,6 +539,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         m_lArmy.setName("Army");
         m_lArmy.addMouseListener(armyTableMouseAdapter);
         m_lArmy.setModel(armyModel);
+        armySorter = new TableRowSorter<>(armyModel);
+        m_lArmy.setRowSorter(armySorter);
         m_lArmy.setIntercellSpacing(new Dimension(0, 0));
         m_lArmy.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         m_lArmyBVTotal = new JLabel("BV Total: 0");
@@ -705,6 +715,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
             m_lArmyBVTotal.setText(msg_bvtotal + calculateTotal(m_lArmy, 1));
         } else if (ev.getSource().equals(m_bAdd)) {
             for (int sel : m_lUnits.getSelectedRows()) {
+                sel = m_lUnits.convertRowIndexToModel(sel);
                 MechSummary m = unitsModel.getUnitAt(sel);
                 armyModel.addUnit(m);
             }
@@ -846,6 +857,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         } else if (ev.getSource().equals(m_bAddToForce)) {
             if (generatedRAT != null) {
                 for (int sel : m_lRAT.getSelectedRows()) {
+                    sel = m_lRAT.convertRowIndexToModel(sel);
                     MechSummary ms = generatedRAT.getMechSummary(sel);
                     if (ms != null) {
                         armyModel.addUnit(ms);
@@ -1227,7 +1239,13 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         @Override
         public Object getValueAt(int row, int col) {
             MechSummary m = getUnitAt(row);
+
+            if (m == null) {
+                return "?";
+            }
+
             String value = "";
+
             if (col == COL_BV) {
                 value += m.getBV();
             } else if (col == COL_MOVE) {
@@ -1239,10 +1257,15 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
             } else {
                 return m.getName();
             }
+
             return value;
         }
 
         public MechSummary getUnitAt(int row) {
+            if (data.size() <= row) {
+                return null;
+            }
+
             return data.get(row);
         }
 

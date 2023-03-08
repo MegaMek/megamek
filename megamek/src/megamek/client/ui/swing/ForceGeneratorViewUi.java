@@ -36,6 +36,7 @@ import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeModelListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableRowSorter;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
@@ -66,6 +67,8 @@ public class ForceGeneratorViewUi implements ActionListener {
 
     private JTable tblChosen;
     private ChosenEntityModel modelChosen;
+
+    protected TableRowSorter<ChosenEntityModel> sorterChosen;
 
     static final String FGV_BV = "FGV_BV";
     static final String FGV_COST = "FGV_COST";
@@ -189,6 +192,8 @@ public class ForceGeneratorViewUi implements ActionListener {
 
         modelChosen = new ChosenEntityModel();
         tblChosen = new JTable(modelChosen);
+        sorterChosen = new TableRowSorter<>(modelChosen);
+        tblChosen.setRowSorter(sorterChosen);
         tblChosen.setIntercellSpacing(new Dimension(0, 0));
         tblChosen.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         JScrollPane scroll = new JScrollPane(tblChosen);
@@ -369,11 +374,14 @@ public class ForceGeneratorViewUi implements ActionListener {
                 if (tblChosen.getSelectedRowCount() > 0) {
                     JPopupMenu menu = new JPopupMenu();
 
+                    List<Integer> entities = LobbyUtility.getSelectedEntities(tblChosen);
+                    int[] ents = entities.stream().mapToInt(Integer::intValue).toArray();
+
                     JMenuItem item = new JMenuItem("Remove");
-                    item.addActionListener(ev -> modelChosen.removeEntities(tblChosen.getSelectedRows()));
+                    item.addActionListener(ev -> modelChosen.removeEntities(ents));
                     menu.add(item);
 
-                    List<Integer> entities = LobbyUtility.getSelectedEntities(tblChosen);
+
                     // All command strings should follow the layout COMMAND|INFO|ID1,ID2,I3...
                     // and use -1 when something is not needed (COMMAND|-1|-1)
                     String eIds = LobbyUtility.enToken(entities);

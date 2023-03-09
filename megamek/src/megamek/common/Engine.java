@@ -307,7 +307,10 @@ public class Engine implements Serializable, ITechnology {
                 && (engineType != NONE) && (engineType != BATTERY) && (engineType != SOLAR)
                 && (engineType != STEAM) && (engineType != MAGLEV) && (engineType != EXTERNAL);
     }
- 
+
+    public boolean isSolar() {
+        return engineType == SOLAR;
+    }
 
     /**
      * Returns the weight of the engine in tons, rounded to the next highest half
@@ -452,8 +455,8 @@ public class Engine implements Serializable, ITechnology {
         }
     }
 
-    public static List<String>  getEngineTypes() {
-        List<String> result = new ArrayList<String>();
+    public static List<String> getEngineTypes() {
+        List<String> result = new ArrayList<>();
 
         for (int i = 0; i < Engine.NUM_ENGINE_TYPES; i++) {
             result.add(Messages.getString("Engine." + TYPE_KEYS[i]));

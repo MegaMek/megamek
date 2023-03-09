@@ -157,8 +157,6 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         }
 
         previousMovementMode = movementMode;
-        setFuel(80);
-
         setCrew(new LAMPilot(this));
     }
 

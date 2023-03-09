@@ -437,12 +437,6 @@ public class MtfFile implements IMechLoader {
                 mech.initializeRearArmor(Integer.parseInt(armorValues[x + locationOrder.length].substring(10)), rearLocationOrder[x]);
             }
             
-            // Set capital fighter stats for LAMs
-            if (mech instanceof LandAirMech) {
-                ((LandAirMech) mech).autoSetCapArmor();
-                ((LandAirMech) mech).autoSetFatalThresh();
-            }
-
             // oog, crits.
             compactCriticals(mech);
             // we do these in reverse order to get the outermost
@@ -453,6 +447,14 @@ public class MtfFile implements IMechLoader {
 
             for (String equipment : noCritEquipment) {
                 parseNoCritEquipment(mech, equipment);
+            }
+
+            if (mech instanceof LandAirMech) {
+                // Set capital fighter stats for LAMs
+                ((LandAirMech) mech).autoSetCapArmor();
+                ((LandAirMech) mech).autoSetFatalThresh();
+                int fuelTankCount = (int) mech.getEquipment().stream().filter(e -> e.is(EquipmentTypeLookup.LAM_FUEL_TANK)).count();
+                ((LandAirMech) mech).setFuel(80 * (1 + fuelTankCount));
             }
 
             // add any heat sinks not allocated

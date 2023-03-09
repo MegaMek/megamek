@@ -95,6 +95,11 @@ public class TripodMech extends Mech {
         return Entity.ETYPE_MECH | Entity.ETYPE_TRIPOD_MECH;
     }
 
+    @Override
+    public boolean isTripodMek() {
+        return true;
+    }
+
     /**
      * Returns true if the entity can flip its arms
      */

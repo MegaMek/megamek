@@ -136,7 +136,7 @@ public class AlphaStrikeHelper {
      * @return True when the given Special Unit Ability should be listed on the element's card
      */
     public static boolean hideSpecial(BattleForceSUA sua, ASCardDisplayable element) {
-        return sua.isDoor()
+        return sua.isDoor() || sua.isAnyOf(TRI, QUAD, AERODYNESC)
                 || (element.isLargeAerospace() && (sua == STD))
                 || (element.usesCapitalWeapons() && sua.isAnyOf(MSL, SCAP, CAP))
                 || (element.isType(BM, PM) && (sua == SOA))

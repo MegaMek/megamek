@@ -1,8 +1,12 @@
 VERSION HISTORY:
 ----------------
 0.49.13-SNAPSHOT
++ Fix #3914: LAM fuel tanks will now correctly provide fuel to the LAM
++ Fix #3951: Solar engine powered fixed wing support vehicles are now able to move and don't require fuel
++ Fix #3696: Altitude values no longer inadvertently influence space combat
 + Data: #4223 Illegal/overweight BA units
 + Data: #4206 Illegal armour type on the Kopis AI IIr
++ Fix #4229: Alpha Strike conversion fixes
 + Data: Updates to Flynn map pack
 + Data: Updates to Spanish translation. 
 

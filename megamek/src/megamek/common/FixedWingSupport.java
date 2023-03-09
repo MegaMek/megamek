@@ -34,6 +34,16 @@ public class FixedWingSupport extends ConvFighter {
         barRating = new int[locations()];
     }
 
+    @Override
+    public boolean isFixedWingSupport() {
+        return true;
+    }
+
+    @Override
+    public boolean isConventionalFighter() {
+        return false;
+    }
+
     public void setBARRating(int rating, int loc) {
         barRating[loc] = rating;
     }

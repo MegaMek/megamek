@@ -273,6 +273,11 @@ public class QuadMech extends Mech {
         }
     }
 
+    @Override
+    public boolean isQuadMek() {
+        return true;
+    }
+
     /**
      * Sets the internal structure for the mech.
      *

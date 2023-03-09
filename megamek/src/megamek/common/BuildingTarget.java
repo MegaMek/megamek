@@ -234,11 +234,6 @@ public class BuildingTarget implements Targetable {
         return false;
     }
 
-    @Override
-    public boolean isAero() {
-        return false;
-    }
-
     /*
      * (non-Javadoc)
      * @see megamek.common.Targetable#isAirborne()

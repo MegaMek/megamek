@@ -613,7 +613,7 @@ class EntitySprite extends Sprite {
                     stStr.add(new Status(Color.YELLOW, "ROLLED"));
                 }
 
-                if (a.getCurrentFuel() <= 0) {
+                if ((a.getCurrentFuel() <= 0) && entity.hasEngine() && !entity.getEngine().isSolar()) {
                     stStr.add(new Status(Color.RED, "FUEL"));
                 }
 

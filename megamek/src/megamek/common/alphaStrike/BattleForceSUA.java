@@ -50,7 +50,9 @@ public enum BattleForceSUA {
     // SBF
     AC3, COM, SBF_OMNI,
     // Placeholder for STD (Standard) damage on large AS elements with firing arcs:
-    STD
+    STD,
+    // Placeholders for additional unit info not otherwise present in the AS element
+    TRI, QUAD, AERODYNESC
     ;
     
     private static final EnumMap<BattleForceSUA, BattleForceSUA> transportBayDoors = new EnumMap<>(BattleForceSUA.class);

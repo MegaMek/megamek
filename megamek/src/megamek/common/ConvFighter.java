@@ -29,6 +29,16 @@ public class ConvFighter extends Aero {
     }
 
     @Override
+    public boolean isConventionalFighter() {
+        return true;
+    }
+
+    @Override
+    public boolean isAerospaceFighter() {
+        return false;
+    }
+
+    @Override
     public boolean doomedInVacuum() {
         return true;
     }

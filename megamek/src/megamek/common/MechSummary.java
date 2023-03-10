@@ -42,6 +42,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     private boolean industrial;
     private boolean naval;
     private boolean supportVehicle;
+    private boolean aerospaceFighter;
     private int tankTurrets;
     private File sourceFile;
     private String source;
@@ -325,6 +326,10 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public boolean getSupportVehicle() {
         return supportVehicle;
+    }
+
+    public boolean getAerospaceFighter() {
+        return aerospaceFighter;
     }
 
     public int getTankTurrets() {
@@ -656,6 +661,10 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public void setSupportVehicle(boolean b) {
         supportVehicle = b;
+    }
+
+    public void setAerospaceFighter(boolean b) {
+        aerospaceFighter = b;
     }
 
     public void setTankTurrets(int i) {

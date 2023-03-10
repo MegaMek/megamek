@@ -339,6 +339,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JButton btnFilterNaval = new JButton("\u2610");
     private JLabel lblFilterSupportVehicle = new JLabel(Messages.getString("MechSelectorDialog.Search.SupportVehicle"));
     private JButton btnFilterSupportVehicle = new JButton("\u2610");
+    private JLabel lblFilterAerospaceFighter = new JLabel(Messages.getString("MechSelectorDialog.Search.AerospaceFighter"));
+    private JButton btnFilterAerospaceFighter = new JButton("\u2610");
 
 
     /** The game's current year. */
@@ -986,6 +988,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         btnFilterNaval.addActionListener(this);
         btnFilterSupportVehicle.setBorder(emptyBorder);
         btnFilterSupportVehicle.addActionListener(this);
+        btnFilterAerospaceFighter.setBorder(emptyBorder);
+        btnFilterAerospaceFighter.addActionListener(this);
 
         JPanel unitTypePanel = new JPanel();
         unitTypePanel.setLayout(new GridBagLayout());
@@ -1002,7 +1006,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         filterProtoMechPanel.add(lblFilterProtoMech);
         unitTypePanel.add(filterProtoMechPanel, c);
         c.insets = new Insets(0, 10, 0, 0);
-        c.gridx = 0; c.gridy++;
+
+        c.gridx = 0;
+        c.gridy++;
         JPanel filterMechPanel = new JPanel();
         filterMechPanel.add(btnFilterMech);
         filterMechPanel.add(lblFilterMech);
@@ -1017,6 +1023,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         filterLAMMechPanel.add(btnFilterLAM);
         filterLAMMechPanel.add(lblFilterLAM);
         unitTypePanel.add(filterLAMMechPanel, c);
+
         c.gridy++;
         c.gridx = 1;
         JPanel filterTripodPanel = new JPanel();
@@ -1033,11 +1040,20 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         filterQuadVeePanel.add(btnFilterQuadVee);
         filterQuadVeePanel.add(lblFilterQuadVee);
         unitTypePanel.add(filterQuadVeePanel, c);
-        c.gridx = 0; c.gridy++;
+
+        c.gridx = 0;
+        c.gridy++;
         JPanel filterAeroPanel = new JPanel();
         filterAeroPanel.add(btnFilterAero);
         filterAeroPanel.add(lblFilterAero);
         unitTypePanel.add(filterAeroPanel, c);
+        c.gridx = 1;
+        JPanel filterAerospaceFighterPanel = new JPanel();
+        filterAerospaceFighterPanel.add(btnFilterAerospaceFighter);
+        filterAerospaceFighterPanel.add(lblFilterAerospaceFighter);
+        unitTypePanel.add(filterAerospaceFighterPanel, c);
+
+        c.gridy++;
         c.gridx = 1;
         JPanel filterConvFighterPanel = new JPanel();
         filterConvFighterPanel.add(btnFilterConvFighter);
@@ -1048,6 +1064,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         filterFixedWingSupportPanel.add(btnFilterFixedWingSupport);
         filterFixedWingSupportPanel.add(lblFilterFixedWingSupport);
         unitTypePanel.add(filterFixedWingSupportPanel, c);
+
         c.gridy++;
         c.gridx = 1;
         JPanel filterSmallCraftPanel = new JPanel();
@@ -1059,6 +1076,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         filterDropship.add(btnFilterDropship);
         filterDropship.add(lblFilterDropship);
         unitTypePanel.add(filterDropship, c);
+
         c.gridy++;
         c.gridx = 1;
         JPanel filterJumpshipPanel = new JPanel();
@@ -1070,12 +1088,15 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         filterWarshipPanel.add(btnFilterWarship);
         filterWarshipPanel.add(lblFilterWarship);
         unitTypePanel.add(filterWarshipPanel, c);
+
         c.gridy++;
         JPanel filterSpaceStationPanel = new JPanel();
         filterSpaceStationPanel.add(btnFilterSpaceStation);
         filterSpaceStationPanel.add(lblFilterSpaceStation);
         unitTypePanel.add(filterSpaceStationPanel, c);
-        c.gridx = 0; c.gridy++;
+
+        c.gridx = 0;
+        c.gridy++;
         JPanel filterInfantryPanel = new JPanel();
         filterInfantryPanel.add(btnFilterInfantry);
         filterInfantryPanel.add(lblFilterInfantry);
@@ -1085,6 +1106,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         filterBattleArmorPanel.add(btnFilterBattleArmor);
         filterBattleArmorPanel.add(lblFilterBattleArmor);
         unitTypePanel.add(filterBattleArmorPanel, c);
+
         c.gridx = 0; c.gridy++;
         JPanel filterTankPanel = new JPanel();
         filterTankPanel.add(btnFilterTank);
@@ -1100,12 +1122,14 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         filterrSupportVTOLPanel.add(btnFilterSupportVTOL);
         filterrSupportVTOLPanel.add(lblFilterSupportVTOL);
         unitTypePanel.add(filterrSupportVTOLPanel, c);
+
         c.gridy++;
         c.gridx = 1;
         JPanel filterGunEmplacementPanel = new JPanel();
         filterGunEmplacementPanel.add(btnFilterGunEmplacement);
         filterGunEmplacementPanel.add(lblFilterGunEmplacement);
         unitTypePanel.add(filterGunEmplacementPanel, c);
+
         c.gridy++;
         JPanel filterSupportTankPanel = new JPanel();
         filterSupportTankPanel.add(btnFilterSupportTank);
@@ -1116,12 +1140,14 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         filterrLargeSupportTankPanel.add(btnFilterLargeSupportTank);
         filterrLargeSupportTankPanel.add(lblFilterLargeSupportTank);
         unitTypePanel.add(filterrLargeSupportTankPanel, c);
+
         c.gridy++;
         c.gridx = 1;
         JPanel filterSuperHeavyTankPanel = new JPanel();
         filterSuperHeavyTankPanel.add(btnFilterSuperHeavyTank);
         filterSuperHeavyTankPanel.add(lblFilterSuperHeavyTank);
         unitTypePanel.add(filterSuperHeavyTankPanel, c);
+
         c.gridy++;
         c.gridx = 0;
         c.fill = GridBagConstraints.BOTH;
@@ -1130,6 +1156,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         dotSep.setLayout(new BoxLayout(dotSep, BoxLayout.PAGE_AXIS));
         dotSep.add(new ASAdvancedSearchPanel.DottedSeparator());
         unitTypePanel.add(dotSep, c);
+
         c.gridx = 0; c.gridy++;
         c.fill = GridBagConstraints.NONE;
         c.gridwidth  = 5;
@@ -1637,6 +1664,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
             toggleText(btnFilterNaval);
         } else if (ev.getSource().equals(btnFilterSupportVehicle)) {
             toggleText(btnFilterSupportVehicle);
+        } else if (ev.getSource().equals(btnFilterAerospaceFighter)) {
+            toggleText(btnFilterAerospaceFighter);
         }
     }
 
@@ -1981,6 +2010,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         btnFilterIndustrial.setText("\u2610");
         btnFilterNaval.setText("\u2610");
         btnFilterSupportVehicle.setText("\u2610");
+        btnFilterAerospaceFighter.setText("\u2610");
     }
 
     private void clearQuirks() {
@@ -2242,6 +2272,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         mechFilter.iIndustrial = getValue(btnFilterIndustrial);
         mechFilter.iNaval = getValue(btnFilterNaval);
         mechFilter.iSupportVehicle = getValue(btnFilterSupportVehicle);
+        mechFilter.iAerospaceFighter = getValue(btnFilterAerospaceFighter);
     }
 
     /**

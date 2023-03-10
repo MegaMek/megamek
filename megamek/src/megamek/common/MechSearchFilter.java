@@ -43,6 +43,7 @@ public class MechSearchFilter {
     public int iIndustrial;
     public int iNaval;
     public int iSupportVehicle;
+    public int iAerospaceFighter;
     public String sStartTankTurrets;
     public String sEndTankTurrets;
     public String sStartLowerArms;
@@ -754,6 +755,13 @@ public class MechSearchFilter {
             }
         }
 
+        long aerospacefighter = 1L << 62;
+        long entityType = mech.getEntityType();
+
+        if (mech.getAerospaceFighter()) {
+            entityType = entityType | aerospacefighter;
+        }
+
         long entityTypes = 0;
         if (f.filterMech == 1) {
             entityTypes = entityTypes | Entity.ETYPE_MECH;
@@ -824,8 +832,11 @@ public class MechSearchFilter {
         if (f.filterSuperHeavyTank == 1) {
             entityTypes = entityTypes | Entity.ETYPE_SUPER_HEAVY_TANK;
         }
+        if (f.iAerospaceFighter == 1) {
+            entityTypes = entityTypes | aerospacefighter;
+        }
 
-        if ((!((mech.getEntityType() & entityTypes) > 0)) && (entityTypes != 0)) {
+        if ((!((entityType & entityTypes) > 0) && (entityTypes != 0))) {
             return false;
         }
 
@@ -899,8 +910,11 @@ public class MechSearchFilter {
         if (f.filterSuperHeavyTank == 2) {
             entityTypes = entityTypes | Entity.ETYPE_SUPER_HEAVY_TANK;
         }
+        if (f.iAerospaceFighter == 2) {
+            entityTypes = entityTypes | aerospacefighter;
+        }
 
-        if (((mech.getEntityType() & entityTypes) > 0) && (entityTypes != 0)) {
+        if (((entityType & entityTypes) > 0) && (entityTypes != 0)) {
             return false;
         }
 

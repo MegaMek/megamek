@@ -1027,7 +1027,10 @@ public final class UnitToolTip {
                             tempList.append(", ");
                             break dance;
                         case 2:
-                            tmpStr = game.getTeamForPlayer(player).toString();
+                            Team team = game.getTeamForPlayer(player);
+                            if (team != null) {
+                                tmpStr = team.toString();
+                            }
                             break;
                         case 3:
                             tmpStr = player.getName();

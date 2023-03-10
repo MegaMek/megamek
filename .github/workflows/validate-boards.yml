@@ -64,4 +64,4 @@ jobs:
       # the ./data directory of the current working directory.
       #
       # The -q flag tells the validator to only print the filenames that are invalid.
-      run: java -cp build/libs/MegaMek.jar megamek.utils.BoardsValidator -q
+      run: java -cp build/libs/MegaMek.jar megamek.utilities.BoardsValidator -q

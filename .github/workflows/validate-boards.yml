@@ -17,7 +17,7 @@ on:
     - 'megamek/src/megamek/common/Board.java'
     - 'megamek/src/megamek/common/Building.java'
     - 'megamek/src/megamek/common/Terrains.java'
-    - 'megamek/src/megamek/utils/BoardsValidator.java'
+    - 'megamek/src/megamek/utilities/BoardsValidator.java'
   pull_request:
     branches: [ master ]
     paths:
@@ -25,7 +25,7 @@ on:
     - 'megamek/src/megamek/common/Board.java'
     - 'megamek/src/megamek/common/Building.java'
     - 'megamek/src/megamek/common/Terrains.java'
-    - 'megamek/src/megamek/utils/BoardsValidator.java'
+    - 'megamek/src/megamek/utilities/BoardsValidator.java'
 
 jobs:
   board_validator:

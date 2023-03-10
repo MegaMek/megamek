@@ -9,6 +9,7 @@ VERSION HISTORY:
 + Fix #4229: Alpha Strike conversion fixes
 + Fix #4234: The mini round report now allows marking and copying text
 + Fix #4235: A player without a team no longer results in an error
++ Fix #4238: Erroneous jungle hexes in Fan Pack Arctic boards have been replaced with woods
 + Data: Updates to Flynn map pack
 + Data: Updates to Spanish translation. 
 

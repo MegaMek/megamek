@@ -44,8 +44,6 @@ public class MiniReportDisplayDialog extends JDialog {
 
         UIUtil.updateWindowBounds(this);
         this.setResizable(true);
-        this.setFocusable(false);
-        this.setFocusableWindowState(false);
 
         addWindowListener(new WindowAdapter() {
             @Override

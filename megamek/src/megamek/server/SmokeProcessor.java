@@ -93,11 +93,9 @@ public class SmokeProcessor extends DynamicTerrainProcessor {
             // Dissipate the cloud, this gets handled in FireProcessor if 
             //  TO start fires is on
             if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE)) {
-                if ((cloud.getDuration() > 0) && ((cloud.getDuration() - 1) > 0)) {
+                if (cloud.getDuration() > 1) {
                     cloud.setDuration(cloud.getDuration() - 1);
-                }
-
-                if (cloud.getDuration() < 1) {
+                } else {
                     cloud.setSmokeLevel(0);
                 }
             }

@@ -11,7 +11,8 @@ VERSION HISTORY:
 + Fix #4235: A player without a team no longer results in an error
 + Fix #4238: Erroneous jungle hexes in Fan Pack Arctic boards have been replaced with woods
 + Data: Updates to Flynn map pack
-+ Data: Updates to Spanish translation. 
++ Data: Updates to Spanish translation.
++ Issue #4213: Allow indirect fire for BA mortar weapons
 
 0.49.12 (2023-03-04 2200 UTC)
 + PR #4062: OS Thunderbolt Weapons are now available for construction and use

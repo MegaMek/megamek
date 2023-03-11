@@ -3169,7 +3169,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 	</unit>
 
 	<unit>
-		<chassis>Blood Asp (Star Adder)</chassis>
+		<chassis>Star Adder (Blood Asp)</chassis>
 		<unitType>Mech</unitType>
 		<quirk>rugged_1</quirk>
 	</unit>

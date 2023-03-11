@@ -139,7 +139,15 @@ public class Terrains implements Serializable {
     // hex that has either woods or jungle. It is added by the board loader
     // when it's not present in the board file.
     public static final int FOLIAGE_ELEV = 54;
-    
+
+    // Terrains for defining areas on a map that can be used to set deployment areas,
+    // terrain changes (flooding), Princess targets and mvoement lanes or other things.
+    public static final int AREA_DEPLOY = 55;
+    public static final int AREA_LANE = 56;
+    public static final int AREA_MAPCHANGE = 57;
+    public static final int AREA_DEFENSE = 58;
+    public static final int AREA_ARTILLERY = 59;
+
     /**
      * Keeps track of the different type of terrains that can have exits.
      */
@@ -151,7 +159,8 @@ public class Terrains implements Serializable {
             "bldg_armor", "bridge", "bridge_cf", "bridge_elev", "fuel_tank", "fuel_tank_cf", "fuel_tank_elev",
             "fuel_tank_magn", "impassable", "elevator", "fortified", "screen", "fluff", "arms", "legs", "metal_deposit",
             "bldg_base_collapsed", "bldg_fluff", "road_fluff", "ground_fluff", "water_fluff", "cliff_top", "cliff_bottom", 
-            "incline_top", "incline_bottom", "incline_high_top", "incline_high_bottom", "foliage_elev" };
+            "incline_top", "incline_bottom", "incline_high_top", "incline_high_bottom", "foliage_elev",
+            "area_deploy", "area_lane", "area_mapchange", "area_defense", "area_arty"};
     
     /** Terrains in this set are hidden in the Editor, not saved to board files and handled internally. */
     public static final HashSet<Integer> AUTOMATIC = new HashSet<>(Arrays.asList(

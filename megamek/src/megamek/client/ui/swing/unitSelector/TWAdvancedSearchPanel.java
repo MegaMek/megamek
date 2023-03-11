@@ -494,17 +494,6 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(5, 10, 0, 0);
         c.gridx = 0; c.gridy++;
-        JPanel p1Panel = new JPanel();
-        basePanel.add(p1Panel, c);
-        c.gridx = 1;
-        JPanel p1bPanel = new JPanel();
-        p1bPanel.add(lblInvalid);
-        p1bPanel.add(cInvalid);
-        p1bPanel.add(lblFailedToLoadEquipment);
-        p1bPanel.add(cFailedToLoadEquipment);
-        basePanel.add(p1bPanel, c);
-
-        c.gridx = 0; c.gridy++;
         JPanel yearPanel = new JPanel();
         yearPanel.add(lblYear);
         yearPanel.add(tStartYear);
@@ -512,10 +501,12 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         yearPanel.add(tEndYear);
         basePanel.add(yearPanel, c);
         c.gridx = 1;
-        JPanel armorPanel = new JPanel();
-        armorPanel.add(lblArmor);
-        armorPanel.add(cArmor);
-        basePanel.add(armorPanel, c);
+        JPanel p1bPanel = new JPanel();
+        p1bPanel.add(lblInvalid);
+        p1bPanel.add(cInvalid);
+        p1bPanel.add(lblFailedToLoadEquipment);
+        p1bPanel.add(cFailedToLoadEquipment);
+        basePanel.add(p1bPanel, c);
 
         c.gridx = 0; c.gridy++;
         JPanel bvPanel = new JPanel();
@@ -569,6 +560,11 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         p2Panel.add(new JLabel("-"));
         p2Panel.add(tEndTankTurrets);
         basePanel.add(p2Panel, c);
+        c.gridx = 1;
+        JPanel armorPanel = new JPanel();
+        armorPanel.add(lblArmor);
+        armorPanel.add(cArmor);
+        basePanel.add(armorPanel, c);
 
         c.gridx = 0; c.gridy++;;
         c.gridwidth  = 1;

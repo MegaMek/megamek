@@ -6,7 +6,7 @@ mul id:254
 Config:Quad
 TechBase:Inner Sphere
 Era:3062
-Source:TRO 3060
+Source:TRO 3060 - Civil War 
 Rules Level:2
 
 Mass:70
@@ -147,4 +147,18 @@ ISHeavyGauss Ammo
 -Empty-
 -Empty-
 
+overview:During her reign over the Lyran Alliance, Katherine Steiner-Davion decided she wanted a four-legged BattleMech that would frighten its adversaries in the same way that the classic Atlas and Banshee designs did.		
 
+capabilities:The Earthwerk GRF Quad chassis accommodates a Magna 350 XL engine, which saves weight and lets the 'Mech to carry a hefty weapons payload. The Barghest is shielded by thirteen tons of Durallex Heavy armor, which shields it from all but the most powerful enemy fire. The Barghest features ten double heat sinks to handle the 'Mech's heat buildup from its weaponry.		
+
+deployment:The 3T variant of the Barghest utilizes the new Heavy Gauss Rifle as its primary weapon that is capable of striking at relatively long ranges with a great deal of firepower that increases as the 3T Barghest closes with its target. To back this up, the 3T has a single ER Large Laser and also has fourteen tons of armor. 
+
+history:Katrina Steiner, Archon of the Lyran Alliance, created this novel and distinctive design. The Archon notified Tharkad's TharHes Industries that she desired to build a new design with a horrific appearance, similar to that of the Atlas or the Banshee. She also desired a four-legged design. TharHes executives tried unsuccessfully to persuade her to abandon the quad design, which has been heavily criticized for decades. TharHes Industries only realized the political and military consequences of a new quad design in the Lyran Alliance Armed Forces during the final testing of the new 'Mech, when new four-legged designs debuted in the Draconis Combine and Free Worlds League militaries. The Archon dubbed the finished 'Mech Barghest after the fierce, wolf-like monsters of folklore, after seeing its animalistic elegance and power.
+
+manufacturer:TharHes Industries
+primaryfactory:Tharkad
+systemmanufacturer:CHASSIS:Earthwerk BGS Quad
+systemmanufacturer:ENGINE:Magna 350 XL
+systemmanufacturer:ARMOR:Durallex Heavy
+systemmanufacturer:COMMUNICATIONS:TharHes Euterpe HM-14
+systemmanufacturer:TARGETING:TharHes Ares-8a

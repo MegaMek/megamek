@@ -7,7 +7,7 @@ Config:Quad
 TechBase:Inner Sphere
 Era:3078
 Source:XTRO Steiner - Jihad
-Rules Level:4
+Rules Level:3
 
 Mass:70
 Engine:280 Fusion Engine(IS)
@@ -150,4 +150,18 @@ Endo Steel
 -Empty-
 -Empty-
 
+overview:During her reign over the Lyran Alliance, Katherine Steiner-Davion decided she wanted a four-legged BattleMech that would frighten its adversaries in the same way that the classic Atlas and Banshee designs did.		
 
+capabilities:The Earthwerk GRF Quad chassis accommodates a Magna 350 XL engine, which saves weight and lets the 'Mech to carry a hefty weapons payload. The Barghest is shielded by thirteen tons of Durallex Heavy armor, which shields it from all but the most powerful enemy fire. The Barghest features ten double heat sinks to handle the 'Mech's heat buildup from its weaponry.		
+
+deployment:Using an Improved Heavy Gauss Rifle as its main armament, this version of the Barghest also uses experimental systems to maximize protection and combat effectiveness. The Endo Steel structure and Small Cockpit save enough room to allow the 'Mech to carry two Light PPCs with PPC Capacitors in a Quad BattleMech Turret. This device allows the Barghest pilot to put accurate fire in a 360° arc around the 'Mech. To protect it from an exploding Gauss Rifle, the 'Mech also carries a CASE II system. Finally the LCAF installed a C3 slave unit in the head. 
+
+history:Katrina Steiner, Archon of the Lyran Alliance, created this novel and distinctive design. The Archon notified Tharkad's TharHes Industries that she desired to build a new design with a horrific appearance, similar to that of the Atlas or the Banshee. She also desired a four-legged design. TharHes executives tried unsuccessfully to persuade her to abandon the quad design, which has been heavily criticized for decades. TharHes Industries only realized the political and military consequences of a new quad design in the Lyran Alliance Armed Forces during the final testing of the new 'Mech, when new four-legged designs debuted in the Draconis Combine and Free Worlds League militaries. The Archon dubbed the finished 'Mech Barghest after the fierce, wolf-like monsters of folklore, after seeing its animalistic elegance and power.
+
+manufacturer:TharHes Industries R&D Annex (Refit)
+primaryfactory:Gibbs
+systemmanufacturer:CHASSIS:Earthwerk BGS Endo-Quad
+systemmanufacturer:ENGINE:Magna 280
+systemmanufacturer:ARMOR:Durallex Heavy with CASE II
+systemmanufacturer:COMMUNICATIONS:TharHes Euterpe HM-14
+systemmanufacturer:TARGETING:TharHes Ares-8a

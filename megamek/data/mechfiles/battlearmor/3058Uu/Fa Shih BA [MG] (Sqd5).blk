@@ -58,9 +58,28 @@ BAAPMount:LA
 InfantryAssaultRifle:LA:APM
 BABasicManipulatorMineClearance:LA
 BABasicManipulatorMineClearance:RA
-ISBAMineDispenser:LA
-ISBAMineDispenser:RA
 </Squad Equipment>
+
+
+<Trooper 1 Equipment>
+ISBAMineDispenser:Body
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+ISBAMineDispenser:Body
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+ISBAMineDispenser:Body
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+ISBAMineDispenser:Body
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+ISBAMineDispenser:Body
+</Trooper 5 Equipment>
 
 <type>
 IS Level 3

@@ -519,6 +519,10 @@ Battle Cobra BTL-C-2OC:SCOUT
 Battle Cobra BTL-C-2OD:SNIPER
 Battle Cobra BTL-C-2OE:MISSILE_BOAT
 Battle Cobra BTL-C-2OF:BRAWLER
+Battle Cobra BTL-C-2OG:BRAWLER
+Battle Cobra BTL-C-2OH:MISSILE_BOAT
+Battle Cobra BTL-C-2OI:SKIRMISHER
+Battle Cobra BTL-C-2OJ:SKIRMISHER
 Battle Cobra C:STRIKER
 Battle Cobra F:STRIKER
 Battle Cobra G:STRIKER
@@ -546,7 +550,7 @@ BattleMaster BLR-1Gbc:BRAWLER
 BattleMaster BLR-1Gc:BRAWLER
 BattleMaster BLR-1Gd:BRAWLER
 BattleMaster BLR-1G-DC:BRAWLER
-BattleMaster BLR-1GHE 'HellSinger':BRAWLER
+BattleMaster BLR-1GHE 'HellSlinger':BRAWLER
 BattleMaster BLR-1S:BRAWLER
 BattleMaster BLR-2C:BRAWLER
 BattleMaster BLR-3M (Rogers):BRAWLER

@@ -190,6 +190,9 @@ public class WeaponType extends EquipmentType {
     /** Missile weapon that can be linked to an Artemis fire control system */
     public static final BigInteger F_ARTEMIS_COMPATIBLE = BigInteger.valueOf(1).shiftLeft(70);
 
+    /** This flag is used by mortar-type weapons that allow indirect fire without a spotter and/or with LOS. */
+    public static final BigInteger F_MORTARTYPE_INDIRECT = BigInteger.valueOf(1).shiftLeft(71);
+
     // add maximum range for AT2
     public static final int RANGE_SHORT = RangeType.RANGE_SHORT;
     public static final int RANGE_MED = RangeType.RANGE_MEDIUM;

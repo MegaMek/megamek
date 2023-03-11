@@ -567,7 +567,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
             }
 
-            if ((wtype instanceof MekMortarWeapon) && isIndirect) {
+            if (wtype.hasFlag(WeaponType.F_MORTARTYPE_INDIRECT) && isIndirect) {
                 los.setArcedAttack(true);
             }
 
@@ -597,7 +597,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
             }
 
-            if (wtype instanceof MekMortarWeapon) {
+            if (wtype.hasFlag(WeaponType.F_MORTARTYPE_INDIRECT) && isIndirect) {
                 los.setArcedAttack(true);
             }
 
@@ -2264,7 +2264,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     && LosEffects.calculateLOS(game, ae, target).canSee()
                     && (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                             || Compute.canSee(game, ae, target))
-                    && !(wtype instanceof ArtilleryCannonWeapon) && !(wtype instanceof MekMortarWeapon)) {
+                    && !(wtype instanceof ArtilleryCannonWeapon)
+                    && !wtype.hasFlag(WeaponType.F_MORTARTYPE_INDIRECT)) {
                 return Messages.getString("WeaponAttackAction.NoIndirectWithLOS");
             }
             
@@ -2282,8 +2283,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // Can't fire anything but Mech Mortars and Artillery Cannons indirectly without a spotter 
             // unless the attack has the Oblique Attacker SPA
             if (isIndirect) {
-                if ((spotter == null) && !(wtype instanceof MekMortarWeapon) && !(wtype instanceof ArtilleryCannonWeapon)
-                        && !ae.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)) {
+                if ((spotter == null) && !(wtype instanceof ArtilleryCannonWeapon)
+                        && !ae.hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)
+                        && !wtype.hasFlag(WeaponType.F_MORTARTYPE_INDIRECT)) {
                     return Messages.getString("WeaponAttackAction.NoSpotter");
                 }
             }
@@ -3011,7 +3013,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         // And if this is a Mech Mortar
-        if (wtype instanceof MekMortarWeapon) {
+        if (wtype.hasFlag(WeaponType.F_MORTARTYPE_INDIRECT)) {
             if (isIndirect) {
                 // +2 penalty if there's no spotting entity
                 if (spotter == null) {

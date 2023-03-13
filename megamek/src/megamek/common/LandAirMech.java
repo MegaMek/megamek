@@ -669,6 +669,21 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     }
 
     /**
+     * What's the range of the ECM equipment?
+     *
+     * @return the <code>int</code> range of this unit's ECM. This value will be
+     *         <code>Entity.NONE</code> if no ECM is active.
+     */
+    @Override
+    public int getECMRange() {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
+                || !game.getBoard().inSpace()) {
+            return super.getECMRange();
+        }
+        return Math.min(super.getECMRange(), 0);
+    }
+
+    /**
      * Add in any piloting skill mods
      */
     @Override

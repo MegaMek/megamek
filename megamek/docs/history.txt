@@ -10,6 +10,7 @@ VERSION HISTORY:
 + Fix #4234: The mini round report now allows marking and copying text
 + Fix #4235: A player without a team no longer results in an error
 + Fix #4238: Erroneous jungle hexes in Fan Pack Arctic boards have been replaced with woods
++ Fix #3915: In space with StratOps ECM rules active, a LAM's ECM systems now use the correct range of 0 (its own hex) instead of 6
 + Data: Updates to Flynn map pack
 + Data: Updates to Spanish translation.
 + Issue #4213: Allow indirect fire for BA mortar weapons

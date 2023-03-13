@@ -6,7 +6,7 @@ mul id:3496
 Config:Biped
 TechBase:Inner Sphere
 Era:3069
-Source:Jihad
+Source:RS 3085 PP - Jihad
 Rules Level:2
 
 Mass:70
@@ -150,4 +150,18 @@ Endo Steel
 -Empty-
 -Empty-
 
-imagefile:.\data\images\fluff\Mech\WHM-9D Warhammer.jpg
+overview:The Warhammer proved to be a very capable 'Mech, and for centuries practically defined the entire class of heavy 'Mechs. Boasting incredible firepower and respectable armoring, the Warhammer served prominently in the Star League Defense Force and was one of the premier 'Mechs in the Gunslinger Program. Indeed, many of the greatest MechWarriors in history were Warhammer pilots.
+
+capabilities:The Warhammer was well-protected with strong armor for its age and weight, and the large number of heat sinks allowed it to "fire and maneuver" without fear. The most common engine arrangement propels the 'Mech to a cruising speed of 43.2 km/h and a top speed of 64.8 km/h, which is quick enough to keep up with most battles. The 'Mech's electronics, albeit antiquated by the 31st Century, were basic and functional, allowing it to assume command tasks when necessary. The targeting mechanism, in particular, made use of an unique Searchlight positioned above the 'Mech's left shoulder. The device could act as a conventional searchlight or immediately connect to the O/P 1500 ARB tracking system, transforming the 'Mech into a capable night fighter.
+
+deployment:The Warhammer 8M, introduced in 3069, focused on long range combat. The 'Mech had two ER PPCs, giving it a powerful long range punch, as well as a Light Gauss Rifle that allowed the 'Mech to engage an enemy at extreme ranges. For close combat, the 'Mech carried two ER medium lasers. For heat dissipation, the 8M had a meager twelve double heat sinks, though it carried thirteen tons of armor protection.
+
+history:StarCorps Industries introduced the Warhammer BattleMech in 2515 as "a mobile 'Mech with adequate firepower to destroy or severely damage any 'Mech of the same weight class or lower." The Warhammer continued to serve in the forces of the Great Houses throughout the Succession Wars after the Star League's demise. Despite very modest production rates, the large number of Warhammer factories dispersed over both the Inner Sphere and Periphery contributed to its endurance; Ronin Inc. was never able to construct more than five Warhammers per year from their Wallis factory. The recovery of the Helm Memory Core would prompt Inner Sphere manufacturers to create a slew of new Lostech-powered Warhammer versions, while the Periphery continued to produce original models for mercenaries and black marketeers. After the Clan Invasion, StarCorps chose to rehabilitate the ancient 'Mech with the greatest technological advancements, giving it new life. Initially, the business planned to construct only one new variety from its Crofton plant, but when word of the idea spread, other departments within StarCorps became involved and gathered on Crofton for a week-long conference to iron out the details. The conference turned out to be more jubilant than expected, and at the end of the bacchanalian "negotiations," it was determined that four new variations would be built: one for each of the Federated Suns, Capellan, Free Worlds League, and Lyran forces, employing technology unique to each realm. During the FedCom Civil War, some of these new 'Mechs were put through their paces.
+
+manufacturer:Ronin Inc. (Selasys)
+primaryfactory:Wallis
+systemmanufacturer:CHASSIS:Kell Reinforced 270 Endo Steel
+systemmanufacturer:ENGINE:Magna 280
+systemmanufacturer:ARMOR:Durallex Heavy
+systemmanufacturer:COMMUNICATIONS:Barret Party Line-200
+systemmanufacturer:TARGETING:Wasat Watchdog W100

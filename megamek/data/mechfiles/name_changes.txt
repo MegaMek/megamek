@@ -555,7 +555,16 @@ Black Hawk (Nova) S|Nova (Black Hawk) S
 Black Hawk (Standard)|Black Hawk (Standard)
 Black Hawk 2|Black Hawk (Standard) 2
 Black Hawk 3|Black Hawk (Standard) 3
-Blood Asp|Blood Asp (Star Adder)
+Blood Asp Prime|Star Adder (Blood Asp) Prime
+Blood Asp A|Star Adder (Blood Asp) A
+Blood Asp B|Star Adder (Blood Asp) B
+Blood Asp C|Star Adder (Blood Asp) C
+Blood Asp D|Star Adder (Blood Asp) D
+Blood Asp E|Star Adder (Blood Asp) E
+Blood Asp F|Star Adder (Blood Asp) F
+Blood Asp G|Star Adder (Blood Asp) G
+Blood Asp I|Star Adder (Blood Asp) I
+Blood Asp T|Star Adder (Blood Asp) T
 Cauldron-Born (Ebon Jaguar) A|Ebon Jaguar (Cauldron-Born) A
 Cauldron-Born (Ebon Jaguar) B|Ebon Jaguar (Cauldron-Born) B
 Cauldron-Born (Ebon Jaguar) C|Ebon Jaguar (Cauldron-Born) C

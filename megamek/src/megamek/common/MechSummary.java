@@ -39,10 +39,6 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     private Long entityType;
     private boolean omni;
     private boolean military;
-    private boolean industrial;
-    private boolean naval;
-    private boolean supportVehicle;
-    private boolean aerospaceFighter;
     private int tankTurrets;
     private File sourceFile;
     private String source;
@@ -314,22 +310,6 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public boolean getMilitary() {
         return military;
-    }
-
-    public boolean getIndustrial() {
-        return industrial;
-    }
-
-    public boolean getNaval() {
-        return naval;
-    }
-
-    public boolean getSupportVehicle() {
-        return supportVehicle;
-    }
-
-    public boolean getAerospaceFighter() {
-        return aerospaceFighter;
     }
 
     public int getTankTurrets() {
@@ -649,22 +629,6 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public void setMilitary(boolean b) {
         military = b;
-    }
-
-    public void setIndustrial(boolean b) {
-        industrial = b;
-    }
-
-    public void setNaval(boolean b) {
-        naval = b;
-    }
-
-    public void setSupportVehicle(boolean b) {
-        supportVehicle = b;
-    }
-
-    public void setAerospaceFighter(boolean b) {
-        aerospaceFighter = b;
     }
 
     public void setTankTurrets(int i) {

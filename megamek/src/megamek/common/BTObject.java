@@ -342,4 +342,14 @@ public interface BTObject {
     default boolean isSingleUnit() {
         return !isUnitGroup();
     }
+
+    /**
+     * Returns true when this object is a Naval Vehicle of any kind.
+     * Returns false for any type of unit group even if it is of the right type.
+     *
+     * @return True when this is a Support Vehicle
+     */
+    default boolean isNaval() {
+        return false;
+    }
 }

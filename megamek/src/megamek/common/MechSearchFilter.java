@@ -461,15 +461,15 @@ public class MechSearchFilter {
             return false;
         }
 
-        if (!isMatch(f.iIndustrial, mech.getIndustrial())) {
+        if (!isMatch(f.iIndustrial, mech.isIndustrialMek())) {
             return false;
         }
 
-        if (!isMatch(f.iNaval, mech.getNaval())) {
+        if (!isMatch(f.iNaval, mech.isNaval())) {
             return false;
         }
 
-        if (!isMatch(f.iSupportVehicle, mech.getSupportVehicle())) {
+        if (!isMatch(f.iSupportVehicle, mech.isSupportVehicle())) {
             return false;
         }
 
@@ -757,7 +757,7 @@ public class MechSearchFilter {
 
         long entityType = mech.getEntityType();
 
-        if (mech.getAerospaceFighter()) {
+        if (mech.isAerospaceFighter()) {
             entityType = entityType | Entity.ETYPE_AEROSPACEFIGHTER;
         }
 

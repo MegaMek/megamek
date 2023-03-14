@@ -2838,7 +2838,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             if (e.getClickCount() == 2) {
                 int row = mekTable.rowAtPoint(e.getPoint());
                 InGameObject entity = mekModel.getEntityAt(row);
-                if (entity != null && entity instanceof Entity && isEditable((Entity) entity)) {
+                if ((entity instanceof Entity) && isEditable((Entity) entity)) {
                     lobbyActions.customizeMech((Entity) entity);
                 }
             }

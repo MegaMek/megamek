@@ -150,7 +150,7 @@ public class MekTableModel extends AbstractTableModel {
         playerCells.clear();
         unitCells.clear();
         pilotCells.clear();
-        for (InGameObject entity: entities) {
+        for (InGameObject entity : entities) {
             addCellData(entity);
         }
         fireTableDataChanged();

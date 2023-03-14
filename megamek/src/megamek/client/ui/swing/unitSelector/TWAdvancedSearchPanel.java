@@ -341,7 +341,12 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JButton btnFilterSupportVehicle = new JButton("\u2610");
     private JLabel lblFilterAerospaceFighter = new JLabel(Messages.getString("MechSelectorDialog.Search.AerospaceFighter"));
     private JButton btnFilterAerospaceFighter = new JButton("\u2610");
-
+    private JLabel lblFilterDoomedOnGround = new JLabel(Messages.getString("MechSelectorDialog.Search.DoomedOnGround"));
+    private JButton btnFilterDoomedOnGround = new JButton("\u2610");
+    private JLabel lblFilterDoomedInAtmosphere = new JLabel(Messages.getString("MechSelectorDialog.Search.DoomedInAtmosphere"));
+    private JButton btnFilterDoomedInAtmosphere = new JButton("\u2610");
+    private JLabel lblFilterDoomedInSpace = new JLabel(Messages.getString("MechSelectorDialog.Search.DoomedInSpace"));
+    private JButton btnFilterDoomedInSpace = new JButton("\u2610");
 
     /** The game's current year. */
     private int gameYear;
@@ -986,6 +991,12 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         btnFilterSupportVehicle.addActionListener(this);
         btnFilterAerospaceFighter.setBorder(emptyBorder);
         btnFilterAerospaceFighter.addActionListener(this);
+        btnFilterDoomedOnGround.setBorder(emptyBorder);
+        btnFilterDoomedOnGround.addActionListener(this);
+        btnFilterDoomedInAtmosphere.setBorder(emptyBorder);
+        btnFilterDoomedInAtmosphere.addActionListener(this);
+        btnFilterDoomedInSpace.setBorder(emptyBorder);
+        btnFilterDoomedInSpace.addActionListener(this);
 
         JPanel unitTypePanel = new JPanel();
         unitTypePanel.setLayout(new GridBagLayout());
@@ -1171,6 +1182,12 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         JPanel filter2Panel = new JPanel();
         filter2Panel.add(btnFilterWaterOnly);
         filter2Panel.add(lblFilterWaterOnly);
+        filter2Panel.add(btnFilterDoomedOnGround);
+        filter2Panel.add(lblFilterDoomedOnGround);
+        filter2Panel.add(btnFilterDoomedInAtmosphere);
+        filter2Panel.add(lblFilterDoomedInAtmosphere);
+        filter2Panel.add(btnFilterDoomedInSpace);
+        filter2Panel.add(lblFilterDoomedInSpace);
         unitTypePanel.add(filter2Panel, c);
 
         c.gridx = 0; c.gridy++;;
@@ -1666,6 +1683,12 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
             toggleText(btnFilterSupportVehicle);
         } else if (ev.getSource().equals(btnFilterAerospaceFighter)) {
             toggleText(btnFilterAerospaceFighter);
+        } else if (ev.getSource().equals(btnFilterDoomedOnGround)) {
+            toggleText(btnFilterDoomedOnGround);
+        } else if (ev.getSource().equals(btnFilterDoomedInAtmosphere)) {
+            toggleText(btnFilterDoomedInAtmosphere);
+        } else if (ev.getSource().equals(btnFilterDoomedInSpace)) {
+            toggleText(btnFilterDoomedInSpace);
         }
     }
 
@@ -2011,6 +2034,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         btnFilterWaterOnly.setText("\u2610");
         btnFilterSupportVehicle.setText("\u2610");
         btnFilterAerospaceFighter.setText("\u2610");
+        btnFilterDoomedOnGround.setText("\u2610");
+        btnFilterDoomedInAtmosphere.setText("\u2610");
+        btnFilterDoomedInSpace.setText("\u2610");
     }
 
     private void clearQuirks() {
@@ -2273,6 +2299,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         mechFilter.iWaterOnly = getValue(btnFilterWaterOnly);
         mechFilter.iSupportVehicle = getValue(btnFilterSupportVehicle);
         mechFilter.iAerospaceFighter = getValue(btnFilterAerospaceFighter);
+        mechFilter.iDoomedOnGround = getValue(btnFilterDoomedOnGround);
+        mechFilter.iDoomedInAtmosphere = getValue(btnFilterDoomedInAtmosphere);
+        mechFilter.iDoomedInSpace = getValue(btnFilterDoomedInSpace);
     }
 
     /**

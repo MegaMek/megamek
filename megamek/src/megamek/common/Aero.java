@@ -1685,7 +1685,7 @@ public class Aero extends Entity implements IAero, IBomber {
 
     @Override
     public boolean doomedOnGround() {
-        return !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_GROUND_MOVE);
+        return game != null ? !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_GROUND_MOVE) : false;
     }
 
     @Override

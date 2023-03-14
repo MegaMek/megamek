@@ -467,6 +467,9 @@ public class MechSummaryCache {
         ms.setArmorTypes(armorTypes);
         ms.setArmorTechTypes(armorTechTypes);
         ms.setPatchwork(Arrays.stream(ms.getArmorTypes()).distinct().count() > 1);
+        ms.setDoomedOnGround(e.doomedOnGround());
+        ms.setDoomedInAtmosphere(e.doomedInAtmosphere());
+        ms.setDoomedInSpace(e.doomedInSpace());
 
         // Check to see if this entity has a cockpit, and if so, set it's type
         if ((e instanceof Mech)) {

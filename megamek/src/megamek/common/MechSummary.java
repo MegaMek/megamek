@@ -67,6 +67,9 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     private String extinctRange;
     private boolean canon;
     private boolean patchwork;
+    private boolean doomedOnGround;
+    private boolean doomedInAtmosphere;
+    private boolean doomedInSpace;
     private boolean clan;
     private boolean support;
     private int walkMp;
@@ -198,6 +201,18 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public boolean isPatchwork() {
         return patchwork;
+    }
+
+    public boolean isDoomedOnGround() {
+        return doomedOnGround;
+    }
+
+    public boolean isDoomedInAtmosphere() {
+        return doomedInAtmosphere;
+    }
+
+    public boolean isDoomedInSpace() {
+        return doomedInSpace;
     }
 
     public boolean isClan() {
@@ -892,6 +907,18 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public void setPatchwork(boolean patchwork) {
         this.patchwork = patchwork;
+    }
+
+    public void setDoomedOnGround(boolean doomedOnGround) {
+        this.doomedOnGround = doomedOnGround;
+    }
+
+    public void setDoomedInAtmosphere(boolean doomedInAtmosphere) {
+        this.doomedInAtmosphere = doomedInAtmosphere;
+    }
+
+    public void setDoomedInSpace(boolean doomedInSpace) {
+        this.doomedInSpace = doomedInSpace;
     }
 
     public void setClan(boolean clan) {

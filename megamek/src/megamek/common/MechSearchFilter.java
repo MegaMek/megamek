@@ -42,6 +42,9 @@ public class MechSearchFilter {
     public int iMilitary;
     public int iIndustrial;
     public int iWaterOnly;
+    public int iDoomedOnGround;
+    public int iDoomedInAtmosphere;
+    public int iDoomedInSpace;
     public int iSupportVehicle;
     public int iAerospaceFighter;
     public String sStartTankTurrets;
@@ -466,6 +469,18 @@ public class MechSearchFilter {
         }
 
         if (!isMatch(f.iWaterOnly, (mech.hasWaterMovement() && !mech.hasAirMovement() && !mech.hasGroundMovement()))) {
+            return false;
+        }
+
+        if (!isMatch(f.iDoomedOnGround, mech.isDoomedOnGround())) {
+            return false;
+        }
+
+        if (!isMatch(f.iDoomedInAtmosphere, mech.isDoomedInAtmosphere())) {
+            return false;
+        }
+
+        if (!isMatch(f.iDoomedInSpace, mech.isDoomedInSpace())) {
             return false;
         }
 

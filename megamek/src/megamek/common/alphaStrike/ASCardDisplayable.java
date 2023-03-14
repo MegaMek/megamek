@@ -313,21 +313,23 @@ public interface ASCardDisplayable extends BattleForceSUAFormatter, BTObject {
         return !isAerospace();
     }
 
-    /**
-     * Returns true when this AS element is a naval unit. This is the case when its movement modes
-     *      * contains the "n" or "s" movement mode.
-     */
     @Override
-    default boolean isNaval() {
-        return getPrimaryMovementMode().equals("n") || getPrimaryMovementMode().equals("s");
+    default boolean hasWaterMovement() {
+        return hasMovementMode("n") || hasMovementMode("s");
     }
 
-    /**
-     * Returns true when this object is an Industrial Mek or of type IM for Alpha Strike.
-     * Returns false for any type of unit group even if it is of the right type.
-     *
-     * @return True when this is an Industrial Mek (not a BattleMek)
-     */
+    @Override
+    default boolean hasGroundMovement() {
+        return ((hasMovementMode("w") || hasMovementMode("t") || hasMovementMode("h") || hasMovementMode("g")) && (isVehicle()))
+                || ((hasMovementMode("f") || hasMovementMode("m") || hasMovementMode("j")) && isInfantry())
+                || isMek() || isProtoMek();
+    }
+
+    @Override
+    default boolean hasAirMovement() {
+        return hasMovementMode("w") || hasMovementMode("v") || hasMovementMode("g") || hasMovementMode("a") || hasMovementMode("p");
+    }
+
     @Override
     default boolean isIndustrialMek() {
         return isType(IM);

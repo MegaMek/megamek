@@ -344,12 +344,32 @@ public interface BTObject {
     }
 
     /**
-     * Returns true when this object is a Naval Vehicle of any kind.
+     * Returns true when this object has water movement of n or s.
      * Returns false for any type of unit group even if it is of the right type.
      *
      * @return True when this is a Support Vehicle
      */
-    default boolean isNaval() {
+    default boolean hasWaterMovement() {
+        return false;
+    }
+
+    /**
+     * Returns true when this object has ground movement of any kind.
+     * Returns false for any type of unit group even if it is of the right type.
+     *
+     * @return True when this is a Support Vehicle
+     */
+    default boolean hasGroundMovement() {
+        return false;
+    }
+
+    /**
+     * Returns true when this object has air movement of any kind.
+     * Returns false for any type of unit group even if it is of the right type.
+     *
+     * @return True when this is a Support Vehicle
+     */
+    default boolean hasAirMovement() {
         return false;
     }
 }

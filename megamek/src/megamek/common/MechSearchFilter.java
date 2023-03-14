@@ -41,7 +41,7 @@ public class MechSearchFilter {
     public int iOmni;
     public int iMilitary;
     public int iIndustrial;
-    public int iNaval;
+    public int iWaterOnly;
     public int iSupportVehicle;
     public int iAerospaceFighter;
     public String sStartTankTurrets;
@@ -465,7 +465,7 @@ public class MechSearchFilter {
             return false;
         }
 
-        if (!isMatch(f.iNaval, mech.isNaval())) {
+        if (!isMatch(f.iWaterOnly, (mech.hasWaterMovement() && !mech.hasAirMovement() && !mech.hasGroundMovement()))) {
             return false;
         }
 

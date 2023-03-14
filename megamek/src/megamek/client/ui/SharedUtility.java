@@ -910,7 +910,7 @@ public class SharedUtility {
         if ((chosenDisplayName == null) || (targets == null)) {
             return null;
         } else {
-            return targets.stream().filter(t -> chosenDisplayName.equals(t.getDisplayName())).findAny().orElseGet(null);
+            return targets.stream().filter(t -> chosenDisplayName.equals(t.getDisplayName())).findAny().orElse(null);
         }
     }
 }

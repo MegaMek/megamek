@@ -2719,7 +2719,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             elev = cmd.getFinalElevation();
             mpUsed = cmd.getMpUsed();
         }
-        final boolean canMount = isFinalPositionOnBoard() && !ce.isAirborne() && (mpUsed <= Math.ceil((ce.getWalkMP() / 2.0)))
+        final boolean canMount = isFinalPositionOnBoard() && !ce.isAirborne() && (mpUsed <= Math.ceil(ce.getWalkMP() / 2.0))
                 && !Compute.getMountableUnits(ce, pos, elev + game.getBoard().getHex(pos).getLevel(), game).isEmpty();
         setMountEnabled(canMount);
     }

@@ -139,6 +139,11 @@ public class RATGeneratorEditor extends JFrame {
         panButtons.add(button);
         button.addActionListener(ev -> saveValues());
 
+        button = new JButton("Export as Excel CSV");
+        button.setToolTipText("Export all availability data as an excel-optimized csv file");
+        panButtons.add(button);
+        button.addActionListener(ev -> RATDataCSVExporter.exportToCSV(rg));
+
         panMain.addTab("Edit", createUnitTab());
         panMain.addTab("Edit Factions", createFactionTab());
 

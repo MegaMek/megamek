@@ -470,6 +470,8 @@ public class MechSummaryCache {
         ms.setDoomedOnGround(e.doomedOnGround());
         ms.setDoomedInAtmosphere(e.doomedInAtmosphere());
         ms.setDoomedInSpace(e.doomedInSpace());
+        ms.setDoomedInExtremeTemp(e.doomedInExtremeTemp());
+        ms.setDoomedInVacuum(e.doomedInVacuum());
 
         // Check to see if this entity has a cockpit, and if so, set it's type
         if ((e instanceof Mech)) {

@@ -70,6 +70,8 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     private boolean doomedOnGround;
     private boolean doomedInAtmosphere;
     private boolean doomedInSpace;
+    private boolean doomedInExtremeTemp;
+    private boolean doomedInVacuum;
     private boolean clan;
     private boolean support;
     private int walkMp;
@@ -213,6 +215,14 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public boolean isDoomedInSpace() {
         return doomedInSpace;
+    }
+
+    public boolean isDoomedInExtremeTemp() {
+        return doomedInExtremeTemp;
+    }
+
+    public boolean isDoomedInVacuum() {
+        return doomedInVacuum;
     }
 
     public boolean isClan() {
@@ -919,6 +929,14 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public void setDoomedInSpace(boolean doomedInSpace) {
         this.doomedInSpace = doomedInSpace;
+    }
+
+    public void setDoomedInExtremeTemp(boolean doomedInExtremeTemp) {
+        this.doomedInExtremeTemp = doomedInExtremeTemp;
+    }
+
+    public void setDoomedInVacuum(boolean doomedInVacuum) {
+        this.doomedInVacuum = doomedInVacuum;
     }
 
     public void setClan(boolean clan) {

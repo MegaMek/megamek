@@ -45,6 +45,8 @@ public class MechSearchFilter {
     public int iDoomedOnGround;
     public int iDoomedInAtmosphere;
     public int iDoomedInSpace;
+    public int iDoomedInExtremeTemp;
+    public int iDoomedInVacuum;
     public int iSupportVehicle;
     public int iAerospaceFighter;
     public String sStartTankTurrets;
@@ -481,6 +483,14 @@ public class MechSearchFilter {
         }
 
         if (!isMatch(f.iDoomedInSpace, mech.isDoomedInSpace())) {
+            return false;
+        }
+
+        if (!isMatch(f.iDoomedInExtremeTemp, mech.isDoomedInExtremeTemp())) {
+            return false;
+        }
+
+        if (!isMatch(f.iDoomedInVacuum, mech.isDoomedInVacuum())) {
             return false;
         }
 

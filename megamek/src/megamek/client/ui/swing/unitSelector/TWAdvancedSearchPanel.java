@@ -347,6 +347,10 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JButton btnFilterDoomedInAtmosphere = new JButton("\u2610");
     private JLabel lblFilterDoomedInSpace = new JLabel(Messages.getString("MechSelectorDialog.Search.DoomedInSpace"));
     private JButton btnFilterDoomedInSpace = new JButton("\u2610");
+    private JLabel lblFilterDoomedInExtremeTemp = new JLabel(Messages.getString("MechSelectorDialog.Search.DoomedInExtremeTemp"));
+    private JButton btnFilterDoomedInExtremeTemp = new JButton("\u2610");
+    private JLabel lblFilterDoomedInVacuum = new JLabel(Messages.getString("MechSelectorDialog.Search.DoomedInVacuum"));
+    private JButton btnFilterDoomedInVacuum = new JButton("\u2610");
 
     /** The game's current year. */
     private int gameYear;
@@ -997,6 +1001,10 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         btnFilterDoomedInAtmosphere.addActionListener(this);
         btnFilterDoomedInSpace.setBorder(emptyBorder);
         btnFilterDoomedInSpace.addActionListener(this);
+        btnFilterDoomedInExtremeTemp.setBorder(emptyBorder);
+        btnFilterDoomedInExtremeTemp.addActionListener(this);
+        btnFilterDoomedInVacuum.setBorder(emptyBorder);
+        btnFilterDoomedInVacuum.addActionListener(this);
 
         JPanel unitTypePanel = new JPanel();
         unitTypePanel.setLayout(new GridBagLayout());
@@ -1182,13 +1190,22 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         JPanel filter2Panel = new JPanel();
         filter2Panel.add(btnFilterWaterOnly);
         filter2Panel.add(lblFilterWaterOnly);
-        filter2Panel.add(btnFilterDoomedOnGround);
-        filter2Panel.add(lblFilterDoomedOnGround);
-        filter2Panel.add(btnFilterDoomedInAtmosphere);
-        filter2Panel.add(lblFilterDoomedInAtmosphere);
-        filter2Panel.add(btnFilterDoomedInSpace);
-        filter2Panel.add(lblFilterDoomedInSpace);
+        filter2Panel.add(btnFilterDoomedInExtremeTemp);
+        filter2Panel.add(lblFilterDoomedInExtremeTemp);
+        filter2Panel.add(btnFilterDoomedInVacuum);
+        filter2Panel.add(lblFilterDoomedInVacuum);
         unitTypePanel.add(filter2Panel, c);
+
+
+        c.gridx = 0; c.gridy++;
+        JPanel filter3Panel = new JPanel();
+        filter3Panel.add(btnFilterDoomedOnGround);
+        filter3Panel.add(lblFilterDoomedOnGround);
+        filter3Panel.add(btnFilterDoomedInAtmosphere);
+        filter3Panel.add(lblFilterDoomedInAtmosphere);
+        filter3Panel.add(btnFilterDoomedInSpace);
+        filter3Panel.add(lblFilterDoomedInSpace);
+        unitTypePanel.add(filter3Panel, c);
 
         c.gridx = 0; c.gridy++;;
         c.weighty = 1;
@@ -1689,6 +1706,10 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
             toggleText(btnFilterDoomedInAtmosphere);
         } else if (ev.getSource().equals(btnFilterDoomedInSpace)) {
             toggleText(btnFilterDoomedInSpace);
+        } else if (ev.getSource().equals(btnFilterDoomedInExtremeTemp)) {
+            toggleText(btnFilterDoomedInExtremeTemp);
+        } else if (ev.getSource().equals(btnFilterDoomedInVacuum)) {
+            toggleText(btnFilterDoomedInVacuum);
         }
     }
 
@@ -2037,6 +2058,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         btnFilterDoomedOnGround.setText("\u2610");
         btnFilterDoomedInAtmosphere.setText("\u2610");
         btnFilterDoomedInSpace.setText("\u2610");
+        btnFilterDoomedInExtremeTemp.setText("\u2610");
+        btnFilterDoomedInVacuum.setText("\u2610");
     }
 
     private void clearQuirks() {
@@ -2302,6 +2325,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         mechFilter.iDoomedOnGround = getValue(btnFilterDoomedOnGround);
         mechFilter.iDoomedInAtmosphere = getValue(btnFilterDoomedInAtmosphere);
         mechFilter.iDoomedInSpace = getValue(btnFilterDoomedInSpace);
+        mechFilter.iDoomedInExtremeTemp = getValue(btnFilterDoomedInExtremeTemp);
+        mechFilter.iDoomedInVacuum = getValue(btnFilterDoomedInVacuum);
     }
 
     /**

@@ -158,7 +158,6 @@ public class GameManager implements IGameManager {
 
         // register terrain processors
         terrainProcessors.add(new FireProcessor(this));
-        terrainProcessors.add(new SmokeProcessor(this));
         terrainProcessors.add(new GeyserProcessor(this));
         terrainProcessors.add(new ElevatorProcessor(this));
         terrainProcessors.add(new ScreenProcessor(this));
@@ -34078,7 +34077,7 @@ public class GameManager implements IGameManager {
      * @param duration How long the smoke will last.
      */
     public void createSmoke(Coords coords, int level, int duration) {
-        SmokeCloud cloud = new SmokeCloud(coords, level, duration);
+        SmokeCloud cloud = new SmokeCloud(coords, level, duration, game.getRoundCount());
         game.addSmokeCloud(cloud);
         sendSmokeCloudAdded(cloud);
     }
@@ -34091,20 +34090,9 @@ public class GameManager implements IGameManager {
      * @param duration duration How long the smoke will last.
      */
     public void createSmoke(ArrayList<Coords> coords, int level, int duration) {
-        SmokeCloud cloud = new SmokeCloud(coords, level, duration);
+        SmokeCloud cloud = new SmokeCloud(coords, level, duration, game.getRoundCount());
         game.addSmokeCloud(cloud);
         sendSmokeCloudAdded(cloud);
-    }
-
-    /**
-     * Update the map with a new set of coords.
-     *
-     * @param newCoords the location to move the smoke to
-     */
-    public void updateSmoke(SmokeCloud cloud, ArrayList<Coords> newCoords) {
-        removeSmokeTerrain(cloud);
-        cloud.getCoordsList().clear();
-        cloud.getCoordsList().addAll(newCoords);
     }
 
     /**
@@ -34114,9 +34102,9 @@ public class GameManager implements IGameManager {
      */
     public void removeSmokeTerrain(SmokeCloud cloud) {
         for (Coords coords : cloud.getCoordsList()) {
-            Hex nextHex = game.getBoard().getHex(coords);
-            if ((nextHex != null) && nextHex.containsTerrain(Terrains.SMOKE)) {
-                nextHex.removeTerrain(Terrains.SMOKE);
+            Hex hex = game.getBoard().getHex(coords);
+            if ((hex != null) && hex.containsTerrain(Terrains.SMOKE)) {
+                hex.removeTerrain(Terrains.SMOKE);
                 sendChangedHex(coords);
             }
         }

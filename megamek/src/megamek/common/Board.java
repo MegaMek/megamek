@@ -23,6 +23,9 @@ import org.apache.logging.log4j.LogManager;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 public class Board implements Serializable {
     //region Variable Declarations
@@ -607,7 +610,7 @@ public class Board implements Serializable {
      * @param c the Coords.
      * @return <code>true</code> if the board contains the specified coords
      */
-    public boolean contains(Coords c) {
+    public boolean contains(@Nullable Coords c) {
         if (c == null) {
             return false;
         }
@@ -615,11 +618,38 @@ public class Board implements Serializable {
     }
 
     /**
-     * @param c the Coords, which may be null
+     * Returns the Hex at the given Coords, both of which may be null.
+     *
+     * @param coords the Coords to look for the Hex
      * @return the Hex at the specified Coords, or null if there is not a hex there
      */
-    public @Nullable Hex getHex(final @Nullable Coords c) {
-        return (c == null) ? null : getHex(c.getX(), c.getY());
+    public @Nullable Hex getHex(final @Nullable Coords coords) {
+        if (coords == null) {
+            LogManager.getLogger().warn("Method called with null Coords!");
+            return null;
+        } else if (getHex(coords.getX(), coords.getY()) == null) {
+            LogManager.getLogger().warn("Method called with a Coords that returns a null hex!");
+            return null;
+        } else {
+            return getHex(coords.getX(), coords.getY());
+        }
+    }
+
+    /**
+     * Returns a list of Hexes at the given coords. The list will never be null but may be empty
+     * depending on the given Coords collection. If the given Coords collection is null, the returned
+     * list will be empty.
+     *
+     * @param coords the Coords to query
+     * @return the Hexes at the specified Coords
+     */
+    public List<Hex> getHexes(final @Nullable Collection<Coords> coords) {
+        if (coords == null) {
+            LogManager.getLogger().warn("Method called with null Coords list!");
+            return new ArrayList<>();
+        } else {
+            return coords.stream().map(this::getHex).filter(Objects::nonNull).collect(toList());
+        }
     }
 
     /**

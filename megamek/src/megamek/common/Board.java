@@ -627,9 +627,6 @@ public class Board implements Serializable {
         if (coords == null) {
             LogManager.getLogger().warn("Method called with null Coords!");
             return null;
-        } else if (getHex(coords.getX(), coords.getY()) == null) {
-            LogManager.getLogger().warn("Method called with a Coords that returns a null hex!");
-            return null;
         } else {
             return getHex(coords.getX(), coords.getY());
         }

@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.client.ratgenerator;
 
 import megamek.client.ui.Messages;
@@ -12,18 +30,29 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * This class provides export for MM's RAT data to an excel-optimized CSV file for exchanging data with the MUL team.
+ */
 public class RATDataCSVExporter {
+
+    //TODO: Code cleanup
+    //TODO: Chassis avail
 
     private static final String DELIMITER = ";";
 
-
+    /**
+     * Exports all RAT data to a selectable file as an excel-optimized CSV.
+     */
     public static void exportToCSV() {
         RATGenerator ratGenerator = initializeRatGenerator();
         exportToCSV(ratGenerator);
     }
 
+    /**
+     * Exports all RAT data from the given RATGenerator to a selectable file as an excel-optimized CSV.
+     */
     public static void exportToCSV(RATGenerator ratGenerator) {
-        File saveFile = getSaveFile();
+        File saveFile = getSaveTargetFile();
         if (saveFile == null) {
             return;
         }
@@ -84,12 +113,7 @@ public class RATDataCSVExporter {
         return ratGenerator;
     }
 
-    /**
-     * Shows a dialog for choosing a .board file to save to.
-     * Sets curBoardFile and returns true when a valid file was chosen.
-     * Returns false otherwise.
-     */
-    private static File getSaveFile() {
+    private static File getSaveTargetFile() {
         JFileChooser fc = new JFileChooser();
         fc.setDialogTitle(Messages.getString("BoardEditor.saveBoardAs"));
         fc.setFileFilter(new FileFilter() {
@@ -102,16 +126,12 @@ public class RATDataCSVExporter {
             public String getDescription() {
                 return "*.csv";
             }
-
-
         });
         int returnVal = fc.showSaveDialog(null);
-//        saveDialogSize(fc);
         if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
             return null;
         }
         File choice = fc.getSelectedFile();
-        // make sure the file ends in board
         if (!choice.getName().toLowerCase().endsWith(".csv")) {
             try {
                 choice = new File(choice.getCanonicalPath() + ".csv");
@@ -122,6 +142,5 @@ public class RATDataCSVExporter {
         return choice;
     }
 
-    private RATDataCSVExporter() {
-    }
+    private RATDataCSVExporter() { }
 }

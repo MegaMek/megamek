@@ -150,7 +150,18 @@ class LobbyMekCellFormatter {
             if (!entity.isDesignValid()) {
                 result.append(DOT_SPACER);
                 result.append(guiScaledFontHTML(GUIP.getWarningColor()));
-                result.append("\u26D4 </FONT>").append(Messages.getString("ChatLounge.invalidDesign"));
+                result.append("\u26D4 ").append(Messages.getString("ChatLounge.invalidDesign"));
+                result.append("</FONT>");
+            }
+        }
+
+        // Shutdown
+        if (!forceView) {
+            if (entity.isShutDown()) {
+                result.append(DOT_SPACER);
+                result.append(guiScaledFontHTML(GUIP.getWarningColor()));
+                result.append("\u23FC ").append(Messages.getString("ChatLounge.shutdown"));
+                result.append("</FONT>");
             }
         }
         

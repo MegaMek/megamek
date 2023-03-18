@@ -51,8 +51,6 @@ public class UnitDisplayDialog extends JDialog {
 
         UIUtil.updateWindowBounds(this);
         this.setResizable(true);
-        this.setFocusable(false);
-        this.setFocusableWindowState(false);
 
         addWindowListener(new WindowAdapter() {
             @Override

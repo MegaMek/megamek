@@ -266,9 +266,10 @@ class EntitySprite extends Sprite {
 
         if ((indexEntity != -1) && (numEntity <= 4)) {
             labelRect.y += (bv.getFontMetrics(labelFont).getAscent() + 4) * indexEntity;
+        } else if (indexEntity == -1) {
+            labelRect.y += (bv.getFontMetrics(labelFont).getAscent() + 4) * numEntity;
         } else {
-            labelRect.y += (bv.getFontMetrics(labelFont).getAscent() + 4) *
-                    bv.game.getEntitiesVector(position).size();
+            labelRect.y += (bv.getFontMetrics(labelFont).getAscent() + 4);
         }
 
         // If the label has changed, force a redraw (necessary

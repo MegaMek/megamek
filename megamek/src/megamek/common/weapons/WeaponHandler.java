@@ -788,7 +788,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
             r.indent();
             r.newlines = 0;
             r.subject = subjectId;
-            r.add(wtype.getName() + number);
+            String base = wtype.isClan() ? " (Clan)" : "";
+            r.add(wtype.getName() + base + number);
             if (entityTarget != null) {
                 if ((wtype.getAmmoType() != AmmoType.T_NA)
                         && (weapon.getLinked() != null)

@@ -35,9 +35,6 @@ import java.util.stream.Collectors;
  */
 public class RATDataCSVExporter {
 
-    //TODO: Code cleanup
-    //TODO: Chassis avail
-
     private static final String DELIMITER = ";";
 
     /**
@@ -67,35 +64,66 @@ public class RATDataCSVExporter {
 
             bw.write(columnNames);
 
-            for (ModelRecord record : ratGenerator.getModelList()) {
-                for (String faction : record.getIncludedFactions()) {
+            for (ChassisRecord chassisRecord : ratGenerator.getChassisList()) {
+                for (String faction : chassisRecord.getIncludedFactions()) {
                     var csvLine = new StringBuilder();
-                    csvLine.append(record.getChassis()).append(DELIMITER);
-                    csvLine.append(record.getModel()).append(DELIMITER);
-                    csvLine.append(record.getMechSummary().getMulId()).append(DELIMITER);
-                    csvLine.append(record.getMechSummary().getYear()).append(DELIMITER);
-                    csvLine.append("TBD").append(DELIMITER);
-                    csvLine.append(faction).append(DELIMITER);
-                    for (int era : eras) {
-                        csvLine.append("\"=\"\"");
-                        AvailabilityRating ar = ratGenerator.findModelAvailabilityRecord(era, record.getKey(), faction);
-                        if (ar != null) {
-                            csvLine.append(ar.getAvailabilityCode());
-                            if (ar.getEra() != ar.getStartYear()) {
-                                csvLine.append(":").append(ar.getStartYear());
-                            }
-                        } else {
-                            csvLine.append("--");
-                        }
-                        csvLine.append("\"\"\"");
-                        csvLine.append(DELIMITER);
-                    }
+                    writeChassisBaseData(chassisRecord, csvLine, faction);
+                    writeEraData(chassisRecord, eras, ratGenerator, csvLine, faction);
                     csvLine.append("\n");
                     bw.write(csvLine.toString());
+                }
+
+                for (ModelRecord modelRecord : chassisRecord.getModels()) {
+                    for (String faction : modelRecord.getIncludedFactions()) {
+                        var csvLine = new StringBuilder();
+                        writeModelBaseData(modelRecord, csvLine, faction);
+                        writeEraData(chassisRecord, eras, ratGenerator, csvLine, faction);
+                        csvLine.append("\n");
+                        bw.write(csvLine.toString());
+                    }
                 }
             }
         } catch (Exception ex) {
             LogManager.getLogger().error("", ex);
+        }
+    }
+
+    private static void writeModelBaseData(ModelRecord record, StringBuilder csvLine, String faction) {
+        csvLine.append(record.getChassis()).append(DELIMITER);
+        csvLine.append(record.getModel()).append(DELIMITER);
+        csvLine.append(record.getMechSummary().getMulId()).append(DELIMITER);
+        csvLine.append(record.getMechSummary().getYear()).append(DELIMITER);
+        csvLine.append("TBD").append(DELIMITER);
+        csvLine.append(faction).append(DELIMITER);
+    }
+
+    private static void writeChassisBaseData(ChassisRecord record, StringBuilder csvLine, String faction) {
+        csvLine.append(record.getChassis()).append(DELIMITER);
+        csvLine.append(DELIMITER);
+        csvLine.append(DELIMITER);
+        csvLine.append(DELIMITER);
+        csvLine.append("TBD").append(DELIMITER);
+        csvLine.append(faction).append(DELIMITER);
+    }
+
+    private static void writeEraData(AbstractUnitRecord record, Integer[] eras,
+                                     RATGenerator ratGenerator, StringBuilder csvLine, String faction) {
+        for (int era : eras) {
+            AvailabilityRating ar;
+            if (record instanceof ModelRecord) {
+                ar = ratGenerator.findModelAvailabilityRecord(era, record.getKey(), faction);
+            } else {
+                ar = ratGenerator.findChassisAvailabilityRecord(era, record.getKey(), faction, era);
+            }
+            if (ar != null) {
+                csvLine.append("\"=\"\"");
+                csvLine.append(ar.getAvailabilityCode());
+                if (ar.getEra() != ar.getStartYear()) {
+                    csvLine.append(":").append(ar.getStartYear());
+                }
+                csvLine.append("\"\"\"");
+            }
+            csvLine.append(DELIMITER);
         }
     }
 

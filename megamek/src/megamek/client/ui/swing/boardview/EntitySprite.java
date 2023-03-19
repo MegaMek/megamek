@@ -95,8 +95,7 @@ class EntitySprite extends Sprite {
 
     private String getAdjShortName() {
         Coords position = entity.getPosition();
-        boolean multipleUnits = bv.game.getEntitiesVector(position, true).size() > 1;
-
+        boolean multipleUnits = bv.game.getEntitiesVector(position, true).size() > 4;
 
         if (onlyDetectedBySensors()) {
             return Messages.getString("BoardView1.sensorReturn");
@@ -262,8 +261,10 @@ class EntitySprite extends Sprite {
 
         // If multiple units are present in a hex, fan out the labels
         // In the deployment phase, indexOf returns -1 for the current unit
-        int indexEntity = bv.game.getEntitiesVector(position).indexOf(entity);
-        if (indexEntity != -1) {
+        int indexEntity = bv.game.getEntitiesVector(position, true).indexOf(entity);
+        int numEntity = bv.game.getEntitiesVector(position, true).size();
+
+        if ((indexEntity != -1) && (numEntity <= 4)) {
             labelRect.y += (bv.getFontMetrics(labelFont).getAscent() + 4) * indexEntity;
         } else {
             labelRect.y += (bv.getFontMetrics(labelFont).getAscent() + 4) *

@@ -77,7 +77,7 @@ public class RATDataCSVExporter {
                     for (String faction : modelRecord.getIncludedFactions()) {
                         var csvLine = new StringBuilder();
                         writeModelBaseData(modelRecord, csvLine, faction);
-                        writeEraData(chassisRecord, eras, ratGenerator, csvLine, faction);
+                        writeEraData(modelRecord, eras, ratGenerator, csvLine, faction);
                         csvLine.append("\n");
                         bw.write(csvLine.toString());
                     }
@@ -89,8 +89,8 @@ public class RATDataCSVExporter {
     }
 
     private static void writeModelBaseData(ModelRecord record, StringBuilder csvLine, String faction) {
-        csvLine.append(record.getChassis()).append(DELIMITER);
-        csvLine.append(record.getModel()).append(DELIMITER);
+        csvLine.append("\"=\"\"").append(record.getChassis()).append("\"\"\"").append(DELIMITER);
+        csvLine.append("\"=\"\"").append(record.getModel()).append("\"\"\"").append(DELIMITER);
         csvLine.append(record.getMechSummary().getMulId()).append(DELIMITER);
         csvLine.append(record.getMechSummary().getYear()).append(DELIMITER);
         csvLine.append("TBD").append(DELIMITER);
@@ -98,7 +98,7 @@ public class RATDataCSVExporter {
     }
 
     private static void writeChassisBaseData(ChassisRecord record, StringBuilder csvLine, String faction) {
-        csvLine.append(record.getChassis()).append(DELIMITER);
+        csvLine.append("\"=\"\"").append(record.getChassis()).append("\"\"\"").append(DELIMITER);
         csvLine.append(DELIMITER);
         csvLine.append(DELIMITER);
         csvLine.append(DELIMITER);
@@ -113,7 +113,7 @@ public class RATDataCSVExporter {
             if (record instanceof ModelRecord) {
                 ar = ratGenerator.findModelAvailabilityRecord(era, record.getKey(), faction);
             } else {
-                ar = ratGenerator.findChassisAvailabilityRecord(era, record.getKey(), faction, era);
+                ar = ratGenerator.findChassisAvailabilityRecord(era, record.getChassisKey(), faction, era);
             }
             if (ar != null) {
                 csvLine.append("\"=\"\"");

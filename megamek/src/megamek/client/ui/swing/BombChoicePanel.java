@@ -88,11 +88,15 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
             b_labels[type] = new JLabel();
             b_choices[type] = new JComboBox<String>();
 
-            int maxNumBombs = Math.round(availBombPoints
-                    / BombType.getBombCost(type))
-                    + bombChoices[type];
-            if (BombType.getBombCost(type) > maxSize) {
+            int maxNumBombs = Math.round(availBombPoints / BombType.getBombCost(type)) + bombChoices[type];
+
+            if (BombType.getBombCost(type) > maxSize)  {
                 maxNumBombs = 0;
+            }
+
+            // somehow too many bombs were added
+            if ((bombChoices[type] * BombType.getBombCost(type))  > maxSize) {
+                bombChoices[type] = 0;
             }
             
             if (typeMax != null) {
@@ -100,7 +104,15 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
                     maxNumBombs = typeMax[type];
                 }
             }
-            
+
+            if (maxNumBombs < 0) {
+                maxNumBombs = 0;
+            }
+
+            if (maxNumBombs > maxSize) {
+                maxNumBombs = maxSize;
+            }
+
             for (int x = 0; x <= maxNumBombs; x++) {
                 b_choices[type].addItem(Integer.toString(x));
             }

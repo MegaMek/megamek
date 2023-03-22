@@ -607,14 +607,11 @@ public class Board implements Serializable {
     /**
      * Determines whether this Board "contains" the specified Coords.
      *
-     * @param c the Coords.
+     * @param coords the Coords.
      * @return <code>true</code> if the board contains the specified coords
      */
-    public boolean contains(@Nullable Coords c) {
-        if (c == null) {
-            return false;
-        }
-        return contains(c.getX(), c.getY());
+    public boolean contains(@Nullable Coords coords) {
+        return coords != null && contains(coords.getX(), coords.getY());
     }
 
     /**
@@ -624,12 +621,7 @@ public class Board implements Serializable {
      * @return the Hex at the specified Coords, or null if there is not a hex there
      */
     public @Nullable Hex getHex(final @Nullable Coords coords) {
-        if (coords == null) {
-            LogManager.getLogger().warn("Method called with null Coords!");
-            return null;
-        } else {
-            return getHex(coords.getX(), coords.getY());
-        }
+        return (coords == null) ? null : getHex(coords.getX(), coords.getY());
     }
 
     /**

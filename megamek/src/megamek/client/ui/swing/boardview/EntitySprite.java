@@ -77,6 +77,8 @@ class EntitySprite extends Sprite {
             "Assault", "Mobile", "Platform", "Battle Armor", "Vessel", "Infantry",
             "Fighting", "Fire", "Suport", "Reconnaissance", "Fast");
 
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
     public EntitySprite(BoardView boardView1, final Entity entity,
                         int secondaryPos, Image radarBlipImage) {
         super(boardView1);
@@ -92,10 +94,19 @@ class EntitySprite extends Sprite {
     }
 
     private String getAdjShortName() {
+        Coords position = entity.getPosition();
+        boolean multipleUnits = bv.game.getEntitiesVector(position, true).size() > 4;
+
         if (onlyDetectedBySensors()) {
             return Messages.getString("BoardView1.sensorReturn");
+        } else if (multipleUnits) {
+            if (GUIP.getUnitLabelStyle() == LabelDisplayStyle.ONLY_STATUS) {
+                return "";
+            } else {
+                return Messages.getString("BoardView1.multipleUnits");
+            }
         } else {
-            switch (GUIPreferences.getInstance().getUnitLabelStyle()) {
+            switch (GUIP.getUnitLabelStyle()) {
                 case FULL:
                     return standardLabelName();
                 case ABBREV:
@@ -250,12 +261,15 @@ class EntitySprite extends Sprite {
 
         // If multiple units are present in a hex, fan out the labels
         // In the deployment phase, indexOf returns -1 for the current unit
-        int indexEntity = bv.game.getEntitiesVector(position).indexOf(entity);
-        if (indexEntity != -1) {
+        int indexEntity = bv.game.getEntitiesVector(position, true).indexOf(entity);
+        int numEntity = bv.game.getEntitiesVector(position, true).size();
+
+        if ((indexEntity != -1) && (numEntity <= 4)) {
             labelRect.y += (bv.getFontMetrics(labelFont).getAscent() + 4) * indexEntity;
+        } else if (indexEntity == -1) {
+            labelRect.y += (bv.getFontMetrics(labelFont).getAscent() + 4) * numEntity;
         } else {
-            labelRect.y += (bv.getFontMetrics(labelFont).getAscent() + 4) *
-                    bv.game.getEntitiesVector(position).size();
+            labelRect.y += (bv.getFontMetrics(labelFont).getAscent() + 4);
         }
 
         // If the label has changed, force a redraw (necessary
@@ -379,7 +393,6 @@ class EntitySprite extends Sprite {
     @Override
     public void prepare() {
         final Board board = bv.game.getBoard();
-        final GUIPreferences guip = GUIPreferences.getInstance();
         // recalculate bounds & label
         getBounds();
 
@@ -404,8 +417,7 @@ class EntitySprite extends Sprite {
                 // draw the unit icon translucent if:
                 // hidden from the enemy (and activated graphics setting); or
                 // submerged
-                boolean translucentHiddenUnits = guip
-                        .getBoolean(GUIPreferences.ADVANCED_TRANSLUCENT_HIDDEN_UNITS);
+                boolean translucentHiddenUnits = GUIP.getBoolean(GUIPreferences.ADVANCED_TRANSLUCENT_HIDDEN_UNITS);
                 boolean shouldBeTranslucent = (trackThisEntitiesVisibilityInfo(entity)
                         && !entity.isVisibleToEnemy()) || entity.isHidden();
                 if ((shouldBeTranslucent && translucentHiddenUnits)
@@ -628,7 +640,7 @@ class EntitySprite extends Sprite {
                 }
             }
 
-            if (guip.getShowDamageLevel()) {
+            if (GUIP.getShowDamageLevel()) {
                 Color damageColor = getDamageColor();
                 if (damageColor != null) {
                     stStr.add(new Status(damageColor, 0, SMALL));
@@ -651,16 +663,16 @@ class EntitySprite extends Sprite {
                         labelRect.height, 5, 10);
 
                 // Draw a label border with player colors or team coloring
-                if (guip.getUnitLabelBorder()) {
-                    if (guip.getTeamColoring()) {
+                if (GUIP.getUnitLabelBorder()) {
+                    if (GUIP.getTeamColoring()) {
                         boolean isLocalTeam = entity.getOwner().getTeam() == bv.clientgui.getClient().getLocalPlayer().getTeam();
                         boolean isLocalPlayer = entity.getOwner().equals(bv.clientgui.getClient().getLocalPlayer());
                         if (isLocalPlayer) {
-                            graph.setColor(GUIPreferences.getInstance().getMyUnitColor());
+                            graph.setColor(GUIP.getMyUnitColor());
                         } else if (isLocalTeam) {
-                            graph.setColor(GUIPreferences.getInstance().getAllyUnitColor());
+                            graph.setColor(GUIP.getAllyUnitColor());
                         } else {
-                            graph.setColor(GUIPreferences.getInstance().getEnemyUnitColor());
+                            graph.setColor(GUIP.getEnemyUnitColor());
                         }
                     } else {
                         graph.setColor(entity.getOwner().getColour().getColour(false));
@@ -676,10 +688,10 @@ class EntitySprite extends Sprite {
                 graph.setFont(labelFont);
                 Color textColor = LABEL_TEXT_COLOR;
                 if (!entity.isDone() && !onlyDetectedBySensors()) {
-                    textColor = guip.getColor(GUIPreferences.ADVANCED_UNITOVERVIEW_VALID_COLOR);
+                    textColor = GUIP.getColor(GUIPreferences.ADVANCED_UNITOVERVIEW_VALID_COLOR);
                 }
                 if (isSelected) {
-                    textColor = guip.getColor(GUIPreferences.ADVANCED_UNITOVERVIEW_SELECTED_COLOR);
+                    textColor = GUIP.getColor(GUIPreferences.ADVANCED_UNITOVERVIEW_SELECTED_COLOR);
                 }
                 BoardView.drawCenteredText(graph, getAdjShortName(),
                         labelRect.x + labelRect.width / 2,
@@ -713,7 +725,7 @@ class EntitySprite extends Sprite {
                     graph.scale(1 / bv.scale, 1 / bv.scale);
                     graph.rotate(Math.PI / 24, bv.hex_size.width / 2, bv.hex_size.height / 2);
                     graph.scale(bv.scale, bv.scale);
-                    graph.setColor(GUIPreferences.getInstance().getWarningColor());
+                    graph.setColor(GUIP.getWarningColor());
                     graph.fill(bv.facingPolys[entity.getFacing()]);
                     graph.setColor(Color.LIGHT_GRAY);
                     graph.draw(bv.facingPolys[entity.getFacing()]);
@@ -721,7 +733,7 @@ class EntitySprite extends Sprite {
                 }
 
                 if (!entity.isDone() && bv.game.getPhase().isMovement()) {
-                    graph.setColor(GUIPreferences.getInstance().getWarningColor());
+                    graph.setColor(GUIP.getWarningColor());
                     graph.fill(bv.facingPolys[entity.getFacing()]);
                     graph.setColor(Color.WHITE);
                     graph.draw(bv.facingPolys[entity.getFacing()]);
@@ -781,12 +793,12 @@ class EntitySprite extends Sprite {
             }
 
             // TMM pips show if done in movement, or on all units during firing
-            int pipOption = guip.getInt(GUIPreferences.ADVANCED_TMM_PIP_MODE);
+            int pipOption = GUIP.getInt(GUIPreferences.ADVANCED_TMM_PIP_MODE);
             if ((pipOption != 0) && !ge
                     && ((entity.isDone() && bv.game.getPhase().isMovement())
                     || bv.game.getPhase().isFiring())) {
                 int tmm = Compute.getTargetMovementModifier(bv.game, entity.getId()).getValue();
-                Color tmmColor = (pipOption == 1) ? Color.WHITE : guip.getColorForMovement(entity.moved);
+                Color tmmColor = (pipOption == 1) ? Color.WHITE : GUIP.getColorForMovement(entity.moved);
                 graph.setColor(Color.darkGray);
                 graph.fillRect(STATUS_BAR_X, 12 + TMM_PIP_SIZE, STATUS_BAR_LENGTH, TMM_PIP_SIZE);
                 if (tmm >= 0) {

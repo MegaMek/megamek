@@ -19,6 +19,7 @@
 package megamek.client.ratgenerator;
 
 import megamek.client.ui.Messages;
+import megamek.common.UnitType;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
@@ -58,7 +59,7 @@ public class RATDataCSVExporter {
         List<String> eraYears = ratGenerator.getEraSet().stream().map(era -> era + "").collect(Collectors.toList());
 
         try (PrintWriter pw = new PrintWriter(saveFile); BufferedWriter bw = new BufferedWriter(pw)) {
-            String columnNames = "Chassis" + DELIMITER + "Model" + DELIMITER + "MUL ID" + DELIMITER;
+            String columnNames = "Chassis" + DELIMITER + "Model" + DELIMITER + "MUL ID" + DELIMITER + "Unit Type" + DELIMITER;
             columnNames += "Intro Date" + DELIMITER + "Faction ID" + DELIMITER + "Faction" + DELIMITER;
             columnNames += String.join(DELIMITER, eraYears) + "\n";
 
@@ -92,6 +93,7 @@ public class RATDataCSVExporter {
         csvLine.append("\"=\"\"").append(record.getChassis()).append("\"\"\"").append(DELIMITER);
         csvLine.append("\"=\"\"").append(record.getModel()).append("\"\"\"").append(DELIMITER);
         csvLine.append(record.getMechSummary().getMulId()).append(DELIMITER);
+        csvLine.append(UnitType.getTypeName(record.getUnitType())).append(DELIMITER);
         csvLine.append(record.getMechSummary().getYear()).append(DELIMITER);
         csvLine.append("TBD").append(DELIMITER);
         csvLine.append(faction).append(DELIMITER);
@@ -101,6 +103,7 @@ public class RATDataCSVExporter {
         csvLine.append("\"=\"\"").append(record.getChassis()).append("\"\"\"").append(DELIMITER);
         csvLine.append(DELIMITER);
         csvLine.append(DELIMITER);
+        csvLine.append(UnitType.getTypeName(record.getUnitType())).append(DELIMITER);
         csvLine.append(DELIMITER);
         csvLine.append("TBD").append(DELIMITER);
         csvLine.append(faction).append(DELIMITER);

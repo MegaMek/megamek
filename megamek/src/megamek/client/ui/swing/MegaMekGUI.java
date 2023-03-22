@@ -511,8 +511,15 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
         // Handrolled extraction, as we require Server initialization to use XStream and don't need
         // the additional overhead of initializing everything twice
-        try (InputStream is = new FileInputStream(fc.getSelectedFile());
-             InputStream gzi = new GZIPInputStream(is)) {
+        try (InputStream is = new FileInputStream(fc.getSelectedFile())) {
+            InputStream gzi;
+
+            if (fc.getSelectedFile().getName().toLowerCase().endsWith(".gz")) {
+                gzi = new GZIPInputStream(is);
+            } else {
+                gzi = is;
+            }
+
             // Using factory get an instance of document builder
             final DocumentBuilder documentBuilder = MMXMLUtility.newSafeDocumentBuilder();
             // Parse using builder to get DOM representation of the XML file

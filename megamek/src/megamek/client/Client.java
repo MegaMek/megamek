@@ -914,9 +914,17 @@ public class Client implements IClientCommandHandler {
      * sends a load game file to the server
      */
     public void sendLoadGame(File f) {
-        try (InputStream fis = new FileInputStream(f); InputStream is = new GZIPInputStream(fis)) {
+        try (InputStream is = new FileInputStream(f)) {
+            InputStream gzi;
+
+            if (f.getName().toLowerCase().endsWith(".gz")) {
+                gzi = new GZIPInputStream(is);
+            } else {
+                gzi = is;
+            }
+
             game.reset();
-            send(new Packet(PacketCommand.LOAD_GAME, SerializationHelper.getLoadSaveGameXStream().fromXML(is)));
+            send(new Packet(PacketCommand.LOAD_GAME, SerializationHelper.getLoadSaveGameXStream().fromXML(gzi)));
         } catch (Exception ex) {
             LogManager.getLogger().error("Can't find the local savegame " + f, ex);
         }

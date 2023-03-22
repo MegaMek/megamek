@@ -96,7 +96,7 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
 
             // somehow too many bombs were added
             if ((bombChoices[type] * BombType.getBombCost(type))  > maxSize) {
-                bombChoices[type] = 0;
+                bombChoices[type] = maxSize / BombType.getBombCost(type);
             }
             
             if (typeMax != null) {

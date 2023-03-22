@@ -168,14 +168,27 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
         for (int type = 0; type < BombType.B_NUM; type++) {
             b_choices[type].removeItemListener(this);
             b_choices[type].removeAllItems();
-            int maxNumBombs = Math.round(availBombPoints
-                    / BombType.getBombCost(type))
-                    + current[type];
+            int maxNumBombs = Math.round(availBombPoints / BombType.getBombCost(type)) + current[type];
+
             if (typeMax != null) {
                 if ((maxNumBombs > 0) && (maxNumBombs > typeMax[type])) {
                     maxNumBombs = typeMax[type];
                 }
             }
+
+            if (current[type] > maxNumBombs) {
+                maxNumBombs = current[type];
+            }
+
+            if (maxNumBombs < 0) {
+                maxNumBombs = 0;
+            }
+
+            if (maxNumBombs > maxSize) {
+                maxNumBombs = maxSize;
+            }
+
+
             for (int x = 0; x <= maxNumBombs; x++) {
                 b_choices[type].addItem(Integer.toString(x));
             }

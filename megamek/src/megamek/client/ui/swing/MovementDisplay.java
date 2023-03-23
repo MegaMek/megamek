@@ -3461,7 +3461,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         for (i = 0; i < FighterBays.size(); i++) {
             currentBay = FighterBays.elementAt(i);
             Vector<Integer> bayChoices = new Vector<>();
-            Vector<Entity> currentFighters = currentBay.getLaunchableUnits();
+            List<Entity> currentFighters = currentBay.getLaunchableUnits();
             /*
              * We will assume that if more fighters are launched than is safe,
              * that these excess fighters will be distributed equally among
@@ -3478,7 +3478,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                             "MovementDisplay.LaunchFighterDialog.message", new Object[]{
                                                                                          ce.getShortName(), doors * 2, bayNum});
             for (int loop = 0; loop < names.length; loop++) {
-                names[loop] = currentFighters.elementAt(loop).getShortName();
+                names[loop] = currentFighters.get(loop).getShortName();
             }
 
             boolean doIt = false;
@@ -3529,9 +3529,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 // load up the choices
                 int[] unitsLaunched = choiceDialog.getChoices();
                 for (int element : unitsLaunched) {
-                    bayChoices.add(currentFighters.elementAt(element).getId());
+                    bayChoices.add(currentFighters.get(element).getId());
                     //Prompt the player to load passengers aboard small craft
-                    Entity en = clientgui.getClient().getGame().getEntity(currentFighters.elementAt(element).getId());
+                    Entity en = clientgui.getClient().getGame().getEntity(currentFighters.get(element).getId());
                     if (en instanceof SmallCraft) {
                         loadPassengerAtLaunch((SmallCraft) en);
                     }
@@ -3902,28 +3902,21 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
     }
 
-    /**
-     * check for fuel and adjust buttons
-     */
+    /** Checks Aeros for remaining fuel and adjusts buttons when necessary. */
     private void checkFuel() {
         final Entity ce = ce();
-        if (null == ce) {
+        if ((ce == null) || !ce.isAero()) {
             return;
         }
 
-        if (!ce.isAero()) {
-            return;
-        }
-
-        IAero a = (IAero) ce;
-        if (a.getCurrentFuel() < 1) {
+        IAero aero = (IAero) ce;
+        if ((aero.getCurrentFuel() < 1) && !(ce.hasEngine() && ce.getEngine().isSolar())) {
             disableButtons();
             butDone.setEnabled(true);
             getBtn(MoveCommand.MOVE_NEXT).setEnabled(true);
             setForwardIniEnabled(true);
             if (ce instanceof Aero) {
-                setLaunchEnabled(!ce.getLaunchableFighters().isEmpty()
-                        || !ce.getLaunchableSmallCraft().isEmpty()
+                setLaunchEnabled(!ce.getLaunchableFighters().isEmpty() || !ce.getLaunchableSmallCraft().isEmpty()
                         || !ce.getLaunchableDropships().isEmpty());
             }
             updateRACButton();

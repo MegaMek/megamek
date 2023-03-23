@@ -14,9 +14,12 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
+import megamek.common.EquipmentTypeLookup;
 import megamek.common.Mounted;
 import megamek.common.WeaponType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.Weapon;
 
 /**
@@ -31,7 +34,7 @@ public class CLBAMortarHeavy extends Weapon {
     public CLBAMortarHeavy() {
         super();
         name = "Mortar (Heavy)";
-        setInternalName("CLBAHeavyMortar");
+        setInternalName(EquipmentTypeLookup.CL_BA_MORTAR_HEAVY);
         addLookupName("CL BA Heavy Mortar");
         addLookupName("ISBAHeavyMortar");
         addLookupName("IS BA Heavy Mortar");
@@ -48,7 +51,7 @@ public class CLBAMortarHeavy extends Weapon {
         cost = 7500;
         tonnage = 0.4;
         criticals = 2;
-        flags = flags.or(F_BALLISTIC).or(F_BURST_FIRE).or(F_BA_WEAPON)
+        flags = flags.or(F_BALLISTIC).or(F_BURST_FIRE).or(F_BA_WEAPON).or(F_MORTARTYPE_INDIRECT)
                 .andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "263, TM";
         techAdvancement.setTechBase(TECH_BASE_ALL)
@@ -62,6 +65,25 @@ public class CLBAMortarHeavy extends Weapon {
                 .setClanApproximate(false, false, true, false, false)
                 .setPrototypeFactions(F_FS, F_LC)
                 .setProductionFactions(F_LC);
+    }
+
+    @Override
+    public boolean hasIndirectFire() {
+        return true;
+    }
+
+    @Override
+    public void adaptToGameOptions(GameOptions gOp) {
+        super.adaptToGameOptions(gOp);
+
+        // Indirect Fire
+        if (gOp.booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
+            addMode("");
+            addMode("Indirect");
+        } else {
+            removeMode("");
+            removeMode("Indirect");
+        }
     }
 
     @Override

@@ -1,5 +1,5 @@
 Clan Coyote Light Mechs
-UrbanMech IIC (Standard) 1
+UrbanMech IIC (Standard),1
 Icestorm (Standard), 2
 Mercury MCY-99, 3
 Locust IIC (Standard), 4

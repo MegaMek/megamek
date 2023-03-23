@@ -1896,9 +1896,10 @@ public class MoveStep implements Serializable {
             }
 
             // check the fuel requirements
-            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION)) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION)
+                    && entity.hasEngine() && !entity.getEngine().isSolar()) {
                 int fuelUsed = mpUsed + Math.max(mpUsed - cachedEntityState.getWalkMP(), 0);
-                if (fuelUsed > a.getFuel()) {
+                if (fuelUsed > a.getCurrentFuel()) {
                     return;
                 }
             }

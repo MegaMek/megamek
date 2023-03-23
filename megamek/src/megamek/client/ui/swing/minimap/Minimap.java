@@ -150,9 +150,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
      */
     public static JDialog createMinimap(JFrame parent, @Nullable BoardView bv, Game game, @Nullable ClientGUI cg) {
         var result = new JDialog(parent, Messages.getString("ClientGUI.Minimap"), false);
-        result.setAutoRequestFocus(false);
-        result.setFocusable(false);
-        result.setFocusableWindowState(false);
+
         result.setLocation(GUIP.getMinimapPosX(), GUIP.getMinimapPosY());
         result.setResizable(false);
         result.addWindowListener(new WindowAdapter() {

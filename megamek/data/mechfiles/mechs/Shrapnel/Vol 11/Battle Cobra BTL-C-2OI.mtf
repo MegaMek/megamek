@@ -1,0 +1,165 @@
+Version:1.3
+Battle Cobra
+BTL-C-2OI
+mul id:9494
+Config:Biped Omnimech
+techbase:Inner Sphere
+era:3083
+source:Shrapnel 11 - Early Republic
+rules level:2
+
+mass:40
+engine:200 Fusion Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:10 IS Double
+base chassis heat sinks:8
+walk mp:5
+jump mp:0
+
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:11
+RA armor:11
+LT armor:14
+RT armor:14
+CT armor:17
+HD armor:9
+LL armor:17
+RL armor:17
+RTL armor:5
+RTR armor:5
+RTC armor:5
+
+Weapons:6
+Medium Laser, Left Arm
+Medium Laser, Left Arm
+SRM 4, Left Arm
+SRM 4, Left Arm
+iNarc, Right Arm
+Laser AMS, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Medium Laser (OMNIPOD)
+Medium Laser (OMNIPOD)
+SRM 4 (OMNIPOD)
+SRM 4 (OMNIPOD)
+IS Endo Steel
+IS Endo Steel
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISImprovedNarc (OMNIPOD)
+ISImprovedNarc (OMNIPOD)
+ISImprovedNarc (OMNIPOD)
+ISiNarc Pods (OMNIPOD)
+ISiNarc Pods (OMNIPOD)
+IS Endo Steel
+IS Endo Steel
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+
+Left Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+
+Right Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+IS Ammo SRM-4 Narc-capable (OMNIPOD)
+ISiNarc Pods (OMNIPOD)
+ISCASEII (OMNIPOD)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISLaserAntiMissileSystem (OMNIPOD)
+ISLaserAntiMissileSystem (OMNIPOD)
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:Obtaining a large number of mostly operational Battle Cobras in the aftermath of the brutal conflict in the Devil's Bath during the Battle of Tukayyid, ComStar selected the Battle Cobra as the focus of their efforts to reverse engineer and develop their own OmniMech.
+capabilities:Constructed using Inner Sphere–manufactured components, ComStar's BTL-C-2O Battle Cobra is built on an endo steel, clad in seven tons of ferro-fibrous armor, and is powered by a 200-rated fusion engine. While reducing its speed by 20 km/h, the extra weight was required to carry heavier Inner Sphere–grade weapons, as well as mount a fixed improved C3 computer in its center torso.
+deployment:No information on this variant	
+history:The Draconis Combine was able to pursue an OmniMech development program after recovering massive amounts of Clan salvage from Wolcott and Luthien. Analysts were shocked by ComStar's absence of comparable outcomes following their stunning victory on Tukayyid, which had given them unprecedented access to Clan salvage. ComStar, with some of the finest brains and greatest technological databases in the Inner Sphere, should have produced legions of new OmniMech variants from Terra's reopened factories. Finally, ComStar's approach to the Battle Cobra was typical of their failings in the aftermath of Operation Scorpion. Many of ComStar's brightest minds defected to join the Word of Blake, leaving low-level engineers in control of one of the company's most critical projects in centuries. But, the daring seizure of Terra by the Word of Blake in 3058 drove ComStar back to square one. ComStar's top management directed its surviving technical teams to complete the simplest OmniMech project at any cost. The Fighting Cobra, with its simple weapon pods, went into full production five years later. With control over practically all of ComStar's first OmniMech research, the Word of Blake chose to develop the 'Mech's design rather than push it to completion. The Blakist Battle Cobra project, eventually entrusted to the now-famous Devon Cortland, would gradually evolve into the first of the iconic Celestials: the Preta.
+manufacturer:Arc-Royal MechWorks,Comguard Tukayyid Omega-Epsilon Facilty X
+primaryfactory:Arc-Royal,Tukayyid
+systemmanufacturer:CHASSIS:Alshain Type 69-40S
+systemmanufacturer:ENGINE:Nissan 200
+systemmanufacturer:ARMOR:Paulina Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:Blade 12
+systemmanufacturer:TARGETING:Spanke 112-A
+

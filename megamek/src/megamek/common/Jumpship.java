@@ -1450,7 +1450,12 @@ public class Jumpship extends Aero {
     public boolean isFighter() {
         return false;
     }
-    
+
+    @Override
+    public boolean isAerospaceFighter() {
+        return false;
+    }
+
     @Override
     public boolean isPrimitive() {
         return getDriveCoreType() == DRIVE_CORE_PRIMITIVE;

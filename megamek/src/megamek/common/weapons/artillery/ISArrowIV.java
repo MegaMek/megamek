@@ -48,7 +48,7 @@ public class ISArrowIV extends ArtilleryWeapon {
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setTechRating(RATING_E)
                 .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
-                .setISAdvancement(2593, 2600, DATE_NONE, DATE_NONE, 3044)
+                .setISAdvancement(2593, 2600, DATE_NONE, 2830, 3044)
                 .setISApproximate(false, false, false, false, false)
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH)

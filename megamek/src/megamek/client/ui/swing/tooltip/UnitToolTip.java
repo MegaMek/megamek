@@ -922,7 +922,7 @@ public final class UnitToolTip {
         if (entity.isAero()) {
             // Velocity, Altitude, Elevation, Fuel
             IAero aero = (IAero) entity;
-            sAeroInfo = addToTT("AeroVelAltFuel", BR, aero.getCurrentVelocity(), aero.getAltitude(), aero.getFuel()).toString();
+            sAeroInfo = addToTT("AeroVelAltFuel", BR, aero.getCurrentVelocity(), aero.getAltitude(), aero.getCurrentFuel()).toString();
         } else if (entity.getElevation() != 0) {
             // Elevation only
             sAeroInfo = addToTT("Elev", BR, entity.getElevation()).toString();
@@ -1027,7 +1027,8 @@ public final class UnitToolTip {
                             tempList.append(", ");
                             break dance;
                         case 2:
-                            tmpStr = game.getTeamForPlayer(player).toString();
+                            Team team = game.getTeamForPlayer(player);
+                            tmpStr = team != null ? team.toString() : "";
                             break;
                         case 3:
                             tmpStr = player.getName();

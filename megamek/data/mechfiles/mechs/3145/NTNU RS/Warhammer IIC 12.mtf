@@ -6,7 +6,7 @@ mul id:6857
 Config:Biped
 TechBase:Clan
 Era:3130
-Source:RS 3145 NT NU
+Source:RS 3145 NT NU - Late Republic 
 Rules Level:4
 
 Mass:80
@@ -152,4 +152,19 @@ Clan Heat-Dissipating
 -Empty-
 -Empty-
 
+overview:The Clan's interpretation on the classic Warhammer has never been subtle. The BattleMech's hyper-advanced technology only emphasized and improved its duty as a frontline brawler; boosting its mass by 10 tons (with equivalent increases in armor protection) made it even more powerful.
+
+capabilities:Thanks to their technological expertise, they were able to add ten tons with the same speed and firepower and nearly double the armor of the original. The Warhammer IIC is built on an Endo Steel frame and is protected by tons of ferro-fibrous armor. The result is a dangerous 'Mech, able to hold its own in any battle against the Inner Sphere. Also note that the armor was the primary concern when designing the IIC version rivaling even 100 ton assault 'Mechs in durability and protection.
+
+deployment:This version uses an XXL engine to reach top speeds of 86 km/h. Its weapon load hearkens back to the original Warhammer, carrying ER PPCs in the arms and a single ER Medium Laser and ER Small Laser in the left and right torso. An SRM-6 is also carried in the right torso, and an ECM Suite disrupts enemy communications and targeting. This version is protected by Heat-Dissipating Armor. 
+
+history:The Warhammer IIC is now the most common Clan BattleMech in the Inner Sphere. These remarkable machines are fielded by every major Inner Sphere force, Clan, and many large mercenary groups. It is only found on the periphery, where its equally outstanding price tag is simply too high for these countries to justify.
+
+manufacturer:Snow Raven Industrial Complex Alpha,Mu Manufacturing Plant 3H,Sheridan LM-TA 8-10
+primaryfactory:Dante,Paxon,Sheridan
+systemmanufacturer:CHASSIS:SFX-80 Endo
+systemmanufacturer:ENGINE:Type 79 400 XL
+systemmanufacturer:ARMOR:Unknown Heat-Dissipating Armor
+systemmanufacturer:COMMUNICATIONS:TDWS-37 Mk 2.2 with ECM
+systemmanufacturer:TARGETING:“Hephaestus” CT-44
 

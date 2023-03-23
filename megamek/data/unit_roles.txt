@@ -519,6 +519,10 @@ Battle Cobra BTL-C-2OC:SCOUT
 Battle Cobra BTL-C-2OD:SNIPER
 Battle Cobra BTL-C-2OE:MISSILE_BOAT
 Battle Cobra BTL-C-2OF:BRAWLER
+Battle Cobra BTL-C-2OG:BRAWLER
+Battle Cobra BTL-C-2OH:MISSILE_BOAT
+Battle Cobra BTL-C-2OI:SKIRMISHER
+Battle Cobra BTL-C-2OJ:SKIRMISHER
 Battle Cobra C:STRIKER
 Battle Cobra F:STRIKER
 Battle Cobra G:STRIKER
@@ -546,7 +550,7 @@ BattleMaster BLR-1Gbc:BRAWLER
 BattleMaster BLR-1Gc:BRAWLER
 BattleMaster BLR-1Gd:BRAWLER
 BattleMaster BLR-1G-DC:BRAWLER
-BattleMaster BLR-1GHE 'HellSinger':BRAWLER
+BattleMaster BLR-1GHE 'HellSlinger':BRAWLER
 BattleMaster BLR-1S:BRAWLER
 BattleMaster BLR-2C:BRAWLER
 BattleMaster BLR-3M (Rogers):BRAWLER
@@ -736,14 +740,14 @@ Blitzkrieg BTZ-4F:SKIRMISHER
 Blizzard Hover Transport (SRM):SCOUT
 Blizzard Hover Transport (Standard):SCOUT
 Blizzard Hover Transport 'Black Blizzard':STRIKER
-Blood Asp (Star Adder) A:BRAWLER
-Blood Asp (Star Adder) B:MISSILE_BOAT
-Blood Asp (Star Adder) C:BRAWLER
-Blood Asp (Star Adder) D:BRAWLER
-Blood Asp (Star Adder) E:SKIRMISHER
-Blood Asp (Star Adder) F:BRAWLER
-Blood Asp (Star Adder) G:BRAWLER
-Blood Asp (Star Adder) Prime:BRAWLER
+Star Adder (Blood Asp) A:BRAWLER
+Star Adder (Blood Asp) B:MISSILE_BOAT
+Star Adder (Blood Asp) C:BRAWLER
+Star Adder (Blood Asp) D:BRAWLER
+Star Adder (Blood Asp) E:SKIRMISHER
+Star Adder (Blood Asp) F:BRAWLER
+Star Adder (Blood Asp) G:BRAWLER
+Star Adder (Blood Asp) Prime:BRAWLER
 Blood Kite (Standard):SNIPER
 Blood Kite 2:SNIPER
 Blood Reaper (Standard):SKIRMISHER
@@ -6999,6 +7003,7 @@ Victor VTR-9Ka:SKIRMISHER
 Victor VTR-9S:SKIRMISHER
 Victor VTR-C:SKIRMISHER
 Victor VTR-Cr:SKIRMISHER
+Victor VTR-9B (Kataga):BRAWLER
 Vidar Heavy Defense Tank (Standard):MISSILE_BOAT
 Vigilant Corvette (2320):NONE
 Viking IIC (Standard):MISSILE_BOAT
@@ -7722,5 +7727,5 @@ Viper VP-7:BRAWLER
 Viper VP-8:BRAWLER
 Viper VP-9:BRAWLER
 JagerMech JM7-DD:SNIPER
-Blood Asp (Star Adder) I:BRAWLER
-Blood Asp (Star Adder) T:BRAWLER
+Star Adder (Blood Asp) I:BRAWLER
+Star Adder (Blood Asp) T:BRAWLER

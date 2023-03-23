@@ -866,7 +866,15 @@ public class Server implements Runnable {
         LogManager.getLogger().info("s: loading saved game file '" + f + '\'');
 
         Game newGame;
-        try (InputStream is = new FileInputStream(f); InputStream gzi = new GZIPInputStream(is)) {
+        try (InputStream is = new FileInputStream(f)) {
+            InputStream gzi;
+
+            if (f.getName().toLowerCase().endsWith(".gz")) {
+                gzi = new GZIPInputStream(is);
+            } else {
+                gzi = is;
+            }
+
             XStream xstream = SerializationHelper.getLoadSaveGameXStream();
             newGame = (Game) xstream.fromXML(gzi);
         } catch (Exception e) {

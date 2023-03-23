@@ -868,4 +868,8 @@ public class FighterSquadron extends Aero {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public boolean isUnitGroup() {
+        return true;
+    }
 }

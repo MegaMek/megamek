@@ -1,6 +1,27 @@
 VERSION HISTORY:
 ----------------
-0.49.12-SNAPSHOT
+0.49.13-SNAPSHOT
++ Fix #3914: LAM fuel tanks will now correctly provide fuel to the LAM
++ Fix #3951: Solar engine powered fixed wing support vehicles are now able to move and don't require fuel
++ Fix #3696: Altitude values no longer inadvertently influence space combat
++ Data: #4223 Illegal/overweight BA units
++ Data: #4206 Illegal armour type on the Kopis AI IIr
++ Fix #4229, #4249: Alpha Strike conversion fixes
++ Fix #4234: The mini round report now allows marking and copying text
++ Fix #4235: A player without a team no longer results in an error
++ Fix #4238: Erroneous jungle hexes in Fan Pack Arctic boards have been replaced with woods
++ Fix #3915: In space with StratOps ECM rules active, a LAM's ECM systems now use the correct range of 0 (its own hex) instead of 6
++ Data: Updates to Flynn map pack
++ Data: Updates to Spanish translation.
++ PR #4213: BA mortar weapons can now use indirect fire
++ PR #4251: The lobby now indicates that a unit is shut down
++ Fix #4246: Improve rendering of horizontal scroll bar
++ PR #4254: Clan weapons get explicitly called out in firing phase reports
++ Fix #3968: Hexes with multiple units now give better information in the unit labels
++ Fix #3703: Uncompressed save games can now be loaded
++ Fix #4117: Unit card and minimap can now be focused when clicked
+
+0.49.12 (2023-03-04 2200 UTC)
 + PR #4062: OS Thunderbolt Weapons are now available for construction and use
 + PR #4118: The Cross Country SPA is now available for vehicle pilots (effects on water movement is not yet implemented)
 + Issue #4149: Fix an error with the readme file for Princess
@@ -69,9 +90,7 @@ VERSION HISTORY:
 + PR #4211: Alpha Strike cards can now be printed from most card views and, for multiple units, from the conversion dialog in MM's game lobby
 + PR #4194: Show movement mode before move indicators
 + PR #4193: Show amount of heat over capacity on the weapon tab
- 
-
-
++ Data Issues #4210, #4206, #4200, #4198, #4192, #4122, #4119, #3963, and #3919 fixed. 
 + Updating XStream to 1.4.19 from 1.4.14
  
 0.49.11 (2022-12-22 1500 UTC)

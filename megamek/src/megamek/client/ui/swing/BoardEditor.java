@@ -2305,12 +2305,8 @@ public class BoardEditor extends JPanel
                 for (final Image newVar : safeList(tm.orthoFor(curHex))) {
                     g.drawImage(newVar, 0, 0, this);
                 }
+                UIUtil.setHighQualityRendering(g);
                 // add level and INVALID if necessary
-                if (guip.getAntiAliasing()) {
-                    ((Graphics2D) g).setRenderingHint(
-                            RenderingHints.KEY_ANTIALIASING,
-                            RenderingHints.VALUE_ANTIALIAS_ON);
-                }
                 g.setColor(getForeground());
                 g.setFont(new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 9));
                 g.drawString(Messages.getString("BoardEditor.LEVEL") + curHex.getLevel(), 24, 70);

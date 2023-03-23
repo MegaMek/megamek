@@ -643,6 +643,20 @@ public final class UIUtil {
             component.setLocationRelativeTo(null);
         }
     }
+
+    /**
+     * Activates anti-aliasing and other high-quality settings for the given Graphics.
+     *
+     * @param graph Graphics context to use hq rendering for
+     */
+    public static void setHighQualityRendering(Graphics graph) {
+        ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+        ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+    }
+
     /** A specialized panel for the header of a section. */
     public static class Header extends JPanel {
         private static final long serialVersionUID = -6235772150005269143L;

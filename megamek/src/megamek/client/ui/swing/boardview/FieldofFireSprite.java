@@ -11,7 +11,7 @@ import java.awt.Stroke;
 import java.awt.image.ImageObserver;
 import static megamek.client.ui.swing.boardview.HexDrawUtilities.*;
 
-import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Coords;
 
 /**
@@ -97,7 +97,7 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
         // create image for buffer
         images[borders][rangeBracket] = createNewHexImage();
         Graphics2D graph = (Graphics2D) images[borders][rangeBracket].getGraphics();
-        GUIPreferences.AntiAliasifSet(graph);
+        UIUtil.setHighQualityRendering(graph);
 
         // scale the following draws according to board zoom
         graph.scale(bv.scale, bv.scale);

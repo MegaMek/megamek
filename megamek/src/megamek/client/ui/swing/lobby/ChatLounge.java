@@ -84,7 +84,6 @@ import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageFilter;
 import java.awt.image.ImageProducer;
 import java.io.*;
-import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.*;
@@ -1117,7 +1116,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     
     private void markServerSideBoard(BufferedImage image) {
         Graphics g = image.getGraphics();
-        GUIPreferences.AntiAliasifSet(g);
+        setHighQualityRendering(g);
         int w = image.getWidth();
         int h = image.getHeight();
         String text = Messages.getString("ChatLounge.board.serverSide");

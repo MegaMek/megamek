@@ -4,12 +4,12 @@ C
 mul id:9319
 Config:Biped
 techbase:Clan
-era:3130
+era:3093
 source:Rec Guide:ilClan #26 - Late Republic
 rules level:3
 
 mass:60
-engine:240 Fusion Engine(IS)
+engine:240 Fusion (Clan) Engine(IS)
 structure:IS Standard
 myomer:Standard
 
@@ -150,7 +150,7 @@ Jump Jet
 -Empty-
 -Empty-
 
-overview:The Merlin uses components that are all reliable and readily available, making the Merlin a durable and easy-to-repair 'Mech. 
+overview:The Merlin uses components that are all reliable and readily available, making the Merlin a durable and easy-to-repair 'Mech.
 capabilities:The 'Mech is powered by a Pitban 240 fusion engine that gives it a top speed of 64.8 km/h. The Merlin carries ten and a half tons of armor, which is a respectable amount of protection for its weight. Additionally, the Merlin carries eighteen heat sinks to handle its heavy heat load.
 deployment:No Information Available
 history:The Merlin debuted in 3010 as a product of the rebuilt Mountain Wolf BattleMechs. The Merlin was hailed as a technological marvel at the time it was released, as it was the first completely new design to be developed in over 100 years.

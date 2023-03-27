@@ -142,7 +142,7 @@ public class LobbyUtility {
         if (text.isBlank()) {
             return;
         }
-        GUIPreferences.AntiAliasifSet(g);
+        UIUtil.setHighQualityRendering(g);
         // The text size may grow with the width of the image, but no bigger than 16*guiscale
         // to avoid huge text
         int fontSize = Math.min(w / 10, UIUtil.scaleForGUI(16));

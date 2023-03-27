@@ -1,7 +1,7 @@
 package megamek.client.ui.swing.boardview;
 
 import megamek.MMConstants;
-import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Coords;
 
 import java.awt.*;
@@ -25,7 +25,7 @@ public class TextMarkerSprite extends HexSprite {
         // create image for buffer
         image = createNewHexImage();
         Graphics2D graph = (Graphics2D) image.getGraphics();
-        GUIPreferences.AntiAliasifSet(graph);
+        UIUtil.setHighQualityRendering(graph);
 
         // get a big font and test to see which font size will fit
         // the hex shape

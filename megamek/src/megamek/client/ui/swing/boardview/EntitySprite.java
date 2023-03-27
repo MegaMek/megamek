@@ -22,6 +22,7 @@ import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.EntityWreckHelper;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 
@@ -403,7 +404,7 @@ class EntitySprite extends Sprite {
         image = config.createCompatibleImage(bounds.width, bounds.height,
                 Transparency.TRANSLUCENT);
         Graphics2D graph = (Graphics2D) image.getGraphics();
-        GUIPreferences.AntiAliasifSet(graph);
+        UIUtil.setHighQualityRendering(graph);
 
         // translate everything (=correction for label placement)
         graph.translate(-hexOrigin.x, -hexOrigin.y);

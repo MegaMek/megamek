@@ -18,8 +18,8 @@
  */
 package megamek.common.alphaStrike.cardDrawer;
 
-import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.StringDrawer;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.alphaStrike.*;
 import megamek.common.util.ImageUtil;
 
@@ -104,11 +104,7 @@ public class ASLargeAeroCard extends ASCard {
 
     public void drawFlipside(Graphics2D g) {
         initializeFonts(lightFont, boldFont, blackFont);
-        GUIPreferences.AntiAliasifSet(g);
-        g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
-        g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        UIUtil.setHighQualityRendering(g);
         paintCardBackground(g, true);
         new StringDrawer("WEAPON CRITICALS").at(33, 629).font(arcTitleFont).maxWidth(220)
                 .outline(Color.BLACK, 0.4f).centerY().draw(g);

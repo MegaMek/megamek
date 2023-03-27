@@ -29,6 +29,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.boardview.BoardView;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
@@ -487,12 +488,12 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         }
         
         Graphics g = mapImage.getGraphics();
-        GUIPreferences.AntiAliasifSet(g);
+        UIUtil.setHighQualityRendering(g);
         
         if (!minimized || forceDraw) {
             roadHexes.clear();
             Graphics gg = terrainBuffer.getGraphics();
-            GUIPreferences.AntiAliasifSet(gg);
+            UIUtil.setHighQualityRendering(gg);
             for (int j = 0; j < board.getWidth(); j++) {
                 for (int k = 0; k < board.getHeight(); k++) {
                     Hex h = board.getHex(j, k);

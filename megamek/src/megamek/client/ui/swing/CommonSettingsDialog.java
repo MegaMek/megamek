@@ -144,7 +144,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private final JCheckBox showWpsinTT = new JCheckBox(Messages.getString("CommonSettingsDialog.showWpsinTT"));
     private final JCheckBox showArmorMiniVisTT = new JCheckBox(Messages.getString("CommonSettingsDialog.showArmorMiniVisTT"));
     private final JCheckBox showPilotPortraitTT = new JCheckBox(Messages.getString("CommonSettingsDialog.showPilotPortraitTT"));
-    private final JCheckBox chkAntiAliasing = new JCheckBox(Messages.getString("CommonSettingsDialog.antiAliasing"));
     private MMComboBox<WeaponSortOrder> comboDefaultWeaponSortOrder;
     private JTextField tooltipDelay;
     private JTextField tooltipDismissDelay;
@@ -272,7 +271,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private boolean savedUnitLabelBorder;
     private boolean savedShowDamageDecal;
     private boolean savedShowDamageLabel;
-    private boolean savedAntiAlias;
     private String savedFovHighlightRingsRadii;
     private String savedFovHighlightRingsColors;
     private int savedFovHighlightAlpha;
@@ -650,7 +648,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             displayLocale.setSelectedIndex(index);
 
             showMapsheets.setSelected(GUIP.getShowMapsheets());
-            chkAntiAliasing.setSelected(GUIP.getAntiAliasing());
             showDamageLevel.setSelected(GUIP.getShowDamageLevel());
             showDamageDecal.setSelected(GUIP.getShowDamageDecal());
             aOHexShadows.setSelected(GUIP.getAOHexShadows());
@@ -744,7 +741,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             savedFovHighlightAlpha = GUIP.getFovHighlightAlpha();
             savedFovDarkenAlpha = GUIP.getFovDarkenAlpha();
             savedNumStripesSlider = GUIP.getFovStripes();
-            savedAntiAlias = GUIP.getAntiAliasing();
             savedAdvancedOpt.clear();
             
             advancedKeys.clearSelection();
@@ -782,8 +778,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setFovHighlightAlpha(savedFovHighlightAlpha);
         GUIP.setFovDarkenAlpha(savedFovDarkenAlpha);
         GUIP.setFovStripes(savedNumStripesSlider);
-        GUIP.setAntiAliasing(savedAntiAlias);
-         
+
         for (String option: savedAdvancedOpt.keySet()) {
             GUIP.setValue(option, savedAdvancedOpt.get(option));
         }
@@ -1117,8 +1112,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             GUIP.setShowDamageDecal(showDamageDecal.isSelected());
         } else if (source.equals(showDamageLevel)) {
             GUIP.setShowDamageLevel(showDamageLevel.isSelected());
-        } else if (source.equals(chkAntiAliasing)) {
-            GUIP.setAntiAliasing(chkAntiAliasing.isSelected());
         }
     }
 
@@ -1148,7 +1141,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         List<List<Component>> comps = new ArrayList<>();
         ArrayList<Component> row;
 
-        comps.add(checkboxEntry(chkAntiAliasing, Messages.getString("CommonSettingsDialog.antiAliasingToolTip")));
         comps.add(checkboxEntry(animateMove, null));
         comps.add(checkboxEntry(showWrecks, null));
         comps.add(checkboxEntry(showMapsheets, null));

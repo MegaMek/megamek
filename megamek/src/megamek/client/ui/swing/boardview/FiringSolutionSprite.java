@@ -10,6 +10,7 @@ import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.TargetRoll;
 import megamek.common.util.FiringSolution;
 
@@ -91,7 +92,7 @@ class FiringSolutionSprite extends HexSprite {
         // create image for buffer
         image = createNewHexImage();
         Graphics2D graph = (Graphics2D) image.getGraphics();
-        GUIPreferences.AntiAliasifSet(graph);
+        UIUtil.setHighQualityRendering(graph);
         
         // scale the following draws according to board zoom
         graph.scale(bv.scale, bv.scale);

@@ -6,7 +6,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 
-import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Compute;
 import megamek.common.CrewType;
 import megamek.common.Facing;
@@ -69,7 +69,7 @@ public class MovementModifierEnvelopeSprite extends HexSprite {
         // create image for buffer
         image = createNewHexImage();
         Graphics2D graph = (Graphics2D) image.getGraphics();
-        GUIPreferences.AntiAliasifSet(graph);
+        UIUtil.setHighQualityRendering(graph);
 
         // scale the following draws according to board zoom
         graph.scale(bv.scale, bv.scale);

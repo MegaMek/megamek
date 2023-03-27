@@ -23,6 +23,8 @@ VERSION HISTORY:
 + Fix #4261: Prevent aerospace units from having an out-of-bounds bomb count
 + Fix #2102, #3896: Weapon-delivered smoke will now not move in the round it is created and not count this round towards dispersion; 
                     it will also disperse regardless of game options
++ PR: #4269: Anti-aliasing has been removed as a gui option; high quality rendering will always be used
++ Fix #2220: Units now dismount to adjacent hexes from SV
 
 0.49.12 (2023-03-04 2200 UTC)
 + PR #4062: OS Thunderbolt Weapons are now available for construction and use

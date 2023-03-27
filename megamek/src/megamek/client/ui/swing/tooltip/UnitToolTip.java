@@ -15,8 +15,10 @@ package megamek.client.ui.swing.tooltip;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.lobby.ChatLounge;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
@@ -40,11 +42,21 @@ import static megamek.client.ui.swing.tooltip.TipUtil.*;
 import static megamek.client.ui.swing.util.UIUtil.*;
 
 public final class UnitToolTip {
-    
+
     /** The font size reduction for Quirks */
     final static float TT_SMALLFONT_DELTA = -0.2f;
-
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
+    public static StringBuilder lobbyTip(InGameObject unit, Player localPlayer, MapSettings mapSettings) {
+        if (unit instanceof Entity) {
+            return getEntityTipTable((Entity) unit, localPlayer, true, false, mapSettings);
+        } else if (unit instanceof AlphaStrikeElement) {
+            // TODO : Provide a suitable tip
+            return new StringBuilder("AlphaStrikeElement " + ((AlphaStrikeElement) unit).getName());
+        } else {
+            return new StringBuilder("This type of object has currently no table entry.");
+        }
+    }
 
     /** Returns the unit tooltip with values that are relevant in the lobby. */
     public static StringBuilder getEntityTipLobby(Entity entity, Player localPlayer,
@@ -1470,4 +1482,5 @@ public final class UnitToolTip {
         return game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_BURST);
     }
 
+    private UnitToolTip() { }
 }

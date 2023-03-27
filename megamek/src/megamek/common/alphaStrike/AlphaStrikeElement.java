@@ -524,6 +524,11 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
     }
 
     @Override
+    public int getStrength() {
+        return getPointValue();
+    }
+
+    @Override
     public boolean showSUA(BattleForceSUA sua) {
         return !AlphaStrikeHelper.hideSpecial(sua, this);
     }

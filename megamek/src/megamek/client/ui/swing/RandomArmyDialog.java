@@ -23,6 +23,8 @@ import megamek.client.ratgenerator.*;
 import megamek.client.ratgenerator.UnitTable.Parameters;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.dialog.AdvancedSearchDialog2;
+import megamek.client.ui.swing.lobby.LobbyUtility;
+import megamek.client.ui.swing.util.ScalingPopup;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.enums.Gender;
@@ -38,10 +40,12 @@ import megamek.common.util.RandomArmyCreator;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
+import javax.swing.event.MouseInputAdapter;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableRowSorter;
 import javax.swing.tree.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -104,10 +108,16 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
     private JButton m_bClear = new JButton(Messages.getString("RandomArmyDialog.Clear"));
 
     private JTable m_lArmy;
+    private RandomArmyTableMouseAdapter armyTableMouseAdapter = new RandomArmyTableMouseAdapter();
+    protected TableRowSorter<UnitTableModel> armySorter;
     private JLabel m_lArmyBVTotal;
     private JTable m_lUnits;
+    private RandomArmyTableMouseAdapter unitsTableMouseAdapter = new RandomArmyTableMouseAdapter();
+    protected TableRowSorter<UnitTableModel> unitsSorter;
     private JLabel m_lUnitsBVTotal;
     private JTable m_lRAT;
+    private RandomArmyTableMouseAdapter ratTableMouseAdapter = new RandomArmyTableMouseAdapter();
+    protected TableRowSorter<RATTableModel> ratSorter;
 
     private UnitTableModel armyModel;
     private UnitTableModel unitsModel;
@@ -147,6 +157,16 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
     
     private RandomUnitGenerator rug;
     private UnitTable generatedRAT;
+
+    static final String UNITS_BV = "UNITS_BV";
+    static final String UNITS_COST = "UNITS_COST";
+    static final String UNITS_VIEW = "UNITS_VIEW";
+    static final String ARMY_BV = "ARMY_BV";
+    static final String ARMY_COST = "ARMY_COST";
+    static final String ARMY_VIEW = "ARMY_VIEW";
+    static final String RAT_BV = "RAT_BV";
+    static final String RAT_COST = "RAT_COST";
+    static final String RAT_VIEW = "RAT_VIEW";
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
@@ -467,7 +487,11 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
 
         ratModel = new RATTableModel();
         m_lRAT = new JTable();
+        m_lRAT.setName("RAT");
+        m_lRAT.addMouseListener(ratTableMouseAdapter);
         m_lRAT.setModel(ratModel);
+        ratSorter = new TableRowSorter<>(ratModel);
+        m_lRAT.setRowSorter(ratSorter);
         m_lRAT.setIntercellSpacing(new Dimension(5, 0));
         m_lRAT.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         for (int i = 0; i < ratModel.getColumnCount(); i++) {
@@ -500,14 +524,23 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         // construct the preview panel
         unitsModel = new UnitTableModel();
         m_lUnits = new JTable();
+        m_lUnits.setName("Units");
+        m_lUnits.addMouseListener(unitsTableMouseAdapter);
         m_lUnits.setModel(unitsModel);
+        unitsSorter = new TableRowSorter<>(unitsModel);
+        m_lUnits.setRowSorter(unitsSorter);
         m_lUnits.setIntercellSpacing(new Dimension(0, 0));
         m_lUnits.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         JScrollPane scroll = new JScrollPane(m_lUnits);
         scroll.setBorder(BorderFactory.createTitledBorder(Messages.getString("RandomArmyDialog.Army")));
-        m_lUnitsBVTotal = new JLabel("BV Total: 0");        armyModel = new UnitTableModel();
+        m_lUnitsBVTotal = new JLabel("BV Total: 0");
+        armyModel = new UnitTableModel();
         m_lArmy = new JTable();
+        m_lArmy.setName("Army");
+        m_lArmy.addMouseListener(armyTableMouseAdapter);
         m_lArmy.setModel(armyModel);
+        armySorter = new TableRowSorter<>(armyModel);
+        m_lArmy.setRowSorter(armySorter);
         m_lArmy.setIntercellSpacing(new Dimension(0, 0));
         m_lArmy.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         m_lArmyBVTotal = new JLabel("BV Total: 0");
@@ -595,6 +628,13 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
     @Override
     public void actionPerformed(ActionEvent ev) {
         String msg_bvtotal = Messages.getString("RandomArmyDialog.BVTotal");
+        StringTokenizer st = new StringTokenizer(ev.getActionCommand(), "|");
+        String command = "";
+
+        if (st.hasMoreTokens()) {
+            command = st.nextToken();
+        }
+
         if (ev.getSource().equals(m_bOK)) {
             if (m_pMain.getSelectedIndex() == TAB_FORCE_GENERATOR) {
                 m_pForceGen.addChosenUnits((String) m_chPlayer.getSelectedItem());
@@ -675,6 +715,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
             m_lArmyBVTotal.setText(msg_bvtotal + calculateTotal(m_lArmy, 1));
         } else if (ev.getSource().equals(m_bAdd)) {
             for (int sel : m_lUnits.getSelectedRows()) {
+                sel = m_lUnits.convertRowIndexToModel(sel);
                 MechSummary m = unitsModel.getUnitAt(sel);
                 armyModel.addUnit(m);
             }
@@ -816,6 +857,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         } else if (ev.getSource().equals(m_bAddToForce)) {
             if (generatedRAT != null) {
                 for (int sel : m_lRAT.getSelectedRows()) {
+                    sel = m_lRAT.convertRowIndexToModel(sel);
                     MechSummary ms = generatedRAT.getMechSummary(sel);
                     if (ms != null) {
                         armyModel.addUnit(ms);
@@ -829,6 +871,42 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
             updateRATs();
         } else if (ev.getSource().equals(m_bRandomSkills)) {
             new SkillGenerationDialog(m_clientgui.getFrame(), m_clientgui, new ArrayList<>()).showDialog();
+        } else if (command.equals(UNITS_VIEW)) {
+            // The entities list may be empty
+            Set<Entity> entities = LobbyUtility.getEntities(st.nextToken(), unitsModel);
+            LobbyUtility.mechReadoutAction(entities, true, true, m_clientgui.getFrame());
+        } else if (command.equals(ARMY_VIEW)) {
+            // The entities list may be empty
+            Set<Entity> entities = LobbyUtility.getEntities(st.nextToken(), armyModel);
+            LobbyUtility.mechReadoutAction(entities, true, true, m_clientgui.getFrame());
+        } else if (command.equals(RAT_VIEW)) {
+            // The entities list may be empty
+            Set<Entity> entities = LobbyUtility.getEntities(st.nextToken(), ratModel);
+            LobbyUtility.mechReadoutAction(entities, true, true, m_clientgui.getFrame());
+        } else if (command.equals(UNITS_BV)) {
+            // The entities list may be empty
+            Set<Entity> entities = LobbyUtility.getEntities(st.nextToken(), unitsModel);
+            LobbyUtility.mechBVAction(entities, true, true, m_clientgui.getFrame());
+        } else if (command.equals(ARMY_BV)) {
+            // The entities list may be empty
+            Set<Entity> entities = LobbyUtility.getEntities(st.nextToken(), armyModel);
+            LobbyUtility.mechBVAction(entities, true, true, m_clientgui.getFrame());
+        } else if (command.equals(RAT_BV)) {
+            // The entities list may be empty
+            Set<Entity> entities = LobbyUtility.getEntities(st.nextToken(), ratModel);
+            LobbyUtility.mechBVAction(entities, true, true, m_clientgui.getFrame());
+        } else if (command.equals(UNITS_COST)) {
+            // The entities list may be empty
+            Set<Entity> entities = LobbyUtility.getEntities(st.nextToken(), unitsModel);
+            LobbyUtility.mechCostAction(entities, true, true, m_clientgui.getFrame());
+        } else if (command.equals(ARMY_COST)) {
+            // The entities list may be empty
+            Set<Entity> entities = LobbyUtility.getEntities(st.nextToken(), armyModel);
+            LobbyUtility.mechCostAction(entities, true, true, m_clientgui.getFrame());
+        } else if (command.equals(RAT_COST)) {
+            // The entities list may be empty
+            Set<Entity> entities = LobbyUtility.getEntities(st.nextToken(), ratModel);
+            LobbyUtility.mechCostAction(entities, true, true, m_clientgui.getFrame());
         }
     }
 
@@ -1015,6 +1093,66 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         }
     }
 
+    static ScalingPopup getPopup(List<Integer> entities, ActionListener listener, String tableName) {
+        ScalingPopup popup = new ScalingPopup();
+
+        // All command strings should follow the layout COMMAND|INFO|ID1,ID2,I3...
+        // and use -1 when something is not needed (COMMAND|-1|-1)
+        String eIds = LobbyUtility.enToken(entities);
+
+        String view = "";
+        String cost = "";
+        String bv = "";
+
+        if (tableName.equals("Units")) {
+            bv = UNITS_BV;
+            cost = UNITS_COST;
+            view = UNITS_VIEW;
+        } else if (tableName.equals("Army")) {
+            bv = ARMY_BV;
+            cost = ARMY_COST;
+            view = ARMY_VIEW;
+        } else if (tableName.equals("RAT")) {
+            bv = RAT_BV;
+            cost = RAT_COST;
+            view = RAT_VIEW;
+        }
+
+        String msg_view = Messages.getString("RandomArmyDialog.View");
+        String msg_viewbv = Messages.getString("RandomArmyDialog.ViewBV");
+        String msg_viewcost = Messages.getString("RandomArmyDialog.ViewCost");
+
+        popup.add(UIUtil.menuItem(msg_view, view + eIds, true, listener, KeyEvent.VK_V));
+        popup.add(UIUtil.menuItem(msg_viewbv, bv + eIds, true, listener, KeyEvent.VK_B));
+        popup.add(UIUtil.menuItem(msg_viewcost, cost + eIds, true, listener, Integer.MIN_VALUE));
+
+        return popup;
+    }
+
+    /** Shows the right-click menu on the mek table */
+    private static void showPopup(MouseEvent e, ActionListener listener) {
+        if (e.getSource() instanceof  JTable) {
+            JTable sTable = (JTable) e.getSource();
+
+            if (sTable.getSelectedRowCount() == 0) {
+                return;
+            }
+
+            List<Integer> entities = LobbyUtility.getSelectedEntities(sTable);
+            ScalingPopup popup = getPopup(entities, listener, sTable.getName());
+            popup.show(e.getComponent(), e.getX(), e.getY());
+        }
+    }
+
+    public class RandomArmyTableMouseAdapter extends MouseInputAdapter {
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            if (e.isPopupTrigger()) {
+                showPopup(e, RandomArmyDialog.this);
+            }
+        }
+    }
+
     /**
      * This class now listens for game settings changes and updates the RAT year whenever
      * the game year changes. Well, whenever any game settings changes.
@@ -1035,7 +1173,9 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         private static final int COL_UNIT = 0;
         private static final int COL_BV = 1;
         private static final int COL_MOVE = 2;
-        private static final int N_COL = 3;
+        private static final int COL_TECH_BASE = 3;
+        private static final int COL_UNIT_ROLE = 4;
+        private static final int N_COL = 5;
 
         private List<MechSummary> data;
 
@@ -1077,6 +1217,10 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                     return Messages.getString("RandomArmyDialog.colMove");
                 case COL_BV:
                     return Messages.getString("RandomArmyDialog.colBV");
+                case COL_TECH_BASE:
+                    return Messages.getString("RandomArmyDialog.colTechBase");
+                case COL_UNIT_ROLE:
+                    return Messages.getString("RandomArmyDialog.colUnitRole");
                 default:
                     return "??";
             }
@@ -1095,18 +1239,33 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         @Override
         public Object getValueAt(int row, int col) {
             MechSummary m = getUnitAt(row);
+
+            if (m == null) {
+                return "?";
+            }
+
             String value = "";
+
             if (col == COL_BV) {
                 value += m.getBV();
             } else if (col == COL_MOVE) {
                 value += m.getWalkMp() + "/" + m.getRunMp() + "/" + m.getJumpMp();
+            } else if (col == COL_TECH_BASE) {
+                value += m.getTechBase();
+            } else if (col == COL_UNIT_ROLE) {
+                value += m.getRole();
             } else {
                 return m.getName();
             }
+
             return value;
         }
 
         public MechSummary getUnitAt(int row) {
+            if (data.size() <= row) {
+                return null;
+            }
+
             return data.get(row);
         }
 
@@ -1123,7 +1282,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         private static final int COL_UNIT = 1;
         private static final int COL_CL_IS = 2;
         private static final int COL_BV = 3;
-        private static final int N_COL = 4;
+        private static final int COL_UNIT_ROLE = 4;
+        private static final int N_COL = 5;
 
         @Override
         public int getRowCount() {
@@ -1152,6 +1312,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                     return 18;
                 case COL_CL_IS:
                     return 20;
+                case COL_UNIT_ROLE:
+                    return 20;
                 default:
                     return 0;
             }
@@ -1168,6 +1330,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                     return Messages.getString("RandomArmyDialog.colBV");
                 case COL_CL_IS:
                     return Messages.getString("RandomArmyDialog.colCLIS");
+                case COL_UNIT_ROLE:
+                    return Messages.getString("RandomArmyDialog.colUnitRole");
                 default:
                     return "??";
             }
@@ -1198,9 +1362,15 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                         }
                     case COL_CL_IS:
                         return generatedRAT.getTechBase(row);
+                    case COL_UNIT_ROLE:
+                        return generatedRAT.getUnitRole(row);
                 }
             }
             return "";
+        }
+
+        public MechSummary getUnitAt(int row) {
+            return generatedRAT.getMechSummary(row);
         }
     }
 

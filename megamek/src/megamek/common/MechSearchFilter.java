@@ -40,6 +40,15 @@ public class MechSearchFilter {
     public int iArmor;
     public int iOmni;
     public int iMilitary;
+    public int iIndustrial;
+    public int iWaterOnly;
+    public int iDoomedOnGround;
+    public int iDoomedInAtmosphere;
+    public int iDoomedInSpace;
+    public int iDoomedInExtremeTemp;
+    public int iDoomedInVacuum;
+    public int iSupportVehicle;
+    public int iAerospaceFighter;
     public String sStartTankTurrets;
     public String sEndTankTurrets;
     public String sStartLowerArms;
@@ -49,6 +58,7 @@ public class MechSearchFilter {
     public int iClanEngine;
     public int iOfficial;
     public int iCanon;
+    public int iPatchwork;
     public String source;
     public int iInvalid;
     public int iFailedToLoadEquipment;
@@ -456,11 +466,47 @@ public class MechSearchFilter {
             return false;
         }
 
+        if (!isMatch(f.iIndustrial, mech.isIndustrialMek())) {
+            return false;
+        }
+
+        if (!isMatch(f.iWaterOnly, (mech.hasWaterMovement() && !mech.hasAirMovement() && !mech.hasGroundMovement()))) {
+            return false;
+        }
+
+        if (!isMatch(f.iDoomedOnGround, mech.isDoomedOnGround())) {
+            return false;
+        }
+
+        if (!isMatch(f.iDoomedInAtmosphere, mech.isDoomedInAtmosphere())) {
+            return false;
+        }
+
+        if (!isMatch(f.iDoomedInSpace, mech.isDoomedInSpace())) {
+            return false;
+        }
+
+        if (!isMatch(f.iDoomedInExtremeTemp, mech.isDoomedInExtremeTemp())) {
+            return false;
+        }
+
+        if (!isMatch(f.iDoomedInVacuum, mech.isDoomedInVacuum())) {
+            return false;
+        }
+
+        if (!isMatch(f.iSupportVehicle, mech.isSupportVehicle())) {
+            return false;
+        }
+
         if (!isMatch(f.iOfficial, (mech.getMulId() != -1))) {
             return false;
         }
 
         if (!isMatch(f.iCanon, mech.isCanon())) {
+            return false;
+        }
+
+        if (!isMatch(f.iPatchwork, mech.isPatchwork())) {
             return false;
         }
 
@@ -734,7 +780,14 @@ public class MechSearchFilter {
             }
         }
 
+        long entityType = mech.getEntityType();
+
+        if (mech.isAerospaceFighter()) {
+            entityType = entityType | Entity.ETYPE_AEROSPACEFIGHTER;
+        }
+
         long entityTypes = 0;
+
         if (f.filterMech == 1) {
             entityTypes = entityTypes | Entity.ETYPE_MECH;
         }
@@ -804,12 +857,16 @@ public class MechSearchFilter {
         if (f.filterSuperHeavyTank == 1) {
             entityTypes = entityTypes | Entity.ETYPE_SUPER_HEAVY_TANK;
         }
+        if (f.iAerospaceFighter == 1) {
+            entityTypes = entityTypes | Entity.ETYPE_AEROSPACEFIGHTER;
+        }
 
-        if ((!((mech.getEntityType() & entityTypes) > 0)) && (entityTypes != 0)) {
+        if ((!((entityType & entityTypes) > 0) && (entityTypes != 0))) {
             return false;
         }
 
         entityTypes = 0;
+
         if (f.filterMech == 2) {
             entityTypes = entityTypes | Entity.ETYPE_MECH;
         }
@@ -879,8 +936,11 @@ public class MechSearchFilter {
         if (f.filterSuperHeavyTank == 2) {
             entityTypes = entityTypes | Entity.ETYPE_SUPER_HEAVY_TANK;
         }
+        if (f.iAerospaceFighter == 2) {
+            entityTypes = entityTypes | Entity.ETYPE_AEROSPACEFIGHTER;
+        }
 
-        if (((mech.getEntityType() & entityTypes) > 0) && (entityTypes != 0)) {
+        if (((entityType & entityTypes) > 0) && (entityTypes != 0)) {
             return false;
         }
 

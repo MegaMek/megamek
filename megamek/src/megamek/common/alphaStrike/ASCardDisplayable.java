@@ -313,21 +313,40 @@ public interface ASCardDisplayable extends BattleForceSUAFormatter, BTObject {
         return !isAerospace();
     }
 
-    @Override
+    /**
+     * Returns true when this element has any water movement of any kind.
+     *
+     * movement type of (n, s, h, g)
+     * Mek
+     * ProtoMek
+     */
     default boolean hasWaterMovement() {
-        return hasMovementMode("n") || hasMovementMode("s");
+        return hasMovementMode("n") || hasMovementMode("s") || hasMovementMode("h") || hasMovementMode("g")
+                || isMek()
+                || isProtoMek();
     }
 
-    @Override
+    /**
+     * Returns true when this element has ground movement of any kind.
+     *
+     * movement type of (w, t, h, g, f, m, j)
+     * Mek
+     * ProtoMek
+     */
     default boolean hasGroundMovement() {
-        return ((hasMovementMode("w") || hasMovementMode("t") || hasMovementMode("h") || hasMovementMode("g")) && (isVehicle()))
-                || ((hasMovementMode("f") || hasMovementMode("m") || hasMovementMode("j")) && isInfantry())
-                || isMek() || isProtoMek();
+        return hasMovementMode("w") || hasMovementMode("t") || hasMovementMode("h") || hasMovementMode("g")
+                || hasMovementMode("f") || hasMovementMode("m") || hasMovementMode("j")
+                || isMek()
+                || isProtoMek();
     }
 
-    @Override
+    /**
+     * Returns true when this element has air movement of any kind.
+     *
+     * movement type of (v, g, a, p)
+     */
     default boolean hasAirMovement() {
-        return hasMovementMode("w") || hasMovementMode("v") || hasMovementMode("g") || hasMovementMode("a") || hasMovementMode("p");
+        return hasMovementMode("v") || hasMovementMode("g") || hasMovementMode("a") || hasMovementMode("p");
     }
 
     @Override

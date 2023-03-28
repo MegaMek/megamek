@@ -2761,6 +2761,16 @@ public class GameManager implements IGameManager {
         } else {
             entities = game.getEntitiesVector();
         }
+
+        String noInitiative = entities.stream()
+                .filter(e -> e.getInitiative().size() == 0)
+                .map(Object::toString)
+                .collect(Collectors.joining(";"));
+
+        if (!noInitiative.isEmpty()) {
+            LogManager.getLogger().error("No Initiative rolled for: " + noInitiative);
+        }
+
         // Now, generate the global order of all teams' turns.
         TurnVectors team_order = TurnOrdered.generateTurnOrder(entities, game);
 

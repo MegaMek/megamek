@@ -1347,15 +1347,14 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         choiceToggle.addActionListener(e -> updateKeybindsFocusTraversal());
         defaultKeyBindButton.addActionListener(e -> updateKeybindsDefault());
 
-
         String msg_line1 = Messages.getString("CommonSettingsDialog.KeyBinds.tabMessageLine1");
         String msg_line2 = Messages.getString("CommonSettingsDialog.KeyBinds.tabMessageLine2");
         String msg_line3 = Messages.getString("CommonSettingsDialog.KeyBinds.tabMessageLine3");
-
         var choiceLabel = new JLabel(
                 "<HTML><CENTER>" + msg_line1 +
                         "<BR>" + msg_line2 +
                         "<BR>" + msg_line3 + "</HTML>");
+
         buttonPanel.add(choiceToggle);
         buttonPanel.add(defaultKeyBindButton);
         labelPanel.add(choiceLabel);
@@ -1635,17 +1634,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
     private void updateKeybindsDefault() {
         for (KeyCommandBind kcb : KeyCommandBind.values()) {
-            resetKeybind(cmdKeyMap.get(kcb.cmd), KeyEvent.getKeyText(kcb.keyDefault), cmdModifierMap.get(kcb.cmd), KeyEvent.getModifiersExText(kcb.modifiersDefault));
-
+            cmdKeyMap.get(kcb.cmd).setText(KeyEvent.getKeyText(kcb.keyDefault));
+            cmdModifierMap.get(kcb.cmd).setText(KeyEvent.getModifiersExText(kcb.modifiersDefault));
             cmdKeyCodeMap.put(kcb.cmd, kcb.keyDefault);
         }
 
         markDuplicateBinds();
-    }
-
-    private void resetKeybind(JTextField key, String defaultKey, JTextField modifier, String defaultModifier) {
-        key.setText(defaultKey);
-        modifier.setText(defaultModifier);
     }
 
     /** 

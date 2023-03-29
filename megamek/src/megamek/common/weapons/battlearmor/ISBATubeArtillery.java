@@ -14,6 +14,7 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
+import megamek.common.EquipmentTypeLookup;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
@@ -28,7 +29,7 @@ public class ISBATubeArtillery extends ArtilleryWeapon {
     public ISBATubeArtillery() {
         super();
         name = "Tube Artillery (BA)";
-        setInternalName("ISBATubeArtillery");
+        setInternalName(EquipmentTypeLookup.IS_BA_TUBE_ARTY);
         rackSize = 3;
         ammoType = AmmoType.T_BA_TUBE;
         shortRange = 2;

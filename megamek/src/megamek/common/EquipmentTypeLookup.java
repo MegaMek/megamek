@@ -182,4 +182,5 @@ public class EquipmentTypeLookup {
 
     @EquipmentName public static final String CL_BA_MORTAR_HEAVY = "CLBAHeavyMortar";
     @EquipmentName public static final String CL_BA_MORTAR_LIGHT = "CLBALightMortar";
+    @EquipmentName public static final String IS_BA_TUBE_ARTY = "ISBATubeArtillery";
 }

@@ -28,6 +28,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,6 +40,7 @@ import java.util.stream.Collectors;
 public class RATDataCSVExporter {
 
     private static final String DELIMITER = ";";
+    private static final ArrayList<String> EMPTY = new ArrayList<>();
 
     /**
      * Exports all RAT data to a selectable file as an excel-optimized CSV.
@@ -55,8 +59,10 @@ public class RATDataCSVExporter {
             return;
         }
 
-        Integer[] eras = ratGenerator.getEraSet().toArray(new Integer[0]);
         List<String> eraYears = ratGenerator.getEraSet().stream().map(era -> era + "").collect(Collectors.toList());
+        while (EMPTY.size() < ratGenerator.getEraSet().size()) {
+            EMPTY.add("");
+        }
 
         try (PrintWriter pw = new PrintWriter(saveFile); BufferedWriter bw = new BufferedWriter(pw)) {
             String columnNames = "Chassis" + DELIMITER + "Model" + DELIMITER + "MUL ID" + DELIMITER + "Unit Type" + DELIMITER;
@@ -66,19 +72,21 @@ public class RATDataCSVExporter {
             bw.write(columnNames);
 
             for (ChassisRecord chassisRecord : ratGenerator.getChassisList()) {
+                HashMap<String, List<String>> ratings = getRatings(ratGenerator, chassisRecord);
                 for (String faction : chassisRecord.getIncludedFactions()) {
                     var csvLine = new StringBuilder();
                     writeChassisBaseData(chassisRecord, csvLine, faction);
-                    writeEraData(chassisRecord, eras, ratGenerator, csvLine, faction);
+                    writeEraData2(ratings, csvLine, faction);
                     csvLine.append("\n");
                     bw.write(csvLine.toString());
                 }
 
                 for (ModelRecord modelRecord : chassisRecord.getModels()) {
+                    ratings = getRatings(ratGenerator, modelRecord);
                     for (String faction : modelRecord.getIncludedFactions()) {
                         var csvLine = new StringBuilder();
                         writeModelBaseData(modelRecord, csvLine, faction);
-                        writeEraData(modelRecord, eras, ratGenerator, csvLine, faction);
+                        writeEraData2(ratings, csvLine, faction);
                         csvLine.append("\n");
                         bw.write(csvLine.toString());
                     }
@@ -87,6 +95,44 @@ public class RATDataCSVExporter {
         } catch (Exception ex) {
             LogManager.getLogger().error("", ex);
         }
+    }
+
+    private static void writeEraData2(HashMap<String, List<String>> ratings, StringBuilder csvLine, String faction) {
+        ratings.get(faction).forEach(availabilityCode ->  {
+            if (availabilityCode != null) {
+                csvLine.append("\"=\"\"");
+                csvLine.append(availabilityCode);
+                csvLine.append("\"\"\"");
+            }
+            csvLine.append(DELIMITER);
+        });
+    }
+
+    private static HashMap<String, List<String>> getRatings(RATGenerator ratGenerator, AbstractUnitRecord record) {
+        HashMap<String, List<String>> data = new HashMap<>();
+        Integer[] ERAS = ratGenerator.getEraSet().toArray(new Integer[0]);
+        for (int i = 0; i < ERAS.length; i++) {
+            Collection<AvailabilityRating> recs;
+            if (record instanceof ModelRecord) {
+                recs = ratGenerator.getModelFactionRatings(ERAS[i], record.getKey());
+            } else {
+                recs = ratGenerator.getChassisFactionRatings(ERAS[i], record.getChassisKey());
+            }
+            if (recs != null) {
+                for (AvailabilityRating rec : recs) {
+                    String key = rec.getFactionCode();
+                    if (!data.containsKey(key)) {
+                        data.put(key, new ArrayList<>(EMPTY));
+                    }
+                    if (rec.getEra() == rec.getStartYear()) {
+                        data.get(key).set(i, rec.getAvailabilityCode());
+                    } else {
+                        data.get(key).set(i, rec.getAvailabilityCode() + ":" + rec.getStartYear());
+                    }
+                }
+            }
+        }
+        return data;
     }
 
     private static void writeModelBaseData(ModelRecord record, StringBuilder csvLine, String faction) {
@@ -107,27 +153,6 @@ public class RATDataCSVExporter {
         csvLine.append(DELIMITER);
         csvLine.append("TBD").append(DELIMITER);
         csvLine.append(faction).append(DELIMITER);
-    }
-
-    private static void writeEraData(AbstractUnitRecord record, Integer[] eras,
-                                     RATGenerator ratGenerator, StringBuilder csvLine, String faction) {
-        for (int era : eras) {
-            AvailabilityRating ar;
-            if (record instanceof ModelRecord) {
-                ar = ratGenerator.findModelAvailabilityRecord(era, record.getKey(), faction);
-            } else {
-                ar = ratGenerator.findChassisAvailabilityRecord(era, record.getChassisKey(), faction, era);
-            }
-            if (ar != null) {
-                csvLine.append("\"=\"\"");
-                csvLine.append(ar.getAvailabilityCode());
-                if (ar.getEra() != ar.getStartYear()) {
-                    csvLine.append(":").append(ar.getStartYear());
-                }
-                csvLine.append("\"\"\"");
-            }
-            csvLine.append(DELIMITER);
-        }
     }
 
     private static RATGenerator initializeRatGenerator() {

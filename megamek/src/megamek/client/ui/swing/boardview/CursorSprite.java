@@ -9,6 +9,7 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Coords;
 
 /**
@@ -37,12 +38,7 @@ class CursorSprite extends Sprite {
         Image tempImage = new BufferedImage(bounds.width, bounds.height,
                 BufferedImage.TYPE_INT_ARGB);
         Graphics graph = tempImage.getGraphics();
-        
-        if (GUIPreferences.getInstance().getAntiAliasing()) {
-            ((Graphics2D) graph).setRenderingHint(
-                    RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON);
-        }
+        UIUtil.setHighQualityRendering(graph);
 
         // fill with key color
         graph.setColor(new Color(0, 0, 0, 0));

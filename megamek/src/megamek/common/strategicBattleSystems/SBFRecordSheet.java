@@ -19,8 +19,8 @@
 package megamek.common.strategicBattleSystems;
 
 import megamek.MMConstants;
-import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.StringDrawer;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Configuration;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.annotations.Nullable;
@@ -84,11 +84,7 @@ public class SBFRecordSheet implements Printable {
     /** Draws the sheet to the given Graphics2D. When the formation is null, an empty sheet is drawn. */
     public final void drawSheet(Graphics g) {
         Graphics2D g2D = (Graphics2D) g;
-        GUIPreferences.AntiAliasifSet(g);
-        g2D.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
-        g2D.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-        g2D.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        g2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        UIUtil.setHighQualityRendering(g);
 
         drawFormationBackground(g2D);
         drawUnitOverviewBackground(g2D);

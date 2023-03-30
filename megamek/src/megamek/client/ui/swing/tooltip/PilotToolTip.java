@@ -16,10 +16,8 @@ package megamek.client.ui.swing.tooltip;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.Configuration;
-import megamek.common.Crew;
-import megamek.common.Entity;
-import megamek.common.Game;
+import megamek.common.*;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.CrewSkillSummaryUtil;
 import org.apache.logging.log4j.LogManager;
@@ -39,6 +37,17 @@ public final class PilotToolTip {
     /** the portrait base size */
     private final static int PORTRAIT_BASESIZE = 72;
     final static String BG_COLOR = "#313131";
+
+    public static StringBuilder lobbyTip(InGameObject unit) {
+        if (unit instanceof Entity) {
+            return getPilotTipDetailed((Entity) unit, true);
+        } else if (unit instanceof AlphaStrikeElement) {
+            // TODO : Provide a suitable tip
+            return new StringBuilder("AlphaStrikeElement " + ((AlphaStrikeElement) unit).getName());
+        } else {
+            return new StringBuilder("This type of object has currently tooltip.");
+        }
+    }
 
     public static StringBuilder getPilotTipDetailed(Entity entity, boolean showPortrait) {
         return getPilotTip(entity, true, showPortrait, true);
@@ -176,5 +185,6 @@ public final class PilotToolTip {
 
         return new StringBuilder().append(result);
     }
-    
+
+    private PilotToolTip() { }
 }

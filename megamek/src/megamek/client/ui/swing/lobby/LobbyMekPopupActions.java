@@ -264,15 +264,15 @@ public class LobbyMekPopupActions implements ActionListener {
                 break;
 
             case LMP_VIEW:
-                lobby.mechReadoutAction(entities);
+                LobbyUtility.mechReadoutAction(entities, lobby.canSeeAll(entities), false, lobby.getClientgui().getFrame());
                 break;
 
             case LMP_BV:
-                lobby.mechBVAction(entities);
+                LobbyUtility.mechBVAction(entities, lobby.canSeeAll(entities), false, lobby.getClientgui().getFrame());
                 break;
 
             case LMP_COST:
-                lobby.mechCostAction(entities);
+                LobbyUtility.mechCostAction(entities, lobby.canSeeAll(entities), false, lobby.getClientgui().getFrame());
                 break;
 
             case LMP_DAMAGE:

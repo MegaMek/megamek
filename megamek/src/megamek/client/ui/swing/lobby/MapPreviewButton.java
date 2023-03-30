@@ -19,7 +19,6 @@
 package megamek.client.ui.swing.lobby;
 
 import megamek.MMConstants;
-import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.MapSettings;
 import megamek.common.util.ImageUtil;
@@ -156,7 +155,7 @@ public class MapPreviewButton extends JButton {
             // Add the labels (index, name, example)
             BufferedImage drawableImage = ImageUtil.createAcceleratedImage(scaledImage);
             Graphics g = drawableImage.getGraphics();
-            GUIPreferences.AntiAliasifSet(g);
+            UIUtil.setHighQualityRendering(g);
             if (lobby.isMultipleBoards()) {
                 drawIndex(g, w, h);
             }

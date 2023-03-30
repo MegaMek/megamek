@@ -122,9 +122,11 @@ public enum KeyCommandBind {
     
     /** Defines the keycode for the command, e.g. KeyEvent.VK_X. */
     public int key;
+    public int keyDefault;
     
     /** Modifiers to the key code, such as InputEvent.CTRL_DOWN_MASK. */ 
     public int modifiers;
+    public int modifiersDefault;
     
     /**
      * Defines if an action is exclusive, which means that only one
@@ -176,7 +178,9 @@ public enum KeyCommandBind {
     private KeyCommandBind(String c, boolean r, int k, int m, boolean e) {
         cmd = c;
         key = k;
+        keyDefault = k;
         modifiers = m;
+        modifiersDefault = m;
         isRepeatable = r;
         isExclusive = e;
     }

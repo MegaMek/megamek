@@ -46,7 +46,32 @@ import static megamek.client.ui.swing.util.UIUtil.*;
 class LobbyMekCellFormatter {
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
-    
+
+    private LobbyMekCellFormatter() {
+    }
+
+    static String unitTableEntry(InGameObject unit, ChatLounge lobby, boolean forceView, boolean compactView) {
+        if (unit instanceof Entity) {
+            return compactView ? formatUnitCompact((Entity) unit, lobby, forceView) : formatUnitFull((Entity) unit, lobby, forceView);
+        } else if (unit instanceof AlphaStrikeElement) {
+            return MekTableASUnitEntry.fullEntry((AlphaStrikeElement) unit, lobby, forceView, compactView);
+            // TODO : Provide a suitable lobby table entry
+        } else {
+            return "This type of object has currently no table entry.";
+        }
+    }
+
+    static String pilotTableEntry(InGameObject unit, boolean compactView, boolean hide, boolean rpgSkills) {
+        if (unit instanceof Entity) {
+            return compactView ? formatPilotCompact((Entity) unit, hide, rpgSkills) : formatPilotFull((Entity) unit, hide);
+        } else if (unit instanceof AlphaStrikeElement) {
+            // TODO : Provide a suitable lobby table entry
+            return "AlphaStrikeElement " + ((AlphaStrikeElement) unit).getName();
+        } else {
+            return "This type of object has currently no table entry.";
+        }
+    }
+
     /** 
      * Creates and returns the display content of the Unit column for the given entity and
      * for the non-compact display mode.

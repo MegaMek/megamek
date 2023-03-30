@@ -56,6 +56,7 @@ public class EjectedCrew extends Infantry {
         LogManager.getLogger().debug("Ejecting crew size: " + originalRide.getCrew().getSize());
         setChassis(VEE_EJECT_NAME);
         setModel(originalRide.getCrew().getName());
+        setInitiative(originalRide.getInitiative());
 
         // Generate the display name, then add the original ride's name.
         setDisplayName(getDisplayName() + " of " + originalRide.getDisplayName());

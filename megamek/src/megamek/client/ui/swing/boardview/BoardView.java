@@ -916,7 +916,6 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             case GUIPreferences.FOV_HIGHLIGHT_RINGS_COLORS_HSB:
             case GUIPreferences.FOV_HIGHLIGHT_RINGS_RADII:
             case GUIPreferences.SHADOWMAP:
-            case GUIPreferences.ANTIALIASING:
                 clearHexImageCache();
                 repaint();
                 break;
@@ -1027,10 +1026,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             paintCompsStartTime = System.nanoTime();
         }
 
-        if (GUIP.getAntiAliasing()) {
-            ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON);
-        }
+        UIUtil.setHighQualityRendering(g);
 
         Rectangle viewRect = scrollpane.getVisibleRect();
 
@@ -2159,9 +2155,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         Image entireBoard = createImage(boardSize.width, boardSize.height);
         Graphics2D boardGraph = (Graphics2D) entireBoard.getGraphics();
         boardGraph.setClip(0, 0, boardSize.width, boardSize.height);
-        if (GUIP.getAntiAliasing()) {
-            boardGraph.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        }
+        UIUtil.setHighQualityRendering(boardGraph);
 
         if (shadowMap == null) {
             updateShadowMap();
@@ -2423,7 +2417,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 BufferedImage.TYPE_INT_ARGB);
 
         Graphics2D g = (Graphics2D) (hexImage.getGraphics());
-        GUIPreferences.AntiAliasifSet(g);
+        UIUtil.setHighQualityRendering(g);
 
         if (standardTile) { // is the image hex-sized, 84*72?
             g.drawImage(scaledImage, 0, 0, this);

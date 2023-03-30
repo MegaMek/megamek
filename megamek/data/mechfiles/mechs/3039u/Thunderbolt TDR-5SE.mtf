@@ -1,35 +1,34 @@
-Version:1.0
+Version:1.3
 Thunderbolt
 TDR-5SE
 mul id:3240
-
 Config:Biped
-TechBase:Inner Sphere
-Era:2910
-Source:TRO 3039 - Succession Wars
-Rules Level:1
+techbase:Inner Sphere
+era:3000
+source:TRO 3039 - Succession Wars
+rules level:1
 
-Mass:65
-Engine:260 Fusion Engine
-Structure:Standard
-Myomer:Standard
+mass:65
+engine:260 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:17 Single
-Walk MP:4
-Jump MP:4
+heat sinks:17 Single
+walk mp:4
+jump mp:4
 
-Armor:Standard
-LA Armor:20
-RA Armor:20
-LT Armor:24
-RT Armor:24
-CT Armor:30
-HD Armor:9
-LL Armor:29
-RL Armor:29
-RTL Armor:6
-RTR Armor:6
-RTC Armor:11
+armor:Standard(Inner Sphere)
+LA armor:20
+RA armor:20
+LT armor:24
+RT armor:24
+CT armor:30
+HD armor:9
+LL armor:29
+RL armor:29
+RTL armor:6
+RTR armor:6
+RTC armor:11
 
 Weapons:5
 Large Laser, Right Arm
@@ -150,13 +149,9 @@ Heat Sink
 -Empty-
 -Empty-
 
-
-Overview: The Thunderbolt, from its inception, has always been a reliable workhorse of heavy formations. Standard design paradigms for Thunderbolt variants focus on combining durability with a wide and flexible array of firepower. An excellent reputation and service record lead to the modernization of the chassis, bringing the primitive BattleMech up to modern standards. Subsequent improvements of the base design would periodically follow, keeping the Thunderbolt at the forefront of every war in the Inner Sphere for centuries on end.
-
-Capabilities: As the Thunderbolt was initially designed for planetary assaults, a strong combination of armor protection and intimidating firepower was paramount. In this, the Thunderbolt did not fail. The weapon array of the standard variant is well equipped to deal with opponents at any range. Additionally, the RCA Instatrac Mark X targeting system is suited to dealing with multiple targets at once without sacrificing accuracy. Finally, the innate ruggedness of the Thunderbolt chassis has always been once of its greatest strengths, vastly reducing the amount of upkeep needed to keep them running.
-
-Deployment: Few BattleMechs are as widely used as the Thunderbolt. Factories scattered throughout the Inner Sphere and Periphery bring large numbers of the design into service every year, with the toughness of the design naturally reducing attrition rates. Every military of note uses the design, and the Thunderbolt is undoubtebly one of the most common heavy BattleMechs to be found in the Sphere. The Eridani Light Horse modified their Thunderbolts to the TDR-5SE specification. Used in raiding or heavy reconnaissance roles, these Thunderbolts use jump jets and improved heat dissipation to increase their utility in the heat of battle.
-
+overview: The Thunderbolt, from its inception, has always been a reliable workhorse of heavy formations. Standard design paradigms for Thunderbolt variants focus on combining durability with a wide and flexible array of firepower. An excellent reputation and service record lead to the modernization of the chassis, bringing the primitive BattleMech up to modern standards. Subsequent improvements of the base design would periodically follow, keeping the Thunderbolt at the forefront of every war in the Inner Sphere for centuries on end.
+capabilities: As the Thunderbolt was initially designed for planetary assaults, a strong combination of armor protection and intimidating firepower was paramount. In this, the Thunderbolt did not fail. The weapon array of the standard variant is well equipped to deal with opponents at any range. Additionally, the RCA Instatrac Mark X targeting system is suited to dealing with multiple targets at once without sacrificing accuracy. Finally, the innate ruggedness of the Thunderbolt chassis has always been once of its greatest strengths, vastly reducing the amount of upkeep needed to keep them running.
+deployment: Few BattleMechs are as widely used as the Thunderbolt. Factories scattered throughout the Inner Sphere and Periphery bring large numbers of the design into service every year, with the toughness of the design naturally reducing attrition rates. Every military of note uses the design, and the Thunderbolt is undoubtebly one of the most common heavy BattleMechs to be found in the Sphere. The Eridani Light Horse modified their Thunderbolts to the TDR-5SE specification. Used in raiding or heavy reconnaissance roles, these Thunderbolts use jump jets and improved heat dissipation to increase their utility in the heat of battle.
 systemmanufacturer:CHASSIS:Earthwerks
 systemmode:CHASSIS:TDR
 systemmanufacturer:ENGINE:Magna
@@ -167,3 +162,4 @@ systemmanufacturer:COMMUNICATIONS:Neil
 systemmode:COMMUNICATIONS:8000
 systemmanufacturer:TARGETING:RCA
 systemmode:TARGETING:Instatrac Mark X
+

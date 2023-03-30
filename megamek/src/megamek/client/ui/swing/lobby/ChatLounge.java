@@ -43,6 +43,8 @@ import megamek.client.ui.swing.util.ScalingPopup;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.*;
 import megamek.common.force.Force;
@@ -84,7 +86,6 @@ import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageFilter;
 import java.awt.image.ImageProducer;
 import java.io.*;
-import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.*;
@@ -1117,7 +1118,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     
     private void markServerSideBoard(BufferedImage image) {
         Graphics g = image.getGraphics();
-        GUIPreferences.AntiAliasifSet(g);
+        setHighQualityRendering(g);
         int w = image.getWidth();
         int h = image.getHeight();
         String text = Messages.getString("ChatLounge.board.serverSide");
@@ -1554,73 +1555,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                         entity.setOffBoard(entity.getOffBoardDistance(), direction);
                     }
                 }
-            }
-        }
-
-    }
-    
-    
-    /** 
-     * Shows the unit summaries for the given units, but not for hidden units (blind drop)
-     * and not for more than 10 units at a time (because that's likely a misclick).
-     */
-    void mechReadoutAction(Collection<Entity> entities) {
-        if (entities.size() > 10) {
-            LobbyErrors.showTenUnits(clientgui.frame);
-            return;
-        }
-        if (!canSeeAll(entities)) {
-            LobbyErrors.showCannotViewHidden(clientgui.frame);
-            return;
-        }
-        int index = 0;
-        for (Entity entity: entities) {
-            mechReadout(entity, index++);
-        }
-    } 
-
-    /** 
-     * Shows the unit summary for the given unit. Moves the dialog a bit depending on index
-     * so that multiple dialogs dont appear exactly on top of each other.
-     */
-    private void mechReadout(Entity entity, int index) {
-        final EntityReadoutDialog dialog = new EntityReadoutDialog(clientgui.frame, entity);
-        dialog.setVisible(true);
-        dialog.setLocation(dialog.getLocation().x + index * 10, dialog.getLocation().y + index * 10);
-    }
-
-    /** 
-     * Shows the battle value calculation for the given units, but not for hidden units (blind drop)
-     * and not for more than 10 units at a time (because that's likely a misclick).
-     *
-     * @param entities The units to the bv report for
-     */
-    void mechBVAction(final Set<Entity> entities) {
-        if (entities.size() > 10) {
-            LobbyErrors.showTenUnits(clientgui.frame);
-        } else if (!canSeeAll(entities)) {
-            LobbyErrors.showCannotViewHidden(clientgui.frame);
-        } else {
-            for (final Entity entity : entities) {
-                new BVDisplayDialog(getClientgui().getFrame(), entity).setVisible(true);
-            }
-        }
-    }
-
-    /**
-     * Shows the cost calculation for the given units, but not for hidden units (blind drop)
-     * and not for more than 10 units at a time (because that's likely a misclick).
-     *
-     * @param entities The units to the cost report for
-     */
-    void mechCostAction(final Set<Entity> entities) {
-        if (entities.size() > 10) {
-            LobbyErrors.showTenUnits(clientgui.frame);
-        } else if (!canSeeAll(entities)) {
-            LobbyErrors.showCannotViewHidden(clientgui.frame);
-        } else {
-            for (final Entity entity : entities) {
-                new CostDisplayDialog(getClientgui().getFrame(), entity).setVisible(true);
             }
         }
     }
@@ -2546,7 +2480,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 lobbyActions.delete(new ArrayList<>(), entities, true);
             } else if (code == KeyEvent.VK_SPACE) {
                 evt.consume();
-                mechReadoutAction(entities);
+                LobbyUtility.mechReadoutAction(entities, canSeeAll(entities), false, getClientgui().getFrame());
             } else if (code == KeyEvent.VK_ENTER) {
                 evt.consume();
                 if (entities.size() == 1) {
@@ -2680,7 +2614,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             
             if (code == KeyEvent.VK_SPACE) {
                 e.consume();
-                mechReadoutAction(selEntities);
+                mechReadoutAction(selEntities, canSeeAll(selEntities), false, getClientgui().getFrame());
                 
             } else if (code == KeyEvent.VK_ENTER && onlyOneEntity) {
                 e.consume();
@@ -2835,9 +2769,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         public void mouseClicked(MouseEvent e) {
             if (e.getClickCount() == 2) {
                 int row = mekTable.rowAtPoint(e.getPoint());
-                Entity entity = mekModel.getEntityAt(row);
-                if (entity != null && isEditable(entity)) {
-                    lobbyActions.customizeMech(entity);
+                InGameObject entity = mekModel.getEntityAt(row);
+                if ((entity instanceof Entity) && isEditable((Entity) entity)) {
+                    lobbyActions.customizeMech((Entity) entity);
                 }
             }
         }
@@ -3262,7 +3196,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         ArrayList<Entity> result = new ArrayList<>();
         int[] rows = mekTable.getSelectedRows();
         for (int i = 0; i < rows.length; i++) {
-            result.add(mekModel.getEntityAt(rows[i]));
+            InGameObject unit = mekModel.getEntityAt(rows[i]);
+            if (unit instanceof Entity) {
+                result.add((Entity) unit);
+            }
         }
         return result;
     }

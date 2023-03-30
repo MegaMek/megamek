@@ -120,7 +120,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     /* --End advanced settings-- */
 
     public static final String SHOW_COORDS = "showCoords";
-    public static final String ANTIALIASING = "AntiAliasing";
     public static final String SHADOWMAP = "ShadowMap";
     public static final String INCLINES = "Inclines";
     public static final String AOHEXSHADOWS = "AoHexShadows";
@@ -452,7 +451,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(FOV_STRIPES, 35);
         store.setDefault(FOV_GRAYSCALE, false);
 
-        store.setDefault(ANTIALIASING, true);
         store.setDefault(AOHEXSHADOWS, false);
         store.setDefault(SHADOWMAP, true);
         store.setDefault(INCLINES, true);
@@ -639,10 +637,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     @Override
     public String[] getAdvancedProperties() {
         return store.getAdvancedProperties();
-    }
-
-    public boolean getAntiAliasing() {
-        return store.getBoolean(ANTIALIASING);
     }
 
     public boolean getAOHexShadows() {
@@ -1267,10 +1261,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getBoardEdRndStart() {
         return store.getBoolean(BOARDEDIT_RNDDIALOG_START);
-    }
-
-    public void setAntiAliasing(boolean state) {
-        store.setValue(ANTIALIASING, state);
     }
 
     public void setShadowMap(boolean state) {
@@ -2250,19 +2240,4 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return Color.BLUE;
     }
     //endregion Colours
-
-    /**
-     * Activates AntiAliasing for the <code>Graphics</code> graph
-     * if AA is activated in the Client settings.
-     *
-     * @param graph Graphics context to activate AA for
-     */
-    public static void AntiAliasifSet(Graphics graph) {
-        if (getInstance().getAntiAliasing()) {
-            ((Graphics2D) graph).setRenderingHint(
-                    RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON);
-        }
-    }
-
 }

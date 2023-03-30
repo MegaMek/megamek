@@ -23,6 +23,7 @@ package megamek.client.ui.swing;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
+import megamek.client.ui.baseComponents.MMButton;
 import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.swing.StatusBarPhaseDisplay.PhaseCommand;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
@@ -144,7 +145,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private final JCheckBox showWpsinTT = new JCheckBox(Messages.getString("CommonSettingsDialog.showWpsinTT"));
     private final JCheckBox showArmorMiniVisTT = new JCheckBox(Messages.getString("CommonSettingsDialog.showArmorMiniVisTT"));
     private final JCheckBox showPilotPortraitTT = new JCheckBox(Messages.getString("CommonSettingsDialog.showPilotPortraitTT"));
-    private final JCheckBox chkAntiAliasing = new JCheckBox(Messages.getString("CommonSettingsDialog.antiAliasing"));
     private MMComboBox<WeaponSortOrder> comboDefaultWeaponSortOrder;
     private JTextField tooltipDelay;
     private JTextField tooltipDismissDelay;
@@ -226,7 +226,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     
     private JComboBox<String> tileSetChoice;
     private List<String> tileSets;
-    private final MMToggleButton choiceToggle = new MMToggleButton("Enable tabbing through this dialog page");
+    private final MMToggleButton choiceToggle = new MMToggleButton(Messages.getString("CommonSettingsDialog.KeyBinds.buttoneTabbing"));
+    private final MMButton defaultKeyBindButton = new MMButton("default", Messages.getString("CommonSettingsDialog.KeyBinds.buttonDefault"));
 
     private JComboBox unitDisplayAutoDisplayReportCombo;
     private JComboBox unitDisplayAutoDisplayNonReportCombo;
@@ -272,7 +273,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private boolean savedUnitLabelBorder;
     private boolean savedShowDamageDecal;
     private boolean savedShowDamageLabel;
-    private boolean savedAntiAlias;
     private String savedFovHighlightRingsRadii;
     private String savedFovHighlightRingsColors;
     private int savedFovHighlightAlpha;
@@ -650,7 +650,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             displayLocale.setSelectedIndex(index);
 
             showMapsheets.setSelected(GUIP.getShowMapsheets());
-            chkAntiAliasing.setSelected(GUIP.getAntiAliasing());
             showDamageLevel.setSelected(GUIP.getShowDamageLevel());
             showDamageDecal.setSelected(GUIP.getShowDamageDecal());
             aOHexShadows.setSelected(GUIP.getAOHexShadows());
@@ -744,7 +743,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             savedFovHighlightAlpha = GUIP.getFovHighlightAlpha();
             savedFovDarkenAlpha = GUIP.getFovDarkenAlpha();
             savedNumStripesSlider = GUIP.getFovStripes();
-            savedAntiAlias = GUIP.getAntiAliasing();
             savedAdvancedOpt.clear();
             
             advancedKeys.clearSelection();
@@ -782,8 +780,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setFovHighlightAlpha(savedFovHighlightAlpha);
         GUIP.setFovDarkenAlpha(savedFovDarkenAlpha);
         GUIP.setFovStripes(savedNumStripesSlider);
-        GUIP.setAntiAliasing(savedAntiAlias);
-         
+
         for (String option: savedAdvancedOpt.keySet()) {
             GUIP.setValue(option, savedAdvancedOpt.get(option));
         }
@@ -1117,8 +1114,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             GUIP.setShowDamageDecal(showDamageDecal.isSelected());
         } else if (source.equals(showDamageLevel)) {
             GUIP.setShowDamageLevel(showDamageLevel.isSelected());
-        } else if (source.equals(chkAntiAliasing)) {
-            GUIP.setAntiAliasing(chkAntiAliasing.isSelected());
         }
     }
 
@@ -1148,7 +1143,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         List<List<Component>> comps = new ArrayList<>();
         ArrayList<Component> row;
 
-        comps.add(checkboxEntry(chkAntiAliasing, Messages.getString("CommonSettingsDialog.antiAliasingToolTip")));
         comps.add(checkboxEntry(animateMove, null));
         comps.add(checkboxEntry(showWrecks, null));
         comps.add(checkboxEntry(showMapsheets, null));
@@ -1351,11 +1345,18 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         var buttonPanel = new JPanel();
         var labelPanel = new JPanel();
         choiceToggle.addActionListener(e -> updateKeybindsFocusTraversal());
+        defaultKeyBindButton.addActionListener(e -> updateKeybindsDefault());
+
+        String msg_line1 = Messages.getString("CommonSettingsDialog.KeyBinds.tabMessageLine1");
+        String msg_line2 = Messages.getString("CommonSettingsDialog.KeyBinds.tabMessageLine2");
+        String msg_line3 = Messages.getString("CommonSettingsDialog.KeyBinds.tabMessageLine3");
         var choiceLabel = new JLabel(
-                "<HTML><CENTER>This will enable stepping through the entry fields on this page using the TAB key." +
-                        "<BR> It will prevent TAB from being used as a keybind and " +
-                        "<BR> remove any existing TAB keybinds.");
+                "<HTML><CENTER>" + msg_line1 +
+                        "<BR>" + msg_line2 +
+                        "<BR>" + msg_line3 + "</HTML>");
+
         buttonPanel.add(choiceToggle);
+        buttonPanel.add(defaultKeyBindButton);
         labelPanel.add(choiceLabel);
         tabChoice.add(buttonPanel);
         tabChoice.add(labelPanel);
@@ -1369,15 +1370,18 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         
         // Create header: labels for describing what each column does
         JLabel headers = new JLabel("Name");
-        headers.setToolTipText("The name of the action");
+        String msg_tooltipName = Messages.getString("CommonSettingsDialog.KeyBinds.tooltipName");
+        headers.setToolTipText(msg_tooltipName);
         keyBinds.add(headers, gbc);
         gbc.gridx++;
         headers = new JLabel("Modifier");
-        headers.setToolTipText("The modifier key, like shift, ctrl, alt");
+        String msg_tooltipModifier = Messages.getString("CommonSettingsDialog.KeyBinds.tooltipModifier");
+        headers.setToolTipText(msg_tooltipModifier);
         keyBinds.add(headers, gbc);
         gbc.gridx++;
         headers = new JLabel("Key");
-        headers.setToolTipText("The key");
+        String msg_tooltipKey = Messages.getString("CommonSettingsDialog.KeyBinds.tooltipKey");
+        headers.setToolTipText(msg_tooltipKey);
         keyBinds.add(headers, gbc);
         gbc.gridy++;
         gbc.gridx = 0;
@@ -1626,6 +1630,16 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
                 cmdKeyMap.get(kcb.cmd).setText("");
             }
         }
+    }
+
+    private void updateKeybindsDefault() {
+        for (KeyCommandBind kcb : KeyCommandBind.values()) {
+            cmdKeyMap.get(kcb.cmd).setText(KeyEvent.getKeyText(kcb.keyDefault));
+            cmdModifierMap.get(kcb.cmd).setText(KeyEvent.getModifiersExText(kcb.modifiersDefault));
+            cmdKeyCodeMap.put(kcb.cmd, kcb.keyDefault);
+        }
+
+        markDuplicateBinds();
     }
 
     /** 

@@ -4,7 +4,7 @@ C
 mul id:9397
 Config:Biped
 techbase:Mixed (Clan Chassis)
-era:3093
+era:3130
 source:Rec Guide:ilClan #29 - Early Republic
 rules level:3
 
@@ -31,10 +31,10 @@ RTR armor:10
 RTC armor:10
 
 Weapons:5
-Improved Heavy Medium Laser, Left Torso
-Improved Heavy Medium Laser, Right Torso
 Improved Heavy Medium Laser, Left Arm
 Improved Heavy Medium Laser, Right Arm
+Improved Heavy Medium Laser, Left Torso
+Improved Heavy Medium Laser, Right Torso
 ER Medium Laser, Head
 
 Left Arm:
@@ -150,13 +150,9 @@ Foot Actuator
 -Empty-
 
 overview:The Charger is seen as an example of abject failure in BattleMech design. Wells Technologies originally wanted to produce an ultra-heavy scout 'Mech for the Star League Defense Force that was not only fast but could survive contact with the enemy.
-
 capabilities:The Charger is seen as an example of abject failure in BattleMech design. Wells Technologies originally wanted to produce an ultra-heavy scout 'Mech for the Star League Defense Force that was not only fast but could survive contact with the enemy. This was to be the 'Mech's downfall, as its popgun laser array proved to be quite laughable, capable of little more than fighting infantry and light combat vehicles. Its armoring, while respectable, could not stand up to sustained punishment, which meant if the 'Mech got too close to heavy combat or trapped by superior numbers it could be shot to pieces.
-
 deployment:The Snow Ravens have raised the Charger, which was once regarded as one of the worst assault 'Mechs ever constructed. Shutting down the Charger line was one of the key reasons for Raveena Electronics' strong anti-Clan attitude, but the line's reinstatement put an end to their protests. The Charger C, when upgraded to a fully Clan-spec 'Mech with MASC and a supercharger, can meet the original design objective of a rapid assault-class scout with matching firepower.
-
 history:When the Charger debuted in 2665 it quickly became derided as "a light 'Mech trapped in an assault's frame" and the Star League quickly withdrew it from use; Wells Technologies eventually found itself wallowing in over a thousand Chargers which no one now wanted to buy. In an odd twist of fate, the fall of the Star League and the start of the First Succession War would save the company and the Charger. Desperate for any 'Mech they could get their hands on, the Draconis Combine bought the Charger in large numbers and established a long-term contract with the company. During the long attritional warfare of the Succession Wars era the Charger proved to be a reliable, low-maintenance 'Mech useful in rear areas and for garrison duty on low-tech worlds, especially in the Periphery. In its limited frontline engagements this close-assault 'Mech proved itself deadly against smaller recon elements like Wasps and Stingers and any machine whose main armament was already destroyed. Its greatest successes often came in less orthodox roles such as counterinsurgency operations. By 3025 nearly five hundred of the original thousand Chargers were still in use, largely with the Combine but also in the other Great Houses too. This was mainly due to battlefield salvage and black-market trading, the latter of which Wells itself took part in due to export restrictions placed on it by the Combine. The company was eventually bought out by its license-holder Luthien Armor Works in 3027 after the discovery of this underhanded dealing, and production of the original Charger ceased altogether in 3030. In the devastating aftermath of the Fourth Succession War however, the Combine once again needed 'Mechs to replace its losses, and the Coordinator himself ordered LAW to produce a 'Mech which would act as a symbol of the Combine's might. The resulting crash program to produce the Hatamoto-Chi gave LAW the ability to rework the Charger line using rediscovered technology, allowing them to produce "new" assault 'Mechs in half the time through a major modification program rather than starting from scratch. These new Charger variants debuted in time to meet the Clan Invasion, and while still close-in brawlers their varied weaponry and advanced technology made them far superior. Success with the revamped designs was such that by 3068 every Draconis Combine Mustered Soldiery unit had at least one new Charger in its inventory, though with the loss of LAW's Luthien plant production on the CGR-3K model ceased and many had moved on to the newer CGR-SA5 model. Some of the original Chargers are still used as labyrinthine fighters by backwater stables on Solaris VII.
-
 manufacturer:Raveena Electronics
 primaryfactory:Ramora
 systemmanufacturer:CHASSIS:Wells 990
@@ -165,3 +161,4 @@ systemmanufacturer:ARMOR:Compound LZ-7
 systemmanufacturer:JUMPJET:Icarus 81
 systemmanufacturer:COMMUNICATIONS:Tek Batt with Angel ECM
 systemmanufacturer:TARGETING:Dalban Hirez with Bloodhound Active Probe
+

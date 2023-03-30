@@ -1,101 +1,101 @@
-Version:1.0
+Version:1.3
 Jinggau
-JN-G7L
-mul id:1707
-
+JN-G7Lr
+mul id:1708
 Config:Biped
-TechBase:Inner Sphere
-Era:3068
-Source:TRO 3060 - Jihad
-Rules Level:2
+techbase:Mixed (IS Chassis)
+era:3078
+source:Shrapnel #12 - Jihad 
+rules level:2
 
-Mass:65
-Engine:325 XL Engine
-Structure:Endo Steel
-Myomer:Standard
+mass:65
+engine:325 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
 
-Heat Sinks:15 Double
-Walk MP:5
-Jump MP:5
+heat sinks:15 Clan Double
+walk mp:5
+jump mp:5
 
-Armor:Standard(Inner Sphere)
-LA Armor:17
-RA Armor:17
-LT Armor:24
-RT Armor:24
-CT Armor:28
-HD Armor:9
-LL Armor:22
-RL Armor:22
-RTL Armor:6
-RTR Armor:6
-RTC Armor:9
+armor:Ferro-Fibrous(Clan)
+LA armor:20
+RA armor:20
+LT armor:24
+RT armor:24
+CT armor:32
+HD armor:9
+LL armor:30
+RL armor:30
+RTL armor:6
+RTR armor:6
+RTC armor:10
 
-Weapons:8
-Medium Laser, Left Arm
-Medium Laser, Left Arm
-Medium Laser, Left Arm
-Medium Laser, Left Arm
-Medium Laser, Left Arm
-Medium Laser, Left Arm
+Weapons:9
 Plasma Rifle, Right Arm
 Plasma Rifle, Right Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+ER Small Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-Medium Laser
-Medium Laser
-Medium Laser
-Medium Laser
-Medium Laser
-Medium Laser
--Empty-
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+Clan Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
 ISPlasmaRifle
 ISPlasmaRifle
 ISPlasmaRifle
 ISPlasmaRifle
 ISPlasmaRifleAmmo
--Empty-
--Empty-
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+Clan Ferro-Fibrous
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
--Empty-
+CLDoubleHeatSink
+CLDoubleHeatSink
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
 ISPlasmaRifleAmmo
 ISPlasmaRifleAmmo
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -109,13 +109,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Jump Jet
--Empty-
+Clan Ferro-Fibrous
 
 Head:
 Life Support
 Sensors
 Cockpit
--Empty-
+CLERSmallLaser
 Sensors
 Life Support
 -Empty-
@@ -153,20 +153,21 @@ Jump Jet
 -Empty-
 -Empty-
 
-
 overview:The Jinggau is made to engage in direct combat, not lurk at the periphery or wait for a few fortunate long-range hits.
 
 capabilities:It can close relatively easily in virtually any terrain thanks to its top-end mobility for its weight, which includes a running speed of over 85 kph and a 150-meter leap capacity. With more than eleven tons of armor, the Jinggau has a very good chance of surviving whether traversing wide terrain or fighting in stand-up combat. The major offense comes from a number of strong hitting primary weapons including the Zhi-tong-yao ("painkiller") Gauss rifle. The weapon fires piercing shots until the Jinggau is within striking distance of its secondary lasers, which can frighten the pilot of even an assault mech. At that point, the main armaments continue to unleash their knockdown power punches while the lasers look for vulnerable areas to butcher an enemy machine.
 
-deployment:This variant was introduced just after the start of the Jihad, applying the latest Capellan technology to the 'Mech. A pair of plasma rifles are mounted in the right arm, while in the left arm, the 'Mech has been given six standard medium lasers. To help cope with the heat, the 'Mech's double heat sink count has been raised to fifteen. 
+deployment:The -G7Lr was developed by Clan Hell's Horses, which keeps the plasma weapons while substituting Clan models for the armor, heat sinks, and lasers.
 
 history:Word of Blake's Toyama faction started sending technicians and supplies to Capellan Chancellor Sun-Tzu Liao toward the end of 3058 to assist with the completion of overhauling the old Star League production facility on Victoria. This assistance, which appeared to be a personal debt owed to Chancellor Liao, aided the Capellans in finishing up construction on the Jinggau assembly line and increased production of the Duan Gung BattleMech design. The first Jinggau, which is Chinese for siren, is said to have left the factory in early 3059, but for unknown reasons, production was suspended for more than a year before being partially resumed. Presenting a lance of Jinggau to the Fourth Tau Ceti Rangers, Sun-Tzu Liao said, “This is not a ’Mech relegated to support roles, or reconnaissance or garrison duty. This is a BattleMech for seeking out your opponent and doing him harm. This is a ’Mech with which to make your enemy miserable.” The Jinggau's extended-range medium lasers, which are made by the Free Worlds League, intrigue engineers studying it. All of the Jinggau's components, with the exception of its jump jets and targeting system, are supposed to be constructed on Victoria, just like the Duan Gung.
 
-manufacturer:Shengli Arms
-primaryfactory:Victoria
+manufacturer:Field Refit
+primaryfactory:Various
 systemmanufacturer:CHASSIS:Chariot Type II Endo Steel
 systemmanufacturer:ENGINE:VOX 325 XL
-systemmanufacturer:ARMOR:Valiant DefCo
+systemmanufacturer:ARMOR:Unknown Ferro-Fibrous
 systemmanufacturer:JUMPJET:Hellespont Leapers
-systemmanufacturer:COMMUNICATIONS:Dian-bao Comms, heavily insulated
+systemmanufacturer:COMMUNICATIONS:Dian-bao Comms with ECM
 systemmanufacturer:TARGETING:Dynatec Special T&T
+
+

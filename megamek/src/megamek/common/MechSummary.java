@@ -66,6 +66,12 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     private int stdTechYear; // year after which the unit is standard level
     private String extinctRange;
     private boolean canon;
+    private boolean patchwork;
+    private boolean doomedOnGround;
+    private boolean doomedInAtmosphere;
+    private boolean doomedInSpace;
+    private boolean doomedInExtremeTemp;
+    private boolean doomedInVacuum;
     private boolean clan;
     private boolean support;
     private int walkMp;
@@ -193,6 +199,30 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public boolean isCanon() {
         return canon;
+    }
+
+    public boolean isPatchwork() {
+        return patchwork;
+    }
+
+    public boolean isDoomedOnGround() {
+        return doomedOnGround;
+    }
+
+    public boolean isDoomedInAtmosphere() {
+        return doomedInAtmosphere;
+    }
+
+    public boolean isDoomedInSpace() {
+        return doomedInSpace;
+    }
+
+    public boolean isDoomedInExtremeTemp() {
+        return doomedInExtremeTemp;
+    }
+
+    public boolean isDoomedInVacuum() {
+        return doomedInVacuum;
     }
 
     public boolean isClan() {
@@ -883,6 +913,30 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public void setCanon(boolean canon) {
         this.canon = canon;
+    }
+
+    public void setPatchwork(boolean patchwork) {
+        this.patchwork = patchwork;
+    }
+
+    public void setDoomedOnGround(boolean doomedOnGround) {
+        this.doomedOnGround = doomedOnGround;
+    }
+
+    public void setDoomedInAtmosphere(boolean doomedInAtmosphere) {
+        this.doomedInAtmosphere = doomedInAtmosphere;
+    }
+
+    public void setDoomedInSpace(boolean doomedInSpace) {
+        this.doomedInSpace = doomedInSpace;
+    }
+
+    public void setDoomedInExtremeTemp(boolean doomedInExtremeTemp) {
+        this.doomedInExtremeTemp = doomedInExtremeTemp;
+    }
+
+    public void setDoomedInVacuum(boolean doomedInVacuum) {
+        this.doomedInVacuum = doomedInVacuum;
     }
 
     public void setClan(boolean clan) {

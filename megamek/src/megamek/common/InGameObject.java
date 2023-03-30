@@ -53,4 +53,12 @@ public interface InGameObject extends BTObject {
     default boolean hasOwner() {
         return getOwnerId() != Player.PLAYER_NONE;
     }
+
+    /**
+     * Returns the current (remaining) battle strength of this unit or object. For combat units, this
+     * is the battle value (BV) or the point value (PV).
+     *
+     * @return The current battle strength (BV/PV)
+     */
+    int getStrength();
 }

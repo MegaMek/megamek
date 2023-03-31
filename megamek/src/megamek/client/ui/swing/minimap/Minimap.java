@@ -92,7 +92,11 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
     private static final int SHOW_GROUND_HEIGHT = 1;
     private static final int SHOW_BUILDING_HEIGHT = 2;
     private static final int SHOW_TOTAL_HEIGHT = 3;
-    private static final int NBR_MODES = 3;
+    private static final int NBR_HEIGHT_MODES = 3;
+
+    private static final int SHOW_SYMBOLS = 0;
+    private static final int SHOW_NO_SYMBOLS = 1;
+    private static final int NBR_SYMBOLS_MODES = 1;
 
     private static final int DIALOG_MARGIN = 6;
     private static final int MARGIN = 3;
@@ -126,6 +130,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
     private final List<int[]> roadHexes = new ArrayList<>();
     private int zoom = GUIP.getMinimapZoom();
     private int heightDisplayMode = GUIP.getMinimapHeightDisplayMode();
+    private int symbolsDisplayMode = GUIP.getMinimapSymbolsDisplayMode();
     
     private Coords firstLOS;
     private Coords secondLOS;
@@ -535,27 +540,29 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             }
 
             drawDeploymentZone(g);
-            
-            if (null != game) {
-                // draw declared fire
-                for (EntityAction action : game.getActionsVector()) {
-                    if (action instanceof AttackAction) {
-                        paintAttack(g, (AttackAction) action);
+
+            if (symbolsDisplayMode == SHOW_SYMBOLS) {
+                if (null != game) {
+                    // draw declared fire
+                    for (EntityAction action : game.getActionsVector()) {
+                        if (action instanceof AttackAction) {
+                            paintAttack(g, (AttackAction) action);
+                        }
+                    }
+
+                    multiUnits.clear();
+                    for (Entity e : game.getEntitiesVector()) {
+                        if (e.getPosition() != null) {
+                            paintUnit(g, e);
+                        }
                     }
                 }
 
-                multiUnits.clear();
-                for (Entity e : game.getEntitiesVector()) {
-                    if (e.getPosition() != null) {
-                        paintUnit(g, e);
-                    }
-                }
-            }
-            
 
-            if ((client != null) && (client.getArtilleryAutoHit() != null)) {
-                for (int i = 0; i < client.getArtilleryAutoHit().size(); i++) {
-                    drawAutoHit(g, client.getArtilleryAutoHit().get(i));
+                if ((client != null) && (client.getArtilleryAutoHit() != null)) {
+                    for (int i = 0; i < client.getArtilleryAutoHit().size(); i++) {
+                        drawAutoHit(g, client.getArtilleryAutoHit().get(i));
+                    }
                 }
             }
         }
@@ -686,10 +693,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
 
             if (zoom > 3) {
                 // the button for displaying heights
-                g.setColor(Color.black);
-                g.drawLine(2 * BUTTON_HEIGHT - 1, y0, 2 * BUTTON_HEIGHT - 1, h);
-                g.setColor(Color.green.darker());
-                g.drawLine(2 * BUTTON_HEIGHT, y0, 2 * BUTTON_HEIGHT, h);
+                int x = BUTTON_HEIGHT;
                 g.setColor(Color.yellow);
                 String label;
                 switch (heightDisplayMode) {
@@ -708,18 +712,43 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                     default:
                         label = "";
                 }
-                g.drawString(label, 17, y0 + 11);
+                g.drawString(label, x + 2, y0 + 11);
+
+                x += BUTTON_HEIGHT;
+                g.setColor(Color.black);
+                g.drawLine(x - 1, y0, x - 1, h);
+                g.setColor(Color.green.darker());
+                g.drawLine(x, y0, x, h);
+
+                // the button for displaying symbols
+                g.setColor(Color.yellow);
+                switch (symbolsDisplayMode) {
+                    case SHOW_SYMBOLS:
+                        label = Messages.getString("Minimap.SymbolsLabel");
+                        break;
+                    case SHOW_NO_SYMBOLS:
+                        label = Messages.getString("Minimap.NoSymbolsLabel");
+                        break;
+                    default:
+                        label = "";
+                }
+                g.drawString(label, x + 2, y0 + 11);
+
+                x += BUTTON_HEIGHT;
+                g.setColor(Color.black);
+                g.drawLine(x - 1, y0, x - 1, h);
+                g.setColor(Color.green.darker());
+                g.drawLine(x, y0, x, h);
 
                 // map size
-                int width = getFontMetrics(g.getFont()).stringWidth(label);
                 String mapSize = board.getWidth() + " " + Messages.getString("Minimap.X") + " " + board.getHeight();
-                int x = 24 + width;
+                g.setColor(Color.yellow);
                 g.drawString(mapSize, x, y0 + 11);
-                width = getFontMetrics(g.getFont()).stringWidth(mapSize);
+
+                int width = getFontMetrics(g.getFont()).stringWidth(mapSize);
                 x += width + 3;
                 g.setColor(Color.black);
-                g.drawLine(x, y0, x, h);
-                x += 1;
+                g.drawLine(x - 1, y0, x, h);
                 g.setColor(Color.green.darker());
                 g.drawLine(x, y0, x, h);
             }
@@ -1314,8 +1343,12 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                 if (x < BUTTON_HEIGHT) {
                     zoomOut();
                 } else if ((x < 2 * BUTTON_HEIGHT) && (zoom > 3)) {
-                    heightDisplayMode = ((++heightDisplayMode) > NBR_MODES) ? 0 : heightDisplayMode;
+                    heightDisplayMode = ((++heightDisplayMode) > NBR_HEIGHT_MODES) ? 0 : heightDisplayMode;
                     GUIP.setMinimapHeightDisplayMode(heightDisplayMode);
+                    initializeMap();
+                } else if ((x < 3 * BUTTON_HEIGHT) && (zoom > 3)) {
+                    symbolsDisplayMode = ((++symbolsDisplayMode) > NBR_SYMBOLS_MODES) ? 0 : symbolsDisplayMode;
+                    GUIP.setMiniMapSymbolsDisplayMode(symbolsDisplayMode);
                     initializeMap();
                 } else if (x > (getSize().width - BUTTON_HEIGHT)) {
                     zoomIn();

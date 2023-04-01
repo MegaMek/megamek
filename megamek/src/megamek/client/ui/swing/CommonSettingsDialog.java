@@ -410,6 +410,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         unitTooltipArmorMiniArmorCharText = new JTextField(5);
         unitTooltipArmorMiniArmorCharText.setText(GUIP.getUnitToolTipArmorMiniArmorChar());
         unitTooltipArmorMiniArmorCharText.setMaximumSize(new Dimension(150, 40));
+        unitTooltipArmorMiniArmorCharText.setToolTipText(Messages.getString("CommonSettingsDialog.ArmorMiniArmorChar.tooltip"));
         row = new ArrayList<>();
         row.add(unitTooltipArmorLabel);
         row.add(unitTooltipArmorMiniArmorCharText);
@@ -419,6 +420,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         unitTooltipArmorMiniInternalStructureCharText = new JTextField(5);
         unitTooltipArmorMiniInternalStructureCharText.setText(GUIP.getUnitToolTipArmorMiniISChar());
         unitTooltipArmorMiniInternalStructureCharText.setMaximumSize(new Dimension(150, 40));
+        unitTooltipArmorMiniInternalStructureCharText.setToolTipText(Messages.getString("CommonSettingsDialog.ArmorMiniInternalStructureChar.tooltip"));
         row = new ArrayList<>();
         row.add(unitTooltipInternalStructureLabel);
         row.add(unitTooltipArmorMiniInternalStructureCharText);
@@ -428,6 +430,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         unitTooltipArmorMiniDestroyedCharText = new JTextField(5);
         unitTooltipArmorMiniDestroyedCharText.setText(GUIP.getUnitToolTipArmorMiniDestoryedChar());
         unitTooltipArmorMiniDestroyedCharText.setMaximumSize(new Dimension(150, 40));
+        unitTooltipArmorMiniDestroyedCharText.setToolTipText(Messages.getString("CommonSettingsDialog.ArmorMiniDestroyedChar.tooltip"));
         row = new ArrayList<>();
         row.add(unitTooltipDestroyedLabel);
         row.add(unitTooltipArmorMiniDestroyedCharText);
@@ -437,6 +440,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         unitTooltipArmorMiniCapArmorCharText = new JTextField(5);
         unitTooltipArmorMiniCapArmorCharText.setText(GUIP.getUnitToolTipArmorMiniCapArmorChar());
         unitTooltipArmorMiniCapArmorCharText.setMaximumSize(new Dimension(150, 40));
+        unitTooltipArmorMiniCapArmorCharText.setToolTipText(Messages.getString("CommonSettingsDialog.ArmorMiniCapArmorChar.tooltip"));
         row = new ArrayList<>();
         row.add(unitTooltipCapArmorLabel);
         row.add(unitTooltipArmorMiniCapArmorCharText);
@@ -446,6 +450,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         unitTooltipArmorMiniUnitsPerBlockText = new JTextField(5);
         unitTooltipArmorMiniUnitsPerBlockText.setText(String.format("%d", GUIP.getUnitToolTipArmorMiniUnitsPerBlock()));
         unitTooltipArmorMiniUnitsPerBlockText.setMaximumSize(new Dimension(150, 40));
+        unitTooltipArmorMiniUnitsPerBlockText.setToolTipText(Messages.getString("CommonSettingsDialog.ArmorMiniUnitsPerBlock.tooltip"));
         row = new ArrayList<>();
         row.add(unitTooltipUnitsPerBlockLabel);
         row.add(unitTooltipArmorMiniUnitsPerBlockText);
@@ -455,6 +460,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         unitTooltipArmorMiniFontSizeModText = new JTextField(5);
         unitTooltipArmorMiniFontSizeModText.setText(String.format("%d", GUIP.getUnitToolTipArmorMiniFontSizeMod()));
         unitTooltipArmorMiniFontSizeModText.setMaximumSize(new Dimension(150, 40));
+        unitTooltipArmorMiniFontSizeModText.setToolTipText(Messages.getString("CommonSettingsDialog.ArmorMiniFontSizeMod.tooltip"));
         row = new ArrayList<>();
         row.add(unitTooltipFontSizeModLabel);
         row.add(unitTooltipArmorMiniFontSizeModText);
@@ -487,6 +493,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         unitDisplayHeatLevel1Text = new JTextField(5);
         unitDisplayHeatLevel1Text.setText(String.format("%d", GUIP.getUnitDisplayHeatValue1()));
         unitDisplayHeatLevel1Text.setMaximumSize(new Dimension(150, 40));
+        unitDisplayHeatLevel1Text.setToolTipText(Messages.getString("CommonSettingsDialog.UnitDisplayHeatToolTip"));
         row.add(unitDisplayHeatLevel1Text);
         csbUnitDisplayHeatLevel2 = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.Colors.UnitDisplayHeatLevel2"));
         csbUnitDisplayHeatLevel2.setColour(GUIP.getUnitDisplayHeatLevel2());
@@ -494,6 +501,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         unitDisplayHeatLevel2Text = new JTextField(5);
         unitDisplayHeatLevel2Text.setText(String.format("%d", GUIP.getUnitDisplayHeatValue2()));
         unitDisplayHeatLevel2Text.setMaximumSize(new Dimension(150, 40));
+        unitDisplayHeatLevel2Text.setToolTipText(Messages.getString("CommonSettingsDialog.UnitDisplayHeatToolTip"));
         row.add(unitDisplayHeatLevel2Text);
         csbUnitDisplayHeatLevel3 = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.Colors.UnitDisplayHeatLevel3"));
         csbUnitDisplayHeatLevel3.setColour(GUIP.getUnitDisplayHeatLevel3());
@@ -501,6 +509,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         unitDisplayHeatLevel3Text = new JTextField(5);
         unitDisplayHeatLevel3Text.setText(String.format("%d", GUIP.getUnitDisplayHeatValue3()));
         unitDisplayHeatLevel3Text.setMaximumSize(new Dimension(150, 40));
+        unitDisplayHeatLevel3Text.setToolTipText(Messages.getString("CommonSettingsDialog.UnitDisplayHeatToolTip"));
         row.add(unitDisplayHeatLevel3Text);
         comps.add(row);
 
@@ -511,6 +520,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         unitDisplayHeatLevel4Text = new JTextField(5);
         unitDisplayHeatLevel4Text.setText(String.format("%d", GUIP.getUnitDisplayHeatValue4()));
         unitDisplayHeatLevel4Text.setMaximumSize(new Dimension(150, 40));
+        unitDisplayHeatLevel4Text.setToolTipText(Messages.getString("CommonSettingsDialog.UnitDisplayHeatToolTip"));
         row.add(unitDisplayHeatLevel4Text);
         csbUnitDisplayHeatLevel5 = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.Colors.UnitDisplayHeatLevel5"));
         csbUnitDisplayHeatLevel5.setColour(GUIP.getUnitDisplayHeatLevel5());
@@ -518,6 +528,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         unitDisplayHeatLevel5Text = new JTextField(5);
         unitDisplayHeatLevel5Text.setText(String.format("%d", GUIP.getUnitDisplayHeatValue5()));
         unitDisplayHeatLevel5Text.setMaximumSize(new Dimension(150, 40));
+        unitDisplayHeatLevel5Text.setToolTipText(Messages.getString("CommonSettingsDialog.UnitDisplayHeatToolTip"));
         row.add(unitDisplayHeatLevel5Text);
         csbUnitDisplayHeatLevel6 = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.Colors.UnitDisplayHeatLevel6"));
         csbUnitDisplayHeatLevel6.setColour(GUIP.getUnitDisplayHeatLevel6());
@@ -525,6 +536,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         unitDisplayHeatLevel6Text = new JTextField(5);
         unitDisplayHeatLevel6Text.setText(String.format("%d", GUIP.getUnitDisplayHeatValue6()));
         unitDisplayHeatLevel6Text.setMaximumSize(new Dimension(150, 40));
+        unitDisplayHeatLevel6Text.setToolTipText(Messages.getString("CommonSettingsDialog.UnitDisplayHeatToolTip"));
         row.add(unitDisplayHeatLevel6Text);
         comps.add(row);
 

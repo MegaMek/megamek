@@ -245,6 +245,13 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private ColourSelectorButton csbUnitDisplayHeatLevel5;
     private ColourSelectorButton csbUnitDisplayHeatLevel6;
     private ColourSelectorButton csbUnitDisplayHeatLevelOverheat;
+
+    private JTextField unitDisplayHeatLevel1Text;
+    private JTextField unitDisplayHeatLevel2Text;
+    private JTextField unitDisplayHeatLevel3Text;
+    private JTextField unitDisplayHeatLevel4Text;
+    private JTextField unitDisplayHeatLevel5Text;
+    private JTextField unitDisplayHeatLevel6Text;
     private JComboBox<String> unitTooltipSeenbyCbo;
     private JTextField unitDisplayWeaponListHeightText;
 
@@ -391,15 +398,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         csbUnitTooltipArmorMiniIntact = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.Colors.UnitTooltipArmorMiniIntact"));
         csbUnitTooltipArmorMiniIntact.setColour(GUIP.getUnitTooltipArmorMiniColorIntact());
         row.add(csbUnitTooltipArmorMiniIntact);
-        comps.add(row);
-
-        row = new ArrayList<>();
         csbUnitTooltipArmorMiniPartial = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.Colors.UnitTooltipArmorMiniPartialDamage"));
         csbUnitTooltipArmorMiniPartial.setColour(GUIP.getUnitTooltipArmorMiniColorPartialDamage());
         row.add(csbUnitTooltipArmorMiniPartial);
-        comps.add(row);
-
-        row = new ArrayList<>();
         csbUnitTooltipArmorMiniDamaged = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.Colors.UnitTooltipArmorMiniDamaged"));
         csbUnitTooltipArmorMiniDamaged.setColour(GUIP.getUnitTooltipArmorMiniColorDamaged());
         row.add(csbUnitTooltipArmorMiniDamaged);
@@ -443,7 +444,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         JLabel unitTooltipUnitsPerBlockLabel = new JLabel(Messages.getString("CommonSettingsDialog.ArmorMiniUnitsPerBlock"));
         unitTooltipArmorMiniUnitsPerBlockText = new JTextField(5);
-        unitTooltipArmorMiniUnitsPerBlockText.setText(String.format("%d",GUIP.getUnitToolTipArmorMiniUnitsPerBlock()));
+        unitTooltipArmorMiniUnitsPerBlockText.setText(String.format("%d", GUIP.getUnitToolTipArmorMiniUnitsPerBlock()));
         unitTooltipArmorMiniUnitsPerBlockText.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
         row.add(unitTooltipUnitsPerBlockLabel);
@@ -452,7 +453,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         JLabel unitTooltipFontSizeModLabel = new JLabel(Messages.getString("CommonSettingsDialog.ArmorMiniFontSizeMod"));
         unitTooltipArmorMiniFontSizeModText = new JTextField(5);
-        unitTooltipArmorMiniFontSizeModText.setText(String.format("%d",GUIP.getUnitToolTipArmorMiniFontSizeMod()));
+        unitTooltipArmorMiniFontSizeModText.setText(String.format("%d", GUIP.getUnitToolTipArmorMiniFontSizeMod()));
         unitTooltipArmorMiniFontSizeModText.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
         row.add(unitTooltipFontSizeModLabel);
@@ -468,13 +469,13 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         unitTooltipSeenbyCbo.addItem(Messages.getString("CommonSettingsDialog.seenby.Player"));
         unitTooltipSeenbyCbo.addItem(Messages.getString("CommonSettingsDialog.seenby.PlayerDetailed"));
         unitTooltipSeenbyCbo.setSelectedIndex(GUIP.getUnitToolTipSeenByResolution());
-        unitTooltipSeenbyCbo.setMaximumSize(new Dimension(150, 40));
+        unitTooltipSeenbyCbo.setMaximumSize(new Dimension(300, 60));
         row = new ArrayList<>();
         row.add(unitTooltipSeenbyLabel);
         row.add(unitTooltipSeenbyCbo);
         comps.add(row);
 
-        JLabel phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.Colors.UnitDisplayHeatLevels") + ": ");
+        JLabel phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.Colors.UnitDisplayHeatLevels"));
         row = new ArrayList<>();
         row.add(phaseLabel);
         comps.add(row);
@@ -483,21 +484,51 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         csbUnitDisplayHeatLevel1 = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.Colors.UnitDisplayHeatLevel1"));
         csbUnitDisplayHeatLevel1.setColour(GUIP.getUnitDisplayHeatLevel1());
         row.add(csbUnitDisplayHeatLevel1);
+        unitDisplayHeatLevel1Text = new JTextField(5);
+        unitDisplayHeatLevel1Text.setText(String.format("%d", GUIP.getUnitDisplayHeatValue1()));
+        unitDisplayHeatLevel1Text.setMaximumSize(new Dimension(150, 40));
+        row.add(unitDisplayHeatLevel1Text);
         csbUnitDisplayHeatLevel2 = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.Colors.UnitDisplayHeatLevel2"));
         csbUnitDisplayHeatLevel2.setColour(GUIP.getUnitDisplayHeatLevel2());
         row.add(csbUnitDisplayHeatLevel2);
+        unitDisplayHeatLevel2Text = new JTextField(5);
+        unitDisplayHeatLevel2Text.setText(String.format("%d", GUIP.getUnitDisplayHeatValue2()));
+        unitDisplayHeatLevel2Text.setMaximumSize(new Dimension(150, 40));
+        row.add(unitDisplayHeatLevel2Text);
         csbUnitDisplayHeatLevel3 = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.Colors.UnitDisplayHeatLevel3"));
         csbUnitDisplayHeatLevel3.setColour(GUIP.getUnitDisplayHeatLevel3());
         row.add(csbUnitDisplayHeatLevel3);
+        unitDisplayHeatLevel3Text = new JTextField(5);
+        unitDisplayHeatLevel3Text.setText(String.format("%d", GUIP.getUnitDisplayHeatValue3()));
+        unitDisplayHeatLevel3Text.setMaximumSize(new Dimension(150, 40));
+        row.add(unitDisplayHeatLevel3Text);
+        comps.add(row);
+
+        row = new ArrayList<>();
         csbUnitDisplayHeatLevel4 = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.Colors.UnitDisplayHeatLevel4"));
         csbUnitDisplayHeatLevel4.setColour(GUIP.getUnitDisplayHeatLevel4());
         row.add(csbUnitDisplayHeatLevel4);
+        unitDisplayHeatLevel4Text = new JTextField(5);
+        unitDisplayHeatLevel4Text.setText(String.format("%d", GUIP.getUnitDisplayHeatValue4()));
+        unitDisplayHeatLevel4Text.setMaximumSize(new Dimension(150, 40));
+        row.add(unitDisplayHeatLevel4Text);
         csbUnitDisplayHeatLevel5 = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.Colors.UnitDisplayHeatLevel5"));
         csbUnitDisplayHeatLevel5.setColour(GUIP.getUnitDisplayHeatLevel5());
         row.add(csbUnitDisplayHeatLevel5);
+        unitDisplayHeatLevel5Text = new JTextField(5);
+        unitDisplayHeatLevel5Text.setText(String.format("%d", GUIP.getUnitDisplayHeatValue5()));
+        unitDisplayHeatLevel5Text.setMaximumSize(new Dimension(150, 40));
+        row.add(unitDisplayHeatLevel5Text);
         csbUnitDisplayHeatLevel6 = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.Colors.UnitDisplayHeatLevel6"));
         csbUnitDisplayHeatLevel6.setColour(GUIP.getUnitDisplayHeatLevel6());
         row.add(csbUnitDisplayHeatLevel6);
+        unitDisplayHeatLevel6Text = new JTextField(5);
+        unitDisplayHeatLevel6Text.setText(String.format("%d", GUIP.getUnitDisplayHeatValue6()));
+        unitDisplayHeatLevel6Text.setMaximumSize(new Dimension(150, 40));
+        row.add(unitDisplayHeatLevel6Text);
+        comps.add(row);
+
+        row = new ArrayList<>();
         csbUnitDisplayHeatLevelOverheat = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.Colors.UnitDisplayHeatLevelOverheat"));
         csbUnitDisplayHeatLevelOverheat.setColour(GUIP.getUnitDisplayHeatLevelOverheat());
         row.add(csbUnitDisplayHeatLevelOverheat);
@@ -551,7 +582,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     }
 
     private JPanel getSettingsPanel() {
-
         List<List<Component>> comps = new ArrayList<>();
         ArrayList<Component> row;
 
@@ -954,6 +984,13 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         csbUnitDisplayHeatLevel6.setColour(GUIP.getUnitDisplayHeatLevel6());
         csbUnitDisplayHeatLevelOverheat.setColour(GUIP.getUnitDisplayHeatLevelOverheat());
 
+        unitDisplayHeatLevel1Text.setText(String.format("%d", GUIP.getUnitDisplayHeatValue1()));
+        unitDisplayHeatLevel1Text.setText(String.format("%d", GUIP.getUnitDisplayHeatValue2()));
+        unitDisplayHeatLevel1Text.setText(String.format("%d", GUIP.getUnitDisplayHeatValue3()));
+        unitDisplayHeatLevel1Text.setText(String.format("%d", GUIP.getUnitDisplayHeatValue4()));
+        unitDisplayHeatLevel1Text.setText(String.format("%d", GUIP.getUnitDisplayHeatValue5()));
+        unitDisplayHeatLevel1Text.setText(String.format("%d", GUIP.getUnitDisplayHeatValue6()));
+
         unitTooltipSeenbyCbo.setSelectedIndex(GUIP.getUnitToolTipSeenByResolution());
         unitDisplayWeaponListHeightText.setText(String.format("%d", GUIP.getUnitDisplayWeaponListHeight()));
 
@@ -964,8 +1001,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         unitTooltipArmorMiniInternalStructureCharText.setText(GUIP.getUnitToolTipArmorMiniISChar());
         unitTooltipArmorMiniDestroyedCharText.setText(GUIP.getUnitToolTipArmorMiniDestoryedChar());
         unitTooltipArmorMiniCapArmorCharText.setText(GUIP.getUnitToolTipArmorMiniCapArmorChar());
-        unitTooltipArmorMiniUnitsPerBlockText.setText(String.format("%d",GUIP.getUnitToolTipArmorMiniUnitsPerBlock()));
-        unitTooltipArmorMiniFontSizeModText.setText(String.format("%d",GUIP.getUnitToolTipArmorMiniFontSizeMod()));
+        unitTooltipArmorMiniUnitsPerBlockText.setText(String.format("%d", GUIP.getUnitToolTipArmorMiniUnitsPerBlock()));
+        unitTooltipArmorMiniFontSizeModText.setText(String.format("%d", GUIP.getUnitToolTipArmorMiniFontSizeMod()));
 
         setVisible(false);
     }
@@ -1234,6 +1271,38 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setUnitDisplayHeatColorLevel5(csbUnitDisplayHeatLevel5.getColour());
         GUIP.setUnitDisplayHeatColorLevel6(csbUnitDisplayHeatLevel6 .getColour());
         GUIP.setUnitDisplayHeatColorLevelOverHeat(csbUnitDisplayHeatLevelOverheat.getColour());
+
+        try {
+            GUIP.setUnitDisplayHeatColorValue1(Integer.parseInt(unitDisplayHeatLevel1Text.getText()));
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
+        }
+        try {
+            GUIP.setUnitDisplayHeatColorValue2(Integer.parseInt(unitDisplayHeatLevel2Text.getText()));
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
+        }
+        try {
+            GUIP.setUnitDisplayHeatColorValue3(Integer.parseInt(unitDisplayHeatLevel3Text.getText()));
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
+        }
+        try {
+            GUIP.setUnitDisplayHeatColorValue4(Integer.parseInt(unitDisplayHeatLevel4Text.getText()));
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
+        }
+        try {
+            GUIP.setUnitDisplayHeatColorValue5(Integer.parseInt(unitDisplayHeatLevel5Text.getText()));
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
+        }
+        try {
+            GUIP.setUnitDisplayHeatColorValue6(Integer.parseInt(unitDisplayHeatLevel6Text.getText()));
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
+        }
+
 
         GUIP.setUnitToolTipSeenByResolution(unitTooltipSeenbyCbo.getSelectedIndex());
         try {

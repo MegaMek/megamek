@@ -138,6 +138,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String UNIT_DISPLAY_HEAT_COLOR_5 = "UnitDisplayHeatColor5";
     public static final String UNIT_DISPLAY_HEAT_COLOR_6 = "UnitDisplayHeatColor6";
     public static final String UNIT_DISPLAY_HEAT_COLOR_OVERHEAT = "UnitDisplayColorOverheat";
+    public static final String UNIT_DISPLAY_HEAT_VALUE_1 = "UnitDisplayHeatValue1";
+    public static final String UNIT_DISPLAY_HEAT_VALUE_2 = "UnitDisplayHeatValue2";
+    public static final String UNIT_DISPLAY_HEAT_VALUE_3 = "UnitDisplayHeatValue3";
+    public static final String UNIT_DISPLAY_HEAT_VALUE_4 = "UnitDisplayHeatValue4";
+    public static final String UNIT_DISPLAY_HEAT_VALUE_5 = "UnitDisplayHeatValue5";
+    public static final String UNIT_DISPLAY_HEAT_VALUE_6 = "UnitDisplayHeatValue6";
     public static final String UNIT_DISPLAY_WEAPON_LIST_HEIGHT = "UnitDisplayWeaponListHeight";
     public static final String UNIT_TOOLTIP_SEENBYRESOLUTION = "UnitToolTipSeenByResolution";
     public static final String UNIT_TOOLTIP_ARMORMINI_UNITS_PER_BLOCK = "UnitToolTipArmorMiniUnitsPerBlock";
@@ -466,6 +472,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(UNIT_DISPLAY_HEAT_COLOR_5, DEFAULT_HEAT_5_COLOR);
         setDefault(UNIT_DISPLAY_HEAT_COLOR_6, DEFAULT_HEAT_6_COLOR);
         setDefault(UNIT_DISPLAY_HEAT_COLOR_OVERHEAT, DEFAULT_HEAT_OVERHEAT_COLOR);
+        store.setDefault(UNIT_DISPLAY_HEAT_VALUE_1, 4);
+        store.setDefault(UNIT_DISPLAY_HEAT_VALUE_2, 7);
+        store.setDefault(UNIT_DISPLAY_HEAT_VALUE_3, 9);
+        store.setDefault(UNIT_DISPLAY_HEAT_VALUE_4, 12);
+        store.setDefault(UNIT_DISPLAY_HEAT_VALUE_5, 13);
+        store.setDefault(UNIT_DISPLAY_HEAT_VALUE_6, 14);
 
         store.setDefault(UNIT_TOOLTIP_SEENBYRESOLUTION, 3);
         store.setDefault(UNIT_TOOLTIP_ARMORMINI_UNITS_PER_BLOCK, 10);
@@ -785,6 +797,30 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public Color getUnitDisplayHeatLevelOverheat() {
         return getColor(UNIT_DISPLAY_HEAT_COLOR_OVERHEAT);
+    }
+
+    public int getUnitDisplayHeatValue1() {
+        return getInt(UNIT_DISPLAY_HEAT_VALUE_1);
+    }
+
+    public int getUnitDisplayHeatValue2() {
+        return getInt(UNIT_DISPLAY_HEAT_VALUE_2);
+    }
+
+    public int getUnitDisplayHeatValue3() {
+        return getInt(UNIT_DISPLAY_HEAT_VALUE_3);
+    }
+
+    public int getUnitDisplayHeatValue4() {
+        return getInt(UNIT_DISPLAY_HEAT_VALUE_4);
+    }
+
+    public int getUnitDisplayHeatValue5() {
+        return getInt(UNIT_DISPLAY_HEAT_VALUE_5);
+    }
+
+    public int getUnitDisplayHeatValue6() {
+        return getInt(UNIT_DISPLAY_HEAT_VALUE_6);
     }
 
     public Color getUnitTooltipArmorMiniColorIntact() {
@@ -1460,6 +1496,30 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setUnitDisplayHeatColorLevelOverHeat(Color c) {
         store.setValue(UNIT_DISPLAY_HEAT_COLOR_OVERHEAT, c.getRed() + " "  + c.getGreen() + " " + c.getBlue());
+    }
+
+    public void setUnitDisplayHeatColorValue1(int i) {
+        store.setValue(UNIT_DISPLAY_HEAT_VALUE_1, i);
+    }
+
+    public void setUnitDisplayHeatColorValue2(int i) {
+        store.setValue(UNIT_DISPLAY_HEAT_VALUE_2, i);
+    }
+
+    public void setUnitDisplayHeatColorValue3(int i) {
+        store.setValue(UNIT_DISPLAY_HEAT_VALUE_3, i);
+    }
+
+    public void setUnitDisplayHeatColorValue4(int i) {
+        store.setValue(UNIT_DISPLAY_HEAT_VALUE_4, i);
+    }
+
+    public void setUnitDisplayHeatColorValue5(int i) {
+        store.setValue(UNIT_DISPLAY_HEAT_VALUE_5, i);
+    }
+
+    public void setUnitDisplayHeatColorValue6(int i) {
+        store.setValue(UNIT_DISPLAY_HEAT_VALUE_6, i);
     }
 
     public void setUnitTooltipArmorminiColorIntact(Color c) {
@@ -2326,17 +2386,17 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public Color getColorForHeat(int heat, Color defaultColor) {
         if (heat <= 0) {
             return defaultColor;
-        } else if (heat <= 4) {
+        } else if (heat <= getUnitDisplayHeatValue1()) {
             return getColor(UNIT_DISPLAY_HEAT_COLOR_1);
-        } else if (heat <= 7) {
+        } else if (heat <= getUnitDisplayHeatValue2()) {
             return getColor(UNIT_DISPLAY_HEAT_COLOR_2);
-        } else if (heat <= 9) {
+        } else if (heat <= getUnitDisplayHeatValue3()) {
             return getColor(UNIT_DISPLAY_HEAT_COLOR_3);
-        } else if (heat <= 12) {
+        } else if (heat <= getUnitDisplayHeatValue4()) {
             return  getColor(UNIT_DISPLAY_HEAT_COLOR_4);
-        } else if (heat <= 13) {
+        } else if (heat <= getUnitDisplayHeatValue5()) {
             return  getColor(UNIT_DISPLAY_HEAT_COLOR_5);
-        } else if (heat <= 14) {
+        } else if (heat <= getUnitDisplayHeatValue6()) {
             return  getColor(UNIT_DISPLAY_HEAT_COLOR_6);
         }
         return  getColor(UNIT_DISPLAY_HEAT_COLOR_OVERHEAT);

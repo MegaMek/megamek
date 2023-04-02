@@ -260,6 +260,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private ColourSelectorButton csbUnitTooltipArmorMiniDamaged;
     private JTextField unitTooltipArmorMiniArmorCharText;
     private JTextField unitTooltipArmorMiniInternalStructureCharText;
+    private JTextField unitTooltipArmorMiniCriticalCharText;
     private JTextField unitTooltipArmorMiniDestroyedCharText;
     private JTextField unitTooltipArmorMiniCapArmorCharText;
     private JTextField unitTooltipArmorMiniFontSizeModText;
@@ -424,6 +425,16 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         row = new ArrayList<>();
         row.add(unitTooltipInternalStructureLabel);
         row.add(unitTooltipArmorMiniInternalStructureCharText);
+        comps.add(row);
+
+        JLabel unitTooltipCriticalLabel = new JLabel(Messages.getString("CommonSettingsDialog.ArmorMiniCriticalChar"));
+        unitTooltipArmorMiniCriticalCharText = new JTextField(5);
+        unitTooltipArmorMiniCriticalCharText.setText(GUIP.getUnitToolTipArmorMiniISChar());
+        unitTooltipArmorMiniCriticalCharText.setMaximumSize(new Dimension(150, 40));
+        unitTooltipArmorMiniCriticalCharText.setToolTipText(Messages.getString("CommonSettingsDialog.ArmorMiniCriticalChar.tooltip"));
+        row = new ArrayList<>();
+        row.add(unitTooltipCriticalLabel);
+        row.add(unitTooltipArmorMiniCriticalCharText);
         comps.add(row);
 
         JLabel unitTooltipDestroyedLabel = new JLabel(Messages.getString("CommonSettingsDialog.ArmorMiniDestroyedChar"));
@@ -1011,6 +1022,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         csbUnitTooltipArmorMiniDamaged.setColour(GUIP.getUnitTooltipArmorMiniColorDamaged());
         unitTooltipArmorMiniArmorCharText.setText(GUIP.getUnitToolTipArmorMiniArmorChar());
         unitTooltipArmorMiniInternalStructureCharText.setText(GUIP.getUnitToolTipArmorMiniISChar());
+        unitTooltipArmorMiniCriticalCharText.setText(GUIP.getUnitToolTipArmorMiniCriticalChar());
         unitTooltipArmorMiniDestroyedCharText.setText(GUIP.getUnitToolTipArmorMiniDestoryedChar());
         unitTooltipArmorMiniCapArmorCharText.setText(GUIP.getUnitToolTipArmorMiniCapArmorChar());
         unitTooltipArmorMiniUnitsPerBlockText.setText(String.format("%d", GUIP.getUnitToolTipArmorMiniUnitsPerBlock()));
@@ -1328,6 +1340,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setUnitTooltipArmorminiColorDamaged(csbUnitTooltipArmorMiniDamaged.getColour());
         GUIP.setUnitToolTipArmorMiniArmorChar(unitTooltipArmorMiniArmorCharText.getText());
         GUIP.setUnitToolTipArmorMiniISChar(unitTooltipArmorMiniInternalStructureCharText.getText());
+        GUIP.setUnitToolTipArmorMiniCriticalChar(unitTooltipArmorMiniCriticalCharText.getText());
         GUIP.setUnitTooltipArmorminiDestroyedChar(unitTooltipArmorMiniDestroyedCharText.getText());
         GUIP.setUnitTooltipArmorMiniCapArmorChar(unitTooltipArmorMiniCapArmorCharText.getText());
         try {

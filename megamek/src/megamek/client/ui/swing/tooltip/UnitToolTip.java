@@ -424,7 +424,7 @@ public final class UnitToolTip {
         Color colorIntact = GUIP.getColor(GUIPreferences.UNIT_TOOLTIP_ARMORMINI_COLOR_INTACT);
         Color colorDamaged = GUIP.getColor(GUIPreferences.UNIT_TOOLTIP_ARMORMINI_COLOR_DAMAGED);
         String dChar =  GUIP.getString(GUIPreferences.UNIT_TOOLTIP_ARMORMINI_DESTROYED_CHAR);
-        String iChar = GUIP.getString(GUIPreferences.UNIT_TOOLTIP_ARMORMINI_IS_CHAR);
+        String iChar = GUIP.getString(GUIPreferences.UNIT_TOOLTIP_ARMORMINI_CRITICAL_CHAR);
 
         if (good > 0)  {
             if (!destroyed) {

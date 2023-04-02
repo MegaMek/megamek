@@ -150,6 +150,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String UNIT_TOOLTIP_ARMORMINI_ARMOR_CHAR = "UnitToolTipArmorMiniArmorChar";
     public static final String UNIT_TOOLTIP_ARMORMINI_CAP_ARMOR_CHAR = "UnitToolTipArmorMiniCapArmorChar";
     public static final String UNIT_TOOLTIP_ARMORMINI_IS_CHAR = "UnitToolTipArmorMiniISChar";
+    public static final String UNIT_TOOLTIP_ARMORMINI_CRITICAL_CHAR = "UnitToolTipArmorMiniCriticalChar";
     public static final String UNIT_TOOLTIP_ARMORMINI_DESTROYED_CHAR = "UnitToolTipArmorMiniDestroyedChar";
     public static final String UNIT_TOOLTIP_ARMORMINI_COLOR_INTACT = "UnitToolTipArmorMiniColorIntact";
     public static final String UNIT_TOOLTIP_ARMORMINI_COLOR_PARTIAL_DMG = "UnitToolTipArmorMiniColorPartialDmg";
@@ -484,6 +485,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(UNIT_TOOLTIP_ARMORMINI_ARMOR_CHAR, "\u2B1B"); // Centered Filled Square
         store.setDefault(UNIT_TOOLTIP_ARMORMINI_CAP_ARMOR_CHAR, "\u26CA"); // Shield
         store.setDefault(UNIT_TOOLTIP_ARMORMINI_IS_CHAR, "\u25A3"); // Centered Square with Dot
+        store.setDefault(UNIT_TOOLTIP_ARMORMINI_CRITICAL_CHAR, "\u27D0"); // Centered Square with Dot
         store.setDefault(UNIT_TOOLTIP_ARMORMINI_DESTROYED_CHAR, "\u2715"); // Centered x
         setDefault(UNIT_TOOLTIP_ARMORMINI_COLOR_INTACT, DEFAULT_MEDIUM_GREEN);
         setDefault(UNIT_TOOLTIP_ARMORMINI_COLOR_PARTIAL_DMG, DEFAULT_MEDIUM_YELLOW);
@@ -2167,6 +2169,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return getString(UNIT_TOOLTIP_ARMORMINI_IS_CHAR);
     }
 
+    public String getUnitToolTipArmorMiniCriticalChar() {
+        return getString(UNIT_TOOLTIP_ARMORMINI_CRITICAL_CHAR);
+    }
+
     public String getUnitToolTipArmorMiniDestoryedChar() {
         return getString(UNIT_TOOLTIP_ARMORMINI_DESTROYED_CHAR);
     }
@@ -2289,6 +2295,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setUnitToolTipArmorMiniISChar(String s) {
         store.setValue(UNIT_TOOLTIP_ARMORMINI_IS_CHAR, s);
+    }
+
+    public void setUnitToolTipArmorMiniCriticalChar(String s) {
+        store.setValue(UNIT_TOOLTIP_ARMORMINI_CRITICAL_CHAR, s);
     }
 
     public void setUnitTooltipArmorminiDestroyedChar(String s) {

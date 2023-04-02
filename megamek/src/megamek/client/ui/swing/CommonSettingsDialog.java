@@ -429,7 +429,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         JLabel unitTooltipCriticalLabel = new JLabel(Messages.getString("CommonSettingsDialog.ArmorMiniCriticalChar"));
         unitTooltipArmorMiniCriticalCharText = new JTextField(5);
-        unitTooltipArmorMiniCriticalCharText.setText(GUIP.getUnitToolTipArmorMiniISChar());
+        unitTooltipArmorMiniCriticalCharText.setText(GUIP.getUnitToolTipArmorMiniCriticalChar());
         unitTooltipArmorMiniCriticalCharText.setMaximumSize(new Dimension(150, 40));
         unitTooltipArmorMiniCriticalCharText.setToolTipText(Messages.getString("CommonSettingsDialog.ArmorMiniCriticalChar.tooltip"));
         row = new ArrayList<>();

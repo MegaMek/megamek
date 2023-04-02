@@ -470,7 +470,8 @@ public class ASDamageConverter {
     }
 
     protected void processArtillery(Mounted weapon, WeaponType weaponType) {
-        if (weaponType.getDamage() == WeaponType.DAMAGE_ARTILLERY) {
+        if ((weaponType.getDamage() == WeaponType.DAMAGE_ARTILLERY)
+                || weaponType.is(EquipmentTypeLookup.IS_BA_TUBE_ARTY)) {
             assignToLocations(weapon, getArtilleryType(weaponType), 1);
         }
     }

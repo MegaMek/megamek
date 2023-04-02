@@ -54,7 +54,7 @@ public class ASHeatTrackingCard extends ASCard {
     @Override
     protected void paintHeat(Graphics2D g) {
         int height = 54;
-        drawBox(g, 36, 372, BOX_WIDTH_WIDE, height, Color.LIGHT_GRAY, BOX_STROKE);
+        drawBox(g, 36, 372, BOX_WIDTH_WIDE, height, BACKGROUND_GRAY, BOX_STROKE);
 
         g.drawLine(36 + 141, 372 + 12, 36 + 141, 372 + height - 12);
         // Heat Scale Box

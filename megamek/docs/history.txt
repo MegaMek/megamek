@@ -6,13 +6,14 @@ VERSION HISTORY:
 + Fix #3696: Altitude values no longer inadvertently influence space combat
 + Data: #4223 Illegal/overweight BA units
 + Data: #4206 Illegal armour type on the Kopis AI IIr
-+ Fix #4229, #4249: Alpha Strike conversion fixes
++ Fix #4229, #4249, #4278: Alpha Strike conversion and card fixes
 + Fix #4234: The mini round report now allows marking and copying text
 + Fix #4235: A player without a team no longer results in an error
 + Fix #4238: Erroneous jungle hexes in Fan Pack Arctic boards have been replaced with woods
 + Fix #3915: In space with StratOps ECM rules active, a LAM's ECM systems now use the correct range of 0 (its own hex) instead of 6
 + Data: Updates to Flynn map pack
 + Data: Updates to Spanish translation.
++ Data: Updates to German translation.
 + PR #4213: BA mortar weapons can now use indirect fire
 + PR #4251: The lobby now indicates that a unit is shut down
 + Fix #4246: Improve rendering of horizontal scroll bar
@@ -28,8 +29,10 @@ VERSION HISTORY:
 + Fix #4203: QoL updates to the Create Random Army tabs
 + PR #4228: Various updates to the advanced search: patchwork armor, AS unit roles, additional unit type and unit survival filters
 + PR #4268: Princess will now attack even DropShips when set to very high aggression values
++ PR #4280: Adds two new "v2" Princess Presets for the new aggression values
 + Fix #4267: Ejected Crew now remember their initiative
 + PR #4276: The key binds can now be reset to their default values in the client settings
++ PR #4281: For VTOL vehicles, elevation is now saved to and loaded from MULs
 
 0.49.12 (2023-03-04 2200 UTC)
 + PR #4062: OS Thunderbolt Weapons are now available for construction and use

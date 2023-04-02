@@ -6,7 +6,7 @@ mul id:7501
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3142
-rules level:3
+rules level:2
 source:Rec Guide:ilClan #4 - Dark Age
 
 mass:80
@@ -149,4 +149,18 @@ CLDoubleHeatSink
 -Empty-
 -Empty-
 
+overview:The Awesome was designed in 2665 for the Star League by the Technicron Conglomorate and was based on the aging STR-2C Striker. While not as fast as its forefather, the Awesome is a strong assault 'Mech.
 
+capabilities:The Awesome's abilities are nearly entirely dependent on its particle projection cannons. The AWS can withstand a severe and consistent onslaught from its weaponry thanks to several heat sinks. With one and a half tons more armor than the Striker, the AWS is more protected than even the BattleMaster. The Amazing, like any other BattleMech, has weaknesses. While it is lethal at range, it is less effective in close-quarters combat since its PPCs have a tougher time connecting with the victim. In that case, it just possesses a light weapon and a left fist to fall back on. Because of its limited mobility, it is vulnerable to flanking attacks from speedier opponents seeking to get past the PPCs. While they face arguably of the heaviest rear armor found on any BattleMech, the Awesome's lack of rear facing armaments or a weapon mount on its left arm has offered numerous MechWarriors a fighting chance. Formations of Awesomes (or even just a few) are incredibly effective and tough to stop or defeat when correctly placed by commanders who are knowledgeable of the AWS's limitations.
+
+deployment:Introduced after Technicron perfected production of Clan-spec Endo Steel and double heat sinks, the 11H Awesome carries three Heavy PPCs and can fire them continuously. In a nod to the traditional Awesome, the head carries an ER Small Laser. All the heat is dissipated by the twenty-three Clan-spec double heat sinks.
+
+history:Awesomes can be found in every military House. Because the Free Worlds League has the last remaining manufacturing factories capable of generating the Awesome, it also has the most Awesomes of any of the Great Houses. Opinions on the 'Mech vary greatly within the League. Many people laud its powers, while others believe that its limited mobility is too high a price to pay for what it can do. Similar sentiments exist in the other Houses, but none of them can debate the issue beyond academics. Few commanders would turn down the opportunity to acquire an Awesome for their army. The Awesome is typically used to assault a fixed position or to breach the enemy's line of defense. They are also in demand for defensive operations. MechWarriors piloting the Awesome can expect to be involved in heavy battle and to be charged with obtaining or guarding the most crucial objectives from the adversary.
+
+manufacturer:Technicron Manufacturing
+primaryfactory:Savannah
+systemmanufacturer:CHASSIS:Unknown Clan Endo-Steel
+systemmanufacturer:ENGINE:Pitban 240
+systemmanufacturer:ARMOR:Durallex Heavy Special
+systemmanufacturer:COMMUNICATIONS:Garrett T19-G
+systemmanufacturer:TARGETING:Dynatec 2780

@@ -1509,21 +1509,21 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
     ActionListener listener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (e.getActionCommand() == ACTION_ZOOM_IN) {
+            if (e.getActionCommand().equals(ACTION_ZOOM_IN)) {
                 zoomIn();
-            } else if (e.getActionCommand() == ACTION_ZOOM_OUT) {
+            } else if (e.getActionCommand().equals(ACTION_ZOOM_OUT)) {
                 zoomOut();
-            } else if (e.getActionCommand() == ACTION_HEIGHT_NONE) {
+            } else if (e.getActionCommand().equals(ACTION_HEIGHT_NONE)) {
                 setHeightDisplay(SHOW_NO_HEIGHT);
-            } else if (e.getActionCommand() == ACTION_HEIGHT_GROUND) {
+            } else if (e.getActionCommand().equals(ACTION_HEIGHT_GROUND)) {
                 setHeightDisplay(SHOW_GROUND_HEIGHT);
-            } else if (e.getActionCommand() == ACTION_HEIGHT_BUILDING) {
+            } else if (e.getActionCommand().equals(ACTION_HEIGHT_BUILDING)) {
                 setHeightDisplay(SHOW_BUILDING_HEIGHT);
-            } else if (e.getActionCommand() == ACTION_HEIGHT_TOTAL) {
+            } else if (e.getActionCommand().equals(ACTION_HEIGHT_TOTAL)) {
                 setHeightDisplay(SHOW_TOTAL_HEIGHT);
-            } else if (e.getActionCommand() == ACTION_SYMBOLS_NO) {
+            } else if (e.getActionCommand().equals(ACTION_SYMBOLS_NO)) {
                 setSymbolsDisplay(SHOW_NO_SYMBOLS);
-            } else if (e.getActionCommand() == ACTION_SYMBOLS_SHOW) {
+            } else if (e.getActionCommand().equals(ACTION_SYMBOLS_SHOW)) {
                 setSymbolsDisplay(SHOW_SYMBOLS);
             }
         }

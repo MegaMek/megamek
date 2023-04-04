@@ -128,6 +128,9 @@
 		<salvage pct='6'></salvage>
 	</faction>
 	<faction key='FWL.RH'/>
+	<faction key='RWR.HG'>
+		<salvage pct='5'>TH:1,LA:7</salvage>
+	</faction>
 	<faction key='LA.RG'>
 		<salvage pct='6'></salvage>
 	</faction>

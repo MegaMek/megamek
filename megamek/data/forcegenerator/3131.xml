@@ -774,13 +774,6 @@
 		<techMargin>12</techMargin>
 		<upgradeMargin>9</upgradeMargin>
 	</faction>
-	<faction key='SL3.CSJ'>
-		<pctOmni>50,70</pctOmni>
-		<pctClan>50,70</pctClan>
-		<pctSL>50,30</pctSL>
-		<techMargin>12</techMargin>
-		<salvage pct='6'></salvage>
-	</faction>
 	<faction key='MSC.FWG'>
 		<pctOmni>30</pctOmni>
 		<pctClan>20</pctClan>
@@ -4841,9 +4834,6 @@
 		<model name='(Upgrade) (Laser)'>
 			<availability>LA:6,IS:8</availability>
 		</model>
-		<model name='(Upgrade) (Standard)'>
-			<availability>LA:8,FWL:6,MERC:6,CP:6</availability>
-		</model>
 	</chassis>
 	<chassis name='Condor Multi-Purpose Tank' unitType='Tank'>
 		<availability>ROS:5</availability>
@@ -6594,7 +6584,7 @@
 	</chassis>
 	<chassis name='Falcon Hover Tank' unitType='Tank'>
 		<availability>IS:1,Periphery:1</availability>
-		<model name='(Standard)'>
+		<model name=''>
 			<availability>General:5</availability>
 		</model>
 	</chassis>
@@ -11434,10 +11424,6 @@
 	</chassis>
 	<chassis name='M.A.S.H. Truck' unitType='Tank'>
 		<availability>CC:10,LA:10,CLAN:10,FWL:10,IS:9,FS:10,CP:10,DC:10,Periphery:8</availability>
-		<model name='(Standard)'>
-			<roles>support</roles>
-			<availability>General:8</availability>
-		</model>
 	</chassis>
 	<chassis name='MHI Amphibious APC' unitType='Tank'>
 		<availability>CLAN:6,IS:6</availability>
@@ -12482,10 +12468,6 @@
 	</chassis>
 	<chassis name='Mobile Long Tom Artillery (Unofficial)' unitType='Tank'>
 		<availability>CLAN:3,IS:2</availability>
-		<model name='(+ Carriage)'>
-			<roles>artillery</roles>
-			<availability>General:6</availability>
-		</model>
 	</chassis>
 	<chassis name='Model 97 &apos;Octopus&apos;' unitType='Dropship'>
 		<availability>FWL:3,IS:2,CP:3</availability>
@@ -17370,12 +17352,11 @@
 	</chassis>
 	<chassis name='Svartalfa' unitType='ProtoMek'>
 		<availability>CHH:4</availability>
-		<model name='(LRM Variant)'>
-			<roles>fire_support</roles>
-			<availability>CHH:4</availability>
-		</model>
 		<model name='(Standard)'>
 			<availability>CHH:6</availability>
+		</model>
+		<model name='2'>
+			<availability>CHH:4</availability>
 		</model>
 	</chassis>
 	<chassis name='Swallow Attack WIGE' unitType='Tank'>

@@ -181,7 +181,7 @@
 		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CLAN.IS</parentFaction>
 	</faction>
-	<faction key='CWIE' name='Clan Wolf-in-Exile' minor='false' clan='true' periphery='false'>
+	<faction key='CWIE' name='Clan Wolf (In Exile)' minor='false' clan='true' periphery='false'>
 		<years>3057-3151</years>
 		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CLAN.IS</parentFaction>
@@ -410,7 +410,7 @@
 		<years>-</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 	</faction>
-	<faction key='PIR' name='Pirate' minor='false' clan='false' periphery='true'>
+	<faction key='PIR' name='Pirates' minor='false' clan='false' periphery='true'>
 		<years>-</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>Periphery</parentFaction>
@@ -519,7 +519,7 @@
 		<ratingLevels>C,B,A</ratingLevels>
 		<parentFaction>CWE,ROS</parentFaction>
 	</faction>
-	<faction key='SLIE' name='Star League-in-Exile' minor='false' clan='false' periphery='false'>
+	<faction key='SLIE' name='Star League in Exile' minor='false' clan='false' periphery='false'>
 		<years>2786-2801</years>
 		<parentFaction>SL</parentFaction>
 	</faction>
@@ -877,12 +877,6 @@
 		<years>3028-3057</years>
 		<ratingLevels>A</ratingLevels>
 		<parentFaction>FC</parentFaction>
-	</faction>
-	<faction key='SL3.CSJ' name='Fidelis' minor='true' clan='true' periphery='false'>
-		<nameChange year='3151'>Star League (Clan Smoke Jaguar)</nameChange>
-		<years>3076-</years>
-		<ratingLevels>Front Line,Keshik</ratingLevels>
-		<parentFaction>WOB,ROS</parentFaction>
 	</faction>
 	<faction key='MSC.FWG' name='Free Worlds Guards' minor='false' clan='false' periphery='false'>
 		<years>3082-3138</years>
@@ -1285,6 +1279,16 @@
 		<years>3139-</years>
 		<ratingLevels>C</ratingLevels>
 		<parentFaction>FWL</parentFaction>
+	</faction>
+	<faction key='RWR.HG' name='Rim Worlds Republic - Home Guard' minor='false' clan='false' periphery='true'>
+		<years>2250-2769</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>Periphery.R</parentFaction>
+	</faction>
+	<faction key='RWR.TC' name='Rim Worlds Republic - Terran Corps' minor='false' clan='false' periphery='true'>
+		<years>2765-2779</years>
+		<ratingLevels>B,A</ratingLevels>
+		<parentFaction>SL.R,Periphery.R</parentFaction>
 	</faction>
 	<faction key='FS.RC' name='Robinson Chevaliers' minor='false' clan='false' periphery='false'>
 		<years>2540-2950</years>

@@ -959,6 +959,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
 
         setupButtonPanel();
+        updateDonePanel();
     }
 
     private void updateAeroButtons() {
@@ -979,12 +980,23 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
     }
 
+
+    /** toggles the status of the Done and No Nag buttons based on if the current move order is valid */
+    protected void updateDonePanel()
+    {
+        if (cmd == null || cmd.length() == 0) {
+            updateDonePanel(Messages.getString("MovementDisplay.Skip"), false);
+        } else {
+            updateDonePanel(Messages.getString("MovementDisplay.Move"), true);
+        }
+    }
+
     /**
      * Enables relevant buttons and sets up for your turn.
      */
     private void beginMyTurn() {
-        setInvalidAction(Messages.getString("MovementDisplay.Done"));
-        butDone.setEnabled(true);
+        updateDonePanel();
+//        butDone.setEnabled(true);
         setNextEnabled(true);
         setForwardIniEnabled(true);
         clientgui.getBoardView().clearFieldofF();
@@ -1146,7 +1158,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         // update some GUI elements
         clientgui.getBoardView().clearMovementData();
-        setInvalidAction(Messages.getString("MovementDisplay.Done"));
+        updateDonePanel();
 
         updateProneButtons();
         updateRACButton();
@@ -1231,7 +1243,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             MovePath possible = cmd.clone();
             possible.clipToPossible();
             if (possible.length() == 0) {
-                setInvalidAction(Messages.getString("MovementDisplay.Done"));
+                updateDonePanel();
             }
         }
         updateButtons();
@@ -1758,14 +1770,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             Coords moveto = b.getCoords();
             clientgui.getBoardView().drawMovementData(ce, cmd);
             if (shiftheld || (gear == MovementDisplay.GEAR_TURN)) {
-                setValidAction(Messages.getString("MovementDisplay.Move"));
+                updateDonePanel();
 
                 // Set the button's label to "Done"
                 // if the entire move is impossible.
                 MovePath possible = cmd.clone();
                 possible.clipToPossible();
                 if (possible.length() == 0) {
-                    setInvalidAction(Messages.getString("MovementDisplay.Done"));
+                    updateDonePanel();
                 }
             } else {
                 clientgui.getBoardView().select(b.getCoords());
@@ -1940,7 +1952,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 clear();
                 return;
             }
-            setValidAction(Messages.getString("MovementDisplay.Move"));
+            updateDonePanel();
             butDone.setEnabled(clientgui.getClient().isMyTurn());
             updateProneButtons();
             updateRACButton();
@@ -4561,7 +4573,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     }
                 }
             } else {
-                setValidAction(Messages.getString("MovementDisplay.Move"));
+                updateDonePanel();
                 if (cmd.getFinalProne() || cmd.getFinalHullDown()) {
                     cmd.addStep(MoveStepType.GET_UP);
                 }
@@ -4574,19 +4586,19 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 cmd.addStep(MoveStepType.GO_PRONE);
             }
             clientgui.getBoardView().drawMovementData(ce(), cmd);
-            setValidAction(Messages.getString("MovementDisplay.Move"));
+            updateDonePanel();
         } else if (actionCmd.equals(MoveCommand.MOVE_HULL_DOWN.getCmd())) {
             gear = MovementDisplay.GEAR_LAND;
             if (!cmd.getFinalHullDown()) {
                 cmd.addStep(MoveStepType.HULL_DOWN);
             }
             clientgui.getBoardView().drawMovementData(ce(), cmd);
-            setValidAction(Messages.getString("MovementDisplay.Move"));
+            updateDonePanel();
         } else if (actionCmd.equals(MoveCommand.MOVE_BRACE.getCmd())) {
             var options = ce().getValidBraceLocations();
             if (options.size() == 1) {
                 cmd.addStep(MoveStepType.BRACE, options.get(0));
-                setInvalidAction(Messages.getString("MovementDisplay.Done"));
+                updateDonePanel();
             } else if (options.size() > 1) {
                 String[] locationNames = new String[options.size()];
 
@@ -4604,7 +4616,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 if (option != null) {
                     int id = options.get(Arrays.asList(locationNames).indexOf(option));
                     cmd.addStep(MoveStepType.BRACE, id);
-                    setInvalidAction(Messages.getString("MovementDisplay.Done"));
+                    updateDonePanel();
                 }
             }
         } else if (actionCmd.equals(MoveCommand.MOVE_FLEE.getCmd())

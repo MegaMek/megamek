@@ -55,12 +55,13 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     private static final int BUTTON_ROWS = 2;
     private static final String SBPD_KEY_CLEARBUTTON = "clearButton";
 
-//    private JCheckBox checkBoxForceIgnoreNag;
     private MMToggleButton butIgnoreNag;
     /**
      * timer that ends turn if time limit set in options is over
      */
     private TurnTimer tt;
+
+    private boolean isValidAction = false;
 
     /**
      * Interface that defines what a command for a phase is.
@@ -226,11 +227,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         donePanel.add(butIgnoreNag);
         butIgnoreNag.setPreferredSize(new Dimension(DONE_BUTTON_WIDTH, MIN_BUTTON_SIZE.height * 1));
 
-
-//        checkBoxForceIgnoreNag = new JCheckBox("Confirm");
-////        donePanel.add(checkBoxForceIgnoreNag);
-//        checkBoxForceIgnoreNag.setPreferredSize(new Dimension(DONE_BUTTON_WIDTH, MIN_BUTTON_SIZE.height));
-        setupButIgnoreNag(false);
+        setupDonePanel();
 
         panButtons.add(buttonsPanel);
         panButtons.add(donePanel);
@@ -239,7 +236,6 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         panButtons.repaint();
     }
 
-    private boolean forceIgnoreNag;
     /** @return true if a nag window should be shown when there is no action given to current unit.
      * This is true if user option wants a nag and they have not preemptively checked the done box */
     protected boolean needNagForNoAction()
@@ -253,35 +249,39 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         return false;
     }
 
-    /** updates the "Done Button"s @butDone and @butForce to show that a valid action has been given. */
-    protected void setValidAction(String butDoneDoneLabel)
+    /** updates the "Done Button"s @butDone and @butIgnoreNag to show if a valid action has
+     * been given by the user. */
+    protected void updateDonePanel(String butDoneLabel, boolean isValidAction)
     {
+        this.isValidAction = isValidAction;
         butDone.setText("<html><b>"
-                + butDoneDoneLabel
+                + butDoneLabel
                 + "</b></html>");
-        butIgnoreNag.setSelected(true);
+
+        if (getPhaseMayUseNagNoAction()) {
+            if (this.isValidAction)
+            {
+                butDone.setEnabled(true);
+                butIgnoreNag.setEnabled(false);
+            } else {
+                butDone.setEnabled(false);
+                butIgnoreNag.setEnabled(true);
+            }
+        }
+        butIgnoreNag.setSelected(this.isValidAction);
     }
 
-    /** updates the "Done Button"s @butDone and @butForce to show that no valid action has been given yet. */
-    protected void setInvalidAction(String butDoneSkipLabel)
-    {
-        butDone.setText("<html><b>"
-                + "Skip Unit"
-                + "</b></html>");
-        butIgnoreNag.setSelected(false);
-    }
-
-    protected void setupButIgnoreNag(boolean hasActions)
+    protected void setupDonePanel()
     {
         if (getPhaseMayUseNagNoAction()) {
             butIgnoreNag.setVisible(true);
-            if ( (GUIP.getNagForNoAction()) ) {
-                butIgnoreNag.setSelected(false);
-                butIgnoreNag.setEnabled(true);
-            } else {
-                butIgnoreNag.setSelected(true);
-                butIgnoreNag.setEnabled(false);
-            }
+//            if ( (GUIP.getNagForNoAction()) ) {
+//                butIgnoreNag.setSelected(isValidAction);
+//                butIgnoreNag.setEnabled(true);
+//            } else {
+//                butIgnoreNag.setSelected(isValidAction);
+//                butIgnoreNag.setEnabled(false);
+//            }
         } else {
             butIgnoreNag.setVisible(false);
         }
@@ -318,7 +318,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         } else if (e.getName().equals(KeyBindParser.KEYBINDS_CHANGED)) {
             setButtonsTooltips();
         }
-        setupButIgnoreNag(false);
+        setupDonePanel();
     }
 
     @Override

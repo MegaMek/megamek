@@ -43,7 +43,7 @@ import java.util.*;
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
 
-public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener, ListSelectionListener {
+public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, ListSelectionListener {
     private static final long serialVersionUID = -5586388490027013723L;
 
     /**
@@ -178,9 +178,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
     // HACK : track when we want to show the target choice dialog.
     protected boolean showTargetChoice = true;
 
-    // shots we have so far.
-    protected Vector<AbstractEntityAction> attacks;
-
     // is the shift key held?
     protected boolean shiftheld;
 
@@ -219,7 +216,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         setButtons();
         setButtonsTooltips();
 
-        butDone.setText("<html><body>" + Messages.getString("FiringDisplay.Done") + "</body></html>");
+        butDone.setText("<html><body>" + Messages.getString("FiringDisplay.Skip") + "</body></html>");
         String f = guiScaledFontHTML(uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
         butDone.setToolTipText("<html><body>" + f + "</body></html>");
         butDone.setEnabled(false);
@@ -235,6 +232,16 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         ash = new AimedShotHandler(this);
 
         registerKeyCommands();
+    }
+
+    @Override
+    protected void setDoneButtonValid() {
+        updateDonePanel(Messages.getString("FiringDisplay.Fire"), true);
+    }
+
+    @Override
+    protected void setDoneButtonSkip() {
+        updateDonePanel(Messages.getString("FiringDisplay.Skip"), false);
     }
 
     @Override
@@ -1184,48 +1191,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         target(targ);
     }
 
-    @Override
-    protected boolean getPhaseMayUseNagNoAction()
-    {
-        return true;
-    }
-
-    private void refreshAttacksUI()
-    {
-        if (attacks.isEmpty()) {
-            setInvalidAction("Skip Unit");
-        } else {
-            setValidAction("Fire");
-        }
-    }
-
-    private void removeAttack(Object o)
-    {
-        attacks.remove(o);
-        refreshAttacksUI();
-    }
-
-    /** removes all elements from the local temporary attack list */
-    private void removeAllAttacks()
-    {
-        attacks.removeAllElements();
-        refreshAttacksUI();
-    }
-
-    /** add an attack at the given index to the local temporary attack list */
-    private void addAttack(int index, AbstractEntityAction entityAction)
-    {
-        attacks.add(index, entityAction);
-        refreshAttacksUI();
-    }
-
-    /** add an attack to the end of the local temporary attack list */
-    private void addAttack(AbstractEntityAction entityAction)
-    {
-        attacks.add(entityAction);
-        refreshAttacksUI();
-    }
-
     /**
      * Called when the current entity is done firing. Send out our attack queue
      * to the server.
@@ -1834,7 +1799,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         }
 
         // remove attacks, set weapons available again
-        Enumeration<AbstractEntityAction> i = attacks.elements();
+//        Enumeration<AbstractEntityAction> i = attacks.elements();
+        Enumeration<EntityAction> i = attacks.elements();
         while (i.hasMoreElements()) {
             Object o = i.nextElement();
             if (o instanceof WeaponAttackAction) {

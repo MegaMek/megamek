@@ -55,8 +55,8 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     private static final int BUTTON_ROWS = 2;
     private static final String SBPD_KEY_CLEARBUTTON = "clearButton";
 
-    private static JCheckBox checkBoxConfirmDone;
-
+//    private JCheckBox checkBoxForceIgnoreNag;
+    private MMToggleButton butIgnoreNag;
     /**
      * timer that ends turn if time limit set in options is over
      */
@@ -218,12 +218,19 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
 
         var donePanel = new UIUtil.FixedXPanel();
         donePanel.setOpaque(false);
+        donePanel.setLayout(new GridLayout(2,1));
         donePanel.add(butDone);
         butDone.setPreferredSize(new Dimension(DONE_BUTTON_WIDTH, MIN_BUTTON_SIZE.height * 2));
 
-        checkBoxConfirmDone = new JCheckBox();
-        donePanel.add(checkBoxConfirmDone);
-        checkBoxConfirmDone.setPreferredSize(new Dimension(DONE_BUTTON_WIDTH, MIN_BUTTON_SIZE.height * 2));
+        butIgnoreNag = new MMToggleButton("Confirm");
+        donePanel.add(butIgnoreNag);
+        butIgnoreNag.setPreferredSize(new Dimension(DONE_BUTTON_WIDTH, MIN_BUTTON_SIZE.height * 1));
+
+
+//        checkBoxForceIgnoreNag = new JCheckBox("Confirm");
+////        donePanel.add(checkBoxForceIgnoreNag);
+//        checkBoxForceIgnoreNag.setPreferredSize(new Dimension(DONE_BUTTON_WIDTH, MIN_BUTTON_SIZE.height));
+        setupButIgnoreNag(false);
 
         panButtons.add(buttonsPanel);
         panButtons.add(donePanel);
@@ -232,11 +239,52 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         panButtons.repaint();
     }
 
-    /** @return true if a nag window is shown when there is no action given to current unit.
+    private boolean forceIgnoreNag;
+    /** @return true if a nag window should be shown when there is no action given to current unit.
      * This is true if user option wants a nag and they have not preemptively checked the done box */
     protected boolean needNagForNoAction()
     {
-        return GUIP.getNagForNoAction() && !checkBoxConfirmDone.isSelected();
+        return GUIP.getNagForNoAction() && !butIgnoreNag.isSelected();
+    }
+
+    /** @return true if this phase may interrupt ready() with a nag if no actions is given */
+    protected boolean getPhaseMayUseNagNoAction()
+    {
+        return false;
+    }
+
+    /** updates the "Done Button"s @butDone and @butForce to show that a valid action has been given. */
+    protected void setValidAction(String butDoneDoneLabel)
+    {
+        butDone.setText("<html><b>"
+                + butDoneDoneLabel
+                + "</b></html>");
+        butIgnoreNag.setSelected(true);
+    }
+
+    /** updates the "Done Button"s @butDone and @butForce to show that no valid action has been given yet. */
+    protected void setInvalidAction(String butDoneSkipLabel)
+    {
+        butDone.setText("<html><b>"
+                + "Skip Unit"
+                + "</b></html>");
+        butIgnoreNag.setSelected(false);
+    }
+
+    protected void setupButIgnoreNag(boolean hasActions)
+    {
+        if (getPhaseMayUseNagNoAction()) {
+            butIgnoreNag.setVisible(true);
+            if ( (GUIP.getNagForNoAction()) ) {
+                butIgnoreNag.setSelected(false);
+                butIgnoreNag.setEnabled(true);
+            } else {
+                butIgnoreNag.setSelected(true);
+                butIgnoreNag.setEnabled(false);
+            }
+        } else {
+            butIgnoreNag.setVisible(false);
+        }
     }
 
     /** Clears the actions of this phase. */
@@ -270,6 +318,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         } else if (e.getName().equals(KeyBindParser.KEYBINDS_CHANGED)) {
             setButtonsTooltips();
         }
+        setupButIgnoreNag(false);
     }
 
     @Override

@@ -175,7 +175,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
 
     Targetable target; // target
 
-    // HACK : track when we wan to show the target choice dialog.
+    // HACK : track when we want to show the target choice dialog.
     protected boolean showTargetChoice = true;
 
     // shots we have so far.
@@ -913,10 +913,10 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
             disableButtons();
             TriggerAPPodDialog dialog = new TriggerAPPodDialog(clientgui.getFrame(), ce());
             dialog.setVisible(true);
-            attacks.removeAllElements();
+            removeAllAttacks();
             Enumeration<TriggerAPPodAction> actions = dialog.getActions();
             while (actions.hasMoreElements()) {
-                attacks.addElement(actions.nextElement());
+                addAttack(actions.nextElement());
             }
             ready();
         } else if ((turn instanceof GameTurn.TriggerBPodTurn) && (null != ce())) {
@@ -924,10 +924,10 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
             TriggerBPodDialog dialog = new TriggerBPodDialog(clientgui, ce(),
                     ((GameTurn.TriggerBPodTurn) turn).getAttackType());
             dialog.setVisible(true);
-            attacks.removeAllElements();
+            removeAllAttacks();
             Enumeration<TriggerBPodAction> actions = dialog.getActions();
             while (actions.hasMoreElements()) {
-                attacks.addElement(actions.nextElement());
+                addAttack(actions.nextElement());
             }
             ready();
         } else {
@@ -1184,13 +1184,55 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         target(targ);
     }
 
+    @Override
+    protected boolean getPhaseMayUseNagNoAction()
+    {
+        return true;
+    }
+
+    private void refreshAttacksUI()
+    {
+        if (attacks.isEmpty()) {
+            setInvalidAction("Skip Unit");
+        } else {
+            setValidAction("Fire");
+        }
+    }
+
+    private void removeAttack(Object o)
+    {
+        attacks.remove(o);
+        refreshAttacksUI();
+    }
+
+    /** removes all elements from the local temporary attack list */
+    private void removeAllAttacks()
+    {
+        attacks.removeAllElements();
+        refreshAttacksUI();
+    }
+
+    /** add an attack at the given index to the local temporary attack list */
+    private void addAttack(int index, AbstractEntityAction entityAction)
+    {
+        attacks.add(index, entityAction);
+        refreshAttacksUI();
+    }
+
+    /** add an attack to the end of the local temporary attack list */
+    private void addAttack(AbstractEntityAction entityAction)
+    {
+        attacks.add(entityAction);
+        refreshAttacksUI();
+    }
+
     /**
      * Called when the current entity is done firing. Send out our attack queue
      * to the server.
      */
     @Override
     public void ready() {
-        if (attacks.isEmpty() && GUIP.getNagForNoAction()) {
+        if (attacks.isEmpty() && needNagForNoAction()) {
             // confirm this action
             String title = Messages.getString("FiringDisplay.DontFireDialog.title");
             String body = Messages.getString("FiringDisplay.DontFireDialog.message");
@@ -1309,7 +1351,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         clientgui.getClient().sendAttackData(cen, newAttacks);
 
         // clear queue
-        attacks.removeAllElements();
+        removeAllAttacks();
 
         // close aimed shot display, if any
         ash.closeDialog();
@@ -1334,7 +1376,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                 && (((Tank) ce()).isTurretJammed(((Tank) ce()).getLocTurret())))
                 || ((Tank) ce()).isTurretJammed(((Tank) ce()).getLocTurret2())) {
             UnjamTurretAction uta = new UnjamTurretAction(ce().getId());
-            attacks.add(uta);
+            addAttack(uta);
             ready();
         }
     }
@@ -1358,7 +1400,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                 if (input.equals(names[loop])) {
                     RepairWeaponMalfunctionAction rwma = new RepairWeaponMalfunctionAction(
                             ce().getId(), ce().getEquipmentNum(weapons.get(loop)));
-                    attacks.add(rwma);
+                    addAttack(rwma);
                     ready();
                 }
             }
@@ -1366,7 +1408,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
     }
 
     /**
-     * This pops up a menu allowing the user to choose one of several 
+     * This pops up a menu allowing the user to choose one of several
      * SPAs, and then performs the appropriate steps.
      */
     private void doActivateSpecialAbility() {
@@ -1389,7 +1431,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
             case OptionsConstants.GUNNERY_BLOOD_STALKER:
                 // figure out when to clear Blood Stalker (when unit destroyed or flees or fly off no return)
                 ActivateBloodStalkerAction bloodStalkerAction = new ActivateBloodStalkerAction(ce().getId(), target.getId());
-                attacks.add(0, bloodStalkerAction);
+                addAttack(0, bloodStalkerAction);
                 ce().setBloodStalkerTarget(target.getId());
                 break;
         }
@@ -1401,7 +1443,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
      * Worker function that determines if we can activate the "blood stalker" ability
      */
     private boolean canActivateBloodStalker() {
-        // can be activated if the entity can do it and haven't done it already 
+        // can be activated if the entity can do it and haven't done it already
         // and the target is something that can be blood-stalked
         return (ce() != null) && ce().canActivateBloodStalker() &&
                 (target != null) && (target.getTargetType() == Targetable.TYPE_ENTITY) &&
@@ -1424,7 +1466,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         // create and queue a searchlight action
         SearchlightAttackAction saa = new SearchlightAttackAction(cen,
                 target.getTargetType(), target.getId());
-        attacks.addElement(saa);
+        addAttack(saa);
 
         // and add it into the game, temporarily
         clientgui.getClient().getGame().addAction(saa);
@@ -1492,7 +1534,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                 }
             }
             // Could check legality on buildings, but I don't believe there are
-            // any weapons that are still legal that aren't legal on buildings            
+            // any weapons that are still legal that aren't legal on buildings
         }
         clientgui.getUnitDisplay().wPan.toHitText.setText(toHitBuff.toString());
     }
@@ -1666,7 +1708,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
             firstShot = false;
 
             // add the attack to our temporary queue
-            attacks.addElement(waa);
+            addAttack(waa);
 
             // and add it into the game, temporarily
             game.addAction(waa);
@@ -1748,8 +1790,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
             return;
         }
 
-        attacks.removeAllElements();
-        attacks.addElement(new FindClubAction(cen));
+        removeAllAttacks();
+        addAttack(new FindClubAction(cen));
 
         ready();
     }
@@ -1774,7 +1816,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         if (!clientgui.doYesNoDialog(title, body)) {
             return;
         }
-        attacks.addElement(new SpotAction(cen, target.getId()));
+        addAttack(new SpotAction(cen, target.getId()));
 
     }
 
@@ -1800,7 +1842,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                 ce().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
             }
         }
-        attacks.removeAllElements();
+        removeAllAttacks();
 
         // remove temporary attacks from game & board
         removeTempAttacks();
@@ -1828,7 +1870,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
             if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) o;
                 ce().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
-                attacks.removeElement(o);
+                removeAttack(o);
                 clientgui.getUnitDisplay().wPan.displayMech(ce());
                 clientgui.getClient().getGame().removeAction(o);
                 clientgui.getBoardView().refreshAttacks();
@@ -1851,6 +1893,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
             this.updateVTOLGroundTarget();
         }
         updateTarget();
+        refreshAttacksUI();
     }
 
     /**
@@ -2013,7 +2056,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
 
     /**
      * A VTOL or LAM in airmech mode making a bombing or strafing attack already has the target set
-     * during the movement phase. 
+     * during the movement phase.
      */
     void updateVTOLGroundTarget() {
         clientgui.getBoardView().clearStrafingCoords();
@@ -2042,7 +2085,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
 
         if (direction != ce().getSecondaryFacing()) {
             clearAttacks();
-            attacks.addElement(new TorsoTwistAction(cen, direction));
+            addAttack(new TorsoTwistAction(cen, direction));
             ce().setSecondaryFacing(direction);
             refreshAll();
         }
@@ -2060,13 +2103,13 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         if (twistDir == 0) {
             clearAttacks();
             direction = ce().clipSecondaryFacing((direction + 5) % 6);
-            attacks.addElement(new TorsoTwistAction(cen, direction));
+            addAttack(new TorsoTwistAction(cen, direction));
             ce().setSecondaryFacing(direction);
             refreshAll();
         } else if (twistDir == 1) {
             clearAttacks();
             direction = ce().clipSecondaryFacing((direction + 7) % 6);
-            attacks.addElement(new TorsoTwistAction(cen, direction));
+            addAttack(new TorsoTwistAction(cen, direction));
             ce().setSecondaryFacing(direction);
             refreshAll();
         }
@@ -2202,7 +2245,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
             } else {
                 endMyTurn();
                 String playerName;
-              
+
                 if (e.getPlayer() != null) {
                     playerName = e.getPlayer().getName();
                 } else {
@@ -2309,7 +2352,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
 
         clearAttacks();
         ce().setArmsFlipped(armsFlipped);
-        attacks.addElement(new FlipArmsAction(cen, armsFlipped));
+        addAttack(new FlipArmsAction(cen, armsFlipped));
         updateTarget();
         refreshAll();
     }
@@ -2443,8 +2486,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         if ((ce() != null) && !ce().isMakingVTOLGroundAttack()) {
             target(null);
         }
-        // if we're clearing a "blood stalker" activation from the queue, 
-        // clear the local entity's blood stalker 
+        // if we're clearing a "blood stalker" activation from the queue,
+        // clear the local entity's blood stalker
         if ((ce() != null) && attacks.stream().anyMatch(item -> item instanceof ActivateBloodStalkerAction)) {
             ce().setBloodStalkerTarget(Entity.NONE);
         }

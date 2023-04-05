@@ -28,6 +28,8 @@ import java.util.stream.Collectors;
 import javax.swing.*;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.CommandAction;
+import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.TurnTimer;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.*;
@@ -55,13 +57,14 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     private static final int BUTTON_ROWS = 2;
     private static final String SBPD_KEY_CLEARBUTTON = "clearButton";
 
-    private MMToggleButton butIgnoreNag;
+    private MegamekToggleButton butIgnoreNag;
     /**
      * timer that ends turn if time limit set in options is over
      */
     private TurnTimer tt;
 
     private boolean isValidAction = false;
+    private boolean ignoreNag = false;
 
     /**
      * Interface that defines what a command for a phase is.
@@ -223,10 +226,27 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         donePanel.add(butDone);
         butDone.setPreferredSize(new Dimension(DONE_BUTTON_WIDTH, MIN_BUTTON_SIZE.height * 2));
 
-        butIgnoreNag = new MMToggleButton("Confirm");
+        butIgnoreNag = new MegamekToggleButton("Confirm", SkinSpecification.UIComponents.PhaseDisplayDoneButton.getComp());
         donePanel.add(butIgnoreNag);
         butIgnoreNag.setPreferredSize(new Dimension(DONE_BUTTON_WIDTH, MIN_BUTTON_SIZE.height * 1));
+        if (clientgui != null) {
+            butIgnoreNag.addActionListener(new AbstractAction() {
+                private static final long serialVersionUID = -5034474968902280850L;
 
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (isIgnoringEvents()) {
+                        return;
+                    }
+                    if ((clientgui.getClient().isMyTurn())
+                            || (clientgui.getClient().getGame().getTurn() == null)
+                            || (clientgui.getClient().getGame().getPhase().isReport())) {
+                        ignoreNag = !ignoreNag;
+                        updateDonePanel();
+                    }
+                }
+            });
+        }
         setupDonePanel();
 
         panButtons.add(buttonsPanel);
@@ -251,15 +271,16 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
 
     /** updates the "Done Button"s @butDone and @butIgnoreNag to show if a valid action has
      * been given by the user. */
-    protected void updateDonePanel(String butDoneLabel, boolean isValidAction)
-    {
-        this.isValidAction = isValidAction;
-        butDone.setText("<html><b>"
-                + butDoneLabel
-                + "</b></html>");
+    protected void updateDonePanel(String butDoneLabel, boolean validAction) {
+        isValidAction = validAction;
+        butDone.setText("<html><b>" + butDoneLabel + "</b></html>");
+        updateDonePanel();
+    }
 
+    private void updateDonePanel()
+    {
         if (getPhaseMayUseNagNoAction()) {
-            if (this.isValidAction)
+            if (isValidAction || ignoreNag)
             {
                 butDone.setEnabled(true);
                 butIgnoreNag.setEnabled(false);
@@ -268,20 +289,18 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
                 butIgnoreNag.setEnabled(true);
             }
         }
-        butIgnoreNag.setSelected(this.isValidAction);
+        updateButIgnoreNag();
+    }
+
+    private void updateButIgnoreNag()
+    {
+        butIgnoreNag.setSelected(ignoreNag || this.isValidAction);
     }
 
     protected void setupDonePanel()
     {
         if (getPhaseMayUseNagNoAction()) {
             butIgnoreNag.setVisible(true);
-//            if ( (GUIP.getNagForNoAction()) ) {
-//                butIgnoreNag.setSelected(isValidAction);
-//                butIgnoreNag.setEnabled(true);
-//            } else {
-//                butIgnoreNag.setSelected(isValidAction);
-//                butIgnoreNag.setEnabled(false);
-//            }
         } else {
             butIgnoreNag.setVisible(false);
         }

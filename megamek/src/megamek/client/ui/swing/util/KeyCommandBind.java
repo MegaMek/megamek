@@ -33,13 +33,13 @@ import static java.awt.event.KeyEvent.*;
  * @author arlith
  */
 public enum KeyCommandBind {
-    
-    SCROLL_NORTH("scrollN", true, VK_W), 
-    SCROLL_SOUTH("scrollS", true, VK_S), 
-    SCROLL_EAST("scrollE", true, VK_D),  
-    SCROLL_WEST("scrollW", true, VK_A),  
+
+    SCROLL_NORTH("scrollN", true, VK_W),
+    SCROLL_SOUTH("scrollS", true, VK_S),
+    SCROLL_EAST("scrollE", true, VK_D),
+    SCROLL_WEST("scrollW", true, VK_A),
     // Activates chat box
-    TOGGLE_CHAT("toggleChat", VK_ENTER), 
+    TOGGLE_CHAT("toggleChat", VK_ENTER),
     // Activates chat box and adds the command character (/)
     TOGGLE_CHAT_CMD("toggleChatCmd", VK_SLASH),
     // Change facing one hexside to the left
@@ -77,6 +77,7 @@ public enum KeyCommandBind {
     /** Used to cancel moves/fires/chatterbox */
     CANCEL("cancel", false, VK_ESCAPE, 0, true),
     DONE("done", false, VK_ENTER, CTRL_DOWN_MASK, true),
+    DONE_NO_ACTION("doneNoAction", false, VK_ENTER, CTRL_DOWN_MASK | SHIFT_DOWN_MASK, true),
     // Used to select the tab in the unit display
     UD_GENERAL("udGeneral", VK_F1),
     UD_PILOT("udPilot", VK_F2),
@@ -115,19 +116,19 @@ public enum KeyCommandBind {
     LOCAL_SAVE(true, "localSave", VK_S, CTRL_DOWN_MASK),
     REPLACE_PLAYER(true, "replacePlayer", VK_R, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
     MOD_ENVELOPE(true, "viewModEnvelope", VK_W, CTRL_DOWN_MASK);
-    
-    
+
+
     /** The command associated with this binding. */
     public String cmd;
-    
+
     /** Defines the keycode for the command, e.g. KeyEvent.VK_X. */
     public int key;
     public int keyDefault;
-    
-    /** Modifiers to the key code, such as InputEvent.CTRL_DOWN_MASK. */ 
+
+    /** Modifiers to the key code, such as InputEvent.CTRL_DOWN_MASK. */
     public int modifiers;
     public int modifiersDefault;
-    
+
     /**
      * Defines if an action is exclusive, which means that only one
      * CommandAction will be performed for each key press. The CommandAction
@@ -137,44 +138,44 @@ public enum KeyCommandBind {
     public boolean isExclusive = false;
 
     /**
-     * For a repeatable bind, when the key is pressed the action will be added to a 
+     * For a repeatable bind, when the key is pressed the action will be added to a
      * timer and repeated until the key is released.
      */
     public boolean isRepeatable;
-    
-    /** 
+
+    /**
      * When true, this keybind is used by the CommonMenuBar. Binding it with the MegaMekController like the other
      * keybinds is not necessary (and will not work, as the command will not be recognized in this way).
      */
     public boolean isMenuBar = false;
-    
+
     private KeyCommandBind(String c, int k) {
         this(c, false, k, 0, false);
     }
-    
+
     private KeyCommandBind(String c, int k, int m) {
         this(c, false, k, m, false);
     }
-    
+
     private KeyCommandBind(String c, boolean r, int k) {
         this(c, r, k, 0, false);
     }
-    
+
     private KeyCommandBind(String c, boolean r, int k, int m) {
         this(c, r, k, m, false);
     }
-    
+
     // CommonMenuBar keybinds - these are exclusive, as multiple menu items on the same key don't work
     private KeyCommandBind(boolean n, String c, int k, int m) {
         this(c, false, k, m, true);
         isMenuBar = n;
     }
-    
+
     private KeyCommandBind(boolean n, String c, int k) {
         this(c, false, k, 0, true);
         isMenuBar = n;
     }
-    
+
     private KeyCommandBind(String c, boolean r, int k, int m, boolean e) {
         cmd = c;
         key = k;
@@ -185,7 +186,7 @@ public enum KeyCommandBind {
         isExclusive = e;
     }
 
-    /** 
+    /**
      * Returns a list of binds using the given keycode and modifier. Only lists those
      * that are not used by the CommonMenuBar!
      */
@@ -196,12 +197,12 @@ public enum KeyCommandBind {
                 .filter(bind -> bind.modifiers == modifiers)
                 .collect(Collectors.toList());
     }
-    
+
     /** Returns the bind identified by the given cmd or null if there is no such bind. */
     public static KeyCommandBind getBindByCmd(String cmd) {
         return Stream.of(values()).filter(bind -> bind.cmd.equals(cmd)).findAny().orElse(null);
     }
-    
+
     /** Returns a KeyStroke for a given KeyCommandBind. */
     public static KeyStroke keyStroke(KeyCommandBind bind) {
         return KeyStroke.getKeyStroke(bind.key, bind.modifiers);

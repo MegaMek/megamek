@@ -361,11 +361,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
         setButtons();
         setButtonsTooltips();
 
-        butDone.setText("<html><body>" + Messages.getString("MovementDisplay.butDone") + "</body></html>");
-        String f = guiScaledFontHTML(uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
-        butDone.setToolTipText("<html><body>" + f + "</body></html>");
-        butDone.setEnabled(false);
-
         setupButtonPanel();
 
         gear = MovementDisplay.GEAR_LAND;
@@ -979,7 +974,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
             }
         }
     }
-
 
     /** toggles the status of the Done and No Nag buttons based on if the current move order is valid */
     protected void updateDonePanel()

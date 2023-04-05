@@ -17,6 +17,7 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.*;
 import megamek.common.Configuration;
 import megamek.common.Coords;
@@ -30,6 +31,8 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.net.URI;
+
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 
 public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
         BoardViewListener, GameListener, Distractable {
@@ -73,6 +76,8 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
 
         setBorder(new MegamekBorder(borderSkinComp));
         butDone = new MegamekButton("DONE", buttonSkinComp);
+        String f = guiScaledFontHTML(UIUtil.uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
+        butDone.setToolTipText("<html><body>" + f + "</body></html>");
         butDone.setActionCommand("doneButton");
         if (clientgui != null) {
             butDone.addActionListener(new AbstractAction() {

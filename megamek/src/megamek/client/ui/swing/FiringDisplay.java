@@ -216,11 +216,6 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         setButtons();
         setButtonsTooltips();
 
-        butDone.setText("<html><body>" + Messages.getString("FiringDisplay.Skip") + "</body></html>");
-        String f = guiScaledFontHTML(uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
-        butDone.setToolTipText("<html><body>" + f + "</body></html>");
-        butDone.setEnabled(false);
-
         setupButtonPanel();
 
         clientgui.getBoardView().addKeyListener(this);
@@ -940,7 +935,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
             ready();
         } else {
             setNextEnabled(true);
-            whatisthis();
+            updateDonePanelEnabled();
             if (numButtonGroups > 1) {
                 buttons.get(FiringCommand.FIRE_MORE).setEnabled(true);
             }

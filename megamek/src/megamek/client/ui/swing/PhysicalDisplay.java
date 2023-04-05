@@ -132,11 +132,6 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         setButtons();
         setButtonsTooltips();
 
-        butDone.setText("<html><body>" + Messages.getString("PhysicalDisplay.Done") + "</body></html>");
-        String f = guiScaledFontHTML(uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
-        butDone.setToolTipText("<html><body>" + f + "</body></html>");
-        butDone.setEnabled(false);
-
         setupButtonPanel();
     }
 

@@ -142,8 +142,6 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         setButtonsTooltips();
 
         butDone.setText(Messages.getString("PrephaseDisplay.Done"));
-        String f = guiScaledFontHTML(uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
-        butDone.setToolTipText("<html><body>" + f + "</body></html>");
         butDone.setEnabled(false);
 
         setupButtonPanel();

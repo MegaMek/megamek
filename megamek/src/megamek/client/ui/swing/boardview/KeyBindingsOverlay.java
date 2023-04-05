@@ -1,16 +1,16 @@
-/*  
-* MegaMek - Copyright (C) 2020 - The MegaMek Team  
-*  
-* This program is free software; you can redistribute it and/or modify it under  
-* the terms of the GNU General Public License as published by the Free Software  
-* Foundation; either version 2 of the License, or (at your option) any later  
-* version.  
-*  
-* This program is distributed in the hope that it will be useful, but WITHOUT  
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS  
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more  
-* details.  
-*/  
+/*
+* MegaMek - Copyright (C) 2020 - The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
 package megamek.client.ui.swing.boardview;
 
 import megamek.MMConstants;
@@ -39,10 +39,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/** 
+/**
  * An overlay for the Boardview that displays a selection of keybinds
- * for the current game situation 
- * 
+ * for the current game situation
+ *
  * @author SJuliez
  */
 public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListener {
@@ -55,7 +55,7 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
     private static final Color SHADOW_COLOR = Color.DARK_GRAY;
     private static final Color BG_COLOR = new Color(80, 80, 80, 200);
     private static final float FADE_SPEED = 0.2f;
-    
+
     /** The keybinds to be shown during the firing phases (incl. physical etc.) */
     private static final List<KeyCommandBind> BINDS_FIRE = Arrays.asList(
             KeyCommandBind.NEXT_WEAPON,
@@ -76,8 +76,9 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
 
     /** The keybinds to be shown in all phases during the local player's turn */
     private static final List<KeyCommandBind> BINDS_MY_TURN = Arrays.asList(
-            KeyCommandBind.CANCEL, 
-            KeyCommandBind.DONE, 
+            KeyCommandBind.CANCEL,
+            KeyCommandBind.DONE,
+            KeyCommandBind.DONE_NO_ACTION,
             KeyCommandBind.NEXT_UNIT,
             KeyCommandBind.PREV_UNIT,
             KeyCommandBind.CENTER_ON_SELECTED
@@ -89,7 +90,7 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
             KeyCommandBind.DRAW_LABELS,
             KeyCommandBind.HEX_COORDS
     );
-    
+
     /** The keybinds to be shown in the Board Editor */
     private static final List<KeyCommandBind> BINDS_BOARD_EDITOR = Arrays.asList(
             KeyCommandBind.HEX_COORDS
@@ -97,7 +98,7 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
 
     private static final List<String> ADDTL_BINDS = Arrays.asList(
             Messages.getString("KeyBindingsDisplay.fixedBinds").split("\n"));
-    
+
     private static final List<String> ADDTL_BINDS_BOARD_EDITOR = Arrays.asList(
             Messages.getString("KeyBindingsDisplay.fixedBindsBoardEd").split("\n"));
 
@@ -120,9 +121,9 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
     /** The transparency of the overlay. Only used while fading in/out. */
     private float alpha = 1;
 
-    /** 
+    /**
      * An overlay for the Boardview that displays a selection of keybinds
-     * for the current game situation. 
+     * for the current game situation.
      */
     public KeyBindingsOverlay(Game game, ClientGUI cg) {
         visible = GUIP.getBoolean(GUIPreferences.SHOW_KEYBINDS_OVERLAY);
@@ -138,12 +139,12 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
         if (!visible && !isSliding()) {
             return;
         }
-        
-        // At startup, phase and turn change and when the keybinds change, 
+
+        // At startup, phase and turn change and when the keybinds change,
         // the cached image is (re)created
         if (changed) {
             changed = false;
-            
+
             // calculate the size from the text lines, font and padding
             Font newFont = FONT.deriveFont(FONT.getSize() * GUIP.getGUIScale());
             graph.setFont(newFont);
@@ -156,21 +157,21 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
             Graphics intGraph = displayImage.getGraphics();
             UIUtil.setHighQualityRendering(intGraph);
 
-            // draw a semi-transparent background rectangle 
+            // draw a semi-transparent background rectangle
             intGraph.setColor(BG_COLOR);
             intGraph.fillRoundRect(0, 0, r.width, r.height, PADDING_X, PADDING_X);
-            
+
             // The coordinates to write the texts to
             int x = PADDING_X;
             int y = PADDING_Y + fm.getAscent();
-            
+
             // write the strings
             for (String line: allLines) {
                 drawShadowedString(intGraph, line, x, y);
                 y += fm.getHeight();
             }
         }
-        
+
         // draw the cached image to the boardview
         // uses Composite to draw the image with variable transparency
         if (alpha < 1) {
@@ -185,7 +186,7 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
         }
     }
 
-    /** Calculates the pixel size of the display from the necessary text lines. */ 
+    /** Calculates the pixel size of the display from the necessary text lines. */
     private Rectangle getSize(Graphics graph, List<String> lines, FontMetrics fm) {
         int width = 0;
         for (String line: lines) {
@@ -200,17 +201,17 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
         int height = fm.getHeight() * lines.size();
         return new Rectangle(width, height);
     }
-    
+
     /** Returns an ArrayList of all text lines to be shown. */
     private List<String> assembleTextLines() {
         List<String> result = new ArrayList<>();
 
         String toggleKey = KeyCommandBind.getDesc(KeyCommandBind.KEY_BINDS);
         result.add(Messages.getString("KeyBindingsDisplay.heading", toggleKey));
-        
+
         if (clientGui != null) {
             // In a game, not the Board Editor
-            // Most of the keybinds are only active during the local player's turn 
+            // Most of the keybinds are only active during the local player's turn
             if ((clientGui.getClient() != null) && (clientGui.getClient().isMyTurn())) {
                 List<KeyCommandBind> listForPhase = new ArrayList<>();
                 switch (currentPhase) {
@@ -239,7 +240,7 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
 
         return result;
     }
-    
+
     /** Converts a list of KeyCommandBinds to a list of formatted strings. */
     private List<String> convertToStrings(List<KeyCommandBind> kcbs) {
         List<String> result = new ArrayList<>();
@@ -250,10 +251,10 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
         }
         return result;
     }
-    
-    /** 
-     * Draws the String s to the Graphics graph at position x, y 
-     * with a shadow. If the string starts with #789ABC then 789ABC 
+
+    /**
+     * Draws the String s to the Graphics graph at position x, y
+     * with a shadow. If the string starts with #789ABC then 789ABC
      * is converted to a color to write the rest of the text,
      * otherwise TEXT_COLOR is used.
      */
@@ -283,11 +284,11 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
             graph.drawString(text.getIterator(), x, y);
         }
     }
-    
-    /** 
+
+    /**
      * Activates or deactivates the overlay, fading it in or out.
-     * Also saves the visibility to the GUIPreferences so 
-     * MegaMek remembers it. 
+     * Also saves the visibility to the GUIPreferences so
+     * MegaMek remembers it.
      * */
     public void setVisible(boolean vis) {
         visible = vis;
@@ -304,12 +305,12 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
     public boolean isVisible() {
         return visible;
     }
-    
+
     @Override
     public boolean isSliding() {
         return fadingOut || fadingIn;
     }
-    
+
     @Override
     public boolean slide() {
         if (fadingIn) {
@@ -329,7 +330,7 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
         }
         return false;
     }
-    
+
     /** Detects phase and turn changes to display only relevant keybinds. */
     private GameListener gameListener = new GameListenerAdapter() {
         @Override
@@ -337,7 +338,7 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
             currentPhase = e.getNewPhase();
             changed = true;
         }
-        
+
         @Override
         public void gameTurnChange(GameTurnChangeEvent e) {
             // The active player has changed

@@ -1,5 +1,26 @@
+/*
+ * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.client.ui.swing;
 
+import megamek.client.ui.swing.StatusBarPhaseDisplay;
+import megamek.client.ui.swing.util.CommandAction;
+import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
@@ -8,6 +29,8 @@ import megamek.common.preference.PreferenceChangeEvent;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 
 public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
     protected MegamekButton butIgnoreNag;
@@ -23,6 +46,9 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
         var donePanel = super.setupDonePanel();
         butIgnoreNag = new MegamekButton("SKIP", SkinSpecification.UIComponents.PhaseDisplayDoneButton.getComp());
         butIgnoreNag.setPreferredSize(new Dimension(DONE_BUTTON_WIDTH, MIN_BUTTON_SIZE.height * 1));
+        String f = guiScaledFontHTML(UIUtil.uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE_NO_ACTION)+ "</FONT>";
+        butDone.setToolTipText("<html><body>" + f + "</body></html>");
+
         donePanel.add(butIgnoreNag);
         if (clientgui != null) {
             butIgnoreNag.addActionListener(new AbstractAction() {
@@ -36,16 +62,44 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
                     if ((clientgui.getClient().isMyTurn())
                             || (clientgui.getClient().getGame().getTurn() == null)
                             || (clientgui.getClient().getGame().getPhase().isReport())) {
-//                        // act like checkbox
-//                        ignoreNag = !ignoreNag;
-//                        updateDonePanel();
-
                         // act like Done button
                         ignoreNoActionNag = true;
                         ready();
+                        // When the turn is ended, we could miss a key release
+                        // event
+                        // This will ensure no repeating keys are stuck down
+                        clientgui.controller.stopAllRepeating();
                     }
                 }
             });
+
+            final AbstractPhaseDisplay display = this;
+            // Register the action for DONE
+            clientgui.controller.registerCommandAction(KeyCommandBind.DONE_NO_ACTION.cmd,
+                    new CommandAction() {
+
+                        @Override
+                        public boolean shouldPerformAction() {
+                            if (((!clientgui.getClient().isMyTurn()
+                                    && (clientgui.getClient().getGame().getTurn() != null)
+                                    && (!clientgui.getClient().getGame().getPhase().isReport())))
+                                    || clientgui.getBoardView().getChatterBoxActive()
+                                    || display.isIgnoringEvents()
+                                    || !display.isVisible()
+                                    || !butIgnoreNag.isEnabled()) {
+                                return false;
+                            } else {
+                                return true;
+                            }
+                        }
+
+                        @Override
+                        public void performAction() {
+                            ignoreNoActionNag = true;
+                            ready();
+                        }
+                    });
+
         }
 
         updateVisibilityDonePanel();
@@ -63,6 +117,7 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
         ignoreNoActionNag = false;
         updateVisibilityDonePanel();
     }
+
     private void updateVisibilityDonePanel()
     {
         if (GUIP.getNagForNoAction()) {
@@ -84,7 +139,6 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
     protected void updateDonePanel(String actionLabel, String noActionLabel, boolean doingAction) {
         isDoingAction = doingAction;
         if (GUIP.getNagForNoAction()) {
-            // toggle buttons enables on the two buttons, not the text
             butDone.setText("<html><b>" + actionLabel + "</b></html>");
         } else {
             // toggle the text on the done button
@@ -98,7 +152,7 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
         updateDonePanelEnabled();
     }
 
-    private void updateDonePanelEnabled() {
+    protected void updateDonePanelEnabled() {
         if (isDoingAction || ignoreNoActionNag) {
             butDone.setEnabled(true);
             butIgnoreNag.setEnabled(false);
@@ -107,6 +161,4 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
             butIgnoreNag.setEnabled(true);
         }
     }
-
-    protected void whatisthis() {}
 }

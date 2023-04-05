@@ -192,11 +192,6 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
         setButtons();
         setButtonsTooltips();
 
-        butDone.setText(Messages.getString("TargetingPhaseDisplay.Done"));
-        String f = guiScaledFontHTML(uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
-        butDone.setToolTipText("<html><body>" + f + "</body></html>");
-        butDone.setEnabled(false);
-
         setupButtonPanel();
 
         registerKeyCommands();

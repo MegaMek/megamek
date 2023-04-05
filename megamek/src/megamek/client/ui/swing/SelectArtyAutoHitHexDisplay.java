@@ -42,8 +42,8 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
 
     /**
      * This enumeration lists all the possible ActionCommands that can be
-     * carried out during the select arty auto hit phase.  Each command has a 
-     * string for the command plus a flag that determines what unit type it is 
+     * carried out during the select arty auto hit phase.  Each command has a
+     * string for the command plus a flag that determines what unit type it is
      * appropriate for.
      * @author arlith
      */
@@ -85,13 +85,13 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
             return "";
         }
     }
-    
+
     // buttons
     protected Map<ArtyAutoHitCommand,MegamekButton> buttons;
 
     private Player p;
     private PlayerIDandList<Coords> artyAutoHitHexes = new PlayerIDandList<>();
-    
+
     private int startingHexes;
 
     /**
@@ -103,7 +103,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         clientgui.getClient().getGame().addGameListener(this);
 
         clientgui.getBoardView().addBoardViewListener(this);
-        
+
         setupStatusBar(Messages.getString("SelectArtyAutoHitHexDisplay.waitingArtillery"));
 
         p = clientgui.getClient().getLocalPlayer();
@@ -114,8 +114,6 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         setButtonsTooltips();
 
         butDone.setText(Messages.getString("SelectArtyAutoHitHexDisplay.Done"));
-        String f = guiScaledFontHTML(uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
-        butDone.setToolTipText("<html><body>" + f + "</body></html>");
         butDone.setEnabled(false);
 
         setupButtonPanel();
@@ -387,7 +385,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
             }
 
             private boolean thisKeyPressed = false;
-            
+
             @Override
             public void performAction() {
                 if (!thisKeyPressed) {
@@ -396,12 +394,12 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
                 }
                 thisKeyPressed = true;
             }
-            
+
             @Override
             public void releaseAction() {
                 thisKeyPressed = false;
             }
-            
+
             @Override
             public boolean hasReleaseAction() {
                 return true;

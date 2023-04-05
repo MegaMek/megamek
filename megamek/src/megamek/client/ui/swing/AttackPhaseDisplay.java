@@ -26,7 +26,6 @@ import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 
 public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
     // client list of attacks user has input
-//    protected Vector<AbstractEntityAction> attacks;
     protected Vector<EntityAction> attacks;
 
     protected AttackPhaseDisplay(ClientGUI cg) {

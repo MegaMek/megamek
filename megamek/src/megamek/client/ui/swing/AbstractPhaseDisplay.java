@@ -34,7 +34,7 @@ import java.net.URI;
 public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
         BoardViewListener, GameListener, Distractable {
     private static final long serialVersionUID = 4421205210788230341L;
-    
+
     public static final int DONE_BUTTON_WIDTH = 125;
     // Distraction implementation.
     protected DistractableAdapter distracted = new DistractableAdapter();
@@ -42,7 +42,7 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
     protected MegamekButton butDone;
 
     protected ClientGUI clientgui;
-    
+
     ImageIcon backgroundIcon = null;
 
     protected AbstractPhaseDisplay(ClientGUI cg) {
@@ -58,7 +58,7 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
 
         try {
             if (!pdSkinSpec.backgrounds.isEmpty()) {
-                File file = new MegaMekFile(Configuration.widgetsDir(), 
+                File file = new MegaMekFile(Configuration.widgetsDir(),
                         pdSkinSpec.backgrounds.get(0)).getFile();
                 URI imgURL = file.toURI();
                 if (!file.exists()) {
@@ -70,9 +70,9 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
         } catch (Exception e) {
             LogManager.getLogger().error("Error loading PhaseDisplay background image!", e);
         }
-        
+
         setBorder(new MegamekBorder(borderSkinComp));
-        butDone = new MegamekButton("", buttonSkinComp);
+        butDone = new MegamekButton("DONE", buttonSkinComp);
         butDone.setActionCommand("doneButton");
         if (clientgui != null) {
             butDone.addActionListener(new AbstractAction() {
@@ -277,12 +277,12 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
     public void gameNewAction(GameNewActionEvent e) {
         //noaction default
     }
-    
+
     @Override
     public void gameClientFeedbackRequest(GameCFREvent evt) {
         //noaction default
     }
-    
+
     @Override
     public void gameVictory(GameVictoryEvent e) {
         //noaction default

@@ -24,7 +24,7 @@ import java.util.*;
 
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 
-public abstract class AttackPhaseDisplay extends StatusBarPhaseDisplay {
+public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
     // client list of attacks user has input
 //    protected Vector<AbstractEntityAction> attacks;
     protected Vector<EntityAction> attacks;
@@ -35,13 +35,7 @@ public abstract class AttackPhaseDisplay extends StatusBarPhaseDisplay {
     abstract protected void setDoneButtonValid();
     abstract protected void setDoneButtonSkip();
 
-    @Override
-    protected boolean getPhaseMayUseNagNoAction()
-    {
-        return true;
-    }
-
-    protected void refreshAttacksUI()
+    protected void updateDonePanel()
     {
         if (attacks.isEmpty()) {
             setDoneButtonSkip();
@@ -53,27 +47,27 @@ public abstract class AttackPhaseDisplay extends StatusBarPhaseDisplay {
     protected void removeAttack(Object o)
     {
         attacks.remove(o);
-        refreshAttacksUI();
+        updateDonePanel();
     }
 
     /** removes all elements from the local temporary attack list */
     protected void removeAllAttacks()
     {
         attacks.removeAllElements();
-        refreshAttacksUI();
+        updateDonePanel();
     }
 
     /** add an attack at the given index to the local temporary attack list */
     protected void addAttack(int index, EntityAction entityAction)
     {
         attacks.add(index, entityAction);
-        refreshAttacksUI();
+        updateDonePanel();
     }
 
     /** add an attack to the end of the local temporary attack list */
     protected void addAttack(EntityAction entityAction)
     {
         attacks.add(entityAction);
-        refreshAttacksUI();
+        updateDonePanel();
     }
 }

@@ -143,12 +143,12 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
     @Override
     protected void setDoneButtonValid() {
         // could add cmd
-        updateDonePanel(Messages.getString("PhysicalDisplay.Attack"), true);
+        updateDonePanel(Messages.getString("PhysicalDisplay.Attack"), Messages.getString("PhysicalDisplay.Skip"), true);
     }
 
     @Override
     protected void setDoneButtonSkip() {
-        updateDonePanel(Messages.getString("PhysicalDisplay.Skip"), false);
+        updateDonePanel(Messages.getString("PhysicalDisplay.Attack"), Messages.getString("PhysicalDisplay.Skip"), false);
     }
 
     @Override
@@ -272,6 +272,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
      * Does turn start stuff
      */
     private void beginMyTurn() {
+        initDonePanelForNewTurn();
         clientgui.maybeShowUnitDisplay();
         GameTurn turn = clientgui.getClient().getMyTurn();
         // There's special processing for countering break grapple.

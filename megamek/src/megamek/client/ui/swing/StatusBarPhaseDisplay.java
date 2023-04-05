@@ -57,14 +57,10 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     private static final int BUTTON_ROWS = 2;
     private static final String SBPD_KEY_CLEARBUTTON = "clearButton";
 
-    private MegamekToggleButton butIgnoreNag;
     /**
      * timer that ends turn if time limit set in options is over
      */
     private TurnTimer tt;
-
-    private boolean isValidAction = false;
-    private boolean ignoreNag = false;
 
     /**
      * Interface that defines what a command for a phase is.
@@ -220,34 +216,36 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
             }
         }
 
-        var donePanel = new UIUtil.FixedXPanel();
-        donePanel.setOpaque(false);
-        donePanel.setLayout(new GridLayout(2,1));
-        donePanel.add(butDone);
-        butDone.setPreferredSize(new Dimension(DONE_BUTTON_WIDTH, MIN_BUTTON_SIZE.height * 2));
+        var donePanel = setupDonePanel();
 
-        butIgnoreNag = new MegamekToggleButton("Confirm", SkinSpecification.UIComponents.PhaseDisplayDoneButton.getComp());
-        donePanel.add(butIgnoreNag);
-        butIgnoreNag.setPreferredSize(new Dimension(DONE_BUTTON_WIDTH, MIN_BUTTON_SIZE.height * 1));
-        if (clientgui != null) {
-            butIgnoreNag.addActionListener(new AbstractAction() {
-                private static final long serialVersionUID = -5034474968902280850L;
+        //        var donePanel = new UIUtil.FixedXPanel();
+//        donePanel.setOpaque(false);
+//        donePanel.setLayout(new GridLayout(2,1));
+//        donePanel.add(butDone);
+//        butDone.setPreferredSize(new Dimension(DONE_BUTTON_WIDTH, MIN_BUTTON_SIZE.height * 2));
 
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if (isIgnoringEvents()) {
-                        return;
-                    }
-                    if ((clientgui.getClient().isMyTurn())
-                            || (clientgui.getClient().getGame().getTurn() == null)
-                            || (clientgui.getClient().getGame().getPhase().isReport())) {
-                        ignoreNag = !ignoreNag;
-                        updateDonePanel();
-                    }
-                }
-            });
-        }
-        setupDonePanel();
+//        butIgnoreNag = new MegamekToggleButton("Confirm", SkinSpecification.UIComponents.PhaseDisplayDoneButton.getComp());
+//        donePanel.add(butIgnoreNag);
+//        butIgnoreNag.setPreferredSize(new Dimension(DONE_BUTTON_WIDTH, MIN_BUTTON_SIZE.height * 1));
+//        if (clientgui != null) {
+//            butIgnoreNag.addActionListener(new AbstractAction() {
+//                private static final long serialVersionUID = -5034474968902280850L;
+//
+//                @Override
+//                public void actionPerformed(ActionEvent e) {
+//                    if (isIgnoringEvents()) {
+//                        return;
+//                    }
+//                    if ((clientgui.getClient().isMyTurn())
+//                            || (clientgui.getClient().getGame().getTurn() == null)
+//                            || (clientgui.getClient().getGame().getPhase().isReport())) {
+//                        ignoreNag = !ignoreNag;
+//                        updateDonePanel();
+//                    }
+//                }
+//            });
+//        }
+//        setupDonePanel();
 
         panButtons.add(buttonsPanel);
         panButtons.add(donePanel);
@@ -256,55 +254,59 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         panButtons.repaint();
     }
 
-    /** @return true if a nag window should be shown when there is no action given to current unit.
-     * This is true if user option wants a nag and they have not preemptively checked the done box */
-    protected boolean needNagForNoAction()
+    protected UIUtil.FixedXPanel setupDonePanel()
     {
-        return GUIP.getNagForNoAction() && !butIgnoreNag.isSelected();
+
+        var donePanel = new UIUtil.FixedXPanel();
+        donePanel.setOpaque(false);
+        donePanel.setLayout(new GridLayout(2,1));
+        donePanel.add(butDone);
+        butDone.setPreferredSize(new Dimension(DONE_BUTTON_WIDTH, MIN_BUTTON_SIZE.height * 2));
+        return donePanel;
     }
 
-    /** @return true if this phase may interrupt ready() with a nag if no actions is given */
-    protected boolean getPhaseMayUseNagNoAction()
-    {
-        return false;
-    }
+//    /** @return true if a nag window should be shown when there is no action given to current unit.
+//     * This is true if user option wants a nag and they have not preemptively checked the done box */
+//    protected boolean needNagForNoAction()
+//    {
+//        return GUIP.getNagForNoAction() && !butIgnoreNag.isSelected();
+//    }
+//
+//    /** @return true if this phase may interrupt ready() with a nag if no actions is given */
+//    protected boolean getPhaseMayUseNagNoAction()
+//    {
+//        return false;
+//    }
+//
+//    /** updates the "Done Button"s @butDone and @butIgnoreNag to show if a valid action has
+//     * been given by the user. */
+//    protected void updateDonePanel(String butDoneLabel, boolean validAction) {
+//        isValidAction = validAction;
+//        butDone.setText("<html><b>" + butDoneLabel + "</b></html>");
+//        updateDonePanel();
+//    }
+//
+//    private void updateDonePanel()
+//    {
+//        if (getPhaseMayUseNagNoAction()) {
+//            if (isValidAction || ignoreNag)
+//            {
+//                butDone.setEnabled(true);
+//                butIgnoreNag.setEnabled(false);
+//            } else {
+//                butDone.setEnabled(false);
+//                butIgnoreNag.setEnabled(true);
+//            }
+//        }
+//        updateButIgnoreNag();
+//    }
+//
+//    private void updateButIgnoreNag()
+//    {
+//        butIgnoreNag.setSelected(ignoreNag || this.isValidAction);
+//    }
 
-    /** updates the "Done Button"s @butDone and @butIgnoreNag to show if a valid action has
-     * been given by the user. */
-    protected void updateDonePanel(String butDoneLabel, boolean validAction) {
-        isValidAction = validAction;
-        butDone.setText("<html><b>" + butDoneLabel + "</b></html>");
-        updateDonePanel();
-    }
 
-    private void updateDonePanel()
-    {
-        if (getPhaseMayUseNagNoAction()) {
-            if (isValidAction || ignoreNag)
-            {
-                butDone.setEnabled(true);
-                butIgnoreNag.setEnabled(false);
-            } else {
-                butDone.setEnabled(false);
-                butIgnoreNag.setEnabled(true);
-            }
-        }
-        updateButIgnoreNag();
-    }
-
-    private void updateButIgnoreNag()
-    {
-        butIgnoreNag.setSelected(ignoreNag || this.isValidAction);
-    }
-
-    protected void setupDonePanel()
-    {
-        if (getPhaseMayUseNagNoAction()) {
-            butIgnoreNag.setVisible(true);
-        } else {
-            butIgnoreNag.setVisible(false);
-        }
-    }
 
     /** Clears the actions of this phase. */
     public abstract void clear();
@@ -337,7 +339,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         } else if (e.getName().equals(KeyBindParser.KEYBINDS_CHANGED)) {
             setButtonsTooltips();
         }
-        setupDonePanel();
+//        setupDonePanel();
     }
 
     @Override

@@ -205,12 +205,12 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
     @Override
     protected void setDoneButtonValid() {
         // could add cmd
-        updateDonePanel(Messages.getString("TargetingPhaseDisplay.Fire"), true);
+        updateDonePanel(Messages.getString("TargetingPhaseDisplay.Fire"), Messages.getString("TargetingPhaseDisplay.Skip"),true);
     }
 
     @Override
     protected void setDoneButtonSkip() {
-        updateDonePanel(Messages.getString("TargetingPhaseDisplay.Skip"), false);
+        updateDonePanel(Messages.getString("TargetingPhaseDisplay.Fire"), Messages.getString("TargetingPhaseDisplay.Skip"), false);
     }
 
     @Override
@@ -633,6 +633,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
      * Does turn start stuff
      */
     private void beginMyTurn() {
+        initDonePanelForNewTurn();
         target = null;
 
         if (!clientgui.getBoardView().isMovingUnits()) {

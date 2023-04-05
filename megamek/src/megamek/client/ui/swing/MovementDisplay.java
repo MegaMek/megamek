@@ -60,7 +60,7 @@ import static megamek.common.options.OptionsConstants.ADVGRNDMOV_TACOPS_ZIPLINES
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
 
-public class MovementDisplay extends StatusBarPhaseDisplay {
+public class MovementDisplay extends ActionPhaseDisplay {
     private static final long serialVersionUID = -7246715124042905688L;
 
     // Defines for the different flags
@@ -985,9 +985,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     protected void updateDonePanel()
     {
         if (cmd == null || cmd.length() == 0) {
-            updateDonePanel(Messages.getString("MovementDisplay.Skip"), false);
+            updateDonePanel(Messages.getString("MovementDisplay.Move"), Messages.getString("MovementDisplay.Skip"), false);
         } else {
-            updateDonePanel(Messages.getString("MovementDisplay.Move"), true);
+            updateDonePanel(Messages.getString("MovementDisplay.Move"), Messages.getString("MovementDisplay.Skip"), true);
         }
     }
 
@@ -995,8 +995,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * Enables relevant buttons and sets up for your turn.
      */
     private void beginMyTurn() {
-        updateDonePanel();
-//        butDone.setEnabled(true);
+        initDonePanelForNewTurn();
+//        updateDonePanel();
+        initDonePanelForNewTurn();
         setNextEnabled(true);
         setForwardIniEnabled(true);
         clientgui.getBoardView().clearFieldofF();
@@ -1063,6 +1064,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         setForwardIniEnabled(false);
         getBtn(MoveCommand.MOVE_MORE).setEnabled(false);
         butDone.setEnabled(false);
+        butIgnoreNag.setEnabled(false);
         setLoadEnabled(false);
         setMountEnabled(false);
         setTowEnabled(false);
@@ -1248,18 +1250,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
         updateButtons();
     }
-
-    @Override
-    protected boolean getPhaseMayUseNagNoAction()
-    {
-        return true;
-    }
-
-//    @Override protected synchronized boolean userHasInputActions()
-//    {
-    // this "freezes" the UI
-//        return cmd.length() != 0;
-//    }
 
     /**
      * Sends a data packet indicating the chosen movement.

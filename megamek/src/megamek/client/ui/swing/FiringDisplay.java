@@ -1796,7 +1796,6 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         }
 
         // remove attacks, set weapons available again
-//        Enumeration<AbstractEntityAction> i = attacks.elements();
         Enumeration<EntityAction> i = attacks.elements();
         while (i.hasMoreElements()) {
             Object o = i.nextElement();

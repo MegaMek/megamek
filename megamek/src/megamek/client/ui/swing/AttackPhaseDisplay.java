@@ -31,7 +31,9 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
     protected AttackPhaseDisplay(ClientGUI cg) {
         super(cg);
     }
+
     abstract protected void setDoneButtonValid();
+
     abstract protected void setDoneButtonSkip();
 
     protected void updateDonePanel()

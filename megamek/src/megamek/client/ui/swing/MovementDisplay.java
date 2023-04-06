@@ -1002,8 +1002,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
      */
     private void beginMyTurn() {
         initDonePanelForNewTurn();
-//        updateDonePanel();
-        initDonePanelForNewTurn();
         setNextEnabled(true);
         setForwardIniEnabled(true);
         clientgui.getBoardView().clearFieldofF();
@@ -1167,7 +1165,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // update some GUI elements
         clientgui.getBoardView().clearMovementData();
         updateDonePanel();
-
         updateProneButtons();
         updateRACButton();
         updateSearchlightButton();

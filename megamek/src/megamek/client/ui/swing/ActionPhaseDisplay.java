@@ -18,7 +18,6 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.client.ui.swing.StatusBarPhaseDisplay;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.UIUtil;
@@ -77,7 +76,6 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
             // Register the action for DONE
             clientgui.controller.registerCommandAction(KeyCommandBind.DONE_NO_ACTION.cmd,
                     new CommandAction() {
-
                         @Override
                         public boolean shouldPerformAction() {
                             if (((!clientgui.getClient().isMyTurn()
@@ -99,26 +97,25 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
                             ready();
                         }
                     });
-
         }
 
-        updateVisibilityDonePanel();
+        updateDonePanelVisibility();
         return donePanel;
     }
 
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
         super.preferenceChange(e);
-        updateVisibilityDonePanel();
+        updateDonePanelVisibility();
     }
 
     protected void initDonePanelForNewTurn()
     {
         ignoreNoActionNag = false;
-        updateVisibilityDonePanel();
+        updateDonePanelVisibility();
     }
 
-    private void updateVisibilityDonePanel()
+    private void updateDonePanelVisibility()
     {
         if (GUIP.getNagForNoAction()) {
             butIgnoreNag.setVisible(true);
@@ -129,13 +126,19 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
     }
 
     /**
-     * @return true if a nag window should be shown when there is no action given to current unit.
+     * @return true if a nag dialog should be shown when there is no action given to current unit.
      * This is true if user option wants a nag and they have not preemptively checked @butIgnoreNag
      */
     protected boolean needNagForNoAction() {
         return GUIP.getNagForNoAction() && !ignoreNoActionNag;
     }
 
+    /** set labels and enables on the done buttons and depending on the GUIP options
+     *
+     * @param actionLabel
+     * @param noActionLabel
+     * @param doingAction
+     */
     protected void updateDonePanel(String actionLabel, String noActionLabel, boolean doingAction) {
         isDoingAction = doingAction;
         if (GUIP.getNagForNoAction()) {

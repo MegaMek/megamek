@@ -57,7 +57,7 @@ public class ASStatsExporter {
         }
     }
 
-    private void prepareModel() {
+    private void prepareData() {
         model = new HashMap<>();
         if (element != null) {
             model.put("chassis", element.getChassis());
@@ -70,10 +70,7 @@ public class ASStatsExporter {
             model.put("usesOV", element.usesOV());
             model.put("MV", AlphaStrikeHelper.getMovementAsString(element));
             model.put("usesArcs", element.usesArcs());
-            model.put("dmgS", element.getStandardDamage().S.toStringWithZero());
-            model.put("dmgM", element.getStandardDamage().M.toStringWithZero());
-            model.put("dmgL", element.getStandardDamage().L.toStringWithZero());
-            model.put("dmgE", element.getStandardDamage().E.toStringWithZero());
+            model.put("dmg", dmgData(element.getStandardDamage()));
             model.put("usesE", element.usesSMLE());
             model.put("Arm", element.getFullArmor());
             model.put("Th", element.getThreshold());
@@ -81,12 +78,31 @@ public class ASStatsExporter {
             model.put("Str", element.getFullStructure());
             model.put("specials", element.getSpecialAbilities().getSpecialsDisplayString(", ", element));
             if (element.usesArcs()) {
-                model.put("frontArc", element.getFrontArc().getSpecialsExportString(", ", element));
-                model.put("leftArc", element.getLeftArc().getSpecialsExportString(", ", element));
-                model.put("rightArc", element.getRightArc().getSpecialsExportString(", ", element));
-                model.put("rearArc", element.getRearArc().getSpecialsExportString(", ", element));
+                model.put("frontArc", arcData(element.getFrontArc()));
+                model.put("leftArc", arcData(element.getLeftArc()));
+                model.put("rightArc", arcData(element.getRightArc()));
+                model.put("rearArc", arcData(element.getRearArc()));
             }
         }
+    }
+
+    private HashMap<String, Object> arcData(ASSpecialAbilityCollection arc) {
+        HashMap<String, Object> arcData = new HashMap<>();
+        arcData.put("STD", dmgData(arc.getStdDamage()));
+        arcData.put("CAP", dmgData(arc.getCAP()));
+        arcData.put("SCAP", dmgData(arc.getSCAP()));
+        arcData.put("MSL", dmgData(arc.getMSL()));
+        arcData.put("specials", arc.getSpecialsDisplayString(element));
+        return arcData;
+    }
+
+    private HashMap<String, Object> dmgData(ASDamageVector dmg) {
+        HashMap<String, Object> dmgData = new HashMap<>();
+        dmgData.put("dmgS", dmg.S.toStringWithZero());
+        dmgData.put("dmgM", dmg.M.toStringWithZero());
+        dmgData.put("dmgL", dmg.L.toStringWithZero());
+        dmgData.put("dmgE", dmg.E.toStringWithZero());
+        return dmgData;
     }
 
     /**
@@ -100,7 +116,7 @@ public class ASStatsExporter {
             return "No stats: a null unit was passed to ASStatsExporter.";
         }
         if (model == null) {
-            prepareModel();
+            prepareData();
         }
         try (final ByteArrayOutputStream os = new ByteArrayOutputStream(); final Writer out = new OutputStreamWriter(os)) {
             template.process(model, out);

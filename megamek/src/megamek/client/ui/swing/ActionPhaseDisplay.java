@@ -86,7 +86,7 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
                                     || clientgui.getBoardView().getChatterBoxActive()
                                     || display.isIgnoringEvents()
                                     || !display.isVisible()
-                                    || !butIgnoreNag.isEnabled()) {
+                                    || !(butDone.isEnabled() || butIgnoreNag.isEnabled())) {
                                 return false;
                             } else {
                                 return true;

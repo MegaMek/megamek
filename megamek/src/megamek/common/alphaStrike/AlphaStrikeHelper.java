@@ -167,20 +167,6 @@ public class AlphaStrikeHelper {
         return dataLine.toString();
     }
 
-    /** @return The given arc of the given element. Empty when the element does not use arcs. */
-    public static ASSpecialAbilityCollection getArc(ASCardDisplayable element, ASArcs arc) {
-        switch (arc) {
-            case FRONT:
-                return element.getFrontArc();
-            case LEFT:
-                return element.getLeftArc();
-            case REAR:
-                return element.getRearArc();
-            default:
-                return element.getRightArc();
-        }
-    }
-
     // Do not instantiate
     private AlphaStrikeHelper() { }
 }

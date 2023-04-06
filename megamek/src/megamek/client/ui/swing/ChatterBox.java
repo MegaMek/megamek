@@ -23,6 +23,8 @@ import megamek.common.preference.PreferenceManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.LinkedList;
@@ -124,8 +126,24 @@ public class ChatterBox implements KeyListener, IPreferenceChangeListener {
         playerList.setVisibleRowCount(GUIPreferences.getInstance().getInt(CB_KEY_ADVANCED_CHATBOXSIZE));
         scrPlayers = new JScrollPane(playerList);
         scrPlayers.setPreferredSize(new Dimension(250, chatArea.getHeight()));
-        inputField = new JTextField();
+        inputField = new JTextField(Messages.getString("ChatLounge.ChatPlaceholder"));
         inputField.addKeyListener(this);
+        inputField.addFocusListener(new FocusListener() {
+            private final String chatPlaceholder = Messages.getString("ChatLounge.ChatPlaceholder");
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (inputField.getText().equals(chatPlaceholder)) {
+                    inputField.setText("");
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (inputField.getText().equals("")) {
+                    inputField.setText(chatPlaceholder);
+                }
+            }
+        });
         butDone = new JButton(Messages.getString("ChatterBox.ImDone"));
         butDone.setEnabled(false);
 

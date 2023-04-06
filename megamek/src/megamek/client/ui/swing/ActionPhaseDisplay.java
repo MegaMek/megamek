@@ -153,6 +153,11 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
     }
 
     protected void updateDonePanelEnabled() {
+        // Note for reviewers: currently this toggles between the two buttons being active,
+        // but if that behavior is too different from current,
+        // it could just enable/disable the ignoreNag button
+        // and leave the done button as is.
+
         if (isDoingAction || ignoreNoActionNag) {
             butDone.setEnabled(true);
             butIgnoreNag.setEnabled(false);

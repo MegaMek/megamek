@@ -64,21 +64,22 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
             KeyCommandBind.NEXT_TARGET,
             KeyCommandBind.NEXT_TARGET_VALID,
             KeyCommandBind.NEXT_TARGET_NOALLIES,
-            KeyCommandBind.NEXT_TARGET_VALID_NO_ALLIES
+            KeyCommandBind.NEXT_TARGET_VALID_NO_ALLIES,
+            KeyCommandBind.DONE_NO_ACTION
     );
 
     /** The keybinds to be shown during the movement phase */
     private static final List<KeyCommandBind> BINDS_MOVE = Arrays.asList(
             KeyCommandBind.TOGGLE_MOVEMODE,
             KeyCommandBind.UNDO_LAST_STEP,
-            KeyCommandBind.TOGGLE_CONVERSIONMODE
+            KeyCommandBind.TOGGLE_CONVERSIONMODE,
+            KeyCommandBind.DONE_NO_ACTION
     );
 
     /** The keybinds to be shown in all phases during the local player's turn */
     private static final List<KeyCommandBind> BINDS_MY_TURN = Arrays.asList(
             KeyCommandBind.CANCEL,
             KeyCommandBind.DONE,
-            KeyCommandBind.DONE_NO_ACTION,
             KeyCommandBind.NEXT_UNIT,
             KeyCommandBind.PREV_UNIT,
             KeyCommandBind.CENTER_ON_SELECTED

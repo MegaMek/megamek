@@ -979,9 +979,21 @@ public class MovementDisplay extends ActionPhaseDisplay {
     protected void updateDonePanel()
     {
         if (cmd == null || cmd.length() == 0) {
-            updateDonePanel(Messages.getString("MovementDisplay.Move"), Messages.getString("MovementDisplay.Skip"), false);
+            updateDonePanel( Messages.getString("MovementDisplay.Move"), Messages.getString("MovementDisplay.Skip"), false);
         } else {
-            updateDonePanel(Messages.getString("MovementDisplay.Move"), Messages.getString("MovementDisplay.Skip"), true);
+            boolean psrCheck = (!SharedUtility.doPSRCheck(cmd).isBlank())
+                    || (!SharedUtility.doThrustCheck(cmd, clientgui.getClient()).isBlank());
+            boolean damageCheck = cmd.shouldMechanicalJumpCauseFallDamage()
+                    || cmd.hasActiveMASC()
+                    || (!(ce() instanceof VTOL) && cmd.hasActiveSupercharger())
+                    || cmd.willCrushBuildings();
+
+            String moveMsg =  Messages.getString("MovementDisplay.Move")
+                    + "<sup>"
+                    + (psrCheck ? "*" : "")
+                    + (damageCheck ? " !" : "")
+                    +"</sup>";
+            updateDonePanel(moveMsg, Messages.getString("MovementDisplay.Skip"), true);
         }
     }
 

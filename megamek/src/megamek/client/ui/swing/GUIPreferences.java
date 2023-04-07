@@ -76,15 +76,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_KEY_REPEAT_RATE = "AdvancedKeyRepeatRate";
     public static final String ADVANCED_SHOW_FPS = "AdvancedShowFPS";
     public static final String ADVANCED_BUTTONS_PER_ROW = "AdvancedButtonsPerRow";
-    public static final String ADVANCED_ARMORMINI_UNITS_PER_BLOCK = "AdvancedArmorMiniUnitsPerBlock";
-    public static final String ADVANCED_ARMORMINI_ARMOR_CHAR = "AdvancedArmorMiniArmorChar";
-    public static final String ADVANCED_ARMORMINI_CAP_ARMOR_CHAR = "AdvancedArmorMiniCapArmorChar";
-    public static final String ADVANCED_ARMORMINI_IS_CHAR = "AdvancedArmorMiniISChar";
-    public static final String ADVANCED_ARMORMINI_DESTROYED_CHAR = "AdvancedArmorMiniDestroyedChar";
-    public static final String ADVANCED_ARMORMINI_COLOR_INTACT = "AdvancedArmorMiniColorIntact";
-    public static final String ADVANCED_ARMORMINI_COLOR_PARTIAL_DMG = "AdvancedArmorMiniColorPartialDmg";
-    public static final String ADVANCED_ARMORMINI_COLOR_DAMAGED = "AdvancedArmorMiniColorDamaged";
-    public static final String ADVANCED_ARMORMINI_FONT_SIZE_MOD = "AdvancedArmorMiniFrontSizeMod";
     public static final String ADVANCED_ROUND_REPORT_SPRITES = "AdvancedRoundReportSprites";
     public static final String ADVANCED_LOW_FOLIAGE_COLOR = "AdvancedLowFoliageColor";
     public static final String ADVANCED_NO_SAVE_NAG = "AdvancedNoSaveNag";
@@ -92,13 +83,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_MAP_TEXT_COLOR = "AdvancedMapTextColor";
     public static final String ADVANCED_WARNING_COLOR = "AdvancedWarningColor";
     public static final String ADVANCED_TMM_PIP_MODE = "AdvancedTmmPipMode";
-    public static final String ADVANCED_HEAT_COLOR_4 = "AdvancedHeatColor4";
-    public static final String ADVANCED_HEAT_COLOR_7 = "AdvancedHeatColor7";
-    public static final String ADVANCED_HEAT_COLOR_9 = "AdvancedHeatColor9";
-    public static final String ADVANCED_HEAT_COLOR_12 = "AdvancedHeatColor12";
-    public static final String ADVANCED_HEAT_COLOR_13 = "AdvancedHeatColor13";
-    public static final String ADVANCED_HEAT_COLOR_14 = "AdvancedHeatColor14";
-    public static final String ADVANCED_HEAT_COLOR_OVERHEAT = "AdvancedHeatColorOverheat";
     public static final String ADVANCED_REPORT_COLOR_LINK = "AdvancedReportColorLink";
 
     public static final String ADVANCED_PLANETARY_CONDITIONS_COLOR_TITLE = "AdvancedPlanetaryConditionsColorTitle";
@@ -111,11 +95,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_PLANETARY_CONDITIONS_SHOW_LABELS = "AdvancedPlanetaryConditionsShowLabels";
     public static final String ADVANCED_PLANETARY_CONDITIONS_SHOW_VALUES = "AdvancedPlanetaryConditionsShowValues";
     public static final String ADVANCED_PLANETARY_CONDITIONS_SHOW_INDICATORS = "AdvancedPlanetaryConditionsShowIndicators";
-    public static final String ADVANCED_UNITTOOLTIP_SEENBYRESOLUTION = "AdvancedUnitToolTipSeenByResolution";
     public static final String ADVANCED_DOCK_ON_LEFT = "AdvancedDockOnLeft";
     public static final String ADVANCED_DOCK_MULTIPLE_ON_Y_AXIS = "AdvancedDockMultipleOnYAxis";
     public static final String ADVANCED_PLAYERS_REMAINING_TO_SHOW = "AdvancedPlayersRemainingToShow";
-    public static final String ADVANCED_UNIT_DISPLAY_WEAPON_LIST_HEIGHT = "AdvancedUnitDisplayWeaponListHeight";
 
     /* --End advanced settings-- */
 
@@ -149,6 +131,31 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String UNIT_DISPLAY_AUTO_DISPLAY_NONREPORT_PHASE = "UnitDisplayAutoDiplayNonReportPhase";
     public static final String UNIT_DISPLAY_ENABLED = "UnitDisplayEnabled";
     public static final String UNIT_DISPLAY_LOCATION = "UnitDisplayLocation";
+    public static final String UNIT_DISPLAY_HEAT_COLOR_1 = "UnitDisplayHeatColor1";
+    public static final String UNIT_DISPLAY_HEAT_COLOR_2 = "UnitDisplayHeatColor2";
+    public static final String UNIT_DISPLAY_HEAT_COLOR_3 = "UnitDisplayHeatColor3";
+    public static final String UNIT_DISPLAY_HEAT_COLOR_4 = "UnitDisplayHeatColor4";
+    public static final String UNIT_DISPLAY_HEAT_COLOR_5 = "UnitDisplayHeatColor5";
+    public static final String UNIT_DISPLAY_HEAT_COLOR_6 = "UnitDisplayHeatColor6";
+    public static final String UNIT_DISPLAY_HEAT_COLOR_OVERHEAT = "UnitDisplayColorOverheat";
+    public static final String UNIT_DISPLAY_HEAT_VALUE_1 = "UnitDisplayHeatValue1";
+    public static final String UNIT_DISPLAY_HEAT_VALUE_2 = "UnitDisplayHeatValue2";
+    public static final String UNIT_DISPLAY_HEAT_VALUE_3 = "UnitDisplayHeatValue3";
+    public static final String UNIT_DISPLAY_HEAT_VALUE_4 = "UnitDisplayHeatValue4";
+    public static final String UNIT_DISPLAY_HEAT_VALUE_5 = "UnitDisplayHeatValue5";
+    public static final String UNIT_DISPLAY_HEAT_VALUE_6 = "UnitDisplayHeatValue6";
+    public static final String UNIT_DISPLAY_WEAPON_LIST_HEIGHT = "UnitDisplayWeaponListHeight";
+    public static final String UNIT_TOOLTIP_SEENBYRESOLUTION = "UnitToolTipSeenByResolution";
+    public static final String UNIT_TOOLTIP_ARMORMINI_UNITS_PER_BLOCK = "UnitToolTipArmorMiniUnitsPerBlock";
+    public static final String UNIT_TOOLTIP_ARMORMINI_ARMOR_CHAR = "UnitToolTipArmorMiniArmorChar";
+    public static final String UNIT_TOOLTIP_ARMORMINI_CAP_ARMOR_CHAR = "UnitToolTipArmorMiniCapArmorChar";
+    public static final String UNIT_TOOLTIP_ARMORMINI_IS_CHAR = "UnitToolTipArmorMiniISChar";
+    public static final String UNIT_TOOLTIP_ARMORMINI_CRITICAL_CHAR = "UnitToolTipArmorMiniCriticalChar";
+    public static final String UNIT_TOOLTIP_ARMORMINI_DESTROYED_CHAR = "UnitToolTipArmorMiniDestroyedChar";
+    public static final String UNIT_TOOLTIP_ARMORMINI_COLOR_INTACT = "UnitToolTipArmorMiniColorIntact";
+    public static final String UNIT_TOOLTIP_ARMORMINI_COLOR_PARTIAL_DMG = "UnitToolTipArmorMiniColorPartialDmg";
+    public static final String UNIT_TOOLTIP_ARMORMINI_COLOR_DAMAGED = "UnitToolTipArmorMiniColorDamaged";
+    public static final String UNIT_TOOLTIP_ARMORMINI_FONT_SIZE_MOD = "UnitToolTipArmorMiniFrontSizeMod";
     public static final String SPLIT_PANE_A_DIVIDER_LOCATION = "SplitPaneADividerLocation";
     public static final String GAME_SUMMARY_BOARD_VIEW = "GameSummaryBoardView";
     public static final String GAME_SUMMARY_MINIMAP = "GameSummaryMinimap";
@@ -326,12 +333,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
     private static final Color DEFAULT_MEDIUM_GREEN = new Color(100, 180, 100);
 
     // Heat Scale
-    private static final Color DEFAULT_HEAT_4_COLOR = new Color(64, 128, 255);
-    private static final Color DEFAULT_HEAT_7_COLOR = new Color(64, 164, 128);
-    private static final Color DEFAULT_HEAT_9_COLOR = new Color(48, 212, 48);
-    private static final Color DEFAULT_HEAT_12_COLOR = new Color(228, 198, 0);
-    private static final Color DEFAULT_HEAT_13_COLOR = new Color(248, 128, 0);
-    private static final Color DEFAULT_HEAT_14_COLOR = new Color(248, 64, 64);
+    private static final Color DEFAULT_HEAT_1_COLOR = new Color(64, 128, 255);
+    private static final Color DEFAULT_HEAT_2_COLOR = new Color(64, 164, 128);
+    private static final Color DEFAULT_HEAT_3_COLOR = new Color(48, 212, 48);
+    private static final Color DEFAULT_HEAT_4_COLOR = new Color(228, 198, 0);
+    private static final Color DEFAULT_HEAT_5_COLOR = new Color(248, 128, 0);
+    private static final Color DEFAULT_HEAT_6_COLOR = new Color(248, 64, 64);
     private static final Color DEFAULT_HEAT_OVERHEAT_COLOR = new Color(248, 12, 12);
 
     private static final Color DEFAULT_PLANETARY_CONDITIONS_TEXT_COLOR = new Color(200, 250, 200);
@@ -380,15 +387,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_UNITOVERVIEW_VALID_COLOR, DEFAULT_CYAN);
         setDefault(ADVANCED_FIRE_SOLN_CANSEE_COLOR, DEFAULT_CYAN);
         setDefault(ADVANCED_FIRE_SOLN_NOSEE_COLOR, DEFAULT_RED);
-        setDefault(ADVANCED_ARMORMINI_UNITS_PER_BLOCK, 10);
-        setDefault(ADVANCED_ARMORMINI_ARMOR_CHAR, "\u2B1B"); // Centered Filled Square
-        setDefault(ADVANCED_ARMORMINI_CAP_ARMOR_CHAR, "\u26CA"); // Shield
-        setDefault(ADVANCED_ARMORMINI_IS_CHAR, "\u25A3"); // Centered Square with Dot
-        setDefault(ADVANCED_ARMORMINI_DESTROYED_CHAR, "\u2715"); // Centered x
-        setDefault(ADVANCED_ARMORMINI_COLOR_INTACT, DEFAULT_MEDIUM_GREEN);
-        setDefault(ADVANCED_ARMORMINI_COLOR_PARTIAL_DMG, DEFAULT_MEDIUM_YELLOW);
-        setDefault(ADVANCED_ARMORMINI_COLOR_DAMAGED, DEFAULT_MEDIUM_DARK_RED);
-        setDefault(ADVANCED_ARMORMINI_FONT_SIZE_MOD, -2);
         setDefault(ADVANCED_WARNING_COLOR, DEFAULT_RED);
         setDefault(ADVANCED_TMM_PIP_MODE, 2); // show pips with colors based on move type
         setDefault(ADVANCED_LOW_FOLIAGE_COLOR, DEFAULT_MAP_BRIGHT_GREEN);
@@ -416,14 +414,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ADVANCED_BUTTONS_PER_ROW, 12);
         store.setDefault(ADVANCED_ROUND_REPORT_SPRITES, true);
 
-        setDefault(ADVANCED_HEAT_COLOR_4, DEFAULT_HEAT_4_COLOR);
-        setDefault(ADVANCED_HEAT_COLOR_7, DEFAULT_HEAT_7_COLOR);
-        setDefault(ADVANCED_HEAT_COLOR_9, DEFAULT_HEAT_9_COLOR);
-        setDefault(ADVANCED_HEAT_COLOR_12, DEFAULT_HEAT_12_COLOR);
-        setDefault(ADVANCED_HEAT_COLOR_13, DEFAULT_HEAT_13_COLOR);
-        setDefault(ADVANCED_HEAT_COLOR_14, DEFAULT_HEAT_14_COLOR);
-        setDefault(ADVANCED_HEAT_COLOR_OVERHEAT, DEFAULT_HEAT_OVERHEAT_COLOR);
-
         setDefault(ADVANCED_PLANETARY_CONDITIONS_COLOR_TITLE, Color.WHITE);
         setDefault(ADVANCED_PLANETARY_CONDITIONS_COLOR_TEXT, DEFAULT_PLANETARY_CONDITIONS_TEXT_COLOR);
         setDefault(ADVANCED_PLANETARY_CONDITIONS_COLOR_COLD, DEFAULT_PLANETARY_CONDITIONS_COLD_COLOR);
@@ -436,12 +426,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_PLANETARY_CONDITIONS_SHOW_INDICATORS, true);
 
         setDefault(ADVANCED_REPORT_COLOR_LINK, DEFAULT_REPORT_LINK_COLOR);
-        setDefault(ADVANCED_UNITTOOLTIP_SEENBYRESOLUTION, 3);
         setDefault(ADVANCED_DOCK_ON_LEFT, true);
         setDefault(ADVANCED_DOCK_MULTIPLE_ON_Y_AXIS, true);
         setDefault(ADVANCED_PLAYERS_REMAINING_TO_SHOW, 3);
 
-        setDefault(ADVANCED_UNIT_DISPLAY_WEAPON_LIST_HEIGHT, 200);
+        setDefault(UNIT_DISPLAY_WEAPON_LIST_HEIGHT, 200);
 
         store.setDefault(FOV_HIGHLIGHT_RINGS_RADII, "5 10 15 20 25");
         store.setDefault(FOV_HIGHLIGHT_RINGS_COLORS_HSB, "0.3 1.0 1.0 ; 0.45 1.0 1.0 ; 0.6 1.0 1.0 ; 0.75 1.0 1.0 ; 0.9 1.0 1.0 ; 1.05 1.0 1.0 ");
@@ -478,6 +467,31 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(UNIT_DISPLAY_ENABLED, true);
         store.setDefault(UNIT_DISPLAY_LOCATION, 0);
         store.setDefault(SPLIT_PANE_A_DIVIDER_LOCATION, 300);
+        setDefault(UNIT_DISPLAY_HEAT_COLOR_1, DEFAULT_HEAT_1_COLOR);
+        setDefault(UNIT_DISPLAY_HEAT_COLOR_2, DEFAULT_HEAT_2_COLOR);
+        setDefault(UNIT_DISPLAY_HEAT_COLOR_3, DEFAULT_HEAT_3_COLOR);
+        setDefault(UNIT_DISPLAY_HEAT_COLOR_4, DEFAULT_HEAT_4_COLOR);
+        setDefault(UNIT_DISPLAY_HEAT_COLOR_5, DEFAULT_HEAT_5_COLOR);
+        setDefault(UNIT_DISPLAY_HEAT_COLOR_6, DEFAULT_HEAT_6_COLOR);
+        setDefault(UNIT_DISPLAY_HEAT_COLOR_OVERHEAT, DEFAULT_HEAT_OVERHEAT_COLOR);
+        store.setDefault(UNIT_DISPLAY_HEAT_VALUE_1, 4);
+        store.setDefault(UNIT_DISPLAY_HEAT_VALUE_2, 7);
+        store.setDefault(UNIT_DISPLAY_HEAT_VALUE_3, 9);
+        store.setDefault(UNIT_DISPLAY_HEAT_VALUE_4, 12);
+        store.setDefault(UNIT_DISPLAY_HEAT_VALUE_5, 13);
+        store.setDefault(UNIT_DISPLAY_HEAT_VALUE_6, 14);
+
+        store.setDefault(UNIT_TOOLTIP_SEENBYRESOLUTION, 3);
+        store.setDefault(UNIT_TOOLTIP_ARMORMINI_UNITS_PER_BLOCK, 10);
+        store.setDefault(UNIT_TOOLTIP_ARMORMINI_ARMOR_CHAR, "\u2B1B"); // Centered Filled Square
+        store.setDefault(UNIT_TOOLTIP_ARMORMINI_CAP_ARMOR_CHAR, "\u26CA"); // Shield
+        store.setDefault(UNIT_TOOLTIP_ARMORMINI_IS_CHAR, "\u25A3"); // Centered Square with Dot
+        store.setDefault(UNIT_TOOLTIP_ARMORMINI_CRITICAL_CHAR, "\u27D0"); // Centered Square with Dot
+        store.setDefault(UNIT_TOOLTIP_ARMORMINI_DESTROYED_CHAR, "\u2715"); // Centered x
+        setDefault(UNIT_TOOLTIP_ARMORMINI_COLOR_INTACT, DEFAULT_MEDIUM_GREEN);
+        setDefault(UNIT_TOOLTIP_ARMORMINI_COLOR_PARTIAL_DMG, DEFAULT_MEDIUM_YELLOW);
+        setDefault(UNIT_TOOLTIP_ARMORMINI_COLOR_DAMAGED, DEFAULT_MEDIUM_DARK_RED);
+        store.setDefault(UNIT_TOOLTIP_ARMORMINI_FONT_SIZE_MOD, -2);
 
         store.setDefault(GAME_SUMMARY_BOARD_VIEW, false);
         store.setDefault(ENTITY_OWNER_LABEL_COLOR, true);
@@ -753,11 +767,75 @@ public class GUIPreferences extends PreferenceStoreProxy {
     }
 
     public int getUnitDisplayWeaponListHeight() {
-        return store.getInt(ADVANCED_UNIT_DISPLAY_WEAPON_LIST_HEIGHT);
+        return store.getInt(UNIT_DISPLAY_WEAPON_LIST_HEIGHT);
     }
 
     public int getUnitDisplayLocaton() {
         return store.getInt(UNIT_DISPLAY_LOCATION);
+    }
+
+    public Color getUnitDisplayHeatLevel1() {
+        return getColor(UNIT_DISPLAY_HEAT_COLOR_1);
+    }
+
+    public Color getUnitDisplayHeatLevel2() {
+        return getColor(UNIT_DISPLAY_HEAT_COLOR_2);
+    }
+
+    public Color getUnitDisplayHeatLevel3() {
+        return getColor(UNIT_DISPLAY_HEAT_COLOR_3);
+    }
+
+    public Color getUnitDisplayHeatLevel4() {
+        return getColor(UNIT_DISPLAY_HEAT_COLOR_4);
+    }
+
+    public Color getUnitDisplayHeatLevel5() {
+        return getColor(UNIT_DISPLAY_HEAT_COLOR_5);
+    }
+
+    public Color getUnitDisplayHeatLevel6() {
+        return getColor(UNIT_DISPLAY_HEAT_COLOR_6);
+    }
+
+    public Color getUnitDisplayHeatLevelOverheat() {
+        return getColor(UNIT_DISPLAY_HEAT_COLOR_OVERHEAT);
+    }
+
+    public int getUnitDisplayHeatValue1() {
+        return getInt(UNIT_DISPLAY_HEAT_VALUE_1);
+    }
+
+    public int getUnitDisplayHeatValue2() {
+        return getInt(UNIT_DISPLAY_HEAT_VALUE_2);
+    }
+
+    public int getUnitDisplayHeatValue3() {
+        return getInt(UNIT_DISPLAY_HEAT_VALUE_3);
+    }
+
+    public int getUnitDisplayHeatValue4() {
+        return getInt(UNIT_DISPLAY_HEAT_VALUE_4);
+    }
+
+    public int getUnitDisplayHeatValue5() {
+        return getInt(UNIT_DISPLAY_HEAT_VALUE_5);
+    }
+
+    public int getUnitDisplayHeatValue6() {
+        return getInt(UNIT_DISPLAY_HEAT_VALUE_6);
+    }
+
+    public Color getUnitTooltipArmorMiniColorIntact() {
+        return getColor(UNIT_TOOLTIP_ARMORMINI_COLOR_INTACT);
+    }
+
+    public Color getUnitTooltipArmorMiniColorPartialDamage() {
+        return getColor(UNIT_TOOLTIP_ARMORMINI_COLOR_PARTIAL_DMG);
+    }
+
+    public Color getUnitTooltipArmorMiniColorDamaged() {
+        return getColor(UNIT_TOOLTIP_ARMORMINI_COLOR_DAMAGED);
     }
 
     public int getSplitPaneADividerLocaton() {
@@ -1387,8 +1465,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(UNIT_DISPLAY_ENABLED, b);
     }
 
-    public void setAdvancedUnitDisplayWeaponListHeight(int i) {
-        store.setValue(ADVANCED_UNIT_DISPLAY_WEAPON_LIST_HEIGHT, i);
+    public void setUnitDisplayWeaponListHeight(int i) {
+        store.setValue(UNIT_DISPLAY_WEAPON_LIST_HEIGHT, i);
     }
 
     public void toggleUnitDisplayLocation() {
@@ -1397,6 +1475,70 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setUnitDisplayLocation(int i) {
         store.setValue(UNIT_DISPLAY_LOCATION, i);
+    }
+
+    public void setUnitDisplayHeatColorLevel1(Color c) {
+        store.setValue(UNIT_DISPLAY_HEAT_COLOR_1, c.getRed() + " "  + c.getGreen() + " " + c.getBlue());
+    }
+
+    public void setUnitDisplayHeatColorLevel2(Color c) {
+        store.setValue(UNIT_DISPLAY_HEAT_COLOR_2, c.getRed() + " "  + c.getGreen() + " " + c.getBlue());
+    }
+
+    public void setUnitDisplayHeatColorLevel3(Color c) {
+        store.setValue(UNIT_DISPLAY_HEAT_COLOR_3, c.getRed() + " "  + c.getGreen() + " " + c.getBlue());
+    }
+
+    public void setUnitDisplayHeatColorLevel4(Color c) {
+        store.setValue(UNIT_DISPLAY_HEAT_COLOR_4, c.getRed() + " "  + c.getGreen() + " " + c.getBlue());
+    }
+
+    public void setUnitDisplayHeatColorLevel5(Color c) {
+        store.setValue(UNIT_DISPLAY_HEAT_COLOR_5, c.getRed() + " "  + c.getGreen() + " " + c.getBlue());
+    }
+
+    public void setUnitDisplayHeatColorLevel6(Color c) {
+        store.setValue(UNIT_DISPLAY_HEAT_COLOR_6, c.getRed() + " "  + c.getGreen() + " " + c.getBlue());
+    }
+
+    public void setUnitDisplayHeatColorLevelOverHeat(Color c) {
+        store.setValue(UNIT_DISPLAY_HEAT_COLOR_OVERHEAT, c.getRed() + " "  + c.getGreen() + " " + c.getBlue());
+    }
+
+    public void setUnitDisplayHeatColorValue1(int i) {
+        store.setValue(UNIT_DISPLAY_HEAT_VALUE_1, i);
+    }
+
+    public void setUnitDisplayHeatColorValue2(int i) {
+        store.setValue(UNIT_DISPLAY_HEAT_VALUE_2, i);
+    }
+
+    public void setUnitDisplayHeatColorValue3(int i) {
+        store.setValue(UNIT_DISPLAY_HEAT_VALUE_3, i);
+    }
+
+    public void setUnitDisplayHeatColorValue4(int i) {
+        store.setValue(UNIT_DISPLAY_HEAT_VALUE_4, i);
+    }
+
+    public void setUnitDisplayHeatColorValue5(int i) {
+        store.setValue(UNIT_DISPLAY_HEAT_VALUE_5, i);
+    }
+
+    public void setUnitDisplayHeatColorValue6(int i) {
+        store.setValue(UNIT_DISPLAY_HEAT_VALUE_6, i);
+    }
+
+    public void setUnitTooltipArmorminiColorIntact(Color c) {
+        store.setValue(UNIT_TOOLTIP_ARMORMINI_COLOR_INTACT, c.getRed() + " "  + c.getGreen() + " " + c.getBlue());
+    }
+
+    public void setUnitTooltipArmorminiColorPartialDamage(Color c) {
+        store.setValue(UNIT_TOOLTIP_ARMORMINI_COLOR_PARTIAL_DMG, c.getRed() + " "  + c.getGreen() + " " + c.getBlue());
+    }
+
+    public void setUnitTooltipArmorminiColorDamaged(Color c) {
+        store.setValue(UNIT_TOOLTIP_ARMORMINI_COLOR_DAMAGED, c.getRed() + " "  + c.getGreen() + " " + c.getBlue());
     }
 
     public void setSplitPaneALocation(int i) {
@@ -2024,8 +2166,36 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return getColor(ADVANCED_REPORT_COLOR_LINK);
     }
 
-    public int getAdvancedUnitToolTipSeenByResolution() {
-        return getInt(ADVANCED_UNITTOOLTIP_SEENBYRESOLUTION);
+    public int getUnitToolTipSeenByResolution() {
+        return getInt(UNIT_TOOLTIP_SEENBYRESOLUTION);
+    }
+
+    public String getUnitToolTipArmorMiniArmorChar() {
+        return getString(UNIT_TOOLTIP_ARMORMINI_ARMOR_CHAR);
+    }
+
+    public String getUnitToolTipArmorMiniISChar() {
+        return getString(UNIT_TOOLTIP_ARMORMINI_IS_CHAR);
+    }
+
+    public String getUnitToolTipArmorMiniCriticalChar() {
+        return getString(UNIT_TOOLTIP_ARMORMINI_CRITICAL_CHAR);
+    }
+
+    public String getUnitToolTipArmorMiniDestoryedChar() {
+        return getString(UNIT_TOOLTIP_ARMORMINI_DESTROYED_CHAR);
+    }
+
+    public String getUnitToolTipArmorMiniCapArmorChar() {
+        return getString(UNIT_TOOLTIP_ARMORMINI_CAP_ARMOR_CHAR);
+    }
+
+    public int getUnitToolTipArmorMiniUnitsPerBlock() {
+        return getInt(UNIT_TOOLTIP_ARMORMINI_UNITS_PER_BLOCK);
+    }
+
+    public int getUnitToolTipArmorMiniFontSizeMod() {
+        return getInt(UNIT_TOOLTIP_ARMORMINI_FONT_SIZE_MOD);
     }
 
     public boolean getAdvancedDockOnLeft() {
@@ -2124,8 +2294,36 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(ADVANCED_PLANETARY_CONDITIONS_SHOW_INDICATORS, state);
     }
 
-    public void setAdvancedUnitToolTipSeenByResolution(int i) {
-        store.setValue(ADVANCED_UNITTOOLTIP_SEENBYRESOLUTION, i);
+    public void setUnitToolTipSeenByResolution(int i) {
+        store.setValue(UNIT_TOOLTIP_SEENBYRESOLUTION, i);
+    }
+
+    public void setUnitToolTipArmorMiniArmorChar(String s) {
+        store.setValue(UNIT_TOOLTIP_ARMORMINI_ARMOR_CHAR, s);
+    }
+
+    public void setUnitToolTipArmorMiniISChar(String s) {
+        store.setValue(UNIT_TOOLTIP_ARMORMINI_IS_CHAR, s);
+    }
+
+    public void setUnitToolTipArmorMiniCriticalChar(String s) {
+        store.setValue(UNIT_TOOLTIP_ARMORMINI_CRITICAL_CHAR, s);
+    }
+
+    public void setUnitTooltipArmorminiDestroyedChar(String s) {
+        store.setValue(UNIT_TOOLTIP_ARMORMINI_DESTROYED_CHAR, s);
+    }
+
+    public void setUnitTooltipArmorMiniCapArmorChar(String s) {
+        store.setValue(UNIT_TOOLTIP_ARMORMINI_CAP_ARMOR_CHAR, s);
+    }
+
+    public void setUnitTooltipArmorMiniUnitsPerBlock(int i) {
+        store.setValue(UNIT_TOOLTIP_ARMORMINI_UNITS_PER_BLOCK, i);
+    }
+
+    public void setUnitToolTipArmorMiniFontSize(int i) {
+        store.setValue(UNIT_TOOLTIP_ARMORMINI_FONT_SIZE_MOD, i);
     }
 
     public void setAdvancedDockOnLeft(Boolean state) {
@@ -2207,20 +2405,20 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public Color getColorForHeat(int heat, Color defaultColor) {
         if (heat <= 0) {
             return defaultColor;
-        } else if (heat <= 4) {
-            return getColor(ADVANCED_HEAT_COLOR_4);
-        } else if (heat <= 7) {
-            return getColor(ADVANCED_HEAT_COLOR_7);
-        } else if (heat <= 9) {
-            return getColor(ADVANCED_HEAT_COLOR_9);
-        } else if (heat <= 12) {
-            return  getColor(ADVANCED_HEAT_COLOR_12);
-        } else if (heat <= 13) {
-            return  getColor(ADVANCED_HEAT_COLOR_13);
-        } else if (heat <= 14) {
-            return  getColor(ADVANCED_HEAT_COLOR_14);
+        } else if (heat <= getUnitDisplayHeatValue1()) {
+            return getColor(UNIT_DISPLAY_HEAT_COLOR_1);
+        } else if (heat <= getUnitDisplayHeatValue2()) {
+            return getColor(UNIT_DISPLAY_HEAT_COLOR_2);
+        } else if (heat <= getUnitDisplayHeatValue3()) {
+            return getColor(UNIT_DISPLAY_HEAT_COLOR_3);
+        } else if (heat <= getUnitDisplayHeatValue4()) {
+            return  getColor(UNIT_DISPLAY_HEAT_COLOR_4);
+        } else if (heat <= getUnitDisplayHeatValue5()) {
+            return  getColor(UNIT_DISPLAY_HEAT_COLOR_5);
+        } else if (heat <= getUnitDisplayHeatValue6()) {
+            return  getColor(UNIT_DISPLAY_HEAT_COLOR_6);
         }
-        return  getColor(ADVANCED_HEAT_COLOR_OVERHEAT);
+        return  getColor(UNIT_DISPLAY_HEAT_COLOR_OVERHEAT);
     }
 
     public void setUnitLabelStyle(LabelDisplayStyle style) {

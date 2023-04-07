@@ -222,11 +222,11 @@ public final class UnitToolTip {
 
     /** Returns the graphical Armor representation. */
     private static StringBuilder addArmorMiniVisToTT(Entity entity) {
-        String armorChar = GUIP.getString(GUIPreferences.ADVANCED_ARMORMINI_ARMOR_CHAR);
+        String armorChar = GUIP.getString(GUIPreferences.UNIT_TOOLTIP_ARMORMINI_ARMOR_CHAR);
         if (entity.isCapitalScale()) {
-            armorChar = GUIP.getString(GUIPreferences.ADVANCED_ARMORMINI_CAP_ARMOR_CHAR);
+            armorChar = GUIP.getString(GUIPreferences.UNIT_TOOLTIP_ARMORMINI_CAP_ARMOR_CHAR);
         }
-        String internalChar = GUIP.getString(GUIPreferences.ADVANCED_ARMORMINI_IS_CHAR);
+        String internalChar = GUIP.getString(GUIPreferences.UNIT_TOOLTIP_ARMORMINI_IS_CHAR);
         String col1 = "";
         String col2 = "";
         String col3 = "";
@@ -336,7 +336,7 @@ public final class UnitToolTip {
      * The location has the given orig original Armor/IS. 
      */
     private static StringBuilder destroyedLocBar(int orig) {
-        String destroyedChar = GUIP.getString(GUIPreferences.ADVANCED_ARMORMINI_DESTROYED_CHAR);
+        String destroyedChar = GUIP.getString(GUIPreferences.UNIT_TOOLTIP_ARMORMINI_DESTROYED_CHAR);
         return locBar(orig, orig, destroyedChar, true);
     }
 
@@ -363,10 +363,10 @@ public final class UnitToolTip {
         }
 
         String result = "";
-        Color colorIntact = GUIP.getColor(GUIPreferences.ADVANCED_ARMORMINI_COLOR_INTACT);
-        Color colorPartialDmg = GUIP.getColor(GUIPreferences.ADVANCED_ARMORMINI_COLOR_PARTIAL_DMG);
-        Color colorDamaged = GUIP.getColor(GUIPreferences.ADVANCED_ARMORMINI_COLOR_DAMAGED);
-        int visUnit = GUIP.getInt(GUIPreferences.ADVANCED_ARMORMINI_UNITS_PER_BLOCK);
+        Color colorIntact = GUIP.getColor(GUIPreferences.UNIT_TOOLTIP_ARMORMINI_COLOR_INTACT);
+        Color colorPartialDmg = GUIP.getColor(GUIPreferences.UNIT_TOOLTIP_ARMORMINI_COLOR_PARTIAL_DMG);
+        Color colorDamaged = GUIP.getColor(GUIPreferences.UNIT_TOOLTIP_ARMORMINI_COLOR_DAMAGED);
+        int visUnit = GUIP.getInt(GUIPreferences.UNIT_TOOLTIP_ARMORMINI_UNITS_PER_BLOCK);
         
         if (destroyed) {
             colorIntact = colorDamaged;
@@ -421,10 +421,10 @@ public final class UnitToolTip {
         }
 
         String result = "";
-        Color colorIntact = GUIP.getColor(GUIPreferences.ADVANCED_ARMORMINI_COLOR_INTACT);
-        Color colorDamaged = GUIP.getColor(GUIPreferences.ADVANCED_ARMORMINI_COLOR_DAMAGED);
-        String dChar =  GUIP.getString(GUIPreferences.ADVANCED_ARMORMINI_DESTROYED_CHAR);
-        String iChar = GUIP.getString(GUIPreferences.ADVANCED_ARMORMINI_IS_CHAR);
+        Color colorIntact = GUIP.getColor(GUIPreferences.UNIT_TOOLTIP_ARMORMINI_COLOR_INTACT);
+        Color colorDamaged = GUIP.getColor(GUIPreferences.UNIT_TOOLTIP_ARMORMINI_COLOR_DAMAGED);
+        String dChar =  GUIP.getString(GUIPreferences.UNIT_TOOLTIP_ARMORMINI_DESTROYED_CHAR);
+        String iChar = GUIP.getString(GUIPreferences.UNIT_TOOLTIP_ARMORMINI_CRITICAL_CHAR);
 
         if (good > 0)  {
             if (!destroyed) {
@@ -1027,7 +1027,7 @@ public final class UnitToolTip {
             StringBuffer tempList = new StringBuffer();
             boolean teamVision = game.getOptions().booleanOption(
                     OptionsConstants.ADVANCED_TEAM_VISION);
-            int seenByResolution = GUIP.getAdvancedUnitToolTipSeenByResolution();
+            int seenByResolution = GUIP.getUnitToolTipSeenByResolution();
             String tmpStr = "";
 
             dance: for (Player player :  entity.getWhoCanSee()) {

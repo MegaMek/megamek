@@ -78,11 +78,11 @@ public class ModifiedConstantSkillGenerator extends ConstantSkillGenerator {
             // Infantry and ProtoMechs are both Regular.
             // Aerospace Fighters are Veteran.
             if (entity instanceof Mech) {
-                return SkillLevel.VETERAN.getDefaultSkillValues();
-                skills[1]++;
+                skills[0]=5;
+                skills[1]=3;
             } else if (entity instanceof Tank) {
-                return SkillLevel.REGULAR.getDefaultSkillValues();
-                skills[1]++;
+                skills[0]=6;
+                skills[1]=4;
             } else if (entity.isConventionalInfantry() || (entity instanceof Protomech) {
                 return SkillLevel.REGULAR.getDefaultSkillValues();
             } else if (entity instanceof Aero) {

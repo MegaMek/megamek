@@ -12751,6 +12751,7 @@ public class GameManager implements IGameManager {
             return;
         }
 
+        entity.setDone(true);
         // Update visibility indications if using double blind.
         if (doBlind()) {
             updateVisibilityIndicator(null);

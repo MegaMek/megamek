@@ -28595,11 +28595,15 @@ public class GameManager implements IGameManager {
                 addVisibleEntity(vCanSee, e);
                 continue;
             } else if (e.isHidden()) {
-                // If it's NOT friendly and is hidden, they can't see it,
-                // period.
+                // If it's NOT friendly and is hidden, they can't see it, period.
                 // LOS doesn't matter.
                 continue;
+            } else if (e.isOffBoardObserved(pViewer.getTeam())) {
+                // if it's hostile and has been observed for counter-battery fire, we can "see" it
+                addVisibleEntity(vCanSee, e);
+                continue;
             }
+
             for (Entity spotter : vMyEntities) {
 
                 // If they're off-board, skip it; they can't see anything.

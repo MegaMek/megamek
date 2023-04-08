@@ -1127,7 +1127,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
      * Get the next target. Return null if we don't have any targets.
      */
     private Entity getNextTarget() {
-        if (null == visibleTargets) {
+        if (null == visibleTargets || visibleTargets.length == 0) {
             return null;
         }
 

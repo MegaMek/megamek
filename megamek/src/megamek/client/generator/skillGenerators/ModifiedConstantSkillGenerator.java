@@ -83,9 +83,9 @@ public class ModifiedConstantSkillGenerator extends ConstantSkillGenerator {
             } else if (entity instanceof Tank) {
                 return SkillLevel.REGULAR.getDefaultSkillValues();
                 skills[1]++;
-            } else if (entity.isConventionalInfantry() || (entity instanceof ProtoMech) {
+            } else if (entity.isConventionalInfantry() || (entity instanceof Protomech) {
                 return SkillLevel.REGULAR.getDefaultSkillValues();
-            } else if (entity instanceof Fighter) {
+            } else if (entity instanceof Aero) {
                 return SkillLevel.VETERAN.getDefaultSkillValues();
             }
         }

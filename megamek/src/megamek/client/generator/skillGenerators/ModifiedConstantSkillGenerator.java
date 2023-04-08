@@ -69,6 +69,26 @@ public class ModifiedConstantSkillGenerator extends ConstantSkillGenerator {
                 skills[0]++;
             }
         }
+        
+        //And finally, The Society, per WoRS p. 3
+        
+        if (getType().isClan() || (forceClan && entity.isClan())) {
+            // 'Mechs are Veteran with a -1 modifier to skills (simulated by dropping Piloting by 1).
+            // Tanks are Regular with the same -1 modifier.
+            // Infantry and ProtoMechs are both Regular.
+            // Aerospace Fighters are Veteran.
+            if (entity instanceof Mech) {
+                return SkillLevel.VETERAN.getDefaultSkillValues();
+                skills[1]++;
+            } else if (entity instanceof Tank) {
+                return SkillLevel.REGULAR.getDefaultSkillValues();
+                skills[1]++;
+            } else if (entity.isConventionalInfantry() || (entity instanceof ProtoMech) {
+                return SkillLevel.REGULAR.getDefaultSkillValues();
+            } else if (entity instanceof Fighter) {
+                return SkillLevel.VETERAN.getDefaultSkillValues();
+            }
+        }
 
         return cleanReturn(entity, skills);
     }

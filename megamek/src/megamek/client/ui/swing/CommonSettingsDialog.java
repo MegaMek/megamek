@@ -501,7 +501,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         comps.add(checkboxEntry(animateMove, null));
         comps.add(checkboxEntry(showWrecks, null));
 
-        row = (ArrayList) checkboxEntry(showMapsheets, null);
+        showMapsheets.addItemListener(this);
+        row = new ArrayList<>();
+        row.add(showMapsheets);
         csbMapsheetColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.MapSheetColor"));
         csbMapsheetColor.setColour(GUIP.getMapsheetColor());
         row.add(csbMapsheetColor);
@@ -1165,7 +1167,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
     private JPanel getMiniMapPanel() {
         List<List<Component>> comps = new ArrayList<>();
-        ArrayList<Component> row;
 
         comps.add(checkboxEntry(mmSymbol, null));
         comps.add(checkboxEntry(gameSummaryMM,

@@ -90,7 +90,6 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     private Client client;
     private Server server;
     private GameManager gameManager;
-    private CommonAboutDialog about;
     private CommonSettingsDialog settingsDialog;
 
     private MegaMekController controller;
@@ -886,19 +885,6 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         frame.getContentPane().add(comp);
     }
 
-    /**
-     * Called when the user selects the "Help->About" menu item.
-     */
-    void showAbout() {
-        // Do we need to create the "about" dialog?
-        if (about == null) {
-            about = new CommonAboutDialog(frame);
-        }
-
-        // Show the about dialog.
-        about.setVisible(true);
-    }
-
     private void showSkinningHowTo() {
         try {
             // Get the correct help file.
@@ -1013,7 +999,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 quickLoadGame();
                 break;
             case ClientGUI.HELP_ABOUT:
-                showAbout();
+                new CommonAboutDialog(frame).setVisible(true);
                 break;
             case ClientGUI.HELP_CONTENTS:
                 new MMReadMeHelpDialog(frame).setVisible(true);

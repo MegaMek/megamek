@@ -221,7 +221,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
     // A menu bar to contain all actions.
     protected CommonMenuBar menuBar;
-    private CommonAboutDialog about;
     private AbstractHelpDialog help;
     private CommonSettingsDialog setdlg;
     private AccessibilityWindow aw;
@@ -638,13 +637,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      * Called when the user selects the "Help->About" menu item.
      */
     private void showAbout() {
-        // Do we need to create the "about" dialog?
-        if (about == null) {
-            about = new CommonAboutDialog(frame);
-        }
-
-        // Show the about dialog.
-        about.setVisible(true);
+        new CommonAboutDialog(frame).setVisible(true);
     }
 
     /**
@@ -2769,7 +2762,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     public boolean shouldIgnoreHotKeys() {
         return ignoreHotKeys
                 || ((gameOptionsDialog != null) && gameOptionsDialog.isVisible())
-                || ((about != null) && about.isVisible())
+                || UIUtil.isModalDialogDisplayed()
                 || ((help != null) && help.isVisible())
                 || ((setdlg != null) && setdlg.isVisible())
                 || ((aw != null) && aw.isVisible());

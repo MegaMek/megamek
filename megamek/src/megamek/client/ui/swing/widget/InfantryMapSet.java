@@ -48,8 +48,10 @@ public class InfantryMapSet implements DisplayMapSet {
     // Set of Background drawers
     private Vector<BackGroundDrawer> bgDrawers = new Vector<>();
 
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
     private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
-            GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorMediumFontSize"));
+            GUIP.getUnitDisplayMechArmorMediumFontSize());
 
     public InfantryMapSet(JComponent c) {
         comp = c;

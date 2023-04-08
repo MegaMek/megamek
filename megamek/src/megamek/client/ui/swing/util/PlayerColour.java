@@ -57,6 +57,8 @@ public enum PlayerColour {
     private final int hex;
     //endregion Variable Declarations
 
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
     //region Constructors
     PlayerColour(String name, int hex) {
         this.name = Messages.getString(name);
@@ -71,7 +73,7 @@ public enum PlayerColour {
 
     public Color getColour(boolean allowTransparency) {
         if (allowTransparency) {
-            int transparency = GUIPreferences.getInstance().getInt(GUIPreferences.ADVANCED_ATTACK_ARROW_TRANSPARENCY);
+            int transparency = GUIP.getAttachArrowTransparency();
             return new Color(getHex() | (transparency << 24), true);
         } else {
             return new Color(getHex());

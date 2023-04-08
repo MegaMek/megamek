@@ -1225,7 +1225,7 @@ public class Client implements IClientCommandHandler {
      * returns the stored <img> tag for given unit id
      */
     private String getCachedImgTag(int id) {
-        if (!GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_ROUND_REPORT_SPRITES)
+        if (!GUIPreferences.getInstance().getBoolean(GUIPreferences.MINI_ROUND_REPORT_SPRITES)
                 || (imgCache == null) || !imgCache.containsKey(id)) {
             return null;
         }

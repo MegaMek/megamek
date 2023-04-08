@@ -100,7 +100,7 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
      * for the current game situation. 
      */
     public PlanetaryConditionsOverlay(Game game, ClientGUI cg) {
-        visible = GUIP.getBoolean(GUIPreferences.SHOW_PLANETARYCONDITIONS_OVERLAY);
+        visible = GUIP.getShowPlanetaryConditionsOverlay();
         currentGame = game;
         currentPhase = game.getPhase();
         game.addGameListener(gameListener);
@@ -196,7 +196,7 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
         String toggleKey = KeyCommandBind.getDesc(KeyCommandBind.PLANETARY_CONDITIONS);
 
         String tmpStr = "";
-        Boolean showHeading = GUIP.getAdvancedPlanetaryConditionsShowHeader();
+        Boolean showHeading = GUIP.getPlanetaryConditionsShowHeader();
         tmpStr = (showHeading ? String.format("#%02X%02X%02X", colorTitle.getRed(), colorTitle.getGreen(), colorTitle.getBlue()) + MessageFormat.format(MSG_HEADING, toggleKey) : "");
 
         if (tmpStr.length()  > 0) {
@@ -215,11 +215,11 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
                 tempColor = String.format("#%02X%02X%02X", colorCold.getRed(), colorCold.getGreen(), colorCold.getBlue());
             }
 
-            boolean showDefaultConditions = GUIP.getAdvancedPlanetaryConditionsShowDefaults();
+            boolean showDefaultConditions = GUIP.getPlanetaryConditionsShowDefaults();
 
-            Boolean showLabel = GUIP.getAdvancedPlanetaryConditionsShowLabels();
-            Boolean showValue = GUIP.getAdvancedPlanetaryConditionsShowValues();
-            Boolean showIndicator = GUIP.getAdvancedPlanetaryConditionsShowIndicators();
+            Boolean showLabel = GUIP.getPlanetaryConditionsShowLabels();
+            Boolean showValue = GUIP.getPlanetaryConditionsShowValues();
+            Boolean showIndicator = GUIP.getPlanetaryConditionsShowIndicators();
 
 
             if (((showDefaultConditions) || ((!showDefaultConditions) && (currentGame.getPlanetaryConditions().isExtremeTemperature())))) {
@@ -334,7 +334,7 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
      * */
     public void setVisible(boolean vis) {
         visible = vis;
-        GUIP.setValue(GUIPreferences.SHOW_PLANETARYCONDITIONS_OVERLAY, vis);
+
         if (vis) {
             fadingIn = true;
             fadingOut = false;

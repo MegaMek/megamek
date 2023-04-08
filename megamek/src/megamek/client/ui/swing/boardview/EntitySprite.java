@@ -418,7 +418,7 @@ class EntitySprite extends Sprite {
                 // draw the unit icon translucent if:
                 // hidden from the enemy (and activated graphics setting); or
                 // submerged
-                boolean translucentHiddenUnits = GUIP.getBoolean(GUIPreferences.ADVANCED_TRANSLUCENT_HIDDEN_UNITS);
+                boolean translucentHiddenUnits = GUIP.getTranslucentHiddenUnits();
                 boolean shouldBeTranslucent = (trackThisEntitiesVisibilityInfo(entity)
                         && !entity.isVisibleToEnemy()) || entity.isHidden();
                 if ((shouldBeTranslucent && translucentHiddenUnits)
@@ -689,10 +689,10 @@ class EntitySprite extends Sprite {
                 graph.setFont(labelFont);
                 Color textColor = LABEL_TEXT_COLOR;
                 if (!entity.isDone() && !onlyDetectedBySensors()) {
-                    textColor = GUIP.getColor(GUIPreferences.ADVANCED_UNITOVERVIEW_VALID_COLOR);
+                    textColor = GUIP.getUnitOverviewValidColor();
                 }
                 if (isSelected) {
-                    textColor = GUIP.getColor(GUIPreferences.ADVANCED_UNITOVERVIEW_SELECTED_COLOR);
+                    textColor = GUIP.getUnitOverviewSelectedColor();
                 }
                 BoardView.drawCenteredText(graph, getAdjShortName(),
                         labelRect.x + labelRect.width / 2,
@@ -794,7 +794,7 @@ class EntitySprite extends Sprite {
             }
 
             // TMM pips show if done in movement, or on all units during firing
-            int pipOption = GUIP.getInt(GUIPreferences.ADVANCED_TMM_PIP_MODE);
+            int pipOption = GUIP.getTMMPipMode();
             if ((pipOption != 0) && !ge
                     && ((entity.isDone() && bv.game.getPhase().isMovement())
                     || bv.game.getPhase().isFiring())) {

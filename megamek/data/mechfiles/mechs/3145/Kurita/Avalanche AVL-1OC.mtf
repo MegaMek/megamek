@@ -152,4 +152,20 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:The Avalanche is a thirty-second century medium OmniMech, first deployed by the Draconis Combine and Clan Nova Cat. 
+
+capabilities:Constructed using Inner Sphere technologies, the 'Mech design was envisioned with economics in mind. The Avalanche is powered by a 250-rated fusion engine, giving it a modest maximum speed of 86 km/h, while its hull is protected by 10 tons of standard armor, which gives it less armor protection than other designs of the time. Mobility is enhanced with five jump jets, and CASE mounted in its right torso protected against complete destruction from a magazine detonation. Additional equipment and weapons are allotted 16 tons of pod space, giving decent flexibility.
+
+deployment:This configuration is armed with a pair of LAC/5s, one mounted in each of the 'Mechs arms. These weapons are backed up by arm mounted ER medium lasers and side torso mounted small X-Pulse lasers. 
+
+history:The 'Mech was conceived as part of a joint project between House Kurita and its then ally Clan Nova Cat, and served as part of an effort to aid in the rebuilding the Clan's depleted touman as a result of the aftermath of the 2nd Combine-Dominion War that ended in 3101. The 'Mech would be developed over the next 30 years, however development would prove to be challenging for both groups. After decades of development, the Avalanche would still have a number of design flaws which would give it a bad reputation among warriors of Clan Nova Cat. The 'Mech would soon be deployed shortly before House Kurita's invasion of the Republic of the Sphere, where it would serve among House Kurita's elite forces. After the destruction of Clan Nova Cat, as a result of its revolt against Coordinator Yori Kurita, the dead Clan's allotment of Avalanches would be sold off to other Inner Sphere powers.
+
+manufacturer:Luthien Armor Works
+primaryfactory:Luthien
+systemmanufacturer:CHASSIS:Luthien Class M Endo Steel
+systemmanufacturer:ENGINE:Hermes 250
+systemmanufacturer:ARMOR:Mitchel Argon Standard with CASE
+systemmanufacturer:JUMPJET:Icarus Standard
+systemmanufacturer:COMMUNICATIONS:Sipher CommCon SCU-9
+systemmanufacturer:TARGETING:Matabushi Stalker
 

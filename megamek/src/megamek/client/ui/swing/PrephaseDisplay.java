@@ -324,10 +324,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
     public void ready() {
         // stop further input (hopefully)
         disableButtons();
-
-//        clientgui.getClient().sendUpdateEntity(ce());
         clientgui.getClient().sendPrephaseData(cen);
-
         endMyTurn();
     }
 
@@ -355,14 +352,6 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
      * Does end turn stuff.
      */
     private void endMyTurn() {
-//        Entity next = clientgui.getClient().getGame()
-//                .getNextEntity(clientgui.getClient().getGame().getTurnIndex());
-//        if ((phase == clientgui.getClient().getGame().getPhase())
-//                && (null != next) && (null != ce())
-//                && (next.getOwnerId() != ce().getOwnerId())) {
-//            clientgui.maybeShowUnitDisplay();
-//        }
-
         cen = Entity.NONE;
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().highlight(null);
@@ -371,6 +360,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         clientgui.getBoardView().clearMovementData();
         clientgui.getBoardView().clearFieldofF();
         clientgui.setSelectedEntityNum(Entity.NONE);
+
         refreshButtons();
     }
 
@@ -510,6 +500,13 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
+        // Reviewers: Is this the right place to catch the change applied by a server packet
+        // that changes an entity from done to not-done?
+        if (ce().isDone())
+        {
+            selectEntity(clientgui.getClient().getNextHiddenEntityNum(cen));
+        }
+
         refreshButtons();
     }
 
@@ -533,10 +530,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         }
 
         if (ev.getActionCommand().equals(PrephaseCommand.PREPHASE_NEXT.getCmd())) {
-//            selectEntity(clientgui.getClient()
-//                    .getNextEntityNum(cen));
             selectEntity(clientgui.getClient().getNextHiddenEntityNum(cen));
-
         }
     }
 

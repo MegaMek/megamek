@@ -211,7 +211,6 @@ public class BoardEditor extends JPanel
     boolean isDragging = false;
     private Component bvc;
     private final CommonMenuBar menuBar = new CommonMenuBar(this);
-    private CommonAboutDialog about;
     private AbstractHelpDialog help;
     private CommonSettingsDialog setdlg;
     private JDialog minimapW;
@@ -1689,10 +1688,7 @@ public class BoardEditor extends JPanel
 
     /** Called when the user selects the "Help->About" menu item. */
     private void showAbout() {
-        if (about == null) {
-            about = new CommonAboutDialog(frame);
-        }
-        about.setVisible(true);
+        new CommonAboutDialog(frame).setVisible(true);
     }
 
     /** Called when the user selects the "Help->Contents" menu item. */
@@ -2355,7 +2351,7 @@ public class BoardEditor extends JPanel
      */
     public boolean shouldIgnoreHotKeys() {
         return ignoreHotKeys
-                || ((about != null) && about.isVisible())
+                || UIUtil.isModalDialogDisplayed()
                 || ((help != null) && help.isVisible())
                 || ((setdlg != null) && setdlg.isVisible())
                 || texElev.hasFocus() || texTerrainLevel.hasFocus() || texTerrExits.hasFocus();

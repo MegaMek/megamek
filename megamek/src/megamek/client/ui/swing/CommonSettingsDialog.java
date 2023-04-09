@@ -207,7 +207,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private JTextField ecmTransparency;
     private JTextField buttonsPerRow;
     private JTextField playersRemainingToShow;
-    private JTextField tmmPipMode;
+
+    private JComboBox<String> tmmPipModeCbo;
     private final JCheckBox darkenMapAtNight = new JCheckBox(Messages.getString("CommonSettingsDialog.darkenMapAtNight"));
     private final JCheckBox translucentHiddenUnits = new JCheckBox(Messages.getString("CommonSettingsDialog.translucentHiddenUnits"));
 
@@ -541,14 +542,15 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         ecmTransparency.setToolTipText(Messages.getString("CommonSettingsDialog.ecmTransparency.tooltip"));
         comps.add(row);
 
-        tmmPipMode = new JTextField(4);
-        tmmPipMode.setMaximumSize(new Dimension(150, 40));
+        tmmPipModeCbo = new JComboBox<>();
+        tmmPipModeCbo.addItem(Messages.getString("CommonSettingsDialog.tmmPipMode.NoPips"));
+        tmmPipModeCbo.addItem(Messages.getString("CommonSettingsDialog.tmmPipMode.WhitePips"));
+        tmmPipModeCbo.addItem(Messages.getString("CommonSettingsDialog.tmmPipMode.ColoredPips"));
+        tmmPipModeCbo.setSelectedIndex(GUIP.getTMMPipMode());
         JLabel tmmPipModeLabel = new JLabel(Messages.getString("CommonSettingsDialog.tmmPipMode"));
         row = new ArrayList<>();
         row.add(tmmPipModeLabel);
-        row.add(tmmPipMode);
-        tmmPipMode.setText(String.format("%d", GUIP.getTMMPipMode()));
-        tmmPipMode.setToolTipText(Messages.getString("CommonSettingsDialog.tmmPipMode.tooltip"));
+        row.add(tmmPipModeCbo);
         comps.add(row);
 
         addLineSpacer(comps);
@@ -1582,7 +1584,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         ecmTransparency.setText(String.format("%d", GUIP.getECMTransparency()));
         buttonsPerRow.setText(String.format("%d", GUIP.getButtonsPerRow()));
         playersRemainingToShow.setText(String.format("%d", GUIP.getPlayersRemainingToShow()));
-        tmmPipMode.setText(String.format("%d", GUIP.getTMMPipMode()));
+        tmmPipModeCbo.setSelectedIndex(GUIP.getTMMPipMode());
         moveFontType.setText(GUIP.getMoveFontType());
         moveFontSize.setText(String.format("%d", GUIP.getMoveFontSize()));
         moveFontStyle.setText(String.format("%d", GUIP.getMoveFontStyle()));
@@ -1730,12 +1732,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         } catch (Exception ex) {
             LogManager.getLogger().error("", ex);
         }
-        try {
-            GUIP.setTMMPipMode(Integer.parseInt(tmmPipMode.getText()));
-        } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
-        }
 
+        GUIP.setTMMPipMode(tmmPipModeCbo.getSelectedIndex());
         GUIP.setDarkenMapAtNight(darkenMapAtNight.isSelected());
         GUIP.setTranslucentHiddenUnits(translucentHiddenUnits.isSelected());
 

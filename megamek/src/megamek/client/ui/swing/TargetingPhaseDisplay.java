@@ -571,8 +571,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 
             setFireModeEnabled(true);
 
-            if (GUIPreferences.getInstance().getBoolean("FiringSolutions")
-                    && !ce().isOffBoard()) {
+            if (GUIP.getFiringSolutions() && !ce().isOffBoard()) {
                 setFiringSolutions();
             } else {
                 clientgui.getBoardView().clearFiringSolutionData();
@@ -590,7 +589,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 
         Game game = clientgui.getClient().getGame();
         Player localPlayer = clientgui.getClient().getLocalPlayer();
-        if (!GUIPreferences.getInstance().getFiringSolutions()) {
+        if (!GUIP.getFiringSolutions()) {
             return;
         }
 
@@ -753,13 +752,13 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
      */
     @Override
     public void ready() {
-        if (attacks.isEmpty() && GUIPreferences.getInstance().getNagForNoAction()) {
+        if (attacks.isEmpty() && GUIP.getNagForNoAction()) {
             // confirm this action
             String title = Messages.getString("TargetingPhaseDisplay.DontFireDialog.title");
             String body = Messages.getString("TargetingPhaseDisplay.DontFireDialog.message");
             ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
             if (!response.getShowAgain()) {
-                GUIPreferences.getInstance().setNagForNoAction(false);
+                GUIP.setNagForNoAction(false);
             }
 
             if (!response.getAnswer()) {
@@ -823,7 +822,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         }
 
         // declare searchlight, if possible
-        if (GUIPreferences.getInstance().getAutoDeclareSearchlight()) {
+        if (GUIP.getAutoDeclareSearchlight()) {
             doSearchlight();
         }
 
@@ -883,7 +882,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         int nextWeapon = clientgui.getUnitDisplay().wPan.selectNextWeapon();
 
         // check; if there are no ready weapons, you're done.
-        if ((nextWeapon == -1) && GUIPreferences.getInstance().getAutoEndFiring()) {
+        if ((nextWeapon == -1) && GUIP.getAutoEndFiring()) {
             ready();
             return;
         }

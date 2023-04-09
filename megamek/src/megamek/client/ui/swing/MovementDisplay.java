@@ -191,9 +191,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
          * Priority that determines this buttons order
          */
         public int priority;
-
-        private static final GUIPreferences GUIP = GUIPreferences.getInstance();
-
         MoveCommand(String c, int f) {
             cmd = c;
             flag = f;

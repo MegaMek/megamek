@@ -93,8 +93,8 @@ class FovHighlightingAndDarkening {
 
         // Code for LoS darkening/highlighting
         Point p = new Point(drawX, drawY);
-        boolean highlight = gs.getBoolean(GUIPreferences.FOV_HIGHLIGHT);
-        boolean darken = gs.getBoolean(GUIPreferences.FOV_DARKEN);
+        boolean highlight = gs.getFovHighlight();
+        boolean darken = gs.getFovDarken();
 
         if ((darken || highlight) && this.boardView1.game.getPhase().isMovement()) {
 

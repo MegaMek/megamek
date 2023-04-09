@@ -2107,6 +2107,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(UI_THEME, s);
     }
 
+    public void setSoftcenter(boolean b) {
+        store.setValue(SOFTCENTER, b);
+    }
+
     public void setAsCardFont(String asCardFont) {
         store.setValue(AS_CARD_FONT, asCardFont);
     }
@@ -2645,6 +2649,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
      */
     public void toggleKeybindsOverlay() {
         store.setValue(SHOW_KEYBINDS_OVERLAY, !getBoolean(SHOW_KEYBINDS_OVERLAY));
+    }
+
+    public boolean getShowKeybindsOverlay() {
+        return getBoolean(SHOW_KEYBINDS_OVERLAY);
     }
 
     public void togglePlanetaryConditionsOverlay() {

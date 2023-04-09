@@ -1434,7 +1434,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             levelhighlight.setSelected(GUIP.getLevelHighlight());
             shadowMap.setSelected(GUIP.getShadowMap());
             hexInclines.setSelected(GUIP.getHexInclines());
-            useSoftCenter.setSelected(GUIP.getBoolean("SOFTCENTER"));
+            useSoftCenter.setSelected(GUIP.getSoftCenter());
             entityOwnerColor.setSelected(GUIP.getUnitLabelBorder());
             teamColoring.setSelected(GUIP.getTeamColoring());
 
@@ -1809,7 +1809,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setLevelHighlight(levelhighlight.isSelected());
         GUIP.setShadowMap(shadowMap.isSelected());
         GUIP.setHexInclines(hexInclines.isSelected());
-        GUIP.setValue("SOFTCENTER", useSoftCenter.isSelected());
+        GUIP.setSoftcenter(useSoftCenter.isSelected());
         GUIP.setGameSummaryBoardView(gameSummaryBV.isSelected());
         GUIP.setGameSummaryMinimap(gameSummaryMM.isSelected());
 

@@ -249,7 +249,7 @@ public class MinimapUnitSymbols {
     
     /** Returns the Path2D minimap symbol shape for the given entity. */
     public static Path2D getForm(Entity entity) {
-        boolean stratOps = GUIP.getBoolean(GUIPreferences.MMSYMBOL);
+        boolean stratOps = GUIP.getMmSymbol();
         
         if ((entity instanceof Mech) || (entity instanceof Protomech)) {
             return stratOps ? STRAT_MECH : STD_MECH;

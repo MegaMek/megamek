@@ -1027,6 +1027,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplay.NON_TABBED_C2));
 
         JList<String> listUnitDisplayNonTabbed = new JList<>(unitDisplayNonTabbed);
+        listUnitDisplayNonTabbed.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+        listUnitDisplayNonTabbed.setVisibleRowCount(2);
         listUnitDisplayNonTabbed.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         listUnitDisplayNonTabbed.addMouseListener(cmdMouseAdaptor);
         listUnitDisplayNonTabbed.addMouseMotionListener(cmdMouseAdaptor);

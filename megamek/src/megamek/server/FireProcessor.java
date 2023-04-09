@@ -54,7 +54,6 @@ public class FireProcessor extends DynamicTerrainProcessor {
         int height = board.getHeight();
         int windDirection = game.getPlanetaryConditions().getWindDirection();
         int windStrength = game.getPlanetaryConditions().getWindStrength();
-        Report r;
 
         // Get the position map of all entities in the game.
         Hashtable<Coords, Vector<Entity>> positionMap = game.getPositionMap();

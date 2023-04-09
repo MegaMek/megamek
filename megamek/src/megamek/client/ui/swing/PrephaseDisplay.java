@@ -187,7 +187,8 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
 
                     @Override
                     public void performAction() {
-                        selectEntity(clientgui.getClient().getNextEntityNum(cen));
+//                        selectEntity(clientgui.getClient().getNextEntityNum(cen));
+                        selectEntity(clientgui.getClient().getNextHiddenEntityNum(cen));
                     }
                 });
 
@@ -313,6 +314,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         boolean isRevealing = !ce.getHiddenActivationPhase().isUnknown();
         setRevealEnabled(!isRevealing);
         setCancelRevealEnabled(isRevealing);
+        setNextEnabled(true);
         butDone.setEnabled(true);
     }
 

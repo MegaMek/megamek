@@ -1821,6 +1821,10 @@ public class Game extends AbstractGame implements Serializable {
      * @return the number of the first deployable entity that is valid for the specified turn
      */
     public int getFirstHiddenEntityNum(final @Nullable GameTurn turn) {
+        // Reviewers: Not sure if this is where to add filtering (this is hoe deployment does it)
+        // or if the right way is to create a subclass of GameTurn.EntityClassTurn that overrides isValidEntity
+        // the latter seems more correct, but I see no other examples  of that
+
         // Repeat the logic from getFirstEntityNum.
         if (turn == null) {
             return -1;

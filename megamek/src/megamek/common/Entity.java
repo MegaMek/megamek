@@ -6399,13 +6399,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             setTsempEffect(MMConstants.TSEMP_EFFECT_NONE);
         }
 
-        // TSEMPs can fire every other round, so if we didn't fire last
-        //  round and the TSEMP isn't one-shot, reset it's fired state
+        // Standard TSEMPs can fire every other round, so if we didn't fire last
+        //  round and the TSEMP isn't one-shot or repeating, reset it's fired state
         if (hasFiredTsemp()) {
             for (Mounted m : getWeaponList()) {
                 if (m.getType().hasFlag(WeaponType.F_TSEMP)
                         && !m.getType().hasFlag(WeaponType.F_ONESHOT)) {
-                    if (m.isTSEMPDowntime()) {
+                    if (m.getType().hasFlag(WeaponType.F_REPEATING) || m.isTSEMPDowntime()) {
                         m.setFired(false);
                         m.setTSEMPDowntime(false);
                     } else if (m.isFired()) {

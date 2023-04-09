@@ -2565,7 +2565,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return facing;
     }
 
-    public String getFacingNane(int facing) {
+    public String getFacingName(int facing) {
         switch (facing) {
             case 0:
                 return Messages.getString("Entity.facing.north");

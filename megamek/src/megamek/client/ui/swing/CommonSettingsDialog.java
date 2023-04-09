@@ -2591,17 +2591,28 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private JScrollPane getButtonOrderPane(DefaultListModel<PhaseCommand> list, 
             StatusBarPhaseDisplay.PhaseCommand[] commands) {
         JPanel panel = new JPanel();
-        Arrays.sort(commands, cmdComp);        
+        Arrays.sort(commands, cmdComp);
+
         for (StatusBarPhaseDisplay.PhaseCommand cmd : commands) {
             list.addElement(cmd);
         }
+
+        int rowCount = list.getSize() / 7;
+
+        if (list.getSize() % 7 != 0) {
+            rowCount++;
+        }
+
         JList<StatusBarPhaseDisplay.PhaseCommand> jlist = new JList<>(list);
         jlist.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         jlist.addMouseListener(cmdMouseAdaptor);
         jlist.addMouseMotionListener(cmdMouseAdaptor);
+        jlist.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+        jlist.setVisibleRowCount(rowCount);
         panel.add(jlist);
         JScrollPane scrollPane = new JScrollPane(panel);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+
         return scrollPane;
     }
 

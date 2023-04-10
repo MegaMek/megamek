@@ -6,7 +6,7 @@ mul id:7608
 Config:Biped Omnimech
 techbase:Clan
 era:3149
-source:Dark Age
+source:TRO:GC - Dark Age
 rules level:2
 
 mass:40
@@ -150,5 +150,19 @@ Foot Actuator
 -Empty-
 -Empty-
 
-notes:I’m getting this 1 ton over. Also we’ve got 3 crit slots used in the CT when only 2 are available. Moved existing HS to Left torso and ECM to right torso.
+overview:The Coyotl has the honor of being the first OmniMech. 
+
+capabilities:Built on an endo steel chassis and powered by a Pitban 280 XL engine, these lightweight technologies allowed the Coyotl to carry a great deal of equipment. The powerful engine allowed the 'Mech to move up to 118.8 km/h, giving it the ability to avoid enemy fire as well as dash about the battlefield
+
+deployment:The Primary configuration of the Coyotl used an ER PPC and LRM-10 as the primary long range weapons, while a medium pulse laser and Streak SRM-4 provided short range firepower. Originally the engineers thought they would build each variant around the PPC, but this proved to be too limiting, particularly with the high heat it caused. The missile systems were added to provide firepower at a lower heat cost.
+
+history:Developed by Clan Coyote with some help from Clan Sea Fox, the Coyotl was first fielded in 2854. Taking the modular nature of the earlier Mercury to its logical conclusion, the Coyotl was originally developed along the same lines. When the Coyote scientists saw that they could create the OmniMech, they jumped at the chance. The result was a 'Mech that could have its weapons load tailored for a particular mission, though the Coyotes did not fully capitalize on Omni technology until 2859, when the Coyotes equipped all of their Alpha Galaxy with OmniMechs and expanded rapidly within the Kerensky Cluster. Though a useful 'Mech that demonstrated how effective an OmniMech could be, the Coyotl couldn't compete with later designs from other Clans. Furthermore, the Coyotl production became ever more stifled as the fortunes of Clan Coyote waned and territory was lost. With the supply of spare parts dwindling, the Coyotes shut down their production lines in 2943. Sensing a sales opportunity, the Coyotl was one of a number of Golden Century designs Clan Sea Fox would revive to sell during the Dark Age era.
+
+manufacturer:Manufacturing Plant SFF-TU1
+primaryfactory:Tukayyid
+systemmanufacturer:CHASSIS:Coyotl
+systemmanufacturer:ENGINE:Pitban 280 XL
+systemmanufacturer:ARMOR:CI Standard
+systemmanufacturer:COMMUNICATIONS:CI-Com 2
+systemmanufacturer:TARGETING:CI-X 2
 

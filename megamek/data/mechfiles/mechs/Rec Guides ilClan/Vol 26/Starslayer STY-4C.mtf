@@ -5,7 +5,7 @@ mul id:9315
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3145
-source:Rec Guide:ilClan #26 - Dark Age 
+source:Rec Guide:ilClan #26 - Dark Age
 rules level:2
 
 mass:50
@@ -36,7 +36,7 @@ ER Medium Laser, Left Torso
 ER Medium Laser, Left Torso
 Improved Heavy Large Laser, Right Torso
 ER Small Laser, Head
-Streak SRM 4 (I-OS), Left Torso
+SRM 4 (I-OS), Left Torso
 
 Left Arm:
 Shoulder
@@ -74,10 +74,10 @@ Jump Jet
 Jump Jet
 CLERMediumLaser
 CLERMediumLaser
-CLStreakSRM4 (IOS)
+ISSRM4IOS
 Coolant Pod
 IS Endo Steel
-IS Endo Steel
+-Empty-
 -Empty-
 
 Right Torso:
@@ -106,7 +106,7 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Jump Jet
--Empty-
+IS Endo Steel
 
 Head:
 Life Support

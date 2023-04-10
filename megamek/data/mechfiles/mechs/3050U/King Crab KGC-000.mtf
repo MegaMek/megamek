@@ -1,97 +1,96 @@
-Version:1.0
+Version:1.3
 King Crab
 KGC-000
 mul id:1770
-
 Config:Biped
-TechBase:Inner Sphere
-Era:2743
-Source:TRO 3050 - Star League
-Rules Level:2
+techbase:Inner Sphere
+era:2743
+source:TRO 3050 - Star League
+rules level:2
 
-Mass:100
-Engine:300 Fusion Engine
-Structure:Standard
-Myomer:Standard
+mass:100
+engine:300 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:15 Single
-Walk MP:3
-Jump MP:0
+heat sinks:15 Single
+walk mp:3
+jump mp:0
 
-Armor:Ferro-Fibrous
-LA Armor:34
-RA Armor:34
-LT Armor:30
-RT Armor:30
-CT Armor:39
-HD Armor:9
-LL Armor:35
-RL Armor:35
-RTL Armor:12
-RTR Armor:12
-RTC Armor:16
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:34
+RA armor:34
+LT armor:30
+RT armor:30
+CT armor:39
+HD armor:9
+LL armor:35
+RL armor:35
+RTL armor:12
+RTR armor:12
+RTC armor:16
 
 Weapons:4
-1 ISAC20, Right Arm, Ammo:10
-1 ISAC20, Left Arm
-1 ISLRM15, Left Torso, Ammo:8
-1 ISLargeLaser, Right Torso
+AC/20, Left Torso
+AC/20, Right Torso
+LRM 15, Left Torso
+Large Laser, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISAC20 (Split)
-ISAC20 (Split)
-ISAC20 (Split)
-ISAC20 (Split)
-ISAC20 (Split)
-ISAC20 (Split)
-ISAC20 (Split)
-ISAC20 (Split)
+Autocannon/20
+Autocannon/20
+Autocannon/20
+Autocannon/20
+Autocannon/20
+Autocannon/20
+Autocannon/20
+Autocannon/20
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISAC20 (Split)
-ISAC20 (Split)
-ISAC20 (Split)
-ISAC20 (Split)
-ISAC20 (Split)
-ISAC20 (Split)
-ISAC20 (Split)
-ISAC20 (Split)
+Autocannon/20
+Autocannon/20
+Autocannon/20
+Autocannon/20
+Autocannon/20
+Autocannon/20
+Autocannon/20
+Autocannon/20
 
 Left Torso:
-ISAC20 (Split)
-ISAC20 (Split)
-ISLRM15
-ISLRM15
-ISLRM15
-ISAC20 Ammo
-ISLRM15 Ammo
+Autocannon/20
+Autocannon/20
+LRM 15
+LRM 15
+LRM 15
+IS Ammo AC/20
+IS Ammo LRM-15
 ISCASE
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Torso:
-ISAC20 (Split)
-ISAC20 (Split)
-ISLargeLaser
-ISLargeLaser
-ISAC20 Ammo
+Autocannon/20
+Autocannon/20
+Large Laser
+Large Laser
+IS Ammo AC/20
 ISCASE
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -105,13 +104,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Heat Sink
-Ferro-Fibrous
+IS Ferro-Fibrous
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+IS Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -127,7 +126,7 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Heat Sink
-Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -141,11 +140,27 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Heat Sink
-Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
+overview:The King Crab has been a horror on the battlefield since its introduction just before the old Star League's demise, and it is well known for its ability to quickly kill most BattleMechs under eighty tons.
+
+capabilities:While not the most heavily armored 'Mech, the King Crab is still tough to crack, with sixteen tons of ferro-fibrous armor and CASE protecting its ammunition stores; however, the arms are probably the most susceptible area to receive damage and an internal hit is likely to knock an autocannon out of the fight. The 'Mech is also slow, with a cruising speed of 32 km/h and top speed of 54 km/h,[6] and has been described as a "notorious hangar queen".
+
+deployment:The King Crab's primary weapons are two massive Deathgiver Autocannon/20s, among the most powerful BattleMech weapons ever created. Each arm carries one of these massive weapons, and they are fed by two tons of ammo split between the side torsos. The firepower of these weapons is enough to destroy a medium 'Mech in one salvo. To protect the autocannons in combat, engineers designed the King Crab with simple hand actuators. In appearance and movement, the actuators are very similar to pincers or claws found on real crabs, a contributing factor to the 'Mech's name. To back up the autocannons, and provide some long-range capabilities, the King Crab carries a Simpson-15 LRM-15 launcher, mounted in the left torso and fed by one ton of reloads in the same location, and an Exostar Large Laser in the right torso.
+
+history:The KGC-000, designed by Cosara Weaponries scientists under General Kerensky's directives, performed brilliantly in its specified mission, though it was nowhere near the command vehicle that Defiance Industries' later Atlas was. The majority of King Crabs joined Kerensky on his Exodus, including all surviving -010 platforms; those that remained were surreptitiously purchased by ComStar and mothballed on Terra. Upon the Clans' arrival and the Battle of Tukayyid, most Com Guard commanders discovered that the original Imperator-D autocannon design could not close quickly enough with Clan machines to cause considerable damage. After being approached by ComStar, Cosara Weaponries created the -001 variant; the additional range gave the King Crab some much-needed reach. ComStar, pleased with their performance, gave Cosara permission to mass-produce the enhanced King Crab for general market sale, with ComStar receiving a major portion of the yearly earnings. Northwind production ended after the Word of Blake blockaded the system, and scattered intelligence reports indicate that the Blakists took control the Cosara plant. After being shut down for some months, the plant reopened in late 3069, continuously producing and sending a newer King Crab variant to Protectorate forces. First Precentor Dow took an extraordinary action for the once-secret organization after losing a major weapons supply. ComStar was able to infiltrate the Cosara plant and grab the new engineering designs by hiring a tiny mercenary group that specialized in corporate espionage. ComStar then approached Starcorps Industries and gave the young company the opportunity to create a new King Crab variation, the KGC-007. StarCorps accepted, eager to expand their product line, and the first -007s are scheduled to roll off the Son Hoa line in late 3071. The first three production runs have already been purchased by the LAAF and AFFC.
+
+manufacturer:Cosara Weaponries,Cosara Weaponries 
+primaryfactory:Mars,Northwind 
+systemmanufacturer:CHASSIS:Hollis Mark II
+systemmanufacturer:ENGINE:Vlar 300 XL
+systemmanufacturer:ARMOR:Aldis X Ferro-Fibrous with CASE
+systemmanufacturer:COMMUNICATIONS:Dalban Commline
+systemmanufacturer:TARGETING:Dalban HiRez-B
 

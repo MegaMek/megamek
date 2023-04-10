@@ -1,42 +1,41 @@
-Version:1.0
+Version:1.3
 Cestus
 CTS-6X
 mul id:532
-
 Config:Biped
-TechBase:Inner Sphere
-Era:2609
-Source:TRO 3058 - Star League
-Rules Level:2
+techbase:Inner Sphere
+era:2609
+source:TRO 3058 - Star League
+rules level:2
 
-Mass:65
-Engine:260 XL Engine
-Structure:Standard
-Myomer:Standard
+mass:65
+engine:260 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:14 Single
-Walk MP:4
-Jump MP:0
+heat sinks:14 Single
+walk mp:4
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:20
-RA Armor:20
-LT Armor:22
-RT Armor:22
-CT Armor:32
-HD Armor:9
-LL Armor:30
-RL Armor:30
-RTL Armor:8
-RTR Armor:8
-RTC Armor:10
+armor:Standard(Inner Sphere)
+LA armor:20
+RA armor:20
+LT armor:22
+RT armor:22
+CT armor:32
+HD armor:9
+LL armor:30
+RL armor:30
+RTL armor:8
+RTR armor:8
+RTC armor:10
 
 Weapons:6
 PPC, Left Arm
 Large Laser, Left Arm
+Medium Pulse Laser, Left Arm
 PPC, Right Arm
 Large Laser, Right Arm
-Medium Pulse Laser, Left Arm
 Medium Pulse Laser, Right Arm
 
 Left Arm:
@@ -151,4 +150,19 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:The SLDF's original design specifications for the Cestus, a medium fire-support BattleMech, asked for two PPCs, two big lasers, and a pair of medium pulse lasers.	
+
+capabilities:The new generation of Cestus BattleMechs produced in the last decade is powered by GM's efficient 260 XL engine, with a top speed of 64 kph—a rating that many perceive to be on the slow side for a 'Mech at the light end of the heavy spectrum. The Cestus' weaponry, on the other hand, makes it a lethal foe at any range. The huge torso-mounted Gauss gun can provide catastrophic damage at long range. The Gauss rifle is supported by large and medium lasers installed in each arm. The Cestus retains both of its hand actuators for close-range fighting, capable of gripping or striking an opponent as needed.
+
+deployment:The original 6X Cestus carries an all energy weapon payload. Each arm carries a Large Pulse Laser, Medium Pulse Laser, and PPC. Heat is a major concern with this design as it only carries fourteen single heat sinks. 
+
+history:The CTS-6Y Cestus began production for the Star League Defense Force in 2766. However the original CTS-6X Cestus was produced during 2603. Introduced by General Motors and constructed at their Kathil plant, the Cestus served in the Armed Forces of the Federated Suns after the Fall of the Star League until its factory became a casualty during a Capellan Confederation Armed Forces raid at the beginning of the Second Succession War. The 'Mech was originally designed to carry a heavy energy weapons payload, but because of complications encountered with the heat sinks on the 'Mech, the upgraded Cestus was modified to carry a mix of ballistic and energy weapons. The Cestus was reintroduced by both Blue Shot Weapons and General Motors in the mid-3050s.
+
+manufacturer:General Motors
+primaryfactory:Kathil
+systemmanufacturer:CHASSIS:GM Heavy CVA
+systemmanufacturer:ENGINE:GM 260 XL
+systemmanufacturer:ARMOR:Durallex Special Heavy
+systemmanufacturer:COMMUNICATIONS:TharHes Thalia HM-22
+systemmanufacturer:TARGETING:Salamander Systems CommPhase Unit
 

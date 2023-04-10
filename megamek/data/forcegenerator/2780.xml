@@ -2287,14 +2287,6 @@
 	</chassis>
 	<chassis name='M.A.S.H. Truck' unitType='Tank'>
 		<availability>CC:10,LA:10,SL:10,FWL:10,IS:9,NIOPS:10,FS:10,DC:10,Periphery:8</availability>
-		<model name='(ICE)'>
-			<roles>support</roles>
-			<availability>CC:2,MOC:3,OA:3,LA:2,General:3,FWL:2,FS:2,CIR:3,DC:2,TC:3</availability>
-		</model>
-		<model name='(Standard)'>
-			<roles>support</roles>
-			<availability>General:8</availability>
-		</model>
 	</chassis>
 	<chassis name='Mackie' unitType='Mek'>
 		<availability>Periphery:1</availability>
@@ -2550,10 +2542,6 @@
 	</chassis>
 	<chassis name='Mobile Long Tom Artillery (Unofficial)' unitType='Tank'>
 		<availability>SL:6,IS:5,SL.R:2</availability>
-		<model name='(+ Carriage)'>
-			<roles>artillery</roles>
-			<availability>General:6</availability>
-		</model>
 	</chassis>
 	<chassis name='Model 96 &apos;Elephant&apos;' unitType='Dropship'>
 		<availability>SL:5,NIOPS:4</availability>

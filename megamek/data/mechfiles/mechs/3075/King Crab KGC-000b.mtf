@@ -6,7 +6,7 @@ mul id:1772
 Config:Biped
 TechBase:Inner Sphere
 Era:2743
-Source:TRO 3075
+Source:TRO 3075 - Star League
 Rules Level:2
 
 Mass:100
@@ -149,4 +149,18 @@ Ferro-Fibrous
 -Empty-
 -Empty-
 
+overview:The King Crab has been a horror on the battlefield since its introduction just before the old Star League's demise, and it is well known for its ability to quickly kill most BattleMechs under eighty tons.
 
+capabilities:While not the most heavily armored 'Mech, the King Crab is still tough to crack, with sixteen tons of ferro-fibrous armor and CASE protecting its ammunition stores; however, the arms are probably the most susceptible area to receive damage and an internal hit is likely to knock an autocannon out of the fight. The 'Mech is also slow, with a cruising speed of 32 km/h and top speed of 54 km/h,[6] and has been described as a "notorious hangar queen".
+
+deployment:The 000b variant is an upgrade of the classic KGC-000 built exclusively for the Star League Defense Force Royal units. Introduced at the same time as the original model its upgrade to double heat sink technology allowed the removal of three heat sinks as well as the addition of an extra ton of ammunition for each autocannon and an Artemis IV FCS for the missile launcher. 
+
+history:The KGC-000, designed by Cosara Weaponries scientists under General Kerensky's directives, performed brilliantly in its specified mission, though it was nowhere near the command vehicle that Defiance Industries' later Atlas was. The majority of King Crabs joined Kerensky on his Exodus, including all surviving -010 platforms; those that remained were surreptitiously purchased by ComStar and mothballed on Terra. Upon the Clans' arrival and the Battle of Tukayyid, most Com Guard commanders discovered that the original Imperator-D autocannon design could not close quickly enough with Clan machines to cause considerable damage. After being approached by ComStar, Cosara Weaponries created the -001 variant; the additional range gave the King Crab some much-needed reach. ComStar, pleased with their performance, gave Cosara permission to mass-produce the enhanced King Crab for general market sale, with ComStar receiving a major portion of the yearly earnings. Northwind production ended after the Word of Blake blockaded the system, and scattered intelligence reports indicate that the Blakists took control the Cosara plant. After being shut down for some months, the plant reopened in late 3069, continuously producing and sending a newer King Crab variant to Protectorate forces. First Precentor Dow took an extraordinary action for the once-secret organization after losing a major weapons supply. ComStar was able to infiltrate the Cosara plant and grab the new engineering designs by hiring a tiny mercenary group that specialized in corporate espionage. ComStar then approached Starcorps Industries and gave the young company the opportunity to create a new King Crab variation, the KGC-007. StarCorps accepted, eager to expand their product line, and the first -007s are scheduled to roll off the Son Hoa line in late 3071. The first three production runs have already been purchased by the LAAF and AFFC.
+
+manufacturer:Cosara Weaponries,Cosara Weaponries , Field Refit
+primaryfactory:Mars,Northwind,Various
+systemmanufacturer:CHASSIS:Hollis Mark II
+systemmanufacturer:ENGINE:Vlar 300
+systemmanufacturer:ARMOR:Aldis X Ferro-Fibrous with CASE
+systemmanufacturer:COMMUNICATIONS:Dalban Commline
+systemmanufacturer:TARGETING:Dalban HiRez-B

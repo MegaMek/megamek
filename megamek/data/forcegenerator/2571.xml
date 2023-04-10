@@ -192,6 +192,9 @@
 	<faction key='FWL.RH'>
 		<salvage pct='5'>MOC:1,CC:1,TH:10,LA:4,SL:5</salvage>
 	</faction>
+	<faction key='RWR.HG'>
+		<salvage pct='5'>TH:1,LA:7,SL:2</salvage>
+	</faction>
 	<faction key='FS.RC'>
 		<salvage pct='5'></salvage>
 	</faction>
@@ -1857,10 +1860,6 @@
 	</chassis>
 	<chassis name='Mobile Long Tom Artillery (Unofficial)' unitType='Tank'>
 		<availability>SL:6,IS:4,SL.R:4</availability>
-		<model name='(+ Carriage)'>
-			<roles>artillery</roles>
-			<availability>General:6</availability>
-		</model>
 	</chassis>
 	<chassis name='Model 96 &apos;Elephant&apos;' unitType='Dropship'>
 		<availability>SL:4</availability>

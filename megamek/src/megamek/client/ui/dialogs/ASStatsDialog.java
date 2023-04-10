@@ -18,10 +18,13 @@
  */
 package megamek.client.ui.dialogs;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractDialog;
 import megamek.client.ui.swing.ASStatsTablePanel;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
+import megamek.common.alphaStrike.ASCardDisplayable;
+import megamek.common.alphaStrike.ASStatsExporter;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.AlphaStrikeHelper;
 import megamek.common.alphaStrike.cardDrawer.ASCardPrinter;
@@ -41,8 +44,9 @@ import java.util.Collection;
 public class ASStatsDialog extends AbstractDialog {
     
     private final Collection<Entity> entities;
-    private final JButton clipBoardButton = new JButton("Copy to Clipboard");
-    private final JButton printButton = new JButton("Print");
+    private final JButton clipBoardButton = new JButton(Messages.getString("CASCardPanel.copyCard"));
+    private final JButton copyStatsButton = new JButton(Messages.getString("CASCardPanel.copyStats"));
+    private final JButton printButton = new JButton(Messages.getString("CASCardPanel.printCard"));
     private final JScrollPane scrollPane = new JScrollPane();
     private final JPanel centerPanel = new JPanel();
     private ASStatsTablePanel tablePanel;
@@ -71,8 +75,10 @@ public class ASStatsDialog extends AbstractDialog {
         var optionsPanel = new UIUtil.FixedYPanel(new FlowLayout(FlowLayout.LEFT));
         optionsPanel.add(Box.createVerticalStrut(25));
         optionsPanel.add(clipBoardButton);
+        optionsPanel.add(copyStatsButton);
         optionsPanel.add(printButton);
         clipBoardButton.addActionListener(e -> copyToClipboard());
+        copyStatsButton.addActionListener(e -> copyStats());
         printButton.addActionListener(ev -> printCards());
         
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
@@ -97,7 +103,17 @@ public class ASStatsDialog extends AbstractDialog {
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(stringSelection, null);
     }
-    
+
+    private void copyStats() {
+        StringBuilder allStats = new StringBuilder();
+        for (ASCardDisplayable element : tablePanel.getElements()) {
+            var statsExporter = new ASStatsExporter(element);
+            allStats.append(statsExporter.getStats()).append("\n");
+        }
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(new StringSelection(allStats.toString()), null);
+    }
+
     /** Returns a String representing the entities to export to the clipboard. */
     private String clipboardString(Collection<Entity> entities) {
         StringBuilder result = new StringBuilder();

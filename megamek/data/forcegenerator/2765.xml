@@ -64,7 +64,7 @@
 		<salvage pct='15'>CC:2,LA:2,SL:5,FWL:2,FS:2,DC:2</salvage>
 	</faction>
 	<faction key='RWR'>
-		<salvage pct='5'>LA:10,SL:2</salvage>
+		<salvage pct='5'>LA:10,SL:2,SL.R:1</salvage>
 	</faction>
 	<faction key='SL'>
 		<salvage pct='5'>CC:8,LA:10,FWL:7,FS:4,DC:6</salvage>
@@ -230,6 +230,18 @@
 	</faction>
 	<faction key='FWL.RH'>
 		<salvage pct='5'>MOC:1,CC:8,LA:10,SL:10</salvage>
+	</faction>
+	<faction key='RWR.HG'>
+		<pctSL>0,0,1,2,5</pctSL>
+		<pctSL unitType='Aero'>0,0,1,2,5</pctSL>
+		<pctSL unitType='Vehicle'>0,0,1,2,5</pctSL>
+		<salvage pct='5'>LA:10,SL:2,SL.R:1</salvage>
+	</faction>
+	<faction key='RWR.TC'>
+		<pctSL>30,40</pctSL>
+		<pctSL unitType='Aero'>30,40</pctSL>
+		<pctSL unitType='Vehicle'>30,40</pctSL>
+		<salvage pct='7'>SL:8,SL.R:2</salvage>
 	</faction>
 	<faction key='FS.RC'>
 		<salvage pct='5'></salvage>
@@ -2242,10 +2254,6 @@
 	</chassis>
 	<chassis name='M.A.S.H. Truck' unitType='Tank'>
 		<availability>CC:10,LA:10,SL:10,FWL:10,IS:9,FS:10,DC:10,Periphery:8</availability>
-		<model name='(Standard)'>
-			<roles>support</roles>
-			<availability>General:8</availability>
-		</model>
 	</chassis>
 	<chassis name='M9 SDS Battle Station' unitType='Space Station'>
 		<availability>TH:3</availability>
@@ -2510,10 +2518,6 @@
 	</chassis>
 	<chassis name='Mobile Long Tom Artillery (Unofficial)' unitType='Tank'>
 		<availability>SL:6,IS:5,SL.R:2</availability>
-		<model name='(+ Carriage)'>
-			<roles>artillery</roles>
-			<availability>General:6</availability>
-		</model>
 	</chassis>
 	<chassis name='Model 96 &apos;Elephant&apos;' unitType='Dropship'>
 		<availability>SL:5</availability>

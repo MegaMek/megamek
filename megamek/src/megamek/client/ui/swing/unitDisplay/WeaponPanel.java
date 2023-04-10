@@ -2825,7 +2825,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         // Update the text size when the GUI scaling changes
         if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
             adaptToGUIScale();
-        } else if (e.getName().equals(GUIPreferences.ADVANCED_UNIT_DISPLAY_WEAPON_LIST_HEIGHT)) {
+        } else if (e.getName().equals(GUIPreferences.UNIT_DISPLAY_WEAPON_LIST_HEIGHT)) {
             tWeaponScroll.setMinimumSize(new Dimension(500, GUIP.getUnitDisplayWeaponListHeight()));
             tWeaponScroll.setPreferredSize(new Dimension(500, GUIP.getUnitDisplayWeaponListHeight()));
             tWeaponScroll.revalidate();

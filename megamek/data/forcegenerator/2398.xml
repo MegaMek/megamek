@@ -124,6 +124,9 @@
 	<faction key='LA.M'>
 		<salvage pct='6'></salvage>
 	</faction>
+	<faction key='RWR.HG'>
+		<salvage pct='5'>TH:1,LA:3</salvage>
+	</faction>
 	<faction key='LA.RG'>
 		<salvage pct='6'></salvage>
 	</faction>

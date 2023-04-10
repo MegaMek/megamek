@@ -152,4 +152,19 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:The SLDF's original design specifications for the Cestus, a medium fire-support BattleMech, asked for two PPCs, two big lasers, and a pair of medium pulse lasers.	
+
+capabilities:The new generation of Cestus BattleMechs produced in the last decade is powered by GM's efficient 260 XL engine, with a top speed of 64 kph—a rating that many perceive to be on the slow side for a 'Mech at the light end of the heavy spectrum. The Cestus' weaponry, on the other hand, makes it a lethal foe at any range. The huge torso-mounted Gauss gun can provide catastrophic damage at long range. The Gauss rifle is supported by large and medium lasers installed in each arm. The Cestus retains both of its hand actuators for close-range fighting, capable of gripping or striking an opponent as needed.
+
+deployment:A variant created by Blue Shot Weapons, the 7A turns the Cestus into a close range brawler. The first step was the removal of all the weaponry. In their places are newer guns, the largest of which is the LB-X Autocannon/20. With three tons of ammunition, the MechWarrior has the flexibility to swap between slugs and cluster rounds. This is backed up by paired ER medium lasers, Medium Pulse Lasers, and Streak SRM-4s. As long as the autocannon has rounds, heat can be an issue, so it should be managed with care. 
+
+history:The CTS-6Y Cestus began production for the Star League Defense Force in 2766. However the original CTS-6X Cestus was produced during 2603. Introduced by General Motors and constructed at their Kathil plant, the Cestus served in the Armed Forces of the Federated Suns after the Fall of the Star League until its factory became a casualty during a Capellan Confederation Armed Forces raid at the beginning of the Second Succession War. The 'Mech was originally designed to carry a heavy energy weapons payload, but because of complications encountered with the heat sinks on the 'Mech, the upgraded Cestus was modified to carry a mix of ballistic and energy weapons. The Cestus was reintroduced by both Blue Shot Weapons and General Motors in the mid-3050s.
+
+manufacturer:Blue Shot Weapons
+primaryfactory:Solaris VIIl
+systemmanufacturer:CHASSIS:GM Heavy CVA
+systemmanufacturer:ENGINE:GM 260 XL
+systemmanufacturer:ARMOR:Durallex Special Heavy
+systemmanufacturer:COMMUNICATIONS:TharHes Thalia HM-22
+systemmanufacturer:TARGETING:Salamander Systems CommPhase Unit
 

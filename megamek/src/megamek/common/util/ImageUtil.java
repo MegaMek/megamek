@@ -165,6 +165,15 @@ public final class ImageUtil {
         }
     }
 
+    /**
+     * Loads and returns the image of the given fileName. This method does not make sure the image
+     * is fully loaded, this must be done by the caller when necessary (the simplest way is to
+     * create a new ImageIcon with the image). If the image cannot be loaded for any reason,
+     * the method returns a placeholder image but not null.
+     *
+     * @param fileName The image filename
+     * @return The image if possible, a placeholder image otherwise
+     */
     public static Image loadImageFromFile(String fileName) {
         if (null == fileName) {
             return failStandardImage();

@@ -34,8 +34,12 @@ VERSION HISTORY:
 + PR #4276: The key binds can now be reset to their default values in the client settings
 + PR #4281: For VTOL vehicles, elevation is now saved to and loaded from MULs
 + PR #4289: A pure text stats summary of Alpha Strike elements can now be copied to the Clipboard
-+ PR #4282: Symbols on the minimap can now be hidden. The minimap also now has a context menu.
++ PR #4282: Symbols on the minimap can now be hidden; the minimap also now has a context menu
 + PR #4284: The client settings now have a separate tab for tool tip and unit display setting
++ PR #4295: System/java/Megamek information can now be copied in the About dialog
++ Fix #4293: Off-board entities are now properly visible to players
++ PR #4292: The -quick command line flag can now be combined with other flags
++ PR #4290: The lobby chat window now shows a text placeholder when empty to improve its visibility
 
 0.49.12 (2023-03-04 2200 UTC)
 + PR #4062: OS Thunderbolt Weapons are now available for construction and use

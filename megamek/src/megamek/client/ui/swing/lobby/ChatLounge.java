@@ -3546,12 +3546,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         return butForceView.isSelected();
     }
     
-    /** Returns true when a modal dialog such as the Camo Chooser or a Load Force dialog is currently shown. */
-    public boolean isModalDialogShowing() {
-        return Stream.of(Window.getWindows())
-                .anyMatch(w -> w.isShowing() && (w instanceof JDialog) && ((JDialog) w).isModal());
-    }
-
     public void killPreviewBV() {
         if (previewBV != null) {
             previewBV.die();

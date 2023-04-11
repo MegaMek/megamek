@@ -672,7 +672,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                     }
                 }
                 c.sendAddEntity(entities);
-                m_clientgui.getClient().sendChat(m_clientgui.getClient().getLocalPlayer() + " loaded Units from Random Army for player: " + m_chPlayer.getSelectedItem() + " [units " + entities.size() + "]");
+                m_clientgui.getClient().sendServerChat(Player.PLAYER_NONE,m_clientgui.getClient().getLocalPlayer() + " loaded Units from Random Army for player: " + m_chPlayer.getSelectedItem() + " [units " + entities.size() + "]");
                 armyModel.clearData();
                 unitsModel.clearData();
                 m_lUnitsBVTotal.setText(msg_bvtotal + "0");

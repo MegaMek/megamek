@@ -1586,7 +1586,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             previewGameBoard();
         }
 
-        clientgui.getClient().sendChat(clientgui.getClient().getLocalPlayer() + " changed map to: " + board);
+        clientgui.getClient().sendServerChat(Player.PLAYER_NONE, clientgui.getClient().getLocalPlayer() + " changed map to: " + board);
     }
 
     //
@@ -2540,7 +2540,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
             if (!newEntities.isEmpty()) {
                 client().sendAddEntity(newEntities);
-                client().sendChat(client().getLocalPlayer() + " loaded units from Clipboard for player: " + localPlayer().getName() + " [units " + newEntities.size() + "]");
+                client().sendServerChat(Player.PLAYER_NONE, client().getLocalPlayer() + " loaded units from Clipboard for player: " + localPlayer().getName() + " [units " + newEntities.size() + "]");
             }
         }
     }

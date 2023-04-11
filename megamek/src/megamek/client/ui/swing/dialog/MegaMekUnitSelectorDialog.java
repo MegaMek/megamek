@@ -113,7 +113,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
             e.setOwner(client.getLocalPlayer());
             client.sendAddEntity(e);
 
-            clientGUI.getClient().sendChat(clientGUI.getClient().getLocalPlayer() + " selected a unit for player " + name);
+            clientGUI.getClient().sendServerChat(Player.PLAYER_NONE, clientGUI.getClient().getLocalPlayer() + " selected a unit for player " + name);
         }
         if (close) {
             setVisible(false);

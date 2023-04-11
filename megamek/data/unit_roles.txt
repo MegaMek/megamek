@@ -5390,6 +5390,8 @@ Rifleman RFL-2N:SNIPER
 Rifleman RFL-3C:BRAWLER
 Rifleman RFL-3Cr:BRAWLER
 Rifleman RFL-3N:SNIPER
+Rifleman RFL-3N (Sneede):SNIPER
+Rifleman RFL-3N (Sneede II):SNIPER
 Rifleman RFL-4D:SNIPER
 Rifleman RFL-5CS:SNIPER
 Rifleman RFL-5D:BRAWLER

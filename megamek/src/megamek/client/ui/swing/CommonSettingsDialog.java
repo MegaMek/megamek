@@ -310,6 +310,11 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
     private ColourSelectorButton csbUnitOverviewValidColor;
     private ColourSelectorButton csbUnitOverviewSelectedColor;
+    private ColourSelectorButton csbUnitOverviewTextColor;
+    private ColourSelectorButton csbUnitOverviewTextShadowColor;
+    private ColourSelectorButton csbUnitOverviewWarningColor;
+    private ColourSelectorButton csbUnitOverviewCautionColor;
+    private ColourSelectorButton csbUnitOverviewConditionShadowColor;
 
     private ColourSelectorButton csbPlanetaryConditionsColorTitle;
     private ColourSelectorButton csbPlanetaryConditionsColorText;
@@ -321,6 +326,11 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private final JCheckBox planetaryConditionsShowLabels = new JCheckBox(Messages.getString("CommonSettingsDialog.planetaryConditionsShowLabels"));
     private final JCheckBox planetaryConditionsShowValues = new JCheckBox(Messages.getString("CommonSettingsDialog.planetaryConditionsShowValues"));
     private final JCheckBox planetaryConditionsShowIndicators = new JCheckBox(Messages.getString("CommonSettingsDialog.planetaryConditionsShowIndicators"));
+
+    private ColourSelectorButton csbKeyBindingsColorTitle;
+    private ColourSelectorButton csbKeyBindingsColorText;
+    private ColourSelectorButton csbKeyBindingsColorBackground;
+    private final JCheckBox keyBindingsShowHeader = new JCheckBox(Messages.getString("CommonSettingsDialog.keyBindingsShowHeader"));
 
     /** Maps command strings to a JTextField for updating the modifier for the command. */
     private Map<String, JTextField> cmdModifierMap;
@@ -1121,10 +1131,30 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         csbUnitOverviewValidColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitOverviewValidColor"));
         csbUnitOverviewValidColor.setColour(GUIP.getUnitOverviewValidColor());
         row.add(csbUnitOverviewValidColor);
-
         csbUnitOverviewSelectedColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitOverviewSelectedColor"));
         csbUnitOverviewSelectedColor.setColour(GUIP.getUnitOverviewSelectedColor());
         row.add(csbUnitOverviewSelectedColor);
+        comps.add(row);
+
+        row = new ArrayList<>();
+        csbUnitOverviewTextColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitOverviewTextColor"));
+        csbUnitOverviewTextColor.setColour(GUIP.getUnitOverviewTextColor());
+        row.add(csbUnitOverviewTextColor);
+        csbUnitOverviewTextShadowColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitOverviewTextShadowColor"));
+        csbUnitOverviewTextShadowColor.setColour(GUIP.getUnitOverviewTextShadowColor());
+        row.add(csbUnitOverviewTextShadowColor);
+        comps.add(row);
+
+        row = new ArrayList<>();
+        csbUnitOverviewWarningColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitOverviewWarningColor"));
+        csbUnitOverviewWarningColor.setColour(GUIP.getUnitOverviewWarningColor());
+        row.add(csbUnitOverviewWarningColor);
+        csbUnitOverviewCautionColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitOverviewCautionColor"));
+        csbUnitOverviewCautionColor.setColour(GUIP.getUnitOverviewCautionColor());
+        row.add(csbUnitOverviewCautionColor);
+        csbUnitOverviewConditionShadowColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitOverviewConditionShadowColor"));
+        csbUnitOverviewConditionShadowColor.setColour(GUIP.getUnitOverviewConditionShadowColor());
+        row.add(csbUnitOverviewConditionShadowColor);
         comps.add(row);
 
         addLineSpacer(comps);
@@ -1133,11 +1163,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         csbPlanetaryConditionsColorTitle = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.PlanetaryConditionsColorTitle"));
         csbPlanetaryConditionsColorTitle.setColour(GUIP.getPlanetaryConditionsColorTitle());
         row.add(csbPlanetaryConditionsColorTitle);
-
         csbPlanetaryConditionsColorText = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.PlanetaryConditionsColorText"));
         csbPlanetaryConditionsColorText.setColour(GUIP.getPlanetaryConditionsColorText());
         row.add(csbPlanetaryConditionsColorText);
-
         csbPlanetaryConditionsColorBackground = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.PlanetaryConditionsColorBackground"));
         csbPlanetaryConditionsColorBackground.setColour(GUIP.getPlanetaryConditionsColorBackground());
         row.add(csbPlanetaryConditionsColorBackground);
@@ -1147,7 +1175,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         csbPlanetaryConditionsColorCold = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.PlanetaryConditionsColorCold"));
         csbPlanetaryConditionsColorCold.setColour(GUIP.getPlanetaryConditionsColorCold());
         row.add(csbPlanetaryConditionsColorCold);
-
         csbPlanetaryConditionsColorHot = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.PlanetaryConditionsColorHot"));
         csbPlanetaryConditionsColorHot.setColour(GUIP.getPlanetaryConditionsColorHot());
         row.add(csbPlanetaryConditionsColorHot);
@@ -1165,6 +1192,21 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         planetaryConditionsShowIndicators.setSelected(GUIP.getPlanetaryConditionsShowIndicators());
 
         addLineSpacer(comps);
+
+        row = new ArrayList<>();
+        csbKeyBindingsColorTitle = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.keyBindingsColorTitle"));
+        csbKeyBindingsColorTitle.setColour(GUIP.getKeyBindingsColorTitle());
+        row.add(csbKeyBindingsColorTitle);
+        csbKeyBindingsColorText = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.keyBindingsColorText"));
+        csbKeyBindingsColorText.setColour(GUIP.getKeyBindingsColorText());
+        row.add(csbKeyBindingsColorText);
+        csbKeyBindingsColorBackground = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.keyBindingsColorColorBackground"));
+        csbKeyBindingsColorBackground.setColour(GUIP.getKeyBindingsColorBackground());
+        row.add(csbKeyBindingsColorBackground);
+        comps.add(row);
+
+        comps.add(checkboxEntry(keyBindingsShowHeader, null));
+        keyBindingsShowHeader.setSelected(GUIP.getKeyBindingsColorShowHeader());
 
         return createSettingsPanel(comps);
     }
@@ -1654,6 +1696,11 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         csbUnitOverviewValidColor.setColour(GUIP.getUnitOverviewValidColor());
         csbUnitOverviewSelectedColor.setColour(GUIP.getUnitOverviewSelectedColor());
+        csbUnitOverviewTextColor.setColour(GUIP.getUnitOverviewTextColor());
+        csbUnitOverviewTextShadowColor.setColour(GUIP.getUnitOverviewTextShadowColor());
+        csbUnitOverviewWarningColor.setColour(GUIP.getUnitOverviewWarningColor());
+        csbUnitOverviewCautionColor.setColour(GUIP.getUnitOverviewCautionColor());
+        csbUnitOverviewConditionShadowColor.setColour(GUIP.getUnitOverviewConditionShadowColor());
 
         csbPlanetaryConditionsColorTitle.setColour(GUIP.getPlanetaryConditionsColorTitle());
         csbPlanetaryConditionsColorText.setColour(GUIP.getPlanetaryConditionsColorText());
@@ -1666,6 +1713,11 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         planetaryConditionsShowLabels.setSelected(GUIP.getPlanetaryConditionsShowLabels());
         planetaryConditionsShowValues.setSelected(GUIP.getPlanetaryConditionsShowValues());
         planetaryConditionsShowIndicators.setSelected(GUIP.getPlanetaryConditionsShowIndicators());
+
+        csbKeyBindingsColorTitle.setColour(GUIP.getKeyBindingsColorTitle());
+        csbKeyBindingsColorText.setColour(GUIP.getKeyBindingsColorText());
+        csbKeyBindingsColorBackground.setColour(GUIP.getKeyBindingsColorBackground());
+        keyBindingsShowHeader.setSelected(GUIP.getKeyBindingsColorShowHeader());
 
         setVisible(false);
     }
@@ -2084,6 +2136,11 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         GUIP.setUnitOverviewValidColor(csbUnitOverviewValidColor.getColour());
         GUIP.setUnitOverviewSelectedColor(csbUnitOverviewSelectedColor.getColour());
+        GUIP.setUnitOverviewTextColor(csbUnitOverviewTextColor.getColour());
+        GUIP.setUnitOverviewTextShadowColor(csbUnitOverviewTextShadowColor.getColour());
+        GUIP.setUnitOverviewWarningColor(csbUnitOverviewWarningColor.getColour());
+        GUIP.setUnitOverviewCautionColor(csbUnitOverviewCautionColor.getColour());
+        GUIP.setUnitOverviewConditionShadowColor(csbUnitOverviewConditionShadowColor.getColour());
 
         GUIP.setPlanetaryConditionsColorTitle(csbPlanetaryConditionsColorTitle.getColour());
         GUIP.setPlanetaryConditionsColorText(csbPlanetaryConditionsColorText.getColour());
@@ -2096,6 +2153,11 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setPlanetaryConditionsShowLabels(planetaryConditionsShowLabels.isSelected());
         GUIP.setPlanetaryConditionsShowValues(planetaryConditionsShowValues.isSelected());
         GUIP.setPlanetaryConditionsShowIndicators(planetaryConditionsShowIndicators.isSelected());
+
+        GUIP.setKeyBindingsColorTitle(csbKeyBindingsColorTitle.getColour());
+        GUIP.setKeyBindingsColorText(csbKeyBindingsColorText.getColour());
+        GUIP.setKeyBindingsColorBackground(csbKeyBindingsColorBackground.getColour());
+        GUIP.setKeyBindingsShowHeader(keyBindingsShowHeader.isSelected());
 
         setVisible(false);
     }

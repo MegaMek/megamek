@@ -197,7 +197,8 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
 
         String tmpStr = "";
         Boolean showHeading = GUIP.getPlanetaryConditionsShowHeader();
-        tmpStr = (showHeading ? String.format("#%02X%02X%02X", colorTitle.getRed(), colorTitle.getGreen(), colorTitle.getBlue()) + MessageFormat.format(MSG_HEADING, toggleKey) : "");
+        String titleColor = String.format("#%02X%02X%02X", colorTitle.getRed(), colorTitle.getGreen(), colorTitle.getBlue());
+        tmpStr = (showHeading ? titleColor + MessageFormat.format(MSG_HEADING, toggleKey) : "");
 
         if (tmpStr.length()  > 0) {
             result.add(tmpStr);

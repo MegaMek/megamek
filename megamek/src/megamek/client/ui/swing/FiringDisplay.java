@@ -1364,7 +1364,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
     }
 
     /**
-     * This pops up a menu allowing the user to choose one of several 
+     * This pops up a menu allowing the user to choose one of several
      * SPAs, and then performs the appropriate steps.
      */
     private void doActivateSpecialAbility() {
@@ -1399,7 +1399,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
      * Worker function that determines if we can activate the "blood stalker" ability
      */
     private boolean canActivateBloodStalker() {
-        // can be activated if the entity can do it and haven't done it already 
+        // can be activated if the entity can do it and haven't done it already
         // and the target is something that can be blood-stalked
         return (ce() != null) && ce().canActivateBloodStalker() &&
                 (target != null) && (target.getTargetType() == Targetable.TYPE_ENTITY) &&
@@ -1490,7 +1490,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                 }
             }
             // Could check legality on buildings, but I don't believe there are
-            // any weapons that are still legal that aren't legal on buildings            
+            // any weapons that are still legal that aren't legal on buildings
         }
         clientgui.getUnitDisplay().wPan.toHitText.setText(toHitBuff.toString());
     }
@@ -2011,7 +2011,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
 
     /**
      * A VTOL or LAM in airmech mode making a bombing or strafing attack already has the target set
-     * during the movement phase. 
+     * during the movement phase.
      */
     void updateVTOLGroundTarget() {
         clientgui.getBoardView().clearStrafingCoords();
@@ -2200,7 +2200,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
             } else {
                 endMyTurn();
                 String playerName;
-              
+
                 if (e.getPlayer() != null) {
                     playerName = e.getPlayer().getName();
                 } else {
@@ -2441,8 +2441,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         if ((ce() != null) && !ce().isMakingVTOLGroundAttack()) {
             target(null);
         }
-        // if we're clearing a "blood stalker" activation from the queue, 
-        // clear the local entity's blood stalker 
+        // if we're clearing a "blood stalker" activation from the queue,
+        // clear the local entity's blood stalker
         if ((ce() != null) && attacks.stream().anyMatch(item -> item instanceof ActivateBloodStalkerAction)) {
             ce().setBloodStalkerTarget(Entity.NONE);
         }
@@ -2612,12 +2612,15 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
             choice = targets.get(0);
         } else if (targets.size() > 1) {
             // If we have multiple choices, display a selection dialog.
-            String input = (String) JOptionPane.showInputDialog(clientgui,
-                    Messages.getString("FiringDisplay.ChooseTargetDialog.message", pos.getBoardNum()),
-                    Messages.getString("FiringDisplay.ChooseTargetDialog.title"),
-                    JOptionPane.QUESTION_MESSAGE, null,
-                    SharedUtility.getDisplayArray(targets), null);
-            choice = SharedUtility.getTargetPicked(targets, input);
+//            String input = (String) JOptionPane.showInputDialog(clientgui,
+//                    Messages.getString("FiringDisplay.ChooseTargetDialog.message", pos.getBoardNum()),
+//                    Messages.getString("FiringDisplay.ChooseTargetDialog.title"),
+//                    JOptionPane.QUESTION_MESSAGE, null,
+//                    SharedUtility.getTargetDisplayArray(targets), null);
+//            choice = SharedUtility.getTargetPicked(targets, input);
+
+            choice = TargetChoiceDialog.showTargetChoiceDialog(clientgui.getFrame(), targets);
+
         }
 
         // Return the chosen unit.

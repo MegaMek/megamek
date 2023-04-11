@@ -1021,7 +1021,8 @@ public class MapSettings implements Serializable {
                 && (algorithmToUse == other.getAlgorithmToUse()) && (mountainHeightMin == other.getMountainHeightMin())
                 && (mountainHeightMax == other.getMountainHeightMax()) && (mountainPeaks == other.getMountainPeaks())
                 && (mountainStyle == other.getMountainStyle()) && (mountainWidthMin == other.getMountainWidthMin())
-                && (mountainWidthMax == other.getMountainWidthMax()) && (boardBuildings.equals(other.getBoardBuildings()));
+                && (mountainWidthMax == other.getMountainWidthMax()) && (boardBuildings.equals(other.getBoardBuildings())
+                && (medium == other.medium));
     }
 
     public int getInvertNegativeTerrain() {

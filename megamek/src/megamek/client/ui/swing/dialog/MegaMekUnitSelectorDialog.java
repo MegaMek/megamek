@@ -100,8 +100,9 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         Entity e = getSelectedEntity();
         if (e != null) {
             Client client = null;
+            String name = (String) comboPlayer.getSelectedItem();
+
             if (comboPlayer.getSelectedIndex() > 0) {
-                String name = (String) comboPlayer.getSelectedItem();
                 client = clientGUI.getBots().get(name);
             }
 
@@ -111,6 +112,8 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
             autoSetSkillsAndName(e, client.getLocalPlayer());
             e.setOwner(client.getLocalPlayer());
             client.sendAddEntity(e);
+
+            clientGUI.getClient().sendChat(clientGUI.getClient().getLocalPlayer() + " selected a unit for player " + name);
         }
         if (close) {
             setVisible(false);

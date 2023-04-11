@@ -135,6 +135,7 @@ public class SkillGenerationDialog extends AbstractButtonDialog {
     protected void okAction() {
         super.okAction();
         getSkillGenerationOptionsPanel().updateClient();
+        clientGUI.getClient().sendChat(clientGUI.getClient().getLocalPlayer() + " changed settings for Skill Generation");
     }
     //endregion Button Actions
 

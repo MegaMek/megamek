@@ -1585,6 +1585,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         if (boardPreviewW.isVisible()) {
             previewGameBoard();
         }
+
+        clientgui.getClient().sendChat(clientgui.getClient().getLocalPlayer() + " changed map to: " + board);
     }
 
     //
@@ -2538,6 +2540,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
             if (!newEntities.isEmpty()) {
                 client().sendAddEntity(newEntities);
+                client().sendChat(client().getLocalPlayer() + " loaded units from Clipboard for player: " + localPlayer().getName() + " [units " + newEntities.size() + "]");
             }
         }
     }

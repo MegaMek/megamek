@@ -249,7 +249,8 @@ public class ForceGeneratorViewUi implements ActionListener {
         }
         c.sendAddEntity(entities);
 
-        clientGui.getClient().sendServerChat(Player.PLAYER_NONE, clientGui.getClient().getLocalPlayer() + " loaded Units from Random Army for player: "  + playerName + " [units "+ entities.size() + "]");
+        String msg = clientGui.getClient().getLocalPlayer() + " loaded Units from Random Army for player: "  + playerName + " [units "+ entities.size() + "]";
+        clientGui.getClient().sendServerChat(Player.PLAYER_NONE, msg);
 
         modelChosen.clearData();
     }

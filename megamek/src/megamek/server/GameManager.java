@@ -872,7 +872,7 @@ public class GameManager implements IGameManager {
                 if (game.getPhase().isBefore(GamePhase.DEPLOYMENT)) {
                     MapSettings newSettings = (MapSettings) packet.getObject(0);
                     if (!game.getMapSettings().equalMapGenParameters(newSettings)) {
-                        sendServerChat("Player " + player + " changed map settings");
+                        sendServerChat(player + " changed map settings");
                     }
                     MapSettings mapSettings = newSettings;
                     mapSettings.setBoardsAvailableVector(ServerBoardHelper.scanForBoards(mapSettings));
@@ -888,7 +888,7 @@ public class GameManager implements IGameManager {
                 if (game.getPhase().isBefore(GamePhase.DEPLOYMENT)) {
                     MapSettings newSettings = (MapSettings) packet.getObject(0);
                     if (!game.getMapSettings().equalMapGenParameters(newSettings)) {
-                        sendServerChat("Player " + player + " changed map dimensions");
+                        sendServerChat(player + " changed map dimensions");
                     }
                     MapSettings mapSettings = newSettings;
                     mapSettings.setBoardsAvailableVector(ServerBoardHelper.scanForBoards(mapSettings));
@@ -903,7 +903,7 @@ public class GameManager implements IGameManager {
             case SENDING_PLANETARY_CONDITIONS:
                 if (game.getPhase().isBefore(GamePhase.DEPLOYMENT)) {
                     PlanetaryConditions conditions = (PlanetaryConditions) packet.getObject(0);
-                    sendServerChat("Player " + player + " changed planetary conditions");
+                    sendServerChat(player + " changed planetary conditions");
                     game.setPlanetaryConditions(conditions);
                     resetPlayersDone();
                     transmitAllPlayerDones();

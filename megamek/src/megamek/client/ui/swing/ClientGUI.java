@@ -1948,7 +1948,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
                     if (!loadedUnits.isEmpty()) {
                         client.sendAddEntity(loadedUnits);
-                        client.sendServerChat(Player.PLAYER_NONE, client.getLocalPlayer() + " loaded MUL file for player: " + player.getName() + " [" + loadedUnits.size() + " units]");
+                        String msg = client.getLocalPlayer() + " loaded MUL file for player: " + player.getName() + " [" + loadedUnits.size() + " units]";
+                        client.sendServerChat(Player.PLAYER_NONE, msg);
                         addedUnits = true;
                     }
                 } catch (Exception ex) {

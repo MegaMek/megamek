@@ -57,6 +57,8 @@ class FiringSolutionSprite extends HexSprite {
     private boolean noHitPossible = false;
     private Shape finalHex;
 
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
     public FiringSolutionSprite(BoardView boardView1, final FiringSolution fsoln) {
         super(boardView1, fsoln.getToHitData().getLocation());
         updateBounds();
@@ -98,8 +100,8 @@ class FiringSolutionSprite extends HexSprite {
         graph.scale(bv.scale, bv.scale);
         
         // get the right font
-        String fontName = GUIPreferences.getInstance().getString(GUIPreferences.ADVANCED_MOVE_FONT_TYPE);
-        int fontStyle = GUIPreferences.getInstance().getInt(GUIPreferences.ADVANCED_MOVE_FONT_STYLE);
+        String fontName = GUIP.getMoveFontType();
+        int fontStyle = GUIP.getMoveFontStyle();
         
         if (noHitPossible) {  
             // write big red X

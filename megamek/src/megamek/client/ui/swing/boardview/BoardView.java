@@ -890,7 +890,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 }
                 break;
 
-            case GUIPreferences.ADVANCED_USE_CAMO_OVERLAY:
+            case GUIPreferences.USE_CAMO_OVERLAY:
                 getTilesetManager().reloadUnitIcons();
                 break;
 
@@ -1022,7 +1022,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
      */
     @Override
     public synchronized void paintComponent(Graphics g) {
-        if (GUIP.getBoolean(GUIPreferences.ADVANCED_SHOW_FPS)) {
+        if (GUIP.getShowFPS()) {
             paintCompsStartTime = System.nanoTime();
         }
 
@@ -1220,7 +1220,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             disp.draw(g, displayablesRect);
         }
 
-        if (GUIP.getBoolean(GUIPreferences.ADVANCED_SHOW_FPS)) {
+        if (GUIP.getShowFPS()) {
             if (frameCount == FRAMES) {
                 averageTime = totalTime / FRAMES;
                 totalTime = 0;
@@ -2492,7 +2492,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         }
 
         // Add the terrain & building shadows
-        if (GUIP.getBoolean(GUIPreferences.SHADOWMAP) && (shadowMap != null)) {
+        if (GUIP.getShadowMap() && (shadowMap != null)) {
             Point p1SRC = getHexLocationLargeTile(c.getX(), c.getY(), 1);
             Point p2SRC = new Point(p1SRC.x + HEX_W, p1SRC.y + HEX_H);
             Point p2DST = new Point(hex_size.width, hex_size.height);
@@ -2532,7 +2532,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         }
 
         // AO Hex Shadow in this hex when a higher one is adjacent
-        if (GUIP.getBoolean(GUIPreferences.AOHEXSHADOWS)) {
+        if (GUIP.getAOHexShadows()) {
             for (int dir : allDirections) {
                 Shape ShadowShape = getElevationShadowArea(c, dir);
                 GradientPaint gpl = getElevationShadowGP(c, dir);
@@ -2601,7 +2601,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         }
 
         // Darken the hex for nighttime, if applicable
-        if (GUIP.getBoolean(GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT)
+        if (GUIP.getDarkenMapAtNight()
                 && IlluminationLevel.determineIlluminationLevel(game, c).isNone()
                 && (game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DAY)) {
             for (int x = 0; x < hexImage.getWidth(); ++x) {
@@ -2612,9 +2612,9 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         }
 
         // Set the text color according to Preferences or Light Gray in space
-        g.setColor(GUIP.getMapTextColor());
+        g.setColor(GUIP.getBoardTextColor());
         if (game.getBoard().inSpace()) {
-            g.setColor(Color.LIGHT_GRAY);
+            g.setColor(GUIP.getBoardSpaceTextColor());
         }
 
         // draw special stuff for the hex
@@ -2659,14 +2659,13 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 ypos -= 10;
             }
             if (height > 0) {
-                g.setColor(GUIP.getColor("AdvancedBuildingTextColor"));
+                g.setColor(GUIP.getBuildingTextColor());
                 drawCenteredString(Messages.getString("BoardView1.HEIGHT") + height,
                         0, (int) (ypos * scale), font_elev, g);
                 ypos -= 10;
             }
             if (hex.terrainLevel(Terrains.FOLIAGE_ELEV) == 1) {
-                g.setColor(GUIP.getColor(
-                        GUIPreferences.ADVANCED_LOW_FOLIAGE_COLOR));  
+                g.setColor(GUIP.getLowFoliageColor());
                 drawCenteredString(Messages.getString("BoardView1.LowFoliage"), 
                         0, (int) (ypos * scale), font_elev, g);
                 ypos -= 10;
@@ -2696,42 +2695,42 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         // draw elevation borders
         if (drawElevationLine(c, 0)) {
             drawIsometricElevation(c, Color.GRAY, p1, p2, 0, g);
-            if (GUIP.getBoolean(GUIPreferences.LEVELHIGHLIGHT)) {
+            if (GUIP.getLevelHighlight()) {
                 g.drawLine(s21, 0, s62, 0);
             }
         }
 
         if (drawElevationLine(c, 1)) {
             drawIsometricElevation(c, Color.DARK_GRAY, p3, p1, 1, g);
-            if (GUIP.getBoolean(GUIPreferences.LEVELHIGHLIGHT)) {
+            if (GUIP.getLevelHighlight()) {
                 g.drawLine(s62, 0, s83, s35);
             }
         }
 
         if (drawElevationLine(c, 2)) {
             drawIsometricElevation(c, Color.LIGHT_GRAY, p4, p5, 2, g);
-            if (GUIP.getBoolean(GUIPreferences.LEVELHIGHLIGHT)) {
+            if (GUIP.getLevelHighlight()) {
                 g.drawLine(s83, s36, s62, s71);
             }
         }
 
         if (drawElevationLine(c, 3)) {
             drawIsometricElevation(c, Color.GRAY, p6, p5, 3, g);
-            if (GUIP.getBoolean(GUIPreferences.LEVELHIGHLIGHT)) {
+            if (GUIP.getLevelHighlight()) {
                 g.drawLine(s62, s71, s21, s71);
             }
         }
 
         if (drawElevationLine(c, 4)) {
             drawIsometricElevation(c, Color.DARK_GRAY, p7, p6, 4, g);
-            if (GUIP.getBoolean(GUIPreferences.LEVELHIGHLIGHT)) {
+            if (GUIP.getLevelHighlight()) {
                 g.drawLine(s21, s71, 0, s36);
             }
         }
 
         if (drawElevationLine(c, 5)) {
             drawIsometricElevation(c, Color.LIGHT_GRAY, p8, p2, 5, g);
-            if (GUIP.getBoolean(GUIPreferences.LEVELHIGHLIGHT)) {
+            if (GUIP.getLevelHighlight()) {
                 g.drawLine(0, s35, s21, 0);
             }
 
@@ -2741,7 +2740,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
         // draw mapsheet borders
         if (GUIP.getShowMapsheets()) {
-            g.setColor(GUIP.getColor(GUIPreferences.ADVANCED_MAPSHEET_COLOR));
+            g.setColor(GUIP.getMapsheetColor());
             if ((c.getX() % 16) == 0) {
                 // left edge of sheet (edge 4 & 5)
                 g.drawLine(s21, s71, 0, s36);
@@ -2817,7 +2816,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 BufferedImage scaledImage = ImageUtil.createAcceleratedImage(getScaledImage(image, true));
 
                 // Darken the hex for nighttime, if applicable
-                if (GUIP.getBoolean(GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT)
+                if (GUIP.getDarkenMapAtNight()
                         && IlluminationLevel.determineIlluminationLevel(game, c).isNone()
                         && (game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DAY)) {
                     for (int x = 0; x < scaledImage.getWidth(null); ++x) {
@@ -2865,7 +2864,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         final Hex dest = game.getBoard().getHexInDir(c, dir);
         final Hex src = game.getBoard().getHex(c);
 
-        if (!useIsometric() || GUIP.getBoolean(GUIPreferences.FLOATINGISO)) {
+        if (!useIsometric() || GUIP.getFloatingIso()) {
             return;
         }
 
@@ -3581,7 +3580,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             return;
         }
 
-        if (GUIP.getBoolean("SOFTCENTER")) {
+        if (GUIP.getSoftCenter()) {
             // Soft Centering:
             // set the target point
             Point p = getCentreHexLocation(c);
@@ -3753,20 +3752,20 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 case MOVE_RUN:
                 case MOVE_VTOL_RUN:
                 case MOVE_OVER_THRUST:
-                    col = GUIP.getColor("AdvancedMoveRunColor");
+                    col = GUIP.getMoveRunColor();
                     break;
                 case MOVE_SPRINT:
                 case MOVE_VTOL_SPRINT:
-                    col = GUIP.getColor("AdvancedMoveSprintColor");
+                    col = GUIP.getMoveSprintColor();
                     break;
                 case MOVE_JUMP:
-                    col = GUIP.getColor("AdvancedMoveJumpColor");
+                    col = GUIP.getMoveJumpColor();
                     break;
                 case MOVE_ILLEGAL:
-                    col = GUIP.getColor("AdvancedMoveIllegalColor");
+                    col = GUIP.getMoveIllegalColor();
                     break;
                 default:
-                    col = GUIP.getColor("AdvancedMoveDefaultColor");
+                    col = GUIP.getMoveDefaultColor();
                     break;
             }
             movementTarget = md.getLastStep().getPosition();
@@ -3857,18 +3856,18 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             int mvType = -1;
             if (gear == MovementDisplay.GEAR_JUMP || gear == MovementDisplay.GEAR_DFA) {
                 if (mvEnvData.get(loc) <= jump) {
-                    spriteColor = GUIP.getColor(GUIPreferences.ADVANCED_MOVE_JUMP_COLOR);
+                    spriteColor = GUIP.getMoveJumpColor();
                     mvType = 1;
                 }
             } else {
                 if (mvEnvData.get(loc) <= walk) {
-                    spriteColor = GUIP.getColor(GUIPreferences.ADVANCED_MOVE_DEFAULT_COLOR);
+                    spriteColor = GUIP.getMoveDefaultColor();
                     mvType = 2;
                 } else if (mvEnvData.get(loc) <= run) {
-                    spriteColor = GUIP.getColor(GUIPreferences.ADVANCED_MOVE_RUN_COLOR);
+                    spriteColor = GUIP.getMoveRunColor();
                     mvType = 3;
                 } else {
-                    spriteColor = GUIP.getColor(GUIPreferences.ADVANCED_MOVE_SPRINT_COLOR);
+                    spriteColor = GUIP.getMoveSprintColor();
                     mvType = 4;
                 }
             }
@@ -4487,7 +4486,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         if (!movingUnits.isEmpty()) {
             moveWait += idleTime;
 
-            if (moveWait > GUIP.getInt("AdvancedMoveStepDelay")) {
+            if (moveWait > GUIP.getMoveStepDelay()) {
                 ArrayList<MovingUnit> spent = new ArrayList<>();
 
                 for (MovingUnit move : movingUnits) {
@@ -6355,8 +6354,8 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
      * Check to see if the HexImageCache should be cleared because of field-of-view changes.
      */
     public void checkFoVHexImageCacheClear() {
-        boolean darken = GUIP.getBoolean(GUIPreferences.FOV_DARKEN);
-        boolean highlight = GUIP.getBoolean(GUIPreferences.FOV_HIGHLIGHT);
+        boolean darken = GUIP.getFovDarken();
+        boolean highlight = GUIP.getFovHighlight();
         if (game.getPhase().isMovement() && (darken || highlight)) {
             clearHexImageCache();
         }

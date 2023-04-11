@@ -652,7 +652,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private boolean canon;
 
     private int assaultDropInProgress = 0;
-    private boolean climbMode = GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_MOVE_DEFAULT_CLIMB_MODE);
+
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+    private boolean climbMode = GUIP.getMoveDefaultClimbMode();
 
     protected int lastTarget = Entity.NONE;
     protected String lastTargetDisplayName = "";
@@ -827,7 +829,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         impThisTurn = 0;
         impLastTurn = 0;
 
-        weaponSortOrder = GUIPreferences.getInstance().getDefaultWeaponSortOrder();
+        weaponSortOrder = GUIP.getDefaultWeaponSortOrder();
 
         // set a random UUID for external ID, this will help us sort enemy salvage and prisoners in MHQ
         // and should have no effect on MM (but need to make sure it doesn't screw up MekWars)
@@ -2563,6 +2565,25 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
         }
         return facing;
+    }
+
+    public String getFacingName(int facing) {
+        switch (facing) {
+            case 0:
+                return Messages.getString("Entity.facing.north");
+            case 1:
+                return Messages.getString("Entity.facing.northeast");
+            case 2:
+                return Messages.getString("Entity.facing.southeast");
+            case 3:
+                return Messages.getString("Entity.facing.south");
+            case 4:
+                return Messages.getString("Entity.facing.southwest");
+            case 5:
+                return Messages.getString("Entity.facing.northwest");
+            default:
+                return "";
+        }
     }
 
     /**
@@ -6433,7 +6454,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         setSelfDestructedThisTurn(false);
 
-        setClimbMode(GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_MOVE_DEFAULT_CLIMB_MODE));
+        setClimbMode(GUIP.getMoveDefaultClimbMode());
         
         setTurnInterrupted(false);
     }

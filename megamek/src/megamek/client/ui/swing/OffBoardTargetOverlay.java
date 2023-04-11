@@ -43,7 +43,8 @@ public class OffBoardTargetOverlay implements IDisplayable {
     private Map<OffBoardDirection, Rectangle> buttons = new HashMap<>();
     private TargetingPhaseDisplay targetingPhaseDisplay;
     private Image offBoardTargetImage;
-    
+
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private Game getCurrentGame() {
         return clientgui.getClient().getGame();
     }
@@ -195,7 +196,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
         buttons.clear();
         
         Color push = graph.getColor();
-        graph.setColor(GUIPreferences.getInstance().getColor(GUIPreferences.ADVANCED_UNITOVERVIEW_VALID_COLOR));
+        graph.setColor(GUIP.getUnitOverviewValidColor());
         
         // each of these draws the relevant icon and stores the coordinates for retrieval when checking hit box
         // pre-store the selected artillery weapon as it carries out a bunch of computations
@@ -259,7 +260,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
                 return new Rectangle(xPosition, yPosition, WIDE_EDGE_SIZE, NARROW_EDGE_SIZE);
             // east rectangle is narrower than wider, and at the right of the board view, but to the left of the unit overview panel
             case EAST:
-                int extraXOffset = GUIPreferences.getInstance().getShowUnitOverview() ? UnitOverview.getUIWidth() : 0;
+                int extraXOffset = GUIP.getShowUnitOverview() ? UnitOverview.getUIWidth() : 0;
                 xPosition = boundingRectangle.x + boundingRectangle.width - WIDE_EDGE_SIZE - EDGE_OFFSET - extraXOffset;
                 yPosition = boundingRectangle.y + (int) (boundingRectangle.height / 2) - (int) (NARROW_EDGE_SIZE / 2);
                 return new Rectangle(xPosition, yPosition, WIDE_EDGE_SIZE, NARROW_EDGE_SIZE); // used to be NARROW_EDGE_SIZE, WIDE_EDGE_SIZE);

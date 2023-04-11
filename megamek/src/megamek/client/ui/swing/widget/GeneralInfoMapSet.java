@@ -44,10 +44,13 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             elevationR, fuelR, curSensorsR, visualRangeR;
     private PMMultiLineLabel quirksAndPartReps;
     private Vector<BackGroundDrawer> bgDrawers = new Vector<>();
+
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
     private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
-            GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize"));
+            GUIP.getUnitDisplayMechLargeFontSize());
     private static final Font FONT_TITLE = new Font(MMConstants.FONT_SANS_SERIF, Font.ITALIC,
-            GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize"));
+            GUIP.getUnitDisplayMechLargeFontSize());
     private int yCoord = 1;
 
     /**
@@ -348,7 +351,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             heatCapacityStr = heatCap + " [" + heatCapWater + "]";
         }
 
-        heatR.color = GUIPreferences.getInstance().getColorForHeat(en.heat, Color.WHITE);
+        heatR.color = GUIP.getColorForHeat(en.heat, Color.WHITE);
         heatR.setString(en.heat
                 + " (" + heatCapacityStr + " " + Messages.getString("GeneralInfoMapSet.capacity") + ")");
 

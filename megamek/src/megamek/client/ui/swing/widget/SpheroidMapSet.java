@@ -58,10 +58,11 @@ public class SpheroidMapSet implements DisplayMapSet{
     private Polygon aftArmor = new Polygon (new int[] { 0, 20, 80, 100 },
             new int[] { 150, 200, 200, 150 }, 4);
 
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final Font FONT_LABEL = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
-            GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize"));
+            GUIP.getUnitDisplayMechArmorSmallFontSize());
     private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
-            GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize"));
+            GUIP.getUnitDisplayMechArmorLargeFontSize());
 
     public SpheroidMapSet(JComponent c, UnitDisplay unitDisplay) {
         this.unitDisplay = unitDisplay;

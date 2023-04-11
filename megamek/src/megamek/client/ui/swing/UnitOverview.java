@@ -71,6 +71,8 @@ public class UnitOverview implements IDisplayable {
     private Image pageUpG;
     private Image pageDownG;
 
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
     public UnitOverview(ClientGUI clientgui) {
         this.clientgui = clientgui;
         fm = clientgui.getFontMetrics(FONT);
@@ -93,7 +95,7 @@ public class UnitOverview implements IDisplayable {
         pageDownG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageDown2_G.png").toString());
         PMUtil.setImage(pageDown, clientgui);
         
-        visible = GUIPreferences.getInstance().getShowUnitOverview();
+        visible = GUIP.getShowUnitOverview();
     }
 
     @Override
@@ -159,8 +161,7 @@ public class UnitOverview implements IDisplayable {
 
             if ((turn != null) && turn.isValidEntity(e, game)) {
                 Color oldColor = graph.getColor();
-                graph.setColor(GUIPreferences.getInstance().getColor(
-                        GUIPreferences.ADVANCED_UNITOVERVIEW_VALID_COLOR));
+                graph.setColor(GUIP.getUnitOverviewValidColor());
                 graph.drawRect(x - 1, y - 1, ICON_WIDTH + 2, ICON_HEIGHT + 2);
                 graph.setColor(oldColor);
             }
@@ -168,8 +169,7 @@ public class UnitOverview implements IDisplayable {
             Entity se = clientgui == null ? null : clientgui.getClient().getEntity(clientgui.getSelectedEntityNum());
             if ((e == se) && (game.getTurn() != null) && game.getTurn().isValidEntity(e, game)) {
                 Color oldColor = graph.getColor();
-                graph.setColor(GUIPreferences.getInstance().getColor(
-                        GUIPreferences.ADVANCED_UNITOVERVIEW_SELECTED_COLOR));
+                graph.setColor(GUIP.getUnitOverviewSelectedColor());
                 graph.drawRect(x - 1, y - 1, ICON_WIDTH + 2, ICON_HEIGHT + 2);
                 graph.setColor(oldColor);
             }

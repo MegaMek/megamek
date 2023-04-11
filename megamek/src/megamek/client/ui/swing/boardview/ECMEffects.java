@@ -49,6 +49,8 @@ public class ECMEffects {
         ecmEffects = new LinkedList<>();
     }
 
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
     /**
      * Added another ECMInfo to the effects for a location.
      * @param info
@@ -129,7 +131,7 @@ public class ECMEffects {
      * @return
      */
     public static Color getColorAverage(List<Color> colors) {
-        final int alpha = GUIPreferences.getInstance().getInt(GUIPreferences.ADVANCED_ECM_TRANSPARENCY);
+        final int alpha = GUIP.getECMTransparency();
 
         int red, green, blue;
         red = green = blue = 0;
@@ -153,7 +155,7 @@ public class ECMEffects {
      * @return
      */
     public static Color getECMColor(Player player) {
-        final int alpha = GUIPreferences.getInstance().getInt(GUIPreferences.ADVANCED_ECM_TRANSPARENCY);
+        final int alpha = GUIP.getECMTransparency();
         Color tint = (player == null) ? Color.GRAY : player.getColour().getColour();
         // Create a new color by adding transparency to the tint
         return new Color(tint.getRed(), tint.getGreen(), tint.getBlue(), alpha);

@@ -66,10 +66,12 @@ public class WarshipMapSet implements DisplayMapSet {
     private Polygon aftArmor = new Polygon (new int[] { 0, -10, 40, 40, 60, 60, 110, 100 },
             new int[] { 150, 200, 190, 200, 200, 190, 200, 150 }, 8);
 
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
     private static final Font FONT_LABEL = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
-            GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize"));
+            GUIP.getUnitDisplayMechArmorSmallFontSize());
     private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
-            GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize"));
+            GUIP.getUnitDisplayMechArmorLargeFontSize());
 
     public WarshipMapSet(JComponent c, UnitDisplay unitDisplay) {
         this.unitDisplay = unitDisplay;

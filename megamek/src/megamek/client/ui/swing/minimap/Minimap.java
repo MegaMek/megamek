@@ -962,7 +962,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         Graphics2D g2 = (Graphics2D) g;
         Stroke saveStroke = g2.getStroke();
         AffineTransform saveTransform = g2.getTransform();
-        boolean stratOpsSymbols = GUIP.getBoolean(GUIPreferences.MMSYMBOL);
+        boolean stratOpsSymbols = GUIP.getMmSymbol();
 
         // Choose player or team color depending on preferences
         Color iconColor = entity.getOwner().getColour().getColour(false);
@@ -1076,7 +1076,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         
         if (entity == se) {
             int rad = stratOpsSymbols ? 2 * unitSize - 1 : unitSize + unitSize / 2;
-            Color color = GUIP.getColor(GUIPreferences.ADVANCED_UNITOVERVIEW_SELECTED_COLOR);
+            Color color = GUIP.getUnitOverviewSelectedColor();
             g2.setColor(color.darker());
             g2.setStroke(new BasicStroke(unitSize / 5 + 1));
             g2.drawOval(baseX - rad, baseY - rad, rad * 2, rad * 2);

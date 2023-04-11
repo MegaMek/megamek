@@ -257,9 +257,9 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         menu.addSeparator();
 
         initMenuItem(viewKeybindsOverlay, menu, VIEW_KEYBINDS_OVERLAY);
-        viewKeybindsOverlay.setSelected(GUIP.getBoolean(GUIPreferences.SHOW_KEYBINDS_OVERLAY));
+        viewKeybindsOverlay.setSelected(GUIP.getShowKeybindsOverlay());
         initMenuItem(viewPlanetaryConditionsOverlay, menu, VIEW_PLANETARYCONDITIONS_OVERLAY);
-        viewPlanetaryConditionsOverlay.setSelected(GUIP.getBoolean(GUIPreferences.SHOW_PLANETARYCONDITIONS_OVERLAY));
+        viewPlanetaryConditionsOverlay.setSelected(GUIP.getShowPlanetaryConditionsOverlay());
         initMenuItem(viewUnitOverview, menu, VIEW_UNIT_OVERVIEW);
         menu.addSeparator();
         
@@ -499,7 +499,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         } else if (e.getName().equals(GUIPreferences.MINI_MAP_ENABLED)) {
             viewMinimap.setSelected(GUIP.getMinimapEnabled());
         } else if (e.getName().equals(GUIPreferences.SHOW_COORDS)) {
-            toggleHexCoords.setSelected(GUIP.getBoolean(GUIPreferences.SHOW_COORDS));
+            toggleHexCoords.setSelected(GUIP.getCoordsEnabled());
         } else if (e.getName().equals(KeyBindParser.KEYBINDS_CHANGED)) {
             setKeyBinds();
         } else if (e.getName().equals(GUIPreferences.UNIT_DISPLAY_ENABLED)) {

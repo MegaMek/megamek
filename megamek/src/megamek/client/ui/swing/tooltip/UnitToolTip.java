@@ -119,7 +119,7 @@ public final class UnitToolTip {
             sPilotInfo += inGameValues(entity, localPlayer);
 
             if (pilotInfo) {
-                sPilotInfo += PilotToolTip.getPilotTipShort(entity, GUIP.getBoolean(GUIPreferences.SHOW_PILOT_PORTRAIT_TT));
+                sPilotInfo += PilotToolTip.getPilotTipShort(entity, GUIP.getshowPilotPortraitTT());
             } else {
                 sPilotInfo += "<BR>";
             }
@@ -140,12 +140,12 @@ public final class UnitToolTip {
         result += guiScaledFontHTML() + sEntityInfo + "</FONT>";
 
         // Status bar visual representation of armor and IS 
-        if (GUIP.getBoolean(GUIPreferences.SHOW_ARMOR_MINIVIS_TT)) {
+        if (GUIP.getshowArmorMiniVisTT()) {
             result += addArmorMiniVisToTT(entity);
         }
 
         // Weapon List
-        if (GUIP.getBoolean(GUIPreferences.SHOW_WPS_IN_TT)) {
+        if (GUIP.getShowWpsinTT()) {
             String sWeaponList = weaponList(entity).toString();
             sWeaponList += ecmInfo(entity).toString();
             result += guiScaledFontHTML() + sWeaponList + "</FONT>";
@@ -222,11 +222,11 @@ public final class UnitToolTip {
 
     /** Returns the graphical Armor representation. */
     private static StringBuilder addArmorMiniVisToTT(Entity entity) {
-        String armorChar = GUIP.getString(GUIPreferences.UNIT_TOOLTIP_ARMORMINI_ARMOR_CHAR);
+        String armorChar = GUIP.getUnitToolTipArmorMiniArmorChar();
         if (entity.isCapitalScale()) {
-            armorChar = GUIP.getString(GUIPreferences.UNIT_TOOLTIP_ARMORMINI_CAP_ARMOR_CHAR);
+            armorChar = GUIP.getUnitToolTipArmorMiniCapArmorChar();
         }
-        String internalChar = GUIP.getString(GUIPreferences.UNIT_TOOLTIP_ARMORMINI_IS_CHAR);
+        String internalChar = GUIP.getUnitToolTipArmorMiniISChar();
         String col1 = "";
         String col2 = "";
         String col3 = "";
@@ -336,7 +336,7 @@ public final class UnitToolTip {
      * The location has the given orig original Armor/IS. 
      */
     private static StringBuilder destroyedLocBar(int orig) {
-        String destroyedChar = GUIP.getString(GUIPreferences.UNIT_TOOLTIP_ARMORMINI_DESTROYED_CHAR);
+        String destroyedChar = GUIP.getUnitToolTipArmorMiniDestoryedChar();
         return locBar(orig, orig, destroyedChar, true);
     }
 
@@ -421,10 +421,10 @@ public final class UnitToolTip {
         }
 
         String result = "";
-        Color colorIntact = GUIP.getColor(GUIPreferences.UNIT_TOOLTIP_ARMORMINI_COLOR_INTACT);
-        Color colorDamaged = GUIP.getColor(GUIPreferences.UNIT_TOOLTIP_ARMORMINI_COLOR_DAMAGED);
-        String dChar =  GUIP.getString(GUIPreferences.UNIT_TOOLTIP_ARMORMINI_DESTROYED_CHAR);
-        String iChar = GUIP.getString(GUIPreferences.UNIT_TOOLTIP_ARMORMINI_CRITICAL_CHAR);
+        Color colorIntact = GUIP.getUnitTooltipArmorMiniColorIntact();
+        Color colorDamaged = GUIP.getUnitTooltipArmorMiniColorDamaged();
+        String dChar =  GUIP.getUnitToolTipArmorMiniDestoryedChar();
+        String iChar = GUIP.getUnitToolTipArmorMiniCriticalChar();
 
         if (good > 0)  {
             if (!destroyed) {
@@ -944,10 +944,10 @@ public final class UnitToolTip {
 
         result += "<BR>";
         String msg_facing = Messages.getString("BoardView1.Tooltip.Facing");
-        String sFacingTwist = "&nbsp;&nbsp;" + msg_facing + ":&nbsp;" + PlanetaryConditions.getWindDirDisplayableName(entity.getFacing());
+        String sFacingTwist = "&nbsp;&nbsp;" + msg_facing + ":&nbsp;" + entity.getFacingName(entity.getFacing());
         if (entity.getFacing() != entity.getSecondaryFacing()) {
             String msg_twist = Messages.getString("BoardView1.Tooltip.Twist");
-            sFacingTwist += "&nbsp;&nbsp;" + msg_twist + ":&nbsp;" + PlanetaryConditions.getWindDirDisplayableName(entity.getSecondaryFacing());
+            sFacingTwist += "&nbsp;&nbsp;" + msg_twist + ":&nbsp;" + entity.getFacingName(entity.getSecondaryFacing());
         }
         result += guiScaledFontHTML() + sFacingTwist + "</FONT>";
 

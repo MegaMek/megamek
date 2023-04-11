@@ -74,8 +74,6 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
 
         String cmd;
 
-        private static final GUIPreferences GUIP = GUIPreferences.getInstance();
-
         /**
          * Priority that determines this buttons order
          */
@@ -851,7 +849,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
             LogManager.getLogger().error("Tried to select non-existent entity " + en);
         }
 
-        if (GUIP.getBoolean("FiringSolutions")) {
+        if (GUIP.getFiringSolutions()) {
             setFiringSolutions();
         } else {
             clientgui.getBoardView().clearFiringSolutionData();

@@ -46,6 +46,10 @@ public class ModifiedTotalWarfareSkillGenerator extends TotalWarfareSkillGenerat
             }
         } else if (type.isManeiDomini()) {
             bonus++;
+        } else if (type.isSociety()) {
+            if ((entity instanceof Mech) || (entity instanceof Tank)) {
+                bonus -= 1;
+            }
         }
 
         // Demands of dual training

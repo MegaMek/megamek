@@ -59,10 +59,11 @@ public class AeroMapSet implements DisplayMapSet {
     private Polygon aftArmor = new Polygon(new int[] { 45, 45, 30, 30, 95, 95,
             80, 80 }, new int[] { 160, 180, 190, 200, 200, 190, 180, 160 }, 8);
 
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final Font FONT_LABEL = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
-            GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize"));
+            GUIP.getUnitDisplayMechArmorSmallFontSize());
     private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
-            GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize"));
+            GUIP.getUnitDisplayMechArmorLargeFontSize());
 
     public AeroMapSet(JComponent c, UnitDisplay unitDisplay) {
         this.unitDisplay = unitDisplay;

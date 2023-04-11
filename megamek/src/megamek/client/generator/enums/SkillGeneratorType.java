@@ -26,7 +26,8 @@ public enum SkillGeneratorType {
     //region Enum Declarations
     INNER_SPHERE("SkillGeneratorType.INNER_SPHERE.text", "SkillGeneratorType.INNER_SPHERE.toolTipText"),
     CLAN("SkillGeneratorType.CLAN.text", "SkillGeneratorType.CLAN.toolTipText"),
-    MANEI_DOMINI("SkillGeneratorType.MANEI_DOMINI.text", "SkillGeneratorType.MANEI_DOMINI.toolTipText");
+    MANEI_DOMINI("SkillGeneratorType.MANEI_DOMINI.text", "SkillGeneratorType.MANEI_DOMINI.toolTipText"),
+    SOCIETY("SkillGeneratorType.SOCIETY.text", "SkillGeneratorType.SOCIETY.toolTipText");
     //endregion Enum Declarations
 
     //region Variable Declarations
@@ -60,6 +61,10 @@ public enum SkillGeneratorType {
 
     public boolean isManeiDomini() {
         return this == MANEI_DOMINI;
+    }
+    
+    public boolean isSociety() {
+        return this == SOCIETY;
     }
     //endregion Boolean Comparisons
 

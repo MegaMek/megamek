@@ -191,9 +191,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
          * Priority that determines this buttons order
          */
         public int priority;
-
-        private static final GUIPreferences GUIP = GUIPreferences.getInstance();
-
         MoveCommand(String c, int f) {
             cmd = c;
             flag = f;
@@ -579,16 +576,16 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                     cmd.addStep(MoveStepType.START_JUMP);
                                 }
                                 gear = MovementDisplay.GEAR_JUMP;
-                                Color jumpColor = GUIP.getColor(GUIPreferences.ADVANCED_MOVE_JUMP_COLOR);
+                                Color jumpColor = GUIP.getMoveJumpColor();
                                 clientgui.getBoardView().setHighlightColor(jumpColor);
                             } else {
-                                Color walkColor = GUIP.getColor(GUIPreferences.ADVANCED_MOVE_DEFAULT_COLOR);
+                                Color walkColor = GUIP.getMoveDefaultColor();
                                 clientgui.getBoardView().setHighlightColor(walkColor);
                                 gear = MovementDisplay.GEAR_LAND;
                                 clear();
                             }
                         } else {
-                            Color walkColor = GUIP.getColor(GUIPreferences.ADVANCED_MOVE_DEFAULT_COLOR);
+                            Color walkColor = GUIP.getMoveDefaultColor();
                             clientgui.getBoardView().setHighlightColor(walkColor);
                             gear = MovementDisplay.GEAR_LAND;
                             clear();
@@ -749,7 +746,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         cen = en;
         clientgui.setSelectedEntityNum(en);
         gear = MovementDisplay.GEAR_LAND;
-        Color walkColor = GUIP.getColor(GUIPreferences.ADVANCED_MOVE_DEFAULT_COLOR);
+        Color walkColor = GUIP.getMoveDefaultColor();
         clientgui.getBoardView().setHighlightColor(walkColor);
         clear();
 
@@ -1140,7 +1137,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         ce.setCarefulStand(false);
         ce.setIsJumpingNow(false);
         ce.setConvertingNow(false);
-        ce.setClimbMode(GUIP.getBoolean(GUIPreferences.ADVANCED_MOVE_DEFAULT_CLIMB_MODE));
+        ce.setClimbMode(GUIP.getMoveDefaultClimbMode());
 
         // switch back from swimming to normal mode.
         if (ce.getMovementMode() == EntityMovementMode.BIPED_SWIM) {
@@ -1156,7 +1153,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // set to "walk," or the equivalent
         if (gear != MovementDisplay.GEAR_JUMP) {
             gear = MovementDisplay.GEAR_LAND;
-            Color walkColor = GUIP.getColor(GUIPreferences.ADVANCED_MOVE_DEFAULT_COLOR);
+            Color walkColor = GUIP.getMoveDefaultColor();
             clientgui.getBoardView().setHighlightColor(walkColor);
         } else if (!cmd.isJumping()) {
             cmd.addStep(MoveStepType.START_JUMP);
@@ -1263,13 +1260,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
             return;
         }
 
-        if ((ce().canUnjamRAC()) && (GUIPreferences.getInstance().getNagForNoUnJamRAC()) && (!isUnJammingRAC)){
+        if ((ce().canUnjamRAC()) && (GUIP.getNagForNoUnJamRAC()) && (!isUnJammingRAC)){
             // confirm this action
             String title = Messages.getString("MovementDisplay.ConfirmUnJamRACDlg.title");
             String body = Messages.getString("MovementDisplay.ConfirmUnJamRACDlg.message");
             ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
             if (!response.getShowAgain()) {
-                GUIPreferences.getInstance().setNagForNoUnJamRAC(false);
+                GUIP.setNagForNoUnJamRAC(false);
             }
 
             if (!response.getAnswer()) {
@@ -4219,7 +4216,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
      */
     public void computeMovementEnvelope(Entity suggestion) {
         // do nothing if deactivated in the settings
-        if (!GUIP.getBoolean(GUIPreferences.MOVE_ENVELOPE)) {
+        if (!GUIP.getMoveEnvelope()) {
             clientgui.getBoardView().clearMovementEnvelope();
             return;
         }
@@ -4376,7 +4373,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 gear = MovementDisplay.GEAR_LAND;
                 clear();
             }
-            Color walkColor = GUIP.getColor(GUIPreferences.ADVANCED_MOVE_DEFAULT_COLOR);
+            Color walkColor = GUIP.getMoveDefaultColor();
             clientgui.getBoardView().setHighlightColor(walkColor);
             gear = MovementDisplay.GEAR_LAND;
             computeMovementEnvelope(ce);
@@ -4391,7 +4388,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 cmd.addStep(MoveStepType.START_JUMP);
             }
             gear = MovementDisplay.GEAR_JUMP;
-            Color jumpColor = GUIP.getColor(GUIPreferences.ADVANCED_MOVE_JUMP_COLOR);
+            Color jumpColor = GUIP.getMoveJumpColor();
             clientgui.getBoardView().setHighlightColor(jumpColor);
             computeMovementEnvelope(ce);
         } else if (actionCmd.equals(MoveCommand.MOVE_SWIM.getCmd())) {
@@ -4448,7 +4445,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 clear();
             }
             gear = MovementDisplay.GEAR_BACKUP; // on purpose...
-            Color backColor = GUIP.getColor(GUIPreferences.ADVANCED_MOVE_BACK_COLOR);
+            Color backColor = GUIP.getMoveBackColor();
             clientgui.getBoardView().setHighlightColor(backColor);
             computeMovementEnvelope(ce);
         } else if (actionCmd.equals(MoveCommand.MOVE_LONGEST_RUN.getCmd())) {
@@ -4769,7 +4766,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         && ce.getMovementMode().equals(EntityMovementMode.INF_JUMP)) {
                     cmd.addStep(MoveStepType.START_JUMP);
                     gear = GEAR_JUMP;
-                    Color jumpColor = GUIP.getColor(GUIPreferences.ADVANCED_MOVE_JUMP_COLOR);
+                    Color jumpColor = GUIP.getMoveJumpColor();
                     clientgui.getBoardView().setHighlightColor(jumpColor);
                     computeMovementEnvelope(ce);
                 }

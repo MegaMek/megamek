@@ -43,8 +43,6 @@ import megamek.client.ui.swing.util.ScalingPopup;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
-import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.*;
 import megamek.common.force.Force;
@@ -264,6 +262,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     private static final String MSG_MAPSETUPXMLFILES = Messages.getString("ChatLounge.map.SetupXMLfiles");
 
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
     /** Creates a new chat lounge for the clientgui.getClient(). */
     public ChatLounge(ClientGUI clientgui) {
         super(clientgui, SkinSpecification.UIComponents.ChatLounge.getComp(),
@@ -303,7 +303,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         // Make sure that no listeners are already registered from calling a refresh... method
         removeAllListeners();
         
-        GUIPreferences.getInstance().addPreferenceChangeListener(this);
+        GUIP.addPreferenceChangeListener(this);
         PreferenceManager.getClientPreferences().addPreferenceChangeListener(this);
         MechSummaryCache.getInstance().addListener(mechSummaryCacheListener);
         clientgui.getClient().getGame().addGameListener(this);
@@ -1127,7 +1127,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         FontMetrics fm = g.getFontMetrics(g.getFont());
         int cx = (w - fm.stringWidth(text)) / 2;
         int cy = h / 10 + fm.getAscent();
-        g.setColor(GUIPreferences.getInstance().getWarningColor());
+        g.setColor(GUIP.getWarningColor());
         g.drawString(text, cx, cy);
         g.dispose();
     }
@@ -2192,7 +2192,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     public void removeAllListeners() {
         clientgui.getClient().getGame().removeGameListener(this);
         clientgui.getBoardView().removeBoardViewListener(this);
-        GUIPreferences.getInstance().removePreferenceChangeListener(this);
+        GUIP.removePreferenceChangeListener(this);
         PreferenceManager.getClientPreferences().removePreferenceChangeListener(this);
         MechSummaryCache.getInstance().removeListener(mechSummaryCacheListener);
         
@@ -2935,7 +2935,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 mekModel.refreshCells();
                 refreshTree();
                 break;
-            case GUIPreferences.ADVANCED_USE_CAMO_OVERLAY:
+            case GUIPreferences.USE_CAMO_OVERLAY:
                 clientgui.getBoardView().getTilesetManager().reloadUnitIcons();
                 mekModel.refreshCells();
                 refreshTree();
@@ -3010,7 +3010,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         } else {
             return;
         }
-        column.setPreferredWidth(GUIPreferences.getInstance().getInt(key));
+        column.setPreferredWidth(GUIP.getInt(key));
     }
     
     /** Adapts the whole Lobby UI (both panels) to the current guiScale. */
@@ -3104,7 +3104,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 } else {
                     continue;
                 }
-                GUIPreferences.getInstance().setValue(key, column.getWidth());
+                GUIP.setValue(key, column.getWidth());
             }
             
             changeMekTableSorter(e);
@@ -3268,7 +3268,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             if (board.getWidth() < 25) {
                 zoom = Math.max(zoom, 3);
             }
-            float scale = GUIPreferences.getInstance().getGUIScale();
+            float scale = GUIP.getGUIScale();
             zoom = (int) (scale*zoom);
             if (zoom > 6) {
                 zoom = 6;
@@ -3319,7 +3319,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     public class BoardNameRenderer extends DefaultListCellRenderer  {
         private static final long serialVersionUID = -3218595828938299222L;
         
-        private float oldGUIScale = GUIPreferences.getInstance().getGUIScale();
+        private float oldGUIScale = GUIP.getGUIScale();
         private Image image;
         private ImageIcon icon;
         
@@ -3334,7 +3334,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             }
             
             // If the gui scaling has changed, clear out all images, triggering a reload
-            float currentGUIScale = GUIPreferences.getInstance().getGUIScale();
+            float currentGUIScale = GUIP.getGUIScale();
             if (currentGUIScale != oldGUIScale) {
                 oldGUIScale = currentGUIScale;
                 mapIcons.clear();

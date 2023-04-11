@@ -66,10 +66,11 @@ public class JumpshipMapSet implements DisplayMapSet{
     private Polygon aftArmor = new Polygon (new int[] { 20, 0, 40, 40, 60, 60, 100, 80 },
             new int[] { 160, 200, 190, 200, 200, 190, 200, 160 }, 8);
 
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final Font FONT_LABEL = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
-            GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize"));
+            GUIP.getUnitDisplayMechArmorSmallFontSize());
     private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
-            GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize"));
+            GUIP.getUnitDisplayMechArmorLargeFontSize());
 
     public JumpshipMapSet(JComponent c, UnitDisplay unitDisplay) {
         this.unitDisplay = unitDisplay;

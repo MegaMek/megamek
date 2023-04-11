@@ -114,8 +114,6 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     private boolean turnMode = false;
     private boolean assaultDropPreference = false;
 
-    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
-
     /** Creates and lays out a new deployment phase display for the specified client. */
     public DeploymentDisplay(ClientGUI clientgui) {
         super(clientgui);

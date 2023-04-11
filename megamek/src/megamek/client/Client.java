@@ -119,6 +119,8 @@ public class Client implements IClientCommandHandler {
 
     private Coords currentHex;
 
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
     private class ConnectionHandler implements Runnable {
 
         boolean shouldStop = false;
@@ -1225,7 +1227,7 @@ public class Client implements IClientCommandHandler {
      * returns the stored <img> tag for given unit id
      */
     private String getCachedImgTag(int id) {
-        if (!GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_ROUND_REPORT_SPRITES)
+        if (!GUIP.getMiniReportShowSprites()
                 || (imgCache == null) || !imgCache.containsKey(id)) {
             return null;
         }

@@ -11,6 +11,7 @@ import java.awt.Stroke;
 import java.awt.image.ImageObserver;
 import static megamek.client.ui.swing.boardview.HexDrawUtilities.*;
 
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Coords;
 
@@ -28,12 +29,9 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
     // thick border
     private static final int borderW = 10;
     private static final int borderOpac = 120;
-    // colors for Min,S,M,L,E ranges
-    public static final Color[] fieldofFireColors = { new Color(255, 100, 100),
-        new Color(100, 255, 100), new Color(80, 200, 80), 
-        new Color(60, 150, 60), new Color(40, 100, 40)
-    };
-    
+
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
     // thin line
     private static final float lineThickness = 1.4f;
     private static final Color lineColor = Color.WHITE;
@@ -65,18 +63,35 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
     // individual sprite values
     private final Color fillColor;
     private final int rangeBracket;
+
     
     public FieldofFireSprite(BoardView boardView1, int rangeBracket, Coords l,
                              int borders) {
         // the color of the super doesn't matter
         super(boardView1, Color.BLACK, l, borders);
-        fillColor = new Color(fieldofFireColors[rangeBracket].getRed(), 
-                fieldofFireColors[rangeBracket].getGreen(),
-                fieldofFireColors[rangeBracket].getBlue(), 
-                borderOpac);
+        Color c = getFieldOfFireColor(rangeBracket);
+        fillColor = new Color(c.getRed(), c.getGreen(), c.getBlue(), borderOpac);
         this.rangeBracket = rangeBracket;
     }
-    
+
+    public static Color getFieldOfFireColor(int rangeBracket) {
+        // colors for Min,S,M,L,E ranges
+        switch (rangeBracket) {
+            case 0:
+                return GUIP.getFieldOfFireMinColor();
+            case 1:
+                return GUIP.getFieldOfFireShortColor();
+            case 2:
+                return GUIP.getFieldOfFireMediumColor();
+            case 3:
+                return GUIP.getFieldOfFireLongColor();
+            case 4:
+                return GUIP.getFieldOfFireExtendedColor();
+            default:
+                return new Color(0,0,0);
+        }
+    }
+
     @Override
     public void prepare() {
         // adjust bounds (image size) to board zoom

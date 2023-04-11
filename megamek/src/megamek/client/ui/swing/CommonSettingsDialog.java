@@ -198,6 +198,11 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
     private ColourSelectorButton csbFireSolnCanSeeColor;
     private ColourSelectorButton csbFireSolnNoSeeColor;
+    private ColourSelectorButton csbFieldOfFireMinColor;
+    private ColourSelectorButton csbFieldOfFireShortColor;
+    private ColourSelectorButton csbFieldOfFireMediumColor;
+    private ColourSelectorButton csbFieldOfFireLongColor;
+    private ColourSelectorButton csbFieldOfFireExtendedColor;
     private ColourSelectorButton csbBuildingTextColor;
     private ColourSelectorButton csbLowFoliageColor;
     private ColourSelectorButton csbBoardTextColor;
@@ -630,10 +635,27 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         csbFireSolnCanSeeColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.FireSolnCanSeeColor"));
         csbFireSolnCanSeeColor.setColour(GUIP.getFireSolnCanSeeColor());
         row.add(csbFireSolnCanSeeColor);
-
         csbFireSolnNoSeeColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.FireSolnNoSeeColor"));
         csbFireSolnNoSeeColor.setColour(GUIP.getFireSolnNoSeeColor());
         row.add(csbFireSolnNoSeeColor);
+        comps.add(row);
+
+        row = new ArrayList<>();
+        csbFieldOfFireMinColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.FieldOfFireMinColor"));
+        csbFieldOfFireMinColor.setColour(GUIP.getFieldOfFireMinColor());
+        row.add(csbFieldOfFireMinColor);
+        csbFieldOfFireShortColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.FieldOfFireShortColor"));
+        csbFieldOfFireShortColor.setColour(GUIP.getFieldOfFireShortColor());
+        row.add(csbFieldOfFireShortColor);
+        csbFieldOfFireMediumColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.FieldOfFireMediumColor"));
+        csbFieldOfFireMediumColor.setColour(GUIP.getFieldOfFireMediumColor());
+        row.add(csbFieldOfFireMediumColor);
+        csbFieldOfFireLongColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.FieldOfFireLongColor"));
+        csbFieldOfFireLongColor.setColour(GUIP.getFieldOfFireLongColor());
+        row.add(csbFieldOfFireLongColor);
+        csbFieldOfFireExtendedColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.FieldOfFireExtendedColor"));
+        csbFieldOfFireExtendedColor.setColour(GUIP.getFieldOfFireExtendedColor());
+        row.add(csbFieldOfFireExtendedColor);
         comps.add(row);
 
         addLineSpacer(comps);
@@ -1618,6 +1640,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         csbFireSolnCanSeeColor.setColour(GUIP.getFireSolnCanSeeColor());
         csbFireSolnNoSeeColor.setColour(GUIP.getFireSolnNoSeeColor());
+        csbFieldOfFireMinColor.setColour(GUIP.getFieldOfFireMinColor());
+        csbFieldOfFireShortColor.setColour(GUIP.getFieldOfFireShortColor());
+        csbFieldOfFireMediumColor.setColour(GUIP.getFieldOfFireMediumColor());
+        csbFieldOfFireLongColor.setColour(GUIP.getFieldOfFireLongColor());
+        csbFieldOfFireExtendedColor.setColour(GUIP.getFieldOfFireExtendedColor());
+
         csbBuildingTextColor.setColour(GUIP.getBuildingTextColor());
         csbBoardTextColor.setColour(GUIP.getBoardTextColor());
         csbBoardSpaceTextColor.setColour(GUIP.getBoardSpaceTextColor());
@@ -1760,6 +1788,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         GUIP.setFireSolnCanSeeColor(csbFireSolnCanSeeColor.getColour());
         GUIP.setFireSolnNoSeeColor(csbFireSolnNoSeeColor.getColour());
+        GUIP.setFieldOfFireMinColor(csbFieldOfFireMinColor.getColour());
+        GUIP.setFieldOfFireShortColor(csbFieldOfFireShortColor.getColour());
+        GUIP.setBoardFieldOfFireMediumColor(csbFieldOfFireMediumColor.getColour());
+        GUIP.setFieldOfFireLongColor(csbFieldOfFireLongColor.getColour());
+        GUIP.setFieldOfFireExtendedColor(csbFieldOfFireExtendedColor.getColour());
+
         GUIP.setBuildingTextColor(csbBuildingTextColor.getColour());
         GUIP.setBoardTextColor(csbBoardTextColor.getColour());
         GUIP.setBoardSpaceTextColor(csbBoardSpaceTextColor.getColour());

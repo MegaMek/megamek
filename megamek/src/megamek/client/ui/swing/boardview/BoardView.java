@@ -6514,7 +6514,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 if (game.getBoard().contains(mark) && fieldFire.get(bracket).contains(mark)
                         && ((bracket > 0) || (numMinMarkers < 2))) {
                     TextMarkerSprite tS = new TextMarkerSprite(this, mark,
-                            rangeTexts[bracket], FieldofFireSprite.fieldofFireColors[bracket]);
+                            rangeTexts[bracket], FieldofFireSprite.getFieldOfFireColor(bracket));
                     fieldofFireSprites.add(tS);
                     if (bracket == 0) {
                         numMinMarkers++;

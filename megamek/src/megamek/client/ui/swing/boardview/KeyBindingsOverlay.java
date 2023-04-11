@@ -52,7 +52,6 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
     private static final int DIST_SIDE = 30;
     private static final int PADDING_X = 10;
     private static final int PADDING_Y = 5;
-    private static final Color TEXT_COLOR = new Color(200, 250, 200);
     private static final Color SHADOW_COLOR = Color.DARK_GRAY;
     private static final float FADE_SPEED = 0.2f;
     

@@ -72,6 +72,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String BOARD_TEXT_COLOR = "BoardTextColor";
     public static final String BOARD_SPACE_TEXT_COLOR = "BoardSpaceTextColor";
     public static final String BOARD_MAPSHEET_COLOR = "BoardMapsheetColor";
+    public static final String BOARD_FIELD_OF_FIRE_MIN_COLOR = "BoardFieldOfFireMinColor";
+    public static final String BOARD_FIELD_OF_FIRE_SHORT_COLOR = "BoardFieldOfFireShortColor";
+    public static final String BOARD_FIELD_OF_FIRE_MEDIUM_COLOR = "BoardFieldOfFireMediumColor";
+    public static final String BOARD_FIELD_OF_FIRE_LONG_COLOR = "BoardFieldOfFireLongColor";
+    public static final String BOARD_FIELD_OF_FIRE_EXTENDED_COLOR = "BoardFieldOfFireExtendedColor";
 
     public static final String BOARD_ATTACK_ARROW_TRANSPARENCY = "BoardAttackArrowTransparency";
     public static final String BOARD_ECM_TRANSPARENCY = "BoardECMTransparency";
@@ -434,6 +439,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(BOARD_TEXT_COLOR, DEFAULT_BLACK);
         setDefault(BOARD_SPACE_TEXT_COLOR, DEFAULT_LIGHT_GRAY);
         setDefault(BOARD_MAPSHEET_COLOR, DEFAULT_BLUE);
+        setDefault(BOARD_FIELD_OF_FIRE_MIN_COLOR, new Color(255, 100, 100));
+        setDefault(BOARD_FIELD_OF_FIRE_SHORT_COLOR, new Color(100, 255, 100));
+        setDefault(BOARD_FIELD_OF_FIRE_MEDIUM_COLOR, new Color(80, 200, 80));
+        setDefault(BOARD_FIELD_OF_FIRE_LONG_COLOR, new Color(60, 150, 60));
+        setDefault(BOARD_FIELD_OF_FIRE_EXTENDED_COLOR, new Color(40, 100, 40));
 
         setDefault(BOARD_MOVE_FONT_TYPE, MMConstants.FONT_SANS_SERIF);
         setDefault(BOARD_MOVE_FONT_SIZE, 26);
@@ -2414,6 +2424,46 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setMapsheetColor(Color color) {
         store.setValue(BOARD_MAPSHEET_COLOR, getColorString(color));
+    }
+
+    public Color getFieldOfFireMinColor() {
+        return getColor(BOARD_FIELD_OF_FIRE_MIN_COLOR);
+    }
+
+    public void setFieldOfFireMinColor(Color color) {
+        store.setValue(BOARD_FIELD_OF_FIRE_MIN_COLOR, getColorString(color));
+    }
+
+    public Color getFieldOfFireShortColor() {
+        return getColor(BOARD_FIELD_OF_FIRE_SHORT_COLOR);
+    }
+
+    public void setFieldOfFireShortColor(Color color) {
+        store.setValue(BOARD_FIELD_OF_FIRE_SHORT_COLOR, getColorString(color));
+    }
+
+    public Color getFieldOfFireMediumColor() {
+        return getColor(BOARD_FIELD_OF_FIRE_MEDIUM_COLOR);
+    }
+
+    public void setBoardFieldOfFireMediumColor(Color color) {
+        store.setValue(BOARD_FIELD_OF_FIRE_MEDIUM_COLOR, getColorString(color));
+    }
+
+    public Color getFieldOfFireLongColor() {
+        return getColor(BOARD_FIELD_OF_FIRE_LONG_COLOR);
+    }
+
+    public void setFieldOfFireLongColor(Color color) {
+        store.setValue(BOARD_FIELD_OF_FIRE_LONG_COLOR, getColorString(color));
+    }
+
+    public Color getFieldOfFireExtendedColor() {
+        return getColor(BOARD_FIELD_OF_FIRE_EXTENDED_COLOR);
+    }
+
+    public void setFieldOfFireExtendedColor(Color color) {
+        store.setValue(BOARD_FIELD_OF_FIRE_EXTENDED_COLOR, getColorString(color));
     }
 
     public int getAttachArrowTransparency() {

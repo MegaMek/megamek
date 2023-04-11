@@ -46,7 +46,7 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
         butIgnoreNag = new MegamekButton("SKIP", SkinSpecification.UIComponents.PhaseDisplayDoneButton.getComp());
         butIgnoreNag.setPreferredSize(new Dimension(DONE_BUTTON_WIDTH, MIN_BUTTON_SIZE.height * 1));
         String f = guiScaledFontHTML(UIUtil.uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE_NO_ACTION)+ "</FONT>";
-        butDone.setToolTipText("<html><body>" + f + "</body></html>");
+        butIgnoreNag.setToolTipText("<html><body>" + f + "</body></html>");
 
         donePanel.add(butIgnoreNag);
         if (clientgui != null) {

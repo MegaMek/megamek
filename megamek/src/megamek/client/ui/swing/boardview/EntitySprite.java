@@ -290,7 +290,7 @@ class EntitySprite extends Sprite {
             color = c;
             status = Messages.getString("BoardView1." + s);
             small = false;
-            if (color.equals(Color.RED)) {
+            if (color.equals(GUIP.getWarningColor())) {
                 criticalStatus = true;
             }
         }
@@ -299,7 +299,7 @@ class EntitySprite extends Sprite {
             color = c;
             status = Messages.getString("BoardView1." + s, objs);
             small = false;
-            if (color.equals(Color.RED)) {
+            if (color.equals(GUIP.getWarningColor())) {
                 criticalStatus = true;
             }
         }
@@ -308,7 +308,7 @@ class EntitySprite extends Sprite {
             color = c;
             status = s;
             small = false;
-            if (color.equals(Color.RED)) {
+            if (color.equals(GUIP.getWarningColor())) {
                 criticalStatus = true;
             }
         }
@@ -370,7 +370,7 @@ class EntitySprite extends Sprite {
             g.setFont(bigFont);
             Point pos = new Point(bv.hex_size.width / 2, bv.hex_size.height / 2);
             bv.drawTextShadow(g, "!", pos, bigFont);
-            BoardView.drawCenteredText(g, "!", pos, Color.RED, false);
+            BoardView.drawCenteredText(g, "!", pos, GUIP.getWarningColor(), false);
             return;
         }
 
@@ -493,72 +493,72 @@ class EntitySprite extends Sprite {
 
             // Shutdown
             if (entity.isManualShutdown()) {
-                stStr.add(new Status(Color.YELLOW, "SHUTDOWN"));
+                stStr.add(new Status(GUIP.getCautionColor(), "SHUTDOWN"));
             } else if (entity.isShutDown()) {
-                stStr.add(new Status(Color.RED, "SHUTDOWN"));
+                stStr.add(new Status(GUIP.getWarningColor(), "SHUTDOWN"));
             }
 
             // Prone, Hulldown, Stuck, Immobile, Jammed
             if (entity.isProne()) {
-                stStr.add(new Status(Color.RED, "PRONE"));
+                stStr.add(new Status(GUIP.getCautionColor(), "PRONE"));
             }
 
             if (!entity.getHiddenActivationPhase().isUnknown()) {
-                stStr.add(new Status(Color.RED, "ACTIVATING"));
+                stStr.add(new Status(GUIP.getPrecautionColor(), "ACTIVATING"));
             }
 
             if (entity.isHidden()) {
-                stStr.add(new Status(Color.RED, "HIDDEN"));
+                stStr.add(new Status(GUIP.getPrecautionColor(), "HIDDEN"));
             }
 
             if (entity.isGyroDestroyed()) {
-                stStr.add(new Status(Color.RED, "NO_GYRO"));
+                stStr.add(new Status(GUIP.getWarningColor(), "NO_GYRO"));
             }
 
             if (entity.isHullDown()) {
-                stStr.add(new Status(Color.ORANGE, "HULLDOWN"));
+                stStr.add(new Status(GUIP.getPrecautionColor(), "HULLDOWN"));
             }
 
             if (entity.isStuck()) {
-                stStr.add(new Status(Color.ORANGE, "STUCK"));
+                stStr.add(new Status(GUIP.getCautionColor(), "STUCK"));
             }
 
             if (!ge && entity.isImmobile()) {
-                stStr.add(new Status(Color.RED, "IMMOBILE"));
+                stStr.add(new Status(GUIP.getWarningColor(), "IMMOBILE"));
             }
 
             if (entity.isBracing()) {
-                stStr.add(new Status(Color.ORANGE, "BRACING"));
+                stStr.add(new Status(GUIP.getPrecautionColor(), "BRACING"));
             }
 
             if (isAffectedByECM()) {
-                stStr.add(new Status(Color.YELLOW, "Jammed"));
+                stStr.add(new Status(GUIP.getCautionColor(), "Jammed"));
             }
 
             // Turret Lock
             if (turretLocked) {
-                stStr.add(new Status(Color.YELLOW, "LOCKED"));
+                stStr.add(new Status(GUIP.getCautionColor(), "LOCKED"));
             }
 
             // Grappling & Swarming
             if (entity.getGrappled() != Entity.NONE) {
                 if (entity.isGrappleAttacker()) {
-                    stStr.add(new Status(Color.YELLOW, "GRAPPLER"));
+                    stStr.add(new Status(GUIP.getCautionColor(), "GRAPPLER"));
                 } else {
-                    stStr.add(new Status(Color.RED, "GRAPPLED"));
+                    stStr.add(new Status(GUIP.getWarningColor(), "GRAPPLED"));
                 }
             }
             if (entity.getSwarmAttackerId() != Entity.NONE) {
-                stStr.add(new Status(Color.RED, "SWARMED"));
+                stStr.add(new Status(GUIP.getWarningColor(), "SWARMED"));
             }
 
             // Transporting
             if (!entity.getLoadedUnits().isEmpty()) {
-                stStr.add(new Status(Color.YELLOW, "T", SMALL));
+                stStr.add(new Status(GUIP.getCautionColor(), "T", SMALL));
             }
 
             if (!entity.getAllTowedUnits().isEmpty()) {
-                stStr.add(new Status(Color.YELLOW, "TOWING"));
+                stStr.add(new Status(GUIP.getCautionColor(), "TOWING"));
             }
 
             // Hidden, Unseen Unit
@@ -571,23 +571,23 @@ class EntitySprite extends Sprite {
             }
 
             if (entity.hasAnyTypeNarcPodsAttached()) {
-                stStr.add(new Status(Color.RED, "N", SMALL));
+                stStr.add(new Status(GUIP.getWarningColor(), "N", SMALL));
             }
 
             // Large Craft Ejecting
             if (entity instanceof Aero) {
                 if (((Aero) entity).isEjecting()) {
-                    stStr.add(new Status(Color.YELLOW, "EJECTING"));
+                    stStr.add(new Status(GUIP.getCautionColor(), "EJECTING"));
                 }
             }
 
             // Crew
             if (entity.getCrew().isDead()) {
-                stStr.add(new Status(Color.RED, "CrewDead"));
+                stStr.add(new Status(GUIP.getWarningColor(), "CrewDead"));
             }
 
             if (crewStunned > 0)  {
-                stStr.add(new Status(Color.YELLOW, "STUNNED", new Object[] { crewStunned }));
+                stStr.add(new Status(GUIP.getCautionColor(), "STUNNED", new Object[] { crewStunned }));
             }
 
             // Infantry
@@ -597,14 +597,14 @@ class EntitySprite extends Sprite {
                 if (dig == Infantry.DUG_IN_COMPLETE) {
                     stStr.add(new Status(Color.PINK, "D", SMALL));
                 } else if (dig != Infantry.DUG_IN_NONE) {
-                    stStr.add(new Status(Color.YELLOW, "Working", DIRECT));
+                    stStr.add(new Status(GUIP.getPrecautionColor(), "Working", DIRECT));
                     stStr.add(new Status(Color.PINK, "D", SMALL));
                 } else if (inf.isTakingCover()) {
-                    stStr.add(new Status(Color.YELLOW, "TakingCover"));
+                    stStr.add(new Status(GUIP.getPrecautionColor(), "TakingCover"));
                 }
 
                 if (inf.turnsLayingExplosives >= 0) {
-                    stStr.add(new Status(Color.YELLOW, "Working", DIRECT));
+                    stStr.add(new Status(GUIP.getPrecautionColor(), "Working", DIRECT));
                     stStr.add(new Status(Color.PINK, "E", SMALL));
                 }
             }
@@ -614,7 +614,7 @@ class EntitySprite extends Sprite {
                 Tank tnk = ((Tank) entity);
                 int dig = tnk.getDugIn();
                 if ((dig >= Tank.DUG_IN_FORTIFYING1) && (dig <= Tank.DUG_IN_FORTIFYING3)) {
-                    stStr.add(new Status(Color.YELLOW, "Working", DIRECT));
+                    stStr.add(new Status(GUIP.getPrecautionColor(), "Working", DIRECT));
                     stStr.add(new Status(Color.PINK, "D", SMALL));
                 }
             }
@@ -623,11 +623,11 @@ class EntitySprite extends Sprite {
             if (isAero) {
                 IAero a = (IAero) entity;
                 if (a.isRolled()) {
-                    stStr.add(new Status(Color.YELLOW, "ROLLED"));
+                    stStr.add(new Status(GUIP.getCautionColor(), "ROLLED"));
                 }
 
                 if ((a.getCurrentFuel() <= 0) && entity.hasEngine() && !entity.getEngine().isSolar()) {
-                    stStr.add(new Status(Color.RED, "FUEL"));
+                    stStr.add(new Status(GUIP.getWarningColor(), "FUEL"));
                 }
 
                 if (entity.isEvading()) {
@@ -635,9 +635,9 @@ class EntitySprite extends Sprite {
                 }
 
                 if (a.isOutControlTotal() & a.isRandomMove()) {
-                    stStr.add(new Status(Color.RED, "RANDOM"));
+                    stStr.add(new Status(GUIP.getWarningColor(), "RANDOM"));
                 } else if (a.isOutControlTotal()) {
-                    stStr.add(new Status(Color.RED, "CONTROL"));
+                    stStr.add(new Status(GUIP.getWarningColor(), "CONTROL"));
                 }
             }
 
@@ -840,9 +840,9 @@ class EntitySprite extends Sprite {
             case Entity.DMG_CRIPPLED:
                 return Color.black;
             case Entity.DMG_HEAVY:
-                return Color.red;
+                return GUIP.getWarningColor();
             case Entity.DMG_MODERATE:
-                return Color.yellow;
+                return GUIP.getCautionColor();
             case Entity.DMG_LIGHT:
                 return Color.green;
             default:
@@ -870,9 +870,9 @@ class EntitySprite extends Sprite {
 
     private Color getStatusBarColor(double percentRemaining) {
         if (percentRemaining <= .25) {
-            return Color.red;
+            return GUIP.getWarningColor();
         } else if (percentRemaining <= .75) {
-            return Color.yellow;
+            return GUIP.getCautionColor();
         } else {
             return new Color(16, 196, 16);
         }

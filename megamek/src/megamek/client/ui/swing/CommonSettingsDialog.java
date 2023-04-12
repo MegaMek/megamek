@@ -265,6 +265,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private final MMToggleButton choiceToggle = new MMToggleButton(Messages.getString("CommonSettingsDialog.keyBinds.buttoneTabbing"));
     private final MMButton defaultKeyBindButton = new MMButton("default", Messages.getString("CommonSettingsDialog.keyBinds.buttonDefault"));
     private ColourSelectorButton csbWarningColor;
+    private ColourSelectorButton csbCautionColor;
+    private ColourSelectorButton csbPrecautionColor;
 
     private JComboBox unitDisplayAutoDisplayReportCombo;
     private JComboBox unitDisplayAutoDisplayNonReportCombo;
@@ -317,8 +319,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private ColourSelectorButton csbUnitOverviewSelectedColor;
     private ColourSelectorButton csbUnitOverviewTextColor;
     private ColourSelectorButton csbUnitOverviewTextShadowColor;
-    private ColourSelectorButton csbUnitOverviewWarningColor;
-    private ColourSelectorButton csbUnitOverviewCautionColor;
     private ColourSelectorButton csbUnitOverviewConditionShadowColor;
 
     private ColourSelectorButton csbPlanetaryConditionsColorTitle;
@@ -1165,15 +1165,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         csbUnitOverviewTextShadowColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitOverviewTextShadowColor"));
         csbUnitOverviewTextShadowColor.setColour(GUIP.getUnitOverviewTextShadowColor());
         row.add(csbUnitOverviewTextShadowColor);
-        comps.add(row);
-
-        row = new ArrayList<>();
-        csbUnitOverviewWarningColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitOverviewWarningColor"));
-        csbUnitOverviewWarningColor.setColour(GUIP.getUnitOverviewWarningColor());
-        row.add(csbUnitOverviewWarningColor);
-        csbUnitOverviewCautionColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitOverviewCautionColor"));
-        csbUnitOverviewCautionColor.setColour(GUIP.getUnitOverviewCautionColor());
-        row.add(csbUnitOverviewCautionColor);
         csbUnitOverviewConditionShadowColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitOverviewConditionShadowColor"));
         csbUnitOverviewConditionShadowColor.setColour(GUIP.getUnitOverviewConditionShadowColor());
         row.add(csbUnitOverviewConditionShadowColor);
@@ -1309,6 +1300,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         csbWarningColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.warningColor"));
         csbWarningColor.setColour(GUIP.getWarningColor());
         row.add(csbWarningColor);
+        csbCautionColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.CautionColor"));
+        csbCautionColor.setColour(GUIP.getCautionColor());
+        row.add(csbCautionColor);
+        csbPrecautionColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.PrecautionColor"));
+        csbPrecautionColor.setColour(GUIP.getPrecautionColor());
+        row.add(csbPrecautionColor);
         comps.add(row);
 
         addLineSpacer(comps);
@@ -1628,7 +1625,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setFovHighlightAlpha(savedFovHighlightAlpha);
         GUIP.setFovDarkenAlpha(savedFovDarkenAlpha);
         GUIP.setFovStripes(savedNumStripesSlider);
+
         csbWarningColor.setColour(GUIP.getWarningColor());
+        csbCautionColor.setColour(GUIP.getCautionColor());
+        csbPrecautionColor.setColour(GUIP.getPrecautionColor());
 
         csbMoveDefaultColor.setColour(GUIP.getMoveDefaultColor());
         csbMoveIllegalColor.setColour(GUIP.getMoveIllegalColor());
@@ -1726,8 +1726,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         csbUnitOverviewSelectedColor.setColour(GUIP.getUnitOverviewSelectedColor());
         csbUnitOverviewTextColor.setColour(GUIP.getUnitOverviewTextColor());
         csbUnitOverviewTextShadowColor.setColour(GUIP.getUnitOverviewTextShadowColor());
-        csbUnitOverviewWarningColor.setColour(GUIP.getUnitOverviewWarningColor());
-        csbUnitOverviewCautionColor.setColour(GUIP.getUnitOverviewCautionColor());
         csbUnitOverviewConditionShadowColor.setColour(GUIP.getUnitOverviewConditionShadowColor());
 
         csbPlanetaryConditionsColorTitle.setColour(GUIP.getPlanetaryConditionsColorTitle());
@@ -1776,7 +1774,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setShowWpsinTT(showWpsinTT.isSelected());
         GUIP.setshowArmorMiniVisTT(showArmorMiniVisTT.isSelected());
         GUIP.setshowPilotPortraitTT(showPilotPortraitTT.isSelected());
+
         GUIP.setWarningColor(csbWarningColor.getColour());
+        GUIP.setCautionColor(csbCautionColor.getColour());
+        GUIP.setPrecautionColor(csbPrecautionColor.getColour());
 
         GUIP.setMoveDefaultColor(csbMoveDefaultColor.getColour());
         GUIP.setMoveIllegalColor(csbMoveIllegalColor.getColour());
@@ -2172,8 +2173,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setUnitOverviewSelectedColor(csbUnitOverviewSelectedColor.getColour());
         GUIP.setUnitOverviewTextColor(csbUnitOverviewTextColor.getColour());
         GUIP.setUnitOverviewTextShadowColor(csbUnitOverviewTextShadowColor.getColour());
-        GUIP.setUnitOverviewWarningColor(csbUnitOverviewWarningColor.getColour());
-        GUIP.setUnitOverviewCautionColor(csbUnitOverviewCautionColor.getColour());
         GUIP.setUnitOverviewConditionShadowColor(csbUnitOverviewConditionShadowColor.getColour());
 
         GUIP.setPlanetaryConditionsColorTitle(csbPlanetaryConditionsColorTitle.getColour());

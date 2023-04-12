@@ -88,8 +88,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String UNIT_OVERVIEW_VALID_COLOR = "UnitOverviewValidColor";
     public static final String UNIT_OVERVIEW_TEXT_COLOR = "UnitOverviewTextColor";
     public static final String UNIT_OVERVIEW_TEXT_SHADOW_COLOR = "UnitOverviewTextShadowColor";
-    public static final String UNIT_OVERVIEW_WARNING_COLOR = "UnitOverviewWarningColor";
-    public static final String UNIT_OVERVIEW_CAUTION_COLOR = "UnitOverviewCautionColor";
     public static final String UNIT_OVERVIEW_CONDITION_SHADOW_COLOR = "UnitOverviewConditionShadowColor";
 
     public static final String PLANETARY_CONDITIONS_COLOR_TITLE = "PlanetaryConditionsColorTitle";
@@ -126,6 +124,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String AUTO_DECLARE_SEARCHLIGHT = "AutoDeclareSearchlight";
 
     public static final String WARNING_COLOR = "WarningColor";
+    public static final String CAUTION_COLOR = "CautionColor";
+    public static final String PRECAUTION_COLOR = "PrecautionColor";
+
     public static final String CUSTOM_UNIT_HEIGHT = "CustomUnitDialogSizeHeight";
     public static final String CUSTOM_UNIT_WIDTH = "CustomUnitDialogSizeWidth";
 
@@ -423,6 +424,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(KEYBINDINGS_SHOW_HEADER, true);
 
         setDefault(WARNING_COLOR, DEFAULT_RED);
+        setDefault(CAUTION_COLOR, Color.yellow);
+        setDefault(PRECAUTION_COLOR, Color.orange);
 
         setDefault(BOARD_MOVE_DEFAULT_CLIMB_MODE, true);
         setDefault(BOARD_MOVE_DEFAULT_COLOR, DEFAULT_CYAN.CYAN);
@@ -458,8 +461,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(UNIT_OVERVIEW_VALID_COLOR, DEFAULT_CYAN);
         setDefault(UNIT_OVERVIEW_TEXT_COLOR, Color.white);
         setDefault(UNIT_OVERVIEW_TEXT_SHADOW_COLOR, Color.black);
-        setDefault(UNIT_OVERVIEW_WARNING_COLOR, Color.red);
-        setDefault(UNIT_OVERVIEW_CAUTION_COLOR, Color.yellow);
         setDefault(UNIT_OVERVIEW_CONDITION_SHADOW_COLOR, Color.darkGray);
 
         setDefault(PLAYERS_REMAINING_TO_SHOW, 3);
@@ -2282,6 +2283,22 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(WARNING_COLOR, getColorString(color));
     }
 
+    public Color getCautionColor() {
+        return getColor(CAUTION_COLOR);
+    }
+
+    public void setCautionColor(Color color) {
+        store.setValue(CAUTION_COLOR, getColorString(color));
+    }
+
+    public Color getPrecautionColor() {
+        return getColor(PRECAUTION_COLOR);
+    }
+
+    public void setPrecautionColor(Color color) {
+        store.setValue(PRECAUTION_COLOR, getColorString(color));
+    }
+
     public boolean getMoveDefaultClimbMode() {
         return getBoolean(BOARD_MOVE_DEFAULT_CLIMB_MODE);
     }
@@ -2536,22 +2553,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setUnitOverviewTextShadowColor(Color color) {
         store.setValue(UNIT_OVERVIEW_TEXT_SHADOW_COLOR, getColorString(color));
-    }
-
-    public Color getUnitOverviewWarningColor() {
-        return getColor(UNIT_OVERVIEW_WARNING_COLOR);
-    }
-
-    public void setUnitOverviewWarningColor(Color color) {
-        store.setValue(UNIT_OVERVIEW_WARNING_COLOR, getColorString(color));
-    }
-
-    public Color getUnitOverviewCautionColor() {
-        return getColor(UNIT_OVERVIEW_CAUTION_COLOR);
-    }
-
-    public void setUnitOverviewCautionColor(Color color) {
-        store.setValue(UNIT_OVERVIEW_CAUTION_COLOR, getColorString(color));
     }
 
     public Color getUnitOverviewConditionShadowColor() {

@@ -381,20 +381,20 @@ public class UnitOverview implements IDisplayable {
                 // draw "rolled"
                 graph.setColor(GUIP.getUnitOverviewConditionShadowColor());
                 graph.drawString(Messages.getString("BoardView1.ROLLED"), x + 11, y+29);
-                graph.setColor(GUIP.getUnitOverviewWarningColor());
+                graph.setColor(GUIP.getWarningColor());
                 graph.drawString(Messages.getString("BoardView1.ROLLED"), x + 10, y+28);
             }
 
             if (a.isOutControlTotal() && a.isRandomMove()) {
                 graph.setColor(GUIP.getUnitOverviewConditionShadowColor());
                 graph.drawString(Messages.getString("UnitOverview.RANDOM"), x + 11, y + 24);
-                graph.setColor(GUIP.getUnitOverviewWarningColor());
+                graph.setColor(GUIP.getWarningColor());
                 graph.drawString(Messages.getString("UnitOverview.RANDOM"), x + 10, y + 23);
             } else if (a.isOutControlTotal()) {
                 // draw "CONTROL"
                 graph.setColor(GUIP.getUnitOverviewConditionShadowColor());
                 graph.drawString(Messages.getString("UnitOverview.CONTROL"), x + 11, y + 24);
-                graph.setColor(GUIP.getUnitOverviewWarningColor());
+                graph.setColor(GUIP.getWarningColor());
                 graph.drawString(Messages.getString("UnitOverview.CONTROL"), x + 10, y + 23);
             }
 
@@ -403,7 +403,7 @@ public class UnitOverview implements IDisplayable {
                 // draw evasion
                 graph.setColor(GUIP.getUnitOverviewConditionShadowColor());
                 graph.drawString(Messages.getString("UnitOverview.EVADE"), x +11, y + 24);
-                graph.setColor(GUIP.getUnitOverviewWarningColor());
+                graph.setColor(GUIP.getWarningColor());
                 graph.drawString(Messages.getString("UnitOverview.EVADE"), x + 10, y + 23);
             }
 
@@ -413,53 +413,39 @@ public class UnitOverview implements IDisplayable {
         if (entity.isImmobile() && !entity.isProne() && !(entity instanceof GunEmplacement)) {
             // draw "IMMOB"
             graph.setColor(GUIP.getUnitOverviewConditionShadowColor());
-            graph.drawString(
-                    Messages.getString("UnitOverview.IMMOB"), x + 11, y + 29);
-            graph.setColor(GUIP.getUnitOverviewWarningColor());
-            graph.drawString(
-                    Messages.getString("UnitOverview.IMMOB"), x + 10, y + 28);
+            graph.drawString(Messages.getString("UnitOverview.IMMOB"), x + 11, y + 29);
+            graph.setColor(GUIP.getWarningColor());
+            graph.drawString(Messages.getString("UnitOverview.IMMOB"), x + 10, y + 28);
         } else if (!entity.isImmobile() && entity.isProne()) {
             // draw "PRONE"
             graph.setColor(GUIP.getUnitOverviewConditionShadowColor());
-            graph.drawString(
-                    Messages.getString("UnitOverview.PRONE"), x + 11, y + 29);
-            graph.setColor(GUIP.getUnitOverviewCautionColor());
-            graph.drawString(
-                    Messages.getString("UnitOverview.PRONE"), x + 10, y + 28);
+            graph.drawString(Messages.getString("UnitOverview.PRONE"), x + 11, y + 29);
+            graph.setColor(GUIP.getCautionColor());
+            graph.drawString(Messages.getString("UnitOverview.PRONE"), x + 10, y + 28);
         } else if (entity.isImmobile() && entity.isProne()) {
             // draw "IMMOB" and "PRONE"
             graph.setColor(GUIP.getUnitOverviewConditionShadowColor());
-            graph.drawString(
-                    Messages.getString("UnitOverview.IMMOB"), x + 11, y + 24);
-            graph.drawString(
-                    Messages.getString("UnitOverview.PRONE"), x + 11, y + 34);
-            graph.setColor(GUIP.getUnitOverviewWarningColor());
-            graph.drawString(
-                    Messages.getString("UnitOverview.IMMOB"), x + 10, y + 23);
-            graph.setColor(GUIP.getUnitOverviewCautionColor());
-            graph.drawString(
-                    Messages.getString("UnitOverview.PRONE"), x + 10, y + 33);
+            graph.drawString(Messages.getString("UnitOverview.IMMOB"), x + 11, y + 24);
+            graph.drawString(Messages.getString("UnitOverview.PRONE"), x + 11, y + 34);
+            graph.setColor(GUIP.getWarningColor());
+            graph.drawString(Messages.getString("UnitOverview.IMMOB"), x + 10, y + 23);
+            graph.setColor(GUIP.getCautionColor());
+            graph.drawString(Messages.getString("UnitOverview.PRONE"), x + 10, y + 33);
         } else if (!entity.isImmobile() && entity.isHullDown()) {
-            // draw "PRONE"
+            // draw "HullDown"
             graph.setColor(GUIP.getUnitOverviewConditionShadowColor());
-            graph.drawString(
-                    Messages.getString("UnitOverview.HULLDOWN"), x - 1, y + 29);
-            graph.setColor(GUIP.getUnitOverviewCautionColor());
-            graph.drawString(
-                    Messages.getString("UnitOverview.HULLDOWN"), x - 2, y + 28);
+            graph.drawString(Messages.getString("UnitOverview.HULLDOWN"), x - 1, y + 29);
+            graph.setColor(GUIP.getPrecautionColor());
+            graph.drawString(Messages.getString("UnitOverview.HULLDOWN"), x - 2, y + 28);
         } else if (entity.isImmobile() && entity.isHullDown()) {
-            // draw "IMMOB" and "PRONE"
+            // draw "IMMOB" and "HullDown"
             graph.setColor(GUIP.getUnitOverviewConditionShadowColor());
-            graph.drawString(
-                    Messages.getString("UnitOverview.IMMOB"), x + 11, y + 24);
-            graph.drawString(
-                    Messages.getString("UnitOverview.HULLDOWN"), x - 1, y + 34);
-            graph.setColor(GUIP.getUnitOverviewWarningColor());
-            graph.drawString(
-                    Messages.getString("UnitOverview.IMMOB"), x + 10, y + 23);
-            graph.setColor(GUIP.getUnitOverviewCautionColor());
-            graph.drawString(
-                    Messages.getString("UnitOverview.HULLDOWN"), x - 2, y + 33);
+            graph.drawString(Messages.getString("UnitOverview.IMMOB"), x + 11, y + 24);
+            graph.drawString(Messages.getString("UnitOverview.HULLDOWN"), x - 1, y + 34);
+            graph.setColor(GUIP.getWarningColor());
+            graph.drawString(Messages.getString("UnitOverview.IMMOB"), x + 10, y + 23);
+            graph.setColor(GUIP.getPrecautionColor());
+            graph.drawString(Messages.getString("UnitOverview.HULLDOWN"), x - 2, y + 33);
         } else if (!entity.isDeployed()) {
             int roundsLeft = entity.getDeployRound()
                     - clientgui.getClient().getGame().getRoundCount();

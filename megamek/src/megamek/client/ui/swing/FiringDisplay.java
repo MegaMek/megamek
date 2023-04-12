@@ -16,7 +16,6 @@ package megamek.client.ui.swing;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
-import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.unitDisplay.WeaponPanel;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
@@ -2612,10 +2611,10 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
             choice = targets.get(0);
         } else if (targets.size() > 1) {
             // If we have multiple choices, display a selection dialog.
-            choice = TargetChoiceDialog.showTargetChoiceDialog(clientgui.getFrame(),
+            choice = TargetChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(),
                     Messages.getString("FiringDisplay.ChooseTargetDialog.message", pos.getBoardNum()),
                     Messages.getString("FiringDisplay.ChooseTargetDialog.title"),
-                    targets, false);
+                    targets);
         }
 
         // Return the chosen unit.

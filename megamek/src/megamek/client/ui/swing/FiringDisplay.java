@@ -2612,15 +2612,10 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
             choice = targets.get(0);
         } else if (targets.size() > 1) {
             // If we have multiple choices, display a selection dialog.
-//            String input = (String) JOptionPane.showInputDialog(clientgui,
-//                    Messages.getString("FiringDisplay.ChooseTargetDialog.message", pos.getBoardNum()),
-//                    Messages.getString("FiringDisplay.ChooseTargetDialog.title"),
-//                    JOptionPane.QUESTION_MESSAGE, null,
-//                    SharedUtility.getTargetDisplayArray(targets), null);
-//            choice = SharedUtility.getTargetPicked(targets, input);
-
-            choice = TargetChoiceDialog.showTargetChoiceDialog(clientgui.getFrame(), targets);
-
+            choice = TargetChoiceDialog.showTargetChoiceDialog(clientgui.getFrame(),
+                    Messages.getString("FiringDisplay.ChooseTargetDialog.message", pos.getBoardNum()),
+                    Messages.getString("FiringDisplay.ChooseTargetDialog.title"),
+                    targets, false);
         }
 
         // Return the chosen unit.

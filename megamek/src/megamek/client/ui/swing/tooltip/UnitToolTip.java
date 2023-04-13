@@ -827,30 +827,7 @@ public final class UnitToolTip {
         Game game = entity.getGame();
         boolean isGunEmplacement = entity instanceof GunEmplacement;
 
-//        // Actual Movement
-//        if (!isGunEmplacement) {
-//            // "Has not yet moved" only during movement phase
-//            if (!entity.isDone() && game.getPhase().isMovement()) {
-//                result += ' ' + guiScaledFontHTML(GUIP.getColorForMovement(entity.moved))
-//                        + Messages.getString("BoardView1.Tooltip.NotYetMoved") + "</FONT>";
-//            } else if ((entity.isDone() && game.getPhase().isMovement())
-//                    || (game.getPhase().isMovementReport())
-//                    || (game.getPhase().isFiring())
-//                    || (game.getPhase().isFiringReport())
-//                    || (game.getPhase().isPhysical())
-//                    || (game.getPhase().isPhysicalReport())) {
-//                if (entity.moved != EntityMovementType.MOVE_NONE) {
-////                    result += ' ' + guiScaledFontHTML(GUIP.getColorForMovement(entity.moved))
-////                            + entity.getMovementString(entity.moved) + "</FONT>";
-//                    result += entity.getMovementString(entity.moved);
-//                } else {
-//                    result += "Stood Still";
-//                }
-//            }
-//        }
-
         result += Messages.getString("BoardView1.Tooltip.ArmorInternals", entity.getTotalArmor(), entity.getTotalInternal());
-
 
         String damageLevel;
         switch (entity.getDamageLevel()) {

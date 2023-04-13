@@ -3970,7 +3970,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             choice = TargetChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(),
                     Messages.getString("MovementDisplay.ChooseTargetDialog.message", pos.getBoardNum()),
                     Messages.getString("MovementDisplay.ChooseTargetDialog.title"),
-                    targets, clientgui);
+                    targets, clientgui, ce());
 
         }
 

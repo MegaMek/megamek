@@ -126,7 +126,20 @@ public class TargetRoll implements Serializable {
 
         return allDesc.toString();
     }
-    
+
+    public boolean needsRoll()
+    {
+        switch (total) {
+            case IMPOSSIBLE:
+            case AUTOMATIC_FAIL:
+            case AUTOMATIC_SUCCESS:
+            case CHECK_FALSE:
+                return false;
+            default:
+                return true;
+        }
+    }
+
     @Override
     public String toString() {
         return getDesc();

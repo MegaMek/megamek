@@ -1,21 +1,20 @@
 /*
-* MegaMek - Copyright (C) 2020 - The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+ * MegaMek - Copyright (C) 2020 - The MegaMek Team
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ */
 package megamek.client.ui.swing.tooltip;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.lobby.ChatLounge;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.alphaStrike.AlphaStrikeElement;
@@ -60,7 +59,7 @@ public final class UnitToolTip {
 
     /** Returns the unit tooltip with values that are relevant in the lobby. */
     public static StringBuilder getEntityTipLobby(Entity entity, Player localPlayer,
-            MapSettings mapSettings) {
+                                                  MapSettings mapSettings) {
         return getEntityTipTable(entity, localPlayer, true, false, mapSettings);
     }
 
@@ -75,7 +74,7 @@ public final class UnitToolTip {
     }
 
     /** Returns the unit tooltip with minimal but useful information */
-    public static StringBuilder getEntityTipBrief(Entity entity, Player localPlayer) {
+    public static StringBuilder getEntityTipVitals(Entity entity, Player localPlayer) {
         return getEntityTipTable(entity, localPlayer, false, false, null);
     }
 
@@ -83,7 +82,7 @@ public final class UnitToolTip {
 
     /** Assembles the whole unit tooltip. */
     private static StringBuilder getEntityTipTable(Entity entity, Player localPlayer,
-           boolean details, boolean pilotInfo, @Nullable MapSettings mapSettings) {
+                                                   boolean details, boolean pilotInfo, @Nullable MapSettings mapSettings) {
 
         // Tooltip info for a sensor blip
         if (EntityVisibilityUtils.onlyDetectedBySensors(localPlayer, entity)) {
@@ -820,6 +819,75 @@ public final class UnitToolTip {
         result = guiScaledFontHTML() + sECMInfo + "</FONT>";
 
         return new StringBuilder().append(result);
+    }
+
+    public static String getOneLineSummary(Entity entity)
+    {
+        String result = "";
+        Game game = entity.getGame();
+        boolean isGunEmplacement = entity instanceof GunEmplacement;
+
+//        // Actual Movement
+//        if (!isGunEmplacement) {
+//            // "Has not yet moved" only during movement phase
+//            if (!entity.isDone() && game.getPhase().isMovement()) {
+//                result += ' ' + guiScaledFontHTML(GUIP.getColorForMovement(entity.moved))
+//                        + Messages.getString("BoardView1.Tooltip.NotYetMoved") + "</FONT>";
+//            } else if ((entity.isDone() && game.getPhase().isMovement())
+//                    || (game.getPhase().isMovementReport())
+//                    || (game.getPhase().isFiring())
+//                    || (game.getPhase().isFiringReport())
+//                    || (game.getPhase().isPhysical())
+//                    || (game.getPhase().isPhysicalReport())) {
+//                if (entity.moved != EntityMovementType.MOVE_NONE) {
+////                    result += ' ' + guiScaledFontHTML(GUIP.getColorForMovement(entity.moved))
+////                            + entity.getMovementString(entity.moved) + "</FONT>";
+//                    result += entity.getMovementString(entity.moved);
+//                } else {
+//                    result += "Stood Still";
+//                }
+//            }
+//        }
+
+        result += Messages.getString("BoardView1.Tooltip.ArmorInternals", entity.getTotalArmor(), entity.getTotalInternal());
+
+
+        String damageLevel;
+        switch (entity.getDamageLevel()) {
+            case Entity.DMG_CRIPPLED:
+                String msg_crippled = ' '+Messages.getString("BoardView1.Tooltip.Crippled");
+                damageLevel = msg_crippled;
+                damageLevel = guiScaledFontHTML(GUIP.getWarningColor()) + damageLevel + "</FONT>";
+                break;
+            case Entity.DMG_HEAVY:
+                String msg_heavydmg = Messages.getString("BoardView1.Tooltip.HeavyDmg");
+                damageLevel = msg_heavydmg;
+                damageLevel = ' '+guiScaledFontHTML(GUIP.getWarningColor()) + damageLevel + "</FONT>";
+                break;
+            case Entity.DMG_MODERATE:
+                String msg_moderatedmg = Messages.getString("BoardView1.Tooltip.ModerateDmg");
+                damageLevel = ' '+msg_moderatedmg;
+                break;
+            case Entity.DMG_LIGHT:
+                String msg_lightdmg = Messages.getString("BoardView1.Tooltip.LightDmg");
+                damageLevel = ' '+msg_lightdmg ;
+                break;
+            default:
+                damageLevel = "";
+                break;
+        }
+        result += damageLevel;
+
+        if (!isGunEmplacement && entity.isImmobile()) {
+            result += ' '+guiScaledFontHTML(GUIP.getWarningColor()) + Messages.getString("BoardView1.Tooltip.Immobile") + "</FONT>";
+        }
+
+        // Unit Prone
+        if (!isGunEmplacement && entity.isProne()) {
+            result += ' '+guiScaledFontHTML(GUIP.getWarningColor()) + Messages.getString("BoardView1.Tooltip.Prone") + "</FONT>";
+        }
+
+        return result;
     }
 
     /** Returns values that only are relevant when in-game such as heat. */

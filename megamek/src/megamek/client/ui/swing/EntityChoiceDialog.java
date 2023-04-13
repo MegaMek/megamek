@@ -20,7 +20,7 @@ public class EntityChoiceDialog extends AbstractChoiceDialog<Entity> {
 
     @Override
     protected void detailLabel(JToggleButton button, Entity target) {
-        button.setText("<html>" + UnitToolTip.getEntityTipBrief((Entity) target, null) + "</html>");
+        button.setText("<html>" + UnitToolTip.getEntityTipVitals((Entity) target, null) + "</html>");
     }
 
     @Override

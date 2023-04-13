@@ -121,7 +121,6 @@ public final class HexTooltip {
 
     public static String getBuildingTargetTip(BuildingTarget target, Board board) {
         String result = "";
-        result += target.getDisplayName();
         String sBuilding;
         Coords mcoords = target.getPosition();
         Building bldg = board.getBuildingAt(mcoords);
@@ -136,6 +135,17 @@ public final class HexTooltip {
         String row = "<TR>" + col + "</TR>";
         String table = "<TABLE BORDER=0 BGCOLOR=" + BUILDING_BGCOLOR + " width=100%>" + row + "</TABLE>";
         result += table;
+        return result;
+    }
+
+    public static String getOneLineSummary(BuildingTarget target, Board board) {
+        String result = "";
+        String sBuilding;
+        Coords mcoords = target.getPosition();
+        Building bldg = board.getBuildingAt(mcoords);
+        Hex mhex = board.getHex(mcoords);
+//        result += Messages.getString("BoardView1.Tooltip.Building", mhex.terrainLevel(Terrains.BLDG_ELEV), bldg.toString(), bldg.getCurrentCF(mcoords), bldg.getArmor(mcoords), bldg.getBasement(mcoords).toString());
+        result += Messages.getString("BoardView1.Tooltip.BuildingLine", mhex.terrainLevel(Terrains.BLDG_ELEV), bldg.getCurrentCF(mcoords), bldg.getArmor(mcoords));
         return result;
     }
 

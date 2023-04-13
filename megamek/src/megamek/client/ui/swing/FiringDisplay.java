@@ -2614,7 +2614,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
             choice = TargetChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(),
                     Messages.getString("FiringDisplay.ChooseTargetDialog.message", pos.getBoardNum()),
                     Messages.getString("FiringDisplay.ChooseTargetDialog.title"),
-                    targets, clientgui);
+                    targets, clientgui, ce());
         }
 
         // Return the chosen unit.

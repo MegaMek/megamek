@@ -291,7 +291,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
             choice = TargetChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(),
                     Messages.getString("FiringDisplay.ChooseCounterbatteryTargetDialog.message"),
                     Messages.getString("FiringDisplay.ChooseTargetDialog.title"),
-                    eligibleTargets, clientgui);
+                    eligibleTargets, clientgui, null);
         } else if ((eligibleTargets.size() == 1) && (eligibleTargets.get(0) != null)) {
             choice = eligibleTargets.get(0);
         } else {

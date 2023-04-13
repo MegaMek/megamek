@@ -1,10 +1,8 @@
 package megamek.client.ui.swing;
 
+import megamek.client.ui.swing.tooltip.HexTooltip;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Targetable;
+import megamek.common.*;
 import megamek.common.annotations.Nullable;
 
 import javax.swing.*;
@@ -13,16 +11,26 @@ import java.util.List;
 /**
  * A modal dialog for choosing one or more Targetable objects. Can show info in brief or detail
  */
-public class TargetChoiceDialog extends AbstractSelectionDialog<Targetable> {
+public class TargetChoiceDialog extends AbstractChoiceDialog<Targetable> {
+    ClientGUI clientGUI;
     protected TargetChoiceDialog(JFrame frame, String message, String title,
-                                 @Nullable List<Targetable> targets, boolean isMultiSelect) {
+                                 @Nullable List<Targetable> targets, boolean isMultiSelect,
+                                 ClientGUI clientGUI) {
         super(frame, message, title, targets, isMultiSelect);
+        this.clientGUI = clientGUI;
     }
 
     @Override
-    protected void detailLabel(JToggleButton button, Targetable target)
-    {
-        button.setText("<html>" + UnitToolTip.getEntityTipBrief((Entity) target, null) + "</html>");
+    protected void detailLabel(JToggleButton button, Targetable target) {
+        if (target instanceof Entity) {
+            button.setText("<html>" + UnitToolTip.getEntityTipBrief((Entity) target, null) + "</html>");
+        } else if (target instanceof BuildingTarget) {
+            button.setText("<html>" + HexTooltip.getBuildingTargetTip((BuildingTarget) target, clientGUI.getClient().getBoard()) + "</html>");
+        } else if (target instanceof Hex) {
+            button.setText("<html>" + HexTooltip.getHexTip((Hex) target, clientGUI.getClient(), clientGUI) + "</html>");
+        } else {
+            simpleLabel(button, target);
+        }
     }
 
     @Override
@@ -37,8 +45,9 @@ public class TargetChoiceDialog extends AbstractSelectionDialog<Targetable> {
         button.setText("<html><b>" + target.getDisplayName() + "</b>"+mods+"</html>");
     }
 
-    public static @Nullable Targetable showSingleChoiceDialog(JFrame frame, String message, String title, @Nullable List<Targetable> targets) {
-        TargetChoiceDialog dialog = new TargetChoiceDialog(frame, message, title, targets, false);
+    public static @Nullable Targetable showSingleChoiceDialog(JFrame frame, String message, String title,
+                                                              @Nullable List<Targetable> targets, ClientGUI clientGUI) {
+        TargetChoiceDialog dialog = new TargetChoiceDialog(frame, message, title, targets, false, clientGUI);
 
         boolean userOkay = dialog.showDialog();
         if (userOkay) {
@@ -47,8 +56,8 @@ public class TargetChoiceDialog extends AbstractSelectionDialog<Targetable> {
         return null;
     }
 
-    public static @Nullable List<Targetable> showMultiChoiceDialog(JFrame frame, String message, String title, @Nullable List<Targetable> targets) {
-        TargetChoiceDialog dialog = new TargetChoiceDialog(frame, message, title, targets, true);
+    public static @Nullable List<Targetable> showMultiChoiceDialog(JFrame frame, String message, String title, @Nullable List<Targetable> targets, ClientGUI clientGUI) {
+        TargetChoiceDialog dialog = new TargetChoiceDialog(frame, message, title, targets, true, clientGUI);
 
         boolean userOkay = dialog.showDialog();
         if (userOkay) {

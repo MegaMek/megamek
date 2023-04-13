@@ -2,7 +2,6 @@ package megamek.client.ui.swing;
 
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.common.Entity;
-import megamek.common.Targetable;
 import megamek.common.annotations.Nullable;
 
 import javax.swing.*;
@@ -11,7 +10,7 @@ import java.util.List;
 /**
  * A modal dialog for choosing one or more Entities.
  */
-public class EntityChoiceDialog extends AbstractSelectionDialog<Entity> {
+public class EntityChoiceDialog extends AbstractChoiceDialog<Entity> {
 
     /** Creates new PlanetaryConditionsDialog and takes the conditions from the client's Game. */
     protected EntityChoiceDialog(JFrame frame, String message, String title,

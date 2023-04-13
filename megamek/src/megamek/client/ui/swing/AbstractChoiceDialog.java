@@ -1,7 +1,5 @@
 package megamek.client.ui.swing;
 
-import megamek.client.ui.swing.tooltip.UnitToolTip;
-import megamek.common.Entity;
 import megamek.common.annotations.Nullable;
 
 import javax.swing.*;
@@ -10,7 +8,7 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractSelectionDialog<T> extends ClientDialog {
+public abstract class AbstractChoiceDialog<T> extends ClientDialog {
     private static boolean showDetails = false;
     List<T> targets;
     private List<T> choosen = new ArrayList<T>();
@@ -20,8 +18,8 @@ public abstract class AbstractSelectionDialog<T> extends ClientDialog {
     private JToggleButton [] buttons;
 
     /** Creates new PlanetaryConditionsDialog and takes the conditions from the client's Game. */
-    protected AbstractSelectionDialog(JFrame frame, String message, String title,
-                                 @Nullable List<T> targets, boolean isMultiSelect) {
+    protected AbstractChoiceDialog(JFrame frame, String message, String title,
+                                   @Nullable List<T> targets, boolean isMultiSelect) {
         super(frame, title, true, true);
         this.targets = targets;
         this.isMultiSelect = isMultiSelect;
@@ -71,11 +69,11 @@ public abstract class AbstractSelectionDialog<T> extends ClientDialog {
 
         doneCancel.add(cancelButton);
         initChoices();
-        updateChoices();
     }
 
     public boolean showDialog() {
         userResponse = false;
+        updateChoices();
         setVisible(true);
         return userResponse;
     }

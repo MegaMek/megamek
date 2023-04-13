@@ -1403,7 +1403,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             choice = TargetChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(),
                     Messages.getString("PhysicalDisplay.ChooseTargetDialog.message", pos.getBoardNum()),
                     Messages.getString("PhysicalDisplay.ChooseTargetDialog.title"),
-                    targets);
+                    targets, clientgui);
         }
 
         // Return the chosen unit.

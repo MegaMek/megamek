@@ -1306,7 +1306,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             choice = TargetChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(),
                     Messages.getString("FiringDisplay.ChooseTargetDialog.message", new Object[] { pos.getBoardNum() }),
                     Messages.getString("FiringDisplay.ChooseTargetDialog.title"),
-                    targets);
+                    targets, clientgui);
         }
 
         // Return the chosen unit.

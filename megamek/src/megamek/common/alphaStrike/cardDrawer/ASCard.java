@@ -19,9 +19,9 @@
 package megamek.common.alphaStrike.cardDrawer;
 
 import megamek.MMConstants;
-import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.FluffImageHelper;
 import megamek.client.ui.swing.util.StringDrawer;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Configuration;
 import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.alphaStrike.ASDamageVector;
@@ -95,6 +95,7 @@ public class ASCard {
     protected int armorBoxY = 410;
     protected int armorBoxHeight = 94;
     protected int armorBoxWidth = BOX_WIDTH_WIDE;
+    protected int armorPipSpace = 531;
     protected int specialBoxX = 36;
     protected int specialBoxY = 522;
     protected int specialBoxWidth = armorBoxWidth;
@@ -226,11 +227,7 @@ public class ASCard {
     public final void drawCard(Graphics g) {
         initializeFonts(lightFont, boldFont, blackFont);
         Graphics2D g2D = (Graphics2D) g;
-        GUIPreferences.AntiAliasifSet(g);
-        g2D.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
-        g2D.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-        g2D.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        g2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        UIUtil.setHighQualityRendering(g);
 
         paintCardBackground(g2D, false);
 
@@ -342,7 +339,6 @@ public class ASCard {
     /** Write the armor block. Overridden for some card types. */
     protected void paintArmor(Graphics2D g) {
         drawBox(g, 36, armorBoxY, armorBoxWidth, armorBoxHeight, BACKGROUND_GRAY, BOX_STROKE);
-
         if (element != null) {
             // Headers A, S
             int upperY = armorBoxY + armorBoxHeight / 2 - 18;
@@ -357,11 +353,12 @@ public class ASCard {
 
     protected void paintPipLines(Graphics2D g, int leftX, int y, Color fillColor, int pipCount) {
         int x = leftX;
-        int pipsPerLine = (armorBoxWidth - leftX) / ARMOR_PIP_SIZE;
+        int pipsPerLine = (armorPipSpace - leftX) / ARMOR_PIP_SIZE;
         int pipSize = ARMOR_PIP_SIZE;
+        g.setStroke(new BasicStroke(1.5f));
         if (pipCount > pipsPerLine) {
             pipSize = ARMOR_PIP_SIZE - 2;
-            y -= ARMOR_PIP_SIZE / 2;
+            y -= ARMOR_PIP_SIZE / 3;
         }
         for (int i = 0; i < Math.min(pipsPerLine, pipCount); i++) {
             g.setColor(fillColor);
@@ -371,8 +368,8 @@ public class ASCard {
             x += ARMOR_PIP_SIZE + 1;
         }
         if (pipCount > pipsPerLine) {
-            y += ARMOR_PIP_SIZE;
-            x = leftX;
+            y += pipSize;
+            x = leftX + ARMOR_PIP_SIZE / 2;
             for (int i = 0; i < pipCount - pipsPerLine; i++) {
                 g.setColor(fillColor);
                 g.fillOval(x, y - pipSize / 2, pipSize, pipSize);

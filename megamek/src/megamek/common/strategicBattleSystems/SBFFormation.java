@@ -325,6 +325,11 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
     }
 
     @Override
+    public int getStrength() {
+        return getPointValue();
+    }
+
+    @Override
     public String getForceString() {
         return forceString;
     }

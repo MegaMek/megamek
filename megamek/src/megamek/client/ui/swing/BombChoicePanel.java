@@ -88,11 +88,15 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
             b_labels[type] = new JLabel();
             b_choices[type] = new JComboBox<String>();
 
-            int maxNumBombs = Math.round(availBombPoints
-                    / BombType.getBombCost(type))
-                    + bombChoices[type];
-            if (BombType.getBombCost(type) > maxSize) {
+            int maxNumBombs = Math.round(availBombPoints / BombType.getBombCost(type)) + bombChoices[type];
+
+            if (BombType.getBombCost(type) > maxSize)  {
                 maxNumBombs = 0;
+            }
+
+            // somehow too many bombs were added
+            if ((bombChoices[type] * BombType.getBombCost(type))  > maxSize) {
+                bombChoices[type] = maxSize / BombType.getBombCost(type);
             }
             
             if (typeMax != null) {
@@ -100,7 +104,19 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
                     maxNumBombs = typeMax[type];
                 }
             }
-            
+
+            if (bombChoices[type] > maxNumBombs) {
+                maxNumBombs = bombChoices[type];
+            }
+
+            if (maxNumBombs < 0) {
+                maxNumBombs = 0;
+            }
+
+            if (maxNumBombs > maxSize) {
+                maxNumBombs = maxSize;
+            }
+
             for (int x = 0; x <= maxNumBombs; x++) {
                 b_choices[type].addItem(Integer.toString(x));
             }
@@ -152,14 +168,27 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
         for (int type = 0; type < BombType.B_NUM; type++) {
             b_choices[type].removeItemListener(this);
             b_choices[type].removeAllItems();
-            int maxNumBombs = Math.round(availBombPoints
-                    / BombType.getBombCost(type))
-                    + current[type];
+            int maxNumBombs = Math.round(availBombPoints / BombType.getBombCost(type)) + current[type];
+
             if (typeMax != null) {
                 if ((maxNumBombs > 0) && (maxNumBombs > typeMax[type])) {
                     maxNumBombs = typeMax[type];
                 }
             }
+
+            if (current[type] > maxNumBombs) {
+                maxNumBombs = current[type];
+            }
+
+            if (maxNumBombs < 0) {
+                maxNumBombs = 0;
+            }
+
+            if (maxNumBombs > maxSize) {
+                maxNumBombs = maxSize;
+            }
+
+
             for (int x = 0; x <= maxNumBombs; x++) {
                 b_choices[type].addItem(Integer.toString(x));
             }

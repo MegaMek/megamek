@@ -23,6 +23,7 @@ import java.awt.geom.AffineTransform;
 
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.StringDrawer;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.TargetRoll;
 import megamek.common.util.FiringSolution;
 
@@ -87,15 +88,15 @@ class FiringSolutionSprite extends HexSprite {
         updateBounds();
         image = createNewHexImage();
         Graphics2D graph = (Graphics2D) image.getGraphics();
-        GUIPreferences.AntiAliasifSet(graph);
-        graph.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        graph.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
-        graph.scale(bv.scale, bv.scale);
+        UIUtil.setHighQualityRendering(graph);
         
+        // scale the following draws according to board zoom
+        graph.scale(bv.scale, bv.scale);
+
         String fontName = GUIPreferences.getInstance().getString(GUIPreferences.ADVANCED_MOVE_FONT_TYPE);
         int fontStyle = GUIPreferences.getInstance().getInt(GUIPreferences.ADVANCED_MOVE_FONT_STYLE);
         graph.setFont(new Font(fontName, fontStyle, FONT_SIZE_X));
-        
+
         if (noHitPossible) {
             new StringDrawer("X").at(HEX_CENTER).color(COLOR_X).fontSize(scaledFontSize(FONT_SIZE_X))
                     .center().outline(OUTLINE_COLOR, 1.5f).draw(graph);

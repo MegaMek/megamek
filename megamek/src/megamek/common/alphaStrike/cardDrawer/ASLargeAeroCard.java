@@ -18,8 +18,8 @@
  */
 package megamek.common.alphaStrike.cardDrawer;
 
-import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.StringDrawer;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.alphaStrike.*;
 import megamek.common.util.ImageUtil;
 
@@ -104,11 +104,7 @@ public class ASLargeAeroCard extends ASCard {
 
     public void drawFlipside(Graphics2D g) {
         initializeFonts(lightFont, boldFont, blackFont);
-        GUIPreferences.AntiAliasifSet(g);
-        g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
-        g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        UIUtil.setHighQualityRendering(g);
         paintCardBackground(g, true);
         new StringDrawer("WEAPON CRITICALS").at(33, 629).font(arcTitleFont).maxWidth(220)
                 .outline(Color.BLACK, 0.4f).centerY().draw(g);
@@ -279,7 +275,7 @@ public class ASLargeAeroCard extends ASCard {
 
     @Override
     protected void paintBaseInfo(Graphics2D g) {
-        ASCard.drawBox(g, 36, 97, 624, 63, Color.LIGHT_GRAY, BOX_STROKE);
+        ASCard.drawBox(g, 36, 97, 624, 63, BACKGROUND_GRAY, BOX_STROKE);
 
         int centerY = 129;
         new StringDrawer("TP: ").at(44, centerY).centerY().font(headerFont).maxWidth(47).draw(g);
@@ -308,7 +304,7 @@ public class ASLargeAeroCard extends ASCard {
         box.closePath();
 
         g.setStroke(new BasicStroke(BOX_STROKE));
-        g.setColor(Color.LIGHT_GRAY);
+        g.setColor(BACKGROUND_GRAY);
         g.fill(box);
         g.setColor(Color.BLACK);
         g.draw(box);
@@ -340,7 +336,7 @@ public class ASLargeAeroCard extends ASCard {
 
     @Override
     protected void paintSpecial(Graphics2D g) {
-        ASCard.drawBox(g, 536, 485, 477, 152, Color.LIGHT_GRAY, BOX_STROKE);
+        ASCard.drawBox(g, 536, 485, 477, 152, BACKGROUND_GRAY, BOX_STROKE);
         paintSpecialTextLines(g, element, largeAeroSpecialFont, 551, 484, 447, 44);
     }
 
@@ -355,7 +351,7 @@ public class ASLargeAeroCard extends ASCard {
 
     @Override
     protected void paintHits(Graphics2D g) {
-        ASCard.drawBox(g, 36, 410, 490, 227, Color.LIGHT_GRAY, BOX_STROKE);
+        ASCard.drawBox(g, 36, 410, 490, 227, BACKGROUND_GRAY, BOX_STROKE);
         if (element.getASUnitType().isAnyOf(WS, SS, JS)) {
             new StringDrawer("CRITICAL HITS").at(281, 435).center().font(headerFont).maxWidth(450).draw(g);
 

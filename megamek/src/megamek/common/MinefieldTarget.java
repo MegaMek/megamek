@@ -41,6 +41,11 @@ public class MinefieldTarget implements Targetable {
     }
 
     @Override
+    public int getStrength() {
+        return 0;
+    }
+
+    @Override
     public Coords getPosition() {
         return m_coords;
     }

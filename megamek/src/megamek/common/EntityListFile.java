@@ -727,6 +727,10 @@ public class EntityListFile {
                 output.write("\" altitude=\"");
                 output.write(entity.getAltitude() + "");
             }
+            if (entity instanceof VTOL) {
+                output.write("\" elevation=\"");
+                output.write(((VTOL) entity).getElevation() + "");
+            }
             if (!entity.getExternalIdAsString().equals("-1")) {
                 output.write("\" externalId=\"");
                 output.write(entity.getExternalIdAsString());

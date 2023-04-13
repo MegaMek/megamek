@@ -10651,7 +10651,6 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<unitType>Mech</unitType>
 		<quirk>command_mech</quirk>
 		<quirk>hyper_actuator</quirk>
-		<quirk>low_profile</quirk>
 		<quirk>exp_actuator</quirk>
 	</unit>
 

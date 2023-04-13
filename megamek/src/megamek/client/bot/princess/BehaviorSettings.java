@@ -80,9 +80,9 @@ public class BehaviorSettings implements Serializable {
             2.5,
             3,
             3.5,
-            4,
-            4.5,
-            5};
+            10,
+            50,
+            500};
     static final double[] HERD_MENTALITY_VALUES = {
             0.1,
             0.2,
@@ -111,7 +111,7 @@ public class BehaviorSettings implements Serializable {
     private final Set<Integer> priorityUnitTargets = new HashSet<>(); // What units do I especially want to blow up?
     private int herdMentalityIndex = 5; // How close do I want to stick to my teammates?
     private int braveryIndex = 5; // How quickly will I try to escape once damaged?
-    
+
     private final Set<Integer> ignoredUnitTargets = new HashSet<>();
     //endregion Variable Declarations
 
@@ -144,7 +144,7 @@ public class BehaviorSettings implements Serializable {
         for (final Integer i : getIgnoredUnitTargets()) {
             copy.addIgnoredUnitTarget(i);
         }
-        
+
         return copy;
     }
 
@@ -229,28 +229,28 @@ public class BehaviorSettings implements Serializable {
     public Set<Integer> getIgnoredUnitTargets() {
         return new HashSet<>(ignoredUnitTargets);
     }
-    
+
     /**
      * Add the given unit ID to the ignored target list.
      */
     public void addIgnoredUnitTarget(int unitID) {
         ignoredUnitTargets.add(unitID);
     }
-    
+
     /**
      * Remove the given unit ID from the ignored target list.
      */
     public void removeIgnoredUnitTarget(int unitID) {
         ignoredUnitTargets.remove(unitID);
     }
-    
+
     /**
      * Empty out the ignored target list.
      */
     public void clearIgnoredUnitTargets() {
         ignoredUnitTargets.clear();
     }
-    
+
     /**
      * @return A list of enemy units that Princess will prioritize over others.
      */
@@ -520,7 +520,7 @@ public class BehaviorSettings implements Serializable {
             throw new PrincessException("Invalid destinationEdge value.", e);
         }
     }
-    
+
     /**
      * Princess's home edge.
      *
@@ -741,7 +741,7 @@ public class BehaviorSettings implements Serializable {
             final Element destinationEdgeNode = doc.createElement("destinationEdge");
             destinationEdgeNode.setTextContent(getDestinationEdge().toString());
             behavior.appendChild(destinationEdgeNode);
-            
+
             final Element retreatEdgeNode = doc.createElement("retreatEdge");
             retreatEdgeNode.setTextContent(getRetreatEdge().toString());
             behavior.appendChild(retreatEdgeNode);

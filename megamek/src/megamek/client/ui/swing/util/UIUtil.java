@@ -25,6 +25,7 @@ import megamek.common.util.ImageUtil;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
@@ -643,6 +644,20 @@ public final class UIUtil {
             component.setLocationRelativeTo(null);
         }
     }
+
+    /**
+     * Activates anti-aliasing and other high-quality settings for the given Graphics.
+     *
+     * @param graph Graphics context to use hq rendering for
+     */
+    public static void setHighQualityRendering(Graphics graph) {
+        ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+        ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+    }
+
     /** A specialized panel for the header of a section. */
     public static class Header extends JPanel {
         private static final long serialVersionUID = -6235772150005269143L;
@@ -1126,6 +1141,34 @@ public final class UIUtil {
      */
     public static Font getScaledFont() {
         return new Font(MMConstants.FONT_DIALOG, Font.PLAIN, scaleForGUI(FONT_SCALE1));
+    }
+
+    /**
+     * Returns vertical spacer Swing component ({@link Box#createVerticalStrut(int)} with the given height
+     * scaled by the current GUI scaling.
+     */
+    public static Component scaledVerticalSpacer(int unscaledHeight) {
+        return Box.createVerticalStrut((int) (unscaledHeight * GUIPreferences.getInstance().getGUIScale()));
+    }
+
+    /**
+     * This class is a subclass of EmptyBorder. The given top, left, right, bottom values are scaled with the
+     * current GUI scale.
+     */
+    public static class ScaledEmptyBorder extends EmptyBorder {
+
+        /**
+         * Creates a version of EmptyBorder where top, left, right, bottom values are scaled with the current GUI scale.
+         */
+        public ScaledEmptyBorder(int top, int left, int bottom, int right) {
+            super(UIUtil.scaleForGUI(top), UIUtil.scaleForGUI(left), UIUtil.scaleForGUI(bottom), UIUtil.scaleForGUI(right));
+        }
+    }
+
+    /** Returns true when a modal dialog such as the Camo Chooser or a Load Force dialog is currently shown. */
+    public static boolean isModalDialogDisplayed() {
+        return Stream.of(Window.getWindows())
+                .anyMatch(w -> w.isShowing() && (w instanceof JDialog) && ((JDialog) w).isModal());
     }
 
     // PRIVATE

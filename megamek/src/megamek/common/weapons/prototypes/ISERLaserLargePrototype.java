@@ -102,6 +102,6 @@ public class ISERLaserLargePrototype extends LaserWeapon {
 
     @Override
     public int getAlphaStrikeHeat() {
-        return 18;
+        return 15;
     }
 }

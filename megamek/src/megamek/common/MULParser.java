@@ -145,6 +145,7 @@ public class MULParser {
     private static final String NEVER_DEPLOYED = "neverDeployed";
     private static final String VELOCITY = "velocity";
     public static final String ALTITUDE = "altitude";
+    public static final String ELEVATION = "elevation";
     private static final String AUTOEJECT = "autoeject";
     private static final String CONDEJECTAMMO = "condejectammo";
     private static final String CONDEJECTENGINE = "condejectengine";
@@ -726,18 +727,46 @@ public class MULParser {
 
             IAero a = (IAero) entity;
             if (!velString.isBlank()) {
-                int velocity = Integer.parseInt(velString);
+                int velocity = 0;
+
+                try {
+                    velocity = Integer.parseInt(velString);
+                } catch (NumberFormatException ex) {
+                }
+
                 a.setCurrentVelocity(velocity);
                 a.setNextVelocity(velocity);
             }
 
             if (!altString.isBlank()) {
-                int altitude = Integer.parseInt(altString);
+                int altitude = 0;
+
+                try {
+                    altitude = Integer.parseInt(altString);
+                } catch (NumberFormatException ex) {
+                }
+
                 if (altitude <= 0) {
                     a.land();
                 } else {
                     a.liftOff(altitude);
                 }
+            }
+        }
+
+        if (entity instanceof VTOL) {
+            String elevString = entityTag.getAttribute(ELEVATION);
+            VTOL v = (VTOL) entity;
+            
+            if (!elevString.isBlank()) {
+                int elevation = 0;
+
+                try {
+                    elevation = Integer.parseInt(elevString);
+                } catch (NumberFormatException ex) {
+                }
+
+                v.setElevation(elevation);
             }
         }
 

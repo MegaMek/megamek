@@ -196,6 +196,12 @@
 	<faction key='FWL.RH'>
 		<salvage pct='5'>MOC:1,CC:4,LA:6,SL:10</salvage>
 	</faction>
+	<faction key='RWR.HG'>
+		<pctSL>0,0,3,5,10</pctSL>
+		<pctSL unitType='Aero'>0,0,3,5,10</pctSL>
+		<pctSL unitType='Vehicle'>0,0,3,5,10</pctSL>
+		<salvage pct='5'>LA:10,SL:2</salvage>
+	</faction>
 	<faction key='FS.RC'>
 		<salvage pct='5'></salvage>
 	</faction>
@@ -1764,10 +1770,6 @@
 	</chassis>
 	<chassis name='M.A.S.H. Truck' unitType='Tank'>
 		<availability>CC:10,LA:10,SL:10,FWL:10,IS:9,FS:10,DC:10,Periphery:8</availability>
-		<model name='(Standard)'>
-			<roles>support</roles>
-			<availability>General:8</availability>
-		</model>
 	</chassis>
 	<chassis name='Mackie' unitType='Mek'>
 		<availability>TH:3-,LA:1-,IS:1-,FWL:1-,Periphery.Deep:4,SL.R:0,TH.HM:4-,Periphery:4</availability>
@@ -1986,10 +1988,6 @@
 	</chassis>
 	<chassis name='Mobile Long Tom Artillery (Unofficial)' unitType='Tank'>
 		<availability>SL:6,IS:4,SL.R:3</availability>
-		<model name='(+ Carriage)'>
-			<roles>artillery</roles>
-			<availability>General:6</availability>
-		</model>
 	</chassis>
 	<chassis name='Model 96 &apos;Elephant&apos;' unitType='Dropship'>
 		<availability>SL:5</availability>

@@ -21,12 +21,13 @@ package megamek.common.alphaStrike.cardDrawer;
 import megamek.client.ui.swing.util.StringDrawer;
 import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.alphaStrike.ASDamageVector;
-import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.AlphaStrikeHelper;
 
 import java.awt.*;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Path2D;
+
+import static java.awt.Color.WHITE;
 
 public class ASAeroCard extends ASHeatTrackingCard {
 
@@ -109,38 +110,12 @@ public class ASAeroCard extends ASHeatTrackingCard {
 
     @Override
     protected void paintArmor(Graphics2D g) {
-        drawBox(g, 36, armorBoxY, armorBoxWidth, armorBoxHeight, BACKGROUND_GRAY, BOX_STROKE);
+        super.paintArmor(g);
+        int upperY = armorBoxY + armorBoxHeight / 2 - 18;
+        new StringDrawer("TH").at(606, upperY).font(headerFont).center().maxWidth(52).draw(g);
 
         if (element != null) {
-            // Headers A, S
-            int upperY = armorBoxY + armorBoxHeight / 2 - 18;
             int lowerY = armorBoxY + armorBoxHeight / 2 + 18;
-            g.setFont(headerFont);
-            int headerWidth = new StringDrawer("A:").at(44, upperY).centerY().draw(g).width + 12;
-            new StringDrawer("S:").at(44, lowerY).centerY().draw(g);
-
-            // Armor Pips
-            int cx = 44 + headerWidth;
-            g.setStroke(new BasicStroke(1.5f));
-            for (int i = 0; i < element.getFullArmor(); i++) {
-                g.setColor(Color.WHITE);
-                g.fillOval(cx, upperY - ARMOR_PIP_SIZE / 2, ARMOR_PIP_SIZE, ARMOR_PIP_SIZE);
-                g.setColor(Color.BLACK);
-                g.drawOval(cx, upperY - ARMOR_PIP_SIZE / 2, ARMOR_PIP_SIZE, ARMOR_PIP_SIZE);
-                cx += ARMOR_PIP_SIZE + 1;
-            }
-
-            // Structure Pips
-            cx = 44 + headerWidth;
-            for (int i = 0; i < element.getFullStructure(); i++) {
-                g.setColor(DARKGRAY);
-                g.fillOval(cx, lowerY - ARMOR_PIP_SIZE / 2, ARMOR_PIP_SIZE, ARMOR_PIP_SIZE);
-                g.setColor(Color.BLACK);
-                g.drawOval(cx, lowerY - ARMOR_PIP_SIZE / 2, ARMOR_PIP_SIZE, ARMOR_PIP_SIZE);
-                cx += ARMOR_PIP_SIZE + 1;
-            }
-
-            new StringDrawer("TH").at(606, upperY).font(headerFont).center().maxWidth(52).draw(g);
             new StringDrawer(element.getThreshold() + "").at(606, lowerY).useConfig(valueConfig).center().maxWidth(52).draw(g);
         }
     }

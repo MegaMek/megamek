@@ -19,6 +19,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.KeyCommandBind;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Game;
 import megamek.common.KeyBindParser;
 import megamek.common.enums.GamePhase;
@@ -32,7 +33,6 @@ import megamek.common.util.ImageUtil;
 import org.apache.logging.log4j.LogManager;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.awt.font.TextAttribute;
 import java.text.AttributedString;
 import java.util.ArrayList;
@@ -154,7 +154,7 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
 
             displayImage = ImageUtil.createAcceleratedImage(r.width, r.height);
             Graphics intGraph = displayImage.getGraphics();
-            GUIPreferences.AntiAliasifSet(intGraph);
+            UIUtil.setHighQualityRendering(intGraph);
 
             // draw a semi-transparent background rectangle 
             intGraph.setColor(BG_COLOR);

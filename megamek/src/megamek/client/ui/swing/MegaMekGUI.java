@@ -90,7 +90,6 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     private Client client;
     private Server server;
     private GameManager gameManager;
-    private CommonAboutDialog about;
     private CommonSettingsDialog settingsDialog;
 
     private MegaMekController controller;
@@ -323,9 +322,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         launch(editor.getFrame());
         editor.boardNew(GUIPreferences.getInstance().getBoardEdRndStart());
     }
-    
+
     void showSkinEditor() {
-        int response = JOptionPane.showConfirmDialog(frame, 
+        int response = JOptionPane.showConfirmDialog(frame,
                 "The skin editor is currently "
                 + "in beta and is a work in progress.  There are likely to "
                 + "be issues. \nContinue?", "Continue?",
@@ -336,7 +335,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         SkinEditorMainGUI skinEditor = new SkinEditorMainGUI();
         skinEditor.initialize();
         skinEditor.switchPanel(GamePhase.MOVEMENT);
-        launch(skinEditor.getFrame());        
+        launch(skinEditor.getFrame());
     }
 
     /**
@@ -651,10 +650,10 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             }
         }
     }
-    
+
     /** Developer Utility: Loads "quicksave.sav.gz" with the last used connection settings. */
     public void quickLoadGame() {
-        File file = new File(MMConstants.QUICKSAVE_PATH, MMConstants.QUICKSAVE_FILE + MMConstants.SAVE_FILE_GZ_EXT);
+        File file = MegaMek.getQuickSaveFile();
         if (!file.exists() || !file.canRead()) {
             JOptionPane.showMessageDialog(frame,
                     Messages.getFormattedString("MegaMek.LoadGameAlert.message", file.getAbsolutePath()),
@@ -744,7 +743,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             pcd.setVisible(true);
             g.setPlanetaryConditions(pcd.getConditions());
         }
-        
+
         String playerName;
         int port;
         String serverPW;
@@ -800,7 +799,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             return;
         }
         server.setGame(g);
-        
+
         // apply any scenario damage
         sl.applyDamage(gameManager);
 
@@ -810,14 +809,14 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
         // calculate initial BV
         gameManager.calculatePlayerInitialCounts();
-        
+
         // setup any bots
         for (int x = 0; x < pa.length; x++) {
             if (playerTypes[x] == ScenarioDialog.T_BOT) {
                 LogManager.getLogger().info("Adding bot "  + pa[x].getName() + " as Princess");
                 BotClient c = new Princess(pa[x].getName(), MMConstants.LOCALHOST, port);
                 c.getGame().addGameListener(new BotGUI(frame, c));
-                c.connect();                
+                c.connect();
             } else if (playerTypes[x] == ScenarioDialog.T_OBOT) {
                 LogManager.getLogger().info("Adding bot "  + pa[x].getName() + " as TestBot");
                 BotClient c = new TestBot(pa[x].getName(), MMConstants.LOCALHOST, port);
@@ -864,7 +863,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         var bcd = new BotConfigDialog(frame, cd.getPlayerName());
         bcd.setVisible(true);
         if (bcd.getResult() == DialogResult.CANCELLED) {
-            return; 
+            return;
         }
         client = Princess.createPrincess(bcd.getBotName(), cd.getServerAddress(), cd.getPort(), bcd.getBehaviorSettings());
         client.getGame().addGameListener(new BotGUI(frame, (BotClient) client));
@@ -884,19 +883,6 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     private void addBag(JComponent comp, GridBagLayout gridbag, GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         frame.getContentPane().add(comp);
-    }
-
-    /**
-     * Called when the user selects the "Help->About" menu item.
-     */
-    void showAbout() {
-        // Do we need to create the "about" dialog?
-        if (about == null) {
-            about = new CommonAboutDialog(frame);
-        }
-
-        // Show the about dialog.
-        about.setVisible(true);
     }
 
     private void showSkinningHowTo() {
@@ -982,7 +968,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         System.gc();
         System.runFinalization();
     }
-    
+
     private final ActionListener actionListener = ev -> {
         switch (ev.getActionCommand()) {
             case ClientGUI.BOARD_NEW:
@@ -1013,7 +999,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 quickLoadGame();
                 break;
             case ClientGUI.HELP_ABOUT:
-                showAbout();
+                new CommonAboutDialog(frame).setVisible(true);
                 break;
             case ClientGUI.HELP_CONTENTS:
                 new MMReadMeHelpDialog(frame).setVisible(true);
@@ -1066,9 +1052,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     }
 
     /**
-     * Method used to determine the appropriate splash screen to use. This method looks 
+     * Method used to determine the appropriate splash screen to use. This method looks
      * at both the height and the width of the main monitor.
-     * 
+     *
      * @param splashScreens List of available splash screens.
      * @param screenWidth Width of the current monitor.
      * @param screenHeight Height of the current monitor.

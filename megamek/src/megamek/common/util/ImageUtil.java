@@ -38,6 +38,7 @@ import java.util.List;
 
 import megamek.client.ui.swing.util.ImageAtlasMap;
 import megamek.client.ui.swing.util.ImprovedAveragingScaleFilter;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Coords;
 import megamek.common.annotations.Nullable;
 import org.apache.logging.log4j.LogManager;
@@ -134,8 +135,7 @@ public final class ImageUtil {
         if (scaleType == IMAGE_SCALE_BICUBIC) {
             BufferedImage scaled = createAcceleratedImage(newWidth, newHeight);
             Graphics2D g2 = (Graphics2D) scaled.getGraphics();
-            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-                    RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+            UIUtil.setHighQualityRendering(g2);
             g2.drawImage(img, 0, 0, newWidth, newHeight, null);
             return scaled;
         } else {
@@ -165,6 +165,15 @@ public final class ImageUtil {
         }
     }
 
+    /**
+     * Loads and returns the image of the given fileName. This method does not make sure the image
+     * is fully loaded, this must be done by the caller when necessary (the simplest way is to
+     * create a new ImageIcon with the image). If the image cannot be loaded for any reason,
+     * the method returns a placeholder image but not null.
+     *
+     * @param fileName The image filename
+     * @return The image if possible, a placeholder image otherwise
+     */
     public static Image loadImageFromFile(String fileName) {
         if (null == fileName) {
             return failStandardImage();

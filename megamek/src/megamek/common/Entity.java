@@ -103,6 +103,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public static final long ETYPE_TRIPOD_MECH = 1L << 26;
     public static final long ETYPE_QUADVEE = 1L << 27;
 
+    public static final long ETYPE_AEROSPACEFIGHTER = 1L << 28;
+
     public static final int NONE = -1;
     public static final int BLOOD_STALKER_TARGET_CLEARED = -2;
 
@@ -15590,5 +15592,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /** @return True for unit types that have an automatic external searchlight (Meks and Tanks). */
     public boolean getsAutoExternalSearchlight() {
         return false;
+    }
+
+    @Override
+    public int getStrength() {
+        return calculateBattleValue();
     }
 }

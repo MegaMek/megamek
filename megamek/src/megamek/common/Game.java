@@ -3219,6 +3219,14 @@ public class Game extends AbstractGame implements Serializable {
         }
     }
 
+    public void removeEmptySmokeClouds() {
+        smokeCloudList.removeIf(SmokeCloud::hasNoHexes);
+    }
+
+    public void removeCompletelyDissipatedSmokeClouds() {
+        smokeCloudList.removeIf(SmokeCloud::isCompletelyDissipated);
+    }
+
     /**
      * Updates the map that maps a position to the list of Entity's in that
      * position.

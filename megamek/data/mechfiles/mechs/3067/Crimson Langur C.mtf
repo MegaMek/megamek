@@ -6,7 +6,7 @@ mul id:4018
 Config:Biped Omnimech
 TechBase:Clan
 Era:3065
-Source:TRO 3067
+source:TRO 3067 - Civil War
 Rules Level:2
 
 Mass:50
@@ -155,4 +155,19 @@ Clan Endo Steel
 -Empty-
 -Empty-
 
+overview:Khan Schmitt initiated many schemes to instill fresh energy in her Clan, one of which would result in new OmniMechs. The Crimson Langur, a fast medium mech designed for pilot safety, was born as a result of this.
+
+capabilities:The Crimson Langur is a remarkably fast 'Mech for its weight. In order to do this, it uses both an XL engine and an endo steel chassis to save weight. The design utilizes ten and a half tons of standard armor, the most the chassis can hold, though this weight only gives the Crimson Langur fifteen tons of pod space for modular equipment. To keep the warriors assigned to it in the fight longer, the Crimson Langur is equipped with a Full Head Ejection System.
+
+deployment:The main weapon of this configuration is an UAC/10. To back up this capable weapon are four ER micro lasers and four micro pulse lasers. This can hold its own against hardened targets, while being a powerful force against conventional infantry.
+
+history:As the Blood Spirits planned to isolate themselves from the Clans following the Great Refusal, the Star Adders increased their raids on the Spirits until the Trials of Possession threatened the security of York and the morale of Clan Blood Spirit. Khan Schmitt initiated many schemes to instill fresh energy in her Clan, one of which would result in new OmniMechs. But, because the Spirits' finances have always been limited, they contacted Kindraa Mick-Kreese in the hopes of forging a better relationship. Kindraa, a staunch Crusader, was eager to assist, and a period of co-development and production started. When finished, the OmniMech was christened Crimson Langur to honor the new alliance between the two Clans.
+
+manufacturer:Kindraa Mick-Kreese Primary Production Facility,Unknown,York Y2 Facility
+primaryfactory:Atreus (Clan),Haven (Colleen),York
+systemmanufacturer:CHASSIS:York XT
+systemmanufacturer:ENGINE:350 XL
+systemmanufacturer:ARMOR:Beta J77
+systemmanufacturer:COMMUNICATIONS:York Y2-Com
+systemmanufacturer:TARGETING:York Y5- T&T5
 

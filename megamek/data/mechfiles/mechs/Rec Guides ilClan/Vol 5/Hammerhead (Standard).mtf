@@ -6,7 +6,7 @@ Config:Biped
 techbase:Clan
 era:3146
 source:Rec Guide:ilClan #5 - Dark Age
-rules level:4
+rules level:3
 
 mass:45
 engine:270 XL (Clan) Engine(IS)
@@ -147,6 +147,10 @@ ISAES
 -Empty-
 -Empty-
 
+overview:The Hammerhead is a medium Clan BattleMech designed as a skirmisher by Clan Sea Fox. 
+capabilities:Intended for close-in combat, the Hammerhead has 15 tons of hardened armor to help resist damage. Unlike most Clan Mechs, this one is intended to allow inexperienced pilots to survive their first engagements and learn from the experience. With the assistance of leg-mounted actuator enhancement systems, the 'Mech's heavy armor helps its pilot keep the 'Mech standing, further assisting newer MechWarriors.
+deployment:Not heavily armed, the Mech's arsenal consists of medium and close range weapons. The main gun is a Series 44h large pulse laser, while a Series 2b ER medium laser and Type VI Streak SRM-6 allow the Mech to handle an opponent once the Hammerhead closes in to short range. The 'Mech is built on a SFAM endo steel skeleton and is powered by a Firebox 270 XL extralight engine, which gives the it enough power to support the weight of its hardened armor and still move at a top speed of 86.4 km/h.
+history:The design, which is roughly based on a hammerhead shark, is designed to be aggressive with its opponents while also being structured around the concept of never being knocked off its feet. Despite its meager weaponry, the Hammerhead has proven to be an effective shock trooper, plowing through enemy formations to combat with opponents twice its size at close range. The Hammerhead has quickly become a signature 'Mech for Clan Sea Fox and its touman, and it is also sold and exported to any interested Clan purchasers, with Clan Ghost Bear particularly fond of its strong and uncompromising attributes. In the lead-up to the ilClan era, the intensifying rivalry between Clans Jade Falcon and Wolf would result in heavy orders from both sides as they confronted the opposing Hammerhead in increasing numbers. The sole issue with the Hammerhead is that non-Sea Fox MechWarriors have reported occasional malfunctions in various systems in exported production versions. The Sea Foxes blame this to the diverging and conflicting software requirements of so many different buyers, and the issues are modest enough that they have not materially harmed Mech sales.
 manufacturer: Manufacturing Plant SFF-IT1
 primaryfactory: Itabaiana
 systemmanufacturer:CHASSIS:SFAM Endo Steel

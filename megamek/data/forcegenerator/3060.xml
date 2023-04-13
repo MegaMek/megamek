@@ -3301,9 +3301,6 @@
 		<model name='(Standard)'>
 			<availability>CC:6,General:7,FS:6,Periphery:7</availability>
 		</model>
-		<model name='(Upgrade) (Standard)'>
-			<availability>LA:6</availability>
-		</model>
 	</chassis>
 	<chassis name='Condor' unitType='Dropship'>
 		<availability>IS:5,Periphery.Deep:6,WOB:4,CIR:6,Periphery:6</availability>
@@ -4318,7 +4315,7 @@
 	</chassis>
 	<chassis name='Falcon Hover Tank' unitType='Tank'>
 		<availability>IS:1,Periphery:1</availability>
-		<model name='(Standard)'>
+		<model name=''>
 			<availability>General:5</availability>
 		</model>
 	</chassis>
@@ -7591,10 +7588,6 @@
 	</chassis>
 	<chassis name='M.A.S.H. Truck' unitType='Tank'>
 		<availability>CC:10,CS:10,LA:10,CLAN:10,FWL:10,IS:9,NIOPS:10,WOB:10,FS:10,DC:10,Periphery:8</availability>
-		<model name='(Standard)'>
-			<roles>support</roles>
-			<availability>General:8</availability>
-		</model>
 	</chassis>
 	<chassis name='MRM Carrier' unitType='Tank'>
 		<availability>Periphery.DD:4,IS:4,Periphery.OS:4,DC:5,Periphery:3</availability>
@@ -8295,10 +8288,6 @@
 	</chassis>
 	<chassis name='Mobile Long Tom Artillery (Unofficial)' unitType='Tank'>
 		<availability>CLAN:3,IS:5</availability>
-		<model name='(+ Carriage)'>
-			<roles>artillery</roles>
-			<availability>General:6</availability>
-		</model>
 	</chassis>
 	<chassis name='Model 96 &apos;Elephant&apos;' unitType='Dropship'>
 		<availability>CS:4,NIOPS:4,WOB:4</availability>

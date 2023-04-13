@@ -695,13 +695,6 @@
 		<omniMargin>1</omniMargin>
 		<techMargin>1</techMargin>
 	</faction>
-	<faction key='SL3.CSJ'>
-		<pctOmni>10,10</pctOmni>
-		<pctClan>0,0</pctClan>
-		<pctSL>70,70</pctSL>
-		<techMargin>1</techMargin>
-		<salvage pct='6'></salvage>
-	</faction>
 	<faction key='FWL.FWG'>
 		<pctOmni>20</pctOmni>
 		<pctClan>8</pctClan>
@@ -4274,9 +4267,6 @@
 		<model name='(Upgrade) (Laser)'>
 			<availability>LA:6,IS:6</availability>
 		</model>
-		<model name='(Upgrade) (Standard)'>
-			<availability>LA:8,FWL:6,MERC:6</availability>
-		</model>
 	</chassis>
 	<chassis name='Condor' unitType='Dropship'>
 		<availability>IS:5,Periphery.Deep:6,WOB:4,CIR:6,Periphery:6</availability>
@@ -5786,7 +5776,7 @@
 	</chassis>
 	<chassis name='Falcon Hover Tank' unitType='Tank'>
 		<availability>IS:1,Periphery:1</availability>
-		<model name='(Standard)'>
+		<model name=''>
 			<availability>General:5</availability>
 		</model>
 	</chassis>
@@ -10189,10 +10179,6 @@
 	</chassis>
 	<chassis name='M.A.S.H. Truck' unitType='Tank'>
 		<availability>CC:10,CS:10,LA:10,CLAN:10,FWL:10,IS:9,NIOPS:10,WOB:10,FS:10,DC:10,Periphery:8</availability>
-		<model name='(Standard)'>
-			<roles>support</roles>
-			<availability>General:8</availability>
-		</model>
 	</chassis>
 	<chassis name='MIT23 MASH Vehicle' unitType='Tank'>
 		<availability>CS:5</availability>
@@ -11142,10 +11128,6 @@
 	</chassis>
 	<chassis name='Mobile Long Tom Artillery (Unofficial)' unitType='Tank'>
 		<availability>CLAN:3,IS:3</availability>
-		<model name='(+ Carriage)'>
-			<roles>artillery</roles>
-			<availability>General:6</availability>
-		</model>
 	</chassis>
 	<chassis name='Model 96 &apos;Elephant&apos;' unitType='Dropship'>
 		<availability>CS:4,NIOPS:4,WOB:5</availability>

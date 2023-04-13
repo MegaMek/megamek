@@ -140,11 +140,9 @@ public final class HexTooltip {
 
     public static String getOneLineSummary(BuildingTarget target, Board board) {
         String result = "";
-        String sBuilding;
         Coords mcoords = target.getPosition();
         Building bldg = board.getBuildingAt(mcoords);
         Hex mhex = board.getHex(mcoords);
-//        result += Messages.getString("BoardView1.Tooltip.Building", mhex.terrainLevel(Terrains.BLDG_ELEV), bldg.toString(), bldg.getCurrentCF(mcoords), bldg.getArmor(mcoords), bldg.getBasement(mcoords).toString());
         result += Messages.getString("BoardView1.Tooltip.BuildingLine", mhex.terrainLevel(Terrains.BLDG_ELEV), bldg.getCurrentCF(mcoords), bldg.getArmor(mcoords));
         return result;
     }

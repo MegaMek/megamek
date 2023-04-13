@@ -824,7 +824,6 @@ public final class UnitToolTip {
     public static String getOneLineSummary(Entity entity)
     {
         String result = "";
-        Game game = entity.getGame();
         boolean isGunEmplacement = entity instanceof GunEmplacement;
 
         result += Messages.getString("BoardView1.Tooltip.ArmorInternals", entity.getTotalArmor(), entity.getTotalInternal());

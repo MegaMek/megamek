@@ -74,7 +74,7 @@ public final class UnitToolTip {
         return getEntityTipTable(entity, localPlayer, true, false, null);
     }
 
-    /** Returns the unit tooltip with values that are relevant in-game without the Pilot info. */
+    /** Returns the unit tooltip with minimal but useful information */
     public static StringBuilder getEntityTipBrief(Entity entity, Player localPlayer) {
         return getEntityTipTable(entity, localPlayer, false, false, null);
     }

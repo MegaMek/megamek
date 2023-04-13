@@ -13,6 +13,7 @@ import java.util.List;
  */
 public class TargetChoiceDialog extends AbstractChoiceDialog<Targetable> {
     ClientGUI clientGUI;
+
     protected TargetChoiceDialog(JFrame frame, String message, String title,
                                  @Nullable List<Targetable> targets, boolean isMultiSelect,
                                  ClientGUI clientGUI) {
@@ -29,12 +30,12 @@ public class TargetChoiceDialog extends AbstractChoiceDialog<Targetable> {
         } else if (target instanceof Hex) {
             button.setText("<html>" + HexTooltip.getHexTip((Hex) target, clientGUI.getClient(), clientGUI) + "</html>");
         } else {
-            simpleLabel(button, target);
+            summaryLabel(button, target);
         }
     }
 
     @Override
-    protected void simpleLabel(JToggleButton button, Targetable target) {
+    protected void summaryLabel(JToggleButton button, Targetable target) {
         String mods = "";
         if (target instanceof Entity) {
             //not sure if check is needed, safe to assume all targets are entity?
@@ -45,6 +46,11 @@ public class TargetChoiceDialog extends AbstractChoiceDialog<Targetable> {
         button.setText("<html><b>" + target.getDisplayName() + "</b>"+mods+"</html>");
     }
 
+    /**
+     * show modal dialog to return one or null @Targetable from chosen from the target list
+     * @param targets list of Targetable that can be selected from
+     * @return list of chosen Targetable, will be null if none chosen
+     */
     public static @Nullable Targetable showSingleChoiceDialog(JFrame frame, String message, String title,
                                                               @Nullable List<Targetable> targets, ClientGUI clientGUI) {
         TargetChoiceDialog dialog = new TargetChoiceDialog(frame, message, title, targets, false, clientGUI);
@@ -56,12 +62,17 @@ public class TargetChoiceDialog extends AbstractChoiceDialog<Targetable> {
         return null;
     }
 
+    /**
+     * show modal dialog to return zero or more @Targetable from chosen from the target list
+     * @param targets list of Targetable that can be selected from
+     * @return list of chosen Targetable, can be empty
+     */
     public static @Nullable List<Targetable> showMultiChoiceDialog(JFrame frame, String message, String title, @Nullable List<Targetable> targets, ClientGUI clientGUI) {
         TargetChoiceDialog dialog = new TargetChoiceDialog(frame, message, title, targets, true, clientGUI);
 
         boolean userOkay = dialog.showDialog();
         if (userOkay) {
-            return dialog.getChoosen();
+            return dialog.getChosen();
         }
         return null;
     }

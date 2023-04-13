@@ -11,7 +11,7 @@ import java.util.List;
 public abstract class AbstractChoiceDialog<T> extends ClientDialog {
     private static boolean showDetails = false;
     List<T> targets;
-    private List<T> choosen = new ArrayList<T>();
+    private List<T> chosen = new ArrayList<T>();
     private boolean isMultiSelect;
     private boolean userResponse;
     private JPanel choicesPanel;
@@ -102,22 +102,22 @@ public abstract class AbstractChoiceDialog<T> extends ClientDialog {
 
         for (int i = 0; i < buttons.length; i++) {
             T target = targets.get(i);
-            buttons[i].setSelected(choosen.contains(target));
+            buttons[i].setSelected(chosen.contains(target));
             if (showDetails) {
                 detailLabel(buttons[i], target);
             } else {
-                simpleLabel(buttons[i], target);
+                summaryLabel(buttons[i], target);
             }
         }
     }
 
+    /** @Override to set button text with details about this option */
     abstract protected void detailLabel(JToggleButton button, T target);
 
+    /** @Override to set button text with a summary of this option */
+    abstract  protected void summaryLabel(JToggleButton button, T target);
 
-    abstract  protected void simpleLabel(JToggleButton button, T target);
-
-    private void toggleDetails()
-    {
+    private void toggleDetails() {
         showDetails = !showDetails;
         updateChoices();
         // force a resize to fit change components
@@ -125,8 +125,8 @@ public abstract class AbstractChoiceDialog<T> extends ClientDialog {
     }
 
     private void choose(@Nullable T choice) {
-        if (!choosen.contains(choice)) {
-            choosen.add(choice);
+        if (!chosen.contains(choice)) {
+            chosen.add(choice);
         }
         if (!isMultiSelect) {
             doOK();
@@ -134,31 +134,23 @@ public abstract class AbstractChoiceDialog<T> extends ClientDialog {
     }
 
     // use
-    private void doOK()
-    {
+    private void doOK() {
         this.userResponse = true;
         this.setVisible(false);
     }
 
-    private void doCancel()
-    {
+    private void doCancel() {
         this.userResponse = false;
         this.setVisible(false);
     }
 
-    /***
-     *
-     * @return first chosen item, or @null if nothing chosen
-     */
+    /** @return first chosen item, or @null if nothing chosen */
     public @Nullable T getFirstChoice() {
-        return (choosen == null || choosen.size() == 0) ? null : choosen.get(0);
+        return (chosen == null || chosen.size() == 0) ? null : chosen.get(0);
     }
 
-    /***
-     *
-     * @return list of items picked by user
-     */
-    public @Nullable List<T> getChoosen() {
-        return (choosen == null || choosen.size() == 0) ? null : choosen;
+    /** @return list of items picked by user */
+    public @Nullable List<T> getChosen() {
+        return (chosen == null || chosen.size() == 0) ? null : chosen;
     }
 }

@@ -19,19 +19,22 @@ public class EntityChoiceDialog extends AbstractChoiceDialog<Entity> {
     }
 
     @Override
-    protected void detailLabel(JToggleButton button, Entity target)
-    {
+    protected void detailLabel(JToggleButton button, Entity target) {
         button.setText("<html>" + UnitToolTip.getEntityTipBrief((Entity) target, null) + "</html>");
     }
 
     @Override
-    protected void simpleLabel(JToggleButton button, Entity target) {
+    protected void summaryLabel(JToggleButton button, Entity target) {
         button.setText("<html><b>" + target.getDisplayName() + "</b></html>");
     }
 
+    /**
+     * show modal dialog to return one or null @Entity from chosen from the target list
+     * @param targets list of Entity that can be selected from
+     * @return list of chosen Entity, will be null if none chosen
+     */
     public static @Nullable Entity showSingleChoiceDialog(JFrame frame, String message, String title, @Nullable List<Entity> targets) {
         EntityChoiceDialog dialog = new EntityChoiceDialog(frame, message, title, targets, false);
-
         boolean userOkay = dialog.showDialog();
         if (userOkay) {
             return dialog.getFirstChoice();
@@ -39,12 +42,17 @@ public class EntityChoiceDialog extends AbstractChoiceDialog<Entity> {
         return null;
     }
 
+    /**
+     * show modal dialog to return zero or more @Entity from chosen from the target list
+     * @param targets list of Entity that can be selected from
+     * @return list of chosen Entity, can be empty
+     */
     public static @Nullable List<Entity> showMultiChoiceDialog(JFrame frame, String message, String title, @Nullable List<Entity> targets) {
         EntityChoiceDialog dialog = new EntityChoiceDialog(frame, message, title, targets, true);
 
         boolean userOkay = dialog.showDialog();
         if (userOkay) {
-            return dialog.getChoosen();
+            return dialog.getChosen();
         }
         return null;
     }

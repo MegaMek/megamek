@@ -165,7 +165,7 @@ public abstract class AbstractChoiceDialog<T> extends ClientDialog {
 
     /** @return first chosen item, or @null if nothing chosen */
     public @Nullable T getFirstChoice() {
-        return (chosen == null || chosen.size() == 0) ? null : chosen.get(0);
+        return (chosen.size() == 0) ? null : chosen.get(0);
     }
 
     /** @return list of items picked by user. List will be empty if nothing picked */

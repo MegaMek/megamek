@@ -604,7 +604,6 @@ public final class UnitToolTip {
         String col2 = "";
         String row = "";
         String rows = "";
-        boolean subsequentLine = false;
         // Display sorted by weapon name
         var wps = new ArrayList<>(wpInfos.values());
         wps.sort(Comparator.comparing(w -> w.sortString));

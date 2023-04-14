@@ -1,3 +1,16 @@
+/*
+ * MegaMek - Copyright (C) 2023 - The MegaMek Team
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ */
 package megamek.client.ui.swing;
 
 import megamek.common.annotations.Nullable;
@@ -8,16 +21,22 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A modal dialog for presenting options as buttons. Can do single or multi-selection.
+ * Sublclasses should define mehtods for setting the text labels for the buttons as a summary or
+ * details of the item. Text label can be HTML or any other JButton legal content.
+ * @param <T> Any object type
+ */
 public abstract class AbstractChoiceDialog<T> extends ClientDialog {
     private static boolean showDetails = false;
-    List<T> targets;
-    private List<T> chosen = new ArrayList<T>();
-    private boolean isMultiSelect;
+    final List<T> targets;
+    final private List<T> chosen = new ArrayList<T>();
+    final private boolean isMultiSelect;
+    final private JPanel choicesPanel;
     private boolean userResponse;
-    private JPanel choicesPanel;
     private JToggleButton [] buttons;
 
-    /** Creates new PlanetaryConditionsDialog and takes the conditions from the client's Game. */
+    /**  */
     protected AbstractChoiceDialog(JFrame frame, String message, String title,
                                    @Nullable List<T> targets, boolean isMultiSelect) {
         super(frame, title, true, true);
@@ -149,8 +168,8 @@ public abstract class AbstractChoiceDialog<T> extends ClientDialog {
         return (chosen == null || chosen.size() == 0) ? null : chosen.get(0);
     }
 
-    /** @return list of items picked by user */
-    public @Nullable List<T> getChosen() {
-        return (chosen == null || chosen.size() == 0) ? null : chosen;
+    /** @return list of items picked by user. List will be empty if nothing picked */
+    public List<T> getChosen() {
+        return chosen;
     }
 }

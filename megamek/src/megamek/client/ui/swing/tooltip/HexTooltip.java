@@ -17,7 +17,7 @@ import static megamek.client.ui.swing.util.UIUtil.uiBlack;
 
 public final class HexTooltip {
     public static String getHexTip(Hex mhex, Client client, @Nullable ClientGUI clientGUI) {
-        String result = "";
+        StringBuilder result = new StringBuilder();
         Coords mcoords = mhex.getCoords();
         Player localPlayer = client.getLocalPlayer();
         Game game = client.getGame();
@@ -38,7 +38,7 @@ public final class HexTooltip {
             String col = "<TD>" + sFuelTank + "</TD>";
             String row = "<TR>" + col + "</TR>";
             String table = "<TABLE BORDER=0 BGCOLOR=" + LIGHT_BGCOLOR + " width=100%>" + row + "</TABLE>";
-            result += table;
+            result.append(table);
         }
 
         // Building
@@ -52,7 +52,7 @@ public final class HexTooltip {
                 String col = "<TD>" + sBuilding + "</TD>";
                 String row = "<TR>" + col + "</TR>";
                 String table = "<TABLE BORDER=0 BGCOLOR=" + LIGHT_BGCOLOR + " width=100%>" + row + "</TABLE>";
-                result += table;
+                result.append(table);
             } else {
                 Building bldg = game.getBoard().getBuildingAt(mcoords);
                 sBuilding = Messages.getString("BoardView1.Tooltip.Building", mhex.terrainLevel(Terrains.BLDG_ELEV), bldg.toString(), bldg.getCurrentCF(mcoords), bldg.getArmor(mcoords), bldg.getBasement(mcoords).toString());
@@ -64,7 +64,7 @@ public final class HexTooltip {
                 String col = "<TD>" + sBuilding + "</TD>";
                 String row = "<TR>" + col + "</TR>";
                 String table = "<TABLE BORDER=0 BGCOLOR=" + BUILDING_BGCOLOR + " width=100%>" + row + "</TABLE>";
-                result += table;
+                result.append(table);
             }
         }
 
@@ -83,22 +83,22 @@ public final class HexTooltip {
             String col = "<TD>" + sBridge + "</TD>";
             String row = "<TR>" + col + "</TR>";
             String table = "<TABLE BORDER=0 BGCOLOR=" + LIGHT_BGCOLOR + " width=100%>" + row + "</TABLE>";
-            result += table;
+            result.append(table);
         }
 
         if (game.containsMinefield(mcoords)) {
             Vector<Minefield> minefields = game.getMinefields(mcoords);
             for (int i = 0; i < minefields.size(); i++) {
                 Minefield mf = minefields.elementAt(i);
-                String owner = " (" + game.getPlayer(mf.getPlayerId()).getName() + ")";
-                String sMinefield = mf.getName() + " " + Messages.getString("BoardView1.minefield") + " (" + mf.getDensity() + ")";
+                String owner = " (" + game.getPlayer(mf.getPlayerId()).getName() + ')';
+                String sMinefield = mf.getName() + ' ' + Messages.getString("BoardView1.minefield") + " (" + mf.getDensity() + ')';
 
                 switch (mf.getType()) {
                     case Minefield.TYPE_CONVENTIONAL:
                     case Minefield.TYPE_COMMAND_DETONATED:
                     case Minefield.TYPE_ACTIVE:
                     case Minefield.TYPE_INFERNO:
-                        sMinefield += " " + owner;
+                        sMinefield += ' ' + owner;
                         break;
                     case Minefield.TYPE_VIBRABOMB:
                         if (mf.getPlayerId() == localPlayer.getId()) {
@@ -112,20 +112,21 @@ public final class HexTooltip {
                 }
 
                 sMinefield = guiScaledFontHTML(UIUtil.uiWhite()) + sMinefield + "</FONT>";
-                result += sMinefield;
-                result += "<BR>";
+                result.append(sMinefield);
+                result.append("<BR>");
             }
         }
-        return result;
+        return result.toString();
     }
 
     public static String getBuildingTargetTip(BuildingTarget target, Board board) {
         String result = "";
-        String sBuilding;
         Coords mcoords = target.getPosition();
         Building bldg = board.getBuildingAt(mcoords);
         Hex mhex = board.getHex(mcoords);
-        sBuilding = Messages.getString("BoardView1.Tooltip.Building", mhex.terrainLevel(Terrains.BLDG_ELEV), bldg.toString(), bldg.getCurrentCF(mcoords), bldg.getArmor(mcoords), bldg.getBasement(mcoords).toString());
+        String sBuilding = Messages.getString("BoardView1.Tooltip.Building",
+                mhex.terrainLevel(Terrains.BLDG_ELEV), bldg.toString(), bldg.getCurrentCF(mcoords),
+                bldg.getArmor(mcoords), bldg.getBasement(mcoords).toString());
 
         if (bldg.getBasementCollapsed(mcoords)) {
             sBuilding += Messages.getString("BoardView1.Tooltip.BldgBasementCollapsed");
@@ -151,7 +152,7 @@ public final class HexTooltip {
     {
         Coords mcoords = mhex.getCoords();
         String result = "";
-        String sTerrain = Messages.getString("BoardView1.Tooltip.Hex", mcoords.getBoardNum(), mhex.getLevel()) + "<BR>";
+        StringBuilder sTerrain = new StringBuilder(Messages.getString("BoardView1.Tooltip.Hex", mcoords.getBoardNum(), mhex.getLevel()) + "<BR>");
 
         // cycle through the terrains and report types found
         for (int terType: mhex.getTerrainTypes()) {
@@ -160,8 +161,8 @@ public final class HexTooltip {
             String name = Terrains.getDisplayName(terType, ttl);
             if (name != null) {
                 String msg_tf =  Messages.getString("BoardView1.Tooltip.TF");
-                name += (tf > 0) ? " (" + msg_tf + ": " + tf + ")" : "";
-                sTerrain += name + "<BR>";
+                name += (tf > 0) ? " (" + msg_tf + ": " + tf + ')' : "";
+                sTerrain.append(name).append("<BR>");
             }
         }
 

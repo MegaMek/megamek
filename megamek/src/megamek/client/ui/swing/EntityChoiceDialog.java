@@ -1,3 +1,16 @@
+/*
+ * MegaMek - Copyright (C) 2023 - The MegaMek Team
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ */
 package megamek.client.ui.swing;
 
 import megamek.client.ui.swing.tooltip.UnitToolTip;
@@ -8,11 +21,11 @@ import javax.swing.*;
 import java.util.List;
 
 /**
- * A modal dialog for choosing one or more Entities.
+ * A modal dialog for choosing one or more Entities. Can show stats
+ *  in brief or in detail.
  */
 public class EntityChoiceDialog extends AbstractChoiceDialog<Entity> {
 
-    /** Creates new PlanetaryConditionsDialog and takes the conditions from the client's Game. */
     protected EntityChoiceDialog(JFrame frame, String message, String title,
                                  @Nullable List<Entity> targets, boolean isMultiSelect) {
         super(frame, message, title, targets, isMultiSelect);
@@ -20,7 +33,7 @@ public class EntityChoiceDialog extends AbstractChoiceDialog<Entity> {
 
     @Override
     protected void detailLabel(JToggleButton button, Entity target) {
-        button.setText("<html>" + UnitToolTip.getEntityTipVitals((Entity) target, null) + "</html>");
+        button.setText("<html>" + UnitToolTip.getEntityTipVitals(target, null) + "</html>");
     }
 
     @Override
@@ -45,7 +58,7 @@ public class EntityChoiceDialog extends AbstractChoiceDialog<Entity> {
     /**
      * show modal dialog to return zero or more @Entity from chosen from the target list
      * @param targets list of Entity that can be selected from
-     * @return list of chosen Entity, can be empty
+     * @return list of chosen Entity, will be null if none chosen
      */
     public static @Nullable List<Entity> showMultiChoiceDialog(JFrame frame, String message, String title, @Nullable List<Entity> targets) {
         EntityChoiceDialog dialog = new EntityChoiceDialog(frame, message, title, targets, true);

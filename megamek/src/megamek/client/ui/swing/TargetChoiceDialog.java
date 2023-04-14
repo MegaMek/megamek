@@ -1,3 +1,16 @@
+/*
+ * MegaMek - Copyright (C) 2023 - The MegaMek Team
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ */
 package megamek.client.ui.swing;
 
 import megamek.client.ui.swing.tooltip.HexTooltip;
@@ -9,15 +22,13 @@ import megamek.common.annotations.Nullable;
 import javax.swing.*;
 import java.util.List;
 
-import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
-
 /**
- * A modal dialog for choosing one or more Targetable objects. Can show info in brief or detail
+ * A modal dialog for choosing one or more Targetable objects. Can show stats
+ * in brief or in detail.
  */
 public class TargetChoiceDialog extends AbstractChoiceDialog<Targetable> {
-    ClientGUI clientGUI;
+    final ClientGUI clientGUI;
     Entity firingEntity;
-
 
     protected TargetChoiceDialog(JFrame frame, String message, String title,
                                  @Nullable List<Targetable> targets, boolean isMultiSelect,
@@ -105,7 +116,7 @@ public class TargetChoiceDialog extends AbstractChoiceDialog<Targetable> {
     /**
      * show modal dialog to return zero or more @Targetable from chosen from the target list
      * @param targets list of Targetable that can be selected from
-     * @return list of chosen Targetable, can be empty
+     * @return list of chosen Targetable, will be null if none chosen
      */
     public static @Nullable List<Targetable> showMultiChoiceDialog(JFrame frame, String message, String title,
                                                                    @Nullable List<Targetable> targets,

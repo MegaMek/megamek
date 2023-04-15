@@ -1818,7 +1818,7 @@ public class Game extends AbstractGame implements Serializable {
 
     /**
      * @param turn the current game turn, which may be null
-     * @return the number of the first deployable entity that is valid for the specified turn
+     * @return the number of the first hidden entity that is valid for the specified turn
      */
     public int getFirstHiddenEntityNum(final @Nullable GameTurn turn) {
         // Reviewers: Not sure if this is where to add filtering (this is hoe deployment does it)
@@ -1838,7 +1838,7 @@ public class Game extends AbstractGame implements Serializable {
     }
 
     /**
-     * @return the number of the next deployable entity that is valid for the specified turn
+     * @return the number of the next hidden entity that is valid for the specified turn
      */
     public int getNextHiddenEntityNum(GameTurn turn, int start) {
         if (start >= 0) {

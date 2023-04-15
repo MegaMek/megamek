@@ -438,7 +438,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(BOARD_FIELD_OF_FIRE_LONG_COLOR, new Color(60, 150, 60));
         setDefault(BOARD_FIELD_OF_FIRE_EXTENDED_COLOR, new Color(40, 100, 40));
 
-        setDefault(BOARD_MOVE_FONT_TYPE, MMConstants.FONT_SANS_SERIF);
+        setDefault(BOARD_MOVE_FONT_TYPE, "SansSerif");
         setDefault(BOARD_MOVE_FONT_SIZE, 26);
         setDefault(BOARD_MOVE_FONT_STYLE, Font.BOLD);
         store.setDefault(BOARD_ATTACK_ARROW_TRANSPARENCY, 0x80);

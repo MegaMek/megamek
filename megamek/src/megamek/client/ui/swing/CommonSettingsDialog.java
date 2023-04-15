@@ -192,9 +192,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private ColourSelectorButton csbMoveRunColor;
     private ColourSelectorButton csbMoveBackColor;
     private ColourSelectorButton csbMoveSprintColor;
-    private JTextField moveFontType;
+
+    private final JComboBox<String> fontTypeChooserMoveFont = new JComboBox<>();
     private JTextField moveFontSize;
-    private JTextField moveFontStyle;
+    private final JComboBox<String> fontStyleChooserMoveFont = new JComboBox<>();
 
     private ColourSelectorButton csbFireSolnCanSeeColor;
     private ColourSelectorButton csbFireSolnNoSeeColor;
@@ -565,13 +566,16 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         addLineSpacer(comps);
 
-        moveFontType = new JTextField(4);
-        moveFontType.setMaximumSize(new Dimension(150, 40));
+        for (String family : GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()) {
+            fontTypeChooserMoveFont.addItem(family);
+        }
+
+        fontTypeChooserMoveFont.setSelectedItem(GUIP.getMoveFontType());
+
         JLabel moveFontTypeLabel = new JLabel(Messages.getString("CommonSettingsDialog.moveFontType"));
         row = new ArrayList<>();
         row.add(moveFontTypeLabel);
-        row.add(moveFontType);
-        moveFontType.setText(GUIP.getMoveFontType());
+        row.add(fontTypeChooserMoveFont);
         comps.add(row);
 
         moveFontSize = new JTextField(4);
@@ -583,13 +587,14 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         moveFontSize.setText(String.format("%d", GUIP.getMoveFontSize()));
         comps.add(row);
 
-        moveFontStyle = new JTextField(4);
-        moveFontStyle.setMaximumSize(new Dimension(150, 40));
+        fontStyleChooserMoveFont.addItem(Messages.getString("Plain"));
+        fontStyleChooserMoveFont.addItem(Messages.getString("Bold"));
+        fontStyleChooserMoveFont.addItem(Messages.getString("Italic"));
         JLabel moveFontStyleLabel = new JLabel(Messages.getString("CommonSettingsDialog.moveFontStyle"));
         row = new ArrayList<>();
         row.add(moveFontStyleLabel);
-        row.add(moveFontStyle);
-        moveFontStyle.setText(String.format("%d", GUIP.getMoveFontStyle()));
+        row.add(fontStyleChooserMoveFont);
+        fontStyleChooserMoveFont.setSelectedIndex(GUIP.getMoveFontStyle());
         comps.add(row);
 
         row = new ArrayList<>();
@@ -1635,9 +1640,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         buttonsPerRow.setText(String.format("%d", GUIP.getButtonsPerRow()));
         playersRemainingToShow.setText(String.format("%d", GUIP.getPlayersRemainingToShow()));
         tmmPipModeCbo.setSelectedIndex(GUIP.getTMMPipMode());
-        moveFontType.setText(GUIP.getMoveFontType());
+        fontTypeChooserMoveFont.setSelectedItem(GUIP.getMoveFontType());
         moveFontSize.setText(String.format("%d", GUIP.getMoveFontSize()));
-        moveFontStyle.setText(String.format("%d", GUIP.getMoveFontStyle()));
+        fontStyleChooserMoveFont.setSelectedIndex(GUIP.getMoveFontStyle());
         darkenMapAtNight.setSelected(GUIP.getDarkenMapAtNight());
         translucentHiddenUnits.setSelected(GUIP.getTranslucentHiddenUnits());
 
@@ -1800,17 +1805,13 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setTranslucentHiddenUnits(translucentHiddenUnits.isSelected());
 
 
-        GUIP.setMoveFontType(moveFontType.getText());
+        GUIP.setMoveFontType(fontTypeChooserMoveFont.getSelectedItem().toString());
         try {
             GUIP.setMoveFontSize(Integer.parseInt(moveFontSize.getText()));
         } catch (Exception ex) {
             LogManager.getLogger().error("", ex);
         }
-        try {
-            GUIP.setMoveFontStyle(Integer.parseInt(moveFontStyle.getText()));
-        } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
-        }
+        GUIP.setMoveFontStyle(fontStyleChooserMoveFont.getSelectedIndex());
 
         try {
             GUIP.setTooltipDelay(Integer.parseInt(tooltipDelay.getText()));

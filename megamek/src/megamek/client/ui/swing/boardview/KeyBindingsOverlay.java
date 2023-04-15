@@ -156,7 +156,7 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
             UIUtil.setHighQualityRendering(intGraph);
 
             // draw a semi-transparent background rectangle
-            Color colorBG = GUIP.getKeyBindingsColorBackground();
+            Color colorBG = GUIP.getPlanetaryConditionsColorBackground();
             intGraph.setColor(colorBG);
             intGraph.fillRoundRect(0, 0, r.width, r.height, PADDING_X, PADDING_X);
             
@@ -205,11 +205,11 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
     private List<String> assembleTextLines() {
         List<String> result = new ArrayList<>();
 
-        Color colorTitle = GUIP.getKeyBindingsColorTitle();
+        Color colorTitle = GUIP.getPlanetaryConditionsColorTitle();
         String toggleKey = KeyCommandBind.getDesc(KeyCommandBind.KEY_BINDS);
 
         String tmpStr = "";
-        Boolean showHeading = GUIP.getKeyBindingsColorShowHeader();
+        Boolean showHeading = GUIP.getPlanetaryConditionsShowHeader();
         String titleColor = String.format("#%02X%02X%02X", colorTitle.getRed(), colorTitle.getGreen(), colorTitle.getBlue());
         tmpStr = (showHeading ? titleColor + Messages.getString("KeyBindingsDisplay.heading", toggleKey) : "");
 
@@ -267,7 +267,7 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
      * otherwise TEXT_COLOR is used.
      */
     private void drawShadowedString(Graphics graph, String s, int x, int y) {
-        Color textColor = GUIP.getKeyBindingsColorText();
+        Color textColor = GUIP.getPlanetaryConditionsColorText();
         // Extract a color code from the start of the string
         // used to display headlines if it's there
         if (s.startsWith("#") && s.length() > 7) {

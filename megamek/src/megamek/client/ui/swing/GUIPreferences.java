@@ -101,11 +101,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String PLANETARY_CONDITIONS_SHOW_VALUES = "PlanetaryConditionsShowValues";
     public static final String PLANETARY_CONDITIONS_SHOW_INDICATORS = "PlanetaryConditionsShowIndicators";
 
-    public static final String KEYBINDINGS_COLOR_TITLE = "KeyBindingsColorTitle";
-    public static final String KEYBINDINGS_COLOR_TEXT = "KeyBindingsColorText";
-    public static final String KEYBINDINGS_COLOR_BACKGROUND = "KeyBindingsColorBackground";
-    public static final String KEYBINDINGS_SHOW_HEADER = "KeyBindingsShowHeader";
-
     public static final String PLAYERS_REMAINING_TO_SHOW = "PlayersRemainingToShow";
     public static final String BUTTONS_PER_ROW = "ButtonsPerRow";
     public static final String DOCK_ON_LEFT = "DockOnLeft";
@@ -417,11 +412,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(PLANETARY_CONDITIONS_SHOW_LABELS, true);
         setDefault(PLANETARY_CONDITIONS_SHOW_VALUES, true);
         setDefault(PLANETARY_CONDITIONS_SHOW_INDICATORS, true);
-
-        setDefault(KEYBINDINGS_COLOR_TITLE, Color.WHITE);
-        setDefault(KEYBINDINGS_COLOR_TEXT, DEFAULT_PLANETARY_CONDITIONS_TEXT_COLOR);
-        setDefault(KEYBINDINGS_COLOR_BACKGROUND, DEFAULT_PLANETARY_CONDITIONS_BACKGROUND_COLOR);
-        setDefault(KEYBINDINGS_SHOW_HEADER, true);
 
         setDefault(WARNING_COLOR, DEFAULT_RED);
         setDefault(CAUTION_COLOR, Color.yellow);
@@ -2667,22 +2657,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return getBoolean(PLANETARY_CONDITIONS_SHOW_INDICATORS);
     }
 
-    public Color getKeyBindingsColorTitle() {
-        return getColor(KEYBINDINGS_COLOR_TITLE);
-    }
-
-    public Color getKeyBindingsColorText() {
-        return getColor(KEYBINDINGS_COLOR_TEXT);
-    }
-
-    public Color getKeyBindingsColorBackground() {
-        return getColor(KEYBINDINGS_COLOR_BACKGROUND);
-    }
-
-    public Boolean getKeyBindingsColorShowHeader() {
-        return getBoolean(KEYBINDINGS_SHOW_HEADER);
-    }
-
     public void setPlanetaryConditionsColorTitle(Color color) {
         store.setValue(PLANETARY_CONDITIONS_COLOR_TITLE, getColorString(color));
     }
@@ -2721,22 +2695,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setPlanetaryConditionsShowIndicators(Boolean state) {
         store.setValue(PLANETARY_CONDITIONS_SHOW_INDICATORS, state);
-    }
-
-    public void setKeyBindingsColorTitle(Color color) {
-        store.setValue(KEYBINDINGS_COLOR_TITLE, getColorString(color));
-    }
-
-    public void setKeyBindingsColorText(Color color) {
-        store.setValue(KEYBINDINGS_COLOR_TEXT, getColorString(color));
-    }
-
-    public void setKeyBindingsColorBackground(Color color) {
-        store.setValue(KEYBINDINGS_COLOR_BACKGROUND, getColorString(color));
-    }
-
-    public void setKeyBindingsShowHeader(Boolean state) {
-        store.setValue(KEYBINDINGS_SHOW_HEADER, state);
     }
 
     public void setUnitToolTipSeenByResolution(int i) {

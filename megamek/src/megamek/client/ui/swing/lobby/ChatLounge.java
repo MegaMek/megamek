@@ -2541,7 +2541,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
             if (!newEntities.isEmpty()) {
                 client().sendAddEntity(newEntities);
-                String msg = client().getLocalPlayer() + " loaded units from Clipboard for player: " + localPlayer().getName() + " [units " + newEntities.size() + "]";
+                String msg = client().getLocalPlayer() + " loaded units from Clipboard for player: " + localPlayer().getName() + " [" + newEntities.size() + " units]";
                 client().sendServerChat(Player.PLAYER_NONE, msg);
             }
         }

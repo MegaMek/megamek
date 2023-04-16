@@ -26,6 +26,7 @@ import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.panels.SkillGenerationOptionsPanel;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
+import megamek.common.Player;
 
 import javax.swing.*;
 import java.awt.*;
@@ -135,6 +136,8 @@ public class SkillGenerationDialog extends AbstractButtonDialog {
     protected void okAction() {
         super.okAction();
         getSkillGenerationOptionsPanel().updateClient();
+        String msg = clientGUI.getClient().getLocalPlayer() + " changed settings for Skill Generation";
+        clientGUI.getClient().sendServerChat(Player.PLAYER_NONE, msg);
     }
     //endregion Button Actions
 

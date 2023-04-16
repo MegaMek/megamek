@@ -42,7 +42,7 @@ VERSION HISTORY:
 + PR #4290: The lobby chat window now shows a text placeholder when empty to improve its visibility
 + Fix #4302: The wind direction shown in the Planetary Conditions is now correct
 + PR #4294: Megamek now has random and constant skill generation values for The Society (WoRS)
-+ PR #4319: Add original armor and internal structure values
++ PR #4319: Add original armor and internal structure values to the unit tooltip
 + PR #4310: Show a chat message when changing settings
 
 

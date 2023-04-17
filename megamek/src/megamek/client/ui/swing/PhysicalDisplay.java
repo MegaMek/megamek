@@ -1401,8 +1401,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         } else if (targets.size() > 1) {
             // If we have multiple choices, display a selection dialog.
             choice = TargetChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(),
-                    Messages.getString("PhysicalDisplay.ChooseTargetDialog.message", pos.getBoardNum()),
                     Messages.getString("PhysicalDisplay.ChooseTargetDialog.title"),
+                    Messages.getString("PhysicalDisplay.ChooseTargetDialog.message", pos.getBoardNum()),
                     targets, clientgui, ce());
         }
 

@@ -1304,8 +1304,8 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         } else if (targets.size() > 1) {;
             // If we have multiple choices, display a selection dialog.
             choice = TargetChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(),
-                    Messages.getString("FiringDisplay.ChooseTargetDialog.message", new Object[] { pos.getBoardNum() }),
                     Messages.getString("FiringDisplay.ChooseTargetDialog.title"),
+                    Messages.getString("FiringDisplay.ChooseTargetDialog.message", new Object[] { pos.getBoardNum() }),
                     targets, clientgui, ce());
         }
 

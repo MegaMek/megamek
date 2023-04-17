@@ -289,8 +289,8 @@ public class OffBoardTargetOverlay implements IDisplayable {
         if (eligibleTargets.size() > 1) {
             // If we have multiple choices, display a selection dialog.
             choice = TargetChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(),
+                    "FiringDisplay.ChooseTargetDialog.title",
                     Messages.getString("FiringDisplay.ChooseCounterbatteryTargetDialog.message"),
-                    Messages.getString("FiringDisplay.ChooseTargetDialog.title"),
                     eligibleTargets, clientgui, null);
         } else if ((eligibleTargets.size() == 1) && (eligibleTargets.get(0) != null)) {
             choice = eligibleTargets.get(0);

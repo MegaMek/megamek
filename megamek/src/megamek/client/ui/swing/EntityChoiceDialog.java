@@ -13,6 +13,7 @@
  */
 package megamek.client.ui.swing;
 
+import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.common.Entity;
 import megamek.common.annotations.Nullable;
@@ -22,13 +23,24 @@ import java.util.List;
 
 /**
  * A modal dialog for choosing one or more Entities. Can show stats
- *  in brief or in detail.
+ * in brief or in detail.
  */
 public class EntityChoiceDialog extends AbstractChoiceDialog<Entity> {
 
-    protected EntityChoiceDialog(JFrame frame, String message, String title,
+    /**
+     * This creates a modal dialog to pick one or more entities.
+     * @param frame         parent @JFrame that owns this dialog
+     * @param title         Resource key string only, plain text will result in NPE from Resources
+     * @param message       HTML or plain text message show at top of dialog
+     * @param targets       things to chose from
+     * @param isMultiSelect if true, allows user to select multiple items. if false first,
+     *                      item chosen will close the window
+     */
+    protected EntityChoiceDialog(JFrame frame, String title, String message,
                                  @Nullable List<Entity> targets, boolean isMultiSelect) {
-        super(frame, message, title, targets, isMultiSelect);
+        super(frame, title, message, targets, isMultiSelect);
+        // initialize must be called after all member variables set
+        initialize();
     }
 
     @Override
@@ -42,29 +54,38 @@ public class EntityChoiceDialog extends AbstractChoiceDialog<Entity> {
     }
 
     /**
-     * show modal dialog to return one or null @Entity from chosen from the target list
-     * @param targets list of Entity that can be selected from
-     * @return list of chosen Entity, will be null if none chosen
+     * show modal dialog to chose one entity from a list
+     * This creates a modal dialog to pick one or more entities.
+     * @param frame         parent @JFrame that owns this dialog
+     * @param title         Resource key string only, plain text will result in NPE from Resources
+     * @param message       HTML or plain text message show at top of dialog
+     * @param targets       Entities to chose from
+     * @return chosen entity or null if not chosen
      */
-    public static @Nullable Entity showSingleChoiceDialog(JFrame frame, String message, String title, @Nullable List<Entity> targets) {
-        EntityChoiceDialog dialog = new EntityChoiceDialog(frame, message, title, targets, false);
-        boolean userOkay = dialog.showDialog();
-        if (userOkay) {
+    public static @Nullable Entity showSingleChoiceDialog(JFrame frame, String title, String message,
+                                                          @Nullable List<Entity> targets) {
+        EntityChoiceDialog dialog = new EntityChoiceDialog(frame, title, message, targets, false);
+        DialogResult result = dialog.showDialog();
+        if (result == DialogResult.CONFIRMED) {
             return dialog.getFirstChoice();
         }
         return null;
     }
 
     /**
-     * show modal dialog to return zero or more @Entity from chosen from the target list
-     * @param targets list of Entity that can be selected from
-     * @return list of chosen Entity, will be null if none chosen
+     * show modal dialog to chose one or more entities from a list
+     * This creates a modal dialog to pick one or more entities.
+     * @param frame         parent @JFrame that owns this dialog
+     * @param title         Resource key string only, plain text will result in NPE from Resources
+     * @param message       HTML or plain text message show at top of dialog
+     * @param targets       Entities to chose from
+     * @return chosen entities or empty list if none chosen
      */
-    public static @Nullable List<Entity> showMultiChoiceDialog(JFrame frame, String message, String title, @Nullable List<Entity> targets) {
-        EntityChoiceDialog dialog = new EntityChoiceDialog(frame, message, title, targets, true);
-
-        boolean userOkay = dialog.showDialog();
-        if (userOkay) {
+    public static @Nullable List<Entity> showMultiChoiceDialog(JFrame frame, String title, String message,
+                                                               @Nullable List<Entity> targets) {
+        EntityChoiceDialog dialog = new EntityChoiceDialog(frame, title, message, targets, true);
+        DialogResult result = dialog.showDialog();
+        if (result == DialogResult.CONFIRMED) {
             return dialog.getChosen();
         }
         return null;

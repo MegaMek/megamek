@@ -508,6 +508,18 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         comps.add(checkboxEntry(entityOwnerColor, Messages.getString("CommonSettingsDialog.entityOwnerColor.tooltip")));
         comps.add(checkboxEntry(useSoftCenter, Messages.getString("CommonSettingsDialog.useSoftCenter.tooltip")));
 
+        row = new ArrayList<>();
+        csbUnitTextColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitTextColor"));
+        csbUnitTextColor.setColour(GUIP.getUnitTextColor());
+        row.add(csbUnitTextColor);
+        csbUnitValidColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitValidColor"));
+        csbUnitValidColor.setColour(GUIP.getUnitValidColor());
+        row.add(csbUnitValidColor);
+        csbUnitSelectedColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitSelectedColor"));
+        csbUnitSelectedColor.setColour(GUIP.getUnitSelectedColor());
+        row.add(csbUnitSelectedColor);
+        comps.add(row);
+
         addLineSpacer(comps);
 
         comps.add(checkboxEntry(animateMove, null));
@@ -530,6 +542,25 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         darkenMapAtNight.setSelected(GUIP.getDarkenMapAtNight());
         comps.add(checkboxEntry(translucentHiddenUnits, null));
         translucentHiddenUnits.setSelected(GUIP.getTranslucentHiddenUnits());
+
+        row = new ArrayList<>();
+
+        csbBoardTextColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.BoardTextColor"));
+        csbBoardTextColor.setColour(GUIP.getBoardTextColor());
+        row.add(csbBoardTextColor);
+
+        csbBoardSpaceTextColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.BoardSpaceTextColor"));
+        csbBoardSpaceTextColor.setColour(GUIP.getBoardSpaceTextColor());
+        row.add(csbBoardSpaceTextColor);
+
+        csbBuildingTextColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.BuildingTextColor"));
+        csbBuildingTextColor.setColour(GUIP.getBuildingTextColor());
+        row.add(csbBuildingTextColor);
+
+        csbLowFoliageColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.LowFoliageColor"));
+        csbLowFoliageColor.setColour(GUIP.getLowFoliageColor());
+        row.add(csbLowFoliageColor);
+        comps.add(row);
 
         addLineSpacer(comps);
 
@@ -656,41 +687,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         csbFieldOfFireExtendedColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.FieldOfFireExtendedColor"));
         csbFieldOfFireExtendedColor.setColour(GUIP.getFieldOfFireExtendedColor());
         row.add(csbFieldOfFireExtendedColor);
-        comps.add(row);
-
-        addLineSpacer(comps);
-
-        row = new ArrayList<>();
-        csbUnitTextColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitTextColor"));
-        csbUnitTextColor.setColour(GUIP.getUnitTextColor());
-        row.add(csbUnitTextColor);
-        csbUnitValidColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitValidColor"));
-        csbUnitValidColor.setColour(GUIP.getUnitValidColor());
-        row.add(csbUnitValidColor);
-        csbUnitSelectedColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitSelectedColor"));
-        csbUnitSelectedColor.setColour(GUIP.getUnitSelectedColor());
-        row.add(csbUnitSelectedColor);
-        comps.add(row);
-
-        addLineSpacer(comps);
-
-        row = new ArrayList<>();
-
-        csbBoardTextColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.BoardTextColor"));
-        csbBoardTextColor.setColour(GUIP.getBoardTextColor());
-        row.add(csbBoardTextColor);
-
-        csbBoardSpaceTextColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.BoardSpaceTextColor"));
-        csbBoardSpaceTextColor.setColour(GUIP.getBoardSpaceTextColor());
-        row.add(csbBoardSpaceTextColor);
-
-        csbBuildingTextColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.BuildingTextColor"));
-        csbBuildingTextColor.setColour(GUIP.getBuildingTextColor());
-        row.add(csbBuildingTextColor);
-
-        csbLowFoliageColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.LowFoliageColor"));
-        csbLowFoliageColor.setColour(GUIP.getLowFoliageColor());
-        row.add(csbLowFoliageColor);
         comps.add(row);
 
         addLineSpacer(comps);

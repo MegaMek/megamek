@@ -4642,7 +4642,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * returns total heat capacity factoring in normal capacity, water and radical HS
      *
-     * @param en Entity to check
      */
     public String getHeatCapacityForDisplay() {
         int heatCap;

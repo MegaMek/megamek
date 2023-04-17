@@ -329,10 +329,7 @@ public class StringDrawer {
             return new Rectangle();
         }
         Graphics2D g2D = (Graphics2D) g.create();
-        g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2D.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        g2D.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-        g2D.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+        UIUtil.setHighQualityRendering(g);
 
         if (fillColor != null) {
             g2D.setColor(fillColor);

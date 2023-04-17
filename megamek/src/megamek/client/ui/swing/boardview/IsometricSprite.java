@@ -23,6 +23,8 @@ class IsometricSprite extends Sprite {
     private Rectangle modelRect;
     private int secondaryPos;
 
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
     public IsometricSprite(BoardView boardView1, Entity entity, int secondaryPos, Image radarBlipImage) {
         super(boardView1);
         this.entity = entity;
@@ -184,8 +186,7 @@ class IsometricSprite extends Sprite {
 
         // draw the unit icon translucent if hidden from the enemy 
         // (and activated graphics setting); or submerged
-        boolean translucentHiddenUnits = GUIPreferences.getInstance()
-                .getBoolean(GUIPreferences.ADVANCED_TRANSLUCENT_HIDDEN_UNITS);
+        boolean translucentHiddenUnits = GUIP.getTranslucentHiddenUnits();
         
         if ((trackThisEntitiesVisibilityInfo(entity)
                 && !entity.isVisibleToEnemy() && translucentHiddenUnits)

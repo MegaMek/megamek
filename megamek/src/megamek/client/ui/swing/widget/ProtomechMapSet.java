@@ -65,8 +65,9 @@ public class ProtomechMapSet implements DisplayMapSet {
     // Set of Background drawers which will be sent to PicMap component
     private Vector<BackGroundDrawer> bgDrawers = new Vector<>();
 
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
-            GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize"));
+            GUIP.getUnitDisplayMechArmorLargeFontSize());
 
     /**
      * This constructor can only be called from the addNotify method

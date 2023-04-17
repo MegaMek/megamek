@@ -125,7 +125,7 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
      * for the current game situation. 
      */
     public KeyBindingsOverlay(Game game, ClientGUI cg) {
-        visible = GUIP.getBoolean(GUIPreferences.SHOW_KEYBINDS_OVERLAY);
+        visible = GUIP.getShowKeybindsOverlay();
         currentPhase = game.getPhase();
         game.addGameListener(gameListener);
         clientGui = cg;

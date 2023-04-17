@@ -93,7 +93,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     /** The number of button groups there are, needs to be computed in a child class. */
     protected int numButtonGroups;
     
-    protected int buttonsPerRow = GUIP.getInt(GUIPreferences.ADVANCED_BUTTONS_PER_ROW);
+    protected int buttonsPerRow = GUIP.getButtonsPerRow();
     protected int buttonsPerGroup = BUTTON_ROWS * buttonsPerRow;
 
     protected StatusBarPhaseDisplay(ClientGUI cg) {
@@ -248,8 +248,8 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
 
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
-        if (e.getName().equals(GUIPreferences.ADVANCED_BUTTONS_PER_ROW)) {
-            buttonsPerRow = GUIP.getInt(GUIPreferences.ADVANCED_BUTTONS_PER_ROW);
+        if (e.getName().equals(GUIPreferences.BUTTONS_PER_ROW)) {
+            buttonsPerRow = GUIP.getButtonsPerRow();
             buttonsPerGroup = 2 * buttonsPerRow;
             setupButtonPanel();
         } else if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
@@ -301,7 +301,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
 
     public String getRemainingPlayerWithTurns() {
         String s = "";
-        int r = GUIP.getAdvancedPlayersRemainingToShow();
+        int r = GUIP.getPlayersRemainingToShow();
         if (r > 0) {
             String m = "";
             int gti = clientgui.getClient().getGame().getTurnIndex();
@@ -330,7 +330,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     public void setStatusBarWithNotDonePlayers() {
         GamePhase phase = clientgui.getClient().getGame().getPhase();
         if (phase.isReport()) {
-            int r = GUIP.getAdvancedPlayersRemainingToShow();
+            int r = GUIP.getPlayersRemainingToShow();
             if (r > 0) {
                 List<Player> playerList = clientgui.getClient().getGame().getPlayersList().stream().filter(p -> ((!p.isBot()) && (!p.isObserver()) && (!p.isDone()))).collect(Collectors.toList());
                 playerList.sort(Comparator.comparingInt(Player::getId));

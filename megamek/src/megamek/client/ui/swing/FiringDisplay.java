@@ -74,8 +74,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
 
         String cmd;
 
-        private static final GUIPreferences GUIP = GUIPreferences.getInstance();
-
         /**
          * Priority that determines this buttons order
          */
@@ -849,7 +847,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
             LogManager.getLogger().error("Tried to select non-existent entity " + en);
         }
 
-        if (GUIP.getBoolean("FiringSolutions")) {
+        if (GUIP.getFiringSolutions()) {
             setFiringSolutions();
         } else {
             clientgui.getBoardView().clearFiringSolutionData();

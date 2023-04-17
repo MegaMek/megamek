@@ -33,7 +33,9 @@ import megamek.common.util.FiringSolution;
  * a big red X if the target cannot be hit.
  */
 class FiringSolutionSprite extends HexSprite {
-    
+
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
     private static final int HEX_CENTER_X = BoardView.HEX_W / 2;
     private static final int HEX_CENTER_Y = BoardView.HEX_H / 2;
     private static final Color TEXT_COLOR = new Color(40,255,255,230);
@@ -98,8 +100,8 @@ class FiringSolutionSprite extends HexSprite {
         UIUtil.setHighQualityRendering(graph);
         graph.scale(bv.scale, bv.scale);
 
-        String fontName = GUIPreferences.getInstance().getString(GUIPreferences.ADVANCED_MOVE_FONT_TYPE);
-        int fontStyle = GUIPreferences.getInstance().getInt(GUIPreferences.ADVANCED_MOVE_FONT_STYLE);
+        String fontName = GUIP.getMoveFontType();
+        int fontStyle = GUIP.getMoveFontStyle();
         graph.setFont(new Font(fontName, fontStyle, X_SIZE));
 
         if (noHitPossible) {

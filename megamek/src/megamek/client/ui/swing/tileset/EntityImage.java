@@ -70,6 +70,8 @@ public class EntityImage {
     private static final int IMG_WIDTH = HexTileset.HEX_W;
     private static final int IMG_HEIGHT = HexTileset.HEX_H;
     private static final int IMG_SIZE = IMG_WIDTH * IMG_HEIGHT;
+
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     
     /** Facing-dependent camo overlays (add shadows and highlighting) */ 
     private static final int[][] pOverlays = new int[6][IMG_SIZE];
@@ -213,7 +215,7 @@ public class EntityImage {
             Image fImage = applyColor(base, i);
 
             // Add damage scars and smoke/fire; not to Infantry
-            if (!isInfantry && GUIPreferences.getInstance().getShowDamageDecal()) {
+            if (!isInfantry && GUIP.getShowDamageDecal()) {
                 fImage = applyDamageDecal(fImage);
                 // No smoke in the lobby
                 if (!isPreview) {
@@ -235,7 +237,7 @@ public class EntityImage {
             wreck = applyColor(wreck, 0);
 
             // Add damage scars and smoke/fire; not to Infantry
-            if (!isInfantry && GUIPreferences.getInstance().getShowDamageDecal()) {
+            if (!isInfantry && GUIP.getShowDamageDecal()) {
                 wreck = applyDamageDecal(wreck);
                 // No smoke in the lobby
                 if (!isPreview) {
@@ -293,7 +295,7 @@ public class EntityImage {
         base = applyColor(getBase(), 0);
 
         // Add damage scars and smoke/fire; not to Infantry
-        if (showDamage && !isInfantry && GUIPreferences.getInstance().getShowDamageDecal()) {
+        if (showDamage && !isInfantry && GUIP.getShowDamageDecal()) {
             base = applyDamageDecal(getBase());
             // No smoke in the lobby
             if (!isPreview) {
@@ -348,7 +350,7 @@ public class EntityImage {
 
                     // Pretreat with the camo overlay (but not Infantry, they're too small, it'll just darken them)
                     int oalpha = 128;
-                    if (GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_USE_CAMO_OVERLAY)
+                    if (GUIP.getUseCamoOverlay()
                             && !isInfantry) {
                         oalpha = pOverlays[facing][i] & 0xff;
                     }

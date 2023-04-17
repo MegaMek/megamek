@@ -549,7 +549,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                if (!GUIP.getBoolean(GUIPreferences.ADVANCED_NO_SAVE_NAG)) {
+                if (!GUIP.getNoSaveNag()) {
                     ignoreHotKeys = true;
                     int savePrompt = JOptionPane.showConfirmDialog(null,
                             Messages.getString("ClientGUI.gameSaveDialogMessage"),
@@ -1648,7 +1648,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     }
 
     private void setDockAxis() {
-        if (GUIP.getAdvancedDockMultipleOnYAxis()) {
+        if (GUIP.getDockMultipleOnYAxis()) {
             panA1.setLayout(new BoxLayout(panA1, BoxLayout.Y_AXIS));
             panA2.setLayout(new BoxLayout(panA2, BoxLayout.Y_AXIS));
         } else {
@@ -1661,7 +1661,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         saveSplitPaneLocations();
         setDockAxis();
 
-        if (GUIP.getAdvancedDockOnLeft()) {
+        if (GUIP.getDockOnLeft()) {
             switch (GUIP.getUnitDisplayLocaton()) {
                 case 0:
                     panA2.add(bvc);
@@ -1713,7 +1713,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         saveSplitPaneLocations();
         setDockAxis();
 
-        if (GUIP.getAdvancedDockOnLeft()) {
+        if (GUIP.getDockOnLeft()) {
             switch (GUIP.getMiniReportLocaton()) {
                 case 0:
                     panA2.add(bvc);
@@ -1948,6 +1948,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
                     if (!loadedUnits.isEmpty()) {
                         client.sendAddEntity(loadedUnits);
+                        String msg = client.getLocalPlayer() + " loaded MUL file for player: " + player.getName() + " [" + loadedUnits.size() + " units]";
+                        client.sendServerChat(Player.PLAYER_NONE, msg);
                         addedUnits = true;
                     }
                 } catch (Exception ex) {
@@ -2859,10 +2861,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             setMiniReportVisible(GUIP.getMiniReportEnabled());
         } else if (e.getName().equals(GUIPreferences.MINI_REPORT_LOCATION)) {
             setMiniReportVisible(GUIP.getMiniReportEnabled());
-        } else if (e.getName().equals(GUIPreferences.ADVANCED_DOCK_ON_LEFT)) {
+        } else if (e.getName().equals(GUIPreferences.DOCK_ON_LEFT)) {
             setUnitDisplayVisible(GUIP.getUnitDisplayEnabled());
             setMiniReportVisible(GUIP.getMiniReportEnabled());
-        } else if (e.getName().equals(GUIPreferences.ADVANCED_DOCK_MULTIPLE_ON_Y_AXIS)) {
+        } else if (e.getName().equals(GUIPreferences.DOCK_MULTIPLE_ON_Y_AXIS)) {
             setUnitDisplayVisible(GUIP.getUnitDisplayEnabled());
             setMiniReportVisible(GUIP.getMiniReportEnabled());
         } else if (e.getName().equals(GUIPreferences.GUI_SCALE)) {

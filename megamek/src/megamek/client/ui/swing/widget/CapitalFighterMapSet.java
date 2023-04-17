@@ -64,8 +64,10 @@ public class CapitalFighterMapSet implements DisplayMapSet {
     private int armorRows = 8;
     private int armorCols = 6;
 
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
     private static final Font FONT_LABEL = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
-            GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize"));
+            GUIP.getUnitDisplayMechArmorSmallFontSize());
 
     public CapitalFighterMapSet(JComponent c) {
         comp = c;

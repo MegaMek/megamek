@@ -62,12 +62,13 @@ public class ChatterBox2 implements KeyListener, IDisplayable, IPreferenceChange
     private static final Color COLOR_BACKGROUND;
     private ChatterBox cb;
 
+    protected static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
     static {
         Color temp;
         try {
-            temp = GUIPreferences.getInstance().getColor("AdvancedChatbox2BackColor");
-            temp = new Color(temp.getRed(), temp.getGreen(), temp.getBlue(),
-                    GUIPreferences.getInstance().getInt("AdvancedChatbox2Transparancy"));
+            temp = GUIP.getChatbox2BackColor();
+            temp = new Color(temp.getRed(), temp.getGreen(), temp.getBlue(), GUIP.getChatbox2Transparancy());
         } catch (Throwable err) {
             temp = Color.gray;
         }
@@ -120,7 +121,6 @@ public class ChatterBox2 implements KeyListener, IDisplayable, IPreferenceChange
     private Image resizebutton;
 
     private FontMetrics fm;
-    protected static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     public ChatterBox2(ClientGUI client, BoardView boardview, MegaMekController controller) {
         this.client = client.getClient();
@@ -254,9 +254,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable, IPreferenceChange
                 idleTime = timeIdle;
             }
 
-            if ((idleTime > MAX_IDLE_TIME) && !isSliding() && 
-                    GUIPreferences.getInstance().getBoolean(
-                            "AdvancedChatbox2AutoSlidedown")) {
+            if ((idleTime > MAX_IDLE_TIME) && !isSliding() && GUIP.getChatbox2AutoSlideDown()) {
                 slideDown();
             }
         }

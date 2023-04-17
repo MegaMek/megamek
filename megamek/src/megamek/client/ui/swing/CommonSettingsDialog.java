@@ -204,7 +204,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private ColourSelectorButton csbFieldOfFireMediumColor;
     private ColourSelectorButton csbFieldOfFireLongColor;
     private ColourSelectorButton csbFieldOfFireExtendedColor;
-    private ColourSelectorButton csbBuildingTextColor;
+    private ColourSelectorButton csbUnitValidColor;
+    private ColourSelectorButton csbUnitSelectedColor;
+    private ColourSelectorButton csbUnitTextColor;
+        private ColourSelectorButton csbBuildingTextColor;
     private ColourSelectorButton csbLowFoliageColor;
     private ColourSelectorButton csbBoardTextColor;
     private ColourSelectorButton csbBoardSpaceTextColor;
@@ -316,9 +319,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private ColourSelectorButton csbReportLinkColor;
     private final JCheckBox showReportSprites = new JCheckBox(Messages.getString("CommonSettingsDialog.showReportSprites"));
 
-    private ColourSelectorButton csbUnitOverviewValidColor;
-    private ColourSelectorButton csbUnitOverviewSelectedColor;
-    private ColourSelectorButton csbUnitOverviewTextColor;
     private ColourSelectorButton csbUnitOverviewTextShadowColor;
     private ColourSelectorButton csbUnitOverviewConditionShadowColor;
 
@@ -656,6 +656,20 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         csbFieldOfFireExtendedColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.FieldOfFireExtendedColor"));
         csbFieldOfFireExtendedColor.setColour(GUIP.getFieldOfFireExtendedColor());
         row.add(csbFieldOfFireExtendedColor);
+        comps.add(row);
+
+        addLineSpacer(comps);
+
+        row = new ArrayList<>();
+        csbUnitTextColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitTextColor"));
+        csbUnitTextColor.setColour(GUIP.getUnitTextColor());
+        row.add(csbUnitTextColor);
+        csbUnitValidColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitValidColor"));
+        csbUnitValidColor.setColour(GUIP.getUnitValidColor());
+        row.add(csbUnitValidColor);
+        csbUnitSelectedColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitSelectedColor"));
+        csbUnitSelectedColor.setColour(GUIP.getUnitSelectedColor());
+        row.add(csbUnitSelectedColor);
         comps.add(row);
 
         addLineSpacer(comps);
@@ -1023,6 +1037,28 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         addLineSpacer(comps);
 
+        row = new ArrayList<>();
+        JLabel orderLabel = new JLabel(Messages.getString("CommonSettingsDialog.orderLabel") + ": ");
+        row.add(orderLabel);
+
+        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplay.NON_TABBED_A1));
+        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplay.NON_TABBED_B1));
+        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplay.NON_TABBED_C1));
+        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplay.NON_TABBED_A2));
+        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplay.NON_TABBED_B2));
+        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplay.NON_TABBED_C2));
+
+        JList<String> listUnitDisplayNonTabbed = new JList<>(unitDisplayNonTabbed);
+        listUnitDisplayNonTabbed.setLayoutOrientation(JList.HORIZONTAL_WRAP);
+        listUnitDisplayNonTabbed.setVisibleRowCount(2);
+        listUnitDisplayNonTabbed.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        listUnitDisplayNonTabbed.addMouseListener(cmdMouseAdaptor);
+        listUnitDisplayNonTabbed.addMouseMotionListener(cmdMouseAdaptor);
+        row.add(listUnitDisplayNonTabbed);
+        comps.add(row);
+
+        addLineSpacer(comps);
+
         JLabel defaultSortOrderLabel = new JLabel(Messages.getString("CommonSettingsDialog.defaultWeaponSortOrder"));
         String toolTip = Messages.getString("CommonSettingsDialog.defaultWeaponSortOrder.tooltip");
         defaultSortOrderLabel.setToolTipText(toolTip);
@@ -1043,28 +1079,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         row = new ArrayList<>();
         row.add(weaponListHeightLabel);
         row.add(unitDisplayWeaponListHeightText);
-        comps.add(row);
-
-        addLineSpacer(comps);
-
-        row = new ArrayList<>();
-        JLabel orderLabel = new JLabel(Messages.getString("CommonSettingsDialog.orderLabel") + ": ");
-        row.add(orderLabel);
-
-        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplay.NON_TABBED_A1));
-        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplay.NON_TABBED_B1));
-        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplay.NON_TABBED_C1));
-        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplay.NON_TABBED_A2));
-        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplay.NON_TABBED_B2));
-        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplay.NON_TABBED_C2));
-
-        JList<String> listUnitDisplayNonTabbed = new JList<>(unitDisplayNonTabbed);
-        listUnitDisplayNonTabbed.setLayoutOrientation(JList.HORIZONTAL_WRAP);
-        listUnitDisplayNonTabbed.setVisibleRowCount(2);
-        listUnitDisplayNonTabbed.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        listUnitDisplayNonTabbed.addMouseListener(cmdMouseAdaptor);
-        listUnitDisplayNonTabbed.addMouseMotionListener(cmdMouseAdaptor);
-        row.add(listUnitDisplayNonTabbed);
         comps.add(row);
 
         addLineSpacer(comps);
@@ -1150,23 +1164,13 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         addLineSpacer(comps);
 
         row = new ArrayList<>();
-        csbUnitOverviewValidColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitOverviewValidColor"));
-        csbUnitOverviewValidColor.setColour(GUIP.getUnitOverviewValidColor());
-        row.add(csbUnitOverviewValidColor);
-        csbUnitOverviewSelectedColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitOverviewSelectedColor"));
-        csbUnitOverviewSelectedColor.setColour(GUIP.getUnitOverviewSelectedColor());
-        row.add(csbUnitOverviewSelectedColor);
-        comps.add(row);
-
-        row = new ArrayList<>();
-        csbUnitOverviewTextColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitOverviewTextColor"));
-        csbUnitOverviewTextColor.setColour(GUIP.getUnitOverviewTextColor());
-        row.add(csbUnitOverviewTextColor);
         csbUnitOverviewTextShadowColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitOverviewTextShadowColor"));
         csbUnitOverviewTextShadowColor.setColour(GUIP.getUnitOverviewTextShadowColor());
+        csbUnitOverviewTextShadowColor.setToolTipText(Messages.getString("CommonSettingsDialog.colors.UnitOverviewTextShadowColor.tooltip"));
         row.add(csbUnitOverviewTextShadowColor);
         csbUnitOverviewConditionShadowColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitOverviewConditionShadowColor"));
         csbUnitOverviewConditionShadowColor.setColour(GUIP.getUnitOverviewConditionShadowColor());
+        csbUnitOverviewConditionShadowColor.setToolTipText(Messages.getString("CommonSettingsDialog.colors.UnitOverviewConditionShadowColor.tooltip"));
         row.add(csbUnitOverviewConditionShadowColor);
         comps.add(row);
 
@@ -1629,6 +1633,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         csbFieldOfFireLongColor.setColour(GUIP.getFieldOfFireLongColor());
         csbFieldOfFireExtendedColor.setColour(GUIP.getFieldOfFireExtendedColor());
 
+        csbUnitValidColor.setColour(GUIP.getUnitValidColor());
+        csbUnitSelectedColor.setColour(GUIP.getUnitSelectedColor());
+        csbUnitTextColor.setColour(GUIP.getUnitTextColor());
+
         csbBuildingTextColor.setColour(GUIP.getBuildingTextColor());
         csbBoardTextColor.setColour(GUIP.getBoardTextColor());
         csbBoardSpaceTextColor.setColour(GUIP.getBoardSpaceTextColor());
@@ -1705,9 +1713,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         csbReportLinkColor.setColour(GUIP.getReportLinkColor());
         showReportSprites.setSelected(GUIP.getMiniReportShowSprites());
 
-        csbUnitOverviewValidColor.setColour(GUIP.getUnitOverviewValidColor());
-        csbUnitOverviewSelectedColor.setColour(GUIP.getUnitOverviewSelectedColor());
-        csbUnitOverviewTextColor.setColour(GUIP.getUnitOverviewTextColor());
         csbUnitOverviewTextShadowColor.setColour(GUIP.getUnitOverviewTextShadowColor());
         csbUnitOverviewConditionShadowColor.setColour(GUIP.getUnitOverviewConditionShadowColor());
 
@@ -1772,6 +1777,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setBoardFieldOfFireMediumColor(csbFieldOfFireMediumColor.getColour());
         GUIP.setFieldOfFireLongColor(csbFieldOfFireLongColor.getColour());
         GUIP.setFieldOfFireExtendedColor(csbFieldOfFireExtendedColor.getColour());
+
+        GUIP.setUnitValidColor(csbUnitValidColor.getColour());
+        GUIP.setUnitSelectedColor(csbUnitSelectedColor.getColour());
+        GUIP.setUnitOverviewTextColor(csbUnitTextColor.getColour());
 
         GUIP.setBuildingTextColor(csbBuildingTextColor.getColour());
         GUIP.setBoardTextColor(csbBoardTextColor.getColour());
@@ -2143,9 +2152,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setReportLinkColor(csbReportLinkColor.getColour());
         GUIP.setMiniReportShowSprites(showReportSprites.isSelected());
 
-        GUIP.setUnitOverviewValidColor(csbUnitOverviewValidColor.getColour());
-        GUIP.setUnitOverviewSelectedColor(csbUnitOverviewSelectedColor.getColour());
-        GUIP.setUnitOverviewTextColor(csbUnitOverviewTextColor.getColour());
         GUIP.setUnitOverviewTextShadowColor(csbUnitOverviewTextShadowColor.getColour());
         GUIP.setUnitOverviewConditionShadowColor(csbUnitOverviewConditionShadowColor.getColour());
 

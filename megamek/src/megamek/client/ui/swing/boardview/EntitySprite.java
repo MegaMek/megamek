@@ -687,12 +687,12 @@ class EntitySprite extends Sprite {
 
                 // Label text
                 graph.setFont(labelFont);
-                Color textColor = LABEL_TEXT_COLOR;
+                Color textColor = GUIP.getUnitTextColor();
                 if (!entity.isDone() && !onlyDetectedBySensors()) {
-                    textColor = GUIP.getUnitOverviewValidColor();
+                    textColor = GUIP.getUnitValidColor();
                 }
                 if (isSelected) {
-                    textColor = GUIP.getUnitOverviewSelectedColor();
+                    textColor = GUIP.getUnitSelectedColor();
                 }
                 BoardView.drawCenteredText(graph, getAdjShortName(),
                         labelRect.x + labelRect.width / 2,

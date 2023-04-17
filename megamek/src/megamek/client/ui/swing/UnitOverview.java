@@ -161,7 +161,7 @@ public class UnitOverview implements IDisplayable {
 
             if ((turn != null) && turn.isValidEntity(e, game)) {
                 Color oldColor = graph.getColor();
-                graph.setColor(GUIP.getUnitOverviewValidColor());
+                graph.setColor(GUIP.getUnitValidColor());
                 graph.drawRect(x - 1, y - 1, ICON_WIDTH + 2, ICON_HEIGHT + 2);
                 graph.setColor(oldColor);
             }
@@ -169,7 +169,7 @@ public class UnitOverview implements IDisplayable {
             Entity se = clientgui == null ? null : clientgui.getClient().getEntity(clientgui.getSelectedEntityNum());
             if ((e == se) && (game.getTurn() != null) && game.getTurn().isValidEntity(e, game)) {
                 Color oldColor = graph.getColor();
-                graph.setColor(GUIP.getUnitOverviewSelectedColor());
+                graph.setColor(GUIP.getUnitSelectedColor());
                 graph.drawRect(x - 1, y - 1, ICON_WIDTH + 2, ICON_HEIGHT + 2);
                 graph.setColor(oldColor);
             }
@@ -368,7 +368,7 @@ public class UnitOverview implements IDisplayable {
         g.drawString(s, x - 1, y);
         g.drawString(s, x, y + 1);
         g.drawString(s, x, y - 1);
-        g.setColor(GUIP.getUnitOverviewTextColor());
+        g.setColor(GUIP.getUnitTextColor());
         g.drawString(s, x, y);
     }
 

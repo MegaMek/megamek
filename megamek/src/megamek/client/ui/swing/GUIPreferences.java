@@ -77,6 +77,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String BOARD_FIELD_OF_FIRE_MEDIUM_COLOR = "BoardFieldOfFireMediumColor";
     public static final String BOARD_FIELD_OF_FIRE_LONG_COLOR = "BoardFieldOfFireLongColor";
     public static final String BOARD_FIELD_OF_FIRE_EXTENDED_COLOR = "BoardFieldOfFireExtendedColor";
+    public static final String BOARD_UNIT_SELECTED_COLOR = "BoardUnitSelectedColor";
+    public static final String BOARD_UNIT_VALID_COLOR = "BoardUnitValidColor";
+    public static final String BOARD_UNIT_TEXT_COLOR = "BoardUnitTextColor";
 
     public static final String BOARD_ATTACK_ARROW_TRANSPARENCY = "BoardAttackArrowTransparency";
     public static final String BOARD_ECM_TRANSPARENCY = "BoardECMTransparency";
@@ -84,9 +87,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String BOARD_TRANSLUCENT_HIDDEN_UNITS = "BoardTranslucentHiddenUnits";
     public static final String BOARD_TMM_PIP_MODE = "BoardTmmPipMode";
 
-    public static final String UNIT_OVERVIEW_SELECTED_COLOR = "UnitOverviewSelectedColor";
-    public static final String UNIT_OVERVIEW_VALID_COLOR = "UnitOverviewValidColor";
-    public static final String UNIT_OVERVIEW_TEXT_COLOR = "UnitOverviewTextColor";
     public static final String UNIT_OVERVIEW_TEXT_SHADOW_COLOR = "UnitOverviewTextShadowColor";
     public static final String UNIT_OVERVIEW_CONDITION_SHADOW_COLOR = "UnitOverviewConditionShadowColor";
 
@@ -437,6 +437,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(BOARD_FIELD_OF_FIRE_MEDIUM_COLOR, new Color(80, 200, 80));
         setDefault(BOARD_FIELD_OF_FIRE_LONG_COLOR, new Color(60, 150, 60));
         setDefault(BOARD_FIELD_OF_FIRE_EXTENDED_COLOR, new Color(40, 100, 40));
+        setDefault(BOARD_UNIT_SELECTED_COLOR, DEFAULT_MAGENTA);
+        setDefault(BOARD_UNIT_VALID_COLOR, DEFAULT_CYAN);
+        setDefault(BOARD_UNIT_TEXT_COLOR, Color.white);
 
         setDefault(BOARD_MOVE_FONT_TYPE, "SansSerif");
         setDefault(BOARD_MOVE_FONT_SIZE, 26);
@@ -447,9 +450,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(BOARD_TRANSLUCENT_HIDDEN_UNITS, true);
         setDefault(BOARD_TMM_PIP_MODE, 2); // show pips with colors based on move type
 
-        setDefault(UNIT_OVERVIEW_SELECTED_COLOR, DEFAULT_MAGENTA);
-        setDefault(UNIT_OVERVIEW_VALID_COLOR, DEFAULT_CYAN);
-        setDefault(UNIT_OVERVIEW_TEXT_COLOR, Color.white);
         setDefault(UNIT_OVERVIEW_TEXT_SHADOW_COLOR, Color.black);
         setDefault(UNIT_OVERVIEW_CONDITION_SHADOW_COLOR, Color.darkGray);
 
@@ -2473,6 +2473,30 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(BOARD_FIELD_OF_FIRE_EXTENDED_COLOR, getColorString(color));
     }
 
+    public Color getUnitValidColor() {
+        return getColor(BOARD_UNIT_VALID_COLOR);
+    }
+
+    public void setUnitValidColor(Color color) {
+        store.setValue(BOARD_UNIT_VALID_COLOR, getColorString(color));
+    }
+
+    public Color getUnitSelectedColor() {
+        return getColor(BOARD_UNIT_SELECTED_COLOR);
+    }
+
+    public void setUnitSelectedColor(Color color) {
+        store.setValue(BOARD_UNIT_SELECTED_COLOR, getColorString(color));
+    }
+
+    public Color getUnitTextColor() {
+        return getColor(BOARD_UNIT_TEXT_COLOR);
+    }
+
+    public void setUnitOverviewTextColor(Color color) {
+        store.setValue(BOARD_UNIT_TEXT_COLOR, getColorString(color));
+    }
+
     public int getAttachArrowTransparency() {
         return getInt(BOARD_ATTACK_ARROW_TRANSPARENCY);
     }
@@ -2511,30 +2535,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setTMMPipMode(int i) {
         store.setValue(BOARD_TMM_PIP_MODE, i);
-    }
-
-    public Color getUnitOverviewValidColor() {
-        return getColor(UNIT_OVERVIEW_VALID_COLOR);
-    }
-
-    public void setUnitOverviewValidColor(Color color) {
-        store.setValue(UNIT_OVERVIEW_VALID_COLOR, getColorString(color));
-    }
-
-    public Color getUnitOverviewSelectedColor() {
-        return getColor(UNIT_OVERVIEW_SELECTED_COLOR);
-    }
-
-    public void setUnitOverviewSelectedColor(Color color) {
-        store.setValue(UNIT_OVERVIEW_SELECTED_COLOR, getColorString(color));
-    }
-
-    public Color getUnitOverviewTextColor() {
-        return getColor(UNIT_OVERVIEW_TEXT_COLOR);
-    }
-
-    public void setUnitOverviewTextColor(Color color) {
-        store.setValue(UNIT_OVERVIEW_TEXT_COLOR, getColorString(color));
     }
 
     public Color getUnitOverviewTextShadowColor() {

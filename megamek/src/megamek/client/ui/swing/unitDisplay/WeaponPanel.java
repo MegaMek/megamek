@@ -1125,36 +1125,6 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             currentHeatBuildup++;
         }
 
-        // This code block copied from the MovementPanel class,
-        // bad coding practice (duplicate code).
-        int heatCap;
-        if (en instanceof Mech) {
-            heatCap = ((Mech) en).getHeatCapacity(true, false);
-        } else if (en instanceof Aero) {
-            heatCap = en.getHeatCapacity(false);
-        } else {
-            heatCap = en.getHeatCapacity();
-        }
-        int heatCapWater = en.getHeatCapacityWithWater();
-        if (en.getCoolantFailureAmount() > 0) {
-            heatCap -= en.getCoolantFailureAmount();
-            heatCapWater -= en.getCoolantFailureAmount();
-        }
-        if (en.hasActivatedRadicalHS()) {
-            if (en instanceof Mech) {
-                heatCap += ((Mech) en).getActiveSinks();
-                heatCapWater += ((Mech) en).getActiveSinks();
-            } else if (en instanceof Aero) {
-                heatCap += ((Aero) en).getHeatSinks();
-                heatCapWater += ((Aero) en).getHeatSinks();
-            }
-        }
-        String heatCapacityStr = Integer.toString(heatCap);
-
-        if (heatCap < heatCapWater) {
-            heatCapacityStr = heatCap + " [" + heatCapWater + ']';
-        }
-
         // check for negative values due to extreme temp
         if (currentHeatBuildup < 0) {
             currentHeatBuildup = 0;
@@ -1168,6 +1138,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             String msg_over = Messages.getString("MechDisplay.over");
             sheatOverCapacity = " " + heatOverCapacity + " " + msg_over;
         }
+
+        String heatCapacityStr = en.getHeatCapacityForDisplay();
 
         currentHeatBuildupR.setForeground(GUIP.getColorForHeat(heatOverCapacity, Color.WHITE));
         currentHeatBuildupR.setText(heatText + " (" + heatCapacityStr + ')' + sheatOverCapacity);

@@ -4656,6 +4656,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             heatCap = this.getHeatCapacity();
         }
 
+        int heatCapOrg = heatCap;
+
         int heatCapWater = this.getHeatCapacityWithWater();
 
         if (this instanceof Mech) {
@@ -4678,10 +4680,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
         }
 
-        String heatCapacityStr = Integer.toString(heatCap);
+        String heatCapacityStr = Integer.toString(heatCap) ;
+
+        if (heatCap < heatCapOrg) {
+            heatCapacityStr += "*";
+        }
 
         if (heatCap < heatCapWater) {
-            heatCapacityStr = heatCap + " [" + heatCapWater + ']';
+            heatCapacityStr += " [" + heatCapWater + ']';
         }
 
         return heatCapacityStr;

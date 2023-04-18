@@ -21,10 +21,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.swing.lobby.LobbyUtility;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.Entity;
-import megamek.common.MechSummary;
-import megamek.common.MechSummaryCache;
-import megamek.common.UnitType;
+import megamek.common.*;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.annotations.Nullable;
@@ -251,7 +248,10 @@ public class ForceGeneratorViewUi implements ActionListener {
             entities.add(e);
         }
         c.sendAddEntity(entities);
-        
+
+        String msg = clientGui.getClient().getLocalPlayer() + " loaded Units from Random Army for player: "  + playerName + " ["+ entities.size() + " units]";
+        clientGui.getClient().sendServerChat(Player.PLAYER_NONE, msg);
+
         modelChosen.clearData();
     }
 

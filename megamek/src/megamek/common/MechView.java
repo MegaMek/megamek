@@ -480,21 +480,29 @@ public class MechView {
             for (Mounted weapon: entity.getWeaponList()) {
                 for (Enumeration<IOptionGroup> optionGroups = weapon.getQuirks().getGroups(); optionGroups.hasMoreElements();) {
                     IOptionGroup group = optionGroups.nextElement();
+
                     if (weapon.getQuirks().count(group.getKey()) > 0) {
-                        wpQuirksList += weapon.getDesc() + ": ";
-                        for (Enumeration<IOption> options = group.getOptions(); options.hasMoreElements();) {
+                        String wq = "";
+
+                        for (Enumeration<IOption> options = group.getOptions(); options.hasMoreElements(); ) {
                             IOption option = options.nextElement();
+
                             if (option != null && option.booleanValue()) {
-                                wpQuirksList += option.getDisplayableNameWithValue() + " \u2022 ";
+                                wq += option.getDisplayableNameWithValue() + " \u2022 ";
                             }
+                        }
+
+                        if (!wq.isEmpty()) {
+                            wq = weapon.getDesc() + ": " + wq.substring(0, wq.length() - 2);
+                            wpQuirksList += wq + "<BR/>";
                         }
                     }
                 }
             }
 
             if (!wpQuirksList.isEmpty()) {
-                ItemList list = new ItemList(Messages.getString("MechView.WeaponQuirks"));
-                list.addItem(wpQuirksList.substring(0, wpQuirksList.length()-2));
+                ItemList list = new ItemList("<BR/>" + Messages.getString("MechView.WeaponQuirks"));
+                list.addItem(wpQuirksList);
                 sFluff.add(list);
             }
         }

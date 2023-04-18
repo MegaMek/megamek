@@ -384,20 +384,6 @@ public class Client implements IClientCommandHandler {
     }
 
     /**
-     * Returns the number of the first deployable entity
-     */
-    public int getFirstHiddenEntityNum() {
-        return game.getFirstHiddenEntityNum(getMyTurn());
-    }
-
-    /**
-     * Returns the number of the next deployable entity
-     */
-    public int getNextHiddenEntityNum(int entityId) {
-        return game.getNextHiddenEntityNum(getMyTurn(), entityId);
-    }
-
-    /**
      * Shortcut to game.board
      */
     public Board getBoard() {

@@ -61,8 +61,6 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
      * carried out during the Prephase.  Each command has a string
      * for the command plus a flag that determines what unit type it is
      * appropriate for.
-     *
-     * @author arlith
      */
     public enum PrephaseCommand implements PhaseCommand {
         PREPHASE_NEXT("prephaseNext"),
@@ -187,7 +185,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
 
                     @Override
                     public void performAction() {
-                        selectEntity(clientgui.getClient().getNextHiddenEntityNum(cen));
+                        selectEntity(clientgui.getClient().getNextEntityNum(cen));
                     }
                 });
 
@@ -338,7 +336,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
 
         clientgui.getBoardView().clearFieldofF();
 
-        selectEntity(clientgui.getClient().getFirstHiddenEntityNum());
+        selectEntity(clientgui.getClient().getFirstEntityNum());
 
         if (!clientgui.getBoardView().isMovingUnits()) {
             clientgui.maybeShowUnitDisplay();
@@ -505,7 +503,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         // that changes an entity from done to not-done?
         if (ce().isDone())
         {
-            selectEntity(clientgui.getClient().getNextHiddenEntityNum(cen));
+            selectEntity(clientgui.getClient().getNextEntityNum(cen));
         }
 
         refreshButtons();
@@ -531,7 +529,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         }
 
         if (ev.getActionCommand().equals(PrephaseCommand.PREPHASE_NEXT.getCmd())) {
-            selectEntity(clientgui.getClient().getNextHiddenEntityNum(cen));
+            selectEntity(clientgui.getClient().getNextEntityNum(cen));
         }
     }
 

@@ -16,10 +16,7 @@ package megamek.common;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.codeUtilities.StringUtility;
-import megamek.common.options.IOption;
-import megamek.common.options.IOptionGroup;
-import megamek.common.options.PilotOptions;
-import megamek.common.options.Quirks;
+import megamek.common.options.*;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
@@ -475,6 +472,33 @@ public class MechView {
             list.addItem(quirksList.toString());
             sFluff.add(list);
         }
+
+        Game game = entity.getGame();
+
+        if ((game == null) || game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
+            String wpQuirksList = "";
+            for (Mounted weapon: entity.getWeaponList()) {
+                for (Enumeration<IOptionGroup> optionGroups = weapon.getQuirks().getGroups(); optionGroups.hasMoreElements();) {
+                    IOptionGroup group = optionGroups.nextElement();
+                    if (weapon.getQuirks().count(group.getKey()) > 0) {
+                        wpQuirksList += weapon.getDesc() + ": ";
+                        for (Enumeration<IOption> options = group.getOptions(); options.hasMoreElements();) {
+                            IOption option = options.nextElement();
+                            if (option != null && option.booleanValue()) {
+                                wpQuirksList += option.getDisplayableNameWithValue() + " \u2022 ";
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (!wpQuirksList.isEmpty()) {
+                ItemList list = new ItemList(Messages.getString("MechView.WeaponQuirks"));
+                list.addItem(wpQuirksList.substring(0, wpQuirksList.length()-2));
+                sFluff.add(list);
+            }
+        }
+
         sFluff.add(new SingleLine());
         if (!entity.getFluff().getOverview().isEmpty()) {
             sFluff.add(new LabeledElement("Overview", entity.getFluff().getOverview()));

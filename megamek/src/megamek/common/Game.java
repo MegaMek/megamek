@@ -3021,10 +3021,7 @@ public class Game extends AbstractGame implements Serializable {
         return rv;
     }
 
-    /**
-     * Age the flare list and remove any which have burnt out Artillery flares
-     * drift with wind. (called at end of turn)
-     */
+    /** Ages all flares, drifts them with the wind and removes any which have burnt out or drifted off the map. */
     public Vector<Report> ageFlares() {
         Vector<Report> reports = new Vector<>();
         Report r;
@@ -3034,51 +3031,42 @@ public class Game extends AbstractGame implements Serializable {
             r.add(flare.position.getBoardNum());
             r.newlines = 0;
             reports.addElement(r);
-            if ((flare.flags & Flare.F_IGNITED) != 0) {
+            boolean notDriftedOffMap = true;
+            if (flare.isIgnited()) {
                 flare.turnsToBurn--;
-                if ((flare.flags & Flare.F_DRIFTING) != 0) {
-                    int dir = planetaryConditions.getWindDirection();
+                if (flare.isDrifting()) {
                     int str = planetaryConditions.getWindStrength();
-
-                    // strength 1 and 2: drift 1 hex
-                    // strength 3: drift 2 hexes
-                    // strength 4: drift 3 hexes
-                    // for each above strength 4 (storm), drift one more
                     if (str > 0) {
-                        flare.position = flare.position.translated(dir);
-                        if (str > 2) {
-                            flare.position = flare.position.translated(dir);
+                        int dir = planetaryConditions.getWindDirection();
+                        flare.position = flare.position.translated(dir, (str > 1) ? (str - 1) : str);
+                        if (getBoard().contains(flare.position)) {
+                            r = new Report(5236);
+                            r.add(flare.position.getBoardNum());
+                            r.newlines = 0;
+                            reports.addElement(r);
+                        } else {
+                            reports.addElement(new Report(5240));
+                            flares.removeElementAt(i);
+                            notDriftedOffMap = false;
                         }
-                        if (str > 3) {
-                            flare.position = flare.position.translated(dir);
-                        }
-                        if (str > 4) {
-                            flare.position = flare.position.translated(dir);
-                        }
-                        if (str > 5) {
-                            flare.position = flare.position.translated(dir);
-                        }
-                        r = new Report(5236);
-                        r.add(flare.position.getBoardNum());
-                        r.newlines = 0;
-                        reports.addElement(r);
                     }
                 }
             } else {
                 r = new Report(5237);
                 r.newlines = 0;
                 reports.addElement(r);
-                flare.flags |= Flare.F_IGNITED;
+                flare.ignite();
             }
-            if (flare.turnsToBurn <= 0) {
-                r = new Report(5238);
-                reports.addElement(r);
-                flares.removeElementAt(i);
-            } else {
-                r = new Report(5239);
-                r.add(flare.turnsToBurn);
-                reports.addElement(r);
-                flares.setElementAt(flare, i);
+            if (notDriftedOffMap) {
+                if (flare.turnsToBurn <= 0) {
+                    reports.addElement(new Report(5238));
+                    flares.removeElementAt(i);
+                } else {
+                    r = new Report(5239);
+                    r.add(flare.turnsToBurn);
+                    reports.addElement(r);
+                    flares.setElementAt(flare, i);
+                }
             }
         }
         processGameEvent(new GameBoardChangeEvent(this));

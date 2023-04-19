@@ -1008,7 +1008,7 @@ public final class UnitToolTip {
             } else {
                 sHeat += addToTT("Heat", BR, heat).toString();
             }
-            sHeat += " / "+entity.getHeatCapacity();
+            sHeat += " / "+ entity.getHeatCapacityForDisplay();
             result += guiScaledFontHTML(GUIP.getColorForHeat(heat)) + sHeat + "</FONT>";
         }
 
@@ -1347,8 +1347,8 @@ public final class UnitToolTip {
                 armorType = (entity.isCapitalScale() ? msg_armorcapital + " " : "") + armorType;
                 armorType = " (" + armorType + ")";
             }
-            String armorStr = " " + entity.getTotalArmor() + armorType;
-            String sArmorInternals = addToTT("ArmorInternals", NOBR, armorStr, entity.getTotalInternal()).toString();
+            String armorStr = " " + entity.getTotalArmor() + " / " + entity.getTotalOArmor() + armorType;
+            String sArmorInternals = addToTT("ArmorInternals", NOBR, armorStr, entity.getTotalInternal()).toString() + " / " + entity.getTotalOInternal();
             l4 = "<Li style=\"list-style-type: none; list-style-image: none; margin: 0; padding: 0;\">" + sArmorInternals + "</Li>";
         }
 

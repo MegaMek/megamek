@@ -16,6 +16,7 @@ package megamek.utilities;
 import megamek.MMConstants;
 import megamek.client.ratgenerator.*;
 import megamek.client.ratgenerator.FactionRecord.TechCategory;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.util.UIUtil.FixedXPanel;
 import megamek.client.ui.swing.util.UIUtil.FixedYPanel;
 import megamek.common.Configuration;
@@ -78,6 +79,8 @@ public class RATGeneratorEditor extends JFrame {
     private final JTextField txtNewFaction = new JTextField(20);
     private final JCheckBox chkShowSubfactions = new JCheckBox();
     private final JCheckBox chkShowMinorFactions = new JCheckBox();
+    private final JButton butFactionMUL = new JButton("Open MUL");
+    private int currentFactionMulId = -1;
 
     private final JTable tblMasterFactionList = new JTable();
     private FactionListTableModel masterFactionListModel;
@@ -150,6 +153,8 @@ public class RATGeneratorEditor extends JFrame {
         add(panMain, BorderLayout.CENTER);
         add(buildOptionPanel(), BorderLayout.PAGE_START);
         add(panButtons, BorderLayout.PAGE_END);
+
+        setLocationRelativeTo(null);
     }
 
     private void loadAltDir() {
@@ -265,7 +270,7 @@ public class RATGeneratorEditor extends JFrame {
         });
         unitSearchPanel.add(Box.createHorizontalStrut(15));
         unitSearchPanel.add(butMUL);
-        butMUL.addActionListener(e -> showMUL());
+        butMUL.addActionListener(e -> UIUtil.showUnitInMul(currentMulId, this));
 
         tblMasterUnitList.setModel(masterUnitListModel);
         masterUnitListSorter = new TableRowSorter<>(masterUnitListModel);
@@ -307,18 +312,6 @@ public class RATGeneratorEditor extends JFrame {
         factionEditSide.add(Box.createVerticalStrut(5));
         factionEditSide.add(createUnitChassisEditor());
         return new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, unitContainer, factionEditSide);
-    }
-
-    private void showMUL() {
-        try {
-            if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)
-                    && currentMulId > 0) {
-                Desktop.getDesktop().browse(new URL(MMConstants.MUL_URL_PREFIX + currentMulId).toURI());
-            }
-        } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
-        }
     }
 
     private JComponent createCopyBetweenButtonPanel() {
@@ -517,6 +510,8 @@ public class RATGeneratorEditor extends JFrame {
         chkShowMinorFactions.setSelected(true);
         chkShowMinorFactions.addActionListener(ev -> filterFactionList());
 
+        butFactionMUL.addActionListener(e -> UIUtil.showFactionInMul(currentFactionMulId, this));
+
         masterFactionListModel = new FactionListTableModel(rg.getFactionList());
         tblMasterFactionList.setModel(masterFactionListModel);
         masterFactionListSorter = new TableRowSorter<>(masterFactionListModel);
@@ -533,10 +528,13 @@ public class RATGeneratorEditor extends JFrame {
                         getFactionRecord(tblMasterFactionList.convertRowIndexToModel(tblMasterFactionList.getSelectedRow()));
                 factionEditorModel.setData(rec);
                 salvageEditorModel.setData(rec);
+                currentFactionMulId = rec.getMulId();
             } else {
                 factionEditorModel.clearData();
                 salvageEditorModel.clearData();
+                currentFactionMulId = -1;
             }
+            butFactionMUL.setEnabled(currentFactionMulId > 0);
         });
         JScrollPane masterScroll = new JScrollPane(tblMasterFactionList);
         JPanel masterPanel = new FixedXPanel();
@@ -581,6 +579,7 @@ public class RATGeneratorEditor extends JFrame {
         optionsPanel.add(copyButton);
         optionsPanel.add(chkShowSubfactions);
         optionsPanel.add(chkShowMinorFactions);
+        optionsPanel.add(butFactionMUL);
 
         JPanel salvageButtonPanel = new FixedYPanel(new FlowLayout(FlowLayout.LEFT));
         salvageButtonPanel.add(txtSalvageFaction);
@@ -1094,10 +1093,11 @@ public class RATGeneratorEditor extends JFrame {
         public static final int COL_PERIPHERY = 5;
         public static final int COL_RATINGS = 6;
         public static final int COL_USE_ALT_FACTION = 7;
-        public static final int NUM_COLS = 8;
+        public static final int COL_MULID = 8;
+        public static final int NUM_COLS = 9;
         
         public final String[] colNames = {"Code", "Name", "Years", "Minor", "Clan",
-            "Periphery", "Ratings", "Use Alt"};
+            "Periphery", "Ratings", "Use Alt", "MUL ID"};
         
         private final ArrayList<FactionRecord> data;
         
@@ -1146,8 +1146,11 @@ public class RATGeneratorEditor extends JFrame {
         public Class<?> getColumnClass(int col) {
             if (col == COL_MINOR || col == COL_CLAN || col == COL_PERIPHERY) {
                 return Boolean.class;
+            } else if (col == COL_MULID) {
+                return Integer.class;
+            } else {
+                return String.class;
             }
-            return String.class;
         }
         
         @Override
@@ -1157,6 +1160,8 @@ public class RATGeneratorEditor extends JFrame {
                     return data.get(row).getKey();
                 case COL_NAME:
                     return data.get(row).getNamesAsString();
+                case COL_MULID:
+                    return data.get(row).getMulId();
                 case COL_YEARS:
                     return data.get(row).getYearsAsString();
                 case COL_MINOR:
@@ -1185,6 +1190,10 @@ public class RATGeneratorEditor extends JFrame {
                     break;
                 case COL_NAME:
                     data.get(row).setNames((String) val);
+                    break;
+                case COL_MULID:
+                    data.get(row).setMulId((Integer) val);
+                    currentFactionMulId = (Integer) val;
                     break;
                 case COL_YEARS:
                     try {
@@ -1228,6 +1237,10 @@ public class RATGeneratorEditor extends JFrame {
         
         private static final int[] WEIGHT_DIST_UNIT_TYPES = {
                 UnitType.MEK, UnitType.TANK, UnitType.AERO
+        };
+
+        private static final String[] WEIGHT_DIST_UNIT_NAME = {
+                "Mek", "Tank", "Aero"
         };
         
         private FactionRecord factionRec;
@@ -1287,7 +1300,7 @@ public class RATGeneratorEditor extends JFrame {
                 if (row == 0) {
                     return "Salvage %";
                 } else if (row > factionRec.getRatingLevels().size() * CATEGORIES.length) {
-                    return WEIGHT_DIST_UNIT_TYPES[row - 1 - factionRec.getRatingLevels().size() * CATEGORIES.length];
+                    return UnitType.getTypeName(WEIGHT_DIST_UNIT_TYPES[row - 1 - factionRec.getRatingLevels().size() * CATEGORIES.length]);
                 } else {
                     return CATEGORIES[(row - 1) / factionRec.getRatingLevels().size()]
                             + " " + factionRec.getRatingLevels().get((row - 1) % factionRec.getRatingLevels().size());

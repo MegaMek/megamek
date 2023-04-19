@@ -59,4 +59,7 @@ public abstract class SuiteConstants {
     public static final String MM_PREFERENCES_FILE = "mmconf/mm.preferences";
     public static final String MML_PREFERENCES_FILE = "mmconf/mml.preferences";
     //endregion File Paths
+
+    public static final String MUL_URL_UNIT_PREFIX = "http://www.masterunitlist.info/Unit/Details/";
+    public static final String MUL_URL_FACTION_PREFIX = "http://www.masterunitlist.info/Faction/Details/";
 }

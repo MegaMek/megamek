@@ -67,6 +67,7 @@ public class FactionRecord {
     }
 
     private String key;
+    private int mulId = -1;
     private boolean minor;
     private boolean clan;
     private boolean periphery;
@@ -131,6 +132,14 @@ public class FactionRecord {
 
     public String getKey() {
         return key;
+    }
+
+    public int getMulId() {
+        return mulId;
+    }
+
+    public void setMulId(int newId) {
+        mulId = newId;
     }
 
     public boolean isMinor() {
@@ -479,6 +488,7 @@ public class FactionRecord {
         FactionRecord retVal = new FactionRecord();
         retVal.key = node.getAttributes().getNamedItem("key").getTextContent();
         retVal.name = node.getAttributes().getNamedItem("name").getTextContent();
+        retVal.mulId = Integer.parseInt(node.getAttributes().getNamedItem("mulid").getTextContent());
         if (node.getAttributes().getNamedItem("minor") != null) {
             retVal.minor = Boolean.parseBoolean(node.getAttributes().getNamedItem("minor").getTextContent());
         } else {
@@ -586,10 +596,8 @@ public class FactionRecord {
     }
 
     public void writeToXml(PrintWriter pw) {
-        pw.println("\t<faction key='" + key + "' name='"
-                + StringEscapeUtils.escapeXml10(name) + "' minor='" + minor
-                + "' clan='" + clan
-                + "' periphery='" + periphery + "'>");
+        pw.println("\t<faction key='" + key + "' name='" + StringEscapeUtils.escapeXml10(name)
+                + "' mulid='" + mulId + "' minor='" + minor + "' clan='" + clan + "' periphery='" + periphery + "'>");
         for (Integer year : altNames.keySet()) {
             pw.println("\t\t<nameChange year='" + year + "'>"
                     + altNames.get(year) + "</nameChange>");

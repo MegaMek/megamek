@@ -20,12 +20,12 @@
 package megamek.client.ui.swing;
 
 import megamek.client.ui.swing.util.FluffImageHelper;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.util.UIUtil.FixedXPanel;
 import megamek.common.Entity;
 import megamek.common.MechView;
 import megamek.common.Report;
 import megamek.common.templates.TROView;
-import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -60,15 +60,8 @@ public class MechViewPanel extends JPanel {
         txtMek.setMinimumSize(new Dimension(width, height));
         txtMek.setPreferredSize(new Dimension(width, height));
         txtMek.addHyperlinkListener(e -> {
-            try {
-                if (HyperlinkEvent.EventType.ACTIVATED == e.getEventType()) {
-                    if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-                        Desktop.getDesktop().browse(e.getURL().toURI());
-                    }
-                }
-            } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
-                JOptionPane.showMessageDialog(this, ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
+            if (HyperlinkEvent.EventType.ACTIVATED == e.getEventType()) {
+                UIUtil.openInBrowser(e.getURL().toString(), null);
             }
         });
         scrMek = new JScrollPane(txtMek);

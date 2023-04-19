@@ -24,7 +24,6 @@ package megamek;
 public final class MMConstants extends SuiteConstants {
     //region General Constants
     public static final String PROJECT_NAME = "MegaMek";
-    public static final String MUL_URL_PREFIX = "http://www.masterunitlist.info/Unit/Details/";
     //endregion General Constants
 
     //region GUI Constants

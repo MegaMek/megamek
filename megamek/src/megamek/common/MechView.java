@@ -251,7 +251,7 @@ public class MechView {
         sHead.add(new LabeledElement(Messages.getString("MechView.Cost"),
                 dFormatter.format(cost) + " C-bills"));
         if (entity.hasMulId()) {
-            sHead.add(new HyperLinkElement(MMConstants.MUL_URL_PREFIX + entity.getMulId(),
+            sHead.add(new HyperLinkElement(MMConstants.MUL_URL_UNIT_PREFIX + entity.getMulId(),
                     Messages.getString("MechView.Source")));
             if (!entity.getSource().isEmpty()) {
                 sHead.add(new LabeledElement("", entity.getSource()));

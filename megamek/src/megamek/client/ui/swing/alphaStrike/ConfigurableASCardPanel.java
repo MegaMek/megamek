@@ -19,22 +19,20 @@
 package megamek.client.ui.swing.alphaStrike;
 
 import megamek.MMConstants;
+import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.ASConversionInfoDialog;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.client.ui.Messages;
 import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.alphaStrike.ASStatsExporter;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.cardDrawer.ASCardPrinter;
 import megamek.common.annotations.Nullable;
-import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.datatransfer.*;
-import java.net.URL;
 import java.util.List;
 
 /**
@@ -86,7 +84,7 @@ public class ConfigurableASCardPanel extends JPanel {
         copyStatsButton.addActionListener(ev -> copyStats());
         printButton.addActionListener(ev -> printCard());
 
-        mulButton.addActionListener(ev -> showMUL());
+        mulButton.addActionListener(ev -> UIUtil.showUnitInMul(mulId, parent));
         mulButton.setToolTipText("Show the Master Unit List entry for this unit. Opens a browser window.");
 
         conversionButton.addActionListener(e -> showConversionReport());
@@ -157,17 +155,6 @@ public class ConfigurableASCardPanel extends JPanel {
         if (sizeChooser.getSelectedItem() != null) {
             cardPanel.setScale((Float) sizeChooser.getSelectedItem());
             GUIPreferences.getInstance().setAsCardSize((Float) sizeChooser.getSelectedItem());
-        }
-    }
-
-    private void showMUL() {
-        try {
-            if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-                Desktop.getDesktop().browse(new URL(MMConstants.MUL_URL_PREFIX + mulId).toURI());
-            }
-        } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
         }
     }
 

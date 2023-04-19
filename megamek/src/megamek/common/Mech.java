@@ -33,7 +33,6 @@ import org.apache.logging.log4j.LogManager;
 import java.io.PrintWriter;
 import java.math.BigInteger;
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -3344,41 +3343,22 @@ public abstract class Mech extends Entity {
 
     @Override
     public Vector<Report> victoryReport() {
-        Vector<Report> vDesc = new Vector<>();
-
-        Report r = new Report(7025);
-        r.type = Report.PUBLIC;
-        r.addDesc(this);
-        vDesc.addElement(r);
-
-        r = new Report(7030);
-        r.type = Report.PUBLIC;
-        r.newlines = 0;
-        vDesc.addElement(r);
-        vDesc.addAll(getCrew().getDescVector(false));
-        r = new Report(7070, Report.PUBLIC);
-        r.add(getKillNumber());
-        vDesc.addElement(r);
-
+        Vector<Report> reports = new Vector<>();
+        reports.addElement(Report.publicReport(7025).addDesc(this));
+        reports.addElement(Report.publicReport(7030).noNL());
+        reports.addAll(getCrew().getDescVector(false));
+        reports.addElement(Report.publicReport(7070).add(getKillNumber()));
         if (isDestroyed()) {
-            Entity killer = game.getEntity(killerId);
-            if (killer == null) {
-                killer = game.getOutOfGameEntity(killerId);
-            }
+            Entity killer = game.getEntityFromAllSources(killerId);
             if (killer != null) {
-                r = new Report(7072, Report.PUBLIC);
-                r.addDesc(killer);
+                reports.addElement(Report.publicReport(7072).addDesc(killer).newLines(2));
             } else {
-                r = new Report(7073, Report.PUBLIC);
+                reports.addElement(Report.publicReport(7073).newLines(2));
             }
-            vDesc.addElement(r);
         } else if (getCrew().isEjected()) {
-            r = new Report(7074, Report.PUBLIC);
-            vDesc.addElement(r);
+            reports.addElement(Report.publicReport(7074).newLines(2));
         }
-        r.newlines = 2;
-
-        return vDesc;
+        return reports;
     }
 
     /**
@@ -5607,121 +5587,61 @@ public abstract class Mech extends Entity {
         return super.isShutDown() || isStalled();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Entity#doCheckEngineStallRoll(java.util.Vector)
-     */
     @Override
     public Vector<Report> doCheckEngineStallRoll(Vector<Report> vPhaseReport) {
         if (hasEngine() && (getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)) {
-            Report r = new Report(2280);
-            r.addDesc(this);
-            r.subject = getId();
-            r.add(1);
-            r.add("ICE-Engine 'Mech failed a PSR");
-            vPhaseReport.add(r);
-            r = new Report(2285);
-            r.subject = getId();
+            vPhaseReport.add(Report.subjectReport(2280, getId()).addDesc(this).add(1).add("ICE-Engine Mek failed a PSR"));
+
             // Stall check is made against unmodified Piloting skill...
-            PilotingRollData base = new PilotingRollData(getId(), getCrew()
-                    .getPiloting(), "Base piloting skill");
+            PilotingRollData psr = new PilotingRollData(getId(), getCrew().getPiloting(), "Base piloting skill");
             // ...but dead or unconscious pilots should still auto-fail.
-            if (getCrew().isDead() || getCrew().isDoomed()
-                    || (getCrew().getHits() >= 6)) {
-                base = new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL,
-                        "Pilot dead");
+            if (getCrew().isDead() || getCrew().isDoomed() || (getCrew().getHits() >= 6)) {
+                psr = new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL, "Pilot dead");
             } else if (!getCrew().isActive()) {
-                base = new PilotingRollData(getId(), TargetRoll.IMPOSSIBLE,
-                        "Pilot unconscious");
+                psr = new PilotingRollData(getId(), TargetRoll.IMPOSSIBLE, "Pilot unconscious");
             }
-            r.add(base.getValueAsString());
-            r.add(base.getDesc());
-            vPhaseReport.add(r);
-            r = new Report(2290);
-            r.subject = getId();
-            r.indent();
-            r.newlines = 0;
-            r.add(1);
-            r.add(base.getPlainDesc());
-            vPhaseReport.add(r);
+
+            vPhaseReport.add(Report.subjectReport(2285, getId()).add(psr.getValueAsString()).add(psr.getDesc()));
+            vPhaseReport.add(Report.subjectReport(2290, getId()).indent().noNL().add(1).add(psr.getPlainDesc()));
+
             int diceRoll = getCrew().rollPilotingSkill();
-            r = new Report(2300);
-            r.subject = getId();
-            r.add(base);
-            r.add(diceRoll);
-            if (diceRoll < base.getValue()) {
-                r.choose(false);
+            Report r = Report.subjectReport(2300, getId()).add(psr).add(diceRoll);
+            if (diceRoll < psr.getValue()) {
                 setStalled(true);
-                r.newlines = 0;
-                vPhaseReport.add(r);
-                r = new Report(2303);
-                r.subject = getId();
-                vPhaseReport.add(r);
+                vPhaseReport.add(r.noNL().choose(false));
+                vPhaseReport.add(Report.subjectReport(2303, getId()));
             } else {
-                r.choose(true);
-                vPhaseReport.add(r);
+                vPhaseReport.add(r.choose(true));
             }
         }
         return vPhaseReport;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Entity#checkUnstall(java.util.Vector)
-     */
     @Override
     public void checkUnstall(Vector<Report> vPhaseReport) {
-        if (stalled && !stalledThisTurn && hasEngine()
-                && (getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)) {
-            Report r = new Report(2280);
-            r.addDesc(this);
-            r.subject = getId();
-            r.add(1);
-            r.add("unstall stalled ICE engine");
-            vPhaseReport.add(r);
-            r = new Report(2285);
-            r.subject = getId();
+        if (stalled && !stalledThisTurn && hasEngine() && (getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)) {
+            vPhaseReport.add(Report.subjectReport(2280, getId()).addDesc(this).add(1).add("unstall stalled ICE engine"));
+
             // Unstall check is made against unmodified Piloting skill...
-            PilotingRollData base = new PilotingRollData(getId(), getCrew()
-                    .getPiloting(), "Base piloting skill");
-            // ...but dead or unconscious pilots should still auto-fail, same as
-            // for stalling.
-            if (getCrew().isDead() || getCrew().isDoomed()
-                    || (getCrew().getHits() >= 6)) {
-                base = new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL,
-                        "Pilot dead");
+            PilotingRollData psr = new PilotingRollData(getId(), getCrew().getPiloting(), "Base piloting skill");
+            // ...but dead or unconscious pilots should still auto-fail, same as for stalling.
+            if (getCrew().isDead() || getCrew().isDoomed() || (getCrew().getHits() >= 6)) {
+                psr = new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL, "Pilot dead");
             } else if (!getCrew().isActive()) {
-                base = new PilotingRollData(getId(), TargetRoll.IMPOSSIBLE,
-                        "Pilot unconscious");
+                psr = new PilotingRollData(getId(), TargetRoll.IMPOSSIBLE, "Pilot unconscious");
             }
-            r.add(base.getValueAsString());
-            r.add(base.getDesc());
-            vPhaseReport.add(r);
-            r = new Report(2290);
-            r.subject = getId();
-            r.indent();
-            r.newlines = 0;
-            r.add(1);
-            r.add(base.getPlainDesc());
-            vPhaseReport.add(r);
+
+            vPhaseReport.add(Report.subjectReport(2285, getId()).add(psr.getValueAsString()).add(psr.getDesc()));
+            vPhaseReport.add(Report.subjectReport(2290, getId()).indent().noNL().add(1).add(psr.getPlainDesc()));
+
             int diceRoll = getCrew().rollPilotingSkill();
-            r = new Report(2300);
-            r.subject = getId();
-            r.add(base);
-            r.add(diceRoll);
-            if (diceRoll < base.getValue()) {
-                r.choose(false);
-                vPhaseReport.add(r);
+            Report r = Report.subjectReport(2300, getId()).add(psr).add(diceRoll);
+            if (diceRoll < psr.getValue()) {
+                vPhaseReport.add(r.choose(false));
             } else {
-                r.choose(true);
-                r.newlines = 0;
-                vPhaseReport.add(r);
                 setStalled(false);
-                r = new Report(2304);
-                r.subject = getId();
-                vPhaseReport.add(r);
+                vPhaseReport.add(r.noNL().choose(true));
+                vPhaseReport.add(Report.subjectReport(2304, getId()));
             }
         }
     }
@@ -6467,18 +6387,11 @@ public abstract class Mech extends Entity {
             boolean bFailure = false;
             int nRoll = Compute.d6(2);
             bUsedCoolantSystem = true;
-            Report r = new Report(2365);
-            r.subject = getId();
-            r.addDesc(this);
-            r.add(coolantSystem.getName());
-            vDesc.addElement(r);
-            r = new Report(2370);
-            r.subject = getId();
-            r.indent();
-            r.add(EMERGENCY_COOLANT_SYSTEM_FAILURE[nCoolantSystemLevel]);
-            r.add(nRoll);
+            vDesc.addElement(Report.subjectReport(2365, getId()).addDesc(this).add(coolantSystem.getName()));
+            int requiredRoll = EMERGENCY_COOLANT_SYSTEM_FAILURE[nCoolantSystemLevel];
+            Report r = Report.subjectReport(2370, getId()).indent().add(requiredRoll).add(nRoll);
 
-            if (nRoll < EMERGENCY_COOLANT_SYSTEM_FAILURE[nCoolantSystemLevel]) {
+            if (nRoll < requiredRoll) {
                 // uh oh
                 bFailure = true;
                 r.choose(false);

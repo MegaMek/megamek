@@ -762,7 +762,7 @@ public final class UnitToolTip {
             String msg_outofammo = Messages.getString("BoardView1.Tooltip.OutOfAmmo");
             col2 = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + msg_outofammo;
             col1 = "<TD>" + col1 + "</TD>";
-            col2 = guiScaledFontHTML(uiYellow(), -0.2f) + col2 + "</FONT>";
+            col2 = guiScaledFontHTML(GUIP.getCautionColor(), -0.2f) + col2 + "</FONT>";
             col2 = "<TD>" + col2 + "</TD>";
             row = "<TR>" + col1 + col2 + "</TR>";
             rows += row;
@@ -789,7 +789,7 @@ public final class UnitToolTip {
                 }
 
                 col1 = "<TD>" + col1 + "</TD>";
-                col2 = guiScaledFontHTML(uiYellow(), -0.2f) + col2 + "</FONT>";
+                col2 = guiScaledFontHTML(GUIP.getCautionColor(), -0.2f) + col2 + "</FONT>";
                 col2 = "<TD>" + col2 + "</TD>";
                 row = "<TR>" + col1 + col2 + "</TR>";
                 rows += row;
@@ -892,14 +892,14 @@ public final class UnitToolTip {
                 if (entity.isEvading()) {
                     String sSpecialMove = addToTT("Evade", BR).toString();
                     sSpecialMove = "<I>" + sSpecialMove + "</I>";
-                    sSpecialMove = guiScaledFontHTML(GUIP.getWarningColor()) + sSpecialMove + "</FONT>";
+                    sSpecialMove = guiScaledFontHTML(GUIP.getPrecautionColor()) + sSpecialMove + "</FONT>";
                     sMove += sSpecialMove;
                 }
 
                 if ((entity instanceof Infantry) && ((Infantry) entity).isTakingCover()) {
                     String sTakingCover = addToTT("TakingCover", BR).toString();
                     sTakingCover = "<I>" + sTakingCover + "</I>";
-                    sTakingCover = guiScaledFontHTML(GUIP.getWarningColor()) + sTakingCover + "</FONT>";
+                    sTakingCover = guiScaledFontHTML(GUIP.getPrecautionColor()) + sTakingCover + "</FONT>";
                     sMove += sTakingCover;
                 }
 
@@ -987,7 +987,7 @@ public final class UnitToolTip {
         // Unit Prone
         if (!isGunEmplacement && entity.isProne()) {
             String sUnitProne = addToTT("Prone", BR).toString();
-            result += guiScaledFontHTML(GUIP.getWarningColor()) + sUnitProne + "</FONT>";
+            result += guiScaledFontHTML(GUIP.getCautionColor()) + sUnitProne + "</FONT>";
         }
 
 
@@ -1349,7 +1349,7 @@ public final class UnitToolTip {
             sNoncritial += "<BR>" + msg_fightersquadronempty;
         }
 
-        result += guiScaledFontHTML(uiYellow()) + sNoncritial + "</FONT>";
+        result += guiScaledFontHTML(GUIP.getCautionColor()) + sNoncritial + "</FONT>";
 
         return new StringBuilder().append(result);
     }

@@ -196,7 +196,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
         buttons.clear();
         
         Color push = graph.getColor();
-        graph.setColor(GUIP.getUnitOverviewValidColor());
+        graph.setColor(GUIP.getUnitValidColor());
         
         // each of these draws the relevant icon and stores the coordinates for retrieval when checking hit box
         // pre-store the selected artillery weapon as it carries out a bunch of computations

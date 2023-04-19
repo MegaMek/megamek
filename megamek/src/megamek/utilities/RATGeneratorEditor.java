@@ -1239,10 +1239,6 @@ public class RATGeneratorEditor extends JFrame {
                 UnitType.MEK, UnitType.TANK, UnitType.AERO
         };
 
-        private static final String[] WEIGHT_DIST_UNIT_NAME = {
-                "Mek", "Tank", "Aero"
-        };
-        
         private FactionRecord factionRec;
         
         public FactionEditorTableModel(FactionRecord rec) {

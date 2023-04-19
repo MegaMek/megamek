@@ -122,6 +122,31 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String CAUTION_COLOR = "CautionColor";
     public static final String PRECAUTION_COLOR = "PrecautionColor";
 
+    public static final String PLAYERCOLOUR_BLUE = "PlayerColourBlue";
+    public static final String PLAYERCOLOUR_RED = "PlayerColourRed";
+    public static final String PLAYERCOLOUR_GREEN = "PlayerColourGreen";
+    public static final String PLAYERCOLOUR_CYAN = "PlayerColourCyan";
+    public static final String PLAYERCOLOUR_PINK = "PlayerColourPink";
+    public static final String PLAYERCOLOUR_ORANGE = "PlayerColourOrange";
+    public static final String PLAYERCOLOUR_GRAY = "PlayerColourGray";
+    public static final String PLAYERCOLOUR_BROWN = "PlayerColourBrown";
+    public static final String PLAYERCOLOUR_PURPLE = "PlayerColourPurple";
+    public static final String PLAYERCOLOUR_TURQUOISE = "PlayerColourTurquoise";
+    public static final String PLAYERCOLOUR_MAROON = "PlayerColourMaroon";
+    public static final String PLAYERCOLOUR_SPRING_GREEN = "PlayerColourSpringGreen";
+    public static final String PLAYERCOLOUR_GOLD = "PlayerColourGold";
+    public static final String PLAYERCOLOUR_SIENNA = "PlayerColourSienna";
+    public static final String PLAYERCOLOUR_VIOLET = "PlayerColourViolet";
+    public static final String PLAYERCOLOUR_NAVY = "PlayerColourNavy";
+    public static final String PLAYERCOLOUR_OLIVE_DRAB = "PlayerColourOliveDrab";
+    public static final String PLAYERCOLOUR_FUCHSIA = "PlayerColourFuchsia";
+    public static final String PLAYERCOLOUR_FIRE_BRICK = "PlayerColourFireBrick";
+    public static final String PLAYERCOLOUR_DARK_GOLDEN_ROD = "PlayerColourDarkGoldenRod";
+    public static final String PLAYERCOLOUR_CORAL = "PlayerColourCoral";
+    public static final String PLAYERCOLOUR_CHARTREUSE = "PlayerColourChartreuse";
+    public static final String PLAYERCOLOUR_DEEP_PURPLE = "PlayerColourDeepPurple";
+    public static final String PLAYERCOLOUR_YELLOW = "PlayerColourYellow";
+
     public static final String CUSTOM_UNIT_HEIGHT = "CustomUnitDialogSizeHeight";
     public static final String CUSTOM_UNIT_WIDTH = "CustomUnitDialogSizeWidth";
 
@@ -416,6 +441,31 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(WARNING_COLOR, DEFAULT_RED);
         setDefault(CAUTION_COLOR, Color.yellow);
         setDefault(PRECAUTION_COLOR, Color.orange);
+
+        setDefault(PLAYERCOLOUR_BLUE, new Color(0x8686BF));
+        setDefault(PLAYERCOLOUR_RED, new Color(0xCC6666));
+        setDefault(PLAYERCOLOUR_GREEN, new Color(0x87BF86));
+        setDefault(PLAYERCOLOUR_CYAN, new Color(0x8FCCCC));
+        setDefault(PLAYERCOLOUR_PINK, new Color(0xF29DC8));
+        setDefault(PLAYERCOLOUR_ORANGE, new Color(0xF2AA61));
+        setDefault(PLAYERCOLOUR_GRAY, new Color(0xBEBEBE));
+        setDefault(PLAYERCOLOUR_BROWN, new Color(0x98816B));
+        setDefault(PLAYERCOLOUR_PURPLE, new Color(0x800080));
+        setDefault(PLAYERCOLOUR_TURQUOISE, new Color(0x40E0D0));
+        setDefault(PLAYERCOLOUR_MAROON, new Color(0x800000));
+        setDefault(PLAYERCOLOUR_SPRING_GREEN, new Color(0x00FF7F));
+        setDefault(PLAYERCOLOUR_GOLD, new Color(0xFFD700));
+        setDefault(PLAYERCOLOUR_SIENNA, new Color(0xA0522D));
+        setDefault(PLAYERCOLOUR_VIOLET, new Color(0xEE82EE));
+        setDefault(PLAYERCOLOUR_NAVY, new Color(0x000080));
+        setDefault(PLAYERCOLOUR_OLIVE_DRAB, new Color(0x6B8E23));
+        setDefault(PLAYERCOLOUR_FUCHSIA, new Color(0xFF00FF));
+        setDefault(PLAYERCOLOUR_FIRE_BRICK, new Color(0xB22222));
+        setDefault(PLAYERCOLOUR_DARK_GOLDEN_ROD, new Color(0xB8860B));
+        setDefault(PLAYERCOLOUR_CORAL, new Color(0xFF7F50));
+        setDefault(PLAYERCOLOUR_CHARTREUSE, new Color(0x7FFF00));
+        setDefault(PLAYERCOLOUR_DEEP_PURPLE, new Color(0x9400D3));
+        setDefault(PLAYERCOLOUR_YELLOW, new Color(0xF2F261));
 
         setDefault(BOARD_MOVE_DEFAULT_CLIMB_MODE, true);
         setDefault(BOARD_MOVE_DEFAULT_COLOR, DEFAULT_CYAN.CYAN);
@@ -2848,6 +2898,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         final String text = store.getString(name);
         final Color colour = parseRGB(text);
         return (colour == null) ? PlayerColour.parseFromString(text).getColour() : colour;
+    }
+
+    public void setColor(String name, Color c) {
+        store.setValue(name, getColorString(c));
     }
 
     protected String getColorString(Color colour) {

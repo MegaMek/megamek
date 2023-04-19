@@ -80,8 +80,63 @@ public enum PlayerColour {
         }
     }
 
+    public int getColorToHex(Color c) {
+        return c.getRGB() & 0xFFFFFF;
+    }
+
     public int getHex() {
-        return hex;
+        switch (this) {
+            case BLUE:
+                return getColorToHex(GUIP.getColor(GUIP.PLAYERCOLOUR_BLUE));
+            case RED:
+                return getColorToHex(GUIP.getColor(GUIP.PLAYERCOLOUR_RED));
+            case GREEN:
+                return getColorToHex(GUIP.getColor(GUIP.PLAYERCOLOUR_GREEN));
+            case CYAN:
+                return getColorToHex(GUIP.getColor(GUIP.PLAYERCOLOUR_CYAN));
+            case PINK:
+                return getColorToHex(GUIP.getColor(GUIP.PLAYERCOLOUR_PINK));
+            case ORANGE:
+                return getColorToHex(GUIP.getColor(GUIP.PLAYERCOLOUR_ORANGE));
+            case GRAY:
+                return getColorToHex(GUIP.getColor(GUIP.PLAYERCOLOUR_GRAY));
+            case BROWN:
+                return getColorToHex(GUIP.getColor(GUIP.PLAYERCOLOUR_BROWN));
+            case PURPLE:
+                return getColorToHex(GUIP.getColor(GUIP.PLAYERCOLOUR_PURPLE));
+            case TURQUOISE:
+                return getColorToHex(GUIP.getColor(GUIP.PLAYERCOLOUR_TURQUOISE));
+            case MAROON:
+                return getColorToHex(GUIP.getColor(GUIP.PLAYERCOLOUR_MAROON));
+            case SPRING_GREEN:
+                return getColorToHex(GUIP.getColor(GUIP.PLAYERCOLOUR_SPRING_GREEN));
+            case GOLD:
+                return getColorToHex(GUIP.getColor(GUIP.PLAYERCOLOUR_GOLD));
+            case SIENNA:
+                return getColorToHex(GUIP.getColor(GUIP.PLAYERCOLOUR_SIENNA));
+            case VIOLET:
+                return getColorToHex(GUIP.getColor(GUIP.PLAYERCOLOUR_VIOLET));
+            case NAVY:
+                return getColorToHex(GUIP.getColor(GUIP.PLAYERCOLOUR_NAVY));
+            case OLIVE_DRAB:
+                return getColorToHex(GUIP.getColor(GUIP.PLAYERCOLOUR_OLIVE_DRAB));
+            case FUCHSIA:
+                return getColorToHex(GUIP.getColor(GUIP.PLAYERCOLOUR_FUCHSIA));
+            case FIRE_BRICK:
+                return getColorToHex(GUIP.getColor(GUIP.PLAYERCOLOUR_FIRE_BRICK));
+            case DARK_GOLDEN_ROD:
+                return getColorToHex(GUIP.getColor(GUIP.PLAYERCOLOUR_DARK_GOLDEN_ROD));
+            case CORAL:
+                return getColorToHex(GUIP.getColor(GUIP.PLAYERCOLOUR_CORAL));
+            case CHARTREUSE:
+                return getColorToHex(GUIP.getColor(GUIP.PLAYERCOLOUR_CHARTREUSE));
+            case DEEP_PURPLE:
+                return getColorToHex(GUIP.getColor(GUIP.PLAYERCOLOUR_DEEP_PURPLE));
+            case YELLOW:
+                return getColorToHex(GUIP.getColor(GUIP.PLAYERCOLOUR_YELLOW));
+            default:
+                return hex;
+        }
     }
 
     public String getHexString() {

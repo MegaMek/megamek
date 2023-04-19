@@ -5744,24 +5744,6 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             return;
         }
         txt.append(HexTooltip.getTerrainTip(mhex));
-//        Coords mcoords = mhex.getCoords();
-//        String result = "";
-//        String sTerrian = Messages.getString("BoardView1.Tooltip.Hex", mcoords.getBoardNum(), mhex.getLevel()) + "<BR>";
-//
-//        // cycle through the terrains and report types found
-//        for (int terType: mhex.getTerrainTypes()) {
-//            int tf = mhex.getTerrain(terType).getTerrainFactor();
-//            int ttl = mhex.getTerrain(terType).getLevel();
-//            String name = Terrains.getDisplayName(terType, ttl);
-//            if (name != null) {
-//                String msg_tf =  Messages.getString("BoardView1.Tooltip.TF");
-//                name += (tf > 0) ? " (" + msg_tf + ": " + tf + ")" : "";
-//                sTerrian += name + "<BR>";
-//            }
-//        }
-//
-//        result += guiScaledFontHTML(UIUtil.uiBlack()) + sTerrian + "</FONT>";
-//        txt.append(result);
     }
 
     /**

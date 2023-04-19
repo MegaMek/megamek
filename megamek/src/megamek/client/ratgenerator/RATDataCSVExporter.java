@@ -65,8 +65,9 @@ public class RATDataCSVExporter {
         }
 
         try (PrintWriter pw = new PrintWriter(saveFile); BufferedWriter bw = new BufferedWriter(pw)) {
-            String columnNames = "Chassis" + DELIMITER + "Model" + DELIMITER + "MUL ID" + DELIMITER + "Unit Type" + DELIMITER;
-            columnNames += "Intro Date" + DELIMITER + "Faction ID" + DELIMITER + "Faction" + DELIMITER;
+            String columnNames = "Chassis" + DELIMITER + "Model" + DELIMITER + "Model/Chassis Data" + DELIMITER + "MUL ID"
+                    + DELIMITER + "Unit Type" + DELIMITER + "Intro Date" + DELIMITER + "Faction ID" + DELIMITER +
+                    "Faction" + DELIMITER;
             columnNames += String.join(DELIMITER, eraYears) + "\n";
 
             bw.write(columnNames);
@@ -138,6 +139,7 @@ public class RATDataCSVExporter {
     private static void writeModelBaseData(ModelRecord record, StringBuilder csvLine, String faction) {
         csvLine.append("\"=\"\"").append(record.getChassis()).append("\"\"\"").append(DELIMITER);
         csvLine.append("\"=\"\"").append(record.getModel()).append("\"\"\"").append(DELIMITER);
+        csvLine.append("Model Data").append(DELIMITER);
         csvLine.append(record.getMechSummary().getMulId()).append(DELIMITER);
         csvLine.append(UnitType.getTypeName(record.getUnitType())).append(DELIMITER);
         csvLine.append(record.getMechSummary().getYear()).append(DELIMITER);
@@ -148,6 +150,7 @@ public class RATDataCSVExporter {
     private static void writeChassisBaseData(ChassisRecord record, StringBuilder csvLine, String faction) {
         csvLine.append("\"=\"\"").append(record.getChassis()).append("\"\"\"").append(DELIMITER);
         csvLine.append(DELIMITER);
+        csvLine.append("Chassis Data").append(DELIMITER);
         csvLine.append(DELIMITER);
         csvLine.append(UnitType.getTypeName(record.getUnitType())).append(DELIMITER);
         csvLine.append(DELIMITER);

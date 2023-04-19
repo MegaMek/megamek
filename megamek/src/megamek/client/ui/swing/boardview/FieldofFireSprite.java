@@ -14,6 +14,7 @@ import static megamek.client.ui.swing.boardview.HexDrawUtilities.*;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Coords;
+import megamek.common.RangeType;
 
 /**
  * This sprite is used to paint the field of fire 
@@ -77,16 +78,16 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
     public static Color getFieldOfFireColor(int rangeBracket) {
         // colors for Min,S,M,L,E ranges
         switch (rangeBracket) {
-            case 0:
+            case RangeType.RANGE_MINIMUM:
                 return GUIP.getFieldOfFireMinColor();
-            case 1:
+            case RangeType.RANGE_SHORT:
                 return GUIP.getFieldOfFireShortColor();
-            case 2:
+            case RangeType.RANGE_MEDIUM:
                 return GUIP.getFieldOfFireMediumColor();
-            case 3:
+            case RangeType.RANGE_LONG:
                 return GUIP.getFieldOfFireLongColor();
-            case 4:
-                return GUIP.getFieldOfFireExtendedColor();
+            case RangeType.RANGE_EXTREME:
+                return GUIP.getFieldOfFireExtremeColor();
             default:
                 return new Color(0,0,0);
         }

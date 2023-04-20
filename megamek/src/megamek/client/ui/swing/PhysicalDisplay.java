@@ -1700,7 +1700,9 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                             clientgui.frame,
                             Messages.getString("PhysicalDisplay.AimedShotDialog.title"),
                             Messages.getString("PhysicalDisplay.AimedShotDialog.message"),
-                            options, enabled, aimingAt, this, this);
+                            options, enabled, aimingAt,
+                            clientgui, target,
+                            this, this);
 
                     asd.setVisible(true);
                     updateTarget();

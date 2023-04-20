@@ -14,6 +14,7 @@
 package megamek.client.ui.swing.tooltip;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
@@ -196,6 +197,28 @@ public final class UnitToolTip {
         String table = "<TABLE BGCOLOR=#313131 width=100%>" + row + "</TABLE>";
 
         return new StringBuilder().append(table);
+    }
+
+    public static String getTargetTipDetail(Targetable target, @Nullable Board board,
+                                     @Nullable ClientGUI clientGUI) {
+        if (target instanceof Entity) {
+           return UnitToolTip.getEntityTipVitals((Entity) target, null).toString();
+        } else if (target instanceof BuildingTarget) {
+            return HexTooltip.getBuildingTargetTip((BuildingTarget) target, board);
+        } else if (target instanceof Hex) {
+            return HexTooltip.getHexTip((Hex) target, clientGUI.getClient(), clientGUI).toString();
+        } else {
+            return getTargetTipSummary(target, board);
+        }
+    }
+
+    public static String getTargetTipSummary(Targetable target, @Nullable Board board) {
+        if (target instanceof Entity) {
+            return UnitToolTip.getOneLineSummary((Entity) target);
+        } else if (target instanceof BuildingTarget) {
+           return HexTooltip.getOneLineSummary((BuildingTarget) target, board);
+        }
+        return target.getDisplayName();
     }
 
     private static boolean hideArmorLocation(Entity entity, int location) {

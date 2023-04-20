@@ -1076,7 +1076,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         
         if (entity == se) {
             int rad = stratOpsSymbols ? 2 * unitSize - 1 : unitSize + unitSize / 2;
-            Color color = GUIP.getUnitOverviewSelectedColor();
+            Color color = GUIP.getUnitSelectedColor();
             g2.setColor(color.darker());
             g2.setStroke(new BasicStroke(unitSize / 5 + 1));
             g2.drawOval(baseX - rad, baseY - rad, rad * 2, rad * 2);

@@ -95,6 +95,7 @@ public class RATDataCSVExporter {
             }
         } catch (Exception ex) {
             LogManager.getLogger().error("", ex);
+            JOptionPane.showMessageDialog(null, ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -143,7 +144,7 @@ public class RATDataCSVExporter {
         csvLine.append(record.getMechSummary().getMulId()).append(DELIMITER);
         csvLine.append(UnitType.getTypeName(record.getUnitType())).append(DELIMITER);
         csvLine.append(record.getMechSummary().getYear()).append(DELIMITER);
-        csvLine.append("TBD").append(DELIMITER);
+        csvLine.append(mulId(faction)).append(DELIMITER);
         csvLine.append(faction).append(DELIMITER);
     }
 
@@ -154,8 +155,13 @@ public class RATDataCSVExporter {
         csvLine.append(DELIMITER);
         csvLine.append(UnitType.getTypeName(record.getUnitType())).append(DELIMITER);
         csvLine.append(DELIMITER);
-        csvLine.append("TBD").append(DELIMITER);
+        csvLine.append(mulId(faction)).append(DELIMITER);
         csvLine.append(faction).append(DELIMITER);
+    }
+
+    private static int mulId(String faction) {
+        FactionRecord factionRecord = RATGenerator.getInstance().getFaction(faction);
+        return factionRecord != null ? factionRecord.getMulId() : -2;
     }
 
     private static RATGenerator initializeRatGenerator() {

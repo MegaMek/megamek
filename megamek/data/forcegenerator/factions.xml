@@ -176,7 +176,7 @@
 		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CLAN</parentFaction>
 	</faction>
-	<faction key='CW' name='Clan Wolf' mulid='-1' minor='false' clan='true' periphery='false'>
+	<faction key='CW' name='Clan Wolf' mulid='24' minor='false' clan='true' periphery='false'>
 		<years>2807-3142</years>
 		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CLAN.IS</parentFaction>
@@ -205,7 +205,7 @@
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
 	</faction>
-	<faction key='DA' name='Duchy of Andurien' mulid='-1' minor='false' clan='false' periphery='false'>
+	<faction key='DA' name='Duchy of Andurien' mulid='59' minor='false' clan='false' periphery='false'>
 		<years>3030-3040,3079-</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS,FWL</parentFaction>
@@ -245,7 +245,7 @@
 		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CGS,Periphery.Deep</parentFaction>
 	</faction>
-	<faction key='FC' name='Federated Commonwealth (Combined)' mulid='-1' minor='false' clan='false' periphery='false'>
+	<faction key='FC' name='Federated Commonwealth (Combined)' mulid='84' minor='false' clan='false' periphery='false'>
 		<years>3028-3057</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>FS,LA</parentFaction>
@@ -316,7 +316,7 @@
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>Periphery.MW</parentFaction>
 	</faction>
-	<faction key='LA' name='Lyran Commonwealth' mulid='60' minor='false' clan='false' periphery='false'>
+	<faction key='LA' name='Lyran Commonwealth' mulid='32' minor='false' clan='false' periphery='false'>
 		<nameChange year='3042'>Federated Commonwealth (Steiner)</nameChange>
 		<nameChange year='3057'>Lyran Alliance</nameChange>
 		<nameChange year='3084'>Lyran Commonwealth</nameChange>
@@ -510,7 +510,7 @@
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
 	</faction>
-	<faction key='SL' name='Star League' mulid='90' minor='false' clan='false' periphery='false'>
+	<faction key='SL' name='Star League' mulid='45' minor='false' clan='false' periphery='false'>
 		<years>2571-2780</years>
 		<ratingLevels>C,B,A</ratingLevels>
 	</faction>
@@ -779,12 +779,12 @@
 		<ratingLevels>B</ratingLevels>
 		<parentFaction>CC</parentFaction>
 	</faction>
-	<faction key='CLAN.HW' name='Clan - Homeworld' mulid='-1' minor='false' clan='true' periphery='false'>
+	<faction key='CLAN.HW' name='Clan - Homeworld' mulid='85' minor='false' clan='true' periphery='false'>
 		<years>3050-3085</years>
 		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CLAN</parentFaction>
 	</faction>
-	<faction key='CLAN.IS' name='Clan - Inner Sphere' mulid='-1' minor='false' clan='true' periphery='false'>
+	<faction key='CLAN.IS' name='Clan - Inner Sphere' mulid='56' minor='false' clan='true' periphery='false'>
 		<years>3050-</years>
 		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CLAN</parentFaction>
@@ -1320,7 +1320,7 @@
 		<ratingLevels>D</ratingLevels>
 		<parentFaction>CC</parentFaction>
 	</faction>
-	<faction key='SL.2' name='Second Star League' mulid='-1' minor='false' clan='false' periphery='false'>
+	<faction key='SL.2' name='Second Star League' mulid='46' minor='false' clan='false' periphery='false'>
 		<years>3058-3067</years>
 		<ratingLevels>C,B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
@@ -1376,12 +1376,12 @@
 		<ratingLevels>B</ratingLevels>
 		<parentFaction>CC</parentFaction>
 	</faction>
-	<faction key='SL3.CJF' name='Star League (Clan Jade Falcon)' mulid='-1' minor='true' clan='true' periphery='false'>
+	<faction key='SL3.CJF' name='Star League (Clan Jade Falcon)' mulid='97' minor='true' clan='true' periphery='false'>
 		<years>3151-</years>
 		<ratingLevels>Front Line,Keshik</ratingLevels>
 		<parentFaction>CJF,CLAN.IS</parentFaction>
 	</faction>
-	<faction key='SL.R' name='Star League Royal' mulid='-1' minor='false' clan='false' periphery='false'>
+	<faction key='SL.R' name='Star League Royal' mulid='43' minor='false' clan='false' periphery='false'>
 		<years>2571-2780</years>
 		<parentFaction>SL</parentFaction>
 	</faction>

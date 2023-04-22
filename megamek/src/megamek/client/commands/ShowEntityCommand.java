@@ -1,7 +1,6 @@
 package megamek.client.commands;
 
-import megamek.client.Client;
-import megamek.client.TwGameClient;
+import megamek.client.TwClient;
 import megamek.common.Entity;
 import megamek.common.options.OptionsConstants;
 
@@ -12,7 +11,7 @@ import megamek.common.options.OptionsConstants;
  */
 public class ShowEntityCommand extends ClientCommand {
 
-    public ShowEntityCommand(TwGameClient client) {
+    public ShowEntityCommand(TwClient client) {
         super(client, "entity",
                 "Print the information about a entity into the chat window. Usage: #entity 5 which would show the details for the entity numbered 5. Also #entity 5 0 would show location 0 of entity 5.");
         // to be extended by adding /entity unit# loc# to list details on locations.

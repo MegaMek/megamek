@@ -13,8 +13,7 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.client.Client;
-import megamek.client.TwGameClient;
+import megamek.client.TwClient;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.BASE64ToolKit;
 import megamek.client.ui.swing.util.UIUtil;
@@ -55,7 +54,7 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
     private JComboBox<String> comboEntity = new JComboBox<>();
     private JComboBox<String> comboQuick = new JComboBox<>();
     private ClientGUI currentClientgui;
-    private TwGameClient currentClient;
+    private TwClient currentClient;
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final ClientPreferences CP =  PreferenceManager.getClientPreferences();
 

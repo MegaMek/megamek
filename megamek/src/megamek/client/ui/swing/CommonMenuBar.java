@@ -19,7 +19,7 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.client.Client;
+import megamek.client.AbstractClient;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.UIUtil;
@@ -141,7 +141,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private final Map<String, JMenuItem> itemMap = new HashMap<>();
 
     /** Creates a MegaMek menu bar for the given client (for the lobby or ingame). */
-    public CommonMenuBar(Client parent) {
+    public CommonMenuBar(AbstractClient parent) {
         this();
         isGame = true;
         updateEnabledStates();

@@ -4,8 +4,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import megamek.client.Client;
-import megamek.client.TwGameClient;
+import megamek.client.TwClient;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Hex;
@@ -27,7 +26,7 @@ public class ShowTileCommand extends ClientCommand {
         directions.add("SE");
     }
 
-    public ShowTileCommand(TwGameClient client) {
+    public ShowTileCommand(TwClient client) {
         super(
                 client,
                 "tile",

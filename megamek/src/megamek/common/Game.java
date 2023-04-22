@@ -1183,6 +1183,17 @@ public class Game extends AbstractGame implements Serializable {
         addEntity(entity, true);
     }
 
+    @Override
+    protected void processUnitReplace(List<InGameObject> units) {
+        List<Entity> entities = units.stream().filter(u -> u instanceof Entity).map(u -> (Entity) u).collect(toList());
+        for (Entity entity : entities) {
+            entity.setGame(this);
+            entity.setOwner(getPlayer(entity.getOwnerId()));
+            updateEntityPositionLookup(entity, null);
+        }
+        processGameEvent(new GameEntityNewEvent(this, entities));
+    }
+
     /**
      * Adds a new Entity to this Game object.
      *
@@ -1269,6 +1280,11 @@ public class Game extends AbstractGame implements Serializable {
     @Override
     public int getNextEntityId() {
         return lastEntityId + 1;
+    }
+
+    @Override
+    public boolean isValidForGameType(InGameObject object) {
+        return object instanceof Entity;
     }
 
     /**

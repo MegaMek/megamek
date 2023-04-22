@@ -18,8 +18,8 @@
  */ 
 package megamek.client.ui.swing.lobby;
 
-import megamek.client.Client;
-import megamek.client.TwGameClient;
+import megamek.client.AbstractClient;
+import megamek.client.TwClient;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
 import megamek.client.generator.RandomCallsignGenerator;
@@ -290,9 +290,9 @@ public class LobbyActions {
         int ownerId = randomSelected.getOwner().getId();
 
         boolean editable = client().getBots().get(ownerName) != null;
-        TwGameClient client;
+        TwClient client;
         if (editable) {
-            client = (TwGameClient) client().getBots().get(ownerName);
+            client = (TwClient) client().getBots().get(ownerName);
         } else {
             editable |= ownerId == localPlayer().getId();
             client = client();
@@ -349,9 +349,9 @@ public class LobbyActions {
             return;
         }
         boolean editable = client().getBots().get(entity.getOwner().getName()) != null;
-        TwGameClient c;
+        TwClient c;
         if (editable) {
-            c = (TwGameClient) client().getBots().get(entity.getOwner().getName());
+            c = (TwClient) client().getBots().get(entity.getOwner().getName());
         } else {
             editable |= entity.getOwnerId() == localPlayer().getId();
             c = client();
@@ -439,7 +439,7 @@ public class LobbyActions {
             return;
         }
         for (final Entity entity : entities) {
-            final TwGameClient client = lobby.getLocalClient(entity);
+            final TwClient client = lobby.getLocalClient(entity);
             client.getSkillGenerator().setRandomSkills(entity, true);
         }
         sendUpdates(entities);
@@ -545,7 +545,7 @@ public class LobbyActions {
     
     /** Adds the given entities as strategic targets for the given local bot. */
     void setPrioTarget(String botName, Collection<Entity> entities) {
-        Map<String, Client> bots = lobby.getClientgui().getBots();
+        Map<String, AbstractClient> bots = lobby.getClientgui().getBots();
         if (!bots.containsKey(botName) || !(bots.get(botName) instanceof Princess)) {
             return;
         }
@@ -689,8 +689,8 @@ public class LobbyActions {
         }
         
         // Send a command to remove the forceless entities
-        Set<TwGameClient> senders = finalEnDelete.stream().map(this::correctSender).collect(toSet());
-        for (TwGameClient sender: senders) {
+        Set<TwClient> senders = finalEnDelete.stream().map(this::correctSender).collect(toSet());
+        for (TwClient sender: senders) {
             // Gather the entities for this sending client; 
             // Serialization doesn't like the toList() result, therefore the new ArrayList
             List<Integer> ids = new ArrayList<>(finalEnDelete.stream()
@@ -700,7 +700,7 @@ public class LobbyActions {
         
         // Send a command to remove the forces (with entities)
         senders = finalFoDelete.stream().map(this::correctSender).collect(toSet());
-        for (TwGameClient sender: senders) {
+        for (TwClient sender: senders) {
             List<Force> foList = new ArrayList<>(finalFoDelete.stream()
                     .filter(f -> correctSender(f).equals(sender))
                     .collect(toList()));
@@ -1031,7 +1031,7 @@ public class LobbyActions {
         if (entities.stream().anyMatch(e -> e.getOwner().equals(localPlayer()))) {
             return localPlayer();
         } else {
-            for (Entry<String, Client> en: client().getBots().entrySet()) {
+            for (Entry<String, AbstractClient> en: client().getBots().entrySet()) {
                 Player bot = en.getValue().getLocalPlayer();
                 if (entities.stream().anyMatch(e -> e.getOwner().equals(bot))) {
                     return en.getValue().getLocalPlayer();
@@ -1086,8 +1086,8 @@ public class LobbyActions {
     void sendUpdates(Collection<Entity> entities) {
         // Gather the necessary sending clients; this list may contain null if some units 
         // cannot be affected at all, i.e. are enemies to localplayer and all his bots
-        List<TwGameClient> senders = entities.stream().map(this::correctSender).distinct().collect(toList());
-        for (TwGameClient sender: senders) {
+        List<TwClient> senders = entities.stream().map(this::correctSender).distinct().collect(toList());
+        for (TwClient sender: senders) {
             if (sender == null) {
                 continue;
             }
@@ -1107,11 +1107,11 @@ public class LobbyActions {
     void sendUpdates(Collection<Entity> changedEntities, Collection<Force> changedForces) {
         // Gather the necessary sending clients; this list may contain null if some units 
         // cannot be affected at all, i.e. are enemies to localplayer and all his bots
-        Set<TwGameClient> senders = new HashSet<>();
+        Set<TwClient> senders = new HashSet<>();
         senders.addAll(changedEntities.stream().map(this::correctSender).distinct().collect(toList()));
         senders.addAll(changedForces.stream().map(this::correctSender).distinct().collect(toList()));
         
-        for (TwGameClient sender: senders) {
+        for (TwClient sender: senders) {
             if (sender == null) {
                 continue;
             }
@@ -1138,18 +1138,18 @@ public class LobbyActions {
      * Returns the best sending client for an update of the given entity or
      * null if none can be found (entity is an enemy to the local player and all his bots)
      */
-    private TwGameClient correctSender(Entity entity) {
+    private TwClient correctSender(Entity entity) {
         Player owner = entity.getOwner();
         if (localPlayer().equals(owner)) {
             return client();
         } else if (client().getBots().containsKey(owner.getName())) {
-            return (TwGameClient) client().getBots().get(owner.getName());
+            return (TwClient) client().getBots().get(owner.getName());
         } else if (!localPlayer().isEnemyOf(owner)) {
             return client();
         } else {
-            for (Client bot: client().getBots().values()) {
+            for (AbstractClient bot: client().getBots().values()) {
                 if (!bot.getLocalPlayer().isEnemyOf(owner)) {
-                    return (TwGameClient) bot;
+                    return (TwClient) bot;
                 }
             }
         }
@@ -1161,18 +1161,18 @@ public class LobbyActions {
      * Returns the best sending client for an update of the given force or
      * null if none can be found (force is an enemy to the local player and all his bots)
      */
-    private TwGameClient correctSender(Force force) {
+    private TwClient correctSender(Force force) {
         Player owner = game().getForces().getOwner(force);
         if (localPlayer().equals(owner)) {
             return client();
         } else if (client().getBots().containsKey(owner.getName())) {
-            return (TwGameClient) client().getBots().get(owner.getName());
+            return (TwClient) client().getBots().get(owner.getName());
         } else if (!localPlayer().isEnemyOf(owner) || isEditable(force)) {
             return client();
         } else {
-            for (Client bot: client().getBots().values()) {
+            for (AbstractClient bot: client().getBots().values()) {
                 if (!bot.getLocalPlayer().isEnemyOf(owner)) {
-                    return (TwGameClient) bot;
+                    return (TwClient) bot;
                 }
             }
         }
@@ -1323,7 +1323,7 @@ public class LobbyActions {
         return lobby.game();
     }
     
-    private TwGameClient client() {
+    private TwClient client() {
         return lobby.client();
     }
     

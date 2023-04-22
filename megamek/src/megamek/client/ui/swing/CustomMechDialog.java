@@ -13,7 +13,7 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.client.TwGameClient;
+import megamek.client.TwClient;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
@@ -137,7 +137,7 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
     private int status = CustomMechDialog.DONE;
 
     private final ClientGUI clientgui;
-    private final TwGameClient client;
+    private final TwClient client;
     private final boolean space;
 
     private PilotOptions options;
@@ -156,7 +156,7 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
     /**
      * Creates new CustomMechDialog
      */
-    public CustomMechDialog(ClientGUI clientgui, TwGameClient client, List<Entity> entities, boolean editable) {
+    public CustomMechDialog(ClientGUI clientgui, TwClient client, List<Entity> entities, boolean editable) {
         super(clientgui.getFrame(), "CustomizeMechDialog", "CustomMechDialog.title");
 
         this.entities = entities;

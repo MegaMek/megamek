@@ -13,8 +13,8 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.client.Client;
-import megamek.client.TwGameClient;
+import megamek.client.AbstractClient;
+import megamek.client.TwClient;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.VerifyInRange;
 import megamek.client.ui.swing.widget.VerifiableTextField;
@@ -45,7 +45,7 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
     // External helpers.
     private final JFrame PARENT;
     private final IMapSettingsObserver MAP_SETTINGS_OBSERVER;
-    private final TwGameClient CLIENT;
+    private final TwClient CLIENT;
 
     // How the map will be set up.
     private MapSettings mapSettings;
@@ -86,11 +86,11 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
      * @param parent              The parent {@link JFrame} invoking this dialog.
      * @param mapSettingsObserver The {@link IMapSettingsObserver} objects to which the map setting will be passed if
      *                            this is a local only game.
-     * @param client              The {@link Client} that will send the map settings to the server if this is a
+     * @param client              The {@link AbstractClient} that will send the map settings to the server if this is a
      *                            server-based game.
      * @param mapSettings         The {@link MapSettings} describing the map to be generated.
      */
-    public ResizeMapDialog(JFrame parent, IMapSettingsObserver mapSettingsObserver, TwGameClient client,
+    public ResizeMapDialog(JFrame parent, IMapSettingsObserver mapSettingsObserver, TwClient client,
                            MapSettings mapSettings) {
         super(parent, Messages.getString("ExpandMapDialog.title"), true);
         this.mapSettings = mapSettings;

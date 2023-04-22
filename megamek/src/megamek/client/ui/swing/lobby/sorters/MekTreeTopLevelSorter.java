@@ -20,17 +20,16 @@ package megamek.client.ui.swing.lobby.sorters;
 
 import java.util.Comparator;
 
-import megamek.client.Client;
-import megamek.client.TwGameClient;
+import megamek.client.TwClient;
 import megamek.common.*;
 import megamek.common.force.*;
 
 /** A Comparator for the top level entries of the Mek Tree (forces and force-less entities). */
 public class MekTreeTopLevelSorter implements Comparator<Object> {
 
-    private TwGameClient client;
+    private TwClient client;
 
-    public MekTreeTopLevelSorter(TwGameClient cl) {
+    public MekTreeTopLevelSorter(TwClient cl) {
         client = cl;
     }
 

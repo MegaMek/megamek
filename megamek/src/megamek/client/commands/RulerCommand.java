@@ -14,8 +14,7 @@
  */
 package megamek.client.commands;
 
-import megamek.client.Client;
-import megamek.client.TwGameClient;
+import megamek.client.TwClient;
 import megamek.common.Coords;
 import megamek.common.LosEffects;
 import megamek.common.TargetRoll;
@@ -28,7 +27,7 @@ import megamek.common.ToHitData;
  */
 public class RulerCommand extends ClientCommand {
 
-    public RulerCommand(TwGameClient client) {
+    public RulerCommand(TwClient client) {
         super(
                 client,
                 "ruler",

@@ -14,18 +14,18 @@
  */
 package megamek.client.commands;
 
-import megamek.client.Client;
-import megamek.client.TwGameClient;
+import megamek.client.AbstractClient;
+import megamek.client.TwClient;
 
 /**
  * @author dirk
  */
 public class HelpCommand extends ClientCommand {
 
-    private Client cmdHandler;
+    private AbstractClient cmdHandler;
 
     /** Creates new HelpCommand */
-    public HelpCommand(TwGameClient client) {
+    public HelpCommand(TwClient client) {
         super(
                 client,
                 "help",

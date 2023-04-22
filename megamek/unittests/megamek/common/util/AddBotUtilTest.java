@@ -1,6 +1,6 @@
 package megamek.common.util;
 
-import megamek.client.Client;
+import megamek.client.AbstractClient;
 import megamek.client.bot.TestBot;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
@@ -30,7 +30,7 @@ public class AddBotUtilTest {
     private static final String HUMAN_PLAYER_NAME = "MockHuman";
     private static final String BOT_PLAYER_NAME = "MockBot";
 
-    private Client mockClient;
+    private AbstractClient mockClient;
     private Game mockGame;
     private Princess mockPrincess;
     private AddBotUtil testAddBotUtil;
@@ -56,7 +56,7 @@ public class AddBotUtilTest {
         when(mockGame.getPlayers()).thenReturn(playerEnumeration);
         doNothing().when(mockGame).addGameListener(any(GameListener.class));
 
-        mockClient = mock(Client.class);
+        mockClient = mock(AbstractClient.class);
         doNothing().when(mockClient).sendChat(anyString());
         when(mockClient.getGame()).thenReturn(mockGame);
         when(mockClient.getHost()).thenReturn("mockHost");

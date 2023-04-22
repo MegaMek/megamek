@@ -13,8 +13,7 @@
  */
 package megamek.client.ui.swing.util;
 
-import megamek.client.Client;
-import megamek.client.TwGameClient;
+import megamek.client.TwClient;
 import megamek.client.ui.swing.AbstractPhaseDisplay;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.enums.GamePhase;
@@ -102,7 +101,7 @@ public class TurnTimer {
         timer.stop();
     }
 
-    public static TurnTimer init(AbstractPhaseDisplay phaseDisplay, TwGameClient client) {
+    public static TurnTimer init(AbstractPhaseDisplay phaseDisplay, TwClient client) {
         // check if there should be a turn timer running
         if (timerShouldStart(client)) {
             Option timer = (Option) client.getGame().getOptions().getOption(OptionsConstants.BASE_TURN_TIMER);
@@ -118,7 +117,7 @@ public class TurnTimer {
      * limit is only imposed on movement, firing
      */
     //TODO: add timer to physical and targeting phase currently it is only in movement and fire
-    private static boolean timerShouldStart(TwGameClient client) {
+    private static boolean timerShouldStart(TwClient client) {
         // check if there is a timer set
         Option timer = (Option) client.getGame().getOptions().getOption(OptionsConstants.BASE_TURN_TIMER);
         // if timer is set to 0 in options, it is disabled so we only create one if a limit is set in options

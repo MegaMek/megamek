@@ -14,8 +14,7 @@
 package megamek.common.actions;
 
 import megamek.MMConstants;
-import megamek.client.Client;
-import megamek.client.TwGameClient;
+import megamek.client.TwClient;
 import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.enums.AimingMode;
@@ -5116,7 +5115,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     }
 
     @Override
-    public String toDisplayableString(TwGameClient client) {
+    public String toDisplayableString(TwClient client) {
         return "attacking " + getTarget(client.getGame()).getDisplayName() + " with " + getEntity(client.getGame()).getEquipment(weaponId).getName();
     }
 }

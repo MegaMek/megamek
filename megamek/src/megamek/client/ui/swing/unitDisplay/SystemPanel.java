@@ -1,7 +1,6 @@
 package megamek.client.ui.swing.unitDisplay;
 
-import megamek.client.Client;
-import megamek.client.TwGameClient;
+import megamek.client.TwClient;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ChoiceDialog;
 import megamek.client.ui.swing.ClientGUI;
@@ -706,7 +705,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
             } else if (event.getSource().equals(slotList)
                     && (unitDisplay.getClientGUI() != null)) {
 
-                TwGameClient client = unitDisplay.getClientGUI().getClient();
+                TwClient client = unitDisplay.getClientGUI().getClient();
                 m_bDumpAmmo.setEnabled(false);
                 m_chMode.setEnabled(false);
                 Mounted m = getSelectedEquipment();

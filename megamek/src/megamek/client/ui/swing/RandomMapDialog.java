@@ -13,8 +13,8 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.client.Client;
-import megamek.client.TwGameClient;
+import megamek.client.AbstractClient;
+import megamek.client.TwClient;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.util.VerifyIsPositiveInteger;
@@ -47,7 +47,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
     // External helpers.
     private final JFrame PARENT;
     private final IMapSettingsObserver MAP_SETTINGS_OBSERVER;
-    private final TwGameClient CLIENT;
+    private final TwClient CLIENT;
     private final GUIPreferences guip = GUIPreferences.getInstance();
 
     // How the map will be set up.
@@ -85,11 +85,11 @@ public class RandomMapDialog extends JDialog implements ActionListener {
      * @param parent              The parent {@link JFrame} invoking this dialog.
      * @param mapSettingsObserver The {@link IMapSettingsObserver} objects to which the map setting will be passed if
      *                            this is a local only game.
-     * @param client              The {@link Client} that will send the map settings to the server if this is a
+     * @param client              The {@link AbstractClient} that will send the map settings to the server if this is a
      *                            server-based game.
      * @param mapSettings         The {@link MapSettings} describing the map to be generated.
      */
-    public RandomMapDialog(JFrame parent, IMapSettingsObserver mapSettingsObserver, TwGameClient client,
+    public RandomMapDialog(JFrame parent, IMapSettingsObserver mapSettingsObserver, TwClient client,
                            MapSettings mapSettings) {
         this(parent, mapSettingsObserver, client, mapSettings, Messages.getString("RandomMapDialog.title"));
     }
@@ -100,11 +100,11 @@ public class RandomMapDialog extends JDialog implements ActionListener {
      * @param parent              The parent {@link JFrame} invoking this dialog.
      * @param mapSettingsObserver The {@link IMapSettingsObserver} objects to which the map setting will be passed if
      *                            this is a local only game.
-     * @param client              The {@link Client} that will send the map settings to the server if this is a
+     * @param client              The {@link AbstractClient} that will send the map settings to the server if this is a
      *                            server-based game.
      * @param mapSettings         The {@link MapSettings} describing the map to be generated.
      */
-    public RandomMapDialog(JFrame parent, IMapSettingsObserver mapSettingsObserver, TwGameClient client,
+    public RandomMapDialog(JFrame parent, IMapSettingsObserver mapSettingsObserver, TwClient client,
                            MapSettings mapSettings, String title) {
         super(parent, title, true);
         this.mapSettings = mapSettings;

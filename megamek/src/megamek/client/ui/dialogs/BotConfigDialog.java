@@ -19,8 +19,7 @@
  */
 package megamek.client.ui.dialogs;
 
-import megamek.client.Client;
-import megamek.client.TwGameClient;
+import megamek.client.TwClient;
 import megamek.client.bot.princess.*;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
@@ -109,7 +108,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
     private final ClientGUI clientGui;
     
     /** Convenience field for clientGui.getClient(). */
-    private final TwGameClient client;
+    private final TwClient client;
     
     public BotConfigDialog(JFrame parent, @Nullable String botName) {
         this(parent, botName, null, null);

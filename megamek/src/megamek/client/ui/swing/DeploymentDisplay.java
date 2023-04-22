@@ -19,8 +19,7 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.client.Client;
-import megamek.client.TwGameClient;
+import megamek.client.TwClient;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
@@ -652,7 +651,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     //
     @Override
     public void actionPerformed(ActionEvent evt) {
-        final TwGameClient client = clientgui.getClient();
+        final TwClient client = clientgui.getClient();
         final String actionCmd = evt.getActionCommand();
         // Are we ignoring events?
         if (isIgnoringEvents()) {
@@ -835,7 +834,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         if (isIgnoringEvents()) {
             return;
         }
-        final TwGameClient client = clientgui.getClient();
+        final TwClient client = clientgui.getClient();
         final Entity e = client.getGame().getEntity(b.getEntityId());
         if (null == e) {
             return;

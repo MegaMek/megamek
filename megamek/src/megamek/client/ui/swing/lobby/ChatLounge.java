@@ -21,8 +21,8 @@
 package megamek.client.ui.swing.lobby;
 
 import megamek.MMConstants;
-import megamek.client.Client;
-import megamek.client.TwGameClient;
+import megamek.client.AbstractClient;
+import megamek.client.TwClient;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
@@ -85,7 +85,6 @@ import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageFilter;
 import java.awt.image.ImageProducer;
 import java.io.*;
-import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.*;
@@ -1511,16 +1510,16 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      * For a unit that cannot be configured (owned by a remote player) the client
      * of the local player is returned.
      */
-    TwGameClient getLocalClient(Entity entity) {
+    TwClient getLocalClient(Entity entity) {
         if (clientgui.getBots().containsKey(entity.getOwner().getName())) {
-            return (TwGameClient) clientgui.getBots().get(entity.getOwner().getName());
+            return (TwClient) clientgui.getBots().get(entity.getOwner().getName());
         } else {
             return clientgui.getClient();
         }
     }
 
     public void configPlayer() {
-        TwGameClient c = getSelectedClient();
+        TwClient c = getSelectedClient();
         if (null == c) {
             return;
         }
@@ -1757,7 +1756,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             } else if (ev.getSource().equals(butLoadList)) {
                 // Allow the player to replace their current
                 // list of entities with a list from a file.
-                Client c = getSelectedClient();
+                AbstractClient c = getSelectedClient();
                 if (c == null) {
                     clientgui.doAlertDialog(Messages.getString("ChatLounge.ImproperCommand"),
                             Messages.getString("ChatLounge.SelectBotOrPlayer"));
@@ -1768,7 +1767,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             } else if (ev.getSource().equals(butSaveList)) {
                 // Allow the player to save their current
                 // list of entities to a file.
-                TwGameClient c = getSelectedClient();
+                TwClient c = getSelectedClient();
                 if (c == null) {
                     clientgui.doAlertDialog(Messages.getString("ChatLounge.ImproperCommand"),
                             Messages.getString("ChatLounge.SelectBotOrPlayer"));
@@ -2048,7 +2047,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     }
     
     private void removeBot() {
-        Client c = getSelectedClient();
+        AbstractClient c = getSelectedClient();
         if (!client().getBots().containsValue(c)) {
             LobbyErrors.showOnlyOwnBot(clientgui.frame);
             return;
@@ -2191,7 +2190,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     
     @Override
     public void ready() {
-        final TwGameClient client = clientgui.getClient();
+        final TwClient client = clientgui.getClient();
         final Game game = client.getGame();
         final GameOptions gOpts = game.getOptions();
         
@@ -2212,7 +2211,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 players.add(client.getLocalPlayer().getName());
             }
 
-            for (Client bc : clientgui.getBots().values()) {
+            for (AbstractClient bc : clientgui.getBots().values()) {
                 if ((game.getLiveCommandersOwnedBy(bc.getLocalPlayer()) < 1)
                         && (game.getEntitiesOwnedBy(bc.getLocalPlayer()) > 0)) {
                     players.add(bc.getLocalPlayer().getName());
@@ -2232,12 +2231,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         boolean done = !localPlayer().isDone();
         client.sendDone(done);
         refreshDoneButton(done);
-        for (Client botClient : clientgui.getBots().values()) {
+        for (AbstractClient botClient : clientgui.getBots().values()) {
             botClient.sendDone(done);
         }
     }
 
-    TwGameClient getSelectedClient() {
+    TwClient getSelectedClient() {
         if ((tablePlayers == null) || (tablePlayers.getSelectedRowCount() == 0)) {
             return null;
         }
@@ -2245,7 +2244,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         Player player = playerModel.getPlayerAt(tablePlayers.getSelectedRow());
         if (localPlayer().equals(player)) {
             return client();
-        } else return (TwGameClient) client().getBots().getOrDefault(player.getName(), null);
+        } else return (TwClient) client().getBots().getOrDefault(player.getName(), null);
     }
 
     /**
@@ -3598,7 +3597,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     }
     
     /** Convenience for clientgui.getClient() */
-    TwGameClient client() {
+    TwClient client() {
         return clientgui.getClient();
     }
     

@@ -24,8 +24,8 @@ import java.util.Vector;
 
 import javax.swing.*;
 
-import megamek.client.Client;
-import megamek.client.TwGameClient;
+import megamek.client.AbstractClient;
+import megamek.client.TwClient;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.Messages;
@@ -38,7 +38,7 @@ import megamek.common.enums.Gender;
  */
 public class RandomNameDialog extends JDialog implements ActionListener {
     private static final long serialVersionUID = -2459992981678758743L;
-    private Client client;
+    private AbstractClient client;
     private ClientGUI clientgui;
     private List<Entity> units;
 
@@ -105,7 +105,7 @@ public class RandomNameDialog extends JDialog implements ActionListener {
         chPlayer.setEnabled(true);
         chPlayer.addItem(clientName);
 
-        for (Iterator<Client> i = clientgui.getBots().values().iterator(); i.hasNext();) {
+        for (Iterator<AbstractClient> i = clientgui.getBots().values().iterator(); i.hasNext();) {
             chPlayer.addItem(i.next().getName());
         }
         if (chPlayer.getItemCount() == 1) {
@@ -141,13 +141,13 @@ public class RandomNameDialog extends JDialog implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ev) {
         if (ev.getSource().equals(butOkay)) {
-            TwGameClient c = null;
+            TwClient c = null;
             if (chPlayer.getSelectedIndex() > 0) {
                 String name = (String) chPlayer.getSelectedItem();
-                c = (TwGameClient) clientgui.getBots().get(name);
+                c = (TwClient) clientgui.getBots().get(name);
             }
             if (c == null) {
-                c = (TwGameClient) client;
+                c = (TwClient) client;
             }
             saveSettings();
             // go through all of the units provided for this player and assign random names
@@ -180,7 +180,7 @@ public class RandomNameDialog extends JDialog implements ActionListener {
         }
     }
 
-    public void setClient(Client client) {
+    public void setClient(AbstractClient client) {
         this.client = client;
     }
 

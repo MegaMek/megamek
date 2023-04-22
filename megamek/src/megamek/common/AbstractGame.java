@@ -91,4 +91,25 @@ public abstract class AbstractGame implements IGame {
     public List<InGameObject> getInGameObjects() {
         return new ArrayList<>(inGameObjects.values());
     }
+
+    @Override
+    public void replaceUnits(List<InGameObject> units) {
+        units.forEach(u -> inGameObjects.put(u.getId(), u));
+        processUnitReplace(units);
+    }
+
+    /**
+     * Override this method to do any client-side processing when the Client has to replace or add units
+     * by command of the server with newly sent ones.
+     * The units are already replaced in the Game's unit list when this method is called.
+     * Typical things to take care of are:
+     * <UL>
+     * <LI>  setting transient fields in the units (like the owner in Entity)    </LI>
+     * <LI>  updating client-side caches like a position cache    </LI>
+     * <LI>  firing events    </LI>
+     * </UL>
+     *
+     * @param units The units that replaced former units of the same id or were added
+     */
+    protected abstract void processUnitReplace(List<InGameObject> units);
 }

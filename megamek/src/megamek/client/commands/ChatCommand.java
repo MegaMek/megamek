@@ -1,14 +1,13 @@
 package megamek.client.commands;
 
-import megamek.client.Client;
-import megamek.client.TwGameClient;
+import megamek.client.TwClient;
 
 /**
  * A command that exist purely for the accessibility UI so that commands can be made as the default rather than chat.
  */
 public class ChatCommand extends ClientCommand {
 
-    public ChatCommand(TwGameClient client) {
+    public ChatCommand(TwClient client) {
         super(client, "say", "say <message>, sends message to chat.");
     }
 

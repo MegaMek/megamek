@@ -1,7 +1,6 @@
 package megamek.client.commands;
 
-import megamek.client.Client;
-import megamek.client.TwGameClient;
+import megamek.client.TwClient;
 import megamek.common.Entity;
 
 import java.util.LinkedList;
@@ -28,7 +27,7 @@ import java.util.Objects;
  */
 public class AssignNovaNetworkCommand extends ClientCommand {
 
-    public AssignNovaNetworkCommand(TwGameClient client) {
+    public AssignNovaNetworkCommand(TwClient client) {
         super(
                 client,
                 "nova",

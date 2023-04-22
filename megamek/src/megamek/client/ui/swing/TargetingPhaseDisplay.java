@@ -13,8 +13,7 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.client.Client;
-import megamek.client.TwGameClient;
+import megamek.client.TwClient;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
@@ -522,7 +521,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             clearAttacks();
             refreshAll();
         }
-        TwGameClient client = clientgui.getClient();
+        TwClient client = clientgui.getClient();
         if ((ce() != null) &&ce().isWeapOrderChanged()) {
             client.sendEntityWeaponOrderUpdate(ce());
         }
@@ -1240,7 +1239,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         if (isIgnoringEvents()) {
             return;
         }
-        final TwGameClient client = clientgui.getClient();
+        final TwClient client = clientgui.getClient();
 
         if (client.isMyTurn() && (b.getCoords() != null)
                 && (ce() != null) && !b.getCoords().equals(ce().getPosition())) {

@@ -18,8 +18,8 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.client.Client;
-import megamek.client.TwGameClient;
+import megamek.client.AbstractClient;
+import megamek.client.TwClient;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
 import megamek.client.ui.baseComponents.MMButton;
 import megamek.client.ui.baseComponents.MMComboBox;
@@ -87,7 +87,7 @@ public class SkillGenerationDialog extends AbstractButtonDialog {
                     resources.getString("SkillGenerationDialog.btnRandomize.toolTipText"),
                     evt -> {
                 getSkillGenerationOptionsPanel().updateClient();
-                final TwGameClient client = getSkillGenerationOptionsPanel().getClient();
+                final TwClient client = getSkillGenerationOptionsPanel().getClient();
                 for (final Entity entity : getEntities()) {
                     if (entity.getOwnerId() != client.getLocalPlayer().getId()) {
                         continue;
@@ -110,7 +110,7 @@ public class SkillGenerationDialog extends AbstractButtonDialog {
 
         final DefaultComboBoxModel<String> clientsModel = new DefaultComboBoxModel<>();
         clientsModel.addElement(getClientGUI().getClient().getName());
-        clientsModel.addAll(getClientGUI().getBots().values().stream().map(Client::getName)
+        clientsModel.addAll(getClientGUI().getBots().values().stream().map(AbstractClient::getName)
                 .collect(Collectors.toList()));
         final MMComboBox<String> comboClients = new MMComboBox<>("comboClients", clientsModel);
         comboClients.setToolTipText(resources.getString("comboClients.toolTipText"));
@@ -118,7 +118,7 @@ public class SkillGenerationDialog extends AbstractButtonDialog {
         comboClients.setEnabled(comboClients.getItemCount() > 1);
         comboClients.addActionListener(evt -> getSkillGenerationOptionsPanel().changeClient(
                 (comboClients.getSelectedIndex() > 0)
-                        ? (TwGameClient) getClientGUI().getBots().get(comboClients.getSelectedItem())
+                        ? (TwClient) getClientGUI().getBots().get(comboClients.getSelectedItem())
                         : getClientGUI().getClient()));
         panel.add(comboClients);
         return panel;

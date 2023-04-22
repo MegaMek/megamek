@@ -153,5 +153,29 @@ public interface IGame {
         return getInGameObjects().stream().filter(o -> idList.contains(o.getId())).collect(Collectors.toList());
     }
 
+    /**
+     * This is a Client-side method to replace or add units that are sent from the server. This method is called from
+     * AbstractClient and should typically not require an override.
+     *
+     * Adds the given units to the list of units or objects in the current game. When a unit's ID is already
+     * present the currently assigned unit will be replaced with the given new one.
+     *
+     * @param units The units to add or use as a replacement for current units.
+     */
+    void replaceUnits(List<InGameObject> units);
+
+    /**
+     * True when this InGameObject can be used as a game piece (may appear on the map) in this game type
+     * (e.g. Entity and SupplyCrate would be valid for a TW Game but AlphaStrikeElement or SBFFormation would not.
+     * For an SBF Game, SBF Formations and SBF Units would be valid but AlphaStrikeElement and Entity would not.)
+     * Ideally, to enable using the lobby for all types of games, all Game/Client/GameManager combinations should
+     * be able to handle all types of units during the lobby phase, but remove and prevent from adding them
+     * outside the lobby phase.
+     *
+     * @param object The InGameObject (unit or other) to test
+     * @return True when the InGameObject fits this type of Game and can appear as a game piece on the map
+     */
+    boolean isValidForGameType(InGameObject object);
+
     //endregion
 }

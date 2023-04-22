@@ -15,9 +15,9 @@
 package megamek.client.ui.swing;
 
 import megamek.MMConstants;
-import megamek.client.Client;
+import megamek.client.AbstractClient;
 import megamek.client.TimerSingleton;
-import megamek.client.TwGameClient;
+import megamek.client.TwClient;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
 import megamek.client.bot.princess.BehaviorSettings;
@@ -258,7 +258,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      */
     private JFileChooser dlgLoadList;
     private JFileChooser dlgSaveList;
-    private TwGameClient client;
+    private TwClient client;
 
     private File curfileBoardImage;
     private File curfileBoard;
@@ -336,7 +336,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      * clean up after itself as much as possible, but will not call
      * System.exit().
      */
-    public ClientGUI(TwGameClient client, MegaMekController c) {
+    public ClientGUI(TwClient client, MegaMekController c) {
         super(new BorderLayout());
         this.addComponentListener(this);
         this.client = client;
@@ -1868,7 +1868,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      *
      * @param c
      */
-    protected void loadListFile(Client c) {
+    protected void loadListFile(AbstractClient c) {
         loadListFile(c.getLocalPlayer());
     }
 
@@ -2273,7 +2273,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         public void gameEnd(GameEndEvent e) {
             bv.clearMovementData();
             bv.clearFieldofF();
-            for (Client client2 : getBots().values()) {
+            for (AbstractClient client2 : getBots().values()) {
                 client2.die();
             }
             getBots().clear();
@@ -2575,7 +2575,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         }
     };
 
-    public TwGameClient getClient() {
+    public TwClient getClient() {
         return client;
     }
 
@@ -2585,7 +2585,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      *
      * @return This Client's local bots mapped to their player name
      */
-    public Map<String, Client> getBots() {
+    public Map<String, AbstractClient> getBots() {
         return client.getBots();
     }
 

@@ -55,7 +55,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 
-public class TwGameClient extends Client {
+public class TwClient extends AbstractClient {
 
     /**
      * The game state object: this object is not ever replaced during a game, only updated. A
@@ -71,7 +71,7 @@ public class TwGameClient extends Client {
     private Vector<Coords> artilleryAutoHitHexes = null;
     private AbstractSkillGenerator skillGenerator;
 
-    public TwGameClient(String name, String host, int port) {
+    public TwClient(String name, String host, int port) {
         super(name, host, port);
         setSkillGenerator(new ModifiedTotalWarfareSkillGenerator());
         registerCommand(new HelpCommand(this));
@@ -689,19 +689,6 @@ public class TwGameClient extends Client {
         }
     }
 
-    protected void receiveEntityAdd(Packet packet) {
-        @SuppressWarnings(value = "unchecked")
-        List<Entity> entities = (List<Entity>) packet.getObject(0);
-        @SuppressWarnings(value = "unchecked")
-        List<Force> forces = (List<Force>) packet.getObject(1);
-
-        for (Force force : forces) {
-            game.getForces().replace(force.getId(), force);
-        }
-
-        game.addEntities(entities);
-    }
-
     protected void receiveEntityRemove(Packet packet) {
         @SuppressWarnings("unchecked")
         List<Integer> entityIds = (List<Integer>) packet.getObject(0);
@@ -982,9 +969,6 @@ public class TwGameClient extends Client {
                 break;
             case PRINCESS_SETTINGS:
                 game.setBotSettings((Map<String, BehaviorSettings>) packet.getObject(0));
-                break;
-            case ENTITY_ADD:
-                receiveEntityAdd(packet);
                 break;
             case ENTITY_UPDATE:
                 receiveEntityUpdate(packet);

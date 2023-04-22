@@ -19,8 +19,7 @@
 package megamek.client.ui.swing.lobby;
 
 import megamek.MegaMek;
-import megamek.client.Client;
-import megamek.client.TwGameClient;
+import megamek.client.TwClient;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
@@ -56,7 +55,7 @@ class LobbyMekCellFormatter {
     static String formatUnitFull(Entity entity, ChatLounge lobby, boolean forceView) {
         StringBuilder result = new StringBuilder("<HTML><NOBR>" + guiScaledFontHTML());
 
-        TwGameClient client = lobby.getClientgui().getClient();
+        TwClient client = lobby.getClientgui().getClient();
         Game game = client.getGame();
         GameOptions options = game.getOptions();
         Player localPlayer = client.getLocalPlayer();
@@ -445,7 +444,7 @@ class LobbyMekCellFormatter {
      * for the compact display mode. Assumes that no enemy or blind-drop-hidden units are provided. 
      */
     static String formatUnitCompact(Entity entity, ChatLounge lobby, boolean forceView) {
-        TwGameClient client = lobby.getClientgui().getClient();
+        TwClient client = lobby.getClientgui().getClient();
         Game game = client.getGame();
         GameOptions options = game.getOptions();
         Player localPlayer = client.getLocalPlayer();
@@ -756,7 +755,7 @@ class LobbyMekCellFormatter {
     }
     
     private static String formatForce(Force force, ChatLounge lobby, float size) {
-        TwGameClient client = lobby.getClientgui().getClient();
+        TwClient client = lobby.getClientgui().getClient();
         Game game = client.getGame();
         Player localPlayer = client.getLocalPlayer();
         int ownerId = game.getForces().getOwnerId(force);

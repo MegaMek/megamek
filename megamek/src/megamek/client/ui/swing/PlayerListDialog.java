@@ -14,7 +14,7 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.client.Client;
+import megamek.client.AbstractClient;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.IGame;
@@ -39,12 +39,12 @@ public class PlayerListDialog extends JDialog implements ActionListener, IPrefer
 
     private JList<String> playerList = new JList<>(new DefaultListModel<>());
 
-    private Client client;
+    private AbstractClient client;
     private JButton butOkay;
     private boolean modal;
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
-    public PlayerListDialog(JFrame parent, Client client, boolean modal) {
+    public PlayerListDialog(JFrame parent, AbstractClient client, boolean modal) {
         super(parent, "", false);
         this.setTitle(Messages.getString("PlayerListDialog.title"));
         this.client = client;
@@ -87,7 +87,7 @@ public class PlayerListDialog extends JDialog implements ActionListener, IPrefer
     }
 
     public void refreshPlayerList(JList<String> playerList,
-            Client client) {
+            AbstractClient client) {
         refreshPlayerList(playerList, client, false);
     }
 
@@ -103,7 +103,7 @@ public class PlayerListDialog extends JDialog implements ActionListener, IPrefer
      * object.
      */
     public void refreshPlayerList(JList<String> playerList,
-            Client client, boolean displayTeam) {
+                                  AbstractClient client, boolean displayTeam) {
         ((DefaultListModel<String>) playerList.getModel()).removeAllElements();
 
         for (Player player : sortedPlayerList(client.getIGame())) {

@@ -21,8 +21,7 @@
 package megamek.client.ui.swing.minimap;
 
 import megamek.MMConstants;
-import megamek.client.Client;
-import megamek.client.TwGameClient;
+import megamek.client.TwClient;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.event.BoardViewListenerAdapter;
@@ -108,7 +107,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
     private final Game game;
     private Board board;
     private final JDialog dialog;
-    private TwGameClient client;
+    private TwClient client;
     private final ClientGUI clientGui;
     
     private int margin = MARGIN;

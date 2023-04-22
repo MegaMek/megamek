@@ -13,11 +13,10 @@
  */
 package megamek.client.bot;
 
-import megamek.client.Client;
-import megamek.client.TwGameClient;
+import megamek.client.AbstractClient;
+import megamek.client.TwClient;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.ReportDisplay;
 import megamek.common.*;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
@@ -36,7 +35,7 @@ import javax.swing.*;
 import java.io.*;
 import java.util.*;
 
-public abstract class BotClient extends TwGameClient {
+public abstract class BotClient extends TwClient {
     public static final int BOT_TURN_RETRY_COUNT = 3;
 
     private List<Entity> currentTurnEnemyEntities;
@@ -1148,7 +1147,7 @@ public abstract class BotClient extends TwGameClient {
         // If we have a clientgui, it keeps track of a Name -> Client map, and
         //  we need to update that map with this name change.
         if (getClientGUI() != null) {
-            Map<String, Client> bots = getClientGUI().getBots();
+            Map<String, AbstractClient> bots = getClientGUI().getBots();
             String oldName = getName();
             String newName = (String) (inP.getObject(0));
             if (!this.equals(bots.get(oldName))) {

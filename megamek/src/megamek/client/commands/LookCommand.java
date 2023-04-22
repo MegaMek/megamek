@@ -1,7 +1,6 @@
 package megamek.client.commands;
 
-import megamek.client.Client;
-import megamek.client.TwGameClient;
+import megamek.client.TwClient;
 import megamek.common.Coords;
 import megamek.common.Hex;
 
@@ -19,7 +18,7 @@ public class LookCommand extends ClientCommand {
         directions.add("NW");
     }
 
-    public LookCommand(TwGameClient client) {
+    public LookCommand(TwClient client) {
         super(client, "look", "Look around the current hex.");
     }
 

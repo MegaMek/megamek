@@ -13,8 +13,8 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.client.Client;
-import megamek.client.TwGameClient;
+import megamek.client.AbstractClient;
+import megamek.client.TwClient;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.event.*;
@@ -34,7 +34,7 @@ import java.util.LinkedList;
  */
 public class ChatterBox implements KeyListener, IPreferenceChangeListener {
     public static final int MAX_HISTORY = 10;
-    TwGameClient client;
+    TwClient client;
 
     private JPanel chatPanel;
     JTextArea chatArea;
@@ -220,7 +220,7 @@ public class ChatterBox implements KeyListener, IPreferenceChangeListener {
             history.addFirst(inputField.getText());
             historyBookmark = -1;
 
-            if (!inputField.getText().startsWith(Client.CLIENT_COMMAND)) {
+            if (!inputField.getText().startsWith(AbstractClient.CLIENT_COMMAND)) {
                 client.sendChat(inputField.getText());
             } else {
                 systemMessage(client.runCommand(inputField.getText()));

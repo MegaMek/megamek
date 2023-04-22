@@ -13,8 +13,7 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.client.Client;
-import megamek.client.TwGameClient;
+import megamek.client.TwClient;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.common.*;
@@ -122,9 +121,9 @@ public class EquipChoicePanel extends JPanel {
     private JComboBox<String> choC3 = new JComboBox<>();
 
     ClientGUI clientgui;
-    TwGameClient client;
+    TwClient client;
 
-    public EquipChoicePanel(Entity entity, ClientGUI clientgui, TwGameClient client) {
+    public EquipChoicePanel(Entity entity, ClientGUI clientgui, TwClient client) {
         this.entity = entity;
         this.clientgui = clientgui;
         this.client = client;

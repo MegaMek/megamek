@@ -14,7 +14,7 @@
  */
 package megamek.client.bot;
 
-import megamek.client.Client;
+import megamek.client.AbstractClient;
 import megamek.client.ui.SharedUtility;
 import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
@@ -1049,7 +1049,7 @@ public class CEntity {
         return entity.getId();
     }
 
-    public MoveOption.Table getAllMoves(Client client) {
+    public MoveOption.Table getAllMoves(AbstractClient client) {
         if (moves == null) {
             moves = calculateMoveOptions(current, client);
         }
@@ -1060,7 +1060,7 @@ public class CEntity {
      * From the current state, explore based upon an implementation of
      * Dijkstra's algorithm.
      */
-    protected MoveOption.Table calculateMoveOptions(MoveOption base, Client client) {
+    protected MoveOption.Table calculateMoveOptions(MoveOption base, AbstractClient client) {
         // New array of movement options
         ArrayList<MoveOption> possible = new ArrayList<>();
         MoveOption.Table discovered = new MoveOption.Table();
@@ -1158,7 +1158,7 @@ public class CEntity {
     /**
      * find all moves that get into dest
      */
-    public ArrayList<MoveOption> findMoves(Coords dest, Client client) {
+    public ArrayList<MoveOption> findMoves(Coords dest, AbstractClient client) {
         ArrayList<MoveOption> result = new ArrayList<>();
         for (int i = 0; i < 6; i++) {
             for (int j = 1; j < 2; j++) {

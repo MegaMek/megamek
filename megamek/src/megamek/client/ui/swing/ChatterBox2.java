@@ -15,7 +15,7 @@
 package megamek.client.ui.swing;
 
 import megamek.MMConstants;
-import megamek.client.Client;
+import megamek.client.AbstractClient;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.util.CommandAction;
@@ -110,7 +110,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable, IPreferenceChange
 
     private Vector<String> messages = new Vector<>();
 
-    private Client client;
+    private AbstractClient client;
     private BoardView bv;
 
     private Image upbutton;

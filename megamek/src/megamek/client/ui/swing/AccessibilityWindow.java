@@ -19,8 +19,8 @@
 package megamek.client.ui.swing;
 
 import megamek.MMConstants;
-import megamek.client.Client;
-import megamek.client.TwGameClient;
+import megamek.client.AbstractClient;
+import megamek.client.TwClient;
 import megamek.client.ui.Messages;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -39,7 +39,7 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
     public static final int MAX_HISTORY = 10;
     public static final String ACCESSIBLE_GUI_SHORTCUT = ".";
 
-    TwGameClient client;
+    TwClient client;
     ClientGUI gui;
     JTextArea chatArea;
 
@@ -220,14 +220,14 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
             history.addFirst(inputField.getText());
             historyBookmark = -1;
 
-            if (inputField.getText().startsWith(Client.CLIENT_COMMAND)) {
+            if (inputField.getText().startsWith(AbstractClient.CLIENT_COMMAND)) {
                 systemEvent(client.runCommand(inputField.getText()));
             } else if (inputField.getText().startsWith(ACCESSIBLE_GUI_SHORTCUT)) {
                 processAccessibleGUI();
                 systemEvent("Selected " + selectedTarget.toFriendlyString() + " in the GUI.");
             } else {
                 // default to running commands in the accesibility window, added a say command for chat.
-                systemEvent(client.runCommand(Client.CLIENT_COMMAND + inputField.getText()));
+                systemEvent(client.runCommand(AbstractClient.CLIENT_COMMAND + inputField.getText()));
             }
             inputField.setText("");
 

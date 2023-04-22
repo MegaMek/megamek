@@ -13,13 +13,12 @@
  */
 package megamek.common.actions;
 
-import megamek.client.Client;
-import megamek.client.TwGameClient;
+import megamek.client.TwClient;
 
 public interface EntityAction {
     int getEntityId();
 
     void setEntityId(int entityId);
 
-    String toDisplayableString(TwGameClient client);
+    String toDisplayableString(TwClient client);
 }

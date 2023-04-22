@@ -19,7 +19,7 @@ package megamek.client.ui.swing;
 import megamek.MMConstants;
 import megamek.MegaMek;
 import megamek.Version;
-import megamek.client.TwGameClient;
+import megamek.client.TwClient;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
 import megamek.client.bot.princess.Princess;
@@ -87,7 +87,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     private static final String FILENAME_ICON_256X256 = "megamek-icon-256x256.png";
 
     private JFrame frame;
-    private TwGameClient client;
+    private TwClient client;
     private Server server;
     private GameManager gameManager;
     private CommonAboutDialog about;
@@ -458,7 +458,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             return;
         }
 
-        client = new TwGameClient(playerName, serverAddress, port);
+        client = new TwClient(playerName, serverAddress, port);
         ClientGUI gui = new ClientGUI(client, controller);
         controller.clientgui = gui;
         frame.setCursor(new Cursor(Cursor.WAIT_CURSOR));

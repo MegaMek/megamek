@@ -14,8 +14,7 @@
 
 package megamek.common.actions;
 
-import megamek.client.Client;
-import megamek.client.TwGameClient;
+import megamek.client.TwClient;
 
 import java.io.Serializable;
 
@@ -45,7 +44,7 @@ public abstract class AbstractEntityAction implements Serializable,
     }
 
     @Override
-    public String toDisplayableString(TwGameClient client) {
+    public String toDisplayableString(TwClient client) {
         return this.toString();
     }
 }

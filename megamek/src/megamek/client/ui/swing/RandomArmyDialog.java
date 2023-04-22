@@ -14,8 +14,8 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.client.Client;
-import megamek.client.TwGameClient;
+import megamek.client.AbstractClient;
+import megamek.client.TwClient;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.client.generator.RandomUnitGenerator;
@@ -60,7 +60,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
     private static final String CARD_FORCE_TREE = "card_force_tree";
     
     private ClientGUI m_clientgui;
-    private TwGameClient m_client;
+    private TwClient m_client;
     AdvancedSearchDialog2 asd;
 
     private MechSearchFilter searchFilter;
@@ -602,10 +602,10 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
             } else {
                 ArrayList<Entity> entities = new ArrayList<>(
                         armyModel.getAllUnits().size());
-                TwGameClient c = null;
+                TwClient c = null;
                 if (m_chPlayer.getSelectedIndex() > 0) {
                     String name = (String) m_chPlayer.getSelectedItem();
-                    c = (TwGameClient) m_clientgui.getBots().get(name);
+                    c = (TwClient) m_clientgui.getBots().get(name);
                 }
                 if (c == null) {
                     c = m_client;
@@ -854,7 +854,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         m_chPlayer.removeAllItems();
         m_chPlayer.setEnabled(true);
         m_chPlayer.addItem(clientName);
-        for (Client client : m_clientgui.getBots().values()) {
+        for (AbstractClient client : m_clientgui.getBots().values()) {
             Player player = m_client.getGame().getPlayer(client.getLocalPlayerNumber());
 
             if (!player.isObserver()) {

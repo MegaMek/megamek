@@ -18,8 +18,7 @@
  */
 package megamek.client.ui.panels;
 
-import megamek.client.Client;
-import megamek.client.TwGameClient;
+import megamek.client.TwClient;
 import megamek.client.generator.enums.SkillGeneratorMethod;
 import megamek.client.generator.enums.SkillGeneratorType;
 import megamek.client.ui.baseComponents.AbstractPanel;
@@ -38,7 +37,7 @@ import java.util.Objects;
 public class SkillGenerationOptionsPanel extends AbstractPanel {
     //region Variable Declarations
     private final ClientGUI clientGUI;
-    private TwGameClient client;
+    private TwClient client;
     private TipCombo<SkillGeneratorMethod> comboMethod;
     private TipCombo<SkillGeneratorType> comboType;
     private TipCombo<SkillLevel> comboSkillLevel;
@@ -47,7 +46,7 @@ public class SkillGenerationOptionsPanel extends AbstractPanel {
 
     //region Constructors
     public SkillGenerationOptionsPanel(final JFrame frame, final ClientGUI clientGUI,
-                                       final @Nullable TwGameClient client) {
+                                       final @Nullable TwClient client) {
         super(frame, "SkillGenerationOptionsPanel");
         this.clientGUI = clientGUI;
         setClient((client == null) ? getClientGUI().getClient() : client);
@@ -60,11 +59,11 @@ public class SkillGenerationOptionsPanel extends AbstractPanel {
         return clientGUI;
     }
 
-    public TwGameClient getClient() {
+    public TwClient getClient() {
         return client;
     }
 
-    public void setClient(final TwGameClient client) {
+    public void setClient(final TwClient client) {
         this.client = client;
     }
 
@@ -211,7 +210,7 @@ public class SkillGenerationOptionsPanel extends AbstractPanel {
     }
     //endregion Initialization
 
-    public void changeClient(final @Nullable TwGameClient client) {
+    public void changeClient(final @Nullable TwClient client) {
         if ((client == null) || client.getName().equalsIgnoreCase(getClient().getName())) {
             return;
         }

@@ -28,6 +28,7 @@ import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.swing.StatusBarPhaseDisplay.PhaseCommand;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.KeyCommandBind;
+import megamek.client.ui.swing.util.PlayerColour;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.common.Configuration;
@@ -272,31 +273,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private ColourSelectorButton csbCautionColor;
     private ColourSelectorButton csbPrecautionColor;
 
-    private ColourSelectorButton csbPlayerColourBlue;
-    private ColourSelectorButton csbPlayerColourRed;
-    private ColourSelectorButton csbPlayerColourGreen;
-    private ColourSelectorButton csbPlayerColourCyan;
-    private ColourSelectorButton csbPlayerColourPink;
-    private ColourSelectorButton csbPlayerColourOrange;
-    private ColourSelectorButton csbPlayerColourGray;
-    private ColourSelectorButton csbPlayerColourBrown;
-    private ColourSelectorButton csbPlayerColourPurple;
-    private ColourSelectorButton csbPlayerColourTurquoise;
-    private ColourSelectorButton csbPlayerColourMaroon;
-    private ColourSelectorButton csbPlayerColourSpringGreen;
-    private ColourSelectorButton csbPlayerColourGold;
-    private ColourSelectorButton csbPlayerColourSienna;
-    private ColourSelectorButton csbPlayerColourViolet;
-    private ColourSelectorButton csbPlayerColourNavy;
-    private ColourSelectorButton csbPlayerColourOliveDrab;
-    private ColourSelectorButton csbPlayerColourFuchsia;
-    private ColourSelectorButton csbPlayerColourFireBrick;
-    private ColourSelectorButton csbPlayerColourDarkGoldenRod;
-    private ColourSelectorButton csbPlayerColourCoral;
-    private ColourSelectorButton csbPlayerColourChartreuse;
-    private ColourSelectorButton csbPlayerColourDeepPurple;
-    private ColourSelectorButton csbPlayerColourYellow;
-
+    ArrayList<PlayerColourHelper> playerColours;
 
     private JComboBox unitDisplayAutoDisplayReportCombo;
     private JComboBox unitDisplayAutoDisplayNonReportCombo;
@@ -1243,6 +1220,46 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         return createSettingsPanel(comps);
     }
 
+    private static class PlayerColourHelper {
+        PlayerColour pc;
+        ColourSelectorButton csb;
+
+        public PlayerColourHelper(PlayerColour pc, ColourSelectorButton csb) {
+            this.pc = pc;
+            this.csb = csb;
+        }
+    }
+
+    private JPanel getPlayerColourPanel() {
+        List<List<Component>> comps = new ArrayList<>();
+        ArrayList<Component> row;
+
+        playerColours = new ArrayList<>();
+
+        row = new ArrayList<>();
+        JLabel playerColourLabel = new JLabel(Messages.getString("CommonSettingsDialog.playerColour"));
+        playerColourLabel.setToolTipText(Messages.getString("CommonSettingsDialog.playerColour.tooltip"));
+        row.add(playerColourLabel);
+        comps.add(row);
+
+        for (PlayerColour pc : PlayerColour.values()) {
+            ColourSelectorButton csb = new ColourSelectorButton("");
+            csb.setToolTipText(Messages.getString("CommonSettingsDialog.playerColour.tooltip"));
+            playerColours.add(new PlayerColourHelper(pc, csb));
+        }
+
+        row = new ArrayList<>();
+
+        for (PlayerColourHelper pch : playerColours) {
+            pch.csb.setColour(GUIP.getColor(pch.pc.getText()));
+            row.add(pch.csb);
+        }
+
+        comps.add(row);
+
+        return createSettingsPanel(comps);
+    }
+
     private JPanel getSettingsPanel() {
         List<List<Component>> comps = new ArrayList<>();
         ArrayList<Component> row;
@@ -1320,87 +1337,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         addLineSpacer(comps);
 
         row = new ArrayList<>();
-        csbPlayerColourBlue = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.PlayerColourBlue"));
-        csbPlayerColourBlue.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_BLUE));
-        row.add(csbPlayerColourBlue);
-        csbPlayerColourRed = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.PlayerColourRed"));
-        csbPlayerColourRed.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_RED));
-        row.add(csbPlayerColourRed);
-        csbPlayerColourGreen = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.PlayerColourGreen"));
-        csbPlayerColourGreen.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_GREEN));
-        row.add(csbPlayerColourGreen);
-        csbPlayerColourCyan = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.PlayerColourCyan"));
-        csbPlayerColourCyan.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_CYAN));
-        row.add(csbPlayerColourCyan);
-        csbPlayerColourPink = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.PlayerColourPink"));
-        csbPlayerColourPink.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_PINK));
-        row.add(csbPlayerColourPink);
-        csbPlayerColourOrange = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.PlayerColourOrange"));
-        csbPlayerColourOrange.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_ORANGE));
-        row.add(csbPlayerColourOrange);
-        comps.add(row);
-
-        row = new ArrayList<>();
-        csbPlayerColourGray = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.PlayerColourGray"));
-        csbPlayerColourGray.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_GRAY));
-        row.add(csbPlayerColourGray);
-        csbPlayerColourBrown = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.PlayerColourBrown"));
-        csbPlayerColourBrown.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_BROWN));
-        row.add(csbPlayerColourBrown);
-        csbPlayerColourPurple = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.PlayerColourPurple"));
-        csbPlayerColourPurple.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_PURPLE));
-        row.add(csbPlayerColourPurple);
-        csbPlayerColourTurquoise = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.PlayerColourTurquoise"));
-        csbPlayerColourTurquoise.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_TURQUOISE));
-        row.add(csbPlayerColourTurquoise);
-        csbPlayerColourMaroon = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.PlayerColourMaroon"));
-        csbPlayerColourMaroon.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_MAROON));
-        row.add(csbPlayerColourMaroon);
-        csbPlayerColourSpringGreen = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.PlayerColourSpringGreen"));
-        csbPlayerColourSpringGreen.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_SPRING_GREEN));
-        row.add(csbPlayerColourSpringGreen);
-        comps.add(row);
-
-        row = new ArrayList<>();
-        csbPlayerColourGold = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.PlayerColourGold"));
-        csbPlayerColourGold.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_GOLD));
-        row.add(csbPlayerColourGold);
-        csbPlayerColourSienna = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.PlayerColourSienna"));
-        csbPlayerColourSienna.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_SIENNA));
-        row.add(csbPlayerColourSienna);
-        csbPlayerColourViolet = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.PlayerColourViolet"));
-        csbPlayerColourViolet.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_VIOLET));
-        row.add(csbPlayerColourViolet);
-        csbPlayerColourNavy = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.PlayerColourNavy"));
-        csbPlayerColourNavy.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_NAVY));
-        row.add(csbPlayerColourNavy);
-        csbPlayerColourOliveDrab = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.PlayerColourOliveDrab"));
-        csbPlayerColourOliveDrab.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_OLIVE_DRAB));
-        row.add(csbPlayerColourOliveDrab);
-        csbPlayerColourFuchsia = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.PlayerColourFuchsia"));
-        csbPlayerColourFuchsia.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_FUCHSIA));
-        row.add(csbPlayerColourFuchsia);
-        comps.add(row);
-
-        row = new ArrayList<>();
-        csbPlayerColourFireBrick = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.PlayerColourFireBrick"));
-        csbPlayerColourFireBrick.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_FIRE_BRICK));
-        row.add(csbPlayerColourFireBrick);
-        csbPlayerColourDarkGoldenRod = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.PlayerColourDarkGoldenRod"));
-        csbPlayerColourDarkGoldenRod.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_DARK_GOLDEN_ROD));
-        row.add(csbPlayerColourDarkGoldenRod);
-        csbPlayerColourCoral = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.PlayerColourCoral"));
-        csbPlayerColourCoral.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_CORAL));
-        row.add(csbPlayerColourCoral);
-        csbPlayerColourChartreuse = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.PlayerColourChartreuse"));
-        csbPlayerColourChartreuse.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_CHARTREUSE));
-        row.add(csbPlayerColourChartreuse);
-        csbPlayerColourDeepPurple = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.PlayerColourDeepPurple"));
-        csbPlayerColourDeepPurple.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_DEEP_PURPLE));
-        row.add(csbPlayerColourDeepPurple);
-        csbPlayerColourYellow = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.PlayerColourYellow"));
-        csbPlayerColourYellow.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_YELLOW));
-        row.add(csbPlayerColourYellow);
+        row.add(getPlayerColourPanel());
         comps.add(row);
 
         addLineSpacer(comps);
@@ -1725,36 +1662,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         csbCautionColor.setColour(GUIP.getCautionColor());
         csbPrecautionColor.setColour(GUIP.getPrecautionColor());
 
-        csbPlayerColourBlue.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_BLUE));
-        csbPlayerColourRed.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_RED));
-        csbPlayerColourGreen.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_GREEN));
-        csbPlayerColourCyan.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_CYAN));
-        csbPlayerColourPink.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_PINK));
-        csbPlayerColourOrange.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_ORANGE));
-
-        csbPlayerColourGray.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_BLUE));
-        csbPlayerColourBrown.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_BROWN));
-        csbPlayerColourPurple.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_PURPLE));
-        csbPlayerColourTurquoise.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_TURQUOISE));
-        csbPlayerColourMaroon.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_MAROON));
-        csbPlayerColourSpringGreen.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_SPRING_GREEN));
-
-        csbPlayerColourGold.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_GOLD));
-        csbPlayerColourSienna.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_SIENNA));
-        csbPlayerColourViolet.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_VIOLET));
-        csbPlayerColourNavy.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_NAVY));
-        csbPlayerColourOliveDrab.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_OLIVE_DRAB));
-        csbPlayerColourFuchsia.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_FUCHSIA));
-
-        csbPlayerColourFireBrick.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_FIRE_BRICK));
-        csbPlayerColourDarkGoldenRod.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_DARK_GOLDEN_ROD));
-        csbPlayerColourCoral.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_CORAL));
-        csbPlayerColourChartreuse.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_CHARTREUSE));
-        csbPlayerColourDeepPurple.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_DEEP_PURPLE));
-        csbPlayerColourYellow.setColour(GUIP.getColor(GUIP.PLAYERCOLOUR_YELLOW));
-
-
-
+        for (PlayerColourHelper pch : playerColours) {
+            pch.csb.setColour(GUIP.getColor(pch.pc.getText()));
+        }
 
         csbMoveDefaultColor.setColour(GUIP.getMoveDefaultColor());
         csbMoveIllegalColor.setColour(GUIP.getMoveIllegalColor());
@@ -1901,33 +1811,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setCautionColor(csbCautionColor.getColour());
         GUIP.setPrecautionColor(csbPrecautionColor.getColour());
 
-        GUIP.setColor(GUIP.PLAYERCOLOUR_BLUE, csbPlayerColourBlue.getColour());
-        GUIP.setColor(GUIP.PLAYERCOLOUR_RED, csbPlayerColourRed.getColour());
-        GUIP.setColor(GUIP.PLAYERCOLOUR_GREEN, csbPlayerColourGreen.getColour());
-        GUIP.setColor(GUIP.PLAYERCOLOUR_CYAN, csbPlayerColourCyan.getColour());
-        GUIP.setColor(GUIP.PLAYERCOLOUR_PINK, csbPlayerColourPink.getColour());
-        GUIP.setColor(GUIP.PLAYERCOLOUR_ORANGE, csbPlayerColourOrange.getColour());
-
-        GUIP.setColor(GUIP.PLAYERCOLOUR_GRAY, csbPlayerColourGray.getColour());
-        GUIP.setColor(GUIP.PLAYERCOLOUR_BROWN, csbPlayerColourBrown.getColour());
-        GUIP.setColor(GUIP.PLAYERCOLOUR_PURPLE, csbPlayerColourPurple.getColour());
-        GUIP.setColor(GUIP.PLAYERCOLOUR_TURQUOISE, csbPlayerColourTurquoise.getColour());
-        GUIP.setColor(GUIP.PLAYERCOLOUR_MAROON, csbPlayerColourMaroon.getColour());
-        GUIP.setColor(GUIP.PLAYERCOLOUR_SPRING_GREEN, csbPlayerColourSpringGreen.getColour());
-
-        GUIP.setColor(GUIP.PLAYERCOLOUR_GOLD, csbPlayerColourGold.getColour());
-        GUIP.setColor(GUIP.PLAYERCOLOUR_SIENNA, csbPlayerColourSienna.getColour());
-        GUIP.setColor(GUIP.PLAYERCOLOUR_VIOLET, csbPlayerColourViolet.getColour());
-        GUIP.setColor(GUIP.PLAYERCOLOUR_NAVY, csbPlayerColourNavy.getColour());
-        GUIP.setColor(GUIP.PLAYERCOLOUR_OLIVE_DRAB, csbPlayerColourOliveDrab.getColour());
-        GUIP.setColor(GUIP.PLAYERCOLOUR_FUCHSIA, csbPlayerColourFuchsia.getColour());
-
-        GUIP.setColor(GUIP.PLAYERCOLOUR_FIRE_BRICK, csbPlayerColourFireBrick.getColour());
-        GUIP.setColor(GUIP.PLAYERCOLOUR_DARK_GOLDEN_ROD, csbPlayerColourDarkGoldenRod.getColour());
-        GUIP.setColor(GUIP.PLAYERCOLOUR_CORAL, csbPlayerColourCoral.getColour());
-        GUIP.setColor(GUIP.PLAYERCOLOUR_CHARTREUSE, csbPlayerColourChartreuse.getColour());
-        GUIP.setColor(GUIP.PLAYERCOLOUR_DEEP_PURPLE, csbPlayerColourDeepPurple.getColour());
-        GUIP.setColor(GUIP.PLAYERCOLOUR_YELLOW, csbPlayerColourYellow.getColour());
+        for (PlayerColourHelper pch : playerColours) {
+            GUIP.setColor(pch.pc.getText(), pch.csb.getColour());
+        }
 
         GUIP.setMoveDefaultColor(csbMoveDefaultColor.getColour());
         GUIP.setMoveIllegalColor(csbMoveIllegalColor.getColour());

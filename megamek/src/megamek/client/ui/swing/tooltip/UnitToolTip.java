@@ -479,10 +479,10 @@ public final class UnitToolTip {
             if (isNotTTRelevant(wtype)) {
                 continue;
             }
+
             String weapDesc = curWp.getDesc();
 
-            // location info is only useful units with more than one location
-            if (entity.locations() > 1) {
+            if (GUIP.getShowWpsLocinTT() && (entity.locations() > 1)) {
                 weapDesc += " ["+entity.getLocationAbbr(curWp.getLocation()) + ']';
             }
 

@@ -25,7 +25,7 @@ import megamek.common.Player;
 
 import java.util.*;
 
-public interface Client {
+public interface IClient {
 
     //region Server Connection
 

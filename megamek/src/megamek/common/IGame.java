@@ -165,7 +165,7 @@ public interface IGame {
     void replaceUnits(List<InGameObject> units);
 
     /**
-     * True when this InGameObject can be used as a game piece (may appear on the map) in this game type
+     * True when the given InGameObject can be used as a game piece (may appear on the map) in this game type
      * (e.g. Entity and SupplyCrate would be valid for a TW Game but AlphaStrikeElement or SBFFormation would not.
      * For an SBF Game, SBF Formations and SBF Units would be valid but AlphaStrikeElement and Entity would not.)
      * Ideally, to enable using the lobby for all types of games, all Game/Client/GameManager combinations should

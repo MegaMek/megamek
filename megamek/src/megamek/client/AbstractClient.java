@@ -40,7 +40,7 @@ import java.util.*;
  * This class is instantiated for each client and for each bot running on that
  * client. non-local clients are not also instantiated on the local server.
  */
-public abstract class AbstractClient implements Client {
+public abstract class AbstractClient implements IClient {
     public static final String CLIENT_COMMAND = "#";
 
     // Server connection information

@@ -1610,9 +1610,7 @@ public class GameManager implements IGameManager {
         addReport(new Report(1210, Report.PUBLIC));
 
         // Show player BVs
-        Enumeration<Player> players2 = game.getPlayers();
-        while (players2.hasMoreElements()) {
-            Player player = players2.nextElement();
+        for (Player player : game.getPlayersList()) {
             // Observers without initial entities get ignored
             if (player.isObserver() && (player.getInitialEntityCount() == 0)) {
                 continue;

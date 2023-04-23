@@ -332,6 +332,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private final JCheckBox planetaryConditionsShowLabels = new JCheckBox(Messages.getString("CommonSettingsDialog.planetaryConditionsShowLabels"));
     private final JCheckBox planetaryConditionsShowValues = new JCheckBox(Messages.getString("CommonSettingsDialog.planetaryConditionsShowValues"));
     private final JCheckBox planetaryConditionsShowIndicators = new JCheckBox(Messages.getString("CommonSettingsDialog.planetaryConditionsShowIndicators"));
+    private JTextField planetaryConditionsBackgroundTransparency;
 
     /** Maps command strings to a JTextField for updating the modifier for the command. */
     private Map<String, JTextField> cmdModifierMap;
@@ -1204,6 +1205,16 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         comps.add(checkboxEntry(planetaryConditionsShowIndicators, null));
         planetaryConditionsShowIndicators.setSelected(GUIP.getPlanetaryConditionsShowIndicators());
 
+        planetaryConditionsBackgroundTransparency = new JTextField(4);
+        planetaryConditionsBackgroundTransparency.setMaximumSize(new Dimension(150, 40));
+        JLabel planetaryConditionsBackgroundTransparencyLabel = new JLabel(Messages.getString("CommonSettingsDialog.colors.PlanetaryConditionsBackgroundTransparency"));
+        row = new ArrayList<>();
+        row.add(planetaryConditionsBackgroundTransparency);
+        row.add(planetaryConditionsBackgroundTransparencyLabel);
+        planetaryConditionsBackgroundTransparency.setText(String.format("%d", GUIP.getPlanetaryConditionsBackgroundTransparency()));
+        planetaryConditionsBackgroundTransparency.setToolTipText(Messages.getString("CommonSettingsDialog.colors.PlanetaryConditionsBackgroundTransparency.tooltip"));
+        comps.add(row);
+
         return createSettingsPanel(comps);
     }
 
@@ -1723,6 +1734,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         planetaryConditionsShowLabels.setSelected(GUIP.getPlanetaryConditionsShowLabels());
         planetaryConditionsShowValues.setSelected(GUIP.getPlanetaryConditionsShowValues());
         planetaryConditionsShowIndicators.setSelected(GUIP.getPlanetaryConditionsShowIndicators());
+        planetaryConditionsBackgroundTransparency.setText(String.format("%d", GUIP.getPlanetaryConditionsBackgroundTransparency()));
 
         setVisible(false);
     }
@@ -2162,6 +2174,11 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setPlanetaryConditionsShowLabels(planetaryConditionsShowLabels.isSelected());
         GUIP.setPlanetaryConditionsShowValues(planetaryConditionsShowValues.isSelected());
         GUIP.setPlanetaryConditionsShowIndicators(planetaryConditionsShowIndicators.isSelected());
+        try {
+            GUIP.setPlanetaryConditionsBackgroundTransparency(Integer.parseInt(planetaryConditionsBackgroundTransparency.getText()));
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
+        }
 
         setVisible(false);
     }

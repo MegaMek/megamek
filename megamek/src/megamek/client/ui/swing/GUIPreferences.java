@@ -100,6 +100,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String PLANETARY_CONDITIONS_SHOW_LABELS = "PlanetaryConditionsShowLabels";
     public static final String PLANETARY_CONDITIONS_SHOW_VALUES = "PlanetaryConditionsShowValues";
     public static final String PLANETARY_CONDITIONS_SHOW_INDICATORS = "PlanetaryConditionsShowIndicators";
+    public static final String PLANETARY_CONDITIONS_BACKGROUND_TRANSPARENCY = "PlanetaryConditionsBackgroundTransparency";
 
     public static final String PLAYERS_REMAINING_TO_SHOW = "PlayersRemainingToShow";
     public static final String BUTTONS_PER_ROW = "ButtonsPerRow";
@@ -412,6 +413,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(PLANETARY_CONDITIONS_SHOW_LABELS, true);
         setDefault(PLANETARY_CONDITIONS_SHOW_VALUES, true);
         setDefault(PLANETARY_CONDITIONS_SHOW_INDICATORS, true);
+        setDefault(PLANETARY_CONDITIONS_BACKGROUND_TRANSPARENCY, 200);
 
         setDefault(WARNING_COLOR, DEFAULT_RED);
         setDefault(CAUTION_COLOR, Color.yellow);
@@ -2657,6 +2659,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return getBoolean(PLANETARY_CONDITIONS_SHOW_INDICATORS);
     }
 
+    public int getPlanetaryConditionsBackgroundTransparency() {
+        return getInt(PLANETARY_CONDITIONS_BACKGROUND_TRANSPARENCY);
+    }
+
     public void setPlanetaryConditionsColorTitle(Color color) {
         store.setValue(PLANETARY_CONDITIONS_COLOR_TITLE, getColorString(color));
     }
@@ -2695,6 +2701,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setPlanetaryConditionsShowIndicators(Boolean state) {
         store.setValue(PLANETARY_CONDITIONS_SHOW_INDICATORS, state);
+    }
+
+    public void setPlanetaryConditionsBackgroundTransparency(int i) {
+        store.setValue(PLANETARY_CONDITIONS_BACKGROUND_TRANSPARENCY, i);
     }
 
     public void setUnitToolTipSeenByResolution(int i) {

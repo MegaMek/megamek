@@ -150,11 +150,10 @@ Heat Sink
 manufacturer:Earthwerks Incorporated
 primaryFactory:Keystone
 systemmanufacturer:CHASSIS:Earthwerks
-systemmodel:CHASSIS:TDR Standard
+systemmode:CHASSIS:TDR Standard
 systemmanufacturer:ENGINE:Magna
-systemmodel:ENGINE:260
+systemmode:ENGINE:260
 systemmanufacturer:COMMUNICATIONS:Neil
-systemmodel:COMMUNICATIONS:8000
+systemmode:COMMUNICATIONS:8000
 systemmanufacturer:TARGETING:RCA
-systemmodel:TARGETING:Instatrac Mark X
-
+systemmode:TARGETING:Instatrac Mark X

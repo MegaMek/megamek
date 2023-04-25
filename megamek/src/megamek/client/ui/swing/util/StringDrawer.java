@@ -65,6 +65,7 @@ public class StringDrawer {
     private boolean centerY = false;
     private boolean rightAlign = false;
     private Font font = null;
+    private float fontSize = -1;
     private double angle = 0;
     private int maxWidth = Integer.MAX_VALUE;
     private float scaleX = 1;
@@ -92,6 +93,17 @@ public class StringDrawer {
         this.x = x;
         this.y = y;
         return this;
+    }
+
+    /**
+     * Sets the coordinates to draw the text at. The exact placement depends on other settings
+     * such as given by {@link #center()}, {@link #centerX()}, or {@link #rightAlign()}.
+     *
+     * @param point The Point with the x and y coordinates to place the text at
+     * @return The StringDrawer itself
+     */
+    public StringDrawer at(Point point) {
+        return at(point.x, point.y);
     }
 
     /**
@@ -180,6 +192,22 @@ public class StringDrawer {
      */
     public StringDrawer font(Font font) {
         this.font = font;
+        return this;
+    }
+
+    /**
+     * Sets the StringDrawer to use the given fontSize when drawing the String. When drawing the string,
+     * a new Font object will be created using this fontSize and either the font given through
+     * {@link #font(Font)} or, when no font is given, the current font. Note that when this
+     * method is used, and a font is also specified, the fontSize given here takes precedence even
+     * when {@link #font(Font)} is called later. Also note that {@link #maxWidth(int)} may scale down
+     * the resulting font size even when this method is used (in other words, this method sets the
+     * maximum possible font size). Values for fontSize <= 0 are ignored.
+     *
+     * @return The StringDrawer itself
+     */
+    public StringDrawer fontSize(float fontSize) {
+        this.fontSize = fontSize <= 0 ? -1 : fontSize;
         return this;
     }
 
@@ -301,6 +329,7 @@ public class StringDrawer {
             return new Rectangle();
         }
         Graphics2D g2D = (Graphics2D) g.create();
+        UIUtil.setHighQualityRendering(g);
 
         if (fillColor != null) {
             g2D.setColor(fillColor);
@@ -308,6 +337,10 @@ public class StringDrawer {
 
         if (font != null) {
             g2D.setFont(font);
+        }
+
+        if (fontSize > 0) {
+            g2D.setFont(g2D.getFont().deriveFont(fontSize));
         }
 
         FontRenderContext frc = new FontRenderContext(null, true, true);

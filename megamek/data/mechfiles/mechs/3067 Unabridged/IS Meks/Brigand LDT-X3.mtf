@@ -6,9 +6,8 @@ mul id:5653
 Config:Biped
 TechBase:Inner Sphere
 Era:3075
-Source:TRO:3067 Unabridged
+Source:3067 Unabridged
 Rules Level:2
-source:3067 Unabridged
 
 Mass:25
 Engine:150 XL Engine(IS)

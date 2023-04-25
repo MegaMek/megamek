@@ -35,6 +35,7 @@ import org.apache.logging.log4j.LogManager;
 import java.awt.*;
 import java.awt.font.TextAttribute;
 import java.text.AttributedString;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -51,9 +52,7 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
     private static final int DIST_SIDE = 30;
     private static final int PADDING_X = 10;
     private static final int PADDING_Y = 5;
-    private static final Color TEXT_COLOR = new Color(200, 250, 200);
     private static final Color SHADOW_COLOR = Color.DARK_GRAY;
-    private static final Color BG_COLOR = new Color(80, 80, 80, 200);
     private static final float FADE_SPEED = 0.2f;
 
     /** The keybinds to be shown during the firing phases (incl. physical etc.) */
@@ -159,7 +158,8 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
             UIUtil.setHighQualityRendering(intGraph);
 
             // draw a semi-transparent background rectangle
-            intGraph.setColor(BG_COLOR);
+            Color colorBG = GUIP.getPlanetaryConditionsColorBackground();
+            intGraph.setColor(colorBG);
             intGraph.fillRoundRect(0, 0, r.width, r.height, PADDING_X, PADDING_X);
 
             // The coordinates to write the texts to
@@ -207,8 +207,17 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
     private List<String> assembleTextLines() {
         List<String> result = new ArrayList<>();
 
+        Color colorTitle = GUIP.getPlanetaryConditionsColorTitle();
         String toggleKey = KeyCommandBind.getDesc(KeyCommandBind.KEY_BINDS);
-        result.add(Messages.getString("KeyBindingsDisplay.heading", toggleKey));
+
+        String tmpStr = "";
+        Boolean showHeading = GUIP.getPlanetaryConditionsShowHeader();
+        String titleColor = String.format("#%02X%02X%02X", colorTitle.getRed(), colorTitle.getGreen(), colorTitle.getBlue());
+        tmpStr = (showHeading ? titleColor + Messages.getString("KeyBindingsDisplay.heading", toggleKey) : "");
+
+        if (tmpStr.length()  > 0) {
+            result.add(tmpStr);
+        }
 
         if (clientGui != null) {
             // In a game, not the Board Editor
@@ -260,7 +269,7 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
      * otherwise TEXT_COLOR is used.
      */
     private void drawShadowedString(Graphics graph, String s, int x, int y) {
-        Color textColor = TEXT_COLOR;
+        Color textColor = GUIP.getPlanetaryConditionsColorText();
         // Extract a color code from the start of the string
         // used to display headlines if it's there
         if (s.startsWith("#") && s.length() > 7) {

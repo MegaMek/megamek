@@ -156,7 +156,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
     private final JCheckBox keepGameLog = new JCheckBox(Messages.getString("CommonSettingsDialog.keepGameLog"));
     private JTextField gameLogFilename;
-    // private JTextField gameLogMaxSize;
     private final JCheckBox stampFilenames = new JCheckBox(Messages.getString("CommonSettingsDialog.stampFilenames"));
     private JTextField stampFormat;
     private final JCheckBox defaultAutoejectDisabled = new JCheckBox(Messages.getString("CommonSettingsDialog.defaultAutoejectDisabled"));
@@ -207,13 +206,13 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private ColourSelectorButton csbUnitValidColor;
     private ColourSelectorButton csbUnitSelectedColor;
     private ColourSelectorButton csbUnitTextColor;
-        private ColourSelectorButton csbBuildingTextColor;
+    private ColourSelectorButton csbBuildingTextColor;
     private ColourSelectorButton csbLowFoliageColor;
     private ColourSelectorButton csbBoardTextColor;
     private ColourSelectorButton csbBoardSpaceTextColor;
     private ColourSelectorButton csbMapsheetColor;
-    private JTextField attackArrowTransparency;;
-    private JTextField ecmTransparency;
+    private JSpinner attackArrowTransparency;;
+    private JSpinner ecmTransparency;
     private JTextField buttonsPerRow;
     private JTextField playersRemainingToShow;
 
@@ -247,7 +246,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private JComboBox<String> skinFiles;
     private JComboBox<UITheme> uiThemes;
 
-    // Avanced Settings
+    // Advanced Settings
     private JList<AdvancedOptionData> advancedKeys;
     private int advancedKeyIndex = 0;
     private JTextField advancedValue;
@@ -332,7 +331,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private final JCheckBox planetaryConditionsShowLabels = new JCheckBox(Messages.getString("CommonSettingsDialog.planetaryConditionsShowLabels"));
     private final JCheckBox planetaryConditionsShowValues = new JCheckBox(Messages.getString("CommonSettingsDialog.planetaryConditionsShowValues"));
     private final JCheckBox planetaryConditionsShowIndicators = new JCheckBox(Messages.getString("CommonSettingsDialog.planetaryConditionsShowIndicators"));
-    private JTextField planetaryConditionsBackgroundTransparency;
+    private JSpinner planetaryConditionsBackgroundTransparency;
 
     /** Maps command strings to a JTextField for updating the modifier for the command. */
     private Map<String, JTextField> cmdModifierMap;
@@ -565,23 +564,23 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         addLineSpacer(comps);
 
-        attackArrowTransparency = new JTextField(4);
+        SpinnerNumberModel mAttackArrowTransparency = new SpinnerNumberModel(GUIP.getAttachArrowTransparency(), 0, 256, 1);
+        attackArrowTransparency = new JSpinner(mAttackArrowTransparency);
         attackArrowTransparency.setMaximumSize(new Dimension(150, 40));
         JLabel attackArrowTransparencyLabel = new JLabel(Messages.getString("CommonSettingsDialog.attackArrowTransparency"));
         row = new ArrayList<>();
         row.add(attackArrowTransparencyLabel);
         row.add(attackArrowTransparency);
-        attackArrowTransparency.setText(String.format("%d", GUIP.getAttachArrowTransparency()));
         attackArrowTransparency.setToolTipText(Messages.getString("CommonSettingsDialog.attackArrowTransparency.tooltip"));
         comps.add(row);
 
-        ecmTransparency = new JTextField(4);
+        SpinnerNumberModel mECMTransparency = new SpinnerNumberModel(GUIP.getECMTransparency(), 0, 256, 1);
+        ecmTransparency = new JSpinner(mECMTransparency);
         ecmTransparency.setMaximumSize(new Dimension(150, 40));
         JLabel ecmTransparencyLabel = new JLabel(Messages.getString("CommonSettingsDialog.ecmTransparency"));
         row = new ArrayList<>();
         row.add(ecmTransparencyLabel);
         row.add(ecmTransparency);
-        ecmTransparency.setText(String.format("%d", GUIP.getECMTransparency()));
         ecmTransparency.setToolTipText(Messages.getString("CommonSettingsDialog.ecmTransparency.tooltip"));
         comps.add(row);
 
@@ -1125,7 +1124,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         row.add(unitDisplayMechMeduimFontSizeText);
         comps.add(row);
 
-
         return createSettingsPanel(comps);
     }
 
@@ -1205,13 +1203,13 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         comps.add(checkboxEntry(planetaryConditionsShowIndicators, null));
         planetaryConditionsShowIndicators.setSelected(GUIP.getPlanetaryConditionsShowIndicators());
 
-        planetaryConditionsBackgroundTransparency = new JTextField(4);
+        SpinnerNumberModel mPlanetaryConditionsBackgroundTransparency = new SpinnerNumberModel(GUIP.getPlanetaryConditionsBackgroundTransparency(), 0, 256, 1);
+        planetaryConditionsBackgroundTransparency = new JSpinner(mPlanetaryConditionsBackgroundTransparency);
         planetaryConditionsBackgroundTransparency.setMaximumSize(new Dimension(150, 40));
         JLabel planetaryConditionsBackgroundTransparencyLabel = new JLabel(Messages.getString("CommonSettingsDialog.colors.PlanetaryConditionsBackgroundTransparency"));
         row = new ArrayList<>();
         row.add(planetaryConditionsBackgroundTransparency);
         row.add(planetaryConditionsBackgroundTransparencyLabel);
-        planetaryConditionsBackgroundTransparency.setText(String.format("%d", GUIP.getPlanetaryConditionsBackgroundTransparency()));
         planetaryConditionsBackgroundTransparency.setToolTipText(Messages.getString("CommonSettingsDialog.colors.PlanetaryConditionsBackgroundTransparency.tooltip"));
         comps.add(row);
 
@@ -1587,6 +1585,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
                 cmdModifierMap.get(kcb.cmd).setText(KeyEvent.getModifiersExText(kcb.modifiers));
                 cmdKeyMap.get(kcb.cmd).setText(KeyEvent.getKeyText(kcb.key));
             }
+
             markDuplicateBinds();
 
             adaptToGUIScale();
@@ -1650,8 +1649,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         csbLowFoliageColor.setColour(GUIP.getLowFoliageColor());
         csbMapsheetColor.setColour(GUIP.getMapsheetColor());
 
-        attackArrowTransparency.setText(String.format("%d", GUIP.getAttachArrowTransparency()));
-        ecmTransparency.setText(String.format("%d", GUIP.getECMTransparency()));
+        attackArrowTransparency.setValue(GUIP.getAttachArrowTransparency());
+        ecmTransparency.setValue(GUIP.getECMTransparency());
         buttonsPerRow.setText(String.format("%d", GUIP.getButtonsPerRow()));
         playersRemainingToShow.setText(String.format("%d", GUIP.getPlayersRemainingToShow()));
         tmmPipModeCbo.setSelectedIndex(GUIP.getTMMPipMode());
@@ -1734,7 +1733,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         planetaryConditionsShowLabels.setSelected(GUIP.getPlanetaryConditionsShowLabels());
         planetaryConditionsShowValues.setSelected(GUIP.getPlanetaryConditionsShowValues());
         planetaryConditionsShowIndicators.setSelected(GUIP.getPlanetaryConditionsShowIndicators());
-        planetaryConditionsBackgroundTransparency.setText(String.format("%d", GUIP.getPlanetaryConditionsBackgroundTransparency()));
+        planetaryConditionsBackgroundTransparency.setValue(GUIP.getPlanetaryConditionsBackgroundTransparency());
 
         setVisible(false);
     }
@@ -1796,16 +1795,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setLowFoliageColor(csbLowFoliageColor.getColour());
         GUIP.setMapsheetColor(csbMapsheetColor.getColour());
 
-        try {
-            GUIP.setAttachArrowTransparency(Integer.parseInt(attackArrowTransparency.getText()));
-        } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
-        }
-        try {
-            GUIP.setECMTransparency(Integer.parseInt(ecmTransparency.getText()));
-        } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
-        }
+        GUIP.setAttachArrowTransparency((Integer) attackArrowTransparency.getValue());
+        GUIP.setECMTransparency((Integer) ecmTransparency.getValue());
+
         try {
             GUIP.setButtonsPerRow(Integer.parseInt(buttonsPerRow.getText()));
         } catch (Exception ex) {
@@ -1820,7 +1812,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setTMMPipMode(tmmPipModeCbo.getSelectedIndex());
         GUIP.setDarkenMapAtNight(darkenMapAtNight.isSelected());
         GUIP.setTranslucentHiddenUnits(translucentHiddenUnits.isSelected());
-
 
         GUIP.setMoveFontType(fontTypeChooserMoveFont.getSelectedItem().toString());
         try {
@@ -2174,11 +2165,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setPlanetaryConditionsShowLabels(planetaryConditionsShowLabels.isSelected());
         GUIP.setPlanetaryConditionsShowValues(planetaryConditionsShowValues.isSelected());
         GUIP.setPlanetaryConditionsShowIndicators(planetaryConditionsShowIndicators.isSelected());
-        try {
-            GUIP.setPlanetaryConditionsBackgroundTransparency(Integer.parseInt(planetaryConditionsBackgroundTransparency.getText()));
-        } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
-        }
+        GUIP.setPlanetaryConditionsBackgroundTransparency((Integer) planetaryConditionsBackgroundTransparency.getValue());
 
         setVisible(false);
     }
@@ -2315,7 +2302,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         gbc.fill = GridBagConstraints.NONE;
         gbc.gridy++;
         gbc.gridwidth = 1;
-        
 
         // Create maps to retrieve the text fields for saving
         int numBinds = KeyCommandBind.values().length;
@@ -2337,6 +2323,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             for (KeyListener kl : modifiers.getKeyListeners()) {
                 modifiers.removeKeyListener(kl);
             }
+
             // Update how typing in the text field works
             modifiers.addKeyListener(new KeyListener() {
 
@@ -2362,6 +2349,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
                 }
 
             });
+
             keyBinds.add(modifiers, gbc);
             gbc.gridx++;
             cmdModifierMap.put(kcb.cmd, modifiers);
@@ -2372,6 +2360,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             final String cmd = kcb.cmd;
             cmdKeyMap.put(cmd, key);
             cmdKeyCodeMap.put(cmd, kcb.key);
+
             key.addKeyListener(new KeyListener() {
 
                 @Override
@@ -2401,6 +2390,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
                 }
 
             });
+
             keyBinds.add(key, gbc);
             gbc.gridx = 0;
             gbc.gridy++;
@@ -2736,6 +2726,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         advancedKeys = new JList<>(opts);
         advancedKeys.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         advancedKeys.addListSelectionListener(this);
+
         advancedKeys.addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseMoved(MouseEvent e) {
@@ -2746,6 +2737,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
                 }
             }
         });
+
         p.add(advancedKeys);
 
         advancedValue = new JTextField(10);

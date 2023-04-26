@@ -1589,13 +1589,19 @@ public class GameManager implements IGameManager {
         int fledBV;
         int entityCount;
         int initialEntityCount;
+        int fledEntityCount;
+        int ejectedCrew;
+        int fledEjectedCrewCount;
 
-        public TeamHelper(int bv, int initialBV, int fledBV, int entityCount, int initialEntityCount) {
+        public TeamHelper() {
             this.bv = bv;
-            this.initialBV = initialBV;
-            this.fledBV = fledBV;
-            this.entityCount = entityCount;
-            this.initialEntityCount = initialEntityCount;
+            this.initialBV = 0;
+            this.fledBV = 0;
+            this.entityCount = 0;
+            this.initialEntityCount = 0;
+            this.fledEntityCount = 0;
+            this.ejectedCrew = 0;
+            this.fledEjectedCrewCount = 0;
         }
     }
 
@@ -1603,7 +1609,7 @@ public class GameManager implements IGameManager {
         HashMap<Integer, TeamHelper> teamsInfo = new HashMap<>();
 
         for (Team team : game.getTeams()) {
-            teamsInfo.put(team.getId(), new TeamHelper(0, 0, 0, 0, 0));
+            teamsInfo.put(team.getId(), new TeamHelper());
         }
 
         // blank line
@@ -1620,22 +1626,38 @@ public class GameManager implements IGameManager {
                 r.type = Report.PLAYER;
                 r.player = player.getId();
             }
+
+            int bv = player.getBV();
+            int initialBV = player.getInitialBV();
+            int fledBV = player.getFledBV();
+            int entityCount = player.getEntityCountExcludingEjectedCrew();
+            int initialEntityCount = player.getInitialEntityCount();
+            int fledEntityCount = player.getFledEntityExcludeEjectedCrew();
+            int ejectedCrewCount = player.getCountEjectedCrewCount();
+            int fledEjectedCrewCount = player.getFledEjectedCrew();
+
             r.add(player.getColorForPlayer());
-            r.add(player.getBV());
-            r.add(player.getInitialBV());
-            r.add(Double.toString(Math.round(((double) player.getBV() / player.getInitialBV()) * 10000.0) / 100.0));
-            r.add(player.getFledBV());
-            r.add(player.getEntityCount());
-            r.add(player.getInitialEntityCount());
-            r.add(Double.toString(Math.round(((double) player.getEntityCount() / player.getInitialEntityCount()) * 10000.0) / 100.0));
+            r.add(bv);
+            r.add(initialBV);
+            r.add(Double.toString(Math.round(((double) bv /initialBV) * 10000.0) / 100.0));
+            r.add(fledBV);
+            r.add(entityCount);
+            r.add(initialEntityCount);
+            r.add(Double.toString(Math.round(((double) entityCount / initialEntityCount) * 10000.0) / 100.0));
+            r.add(fledEntityCount);
+            r.add(ejectedCrewCount);
+            r.add(fledEjectedCrewCount);
             addReport(r);
 
             TeamHelper th = teamsInfo.get(player.getTeam());
-            th.bv += player.getBV();
-            th.initialBV += player.getInitialBV();
-            th.fledBV += player.getFledBV();
-            th.entityCount += player.getEntityCount();
-            th.initialEntityCount += player.getInitialEntityCount();
+            th.bv += bv;
+            th.initialBV += initialBV;
+            th.fledBV += fledBV;
+            th.entityCount += entityCount;
+            th.initialEntityCount += initialEntityCount;
+            th.fledEntityCount += fledEntityCount;
+            th.ejectedCrew += ejectedCrewCount;
+            th.fledEjectedCrewCount += fledEjectedCrewCount;
         }
 
         // blank line
@@ -1653,6 +1675,9 @@ public class GameManager implements IGameManager {
             r.add(th.entityCount);
             r.add(th.initialEntityCount);
             r.add(Double.toString(Math.round(((double) th.entityCount / th.initialEntityCount) * 10000.0) / 100.0));
+            r.add(th.fledEntityCount);
+            r.add(th.ejectedCrew);
+            r.add(th.fledEjectedCrewCount);
             addReport(r);
         }
 

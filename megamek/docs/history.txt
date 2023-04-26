@@ -49,6 +49,8 @@ VERSION HISTORY:
 + Fix #2333: Show Weapon Quirks in various tool tips
 + PR #4313: Add and Improve client settings
 + Fix MML 881: Problem with PPC Capacitors in Mixed Tech Mechs and Vehicles (adding missing PPC's)
++ Issue #2972: Add team BV totals to round report
++ PR #4348: Add weapon location to tooltips if appropriate client setting is on
 
 0.49.12 (2023-03-04 2200 UTC)
 + PR #4062: OS Thunderbolt Weapons are now available for construction and use

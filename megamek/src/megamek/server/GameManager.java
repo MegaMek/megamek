@@ -1194,7 +1194,7 @@ public class GameManager implements IGameManager {
         // List the survivors
         Iterator<Entity> survivors = game.getEntities();
         if (survivors.hasNext()) {
-            addReport(new Report(7020, Report.PUBLIC));
+            addReport(new Report(7023, Report.PUBLIC));
             while (survivors.hasNext()) {
                 Entity entity = survivors.next();
 
@@ -1639,11 +1639,6 @@ public class GameManager implements IGameManager {
             if (player.isObserver() && (player.getInitialEntityCount() == 0)) {
                 continue;
             }
-            Report r = new Report(7016, Report.PUBLIC);
-            if (checkBlind && doBlind() && suppressBlindBV()) {
-                r.type = Report.PLAYER;
-                r.player = player.getId();
-            }
 
             int bv = player.getBV();
             int initialBV = player.getInitialBV();
@@ -1663,17 +1658,38 @@ public class GameManager implements IGameManager {
             int ejectedCrewKilledCount = player.getEjectedCrewKilledCount();
             int ejectedCrewFledCount = player.getFledEjectedCrew();
 
+            Report r = new Report(7016, Report.PUBLIC);
+            if (checkBlind && doBlind() && suppressBlindBV()) {
+                r.type = Report.PLAYER;
+                r.player = player.getId();
+            }
             r.add(player.getColorForPlayer());
+            addReport(r);
+
+            r = new Report(7017, Report.PUBLIC);
+            if (checkBlind && doBlind() && suppressBlindBV()) {
+                r.type = Report.PLAYER;
+                r.player = player.getId();
+            }
             r.add(bv);
             r.add(initialBV);
             r.add(Double.toString(Math.round(((double) bv /initialBV) * 10000.0) / 100.0));
             r.add(fledBV);
+            r.indent(2);
+            addReport(r);
+
+            r = new Report(7018, Report.PUBLIC);
+            if (checkBlind && doBlind() && suppressBlindBV()) {
+                r.type = Report.PLAYER;
+                r.player = player.getId();
+            }
             r.add(unitsCount);
             r.add(initialUnitsCount);
             r.add(Double.toString(Math.round(((double) unitsCount / initialUnitsCount) * 10000.0) / 100.0));
+            r.indent(2);
             addReport(r);
 
-            r = new Report(7017, Report.PUBLIC);
+            r = new Report(7019, Report.PUBLIC);
             if (checkBlind && doBlind() && suppressBlindBV()) {
                 r.type = Report.PLAYER;
                 r.player = player.getId();
@@ -1685,9 +1701,10 @@ public class GameManager implements IGameManager {
             r.add(unitsDestroyedCount);
             r.add(unitsCrewEjectedCount);
             r.add(unitsFledCount);
+            r.indent(2);
             addReport(r);
 
-            r = new Report(7018, Report.PUBLIC);
+            r = new Report(7020, Report.PUBLIC);
             if (checkBlind && doBlind() && suppressBlindBV()) {
                 r.type = Report.PLAYER;
                 r.player = player.getId();
@@ -1697,6 +1714,7 @@ public class GameManager implements IGameManager {
             r.add(ejectedCrewPickedUpByEnemyTeamCount);
             r.add(ejectedCrewKilledCount);
             r.add(ejectedCrewFledCount);
+            r.indent(2);
             addReport(r);
 
             // blank line
@@ -1724,18 +1742,27 @@ public class GameManager implements IGameManager {
         // Show teams BVs
         for (Map.Entry<Integer, TeamHelper> e : teamsInfo.entrySet()) {
             TeamHelper th = e.getValue();
+
             Report r = new Report(7016, Report.PUBLIC);
             r.add(Player.TEAM_NAMES[e.getKey()]);
+            addReport(r);
+
+            r = new Report(7017, Report.PUBLIC);
             r.add(th.bv);
             r.add(th.initialBV);
             r.add(Double.toString(Math.round(((double) th.bv / th.initialBV) * 10000.0) / 100.0));
             r.add(th.fledBV);
+            r.indent(2);
+            addReport(r);
+
+            r = new Report(7018, Report.PUBLIC);
             r.add(th.unitCount);
             r.add(th.unitsInitialCount);
             r.add(Double.toString(Math.round(((double) th.unitCount / th.unitsInitialCount) * 10000.0) / 100.0));
+            r.indent(2);
             addReport(r);
 
-            r = new Report(7017, Report.PUBLIC);
+            r = new Report(7019, Report.PUBLIC);
             r.add(th.unitsLightDamageCount);
             r.add(th.unitsModerateDamageCount);
             r.add(th.unitsHeavyDamageCount);
@@ -1743,14 +1770,16 @@ public class GameManager implements IGameManager {
             r.add(th.unitsDestoryedCount);
             r.add(th.unitsCrewEjectedCount);
             r.add(th.unitsFledCount);
+            r.indent(2);
             addReport(r);
 
-            r = new Report(7018, Report.PUBLIC);
+            r = new Report(7020, Report.PUBLIC);
             r.add(th.ejectedCrewActiveCount);
             r.add(th.ejectedCrewPickedUpByTeamCount);
             r.add(th.ejectedCrewPickedUpByEnemyTeamCount);
             r.add(th.ejectedCrewKilledCount);
             r.add(th.ejectedCrewFledCount);
+            r.indent(2);
             addReport(r);
 
             // blank line

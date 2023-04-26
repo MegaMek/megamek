@@ -164,11 +164,11 @@ history:The Adder was designed by Clan Star Adder in preparation for the invasio
 manufacturer:Sheridan LM-TA 8-10, W-7 Facilities,Wolf Clan Site 3, Assault Tech Industries
 primaryfactory:Sheridan LM-TA 8-10, W-7 Facilities,Wolf Clan Site 3, Assault Tech Industries
 systemmanufacturer:CHASSIS:Hooded Endo-Lite
-systemmodel:CHASSIS:Endo Steel
+systemmode:CHASSIS:Endo Steel
 systemmanufacturer:ENGINE:Great Father 210 XL
-systemmanufacturer:ARMOR:Star Lite 
-systemmodel:ARMOR:Ferro-Fibrous
+systemmanufacturer:ARMOR:Star Lite
+systemmode:ARMOR:Ferro-Fibrous
 systemmanufacturer:COMMUNICATIONS:Trueborn Ultra
-systemmodel:COMMUNICATIONS:945B
-systemmanufacturer:TARGETING:Adder Special 
-systemmodel:TARGETING:V8.6
+systemmode:COMMUNICATIONS:945B
+systemmanufacturer:TARGETING:Adder Special
+systemmode:TARGETING:V8.6

@@ -504,7 +504,21 @@ public final class Player extends TurnOrdered {
 
     public int getEjectedCrewCount() {
         return Math.toIntExact(game.getPlayerEntities(this, false).stream()
-                .filter(entity -> !entity.isDestroyed() && !entity.isTrapped() && (entity instanceof EjectedCrew)).count());
+                .filter(entity -> !entity.isDestroyed() && !entity.isTrapped() &&
+                        (((entity instanceof MechWarrior) && ((MechWarrior) entity).getPickedUpById() == Entity.NONE) ||
+                                ((entity instanceof EjectedCrew) && !(entity instanceof MechWarrior)))).count());
+    }
+
+    public int getEjectedCrewPickedUpByTeamCount() {
+        return Math.toIntExact(game.getPlayerEntities(this, false).stream()
+                .filter(entity -> !entity.isDestroyed() && !entity.isTrapped() &&
+                        ((entity instanceof MechWarrior) && ((MechWarrior) entity).getPickedUpById() != Entity.NONE && game.getEntity(((MechWarrior) entity).getPickedUpById()).getOwner().getTeam() == this.getTeam())).count());
+    }
+
+    public int getEjectedCrewPickedUpByEnemyTeamCount() {
+        return Math.toIntExact(game.getPlayerEntities(this, false).stream()
+                .filter(entity -> !entity.isDestroyed() && !entity.isTrapped() &&
+                        ((entity instanceof MechWarrior) && ((MechWarrior) entity).getPickedUpById() != Entity.NONE && game.getEntity(((MechWarrior) entity).getPickedUpById()).getOwner().getTeam() != this.getTeam())).count());
     }
 
     public int getEjectedCrewKilledCount() {

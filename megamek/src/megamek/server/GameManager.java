@@ -1597,6 +1597,8 @@ public class GameManager implements IGameManager {
         int unitsCrewEjectedCount;
         int unitsFledCount;
         int ejectedCrewActiveCount;
+        int ejectedCrewPickedUpByTeamCount;
+        int ejectedCrewPickedUpByEnemyTeamCount;
         int ejectedCrewKilledCount;
         int ejectedCrewFledCount;
 
@@ -1614,6 +1616,8 @@ public class GameManager implements IGameManager {
             this.unitsCrewEjectedCount = 0;
             this.unitsFledCount = 0;
             this.ejectedCrewActiveCount = 0;
+            this.ejectedCrewPickedUpByTeamCount = 0;
+            this.ejectedCrewPickedUpByEnemyTeamCount = 0;
             this.ejectedCrewKilledCount = 0;
             this.ejectedCrewFledCount = 0;
         }
@@ -1654,6 +1658,8 @@ public class GameManager implements IGameManager {
             int unitsCrewEjectedCount = player.getUnitCrewEjectedCount();
             int unitsFledCount = player.getFledUnitsCount();
             int ejectedCrewActiveCount = player.getEjectedCrewCount();
+            int ejectedCrewPickedUpByTeamCount = player.getEjectedCrewPickedUpByTeamCount();
+            int ejectedCrewPickedUpByEnemyTeamCount = player.getEjectedCrewPickedUpByEnemyTeamCount();
             int ejectedCrewKilledCount = player.getEjectedCrewKilledCount();
             int ejectedCrewFledCount = player.getFledEjectedCrew();
 
@@ -1687,6 +1693,8 @@ public class GameManager implements IGameManager {
                 r.player = player.getId();
             }
             r.add(ejectedCrewActiveCount);
+            r.add(ejectedCrewPickedUpByTeamCount);
+            r.add(ejectedCrewPickedUpByEnemyTeamCount);
             r.add(ejectedCrewKilledCount);
             r.add(ejectedCrewFledCount);
             addReport(r);
@@ -1708,6 +1716,8 @@ public class GameManager implements IGameManager {
             th.unitsCrewEjectedCount += unitsCrewEjectedCount;
             th.unitsFledCount += unitsFledCount;
             th.ejectedCrewActiveCount += ejectedCrewActiveCount;
+            th.ejectedCrewPickedUpByTeamCount += ejectedCrewPickedUpByTeamCount;
+            th.ejectedCrewPickedUpByEnemyTeamCount += ejectedCrewPickedUpByEnemyTeamCount;
             th.ejectedCrewFledCount += ejectedCrewFledCount;
         }
 
@@ -1737,6 +1747,8 @@ public class GameManager implements IGameManager {
 
             r = new Report(7018, Report.PUBLIC);
             r.add(th.ejectedCrewActiveCount);
+            r.add(th.ejectedCrewPickedUpByTeamCount);
+            r.add(th.ejectedCrewPickedUpByEnemyTeamCount);
             r.add(th.ejectedCrewKilledCount);
             r.add(th.ejectedCrewFledCount);
             addReport(r);

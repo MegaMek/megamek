@@ -487,7 +487,7 @@ public final class Player extends TurnOrdered {
                 .filter(entity -> !entity.isDestroyed() && !entity.isTrapped() && (entity.getDamageLevel() == Entity.DMG_HEAVY) && !(entity instanceof EjectedCrew)).count());
     }
 
-    public int getEUnitCrippledCount() {
+    public int getUnitCrippledCount() {
         return Math.toIntExact(game.getPlayerEntities(this, false).stream()
                 .filter(entity -> !entity.isDestroyed() && !entity.isTrapped() && (entity.getDamageLevel() == Entity.DMG_CRIPPLED) && !(entity instanceof EjectedCrew)).count());
     }

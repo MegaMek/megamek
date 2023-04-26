@@ -1189,7 +1189,7 @@ public class GameManager implements IGameManager {
         }
         addReport(r);
 
-        bvReport(false);
+        bvReports(false);
 
         // List the survivors
         Iterator<Entity> survivors = game.getEntities();
@@ -1583,17 +1583,17 @@ public class GameManager implements IGameManager {
         }
     }
 
-    private static class TeamHelper {
+    private static class BVCountHelper {
         int bv;
-        int initialBV;
-        int fledBV;
-        int unitCount;
+        int bvInitial;
+        int bvFled;
+        int unitsCount;
         int unitsInitialCount;
         int unitsLightDamageCount;
         int unitsModerateDamageCount;
         int unitsHeavyDamageCount;
         int unitsCrippledCount;
-        int unitsDestoryedCount;
+        int unitsDestroyedCount;
         int unitsCrewEjectedCount;
         int unitsFledCount;
         int ejectedCrewActiveCount;
@@ -1602,17 +1602,17 @@ public class GameManager implements IGameManager {
         int ejectedCrewKilledCount;
         int ejectedCrewFledCount;
 
-        public TeamHelper() {
-            this.bv = bv;
-            this.initialBV = 0;
-            this.fledBV = 0;
-            this.unitCount = 0;
+        public BVCountHelper() {
+            this.bv = 0;
+            this.bvInitial = 0;
+            this.bvFled = 0;
+            this.unitsCount = 0;
             this.unitsInitialCount = 0;
             this.unitsLightDamageCount = 0;
             this.unitsModerateDamageCount = 0;
             this.unitsHeavyDamageCount = 0;
             this.unitsCrippledCount = 0;
-            this.unitsDestoryedCount = 0;
+            this.unitsDestroyedCount = 0;
             this.unitsCrewEjectedCount = 0;
             this.unitsFledCount = 0;
             this.ejectedCrewActiveCount = 0;
@@ -1623,11 +1623,11 @@ public class GameManager implements IGameManager {
         }
     }
 
-    private void bvReport(boolean checkBlind) {
-        HashMap<Integer, TeamHelper> teamsInfo = new HashMap<>();
+    private void bvReports(boolean checkBlind) {
+        HashMap<Integer, BVCountHelper> teamsInfo = new HashMap<>();
 
         for (Team team : game.getTeams()) {
-            teamsInfo.put(team.getId(), new TeamHelper());
+            teamsInfo.put(team.getId(), new BVCountHelper());
         }
 
         // blank line
@@ -1640,151 +1640,111 @@ public class GameManager implements IGameManager {
                 continue;
             }
 
-            int bv = player.getBV();
-            int initialBV = player.getInitialBV();
-            int fledBV = player.getFledBV();
-            int unitsCount = player.getUnitCount();
-            int initialUnitsCount = player.getInitialEntityCount();
-            int unitsLightDamageCount = player.getUnitLightDamageCount();
-            int unitsModerateDamageCount = player.getUnitModerateDamageCount();
-            int unitsHeavyDamageCount = player.getUnitHeavyDamageCount();
-            int unitsCrippledCount = player.getEUnitCrippledCount();
-            int unitsDestroyedCount = player.getUnitDestroyedCount();
-            int unitsCrewEjectedCount = player.getUnitCrewEjectedCount();
-            int unitsFledCount = player.getFledUnitsCount();
-            int ejectedCrewActiveCount = player.getEjectedCrewCount();
-            int ejectedCrewPickedUpByTeamCount = player.getEjectedCrewPickedUpByTeamCount();
-            int ejectedCrewPickedUpByEnemyTeamCount = player.getEjectedCrewPickedUpByEnemyTeamCount();
-            int ejectedCrewKilledCount = player.getEjectedCrewKilledCount();
-            int ejectedCrewFledCount = player.getFledEjectedCrew();
+            BVCountHelper bvcPlayer = new BVCountHelper();
+            bvcPlayer.bv = player.getBV();
+            bvcPlayer.bvInitial = player.getInitialBV();
+            bvcPlayer.bvFled = player.getFledBV();
+            bvcPlayer.unitsCount = player.getUnitCount();
+            bvcPlayer.unitsInitialCount = player.getInitialEntityCount();
+            bvcPlayer.unitsLightDamageCount = player.getUnitLightDamageCount();
+            bvcPlayer.unitsModerateDamageCount = player.getUnitModerateDamageCount();
+            bvcPlayer.unitsHeavyDamageCount = player.getUnitHeavyDamageCount();
+            bvcPlayer.unitsCrippledCount = player.getUnitCrippledCount();
+            bvcPlayer.unitsDestroyedCount =  player.getUnitDestroyedCount();
+            bvcPlayer.unitsCrewEjectedCount = player.getUnitCrewEjectedCount();
+            bvcPlayer.unitsFledCount = player.getFledUnitsCount();
+            bvcPlayer.ejectedCrewActiveCount = player.getEjectedCrewCount();
+            bvcPlayer.ejectedCrewPickedUpByTeamCount =  player.getEjectedCrewPickedUpByTeamCount();
+            bvcPlayer.ejectedCrewPickedUpByEnemyTeamCount = player.getEjectedCrewPickedUpByEnemyTeamCount();
+            bvcPlayer.ejectedCrewKilledCount = player.getEjectedCrewKilledCount();
+            bvcPlayer.ejectedCrewFledCount = player.getFledEjectedCrew();
 
-            Report r = new Report(7016, Report.PUBLIC);
-            if (checkBlind && doBlind() && suppressBlindBV()) {
-                r.type = Report.PLAYER;
-                r.player = player.getId();
-            }
-            r.add(player.getColorForPlayer());
-            addReport(r);
+            bvReport(player.getColorForPlayer(), player.getId(), bvcPlayer, checkBlind);
 
-            r = new Report(7017, Report.PUBLIC);
-            if (checkBlind && doBlind() && suppressBlindBV()) {
-                r.type = Report.PLAYER;
-                r.player = player.getId();
-            }
-            r.add(bv);
-            r.add(initialBV);
-            r.add(Double.toString(Math.round(((double) bv /initialBV) * 10000.0) / 100.0));
-            r.add(fledBV);
-            r.indent(2);
-            addReport(r);
-
-            r = new Report(7018, Report.PUBLIC);
-            if (checkBlind && doBlind() && suppressBlindBV()) {
-                r.type = Report.PLAYER;
-                r.player = player.getId();
-            }
-            r.add(unitsCount);
-            r.add(initialUnitsCount);
-            r.add(Double.toString(Math.round(((double) unitsCount / initialUnitsCount) * 10000.0) / 100.0));
-            r.indent(2);
-            addReport(r);
-
-            r = new Report(7019, Report.PUBLIC);
-            if (checkBlind && doBlind() && suppressBlindBV()) {
-                r.type = Report.PLAYER;
-                r.player = player.getId();
-            }
-            r.add(unitsLightDamageCount);
-            r.add(unitsModerateDamageCount);
-            r.add(unitsHeavyDamageCount);
-            r.add(unitsCrippledCount);
-            r.add(unitsDestroyedCount);
-            r.add(unitsCrewEjectedCount);
-            r.add(unitsFledCount);
-            r.indent(2);
-            addReport(r);
-
-            r = new Report(7020, Report.PUBLIC);
-            if (checkBlind && doBlind() && suppressBlindBV()) {
-                r.type = Report.PLAYER;
-                r.player = player.getId();
-            }
-            r.add(ejectedCrewActiveCount);
-            r.add(ejectedCrewPickedUpByTeamCount);
-            r.add(ejectedCrewPickedUpByEnemyTeamCount);
-            r.add(ejectedCrewKilledCount);
-            r.add(ejectedCrewFledCount);
-            r.indent(2);
-            addReport(r);
-
-            // blank line
-            addReport(new Report(1210, Report.PUBLIC));
-
-            TeamHelper th = teamsInfo.get(player.getTeam());
-            th.bv += bv;
-            th.initialBV += initialBV;
-            th.fledBV += fledBV;
-            th.unitCount += unitsCount;
-            th.unitsInitialCount += initialUnitsCount;
-            th.unitsLightDamageCount += unitsLightDamageCount;
-            th.unitsModerateDamageCount += unitsModerateDamageCount;
-            th.unitsHeavyDamageCount += unitsHeavyDamageCount;
-            th.unitsCrippledCount += unitsCrippledCount;
-            th.unitsDestoryedCount += unitsDestroyedCount;
-            th.unitsCrewEjectedCount += unitsCrewEjectedCount;
-            th.unitsFledCount += unitsFledCount;
-            th.ejectedCrewActiveCount += ejectedCrewActiveCount;
-            th.ejectedCrewPickedUpByTeamCount += ejectedCrewPickedUpByTeamCount;
-            th.ejectedCrewPickedUpByEnemyTeamCount += ejectedCrewPickedUpByEnemyTeamCount;
-            th.ejectedCrewFledCount += ejectedCrewFledCount;
+            BVCountHelper bvcTeam = teamsInfo.get(player.getTeam());
+            bvcTeam.bv += bvcPlayer.bv;
+            bvcTeam.bvInitial += bvcPlayer.bvInitial;
+            bvcTeam.bvFled += bvcPlayer.bvFled;
+            bvcTeam.unitsCount += bvcPlayer.unitsCount;
+            bvcTeam.unitsInitialCount += bvcPlayer.unitsInitialCount;
+            bvcTeam.unitsLightDamageCount += bvcPlayer.unitsLightDamageCount;
+            bvcTeam.unitsModerateDamageCount += bvcPlayer.unitsModerateDamageCount;
+            bvcTeam.unitsHeavyDamageCount += bvcPlayer.unitsHeavyDamageCount;
+            bvcTeam.unitsCrippledCount += bvcPlayer.unitsCrippledCount;
+            bvcTeam.unitsDestroyedCount += bvcPlayer.unitsDestroyedCount;
+            bvcTeam.unitsCrewEjectedCount += bvcPlayer.unitsCrewEjectedCount;
+            bvcTeam.unitsFledCount += bvcPlayer.unitsFledCount;
+            bvcTeam.ejectedCrewActiveCount += bvcPlayer.ejectedCrewActiveCount;
+            bvcTeam.ejectedCrewPickedUpByTeamCount += bvcPlayer.ejectedCrewPickedUpByTeamCount;
+            bvcTeam.ejectedCrewPickedUpByEnemyTeamCount += bvcPlayer.ejectedCrewPickedUpByEnemyTeamCount;
+            bvcTeam.ejectedCrewKilledCount += bvcPlayer.ejectedCrewKilledCount;
+            bvcTeam.ejectedCrewFledCount += bvcPlayer.ejectedCrewFledCount;
         }
 
         // Show teams BVs
-        for (Map.Entry<Integer, TeamHelper> e : teamsInfo.entrySet()) {
-            TeamHelper th = e.getValue();
-
-            Report r = new Report(7016, Report.PUBLIC);
-            r.add(Player.TEAM_NAMES[e.getKey()]);
-            addReport(r);
-
-            r = new Report(7017, Report.PUBLIC);
-            r.add(th.bv);
-            r.add(th.initialBV);
-            r.add(Double.toString(Math.round(((double) th.bv / th.initialBV) * 10000.0) / 100.0));
-            r.add(th.fledBV);
-            r.indent(2);
-            addReport(r);
-
-            r = new Report(7018, Report.PUBLIC);
-            r.add(th.unitCount);
-            r.add(th.unitsInitialCount);
-            r.add(Double.toString(Math.round(((double) th.unitCount / th.unitsInitialCount) * 10000.0) / 100.0));
-            r.indent(2);
-            addReport(r);
-
-            r = new Report(7019, Report.PUBLIC);
-            r.add(th.unitsLightDamageCount);
-            r.add(th.unitsModerateDamageCount);
-            r.add(th.unitsHeavyDamageCount);
-            r.add(th.unitsCrippledCount);
-            r.add(th.unitsDestoryedCount);
-            r.add(th.unitsCrewEjectedCount);
-            r.add(th.unitsFledCount);
-            r.indent(2);
-            addReport(r);
-
-            r = new Report(7020, Report.PUBLIC);
-            r.add(th.ejectedCrewActiveCount);
-            r.add(th.ejectedCrewPickedUpByTeamCount);
-            r.add(th.ejectedCrewPickedUpByEnemyTeamCount);
-            r.add(th.ejectedCrewKilledCount);
-            r.add(th.ejectedCrewFledCount);
-            r.indent(2);
-            addReport(r);
-
-            // blank line
-            addReport(new Report(1210, Report.PUBLIC));
+        for (Map.Entry<Integer, BVCountHelper> e : teamsInfo.entrySet()) {
+            BVCountHelper bvc = e.getValue();
+            bvReport(Player.TEAM_NAMES[e.getKey()], Player.PLAYER_NONE, bvc, false);
         }
+    }
+
+    private void bvReport(String name, int playerID, BVCountHelper bvc, boolean checkBlind) {
+        Report r = new Report(7016, Report.PUBLIC);
+        r.add(name);
+        addReport(r);
+
+        r = new Report(7017, Report.PUBLIC);
+        if (checkBlind && doBlind() && suppressBlindBV()) {
+            r.type = Report.PLAYER;
+            r.player = playerID;
+        }
+        r.add(bvc.bv);
+        r.add(bvc.bvInitial);
+        r.add(Double.toString(Math.round(((double) bvc.bv / bvc.bvInitial) * 10000.0) / 100.0));
+        r.add(bvc.bvFled);
+        r.indent(2);
+        addReport(r);
+
+        r = new Report(7018, Report.PUBLIC);
+        if (checkBlind && doBlind() && suppressBlindBV()) {
+            r.type = Report.PLAYER;
+        }
+        r.add(bvc.unitsCount);
+        r.add(bvc.unitsInitialCount);
+        r.add(Double.toString(Math.round(((double) bvc.unitsCount / bvc.unitsInitialCount) * 10000.0) / 100.0));
+        r.indent(2);
+        addReport(r);
+
+        r = new Report(7019, Report.PUBLIC);
+        if (checkBlind && doBlind() && suppressBlindBV()) {
+            r.type = Report.PLAYER;
+            r.player = playerID;
+        }
+        r.add(bvc.unitsLightDamageCount);
+        r.add(bvc.unitsModerateDamageCount);
+        r.add(bvc.unitsHeavyDamageCount);
+        r.add(bvc.unitsCrippledCount);
+        r.add(bvc.unitsDestroyedCount);
+        r.add(bvc.unitsCrewEjectedCount);
+        r.add(bvc.unitsFledCount);
+        r.indent(2);
+        addReport(r);
+
+        r = new Report(7020, Report.PUBLIC);
+        if (checkBlind && doBlind() && suppressBlindBV()) {
+            r.type = Report.PLAYER;
+            r.player = playerID;
+        }
+        r.add(bvc.ejectedCrewActiveCount);
+        r.add(bvc.ejectedCrewPickedUpByTeamCount);
+        r.add(bvc.ejectedCrewPickedUpByEnemyTeamCount);
+        r.add(bvc.ejectedCrewKilledCount);
+        r.add(bvc.ejectedCrewFledCount);
+        r.indent(2);
+        addReport(r);
+
+        // blank line
+        addReport(new Report(1210, Report.PUBLIC));
     }
 
     /**
@@ -1987,7 +1947,7 @@ public class GameManager implements IGameManager {
             case INITIATIVE_REPORT: {
                 autoSave();
 
-                bvReport(true);
+                bvReports(true);
             }
             case TARGETING_REPORT:
             case MOVEMENT_REPORT:

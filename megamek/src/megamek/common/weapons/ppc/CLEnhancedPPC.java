@@ -58,6 +58,6 @@ public class CLEnhancedPPC extends PPCWeapon {
                 .setPrototypeFactions(F_CWV)
                 .setProductionFactions(F_CWV)
                 .setReintroductionFactions(F_EI)
-                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 }

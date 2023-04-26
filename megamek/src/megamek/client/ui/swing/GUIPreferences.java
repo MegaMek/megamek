@@ -272,6 +272,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SHOW_FIELD_OF_FIRE = "ShowFieldOfFire";
     public static final String SHOW_MAPHEX_POPUP = "ShowMapHexPopup";
     public static final String SHOW_WPS_IN_TT = "ShowWpsinTT";
+    public static final String SHOW_WPS_LOC_IN_TT = "ShowWpsLocinTT";
     public static final String SHOW_ARMOR_MINIVIS_TT = "showArmorMiniVisTT";
     public static final String SHOW_PILOT_PORTRAIT_TT = "showPilotPortraitTT";
     public static final String SHOW_MOVE_STEP = "ShowMoveStep";
@@ -630,6 +631,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(TOOLTIP_DISMISS_DELAY, -1);
         store.setDefault(TOOLTIP_DIST_SUPRESSION, BoardView.HEX_DIAG);
         store.setDefault(SHOW_WPS_IN_TT, true);
+        store.setDefault(SHOW_WPS_LOC_IN_TT, true);
         store.setDefault(SHOW_ARMOR_MINIVIS_TT, true);
         store.setDefault(SHOW_PILOT_PORTRAIT_TT, true);
 
@@ -1277,6 +1279,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getShowWpsinTT() {
         return store.getBoolean(SHOW_WPS_IN_TT);
+    }
+
+    public boolean getShowWpsLocinTT() {
+        return store.getBoolean(SHOW_WPS_LOC_IN_TT);
     }
 
     public boolean getshowArmorMiniVisTT() {
@@ -2020,6 +2026,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setShowWpsinTT(boolean state) {
         store.setValue(SHOW_WPS_IN_TT, state);
+    }
+
+    public void setShowWpsLocinTT(boolean state) {
+        store.setValue(SHOW_WPS_LOC_IN_TT, state);
     }
 
     public void setshowArmorMiniVisTT(boolean state) {

@@ -565,6 +565,9 @@ public class MechFileParser {
                                 || (mWeapon.getType() instanceof ISHeavyPPC)
                                 || (mWeapon.getType() instanceof ISERPPC)
                                 || (mWeapon.getType() instanceof ISSnubNosePPC)
+                                || (mWeapon.getType() instanceof CLEnhancedPPC)
+                                || (mWeapon.getType() instanceof CLImprovedPPC)
+                                || (mWeapon.getType() instanceof ISKinsSlaughterPPC)                             
                                 || (mWeapon.getType() instanceof CLERPPC && ent.getYear() >= 3101)) {
 
                             m.setCrossLinked(mWeapon);

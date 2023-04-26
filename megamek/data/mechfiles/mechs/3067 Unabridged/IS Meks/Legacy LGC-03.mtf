@@ -6,9 +6,8 @@ mul id:4490
 Config:Biped
 TechBase:Inner Sphere
 Era:3070
-Source:RS:3067U
+Source:3067 Unabridged
 Rules Level:2
-source:3067 Unabridged
 
 Mass:80
 Engine:320 Light Engine(IS)

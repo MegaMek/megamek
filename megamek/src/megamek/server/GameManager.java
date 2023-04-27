@@ -1595,6 +1595,7 @@ public class GameManager implements IGameManager {
         int unitsCrippledCount;
         int unitsDestroyedCount;
         int unitsCrewEjectedCount;
+        int unitsCrewKilledCount;
         int unitsFledCount;
         int ejectedCrewActiveCount;
         int ejectedCrewPickedUpByTeamCount;
@@ -1614,6 +1615,7 @@ public class GameManager implements IGameManager {
             this.unitsCrippledCount = 0;
             this.unitsDestroyedCount = 0;
             this.unitsCrewEjectedCount = 0;
+            this.unitsCrewKilledCount = 0;
             this.unitsFledCount = 0;
             this.ejectedCrewActiveCount = 0;
             this.ejectedCrewPickedUpByTeamCount = 0;
@@ -1652,6 +1654,7 @@ public class GameManager implements IGameManager {
             bvcPlayer.unitsCrippledCount = player.getUnitCrippledCount();
             bvcPlayer.unitsDestroyedCount =  player.getUnitDestroyedCount();
             bvcPlayer.unitsCrewEjectedCount = player.getUnitCrewEjectedCount();
+            bvcPlayer.unitsCrewKilledCount = player.getUnitCrewKilledCount();
             bvcPlayer.unitsFledCount = player.getFledUnitsCount();
             bvcPlayer.ejectedCrewActiveCount = player.getEjectedCrewCount();
             bvcPlayer.ejectedCrewPickedUpByTeamCount =  player.getEjectedCrewPickedUpByTeamCount();
@@ -1673,6 +1676,7 @@ public class GameManager implements IGameManager {
             bvcTeam.unitsCrippledCount += bvcPlayer.unitsCrippledCount;
             bvcTeam.unitsDestroyedCount += bvcPlayer.unitsDestroyedCount;
             bvcTeam.unitsCrewEjectedCount += bvcPlayer.unitsCrewEjectedCount;
+            bvcTeam.unitsCrewKilledCount += bvcPlayer.unitsCrewKilledCount;
             bvcTeam.unitsFledCount += bvcPlayer.unitsFledCount;
             bvcTeam.ejectedCrewActiveCount += bvcPlayer.ejectedCrewActiveCount;
             bvcTeam.ejectedCrewPickedUpByTeamCount += bvcPlayer.ejectedCrewPickedUpByTeamCount;
@@ -1725,8 +1729,9 @@ public class GameManager implements IGameManager {
         r.add(bvc.unitsHeavyDamageCount);
         r.add(bvc.unitsCrippledCount);
         r.add(bvc.unitsDestroyedCount);
-        r.add(bvc.unitsCrewEjectedCount);
         r.add(bvc.unitsFledCount);
+        r.add(bvc.unitsCrewEjectedCount);;
+        r.add(bvc.unitsCrewKilledCount);
         r.indent(2);
         addReport(r);
 

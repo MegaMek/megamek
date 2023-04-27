@@ -504,7 +504,7 @@ public final class Player extends TurnOrdered {
 
     public int getUnitCrewKilledCount() {
         return Math.toIntExact(game.getOutOfGameEntitiesVector().stream()
-                .filter(entity -> this.equals(entity.getOwner()) && entity.getCrew().isDead() && !(entity instanceof EjectedCrew)).count());
+                .filter(entity -> this.equals(entity.getOwner()) && entity.getCrew().isDead() && !entity.getCrew().isEjected() && !(entity instanceof EjectedCrew)).count());
     }
 
     public int getEjectedCrewCount() {

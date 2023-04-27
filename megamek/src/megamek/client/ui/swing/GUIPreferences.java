@@ -420,6 +420,31 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(CAUTION_COLOR, Color.yellow);
         setDefault(PRECAUTION_COLOR, Color.orange);
 
+        setDefault(PlayerColour.PLAYERCOLOUR_BLUE, new Color(0x8686BF));
+        setDefault(PlayerColour.PLAYERCOLOUR_RED, new Color(0xCC6666));
+        setDefault(PlayerColour.PLAYERCOLOUR_GREEN, new Color(0x87BF86));
+        setDefault(PlayerColour.PLAYERCOLOUR_CYAN, new Color(0x8FCCCC));
+        setDefault(PlayerColour.PLAYERCOLOUR_PINK, new Color(0xF29DC8));
+        setDefault(PlayerColour.PLAYERCOLOUR_ORANGE, new Color(0xF2AA61));
+        setDefault(PlayerColour.PLAYERCOLOUR_GRAY, new Color(0xBEBEBE));
+        setDefault(PlayerColour.PLAYERCOLOUR_BROWN, new Color(0x98816B));
+        setDefault(PlayerColour.PLAYERCOLOUR_PURPLE, new Color(0x800080));
+        setDefault(PlayerColour.PLAYERCOLOUR_TURQUOISE, new Color(0x40E0D0));
+        setDefault(PlayerColour.PLAYERCOLOUR_MAROON, new Color(0x800000));
+        setDefault(PlayerColour.PLAYERCOLOUR_SPRING_GREEN, new Color(0x00FF7F));
+        setDefault(PlayerColour.PLAYERCOLOUR_GOLD, new Color(0xFFD700));
+        setDefault(PlayerColour.PLAYERCOLOUR_SIENNA, new Color(0xA0522D));
+        setDefault(PlayerColour.PLAYERCOLOUR_VIOLET, new Color(0xEE82EE));
+        setDefault(PlayerColour.PLAYERCOLOUR_NAVY, new Color(0x000080));
+        setDefault(PlayerColour.PLAYERCOLOUR_OLIVE_DRAB, new Color(0x6B8E23));
+        setDefault(PlayerColour.PLAYERCOLOUR_FUCHSIA, new Color(0xFF00FF));
+        setDefault(PlayerColour.PLAYERCOLOUR_FIRE_BRICK, new Color(0xB22222));
+        setDefault(PlayerColour.PLAYERCOLOUR_DARK_GOLDEN_ROD, new Color(0xB8860B));
+        setDefault(PlayerColour.PLAYERCOLOUR_CORAL, new Color(0xFF7F50));
+        setDefault(PlayerColour.PLAYERCOLOUR_CHARTREUSE, new Color(0x7FFF00));
+        setDefault(PlayerColour.PLAYERCOLOUR_DEEP_PURPLE, new Color(0x9400D3));
+        setDefault(PlayerColour.PLAYERCOLOUR_YELLOW, new Color(0xF2F261));
+
         setDefault(BOARD_MOVE_DEFAULT_CLIMB_MODE, true);
         setDefault(BOARD_MOVE_DEFAULT_COLOR, DEFAULT_CYAN.CYAN);
         setDefault(BOARD_MOVE_ILLEGAL_COLOR, DEFAULT_DARK_GRAY);
@@ -2868,6 +2893,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         final String text = store.getString(name);
         final Color colour = parseRGB(text);
         return (colour == null) ? PlayerColour.parseFromString(text).getColour() : colour;
+    }
+
+    public void setColor(String name, Color c) {
+        store.setValue(name, getColorString(c));
     }
 
     protected String getColorString(Color colour) {

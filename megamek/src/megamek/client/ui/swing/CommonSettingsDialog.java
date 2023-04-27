@@ -28,6 +28,7 @@ import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.swing.StatusBarPhaseDisplay.PhaseCommand;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.KeyCommandBind;
+import megamek.client.ui.swing.util.PlayerColour;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.common.Configuration;
@@ -271,6 +272,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private ColourSelectorButton csbWarningColor;
     private ColourSelectorButton csbCautionColor;
     private ColourSelectorButton csbPrecautionColor;
+
+    ArrayList<PlayerColourHelper> playerColours;
 
     private JComboBox unitDisplayAutoDisplayReportCombo;
     private JComboBox unitDisplayAutoDisplayNonReportCombo;
@@ -1228,6 +1231,46 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         return createSettingsPanel(comps);
     }
 
+    private static class PlayerColourHelper {
+        PlayerColour pc;
+        ColourSelectorButton csb;
+
+        public PlayerColourHelper(PlayerColour pc, ColourSelectorButton csb) {
+            this.pc = pc;
+            this.csb = csb;
+        }
+    }
+
+    private JPanel getPlayerColourPanel() {
+        List<List<Component>> comps = new ArrayList<>();
+        ArrayList<Component> row;
+
+        playerColours = new ArrayList<>();
+
+        row = new ArrayList<>();
+        JLabel playerColourLabel = new JLabel(Messages.getString("CommonSettingsDialog.playerColour"));
+        playerColourLabel.setToolTipText(Messages.getString("CommonSettingsDialog.playerColour.tooltip"));
+        row.add(playerColourLabel);
+        comps.add(row);
+
+        for (PlayerColour pc : PlayerColour.values()) {
+            ColourSelectorButton csb = new ColourSelectorButton("");
+            csb.setToolTipText(Messages.getString("CommonSettingsDialog.playerColour.tooltip"));
+            playerColours.add(new PlayerColourHelper(pc, csb));
+        }
+
+        row = new ArrayList<>();
+
+        for (PlayerColourHelper pch : playerColours) {
+            pch.csb.setColour(GUIP.getColor(pch.pc.getText()));
+            row.add(pch.csb);
+        }
+
+        comps.add(row);
+
+        return createSettingsPanel(comps);
+    }
+
     private JPanel getSettingsPanel() {
         List<List<Component>> comps = new ArrayList<>();
         ArrayList<Component> row;
@@ -1300,6 +1343,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         csbPrecautionColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.PrecautionColor"));
         csbPrecautionColor.setColour(GUIP.getPrecautionColor());
         row.add(csbPrecautionColor);
+        comps.add(row);
+
+        addLineSpacer(comps);
+
+        row = new ArrayList<>();
+        row.add(getPlayerColourPanel());
         comps.add(row);
 
         addLineSpacer(comps);
@@ -1626,6 +1675,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         csbCautionColor.setColour(GUIP.getCautionColor());
         csbPrecautionColor.setColour(GUIP.getPrecautionColor());
 
+        for (PlayerColourHelper pch : playerColours) {
+            pch.csb.setColour(GUIP.getColor(pch.pc.getText()));
+        }
+
         csbMoveDefaultColor.setColour(GUIP.getMoveDefaultColor());
         csbMoveIllegalColor.setColour(GUIP.getMoveIllegalColor());
         csbMoveJumpColor.setColour(GUIP.getMoveJumpColor());
@@ -1772,6 +1825,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setWarningColor(csbWarningColor.getColour());
         GUIP.setCautionColor(csbCautionColor.getColour());
         GUIP.setPrecautionColor(csbPrecautionColor.getColour());
+
+        for (PlayerColourHelper pch : playerColours) {
+            GUIP.setColor(pch.pc.getText(), pch.csb.getColour());
+        }
 
         GUIP.setMoveDefaultColor(csbMoveDefaultColor.getColour());
         GUIP.setMoveIllegalColor(csbMoveIllegalColor.getColour());

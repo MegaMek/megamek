@@ -1,7 +1,8 @@
 Version:1.3
 Jinggau
 JN-G9CCr
-mul id:1708
+mul id:9504
+
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3137
@@ -166,4 +167,3 @@ systemmanufacturer:ENGINE:VOX 325 XL
 systemmanufacturer:ARMOR:Valiant DefCo
 systemmanufacturer:COMMUNICATIONS:Dian-bao Comms, heavily insulated
 systemmanufacturer:TARGETING:Dynatec Special T&T
-

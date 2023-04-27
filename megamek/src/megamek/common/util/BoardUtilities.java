@@ -226,6 +226,18 @@ public class BoardUtilities {
                     reverseHex, true);
         }
 
+        // Add the sand
+        count = mapSettings.getMinSnowSpots();
+        if (mapSettings.getMaxSnowSpots() > 0) {
+            count += Compute.randomInt(mapSettings.getMaxSnowSpots());
+        }
+        count = (int) Math.round(count * sizeScale);
+        for (int i = 0; i < count; i++) {
+            placeSomeTerrain(result, Terrains.SNOW, 0, mapSettings
+                            .getMinSnowSize(), mapSettings.getMaxSnowSize(),
+                    reverseHex, true);
+        }
+
         // Add the planted field
         count = mapSettings.getMinPlantedFieldSpots();
         if (mapSettings.getMaxPlantedFieldSpots() > 0) {

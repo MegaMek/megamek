@@ -1189,25 +1189,7 @@ public class GameManager implements IGameManager {
         }
         addReport(r);
 
-        // Show player BVs
-        Enumeration<Player> players = game.getPlayers();
-        while (players.hasMoreElements()) {
-            Player player = players.nextElement();
-            // Observers without initial entities get ignored
-            if (player.isObserver() && (player.getInitialEntityCount() == 0)) {
-                continue;
-            }
-            r = new Report(7016, Report.PUBLIC);
-            r.add(player.getColorForPlayer());
-            r.add(player.getBV());
-            r.add(player.getInitialBV());
-            r.add(Double.toString(Math.round((double) player.getBV() / player.getInitialBV() * 10000.0) / 100.0));
-            r.add(player.getFledBV());
-            r.add(player.getEntityCount());
-            r.add(player.getInitialEntityCount());
-            r.add(Double.toString(Math.round(((double) player.getEntityCount() / player.getInitialEntityCount()) * 10000.0) / 100.0));
-            addReport(r);
-        }
+        bvReport(false);
 
         // List the survivors
         Iterator<Entity> survivors = game.getEntities();
@@ -1601,6 +1583,83 @@ public class GameManager implements IGameManager {
         }
     }
 
+    private static class TeamHelper {
+        int bv;
+        int initialBV;
+        int fledBV;
+        int entityCount;
+        int initialEntityCount;
+
+        public TeamHelper(int bv, int initialBV, int fledBV, int entityCount, int initialEntityCount) {
+            this.bv = bv;
+            this.initialBV = initialBV;
+            this.fledBV = fledBV;
+            this.entityCount = entityCount;
+            this.initialEntityCount = initialEntityCount;
+        }
+    }
+
+    private void bvReport(boolean checkBlind) {
+        HashMap<Integer, TeamHelper> teamsInfo = new HashMap<>();
+
+        for (Team team : game.getTeams()) {
+            teamsInfo.put(team.getId(), new TeamHelper(0, 0, 0, 0, 0));
+        }
+
+        // blank line
+        addReport(new Report(1210, Report.PUBLIC));
+
+        // Show player BVs
+        for (Player player : game.getPlayersList()) {
+            // Observers without initial entities get ignored
+            if (player.isObserver() && (player.getInitialEntityCount() == 0)) {
+                continue;
+            }
+            Report r = new Report(7016, Report.PUBLIC);
+            if (checkBlind && doBlind() && suppressBlindBV()) {
+                r.type = Report.PLAYER;
+                r.player = player.getId();
+            }
+            r.add(player.getColorForPlayer());
+            r.add(player.getBV());
+            r.add(player.getInitialBV());
+            r.add(Double.toString(Math.round(((double) player.getBV() / player.getInitialBV()) * 10000.0) / 100.0));
+            r.add(player.getFledBV());
+            r.add(player.getEntityCount());
+            r.add(player.getInitialEntityCount());
+            r.add(Double.toString(Math.round(((double) player.getEntityCount() / player.getInitialEntityCount()) * 10000.0) / 100.0));
+            addReport(r);
+
+            TeamHelper th = teamsInfo.get(player.getTeam());
+            th.bv += player.getBV();
+            th.initialBV += player.getInitialBV();
+            th.fledBV += player.getFledBV();
+            th.entityCount += player.getEntityCount();
+            th.initialEntityCount += player.getInitialEntityCount();
+        }
+
+        // blank line
+        addReport(new Report(1210, Report.PUBLIC));
+
+        // Show teams BVs
+        for (Map.Entry<Integer, TeamHelper> e : teamsInfo.entrySet()) {
+            TeamHelper th = e.getValue();
+            Report r = new Report(7016, Report.PUBLIC);
+            r.add(Player.TEAM_NAMES[e.getKey()]);
+            r.add(th.bv);
+            r.add(th.initialBV);
+            r.add(Double.toString(Math.round(((double) th.bv / th.initialBV) * 10000.0) / 100.0));
+            r.add(th.fledBV);
+            r.add(th.entityCount);
+            r.add(th.initialEntityCount);
+            r.add(Double.toString(Math.round(((double) th.entityCount / th.initialEntityCount) * 10000.0) / 100.0));
+            addReport(r);
+        }
+
+        // blank line
+        addReport(new Report(1210, Report.PUBLIC));
+    }
+
     /**
      * Prepares for, presumably, the next phase. This typically involves
      * resetting the states of entities in the game and making sure the client
@@ -1800,29 +1859,8 @@ public class GameManager implements IGameManager {
                 break;
             case INITIATIVE_REPORT: {
                 autoSave();
-                // Show player BVs
-                Enumeration<Player> players2 = game.getPlayers();
-                while (players2.hasMoreElements()) {
-                    Player player = players2.nextElement();
-                    // Observers without initial entities get ignored
-                    if (player.isObserver() && (player.getInitialEntityCount() == 0)) {
-                        continue;
-                    }
-                    Report r = new Report(7016, Report.PUBLIC);
-                    if (doBlind() && suppressBlindBV()) {
-                        r.type = Report.PLAYER;
-                        r.player = player.getId();
-                    }
-                    r.add(player.getColorForPlayer());
-                    r.add(player.getBV());
-                    r.add(player.getInitialBV());
-                    r.add(Double.toString(Math.round(((double) player.getBV() / player.getInitialBV()) * 10000.0) / 100.0));
-                    r.add(player.getFledBV());
-                    r.add(player.getEntityCount());
-                    r.add(player.getInitialEntityCount());
-                    r.add(Double.toString(Math.round(((double) player.getEntityCount() / player.getInitialEntityCount()) * 10000.0) / 100.0));
-                    addReport(r);
-                }
+
+                bvReport(true);
             }
             case TARGETING_REPORT:
             case MOVEMENT_REPORT:

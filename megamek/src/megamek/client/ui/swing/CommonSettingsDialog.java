@@ -28,6 +28,7 @@ import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.swing.StatusBarPhaseDisplay.PhaseCommand;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.KeyCommandBind;
+import megamek.client.ui.swing.util.PlayerColour;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.common.Configuration;
@@ -96,7 +97,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
                 if (src instanceof JList) {
                     dragSourceIndex = ((JList<?>) src).getSelectedIndex();
                     mouseDragging = true;
-                }                
+                }
             }
         }
 
@@ -143,6 +144,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private final JCheckBox soundMuteOthersTurn = new JCheckBox(Messages.getString("CommonSettingsDialog.soundMuteOthersTurn"));
     private JTextField tfSoundMuteOthersFileName;
     private final JCheckBox showWpsinTT = new JCheckBox(Messages.getString("CommonSettingsDialog.showWpsinTT"));
+    private final JCheckBox showWpsLocinTT = new JCheckBox(Messages.getString("CommonSettingsDialog.showWpsLocinTT"));
     private final JCheckBox showArmorMiniVisTT = new JCheckBox(Messages.getString("CommonSettingsDialog.showArmorMiniVisTT"));
     private final JCheckBox showPilotPortraitTT = new JCheckBox(Messages.getString("CommonSettingsDialog.showPilotPortraitTT"));
     private MMComboBox<WeaponSortOrder> comboDefaultWeaponSortOrder;
@@ -156,7 +158,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
     private final JCheckBox keepGameLog = new JCheckBox(Messages.getString("CommonSettingsDialog.keepGameLog"));
     private JTextField gameLogFilename;
-    // private JTextField gameLogMaxSize;
     private final JCheckBox stampFilenames = new JCheckBox(Messages.getString("CommonSettingsDialog.stampFilenames"));
     private JTextField stampFormat;
     private final JCheckBox defaultAutoejectDisabled = new JCheckBox(Messages.getString("CommonSettingsDialog.defaultAutoejectDisabled"));
@@ -207,13 +208,13 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private ColourSelectorButton csbUnitValidColor;
     private ColourSelectorButton csbUnitSelectedColor;
     private ColourSelectorButton csbUnitTextColor;
-        private ColourSelectorButton csbBuildingTextColor;
+    private ColourSelectorButton csbBuildingTextColor;
     private ColourSelectorButton csbLowFoliageColor;
     private ColourSelectorButton csbBoardTextColor;
     private ColourSelectorButton csbBoardSpaceTextColor;
     private ColourSelectorButton csbMapsheetColor;
-    private JTextField attackArrowTransparency;;
-    private JTextField ecmTransparency;
+    private JSpinner attackArrowTransparency;;
+    private JSpinner ecmTransparency;
     private JTextField buttonsPerRow;
     private JTextField playersRemainingToShow;
 
@@ -230,14 +231,14 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private JCheckBox fovGrayscaleEnabled;
     private JTextField fovHighlightRingsRadii;
     private JTextField fovHighlightRingsColors;
-    
+
     // Labels (there to make it possible to disable them)
     private JLabel darkenAlphaLabel;
     private JLabel numStripesLabel;
     private JLabel fovHighlightRingsColorsLabel;
     private JLabel fovHighlightRingsRadiiLabel;
     private JLabel highlightAlphaLabel;
-    
+
     private JLabel stampFormatLabel;
     private JLabel gameLogFilenameLabel;
 
@@ -247,7 +248,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private JComboBox<String> skinFiles;
     private JComboBox<UITheme> uiThemes;
 
-    // Avanced Settings
+    // Advanced Settings
     private JList<AdvancedOptionData> advancedKeys;
     private int advancedKeyIndex = 0;
     private JTextField advancedValue;
@@ -263,7 +264,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private DefaultListModel<String> unitDisplayNonTabbed = new DefaultListModel<>();
     private final StatusBarPhaseDisplay.CommandComparator cmdComp = new StatusBarPhaseDisplay.CommandComparator();
     private final PhaseCommandListMouseAdapter cmdMouseAdaptor = new PhaseCommandListMouseAdapter();
-    
+
     private JComboBox<String> tileSetChoice;
     private List<String> tileSets;
     private final MMToggleButton choiceToggle = new MMToggleButton(Messages.getString("CommonSettingsDialog.keyBinds.buttoneTabbing"));
@@ -271,6 +272,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private ColourSelectorButton csbWarningColor;
     private ColourSelectorButton csbCautionColor;
     private ColourSelectorButton csbPrecautionColor;
+
+    ArrayList<PlayerColourHelper> playerColours;
 
     private JComboBox unitDisplayAutoDisplayReportCombo;
     private JComboBox unitDisplayAutoDisplayNonReportCombo;
@@ -332,15 +335,16 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private final JCheckBox planetaryConditionsShowLabels = new JCheckBox(Messages.getString("CommonSettingsDialog.planetaryConditionsShowLabels"));
     private final JCheckBox planetaryConditionsShowValues = new JCheckBox(Messages.getString("CommonSettingsDialog.planetaryConditionsShowValues"));
     private final JCheckBox planetaryConditionsShowIndicators = new JCheckBox(Messages.getString("CommonSettingsDialog.planetaryConditionsShowIndicators"));
+    private JSpinner planetaryConditionsBackgroundTransparency;
 
     /** Maps command strings to a JTextField for updating the modifier for the command. */
     private Map<String, JTextField> cmdModifierMap;
 
     /** Maps command strings to a JTextField for updating the key for the command. */
     private Map<String, JTextField> cmdKeyMap;
-    
+
     /** Maps command strings to a Integer for updating the key for the command. */
-    private Map<String, Integer> cmdKeyCodeMap; 
+    private Map<String, Integer> cmdKeyCodeMap;
 
     private ClientGUI clientgui = null;
 
@@ -350,10 +354,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private static final ButtonOrderPreferences BOP = ButtonOrderPreferences.getInstance();
 
     private static final String[] LOCALE_CHOICES = { "en", "de", "ru", "es" };
-    
+
     private static final Dimension LABEL_SPACER = new Dimension(5, 0);
     private static final Dimension DEPENDENT_INSET = new Dimension(25, 0);
-    
+
     // Save some values to restore them when the dialog is canceled
     private boolean savedFovHighlight;
     private boolean savedFovDarken;
@@ -384,7 +388,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         this(owner);
         clientgui = cg;
     }
-    
+
     /** Constructs the Client Settings Dialog without a clientgui (used in the main menu and board editor). */
     public CommonSettingsDialog(JFrame owner) {
         super(owner, true, "ClientSettings", "CommonSettingsDialog.title");
@@ -564,23 +568,23 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         addLineSpacer(comps);
 
-        attackArrowTransparency = new JTextField(4);
+        SpinnerNumberModel mAttackArrowTransparency = new SpinnerNumberModel(GUIP.getAttachArrowTransparency(), 0, 256, 1);
+        attackArrowTransparency = new JSpinner(mAttackArrowTransparency);
         attackArrowTransparency.setMaximumSize(new Dimension(150, 40));
         JLabel attackArrowTransparencyLabel = new JLabel(Messages.getString("CommonSettingsDialog.attackArrowTransparency"));
         row = new ArrayList<>();
         row.add(attackArrowTransparencyLabel);
         row.add(attackArrowTransparency);
-        attackArrowTransparency.setText(String.format("%d", GUIP.getAttachArrowTransparency()));
         attackArrowTransparency.setToolTipText(Messages.getString("CommonSettingsDialog.attackArrowTransparency.tooltip"));
         comps.add(row);
 
-        ecmTransparency = new JTextField(4);
+        SpinnerNumberModel mECMTransparency = new SpinnerNumberModel(GUIP.getECMTransparency(), 0, 256, 1);
+        ecmTransparency = new JSpinner(mECMTransparency);
         ecmTransparency.setMaximumSize(new Dimension(150, 40));
         JLabel ecmTransparencyLabel = new JLabel(Messages.getString("CommonSettingsDialog.ecmTransparency"));
         row = new ArrayList<>();
         row.add(ecmTransparencyLabel);
         row.add(ecmTransparency);
-        ecmTransparency.setText(String.format("%d", GUIP.getECMTransparency()));
         ecmTransparency.setToolTipText(Messages.getString("CommonSettingsDialog.ecmTransparency.tooltip"));
         comps.add(row);
 
@@ -863,6 +867,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         comps.add(row);
 
         comps.add(checkboxEntry(showWpsinTT, null));
+        comps.add(checkboxEntry(showWpsLocinTT, null));
         comps.add(checkboxEntry(showPilotPortraitTT, null));
 
         addLineSpacer(comps);
@@ -1124,7 +1129,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         row.add(unitDisplayMechMeduimFontSizeText);
         comps.add(row);
 
-
         return createSettingsPanel(comps);
     }
 
@@ -1204,6 +1208,16 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         comps.add(checkboxEntry(planetaryConditionsShowIndicators, null));
         planetaryConditionsShowIndicators.setSelected(GUIP.getPlanetaryConditionsShowIndicators());
 
+        SpinnerNumberModel mPlanetaryConditionsBackgroundTransparency = new SpinnerNumberModel(GUIP.getPlanetaryConditionsBackgroundTransparency(), 0, 256, 1);
+        planetaryConditionsBackgroundTransparency = new JSpinner(mPlanetaryConditionsBackgroundTransparency);
+        planetaryConditionsBackgroundTransparency.setMaximumSize(new Dimension(150, 40));
+        JLabel planetaryConditionsBackgroundTransparencyLabel = new JLabel(Messages.getString("CommonSettingsDialog.colors.PlanetaryConditionsBackgroundTransparency"));
+        row = new ArrayList<>();
+        row.add(planetaryConditionsBackgroundTransparency);
+        row.add(planetaryConditionsBackgroundTransparencyLabel);
+        planetaryConditionsBackgroundTransparency.setToolTipText(Messages.getString("CommonSettingsDialog.colors.PlanetaryConditionsBackgroundTransparency.tooltip"));
+        comps.add(row);
+
         return createSettingsPanel(comps);
     }
 
@@ -1217,22 +1231,62 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         return createSettingsPanel(comps);
     }
 
+    private static class PlayerColourHelper {
+        PlayerColour pc;
+        ColourSelectorButton csb;
+
+        public PlayerColourHelper(PlayerColour pc, ColourSelectorButton csb) {
+            this.pc = pc;
+            this.csb = csb;
+        }
+    }
+
+    private JPanel getPlayerColourPanel() {
+        List<List<Component>> comps = new ArrayList<>();
+        ArrayList<Component> row;
+
+        playerColours = new ArrayList<>();
+
+        row = new ArrayList<>();
+        JLabel playerColourLabel = new JLabel(Messages.getString("CommonSettingsDialog.playerColour"));
+        playerColourLabel.setToolTipText(Messages.getString("CommonSettingsDialog.playerColour.tooltip"));
+        row.add(playerColourLabel);
+        comps.add(row);
+
+        for (PlayerColour pc : PlayerColour.values()) {
+            ColourSelectorButton csb = new ColourSelectorButton("");
+            csb.setToolTipText(Messages.getString("CommonSettingsDialog.playerColour.tooltip"));
+            playerColours.add(new PlayerColourHelper(pc, csb));
+        }
+
+        row = new ArrayList<>();
+
+        for (PlayerColourHelper pch : playerColours) {
+            pch.csb.setColour(GUIP.getColor(pch.pc.getText()));
+            row.add(pch.csb);
+        }
+
+        comps.add(row);
+
+        return createSettingsPanel(comps);
+    }
+
     private JPanel getSettingsPanel() {
         List<List<Component>> comps = new ArrayList<>();
         ArrayList<Component> row;
 
         JLabel displayLocaleLabel = new JLabel(Messages.getString("CommonSettingsDialog.locale"));
         displayLocale = new JComboBox<>();
-        displayLocale.addItem(Messages.getString("CommonSettingsDialog.locale.English")); 
-        displayLocale.addItem(Messages.getString("CommonSettingsDialog.locale.Deutsch")); 
+        displayLocale.addItem(Messages.getString("CommonSettingsDialog.locale.English"));
+        displayLocale.addItem(Messages.getString("CommonSettingsDialog.locale.Deutsch"));
         displayLocale.addItem(Messages.getString("CommonSettingsDialog.locale.Russian"));
-        displayLocale.addItem(Messages.getString("CommonSettingsDialog.locale.Spanish")); 
+        displayLocale.addItem(Messages.getString("CommonSettingsDialog.locale.Spanish"));
         displayLocale.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
         row.add(displayLocaleLabel);
         row.add(displayLocale);
         comps.add(row);
-        
+
         addLineSpacer(comps);
 
         guiScale = new JSlider();
@@ -1293,6 +1347,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         addLineSpacer(comps);
 
+        row = new ArrayList<>();
+        row.add(getPlayerColourPanel());
+        comps.add(row);
+
+        addLineSpacer(comps);
+
         comps.add(checkboxEntry(teamColoring, Messages.getString("CommonSettingsDialog.teamColoring.tooltip")));
         comps.add(checkboxEntry(dockOnLeft, null));
         dockOnLeft.setSelected(GUIP.getDockOnLeft());
@@ -1324,14 +1384,14 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         addLineSpacer(comps);
 
-        JLabel unitStartCharLabel = new JLabel(Messages.getString("CommonSettingsDialog.protoMechUnitCodes")); 
+        JLabel unitStartCharLabel = new JLabel(Messages.getString("CommonSettingsDialog.protoMechUnitCodes"));
         unitStartChar = new JComboBox<>();
         // Add option for "A, B, C, D..."
-        unitStartChar.addItem("\u0041, \u0042, \u0043, \u0044..."); 
+        unitStartChar.addItem("\u0041, \u0042, \u0043, \u0044...");
         // Add option for "ALPHA, BETA, GAMMA, DELTA..."
-        unitStartChar.addItem("\u0391, \u0392, \u0393, \u0394..."); 
+        unitStartChar.addItem("\u0391, \u0392, \u0393, \u0394...");
         // Add option for "alpha, beta, gamma, delta..."
-        unitStartChar.addItem("\u03B1, \u03B2, \u03B3, \u03B4..."); 
+        unitStartChar.addItem("\u03B1, \u03B2, \u03B3, \u03B4...");
         unitStartChar.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
         row.add(unitStartCharLabel);
@@ -1344,7 +1404,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         addLineSpacer(comps);
         comps.add(checkboxEntry(keepGameLog, null));
 
-        gameLogFilenameLabel = new JLabel(Messages.getString("CommonSettingsDialog.logFileName")); 
+        gameLogFilenameLabel = new JLabel(Messages.getString("CommonSettingsDialog.logFileName"));
         gameLogFilename = new JTextField(15);
         gameLogFilename.setMaximumSize(new Dimension(250, 40));
         row = new ArrayList<>();
@@ -1356,7 +1416,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         addSpacer(comps, 5);
         comps.add(checkboxEntry(stampFilenames, null));
 
-        stampFormatLabel = new JLabel(Messages.getString("CommonSettingsDialog.stampFormat")); 
+        stampFormatLabel = new JLabel(Messages.getString("CommonSettingsDialog.stampFormat"));
         stampFormat = new JTextField(15);
         stampFormat.setMaximumSize(new Dimension(15*13, 40));
         row = new ArrayList<>();
@@ -1414,7 +1474,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             nagForMASC.setSelected(GUIP.getNagForMASC());
             nagForPSR.setSelected(GUIP.getNagForPSR());
             nagForWiGELanding.setSelected(GUIP.getNagForWiGELanding());
-            nagForNoAction.setSelected(GUIP.getNagForNoAction());          
+            nagForNoAction.setSelected(GUIP.getNagForNoAction());
             nagForNoUnJamRAC.setSelected(GUIP.getNagForNoUnJamRAC());
             animateMove.setSelected(GUIP.getShowMoveStep());
             showWrecks.setSelected(GUIP.getShowWrecks());
@@ -1425,6 +1485,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             tooltipDismissDelay.setText(Integer.toString(GUIP.getTooltipDismissDelay()));
             tooltipDistSupression.setText(Integer.toString(GUIP.getTooltipDistSuppression()));
             showWpsinTT.setSelected(GUIP.getShowWpsinTT());
+            showWpsLocinTT.setSelected(GUIP.getShowWpsLocinTT());
             showArmorMiniVisTT.setSelected(GUIP.getshowArmorMiniVisTT());
             showPilotPortraitTT.setSelected(GUIP.getshowPilotPortraitTT());
             comboDefaultWeaponSortOrder.setSelectedItem(GUIP.getDefaultWeaponSortOrder());
@@ -1546,7 +1607,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             gameLogFilenameLabel.setEnabled(keepGameLog.isSelected());
 
             getFocus.setSelected(GUIP.getFocus());
-            
+
             savedFovHighlight = GUIP.getFovHighlight();
             savedFovDarken = GUIP.getFovDarken();
             savedFovGrayscale = GUIP.getFovGrayscale();
@@ -1569,13 +1630,14 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             savedFovDarkenAlpha = GUIP.getFovDarkenAlpha();
             savedNumStripesSlider = GUIP.getFovStripes();
             savedAdvancedOpt.clear();
-            
+
             advancedKeys.clearSelection();
-            
+
             for (KeyCommandBind kcb : KeyCommandBind.values()) {
                 cmdModifierMap.get(kcb.cmd).setText(KeyEvent.getModifiersExText(kcb.modifiers));
                 cmdKeyMap.get(kcb.cmd).setText(KeyEvent.getKeyText(kcb.key));
             }
+
             markDuplicateBinds();
 
             adaptToGUIScale();
@@ -1613,6 +1675,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         csbCautionColor.setColour(GUIP.getCautionColor());
         csbPrecautionColor.setColour(GUIP.getPrecautionColor());
 
+        for (PlayerColourHelper pch : playerColours) {
+            pch.csb.setColour(GUIP.getColor(pch.pc.getText()));
+        }
+
         csbMoveDefaultColor.setColour(GUIP.getMoveDefaultColor());
         csbMoveIllegalColor.setColour(GUIP.getMoveIllegalColor());
         csbMoveJumpColor.setColour(GUIP.getMoveJumpColor());
@@ -1639,8 +1705,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         csbLowFoliageColor.setColour(GUIP.getLowFoliageColor());
         csbMapsheetColor.setColour(GUIP.getMapsheetColor());
 
-        attackArrowTransparency.setText(String.format("%d", GUIP.getAttachArrowTransparency()));
-        ecmTransparency.setText(String.format("%d", GUIP.getECMTransparency()));
+        attackArrowTransparency.setValue(GUIP.getAttachArrowTransparency());
+        ecmTransparency.setValue(GUIP.getECMTransparency());
         buttonsPerRow.setText(String.format("%d", GUIP.getButtonsPerRow()));
         playersRemainingToShow.setText(String.format("%d", GUIP.getPlayersRemainingToShow()));
         tmmPipModeCbo.setSelectedIndex(GUIP.getTMMPipMode());
@@ -1723,6 +1789,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         planetaryConditionsShowLabels.setSelected(GUIP.getPlanetaryConditionsShowLabels());
         planetaryConditionsShowValues.setSelected(GUIP.getPlanetaryConditionsShowValues());
         planetaryConditionsShowIndicators.setSelected(GUIP.getPlanetaryConditionsShowIndicators());
+        planetaryConditionsBackgroundTransparency.setValue(GUIP.getPlanetaryConditionsBackgroundTransparency());
 
         setVisible(false);
     }
@@ -1743,7 +1810,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setNagForMASC(nagForMASC.isSelected());
         GUIP.setNagForPSR(nagForPSR.isSelected());
         GUIP.setNagForWiGELanding(nagForWiGELanding.isSelected());
-        GUIP.setNagForNoAction(nagForNoAction.isSelected());      
+        GUIP.setNagForNoAction(nagForNoAction.isSelected());
         GUIP.setNagForNoUnJamRAC(nagForNoUnJamRAC.isSelected());
         GUIP.setShowMoveStep(animateMove.isSelected());
         GUIP.setShowWrecks(showWrecks.isSelected());
@@ -1751,12 +1818,17 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setSoundMuteMyTurn(soundMuteMyTurn.isSelected());
         GUIP.setSoundMuteOthersTurn(soundMuteOthersTurn.isSelected());
         GUIP.setShowWpsinTT(showWpsinTT.isSelected());
+        GUIP.setShowWpsLocinTT(showWpsLocinTT.isSelected());
         GUIP.setshowArmorMiniVisTT(showArmorMiniVisTT.isSelected());
         GUIP.setshowPilotPortraitTT(showPilotPortraitTT.isSelected());
 
         GUIP.setWarningColor(csbWarningColor.getColour());
         GUIP.setCautionColor(csbCautionColor.getColour());
         GUIP.setPrecautionColor(csbPrecautionColor.getColour());
+
+        for (PlayerColourHelper pch : playerColours) {
+            GUIP.setColor(pch.pc.getText(), pch.csb.getColour());
+        }
 
         GUIP.setMoveDefaultColor(csbMoveDefaultColor.getColour());
         GUIP.setMoveIllegalColor(csbMoveIllegalColor.getColour());
@@ -1784,16 +1856,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setLowFoliageColor(csbLowFoliageColor.getColour());
         GUIP.setMapsheetColor(csbMapsheetColor.getColour());
 
-        try {
-            GUIP.setAttachArrowTransparency(Integer.parseInt(attackArrowTransparency.getText()));
-        } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
-        }
-        try {
-            GUIP.setECMTransparency(Integer.parseInt(ecmTransparency.getText()));
-        } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
-        }
+        GUIP.setAttachArrowTransparency((Integer) attackArrowTransparency.getValue());
+        GUIP.setECMTransparency((Integer) ecmTransparency.getValue());
+
         try {
             GUIP.setButtonsPerRow(Integer.parseInt(buttonsPerRow.getText()));
         } catch (Exception ex) {
@@ -1808,7 +1873,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setTMMPipMode(tmmPipModeCbo.getSelectedIndex());
         GUIP.setDarkenMapAtNight(darkenMapAtNight.isSelected());
         GUIP.setTranslucentHiddenUnits(translucentHiddenUnits.isSelected());
-
 
         GUIP.setMoveFontType(fontTypeChooserMoveFont.getSelectedItem().toString());
         try {
@@ -1898,7 +1962,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
                 JOptionPane.showMessageDialog(getFrame(), msg, title, JOptionPane.ERROR_MESSAGE);
             } else {
                 GUIP.setSkinFile(newSkinFile);
-            }            
+            }
         }
 
         if (tileSetChoice.getSelectedIndex() >= 0) {
@@ -1920,7 +1984,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         for (KeyCommandBind kcb : KeyCommandBind.values()) {
             int modifiers = modifierCode(kcb);
             int keyCode = keyCode(kcb);
-            bindsChanged |= (kcb.modifiers != modifiers) || (kcb.key != keyCode); 
+            bindsChanged |= (kcb.modifiers != modifiers) || (kcb.key != keyCode);
             kcb.modifiers = modifiers;
             kcb.key = keyCode;
         }
@@ -1928,7 +1992,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         if (bindsChanged) {
             KeyBindParser.writeKeyBindings();
         }
-        
+
         // Button Order
         // Movement
         boolean buttonOrderChanged = false;
@@ -1940,12 +2004,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
                 buttonOrderChanged = true;
             }
         }
-        
+
         // Need to do stuff if the order changes.
         if (buttonOrderChanged && (clientgui != null)) {
             clientgui.updateButtonPanel(GamePhase.MOVEMENT);
         }
-        
+
         // Deploy
         buttonOrderChanged = false;
         for (int i = 0; i < deployPhaseCommands.getSize(); i++) {
@@ -1956,12 +2020,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
                 buttonOrderChanged = true;
             }
         }
-        
+
         // Need to do stuff if the order changes.
         if (buttonOrderChanged && (clientgui != null)) {
             clientgui.updateButtonPanel(GamePhase.DEPLOYMENT);
-        }        
-        
+        }
+
         // Firing
         buttonOrderChanged = false;
         for (int i = 0; i < firingPhaseCommands.getSize(); i++) {
@@ -1972,12 +2036,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
                 buttonOrderChanged = true;
             }
         }
-        
+
         // Need to do stuff if the order changes.
         if (buttonOrderChanged && (clientgui != null)) {
             clientgui.updateButtonPanel(GamePhase.FIRING);
         }
-        
+
         // Physical
         buttonOrderChanged = false;
         for (int i = 0; i < physicalPhaseCommands.getSize(); i++) {
@@ -1988,12 +2052,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
                 buttonOrderChanged = true;
             }
         }
-        
+
         // Need to do stuff if the order changes.
         if (buttonOrderChanged && (clientgui != null)) {
             clientgui.updateButtonPanel(GamePhase.PHYSICAL);
         }
-        
+
         // Targeting
         buttonOrderChanged = false;
         for (int i = 0; i < targetingPhaseCommands.getSize(); i++) {
@@ -2004,7 +2068,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
                 buttonOrderChanged = true;
             }
         }
-        
+
         // Need to do stuff if the order changes.
         if (buttonOrderChanged && (clientgui != null)) {
             clientgui.updateButtonPanel(GamePhase.TARGETING);
@@ -2162,6 +2226,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setPlanetaryConditionsShowLabels(planetaryConditionsShowLabels.isSelected());
         GUIP.setPlanetaryConditionsShowValues(planetaryConditionsShowValues.isSelected());
         GUIP.setPlanetaryConditionsShowIndicators(planetaryConditionsShowIndicators.isSelected());
+        GUIP.setPlanetaryConditionsBackgroundTransparency((Integer) planetaryConditionsBackgroundTransparency.getValue());
 
         setVisible(false);
     }
@@ -2231,19 +2296,19 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         } else if (src.equals(fovHighlightRingsColors)) {
             guip.setFovHighlightRingsColorsHsb(fovHighlightRingsColors.getText());
             return;
-        } 
+        }
         // For Advanced options
         String option = "Advanced" + advancedKeys.getModel().getElementAt(advancedKeyIndex).option;
-        savedAdvancedOpt.put(option, guip.getString(option));        
+        savedAdvancedOpt.put(option, guip.getString(option));
         guip.setValue(option, advancedValue.getText());
     }
-    
+
     /** Creates a panel with a box for all of the commands that can be bound to keys. */
     private JPanel getKeyBindPanel() {
         // The first column is for labels, the second column for modifiers, the third column for keys
         JPanel outer = new JPanel();
         outer.setLayout(new BoxLayout(outer, BoxLayout.PAGE_AXIS));
-        
+
         var tabChoice = new JPanel();
         tabChoice.setLayout(new BoxLayout(tabChoice, BoxLayout.PAGE_AXIS));
         tabChoice.setBorder(new EmptyBorder(15, 15, 15, 15));
@@ -2272,7 +2337,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = gbc.gridy = 0;
         gbc.insets = new Insets(0, 10, 5, 10);
-        
+
         // Create header: labels for describing what each column does
         JLabel headers = new JLabel("Name");
         String msg_tooltipName = Messages.getString("CommonSettingsDialog.keyBinds.tooltipName");
@@ -2291,14 +2356,13 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         gbc.gridy++;
         gbc.gridx = 0;
         gbc.gridwidth = 4;
-        
+
         gbc.fill = GridBagConstraints.BOTH;
         keyBinds.add(new JSeparator(SwingConstants.HORIZONTAL), gbc);
-        
+
         gbc.fill = GridBagConstraints.NONE;
         gbc.gridy++;
         gbc.gridwidth = 1;
-        
 
         // Create maps to retrieve the text fields for saving
         int numBinds = KeyCommandBind.values().length;
@@ -2320,6 +2384,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             for (KeyListener kl : modifiers.getKeyListeners()) {
                 modifiers.removeKeyListener(kl);
             }
+
             // Update how typing in the text field works
             modifiers.addKeyListener(new KeyListener() {
 
@@ -2345,6 +2410,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
                 }
 
             });
+
             keyBinds.add(modifiers, gbc);
             gbc.gridx++;
             cmdModifierMap.put(kcb.cmd, modifiers);
@@ -2355,6 +2421,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             final String cmd = kcb.cmd;
             cmdKeyMap.put(cmd, key);
             cmdKeyCodeMap.put(cmd, kcb.key);
+
             key.addKeyListener(new KeyListener() {
 
                 @Override
@@ -2384,10 +2451,11 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
                 }
 
             });
+
             keyBinds.add(key, gbc);
             gbc.gridx = 0;
             gbc.gridy++;
-            
+
             // deactivate TABbing through fields here so TAB can be caught as a keybind
             modifiers.setFocusTraversalKeysEnabled(false);
             key.setFocusTraversalKeysEnabled(false);
@@ -2524,7 +2592,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         return createSettingsPanel(comps);
     }
-    
+
     private void updateKeybindsFocusTraversal() {
         for (KeyCommandBind kcb : KeyCommandBind.values()) {
             cmdModifierMap.get(kcb.cmd).setFocusTraversalKeysEnabled(choiceToggle.isSelected());
@@ -2545,12 +2613,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         markDuplicateBinds();
     }
 
-    /** 
+    /**
      * Marks the text fields when duplicate keybinds occur. Two commands may share a keybind if none
      * of them is a Menubar or exclusive keybind (although that only works well if they're used in different
-     * phases such as turn and twist). 
+     * phases such as turn and twist).
      * Also checks for Ctrl-C and Ctrl-V. These are coded into JTables and JTrees and making them
-     * configurable would be unproportional effort to the gain. 
+     * configurable would be unproportional effort to the gain.
      */
     private void markDuplicateBinds() {
         Map<KeyStroke, KeyCommandBind> duplicates = new HashMap<>();
@@ -2562,14 +2630,14 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
                 duplicates.put(keyStroke, kcb);
             }
         }
-                    
+
         // Now traverse the commands again. When a duplicate keybind is found and this KeyCommandBind is exclusive or Menubar
         // or the other one (the first one found with the same keybind) is exclusive or Menubar, both are marked.
         // Also, Ctrl-C and Ctrl-V are marked as these are hard-mapped to Copy/Paste and cannot be used otherwise.
         for (KeyCommandBind kcb : KeyCommandBind.values()) {
             boolean isCorrect = true;
             KeyStroke keyStroke = KeyStroke.getKeyStroke(keyCode(kcb), modifierCode(kcb));
-            if (duplicates.containsKey(keyStroke) && 
+            if (duplicates.containsKey(keyStroke) &&
                     (kcb.isMenuBar || kcb.isExclusive || duplicates.get(keyStroke).isExclusive || duplicates.get(keyStroke).isMenuBar)) {
                 // Mark the current kcb and the one that was already in the keyMap as duplicate
                 markTextfield(cmdModifierMap.get(kcb.cmd), "This keybind is a duplicate and will not work correctly.");
@@ -2591,17 +2659,17 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             }
         }
     }
-    
+
     private void markTextfield(JTextField field, String errorMsg) {
         field.setForeground(errorMsg != null ? GUIP.getWarningColor() : null);
         field.setToolTipText(errorMsg);
     }
-    
+
     /** Returns the keycode for the character part of a user-entered keybind (The "V" in CTRL-V). */
     private int keyCode(KeyCommandBind kcb) {
         return cmdKeyCodeMap.get(kcb.cmd);
     }
-    
+
     /** Returns the keycode for the modifier part of a user-entered keybind (The "CTRL" in CTRL-V). */
     private int modifierCode(KeyCommandBind kcb) {
         int modifiers = 0;
@@ -2617,44 +2685,44 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         }
         return modifiers;
     }
-    
+
     /** Creates a panel with a list boxes that allow the button order to be changed. */
     private JPanel getButtonOrderPanel() {
         JPanel buttonOrderPanel = new JPanel();
         buttonOrderPanel.setLayout(new BoxLayout(buttonOrderPanel, BoxLayout.Y_AXIS));
         JTabbedPane phasePane = new JTabbedPane();
         buttonOrderPanel.add(phasePane);
-        
-        // MovementPhaseDisplay        
+
+        // MovementPhaseDisplay
         movePhaseCommands = new DefaultListModel<>();
         phasePane.add("Movement", getButtonOrderPane(movePhaseCommands,
                 MovementDisplay.MoveCommand.values()));
-        
+
         // DeploymentPhaseDisplay
         deployPhaseCommands = new DefaultListModel<>();
         phasePane.add("Deployment", getButtonOrderPane(deployPhaseCommands,
                 DeploymentDisplay.DeployCommand.values()));
-        
+
         // FiringPhaseDisplay
         firingPhaseCommands = new DefaultListModel<>();
         phasePane.add("Firing", getButtonOrderPane(firingPhaseCommands,
                 FiringDisplay.FiringCommand.values()));
-        
+
         // PhysicalPhaseDisplay
         physicalPhaseCommands = new DefaultListModel<>();
         phasePane.add("Physical", getButtonOrderPane(physicalPhaseCommands,
-                PhysicalDisplay.PhysicalCommand.values()));          
-        
+                PhysicalDisplay.PhysicalCommand.values()));
+
         // TargetingPhaseDisplay
         targetingPhaseCommands = new DefaultListModel<>();
         phasePane.add("Targeting", getButtonOrderPane(targetingPhaseCommands,
                 TargetingPhaseDisplay.TargetingCommand.values()));
-        
+
         return buttonOrderPanel;
     }
 
-    /** Constructs the button ordering panel for one phase. */ 
-    private JScrollPane getButtonOrderPane(DefaultListModel<PhaseCommand> list, 
+    /** Constructs the button ordering panel for one phase. */
+    private JScrollPane getButtonOrderPane(DefaultListModel<PhaseCommand> list,
             StatusBarPhaseDisplay.PhaseCommand[] commands) {
         JPanel panel = new JPanel();
         Arrays.sort(commands, cmdComp);
@@ -2694,7 +2762,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
                     subPanel.add(c);
                     subPanel.add(Box.createRigidArea(LABEL_SPACER));
                 } else {
-                    subPanel.add(c);    
+                    subPanel.add(c);
                 }
             }
             subPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -2719,6 +2787,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         advancedKeys = new JList<>(opts);
         advancedKeys.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         advancedKeys.addListSelectionListener(this);
+
         advancedKeys.addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseMoved(MouseEvent e) {
@@ -2729,6 +2798,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
                 }
             }
         });
+
         p.add(advancedKeys);
 
         advancedValue = new JTextField(10);
@@ -2739,7 +2809,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         return p;
     }
 
-    /** Used to note which advanced setting is currently clicked. */  
+    /** Used to note which advanced setting is currently clicked. */
     @Override
     public void valueChanged(ListSelectionEvent event) {
         if (event.getValueIsAdjusting()) {

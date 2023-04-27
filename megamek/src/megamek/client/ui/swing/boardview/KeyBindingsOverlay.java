@@ -157,7 +157,7 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
 
             // draw a semi-transparent background rectangle
             Color colorBG = GUIP.getPlanetaryConditionsColorBackground();
-            intGraph.setColor(colorBG);
+            intGraph.setColor(new Color(colorBG.getRed(), colorBG.getGreen(), colorBG.getBlue(), GUIP.getPlanetaryConditionsBackgroundTransparency()));
             intGraph.fillRoundRect(0, 0, r.width, r.height, PADDING_X, PADDING_X);
             
             // The coordinates to write the texts to

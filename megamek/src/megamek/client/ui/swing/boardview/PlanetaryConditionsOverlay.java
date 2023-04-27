@@ -139,7 +139,7 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
 
             // draw a semi-transparent background rectangle
             Color colorBG = GUIP.getPlanetaryConditionsColorBackground();
-            intGraph.setColor(new Color(colorBG.getRed(), colorBG.getGreen(), colorBG.getBlue(), 200));
+            intGraph.setColor(new Color(colorBG.getRed(), colorBG.getGreen(), colorBG.getBlue(), GUIP.getPlanetaryConditionsBackgroundTransparency()));
             intGraph.fillRoundRect(0, 0, r.width, r.height, PADDING_X, PADDING_X);
             
             // The coordinates to write the texts to

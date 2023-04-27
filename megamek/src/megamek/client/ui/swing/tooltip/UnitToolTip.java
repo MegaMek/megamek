@@ -1,16 +1,16 @@
 /*
- * MegaMek - Copyright (C) 2020 - The MegaMek Team
- *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- */
+* MegaMek - Copyright (C) 2020 - The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
 package megamek.client.ui.swing.tooltip;
 
 import megamek.client.ui.Messages;
@@ -83,7 +83,7 @@ public final class UnitToolTip {
 
     /** Assembles the whole unit tooltip. */
     private static StringBuilder getEntityTipTable(Entity entity, Player localPlayer,
-                                                   boolean details, boolean pilotInfo, @Nullable MapSettings mapSettings) {
+           boolean details, boolean pilotInfo, @Nullable MapSettings mapSettings) {
 
         // Tooltip info for a sensor blip
         if (EntityVisibilityUtils.onlyDetectedBySensors(localPlayer, entity)) {
@@ -506,7 +506,13 @@ public final class UnitToolTip {
             if (isNotTTRelevant(wtype)) {
                 continue;
             }
+
             String weapDesc = curWp.getDesc();
+
+            if (GUIP.getShowWpsLocinTT() && (entity.locations() > 1)) {
+                weapDesc += " ["+entity.getLocationAbbr(curWp.getLocation()) + ']';
+            }
+
             // Distinguish equal weapons with and without rapid fire
             if (isRapidFireActive(entity.getGame()) && curWp.isRapidfire() && !curWp.isDestroyed()) {
                 weapDesc += RAPIDFIRE;
@@ -627,6 +633,7 @@ public final class UnitToolTip {
         String col2 = "";
         String row = "";
         String rows = "";
+
         // Display sorted by weapon name
         var wps = new ArrayList<>(wpInfos.values());
         wps.sort(Comparator.comparing(w -> w.sortString));

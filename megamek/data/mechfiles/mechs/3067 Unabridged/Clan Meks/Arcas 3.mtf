@@ -6,9 +6,8 @@ mul id:5686
 Config:Biped
 TechBase:Clan
 Era:3078
-Source:RS:3067 Unabridged
+Source:3067 Unabridged
 Rules Level:2
-source:3067 Unabridged
 
 Mass:65
 Engine:325 XL (Clan) Engine(IS)
@@ -154,8 +153,7 @@ overview: First produced in 3061, the Arcas is expensive for a second-line 'Mech
 
 capabilities:It utilizes an XL Engine that enables it to move up to 86 km/h and jump jets for a maximum jump capacity of one hundred fifty meters at a time. The Arcas mounts thirteen and a half tons of standard armor, the most a 'Mech of its size can carry. This version carries a Targeting Computer to counteract the inaccuracy of its Heavy Large Laser. A Streak SRM-4 and pair of Medium Pulse Lasers rounds out the armament. Seven Improved Jump Jets allow the Arcas 3 to cover 210 meters in a single jump. 
 
-history:Following the move of Clan Ghost Bear to the Inner Sphere, Khan Bjorn Jorgensson ordered the creation of a new 
-BattleMech. The Arcas was designed as a symbol to mark the beginning of a new era, so Loremaster Laurie Tseng named it after a character in the mythology of the Greeks who eventually became the constellation known as Ursa Minor.
+history:Following the move of Clan Ghost Bear to the Inner Sphere, Khan Bjorn Jorgensson ordered the creation of a new BattleMech. The Arcas was designed as a symbol to mark the beginning of a new era, so Loremaster Laurie Tseng named it after a character in the mythology of the Greeks who eventually became the constellation known as Ursa Minor.
 
 manufacturer:Bergan Industries
 primaryfactory:Alshain

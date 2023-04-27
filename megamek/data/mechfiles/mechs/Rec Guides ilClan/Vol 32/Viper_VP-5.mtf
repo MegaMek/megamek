@@ -1,12 +1,12 @@
 Version:1.0
 Viper
 VP-5
+mul id:9488
 
 Config:Biped
 techbase:Inner Sphere
 era:2958
 rules level:1
-mul id:9466
 Source:Rec Guide:ilClan #32 - Late Succession War - LosTech
 
 mass:70
@@ -152,5 +152,3 @@ Jump Jet
 -Empty-
 -Empty-
 -Empty-
-
-

@@ -16,7 +16,6 @@ package megamek.client.ui.swing;
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
-import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.FiringDisplay.FiringCommand;
 import megamek.client.ui.swing.unitDisplay.WeaponPanel;
 import megamek.client.ui.swing.util.CommandAction;
@@ -37,7 +36,6 @@ import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import org.apache.logging.log4j.LogManager;
 
-import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.event.*;
@@ -536,7 +534,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             if (null == ce().getPosition()) {
 
                 // Walk through the list of entities for this player.
-                for (int nextId = client.getNextEntityNum(en); nextId != en; 
+                for (int nextId = client.getNextEntityNum(en); nextId != en;
                         nextId = client.getNextEntityNum(nextId)) {
 
                     if (null != clientgui.getClient().getGame()
@@ -838,17 +836,17 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             waa = new ArtilleryAttackAction(cen, target.getTargetType(),
                     target.getId(), weaponNum, clientgui.getClient().getGame());
             // Get the launch velocity for bearings-only telemissiles
-            if (mounted.getType() instanceof TeleOperatedMissileBayWeapon) {                
+            if (mounted.getType() instanceof TeleOperatedMissileBayWeapon) {
                 TeleMissileSettingDialog tsd = new TeleMissileSettingDialog(clientgui.frame, clientgui.getClient().getGame());
                 tsd.setVisible(true);
                 waa.setLaunchVelocity(tsd.getSetting());
                 waa.updateTurnsTilHit(clientgui.getClient().getGame());
-            } 
+            }
         }
-        
+
         updateDisplayForPendingAttack(mounted, waa);
     }
-    
+
     /**
      * Worker function that handles setting associated ammo and other bookkeeping/UI updates
      * for a pending weapon attack action.
@@ -905,7 +903,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         if (ce().getId() != clientgui.getUnitDisplay().wPan.getSelectedEntityId()) {
             clientgui.getUnitDisplay().wPan.displayMech(ce());
         }
-        
+
         if (weaponId == -1) {
             setFireModeEnabled(false);
         } else {
@@ -934,7 +932,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             setFireModeEnabled(m.isModeSwitchable());
         }
         updateTarget();
-    }    
+    }
 
     /**
      * Removes all current fire
@@ -990,7 +988,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                 clientgui.getBoardView().refreshAttacks();
             }
         }
-    }    
+    }
 
     /**
      * Refreshes all displays.
@@ -1026,15 +1024,15 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             ToHitData toHit;
             Mounted m = ce().getEquipment(weaponId);
 
-            int targetDistance = ce().getPosition().distance(target.getPosition()); 
+            int targetDistance = ce().getPosition().distance(target.getPosition());
             boolean isArtilleryAttack = m.getType().hasFlag(WeaponType.F_ARTILLERY)
                     // For other weapons that can make artillery attacks
-                    || target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY;            
+                    || target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY;
 
             toHit = WeaponAttackAction.toHit(clientgui.getClient().getGame(),
                     cen, target, weaponId, Entity.LOC_NONE, AimingMode.NONE, false);
-            
-            String flightTimeText = ""; 
+
+            String flightTimeText = "";
             if (isArtilleryAttack) {
                 ArtilleryAttackAction aaa = new ArtilleryAttackAction(ce().getId(), target.getTargetType(),
                         target.getId(), weaponId, clientgui.getClient().getGame());
@@ -1044,7 +1042,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             String t =  String.format("<html><div WIDTH=%d>%s</div></html>", WeaponPanel.TARGET_DISPLAY_WIDTH, target.getDisplayName());
             clientgui.getUnitDisplay().wPan.wTargetR.setText(t);
             clientgui.getUnitDisplay().wPan.wRangeR.setText(String.format("%d %s", targetDistance, flightTimeText));
-            
+
             Game game = clientgui.getClient().getGame();
             int distance = Compute.effectiveDistance(game, ce(), target);
             if (m.isUsedThisRound()) {
@@ -1154,7 +1152,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 
         target(targ);
     }
-    
+
     /**
      * Get the next target. Return null if we don't have any targets.
      */
@@ -1171,7 +1169,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 
         return visibleTargets[lastTargetID];
     }
-    
+
     /**
      * Jump to our next target. If there isn't one, well, don't do anything.
      */
@@ -1186,7 +1184,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         clientgui.getBoardView().select(targ.getPosition());
 
         target(targ);
-    }    
+    }
 
     /**
      * Returns the current entity.
@@ -1303,20 +1301,12 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         if (targets.size() == 1) {
             // Return that choice.
             choice = targets.get(0);
-        }
-
-        // If we have multiple choices, display a selection dialog.
-        else if (targets.size() > 1) {
-            String input = (String) JOptionPane
-                    .showInputDialog(
-                            clientgui,
-                            Messages.getString(
-                                    "FiringDisplay.ChooseTargetDialog.message",
-                                    new Object[] { pos.getBoardNum() }),
-                            Messages.getString("FiringDisplay.ChooseTargetDialog.title"),
-                            JOptionPane.QUESTION_MESSAGE, null, SharedUtility
-                                    .getDisplayArray(targets), null);
-            choice = SharedUtility.getTargetPicked(targets, input);
+        } else if (targets.size() > 1) {;
+            // If we have multiple choices, display a selection dialog.
+            choice = TargetChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(),
+                    Messages.getString("FiringDisplay.ChooseTargetDialog.title"),
+                    Messages.getString("FiringDisplay.ChooseTargetDialog.message", new Object[] { pos.getBoardNum() }),
+                    targets, clientgui, ce());
         }
 
         // Return the chosen unit.
@@ -1558,19 +1548,19 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             updateTarget();
         }
     }
-    
+
     public void FieldofFire(Entity unit, int[][] ranges, int arc, int loc, int facing) {
         // do nothing here outside the arty targeting phase
         if (!clientgui.getClient().getGame().getPhase().isTargeting() &&
                 !clientgui.getClient().getGame().getPhase().isOffboard()) {
             return;
         }
-        
+
         clientgui.getBoardView().fieldofFireUnit = unit;
         clientgui.getBoardView().fieldofFireRanges = ranges;
         clientgui.getBoardView().fieldofFireWpArc = arc;
         clientgui.getBoardView().fieldofFireWpLoc = loc;
-        
+
         clientgui.getBoardView().setWeaponFieldofFire(facing, unit.getPosition());
     }
 }

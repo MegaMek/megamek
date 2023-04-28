@@ -470,7 +470,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(FOV_STRIPES, 35);
         store.setDefault(FOV_GRAYSCALE, false);
 
-        store.setDefault(HIGH_QUALITY_GRAPHICS, false);
+        store.setDefault(HIGH_QUALITY_GRAPHICS, true);
         store.setDefault(AOHEXSHADOWS, false);
         store.setDefault(SHADOWMAP, true);
         store.setDefault(INCLINES, true);

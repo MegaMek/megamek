@@ -226,7 +226,7 @@ public class BoardUtilities {
                     reverseHex, true);
         }
 
-        // Add the sand
+        // Add the snow
         count = mapSettings.getMinSnowSpots();
         if (mapSettings.getMaxSnowSpots() > 0) {
             count += Compute.randomInt(mapSettings.getMaxSnowSpots());

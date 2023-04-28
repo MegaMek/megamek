@@ -854,16 +854,16 @@ public class RandomMapPanelAdvanced extends JPanel {
         panel.add(snowMinField);
         JLabel numberSnowToLabel = new JLabel(Messages.getString("to"));
         panel.add(numberSnowToLabel);
-        snowMaxField.setToolTipText(Messages.getString("RandomMapDialog.SnowMaxField.toolTip"));
+        snowMaxField.setToolTipText(Messages.getString("RandomMapDialog.snowMaxField.toolTip"));
         panel.add(snowMaxField);
 
         JLabel sizeSnowLabel = new JLabel(Messages.getString("RandomMapDialog.labSnowSize"));
         panel.add(sizeSnowLabel);
-        snowSizeMinField.setToolTipText(Messages.getString("RandomMapDialog.SnowSizeMinField.toolTip"));
+        snowSizeMinField.setToolTipText(Messages.getString("RandomMapDialog.snowSizeMinField.toolTip"));
         panel.add(snowSizeMinField);
         JLabel sizeSnowToLabel = new JLabel(Messages.getString("to"));
         panel.add(sizeSnowToLabel);
-        snowSizeMaxField.setToolTipText(Messages.getString("RandomMapDialog.SnowSizeMaxField.toolTip"));
+        snowSizeMaxField.setToolTipText(Messages.getString("RandomMapDialog.snowSizeMaxField.toolTip"));
         panel.add(snowSizeMaxField);
 
         panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1),

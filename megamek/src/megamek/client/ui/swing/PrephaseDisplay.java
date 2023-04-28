@@ -50,8 +50,7 @@ import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
 
 /**
- * Targeting Phase Display. Breaks naming convention because TargetingDisplay is too easy to confuse
- * with something else
+ * PrephaseDisplay for revealing hidden units. This occurs before Move and Firing
  */
 public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         KeyListener, ItemListener, ListSelectionListener {
@@ -59,11 +58,9 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
 
     /**
      * This enumeration lists all of the possible ActionCommands that can be
-     * carried out during the deploy minefield phase.  Each command has a string
+     * carried out during the Prephase.  Each command has a string
      * for the command plus a flag that determines what unit type it is
      * appropriate for.
-     *
-     * @author arlith
      */
     public enum PrephaseCommand implements PhaseCommand {
         PREPHASE_NEXT("prephaseNext"),
@@ -120,11 +117,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
     // buttons
     protected Map<PrephaseCommand, MegamekButton> buttons;
 
-    // let's keep track of what we're shooting and at what, too
     private int cen = Entity.NONE; // current entity number
-
-    // is the shift key held?
-    private boolean shiftheld;
 
     private final GamePhase phase;
 
@@ -256,7 +249,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
      * Selects an entity, by number, for targeting.
      */
     private void selectEntity(int en) {
-        // clear any previously considered attacks
+        // clear any previously considered actions
         if (en != cen) {
             refreshAll();
         }
@@ -318,6 +311,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         boolean isRevealing = !ce.getHiddenActivationPhase().isUnknown();
         setRevealEnabled(!isRevealing);
         setCancelRevealEnabled(isRevealing);
+        setNextEnabled(true);
         butDone.setEnabled(true);
     }
 
@@ -329,10 +323,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
     public void ready() {
         // stop further input (hopefully)
         disableButtons();
-
-        clientgui.getClient().sendUpdateEntity(ce());
         clientgui.getClient().sendPrephaseData(cen);
-
         endMyTurn();
     }
 
@@ -345,21 +336,11 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
 
         clientgui.getBoardView().clearFieldofF();
 
+        selectEntity(clientgui.getClient().getFirstEntityNum());
+
         if (!clientgui.getBoardView().isMovingUnits()) {
             clientgui.maybeShowUnitDisplay();
         }
-
-        // make best guess at next unit to select
-        int nextId = Entity.NONE;
-        Entity next = clientgui.getClient().getGame()
-                .getNextEntity(clientgui.getClient().getGame().getTurnIndex());
-
-        if (next == null) {
-            nextId = clientgui.getClient().getFirstEntityNum();
-        } else {
-            nextId = next.getId();
-        }
-        selectEntity(nextId);
 
         clientgui.getBoardView().select(null);
         setupButtonPanel();
@@ -370,14 +351,6 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
      * Does end turn stuff.
      */
     private void endMyTurn() {
-        Entity next = clientgui.getClient().getGame()
-                .getNextEntity(clientgui.getClient().getGame().getTurnIndex());
-        if ((phase == clientgui.getClient().getGame().getPhase())
-                && (null != next) && (null != ce())
-                && (next.getOwnerId() != ce().getOwnerId())) {
-            clientgui.maybeShowUnitDisplay();
-        }
-
         cen = Entity.NONE;
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().highlight(null);
@@ -386,6 +359,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         clientgui.getBoardView().clearMovementData();
         clientgui.getBoardView().clearFieldofF();
         clientgui.setSelectedEntityNum(Entity.NONE);
+
         refreshButtons();
     }
 
@@ -525,6 +499,13 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
+        // Reviewers: Is this the right place to catch the change applied by a server packet
+        // that changes an entity from done to not-done?
+        if (ce().isDone())
+        {
+            selectEntity(clientgui.getClient().getNextEntityNum(cen));
+        }
+
         refreshButtons();
     }
 
@@ -548,8 +529,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         }
 
         if (ev.getActionCommand().equals(PrephaseCommand.PREPHASE_NEXT.getCmd())) {
-            selectEntity(clientgui.getClient()
-                    .getNextEntityNum(cen));
+            selectEntity(clientgui.getClient().getNextEntityNum(cen));
         }
     }
 

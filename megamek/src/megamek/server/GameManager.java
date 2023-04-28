@@ -3081,6 +3081,8 @@ public class GameManager implements IGameManager {
                     // turns during the movement phase
                     if (getGame().getPhase().isMovement() || getGame().getPhase().isDeployment()) {
                         turn = new GameTurn.EntityClassTurn(player.getId(), ~aeroMask);
+                    } else if (getGame().getPhase().isPremovement() || getGame().getPhase().isPrefiring()){
+                        turn = new GameTurn.PrephaseTurn(player.getId());
                     } else {
                         turn = new GameTurn(player.getId());
                     }
@@ -12789,13 +12791,15 @@ public class GameManager implements IGameManager {
             return;
         }
 
+        entity.setDone(true);
+
         // Update visibility indications if using double blind.
         if (doBlind()) {
             updateVisibilityIndicator(null);
         }
 
-        endCurrentTurn(entity);
         entityUpdate(entity.getId());
+        endCurrentTurn(entity);
     }
 
     /**

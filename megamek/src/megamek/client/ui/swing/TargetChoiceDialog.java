@@ -73,30 +73,14 @@ public class TargetChoiceDialog extends AbstractChoiceDialog<Targetable> {
 
     @Override
     protected void detailLabel(JToggleButton button, Targetable target) {
-        button.setText("<html>" + infoText(target) + UnitToolTip.getTargetTipDetail(target,  clientGUI.getClient().getBoard(), clientGUI) + "</html>");
-
-//        if (target instanceof Entity) {
-//            button.setText("<html>" + infoText(target) + UnitToolTip.getEntityTipVitals((Entity) target, null) + "</html>");
-//        } else if (target instanceof BuildingTarget) {
-//            button.setText("<html>" + infoText(target) + HexTooltip.getBuildingTargetTip((BuildingTarget) target, clientGUI.getClient().getBoard()) + "</html>");
-//        } else if (target instanceof Hex) {
-//            button.setText("<html>" + infoText(target) + HexTooltip.getHexTip((Hex) target, clientGUI.getClient(), clientGUI) + "</html>");
-//        } else {
-//            summaryLabel(button, target);
-//        }
+        button.setText("<html>" + infoText(target) + UnitToolTip.getTargetTipDetail(target,
+                clientGUI.getClient().getBoard(), clientGUI) + "</html>");
     }
 
     @Override
     protected void summaryLabel(JToggleButton button, Targetable target) {
-        button.setText("<html>" + infoText(target) + UnitToolTip.getTargetTipSummary(target,  clientGUI.getClient().getBoard()) + "</html>");
-
-//        String result = infoText(target);
-//        if (target instanceof Entity) {
-//            result += "<br>" + UnitToolTip.getOneLineSummary((Entity) target);
-//        } else if (target instanceof BuildingTarget) {
-//            result += "<br>" + HexTooltip.getOneLineSummary((BuildingTarget) target, clientGUI.getClient().getBoard());
-//        }
-//        button.setText("<html>" + result + "</html>");
+        button.setText("<html>" + infoText(target) + UnitToolTip.getTargetTipSummary(target,
+                clientGUI.getClient().getBoard()) + "</html>");
     }
 
     protected String infoText(Targetable target) {

@@ -1624,7 +1624,7 @@ public class GameManager implements IGameManager {
             this.ejectedCrewFledCount = 0;
         }
     }
-
+    
     private void bvReports(boolean checkBlind) {
         HashMap<Integer, BVCountHelper> teamsInfo = new HashMap<>();
 
@@ -1719,34 +1719,40 @@ public class GameManager implements IGameManager {
         r.indent(2);
         addReport(r);
 
-        r = new Report(7019, Report.PUBLIC);
-        if (checkBlind && doBlind() && suppressBlindBV()) {
-            r.type = Report.PLAYER;
-            r.player = playerID;
+        if (bvc.unitsLightDamageCount + bvc.unitsModerateDamageCount + bvc.unitsHeavyDamageCount +
+                bvc.unitsCrippledCount + bvc.unitsDestroyedCount + bvc.unitsFledCount + bvc.unitsCrewEjectedCount +
+                bvc.unitsCrewKilledCount > 0) {
+            r = new Report(7019, Report.PUBLIC);
+            if (checkBlind && doBlind() && suppressBlindBV()) {
+                r.type = Report.PLAYER;
+                r.player = playerID;
+            }
+            r.add(bvc.unitsLightDamageCount > 0 ? r.warning(bvc.unitsLightDamageCount + "") : bvc.unitsLightDamageCount + "");
+            r.add(bvc.unitsModerateDamageCount > 0 ? r.warning(bvc.unitsModerateDamageCount + "") : bvc.unitsModerateDamageCount + "");
+            r.add(bvc.unitsHeavyDamageCount > 0 ? r.warning(bvc.unitsHeavyDamageCount + "") : bvc.unitsHeavyDamageCount + "");
+            r.add(bvc.unitsCrippledCount > 0 ? r.warning(bvc.unitsCrippledCount + "") : bvc.unitsCrippledCount + "");
+            r.add(bvc.unitsDestroyedCount > 0 ? r.warning(bvc.unitsDestroyedCount + "") : bvc.unitsDestroyedCount + "");
+            r.add(bvc.unitsFledCount > 0 ? r.warning(bvc.unitsFledCount + "") : bvc.unitsFledCount + "");
+            r.add(bvc.unitsCrewEjectedCount > 0 ? r.warning(bvc.unitsCrewEjectedCount + "") : bvc.unitsCrewEjectedCount + "");
+            r.add(bvc.unitsCrewKilledCount > 0 ? r.warning(bvc.unitsCrewKilledCount + "") : bvc.unitsCrewKilledCount + "");
+            r.indent(2);
+            addReport(r);
         }
-        r.add(bvc.unitsLightDamageCount);
-        r.add(bvc.unitsModerateDamageCount);
-        r.add(bvc.unitsHeavyDamageCount);
-        r.add(bvc.unitsCrippledCount);
-        r.add(bvc.unitsDestroyedCount);
-        r.add(bvc.unitsFledCount);
-        r.add(bvc.unitsCrewEjectedCount);;
-        r.add(bvc.unitsCrewKilledCount);
-        r.indent(2);
-        addReport(r);
 
-        r = new Report(7020, Report.PUBLIC);
-        if (checkBlind && doBlind() && suppressBlindBV()) {
-            r.type = Report.PLAYER;
-            r.player = playerID;
+        if (bvc.unitsCrewEjectedCount > 0) {
+            r = new Report(7020, Report.PUBLIC);
+            if (checkBlind && doBlind() && suppressBlindBV()) {
+                r.type = Report.PLAYER;
+                r.player = playerID;
+            }
+            r.add(bvc.ejectedCrewActiveCount > 0 ? r.warning(bvc.ejectedCrewActiveCount + "") : bvc.ejectedCrewActiveCount + "");
+            r.add(bvc.ejectedCrewPickedUpByTeamCount > 0 ? r.warning(bvc.ejectedCrewPickedUpByTeamCount + "") : bvc.ejectedCrewPickedUpByTeamCount + "");
+            r.add(bvc.ejectedCrewPickedUpByEnemyTeamCount > 0 ? r.warning(bvc.ejectedCrewPickedUpByEnemyTeamCount + "") : bvc.ejectedCrewPickedUpByEnemyTeamCount + "");
+            r.add(bvc.ejectedCrewKilledCount > 0 ? r.warning(bvc.ejectedCrewKilledCount + "") : bvc.ejectedCrewKilledCount + "");
+            r.add(bvc.ejectedCrewFledCount > 0 ? r.warning(bvc.ejectedCrewFledCount + "") : bvc.ejectedCrewFledCount + "");
+            r.indent(2);
+            addReport(r);
         }
-        r.add(bvc.ejectedCrewActiveCount);
-        r.add(bvc.ejectedCrewPickedUpByTeamCount);
-        r.add(bvc.ejectedCrewPickedUpByEnemyTeamCount);
-        r.add(bvc.ejectedCrewKilledCount);
-        r.add(bvc.ejectedCrewFledCount);
-        r.indent(2);
-        addReport(r);
 
         // blank line
         addReport(new Report(1210, Report.PUBLIC));

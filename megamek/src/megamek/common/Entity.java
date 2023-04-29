@@ -4639,11 +4639,20 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public abstract int getEngineCritHeat();
 
+    public static class HeatDisplayHelper {
+        public String heatCapacityStr;
+        public int heatCap;
+        public HeatDisplayHelper(String heatCapacityStr, int heatCap) {
+            this.heatCapacityStr = heatCapacityStr;
+            this.heatCap = heatCap;
+        }
+    }
+
     /**
      * returns total heat capacity factoring in normal capacity, water and radical HS
      *
      */
-    public String getHeatCapacityForDisplay() {
+    public HeatDisplayHelper getHeatCapacityForDisplay() {
         int heatCap;
 
         if (this instanceof Mech) {
@@ -4690,7 +4699,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             heatCapacityStr += " [" + heatCapWater + ']';
         }
 
-        return heatCapacityStr;
+        return new HeatDisplayHelper(heatCapacityStr, heatCap);
     }
 
     /**

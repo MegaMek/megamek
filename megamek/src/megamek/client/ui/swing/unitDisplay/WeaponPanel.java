@@ -1131,15 +1131,16 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         }
 
         String heatText = Integer.toString(currentHeatBuildup);
-        int heatOverCapacity = currentHeatBuildup - en.getHeatCapacityWithWater();
+        Entity.HeatDisplayHelper hdh = en.getHeatCapacityForDisplay();
+        String heatCapacityStr = hdh.heatCapacityStr;
+        int heatOverCapacity = currentHeatBuildup - hdh.heatCap;
+
         String sheatOverCapacity = "";
         if (heatOverCapacity > 0) {
             heatText += "*"; // overheat indication
             String msg_over = Messages.getString("MechDisplay.over");
             sheatOverCapacity = " " + heatOverCapacity + " " + msg_over;
         }
-
-        String heatCapacityStr = en.getHeatCapacityForDisplay();
 
         currentHeatBuildupR.setForeground(GUIP.getColorForHeat(heatOverCapacity, Color.WHITE));
         currentHeatBuildupR.setText(heatText + " (" + heatCapacityStr + ')' + sheatOverCapacity);

@@ -966,7 +966,8 @@ public final class UnitToolTip {
             } else {
                 sHeat += addToTT("Heat", BR, heat).toString();
             }
-            sHeat += " / "+ entity.getHeatCapacityForDisplay();
+            Entity.HeatDisplayHelper hdh = entity.getHeatCapacityForDisplay();
+            sHeat += " / "+ hdh.heatCapacityStr;
             result += guiScaledFontHTML(GUIP.getColorForHeat(heat)) + sHeat + "</FONT>";
         }
 

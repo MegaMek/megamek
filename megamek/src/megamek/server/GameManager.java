@@ -1595,6 +1595,7 @@ public class GameManager implements IGameManager {
         int unitsCrippledCount;
         int unitsDestroyedCount;
         int unitsCrewEjectedCount;
+        int unitsCrewTrappedCount;
         int unitsCrewKilledCount;
         int unitsFledCount;
         int ejectedCrewActiveCount;
@@ -1615,6 +1616,7 @@ public class GameManager implements IGameManager {
             this.unitsCrippledCount = 0;
             this.unitsDestroyedCount = 0;
             this.unitsCrewEjectedCount = 0;
+            this.unitsCrewTrappedCount = 0;
             this.unitsCrewKilledCount = 0;
             this.unitsFledCount = 0;
             this.ejectedCrewActiveCount = 0;
@@ -1624,7 +1626,7 @@ public class GameManager implements IGameManager {
             this.ejectedCrewFledCount = 0;
         }
     }
-    
+
     private void bvReports(boolean checkBlind) {
         HashMap<Integer, BVCountHelper> teamsInfo = new HashMap<>();
 
@@ -1654,6 +1656,7 @@ public class GameManager implements IGameManager {
             bvcPlayer.unitsCrippledCount = player.getUnitCrippledCount();
             bvcPlayer.unitsDestroyedCount =  player.getUnitDestroyedCount();
             bvcPlayer.unitsCrewEjectedCount = player.getUnitCrewEjectedCount();
+            bvcPlayer.unitsCrewTrappedCount = player.getUnitCrewTrappedCount();
             bvcPlayer.unitsCrewKilledCount = player.getUnitCrewKilledCount();
             bvcPlayer.unitsFledCount = player.getFledUnitsCount();
             bvcPlayer.ejectedCrewActiveCount = player.getEjectedCrewCount();
@@ -1676,6 +1679,7 @@ public class GameManager implements IGameManager {
             bvcTeam.unitsCrippledCount += bvcPlayer.unitsCrippledCount;
             bvcTeam.unitsDestroyedCount += bvcPlayer.unitsDestroyedCount;
             bvcTeam.unitsCrewEjectedCount += bvcPlayer.unitsCrewEjectedCount;
+            bvcTeam.unitsCrewTrappedCount += bvcPlayer.unitsCrewTrappedCount;
             bvcTeam.unitsCrewKilledCount += bvcPlayer.unitsCrewKilledCount;
             bvcTeam.unitsFledCount += bvcPlayer.unitsFledCount;
             bvcTeam.ejectedCrewActiveCount += bvcPlayer.ejectedCrewActiveCount;
@@ -1734,6 +1738,7 @@ public class GameManager implements IGameManager {
             r.add(bvc.unitsDestroyedCount > 0 ? r.warning(bvc.unitsDestroyedCount + "") : bvc.unitsDestroyedCount + "");
             r.add(bvc.unitsFledCount > 0 ? r.warning(bvc.unitsFledCount + "") : bvc.unitsFledCount + "");
             r.add(bvc.unitsCrewEjectedCount > 0 ? r.warning(bvc.unitsCrewEjectedCount + "") : bvc.unitsCrewEjectedCount + "");
+            r.add(bvc.unitsCrewTrappedCount > 0 ? r.warning(bvc.unitsCrewTrappedCount + "") : bvc.unitsCrewTrappedCount + "");
             r.add(bvc.unitsCrewKilledCount > 0 ? r.warning(bvc.unitsCrewKilledCount + "") : bvc.unitsCrewKilledCount + "");
             r.indent(2);
             addReport(r);

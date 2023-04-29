@@ -13,7 +13,6 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.MMConstants;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.boardview.LabelDisplayStyle;
 import megamek.client.ui.swing.util.PlayerColour;
@@ -109,6 +108,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String USE_CAMO_OVERLAY = "UseCamoOverlay";
 
     public static final String SHOW_COORDS = "showCoords";
+    public static final String HIGH_QUALITY_GRAPHICS = "HighQualityGraphics";
     public static final String SHADOWMAP = "ShadowMap";
     public static final String INCLINES = "Inclines";
     public static final String AOHEXSHADOWS = "AoHexShadows";
@@ -497,6 +497,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(FOV_STRIPES, 35);
         store.setDefault(FOV_GRAYSCALE, false);
 
+        store.setDefault(HIGH_QUALITY_GRAPHICS, true);
         store.setDefault(AOHEXSHADOWS, false);
         store.setDefault(SHADOWMAP, true);
         store.setDefault(INCLINES, true);
@@ -721,6 +722,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public boolean getAOHexShadows() {
         return store.getBoolean(AOHEXSHADOWS);
     }
+
+    public boolean getHighQualityGraphics() { return store.getBoolean(HIGH_QUALITY_GRAPHICS); }
 
     public boolean getFloatingIso() {
         return store.getBoolean(FLOATINGISO);
@@ -1473,6 +1476,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setAOHexShadows(boolean state) {
         store.setValue(AOHEXSHADOWS, state);
     }
+
+    public void setHighQualityGraphics(boolean state) { store.setValue(HIGH_QUALITY_GRAPHICS, state); }
 
     public void setFloatingIso(boolean state) {
         store.setValue(FLOATINGISO, state);

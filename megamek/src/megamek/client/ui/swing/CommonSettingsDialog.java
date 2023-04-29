@@ -143,6 +143,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private JTextField tfSoundMuteMyTurntFileName;
     private final JCheckBox soundMuteOthersTurn = new JCheckBox(Messages.getString("CommonSettingsDialog.soundMuteOthersTurn"));
     private JTextField tfSoundMuteOthersFileName;
+    private final JCheckBox chkHighQualityGraphics = new JCheckBox(Messages.getString("CommonSettingsDialog.highQualityGraphics"));
     private final JCheckBox showWpsinTT = new JCheckBox(Messages.getString("CommonSettingsDialog.showWpsinTT"));
     private final JCheckBox showWpsLocinTT = new JCheckBox(Messages.getString("CommonSettingsDialog.showWpsLocinTT"));
     private final JCheckBox showArmorMiniVisTT = new JCheckBox(Messages.getString("CommonSettingsDialog.showArmorMiniVisTT"));
@@ -375,6 +376,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private boolean savedUnitLabelBorder;
     private boolean savedShowDamageDecal;
     private boolean savedShowDamageLabel;
+    private boolean savedHighQualityGraphics;
     private String savedFovHighlightRingsRadii;
     private String savedFovHighlightRingsColors;
     private int savedFovHighlightAlpha;
@@ -528,6 +530,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         comps.add(checkboxEntry(animateMove, null));
         comps.add(checkboxEntry(showWrecks, null));
+        comps.add(checkboxEntry(chkHighQualityGraphics, Messages.getString("CommonSettingsDialog.highQualityGraphics.tooltip")));
 
         showMapsheets.addItemListener(this);
         row = new ArrayList<>();
@@ -1533,6 +1536,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             displayLocale.setSelectedIndex(index);
 
             showMapsheets.setSelected(GUIP.getShowMapsheets());
+            chkHighQualityGraphics.setSelected(GUIP.getHighQualityGraphics());
             showDamageLevel.setSelected(GUIP.getShowDamageLevel());
             showDamageDecal.setSelected(GUIP.getShowDamageDecal());
             aOHexShadows.setSelected(GUIP.getAOHexShadows());
@@ -1629,6 +1633,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             savedFovHighlightAlpha = GUIP.getFovHighlightAlpha();
             savedFovDarkenAlpha = GUIP.getFovDarkenAlpha();
             savedNumStripesSlider = GUIP.getFovStripes();
+            savedHighQualityGraphics = GUIP.getHighQualityGraphics();
             savedAdvancedOpt.clear();
 
             advancedKeys.clearSelection();
@@ -1670,6 +1675,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setFovHighlightAlpha(savedFovHighlightAlpha);
         GUIP.setFovDarkenAlpha(savedFovDarkenAlpha);
         GUIP.setFovStripes(savedNumStripesSlider);
+        GUIP.setHighQualityGraphics(savedHighQualityGraphics);
 
         csbWarningColor.setColour(GUIP.getWarningColor());
         csbCautionColor.setColour(GUIP.getCautionColor());
@@ -2280,6 +2286,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             GUIP.setShowDamageDecal(showDamageDecal.isSelected());
         } else if (source.equals(showDamageLevel)) {
             GUIP.setShowDamageLevel(showDamageLevel.isSelected());
+        } else if (source.equals(chkHighQualityGraphics)) {
+            GUIP.setHighQualityGraphics(chkHighQualityGraphics.isSelected());
         }
     }
 

@@ -533,7 +533,7 @@ public final class Player extends TurnOrdered {
 
     public int getEjectedCrewKilledCount() {
         return Math.toIntExact(game.getOutOfGameEntitiesVector().stream()
-                .filter(entity -> entity.isDestroyed() && (entity instanceof EjectedCrew)).count());
+                .filter(entity -> entity.getOwner().equals(this) && entity.isDestroyed() && (entity instanceof EjectedCrew)).count());
     }
 
     public int getInitialEntityCount() {
@@ -582,7 +582,7 @@ public final class Player extends TurnOrdered {
         int count = 0;
         while (fledUnits.hasMoreElements()) {
             Entity entity = fledUnits.nextElement();
-            if (entity.getOwner().equals(this) && !(entity instanceof EjectedCrew)) {
+            if (entity.getOwner().equals(this) && !entity.isDestroyed() && !(entity instanceof EjectedCrew)) {
                 count += 1;
             }
         }
@@ -595,7 +595,7 @@ public final class Player extends TurnOrdered {
         int count = 0;
         while (fledUnits.hasMoreElements()) {
             Entity entity = fledUnits.nextElement();
-            if (entity.getOwner().equals(this) && (entity instanceof EjectedCrew)) {
+            if (entity.getOwner().equals(this) && !entity.isDestroyed() && (entity instanceof EjectedCrew)) {
                 count += 1;
             }
         }

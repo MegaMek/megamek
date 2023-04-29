@@ -1133,7 +1133,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         String heatText = Integer.toString(currentHeatBuildup);
         Entity.HeatDisplayHelper hdh = en.getHeatCapacityForDisplay();
         String heatCapacityStr = hdh.heatCapacityStr;
-        int heatOverCapacity = currentHeatBuildup - hdh.heatCap;
+        int heatOverCapacity = currentHeatBuildup - hdh.heatCapWater;
 
         String sheatOverCapacity = "";
         if (heatOverCapacity > 0) {

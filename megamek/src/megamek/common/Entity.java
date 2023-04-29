@@ -4641,10 +4641,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public static class HeatDisplayHelper {
         public String heatCapacityStr;
-        public int heatCap;
-        public HeatDisplayHelper(String heatCapacityStr, int heatCap) {
+        public int heatCapWater;
+        public HeatDisplayHelper(String heatCapacityStr, int heatCapWater) {
             this.heatCapacityStr = heatCapacityStr;
-            this.heatCap = heatCap;
+            this.heatCapWater = heatCapWater;
         }
     }
 
@@ -4699,7 +4699,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             heatCapacityStr += " [" + heatCapWater + ']';
         }
 
-        return new HeatDisplayHelper(heatCapacityStr, heatCap);
+        return new HeatDisplayHelper(heatCapacityStr, heatCapWater);
     }
 
     /**

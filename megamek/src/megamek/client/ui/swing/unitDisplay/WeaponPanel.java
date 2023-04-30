@@ -6,6 +6,7 @@ import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.swing.*;
+import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.*;
 import megamek.common.*;
@@ -1131,7 +1132,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         }
 
         String heatText = Integer.toString(currentHeatBuildup);
-        Entity.HeatDisplayHelper hdh = en.getHeatCapacityForDisplay();
+        UnitToolTip.HeatDisplayHelper hdh = UnitToolTip.getHeatCapacityForDisplay(en);
         String heatCapacityStr = hdh.heatCapacityStr;
         int heatOverCapacity = currentHeatBuildup - hdh.heatCapWater;
 

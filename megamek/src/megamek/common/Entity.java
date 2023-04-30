@@ -4639,69 +4639,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public abstract int getEngineCritHeat();
 
-    public static class HeatDisplayHelper {
-        public String heatCapacityStr;
-        public int heatCapWater;
-        public HeatDisplayHelper(String heatCapacityStr, int heatCapWater) {
-            this.heatCapacityStr = heatCapacityStr;
-            this.heatCapWater = heatCapWater;
-        }
-    }
-
-    /**
-     * returns total heat capacity factoring in normal capacity, water and radical HS
-     *
-     */
-    public HeatDisplayHelper getHeatCapacityForDisplay() {
-        int heatCap;
-
-        if (this instanceof Mech) {
-            Mech m = (Mech) this;
-            heatCap = m.getHeatCapacity(true, false);
-        } else if (this instanceof Aero) {
-            Aero a = (Aero) this;
-            heatCap = a.getHeatCapacity(false);
-        } else {
-            heatCap = this.getHeatCapacity();
-        }
-
-        int heatCapOrg = heatCap;
-
-        int heatCapWater = this.getHeatCapacityWithWater();
-
-        if (this instanceof Mech) {
-            Mech m = (Mech) this;
-            if (m.getCoolantFailureAmount() > 0) {
-                heatCap -= m.getCoolantFailureAmount();
-                heatCapWater -= m.getCoolantFailureAmount();
-            }
-        }
-
-        if (this.hasActivatedRadicalHS()) {
-            if (this instanceof Mech) {
-                Mech m = (Mech) this;
-                heatCap += m.getActiveSinks();
-                heatCapWater += m.getActiveSinks();
-            } else if (this instanceof Aero) {
-                Aero a = (Aero) this;
-                heatCap += a.getHeatSinks();
-                heatCapWater += a.getHeatSinks();
-            }
-        }
-
-        String heatCapacityStr = Integer.toString(heatCap) ;
-
-        if (heatCap < heatCapOrg) {
-            heatCapacityStr += "*";
-        }
-
-        if (heatCap < heatCapWater) {
-            heatCapacityStr += " [" + heatCapWater + ']';
-        }
-
-        return new HeatDisplayHelper(heatCapacityStr, heatCapWater);
-    }
-
     /**
      * Returns a critical hit slot
      */

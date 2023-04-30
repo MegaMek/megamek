@@ -823,6 +823,69 @@ public final class UnitToolTip {
         return new StringBuilder().append(result);
     }
 
+    public static class HeatDisplayHelper {
+        public String heatCapacityStr;
+        public int heatCapWater;
+        public HeatDisplayHelper(String heatCapacityStr, int heatCapWater) {
+            this.heatCapacityStr = heatCapacityStr;
+            this.heatCapWater = heatCapWater;
+        }
+    }
+
+    /**
+     * returns total heat capacity factoring in normal capacity, water and radical HS
+     *
+     */
+    public static HeatDisplayHelper getHeatCapacityForDisplay(Entity e) {
+        int heatCap;
+
+        if (e instanceof Mech) {
+            Mech m = (Mech) e;
+            heatCap = m.getHeatCapacity(true, false);
+        } else if (e instanceof Aero) {
+            Aero a = (Aero) e;
+            heatCap = a.getHeatCapacity(false);
+        } else {
+            heatCap = e.getHeatCapacity();
+        }
+
+        int heatCapOrg = heatCap;
+
+        int heatCapWater = e.getHeatCapacityWithWater();
+
+        if (e instanceof Mech) {
+            Mech m = (Mech) e;
+            if (m.getCoolantFailureAmount() > 0) {
+                heatCap -= m.getCoolantFailureAmount();
+                heatCapWater -= m.getCoolantFailureAmount();
+            }
+        }
+
+        if (e.hasActivatedRadicalHS()) {
+            if (e instanceof Mech) {
+                Mech m = (Mech) e;
+                heatCap += m.getActiveSinks();
+                heatCapWater += m.getActiveSinks();
+            } else if (e instanceof Aero) {
+                Aero a = (Aero) e;
+                heatCap += a.getHeatSinks();
+                heatCapWater += a.getHeatSinks();
+            }
+        }
+
+        String heatCapacityStr = Integer.toString(heatCap) ;
+
+        if (heatCap < heatCapOrg) {
+            heatCapacityStr += "*";
+        }
+
+        if (heatCap < heatCapWater) {
+            heatCapacityStr += " [" + heatCapWater + ']';
+        }
+
+        return new HeatDisplayHelper(heatCapacityStr, heatCapWater);
+    }
+
     /** Returns values that only are relevant when in-game such as heat. */
     private static StringBuilder inGameValues(Entity entity, Player localPlayer) {
         Game game = entity.getGame();
@@ -966,7 +1029,7 @@ public final class UnitToolTip {
             } else {
                 sHeat += addToTT("Heat", BR, heat).toString();
             }
-            Entity.HeatDisplayHelper hdh = entity.getHeatCapacityForDisplay();
+            HeatDisplayHelper hdh = getHeatCapacityForDisplay(entity);
             sHeat += " / "+ hdh.heatCapacityStr;
             result += guiScaledFontHTML(GUIP.getColorForHeat(heat)) + sHeat + "</FONT>";
         }

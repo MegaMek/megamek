@@ -13,6 +13,8 @@
  */
 package megamek.common.weapons.battlearmor;
 
+import megamek.common.Mounted;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.lasers.LaserWeapon;
 
 /**
@@ -53,5 +55,10 @@ public class CLBALaserERMicro extends LaserWeapon {
                 .setClanApproximate(true, false, false, false, false)
                 .setPrototypeFactions(F_CSJ)
                 .setProductionFactions(F_CSJ);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        return (range <= AlphaStrikeElement.SHORT_RANGE) ? 0.2 : 0;
     }
 }

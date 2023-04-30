@@ -1,7 +1,7 @@
 Version:1.0
 Eris
 ERS-2H
-mul id:8250
+mul id:9328
 
 Config:Biped
 techbase:Inner Sphere
@@ -157,4 +157,3 @@ systemmanufacturer:ARMOR:Kallon Royalstar with CASE II
 systemmanufacturer:JUMPJET:Chilton 360 with Partial Wing
 systemmanufacturer:COMMUNICATIONS:Garret T20-C
 systemmanufacturer:TARGETING:Garret A6
-

@@ -248,7 +248,7 @@ public class MegaMek {
         SwingUtilities.invokeLater(() -> {
             MegaMekGUI mmg = new MegaMekGUI();
             mmg.start(false);
-            
+
             File gameFile = null;
             if (resolver.saveGameFileName != null ) {
                 gameFile = new File(resolver.saveGameFileName);

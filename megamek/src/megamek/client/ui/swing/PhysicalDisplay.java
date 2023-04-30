@@ -15,7 +15,6 @@ package megamek.client.ui.swing;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
-import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.widget.IndexedRadioButton;
 import megamek.client.ui.swing.widget.MegamekButton;
@@ -205,7 +204,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             LogManager.getLogger().error("Tried to select non-existent entity " + en);
             return;
         }
-        
+
         if ((ce() != null) &&ce().isWeapOrderChanged()) {
             clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
         }
@@ -393,15 +392,15 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                 target, PunchAttackAction.LEFT, false);
         final ToHitData rightArm = PunchAttackAction.toHit(clientgui.getClient().getGame(), cen,
                 target, PunchAttackAction.RIGHT, false);
-        
+
         final double punchOddsRight = Compute.oddsAbove(rightArm.getValue(), isAptPiloting);
         final int punchDmgRight = PunchAttackAction.getDamageFor(en,
                 PunchAttackAction.RIGHT, target.isConventionalInfantry(), false);
-        
+
         final double punchOddsLeft = Compute.oddsAbove(leftArm.getValue(), isAptPiloting);
         final int punchDmgLeft = PunchAttackAction.getDamageFor(en, PunchAttackAction.LEFT,
                 target.isConventionalInfantry(), false);
-        
+
         String title = Messages.getString("PhysicalDisplay.PunchDialog.title", target.getDisplayName());
         String message = Messages.getString("PhysicalDisplay.PunchDialog.message",
                 rightArm.getValueAsString(), punchOddsRight, rightArm.getDesc(), punchDmgRight,
@@ -436,7 +435,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                         Messages.getString("PhysicalDisplay.ExtendBladeDialog.message",
                                 en.getLocationName(Mech.LOC_RARM)));
             }
-            
+
             boolean zweihandering = false;
             int armChosenZwei = PunchAttackAction.RIGHT;
             if (canZweihander) {
@@ -459,15 +458,15 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                     damageZwei = damageLeftZwei;
                     oddsZwei = oddsLeft;
                     armChosenZwei = PunchAttackAction.LEFT;
-                } 
-                              
+                }
+
                 zweihandering = clientgui.doYesNoDialog(
                         Messages.getString("PhysicalDisplay.ZweihanderPunchDialog.title"),
                         Messages.getString("PhysicalDisplay.ZweihanderPunchDialog.message",
                                 toHitZwei.getValueAsString(), oddsZwei, toHitZwei.getDesc(),
                                 damageZwei, toHitZwei.getTableDesc()));
             }
-            
+
             if (zweihandering) {
                 if (armChosenZwei==PunchAttackAction.LEFT) {
                     leftArm.addModifier(TargetRoll.IMPOSSIBLE, "zweihandering with other arm");
@@ -562,7 +561,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                 && en.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
         final boolean isMeleeMaster = (en.getCrew() != null)
                 && en.hasAbility(OptionsConstants.PILOT_MELEE_MASTER);
-        
+
         ToHitData leftLeg = KickAttackAction.toHit(clientgui.getClient()
                 .getGame(), cen, target, KickAttackAction.LEFT);
         ToHitData rightLeg = KickAttackAction.toHit(clientgui.getClient()
@@ -596,19 +595,19 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                 attackLeg = leftRearLeg;
             }
         }
-        
+
         final double kickOdds = Compute.oddsAbove(attackLeg.getValue(),
                 isAptPiloting);
         final int kickDmg = KickAttackAction.getDamageFor(en, attackSide, target.isConventionalInfantry());
-        
+
         String title = Messages.getString("PhysicalDisplay.KickDialog.title", target.getDisplayName());
         String message = Messages.getString("PhysicalDisplay.KickDialog.message",
                 attackLeg.getValueAsString(), kickOdds, attackLeg.getDesc(), kickDmg, attackLeg.getTableDesc());
-        
+
         if (isMeleeMaster) {
             message = Messages.getString("PhysicalDisplay.MeleeMaster") + "\n\n" + message;
         }
-        
+
         if (clientgui.doYesNoDialog(title, message)) {
             disableButtons();
             // declare searchlight, if possible
@@ -866,7 +865,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             return;
         }
         final Entity en = ce();
-        
+
         final boolean isAptPiloting = (en.getCrew() != null)
                 && en.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
         final boolean isMeleeMaster = (en.getCrew() != null)
@@ -891,11 +890,11 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         String title = Messages.getString("PhysicalDisplay.ClubDialog.title", target.getDisplayName());
         String message = Messages.getString("PhysicalDisplay.ClubDialog.message",
                 toHit.getValueAsString(), clubOdds, toHit.getDesc(), dmgString, toHit.getTableDesc());
-        
+
         if (isMeleeMaster) {
             message = Messages.getString("PhysicalDisplay.MeleeMaster") + "\n\n" + message;
         }
-        
+
         if (clientgui.doYesNoDialog(title, message)) {
             boolean zweihandering = false;
             if (canZweihander) {
@@ -1399,16 +1398,12 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         if (targets.size() == 1) {
             // Return that choice.
             choice = targets.get(0);
-        }
-
-        // If we have multiple choices, display a selection dialog.
-        else if (targets.size() > 1) {
-            String input = (String) JOptionPane.showInputDialog(clientgui,
-                    Messages.getString("PhysicalDisplay.ChooseTargetDialog.message", pos.getBoardNum()),
+        } else if (targets.size() > 1) {
+            // If we have multiple choices, display a selection dialog.
+            choice = TargetChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(),
                     Messages.getString("PhysicalDisplay.ChooseTargetDialog.title"),
-                    JOptionPane.QUESTION_MESSAGE, null,
-                    SharedUtility.getDisplayArray(targets), null);
-            choice = SharedUtility.getTargetPicked(targets, input);
+                    Messages.getString("PhysicalDisplay.ChooseTargetDialog.message", pos.getBoardNum()),
+                    targets, clientgui, ce());
         }
 
         // Return the chosen unit.
@@ -1451,7 +1446,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         } else {
             endMyTurn();
             String playerName;
-          
+
             if (e.getPlayer() != null) {
                 playerName = e.getPlayer().getName();
             } else {
@@ -1705,7 +1700,9 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                             clientgui.frame,
                             Messages.getString("PhysicalDisplay.AimedShotDialog.title"),
                             Messages.getString("PhysicalDisplay.AimedShotDialog.message"),
-                            options, enabled, aimingAt, this, this);
+                            options, enabled, aimingAt,
+                            clientgui, target,
+                            this, this);
 
                     asd.setVisible(true);
                     updateTarget();

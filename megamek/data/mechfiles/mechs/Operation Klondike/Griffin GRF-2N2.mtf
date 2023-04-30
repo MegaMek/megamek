@@ -1,6 +1,7 @@
 Version:1.0
 Griffin
 GRF-2N2
+mul id:6767
 
 Config:Biped
 techbase:Inner Sphere
@@ -160,4 +161,3 @@ systemmanufacturer:ARMOR:Starshield Ferro-Fibrous
 systemmanufacturer:JUMPJET:Rawlings 55
 systemmanufacturer:COMMUNICATIONS:Neil 6000
 systemmanufacturer:TARGETING:Octagon Tartrac System C
-

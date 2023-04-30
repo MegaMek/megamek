@@ -52,6 +52,40 @@ public class TSEMPHandler extends EnergyWeaponHandler {
         return 0;
     }
     
+    // Copied from megamek.common.weapons.HVACWeaponHandler#doChecks(java.util.Vector)
+    /*
+    * (non-Javadoc)
+    *
+    * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
+    */
+    @Override
+    protected boolean doChecks(Vector<Report> vPhaseReport) {
+        if (roll == 2) {
+            Report r = new Report(3162);
+            r.subject = subjectId;
+            weapon.setHit(true);
+            int wloc = weapon.getLocation();
+            for (int i = 0; i < ae.getNumberOfCriticals(wloc); i++) {
+                CriticalSlot slot1 = ae.getCritical(wloc, i);
+                if ((slot1 == null) ||
+                    (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                        continue;
+                    }
+                Mounted mounted = slot1.getMount();
+                if (mounted.equals(weapon)) {
+                    ae.hitAllCriticals(wloc, i);
+                    break;
+                }
+            }
+            vPhaseReport.addAll(gameManager.explodeEquipment(ae, wloc, weapon));
+            r.choose(false);
+            vPhaseReport.addElement(r);
+            return true;
+        } else {
+            return super.doChecks(vPhaseReport);
+        }
+    }
+
     @Override
     public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         weapon.setFired(true);

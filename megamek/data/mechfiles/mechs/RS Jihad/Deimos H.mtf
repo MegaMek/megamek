@@ -1,6 +1,7 @@
 Version:1.0
 Deimos
 H
+mul id:9505
 
 Config:Biped Omnimech
 techbase:Clan
@@ -166,4 +167,3 @@ systemmanufacturer:ENGINE:Type 255 Extralight
 systemmanufacturer:ARMOR:Longanecker PlastiSteel
 systemmanufacturer:COMMUNICATIONS:TDWS-37 Mk. 2.2
 systemmanufacturer:TARGETING:Hermes CT-44
-

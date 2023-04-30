@@ -156,8 +156,7 @@ ISStreakSRM2
 
 overview:The Crusader was initially designed as a close combat BattleMech for the Star League Defense Force, but soon proved itself to be a very adaptable, multi-role design. This reliable workhorse of the SLDF, while not excelling in any one job, was quite capable of accomplishing just about any mission, whether it be close assault, anti-aircraft, counter-insurgency, or even reconnaissance. Its versatility and large number of manufacturers ensured the Crusader its place as one of the most common heavy 'Mechs in the Inner Sphere.
 
-capabilities:Each arm was equipped with an LRM launcher, laser and machine gun, while the SRM launchers were built into the legs and mounted at hip height to provide a stable firing location and avoid interference with the LRMs' flight path. Early Crusader models had issues with the arm-mounted launchers and lasers overheating and causing stress to the actuators and internal structure, but this was rectified with the additions of the now-distinctive collars which deflect hot gasses away. 
-The Crusader was well-protected with twelve tons of armor, particularly around the legs, which made it a good hand-to-hand combatant. A thirteen and a half ton fusion engine allowed the Crusader to achieve a decent cruising speed of 43.2 km/h. One disadvantage to the Crusader was its inadequate heat management system, carrying just ten standard heat sinks to handle all the waste heat produced by its weapons and equipment.
+capabilities:Each arm was equipped with an LRM launcher, laser and machine gun, while the SRM launchers were built into the legs and mounted at hip height to provide a stable firing location and avoid interference with the LRMs' flight path. Early Crusader models had issues with the arm-mounted launchers and lasers overheating and causing stress to the actuators and internal structure, but this was rectified with the additions of the now-distinctive collars which deflect hot gasses away. The Crusader was well-protected with twelve tons of armor, particularly around the legs, which made it a good hand-to-hand combatant. A thirteen and a half ton fusion engine allowed the Crusader to achieve a decent cruising speed of 43.2 km/h. One disadvantage to the Crusader was its inadequate heat management system, carrying just ten standard heat sinks to handle all the waste heat produced by its weapons and equipment.
 
 deployment:The 5M was the official production-model upgraded variant of the Crusader for the Free Worlds League, introduced in 3049 and using recovered Star League technology. Though using the same Crucis-B chassis as before the 'Mech was powered by a Hermes 260 XL Engine and carried thirteen double heat sinks to vent its heat more efficiently. The 5M was also capable of jumping up to one hundred and twenty meters with its four torso-mounted jump jets. The 'Mech was armed with two Magna Longbow LRM-15 launchers and two Intek medium lasers in its arms, two Hovertec Streak SRM-2 launchers mounted in its legs, a Flame Tech Flamer and a LFN Lindblad machine gun in its right arm, and a LFN Lindblad Shotgun Anti-Missile System on its head. One ton of ammo for the machine gun was carried in the right arm, while two tons of LRM reloads and one ton each for the AMS and Streak launchers were carried in CASE-protected side torsos. This variant was built for the FWLM from Kallon's factories on Ascuncion and Bernardo, as well as the Brigadier plant on Oliver until that planet was captured by the Federated Commonwealth, after which it began building 5Ms for the AFFC.
 
@@ -170,8 +169,3 @@ systemmanufacturer:ENGINE:Hermes 260 XL
 systemmanufacturer:ARMOR:Riese-500 with CASE
 systemmanufacturer:COMMUNICATIONS:Garret T11-b
 systemmanufacturer:TARGETING:Garret A6
-
-
-
-
-

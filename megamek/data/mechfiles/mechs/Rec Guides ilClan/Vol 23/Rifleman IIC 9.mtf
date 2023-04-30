@@ -149,16 +149,13 @@ CLDoubleHeatSink
 -Empty-
 -Empty-
 
-
 overview:The Rifleman IIC is an upgrade of the venerable Rifleman BattleMech. Five tons heavier than the design it is based on, the Rifleman IIC is also slower. 
 
 capabilities:Five tons heavier than the design it is based on, the Rifleman IIC is also slower. This creates a great deal more room with which to mount other equipment. Further weight savings are found in the use of an Endo Steel frame. One of the first upgrades to the design was maxing out its protection, with eleven tons of Ferro-Fibrous armor. 
 
 deployment:Simple, straightforward, and accurate; the Rifleman IIC is armed with four Large Pulse Lasers. This allows it to pick apart enemies from a respectable range, as well as easily target incoming aircraft. A single ER Small Laser is installed, seemingly as an afterthought. Nineteen double heat sinks keep heat mostly in check, though volley fire should be used. he vaunted anti-aircraft 'Mech is aided in its role by the inclusion of an Active Probe. To compensate for the loss of speed, the IIC mounts three jump jets that can propel the 'Mech up to ninety meters in one leap.
 
-history:An ancient rebuild of an already ancient design, the Rifleman IIC has soldiered on throughout the centuries. The ’Mech can be found in service with most Clans (a
-notable exception is Clan Wolf, which prefers the Glass Spider) and several Inner Sphere powers. Its simplicity is matched only by its effectiveness, and new variants
-continue to debut.
+history:An ancient rebuild of an already ancient design, the Rifleman IIC has soldiered on throughout the centuries. The ’Mech can be found in service with most Clans (a notable exception is Clan Wolf, which prefers the Glass Spider) and several Inner Sphere powers. Its simplicity is matched only by its effectiveness, and new variants continue to debut.
 
 manufacturer:Mountain Wolf BattleMechs
 primaryfactory:Alpheratz
@@ -169,4 +166,3 @@ systemmanufacturer:ARMOR:Forging Z5 Ferro-Fibrous
 systemmanufacturer:JUMPJET:“Highlifter” 44
 systemmanufacturer:COMMUNICATIONS:Garret T11-A
 systemmanufacturer:TARGETING:GH D5j TTS with Active Probe
-

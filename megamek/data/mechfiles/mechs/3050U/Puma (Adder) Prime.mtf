@@ -161,8 +161,11 @@ manufacturer:Sheridan LM-TA 8-10, W-7 Facilities,Wolf Clan Site 3, Assault Tech 
 primaryfactory:Sheridan LM-TA 8-10, W-7 Facilities,Wolf Clan Site 3, Assault Tech Industries
 notes:Codenamed Puma by Inner Sphere forces who first engaged it.
 systemmanufacturer:CHASSIS:Hooded Endo-Lite
+systemmode:CHASSIS:Endo Steel
 systemmanufacturer:ENGINE:Great Father 210 XL
 systemmanufacturer:ARMOR:Star Lite
+systemmode:ARMOR:Ferro-Fibrous
 systemmanufacturer:COMMUNICATIONS:Trueborn Ultra
+systemmode:COMMUNICATIONS:945B
 systemmanufacturer:TARGETING:Adder Special
-
+systemmode:TARGETING:V8.6

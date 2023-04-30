@@ -25,13 +25,10 @@ import megamek.client.event.MechDisplayEvent;
 import megamek.client.event.MechDisplayListener;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
-import megamek.client.ui.SharedUtility;
-import megamek.client.ui.swing.ChatterBox2;
-import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.MovementDisplay;
+import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.tileset.HexTileset;
 import megamek.client.ui.swing.tileset.TilesetManager;
+import megamek.client.ui.swing.tooltip.HexTooltip;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.util.*;
 import megamek.client.ui.swing.widget.MegamekBorder;
@@ -42,7 +39,6 @@ import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
-import megamek.common.enums.BasementType;
 import megamek.common.enums.IlluminationLevel;
 import megamek.common.event.*;
 import megamek.common.options.GameOptions;
@@ -401,12 +397,12 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
     /** Stores the correct tooltip dismiss delay so it can be restored when exiting the boardview */
     private int dismissDelay = ToolTipManager.sharedInstance().getDismissDelay();
-    
-    /** A map overlay showing some important keybinds. */ 
+
+    /** A map overlay showing some important keybinds. */
     KeyBindingsOverlay keybindOverlay;
 
     PlanetaryConditionsOverlay planetaryConditionsOverlay;
-    
+
     /** The coords where the mouse was last. */
     Coords lastCoords;
 
@@ -431,7 +427,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
         game.addGameListener(gameListener);
         game.getBoard().addBoardListener(this);
-        
+
         keybindOverlay = new KeyBindingsOverlay(game, clientgui);
         // Avoid showing the key binds when they can't be used (in the lobby map preview)
         if (controller != null) {
@@ -528,7 +524,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                     drawDimension.setSize(width, height);
                     disp.isMouseOver(point, drawDimension);
                 }
-                
+
                 final Coords mcoords = getCoordsAt(point);
                 if (!mcoords.equals(lastCoords) && game.getBoard().contains(mcoords)) {
                     lastCoords = mcoords;
@@ -1070,7 +1066,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                         } catch (Exception e) {
                             // if we somehow messed up the math, log the error and simply act as if we have no background image.
                             Rectangle rasterBounds = bvBgImage.getRaster().getBounds();
-                            
+
                             String errorData = String.format("Error drawing background image. Raster Bounds: %.2f, %.2f, width:%.2f, height:%.2f, Attempted Draw Coordinates: %d, %d, width:%d, height:%d",
                                     rasterBounds.getMinX(), rasterBounds.getMinY(), rasterBounds.getWidth(), rasterBounds.getHeight(),
                                     xRem, yRem, w - xRem, h - yRem);
@@ -1243,7 +1239,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     }
 
     /**
-     * Debugging method that renders a hex in the approximate direction 
+     * Debugging method that renders a hex in the approximate direction
      * from the selected entity to the selected hex, of both exist.
      * @param g Graphics object on which to draw.
      */
@@ -1252,16 +1248,16 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         if (selectedEntity == null || selected == null) {
             return;
         }
-        
+
         int direction = selectedEntity.getPosition().approximateDirection(selected, 0, 0);
-        
+
         Coords donutCoords = selectedEntity.getPosition().translated(direction);
-        
+
         Point p = getCentreHexLocation(donutCoords.getX(), donutCoords.getY(), true);
         p.translate(HEX_W  / 2, HEX_H  / 2);
         drawHexBorder(g, p, Color.BLUE, 0, 6);
     }
-    
+
     /**
      * Debugging method that renders the bounding hex of a unit's movement envelope.
      * Warning: very slow when rendering the bounding hex for really fast units.
@@ -1318,7 +1314,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             drawHexBorder(g, p, Color.PINK, 0, 6);
         }
     }
-    
+
     /**
      * Debugging method that renders a obnoxious pink lines around hexes in "Board Clusters"
      * @param g Graphics object on which to draw.
@@ -1327,7 +1323,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     private void renderClusters(Graphics2D g) {
         BoardClusterTracker bct = new BoardClusterTracker();
         Map<Coords, BoardCluster> clusterMap = bct.generateClusters(selectedEntity, false, true);
-        
+
         for (BoardCluster cluster : clusterMap.values().stream().distinct().collect(Collectors.toList())) {
             for (Coords coords : cluster.contents.keySet()) {
                 Point p = getCentreHexLocation(coords.getX(), coords.getY(), true);
@@ -1548,7 +1544,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 for (int i = beg; i < n * (lDiff - 0.4); i++) {
                     gS.drawImage(hexShadow, (int) p1.getX(), (int) p1.getY(), null);
                     p1.setLocation(p1.getX() + deltaX, p1.getY() + deltaY);
-                }   
+                }
             } else {
                 for (int i = 0; i < n * lDiff; i++) {
                     gS.drawImage(hexShadow, (int) p1.getX(), (int) p1.getY(), null);
@@ -2466,7 +2462,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             g.setComposite(svComp);
         }
 
-        // To place roads under the shadow map, some supers 
+        // To place roads under the shadow map, some supers
         // have to be drawn before the shadow map, otherwise the supers are
         // drawn after. Unfortunately the supers images
         // themselves can't be checked for roads.
@@ -2666,7 +2662,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             }
             if (hex.terrainLevel(Terrains.FOLIAGE_ELEV) == 1) {
                 g.setColor(GUIP.getLowFoliageColor());
-                drawCenteredString(Messages.getString("BoardView1.LowFoliage"), 
+                drawCenteredString(Messages.getString("BoardView1.LowFoliage"),
                         0, (int) (ypos * scale), font_elev, g);
                 ypos -= 10;
             }
@@ -4867,11 +4863,11 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
     /**
      * Notifies listeners about the specified mouse action.
-     * 
+     *
      * @param coords          - coords the Coords.
      * @param mtype           - Board view event type
      * @param modifiers       - mouse event modifiers mask such as SHIFT_DOWN_MASK etc.
-     * @param mouseButton     - mouse button associated with this event 
+     * @param mouseButton     - mouse button associated with this event
      *                           0 = no button
      *                           1 = Button 1
      *                           2 = Button 2
@@ -4905,7 +4901,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     public void boardChangedHex(BoardEvent b) {
         hexImageCache.remove(b.getCoords());
         // Also repaint the surrounding hexes because of shadows, border etc.
-        for (int dir: allDirections) { 
+        for (int dir: allDirections) {
             hexImageCache.remove(b.getCoords().translated(dir));
         }
         clearShadowMap();
@@ -4952,12 +4948,12 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             final GameOptions gopts = game.getOptions();
 
             updateEcmList();
-            
+
             // For Entities that have converted to another mode, check for a different sprite
             if (game.getPhase().isMovement() && en.isConvertingNow()) {
                 tileManager.reloadImage(en);
             }
-            
+
             // for units that have been blown up, damaged or ejected, force a reload
             if ((e.getOldEntity() != null) &&
                     ((en.getDamageLevel() != e.getOldEntity().getDamageLevel()) ||
@@ -4965,7 +4961,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                     (en.getCrew().isEjected() != e.getOldEntity().getCrew().isEjected()))) {
                 tileManager.reloadImage(en);
             }
-            
+
             redrawAllEntities();
             if (game.getPhase().isMovement()) {
                 refreshMoveVectors();
@@ -5089,7 +5085,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 default:
             }
             for (Entity en: game.getEntitiesVector()) {
-                if ((en.getDamageLevel() != Entity.DMG_NONE) && 
+                if ((en.getDamageLevel() != Entity.DMG_NONE) &&
                         ((en.damageThisRound != 0) || (en instanceof GunEmplacement))) {
                     tileManager.reloadImage(en);
                 }
@@ -5190,9 +5186,9 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             if (e.getPosition() == null) {
                 continue;
             }
-            
-            boolean entityIsEnemy = e.getOwner().isEnemyOf(localPlayer);           
-            
+
+            boolean entityIsEnemy = e.getOwner().isEnemyOf(localPlayer);
+
             // If this unit isn't spotted somehow, it's ECM doesn't show up
             if ((localPlayer != null)
                     && game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
@@ -5201,7 +5197,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                     && !e.hasDetectedEntity(localPlayer)) {
                 continue;
             }
-            
+
             // hidden enemy entities don't show their ECM bubble
             if (entityIsEnemy && e.isHidden()) {
                 continue;
@@ -5241,12 +5237,12 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                     && !ecmInfo.getEntity().hasDetectedEntity(localPlayer)) {
                 continue;
             }
-            
+
             // hidden enemy entities don't show their ECM bubble
             if (ecmInfo.getEntity().getOwner().isEnemyOf(localPlayer) && ecmInfo.getEntity().isHidden()) {
                 continue;
             }
-            
+
             final Coords ecmPos = ecmInfo.getPos();
             final int range = ecmInfo.getRange();
 
@@ -5422,12 +5418,10 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             choice = entities.get(0);
         } else if (entities.size() > 1) {
             // If we have multiple choices, display a selection dialog.
-            String input = (String) JOptionPane.showInputDialog(null,
+            choice = EntityChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(),
                     Messages.getString("BoardView1.ChooseEntityDialog.message", pos.getBoardNum()),
                     Messages.getString("BoardView1.ChooseEntityDialog.title"),
-                    JOptionPane.QUESTION_MESSAGE, null,
-                    SharedUtility.getDisplayArray(entities), null);
-            choice = (Entity) SharedUtility.getTargetPicked(entities, input);
+                    entities);
         }
 
         // Return the chosen unit.
@@ -5449,7 +5443,6 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         Hex mhex = game.getBoard().getHex(mcoords);
 
         String result = "";
-        //StringBuffer txt = new StringBuffer();
 
         // Hex Terrain
         if (GUIP.getShowMapHexPopup() && (mhex != null)) {
@@ -5750,25 +5743,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         if (mhex == null) {
             return;
         }
-
-        Coords mcoords = mhex.getCoords();
-        String result = "";
-        String sTerrian = Messages.getString("BoardView1.Tooltip.Hex", mcoords.getBoardNum(), mhex.getLevel()) + "<BR>";
-
-        // cycle through the terrains and report types found
-        for (int terType: mhex.getTerrainTypes()) {
-            int tf = mhex.getTerrain(terType).getTerrainFactor();
-            int ttl = mhex.getTerrain(terType).getLevel();
-            String name = Terrains.getDisplayName(terType, ttl);
-            if (name != null) {
-                String msg_tf =  Messages.getString("BoardView1.Tooltip.TF");
-                name += (tf > 0) ? " (" + msg_tf + ": " + tf + ")" : "";
-                sTerrian += name + "<BR>";
-            }
-        }
-
-        result += guiScaledFontHTML(UIUtil.uiBlack()) + sTerrian + "</FONT>";
-        txt.append(result);
+        txt.append(HexTooltip.getTerrainTip(mhex));
     }
 
     /**
@@ -5778,122 +5753,10 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         if (mhex == null) {
             return;
         }
-        Coords mcoords = mhex.getCoords();
-
-        String result = "";
-
-        // Fuel Tank
-        if (mhex.containsTerrain(Terrains.FUEL_TANK)) {
-            String sFuelTank = "";
-            // In the BoardEditor, buildings have no entry in the
-            // buildings list of the board, so get the info from the hex
-            if (clientgui == null) {
-                sFuelTank = Messages.getString("BoardView1.Tooltip.FuelTank",
-                        mhex.terrainLevel(Terrains.FUEL_TANK_ELEV),
-                        Terrains.getEditorName(Terrains.FUEL_TANK),
-                        mhex.terrainLevel(Terrains.FUEL_TANK_CF),
-                        mhex.terrainLevel(Terrains.FUEL_TANK_MAGN));
-            } else {
-                FuelTank bldg = (FuelTank) game.getBoard().getBuildingAt(mcoords);
-                sFuelTank = Messages.getString("BoardView1.Tooltip.FuelTank",
-                        mhex.terrainLevel(Terrains.FUEL_TANK_ELEV), bldg.toString(),
-                        bldg.getCurrentCF(mcoords), bldg.getMagnitude());
-            }
-
-            sFuelTank = guiScaledFontHTML(uiBlack()) + sFuelTank + "</FONT>";
-            String col = "<TD>" + sFuelTank + "</TD>";
-            String row = "<TR>" + col + "</TR>";
-            String table = "<TABLE BORDER=0 BGCOLOR=" + LIGHT_BGCOLOR + " width=100%>" + row + "</TABLE>";
-            result += table;
-        }
-
-        // Building
-        if (mhex.containsTerrain(Terrains.BUILDING)) {
-            String sBuilding;
-            // In the BoardEditor, buildings have no entry in the
-            // buildings list of the board, so get the info from the hex
-            if (clientgui == null) {
-                sBuilding = Messages.getString("BoardView1.Tooltip.Building",
-                        mhex.terrainLevel(Terrains.BLDG_ELEV), Terrains.getEditorName(Terrains.BUILDING),
-                        mhex.terrainLevel(Terrains.BLDG_CF), Math.max(mhex.terrainLevel(Terrains.BLDG_ARMOR), 0),
-                        BasementType.getType(mhex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).toString());
-                sBuilding = guiScaledFontHTML(uiBlack()) + sBuilding + "</FONT>";
-                String col = "<TD>" + sBuilding + "</TD>";
-                String row = "<TR>" + col + "</TR>";
-                String table = "<TABLE BORDER=0 BGCOLOR=" + LIGHT_BGCOLOR + " width=100%>" + row + "</TABLE>";
-                result += table;
-            } else {
-                Building bldg = game.getBoard().getBuildingAt(mcoords);
-                sBuilding = Messages.getString("BoardView1.Tooltip.Building",
-                        mhex.terrainLevel(Terrains.BLDG_ELEV), bldg.toString(),
-                        bldg.getCurrentCF(mcoords), bldg.getArmor(mcoords),
-                        bldg.getBasement(mcoords).toString());
-
-                if (bldg.getBasementCollapsed(mcoords)) {
-                    sBuilding += Messages.getString("BoardView1.Tooltip.BldgBasementCollapsed");
-                }
-                sBuilding = guiScaledFontHTML(uiBlack()) + sBuilding + "</FONT>";
-                String col = "<TD>" + sBuilding + "</TD>";
-                String row = "<TR>" + col + "</TR>";
-                String table = "<TABLE BORDER=0 BGCOLOR=" + BUILDING_BGCOLOR + " width=100%>" + row + "</TABLE>";
-                result += table;
-            }
-        }
-
-        // Bridge
-        if (mhex.containsTerrain(Terrains.BRIDGE)) {
-            String sBridge;
-            // In the BoardEditor, buildings have no entry in the
-            // buildings list of the board, so get the info from the hex
-            if (clientgui == null) {
-                sBridge = Messages.getString("BoardView1.Tooltip.Bridge",
-                        mhex.terrainLevel(Terrains.BRIDGE_ELEV), Terrains.getEditorName(Terrains.BRIDGE),
-                        mhex.terrainLevel(Terrains.BRIDGE_CF));
-            } else {
-                Building bldg = game.getBoard().getBuildingAt(mcoords);
-                sBridge = Messages.getString("BoardView1.Tooltip.Bridge",
-                        mhex.terrainLevel(Terrains.BRIDGE_ELEV), bldg.toString(), bldg.getCurrentCF(mcoords));
-            }
-            sBridge = guiScaledFontHTML(uiBlack()) + sBridge + "</FONT>";
-            String col = "<TD>" + sBridge + "</TD>";
-            String row = "<TR>" + col + "</TR>";
-            String table = "<TABLE BORDER=0 BGCOLOR=" + LIGHT_BGCOLOR + " width=100%>" + row + "</TABLE>";
-            result += table;
-        }
-
-        if (game.containsMinefield(mcoords)) {
-            Vector<Minefield> minefields = game.getMinefields(mcoords);
-            for (int i = 0; i < minefields.size(); i++) {
-                Minefield mf = minefields.elementAt(i);
-                String owner = " (" + game.getPlayer(mf.getPlayerId()).getName() + ")";
-                String sMinefield = mf.getName() + " " + Messages.getString("BoardView1.minefield") + " (" + mf.getDensity()+ ")";
-
-                switch (mf.getType()) {
-                    case Minefield.TYPE_CONVENTIONAL:
-                    case Minefield.TYPE_COMMAND_DETONATED:
-                    case Minefield.TYPE_ACTIVE:
-                    case Minefield.TYPE_INFERNO:
-                        sMinefield += " " + owner;
-                        break;
-                    case Minefield.TYPE_VIBRABOMB:
-                        if (mf.getPlayerId() == localPlayer.getId()) {
-                            sMinefield += "("  + mf.getSetting() + ") " + owner;
-                        } else {
-                            sMinefield += owner;
-                        }
-                        break;
-                    default:
-                        break;
-                }
-
-                sMinefield = guiScaledFontHTML(UIUtil.uiWhite()) + sMinefield + "</FONT>";
-                result += sMinefield;
-                result += "<BR>";
-            }
-        }
-
+        String result = HexTooltip.getHexTip(mhex, clientgui.getClient(), clientgui);
         txt.append(result);
     }
+
     /**
      * Appends HTML describing a given Entity aka Unit
      */
@@ -5923,7 +5786,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
     private ArrayList<ArtilleryAttackAction> getArtilleryAttacksAtLocation(Coords c) {
         ArrayList<ArtilleryAttackAction> v = new ArrayList<>();
-        
+
         for (Enumeration<ArtilleryAttackAction> attacks = game.getArtilleryAttacks(); attacks.hasMoreElements(); ) {
             ArtilleryAttackAction a = attacks.nextElement();
             Targetable target = a.getTarget(game);
@@ -6562,7 +6425,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         } else if (selectedTheme.equals("(No Theme)")) {
             selectedTheme = "";
         }
-        
+
         board.setTheme(selectedTheme);
         return selectedTheme;
     }

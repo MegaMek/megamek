@@ -13,7 +13,6 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.MMConstants;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.boardview.LabelDisplayStyle;
 import megamek.client.ui.swing.util.PlayerColour;
@@ -100,6 +99,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String PLANETARY_CONDITIONS_SHOW_LABELS = "PlanetaryConditionsShowLabels";
     public static final String PLANETARY_CONDITIONS_SHOW_VALUES = "PlanetaryConditionsShowValues";
     public static final String PLANETARY_CONDITIONS_SHOW_INDICATORS = "PlanetaryConditionsShowIndicators";
+    public static final String PLANETARY_CONDITIONS_BACKGROUND_TRANSPARENCY = "PlanetaryConditionsBackgroundTransparency";
 
     public static final String PLAYERS_REMAINING_TO_SHOW = "PlayersRemainingToShow";
     public static final String BUTTONS_PER_ROW = "ButtonsPerRow";
@@ -108,6 +108,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String USE_CAMO_OVERLAY = "UseCamoOverlay";
 
     public static final String SHOW_COORDS = "showCoords";
+    public static final String HIGH_QUALITY_GRAPHICS = "HighQualityGraphics";
     public static final String SHADOWMAP = "ShadowMap";
     public static final String INCLINES = "Inclines";
     public static final String AOHEXSHADOWS = "AoHexShadows";
@@ -413,10 +414,36 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(PLANETARY_CONDITIONS_SHOW_LABELS, true);
         setDefault(PLANETARY_CONDITIONS_SHOW_VALUES, true);
         setDefault(PLANETARY_CONDITIONS_SHOW_INDICATORS, true);
+        setDefault(PLANETARY_CONDITIONS_BACKGROUND_TRANSPARENCY, 200);
 
         setDefault(WARNING_COLOR, DEFAULT_RED);
         setDefault(CAUTION_COLOR, Color.yellow);
         setDefault(PRECAUTION_COLOR, Color.orange);
+
+        setDefault(PlayerColour.PLAYERCOLOUR_BLUE, new Color(0x8686BF));
+        setDefault(PlayerColour.PLAYERCOLOUR_RED, new Color(0xCC6666));
+        setDefault(PlayerColour.PLAYERCOLOUR_GREEN, new Color(0x87BF86));
+        setDefault(PlayerColour.PLAYERCOLOUR_CYAN, new Color(0x8FCCCC));
+        setDefault(PlayerColour.PLAYERCOLOUR_PINK, new Color(0xF29DC8));
+        setDefault(PlayerColour.PLAYERCOLOUR_ORANGE, new Color(0xF2AA61));
+        setDefault(PlayerColour.PLAYERCOLOUR_GRAY, new Color(0xBEBEBE));
+        setDefault(PlayerColour.PLAYERCOLOUR_BROWN, new Color(0x98816B));
+        setDefault(PlayerColour.PLAYERCOLOUR_PURPLE, new Color(0x800080));
+        setDefault(PlayerColour.PLAYERCOLOUR_TURQUOISE, new Color(0x40E0D0));
+        setDefault(PlayerColour.PLAYERCOLOUR_MAROON, new Color(0x800000));
+        setDefault(PlayerColour.PLAYERCOLOUR_SPRING_GREEN, new Color(0x00FF7F));
+        setDefault(PlayerColour.PLAYERCOLOUR_GOLD, new Color(0xFFD700));
+        setDefault(PlayerColour.PLAYERCOLOUR_SIENNA, new Color(0xA0522D));
+        setDefault(PlayerColour.PLAYERCOLOUR_VIOLET, new Color(0xEE82EE));
+        setDefault(PlayerColour.PLAYERCOLOUR_NAVY, new Color(0x000080));
+        setDefault(PlayerColour.PLAYERCOLOUR_OLIVE_DRAB, new Color(0x6B8E23));
+        setDefault(PlayerColour.PLAYERCOLOUR_FUCHSIA, new Color(0xFF00FF));
+        setDefault(PlayerColour.PLAYERCOLOUR_FIRE_BRICK, new Color(0xB22222));
+        setDefault(PlayerColour.PLAYERCOLOUR_DARK_GOLDEN_ROD, new Color(0xB8860B));
+        setDefault(PlayerColour.PLAYERCOLOUR_CORAL, new Color(0xFF7F50));
+        setDefault(PlayerColour.PLAYERCOLOUR_CHARTREUSE, new Color(0x7FFF00));
+        setDefault(PlayerColour.PLAYERCOLOUR_DEEP_PURPLE, new Color(0x9400D3));
+        setDefault(PlayerColour.PLAYERCOLOUR_YELLOW, new Color(0xF2F261));
 
         setDefault(BOARD_MOVE_DEFAULT_CLIMB_MODE, true);
         setDefault(BOARD_MOVE_DEFAULT_COLOR, DEFAULT_CYAN.CYAN);
@@ -470,6 +497,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(FOV_STRIPES, 35);
         store.setDefault(FOV_GRAYSCALE, false);
 
+        store.setDefault(HIGH_QUALITY_GRAPHICS, true);
         store.setDefault(AOHEXSHADOWS, false);
         store.setDefault(SHADOWMAP, true);
         store.setDefault(INCLINES, true);
@@ -694,6 +722,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public boolean getAOHexShadows() {
         return store.getBoolean(AOHEXSHADOWS);
     }
+
+    public boolean getHighQualityGraphics() { return store.getBoolean(HIGH_QUALITY_GRAPHICS); }
 
     public boolean getFloatingIso() {
         return store.getBoolean(FLOATINGISO);
@@ -1446,6 +1476,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setAOHexShadows(boolean state) {
         store.setValue(AOHEXSHADOWS, state);
     }
+
+    public void setHighQualityGraphics(boolean state) { store.setValue(HIGH_QUALITY_GRAPHICS, state); }
 
     public void setFloatingIso(boolean state) {
         store.setValue(FLOATINGISO, state);
@@ -2667,6 +2699,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return getBoolean(PLANETARY_CONDITIONS_SHOW_INDICATORS);
     }
 
+    public int getPlanetaryConditionsBackgroundTransparency() {
+        return getInt(PLANETARY_CONDITIONS_BACKGROUND_TRANSPARENCY);
+    }
+
     public void setPlanetaryConditionsColorTitle(Color color) {
         store.setValue(PLANETARY_CONDITIONS_COLOR_TITLE, getColorString(color));
     }
@@ -2705,6 +2741,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setPlanetaryConditionsShowIndicators(Boolean state) {
         store.setValue(PLANETARY_CONDITIONS_SHOW_INDICATORS, state);
+    }
+
+    public void setPlanetaryConditionsBackgroundTransparency(int i) {
+        store.setValue(PLANETARY_CONDITIONS_BACKGROUND_TRANSPARENCY, i);
     }
 
     public void setUnitToolTipSeenByResolution(int i) {
@@ -2858,6 +2898,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         final String text = store.getString(name);
         final Color colour = parseRGB(text);
         return (colour == null) ? PlayerColour.parseFromString(text).getColour() : colour;
+    }
+
+    public void setColor(String name, Color c) {
+        store.setValue(name, getColorString(c));
     }
 
     protected String getColorString(Color colour) {

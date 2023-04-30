@@ -156,7 +156,7 @@ deployment:Another close range combatant, this Howler variant carries a pair of 
 history:The Howler (or Baboon, as the Inner Sphere calls it) was first seen in Clan Jade Falcon's second-line Clusters. Once thought to be unique to that Clan, the design has now appeared among the Snow Ravens, Star Adders, and Steel Vipers. The Steel Vipers returned to the Clan homeworlds and restructured their touman after the Jade Falcons kicked them out of the Inner Sphere occupied zones. Aside from improvements in front-line troops, numerous second-line units gained new people and equipment. Steel Vipers addressed the needs of its heavy forces with designs like as the Matador, Scylla, the heavy laser form of the Phoenix Hawk IIC, and the upgraded version of the Viper. Lighter second-line BattleMech formations, on the other hand, lagged behind. The Viper Khans explored acceptable designs to correct this imbalance and eventually settled on the successful Baboon.
 
 manufacturer:CJF Factory Zone 5
-primaryfactoryBlackjack
+primaryfactory:Blackjack
 systemmanufacturer:CHASSIS:Type-A Endo Steel
 systemmanufacturer:ENGINE:General Systems 120 XL
 systemmanufacturer:ARMOR:Type 2 Ferro Fibrous w/CASE II

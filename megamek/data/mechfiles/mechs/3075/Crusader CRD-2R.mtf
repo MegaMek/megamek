@@ -157,8 +157,7 @@ ISStreakSRM2
 
 overview:The Crusader was initially designed as a close combat BattleMech for the Star League Defense Force, but soon proved itself to be a very adaptable, multi-role design. This reliable workhorse of the SLDF, while not excelling in any one job, was quite capable of accomplishing just about any mission, whether it be close assault, anti-aircraft, counter-insurgency, or even reconnaissance. Its versatility and large number of manufacturers ensured the Crusader its place as one of the most common heavy 'Mechs in the Inner Sphere.
 
-capabilities:Each arm was equipped with an LRM launcher, laser and machine gun, while the SRM launchers were built into the legs and mounted at hip height to provide a stable firing location and avoid interference with the LRMs' flight path. Early Crusader models had issues with the arm-mounted launchers and lasers overheating and causing stress to the actuators and internal structure, but this was rectified with the additions of the now-distinctive collars which deflect hot gasses away. 
-The Crusader was well-protected with twelve tons of armor, particularly around the legs, which made it a good hand-to-hand combatant. A thirteen and a half ton fusion engine allowed the Crusader to achieve a decent cruising speed of 43.2 km/h. One disadvantage to the Crusader was its inadequate heat management system, carrying just ten standard heat sinks to handle all the waste heat produced by its weapons and equipment.
+capabilities:Each arm was equipped with an LRM launcher, laser and machine gun, while the SRM launchers were built into the legs and mounted at hip height to provide a stable firing location and avoid interference with the LRMs' flight path. Early Crusader models had issues with the arm-mounted launchers and lasers overheating and causing stress to the actuators and internal structure, but this was rectified with the additions of the now-distinctive collars which deflect hot gasses away. The Crusader was well-protected with twelve tons of armor, particularly around the legs, which made it a good hand-to-hand combatant. A thirteen and a half ton fusion engine allowed the Crusader to achieve a decent cruising speed of 43.2 km/h. One disadvantage to the Crusader was its inadequate heat management system, carrying just ten standard heat sinks to handle all the waste heat produced by its weapons and equipment.
 
 deployment:This lostech variant was used by the SLDF's Royal units. It used double heat sinks and utilized an Endo Steel internal structure to save mass. This enabled the addition of Artemis IV Fire Control Systems to the LRM launchers. The SRMs were replaced with four Hawk Streak SRM-2s. All of the ammunition was moved to the side torsos and protected by CASE.
 
@@ -171,8 +170,3 @@ systemmanufacturer:ENGINE:Unknown
 systemmanufacturer:ARMOR:Unknown
 systemmanufacturer:COMMUNICATIONS:Unknown
 systemmanufacturer:TARGETING:Unknown
-
-
-
-
-

@@ -13139,7 +13139,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     @Override
     public int getAltitude() {
         if (isSpaceborne()) {
-            LogManager.getLogger().warn("Altitude retrieved for a spaceborne unit!");
+            // This happens so often that reporting it blows up the log; ideally it shouldn't happen at all in space
+            // LogManager.getLogger().warn("Altitude retrieved for a spaceborne unit!");
             return 0;
         } else {
             return altitude;

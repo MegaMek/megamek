@@ -23,17 +23,16 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.HeadlessException;
 import java.awt.Image;
-import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.Transparency;
-import java.awt.image.BufferedImage;
-import java.awt.image.FilteredImageSource;
-import java.awt.image.ImageFilter;
-import java.awt.image.ImageObserver;
-import java.awt.image.ImageProducer;
+import java.awt.image.*;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import megamek.client.ui.swing.util.ImageAtlasMap;
@@ -42,6 +41,8 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Coords;
 import megamek.common.annotations.Nullable;
 import org.apache.logging.log4j.LogManager;
+
+import javax.imageio.ImageIO;
 
 /**
  * Generic utility methods for image data
@@ -425,5 +426,24 @@ public final class ImageUtil {
         public boolean isAnimated() {
             return animated;
         }
+    }
+
+    /**
+     * takes an image and converts it to text in the Base64 encoding.
+     */
+    public static String base64TextEncodeImage(BufferedImage img) {
+        String base64Text = "";
+
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write((RenderedImage) img, "png", baos);
+            baos.flush();
+            base64Text = Base64.getEncoder().encodeToString(baos.toByteArray());
+            baos.close();
+        } catch (final IOException ioe) {
+            throw new UncheckedIOException(ioe);
+        }
+
+        return base64Text;
     }
 }

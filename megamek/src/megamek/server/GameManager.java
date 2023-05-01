@@ -3247,6 +3247,8 @@ public class GameManager implements IGameManager {
             }
         }
 
+        addNewLines();
+
         if (!abbreviatedReport) {
             // remaining deployments
             Comparator<Entity> comp = Comparator.comparingInt(Entity::getDeployRound);

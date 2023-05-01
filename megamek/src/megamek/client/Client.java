@@ -27,6 +27,7 @@ import megamek.client.generator.skillGenerators.ModifiedTotalWarfareSkillGenerat
 import megamek.client.ui.IClientCommandHandler;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.boardview.BoardView;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.Building.DemolitionCharge;
 import megamek.common.actions.*;
@@ -51,11 +52,9 @@ import megamek.common.util.StringUtil;
 import megamek.server.SmokeCloud;
 import org.apache.logging.log4j.LogManager;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.io.*;
 import java.util.List;
 import java.util.*;
@@ -967,27 +966,20 @@ public class Client implements IClientCommandHandler {
         game.setBoard(newBoard);
     }
 
-    private void createDoubleBlindHiddenImg() {
+    private void createDoubleBlindHiddenImage() {
         BufferedImage image = new BufferedImage(56, 48, BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics = image.createGraphics();
+        UIUtil.setHighQualityRendering(graphics);
         graphics.setComposite(AlphaComposite.Clear);
         graphics.fillRect(0, 0, 56, 48);
         graphics.setComposite(AlphaComposite.Src);
         graphics.setColor(UIManager.getColor("Label.foreground"));
-        graphics.setFont(new Font(MMConstants.FONT_DIALOG, Font.PLAIN, 26));
+        graphics.setFont(new Font(MMConstants.FONT_DIALOG, Font.BOLD, 26));
         graphics.drawString("?", 20, 40);
-        try {
-            String base64Text;
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write((RenderedImage) image, "png", baos);
-            baos.flush();
-            base64Text = Base64.getEncoder().encodeToString(baos.toByteArray());
-            baos.close();
-            String img = "<img src='data:image/png;base64," + base64Text + "'>";
-            imgCache.put(Report.HIDDEN_ENTITY_NUM, img);
-        } catch (final IOException ioe) {
-            throw new UncheckedIOException(ioe);
-        }
+
+        String base64Text = ImageUtil.base64TextEncodeImage(image);
+        String img = "<img src='data:image/png;base64," + base64Text + "'>";
+        imgCache.put(Report.HIDDEN_ENTITY_NUM, img);
     }
 
     /**
@@ -1017,7 +1009,7 @@ public class Client implements IClientCommandHandler {
         if (GUIP.getMiniReportShowSprites() &&
                 game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) &&
                 imgCache != null && !imgCache.containsKey(Report.HIDDEN_ENTITY_NUM)) {
-            createDoubleBlindHiddenImg();
+            createDoubleBlindHiddenImage();
         }
     }
     
@@ -1285,19 +1277,10 @@ public class Client implements IClientCommandHandler {
 
         if (getTargetImage(entity) != null) {
             // convert image to base64, add to the <img> tag and store in cache
-            Image image = ImageUtil.getScaledImage(getTargetImage(entity), 56, 48);
-            try {
-                String base64Text;
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ImageIO.write((RenderedImage) image, "png", baos);
-                baos.flush();
-                base64Text = Base64.getEncoder().encodeToString(baos.toByteArray());
-                baos.close();
-                String img = "<img src='data:image/png;base64," + base64Text + "'>";
-                imgCache.put(entity.getId(), img);
-            } catch (final IOException ioe) {
-                throw new UncheckedIOException(ioe);
-            }
+            BufferedImage image = ImageUtil.getScaledImage(getTargetImage(entity), 56, 48);
+            String base64Text = ImageUtil.base64TextEncodeImage(image);
+            String img = "<img src='data:image/png;base64," + base64Text + "'>";
+            imgCache.put(entity.getId(), img);
         }
     }
 

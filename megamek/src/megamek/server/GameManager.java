@@ -13,7 +13,6 @@
  */
 package megamek.server;
 
-import com.thoughtworks.xstream.XStream;
 import megamek.MMConstants;
 import megamek.MegaMek;
 import megamek.client.bot.princess.BehaviorSettings;

@@ -27,7 +27,6 @@ import megamek.client.generator.skillGenerators.ModifiedTotalWarfareSkillGenerat
 import megamek.client.ui.IClientCommandHandler;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.boardview.BoardView;
-import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.Building.DemolitionCharge;
 import megamek.common.actions.*;
@@ -974,8 +973,7 @@ public class Client implements IClientCommandHandler {
         graphics.setComposite(AlphaComposite.Clear);
         graphics.fillRect(0, 0, 56, 48);
         graphics.setComposite(AlphaComposite.Src);
-        graphics.setStroke(new BasicStroke(4f));
-        graphics.setColor(Color.WHITE);
+        graphics.setColor(UIManager.getColor("Label.foreground"));
         graphics.setFont(new Font(MMConstants.FONT_DIALOG, Font.PLAIN, 26));
         graphics.drawString("?", 20, 40);
         try {

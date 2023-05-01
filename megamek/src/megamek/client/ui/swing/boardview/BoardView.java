@@ -6217,9 +6217,9 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
      * Check to see if the HexImageCache should be cleared because of field-of-view changes.
      */
     public void checkFoVHexImageCacheClear() {
-        boolean darken = GUIP.getFovDarken();
-        boolean highlight = GUIP.getFovHighlight();
-        if (game.getPhase().isMovement() && (darken || highlight)) {
+        boolean darken = shouldFovDarken();
+        boolean highlight = shouldFovHighlight();
+        if (darken || highlight) {
             clearHexImageCache();
         }
     }
@@ -6511,5 +6511,15 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
     public Rectangle getDisplayablesRect() {
         return displayablesRect;
+    }
+
+    public boolean shouldFovHighlight() {
+//        return GUIP.getFovHighlight() && game.getPhase().isMovement();
+        return GUIP.getFovHighlight() && !(game.getPhase().isReport());
+    }
+
+    public boolean shouldFovDarken() {
+//        return GUIP.getFovDarken() && game.getPhase().isMovement();
+        return GUIP.getFovDarken() && !(game.getPhase().isReport());
     }
 }

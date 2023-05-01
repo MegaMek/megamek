@@ -27,6 +27,7 @@ import megamek.client.generator.skillGenerators.ModifiedTotalWarfareSkillGenerat
 import megamek.client.ui.IClientCommandHandler;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.boardview.BoardView;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.Building.DemolitionCharge;
 import megamek.common.actions.*;
@@ -43,6 +44,7 @@ import megamek.common.net.listeners.ConnectionListener;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
+import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.SerializationHelper;
@@ -53,6 +55,7 @@ import org.apache.logging.log4j.LogManager;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.*;
 import java.util.List;
@@ -965,6 +968,30 @@ public class Client implements IClientCommandHandler {
         game.setBoard(newBoard);
     }
 
+    private void createDoubleBlindHiddenImg() {
+        BufferedImage image = new BufferedImage(56, 48, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D graphics = image.createGraphics();
+        graphics.setComposite(AlphaComposite.Clear);
+        graphics.fillRect(0, 0, 56, 48);
+        graphics.setComposite(AlphaComposite.Src);
+        graphics.setStroke(new BasicStroke(4f));
+        graphics.setColor(Color.WHITE);
+        graphics.setFont(new Font(MMConstants.FONT_DIALOG, Font.PLAIN, 26));
+        graphics.drawString("?", 20, 40);
+        try {
+            String base64Text;
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write((RenderedImage) image, "png", baos);
+            baos.flush();
+            base64Text = Base64.getEncoder().encodeToString(baos.toByteArray());
+            baos.close();
+            String img = "<img src='data:image/png;base64," + base64Text + "'>";
+            imgCache.put(Report.HIDDEN_ENTITY_NUM, img);
+        } catch (final IOException ioe) {
+            throw new UncheckedIOException(ioe);
+        }
+    }
+
     /**
      * Loads the entities from the data in the net command.
      */
@@ -987,6 +1014,12 @@ public class Client implements IClientCommandHandler {
         // cache the image data for the entities
         for (Entity e: newEntities) {
             cacheImgTag(e);
+        }
+
+        if (GUIP.getMiniReportShowSprites() &&
+                game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) &&
+                imgCache != null && !imgCache.containsKey(Report.HIDDEN_ENTITY_NUM)) {
+            createDoubleBlindHiddenImg();
         }
     }
     
@@ -1202,14 +1235,17 @@ public class Client implements IClientCommandHandler {
 
         Set<Integer> set = new HashSet<>();
         //find id stored in spans and extract it
-        Pattern p = Pattern.compile("<s(.*?)n>");
+        Pattern p = Pattern.compile("<span id=(.*?)span>");
         Matcher m = p.matcher(report.toString());
 
         // add all instances to a hashset to prevent duplicates
         while (m.find()) {
-            String cleanedText = m.group(1).replaceAll("\\D", "");
+            String cleanedText = m.group(1).replaceAll("[^\\d-]", "");
             if (!cleanedText.isBlank()) {
-                set.add(Integer.parseInt(cleanedText));
+                try {
+                    set.add(Integer.parseInt(cleanedText));
+                } catch (Exception ignored) {
+                }
             }
         }
 
@@ -1217,7 +1253,7 @@ public class Client implements IClientCommandHandler {
         // loop through the hashset of unique ids and replace the ids with img tags
         for (int i : set) {
             if (getCachedImgTag(i) != null) {
-                updatedReport = updatedReport.replace("<span id='" + i + "'></span>", getCachedImgTag(i));
+                updatedReport = updatedReport.replaceAll("<span id='" + i + "'></span>", getCachedImgTag(i));
             }
         }
         return updatedReport;

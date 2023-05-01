@@ -162,7 +162,7 @@ systemmanufacturer:CHASSIS:Bergan
 systemmode:CHASSIS:XI
 systemmanufacturer:ENGINE:Vlar
 systemmode:ENGINE:300
-systemmanufacturer:StarSlab
+systemmanufacturer:ARMOR:StarSlab
 systemmode:ARMOR:/2
 systemmanufacturer:COMMUNICATIONS:Garret
 systemmode:COMMUNICATIONS:T-11C

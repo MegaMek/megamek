@@ -1,6 +1,7 @@
 Version:1.0
 Blackjack
 C
+mul id:8388
 
 Config:Biped
 techbase:Clan
@@ -164,4 +165,3 @@ systemmanufacturer:ARMOR:Clan Ferro-Fibrous
 systemmanufacturer:JUMPJET:Whitworth Jetlift
 systemmanufacturer:COMMUNICATIONS:StarGuard II
 systemmanufacturer:TARGETING:Dalban AQ
-

@@ -67,7 +67,7 @@ public class GameTurn implements Serializable {
     public static final int CLASS_SMALL_CRAFT   = 1024;
 
     private int playerId;
-    
+
     /**
      * Various optionals rules force certain unit types to move multiple units for one turn, such as
      * mek and vehicle lance rules; this flag keeps track of whether this turn was generated as one
@@ -531,6 +531,30 @@ public class GameTurn implements Serializable {
         public boolean isValidEntity(Entity entity, Game game, boolean useValidNonInfantryCheck) {
             return super.isValidEntity(entity, game, useValidNonInfantryCheck)
                     && (unitNumber == entity.getUnitNumber());
+        }
+    }
+
+    /**
+     * Prephase turn currently used for revealing hidden units
+     */
+    public static class PrephaseTurn extends GameTurn {
+        public PrephaseTurn(int playerId) {
+            super(playerId);
+        }
+
+        /**
+         * Determine if the given entity is a valid one to use for this turn.
+         *
+         * @param entity the <code>Entity</code> being tested for the move.
+         * @param game The {@link Game} the entity belongs to
+         * @return <code>true</code> if the entity can be activated.
+         */
+        @Override
+        public boolean isValidEntity(final @Nullable Entity entity, final Game game,
+                                     final boolean useValidNonInfantryCheck) {
+            // The entity must pass the requirements of the parent class and be hidden
+            return super.isValidEntity(entity, game, useValidNonInfantryCheck)
+                    && entity.isHidden();
         }
     }
 }

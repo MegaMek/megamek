@@ -15,7 +15,6 @@ package megamek.client.ui.swing;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
-import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.widget.IndexedRadioButton;
 import megamek.client.ui.swing.widget.MegamekButton;
@@ -1402,16 +1401,12 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         if (targets.size() == 1) {
             // Return that choice.
             choice = targets.get(0);
-        }
-
-        // If we have multiple choices, display a selection dialog.
-        else if (targets.size() > 1) {
-            String input = (String) JOptionPane.showInputDialog(clientgui,
-                    Messages.getString("PhysicalDisplay.ChooseTargetDialog.message", pos.getBoardNum()),
+        } else if (targets.size() > 1) {
+            // If we have multiple choices, display a selection dialog.
+            choice = TargetChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(),
                     Messages.getString("PhysicalDisplay.ChooseTargetDialog.title"),
-                    JOptionPane.QUESTION_MESSAGE, null,
-                    SharedUtility.getDisplayArray(targets), null);
-            choice = SharedUtility.getTargetPicked(targets, input);
+                    Messages.getString("PhysicalDisplay.ChooseTargetDialog.message", pos.getBoardNum()),
+                    targets, clientgui, ce());
         }
 
         // Return the chosen unit.
@@ -1708,7 +1703,9 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
                             clientgui.frame,
                             Messages.getString("PhysicalDisplay.AimedShotDialog.title"),
                             Messages.getString("PhysicalDisplay.AimedShotDialog.message"),
-                            options, enabled, aimingAt, this, this);
+                            options, enabled, aimingAt,
+                            clientgui, target,
+                            this, this);
 
                     asd.setVisible(true);
                     updateTarget();

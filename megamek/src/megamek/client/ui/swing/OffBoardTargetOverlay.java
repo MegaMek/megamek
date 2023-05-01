@@ -1,15 +1,15 @@
-/*  
-* MegaMek - Copyright (C) 2020 - The MegaMek Team  
-*  
-* This program is free software; you can redistribute it and/or modify it under  
-* the terms of the GNU General Public License as published by the Free Software  
-* Foundation; either version 2 of the License, or (at your option) any later  
-* version.  
-*  
-* This program is distributed in the hope that it will be useful, but WITHOUT  
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS  
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more  
-* details.  
+/*
+* MegaMek - Copyright (C) 2020 - The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
 */
 package megamek.client.ui.swing;
 
@@ -37,7 +37,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
     private static final int WIDE_EDGE_SIZE = 60;
     private static final int NARROW_EDGE_SIZE = 40;
     private static final String FILENAME_OFFBOARD_TARGET_IMAGE = "OffBoardTarget.png";
-    
+
     private boolean isHit = false;
     private ClientGUI clientgui;
     private Map<OffBoardDirection, Rectangle> buttons = new HashMap<>();
@@ -48,85 +48,85 @@ public class OffBoardTargetOverlay implements IDisplayable {
     private Game getCurrentGame() {
         return clientgui.getClient().getGame();
     }
-    
+
     private Player getCurrentPlayer() {
         return clientgui.getClient().getLocalPlayer();
     }
-    
+
     /**
      * Sets a reference to a TargetingPhaseDisplay. Used to communicate a generated attack to it.
      */
     public void setTargetingPhaseDisplay(TargetingPhaseDisplay tpd) {
         targetingPhaseDisplay = tpd;
-    }    
-    
+    }
+
     public OffBoardTargetOverlay(ClientGUI clientgui) {
         this.clientgui = clientgui;
-        
+
         offBoardTargetImage = ImageUtil.loadImageFromFile(
                 new MegaMekFile(Configuration.miscImagesDir(), FILENAME_OFFBOARD_TARGET_IMAGE).toString());
-        
-        //Maybe TODO: display dimmed version of off-board icon during movement phase OR targeting phase when weapon is ineligible to fire 
+
+        //Maybe TODO: display dimmed version of off-board icon during movement phase OR targeting phase when weapon is ineligible to fire
         //Maybe TODO: maybe tooltips?
     }
-    
+
     /**
      * Logic that determines if this overlay should be visible.
      */
     private boolean shouldBeVisible() {
         // only relevant if it's our turn in the targeting phase
         boolean visible = clientgui.getClient().isMyTurn() && getCurrentGame().getPhase().isTargeting();
-        
+
         if (!visible) {
             return false;
         }
-        
+
         Mounted selectedArtilleryWeapon = clientgui.getBoardView().getSelectedArtilleryWeapon();
-        
+
         // only relevant if we've got an artillery weapon selected for one of our own units
         if (selectedArtilleryWeapon == null) {
             return false;
         }
-        
+
         // the artillery weapon needs to be using non-homing ammo
         Mounted ammo = selectedArtilleryWeapon.getLinked();
         if (ammo.isHomingAmmoInHomingMode()) {
             return false;
         }
-        
+
         // only show these if there are any actual enemy units eligible for off board targeting
         for (OffBoardDirection direction : OffBoardDirection.values()) {
             if (showDirectionalElement(direction, selectedArtilleryWeapon)) {
-                return true; 
+                return true;
             }
         }
-        
+
         return false;
     }
-    
+
     /**
      * Logic that determines whether to show a specific directional indicator
      */
     private boolean showDirectionalElement(OffBoardDirection direction, Mounted selectedArtilleryWeapon) {
         for (Entity entity : getCurrentGame().getAllOffboardEnemyEntities(getCurrentPlayer())) {
-            if (entity.isOffBoardObserved(getCurrentPlayer().getTeam()) && 
+            if (entity.isOffBoardObserved(getCurrentPlayer().getTeam()) &&
                     (entity.getOffBoardDirection() == direction) &&
                         (targetingPhaseDisplay.ce().isOffBoard() ||
                         weaponFacingInDirection(selectedArtilleryWeapon, direction))) {
                 return true;
             }
         }
-        
+
         return false;
     }
-    
+
     /**
      * Worker function that determines if the given weapon is facing in the correct off-board direction.
      */
     private boolean weaponFacingInDirection(Mounted artilleryWeapon, OffBoardDirection direction) {
         Coords checkCoords = artilleryWeapon.getEntity().getPosition();
         int translationDistance;
-        
+
         // little hack: we project a point 10 hexes off board to the north/south/east/west and declare a hex target with it
         // then use Compute.isInArc, as that takes into account all the logic including torso/turret twists.
         switch (direction) {
@@ -147,18 +147,18 @@ public class OffBoardTargetOverlay implements IDisplayable {
             default:
                 return false;
         }
-        
+
         Targetable checkTarget = new HexTarget(checkCoords, Targetable.TYPE_HEX_ARTILLERY);
-        
-        return Compute.isInArc(getCurrentGame(), artilleryWeapon.getEntity().getId(), 
+
+        return Compute.isInArc(getCurrentGame(), artilleryWeapon.getEntity().getId(),
                 artilleryWeapon.getEntity().getEquipmentNum(artilleryWeapon), checkTarget);
     }
-    
+
     @Override
     public boolean isHit(Point point, Dimension size) {
         point.x = (int) (point.getX() + clientgui.getBoardView().getDisplayablesRect().getX());
         point.y = (int) (point.getY() + clientgui.getBoardView().getDisplayablesRect().getY());
-        
+
         for (OffBoardDirection direction : OffBoardDirection.values()) {
             if (direction != OffBoardDirection.NONE) {
                 if (buttons.containsKey(direction) &&
@@ -169,7 +169,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
                 }
             }
         }
-                
+
         return false;
     }
 
@@ -191,57 +191,58 @@ public class OffBoardTargetOverlay implements IDisplayable {
         if (!shouldBeVisible()) {
             return;
         }
-        
+
         Rectangle button;
         buttons.clear();
-        
+
         Color push = graph.getColor();
+
         graph.setColor(GUIP.getUnitValidColor());
-        
+
         // each of these draws the relevant icon and stores the coordinates for retrieval when checking hit box
         // pre-store the selected artillery weapon as it carries out a bunch of computations
         Mounted selectedArtilleryWeapon = clientgui.getBoardView().getSelectedArtilleryWeapon();
-        
+
         // draw top icon, if necessary
         if (showDirectionalElement(OffBoardDirection.NORTH, selectedArtilleryWeapon)) {
             button = generateRectangle(OffBoardDirection.NORTH, rect);
             buttons.put(OffBoardDirection.NORTH, button);
             graph.drawImage(offBoardTargetImage, button.x, button.y, button.width, button.height, clientgui.getBoardView());
         }
-        
+
         // draw left icon, if necessary
         if (showDirectionalElement(OffBoardDirection.WEST, selectedArtilleryWeapon)) {
             button = generateRectangle(OffBoardDirection.WEST, rect);
             buttons.put(OffBoardDirection.WEST, button);
             graph.drawImage(offBoardTargetImage, button.x, button.y, button.width, button.height, clientgui.getBoardView());
         }
-        
+
         // draw bottom icon, if necessary
         if (showDirectionalElement(OffBoardDirection.SOUTH, selectedArtilleryWeapon)) {
             button = generateRectangle(OffBoardDirection.SOUTH, rect);
             buttons.put(OffBoardDirection.SOUTH, button);
             graph.drawImage(offBoardTargetImage, button.x, button.y, button.width, button.height, clientgui.getBoardView());
         }
-        
+
         // draw right icon, if necessary. This one is hairy because of the unit overview pane
         if (showDirectionalElement(OffBoardDirection.EAST, selectedArtilleryWeapon)) {
             button = generateRectangle(OffBoardDirection.EAST, rect);
             buttons.put(OffBoardDirection.EAST, button);
             graph.drawImage(offBoardTargetImage, button.x, button.y, button.width, button.height, clientgui.getBoardView());
         }
-        
+
         // be nice, leave the color as we found it
         graph.setColor(push);
     }
-    
+
     /**
      * Worker function that generates a rectangle that can be drawn on screen
      * or evaluated for hit detection.
      */
     private Rectangle generateRectangle(OffBoardDirection direction, Rectangle boundingRectangle) {
         int xPosition;
-        int yPosition;        
-        
+        int yPosition;
+
         switch (direction) {
             // north rectangle is wider than narrower, and at the top of the board view
             case NORTH:
@@ -276,37 +277,35 @@ public class OffBoardTargetOverlay implements IDisplayable {
      */
     private void handleButtonClick(OffBoardDirection direction) {
         List<Targetable> eligibleTargets = new ArrayList<>();
-        
+
         for (Entity ent : this.getCurrentGame().getAllOffboardEnemyEntities(getCurrentPlayer())) {
             if (ent.getOffBoardDirection() == direction &&
                     ent.isOffBoardObserved(getCurrentPlayer().getTeam())) {
                 eligibleTargets.add(ent);
             }
         }
-        
+
         Targetable choice;
-        
+
         if (eligibleTargets.size() > 1) {
-            String input = (String) JOptionPane
-                    .showInputDialog(clientgui,
-                            Messages.getString("FiringDisplay.ChooseCounterbatteryTargetDialog.message"),
-                            Messages.getString("FiringDisplay.ChooseTargetDialog.title"),
-                            JOptionPane.QUESTION_MESSAGE, null, SharedUtility
-                                    .getDisplayArray(eligibleTargets), null);
-            choice = SharedUtility.getTargetPicked(eligibleTargets, input);
+            // If we have multiple choices, display a selection dialog.
+            choice = TargetChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(),
+                    "FiringDisplay.ChooseTargetDialog.title",
+                    Messages.getString("FiringDisplay.ChooseCounterbatteryTargetDialog.message"),
+                    eligibleTargets, clientgui, null);
         } else if ((eligibleTargets.size() == 1) && (eligibleTargets.get(0) != null)) {
             choice = eligibleTargets.get(0);
         } else {
             return;
         }
-        
+
         // display dropdown containing all observed offboard enemy entities in given direction
         // upon selection, generate an ArtilleryAttackAction vs selected entity as per  TargetingPhaseDisplay, like so:
         WeaponAttackAction waa = new ArtilleryAttackAction(targetingPhaseDisplay.ce().getId(), choice.getTargetType(),
                 choice.getId(),
-                targetingPhaseDisplay.ce().getEquipmentNum(clientgui.getBoardView().getSelectedArtilleryWeapon()), 
+                targetingPhaseDisplay.ce().getEquipmentNum(clientgui.getBoardView().getSelectedArtilleryWeapon()),
                 clientgui.getClient().getGame());
-        
+
         targetingPhaseDisplay.updateDisplayForPendingAttack(clientgui.getBoardView().getSelectedArtilleryWeapon(), waa);
     }
 }

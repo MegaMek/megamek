@@ -1236,7 +1236,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                 return 0;
             }
             if ((isHotLoaded() || hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS))
-                    && (getLinked().getUsableShotsLeft() > 0)) {
+                    && (getLinked() != null) && (getLinked().getUsableShotsLeft() > 0)) {
                 Mounted link = getLinked();
                 AmmoType atype = ((AmmoType) link.getType());
                 int damagePerShot = atype.getDamagePerShot();

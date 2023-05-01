@@ -1,6 +1,7 @@
 Version:1.0
 Hel
 HL-2
+mul id:9251
 
 Config:Biped
 techbase:Inner Sphere
@@ -157,4 +158,3 @@ systemmanufacturer:ARMOR:Nashan HD with CASE II
 systemmanufacturer:JUMPJET:HildCo Model 13
 systemmanufacturer:COMMUNICATIONS:Nashan Comm-i U-284
 systemmanufacturer:TARGETING:Nashan Trac V-102
-

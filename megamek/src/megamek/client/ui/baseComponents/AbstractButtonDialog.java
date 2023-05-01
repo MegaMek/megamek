@@ -63,7 +63,7 @@ public abstract class AbstractButtonDialog extends AbstractDialog {
      */
     protected AbstractButtonDialog(final JFrame frame, final boolean modal, final String name,
                                    final String title) {
-        this(frame, modal, ResourceBundle.getBundle("megamek.client.messages", 
+        this(frame, modal, ResourceBundle.getBundle("megamek.client.messages",
                 MegaMek.getMMOptions().getLocale()), name, title);
     }
 

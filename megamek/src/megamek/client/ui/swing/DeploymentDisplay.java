@@ -680,12 +680,12 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
             // Do we have anyone to load?
             if (!choices.isEmpty()) {
-                String input = (String) JOptionPane.showInputDialog(clientgui,
+                // If we have multiple choices, display a selection dialog.
+                Entity other = EntityChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(),
                         Messages.getString("DeploymentDisplay.loadUnitDialog.message", ce().getShortName(), ce().getUnusedString()),
                         Messages.getString("DeploymentDisplay.loadUnitDialog.title"),
-                        JOptionPane.QUESTION_MESSAGE, null,
-                        SharedUtility.getDisplayArray(choices), null);
-                Entity other = (Entity) SharedUtility.getTargetPicked(choices, input);
+                        choices);
+
                 if (!(other instanceof Infantry)) {
                     List<Integer> bayChoices = new ArrayList<>();
                     for (Transporter t : ce().getTransports()) {
@@ -756,11 +756,12 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             Entity loader = ce();
             List<Entity> choices = loader.getLoadedUnits();
             if (!choices.isEmpty()) {
-                String msg = Messages.getString("DeploymentDisplay.unloadUnitDialog.message", ce().getShortName(), ce().getUnusedString());
-                String title = Messages.getString("DeploymentDisplay.unloadUnitDialog.title");
-                String input = (String) JOptionPane.showInputDialog(clientgui, msg, title, JOptionPane.QUESTION_MESSAGE, null,
-                        SharedUtility.getDisplayArray(choices), null);
-                Entity loaded = (Entity) SharedUtility.getTargetPicked(choices, input);
+
+                Entity loaded = EntityChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(),
+                        Messages.getString("DeploymentDisplay.unloadUnitDialog.message", ce().getShortName(), ce().getUnusedString()),
+                        Messages.getString("DeploymentDisplay.unloadUnitDialog.title"),
+                        choices);
+
                 if (loaded != null) {
                     if (loader.unload(loaded)) {
                         loaded.setTransportId(Entity.NONE);

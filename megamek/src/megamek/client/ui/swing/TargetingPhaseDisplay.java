@@ -196,14 +196,13 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
     }
 
     @Override
-    protected void setDoneButtonValid() {
-        // could add cmd
-        updateDonePanel(Messages.getString("TargetingPhaseDisplay.Fire"), Messages.getString("TargetingPhaseDisplay.Skip"),true);
+    protected String getDoneButtonLabel() {
+        return Messages.getString("TargetingPhaseDisplay.Fire");
     }
 
     @Override
-    protected void setDoneButtonSkip() {
-        updateDonePanel(Messages.getString("TargetingPhaseDisplay.Fire"), Messages.getString("TargetingPhaseDisplay.Skip"), false);
+    protected String getSkipTurnButtonLabel() {
+        return Messages.getString("TargetingPhaseDisplay.Skip");
     }
 
     @Override
@@ -625,7 +624,6 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
      * Does turn start stuff
      */
     private void beginMyTurn() {
-        initDonePanelForNewTurn();
         target = null;
 
         if (!clientgui.getBoardView().isMovingUnits()) {
@@ -663,6 +661,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
             setNextEnabled(true);
             butDone.setEnabled(true);
             clientgui.getBoardView().select(null);
+            initDonePanelForNewTurn();
         }
         setupButtonPanel();
     }

@@ -40,7 +40,6 @@ import java.awt.event.*;
 import java.util.*;
 
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
-import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
 
 public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, ListSelectionListener {
     private static final long serialVersionUID = -5586388490027013723L;
@@ -227,13 +226,13 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
     }
 
     @Override
-    protected void setDoneButtonValid() {
-        updateDonePanel(Messages.getString("FiringDisplay.Fire"), Messages.getString("FiringDisplay.Skip"), true);
+    protected String getDoneButtonLabel() {
+        return Messages.getString("FiringDisplay.Fire");
     }
 
     @Override
-    protected void setDoneButtonSkip() {
-        updateDonePanel(Messages.getString("FiringDisplay.Fire"), Messages.getString("FiringDisplay.Skip"),false);
+    protected String getSkipTurnButtonLabel() {
+        return Messages.getString("FiringDisplay.Skip");
     }
 
     @Override
@@ -897,7 +896,6 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
      * Does turn start stuff
      */
     protected void beginMyTurn() {
-        initDonePanelForNewTurn();
         target = null;
 
         if (!clientgui.getBoardView().isMovingUnits()) {
@@ -932,13 +930,13 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
             ready();
         } else {
             setNextEnabled(true);
-            updateDonePanelEnabled();
             if (numButtonGroups > 1) {
                 buttons.get(FiringCommand.FIRE_MORE).setEnabled(true);
             }
             setFireCalledEnabled(clientgui.getClient().getGame().getOptions()
                     .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS));
             clientgui.getBoardView().select(null);
+            initDonePanelForNewTurn();
         }
 
         startTimer();
@@ -985,7 +983,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         buttons.get(FiringCommand.FIRE_MORE).setEnabled(false);
         setNextEnabled(false);
         butDone.setEnabled(false);
-        butIgnoreNag.setEnabled(false);
+        butSkipTurn.setEnabled(false);
         setNextTargetEnabled(false);
         setFlipArmsEnabled(false);
         setFireModeEnabled(false);

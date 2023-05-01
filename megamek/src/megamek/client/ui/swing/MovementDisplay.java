@@ -58,7 +58,6 @@ import java.util.stream.Stream;
 import static megamek.common.options.OptionsConstants.ADVGRNDMOV_TACOPS_ZIPLINES;
 
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
-import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
 
 public class MovementDisplay extends ActionPhaseDisplay {
     private static final long serialVersionUID = -7246715124042905688L;
@@ -973,10 +972,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     /** toggles the status of the Done and No Nag buttons based on if the current move order is valid */
-    protected void updateDonePanel()
-    {
+    @Override
+    protected void updateDonePanel() {
         if (cmd == null || cmd.length() == 0) {
-            updateDonePanel( Messages.getString("MovementDisplay.Move"), Messages.getString("MovementDisplay.Skip"), false);
+            updateDonePanelButtons( Messages.getString("MovementDisplay.Move"), Messages.getString("MovementDisplay.Skip"), false);
         } else {
             boolean psrCheck = (!SharedUtility.doPSRCheck(cmd).isBlank())
                     || (!SharedUtility.doThrustCheck(cmd, clientgui.getClient()).isBlank());
@@ -986,11 +985,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     || cmd.willCrushBuildings();
 
             String moveMsg =  Messages.getString("MovementDisplay.Move")
-                    + "<sup>"
                     + (psrCheck ? "*" : "")
-                    + (damageCheck ? " !" : "")
-                    +"</sup>";
-            updateDonePanel(moveMsg, Messages.getString("MovementDisplay.Skip"), true);
+                    + (damageCheck ? " !" : "");
+            updateDonePanelButtons(moveMsg, Messages.getString("MovementDisplay.Skip"), true);
         }
     }
 
@@ -1065,7 +1062,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         setForwardIniEnabled(false);
         getBtn(MoveCommand.MOVE_MORE).setEnabled(false);
         butDone.setEnabled(false);
-        butIgnoreNag.setEnabled(false);
+        butSkipTurn.setEnabled(false);
         setLoadEnabled(false);
         setMountEnabled(false);
         setTowEnabled(false);

@@ -32,7 +32,7 @@ import java.awt.event.ActionEvent;
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 
 public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
-    protected MegamekButton butIgnoreNag;
+    protected MegamekButton butSkipTurn;
     private boolean isDoingAction = false;
     private boolean ignoreNoActionNag = false;
 
@@ -43,14 +43,14 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
     @Override
     protected UIUtil.FixedXPanel setupDonePanel() {
         var donePanel = super.setupDonePanel();
-        butIgnoreNag = new MegamekButton("SKIP", SkinSpecification.UIComponents.PhaseDisplayDoneButton.getComp());
-        butIgnoreNag.setPreferredSize(new Dimension(DONE_BUTTON_WIDTH, MIN_BUTTON_SIZE.height * 1));
+        butSkipTurn = new MegamekButton("SKIP", SkinSpecification.UIComponents.PhaseDisplayDoneButton.getComp());
+        butSkipTurn.setPreferredSize(new Dimension(DONE_BUTTON_WIDTH, MIN_BUTTON_SIZE.height * 1));
         String f = guiScaledFontHTML(UIUtil.uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE_NO_ACTION)+ "</FONT>";
-        butIgnoreNag.setToolTipText("<html><body>" + f + "</body></html>");
+        butSkipTurn.setToolTipText("<html><body>" + f + "</body></html>");
 
-        donePanel.add(butIgnoreNag);
+        donePanel.add(butSkipTurn);
         if (clientgui != null) {
-            butIgnoreNag.addActionListener(new AbstractAction() {
+            butSkipTurn.addActionListener(new AbstractAction() {
                 private static final long serialVersionUID = -5034474968902280850L;
 
                 @Override
@@ -84,7 +84,7 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
                                     || clientgui.getBoardView().getChatterBoxActive()
                                     || display.isIgnoringEvents()
                                     || !display.isVisible()
-                                    || !(butDone.isEnabled() || butIgnoreNag.isEnabled())) {
+                                    || !(butDone.isEnabled() || butSkipTurn.isEnabled())) {
                                 return false;
                             } else {
                                 return true;
@@ -99,31 +99,27 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
                     });
         }
 
-        updateDonePanelVisibility();
+        updateDonePanel();
         return donePanel;
     }
 
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
         super.preferenceChange(e);
-        updateDonePanelVisibility();
+        updateDonePanel();
     }
 
     protected void initDonePanelForNewTurn()
     {
         ignoreNoActionNag = false;
-        updateDonePanelVisibility();
+        updateDonePanel();
     }
 
-    private void updateDonePanelVisibility()
-    {
-        if (GUIP.getNagForNoAction()) {
-            butIgnoreNag.setVisible(true);
-        } else {
-            butIgnoreNag.setVisible(false);
-        }
-        updateDonePanelEnabled();
-    }
+    /** called to reset, show, hide and relabel the Done panel buttons. Override to change button labels and states,
+     * being sure to call {@link #updateDonePanelButtons(String,String,boolean) UpdateDonePanelButtons}
+     * to set the button labels and states
+     */
+    abstract protected void updateDonePanel();
 
     /**
      * @return true if a nag dialog should be shown when there is no action given to current unit.
@@ -133,40 +129,35 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
         return GUIP.getNagForNoAction() && !ignoreNoActionNag;
     }
 
-    /** set labels and enables on the done buttons and depending on the GUIP options
+    /** set labels and enables on the done and skip buttons depending on the GUIP getNagForNoAction option
      *
-     * @param actionLabel
-     * @param noActionLabel
-     * @param doingAction
+     * @param doneButtonLabel
+     * @param skipButtonLabel
+     * @param isDoingAction true if user has entered actions for this turn, false if not.
      */
-    protected void updateDonePanel(String actionLabel, String noActionLabel, boolean doingAction) {
-        isDoingAction = doingAction;
+    protected void updateDonePanelButtons(String doneButtonLabel, String skipButtonLabel, boolean isDoingAction) {
+        this.isDoingAction = isDoingAction;
         if (GUIP.getNagForNoAction()) {
-            butDone.setText("<html><b>" + actionLabel + "</b></html>");
+            butDone.setText("<html><b>" + doneButtonLabel + "</b></html>");
+            butSkipTurn.setText("<html><b>" + skipButtonLabel + "</b></html>");
         } else {
-            // toggle the text on the done button
-            if (doingAction) {
-                butDone.setText("<html><b>" + actionLabel + "</b></html>");
+            // toggle the text on the done button, butIgnoreNag is not used
+            butSkipTurn.setVisible(false);
+            if (this.isDoingAction) {
+                butDone.setText("<html><b>" + doneButtonLabel + "</b></html>");
             } else {
-                butDone.setText("<html><b>" + noActionLabel + "</b></html>");
+                butDone.setText("<html><b>" + skipButtonLabel + "</b></html>");
             }
         }
-        butIgnoreNag.setText("<html><b>" + noActionLabel + "</b></html>");
-        updateDonePanelEnabled();
-    }
+        butSkipTurn.setText("<html><b>" + skipButtonLabel + "</b></html>");
 
-    protected void updateDonePanelEnabled() {
-        // Note for reviewers: currently this toggles between the two buttons being active,
-        // but if that behavior is too different from current,
-        // it could just enable/disable the ignoreNag button
-        // and leave the done button as is.
-
-        if (isDoingAction || ignoreNoActionNag) {
+        // enable/disable
+        if (this.isDoingAction || ignoreNoActionNag) {
             butDone.setEnabled(true);
-            butIgnoreNag.setEnabled(false);
+            butSkipTurn.setEnabled(false);
         } else {
             butDone.setEnabled(!GUIP.getNagForNoAction());
-            butIgnoreNag.setEnabled(true);
+            butSkipTurn.setEnabled(true);
         }
     }
 }

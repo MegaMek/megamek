@@ -32,17 +32,25 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
         super(cg);
     }
 
-    abstract protected void setDoneButtonValid();
+    /**
+     * called by updateDonePanel to populate the label text of the Done button. Usually wraps a call to Messages.getString(...Fire)
+     * but can be extended to add more details.
+     * @return text for label
+     */
+    abstract protected String getDoneButtonLabel();
 
-    abstract protected void setDoneButtonSkip();
+    /**
+     * called by updateDonePanel to populate the label text of the NoAction button. Usually wraps a call to Messages.getString(...Skip)
+     * but can be extended to add more details.
+     * @return text for label
+     */
+    abstract protected String getSkipTurnButtonLabel();
 
+
+    @Override
     protected void updateDonePanel()
     {
-        if (attacks.isEmpty()) {
-            setDoneButtonSkip();
-        } else {
-            setDoneButtonValid();
-        }
+        updateDonePanelButtons(getDoneButtonLabel(), getSkipTurnButtonLabel(), !attacks.isEmpty());
     }
 
     protected void removeAttack(Object o)

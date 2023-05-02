@@ -430,6 +430,16 @@ public class MapMenu extends JPopupMenu {
             });
             menu.add(item);
 
+            item = new JMenuItem(Messages.getString("MovementDisplay.moveChaff"));
+            item.setActionCommand(MovementDisplay.MoveCommand.MOVE_CHAFF.getCmd());
+            item.addActionListener(evt -> {
+                try {
+                    ((MovementDisplay) currentPanel).actionPerformed(evt);
+                } catch (Exception ex) {
+                    LogManager.getLogger().error("", ex);
+                }
+            });
+            menu.add(item);
 
             item = new JMenuItem(Messages.getString("MovementDisplay.butWalk"));
             item.setActionCommand(MovementDisplay.MoveCommand.MOVE_WALK.getCmd());

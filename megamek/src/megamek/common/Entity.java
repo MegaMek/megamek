@@ -4418,6 +4418,19 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return false;
     }
 
+    public List<Mounted> getMiscEquipment(BigInteger flag) {
+        List<Mounted> miscItems = new LinkedList<>();
+        for (Mounted m : miscList) {
+            if ((m.getType() instanceof MiscType)) {
+                MiscType type = (MiscType) m.getType();
+                if (type.hasFlag(flag)) {
+                    miscItems.add(m);
+                }
+            }
+        }
+        return miscItems;
+    }
+
     /**
      * return how many misc equipments with the specified flag the unit has
      *

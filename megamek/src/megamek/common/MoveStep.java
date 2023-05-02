@@ -397,6 +397,8 @@ public class MoveStep implements Serializable {
                 return "Hover";
             case BRACE:
                 return "Brace";
+            case CHAFF:
+                return "Chaff";
             default:
                 return "???";
         }
@@ -1084,6 +1086,7 @@ public class MoveStep implements Serializable {
             case BRACE:
                 setMp(entity.getBraceMPCost());
                 break;
+            case CHAFF:
             default:
                 setMp(0);
         }
@@ -1521,6 +1524,7 @@ public class MoveStep implements Serializable {
         } else if (hasEverUnloaded && (type != MoveStepType.UNLOAD)
                 && (type != MoveStepType.LAUNCH) && (type != MoveStepType.DROP)
                 && (type != MoveStepType.UNDOCK) && (type != MoveStepType.DISCONNECT)
+                && (type != MoveStepType.CHAFF)
                 && (getAltitude() == 0)) {
             // Can't be after unloading BA/inf
             legal = false;
@@ -2174,6 +2178,9 @@ public class MoveStep implements Serializable {
             movementType = EntityMovementType.MOVE_NONE;
         }
         if (type == MoveStepType.CONVERT_MODE) {
+            movementType = EntityMovementType.MOVE_NONE;
+        }
+        if (type == MoveStepType.CHAFF) {
             movementType = EntityMovementType.MOVE_NONE;
         }
 

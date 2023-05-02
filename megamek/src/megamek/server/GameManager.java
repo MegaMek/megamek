@@ -7359,6 +7359,19 @@ public class GameManager implements IGameManager {
                 }
             }
 
+            if (step.getType() == MovePath.MoveStepType.CHAFF) {
+                List<Mounted> chaffDispensers = entity.getMiscEquipment(MiscType.F_CHAFF_POD)
+                        .stream().filter(dispenser -> dispenser.isReady())
+                        .collect(Collectors.toList());
+                if (chaffDispensers.size() > 0) {
+                    chaffDispensers.get(0).setFired(true);
+                    createSmoke(curPos, 1, 1);
+                    Hex hex = game.getBoard().getHex(curPos);
+                    hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_CHAFF_LIGHT));
+                    sendChangedHex(curPos);
+                }
+            }
+
             // check for last move ending in magma TODO: build report for end of move
             if (!i.hasMoreElements() && curHex.terrainLevel(Terrains.MAGMA) == 2
                     && firstHex.terrainLevel(Terrains.MAGMA) == 2) {

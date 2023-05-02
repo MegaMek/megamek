@@ -7369,6 +7369,11 @@ public class GameManager implements IGameManager {
                     Hex hex = game.getBoard().getHex(curPos);
                     hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_CHAFF_LIGHT));
                     sendChangedHex(curPos);
+                    r = new Report(2512)
+                            .addDesc(entity)
+                            .subject(entity.getId());
+
+                    addReport(r);
                 }
             }
 

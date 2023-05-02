@@ -1536,6 +1536,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         if (isUsingChaff) {
             cmd.addStep(MoveStepType.CHAFF);
+            isUsingChaff = false;
         }
 
         disableButtons();

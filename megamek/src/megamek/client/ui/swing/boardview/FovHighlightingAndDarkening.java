@@ -74,7 +74,8 @@ class FovHighlightingAndDarkening {
     boolean draw(Graphics boardGraph, Coords c, int drawX, int drawY, boolean saveBoardImage) {
         Coords src;
         boolean hasLoS = true;
-        if (this.boardView1.selected != null) {
+        // in movement phase, calc LOS based on selected hex, otherwise use selected Entity
+        if (this.boardView1.game.getPhase().isMovement() && this.boardView1.selected != null) {
             src = this.boardView1.selected;
         } else if (this.boardView1.selectedEntity != null) {
             src = this.boardView1.selectedEntity.getPosition();

@@ -1524,6 +1524,7 @@ public class MoveStep implements Serializable {
         } else if (hasEverUnloaded && (type != MoveStepType.UNLOAD)
                 && (type != MoveStepType.LAUNCH) && (type != MoveStepType.DROP)
                 && (type != MoveStepType.UNDOCK) && (type != MoveStepType.DISCONNECT)
+                && (type != MoveStepType.CHAFF)
                 && (getAltitude() == 0)) {
             // Can't be after unloading BA/inf
             legal = false;
@@ -2789,7 +2790,7 @@ public class MoveStep implements Serializable {
 
         // check if this movement is illegal for reasons other than points
         if (!isMovementPossible(game, lastPos, prev.getElevation(), cachedEntityState)
-                || isUnloaded) {
+                || (isUnloaded && type != MoveStepType.CHAFF)) {
             movementType = EntityMovementType.MOVE_ILLEGAL;
         }
 

@@ -15,16 +15,7 @@
 */
 package megamek.common.util;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.HeadlessException;
-import java.awt.Image;
-import java.awt.Toolkit;
-import java.awt.Transparency;
+import java.awt.*;
 import java.awt.image.*;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -33,16 +24,20 @@ import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Hashtable;
 import java.util.List;
 
+import megamek.MMConstants;
 import megamek.client.ui.swing.util.ImageAtlasMap;
 import megamek.client.ui.swing.util.ImprovedAveragingScaleFilter;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Coords;
+import megamek.common.Report;
 import megamek.common.annotations.Nullable;
 import org.apache.logging.log4j.LogManager;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 
 /**
  * Generic utility methods for image data
@@ -445,5 +440,24 @@ public final class ImageUtil {
         }
 
         return base64Text;
+    }
+
+    /**
+     * creates a ? image, used when units are hidden in double blind
+     */
+    public static void createDoubleBlindHiddenImage(Hashtable<Integer, String> imgCache) {
+        BufferedImage image = new BufferedImage(56, 48, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D graphics = image.createGraphics();
+        UIUtil.setHighQualityRendering(graphics);
+        graphics.setComposite(AlphaComposite.Clear);
+        graphics.fillRect(0, 0, 56, 48);
+        graphics.setComposite(AlphaComposite.Src);
+        graphics.setColor(UIManager.getColor("Label.foreground"));
+        graphics.setFont(new Font(MMConstants.FONT_DIALOG, Font.BOLD, 26));
+        graphics.drawString("?", 20, 40);
+
+        String base64Text = base64TextEncodeImage(image);
+        String img = "<img src='data:image/png;base64," + base64Text + "'>";
+        imgCache.put(Report.HIDDEN_ENTITY_NUM, img);
     }
 }

@@ -1650,10 +1650,10 @@ public class GameManager implements IGameManager {
             bvcPlayer.bvFled = player.getFledBV();
             bvcPlayer.unitsCount = player.getUnitCount();
             bvcPlayer.unitsInitialCount = player.getInitialEntityCount();
-            bvcPlayer.unitsLightDamageCount = player.getUnitLightDamageCount();
-            bvcPlayer.unitsModerateDamageCount = player.getUnitModerateDamageCount();
-            bvcPlayer.unitsHeavyDamageCount = player.getUnitHeavyDamageCount();
-            bvcPlayer.unitsCrippledCount = player.getUnitCrippledCount();
+            bvcPlayer.unitsLightDamageCount = player.getUnitDamageCount(Entity.DMG_LIGHT);
+            bvcPlayer.unitsModerateDamageCount = player.getUnitDamageCount(Entity.DMG_MODERATE);
+            bvcPlayer.unitsHeavyDamageCount = player.getUnitDamageCount(Entity.DMG_HEAVY);
+            bvcPlayer.unitsCrippledCount = player.getUnitDamageCount(Entity.DMG_CRIPPLED);
             bvcPlayer.unitsDestroyedCount =  player.getUnitDestroyedCount();
             bvcPlayer.unitsCrewEjectedCount = player.getUnitCrewEjectedCount();
             bvcPlayer.unitsCrewTrappedCount = player.getUnitCrewTrappedCount();

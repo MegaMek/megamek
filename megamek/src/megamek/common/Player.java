@@ -472,24 +472,9 @@ public final class Player extends TurnOrdered {
                 .filter(entity -> !entity.isDestroyed() && !entity.isTrapped() && !(entity instanceof EjectedCrew)).count());
     }
 
-    public int getUnitLightDamageCount() {
+    public int getUnitDamageCount(int damageLevel) {
         return Math.toIntExact(game.getPlayerEntities(this, false).stream()
-                .filter(entity -> !entity.isDestroyed() && !entity.isTrapped() && (entity.getDamageLevel() == Entity.DMG_LIGHT) && !(entity instanceof EjectedCrew)).count());
-    }
-
-    public int getUnitModerateDamageCount() {
-        return Math.toIntExact(game.getPlayerEntities(this, false).stream()
-                .filter(entity -> !entity.isDestroyed() && !entity.isTrapped() && (entity.getDamageLevel() == Entity.DMG_MODERATE) && !(entity instanceof EjectedCrew)).count());
-    }
-
-    public int getUnitHeavyDamageCount() {
-        return Math.toIntExact(game.getPlayerEntities(this, false).stream()
-                .filter(entity -> !entity.isDestroyed() && !entity.isTrapped() && (entity.getDamageLevel() == Entity.DMG_HEAVY) && !(entity instanceof EjectedCrew)).count());
-    }
-
-    public int getUnitCrippledCount() {
-        return Math.toIntExact(game.getPlayerEntities(this, false).stream()
-                .filter(entity -> !entity.isDestroyed() && !entity.isTrapped() && (entity.getDamageLevel() == Entity.DMG_CRIPPLED) && !(entity instanceof EjectedCrew)).count());
+                .filter(entity -> !entity.isDestroyed() && !entity.isTrapped() && (entity.getDamageLevel() == damageLevel) && !(entity instanceof EjectedCrew)).count());
     }
 
     public int getUnitDestroyedCount() {
@@ -565,41 +550,23 @@ public final class Player extends TurnOrdered {
      */
     public int getFledBV() {
         //TODO: I'm not sure how squadrons are treated here - see getBV()
-        Enumeration<Entity> fledUnits = game.getRetreatedEntities();
-        int bv = 0;
-        while (fledUnits.hasMoreElements()) {
-            Entity entity = fledUnits.nextElement();
-            if (entity.getOwner().equals(this)) {
-                bv += entity.calculateBattleValue();
-            }
-        }
-        return bv;
+        return game.getPlayerRetreatedEntities(this).stream()
+                .filter(entity -> !entity.isDestroyed())
+                .mapToInt(Entity::calculateBattleValue).sum();
     }
 
     public int getFledUnitsCount() {
         //TODO: I'm not sure how squadrons are treated here - see getBV()
-        Enumeration<Entity> fledUnits = game.getRetreatedEntities();
-        int count = 0;
-        while (fledUnits.hasMoreElements()) {
-            Entity entity = fledUnits.nextElement();
-            if (entity.getOwner().equals(this) && !entity.isDestroyed() && !(entity instanceof EjectedCrew)) {
-                count += 1;
-            }
-        }
-        return count;
+        return Math.toIntExact(game.getPlayerRetreatedEntities(this).stream()
+                .filter(entity -> !entity.isDestroyed() && !(entity instanceof EjectedCrew))
+                .mapToInt(Entity::calculateBattleValue).count());
     }
 
     public int getFledEjectedCrew() {
         //TODO: I'm not sure how squadrons are treated here - see getBV()
-        Enumeration<Entity> fledUnits = game.getRetreatedEntities();
-        int count = 0;
-        while (fledUnits.hasMoreElements()) {
-            Entity entity = fledUnits.nextElement();
-            if (entity.getOwner().equals(this) && !entity.isDestroyed() && (entity instanceof EjectedCrew)) {
-                count += 1;
-            }
-        }
-        return count;
+        return Math.toIntExact(game.getPlayerRetreatedEntities(this).stream()
+                .filter(entity -> !entity.isDestroyed() && (entity instanceof EjectedCrew))
+                .mapToInt(Entity::calculateBattleValue).count());
     }
 
     public int getInitialBV() {

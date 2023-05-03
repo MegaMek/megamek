@@ -19,6 +19,8 @@
  */
 package megamek.client.ui.swing;
 
+import megamek.MMConstants;
+import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.KeyCommandBind;
@@ -130,6 +132,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private JMenuItem helpContents = new JMenuItem(getString("CommonMenuBar.helpContents"));
     private JMenuItem helpSkinning = new JMenuItem(getString("CommonMenuBar.helpSkinning"));
     private JMenuItem helpAbout = new JMenuItem(getString("CommonMenuBar.helpAbout"));
+    private JMenuItem helpResetNags = new JMenuItem(getString("CommonMenuBar.helpResetNags"));
     
     // The Firing Action menu
     private JMenuItem fireSaveWeaponOrder = new JMenuItem(getString("CommonMenuBar.fireSaveWeaponOrder"));
@@ -301,6 +304,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         menu = new JMenu(Messages.getString("CommonMenuBar.HelpMenu"));
         menu.setMnemonic(VK_H);
         add(menu);
+        initMenuItem(helpResetNags, menu, HELP_RESETNAGS);
         initMenuItem(helpContents, menu, HELP_CONTENTS);
         initMenuItem(helpSkinning, menu, HELP_SKINNING);
         menu.addSeparator();
@@ -360,8 +364,11 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
 
         } else if (event.getActionCommand().equals(ClientGUI.VIEW_LABELS)) {
             GUIP.setUnitLabelStyle(GUIP.getUnitLabelStyle().next());
+
+        } else if(event.getActionCommand().equals(ClientGUI.HELP_RESETNAGS)) {
+            MegaMek.getMMOptions().setNagDialogIgnore(MMConstants.NAG_BOT_README, false);
         }
-        
+
         // Pass the action on to each of our listeners.
         actionListeners.forEach(l -> l.actionPerformed(event));
     }

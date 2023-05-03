@@ -180,6 +180,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     public static final String HELP_CONTENTS = "helpContents";
     public static final String HELP_SKINNING = "helpSkinning";
     public static final String HELP_ABOUT = "helpAbout";
+    public static final String HELP_RESETNAGS = "helpResetNags";
     //endregion help menu
     //endregion action commands
 

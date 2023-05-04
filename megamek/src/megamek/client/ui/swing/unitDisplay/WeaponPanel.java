@@ -2113,20 +2113,20 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             if (entity.isSecondaryArcWeapon(entity.getEquipmentNum(mounted))) {
                 facing = entity.getSecondaryFacing();
             }
-            ((FiringDisplay) gui.getCurrentPanel()).setWeaponFieldofFire(entity, ranges, arc, loc, facing);
+            ((FiringDisplay) gui.getCurrentPanel()).setWeaponFieldOfFire(entity, ranges, arc, loc, facing);
         } else if (gui.getCurrentPanel() instanceof TargetingPhaseDisplay) {
             // twisting
             int facing = entity.getFacing();
             if (entity.isSecondaryArcWeapon(entity.getEquipmentNum(mounted))) {
                 facing = entity.getSecondaryFacing();
             }
-            ((TargetingPhaseDisplay) gui.getCurrentPanel()).setWeaponFieldofFire(entity, ranges, arc, loc, facing);
+            ((TargetingPhaseDisplay) gui.getCurrentPanel()).setWeaponFieldOfFire(entity, ranges, arc, loc, facing);
         } else if (gui.getCurrentPanel() instanceof MovementDisplay) {
             // no twisting here
-            ((MovementDisplay) gui.getCurrentPanel()).setWeaponFieldofFire(entity, ranges, arc, loc);
+            ((MovementDisplay) gui.getCurrentPanel()).setWeaponFieldOfFire(entity, ranges, arc, loc);
         }  else if (gui.getCurrentPanel() instanceof DeploymentDisplay) {
             // no twisting here
-            ((DeploymentDisplay) gui.getCurrentPanel()).setWeaponFieldofFire(entity, ranges, arc, loc);
+            ((DeploymentDisplay) gui.getCurrentPanel()).setWeaponFieldOfFire(entity, ranges, arc, loc);
         }
     }
 

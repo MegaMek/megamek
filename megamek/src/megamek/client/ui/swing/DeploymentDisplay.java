@@ -931,13 +931,4 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         }
         return choices;
     }
-
-    public void setWeaponFieldofFire(Entity unit, int[][] ranges, int arc, int loc) {
-        clientgui.getBoardView().fieldOfFireUnit = unit;
-        clientgui.getBoardView().fieldOfFireRanges = ranges;
-        clientgui.getBoardView().fieldOfFireWpArc = arc;
-        clientgui.getBoardView().fieldOfFireWpLoc = loc;
-
-        clientgui.getBoardView().setWeaponFieldOfFire(unit.getFacing(), unit.getPosition());
-    }
 }

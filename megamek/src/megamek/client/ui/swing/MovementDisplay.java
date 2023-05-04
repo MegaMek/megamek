@@ -5541,23 +5541,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 && !(cmd.isJumping() && (ce instanceof Mech) && (ce.getJumpType() == Mech.JUMP_BOOSTER)));
     }
 
-    public void setWeaponFieldofFire(Entity unit, int[][] ranges, int arc, int loc) {
-        // do nothing here outside the movement phase
-        if (!clientgui.getClient().getGame().getPhase().isMovement()) {
-            return;
-        }
-
-        clientgui.getBoardView().fieldOfFireUnit = unit;
-        clientgui.getBoardView().fieldOfFireRanges = ranges;
-        clientgui.getBoardView().fieldOfFireWpArc = arc;
-        clientgui.getBoardView().fieldOfFireWpLoc = loc;
-
+    @Override
+    public void setWeaponFieldOfFire(Entity unit, int[][] ranges, int arc, int loc) {
         // If the unit is the current unit, then work with
         // the current considered movement
         if (unit.equals(ce())) {
-            clientgui.getBoardView().setWeaponFieldOfFire(ce(), cmd);
+            super.setWeaponFieldOfFire(unit, ranges, arc, loc, cmd);
         } else {
-            clientgui.getBoardView().setWeaponFieldOfFire(unit.getFacing(), unit.getPosition());
+            super.setWeaponFieldOfFire(unit, ranges, arc, loc);
         }
     }
 

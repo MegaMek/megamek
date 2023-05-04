@@ -2675,18 +2675,4 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         }
         return isConsecutive && isInaLine;
     }
-
-    public void setWeaponFieldofFire(Entity unit, int[][] ranges, int arc, int loc, int facing) {
-        // do nothing here outside the movement phase
-        if (!clientgui.getClient().getGame().getPhase().isFiring()) {
-            return;
-        }
-
-        clientgui.getBoardView().fieldOfFireUnit = unit;
-        clientgui.getBoardView().fieldOfFireRanges = ranges;
-        clientgui.getBoardView().fieldOfFireWpArc = arc;
-        clientgui.getBoardView().fieldOfFireWpLoc = loc;
-
-        clientgui.getBoardView().setWeaponFieldOfFire(facing, unit.getPosition());
-    }
 }

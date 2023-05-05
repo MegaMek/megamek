@@ -846,7 +846,8 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
 
         // update target panel
         final int weaponId = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
-        if ((target != null) && (target.getPosition() != null) && (weaponId != -1) && (ce() != null)) {
+        if ((ce() != null) && ce().equals(clientgui.getUnitDisplay().getCurrentEntity())
+               && (target != null) && (target.getPosition() != null) && (weaponId != -1)) {
             ToHitData toHit;
             if (!ash.getAimingMode().isNone()) {
                 Mounted weapon = ce().getEquipment(weaponId);

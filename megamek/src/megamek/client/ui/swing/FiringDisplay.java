@@ -1916,8 +1916,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
             clientgui.getUnitDisplay().wPan.wTargetR.setText(Messages
                     .getString("FiringDisplay.Strafing.TargetLabel"));
             updateStrafingTargets();
-        } else if ((target != null) && (target.getPosition() != null)
-            && (weaponId != -1) && (ce() != null)) {
+        } else if ((ce() != null) && ce().equals(clientgui.getUnitDisplay().getCurrentEntity())
+            && (target != null) && (target.getPosition() != null)
+            && (weaponId != -1)) {
             ToHitData toHit;
             if (!ash.getAimingMode().isNone()) {
                 Mounted weapon = ce().getEquipment(weaponId);

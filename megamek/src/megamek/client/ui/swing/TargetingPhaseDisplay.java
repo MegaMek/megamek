@@ -1020,7 +1020,8 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 
         // update target panel
         final int weaponId = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
-        if ((target != null) && (weaponId != -1)) {
+        if ( (cen != Entity.NONE) && ce().equals(clientgui.getUnitDisplay().getCurrentEntity())
+                && (target != null) && (weaponId != -1)) {
             ToHitData toHit;
             Mounted m = ce().getEquipment(weaponId);
 

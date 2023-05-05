@@ -1716,6 +1716,7 @@ public class GameManager implements IGameManager {
         r = new Report(7018, Report.PUBLIC);
         if (checkBlind && doBlind() && suppressBlindBV()) {
             r.type = Report.PLAYER;
+            r.player = playerID;
         }
         r.add(bvc.unitsCount);
         r.add(bvc.unitsInitialCount);

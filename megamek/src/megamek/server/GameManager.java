@@ -1690,9 +1690,11 @@ public class GameManager implements IGameManager {
         }
 
         // Show teams BVs
-        for (Map.Entry<Integer, BVCountHelper> e : teamsInfo.entrySet()) {
-            BVCountHelper bvc = e.getValue();
-            bvReport(Player.TEAM_NAMES[e.getKey()], Player.PLAYER_NONE, bvc, false);
+        if (!(checkBlind && doBlind() && suppressBlindBV())) {
+            for (Map.Entry<Integer, BVCountHelper> e : teamsInfo.entrySet()) {
+                BVCountHelper bvc = e.getValue();
+                bvReport(Player.TEAM_NAMES[e.getKey()], Player.PLAYER_NONE, bvc, false);
+            }
         }
     }
 

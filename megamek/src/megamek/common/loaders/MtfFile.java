@@ -24,6 +24,7 @@ import java.util.*;
 
 import megamek.common.*;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * @author Ben
@@ -436,7 +437,7 @@ public class MtfFile implements IMechLoader {
             for (int x = 0; x < rearLocationOrder.length; x++) {
                 mech.initializeRearArmor(Integer.parseInt(armorValues[x + locationOrder.length].substring(10)), rearLocationOrder[x]);
             }
-            
+
             // oog, crits.
             compactCriticals(mech);
             // we do these in reverse order to get the outermost
@@ -807,8 +808,13 @@ public class MtfFile implements IMechLoader {
                                 size = BLKFile.getLegacyVariableSize(critName);
                             }
                             mount.setSize(size);
-                            // THe size may require additional critical slots
-                            for (int c = 1; c < mount.getCriticals(); c++) {
+                            // The size may require additional critical slots
+                            // Account for loading Superheavy oversized Variable Size components
+                            int critCount = mount.getCriticals();
+                            if (mech.isSuperHeavy()){
+                                critCount = (int)Math.ceil(critCount / 2.0);
+                            }
+                            for (int c = 1; c < critCount; c++) {
                                 CriticalSlot cs = new CriticalSlot(mount);
                                 mech.addCritical(loc, cs, i + c);
                             }
@@ -1026,7 +1032,7 @@ public class MtfFile implements IMechLoader {
             gyroType = line;
             return true;
         }
-        
+
         if (lineLower.startsWith(MOTIVE)) {
             motiveType = line;
             return true;
@@ -1055,7 +1061,7 @@ public class MtfFile implements IMechLoader {
         if (lineLower.startsWith(MYOMER)) {
             return true;
         }
-        
+
         if (lineLower.startsWith(LAM)) {
             lamType = line;
             return true;
@@ -1113,7 +1119,7 @@ public class MtfFile implements IMechLoader {
             noCritEquipment.add(line.substring(NO_CRIT.length()));
             return true;
         }
-        
+
         if (lineLower.startsWith(OVERVIEW)) {
             overview = line.substring(OVERVIEW.length());
             return true;
@@ -1123,12 +1129,12 @@ public class MtfFile implements IMechLoader {
             capabilities = line.substring(CAPABILITIES.length());
             return true;
         }
-                
+
         if (lineLower.startsWith(DEPLOYMENT)) {
             deployment = line.substring(DEPLOYMENT.length());
             return true;
         }
-        
+
         if (lineLower.startsWith(HISTORY)) {
             history = line.substring(HISTORY.length());
             return true;

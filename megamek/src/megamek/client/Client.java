@@ -984,9 +984,10 @@ public class Client implements IClientCommandHandler {
                 cacheImgTag(e);
             }
         }
-        // cache the image data for the entities
+        // cache the image data for the entities and set force for entities
         for (Entity e: newEntities) {
             cacheImgTag(e);
+            e.setForceId(game.getForces().getForceId(e));
         }
     }
 

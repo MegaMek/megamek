@@ -206,7 +206,7 @@ public final class UnitToolTip {
         } else if (target instanceof BuildingTarget) {
             return HexTooltip.getBuildingTargetTip((BuildingTarget) target, board);
         } else if (target instanceof Hex) {
-            return HexTooltip.getHexTip((Hex) target, clientGUI.getClient(), clientGUI);
+            return HexTooltip.getHexTip((Hex) target, clientGUI);
         } else {
             return getTargetTipSummary(target, board);
         }

@@ -1,6 +1,7 @@
 Version:1.0
 Javelin
 JVN-12N
+mul id:9461
 
 Config:Biped
 techbase:Mixed (IS Chassis)
@@ -162,4 +163,3 @@ systemmanufacturer:ARMOR:Durallex Light with CASEII
 systemmanufacturer:JUMPJET:Rawlings 95
 systemmanufacturer:COMMUNICATIONS:Garret T10B
 systemmanufacturer:TARGETING:Dynatec 128C
-

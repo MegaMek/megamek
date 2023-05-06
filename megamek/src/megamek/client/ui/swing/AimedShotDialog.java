@@ -28,7 +28,10 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.widget.IndexedRadioButton;
+import megamek.common.Targetable;
+import megamek.common.annotations.Nullable;
 
 public class AimedShotDialog extends JDialog {
     private static final long serialVersionUID = 6527374019085650613L;
@@ -42,8 +45,9 @@ public class AimedShotDialog extends JDialog {
     private boolean[] boxEnabled;
 
     public AimedShotDialog(JFrame parent, String title, String message,
-            String[] choices, boolean[] enabled, int selectedIndex,
-            ItemListener il, ActionListener al) {
+                           String[] choices, boolean[] enabled, int selectedIndex,
+                           ClientGUI clientGUI, Targetable target,
+                           ItemListener il, ActionListener al) {
         super(parent, title, false);
         super.setResizable(false);
 
@@ -61,6 +65,15 @@ public class AimedShotDialog extends JDialog {
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(labMessage, c);
         getContentPane().add(labMessage);
+
+        JLabel labTarget = new JLabel("<html>" + UnitToolTip.getTargetTipDetail(target, clientGUI.getClient().getBoard(), clientGUI) + "</hmtl>",
+                SwingConstants.LEFT);
+        c.weightx = 1.0;
+        c.weighty = 1.0;
+        c.gridwidth = 0;
+        c.anchor = GridBagConstraints.EAST;
+        gridbag.setConstraints(labTarget, c);
+        getContentPane().add(labTarget);
 
         ButtonGroup radioGroup = new ButtonGroup();
         checkboxes = new IndexedRadioButton[choices.length];

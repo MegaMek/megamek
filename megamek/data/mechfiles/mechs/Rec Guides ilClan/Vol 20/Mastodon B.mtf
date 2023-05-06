@@ -154,24 +154,15 @@ Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
-manufacturer:Jötunn BattleWorx
-primaryfactory:Goito
-systemmanufacturer:CHASSIS:Type 56-95C Modified Reinforced
-systemmanufacturer:ENGINE:RUFM XL 285
-systemmanufacturer:ARMOR:IceSheet Ferro-Fibrous
-systemmanufacturer:COMMUNICATIONS:Garret T10B
-systemmanufacturer:TARGETING:GC Hodr System Type 2
-
 overview:The Mastodon is an Assault OmniMech originally built by the Rasalhague Dominion and its Clan Ghost Bear brethren
 
 capabilities:A veritable juggernaut of a 'Mech, Jötunn BattleWorx made use of technologies unusual in a Clan design in order to protect the Mastodon. Namely, a reinforced skeleton is employed, making it highly durable though arduous to maintain. This protection is further bolstered by the use of fifteen and a half tons of Ferro-Fibrous Armour which also serves to save weight, allowing it a generous 45 tons of pod space for equipment. Propelling the design is an XL 285 fusion engine which affords it a pace of 54 km/h, sufficient for its role.
 
 deployment:Carrying an LBX-20 in the left arm, close-range firepower is the name of the game. It is linked to 3 tons of CASE II–protected ammo in the left torso along with a pair of Streak SRM-4s in the right arm which combined only draw on a single ton of ammo. Recognising the need for softening up of a target while closing the distance, a Streak LRM-20 was added in the right torso with 2 tons of ammo. Finally, the 'Mech is rounded out and backed up by 4 medium pulse lasers in the right arm, and 4 additional double heat sinks to prevent heat issues. 
 
-history:Spurred by the Clan Hell's Horses invasion of 3147, this unusually ponderous design marks a shift in the Dominion's preferred combat doctrine, previously focused around swift, 
-agile attackers. Equipped with ample weaponry and advanced protective technologies previously unfamiliar to the Clans, the result is a powerful, resilient OmniMech capable of filling both defensive and heavy assault roles, and able to weather whatever its enemy could possibly throw at it. In fact, the Mastodon's exceptional durability is often utilised by its pilots in order to fool foes into overcommitting, by pretending to have taken more damage than they actually have. Directly related to the company's earlier Rime Otter rework of Bergan Industries' Grizzly, Jötunn made use of reused and scaled-up components and technologies from these earlier programs throughout the development process, in order to reduce costs and streamline development.
+history:Spurred by the Clan Hell's Horses invasion of 3147, this unusually ponderous design marks a shift in the Dominion's preferred combat doctrine, previously focused around swift, agile attackers. Equipped with ample weaponry and advanced protective technologies previously unfamiliar to the Clans, the result is a powerful, resilient OmniMech capable of filling both defensive and heavy assault roles, and able to weather whatever its enemy could possibly throw at it. In fact, the Mastodon's exceptional durability is often utilised by its pilots in order to fool foes into overcommitting, by pretending to have taken more damage than they actually have. Directly related to the company's earlier Rime Otter rework of Bergan Industries' Grizzly, Jötunn made use of reused and scaled-up components and technologies from these earlier programs throughout the development process, in order to reduce costs and streamline development.
 
-manufacturer:Jotunn BattleWorx
+manufacturer:Jötunn BattleWorx
 primaryfactory:Goito
 systemmanufacturer:CHASSIS:Type 56-95C Modified Reinforced
 systemmanufacturer:ENGINE:RUFM XL 285

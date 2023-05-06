@@ -139,7 +139,7 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
 
             // draw a semi-transparent background rectangle
             Color colorBG = GUIP.getPlanetaryConditionsColorBackground();
-            intGraph.setColor(new Color(colorBG.getRed(), colorBG.getGreen(), colorBG.getBlue(), 200));
+            intGraph.setColor(new Color(colorBG.getRed(), colorBG.getGreen(), colorBG.getBlue(), GUIP.getPlanetaryConditionsBackgroundTransparency()));
             intGraph.fillRoundRect(0, 0, r.width, r.height, PADDING_X, PADDING_X);
             
             // The coordinates to write the texts to
@@ -197,7 +197,8 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
 
         String tmpStr = "";
         Boolean showHeading = GUIP.getPlanetaryConditionsShowHeader();
-        tmpStr = (showHeading ? String.format("#%02X%02X%02X", colorTitle.getRed(), colorTitle.getGreen(), colorTitle.getBlue()) + MessageFormat.format(MSG_HEADING, toggleKey) : "");
+        String titleColor = String.format("#%02X%02X%02X", colorTitle.getRed(), colorTitle.getGreen(), colorTitle.getBlue());
+        tmpStr = (showHeading ? titleColor + MessageFormat.format(MSG_HEADING, toggleKey) : "");
 
         if (tmpStr.length()  > 0) {
             result.add(tmpStr);

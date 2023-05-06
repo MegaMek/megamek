@@ -3967,12 +3967,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             choice = targets.get(0);
         } else if (targets.size() > 1) {
             // If we have multiple choices, display a selection dialog.
-            String input = (String) JOptionPane.showInputDialog(clientgui,
+            choice = TargetChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(),
+                    "MovementDisplay.ChooseTargetDialog.title",
                     Messages.getString("MovementDisplay.ChooseTargetDialog.message", pos.getBoardNum()),
-                    Messages.getString("MovementDisplay.ChooseTargetDialog.title"),
-                    JOptionPane.QUESTION_MESSAGE, null, SharedUtility.getDisplayArray(targets),
-                    null);
-            choice = SharedUtility.getTargetPicked(targets, input);
+                    targets, clientgui, ce());
+
         }
 
         return choice;

@@ -45,8 +45,20 @@ VERSION HISTORY:
 + PR #4294: Megamek now has random and constant skill generation values for The Society (WoRS)
 + PR #4319: Add original armor and internal structure values to the unit tooltip
 + PR #4310: Show a chat message when changing settings
-+ Fix #4334: Correctly display heat capacity on unit tool tip to match unit card
-+ Fix #4221: Flares now correctly respawn when blown off the map
++ Fix #4334: Correctly display heat capacity on unit tool tip to match unit card when TO Heatsink Coolant Failure is used
++ Fix #4221: Flares now correctly despawn when blown off the map
++ Fix #2333: Show Weapon Quirks in various tool tips
++ PR #4313: Add and Improve client settings
++ Fix MML 881: Problem with PPC Capacitors in Mixed Tech Mechs and Vehicles (adding missing PPC's)
++ Issue #2972: Add team BV totals to round report
++ PR #4348: Add weapon location to tooltips if appropriate client setting is on
++ Issue #2569: Ability to change certain color palettes in client settings to improve accessibility
++ Issue #4291: Prevent unintended discovery of opponent hidden units if both player and opponent have them
++ PR #4318: Added expandable detailed info to target selection dropdowns
++ PR #4368: Snow mapgen option
++ PR #4360: Low Quality Graphics options to address lag in game.
++ Issue #3813: Implement repeating TSEMPs
++ Issue #4370: Remove unnecessary log bloat for altitude checks in space
 
 0.49.12 (2023-03-04 2200 UTC)
 + PR #4062: OS Thunderbolt Weapons are now available for construction and use
@@ -117,6 +129,7 @@ VERSION HISTORY:
 + PR #4211: Alpha Strike cards can now be printed from most card views and, for multiple units, from the conversion dialog in MM's game lobby
 + PR #4194: Show movement mode before move indicators
 + PR #4193: Show amount of heat over capacity on the weapon tab
++ Issues #4260, #4353: Fixed some XStream de-serialization issues loading saved games
 + Data Issues #4210, #4206, #4200, #4198, #4192, #4122, #4119, #3963, and #3919 fixed.
 + Updating XStream to 1.4.19 from 1.4.14
 

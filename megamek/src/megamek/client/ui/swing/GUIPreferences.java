@@ -13,7 +13,6 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.MMConstants;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.boardview.LabelDisplayStyle;
 import megamek.client.ui.swing.util.PlayerColour;
@@ -72,6 +71,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String BOARD_TEXT_COLOR = "BoardTextColor";
     public static final String BOARD_SPACE_TEXT_COLOR = "BoardSpaceTextColor";
     public static final String BOARD_MAPSHEET_COLOR = "BoardMapsheetColor";
+    public static final String BOARD_FIELD_OF_FIRE_MIN_COLOR = "BoardFieldOfFireMinColor";
+    public static final String BOARD_FIELD_OF_FIRE_SHORT_COLOR = "BoardFieldOfFireShortColor";
+    public static final String BOARD_FIELD_OF_FIRE_MEDIUM_COLOR = "BoardFieldOfFireMediumColor";
+    public static final String BOARD_FIELD_OF_FIRE_LONG_COLOR = "BoardFieldOfFireLongColor";
+    public static final String BOARD_FIELD_OF_FIRE_EXTREME_COLOR = "BoardFieldOfFireExtremeColor";
+    public static final String BOARD_UNIT_SELECTED_COLOR = "BoardUnitSelectedColor";
+    public static final String BOARD_UNIT_VALID_COLOR = "BoardUnitValidColor";
+    public static final String BOARD_UNIT_TEXT_COLOR = "BoardUnitTextColor";
 
     public static final String BOARD_ATTACK_ARROW_TRANSPARENCY = "BoardAttackArrowTransparency";
     public static final String BOARD_ECM_TRANSPARENCY = "BoardECMTransparency";
@@ -79,8 +86,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String BOARD_TRANSLUCENT_HIDDEN_UNITS = "BoardTranslucentHiddenUnits";
     public static final String BOARD_TMM_PIP_MODE = "BoardTmmPipMode";
 
-    public static final String UNIT_OVERVIEW_SELECTED_COLOR = "UnitOverviewSelectedColor";
-    public static final String UNIT_OVERVIEW_VALID_COLOR = "UnitOverviewValidColor";
+    public static final String UNIT_OVERVIEW_TEXT_SHADOW_COLOR = "UnitOverviewTextShadowColor";
+    public static final String UNIT_OVERVIEW_CONDITION_SHADOW_COLOR = "UnitOverviewConditionShadowColor";
 
     public static final String PLANETARY_CONDITIONS_COLOR_TITLE = "PlanetaryConditionsColorTitle";
     public static final String PLANETARY_CONDITIONS_COLOR_TEXT = "PlanetaryConditionsColorText";
@@ -92,6 +99,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String PLANETARY_CONDITIONS_SHOW_LABELS = "PlanetaryConditionsShowLabels";
     public static final String PLANETARY_CONDITIONS_SHOW_VALUES = "PlanetaryConditionsShowValues";
     public static final String PLANETARY_CONDITIONS_SHOW_INDICATORS = "PlanetaryConditionsShowIndicators";
+    public static final String PLANETARY_CONDITIONS_BACKGROUND_TRANSPARENCY = "PlanetaryConditionsBackgroundTransparency";
 
     public static final String PLAYERS_REMAINING_TO_SHOW = "PlayersRemainingToShow";
     public static final String BUTTONS_PER_ROW = "ButtonsPerRow";
@@ -100,6 +108,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String USE_CAMO_OVERLAY = "UseCamoOverlay";
 
     public static final String SHOW_COORDS = "showCoords";
+    public static final String HIGH_QUALITY_GRAPHICS = "HighQualityGraphics";
     public static final String SHADOWMAP = "ShadowMap";
     public static final String INCLINES = "Inclines";
     public static final String AOHEXSHADOWS = "AoHexShadows";
@@ -111,6 +120,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String AUTO_DECLARE_SEARCHLIGHT = "AutoDeclareSearchlight";
 
     public static final String WARNING_COLOR = "WarningColor";
+    public static final String CAUTION_COLOR = "CautionColor";
+    public static final String PRECAUTION_COLOR = "PrecautionColor";
+
     public static final String CUSTOM_UNIT_HEIGHT = "CustomUnitDialogSizeHeight";
     public static final String CUSTOM_UNIT_WIDTH = "CustomUnitDialogSizeWidth";
 
@@ -260,6 +272,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SHOW_FIELD_OF_FIRE = "ShowFieldOfFire";
     public static final String SHOW_MAPHEX_POPUP = "ShowMapHexPopup";
     public static final String SHOW_WPS_IN_TT = "ShowWpsinTT";
+    public static final String SHOW_WPS_LOC_IN_TT = "ShowWpsLocinTT";
     public static final String SHOW_ARMOR_MINIVIS_TT = "showArmorMiniVisTT";
     public static final String SHOW_PILOT_PORTRAIT_TT = "showPilotPortraitTT";
     public static final String SHOW_MOVE_STEP = "ShowMoveStep";
@@ -401,8 +414,36 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(PLANETARY_CONDITIONS_SHOW_LABELS, true);
         setDefault(PLANETARY_CONDITIONS_SHOW_VALUES, true);
         setDefault(PLANETARY_CONDITIONS_SHOW_INDICATORS, true);
+        setDefault(PLANETARY_CONDITIONS_BACKGROUND_TRANSPARENCY, 200);
 
         setDefault(WARNING_COLOR, DEFAULT_RED);
+        setDefault(CAUTION_COLOR, Color.yellow);
+        setDefault(PRECAUTION_COLOR, Color.orange);
+
+        setDefault(PlayerColour.PLAYERCOLOUR_BLUE, new Color(0x8686BF));
+        setDefault(PlayerColour.PLAYERCOLOUR_RED, new Color(0xCC6666));
+        setDefault(PlayerColour.PLAYERCOLOUR_GREEN, new Color(0x87BF86));
+        setDefault(PlayerColour.PLAYERCOLOUR_CYAN, new Color(0x8FCCCC));
+        setDefault(PlayerColour.PLAYERCOLOUR_PINK, new Color(0xF29DC8));
+        setDefault(PlayerColour.PLAYERCOLOUR_ORANGE, new Color(0xF2AA61));
+        setDefault(PlayerColour.PLAYERCOLOUR_GRAY, new Color(0xBEBEBE));
+        setDefault(PlayerColour.PLAYERCOLOUR_BROWN, new Color(0x98816B));
+        setDefault(PlayerColour.PLAYERCOLOUR_PURPLE, new Color(0x800080));
+        setDefault(PlayerColour.PLAYERCOLOUR_TURQUOISE, new Color(0x40E0D0));
+        setDefault(PlayerColour.PLAYERCOLOUR_MAROON, new Color(0x800000));
+        setDefault(PlayerColour.PLAYERCOLOUR_SPRING_GREEN, new Color(0x00FF7F));
+        setDefault(PlayerColour.PLAYERCOLOUR_GOLD, new Color(0xFFD700));
+        setDefault(PlayerColour.PLAYERCOLOUR_SIENNA, new Color(0xA0522D));
+        setDefault(PlayerColour.PLAYERCOLOUR_VIOLET, new Color(0xEE82EE));
+        setDefault(PlayerColour.PLAYERCOLOUR_NAVY, new Color(0x000080));
+        setDefault(PlayerColour.PLAYERCOLOUR_OLIVE_DRAB, new Color(0x6B8E23));
+        setDefault(PlayerColour.PLAYERCOLOUR_FUCHSIA, new Color(0xFF00FF));
+        setDefault(PlayerColour.PLAYERCOLOUR_FIRE_BRICK, new Color(0xB22222));
+        setDefault(PlayerColour.PLAYERCOLOUR_DARK_GOLDEN_ROD, new Color(0xB8860B));
+        setDefault(PlayerColour.PLAYERCOLOUR_CORAL, new Color(0xFF7F50));
+        setDefault(PlayerColour.PLAYERCOLOUR_CHARTREUSE, new Color(0x7FFF00));
+        setDefault(PlayerColour.PLAYERCOLOUR_DEEP_PURPLE, new Color(0x9400D3));
+        setDefault(PlayerColour.PLAYERCOLOUR_YELLOW, new Color(0xF2F261));
 
         setDefault(BOARD_MOVE_DEFAULT_CLIMB_MODE, true);
         setDefault(BOARD_MOVE_DEFAULT_COLOR, DEFAULT_CYAN.CYAN);
@@ -419,8 +460,16 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(BOARD_TEXT_COLOR, DEFAULT_BLACK);
         setDefault(BOARD_SPACE_TEXT_COLOR, DEFAULT_LIGHT_GRAY);
         setDefault(BOARD_MAPSHEET_COLOR, DEFAULT_BLUE);
+        setDefault(BOARD_FIELD_OF_FIRE_MIN_COLOR, new Color(255, 100, 100));
+        setDefault(BOARD_FIELD_OF_FIRE_SHORT_COLOR, new Color(100, 255, 100));
+        setDefault(BOARD_FIELD_OF_FIRE_MEDIUM_COLOR, new Color(80, 200, 80));
+        setDefault(BOARD_FIELD_OF_FIRE_LONG_COLOR, new Color(60, 150, 60));
+        setDefault(BOARD_FIELD_OF_FIRE_EXTREME_COLOR, new Color(40, 100, 40));
+        setDefault(BOARD_UNIT_SELECTED_COLOR, DEFAULT_MAGENTA);
+        setDefault(BOARD_UNIT_VALID_COLOR, DEFAULT_CYAN);
+        setDefault(BOARD_UNIT_TEXT_COLOR, Color.white);
 
-        setDefault(BOARD_MOVE_FONT_TYPE, MMConstants.FONT_SANS_SERIF);
+        setDefault(BOARD_MOVE_FONT_TYPE, "SansSerif");
         setDefault(BOARD_MOVE_FONT_SIZE, 26);
         setDefault(BOARD_MOVE_FONT_STYLE, Font.BOLD);
         store.setDefault(BOARD_ATTACK_ARROW_TRANSPARENCY, 0x80);
@@ -429,8 +478,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(BOARD_TRANSLUCENT_HIDDEN_UNITS, true);
         setDefault(BOARD_TMM_PIP_MODE, 2); // show pips with colors based on move type
 
-        setDefault(UNIT_OVERVIEW_SELECTED_COLOR, DEFAULT_MAGENTA);
-        setDefault(UNIT_OVERVIEW_VALID_COLOR, DEFAULT_CYAN);
+        setDefault(UNIT_OVERVIEW_TEXT_SHADOW_COLOR, Color.black);
+        setDefault(UNIT_OVERVIEW_CONDITION_SHADOW_COLOR, Color.darkGray);
 
         setDefault(PLAYERS_REMAINING_TO_SHOW, 3);
         store.setDefault(BUTTONS_PER_ROW, 12);
@@ -448,6 +497,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(FOV_STRIPES, 35);
         store.setDefault(FOV_GRAYSCALE, false);
 
+        store.setDefault(HIGH_QUALITY_GRAPHICS, true);
         store.setDefault(AOHEXSHADOWS, false);
         store.setDefault(SHADOWMAP, true);
         store.setDefault(INCLINES, true);
@@ -607,6 +657,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(TOOLTIP_DISMISS_DELAY, -1);
         store.setDefault(TOOLTIP_DIST_SUPRESSION, BoardView.HEX_DIAG);
         store.setDefault(SHOW_WPS_IN_TT, true);
+        store.setDefault(SHOW_WPS_LOC_IN_TT, true);
         store.setDefault(SHOW_ARMOR_MINIVIS_TT, true);
         store.setDefault(SHOW_PILOT_PORTRAIT_TT, true);
 
@@ -671,6 +722,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public boolean getAOHexShadows() {
         return store.getBoolean(AOHEXSHADOWS);
     }
+
+    public boolean getHighQualityGraphics() { return store.getBoolean(HIGH_QUALITY_GRAPHICS); }
 
     public boolean getFloatingIso() {
         return store.getBoolean(FLOATINGISO);
@@ -1256,6 +1309,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(SHOW_WPS_IN_TT);
     }
 
+    public boolean getShowWpsLocinTT() {
+        return store.getBoolean(SHOW_WPS_LOC_IN_TT);
+    }
+
     public boolean getshowArmorMiniVisTT() {
         return store.getBoolean(SHOW_ARMOR_MINIVIS_TT);
     }
@@ -1419,6 +1476,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setAOHexShadows(boolean state) {
         store.setValue(AOHEXSHADOWS, state);
     }
+
+    public void setHighQualityGraphics(boolean state) { store.setValue(HIGH_QUALITY_GRAPHICS, state); }
 
     public void setFloatingIso(boolean state) {
         store.setValue(FLOATINGISO, state);
@@ -1999,6 +2058,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(SHOW_WPS_IN_TT, state);
     }
 
+    public void setShowWpsLocinTT(boolean state) {
+        store.setValue(SHOW_WPS_LOC_IN_TT, state);
+    }
+
     public void setshowArmorMiniVisTT(boolean state) {
         store.setValue(SHOW_ARMOR_MINIVIS_TT, state);
     }
@@ -2252,6 +2315,22 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(WARNING_COLOR, getColorString(color));
     }
 
+    public Color getCautionColor() {
+        return getColor(CAUTION_COLOR);
+    }
+
+    public void setCautionColor(Color color) {
+        store.setValue(CAUTION_COLOR, getColorString(color));
+    }
+
+    public Color getPrecautionColor() {
+        return getColor(PRECAUTION_COLOR);
+    }
+
+    public void setPrecautionColor(Color color) {
+        store.setValue(PRECAUTION_COLOR, getColorString(color));
+    }
+
     public boolean getMoveDefaultClimbMode() {
         return getBoolean(BOARD_MOVE_DEFAULT_CLIMB_MODE);
     }
@@ -2396,6 +2475,70 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(BOARD_MAPSHEET_COLOR, getColorString(color));
     }
 
+    public Color getFieldOfFireMinColor() {
+        return getColor(BOARD_FIELD_OF_FIRE_MIN_COLOR);
+    }
+
+    public void setFieldOfFireMinColor(Color color) {
+        store.setValue(BOARD_FIELD_OF_FIRE_MIN_COLOR, getColorString(color));
+    }
+
+    public Color getFieldOfFireShortColor() {
+        return getColor(BOARD_FIELD_OF_FIRE_SHORT_COLOR);
+    }
+
+    public void setFieldOfFireShortColor(Color color) {
+        store.setValue(BOARD_FIELD_OF_FIRE_SHORT_COLOR, getColorString(color));
+    }
+
+    public Color getFieldOfFireMediumColor() {
+        return getColor(BOARD_FIELD_OF_FIRE_MEDIUM_COLOR);
+    }
+
+    public void setBoardFieldOfFireMediumColor(Color color) {
+        store.setValue(BOARD_FIELD_OF_FIRE_MEDIUM_COLOR, getColorString(color));
+    }
+
+    public Color getFieldOfFireLongColor() {
+        return getColor(BOARD_FIELD_OF_FIRE_LONG_COLOR);
+    }
+
+    public void setFieldOfFireLongColor(Color color) {
+        store.setValue(BOARD_FIELD_OF_FIRE_LONG_COLOR, getColorString(color));
+    }
+
+    public Color getFieldOfFireExtremeColor() {
+        return getColor(BOARD_FIELD_OF_FIRE_EXTREME_COLOR);
+    }
+
+    public void setFieldOfFireExtremeColor(Color color) {
+        store.setValue(BOARD_FIELD_OF_FIRE_EXTREME_COLOR, getColorString(color));
+    }
+
+    public Color getUnitValidColor() {
+        return getColor(BOARD_UNIT_VALID_COLOR);
+    }
+
+    public void setUnitValidColor(Color color) {
+        store.setValue(BOARD_UNIT_VALID_COLOR, getColorString(color));
+    }
+
+    public Color getUnitSelectedColor() {
+        return getColor(BOARD_UNIT_SELECTED_COLOR);
+    }
+
+    public void setUnitSelectedColor(Color color) {
+        store.setValue(BOARD_UNIT_SELECTED_COLOR, getColorString(color));
+    }
+
+    public Color getUnitTextColor() {
+        return getColor(BOARD_UNIT_TEXT_COLOR);
+    }
+
+    public void setUnitOverviewTextColor(Color color) {
+        store.setValue(BOARD_UNIT_TEXT_COLOR, getColorString(color));
+    }
+
     public int getAttachArrowTransparency() {
         return getInt(BOARD_ATTACK_ARROW_TRANSPARENCY);
     }
@@ -2436,20 +2579,20 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(BOARD_TMM_PIP_MODE, i);
     }
 
-    public Color getUnitOverviewValidColor() {
-        return getColor(UNIT_OVERVIEW_VALID_COLOR);
+    public Color getUnitOverviewTextShadowColor() {
+        return getColor(UNIT_OVERVIEW_TEXT_SHADOW_COLOR);
     }
 
-    public void setUnitOverviewValidColor(Color color) {
-        store.setValue(UNIT_OVERVIEW_VALID_COLOR, getColorString(color));
+    public void setUnitOverviewTextShadowColor(Color color) {
+        store.setValue(UNIT_OVERVIEW_TEXT_SHADOW_COLOR, getColorString(color));
     }
 
-    public Color getUnitOverviewSelectedColor() {
-        return getColor(UNIT_OVERVIEW_SELECTED_COLOR);
+    public Color getUnitOverviewConditionShadowColor() {
+        return getColor(UNIT_OVERVIEW_CONDITION_SHADOW_COLOR);
     }
 
-    public void setUnitOverviewSelectedColor(Color color) {
-        store.setValue(UNIT_OVERVIEW_SELECTED_COLOR, getColorString(color));
+    public void setUnitOverviewConditionShadowColor(Color color) {
+        store.setValue(UNIT_OVERVIEW_CONDITION_SHADOW_COLOR, getColorString(color));
     }
 
     public int getButtonsPerRow() {
@@ -2556,6 +2699,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return getBoolean(PLANETARY_CONDITIONS_SHOW_INDICATORS);
     }
 
+    public int getPlanetaryConditionsBackgroundTransparency() {
+        return getInt(PLANETARY_CONDITIONS_BACKGROUND_TRANSPARENCY);
+    }
+
     public void setPlanetaryConditionsColorTitle(Color color) {
         store.setValue(PLANETARY_CONDITIONS_COLOR_TITLE, getColorString(color));
     }
@@ -2594,6 +2741,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setPlanetaryConditionsShowIndicators(Boolean state) {
         store.setValue(PLANETARY_CONDITIONS_SHOW_INDICATORS, state);
+    }
+
+    public void setPlanetaryConditionsBackgroundTransparency(int i) {
+        store.setValue(PLANETARY_CONDITIONS_BACKGROUND_TRANSPARENCY, i);
     }
 
     public void setUnitToolTipSeenByResolution(int i) {
@@ -2747,6 +2898,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         final String text = store.getString(name);
         final Color colour = parseRGB(text);
         return (colour == null) ? PlayerColour.parseFromString(text).getColour() : colour;
+    }
+
+    public void setColor(String name, Color c) {
+        store.setValue(name, getColorString(c));
     }
 
     protected String getColorString(Color colour) {

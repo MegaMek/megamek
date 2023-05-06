@@ -116,6 +116,12 @@ public final class Configuration {
     /** The default widgets directory name (under the images directory). */
     private static final String DEFAULT_DIR_NAME_WIDGETS = "widgets";
 
+    /** The default universe directory name (under the images directory). */
+    private static final String DEFAULT_DIR_NAME_IMG_UNIVERSE = "universe";
+
+    private Configuration() {
+    }
+
     // **************************************************************************
     // Static methods for accessing and modifying configuration data.
 
@@ -325,6 +331,11 @@ public final class Configuration {
      */
     public static File fluffImagesDir() {
         return new File(imagesDir(), DEFAULT_DIR_NAME_FLUFF_IMAGES);
+    }
+
+    /** @return {@link File} containing the path to the universe images directory (having e.g. era, faction images). */
+    public static File universeImagesDir() {
+        return new File(imagesDir(), DEFAULT_DIR_NAME_IMG_UNIVERSE);
     }
 
     /**

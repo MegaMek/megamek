@@ -19,8 +19,6 @@
 package megamek.common.loaders;
 
 import megamek.common.*;
-import org.apache.logging.log4j.core.config.Configurator;
-import org.apache.logging.log4j.Level;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
@@ -113,8 +111,6 @@ public class MtfFileTest {
         mount.setSize(varSize);
 
         MtfFile loader = toMtfFile(mech);
-        System.out.println(loader.getEntity().getCritical(Mech.LOC_LT, 0).getMount().getSize());
-        System.out.println(loader.getEntity().getCritical(Mech.LOC_LT, 0).getMount().getCriticals());
         CriticalSlot slot = loader.getEntity().getCritical(Mech.LOC_LT, 0);
 
         assertEquals(commo, slot.getMount().getType());

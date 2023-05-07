@@ -181,7 +181,7 @@ public class BoardUtilities {
         // Add the woods
         int count = mapSettings.getMinForestSpots();
         if (mapSettings.getMaxForestSpots() > 0) {
-            count += Compute.randomInt(mapSettings.getMaxForestSpots());
+            count += Compute.randomInt(mapSettings.getMaxForestSpots() + 1);
         }
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
@@ -193,7 +193,7 @@ public class BoardUtilities {
         // Add foliage (1 elevation high woods)
         count = mapSettings.getMinFoliageSpots();
         if (mapSettings.getMaxFoliageSpots() > 0) {
-            count += Compute.randomInt(mapSettings.getMaxFoliageSpots());
+            count += Compute.randomInt(mapSettings.getMaxFoliageSpots() + 1);
         }
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
@@ -205,7 +205,7 @@ public class BoardUtilities {
         // Add the rough
         count = mapSettings.getMinRoughSpots();
         if (mapSettings.getMaxRoughSpots() > 0) {
-            count += Compute.randomInt(mapSettings.getMaxRoughSpots());
+            count += Compute.randomInt(mapSettings.getMaxRoughSpots() + 1);
         }
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
@@ -217,7 +217,7 @@ public class BoardUtilities {
         // Add the sand
         count = mapSettings.getMinSandSpots();
         if (mapSettings.getMaxSandSpots() > 0) {
-            count += Compute.randomInt(mapSettings.getMaxSandSpots());
+            count += Compute.randomInt(mapSettings.getMaxSandSpots() + 1);
         }
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
@@ -229,7 +229,7 @@ public class BoardUtilities {
         // Add the snow
         count = mapSettings.getMinSnowSpots();
         if (mapSettings.getMaxSnowSpots() > 0) {
-            count += Compute.randomInt(mapSettings.getMaxSnowSpots());
+            count += Compute.randomInt(mapSettings.getMaxSnowSpots() + 1);
         }
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
@@ -241,7 +241,7 @@ public class BoardUtilities {
         // Add the planted field
         count = mapSettings.getMinPlantedFieldSpots();
         if (mapSettings.getMaxPlantedFieldSpots() > 0) {
-            count += Compute.randomInt(mapSettings.getMaxPlantedFieldSpots());
+            count += Compute.randomInt(mapSettings.getMaxPlantedFieldSpots() + 1);
         }
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
@@ -253,7 +253,7 @@ public class BoardUtilities {
         // Add the swamp
         count = mapSettings.getMinSwampSpots();
         if (mapSettings.getMaxSwampSpots() > 0) {
-            count += Compute.randomInt(mapSettings.getMaxSwampSpots());
+            count += Compute.randomInt(mapSettings.getMaxSwampSpots() + 1);
         }
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
@@ -265,7 +265,7 @@ public class BoardUtilities {
         // Add the Fortified hexes
         count = mapSettings.getMinFortifiedSpots();
         if (mapSettings.getMaxFortifiedSpots() > 0) {
-            count += Compute.randomInt(mapSettings.getMaxFortifiedSpots());
+            count += Compute.randomInt(mapSettings.getMaxFortifiedSpots() + 1);
         }
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
@@ -277,7 +277,7 @@ public class BoardUtilities {
         // Add the rubble
         count = mapSettings.getMinRubbleSpots();
         if (mapSettings.getMaxRubbleSpots() > 0) {
-            count += Compute.randomInt(mapSettings.getMaxRubbleSpots());
+            count += Compute.randomInt(mapSettings.getMaxRubbleSpots() + 1);
         }
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
@@ -289,7 +289,7 @@ public class BoardUtilities {
         // Add the water
         count = mapSettings.getMinWaterSpots();
         if (mapSettings.getMaxWaterSpots() > 0) {
-            count += Compute.randomInt(mapSettings.getMaxWaterSpots());
+            count += Compute.randomInt(mapSettings.getMaxWaterSpots() + 1);
         }
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
@@ -300,7 +300,7 @@ public class BoardUtilities {
         // Add the pavements
         count = mapSettings.getMinPavementSpots();
         if (mapSettings.getMaxPavementSpots() > 0) {
-            count += Compute.randomInt(mapSettings.getMaxPavementSpots());
+            count += Compute.randomInt(mapSettings.getMaxPavementSpots() + 1);
         }
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
@@ -311,7 +311,7 @@ public class BoardUtilities {
         // Add the ice
         count = mapSettings.getMinIceSpots();
         if (mapSettings.getMaxIceSpots() > 0) {
-            count += Compute.randomInt(mapSettings.getMaxIceSpots());
+            count += Compute.randomInt(mapSettings.getMaxIceSpots() + 1);
         }
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
@@ -411,7 +411,7 @@ public class BoardUtilities {
         Point p = new Point(Compute.randomInt(board.getWidth()), Compute.randomInt(board.getHeight()));
         int count = minHexes;
         if ((maxHexes - minHexes) > 0) {
-            count += Compute.randomInt(maxHexes - minHexes);
+            count += Compute.randomInt(maxHexes - minHexes + 1);
         }
         Hex field;
 
@@ -484,7 +484,7 @@ public class BoardUtilities {
         Point p = new Point(Compute.randomInt(board.getWidth()), Compute.randomInt(board.getHeight()));
         int count = minHexes;
         if ((maxHexes - minHexes) > 0) {
-            count += Compute.randomInt(maxHexes - minHexes);
+            count += Compute.randomInt(maxHexes - minHexes + 1);
         }
         Hex field;
 
@@ -566,7 +566,7 @@ public class BoardUtilities {
         // Calculate number of craters to generate.
         int numberCraters = minCraters;
         if (maxCraters > minCraters) {
-            numberCraters += Compute.randomInt(maxCraters - minCraters);
+            numberCraters += Compute.randomInt(maxCraters - minCraters + 1);
         }
 
         // Stay within the board boundaries.
@@ -582,7 +582,7 @@ public class BoardUtilities {
             Point center = new Point(Compute.randomInt(width), Compute.randomInt(height));
 
             // What is the diameter of this crater?
-            int radius = Compute.randomInt(maxRadius - minRadius) + minRadius;
+            int radius = Compute.randomInt(maxRadius - minRadius + 1) + minRadius;
 
             // Terrestrial crater depth to radius ratio is typically 1:5 to 1:7.
             // Hexes are 30m across and levels are 6m high.

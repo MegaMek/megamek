@@ -1893,6 +1893,25 @@ public class Game extends AbstractGame implements Serializable {
     }
 
     /**
+     * Get the entities for the player.
+     *
+     * @param player - the <code>Player</code> whose entities are required.
+     * @return a <code>Vector</code> of <code>Entity that have retreaded</code>s.
+     */
+    public ArrayList<Entity> getPlayerRetreatedEntities(Player player) {
+        ArrayList<Entity> output = new ArrayList<>();
+        for (Entity entity : vOutOfGame) {
+            if (player.equals(entity.getOwner()) &&
+                    ((entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_IN_RETREAT)
+                    || (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_CAPTURED)
+                    || (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_PUSHED))) {
+                output.add(entity);
+            }
+        }
+        return output;
+    }
+
+    /**
      * Determines if the indicated entity is stranded on a transport that can't move.
      * <p>
      * According to

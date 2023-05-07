@@ -59,6 +59,7 @@ VERSION HISTORY:
 + PR #4360: Low Quality Graphics options to address lag in game.
 + Issue #3813: Implement repeating TSEMPs
 + Issue #4370: Remove unnecessary log bloat for altitude checks in space
++ PR #4405 - Prevent error displaying hex tooltip in various situations
 
 0.49.12 (2023-03-04 2200 UTC)
 + PR #4062: OS Thunderbolt Weapons are now available for construction and use

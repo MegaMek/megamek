@@ -175,6 +175,8 @@ public class Report implements Serializable {
      */
     public transient int player = Player.PLAYER_NONE;
 
+    public static int HIDDEN_ENTITY_NUM = -1;
+
     /**
      * This hash table will store the tagData Vector indexes that are supposed
      * to be obscured before sending to clients. This only applies when the
@@ -250,6 +252,7 @@ public class Report implements Serializable {
         obscuredIndexes = (Hashtable<Integer, Boolean>) r.obscuredIndexes.clone();
         obscuredRecipients = (Vector<String>) r.obscuredRecipients.clone();
         tagCounter = r.tagCounter;
+        imageCode = r.imageCode;
     }
 
     /**
@@ -470,6 +473,10 @@ public class Report implements Serializable {
      */
     public void setShowImage(boolean showImage) {
         this.showImage = showImage;
+    }
+
+    public void obsureImg() {
+        imageCode = "<span id='" + HIDDEN_ENTITY_NUM +  "'></span>";
     }
 
     /**

@@ -13,7 +13,6 @@
  */
 package megamek.server;
 
-import com.thoughtworks.xstream.XStream;
 import megamek.MMConstants;
 import megamek.MegaMek;
 import megamek.client.bot.princess.BehaviorSettings;
@@ -3249,6 +3248,8 @@ public class GameManager implements IGameManager {
                 }
             }
         }
+
+        addNewLines();
 
         if (!abbreviatedReport) {
             // remaining deployments
@@ -28801,6 +28802,11 @@ public class GameManager implements IGameManager {
                 }
             }
         }
+
+        if (shouldObscure) {
+            copy.obsureImg();
+        }
+
         return copy;
     }
 

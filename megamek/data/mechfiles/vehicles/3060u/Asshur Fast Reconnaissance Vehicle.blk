@@ -16,9 +16,9 @@ Tank
 Asshur Fast Reconnaissance Vehicle
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 135

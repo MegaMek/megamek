@@ -16,9 +16,9 @@ Tank
 Kanga Medium Hovertank
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 1745

@@ -16,9 +16,9 @@ SupportTank
 Seahorse Cargo Sub
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 5011

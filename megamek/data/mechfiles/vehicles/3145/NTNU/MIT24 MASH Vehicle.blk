@@ -16,9 +16,9 @@ Tank
 MIT24 MASH Vehicle
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 6753

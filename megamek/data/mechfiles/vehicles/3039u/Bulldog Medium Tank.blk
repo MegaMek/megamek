@@ -16,9 +16,9 @@ Tank
 Bulldog Medium Tank
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 441

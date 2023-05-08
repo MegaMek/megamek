@@ -16,9 +16,9 @@ Tank
 Manticore II Heavy Tank
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 6601

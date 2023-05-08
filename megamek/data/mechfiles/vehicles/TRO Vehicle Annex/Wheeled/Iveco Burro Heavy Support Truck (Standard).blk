@@ -16,9 +16,9 @@ SupportTank
 Iveco Burro Heavy Support Truck
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 4381

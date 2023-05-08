@@ -12,9 +12,9 @@ Tank
 <Name>
 Gladius Medium Hover Tank
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 1214

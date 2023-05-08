@@ -16,9 +16,9 @@ Tank
 Engineering Vehicle
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 990

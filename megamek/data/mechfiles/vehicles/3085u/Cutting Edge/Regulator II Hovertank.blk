@@ -16,9 +16,9 @@ Tank
 Regulator II Hovertank
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 2679

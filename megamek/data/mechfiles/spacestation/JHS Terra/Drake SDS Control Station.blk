@@ -16,9 +16,9 @@ SpaceStation
 Drake SDS Control Station
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 4097

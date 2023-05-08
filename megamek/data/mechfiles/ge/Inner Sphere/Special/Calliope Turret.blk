@@ -22,9 +22,9 @@ GunEmplacement
 Calliope Turret
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <Year>
 3042

@@ -16,9 +16,9 @@ Tank
 Bulwark Assault Vehicle
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 6498

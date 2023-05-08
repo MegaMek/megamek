@@ -16,9 +16,9 @@ FixedWingSupport
 Boomerang Spotter Plane
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 3854

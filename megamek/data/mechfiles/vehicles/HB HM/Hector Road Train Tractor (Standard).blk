@@ -16,9 +16,9 @@ LargeSupportTank
 Hector Road Train Tractor
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 4285

@@ -16,9 +16,9 @@ SupportVTOL
 Blackstone Baronet Passenger VTOL
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 3832

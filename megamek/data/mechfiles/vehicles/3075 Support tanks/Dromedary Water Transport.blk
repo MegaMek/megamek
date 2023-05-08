@@ -16,9 +16,9 @@ LargeSupportTank
 Dromedary Water Transport
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 4099

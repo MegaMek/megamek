@@ -16,9 +16,9 @@ FixedWingSupport
 Vendetta Medium Fighter
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 5625

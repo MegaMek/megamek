@@ -44,7 +44,7 @@ public abstract class AbstractNagDialog extends AbstractButtonDialog {
         if (isShow()) {
             initialize();
         } else {
-            setResult(DialogResult.CONFIRMED);
+            setResult(DialogResult.CANCELLED);
         }
     }
 

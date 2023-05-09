@@ -467,6 +467,60 @@ public final class Player extends TurnOrdered {
                 .filter(entity -> !entity.isDestroyed() && !entity.isTrapped()).count());
     }
 
+    public int getUnitCount() {
+        return Math.toIntExact(game.getPlayerEntities(this, false).stream()
+                .filter(entity -> !entity.isDestroyed() && !entity.isTrapped() && !(entity instanceof EjectedCrew)).count());
+    }
+
+    public int getUnitDamageCount(int damageLevel) {
+        return Math.toIntExact(game.getPlayerEntities(this, false).stream()
+                .filter(entity -> !entity.isDestroyed() && !entity.isTrapped() && (entity.getDamageLevel() == damageLevel) && !(entity instanceof EjectedCrew)).count());
+    }
+
+    public int getUnitDestroyedCount() {
+        return Math.toIntExact(game.getOutOfGameEntitiesVector().stream()
+                .filter(entity -> this.equals(entity.getOwner()) && entity.isDestroyed() && !(entity instanceof EjectedCrew)).count());
+    }
+
+    public int getUnitCrewEjectedCount() {
+        return Math.toIntExact(game.getOutOfGameEntitiesVector().stream()
+                .filter(entity -> this.equals(entity.getOwner()) && entity.getCrew().isEjected() && !(entity instanceof EjectedCrew)).count());
+    }
+
+    public int getUnitCrewTrappedCount() {
+        return Math.toIntExact(game.getOutOfGameEntitiesVector().stream()
+                .filter(entity -> this.equals(entity.getOwner()) && entity.isDestroyed() && !entity.getCrew().isDead() && !entity.getCrew().isEjected() && !(entity instanceof EjectedCrew)).count());
+    }
+
+    public int getUnitCrewKilledCount() {
+        return Math.toIntExact(game.getOutOfGameEntitiesVector().stream()
+                .filter(entity -> this.equals(entity.getOwner()) && entity.getCrew().isDead() && !entity.getCrew().isEjected() && !(entity instanceof EjectedCrew)).count());
+    }
+
+    public int getEjectedCrewCount() {
+        return Math.toIntExact(game.getPlayerEntities(this, false).stream()
+                .filter(entity -> !entity.isDestroyed() && !entity.isTrapped() &&
+                        (((entity instanceof MechWarrior) && ((MechWarrior) entity).getPickedUpById() == Entity.NONE) ||
+                                ((entity instanceof EjectedCrew) && !(entity instanceof MechWarrior)))).count());
+    }
+
+    public int getEjectedCrewPickedUpByTeamCount() {
+        return Math.toIntExact(game.getPlayerEntities(this, false).stream()
+                .filter(entity -> !entity.isDestroyed() && !entity.isTrapped() &&
+                        ((entity instanceof MechWarrior) && ((MechWarrior) entity).getPickedUpById() != Entity.NONE && game.getEntity(((MechWarrior) entity).getPickedUpById()).getOwner().getTeam() == this.getTeam())).count());
+    }
+
+    public int getEjectedCrewPickedUpByEnemyTeamCount() {
+        return Math.toIntExact(game.getPlayerEntities(this, false).stream()
+                .filter(entity -> !entity.isDestroyed() && !entity.isTrapped() &&
+                        ((entity instanceof MechWarrior) && ((MechWarrior) entity).getPickedUpById() != Entity.NONE && game.getEntity(((MechWarrior) entity).getPickedUpById()).getOwner().getTeam() != this.getTeam())).count());
+    }
+
+    public int getEjectedCrewKilledCount() {
+        return Math.toIntExact(game.getOutOfGameEntitiesVector().stream()
+                .filter(entity -> entity.getOwner().equals(this) && entity.isDestroyed() && (entity instanceof EjectedCrew)).count());
+    }
+
     public int getInitialEntityCount() {
         return initialEntityCount;
     }
@@ -496,15 +550,23 @@ public final class Player extends TurnOrdered {
      */
     public int getFledBV() {
         //TODO: I'm not sure how squadrons are treated here - see getBV()
-        Enumeration<Entity> fledUnits = game.getRetreatedEntities();
-        int bv = 0;
-        while (fledUnits.hasMoreElements()) {
-            Entity entity = fledUnits.nextElement();
-            if (entity.getOwner().equals(this)) {
-                bv += entity.calculateBattleValue();
-            }
-        }
-        return bv;
+        return game.getPlayerRetreatedEntities(this).stream()
+                .filter(entity -> !entity.isDestroyed())
+                .mapToInt(Entity::calculateBattleValue).sum();
+    }
+
+    public int getFledUnitsCount() {
+        //TODO: I'm not sure how squadrons are treated here - see getBV()
+        return Math.toIntExact(game.getPlayerRetreatedEntities(this).stream()
+                .filter(entity -> !entity.isDestroyed() && !(entity instanceof EjectedCrew))
+                .mapToInt(Entity::calculateBattleValue).count());
+    }
+
+    public int getFledEjectedCrew() {
+        //TODO: I'm not sure how squadrons are treated here - see getBV()
+        return Math.toIntExact(game.getPlayerRetreatedEntities(this).stream()
+                .filter(entity -> !entity.isDestroyed() && (entity instanceof EjectedCrew))
+                .mapToInt(Entity::calculateBattleValue).count());
     }
 
     public int getInitialBV() {

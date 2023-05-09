@@ -43,6 +43,7 @@ import megamek.common.net.listeners.ConnectionListener;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
+import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.SerializationHelper;
@@ -50,10 +51,9 @@ import megamek.common.util.StringUtil;
 import megamek.server.SmokeCloud;
 import org.apache.logging.log4j.LogManager;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.RenderedImage;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.List;
 import java.util.*;
@@ -988,6 +988,12 @@ public class Client implements IClientCommandHandler {
         for (Entity e: newEntities) {
             cacheImgTag(e);
         }
+
+        if (GUIP.getMiniReportShowSprites() &&
+                game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) &&
+                imgCache != null && !imgCache.containsKey(Report.HIDDEN_ENTITY_NUM)) {
+            ImageUtil.createDoubleBlindHiddenImage(imgCache);
+        }
     }
 
     /**
@@ -1202,14 +1208,17 @@ public class Client implements IClientCommandHandler {
 
         Set<Integer> set = new HashSet<>();
         //find id stored in spans and extract it
-        Pattern p = Pattern.compile("<s(.*?)n>");
+        Pattern p = Pattern.compile("<span id=(.*?)span>");
         Matcher m = p.matcher(report.toString());
 
         // add all instances to a hashset to prevent duplicates
         while (m.find()) {
-            String cleanedText = m.group(1).replaceAll("\\D", "");
+            String cleanedText = m.group(1).replaceAll("[^\\d-]", "");
             if (!cleanedText.isBlank()) {
-                set.add(Integer.parseInt(cleanedText));
+                try {
+                    set.add(Integer.parseInt(cleanedText));
+                } catch (Exception ignored) {
+                }
             }
         }
 
@@ -1217,7 +1226,7 @@ public class Client implements IClientCommandHandler {
         // loop through the hashset of unique ids and replace the ids with img tags
         for (int i : set) {
             if (getCachedImgTag(i) != null) {
-                updatedReport = updatedReport.replace("<span id='" + i + "'></span>", getCachedImgTag(i));
+                updatedReport = updatedReport.replaceAll("<span id='" + i + "'></span>", getCachedImgTag(i));
             }
         }
         return updatedReport;
@@ -1251,19 +1260,10 @@ public class Client implements IClientCommandHandler {
 
         if (getTargetImage(entity) != null) {
             // convert image to base64, add to the <img> tag and store in cache
-            Image image = ImageUtil.getScaledImage(getTargetImage(entity), 56, 48);
-            try {
-                String base64Text;
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ImageIO.write((RenderedImage) image, "png", baos);
-                baos.flush();
-                base64Text = Base64.getEncoder().encodeToString(baos.toByteArray());
-                baos.close();
-                String img = "<img src='data:image/png;base64," + base64Text + "'>";
-                imgCache.put(entity.getId(), img);
-            } catch (final IOException ioe) {
-                throw new UncheckedIOException(ioe);
-            }
+            BufferedImage image = ImageUtil.getScaledImage(getTargetImage(entity), 56, 48);
+            String base64Text = ImageUtil.base64TextEncodeImage(image);
+            String img = "<img src='data:image/png;base64," + base64Text + "'>";
+            imgCache.put(entity.getId(), img);
         }
     }
 

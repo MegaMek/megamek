@@ -1738,14 +1738,15 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         if (mounted.isInBearingsOnlyMode()) {
             extremeR = RangeType.RANGE_BEARINGS_ONLY_OUT;
         }
+        // Show water ranges for submerged weapons and those that have only water ranges (torpedoes)
         if ((entity.getLocationStatus(mounted.getLocation()) == ILocationExposureStatus.WET)
-            || (longR == 0)) {
+                || ((longR == 0) && wtype.getWLongRange() > 0)) {
             shortR = wtype.getWShortRange();
             mediumR = wtype.getWMediumRange();
             longR = wtype.getWLongRange();
             extremeR = wtype.getWExtremeRange();
         } else if (wtype.hasFlag(WeaponType.F_PDBAY)) {
-        //Point Defense bays have a variable range, depending on the mode they're in
+            //Point Defense bays have a variable range, depending on the mode they're in
             if (wtype.hasModes() && mounted.curMode().equals("Point Defense")) {
                 shortR = 1;
                 wShortR.setText("1");

@@ -15,8 +15,8 @@ BattleArmor
 Salamander Battle Armor
 </Name>
 
-<Model>
-(Standard)(Sqd3)
+<model>
+(Sqd3)
 </Model>
 
 <mul id:>

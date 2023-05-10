@@ -15,8 +15,8 @@ BattleArmor
 Rottweiler Battle Armor
 </Name>
 
-<Model>
-(Standard)(Sqd5)
+<model>
+(Sqd5)
 </Model>
 
 <mul id:>

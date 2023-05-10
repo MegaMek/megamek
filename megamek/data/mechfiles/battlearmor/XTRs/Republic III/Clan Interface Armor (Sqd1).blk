@@ -16,8 +16,8 @@ BattleArmor
 Clan Interface Armor
 </Name>
 
-<Model>
-(Standard)(Sqd1)
+<model>
+(Sqd1)
 </Model>
 
 <mul id:>

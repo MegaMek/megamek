@@ -16,8 +16,8 @@ BattleArmor
 Golem Assault Armor
 </Name>
 
-<Model>
-(Standard)(Sqd4)
+<model>
+(Sqd4)
 </Model>
 
 <mul id:>

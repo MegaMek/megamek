@@ -4,6 +4,851 @@
 # campaign file. Each entry should be on a separate line and have the
 # format "oldname|currentname"
 
+
+#These are the units impact by the removal of the (Standard) designation that the MUL has discontinued. Done as part of 0.49.13 May 10/2023
+AC/2 Carrier (Standard)|AC/2 Carrier 
+Aeron Strike VTOL (Standard)|Aeron Strike VTOL
+Aeshna Heavy Drone Fighter (Standard)|Aeshna Heavy Drone Fighter 
+Angerona Scout Suit (Standard)(Sqd4)|Angerona Scout Suit (Sqd4)
+Anhur Transport (Standard)|Anhur Transport 
+Arbalest (Standard)|Arbalest 
+Arctic Wolf (Standard)|Arctic Wolf 
+Ares Medium Tank (Standard)|Ares Medium Tank 
+Asshur Artillery Spotter (Standard)|Asshur Artillery Spotter 
+Asshur Fast Reconnaissance Vehicle (Standard)|Asshur Fast Reconnaissance Vehicle 
+Athena Combat Vehicle (Standard)|Athena Combat Vehicle 
+Axel Heavy Tank IIC (Standard)|Axel Heavy Tank IIC 
+Baboon (Howler) (Standard)|Baboon (Howler) 
+Balac Strike VTOL (Standard)|Balac Strike VTOL 
+BattleMech Recovery Vehicle (Standard)|BattleMech Recovery Vehicle 
+Beagle Hover Scout (Standard)|Beagle Hover Scout 
+Bear Cub (Standard)|Bear Cub 
+Behemoth (Stone Rhino) (Standard)|Behemoth (Stone Rhino) 
+Behemoth Heavy Tank (Standard)|Behemoth Heavy Tank 
+Bellona Hover Tank (Standard)|Bellona Hover Tank 
+Blizzard Hover Transport (Standard)|Blizzard Hover Transport 
+Blood Reaper (Standard)|Blood Reaper 
+Boeing Jump Bomber (Standard)|Boeing Jump Bomber 
+Bruin (Standard)|Bruin 
+Brutus Assault Tank (Standard)|Brutus Assault Tank 
+Bulldog Medium Tank (Standard)|Bulldog Medium Tank 
+Burke Defense Tank (Standard)|Burke Defense Tank 
+Buster BC XV HaulerMech (Standard)|Buster BC XV HaulerMech 
+Canis (Standard)|Canis 
+Carbine CON-1 ConstructionMech (Standard)|Carbine CON-1 ConstructionMech 
+Carnivore Assault Tank (Standard)|Carnivore Assault Tank 
+Cavalry Attack Helicopter (Standard)|Cavalry Attack Helicopter 
+Centaur (Standard)|Centaur 
+Centipede Scout Car (Standard)|Centipede Scout Car 
+Chalchiuhtotolin Support Tank (Standard)|Chalchiuhtotolin Support Tank 
+Chaparral Missile Artillery Tank (Standard)|Chaparral Missile Artillery Tank 
+Chevalier Light Tank (Standard)|Chevalier Light Tank 
+Chippewa IIC (Standard)|Chippewa IIC 
+Clint IIC (Standard)|Clint IIC 
+Cobra Transport VTOL (Standard)|Cobra Transport VTOL 
+Commando IIC (Standard)|Commando IIC 
+Condor Heavy Hover Tank (Standard)|Condor Heavy Hover Tank 
+Corvis (Standard)|Corvis 
+Crimson Hawk (Standard)|Crimson Hawk 
+Crow Scout Helicopter (Standard)|Crow Scout Helicopter 
+Cygnus (Standard)|Cygnus 
+Cyrano Gunship (Standard)|Cyrano Gunship 
+Danai Support Vehicle (Standard)|Danai Support Vehicle 
+Danais (Standard)|Danais 
+Dark Crow (Standard)|Dark Crow 
+Darter Scout Car (Standard)|Darter Scout Car 
+Dasher II (Standard)|Dasher II 
+Demolisher II Heavy Tank (Standard)|Demolisher II Heavy Tank 
+Demon Medium Tank (Standard)|Demon Medium Tank 
+Demon Tank (Standard)|Demon Tank 
+Devastator Heavy Tank (Standard)|Devastator Heavy Tank 
+DI Morgan Assault Tank (Standard)|DI Morgan Assault Tank 
+Donar Assault Helicopter (Standard)|Donar Assault Helicopter 
+Drake Medium Strike Fighter (Standard)|Drake Medium Strike Fighter 
+Drillson Heavy Hover Tank (Standard)|Drillson Heavy Hover Tank 
+Eldingar Hover Sled (Standard)|Eldingar Hover Sled 
+Engineering Vehicle (Standard)|Engineering Vehicle 
+Fensalir Combat WiGE (Standard)|Fensalir Combat WiGE 
+Ferret Light Scout VTOL (Standard)|Ferret Light Scout VTOL 
+Fire Scorpion (Standard)|Fire Scorpion 
+Fox Armored Car (Standard)|Fox Armored Car 
+Fulcrum Heavy Hovertank (Standard)|Fulcrum Heavy Hovertank 
+Fury Command Tank (Standard)|Fury Command Tank 
+Gabriel Reconnaissance Hovercraft (Standard)|Gabriel Reconnaissance Hovercraft 
+Galahad (Glass Spider) (Standard)|Galahad (Glass Spider) 
+Giggins APC (Standard)|Giggins APC 
+Gladius Medium Hover Tank (Standard)|Gladius Medium Hover Tank 
+Gnome Battle Armor (Standard)(Sqd4)|Gnome Battle Armor (Sqd4)
+Goblin II Infantry Support Vehicle (Standard)|Goblin II Infantry Support Vehicle 
+Goblin Infantry Support Vehicle (Standard)|Goblin Infantry Support Vehicle 
+Goblin Medium Tank (Standard)|Goblin Medium Tank 
+Gorgon (Standard)|Gorgon 
+Goshawk (Vapor Eagle) (Standard)|Goshawk (Vapor Eagle) 
+Goshawk II (Standard)|Goshawk II 
+Gray Death Heavy Suit (Standard)(Sqd4)|Gray Death Heavy Suit (Sqd4)
+Gray Death Scout Suit (Standard)(Sqd4)|Gray Death Scout Suit (Sqd4)
+Great Wyrm (Standard)|Great Wyrm 
+Griffin IIC (Standard)|Griffin IIC 
+Grizzly (Standard)|Grizzly 
+Guardian Fighter (Standard)|Guardian Fighter 
+Guillotine IIC (Standard)|Guillotine IIC 
+Ha Otoko (Standard)|Ha Otoko 
+Hachiman Fire Support Tank (Standard)|Hachiman Fire Support Tank 
+Harasser Laser Platform (Standard)|Harasser Laser Platform 
+Harasser Missile Platform (Standard)|Harasser Missile Platform 
+Harpy (Standard)|Harpy 
+Hawk Moth Gunship (Standard)|Hawk Moth Gunship 
+Heavy BattleMech Recovery Vehicle (Standard)|Heavy BattleMech Recovery Vehicle 
+Heavy Hover APC (Standard)|Heavy Hover APC 
+Heavy LRM Carrier (Standard)|Heavy LRM Carrier 
+Heavy MML Carrier (Standard)|Heavy MML Carrier 
+Heavy Tracked APC (Standard)|Heavy Tracked APC 
+Heavy Wheeled APC (Standard)|Heavy Wheeled APC 
+Hellhound (Conjurer) (Standard)|Hellhound (Conjurer) 
+Hellstar (Standard)|Hellstar 
+Hetzer Wheeled Assault Gun (Standard)|Hetzer Wheeled Assault Gun 
+Highlander IIC (Standard)|Highlander IIC 
+Hiryo Armored Infantry Transport (Standard)|Hiryo Armored Infantry Transport 
+Hi-Scout Drone Carrier (Standard)|Hi-Scout Drone Carrier 
+Huitzilopochtli Assault Tank 'Huey' (Standard)|Huitzilopochtli Assault Tank 'Huey' 
+Hunchback IIC (Standard)|Hunchback IIC 
+Hunter Light Support Tank (Standard)|Hunter Light Support Tank 
+Hurricane Conventional Fighter (Standard)|Hurricane Conventional Fighter 
+Hydra (Standard)|Hydra 
+Icestorm (Standard)|Icestorm 
+Ignis Infantry Support Tank (Standard)|Ignis Infantry Support Tank 
+Indra Infantry Transport (Standard)|Indra Infantry Transport 
+Ironhold Assault Battle Armor (Standard)(Sqd4)|Ironhold Assault Battle Armor (Sqd4)
+Ishtar Heavy Fire Support Tank (Standard)|Ishtar Heavy Fire Support Tank 
+J. Edgar Light Hover Tank (Standard)|J. Edgar Light Hover Tank 
+J-27 Ordnance Transport (Standard)|J-27 Ordnance Transport 
+J-37 Ordnance Transport (Standard)|J-37 Ordnance Transport
+Jagdpanzer II (Standard)|Jagdpanzer II
+Jenner IIC (Standard)|Jenner IIC 
+JES I Tactical Missile Carrier (Standard)|JES I Tactical Missile Carrier 
+JES II Strategic Missile Carrier (Standard)|JES II Strategic Missile Carrier 
+Jupiter (Standard)|Jupiter 
+Kanga Medium Hovertank (Standard)|Kanga Medium Hovertank 
+Kanga-X Jump Tank (Standard)|Kanga-X Jump Tank 
+Karnov UR Gunship (Standard)|Karnov UR Gunship 
+Karnov UR Transport (Standard)|Karnov UR Transport 
+Kestrel VTOL (Standard)|Kestrel VTOL 
+Kinnol MBT (Standard)|Kinnol MBT 
+Kodiak (Standard)|Kodiak 
+Kraken (Bane) (Standard)|Kraken (Bane) 
+Ku Wheeled Assault Tank (Standard)|Ku Wheeled Assault Tank 
+Kuma (Standard)|Kuma 
+Laser Carrier (Standard)|Laser Carrier 
+Light SRM Carrier (Standard)|Light SRM Carrier 
+Light Thunderbolt Carrier (Standard)|Light Thunderbolt Carrier 
+Lightning Attack Hovercraft (Standard)|Lightning Attack Hovercraft 
+Locust IIC (Standard)|Locust IIC 
+LRM Carrier (Standard)|LRM Carrier 
+MASH Truck (Standard)|MASH Truck 
+Magi Infantry Support Vehicle (Standard)|Magi Infantry Support Vehicle 
+Mandrill (Standard)|Mandrill 
+Manticore Heavy Tank (Standard)|Manticore Heavy Tank 
+Mantis Light Attack VTOL (Standard)|Mantis Light Attack VTOL 
+Marauder IIC (Standard)|Marauder IIC 
+Marksman Artillery Vehicle (Standard)|Marksman Artillery Vehicle 
+Mars Assault Vehicle (Standard)|Mars Assault Vehicle 
+Marsden II MBT (Standard)|Marsden II MBT 
+Matador (Standard)|Matador 
+Maultier Hover APC (Standard)|Maultier Hover APC 
+Mauna Kea Command Vessel (Standard)|Mauna Kea Command Vessel 
+Maxim (I) Heavy Hover Transport (Standard)|Maxim (I) Heavy Hover Transport 
+Maxim Flanker (Standard)|Maxim Flanker 
+Maxim Heavy Hover Transport (Standard)|Maxim Heavy Hover Transport 
+Maxim Mk II Transport (Standard)|Maxim Mk II Transport 
+Mechbuster (Standard)|Mechbuster 
+Minotaur (Standard)|Minotaur 
+MIT23 MASH Vehicle (Standard)|MIT23 MASH Vehicle 
+Mithras Light Tank (Standard)|Mithras Light Tank 
+Mobile Headquarters (Standard)|Mobile Headquarters 
+Monitor Naval Vessel (Standard)|Monitor Naval Vessel 
+Morrigan (Standard)|Morrigan 
+MRM Carrier (Standard)|MRM Carrier 
+Myrmidon Medium Tank (Standard)|Myrmidon Medium Tank 
+Night Wolf (Standard)|Night Wolf 
+Nightshade ECM VTOL (Standard)|Nightshade ECM VTOL 
+Ocelot (Standard)|Ocelot 
+Odin Scout Tank (Standard)|Odin Scout Tank 
+Omen (Standard)|Omen 
+Onager (Standard)|Onager 
+Ontos Heavy Tank (Standard)|Ontos Heavy Tank 
+Orion IIC (Standard)|Orion IIC 
+Oro Heavy Tank (Standard)|Oro Heavy Tank 
+Pack Hunter (Standard)|Pack Hunter 
+Pack Hunter II (Standard)|Pack Hunter II 
+Padilla Heavy Artillery Tank (Standard)|Padilla Heavy Artillery Tank 
+Padilla Tube Artillery Tank (Standard)|Padilla Tube Artillery Tank 
+Palmoni Assault Infantry Fighting Vehicle (Standard)|Palmoni Assault Infantry Fighting Vehicle 
+Pandion Combat WiGE (Standard)|Pandion Combat WiGE 
+Parash (Standard)|Parash 
+Partisan Air Defense Tank (Standard)|Partisan Air Defense Tank 
+Partisan Heavy Tank (Standard)|Partisan Heavy Tank 
+Partisan Hull Defense (Standard)|Partisan Hull Defense 
+Patton Tank (Standard)|Patton Tank 
+Pegasus Scout Hover Tank (Standard)|Pegasus Scout Hover Tank 
+Peregrine (Horned Owl) (Standard)|Peregrine (Horned Owl) 
+Peregrine Attack VTOL (Standard)|Peregrine Attack VTOL 
+Phoenix Hawk IIC (Standard)|Phoenix Hawk IIC 
+Pike Support Vehicle (Standard)|Pike Support Vehicle 
+Pilum Heavy Tank (Standard)|Pilum Heavy Tank 
+Pinto Attack VTOL (Standard)|Pinto Attack VTOL 
+Piranha (Standard)|Piranha 
+Plainsman Medium Hovertank (Standard)|Plainsman Medium Hovertank 
+Planetlifter Air Transport (Standard)|Planetlifter Air Transport 
+Po Heavy Tank (Standard)|Po Heavy Tank 
+Po II Heavy Tank (Standard)|Po II Heavy Tank 
+Powerman SC XI LoaderMech (Standard)|Powerman SC XI LoaderMech 
+Predator (Standard)|Predator 
+Prowler Multi-Terrain Vehicle (Standard)|Prowler Multi-Terrain Vehicle 
+Ravager Assault Battle Armor (Standard)(Sqd4)|Ravager Assault Battle Armor (Sqd4)
+Regulator Hovertank (Standard)|Regulator Hovertank 
+Regulator II Hovertank (Standard)|Regulator II Hovertank 
+Rifleman IIC (Standard)|Rifleman IIC 
+Ripper Infantry Transport (Standard)|Ripper Infantry Transport 
+Roc (Standard)|Roc 
+Rommel Tank (Standard)|Rommel Tank 
+Ryoken II (Standard)|Ryoken II 
+Sabaku Kaze Heavy Scout Hover Tank (Standard)|Sabaku Kaze Heavy Scout Hover Tank 
+Saladin Assault Hover Tank (Standard)|Saladin Assault Hover Tank 
+Salamander Battle Armor (Standard)(Sqd4)|Salamander Battle Armor (Sqd4)
+Sand Devil Hover Tank (Standard)|Sand Devil Hover Tank 
+Saracen Medium Hover Tank (Standard)|Saracen Medium Hover Tank 
+Satyr (Standard)|Satyr 
+Savannah Master Hovercraft (Standard)|Savannah Master Hovercraft 
+Saxon APC (Standard)|Saxon APC 
+Scarab Medium Drone Fighter (Standard)|Scarab Medium Drone Fighter 
+Schrek AC Carrier (Standard)|Schrek AC Carrier 
+Schrek II-X PPC Carrier (Standard)|Schrek II-X PPC Carrier 
+Schrek PPC Carrier (Standard)|Schrek PPC Carrier 
+Scimitar Medium Hover Tank (Standard)|Scimitar Medium Hover Tank 
+Scorpion Light Tank (Standard)|Scorpion Light Tank 
+Sea Hunter Maritime Tank (Standard)|Sea Hunter Maritime Tank 
+Shadow Cat II (Standard)|Shadow Cat II 
+Shadow Hawk IIC (Standard)|Shadow Hawk IIC 
+Shamash Reconnaissance Vehicle (Standard)|Shamash Reconnaissance Vehicle 
+Siren (Standard)|Siren 
+Skulker Wheeled Scout Tank (Standard)|Skulker Wheeled Scout Tank 
+Sloth Battle Armor (Standard)(Sqd4)|Sloth Battle Armor (Sqd4)
+Snow Fox (Standard)|Snow Fox 
+Sphinx (Standard)|Sphinx 
+Sprint Scout Helicopter (Standard)|Sprint Scout Helicopter 
+SRM Carrier (Standard)|SRM Carrier 
+Stalking Spider (Standard)|Stalking Spider 
+Stoat Scout Car (Standard)|Stoat Scout Car 
+Striker Light Tank (Standard)|Striker Light Tank 
+SturmFeur 'Kalki' Cruise Missile Launcher (Standard)|SturmFeur 'Kalki' Cruise Missile Launcher 
+Sun Cobra (Standard)|Sun Cobra 
+Supernova (Standard)|Supernova 
+Svantovit Infantry Fighting Vehicle (Standard)|Svantovit Infantry Fighting Vehicle 
+Swift Wind Scout Car (Standard)|Swift Wind Scout Car 
+Sylph Battle Armor (Standard)(Sqd4)|Sylph Battle Armor (Sqd4)
+Tabanid Light Drone Fighter (Standard)|Tabanid Light Drone Fighter 
+Tamerlane Strike Sled (Standard)|Tamerlane Strike Sled 
+Thor Artillery Vehicle (Standard)|Thor Artillery Vehicle 
+Thresher (Standard)|Thresher 
+Thumper Artillery Vehicle (Standard)|Thumper Artillery Vehicle 
+Thunder Stallion (Standard)|Thunder Stallion 
+Tokugawa Heavy Tank (Standard)|Tokugawa Heavy Tank 
+Tonbo Superheavy Transport (Standard)|Tonbo Superheavy Transport 
+Trajan Assault Infantry Fighting Vehicle (Standard)|Trajan Assault Infantry Fighting Vehicle 
+Trireme Infantry Transport (Standard)|Trireme Infantry Transport 
+Tufana Hovercraft (Standard)|Tufana Hovercraft 
+Tundra Wolf (Standard)|Tundra Wolf 
+Turhan Urban Combat Vehicle (Standard)|Turhan Urban Combat Vehicle 
+Typhoon Urban Assault Vehicle (Standard)|Typhoon Urban Assault Vehicle 
+Undine Battle Armor (Standard)(Sqd4)|Undine Battle Armor (Sqd4)
+UrbanMech IIC (Standard)|UrbanMech IIC 
+Ursus (Standard)|Ursus 
+Ursus II (Standard)|Ursus II 
+Vedette Medium Tank (Standard)|Vedette Medium Tank 
+Viper (Black Python) (Standard)|Viper (Black Python) 
+Vixen (Incubus) (Standard)|Vixen (Incubus) 
+Wakazashi (Standard)|Wakazashi 
+Warg Assault Battle Armor (Standard)(Sqd4)|Warg Assault Battle Armor (Sqd4)
+Warhammer IIC (Standard)|Warhammer IIC 
+Winston Combat Vehicle (Standard)|Winston Combat Vehicle 
+Wyvern IIC (Standard)|Wyvern IIC 
+Yasha VTOL (Standard)|Yasha VTOL 
+Yellow Jacket Gunship (Standard)|Yellow Jacket Gunship 
+Zephyr Hovertank (Standard)|Zephyr Hovertank 
+Zephyros Infantry Support Vehicle (Standard)|Zephyros Infantry Support Vehicle 
+Zhukov Heavy Tank (Standard)|Zhukov Heavy Tank 
+Zorya Light Tank (Standard)|Zorya Light Tank 
+Adelante Passenger/Cargo Train (Standard)|Adelante Passenger/Cargo Train 
+Aerie PA(L) (Standard)(Sqd4)|Aerie PA(L) (Sqd4)
+Aesir Assault Dropship (Standard)|Aesir Assault Dropship 
+Afreet Medium Battle Armor (Standard)(Sqd4)|Afreet Medium Battle Armor (Sqd4)
+Agamemnon Heavy Cruiser (Standard)|Agamemnon Heavy Cruiser 
+Ailette Zero-G Engineering Exoskeleton (Standard)(Sqd4)|Ailette Zero-G Engineering Exoskeleton (Sqd4)
+Air Car (Standard)|Air Car 
+Aithon Assault Transport (Standard)|Aithon Assault Transport 
+Ammon (Standard)|Ammon 
+Apocalypse World Rover (Standard)|Apocalypse World Rover 
+Apple-Churchill Surveillance VTOL (Standard)|Apple-Churchill Surveillance VTOL 
+Aquarius Escort (Standard)|Aquarius Escort 
+Aqueduct Liquid Carrier (Standard)|Aqueduct Liquid Carrier 
+Aquilla Transport Jumpship (Standard)|Aquilla Transport Jumpship 
+Arcas (Standard)|Arcas 
+Arondight Pocket Warship (Standard)|Arondight Pocket Warship 
+Aston-Martin Fiver Roadster (Standard)|Aston-Martin Fiver Roadster 
+Aston-Martin Fiver Traveler (Standard)|Aston-Martin Fiver Traveler 
+Asura Medium Battle Armor (Standard)(Sqd4)|Asura Medium Battle Armor (Sqd4)
+Atlantia Luxury Yacht (Standard)|Atlantia Luxury Yacht 
+Aurora (Standard)|Aurora 
+Avalon Cruiser (Standard)|Avalon Cruiser 
+Bailey Armored Car (Standard)|Bailey Armored Car 
+Baleena Passenger Submarine (Standard)|Baleena Passenger Submarine 
+Barouche Military Transport (Standard)|Barouche Military Transport 
+Basilisk ProtoMech (Quad) (Standard)|Basilisk ProtoMech (Quad) 
+Basilisk (Standard)|Basilisk 
+Bayamo Hoverbike (Standard)|Bayamo Hoverbike 
+Beowulf IIC (Standard)|Beowulf IIC 
+BFFL 'Buffalo' (Standard)|BFFL 'Buffalo' 
+Blackstone Baronet Passenger VTOL (Standard)|Blackstone Baronet Passenger VTOL 
+Blackstone Pegasus Passenger VTOL (Standard)|Blackstone Pegasus Passenger VTOL 
+Blood Kite (Standard)|Blood Kite 
+Boggart Ultraheavy ProtoMech (Standard)|Boggart Ultraheavy ProtoMech 
+Bokkusu Support Trailer (Standard)|Bokkusu Support Trailer 
+Boomerang Spotter Plane (Standard)|Boomerang Spotter Plane 
+Bowman (Standard)|Bowman 
+Brunel Dump Truck (Standard)|Brunel Dump Truck 
+Bullet Suicide Drone (Standard)|Bullet Suicide Drone 
+Burrock (Standard)|Burrock 
+Carbine CON-7 ConstructionMech (Standard)|Carbine CON-7 ConstructionMech 
+Carbine CON-8 ConstructionMech (Standard)|Carbine CON-8 ConstructionMech 
+Cecerops (Standard)|Cecerops 
+C-85 Sprinter Delivery Vehicle (Standard)|C-85 Sprinter Delivery Vehicle 
+Chaeronea (Standard)|Chaeronea 
+Champion Hoversports Crimson Streak Hover Racer (Standard)|Champion Hoversports Crimson Streak Hover Racer 
+Champion Hoversports CS535 Hover Car (Standard)|Champion Hoversports CS535 Hover Car 
+Chariot High-Speed Medevac (Standard)|Chariot High-Speed Medevac 
+Chrysaor (Standard)|Chrysaor 
+Coanda Personal Sports Craft (Standard)|Coanda Personal Sports Craft 
+Colossus (Standard)|Colossus 
+Conqueror Battlecruiser Carrier (Standard)|Conqueror Battlecruiser Carrier 
+Cormorant Medium Cargo Craft (Standard)|Cormorant Medium Cargo Craft 
+Corona Heavy Battle Armor (Standard) (Sqd4)|Corona Heavy Battle Armor (Sqd4)
+Corx Mobile Tunnel Miner (Standard)|Corx Mobile Tunnel Miner 
+Croyle Systems Cortez Series N (Standard)|Croyle Systems Cortez Series N 
+Crucible Station (Standard)|Crucible Station 
+Dante Frigate (Standard)|Dante Frigate 
+Delphyne (Standard)|Delphyne 
+Deusenberg VIP Luxury Hovercar (Standard)|Deusenberg VIP Luxury Hovercar 
+Dictator (Standard)|Dictator 
+Dig King RCL-1 MiningMech (Standard)|Dig King RCL-1 MiningMech 
+Djinn Battle Armor (Standard) (Sqd4)|Djinn Battle Armor (Sqd4)
+Donovan-Miter Magellan Series Four (Standard)|Donovan-Miter Magellan Series Four 
+Dragau II Assault Interceptor (Standard)|Dragau II Assault Interceptor 
+Drake Medium Stealth Fighter (Standard)|Drake Medium Stealth Fighter 
+Drake SDS Control Station (Standard)|Drake SDS Control Station 
+Dromedary Water Transport (Standard)|Dromedary Water Transport 
+Du Shi Wang Battleship (Standard)|Du Shi Wang Battleship 
+Durandel-British 'Blue Nova' Convertible (Standard)|Durandel-British 'Blue Nova' Convertible 
+Eagle Frigate (Standard)|Eagle Frigate 
+Elemental II Battle Armor (Standard)(Sqd4)|Elemental II Battle Armor (Sqd4)
+Enyo Strike Tank (Standard)|Enyo Strike Tank 
+Erinyes (Standard)|Erinyes 
+Escape Pod (Standard)|Escape Pod 
+Estevez MBT (Standard)|Estevez MBT 
+Explorer JumpShip (Standard)|Explorer JumpShip 
+Feng Huang Cruiser (Standard)|Feng Huang Cruiser 
+Fortune Wheeled Assault Vehicle (Standard)|Fortune Wheeled Assault Vehicle 
+Freedom 900 Hover Jeep (Standard)|Freedom 900 Hover Jeep 
+Fulmar Patrol Craft (Standard)|Fulmar Patrol Craft 
+Galaport Ground Trailer (Standard)|Galaport Ground Trailer 
+Gallant Urban Assault Tank (Standard)|Gallant Urban Assault Tank 
+Garuda Heavy VTOL (Standard)|Garuda Heavy VTOL 
+Gladiator Exoskeleton (Standard) [AG](Sqd4)|Gladiator Exoskeleton [AG](Sqd4)
+Glaive Medium Tank (Standard)|Glaive Medium Tank 
+Glory Heavy Fire Support Vehicle (Standard)|Glory Heavy Fire Support Vehicle 
+Golem Assault Armor (Standard)(Sqd4)|Golem Assault Armor (Sqd4)
+Gray Death Strike Suit (Standard)(Sqd4)|Gray Death Strike Suit (Sqd4)
+Ground Car (Standard)|Ground Car 
+Gurteltier MBT (Standard)|Gurteltier MBT 
+Ha Otoko-HR (Standard)|Ha Otoko-HR 
+Harvester HVR-99 AgroMech (Standard)|Harvester HVR-99 AgroMech 
+Hauberk Battle Armor (Standard)(Sqd4)|Hauberk Battle Armor (Sqd4)
+Hauberk II Battle Armor (Standard)(Sqd4)|Hauberk II Battle Armor (Sqd4)
+Heavy Lifter HCL-1 CargoMech (Standard)|Heavy Lifter HCL-1 CargoMech 
+Heavy NLRM Carrier (Standard)|Heavy NLRM Carrier 
+Heavy Transport B1 (Standard)|Heavy Transport B1 
+HeavyHauler Exoskeleton (Standard)(Sqd4)|HeavyHauler Exoskeleton (Sqd4)
+Hector Road Train Tractor (Standard)|Hector Road Train Tractor 
+Hector Road Train Trailer Module (Standard)|Hector Road Train Trailer Module 
+Hellfire (Standard)|Hellfire 
+Hephaestus Jump Tank (Standard)|Hephaestus Jump Tank 
+Hipparch Cavalry Tank (Standard)|Hipparch Cavalry Tank 
+Hobgoblin Ultraheavy ProtoMech (Standard)|Hobgoblin Ultraheavy ProtoMech 
+Hong Lung Interdiction Station (Standard)|Hong Lung Interdiction Station 
+Hover Scout (Standard)|Hover Scout 
+Hydaspes (Standard)|Hydaspes 
+Ibex RV (Standard)|Ibex RV 
+Ina-du Swamp Skimmer (Standard)|Ina-du Swamp Skimmer 
+Inazuma Corvette (Standard)|Inazuma Corvette 
+Incubus II (Standard)|Incubus II 
+Interdictor Pocket Warship (Standard)|Interdictor Pocket Warship 
+Isegrim Assault DropShip (Standard)|Isegrim Assault DropShip 
+Issus (Standard)|Issus 
+Iveco Burro Heavy Support Truck (Standard)|Iveco Burro Heavy Support Truck 
+Iveco Burro II Super Heavy Cargo Truck (Standard)|Iveco Burro II Super Heavy Cargo Truck 
+Jeep (Standard)|Jeep 
+Jet Sled (Standard)|Jet Sled 
+Jetta Coruna 4X (Standard)|Jetta Coruna 4X 
+Jumbo (Standard)|Jumbo 
+Kalki Cruise Missile Launcher (Standard)|Kalki Cruise Missile Launcher 
+Knox Armored Car (Standard)|Knox Armored Car 
+Koi Heavy Transport (Standard)|Koi Heavy Transport 
+Kraken-XR (Standard)|Kraken-XR 
+Kressly Dillinger Police Vehicle (Standard)|Kressly Dillinger Police Vehicle 
+Krise PA(L) (Standard)(Sqd4)|Krise PA(L) (Sqd4)
+Lesseps Dump Truck (Standard)|Lesseps Dump Truck 
+Leviathan Heavy Transport (Standard)|Leviathan Heavy Transport 
+Leviathan II Battleship (Standard)|Leviathan II Battleship 
+Leviathan Jumpship (Standard)|Leviathan Jumpship 
+Lewis Skimmer Bus (Standard)|Lewis Skimmer Bus 
+Life Boat (Standard)|Life Boat 
+Lobo (Standard)|Lobo 
+Luciano White Wolverine (Standard)|Luciano White Wolverine 
+Lyonesse Escort (Standard)|Lyonesse Escort 
+Machina Domini Interface Armor (Standard)(Sqd1)|Machina Domini Interface Armor (Sqd1)
+Mad Cat III (Standard)|Mad Cat III 
+Mad Cat Mk II (Standard)|Mad Cat Mk II 
+Main Gauche Light Support Tank (Standard)|Main Gauche Light Support Tank 
+Manatee (Standard)|Manatee 
+Manta Fast Attack Submarine (Standard)|Manta Fast Attack Submarine 
+Minion Advanced Tactical Vehicle (Standard)|Minion Advanced Tactical Vehicle 
+Mjolnir Battlecruiser (Standard)|Mjolnir Battlecruiser 
+Model 96 'Elephant' (Standard)|Model 96 'Elephant' 
+Moray Heavy Attack Submarine (Standard)|Moray Heavy Attack Submarine 
+Morningstar City Command Vehicle (Standard)|Morningstar City Command Vehicle 
+Morrigu Fire Support Vehicle (Standard)|Morrigu Fire Support Vehicle 
+Mosquito Radar Plane IX (Standard)|Mosquito Radar Plane IX
+Motuo Che Shang No.2 (Standard)|Motuo Che Shang No.2 
+Mowang Courier (Standard)|Mowang Courier 
+Musketeer Hover Tank (Standard)|Musketeer Hover Tank 
+Nekohono'o (Standard)|Nekohono'o 
+Neptune Submarine (Standard)|Neptune Submarine 
+Nifty Transportable Field Repair Unit (Standard)|Nifty Transportable Field Repair Unit 
+Nike Air Defense Platform (Standard)|Nike Air Defense Platform 
+Nuberu Anti Aircraft Tank (Standard)|Nuberu Anti Aircraft Tank 
+'Oppie' (HMRV DeConAid Trailer) (Standard)|'Oppie' (HMRV DeConAid Trailer) 
+Orc (Standard)|Orc 
+Paramour Mobile Repair Vehicle (Standard)|Paramour Mobile Repair Vehicle 
+Patron LoaderMech (Standard)|Patron LoaderMech 
+Peacekeeper SWAT Carrier (Standard)|Peacekeeper SWAT Carrier 
+Pentagon (Standard)|Pentagon 
+Persepolis (Standard)|Persepolis 
+Bulldog Medium Truck (Standard)|Bulldog Medium Truck 
+Pit Bull Medium Truck (Standard)|Pit Bull Medium Truck 
+Pinion (Standard)|Pinion 
+Heavy Combat ATV (Standard)|Heavy Combat ATV 
+Pion-Laurier Cascatelle (Standard)|Pion-Laurier Cascatelle 
+Lama-Deux Firefighting VTOL (Standard)|Lama-Deux Firefighting VTOL 
+Planetlifter Tactical Support (Standard)|Planetlifter Tactical Support 
+Powerman SC XV HaulerMech (Standard)|Powerman SC XV HaulerMech 
+Powerman SC XVI HaulerMech (Standard)|Powerman SC XVI HaulerMech 
+Princess Luxury Liner (Standard)|Princess Luxury Liner 
+Procyon (Standard)|Procyon 
+Prometheus (Standard)|Prometheus 
+Prometheus Combat Support Bridgelayer (Standard)|Prometheus Combat Support Bridgelayer 
+Quetzalcoatl-Scout JumpShip (Standard)|Quetzalcoatl-Scout JumpShip 
+Quicksilver Mongoose Battleship (Standard)|Quicksilver Mongoose Battleship 
+Quicksilver Personal Sports Craft (Standard)|Quicksilver Personal Sports Craft 
+Rabid Coyote (Standard)|Rabid Coyote 
+Raptor RRV (Standard)|Raptor RRV 
+Resgate PA(L) (Standard)(Sqd4)|Resgate PA(L) (Sqd4)
+Rhino Battle Armor (Standard)(Sqd5)|Rhino Battle Armor (Sqd5)
+Rhino Fire Support Tank (Standard)|Rhino Fire Support Tank 
+Rogue Bear Heavy Battle Armor (Standard)(Sqd4)|Rogue Bear Heavy Battle Armor (Sqd4)
+Rottweiler Battle Armor (Standard)(Sqd4)|Rottweiler Battle Armor (Sqd4)
+Routemaster Hover Shuttle (Standard)|Routemaster Hover Shuttle 
+RRV 'Rock Rover' Half-Track (Standard)|RRV 'Rock Rover' Half-Track 
+Ryu Heavy Transport (Standard)|Ryu Heavy Transport 
+S 2772 Airplane (Standard)|S 2772 Airplane 
+Saturn Harvester (Standard)|Saturn Harvester 
+Saturnus V Grande Circuit Racer (Standard)|Saturnus V Grande Circuit Racer 
+ScavengerMech SC-V SalvageMech (Standard)|ScavengerMech SC-V SalvageMech 
+Scylla (Standard)|Scylla 
+Sea Skimmer Hydrofoil (Standard)|Sea Skimmer Hydrofoil 
+Seabuster Strike Fighter (Standard)|Seabuster Strike Fighter 
+Seahorse Cargo Sub (Standard)|Seahorse Cargo Sub 
+Se'irim Medium Battle Armor (Standard)(Sqd4)|Se'irim Medium Battle Armor (Sqd4)
+Shedu Assault Battle Armor (Standard)(Sqd4)|Shedu Assault Battle Armor (Sqd4)
+Sherpa Armored Truck (Standard)|Sherpa Armored Truck 
+Shoden Assault Vehicle (Standard)|Shoden Assault Vehicle 
+Silverback Coastal Cutter (Standard)|Silverback Coastal Cutter 
+Silverfin Coastal Cutter (Standard)|Silverfin Coastal Cutter 
+Simca Ambulance (Standard)|Simca Ambulance 
+Skoda 'Growler' Service Utility Truck (Standard)|Skoda 'Growler' Service Utility Truck 
+Skulker Wheeled Scout Tank Mk II (Standard)|Skulker Wheeled Scout Tank Mk II 
+Sky Eye News Helicopter (Standard)|Sky Eye News Helicopter 
+Slipper Hovercar LX-Series (Standard)|Slipper Hovercar LX-Series 
+Snowden Mining Station (Standard)|Snowden Mining Station 
+SOAR (Standard)|SOAR 
+Sokar Urban Combat Unit (Standard)|Sokar Urban Combat Unit 
+Solitaire (Standard)|Solitaire 
+Speeder (Standard)|Speeder 
+Spirit (Standard)|Spirit 
+Sprite Ultraheavy ProtoMech (Standard)|Sprite Ultraheavy ProtoMech 
+Stinger IIC (Standard)|Stinger IIC 
+Stork Light Refueling Craft (Standard)|Stork Light Refueling Craft 
+Stygian Strike Tank (Standard)|Stygian Strike Tank 
+Svartalfa (Standard)|Svartalfa 
+Taihou Assault Dropship (Standard)|Taihou Assault Dropship 
+Tatsumaki Destroyer (Standard)|Tatsumaki Destroyer 
+Teppo Artillery Vehicle (Standard)|Teppo Artillery Vehicle 
+Thera Carrier (Standard)|Thera Carrier 
+Thunderbolt IIC (Standard)|Thunderbolt IIC 
+Tiamat Pocket Warship (Standard)|Tiamat Pocket Warship 
+Triton (Standard)|Triton 
+Tyr Infantry Support Tank (Standard)|Tyr Infantry Support Tank 
+Tyre (Standard)|Tyre 
+Uni ATAE-70 CargoMech (Standard)|Uni ATAE-70 CargoMech 
+Vampire (Standard)|Vampire 
+Vampyr SC-V-1 SalvageMech (Standard)|Vampyr SC-V-1 SalvageMech 
+Vanir Assault Dropship (Standard)|Vanir Assault Dropship 
+Vidar Heavy Defense Tank (Standard)|Vidar Heavy Defense Tank 
+Void Medium Battle Armor (Standard)(Sqd4)|Void Medium Battle Armor (Sqd4)
+Wayland Mobile Base (Standard)|Wayland Mobile Base 
+Wheeled Scout (Standard)|Wheeled Scout 
+White Tip Submarine (Standard)|White Tip Submarine 
+Whitestreak Jetski (Standard)|Whitestreak Jetski 
+Whitestreak Speedboat (Standard)|Whitestreak Speedboat 
+Xerxes (Standard)|Xerxes 
+Zanadu Air Bus (Standard)|Zanadu Air Bus 
+Zechetinu Corvette (Standard)|Zechetinu Corvette 
+Zechetinu II Corvette (Standard)|Zechetinu II Corvette 
+Buffel Engineering Support Vehicle VII (Standard)|Buffel Engineering Support Vehicle VII 
+Buffel Engineering Support Vehicle VIII (Standard)|Buffel Engineering Support Vehicle VIII 
+Dreadnought Mk II Land Train (Standard)|Dreadnought Mk II Land Train 
+Strike Falcon Attack VTOL (Standard)|Strike Falcon Attack VTOL 
+Randolph Support Vehicle (Standard)|Randolph Support Vehicle 
+Mosquito Light Fighter (Standard)|Mosquito Light Fighter 
+Black Eagle (Standard)|Black Eagle 
+Vampire II (Standard)|Vampire II 
+Carter Medical Emergency Response Vehicle (Standard)|Carter Medical Emergency Response Vehicle 
+Caravan Heavy Transport (Standard)|Caravan Heavy Transport 
+Vendetta Medium Fighter (Standard)|Vendetta Medium Fighter 
+Liberty Jumpship (Standard)|Liberty Jumpship 
+Buffalo Drone Bomb (Standard)|Buffalo Drone Bomb 
+Soarece Superheavy MBT (Standard)|Soarece Superheavy MBT 
+Tsuru VIP Aircraft (Standard)|Tsuru VIP Aircraft 
+Shackleton AESV (Standard)|Shackleton AESV 
+Bug-Eye Surveillance Ship (Standard)|Bug-Eye Surveillance Ship 
+Faslane Yardship (Standard)|Faslane Yardship 
+Ostscout IIC (Standard)|Ostscout IIC 
+Buraq Fast Battle Armor (Standard)(Sqd4)|Buraq Fast Battle Armor (Sqd4)
+Wraith Battle Armor (Standard)(Sqd4)|Wraith Battle Armor (Sqd4)
+Nacon Armored Scout (Standard)|Nacon Armored Scout 
+Anat APC (Standard)|Anat APC 
+Skadi Swift Attack VTOL (Standard)|Skadi Swift Attack VTOL 
+Skanda Light Tank (Standard)|Skanda Light Tank 
+Hadur Fast Support Vehicle (Standard)|Hadur Fast Support Vehicle 
+Aesir Medium AA Vehicle (Standard)|Aesir Medium AA Vehicle 
+Gurzil Support Tank (Standard)|Gurzil Support Tank 
+Arion (Standard)|Arion 
+Cyllaros (Standard)|Cyllaros 
+Harpagos (Standard)|Harpagos 
+Eyrie (Standard)|Eyrie 
+Gyrfalcon (Standard)|Gyrfalcon 
+Shrike (Standard)|Shrike 
+Kodiak II (Standard)|Kodiak II 
+PAB-28 Sniper Suit (Standard)(Sqd4)|PAB-28 Sniper Suit (Sqd4)
+Sea Fox Amphibious Armor (Standard)(Sqd4)|Sea Fox Amphibious Armor (Sqd4)
+Fusilier Battle Armor (Standard)(Sqd4)|Fusilier Battle Armor (Sqd4)
+Kruger Combat Car (Standard)|Kruger Combat Car 
+Marten Scout VTOL (Standard)|Marten Scout VTOL 
+JI2A1 Attack APC (Standard)|JI2A1 Attack APC 
+Hasek Mechanized Combat Vehicle (Standard)|Hasek Mechanized Combat Vehicle 
+Sortek Assault Craft (Standard)|Sortek Assault Craft 
+Hanse MBT (Standard)|Hanse MBT 
+Sniper Artillery (Standard)|Sniper Artillery 
+Paladin Defense System (Standard)|Paladin Defense System 
+Destrier Siege Vehicle (Standard)|Destrier Siege Vehicle 
+Ballista Artillery Trailer (Standard)|Ballista Artillery Trailer 
+Kishi Ceremonial Armor (Standard)(Sqd4)|Kishi Ceremonial Armor (Sqd4)
+Zou Heavy Battle Armor (Standard)(Sqd4)|Zou Heavy Battle Armor (Sqd4)
+Saladin Mk II HCV (Standard)|Saladin Mk II HCV 
+Saracen Mk II HCV (Standard)|Saracen Mk II HCV 
+Scimitar Mk II HCV (Standard)|Scimitar Mk II HCV 
+Shillelagh Missile Tank (Standard)|Shillelagh Missile Tank 
+Cizin Hover Tank (Standard)|Cizin Hover Tank 
+Kamakiri Attack VTOL (Standard)|Kamakiri Attack VTOL 
+Sekhmet Assault Vehicle (Standard)|Sekhmet Assault Vehicle 
+Mamono IFV (Standard)|Mamono IFV 
+SM2 Heavy Artillery Vehicle (Standard)|SM2 Heavy Artillery Vehicle 
+Oo-Suzumebachi (Standard)|Oo-Suzumebachi 
+Luduan Scout Vehicle (Standard)|Luduan Scout Vehicle 
+Nisos Attack WIGE (Standard)|Nisos Attack WIGE 
+Shun Transport VTOL (Standard)|Shun Transport VTOL 
+Predator Tank Destroyer (Standard)|Predator Tank Destroyer 
+Sheriff Infantry Support Tank (Standard)|Sheriff Infantry Support Tank 
+Zahn Heavy Transport (Standard)|Zahn Heavy Transport 
+Pixiu Heavy Tank (Standard)|Pixiu Heavy Tank 
+Arrow IV Assault Vehicle (Standard)|Arrow IV Assault Vehicle 
+Behemoth II Heavy Tank (Standard)|Behemoth II Heavy Tank 
+Saroyan Jump Bomber (Standard)|Saroyan Jump Bomber 
+Zhen Niao (Standard)|Zhen Niao 
+Ogre Battle Armor (Standard)(Sqd4)|Ogre Battle Armor (Sqd4)
+Thang-Ta APC (Standard)|Thang-Ta APC 
+Red Kite Attack VTOL (Standard)|Red Kite Attack VTOL 
+Partisan AA Vehicle (Standard)|Partisan AA Vehicle 
+Bardiche Heavy Strike Tank (Standard)|Bardiche Heavy Strike Tank 
+Bulwark Assault Vehicle (Standard)|Bulwark Assault Vehicle 
+Caerleon (Standard)|Caerleon 
+Seleucus Infantry Transport (Standard)|Seleucus Infantry Transport 
+Gorgon Carrier (Standard)|Gorgon Carrier 
+Spectre Stealth Battle Armor (Standard)(Sqd4)|Spectre Stealth Battle Armor (Sqd4)
+Marauder Battle Armor (Standard)(Sqd4)|Marauder Battle Armor (Sqd4)
+Gossamer VTOL (Standard)|Gossamer VTOL 
+Garrot Superheavy Transport (Standard)|Garrot Superheavy Transport 
+Lamprey Transport Helicopter (Standard)|Lamprey Transport Helicopter 
+Kite Reconnaissance Vehicle (Standard)|Kite Reconnaissance Vehicle 
+Cardinal Transport (Standard)|Cardinal Transport 
+Testudo Siege Tank (Standard)|Testudo Siege Tank 
+Bishop Transport VTOL (Standard)|Bishop Transport VTOL 
+Savior Repair Vehicle (Standard)|Savior Repair Vehicle 
+Koshi (Standard) |Koshi (Standard) 
+Koshi (Standard) 2|Koshi (Standard) 2
+Koshi (Standard) 3|Koshi (Standard) 3
+Tiburon (Standard)|Tiburon 
+Stalking Spider II (Standard)|Stalking Spider II 
+Black Hawk (Standard) |Black Hawk (Standard) 
+Black Hawk (Standard) 2|Black Hawk (Standard) 2
+Black Hawk (Standard) 3|Black Hawk (Standard) 3
+Jade Hawk (Standard)|Jade Hawk 
+Mad Cat Mk IV (Savage Wolf) PR (Standard)|Mad Cat Mk IV (Savage Wolf) PR
+Hippogriff (Standard)|Hippogriff 
+Condottiere Assault Craft (Standard)|Condottiere Assault Craft 
+NL-45 Gunboat (Standard)|NL-45 Gunboat 
+Nagasawa (Standard)|Nagasawa 
+Cuchulainn Support Armor (Standard) (Sqd4)|Cuchulainn Support Armor (Sqd4)
+Winterhawk APC (Standard)|Winterhawk APC 
+DI Multipurpose VTOL (Standard)|DI Multipurpose VTOL 
+Swallow Attack WIGE (Standard)|Swallow Attack WIGE 
+Schildkrote Line Tank (Standard)|Schildkrote Line Tank 
+Manticore II Heavy Tank (Standard)|Manticore II Heavy Tank 
+DI Schmitt Tank (Standard)|DI Schmitt Tank 
+Kelswa Assault Tank (Standard)|Kelswa Assault Tank 
+Jaguar (Standard)|Jaguar 
+Viking IIC (Standard)|Viking IIC 
+Wurger Assault Craft (Standard)|Wurger Assault Craft 
+Trutzburg (Standard)|Trutzburg 
+Centaur Battle Armor (Standard)(Sqd4)|Centaur Battle Armor (Sqd4)
+Taranis Battle Armor (Standard)(Sqd4)|Taranis Battle Armor (Sqd4)
+Hawk Moth II Gunship (Standard)|Hawk Moth II Gunship 
+Shandra Advanced Scout Vehicle (Standard)|Shandra Advanced Scout Vehicle 
+Crane Heavy Transport (Standard)|Crane Heavy Transport 
+MHI Amphibious APC (Standard)|MHI Amphibious APC 
+JES III Missile Carrier (Standard)|JES III Missile Carrier 
+MHI Defense AA Tank (Standard)|MHI Defense AA Tank 
+Duat Military Transport (Standard)|Duat Military Transport 
+MIT24 MASH Vehicle (Standard)|MIT24 MASH Vehicle 
+Vector Combat Support VTOL (Standard)|Vector Combat Support VTOL 
+Vali Artillery Vehicle (Standard)|Vali Artillery Vehicle 
+Ballista Self-Propelled Artillery Tank (Standard)|Ballista Self-Propelled Artillery Tank 
+Pollux ADA Heavy Tank (Standard)|Pollux ADA Heavy Tank 
+Stefan Amaris Battleship (Standard)|Stefan Amaris Battleship 
+Mortar Carrier (Standard)|Mortar Carrier 
+Cave Lion (Standard)|Cave Lion 
+Praetorian Mobile Strategic Command HQ (Standard)|Praetorian Mobile Strategic Command HQ 
+Tribune Mobile Tactical Command HQ (Standard)|Tribune Mobile Tactical Command HQ 
+'Oppie' (HMRV Salvage Bed Trailer) (Standard)|'Oppie' (HMRV Salvage Bed Trailer) 
+Polaris (Standard)|Polaris 
+Uni ATAE-70 MilitiaMech (Standard)|Uni ATAE-70 MilitiaMech 
+Soyal Heavy Cruiser (Standard)|Soyal Heavy Cruiser 
+Congress D Frigate (Standard)|Congress D Frigate 
+Defender Battlecruiser (Standard)|Defender Battlecruiser 
+Cruiser (Standard)|Cruiser 
+Carbine CON-8H HaulerMech (Standard)|Carbine CON-8H HaulerMech 
+Carbine CON-9 ConstructionMech (Standard)|Carbine CON-9 ConstructionMech 
+Peacemaker PM-6 PoliceMech (Standard)|Peacemaker PM-6 PoliceMech 
+ScavengerMech SC-V-M MilitiaMech (Standard)|ScavengerMech SC-V-M MilitiaMech 
+Uni ATAE-70T CargoMech (Standard)|Uni ATAE-70T CargoMech 
+Grommet D90 MilitiaMech (Standard)|Grommet D90 MilitiaMech 
+Chi-Ha Infantry Combat Vehicle (Standard)|Chi-Ha Infantry Combat Vehicle 
+Cobra VTOL Transport (Standard)|Cobra VTOL Transport 
+Sturmblitz Assault Gun (Standard)|Sturmblitz Assault Gun 
+Mustang Fighter (Standard)|Mustang Fighter 
+Gladiator Exoskeleton (Standard) [BC/ID](Sqd4)|Gladiator Exoskeleton [BC/ID](Sqd4)
+Buster BC XXI HaulerMech (Standard)|Buster BC XXI HaulerMech 
+Quaestor Mobile Tactical Command HQ (Standard)|Quaestor Mobile Tactical Command HQ 
+Strix Stealth VTOL (Standard)|Strix Stealth VTOL 
+Diggs Drone Control Tank (Standard)|Diggs Drone Control Tank 
+Condor Multi-Purpose Tank (Standard)|Condor Multi-Purpose Tank 
+Hexareme HQ Hovercraft (Standard)|Hexareme HQ Hovercraft 
+Surat (Gray Death) Solahma Suit (Standard)(Sqd4)|Surat (Gray Death) Solahma Suit (Sqd4)
+Castrum Pocket WarShip (Standard)|Castrum Pocket WarShip 
+Burke II Superheavy Tank (Standard)|Burke II Superheavy Tank 
+Prairie Schooner Land Train (Standard)|Prairie Schooner Land Train 
+Prairie Schooner Module (Standard)|Prairie Schooner Module 
+Thunderbird II Battle Armor (Standard)(Sqd4)|Thunderbird II Battle Armor (Sqd4)
+Padilla Anti-Missile Tank (Standard)|Padilla Anti-Missile Tank 
+Clan Interface Armor (Standard)(Sqd1)|Clan Interface Armor (Sqd1)
+Aegis Point Defense Suit (Standard)(Sqd4)|Aegis Point Defense Suit (Sqd4)
+Leviathan III Battleship (Standard)|Leviathan III Battleship 
+Pollux II ADA Heavy Tank (Standard)|Pollux II ADA Heavy Tank 
+Dunning Mobile Tactical Command Post (Standard)|Dunning Mobile Tactical Command Post 
+Asher Hover Scout (Standard)|Asher Hover Scout 
+RR-3 Recovery Vehicle (Standard)|RR-3 Recovery Vehicle 
+UTR-588 Recovery Vehicle (Standard)|UTR-588 Recovery Vehicle 
+Reaper Self-Propelled Artillery (Standard)|Reaper Self-Propelled Artillery 
+Apostle Self-Propelled Artillery (Standard)|Apostle Self-Propelled Artillery 
+Saturn Patrol Ship (Standard)|Saturn Patrol Ship 
+Dominator (Standard)|Dominator 
+Reconquista (Standard)|Reconquista 
+Thresher Mk II (Standard)|Thresher Mk II 
+Hammerhead (Standard)|Hammerhead 
+Devil (Standard)|Devil 
+Drift Shag (Standard)|Drift Shag 
+Fox (Standard)|Fox 
+Sleipnir APC Tank (Standard)|Sleipnir APC Tank 
+Vargr APC Tank (Standard)|Vargr APC Tank 
+Naja (Standard)|Naja 
+Outrider (Standard)|Outrider 
+Vision Quest (Standard)|Vision Quest 
+Minsk (Standard)|Minsk 
+Masauwu (Standard)|Masauwu 
+Pulverizer (Standard)|Pulverizer 
+Storm Giant (Standard)|Storm Giant 
+Pella (Standard)|Pella 
+Water Elemental Mining Suit (Standard)(Sqd4)|Water Elemental Mining Suit (Sqd4)
+Redback (Standard)|Redback 
+TinStar BattleArmor (Standard)(Sqd4)|TinStar BattleArmor (Sqd4)
+Crucible (Standard)|Crucible 
+Dragonstar Passenger Transport (Standard)|Dragonstar Passenger Transport 
+Hoshiryokou (Standard)|Hoshiryokou 
+Obuzaabaa Tactical Vehicle (Standard)|Obuzaabaa Tactical Vehicle 
+Sasayaku Control Transport (Standard)|Sasayaku Control Transport 
+White Raven (Standard)|White Raven 
+Cazador (Standard)|Cazador 
+Tolva (Standard)|Tolva 
+Rhino (Standard)|Rhino 
+Desert Scorpion Light Tank (Standard)|Desert Scorpion Light Tank 
+Firestorm (Standard)|Firestorm 
+Planetlifter Support Aircraft (Standard)|Planetlifter Support Aircraft 
+Amarok (Standard)|Amarok 
+Kontio (Standard)|Kontio 
+Field Gun Infantry Platoon (AC/10) (Standard)|Field Gun Infantry Platoon (AC/10) 
+Star Python (Standard)|Star Python 
+Angerona Scout Suit (Standard)(Sqd5)|Angerona Scout Suit (Sqd5)
+Gnome Battle Armor (Standard)(Sqd5)|Gnome Battle Armor (Sqd5)
+Gray Death Heavy Suit (Standard)(Sqd5)|Gray Death Heavy Suit (Sqd5)
+Gray Death Scout Suit (Standard)(Sqd5)|Gray Death Scout Suit (Sqd5)
+Ironhold Assault Battle Armor (Standard)(Sqd5)|Ironhold Assault Battle Armor (Sqd5)
+Ravager Assault Battle Armor (Standard)(Sqd5)|Ravager Assault Battle Armor (Sqd5)
+Salamander Battle Armor (Standard)(Sqd5)|Salamander Battle Armor (Sqd5)
+Sloth Battle Armor (Standard)(Sqd5)|Sloth Battle Armor (Sqd5)
+Sylph Battle Armor (Standard)(Sqd5)|Sylph Battle Armor (Sqd5)
+Undine Battle Armor (Standard)(Sqd5)|Undine Battle Armor (Sqd5)
+Warg Assault Battle Armor (Standard)(Sqd5)|Warg Assault Battle Armor (Sqd5)
+Aerie PA(L) (Standard)(Sqd5)|Aerie PA(L) (Sqd5)
+Afreet Medium Battle Armor (Standard)(Sqd5)|Afreet Medium Battle Armor (Sqd5)
+Ailette Zero-G Engineering Exoskeleton (Standard)(Sqd5)|Ailette Zero-G Engineering Exoskeleton (Sqd5)
+Asura Medium Battle Armor (Standard)(Sqd5)|Asura Medium Battle Armor (Sqd5)
+Corona Heavy Battle Armor (Standard) (Sqd5)|Corona Heavy Battle Armor (Sqd5)
+Djinn Battle Armor (Standard) (Sqd5)|Djinn Battle Armor (Sqd5)
+Elemental II Battle Armor (Standard)(Sqd5)|Elemental II Battle Armor (Sqd5)
+Gladiator Exoskeleton (Standard) [AG](Sqd5)|Gladiator Exoskeleton [AG](Sqd5)
+Golem Assault Armor (Standard)(Sqd5)|Golem Assault Armor (Sqd5)
+Gray Death Strike Suit (Standard)(Sqd5)|Gray Death Strike Suit (Sqd5)
+Hauberk Battle Armor (Standard)(Sqd5)|Hauberk Battle Armor (Sqd5)
+Hauberk II Battle Armor (Standard)(Sqd5)|Hauberk II Battle Armor (Sqd5)
+HeavyHauler Exoskeleton (Standard)(Sqd5)|HeavyHauler Exoskeleton (Sqd5)
+Krise PA(L) (Standard)(Sqd5)|Krise PA(L) (Sqd5)
+Resgate PA(L) (Standard)(Sqd5)|Resgate PA(L) (Sqd5)
+Rogue Bear Heavy Battle Armor (Standard)(Sqd5)|Rogue Bear Heavy Battle Armor (Sqd5)
+Rottweiler Battle Armor (Standard)(Sqd5)|Rottweiler Battle Armor (Sqd5)
+Se'irim Medium Battle Armor (Standard)(Sqd5)|Se'irim Medium Battle Armor (Sqd5)
+Shedu Assault Battle Armor (Standard)(Sqd5)|Shedu Assault Battle Armor (Sqd5)
+Void Medium Battle Armor (Standard)(Sqd5)|Void Medium Battle Armor (Sqd5)
+Buraq Fast Battle Armor (Standard)(Sqd5)|Buraq Fast Battle Armor (Sqd5)
+Wraith Battle Armor (Standard)(Sqd5)|Wraith Battle Armor (Sqd5)
+PAB-28 Sniper Suit (Standard)(Sqd5)|PAB-28 Sniper Suit (Sqd5)
+Sea Fox Amphibious Armor (Standard)(Sqd5)|Sea Fox Amphibious Armor (Sqd5)
+Fusilier Battle Armor (Standard)(Sqd5)|Fusilier Battle Armor (Sqd5)
+Kishi Ceremonial Armor (Standard)(Sqd5)|Kishi Ceremonial Armor (Sqd5)
+Zou Heavy Battle Armor (Standard)(Sqd5)|Zou Heavy Battle Armor (Sqd5)
+Ogre Battle Armor (Standard)(Sqd5)|Ogre Battle Armor (Sqd5)
+Spectre Stealth Battle Armor (Standard)(Sqd5)|Spectre Stealth Battle Armor (Sqd5)
+Marauder Battle Armor (Standard)(Sqd5)|Marauder Battle Armor (Sqd5)
+Cuchulainn Support Armor (Standard) (Sqd5)|Cuchulainn Support Armor (Sqd5)
+Centaur Battle Armor (Standard)(Sqd5)|Centaur Battle Armor (Sqd5)
+Taranis Battle Armor (Standard)(Sqd5)|Taranis Battle Armor (Sqd5)
+Gladiator Exoskeleton (Standard) [BC/ID](Sqd5)|Gladiator Exoskeleton [BC/ID](Sqd5)
+Surat (Gray Death) Solahma Suit (Standard)(Sqd5)|Surat (Gray Death) Solahma Suit (Sqd5)
+Thunderbird II Battle Armor (Standard)(Sqd5)|Thunderbird II Battle Armor (Sqd5)
+Aegis Point Defense Suit (Standard)(Sqd5)|Aegis Point Defense Suit (Sqd5)
+Angerona Scout Suit (Standard)(Sqd6)|Angerona Scout Suit (Sqd6)
+Gnome Battle Armor (Standard)(Sqd6)|Gnome Battle Armor (Sqd6)
+Gray Death Heavy Suit (Standard)(Sqd6)|Gray Death Heavy Suit (Sqd6)
+Gray Death Scout Suit (Standard)(Sqd6)|Gray Death Scout Suit (Sqd6)
+Ironhold Assault Battle Armor (Standard)(Sqd6)|Ironhold Assault Battle Armor (Sqd6)
+Ravager Assault Battle Armor (Standard)(Sqd6)|Ravager Assault Battle Armor (Sqd6)
+Salamander Battle Armor (Standard)(Sqd6)|Salamander Battle Armor (Sqd6)
+Sloth Battle Armor (Standard)(Sqd6)|Sloth Battle Armor (Sqd6)
+Sylph Battle Armor (Standard)(Sqd6)|Sylph Battle Armor (Sqd6)
+Undine Battle Armor (Standard)(Sqd6)|Undine Battle Armor (Sqd6)
+Warg Assault Battle Armor (Standard)(Sqd6)|Warg Assault Battle Armor (Sqd6)
+Aerie PA(L) (Standard)(Sqd6)|Aerie PA(L) (Sqd6)
+Afreet Medium Battle Armor (Standard)(Sqd6)|Afreet Medium Battle Armor (Sqd6)
+Ailette Zero-G Engineering Exoskeleton (Standard)(Sqd6)|Ailette Zero-G Engineering Exoskeleton (Sqd6)
+Asura Medium Battle Armor (Standard)(Sqd6)|Asura Medium Battle Armor (Sqd6)
+Corona Heavy Battle Armor (Standard) (Sqd6)|Corona Heavy Battle Armor (Sqd6)
+Djinn Battle Armor (Standard) (Sqd6)|Djinn Battle Armor (Sqd6)
+Elemental II Battle Armor (Standard)(Sqd6)|Elemental II Battle Armor (Sqd6)
+Gladiator Exoskeleton (Standard) [AG](Sqd6)|Gladiator Exoskeleton [AG](Sqd6)
+Golem Assault Armor (Standard)(Sqd6)|Golem Assault Armor (Sqd6)
+Gray Death Strike Suit (Standard)(Sqd6)|Gray Death Strike Suit (Sqd6)
+Hauberk Battle Armor (Standard)(Sqd6)|Hauberk Battle Armor (Sqd6)
+Hauberk II Battle Armor (Standard)(Sqd6)|Hauberk II Battle Armor (Sqd6)
+HeavyHauler Exoskeleton (Standard)(Sqd6)|HeavyHauler Exoskeleton (Sqd6)
+Krise PA(L) (Standard)(Sqd6)|Krise PA(L) (Sqd6)
+Resgate PA(L) (Standard)(Sqd6)|Resgate PA(L) (Sqd6)
+Rogue Bear Heavy Battle Armor (Standard)(Sqd6)|Rogue Bear Heavy Battle Armor (Sqd6)
+Rottweiler Battle Armor (Standard)(Sqd6)|Rottweiler Battle Armor (Sqd6)
+Se'irim Medium Battle Armor (Standard)(Sqd6)|Se'irim Medium Battle Armor (Sqd6)
+Shedu Assault Battle Armor (Standard)(Sqd6)|Shedu Assault Battle Armor (Sqd6)
+Void Medium Battle Armor (Standard)(Sqd6)|Void Medium Battle Armor (Sqd6)
+Buraq Fast Battle Armor (Standard)(Sqd6)|Buraq Fast Battle Armor (Sqd6)
+Wraith Battle Armor (Standard)(Sqd6)|Wraith Battle Armor (Sqd6)
+PAB-28 Sniper Suit (Standard)(Sqd6)|PAB-28 Sniper Suit (Sqd6)
+Sea Fox Amphibious Armor (Standard)(Sqd6)|Sea Fox Amphibious Armor (Sqd6)
+Fusilier Battle Armor (Standard)(Sqd6)|Fusilier Battle Armor (Sqd6)
+Kishi Ceremonial Armor (Standard)(Sqd6)|Kishi Ceremonial Armor (Sqd6)
+Zou Heavy Battle Armor (Standard)(Sqd6)|Zou Heavy Battle Armor (Sqd6)
+Ogre Battle Armor (Standard)(Sqd6)|Ogre Battle Armor (Sqd6)
+Spectre Stealth Battle Armor (Standard)(Sqd6)|Spectre Stealth Battle Armor (Sqd6)
+Marauder Battle Armor (Standard)(Sqd6)|Marauder Battle Armor (Sqd6)
+Cuchulainn Support Armor (Standard) (Sqd6)|Cuchulainn Support Armor (Sqd6)
+Centaur Battle Armor (Standard)(Sqd6)|Centaur Battle Armor (Sqd6)
+Taranis Battle Armor (Standard)(Sqd6)|Taranis Battle Armor (Sqd6)
+Gladiator Exoskeleton (Standard) [BC/ID](Sqd6)|Gladiator Exoskeleton [BC/ID](Sqd6)
+Surat (Gray Death) Solahma Suit (Standard)(Sqd6)|Surat (Gray Death) Solahma Suit (Sqd6)
+Thunderbird II Battle Armor (Standard)(Sqd6)|Thunderbird II Battle Armor (Sqd6)
+Aegis Point Defense Suit (Standard)(Sqd6)|Aegis Point Defense Suit (Sqd6)
+Rhino Battle Armor (Standard)(Sqd4)|Rhino Battle Armor (Sqd4)
+Rhino Battle Armor (Standard)(Sqd6)|Rhino Battle Armor (Sqd6)
+Salamander Battle Armor (Standard)(Sqd3)|Salamander Battle Armor (Sqd3)
+Gnome Battle Armor (Standard)(Sqd3)|Gnome Battle Armor (Sqd3)
+Hoodling Sensor HoverJeep (Standard)|Hoodling Sensor HoverJeep 
+HoverPod (Standard)|HoverPod 
+JI-002 HoverBike (Standard)|JI-002 HoverBike 
+Assuan Armored Bike (Standard)|Assuan Armored Bike 
+Beast Riot Car (Standard)|Beast Riot Car 
+Death Trike (Standard)|Death Trike 
+Dune Buggy (Standard)|Dune Buggy 
+Eagre Firefighting ATV (Standard)|Eagre Firefighting ATV 
+Tracked Quad (Standard)|Tracked Quad 
+HTE Micro-Copter (Standard)|HTE Micro-Copter 
+Harpoon ParaSub (Standard)|Harpoon ParaSub 
+Small Steamer (Standard)|Small Steamer 
+
+
 #Aerospace
 Persepolis 2 (Standard)|Persepolis 2
 MechBuster|Mechbuster

@@ -14275,6 +14275,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>easy_maintain</quirk>
 		<quirk>easy_pilot</quirk>
 		<quirk>rugged_1</quirk>
+		<quirk>ubiquitous_is</quirk>
 	</unit>
 
 	<unit>

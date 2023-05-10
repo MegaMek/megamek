@@ -6,8 +6,8 @@ mul id:8381
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3130
-source:XTRO Royal Fantasy
-rules level:5
+source:XTRO Royal Fantasy - Dark Age
+rules level:3
 
 mass:55
 engine:385 XL (Clan) Engine

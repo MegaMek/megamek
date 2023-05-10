@@ -7,7 +7,7 @@ Config:Biped
 techbase:Mixed (IS Chassis)
 era:3137
 source:XTRO: Royal Fantasy
-rules level:5
+rules level:3
 
 mass:50
 engine:300 XL Engine(IS)

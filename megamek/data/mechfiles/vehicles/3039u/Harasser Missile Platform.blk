@@ -16,9 +16,9 @@ Tank
 Harasser Missile Platform
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 1390

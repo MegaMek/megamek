@@ -16,9 +16,9 @@ Warship
 Conqueror Battlecruiser Carrier
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 3991

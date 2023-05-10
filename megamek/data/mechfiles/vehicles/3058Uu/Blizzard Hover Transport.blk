@@ -12,9 +12,9 @@ Tank
 <Name>
 Blizzard Hover Transport
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 398

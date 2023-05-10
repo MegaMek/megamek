@@ -16,9 +16,9 @@ Tank
 Shamash Reconnaissance Vehicle
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 2921

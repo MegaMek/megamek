@@ -13,9 +13,9 @@ Tank
 Demolisher II Heavy Tank
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 866

@@ -16,9 +16,9 @@ VTOL
 Hawk Moth Gunship
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 1427

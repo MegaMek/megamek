@@ -12,9 +12,9 @@ SupportTank
 <Name>
 Air Car
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 3684

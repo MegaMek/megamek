@@ -16,9 +16,9 @@ SupportTank
 Skoda 'Growler' Service Utility Truck
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 5066

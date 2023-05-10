@@ -12,9 +12,9 @@ Tank
 <Name>
 Main Gauche Light Support Tank
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 4569

@@ -16,9 +16,9 @@ SupportTank
 Sturmblitz Assault Gun
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 7191

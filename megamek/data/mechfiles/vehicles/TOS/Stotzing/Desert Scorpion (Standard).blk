@@ -16,9 +16,9 @@ Tank
 Desert Scorpion Light Tank
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 8078

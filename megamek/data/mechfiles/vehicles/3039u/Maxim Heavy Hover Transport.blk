@@ -16,9 +16,9 @@ Tank
 Maxim Heavy Hover Transport
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 2127

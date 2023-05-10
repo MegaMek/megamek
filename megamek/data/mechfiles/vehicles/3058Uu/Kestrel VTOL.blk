@@ -12,9 +12,9 @@ VTOL
 <Name>
 Kestrel VTOL
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 1769

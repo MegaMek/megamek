@@ -12,9 +12,9 @@ Tank
 <Name>
 Heavy Tracked APC
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 1453

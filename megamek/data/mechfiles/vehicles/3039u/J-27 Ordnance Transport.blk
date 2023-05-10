@@ -16,9 +16,9 @@ Tank
 J-27 Ordnance Transport
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 1645

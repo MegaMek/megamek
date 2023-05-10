@@ -16,9 +16,9 @@ SupportVTOL
 Strike Falcon Attack VTOL
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 5585

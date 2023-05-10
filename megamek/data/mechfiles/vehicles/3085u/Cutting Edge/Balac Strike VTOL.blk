@@ -16,9 +16,9 @@ VTOL
 Balac Strike VTOL
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 210

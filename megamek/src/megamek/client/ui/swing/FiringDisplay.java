@@ -40,9 +40,8 @@ import java.awt.event.*;
 import java.util.*;
 
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
-import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
 
-public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener, ListSelectionListener {
+public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, ListSelectionListener {
     private static final long serialVersionUID = -5586388490027013723L;
 
     /**
@@ -172,11 +171,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
 
     Targetable target; // target
 
-    // HACK : track when we wan to show the target choice dialog.
+    // HACK : track when we want to show the target choice dialog.
     protected boolean showTargetChoice = true;
-
-    // shots we have so far.
-    protected Vector<AbstractEntityAction> attacks;
 
     // is the shift key held?
     protected boolean shiftheld;
@@ -216,11 +212,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         setButtons();
         setButtonsTooltips();
 
-        butDone.setText("<html><body>" + Messages.getString("FiringDisplay.Done") + "</body></html>");
-        String f = guiScaledFontHTML(uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
-        butDone.setToolTipText("<html><body>" + f + "</body></html>");
-        butDone.setEnabled(false);
-
         setupButtonPanel();
 
         clientgui.getBoardView().addKeyListener(this);
@@ -232,6 +223,16 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         ash = new AimedShotHandler(this);
 
         registerKeyCommands();
+    }
+
+    @Override
+    protected String getDoneButtonLabel() {
+        return Messages.getString("FiringDisplay.Fire");
+    }
+
+    @Override
+    protected String getSkipTurnButtonLabel() {
+        return Messages.getString("FiringDisplay.Skip");
     }
 
     @Override
@@ -910,10 +911,10 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
             disableButtons();
             TriggerAPPodDialog dialog = new TriggerAPPodDialog(clientgui.getFrame(), ce());
             dialog.setVisible(true);
-            attacks.removeAllElements();
+            removeAllAttacks();
             Enumeration<TriggerAPPodAction> actions = dialog.getActions();
             while (actions.hasMoreElements()) {
-                attacks.addElement(actions.nextElement());
+                addAttack(actions.nextElement());
             }
             ready();
         } else if ((turn instanceof GameTurn.TriggerBPodTurn) && (null != ce())) {
@@ -921,21 +922,21 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
             TriggerBPodDialog dialog = new TriggerBPodDialog(clientgui, ce(),
                     ((GameTurn.TriggerBPodTurn) turn).getAttackType());
             dialog.setVisible(true);
-            attacks.removeAllElements();
+            removeAllAttacks();
             Enumeration<TriggerBPodAction> actions = dialog.getActions();
             while (actions.hasMoreElements()) {
-                attacks.addElement(actions.nextElement());
+                addAttack(actions.nextElement());
             }
             ready();
         } else {
             setNextEnabled(true);
-            butDone.setEnabled(true);
             if (numButtonGroups > 1) {
                 buttons.get(FiringCommand.FIRE_MORE).setEnabled(true);
             }
             setFireCalledEnabled(clientgui.getClient().getGame().getOptions()
                     .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS));
             clientgui.getBoardView().select(null);
+            initDonePanelForNewTurn();
         }
 
         startTimer();
@@ -982,6 +983,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         buttons.get(FiringCommand.FIRE_MORE).setEnabled(false);
         setNextEnabled(false);
         butDone.setEnabled(false);
+        butSkipTurn.setEnabled(false);
         setNextTargetEnabled(false);
         setFlipArmsEnabled(false);
         setFireModeEnabled(false);
@@ -1187,7 +1189,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
      */
     @Override
     public void ready() {
-        if (attacks.isEmpty() && GUIP.getNagForNoAction()) {
+        if (attacks.isEmpty() && needNagForNoAction()) {
             // confirm this action
             String title = Messages.getString("FiringDisplay.DontFireDialog.title");
             String body = Messages.getString("FiringDisplay.DontFireDialog.message");
@@ -1306,7 +1308,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         clientgui.getClient().sendAttackData(cen, newAttacks);
 
         // clear queue
-        attacks.removeAllElements();
+        removeAllAttacks();
 
         // close aimed shot display, if any
         ash.closeDialog();
@@ -1331,7 +1333,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                 && (((Tank) ce()).isTurretJammed(((Tank) ce()).getLocTurret())))
                 || ((Tank) ce()).isTurretJammed(((Tank) ce()).getLocTurret2())) {
             UnjamTurretAction uta = new UnjamTurretAction(ce().getId());
-            attacks.add(uta);
+            addAttack(uta);
             ready();
         }
     }
@@ -1355,7 +1357,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                 if (input.equals(names[loop])) {
                     RepairWeaponMalfunctionAction rwma = new RepairWeaponMalfunctionAction(
                             ce().getId(), ce().getEquipmentNum(weapons.get(loop)));
-                    attacks.add(rwma);
+                    addAttack(rwma);
                     ready();
                 }
             }
@@ -1386,7 +1388,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
             case OptionsConstants.GUNNERY_BLOOD_STALKER:
                 // figure out when to clear Blood Stalker (when unit destroyed or flees or fly off no return)
                 ActivateBloodStalkerAction bloodStalkerAction = new ActivateBloodStalkerAction(ce().getId(), target.getId());
-                attacks.add(0, bloodStalkerAction);
+                addAttack(0, bloodStalkerAction);
                 ce().setBloodStalkerTarget(target.getId());
                 break;
         }
@@ -1421,7 +1423,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         // create and queue a searchlight action
         SearchlightAttackAction saa = new SearchlightAttackAction(cen,
                 target.getTargetType(), target.getId());
-        attacks.addElement(saa);
+        addAttack(saa);
 
         // and add it into the game, temporarily
         clientgui.getClient().getGame().addAction(saa);
@@ -1663,7 +1665,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
             firstShot = false;
 
             // add the attack to our temporary queue
-            attacks.addElement(waa);
+            addAttack(waa);
 
             // and add it into the game, temporarily
             game.addAction(waa);
@@ -1745,8 +1747,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
             return;
         }
 
-        attacks.removeAllElements();
-        attacks.addElement(new FindClubAction(cen));
+        removeAllAttacks();
+        addAttack(new FindClubAction(cen));
 
         ready();
     }
@@ -1771,7 +1773,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         if (!clientgui.doYesNoDialog(title, body)) {
             return;
         }
-        attacks.addElement(new SpotAction(cen, target.getId()));
+        addAttack(new SpotAction(cen, target.getId()));
 
     }
 
@@ -1789,7 +1791,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         }
 
         // remove attacks, set weapons available again
-        Enumeration<AbstractEntityAction> i = attacks.elements();
+        Enumeration<EntityAction> i = attacks.elements();
         while (i.hasMoreElements()) {
             Object o = i.nextElement();
             if (o instanceof WeaponAttackAction) {
@@ -1797,7 +1799,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                 ce().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
             }
         }
-        attacks.removeAllElements();
+        removeAllAttacks();
 
         // remove temporary attacks from game & board
         removeTempAttacks();
@@ -1825,7 +1827,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
             if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) o;
                 ce().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
-                attacks.removeElement(o);
+                removeAttack(o);
                 clientgui.getUnitDisplay().wPan.displayMech(ce());
                 clientgui.getClient().getGame().removeAction(o);
                 clientgui.getBoardView().refreshAttacks();
@@ -1848,6 +1850,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
             this.updateVTOLGroundTarget();
         }
         updateTarget();
+        updateDonePanel();
     }
 
     /**
@@ -2039,7 +2042,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
 
         if (direction != ce().getSecondaryFacing()) {
             clearAttacks();
-            attacks.addElement(new TorsoTwistAction(cen, direction));
+            addAttack(new TorsoTwistAction(cen, direction));
             ce().setSecondaryFacing(direction);
             refreshAll();
         }
@@ -2057,13 +2060,13 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         if (twistDir == 0) {
             clearAttacks();
             direction = ce().clipSecondaryFacing((direction + 5) % 6);
-            attacks.addElement(new TorsoTwistAction(cen, direction));
+            addAttack(new TorsoTwistAction(cen, direction));
             ce().setSecondaryFacing(direction);
             refreshAll();
         } else if (twistDir == 1) {
             clearAttacks();
             direction = ce().clipSecondaryFacing((direction + 7) % 6);
-            attacks.addElement(new TorsoTwistAction(cen, direction));
+            addAttack(new TorsoTwistAction(cen, direction));
             ce().setSecondaryFacing(direction);
             refreshAll();
         }
@@ -2306,7 +2309,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
 
         clearAttacks();
         ce().setArmsFlipped(armsFlipped);
-        attacks.addElement(new FlipArmsAction(cen, armsFlipped));
+        addAttack(new FlipArmsAction(cen, armsFlipped));
         updateTarget();
         refreshAll();
     }

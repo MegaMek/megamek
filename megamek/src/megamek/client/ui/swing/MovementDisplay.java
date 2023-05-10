@@ -58,9 +58,8 @@ import java.util.stream.Stream;
 import static megamek.common.options.OptionsConstants.ADVGRNDMOV_TACOPS_ZIPLINES;
 
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
-import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
 
-public class MovementDisplay extends StatusBarPhaseDisplay {
+public class MovementDisplay extends ActionPhaseDisplay {
     private static final long serialVersionUID = -7246715124042905688L;
 
     // Defines for the different flags
@@ -357,11 +356,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         setButtons();
         setButtonsTooltips();
-
-        butDone.setText("<html><body>" + Messages.getString("MovementDisplay.butDone") + "</body></html>");
-        String f = guiScaledFontHTML(uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
-        butDone.setToolTipText("<html><body>" + f + "</body></html>");
-        butDone.setEnabled(false);
 
         setupButtonPanel();
 
@@ -956,6 +950,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
 
         setupButtonPanel();
+        updateDonePanel();
     }
 
     private void updateAeroButtons() {
@@ -976,12 +971,31 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
     }
 
+    /** toggles the status of the Done and No Nag buttons based on if the current move order is valid */
+    @Override
+    protected void updateDonePanel() {
+        if (cmd == null || cmd.length() == 0) {
+            updateDonePanelButtons( Messages.getString("MovementDisplay.Move"), Messages.getString("MovementDisplay.Skip"), false);
+        } else {
+            boolean psrCheck = (!SharedUtility.doPSRCheck(cmd).isBlank())
+                    || (!SharedUtility.doThrustCheck(cmd, clientgui.getClient()).isBlank());
+            boolean damageCheck = cmd.shouldMechanicalJumpCauseFallDamage()
+                    || cmd.hasActiveMASC()
+                    || (!(ce() instanceof VTOL) && cmd.hasActiveSupercharger())
+                    || cmd.willCrushBuildings();
+
+            String moveMsg =  Messages.getString("MovementDisplay.Move")
+                    + (psrCheck ? "*" : "")
+                    + (damageCheck ? " !" : "");
+            updateDonePanelButtons(moveMsg, Messages.getString("MovementDisplay.Skip"), true);
+        }
+    }
+
     /**
      * Enables relevant buttons and sets up for your turn.
      */
     private void beginMyTurn() {
-        butDone.setText("<html><b>" + Messages.getString("MovementDisplay.Done") + "</b></html>");
-        butDone.setEnabled(true);
+        initDonePanelForNewTurn();
         setNextEnabled(true);
         setForwardIniEnabled(true);
         clientgui.getBoardView().clearFieldofF();
@@ -1048,6 +1062,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         setForwardIniEnabled(false);
         getBtn(MoveCommand.MOVE_MORE).setEnabled(false);
         butDone.setEnabled(false);
+        butSkipTurn.setEnabled(false);
         setLoadEnabled(false);
         setMountEnabled(false);
         setTowEnabled(false);
@@ -1143,8 +1158,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         // update some GUI elements
         clientgui.getBoardView().clearMovementData();
-        butDone.setText("<html><b>"
-                        + Messages.getString("MovementDisplay.Done") + "</b></html>");
+        updateDonePanel();
         updateProneButtons();
         updateRACButton();
         updateSearchlightButton();
@@ -1228,7 +1242,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             MovePath possible = cmd.clone();
             possible.clipToPossible();
             if (possible.length() == 0) {
-                butDone.setText("<html><b>" + Messages.getString("MovementDisplay.Done") + "</b></html>");
+                updateDonePanel();
             }
         }
         updateButtons();
@@ -1258,7 +1272,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
 
         cmd.clipToPossible();
-        if ((cmd.length() == 0) && !ce().isAirborne() && GUIP.getNagForNoAction()) {
+        if ( (cmd.length() == 0) && (!ce().isAirborne()) && needNagForNoAction()) {
             // Hmm... no movement steps, confirm this action
             String title = Messages.getString("MovementDisplay.ConfirmNoMoveDlg.title");
             String body = Messages.getString("MovementDisplay.ConfirmNoMoveDlg.message");
@@ -1743,19 +1757,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             Coords moveto = b.getCoords();
             clientgui.getBoardView().drawMovementData(ce, cmd);
             if (shiftheld || (gear == MovementDisplay.GEAR_TURN)) {
-                butDone.setText("<html><b>"
-                        + Messages.getString("MovementDisplay.Move")
-                        + "</b></html>");
+                updateDonePanel();
 
                 // Set the button's label to "Done"
                 // if the entire move is impossible.
                 MovePath possible = cmd.clone();
                 possible.clipToPossible();
                 if (possible.length() == 0) {
-                    butDone.setText("<html><b>"
-                            + Messages.getString("MovementDisplay.Done")
-                            + "</b></html>");
-
+                    updateDonePanel();
                 }
             } else {
                 clientgui.getBoardView().select(b.getCoords());
@@ -1930,7 +1939,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 clear();
                 return;
             }
-            butDone.setText("<html><b>" + Messages.getString("MovementDisplay.Move") + "</b></html>");
+            updateDonePanel();
             butDone.setEnabled(clientgui.getClient().isMyTurn());
             updateProneButtons();
             updateRACButton();
@@ -4550,7 +4559,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     }
                 }
             } else {
-                butDone.setText("<html><b>" + Messages.getString("MovementDisplay.Move") + "</b></html");
+                updateDonePanel();
                 if (cmd.getFinalProne() || cmd.getFinalHullDown()) {
                     cmd.addStep(MoveStepType.GET_UP);
                 }
@@ -4563,19 +4572,19 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 cmd.addStep(MoveStepType.GO_PRONE);
             }
             clientgui.getBoardView().drawMovementData(ce(), cmd);
-            butDone.setText("<html><b>" + Messages.getString("MovementDisplay.Move") + "</b></html>");
+            updateDonePanel();
         } else if (actionCmd.equals(MoveCommand.MOVE_HULL_DOWN.getCmd())) {
             gear = MovementDisplay.GEAR_LAND;
             if (!cmd.getFinalHullDown()) {
                 cmd.addStep(MoveStepType.HULL_DOWN);
             }
             clientgui.getBoardView().drawMovementData(ce(), cmd);
-            butDone.setText("<html><b>" + Messages.getString("MovementDisplay.Move") + "</b></html>");
+            updateDonePanel();
         } else if (actionCmd.equals(MoveCommand.MOVE_BRACE.getCmd())) {
             var options = ce().getValidBraceLocations();
             if (options.size() == 1) {
                 cmd.addStep(MoveStepType.BRACE, options.get(0));
-                butDone.setText("<html><b>" + Messages.getString("MovementDisplay.Done") + "</b></html>");
+                updateDonePanel();
             } else if (options.size() > 1) {
                 String[] locationNames = new String[options.size()];
 
@@ -4593,7 +4602,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 if (option != null) {
                     int id = options.get(Arrays.asList(locationNames).indexOf(option));
                     cmd.addStep(MoveStepType.BRACE, id);
-                    butDone.setText("<html><b>" + Messages.getString("MovementDisplay.Done") + "</b></html>");
+                    updateDonePanel();
                 }
             }
         } else if (actionCmd.equals(MoveCommand.MOVE_FLEE.getCmd())

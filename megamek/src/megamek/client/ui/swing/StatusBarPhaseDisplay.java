@@ -28,6 +28,8 @@ import java.util.stream.Collectors;
 import javax.swing.*;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.CommandAction;
+import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.TurnTimer;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.*;
@@ -41,15 +43,15 @@ import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
 
 /**
- * This is a parent class for the button display for each phase.  Every phase 
+ * This is a parent class for the button display for each phase.  Every phase
  * has a panel of control buttons along with a Done button. Each button
- * correspondes to a command that can be carried out in the current phase.  
- * This class formats the button panel, the done button, and a status display area. 
+ * correspondes to a command that can be carried out in the current phase.
+ * This class formats the button panel, the done button, and a status display area.
  * Control buttons are grouped and the groups can be cycled through.
  */
 public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         implements ActionListener, MouseListener, KeyListener, IPreferenceChangeListener {
-    
+
     protected static final Dimension MIN_BUTTON_SIZE = new Dimension(32, 32);
     protected static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final int BUTTON_ROWS = 2;
@@ -69,7 +71,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         int getPriority();
         void setPriority(int p);
     }
-    
+
     /**
      * Comparator for comparing the priority of two commands, used to determine
      * button order.
@@ -79,21 +81,22 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     {
         @Override
         public int compare(PhaseCommand c1, PhaseCommand c2) {
-            return c1.getPriority() - c2.getPriority();            
+            return c1.getPriority() - c2.getPriority();
         }
     }
-    
+
     private JLabel labStatus;
     protected JPanel panStatus = new JPanel();
-    protected JPanel panButtons = new JPanel();  
-    
+    protected JPanel panButtons = new JPanel();
+
     /** The button group that is currently displayed */
     protected int currentButtonGroup = 0;
-    
+
     /** The number of button groups there are, needs to be computed in a child class. */
     protected int numButtonGroups;
-    
+
     protected int buttonsPerRow = GUIP.getButtonsPerRow();
+
     protected int buttonsPerGroup = BUTTON_ROWS * buttonsPerRow;
 
     protected StatusBarPhaseDisplay(ClientGUI cg) {
@@ -109,30 +112,30 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
                     clientgui.getBoardView().setChatterBoxActive(false);
                     clientgui.cb2.clearMessage();
                 } else if (clientgui.getClient().isMyTurn() || (e.getSource() instanceof MovementDisplay)) {
-                    // Users can draw movement envelope during the movement phase 
+                    // Users can draw movement envelope during the movement phase
                     // even if it's not their turn, so we always want to be able
                     // to clear. MovementDisplay.clear() can handle this case
                     clear();
                 }
             }
         });
-        
+
         panButtons.setLayout(new BoxLayout(panButtons, BoxLayout.LINE_AXIS));
-        panButtons.setOpaque(false);        
+        panButtons.setOpaque(false);
         panButtons.addKeyListener(this);
         panStatus.setOpaque(false);
         panStatus.addKeyListener(this);
-        
+
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         add(panButtons);
         add(panStatus);
-        
+
         GUIP.addPreferenceChangeListener(this);
         KeyBindParser.addPreferenceChangeListener(this);
         ToolTipManager.sharedInstance().registerComponent(this);
     }
-    
-    
+
+
     /** Returns the list of buttons that should be displayed. */
     protected abstract ArrayList<MegamekButton> getButtonList();
 
@@ -179,12 +182,12 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
      */
     public void setupButtonPanel() {
         panButtons.removeAll();
-        
+
         var buttonsPanel = new JPanel();
         buttonsPanel.setOpaque(false);
         buttonsPanel.setLayout(new GridLayout(BUTTON_ROWS, buttonsPerRow));
         List<MegamekButton> buttonList = getButtonList();
-        
+
         // Unless it's the first group of buttons, skip any button group if all of its buttons are disabled
         if (currentButtonGroup > 0) {
             int index = currentButtonGroup * buttonsPerGroup;
@@ -200,7 +203,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
                 currentButtonGroup = 0;
             }
         }
-        
+
         int startIndex = currentButtonGroup * buttonsPerGroup;
         int endIndex = startIndex + buttonsPerGroup - 1;
         for (int index = startIndex; index <= endIndex; index++) {
@@ -212,23 +215,30 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
             } else {
                 buttonsPanel.add(Box.createHorizontalGlue());
             }
-        }         
-           
-        var donePanel = new UIUtil.FixedXPanel();
-        donePanel.setOpaque(false);
-        donePanel.add(butDone);
-        butDone.setPreferredSize(new Dimension(DONE_BUTTON_WIDTH, MIN_BUTTON_SIZE.height * 2));
-                
+        }
+
+        var donePanel = setupDonePanel();
+
         panButtons.add(buttonsPanel);
         panButtons.add(donePanel);
         adaptToGUIScale();
         panButtons.validate();
         panButtons.repaint();
     }
-    
+
+    protected UIUtil.FixedXPanel setupDonePanel()
+    {
+        var donePanel = new UIUtil.FixedXPanel();
+        donePanel.setOpaque(false);
+        donePanel.setLayout(new GridLayout(2,1));
+        donePanel.add(butDone);
+        butDone.setPreferredSize(new Dimension(DONE_BUTTON_WIDTH, MIN_BUTTON_SIZE.height * 2));
+        return donePanel;
+    }
+
     /** Clears the actions of this phase. */
     public abstract void clear();
-    
+
     /** Sets up the status bar. It usually displays info on the current phase and if it's the local player's turn. */
     protected void setupStatusBar(String statusInfo) {
         SkinSpecification pdSkinSpec = SkinXMLHandler.getSkin(SkinSpecification.UIComponents.PhaseDisplay.getComp());

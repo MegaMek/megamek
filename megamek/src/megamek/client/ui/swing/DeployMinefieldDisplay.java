@@ -33,8 +33,8 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
 
     /**
      * This enumeration lists all of the possible ActionCommands that can be
-     * carried out during the deploy minefield phase.  Each command has a string 
-     * for the command plus a flag that determines what unit type it is 
+     * carried out during the deploy minefield phase.  Each command has a string
+     * for the command plus a flag that determines what unit type it is
      * appropriate for.
      * @author arlith
      */
@@ -68,7 +68,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         public void setPriority(int p) {
             priority = p;
         }
-        
+
         @Override
         public String toString() {
             return Messages.getString("DeployMinefieldDisplay." + getCmd());
@@ -81,7 +81,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
 
     // buttons
     protected Map<DeployMinefieldCommand,MegamekButton> buttons;
-    
+
     private boolean deployM = false;
     private boolean deployC = false;
     private boolean deployV = false;
@@ -109,8 +109,6 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         setButtonsTooltips();
 
         butDone.setText(Messages.getString("DeployMinefieldDisplay.Done"));
-        String f = guiScaledFontHTML(uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
-        butDone.setToolTipText("<html><body>" + f + "</body></html>");
         butDone.setEnabled(false);
 
         setupButtonPanel();
@@ -256,7 +254,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
                 }
                 MineDensityDialog mfd = new MineDensityDialog(clientgui.frame);
                 mfd.setVisible(true);
-                
+
                 if (mfd.getDensity() > 0) {
                     mf = Minefield.createMinefield(coords, p.getId(),
                             Minefield.TYPE_CONVENTIONAL, mfd.getDensity(), sea,

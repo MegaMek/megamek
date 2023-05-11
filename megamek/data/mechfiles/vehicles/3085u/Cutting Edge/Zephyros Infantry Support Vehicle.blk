@@ -16,9 +16,9 @@ Tank
 Zephyros Infantry Support Vehicle
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 3634

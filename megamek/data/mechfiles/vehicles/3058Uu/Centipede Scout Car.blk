@@ -12,9 +12,9 @@ Tank
 <Name>
 Centipede Scout Car
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 514

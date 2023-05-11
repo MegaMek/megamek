@@ -12,9 +12,9 @@ VTOL
 <Name>
 Yellow Jacket Gunship
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 3617

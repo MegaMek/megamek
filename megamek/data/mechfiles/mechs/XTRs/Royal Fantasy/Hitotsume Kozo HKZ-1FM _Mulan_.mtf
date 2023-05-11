@@ -6,8 +6,8 @@ mul id:8380
 Config:Biped
 techbase:Inner Sphere
 era:3136
-source:XTRO Royal Fantasy
-rules level:5
+source:XTRO Royal Fantasy - Dark Age
+rules level:3
 
 mass:55
 engine:330 XL Engine(IS)

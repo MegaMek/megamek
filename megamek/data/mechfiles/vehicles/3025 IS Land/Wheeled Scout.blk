@@ -16,9 +16,9 @@ Tank
 Wheeled Scout
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 5401

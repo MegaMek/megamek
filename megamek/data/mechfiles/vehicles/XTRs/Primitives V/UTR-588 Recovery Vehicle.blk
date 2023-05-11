@@ -16,9 +16,9 @@ SupportTank
 UTR-588 Recovery Vehicle
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 7412

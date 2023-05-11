@@ -218,6 +218,13 @@
     </KeyBind>
 
     <KeyBind>
+         <command>doneNoAction</command> <!-- Ctrl+Alt-Enter -->
+        <keyCode>10</keyCode>
+        <modifier>640</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
          <command>udGeneral</command> <!-- F1 -->
         <keyCode>112</keyCode>
         <modifier>0</modifier>

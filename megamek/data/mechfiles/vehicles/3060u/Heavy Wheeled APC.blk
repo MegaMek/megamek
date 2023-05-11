@@ -12,9 +12,9 @@ Tank
 <Name>
 Heavy Wheeled APC
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 1458

@@ -17,6 +17,7 @@ Thumbs.db
 out/
 .idea/
 .vscode/
+.run/
 .classpath
 .project
 .classpath

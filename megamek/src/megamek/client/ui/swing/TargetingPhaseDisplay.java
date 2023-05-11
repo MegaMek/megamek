@@ -48,7 +48,7 @@ import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
  * Targeting Phase Display. Breaks naming convention because TargetingDisplay is too easy to confuse
  * with something else
  */
-public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
+public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
         KeyListener, ItemListener, ListSelectionListener {
     private static final long serialVersionUID = 3441669419807288865L;
 
@@ -164,9 +164,6 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 
     private Targetable target; // target
 
-    // shots we have so far.
-    private Vector<EntityAction> attacks;
-
     // is the shift key held?
     private boolean shiftheld;
 
@@ -193,14 +190,19 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         setButtons();
         setButtonsTooltips();
 
-        butDone.setText(Messages.getString("TargetingPhaseDisplay.Done"));
-        String f = guiScaledFontHTML(uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
-        butDone.setToolTipText("<html><body>" + f + "</body></html>");
-        butDone.setEnabled(false);
-
         setupButtonPanel();
 
         registerKeyCommands();
+    }
+
+    @Override
+    protected String getDoneButtonLabel() {
+        return Messages.getString("TargetingPhaseDisplay.Fire");
+    }
+
+    @Override
+    protected String getSkipTurnButtonLabel() {
+        return Messages.getString("TargetingPhaseDisplay.Skip");
     }
 
     @Override
@@ -638,10 +640,10 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             disableButtons();
             TriggerAPPodDialog dialog = new TriggerAPPodDialog(clientgui.getFrame(), ce());
             dialog.setVisible(true);
-            attacks.removeAllElements();
+           removeAllAttacks();
             Enumeration<TriggerAPPodAction> actions = dialog.getActions();
             while (actions.hasMoreElements()) {
-                attacks.addElement(actions.nextElement());
+                addAttack(actions.nextElement());
             }
             ready();
         } else if ((turn instanceof GameTurn.TriggerBPodTurn) && (null != ce())) {
@@ -649,16 +651,17 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             TriggerBPodDialog dialog = new TriggerBPodDialog(clientgui, ce(),
                     ((GameTurn.TriggerBPodTurn) turn).getAttackType());
             dialog.setVisible(true);
-            attacks.removeAllElements();
+           removeAllAttacks();
             Enumeration<TriggerBPodAction> actions = dialog.getActions();
             while (actions.hasMoreElements()) {
-                attacks.addElement(actions.nextElement());
+                addAttack(actions.nextElement());
             }
             ready();
         } else {
             setNextEnabled(true);
             butDone.setEnabled(true);
             clientgui.getBoardView().select(null);
+            initDonePanelForNewTurn();
         }
         setupButtonPanel();
     }
@@ -750,7 +753,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
      */
     @Override
     public void ready() {
-        if (attacks.isEmpty() && GUIP.getNagForNoAction()) {
+        if (attacks.isEmpty() && needNagForNoAction()) {
             // confirm this action
             String title = Messages.getString("TargetingPhaseDisplay.DontFireDialog.title");
             String body = Messages.getString("TargetingPhaseDisplay.DontFireDialog.message");
@@ -774,7 +777,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         clientgui.getClient().sendAttackData(cen, attacks);
 
         // clear queue
-        attacks.removeAllElements();
+       removeAllAttacks();
 
         if ((ce() != null) && ce().isWeapOrderChanged()) {
             clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
@@ -794,7 +797,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 
         // create and queue a searchlight action
         SearchlightAttackAction saa = new SearchlightAttackAction(cen, target.getTargetType(), target.getId());
-        attacks.addElement(saa);
+        addAttack(saa);
 
         // and add it into the game, temporarily
         clientgui.getClient().getGame().addAction(saa);
@@ -868,7 +871,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         }
 
         // add the attack to our temporary queue
-        attacks.addElement(waa);
+        addAttack(waa);
 
         // and add it into the game, temporarily
         clientgui.getClient().getGame().addAction(waa);
@@ -952,7 +955,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                 ce().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
             }
         }
-        attacks.removeAllElements();
+       removeAllAttacks();
 
         // remove temporary attacks from game & board
         removeTempAttacks();
@@ -981,7 +984,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) o;
                 ce().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
-                attacks.removeElement(o);
+                removeAttack(o);
                 setDisengageEnabled(attacks.isEmpty() && ce().isOffBoard() && ce().canFlee());
                 clientgui.getUnitDisplay().wPan.displayMech(ce());
                 clientgui.getClient().getGame().removeAction(o);
@@ -1409,7 +1412,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                 && clientgui.doYesNoDialog(Messages.getString("MovementDisplay.EscapeDialog.title"),
                         Messages.getString("MovementDisplay.EscapeDialog.message"))) {
             clear();
-            attacks.add(new DisengageAction(cen));
+            addAttack(new DisengageAction(cen));
             ready();
         }
     }
@@ -1421,7 +1424,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 
         clearAttacks();
         ce().setArmsFlipped(armsFlipped);
-        attacks.addElement(new FlipArmsAction(cen, armsFlipped));
+        addAttack(new FlipArmsAction(cen, armsFlipped));
         updateTarget();
         refreshAll();
     }

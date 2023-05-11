@@ -16,9 +16,9 @@ Infantry
 Field Gun Infantry Platoon (AC/10)
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 8410

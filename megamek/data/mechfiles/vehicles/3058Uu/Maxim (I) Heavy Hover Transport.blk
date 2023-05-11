@@ -12,9 +12,9 @@ Tank
 <Name>
 Maxim (I) Heavy Hover Transport
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 2115

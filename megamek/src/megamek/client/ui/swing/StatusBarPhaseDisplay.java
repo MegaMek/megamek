@@ -28,6 +28,8 @@ import java.util.stream.Collectors;
 import javax.swing.*;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.CommandAction;
+import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.TurnTimer;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.*;
@@ -92,6 +94,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     protected int numButtonGroups;
 
     protected int buttonsPerRow = GUIP.getButtonsPerRow();
+
     protected int buttonsPerGroup = BUTTON_ROWS * buttonsPerRow;
 
     protected StatusBarPhaseDisplay(ClientGUI cg) {
@@ -212,16 +215,23 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
             }
         }
 
-        var donePanel = new UIUtil.FixedXPanel();
-        donePanel.setOpaque(false);
-        donePanel.add(butDone);
-        butDone.setPreferredSize(new Dimension(DONE_BUTTON_WIDTH, MIN_BUTTON_SIZE.height * 2));
+        var donePanel = setupDonePanel();
 
         panButtons.add(buttonsPanel);
         panButtons.add(donePanel);
         adaptToGUIScale();
         panButtons.validate();
         panButtons.repaint();
+    }
+
+    protected UIUtil.FixedXPanel setupDonePanel()
+    {
+        var donePanel = new UIUtil.FixedXPanel();
+        donePanel.setOpaque(false);
+        donePanel.setLayout(new GridLayout(2,1));
+        donePanel.add(butDone);
+        butDone.setPreferredSize(new Dimension(DONE_BUTTON_WIDTH, MIN_BUTTON_SIZE.height * 2));
+        return donePanel;
     }
 
     /** Clears the actions of this phase. */

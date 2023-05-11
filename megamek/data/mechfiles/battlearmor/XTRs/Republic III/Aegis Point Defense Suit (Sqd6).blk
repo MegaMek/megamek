@@ -16,8 +16,8 @@ BattleArmor
 Aegis Point Defense Suit
 </Name>
 
-<Model>
-(Standard)(Sqd6)
+<model>
+(Sqd6)
 </Model>
 
 <mul id:>

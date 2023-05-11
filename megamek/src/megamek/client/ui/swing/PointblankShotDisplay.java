@@ -562,7 +562,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
      */
     @Override
     public void ready() {
-        if (attacks.isEmpty() && GUIPreferences.getInstance().getNagForNoAction()) {
+        if (attacks.isEmpty() && needNagForNoAction()) {
             // confirm this action
             String title = Messages.getString("FiringDisplay.DontFireDialog.title");
             String body = Messages.getString("FiringDisplay.DontFireDialog.message");
@@ -690,7 +690,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
         clientgui.setPointblankEID(Entity.NONE);
 
         // clear queue
-        attacks.removeAllElements();
+        removeAllAttacks();
 
         // close aimed shot display, if any
         ash.closeDialog();
@@ -767,7 +767,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
         waa.setPointblankShot(true);
 
         // add the attack to our temporary queue
-        attacks.addElement(waa);
+        addAttack(waa);
 
         // and add it into the game, temporarily
         game.addAction(waa);

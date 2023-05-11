@@ -124,8 +124,6 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         setButtonsTooltips();
 
         butDone.setText("<html><body>" + Messages.getString("DeploymentDisplay.Deploy") + "</body></html>");
-        String f = guiScaledFontHTML(uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
-        butDone.setToolTipText("<html><body>" + f + "</body></html>");
         butDone.setEnabled(false);
         setupButtonPanel();
     }
@@ -761,11 +759,12 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             Entity loader = ce();
             List<Entity> choices = loader.getLoadedUnits();
             if (!choices.isEmpty()) {
-                // If we have multiple choices, display a selection dialog.
+
                 Entity loaded = EntityChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(),
                         Messages.getString("DeploymentDisplay.unloadUnitDialog.message", ce().getShortName(), ce().getUnusedString()),
                         Messages.getString("DeploymentDisplay.unloadUnitDialog.title"),
                         choices);
+
                 if (loaded != null) {
                     if (loader.unload(loaded)) {
                         loaded.setTransportId(Entity.NONE);

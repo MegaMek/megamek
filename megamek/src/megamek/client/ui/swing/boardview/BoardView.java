@@ -29,6 +29,7 @@ import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.tileset.HexTileset;
 import megamek.client.ui.swing.tileset.TilesetManager;
 import megamek.client.ui.swing.tooltip.HexTooltip;
+import megamek.client.ui.swing.tooltip.PilotToolTip;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.util.*;
 import megamek.client.ui.swing.widget.MegamekBorder;
@@ -5573,7 +5574,16 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 sWreck = guiScaledFontHTML(uiBlack()) + sWreck + "</FONT>";
                 String col = "<TD>" + sWreck + "</TD>";
                 String row = "<TR>" + col + "</TR>";
-                String table = "<TABLE BORDER=0 BGCOLOR=" + ALT_BGCOLOR + " width=100%>" + row + "</TABLE>";
+                String rows = row;
+
+                if (!wSprite.entity.getCrew().isEjected()) {
+                    String sPilot = PilotToolTip.getPilotTipShort(wSprite.entity, GUIP.getshowPilotPortraitTT()).toString();
+                    col = "<TD>" + sPilot + "</TD>";
+                    row = "<TR>" + col + "</TR>";
+                    rows += row;
+                }
+
+                String table = "<TABLE BORDER=0 BGCOLOR=" + ALT_BGCOLOR + " width=100%>" + rows + "</TABLE>";
                 result += table;
             }
         }

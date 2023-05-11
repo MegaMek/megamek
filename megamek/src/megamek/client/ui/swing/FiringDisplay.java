@@ -16,6 +16,7 @@ package megamek.client.ui.swing;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.unitDisplay.WeaponPanel;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
@@ -1914,6 +1915,8 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         }
 
         // update target panel
+        clientgui.getUnitDisplay().wPan.setTarget(target);
+
         final int weaponId = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
         if (isStrafing && weaponId != -1) {
             clientgui.getUnitDisplay().wPan.wTargetR.setText(Messages
@@ -1922,6 +1925,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         } else if ((target != null) && (target.getPosition() != null)
             && (weaponId != -1) && (ce() != null)) {
             ToHitData toHit;
+
             if (!ash.getAimingMode().isNone()) {
                 Mounted weapon = ce().getEquipment(weaponId);
                 boolean aiming = ash.isAimingAtLocation() && ash.allowAimedShotWith(weapon);

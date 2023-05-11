@@ -66,7 +66,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         @Override
         public void mouseDragged(MouseEvent e) {
             removeListeners();
-            
+
             Object src = e.getSource();
             // Check to see if we are in a state we care about
             if (!mouseDragging || !(src instanceof JList)) {
@@ -249,7 +249,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             // Fire Mode - lots of things have variable modes
             if (wtype.hasModes()) {
                 wn.append(' ');
-                
+
                 wn.append(mounted.curMode().getDisplayableName());
                 if (!mounted.pendingMode().equals("None")) {
                     wn.append(" (next turn, ");
@@ -351,6 +351,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     private JLabel wInfantryRange5R;
 
     public JTextArea toHitText;
+
+    private JButton wTargetInfo;
+    private boolean targetInfoDetail;
 
     // I need to keep a pointer to the weapon list of the
     // currently selected mech.
@@ -862,17 +865,50 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
         gridy++;
 
+        JPanel pInfo = new JPanel(new GridBagLayout());
+        pInfo.setOpaque(false);
+        pgridy = 0;
+
         // to-hit text
         toHitText = new JTextArea("", 2, 20);
         toHitText.setEditable(false);
         toHitText.setLineWrap(true);
         toHitText.setFont(new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 10));
-        panelMain.add(toHitText,
-            GBC.eol().fill(GridBagConstraints.BOTH)
-               .anchor(GridBagConstraints.WEST)
-               .insets(15, 9, 15, 9).gridy(gridy).gridx(0)
-               .weighty(1)
-               .gridheight(2));
+        pInfo.add(toHitText,
+                GBC.eol().fill(GridBagConstraints.HORIZONTAL)
+//                        .anchor(GridBagConstraints.WEST)
+//                        .insets(15, 1, 1, 1)
+                        .gridy(pgridy).gridx(0));
+        pgridy++;
+
+        wTargetInfo = new JButton("---");//, SwingConstants.CENTER);
+        wTargetInfo.setOpaque(false);
+        wTargetInfo.setForeground(Color.WHITE);
+        pInfo.add(wTargetInfo,
+                GBC.eol().fill(GridBagConstraints.HORIZONTAL)
+//                        .anchor(GridBagConstraints.WEST)
+//                        .insets(15, 1, 1, 1)
+                        .gridy(pgridy).gridx(0));
+
+        panelMain.add(pInfo,
+                GBC.eol().insets(15, 9, 15, 9)
+                        .fill(GridBagConstraints.HORIZONTAL)
+                        .anchor(GridBagConstraints.WEST)
+                        .gridy(gridy)
+                        .gridwidth(3)
+                        .gridx(0));
+//        GBC.std().fill(GridBagConstraints.HORIZONTAL)
+//                .anchor(GridBagConstraints.WEST)
+//                .insets(15, 1, 1, 1)
+////                .gridwidth(3)
+//                .gridy(gridy).gridx(0));
+
+//        GBC.std().fill(GridBagConstraints.HORIZONTAL)
+//                .anchor(GridBagConstraints.CENTER)
+//                .weighty(1)
+//                .gridwidth(3)
+//                .gridy(gridy).gridx(0));
+        gridy++;
 
         addListeners();
 
@@ -884,6 +920,22 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
         setBackGround();
         onResize();
+    }
+
+    private Targetable target;
+    public void setTarget(Targetable target) {
+        this.target = target;
+        updateTargetInfo();
+    }
+
+    private void updateTargetInfo() {
+        if (target == null) {
+            wTargetInfo.setText("---");
+        } else if (targetInfoDetail) {
+            wTargetInfo.setText(String.format("<html>%s</html>", UnitToolTip.getTargetTipDetail(target, null, null)));
+        } else {
+            wTargetInfo.setText(String.format("<html>%s<br>%s</html>", target.getDisplayName(), UnitToolTip.getTargetTipSummary(target, null)));
+        }
     }
 
     @Override
@@ -970,7 +1022,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
      */
     public void displayMech(Entity en) {
         removeListeners();
-        
+
         // Grab a copy of the game.
         Game game = null;
 
@@ -987,7 +1039,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             max_ext_heat = 15; // Standard value specified in TW p.159
         }
 
-        int currentHeatBuildup = (en.heat // heat from last round                
+        int currentHeatBuildup = (en.heat // heat from last round
                 + en.getEngineCritHeat() // heat engine crits will add
                 + Math.min(max_ext_heat, en.heatFromExternal) // heat from external sources
                 + en.heatBuildup) // heat we're building up this round
@@ -1083,7 +1135,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                     && !mounted.getType().hasFlag(WeaponType.F_TAG)) {
                 continue;
             }
-            
+
             ((WeaponListModel) weaponList.getModel()).addWeapon(mounted);
             if (mounted.isUsedThisRound()
                     && (game.getPhase() == mounted.usedInPhase())
@@ -1282,7 +1334,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         }
         Mounted selectedWeap;
         int initialSelection = selected;
-        
+
         boolean hasLooped = false;
         do {
             selected++;
@@ -1301,9 +1353,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             return selected;
         } else {
             return -1;
-        } 
+        }
     }
-    
+
     public int getPrevWeaponListIdx() {
         int selected = weaponList.getSelectedIndex();
         // In case nothing was selected
@@ -1332,7 +1384,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             return -1;
         }
     }
-    
+
     public int getNextWeaponNum() {
         int selected = getNextWeaponListIdx();
         if ((selected >= 0) && (selected < entity.getWeaponList().size())) {
@@ -1342,7 +1394,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             return -1;
         }
     }
-    
+
     /**
      * Selects the next valid weapon in the weapon list.
      *
@@ -1477,7 +1529,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             if (inftype.hasFlag(WeaponType.F_INF_BURST)) {
                 zeromods--;
             }
-            
+
             int range = inftype.getInfantryRange();
             if (entity.getLocationStatus(mounted.getLocation()) == ILocationExposureStatus.WET) {
                 range /= 2;
@@ -1863,7 +1915,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                                                  .elementAt(n));
             wtype = (WeaponType) mounted.getType();
         }
-        
+
         if (wtype.getAmmoType() == AmmoType.T_NA) {
             m_chAmmo.setEnabled(false);
         } else if (wtype.hasFlag(WeaponType.F_DOUBLE_ONESHOT)
@@ -1921,8 +1973,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 if (entity.usesWeaponBays() && !(entity instanceof FighterSquadron)) {
                     rightBay = oldmount.ammoInBay(entity.getEquipmentNum(mountedAmmo));
                 }
-                
-                // covers the situation where a weapon using non-caseless ammo should 
+
+                // covers the situation where a weapon using non-caseless ammo should
                 // not be able to switch to caseless on the fly and vice versa
                 boolean canSwitchToAmmo = AmmoType.canSwitchToAmmo(mounted, atype);
 
@@ -1954,8 +2006,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         onResize();
         addListeners();
     }
-    
-    // this gathers all the range data 
+
+    // this gathers all the range data
     // it is a boiled down version of displaySelected,
     // updateAttackValues, updateRangeDisplayForAmmo
     private void setFieldofFire(Mounted mounted) {
@@ -1963,7 +2015,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         if (unitDisplay.getClientGUI() == null) {
             return;
         }
-        
+
         ClientGUI gui = unitDisplay.getClientGUI();
 
         WeaponType wtype = (WeaponType) mounted.getType();
@@ -1992,7 +2044,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             }
         }
 
-        // Infantry range types 4+ are simplified to 
+        // Infantry range types 4+ are simplified to
         // the usual range types as displaying 5 range circles
         // would be visual overkill (and besides this makes
         // things easier)
@@ -2061,18 +2113,18 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         if (entity.isAirborne()) {
 
             // prepare fresh ranges, no underwater
-            ranges[0] = new int[] { 0, 0, 0, 0, 0 };  
+            ranges[0] = new int[] { 0, 0, 0, 0, 0 };
             ranges[1] = new int[] { 0, 0, 0, 0, 0 };
             int maxr = WeaponType.RANGE_SHORT;
-            
+
             // In the WeaponPanel, when the weapon is out of ammo
             // or otherwise nonfunctional, SHORT range will be listed;
             // the field of fire is instead disabled
             // Here as well as in WeaponPanel, choosing a specific ammo
             // only works for the current player's units
-            if (!mounted.isBreached() && !mounted.isMissing() 
-                    && !mounted.isDestroyed() && !mounted.isJammed() 
-                    && ((mounted.getLinked() == null) 
+            if (!mounted.isBreached() && !mounted.isMissing()
+                    && !mounted.isDestroyed() && !mounted.isJammed()
+                    && ((mounted.getLinked() == null)
                             || (mounted.getLinked().getUsableShotsLeft() > 0))) {
                 maxr = wtype.getMaxRange(mounted);
 
@@ -2085,9 +2137,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                         }
                     } else if (atype.getAmmoType() == AmmoType.T_MML) {
                         if (!atype.hasFlag(AmmoType.F_MML_LRM)) {
-                            maxr = WeaponType.RANGE_SHORT; 
+                            maxr = WeaponType.RANGE_SHORT;
                         }
-                    } 
+                    }
                 }
 
                 // set the standard ranges, depending on capital or no
@@ -2097,7 +2149,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 if (game.getBoard().onGround()) {
                     rangeMultiplier *= 8;
                 }
-                
+
                 for (int rangeIndex = RangeType.RANGE_MINIMUM; rangeIndex <= RangeType.RANGE_EXTREME; rangeIndex++) {
                     if (maxr >= rangeIndex) {
                         ranges[0][rangeIndex] = WeaponType.AIRBORNE_WEAPON_RANGES[rangeIndex] * rangeMultiplier;
@@ -2105,11 +2157,11 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 }
             }
         }
-        
+
         // pass all this to the Displays
         int arc = entity.getWeaponArc(entity.getEquipmentNum(mounted));
         int loc = mounted.getLocation();
-        
+
         if (gui.getCurrentPanel() instanceof FiringDisplay) {
             // twisting
             int facing = entity.getFacing();
@@ -2249,7 +2301,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 wMedR.setText("6 - 10");
                 wLongR.setText("11 - 15");
                 wExtR.setText("16 - 20");
-            }           
+            }
         } else if ((atype.getAmmoType() == AmmoType.T_LRM) && (atype.getMunitionType() == AmmoType.M_DEAD_FIRE)) {
             wMinR.setText("4");
             wShortR.setText("1 - 5");
@@ -2391,7 +2443,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 avExt = 0;
             }
         } // end weapon is MML
-        else if ((atype.getAmmoType() == AmmoType.T_LRM) 
+        else if ((atype.getAmmoType() == AmmoType.T_LRM)
                 || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
                 || (atype.getAmmoType() == AmmoType.T_SRM)
                 || (atype.getAmmoType() == AmmoType.T_SRM_IMP)) {
@@ -2453,7 +2505,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 avShort = 1000;
                 avMed = 1000;
                 avLong = 1000;
-                avExt = 1000; 
+                avExt = 1000;
             } else {
                 avShort = 4;
                 avMed = 4;
@@ -2465,7 +2517,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 avShort = 100;
                 avMed = 100;
                 avLong = 100;
-                avExt = 100; 
+                avExt = 100;
             } else {
                 avShort = 3;
                 avMed = 3;
@@ -2602,12 +2654,12 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         }
         if (event.getSource().equals(weaponList)) {
             displaySelected();
-            
+
             // Can't do anything if ClientGUI is null
             if (unitDisplay.getClientGUI() == null) {
                 return;
             }
-            
+
             JComponent currPanel = unitDisplay.getClientGUI().getCurrentPanel();
             // When in the Firing Phase, update the targeting information.
             if (currPanel instanceof FiringDisplay) {
@@ -2621,7 +2673,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                             .getSelectedIndex());
                 }
                 Mounted prevMounted = null;
-                if ((event.getLastIndex() != -1) 
+                if ((event.getLastIndex() != -1)
                         && (event.getLastIndex() < weaponModel.getSize())) {
                     prevMounted = weaponModel.getWeaponAt(event.getLastIndex());
                 }
@@ -2629,12 +2681,12 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 // in the target method
                 if (mounted != null
                         && mounted.getType().hasFlag(WeaponType.F_VGL)) {
-                    // Store previous target, if it's a weapon that doesn't 
+                    // Store previous target, if it's a weapon that doesn't
                     // have a forced target
                     if ((prevMounted != null)
                             && !prevMounted.getType().hasFlag(WeaponType.F_VGL)) {
                         prevTarget = firingDisplay.getTarget();
-                    }                    
+                    }
                     firingDisplay.target(null);
                 } else {
                     if (prevTarget != null) {
@@ -2649,8 +2701,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             } else if (currPanel instanceof TargetingPhaseDisplay) {
                 ((TargetingPhaseDisplay) currPanel).updateTarget();
             }
-            
-            // Tell the <Phase>Display to update the 
+
+            // Tell the <Phase>Display to update the
             // firing arc info when a weapon has been de-selected
             if (weaponList.getSelectedIndex() == -1) {
                 unitDisplay.getClientGUI().getBoardView().clearFieldofF();
@@ -2756,8 +2808,15 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             if (entity.getOwner().equals(unitDisplay.getClientGUI().getClient().getLocalPlayer())) {
                 unitDisplay.getClientGUI().getClient().sendEntityWeaponOrderUpdate(entity);
             }
+        } else if (ev.getSource().equals(wTargetInfo)) {
+            toggleTargetInfoDetail();
         }
         onResize();
+    }
+
+    private void toggleTargetInfoDetail() {
+        targetInfoDetail = !targetInfoDetail;
+        updateTargetInfo();
     }
 
     void setWeaponComparator(final @Nullable WeaponSortOrder weaponSortOrder) {
@@ -2774,6 +2833,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         m_chAmmo.addActionListener(this);
         m_chBayWeapon.addActionListener(this);
         weaponList.addListSelectionListener(this);
+        wTargetInfo.addActionListener(this);
     }
 
     private void removeListeners() {
@@ -2781,6 +2841,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         m_chAmmo.removeActionListener(this);
         m_chBayWeapon.removeActionListener(this);
         weaponList.removeListSelectionListener(this);
+        wTargetInfo.removeActionListener(this);
     }
 
     public Targetable getPrevTarget() {

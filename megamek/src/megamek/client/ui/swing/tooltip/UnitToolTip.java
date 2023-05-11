@@ -199,8 +199,12 @@ public final class UnitToolTip {
         return new StringBuilder().append(table);
     }
 
-    public static String getTargetTipDetail(Targetable target, @Nullable Board board,
+    public static String getTargetTipDetail(@Nullable Targetable target, @Nullable Board board,
                                      @Nullable ClientGUI clientGUI) {
+        if (target == null) {
+            return Messages.getString("BoardView1.Tooltip.NoTarget");
+        }
+
         if (target instanceof Entity) {
            return UnitToolTip.getEntityTipVitals((Entity) target, null).toString();
         } else if (target instanceof BuildingTarget) {
@@ -912,12 +916,13 @@ public final class UnitToolTip {
 
         return new HeatDisplayHelper(heatCapacityStr, heatCapWater);
     }
-      
+
     public static String getOneLineSummary(Entity entity) {
         String result = "";
         boolean isGunEmplacement = entity instanceof GunEmplacement;
 
-        result += Messages.getString("BoardView1.Tooltip.ArmorInternals", entity.getTotalArmor(), entity.getTotalInternal());
+        result += Messages.getString("BoardView1.Tooltip.ArmorInternals",
+                entity.getTotalArmor(), entity.getTotalOArmor(), entity.getTotalInternal(), entity.getTotalOInternal());
 
         String damageLevel;
         switch (entity.getDamageLevel()) {

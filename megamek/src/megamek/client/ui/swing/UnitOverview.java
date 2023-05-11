@@ -25,10 +25,9 @@ import megamek.common.util.StringUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Vector;
-import java.util.stream.Collectors;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class UnitOverview implements IDisplayable {
     private static final int UNKNOWN_UNITS_PER_PAGE = -1;
@@ -139,10 +138,24 @@ public class UnitOverview implements IDisplayable {
                     + BUTTON_PADDING;
         }
 
-        Comparator<Entity> comp = Comparator.comparingInt(Entity::getForceId);
-        comp = comp.thenComparing(Entity::isCommander);
-        comp = comp.thenComparing(Entity::getWeight).reversed();
-        v.sort(comp);
+        ArrayList<Function<Entity, Integer>> fs = new ArrayList<>();
+        fs.add((Entity e) -> e.getForceId());
+        fs.add((Entity e) -> e.getInitialBV());
+        fs.add((Entity e) -> (int) Math.round(e.getWeight()));
+        fs.add((Entity e) -> e.getCrew().getPiloting());
+        fs.add((Entity e) -> e.getCrew().getGunnery());
+
+        if (fs.size() > 0) {
+            Comparator<Entity> comp = Comparator.comparing(fs.get(0));
+            int i = 1;
+
+            while (i < fs.size()) {
+                comp = comp.thenComparing(fs.get(i));
+                i++;
+            }
+
+            v.sort(comp);
+        }
 
         for (int i = scrollOffset; (i < v.size())
                 && (i < actUnitsPerPage + scrollOffset); i++) {
@@ -152,7 +165,7 @@ public class UnitOverview implements IDisplayable {
             Image i1 = clientgui.getBoardView().getTilesetManager().iconFor(e);
 
             graph.drawImage(i1, x, y, null);
-            printLine(graph, x + 3, y + 46, name, e.isCommander());
+            printLine(graph, x + 3, y + 46, name);
             drawBars(graph, e, x, y);
             drawHeat(graph, e, x, y);
             drawConditionStrings(graph, e, x, y);
@@ -369,14 +382,13 @@ public class UnitOverview implements IDisplayable {
         return Color.black;
     }
 
-    private void printLine(Graphics g, int x, int y, String s, boolean b) {
+    private void printLine(Graphics g, int x, int y, String s) {
         g.setColor(Color.black);
         g.drawString(s, x + 1, y);
         g.drawString(s, x - 1, y);
         g.drawString(s, x, y + 1);
         g.drawString(s, x, y - 1);
-        Color c = b ? Color.yellow : Color.white;
-        g.setColor(c);
+        g.setColor(Color.white);
         g.drawString(s, x, y);
     }
 
@@ -472,7 +484,7 @@ public class UnitOverview implements IDisplayable {
             int roundsLeft = entity.getDeployRound()
                     - clientgui.getClient().getGame().getRoundCount();
             if (roundsLeft > 0) {
-                printLine(graph, x + 25, y + 28, Integer.toString(roundsLeft), entity.isCommander());
+                printLine(graph, x + 25, y + 28, Integer.toString(roundsLeft));
             }
         }
     }

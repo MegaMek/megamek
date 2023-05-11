@@ -2267,7 +2267,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         @Override
         public void gameEnd(GameEndEvent e) {
             bv.clearMovementData();
-            bv.clearFieldofF();
+            bv.clearFieldOfFire();
             for (Client client2 : getBots().values()) {
                 client2.die();
             }

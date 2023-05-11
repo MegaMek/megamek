@@ -773,7 +773,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         } else {
             setStatusBarText(yourTurnMsg);
         }
-        clientgui.getBoardView().clearFieldofF();
+        clientgui.getBoardView().clearFieldOfFire();
         computeMovementEnvelope(ce);
     }
 
@@ -998,7 +998,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         initDonePanelForNewTurn();
         setNextEnabled(true);
         setForwardIniEnabled(true);
-        clientgui.getBoardView().clearFieldofF();
+        clientgui.getBoardView().clearFieldOfFire();
         if (numButtonGroups > 1) {
             getBtn(MoveCommand.MOVE_MORE).setEnabled(true);
         }
@@ -1038,7 +1038,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         clientgui.getBoardView().selectEntity(null);
         clientgui.setSelectedEntityNum(Entity.NONE);
         clientgui.getBoardView().clearMovementData();
-        clientgui.getBoardView().clearFieldofF();
+        clientgui.getBoardView().clearFieldOfFire();
     }
 
     /**
@@ -1145,7 +1145,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         // create new current and considered paths
         cmd = new MovePath(clientgui.getClient().getGame(), ce);
-        clientgui.getBoardView().setWeaponFieldofFire(ce, cmd);
+        clientgui.getBoardView().setWeaponFieldOfFire(ce, cmd);
 
         // set to "walk," or the equivalent
         if (gear != MovementDisplay.GEAR_JUMP) {
@@ -1235,7 +1235,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             clientgui.getBoardView().select(cmd.getFinalCoords());
             clientgui.getBoardView().cursor(cmd.getFinalCoords());
             clientgui.getBoardView().drawMovementData(entity, cmd);
-            clientgui.getBoardView().setWeaponFieldofFire(entity, cmd);
+            clientgui.getBoardView().setWeaponFieldOfFire(entity, cmd);
 
             // Set the button's label to "Done"
             // if the entire move is impossible.
@@ -1703,7 +1703,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 cmd = lPath;
             }
         }
-        clientgui.getBoardView().setWeaponFieldofFire(ce(), cmd);
+        clientgui.getBoardView().setWeaponFieldOfFire(ce(), cmd);
     }
 
     //
@@ -5550,23 +5550,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 && !(cmd.isJumping() && (ce instanceof Mech) && (ce.getJumpType() == Mech.JUMP_BOOSTER)));
     }
 
-    public void FieldOfFire(Entity unit, int[][] ranges, int arc, int loc) {
-        // do nothing here outside the movement phase
-        if (!clientgui.getClient().getGame().getPhase().isMovement()) {
-            return;
-        }
-
-        clientgui.getBoardView().fieldofFireUnit = unit;
-        clientgui.getBoardView().fieldofFireRanges = ranges;
-        clientgui.getBoardView().fieldofFireWpArc = arc;
-        clientgui.getBoardView().fieldofFireWpLoc = loc;
-
+    @Override
+    public void setWeaponFieldOfFire(Entity unit, int[][] ranges, int arc, int loc) {
         // If the unit is the current unit, then work with
         // the current considered movement
         if (unit.equals(ce())) {
-            clientgui.getBoardView().setWeaponFieldofFire(ce(), cmd);
+            super.setWeaponFieldOfFire(unit, ranges, arc, loc, cmd);
         } else {
-            clientgui.getBoardView().setWeaponFieldofFire(unit.getFacing(), unit.getPosition());
+            super.setWeaponFieldOfFire(unit, ranges, arc, loc);
         }
     }
 

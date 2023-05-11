@@ -1162,7 +1162,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
      */
     void updateTarget() {
         // dis/enable physical attach buttons
-        if ((cen != Entity.NONE) && (target != null)) {
+        if ((cen != Entity.NONE) && ce().equals(clientgui.getUnitDisplay().getCurrentEntity()) && (target != null)) {
             if (target.getTargetType() != Targetable.TYPE_INARC_POD) {
                 // punch?
                 final ToHitData leftArm = PunchAttackAction.toHit(clientgui

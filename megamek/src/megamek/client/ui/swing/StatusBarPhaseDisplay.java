@@ -33,10 +33,8 @@ import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.TurnTimer;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.*;
-import megamek.common.GameTurn;
-import megamek.common.Player;
+import megamek.common.*;
 import megamek.common.enums.GamePhase;
-import megamek.common.KeyBindParser;
 import megamek.common.preference.*;
 
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
@@ -364,5 +362,27 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
                 setStatusBarText(phase.toString() + s);
             }
         }
+    }
+
+    public void setWeaponFieldOfFire(Entity unit, int[][] ranges, int arc, int loc) {
+        setWeaponFieldOfFire(unit, ranges, arc, loc, unit.getFacing());
+    }
+
+    public void setWeaponFieldOfFire(Entity unit, int[][] ranges, int arc, int loc, int facing) {
+        clientgui.getBoardView().fieldOfFireUnit = unit;
+        clientgui.getBoardView().fieldOfFireRanges = ranges;
+        clientgui.getBoardView().fieldOfFireWpArc = arc;
+        clientgui.getBoardView().fieldOfFireWpLoc = loc;
+
+        clientgui.getBoardView().setWeaponFieldOfFire(facing, unit.getPosition());
+    }
+
+    public void setWeaponFieldOfFire(Entity unit, int[][] ranges, int arc, int loc, MovePath cmd) {
+        clientgui.getBoardView().fieldOfFireUnit = unit;
+        clientgui.getBoardView().fieldOfFireRanges = ranges;
+        clientgui.getBoardView().fieldOfFireWpArc = arc;
+        clientgui.getBoardView().fieldOfFireWpLoc = loc;
+
+        clientgui.getBoardView().setWeaponFieldOfFire(unit, cmd);
     }
 }

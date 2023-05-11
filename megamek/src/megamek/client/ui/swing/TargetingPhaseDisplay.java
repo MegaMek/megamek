@@ -629,7 +629,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
         if (!clientgui.getBoardView().isMovingUnits()) {
             clientgui.maybeShowUnitDisplay();
         }
-        clientgui.getBoardView().clearFieldofF();
+        clientgui.getBoardView().clearFieldOfFire();
 
         selectEntity(clientgui.getClient().getFirstEntityNum());
         setDisengageEnabled((ce() != null) && attacks.isEmpty() && ce().canFlee());
@@ -685,7 +685,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
         clientgui.getBoardView().cursor(null);
         clientgui.getBoardView().clearFiringSolutionData();
         clientgui.getBoardView().clearMovementData();
-        clientgui.getBoardView().clearFieldofF();
+        clientgui.getBoardView().clearFieldOfFire();
         clientgui.setSelectedEntityNum(Entity.NONE);
         disableButtons();
     }
@@ -1023,7 +1023,8 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
 
         // update target panel
         final int weaponId = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
-        if ((target != null) && (weaponId != -1)) {
+        if ( (cen != Entity.NONE) && ce().equals(clientgui.getUnitDisplay().getCurrentEntity())
+                && (target != null) && (weaponId != -1)) {
             ToHitData toHit;
             Mounted m = ce().getEquipment(weaponId);
 
@@ -1550,20 +1551,5 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
             // update target data in weapon display
             updateTarget();
         }
-    }
-
-    public void FieldofFire(Entity unit, int[][] ranges, int arc, int loc, int facing) {
-        // do nothing here outside the arty targeting phase
-        if (!clientgui.getClient().getGame().getPhase().isTargeting() &&
-                !clientgui.getClient().getGame().getPhase().isOffboard()) {
-            return;
-        }
-
-        clientgui.getBoardView().fieldofFireUnit = unit;
-        clientgui.getBoardView().fieldofFireRanges = ranges;
-        clientgui.getBoardView().fieldofFireWpArc = arc;
-        clientgui.getBoardView().fieldofFireWpLoc = loc;
-
-        clientgui.getBoardView().setWeaponFieldofFire(facing, unit.getPosition());
     }
 }

@@ -22,7 +22,6 @@ package megamek.client.ui.swing;
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
-import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.*;
@@ -230,9 +229,11 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
             clientgui.getUnitDisplay().displayEntity(ce());
             clientgui.getUnitDisplay().showPanel("movement");
+            clientgui.getBoardView().setWeaponFieldOfFire(ce().getFacing(), ce().getPosition());
         } else {
             disableButtons();
             setNextEnabled(true);
+            clientgui.getBoardView().clearFieldOfFire();
         }
     }
 
@@ -486,6 +487,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             ce().setFacing(ce().getPosition().direction(moveto));
             ce().setSecondaryFacing(ce().getFacing());
             clientgui.getBoardView().redrawEntity(ce());
+            clientgui.getBoardView().setWeaponFieldOfFire(ce().getFacing(), ce().getPosition());
             turnMode = false;
         } else if (ce().isBoardProhibited(board.getType())) {
             // check if this type of unit can be on the given type of map
@@ -548,6 +550,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             ce().setPosition(moveto);
 
             clientgui.getBoardView().redrawEntity(ce());
+            clientgui.getBoardView().setWeaponFieldOfFire(ce().getFacing(), moveto);
             clientgui.getBoardView().repaint();
             butDone.setEnabled(true);
         }
@@ -836,6 +839,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         if (null == e) {
             return;
         }
+        clientgui.getBoardView().clearFieldOfFire();
         if (client.isMyTurn()) {
             if (client.getGame().getTurn().isValidEntity(e, client.getGame())) {
                 if (ce() != null) {

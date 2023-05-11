@@ -70,6 +70,7 @@ VERSION HISTORY:
 + PR #4412: Remove "(Standard)" as model to follow the MUL. The MUL has removed the (Standard) and we will continue our practice of matching the MUL as closely as possible
 + Fix #4327, #4400: Field of Fire and FOV Darken/Highlight may now be used in more phases of the game
 + PR #4414: The wreck tooltip now shows crew info if they did not eject
++ Data: iATM ammo should use ATM availability codes for standard (ER,HE,Standard) ammos
 
 0.49.12 (2023-03-04 2200 UTC)
 + PR #4062: OS Thunderbolt Weapons are now available for construction and use

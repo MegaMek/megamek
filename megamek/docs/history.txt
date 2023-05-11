@@ -54,20 +54,22 @@ VERSION HISTORY:
 + Issue #4291: Prevent unintended discovery of opponent hidden units if both player and opponent have them
 + PR #4318: Added expandable detailed info to target selection dropdowns
 + PR #4368: The random map generator can now generate Snow features
-+ PR #4360: Low Quality Graphics options to address lag in game.
++ PR #4360: Low Quality Graphics options to address lag in game
 + Issue #3813: Implement repeating TSEMPs
 + Issue #4370: Remove unnecessary log bloat for altitude checks in space
 + PR #4405: Prevent error displaying hex tooltip in various situations
 + Fix #1227: Variable Size critical slots on Superheavy Meks from MTF files now load correctly
 + Issue #4314: BA Micro Grenade Launchers can now correctly attack targets up to 2 hexes away and show these ranges in the unit display
 + Issue #4392: The random map generator now respects the full range of allowed terrain features and may create a feature when between 0 and 1 are allowed
-+ Issue #4345: The bot readme will no longer appear anytime a bot is created and respects the nag dialog setting. Those can be reset with a new menu item.
++ Issue #4345: The bot readme will no longer appear anytime a bot is created and respects the nag dialog setting. Those can be reset with a new menu item
 + Issue #2981: Entity images now show on reports when using double blind
 + PR #4362: The round report now gives detailed unit counts
 + Fix #4386: Indirect-fire ballistic weapons no longer apply modifiers for planetary conditions
 + PR #4379: The overheat from weapon fire shown in the unit display now shows the correct heat capacity values when heat capacity is modified
 + PR #4288: The in-game Done button has been reworked to prevent accidental no-actions without constantly having to add a click in the nag window
-+ PR #4412: Remove "(Standard)" as model to follow the MUL. The MUL has removed the (Standard) and we will continue our practice of matching the MUL as closely as possible. 
++ PR #4412: Remove "(Standard)" as model to follow the MUL. The MUL has removed the (Standard) and we will continue our practice of matching the MUL as closely as possible
++ Fix #4327, #4400: Field of Fire and FOV Darken/Highlight may now be used in more phases of the game
++ PR #4414: The wreck tooltip now shows crew info if they did not eject
 
 0.49.12 (2023-03-04 2200 UTC)
 + PR #4062: OS Thunderbolt Weapons are now available for construction and use

@@ -2006,7 +2006,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             return;
         }
 
-        if (ce.getMiscEquipment(F_CHAFF_POD).stream().anyMatch(Mounted::isReady)) {
+        if (ce.hasWorkingMisc(F_CHAFF_POD)) {
             setChaffEnabled(true);
         } else {
             setChaffEnabled(false);

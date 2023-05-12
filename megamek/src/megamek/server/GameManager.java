@@ -7365,7 +7365,7 @@ public class GameManager implements IGameManager {
                         .collect(Collectors.toList());
                 if (chaffDispensers.size() > 0) {
                     chaffDispensers.get(0).setFired(true);
-                    createSmoke(curPos, 1, 1);
+                    createSmoke(curPos, SmokeCloud.SMOKE_CHAFF_LIGHT, 1);
                     Hex hex = game.getBoard().getHex(curPos);
                     hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_CHAFF_LIGHT));
                     sendChangedHex(curPos);

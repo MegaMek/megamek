@@ -55,6 +55,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static megamek.common.MiscType.F_CHAFF_POD;
 import static megamek.common.options.OptionsConstants.ADVGRNDMOV_TACOPS_ZIPLINES;
 
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
@@ -82,6 +83,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
     public static final int CMD_NON_INF = CMD_MECH | CMD_TANK | CMD_VTOL | CMD_AERO | CMD_AERO_VECTORED;
 
     private boolean isUnJammingRAC;
+    private boolean isUsingChaff;
 
     /**
      * This enumeration lists all of the possible ActionCommands that can be carried out during the
@@ -120,6 +122,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         MOVE_SWIM("moveSwim", CMD_MECH),
         MOVE_SHAKE_OFF("moveShakeOff", CMD_TANK | CMD_VTOL),
         MOVE_BRACE("moveBrace", CMD_MECH),
+        MOVE_CHAFF("moveChaff", CMD_NON_INF),
         // Convert command for a single button, which can cycle through modes because MovePath state is available
         MOVE_MODE_CONVERT("moveModeConvert", CMD_CONVERTER),
         // Convert commands used for menus, where the MovePath state is unknown.
@@ -840,7 +843,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         updateEvadeButton();
         updateBootleggerButton();
         updateLayMineButton();
-
+        updateChaffButton();
         updateStartupButton();
         updateShutdownButton();
 
@@ -1048,6 +1051,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         setWalkEnabled(false);
         setJumpEnabled(false);
         setBackUpEnabled(false);
+        setChaffEnabled(false);
         setTurnEnabled(false);
         setFleeEnabled(false);
         setFlyOffEnabled(false);
@@ -1544,6 +1548,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
             }
         }
 
+        if (isUsingChaff) {
+            cmd.addStep(MoveStepType.CHAFF);
+            isUsingChaff = false;
+        }
+
         disableButtons();
         clientgui.getBoardView().clearMovementData();
         clientgui.getBoardView().clearMovementEnvelope();
@@ -1942,6 +1951,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             updateDonePanel();
             butDone.setEnabled(clientgui.getClient().isMyTurn());
             updateProneButtons();
+            updateChaffButton();
             updateRACButton();
             updateSearchlightButton();
             updateLoadButtons();
@@ -1995,6 +2005,20 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     Infantry.hasValidCover(game, pos, elevation));
         } else {
             getBtn(MoveCommand.MOVE_TAKE_COVER).setEnabled(false);
+        }
+    }
+
+    private synchronized void updateChaffButton() {
+        Entity ce = ce();
+        if (ce == null )
+        {
+            return;
+        }
+
+        if (ce.hasWorkingMisc(F_CHAFF_POD)) {
+            setChaffEnabled(true);
+        } else {
+            setChaffEnabled(false);
         }
     }
 
@@ -5050,6 +5074,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     clientgui.getClient().sendUpdateEntity(e);
                 }
             }
+        } else if (actionCmd.equals(MoveCommand.MOVE_CHAFF.getCmd())) {
+            if(clientgui.doYesNoDialog(
+                    Messages.getString("MovementDisplay.ConfirmChaff.title"),
+                    Messages.getString("MovementDisplay.ConfirmChaff.message"))) {
+                isUsingChaff = true;
+            }
         }
         updateProneButtons();
         updateRACButton();
@@ -5329,6 +5359,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private void setUnjamEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_UNJAM).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_UNJAM.getCmd(), enabled);
+    }
+
+    private void setChaffEnabled(boolean enabled) {
+        getBtn(MoveCommand.MOVE_CHAFF).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(MoveCommand.MOVE_CHAFF.getCmd(), enabled);
     }
 
     private void setSearchlightEnabled(boolean enabled, boolean state) {

@@ -5240,9 +5240,12 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             }
 
             // hidden enemy entities don't show their ECM bubble
-            if (ecmInfo.getEntity().getOwner().isEnemyOf(localPlayer) && ecmInfo.getEntity().isHidden()) {
-                continue;
-            }
+                if (ecmInfo.getEntity() != null
+                        && ecmInfo.getEntity().getOwner().isEnemyOf(localPlayer)
+                        && ecmInfo.getEntity().isHidden()) {
+                    continue;
+                }
+
 
             final Coords ecmPos = ecmInfo.getPos();
             final int range = ecmInfo.getRange();

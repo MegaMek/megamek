@@ -6,7 +6,7 @@ VERSION HISTORY:
 + Fix #3696: Altitude values no longer inadvertently influence space combat
 + Data: #4223 Illegal/overweight BA units
 + Data: #4206 Illegal armour type on the Kopis AI IIr
-+ Fix #4229, #4249, #4278: Alpha Strike conversion and card fixes
++ Fix #4229, #4249, #4278, #4415: Alpha Strike conversion and card fixes
 + Fix #4234: The mini round report now allows marking and copying text
 + Fix #4235: A player without a team no longer results in an error
 + Fix #4238: Erroneous jungle hexes in Fan Pack Arctic boards have been replaced with woods

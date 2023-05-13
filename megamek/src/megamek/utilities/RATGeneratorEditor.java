@@ -13,7 +13,6 @@
  */
 package megamek.utilities;
 
-import megamek.MMConstants;
 import megamek.client.ratgenerator.*;
 import megamek.client.ratgenerator.FactionRecord.TechCategory;
 import megamek.client.ui.swing.util.UIUtil;
@@ -35,7 +34,6 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.io.File;
-import java.net.URL;
 import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -1147,7 +1145,7 @@ public class RATGeneratorEditor extends JFrame {
             if (col == COL_MINOR || col == COL_CLAN || col == COL_PERIPHERY) {
                 return Boolean.class;
             } else if (col == COL_MULID) {
-                return Integer.class;
+                return String.class;
             } else {
                 return String.class;
             }
@@ -1161,7 +1159,7 @@ public class RATGeneratorEditor extends JFrame {
                 case COL_NAME:
                     return data.get(row).getNamesAsString();
                 case COL_MULID:
-                    return data.get(row).getMulId();
+                    return data.get(row).getMulIdsAsString();
                 case COL_YEARS:
                     return data.get(row).getYearsAsString();
                 case COL_MINOR:
@@ -1192,8 +1190,8 @@ public class RATGeneratorEditor extends JFrame {
                     data.get(row).setNames((String) val);
                     break;
                 case COL_MULID:
-                    data.get(row).setMulId((Integer) val);
-                    currentFactionMulId = (Integer) val;
+                    data.get(row).setMulIds((String) val);
+                    currentFactionMulId = data.get(row).getMulId();
                     break;
                 case COL_YEARS:
                     try {

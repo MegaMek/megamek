@@ -68,16 +68,17 @@ public class FactionRecord {
 
     private String key;
     private int mulId = -1;
-    private boolean minor;
-    private boolean clan;
-    private boolean periphery;
+    private boolean minor = false;
+    private boolean clan = false;
+    private boolean periphery = false;
     private String name;
-    private TreeMap<Integer, String> altNames;
-    private ArrayList<DateRange> yearsActive;
-    private ArrayList<String> ratingLevels;
-    private HashMap<Integer, Integer> pctSalvage;
-    private HashMap<TechCategory, HashMap<Integer, ArrayList<Integer>>> pctTech;
-    private HashMap<Integer, HashMap<String, Integer>> salvage;
+    private final TreeMap<Integer, String> altNames = new TreeMap<>();
+    private final TreeMap<Integer, Integer> altMulIds = new TreeMap<>();
+    private final ArrayList<DateRange> yearsActive = new ArrayList<>();
+    private final ArrayList<String> ratingLevels = new ArrayList<>();
+    private final HashMap<Integer, Integer> pctSalvage = new HashMap<>();
+    private final HashMap<TechCategory, HashMap<Integer, ArrayList<Integer>>> pctTech = new HashMap<>();
+    private final HashMap<Integer, HashMap<String, Integer>> salvage = new HashMap<>();
     /*
      * FM:Updates gives percentage values for omni, Clan, and SL tech. Later manuals are
      * less precise, giving omni percentages for Clans and (in FM:3085) upgrade percentage
@@ -87,12 +88,12 @@ public class FactionRecord {
      * get farther from known values. upgradeMargin applies the percentage of units that
      * are late-SW IS tech. techMargin applies to both Clan and advanced (SL and post-Clan) tech.
      */
-    private HashMap<Integer, Integer> omniMargin;
-    private HashMap<Integer, Integer> techMargin;
-    private HashMap<Integer, Integer> upgradeMargin;
+    private final HashMap<Integer, Integer> omniMargin = new HashMap<>();
+    private final HashMap<Integer, Integer> techMargin = new HashMap<>();
+    private final HashMap<Integer, Integer> upgradeMargin = new HashMap<>();
 
-    private HashMap<Integer, HashMap<Integer, ArrayList<Integer>>> weightDistribution;
-    private ArrayList<String> parentFactions;
+    private final HashMap<Integer, HashMap<Integer, ArrayList<Integer>>> weightDistribution = new HashMap<>();
+    private final ArrayList<String> parentFactions = new ArrayList<>();
 
     public FactionRecord() {
         this("Periphery", "Periphery");
@@ -105,18 +106,6 @@ public class FactionRecord {
     public FactionRecord(String key, String name) {
         this.key = key;
         this.name = name;
-        minor = clan = periphery = false;
-        ratingLevels = new ArrayList<>();
-        altNames = new TreeMap<>();
-        yearsActive = new ArrayList<>();
-        pctSalvage = new HashMap<>();
-        pctTech = new HashMap<>();
-        omniMargin = new HashMap<>();
-        upgradeMargin = new HashMap<>();
-        techMargin = new HashMap<>();
-        salvage = new HashMap<>();
-        weightDistribution = new HashMap<>();
-        parentFactions = new ArrayList<>();
     }
 
     @Override
@@ -134,12 +123,33 @@ public class FactionRecord {
         return key;
     }
 
+    /** @return The MUL ID of this faction. May vary with the given year when this faction has alternate names and MUL IDs. */
+    public int getMulId(int year) {
+        Map.Entry<Integer, Integer> possibleAltMulId = altMulIds.floorEntry(year);
+        return possibleAltMulId != null ? possibleAltMulId.getValue() : mulId;
+    }
+
+    /** @return The MUL ID of this faction. Always returns the base MUL ID, never any year-dependent alternates. */
     public int getMulId() {
         return mulId;
     }
 
     public void setMulId(int newId) {
         mulId = newId;
+    }
+
+    public void setMulId(int year, int mulId) {
+        altMulIds.put(year, mulId);
+    }
+
+    public void setMulIds(String mulIds) {
+        String[] fields = mulIds.split(",");
+        mulId = Integer.parseInt(fields[0]);
+        altMulIds.clear();
+        for (int i = 1; i < fields.length; i++) {
+            String[] entry = fields[i].split(":");
+            altMulIds.put(Integer.parseInt(entry[0]), Integer.parseInt(entry[1]));
+        }
     }
 
     public boolean isMinor() {
@@ -512,6 +522,8 @@ public class FactionRecord {
             if (wn.getNodeName().equalsIgnoreCase("nameChange")) {
                 retVal.altNames.put(Integer.parseInt(wn.getAttributes().getNamedItem("year").getTextContent()),
                         wn.getTextContent());
+                retVal.altMulIds.put(Integer.parseInt(wn.getAttributes().getNamedItem("year").getTextContent()),
+                        Integer.parseInt(wn.getAttributes().getNamedItem("mulid").getTextContent()));
             } else if (wn.getNodeName().equalsIgnoreCase("years")) {
                 try {
                     retVal.setYears(wn.getTextContent());
@@ -599,8 +611,7 @@ public class FactionRecord {
         pw.println("\t<faction key='" + key + "' name='" + StringEscapeUtils.escapeXml10(name)
                 + "' mulid='" + mulId + "' minor='" + minor + "' clan='" + clan + "' periphery='" + periphery + "'>");
         for (Integer year : altNames.keySet()) {
-            pw.println("\t\t<nameChange year='" + year + "'>"
-                    + altNames.get(year) + "</nameChange>");
+            pw.println("\t\t<nameChange year='" + year + "' mulid='" + altMulIds.get(year) + "'>" + altNames.get(year) + "</nameChange>");
         }
         pw.print("\t\t<years>");
         pw.print(getYearsAsString());
@@ -609,7 +620,7 @@ public class FactionRecord {
             pw.println("\t\t<ratingLevels>" + StringEscapeUtils.escapeXml10(String.join(",", ratingLevels)) + "</ratingLevels>");
         }
 
-        if ((parentFactions != null) && !parentFactions.isEmpty()) {
+        if (!parentFactions.isEmpty()) {
             pw.println("\t\t<parentFaction>" + StringEscapeUtils.escapeXml10(String.join(",", parentFactions)) + "</parentFaction>");
         }       
         pw.println("\t</faction>");
@@ -779,6 +790,18 @@ public class FactionRecord {
         StringBuilder retVal = new StringBuilder(name);
         for (Integer y : altNames.keySet()) {
             retVal.append(",").append(y).append(":").append(altNames.get(y));
+        }
+        return retVal.toString();
+    }
+
+    /**
+     * @return CSV of all MUL IDs of the faction, with the original MUL ID given first followed by
+     *         changes in the format year:MUL ID
+     */
+    public Object getMulIdsAsString() {
+        StringBuilder retVal = new StringBuilder(mulId+"");
+        for (Integer y : altMulIds.keySet()) {
+            retVal.append(",").append(y).append(":").append(altMulIds.get(y));
         }
         return retVal.toString();
     }

@@ -15,7 +15,7 @@
 		<parentFaction>ROS</parentFaction>
 	</faction>
 	<faction key='AB' name='Azami Caliphate' mulid='-1' minor='true' clan='false' periphery='false'>
-		<nameChange year='3075'>Azami Brotherhood</nameChange>
+		<nameChange year='3075' mulid='-1'>Azami Brotherhood</nameChange>
 		<years>2450-2516,3075-3081</years>
 		<ratingLevels>D</ratingLevels>
 		<parentFaction>DC.AL</parentFaction>
@@ -99,7 +99,7 @@
 		<parentFaction>CLAN.HW</parentFaction>
 	</faction>
 	<faction key='CGB' name='Clan Ghost Bear' mulid='11' minor='false' clan='true' periphery='false'>
-		<nameChange year='3060'>Ghost Bear Dominion</nameChange>
+		<nameChange year='3060' mulid='11'>Ghost Bear Dominion</nameChange>
 		<years>2807-3103</years>
 		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CLAN.IS</parentFaction>
@@ -140,8 +140,8 @@
 		<parentFaction>CLAN.IS</parentFaction>
 	</faction>
 	<faction key='CDS' name='Clan Sea Fox' mulid='82' minor='false' clan='true' periphery='false'>
-		<nameChange year='2985'>Clan Diamond Shark</nameChange>
-		<nameChange year='3100'>Clan Sea Fox</nameChange>
+		<nameChange year='2985' mulid='8'>Clan Diamond Shark</nameChange>
+		<nameChange year='3100' mulid='82'>Clan Sea Fox</nameChange>
 		<years>2807-</years>
 		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CLAN.IS</parentFaction>
@@ -230,7 +230,7 @@
 		<parentFaction>CM</parentFaction>
 	</faction>
 	<faction key='DTA' name='Duchy of Tamarind' mulid='75' minor='false' clan='false' periphery='false'>
-		<nameChange year='3078'>Duchy of Tamarind-Abbey</nameChange>
+		<nameChange year='3078' mulid='75'>Duchy of Tamarind-Abbey</nameChange>
 		<years>3071-3139</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS,FWL</parentFaction>
@@ -251,8 +251,8 @@
 		<parentFaction>FS,LA</parentFaction>
 	</faction>
 	<faction key='FS' name='Federated Suns' mulid='29' minor='false' clan='false' periphery='false'>
-		<nameChange year='3042'>Federated Commonwealth (Davion)</nameChange>
-		<nameChange year='3067'>Federated Suns</nameChange>
+		<nameChange year='3042' mulid='29'>Federated Commonwealth (Davion)</nameChange>
+		<nameChange year='3067' mulid='29'>Federated Suns</nameChange>
 		<years>2317-</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
@@ -273,8 +273,8 @@
 		<parentFaction>IS</parentFaction>
 	</faction>
 	<faction key='FWL' name='Free Worlds League' mulid='30' minor='false' clan='false' periphery='false'>
-		<nameChange year='3078'>Former Free Worlds Independent</nameChange>
-		<nameChange year='3138'>Free Worlds League</nameChange>
+		<nameChange year='3078' mulid='30'>Former Free Worlds Independent</nameChange>
+		<nameChange year='3138' mulid='30'>Free Worlds League</nameChange>
 		<years>2271-</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
@@ -317,9 +317,9 @@
 		<parentFaction>Periphery.MW</parentFaction>
 	</faction>
 	<faction key='LA' name='Lyran Commonwealth' mulid='32' minor='false' clan='false' periphery='false'>
-		<nameChange year='3042'>Federated Commonwealth (Steiner)</nameChange>
-		<nameChange year='3057'>Lyran Alliance</nameChange>
-		<nameChange year='3084'>Lyran Commonwealth</nameChange>
+		<nameChange year='3042' mulid='32'>Federated Commonwealth (Steiner)</nameChange>
+		<nameChange year='3057' mulid='32'>Lyran Alliance</nameChange>
+		<nameChange year='3084' mulid='32'>Lyran Commonwealth</nameChange>
 		<years>2341-</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
@@ -561,8 +561,8 @@
 		<parentFaction>IS</parentFaction>
 	</faction>
 	<faction key='TH' name='Terran Hegemony' mulid='87' minor='false' clan='true' periphery='false'>
-		<nameChange year='2767'>Amaris Empire</nameChange>
-		<nameChange year='2779'>Terran Hegemony</nameChange>
+		<nameChange year='2767' mulid='87'>Amaris Empire</nameChange>
+		<nameChange year='2779' mulid='87'>Terran Hegemony</nameChange>
 		<years>2315-2788</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS,SL,SL.R</parentFaction>
@@ -627,7 +627,7 @@
 		<parentFaction>LA</parentFaction>
 	</faction>
 	<faction key='LA.AlJ' name='Alliance Jaegers' mulid='-1' minor='false' clan='false' periphery='false'>
-		<nameChange year='3084'>Lyran Reserves</nameChange>
+		<nameChange year='3084' mulid='-1'>Lyran Reserves</nameChange>
 		<years>3057-</years>
 		<ratingLevels>B</ratingLevels>
 		<parentFaction>LA</parentFaction>
@@ -638,7 +638,7 @@
 		<parentFaction>OA</parentFaction>
 	</faction>
 	<faction key='DC.AR' name='Alshain Regulars' mulid='-1' minor='true' clan='false' periphery='false'>
-		<nameChange year='3052'>Alshain Avengers</nameChange>
+		<nameChange year='3052' mulid='-1'>Alshain Avengers</nameChange>
 		<years>3034-3064</years>
 		<ratingLevels>D</ratingLevels>
 		<parentFaction>DC</parentFaction>
@@ -764,7 +764,7 @@
 		<parentFaction>MOC</parentFaction>
 	</faction>
 	<faction key='CC.CR' name='Chesterton Regulars' mulid='-1' minor='false' clan='false' periphery='false'>
-		<nameChange year='2832'>Chesteron Reserves</nameChange>
+		<nameChange year='2832' mulid='-1'>Chesteron Reserves</nameChange>
 		<years>2832-3060</years>
 		<ratingLevels>C</ratingLevels>
 		<parentFaction>CC</parentFaction>
@@ -1255,7 +1255,7 @@
 		<parentFaction>DC</parentFaction>
 	</faction>
 	<faction key='MOC.RC' name='Raventhir Footmen' mulid='-1' minor='false' clan='false' periphery='true'>
-		<nameChange year='3063'>Raventhir Cuirassiers</nameChange>
+		<nameChange year='3063' mulid='-1'>Raventhir Cuirassiers</nameChange>
 		<years>3055-</years>
 		<ratingLevels>C</ratingLevels>
 		<parentFaction>MOC</parentFaction>
@@ -1341,7 +1341,7 @@
 		<parentFaction>DC</parentFaction>
 	</faction>
 	<faction key='CC.SD' name='Sian Lancers' mulid='-1' minor='false' clan='false' periphery='false'>
-		<nameChange year='2485'>Sian Dragoons</nameChange>
+		<nameChange year='2485' mulid='-1'>Sian Dragoons</nameChange>
 		<years>2367-3000</years>
 		<ratingLevels>D</ratingLevels>
 		<parentFaction>CC</parentFaction>

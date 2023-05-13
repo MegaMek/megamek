@@ -18,6 +18,7 @@
  */
 package megamek.client.ui.swing.util;
 
+import megamek.MMConstants;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Messages;
 import org.apache.logging.log4j.LogManager;
@@ -26,60 +27,95 @@ import java.awt.*;
 
 public enum PlayerColour {
     //region Enum Declarations
-    BLUE("PlayerColour.BLUE.text", 0x8686BF),
-    RED("PlayerColour.RED.text", 0xCC6666),
-    GREEN("PlayerColour.GREEN.text", 0x87BF86),
-    CYAN("PlayerColour.CYAN.text", 0x8FCCCC),
-    PINK("PlayerColour.PINK.text", 0xF29DC8),
-    ORANGE("PlayerColour.ORANGE.text", 0xF2AA61),
-    GRAY("PlayerColour.GRAY.text", 0xBEBEBE),
-    BROWN("PlayerColour.BROWN.text", 0x98816B),
-    PURPLE("PlayerColour.PURPLE.text", 0x800080),
-    TURQUOISE("PlayerColour.TURQUOISE.text", 0x40E0D0),
-    MAROON("PlayerColour.MAROON.text", 0x800000),
-    SPRING_GREEN("PlayerColour.SPRING_GREEN.text", 0x00FF7F),
-    GOLD("PlayerColour.GOLD.text", 0xFFD700),
-    SIENNA("PlayerColour.SIENNA.text", 0xA0522D),
-    VIOLET("PlayerColour.VIOLET.text", 0xEE82EE),
-    NAVY("PlayerColour.NAVY.text", 0x000080),
-    OLIVE_DRAB("PlayerColour.OLIVE_DRAB.text", 0x6B8E23),
-    FUCHSIA("PlayerColour.FUCHSIA.text", 0xFF00FF),
-    FIRE_BRICK("PlayerColour.FIRE_BRICK.text", 0xB22222),
-    DARK_GOLDEN_ROD("PlayerColour.DARK_GOLDEN_ROD.text", 0xB8860B),
-    CORAL("PlayerColour.CORAL.text", 0xFF7F50),
-    CHARTREUSE("PlayerColour.CHARTREUSE.text", 0x7FFF00),
-    DEEP_PURPLE("PlayerColour.DEEP_PURPLE.text", 0x9400D3),
-    YELLOW("PlayerColour.YELLOW.text", 0xF2F261);
+    BLUE(PlayerColour.PLAYERCOLOUR_BLUE),
+    RED(PlayerColour.PLAYERCOLOUR_RED),
+    GREEN(PlayerColour.PLAYERCOLOUR_GREEN),
+    CYAN(PlayerColour.PLAYERCOLOUR_CYAN),
+    PINK(PlayerColour.PLAYERCOLOUR_PINK),
+    ORANGE(PlayerColour.PLAYERCOLOUR_ORANGE),
+    GRAY(PlayerColour.PLAYERCOLOUR_GRAY),
+    BROWN(PlayerColour.PLAYERCOLOUR_BROWN),
+    PURPLE(PlayerColour.PLAYERCOLOUR_PURPLE),
+    TURQUOISE(PlayerColour.PLAYERCOLOUR_TURQUOISE),
+    MAROON(PlayerColour.PLAYERCOLOUR_MAROON),
+    SPRING_GREEN(PlayerColour.PLAYERCOLOUR_SPRING_GREEN),
+    GOLD(PlayerColour.PLAYERCOLOUR_GOLD),
+    SIENNA(PlayerColour.PLAYERCOLOUR_SIENNA),
+    VIOLET(PlayerColour.PLAYERCOLOUR_VIOLET),
+    NAVY(PlayerColour.PLAYERCOLOUR_NAVY),
+    OLIVE_DRAB(PlayerColour.PLAYERCOLOUR_OLIVE_DRAB),
+    FUCHSIA(PlayerColour.PLAYERCOLOUR_FUCHSIA),
+    FIRE_BRICK(PlayerColour.PLAYERCOLOUR_FIRE_BRICK),
+    DARK_GOLDEN_ROD(PlayerColour.PLAYERCOLOUR_DARK_GOLDEN_ROD),
+    CORAL(PlayerColour.PLAYERCOLOUR_CORAL),
+    CHARTREUSE(PlayerColour.PLAYERCOLOUR_CHARTREUSE),
+    DEEP_PURPLE(PlayerColour.PLAYERCOLOUR_DEEP_PURPLE),
+    YELLOW(PlayerColour.PLAYERCOLOUR_YELLOW);
     //endregion Enum Declarations
 
+
     //region Variable Declarations
+    private final String text;
     private final String name;
-    private final int hex;
+    public static final String PLAYERCOLOUR_BLUE = "PlayerColour.BLUE.text";
+    public static final String PLAYERCOLOUR_RED = "PlayerColour.RED.text";
+    public static final String PLAYERCOLOUR_GREEN = "PlayerColour.GREEN.text";
+    public static final String PLAYERCOLOUR_CYAN = "PlayerColour.CYAN.text";
+    public static final String PLAYERCOLOUR_PINK = "PlayerColour.PINK.text";
+    public static final String PLAYERCOLOUR_ORANGE = "PlayerColour.ORANGE.text";
+    public static final String PLAYERCOLOUR_GRAY = "PlayerColour.GRAY.text";
+    public static final String PLAYERCOLOUR_BROWN = "layerColour.BROWN.text";
+    public static final String PLAYERCOLOUR_PURPLE = "PlayerColour.PURPLE.text";
+    public static final String PLAYERCOLOUR_TURQUOISE = "PlayerColour.TURQUOISE.text";
+    public static final String PLAYERCOLOUR_MAROON = "PlayerColour.MAROON.text";
+    public static final String PLAYERCOLOUR_SPRING_GREEN = "PlayerColour.SPRING_GREEN.text";
+    public static final String PLAYERCOLOUR_GOLD = "PlayerColour.GOLD.text";
+    public static final String PLAYERCOLOUR_SIENNA = "PlayerColour.SIENNA.text";
+    public static final String PLAYERCOLOUR_VIOLET = "PlayerColour.VIOLET.text";
+    public static final String PLAYERCOLOUR_NAVY = "PlayerColour.NAVY.text";
+    public static final String PLAYERCOLOUR_OLIVE_DRAB = "PlayerColour.OLIVE_DRAB.text";
+    public static final String PLAYERCOLOUR_FUCHSIA = "PlayerColour.FUCHSIA.text";
+    public static final String PLAYERCOLOUR_FIRE_BRICK = "PlayerColour.FIRE_BRICK.text";
+    public static final String PLAYERCOLOUR_DARK_GOLDEN_ROD = "PlayerColour.DARK_GOLDEN_ROD.text";
+    public static final String PLAYERCOLOUR_CORAL = "PlayerColour.CORAL.text";
+    public static final String PLAYERCOLOUR_CHARTREUSE = "PlayerColour.CHARTREUSE.text";
+    public static final String PLAYERCOLOUR_DEEP_PURPLE = "PlayerColour.DEEP_PURPLE.text";
+    public static final String PLAYERCOLOUR_YELLOW = "PlayerColour.YELLOW.text";
     //endregion Variable Declarations
 
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
     //region Constructors
-    PlayerColour(String name, int hex) {
-        this.name = Messages.getString(name);
-        this.hex = hex;
+    PlayerColour(String text) {
+        this.text = text;
+        this.name = Messages.getString(text);
     }
     //endregion Constructors
 
     //region Getters
+    public String getText() {
+        return this.text;
+    }
+
     public Color getColour() {
         return getColour(true);
     }
 
     public Color getColour(boolean allowTransparency) {
         if (allowTransparency) {
-            int transparency = GUIPreferences.getInstance().getInt(GUIPreferences.ADVANCED_ATTACK_ARROW_TRANSPARENCY);
+            int transparency = GUIP.getAttachArrowTransparency();
             return new Color(getHex() | (transparency << 24), true);
         } else {
             return new Color(getHex());
         }
     }
 
+    public int getColorToHex(Color c) {
+        return c.getRGB() & 0xFFFFFF;
+    }
+
     public int getHex() {
-        return hex;
+        return getColorToHex(GUIP.getColor(this.text));
     }
 
     public String getHexString() {

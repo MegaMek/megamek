@@ -157,8 +157,6 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         }
 
         previousMovementMode = movementMode;
-        setFuel(80);
-
         setCrew(new LAMPilot(this));
     }
 
@@ -397,6 +395,11 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
             if (weatherMod != 0) {
                 j = Math.max(j + weatherMod, 0);
+            }
+
+            if(getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
+                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_TORNADO_F13)) {
+                j += 1;
             }
         }
         return j;
@@ -663,6 +666,21 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             default:
                 return super.getMovementAbbr(mtype);
         }
+    }
+
+    /**
+     * What's the range of the ECM equipment?
+     *
+     * @return the <code>int</code> range of this unit's ECM. This value will be
+     *         <code>Entity.NONE</code> if no ECM is active.
+     */
+    @Override
+    public int getECMRange() {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
+                || !game.getBoard().inSpace()) {
+            return super.getECMRange();
+        }
+        return Math.min(super.getECMRange(), 0);
     }
 
     /**
@@ -1128,6 +1146,12 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     }
 
     @Override
+    public int reduceMPByBombLoad(int t) {
+        // bombs don't impact movement
+        return t;
+    }
+
+    @Override
     public Targetable getVTOLBombTarget() {
         return airmechBombTarget;
     }
@@ -1140,6 +1164,15 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     @Override
     public boolean isMakingVTOLGroundAttack() {
         return airmechBombTarget != null;
+    }
+
+    @Override
+    public boolean isNightwalker() {
+        if (isAirborne()) {
+            return false;
+        } else {
+            return getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_NIGHTWALKER);
+        }
     }
 
     @Override

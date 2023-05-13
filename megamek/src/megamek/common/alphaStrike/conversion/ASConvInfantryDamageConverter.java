@@ -42,27 +42,35 @@ public class ASConvInfantryDamageConverter extends ASDamageConverter {
 
     @Override
     protected void processDamage() {
-        report.addEmptyLine();
-        report.addLine("--- Damage:", "");
-        int baseRange = 0;
-        if ((infantry.getSecondaryWeapon() != null) && (infantry.getSecondaryN() >= 2)) {
-            baseRange = infantry.getSecondaryWeapon().getInfantryRange();
-        } else if (infantry.getPrimaryWeapon() != null) {
-            baseRange = infantry.getPrimaryWeapon().getInfantryRange();
+        if (infantry.hasFieldWeapon()) {
+            processSDamage();
+            processMDamage();
+            processLDamage();
+            processFrontSpecialDamage(AC);
+            processFrontSpecialDamage(FLK);
+        } else {
+            int baseRange = 0;
+            if ((infantry.getSecondaryWeapon() != null) && (infantry.getSecondaryWeaponsPerSquad() >= 2)) {
+                baseRange = infantry.getSecondaryWeapon().getInfantryRange();
+            } else if (infantry.getPrimaryWeapon() != null) {
+                baseRange = infantry.getPrimaryWeapon().getInfantryRange();
+            }
+            int range = baseRange * 3;
+            String maxRangeText;
+            finalSDamage = ASDamage.createDualRoundedUp(getConvInfantryStandardDamage());
+            if (range > 15) {
+                finalLDamage = finalSDamage;
+                finalMDamage = finalSDamage;
+                maxRangeText = "Ranges: S, M, L";
+            } else if (range > 3) {
+                finalMDamage = finalSDamage;
+                maxRangeText = "Ranges: S, M";
+            } else {
+                maxRangeText  = "Range: S";
+            }
+            report.addLine("Final Damage", "", finalSDamage + "");
+            report.addLine("Range:", range + " hexes", maxRangeText);
         }
-        int range = baseRange * 3;
-        finalSDamage = ASDamage.createDualRoundedUp(getConvInfantryStandardDamage());
-        String maxRangeText = "Range: S";
-        if (range > 3) {
-            finalMDamage = finalSDamage;
-            maxRangeText = "Ranges: S, M";
-        }
-        if (range > 15) {
-            finalLDamage = finalSDamage;
-            maxRangeText = "Ranges: S, M, L";
-        }
-        report.addLine("Final Damage", "", finalSDamage + "");
-        report.addLine("Range:", range + " hexes", maxRangeText);
 
         processHT();
     }
@@ -95,13 +103,12 @@ public class ASConvInfantryDamageConverter extends ASDamageConverter {
             WeaponType weaponType = (WeaponType) weapon.getType();
             if ((weaponType.hasFlag(WeaponType.F_FLAMER) || weaponType.hasFlag(WeaponType.F_PLASMA))
                     && (ASLocationMapper.damageLocationMultiplier(entity, 0, weapon) > 0)) {
-                //TODO: Rules are unclear how to deal with an S damage value of 0*
                 if (finalSDamage.damage < 1) {
-                    report.addLine("No S damage", "No HT", "");
+                    report.addLine("Insufficient S damage", "No HT", "");
                 } else {
                     report.addLine(weapon.getName(), "(has heat damage)", "");
                     ASDamageVector finalHtValue = ASDamageVector.createNormRndDmg(Math.min(2, finalSDamage.damage), 0, 0);
-                    element.getSpecialAbilities().setSUA(HT, finalHtValue);
+                    locations[0].setSUA(HT, finalHtValue); // don't set it directly, it  gets overwritten
                     report.addLine("Final Ability", "", "HT" + finalHtValue);
                 }
                 report.endTentativeSection();

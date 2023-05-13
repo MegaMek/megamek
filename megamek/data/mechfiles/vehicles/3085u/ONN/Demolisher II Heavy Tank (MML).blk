@@ -79,3 +79,35 @@ Tracked
 <source>
 Jihad
 </source>
+
+<capabilities>
+The result is a slow-moving tank that can literally demolish anything in its path. CASE protects the crew of this vehicle from potentially-lethal ammunition explosions. Fourteen and a half tons of ferro-fibrous armor protect the vehicle from all but the most determined and concentrated of assaults.
+</capabilities>
+
+<overview>
+The 'Demolisher II heavy tank is an upgrade of the original Demolisher, whose factory on Sudeten was lost to Clan Jade Falcon. 
+</overview>
+
+<deployment>
+Also introduced during the Jihad, this variant carries a Guardian ECM Suite for increased protection. Four MML-9 launchers with Artemis IV guidance systems and 7 tons of ammo replace the autocannons.
+</deployment>
+
+<history>
+Since the Typhoon stayed concentrated within traditionally Federated Suns unit within the Federated Commonwealth, when the Lyran Alliance broke away, they needed their own urban combat vehicle. Production began in 3059.
+</history>
+
+<manufacturer>
+Field Refit
+</manufacturer>
+
+<primaryFactory>
+Field Refit
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Vlar 300 fusion
+ARMOR:Starslab/6 ferro-fibrous w/ CASE
+COMMUNICATIONS:Neil 9000
+TARGETING:Angst Clear View 2A
+</systemManufacturers>

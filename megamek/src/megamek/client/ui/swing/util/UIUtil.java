@@ -13,6 +13,7 @@
 */ 
 package megamek.client.ui.swing.util;
 
+import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.swing.ClientGUI;
@@ -26,6 +27,8 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -46,6 +49,7 @@ public final class UIUtil {
     
     /** The style = font-size: xx value corresponding to a GUI scale of 1 */
     public final static int FONT_SCALE1 = 14;
+    public final static int FONT_SCALE2 = 17;
     public final static String ECM_SIGN = " \u24BA ";
     public final static String LOADED_SIGN = " \u26DF ";
     public final static String UNCONNECTED_SIGN = " \u26AC";
@@ -54,6 +58,7 @@ public final class UIUtil {
     public final static String QUIRKS_SIGN = " \u24E0 ";
     public static final String DOT_SPACER = " \u2B1D ";
     public static final String BOT_MARKER = " \u259A ";
+
 
     public static String repeat(String str, int count) {
         return String.valueOf(str).repeat(Math.max(0, count));
@@ -244,12 +249,30 @@ public final class UIUtil {
     }
     
     /** 
-     * Returns a light red color suitable as a text color. The supplied
+     * Returns a yellow color suitable as a text color. The supplied
      * color depends on the UI look and feel and will be lighter for a 
      * dark UI LAF than for a light UI LAF.
      */
     public static Color uiYellow() {
         return uiBgBrightness() > 130 ? LIGHTUI_YELLOW : DARKUI_YELLOW;
+    }
+
+    /**
+     * Returns a light red color suitable as a text color. The supplied
+     * color depends on the UI look and feel and will be lighter for a
+     * dark UI LAF than for a light UI LAF.
+     */
+    public static Color uiBlack() {
+        return uiBgBrightness() > 130 ? LIGHTUI_BLACK : DARKUI_BLACK;
+    }
+
+    /**
+     * Returns a light red color suitable as a text color. The supplied
+     * color depends on the UI look and feel and will be lighter for a
+     * dark UI LAF than for a light UI LAF.
+     */
+    public static Color uiWhite() {
+        return uiBgBrightness() > 130 ? LIGHTUI_WHITE : DARKUI_WHITE;
     }
     
     /** 
@@ -352,58 +375,87 @@ public final class UIUtil {
         return "<HTML>" + UIUtil.guiScaledFontHTML() + Messages.getString(str) + "</FONT></HTML>";
     }
     
-    /** Call this for  {@link #adjustDialog(Container)} with a dialog as parameter. */
-    public static void adjustDialog(JDialog dialog) {
-        adjustDialog(dialog.getContentPane());
+    /** Call this for {@link #adjustContainer(Container, int)} with a dialog as parameter. */
+    public static void adjustDialog(JDialog dialog, int fontSize) {
+        adjustContainer(dialog.getContentPane(), fontSize);
     }
-    
+
+    /** calculate the max row height in a table + pad */
+    public static int calRowHeights(JTable table, int sf, int pad)
+    {
+        int rowHeight = sf;
+        for (int row = 0; row < table.getRowCount(); row++)         {
+            for (int col = 0; col < table.getColumnCount(); col++) {
+                // Consider the preferred height of the column
+                TableCellRenderer renderer = table.getCellRenderer(row, col);
+                Component comp = table.prepareRenderer(renderer, row, col);
+                rowHeight = Math.max(rowHeight, comp.getPreferredSize().height);
+            }
+        }
+        // Add a little margin to the rows
+        return rowHeight + pad;
+    }
+
+    /** set font size for the TitledBorder */
+     public static void setTitledBorder(Border border, int sf) {
+        if ((border instanceof TitledBorder)) {
+            ((TitledBorder) border).setTitleFont(((TitledBorder) border).getTitleFont().deriveFont((float) sf));
+        }
+    }
+
     /** 
      * Applies the current gui scale to a given Container.
      * For a dialog, pass getContentPane(). This can work well for simple dialogs,
      * but it is of course "experimental". Complex dialogs must be hand-adapted to the 
      * gui scale.
      */
-    public static void adjustDialog(Container contentPane) {
-        Font scaledFont = getScaledFont();
-        Component[] allComps = contentPane.getComponents();
-        for (Component comp: allComps) {
+    public static void adjustContainer(Container parentCon, int fontSize) {
+        int sf = scaleForGUI(fontSize);
+        int pad = 3;
+
+        for (Component comp: parentCon.getComponents()) {
             if ((comp instanceof JButton) || (comp instanceof JLabel)
                     || (comp instanceof JComboBox<?>) || (comp instanceof JTextField) || (comp instanceof JSlider)
-                    || (comp instanceof JSpinner) || (comp instanceof JTextArea) || (comp instanceof JTextPane)
-                    || (comp instanceof JToggleButton)) {
-                comp.setFont(scaledFont.deriveFont(comp.getFont().getStyle()));
+                    || (comp instanceof JSpinner) || (comp instanceof JTextArea) || (comp instanceof JToggleButton)
+                    || (comp instanceof JTable) || (comp instanceof JList) || (comp instanceof JProgressBar)
+                    || (comp instanceof JEditorPane) || (comp instanceof JTree)) {
+                if ((comp.getFont() != null) && (sf != comp.getFont().getSize())) {
+                    comp.setFont(comp.getFont().deriveFont((float) sf));
+                }
             }
             if (comp instanceof JScrollPane 
                     && ((JScrollPane) comp).getViewport().getView() instanceof JComponent) {
-                adjustDialog(((JScrollPane) comp).getViewport());
+                JScrollPane scrollPane = (JScrollPane) comp;
+                Border border = scrollPane.getBorder();
+                setTitledBorder(border, sf);
+                adjustContainer(((JScrollPane) comp).getViewport(), fontSize);
             } else if (comp instanceof JPanel) {
                 JPanel panel = (JPanel) comp;
                 Border border = panel.getBorder();
-                if ((border instanceof TitledBorder)) {
-                    ((TitledBorder) border).setTitleFont(scaledFont);
-                }
-
-                if ((border instanceof EmptyBorder)) {
-                    Insets i = ((EmptyBorder) border).getBorderInsets();
-                    int top = scaleForGUI(i.top);
-                    int bottom = scaleForGUI(i.bottom);
-                    int left = scaleForGUI(i.left);
-                    int right = scaleForGUI(i.right);
-                    panel.setBorder(BorderFactory.createEmptyBorder(top, left, bottom, right));
-                }
-                adjustDialog(panel);
+                setTitledBorder(border, sf);
+                adjustContainer(panel, fontSize);
             } else if (comp instanceof JTabbedPane) {
-                comp.setFont(scaledFont);
+                if ((comp.getFont() != null) && (sf != comp.getFont().getSize())) {
+                    comp.setFont(comp.getFont().deriveFont((float) sf));
+                }
                 JTabbedPane tabbedPane = (JTabbedPane) comp;
                 for (int i=0; i < tabbedPane.getTabCount();i++) {
                     Component subComp = tabbedPane.getTabComponentAt(i);
                     if (subComp instanceof JPanel) {
-                        adjustDialog((JPanel) subComp);
+                        adjustContainer((JPanel) subComp, fontSize);
                     }
                 }
-                adjustDialog((JTabbedPane) comp);
+                adjustContainer((JTabbedPane) comp, fontSize);
+            } else if (comp instanceof JTable) {
+                JTable table = (JTable) comp;
+                table.setRowHeight(calRowHeights(table, sf, pad));
+                JTableHeader header = table.getTableHeader();
+                if ((header != null)) {
+                    header.setFont(comp.getFont().deriveFont((float) sf));
+                }
+                adjustContainer((Container) comp, fontSize);
             } else if (comp instanceof Container) {
-                adjustDialog((Container) comp);
+                adjustContainer((Container) comp, fontSize);
             }
         }
     }
@@ -414,13 +466,23 @@ public final class UIUtil {
             if ((comp instanceof JMenuItem)) {
                 comp.setFont(getScaledFont());
                 scaleJMenuItem((JMenuItem) comp);
-            } 
+            }
+        }
+    }
+
+    public static void scaleComp(JComponent comp, int fontSize) {
+        int sf = scaleForGUI(fontSize);
+
+        if ((comp.getFont() != null) && (sf != comp.getFont().getSize())) {
+            comp.setFont(comp.getFont().deriveFont((float) sf));
+            Border border = comp.getBorder();
+            setTitledBorder(border, sf);
         }
     }
 
     /**
      *
-     * @param currentMonitor
+     * @param currentMonitor The DisplayMode of the current monitor
      * @return the width of the screen taking into account display scaling
      */
     public static int getScaledScreenWidth(DisplayMode currentMonitor) {
@@ -431,7 +493,7 @@ public final class UIUtil {
 
     /**
      *
-     * @param currentMonitor
+     * @param currentMonitor The DisplayMode of the current monitor
      * @return The height of the screen taking into account display scaling
      */
     public static int getScaledScreenHeight(DisplayMode currentMonitor) {
@@ -450,7 +512,7 @@ public final class UIUtil {
 
     /**
      *
-     * @param currentMonitor
+     * @param currentMonitor The DisplayMode of the current monitor
      * @return The height of the screen taking into account display scaling
      */
     public static Dimension getScaledScreenSize(DisplayMode currentMonitor) {
@@ -536,7 +598,7 @@ public final class UIUtil {
     /**
      *
      * @param imgSplash an image
-     * @param observer
+     * @param observer An imageObserver
      * @param scaledMonitorSize the dimensions of the monitor taking into account display scaling
      * @return a JLabel setup to the correct size to act as a splash screen
      */
@@ -582,6 +644,22 @@ public final class UIUtil {
             component.setLocationRelativeTo(null);
         }
     }
+
+    /**
+     * Activates anti-aliasing and other high-quality settings for the given Graphics.
+     *
+     * @param graph Graphics context to use hq rendering for
+     */
+    public static void setHighQualityRendering(Graphics graph) {
+        if (GUIPreferences.getInstance().getHighQualityGraphics()) {
+            ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+            ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+            ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        }
+    }
+
     /** A specialized panel for the header of a section. */
     public static class Header extends JPanel {
         private static final long serialVersionUID = -6235772150005269143L;
@@ -1064,7 +1142,35 @@ public final class UIUtil {
      * size 14 and scaled with the current gui scaling. 
      */
     public static Font getScaledFont() {
-        return new Font("Dialog", Font.PLAIN, scaleForGUI(FONT_SCALE1));
+        return new Font(MMConstants.FONT_DIALOG, Font.PLAIN, scaleForGUI(FONT_SCALE1));
+    }
+
+    /**
+     * Returns vertical spacer Swing component ({@link Box#createVerticalStrut(int)} with the given height
+     * scaled by the current GUI scaling.
+     */
+    public static Component scaledVerticalSpacer(int unscaledHeight) {
+        return Box.createVerticalStrut((int) (unscaledHeight * GUIPreferences.getInstance().getGUIScale()));
+    }
+
+    /**
+     * This class is a subclass of EmptyBorder. The given top, left, right, bottom values are scaled with the
+     * current GUI scale.
+     */
+    public static class ScaledEmptyBorder extends EmptyBorder {
+
+        /**
+         * Creates a version of EmptyBorder where top, left, right, bottom values are scaled with the current GUI scale.
+         */
+        public ScaledEmptyBorder(int top, int left, int bottom, int right) {
+            super(UIUtil.scaleForGUI(top), UIUtil.scaleForGUI(left), UIUtil.scaleForGUI(bottom), UIUtil.scaleForGUI(right));
+        }
+    }
+
+    /** Returns true when a modal dialog such as the Camo Chooser or a Load Force dialog is currently shown. */
+    public static boolean isModalDialogDisplayed() {
+        return Stream.of(Window.getWindows())
+                .anyMatch(w -> w.isShowing() && (w instanceof JDialog) && ((JDialog) w).isModal());
     }
 
     // PRIVATE
@@ -1087,6 +1193,10 @@ public final class UIUtil {
     private final static Color DARKUI_LIGHTGREEN = new Color(150, 210, 150);
     private final static Color LIGHTUI_DARKBLUE = new Color(225, 225, 245);
     private final static Color DARKUI_DARKBLUE = new Color(50, 50, 80);
+    private final static Color LIGHTUI_BLACK = new Color(0, 0, 0);
+    private final static Color DARKUI_BLACK = new Color(0, 0, 0);
+    private final static Color LIGHTUI_WHITE = new Color(255, 255, 255);
+    private final static Color DARKUI_WHITE = new Color(255, 255, 255);
 
     /** Returns an HTML FONT Size String, according to GUIScale (e.g. "style=font-size:22"). */
     private static String sizeString() {
@@ -1187,4 +1297,16 @@ public final class UIUtil {
         window.setLocation(location);
         window.setSize(size);
     }
+
+    /*
+     * Calculates center of view port for a given point
+     */
+    public static int calculateCenter(int vh, int h, int th, int y) {
+        y = Math.max(0, y - ((vh - th)/2));
+        y = Math.min(y, h - vh);
+        return y;
+    }
+
+
+    private UIUtil() { }
 }

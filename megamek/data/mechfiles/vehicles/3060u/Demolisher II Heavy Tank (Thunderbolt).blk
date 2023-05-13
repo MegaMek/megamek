@@ -91,3 +91,35 @@ Tracked
 <source>
 Jihad
 </source>
+
+<capabilities>
+The result is a slow-moving tank that can literally demolish anything in its path. CASE protects the crew of this vehicle from potentially-lethal ammunition explosions. Fourteen and a half tons of ferro-fibrous armor protect the vehicle from all but the most determined and concentrated of assaults.
+</capabilities>
+
+<overview>
+The 'Demolisher II heavy tank is an upgrade of the original Demolisher, whose factory on Sudeten was lost to Clan Jade Falcon. 
+</overview>
+
+<deployment>
+This is a Jihad era variant of the tank, which includes Advanced Technology. The tank's signature autocannons have been replaced by a pair of Thunderbolt 20 Missile Launchers mounted in its turret. The T-Bolt launchers have been given 10 tons of ammunition. For secondary weaponry, it has been given a Streak SRM-6 Missile Launcher and a pair of ER Medium Lasers which are mounted in the vehicle's turret. A ton of ammunition has been given to the Streak SRM launcher. The tank's armor has also been greatly increased to handle the rigors of combat. To make room for the revised weaponry and armor, the tank been fitted with an XL fusion engine.
+</deployment>
+
+<history>
+Since the Typhoon stayed concentrated within traditionally Federated Suns unit within the Federated Commonwealth, when the Lyran Alliance broke away, they needed their own urban combat vehicle. Production began in 3059.
+</history>
+
+<manufacturer>
+Defiance Manufacturing Annex
+</manufacturer>
+
+<primaryFactory>
+Hesperus II
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Vlar 300 fusion
+ARMOR:Starslab/6 ferro-fibrous w/ CASE
+COMMUNICATIONS:Neil 9000
+TARGETING:Angst Clear View 2A
+</systemManufacturers>

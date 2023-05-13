@@ -1838,7 +1838,7 @@ public class CEntity {
 
         // If there are two secondary weapons per squad then use that weapons
         // range. Otherwise use the primary weapons range.
-        if ((null != secondary_weapon) && (attacker.getSecondaryN() >= 2)) {
+        if ((null != secondary_weapon) && (attacker.getSecondaryWeaponsPerSquad() >= 2)) {
             base_range = secondary_weapon.getInfantryRange();
         } else {
             base_range = primary_weapon.getInfantryRange();

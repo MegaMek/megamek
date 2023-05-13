@@ -16,9 +16,9 @@ FixedWingSupport
 Stork Light Refueling Craft
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 5144

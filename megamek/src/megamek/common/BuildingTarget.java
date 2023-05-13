@@ -152,8 +152,18 @@ public class BuildingTarget implements Targetable {
     }
 
     @Override
-    public int getTargetId() {
+    public int getId() {
         return id;
+    }
+
+    @Override
+    public int getOwnerId() {
+        return Player.PLAYER_NONE;
+    }
+
+    @Override
+    public int getStrength() {
+        return 0;
     }
 
     @Override
@@ -226,11 +236,6 @@ public class BuildingTarget implements Targetable {
      */
     @Override
     public boolean isOffBoard() {
-        return false;
-    }
-
-    @Override
-    public boolean isAero() {
         return false;
     }
 

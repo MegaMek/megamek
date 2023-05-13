@@ -46,6 +46,10 @@ public class ASMekSpecialAbilityConverter extends ASSpecialAbilityConverter {
     protected void processUnitFeatures() {
         super.processUnitFeatures();
 
+        if (entity.isOmni()) {
+            assign("Omni Unit", OMNI);
+        }
+
         String cockpitName = Mech.getCockpitDisplayString(mek.getCockpitType());
         switch (mek.getCockpitType()) {
             case Mech.COCKPIT_INTERFACE:
@@ -99,6 +103,10 @@ public class ASMekSpecialAbilityConverter extends ASSpecialAbilityConverter {
 
         if (element.isBattleMek()) {
             assign("BattleMek", SOA);
+        }
+
+        if (entity.getWeight() > 100) {
+            assign("Superheavy Mek", LG);
         }
     }
 

@@ -1,7 +1,7 @@
 size 16 17
 tag "Water (Auto)"
-tag "DesertTheme (Auto)"
 tag "HighHills (Auto)"
+tag "DesertTheme (Auto)"
 tag "Woods (Auto)"
 hex 0101 0 "" "desert"
 hex 0201 0 "" "desert"

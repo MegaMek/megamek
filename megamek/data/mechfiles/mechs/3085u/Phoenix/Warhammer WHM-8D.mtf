@@ -6,7 +6,7 @@ mul id:3494
 Config:Biped
 TechBase:Inner Sphere
 Era:3066
-Source:Civil War
+Source:RS: Clan Invasion - Civil War
 Rules Level:2
 
 Mass:70
@@ -152,4 +152,19 @@ Endo Steel
 -Empty-
 -Empty-
 
+overview:The Warhammer proved to be a very capable 'Mech, and for centuries practically defined the entire class of heavy 'Mechs. Boasting incredible firepower and respectable armoring, the Warhammer served prominently in the Star League Defense Force and was one of the premier 'Mechs in the Gunslinger Program. Indeed, many of the greatest MechWarriors in history were Warhammer pilots.
+
+capabilities:The Warhammer was well-protected with strong armor for its age and weight, and the large number of heat sinks allowed it to "fire and maneuver" without fear. The most common engine arrangement propels the 'Mech to a cruising speed of 43.2 km/h and a top speed of 64.8 km/h, which is quick enough to keep up with most battles. The 'Mech's electronics, albeit antiquated by the 31st Century, were basic and functional, allowing it to assume command tasks when necessary. The targeting mechanism, in particular, made use of an unique Searchlight positioned above the 'Mech's left shoulder. The device could act as a conventional searchlight or immediately connect to the O/P 1500 ARB tracking system, transforming the 'Mech into a capable night fighter.
+
+deployment:The first of StarCorps' updated variants of the venerable Warhammer, the 8D showcased some of the weapons exchanges that took place during the period of relative peace on the Federated Commonwealth and Draconis Combine border. Introduced in mid-August 3066, the 'Mech was built on a StarFrame Heavy Endo Steel chassis, protected by thirteen and a half tons of Durallex Heavy armor, used a GM 280 Fusion power plant to maintain the same speed profile as the original, and carried seventeen double heat sinks to dissipate the massive amounts of heat generated. The 'Mech was armed with two Johnston High Speed ER PPCs in traditional Warhammer fashion. For close range work, the 'Mech carried two Defiance Model XII ER medium lasers and two BlazeFire Longshot ER Small Lasers in its side torsos, supported by a Harpoon-6S Streak SRM-6 launcher. Finally, to allow it to share targeting telemetry with other friendly units, the 8D carried a C3 slave. One ton of Streak reloads were carried in the right torso, which was protected by CASE. The electronics were also updated, with a Garret T-60 FastScan comms system and Garret F22C targeting computer.
+
+history:StarCorps Industries introduced the Warhammer BattleMech in 2515 as "a mobile 'Mech with adequate firepower to destroy or severely damage any 'Mech of the same weight class or lower." The Warhammer continued to serve in the forces of the Great Houses throughout the Succession Wars after the Star League's demise. Despite very modest production rates, the large number of Warhammer factories dispersed over both the Inner Sphere and Periphery contributed to its endurance; Ronin Inc. was never able to construct more than five Warhammers per year from their Wallis factory. The recovery of the Helm Memory Core would prompt Inner Sphere manufacturers to create a slew of new Lostech-powered Warhammer versions, while the Periphery continued to produce original models for mercenaries and black marketeers. After the Clan Invasion, StarCorps chose to rehabilitate the ancient 'Mech with the greatest technological advancements, giving it new life. Initially, the business planned to construct only one new variety from its Crofton plant, but when word of the idea spread, other departments within StarCorps became involved and gathered on Crofton for a week-long conference to iron out the details. The conference turned out to be more jubilant than expected, and at the end of the bacchanalian "negotiations," it was determined that four new variations would be built: one for each of the Federated Suns, Capellan, Free Worlds League, and Lyran forces, employing technology unique to each realm. During the FedCom Civil War, some of these new 'Mechs were put through their paces.
+
+manufacturer:StarCorps Industries,StarCorps (FWL) Industries,StarCorps Industries,StarCorps Industries
+primaryfactory:Crofton,Emris IV,Menke,Son Hoa
+systemmanufacturer:CHASSIS:StarFrame Heavy Endo Steel
+systemmanufacturer:ENGINE:GM 280 Fusion
+systemmanufacturer:ARMOR:Durallex Heavy w/CASE
+systemmanufacturer:COMMUNICATIONS:Garret T-60 FastScan with C3 module
+systemmanufacturer:TARGETING:Garret F22C
 

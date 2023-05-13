@@ -7,10 +7,13 @@ import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.HeatEffects;
 import megamek.client.ui.swing.Slider;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.*;
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 import javax.swing.*;
@@ -24,9 +27,11 @@ import java.util.Enumeration;
 /**
  * This class shows information about a unit that doesn't belong elsewhere.
  */
-class ExtraPanel extends PicMap implements ActionListener, ItemListener {
+class ExtraPanel extends PicMap implements ActionListener, ItemListener, IPreferenceChangeListener {
     private final UnitDisplay unitDisplay;
 
+    private JPanel panelMain;
+    private JScrollPane scrollPane;
     private JLabel lblLastTarget;
     private JLabel curSensorsL;
     private JLabel narcLabel;
@@ -116,6 +121,8 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         lblLastTarget.setForeground(Color.WHITE);
         lblLastTarget.setOpaque(false);
         lastTargetR = new JTextArea("", 4, 25);
+        lastTargetR.setLineWrap(true);
+        lastTargetR.setWrapStyleWord(true);
         lastTargetR.setEditable(false);
         lastTargetR.setOpaque(false);
         lastTargetR.setForeground(Color.WHITE);
@@ -152,7 +159,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
 
         gridbag = new GridBagLayout();
         c = new GridBagConstraints();
-        setLayout(gridbag);
+        panelMain = new JPanel(gridbag);
 
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(15, 9, 1, 9);
@@ -161,65 +168,71 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         c.weighty = 1.0;
 
         gridbag.setConstraints(curSensorsL, c);
-        add(curSensorsL);
+        panelMain.add(curSensorsL);
 
         gridbag.setConstraints(chSensors, c);
-        add(chSensors);
+        panelMain.add(chSensors);
 
         gridbag.setConstraints(narcLabel, c);
-        add(narcLabel);
+        panelMain.add(narcLabel);
 
         c.insets = new Insets(1, 9, 1, 9);
-        JScrollPane scrollPane = new JScrollPane(narcList);
+        scrollPane = new JScrollPane(narcList);
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         gridbag.setConstraints(scrollPane, c);
-        add(scrollPane);
+        panelMain.add(scrollPane);
 
         gridbag.setConstraints(unusedL, c);
-        add(unusedL);
+        panelMain.add(unusedL);
 
         gridbag.setConstraints(unusedR, c);
-        add(unusedR);
+        panelMain.add(unusedR);
 
         gridbag.setConstraints(carrysL, c);
-        add(carrysL);
+        panelMain.add(carrysL);
 
         gridbag.setConstraints(carrysR, c);
-        add(carrysR);
+        panelMain.add(carrysR);
 
         gridbag.setConstraints(dumpBombs, c);
-        add(dumpBombs);
+        panelMain.add(dumpBombs);
 
         gridbag.setConstraints(sinksL, c);
-        add(sinksL);
+        panelMain.add(sinksL);
 
         gridbag.setConstraints(sinksR, c);
-        add(sinksR);
+        panelMain.add(sinksR);
 
         gridbag.setConstraints(sinks2B, c);
-        add(sinks2B);
+        panelMain.add(sinks2B);
 
         gridbag.setConstraints(heatL, c);
-        add(heatL);
+        panelMain.add(heatL);
 
         c.insets = new Insets(1, 9, 18, 9);
         gridbag.setConstraints(heatR, c);
-        add(heatR);
+        panelMain.add(heatR);
         
         c.insets = new Insets(0, 0, 0, 0);
         gridbag.setConstraints(lblLastTarget, c);
-        add(lblLastTarget);
+        panelMain.add(lblLastTarget);
         
         c.insets = new Insets(1, 9, 18, 9);
         gridbag.setConstraints(lastTargetR, c);
-        add(lastTargetR);
+        panelMain.add(lastTargetR);
 
         c.insets = new Insets(1, 9, 1, 9);
         gridbag.setConstraints(activateHidden, c);
         c.insets = new Insets(1, 9, 6, 9);
         gridbag.setConstraints(comboActivateHiddenPhase, c);
-        add(activateHidden);
-        add(comboActivateHiddenPhase);
+        panelMain.add(activateHidden);
+        panelMain.add(comboActivateHiddenPhase);
+
+        adaptToGUIScale();
+        GUIPreferences.getInstance().addPreferenceChangeListener(this);
+        setLayout(new BorderLayout());
+        add(panelMain);
+        panelMain.setOpaque(false);
 
         setBackGround();
         onResize();
@@ -523,8 +536,9 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         refreshSensorChoices(en);
 
         if (null != en.getActiveSensor()) {
-            curSensorsL.setText((Messages.getString("MechDisplay.CurrentSensors")).concat(" ")
-                    .concat(en.getSensorDesc()));
+            String tmpStr = Messages.getString("MechDisplay.CurrentSensors") + " " + en.getSensorDesc();
+            tmpStr = String.format("<html><div WIDTH=%d>%s</div></html>",  250, tmpStr);
+            curSensorsL.setText(tmpStr);
         } else {
             curSensorsL.setText((Messages.getString("MechDisplay.CurrentSensors")).concat(" "));
         }
@@ -605,6 +619,20 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         } else if (activateHidden.equals(ae.getSource()) && !dontChange) {
             final GamePhase phase = comboActivateHiddenPhase.getSelectedItem();
             clientgui.getClient().sendActivateHidden(myMechId, (phase == null) ? GamePhase.UNKNOWN : phase);
+        }
+    }
+
+    private void adaptToGUIScale() {
+        UIUtil.adjustContainer(panelMain, UIUtil.FONT_SCALE1);
+        scrollPane.setMinimumSize(new Dimension(200, UIUtil.scaleForGUI(100)));
+        scrollPane.setPreferredSize(new Dimension(200, UIUtil.scaleForGUI(100)));
+    }
+
+    @Override
+    public void preferenceChange(PreferenceChangeEvent e) {
+        // Update the text size when the GUI scaling changes
+        if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
+            adaptToGUIScale();
         }
     }
 }

@@ -88,7 +88,7 @@ public class AlphaStrikeHelper {
      * @param delimiter The delimiter to insert between entries (only relevant for TUR)
      * @return The complete formatted Special Unit Ability string such as "LRM1/1/-" or "CK15D2".
      */
-    public static String formatAbility(BattleForceSUA sua, ASSpecialAbilityCollection collection,
+    public static String formatAbility(BattleForceSUA sua, ASSpecialAbilityCollector collection,
                                        @Nullable ASCardDisplayable element, String delimiter) {
         Object suaObject = collection.getSUA(sua);
         if (!sua.isValidAbilityObject(suaObject)) {
@@ -136,11 +136,11 @@ public class AlphaStrikeHelper {
      * @return True when the given Special Unit Ability should be listed on the element's card
      */
     public static boolean hideSpecial(BattleForceSUA sua, ASCardDisplayable element) {
-        return sua.isDoor()
+        return sua.isDoor() || sua.isAnyOf(TRI, QUAD, AERODYNESC)
                 || (element.isLargeAerospace() && (sua == STD))
                 || (element.usesCapitalWeapons() && sua.isAnyOf(MSL, SCAP, CAP))
                 || (element.isType(BM, PM) && (sua == SOA))
-                || (element.isType(CV, BM) && (sua == SRCH))
+                || (element.isBattleMek() && (sua == SRCH))
                 || (!element.isLargeAerospace() && sua.isDoor())
                 || (hasAutoSeal(element) && (sua == SEAL));
     }

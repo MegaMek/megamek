@@ -13,7 +13,6 @@ package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.DropShipCostCalculator;
-import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 
 import java.util.HashMap;
@@ -86,6 +85,16 @@ public class Dropship extends SmallCraft {
     @Override
     public int getUnitType() {
         return UnitType.DROPSHIP;
+    }
+
+    @Override
+    public boolean isSmallCraft() {
+        return false;
+    }
+
+    @Override
+    public boolean isDropShip() {
+        return true;
     }
 
     @Override
@@ -549,7 +558,7 @@ public class Dropship extends SmallCraft {
         if (null == game) {
             return true;
         }
-        return (isAirborne() || isSpaceborne() || game.getPhase() == GamePhase.LOUNGE);
+        return (isAirborne() || isSpaceborne() || game.getPhase().isLounge());
     }
 
     @Override

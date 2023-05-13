@@ -1,0 +1,136 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Condor Heavy Hover Tank
+</Name>
+
+<Model>
+(Upgrade)
+</Model>
+
+<mul id:>
+685
+</mul id:>
+
+<year>
+3066
+</year>
+
+<source>
+Jihad
+</source>
+
+<type>
+IS Level 2
+</type>
+
+<tonnage>
+50.0
+</tonnage>
+
+<motion_type>
+Hover
+</motion_type>
+
+<engine_type>
+2
+</engine_type>
+
+<cruiseMP>
+9
+</cruiseMP>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+31
+21
+21
+14
+20
+</armor>
+
+<Body Equipment>
+IS Ammo LRM-15
+IS Ammo LRM-15
+IS Machine Gun Ammo - Half
+IS LB 5-X AC Ammo
+IS LB 5-X AC Ammo
+</Body Equipment>
+
+<Front Equipment>
+Machine Gun
+Machine Gun
+ISLBXAC5
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+LRM 15
+</Turret Equipment>
+
+<capabilities>
+Although expensive to buy and to maintain, this immense hovercraft is capable of a flank speed of 129 km/h and a cruising speed of 86 km/h, making it one of the fastest vehicles in its weight class and as fast as the speediest 'Mechs and vehicles. Six tons of StarSlab/9.5 Mk II armor give the Condor considerable protection for its role, though the bulk is concentrated on the front and turret, notably weakening the sides. Unlike tracked or wheeled vehicles of the same weight, the Condor is intended to attack enemies "on the fly" at medium ranges,
+</capabilities>
+
+<overview>
+A heavy cavalry unit designed for rapid reaction to a shifting battle, the Condor is one of the few heavy hover tanks available.
+</overview>
+
+<deployment>
+Sharing only a minimal resemblance to the Red Devil model, the Condor rolling off Quikscell's Richvale production lines utilizes a wide range of advanced technology. Replacing the internal combustion engine with a more powerful Core Tek 215 XL fusion engine both greatly increases the Condor's speed while freeing up space to carry upgraded weapons array. Giving the Condor the long-range striking power required on the modern battlefield, the standard GM autocannon was replaced with an advanced Mydron Excel 5SG LB-X AC/5, boosting the ammunition carried to two tons to allow for the use of both standard and cluster munitions, while the lasers were dropped for a turret-mounted Valiant Abalest LRM 15-pack fed with two tons of reloads. Based on the experiences of the FedCom Civil War, an extra machine gun was added to the sole original. An upgrade to ten heat sinks and StarSlab/9.5 ferro-fibrous Mk II boost the Condor's staying power in battle. 
+</deployment>
+
+<history>
+Introduced a few short years before the formation of the original Star League, the Condor remained one of Red Devil Industries main sellers for centuries and was widely distributed across the Inner Sphere, with the militaries of the Lyran Commonwealth, Federated Suns and Capellan Confederation fielding the majority during the Succession Wars. With the loss of Red Devil's factories with the capture of Pandora by Clan Jade Falcon in 3064, the design was secured by Quikscell Company, who developed an advanced new-tech refresh of the venerable and still highly popular design, even selling the unassembled components of the tank in kit form in effort to keep up with demand. Red Devil actually builds their own under license. Originally, Defiance Industries declined to allow the company to do so, which led to Red Devil offering a bounty for used or slightly damaged lasers taken in combat to recondition and install on new Condors. When Defiance noticed that some of its flagship BattleMech designs, such as the Zeus, attracted undue fire from foes attempting to cash in on the bounty, they quickly relented. Not nearly as notable, the reliable SureFire MiniGun, mounted on the body, is intended as an anti-personnel weapon.
+</history>
+
+<manufacturer>
+Quikscell Company
+</manufacturer>
+
+<primaryFactory>
+Richvale
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Core Tek 215 XL fusion engine
+ARMOR:StarSlab/9.5 Ferro-Fibrous Mk II 
+COMMUNICATIONS:TharHes KR-A P/Comm
+TARGETING:TharHes Mars 1 with TAG
+</systemManufacturers>
+
+<source>
+Rec Guide:ilClan #26 - Late Succession War - Renaissance
+</source>

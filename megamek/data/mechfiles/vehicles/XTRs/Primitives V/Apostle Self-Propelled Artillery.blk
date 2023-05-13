@@ -16,9 +16,9 @@ SupportTank
 Apostle Self-Propelled Artillery
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 7414

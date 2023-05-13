@@ -16,8 +16,8 @@ BattleArmor
 Gladiator Exoskeleton
 </Name>
 
-<Model>
-(Standard) [BC/ID](Sqd4)
+<model>
+[BC/ID](Sqd4)
 </Model>
 
 <mul id:>

@@ -95,6 +95,11 @@ public class TripodMech extends Mech {
         return Entity.ETYPE_MECH | Entity.ETYPE_TRIPOD_MECH;
     }
 
+    @Override
+    public boolean isTripodMek() {
+        return true;
+    }
+
     /**
      * Returns true if the entity can flip its arms
      */
@@ -217,6 +222,10 @@ public class TripodMech extends Mech {
                                  .getMovementMods(this);
             if (weatherMod != 0) {
                 wmp = Math.max(wmp + weatherMod, 0);
+            }
+            if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
+                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_TORNADO_F13)) {
+                wmp += 1;
             }
         }
         // gravity

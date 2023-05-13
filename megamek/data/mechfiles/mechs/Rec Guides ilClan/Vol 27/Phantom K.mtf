@@ -1,0 +1,160 @@
+Version:1.3
+Phantom
+K
+mul id:9349
+Config:Biped Omnimech
+techbase:Clan
+era:3141
+source:Rec Guide:ilClan #27 - Dark Age
+rules level:2
+
+mass:40
+engine:360 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:12 Clan Double
+base chassis heat sinks:12
+walk mp:9
+jump mp:0
+
+armor:Ferro-Fibrous(Clan)
+LA armor:12
+RA armor:12
+LT armor:11
+RT armor:11
+CT armor:12
+HD armor:9
+LL armor:13
+RL armor:13
+RTL armor:7
+RTR armor:7
+RTC armor:8
+
+Weapons:1
+ER Large Laser, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Clan Endo Steel
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Clan Endo Steel
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLERLargeLaser (OMNIPOD)
+Clan Endo Steel
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+WatchdogECMSuite (OMNIPOD)
+WatchdogECMSuite (OMNIPOD)
+Clan Endo Steel
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLTargeting Computer (OMNIPOD)
+Clan Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Phantom was pushed into production by Khan Phelan Ward shortly before the Refusal War between Clan Wolf and Clan Jade Falcon, designed around Khan Ward's extensive experience with Inner Sphere tactics.
+capabilities:Intended to push a medium reconnaisance 'Mech to the most extreme limits, the Phantom is built on a lightweight Type-A Endo Steel chassis and is propelled to a top speed of 151.2 km/h by a Light Force 360 XL Engine. The Phantom also boasts strong protection for its size with six tons of Composite A-2 Ferro-Fibrous armor.
+deployment:No information on this variant	
+history:After the Wars of Reaving, the Phantom replaced the Fire Moth Omnimech for the remaining Home Clans because of its similar role and heavier profile.
+manufacturer:Earthwerks-FWL, Inc., Manufacturing Plant SFF-TS1
+primaryfactory:Keystone,CSF Tsunami Mobile Production Facility
+systemmanufacturer:CHASSIS:Type-A Endo Steel
+systemmanufacturer:ENGINE:Light Force 360 (XL)
+systemmanufacturer:ARMOR:Composite A-2 Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:Howler 79
+systemmanufacturer:TARGETING:Model 92 “Stalker”
+

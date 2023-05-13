@@ -53,6 +53,10 @@ public class ASVehicleSpecialAbilityConverter extends ASSpecialAbilityConverter 
     protected void processUnitFeatures() {
         super.processUnitFeatures();
 
+        if (entity.isOmni()) {
+            assign("Omni Unit", OMNI);
+        }
+
         if (!element.isSupportVehicle()) {
             assign("Combat Vehicle", SRCH);
         }

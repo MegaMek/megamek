@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,9 +16,9 @@ SmallCraft
 Oo-Suzumebachi
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 6426
@@ -41,12 +41,12 @@ Aerodyne
 </motion_type>
 
 <transporters>
-cargobay:1.0:1:2
+cargobay:1.0:1:1
 2ndclassquarters:0.0:0
 1stclassquarters:0.0:0
 crewquarters:0.0:0
 steeragequarters:20.0:0
-battlearmorbay:3.0:1:6
+troopspace:12.0
 </transporters>
 
 <SafeThrust>
@@ -89,22 +89,22 @@ MRM 40
 ISApollo
 IS MRM 40 Ammo
 IS MRM 40 Ammo
-ISAMS Ammo
-ISAMS Ammo
-ISAMS Ammo
-ISAMS Ammo
 </Nose Equipment>
 
 <Left Side Equipment>
 ISAntiMissileSystem
 ISAntiMissileSystem
 ISAntiMissileSystem
+ISAMS Ammo
+ISAMS Ammo
 </Left Side Equipment>
 
 <Right Side Equipment>
 ISAntiMissileSystem
 ISAntiMissileSystem
 ISAntiMissileSystem
+ISAMS Ammo
+ISAMS Ammo
 </Right Side Equipment>
 
 <Aft Equipment>
@@ -132,7 +132,7 @@ TRO 3145 Draconis Combine - Late Republic
 </designtype>
 
 <crew>
-22
+4
 </crew>
 
 <officers>
@@ -166,3 +166,4 @@ TRO 3145 Draconis Combine - Late Republic
 <escape_pod>
 0
 </escape_pod>
+

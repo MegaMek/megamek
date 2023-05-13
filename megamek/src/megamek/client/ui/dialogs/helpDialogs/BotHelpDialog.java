@@ -18,13 +18,14 @@
  */
 package megamek.client.ui.dialogs.helpDialogs;
 
+import megamek.MMConstants;
+
 import javax.swing.*;
 
 public class BotHelpDialog extends AbstractHelpDialog {
     //region Constructors
     public BotHelpDialog(final JFrame frame) {
-        // TODO : Remove Inline File Path
-        super(frame, "BotHelpDialog", "docs\\Bot Stuff\\ai-readme.txt");
+        super(frame, "BotHelpDialog", MMConstants.BOT_README_FILE_PATH);
     }
     //endregion Constructors
 }

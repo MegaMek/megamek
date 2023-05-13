@@ -73,9 +73,9 @@ Jifty Transportable Field Repair Unit JI-50 (MG),3
 Jifty Transportable Field Repair Unit JI-50 (ML),3
 Jifty Transportable Field Repair Unit JI-50 (Q-Vehicle),3
 Korvin Tank KRV-2,3
-M.A.S.H. Truck (Standard),18
-M.A.S.H. Truck (Small),9
-M.A.S.H. Truck (ICE),27
+MASH Truck (Standard),18
+MASH Truck (Small),9
+MASH Truck (ICE),27
 Marsden I,9
 Merkava Heavy Tank Mk VI,3
 Merkava Heavy Tank Mk VII,9

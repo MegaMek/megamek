@@ -39,6 +39,10 @@ public enum UnitRole {
         return ground;
     }
 
+    public boolean hasRole() {
+        return (this != UNDETERMINED) && (this != NONE);
+    }
+
     public static UnitRole parseRole(String role) {
         switch (role.toLowerCase()) {
             case "ambusher":

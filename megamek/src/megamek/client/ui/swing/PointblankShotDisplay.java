@@ -16,6 +16,7 @@ package megamek.client.ui.swing;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.unitDisplay.WeaponPanel;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
@@ -41,7 +42,7 @@ import java.util.*;
 
 /**
  * This display is used for when hidden units are taking pointblank shots.
- * 
+ *
  * @author arlith
  *
  */
@@ -97,6 +98,46 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
         public String toString() {
             return Messages.getString("FiringDisplay." + getCmd());
         }
+
+        public String getHotKeyDesc() {
+            String result = "";
+
+            String msg_left = Messages.getString("Left");
+            String msg_right = Messages.getString("Right");
+            String msg_next= Messages.getString("Next");
+            String msg_previous = Messages.getString("Previous");
+
+
+            switch (this) {
+                case FIRE_TWIST:
+                    result = "<BR>";
+                    result += "&nbsp;&nbsp;" + msg_left + ": " + KeyCommandBind.getDesc(KeyCommandBind.TWIST_LEFT);
+                    result += "&nbsp;&nbsp;" + msg_right + ": " + KeyCommandBind.getDesc(KeyCommandBind.TWIST_RIGHT);
+                    break;
+                case FIRE_FIRE:
+                    result = "<BR>";
+                    result += "&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.FIRE);
+                    break;
+                case FIRE_SKIP:
+                    result = "<BR>";
+                    result +=  "&nbsp;&nbsp;" + msg_next + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_WEAPON);
+                    result += "&nbsp;&nbsp;" + msg_previous + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_WEAPON);
+                    break;
+                case FIRE_MODE:
+                    result = "<BR>";
+                    result += "&nbsp;&nbsp;" + msg_next + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_MODE);
+                    result += "&nbsp;&nbsp;" + msg_previous + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_MODE);
+                    break;
+                case FIRE_CANCEL:
+                    result = "<BR>";
+                    result += "&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.CANCEL);
+                    break;
+                default:
+                    break;
+            }
+
+            return result;
+        }
     }
 
     // buttons
@@ -109,21 +150,8 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
     public PointblankShotDisplay(final ClientGUI clientgui) {
         super(clientgui);
 
-        buttons = new HashMap<>((int) (FiringCommand.values().length * 1.25 + 0.5));
-        for (FiringCommand cmd : FiringCommand.values()) {
-            String title = Messages.getString("FiringDisplay." + cmd.getCmd());
-            MegamekButton newButton = new MegamekButton(title, "PhaseDisplayButton");
-            String ttKey = "FiringDisplay." + cmd.getCmd() + ".tooltip";
-            if (Messages.keyExists(ttKey)) {
-                newButton.setToolTipText(Messages.getString(ttKey));
-            }
-            newButton.addActionListener(this);
-            newButton.setActionCommand(cmd.getCmd());
-            newButton.setEnabled(false);
-            buttons.put(cmd, newButton);
-        }
-        numButtonGroups =
-                (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
+        setButtons();
+        setButtonsTooltips();
 
         setupButtonPanel();
 
@@ -143,7 +171,23 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
                 }
             }
         });
+    }
 
+    @Override
+    protected void setButtons() {
+        buttons = new HashMap<>((int) (FiringCommand.values().length * 1.25 + 0.5));
+        for (FiringCommand cmd : FiringCommand.values()) {
+            buttons.put(cmd, createButton(cmd.getCmd(), "FiringDisplay."));
+        }
+        numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
+    }
+
+    @Override
+    protected void setButtonsTooltips() {
+        for (FiringCommand cmd : FiringCommand.values()) {
+            String tt = createToolTip(cmd.getCmd(), "FiringDisplay.", cmd.getHotKeyDesc());
+            buttons.get(cmd).setToolTipText(tt);
+        }
     }
 
     /**
@@ -459,7 +503,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
     @Override
     public void beginMyTurn() {
         clientgui.maybeShowUnitDisplay();
-        clientgui.getBoardView().clearFieldofF();
+        clientgui.getBoardView().clearFieldOfFire();
 
         butDone.setEnabled(true);
         if (numButtonGroups > 1) {
@@ -478,10 +522,9 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
         // end my turn, then.
         Game game = clientgui.getClient().getGame();
         Entity next = game.getNextEntity(game.getTurnIndex());
-        if ((game.getPhase() == GamePhase.FIRING)
-            && (next != null) && (ce() != null)
-            && (next.getOwnerId() != ce().getOwnerId())) {
-            clientgui.setUnitDisplayVisible(false);
+        if (game.getPhase().isFiring() && (next != null) && (ce() != null)
+                && (next.getOwnerId() != ce().getOwnerId())) {
+            clientgui.maybeShowUnitDisplay();
         }
         cen = Entity.NONE;
         target(null);
@@ -491,7 +534,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
         clientgui.getBoardView().clearMovementData();
         clientgui.getBoardView().clearFiringSolutionData();
         clientgui.getBoardView().clearStrafingCoords();
-        clientgui.getBoardView().clearFieldofF();
+        clientgui.getBoardView().clearFieldOfFire();
         clientgui.setSelectedEntityNum(Entity.NONE);
         disableButtons();
         // Return back to the movement phase display
@@ -519,7 +562,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
      */
     @Override
     public void ready() {
-        if (attacks.isEmpty() && GUIPreferences.getInstance().getNagForNoAction()) {
+        if (attacks.isEmpty() && needNagForNoAction()) {
             // confirm this action
             String title = Messages.getString("FiringDisplay.DontFireDialog.title");
             String body = Messages.getString("FiringDisplay.DontFireDialog.message");
@@ -588,6 +631,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
                     waa2.setAimingMode(waa.getAimingMode());
                     waa2.setOtherAttackInfo(waa.getOtherAttackInfo());
                     waa2.setAmmoId(waa.getAmmoId());
+                    waa2.setAmmoMunitionType(waa.getAmmoMunitionType());
                     waa2.setAmmoCarrier(waa.getAmmoCarrier());
                     waa2.setBombPayload(waa.getBombPayload());
                     waa2.setStrafing(waa.isStrafing());
@@ -621,6 +665,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
                     waa2.setAimingMode(waa.getAimingMode());
                     waa2.setOtherAttackInfo(waa.getOtherAttackInfo());
                     waa2.setAmmoId(waa.getAmmoId());
+                    waa2.setAmmoMunitionType(waa.getAmmoMunitionType());
                     waa2.setAmmoCarrier(waa.getAmmoCarrier());
                     waa2.setBombPayload(waa.getBombPayload());
                     waa2.setStrafing(waa.isStrafing());
@@ -630,7 +675,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
                 }
             }
         }
-        
+
         // If the user picked a hex along the flight path, server needs to know
         if ((target instanceof Entity) && Compute.isGroundToAir(ce(), target)) {
             Coords targetPos = ((Entity) target).getPlayerPickedPassThrough(cen);
@@ -645,7 +690,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
         clientgui.setPointblankEID(Entity.NONE);
 
         // clear queue
-        attacks.removeAllElements();
+        removeAllAttacks();
 
         // close aimed shot display, if any
         ash.closeDialog();
@@ -685,10 +730,10 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
                 || (mounted.getType() instanceof CapitalMissileWeapon
                         && Compute.isGroundToGround(ce(), target)))) {
             waa = new WeaponAttackAction(cen, target.getTargetType(),
-                    target.getTargetId(), weaponNum);
+                    target.getId(), weaponNum);
         } else {
             waa = new ArtilleryAttackAction(cen, target.getTargetType(),
-                    target.getTargetId(), weaponNum, game);
+                    target.getId(), weaponNum, game);
         }
 
         if ((mounted.getLinked() != null)
@@ -697,8 +742,10 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
             Mounted ammoMount = mounted.getLinked();
             AmmoType ammoType = (AmmoType) ammoMount.getType();
             waa.setAmmoId(ammoMount.getEntity().getEquipmentNum(ammoMount));
+            long ammoMunitionType = ammoType.getMunitionType();
+            waa.setAmmoMunitionType(ammoMunitionType);
             waa.setAmmoCarrier(ammoMount.getEntity().getId());
-            if (((ammoType.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB) 
+            if (((ammoMunitionType == AmmoType.M_THUNDER_VIBRABOMB)
                     && ((ammoType.getAmmoType() == AmmoType.T_LRM)
                             || (ammoType.getAmmoType() == AmmoType.T_LRM_IMP)
                             || (ammoType.getAmmoType() == AmmoType.T_MML)))
@@ -720,7 +767,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
         waa.setPointblankShot(true);
 
         // add the attack to our temporary queue
-        attacks.addElement(waa);
+        addAttack(waa);
 
         // and add it into the game, temporarily
         game.addAction(waa);
@@ -759,7 +806,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
             return;
         }
         final int weaponId = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
-        Mounted weapon = ce().getEquipment(weaponId); 
+        Mounted weapon = ce().getEquipment(weaponId);
         // Some weapons pick an automatic target
         if ((weapon != null) && weapon.getType().hasFlag(WeaponType.F_VGL)) {
             int facing;
@@ -771,7 +818,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
             facing = (facing + weapon.getFacing()) % 6;
             Coords c = ce().getPosition().translated(facing);
             Targetable hexTarget = new HexTarget(c, Targetable.TYPE_HEX_CLEAR);
-            
+
             // Ignore events that will be generated by the select/cursor calls
             setIgnoringEvents(true);
             clientgui.getBoardView().select(c);
@@ -799,7 +846,8 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
 
         // update target panel
         final int weaponId = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
-        if ((target != null) && (target.getPosition() != null) && (weaponId != -1) && (ce() != null)) {
+        if ((ce() != null) && ce().equals(clientgui.getUnitDisplay().getCurrentEntity())
+               && (target != null) && (target.getPosition() != null) && (weaponId != -1)) {
             ToHitData toHit;
             if (!ash.getAimingMode().isNone()) {
                 Mounted weapon = ce().getEquipment(weaponId);
@@ -810,20 +858,24 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
                     toHit = WeaponAttackAction.toHit(game, cen, target,
                             weaponId, ash.getAimingAt(), ash.getAimingMode(),
                             false, false, null, null, false, true);
-                    clientgui.getUnitDisplay().wPan.wTargetR.setText(target.getDisplayName() + " ("
-                            + ash.getAimingLocation() + ")");
+                    String t =  String.format("<html><div WIDTH=%d>%s</div></html>", WeaponPanel.TARGET_DISPLAY_WIDTH, target.getDisplayName() + " (" + ash.getAimingLocation() + ")");
+                    clientgui.getUnitDisplay().wPan.wTargetR.setText(t);
                 } else {
                     toHit = WeaponAttackAction.toHit(game, cen, target, weaponId, Entity.LOC_NONE,
                             AimingMode.NONE, false, false,
                             null, null, false, true);
-                    clientgui.getUnitDisplay().wPan.wTargetR.setText(target.getDisplayName());
+
+                    String t =  String.format("<html><div WIDTH=%d>%s</div></html>", WeaponPanel.TARGET_DISPLAY_WIDTH, target.getDisplayName());
+                    clientgui.getUnitDisplay().wPan.wTargetR.setText(t);
                 }
                 ash.setPartialCover(toHit.getCover());
             } else {
                 toHit = WeaponAttackAction.toHit(game, cen, target, weaponId, Entity.LOC_NONE,
                         AimingMode.NONE, false, false, null,
                         null, false, true);
-                clientgui.getUnitDisplay().wPan.wTargetR.setText(target.getDisplayName());
+
+                String t =  String.format("<html><div WIDTH=%d>%s</div></html>", WeaponPanel.TARGET_DISPLAY_WIDTH, target.getDisplayName());
+                clientgui.getUnitDisplay().wPan.wTargetR.setText(t);
             }
             int effectiveDistance = Compute.effectiveDistance(game, ce(), target);
             clientgui.getUnitDisplay().wPan.wRangeR.setText("" + effectiveDistance);
@@ -1024,7 +1076,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
         if ((target instanceof Entity) && Compute.isGroundToAir(ce(), target)) {
             ((Entity) target).setPlayerPickedPassThrough(cen, null);
         }
-        clearAttacks();        
+        clearAttacks();
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().cursor(null);
         refreshAll();

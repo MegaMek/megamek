@@ -304,7 +304,7 @@ public class GrappleAttackAction extends PhysicalAttackAction {
         int atGr = ae.getGrappled();
         int deGr = te.getGrappled();
         if ((atGr != Entity.NONE || deGr != Entity.NONE)
-                && atGr != target.getTargetId() && te.isGrappleAttacker()) {
+                && atGr != target.getId() && te.isGrappleAttacker()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Already grappled");
         }
 

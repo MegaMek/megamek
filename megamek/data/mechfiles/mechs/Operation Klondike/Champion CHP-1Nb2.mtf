@@ -1,6 +1,7 @@
 Version:1.0
 Champion
 CHP-1Nb2
+mul id:6765
 
 Config:Biped
 techbase:Inner Sphere
@@ -144,5 +145,3 @@ Foot Actuator
 -Empty-
 -Empty-
 -Empty-
-
-

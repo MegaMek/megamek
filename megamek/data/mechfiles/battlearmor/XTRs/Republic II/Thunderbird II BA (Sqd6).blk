@@ -16,8 +16,8 @@ BattleArmor
 Thunderbird II Battle Armor
 </Name>
 
-<Model>
-(Standard)(Sqd6)
+<model>
+(Sqd6)
 </Model>
 
 <mul id:>

@@ -151,3 +151,19 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:The original contract between General Motors and the SLDF sought for "a medium BattleMech with insurrection suppression and fire-support capabilities." The outcome was the Blackjack. Despite meeting all of its production requirements, the Blackjack gained an unjust reputation and was rejected by the Star League.
+
+capabilities:The Blackjack's original mission was to assist in suppressing insurgent groups (mostly in the Periphery) that defied Star League authority in the decades preceding its demise. The Blackjack is only a minor success in its secondary capacity as a fire support platform. The autocannons lacked the firepower to take on heavily defended targets. At close range, though, the combination of lasers poses a significantly bigger threat. The addition of jump jets came late in the design phase, but the Whitworth Jetlift units have proven to be a vital asset over the decades. The Blackjack's sole significant disadvantage was negative press, which stated that the entire project was a shambles because the 'Mech's basic architecture was defective and unstable. The 'Mech's tiny footpads were alleged to cause falls and hamper maneuverability, or that the StarGuard II armor was brittle and tended to break off. Despite the fact that none of these accusations were ever proven, the Blackjack went out of favor, and few grieved the loss of GM's production line.
+
+deployment:Built in 3042 by the Capellan Confederation on St. Ives based on the experimental BJ-3X, created during the Fourth Succession War, this 'Mech was probably the first in decades if not centuries to feature double heat sinks, a revolutionary rediscovered technology. It is implied that the heat sinks were actually stolen from the Federated Suns and Lyran Commonwealth, but in any case the BJ-3 was the first regular variant to employ them again as part of its standard loadout, as opposed to field refits or ancient Star League era 'Mechs. The superior heat dissipation allowed the 'Mech to be equipped with two Ceres Arms Smasher PPCs and four medium lasers. The majority of the BJ-3 models were turned over to the Federated Suns by the St. Ives Compact after the Fourth Succession War, following that state's secession from the Confederation during the war, but production continued domestically within the St. Ives Compact, predominantly but not exclusively for St. Ives Compact forces, afterwards.
+
+history:The Blackjack had limited use in the Star League, and manufacture was shortly discontinued. The Blackjack, relegated to service with Hegemony planetary militia or sold to League member nations, can still be encountered on the battlefield today. The majority of them now fight for the Capellan Confederation and the Federated Suns. The Confederation has nothing but disdain for the design. The breakaway St. Ives Compact, on the other hand, could not be as picky, and the Blackjack serves in the St. Ives Lancers. The Federated Suns used the Blackjack in the March Militias until the myth of the Blackjack's inferiority was busted on Xhosa VII in 3022. The Crucis Lancers and Deneb Light Cavalry were re-interested in the 'Mech.
+
+manufacturer:Ceres Metals Industries
+primaryfactory:St. Ives
+systemmanufacturer:CHASSIS:GM BJ-1
+systemmanufacturer:ENGINE:GM 180
+systemmanufacturer:ARMOR:StarGuard II
+systemmanufacturer:JUMPJET:Whitworth Jetlift
+systemmanufacturer:COMMUNICATIONS:Dalban Micronics
+systemmanufacturer:TARGETING:Dalban AQ

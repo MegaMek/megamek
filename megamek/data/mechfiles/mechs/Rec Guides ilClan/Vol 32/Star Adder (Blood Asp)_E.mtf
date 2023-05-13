@@ -1,0 +1,171 @@
+Version:1.0
+Star Adder (Blood Asp)
+E
+mul id:403
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3063
+Source:TRO 3060 - Civil War
+Rules Level:2
+
+Mass:90
+Engine:360 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
+Myomer:Standard
+
+Heat Sinks:20 Double
+Base Chassis Heat Sinks:14
+Walk MP:4
+Jump MP:4
+
+Armor:Standard(Clan)
+LA Armor:28
+RA Armor:28
+LT Armor:24
+RT Armor:24
+CT Armor:40
+HD Armor:9
+LL Armor:34
+RL Armor:34
+RTL Armor:11
+RTR Armor:11
+RTC Armor:13
+
+Weapons:8
+ATM 3, Left Arm
+ATM 3, Left Arm
+ATM 3, Right Arm
+ATM 3, Right Arm
+ER PPC, Left Torso
+Medium Pulse Laser, Left Torso
+ER PPC, Right Torso
+Medium Pulse Laser, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLATM3 (omnipod)
+CLATM3 (omnipod)
+CLATM3 (omnipod)
+CLATM3 (omnipod)
+Clan Ammo ATM-3 (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLATM3 (omnipod)
+CLATM3 (omnipod)
+CLATM3 (omnipod)
+CLATM3 (omnipod)
+Clan Ammo ATM-3 (omnipod)
+Clan Endo Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLMediumPulseLaser (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+Clan Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLMediumPulseLaser (omnipod)
+Clan Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:One of the first 'Mechs to field the breakthrough Heavy Laser technology, the Blood Asp proves to be an offensive powerhouse. Delivering incredible damage at all ranges, the Blood Asp makes short work of any enemy regardless of size.
+
+capabilities:Based on the Kingfisher, the Blood Asp adds an XL engine, but space constraints forced the replacement of the Kingfisher's ferro-fibrous armor with standard plate. The Blood Asp incorporates sixteen tons of this armor and fourteen double heat sinks in the base chassis.
+
+deployment:This configuration makes use of ATMs in the form of four ATM 3s. A single ton of ammunition for each pair does not allow the weapons to make the most of their flexibility. A Targeting Computer guides paired ER PPCs and Medium Pulse Lasers. Four jump jets enable the Blood Asp E to vault one hundred-twenty meters into the air, while additional heat sinks keep heat levels within reasonable levels. 
+
+history:Created by Clan Star Adder as an insult to their enemies, Clan Blood Spirit, the Blood Asp has a large amount of available pod space for its size. 	
+
+manufacturer:Sheridan LM-TA 8-10,Snow Raven Industrial Complex Alpha
+primaryfactory:Sheridan,Dante
+systemmanufacturer:CHASSIS:Type MAES-90 Light
+systemmanufacturer:ENGINE:Consolidated Fusion 360 XL
+systemmanufacturer:ARMOR:Forging ZZ7 Ceramic Plate
+systemmanufacturer:COMMUNICATIONS:Series D8 CC-25X
+systemmanufacturer:TARGETING:“Hermes” CT-42 Mk. II

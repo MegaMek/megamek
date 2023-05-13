@@ -1,40 +1,39 @@
-Version:1.0
+Version:1.3
 Assassin
 ASN-21
 mul id:127
-
 Config:Biped
-TechBase:Inner Sphere
-Era:2676
-Source:TRO 3039 - Star League
-Rules Level:1
+techbase:Inner Sphere
+era:2676
+source:TRO 3039 - Star League
+rules level:1
 
-Mass:40
-Engine:280 Fusion Engine
-Structure:Standard
-Myomer:Standard
+mass:40
+engine:280 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:10 Single
-Walk MP:7
-Jump MP:7
+heat sinks:10 Single
+walk mp:7
+jump mp:7
 
-Armor:Standard(Inner Sphere)
-LA Armor:6
-RA Armor:6
-LT Armor:10
-RT Armor:10
-CT Armor:12
-HD Armor:8
-LL Armor:6
-RL Armor:6
-RTL Armor:2
-RTR Armor:2
-RTC Armor:4
+armor:Standard(Inner Sphere)
+LA armor:6
+RA armor:6
+LT armor:10
+RT armor:10
+CT armor:12
+HD armor:8
+LL armor:6
+RL armor:6
+RTL armor:2
+RTR armor:2
+RTC armor:4
 
 Weapons:3
 Medium Laser, Right Arm
-LRM 5, Right Torso
 SRM 2, Left Torso
+LRM 5, Right Torso
 
 Left Arm:
 Shoulder
@@ -148,20 +147,20 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:Many military finance experts outside the Star League saw the Assassin as more of a political pork project than a powerful fighting machine, yet it turned out to be a strong 'Mech in combat against light lances.
 
-Overview: The Assassin, though a serviceable BattleMech, was the result of industrial corruption and corner-cutting at its finest. Embellished and aggrandized, the capabilities of the Assassin were exaggerated enough for the BattleMech to enter production for the SLDF. Once its true capabilites were known, however, the 'Mech was quickly relegated to inferior markets, often ending up in the hands of militia or periphery units.
+capabilities:The Assassin was able to destroy these lighter 'Mechs due to its good speed and maneuverability, good armor coverage (in comparison to the 'Mechs it was built to battle against), and strong weaponry. The weapons of the 'Mechs is essentially comprised of three systems: the long-range missile rack, the short-range missile rack, and the arm-mounted Martell midrange laser. The design is limited in durability unless assigned supply units for support because it can only carry a total of seventy-four salvos for both launchers. The most significant disadvantage for most pilots is the incredibly tight cockpit—one of the most confined cockpit designs in the Inner Sphere.
 
-Capabilities: With its paltry array of weaponry, the Assassin was originally sold as a heavier alterative to the Stinger or the Wasp. In this, the 'Mech works as intended, but its reliance on ammunition led to its disfavor in many commands. On paper, however, the Assassin remains a popular alternative to these lighter 'Mechs due to its tougher armor, increased speed, and higher firepower. The design would find little favor amongst MechWarriors, though. With its intensely cramped cockpit and sub-par life support system, MechWarriors despised being forced to pilot the design. As if not enough, a common ammunition feed problem affecting the SRM launcher hardly helped the Assassin's already questionable popularity.
+deployment:The Assassin is well-known for its long-range capabilities, which are facilitated by a Holly-5 LRM-5 launcher located on the right side of its torso. Its primary short-range armament is a Holly-2 SRM-2 launcher on the left side of the torso, which is supplemented with a Martell midrange laser on the right arm. With only two tons of missile ammunition, one ton of LRM ammunition, and one ton of SRM ammunition, the 'Mech has limited endurance on extended missions without resupply and is vulnerable when armed only with the laser. Assassins made before 2815 also had a significant design problem in the reloading mechanism of the short-range missile rack, which encountered chronic jamming during high-heat settings and could only be rectified by disassembling the unit. Under intense corporate pressure, Maltex finally addressed the problem in newer models and gave several years of money for recall repairs, however some privately-owned Assassins may still be equipped with the faulty technology.
 
-Deployment: The Assassin saw deployment throughout most of the Inner Sphere during the Succession Wars. Though its numbers were few and parts were scarce, they remained on battlefields through sheer need. A testament to its durability, the chassis remains in use even today. The Capellan Confederation would be the first Successor State to replace all of their ASN-21's, instead upgrading them into more modernized versions of the design. The remaining ASN-21's would not survive the burning fires of the Jihad, putting an end to this design's first incarnation.
+history:Maltex has changed the cockpit cooling system dozens of times over the Assassin's four hundred year service history in a bid to provide extra elbow room, but none of the attempts have been effective. As a result, most pilots experience a tight, painful ride that limits in-cockpit time to half that of most other conventional designs; many ex-Assassin pilots have established a history of back issues that will bother them for the rest of their lives. The ammo feed system for the short-range missile rack was the only other issue with the Assassin (mostly those made up to 2815). It commonly failed during high-heat settings due to chronic jamming and could only be repaired through total disassembly in a mechanical bay. Under significant corporate pressure, Holly ultimately introduced a new feed system in 2815 and even paid several years of recall repairs; nonetheless, there are still a huge number of individually owned Assassins that may still mount the problematic system. Maltex produced only a few hundred ASN-21s after their launch. Due to a lack of spare parts, those Assassins in service were utilized sparingly, however House Marik enthusiastically used the 'Mech late in the Third Succession War. When a rush of new BattleMech types entered the markets after 3058, the Assassin was nearly phased out of service. Those that have stayed in service are usually family heirlooms with some modifications.
 
-systemmanufacturer:CHASSIS:Maltex
-systemmode:CHASSIS:40
-systemmanufacturer:ENGINE:VOX
-systemmode:ENGINE:280
-systemmanufacturer:ARMOR:AFVTA
-systemmode:ARMOR:100
-systemmanufacturer:COMMUNICATIONS:Garret
-systemmode:COMMUNICATIONS:T15 B
-systemmanufacturer:TARGETING:Garret
-systemmode:TARGETING:500S
+manufacturer:Maltex Corporation
+primaryfactory:Errai
+systemmanufacturer:CHASSIS:Maltex 40
+systemmanufacturer:ENGINE:VOX 280
+systemmanufacturer:ARMOR:100 AFVTA
+systemmanufacturer:JUMPJET:Lox Lift Series 1
+systemmanufacturer:COMMUNICATIONS:Garret T15 B
+systemmanufacturer:TARGETING:Garret 500S
+

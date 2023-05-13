@@ -1,6 +1,6 @@
 Mercenary Battle Armor C - 3145
 Smoothdavid PA(L) III,1
-Tunnel Rat Mining Exoskeleton IV [Armored Glove/GL],2
+Tunnel Rat IV Mining Exoskeleton [Armored Glove/GL](Sqd4),2
 Infiltrator Mk. I Battle Armor 'Waddle',3
 Gladiator Battle Armor S,4
 Sloth Battle Armor (Interdictor),5

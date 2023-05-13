@@ -1,6 +1,6 @@
 3085 Mercenary Battle Armor D
 Infiltrator Mk. I Battle Armor 'Waddle',1
-Tunnel Rat Mining Exoskeleton IV [Battle Claw/LMG],2
+Tunnel Rat IV Mining Exoskeleton [Battle Claw/LMG](Sqd4),2
 Raiden Battle Armor [Laser],3
 IS Standard Battle Armor [Laser],4
 Sloth Battle Armor (Standard),5

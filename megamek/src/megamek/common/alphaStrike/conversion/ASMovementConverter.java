@@ -73,9 +73,9 @@ final class ASMovementConverter {
         double walkMP = entity.getOriginalWalkMP();
         report.addLine("Base Walking MP", "", Integer.toString(entity.getOriginalWalkMP()));
 
-        int jumpMove = entity.getJumpMP() * 2;
+        int jumpMove = entity.getJumpMP(false) * 2;
         if (entity instanceof Mech) {
-            jumpMove = ((Mech) entity).getJumpMP(false, true) * 2;
+            jumpMove = ((Mech) entity).getJumpMP(false, false) * 2;
         }
 
         if (hasSupercharger(entity) && hasMechMASC(entity)) {
@@ -125,10 +125,6 @@ final class ASMovementConverter {
             }
         }
 
-        if ((entity instanceof Protomech) && ((Protomech) entity).isGlider()) {
-            result.put("", 2);
-            report.addLine("ProtoMek Glider Movement", "2\"");
-        }
         addUMUMovement(result, conversionData);
         return result;
     }
@@ -146,14 +142,12 @@ final class ASMovementConverter {
             jumpingMP = ((BattleArmor)entity).getJumpMP(true, true, true);
         }
 
-        // ensure a minimum base movement of 2"
-        walkingMP = Math.max(walkingMP, 1);
         report.addLine("Walking MP:", Integer.toString(walkingMP));
         report.addLine("Jumping MP:", Integer.toString(jumpingMP));
         String movementCode = getMovementCode(conversionData);
         element.setPrimaryMovementMode(movementCode);
 
-        if (walkingMP > jumpingMP) {
+        if ((walkingMP > jumpingMP) || (jumpingMP == 0)) {
             result.put(movementCode, walkingMP * 2);
             report.addLine("Walking MP > Jumping MP", walkingMP + " x 2", walkingMP * 2 + "\"" + movementCode);
         } else {
@@ -271,8 +265,14 @@ final class ASMovementConverter {
                 report.addLine(type, "Infantry (motorized)", "m");
                 return "m";
             case INF_JUMP:
-                report.addLine(type, "Infantry (jump)", "j");
-                return "j";
+                if (entity.getJumpMP(false) > 0) {
+                    report.addLine(type, "Infantry (jump)", "j");
+                    return "j";
+                } else {
+                    // BA with DWP/DMP equipment may have their jump MP reduced to 0 and should count as leg
+                    report.addLine(type, "Infantry (jump MP reduced to 0)", "f");
+                    return "f";
+                }
             case WIGE:
                 report.addLine(type, "Wige", "g");
                 return "g";
@@ -294,6 +294,9 @@ final class ASMovementConverter {
     static int convertTMM(ASConverter.ConversionData conversionData) {
         CalculationReport report = conversionData.conversionReport;
         AlphaStrikeElement element = conversionData.element;
+        if (element.isAerospace()) {
+            return 0;
+        }
 
         int base = element.getPrimaryMovementValue();
         if (element.isInfantry()) {

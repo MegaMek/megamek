@@ -43,6 +43,7 @@ import megamek.common.net.listeners.ConnectionListener;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
+import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.SerializationHelper;
@@ -50,10 +51,9 @@ import megamek.common.util.StringUtil;
 import megamek.server.SmokeCloud;
 import org.apache.logging.log4j.LogManager;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.RenderedImage;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.List;
 import java.util.*;
@@ -118,6 +118,8 @@ public class Client implements IClientCommandHandler {
     ConnectionHandler packetUpdate;
 
     private Coords currentHex;
+
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     private class ConnectionHandler implements Runnable {
 
@@ -318,13 +320,6 @@ public class Client implements IClientCommandHandler {
      */
     protected boolean keepGameLog() {
         return PreferenceManager.getClientPreferences().keepGameLog();
-    }
-
-    /**
-     * Return an enumeration of the players in the game
-     */
-    public Enumeration<Player> getPlayers() {
-        return game.getPlayers();
     }
 
     public Entity getEntity(int id) {
@@ -640,7 +635,7 @@ public class Client implements IClientCommandHandler {
      * air units flight path. In the case of several equidistant hexes, the
      * attacker gets to choose. This method updates the server with the users
      * choice.
-     * 
+     *
      * @param targetId
      * @param attackerId
      * @param pos
@@ -748,7 +743,7 @@ public class Client implements IClientCommandHandler {
         }
         entity.setWeapOrderChanged(false);
     }
-    
+
     /** Sends the given forces to the server to be made top-level forces. */
     public void sendForceParent(Collection<Force> forceList, int newParentId) {
         send(new Packet(PacketCommand.FORCE_PARENT, forceList, newParentId));
@@ -809,25 +804,25 @@ public class Client implements IClientCommandHandler {
     public void sendUpdateEntity(Entity entity) {
         send(new Packet(PacketCommand.ENTITY_UPDATE, entity));
     }
-    
+
     /**
-     * Sends a packet containing multiple entity updates. Should only be used 
+     * Sends a packet containing multiple entity updates. Should only be used
      * in the lobby phase.
      */
     public void sendUpdateEntity(Collection<Entity> entities) {
         send(new Packet(PacketCommand.ENTITY_MULTIUPDATE, entities));
     }
-    
+
     /**
-     * Sends a packet containing multiple entity updates. Should only be used 
+     * Sends a packet containing multiple entity updates. Should only be used
      * in the lobby phase.
      */
     public void sendChangeOwner(Collection<Entity> entities, int newOwnerId) {
         send(new Packet(PacketCommand.ENTITY_ASSIGN, entities, newOwnerId));
     }
-    
+
     /**
-     * Sends a packet containing multiple entity updates. Should only be used 
+     * Sends a packet containing multiple entity updates. Should only be used
      * in the lobby phase.
      */
     public void sendChangeTeam(Collection<Player> players, int newTeamId) {
@@ -840,21 +835,21 @@ public class Client implements IClientCommandHandler {
     public void sendDeploymentUnload(Entity loader, Entity loaded) {
         send(new Packet(PacketCommand.ENTITY_DEPLOY_UNLOAD, loader.getId(), loaded.getId()));
     }
-    
+
     /**
      * Sends an "Update force" packet
      */
     public void sendUpdateForce(Collection<Force> changedForces, Collection<Entity> changedEntities) {
         send(new Packet(PacketCommand.FORCE_UPDATE, changedForces, changedEntities));
     }
-    
+
     /**
      * Sends an "Update force" packet
      */
     public void sendUpdateForce(Collection<Force> changedForces) {
         send(new Packet(PacketCommand.FORCE_UPDATE, changedForces, new ArrayList<>()));
     }
-    
+
     /**
      * Sends a packet instructing the server to add the given entities to the given force.
      * The server will handle this; the client does not have to implement the change.
@@ -862,7 +857,7 @@ public class Client implements IClientCommandHandler {
     public void sendAddEntitiesToForce(Collection<Entity> entities, int forceId) {
         send(new Packet(PacketCommand.FORCE_ADD_ENTITY, entities, forceId));
     }
-    
+
     /**
      * Sends a packet instructing the server to add the given entities to the given force.
      * The server will handle this; the client does not have to implement the change.
@@ -870,7 +865,7 @@ public class Client implements IClientCommandHandler {
     public void sendAssignForceFull(Collection<Force> forceList, int newOwnerId) {
         send(new Packet(PacketCommand.FORCE_ASSIGN_FULL, forceList, newOwnerId));
     }
-        
+
     /**
      * Sends a packet to the Server requesting to delete the given forces.
      */
@@ -880,7 +875,7 @@ public class Client implements IClientCommandHandler {
                 .boxed()
                 .collect(Collectors.toList())));
     }
-    
+
     /**
      * Sends an "Add force" packet
      */
@@ -921,9 +916,17 @@ public class Client implements IClientCommandHandler {
      * sends a load game file to the server
      */
     public void sendLoadGame(File f) {
-        try (InputStream fis = new FileInputStream(f); InputStream is = new GZIPInputStream(fis)) {
+        try (InputStream is = new FileInputStream(f)) {
+            InputStream gzi;
+
+            if (f.getName().toLowerCase().endsWith(".gz")) {
+                gzi = new GZIPInputStream(is);
+            } else {
+                gzi = is;
+            }
+
             game.reset();
-            send(new Packet(PacketCommand.LOAD_GAME, SerializationHelper.getXStream().fromXML(is)));
+            send(new Packet(PacketCommand.LOAD_GAME, SerializationHelper.getLoadSaveGameXStream().fromXML(gzi)));
         } catch (Exception ex) {
             LogManager.getLogger().error("Can't find the local savegame " + f, ex);
         }
@@ -981,12 +984,19 @@ public class Client implements IClientCommandHandler {
                 cacheImgTag(e);
             }
         }
-        // cache the image data for the entities
+        // cache the image data for the entities and set force for entities
         for (Entity e: newEntities) {
             cacheImgTag(e);
+            e.setForceId(game.getForces().getForceId(e));
+        }
+
+        if (GUIP.getMiniReportShowSprites() &&
+                game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) &&
+                imgCache != null && !imgCache.containsKey(Report.HIDDEN_ENTITY_NUM)) {
+            ImageUtil.createDoubleBlindHiddenImage(imgCache);
         }
     }
-    
+
     /**
      * Receives a force-related update containing affected forces and affected entities
      */
@@ -1002,18 +1012,23 @@ public class Client implements IClientCommandHandler {
             getGame().setEntity(entity.getId(), entity);
         }
     }
-    
+
     /** Receives a server packet commanding deletion of forces. Only valid in the lobby phase. */
     protected void receiveForcesDelete(Packet c) {
         @SuppressWarnings("unchecked")
         Collection<Integer> forceIds = (Collection<Integer>) c.getObject(0);
         Forces forces = game.getForces();
-        
+
         // Gather the forces and entities to be deleted
         Set<Force> delForces = new HashSet<>();
         Set<Entity> delEntities = new HashSet<>();
         forceIds.stream().map(forces::getForce).forEach(delForces::add);
-        delForces.stream().map(forces::getFullEntities).forEach(delEntities::addAll);
+        for (Force delForce : delForces) {
+            forces.getFullEntities(delForce).stream()
+                    .filter(e -> e instanceof Entity)
+                    .map(e -> (Entity) e)
+                    .forEach(delEntities::add);
+        }
 
         forces.deleteForces(delForces);
 
@@ -1021,7 +1036,7 @@ public class Client implements IClientCommandHandler {
             game.removeEntity(entity.getId(), IEntityRemovalConditions.REMOVE_NEVER_JOINED);
         }
     }
-    
+
     /**
      * Loads entity update data from the data in the net command.
      */
@@ -1033,9 +1048,9 @@ public class Client implements IClientCommandHandler {
         // Replace this entity in the game.
         getGame().setEntity(eindex, entity, movePath);
     }
-    
+
     /**
-     * Update multiple entities from the server. Used only in the lobby phase. 
+     * Update multiple entities from the server. Used only in the lobby phase.
      */
     @SuppressWarnings("unchecked")
     protected void receiveEntitiesUpdate(Packet c) {
@@ -1194,14 +1209,17 @@ public class Client implements IClientCommandHandler {
 
         Set<Integer> set = new HashSet<>();
         //find id stored in spans and extract it
-        Pattern p = Pattern.compile("<s(.*?)n>");
+        Pattern p = Pattern.compile("<span id=(.*?)span>");
         Matcher m = p.matcher(report.toString());
 
         // add all instances to a hashset to prevent duplicates
         while (m.find()) {
-            String cleanedText = m.group(1).replaceAll("\\D", "");
+            String cleanedText = m.group(1).replaceAll("[^\\d-]", "");
             if (!cleanedText.isBlank()) {
-                set.add(Integer.parseInt(cleanedText));
+                try {
+                    set.add(Integer.parseInt(cleanedText));
+                } catch (Exception ignored) {
+                }
             }
         }
 
@@ -1209,7 +1227,7 @@ public class Client implements IClientCommandHandler {
         // loop through the hashset of unique ids and replace the ids with img tags
         for (int i : set) {
             if (getCachedImgTag(i) != null) {
-                updatedReport = updatedReport.replace("<span id='" + i + "'></span>", getCachedImgTag(i));
+                updatedReport = updatedReport.replaceAll("<span id='" + i + "'></span>", getCachedImgTag(i));
             }
         }
         return updatedReport;
@@ -1219,7 +1237,7 @@ public class Client implements IClientCommandHandler {
      * returns the stored <img> tag for given unit id
      */
     private String getCachedImgTag(int id) {
-        if (!GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_ROUND_REPORT_SPRITES)
+        if (!GUIP.getMiniReportShowSprites()
                 || (imgCache == null) || !imgCache.containsKey(id)) {
             return null;
         }
@@ -1243,19 +1261,10 @@ public class Client implements IClientCommandHandler {
 
         if (getTargetImage(entity) != null) {
             // convert image to base64, add to the <img> tag and store in cache
-            Image image = ImageUtil.getScaledImage(getTargetImage(entity), 56, 48);
-            try {
-                String base64Text;
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ImageIO.write((RenderedImage) image, "png", baos);
-                baos.flush();
-                base64Text = Base64.getEncoder().encodeToString(baos.toByteArray());
-                baos.close();
-                String img = "<img src='data:image/png;base64," + base64Text + "'>";
-                imgCache.put(entity.getId(), img);
-            } catch (final IOException ioe) {
-                throw new UncheckedIOException(ioe);
-            }
+            BufferedImage image = ImageUtil.getScaledImage(getTargetImage(entity), 56, 48);
+            String base64Text = ImageUtil.base64TextEncodeImage(image);
+            String img = "<img src='data:image/png;base64," + base64Text + "'>";
+            imgCache.put(entity.getId(), img);
         }
     }
 
@@ -1695,7 +1704,7 @@ public class Client implements IClientCommandHandler {
     public void sendTelemissileTargetCFRResponse(int index) {
         send(new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST, PacketCommand.CFR_TELEGUIDED_TARGET, index));
     }
-    
+
     public void sendTAGTargetCFRResponse(int index) {
         send(new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST, PacketCommand.CFR_TAG_TARGET, index));
     }
@@ -1868,15 +1877,15 @@ public class Client implements IClientCommandHandler {
     public void setCurrentHex(Coords hex) {
         currentHex = hex;
     }
-    
+
     /** Returns true when the player is a bot added/controlled by this client. */
     public boolean isLocalBot(Player player) {
         return bots.containsKey(player.getName());
     }
-    
-    /** 
+
+    /**
      * Returns the Client associated with the given local bot player. If
-     * the player is not a local bot, returns null. 
+     * the player is not a local bot, returns null.
      */
     public Client getBotClient(Player player) {
         return bots.get(player.getName());

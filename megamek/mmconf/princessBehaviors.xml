@@ -120,6 +120,21 @@
     <strategicBuildingTargets/>
   </behavior>
   <behavior>
+    <name>BERSERK v2 ANGRY HORDE</name>
+    <destinationEdge>NONE</destinationEdge>
+    <retreatEdge>NEAREST</retreatEdge>
+    <forcedWithdrawal>false</forcedWithdrawal>
+    <goHome>false</goHome>
+    <autoFlee>false</autoFlee>
+    <fallShameIndex>2</fallShameIndex>
+    <hyperAggressionIndex>10</hyperAggressionIndex>
+    <selfPreservationIndex>3</selfPreservationIndex>
+    <herdMentalityIndex>8</herdMentalityIndex>
+    <braveryIndex>2</braveryIndex>
+    <verbosity>WARNING</verbosity>
+    <strategicBuildingTargets/>
+</behavior>
+  <behavior>
     <name>Brawler (pPT)</name>
     <destinationEdge>NONE</destinationEdge>
     <retreatEdge>NEAREST</retreatEdge>
@@ -161,6 +176,21 @@
     <selfPreservationIndex>5</selfPreservationIndex>
     <herdMentalityIndex>5</herdMentalityIndex>
     <braveryIndex>5</braveryIndex>
+    <verbosity>WARNING</verbosity>
+    <strategicBuildingTargets/>
+  </behavior>
+  <behavior>
+    <name>DEFAULT v2 BRAVER</name>
+    <destinationEdge>NONE</destinationEdge>
+    <retreatEdge>NEAREST</retreatEdge>
+    <forcedWithdrawal>false</forcedWithdrawal>
+    <goHome>false</goHome>
+    <autoFlee>false</autoFlee>
+    <fallShameIndex>2</fallShameIndex>
+    <hyperAggressionIndex>5</hyperAggressionIndex>
+    <selfPreservationIndex>3</selfPreservationIndex>
+    <herdMentalityIndex>5</herdMentalityIndex>
+    <braveryIndex>2</braveryIndex>
     <verbosity>WARNING</verbosity>
     <strategicBuildingTargets/>
   </behavior>

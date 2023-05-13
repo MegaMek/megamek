@@ -1444,7 +1444,12 @@ public class Jumpship extends Aero {
     public boolean isFighter() {
         return false;
     }
-    
+
+    @Override
+    public boolean isAerospaceFighter() {
+        return false;
+    }
+
     @Override
     public boolean isPrimitive() {
         return getDriveCoreType() == DRIVE_CORE_PRIMITIVE;
@@ -1461,5 +1466,10 @@ public class Jumpship extends Aero {
     @Override
     protected int calculateWalk() {
         return walkMP;
+    }
+
+    @Override
+    public boolean isLargeAerospace() {
+        return true;
     }
 }

@@ -630,8 +630,41 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         }
     }
 
+    /**
+     * Returns true when this Mounted is not destroyed nor located in a blown-off
+     * or breached location. Does not check any other conditions such as DWP mounting or prior use.
+     * Also does not check if this mounted has been hit in this phase.
+     * This is equivalent to !{@link #isInoperable()}.
+     *
+     * @return True when this Mounted is operable
+     */
+    public boolean isOperable() {
+        return !isInoperable();
+    }
+
+    /**
+     * Returns true when this Mounted destroyed or located in a blown-off
+     * or breached location. Does not check any other conditions such as DWP mounting or prior use.
+     * Also does not check if this mounted has been hit in this phase.
+     * Equivalent to !{@link #isOperable()}.
+     *
+     * @return True when this Mounted is operable
+     */
     public boolean isInoperable() {
         return destroyed || missing || useless;
+    }
+
+    /**
+     * Returns true if this Mounted's EquipmentType is that identified by the given typeInternalName String. The
+     * given typeInternalName is compared to the internal name of the EquipmentType of this Mounted,
+     * not the (display) name!
+     * Best use the constants defined in EquipmentTypeLookup.
+     *
+     * @param typeInternalName An Equipment internal name to check
+     * @return true if the internalName of this equipment matches the given type
+     */
+    public boolean is(String typeInternalName) {
+        return getType().is(typeInternalName);
     }
 
     public boolean isHit() {
@@ -1203,7 +1236,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                 return 0;
             }
             if ((isHotLoaded() || hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS))
-                    && (getLinked().getUsableShotsLeft() > 0)) {
+                    && (getLinked() != null) && (getLinked().getUsableShotsLeft() > 0)) {
                 Mounted link = getLinked();
                 AmmoType atype = ((AmmoType) link.getType());
                 int damagePerShot = atype.getDamagePerShot();

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -49,7 +49,7 @@ dockingcollar
 dockingcollar
 dockingcollar
 dockingcollar
-cargobay:53914.5:1:3
+cargobay:53914.5:1:9
 1stclassquarters:620.0:0
 crewquarters:2100.0:0
 </transporters>
@@ -278,6 +278,46 @@ IS Ammo LRM-10:120
 80
 </structural_integrity>
 
+<capabilities>
+The Tharkad is armed primarily with a wide variety of naval-grade autocannons and lasers, providing a selection of weapons to properly respond to an enemy threat without needlessly wasting firepower on smaller targets. The vessel also carries a number of Medium and Heavy Naval PPCs and four massive Heavy Naval Gauss Cannons, making the Tharkad a threat to heavier WarShips as well. Unusual for its era, the Tharkad carries a significant number of conventional weapons to fight off aerospace fighters. WarShips of the time usually relied on their attending DropShips to provide screens against enemy fighters. Although the practice is commonplace on modern WarShips, conventional weapons were often seen as a waste of tonnage on vessels deployed during the Age of War and the Star League.
+</capabilities>
+
+<overview>
+The first in a line of new WarShips for the Lyran Commonwealth during the Star League era, the Tharkad-class battlecruiser was easily a match for the vast majority of its contemporaries, and was only really outclassed by the Texas and McKenna-class battleships.
+</overview>
+
+<deployment>
+Outside of the ship's strong armor and prolific firepower, this ability to fend for itself was likely one of the reasons that the LCS Invincible was one of the last functional WarShips in the Inner Sphere until the Clan Invasion.
+</deployment>
+
+<history>
+Carrying a vast array of weaponry, moderately heavy armor, and possessing above-average speed, the Tharkad helped enforce Lyran will across the nation. Unfortunately for the Lyran navy, only 28 were produced between its introduction in 2690 and the destruction of the Bolson-Tamar Shipyards at the beginning of the First Succession War. The last functioning Tharkad was believed lost in 2853 until its reemergence in 3067. In 2765 the Lyran Commonwealth was already operating eleven Tharkads, with a single Tharkad forming the heart of each of six Lyran navy patrol squadrons and another Tharkad positioned in each of the static fleets located at Tharkad and each state capital; each Tharkad was commonly escorted by one or more Commonwealth-class light cruisers.
+</history>
+
+<manufacturer>
+Bolson-Tamar Shipyards
+</manufacturer>
+
+<primaryFactory>
+Tamar
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Battlecruiser
+</use>
+
+<length>
+975 m
+</length>
+
 <source>
 TRO3075 - Star League
 </source>
@@ -298,6 +338,10 @@ TRO3075 - Star League
 95
 95
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 474
@@ -330,3 +374,4 @@ TRO3075 - Star League
 <escape_pod>
 30
 </escape_pod>
+

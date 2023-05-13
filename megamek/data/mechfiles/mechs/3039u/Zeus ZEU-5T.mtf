@@ -1,42 +1,41 @@
-Version:1.0
+Version:1.3
 Zeus
 ZEU-5T
 mul id:3641
-
 Config:Biped
-TechBase:Inner Sphere
-Era:2787
-Source:TRO 3039 - Succession Wars
-Rules Level:2
+techbase:Inner Sphere
+era:2787
+source:TRO 3039 - Succession Wars
+rules level:2
 
-Mass:80
-Engine:320 Fusion Engine
-Structure:Standard
-Myomer:Standard
+mass:80
+engine:320 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:17 Double
-Walk MP:4
-Jump MP:0
+heat sinks:17 IS Double
+walk mp:4
+jump mp:0
 
-Armor:Ferro-Fibrous(Inner Sphere)
-LA Armor:23
-RA Armor:23
-LT Armor:24
-RT Armor:24
-CT Armor:36
-HD Armor:9
-LL Armor:30
-RL Armor:30
-RTL Armor:7
-RTR Armor:7
-RTC Armor:11
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:23
+RA armor:23
+LT armor:24
+RT armor:24
+CT armor:36
+HD armor:9
+LL armor:30
+RL armor:30
+RTL armor:7
+RTR armor:7
+RTC armor:11
 
 Weapons:5
-Medium Laser, Left Torso
-Medium Laser, Center Torso
+ER PPC, Left Arm
 LRM 15, Right Arm
 ER Large Laser, Left Torso
-ER PPC, Left Arm
+Medium Laser, Left Torso
+Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
@@ -45,7 +44,7 @@ Lower Arm Actuator
 ISERPPC
 ISERPPC
 ISERPPC
-Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -61,7 +60,7 @@ LRM 15
 LRM 15
 ISArtemisIV
 IS Ammo LRM-15 Artemis-capable
-Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -76,9 +75,9 @@ ISDoubleHeatSink
 ISERLargeLaser
 ISERLargeLaser
 Medium Laser (R)
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Torso:
 ISDoubleHeatSink
@@ -90,9 +89,9 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -106,13 +105,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Medium Laser
-Ferro-Fibrous
+IS Ferro-Fibrous
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+IS Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -127,8 +126,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -141,8 +140,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -150,4 +149,18 @@ Ferro-Fibrous
 -Empty-
 -Empty-
 
+overview:The Zeus was first built by the Lyran Commonwealth in 2787, just as the First Succession War began. Built at the request of Lyran Commonwealth Armed Forces commanders for a new light-assault 'Mech designed to engage the enemy at long range and perform hit-and-run attacks.	
 
+capabilities:the Zeus is fast enough to keep up with most heavy 'Mechs, and with a sturdy frame, eleven and a half tons of standard armor and a versatile weapons array, is equally capable of defeating them. Its use of reliable, low-maintenance and easily modified systems at a time when most 'Mechs were built with cutting-edge technology also proved fortuitous, allowing the Zeus to be produced long after those advanced components had become Lostech.
+
+deployment:One of the two original models of the Zeus, it was similar to the 5S with an LRM-15/Artemis IV combination and an extended range large laser, but was equipped with an ER PPC. The use of ferro-fibrous armor increased the 'Mech's protection and seventeen double heat sinks kept the entire machine cool.
+
+history:Three years before its release, the first two prototypes of the Zeus would have their first "test run" when they were forced to repel an attack on the Hesperus II factory by the Draconis Combine Mustered Soldiery. As the enemy pushed through Lyran lines, the two 'Mechs were summoned to aid, and through sheer novelty and long-range firepower, the Kuritans were forced to pause. This enabled more reinforcements to push back DCMS forces. While these prototypes were effective in repelling the attack, they were considerably more advanced than the commercial model and armed with a PPC, which proved unpredictable and unreliable during the combat. Inadequate shielding caused wild magnetic interactions between the weapon and the Zeus' engine, which was later revealed to be the source of this behavior. To guarantee that the Zeus arrived at the front lines as soon as possible, the complex energy weapon was replaced with a basic autocannon. The 'Mech initially appeared in substantial numbers after the 15th Lyran Guards regained the planet Sakhalin, and the Zeus had a long and storied history within the Commonwealth during the Succession Wars, becoming a well-respected assault 'Mech. Engineers were able to put a PPC on the Zeus again after the end of the Third Succession War, with the resulting ZEU-6T variant being the standard during the Fourth Succession War and later the War of 3039. The design was also well received by mercenary units, particularly the Zeta Battalion of Wolf's Dragoons. During the formation of the Federated Commonwealth, the Zeus would meet opposition from some former AFFS troops, whose "Davion pride" barred them from using the 'Mech despite its superiority to many of their own machines. Similarly, as the FedCom military began to take on a Davion character, many Lyran commanders insisted that their pride and joy was too vital to give up, and so urged Defiance Industries to build new models that included freshly recovered Star League Lostech. With the introduction of the ZEU-9S Zeus, production of the earlier variations would be halted, and samples of this hallmark Lyran 'Mech would be distributed throughout the Commonwealth as a symbol of the new partnership. However, at the time of the FedCom Civil War, the majority of Zeus 'Mechs were in Lyran hands, with many of those assigned to Davion units relegated to rear-guard duty or sold to mercenaries. The LAAF and, following their takeover of Hesperus II in 3070, the Word of Blake Militia would continue to receive new variations.
+
+manufacturer:Defiance Industries
+primaryfactory:Hesperus II
+systemmanufacturer:CHASSIS:Chariot Type III
+systemmanufacturer:ENGINE:Pitban 320
+systemmanufacturer:ARMOR:Glasgow Limited Primo ferro-fibrous
+systemmanufacturer:COMMUNICATIONS:TharHes Calliope ZE-2
+systemmanufacturer:TARGETING:TharHes Ares-7

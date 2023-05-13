@@ -1,0 +1,153 @@
+Version:1.0
+Thresher Mk II
+
+mul id:7502
+
+Config:Biped
+techbase:Clan
+era:3149
+rules level:4
+source:Rec Guide:ilClan #4 - Dark Age
+
+mass:60
+engine:300 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:13 Clan Double
+walk mp:5
+jump mp:5
+
+armor:Reflective(Clan)
+LA armor:14
+RA armor:14
+LT armor:17
+RT armor:17
+CT armor:22
+HD armor:9
+LL armor:21
+RL armor:21
+RTL armor:5
+RTR armor:5
+RTC armor:7
+
+Weapons:5
+ER PPC, Left Arm
+SRM 4, Left Arm
+Flamer, Right Arm
+Large Pulse Laser, Left Torso
+LRM 15, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLERPPC
+CLERPPC
+CLSRM4
+Clan Ammo SRM-4
+CLCASEII
+Clan Endo Steel
+Clan Reflective
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLFlamer
+Clan Endo Steel
+Clan Reflective
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+Jump Jet
+Jump Jet
+CLLargePulseLaser
+CLLargePulseLaser
+CLMASC
+CLMASC
+Clan Reflective
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+CLLRM15
+CLLRM15
+Clan Ammo LRM-15
+Clan Ammo LRM-15
+Supercharger (Clan)
+CLCASEII
+Clan Reflective
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Clan Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Reflective
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

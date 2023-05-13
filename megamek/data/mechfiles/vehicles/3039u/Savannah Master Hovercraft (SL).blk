@@ -75,3 +75,34 @@ TRO 3039 - Succession Wars
 <tonnage>
 5.0
 </tonnage>
+
+<capabilities>
+The Savannah Master's attractiveness stems from its incredible ground speed—more than 200 kilometers per hour at full speed—combined with its extraordinary simplicity of design. Lewis designed it so that it could be easily maintained and repaired with readily available components. The hovercraft's electronics are made in the Lyran city of Tharkad, and its sole weapon varies.
+</capabilities>
+
+<overview>
+The Savannah Master hovercraft, developed as a bounty from a reclaimed Star League storage facility, has become the primary cavalry and pursuit vehicle of practically every Lyran unit. The nimble Savannah Master's tremendous speed is sometimes overshadowed in a military known for its preponderance of large and slow-moving BattleMechs.
+</overview>
+
+<deployment>
+In 3033, a test-bed variant with a pair of light lasers in place of the Defiance B3M was tested but swiftly abandoned after it was realized that even the Savannah Master's superior speed was insufficient to overcome the light lasers' lack of range.
+</deployment>
+
+<history>
+S.L. Lewis, an officer on the JumpShip Winnetka, claimed more than 2,000 25-rated Omni fusion engines as his portion of the bounty, said to be the most efficient ever created, and utilized them to help build the Savannah Master. The LCAF ordered almost a thousand of the nimble craft after a memorable procurement exercise against a Locust, and the AFFS quickly followed suit. Lewis offered the last ten Omni 25s to any Lyran fusion engine manufacturer willing to reverse-engineer its secrets in late 3035. By 3037, Edasich Motors had achieved standard manufacturing of the Omni, and the assembly lines at S.L. Lewis, Incorporated had been retooled to take the Edasich Omni 25. The original Lyran order for 1,000 Savannah Masters has been repeated every decade, and the LCAF's merger with the Armed Forces of the Federated Suns more than doubled the annual invoice. S.L. Lewis, Inc. continued to support service contracts in the Federated Suns after the Civil War, but has not made any new sales to the AFFS.
+</history>
+
+<manufacturer>
+S.L. Lewis, Inc.
+</manufacturer>
+
+<primaryFactory>
+Carlisle
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:Edasich Omni 25 Fusion
+ARMOR:Durallex Light
+COMMUNICATIONS:TharHes Hm 10
+TARGETING:TharHes Alpha-2a
+</systemManufacturers>

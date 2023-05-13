@@ -16,9 +16,9 @@ VTOL
 Crow Scout Helicopter
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 747

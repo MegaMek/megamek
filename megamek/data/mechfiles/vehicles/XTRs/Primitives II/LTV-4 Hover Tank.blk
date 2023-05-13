@@ -16,9 +16,9 @@ Tank
 LTV-4 Hover Tank
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 5587

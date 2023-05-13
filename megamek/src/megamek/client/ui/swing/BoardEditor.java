@@ -19,6 +19,7 @@
  */
 package megamek.client.ui.swing;
 
+import megamek.MMConstants;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.Messages;
@@ -59,7 +60,6 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.List;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static megamek.common.Terrains.*;
 
@@ -211,7 +211,6 @@ public class BoardEditor extends JPanel
     boolean isDragging = false;
     private Component bvc;
     private final CommonMenuBar menuBar = new CommonMenuBar(this);
-    private CommonAboutDialog about;
     private AbstractHelpDialog help;
     private CommonSettingsDialog setdlg;
     private JDialog minimapW;
@@ -241,7 +240,7 @@ public class BoardEditor extends JPanel
     // The brush size: 1 = 1 hex, 2 = radius 1, 3 = radius 2  
     private int brushSize = 1;
     private int hexLeveltoDraw = -1000;
-    private final Font fontComboTerr = new Font("SansSerif", Font.BOLD, 12);
+    private final Font fontComboTerr = new Font(MMConstants.FONT_SANS_SERIF, Font.BOLD, 12);
     private EditorTextField texElev;
     private ScalingIconButton butElevUp;
     private ScalingIconButton butElevDown;
@@ -1689,10 +1688,7 @@ public class BoardEditor extends JPanel
 
     /** Called when the user selects the "Help->About" menu item. */
     private void showAbout() {
-        if (about == null) {
-            about = new CommonAboutDialog(frame);
-        }
-        about.setVisible(true);
+        new CommonAboutDialog(frame).setVisible(true);
     }
 
     /** Called when the user selects the "Help->Contents" menu item. */
@@ -2305,18 +2301,14 @@ public class BoardEditor extends JPanel
                 for (final Image newVar : safeList(tm.orthoFor(curHex))) {
                     g.drawImage(newVar, 0, 0, this);
                 }
+                UIUtil.setHighQualityRendering(g);
                 // add level and INVALID if necessary
-                if (guip.getAntiAliasing()) {
-                    ((Graphics2D) g).setRenderingHint(
-                            RenderingHints.KEY_ANTIALIASING,
-                            RenderingHints.VALUE_ANTIALIAS_ON);
-                }
                 g.setColor(getForeground());
-                g.setFont(new Font("SansSerif", Font.PLAIN, 9));
+                g.setFont(new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 9));
                 g.drawString(Messages.getString("BoardEditor.LEVEL") + curHex.getLevel(), 24, 70);
                 StringBuffer errBuf = new StringBuffer();
                 if (!curHex.isValid(errBuf)) {
-                    g.setFont(new Font("SansSerif", Font.BOLD, 14));
+                    g.setFont(new Font(MMConstants.FONT_SANS_SERIF, Font.BOLD, 14));
                     Point hexCenter = new Point(BoardView.HEX_W / 2, BoardView.HEX_H / 2);
                     BoardView.drawCenteredText((Graphics2D) g, Messages.getString("BoardEditor.INVALID"),
                             hexCenter, guip.getWarningColor(), false);
@@ -2359,7 +2351,7 @@ public class BoardEditor extends JPanel
      */
     public boolean shouldIgnoreHotKeys() {
         return ignoreHotKeys
-                || ((about != null) && about.isVisible())
+                || UIUtil.isModalDialogDisplayed()
                 || ((help != null) && help.isVisible())
                 || ((setdlg != null) && setdlg.isVisible())
                 || texElev.hasFocus() || texTerrainLevel.hasFocus() || texTerrExits.hasFocus();
@@ -2446,7 +2438,7 @@ public class BoardEditor extends JPanel
             });
             setMargin(new Insets(1, 1, 1, 1));
             setHorizontalAlignment(JTextField.CENTER);
-            setFont(new Font("SansSerif", Font.BOLD, 20));
+            setFont(new Font(MMConstants.FONT_SANS_SERIF, Font.BOLD, 20));
             setCursor(Cursor.getDefaultCursor());
         }
         

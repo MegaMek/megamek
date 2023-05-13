@@ -7,6 +7,7 @@ Config:Biped
 TechBase:Inner Sphere
 Era:2795
 Rules Level:2
+source:Hist Klondike - Early Succession War
 
 Mass:55
 Engine:220 Fusion Engine
@@ -129,3 +130,19 @@ Lower Leg Actuator
 Foot Actuator
 -Empty-
 -Empty-
+
+overview:Martinson Armaments designed the Hoplite as a support 'Mech for deployment alongside the infantry divisions of the newly formed Star League Defense Force.	
+
+capabilities:The Hoplite is slow for a medium 'Mech, with a top speed of only 64.8 km/h. However its 11.5 tons of armor and heavy arsenal, both impressive for a 'Mech of its size, makes the Hoplite a rugged machine able to fight its way out of most situations using superior firepower.
+
+deployment:Essentially a "Royal" variant in everything but name, the "Double B" Hoplite was put into production at Strana Mechty MechWorks and Eden Weaponry Consolidated just before the death of Aleksandr Kerensky and found its way both into the forces of the Pentagon Powers and the infant toumans of the Clans. The "Double B" upgrades the LRM-15 to a Holly manufactured version, enhanced with an Artemis IV system, swaps the PPC for an Kinslaughter H-Class ER PPC, and increases the 'Mech's survivability with a Guardian ECM suite, CASE in both torsos, double heat sinks, and an anti-missile system. However, the design's speed and armor were not upgraded, enforcing the need to deploy the 4Bb as a fire-support unit.
+
+history:The Hoplite first saw service with the newly formed Star League Defense Force during the Reunification War before being relegated to Terran Hegemony militia units in the twenty-seventh century. While every Hoplite in the Inner Sphere was destroyed during the Amaris Crisis and the early Succession Wars, Aleksandr Kerensky's SLDF exiles found the simple and rugged design ideal for bolstering their forces in the months prior to the Exodus Civil War. Selected by Wolf's Dragoons in the belief that the ancient design wouldn't arouse undue attention, it had the complete opposite effect, and only raised more questions as to the Dragoons' origins when they arrived in 3005. After the mercenaries cut ties with the Clan Homeworlds in 3020, they also lost access to replacement Hoplites, with attrition bringing the design close to extinction by the Jihad. During the Jihad, when the surviving Dragoons relocated to Arc-Royal, experimental refits were performed on the remaining Hoplites, which continued after the conflict's end.
+
+manufacturer:Eden Consolidated Weaponry,Strana Mechty MechWorks
+primaryfactory:Eden,Strana Mechty
+systemmanufacturer:CHASSIS:Star League HO-01a
+systemmanufacturer:ENGINE:DAV 220
+systemmanufacturer:ARMOR:DuraShield 12-b.1 with CASE
+systemmanufacturer:COMMUNICATIONS:MultiGab 2000 with Guardian
+systemmanufacturer:TARGETING:Dalban HiRez II

@@ -1,0 +1,164 @@
+Version:1.3
+Victor
+VTR-9B (Kataga)
+mul id:6969
+Config:Biped
+techbase:Inner Sphere
+era:2766
+source:HTP New Dallas - Age of War
+rules level:2
+
+mass:80
+engine:320 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:14 IS Double
+walk mp:4
+jump mp:4
+
+armor:Standard(Inner Sphere)
+LA armor:25
+RA armor:25
+LT armor:25
+RT armor:25
+CT armor:39
+HD armor:9
+LL armor:32
+RL armor:32
+RTL armor:9
+RTR armor:9
+RTC armor:10
+
+Weapons:5
+Large Pulse Laser, Left Arm
+Large Pulse Laser, Left Arm
+Gauss Rifle, Right Arm
+Medium Laser, Left Torso
+Medium Laser, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+IS Endo Steel
+IS Endo Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Medium Laser
+BeagleActiveProbe
+BeagleActiveProbe
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Medium Laser
+IS Gauss Ammo
+IS Gauss Ammo
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Victor was built in 2508 under contract to the Terran Hegemony as a support 'Mech with jump capabilities.
+capabilities:Standing at 14 meters tall, the Victor approaches the concept of support in an unorthodox way for a 'Mech of its weight class. While only possessing a ground speed of 64.8 km/h, the Victor achieves a high degree of mobility instead through the use of four jump jets, allowing it to jump up to one hundred and twenty meters. A Victor can therefore "support" friendly units by jumping directly into the fray and bringing its deadly close range arsenal to bear, an ability which can surprise inexperienced MechWarriors and prove advantageous in mountainous terrain. One sacrifice made for this superb mobility is the 'Mech's relatively light armor of only eleven and a half tons, while the lack of proper anti-infantry capabilities is a minor problem.
+deployment:This custom Victor was used by SLDF Major General Carlos Kataga. It upgrades the engine to a 320 XL, and the Chasis to Endo Steel. This allowed for a 30% increase in overall armor, which was rebalanced towards the front. The AC/20 was upgraded to a Gauss Rifle and the two Medium Lasers and SRM 4 were replaced with Large Pulse Lasers, two Medium Lasers, and a Beagle Active Probe. The heat sinks were upgraded to double strength.
+history:An estimated one thousand Victors had been produced by the time the Star League fell. Many of these left with Aleksandr Kerensky during the Exodus, and when HildCo Interplanetary's three Victor factories were destroyed during the First Succession War, the 'Mech became a prized target with all sides scrambling to salvage serviceable units. Only Independence Weaponry retained the ability to build new Victors, and with their capture by the Federated Suns during the Second Succession War it became the AFFS' primary assault 'Mech and a favorite command model for battalion and regimental commanders. Though the Draconis Combine would eventually retake the company following the War of 3039, most Kurita samurai were too proud to adopt a 'Mech now associated with their enemy, while the Davions made do with purchasing new models from the rebuilt HildCo factory in the St. Ives Compact and funding the construction of Styk's Tao MechWorks.
+manufacturer:Field Refit
+primaryfactory:Various
+systemmanufacturer:CHASSIS:HildCo Type V-E
+systemmanufacturer:ENGINE:Pitban 340 XL
+systemmanufacturer:ARMOR:Durallex Heavy
+systemmanufacturer:JUMPJET:HildCo Model 12
+systemmanufacturer:COMMUNICATIONS:Opus III Highbeam
+systemmanufacturer:TARGETING:MaLandry 34
+

@@ -1,0 +1,130 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Kamisori Light Tank
+</Name>
+
+<Model>
+R
+</Model>
+
+<mul id:>
+9335
+</mul id:>
+
+<year>
+3103
+</year>
+
+<originalBuildYear>
+3103
+</originalBuildYear>
+
+<type>
+Mixed (IS Chassis)
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+BattleArmorHandles - troopers:-1
+</transporters>
+
+<cruiseMP>
+6
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+6
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
+30
+20
+20
+10
+29
+</armor>
+
+<Body Equipment>
+CLPlasmaCannonAmmo:OMNI
+CLPlasmaCannonAmmo:OMNI
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+CLPlasmaCannon:OMNI
+</Turret Equipment>
+
+<overview>
+The Kamisori has a modular turret that can accommodate one larger weapon and has the same payload and armor as a Galleon. Militias can manage with fewer tanks and IFVs thanks to the tank's versatile Omni structure.
+</overview>
+
+<manufacturer>
+Pesht Motors
+</manufacturer>
+
+<primaryFactory>
+Unity
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:GM 120 Fusion
+ARMOR:New Samarkand Royal Heavy Ferro-Fibrous
+COMMUNICATIONS:Neil 500
+TARGETING:Matabushi Stalker
+</systemManufacturers>
+
+<source>
+Rec Guide:ilClan #27 - Late Republic
+</source>
+
+<tonnage>
+20.0
+</tonnage>
+
+<baseChassisTurretWeight>
+0.5
+</baseChassisTurretWeight>
+
+<baseChassisTurret2Weight>
+0.0
+</baseChassisTurret2Weight>
+

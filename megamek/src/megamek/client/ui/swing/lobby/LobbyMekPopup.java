@@ -19,21 +19,31 @@
 package megamek.client.ui.swing.lobby;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.CamoChooserDialog;
 import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.tileset.EntityImage;
+import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.swing.util.MenuScroller;
 import megamek.client.ui.swing.util.ScalingPopup;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
+import megamek.common.icons.Camouflage;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
+import org.apache.logging.log4j.LogManager;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static megamek.client.ui.swing.util.UIUtil.menuItem;
@@ -80,6 +90,7 @@ class LobbyMekPopup {
     static final String LMP_FCREATESUB = "FCREATESUB";
     static final String LMP_FCREATETOP = "FCREATETOP";
     static final String LMP_FCREATEFROM = "FCREATEFROM";
+    static final String LMP_SBFFORMATION = "SBFFORMATION";
     static final String LMP_DELETE = "DELETE";
     static final String LMP_UNLOADALL = "UNLOADALL";
     static final String LMP_UNLOAD = "UNLOAD";
@@ -113,7 +124,7 @@ class LobbyMekPopup {
         // A set of all selected entities and all entities in selected forces and their subforces
         Set<Entity> joinedEntities = new HashSet<>(entities);
         for (Force force: forces) {
-            joinedEntities.addAll(game.getForces().getFullEntities(force));
+            joinedEntities.addAll(ForceAssignable.filterToEntityList(game.getForces().getFullEntities(force)));
         }  
 
         // Find certain unit features among all units the player can access
@@ -134,8 +145,9 @@ class LobbyMekPopup {
         boolean anyHLOn = joinedEntities.stream().anyMatch(LobbyMekPopup::hasHotLoaded);
         boolean anyHLOff = joinedEntities.stream().anyMatch(LobbyMekPopup::hasNonHotLoaded);
 
+        boolean oneSelected = entities.size() == 1;
         boolean hasjoinedEntities = !joinedEntities.isEmpty();
-        boolean joinedOneEntitySelected = (entities.size() == 1) && forces.isEmpty();
+        boolean joinedOneEntitySelected = oneSelected && forces.isEmpty();
         boolean canSeeAll = lobby.canSeeAll(joinedEntities);
 
         ScalingPopup popup = new ScalingPopup();
@@ -207,6 +219,12 @@ class LobbyMekPopup {
 
         popup.add(ScalingPopup.spacer());
         popup.add(menuItem("View AlphaStrike Stats", LMP_ALPHASTRIKE + NOINFO + seIds, true, listener));
+
+        if (oneSelected) {
+            popup.add(exportEntitySpriteMenu(clientGui.getFrame(), entities.get(0)));
+        }
+
+        popup.add(menuItem("Convert to SBF Formation", LMP_SBFFORMATION + "|" + foToken(forces) + eIds, lobby.isForceView(), listener));
         popup.add(ScalingPopup.spacer());
         popup.add(menuItem("Delete", LMP_DELETE + "|" + foToken(forces) + seIds, !entities.isEmpty() && forces.isEmpty(), listener, KeyEvent.VK_D));
 
@@ -688,7 +706,96 @@ class LobbyMekPopup {
         return menu;
     }
 
-    /** 
+    private static JMenu exportEntitySpriteMenu(final JFrame frame, final Entity entity) {
+        final JMenu exportUnitSpriteMenu = new JMenu(Messages.getString("exportUnitSpriteMenu.title"));
+        exportUnitSpriteMenu.setToolTipText(Messages.getString("exportUnitSpriteMenu.toolTipText"));
+        exportUnitSpriteMenu.setName("exportUnitSpriteMenu");
+
+        final JMenuItem miCurrentCamouflage = new JMenuItem(Messages.getString("miCurrentCamouflage.text"));
+        miCurrentCamouflage.setToolTipText(Messages.getString("miCurrentCamouflage.toolTipText"));
+        miCurrentCamouflage.setName("miCurrentCamouflage");
+        miCurrentCamouflage.addActionListener(evt ->
+                exportSprite(frame, entity, entity.getCamouflageOrElseOwners(), false));
+        exportUnitSpriteMenu.add(miCurrentCamouflage);
+
+        final JMenuItem miCurrentDamage = new JMenuItem(Messages.getString("miCurrentDamage.text"));
+        miCurrentDamage.setToolTipText(Messages.getString("miCurrentDamage.toolTipText"));
+        miCurrentDamage.setName("miCurrentDamage");
+        miCurrentDamage.addActionListener(evt ->
+                exportSprite(frame, entity, new Camouflage(), true));
+        exportUnitSpriteMenu.add(miCurrentDamage);
+
+        final JMenuItem miCurrentCamouflageAndDamage = new JMenuItem(
+                Messages.getString("miCurrentCamouflageAndDamage.text"));
+        miCurrentCamouflageAndDamage.setToolTipText(Messages.getString("miCurrentCamouflageAndDamage.toolTipText"));
+        miCurrentCamouflageAndDamage.setName("miCurrentCamouflageAndDamage");
+        miCurrentCamouflageAndDamage.addActionListener(evt ->
+                exportSprite(frame, entity, entity.getCamouflageOrElseOwners(), true));
+        exportUnitSpriteMenu.add(miCurrentCamouflageAndDamage);
+
+        final JMenuItem miSelectedCamouflage = new JMenuItem(Messages.getString("miSelectedCamouflage.text"));
+        miSelectedCamouflage.setToolTipText(Messages.getString("miSelectedCamouflage.toolTipText"));
+        miSelectedCamouflage.setName("miSelectedCamouflage");
+        miSelectedCamouflage.addActionListener(evt -> {
+            final CamoChooserDialog camoChooserDialog = new CamoChooserDialog(frame, entity.getCamouflageOrElseOwners());
+            if (camoChooserDialog.showDialog().isConfirmed()) {
+                exportSprite(frame, entity, camoChooserDialog.getSelectedItem(), false);
+            }
+        });
+        exportUnitSpriteMenu.add(miSelectedCamouflage);
+
+        final JMenuItem miSelectedCamouflageAndCurrentDamage = new JMenuItem(
+                Messages.getString("miSelectedCamouflageAndCurrentDamage.text"));
+        miSelectedCamouflageAndCurrentDamage.setToolTipText(
+                Messages.getString("miSelectedCamouflageAndCurrentDamage.toolTipText"));
+        miSelectedCamouflageAndCurrentDamage.setName("miSelectedCamouflageAndCurrentDamage");
+        miSelectedCamouflageAndCurrentDamage.addActionListener(evt -> {
+            final CamoChooserDialog camoChooserDialog = new CamoChooserDialog(frame, entity.getCamouflageOrElseOwners());
+            if (camoChooserDialog.showDialog().isConfirmed()) {
+                exportSprite(frame, entity, camoChooserDialog.getSelectedItem(), true);
+            }
+        });
+        exportUnitSpriteMenu.add(miSelectedCamouflageAndCurrentDamage);
+
+        return exportUnitSpriteMenu;
+    }
+
+    private static void exportSprite(final JFrame frame, final Entity entity,
+                                     final Camouflage camouflage, final boolean showDamage) {
+        // Save Location
+        FileDialog fd = new FileDialog(frame, Messages.getString("ExportUnitSpriteDialog.title"));
+        fd.setMode(FileDialog.SAVE);
+        fd.setDirectory("");
+        fd.setFile(entity.getDisplayName() + ".png");
+        fd.setFilenameFilter((dir, file) -> file.endsWith(".png"));
+        fd.setVisible(true);
+
+        String directory = fd.getDirectory();
+        String filename = fd.getFile();
+        if ((filename == null) || (directory == null)) {
+            return;
+        }
+        File file = new File(directory, filename);
+
+        // Ensure it's a PNG file
+        final String path = file.getPath();
+        if (!path.endsWith(".png")) {
+            file = new File(path + ".png");
+        }
+
+        // Get the Sprite
+        final Image base = MMStaticDirectoryManager.getMechTileset().imageFor(entity);
+        final Image sprite = new EntityImage(base, camouflage, frame, entity).loadPreviewImage(showDamage);
+
+        // Export to File
+        try {
+            ImageIO.write((BufferedImage) sprite, "png", file);
+        } catch (Exception ex) {
+            LogManager.getLogger().error("Failed to export to file", ex);
+        }
+    }
+
+    /**
      * Returns a command string token containing the IDs of the given entities and a leading |
      * E.g. |2,14,44,22
      */

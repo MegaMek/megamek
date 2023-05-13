@@ -16,9 +16,9 @@ Tank
 MHI Amphibious APC
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 6656

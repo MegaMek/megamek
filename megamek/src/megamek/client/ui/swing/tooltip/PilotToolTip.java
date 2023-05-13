@@ -13,12 +13,11 @@
 */  
 package megamek.client.ui.swing.tooltip;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.Configuration;
-import megamek.common.Crew;
-import megamek.common.Entity;
-import megamek.common.Game;
+import megamek.common.*;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.CrewSkillSummaryUtil;
 import org.apache.logging.log4j.LogManager;
@@ -28,12 +27,9 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
-import static megamek.client.ui.swing.tooltip.TipUtil.TABLE_BEGIN;
-import static megamek.client.ui.swing.tooltip.TipUtil.TABLE_END;
 import static megamek.client.ui.swing.tooltip.TipUtil.getOptionList;
 import static megamek.client.ui.swing.tooltip.TipUtil.scaledHTMLSpacer;
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
-import static megamek.client.ui.swing.util.UIUtil.scaleForGUI;
 import static megamek.client.ui.swing.util.UIUtil.uiQuirksColor;
 
 public final class PilotToolTip {
@@ -41,6 +37,17 @@ public final class PilotToolTip {
     /** the portrait base size */
     private final static int PORTRAIT_BASESIZE = 72;
     final static String BG_COLOR = "#313131";
+
+    public static StringBuilder lobbyTip(InGameObject unit) {
+        if (unit instanceof Entity) {
+            return getPilotTipDetailed((Entity) unit, true);
+        } else if (unit instanceof AlphaStrikeElement) {
+            // TODO : Provide a suitable tip
+            return new StringBuilder("AlphaStrikeElement " + ((AlphaStrikeElement) unit).getName());
+        } else {
+            return new StringBuilder("This type of object has currently tooltip.");
+        }
+    }
 
     public static StringBuilder getPilotTipDetailed(Entity entity, boolean showPortrait) {
         return getPilotTip(entity, true, showPortrait, true);
@@ -53,74 +60,87 @@ public final class PilotToolTip {
     // PRIVATE
 
     private static StringBuilder getPilotTip(final Entity entity, boolean detailed, boolean showPortrait, boolean showDefaultPortrait) {
-        StringBuilder result = new StringBuilder();
+        String result = "";
         
-        // The crew info (names etc.) and portraits, if shown, are placed
-        // in a table side by side
-        result.append("<TABLE BORDER=0 BGCOLOR=" + BG_COLOR + " width=100%><TR><TD>");
-
-        if (showPortrait) {
-            result.append(crewPortraits(entity, showDefaultPortrait));
-            // Add a spacer cell
-            int dist = (int) (GUIPreferences.getInstance().getGUIScale() * 10);
-            result.append("<TD WIDTH=" + dist + "></TD>");
+        if (!detailed) {
+            result += "<HR STYLE=WIDTH:90% />";
         }
 
-        result.append(crewInfoCell(entity));
+        // The crew info (names etc.) and portraits, if shown, are placed
+        // in a table side by side
+        String cols = "";
+        if (showPortrait) {
+            cols = crewPortraits(entity, showDefaultPortrait).toString();
+        }
 
-        result.append(TABLE_END);
+        cols += crewInfoCell(entity).toString();
+        String row = "<TR>" + cols + "</TR>";
+        String table = "<TABLE BORDER=0 BGCOLOR=" + BG_COLOR + " >" + row + "</TABLE>";
+        result += "<DIV BGCOLOR=" + BG_COLOR + "  width=100% >" + table + "</DIV>";
 
-        // The crew advantages and MD
-        result.append(scaledHTMLSpacer(3));
-        result.append(crewAdvs(entity, detailed));
-        return result;
+        if (!detailed) {
+            result += "<HR STYLE=WIDTH:90% />";
+        } else {
+            result += scaledHTMLSpacer(3);
+        }
+
+        return new StringBuilder().append(result);
+    }
+
+    /** The crew advantages and MD */
+    public static StringBuilder getCrewAdvs(Entity entity, boolean detailed) {
+        String sCrewAdvs = crewAdvs(entity, detailed).toString();
+        String result = scaledHTMLSpacer(3) + sCrewAdvs +  "</FONT>";
+
+        return new StringBuilder().append(result);
     }
     
     /** Returns a tooltip part with names and skills of the crew. */
     private static StringBuilder crewInfoCell(final Entity entity) {
         Crew crew = entity.getCrew();
         Game game = entity.getGame();
-        StringBuilder result = new StringBuilder();
-        result.append(guiScaledFontHTML());
+        String result = "";
         
         // Name / Callsign and Status for each crew member
         for (int i = 0; i < crew.getSlotCount(); i++) {
+            String sCrew = "";
             if (crew.isMissing(i)) {
                 continue;
             }
 
             if ((crew.getNickname(i) != null) && !crew.getNickname(i).isBlank()) {
-                result.append(guiScaledFontHTML(UIUtil.uiNickColor()) + "<B>'" 
-                        + crew.getNickname(i).toUpperCase() + "'</B></FONT>");
+                String sNickName = "<B>'" + crew.getNickname(i).toUpperCase() + "'</B>";
+                sCrew += guiScaledFontHTML(UIUtil.uiNickColor()) + sNickName + "</FONT>";
             } else if ((crew.getName(i) != null) && !crew.getName(i).isBlank()) {
-                result.append(crew.getName(i));
+                sCrew += crew.getName(i);
             } else {
-                result.append("Pilot");
+                sCrew += Messages.getString("BoardView1.Tooltip.Pilot");
             }
 
             if (crew.getSlotCount() > 1) {
-                result.append(" \u2B1D " + crew.getCrewType().getRoleName(i));
+                sCrew += " \u2B1D " + crew.getCrewType().getRoleName(i);
             }
             
             if (!crew.getStatusDesc(i).isEmpty()) {
-                result.append(guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()));
-                result.append(" (" + crew.getStatusDesc(i) + ")</FONT>");
+                sCrew += guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()) + " (" + crew.getStatusDesc(i) + ")</FONT>";
             }
-            result.append("<BR>");
+            result += sCrew + "<BR>";
         }
         
         // Effective entity skill for the whole crew
         boolean rpg_skills = game.getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
-        result.append(CrewSkillSummaryUtil.getSkillNames(entity) + ": " + crew.getSkillsAsString(rpg_skills));
-        
-        result.append("</FONT>");
-        return result;
+        result += CrewSkillSummaryUtil.getSkillNames(entity) + ": " + crew.getSkillsAsString(rpg_skills);
+        result = guiScaledFontHTML() + result + "</FONT>";
+        String col = "<TD>" + result + "</TD>";
+
+        return new StringBuilder().append(col);
     }
     
     /** Returns a tooltip part with crew portraits. */
     private static StringBuilder crewPortraits(final Entity entity, boolean showDefaultPortrait) {
         Crew crew = entity.getCrew();
-        StringBuilder result = new StringBuilder();
+        String col = "";
+
         for (int i = 0; i < crew.getSlotCount(); i++) {
             if ((!showDefaultPortrait) && crew.getPortrait(i).isDefault()) {
                 continue;
@@ -128,7 +148,7 @@ public final class PilotToolTip {
 
             try {
                 // Adjust the portrait size to the GUI scale and number of pilots
-                float imgSize = scaleForGUI(PORTRAIT_BASESIZE);
+                float imgSize = UIUtil.scaleForGUI(PORTRAIT_BASESIZE);
                 imgSize /= 0.2f * (crew.getSlotCount() - 1) + 1;
                 Image portrait = crew.getPortrait(i).getBaseImage().getScaledInstance(-1, (int) imgSize, Image.SCALE_SMOOTH);
                 // Write the scaled portrait to file
@@ -141,13 +161,14 @@ public final class PilotToolTip {
                     bufferedImage.getGraphics().drawImage(portrait, 0, 0, null);
                     ImageIO.write(bufferedImage, "PNG", tempFile);
                 }
-                result.append("<TD VALIGN=TOP><IMG SRC=file:").append(tempPath).append("></TD>");
+                String img = "<IMG SRC=file:" + tempPath + ">";
+                col += "<TD VALIGN=TOP>" + img + "</TD>";
             } catch (Exception e) {
                 LogManager.getLogger().error("", e);
             }
-            result.append("<TD WIDTH=3></TD>");
         }
-        return result;
+
+        return new StringBuilder().append(col);
     }
     
     /** 
@@ -156,12 +177,14 @@ public final class PilotToolTip {
      * groups and number of advantages per group are given.
      */
     private static StringBuilder crewAdvs(final Entity entity, boolean detailed) {
+        String result = "";
+        String sOptionList = "";
         Crew crew = entity.getCrew();
-        StringBuilder result = new StringBuilder();
-        result.append(guiScaledFontHTML(uiQuirksColor(), UnitToolTip.TT_SMALLFONT_DELTA));
-        result.append(getOptionList(crew.getOptions().getGroups(), crew::countOptions, detailed));
-        result.append("</FONT>");
-        return result; 
+        sOptionList = getOptionList(crew.getOptions().getGroups(), crew::countOptions, detailed);
+        result = guiScaledFontHTML(uiQuirksColor(), UnitToolTip.TT_SMALLFONT_DELTA) + sOptionList + "</FONT>";
+
+        return new StringBuilder().append(result);
     }
-    
+
+    private PilotToolTip() { }
 }

@@ -20,6 +20,7 @@ import megamek.MMConstants;
 import megamek.MegaMek;
 import megamek.Version;
 import megamek.client.ui.swing.util.PlayerColour;
+import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.commandline.AbstractCommandLineParser.ParseException;
@@ -271,7 +272,7 @@ public class Server implements Runnable {
      * @return valid password or null if no password or password is blank string
      */
     public static @Nullable String validatePassword(@Nullable String password) {
-        return ((password == null) || password.isBlank()) ? null : password.trim();
+        return StringUtility.isNullOrBlank(password) ? null : password.trim();
     }
 
     /**
@@ -281,7 +282,7 @@ public class Server implements Runnable {
      * @return true if the user-supplied data matches the server password or no password is set.
      */
     public boolean passwordMatches(Object password) {
-        return (this.password == null) || this.password.isBlank() || this.password.equals(password);
+        return StringUtility.isNullOrBlank(this.password) || this.password.equals(password);
     }
 
     /**
@@ -300,19 +301,13 @@ public class Server implements Runnable {
         }
     }
 
-    public Server(String password, int port, IGameManager gameManager) throws IOException {
+    public Server(@Nullable String password, int port, IGameManager gameManager) throws IOException {
         this(password, port, gameManager, false, "", null, false);
     }
 
-    public Server(String password, int port, IGameManager gameManager,
-                  boolean registerWithServerBrowser, String metaServerUrl) throws IOException {
+    public Server(@Nullable String password, int port, IGameManager gameManager,
+                  boolean registerWithServerBrowser, @Nullable String metaServerUrl) throws IOException {
         this(password, port, gameManager, registerWithServerBrowser, metaServerUrl, null, false);
-    }
-
-    public Server(String password, int port, IGameManager gameManager,
-                  boolean registerWithServerBrowser, String metaServerUrl, EmailService mailer)
-            throws IOException {
-        this(password, port, gameManager, registerWithServerBrowser, metaServerUrl, mailer, false);
     }
 
     /**
@@ -330,10 +325,9 @@ public class Server implements Runnable {
     public Server(@Nullable String password, int port, IGameManager gameManager,
                   boolean registerWithServerBrowser, @Nullable String metaServerUrl,
                   @Nullable EmailService mailer, boolean dedicated) throws IOException {
-        this.metaServerUrl = (metaServerUrl != null) && (!metaServerUrl.isBlank()) ? metaServerUrl : null;
-        this.password = (password != null) && (!password.isBlank()) ? password : null;
+        this.metaServerUrl = StringUtility.isNullOrBlank(metaServerUrl) ? null : metaServerUrl;
+        this.password = StringUtility.isNullOrBlank(password) ? null : password;
         this.gameManager = gameManager;
-
         this.mailer = mailer;
         this.dedicated = dedicated;
 
@@ -376,7 +370,7 @@ public class Server implements Runnable {
         packetPumpThread.start();
 
         if (registerWithServerBrowser) {
-            if ((metaServerUrl != null) && (!metaServerUrl.isBlank())) {
+            if (!StringUtility.isNullOrBlank(metaServerUrl)) {
                 final TimerTask register = new TimerTask() {
                     @Override
                     public void run() {
@@ -872,8 +866,16 @@ public class Server implements Runnable {
         LogManager.getLogger().info("s: loading saved game file '" + f + '\'');
 
         Game newGame;
-        try (InputStream is = new FileInputStream(f); InputStream gzi = new GZIPInputStream(is)) {
-            XStream xstream = SerializationHelper.getXStream();
+        try (InputStream is = new FileInputStream(f)) {
+            InputStream gzi;
+
+            if (f.getName().toLowerCase().endsWith(".gz")) {
+                gzi = new GZIPInputStream(is);
+            } else {
+                gzi = is;
+            }
+
+            XStream xstream = SerializationHelper.getLoadSaveGameXStream();
             newGame = (Game) xstream.fromXML(gzi);
         } catch (Exception e) {
             LogManager.getLogger().error("Unable to load file: " + f, e);
@@ -1317,9 +1319,9 @@ public class Server implements Runnable {
     }
 
     /**
-     * @return the current server instance
+     * @return the current server instance. This may be null if a server has not been started
      */
-    public static Server getServerInstance() {
+    public static @Nullable Server getServerInstance() {
         return serverInstance;
     }
 

@@ -86,7 +86,12 @@ public class SmallCraft extends Aero {
     public boolean isPrimitive() {
         return getArmorType(LOC_NOSE) == EquipmentType.T_ARMOR_PRIMITIVE_AERO;
     }
-    
+
+    @Override
+    public boolean isSmallCraft() {
+        return true;
+    }
+
     @Override
     public void setNCrew(int crew) {
         nCrew = crew;
@@ -892,11 +897,26 @@ public class SmallCraft extends Aero {
         return false;
     }
 
+    @Override
+    public boolean isAerospaceFighter() {
+        return false;
+    }
+
     /**
      * Do not recalculate walkMP when adding engine.
      */
     @Override
     protected int calculateWalk() {
         return walkMP;
+    }
+
+    @Override
+    public boolean isLargeAerospace() {
+        return true;
+    }
+
+    @Override
+    public int getLandingLength() {
+        return 8;
     }
 }

@@ -97,7 +97,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
         }
         String artyMsg;
         ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
-        if (phase == GamePhase.TARGETING) {
+        if (phase.isTargeting()) {
             if (!handledAmmoAndReport) {
                 addHeat();
                 // Report the firing itself

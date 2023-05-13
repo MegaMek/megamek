@@ -45,12 +45,14 @@ public enum BattleForceSUA {
     ATAC, DB, PL, TCP, SDCS,
     // TODO : PL, DB do not exist, TCP = Triple-Core Processor?
     // AlphaStrike only (this may be incorrect, WIP)
-    CRW, CR, DUN, EE, FC, FF, MTN, OVL, PARA, TSMX, RCA, RFA, HTC, TRN, SUBS, SUBW, JMPS, JMPW,
+    CRW, CR, DUN, EE, FC, FF, MTN, OVL, PAR, TSMX, RCA, RFA, HTC, TRN, SUBS, SUBW, JMPS, JMPW,
     CAP, SCAP, FUEL, MSL,
     // SBF
-    AC3, COM,
+    AC3, COM, SBF_OMNI,
     // Placeholder for STD (Standard) damage on large AS elements with firing arcs:
-    STD
+    STD,
+    // Placeholders for additional unit info not otherwise present in the AS element
+    TRI, QUAD, AERODYNESC
     ;
     
     private static final EnumMap<BattleForceSUA, BattleForceSUA> transportBayDoors = new EnumMap<>(BattleForceSUA.class);
@@ -98,6 +100,8 @@ public enum BattleForceSUA {
             spaName = "-D";
         } else if (this == ITSM) {
             spaName = "I-TSM";
+        } else if (this == SBF_OMNI) {
+            spaName = "OMNI";
         }
         return spaName;
     }
@@ -110,7 +114,7 @@ public enum BattleForceSUA {
     /** @return True when this SUA uses an Integer as its value. */
     private boolean usesIntegerObject() {
         return isAnyOf(C3BSS, C3M, C3BSM, C3EM, INARC, CNARC, SNARC, RSD, MHQ, DCC, MASH, TSEMP, TSEMPO,
-                CAR, MDS, BOMB, FUEL, PNT, CRW, SCR, DT, BTAS, MTAS, JMPW, JMPS, SUBW, SUBS)
+                CAR, MDS, BOMB, FUEL, PNT, CRW, SCR, DT, BTAS, MTAS, JMPW, JMPS, SUBW, SUBS, SBF_OMNI)
                 || isArtillery();
     }
 

@@ -16,9 +16,9 @@ Tank
 Sea Skimmer Hydrofoil
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 5009

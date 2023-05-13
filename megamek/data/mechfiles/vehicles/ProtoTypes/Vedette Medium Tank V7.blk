@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -28,6 +28,10 @@ V7
 3084
 </year>
 
+<originalBuildYear>
+3084
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -35,6 +39,9 @@ IS Level 3
 <motion_type>
 Tracked
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 5
@@ -83,6 +90,42 @@ ISMagshotGR
 Bombast Laser
 </Turret Equipment>
 
+<capabilities>
+Carrying only one anti-vehicle weapon does not make it a less effective vehicle than a newer tank, but does reduce its ability to deal with a wide variety of targets. The Vedette uses its speed to great effect by moving into optimum autocannon range, opening fire, and then retreating as fast as possible to another fire position.
+</capabilities>
+
+<overview>
+The yardstick against which all other tanks are judged, the Vedette medium tank is one of the most popular and common combat vehicles in the Inner Sphere.
+</overview>
+
+<deployment>
+This version of the Vedette uses a fuel cell engine to provide speeds of up to 86 km/h. Protection is provided by five tons of Heavy Ferro-Fibrous armor and CASE. A pair of forward firing Magshots deter infantry and light armor while the turret-mounted Bombast Laser inflicts heavy damage on larger vehicles and 'Mechs. Twelve heat sinks disperse the Bombast Laser's waste heat.
+</deployment>
+
+<history>
+There will be at least one Vedette wherever there are armored vehicles. It is not unrealistic to believe that this tank exists on every globe in the Inner Sphere.
+</history>
+
+<manufacturer>
+Arcturan Arms
+</manufacturer>
+
+<primaryFactory>
+Arcturus
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:Locom-Pack 250 InterComBust ICE
+ARMOR:Durallex Special Heavy Ferro-fibrous w/CASE
+COMMUNICATIONS:ComStar Rover
+TARGETING:ComStar Test-2
+</systemManufacturers>
+
+<source>
+TRO Prototypes - Early Republic
+</source>
+
 <tonnage>
 50.0
 </tonnage>
+

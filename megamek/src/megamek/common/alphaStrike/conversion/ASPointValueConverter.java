@@ -173,6 +173,7 @@ public class ASPointValueConverter {
         processOffensiveBT();
         processOffensiveSUAMod(IATM, e -> (double) ((ASDamageVector) element.getSUA(IATM)).L.damage);
         processOffensiveSUAMod(OVL, e -> 0.25 * element.getOV());
+        processOffensiveSUAMod(BOMB, e -> (double) (int) element.getSUA(BOMB));
         processOffensiveSUAMod(HT, e -> {
             ASDamageVector ht = element.getHT();
             return Math.max(ht.S.damage, Math.max(ht.M.damage, ht.L.damage)) + ((ht.M.damage > 0) ? 0.5 : 0);
@@ -314,7 +315,7 @@ public class ASPointValueConverter {
         dir = 0.5 * Math.round(dir * defFactor * 2);
     }
 
-    private void processArmor() {
+    protected void processArmor() {
         double armorMultiplier = 2;
         List<String> modifierList = new ArrayList<>();
         if (element.isType(CV, SV)) {
@@ -343,7 +344,7 @@ public class ASPointValueConverter {
                 "= " + formatForReport(dir));
     }
 
-    private void processStructure() {
+    protected void processStructure() {
         double strucMultiplier = 1;
         String modifiers = "";
         if (element.isInfantry()) {
@@ -378,6 +379,14 @@ public class ASPointValueConverter {
             result += movemod;
             modifierList.add("TMM");
         }
+        if (element.isAerospace()) {
+            result += 2;
+            modifierList.add("Aerospace");
+        }
+        if (element.isType(DS, DA)) {
+            result -= 2;
+            modifierList.add("DropShip");
+        }
         if (element.isType(BA, PM)) {
             result += 1;
             modifierList.add(element.getASUnitType().toString());
@@ -395,6 +404,15 @@ public class ASPointValueConverter {
             result -= 1;
             modifierList.add("LG/SLG/VLG");
         }
+        if (element.hasSUA(JMPS)) {
+            result += 0.5 * element.getJMPS();
+            modifierList.add("JMPS");
+        }
+        if (element.hasSUA(SUBS)) {
+            result += 0.5 * element.getSUBS();
+            modifierList.add("SUBS");
+        }
+
         double multiplier = (result <= 2 ? 0.1 : 0.25);
         double defFactor = 1 + multiplier * result;
         String modifiers = " (" + String.join(", ", modifierList) + ")";
@@ -420,7 +438,8 @@ public class ASPointValueConverter {
         double multiplier = 0;
         if (move >= 2 && !element.hasAnySUAOf(BT, ARTS, C3BSM, C3BSS, C3EM,
                 C3I, C3M, C3S, AC3, NC3, NOVA, C3RS, ECM, AECM, ARTAC, ARTAIS, ARTBA, ARTCM12, ARTCM5, ARTCM7,
-                ARTCM9, ARTLT, ARTLTC, ARTSC, ARTT, ARTTC)) {
+                ARTCM9, ARTLT, ARTLTC, ARTSC, ARTT, ARTTC, MEC, XMEC)
+                && !(element.hasSUA(CAR) && (element.getCAR() <= 8))) {
             double dmgS = pointValueSDamage(element);
             double dmgM = pointValueMDamage(element);
             double dmgL = pointValueLDamage(element);
@@ -442,16 +461,20 @@ public class ASPointValueConverter {
         return roundToHalf(multiplier * subTotal);
     }
 
-    /** Determines the Agile Bonus, AlphaStrike Companion Errata v1.4, p.17  */
+    /**
+     * Determines the Agile Bonus, AlphaStrike Companion Errata v1.4, p.17 and
+     * https://bg.battletech.com/forums/errata/alpha-strike-companion/msg1881442/#msg1881442
+     */
     private double agileBonus() {
         double result = 0;
-        if (element.getTMM() >= 2) {
+        double modifiedTMM = element.getTMM() + 0.5 * element.getJMPS() + 0.5 * element.getSUBS();
+        if (modifiedTMM > 1) {
             double dmgS = element.getStandardDamage().S.minimal ? 0.5 : element.getStandardDamage().S.damage;
             double dmgM = element.getStandardDamage().M.minimal ? 0.5 : element.getStandardDamage().M.damage;
             if (dmgM > 0) {
-                result = (element.getTMM() - 1) * dmgM;
+                result = (modifiedTMM - 1) * dmgM;
             } else if (element.getTMM() >= 3) {
-                result = (element.getTMM() - 2) * dmgS;
+                result = (modifiedTMM - 2) * dmgS;
             }
         }
         if (result != 0) {
@@ -512,8 +535,12 @@ public class ASPointValueConverter {
             modifierList.add("LECM");
         }
         if (element.hasSUA(MHQ)) {
-            int mhqValue = (int) element.getSUA(MHQ);
-            bonus += mhqValue;
+            int mhqValue = element.getMHQ();
+            if (mhqValue <= 4) {
+                bonus += mhqValue;
+            } else {
+                bonus += 4 + Math.ceil(0.2 * (mhqValue - 5));
+            }
             modifierList.add("MHQ");
         }
         if (!modifierList.isEmpty()) {

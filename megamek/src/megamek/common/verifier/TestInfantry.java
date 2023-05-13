@@ -130,7 +130,7 @@ public class TestInfantry extends TestEntity {
         }
 
         int max = maxSecondaryWeapons(inf);
-        if (inf.getSecondaryN() > max) {
+        if (inf.getSecondaryWeaponsPerSquad() > max) {
             buff.append("Number of secondary weapons exceeds maximum of " + max).append("\n\n");
             correct = false;
         }
@@ -146,7 +146,7 @@ public class TestInfantry extends TestEntity {
                 }
             }
             secondaryCrew = Math.max(secondaryCrew, 1);
-            if (secondaryCrew * inf.getSecondaryN() > inf.getSquadSize()) {
+            if (secondaryCrew * inf.getSecondaryWeaponsPerSquad() > inf.getSquadSize()) {
                 buff.append("Secondary weapon crew requirement exceeds squad size.").append("\n\n");
                 correct = false;
             }

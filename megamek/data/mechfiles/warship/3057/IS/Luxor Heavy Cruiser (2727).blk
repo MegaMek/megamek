@@ -1,0 +1,302 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Luxor Heavy Cruiser
+</Name>
+
+<Model>
+(2727)
+</Model>
+
+<mul id:>
+4550
+</mul id:>
+
+<year>
+2727
+</year>
+
+<originalBuildYear>
+2727
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+asfbay:12.0:6:1
+cargobay:53966.5:1:2
+smallcraftbay:4.0:4:3
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+1stclassquarters:620.0:0
+crewquarters:2051.0:0
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+3250
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+12500
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+13
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+153
+151
+151
+145
+151
+151
+</armor>
+
+<Nose Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+(B) Naval PPC (Medium)
+Naval PPC (Medium)
+Naval PPC (Medium)
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:50
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Naval PPC (Medium)
+Naval PPC (Medium)
+Naval PPC (Medium)
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:50
+(B) Naval Gauss (Medium)
+Naval Gauss (Medium)
+Ammo Medium N-Gauss:50
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Naval PPC (Medium)
+Naval PPC (Medium)
+Naval PPC (Medium)
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:50
+(B) Naval Gauss (Medium)
+Naval Gauss (Medium)
+Ammo Medium N-Gauss:50
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+(B) Naval PPC (Medium)
+Naval PPC (Medium)
+Naval PPC (Medium)
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:50
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Naval PPC (Medium)
+Naval PPC (Medium)
+Naval PPC (Medium)
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:50
+(B) Naval Gauss (Medium)
+Naval Gauss (Medium)
+Ammo Medium N-Gauss:50
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Naval PPC (Medium)
+Naval PPC (Medium)
+Naval PPC (Medium)
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:50
+(B) Naval Gauss (Medium)
+Naval Gauss (Medium)
+Ammo Medium N-Gauss:50
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+(B) Naval PPC (Medium)
+Naval PPC (Medium)
+Naval PPC (Medium)
+Naval PPC (Medium)
+(B) Naval Autocannon (NAC/30)
+Naval Autocannon (NAC/30)
+Ammo NAC/30:50
+(B) Naval Autocannon (NAC/30)
+Naval Autocannon (NAC/30)
+Ammo NAC/30:50
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+(B) Naval PPC (Medium)
+Naval PPC (Medium)
+Naval PPC (Medium)
+Naval PPC (Medium)
+(B) Naval Autocannon (NAC/30)
+Naval Autocannon (NAC/30)
+Ammo NAC/30:50
+(B) Naval Autocannon (NAC/30)
+Naval Autocannon (NAC/30)
+Ammo NAC/30:50
+</Right Broadsides Equipment>
+
+<structural_integrity>
+80
+</structural_integrity>
+
+<capabilities>
+The Luxor-class is well armored and maneuverable for a ship of its size. The armament of the Luxor-class is designed to engage capital vessels, and packs a lot of firepower. The firepower is composed of naval autocannons, naval lasers and naval PPCs. However, the Luxor-class is relatively defenseless against attack by smaller AeroSpace assets, and requires its fighter cover for defense. Though not able to ferry as much cargo as some other cruisers, the Luxor-class does boast 4 DropShip collars. In addition, the class has two separate bays. Bay 1 is meant for ferrying AeroSpace Fighters and small craft, of which it can contain 2 squadrons and 4 vessels, respectively. Bay 2 is the cargo bay, which is capable of holding 53,966.5 tons of cargo.
+</capabilities>
+
+<overview>
+The Luxor-class heavy cruiser was designed in response to the Star League Naval Command’s request for a replacement for the Avatar-class cruiser.
+</overview>
+
+<history>
+Mitchell Vehicles had actually designed the Luxor well before the request, and modified the design to meet the project requirements; during the competition itself, political pressure from the Chief Executive Officer of Blue Nose Clipperships and long-time ally of Mitchell Vehicles, Craig Kovac, ensured that the other competing design, the Soyal-class heavy cruiser designed by Nicholas Shipyards, wasn't selected. The first mission of the nascent Luxor-class was convoy protection for troop ferries, an SLDF redeployment required to pacify the Periphery in response to First Lord Richard Cameron’s steep tax hikes. However, the shortlived Luxor-class became a casualty of the Amaris Civil War, mostly as a result of engagements with Caspar Space Defense Drones. The Drones prioritized Luxor-class vessels as major threats, leading the SLDF to deploy Luxors as decoys – a suicide mission for their crews. The last Luxor was destroyed over Terra in 2777.
+</history>
+
+<manufacturer>
+Mitchell Vehicles
+</manufacturer>
+
+<primaryFactory>
+Graham IV
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Heavy Cruiser
+</use>
+
+<length>
+975 meters
+</length>
+
+<source>
+TRO 3057R - Star League
+</source>
+
+<tonnage>
+890000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<lithium-fusion>
+1
+</lithium-fusion>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+95
+95
+</grav_decks>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+399
+</crew>
+
+<officers>
+62
+</officers>
+
+<gunners>
+83
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+35
+</life_boat>
+
+<escape_pod>
+30
+</escape_pod>
+

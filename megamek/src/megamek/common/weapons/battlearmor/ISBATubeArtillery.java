@@ -14,6 +14,9 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
+import megamek.common.EquipmentTypeLookup;
+import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
 
 /**
@@ -26,7 +29,7 @@ public class ISBATubeArtillery extends ArtilleryWeapon {
     public ISBATubeArtillery() {
         super();
         name = "Tube Artillery (BA)";
-        setInternalName("ISBATubeArtillery");
+        setInternalName(EquipmentTypeLookup.IS_BA_TUBE_ARTY);
         rackSize = 3;
         ammoType = AmmoType.T_BA_TUBE;
         shortRange = 2;
@@ -38,7 +41,12 @@ public class ISBATubeArtillery extends ArtilleryWeapon {
         bv = 27;
         cost = 200000;
         rulesRefs = "284, TO";
-        flags = flags.or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON);      
+        flags = flags.or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).or(F_MEK_MORTAR).or(F_MISSILE);
+        damage = DAMAGE_BY_CLUSTERTABLE;
+        atClass = CLASS_NONE;
+        flags = flags.or(F_MEK_MORTAR).or(F_MECH_WEAPON).or(F_MISSILE)
+                .or(F_TANK_WEAPON);
+        infDamageClass = WEAPON_CLUSTER_MISSILE;
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
@@ -48,5 +56,24 @@ public class ISBATubeArtillery extends ArtilleryWeapon {
                 .setISApproximate(false, false, false, false, false)
                 .setPrototypeFactions(F_CS)
                 .setProductionFactions(F_CS);
+    }
+    
+    @Override
+    public boolean hasIndirectFire() {
+        return true;
+    }
+    
+    @Override
+    public void adaptToGameOptions(GameOptions gOp) {
+        super.adaptToGameOptions(gOp);
+
+        // Indirect Fire
+        if (gOp.booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
+            addMode("");
+            addMode("Indirect");
+        } else {
+            removeMode("");
+            removeMode("Indirect");
+        }
     }
 }

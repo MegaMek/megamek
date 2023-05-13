@@ -16,9 +16,9 @@ Tank
 Svantovit Infantry Fighting Vehicle
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 3139

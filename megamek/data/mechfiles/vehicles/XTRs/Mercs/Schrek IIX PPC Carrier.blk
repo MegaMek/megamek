@@ -16,9 +16,9 @@ Tank
 Schrek II-X PPC Carrier
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 2823
@@ -89,9 +89,40 @@ Light PPC
 </Turret Equipment>
 
 <source>
-Jihad
+XTR Mercs - Jihad
 </source>
 
 <tonnage>
 95.0
 </tonnage>
+
+<capabilities>
+While highly effective when firing from cover and the perfect partner to the short-ranged Demolisher, the design is unpopular with crews due to the Schrek's limited mobility and pitifully low seven tons of ArcShield VII Mk 5 plate, which makes it highly vulnerable to counterbattery fire. The Schrek's reputation also suffered due to the decline of technical knowledge during the Succession Wars era. Its use of an increasingly rare fusion engine to power its weapons array drove up the cost to buy and maintain the vehicle, pricing it outside the range of all but the most elite units until after the War of 3039.
+</capabilities>
+
+<overview>
+Designed for extended, long-range bombardments, the Schrek series carriers are capable of unleashing a deadly rain of fire.
+</overview>
+
+<deployment>
+The Schrek II-X, a 95-ton variant built on Arc-Royal, uses an XXL engine to free weight for additional weapons. The tank has six light PPCs in its turret; three of them are paired with experimental PPC capacitors. A targeting computer makes their fire even more accurate. Eight and a half tons of heavy ferro-fibrous armor protects the crew, while a total of 45 heat sinks dissipates the massive heat load.
+</deployment>
+
+<history>
+Intended for long-range bombardments, Aldis reduced the vehicle's silhouette to allow it to be employed in prepared positions, but at the sacrifice of crew comfort. When used from this hull-down position, the Schrek can inflict significant damage on approaching hostile units while limiting its own damage. While it has the firepower to put significant strain on enemy formations and fortifications, the Schrek PPC Carrier's low armor relative to other heavy tanks, paired with its poor mobility, prevents it from serving as a main battle tank. Forces confronted by the Schrek are usually aware of this, and they target the vehicles to quickly diminish the firepower of their adversary's armament. As a result, Schreks are rarely used without escorts. It's no coincidence that the Demolisher is nearly ideal for this duty. The Schrek also compensates for the Demolisher's lack of ranged firepower, making it difficult to fight mixed companies of the two tanks. Because of the Schrek's power plant, the Olmstead 3000 communications package does not suffer from the same power supply concerns as prior Olmsteads. The Schrek's GoreTex fusion power plant also benefits the Omicron IX targeting and tracking suite, as well as its characteristic sensor blister above the right tread. The Mk. IX, which requires even more power than the original Omicron suite, improves the Schrek's ability to strike its target at range.
+</history>
+
+<manufacturer>
+Arc-Royal MechWorks Special Annex (Refit)
+</manufacturer>
+
+<primaryFactory>
+Arc-Royal
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:GM 280 XXL
+ARMOR:Durallex Special Heavy Ferro-Fibrous
+COMMUNICATIONS:Olmstead 3000
+TARGETING:Omicron IX
+</systemManufacturers>

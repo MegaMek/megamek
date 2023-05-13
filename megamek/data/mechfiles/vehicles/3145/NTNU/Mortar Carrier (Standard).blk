@@ -16,9 +16,9 @@ Tank
 Mortar Carrier
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 6793
@@ -29,7 +29,7 @@ Mortar Carrier
 </year>
 
 <type>
-IS Level 3
+IS Level 2
 </type>
 
 <motion_type>
@@ -92,3 +92,34 @@ RS 3145 NTNU - Jihad
 <tonnage>
 60.0
 </tonnage>
+
+<capabilities>
+The chassis for missile carriers vary in basic design, but they are all essentially military transport vehicles, tracked being the most common, adapted to carry the huge missile launchers and loading equipment. Those adaptations generally consist of reinforcing the suspension systems and armoring the crew and critical components areas enough to survive the back blast from so many missiles. With an average top speed of 54 km/h and armor unable to survive counterbattery fire, if forced to engage in direct combat a carrier's life expectancy is measured in seconds.
+</capabilities>
+
+<overview>
+Ever since the development of the first rocket centuries ago, military units have used mobile missile systems to provide cheap and effective fire support. Along with its LRM counterpart, the SRM Carrier serves in every military action across the Inner Sphere in a variety of shapes and forms.
+</overview>
+
+<deployment>
+Developed by Quikscell during the early Dark Age Era in 3083, this variant of the ancient SRM Carrier takes advantage of the newly introduced Class 8 Mech Mortar and adds three of these weapons to the SRM Carrier's chassis. The three weapons have 32 rounds of ammunition stored in the carrier's hull.
+</deployment>
+
+<history>
+Manufactured by almost every major military supplier, the modern SRM Carrier is derived from those developed in the Age of War by Quik Products Inc, the future Quikscell Company. In many cases derived a little too closely; during the Succession Wars era many manufacturers were producing little more than shoddy direct copies that fell below even Quikscell's low quality standards. After the end of the Fourth Succession War Quikscell lodged lawsuits against those manufacturing clones of Quik based carriers, resulting the closure of many smaller manufacturers and larger manufacturers ending production. While those who produced their own designs were not affected, Quikscell's elimination of much of its competitors and its offer to exchange any missile carrier not produced by them for legitimate Quikscell versions and parts made it the number one player of the missile carrier market.
+</history>
+
+<manufacturer>
+Quikscell Company,Quikscell Company,Quikscell Company,Maxwell Planetary Defense Consortium
+</manufacturer>
+
+<primaryFactory>
+Richvale,Kalidasa,Layover,Maxwell
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:180 Fuel Cell
+ARMOR:Aldis Heavy Ferro-Fibrous
+COMMUNICATIONS:Communicator
+TARGETING:FireScan with IndirecTrack
+</systemManufacturers>

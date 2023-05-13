@@ -12,9 +12,9 @@ VTOL
 <Name>
 Sprint Scout Helicopter
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 3026

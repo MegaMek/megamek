@@ -1,0 +1,172 @@
+Version:1.1
+Zeus
+ZEU-11S
+mul id:7455
+
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3130
+source:Rec Guide:ilClan #2- Dark Age
+rules level:2
+
+mass:80
+engine:320 XL (Clan) Engine
+structure:IS Standard
+myomer:Standard
+cockpit:Standard Cockpit
+gyro:Compact Gyro
+
+heat sinks:13 IS Double
+walk mp:4
+jump mp:0
+
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:25
+RA armor:25
+LT armor:25
+RT armor:25
+CT armor:38
+HD armor:9
+LL armor:33
+RL armor:33
+RTL armor:8
+RTR armor:8
+RTC armor:12
+
+Weapons:5
+Gauss Rifle, Left Arm
+LRM 15, Right Arm
+ER Large Laser, Left Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISCASEII
+IS Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLLRM15
+CLLRM15
+ISArtemisIV
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLERLargeLaser
+IS Gauss Ammo
+IS Gauss Ammo
+IS Gauss Ammo
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLERMediumLaser (R)
+Clan Ammo LRM-15 (Clan) Artemis-capable
+Clan Ammo LRM-15 (Clan) Artemis-capable
+Clan Ammo LRM-15 (Clan) Artemis-capable
+BeagleActiveProbe
+BeagleActiveProbe
+ISCASEII
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+CLERMediumLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Zeus was first built by the Lyran Commonwealth in 2787, just as the First Succession War began. Built at the request of Lyran Commonwealth Armed Forces commanders for a new light-assault 'Mech designed to engage the enemy at long range and perform hit-and-run attacks.
+
+capabilities:the Zeus is fast enough to keep up with most heavy 'Mechs, and with a sturdy frame, eleven and a half tons of standard armor and a versatile weapons array, is equally capable of defeating them. Its use of reliable, low-maintenance and easily modified systems at a time when most 'Mechs were built with cutting-edge technology also proved fortuitous, allowing the Zeus to be produced long after those advanced components had become Lostech.
+
+deployment:Combining the best features of the ZEU-9T and Zeus X program, ZEU-11S blurs the Inner Sphere/Clan-tech divide thanks to Defiance's introduction of Clan-grade production lines. Built upon the 9T's frame, the 11S uses a Clan XL engine instead of a light model to free up more weight at no increase in bulk. Offensively a left-arm mounted Inner Sphere Gauss Rifle is supported by an Artemis IV enhanced Clan LRM-15 in the right arm and a Clan ER Large in the left torso, alongside two Clan ER mediums, one forward facing in the center torso with a rear-facing one in the right torso. Carrying three tons each of Gauss and LRM reloads, even with the inclusion of a Beagle Active Probe, the 11S mounts CASE II in the left arm and right torso to shield against gauss or ammo detonations, along with an increased volume of IS standard ferro-fibrous armor protection.
+
+history:Three years before its release, the first two prototypes of the Zeus would have their first "test run" when they were forced to repel an attack on the Hesperus II factory by the Draconis Combine Mustered Soldiery. As the enemy pushed through Lyran lines, the two 'Mechs were summoned to aid, and through sheer novelty and long-range firepower, the Kuritans were forced to pause. This enabled more reinforcements to push back DCMS forces. While these prototypes were effective in repelling the attack, they were considerably more advanced than the commercial model and armed with a PPC, which proved unpredictable and unreliable during the combat. Inadequate shielding caused wild magnetic interactions between the weapon and the Zeus' engine, which was later revealed to be the source of this behavior. To guarantee that the Zeus arrived at the front lines as soon as possible, the complex energy weapon was replaced with a basic autocannon. The 'Mech initially appeared in substantial numbers after the 15th Lyran Guards regained the planet Sakhalin, and the Zeus had a long and storied history within the Commonwealth during the Succession Wars, becoming a well-respected assault 'Mech. Engineers were able to put a PPC on the Zeus again after the end of the Third Succession War, with the resulting ZEU-6T variant being the standard during the Fourth Succession War and later the War of 3039. The design was also well received by mercenary units, particularly the Zeta Battalion of Wolf's Dragoons.
+
+manufacturer:Defiance Industries
+primaryfactory:Hesperus II
+systemmanufacturer:CHASSIS:Chariot Type III
+systemmanufacturer:ENGINE:Clan 320 XL
+systemmanufacturer:ARMOR:Glasgow Limited Primo Ferro-Fibrous with CASE II
+systemmanufacturer:COMMUNICATIONS:TharHes Calliope ZE-2
+systemmanufacturer:TARGETING:TharHes Ares-7
+
+
+

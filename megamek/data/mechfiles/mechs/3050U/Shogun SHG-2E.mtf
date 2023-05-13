@@ -150,3 +150,19 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:The initial specifications for the 'Mech were for a "highly survivable multi-role assault BattleMech." When the Shogun project started the design phase in 2771, those needs had altered little, save to compensate for fundamental flaws in the Stalker's design.
+
+capabilities:Though the Shogun isn't any faster than its predecessor, the inclusion of jump jets allows it to be much more maneuverable. The Shogun's CASE and ferro fiber armor also make it significantly more survivable than the Stalker.
+
+deployment:Downgraded by the Dragoons to Succession Wars era technology the 2E simply carries a Magna Hellstar PPC in place of the ER PPC. Otherwise, the 2E is completely identical to the 2F model. Ironically, because the 2E uses an older PPC model, the PPC produces less heat at the cost of a shorter range than the 2F model, making the 'Mech's waste heat easier to manage
+
+history:The Shogun's history was cloaked in myth and legend, at least until the Clan and Inner Sphere records could be compared. The SLDF issued the original requirements for the Shogun in the late 26th century, although the 'Mech itself did not reach construction for another two centuries. The success and widespread distribution of the Stalker—which served the role of the Shogun, if imperfectly—along with the outbreak of the Reunification War, and then the tranquility of the Star League's Golden Age, saw the original design criteria scrapped. After General Kerensky's conflict, the SLDF needed a new attack BattleMech to replenish its ranks. The Shogun had a good chance of succeeding the Stalker, but Kerensky's Exodus and the First Succession War interfered. Mitchell Vehicles, who won the design when the SLDF regained Graham IV, completed only eight manufacturing runs prior to the Exodus, and only a few more before their plants were destroyed in the First Succession War. That left the Shogun to slip into obscurity—at least until the Wolf's Dragoons returned a few to the Inner Sphere before the Exodus, and only a few more runs before their factories were destroyed in the First Succession War. As a result, the Shogun died quickly—at least until the Wolf's Dragoons returned a few to the Inner Sphere.
+
+manufacturer:Refit
+primaryfactory:Outreach
+systemmanufacturer:CHASSIS:Kitushi Shogun
+systemmanufacturer:ENGINE:Strand 255
+systemmanufacturer:ARMOR:Riese-350
+systemmanufacturer:JUMPJET:Anderson Propulsion 21
+systemmanufacturer:COMMUNICATIONS:HartfordCo COM 4000
+systemmanufacturer:TARGETING:HartfordCo XKZ 1

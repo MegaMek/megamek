@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -25,8 +25,12 @@ Chaparral Missile Artillery Tank
 </mul id:>
 
 <year>
-3064
+2614
 </year>
+
+<originalBuildYear>
+2614
+</originalBuildYear>
 
 <type>
 IS Level 3
@@ -35,6 +39,9 @@ IS Level 3
 <motion_type>
 Tracked
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 4
@@ -82,3 +89,4 @@ TRO 3050 - Civil War
 <tonnage>
 50.0
 </tonnage>
+

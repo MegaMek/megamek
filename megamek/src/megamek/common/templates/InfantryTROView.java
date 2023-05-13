@@ -56,10 +56,10 @@ public class InfantryTROView extends TROView {
         addEntityFluff(inf);
         setModelData("transportWeight", inf.getWeight());
         setModelData("weaponPrimary", String.format("%d %s",
-                (inf.getSquadSize() - inf.getSecondaryN()) * inf.getSquadN(), inf.getPrimaryWeapon().getName()));
+                (inf.getSquadSize() - inf.getSecondaryWeaponsPerSquad()) * inf.getSquadCount(), inf.getPrimaryWeapon().getName()));
         setModelData("weaponSecondary", (inf.getSecondaryWeapon() == null)
                 ? Messages.getString("TROView.None")
-                : String.format("%d %s", inf.getSecondaryN() * inf.getSquadN(), inf.getSecondaryWeapon().getName()));
+                : String.format("%d %s", inf.getSecondaryWeaponsPerSquad() * inf.getSquadCount(), inf.getSecondaryWeapon().getName()));
         final EquipmentType armorKit = inf.getArmorKit();
         if (null != armorKit) {
             setModelData("armorKit", armorKit.getName());
@@ -117,10 +117,10 @@ public class InfantryTROView extends TROView {
             setModelData("umuMP", inf.getOriginalJumpMP());
         }
         setModelData("squadSize", inf.getSquadSize());
-        setModelData("squadCount", inf.getSquadN());
+        setModelData("squadCount", inf.getSquadCount());
         setModelData("armorDivisor", inf.calcDamageDivisor());
         InfantryWeapon rangeWeapon = inf.getPrimaryWeapon();
-        if ((inf.getSecondaryN() > 1) && (inf.getSecondaryWeapon() != null)) {
+        if ((inf.getSecondaryWeaponsPerSquad() > 1) && (inf.getSecondaryWeapon() != null)) {
             rangeWeapon = inf.getSecondaryWeapon();
         }
 
@@ -179,7 +179,7 @@ public class InfantryTROView extends TROView {
             notes.add(String.format(Messages.getString("TROView.InfantryNote.SingleFieldGun"),
                     fieldGuns.get(0).getName(), shots, (int) fieldGuns.get(0).getTonnage(inf)));
         }
-        if ((inf.getSecondaryN() > 1) && (inf.getSecondaryWeapon() != null)) {
+        if ((inf.getSecondaryWeaponsPerSquad() > 1) && (inf.getSecondaryWeapon() != null)) {
             if (inf.getSecondaryWeapon().hasFlag(WeaponType.F_INF_BURST)) {
                 notes.add(Messages.getString("TROView.InfantryNote.Burst"));
             }

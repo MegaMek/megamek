@@ -21,7 +21,7 @@ Jagdpanzer II
 </Name>
 
 <model>
-(Standard)	
+
 </model>
 
 <year>
@@ -29,7 +29,7 @@ Jagdpanzer II
 </year>
 
 <type>
-IS Level 4
+IS Level 3
 </type>
 
 <tonnage>
@@ -118,3 +118,7 @@ ARMOR:Unknown
 COMMUNICATIONS:Johnston Q-Band with ECM
 TARGETING:Scantrex Dual Tac
 </systemManufacturers>
+
+<source>
+XTRO Boondocks - Jihad
+</source>

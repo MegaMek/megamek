@@ -170,6 +170,19 @@ public class MapSettings implements Serializable {
     @XmlElement(name = "SANDMAXHEXES")
     private int maxSandSize = 2;
 
+    /** how much sand spots at least */
+    @XmlElement(name = "SNOWMINSPOTS")
+    private int minSnowSpots = 0;
+    /** how much sand spots at most */
+    @XmlElement(name = "SNOWMAXSPOTS")
+    private int maxSnowSpots = 0;
+    /** minimum size of a rough spot */
+    @XmlElement(name = "SNOWMINHEXES")
+    private int minSnowSize = 0;
+    /** maximum Size of a rough spot */
+    @XmlElement(name = "SNOWMAXHEXES")
+    private int maxSnowSize = 0;
+
     /** how much planted field spots at least */
     @XmlElement(name = "PLANTEDFIELDMINSPOTS")
     private int minPlantedFieldSpots = 2;
@@ -443,6 +456,10 @@ public class MapSettings implements Serializable {
         maxSandSpots = other.getMaxSandSpots();
         minSandSize = other.getMinSandSize();
         maxSandSize = other.getMaxSandSize();
+        minSnowSpots = other.getMinSnowSpots();
+        maxSnowSpots = other.getMaxSnowSpots();
+        minSnowSize = other.getMinSnowSize();
+        maxSnowSize = other.getMaxSnowSize();
         minPlantedFieldSpots = other.getMinPlantedFieldSpots();
         maxPlantedFieldSpots = other.getMaxPlantedFieldSpots();
         minPlantedFieldSize = other.getMinPlantedFieldSize();
@@ -851,6 +868,18 @@ public class MapSettings implements Serializable {
         if (maxSandSize < minSandSize) {
             maxSandSize = minSandSize;
         }
+        if (minSnowSpots < 0) {
+            minSnowSpots = 0;
+        }
+        if (maxSnowSpots < minSnowSpots) {
+            maxSnowSpots = minSnowSpots;
+        }
+        if (minSnowSize < 0) {
+            minSnowSize = 0;
+        }
+        if (maxSnowSize < minSnowSize) {
+            maxSnowSize = minSnowSize;
+        }
         if (minPlantedFieldSpots < 0) {
             minPlantedFieldSpots = 0;
         }
@@ -992,6 +1021,8 @@ public class MapSettings implements Serializable {
                 && (minRoughSize == other.getMinRoughSize()) && (maxRoughSize == other.getMaxRoughSize())
                 && (minSandSpots == other.getMinSandSpots()) && (maxSandSpots == other.getMaxSandSpots())
                 && (minSandSize == other.getMinSandSize()) && (maxSandSize == other.getMaxSandSize())
+                && (minSnowSpots == other.getMinSnowSpots()) && (maxSnowSpots == other.getMaxSnowSpots())
+                && (minSnowSize == other.getMinSnowSize()) && (maxSnowSize == other.getMaxSnowSize())
                 && (minPlantedFieldSpots == other.getMinPlantedFieldSpots())
                 && (maxPlantedFieldSpots == other.getMaxPlantedFieldSpots())
                 && (minPlantedFieldSize == other.getMinPlantedFieldSize())
@@ -1021,7 +1052,8 @@ public class MapSettings implements Serializable {
                 && (algorithmToUse == other.getAlgorithmToUse()) && (mountainHeightMin == other.getMountainHeightMin())
                 && (mountainHeightMax == other.getMountainHeightMax()) && (mountainPeaks == other.getMountainPeaks())
                 && (mountainStyle == other.getMountainStyle()) && (mountainWidthMin == other.getMountainWidthMin())
-                && (mountainWidthMax == other.getMountainWidthMax()) && (boardBuildings.equals(other.getBoardBuildings()));
+                && (mountainWidthMax == other.getMountainWidthMax()) && (boardBuildings.equals(other.getBoardBuildings())
+                && (medium == other.medium));
     }
 
     public int getInvertNegativeTerrain() {
@@ -1144,12 +1176,40 @@ public class MapSettings implements Serializable {
         this.minSandSize = minSandSize;
     }
 
-    public int getMaxSandSize() {
-        return maxSandSize;
-    }
+    public int getMaxSandSize() { return maxSandSize; }
 
     public void setMaxSandSize(int maxSandSize) {
         this.maxSandSize = maxSandSize;
+    }
+
+    public int getMinSnowSpots() {
+        return minSnowSpots;
+    }
+
+    public void setMinSnowSpots(int minSnowSpots) {
+        this.minSnowSpots = minSnowSpots;
+    }
+
+    public int getMaxSnowSpots() {
+        return maxSnowSpots;
+    }
+
+    public void setMaxSnowSpots(int maxSnowSpots) {
+        this.maxSnowSpots = maxSnowSpots;
+    }
+
+    public int getMinSnowSize() {
+        return minSnowSize;
+    }
+
+    public void setMinSnowSize(int minSnowSize) {
+        this.minSnowSize = minSnowSize;
+    }
+
+    public int getMaxSnowSize() { return maxSnowSize; }
+
+    public void setMaxSnowSize(int maxSnowSize) {
+        this.maxSnowSize = maxSnowSize;
     }
 
     public int getMinPlantedFieldSpots() {
@@ -1432,6 +1492,16 @@ public class MapSettings implements Serializable {
         maxSandSpots = maxSpots;
         minSandSize = minSize;
         maxSandSize = maxSize;
+    }
+
+    /**
+     * set the snow parameters for the Map Generator
+     */
+    public void setSnowParams(int minSpots, int maxSpots, int minSize, int maxSize) {
+        minSnowSpots = minSpots;
+        maxSnowSpots = maxSpots;
+        minSnowSize = minSize;
+        maxSnowSize = maxSize;
     }
 
     /**

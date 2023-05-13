@@ -14,12 +14,14 @@
  */
 package megamek.client.ui.swing;
 
+import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.PMUtil;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.Configuration;
@@ -27,6 +29,8 @@ import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GameEntityNewEvent;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePlayerChatEvent;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -44,26 +48,27 @@ import java.util.Vector;
  * A graphical chatterbox within the boardview.
  * @author beerockxs2
  */
-public class ChatterBox2 implements KeyListener, IDisplayable {
+public class ChatterBox2 implements KeyListener, IDisplayable, IPreferenceChangeListener {
 
     private static final String FILENAME_BUTTON_UP = "upbutton.gif";
     private static final String FILENAME_BUTTON_DOWN = "downbutton.gif";
     private static final String FILENAME_BUTTON_MINIMISE = "minbutton.gif";
     private static final String FILENAME_BUTTON_MAXIMISE = "maxbutton.gif";
     private static final String FILENAME_BUTTON_RESIZE = "resizebutton.gif";
-    private static final Font FONT_CHAT = new Font("SansSerif", Font.BOLD,
-            GUIPreferences.getInstance().getInt("AdvancedChatbox2Fontsize"));
-    private static final Color COLOR_TEXT_BACK = Color.black;
-    private static final Color COLOR_TEXT_FRONT = Color.white;
+    private Font FONT_CHAT = new Font(MMConstants.FONT_SANS_SERIF, Font.BOLD,
+            UIUtil.FONT_SCALE1);
+    private static final Color COLOR_TEXT_BACK = Color.BLACK;
+    private static final Color COLOR_TEXT_FRONT = Color.WHITE;
     private static final Color COLOR_BACKGROUND;
     private ChatterBox cb;
+
+    protected static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     static {
         Color temp;
         try {
-            temp = GUIPreferences.getInstance().getColor("AdvancedChatbox2BackColor");
-            temp = new Color(temp.getRed(), temp.getGreen(), temp.getBlue(),
-                    GUIPreferences.getInstance().getInt("AdvancedChatbox2Transparancy"));
+            temp = GUIP.getChatbox2BackColor();
+            temp = new Color(temp.getRed(), temp.getGreen(), temp.getBlue(), GUIP.getChatbox2Transparancy());
         } catch (Throwable err) {
             temp = Color.gray;
         }
@@ -142,7 +147,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         });
 
         bv = boardview;
-        fm = bv.getFontMetrics(FONT_CHAT);
+        adaptToGUIScale();
 
         Toolkit toolkit = bv.getToolkit();
         upbutton = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), 
@@ -162,6 +167,8 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         PMUtil.setImage(resizebutton, client);
 
         registerKeyboardCommands(controller);
+
+        GUIP.addPreferenceChangeListener(this);
     }
 
     private void registerKeyboardCommands(MegaMekController controller) {
@@ -247,9 +254,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
                 idleTime = timeIdle;
             }
 
-            if ((idleTime > MAX_IDLE_TIME) && !isSliding() && 
-                    GUIPreferences.getInstance().getBoolean(
-                            "AdvancedChatbox2AutoSlidedown")) {
+            if ((idleTime > MAX_IDLE_TIME) && !isSliding() && GUIP.getChatbox2AutoSlideDown()) {
                 slideDown();
             }
         }
@@ -454,6 +459,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
     public void draw(Graphics graph, Rectangle clipBounds) {
         graph.setColor(COLOR_BACKGROUND);
         graph.setFont(FONT_CHAT);
+        int h = fm.getHeight();
 
         // Draw box.
         int yOffset = ((clipBounds.height) - height - DIST_BOTTOM) + slideOffset + clipBounds.y;
@@ -469,7 +475,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         }
 
         // Title
-        printLine(graph, "Incoming messages...", 29 + clipBounds.x, yOffset + 15);
+        printLine(graph, "Incoming messages...", 29 + clipBounds.x, yOffset + h);
 
         // resize button
         graph.drawImage(resizebutton, (width - 16) + clipBounds.x, yOffset + 3, bv);
@@ -492,12 +498,13 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
             printLine(graph, visibleMessage + "_", 13 + clipBounds.x, (yOffset + height) - 7);
         }
 
+
         // Text rows
         int rows = messages.size();
         if (rows <= max_nbr_rows) {
             for (int i = 0; i < messages.size(); i++) {
                 printLine(graph, messages.elementAt(i), 10 + clipBounds.x, yOffset
-                        + 15 + ((i + 1) * 15));
+                        + h + ((i + 1) * h));
             }
         } else {
             int row = 1;
@@ -506,7 +513,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
                     - chatScroll); i++) {
                 if (i > -1) {
                     printLine(graph, messages.elementAt(i), 10 + clipBounds.x, yOffset
-                            + 15 + (row * 15));
+                           + h + (row * h));
                     row++;
                 }
             }
@@ -882,11 +889,32 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
     }
 
     private int getMaxSlideOffset() {
-        return height - 20;
+        return height - (fm.getHeight() + 10);
     }
     
     public void clearMessage() {
         message = "";
         visibleMessage ="";
+    }
+
+    private void adaptToGUIScale() {
+        FONT_CHAT = FONT_CHAT.deriveFont((float) UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
+        fm = bv.getFontMetrics(FONT_CHAT);
+        max_nbr_rows = (height / fm.getHeight()) - 2;
+        bv.refreshDisplayables();
+    }
+
+    @Override
+    public void preferenceChange(PreferenceChangeEvent e) {
+        switch (e.getName()) {
+            case GUIPreferences.GUI_SCALE:
+                if (isDown()) {
+                    slideUp();
+                }
+
+                adaptToGUIScale();
+                break;
+
+        }
     }
 }

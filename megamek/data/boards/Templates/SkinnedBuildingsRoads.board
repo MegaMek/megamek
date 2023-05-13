@@ -1,5 +1,12 @@
 size 36 49
 option exit_roads_to_pavement false
+tag "Water (Auto)"
+tag "GrassTheme (Auto)"
+tag "Roads (Auto)"
+tag "Flat (Auto)"
+tag "MediumForest (Auto)"
+tag "Woods (Auto)"
+tag "MediumUrban (Auto)"
 hex 0101 0 "" "grass"
 hex 0201 0 "" "grass"
 hex 0301 0 "" "grass"

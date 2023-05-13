@@ -16,9 +16,9 @@ SupportTank
 Heavy Combat ATV
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 4831

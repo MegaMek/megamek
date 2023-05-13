@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022-2023 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -48,6 +48,8 @@ import java.awt.geom.AffineTransform;
  *                 .color(Color.RED).font(myFont);
  * <BR><BR>new StringDrawer("Another Text").at(736, 553).useConfig(myConfig).draw(g);
  * </code>
+ *
+ * @author Simon (Juliez)
  */
 public class StringDrawer {
 
@@ -63,9 +65,11 @@ public class StringDrawer {
     private boolean centerY = false;
     private boolean rightAlign = false;
     private Font font = null;
+    private float fontSize = -1;
     private double angle = 0;
     private int maxWidth = Integer.MAX_VALUE;
     private float scaleX = 1;
+    private boolean drawHelpLine = false;
 
     /**
      * Returns a new StringDrawer with the given text to draw. Note that the StringDrawer can be used
@@ -89,6 +93,17 @@ public class StringDrawer {
         this.x = x;
         this.y = y;
         return this;
+    }
+
+    /**
+     * Sets the coordinates to draw the text at. The exact placement depends on other settings
+     * such as given by {@link #center()}, {@link #centerX()}, or {@link #rightAlign()}.
+     *
+     * @param point The Point with the x and y coordinates to place the text at
+     * @return The StringDrawer itself
+     */
+    public StringDrawer at(Point point) {
+        return at(point.x, point.y);
     }
 
     /**
@@ -181,6 +196,22 @@ public class StringDrawer {
     }
 
     /**
+     * Sets the StringDrawer to use the given fontSize when drawing the String. When drawing the string,
+     * a new Font object will be created using this fontSize and either the font given through
+     * {@link #font(Font)} or, when no font is given, the current font. Note that when this
+     * method is used, and a font is also specified, the fontSize given here takes precedence even
+     * when {@link #font(Font)} is called later. Also note that {@link #maxWidth(int)} may scale down
+     * the resulting font size even when this method is used (in other words, this method sets the
+     * maximum possible font size). Values for fontSize <= 0 are ignored.
+     *
+     * @return The StringDrawer itself
+     */
+    public StringDrawer fontSize(float fontSize) {
+        this.fontSize = fontSize <= 0 ? -1 : fontSize;
+        return this;
+    }
+
+    /**
      * Sets the StringDrawer to give the text an outline of the given color and line width. Note
      * that the outline is drawn first so its width may appear smaller than expected.
      *
@@ -225,8 +256,20 @@ public class StringDrawer {
     }
 
     /**
+     * Sets the StringDrawer to draw a line showing the extent of the maximum width if such a width is set.
+     *
+     * @return The StringDrawer itself
+     */
+    public StringDrawer showExtent() {
+        drawHelpLine = true;
+        return this;
+    }
+
+    /**
      * Sets the StringDrawer to scale the text horizontally by the given scaleX value. Values bigger than
-     * 1 stretch the text, values smaller than 1 compress it.
+     * 1 stretch the text, values smaller than 1 compress it. Note that the maxWidth value is not scaled
+     * so scaleX < 1 will make the text fit maxWidth easier while scaleX > 1 will make it more easily reach
+     * maxWidth.
      *
      * @param scaleX the horizontal stretch or compression factor to apply to the text
      * @return The StringDrawer itself
@@ -275,6 +318,8 @@ public class StringDrawer {
      * text is empty or null, no action at all is taken. The settings of
      * the Graphics context (brush, color, transform, font) are preserved. The returned
      * Rectangle gives the size of the drawn string including leading and trailing white space.
+     * Note that when no font is actively set, the used font depends on what is currently set in the
+     * Graphics object. The same is true for the text color.
      *
      * @param g The Graphics context to draw to.
      * @return A Rectangle containing the size of the drawn string
@@ -283,33 +328,34 @@ public class StringDrawer {
         if ((text == null) || text.isBlank()) {
             return new Rectangle();
         }
-        Graphics2D g2D = (Graphics2D) g;
-        AffineTransform oldTransform = g2D.getTransform();
-        Stroke oldStroke = g2D.getStroke();
-        Color oldColor = g.getColor();
-        Font oldFont = g.getFont();
+        Graphics2D g2D = (Graphics2D) g.create();
+        UIUtil.setHighQualityRendering(g);
 
         if (fillColor != null) {
-            g.setColor(fillColor);
+            g2D.setColor(fillColor);
         }
 
         if (font != null) {
-            g.setFont(font);
+            g2D.setFont(font);
+        }
+
+        if (fontSize > 0) {
+            g2D.setFont(g2D.getFont().deriveFont(fontSize));
         }
 
         FontRenderContext frc = new FontRenderContext(null, true, true);
-        GlyphVector gv = g.getFont().createGlyphVector(frc, text);
+        GlyphVector gv = g2D.getFont().createGlyphVector(frc, text);
         Rectangle bounds = gv.getPixelBounds(null, 0, 0);
 
         if (scaleX * bounds.width > maxWidth) {
-            float newSize = (float) g.getFont().getSize() * maxWidth / scaleX / bounds.width;
-            g.setFont(g.getFont().deriveFont(newSize));
-            gv = g.getFont().createGlyphVector(frc, text);
+            float newSize = (float) g2D.getFont().getSize() * maxWidth / scaleX / bounds.width;
+            g2D.setFont(g2D.getFont().deriveFont(newSize));
+            gv = g2D.getFont().createGlyphVector(frc, text);
             bounds = gv.getPixelBounds(null, 0, 0);
         }
 
         // Use the size of a pure uppercase placeholder text for Y-centering to keep the same baseline for any text
-        GlyphVector gvUpperCase = g.getFont().createGlyphVector(frc, "AKMPO");
+        GlyphVector gvUpperCase = g2D.getFont().createGlyphVector(frc, "AKMPO");
         Rectangle boundsUpperCase = gvUpperCase.getPixelBounds(null, 0, 0);
 
         int posX = centerX ? x - bounds.width / 2 - bounds.x : x;
@@ -319,38 +365,65 @@ public class StringDrawer {
         }
 
         if (angle != 0) {
-            g2D.translate(posX + bounds.width / 2, posY - bounds.height / 2);
+            g2D.translate(x, y);
             g2D.rotate(angle);
-            g2D.translate(-posX - bounds.width / 2, -posY + bounds.height / 2);
+            g2D.translate(-x, -y);
         }
 
+        Graphics2D transformedG = (Graphics2D) g2D.create();
         AffineTransform scaling = AffineTransform.getTranslateInstance(posX, posY);
         scaling.scale(scaleX, 1);
         scaling.translate(-posX, -posY);
-        g2D.transform(scaling);
+        transformedG.transform(scaling);
 
         // Get the real (transformed) bounds of the text for returning
         bounds = scaling.createTransformedShape(bounds).getBounds();
 
         if (dualOutlineWidth > 0) {
-            g.setColor(dualOutlineColor);
-            g2D.setStroke(new BasicStroke(dualOutlineWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-            g2D.draw(gv.getOutline(posX, posY));
+            transformedG.setColor(dualOutlineColor);
+            transformedG.setStroke(new BasicStroke(dualOutlineWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            transformedG.draw(gv.getOutline(posX, posY));
         }
 
         if (outlineWidth > 0) {
-            g.setColor(outlineColor);
-            g2D.setStroke(new BasicStroke(outlineWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-            g2D.draw(gv.getOutline(posX, posY));
+            transformedG.setColor(outlineColor);
+            transformedG.setStroke(new BasicStroke(outlineWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            transformedG.draw(gv.getOutline(posX, posY));
         }
 
-        g.setColor(fillColor);
-        g2D.fill(gv.getOutline(posX, posY));
+        transformedG.setColor(fillColor);
+        transformedG.fill(gv.getOutline(posX, posY));
+        transformedG.dispose();
 
-        g2D.setTransform(oldTransform);
-        g.setColor(oldColor);
-        g2D.setStroke(oldStroke);
-        g.setFont(oldFont);
+
+        if (drawHelpLine) {
+            Graphics2D untransformedG = (Graphics2D) g.create();
+            untransformedG.setStroke(new BasicStroke(1f));
+            untransformedG.setColor(Color.GREEN);
+            untransformedG.drawLine(x - 4, y - 4, x + 4, y + 4);
+            untransformedG.drawLine(x + 4, y - 4, x - 4, y + 4);
+            untransformedG.dispose();
+
+            g2D.setStroke(new BasicStroke(1f));
+            if (centerX) {
+                g2D.setColor(Color.RED);
+                g2D.drawLine(x, y, x - maxWidth / 2, y);
+                g2D.drawLine(x - maxWidth / 2, y - 5, x - maxWidth / 2, y + 5);
+                g2D.setColor(Color.BLUE);
+                g2D.drawLine(x, y, x + maxWidth / 2, y);
+                g2D.drawLine(x + maxWidth / 2, y - 5, x + maxWidth / 2, y + 5);
+            } else if (rightAlign) {
+                g2D.setColor(Color.RED);
+                g2D.drawLine(x, y, x - maxWidth, y);
+                g2D.drawLine(x - maxWidth, y - 5, x - maxWidth, y + 5);
+            } else {
+                g2D.setColor(Color.BLUE);
+                g2D.drawLine(x, y, x + maxWidth, y);
+                g2D.drawLine(x + maxWidth, y - 5, x + maxWidth, y + 5);
+            }
+        }
+
+        g2D.dispose();
         bounds.translate(posX, posY);
         return bounds;
     }

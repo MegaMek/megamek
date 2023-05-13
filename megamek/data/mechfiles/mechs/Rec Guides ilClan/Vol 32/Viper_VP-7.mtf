@@ -1,0 +1,153 @@
+Version:1.0
+Viper
+VP-7
+
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3124
+rules level:2
+mul id:9489
+Source:Rec Guide:ilClan #32 - Late Republic
+
+mass:70
+engine:280 Light Engine(IS)
+structure:IS Composite
+myomer:Standard
+
+heat sinks:13 IS Double
+walk mp:4
+jump mp:4
+
+armor:Standard(Inner Sphere)
+LA armor:22
+RA armor:22
+LT armor:23
+RT armor:23
+CT armor:37
+HD armor:9
+LL armor:30
+RL armor:30
+RTL armor:7
+RTR armor:7
+RTC armor:6
+
+Weapons:5
+Binary Laser (Blazer) Cannon, Left Arm
+Binary Laser (Blazer) Cannon, Right Arm
+ER Medium Laser, Left Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Binary Laser (Blazer) Cannon
+Binary Laser (Blazer) Cannon
+Binary Laser (Blazer) Cannon
+Binary Laser (Blazer) Cannon
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Binary Laser (Blazer) Cannon
+Binary Laser (Blazer) Cannon
+Binary Laser (Blazer) Cannon
+Binary Laser (Blazer) Cannon
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+CLERMediumLaser
+ISTargeting Computer
+ISTargeting Computer
+ISTargeting Computer
+ISTargeting Computer
+ISTargeting Computer
+ISTargeting Computer
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+CLERMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLERMediumLaser (R)
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLActiveProbe
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

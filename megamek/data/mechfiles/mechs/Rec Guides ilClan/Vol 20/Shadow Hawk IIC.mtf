@@ -1,0 +1,170 @@
+Version:1.0
+Shadow Hawk IIC
+
+mul id:2911
+
+Config:Biped
+techbase:Clan
+era:2831
+source:Rec Guide:ilClan #20 - Succession Wars
+rules level:2
+
+mass:45
+engine:270 Fusion (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:10 Clan Double
+walk mp:6
+jump mp:6
+
+armor:Ferro-Fibrous(Clan)
+LA armor:12
+RA armor:12
+LT armor:17
+RT armor:17
+CT armor:20
+HD armor:9
+LL armor:20
+RL armor:20
+RTL armor:5
+RTR armor:5
+RTC armor:7
+
+Weapons:8
+Medium Pulse Laser, Left Arm
+Medium Pulse Laser, Right Arm
+Streak SRM 2, Left Torso
+Streak SRM 2, Left Torso
+Streak SRM 2, Right Torso
+Streak SRM 2, Right Torso
+ER Small Laser, Center Torso
+ER Medium Laser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLMediumPulseLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLMediumPulseLaser
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Jump Jet
+Jump Jet
+Jump Jet
+CLStreakSRM2
+CLStreakSRM2
+Clan Streak SRM 2 Ammo
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+
+Right Torso:
+Jump Jet
+Jump Jet
+Jump Jet
+CLStreakSRM2
+CLStreakSRM2
+Clan Streak SRM 2 Ammo
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLERSmallLaser
+Clan Ferro-Fibrous
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLERMediumLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Shadow Hawk IIC is a second-line Clan BattleMech based upon the Shadow Hawk that was first fielded by the Star League.
+
+capabilities:The inexpensive unit is protected by seven and a half tons of Ferro-Fibrous armor, mounted on a weight-saving Endo Steel chassis. This medium 'Mech can reach a respectable top speed of 97 km/h, though it also carries enough jump jets to vault up to 180 meters at a time.
+
+deployment:The first version of the Shadow Hawk IIC that Inner Sphere forces encountered is meant for close-range fighting, and appears to be designed with urban warfare in mind. Two Medium Pulse Lasers are incredibly accurate in close. Four Streak SRM-2s are best at exploiting holes in an enemy's armor, while the Streak technology ensures the missiles will inflict no collateral damage. An ER Medium Laser and ER Small Laser rounds out the weaponry. Ten double heat sinks take care of most heat, especially since the Streaks will build no heat if they do not achieve a lock and fire.
+
+manufacturer:Unknown
+primaryfactory:Unknown
+systemmanufacturer:CHASSIS:Lang T3
+systemmanufacturer:ENGINE:Consolidated Fusion 270 Standard
+systemmanufacturer:ARMOR:Compound H17 Ferro-Fibrous
+systemmanufacturer:JUMPJET:Northrup Starlifters M45
+systemmanufacturer:COMMUNICATIONS:JNE Integrated
+systemmanufacturer:TARGETING:TRTTS Mark II
+

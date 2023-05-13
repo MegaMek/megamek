@@ -108,10 +108,4 @@ public enum ASUnitType {
     public boolean isSupportVehicle() {
         return this == SV;
     }
-
-    /** @return True if this ASUnitType is Fighter (AF, CF). */
-    public boolean isFighter() {
-        return isAnyOf(AF, CF);
-    }
-
 }

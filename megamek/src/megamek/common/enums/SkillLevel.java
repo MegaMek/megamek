@@ -19,7 +19,6 @@
 package megamek.common.enums;
 
 import megamek.MegaMek;
-import megamek.common.util.EncodeControl;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.List;
@@ -47,7 +46,7 @@ public enum SkillLevel {
     //region Constructors
     SkillLevel(final String name, final String toolTipText) {
         final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages",
-                MegaMek.getMMOptions().getLocale(), new EncodeControl());
+                MegaMek.getMMOptions().getLocale());
         this.name = resources.getString(name);
         this.toolTipText = resources.getString(toolTipText);
     }
@@ -92,14 +91,37 @@ public enum SkillLevel {
         return this == LEGENDARY;
     }
 
+    public boolean isUltraGreenOrGreater() {
+        return isUltraGreen() || isGreenOrGreater();
+    }
+
+    public boolean isGreenOrGreater() {
+        return isGreen() || isRegularOrGreater();
+    }
+
+    public boolean isRegularOrGreater() {
+        return isRegular() || isVeteranOrGreater();
+    }
+
     public boolean isVeteranOrGreater() {
         return isVeteran() || isEliteOrGreater();
     }
 
     public boolean isEliteOrGreater() {
-        return isElite() || isHeroic() || isLegendary();
+        return isElite() || isHeroicOrGreater();
+    }
+
+    public boolean isHeroicOrGreater() {
+        return isHeroic() || isLegendary();
     }
     //endregion Boolean Comparisons
+
+    /**
+     * @return the skill level adjusted so that 0 is the level for Ultra-Green
+     */
+    public int getAdjustedValue() {
+        return ordinal() - 1;
+    }
 
     /**
      * This returns the default skill values by level. This should never return the value for NONE,

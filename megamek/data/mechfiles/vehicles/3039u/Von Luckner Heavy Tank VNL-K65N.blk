@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -28,6 +28,10 @@ VNL-K65N
 2612
 </year>
 
+<originalBuildYear>
+2612
+</originalBuildYear>
+
 <type>
 IS Level 1
 </type>
@@ -35,6 +39,9 @@ IS Level 1
 <motion_type>
 Tracked
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 3
@@ -84,6 +91,37 @@ Machine Gun
 SRM 4
 </Turret Equipment>
 
+<capabilities>
+The Von Luckner's fusion power plant provides it with the same level of efficiency and mobility as a BattleMech of comparable weight, as well as the indefinite operating range that only fusion can deliver. The Von Luckner's primary armament is typically comprised of powerful autocannons supported by missile racks, as well as a variety of light close-in weaponry deployed to protect against infantry and battlearmor. Finally, its rather thick armor hide helps it to stay in a combat for an extended period of time.
+</capabilities>
+
+<overview>
+This heavily armored and armed vehicle was intended as a BattleMech without legs, fueled by a fusion reactor and equipped with enough firepower to threaten 'Mechs up to its own weight.
+</overview>
+
+<deployment>
+The Von Luckner mounts an impressive array of weaponry. Its main gun is a turret-mounted Armstrong Autocannon 20, which can strip off more than a ton of armor in one salvo. A Holly LRM 10 provides long range and indirect fire, while two Holly SRM 6s and a Dannel SRM 4 add to its close range punch. A Ramsey Machine Gun and Firestorm Flamer provide anti-infantry capabilities. Carrying all of these weapons means that the vehicle is heavily ammo-dependent, which gives it very little to fall back on in the event of a protracted battle. As well, the reloading system is susceptible to jamming, and missile reloads stored in the tank's hull are vulnerable to fires or critical hits.
+</deployment>
+
+<history>
+After the Reunification War, HartfordCo Industries of Bryant produced the VNLK65N Von Luckner Heavy Tank. Count Felix von Luckner, a prominent twentieth-century Terran raider, inspired the name. The Von Luckner's power and resiliency make it a perfect choice for beefing up crucial defensive positions from the Terran Hegemony homeworlds to the far reaches of the Star League's newly gained Periphery territories. Though the Von Luckner became a mainstay of Terran and Star League defensive forces during the Star League's existence, the loss of the HartfordCo factories on Bryant in 2840—due to worsening global storms caused by the destruction of Bryant's Storm Inhibitors—instantly placed the vehicle on the endangered list. During the Amaris Coup and the First Succession War, several advanced Star League vehicles met this end. With many more cannibalized for BattleMech spare parts—an ironic twist on the vehicle's design standards—only a few Von Luckners remained in service as of 3030. Formerly common throughout the Inner Sphere, only Houses Davion, Steiner, Marik, and Kurita still deployed Von Luckners in significant numbers by 3039.
+</history>
+
+<manufacturer>
+HartfordCo,HartfordCo
+</manufacturer>
+
+<primaryFactory>
+Bryant,Pardeau
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:VOX 225 Fusion
+ARMOR:StarSlab/3
+COMMUNICATIONS:O/P 300
+TARGETING:O/P GRNDSTAT 50A
+</systemManufacturers>
+
 <source>
 TRO 3039 - Star League
 </source>
@@ -91,3 +129,4 @@ TRO 3039 - Star League
 <tonnage>
 75.0
 </tonnage>
+

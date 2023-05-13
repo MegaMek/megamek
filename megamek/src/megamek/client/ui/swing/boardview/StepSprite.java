@@ -13,15 +13,16 @@
 */
 package megamek.client.ui.swing.boardview;
 
+import megamek.MMConstants;
+import megamek.client.ui.Messages;
+import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.*;
+import megamek.common.MovePath.MoveStepType;
+
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-
-import megamek.client.ui.Messages;
-import megamek.client.ui.swing.GUIPreferences;
-import megamek.codeUtilities.StringUtility;
-import megamek.common.*;
-import megamek.common.MovePath.MoveStepType;
 
 /**
  * Sprite for a step in a movement path. Only one sprite should exist for
@@ -76,7 +77,7 @@ class StepSprite extends Sprite {
         Graphics graph = tempImage.getGraphics();
         Graphics2D g2D = (Graphics2D) graph;
 
-        GUIPreferences.AntiAliasifSet(graph);
+        UIUtil.setHighQualityRendering(graph);
 
         // fill with key color
         graph.setColor(new Color(0, 0, 0, 0));
@@ -256,7 +257,7 @@ class StepSprite extends Sprite {
                 // show new movement mode
                 String mode = Messages.getString("BoardView1.ConversionMode."
                         + step.getMovementMode());
-                graph.setFont(new Font("SansSerif", Font.PLAIN, 12));
+                graph.setFont(new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 12));
                 int modeX = 42 - (graph.getFontMetrics(graph.getFont()).stringWidth(mode) / 2);
                 graph.setColor(Color.darkGray);
                 graph.drawString(mode, modeX, modePos - 1);
@@ -305,7 +306,7 @@ class StepSprite extends Sprite {
         if (step.isPastDanger()) {
             text = "(" + text + ")";
         }
-        graph.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        graph.setFont(new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 12));
         int posX = 42 - (graph.getFontMetrics(graph.getFont()).stringWidth(text) / 2);
         int posY = 38 + graph.getFontMetrics(graph.getFont()).getHeight();
         graph.setColor(Color.darkGray);
@@ -323,7 +324,7 @@ class StepSprite extends Sprite {
     private void drawConditions(MoveStep step, Graphics graph, Color col) {
         if (step.isEvading()) {
             String evade = Messages.getString("BoardView1.Evade");
-            graph.setFont(new Font("SansSerif", Font.PLAIN, 12));
+            graph.setFont(new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 12));
             int evadeX = 42 - (graph.getFontMetrics(graph.getFont()).stringWidth(evade) / 2);
             graph.setColor(Color.darkGray);
             graph.drawString(evade, evadeX, 64);
@@ -334,7 +335,7 @@ class StepSprite extends Sprite {
         if (step.isRolled()) {
             // Announce roll
             String roll = Messages.getString("BoardView1.Roll");
-            graph.setFont(new Font("SansSerif", Font.PLAIN, 12));
+            graph.setFont(new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 12));
             int rollX = 42 - (graph.getFontMetrics(graph.getFont()).stringWidth(roll) / 2);
             graph.setColor(Color.darkGray);
             graph.drawString(roll, rollX, 18);
@@ -357,13 +358,12 @@ class StepSprite extends Sprite {
         int[] v = step.getVectors();
         for (int i = 0; i < 6; i++) {
             String active = Integer.toString(v[i]);
-            graph.setFont(new Font("SansSerif", Font.PLAIN, 12));
+            graph.setFont(new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 12));
             graph.setColor(Color.darkGray);
             graph.drawString(active, activeXpos[i], activeYpos[i]);
             graph.setColor(Color.red);
             graph.drawString(active, activeXpos[i] - 1, activeYpos[i] - 1);
         }
-
     }
 
     @Override
@@ -377,13 +377,9 @@ class StepSprite extends Sprite {
     }
 
     private Font getMovementFont() {
-        String fontName = GUIPreferences.getInstance().getString(
-                GUIPreferences.ADVANCED_MOVE_FONT_TYPE);
-        int fontStyle = GUIPreferences.getInstance().getInt(
-                GUIPreferences.ADVANCED_MOVE_FONT_STYLE);
-        int fontSize = GUIPreferences.getInstance().getInt(
-                GUIPreferences.ADVANCED_MOVE_FONT_SIZE);
-
+        String fontName = GUIP.getMoveFontType();
+        int fontStyle = GUIP.getMoveFontStyle();
+        int fontSize = GUIP.getMoveFontSize();
         return new Font(fontName, fontStyle, fontSize);
     }
 
@@ -394,8 +390,7 @@ class StepSprite extends Sprite {
             return;
         }
 
-        if (!step.getEntity().isAirborne()
-                || !step.getEntity().isAero()) {
+        if (!step.getEntity().isAirborne() || !step.getEntity().isAero()) {
             return;
         }
 
@@ -416,7 +411,7 @@ class StepSprite extends Sprite {
 
         // Convert the buffer to a String and draw it.
         String velString = velStringBuf.toString();
-        graph.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        graph.setFont(new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 12));
         int costX = 42;
         if (shiftFlag) {
             costX -= (graph.getFontMetrics(graph.getFont()).stringWidth(velString) / 2);
@@ -437,7 +432,7 @@ class StepSprite extends Sprite {
             }
 
             String turnString = "<" + step.getNStraight() + ">";
-            graph.setFont(new Font("SansSerif", Font.PLAIN, 10));
+            graph.setFont(new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 10));
             costX = 50;
             graph.setColor(Color.darkGray);
             graph.drawString(turnString, costX, 15);

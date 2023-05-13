@@ -82,9 +82,9 @@ public class ISSnubNosePPC extends PPCWeapon {
     @Override
     public double getBattleForceDamage(int range, Mounted capacitor) {
         if (range == AlphaStrikeElement.SHORT_RANGE) {
-            return 1;
+            return (capacitor != null) ? 0.75 : 1;
         } else if (range == AlphaStrikeElement.MEDIUM_RANGE) {
-            return 0.65;
+            return (capacitor != null) ? 0.5 : 0.65;
         } else {
             return 0;
         }

@@ -1,30 +1,38 @@
 /*
- * MegaMek -
- * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common;
 
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.annotations.Nullable;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
+import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 import java.awt.*;
 import java.io.Serializable;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
+
+import static megamek.client.ui.swing.util.UIUtil.uiGray;
 
 /**
  * This class defines a single server report. It holds information such as the
@@ -62,7 +70,6 @@ import java.util.Vector;
  * <p> " Crusader (Bob) does 6 damage to the tank."
  *
  * @author Ryan McConnell (oscarmm)
- * @since 0.30
  */
 public class Report implements Serializable {
     /*
@@ -72,12 +79,14 @@ public class Report implements Serializable {
      */
 
     private static final long serialVersionUID = -5586008091586682078L;
-        
+
     private static final int MESSAGE_NONE = -1;
-    
-    /** Report Type: visible to all players. */
+
+    /**
+     * Report Type: visible to all players.
+     */
     public static final int PUBLIC = 0;
-    
+
     /**
      * Report Type: visible to all players, but all data marked for obscuration
      * remains hidden. Note: Not used at this time, since all reports are
@@ -85,17 +94,19 @@ public class Report implements Serializable {
      * <code>public</code>.
      */
     public static final int OBSCURED = 1;
-    
+
     /**
      * Report is only visible to those players who can see the subject. Note:
      * Not used at this time, since all reports are considered
      * <code>obscured</code> unless explicitly marked <code>public</code>.
      */
     public static final int HIDDEN = 2;
-    
-    /** Testing only - remove me later. */
+
+    /**
+     * Testing only - remove me later.
+     */
     public static final int TESTING = 3;
-    
+
     /**
      * Messages which should be sent only to the player indicated by "player"
      */
@@ -106,18 +117,28 @@ public class Report implements Serializable {
      */
     public static final String OBSCURED_STRING = "????";
 
-    /** Number of spaces to use per indentation level. */
+    /**
+     * Number of spaces to use per indentation level.
+     */
     private static final int DEFAULT_INDENTATION = 4;
 
-    /** Prefix for entity hyperlinks */
+    /**
+     * Prefix for entity hyperlinks
+     */
     public static final String ENTITY_LINK = "#entity:";
-    /** Prefix for tooltip text */
+    /**
+     * Prefix for tooltip text
+     */
     public static final String TOOLTIP_LINK = "#tooltip:";
-    
-    /** Required - associates this object with its text. */
+
+    /**
+     * Required - associates this object with its text.
+     */
     public int messageId = Report.MESSAGE_NONE;
-    
-    /** The number of spaces this report should be indented. */
+
+    /**
+     * The number of spaces this report should be indented.
+     */
     private int indentation = 0;
 
     /**
@@ -125,10 +146,14 @@ public class Report implements Serializable {
      */
     public int newlines = 1;
 
-    /** The data values to fill in the report with. */
+    /**
+     * The data values to fill in the report with.
+     */
     private Vector<String> tagData = new Vector<>();
 
-    /** How to translate the tagData or not at all. */
+    /**
+     * How to translate the tagData or not at all.
+     */
     private String tagTranslate = null;
 
     /**
@@ -142,13 +167,15 @@ public class Report implements Serializable {
      * then the report will be considered <code>public</code>.
      */
     public transient int subject = Entity.NONE;
-    
+
     /**
      * The player this report concerns, if applicable. This should be filled in
      * if this report is not public and still does not belong to a specific
      * visible entity
      */
     public transient int player = Player.PLAYER_NONE;
+
+    public static int HIDDEN_ENTITY_NUM = -1;
 
     /**
      * This hash table will store the tagData Vector indexes that are supposed
@@ -164,27 +191,32 @@ public class Report implements Serializable {
      */
     private Vector<String> obscuredRecipients = new Vector<>();
 
-    /** Keep track of what data we have already substituted for tags. */
+    /**
+     * Keep track of what data we have already substituted for tags.
+     */
     private transient int tagCounter = 0;
 
-    /** bool for determining when code should be used to show image. */
+    /**
+     * bool for determining when code should be used to show image.
+     */
     private transient boolean showImage = false;
 
-    /** string to add to reports to show sprites **/
+    /**
+     * string to add to reports to show sprites
+     **/
     private String imageCode = "";
 
     /**
      * Default constructor, note that using this means the
      * <code>messageId</code> field must be explicitly set.
      */
-    public Report() {
-    }
+    public Report() { }
 
     /**
      * Create a new report associated with the given report text.
      *
      * @param id the int value of the report from <i>report-messages.properties
-     * </i>
+     *           </i>
      */
     public Report(int id) {
         messageId = id;
@@ -194,10 +226,9 @@ public class Report implements Serializable {
      * Create a new report associated with the given report text and having the
      * given type.
      *
-     * @param id the int value of the report from <i>report-messages.properties
-     *  </i>
+     * @param id   the int value of the report from report-messages.properties
      * @param type the constant specifying the visibility of the report (PUBLIC,
-     *            OBSCURED, or HIDDEN)
+     *             OBSCURED, or HIDDEN)
      */
     public Report(int id, int type) {
         messageId = id;
@@ -221,6 +252,70 @@ public class Report implements Serializable {
         obscuredIndexes = (Hashtable<Integer, Boolean>) r.obscuredIndexes.clone();
         obscuredRecipients = (Vector<String>) r.obscuredRecipients.clone();
         tagCounter = r.tagCounter;
+        imageCode = r.imageCode;
+    }
+
+    /**
+     * Returns a new report associated with the given report text (ID) and having the
+     * type Report.PUBLIC.
+     *
+     * @param id   the int value of the report from report-messages.properties
+     * @return     A new Report
+     */
+    public static Report publicReport(int id) {
+        return new Report(id, PUBLIC);
+    }
+
+    /**
+     * Returns a new report associated with the given report text (ID) and having the
+     * given subject (Entity ID). The Report will be the default type Report.HIDDEN.
+     *
+     * @param id        the int value of the report from report-messages.properties
+     * @param subjectId The Entity ID of the subject entity
+     * @return          A new Report
+     */
+    public static Report subjectReport(int id, int subjectId) {
+        return new Report(id).subject(subjectId);
+    }
+
+    /**
+     * Set the report to be public (Report.PUBLIC).
+     *
+     * @return This Report to allow chaining
+     */
+    public Report makePublic() {
+        type = Report.PUBLIC;
+        return this;
+    }
+
+    /**
+     * Set the report to not add the given number of newlines at the end.
+     *
+     * @return This Report to allow chaining
+     */
+    public Report newLines(int newlines) {
+        this.newlines = newlines;
+        return this;
+    }
+
+    /**
+     * Set the report to not add a newline at the end, so that the current line of text can be continued
+     * with another report.
+     *
+     * @return This Report to allow chaining
+     */
+    public Report noNL() {
+        return newLines(0);
+    }
+
+    /**
+     * Set the report's subject (Entity ID).
+     *
+     * @return This Report to allow chaining
+     */
+    public Report subject(int subjectId) {
+        subject = subjectId;
+        return this;
     }
 
     /**
@@ -229,9 +324,10 @@ public class Report implements Serializable {
      * match the order of the tags in the report text.
      *
      * @param data the int to be substituted
+     * @return This Report to allow chaining
      */
-    public void add(int data) {
-        add(data, true);
+    public Report add(int data) {
+        return add(data, true);
     }
 
     /**
@@ -240,15 +336,17 @@ public class Report implements Serializable {
      * information if <code>obscure</code> is true. The order in which items
      * are added must match the order of the tags in the report text.
      *
-     * @param data the int to be substituted
+     * @param data    the int to be substituted
      * @param obscure boolean indicating whether the data is double-blind
-     *            sensitive
+     *                sensitive
+     * @return This Report to allow chaining
      */
-    public void add(int data, boolean obscure) {
+    public Report add(int data, boolean obscure) {
         if (obscure) {
             obscuredIndexes.put(tagData.size(), Boolean.TRUE);
         }
         tagData.addElement(String.valueOf(data));
+        return this;
     }
 
     /**
@@ -257,10 +355,12 @@ public class Report implements Serializable {
      * match the order of the tags in the report text.
      *
      * @param data the String to be substituted
+     * @return This Report to allow chaining
      */
-    public void add(String data) {
+    public Report add(String data) {
         add(data, true);
         tagTranslate = null;
+        return this;
     }
 
     /**
@@ -269,12 +369,14 @@ public class Report implements Serializable {
      * match the order of the tags in the report text. The second string
      * argument sets the translation flag to the string value.
      *
-     * @param data the String to be substituted
+     * @param data      the String to be substituted
      * @param translate the common Resource Bundle to be used for translation
+     * @return This Report to allow chaining
      */
-    public void add(String data, String translate) {
+    public Report add(String data, String translate) {
         add(data, true);
         tagTranslate = translate;
+        return this;
     }
 
     /**
@@ -283,33 +385,41 @@ public class Report implements Serializable {
      * information if <code>obscure</code> is true. The order in which items
      * are added must match the order of the tags in the report text.
      *
-     * @param data the String to be substituted
+     * @param data    the String to be substituted
      * @param obscure boolean indicating whether the data is double-blind
-     *            sensitive
+     *                sensitive
+     * @return This Report to allow chaining
      */
-    public void add(String data, boolean obscure) {
+    public Report add(String data, boolean obscure) {
         if (obscure) {
             obscuredIndexes.put(tagData.size(), Boolean.TRUE);
         }
         tagData.addElement(data);
+        return this;
     }
 
     /**
      * Adds target roll to report with details available as a tooltip
+     *
      * @param targetRoll the target roll
+     * @return This Report to allow chaining
      */
-    public void add(TargetRoll targetRoll) {
+    public Report add(TargetRoll targetRoll) {
         addDataWithTooltip(targetRoll.getValueAsString(), targetRoll.getDesc());
+        return this;
     }
 
     /**
      * Adds a field to the report with additional data available as a tooltip
-     * @param data the data for the report field
+     *
+     * @param data    the data for the report field
      * @param tooltip the tooltip text
+     * @return This Report to allow chaining
      */
-    public void addDataWithTooltip(String data, String tooltip) {
+    public Report addDataWithTooltip(String data, String tooltip) {
         tagData.addElement(String.format("<font color='0xffffff'><a href='%s%s'>%s</a></font>",
                 TOOLTIP_LINK, tooltip, data));
+        return this;
     }
 
     /**
@@ -321,9 +431,11 @@ public class Report implements Serializable {
      * two choices.
      *
      * @param choice boolean indicating which message to substitute
+     * @return This Report to allow chaining
      */
-    public void choose(boolean choice) {
+    public Report choose(boolean choice) {
         tagData.addElement(String.valueOf(choice));
+        return this;
     }
 
     /**
@@ -332,14 +444,18 @@ public class Report implements Serializable {
      * not.
      *
      * @param entity the entity you wish to add
+     * @return This Report to allow chaining
      */
-    public void addDesc(Entity entity) {
+    public Report addDesc(Entity entity) {
         if (entity != null) {
             if ((indentation <= Report.DEFAULT_INDENTATION) || showImage) {
                 imageCode = "<span id='" + entity.getId() + "'></span>";
             }
 
-            Color ownerColor = entity.getOwner().getColour().getColour();
+            Player owner = entity.getOwner();
+            Color ownerColor = (owner != null) ? owner.getColour().getColour() : uiGray();
+            String ownerName = (owner != null) ? owner.getName() : ReportMessages.getString("report.unknownOwner");
+
             String unitName = href(ENTITY_LINK + entity.getId(), entity.getShortName());
 
             if ((entity.getCrew().getSize() >= 1) && !entity.getCrew().getNickname().isBlank()) {
@@ -347,15 +463,20 @@ public class Report implements Serializable {
             }
 
             add(unitName, true);
-            add(bold(fgColor(ownerColor, entity.getOwner().getName())));
+            add(bold(fgColor(ownerColor, ownerName)));
         }
+        return this;
     }
 
     /**
      * Manually Toggle if the report should show an image of the entity
-    */
+     */
     public void setShowImage(boolean showImage) {
         this.showImage = showImage;
+    }
+
+    public void obsureImg() {
+        imageCode = "<span id='" + HIDDEN_ENTITY_NUM +  "'></span>";
     }
 
     /**
@@ -365,7 +486,7 @@ public class Report implements Serializable {
      * obscured.
      *
      * @param index position of data value (indexes are chronological and start
-     *            at zero)
+     *              at zero)
      * @return true if the data value was marked obscured
      */
     public boolean isValueObscured(int index) {
@@ -378,26 +499,29 @@ public class Report implements Serializable {
      * Remove the data value from the report. This operation is irreversible.
      *
      * @param index position of data value (indexes are chronological and start
-     *            at zero
+     *              at zero
      */
     public void hideData(int index) {
         tagData.setElementAt(null, index);
     }
 
     /**
-     * Indent the report.
+     * Indent the report. Equivalent to calling {@link #indent(int)} with a parameter of 1.
+     * @return This Report to allow chaining
      */
-    public void indent() {
-        indent(1);
+    public Report indent() {
+        return indent(1);
     }
 
     /**
-     * Indent the report <i>n</i> times.
+     * Indent the report n times.
      *
      * @param n the number of times to indent the report
+     * @return This Report to allow chaining
      */
-    public void indent(int n) {
+    public Report indent(int n) {
         indentation += (n * Report.DEFAULT_INDENTATION);
+        return this;
     }
 
     /**
@@ -426,7 +550,7 @@ public class Report implements Serializable {
                 // Each common Resource Bundle is found below
                 if (tagTranslate.equals("Messages")) {
                     return Messages.getString(value);
-                // Others ifs will be here.
+                    // Others ifs will be here.
                 }
             }
             return value;
@@ -478,15 +602,12 @@ public class Report implements Serializable {
                             text.append(getTag(j)).append(", ");
                         }
                         text.setLength(text.length() - 2); // trim last comma
-                    } else if (raw.substring(i + 1, endTagIdx).startsWith(
-                            "msg:")) {
+                    } else if (raw.substring(i + 1, endTagIdx).startsWith("msg:")) {
                         boolean selector = Boolean.parseBoolean(getTag());
                         if (selector) {
-                            text.append(ReportMessages.getString(raw.substring(
-                                    i + 5, raw.indexOf(',', i))));
+                            text.append(ReportMessages.getString(raw.substring(i + 5, raw.indexOf(',', i))));
                         } else {
-                            text.append(ReportMessages.getString(raw.substring(
-                                    raw.indexOf(',', i) + 1, endTagIdx)));
+                            text.append(ReportMessages.getString(raw.substring(raw.indexOf(',', i) + 1, endTagIdx)));
                         }
                         tagCounter++;
                     } else if (raw.substring(i + 1, endTagIdx).equals("newline")) {
@@ -504,8 +625,7 @@ public class Report implements Serializable {
             if (imageCode != null && !imageCode.isEmpty()) {
                 if (text.toString().startsWith("\n")) {
                     text.insert(1, imageCode);
-                }
-                else {
+                } else {
                     text.insert(0, imageCode);
                 }
             }
@@ -526,8 +646,8 @@ public class Report implements Serializable {
             return;
         }
         int i = 0;
-        while (sb.substring(i, i+4).equals("\n")) {
-            i+=4;
+        while (sb.substring(i, i + 4).equals("\n")) {
+            i += 4;
             if (i == sb.length()) {
                 continue;
             }
@@ -559,6 +679,12 @@ public class Report implements Serializable {
         } catch (Exception ex) {
             LogManager.getLogger().error("Cannot add a new line", ex);
         }
+    }
+
+    public static void setupStylesheet(JTextPane pane) {
+        pane.setContentType("text/html");
+        StyleSheet styleSheet = ((HTMLEditorKit) pane.getEditorKit()).getStyleSheet();
+        Report.setupStylesheet(styleSheet);
     }
 
     public static void setupStylesheet(StyleSheet styleSheet) {
@@ -597,7 +723,7 @@ public class Report implements Serializable {
     }
 
     public String bgColor(String hexColor, String str) {
-        return "<span style='background-color:"+ hexColor +"'>" + str + "</span>";
+        return "<span style='background-color:" + hexColor + "'>" + str + "</span>";
     }
 
     public static String bold(String str) {
@@ -665,16 +791,16 @@ public class Report implements Serializable {
         return sb;
     }
 
-    public static void indentAll(Vector<Report> vDesc, int amount) {
-        // Just avoid an error condition.
-        if (vDesc == null) {
-            return;
-        }
-
-        Enumeration<Report> x = vDesc.elements();
-        while (x.hasMoreElements()) {
-            Report r = x.nextElement();
-            r.indent(amount);
+    /**
+     * Sets the indentation for all reports of the given reports list to the given amount
+     * by calling {@link #indent(int)}
+     *
+     * @param reports A list of reports to be affected
+     * @param amount  The amount of indentation to give each report in the list
+     */
+    public static void indentAll(@Nullable Vector<Report> reports, int amount) {
+        if (reports != null) {
+            reports.forEach(report -> report.indent(amount));
         }
     }
 }

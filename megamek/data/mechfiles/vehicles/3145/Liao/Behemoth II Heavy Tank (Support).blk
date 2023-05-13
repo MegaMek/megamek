@@ -98,3 +98,34 @@ TRO 3145 Capellan Confederation - Late Republic
 <tonnage>
 100.0
 </tonnage>
+
+<capabilities>
+The vehicle is powered by a Vlar 300 rated Extra-Light Fusion Engine, to allow it to move at 50 km/h, and allow it to carry its extensive amount of weaponry and its 15 tons of ferro-fibrous armor.
+</capabilities>
+
+<overview>
+ A product of Aldis Industries, the company heavily marketed the Behemoth II to worlds who were not necessarily looking for another combat vehicle. 
+</overview>
+
+<deployment>
+This variant keeps the Gauss rifle with two tons of ammunition, but exchanges the rest of the weaponry for a co-axially mounted ER Large Laser, a pair of LRM 20 launchers with four tons of ammunition and a pair of Streak SRM 4 launchers with one ton of ammunition for close-range defense.
+</deployment>
+
+<history>
+The Behemoth II Heavy Tank designed in 3102, which was a vehicle utilized by military forces in the 3100s. The company would end up gifting vehicles to reluctant military commands between 3108 to 3110 in order to promote the vehicle. The efforts would prove to be successful, Sales suddenly skyrocketed with twice as many tanks being sold than they had gifted away. The tank gained a reputation to be feared among MechWarriors during the Victoria War. Among some noted actions using the vehicle, was in 3117, when elements of the 4th Oriente Hussars encountered a platoon of 4 Behemoth II tanks used to help defend the Capellan world of Shuen Wan during a raid. The Capellan defenders utilized the tank's capacities to hold the high deserts plateau where they encountered the Hussars. The Behemoth IIs proved to be resilient in combat and remained operational throughout the fight, forcing the Hussars to withdraw.
+</history>
+
+<manufacturer>
+Aldis Industries,Aldis Industries
+</manufacturer>
+
+<primaryFactory>
+Betelgeuse,Terra
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:Vlar 300 XL Fusion
+ARMOR:ArcShield Max III Advanced Ferro-Fibrous
+COMMUNICATIONS:Olmstead 44
+TARGETING:Omicron VIII
+</systemManufacturers>

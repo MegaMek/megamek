@@ -15,11 +15,16 @@ package megamek.client.ui.swing;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.event.*;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.LinkedList;
@@ -28,7 +33,7 @@ import java.util.LinkedList;
  * ChatterBox keeps track of a player list and a (chat) message buffer. Although
  * it is not an AWT component, it keeps one that it will gladly supply.
  */
-public class ChatterBox implements KeyListener {
+public class ChatterBox implements KeyListener, IPreferenceChangeListener {
     public static final int MAX_HISTORY = 10;
     Client client;
 
@@ -42,8 +47,10 @@ public class ChatterBox implements KeyListener {
 
     public LinkedList<String> history;
     public int historyBookmark = -1;
-
+    protected static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private ChatterBox2 cb2;
+
+    private static final String CB_KEY_ADVANCED_CHATBOXSIZE = "AdvancedChatboxSize";
 
     public ChatterBox(ClientGUI clientgui) {
         client = clientgui.getClient();
@@ -51,60 +58,92 @@ public class ChatterBox implements KeyListener {
             @Override
             public void gamePlayerChat(GamePlayerChatEvent e) {
                 chatArea.append('\n' + e.getMessage());
-                PlayerListDialog.refreshPlayerList(playerList, client);
+                PlayerListDialog pld = clientgui.getPlayerListDialog();
+                if (pld != null) {
+                    pld.refreshPlayerList(playerList, client);
+                }
                 moveToEnd();
             }
 
             @Override
             public void gamePlayerChange(GamePlayerChangeEvent e) {
-                PlayerListDialog.refreshPlayerList(playerList, client);
+                PlayerListDialog pld = clientgui.getPlayerListDialog();
+                if (pld != null) {
+                    pld.refreshPlayerList(playerList, client);
+                }
             }
 
             @Override
             public void gameTurnChange(GameTurnChangeEvent e) {
-                PlayerListDialog.refreshPlayerList(playerList, client);
+                PlayerListDialog pld = clientgui.getPlayerListDialog();
+                if (pld != null) {
+                    pld.refreshPlayerList(playerList, client);
+                }
             }
 
             @Override
             public void gamePhaseChange(GamePhaseChangeEvent e) {
-                PlayerListDialog.refreshPlayerList(playerList, client);
+                PlayerListDialog pld = clientgui.getPlayerListDialog();
+                if (pld != null) {
+                    pld.refreshPlayerList(playerList, client);
+                }
             }
 
             @Override
             public void gameEntityNew(GameEntityNewEvent e) {
-                PlayerListDialog.refreshPlayerList(playerList, client);
-                if (PreferenceManager.getClientPreferences()
-                        .getPrintEntityChange()) {
-                    systemMessage(e.getNumberOfEntities() + " Entities added.");
+                PlayerListDialog pld = clientgui.getPlayerListDialog();
+                if (pld != null) {
+                    pld.refreshPlayerList(playerList, client);
+                }
+
+                if (PreferenceManager.getClientPreferences().getPrintEntityChange()) {
+                    systemMessage(e.getNumberOfEntities() + " " + Messages.getString("ChatterBox.entitiesAdded"));
                 }
             }
 
             @Override
             public void gameEntityRemove(GameEntityRemoveEvent e) {
-                PlayerListDialog.refreshPlayerList(playerList, client);
+                PlayerListDialog pld = clientgui.getPlayerListDialog();
+                if (pld != null) {
+                    pld.refreshPlayerList(playerList, client);
+                }
             }
 
             @Override
             public void gameEntityChange(GameEntityChangeEvent e) {
-                if (PreferenceManager.getClientPreferences()
-                        .getPrintEntityChange()) {
+                if (PreferenceManager.getClientPreferences().getPrintEntityChange()) {
                     systemMessage(e.toString());
                 }
             }
         });
         history = new LinkedList<>();
 
-        chatArea = new JTextArea(" \n", GUIPreferences.getInstance().getInt("AdvancedChatboxSize"), 40);
+        chatArea = new JTextArea(" \n", GUIPreferences.getInstance().getInt(CB_KEY_ADVANCED_CHATBOXSIZE), 40);
         chatArea.setEditable(false);
         chatArea.setLineWrap(true);
         chatArea.setWrapStyleWord(true);
-        chatArea.setFont(new Font("Sans Serif", Font.PLAIN, 12));
         playerList = new JList<>(new DefaultListModel<>());
-        playerList.setVisibleRowCount(GUIPreferences.getInstance().getInt("AdvancedChatboxSize"));
+        playerList.setVisibleRowCount(GUIPreferences.getInstance().getInt(CB_KEY_ADVANCED_CHATBOXSIZE));
         scrPlayers = new JScrollPane(playerList);
-        scrPlayers.setPreferredSize(new Dimension(100, chatArea.getHeight()));
-        inputField = new JTextField();
+        scrPlayers.setPreferredSize(new Dimension(250, chatArea.getHeight()));
+        inputField = new JTextField(Messages.getString("ChatLounge.ChatPlaceholder"));
         inputField.addKeyListener(this);
+        inputField.addFocusListener(new FocusListener() {
+            private final String chatPlaceholder = Messages.getString("ChatLounge.ChatPlaceholder");
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (inputField.getText().equals(chatPlaceholder)) {
+                    inputField.setText("");
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (inputField.getText().equals("")) {
+                    inputField.setText(chatPlaceholder);
+                }
+            }
+        });
         butDone = new JButton(Messages.getString("ChatterBox.ImDone"));
         butDone.setEnabled(false);
 
@@ -116,8 +155,8 @@ public class ChatterBox implements KeyListener {
         playerChatSplit.setResizeWeight(0.01);
         
         JPanel subPanel = new JPanel(new BorderLayout());
-        subPanel.setPreferredSize(new Dimension(284, 100));
-        subPanel.setMinimumSize(new Dimension(284, 100));
+        subPanel.setPreferredSize(new Dimension(284, 80));
+        subPanel.setMinimumSize(new Dimension(284, 80));
         subPanel.add(playerChatSplit, BorderLayout.CENTER);
         subPanel.add(inputField, BorderLayout.SOUTH);
 
@@ -138,6 +177,9 @@ public class ChatterBox implements KeyListener {
         butDone.setPreferredSize(butDone.getSize());
         butDone.setMinimumSize(butDone.getSize());
         chatPanel.setMinimumSize(chatPanel.getPreferredSize());
+
+        adaptToGUIScale();
+        GUIP.addPreferenceChangeListener(this);
     }
 
     /**
@@ -164,7 +206,7 @@ public class ChatterBox implements KeyListener {
      * @param message the <code>String</code> message to be shown.
      */
     public void systemMessage(String message) {
-        chatArea.append("\nMegaMek: " + message);
+        chatArea.append("\n" + Messages.getString("ChatterBox.MegaMek") + " " + message);
         moveToEnd();
     }
 
@@ -229,12 +271,12 @@ public class ChatterBox implements KeyListener {
 
     @Override
     public void keyReleased(KeyEvent ev) {
-        //ignored
+        // ignored
     }
 
     @Override
     public void keyTyped(KeyEvent ev) {
-        //ignored
+        // ignored
     }
 
     public void setMessage(String message) {
@@ -245,6 +287,18 @@ public class ChatterBox implements KeyListener {
         this.cb2 = cb2;
     }
 
+    private void adaptToGUIScale() {
+        UIUtil.adjustContainer(chatPanel, UIUtil.FONT_SCALE1);
+        UIUtil.adjustContainer(butDone, UIUtil.FONT_SCALE1);
+    }
 
+    @Override
+    public void preferenceChange(PreferenceChangeEvent e) {
+        switch (e.getName()) {
+            case GUIPreferences.GUI_SCALE:
+                adaptToGUIScale();
+                break;
 
+        }
+    }
 }

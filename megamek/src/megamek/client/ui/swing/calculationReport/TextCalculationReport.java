@@ -18,6 +18,8 @@
  */
 package megamek.client.ui.swing.calculationReport;
 
+import megamek.MMConstants;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
@@ -131,7 +133,7 @@ public class TextCalculationReport implements CalculationReport {
         final JEditorPane editorPane = new JEditorPane("text/plain", this.toString());
         editorPane.setEditable(false);
         editorPane.setCaretPosition(0);
-        editorPane.setFont(new Font("Monospaced", Font.PLAIN, editorPane.getFont().getSize()));
+        editorPane.setFont(new Font(MMConstants.FONT_MONOSPACED, Font.PLAIN, editorPane.getFont().getSize()));
         return editorPane;
     }
 

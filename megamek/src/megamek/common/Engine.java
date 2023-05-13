@@ -15,6 +15,8 @@
 package megamek.common;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class represents an engine, such as those driving 'Meks.
@@ -307,6 +309,10 @@ public class Engine implements Serializable, ITechnology {
         return engineType == FISSION;
     }
 
+    public boolean isSolar() {
+        return engineType == SOLAR;
+    }
+
     /**
      * Returns the weight of the engine in tons, rounded to the next highest half
      * ton.
@@ -450,6 +456,16 @@ public class Engine implements Serializable, ITechnology {
         }
     }
 
+    public static List<String> getEngineTypes() {
+        List<String> result = new ArrayList<>();
+
+        for (int i = 0; i < Engine.NUM_ENGINE_TYPES; i++) {
+            result.add(Messages.getString("Engine." + TYPE_KEYS[i]));
+        }
+
+        return result;
+    }
+
     /**
      * This returns a non-localized name of the engine, it's mostly used to
      * generate files.
@@ -590,24 +606,22 @@ public class Engine implements Serializable, ITechnology {
      * @return the heat generated while the mech is standing still.
      */
     public int getStandingHeat() {
-        if (engineType == XXL_ENGINE) {
-            return 2;
-        }
-        return 0;
+        return (engineType == XXL_ENGINE) ? 2 : 0;
     }
 
     /**
      * @return the heat generated while the mech is walking.
      */
     public int getWalkHeat(Entity e) {
+        boolean hasSCM = (e instanceof Mech) && e.hasWorkingSCM();
         switch (engineType) {
             case COMBUSTION_ENGINE:
             case FUEL_CELL:
                 return 0;
             case XXL_ENGINE:
-                return 4;
+                return hasSCM ? 3 : 4;
             default:
-                return 1;
+                return hasSCM ? 0 : 1;
         }
     }
 
@@ -615,29 +629,31 @@ public class Engine implements Serializable, ITechnology {
      * @return the heat generated while the mech is running.
      */
     public int getRunHeat(Entity e) {
+        boolean hasSCM = (e instanceof Mech) && e.hasWorkingSCM();
         switch (engineType) {
             case COMBUSTION_ENGINE:
             case FUEL_CELL:
                 return 0;
             case XXL_ENGINE:
-                return 6;
+                return hasSCM ? 4 : 6;
             default:
-                return 2;
+                return hasSCM ? 0 : 2;
         }
     }
 
     /**
      * @return the heat generated while the mech is sprinting.
      */
-    public int getSprintHeat() {
+    public int getSprintHeat(Entity e) {
+        boolean hasSCM = (e instanceof Mech) && e.hasWorkingSCM();
         switch (engineType) {
             case COMBUSTION_ENGINE:
             case FUEL_CELL:
                 return 0;
             case XXL_ENGINE:
-                return 9;
+                return hasSCM ? 6 : 9;
             default:
-                return 3;
+                return hasSCM ? 0 : 3;
         }
     }
 

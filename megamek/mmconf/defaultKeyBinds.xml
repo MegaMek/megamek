@@ -78,15 +78,15 @@
     </KeyBind>
 
     <KeyBind>
-         <command>nextWeapon</command> <!-- E -->
-        <keyCode>69</keyCode>
+         <command>nextWeapon</command> <!-- Down -->
+        <keyCode>40</keyCode>
         <modifier>0</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-         <command>prevWeapon</command> <!-- Q -->
-        <keyCode>81</keyCode>
+         <command>prevWeapon</command> <!-- Up -->
+        <keyCode>38</keyCode>
         <modifier>0</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
@@ -106,63 +106,63 @@
     </KeyBind>
 
     <KeyBind>
-         <command>nextTarget</command> <!-- Dead Acute -->
-        <keyCode>129</keyCode>
+         <command>nextTarget</command> <!-- Right -->
+        <keyCode>39</keyCode>
         <modifier>0</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-         <command>prevTarget</command> <!-- Dead Acute -->
-        <keyCode>129</keyCode>
+         <command>prevTarget</command> <!-- Left -->
+        <keyCode>37</keyCode>
         <modifier>0</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-         <command>nextTargetValid</command> <!-- Dead Acute -->
-        <keyCode>129</keyCode>
-        <modifier>0</modifier>
+         <command>nextTargetValid</command> <!-- Shift-Right -->
+        <keyCode>39</keyCode>
+        <modifier>64</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-         <command>prevTargetValid</command> <!-- Dead Acute -->
-        <keyCode>129</keyCode>
-        <modifier>0</modifier>
+         <command>prevTargetValid</command> <!-- Shift-Left -->
+        <keyCode>37</keyCode>
+        <modifier>64</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-         <command>nextTargetNoAllies</command> <!-- Dead Acute -->
-        <keyCode>129</keyCode>
-        <modifier>0</modifier>
+         <command>nextTargetNoAllies</command> <!-- Ctrl-Right -->
+        <keyCode>39</keyCode>
+        <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-         <command>prevTargetNoAllies</command> <!-- Dead Acute -->
-        <keyCode>129</keyCode>
-        <modifier>0</modifier>
+         <command>prevTargetNoAllies</command> <!-- Ctrl-Left -->
+        <keyCode>37</keyCode>
+        <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-         <command>nextTargetValidNoAllies</command> <!-- C -->
-        <keyCode>67</keyCode>
-        <modifier>0</modifier>
+         <command>nextTargetValidNoAllies</command> <!-- Ctrl+Shift-Right -->
+        <keyCode>39</keyCode>
+        <modifier>192</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-         <command>prevTargetValidNoAllies</command> <!-- Z -->
-        <keyCode>90</keyCode>
-        <modifier>0</modifier>
+         <command>prevTargetValidNoAllies</command> <!-- Ctrl+Shift-Left -->
+        <keyCode>37</keyCode>
+        <modifier>192</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-        <command>viewActingUnit</command> <!-- V -->
+         <command>viewActingUnit</command> <!-- V -->
         <keyCode>86</keyCode>
         <modifier>0</modifier>
         <isRepeatable>false</isRepeatable>
@@ -197,8 +197,8 @@
     </KeyBind>
 
     <KeyBind>
-         <command>autoArtyDeployZone</command> <!-- Shift-Space -->
-        <keyCode>32</keyCode>
+         <command>autoArtyDeployZone</command> <!-- Shift-Z -->
+        <keyCode>90</keyCode>
         <modifier>64</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
@@ -214,6 +214,13 @@
          <command>done</command> <!-- Ctrl-Enter -->
         <keyCode>10</keyCode>
         <modifier>128</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>doneNoAction</command> <!-- Ctrl+Alt-Enter -->
+        <keyCode>10</keyCode>
+        <modifier>640</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
@@ -274,15 +281,15 @@
     </KeyBind>
 
     <KeyBind>
-         <command>prevMode</command> <!-- Tab -->
-        <keyCode>9</keyCode>
+         <command>prevMode</command> <!-- Down -->
+        <keyCode>225</keyCode>
         <modifier>0</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-         <command>nextMode</command> <!-- Tab -->
-        <keyCode>9</keyCode>
+         <command>nextMode</command> <!-- Up -->
+        <keyCode>224</keyCode>
         <modifier>0</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
@@ -302,9 +309,9 @@
     </KeyBind>
 
     <KeyBind>
-         <command>fieldOfFire</command> <!-- Ctrl-F -->
-        <keyCode>70</keyCode>
-        <modifier>128</modifier>
+         <command>fieldOfFire</command> <!-- R -->
+        <keyCode>82</keyCode>
+        <modifier>0</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
@@ -353,6 +360,13 @@
     <KeyBind>
          <command>toggleKeybinds</command> <!-- Ctrl-K -->
         <keyCode>75</keyCode>
+        <modifier>128</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>togglePlanetaryConditions</command> <!-- Ctrl-P -->
+        <keyCode>80</keyCode>
         <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>

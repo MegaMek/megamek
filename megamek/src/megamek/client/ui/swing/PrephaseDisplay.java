@@ -39,7 +39,6 @@ import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
-import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameEntityChangeEvent;
@@ -47,9 +46,11 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import org.apache.logging.log4j.LogManager;
 
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
+
 /**
- * Targeting Phase Display. Breaks naming convention because TargetingDisplay is too easy to confuse
- * with something else
+ * PrephaseDisplay for revealing hidden units. This occurs before Move and Firing
  */
 public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         KeyListener, ItemListener, ListSelectionListener {
@@ -57,11 +58,9 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
 
     /**
      * This enumeration lists all of the possible ActionCommands that can be
-     * carried out during the deploy minefield phase.  Each command has a string
+     * carried out during the Prephase.  Each command has a string
      * for the command plus a flag that determines what unit type it is
      * appropriate for.
-     *
-     * @author arlith
      */
     public enum PrephaseCommand implements PhaseCommand {
         PREPHASE_NEXT("prephaseNext"),
@@ -98,16 +97,27 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         public String toString() {
             return Messages.getString("PrephaseDisplay." + getCmd());
         }
+
+        public String getHotKeyDesc() {
+            String result = "";
+
+            String msg_next= Messages.getString("Next");
+            String msg_previous = Messages.getString("Previous");
+
+            if (this == PREPHASE_NEXT) {
+                result = "<BR>";
+                result += "&nbsp;&nbsp;" + msg_next + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT);
+                result += "&nbsp;&nbsp;" + msg_previous + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_UNIT);
+            }
+
+            return result;
+        }
     }
 
     // buttons
     protected Map<PrephaseCommand, MegamekButton> buttons;
 
-    // let's keep track of what we're shooting and at what, too
     private int cen = Entity.NONE; // current entity number
-
-    // is the shift key held?
-    private boolean shiftheld;
 
     private final GamePhase phase;
 
@@ -119,34 +129,40 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         super(clientgui);
         this.phase = phase;
 
-        setupStatusBar(Messages
-                .getFormattedString("PrephaseDisplay.waitingForPrephasePhase", phase.toString()));
+        setupStatusBar(Messages.getFormattedString("PrephaseDisplay.waitingForPrephasePhase", phase.toString()));
 
-        buttons = new HashMap<>(
-                (int) (PrephaseCommand.values().length * 1.25 + 0.5));
-        for (PrephaseCommand cmd : PrephaseCommand.values()) {
-            String title = Messages.getString("PrephaseDisplay."
-                    + cmd.getCmd());
-            MegamekButton newButton = new MegamekButton(title,
-                    SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
-            String ttKey = "PrephaseDisplay." + cmd.getCmd() + ".tooltip";
-            if (Messages.keyExists(ttKey)) {
-                newButton.setToolTipText(Messages.getString(ttKey));
-            }
-            newButton.addActionListener(this);
-            newButton.setActionCommand(cmd.getCmd());
-            newButton.setEnabled(false);
-
-            buttons.put(cmd, newButton);
-        }
-        numButtonGroups = (int) Math.ceil((buttons.size() + 0.0)
-                / buttonsPerGroup);
+        setButtons();
+        setButtonsTooltips();
 
         butDone.setText(Messages.getString("PrephaseDisplay.Done"));
         butDone.setEnabled(false);
 
         setupButtonPanel();
 
+        registerKeyCommands();
+    }
+
+    @Override
+    protected void setButtons() {
+        buttons = new HashMap<>((int) (PrephaseCommand.values().length * 1.25 + 0.5));
+        for (PrephaseCommand cmd : PrephaseCommand.values()) {
+            buttons.put(cmd, createButton(cmd.getCmd(), "PrephaseDisplay."));
+        }
+        numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
+    }
+
+    @Override
+    protected void setButtonsTooltips() {
+        for (PrephaseCommand cmd : PrephaseCommand.values()) {
+            String tt = createToolTip(cmd.getCmd(), "PrephaseDisplay.", cmd.getHotKeyDesc());
+            buttons.get(cmd).setToolTipText(tt);
+        }
+    }
+
+    /**
+     * Register all of the <code>CommandAction</code>s for this panel display.
+     */
+    protected void registerKeyCommands() {
         MegaMekController controller = clientgui.controller;
         final StatusBarPhaseDisplay display = this;
 
@@ -231,7 +247,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
      * Selects an entity, by number, for targeting.
      */
     private void selectEntity(int en) {
-        // clear any previously considered attacks
+        // clear any previously considered actions
         if (en != cen) {
             refreshAll();
         }
@@ -290,9 +306,10 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
 
         setStatusBarText(Messages.getFormattedString("PrephaseDisplay.its_your_turn", phase.toString(), ce.getDisplayName()));
 
-        boolean isRevealing = ce.getHiddenActivationPhase() != GamePhase.UNKNOWN;
+        boolean isRevealing = !ce.getHiddenActivationPhase().isUnknown();
         setRevealEnabled(!isRevealing);
         setCancelRevealEnabled(isRevealing);
+        setNextEnabled(true);
         butDone.setEnabled(true);
     }
 
@@ -304,10 +321,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
     public void ready() {
         // stop further input (hopefully)
         disableButtons();
-
-        clientgui.getClient().sendUpdateEntity(ce());
         clientgui.getClient().sendPrephaseData(cen);
-
         endMyTurn();
     }
 
@@ -318,23 +332,13 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         setStatusBarText(Messages.getFormattedString("PrephaseDisplay.its_your_turn", phase.toString(), ""));
         butDone.setText("<html><b>" + Messages.getString("PrephaseDisplay.Done") + "</b></html>");
 
-        clientgui.getBoardView().clearFieldofF();
+        clientgui.getBoardView().clearFieldOfFire();
+
+        selectEntity(clientgui.getClient().getFirstEntityNum());
 
         if (!clientgui.getBoardView().isMovingUnits()) {
             clientgui.maybeShowUnitDisplay();
         }
-
-        // make best guess at next unit to select
-        int nextId = Entity.NONE;
-        Entity next = clientgui.getClient().getGame()
-                .getNextEntity(clientgui.getClient().getGame().getTurnIndex());
-
-        if (next == null) {
-            nextId = clientgui.getClient().getFirstEntityNum();
-        } else {
-            nextId = next.getId();
-        }
-        selectEntity(nextId);
 
         clientgui.getBoardView().select(null);
         setupButtonPanel();
@@ -345,22 +349,15 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
      * Does end turn stuff.
      */
     private void endMyTurn() {
-        Entity next = clientgui.getClient().getGame()
-                .getNextEntity(clientgui.getClient().getGame().getTurnIndex());
-        if ((phase == clientgui.getClient().getGame().getPhase())
-                && (null != next) && (null != ce())
-                && (next.getOwnerId() != ce().getOwnerId())) {
-            clientgui.setUnitDisplayVisible(false);
-        }
-
         cen = Entity.NONE;
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().highlight(null);
         clientgui.getBoardView().cursor(null);
         clientgui.getBoardView().clearFiringSolutionData();
         clientgui.getBoardView().clearMovementData();
-        clientgui.getBoardView().clearFieldofF();
+        clientgui.getBoardView().clearFieldOfFire();
         clientgui.setSelectedEntityNum(Entity.NONE);
+
         refreshButtons();
     }
 
@@ -375,7 +372,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
     }
 
     private GamePhase revealInPhase() {
-        return phase == GamePhase.PREMOVEMENT ? GamePhase.MOVEMENT : GamePhase.FIRING;
+        return phase.isPremovement() ? GamePhase.MOVEMENT : GamePhase.FIRING;
     }
 
     private void reveal() {
@@ -438,9 +435,8 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
     // GameListener
     @Override
     public void gameTurnChange(GameTurnChangeEvent e) {
-
         // In case of a /reset command, ensure the state gets reset
-        if (clientgui.getClient().getGame().getPhase() == GamePhase.LOUNGE) {
+        if (clientgui.getClient().getGame().getPhase().isLounge()) {
             endMyTurn();
         }
         // On simultaneous phases, each player ending their turn will generate a turn change
@@ -501,6 +497,13 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
+        // Reviewers: Is this the right place to catch the change applied by a server packet
+        // that changes an entity from done to not-done?
+        if (ce().isDone())
+        {
+            selectEntity(clientgui.getClient().getNextEntityNum(cen));
+        }
+
         refreshButtons();
     }
 
@@ -524,8 +527,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         }
 
         if (ev.getActionCommand().equals(PrephaseCommand.PREPHASE_NEXT.getCmd())) {
-            selectEntity(clientgui.getClient()
-                    .getNextEntityNum(cen));
+            selectEntity(clientgui.getClient().getNextEntityNum(cen));
         }
     }
 

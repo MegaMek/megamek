@@ -20,8 +20,11 @@ package megamek.common.alphaStrike;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
+import megamek.common.ForceAssignable;
 import megamek.common.UnitRole;
+import megamek.common.force.Force;
 import megamek.common.options.Quirks;
+import megamek.common.strategicBattleSystems.BattleForceSUAFormatter;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
@@ -36,8 +39,8 @@ import java.util.Set;
  * @author Neoancient
  * @author Simon (Juliez)
  */
-public class AlphaStrikeElement implements Serializable, ASCardDisplayable,
-        ASSpecialAbilityCollector {
+public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSpecialAbilityCollector,
+        BattleForceSUAFormatter, ForceAssignable {
 
     static final int RANGEBANDS_SML = 3;
     static final int RANGEBANDS_SMLE = 4;
@@ -63,6 +66,11 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable,
     private int pointValue;
     private transient CalculationReport conversionReport = new DummyCalculationReport();
 
+    private String forceString = "";
+    private int forceId = Force.NO_FORCE;
+    private int id;
+    private int ownerId;
+
     private ASUnitType asUnitType;
     private int size;
     private int tmm;
@@ -79,10 +87,10 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable,
     private int overheat;
 
     // The arcs of Large Aerospace units. Other units use standardDamage instead
-    private ASSpecialAbilityCollection frontArc = new ASSpecialAbilityCollection();
-    private ASSpecialAbilityCollection leftArc = new ASSpecialAbilityCollection();
-    private ASSpecialAbilityCollection rightArc = new ASSpecialAbilityCollection();
-    private ASSpecialAbilityCollection rearArc = new ASSpecialAbilityCollection();
+    private ASArcSummary frontArc = new ASArcSummary();
+    private ASArcSummary leftArc = new ASArcSummary();
+    private ASArcSummary rightArc = new ASArcSummary();
+    private ASArcSummary rearArc = new ASArcSummary();
 
     private int currentArmor;
     private int currentStructure;
@@ -220,22 +228,22 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable,
     }
 
     @Override
-    public ASSpecialAbilityCollection getFrontArc() {
+    public ASArcSummary getFrontArc() {
         return frontArc;
     }
 
     @Override
-    public ASSpecialAbilityCollection getLeftArc() {
+    public ASArcSummary getLeftArc() {
         return leftArc;
     }
 
     @Override
-    public ASSpecialAbilityCollection getRightArc() {
+    public ASArcSummary getRightArc() {
         return rightArc;
     }
 
     @Override
-    public ASSpecialAbilityCollection getRearArc() {
+    public ASArcSummary getRearArc() {
         return rearArc;
     }
 
@@ -397,7 +405,7 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable,
     }
 
     /** Sets the AS element's special ability collection to the given one, if it is not null. */
-    public void setArc(ASArcs arc, ASSpecialAbilityCollection arcSummary) {
+    public void setArc(ASArcs arc, ASArcSummary arcSummary) {
         Objects.requireNonNull(arc);
         Objects.requireNonNull(arcSummary);
         if (arc == ASArcs.FRONT) {
@@ -443,7 +451,7 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable,
     }
 
     @Override
-    public String getSpecialsDisplayString(String delimiter, ASCardDisplayable element) {
+    public String getSpecialsDisplayString(String delimiter, BattleForceSUAFormatter element) {
         return specialAbilities.getSpecialsDisplayString(delimiter, this);
     }
 
@@ -483,5 +491,50 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable,
      */
     public Set<String> getMovementModes() {
         return movement.keySet();
+    }
+
+    @Override
+    public int getId() {
+        return id;
+    }
+
+    @Override
+    public String getForceString() {
+        return forceString;
+    }
+
+    @Override
+    public void setForceString(String newForceString) {
+        forceString = newForceString;
+    }
+
+    @Override
+    public int getForceId() {
+        return forceId;
+    }
+
+    @Override
+    public void setForceId(int newId) {
+        forceId = newId;
+    }
+
+    @Override
+    public int getOwnerId() {
+        return ownerId;
+    }
+
+    @Override
+    public int getStrength() {
+        return getPointValue();
+    }
+
+    @Override
+    public boolean showSUA(BattleForceSUA sua) {
+        return !AlphaStrikeHelper.hideSpecial(sua, this);
+    }
+
+    @Override
+    public String formatSUA(BattleForceSUA sua, String delimiter, ASSpecialAbilityCollector collection) {
+        return AlphaStrikeHelper.formatAbility(sua, collection, this, delimiter);
     }
 }

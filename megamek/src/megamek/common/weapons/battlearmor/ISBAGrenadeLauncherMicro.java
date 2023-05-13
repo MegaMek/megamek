@@ -37,8 +37,8 @@ public class ISBAGrenadeLauncherMicro extends Weapon {
         minimumRange = WEAPON_NA;
         shortRange = 1;
         mediumRange = 2;
-        longRange = 3;
-        extremeRange = 4;
+        longRange = 2;
+        extremeRange = 2;
         tonnage = 0.075;
         criticals = 1;
         bv = 1;

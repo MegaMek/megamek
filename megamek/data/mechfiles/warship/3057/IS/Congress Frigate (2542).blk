@@ -1,0 +1,256 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Congress Frigate
+</Name>
+
+<Model>
+(2542)
+</Model>
+
+<mul id:>
+3989
+</mul id:>
+
+<year>
+2542
+</year>
+
+<originalBuildYear>
+2542
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+asfbay:6.0:1:1
+smallcraftbay:4.0:1:2
+cargobay:171591.5:1:3
+dockingcollar
+dockingcollar
+1stclassquarters:430.0:0
+crewquarters:1491.0:0
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+604
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+5000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+11
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+75
+72
+72
+75
+72
+72
+</armor>
+
+<Nose Equipment>
+(B) Capital Missile Launcher (Killer Whale)
+Ammo Killer Whale:10
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:70
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:70
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Naval Autocannon (NAC/30)
+Naval Autocannon (NAC/30)
+Ammo NAC/30:50
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/30)
+Ammo NAC/10:70
+Ammo NAC/30:25
+(B) Large Laser
+Large Laser
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/30)
+Ammo NAC/10:70
+Ammo NAC/30:25
+(B) Large Laser
+Large Laser
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+ISLargeNavalCommScannerSuite
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:70
+(B) Large Laser
+Large Laser
+(B) Capital Missile Launcher (White Shark)
+Ammo White Shark:10
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:70
+(B) Large Laser
+Large Laser
+(B) Capital Missile Launcher (White Shark)
+Ammo White Shark:10
+</Right Broadsides Equipment>
+
+<structural_integrity>
+75
+</structural_integrity>
+
+<capabilities>
+Capable of 1.5 Gs of acceleration, the Congress was swift and well-armed for a convoy escort of the era, also equipped with some of the most advanced and sophisticated sensor systems to perform its secondary role as an information-gathering vessel in enemy territory. Introduced in 2542, the genesis of the Congress was marred by a three year legal battle after Challenge Systems of the Federated Suns world of Galax accused DeKirk Aerospace of industrial espionage and theft of the ship's design, with the Terran Hegemony finally brokering a compromise deal in 2540. While no party admitted liability, Challenge was included as a partner in construction and the Armed Forces of the Federated Suns received a heavy discount on orders for the Congress with the more advanced Hegemony technology absent.
+</capabilities>
+
+<overview>
+Built to replace the sluggish and outmoded Quixote-class, the Congress-class frigate was one of the swiftest convoy escort and reconnaissance WarShips built in the 26th century.
+</overview>
+
+<deployment>
+The Congress's main armament is sixteen Naval Autocannons, eight Armstrong LN-10 Naval Autocannon NAC/10's along the forward angles and eight Oriente-30 NAC/30s mounted in the rear quarters, secondary firepower coming in the form of Capital Missile Launchers with a massive Killer Whale missile tube mounted in the nose, with a White Shark launcher fitted in each broadside. Eight Magna Large Lasers provide scant protection against fighters.
+</deployment>
+
+<history>
+Introduced in 2542, the genesis of the Congress was marred by a three year legal battle after Challenge Systems of the Federated Suns world of Galax accused DeKirk Aerospace of industrial espionage and theft of the ship's design, with the Terran Hegemony finally brokering a compromise deal in 2540. While no party admitted liability, Challenge was included as a partner in construction and the Armed Forces of the Federated Suns received a heavy discount on orders for the Congress with the more advanced Hegemony technology absent.
+</history>
+
+<manufacturer>
+Challenge Systems,Dekirk Aerospace
+</manufacturer>
+
+<primaryFactory>
+Galax,Graham IV
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Convoy Escort/Reconnaissance
+</use>
+
+<length>
+703 m
+</length>
+
+<source>
+TRO 3057R - Age of War
+</source>
+
+<tonnage>
+760000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+90
+</grav_decks>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+288
+</crew>
+
+<officers>
+43
+</officers>
+
+<gunners>
+21
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+8
+</life_boat>
+
+<escape_pod>
+8
+</escape_pod>
+

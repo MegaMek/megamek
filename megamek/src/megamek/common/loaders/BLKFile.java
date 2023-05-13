@@ -878,9 +878,9 @@ public class BLKFile {
         } else if (t instanceof Infantry) {
             Infantry infantry = (Infantry) t;
             blk.writeBlockData("squad_size", infantry.getSquadSize());
-            blk.writeBlockData("squadn", infantry.getSquadN());
-            if (infantry.getSecondaryN() > 0) {
-                blk.writeBlockData("secondn", infantry.getSecondaryN());
+            blk.writeBlockData("squadn", infantry.getSquadCount());
+            if (infantry.getSecondaryWeaponsPerSquad() > 0) {
+                blk.writeBlockData("secondn", infantry.getSecondaryWeaponsPerSquad());
             }
             if (null != infantry.getPrimaryWeapon()) {
                 blk.writeBlockData("Primary", infantry.getPrimaryWeapon()

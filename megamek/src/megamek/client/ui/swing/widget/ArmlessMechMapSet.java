@@ -15,6 +15,7 @@
  */
 package megamek.client.ui.swing.widget;
 
+import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
@@ -121,10 +122,11 @@ public class ArmlessMechMapSet implements DisplayMapSet {
 
     private Image heatImage;
 
-    private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN,
-            GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize"));
-    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN,
-            GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize"));
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+    private static final Font FONT_LABEL = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
+            GUIP.getUnitDisplayMechArmorSmallFontSize());
+    private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
+            GUIP.getUnitDisplayMechArmorLargeFontSize());
 
     public ArmlessMechMapSet(JComponent c, UnitDisplay unitDisplay) {
         this.unitDisplay = unitDisplay;

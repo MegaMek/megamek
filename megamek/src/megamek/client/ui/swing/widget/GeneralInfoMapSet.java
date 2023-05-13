@@ -15,6 +15,7 @@
 */
 package megamek.client.ui.swing.widget;
 
+import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.*;
@@ -43,10 +44,13 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             elevationR, fuelR, curSensorsR, visualRangeR;
     private PMMultiLineLabel quirksAndPartReps;
     private Vector<BackGroundDrawer> bgDrawers = new Vector<>();
-    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN,
-            GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize"));
-    private static final Font FONT_TITLE = new Font("SansSerif", Font.ITALIC,
-            GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize"));
+
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
+    private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
+            GUIP.getUnitDisplayMechLargeFontSize());
+    private static final Font FONT_TITLE = new Font(MMConstants.FONT_SANS_SERIF, Font.ITALIC,
+            GUIP.getUnitDisplayMechLargeFontSize());
     private int yCoord = 1;
 
     /**
@@ -347,7 +351,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             heatCapacityStr = heatCap + " [" + heatCapWater + "]";
         }
 
-        heatR.color = GUIPreferences.getInstance().getColorForHeat(en.heat, Color.WHITE);
+        heatR.color = GUIP.getColorForHeat(en.heat, Color.WHITE);
         heatR.setString(en.heat
                 + " (" + heatCapacityStr + " " + Messages.getString("GeneralInfoMapSet.capacity") + ")");
 

@@ -1,0 +1,310 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Volga Transport
+</Name>
+
+<Model>
+(2709)
+</Model>
+
+<mul id:>
+5361
+</mul id:>
+
+<year>
+2709
+</year>
+
+<originalBuildYear>
+2709
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+asfbay:6.0:2:1
+asfbay:6.0:2:2
+cargobay:213510.5:1:3
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+1stclassquarters:470.0:0
+crewquarters:1631.0:0
+</transporters>
+
+<SafeThrust>
+2
+</SafeThrust>
+
+<heatsinks>
+477
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+4750
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+13
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+120
+106
+106
+112
+106
+106
+</armor>
+
+<Nose Equipment>
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+(B) ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:200
+(B) Naval Laser 45
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+(B) Naval Autocannon (NAC/30)
+Naval Autocannon (NAC/30)
+Ammo NAC/30:270
+(B) Naval Laser 45
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+(B) Naval Autocannon (NAC/30)
+Naval Autocannon (NAC/30)
+Ammo NAC/30:270
+(B) Naval Laser 45
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+(B) ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:200
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+(B) Naval Laser 45
+Naval Laser 45
+(B) PPC
+PPC
+PPC
+PPC
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+(B) Naval Laser 45
+Naval Laser 45
+(B) PPC
+PPC
+PPC
+PPC
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+(B) Naval Laser 35
+Naval Laser 35
+(B) Naval Gauss (Heavy)
+Ammo Heavy N-Gauss:100
+(B) PPC
+PPC
+PPC
+PPC
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+(B) Naval Laser 35
+Naval Laser 35
+(B) Naval Gauss (Heavy)
+Ammo Heavy N-Gauss:100
+(B) PPC
+PPC
+PPC
+PPC
+</Right Broadsides Equipment>
+
+<structural_integrity>
+75
+</structural_integrity>
+
+<capabilities>
+In the nose bay, two NAC/20s, an NL45, and four ER large lasers, medium lasers and medium pulse lasers each provide notable head-on firepower, backed up by two NAC/30s, another NL45 along with another four ER large and medium lasers in each front quarter. Each broadside carries two NL35s and a heavy N-Gauss cannon, backed up four ER PPCs and medium pulse lasers. The aft quarters carry two NL45, four ER PPCs, four large pulse lasers, directly aft mirroring the nose bay, save for excluding the naval laser. The Volgas lack of firepower is further hampered by a poorly designed coolant circuit, allowing only 45 percent of its weapons to operate at any given time.
+</capabilities>
+
+<overview>
+The Volga-class tranport was developed in response to an SLDF commission for an armored cargo transport vessel able to ensure the steady supply and support of Star League bases in the Periphery states.
+</overview>
+
+<deployment>
+Intended as a transport, the Volga carries a weapons array geared towards defense against aerospace fighters, a rarity for Star League era craft, proving only marginally effective against other WarShips.
+</deployment>
+
+<history>
+Eaton AeroSpace used the hull of the mothballed Quixote-class frigate as the basis of their design; the small drive that doomed the Quixote enabled the Volga to carry an unusually large amount of cargo - almost 25 percent of the vessel's mass. The well armored Volga saw extensive action during the war to liberate Terra, but a lack of firepower and a poorly designed coolant system resulted in the destruction of more than 200 Volgas during the Amaris crisis. Only about two dozen of the class survived to join the Exodus fleet, finally returning to the Inner Sphere in the fleets of several Clans in the wake of the Battle of Tukayyid, transporting troops and matériel between the occupation zones and Clan Homeworlds.
+</history>
+
+<manufacturer>
+Eaton AeroSpace
+</manufacturer>
+
+<primaryFactory>
+Inglesmond
+</primaryFactory>
+
+<use>
+Transport
+</use>
+
+<length>
+715 m
+</length>
+
+<source>
+TRO3057R - Star League
+</source>
+
+<tonnage>
+780000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+145
+120
+</grav_decks>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+304
+</crew>
+
+<officers>
+47
+</officers>
+
+<gunners>
+33
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+20
+</life_boat>
+
+<escape_pod>
+20
+</escape_pod>
+

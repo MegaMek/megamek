@@ -1,0 +1,171 @@
+Version:1.0
+Black Knight
+BL-18-KNT
+mul id:7791
+
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3130
+source:Rec Guide:ilClan #12 - Dark Age
+rules level:2
+
+mass:75
+engine:300 Light Engine(IS)
+structure:IS Endo-Composite
+myomer:Standard
+
+heat sinks:20 Clan Double
+walk mp:4
+jump mp:0
+
+armor:Standard(Clan)
+LA armor:24
+RA armor:24
+LT armor:24
+RT armor:24
+CT armor:29
+HD armor:9
+LL armor:24
+RL armor:24
+RTL armor:8
+RTR armor:8
+RTC armor:10
+
+Weapons:8
+ER Medium Laser, Left Arm
+ER PPC, Right Arm
+ER Medium Laser, Right Arm
+ER Large Laser, Left Torso
+ER Medium Laser, Left Torso
+ER Large Laser, Right Torso
+ER Medium Laser, Right Torso
+Small Pulse Laser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERMediumLaser
+IS Endo-Composite
+IS Endo-Composite
+IS Endo-Composite
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERPPC
+CLERPPC
+CLERMediumLaser
+IS Endo-Composite
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERLargeLaser
+CLERMediumLaser
+IS Endo-Composite
+IS Endo-Composite
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERLargeLaser
+CLERMediumLaser
+ISTargeting Computer
+ISTargeting Computer
+ISTargeting Computer
+ISTargeting Computer
+ISTargeting Computer
+IS Endo-Composite
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+BeagleActiveProbe
+BeagleActiveProbe
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLSmallPulseLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Black Knight was introduced in 2578 both as a front-line combatant and as a command BattleMech at the company and battalion level for the Star League Defense Force. 
+
+capabilities:Thirteen tons of armor protection on an Endo Steel frame allows the Black Knight to withstand significant punishment. The biggest disadvantage of the design is its challenging heat curve, though the fact that it mounts twenty of them ensures that the Black Knight can still disperse a significant amount of heat produced by its weapons. However, if the 'Mech is involved in a prolonged combat situation, a less experienced MechWarrior who is not competent at heat management may be in trouble. The Black Knight's superior communications equipment allowed it to readily coordinate a whole company of 'Mechs at the same time, as well as link together the command frequencies of an entire parent regiment and connect with orbital support satellites. Improved construction materials provided the Black Knight with a light but sturdy chassis capable of carrying more weaponry and armor for less weight. With the type and amount of weapons carried by the 'Mech, the only challenge the Black Knight faces is heat management.
+
+deployment:Produced for the Republic of the Sphere by Kong Interstellar, this variant uses a Light Engine to run at 64 km/h. The Endo-Composite frame carries a Clan-spec ER PPC, two ER Large Lasers, and four ER medium lasers. For anti-infantry work, a Clan Small Pulse Laser is mounted in the head. Twenty Clan-built double heat sinks are provided to keep the 'Mech cool. All these weapons are tied into an Inner Sphere Targeting Computer. 
+
+history:The Black Knight first debuted in the Reunification War when they were fielded by the 3rd Heavy Assault Regiment in combat with the Taurian Concordat; following its success it was soon adopted by I Corps and the rest of the SLDF. When the Star League collapsed, Kong Interstellar continued producing Black Knights until their Connaught orbital factory was destroyed in 2802. In 2809, Kong was able to restart their production line, but was no longer capable of producing many of the more advanced components found in the Black Knight. As a result, Kong was forced to design a downgraded version, the BL-7-KNT. Finally the Black Knight production line was permanently destroyed in a raid by the Capellan Confederation in 2820, reducing the company to producing low-grade spare parts and performing maintenance. During the Succession Wars many Black Knights fell into the hands of the Great Houses, although as the years progressed they were increasingly forced to repair them with inferior components and their numbers slowly decreased. Some were modified with a number of nonstandard components such as jump jets but few if any survived into the thirty-first century. ComStar's stockpiles of Star League 'Mechs included the Black Knight, which they found to be an excellent command unit for Level II and Level III units when the Com Guards were formed, but the very few Black Knights gifted to the Draconis Combine during Operation ROSEBUD was apparently the result of a clerical error. For their part the Clans maintained the Black Knight, although by the time of the Clan Invasion it was reserved for solahma units. The Black Knight was one of several Clanbusters put together by ComStar leading up to the Battle of Tukayyid, and in 3063 Robinson Standard BattleWorks secured a license from Kong Interstellar to build a new variant, the BL-12-KNT. Two years later KIC finished rebuilding their plant and began producing Black Knights of their own.
+
+manufacturer:Kong Interstellar Corporation
+primaryfactory:Connaught
+systemmanufacturer:CHASSIS:Technicron Revised NT Endo-Composite
+systemmanufacturer:ENGINE:Vlar 300 Light
+systemmanufacturer:ARMOR:Valiant Lamellor
+systemmanufacturer:COMMUNICATIONS:TransComm Alpha
+systemmanufacturer:TARGETING:TransComm Beta
+

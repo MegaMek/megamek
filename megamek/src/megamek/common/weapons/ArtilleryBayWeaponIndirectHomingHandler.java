@@ -77,7 +77,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
             return true;
         }
         ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
-        if (phase == GamePhase.TARGETING) {
+        if (phase.isTargeting()) {
             if (!handledAmmoAndReport) {
                 addHeat();
                 // Report the firing itself
@@ -389,7 +389,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
 
         Objects.requireNonNull(newTarget);
         if (v.isEmpty()) {
-            aaa.setTargetId(newTarget.getTargetId());
+            aaa.setTargetId(newTarget.getId());
             aaa.setTargetType(newTarget.getTargetType());
             target = newTarget;
             toHit = new ToHitData(TargetRoll.IMPOSSIBLE, "tag missed the target");
@@ -406,7 +406,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
         }
         
         if (allowed.isEmpty()) {
-            aaa.setTargetId(newTarget.getTargetId());
+            aaa.setTargetId(newTarget.getId());
             aaa.setTargetType(newTarget.getTargetType());
             target = newTarget;
             toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
@@ -415,20 +415,20 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
             //Just use target 0...
             newTarget = allowed.get(0).target;
             target = newTarget;
-            aaa.setTargetId(target.getTargetId());
+            aaa.setTargetId(target.getId());
             aaa.setTargetType(target.getTargetType());
         } else {
             //The player gets to select the target
             List<Integer> targetIds = new ArrayList<>();
             List<Integer> targetTypes = new ArrayList<>();
             for (TagInfo target : allowed) {
-                targetIds.add(target.target.getTargetId());
+                targetIds.add(target.target.getId());
                 targetTypes.add(target.target.getTargetType());
             }
             int choice = gameManager.processTAGTargetCFR(ae.getOwnerId(), targetIds, targetTypes);
             newTarget = allowed.get(choice).target;
             target = newTarget;
-            aaa.setTargetId(target.getTargetId());
+            aaa.setTargetId(target.getId());
             aaa.setTargetType(target.getTargetType());
         }
     }

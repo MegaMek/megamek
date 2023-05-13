@@ -65,6 +65,16 @@ class PilotPanel extends PicMap {
     }
 
     @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(0,0);
+    }
+
+    @Override
+    public Dimension getMinimumSize() {
+        return new Dimension(0,0);
+    }
+
+    @Override
     public void addNotify() {
         super.addNotify();
         update();
@@ -72,12 +82,7 @@ class PilotPanel extends PicMap {
 
     @Override
     public void onResize() {
-        int w = getSize().width;
-        Rectangle r = getContentBounds();
-        int dx = Math.round(((w - r.width) / 2));
-        if (dx < minLeftMargin) {
-            dx = minLeftMargin;
-        }
+        int dx = minLeftMargin;
         int dy = minTopMargin;
         setContentMargins(dx, dy, dx, dy);
     }

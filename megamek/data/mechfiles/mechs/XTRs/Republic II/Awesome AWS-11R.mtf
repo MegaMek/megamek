@@ -7,7 +7,7 @@ Config:Biped
 TechBase:Inner Sphere
 Era:3133
 Source:XTRO Republic II - Dark Ages  
-Rules Level:3
+Rules Level:2
 
 Mass:80
 Engine:240 XL Engine(IS)
@@ -151,4 +151,18 @@ IS Stealth
 -Empty-
 -Empty-
 
+overview:The Awesome was designed in 2665 for the Star League by the Technicron Conglomorate and was based on the aging STR-2C Striker. While not as fast as its forefather, the Awesome is a strong assault 'Mech.
 
+capabilities:The Awesome's abilities are nearly entirely dependent on its particle projection cannons. The AWS can withstand a severe and consistent onslaught from its weaponry thanks to several heat sinks. With one and a half tons more armor than the Striker, the AWS is more protected than even the BattleMaster. The Amazing, like any other BattleMech, has weaknesses. While it is lethal at range, it is less effective in close-quarters combat since its PPCs have a tougher time connecting with the victim. In that case, it just possesses a light weapon and a left fist to fall back on. Because of its limited mobility, it is vulnerable to flanking attacks from speedier opponents seeking to get past the PPCs. While they face arguably of the heaviest rear armor found on any BattleMech, the Awesome's lack of rear facing armaments or a weapon mount on its left arm has offered numerous MechWarriors a fighting chance. Formations of Awesomes (or even just a few) are incredibly effective and tough to stop or defeat when correctly placed by commanders who are knowledgeable of the AWS's limitations.
+
+deployment:Developed in 3133 this Awesome variant is protected by thirteen tons of Stealth Armor and a Guardian ECM Suite. The weaponry has been replaced with a Light Gauss Rifle, LRM-15, Extended LRM-15, and a single ER medium laser. The ammunition and Gauss rifle are protected by CASE II systems. For emergency use, a single Coolant Pod can supplement the ten double strength heat sinks. A Compact Gyro freed enough room in the center torso to store three tons of ELRM ammunition. A 240 XL engine provides a top speed of 54 km/h, but this is supplemented by a Supercharger which allows for bursts of speed up to 64 km/h. 
+
+history:Awesomes can be found in every military House. Because the Free Worlds League has the last remaining manufacturing factories capable of generating the Awesome, it also has the most Awesomes of any of the Great Houses. Opinions on the 'Mech vary greatly within the League. Many people laud its powers, while others believe that its limited mobility is too high a price to pay for what it can do. Similar sentiments exist in the other Houses, but none of them can debate the issue beyond academics. Few commanders would turn down the opportunity to acquire an Awesome for their army. The Awesome is typically used to assault a fixed position or to breach the enemy's line of defense. They are also in demand for defensive operations. MechWarriors piloting the Awesome can expect to be involved in heavy battle and to be charged with obtaining or guarding the most crucial objectives from the adversary.
+
+manufacturer:Technicron Manufacturing/Irian BattleMechs Unlimited
+primaryfactory:Tongatapu
+systemmanufacturer:CHASSIS:Technicron Type G
+systemmanufacturer:ENGINE:Pitban 240 XL
+systemmanufacturer:ARMOR:Ceres Heavy Stealth
+systemmanufacturer:COMMUNICATIONS:Garrett T19-G with ECM
+systemmanufacturer:TARGETING:Dynatec 2780

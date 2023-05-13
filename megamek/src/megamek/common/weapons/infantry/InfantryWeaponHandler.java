@@ -80,7 +80,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
         
         int troopersHit = 0;
         //when swarming all troopers hit
-        if (ae.getSwarmTargetId() == target.getTargetId()) {
+        if (ae.getSwarmTargetId() == target.getId()) {
             troopersHit = ((Infantry) ae).getShootingStrength();
         } else if (!(ae instanceof Infantry)) {
             troopersHit = 1;
@@ -204,6 +204,26 @@ public class InfantryWeaponHandler extends WeaponHandler {
             }
         } else {
             return ((InfantryWeapon) wtype).getInfantryDamage();
+        }
+    }
+
+    @Override
+    protected void initHit(Entity entityTarget) {
+        if ((entityTarget instanceof BattleArmor) && ae.isConventionalInfantry()) {
+            // TacOps crits against BA do not happen for infantry weapon attacks
+            hit = ((BattleArmor) entityTarget).rollHitLocation(toHit.getSideTable(),
+                    waa.getAimedLocation(), waa.getAimingMode(), true);
+            hit.setGeneralDamageType(generalDamageType);
+            hit.setCapital(wtype.isCapital());
+            hit.setBoxCars(roll == 12);
+            hit.setCapMisCritMod(getCapMisMod());
+            hit.setFirstHit(firstHit);
+            hit.setAttackerId(getAttackerId());
+            if (weapon.isWeaponGroup()) {
+                hit.setSingleAV(attackValue);
+            }
+        } else {
+            super.initHit(entityTarget);
         }
     }
 }

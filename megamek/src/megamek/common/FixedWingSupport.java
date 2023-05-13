@@ -34,6 +34,16 @@ public class FixedWingSupport extends ConvFighter {
         barRating = new int[locations()];
     }
 
+    @Override
+    public boolean isFixedWingSupport() {
+        return true;
+    }
+
+    @Override
+    public boolean isConventionalFighter() {
+        return false;
+    }
+
     public void setBARRating(int rating, int loc) {
         barRating[loc] = rating;
     }
@@ -298,5 +308,10 @@ public class FixedWingSupport extends ConvFighter {
     @Override
     public long getEntityType() {
         return Entity.ETYPE_AERO | Entity.ETYPE_CONV_FIGHTER | Entity.ETYPE_FIXED_WING_SUPPORT;
+    }
+
+    @Override
+    public boolean isAerospaceSV() {
+        return true;
     }
 }

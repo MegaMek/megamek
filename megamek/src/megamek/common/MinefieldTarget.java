@@ -19,7 +19,7 @@ import java.util.Map;
 
 public class MinefieldTarget implements Targetable {
     private static final long serialVersionUID = 420672189241204590L;
-    private Coords m_coords;
+    private final Coords m_coords;
 
     public MinefieldTarget(Coords c) {
         m_coords = c;
@@ -31,8 +31,18 @@ public class MinefieldTarget implements Targetable {
     }
 
     @Override
-    public int getTargetId() {
+    public int getId() {
         return MinefieldTarget.coordsToId(m_coords);
+    }
+
+    @Override
+    public int getOwnerId() {
+        return Player.PLAYER_NONE;
+    }
+
+    @Override
+    public int getStrength() {
+        return 0;
     }
 
     @Override
@@ -76,8 +86,6 @@ public class MinefieldTarget implements Targetable {
      * partitioning the binary representation, but this is more human readable
      * and still allows for a 99999x99999 hex map.
      */
-
-    // encode 2 numbers into 1
     public static int coordsToId(Coords c) {
         return c.getY() * 100000 + c.getX();
     }
@@ -98,28 +106,16 @@ public class MinefieldTarget implements Targetable {
         return sideTable(src);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see megamek.common.Targetable#isOffBoard()
-     */
     @Override
     public boolean isOffBoard() {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see megamek.common.Targetable#isAirborne()
-     */
     @Override
     public boolean isAirborne() {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see megamek.common.Targetable#isAirborneVTOLorWIGE()
-     */
     @Override
     public boolean isAirborneVTOLorWIGE() {
         return false;

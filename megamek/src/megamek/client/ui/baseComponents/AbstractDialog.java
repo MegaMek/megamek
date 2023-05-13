@@ -21,7 +21,6 @@ package megamek.client.ui.baseComponents;
 import megamek.MegaMek;
 import megamek.client.ui.preferences.JWindowPreference;
 import megamek.client.ui.preferences.PreferencesNode;
-import megamek.common.util.EncodeControl;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
@@ -30,6 +29,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
@@ -63,8 +63,8 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
      * modal dialogs.
      */
     protected AbstractDialog(final JFrame frame, final boolean modal, final String name, final String title) {
-        this(frame, modal, ResourceBundle.getBundle("megamek.client.messages", 
-                MegaMek.getMMOptions().getLocale(), new EncodeControl()), name, title);
+        this(frame, modal, ResourceBundle.getBundle("megamek.client.messages",
+                MegaMek.getMMOptions().getLocale()), name, title);
     }
 
     /**
@@ -74,7 +74,14 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
     protected AbstractDialog(final JFrame frame, final boolean modal, final ResourceBundle resources,
                              final String name, final String title) {
         super(frame, modal);
-        setTitle(resources.getString(title));
+        // Reviewers - I guarded this for my own dev, as passing a title key that does not exist
+        // sees like it should not throw an NPE, but perhaps it should be left unguarded?
+        try {
+            setTitle(resources.getString(title));
+        } catch (MissingResourceException e) {
+            setTitle(title);
+        }
+
         setName(name);
         setFrame(frame);
         this.resources = resources;
@@ -143,6 +150,31 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
         addWindowListener(this);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setPreferences();
+    }
+
+    /**
+     * Re-sizes the dialog to a maximum width and height of 80% of the screen size when necessary.
+     * If the dialog goes off-screen, center it
+     */
+    protected void fit() {
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int maxWidth = (int) (screenSize.width * 0.8);
+        int maxHeight = (int) (screenSize.height * 0.8);
+
+        int width = Math.min(maxWidth, getWidth());
+        int height = Math.min(maxHeight, getHeight());
+
+        setSize(new Dimension(width, height));
+        // get again in case changed by setSize
+        width = getSize().width;
+        height = getSize().height;
+
+        // center if dialog out of screen bounds
+        Point p = getLocation();
+        if (p.x < 0 || (p.x + width) > screenSize.width
+                || p.y < 0 || (p.y + height) > screenSize.height) {
+            setLocation((screenSize.width - width) / 2, (screenSize.height - height) / 2);
+        }
     }
 
     /**

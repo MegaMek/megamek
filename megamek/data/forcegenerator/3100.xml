@@ -337,6 +337,9 @@
 		<techMargin>6</techMargin>
 		<upgradeMargin>3</upgradeMargin>
 		<salvage pct='6'>CC:9,LA:10,MSC:3,FS:10,DC:6</salvage>
+		<weightDistribution era='3100' unitType='Mek'>4,3,2,1</weightDistribution>
+		<weightDistribution era='3100' unitType='Tank'>3,2,1,4</weightDistribution>
+		<weightDistribution era='3100' unitType='Aero'>2,1,3,4</weightDistribution>
 	</faction>
 	<faction key='RIM'>
 		<omniMargin>6</omniMargin>
@@ -675,13 +678,6 @@
 		<omniMargin>6</omniMargin>
 		<techMargin>6</techMargin>
 		<upgradeMargin>3</upgradeMargin>
-	</faction>
-	<faction key='SL3.CSJ'>
-		<pctOmni>10,40</pctOmni>
-		<pctClan>20,40</pctClan>
-		<pctSL>70,60</pctSL>
-		<techMargin>6</techMargin>
-		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='MSC.FWG'>
 		<pctOmni>28</pctOmni>
@@ -4486,9 +4482,6 @@
 		<model name='(Upgrade) (Laser)'>
 			<availability>LA:6,IS:8</availability>
 		</model>
-		<model name='(Upgrade) (Standard)'>
-			<availability>LA:8,FWL:6,MERC:6</availability>
-		</model>
 	</chassis>
 	<chassis name='Condor Multi-Purpose Tank' unitType='Tank'>
 		<availability>ROS:5</availability>
@@ -6174,7 +6167,7 @@
 	</chassis>
 	<chassis name='Falcon Hover Tank' unitType='Tank'>
 		<availability>IS:1,Periphery:1</availability>
-		<model name='(Standard)'>
+		<model name=''>
 			<availability>General:5</availability>
 		</model>
 	</chassis>
@@ -10778,10 +10771,6 @@
 	</chassis>
 	<chassis name='M.A.S.H. Truck' unitType='Tank'>
 		<availability>CC:10,LA:10,CLAN:10,FWL:10,IS:9,FS:10,DC:10,Periphery:8</availability>
-		<model name='(Standard)'>
-			<roles>support</roles>
-			<availability>General:8</availability>
-		</model>
 	</chassis>
 	<chassis name='MHI Amphibious APC' unitType='Tank'>
 		<availability>CLAN:5,IS:5</availability>
@@ -11769,10 +11758,6 @@
 	</chassis>
 	<chassis name='Mobile Long Tom Artillery (Unofficial)' unitType='Tank'>
 		<availability>CLAN:3,IS:2</availability>
-		<model name='(+ Carriage)'>
-			<roles>artillery</roles>
-			<availability>General:6</availability>
-		</model>
 	</chassis>
 	<chassis name='Model 97 &apos;Octopus&apos;' unitType='Dropship'>
 		<availability>FWL:3,IS:2</availability>
@@ -16406,12 +16391,11 @@
 	</chassis>
 	<chassis name='Svartalfa' unitType='ProtoMek'>
 		<availability>CHH:4</availability>
-		<model name='(LRM Variant)'>
-			<roles>fire_support</roles>
-			<availability>CHH:4</availability>
-		</model>
 		<model name='(Standard)'>
 			<availability>CHH:6</availability>
+		</model>
+		<model name='2'>
+			<availability>CHH:4</availability>
 		</model>
 	</chassis>
 	<chassis name='Swallow Attack WIGE' unitType='Tank'>

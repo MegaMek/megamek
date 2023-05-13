@@ -3,7 +3,6 @@ package megamek.client.ui.swing.boardview;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
-import megamek.common.enums.GamePhase;
 import megamek.common.enums.IlluminationLevel;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
@@ -59,7 +58,7 @@ class FovHighlightingAndDarkening {
      * respectively: If there is no LOS from currently selected hex/entity, then
      * darkens hex c. If there is a LOS from the hex c to the selected
      * hex/entity, then hex c is colored according to distance.
-     * 
+     *
      * @param boardGraph
      *            The board on which we paint.
      * @param c
@@ -75,7 +74,8 @@ class FovHighlightingAndDarkening {
     boolean draw(Graphics boardGraph, Coords c, int drawX, int drawY, boolean saveBoardImage) {
         Coords src;
         boolean hasLoS = true;
-        if (this.boardView1.selected != null) {
+        // in movement phase, calc LOS based on selected hex, otherwise use selected Entity
+        if (this.boardView1.game.getPhase().isMovement() && this.boardView1.selected != null) {
             src = this.boardView1.selected;
         } else if (this.boardView1.selectedEntity != null) {
             src = this.boardView1.selectedEntity.getPosition();
@@ -94,11 +94,10 @@ class FovHighlightingAndDarkening {
 
         // Code for LoS darkening/highlighting
         Point p = new Point(drawX, drawY);
-        boolean highlight = gs.getBoolean(GUIPreferences.FOV_HIGHLIGHT);
-        boolean darken = gs.getBoolean(GUIPreferences.FOV_DARKEN);
+        boolean highlight = this.boardView1.shouldFovHighlight();
+        boolean darken = this.boardView1.shouldFovDarken();
 
-        if ((darken || highlight)
-                && (this.boardView1.game.getPhase() == GamePhase.MOVEMENT)) {
+        if (darken || highlight) {
 
             final int pad = 0;
             final int lw = 7;

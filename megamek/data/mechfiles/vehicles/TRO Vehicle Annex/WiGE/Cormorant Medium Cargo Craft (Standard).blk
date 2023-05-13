@@ -16,9 +16,9 @@ SupportTank
 Cormorant Medium Cargo Craft
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 4004

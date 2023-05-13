@@ -66,6 +66,11 @@ public interface IBomber {
      * Sets the count of each bomb to zero
      */
     void clearBombChoices();
+
+    /**
+     * @return The calculates movement factoring in the load of bombs currently on unit, t is current movement
+     */
+    int reduceMPByBombLoad(int t);
     
     /**
      * @param cost The cost of the bomb to be mounted

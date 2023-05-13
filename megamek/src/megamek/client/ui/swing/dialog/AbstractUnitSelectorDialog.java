@@ -14,12 +14,14 @@
  */
 package megamek.client.ui.swing.dialog;
 
+import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.BVDisplayDialog;
 import megamek.client.ui.models.XTableColumnModel;
 import megamek.client.ui.panes.EntityViewPane;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.UnitLoadingDialog;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.GameOptions;
@@ -33,7 +35,9 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.*;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
@@ -69,6 +73,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     private JButton buttonResetSearch;
     private final JToggleButton buttonPvToggle = new JToggleButton(Messages.getString("MechSelectorDialog.TogglePV"));
     protected JList<String> listTechLevel = new JList<>();
+    private JLabel lblCount;
     /**
      * We need to map the selected index of listTechLevel to the actual TL it
      * belongs to
@@ -76,10 +81,13 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     protected Map<Integer, Integer> techLevelListToIndex = new HashMap<>();
     protected JComboBox<String> comboUnitType = new JComboBox<>();
     protected JComboBox<String> comboWeight = new JComboBox<>();
+    private JScrollPane techLevelScroll;
+    private JPanel panelFilterButtons;
     protected JLabel labelImage = new JLabel(""); //inline to avoid potential null pointer issues
     protected JTable tableUnits;
     protected JTextField textFilter;
     protected EntityViewPane panePreview;
+    private JPanel selectionPanel;
     private JSplitPane splitPane;
 
     private StringBuffer searchBuffer = new StringBuffer();
@@ -101,6 +109,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     private AdvancedSearchDialog2 advancedSearchDialog2;
 
     protected TableRowSorter<MechTableModel> sorter;
+    private JScrollPane scrollTableUnits;
 
     protected GameOptions gameOptions = null;
     protected boolean enableYearLimits = false;
@@ -109,6 +118,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     protected boolean allowInvalid = true;
     protected int gameTechLevel = TechConstants.T_SIMPLE_INTRO;
     protected int techLevelDisplayType = TECH_LEVEL_DISPLAY_IS_CLAN;
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     //endregion Variable Declarations
 
     protected AbstractUnitSelectorDialog(JFrame frame, UnitLoadingDialog unitLoadingDialog) {
@@ -128,31 +138,29 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
      * This has been set up to permit preference implementation in anything that extends this
      */
     private void setUserPreferences() {
-        GUIPreferences guiPreferences = GUIPreferences.getInstance();
+        comboUnitType.setSelectedIndex(GUIP.getMechSelectorUnitType());
 
-        comboUnitType.setSelectedIndex(guiPreferences.getMechSelectorUnitType());
+        comboWeight.setSelectedIndex(GUIP.getMechSelectorWeightClass());
 
-        comboWeight.setSelectedIndex(guiPreferences.getMechSelectorWeightClass());
-
-        updateTypeCombo(guiPreferences);
+        updateTypeCombo();
 
         List<SortKey> sortList = new ArrayList<>();
         try {
-            sortList.add(new SortKey(guiPreferences.getMechSelectorSortColumn(),
-                    SortOrder.valueOf(guiPreferences.getMechSelectorSortOrder())));
+            sortList.add(new SortKey(GUIP.getMechSelectorSortColumn(),
+                    SortOrder.valueOf(GUIP.getMechSelectorSortOrder())));
         } catch (Exception e) {
             LogManager.getLogger().error("Failed to set based on user preferences, attempting to use default", e);
 
-            sortList.add(new SortKey(guiPreferences.getMechSelectorDefaultSortColumn(),
-                    SortOrder.valueOf(guiPreferences.getMechSelectorDefaultSortOrder())));
+            sortList.add(new SortKey(GUIP.getMechSelectorDefaultSortColumn(),
+                    SortOrder.valueOf(GUIP.getMechSelectorDefaultSortOrder())));
         }
         tableUnits.getRowSorter().setSortKeys(sortList);
         ((DefaultRowSorter<?, ?>) tableUnits.getRowSorter()).sort();
 
         tableUnits.invalidate(); // force re-layout of window
-        splitPane.setDividerLocation(guiPreferences.getMechSelectorSplitPos());
-        setSize(guiPreferences.getMechSelectorSizeWidth(), guiPreferences.getMechSelectorSizeHeight());
-        setLocation(guiPreferences.getMechSelectorPosX(), guiPreferences.getMechSelectorPosY());
+        splitPane.setDividerLocation(GUIP.getMechSelectorSplitPos());
+        setSize(GUIP.getMechSelectorSizeWidth(), GUIP.getMechSelectorSizeHeight());
+        setLocation(GUIP.getMechSelectorPosX(), GUIP.getMechSelectorPosY());
     }
 
     protected void initialize() {
@@ -173,12 +181,12 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
         //region Unit Preview Pane
         panePreview = new EntityViewPane(frame, null);
+        panePreview.setMinimumSize(new Dimension(0,0));
+        panePreview.setPreferredSize(new Dimension(0,0));
         //endregion Unit Preview Pane
 
         //region Selection Panel
-        JPanel selectionPanel = new JPanel(new GridBagLayout());
-        selectionPanel.setMinimumSize(new Dimension(500, 500));
-        selectionPanel.setPreferredSize(new Dimension(500, 600));
+        selectionPanel = new JPanel(new GridBagLayout());
 
         tableUnits = new JTable(unitModel);
         tableUnits.setColumnModel(unitColumnModel);
@@ -199,27 +207,19 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                         refreshUnitView();
                     }
                 });
-        for (int i = 0; i < MechTableModel.N_COL; i++) {
-            TableColumn column = tableUnits.getColumnModel().getColumn(i);
-            if (i == MechTableModel.COL_CHASSIS) {
-                column.setPreferredWidth(125);
-            } else if ((i == MechTableModel.COL_MODEL) || (i == MechTableModel.COL_COST)) {
-                column.setPreferredWidth(75);
-            } else if ((i == MechTableModel.COL_WEIGHT) || (i == MechTableModel.COL_BV)) {
-                column.setPreferredWidth(50);
-            } else {
-                column.setPreferredWidth(25);
-            }
+
+        for (int i = 0; i < unitModel.getColumnCount(); i++) {
+            tableUnits.getColumnModel().getColumn(i).setPreferredWidth(unitModel.getPreferredWidth(i));
         }
         bvColumn = tableUnits.getColumnModel().getColumn(MechTableModel.COL_BV);
         pvColumn = tableUnits.getColumnModel().getColumn(MechTableModel.COL_PV);
-        tableUnits.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        tableUnits.setFont(new Font(MMConstants.FONT_MONOSPACED, Font.PLAIN, 12));
         togglePV(false);
 
-        JScrollPane scrollTableUnits = new JScrollPane(tableUnits);
+        scrollTableUnits = new JScrollPane(tableUnits);
         scrollTableUnits.setName("scrollTableUnits");
-        scrollTableUnits.setMinimumSize(new Dimension(500, 400));
-        scrollTableUnits.setPreferredSize(new Dimension(500, 400));
+
+        gridBagConstraints.insets = new Insets(5, 0, 0, 0);
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = GridBagConstraints.BOTH;
@@ -228,20 +228,17 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         gridBagConstraints.weighty = 1.0;
         selectionPanel.add(scrollTableUnits, gridBagConstraints);
 
-        JPanel panelFilterButtons = new JPanel(new GridBagLayout());
-        panelFilterButtons.setMinimumSize(new Dimension(300, 180));
-        panelFilterButtons.setPreferredSize(new Dimension(300, 180));
+        panelFilterButtons = new JPanel(new GridBagLayout());
 
         JLabel labelType = new JLabel(Messages.getString("MechSelectorDialog.m_labelType"));
         labelType.setToolTipText(Messages.getString("MechSelectorDialog.m_labelType.ToolTip"));
+        gridBagConstraintsWest.insets = new Insets(5, 0, 0, 0);
         gridBagConstraintsWest.gridx = 0;
         gridBagConstraintsWest.gridy = 2;
         panelFilterButtons.add(labelType, gridBagConstraintsWest);
 
         listTechLevel.setToolTipText(Messages.getString("MechSelectorDialog.m_labelType.ToolTip"));
-        JScrollPane techLevelScroll = new JScrollPane(listTechLevel);
-        techLevelScroll.setMinimumSize(new Dimension(300, 100));
-        techLevelScroll.setPreferredSize(new Dimension(300, 100));
+        techLevelScroll = new JScrollPane(listTechLevel);
         gridBagConstraintsWest.gridx = 1;
         gridBagConstraintsWest.gridy = 2;
         panelFilterButtons.add(techLevelScroll, gridBagConstraintsWest);
@@ -259,8 +256,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         weightModel.addElement(Messages.getString("MechSelectorDialog.All"));
         comboWeight.setModel(weightModel);
         comboWeight.setName("comboWeight");
-        comboWeight.setMinimumSize(new Dimension(300, 27));
-        comboWeight.setPreferredSize(new Dimension(300, 27));
         comboWeight.addActionListener(this);
         gridBagConstraintsWest.gridx = 1;
         gridBagConstraintsWest.gridy = 1;
@@ -283,8 +278,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         unitTypeModel.addElement(Messages.getString("MechSelectorDialog.SupportVee"));
         comboUnitType.setModel(unitTypeModel);
         comboUnitType.setName("comboUnitType");
-        comboUnitType.setMinimumSize(new Dimension(300, 27));
-        comboUnitType.setPreferredSize(new Dimension(300, 27));
         comboUnitType.addActionListener(this);
         gridBagConstraintsWest.gridx = 1;
         gridBagConstraintsWest.gridy = 0;
@@ -292,8 +285,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
         textFilter = new JTextField("");
         textFilter.setName("textFilter");
-        textFilter.setMinimumSize(new Dimension(300, 28));
-        textFilter.setPreferredSize(new Dimension(300, 28));
         textFilter.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void changedUpdate(DocumentEvent e) {
@@ -312,7 +303,9 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         });
         gridBagConstraintsWest.gridx = 1;
         gridBagConstraintsWest.gridy = 3;
+        gridBagConstraintsWest.fill = GridBagConstraints.HORIZONTAL;
         panelFilterButtons.add(textFilter, gridBagConstraintsWest);
+        gridBagConstraintsWest.fill = GridBagConstraints.NONE;
 
         JLabel labelFilter = new JLabel(Messages.getString("MechSelectorDialog.m_labelFilter"));
         labelFilter.setName("labelFilter");
@@ -363,6 +356,11 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         gridBagConstraintsWest.gridy = 0;
         panelSearchButtons.add(buttonPvToggle, gridBagConstraintsWest);
 
+        lblCount = new JLabel("");
+        gridBagConstraintsWest.gridx = 3;
+        gridBagConstraintsWest.gridy = 0;
+        panelSearchButtons.add(lblCount, gridBagConstraintsWest);
+
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -373,10 +371,13 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         selectionPanel.add(panelSearchButtons, gridBagConstraints);
         //endregion Selection Panel
 
+        JScrollPane selectionScrollPane = new JScrollPane(selectionPanel);
+        JScrollPane previewScrollPane = new JScrollPane(panePreview);
+
         JPanel panelButtons = createButtonsPanel();
 
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true,
-                selectionPanel, panePreview);
+                selectionScrollPane, previewScrollPane);
         splitPane.setResizeWeight(0);
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = gridBagConstraints.gridy = 0;
@@ -424,12 +425,12 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         rootPane.getActionMap().put(SELECT_ACTION, selectAction);
     }
 
-    private void updateTypeCombo(GUIPreferences preferences) {
+    private void updateTypeCombo() {
         listTechLevel.removeListSelectionListener(this);
         int[] selectedIndices = listTechLevel.getSelectedIndices();
 
         if (selectedIndices.length == 0) {
-            String option = preferences.getMechSelectorRulesLevels().replaceAll("[\\[\\]]", "");
+            String option = GUIP.getMechSelectorRulesLevels().replaceAll("[\\[\\]]", "");
             if (!option.isBlank()) {
                 String[] strSelections = option.split("[,]");
                 selectedIndices = new int[strSelections.length];
@@ -571,6 +572,8 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             return;
         }
         sorter.setRowFilter(unitTypeFilter);
+        String msg_unitcount = Messages.getString("MechSelectorDialog.UnitCount");
+        lblCount.setText(String.format(" %s %d", msg_unitcount, sorter.getViewRowCount()));
     }
 
     /**
@@ -637,6 +640,10 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         buttonResetSearch.setEnabled(false);
         filterUnits();
 
+        if (visible) {
+            adaptToGUIScale();
+        }
+
         super.setVisible(visible);
     }
 
@@ -648,17 +655,16 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     protected void processWindowEvent(WindowEvent e) {
         super.processWindowEvent(e);
         if ((e.getID() == WindowEvent.WINDOW_DEACTIVATED) || (e.getID() == WindowEvent.WINDOW_CLOSING)) {
-            GUIPreferences guiPreferences = GUIPreferences.getInstance();
-            guiPreferences.setMechSelectorUnitType(comboUnitType.getSelectedIndex());
-            guiPreferences.setMechSelectorWeightClass(comboWeight.getSelectedIndex());
-            guiPreferences.setMechSelectorRulesLevels(Arrays.toString(listTechLevel.getSelectedIndices()));
-            guiPreferences.setMechSelectorSortColumn(tableUnits.getRowSorter().getSortKeys().get(0).getColumn());
-            guiPreferences.setMechSelectorSortOrder(tableUnits.getRowSorter().getSortKeys().get(0).getSortOrder().name());
-            guiPreferences.setMechSelectorSizeHeight(getSize().height);
-            guiPreferences.setMechSelectorSizeWidth(getSize().width);
-            guiPreferences.setMechSelectorPosX(getLocation().x);
-            guiPreferences.setMechSelectorPosY(getLocation().y);
-            guiPreferences.setMechSelectorSplitPos(splitPane.getDividerLocation());
+            GUIP.setMechSelectorUnitType(comboUnitType.getSelectedIndex());
+            GUIP.setMechSelectorWeightClass(comboWeight.getSelectedIndex());
+            GUIP.setMechSelectorRulesLevels(Arrays.toString(listTechLevel.getSelectedIndices()));
+            GUIP.setMechSelectorSortColumn(tableUnits.getRowSorter().getSortKeys().get(0).getColumn());
+            GUIP.setMechSelectorSortOrder(tableUnits.getRowSorter().getSortKeys().get(0).getSortOrder().name());
+            GUIP.setMechSelectorSizeHeight(getSize().height);
+            GUIP.setMechSelectorSizeWidth(getSize().width);
+            GUIP.setMechSelectorPosX(getLocation().x);
+            GUIP.setMechSelectorPosY(getLocation().y);
+            GUIP.setMechSelectorSplitPos(splitPane.getDividerLocation());
         }
     }
 
@@ -796,6 +802,29 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             return N_COL;
         }
 
+        public int getPreferredWidth(int col) {
+            switch (col) {
+                case COL_MODEL:
+                    return 75;
+                case COL_CHASSIS:
+                    return 125;
+                case COL_WEIGHT:
+                    return 50;
+                case COL_BV:
+                    return 25;
+                case COL_PV:
+                    return 25;
+                case COL_YEAR:
+                    return 25;
+                case COL_COST:
+                    return 25;
+                case COL_LEVEL:
+                    return 25;
+                default:
+                    return 0;
+            }
+        }
+
         @Override
         public String getColumnName(int column) {
             switch (column) {
@@ -878,5 +907,13 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                 return "?";
             }
         }
+    }
+
+    private void adaptToGUIScale() {
+        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
+        textFilter.setMinimumSize(new Dimension(UIUtil.scaleForGUI(200), UIUtil.scaleForGUI(28)));
+        textFilter.setPreferredSize(new Dimension(UIUtil.scaleForGUI(200), UIUtil.scaleForGUI(28)));
+        techLevelScroll.setMinimumSize(new Dimension(UIUtil.scaleForGUI(300), UIUtil.scaleForGUI(100)));
+        techLevelScroll.setPreferredSize(new Dimension(UIUtil.scaleForGUI(300), UIUtil.scaleForGUI(100)));
     }
 }

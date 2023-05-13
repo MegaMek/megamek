@@ -14,6 +14,7 @@
  */
 package megamek.client.ui.swing.widget;
 
+import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Configuration;
@@ -47,8 +48,10 @@ public class InfantryMapSet implements DisplayMapSet {
     // Set of Background drawers
     private Vector<BackGroundDrawer> bgDrawers = new Vector<>();
 
-    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN,
-            GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorMediumFontSize"));
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
+    private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
+            GUIP.getUnitDisplayMechArmorMediumFontSize());
 
     public InfantryMapSet(JComponent c) {
         comp = c;

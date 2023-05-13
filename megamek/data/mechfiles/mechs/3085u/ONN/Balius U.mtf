@@ -6,8 +6,8 @@ mul id:216
 Config:Quad Omnimech
 TechBase:Clan
 Era:3077
-Source:Jihad
-Rules Level:4
+Source:TRO 3085 - Jihad
+Rules Level:3
 
 Mass:65
 Engine:390 XL (Clan) Engine(IS)
@@ -152,4 +152,18 @@ Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
+overview:The Balius is a quadrupedal, front-line OmniMech produced by Clan Hell's Horses. 
 
+capabilities:The Balius, a true frontline Omni, employs weight-saving technologies such as an Endo Steel chassis, eleven tons of ferro-fibrous armor, and an XL engine. In a quad, though, this leaves limited room for other components. The Balius, on the other hand, has a top speed of 97 km/h, which is fairly fast for a 'Mech of its size. The Balius is equipped with a Creosote Special-H Flamer that can be used against troops as well as as a psychological weapon.
+
+deployment:Equipped with five UMUs and two SRT-6s, this configuration is intended for underwater combat. Though the standard Flamer is useless underwater, the ECM Suite, ER Large Laser, and improved underwater mobility more than make up for it.
+
+history:As of 3075, few details were available about the 'Mech. It is a totem 'Mech, resembling a horse, that is meant to improve morale as much as to be an effective combat unit. There is apparently no factory producing this design. Instead, it is hand-crafted by a crew of technicians specifically selected for the task by the Khan. This has led to few Balius' being produced, so the 'Mech is only in the hands of select Bloodnamed warriors.
+
+manufacturer:Manufacturing Site #3,Transitional Facility HH-Beta  
+primaryfactory:New Oslo,Nouveaux Paris 
+systemmanufacturer:CHASSIS:Type BMHQ-5 Endo Steel
+systemmanufacturer:ENGINE:390 XL
+systemmanufacturer:ARMOR:Forged Type HH35 Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:Unknown
+systemmanufacturer:TARGETING:Unknown

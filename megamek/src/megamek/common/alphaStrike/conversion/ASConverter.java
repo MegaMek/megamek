@@ -24,6 +24,7 @@ import megamek.common.*;
 import megamek.common.alphaStrike.ASArcs;
 import megamek.common.alphaStrike.ASUnitType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.annotations.Nullable;
 import org.apache.logging.log4j.LogManager;
 
@@ -39,6 +40,7 @@ import java.util.*;
 public final class ASConverter {
 
     //TODO: LG, SLG, VLG support vehicles, MS
+    //TODO: pilot skill not working
 
     public static AlphaStrikeElement convertForMechCache(Entity entity) {
         return performConversion(entity, false, new DummyCalculationReport(), entity.getCrew());
@@ -141,6 +143,13 @@ public final class ASConverter {
         element.setThreshold(ASArmStrConverter.convertThreshold(conversionData));
         ASDamageConverter.getASDamageConverter(entity, element, conversionReport).convert();
         ASSpecialAbilityConverter.getConverter(entity, element, conversionReport).processAbilities();
+        if (entity instanceof TripodMech) {
+            element.getSpecialAbilities().setSUA(BattleForceSUA.TRI);
+        } else if (entity instanceof QuadMech) {
+            element.getSpecialAbilities().setSUA(BattleForceSUA.QUAD);
+        } else if ((entity instanceof SmallCraft) && !(entity instanceof Dropship) && !((IAero) entity).isSpheroid()) {
+            element.getSpecialAbilities().setSUA(BattleForceSUA.AERODYNESC);
+        }
         ASPointValueConverter pvConverter = ASPointValueConverter.getPointValueConverter(element, conversionReport);
         element.setPointValue(pvConverter.getSkillAdjustedPointValue());
         element.setConversionReport(conversionReport);

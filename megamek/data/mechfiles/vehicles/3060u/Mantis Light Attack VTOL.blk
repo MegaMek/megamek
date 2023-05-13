@@ -12,9 +12,9 @@ VTOL
 <Name>
 Mantis Light Attack VTOL
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 2029

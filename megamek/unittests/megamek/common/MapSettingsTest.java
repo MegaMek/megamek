@@ -78,6 +78,10 @@ public class MapSettingsTest {
         assertEquals(10, testMe.getMaxSandSpots());
         assertEquals(1, testMe.getMinSandSize());
         assertEquals(2, testMe.getMaxSandSize());
+        assertEquals(0, testMe.getMinSnowSize());
+        assertEquals(0, testMe.getMaxSnowSize());
+        assertEquals(0, testMe.getMinSnowSpots());
+        assertEquals(0, testMe.getMaxSnowSpots());
         assertEquals(2, testMe.getMinPlantedFieldSpots());
         assertEquals(10, testMe.getMaxPlantedFieldSpots());
         assertEquals(1, testMe.getMinPlantedFieldSize());

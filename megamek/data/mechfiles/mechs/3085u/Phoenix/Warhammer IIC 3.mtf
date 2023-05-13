@@ -6,7 +6,7 @@ mul id:3502
 Config:Biped
 TechBase:Clan
 Era:3060
-Source:Clan Invasion
+Source:TRO Clan Invasion - Clan Invasion
 Rules Level:2
 
 Mass:80
@@ -152,4 +152,19 @@ CLDoubleHeatSink
 -Empty-
 -Empty-
 
+overview:The Clan's interpretation on the classic Warhammer has never been subtle. The BattleMech's hyper-advanced technology only emphasized and improved its duty as a frontline brawler; boosting its mass by 10 tons (with equivalent increases in armor protection) made it even more powerful.
+
+capabilities:Thanks to their technological expertise, they were able to add ten tons with the same speed and firepower and nearly double the armor of the original. The Warhammer IIC is built on an Endo Steel frame and is protected by tons of ferro-fibrous armor. The result is a dangerous 'Mech, able to hold its own in any battle against the Inner Sphere. Also note that the armor was the primary concern when designing the IIC version rivaling even 100 ton assault 'Mechs in durability and protection.
+
+deployment:Designed by Clan Diamond Shark, this variant replaces the PPCs and missile launcher of the original design with a pair of arm-mounted Heavy Large Lasers, two additional heat sinks, and a half ton of armor. An advanced Targeting Computer was also added to help ensure that the hard-to-use heavy lasers hit.
+
+history:The Warhammer IIC is now the most common Clan BattleMech in the Inner Sphere. These remarkable machines are fielded by every major Inner Sphere force, Clan, and many large mercenary groups. It is only found on the periphery, where its equally outstanding price tag is simply too high for these countries to justify.
+
+manufacturer:CDS Poseidon [Potemkin Class]/Auxiliary Production Site #4 ,Trellshire Heavy Industries,Manufacturing Plant DSF-12
+primaryfactory:Itabaiana,Twycross,Paxon
+systemmanufacturer:CHASSIS:SFX-80 Endo
+systemmanufacturer:ENGINE:Type 320 Fusion
+systemmanufacturer:ARMOR:Forging ZM15 Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:TDWS-37 Mk 2.2
+systemmanufacturer:TARGETING:“Hephaestus” CT-44
 

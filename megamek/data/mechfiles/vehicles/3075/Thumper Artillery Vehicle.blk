@@ -16,9 +16,9 @@ Tank
 Thumper Artillery Vehicle
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 3210

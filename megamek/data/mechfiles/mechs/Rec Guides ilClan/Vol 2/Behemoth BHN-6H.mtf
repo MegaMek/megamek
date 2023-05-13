@@ -1,0 +1,164 @@
+Version:1.3
+Behemoth
+BHN-6H
+mul id:8301
+Config:Biped
+techbase:Inner Sphere
+era:3004
+source:Rec Guide:ilClan #2 - Late Succession War
+rules level:1
+
+mass:100
+engine:200 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:22 Single
+walk mp:2
+jump mp:2
+
+armor:Standard(Inner Sphere)
+LA armor:32
+RA armor:32
+LT armor:27
+RT armor:27
+CT armor:46
+HD armor:9
+LL armor:36
+RL armor:36
+RTL armor:14
+RTR armor:14
+RTC armor:15
+
+Weapons:5
+PPC, Left Arm
+PPC, Right Arm
+AC/10, Left Torso
+AC/10, Right Torso
+Small Laser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Heat Sink
+Heat Sink
+PPC
+PPC
+PPC
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Heat Sink
+Heat Sink
+PPC
+PPC
+PPC
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Heat Sink
+Heat Sink
+Heat Sink
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+IS Ammo AC/10
+IS Ammo AC/10
+
+Right Torso:
+Heat Sink
+Heat Sink
+Heat Sink
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+IS Ammo AC/10
+IS Ammo AC/10
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+Small Laser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Stone Rhino was one of the most remarkable surprises sprung upon the Inner Sphere by the invading Clans. The Inner Sphere named the 'Mech Behemoth. It was apparently derived from the Matar, which was also known as "Amaris' Folly".
+capabilities:Though visually resembling the Matar, the Stone Rhino is ten tons lighter than "Amaris' Folly", marking it an assault-class 'Mech instead of a superheavy design. Despite the reduced weight it achieves a roughly similar damage output through superior Clan weaponry. Similar to its progenitor, the Stone Rhino is a fairly slow design with the addition of Jump Jets barely mitigating the mobility issues over short distances. Eighteen tons of armor provides reasonable protection until the 'Mech becomes a target of priority. Thus, despite bringing awesome firepower to the battlefield, these machines often cannot be used effectively by field commanders because they ultimately cannot afford to lose one.
+deployment:Assigned to Gordon Zed of the Zalman Bloodname, even downgraded with primitive Succession Wars era technology his Behemoth was a powerful 'Mech that caused mass panic and confusion whenever it took to the field with Wolf's Dragoons Alpha Regiment during the Third Succession War. Zed's Behemoth swapped the large pulse lasers for PPCs, the small pulse laser for standard model and the twin Gauss rifles for Autocannon/10s with four tons of reloads, the extra weight for this loadout and the heat sinks to make it viable is made possible by a reduction to 200-rated standard engine, greatly reducing its ground speed. Like many Dragoons, Zed and his Behemoth would fall during the brutal Battle of Misery, and though the Draconis Combine might have salvaged the 'Mech, they were never able to repair or reproduce it.
+history:Developed during the Golden Century as somewhat of a passion project, the Scientist Caste of Clan Smoke Jaguar sought to prove the superiority of the Clans by turning the flawed Matar into a successful design to achieve what the Inner Sphere could not. The resulting 'Mech was christened the Stone Rhino in honor of the nearly indestructible beast native to Eden. Mainly seen in the Smoke Jaguars touman, scattered examples of the Stone Rhino do appear in other Clans even though it was produced in somewhat limited numbers. Because of these low production numbers, most Stone Rhinos in existence are ancient machines with long and storied histories of their combat actions and their quirks in the hangar. Following the fall of the Smoke Jaguars, Clan Goliath Scorpion's need for new machines to defend their captured Jaguar holdings led them to revisit the Matars original design specs. They rapidly developed a visually different and powerful "new" 'Mech that was immediately put into production on Tokasha while still using the Stone Rhino name. However, the Scorpions would soon need to scramble to establish new production elsewhere after Clan Hell's Horses captured their Tokasha holdings. This allowed the Horses to produce new variants, and the Horses ultimately established a production line for the 'Mech on Csesztreg following their ejection from the Clan Homeworlds.
+manufacturer:Csesztreg Industriplex Alpha
+primaryfactory:Csesztreg
+systemmanufacturer:CHASSIS:Star League Monster (Standard)
+systemmanufacturer:ENGINE:200 Standard
+systemmanufacturer:ARMOR:Compound 12A1 Standard with CASE
+systemmanufacturer:JUMPJET:Grandthrust Mk. 5
+systemmanufacturer:COMMUNICATIONS:Garret L15
+systemmanufacturer:TARGETING:RCA Instatrac Version 8a
+

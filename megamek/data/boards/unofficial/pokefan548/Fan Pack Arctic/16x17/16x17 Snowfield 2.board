@@ -1,4 +1,10 @@
 size 16 17
+tag "Water (Auto)"
+tag "GrassTheme (Auto)"
+tag "Roads (Auto)"
+tag "IceTerrain (Auto)"
+tag "Woods (Auto)"
+tag "SnowTerrain (Auto)"
 hex 0101 0 "snow:1" "grass"
 hex 0201 0 "snow:1" "grass"
 hex 0301 0 "snow:1" "grass"

@@ -6,8 +6,8 @@ mul id:8381
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3130
-source:XTRO Royal Fantasy
-rules level:5
+source:XTRO Royal Fantasy - Dark Age
+rules level:3
 
 mass:55
 engine:385 XL (Clan) Engine
@@ -149,4 +149,19 @@ Clan Ferro-Lamellor
 -Empty-
 -Empty-
 
+overview:The Wraith is a 'Mech that, when properly employed, can wreak havoc on an enemy with its astounding speed and maneuverability. 
 
+capabilities:It is built around a massive LTV 385 XL engine that allows it to reach speeds of just under 119 km/h. The 'Mech is also fitted with seven CurtissJet 55 jump jets which allow it to jump up to two hundred and ten meters, giving it the ability to outmaneuver most BattleMechs in existence, and also allowing the Wraith to quickly traverse any rough terrain. The 'Mech's speed, firepower, and decent armor make the Wraith a considerable threat to many 'Mechs – some being almost twice its weight.
+
+deployment:Debuted in 3141 on the Tennessee Valley Arena and piloted by Ira Kuhn-Bedard, the variant keeps the best features of this hundred-year-old machine and make it even better. Clan Ferro-Lamellor Armor improves its resistance to nearly all forms of damage and is combined with a Clan-spec XL engine model instead of the original Inner Sphere one to improve endurance, MASC to boost its land speed, and four Clan ER Medium Lasers that replace all of the original weaponry. A hatchet has been fitted to make it more appealing to the viewers of the Solaris Games.
+
+history:The Wraith marked Curtiss Militech's entry into BattleMech production. When the design was announced, many felt that the design would be little more than a walking water cooler. What the critics got was a shock. Following the destruction of its sole factory, Curtiss Hydroponics announced its withdrawal from the military market altogether and the sale of its Curtiss Militech assets. By 3085, Hellespont Industrials have expressed interest in the Wraith; and by 3145 Production had been ongoing at one of Hellespont Industrials locations in the Sian Commonality for Capellan use.
+
+manufacturer:Refit
+primaryfactory:Refit
+systemmanufacturer:CHASSIS:Curtiss Wraith
+systemmanufacturer:ENGINE:385 JF Extralight with MASC
+systemmanufacturer:ARMOR:385 JF Extralight 
+systemmanufacturer:JUMPJET:CurtissJet 55
+systemmanufacturer:COMMUNICATIONS:CurtissComm Mk I
+systemmanufacturer:TARGETING:Dynatec 2780

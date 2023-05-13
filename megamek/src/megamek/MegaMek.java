@@ -15,6 +15,7 @@
  */
 package megamek;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.preferences.SuitePreferences;
 import megamek.client.ui.swing.ButtonOrderPreferences;
 import megamek.client.ui.swing.MegaMekGUI;
@@ -105,7 +106,7 @@ public class MegaMek {
                 startGUI();
             }
         } catch (MegaMekCommandLineParser.ParseException e) {
-            LogManager.getLogger().fatal(parser.formatErrorMessage(e));
+            LogManager.getLogger().fatal("Incorrect arguments:" + e.getMessage() + '\n' + parser.help());
             System.exit(1);
         }
     }
@@ -148,20 +149,6 @@ public class MegaMek {
         } catch (Exception ex) {
             LogManager.getLogger().error("Unable to redirect output to legacy.log", ex);
         }
-    }
-
-    public static void printToOut(String text) {
-        PrintStream out = new PrintStream(new FileOutputStream(FileDescriptor.out));
-        out.print(text);
-        out.flush();
-        out.close();
-    }
-
-    public static void printToErr(String text) {
-        PrintStream out = new PrintStream(new FileOutputStream(FileDescriptor.err));
-        out.print(text);
-        out.flush();
-        out.close();
     }
 
     public static SuitePreferences getMMPreferences() {
@@ -249,8 +236,7 @@ public class MegaMek {
         try {
             parser.parse();
         } catch (AbstractCommandLineParser.ParseException e) {
-            LogManager.getLogger().error(parser.formatErrorMessage(e));
-            MegaMek.printToErr(parser.formatErrorMessage(e) + "\n");
+            LogManager.getLogger().error("Incorrect arguments:" + e.getMessage() + '\n' + parser.help());
             System.exit(1);
         }
 
@@ -259,29 +245,52 @@ public class MegaMek {
                 PreferenceManager.getClientPreferences().getLastPlayerName() );
         LogManager.getLogger().info("Starting Host Server. " + Arrays.toString(args));
 
-        MegaMekGUI mmg = new MegaMekGUI();
-        mmg.start(false);
-        File gameFile = null;
-        if (resolver.saveGameFileName != null ) {
-            gameFile = new File(resolver.saveGameFileName);
-            if (!gameFile.isAbsolute()) {
-                gameFile = new File("./savegames", resolver.saveGameFileName);
-            }
-        }
+        SwingUtilities.invokeLater(() -> {
+            MegaMekGUI mmg = new MegaMekGUI();
+            mmg.start(false);
 
-        mmg.startHost(resolver.password, resolver.port, resolver.registerServer,
-                resolver.announceUrl, resolver.mailPropertiesFile, gameFile,
-                resolver.playerName );
+            File gameFile = null;
+            if (resolver.saveGameFileName != null ) {
+                gameFile = new File(resolver.saveGameFileName);
+                if (!gameFile.isAbsolute()) {
+                    gameFile = new File("./savegames", resolver.saveGameFileName);
+                }
+            }
+
+            mmg.startHost(resolver.password, resolver.port, resolver.registerServer,
+                    resolver.announceUrl, resolver.mailPropertiesFile, gameFile,
+                    resolver.playerName );
+        });
     }
 
     /**
      * Skip splash GUI, starts a host with using quicksave file
      */
     private static void startQuickLoad(String... args) {
-        LogManager.getLogger().info("Starting Quick Load Host Server. " + Arrays.toString(args));
-        MegaMekGUI mmg = new MegaMekGUI();
-        mmg.start(false);
-        mmg.quickLoadGame();
+        ClientServerCommandLineParser parser = new ClientServerCommandLineParser(args,
+                MegaMekCommandLineFlag.HOST.toString(), false, false, true);
+        try {
+            parser.parse();
+        } catch (AbstractCommandLineParser.ParseException e) {
+            LogManager.getLogger().error("Incorrect arguments:" + e.getMessage() + '\n' + parser.help());
+            System.exit(1);
+        }
+
+        ClientServerCommandLineParser.Resolver resolver = parser.getResolver(
+                null, MMConstants.DEFAULT_PORT, MMConstants.LOCALHOST,
+                PreferenceManager.getClientPreferences().getLastPlayerName() );
+        LogManager.getLogger().info("Starting Host Server. " + Arrays.toString(args));
+
+        SwingUtilities.invokeLater(() -> {
+            MegaMekGUI mmg = new MegaMekGUI();
+            mmg.start(false);
+
+            File gameFile = getQuickSaveFile();
+
+            mmg.startHost(resolver.password, resolver.port, resolver.registerServer,
+                    resolver.announceUrl, resolver.mailPropertiesFile, gameFile,
+                    resolver.playerName );
+        });
     }
 
     /**
@@ -293,8 +302,7 @@ public class MegaMek {
         try {
             parser.parse();
         } catch (AbstractCommandLineParser.ParseException e) {
-            LogManager.getLogger().error(parser.formatErrorMessage(e));
-            MegaMek.printToErr(parser.formatErrorMessage(e) + "\n");
+            LogManager.getLogger().error("Incorrect arguments:" + e.getMessage() + '\n' + parser.help(), e);
             System.exit(1);
         }
 
@@ -303,9 +311,11 @@ public class MegaMek {
                 PreferenceManager.getClientPreferences().getLastPlayerName());
 
         LogManager.getLogger().info("Starting Client Server. " + Arrays.toString(args));
-        MegaMekGUI mmg = new MegaMekGUI();
-        mmg.start(false);
-        mmg.startClient(resolver.playerName, resolver.serverAddress, resolver.port);
+        SwingUtilities.invokeLater(() -> {
+            MegaMekGUI mmg = new MegaMekGUI();
+            mmg.start(false);
+            mmg.startClient(resolver.playerName, resolver.serverAddress, resolver.port);
+        });
     }
 
     /**
@@ -313,7 +323,7 @@ public class MegaMek {
      */
     private static void startGUI() {
         LogManager.getLogger().info("Starting MegaMekGUI.");
-        new MegaMekGUI().start(true);
+        SwingUtilities.invokeLater(() -> new MegaMekGUI().start(true));
     }
 
     /**
@@ -352,6 +362,11 @@ public class MegaMek {
         } catch (Exception ignored) {
             return null;
         }
+    }
+
+    public static File getQuickSaveFile()
+    {
+        return new File(MMConstants.QUICKSAVE_PATH, MMConstants.QUICKSAVE_FILE + MMConstants.SAVE_FILE_GZ_EXT);
     }
 
     /**

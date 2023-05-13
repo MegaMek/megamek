@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022-2023 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -22,18 +22,20 @@ import megamek.MMConstants;
 import megamek.client.ui.dialogs.ASConversionInfoDialog;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.Messages;
 import megamek.common.alphaStrike.ASCardDisplayable;
+import megamek.common.alphaStrike.ASStatsExporter;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.cardDrawer.ASCardPrinter;
 import megamek.common.annotations.Nullable;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.datatransfer.*;
 import java.net.URL;
+import java.util.List;
 
 /**
  * This is a JPanel that displays an AlphaStrike unit card and elements to configure the display of
@@ -44,9 +46,11 @@ public class ConfigurableASCardPanel extends JPanel {
 
     private final JComboBox<String> fontChooser = new JComboBox<>();
     private final JComboBox<Float> sizeChooser = new JComboBox<>();
-    private final JButton copyButton = new JButton("Copy to Clipboard");
-    private final JButton mulButton = new JButton("MUL");
-    private final JButton conversionButton = new JButton("Conversion Report");
+    private final JButton copyButton = new JButton(Messages.getString("CASCardPanel.copyCard"));
+    private final JButton copyStatsButton = new JButton(Messages.getString("CASCardPanel.copyStats"));
+    private final JButton printButton = new JButton(Messages.getString("CASCardPanel.printCard"));
+    private final JButton mulButton = new JButton(Messages.getString("CASCardPanel.MUL"));
+    private final JButton conversionButton = new JButton(Messages.getString("CASCardPanel.conversionReport"));
     private final ASCardPanel cardPanel = new ASCardPanel();
     private ASCardDisplayable element;
     private int mulId;
@@ -79,6 +83,8 @@ public class ConfigurableASCardPanel extends JPanel {
         sizeChooser.setRenderer((list, value, index, isSelected, cellHasFocus) -> new JLabel(Float.toString(value)));
 
         copyButton.addActionListener(ev -> copyCardToClipboard());
+        copyStatsButton.addActionListener(ev -> copyStats());
+        printButton.addActionListener(ev -> printCard());
 
         mulButton.addActionListener(ev -> showMUL());
         mulButton.setToolTipText("Show the Master Unit List entry for this unit. Opens a browser window.");
@@ -88,13 +94,17 @@ public class ConfigurableASCardPanel extends JPanel {
         var chooserLine = new UIUtil.FixedYPanel(new FlowLayout(FlowLayout.LEFT));
         chooserLine.setBorder(new EmptyBorder(10, 0, 10, 0));
         chooserLine.add(Box.createHorizontalStrut(15));
-        chooserLine.add(new JLabel("Font: "));
+        chooserLine.add(new JLabel(Messages.getString("CASCardPanel.font")));
         chooserLine.add(fontChooser);
         chooserLine.add(Box.createHorizontalStrut(15));
-        chooserLine.add(new JLabel("Card Size: "));
+        chooserLine.add(new JLabel(Messages.getString("CASCardPanel.cardSize")));
         chooserLine.add(sizeChooser);
         chooserLine.add(Box.createHorizontalStrut(15));
         chooserLine.add(copyButton);
+        chooserLine.add(Box.createHorizontalStrut(15));
+        chooserLine.add(copyStatsButton);
+        chooserLine.add(Box.createHorizontalStrut(15));
+        chooserLine.add(printButton);
         chooserLine.add(Box.createHorizontalStrut(15));
         chooserLine.add(mulButton);
         chooserLine.add(Box.createHorizontalStrut(15));
@@ -125,6 +135,9 @@ public class ConfigurableASCardPanel extends JPanel {
         cardPanel.setASElement(element);
         mulId = (element != null) ? element.getMulId() : -1;
         mulButton.setEnabled(mulId > 0);
+        copyStatsButton.setEnabled(element != null);
+        copyButton.setEnabled(element != null);
+        printButton.setEnabled(element != null);
         conversionButton.setEnabled(element instanceof AlphaStrikeElement);
     }
 
@@ -132,7 +145,7 @@ public class ConfigurableASCardPanel extends JPanel {
     private void updateFont() {
         String selectedItem = (String) fontChooser.getSelectedItem();
         if ((selectedItem == null) || selectedItem.isBlank()) {
-            cardPanel.setCardFont(new Font(Font.SANS_SERIF, Font.PLAIN, 14));
+            cardPanel.setCardFont(new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 14));
         } else {
             cardPanel.setCardFont(Font.decode(selectedItem));
             GUIPreferences.getInstance().setAsCardFont(selectedItem);
@@ -164,6 +177,17 @@ public class ConfigurableASCardPanel extends JPanel {
             dialog.setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
             dialog.setVisible(true);
         }
+    }
+
+    private void printCard() {
+        new ASCardPrinter(List.of(element), parent).printCards();
+    }
+
+    private void copyStats() {
+        var statsExporter = new ASStatsExporter(element);
+        StringSelection stringSelection = new StringSelection(statsExporter.getStats());
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(stringSelection, null);
     }
 
     // Taken from https://alvinalexander.com/java/java-copy-image-to-clipboard-example/

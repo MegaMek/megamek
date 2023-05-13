@@ -246,7 +246,7 @@ public abstract class PathRanker implements IPathRanker {
             // Also, skip withdrawing enemy bot units, to avoid humping disabled tanks and ejected
             // MechWarriors
             if (e.isAirborneAeroOnGroundMap() || 
-                    getOwner().getHonorUtil().isEnemyBroken(e.getTargetId(), e.getOwnerId(),
+                    getOwner().getHonorUtil().isEnemyBroken(e.getId(), e.getOwnerId(),
                             getOwner().getForcedWithdrawal())) {
                 continue;
             }

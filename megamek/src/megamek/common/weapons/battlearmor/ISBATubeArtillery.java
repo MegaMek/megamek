@@ -44,8 +44,6 @@ public class ISBATubeArtillery extends ArtilleryWeapon {
         flags = flags.or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).or(F_MEK_MORTAR).or(F_MISSILE);
         damage = DAMAGE_BY_CLUSTERTABLE;
         atClass = CLASS_NONE;
-        flags = flags.or(F_MEK_MORTAR).or(F_MECH_WEAPON).or(F_MISSILE)
-                .or(F_TANK_WEAPON);
         infDamageClass = WEAPON_CLUSTER_MISSILE;
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setIntroLevel(false)

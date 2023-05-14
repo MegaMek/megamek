@@ -43,7 +43,7 @@ public class InfantryBVCalculator extends BVCalculator {
         if (infantry.isArmorEncumbering()) {
             runMP = Math.max(runMP - 1, 1);
         }
-        if ((infantry.getSecondaryN() > 1)
+        if ((infantry.getSecondaryWeaponsPerSquad() > 1)
                 && !infantry.hasAbility(OptionsConstants.MD_TSM_IMPLANT)
                 && !infantry.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
                 && (null != infantry.getSecondaryWeapon()) && infantry.getSecondaryWeapon().hasFlag(WeaponType.F_INF_SUPPORT)
@@ -75,14 +75,14 @@ public class InfantryBVCalculator extends BVCalculator {
         if (!infantry.getMovementMode().isUMUInfantry() && !infantry.getMovementMode().isSubmarine()) {
             jumpMP = infantry.getOriginalJumpMP();
         }
-        if ((infantry.getSecondaryN() > 1)
+        if ((infantry.getSecondaryWeaponsPerSquad() > 1)
                 && !infantry.hasAbility(OptionsConstants.MD_TSM_IMPLANT)
                 && !infantry.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
                 && !infantry.getMovementMode().isSubmarine()
                 && (null != infantry.getSecondaryWeapon())
                 && infantry.getSecondaryWeapon().hasFlag(WeaponType.F_INF_SUPPORT)) {
             jumpMP = Math.max(jumpMP - 1, 0);
-        } else if (infantry.getMovementMode().isVTOL() && infantry.getSecondaryN() > 0) {
+        } else if (infantry.getMovementMode().isVTOL() && infantry.getSecondaryWeaponsPerSquad() > 0) {
             jumpMP = Math.max(jumpMP - 1, 0);
         }
     }
@@ -131,7 +131,7 @@ public class InfantryBVCalculator extends BVCalculator {
         final InfantryWeapon primaryWeapon = infantry.getPrimaryWeapon();
         final InfantryWeapon secondaryWeapon = infantry.getSecondaryWeapon();
         int originalTroopers = Math.max(0, infantry.getOInternal(Infantry.LOC_INFANTRY));
-        int secondaryShooterCount = infantry.getSecondaryN() * infantry.getSquadN();
+        int secondaryShooterCount = infantry.getSecondaryWeaponsPerSquad() * infantry.getSquadCount();
         int primaryShooterCount = originalTroopers - secondaryShooterCount;
 
         // Damage dealt by the troopers is averaged over primary and secondary weapons; therefore calculate

@@ -15639,7 +15639,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public int getStrength() {
         return calculateBattleValue();
     }
-}
+
 
     /** @return The persistent BV Calculator object for this entity. */
     public BVCalculator getBvCalculator() {

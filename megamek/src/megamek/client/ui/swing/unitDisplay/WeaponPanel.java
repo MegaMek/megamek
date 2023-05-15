@@ -1998,9 +1998,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
         // send event to other parts of the UI which care
         if (oldmount.isInWaypointLaunchMode()) {
-            setFieldofFire(oldmount);
+            setFieldOfFire(oldmount);
         } else {
-            setFieldofFire(mounted);
+            setFieldOfFire(mounted);
         }
         unitDisplay.processMechDisplayEvent(new MechDisplayEvent(this, entity, mounted));
         onResize();
@@ -2010,7 +2010,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     // this gathers all the range data
     // it is a boiled down version of displaySelected,
     // updateAttackValues, updateRangeDisplayForAmmo
-    private void setFieldofFire(Mounted mounted) {
+    private void setFieldOfFire(Mounted mounted) {
         // No field of fire without ClientGUI
         if (unitDisplay.getClientGUI() == null) {
             return;
@@ -2168,17 +2168,20 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             if (entity.isSecondaryArcWeapon(entity.getEquipmentNum(mounted))) {
                 facing = entity.getSecondaryFacing();
             }
-            ((FiringDisplay) gui.getCurrentPanel()).FieldofFire(entity, ranges, arc, loc, facing);
+            ((FiringDisplay) gui.getCurrentPanel()).setWeaponFieldOfFire(entity, ranges, arc, loc, facing);
         } else if (gui.getCurrentPanel() instanceof TargetingPhaseDisplay) {
             // twisting
             int facing = entity.getFacing();
             if (entity.isSecondaryArcWeapon(entity.getEquipmentNum(mounted))) {
                 facing = entity.getSecondaryFacing();
             }
-            ((TargetingPhaseDisplay) gui.getCurrentPanel()).FieldofFire(entity, ranges, arc, loc, facing);
+            ((TargetingPhaseDisplay) gui.getCurrentPanel()).setWeaponFieldOfFire(entity, ranges, arc, loc, facing);
         } else if (gui.getCurrentPanel() instanceof MovementDisplay) {
             // no twisting here
-            ((MovementDisplay) gui.getCurrentPanel()).FieldOfFire(entity, ranges, arc, loc);
+            ((MovementDisplay) gui.getCurrentPanel()).setWeaponFieldOfFire(entity, ranges, arc, loc);
+        }  else if (gui.getCurrentPanel() instanceof DeploymentDisplay) {
+            // no twisting here
+            ((DeploymentDisplay) gui.getCurrentPanel()).setWeaponFieldOfFire(entity, ranges, arc, loc);
         }
     }
 
@@ -2705,7 +2708,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             // Tell the <Phase>Display to update the
             // firing arc info when a weapon has been de-selected
             if (weaponList.getSelectedIndex() == -1) {
-                unitDisplay.getClientGUI().getBoardView().clearFieldofF();
+                unitDisplay.getClientGUI().getBoardView().clearFieldOfFire();
             }
         }
         onResize();

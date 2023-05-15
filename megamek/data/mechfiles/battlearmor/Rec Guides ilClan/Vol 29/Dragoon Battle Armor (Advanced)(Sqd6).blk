@@ -17,7 +17,7 @@ Dragoon Battle Armor
 </Name>
 
 <Model>
-(Upgrade)(Sqd6)
+(Advanced)(Sqd6)
 </Model>
 
 <year>
@@ -27,6 +27,10 @@ Dragoon Battle Armor
 <originalBuildYear>
 3072
 </originalBuildYear>
+
+<mul id:>
+9384
+</mul id:>
 
 <type>
 Mixed (IS Chassis) Advanced

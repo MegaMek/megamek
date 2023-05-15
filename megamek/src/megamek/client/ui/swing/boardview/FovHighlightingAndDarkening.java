@@ -58,7 +58,7 @@ class FovHighlightingAndDarkening {
      * respectively: If there is no LOS from currently selected hex/entity, then
      * darkens hex c. If there is a LOS from the hex c to the selected
      * hex/entity, then hex c is colored according to distance.
-     * 
+     *
      * @param boardGraph
      *            The board on which we paint.
      * @param c
@@ -74,7 +74,8 @@ class FovHighlightingAndDarkening {
     boolean draw(Graphics boardGraph, Coords c, int drawX, int drawY, boolean saveBoardImage) {
         Coords src;
         boolean hasLoS = true;
-        if (this.boardView1.selected != null) {
+        // in movement phase, calc LOS based on selected hex, otherwise use selected Entity
+        if (this.boardView1.game.getPhase().isMovement() && this.boardView1.selected != null) {
             src = this.boardView1.selected;
         } else if (this.boardView1.selectedEntity != null) {
             src = this.boardView1.selectedEntity.getPosition();
@@ -93,10 +94,10 @@ class FovHighlightingAndDarkening {
 
         // Code for LoS darkening/highlighting
         Point p = new Point(drawX, drawY);
-        boolean highlight = gs.getFovHighlight();
-        boolean darken = gs.getFovDarken();
+        boolean highlight = this.boardView1.shouldFovHighlight();
+        boolean darken = this.boardView1.shouldFovDarken();
 
-        if ((darken || highlight) && this.boardView1.game.getPhase().isMovement()) {
+        if (darken || highlight) {
 
             final int pad = 0;
             final int lw = 7;

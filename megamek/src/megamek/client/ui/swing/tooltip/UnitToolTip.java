@@ -107,6 +107,7 @@ public final class UnitToolTip {
         sChassisPlayerInfo += "<BR>" + ownerName;
         String msg_id = MessageFormat.format(" [ID: {0}]", entity.getId());
         sChassisPlayerInfo += UIUtil.guiScaledFontHTML(UIUtil.uiGray()) + msg_id + "</FONT>";
+        sChassisPlayerInfo += forceEntry(entity, localPlayer);
         sChassisPlayerInfo = guiScaledFontHTML(ownerColor) + sChassisPlayerInfo +  "</FONT>";
 
         result += sChassisPlayerInfo;
@@ -117,10 +118,6 @@ public final class UnitToolTip {
         if (details && (mapSettings != null)) {
             sPilotInfo += deploymentWarnings(entity, localPlayer, mapSettings) + "<BR>";
         } else {
-            if (pilotInfo) {
-                sPilotInfo += forceEntry(entity, localPlayer);
-            }
-
             sPilotInfo += inGameValues(entity, localPlayer);
 
             if (pilotInfo) {

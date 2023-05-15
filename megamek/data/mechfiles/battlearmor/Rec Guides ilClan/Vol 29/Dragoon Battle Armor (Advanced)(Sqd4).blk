@@ -16,8 +16,12 @@ BattleArmor
 Dragoon Battle Armor
 </Name>
 
+<mul id:>
+9382
+</mul id:>
+
 <Model>
-(Upgrade)(Sqd5)
+(Advanced)(Sqd4)
 </Model>
 
 <year>
@@ -73,9 +77,6 @@ CLBAMicroPulseLaser:RA
 <Trooper 4 Equipment>
 </Trooper 4 Equipment>
 
-<Trooper 5 Equipment>
-</Trooper 5 Equipment>
-
 <manufacturer>
 GM
 </manufacturer>
@@ -101,7 +102,7 @@ biped
 </armor>
 
 <Trooper Count>
-5
+4
 </Trooper Count>
 
 <weightclass>

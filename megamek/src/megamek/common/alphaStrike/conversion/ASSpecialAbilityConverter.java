@@ -140,9 +140,11 @@ public class ASSpecialAbilityConverter {
             assign(misc, BRID);
         } else if (miscType.hasFlag(F_C3S)) {
             assign(misc, C3S);
-            assign(misc, MHQ, 1);
             if (miscType.hasFlag(F_C3EM)) {
                 assign(misc, C3EM, 1);
+                assign(misc, MHQ, 2);
+            } else {
+                assign(misc, MHQ, 1);
             }
         } else if (miscType.hasFlag(F_C3SBS)) {
             assign(misc, C3BSS, 1);

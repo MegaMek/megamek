@@ -644,7 +644,7 @@ public class GameManager implements IGameManager {
                 // Send Entities *after* the Lounge Phase Change
                 send(connId, new Packet(PacketCommand.PHASE_CHANGE, getGame().getPhase()));
                 if (doBlind()) {
-                    send(connId, createFilteredFullEntitiesPacket(player));
+                    send(connId, createFilteredFullEntitiesPacket(player, null));
                 } else {
                     send(connId, createFullEntitiesPacket());
                 }
@@ -655,7 +655,7 @@ public class GameManager implements IGameManager {
 
                 // Send entities *before* other phase changes.
                 if (doBlind()) {
-                    send(connId, createFilteredFullEntitiesPacket(player));
+                    send(connId, createFilteredFullEntitiesPacket(player, null));
                 } else {
                     send(connId, createFullEntitiesPacket());
                 }
@@ -697,7 +697,7 @@ public class GameManager implements IGameManager {
      */
     public void sendEntities(int connId) {
         if (doBlind()) {
-            send(connId, createFilteredEntitiesPacket(game.getPlayer(connId), null));
+            send(connId, createFilteredFullEntitiesPacket(game.getPlayer(connId), null));
         } else {
             send(connId, createEntitiesPacket());
         }
@@ -1911,7 +1911,6 @@ public class GameManager implements IGameManager {
                 resetActivePlayersDone();
                 setIneligible(phase);
                 determineTurnOrder(phase);
-                // send(createEntitiesPacket());
                 entityAllUpdate();
                 clearReports();
                 doTryUnstuck();
@@ -7466,6 +7465,24 @@ public class GameManager implements IGameManager {
                 }
             }
 
+            if (step.getType() == MovePath.MoveStepType.CHAFF) {
+                List<Mounted> chaffDispensers = entity.getMiscEquipment(MiscType.F_CHAFF_POD)
+                        .stream().filter(dispenser -> dispenser.isReady())
+                        .collect(Collectors.toList());
+                if (chaffDispensers.size() > 0) {
+                    chaffDispensers.get(0).setFired(true);
+                    createSmoke(curPos, SmokeCloud.SMOKE_CHAFF_LIGHT, 1);
+                    Hex hex = game.getBoard().getHex(curPos);
+                    hex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_CHAFF_LIGHT));
+                    sendChangedHex(curPos);
+                    r = new Report(2512)
+                            .addDesc(entity)
+                            .subject(entity.getId());
+
+                    addReport(r);
+                }
+            }
+
             // check for last move ending in magma TODO: build report for end of move
             if (!i.hasMoreElements() && curHex.terrainLevel(Terrains.MAGMA) == 2
                     && firstHex.terrainLevel(Terrains.MAGMA) == 2) {
@@ -9018,8 +9035,7 @@ public class GameManager implements IGameManager {
 
         // if using double blind, update the player on new units he might see
         if (doBlind()) {
-            send(entity.getOwner().getId(),
-                    createFilteredEntitiesPacket(entity.getOwner(), losCache));
+            send(entity.getOwner().getId(), createFilteredFullEntitiesPacket(entity.getOwner(), losCache));
         }
 
         // if we generated a charge attack, report it now
@@ -28681,7 +28697,7 @@ public class GameManager implements IGameManager {
             Vector<Player> playersVector = game.getPlayersVector();
             for (int x = 0; x < playersVector.size(); x++) {
                 Player p = playersVector.elementAt(x);
-                send(p.getId(), createFilteredEntitiesPacket(p, null));
+                send(p.getId(), createFilteredFullEntitiesPacket(p, null));
             }
             return;
         }
@@ -30054,9 +30070,10 @@ public class GameManager implements IGameManager {
      * Creates a packet containing all entities, including wrecks, visible to
      * the player in a blind game
      */
-    private Packet createFilteredFullEntitiesPacket(Player p) {
+    private Packet createFilteredFullEntitiesPacket(Player p,
+                                                    Map<EntityTargetPair, LosEffects> losCache) {
         return new Packet(PacketCommand.SENDING_ENTITIES,
-                filterEntities(p, getGame().getEntitiesVector(), null),
+                filterEntities(p, getGame().getEntitiesVector(), losCache),
                 getGame().getOutOfGameEntitiesVector(), getGame().getForces());
     }
 
@@ -30104,7 +30121,8 @@ public class GameManager implements IGameManager {
     private Packet createRemoveEntityPacket(int entityId, int condition) {
         List<Integer> ids = new ArrayList<>(1);
         ids.add(entityId);
-        return createRemoveEntityPacket(ids, getGame().getForces().removeEntityFromForces(entityId), condition);
+        Forces forces = getGame().getForces().clone();
+        return createRemoveEntityPacket(ids, forces.removeEntityFromForces(entityId), condition);
     }
 
     /**

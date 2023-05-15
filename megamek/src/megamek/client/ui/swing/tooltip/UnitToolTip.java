@@ -74,12 +74,57 @@ public final class UnitToolTip {
         return getEntityTipTable(entity, localPlayer, true, false, null);
     }
 
-    /** Returns the unit tooltip with minimal but useful information */
-    public static StringBuilder getEntityTipVitals(Entity entity, Player localPlayer) {
-        return getEntityTipTable(entity, localPlayer, false, false, null);
-    }
+    /** Returns the unit tooltip with minimal but useful information for a targeted entity */
+    public static StringBuilder getEntityTipTarget(Entity entity, Player localPlayer) {
 
-    // PRIVATE
+        // Tooltip info for a sensor blip
+        if (EntityVisibilityUtils.onlyDetectedBySensors(localPlayer, entity)) {
+            String msg_senorreturn = Messages.getString("BoardView1.sensorReturn");
+            return new StringBuilder(msg_senorreturn);
+        }
+
+        String result = getOneLineSummary(entity);
+
+        result += "<BR>";
+        result += inGameValues(entity, localPlayer, false, false);
+        result += "<BR>";
+
+        result += PilotToolTip.getPilotTipLine(entity);
+        result += "<BR>";
+
+        // An empty squadron should not show any info
+        if (entity instanceof FighterSquadron && entity.getLoadedUnits().isEmpty()) {
+            String col = "<TD>" + result + "</TD>";
+            String row = "<TR>" + col + "</TR>";
+            String table = "<TABLE BGCOLOR=#313131 width=100%>" + row + "</TABLE>";
+            return new StringBuilder().append(table);
+        }
+
+        // Status bar visual representation of armor and IS
+        if (GUIP.getshowArmorMiniVisTT()) {
+            result += addArmorMiniVisToTT(entity);
+        }
+
+        // Weapon List
+        if (GUIP.getShowWpsinTT()) {
+            String sWeaponList = weaponList(entity).toString();
+            sWeaponList += ecmInfo(entity).toString();
+            result += guiScaledFontHTML() + sWeaponList + "</FONT>";
+        }
+
+        // Bomb List
+        result += bombList(entity);
+
+        if (!entity.getLoadedUnits().isEmpty()) {
+            result += carriedUnits(entity);
+        }
+
+        String col = "<TD>" + result + "</TD>";
+        String row = "<TR>" + col + "</TR>";
+        String table = "<TABLE BGCOLOR=#313131 width=100%>" + row + "</TABLE>";
+
+        return new StringBuilder().append(table);
+    }
 
     /** Assembles the whole unit tooltip. */
     private static StringBuilder getEntityTipTable(Entity entity, Player localPlayer,
@@ -113,21 +158,21 @@ public final class UnitToolTip {
         result += sChassisPlayerInfo;
 
         // Pilot; in the lounge the pilot is separate so don't add it there
-        String sPilotInfo = "";
+        String sInGameValues = "";
 
         if (details && (mapSettings != null)) {
-            sPilotInfo += deploymentWarnings(entity, localPlayer, mapSettings) + "<BR>";
+            sInGameValues += deploymentWarnings(entity, localPlayer, mapSettings) + "<BR>";
         } else {
-            sPilotInfo += inGameValues(entity, localPlayer);
+            sInGameValues += inGameValues(entity, localPlayer, true, true);
 
             if (pilotInfo) {
-                sPilotInfo += PilotToolTip.getPilotTipShort(entity, GUIP.getshowPilotPortraitTT());
+                sInGameValues += PilotToolTip.getPilotTipShort(entity, GUIP.getshowPilotPortraitTT());
             } else {
-                sPilotInfo += "<BR>";
+                sInGameValues += "<BR>";
             }
         }
 
-        result += sPilotInfo;
+        result += sInGameValues;
 
         // An empty squadron should not show any info
         if (entity instanceof FighterSquadron && entity.getLoadedUnits().isEmpty()) {
@@ -203,7 +248,7 @@ public final class UnitToolTip {
         }
 
         if (target instanceof Entity) {
-           return UnitToolTip.getEntityTipVitals((Entity) target, null).toString();
+           return UnitToolTip.getEntityTipTarget((Entity) target, null).toString();
         } else if (target instanceof BuildingTarget) {
             return HexTooltip.getBuildingTargetTip((BuildingTarget) target, board);
         } else if (target instanceof Hex) {
@@ -222,6 +267,50 @@ public final class UnitToolTip {
         return target.getDisplayName();
     }
 
+    private static String getOneLineSummary(Entity entity) {
+        String result = "";
+        boolean isGunEmplacement = entity instanceof GunEmplacement;
+
+        result += Messages.getString("BoardView1.Tooltip.ArmorInternals",
+                entity.getTotalArmor(), entity.getTotalOArmor(), entity.getTotalInternal(), entity.getTotalOInternal());
+
+        String damageLevel;
+        switch (entity.getDamageLevel()) {
+            case Entity.DMG_CRIPPLED:
+                String msg_crippled = ' '+Messages.getString("BoardView1.Tooltip.Crippled");
+                damageLevel = msg_crippled;
+                damageLevel = guiScaledFontHTML(GUIP.getWarningColor()) + damageLevel + "</FONT>";
+                break;
+            case Entity.DMG_HEAVY:
+                String msg_heavydmg = Messages.getString("BoardView1.Tooltip.HeavyDmg");
+                damageLevel = msg_heavydmg;
+                damageLevel = ' '+guiScaledFontHTML(GUIP.getWarningColor()) + damageLevel + "</FONT>";
+                break;
+            case Entity.DMG_MODERATE:
+                String msg_moderatedmg = Messages.getString("BoardView1.Tooltip.ModerateDmg");
+                damageLevel = ' '+msg_moderatedmg;
+                break;
+            case Entity.DMG_LIGHT:
+                String msg_lightdmg = Messages.getString("BoardView1.Tooltip.LightDmg");
+                damageLevel = ' '+msg_lightdmg ;
+                break;
+            default:
+                damageLevel = "";
+                break;
+        }
+        result += damageLevel;
+
+        if (!isGunEmplacement && entity.isImmobile()) {
+            result += ' '+guiScaledFontHTML(GUIP.getWarningColor()) + Messages.getString("BoardView1.Tooltip.Immobile") + "</FONT>";
+        }
+
+        // Unit Prone
+        if (!isGunEmplacement && entity.isProne()) {
+            result += ' '+guiScaledFontHTML(GUIP.getWarningColor()) + Messages.getString("BoardView1.Tooltip.Prone") + "</FONT>";
+        }
+
+        return result;
+    }
     private static boolean hideArmorLocation(Entity entity, int location) {
         return ((entity.getOArmor(location) <= 0) && (entity.getOInternal(location) <= 0) && !entity.hasRearArmor(location))
                 || (entity.isConventionalInfantry() && (location != Infantry.LOC_INFANTRY));
@@ -914,69 +1003,25 @@ public final class UnitToolTip {
         return new HeatDisplayHelper(heatCapacityStr, heatCapWater);
     }
 
-    public static String getOneLineSummary(Entity entity) {
-        String result = "";
-        boolean isGunEmplacement = entity instanceof GunEmplacement;
-
-        result += Messages.getString("BoardView1.Tooltip.ArmorInternals",
-                entity.getTotalArmor(), entity.getTotalOArmor(), entity.getTotalInternal(), entity.getTotalOInternal());
-
-        String damageLevel;
-        switch (entity.getDamageLevel()) {
-            case Entity.DMG_CRIPPLED:
-                String msg_crippled = ' '+Messages.getString("BoardView1.Tooltip.Crippled");
-                damageLevel = msg_crippled;
-                damageLevel = guiScaledFontHTML(GUIP.getWarningColor()) + damageLevel + "</FONT>";
-                break;
-            case Entity.DMG_HEAVY:
-                String msg_heavydmg = Messages.getString("BoardView1.Tooltip.HeavyDmg");
-                damageLevel = msg_heavydmg;
-                damageLevel = ' '+guiScaledFontHTML(GUIP.getWarningColor()) + damageLevel + "</FONT>";
-                break;
-            case Entity.DMG_MODERATE:
-                String msg_moderatedmg = Messages.getString("BoardView1.Tooltip.ModerateDmg");
-                damageLevel = ' '+msg_moderatedmg;
-                break;
-            case Entity.DMG_LIGHT:
-                String msg_lightdmg = Messages.getString("BoardView1.Tooltip.LightDmg");
-                damageLevel = ' '+msg_lightdmg ;
-                break;
-            default:
-                damageLevel = "";
-                break;
-        }
-        result += damageLevel;
-
-        if (!isGunEmplacement && entity.isImmobile()) {
-            result += ' '+guiScaledFontHTML(GUIP.getWarningColor()) + Messages.getString("BoardView1.Tooltip.Immobile") + "</FONT>";
-        }
-
-        // Unit Prone
-        if (!isGunEmplacement && entity.isProne()) {
-            result += ' '+guiScaledFontHTML(GUIP.getWarningColor()) + Messages.getString("BoardView1.Tooltip.Prone") + "</FONT>";
-        }
-
-        return result;
-    }
-
-    /** Returns values that only are relevant when in-game such as heat. */
-    private static StringBuilder inGameValues(Entity entity, Player localPlayer) {
+    /** Returns values that only are relevant when in-game such as heat, damage level, total armor etc. */
+    private static StringBuilder inGameValues(Entity entity, Player localPlayer, boolean details, boolean showBV) {
         Game game = entity.getGame();
         boolean isGunEmplacement = entity instanceof GunEmplacement;
         String result = "";
 
-        // BV Info
-        // Hidden for invisible units when in double blind and hide enemy bv is selected
-        // Also not shown in the lobby as BV is shown there outside the tooltip
-        boolean showEnemyBV = !(game.getOptions().booleanOption(OptionsConstants.ADVANCED_SUPPRESS_DB_BV) &&
-                game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND));
-        boolean isVisible = EntityVisibilityUtils.trackThisEntitiesVisibilityInfo(localPlayer, entity);
+        if (showBV) {
+            // BV Info
+            // Hidden for invisible units when in double blind and hide enemy bv is selected
+            // Also not shown in the lobby as BV is shown there outside the tooltip
+            boolean showEnemyBV = !(game.getOptions().booleanOption(OptionsConstants.ADVANCED_SUPPRESS_DB_BV) && game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND));
+            boolean isVisible = EntityVisibilityUtils.trackThisEntitiesVisibilityInfo(localPlayer, entity);
 
-        if (isVisible || showEnemyBV) {
-            int currentBV = entity.calculateBattleValue(false, false);
-            int initialBV = entity.getInitialBV();
-            double percentage = (double) currentBV / initialBV;
-            result += addToTT("BV", BR, currentBV, initialBV, percentage).toString();
+            if (isVisible || showEnemyBV) {
+                int currentBV = entity.calculateBattleValue(false, false);
+                int initialBV = entity.getInitialBV();
+                double percentage = (double) currentBV / initialBV;
+                result += addToTT("BV", BR, currentBV, initialBV, percentage).toString();
+            }
         }
 
         String damageLevel;
@@ -1160,13 +1205,13 @@ public final class UnitToolTip {
         }
 
         // Spotting
-        if (entity.isSpotting() && game.hasEntity(entity.getSpotTargetId())) {
+        if (details && entity.isSpotting() && game.hasEntity(entity.getSpotTargetId())) {
             String sSpotting = addToTT("Spotting", BR, game.getEntity(entity.getSpotTargetId()).getDisplayName()).toString();
             result += guiScaledFontHTML() + sSpotting + "</FONT>";
         }
 
         // If Double Blind, add information about who sees this Entity
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) {
+        if (details && game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) {
             StringBuffer tempList = new StringBuffer();
             boolean teamVision = game.getOptions().booleanOption(
                     OptionsConstants.ADVANCED_TEAM_VISION);

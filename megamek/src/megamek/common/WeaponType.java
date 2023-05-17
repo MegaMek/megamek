@@ -14,7 +14,6 @@
  */
 package megamek.common;
 
-import megamek.common.alphaStrike.ASRange;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.*;
 import megamek.common.weapons.artillery.*;
@@ -46,7 +45,6 @@ import megamek.common.weapons.tag.CLTAG;
 import megamek.common.weapons.tag.ISTAG;
 import megamek.common.weapons.unofficial.*;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 
 // TODO add XML support back in.
@@ -156,10 +154,6 @@ public class WeaponType extends EquipmentType {
     // C3 Master Booster System
     public static final BigInteger F_C3MBS = BigInteger.valueOf(1).shiftLeft(56);
 
-    //Used for TSEMP Weapons.
-    public static final BigInteger F_TSEMP = BigInteger.valueOf(1).shiftLeft(57);
-    public static final BigInteger F_REPEATING = BigInteger.valueOf(1).shiftLeft(61);
-
     //Naval Mass Drivers
     public static final BigInteger F_MASS_DRIVER = BigInteger.valueOf(1).shiftLeft(58);
 
@@ -192,6 +186,10 @@ public class WeaponType extends EquipmentType {
 
     /** This flag is used by mortar-type weapons that allow indirect fire without a spotter and/or with LOS. */
     public static final BigInteger F_MORTARTYPE_INDIRECT = BigInteger.valueOf(1).shiftLeft(71);
+
+    //Used for TSEMP Weapons.
+    public static final BigInteger F_TSEMP = BigInteger.valueOf(1).shiftLeft(57);
+    public static final BigInteger F_REPEATING = BigInteger.valueOf(1).shiftLeft(72);
 
     // add maximum range for AT2
     public static final int RANGE_SHORT = RangeType.RANGE_SHORT;
@@ -232,7 +230,6 @@ public class WeaponType extends EquipmentType {
     public static final int CLASS_TELE_MISSILE = 25;
     public static final int CLASS_GAUSS = 26;
     public static final int CLASS_THUNDERBOLT = 27;
-    public static final int NUM_CLASSES = 28;
 
     public static final int WEAPON_DIRECT_FIRE = 0;
     public static final int WEAPON_CLUSTER_BALLISTIC = 1;
@@ -268,12 +265,6 @@ public class WeaponType extends EquipmentType {
     public static final int BFCLASS_CAPITAL = 9;
     public static final int BFCLASS_SUBCAPITAL = 10;
     public static final int BFCLASS_CAPITAL_MISSILE = 11;
-    public static final int BFCLASS_NUM = 12;
-
-    public static final String[] BF_CLASS_NAMES = {
-            "", "LRM", "SRM", "MML", "TORP", "AC", "FLAK", "iATM",
-            "REL", "CAP", "SCAP", "CMISS"
-    };
 
     // protected RangeType rangeL;
     protected int heat;
@@ -499,9 +490,7 @@ public class WeaponType extends EquipmentType {
         if (weapon.isInBearingsOnlyMode()) {
             eRange = RangeType.RANGE_BEARINGS_ONLY_OUT;
         }
-        int[] weaponRanges =
-                { minRange, sRange, mRange, lRange, eRange };
-        return weaponRanges;
+        return new int[] { minRange, sRange, mRange, lRange, eRange };
     }
 
     public int getMinimumRange() {
@@ -750,8 +739,7 @@ public class WeaponType extends EquipmentType {
     }
 
     /**
-     * Reports the class of weapons for those that are tracked separately from standard damage
-     * @return
+     * @return The class of weapons for those that are tracked separately from standard damage (AlphaStrike)
      */
     public int getBattleForceClass() {
         return BFCLASS_STANDARD;

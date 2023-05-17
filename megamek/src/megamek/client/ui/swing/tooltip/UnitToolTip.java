@@ -1523,9 +1523,9 @@ public final class UnitToolTip {
         if (entity.partOfForce()) {
             // Get the my / ally / enemy color and desaturate it
             Color color = GUIP.getEnemyUnitColor();
-            if (entity.getOwnerId() == localPlayer.getId()) {
+            if (localPlayer != null && entity.getOwnerId() == localPlayer.getId()) {
                 color = GUIP.getMyUnitColor();
-            } else if (!localPlayer.isEnemyOf(entity.getOwner())) {
+            } else if (localPlayer != null && !localPlayer.isEnemyOf(entity.getOwner())) {
                 color = GUIP.getAllyUnitColor();
             }
             color = addGray(color, 128).brighter();

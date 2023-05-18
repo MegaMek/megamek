@@ -17,7 +17,7 @@ import megamek.common.Coords;
 import megamek.common.RangeType;
 
 /**
- * This sprite is used to paint the field of fire 
+ * This sprite is used to paint the visual and sensor range
  * for weapons. 
  * 
  * <BR><BR>Extends {@link MovementEnvelopeSprite}
@@ -79,9 +79,9 @@ public class SensorRangeSprite extends MovementEnvelopeSprite {
     public static Color getColor(int sensorType) {
         switch (sensorType) {
             case SENSORS:
-                return UIUtil.uiLightBlue();
+                return GUIP.getSensorRangeColor();
             case VISUAL:
-                return UIUtil.uiDarkBlue();
+                return GUIP.getVisualRangeColor();
             default:
                 return new Color(0,0,0);
         }

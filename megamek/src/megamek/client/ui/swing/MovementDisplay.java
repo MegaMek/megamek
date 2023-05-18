@@ -777,6 +777,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             setStatusBarText(yourTurnMsg);
         }
         clientgui.getBoardView().clearFieldOfFire();
+        clientgui.getBoardView().clearSenorsRanges();
         computeMovementEnvelope(ce);
     }
 
@@ -1002,6 +1003,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         setNextEnabled(true);
         setForwardIniEnabled(true);
         clientgui.getBoardView().clearFieldOfFire();
+        clientgui.getBoardView().clearSenorsRanges();
         if (numButtonGroups > 1) {
             getBtn(MoveCommand.MOVE_MORE).setEnabled(true);
         }
@@ -1042,6 +1044,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         clientgui.setSelectedEntityNum(Entity.NONE);
         clientgui.getBoardView().clearMovementData();
         clientgui.getBoardView().clearFieldOfFire();
+        clientgui.getBoardView().clearSenorsRanges();
     }
 
     /**

@@ -235,6 +235,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             disableButtons();
             setNextEnabled(true);
             clientgui.getBoardView().clearFieldOfFire();
+            clientgui.getBoardView().clearSenorsRanges();
         }
     }
 
@@ -843,6 +844,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             return;
         }
         clientgui.getBoardView().clearFieldOfFire();
+        clientgui.getBoardView().clearSenorsRanges();
         if (client.isMyTurn()) {
             if (client.getGame().getTurn().isValidEntity(e, client.getGame())) {
                 if (ce() != null) {

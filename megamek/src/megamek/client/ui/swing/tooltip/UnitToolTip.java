@@ -1206,7 +1206,11 @@ public final class UnitToolTip {
         // If sensors, display what sensors this unit is using
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)
                 || game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
-            result += addToTT("Sensors", BR, entity.getSensorDesc(), Compute.getMaxVisualRange(entity, false)).toString();
+            String visualRange = Compute.getMaxVisualRange(entity, false) + "";
+            if (game.getPlanetaryConditions().isSearchlightEffective()) {
+                visualRange += " (" + Compute.getMaxVisualRange(entity, true) + ")";
+            }
+            result += addToTT("Sensors", BR, entity.getSensorDesc(), visualRange);
         }
 
         if (entity.hasAnyTypeNarcPodsAttached()) {

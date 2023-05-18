@@ -230,6 +230,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             clientgui.getUnitDisplay().displayEntity(ce());
             clientgui.getUnitDisplay().showPanel("movement");
             clientgui.getBoardView().setWeaponFieldOfFire(ce().getFacing(), ce().getPosition());
+            clientgui.getBoardView().setSensorRange(ce(), ce().getPosition());
         } else {
             disableButtons();
             setNextEnabled(true);
@@ -488,6 +489,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             ce().setSecondaryFacing(ce().getFacing());
             clientgui.getBoardView().redrawEntity(ce());
             clientgui.getBoardView().setWeaponFieldOfFire(ce().getFacing(), ce().getPosition());
+            clientgui.getBoardView().setSensorRange(ce(), ce().getPosition());
             turnMode = false;
         } else if (ce().isBoardProhibited(board.getType())) {
             // check if this type of unit can be on the given type of map
@@ -551,6 +553,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
             clientgui.getBoardView().redrawEntity(ce());
             clientgui.getBoardView().setWeaponFieldOfFire(ce().getFacing(), moveto);
+            clientgui.getBoardView().setSensorRange(ce(), ce().getPosition());
             clientgui.getBoardView().repaint();
             butDone.setEnabled(true);
         }

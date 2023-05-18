@@ -1150,6 +1150,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // create new current and considered paths
         cmd = new MovePath(clientgui.getClient().getGame(), ce);
         clientgui.getBoardView().setWeaponFieldOfFire(ce, cmd);
+        clientgui.getBoardView().setSensorRange(ce, cmd.getFinalCoords());
 
         // set to "walk," or the equivalent
         if (gear != MovementDisplay.GEAR_JUMP) {
@@ -1240,6 +1241,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             clientgui.getBoardView().cursor(cmd.getFinalCoords());
             clientgui.getBoardView().drawMovementData(entity, cmd);
             clientgui.getBoardView().setWeaponFieldOfFire(entity, cmd);
+            clientgui.getBoardView().setSensorRange(entity, cmd.getFinalCoords());
 
             // Set the button's label to "Done"
             // if the entire move is impossible.
@@ -1712,6 +1714,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 cmd = lPath;
             }
         }
+
+        clientgui.getBoardView().setSensorRange(ce(), cmd.getFinalCoords());
         clientgui.getBoardView().setWeaponFieldOfFire(ce(), cmd);
     }
 

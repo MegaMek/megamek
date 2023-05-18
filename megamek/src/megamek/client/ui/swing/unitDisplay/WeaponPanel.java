@@ -2138,6 +2138,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             // no twisting here
             ((DeploymentDisplay) gui.getCurrentPanel()).setWeaponFieldOfFire(entity, ranges, arc, loc);
         }
+
+        unitDisplay.getClientGUI().getBoardView().setSensorRange(entity, entity.getPosition());
     }
 
     private String formatAmmo(Mounted m) {

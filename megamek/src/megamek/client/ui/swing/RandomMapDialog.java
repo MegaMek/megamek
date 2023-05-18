@@ -32,7 +32,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -354,7 +354,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         }
 
         // Cache the selected boards, so we can restore them
-        ArrayList<String> selectedBoards = mapSettings.getBoardsSelectedVector();
+        List<String> selectedBoards = mapSettings.getBoardsSelectedVector();
         // Load the file.  If there is an error, log it and return.
         try (InputStream is = new FileInputStream(selectedFile)) {
             mapSettings = MapSettings.getInstance(is);

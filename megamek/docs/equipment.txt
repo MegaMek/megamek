@@ -1398,7 +1398,7 @@ A,3091-Inner Sphere3063-Inner Sphere3085-Inner Sphere,3091-IS_TW_Non_Box3063-IS_
 A,3091-Inner Sphere3063-Inner Sphere3085-Inner Sphere,3091-IS_TW_Non_Box3063-IS_Advanced3085-IS_TW_Non_Box,Ammo Heavy SCC,Heavy SCC Ammo,HeavySCC Ammo,
 A,3072-Inner Sphere3065-Inner Sphere3055-Inner Sphere,3072-IS_TW_Non_Box3065-IS_Advanced3055-IS_Advanced,Ammo Manta Ray,MantaRay Ammo,Manta Ray Ammo,
 A,3072-Inner Sphere3065-Inner Sphere3055-Inner Sphere,3072-IS_TW_Non_Box3065-IS_Advanced3055-IS_Advanced,Ammo Swordfish,Swordfish Ammo,
-A,3072-Inner Sphere3065-Inner Sphere3055-Inner Sphere,3072-IS_TW_Non_Box3065-IS_Advanced3055-IS_Advanced,Ammo Stringray,Stingray Ammo,ClStingray Ammo,
+A,3072-Inner Sphere3065-Inner Sphere3055-Inner Sphere,3072-IS_TW_Non_Box3065-IS_Advanced3055-IS_Advanced,Ammo Stingray,Stingray Ammo,ClStingray Ammo,
 A,3072-Inner Sphere3065-Inner Sphere3055-Inner Sphere,3072-IS_TW_Non_Box3065-IS_Advanced3055-IS_Advanced,Ammo Piranha,Piranha Ammo,PiranhaAmmo,
 A,-1-Inner Sphere,-1-IS_Unofficial,Ammo Kraken,Kraken Ammo,
 A,2710-Inner Sphere,2710-IS_Experimental,Ammo Heavy Mass Driver,HeavyMassDriver Ammo,

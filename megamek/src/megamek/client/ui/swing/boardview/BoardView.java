@@ -6477,6 +6477,16 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
         lBranckets.add(new RangeHelper(minSensorRange, maxSensorRange));
 
+        minSensorRange = 0;
+
+        if (game.getPlanetaryConditions().isSearchlightEffective()) {
+            maxSensorRange = Compute.getMaxVisualRange(entity, true);
+        } else {
+            maxSensorRange = 0;
+        }
+
+        lBranckets.add(new RangeHelper(minSensorRange, maxSensorRange));
+
         // create the lists of hexes
         List<Set<Coords>> sensorRanges = new ArrayList<>(1);
         int j = 0;
@@ -6498,7 +6508,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         sensorRangeSprites.clear();
 
         // for all available range
-        for (int b = 0; b < 2; b++) {
+        for (int b = 0; b < lBranckets.size(); b++) {
             if (sensorRanges.get(b) == null) {
                 continue;
             }

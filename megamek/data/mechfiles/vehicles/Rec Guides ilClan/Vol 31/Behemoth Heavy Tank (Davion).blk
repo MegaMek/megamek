@@ -20,6 +20,10 @@ Behemoth Heavy Tank
 (Davion)
 </Model>
 
+<mul id:>
+9457
+</mul id:>
+
 <year>
 3087
 </year>
@@ -106,14 +110,6 @@ ISStreakSRM6
 ISStreakSRM6
 </Turret Equipment>
 
-<source>
-Rec Guide:ilClan #31 - Dark Age
-</source>
-
-<tonnage>
-100.0
-</tonnage>
-
 <capabilities>
 Despite the fact that the initial design plan allowed for a whopping twenty-one tons of armor, only thirteen were used to offer greater weight for weaponry. Though not as thick as originally envisioned, the protection is adequate against the majority of threats. With a peak speed of only 32 kph, even the slowest 'Mech can readily catch up to the Behemoth if it's ready to face the firepower.
 </capabilities>
@@ -128,7 +124,6 @@ Twin Gauss rifles have the range and punch of modern assault tanks like the Kels
 
 <history>
 House Davion's Federated Suns troops are noted for their quick deployments and quick combat strategies. AFFS opponents soon learn to expect their adversaries to arrive anywhere, at any moment. The idea of that army commissioning something as ponderous and unmaneuvrable as the Behemoth Heavy Tank is unthinkable to most Davion military planners, but Aldis Industries debuted the vehicle to the AFFS in 2952. At the time, the conventional vehicle's purpose on the 'Mech-equipped battlefield was debatable. A vehicle must either be fast enough to dodge the BattleMech's weaponry or carry guns capable of threatening the armor of a 'Mech. The Aldis team's approach was to equip the Behemoth with cannons powerful enough to overpower a 'Mech while also carrying enough backup weapons to keep it safe from secondary threats. Although the AFFS provided the initial commission, Aldis has always been happy to sell to any interested customer. To date, the Behemoth has infiltrated practically every Successor State military, with the AFFS and the Draconis Combine Mustered Soldiery having the highest concentrations.
-There are several accounts of Behemoth crews' bravery and determination.
 </history>
 
 <manufacturer>
@@ -145,3 +140,12 @@ ARMOR:Valiant Plate Heavy Ferro-Fibrous with CASE
 COMMUNICATIONS:Olmstead 30
 TARGETING:Cirxese Ballista- Check with Cirxese RockeCheck
 </systemManufacturers>
+
+<source>
+Rec Guide:ilClan #31 - Early Republic
+</source>
+
+<tonnage>
+100.0
+</tonnage>
+

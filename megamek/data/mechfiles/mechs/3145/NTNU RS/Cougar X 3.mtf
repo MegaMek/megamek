@@ -4,7 +4,7 @@ X 3
 mul id:6953
 
 Config:Biped
-TechBase:Mixed (Clan Chassis)
+TechBase:Mixed (IS Chassis)
 Era:3093
 Source:RS 3145 NT NU
 Rules Level:3
@@ -43,13 +43,13 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 Clan Ferro-Fibrous
--Empty-
--Empty-
 -Empty-
 
 Right Arm:

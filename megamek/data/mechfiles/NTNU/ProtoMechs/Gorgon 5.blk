@@ -1,0 +1,110 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+ProtoMech
+</UnitType>
+
+<Name>
+Gorgon
+</Name>
+
+<Model>
+5
+</Model>
+
+<mul id:>
+8032
+</mul id:>
+
+<year>
+3122
+</year>
+
+<originalBuildYear>
+3122
+</originalBuildYear>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Biped
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<interface_cockpit>
+false
+</interface_cockpit>
+
+<engine_type>
+0
+</engine_type>
+
+<clan_engine>
+false
+</clan_engine>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+6
+16
+4
+4
+10
+3
+</armor>
+
+<Body Equipment>
+Clan Streak LRM 5 Ammo (13)
+</Body Equipment>
+
+<Head Equipment>
+</Head Equipment>
+
+<Torso Equipment>
+ProtoMagneticClamp
+</Torso Equipment>
+
+<Right Arm Equipment>
+</Right Arm Equipment>
+
+<Left Arm Equipment>
+</Left Arm Equipment>
+
+<Legs Equipment>
+</Legs Equipment>
+
+<Main Gun Equipment>
+CLStreakLRM5
+</Main Gun Equipment>
+
+<source>
+RS3150 -Late Republic
+</source>
+
+<tonnage>
+8.0
+</tonnage>
+

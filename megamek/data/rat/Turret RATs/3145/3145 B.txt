@@ -415,7 +415,7 @@ TSEMP Cannon Turret (Single), 44
 Enhanced LRM/10 Turret (Quad), 43
 Extended LRM/15 Turret (Dual), 42
 Extended LRM/20 Turret (Single), 41
-Calliope Turret (Standard), 40
+Calliope Turret (3053), 40
 Imp.Heavy Gauss Turret (Single), 39
 Enhanced LRM/15 Turret (Triple), 38
 HV Autocannon/10 Turret (Triple), 37

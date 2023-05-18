@@ -1,0 +1,108 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Pilum Heavy Tank
+</Name>
+
+<Model>
+(ELRM)
+</Model>
+
+<mul id:>
+8048
+</mul id:>
+
+<year>
+3148
+</year>
+
+<originalBuildYear>
+3148
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+40
+33
+33
+33
+40
+</armor>
+
+<Body Equipment>
+IS Ammo Extended LRM-15
+IS Ammo Extended LRM-15
+IS Ammo Extended LRM-15
+IS Ammo Extended LRM-15
+IS Ammo Extended LRM-15
+IS Ammo Extended LRM-15
+IS Ammo Extended LRM-15
+ISC3BoostedSystemSlaveUnit
+ISCASE
+</Body Equipment>
+
+<Front Equipment>
+ISERMediumLaser
+ISERMediumLaser
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Extended LRM 15
+Extended LRM 15
+</Turret Equipment>
+
+<source>
+RS3150 - Dark Age
+</source>
+
+<tonnage>
+70.0
+</tonnage>
+

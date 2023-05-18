@@ -16,12 +16,12 @@ ConvFighter
 Planetlifter Support Aircraft
 </Name>
 
-<model>
+<Model>
 
-</model>
+</Model>
 
 <mul id:>
-8175
+2545
 </mul id:>
 
 <year>
@@ -95,6 +95,7 @@ ISTankCockpitCommandConsole
 </Right Wing Equipment>
 
 <Aft Equipment>
+IS Vehicular Stealth
 IS Vehicular Stealth
 IS Vehicular Stealth
 IS Vehicular Stealth

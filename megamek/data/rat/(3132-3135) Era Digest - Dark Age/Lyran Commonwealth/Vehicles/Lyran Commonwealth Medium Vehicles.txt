@@ -3,7 +3,7 @@ JES I Tactical Missile Carrier (Standard), 1
 Vedette Medium Tank (Cell), 2
 JES I Tactical Missile Carrier (3082 Upgrade), 3
 Drillson Heavy Hover Tank (Streak), 4
-Schildkrote Line Tank (Standard), 5
+Schildkröte Line Tank,5
 Condor Heavy Hover Tank (Upgrade), 6
 Swallow Attack WIGE (Standard), 5
 Vedette Medium Tank V9, 4

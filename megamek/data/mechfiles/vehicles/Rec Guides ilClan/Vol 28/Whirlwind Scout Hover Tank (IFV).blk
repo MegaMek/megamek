@@ -20,12 +20,16 @@ Whirlwind Scout Hover Tank
 (IFV)
 </Model>
 
+<mul id:>
+9363
+</mul id:>
+
 <year>
-3145
+3139
 </year>
 
 <originalBuildYear>
-3145
+3139
 </originalBuildYear>
 
 <type>
@@ -82,7 +86,7 @@ ISERMediumLaser
 </Turret Equipment>
 
 <source>
-Rec Guide:ilClan #28 -
+Rec Guide:ilClan #28 - Dark Ages
 </source>
 
 <tonnage>

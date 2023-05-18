@@ -1,0 +1,152 @@
+Version:1.0
+Shrike
+"Black Rose"
+
+Config:Biped
+techbase:Clan
+era:3150
+source:TRO 3145 The Clans - Late Republic
+rules level:3
+
+mass:95
+engine:380 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:21 Laser
+walk mp:4
+jump mp:4
+
+armor:Standard(Inner Sphere)
+LA armor:32
+RA armor:32
+LT armor:29
+RT armor:29
+CT armor:44
+HD armor:9
+LL armor:39
+RL armor:39
+RTL armor:10
+RTR armor:10
+RTC armor:15
+
+Weapons:5
+LRM 10, Center Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Left Torso
+ER PPC, Left Arm
+ER PPC, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Laser Heat Sink
+Laser Heat Sink
+Laser Heat Sink
+Laser Heat Sink
+CLERPPC
+CLERPPC
+CLERPPC
+CLERPPC
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Laser Heat Sink
+Laser Heat Sink
+CLTargeting Computer
+CLTargeting Computer
+CLTargeting Computer
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLPartialWing
+CLPartialWing
+CLPartialWing
+Laser Heat Sink
+Laser Heat Sink
+Laser Heat Sink
+Laser Heat Sink
+Jump Jet
+Jump Jet
+CLERMediumLaser
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLPartialWing
+CLPartialWing
+CLPartialWing
+Laser Heat Sink
+Laser Heat Sink
+Jump Jet
+Jump Jet
+CLERMediumLaser
+Clan Ammo LRM-10
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLLRM10
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

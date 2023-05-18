@@ -1,0 +1,178 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Buccaneer
+</Name>
+
+<Model>
+Rezak
+</Model>
+
+<mul id:>
+7143
+</mul id:>
+
+<year>
+3065
+</year>
+
+<originalBuildYear>
+2708
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+2ndclassquarters:0.0:0
+crewquarters:21.0:0
+steeragequarters:135.0:0
+cargobay:1844.0:1:1
+</transporters>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<heatsinks>
+100
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+4800
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+20
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+211
+156
+156
+104
+</armor>
+
+<Nose Equipment>
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+(B) ISERPPC
+ISERPPC
+(B) LRM 15
+LRM 15
+IS Ammo LRM-15:24
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+(B) ISGaussRifle
+ISGaussRifle
+IS Gauss Ammo:24
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+(B) ISGaussRifle
+ISGaussRifle
+IS Gauss Ammo:24
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+(B) ISStreakSRM6
+IS Streak SRM 6 Ammo:15
+</Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<structural_integrity>
+8
+</structural_integrity>
+
+<source>
+HTP:Antallos - Civil War
+</source>
+
+<tonnage>
+3500.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+30
+</crew>
+
+<officers>
+3
+</officers>
+
+<gunners>
+4
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+2
+</escape_pod>
+

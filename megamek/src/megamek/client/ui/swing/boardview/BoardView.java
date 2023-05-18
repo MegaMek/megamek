@@ -1108,7 +1108,6 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             drawSprites(g, wreckSprites);
         }
 
-
         // Sensor Range
         if (!useIsometric() && shouldShowSensorRange()) {
             drawSprites(g, sensorRangeSprites);
@@ -6455,7 +6454,6 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         }
 
         List<RangeHelper> lBranckets = new ArrayList<>(1);
-
         int maxSensorRange = 0;
         int minSensorRange = 0;
 
@@ -6481,7 +6479,6 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
         // create the lists of hexes
         List<Set<Coords>> sensorRanges = new ArrayList<>(1);
-
         int j = 0;
 
         for (RangeHelper rangeH : lBranckets) {
@@ -6528,7 +6525,6 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
         repaint();
     }
-
 
     /** Displays a dialog and changes the theme of all
      *  board hexes to the user-chosen theme.

@@ -6498,7 +6498,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         for (RangeHelper rangeH : lBranckets) {
             sensorRanges.add(new HashSet<>());
 
-            for (int i = rangeH.min; i < rangeH.max; i++) {
+            for (int i = rangeH.min; i <= rangeH.max; i++) {
                 // Add all hexes up to the range to separate lists
                 sensorRanges.get(j).addAll(c.allAtDistance(i));
             }

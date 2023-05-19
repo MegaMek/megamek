@@ -8151,7 +8151,7 @@ public class MiscType extends EquipmentType {
         misc.tankslots = 1;
         misc.cost = COST_VARIABLE;
         misc.bv = 0;
-        misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_VARIABLE_SIZE).or(F_MECH_EQUIPMENT)
+        misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_VARIABLE_SIZE).or(F_MECH_EQUIPMENT).or(F_PROTOMECH_EQUIPMENT)
                 .or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);

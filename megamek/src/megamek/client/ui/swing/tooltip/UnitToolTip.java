@@ -957,6 +957,10 @@ public final class UnitToolTip {
     public static String getSensorDesc(Entity e) {
         Entity.SensorRangeHelper srh = e.getSensorRanges();
 
+        if (srh == null) {
+            return Messages.getString("NONE");
+        }
+
         if (e.isAirborne() && e.getGame().getBoard().onGround()) {
             return e.getActiveSensor().getDisplayName() + " (" + srh.minSensorRange + "-"
                     + srh.maxSensorRange + ")" + " {" + Messages.getString("BoardView1.Tooltip.sensor_range_vs_ground_target")

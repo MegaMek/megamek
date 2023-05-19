@@ -6454,23 +6454,27 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         }
 
         List<RangeHelper> lBranckets = new ArrayList<>(1);
-        int maxSensorRange = 0;
         int minSensorRange = 0;
+        int maxSensorRange = 0;
+        int minAirSensorRange = 0;
+        int maxAirSensorRange = 0;
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
-            LosEffects los = fovHighlightingAndDarkening.getCachedLosEffects(c, c);
-            int bracket = Compute.getSensorRangeBracket(entity, null,
-                    fovHighlightingAndDarkening.cachedAllECMInfo);
-            int range = Compute.getSensorRangeByBracket(game, entity, null, los);
-            maxSensorRange = bracket * range;
-            minSensorRange = Math.max((bracket - 1) * range, 0);
+        Entity.SensorRangeHelper srh = entity.getSensorRanges();
 
-            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE)) {
-                minSensorRange = 0;
+        if (srh != null) {
+            if (entity.isAirborne() && entity.getGame().getBoard().onGround()) {
+                minSensorRange = srh.minGroundSensorRange;
+                maxSensorRange = srh.maxGroundSensorRange;
+                minAirSensorRange = srh.minSensorRange;
+                maxAirSensorRange = srh.maxSensorRange;
+            } else {
+                minSensorRange = srh.minSensorRange;
+                maxSensorRange = srh.maxSensorRange;
             }
         }
 
         lBranckets.add(new RangeHelper(minSensorRange, maxSensorRange));
+        lBranckets.add(new RangeHelper(minAirSensorRange, maxAirSensorRange));
 
         minSensorRange = 0;
         maxSensorRange = Compute.getMaxVisualRange(entity, false);

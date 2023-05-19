@@ -954,6 +954,18 @@ public final class UnitToolTip {
         return result;
     }
 
+    public static String getSensorDesc(Entity e) {
+        Entity.SensorRangeHelper srh = e.getSensorRanges();
+
+        if (e.isAirborne() && e.getGame().getBoard().onGround()) {
+            return e.getActiveSensor().getDisplayName() + " (" + srh.minSensorRange + "-"
+                    + srh.maxSensorRange + ")" + " {" + Messages.getString("BoardView1.Tooltip.sensor_range_vs_ground_target")
+                    + " (" + srh.minGroundSensorRange + "-" + srh.maxGroundSensorRange + ")}";
+        }
+        return e.getActiveSensor().getDisplayName() + " (" + srh.minSensorRange + "-"
+                + srh.maxSensorRange + ")";
+    }
+
     /** Returns values that only are relevant when in-game such as heat. */
     private static StringBuilder inGameValues(Entity entity, Player localPlayer) {
         Game game = entity.getGame();
@@ -1210,7 +1222,7 @@ public final class UnitToolTip {
             if (game.getPlanetaryConditions().isSearchlightEffective()) {
                 visualRange += " (" + Compute.getMaxVisualRange(entity, true) + ")";
             }
-            result += addToTT("Sensors", BR, entity.getSensorDesc(), visualRange);
+            result += addToTT("Sensors", BR, getSensorDesc(entity), visualRange);
         }
 
         if (entity.hasAnyTypeNarcPodsAttached()) {

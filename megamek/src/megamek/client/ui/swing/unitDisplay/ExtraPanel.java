@@ -9,6 +9,7 @@ import megamek.client.ui.swing.HeatEffects;
 import megamek.client.ui.swing.Slider;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.*;
+import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
@@ -536,7 +537,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener, IPrefer
         refreshSensorChoices(en);
 
         if (null != en.getActiveSensor()) {
-            String tmpStr = Messages.getString("MechDisplay.CurrentSensors") + " " + en.getSensorDesc();
+            String tmpStr = Messages.getString("MechDisplay.CurrentSensors") + " " + UnitToolTip.getSensorDesc(en);
             tmpStr = String.format("<html><div WIDTH=%d>%s</div></html>",  250, tmpStr);
             curSensorsL.setText(tmpStr);
         } else {

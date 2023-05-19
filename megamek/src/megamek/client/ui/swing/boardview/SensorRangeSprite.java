@@ -82,8 +82,9 @@ public class SensorRangeSprite extends MovementEnvelopeSprite {
     private final Color fillColor;
     private final int sensorType;
     public final static int SENSORS = 0;
-    public final static int VISUAL = 1;
-    public final static int VISUAL_DARK = 2;
+    public final static int SENSORS_AIR = 1;
+    public final static int VISUAL = 2;
+    public final static int VISUAL_DARK = 3;
     
     public SensorRangeSprite(BoardView boardView1, int sensorType, Coords l,
                              int borders) {
@@ -97,6 +98,8 @@ public class SensorRangeSprite extends MovementEnvelopeSprite {
     public static Color getColor(int sensorType) {
         switch (sensorType) {
             case SENSORS:
+                return GUIP.getSensorRangeColor();
+            case SENSORS_AIR:
                 return GUIP.getSensorRangeColor();
             case VISUAL:
                 return GUIP.getVisualRangeColor();

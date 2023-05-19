@@ -12983,12 +12983,26 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return Compute.ARC_REAR;
     }
 
+    public static class SensorRangeHelper {
+        public int minSensorRange;
+        public int maxSensorRange;
+        public int minGroundSensorRange;
+        public int maxGroundSensorRange;
+
+        public SensorRangeHelper(int minSensorRange, int maxSensorRange, int minGroundSensorRange, int maxGroundSensorRange) {
+            this.minSensorRange = minSensorRange;
+            this.maxSensorRange = maxSensorRange;
+            this.minGroundSensorRange = minGroundSensorRange;
+            this.maxGroundSensorRange = maxGroundSensorRange;
+        }
+    }
+
     /**
-     * returns a description to the current sensing range of the active sensor
+     * returns the current sensing ranges of the active sensor
      */
-    public String getSensorDesc() {
+    public SensorRangeHelper getSensorRanges() {
         if (null == getActiveSensor()) {
-            return "none";
+            return null;
         }
         int bracket = Compute.getSensorBracket(getSensorCheck());
         if (isSpaceborne()) {
@@ -13025,18 +13039,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         int minSensorRange = Math.max((bracket - 1) * range, 0);
         int maxGroundSensorRange = bracket * groundRange;
         int minGroundSensorRange = Math.max((maxGroundSensorRange - 1), 0);
+
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE)) {
             minSensorRange = 0;
             minGroundSensorRange = 0;
         }
 
-        if (isAirborne() && game.getBoard().onGround()) {
-            return getActiveSensor().getDisplayName() + " (" + minSensorRange + "-"
-                    + maxSensorRange + ")" + " {" + Messages.getString("Entity.sensor_range_vs_ground_target")
-                    + " (" + minGroundSensorRange + "-" + maxGroundSensorRange + ")}";
-        }
-        return getActiveSensor().getDisplayName() + " (" + minSensorRange + "-"
-               + maxSensorRange + ")";
+        return new SensorRangeHelper(minSensorRange, maxSensorRange, minGroundSensorRange, maxGroundSensorRange);
     }
 
     @Override

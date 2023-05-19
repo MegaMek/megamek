@@ -6440,7 +6440,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         }
     }
 
-    // prepares the sprites for a sensor ranges
+    // prepares the sprites for visual and sensor ranges
     public void setSensorRange(Entity entity, Coords c) {
         if (entity == null || c == null) {
             clearSenorsRanges();
@@ -6499,7 +6499,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             sensorRanges.add(new HashSet<>());
 
             for (int i = rangeH.min; i < rangeH.max; i++) {
-                // Add all hexes up to the weapon range to separate lists
+                // Add all hexes up to the range to separate lists
                 sensorRanges.get(j).addAll(c.allAtDistance(i));
             }
 

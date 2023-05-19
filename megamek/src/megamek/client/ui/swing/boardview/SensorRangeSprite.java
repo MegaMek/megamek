@@ -35,7 +35,6 @@ import megamek.common.Coords;
 
 /**
  * This sprite is used to paint the visual and sensor range
- * for weapons. 
  * 
  * <BR><BR>Extends {@link MovementEnvelopeSprite}
  * 

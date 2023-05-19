@@ -13000,6 +13000,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * returns the current sensing ranges of the active sensor
      */
+    @Nullable
     public SensorRangeHelper getSensorRanges() {
         if (null == getActiveSensor()) {
             return null;

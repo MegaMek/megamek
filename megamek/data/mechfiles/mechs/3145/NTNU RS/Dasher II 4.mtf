@@ -4,7 +4,7 @@ Dasher II
 mul id:6919
 
 Config:Biped
-TechBase:Mixed (Clan Chassis)
+TechBase:Mixed (IS Chassis)
 Era:3136
 Source:RS 3145 NT NU
 Rules Level:3
@@ -74,12 +74,12 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
 CLLRM5
 Clan Endo Steel
 
@@ -88,12 +88,12 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
 CLLRM5
 Clan Ammo LRM-5
 
@@ -130,8 +130,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Clan Improved Jump Jet
-Clan Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
 -Empty-
 -Empty-
 -Empty-
@@ -144,8 +144,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Clan Improved Jump Jet
-Clan Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
 -Empty-
 -Empty-
 -Empty-

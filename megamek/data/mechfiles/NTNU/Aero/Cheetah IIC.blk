@@ -1,0 +1,118 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Cheetah IIC
+</Name>
+
+<Model>
+
+</Model>
+
+<mul id:>
+8011
+</mul id:>
+
+<year>
+3149
+</year>
+
+<originalBuildYear>
+3149
+</originalBuildYear>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
+
+<SafeThrust>
+12
+</SafeThrust>
+
+<cockpit_type>
+1
+</cockpit_type>
+
+<heatsinks>
+15
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+320
+</fuel>
+
+<engine_type>
+3
+</engine_type>
+
+<armor_type>
+3
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<armor>
+21
+21
+21
+17
+</armor>
+
+<Nose Equipment>
+CLLightActiveProbe
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+CLCASE
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+CLCASE
+</Right Wing Equipment>
+
+<Aft Equipment>
+Clan Reflective
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
+
+<source>
+RS 3150 - Dark Age
+</source>
+
+<tonnage>
+25.0
+</tonnage>
+

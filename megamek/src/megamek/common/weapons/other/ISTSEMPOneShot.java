@@ -16,6 +16,7 @@ package megamek.common.weapons.other;
 import megamek.common.SimpleTechLevel;
 
 public class ISTSEMPOneShot extends TSEMPWeapon {
+
     private static final long serialVersionUID = 2945503963826543215L;
 
     public ISTSEMPOneShot() {
@@ -25,10 +26,10 @@ public class ISTSEMPOneShot extends TSEMPWeapon {
         bv = 98;
         name = "TSEMP One-Shot";
         setInternalName(name);
-        this.addLookupName("ISTSEMPOS");
+        addLookupName("ISTSEMPOS");
         tonnage = 4;
         criticals = 3;
-		rulesRefs = "90, IO";
+		rulesRefs = "84, IO:AE";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
 		techAdvancement.setTechBase(TECH_BASE_IS)
                 .setIntroLevel(false).setUnofficial(false)
@@ -40,18 +41,4 @@ public class ISTSEMPOneShot extends TSEMPWeapon {
                 .setProductionFactions(F_RS)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     * megamek.server.Server)
-     */
-    /*@Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, Server server) {
-        return new TSEMPOneShotHandler(toHit, waa, game, server);
-    }
-    */
 }

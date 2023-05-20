@@ -1,0 +1,105 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Hadur Fast Support Vehicle
+</Name>
+
+<Model>
+(Reactive)
+</Model>
+
+<mul id:>
+8051
+</mul id:>
+
+<year>
+3142
+</year>
+
+<originalBuildYear>
+3142
+</originalBuildYear>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+9
+</cruiseMP>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+2
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<armor>
+22
+20
+20
+16
+18
+</armor>
+
+<Body Equipment>
+CLAPGaussRifle Ammo
+CLArrowIVAmmo
+CLArrowIVAmmo
+CLArrowIVHomingAmmo
+CLArrowIVHomingAmmo
+</Body Equipment>
+
+<Front Equipment>
+CLERMediumLaser
+CLERMediumLaser
+CLAPGaussRifle
+CLAPGaussRifle
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+CLArrowIV
+</Turret Equipment>
+
+<source>
+RS3150 - Dark Age
+</source>
+
+<tonnage>
+50.0
+</tonnage>
+

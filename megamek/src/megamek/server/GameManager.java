@@ -1013,8 +1013,8 @@ public class GameManager implements IGameManager {
     private void resetEntityPhase(GamePhase phase) {
         // first, mark doomed entities as destroyed and flag them
         Vector<Entity> toRemove = new Vector<>(0, 10);
-        for (Iterator<Entity> e = game.getEntities(); e.hasNext(); ) {
-            final Entity entity = e.next();
+
+        for (Entity entity : game.getEntitiesVector()) {
             entity.newPhase(phase);
             if (entity.isDoomed()) {
                 entity.setDestroyed(true);
@@ -1056,11 +1056,8 @@ public class GameManager implements IGameManager {
         }
 
         // do some housekeeping on all the remaining
-        for (Iterator<Entity> e = game.getEntities(); e.hasNext(); ) {
-            final Entity entity = e.next();
-
+        for (Entity entity : game.getEntitiesVector()) {
             entity.applyDamage();
-
             entity.reloadEmptyWeapons();
 
             // reset damage this phase
@@ -1074,7 +1071,6 @@ public class GameManager implements IGameManager {
             entity.setStartupThisPhase(false);
 
             // reset done to false
-
             if (phase.isDeployment()) {
                 entity.setDone(!entity.shouldDeploy(game.getRoundCount()));
             } else {
@@ -1091,6 +1087,14 @@ public class GameManager implements IGameManager {
                 ((MechWarrior) entity).setLanded(true);
             }
         }
+
+        // flag deployed and doomed, but not destroyed out of game enities
+        for (Entity entity : game.getOutOfGameEntitiesVector()) {
+            if (entity.isDeployed() && entity.isDoomed() && !entity.isDestroyed()) {
+                entity.setDestroyed(true);
+            }
+        }
+
         game.clearIlluminatedPositions();
         send(new Packet(PacketCommand.CLEAR_ILLUM_HEXES));
     }

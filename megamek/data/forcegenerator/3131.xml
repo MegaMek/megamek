@@ -15767,7 +15767,7 @@
 			<availability>General:4</availability>
 		</model>
 	</chassis>
-	<chassis name='Schildkrote Line Tank' unitType='Tank'>
+	<chassis name='Schildkröte Line Tank' unitType='Tank'>
 		<availability>LA:4-,LA.pm:5,MERC:3-</availability>
 		<model name='(HPPC)'>
 			<availability>General:4</availability>

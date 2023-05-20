@@ -73,6 +73,10 @@ VERSION HISTORY:
 + Data: iATM ammo should use ATM availability codes for standard (ER,HE,Standard) ammos
 + Fix #4406: Fix an issue with Forces not working correctly when using double blind
 + PR #4388: Chaff Pods (ECM and smoke) are now functional in the game
++ Issue #4416: Entities destroyed by environmental conditions are marked as destroyed
++ Issue #4411: Corrected display of cruise missile damage values
++ Issue #4835: Allow repeating TSEMP on aerospace units
++ Fix #4283: Custom Weapon Orders can now be saved again
 
 0.49.12 (2023-03-04 2200 UTC)
 + PR #4062: OS Thunderbolt Weapons are now available for construction and use

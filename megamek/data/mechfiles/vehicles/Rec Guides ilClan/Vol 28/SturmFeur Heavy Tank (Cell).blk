@@ -21,15 +21,15 @@ SturmFeur Heavy Tank
 </Model>
 
 <mul id:>
-3115
+9370
 </mul id:>
 
 <year>
-3145
+3149
 </year>
 
 <originalBuildYear>
-3145
+3149
 </originalBuildYear>
 
 <type>
@@ -103,7 +103,6 @@ CLArtemisIV
 
 <capabilities>
 For point-blank anti-infantry protection, the SturmFeur carries two huge missile racks backed up by machine guns. The SturmFeur is extensively armored, more so than many frontline tanks, in comparison to many other fire-support vehicles.
-The SturmFeur's 19-and-a-half tons of armor allow it to resist massive damage, which is appreciated by missile carrier operators who are used to paper-thin armor that disintegrates (as the sailors will tell you) "when given a filthy look."
 </capabilities>
 
 <overview>
@@ -134,7 +133,7 @@ TARGETING:SturmFeur Highlight with BlindFire Radar and Artemis IV FCS
 </systemManufacturers>
 
 <source>
-Rec Guide:ilClan #28 -
+Rec Guide:ilClan #28 - Dark Age
 </source>
 
 <tonnage>

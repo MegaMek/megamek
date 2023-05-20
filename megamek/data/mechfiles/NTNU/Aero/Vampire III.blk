@@ -1,0 +1,168 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Vampire
+</Name>
+
+<Model>
+III
+</Model>
+
+<mul id:>
+8016
+</mul id:>
+
+<year>
+3094
+</year>
+
+<originalBuildYear>
+3094
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+battlearmorbay:4.0:4:1
+cargobay:16.0:1:2
+2ndclassquarters:35.0:0
+crewquarters:14.0:0
+</transporters>
+
+<SafeThrust>
+6
+</SafeThrust>
+
+<heatsinks>
+23
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+2660
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+6
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+144
+112
+112
+92
+</armor>
+
+<Nose Equipment>
+(B) ISERMediumLaser
+ISERMediumLaser
+(B) SRM 6
+IS Ammo SRM-6 Artemis-capable:30
+ISArtemisIV
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) LRM 20
+IS Ammo LRM-20 Artemis-capable:18
+ISArtemisIV
+(B) ISERMediumLaser
+ISERMediumLaser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) LRM 20
+IS Ammo LRM-20 Artemis-capable:18
+ISArtemisIV
+(B) ISERMediumLaser
+ISERMediumLaser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) ISERMediumLaser
+ISERMediumLaser
+</Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<structural_integrity>
+11
+</structural_integrity>
+
+<source>
+RS 3150 - Early Republic
+</source>
+
+<tonnage>
+400.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+31
+</crew>
+
+<officers>
+2
+</officers>
+
+<gunners>
+2
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+24
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+0
+</escape_pod>
+

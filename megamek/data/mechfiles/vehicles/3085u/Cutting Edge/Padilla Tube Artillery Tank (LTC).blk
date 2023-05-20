@@ -2,16 +2,20 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Padilla Tube Artillery Tank
 </Name>
+
 <Model>
 (LTC)
 </Model>
@@ -19,51 +23,75 @@ Padilla Tube Artillery Tank
 <mul id:>
 2405
 </mul id:>
-<Tonnage>
-55
-</Tonnage>
+
+<year>
+3077
+</year>
+
+<originalBuildYear>
+3077
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<transporters>
+</transporters>
+
 <cruiseMP>
 3
 </cruiseMP>
-<Armor>
+
+<engine_type>
+4
+</engine_type>
+
+<armor>
 28
 25
 25
 20
 22
-</Armor>
+</armor>
+
+<Body Equipment>
+ISLongTomCannonAmmo
+ISLongTomCannonAmmo
+ISLongTomCannonAmmo
+ISLongTomCannonAmmo
+IS Ammo LRM-5
+ISGuardianECMSuite
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
 <Turret Equipment>
 ISLongTomCannon
 ISSmallPulseLaser
 ISSmallPulseLaser
-ISLRM5
+LRM 5
 </Turret Equipment>
-<Body Equipment>
-ISLongTomCannon Ammo
-ISLongTomCannon Ammo
-ISLongTomCannon Ammo
-ISLongTomCannon Ammo
-ISLRM5 Ammo
-ISGuardianECMSuite
-</Body Equipment>
-<type>
-IS Level 4
-</type>
-<year>
-3077
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-0
-</armor_type>
-<engine_type>
-4
-</engine_type>
-<motion_type>
-Wheeled
-</motion_type>
+
 <source>
 Jihad
 </source>
+
+<tonnage>
+55.0
+</tonnage>
+

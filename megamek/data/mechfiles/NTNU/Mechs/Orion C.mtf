@@ -1,0 +1,152 @@
+Version:1.3
+Orion
+C
+mul id:7998
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3142
+source:RS3150 - Dark Age
+rules level:3
+
+mass:75
+engine:300 Fusion Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:10 IS Double
+walk mp:4
+jump mp:0
+
+armor:Ferro-Lamellor(Clan)
+LA armor:21
+RA armor:21
+LT armor:22
+RT armor:22
+CT armor:35
+HD armor:9
+LL armor:32
+RL armor:32
+RTL armor:10
+RTR armor:10
+RTC armor:10
+
+Weapons:5
+ER Medium Pulse Laser, Left Arm
+ER Medium Pulse Laser, Right Arm
+Streak LRM 15, Left Torso
+ER Medium Pulse Laser, Left Torso
+Gauss Rifle, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLERMediumPulseLaser
+CLERMediumPulseLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLERMediumPulseLaser
+CLERMediumPulseLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Left Torso:
+CLStreakLRM15
+CLStreakLRM15
+CLStreakLRM15
+CLERMediumPulseLaser
+CLERMediumPulseLaser
+Clan Streak LRM 15 Ammo
+Clan Streak LRM 15 Ammo
+CLCASEII
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+
+Right Torso:
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+Clan Gauss Ammo
+Clan Gauss Ammo
+CLCASEII
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Ferro-Lamellor
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Ferro-Lamellor
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Ferro-Lamellor
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -20,12 +20,16 @@ Whirlwind Scout Hover Tank
 
 </Model>
 
+<mul id:>
+9362
+</mul id:>
+
 <year>
-3025
+2890
 </year>
 
 <originalBuildYear>
-3025
+2890
 </originalBuildYear>
 
 <type>
@@ -104,7 +108,7 @@ TARGETING:Garret D2j
 </systemManufacturers>
 
 <source>
-Rec Guide:ilClan #28 -
+Rec Guide:ilClan #28 - Early Succession War
 </source>
 
 <tonnage>

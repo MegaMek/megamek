@@ -980,8 +980,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if (cmd == null || cmd.length() == 0) {
             updateDonePanelButtons( Messages.getString("MovementDisplay.Move"), Messages.getString("MovementDisplay.Skip"), false);
         } else {
-            boolean psrCheck = (!SharedUtility.doPSRCheck(cmd).isBlank())
-                    || (!SharedUtility.doThrustCheck(cmd, clientgui.getClient()).isBlank());
+            boolean psrCheck = (!SharedUtility.doPSRCheck(cmd.clone()).isBlank())
+                    || (!SharedUtility.doThrustCheck(cmd.clone(), clientgui.getClient()).isBlank());
             boolean damageCheck = cmd.shouldMechanicalJumpCauseFallDamage()
                     || cmd.hasActiveMASC()
                     || (!(ce() instanceof VTOL) && cmd.hasActiveSupercharger())

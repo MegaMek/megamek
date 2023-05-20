@@ -1253,19 +1253,19 @@ public final class UnitToolTip {
             dance: for (Player player :  entity.getWhoCanSee()) {
                 if (player.isEnemyOf(entity.getOwner()) || !teamVision) {
                     switch (seenByResolution) {
-                        case 1:
+                        case 0:
                             String msg_someone = Messages.getString("BoardView1.Tooltip.Someone");
                             tempList.append(msg_someone);
                             tempList.append(", ");
                             break dance;
-                        case 2:
+                        case 1:
                             Team team = game.getTeamForPlayer(player);
                             tmpStr = team != null ? team.toString() : "";
                             break;
-                        case 3:
+                        case 2:
                             tmpStr = player.getName();
                             break;
-                        case 4:
+                        case 3:
                             tmpStr = player.toString();
                             break;
                         default:

@@ -77,6 +77,11 @@ VERSION HISTORY:
 + Issue #4411: Corrected display of cruise missile damage values
 + Issue #4835: Allow repeating TSEMP on aerospace units
 + Fix #4283: Custom Weapon Orders can now be saved again
++ Issue #4262: Game year selection no longer limit units
++ Issue #4422: Issue with escape key reset when jumping
++ PR #4438: Split light visible range and other visible range calculations
++ Fix #4432: Issue with seen by client setting unit tool tip index mismatch
++ Fix #4446: Show teams before players on BV count report section
 
 0.49.12 (2023-03-04 2200 UTC)
 + PR #4062: OS Thunderbolt Weapons are now available for construction and use

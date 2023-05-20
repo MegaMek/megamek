@@ -771,112 +771,150 @@ public class PlanetaryConditions implements Serializable {
         if (isAero && (en.getAltitude() > 9)) {
             return 0;
         }
-        
-        // New rulings per v3.02 errata. Spotlights are easier, yay!
+
+        int lightRange = 0;
+
+        // TO:AR v6 p189
         // Illuminated?  Flat 45 hex distance
         if (targetIlluminated && (lightConditions > L_DAY)) {
-            return 45;
+            lightRange = 45;
         } else if (Spotlight && (lightConditions > L_DAY)) {
             // Using a searchlight?  Flat 30 hex range
             if (isMechVee || isAero || isLargeCraft) {
-                return 30;
+                lightRange = 30;
+            } else {
+                // Except infantry/handheld, 10 hexes
+                lightRange = 10;
             }
-            // Except infantry/handheld, 10 hexes
-            return 10;
         } else if (lightConditions == L_PITCH_BLACK) {
             if (isMechVee || (isAero && (en.getAltitude() < 2))) {
-                return 3;
+                lightRange = 3;
+            } else if (isAero) {
+                lightRange = 5;
+            } else if (isLargeCraft) {
+                lightRange = 4;
+            } else {
+                lightRange = 1;
             }
-            if (isAero) {
-                return 5;
-            }
-            if (isLargeCraft) {
-                return 4;
-            }
-            return 1;
-        } else if ((lightConditions == L_MOONLESS)
-                || (fog == FOG_HEAVY)) {
+        } else if (lightConditions == L_MOONLESS) {
             if (isMechVee || (isAero && (en.getAltitude() < 2))) {
-                return 5;
+                lightRange = 5;
+            } else if (isAero) {
+                lightRange = 10;
+            } else if (isLargeCraft) {
+                lightRange = 8;
+            } else {
+                lightRange = 2;
             }
-            if (isAero) {
-                return 10;
+        } else if (lightConditions == L_FULL_MOON) {
+            if (isMechVee || (isAero && (en.getAltitude() < 2))) {
+                lightRange = 10;
+            } else if (isAero) {
+                lightRange = 20;
+            } else if (isLargeCraft) {
+                lightRange = 15;
+            } else {
+                lightRange = 5;
             }
-            if (isLargeCraft) {
-                return 8;
+        } else if (lightConditions == L_DUSK) {
+            if (isMechVee || (isAero && (en.getAltitude() < 2))) {
+                lightRange = 15;
+            } else if (isAero) {
+                lightRange = 30;
+            } else if (isLargeCraft) {
+                lightRange = 20;
+            } else {
+                lightRange = 8;
             }
-            return 2;
+        } else {
+            if (isMechVee || (isAero && (en.getAltitude() < 2))) {
+                lightRange = 60;
+            } else if (isAero) {
+                lightRange = 120;
+            } else if (isLargeCraft) {
+                lightRange = 70;
+            } else {
+                lightRange = 30;
+            }
+        }
+
+        int otherRange = 0;
+
+        if (fog == FOG_HEAVY) {
+            if (isMechVee || (isAero && (en.getAltitude() < 2))) {
+                otherRange =  5;
+            } else if (isAero) {
+                otherRange =  10;
+            } else if (isLargeCraft) {
+                otherRange =  8;
+            } else {
+                otherRange = 2;
+            }
         } else if ((weatherConditions == WE_HEAVY_HAIL)
                 || (weatherConditions == WE_SLEET)
                 || (weatherConditions == WE_HEAVY_SNOW)
                 || (blowingSand && (windStrength >= WI_MOD_GALE))
-                || (lightConditions == L_FULL_MOON)
                 || (weatherConditions == WE_GUSTING_RAIN)
                 || (weatherConditions == WE_ICE_STORM)
                 || (weatherConditions == WE_DOWNPOUR)) {
             if (isMechVee || (isAero && (en.getAltitude() < 2))) {
-                return 10;
+                otherRange = 10;
+            } else if (isAero) {
+                otherRange = 20;
+            } else if (isLargeCraft) {
+                otherRange = 15;
+            } else {
+                otherRange = 5;
             }
-            if (isAero) {
-                return 20;
-            }
-            if (isLargeCraft) {
-                return 15;
-            }
-            return 5;
-        } else if ((lightConditions == L_DUSK)
-                || (weatherConditions == WE_HEAVY_RAIN)
+        } else if ((weatherConditions == WE_HEAVY_RAIN)
                 || (weatherConditions == WE_SNOW_FLURRIES)
                 || (weatherConditions == WE_MOD_SNOW) && (windStrength >= WI_MOD_GALE)) {
             if (isMechVee || (isAero && (en.getAltitude() < 2))) {
-                return 15;
+                otherRange = 15;
+            } else if (isAero) {
+                otherRange = 30;
+            } else if (isLargeCraft) {
+                otherRange = 20;
+            } else {
+                otherRange = 8;
             }
-            if (isAero) {
-                return 30;
-            }
-            if (isLargeCraft) {
-                return 20;
-            }
-            return 8;
         } else if ((weatherConditions == WE_MOD_SNOW)
                 || (weatherConditions == WE_MOD_RAIN)) {
             if (isMechVee || (isAero && (en.getAltitude() < 2))) {
-                return 20;
+                otherRange = 20;
+            } else if (isAero) {
+                otherRange = 50;
+            } else if (isLargeCraft) {
+                otherRange = 25;
+            } else {
+                otherRange = 10;
             }
-            if (isAero) {
-                return 50;
-            }
-            if (isLargeCraft) {
-                return 25;
-            }
-            return 10;
-        } else if ((lightConditions > L_DAY)
-                || (weatherConditions == WE_LIGHT_SNOW)
+        } else if ((weatherConditions == WE_LIGHT_SNOW)
                 || (weatherConditions == WE_LIGHT_RAIN)
-                || (weatherConditions == WE_LIGHT_HAIL) 
+                || (weatherConditions == WE_LIGHT_HAIL)
                 || (fog == FOG_LIGHT)) {
             if (isMechVee || (isAero && (en.getAltitude() < 2))) {
-                return 30;
+                otherRange = 30;
+            } else if (isAero) {
+                otherRange = 60;
+            } else if (isLargeCraft) {
+                otherRange = 35;
+            } else {
+                otherRange = 15;
             }
-            if (isAero) {
-                return 60;
-            }
-            if (isLargeCraft) {
-                return 35;
-            }
-            return 15;
         } else {
             if (isMechVee || (isAero && (en.getAltitude() < 2))) {
-                return 60;
+                otherRange = 60;
+            } else if (isAero) {
+                otherRange = 120;
+            } else if (isLargeCraft) {
+                otherRange = 70;
+            } else {
+                otherRange = 30;
             }
-            if (isAero) {
-                return 120;
-            }
-            if (isLargeCraft) {
-                return 70;
-            }
-            return 30;
         }
+
+        return Math.min(lightRange, otherRange);
     }
 
     public int getDropRate() {

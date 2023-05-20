@@ -79,12 +79,12 @@ public class TargetChoiceDialog extends AbstractChoiceDialog<Targetable> {
 
     @Override
     protected void summaryLabel(JToggleButton button, Targetable target) {
-        button.setText("<html>" + infoText(target) + UnitToolTip.getTargetTipSummary(target,
-                clientGUI.getClient().getBoard()) + "</html>");
+        button.setText("<html>" + infoText(target) + "<BR>" + UnitToolTip.getTargetTipSummary(target,
+                clientGUI.getClient().getBoard(), clientGUI) + "</html>");
     }
 
     protected String infoText(Targetable target) {
-        String result = "<b>" + target.getDisplayName() + "</b>";
+        String result = "";//""<b>" + target.getDisplayName() + "</b>";
 
         if (firingEntity != null) {
             ToHitData thd = WeaponAttackAction.toHit(clientGUI.getClient().getGame(), firingEntity.getId(), target);

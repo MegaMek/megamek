@@ -858,24 +858,20 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
                     toHit = WeaponAttackAction.toHit(game, cen, target,
                             weaponId, ash.getAimingAt(), ash.getAimingMode(),
                             false, false, null, null, false, true);
-                    String t =  String.format("<html><div WIDTH=%d>%s</div></html>", WeaponPanel.TARGET_DISPLAY_WIDTH, target.getDisplayName() + " (" + ash.getAimingLocation() + ")");
-                    clientgui.getUnitDisplay().wPan.wTargetR.setText(t);
+                    clientgui.getUnitDisplay().wPan.setTarget(target, Messages.getFormattedString("MechDisplay.AimingAt", ash.getAimingLocation()));
+
                 } else {
                     toHit = WeaponAttackAction.toHit(game, cen, target, weaponId, Entity.LOC_NONE,
                             AimingMode.NONE, false, false,
                             null, null, false, true);
-
-                    String t =  String.format("<html><div WIDTH=%d>%s</div></html>", WeaponPanel.TARGET_DISPLAY_WIDTH, target.getDisplayName());
-                    clientgui.getUnitDisplay().wPan.wTargetR.setText(t);
+                    clientgui.getUnitDisplay().wPan.setTarget(target, null);
                 }
                 ash.setPartialCover(toHit.getCover());
             } else {
                 toHit = WeaponAttackAction.toHit(game, cen, target, weaponId, Entity.LOC_NONE,
                         AimingMode.NONE, false, false, null,
                         null, false, true);
-
-                String t =  String.format("<html><div WIDTH=%d>%s</div></html>", WeaponPanel.TARGET_DISPLAY_WIDTH, target.getDisplayName());
-                clientgui.getUnitDisplay().wPan.wTargetR.setText(t);
+                clientgui.getUnitDisplay().wPan.setTarget(target, null);
             }
             int effectiveDistance = Compute.effectiveDistance(game, ce(), target);
             clientgui.getUnitDisplay().wPan.wRangeR.setText("" + effectiveDistance);
@@ -907,7 +903,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
             clientgui.getUnitDisplay().wPan.toHitText.setText(toHit.getDesc());
             setSkipEnabled(true);
         } else {
-            clientgui.getUnitDisplay().wPan.wTargetR.setText("---");
+            clientgui.getUnitDisplay().wPan.setTarget(null, null);
             clientgui.getUnitDisplay().wPan.wRangeR.setText("---");
             clientgui.getUnitDisplay().wPan.wToHitR.setText("---");
             clientgui.getUnitDisplay().wPan.toHitText.setText("");

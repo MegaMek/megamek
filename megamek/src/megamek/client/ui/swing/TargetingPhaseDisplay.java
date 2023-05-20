@@ -1043,8 +1043,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
                 flightTimeText = String.format("(%d turns)", aaa.getTurnsTilHit());
             }
 
-            String t =  String.format("<html><div WIDTH=%d>%s</div></html>", WeaponPanel.TARGET_DISPLAY_WIDTH, target.getDisplayName());
-            clientgui.getUnitDisplay().wPan.wTargetR.setText(t);
+            clientgui.getUnitDisplay().wPan.setTarget(target, null);
             clientgui.getUnitDisplay().wPan.wRangeR.setText(String.format("%d %s", targetDistance, flightTimeText));
 
             Game game = clientgui.getClient().getGame();
@@ -1077,7 +1076,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
             clientgui.getUnitDisplay().wPan.toHitText.setText(toHit.getDesc());
             setSkipEnabled(true);
         } else {
-            clientgui.getUnitDisplay().wPan.wTargetR.setText("---");
+            clientgui.getUnitDisplay().wPan.setTarget(null, null);
             clientgui.getUnitDisplay().wPan.wRangeR.setText("---");
             clientgui.getUnitDisplay().wPan.wToHitR.setText("---");
             clientgui.getUnitDisplay().wPan.toHitText.setText("");

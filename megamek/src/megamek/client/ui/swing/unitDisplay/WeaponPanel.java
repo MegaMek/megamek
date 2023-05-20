@@ -327,11 +327,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     private JLabel wExtAVR;
     private JLabel currentHeatBuildupL;
     private JLabel currentHeatBuildupR;
-
-    private JLabel wTargetL;
     private JLabel wRangeL;
     private JLabel wToHitL;
-    public JLabel wTargetR;
+    public JLabel wTargetExtraInfo;
     public JLabel wRangeR;
     public JLabel wToHitR;
 
@@ -806,36 +804,18 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         pgridy = 0;
 
         // target panel
-        wTargetL = new JLabel(Messages.getString("MechDisplay.Target"), SwingConstants.CENTER);
-        wTargetL.setOpaque(false);
-        wTargetL.setForeground(Color.WHITE);
         wRangeL = new JLabel(Messages.getString("MechDisplay.Range"), SwingConstants.CENTER);
         wRangeL.setOpaque(false);
         wRangeL.setForeground(Color.WHITE);
         wToHitL = new JLabel(Messages.getString("MechDisplay.ToHit"), SwingConstants.CENTER);
         wToHitL.setOpaque(false);
         wToHitL.setForeground(Color.WHITE);
-
-        wTargetR = new JLabel("---", SwingConstants.CENTER);
-        wTargetR.setOpaque(false);
-        wTargetR.setForeground(Color.WHITE);
         wRangeR = new JLabel("---", SwingConstants.CENTER);
         wRangeR.setOpaque(false);
         wRangeR.setForeground(Color.WHITE);
         wToHitR = new JLabel("---", SwingConstants.CENTER);
         wToHitR.setOpaque(false);
         wToHitR.setForeground(Color.WHITE);
-
-        pTarget.add(wTargetL,
-            GBC.std().fill(GridBagConstraints.NONE)
-               .anchor(GridBagConstraints.WEST)
-               .insets(15, 9, 1, 1).gridy(pgridy).gridx(0));
-
-        pTarget.add(wTargetR,
-            GBC.eol().fill(GridBagConstraints.NONE)
-               .anchor(GridBagConstraints.WEST)
-               .insets(15, 9, 1, 1).gridy(pgridy).gridx(1));
-        pgridy++;
 
         pTarget.add(wRangeL,
             GBC.std().fill(GridBagConstraints.NONE)
@@ -857,6 +837,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             GBC.eol().fill(GridBagConstraints.NONE)
                .anchor(GridBagConstraints.WEST)
                .insets(15, 1, 1, 1).gridy(pgridy).gridx(1));
+        pgridy++;
 
         panelMain.add(pTarget, GBC.std().fill(GridBagConstraints.NONE)
                 .anchor(GridBagConstraints.WEST)
@@ -869,6 +850,14 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         pInfo.setOpaque(false);
         pgridy = 0;
 
+        wTargetExtraInfo = new JLabel("---", SwingConstants.CENTER);
+        wTargetExtraInfo.setOpaque(false);
+        wTargetExtraInfo.setForeground(Color.WHITE);
+
+        pInfo.add(wTargetExtraInfo,
+                GBC.eol().fill(GridBagConstraints.HORIZONTAL)
+                        .gridy(pgridy).gridx(0));
+        pgridy++;
         // to-hit text
         toHitText = new JTextArea("", 2, 20);
         toHitText.setEditable(false);
@@ -876,8 +865,6 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         toHitText.setFont(new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 10));
         pInfo.add(toHitText,
                 GBC.eol().fill(GridBagConstraints.HORIZONTAL)
-//                        .anchor(GridBagConstraints.WEST)
-//                        .insets(15, 1, 1, 1)
                         .gridy(pgridy).gridx(0));
         pgridy++;
 
@@ -886,8 +873,6 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         wTargetInfo.setForeground(Color.WHITE);
         pInfo.add(wTargetInfo,
                 GBC.eol().fill(GridBagConstraints.HORIZONTAL)
-//                        .anchor(GridBagConstraints.WEST)
-//                        .insets(15, 1, 1, 1)
                         .gridy(pgridy).gridx(0));
 
         panelMain.add(pInfo,
@@ -897,18 +882,6 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                         .gridy(gridy)
                         .gridwidth(3)
                         .gridx(0));
-//        GBC.std().fill(GridBagConstraints.HORIZONTAL)
-//                .anchor(GridBagConstraints.WEST)
-//                .insets(15, 1, 1, 1)
-////                .gridwidth(3)
-//                .gridy(gridy).gridx(0));
-
-//        GBC.std().fill(GridBagConstraints.HORIZONTAL)
-//                .anchor(GridBagConstraints.CENTER)
-//                .weighty(1)
-//                .gridwidth(3)
-//                .gridy(gridy).gridx(0));
-        gridy++;
 
         addListeners();
 
@@ -923,19 +896,25 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     }
 
     private Targetable target;
-    public void setTarget(Targetable target) {
+    public void setTarget(@Nullable Targetable target, @Nullable String extraInfo) {
         this.target = target;
         updateTargetInfo();
+        if (extraInfo == null || extraInfo.isEmpty()) {
+            wTargetExtraInfo.setText("");
+            wTargetExtraInfo.setVisible(false);
+        } else {
+            wTargetExtraInfo.setText("<html>" + extraInfo + "</html>");
+            wTargetExtraInfo.setVisible(true);
+        }
     }
 
     private void updateTargetInfo() {
         if (target == null) {
-            wTargetInfo.setText("---");
+            wTargetInfo.setText(Messages.getString("MechDisplay.NoTarget"));
         } else if (targetInfoDetail) {
-            wTargetInfo.setText(String.format("<html>%s<br>%s</html>", target.getDisplayName(), UnitToolTip.getTargetTipDetail(target, null, null)));
-
+            wTargetInfo.setText("<html>" + UnitToolTip.getTargetTipDetail(target, null, null) + "</html>");
         } else {
-            wTargetInfo.setText(String.format("<html>%s<br>%s</html>", target.getDisplayName(), UnitToolTip.getTargetTipSummary(target, null)));
+            wTargetInfo.setText("<html>" + UnitToolTip.getTargetTipSummary(target, null, null) + "</html>");
         }
     }
 

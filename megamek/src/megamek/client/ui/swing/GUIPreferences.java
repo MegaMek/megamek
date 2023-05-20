@@ -76,7 +76,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String BOARD_FIELD_OF_FIRE_MEDIUM_COLOR = "BoardFieldOfFireMediumColor";
     public static final String BOARD_FIELD_OF_FIRE_LONG_COLOR = "BoardFieldOfFireLongColor";
     public static final String BOARD_FIELD_OF_FIRE_EXTREME_COLOR = "BoardFieldOfFireExtremeColor";
-    public static final String BOARD_SENOR_RANGE_COLOR = "BoardSensorRangeColor";
+    public static final String BOARD_SENSOR_RANGE_COLOR = "BoardSensorRangeColor";
     public static final String BOARD_VISUAL_RANGE_COLOR = "BoardVisualRangeColor";
     public static final String BOARD_UNIT_SELECTED_COLOR = "BoardUnitSelectedColor";
     public static final String BOARD_UNIT_VALID_COLOR = "BoardUnitValidColor";
@@ -468,7 +468,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(BOARD_FIELD_OF_FIRE_MEDIUM_COLOR, new Color(80, 200, 80));
         setDefault(BOARD_FIELD_OF_FIRE_LONG_COLOR, new Color(60, 150, 60));
         setDefault(BOARD_FIELD_OF_FIRE_EXTREME_COLOR, new Color(40, 100, 40));
-        setDefault(BOARD_SENOR_RANGE_COLOR, new Color(105, 105, 245));
+        setDefault(BOARD_SENSOR_RANGE_COLOR, new Color(105, 105, 245));
         setDefault(BOARD_VISUAL_RANGE_COLOR, new Color(100, 100, 150));
         setDefault(BOARD_UNIT_SELECTED_COLOR, DEFAULT_MAGENTA);
         setDefault(BOARD_UNIT_VALID_COLOR, DEFAULT_CYAN);
@@ -2530,11 +2530,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     }
 
     public Color getSensorRangeColor() {
-        return getColor(BOARD_SENOR_RANGE_COLOR);
+        return getColor(BOARD_SENSOR_RANGE_COLOR);
     }
 
     public void setSensorRangeColor(Color color) {
-        store.setValue(BOARD_SENOR_RANGE_COLOR, getColorString(color));
+        store.setValue(BOARD_SENSOR_RANGE_COLOR, getColorString(color));
     }
 
     public void setVisualRangeColor(Color color) {

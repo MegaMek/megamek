@@ -6271,7 +6271,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         repaint();
     }
 
-    public void clearSenorsRanges() {
+    public void clearSensorsRanges() {
         sensorRangeSprites.clear();
         repaint();
     }
@@ -6443,23 +6443,23 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     // prepares the sprites for visual and sensor ranges
     public void setSensorRange(Entity entity, Coords c) {
         if (entity == null || c == null) {
-            clearSenorsRanges();
+            clearSensorsRanges();
             return;
         }
 
         // Do not display anything for offboard units
         if (entity.isOffBoard()) {
-            clearSenorsRanges();
+            clearSensorsRanges();
             return;
         }
 
-        List<RangeHelper> lBranckets = new ArrayList<>(1);
+        List<RangeHelper> lBrackets = new ArrayList<>(1);
         int minSensorRange = 0;
         int maxSensorRange = 0;
         int minAirSensorRange = 0;
         int maxAirSensorRange = 0;
 
-        Entity.SensorRangeHelper srh = entity.getSensorRanges();
+        Compute.SensorRangeHelper srh = Compute.getSensorRanges(entity.getGame(), entity);
 
         if (srh != null) {
             if (entity.isAirborne() && entity.getGame().getBoard().onGround()) {
@@ -6473,13 +6473,13 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             }
         }
 
-        lBranckets.add(new RangeHelper(minSensorRange, maxSensorRange));
-        lBranckets.add(new RangeHelper(minAirSensorRange, maxAirSensorRange));
+        lBrackets.add(new RangeHelper(minSensorRange, maxSensorRange));
+        lBrackets.add(new RangeHelper(minAirSensorRange, maxAirSensorRange));
 
         minSensorRange = 0;
         maxSensorRange = Compute.getMaxVisualRange(entity, false);
 
-        lBranckets.add(new RangeHelper(minSensorRange, maxSensorRange));
+        lBrackets.add(new RangeHelper(minSensorRange, maxSensorRange));
 
         minSensorRange = 0;
 
@@ -6489,13 +6489,13 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             maxSensorRange = 0;
         }
 
-        lBranckets.add(new RangeHelper(minSensorRange, maxSensorRange));
+        lBrackets.add(new RangeHelper(minSensorRange, maxSensorRange));
 
         // create the lists of hexes
         List<Set<Coords>> sensorRanges = new ArrayList<>(1);
         int j = 0;
 
-        for (RangeHelper rangeH : lBranckets) {
+        for (RangeHelper rangeH : lBrackets) {
             sensorRanges.add(new HashSet<>());
 
             for (int i = rangeH.min; i <= rangeH.max; i++) {
@@ -6512,7 +6512,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         sensorRangeSprites.clear();
 
         // for all available range
-        for (int b = 0; b < lBranckets.size(); b++) {
+        for (int b = 0; b < lBrackets.size(); b++) {
             if (sensorRanges.get(b) == null) {
                 continue;
             }

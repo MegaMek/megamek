@@ -955,7 +955,7 @@ public final class UnitToolTip {
     }
 
     public static String getSensorDesc(Entity e) {
-        Entity.SensorRangeHelper srh = e.getSensorRanges();
+        Compute.SensorRangeHelper srh = Compute.getSensorRanges(e.getGame(), e);
 
         if (srh == null) {
             return Messages.getString("NONE");

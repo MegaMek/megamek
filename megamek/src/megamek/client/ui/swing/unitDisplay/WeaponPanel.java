@@ -2666,7 +2666,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             // firing arc info when a weapon has been de-selected
             if (weaponList.getSelectedIndex() == -1) {
                 unitDisplay.getClientGUI().getBoardView().clearFieldOfFire();
-                unitDisplay.getClientGUI().getBoardView().clearSenorsRanges();
+                unitDisplay.getClientGUI().getBoardView().clearSensorsRanges();
             }
         }
         onResize();

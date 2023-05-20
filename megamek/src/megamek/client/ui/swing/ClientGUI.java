@@ -2273,7 +2273,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         public void gameEnd(GameEndEvent e) {
             bv.clearMovementData();
             bv.clearFieldOfFire();
-            bv.clearSenorsRanges();
+            bv.clearSensorsRanges();
             for (Client client2 : getBots().values()) {
                 client2.die();
             }

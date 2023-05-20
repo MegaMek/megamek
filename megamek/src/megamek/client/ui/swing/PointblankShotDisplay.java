@@ -504,7 +504,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
     public void beginMyTurn() {
         clientgui.maybeShowUnitDisplay();
         clientgui.getBoardView().clearFieldOfFire();
-        clientgui.getBoardView().clearSenorsRanges();
+        clientgui.getBoardView().clearSensorsRanges();
 
         butDone.setEnabled(true);
         if (numButtonGroups > 1) {
@@ -536,7 +536,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
         clientgui.getBoardView().clearFiringSolutionData();
         clientgui.getBoardView().clearStrafingCoords();
         clientgui.getBoardView().clearFieldOfFire();
-        clientgui.getBoardView().clearSenorsRanges();
+        clientgui.getBoardView().clearSensorsRanges();
         clientgui.setSelectedEntityNum(Entity.NONE);
         disableButtons();
         // Return back to the movement phase display

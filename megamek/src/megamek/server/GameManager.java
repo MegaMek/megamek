@@ -1631,6 +1631,8 @@ public class GameManager implements IGameManager {
     }
 
     private void bvReports(boolean checkBlind) {
+        Vector<Report> playerReport = new Vector<>();
+        Vector<Report> teamReport = new Vector<>();
         HashMap<Integer, BVCountHelper> teamsInfo = new HashMap<>();
 
         for (Team team : game.getTeams()) {
@@ -1668,7 +1670,7 @@ public class GameManager implements IGameManager {
             bvcPlayer.ejectedCrewKilledCount = player.getEjectedCrewKilledCount();
             bvcPlayer.ejectedCrewFledCount = player.getFledEjectedCrew();
 
-            bvReport(player.getColorForPlayer(), player.getId(), bvcPlayer, checkBlind);
+            playerReport.addAll(bvReport(player.getColorForPlayer(), player.getId(), bvcPlayer, checkBlind));
 
             BVCountHelper bvcTeam = teamsInfo.get(player.getTeam());
             bvcTeam.bv += bvcPlayer.bv;
@@ -1696,15 +1698,20 @@ public class GameManager implements IGameManager {
         if (!(checkBlind && doBlind() && suppressBlindBV())) {
             for (Map.Entry<Integer, BVCountHelper> e : teamsInfo.entrySet()) {
                 BVCountHelper bvc = e.getValue();
-                bvReport(Player.TEAM_NAMES[e.getKey()], Player.PLAYER_NONE, bvc, false);
+                teamReport.addAll(bvReport(Player.TEAM_NAMES[e.getKey()], Player.PLAYER_NONE, bvc, false));
             }
         }
+
+        addAllReport(teamReport);
+        addAllReport(playerReport);
     }
 
-    private void bvReport(String name, int playerID, BVCountHelper bvc, boolean checkBlind) {
+    private Vector<Report> bvReport(String name, int playerID, BVCountHelper bvc, boolean checkBlind) {
+        Vector<Report> result = new Vector<>();
+
         Report r = new Report(7016, Report.PUBLIC);
         r.add(name);
-        addReport(r);
+        result.add(r);
 
         r = new Report(7017, Report.PUBLIC);
         if (checkBlind && doBlind() && suppressBlindBV()) {
@@ -1716,7 +1723,7 @@ public class GameManager implements IGameManager {
         r.add(Double.toString(Math.round(((double) bvc.bv / bvc.bvInitial) * 10000.0) / 100.0));
         r.add(bvc.bvFled);
         r.indent(2);
-        addReport(r);
+        result.add(r);
 
         r = new Report(7018, Report.PUBLIC);
         if (checkBlind && doBlind() && suppressBlindBV()) {
@@ -1727,7 +1734,7 @@ public class GameManager implements IGameManager {
         r.add(bvc.unitsInitialCount);
         r.add(Double.toString(Math.round(((double) bvc.unitsCount / bvc.unitsInitialCount) * 10000.0) / 100.0));
         r.indent(2);
-        addReport(r);
+        result.add(r);
 
         if (bvc.unitsLightDamageCount + bvc.unitsModerateDamageCount + bvc.unitsHeavyDamageCount +
                 bvc.unitsCrippledCount + bvc.unitsDestroyedCount + bvc.unitsFledCount + bvc.unitsCrewEjectedCount +
@@ -1747,7 +1754,7 @@ public class GameManager implements IGameManager {
             r.add(bvc.unitsCrewTrappedCount > 0 ? r.warning(bvc.unitsCrewTrappedCount + "") : bvc.unitsCrewTrappedCount + "");
             r.add(bvc.unitsCrewKilledCount > 0 ? r.warning(bvc.unitsCrewKilledCount + "") : bvc.unitsCrewKilledCount + "");
             r.indent(2);
-            addReport(r);
+            result.add(r);
         }
 
         if (bvc.unitsCrewEjectedCount > 0) {
@@ -1762,11 +1769,13 @@ public class GameManager implements IGameManager {
             r.add(bvc.ejectedCrewKilledCount > 0 ? r.warning(bvc.ejectedCrewKilledCount + "") : bvc.ejectedCrewKilledCount + "");
             r.add(bvc.ejectedCrewFledCount > 0 ? r.warning(bvc.ejectedCrewFledCount + "") : bvc.ejectedCrewFledCount + "");
             r.indent(2);
-            addReport(r);
+            result.add(r);
         }
 
         // blank line
-        addReport(new Report(1210, Report.PUBLIC));
+        result.add(new Report(1210, Report.PUBLIC));
+
+        return result;
     }
 
     /**
@@ -33553,6 +33562,10 @@ public class GameManager implements IGameManager {
     @Override
     public void addReport(Report report) {
         vPhaseReport.addElement(report);
+    }
+
+    public void addAllReport(Vector<Report> reports) {
+        vPhaseReport.addAll(reports);
     }
 
     /**

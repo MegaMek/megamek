@@ -1631,8 +1631,8 @@ public class GameManager implements IGameManager {
     }
 
     private void bvReports(boolean checkBlind) {
-        Vector<Report> playerReport = new Vector<>();
-        Vector<Report> teamReport = new Vector<>();
+        List<Report> playerReport = new ArrayList<>();
+        List<Report> teamReport = new ArrayList<>();
         HashMap<Integer, BVCountHelper> teamsInfo = new HashMap<>();
 
         for (Team team : game.getTeams()) {
@@ -1702,12 +1702,12 @@ public class GameManager implements IGameManager {
             }
         }
 
-        addAllReport(teamReport);
-        addAllReport(playerReport);
+        vPhaseReport.addAll(teamReport);
+        vPhaseReport.addAll(playerReport);
     }
 
-    private Vector<Report> bvReport(String name, int playerID, BVCountHelper bvc, boolean checkBlind) {
-        Vector<Report> result = new Vector<>();
+    private List<Report> bvReport(String name, int playerID, BVCountHelper bvc, boolean checkBlind) {
+        List<Report> result = new ArrayList<>();
 
         Report r = new Report(7016, Report.PUBLIC);
         r.add(name);
@@ -33562,10 +33562,6 @@ public class GameManager implements IGameManager {
     @Override
     public void addReport(Report report) {
         vPhaseReport.addElement(report);
-    }
-
-    public void addAllReport(Vector<Report> reports) {
-        vPhaseReport.addAll(reports);
     }
 
     /**

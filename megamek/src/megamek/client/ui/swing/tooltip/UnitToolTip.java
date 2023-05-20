@@ -127,12 +127,8 @@ public final class UnitToolTip {
             return new StringBuilder(msg_senorreturn);
         }
 
-        Game game = entity.getGame();
         String result = getChassisPlayerInfo(entity, localPlayer, false);
         result += "<BR>";
-//        result += Messages.getString("BoardView1.Tooltip.ArmorInternals",
-//                entity.getTotalArmor(), entity.getTotalOArmor(), entity.getTotalInternal(), entity.getTotalOInternal());
-//        result += "<BR>";
         result += inGameValues(entity, localPlayer, false, false);
         result += "<BR>";
 

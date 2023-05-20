@@ -84,7 +84,7 @@ public class TargetChoiceDialog extends AbstractChoiceDialog<Targetable> {
     }
 
     protected String infoText(Targetable target) {
-        String result = "";//""<b>" + target.getDisplayName() + "</b>";
+        String result = "";
 
         if (firingEntity != null) {
             ToHitData thd = WeaponAttackAction.toHit(clientGUI.getClient().getGame(), firingEntity.getId(), target);

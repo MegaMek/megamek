@@ -456,8 +456,8 @@
     </KeyBind>
 
     <KeyBind>
-         <command>sensorRange</command> <!-- V -->
-        <keyCode>86</keyCode>
+         <command>sensorRange</command> <!-- C -->
+        <keyCode>67</keyCode>
         <modifier>0</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>

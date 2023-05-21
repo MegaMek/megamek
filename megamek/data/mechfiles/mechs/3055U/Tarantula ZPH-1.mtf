@@ -1,35 +1,34 @@
-Version:1.0
+Version:1.3
 Tarantula
-ZPH-1A
+ZPH-1
 mul id:3160
-
 Config:Quad
-TechBase:Inner Sphere
-Era:3054
-Source:TRO 3055 - Clan Invasion
-Rules Level:2
+techbase:Inner Sphere
+era:3054
+source:TRO 3055 - Clan Invasion
+rules level:2
 
-Mass:25
-Engine:200 XL Engine
-Structure:Standard
-Myomer:Standard
+mass:25
+engine:200 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:10 Double
-Walk MP:8
-Jump MP:8
+heat sinks:10 IS Double
+walk mp:8
+jump mp:8
 
-Armor:Standard(Inner Sphere)
-FLL Armor:7
-FRL Armor:7
-LT Armor:7
-RT Armor:7
-CT Armor:10
-HD Armor:6
-RLL Armor:7
-RRL Armor:7
-RTL Armor:4
-RTR Armor:4
-RTC Armor:6
+armor:Standard(Inner Sphere)
+FLL armor:7
+FRL armor:7
+LT armor:7
+RT armor:7
+CT armor:10
+HD armor:6
+RLL armor:7
+RRL armor:7
+RTL armor:4
+RTR armor:4
+RTC armor:6
 
 Weapons:3
 Medium Laser, Left Torso

@@ -1,8 +1,7 @@
-Version:1.0
+Version:1.3
 Hellion
 T
 mul id:8326
-
 Config:Biped Omnimech
 techbase:Clan
 era:3142
@@ -38,8 +37,8 @@ Medium Pulse Laser, Right Arm
 Medium Pulse Laser, Right Arm
 Streak SRM 2 (I-OS), Left Torso
 Streak SRM 2 (I-OS), Left Torso
-Streak SRM 2 (I-OS), Right Torso
 LRM 10, Right Torso
+Streak SRM 2 (I-OS), Right Torso
 ER Small Laser, Head
 
 Left Arm:
@@ -59,10 +58,10 @@ Clan Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
 CLMediumPulseLaser (OMNIPOD)
 CLMediumPulseLaser (OMNIPOD)
-Clan Ferro-Fibrous
-Clan Ferro-Fibrous
 Clan Endo Steel
 Clan Endo Steel
 -Empty-

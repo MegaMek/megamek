@@ -1,42 +1,41 @@
-Version:1.1
+Version:1.3
 Gladiator
-(Keller)
+GLD-1R (Keller)
 mul id:1197
-
 Config:Biped
-TechBase:Inner Sphere
-Era:3071
-Rules Level:4
+techbase:Inner Sphere
+era:3071
+rules level:4
 
-Mass:55
-Engine:220 Light Engine
-Structure:Standard
-Myomer:Standard
-Cockpit:Standard Cockpit
-Gyro:XL Gyro
+mass:55
+engine:220 Light Engine(IS)
+structure:IS Standard
+myomer:Standard
+cockpit:Standard Cockpit
+gyro:XL Gyro
 
-Heat Sinks:11 Double
-Walk MP:4
-Jump MP:6
+heat sinks:11 IS Double
+walk mp:4
+jump mp:6
 
-Armor:Standard(Inner Sphere)
-LA Armor:17
-RA Armor:17
-LT Armor:20
-RT Armor:20
-CT Armor:27
-HD Armor:9
-LL Armor:23
-RL Armor:23
-RTL Armor:6
-RTR Armor:6
-RTC Armor:8
+armor:Standard(Inner Sphere)
+LA armor:18
+RA armor:18
+LT armor:20
+RT armor:20
+CT armor:27
+HD armor:9
+LL armor:26
+RL armor:26
+RTL armor:6
+RTR armor:6
+RTC armor:9
 
 Weapons:4
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
 Snub-Nose PPC, Right Arm
-ER Medium Laser, Left Arm
 MML 5, Right Torso
-ER Medium Laser, Left Arm
 
 Left Arm:
 Shoulder
@@ -111,7 +110,7 @@ Fusion Engine
 Head:
 Life Support
 Sensors
-Cockpit
+Cockpit (ARMORED)
 -Empty-
 Sensors
 Life Support

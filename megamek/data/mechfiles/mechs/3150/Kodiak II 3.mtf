@@ -1,39 +1,39 @@
-Version:1.0
+Version:1.3
 Kodiak II
 3
-
+mul id:8067
 Config:Biped
-TechBase:Mixed (Clan Chassis)
-Era:3150
-Source:Dark Age
-Rules Level:3
+techbase:Mixed (Clan Chassis)
+era:3146
+source:TRO 3150 - Dark Age
+rules level:3
 
-Mass:100
-Engine:400 XXL (Clan) Engine
-Structure:Clan Endo Steel
-Myomer:Standard
+mass:100
+engine:400 XXL (Clan) Engine
+structure:Clan Endo Steel
+myomer:Standard
 
-Heat Sinks:17 Double
-Walk MP:4
-Jump MP:0
+heat sinks:17 Clan Double
+walk mp:4
+jump mp:0
 
-Armor:Standard(IS/Clan)
-LA Armor:33
-RA Armor:33
-LT Armor:32
-RT Armor:32
-CT Armor:46
-HD Armor:9
-LL Armor:42
-RL Armor:42
-RTL Armor:10
-RTR Armor:10
-RTC Armor:15
+armor:Standard(Clan)
+LA armor:33
+RA armor:33
+LT armor:32
+RT armor:32
+CT armor:46
+HD armor:9
+LL armor:42
+RL armor:42
+RTL armor:10
+RTR armor:10
+RTC armor:15
 
 Weapons:3
-MRM 40, Right Arm
 MRM 40, Left Arm
-LB 20-X AC, Right Torso
+MRM 40, Right Arm
+LB 20-X AC, Center Torso
 
 Left Arm:
 Shoulder
@@ -147,4 +147,19 @@ Clan Endo Steel
 -Empty-
 -Empty-
 
+overview:Designed for Clan Ghost Bear, the Kodiak II is an Assault Class BattleMech which was first produced during the last decade of the thirty-first century. 
+
+capabilities:The 'Mech was engineered so it could serve as both a Command 'Mech and as a powerful assault 'Mech via a fitting of a heavy arsenal of missiles and a large array of energy weaponry. The design is based on the fourth variant of the original Kodiak. The Kodiak II is known for its Command facilities and its endurance. The powerful 'Mech carries 19 tons of Alshain Weapon's Forging AD56 Standard armor, giving it heavy resistance against weapons fire directed at it. At the heart of the machine is a 400-rated Extra-Light Fusion Engine, which while not as quick as other designs its weight saving qualities allows the 'Mech to carry is substantial weapons load out.
+
+deployment:No information on this variant.
+
+history:The Kodiak II would become a favorite design within the Clan Ghost Bear touman, being produced on Alshain at the Alshain Weapons factory. One of the Kodiak II's noted actions was during a border skirmish on the world of Jabuka, wherein elements of Clan Jade Falcon's 53rd Battle Cluster tangled with the 2nd Bear Regulars commanded by Star Colonel Anton Hall from the cockpit of a Kodiak II. The 'Mech would show its perseverance in the face of the 53rd's artillery bombardment of the Star Colonel's surviving units and ended up being the deciding factor which won the battle for the Ghost Bears.
+
+manufacturer:Alshain Weapons
+primaryfactory:Alshain
+systemmanufacturer:CHASSIS:Alshain LXL Endo Steel
+systemmanufacturer:ENGINE:400 Fusion XL
+systemmanufacturer:ARMOR:Forging AD56 Standard
+systemmanufacturer:COMMUNICATIONS:Garret L20
+systemmanufacturer:TARGETING:RCA Instatrac Mark IX with Artemis IV
 

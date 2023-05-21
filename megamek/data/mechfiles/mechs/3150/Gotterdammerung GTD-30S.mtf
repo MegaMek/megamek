@@ -1,7 +1,7 @@
 Version:1.3
 Gotterdammerung
-GTD-20S
-mul id:6629
+GTD-30S
+mul id:8062
 Config:Biped
 techbase:Inner Sphere
 era:3138
@@ -15,7 +15,7 @@ myomer:Standard
 cockpit:Torso-Mounted Cockpit
 gyro:Compact Gyro
 
-heat sinks:12 IS Double
+heat sinks:14 IS Double
 walk mp:4
 jump mp:0
 
@@ -32,14 +32,13 @@ RTL armor:8
 RTR armor:8
 RTC armor:10
 
-Weapons:7
+Weapons:6
 ER PPC, Right Arm
-ER Medium Laser, Center Torso
-ER Medium Laser, Center Torso
-ER Medium Laser, Center Torso
-ER Medium Laser, Center Torso
-ER Medium Laser, Center Torso
-LRM 15, Head
+Medium Pulse Laser, Center Torso
+Medium Pulse Laser, Center Torso
+Medium Pulse Laser, Center Torso
+ER Flamer, Center Torso
+SRM 6, Head
 
 Left Arm:
 Shoulder
@@ -52,8 +51,8 @@ IS Heavy Ferro-Fibrous
 IS Heavy Ferro-Fibrous
 IS Heavy Ferro-Fibrous
 IS Heavy Ferro-Fibrous
--Empty-
--Empty-
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
 
 Right Arm:
 Shoulder
@@ -66,11 +65,14 @@ ISERPPC
 IS Heavy Ferro-Fibrous
 IS Heavy Ferro-Fibrous
 IS Heavy Ferro-Fibrous
--Empty-
--Empty-
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
 
 Left Torso:
 Life Support
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -78,13 +80,13 @@ IS Endo Steel
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
-IS Heavy Ferro-Fibrous
-IS Heavy Ferro-Fibrous
-IS Heavy Ferro-Fibrous
 IS Heavy Ferro-Fibrous
 
 Right Torso:
 Life Support
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -92,9 +94,6 @@ IS Endo Steel
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
-IS Heavy Ferro-Fibrous
-IS Heavy Ferro-Fibrous
-IS Heavy Ferro-Fibrous
 IS Heavy Ferro-Fibrous
 
 Center Torso:
@@ -105,19 +104,19 @@ Gyro
 Gyro
 Cockpit
 Sensors
-ISERMediumLaser
-ISERMediumLaser
-ISERMediumLaser
-ISERMediumLaser
-ISERMediumLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ER Flamer
+IS Heavy Ferro-Fibrous
 
 Head:
 Sensors
 Sensors
-LRM 15
-LRM 15
-LRM 15
-IS Ammo LRM-15
+SRM 6
+SRM 6
+IS Ammo SRM-6
+IS Heavy Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-

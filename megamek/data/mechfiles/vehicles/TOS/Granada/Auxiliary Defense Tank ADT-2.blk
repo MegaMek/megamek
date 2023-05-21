@@ -17,19 +17,19 @@ Auxiliary Defense Tank
 </Name>
 
 <Model>
-ADT-1
+ADT-2
 </Model>
 
 <mul id:>
-8302
+8303
 </mul id:>
 
 <year>
-2833
+2900
 </year>
 
 <originalBuildYear>
-2833
+2900
 </originalBuildYear>
 
 <type>
@@ -67,8 +67,8 @@ pillionseats:5.0:0
 <Body Equipment>
 Advanced Fire Control
 IS Ammo MG - Full
-IS Ammo Medium Rifle
-IS Ammo Medium Rifle
+IS Ammo AC/5
+IS Ammo AC/5
 </Body Equipment>
 
 <Front Equipment>
@@ -85,7 +85,7 @@ Machine Gun
 </Rear Equipment>
 
 <Turret Equipment>
-Rifle (Cannon, Medium)
+Autocannon/5
 </Turret Equipment>
 
 <barrating>
@@ -93,11 +93,11 @@ Rifle (Cannon, Medium)
 </barrating>
 
 <structural_tech_rating>
-3
+4
 </structural_tech_rating>
 
 <engine_tech_rating>
-2
+4
 </engine_tech_rating>
 
 <armor_tech_rating>

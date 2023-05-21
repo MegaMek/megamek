@@ -755,6 +755,11 @@ Command Van (Standard)|Command Van
 Mobile Long Tom Artillery Ammunition Trailer LT-MOB-25|Mobile Long Tom Artillery LT-MOB-25 (Ammunition Carriage)
 Mobile Long Tom Artillery Support Carriage LT-MOB-25|Mobile Long Tom Artillery LT-MOB-25 (Support Carriage)
 Mobile Long Tom Artillery (Unofficial) (+ Carriage)|Mobile Long Tom Artillery (+Carriages)(Unofficial)
+'Oppie' (HMRV DeConAid Trailer) |HMRV (Hazardous Materials Recovery Vehicle) DeConAid Trailer
+'Oppie' (HMRV Salvage Bed Trailer) |HMRV (Hazardous Materials Recovery Vehicle) Salvage Bed
+O-65 'Oppie' Hazardous Materials Recovery Vehicle O-65 HMRV|HMRV (Hazardous Materials Recovery Vehicle) 'Oppie' O-65
+O-66 'Oppie' Hazardous Materials Recovery Vehicle O-66 HMRV|HMRV (Hazardous Materials Recovery Vehicle) 'Oppie' O-66
+
 
 
 #Warships

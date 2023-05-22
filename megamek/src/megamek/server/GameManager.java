@@ -2054,6 +2054,7 @@ public class GameManager implements IGameManager {
                     }
                 }
                 send(createFullEntitiesPacket());
+                send(createAllReportsPacket());
                 send(createReportPacket(null));
                 send(createEndOfGamePacket());
                 break;
@@ -30053,6 +30054,13 @@ public class GameManager implements IGameManager {
      */
     private Packet createAllReportsPacket(Player p) {
         return new Packet(PacketCommand.SENDING_REPORTS_ALL, filterPastReports(getGame().getAllReports(), p));
+    }
+
+    /**
+     * Creates a packet containing all the round reports unfiltered
+     */
+    private Packet createAllReportsPacket() {
+        return new Packet(PacketCommand.SENDING_REPORTS_ALL, getGame().getAllReports());
     }
 
     /**

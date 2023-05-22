@@ -1049,37 +1049,33 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
             Game game = clientgui.getClient().getGame();
             int distance = Compute.effectiveDistance(game, ce(), target);
             if (m.isUsedThisRound()) {
-                clientgui.getUnitDisplay().wPan.wToHitR.setText(
+                clientgui.getUnitDisplay().wPan.setToHit(
                         Messages.getString("TargetingPhaseDisplay.alreadyFired"));
                 setFireEnabled(false);
             } else if (m.isInBearingsOnlyMode() && distance < RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
-                clientgui.getUnitDisplay().wPan.wToHitR.setText(
+                clientgui.getUnitDisplay().wPan.setToHit(
                         Messages.getString("TargetingPhaseDisplay.bearingsOnlyMinRange"));
                 setFireEnabled(false);
             } else if ((m.getType().hasFlag(WeaponType.F_AUTO_TARGET)
                     && !m.curMode().equals(Weapon.MODE_AMS_MANUAL))) {
-                clientgui.getUnitDisplay().wPan.wToHitR.setText(
+                clientgui.getUnitDisplay().wPan.setToHit(
                         Messages.getString("TargetingPhaseDisplay.autoFiringWeapon"));
                 setFireEnabled(false);
             } else if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
-                clientgui.getUnitDisplay().wPan.wToHitR.setText(toHit.getValueAsString());
+                clientgui.getUnitDisplay().wPan.setToHit(toHit);
                 setFireEnabled(false);
             } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
-                clientgui.getUnitDisplay().wPan.wToHitR.setText(toHit.getValueAsString());
+                clientgui.getUnitDisplay().wPan.setToHit(toHit);
                 setFireEnabled(true);
             } else {
-                clientgui.getUnitDisplay().wPan.wToHitR.setText(toHit.getValueAsString() + " ("
-                        + Compute.oddsAbove(toHit.getValue(), ce().hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY))
-                        + "%)");
+                clientgui.getUnitDisplay().wPan.setToHit(toHit, ce().hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY));
                 setFireEnabled(true);
             }
-            clientgui.getUnitDisplay().wPan.toHitText.setText(toHit.getDesc());
             setSkipEnabled(true);
         } else {
             clientgui.getUnitDisplay().wPan.setTarget(null, null);
             clientgui.getUnitDisplay().wPan.wRangeR.setText("---");
-            clientgui.getUnitDisplay().wPan.wToHitR.setText("---");
-            clientgui.getUnitDisplay().wPan.toHitText.setText("");
+            clientgui.getUnitDisplay().wPan.clearToHit();
         }
         updateSearchlight();
     }

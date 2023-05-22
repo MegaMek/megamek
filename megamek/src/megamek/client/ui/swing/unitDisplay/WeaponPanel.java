@@ -332,7 +332,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     private JLabel wToHitL;
     public JLabel wTargetExtraInfo;
     public JLabel wRangeR;
-    public JLabel wToHitR;
+    private JLabel wToHitR;
 
     private JLabel wDamageTrooperL;
     private JLabel wDamageTrooperR;
@@ -349,10 +349,11 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     private JLabel wInfantryRange5L;
     private JLabel wInfantryRange5R;
 
-    public JTextArea toHitText;
+    private JLabel toHitText;
 
     private JButton wTargetInfo;
     private boolean targetInfoDetail;
+    private Targetable target;
 
     // I need to keep a pointer to the weapon list of the
     // currently selected mech.
@@ -363,6 +364,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     private int minLeftMargin = 8;
 
     public static final int TARGET_DISPLAY_WIDTH = 200;
+    public static final int WEAPON_PANE_WIDTH = 500;
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
@@ -370,6 +372,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
         this.unitDisplay = unitDisplay;
         panelMain = new JPanel(new GridBagLayout());
+        boolean OPAQUE = true;
 
         final GBC panelMainGBC = GBC.std().fill(GridBagConstraints.NONE)
                 .fill(GridBagConstraints.NONE)
@@ -384,11 +387,11 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         wSortOrder = new JLabel(
                 Messages.getString("MechDisplay.WeaponSortOrder.label"),
                 SwingConstants.LEFT);
-        wSortOrder.setOpaque(false);
+        wSortOrder.setOpaque(OPAQUE);
         wSortOrder.setForeground(Color.WHITE);
 
         JPanel pWeaponOrder = new JPanel(new GridBagLayout());
-        pWeaponOrder.setOpaque(false);
+        pWeaponOrder.setOpaque(OPAQUE);
         int pgridy = 0;
 
         pWeaponOrder.add(wSortOrder,
@@ -400,13 +403,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                    .fill(GridBagConstraints.HORIZONTAL)
                    .anchor(GridBagConstraints.WEST).gridy(pgridy)
                    .gridx(1));
-
+        pWeaponOrder.setMinimumSize(new Dimension(WEAPON_PANE_WIDTH, 40));
+        pWeaponOrder.setPreferredSize(new Dimension(WEAPON_PANE_WIDTH, 40));
         panelMain.add(pWeaponOrder, GBC.std().gridy(pgridy));
-//                GBC.std().fill(GridBagConstraints.NONE)
-//                .anchor(GridBagConstraints.PAGE_START)
-//                .gridwidth(3)
-//                .gridy(gridy).gridx(0));
-
         gridy++;
 
         // weapon list
@@ -415,15 +414,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         weaponList.addMouseListener(mouseAdapter);
         weaponList.addMouseMotionListener(mouseAdapter);
         tWeaponScroll = new JScrollPane(weaponList);
-        tWeaponScroll.setMinimumSize(new Dimension(500, GUIP.getUnitDisplayWeaponListHeight()));
-        tWeaponScroll.setPreferredSize(new Dimension(500, GUIP.getUnitDisplayWeaponListHeight()));
+        tWeaponScroll.setMinimumSize(new Dimension(WEAPON_PANE_WIDTH, GUIP.getUnitDisplayWeaponListHeight()));
+        tWeaponScroll.setPreferredSize(new Dimension(WEAPON_PANE_WIDTH, GUIP.getUnitDisplayWeaponListHeight()));
         panelMain.add(tWeaponScroll, panelMainGBC.gridy(gridy));
-//            GBC.eol().insets(15, 9, 15, 9)
-//               .fill(GridBagConstraints.HORIZONTAL)
-//               .anchor(GridBagConstraints.WEST)
-//               .gridy(gridy)
-//               .gridwidth(3)
-//               .gridx(0));
         weaponList.resetKeyboardActions();
         for (KeyListener key : weaponList.getKeyListeners()) {
             weaponList.removeKeyListener(key);
@@ -432,19 +425,18 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         gridy++;
 
         // adding Ammo choice + label
-
         wAmmo = new JLabel(Messages.getString("MechDisplay.Ammo"), SwingConstants.LEFT);
-        wAmmo.setOpaque(false);
+        wAmmo.setOpaque(OPAQUE);
         wAmmo.setForeground(Color.WHITE);
         m_chAmmo = new JComboBox<>();
 
         wBayWeapon = new JLabel(Messages.getString("MechDisplay.Weapon"), SwingConstants.LEFT);
-        wBayWeapon.setOpaque(false);
+        wBayWeapon.setOpaque(OPAQUE);
         wBayWeapon.setForeground(Color.WHITE);
         m_chBayWeapon = new JComboBox<>();
 
         JPanel pAmmo = new JPanel(new GridBagLayout());
-        pAmmo.setOpaque(false);
+        pAmmo.setOpaque(OPAQUE);
         pgridy = 0;
 
         pAmmo.add(wBayWeapon, GBC.std().insets(15, 1, 1, 1).gridy(pgridy).gridx(0));
@@ -461,24 +453,22 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                .anchor(GridBagConstraints.WEST)
                .insets(15, 9, 15, 1).gridy(pgridy).gridx(1));
 
+        pAmmo.setMinimumSize(new Dimension(WEAPON_PANE_WIDTH, 40));
+        pAmmo.setMaximumSize(new Dimension(WEAPON_PANE_WIDTH, 40));
+        pAmmo.setPreferredSize(new Dimension(WEAPON_PANE_WIDTH, 40));
         panelMain.add(pAmmo, panelMainGBC.gridy(gridy));
-//                ,GBC.std().fill(GridBagConstraints.NONE)
-//                .anchor(GridBagConstraints.WEST)
-//                .gridwidth(3)
-//                .gridy(gridy).gridx(0));
-
         gridy++;
-        // Adding Heat Buildup
 
+        // Adding Heat Buildup
         currentHeatBuildupL = new JLabel(Messages.getString("MechDisplay.HeatBuildup"), SwingConstants.RIGHT);
-        currentHeatBuildupL.setOpaque(false);
+        currentHeatBuildupL.setOpaque(OPAQUE);
         currentHeatBuildupL.setForeground(Color.WHITE);
         currentHeatBuildupR = new JLabel("--", SwingConstants.LEFT);
-        currentHeatBuildupR.setOpaque(false);
+        currentHeatBuildupR.setOpaque(OPAQUE);
         currentHeatBuildupR.setForeground(Color.WHITE);
 
         JPanel pHeatBuildup = new JPanel(new GridBagLayout());
-        pHeatBuildup.setOpaque(false);
+        pHeatBuildup.setOpaque(OPAQUE);
         pgridy = 0;
 
         pHeatBuildup.add(currentHeatBuildupL,
@@ -492,49 +482,50 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                .anchor(GridBagConstraints.WEST)
                .insets(1, 9, 9, 9).gridy(pgridy).gridx(1));
 
+        pHeatBuildup.setMinimumSize(new Dimension(WEAPON_PANE_WIDTH, 80));
+        pHeatBuildup.setMaximumSize(new Dimension(WEAPON_PANE_WIDTH, 80));
+        pHeatBuildup.setPreferredSize(new Dimension(WEAPON_PANE_WIDTH, 80));
         panelMain.add(pHeatBuildup, GBC.std().fill(GridBagConstraints.NONE)
                 .anchor(GridBagConstraints.WEST)
                 .gridwidth(3)
                 .gridy(gridy).gridx(0));
-
         gridy++;
 
         // Adding weapon display labels
         wNameL = new JLabel(Messages.getString("MechDisplay.Name"), SwingConstants.CENTER);
-        wNameL.setOpaque(false);
+        wNameL.setOpaque(OPAQUE);
         wNameL.setForeground(Color.WHITE);
         wHeatL = new JLabel(Messages.getString("MechDisplay.Heat"), SwingConstants.CENTER);
-        wHeatL.setOpaque(false);
+        wHeatL.setOpaque(OPAQUE);
         wHeatL.setForeground(Color.WHITE);
         wDamL = new JLabel(Messages.getString("MechDisplay.Damage"), SwingConstants.CENTER);
-        wDamL.setOpaque(false);
+        wDamL.setOpaque(OPAQUE);
         wDamL.setForeground(Color.WHITE);
         wArcHeatL = new JLabel(Messages.getString("MechDisplay.ArcHeat"), SwingConstants.CENTER);
-        wArcHeatL.setOpaque(false);
+        wArcHeatL.setOpaque(OPAQUE);
         wArcHeatL.setForeground(Color.WHITE);
         wNameR = new JLabel("", SwingConstants.CENTER);
-        wNameR.setOpaque(false);
+        wNameR.setOpaque(OPAQUE);
         wNameR.setForeground(Color.WHITE);
         wHeatR = new JLabel("--", SwingConstants.CENTER);
-        wHeatR.setOpaque(false);
+        wHeatR.setOpaque(OPAQUE);
         wHeatR.setForeground(Color.WHITE);
         wDamR = new JLabel("--", SwingConstants.CENTER);
-        wDamR.setOpaque(false);
+        wDamR.setOpaque(OPAQUE);
         wDamR.setForeground(Color.WHITE);
         wArcHeatR = new JLabel("--", SwingConstants.CENTER);
-        wArcHeatR.setOpaque(false);
+        wArcHeatR.setOpaque(OPAQUE);
         wArcHeatR.setForeground(Color.WHITE);
 
         wDamageTrooperL = new JLabel(Messages.getString("MechDisplay.DamageTrooper"), SwingConstants.CENTER);
-        wDamageTrooperL.setOpaque(false);
+        wDamageTrooperL.setOpaque(OPAQUE);
         wDamageTrooperL.setForeground(Color.WHITE);
         wDamageTrooperR = new JLabel("---", SwingConstants.CENTER);
-        wDamageTrooperR.setOpaque(false);
+        wDamageTrooperR.setOpaque(OPAQUE);
         wDamageTrooperR.setForeground(Color.WHITE);
 
-
         JPanel pCurrentWeapon = new JPanel(new GridBagLayout());
-        pCurrentWeapon.setOpaque(false);
+        pCurrentWeapon.setOpaque(OPAQUE);
         pgridy = 0;
         pCurrentWeapon.add(wNameL,
             GBC.std().fill(GridBagConstraints.NONE)
@@ -582,99 +573,98 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 .anchor(GridBagConstraints.WEST)
                 .insets(15, 1, 1, 1).gridy(pgridy).gridx(3));
 
+        pCurrentWeapon.setMinimumSize(new Dimension(WEAPON_PANE_WIDTH, 80));
+        pCurrentWeapon.setPreferredSize(new Dimension(WEAPON_PANE_WIDTH, 80));
         panelMain.add(pCurrentWeapon, panelMainGBC.gridy(gridy));
-//                , GBC.std().fill(GridBagConstraints.NONE)
-//                .anchor(GridBagConstraints.WEST)
-//                .gridwidth(3)
-//                .gridy(gridy).gridx(0));
-
         gridy++;
+
         // Adding range labels
         wMinL = new JLabel(Messages.getString("MechDisplay.Min"), SwingConstants.CENTER);
-        wMinL.setOpaque(false);
+        wMinL.setOpaque(OPAQUE);
         wMinL.setForeground(Color.WHITE);
         wShortL = new JLabel(Messages.getString("MechDisplay.Short"), SwingConstants.CENTER);
-        wShortL.setOpaque(false);
+        wShortL.setOpaque(OPAQUE);
         wShortL.setForeground(Color.WHITE);
         wMedL = new JLabel(Messages.getString("MechDisplay.Med"), SwingConstants.CENTER);
-        wMedL.setOpaque(false);
+        wMedL.setOpaque(OPAQUE);
         wMedL.setForeground(Color.WHITE);
         wLongL = new JLabel(Messages.getString("MechDisplay.Long"), SwingConstants.CENTER);
-        wLongL.setOpaque(false);
+        wLongL.setOpaque(OPAQUE);
         wLongL.setForeground(Color.WHITE);
         wExtL = new JLabel(Messages.getString("MechDisplay.Ext"), SwingConstants.CENTER);
-        wExtL.setOpaque(false);
+        wExtL.setOpaque(OPAQUE);
         wExtL.setForeground(Color.WHITE);
         wMinR = new JLabel("---", SwingConstants.CENTER);
-        wMinR.setOpaque(false);
+        wMinR.setOpaque(OPAQUE);
         wMinR.setForeground(Color.WHITE);
         wShortR = new JLabel("---", SwingConstants.CENTER);
-        wShortR.setOpaque(false);
+        wShortR.setOpaque(OPAQUE);
         wShortR.setForeground(Color.WHITE);
         wMedR = new JLabel("---", SwingConstants.CENTER);
-        wMedR.setOpaque(false);
+        wMedR.setOpaque(OPAQUE);
         wMedR.setForeground(Color.WHITE);
         wLongR = new JLabel("---", SwingConstants.CENTER);
-        wLongR.setOpaque(false);
+        wLongR.setOpaque(OPAQUE);
         wLongR.setForeground(Color.WHITE);
         wExtR = new JLabel("---", SwingConstants.CENTER);
-        wExtR.setOpaque(false);
+        wExtR.setOpaque(OPAQUE);
         wExtR.setForeground(Color.WHITE);
         wAVL = new JLabel(Messages.getString("MechDisplay.AV"), SwingConstants.CENTER);
-        wAVL.setOpaque(false);
+        wAVL.setOpaque(OPAQUE);
         wAVL.setForeground(Color.WHITE);
         wShortAVR = new JLabel("---", SwingConstants.CENTER);
-        wShortAVR.setOpaque(false);
+        wShortAVR.setOpaque(OPAQUE);
         wShortAVR.setForeground(Color.WHITE);
         wMedAVR = new JLabel("---", SwingConstants.CENTER);
-        wMedAVR.setOpaque(false);
+        wMedAVR.setOpaque(OPAQUE);
         wMedAVR.setForeground(Color.WHITE);
         wLongAVR = new JLabel("---", SwingConstants.CENTER);
-        wLongAVR.setOpaque(false);
+        wLongAVR.setOpaque(OPAQUE);
         wLongAVR.setForeground(Color.WHITE);
         wExtAVR = new JLabel("---", SwingConstants.CENTER);
-        wExtAVR.setOpaque(false);
+        wExtAVR.setOpaque(OPAQUE);
         wExtAVR.setForeground(Color.WHITE);
 
         wInfantryRange0L = new JLabel("---", SwingConstants.CENTER);
-        wInfantryRange0L.setOpaque(false);
+        wInfantryRange0L.setOpaque(OPAQUE);
         wInfantryRange0L.setForeground(Color.WHITE);
         wInfantryRange0R = new JLabel("---", SwingConstants.CENTER);
-        wInfantryRange0R.setOpaque(false);
+        wInfantryRange0R.setOpaque(OPAQUE);
         wInfantryRange0R.setForeground(Color.WHITE);
         wInfantryRange1L = new JLabel("---", SwingConstants.CENTER);
-        wInfantryRange1L.setOpaque(false);
+        wInfantryRange1L.setOpaque(OPAQUE);
         wInfantryRange1L.setForeground(Color.WHITE);
         wInfantryRange1R = new JLabel("---", SwingConstants.CENTER);
-        wInfantryRange1R.setOpaque(false);
+        wInfantryRange1R.setOpaque(OPAQUE);
         wInfantryRange1R.setForeground(Color.WHITE);
         wInfantryRange2L = new JLabel("---", SwingConstants.CENTER);
-        wInfantryRange2L.setOpaque(false);
+        wInfantryRange2L.setOpaque(OPAQUE);
         wInfantryRange2L.setForeground(Color.WHITE);
         wInfantryRange2R = new JLabel("---", SwingConstants.CENTER);
-        wInfantryRange2R.setOpaque(false);
+        wInfantryRange2R.setOpaque(OPAQUE);
         wInfantryRange2R.setForeground(Color.WHITE);
         wInfantryRange3L = new JLabel("---", SwingConstants.CENTER);
-        wInfantryRange3L.setOpaque(false);
+        wInfantryRange3L.setOpaque(OPAQUE);
         wInfantryRange3L.setForeground(Color.WHITE);
         wInfantryRange3R = new JLabel("---", SwingConstants.CENTER);
-        wInfantryRange3R.setOpaque(false);
+        wInfantryRange3R.setOpaque(OPAQUE);
         wInfantryRange3R.setForeground(Color.WHITE);
         wInfantryRange4L = new JLabel("---", SwingConstants.CENTER);
-        wInfantryRange4L.setOpaque(false);
+        wInfantryRange4L.setOpaque(OPAQUE);
         wInfantryRange4L.setForeground(Color.WHITE);
         wInfantryRange4R = new JLabel("---", SwingConstants.CENTER);
-        wInfantryRange4R.setOpaque(false);
+        wInfantryRange4R.setOpaque(OPAQUE);
         wInfantryRange4R.setForeground(Color.WHITE);
         wInfantryRange5L = new JLabel("---", SwingConstants.CENTER);
-        wInfantryRange5L.setOpaque(false);
+        wInfantryRange5L.setOpaque(OPAQUE);
         wInfantryRange5L.setForeground(Color.WHITE);
         wInfantryRange5R = new JLabel("---", SwingConstants.CENTER);
-        wInfantryRange5R.setOpaque(false);
+        wInfantryRange5R.setOpaque(OPAQUE);
         wInfantryRange5R.setForeground(Color.WHITE);
 
+        // range panel
         JPanel pRange = new JPanel(new GridBagLayout());
-        pRange.setOpaque(false);
+        pRange.setOpaque(true);
         pgridy = 0;
 
         pRange.add(wMinL,
@@ -806,30 +796,28 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                .anchor(GridBagConstraints.WEST)
                .insets(15, 1, 9, 1).gridy(pgridy).gridx(4));
 
+        pRange.setMinimumSize(new Dimension(WEAPON_PANE_WIDTH, 80));
+        pRange.setMaximumSize(new Dimension(WEAPON_PANE_WIDTH, 80));
+        pRange.setPreferredSize(new Dimension(WEAPON_PANE_WIDTH, 80));
         panelMain.add(pRange, panelMainGBC.gridy(gridy));
-//                , GBC.std().fill(GridBagConstraints.NONE)
-//                .anchor(GridBagConstraints.WEST)
-//                .gridwidth(3)
-//                .gridy(gridy).gridx(0));
-
         gridy++;
 
+        // target panel
         JPanel pTarget = new JPanel(new GridBagLayout());
-        pTarget.setOpaque(false);
+        pTarget.setOpaque(true);
         pgridy = 0;
 
-        // target panel
         wRangeL = new JLabel(Messages.getString("MechDisplay.Range"), SwingConstants.CENTER);
-        wRangeL.setOpaque(false);
+        wRangeL.setOpaque(OPAQUE);
         wRangeL.setForeground(Color.WHITE);
         wToHitL = new JLabel(Messages.getString("MechDisplay.ToHit"), SwingConstants.CENTER);
-        wToHitL.setOpaque(false);
+        wToHitL.setOpaque(OPAQUE);
         wToHitL.setForeground(Color.WHITE);
         wRangeR = new JLabel("---", SwingConstants.CENTER);
-        wRangeR.setOpaque(false);
+        wRangeR.setOpaque(OPAQUE);
         wRangeR.setForeground(Color.WHITE);
         wToHitR = new JLabel("---", SwingConstants.CENTER);
-        wToHitR.setOpaque(false);
+        wToHitR.setOpaque(OPAQUE);
         wToHitR.setForeground(Color.WHITE);
 
         pTarget.add(wRangeL,
@@ -843,86 +831,139 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                .insets(15, 1, 1, 1).gridy(pgridy).gridx(1));
         pgridy++;
 
-        pTarget.add(wToHitL,
-            GBC.std().fill(GridBagConstraints.NONE)
-               .anchor(GridBagConstraints.WEST)
-               .insets(15, 1, 1, 1).gridy(pgridy).gridx(0));
+//        pTarget.add(wToHitL,
+//            GBC.std().fill(GridBagConstraints.NONE)
+//               .anchor(GridBagConstraints.WEST)
+//               .insets(15, 1, 1, 1).gridy(pgridy).gridx(0));
+//
+//        pTarget.add(wToHitR,
+//                GBC.eol().fill(GridBagConstraints.NONE)
+//                        .anchor(GridBagConstraints.WEST)
+//                        .insets(15, 1, 1, 1).gridy(pgridy).gridx(1));
+//        pgridy++;
 
-        pTarget.add(wToHitR,
-            GBC.eol().fill(GridBagConstraints.NONE)
-               .anchor(GridBagConstraints.WEST)
-               .insets(15, 1, 1, 1).gridy(pgridy).gridx(1));
-        pgridy++;
-
+        pTarget.setMinimumSize(new Dimension(WEAPON_PANE_WIDTH, 80));
+        pTarget.setMaximumSize(new Dimension(WEAPON_PANE_WIDTH, 200));
+        pTarget.setPreferredSize(new Dimension(WEAPON_PANE_WIDTH, 200));
         panelMain.add(pTarget, panelMainGBC.gridy(gridy));
-//                GBC.std().fill(GridBagConstraints.NONE)
-//                .anchor(GridBagConstraints.WEST)
-//                .gridwidth(3)
-//                .gridy(gridy).gridx(0));
+        gridy++;
 
+        // to-hit text uses JTextArea for better line-wrap
+//        toHitText = new JTextArea();
+//        toHitText.setEnabled(false);
+//        toHitText.setLineWrap(true);
+        toHitText = new JLabel();
+        toHitText.setHorizontalTextPosition(SwingConstants.LEFT);
+        toHitText.setVerticalTextPosition(SwingConstants.TOP);
+
+        toHitText.setOpaque(true);
+        toHitText.setFont(new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 10));
+
+        // use a scroll panel to enforce size
+        JScrollPane toHitScroll = new JScrollPane(toHitText);
+        toHitScroll.setOpaque(OPAQUE);
+        toHitScroll.getViewport().setOpaque(OPAQUE);
+        toHitScroll.setMinimumSize(new Dimension(WEAPON_PANE_WIDTH, 80));
+        toHitScroll.setMaximumSize(new Dimension(WEAPON_PANE_WIDTH, 80));
+        toHitScroll.setPreferredSize(new Dimension(WEAPON_PANE_WIDTH, 80));
+        panelMain.add(toHitScroll, panelMainGBC.gridy(gridy));
         gridy++;
 
         JPanel pInfo = new JPanel(new GridBagLayout());
-        pInfo.setOpaque(false);
+        pInfo.setOpaque(OPAQUE);
         pgridy = 0;
 
         wTargetExtraInfo = new JLabel("---", SwingConstants.CENTER);
-        wTargetExtraInfo.setOpaque(false);
+        wTargetExtraInfo.setOpaque(OPAQUE);
         wTargetExtraInfo.setForeground(Color.WHITE);
 
         pInfo.add(wTargetExtraInfo,
-                GBC.eol().fill(GridBagConstraints.HORIZONTAL)
-                        .gridy(pgridy).gridx(0));
-        pgridy++;
-        // to-hit text
-        toHitText = new JTextArea("", 2, 20);
-        toHitText.setEditable(false);
-        toHitText.setLineWrap(true);
-        toHitText.setFont(new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 10));
-        pInfo.add(toHitText,
-                GBC.eol().fill(GridBagConstraints.HORIZONTAL)
-                        .gridy(pgridy).gridx(0));
+                GBC.eol().gridy(pgridy).gridx(0));
         pgridy++;
 
+//        // to-hit text uses JTextArea for better line-wrap
+//        toHitText = new JTextArea();
+//        toHitText.setEnabled(false);
+//        toHitText.setLineWrap(true);
+//        toHitText.setOpaque(OPAQUE);
+//        toHitText.setFont(new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 10));
+//        pInfo.add(toHitText,
+//                GBC.eol().fill(GridBagConstraints.HORIZONTAL)
+//                        .gridy(pgridy).gridx(0));
+//        pgridy++;
+
         wTargetInfo = new JButton("---");//, SwingConstants.CENTER);
-        wTargetInfo.setOpaque(false);
+        wTargetInfo.setOpaque(OPAQUE);
         wTargetInfo.setForeground(Color.WHITE);
         wTargetInfo.setHorizontalAlignment(SwingConstants.LEFT);
         wTargetInfo.setVerticalAlignment(SwingConstants.TOP);
-        wTargetInfo.setOpaque(false);
+        wTargetInfo.setOpaque(OPAQUE);
         pInfo.add(wTargetInfo,
                 GBC.eol().fill(GridBagConstraints.NONE)
                         .gridy(pgridy).gridx(0));
+//        wTargetInfo.setMinimumSize(new Dimension(WEAPON_PANE_WIDTH/2, 100));
+//        wTargetInfo.setPreferredSize(new Dimension(WEAPON_PANE_WIDTH, 500));
 
-        panelMain.add(pInfo, panelMainGBC.gridy(gridy)
-                .fill(GridBagConstraints.HORIZONTAL)
-                .weighty(0.5));
-//                GBC.eol().insets(15, 9, 15, 9)
-//                        .fill(GridBagConstraints.HORIZONTAL)
-//                        .anchor(GridBagConstraints.WEST)
-//                        .gridy(gridy)
-//                        .gridwidth(3)
-//                        .gridx(0));
+        JScrollPane infoScroll = new JScrollPane(wTargetInfo);
+        infoScroll.setOpaque(OPAQUE);
+        infoScroll.getViewport().setOpaque(OPAQUE);
+        infoScroll.setMinimumSize(new Dimension(WEAPON_PANE_WIDTH, 80));
+        infoScroll.setPreferredSize(new Dimension(WEAPON_PANE_WIDTH, 200));
+        panelMain.add(infoScroll, panelMainGBC.gridy(gridy)
+                .weighty(2));
+//        panelMain.add(pInfo, panelMainGBC.gridy(gridy)
+//                .weighty(0.5));
 
         addListeners();
 
         adaptToGUIScale();
         GUIP.addPreferenceChangeListener(this);
-        panelMain.setOpaque(false);
+        setLayout(new BorderLayout());
+        panelMain.setOpaque(OPAQUE);
+
         JScrollPane scrollPane = new JScrollPane(panelMain);
         scrollPane.setBackground(Color.white);
-        scrollPane.setOpaque(false);
-        scrollPane.setOpaque(false);
-        scrollPane.getViewport().setOpaque(false);
-        setLayout(new BorderLayout());
-//                add(panelMain);
+        scrollPane.setOpaque(OPAQUE);
+        scrollPane.getViewport().setOpaque(OPAQUE);
+        panelMain.setMinimumSize(new Dimension(WEAPON_PANE_WIDTH, GUIP.getUnitDisplayWeaponListHeight()));
+        panelMain.setPreferredSize(new Dimension(WEAPON_PANE_WIDTH, GUIP.getUnitDisplayWeaponListHeight()));
+//        add(panelMain);
         add(scrollPane);
 
         setBackGround();
         onResize();
     }
 
-    private Targetable target;
+    public void clearToHit() {
+        wToHitR.setText("---");
+        toHitText.setText("---");
+    }
+
+    public void setToHit(ToHitData toHit) {
+        setToHit(toHit, false);
+    }
+
+    public void setToHit(ToHitData toHit, boolean natAptGunnery) {
+//        toHit.getValue() == TargetRoll.IMPOSSIBLE
+//        toHit.getValue() == TargetRoll.AUTOMATIC_FAIL
+        //TODO set color
+        wToHitR.setText( String.format("<html><b>%2d</b> (%2.0f%%)</html>",
+                        toHit.getValue(),
+                        Compute.oddsAbove(toHit.getValue(), natAptGunnery)));
+//        toHitText.setText("<html>" + toHit.getDesc() + "</html>");
+        toHitText.setText( String.format("<html><body style='width: %dpx'>To Hit: <b>%2d</b> (%2.0f%%)  = %s</html>",
+                WEAPON_PANE_WIDTH,
+                toHit.getValue(),
+                Compute.oddsAbove(toHit.getValue(), natAptGunnery),
+                toHit.getDesc()));
+    }
+
+    public void setToHit(String message) {
+        wToHitR.setText("---");
+        toHitText.setText("<html>" + message + "</html>");
+//        toHitText.setText(message);
+    }
+
     public void setTarget(@Nullable Targetable target, @Nullable String extraInfo) {
         this.target = target;
         updateTargetInfo();

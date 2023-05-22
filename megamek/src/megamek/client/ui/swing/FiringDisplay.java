@@ -842,7 +842,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
                 setFindClubEnabled(false);
                 setFlipArmsEnabled(false);
                 setStrafeEnabled(false);
-                clientgui.getUnitDisplay().wPan.toHitText.setText("Hidden units are only allowed to spot!");
+                clientgui.getUnitDisplay().wPan.setToHit("Hidden units are only allowed to spot!");
             }
         } else {
             LogManager.getLogger().error("Tried to select non-existent entity " + en);
@@ -1494,7 +1494,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
             // Could check legality on buildings, but I don't believe there are
             // any weapons that are still legal that aren't legal on buildings
         }
-        clientgui.getUnitDisplay().wPan.toHitText.setText(toHitBuff.toString());
+        clientgui.getUnitDisplay().wPan.setToHit(toHitBuff.toString());
     }
 
     private int[] getBombPayload(boolean isSpace, int limit) {
@@ -1957,38 +1957,33 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
                 clientgui.getUnitDisplay().wPan.selectWeapon(weaponId);
             }
             if (m.isUsedThisRound()) {
-                clientgui.getUnitDisplay().wPan.wToHitR.setText(
-                        Messages.getString("FiringDisplay.alreadyFired"));
+                clientgui.getUnitDisplay().wPan.setToHit(Messages.getString("FiringDisplay.alreadyFired"));
                 setFireEnabled(false);
             } else if ((m.getType().hasFlag(WeaponType.F_AUTO_TARGET)
                     && !m.curMode().equals(Weapon.MODE_AMS_MANUAL))
                     || (m.getType().hasModes() && m.curMode().equals("Point Defense"))) {
-                clientgui.getUnitDisplay().wPan.wToHitR.setText(
-                        Messages.getString("FiringDisplay.autoFiringWeapon"));
+                clientgui.getUnitDisplay().wPan.setToHit(Messages.getString("FiringDisplay.autoFiringWeapon"));
                 setFireEnabled(false);
             } else if (m.isInBearingsOnlyMode()) {
-                clientgui.getUnitDisplay().wPan.wToHitR.setText(
-                        Messages.getString("FiringDisplay.bearingsOnlyWrongPhase"));
+                clientgui.getUnitDisplay().wPan.setToHit(Messages.getString("FiringDisplay.bearingsOnlyWrongPhase"));
                 setFireEnabled(false);
             } else if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
-                clientgui.getUnitDisplay().wPan.wToHitR.setText(toHit.getValueAsString());
+                clientgui.getUnitDisplay().wPan.setToHit(toHit);
                 setFireEnabled(false);
             } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
-                clientgui.getUnitDisplay().wPan.wToHitR.setText(toHit.getValueAsString());
+                clientgui.getUnitDisplay().wPan.setToHit(toHit);
                 setFireEnabled(true);
             } else {
                 boolean natAptGunnery = ce().hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
-                clientgui.getUnitDisplay().wPan.wToHitR.setText(toHit.getValueAsString()
-                        + " (" + Compute.oddsAbove(toHit.getValue(), natAptGunnery) + "%)");
+                clientgui.getUnitDisplay().wPan.setToHit(toHit, true);
+
                 setFireEnabled(true);
             }
-            clientgui.getUnitDisplay().wPan.toHitText.setText(toHit.getDesc());
             setSkipEnabled(true);
         } else {
             clientgui.getUnitDisplay().wPan.setTarget(null, null);
             clientgui.getUnitDisplay().wPan.wRangeR.setText("---");
-            clientgui.getUnitDisplay().wPan.wToHitR.setText("---");
-            clientgui.getUnitDisplay().wPan.toHitText.setText("");
+            clientgui.getUnitDisplay().wPan.clearToHit();
         }
 
         if ((weaponId != -1) && (ce() != null) && !isStrafing) {
@@ -2009,7 +2004,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
             setFindClubEnabled(false);
             setFlipArmsEnabled(false);
             setStrafeEnabled(false);
-            clientgui.getUnitDisplay().wPan.toHitText.setText("Hidden units are only allowed to spot!");
+            clientgui.getUnitDisplay().wPan.setToHit("Hidden units are only allowed to spot!");
         }
     }
 

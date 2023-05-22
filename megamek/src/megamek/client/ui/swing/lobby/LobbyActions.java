@@ -456,7 +456,7 @@ public class LobbyActions {
             for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
                 Gender gender = RandomGenderGenerator.generate();
                 e.getCrew().setGender(gender, i);
-                e.getCrew().setName(RandomNameGenerator.getInstance().generate(gender, e.getCrew().isClanner(i), e.getOwner().getName()), i);
+                e.getCrew().setName(RandomNameGenerator.getInstance().generate(gender, e.getCrew().isClanPilot(i), e.getOwner().getName()), i);
             }
         }
         sendUpdates(entities);

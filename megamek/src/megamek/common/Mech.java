@@ -3747,7 +3747,7 @@ public abstract class Mech extends Entity {
         // Mechs can charge, unless they are Clan and the "no clan physicals" option is set
         return super.canCharge()
                 && !(game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL)
-                        && getCrew().isClanner());
+                        && getCrew().isClanPilot());
     }
 
     @Override
@@ -3755,7 +3755,7 @@ public abstract class Mech extends Entity {
         // Mechs can DFA, unless they are Clan and the "no clan physicals" option is set
         return super.canDFA()
                 && !(game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL)
-                        && getCrew().isClanner());
+                        && getCrew().isClanPilot());
     }
 
     /**

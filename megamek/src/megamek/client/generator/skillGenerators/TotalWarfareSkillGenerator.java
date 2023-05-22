@@ -44,14 +44,14 @@ public class TotalWarfareSkillGenerator extends AbstractSkillGenerator {
     //endregion Constructors
 
     @Override
-    public int[] generateRandomSkills(final Entity entity, final boolean clanner,
+    public int[] generateRandomSkills(final Entity entity, final boolean clanPilot,
                                       final boolean forceClan) {
-        return generateRandomSkills(getLevel(), entity, clanner, forceClan);
+        return generateRandomSkills(getLevel(), entity, clanPilot, forceClan);
     }
 
     protected int[] generateRandomSkills(final SkillLevel level, final Entity entity,
-                                         final boolean clanner, final boolean forceClan) {
-        final int bonus = determineBonus(entity, clanner, forceClan);
+                                         final boolean clanPilot, final boolean forceClan) {
+        final int bonus = determineBonus(entity, clanPilot, forceClan);
 
         final int gunneryRoll = Compute.d6(1) + bonus;
         final int pilotingRoll = Compute.d6(1) + bonus;
@@ -100,13 +100,13 @@ public class TotalWarfareSkillGenerator extends AbstractSkillGenerator {
 
     /**
      * @param entity the entity whose crew skill is being rolled
-     * @param clanner if the crew is led by a clanner
-     * @param forceClan forces the type to be clan if the crew are led by a clanner
+     * @param clanPilot if the crew is led by a clan pilot
+     * @param forceClan forces the type to be clan if the crew are led by a clanPilot
      * @return the bonus to use on the Random Skills Table (Expanded) roll
      */
-    protected int determineBonus(final Entity entity, final boolean clanner,
+    protected int determineBonus(final Entity entity, final boolean clanPilot,
                                  final boolean forceClan) {
-        if (getType().isClan() || (forceClan && clanner)) {
+        if (getType().isClan() || (forceClan && clanPilot)) {
             if (entity instanceof Mech) {
                 return 2;
             } else if (entity instanceof Tank) {

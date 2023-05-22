@@ -141,40 +141,40 @@ public class RandomNameGenerator implements Serializable {
     /**
      * This is used to generate a name for MegaMek only that uses the chosen faction
      * @param gender the gender to generate the name for
-     * @param clanner if the name is for a clanner
+     * @param clanPilot if the name is for a clanPilot
      * @return a string containing the randomly generated name
      */
-    public String generate(Gender gender, boolean clanner) {
-        return generate(gender, clanner, getChosenFaction());
+    public String generate(Gender gender, boolean clanPilot) {
+        return generate(gender, clanPilot, getChosenFaction());
     }
 
     /**
      * Generate a single random name for MegaMek only
      *
      * @param gender the gender to generate the name for
-     * @param clanner if the name is for a clanner
+     * @param clanPilot if the name is for a clanPilot
      * @param faction a string containing the faction key with which to generate the name from.
      *                If the faction is not a key for the <code>factionSurnames</code> Map,
      *                it will instead generate based on the General list
      * @return a string containing the randomly generated name
      */
-    public String generate(Gender gender, boolean clanner, String faction) {
+    public String generate(Gender gender, boolean clanPilot, String faction) {
         String name = UNNAMED_FULL_NAME;
         if (initialized) {
             // This checks to see if we've got a name map for the faction. If we do not, then we
-            // go to check if the person is a clanner. If they are, then they default to the default
+            // go to check if the person is a clanPilot. If they are, then they default to the default
             // clan key provided that exists.
             // If the key isn't set by either case above, then the name is generated based on the
             // default faction key
             faction = factionEthnicCodes.containsKey(faction) ? faction
-                    : ((clanner && (factionEthnicCodes.containsKey(KEY_DEFAULT_CLAN)))
+                    : ((clanPilot && (factionEthnicCodes.containsKey(KEY_DEFAULT_CLAN)))
                         ? KEY_DEFAULT_CLAN : KEY_DEFAULT_FACTION);
             final int ethnicCode = factionEthnicCodes.get(faction).randomItem();
             final int givenNameEthnicCode = factionGivenNames.get(faction).get(ethnicCode).randomItem();
 
             name = (gender.isFemale() ? femaleGivenNames : maleGivenNames).get(givenNameEthnicCode).randomItem();
 
-            if (!clanner) {
+            if (!clanPilot) {
                 name += " " + surnames.get(ethnicCode).randomItem();
             }
         }
@@ -183,16 +183,16 @@ public class RandomNameGenerator implements Serializable {
 
     /**
      * @param gender the gender to generate the name for
-     * @param clanner if the person is a clanner
+     * @param clanPilot if the person is a clanPilot
      * @param ethnicCode the specified ethnic code
      * @return a string containing the randomly generated name
      */
-    public String generateWithEthnicCode(Gender gender, boolean clanner, int ethnicCode) {
+    public String generateWithEthnicCode(Gender gender, boolean clanPilot, int ethnicCode) {
         String name = UNNAMED_FULL_NAME;
         if (initialized) {
             name = (gender.isFemale() ? femaleGivenNames : maleGivenNames).get(ethnicCode).randomItem();
 
-            if (!clanner) {
+            if (!clanPilot) {
                 name += " " + surnames.get(ethnicCode).randomItem();
             }
         }
@@ -203,7 +203,7 @@ public class RandomNameGenerator implements Serializable {
      * Generate a single random name split between a given name and surname
      *
      * @param gender the gender to generate the name for
-     * @param clanner if the person is a clanner
+     * @param clanPilot if the person is a clanPilot
      * @param faction a string containing the faction key with which to generate the name from.
      *                If the faction is not a key for the <code>factionSurnames</code> Map,
      *                it will instead generate based on the General list
@@ -211,40 +211,40 @@ public class RandomNameGenerator implements Serializable {
      *              with the given name at String[0]
      *              and the surname at String[1]
      */
-    public String[] generateGivenNameSurnameSplit(Gender gender, boolean clanner, String faction) {
+    public String[] generateGivenNameSurnameSplit(Gender gender, boolean clanPilot, String faction) {
         String[] name = { UNNAMED, UNNAMED_SURNAME };
         if (initialized) {
             // This checks to see if we've got a name map for the faction. If we do not, then we
-            // go to check if the person is a clanner. If they are, then they default to the default
+            // go to check if the person is a clanPilot. If they are, then they default to the default
             // clan key provided that exists.
             // If the key isn't set by either case above, then the name is generated based on the
             // default faction key
             faction = factionEthnicCodes.containsKey(faction) ? faction
-                    : ((clanner && (factionEthnicCodes.containsKey(KEY_DEFAULT_CLAN)))
+                    : ((clanPilot && (factionEthnicCodes.containsKey(KEY_DEFAULT_CLAN)))
                         ? KEY_DEFAULT_CLAN : KEY_DEFAULT_FACTION);
             final int ethnicCode = factionEthnicCodes.get(faction).randomItem();
             final int givenNameEthnicCode = factionGivenNames.get(faction).get(ethnicCode).randomItem();
 
             name[0] = (gender.isFemale() ? femaleGivenNames : maleGivenNames).get(givenNameEthnicCode).randomItem();
 
-            name[1] = clanner ? "" : surnames.get(ethnicCode).randomItem();
+            name[1] = clanPilot ? "" : surnames.get(ethnicCode).randomItem();
         }
         return name;
     }
 
     /**
      * @param gender the gender to generate the name for
-     * @param clanner if the person is a clanner
+     * @param clanPilot if the person is a clanPilot
      * @param ethnicCode the specified ethnic code
      * @return - a String[] containing the name,
      *              with the given name at String[0]
      *              and the surname at String[1]
      */
-    public String[] generateGivenNameSurnameSplitWithEthnicCode(Gender gender, boolean clanner, int ethnicCode) {
+    public String[] generateGivenNameSurnameSplitWithEthnicCode(Gender gender, boolean clanPilot, int ethnicCode) {
         String[] name = { UNNAMED, UNNAMED_SURNAME };
         if (initialized) {
             name[0] = (gender.isFemale() ? femaleGivenNames : maleGivenNames).get(ethnicCode).randomItem();
-            name[1] = clanner ? "" : surnames.get(ethnicCode).randomItem();
+            name[1] = clanPilot ? "" : surnames.get(ethnicCode).randomItem();
         }
         return name;
     }

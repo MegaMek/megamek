@@ -34,13 +34,13 @@ public class TaharqaSkillGenerator extends TotalWarfareSkillGenerator {
     /**
      * The base skill level for each entity is determined separately in Taharqa's Method
      * @param entity the Entity to generate a random skill array for
-     * @param clanner if the crew to generate a random skills array for are clanners
-     * @param forceClan forces the type to be clan if the crew are clanners
+     * @param clanPilot if the crew to generate a random skills array for are a clan crew
+     * @param forceClan forces the type to be clan if the crew are a clan crew
      * @return an integer array containing the (Gunnery, Piloting) skill values, or an alternative
      * pairing if applicable [(Gunnery, Anti-'Mech) for infantry]
      */
     @Override
-    public int[] generateRandomSkills(final Entity entity, final boolean clanner,
+    public int[] generateRandomSkills(final Entity entity, final boolean clanPilot,
                                       final boolean forceClan) {
         int bonus;
         switch (getLevel()) {
@@ -92,6 +92,6 @@ public class TaharqaSkillGenerator extends TotalWarfareSkillGenerator {
             level = SkillLevel.LEGENDARY;
         }
 
-        return generateRandomSkills(level, entity, clanner, forceClan);
+        return generateRandomSkills(level, entity, clanPilot, forceClan);
     }
 }

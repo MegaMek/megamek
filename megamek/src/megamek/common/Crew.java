@@ -47,7 +47,7 @@ public class Crew implements Serializable {
     private final String[] names;
     private final String[] nicknames;
     private final Gender[] genders;
-    private final boolean[] clanners;
+    private final boolean[] clanPilots;
     private final Portrait[] portraits;
 
     private final int[] gunnery;
@@ -172,12 +172,12 @@ public class Crew implements Serializable {
      * @param gunnery   the crew's Gunnery skill.
      * @param piloting  the crew's Piloting or Driving skill.
      * @param gender    the gender of the crew or commander
-     * @param clanner   if the crew or commander is a clanner
+     * @param clanPilot   if the crew or commander is a clanPilot
      * @param extraData any extra data passed to be stored with this Crew.
      */
     public Crew(CrewType crewType, String name, int size, int gunnery, int piloting, Gender gender,
-                boolean clanner, Map<Integer, Map<String, String>> extraData) {
-        this(crewType, name, size, gunnery, gunnery, gunnery, piloting, gender, clanner, extraData);
+                boolean clanPilot, Map<Integer, Map<String, String>> extraData) {
+        this(crewType, name, size, gunnery, gunnery, gunnery, piloting, gender, clanPilot, extraData);
     }
 
     /**
@@ -189,11 +189,11 @@ public class Crew implements Serializable {
      * @param gunneryB  the crew's "ballistic" Gunnery skill.
      * @param piloting  the crew's Piloting or Driving skill.
      * @param gender    the gender of the crew or commander
-     * @param clanner   if the crew or commander is a clanner
+     * @param clanPilot   if the crew or commander is a clanPilot
      * @param extraData any extra data passed to be stored with this Crew.
      */
     public Crew(CrewType crewType, String name, int size, int gunneryL, int gunneryM, int gunneryB,
-                int piloting, Gender gender, boolean clanner,
+                int piloting, Gender gender, boolean clanPilot,
                 Map<Integer, Map<String, String>> extraData) {
         this.crewType = crewType;
         this.size = Math.max(size, crewType.getCrewSlots());
@@ -209,8 +209,8 @@ public class Crew implements Serializable {
         genders = new Gender[slots];
         Arrays.fill(getGenders(), Gender.RANDOMIZE);
         setGender(gender, 0);
-        clanners = new boolean[slots];
-        Arrays.fill(getClanners(), clanner);
+        clanPilots = new boolean[slots];
+        Arrays.fill(getClanPilots(), clanPilot);
         portraits = new Portrait[slots];
         for (int i = 0; i < slots; i++) {
             setPortrait(new Portrait(), i);
@@ -313,20 +313,20 @@ public class Crew implements Serializable {
         getGenders()[pos] = gender;
     }
 
-    public boolean[] getClanners() {
-        return clanners;
+    public boolean[] getClanPilots() {
+        return clanPilots;
     }
 
-    public boolean isClanner() {
-        return getClanners()[0];
+    public boolean isClanPilot() {
+        return getClanPilots()[0];
     }
 
-    public boolean isClanner(final int position) {
-        return (position < getClanners().length) ? getClanners()[position] : isClanner();
+    public boolean isClanPilot(final int position) {
+        return (position < getClanPilots().length) ? getClanPilots()[position] : isClanPilot();
     }
 
-    public void setClanner(final boolean clanner, final int position) {
-        getClanners()[position] = clanner;
+    public void setClanPilot(final boolean clanPilot, final int position) {
+        getClanPilots()[position] = clanPilot;
     }
 
     public Portrait[] getPortraits() {

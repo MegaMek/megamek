@@ -126,7 +126,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
     private void autoSetSkillsAndName(Entity e, Player player) {
         ClientPreferences cs = PreferenceManager.getClientPreferences();
 
-        Arrays.fill(e.getCrew().getClanners(), e.isClan());
+        Arrays.fill(e.getCrew().getClanPilots(), e.isClan());
         if (cs.useAverageSkills()) {
             clientGUI.getClient().getSkillGenerator().setRandomSkills(e);
         }
@@ -136,8 +136,8 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
                 Gender gender = RandomGenderGenerator.generate();
                 e.getCrew().setGender(gender, i);
                 e.getCrew().setName((player != null)
-                        ? RandomNameGenerator.getInstance().generate(gender, e.getCrew().isClanner(i), player.getName())
-                        : RandomNameGenerator.getInstance().generate(gender, e.getCrew().isClanner(i)), i);
+                        ? RandomNameGenerator.getInstance().generate(gender, e.getCrew().isClanPilot(i), player.getName())
+                        : RandomNameGenerator.getInstance().generate(gender, e.getCrew().isClanPilot(i)), i);
             }
         }
     }

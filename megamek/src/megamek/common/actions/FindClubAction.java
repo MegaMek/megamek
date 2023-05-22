@@ -62,7 +62,7 @@ public class FindClubAction extends AbstractEntityAction {
 
         // Check game options
         if (game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL)
-                && entity.getCrew().isClanner()) {
+                && entity.getCrew().isClanPilot()) {
             return false;
         }
 

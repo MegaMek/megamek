@@ -25,8 +25,6 @@ import megamek.common.Infantry;
 import megamek.common.LAMPilot;
 import megamek.common.enums.SkillLevel;
 
-import java.io.Serializable;
-
 public abstract class AbstractSkillGenerator {
     //region Variable Declarations
     private final SkillGeneratorMethod method;
@@ -87,7 +85,7 @@ public abstract class AbstractSkillGenerator {
      * Generates random skills based on an entity crewmember by crewmember, and then assigns the
      * values to the crew before sorting them.
      * @param entity the Entity whose skills are to be randomly set
-     * @param forceClan forces the type to be clan if the crew are led by a clanner
+     * @param forceClan forces the type to be clan if the crew are led by a clan pilot
      */
     public void setRandomSkills(final Entity entity, final boolean forceClan) {
         for (int i = 0; i < entity.getCrew().getSlotCount(); i++) {
@@ -127,7 +125,7 @@ public abstract class AbstractSkillGenerator {
      * pairing if applicable [(Gunnery, Anti-'Mech) for infantry]
      */
     public int[] generateRandomSkills(final Entity entity, final boolean forceClan) {
-        return generateRandomSkills(entity, entity.getCrew().isClanner(), forceClan);
+        return generateRandomSkills(entity, entity.getCrew().isClanPilot(), forceClan);
     }
 
     /**
@@ -135,12 +133,12 @@ public abstract class AbstractSkillGenerator {
      * generator, but does not assign those new skills to that entity. The return value MUST be
      * cleaned with cleanReturn for this setup to work properly.
      * @param entity the Entity to generate a random skill array for
-     * @param clanner if the crew to generate a random skills array for are clanners
-     * @param forceClan forces the type to be clan if the crew are clanners
+     * @param clanPilot if the crew to generate a random skills array for are a clan crew
+     * @param forceClan forces the type to be clan if the crew are a clan crew
      * @return an integer array containing the (Gunnery, Piloting) skill values, or an alternative
      * pairing if applicable [(Gunnery, Anti-'Mech) for infantry]
      */
-    public abstract int[] generateRandomSkills(final Entity entity, final boolean clanner,
+    public abstract int[] generateRandomSkills(final Entity entity, final boolean clanPilot,
                                                final boolean forceClan);
 
     /**

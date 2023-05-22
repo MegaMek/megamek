@@ -157,10 +157,10 @@ public class RandomNameDialog extends JDialog implements ActionListener {
                         ent.getCrew().setGender(gender, i);
                         if (comboHistoricalEthnicity.getSelectedIndex() == 0) {
                             ent.getCrew().setName(RandomNameGenerator.getInstance().generate(gender,
-                                    ent.getCrew().isClanner(i)), i);
+                                    ent.getCrew().isClanPilot(i)), i);
                         } else {
                             ent.getCrew().setName(RandomNameGenerator.getInstance().generateWithEthnicCode(
-                                    gender, ent.getCrew().isClanner(i),
+                                    gender, ent.getCrew().isClanPilot(i),
                                     comboHistoricalEthnicity.getSelectedIndex()), i);
                         }
                     }

@@ -30,9 +30,9 @@ public class ModifiedTotalWarfareSkillGenerator extends TotalWarfareSkillGenerat
     //endregion Constructors
 
     @Override
-    protected int determineBonus(final Entity entity, final boolean clanner,
+    protected int determineBonus(final Entity entity, final boolean clanPilot,
                                  final boolean forceClan) {
-        final SkillGeneratorType type = (forceClan && clanner) ? SkillGeneratorType.CLAN : getType();
+        final SkillGeneratorType type = (forceClan && clanPilot) ? SkillGeneratorType.CLAN : getType();
 
         int bonus = 0;
         if (type.isClan()) {

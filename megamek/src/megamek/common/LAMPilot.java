@@ -43,9 +43,9 @@ public class LAMPilot extends Crew {
     }
 
     public LAMPilot(LandAirMech lam, String name, int gunneryMech, int pilotingMech,
-                    int gunneryAero, int pilotingAero, Gender gender, boolean clanner,
+                    int gunneryAero, int pilotingAero, Gender gender, boolean clanPilot,
                     Map<Integer, Map<String, String>> extraData) {
-        super(CrewType.SINGLE, name, 1, gunneryMech, pilotingMech, gender, clanner, extraData);
+        super(CrewType.SINGLE, name, 1, gunneryMech, pilotingMech, gender, clanPilot, extraData);
         this.lam = lam;
         this.gunneryAero = gunneryAero;
         this.pilotingAero = pilotingAero;
@@ -69,7 +69,7 @@ public class LAMPilot extends Crew {
         Map<Integer, Map<String, String>> extraData = new HashMap<>();
         extraData.put(0, crew.getExtraDataForCrewMember(0));
         LAMPilot pilot = new LAMPilot(lam, crew.getName(), crew.getGunnery(), crew.getPiloting(),
-                crew.getGunnery(), crew.getPiloting(), crew.getGender(), crew.isClanner(), extraData);
+                crew.getGunnery(), crew.getPiloting(), crew.getGender(), crew.isClanPilot(), extraData);
         pilot.setNickname(crew.getNickname(), 0);
         pilot.setPortrait(crew.getPortrait(0).clone(), 0);
         pilot.setGunneryL(crew.getGunneryL(), 0);

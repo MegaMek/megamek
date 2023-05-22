@@ -9989,7 +9989,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         // check game options
         if (game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL)
-                && getCrew().isClanner() && !hasINarcPodsAttached()
+                && getCrew().isClanPilot() && !hasINarcPodsAttached()
                 && (getSwarmAttackerId() == NONE)) {
             return false;
         }

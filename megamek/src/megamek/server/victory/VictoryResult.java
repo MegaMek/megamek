@@ -73,9 +73,8 @@ public class VictoryResult {
                 maxEntity = entry.getKey();
             }
         }
-        if (draw)
-            return defaultEntity;
-        return maxEntity;
+
+        return draw ? defaultEntity : maxEntity;
     }
 
     /**
@@ -96,13 +95,11 @@ public class VictoryResult {
         // used to calculate winner
         hiScore = Double.MIN_VALUE;
         for (Double d : playerScore.values()) {
-            if (d > hiScore)
-                hiScore = d;
+            hiScore = Math.max(hiScore, d);
         }
 
         for (Double d : teamScore.values()) {
-            if (d > hiScore)
-                hiScore = d;
+            hiScore = Math.max(hiScore, d);
         }
     }
 
@@ -147,9 +144,7 @@ public class VictoryResult {
     }
 
     public double getPlayerScore(int id) {
-        if (playerScore.get(id) == null)
-            return 0.0;
-        return playerScore.get(id);
+        return (playerScore.get(id) == null) ? 0.0 : playerScore.get(id);
     }
 
     public int[] getPlayers() {
@@ -157,9 +152,7 @@ public class VictoryResult {
     }
 
     public double getTeamScore(int id) {
-        if (teamScore.get(id) == null)
-            return 0.0;
-        return teamScore.get(id);
+        return (teamScore.get(id) == null) ? 0.0 : teamScore.get(id);
     }
 
     public int[] getTeams() {
@@ -233,8 +226,9 @@ public class VictoryResult {
 
     private int[] intify(Integer... ar) {
         int[] ret = new int[ar.length];
-        for (int i = 0; i < ar.length; i++)
+        for (int i = 0; i < ar.length; i++) {
             ret[i] = ar[i];
+        }
         return ret;
     }
 

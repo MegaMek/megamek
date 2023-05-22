@@ -63,4 +63,9 @@ public class ISXPulseLaserSmall extends PulseLaserWeapon {
             .setProductionFactions(F_LC)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
+    
+    @Override
+    public boolean isAlphaStrikePointDefense() {
+        return true;
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2003-2004 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -11,26 +11,21 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
 package megamek.common;
 
 /**
  * Represents an external or exposed support vehicle crew seat.
  */
-
 public final class PillionSeatCargoBay extends StandardSeatCargoBay {
-
     private static final long serialVersionUID = 145634308684637504L;
 
     /**
      * The default constructor is only for serialization.
      */
-    protected PillionSeatCargoBay() {
+    private PillionSeatCargoBay() {
         totalSpace = 0;
         currentSpace = 0;
     }
-
-    // Public constructors and methods.
 
     /**
      * Creates pillion crew seating for support vehicles.
@@ -43,7 +38,7 @@ public final class PillionSeatCargoBay extends StandardSeatCargoBay {
     }
 
     @Override
-    public String getUnusedString(boolean showrecovery) {
+    public String getUnusedString(boolean showRecovery) {
         return "Seating (Pillion) - " + currentSpace;
     }
 
@@ -61,5 +56,4 @@ public final class PillionSeatCargoBay extends StandardSeatCargoBay {
     public long getCost() {
         return 10L * (long) totalSpace;
     }
-
 }

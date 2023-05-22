@@ -13,21 +13,12 @@
  */
 package megamek.common.weapons;
 
-import java.util.Vector;
-
-import megamek.common.BattleArmor;
-import megamek.common.Building;
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.EquipmentMode;
-import megamek.common.HitData;
-import megamek.common.Game;
-import megamek.common.Report;
-import megamek.common.TargetRoll;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.server.Server;
+import megamek.server.GameManager;
+
+import java.util.Vector;
 
 /**
  * @author Sebastian Brocks
@@ -36,22 +27,14 @@ import megamek.server.Server;
 public class FlamerHandler extends WeaponHandler {
     private static final long serialVersionUID = -7348456582587703751L;
 
-    /**
-     * @param toHit
-     * @param waa
-     * @param g
-     */
-    public FlamerHandler(ToHitData toHit, WeaponAttackAction waa, Game g,
-            Server s) {
-        super(toHit, waa, g, s);
+    public FlamerHandler(ToHitData toHit, WeaponAttackAction waa, Game g, GameManager m) {
+        super(toHit, waa, g, m);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }
 
     @Override
-    protected void handleEntityDamage(Entity entityTarget,
-            Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
-            int bldgAbsorbs) {
-        
+    protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport,
+                                      Building bldg, int hits, int nCluster, int bldgAbsorbs) {
         boolean bmmFlamerDamage = game.getOptions().booleanOption(OptionsConstants.BASE_FLAMER_HEAT);
         EquipmentMode currentWeaponMode = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).curMode();
         
@@ -70,12 +53,10 @@ public class FlamerHandler extends WeaponHandler {
                     waa.getAimingMode(), toHit.getCover());
             hit.setAttackerId(getAttackerId());
 
-            if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
-                    .getCover(), Compute.targetSideTable(ae, entityTarget,
-                            weapon.getCalledShot().getCall()))) {
+            if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(),
+                    Compute.targetSideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {
                 // Weapon strikes Partial Cover.
-                handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg,
-                        hits, nCluster, bldgAbsorbs);
+                handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits, nCluster, bldgAbsorbs);
                 return;
             }
             Report r = new Report(3405);
@@ -87,12 +68,7 @@ public class FlamerHandler extends WeaponHandler {
             FlamerHandlerHelper.doHeatDamage(entityTarget, vPhaseReport, wtype, subjectId, hit);
         }
     }
-    
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
-     */
+
     @Override
     protected int calcDamagePerHit() {
         int toReturn = super.calcDamagePerHit();
@@ -108,8 +84,7 @@ public class FlamerHandler extends WeaponHandler {
     }
 
     @Override
-    protected void handleIgnitionDamage(Vector<Report> vPhaseReport,
-            Building bldg, int hits) {
+    protected void handleIgnitionDamage(Vector<Report> vPhaseReport, Building bldg, int hits) {
         if (!bSalvo) {
             // hits!
             Report r = new Report(2270);
@@ -120,14 +95,13 @@ public class FlamerHandler extends WeaponHandler {
         TargetRoll tn = new TargetRoll(wtype.getFireTN(), wtype.getName());
         if (tn.getValue() != TargetRoll.IMPOSSIBLE) {
             Report.addNewline(vPhaseReport);
-            server.tryIgniteHex(target.getPosition(), subjectId, true, false,
+            gameManager.tryIgniteHex(target.getPosition(), subjectId, true, false,
                     tn, true, -1, vPhaseReport);
         }
     }
 
     @Override
-    protected void handleClearDamage(Vector<Report> vPhaseReport,
-            Building bldg, int nDamage) {
+    protected void handleClearDamage(Vector<Report> vPhaseReport, Building bldg, int nDamage) {
         if (!bSalvo) {
             // hits!
             Report r = new Report(2270);
@@ -148,18 +122,16 @@ public class FlamerHandler extends WeaponHandler {
         // a 5 or less
         // you do a normal ignition as though for intentional fires
         if ((bldg != null)
-                && server.tryIgniteHex(target.getPosition(), subjectId, true,
+                && gameManager.tryIgniteHex(target.getPosition(), subjectId, true,
                         false,
                         new TargetRoll(wtype.getFireTN(), wtype.getName()), 5,
                         vPhaseReport)) {
             return;
         }
-        Vector<Report> clearReports = server.tryClearHex(target.getPosition(),
-                nDamage, subjectId);
-        if (clearReports.size() > 0) {
+        Vector<Report> clearReports = gameManager.tryClearHex(target.getPosition(), nDamage, subjectId);
+        if (!clearReports.isEmpty()) {
             vPhaseReport.lastElement().newlines = 0;
         }
         vPhaseReport.addAll(clearReports);
-        return;
     }
 }

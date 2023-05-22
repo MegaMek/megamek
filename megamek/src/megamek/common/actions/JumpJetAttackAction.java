@@ -62,9 +62,9 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
      * Damage that the specified mech does with a JJ attack
      */
     public static int getDamageFor(Entity entity, int leg) {
-
-        if (leg == BOTH)
+        if (leg == BOTH) {
             return getDamageFor(entity, LEFT) + getDamageFor(entity, RIGHT);
+        }
 
         int[] kickLegs = new int[2];
         if (entity.entityIsQuad() && !entity.isProne()) {
@@ -75,7 +75,7 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
             kickLegs[1] = Mech.LOC_LLEG;
         }
 
-        final int legLoc = (leg == RIGHT) ? kickLegs[0] : kickLegs[1];
+        final int legLoc = kickLegs[(leg == RIGHT) ? 0 : 1];
 
         // underwater damage is 0
         if (entity.getLocationStatus(legLoc) == ILocationExposureStatus.WET) {
@@ -104,11 +104,13 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
      */
     public static ToHitData toHit(Game game, int attackerId, Targetable target, int leg) {
         final Entity ae = game.getEntity(attackerId);
-        if (ae == null)
+        if (ae == null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't attack from a null entity!");
+        }
 
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_JUMP_JET_ATTACK))
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_JUMP_JET_ATTACK)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "no Jump Jet attack");
+        }
 
         String impossible = toHitIsImpossible(game, ae, target);
         if (impossible != null) {

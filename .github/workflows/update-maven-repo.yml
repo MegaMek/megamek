@@ -18,7 +18,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ] # For Maven Repository Update running on *nix is sufficient
         java-distribution: [ temurin ]
-        java-version: [ 11 ]
+        java-version: [ 17 ]
 
     steps:
     # Put the MM repo in a subfolder to make updating the Maven repo easier

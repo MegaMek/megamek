@@ -1,0 +1,168 @@
+Version:1.0
+Dasher (Fire Moth)
+G
+mul id:6946
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3098
+source:Rec Guide:ilClan #8 - Early Republic
+Rules Level:2
+
+Mass:20
+Engine:200 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Base Chassis Heat Sinks:8
+Walk MP:10
+Jump MP:0
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:3
+RA Armor:3
+LT Armor:4
+RT Armor:4
+CT Armor:5
+HD Armor:5
+LL Armor:4
+RL Armor:4
+RTL Armor:2
+RTR Armor:2
+RTC Armor:2
+
+Weapons:4
+Improved Heavy Medium Laser, Left Arm
+Improved Heavy Medium Laser, Left Arm
+Improved Heavy Medium Laser, Right Arm
+Improved Heavy Medium Laser, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CL Super Charger (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLTargeting Computer (omnipod)
+Clan Coolant Pod (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLMASC
+Clan Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+
+overview:The Fire Moth is a light Clan OmniMech intended for scouting and infantry support and transport, often deployed by Clan Ghost Bear.
+
+capabilities:The Fire Moth is easily one of the quickest designs ever produced, with a running speed of 162.0 km/h and accelerating up to 216.0 km/h with the MASC system fitted on the 'Mech's chassis, which is why the Inner Sphere assigned it the codename Dasher. The Fire Moth's higher speed stems from its 200-rated extralight fusion engine, which is typical of many light 'Mechs in its liberal use of lightweight materials. An endo steel chassis saves space, as does two tons of ferro-fibrous armor; this meager amount of armor serves as the only barrier between an attacker and the 'Mech's fragile internals, and as a result, the Fire Moth relies on speed rather than durability for survival. The 'Mech's heat is easily dissipated by the conventional 10 double heat sinks.
+
+deployment:The Fire Moth G was introduced in the Dark Age. It carries four improved heavy medium lasers that have been tied into a targeting computer. It is also equipped with a supercharger which, combined with the MASC system, allow the Fire Moth G to reach approximately 250 km/h in short bursts. To combat the extreme heat the 10 double heat sinks have been supplemented with a coolant pod.
+
+history:The Fire Moth was originally designed by Clan Cloud Cobra scientists as an infantry support OmniMech. The high-placed arms were positioned in order for a pair of infantry "pods" underslung on the arms of the prototype Fire Moth. Designed to ease transporting Elementals into battle, the "pods" were discarded after the first field test, but the arms were never adjusted when the OmniMech debuted in 2874. Clan Ghost Bear came into possession of the Fire Moth when Clan Cloud Cobra traded the design for five years of trade considerations. Both the Ghost Bears and Clan Hell's Horses make extensive use of the Fire Moth for reconnaissance, dueling, and infantry support. Because the Fire Moth is poorly armed and armored, and infantry support is a lack-luster assignment, the Fire Moth is frequently assigned to warriors who are older and lack bloodnames before they reach solahma units. These warriors tend to be extremely aggressive. Most of the Fire Moth factories were moved to the Inner Sphere after Operation Revival. Though the 'Mech is rare in Clan Space, it is commonly passed over in favor of the Phantom OmniMech by the remaining Home Clans, as it fulfills the same roles of the Fire Moth but with heavier armor.
+
+manufacturer:Dominion Facility Kappa-4 and -5
+primaryfactory:Goito, Thule
+systemmanufacturer:CHASSIS:Dominator Light-Alpha 20
+systemmanufacturer:ENGINE:Firebox 200 XL
+systemmanufacturer:ARMOR:IceSheet Ferro Fibrous
+systemmanufacturer:COMMUNICATIONS:Untermarkt IV-a
+systemmanufacturer:TARGETING:Hakkøn MicroSystems

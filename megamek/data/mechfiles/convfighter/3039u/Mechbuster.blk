@@ -13,12 +13,12 @@ ConvFighter
 </UnitType>
 
 <Name>
-MechBuster
+Mechbuster
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 2154

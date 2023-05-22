@@ -68,134 +68,75 @@ public class FireControl {
     static final TargetRollModifier TH_TAR_SKID = new TargetRollModifier(2, "target skidded");
     static final TargetRollModifier TH_TAR_NO_MOVE = new TargetRollModifier(1, "target didn't move");
     static final TargetRollModifier TH_TAR_SPRINT = new TargetRollModifier(-1, "target sprinted");
-    static final TargetRollModifier TH_TAR_AERO_NOE_ADJ = new TargetRollModifier(1,
-                                                                                           "NOE aero adjacent flight " +
-                                                                                           "path");
-    static final TargetRollModifier TH_TAR_AERO_NOE = new TargetRollModifier(3,
-                                                                                       "NOE aero non-adjacent flight " +
-                                                                                       "path");
-    static final TargetRollModifier TH_TAR_PRONE_RANGE = new TargetRollModifier(1,
-                                                                                "target prone and at range");
-    static final TargetRollModifier TH_TAR_PRONE_ADJ = new TargetRollModifier(-2,
-                                                                              "target prone and adjacent");
+    static final TargetRollModifier TH_TAR_AERO_NOE_ADJ = new TargetRollModifier(1, "NOE aero adjacent flight path");
+    static final TargetRollModifier TH_TAR_AERO_NOE = new TargetRollModifier(3, "NOE aero non-adjacent flight path");
+    static final TargetRollModifier TH_TAR_PRONE_RANGE = new TargetRollModifier(1, "target prone and at range");
+    static final TargetRollModifier TH_TAR_PRONE_ADJ = new TargetRollModifier(-2, "target prone and adjacent");
     static final TargetRollModifier TH_TAR_BA = new TargetRollModifier(1, "battle armor target");
-    static final TargetRollModifier TH_TAR_MW = new TargetRollModifier(2, "ejected mechwarrior target");
+    static final TargetRollModifier TH_TAR_MW = new TargetRollModifier(2, "ejected MechWarrior target");
     static final TargetRollModifier TH_TAR_INF = new TargetRollModifier(1, "infantry target");
     static final TargetRollModifier TH_ANTI_AIR = new TargetRollModifier(-2, "anti-aircraft quirk");
-    static final TargetRollModifier TH_INDUSTRIAL =
-            new TargetRollModifier(1, "industrial cockpit without advanced fire control");
-    static final TargetRollModifier TH_PRIMATIVE_INDUSTRIAL =
-            new TargetRollModifier(2, "primitive industrial cockpit without advanced fire control");
+    static final TargetRollModifier TH_INDUSTRIAL = new TargetRollModifier(1, "industrial cockpit without advanced fire control");
+    static final TargetRollModifier TH_PRIMATIVE_INDUSTRIAL = new TargetRollModifier(2, "primitive industrial cockpit without advanced fire control");
     static final TargetRollModifier TH_TAR_SUPER = new TargetRollModifier(-1, "superheavy target");
-    static final TargetRollModifier TH_TAR_GROUND_DS = new TargetRollModifier(-4, "grounded dropship target");
-    static final TargetRollModifier TH_TAR_LOW_PROFILE = new TargetRollModifier(1,
-                                                                                          "narrow/low profile target");
-    static final TargetRollModifier TH_PHY_NOT_MECH =
-            new TargetRollModifier(TargetRoll.IMPOSSIBLE, "non-mechs don't make physical attacks");
-    static final TargetRollModifier TH_PHY_TOO_FAR = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
-                                                                            "target not adjacent");
-    static final TargetRollModifier TH_NULL_POSITION = new TargetRollModifier(TargetRoll.AUTOMATIC_FAIL,
-                                                                              "null position");
-    static final TargetRollModifier TH_RNG_TOO_FAR = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
-                                                                            "target beyond max range");
-    static final TargetRollModifier TH_PHY_NOT_IN_ARC = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
-                                                                               "target not in arc");
-    static final TargetRollModifier TH_PHY_TOO_MUCH_ELEVATION =
-            new TargetRollModifier(TargetRoll.IMPOSSIBLE, "target elevation not in range");
-    static final TargetRollModifier TH_PHY_P_TAR_PRONE = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
-                                                                                "can't punch while prone");
-    static final TargetRollModifier TH_PHY_P_TAR_INF = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
-                                                                              "can't punch infantry");
-    static final TargetRollModifier TH_PHY_P_NO_ARM = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
-                                                                             "Your arm's off!");
-    static final TargetRollModifier TH_PHY_P_NO_SHOULDER = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
-                                                                                  "shoulder destroyed");
-    static final TargetRollModifier TH_PHY_P_UPPER_ARM = new TargetRollModifier(2,
-                                                                                          "upper arm actuator " +
-                                                                                          "destroyed");
-    static final TargetRollModifier TH_PHY_P_LOWER_ARM = new TargetRollModifier(2,
-                                                                                          "lower arm actuator missing" +
-                                                                                          " or destroyed");
-    static final TargetRollModifier TH_PHY_P_HAND = new TargetRollModifier(1,
-                                                                                     "hand actuator missing or " +
-                                                                                     "destroyed");
-    static final TargetRollModifier TH_PHY_K_PRONE = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
-                                                                            "can't kick while prone");
+    static final TargetRollModifier TH_TAR_GROUND_DS = new TargetRollModifier(-4, "grounded DropShip target");
+    static final TargetRollModifier TH_TAR_LOW_PROFILE = new TargetRollModifier(1, "narrow/low profile target");
+    static final TargetRollModifier TH_PHY_NOT_MECH = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "non-Meks don't make physical attacks");
+    static final TargetRollModifier TH_PHY_TOO_FAR = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "target not adjacent");
+    static final TargetRollModifier TH_NULL_POSITION = new TargetRollModifier(TargetRoll.AUTOMATIC_FAIL, "null position");
+    static final TargetRollModifier TH_RNG_TOO_FAR = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "target beyond max range");
+    static final TargetRollModifier TH_PHY_NOT_IN_ARC = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "target not in arc");
+    static final TargetRollModifier TH_PHY_TOO_MUCH_ELEVATION = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "target elevation not in range");
+    static final TargetRollModifier TH_PHY_P_TAR_PRONE = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "can't punch while prone");
+    static final TargetRollModifier TH_PHY_P_TAR_INF = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "can't punch infantry");
+    static final TargetRollModifier TH_PHY_P_NO_ARM = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "Your arm's off!");
+    static final TargetRollModifier TH_PHY_P_NO_SHOULDER = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "shoulder destroyed");
+    static final TargetRollModifier TH_PHY_P_UPPER_ARM = new TargetRollModifier(2, "upper arm actuator destroyed");
+    static final TargetRollModifier TH_PHY_P_LOWER_ARM = new TargetRollModifier(2, "lower arm actuator missing or destroyed");
+    static final TargetRollModifier TH_PHY_P_HAND = new TargetRollModifier(1, "hand actuator missing or destroyed");
+    static final TargetRollModifier TH_PHY_K_PRONE = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "can't kick while prone");
     static final TargetRollModifier TH_PHY_K_INF = new TargetRollModifier(3, "kicking infantry");
-    static final TargetRollModifier TH_PHY_K_INF_RNG = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
-                                                                                        "Infantry too far away");
-    static final TargetRollModifier TH_PHY_K_HIP = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
-                                                                          "can't kick with broken hip");
-    static final TargetRollModifier TH_PHY_K_UPPER_LEG = new TargetRollModifier(2,
-                                                                                          "upper leg actuator " +
-                                                                                          "destroyed");
-    static final TargetRollModifier TH_PHY_K_LOWER_LEG = new TargetRollModifier(2,
-                                                                                          "lower leg actuator " +
-                                                                                          "destroyed");
+    static final TargetRollModifier TH_PHY_K_INF_RNG = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "Infantry too far away");
+    static final TargetRollModifier TH_PHY_K_HIP = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "can't kick with broken hip");
+    static final TargetRollModifier TH_PHY_K_UPPER_LEG = new TargetRollModifier(2, "upper leg actuator destroyed");
+    static final TargetRollModifier TH_PHY_K_LOWER_LEG = new TargetRollModifier(2, "lower leg actuator destroyed");
     static final TargetRollModifier TH_PHY_K_FOOT = new TargetRollModifier(1, "foot actuator destroyed");
     static final TargetRollModifier TH_PHY_LIGHT = new TargetRollModifier(-2, "weight class attack modifier");
-    static final TargetRollModifier TH_PHY_MEDIUM = new TargetRollModifier(-1,
-                                                                                     "weight class attack modifier");
+    static final TargetRollModifier TH_PHY_MEDIUM = new TargetRollModifier(-1, "weight class attack modifier");
     static final TargetRollModifier TH_PHY_SUPER = new TargetRollModifier(1, "superheavy attacker");
     static final TargetRollModifier TH_PHY_EASY_PILOT = new TargetRollModifier(-1, "easy to pilot quirk");
-    static final TargetRollModifier TH_PHY_P_NO_ARMS_QUIRK = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
-                                                                                              "no/minimal arms quirk");
-    static final TargetRollModifier TH_WEAP_CANNOT_FIRE = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
-                                                                                 "weapon cannot fire");
-    static final TargetRollModifier TH_WEAP_NO_AMMO = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
-                                                                             "ammo is gone");
-    static final TargetRollModifier TH_WEAP_PRONE_ARMLESS =
-            new TargetRollModifier(TargetRoll.IMPOSSIBLE, "prone and missing an arm");
-    static final TargetRollModifier TH_WEAP_ARM_PROP = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
-                                                                              "using arm as prop");
-    static final TargetRollModifier TH_WEAP_PRONE_LEG = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
-                                                                               "prone leg weapon");
-    static final TargetRollModifier TH_WEAPON_NO_ARC = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
-                                                                              "not in arc");
-    static final TargetRollModifier TH_INF_ZERO_RNG =
-            new TargetRollModifier(TargetRoll.AUTOMATIC_FAIL, "noninfantry shooting with zero range");
-    static final TargetRollModifier TH_STOP_SWARM_INVALID = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
-                                                                                   "not swarming a Mek");
-    static final TargetRollModifier TH_SWARM_STOPPED = new TargetRollModifier(TargetRoll.AUTOMATIC_SUCCESS,
-                                                                              "stops swarming");
-    static final TargetRollModifier TH_OUT_OF_RANGE = new TargetRollModifier(TargetRoll.IMPOSSIBLE,
-                                                                             "out of range");
+    static final TargetRollModifier TH_PHY_P_NO_ARMS_QUIRK = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "no/minimal arms quirk");
+    static final TargetRollModifier TH_WEAP_CANNOT_FIRE = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "weapon cannot fire");
+    static final TargetRollModifier TH_WEAP_NO_AMMO = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "ammo is gone");
+    static final TargetRollModifier TH_WEAP_PRONE_ARMLESS = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "prone and missing an arm");
+    static final TargetRollModifier TH_WEAP_ARM_PROP = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "using arm as prop");
+    static final TargetRollModifier TH_WEAP_PRONE_LEG = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "prone leg weapon");
+    static final TargetRollModifier TH_WEAPON_NO_ARC = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "not in arc");
+    static final TargetRollModifier TH_INF_ZERO_RNG = new TargetRollModifier(TargetRoll.AUTOMATIC_FAIL, "non-infantry shooting with zero range");
+    static final TargetRollModifier TH_STOP_SWARM_INVALID = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "not swarming a Mek");
+    static final TargetRollModifier TH_SWARM_STOPPED = new TargetRollModifier(TargetRoll.AUTOMATIC_SUCCESS, "stops swarming");
+    static final TargetRollModifier TH_OUT_OF_RANGE = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "out of range");
     static final TargetRollModifier TH_SHORT_RANGE = new TargetRollModifier(0, "Short Range");
     static final TargetRollModifier TH_MEDIUM_RANGE = new TargetRollModifier(2, "Medium Range");
     static final TargetRollModifier TH_LONG_RANGE = new TargetRollModifier(4, "Long Range");
     static final TargetRollModifier TH_EXTREME_RANGE = new TargetRollModifier(6, "Extreme Range");
     static final TargetRollModifier TH_TARGETTING_COMP = new TargetRollModifier(-1, "targeting computer");
-    static final TargetRollModifier TH_IMP_TARG_SHORT =
-            new TargetRollModifier(-1, "improved targetting (short) quirk");
-    static final TargetRollModifier TH_IMP_TARG_MEDIUM =
-            new TargetRollModifier(-1, "improved targetting (medium) quirk");
-    static final TargetRollModifier TH_IMP_TARG_LONG =
-            new TargetRollModifier(-1, "improved targetting (long) quirk");
-    static final TargetRollModifier TH_VAR_RNG_TARG_SHORT_AT_SHORT =
-            new TargetRollModifier(-1, "variable range targetting (short) quirk");
-    static final TargetRollModifier TH_VAR_RNG_TARG_SHORT_AT_LONG =
-            new TargetRollModifier(1, "variable range targetting (short) quirk");
-    static final TargetRollModifier TH_VAR_RNG_TARG_LONG_AT_LONG =
-            new TargetRollModifier(-1, "variable range targetting (long) quirk");
-    static final TargetRollModifier TH_VAR_RNG_TARG_LONG_AT_SHORT =
-            new TargetRollModifier(1, "variable range targetting (long) quirk");
-    static final TargetRollModifier TH_POOR_TARG_SHORT =
-            new TargetRollModifier(1, "poor targetting (short) quirk");
-    static final TargetRollModifier TH_POOR_TARG_MEDIUM =
-            new TargetRollModifier(1, "poor targetting (medium) quirk");
-    static final TargetRollModifier TH_POOR_TARG_LONG =
-            new TargetRollModifier(1, "poor targetting (long) quirk");
-    static final TargetRollModifier TH_ACCURATE_WEAP =
-            new TargetRollModifier(-1, "accurate weapon quirk");
-    static final TargetRollModifier TH_INACCURATE_WEAP =
-            new TargetRollModifier(1, "inaccurate weapon quirk");
-    static final TargetRollModifier TH_RNG_LARGE =
-            new TargetRollModifier(-1, "target large vehicle or superheavy mech");
-    static final TargetRollModifier TH_AIR_STRIKE_PATH =
-            new TargetRollModifier(TargetRoll.IMPOSSIBLE, "target not under flight path");
+    static final TargetRollModifier TH_IMP_TARG_SHORT = new TargetRollModifier(-1, "improved targetting (short) quirk");
+    static final TargetRollModifier TH_IMP_TARG_MEDIUM = new TargetRollModifier(-1, "improved targetting (medium) quirk");
+    static final TargetRollModifier TH_IMP_TARG_LONG = new TargetRollModifier(-1, "improved targetting (long) quirk");
+    static final TargetRollModifier TH_VAR_RNG_TARG_SHORT_AT_SHORT = new TargetRollModifier(-1, "variable range targetting (short) quirk");
+    static final TargetRollModifier TH_VAR_RNG_TARG_SHORT_AT_LONG = new TargetRollModifier(1, "variable range targetting (short) quirk");
+    static final TargetRollModifier TH_VAR_RNG_TARG_LONG_AT_LONG = new TargetRollModifier(-1, "variable range targetting (long) quirk");
+    static final TargetRollModifier TH_VAR_RNG_TARG_LONG_AT_SHORT = new TargetRollModifier(1, "variable range targetting (long) quirk");
+    static final TargetRollModifier TH_POOR_TARG_SHORT = new TargetRollModifier(1, "poor targetting (short) quirk");
+    static final TargetRollModifier TH_POOR_TARG_MEDIUM = new TargetRollModifier(1, "poor targetting (medium) quirk");
+    static final TargetRollModifier TH_POOR_TARG_LONG = new TargetRollModifier(1, "poor targetting (long) quirk");
+    static final TargetRollModifier TH_ACCURATE_WEAP = new TargetRollModifier(-1, "accurate weapon quirk");
+    static final TargetRollModifier TH_INACCURATE_WEAP = new TargetRollModifier(1, "inaccurate weapon quirk");
+    static final TargetRollModifier TH_RNG_LARGE = new TargetRollModifier(-1, "target large vehicle or superheavy mech");
+    static final TargetRollModifier TH_AIR_STRIKE_PATH = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "target not under flight path");
     static final TargetRollModifier TH_AIR_STRIKE = new TargetRollModifier(2, "strike attack");
-    private static final TargetRollModifier TH_STABLE_WEAP =
-            new TargetRollModifier(1, "stabilized weapon quirk");
+    private static final TargetRollModifier TH_STABLE_WEAP = new TargetRollModifier(1, "stabilized weapon quirk");
     private static final TargetRollModifier TH_PHY_LARGE = new TargetRollModifier(-2, "target large vehicle");
 
     /**
@@ -760,7 +701,7 @@ public class FireControl {
         if (targetState.isAirborneAero() && !shooterState.isAero()) {
 
             // If the aero is attacking me, there is no range.
-            if (target.getTargetId() == shooter.getId()) {
+            if (target.getId() == shooter.getId()) {
                 distance = 0;
             } else {
                 // Take into account altitude.
@@ -1334,32 +1275,32 @@ public class FireControl {
         final double damageFraction = (existingDamage + expectedDamage) / ((double) targetHP);
         final double previousDamageFraction = existingDamage / ((double) targetHP);
 
-        //Do not shoot at units we already expect to deal more than their total HP of damage to!
+        // Do not shoot at units we already expect to deal more than their total HP of damage to!
         if (1.0 <= previousDamageFraction) {
             return 100; 
 
-            // In cases that are not generally overkill(less than 50% of the
-            // target's total HP in damage), target as normal(don't want to
-            // spread damage in these cases).
-            // Also want to disregard damage allocation weighting if the target
-            // is a building or infantry/BA(as they don't die until you do 100%
-            // damage to them normally).
-        } else if (0.5 > damageFraction
-                   || Targetable.TYPE_BUILDING == target.getTargetType()
-                   || Targetable.TYPE_HEX_CLEAR == target.getTargetType()
-                   || owner.getGame().getEntity(target.getTargetId()) instanceof Infantry) {
+            // In cases that are not generally overkill (less than 50% of the target's total HP in
+            // damage), target as normal (don't want to spread damage in these cases).
+            // Also want to disregard damage allocation weighting if the target is a building or
+            // infantry/BA (as they don't die until you do 100% damage to them normally).
+        } else if ((damageFraction < 0.5)
+                || (target.getTargetType() == Targetable.TYPE_BUILDING)
+                   || (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)
+                   || (owner.getGame().getEntity(target.getId()) instanceof Infantry)) {
             return 0;
         }
-        //In the remaining case(0.5<=damage), return the fraction of target HP dealt as the penalty scaling factor(multiplied by the weight value to produce a penalty).
+
+        // In the remaining case, namely 0.5 <= damage, return the fraction of target HP dealt as
+        // the penalty scaling factor (multiplied by the weight value to produce a penalty).
         return damageFraction;
     }
 
     /**
-     * Calculates the potential damage that the target could theoretically
-     * deliver as a measure of it's potential "threat" to any allied unit on the
-     * board, thus prioritizing highly damaging enemies over less damaging ones.
-     * For now, this works by simply getting the max damage of the target at
-     * range=1, ignoring to-hit, heat, etc.
+     * Calculates the potential damage that the target could theoretically deliver as a measure of
+     * its potential "threat" to any allied unit on the board, thus prioritizing highly damaging
+     * enemies over less damaging ones.
+     * For now, this works by simply getting the max damage of the target at range = 1 while
+     * ignoring to-hit, heat, etc.
      */
     private double calcTargetPotentialDamage(final Targetable target) {
         if (!(target instanceof Entity)) {
@@ -1394,7 +1335,6 @@ public class FireControl {
      * @param physicalInfo The {@link PhysicalInfo} to be calculated.
      */
     void calculateUtility(final PhysicalInfo physicalInfo) {
-
         // If we can't hit, there's no point.
         if (0.0 >= physicalInfo.getProbabilityToHit()) {
             physicalInfo.setUtility(-10000);
@@ -1638,8 +1578,8 @@ public class FireControl {
         }
         
         // if we have no bombs on board, we can't attack from down here
-        if (AeroGroundPathFinder.NAP_OF_THE_EARTH >= flightPath.getFinalAltitude() &&
-            0 == shooter.getBombs(BombType.F_GROUND_BOMB).size()) {
+        if (AeroGroundPathFinder.NAP_OF_THE_EARTH >= flightPath.getFinalAltitude()
+                && shooter.getBombs(BombType.F_GROUND_BOMB).isEmpty()) {
             LogManager.getLogger().error("Shooter will crash if striking at altitude 1!");
             return myPlan;
         }
@@ -1716,7 +1656,7 @@ public class FireControl {
         }
         
         // not having any bombs (due to expenditure/damage)
-        if (shooter.getBombs(BombType.F_GROUND_BOMB).size() == 0) {
+        if (shooter.getBombs(BombType.F_GROUND_BOMB).isEmpty()) {
             return diveBombPlan;
         }
 
@@ -1814,7 +1754,7 @@ public class FireControl {
             calculateUtility(bombingPlan, Entity.DOES_NOT_TRACK_HEAT, true); // bomb drops never cause heat
             
             // if the bombing plan actually involves doing something
-            if ((bombingPlan.size() > 0) && 
+            if (!bombingPlan.isEmpty() &&
                     (bombingPlan.getUtility() > myPlan.getUtility())) {
                 return bombingPlan;
             }
@@ -1890,7 +1830,6 @@ public class FireControl {
         final FiringPlan swarmAttack = new FiringPlan(target);
         final FiringPlan legAttack = new FiringPlan(target);
         final FiringPlan fieldGuns = new FiringPlan(target);
-        double fieldGunMassAlreadyFired = 0.0; //We need to track the tonnage of field guns being fired, because trying to fire more than the current possible total(# of men left) results in nothing being fired.
         for (final WeaponFireInfo weaponFireInfo : alphaStrike) {
 
             //Leg and swarm attacks can't be mixed with any other attacks, so we have to consider each of those separately.
@@ -1901,20 +1840,15 @@ public class FireControl {
                 } else if ((weaponFireInfo.getWeapon().getType()).getInternalName().equals(Infantry.SWARM_MEK)) {
                     swarmAttack.add(weaponFireInfo);
                     continue;
-                }
-                // We probably shouldn't consider stopping swarm attacks, since Princess isn't smart enough to recognize the rare situations when this is a good idea(e.g. planning to put lots of allied fire on the swarm target next turn, target is likely to explode and ammo explosion splash damage is on, etc).
-                else if ((weaponFireInfo.getWeapon().getType()) instanceof StopSwarmAttack) {
+                } else if ((weaponFireInfo.getWeapon().getType()) instanceof StopSwarmAttack) {
+                    // We probably shouldn't consider stopping swarm attacks, since Princess isn't
+                    // smart enough to recognize the rare situations when this is a good idea
+                    // (e.g. planning to put lots of allied fire on the swarm target next turn,
+                    // target is likely to explode and ammo explosion splash damage is on, etc).
                     continue;
-                } else if (!(shooter instanceof BattleArmor) && Infantry.LOC_FIELD_GUNS == weaponFireInfo.getWeapon()
-                                                                                                         .getLocation()) {
-                    final double fieldGunMass = weaponFireInfo.getWeapon().getTonnage();
-                    //Only fire field guns up until we no longer have the men to fire more, since going over that limit results in nothing firing.
-                    //In theory we could adapt the heat system to handle this(with tonnage as heat and shooting strength as heat capacity, no heat tolerance).
-                    //This would behave much better for units with mixed type field guns, but given that those are rare, this should serve for now.
-                    if (fieldGunMassAlreadyFired + fieldGunMass <= ((Infantry) shooter).getShootingStrength()) {
-                        fieldGuns.add(weaponFireInfo);
-                        fieldGunMassAlreadyFired += fieldGunMass;
-                    }
+                } else if (!(shooter instanceof BattleArmor)
+                        && (Infantry.LOC_FIELD_GUNS == weaponFireInfo.getWeapon().getLocation())) {
+                    fieldGuns.add(weaponFireInfo);
                     continue;
                 }
             }
@@ -1930,7 +1864,7 @@ public class FireControl {
             calculateUtility(swarmAttack, heatTolerance, isAero);
             calculateUtility(legAttack, heatTolerance, isAero);         
             calculateUtility(fieldGuns, heatTolerance, isAero);
-            //Add these plans to the end of the list.
+            // Add these plans to the end of the list.
             bestPlans[maxHeat + 1] = swarmAttack;
             bestPlans[maxHeat + 2] = legAttack;
             bestPlans[maxHeat + 3] = fieldGuns;
@@ -1970,9 +1904,9 @@ public class FireControl {
         // bombs cannot be mixed with other attack types, so we calculate it separately and overwrite the 0-heat plan if it's better
         // currently, this will probably result in the aero blowing its bomb load as soon as it passes over an enemy
         // dropping everything it has, including specialized munitions such as thunder bombs and infernos
-        if (shooter.isAirborne() && 0 < shooter.getBombs(BombType.F_GROUND_BOMB).size()) {
+        if (shooter.isAirborne() && !shooter.getBombs(BombType.F_GROUND_BOMB).isEmpty()) {
             final FiringPlan diveBombPlan = this.getDiveBombPlan(shooter, null, target,
-                                                                 shooter.getGame(), shooter.passedOver(target), false);
+                    shooter.getGame(), shooter.passedOver(target), false);
             
             calculateUtility(diveBombPlan, Entity.DOES_NOT_TRACK_HEAT, true);
             if (diveBombPlan.getUtility() > bestPlans[0].getUtility()) {
@@ -2019,9 +1953,8 @@ public class FireControl {
         
         // conventional fighters can drop bombs
         if (Entity.DOES_NOT_TRACK_HEAT == shooter.getHeatCapacity()
-            && ((shooter.getEntityType() & Entity.ETYPE_INFANTRY) == 0)) {
-            return alphaStrike; // No need to worry about heat if the unit
-                                // doesn't track it.
+                && ((shooter.getEntityType() & Entity.ETYPE_INFANTRY) == 0)) {
+            return alphaStrike; // No need to worry about heat if the unit doesn't track it.
         }
 
         // Get all the best plans that generate less heat than an alpha strike.
@@ -2265,9 +2198,9 @@ public class FireControl {
 
         // if we found one or more targets, pick at random from the closest ones.
         // otherwise, we still can't spot
-        if (closestTargets.size() > 0) {
+        if (!closestTargets.isEmpty()) {
             Targetable target = closestTargets.get(Compute.randomInt(closestTargets.size()));
-            return new SpotAction(spotter.getId(), target.getTargetId());
+            return new SpotAction(spotter.getId(), target.getId());
         }
 
         return null;
@@ -2356,16 +2289,16 @@ public class FireControl {
         // Loop through each enemy and find the best plan for attacking them.
         for (final Targetable enemy : enemies) {
 
-            if (owner.getBehaviorSettings().getIgnoredUnitTargets().contains(enemy.getTargetId())) {
+            if (owner.getBehaviorSettings().getIgnoredUnitTargets().contains(enemy.getId())) {
                 LogManager.getLogger().info(enemy.getDisplayName() + " is being explicitly ignored");
                 continue;
             }
             
-            final boolean priorityTarget = owner.getPriorityUnitTargets().contains(enemy.getTargetId());
+            final boolean priorityTarget = owner.getPriorityUnitTargets().contains(enemy.getId());
 
             // Skip retreating enemies so long as they haven't fired on me while retreating.
             final int playerId = (enemy instanceof Entity) ? ((Entity) enemy).getOwnerId() : -1;
-            if (!priorityTarget && honorUtil.isEnemyBroken(enemy.getTargetId(), playerId,
+            if (!priorityTarget && honorUtil.isEnemyBroken(enemy.getId(), playerId,
                                                            owner.getForcedWithdrawal())) {
                 LogManager.getLogger().info(enemy.getDisplayName() + " is broken - ignoring");
                 continue;
@@ -2487,6 +2420,7 @@ public class FireControl {
             }
             final WeaponAttackAction action = info.getAction();
             action.setAmmoId(shooter.getEquipmentNum(mountedAmmo));
+            action.setAmmoMunitionType(((AmmoType) mountedAmmo.getType()).getMunitionType());
             action.setAmmoCarrier(mountedAmmo.getEntity().getId());
             info.setAction(action);
             owner.sendAmmoChange(info.getShooter().getId(), shooter.getEquipmentNum(currentWeapon),
@@ -3249,7 +3183,7 @@ public class FireControl {
         }
         
         if (bestTarget != null) {
-            SearchlightAttackAction slaa = new SearchlightAttackAction(shooter.getId(), bestTarget.getTargetType(), bestTarget.getTargetId());
+            SearchlightAttackAction slaa = new SearchlightAttackAction(shooter.getId(), bestTarget.getTargetType(), bestTarget.getId());
             return slaa;
         }
         

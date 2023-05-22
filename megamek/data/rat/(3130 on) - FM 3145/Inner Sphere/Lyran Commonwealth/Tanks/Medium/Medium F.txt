@@ -1,0 +1,12 @@
+3145 LCAF Medium Vehicles F
+Hetzer Wheeled Assault Gun (LB-X), 1
+Glaive Medium Tank (Standard), 2
+Schildkröte Line Tank,3
+Vedette Medium Tank (NETC), 4
+Drillson Heavy Hover Tank (Standard), 5
+Fulcrum Heavy Hovertank (Standard), 6
+JES I Tactical Missile Carrier (Standard), 5
+Vedette Medium Tank (Cell), 4
+JES I Tactical Missile Carrier (3082 Upgrade), 3
+Drillson Heavy Hover Tank (Streak), 2
+Maxim Mk II Transport (Infantry Support) 'Shiloh', 1

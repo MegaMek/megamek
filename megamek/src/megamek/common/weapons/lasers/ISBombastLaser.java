@@ -13,13 +13,15 @@
  */
 package megamek.common.weapons.lasers;
 
+import megamek.common.*;
 import megamek.common.Game;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.BombastLaserWeaponHandler;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Jason Tighe
@@ -74,7 +76,12 @@ public class ISBombastLaser extends LaserWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              Server server) {
-        return new BombastLaserWeaponHandler(toHit, waa, game, server);
+                                              GameManager manager) {
+        return new BombastLaserWeaponHandler(toHit, waa, game, manager);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        return (range <= AlphaStrikeElement.MEDIUM_RANGE) ? 1.02 : 0;
     }
 }

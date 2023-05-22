@@ -1,20 +1,32 @@
+/*
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.common.loaders;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import megamek.common.*;
+import megamek.common.InfantryBay.PlatoonType;
+import megamek.common.loaders.BLKFile.ParsedBayInfo;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 
-import org.junit.Test;
-
-import megamek.common.BattleArmorBay;
-import megamek.common.Bay;
-import megamek.common.DropshuttleBay;
-import megamek.common.InfantryBay;
-import megamek.common.Jumpship;
-import megamek.common.MechBay;
-import megamek.common.NavalRepairFacility;
-import megamek.common.loaders.BLKFile.ParsedBayInfo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BLKFileTest {
     
@@ -38,7 +50,7 @@ public class BLKFileTest {
         bayNums.add(0);
         bayNums.add(1);
         
-        ParsedBayInfo pbi = new BLKFile.ParsedBayInfo(bayString, bayNums);
+        ParsedBayInfo pbi = new ParsedBayInfo(bayString, bayNums);
         
         assertEquals(pbi.getSize(), SIZE, 0.01);
         assertEquals(pbi.getDoors(), DOORS);
@@ -54,7 +66,7 @@ public class BLKFileTest {
         bayNums.add(0);
         bayNums.add(1);
         
-        ParsedBayInfo pbi = new BLKFile.ParsedBayInfo(getBayNumbers(bay), bayNums);
+        ParsedBayInfo pbi = new ParsedBayInfo(getBayNumbers(bay), bayNums);
         
         assertEquals(pbi.getSize(), SIZE, 0.01);
         assertEquals(pbi.getDoors(), DOORS);
@@ -64,8 +76,8 @@ public class BLKFileTest {
     @Test
     public void parseBayTypeIndicatorWithBayNumber() {
         Bay bay = new BattleArmorBay(2.0, 1, 1, false, true);
-        
-        ParsedBayInfo pbi = new BLKFile.ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
+
+        ParsedBayInfo pbi = new ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
         
         assertTrue(pbi.isComstarBay());
         assertEquals(pbi.getBayNumber(), 1);
@@ -79,7 +91,7 @@ public class BLKFileTest {
         bayNums.add(0);
         bayNums.add(1);
         
-        ParsedBayInfo pbi = new BLKFile.ParsedBayInfo(numbers, bayNums);
+        ParsedBayInfo pbi = new ParsedBayInfo(numbers, bayNums);
         
         assertTrue(pbi.isComstarBay());
         assertEquals(pbi.getBayNumber(), 2);
@@ -87,45 +99,45 @@ public class BLKFileTest {
 
     @Test
     public void parseFootInfantryBay() {
-        Bay bay = new InfantryBay(2.0, 1, 0, InfantryBay.PlatoonType.FOOT);
+        Bay bay = new InfantryBay(2.0, 1, 0, PlatoonType.FOOT);
         
-        ParsedBayInfo pbi = new BLKFile.ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
+        ParsedBayInfo pbi = new ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
         
-        assertEquals(pbi.getPlatoonType(), InfantryBay.PlatoonType.FOOT);
+        assertEquals(pbi.getPlatoonType(), PlatoonType.FOOT);
     }
 
     @Test
     public void parseJumpInfantryBay() {
-        Bay bay = new InfantryBay(2.0, 1, 0, InfantryBay.PlatoonType.JUMP);
+        Bay bay = new InfantryBay(2.0, 1, 0, PlatoonType.JUMP);
         
-        ParsedBayInfo pbi = new BLKFile.ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
+        ParsedBayInfo pbi = new ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
         
-        assertEquals(pbi.getPlatoonType(), InfantryBay.PlatoonType.JUMP);
+        assertEquals(pbi.getPlatoonType(), PlatoonType.JUMP);
     }
 
     @Test
     public void parseMotorizedInfantryBay() {
-        Bay bay = new InfantryBay(2.0, 1, 0, InfantryBay.PlatoonType.MOTORIZED);
+        Bay bay = new InfantryBay(2.0, 1, 0, PlatoonType.MOTORIZED);
         
-        ParsedBayInfo pbi = new BLKFile.ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
+        ParsedBayInfo pbi = new ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
         
-        assertEquals(pbi.getPlatoonType(), InfantryBay.PlatoonType.MOTORIZED);
+        assertEquals(pbi.getPlatoonType(), PlatoonType.MOTORIZED);
     }
 
     @Test
     public void parseMechanizedInfantryBay() {
-        Bay bay = new InfantryBay(2.0, 1, 0, InfantryBay.PlatoonType.MECHANIZED);
+        Bay bay = new InfantryBay(2.0, 1, 0, PlatoonType.MECHANIZED);
         
-        ParsedBayInfo pbi = new BLKFile.ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
+        ParsedBayInfo pbi = new ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
         
-        assertEquals(pbi.getPlatoonType(), InfantryBay.PlatoonType.MECHANIZED);
+        assertEquals(pbi.getPlatoonType(), PlatoonType.MECHANIZED);
     }
     
     @Test
-    public void parseDropshuttleBay() {
+    public void parseDropShuttleBay() {
         Bay bay = new DropshuttleBay(1, -1, Jumpship.LOC_AFT);
         
-        ParsedBayInfo pbi = new BLKFile.ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
+        ParsedBayInfo pbi = new ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
         
         assertEquals(pbi.getDoors(), 1);
         assertEquals(pbi.getBayNumber(), 1);
@@ -138,7 +150,7 @@ public class BLKFileTest {
         final int DOORS = 2;
         Bay bay = new NavalRepairFacility(SIZE, DOORS, -1, Jumpship.LOC_AFT, true);
         
-        ParsedBayInfo pbi = new BLKFile.ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
+        ParsedBayInfo pbi = new ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
         
         assertEquals(pbi.getSize(), SIZE, 0.01);
         assertEquals(pbi.getDoors(), DOORS);

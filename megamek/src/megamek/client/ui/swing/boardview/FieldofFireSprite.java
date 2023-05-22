@@ -12,7 +12,9 @@ import java.awt.image.ImageObserver;
 import static megamek.client.ui.swing.boardview.HexDrawUtilities.*;
 
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Coords;
+import megamek.common.RangeType;
 
 /**
  * This sprite is used to paint the field of fire 
@@ -23,18 +25,14 @@ import megamek.common.Coords;
  * @author Simon
  */
 public class FieldofFireSprite extends MovementEnvelopeSprite {
-    
     // ### Control values
     
     // thick border
     private static final int borderW = 10;
     private static final int borderOpac = 120;
-    // colors for Min,S,M,L,E ranges
-    public static final Color[] fieldofFireColors = { new Color(255, 100, 100),
-        new Color(100, 255, 100), new Color(80, 200, 80), 
-        new Color(60, 150, 60), new Color(40, 100, 40)
-    };
-    
+
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
     // thin line
     private static final float lineThickness = 1.4f;
     private static final Color lineColor = Color.WHITE;
@@ -66,18 +64,35 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
     // individual sprite values
     private final Color fillColor;
     private final int rangeBracket;
+
     
     public FieldofFireSprite(BoardView boardView1, int rangeBracket, Coords l,
                              int borders) {
         // the color of the super doesn't matter
         super(boardView1, Color.BLACK, l, borders);
-        fillColor = new Color(fieldofFireColors[rangeBracket].getRed(), 
-                fieldofFireColors[rangeBracket].getGreen(),
-                fieldofFireColors[rangeBracket].getBlue(), 
-                borderOpac);
+        Color c = getFieldOfFireColor(rangeBracket);
+        fillColor = new Color(c.getRed(), c.getGreen(), c.getBlue(), borderOpac);
         this.rangeBracket = rangeBracket;
     }
-    
+
+    public static Color getFieldOfFireColor(int rangeBracket) {
+        // colors for Min,S,M,L,E ranges
+        switch (rangeBracket) {
+            case RangeType.RANGE_MINIMUM:
+                return GUIP.getFieldOfFireMinColor();
+            case RangeType.RANGE_SHORT:
+                return GUIP.getFieldOfFireShortColor();
+            case RangeType.RANGE_MEDIUM:
+                return GUIP.getFieldOfFireMediumColor();
+            case RangeType.RANGE_LONG:
+                return GUIP.getFieldOfFireLongColor();
+            case RangeType.RANGE_EXTREME:
+                return GUIP.getFieldOfFireExtremeColor();
+            default:
+                return new Color(0,0,0);
+        }
+    }
+
     @Override
     public void prepare() {
         // adjust bounds (image size) to board zoom
@@ -85,7 +100,9 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
         
         // when the zoom hasn't changed and there is already
         // a prepared image for these borders, then do nothing more
-        if ((bv.scale == oldZoom) && isReady()) return;
+        if ((bv.scale == oldZoom) && isReady()) {
+            return;
+        }
         
         // when the board is rezoomed, ditch all images
         if (bv.scale != oldZoom) {
@@ -96,7 +113,7 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
         // create image for buffer
         images[borders][rangeBracket] = createNewHexImage();
         Graphics2D graph = (Graphics2D) images[borders][rangeBracket].getGraphics();
-        GUIPreferences.AntiAliasifSet(graph);
+        UIUtil.setHighQualityRendering(graph);
 
         // scale the following draws according to board zoom
         graph.scale(bv.scale, bv.scale);
@@ -191,28 +208,22 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
     
     @Override
     public boolean isReady() {
-        if (bv.scale != oldZoom) return false;
-        return images[borders][rangeBracket] != null;
+        return (bv.scale == oldZoom) && (images[borders][rangeBracket] != null);
     }
 
     @Override
-    public void drawOnto(Graphics g, int x, int y, ImageObserver observer,
-            boolean makeTranslucent) {
+    public void drawOnto(Graphics g, int x, int y, ImageObserver observer, boolean makeTranslucent) {
         if (isReady()) {
             if (makeTranslucent) {
                 Graphics2D g2 = (Graphics2D) g;
-                g2.setComposite(AlphaComposite.getInstance(
-                        AlphaComposite.SRC_OVER, 0.5f));
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
                 g2.drawImage(images[borders][rangeBracket], x, y, observer);
-                g2.setComposite(AlphaComposite.getInstance(
-                        AlphaComposite.SRC_OVER, 1.0f));
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
             } else {
                 g.drawImage(images[borders][rangeBracket], x, y, observer);
             }
         } else {
-            // grrr... we'll be ready next time!
             prepare();
         }
     }
-
 }

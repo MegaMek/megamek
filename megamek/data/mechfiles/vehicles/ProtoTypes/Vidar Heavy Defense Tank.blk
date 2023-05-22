@@ -16,9 +16,9 @@ Tank
 Vidar Heavy Defense Tank
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 5348

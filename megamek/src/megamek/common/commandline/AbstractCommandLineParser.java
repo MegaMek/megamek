@@ -13,7 +13,7 @@
  */
 package megamek.common.commandline;
 
-import megamek.client.ui.Messages;
+import java.util.Objects;
 
 /**
  * Very simple skeleton for the command line parser. Provides basic scanner
@@ -21,9 +21,6 @@ import megamek.client.ui.Messages;
  * <code>start</code> function
  */
 public abstract class AbstractCommandLineParser {
-
-    private static final String INCORRECT_ARGUMENTS_MESSAGE = Messages.getString("MegaMek.Help.IncorrectArguments");
-
     /**
      * Exception thrown in case of error
      */
@@ -66,7 +63,7 @@ public abstract class AbstractCommandLineParser {
     private int argsLen;
 
     /**
-     * Index of the of the next token to process
+     * Index of the next token to process
      */
     private int position;
 
@@ -90,9 +87,8 @@ public abstract class AbstractCommandLineParser {
      * 
      * @param args <code>array</code> of arguments to parse
      */
-    public AbstractCommandLineParser(String[] args) {
-        assert (args != null) : "args must be non null";
-        this.args = args;
+    public AbstractCommandLineParser(String... args) {
+        this.args = Objects.requireNonNull(args);
         argsLen = args.length;
     }
 
@@ -165,15 +161,6 @@ public abstract class AbstractCommandLineParser {
 
     protected boolean hasNext() {
         return position < argsLen;
-    }
-
-    /**
-     *
-     * @return <code>String</code> error message for user
-     */
-    public String formatErrorMessage(Exception e) {
-        return (INCORRECT_ARGUMENTS_MESSAGE + e.getMessage() + '\n'
-                + help());
     }
 
     /**

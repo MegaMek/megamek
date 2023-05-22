@@ -13,11 +13,11 @@ SpaceStation
 </UnitType>
 
 <Name>
-Habitat - Large
+Habitat
 </Name>
 
 <Model>
-(2500)
+Large (2500)
 </Model>
 
 <mul id:>

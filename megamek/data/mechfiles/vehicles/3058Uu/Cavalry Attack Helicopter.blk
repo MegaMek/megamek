@@ -12,9 +12,9 @@ VTOL
 <Name>
 Cavalry Attack Helicopter
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 506

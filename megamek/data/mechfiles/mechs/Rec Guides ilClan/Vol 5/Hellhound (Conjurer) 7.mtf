@@ -1,0 +1,167 @@
+Version:1.0
+Hellhound (Conjurer)
+7
+mul id:7512
+
+Config:Biped
+techbase:Clan
+era:2836
+source:Rec Guide:ilClan #5 - Succession Wars
+rules level:2
+
+mass:50
+engine:300 Fusion (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:10 Clan Double
+walk mp:6
+jump mp:6
+
+armor:Ferro-Fibrous(Clan)
+LA armor:14
+RA armor:14
+LT armor:19
+RT armor:19
+CT armor:23
+HD armor:9
+LL armor:24
+RL armor:24
+RTL armor:5
+RTR armor:5
+RTC armor:7
+
+Weapons:5
+Large Pulse Laser, Right Arm
+LRM 5, Left Torso
+LRM 5, Left Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLLargePulseLaser
+CLLargePulseLaser
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Jump Jet
+Jump Jet
+CLLRM5
+CLLRM5
+Clan Ammo LRM-5
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Jump Jet
+Jump Jet
+CLERMediumLaser
+CLERMediumLaser
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Conjurer (code-named the Hellhound by the Inner Sphere nations) is a fast, inexpensive medium BattleMech that excels at medium to short range.
+
+capabilities:Starting as befitting its status as a second-line 'Mech, most Conjurers uses a standard engine, though it is constructed on an endo steel chassis and uses eight and a half tons of ferro-fibrous armor. Its jump jets enable it to leap up to 180 meters at a time. However Clan Nova Cat’s Conjurer program in the 3060s saw refits and various new builds at times only loosely based on the original.  It is noteworthy that the Conjurer is, for all intents and purposes, the Wolverine IIC and was even reported as such by ComStar in early sightings, presumably for its obvious heritage; it was designed off the WVR-7H Wolverine II variant of the original Wolverine, taking the concept and rebuilding it with advanced technology in the fashion of a IIC rebuild. However the Clans would not retain the name of the Not-Named Clan for the redesigned 'Mech.
+
+deployment:This variant trades the Streak SRM-2s of the base model for LRM-5s.
+
+history:Even with an established infrastructure, rebuilding a destroyed Touman for any Clan is a hard task. Rebuilding was a Herculean effort for the Nova Cats, whose infrastructure could barely maintain current units in the field operating, let alone replace units destroyed during the Ghost Bear-Combine battle. The Nova Cats' ongoing reliance on the Draconis Combine may not be sustainable. It harmed their self-esteem and threatened to demoralize them in the long run. If Khan Santin West and his Nova Cats were to survive as a Clan, they would have to conquer this hurdle. Nova Cat scientists, technicians, and Galaxy Commanders looked for a different way to restore their depleted Touman. They updated existing BattleMechs instead of replacing the massive number of lost OmniMechs. The Hellhound was the first such candidate because of its proven battle record and the implications of its moniker. Everyone agreed that retooling this 'Mech would help to shore up the Nova Cats' tattered forces. The Hellhound's performance profile needed to be refined to satisfy new Nova Cat warfare doctrines, which meant the Cats needed assistance from their longtime friend and ally, Clan Diamond Shark. Through the Chatterweb, Khan West contacted Shark Khan Barbara Sennet and offered three Carrack Merchant-class warships and the rights to the new Hellhound in exchange for all of the materials and components needed to create it. Khan West has asked assistance in restoring the Cats' infrastructure, including the construction of new factories on Irece and Avon. The Diamond Sharks enthusiastically agreed to the deal.
+
+manufacturer:Kallon Weapon Industries
+primaryfactory:Thermopolis
+systemmanufacturer:CHASSIS:Puma Type Medium Endo Steel
+systemmanufacturer:ENGINE:Star League Standart 300
+systemmanufacturer:ARMOR:Alpha Plate Special Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:JNE II Integrated
+systemmanufacturer:TARGETING:Build 4 CAT Advanced TTS

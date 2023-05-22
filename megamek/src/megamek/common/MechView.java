@@ -15,10 +15,8 @@ package megamek.common;
 
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
-import megamek.common.options.IOption;
-import megamek.common.options.IOptionGroup;
-import megamek.common.options.PilotOptions;
-import megamek.common.options.Quirks;
+import megamek.codeUtilities.StringUtility;
+import megamek.common.options.*;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
@@ -42,17 +40,18 @@ public class MechView {
      * Provides common interface for various ways to present data that can be formatted
      * either as HTML or as plain text.
      * 
-     * @see MechView.SingleLine
-     * @see MechView.LabeledElement
-     * @see MechView.TableElement
-     * @see MechView.ItemList
-     * @see MechView.Title
-     * @see MechView.EmptyElement
+     * @see SingleLine
+     * @see LabeledElement
+     * @see TableElement
+     * @see ItemList
+     * @see Title
+     * @see EmptyElement
      */
     interface ViewElement {
         String toPlainText();
         String toHTML();
     }
+
     private Entity entity;
     private boolean isMech;
     private boolean isInf;
@@ -148,8 +147,7 @@ public class MechView {
 
         sLoadout.addAll(getWeapons(showDetail));
         sLoadout.add(new SingleLine());
-        if ((!entity.usesWeaponBays() || !showDetail)
-                && entity.getAmmo().size() > 0) {
+        if ((!entity.usesWeaponBays() || !showDetail) && !entity.getAmmo().isEmpty()) {
             sLoadout.add(getAmmo());
             sLoadout.add(new SingleLine());
         }
@@ -184,7 +182,8 @@ public class MechView {
                         augmentations.add(o.getDisplayableName());
                     }
                 }
-                if (augmentations.size() > 0) {
+
+                if (!augmentations.isEmpty()) {
                     ItemList augList = new ItemList("Augmentations");
                     for (String aug : augmentations) {
                         augList.addItem(aug);
@@ -454,25 +453,64 @@ public class MechView {
             }
         }
         sBasic.add(new SingleLine());
-        
-        StringJoiner quirksList = new StringJoiner("<br/>\n");
-        Quirks quirks = entity.getQuirks();
-        for (Enumeration<IOptionGroup> optionGroups = quirks.getGroups(); optionGroups.hasMoreElements();) {
-            IOptionGroup group = optionGroups.nextElement();
-            if (quirks.count(group.getKey()) > 0) {
-                for (Enumeration<IOption> options = group.getOptions(); options.hasMoreElements();) {
-                    IOption option = options.nextElement();
-                    if (option != null && option.booleanValue()) {
-                        quirksList.add(option.getDisplayableNameWithValue());
+
+        Game game = entity.getGame();
+
+        if ((game == null) || game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
+            StringJoiner quirksList = new StringJoiner("<br/>\n");
+            Quirks quirks = entity.getQuirks();
+
+            for (Enumeration<IOptionGroup> optionGroups = quirks.getGroups(); optionGroups.hasMoreElements();) {
+                IOptionGroup group = optionGroups.nextElement();
+
+                if (quirks.count(group.getKey()) > 0) {
+                    for (Enumeration<IOption> options = group.getOptions(); options.hasMoreElements();) {
+                        IOption option = options.nextElement();
+
+                        if (option != null && option.booleanValue()) {
+                            quirksList.add(option.getDisplayableNameWithValue());
+                        }
                     }
                 }
             }
+            if (quirksList.length() > 0) {
+                ItemList list = new ItemList(Messages.getString("MechView.Quirks"));
+                list.addItem(quirksList.toString());
+                sFluff.add(list);
+            }
+
+            String wpQuirksList = "";
+
+            for (Mounted weapon: entity.getWeaponList()) {
+                for (Enumeration<IOptionGroup> optionGroups = weapon.getQuirks().getGroups(); optionGroups.hasMoreElements();) {
+                    IOptionGroup group = optionGroups.nextElement();
+
+                    if (weapon.getQuirks().count(group.getKey()) > 0) {
+                        String wq = "";
+
+                        for (Enumeration<IOption> options = group.getOptions(); options.hasMoreElements(); ) {
+                            IOption option = options.nextElement();
+
+                            if (option != null && option.booleanValue()) {
+                                wq += option.getDisplayableNameWithValue() + " \u2022 ";
+                            }
+                        }
+
+                        if (!wq.isEmpty()) {
+                            wq = weapon.getDesc() + ": " + wq.substring(0, wq.length() - 2);
+                            wpQuirksList += wq + "<BR/>";
+                        }
+                    }
+                }
+            }
+
+            if (!wpQuirksList.isEmpty()) {
+                ItemList list = new ItemList("<BR/>" + Messages.getString("MechView.WeaponQuirks"));
+                list.addItem(wpQuirksList);
+                sFluff.add(list);
+            }
         }
-        if (quirksList.length() > 0) {
-            ItemList list = new ItemList(Messages.getString("MechView.Quirks"));
-            list.addItem(quirksList.toString());
-            sFluff.add(list);
-        }
+
         sFluff.add(new SingleLine());
         if (!entity.getFluff().getOverview().isEmpty()) {
             sFluff.add(new LabeledElement("Overview", entity.getFluff().getOverview()));
@@ -559,7 +597,7 @@ public class MechView {
             Infantry inf = (Infantry) entity;
             retVal.add(new LabeledElement(Messages.getString("MechView.Men"),
                     entity.getTotalInternal()
-                            + " (" + inf.getSquadSize() + "/" + inf.getSquadN()
+                            + " (" + inf.getSquadSize() + "/" + inf.getSquadCount()
                             + ")"));
         } else {
             String internal = String.valueOf(entity.getTotalInternal());
@@ -758,7 +796,7 @@ public class MechView {
             retVal.add(new LabeledElement("Secondary Weapon",
                     (null != inf.getSecondaryWeapon()) ?
                             inf.getSecondaryWeapon().getDesc()
-                                    + " (" + inf.getSecondaryN() + ")" : "None"));
+                                    + " (" + inf.getSecondaryWeaponsPerSquad() + ")" : "None"));
             retVal.add(new LabeledElement("Damage per trooper",
                     String.format("%3.3f", inf.getDamagePerTrooper())));
             retVal.add(new SingleLine());
@@ -950,8 +988,7 @@ public class MechView {
         int[] choices = b.getBombChoices();
         for (int type = 0; type < BombType.B_NUM; type++) {
             if (choices[type] > 0) {
-                retVal.add(new SingleLine(BombType.getBombName(type) + " ("
-                        + choices[type] + ")"));
+                retVal.add(new SingleLine(BombType.getBombName(type) + " (" + choices[type] + ")"));
             }
         }
         return retVal;
@@ -1003,13 +1040,14 @@ public class MechView {
                 miscTable.addRow(row);
             }
         }
+
         if (nEquip > 0) {
             retVal.add(miscTable);
         }
 
         retVal.add(new SingleLine());
         String capacity = entity.getUnusedString(html);
-        if ((capacity != null) && (capacity.length() > 0)) {
+        if (!StringUtility.isNullOrBlank(capacity)) {
             // The entries have already been formatted into a list, but we're still going to
             // format it as a list to get the items under the label.
             ItemList list = new ItemList(Messages.getString("MechView.CarryingCapacity"));
@@ -1017,10 +1055,10 @@ public class MechView {
             retVal.add(list);
             retVal.add(new SingleLine());
         }
-        
+
         if (isSmallCraft || isJumpship) {
             Aero a = (Aero) entity;
-            
+
             TableElement crewTable = new TableElement(2);
             crewTable.setColNames(Messages.getString("MechView.Crew"), "");
             crewTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_RIGHT);

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,9 +16,9 @@ Tank
 Manticore II Heavy Tank
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 6601
@@ -28,6 +28,10 @@ Manticore II Heavy Tank
 3112
 </year>
 
+<originalBuildYear>
+3112
+</originalBuildYear>
+
 <type>
 IS Level 4
 </type>
@@ -35,6 +39,9 @@ IS Level 4
 <motion_type>
 Tracked
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 4
@@ -85,6 +92,37 @@ Enhanced LRM 10
 Heavy PPC
 </Turret Equipment>
 
+<capabilities>
+rotected by nine and a half tons of heavy ferro-fibrous armor and powered by a GM 280 extra-extra-light fusion engine, the Manticore II could reach speeds of 64 km/h, outmatching most vehicles of comparable power when operating in wet terrain. The Manticore II excelled at making long-range attacks and providing support fire from areas such as swamps and rivers, where most opponents wouldn't expect to find a heavyweight tank.
+</capabilities>
+
+<overview>
+The Manticore II Heavy Tank was an update of the Manticore Heavy Tank designed by Defiance Industries and manufactured in their massive factory complexes on Hesperus II.
+</overview>
+
+<deployment>
+The Manticore II carried three weapon systems, a Defiance 980 Heavy Particle Projection Cannon and a pair of Delta Dart II Enhanced LRM 10 Launchers, all mounted in the turret and slaved into a Targeting Computer. Two tons of ammunition for the NLRM-10s were stored inside the body of the Manticore II.
+</deployment>
+
+<history>
+Introduced early in the thirty-second century, the Manticore II was a far more specialized vehicle than its ancestor; by specifically designing the Manticore II to be an amphibious vehicle, Defiance created a heavy tank capable of heavily influencing battles in littoral areas and other water-rich environments on numerous worlds. Despite the Manticore II's success when operating within the role it was designed for, it was still perceived as being flawed by some - generally when compared to the original Manticore, or by those who attempted to either repeat the same tactics the Manticore excelled at or who balked at using it effectively because of the high price tag associated with each Manticore II.
+</history>
+
+<manufacturer>
+Defiance Industries
+</manufacturer>
+
+<primaryFactory>
+Hesperus II
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:GM 280 XXL Fusion
+ARMOR:Durallex Special Heavy Ferro-Fibrous
+COMMUNICATIONS:TharHes Muse 65-128K
+TARGETING:TharHes TargiTrack with Advanced Targeting Computer
+</systemManufacturers>
+
 <source>
 TRO 3145 Lyran Commonwealth - Late Republic
 </source>
@@ -92,3 +130,4 @@ TRO 3145 Lyran Commonwealth - Late Republic
 <tonnage>
 70.0
 </tonnage>
+

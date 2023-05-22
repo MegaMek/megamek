@@ -19,6 +19,9 @@
  */
 package megamek.common.weapons.missiles;
 
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.Mounted;
+
 /**
  * @author Sebastian Brocks
  */
@@ -48,14 +51,27 @@ public class ISMML3 extends MMLWeapon {
         longAV = 2;
         maxRange = RANGE_LONG;
         rulesRefs = "229, TM";
+        //March 2022 - CGL (Greekfire) requested MML adjustments to Tech Progression.
         techAdvancement.setTechBase(TECH_BASE_IS)
         	.setIntroLevel(false)
         	.setUnofficial(false)
             .setTechRating(RATING_D)
             .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-            .setISAdvancement(3067, 3068, 3072, DATE_NONE, DATE_NONE)
-            .setISApproximate(true, false, false,false, false)
-            .setPrototypeFactions(F_MERC)
-            .setProductionFactions(F_WB);
+            .setISAdvancement(DATE_NONE, 3067, 3073, DATE_NONE, DATE_NONE)
+            .setISApproximate(false, false, true,false, false)
+            .setProductionFactions(F_MERC,F_WB);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        if (range == AlphaStrikeElement.SHORT_RANGE) {
+            return 0.4;
+        } else if (range == AlphaStrikeElement.MEDIUM_RANGE) {
+            return 0.3;
+        } else if (range == AlphaStrikeElement.LONG_RANGE) {
+            return 0.2;
+        } else {
+            return 0;
+        }
     }
 }

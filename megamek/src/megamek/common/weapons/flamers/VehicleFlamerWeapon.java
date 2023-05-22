@@ -25,7 +25,7 @@ import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.VehicleFlamerCoolHandler;
 import megamek.common.weapons.VehicleFlamerHandler;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Andrew Hunter
@@ -49,23 +49,15 @@ public abstract class VehicleFlamerWeapon extends AmmoWeapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, Server server) {
+            WeaponAttackAction waa, Game game, GameManager manager) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked().getType();
         
         if (atype.getMunitionType() == AmmoType.M_COOLANT) {
-            return new VehicleFlamerCoolHandler(toHit, waa, game, server);
+            return new VehicleFlamerCoolHandler(toHit, waa, game, manager);
         } else {
-            return new VehicleFlamerHandler(toHit, waa, game, server);
+            return new VehicleFlamerHandler(toHit, waa, game, manager);
         }
     }
 
-    @Override
-    public int getBattleForceHeatDamage(int range) {
-        //Clan ER Flamer does damage at medium
-        if (getMediumRange() > range) {
-            return getDamage();
-        }
-        return 0;
-    }
 }

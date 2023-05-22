@@ -23,15 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import megamek.common.AmmoType;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.HexTarget;
-import megamek.common.Game;
-import megamek.common.Mounted;
-import megamek.common.Targetable;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.options.OptionsConstants;
 
@@ -196,8 +188,12 @@ public class ArtilleryTargetingControl {
         for (Iterator<Entity> enemies = game.getAllEnemyEntities(shooter); enemies.hasNext();) {
             Entity e = enemies.next();
             
-            // skip airborne entities, and those off board - we'll handle them later
-            if (!e.isAirborne() && !e.isAirborneVTOLorWIGE() && !e.isOffBoard()) {
+            // skip airborne entities, and those off board - we'll handle them later and don't target ignored units
+            if (!e.isAirborne()
+                    && !e.isAirborneVTOLorWIGE()
+                    && !e.isOffBoard()
+                    && !owner.getBehaviorSettings().getIgnoredUnitTargets().contains(e.getId())) {
+
                 targetSet.add(new HexTarget(e.getPosition(), Targetable.TYPE_HEX_ARTILLERY));
                 
                 // while we're here, consider shooting at hexes within "MAX_BLAST_RADIUS"
@@ -330,15 +326,17 @@ public class ArtilleryTargetingControl {
                 if (!topValuedFireInfos.isEmpty()) {
                     WeaponFireInfo actualFireInfo = topValuedFireInfos.get(Compute.randomInt(topValuedFireInfos.size()));
                     ArtilleryAttackAction aaa = (ArtilleryAttackAction) actualFireInfo.buildWeaponAttackAction();
-                    int ammoID = findAmmo(shooter, currentWeapon, game);
-                    if (ammoID > NO_AMMO) {
+                    HelperAmmo ammo= findAmmo(shooter, currentWeapon);
+
+                    if (ammo.equipmentNum > NO_AMMO) {
                         //This can happen if princess is towing ammo trailers, which she really shouldn't be doing...
-                        aaa.setAmmoId(ammoID);
+                        aaa.setAmmoId(ammo.equipmentNum);
+                        aaa.setAmmoMunitionType(ammo.munitionType);
                         aaa.setAmmoCarrier(shooter.getId());
                         actualFireInfo.setAction(aaa);
                         retval.add(actualFireInfo);
                         retval.setUtility(retval.getUtility() + maxDamage);
-                        owner.sendAmmoChange(shooter.getId(), shooter.getEquipmentNum(currentWeapon), ammoID);
+                        owner.sendAmmoChange(shooter.getId(), shooter.getEquipmentNum(currentWeapon), ammo.equipmentNum);
                     }
                 }
             } else if (currentWeapon.getType().hasFlag(WeaponType.F_TAG)) {
@@ -378,16 +376,26 @@ public class ArtilleryTargetingControl {
         
         return retval;
     }
-    
+
+    private static class HelperAmmo {
+        public int equipmentNum;
+        public long munitionType;
+
+        public HelperAmmo(int equipmentNum, long munitionType) {
+            this.equipmentNum = equipmentNum;
+            this.munitionType = munitionType;
+        }
+    }
+
     /**
      * Worker function that selects the appropriate ammo for the given entity and weapon.
      * @param shooter
      * @param currentWeapon
-     * @param game The current {@link Game}
      * @return
      */
-    private int findAmmo(Entity shooter, Mounted currentWeapon, Game game) {
+    private HelperAmmo findAmmo(Entity shooter, Mounted currentWeapon) {
         int ammoEquipmentNum = NO_AMMO;
+        long ammoMunitionType = -1;
         
         // simply grab the first valid ammo and let 'er rip.
         for (Mounted ammo : shooter.getAmmo()) {
@@ -396,13 +404,14 @@ public class ArtilleryTargetingControl {
             }
             
             ammoEquipmentNum = shooter.getEquipmentNum(ammo);
+            ammoMunitionType = ((AmmoType) ammo.getType()).getMunitionType();
             break;
             
             // TODO: Attempt to select homing ammo if the target is tagged. 
             // To do so, check ammoType.getMunitionType() == AmmoType.M_HOMING
         }
         
-        return ammoEquipmentNum;
+        return new HelperAmmo(ammoEquipmentNum, ammoMunitionType);
     }
 
     /**

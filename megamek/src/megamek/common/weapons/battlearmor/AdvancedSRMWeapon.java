@@ -14,7 +14,7 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
-import megamek.common.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Compute;
 import megamek.common.Game;
 import megamek.common.ToHitData;
@@ -22,7 +22,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AdvancedSRMHandler;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.srms.SRMWeapon;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks
@@ -39,8 +39,8 @@ public abstract class AdvancedSRMWeapon extends SRMWeapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, Server server) {
-        return new AdvancedSRMHandler(toHit, waa, game, server);
+            WeaponAttackAction waa, Game game, GameManager manager) {
+        return new AdvancedSRMHandler(toHit, waa, game, manager);
     }
 
     /**
@@ -52,7 +52,7 @@ public abstract class AdvancedSRMWeapon extends SRMWeapon {
             return 0;
         }
         double damage = Compute.calculateClusterHitTableAmount(8, getRackSize()) * 2;
-        if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
+        if ((range == AlphaStrikeElement.SHORT_RANGE) && (getMinimumRange() > 0)) {
             damage = adjustBattleForceDamageForMinRange(damage);
         }
         return damage / 10.0;
@@ -64,7 +64,7 @@ public abstract class AdvancedSRMWeapon extends SRMWeapon {
             return 0;
         }
         double damage = Compute.calculateClusterHitTableAmount(8, getRackSize() * baSquadSize);
-        if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
+        if ((range == AlphaStrikeElement.SHORT_RANGE) && (getMinimumRange() > 0)) {
             damage = adjustBattleForceDamageForMinRange(damage);
         }
         return damage / 10.0;

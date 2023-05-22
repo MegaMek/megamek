@@ -167,7 +167,7 @@ public abstract class PathRanker implements IPathRanker {
                 if (!isAirborneAeroOnGroundMap && !getOwner().wantsToFallBack(mover)) {
                     Targetable closestToEnd = findClosestEnemy(mover, finalCoords, game);
                     String validation = validRange(finalCoords, closestToEnd, startingTargetDistance, maxRange, inRange);
-                    if (!StringUtility.isNullOrEmpty(validation)) {
+                    if (!StringUtility.isNullOrBlank(validation)) {
                         msg.append("\n\t").append(validation);
                         continue;
                     }
@@ -246,7 +246,7 @@ public abstract class PathRanker implements IPathRanker {
             // Also, skip withdrawing enemy bot units, to avoid humping disabled tanks and ejected
             // MechWarriors
             if (e.isAirborneAeroOnGroundMap() || 
-                    getOwner().getHonorUtil().isEnemyBroken(e.getTargetId(), e.getOwnerId(),
+                    getOwner().getHonorUtil().isEnemyBroken(e.getId(), e.getOwnerId(),
                             getOwner().getForcedWithdrawal())) {
                 continue;
             }

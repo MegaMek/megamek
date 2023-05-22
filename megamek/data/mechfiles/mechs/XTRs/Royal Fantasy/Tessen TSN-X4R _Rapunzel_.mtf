@@ -1,13 +1,13 @@
 Version:1.0
 Tessen
 TSN-X4R 'Rapunzel'
-mul id:8376
+mul id:8377
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3137
-source:XTRO Royal Fantasy
-rules level:5
+source:XTRO Royal Fantasy - Dark Age
+rules level:4
 
 mass:50
 engine:300 XL Engine(IS)
@@ -148,5 +148,3 @@ IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
-
-

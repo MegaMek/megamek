@@ -27,6 +27,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import megamek.client.ui.Messages;
+import megamek.codeUtilities.StringUtility;
 
 /**
  * Ask for the setting for a vibrabomb.
@@ -81,7 +82,7 @@ public class VibrabombSettingDialog extends JDialog implements ActionListener {
         if (actionEvent.getSource().equals(butOk)) {
             String s = fldSetting.getText();
             try {
-                if (s != null && s.length() != 0) {
+                if (!StringUtility.isNullOrBlank(s)) {
                     setting = Integer.parseInt(s);
                 }
             } catch (NumberFormatException e) {

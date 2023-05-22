@@ -25,11 +25,11 @@ STU-K5b
 </mul id:>
 
 <year>
-2709
+2751
 </year>
 
 <originalBuildYear>
-2709
+2751
 </originalBuildYear>
 
 <type>
@@ -88,13 +88,13 @@ Medium Laser
 </Nose Equipment>
 
 <Left Wing Equipment>
-PPC
-PPC
+ISERPPC
+ISERPPC
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-PPC
-PPC
+ISERPPC
+ISERPPC
 </Right Wing Equipment>
 
 <Aft Equipment>

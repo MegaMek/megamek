@@ -1,6 +1,6 @@
 package megamek.client.ui.swing.unitDisplay;
 
-import java.awt.Rectangle;
+import java.awt.*;
 import java.util.Enumeration;
 
 import megamek.client.ui.swing.widget.AeroMapSet;
@@ -116,6 +116,16 @@ class ArmorPanel extends PicMap {
         jump = new JumpshipMapSet(this, unitDisplay);
         warship = new WarshipMapSet(this, unitDisplay);
         squad = new SquadronMapSet(this, game);
+    }
+
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(0,0);
+    }
+
+    @Override
+    public Dimension getMinimumSize() {
+        return new Dimension(0,0);
     }
 
     @Override

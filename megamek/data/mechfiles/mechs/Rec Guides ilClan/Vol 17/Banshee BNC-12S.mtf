@@ -1,0 +1,178 @@
+Version:1.0
+Banshee
+BNC-12S
+mul id:8246
+
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3138
+source:Rec Guide:ilClan #17 - Dark Age
+rules level:2
+
+mass:95
+engine:380 XL (Clan) Engine
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:14 IS Double
+walk mp:4
+jump mp:0
+
+armor:Standard(Clan)
+LA armor:32
+RA armor:32
+LT armor:30
+RT armor:30
+CT armor:44
+HD armor:9
+LL armor:38
+RL armor:38
+RTL armor:10
+RTR armor:10
+RTC armor:15
+
+Weapons:10
+ER PPC, Left Arm
+Gauss Rifle, Left Torso
+ER PPC, Right Torso
+SRM 6, Right Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Right Torso
+ER Small Laser, Center Torso
+ER Small Laser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISERPPC
+ISERPPC
+ISERPPC
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+IS Ammo SRM-6
+ISCASE
+IS Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+ISERPPC
+ISERPPC
+ISERPPC
+SRM 6
+SRM 6
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+IS Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLERSmallLaser
+IS Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLERSmallLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Gauss Ammo
+IS Gauss Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Banshee, introduced in 2445 by the Terran Hegemony, is a 'Mech that was designed specifically for close-assault operations during the early years of BattleMech warfare.
+
+capabilities:A contemporary of the Mackie and Emperor, the Banshee is undeniably fast for one of the heaviest 'Mechs ever produced, and with fifteen tons of armor it is better protected than most other assault 'Mechs. However the use of a massive GM 380 fusion engine left little room for weaponry, and even at the time of its introduction the Banshee was considered undergunned compared to its privately-built competition. As critics noted, what use was impressive armor and mobility if a better-armed enemy could overwhelm and destroy it? The result was a mediocre 'Mech which even the lowly Rifleman could beat as long as it prevented the Banshee's mass from coming into play.
+
+deployment:This Dark Age variant uses a Clan-spec XL engine to reach a top speed of 64 km/h. An Endo Steel skeleton is used to free weight. The left arm carries an ER PPC, the left torso carries a Gauss rifle, and the right torso carries an ER PPC and SRM-6. The SRM ammo and Gauss Rifle are in the left torso and are protected by CASE. Two tons of Gauss Rifle ammo is carried in the left leg. The remaining weapons (an ER Small Laser in the head and center torso and four ER medium lasers in the right torso) are built to Clan standards. Fourteen double heat sinks are fitted in the engine. The remaining weight is devoted to armor, providing vast amounts of protection.
+
+history: The Hegemony soldiered on though, producing five thousand Banshees in a decade before its poor combat performance finally forced them to stop production in 2455 and the 'Mech was relegated to training and militia units for the next few centuries. Even during the Succession Wars the 'Mech's poor reputation meant many commanders saw it as a liability rather than an asset; unless they were fighting on a backwater Periphery world or as part of a poorly-equipped outfit, most Banshees were placed in second-line reserves to provide fire support or fulfill the role of brawlers so that better-armed 'Mechs need not engage in hand-to-hand combat. In this way fully a third of the original Banshee production run remained operational by the dawn of the thirty-first century and could be found throughout the Inner Sphere and Periphery, with the lion's share residing within the Lyran Commonwealth. Though a few attempts had been made over the years to improve the Banshee, Defiance Industries was the first to produce a variant which markedly improved on the original and was suggested by many of its original critics. With help from the Federated Suns and access to blueprints from the original Hesperus II factories, the BNC-3S proved to be such a success the Lyrans began fielding them in front line units, surprising their enemies who ignored them to focus on "real" threats with thoroughly unexpected firepower. Under the Federated Commonwealth improvements would continue to be made, though not at the same priority level as other projects, and the much-improved BNC-5S was active in time to meet the Clan Invasion.
+
+manufacturer:Defiance Manufacturing Annex 
+primaryfactory:Kwangjong-ni
+
+systemmanufacturer:CHASSIS:Foundation
+systemmode:CHASSIS:210 Endo
+systemmanufacturer:ENGINE:Edasich Motors
+systemmode:ENGINE:380 XL Clan
+systemmanufacturer:ARMOR:Longanecker
+systemmode:ARMOR:PlastiSteel
+systemmanufacturer:COMMUNICATIONS:Angst
+systemmode:COMMUNICATIONS:Clear Channel 3
+systemmanufacturer:TARGETING:Angst
+systemmode:TARGETING:Clear View 2A

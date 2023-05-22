@@ -162,5 +162,5 @@ systemmanufacturer:CHASSIS:Krupp 255 Endo Steel
 systemmanufacturer:ENGINE:GM 315 XL
 systemmanufacturer:ARMOR:Krupp 156 Ferro-Fibrous
 systemmanufacturer:COMMUNICATIONS:Exeter Longscan 300
-systemmanufacturer:TRSS Eagle Eye with TAG
+systemmanufacturer:TARGETING:TRSS Eagle Eye with TAG
 systemmanufacturer:JUMPJET:Ostmann Sct-A

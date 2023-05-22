@@ -6,35 +6,37 @@ import megamek.common.Entity;
 import megamek.common.LosEffects;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 public class ShowValidTargetsCommand extends ServerCommand {
 
-    public ShowValidTargetsCommand(Server server) {
-        super(
-                server,
-                "validTargets",
+    private final GameManager gameManager;
+
+    public ShowValidTargetsCommand(Server server, GameManager gameManager) {
+        super(server, "validTargets",
                 "Shows a list of entity id's that are valid targets for the current entity. Usage: /validTargets # where # is the id number of the entity you are shooting from.");
+        this.gameManager = gameManager;
     }
 
     @Override
-    public void run(int connId, String[] args) {
+    public void run(int connId, String... args) {
         try {
             int id = Integer.parseInt(args[1]);
-            Entity ent = server.getGame().getEntity(id);
+            Entity ent = gameManager.getGame().getEntity(id);
 
             if (ent != null) {
                 String str = "No valid targets.";
                 boolean canHit = false;
                 ToHitData thd;
 
-                List<Entity> entList = server.getGame().getValidTargets(ent);
+                List<Entity> entList = gameManager.getGame().getValidTargets(ent);
                 Entity target;
 
                 for (int i = 0; i < entList.size(); i++) {
                     target = entList.get(i);
-                    thd = LosEffects.calculateLOS(server.getGame(), ent, target)
-                            .losModifiers(server.getGame());
+                    thd = LosEffects.calculateLOS(gameManager.getGame(), ent, target)
+                            .losModifiers(gameManager.getGame());
                     if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
                         thd.setSideTable(target.sideTable(ent.getPosition()));
 
@@ -56,9 +58,8 @@ public class ShowValidTargetsCommand extends ServerCommand {
             } else {
                 server.sendServerChat(connId, "No such entity.");
             }
-        } catch (NumberFormatException nfe) {
-        } catch (NullPointerException npe) {
-        } catch (IndexOutOfBoundsException ioobe) {
+        } catch (Exception ignored) {
+
         }
     }
 }

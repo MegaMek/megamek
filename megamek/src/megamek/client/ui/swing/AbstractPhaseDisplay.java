@@ -17,10 +17,8 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
-import megamek.client.ui.swing.widget.MegamekBorder;
-import megamek.client.ui.swing.widget.MegamekButton;
-import megamek.client.ui.swing.widget.SkinSpecification;
-import megamek.client.ui.swing.widget.SkinXMLHandler;
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.client.ui.swing.widget.*;
 import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.event.*;
@@ -30,15 +28,16 @@ import megamek.common.util.fileUtils.MegaMekFile;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.net.URI;
 
-public abstract class AbstractPhaseDisplay extends JPanel implements
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+
+public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
         BoardViewListener, GameListener, Distractable {
     private static final long serialVersionUID = 4421205210788230341L;
-    
+
     public static final int DONE_BUTTON_WIDTH = 125;
     // Distraction implementation.
     protected DistractableAdapter distracted = new DistractableAdapter();
@@ -46,7 +45,7 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
     protected MegamekButton butDone;
 
     protected ClientGUI clientgui;
-    
+
     ImageIcon backgroundIcon = null;
 
     protected AbstractPhaseDisplay(ClientGUI cg) {
@@ -56,12 +55,13 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
 
     protected AbstractPhaseDisplay(ClientGUI cg, String borderSkinComp,
             String buttonSkinComp) {
+        super(borderSkinComp, 0);
         this.clientgui = cg;
         SkinSpecification pdSkinSpec = SkinXMLHandler.getSkin(borderSkinComp);
 
         try {
             if (!pdSkinSpec.backgrounds.isEmpty()) {
-                File file = new MegaMekFile(Configuration.widgetsDir(), 
+                File file = new MegaMekFile(Configuration.widgetsDir(),
                         pdSkinSpec.backgrounds.get(0)).getFile();
                 URI imgURL = file.toURI();
                 if (!file.exists()) {
@@ -73,9 +73,11 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
         } catch (Exception e) {
             LogManager.getLogger().error("Error loading PhaseDisplay background image!", e);
         }
-        
+
         setBorder(new MegamekBorder(borderSkinComp));
-        butDone = new MegamekButton("", buttonSkinComp);
+        butDone = new MegamekButton("DONE", buttonSkinComp);
+        String f = guiScaledFontHTML(UIUtil.uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
+        butDone.setToolTipText("<html><body>" + f + "</body></html>");
         butDone.setActionCommand("doneButton");
         if (clientgui != null) {
             butDone.addActionListener(new AbstractAction() {
@@ -86,8 +88,9 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
                     if (isIgnoringEvents()) {
                         return;
                     }
-                    if (clientgui.getClient().isMyTurn()
-                            || (clientgui.getClient().getGame().getTurn() == null)) {
+                    if ((clientgui.getClient().isMyTurn())
+                            || (clientgui.getClient().getGame().getTurn() == null)
+                            || (clientgui.getClient().getGame().getPhase().isReport())) {
                         ready();
                         // When the turn is ended, we could miss a key release
                         // event
@@ -104,8 +107,9 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
 
                         @Override
                         public boolean shouldPerformAction() {
-                            if ((!clientgui.getClient().isMyTurn() && (clientgui
-                                    .getClient().getGame().getTurn() != null))
+                            if (((!clientgui.getClient().isMyTurn()
+                                    && (clientgui.getClient().getGame().getTurn() != null)
+                                    && (!clientgui.getClient().getGame().getPhase().isReport())))
                                     || clientgui.getBoardView().getChatterBoxActive()
                                     || display.isIgnoringEvents()
                                     || !display.isVisible()
@@ -121,28 +125,6 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
                             ready();
                         }
                     });
-        }
-    }
-    
-    @Override
-    protected void paintComponent(Graphics g) {
-        if (backgroundIcon == null) {
-            super.paintComponent(g);
-            return;
-        }
-        int w = getWidth();
-        int h = getHeight();
-        int iW = backgroundIcon.getIconWidth();
-        int iH = backgroundIcon.getIconHeight();
-        // If the image isn't loaded, prevent an infinite loop
-        if ((iW < 1) || (iH < 1)) {
-            return;
-        }
-        for (int x = 0; x < w; x += iW) {
-            for (int y = 0; y < h; y += iH) {
-                g.drawImage(backgroundIcon.getImage(), x, y, 
-                        backgroundIcon.getImageObserver());
-            }
         }
     }
 
@@ -300,12 +282,12 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
     public void gameNewAction(GameNewActionEvent e) {
         //noaction default
     }
-    
+
     @Override
     public void gameClientFeedbackRequest(GameCFREvent evt) {
         //noaction default
     }
-    
+
     @Override
     public void gameVictory(GameVictoryEvent e) {
         //noaction default

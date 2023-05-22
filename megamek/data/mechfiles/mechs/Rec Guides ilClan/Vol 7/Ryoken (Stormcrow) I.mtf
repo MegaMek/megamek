@@ -1,0 +1,168 @@
+Version:1.0
+Ryoken (Stormcrow)
+I
+mul id:5487
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3059
+source:Rec Guide:ilClan #7 - Clan Invasion
+Rules Level:2
+
+Mass:55
+Engine:330 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
+Myomer:Standard
+
+Heat Sinks:13 Double
+Base Chassis Heat Sinks:10
+Walk MP:6
+Jump MP:0
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:18
+RA Armor:18
+LT Armor:17
+RT Armor:17
+CT Armor:25
+HD Armor:9
+LL Armor:25
+RL Armor:25
+RTL Armor:9
+RTR Armor:9
+RTC Armor:10
+
+Weapons:6
+ER Large Laser, Left Arm
+ER Medium Laser, Left Arm
+ER Large Laser, Right Arm
+ER Medium Laser, Right Arm
+LRM 15, Left Torso
+LRM 15, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLERLargeLaser (omnipod)
+CLERMediumLaser (omnipod)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERLargeLaser (omnipod)
+CLERMediumLaser (omnipod)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+Clan Ammo LRM-15 (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+Clan Ammo LRM-15 (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Clan Endo Steel
+Clan Ferro-Fibrous
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLActiveProbe (omnipod)
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Stormcrow is a wide-spread, second generation OmniMech fielded by many Clans. However, within the Clan Smoke Jaguar touman, the Stormcrow was especially common during the Clan Invasion and was codenamed the Ryoken（a misspelling of ryōken - hunting dog) by the warriors of the DCMS who encountered it. Because of its versatility through its combination of mobility, armor, and firepower in its various configurations, the Stormcrow is a feared opponent on the battlefield.
+capabilities:The Stormcrow is built on a lightweight Endo Steel chassis and is powered by a 330 XL engine that propels it to a top speed of 97.2 km/h. The Stormcrow is protected by nine and a half tons of Ferro-Fibrous armor, giving the 'Mech the ability to survive encounters with other units that it isn't capable of outpacing.
+
+deployment:A pair of LRM-15 launchers provide long range firepower while each arm carries an ER large laser and ER medium laser. To ferret out hidden enemy forces, the Stormcrow I configuration mounts an active probe in the head.
+
+history:The Stormcrow was designed by Clan Hell's Horses and debuted during the Battle of Tokasha. It is also implied that Stormcrow prototypes were produced on Tokasha at Tokasha MechWorks. However, prototypes of the Stormcrow had only just debuted when Clan Ghost Bear won Tokasha through the Battle of Tokasha. As a result of the upheaval, design copies and moulds for the Stormcrow were scattered throughout Clan space. The final production version of the Stormcrow debuted in 2930, when Clan Snow Raven scientists finished with a series of minor design changes and rechristened the OmniMech.
+
+manufacturer:Industrial Complex Alpha, Various
+primaryfactory:Dante,Various
+systemmanufacturer:CHASSIS:Model MHO-7E Endo-Steel
+systemmanufacturer:ENGINE:Fusion 330 Extralight
+systemmanufacturer:ARMOR:Compound H17/2 Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:GBX Series Integrated
+systemmanufacturer:TARGETING:Tokasha B4-T&T

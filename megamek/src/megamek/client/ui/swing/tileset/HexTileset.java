@@ -385,8 +385,9 @@ public class HexTileset implements BoardListener {
         }
 
         // org terrains must match com terrains
-        if (org.terrainsPresent() < com.terrainsPresent())
+        if (org.terrainsPresent() < com.terrainsPresent()) {
             return 0.0;
+        }
 
         // check terrain
         int[] cTerrainTypes = com.getTerrainTypes();
@@ -432,8 +433,9 @@ public class HexTileset implements BoardListener {
         }
 
         // org terrains must match com terrains
-        if (org.terrainsPresent() < com.terrainsPresent())
+        if (org.terrainsPresent() < com.terrainsPresent()) {
             return 0.0;
+        }
 
         // check terrain
         int[] cTerrainTypes = com.getTerrainTypes();

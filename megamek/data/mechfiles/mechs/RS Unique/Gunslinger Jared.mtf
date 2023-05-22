@@ -6,6 +6,7 @@ mul id:1348
 Config:Biped
 TechBase:Inner Sphere
 Era:3063
+source:RS:Unique Mechs - Civil War
 Rules Level:2
 
 Mass:85
@@ -140,3 +141,20 @@ Lower Leg Actuator
 Foot Actuator
 -Empty-
 ISMediumPulseLaser (R)
+
+overview:The Clan invasion produced some strange bedfellows, the most unlikely of which was the Federated Commonwealth-Draconis Combine quasi-alliance. Though that relationship has deteriorated over the years, the Gunslinger stands as a testament to what can happen when two bitter enemies put aside their mutual hatred and work together to achieve a common goal.
+
+capabilities:To power the Gunslinger, a VOX 255 XL engine is used to give the 'Mech a top speed of 54 km/h. This is augmented by a pair of HildCo Model 12 jump jets that allow the Gunslinger to traverse rough terrain and provide extra mobility at close ranges. The 'Mech is also equipped with a Guardian ECM Suite and a Beagle Active Probe, giving the Gunslinger superior detection capabilities and protection from advanced enemy electronic warfare equipment. Finally, the Gunslinger is protected by fifteen and a half tons of armor, giving the 'Mech excellent armor protection.
+
+deployment:This Gunslinger was uniquely customized for Lyran Alliance MechWarrior Jared Killian. The Gunslinger's arms were replaced with a pair of Zeus right arms. Each arm included Coventry Star Fire LRM-15 Launchers and Guided Technologies 2nd Gen Streak SRM 4 Launchers. The 'Mech's ammunition was placed in the side torsos. 
+
+history:On December 5, 3053, the first FedCom Gunslinger rolled off the assembly line at Defiance Industries. Because of issues with the Gauss weapons, it took nearly two years for the first Combine Gunslinger to leave the Quentin plant. Since then, both plants have built as many Gunslingers as they possibly can each year, severely taxing their resources while breaking production records year after year. Beginning with Operation Guerrero in 3057 and the Lyran Alliance's Jade Falcon invasion in 3058, the Gunslinger demonstrated its capabilities, as it has in every other significant military operation in the Inner Sphere since. As a result, the Gunslinger is still in high demand.
+
+manufacturer:Field Refit
+primaryfactory:Various
+systemmanufacturer:CHASSIS:Star League XT
+systemmanufacturer:ENGINE:VOX 255 XL
+systemmanufacturer:ARMOR:Kevlar 5000
+systemmanufacturer:JUMPJET:HildCo Model 12
+systemmanufacturer:COMMUNICATIONS:Nashan Quartet ComSy with Guardian ECM
+systemmanufacturer:TARGETING:Nashan Diana Mark II Targeting Computer

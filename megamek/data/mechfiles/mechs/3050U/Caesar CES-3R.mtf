@@ -1,55 +1,54 @@
-Version:1.0
+Version:1.3
 Caesar
 CES-3R
 mul id:455
-
 Config:Biped
-TechBase:Inner Sphere
-Era:3049
-Source:TRO 3050 - Clan Invasion
-Rules Level:2
+techbase:Inner Sphere
+era:3049
+source:TRO 3050 - Clan Invasion
+rules level:2
 
-Mass:70
-Engine:280 XL Engine
-Structure:Standard
-Myomer:Standard
+mass:70
+engine:280 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:16 Double
-Walk MP:4
-Jump MP:0
+heat sinks:16 IS Double
+walk mp:4
+jump mp:0
 
-Armor:Standard Armor
-LA Armor:21
-RA Armor:21
-LT Armor:15
-RT Armor:15
-CT Armor:26
-HD Armor:9
-LL Armor:21
-RL Armor:21
-RTL Armor:6
-RTR Armor:6
-RTC Armor:7
+armor:Standard(Inner Sphere)
+LA armor:21
+RA armor:21
+LT armor:15
+RT armor:15
+CT armor:26
+HD armor:9
+LL armor:21
+RL armor:21
+RTL armor:6
+RTR armor:6
+RTC armor:7
 
 Weapons:6
-1 ISGaussRifle, Right Torso, Ammo:16
-1 ISERPPC, Right Arm
-1 ISMediumPulseLaser, Right Arm
-1 ISMediumPulseLaser, Left Arm
-1 ISMediumPulseLaser, Right Torso (R)
-1 ISMediumPulseLaser, Left Torso (R)
+Medium Pulse Laser, Left Arm
+ER PPC, Right Arm
+Medium Pulse Laser, Right Arm
+Medium Pulse Laser, Left Torso
+Gauss Rifle, Right Torso
+Medium Pulse Laser, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISMediumPulseLaser
 -Empty-
 
@@ -58,9 +57,9 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISERPPC
 ISERPPC
 ISERPPC
@@ -71,15 +70,15 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISMediumPulseLaser (R)
-ISGauss Ammo
-ISGauss Ammo
+IS Gauss Ammo
+IS Gauss Ammo
 
 Right Torso:
 Fusion Engine
@@ -150,4 +149,20 @@ Foot Actuator
 -Empty-
 -Empty-
 -Empty-
+
+overview:Originally a reverse engineered version of the Capellan Confederation's Cataphract intended to mask development of the Federated Commonwealth's fearsome Axman, the Caesar would turn out to be a good but not great BattleMech in its own right.
+
+capabilities:The Caesar was built to do as much damage to an enemy at as great a stand-off range as possible. The 'Mech therefore carries primarily long-ranged armament. The 'Mech also uses an 280-rated XL engine and sixteen double heat sinks, both of which save significant amounts of weight, in order to carry as many weapons and as much armor as possible. The 'Mech utilizes CASE to protect against ammunition explosions should an enemy be able to breach the ten and a half tons of armor that protect it.
+
+deployment:The primary long-ranged weapon on the Caesar is a Poland Main Model A Gauss rifle that can shear off just under a ton of armor with each shot, supplied with two tons of reloads. This is backed up at long ranges by a Johnston High Speed ER PPC, which can do two-thirds of the damage of the Gauss rifle but is not dependent on limited ammunition. For close-range engagements, the Caesar carries four Sutel Precision Line medium pulse lasers, two of which are rear-mounted, allowing it to put up a crippling defense against any enemies that can get close to the 'Mech. The large volume of heat sinks carried ensure the Caesar can fire all its weapons while hardly breaking a sweat, making it a popular choice for missions in areas of extremely high temperatures.
+
+history:Supposedly the sole design intended to come out of Johnston Industries' then-new 'Mech lines on New Syrtis, the Caesar received notable public attention in an attempt to distract from development of the Axman. The finished 'Mech surprisingly enough proved to be a high-quality design itself. Though never attracting great sales, the Caesar would prove to be relatively popular in the Capellan March, among Lyran units on the Clan front, and with both FedCom-employed mercenaries and the Com Guards. Johnston attempted to redress its mediocre sales in the wake of the FedCom Civil War, developing two new variants intended to focus specifically on the qualities desired by the Lyran Alliance and Federated Suns. The resulting upswing in sales saw the Caesar in increasing use among those opposing the Word of Blake during the Jihad, with the LAAF in particular adopting the design almost as a means of honoring the assassinated Caesar Steiner.
+
+manufacturer:Johnston Industries
+primaryfactory:New Syrtis
+systemmanufacturer:CHASSIS:Dorwinion CES Standard
+systemmanufacturer:ENGINE:GM 280 Extralight
+systemmanufacturer:ARMOR:Kallon Royalstar with CASE
+systemmanufacturer:COMMUNICATIONS:Johnston Wide Band
+systemmanufacturer:TARGETING:Randar Pinpoint-HY
 

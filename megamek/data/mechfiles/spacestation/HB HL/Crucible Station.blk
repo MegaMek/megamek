@@ -16,9 +16,9 @@ SpaceStation
 Crucible Station
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 4028
@@ -37,7 +37,7 @@ IS Level 3
 </type>
 
 <designtype>
-0
+1
 </designtype>
 
 <motion_type>

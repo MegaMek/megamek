@@ -18,7 +18,7 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
-import megamek.utils.MegaMekXmlUtil;
+import megamek.utilities.xml.MMXMLUtility;
 
 import javax.xml.namespace.QName;
 import java.io.InputStream;
@@ -74,7 +74,7 @@ public class MapSetup implements Serializable {
     public static MapSetup load(final InputStream is) throws JAXBException {
         JAXBContext jc = JAXBContext.newInstance(MapSetup.class);
         Unmarshaller um = jc.createUnmarshaller();
-        return (MapSetup) um.unmarshal(MegaMekXmlUtil.createSafeXmlSource(is));
+        return (MapSetup) um.unmarshal(MMXMLUtility.createSafeXmlSource(is));
     }
 
     /** 

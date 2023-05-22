@@ -1,7 +1,7 @@
 Periphery Battle Armor - 3135+
 Ailette Rescue PA(L),1
 Gorilla Exoskeleton 'Falcata',2
-Tunnel Rat Mining Exoskeleton IV [Armored Glove/LMG],3
+Tunnel Rat IV Mining Exoskeleton [Armored Glove/LMG](Sqd4),3
 Infiltrator Mk. I Battle Armor 'Waddle',4
 IS Standard Battle Armor [Laser],5
 Trinity Medium Battle Armor (Asterion)[MRR],6

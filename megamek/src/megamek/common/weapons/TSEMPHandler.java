@@ -13,26 +13,14 @@
  */
 package megamek.common.weapons;
 
-import java.util.Vector;
-
-import megamek.common.Aero;
-import megamek.common.BattleArmor;
-import megamek.common.Building;
-import megamek.common.Compute;
-import megamek.common.ConvFighter;
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Mech;
-import megamek.common.Protomech;
-import megamek.common.Report;
-import megamek.common.SupportTank;
-import megamek.common.Tank;
-import megamek.common.ToHitData;
+import megamek.MMConstants;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
-import megamek.common.weapons.other.TSEMPWeapon;
+import megamek.server.GameManager;
 import megamek.server.Server;
+
+import java.util.Vector;
 
 /**
  * Weaponhandler for the Tight-Stream Electro-Magnetic Pulse (TSEMP) weapon, 
@@ -48,10 +36,10 @@ public class TSEMPHandler extends EnergyWeaponHandler {
      * @param t
      * @param w
      * @param g
-     * @param s
+     * @param m
      */
-    public TSEMPHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public TSEMPHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
     }
 
     /*
@@ -64,6 +52,40 @@ public class TSEMPHandler extends EnergyWeaponHandler {
         return 0;
     }
     
+    // Copied from megamek.common.weapons.HVACWeaponHandler#doChecks(java.util.Vector)
+    /*
+    * (non-Javadoc)
+    *
+    * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
+    */
+    @Override
+    protected boolean doChecks(Vector<Report> vPhaseReport) {
+        if (roll == 2) {
+            Report r = new Report(3162);
+            r.subject = subjectId;
+            weapon.setHit(true);
+            int wloc = weapon.getLocation();
+            for (int i = 0; i < ae.getNumberOfCriticals(wloc); i++) {
+                CriticalSlot slot1 = ae.getCritical(wloc, i);
+                if ((slot1 == null) ||
+                    (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                        continue;
+                    }
+                Mounted mounted = slot1.getMount();
+                if (mounted.equals(weapon)) {
+                    ae.hitAllCriticals(wloc, i);
+                    break;
+                }
+            }
+            vPhaseReport.addAll(gameManager.explodeEquipment(ae, wloc, weapon));
+            r.choose(false);
+            vPhaseReport.addElement(r);
+            return true;
+        } else {
+            return super.doChecks(vPhaseReport);
+        }
+    }
+
     @Override
     public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         weapon.setFired(true);
@@ -71,19 +93,17 @@ public class TSEMPHandler extends EnergyWeaponHandler {
         ae.setFiredTsempThisTurn(true);
         ae.setHasFiredTsemp(true);
 
-        if (ae.getTsempEffect() == TSEMPWeapon.TSEMP_EFFECT_NONE) {
-            ae.setTsempEffect(TSEMPWeapon.TSEMP_EFFECT_INTERFERENCE);
+        if (ae.getTsempEffect() == MMConstants.TSEMP_EFFECT_NONE) {
+            ae.setTsempEffect(MMConstants.TSEMP_EFFECT_INTERFERENCE);
         }
 
         return super.handle(phase, vPhaseReport);
     }
 
     @Override
-    protected void handleEntityDamage(Entity entityTarget,
-                                      Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
-                                      int bldgAbsorbs) {
-        super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, 
-                nCluster, bldgAbsorbs);
+    protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport,
+                                      Building bldg, int hits, int nCluster, int bldgAbsorbs) {
+        super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
         
         // Increment the TSEMP hit counter
         entityTarget.addTsempHitThisTurn();
@@ -184,20 +204,18 @@ public class TSEMPHandler extends EnergyWeaponHandler {
         // Determine the effect
         Report baShutdownReport = null;
         if (tsempRoll >= shutdownTarget) {
-            entityTarget.setTsempEffect(TSEMPWeapon.TSEMP_EFFECT_SHUTDOWN);
-            tsempEffect = 
-                    "<font color='C00000'><b>Shutdown!</b></font>";
+            entityTarget.setTsempEffect(MMConstants.TSEMP_EFFECT_SHUTDOWN);
+            tsempEffect = "<font color='C00000'><b>Shutdown!</b></font>";
             if (entityTarget instanceof BattleArmor) {
                 baShutdownReport = new Report(3706);
                 baShutdownReport.addDesc(entityTarget);
                 baShutdownReport.indent(4);
                 baShutdownReport.add(entityTarget.getLocationAbbr(hit));
-                // TODO: fix for salvage purposes
+                // TODO : fix for salvage purposes
                 entityTarget.destroyLocation(hit.getLocation());
                 // Check to see if the squad has been eliminated
-                if (entityTarget.getTransferLocation(hit).getLocation() == 
-                        Entity.LOC_DESTROYED) {
-                    vPhaseReport.addAll(server.destroyEntity(entityTarget,
+                if (entityTarget.getTransferLocation(hit).getLocation() == Entity.LOC_DESTROYED) {
+                    vPhaseReport.addAll(gameManager.destroyEntity(entityTarget,
                             "all troopers eliminated", false));
                 }
             } else {
@@ -205,9 +223,8 @@ public class TSEMPHandler extends EnergyWeaponHandler {
             }
         } else if (tsempRoll >= interferenceTarget) {
             int targetEffect = entityTarget.getTsempEffect();
-            if (targetEffect != TSEMPWeapon.TSEMP_EFFECT_SHUTDOWN) {
-                entityTarget.setTsempEffect(
-                        TSEMPWeapon.TSEMP_EFFECT_INTERFERENCE);
+            if (targetEffect != MMConstants.TSEMP_EFFECT_SHUTDOWN) {
+                entityTarget.setTsempEffect(MMConstants.TSEMP_EFFECT_INTERFERENCE);
             }
             tsempEffect = "<b>Interference!</b>";
         } else {

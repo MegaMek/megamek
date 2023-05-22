@@ -2,16 +2,20 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 SRM Carrier
 </Name>
+
 <Model>
 (3054 Upgrade)
 </Model>
@@ -19,54 +23,118 @@ SRM Carrier
 <mul id:>
 3028
 </mul id:>
-<Tonnage>
-60
-</Tonnage>
+
+<year>
+3054
+</year>
+
+<originalBuildYear>
+3054
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+</transporters>
+
 <cruiseMP>
 3
 </cruiseMP>
-<Armor>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
 14
 14
 14
 11
-</Armor>
-<Front Equipment>
-ISSRM6
-ISSRM6
-ISSRM6
-ISSRM6
-ISSRM6
-ISSRM6
-ISSRM6
-ISSRM6
-ISSRM6
-ISNarcBeacon
-</Front Equipment>
+</armor>
+
 <Body Equipment>
-ISSRM6 Ammo Narc-capable
-ISSRM6 Ammo Narc-capable
-ISSRM6 Ammo Narc-capable
+IS Ammo SRM-6 Narc-capable
+IS Ammo SRM-6 Narc-capable
+IS Ammo SRM-6 Narc-capable
 ISNarc Pods
 </Body Equipment>
-<type>
-IS Level 2
-</type>
-<year>
-3054
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-1
-</engine_type>
-<motion_type>
-Tracked
-</motion_type>
+
+<Front Equipment>
+SRM 6
+SRM 6
+SRM 6
+SRM 6
+SRM 6
+SRM 6
+SRM 6
+SRM 6
+SRM 6
+ISNarcBeacon
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<capabilities>
+The chassis for missile carriers vary in basic design, but they are all essentially military transport vehicles, tracked being the most common, adapted to carry the huge missile launchers and loading equipment. Those adaptations generally consist of reinforcing the suspension systems and armoring the crew and critical components areas enough to survive the back blast from so many missiles. With an average top speed of 54 km/h and armor unable to survive counterbattery fire, if forced to engage in direct combat a carrier's life expectancy is measured in seconds.
+</capabilities>
+
+<overview>
+Ever since the development of the first rocket centuries ago, military units have used mobile missile systems to provide cheap and effective fire support. Along with its LRM counterpart, the SRM Carrier serves in every military action across the Inner Sphere in a variety of shapes and forms.
+</overview>
+
+<deployment>
+An even more radical upgrade produced by the Word of Blake, it utilizes a Light Fusion Engine to boost the speed and armor of the carrier, while still retaining enough weight to add a C3i unit, TAG, a Guardian ECM suite and a switch to Streak SRM-4 launchers.
+</deployment>
+
+<history>
+Manufactured by almost every major military supplier, the modern SRM Carrier is derived from those developed in the Age of War by Quik Products Inc, the future Quikscell Company. In many cases derived a little too closely; during the Succession Wars era many manufacturers were producing little more than shoddy direct copies that fell below even Quikscell's low quality standards. After the end of the Fourth Succession War Quikscell lodged lawsuits against those manufacturing clones of Quik based carriers, resulting the closure of many smaller manufacturers and larger manufacturers ending production. While those who produced their own designs were not affected, Quikscell's elimination of much of its competitors and its offer to exchange any missile carrier not produced by them for legitimate Quikscell versions and parts made it the number one player of the missile carrier market.
+</history>
+
+<manufacturer>
+Quikscell Company
+</manufacturer>
+
+<primaryFactory>
+Oliver
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:InterComBust 180 ICE
+ARMOR:Lexington Ltd. High Grade FF
+COMMUNICATIONS:Communicator
+TARGETING:FireScan with IndirecTrack
+</systemManufacturers>
+
 <source>
-Clan Invasion
+TRO 3058 - Clan Invasion
 </source>
+
+<tonnage>
+60.0
+</tonnage>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+

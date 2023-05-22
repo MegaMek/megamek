@@ -32,7 +32,7 @@ import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Jay Lawson
@@ -49,11 +49,11 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
      * @param t
      * @param w
      * @param g
-     * @param s
+     * @param m
      */
     public MissileBayWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
-            Server s) {
-        super(t, w, g, s);        
+            GameManager m) {
+        super(t, w, g, m);
     }
 
     /**
@@ -498,7 +498,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
 
             handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                     nCluster, bldgAbsorbs);
-            server.creditKill(entityTarget, ae);
+            gameManager.creditKill(entityTarget, ae);
         } // Handle the next weapon in the bay
         Report.addNewline(vPhaseReport); 
         return false;

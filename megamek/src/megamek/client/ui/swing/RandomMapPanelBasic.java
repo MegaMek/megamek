@@ -16,6 +16,7 @@ package megamek.client.ui.swing;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.widget.CheckpointComboBox;
 import megamek.common.MapSettings;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -63,6 +64,7 @@ public class RandomMapPanelBasic extends JPanel {
     private final CheckpointComboBox<String> swampsCombo = new CheckpointComboBox<>(LOW_HIGH_CHOICES);
     private final CheckpointComboBox<String> woodsCombo = new CheckpointComboBox<>(LOW_HIGH_CHOICES);
     private final CheckpointComboBox<String> foliageCombo = new CheckpointComboBox<>(LOW_HIGH_CHOICES);
+    private final CheckpointComboBox<String> snowCombo = new CheckpointComboBox<>(LOW_HIGH_CHOICES);
 
     // Water
     private final CheckpointComboBox<String> lakesCombo = new CheckpointComboBox<>(LOW_HIGH_CHOICES);
@@ -129,6 +131,9 @@ public class RandomMapPanelBasic extends JPanel {
                 this.mapSettings.getMinFoliageSpots(),
                 this.mapSettings.getProbFoliageHeavy()));
         foliageCombo.checkpoint();
+        snowCombo.setSelectedItem(sandsToRange(this.mapSettings.getMinSnowSize(),
+                this.mapSettings.getMinSnowSpots()));
+        snowCombo.checkpoint();
         cliffsCombo.setSelectedItem(percentageToRange(this.mapSettings.getCliffs()));
         cliffsCombo.checkpoint();
         cratersCombo.setSelectedItem(cratersToRange(this.mapSettings.getProbCrater()));
@@ -229,8 +234,13 @@ public class RandomMapPanelBasic extends JPanel {
         panel.add(foliageLabel);
         foliageCombo.setToolTipText(Messages.getString("RandomMapDialog.foliageCombo.toolTip"));
         panel.add(foliageCombo);
+
+        final JLabel snowLabel = new JLabel(Messages.getString(("RandomMapDialog.labSnow")));
+        panel.add(snowLabel);
+        snowCombo.setToolTipText(Messages.getString("RandomMapDialog.snowCombo.toolTip"));
+        panel.add(snowCombo);
         
-        makeCompactGrid(panel, 5, 2, 6, 6, 6, 6);
+        makeCompactGrid(panel, 6, 2, 6, 6, 6, 6);
         return new JScrollPane(panel);
     }
 
@@ -387,6 +397,12 @@ public class RandomMapPanelBasic extends JPanel {
         if (foliageCombo.hasChanged()) {
             value = (String) foliageCombo.getSelectedItem();
             setupFoliage(value, newMapSettings);
+            anyChanges = true;
+        }
+
+        if (snowCombo.hasChanged()) {
+            value = (String) snowCombo.getSelectedItem();
+            setupSnow(value, newMapSettings);
             anyChanges = true;
         }
 
@@ -602,6 +618,18 @@ public class RandomMapPanelBasic extends JPanel {
         }
     }
 
+    private void setupSnow(String snowsValue, MapSettings mapSettings) {
+        if (NONE.equalsIgnoreCase(snowsValue)) {
+            mapSettings.setSnowParams(0, 0, 0, 0);
+        } else if (LOW.equalsIgnoreCase(snowsValue)) {
+            mapSettings.setSnowParams(2, 6, 1, 2);
+        } else if (MEDIUM.equalsIgnoreCase(snowsValue)) {
+            mapSettings.setSnowParams(3, 8, 2, 5);
+        } else {
+            mapSettings.setSnowParams(5, 10, 3, 7);
+        }
+    }
+
     private void setupRoughs(String roughsValue, MapSettings mapSettings) {
         if (NONE.equalsIgnoreCase(roughsValue)) {
             mapSettings.setRoughParams(0, 0, 0, 0);
@@ -700,12 +728,12 @@ public class RandomMapPanelBasic extends JPanel {
         SpringLayout layout;
         try {
             layout = (SpringLayout) parent.getLayout();
-        } catch (ClassCastException exc) {
-            System.err.println("The first argument to makeCompactGrid must use SpringLayout.");
+        } catch (Exception ex) {
+            LogManager.getLogger().error("The first argument to makeCompactGrid must use SpringLayout.", ex);
             return;
         }
 
-        //Align all cells in each column and make them the same width.
+        // Align all cells in each column and make them the same width.
         Spring x = Spring.constant(initialX);
         for (int c = 0; c < cols; c++) {
             Spring width = Spring.constant(0);

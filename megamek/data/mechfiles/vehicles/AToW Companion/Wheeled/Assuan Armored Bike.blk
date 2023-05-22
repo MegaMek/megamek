@@ -16,9 +16,13 @@ SupportTank
 Assuan Armored Bike
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+9223
+</mul id:>
 
 <year>
 2610

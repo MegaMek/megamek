@@ -52,10 +52,15 @@ public class ISReengineeredLaserSmall extends ReengineeredLaserWeapon {
                 .setUnofficial(false)
                 .setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_X, RATING_D)
-                .setISAdvancement(3120, 3130, DATE_NONE, DATE_NONE, DATE_NONE)
+                .setISAdvancement(3120, 3130,DATE_NONE,DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
                 .setPrototypeFactions(F_FS)
                 .setProductionFactions(F_FS)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    }
+    
+    @Override
+    public boolean isAlphaStrikePointDefense() {
+        return true;
     }
 }

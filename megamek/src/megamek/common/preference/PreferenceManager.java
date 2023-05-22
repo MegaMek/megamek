@@ -18,7 +18,7 @@ import jakarta.xml.bind.*;
 import jakarta.xml.bind.annotation.*;
 import megamek.common.Configuration;
 import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.utils.MegaMekXmlUtil;
+import megamek.utilities.xml.MMXMLUtility;
 import org.apache.logging.log4j.LogManager;
 
 import javax.xml.namespace.QName;
@@ -93,7 +93,7 @@ public class PreferenceManager {
             JAXBContext jc = JAXBContext.newInstance(Settings.class);
             
             Unmarshaller um = jc.createUnmarshaller();
-            Settings opts = (Settings) um.unmarshal(MegaMekXmlUtil.createSafeXmlSource(is));
+            Settings opts = (Settings) um.unmarshal(MMXMLUtility.createSafeXmlSource(is));
 
             for (Store store : opts.stores) {
                 if (CLIENT_SETTINGS_STORE_NAME.equals(store.name)) {

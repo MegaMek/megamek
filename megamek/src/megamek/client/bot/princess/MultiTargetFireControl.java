@@ -115,7 +115,7 @@ public class MultiTargetFireControl extends FireControl {
         
         for (Targetable target : getTargetableEnemyEntities(weapon.getEntity(), owner.getGame(), owner.getFireControlState())) {
             final int ownerID = (target instanceof Entity) ? ((Entity) target).getOwnerId() : -1;
-            if (owner.getHonorUtil().isEnemyBroken(target.getTargetId(), ownerID, owner.getBehaviorSettings().isForcedWithdrawal())) {
+            if (owner.getHonorUtil().isEnemyBroken(target.getId(), ownerID, owner.getBehaviorSettings().isForcedWithdrawal())) {
                 LogManager.getLogger().info(target.getDisplayName() + " is broken - ignoring");
                 continue;
             }
@@ -284,7 +284,7 @@ public class MultiTargetFireControl extends FireControl {
         
         // now, we look at the bottom right cell, which contains our optimal firing solution
         // unless there is no firing solution at all, in which case we skip this part
-        if (arcBackpack.size() > 0) {
+        if (!arcBackpack.isEmpty()) {
             for (int arc : arcBackpack.get(arcBackpack.size() - 1).get(shooter.getHeatCapacity() - 1)) {
                 retVal.addAll(arcShots.get(arc));
             }

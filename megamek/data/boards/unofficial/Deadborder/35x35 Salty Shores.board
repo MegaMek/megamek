@@ -1,5 +1,11 @@
 size 35 35
 option exit_roads_to_pavement false
+tag "LightUrban (Auto)"
+tag "Water (Auto)"
+tag "Roads (Auto)"
+tag "Ocean (Auto)"
+tag "DesertTheme (Auto)"
+tag "Woods (Auto)"
 hex 0101 0 "water:3" "desert"
 hex 0201 0 "water:3" "desert"
 hex 0301 0 "water:3" "desert"

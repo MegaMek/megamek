@@ -13,13 +13,12 @@
  */
 package megamek.common;
 
+import megamek.common.enums.AimingMode;
+import megamek.common.options.OptionsConstants;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-
-import megamek.common.enums.AimingMode;
-import megamek.common.options.OptionsConstants;
 
 /**
  * @author Andrew Hunter VTOLs are helicopters (more or less.)
@@ -47,6 +46,13 @@ public class VTOL extends Tank implements IBomber {
     public static final int CRIT_ROTOR_DESTROYED = 18;
     public static final int CRIT_FLIGHT_STABILIZER = 19;
 
+    public VTOL() {
+        super();
+        // need to set elevation to something different than entity
+        elevation = 1;
+    }
+    
+    
     @Override
     public int getUnitType() {
         return UnitType.VTOL;
@@ -76,13 +82,6 @@ public class VTOL extends Tank implements IBomber {
     private Targetable bombTarget = null;
     private List<Coords> strafingCoords = new ArrayList<>();
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Entity#checkSkid(int, megamek.common.Hex, int,
-     *      megamek.common.MoveStep, int, int, megamek.common.Coords,
-     *      megamek.common.Coords, boolean, int)
-     */
     @Override
     public PilotingRollData checkSkid(EntityMovementType moveType, Hex prevHex, EntityMovementType overallMoveType,
             MoveStep prevStep, MoveStep currStep, int prevFacing, int curFacing, Coords lastPos, Coords curPos,
@@ -92,11 +91,6 @@ public class VTOL extends Tank implements IBomber {
         return roll;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Tank#canCharge()
-     */
     @Override
     public boolean canCharge() {
         return false;
@@ -131,9 +125,11 @@ public class VTOL extends Tank implements IBomber {
                 return true;
             }
         }
+
         if (hex.containsTerrain(Terrains.IMPASSABLE)) {
             return true;
         }
+
         if (hex.containsTerrain(Terrains.SPACE) && doomedInSpace()) {
             return true;
         }
@@ -159,9 +155,6 @@ public class VTOL extends Tank implements IBomber {
         return retval;
     }
 
-    /*
-     * (non-Javadoc) This really, really isn't right.
-     */
     @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
                                    int cover) {
@@ -180,10 +173,8 @@ public class VTOL extends Tank implements IBomber {
         boolean bHitAimed = false;
         if ((aimedLocation != LOC_NONE) && !aimingMode.isNone()) {
             int roll = Compute.d6(2);
-
             if ((5 < roll) && (roll < 9)) {
-                rv = new HitData(aimedLocation, side == ToHitData.SIDE_REAR,
-                        true);
+                rv = new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);
                 bHitAimed = true;
             }
         }
@@ -193,13 +184,11 @@ public class VTOL extends Tank implements IBomber {
                     rv.setEffect(HitData.EFFECT_CRITICAL);
                     break;
                 case 3:
-                    rv = new HitData(LOC_ROTOR, false,
-                            HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                    rv = new HitData(LOC_ROTOR, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                     break;
                 case 4:
                     if (m_bHasNoTurret) {
-                        rv = new HitData(LOC_ROTOR, false,
-                            HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                        rv = new HitData(LOC_ROTOR, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                     } else {
                         rv = new HitData(LOC_TURRET);
                     }
@@ -228,8 +217,7 @@ public class VTOL extends Tank implements IBomber {
                     break;
                 case 10:
                 case 11:
-                    rv = new HitData(LOC_ROTOR, false,
-                            HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                    rv = new HitData(LOC_ROTOR, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                     break;
                 case 12:
                     rv = new HitData(LOC_ROTOR, false, HitData.EFFECT_CRITICAL
@@ -274,7 +262,7 @@ public class VTOL extends Tank implements IBomber {
     }
 
     @Override
-    public void setBombChoices(int[] bc) {
+    public void setBombChoices(int... bc) {
         if (bc.length == bombChoices.length) {
             bombChoices = bc;
         }
@@ -283,6 +271,12 @@ public class VTOL extends Tank implements IBomber {
     @Override
     public void clearBombChoices() {
         Arrays.fill(bombChoices, 0);
+    }
+
+    @Override
+    public int reduceMPByBombLoad(int t) {
+        // Per TacOps errata v3.0, movement reduction is per bomb rather than per 5 bomb points
+        return Math.max(0, (t - (int) this.getBombs().stream().filter(m -> (m.getUsableShotsLeft() > 0)).count()));
     }
 
     @Override
@@ -298,10 +292,15 @@ public class VTOL extends Tank implements IBomber {
     public List<Coords> getStrafingCoords() {
         return strafingCoords;
     }
-    
+
     @Override
     public boolean isMakingVTOLGroundAttack() {
-        return bombTarget != null || strafingCoords.size() > 0;
+        return bombTarget != null || !strafingCoords.isEmpty();
+    }
+
+    @Override
+    public boolean isNightwalker() {
+        return false;
     }
 
     @Override
@@ -316,8 +315,7 @@ public class VTOL extends Tank implements IBomber {
     }
 
     /**
-     * get the type of critical caused by a critical roll, taking account of
-     * existing damage
+     * get the type of critical caused by a critical roll, taking account of existing damage
      *
      * @param roll the final dice roll
      * @param loc the hit location
@@ -388,7 +386,7 @@ public class VTOL extends Tank implements IBomber {
             } else if (loc == LOC_REAR) {
                 switch (roll) {
                     case 6:
-                        if (getLoadedUnits().size() > 0) {
+                        if (!getLoadedUnits().isEmpty()) {
                             return CRIT_CARGO;
                         }
                     case 7:
@@ -493,7 +491,7 @@ public class VTOL extends Tank implements IBomber {
                             }
                         }
                     case 7:
-                        if (getLoadedUnits().size() > 0) {
+                        if (!getLoadedUnits().isEmpty()) {
                             return CRIT_CARGO;
                         }
                     case 8:
@@ -505,7 +503,7 @@ public class VTOL extends Tank implements IBomber {
                             }
                         }
                     case 9:
-                        // TODO: fix for new TW rules
+                        // TODO : fix for new TW rules
                         // roll 1d6, 1-3, defending player
                         // chooses which weapon gets destroyed
                         // 4-6: attacker chooses which weapon gets destroyed
@@ -588,6 +586,20 @@ public class VTOL extends Tank implements IBomber {
             if (weatherMod != 0) {
                 j = Math.max(j + weatherMod, 0);
             }
+
+            if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_SNOW)) {
+                if (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM) {
+                    j += 2;
+                }
+
+                if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_SLEET)
+                        || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_LIGHT_SNOW)
+                        || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_MOD_SNOW)
+                        || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW)
+                        || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES)) {
+                    j += 1;
+                }
+            }
         }
 
         if (!ignoremodulararmor && hasModularArmor()) {
@@ -597,15 +609,7 @@ public class VTOL extends Tank implements IBomber {
             j--;
         }
 
-        // Per TacOps errata v3.0, movement reduction is per bomb rather than per 5 bomb points
-        for (Mounted m : getBombs()) {
-            if (m.getUsableShotsLeft() > 0) {
-                j--;
-            }
-        }
-        if (j < 0) {
-            j = 0;
-        }
+        j = reduceMPByBombLoad(j);
 
         if (gravity) {
             j = applyGravityEffectsOnMP(j);
@@ -638,35 +642,6 @@ public class VTOL extends Tank implements IBomber {
     }
 
     @Override
-    public double getBaseBattleForceMovement() {
-        double move = getOriginalWalkMP();
-
-        if (getMisc().stream().anyMatch(m -> m.getType().hasFlag(MiscType.F_JET_BOOSTER))) {
-            move *= 1.25;
-        }
-
-        return move;
-    }
-    
-    @Override
-    public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
-        if (index == 1 && location == LOC_REAR) {
-            return 1.0;
-        } else if (location == LOC_REAR || location == LOC_BODY || location == LOC_ROTOR
-                || (index == 0 && location >= LOC_TURRET)
-                || (index == 1 && location < LOC_TURRET)) {
-            return 0.0;
-        }
-        return 1.0; 
-    }
-
-    @Override
-    public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
-        super.addBattleForceSpecialAbilities(specialAbilities);
-        specialAbilities.put(BattleForceSPA.ATMO, null);
-    }
-    
-    @Override
     public long getEntityType() {
         return Entity.ETYPE_TANK | Entity.ETYPE_VTOL;
     }
@@ -685,7 +660,7 @@ public class VTOL extends Tank implements IBomber {
             ctl.addComponent(getChinTurretTA());
         }
     }
-    
+
     /**
      * Used to determine the draw priority of different Entity subclasses.
      * This allows different unit types to always be draw above/below other
@@ -697,5 +672,4 @@ public class VTOL extends Tank implements IBomber {
     public int getSpriteDrawPriority() {
         return 8;
     }
-
 }

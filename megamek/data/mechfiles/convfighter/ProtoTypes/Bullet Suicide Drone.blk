@@ -16,9 +16,9 @@ ConvFighter
 Bullet Suicide Drone
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 3875

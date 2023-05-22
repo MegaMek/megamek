@@ -1,0 +1,162 @@
+Version:1.0
+Star Python
+
+mul id:8413
+
+Config:Biped
+techbase:Clan
+era:3150
+source:Rec Guide:ilClan #23 -
+rules level:3
+
+mass:25
+engine:175 Fusion (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:10 Clan Double
+walk mp:7
+jump mp:4
+
+armor:Reflective(Clan)
+LA armor:6
+RA armor:6
+LT armor:8
+RT armor:8
+CT armor:10
+HD armor:8
+LL armor:10
+RL armor:10
+RTL armor:2
+RTR armor:2
+RTC armor:2
+
+Weapons:6
+Improved Heavy Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+ER Micro Laser, Left Arm
+ER Micro Laser, Right Arm
+Anti-Missile System, Left Torso
+Improved Heavy Medium Laser, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+CLERMediumLaser
+CLERMicroLaser
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+CLERMicroLaser
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+CLDoubleHeatSink
+CLDoubleHeatSink
+Jump Jet
+Jump Jet
+CLAntiMissileSystem
+CLAMS Ammo
+Clan Endo Steel
+Clan Reflective
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+Jump Jet
+Jump Jet
+Clan Endo Steel
+Clan Reflective
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Clan Endo Steel
+Clan Reflective
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Reflective
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Reflective
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+manufacturer:Imperial BattleMechs
+primaryfactory:Braunschweig
+systemmanufacturer:CHASSIS:Imperial 1a Endo
+systemmanufacturer:ENGINE:Antwerp 175
+systemmanufacturer:ARMOR:Compound Rho Special Reflective
+systemmanufacturer:JUMPJET:Rawlings 55
+systemmanufacturer:COMMUNICATIONS:CGS-Comm-1a
+systemmanufacturer:TARGETING:CGS-TTS-VIIa
+

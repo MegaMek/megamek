@@ -15,6 +15,7 @@ package megamek.common.weapons.battlearmor;
 
 import megamek.common.SimpleTechLevel;
 import megamek.common.WeaponType;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 
 /**
  * @since Sep 24, 2004
@@ -44,13 +45,18 @@ public class CLBAFlamerHeavy extends BAFlamerWeapon {
                 .or(F_BURST_FIRE).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "312, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        techAdvancement.setTechBase(TECH_BASE_IS)
+        techAdvancement.setTechBase(TECH_BASE_ALL)
                 .setIntroLevel(false).setUnofficial(false).setTechRating(RATING_C)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                .setISAdvancement(DATE_NONE, 3070, 3073, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, true, false, false, false)
-                .setPrototypeFactions(F_IS)
-                .setProductionFactions(F_IS)
+                .setAdvancement(DATE_NONE, 3070, 3073, DATE_NONE, DATE_NONE)
+                .setApproximate(false, true, false, false, false)
+                .setPrototypeFactions(F_LC)
+                .setProductionFactions(F_LC,F_CJF)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    }
+
+    @Override
+    public int getAlphaStrikeHeatDamage(int rangeband) {
+        return (rangeband <= AlphaStrikeElement.RANGE_BAND_SHORT) ? 4 : 0;
     }
 }

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,9 +16,9 @@ FixedWingSupport
 Boomerang Spotter Plane
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 3854
@@ -42,7 +42,7 @@ Aerodyne
 
 <transporters>
 ejectionseats:1.0:0
-cargobay:0.013:1:1
+cargobay:0.013:1:2
 </transporters>
 
 <SafeThrust>
@@ -121,3 +121,4 @@ TRO 3039 - Early Succession War
 <tonnage>
 4.999
 </tonnage>
+

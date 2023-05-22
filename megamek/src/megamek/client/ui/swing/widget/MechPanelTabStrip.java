@@ -12,13 +12,29 @@ import megamek.common.util.fileUtils.MegaMekFile;
 import org.apache.logging.log4j.LogManager;
 
 import java.awt.*;
+import java.util.Objects;
 
 public class MechPanelTabStrip extends PicMap {
     private static final long serialVersionUID = -1282343469769007184L;
+    protected static final int NUM_TABS = 6;
+    public static final String SUMMARY = "summary";
+    public static final String PILOT = "pilot";
+    public static final String ARMOR = "armor";
+    public static final String WEAPONS = "weapons";
+    public static final String SYSTEMS = "systems";
+    public static final String EXTRAS = "extras";
 
-    private PMPicPolygonalArea[] tabs = new PMPicPolygonalArea[6];
-    private static final Image[] idleImage = new Image[6];
-    private static final Image[] activeImage = new Image[6];
+    public static final int SUMMARY_INDEX = 0;
+    public static final int PILOT_INDEX = 1;
+    public static final int ARMOR_INDEX = 2;
+    public static final int WEAPONS_INDEX = 3;
+    public static final int SYSTEMS_INDEX = 4;
+    public static final int EXTRAS_INDEX = 5;
+
+    private static final Image[] idleImage = new Image[NUM_TABS];
+    private static final Image[] activeImage = new Image[NUM_TABS];
+
+    private PMPicPolygonalArea[] tabs = new PMPicPolygonalArea[NUM_TABS];
     private Image idleCorner, selectedCorner;
     private int activeTab = 0;
     UnitDisplay md;
@@ -50,18 +66,19 @@ public class MechPanelTabStrip extends PicMap {
         UnitDisplaySkinSpecification udSpec = SkinXMLHandler.getUnitDisplaySkin();
         MediaTracker mt = new MediaTracker(this);
         Toolkit tk = getToolkit();
-        idleImage[0] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getGeneralTabIdle()).toString());
-        idleImage[1] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getPilotTabIdle()).toString());
-        idleImage[2] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getArmorTabIdle()).toString());
-        idleImage[3] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getSystemsTabIdle()).toString());
-        idleImage[4] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getWeaponsTabIdle()).toString());
-        idleImage[5] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getExtrasTabIdle()).toString());
-        activeImage[0] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getGeneralTabActive()).toString());
-        activeImage[1] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getPilotTabActive()).toString());
-        activeImage[2] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getArmorTabActive()).toString());
-        activeImage[3] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getSystemsTabActive()).toString());
-        activeImage[4] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getWeaponsTabActive()).toString());
-        activeImage[5] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getExtraTabActive()).toString());
+        idleImage[SUMMARY_INDEX] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getGeneralTabIdle()).toString());
+        idleImage[PILOT_INDEX] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getPilotTabIdle()).toString());
+        idleImage[ARMOR_INDEX] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getArmorTabIdle()).toString());
+        idleImage[SYSTEMS_INDEX] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getSystemsTabIdle()).toString());
+        idleImage[WEAPONS_INDEX] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getWeaponsTabIdle()).toString());
+        idleImage[EXTRAS_INDEX] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getExtrasTabIdle()).toString());
+
+        activeImage[SUMMARY_INDEX] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getGeneralTabActive()).toString());
+        activeImage[PILOT_INDEX] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getPilotTabActive()).toString());
+        activeImage[ARMOR_INDEX] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getArmorTabActive()).toString());
+        activeImage[SYSTEMS_INDEX] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getSystemsTabActive()).toString());
+        activeImage[WEAPONS_INDEX] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getWeaponsTabActive()).toString());
+        activeImage[EXTRAS_INDEX] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getExtraTabActive()).toString());
         idleCorner = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getCornerIdle()).toString());
         selectedCorner = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getCornerActive()).toString());
 
@@ -69,7 +86,7 @@ public class MechPanelTabStrip extends PicMap {
         idleCorner.flush();
         selectedCorner.flush();
 
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < NUM_TABS; i++) {
             // If we don't flush, we might have stale data
             idleImage[i].flush();
             activeImage[i].flush();
@@ -80,31 +97,27 @@ public class MechPanelTabStrip extends PicMap {
         mt.addImage(selectedCorner, 0);
         try {
             mt.waitForAll();
-        } catch (InterruptedException e) {
-            LogManager.getLogger().error("", e);
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
         }
 
         if (mt.isErrorID(0)) {
             LogManager.getLogger().warn("Could not load image");
         }
 
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < NUM_TABS; i++) {
             if (idleImage[i].getWidth(null) != activeImage[i].getWidth(null)) {
-                System.out.println("TabStrip Warning: idleImage and "
-                        + "activeImage do not match widths for image " + i);
+                LogManager.getLogger().warn("idleImage and activeImage do not match widths for image " + i);
             }
             if (idleImage[i].getHeight(null) != activeImage[i].getHeight(null)) {
-                System.out.println("TabStrip Warning: idleImage and "
-                        + "activeImage do not match heights for image " + i);
+                LogManager.getLogger().warn("idleImage and activeImage do not match heights for image " + i);
             }
         }
         if (idleCorner.getWidth(null) != selectedCorner.getWidth(null)) {
-            System.out.println("TabStrip Warning: idleCorner and "
-                    + "selectedCorner do not match widths!");
+            LogManager.getLogger().warn("idleCorner and selectedCorner do not match widths!");
         }
         if (idleCorner.getHeight(null) != selectedCorner.getHeight(null)) {
-            System.out.println("TabStrip Warning: idleCorner and "
-                    + "selectedCorner do not match heights!");
+            LogManager.getLogger().warn("idleCorner and selectedCorner do not match heights!");
         }
     }
 
@@ -130,40 +143,40 @@ public class MechPanelTabStrip extends PicMap {
     }
 
     private void setListeners() {
-        tabs[0].addActionListener(e -> {
-            if (e.getActionCommand() == PMHotArea.MOUSE_DOWN) {
-                md.showPanel("movement");
+        tabs[SUMMARY_INDEX].addActionListener(e -> {
+            if (Objects.equals(e.getActionCommand(), PMHotArea.MOUSE_DOWN)) {
+                md.showPanel(SUMMARY);
             }
         });
-        tabs[1].addActionListener(e -> {
-            if (e.getActionCommand() == PMHotArea.MOUSE_DOWN) {
-                md.showPanel("pilot");
+        tabs[PILOT_INDEX].addActionListener(e -> {
+            if (Objects.equals(e.getActionCommand(), PMHotArea.MOUSE_DOWN)) {
+                md.showPanel(PILOT);
             }
         });
-        tabs[2].addActionListener(e -> {
-            if (e.getActionCommand() == PMHotArea.MOUSE_DOWN) {
-                md.showPanel("armor");
+        tabs[ARMOR_INDEX].addActionListener(e -> {
+            if (Objects.equals(e.getActionCommand(), PMHotArea.MOUSE_DOWN)) {
+                md.showPanel(ARMOR);
             }
         });
-        tabs[3].addActionListener(e -> {
-            if (e.getActionCommand() == PMHotArea.MOUSE_DOWN) {
-                md.showPanel("systems");
+        tabs[SYSTEMS_INDEX].addActionListener(e -> {
+            if (Objects.equals(e.getActionCommand(), PMHotArea.MOUSE_DOWN)) {
+                md.showPanel(SYSTEMS);
             }
         });
-        tabs[4].addActionListener(e -> {
-            if (e.getActionCommand() == PMHotArea.MOUSE_DOWN) {
-                md.showPanel("weapons");
+        tabs[WEAPONS_INDEX].addActionListener(e -> {
+            if (Objects.equals(e.getActionCommand(), PMHotArea.MOUSE_DOWN)) {
+                md.showPanel(WEAPONS);
             }
         });
-        tabs[5].addActionListener(e -> {
-            if (e.getActionCommand() == PMHotArea.MOUSE_DOWN) {
-                md.showPanel("extras");
+        tabs[EXTRAS_INDEX].addActionListener(e -> {
+            if (Objects.equals(e.getActionCommand(), PMHotArea.MOUSE_DOWN)) {
+                md.showPanel(EXTRAS);
             }
         });
     }
 
     private void redrawImages() {
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < NUM_TABS; i++) {
             drawIdleImage(i);
         }
     }
@@ -190,7 +203,6 @@ public class MechPanelTabStrip extends PicMap {
 
     @Override
     public void onResize() {
-        //ignore
+        // ignore
     }
-
 }

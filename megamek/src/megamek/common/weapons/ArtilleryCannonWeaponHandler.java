@@ -14,22 +14,13 @@
  */
 package megamek.common.weapons;
 
-import java.util.Vector;
-
-import megamek.common.AmmoType;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Game;
-import megamek.common.Minefield;
-import megamek.common.Mounted;
-import megamek.common.Report;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
-import megamek.common.VTOL;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
-import megamek.server.Server;
+import megamek.server.GameManager;
+import org.apache.logging.log4j.LogManager;
+
+import java.util.Vector;
 
 /**
  * @author Numien, based work by Sebastian Brocks
@@ -39,27 +30,16 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
     boolean handledAmmoAndReport = false;
 
     /**
-     * This constructor may only be used for deserialization.
+     * This constructor can only be used for deserialization.
      */
     protected ArtilleryCannonWeaponHandler() {
         super();
     }
 
-    /**
-     * @param t
-     * @param w
-     * @param g
-     */
-    public ArtilleryCannonWeaponHandler(ToHitData t, WeaponAttackAction w,
-            Game g, Server s) {
-        super(t, w, g, s);
+    public ArtilleryCannonWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
-     */
     @Override
     public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         if (!cares(phase)) {
@@ -70,11 +50,11 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
         boolean isFlak = (target instanceof VTOL) || target.isAero();
         boolean asfFlak = target.isAero();
         if (ae == null) {
-            System.err.println("Artillery Entity is null!");
+            LogManager.getLogger().error("Artillery Entity is null!");
             return true;
         }
         Mounted ammoUsed = ae.getEquipment(waa.getAmmoId());
-        final AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed.getType();
+        final AmmoType ammoType = (ammoUsed == null) ? null : (AmmoType) ammoUsed.getType();
 
         // Report weapon attack and its to-hit value.
         Report r = new Report(3120);
@@ -84,7 +64,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
         if (wtype != null) {
             r.add(wtype.getName());
         } else {
-            r.add("Error: From Nowhwere");
+            r.add("Error: From Nowhere");
         }
 
         r.add(target.getDisplayName(), true);
@@ -170,32 +150,30 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
         // According to TacOps eratta, artillery cannons can only fire standard
         // rounds.
         // But, they're still in as unofficial tech, because they're fun. :)
-        if (atype.getMunitionType() == AmmoType.M_FLARE) {
+        if (ammoType.getMunitionType() == AmmoType.M_FLARE) {
             int radius;
-            if (atype.getAmmoType() == AmmoType.T_LONG_TOM) {
+            if (ammoType.getAmmoType() == AmmoType.T_LONG_TOM) {
                 radius = 3;
-            } else if (atype.getAmmoType() == AmmoType.T_SNIPER) {
+            } else if (ammoType.getAmmoType() == AmmoType.T_SNIPER) {
                 radius = 2;
             } else {
                 radius = 1;
             }
-            server.deliverArtilleryFlare(targetPos, radius);
+            gameManager.deliverArtilleryFlare(targetPos, radius);
             return false;
-        }
-        if (atype.getMunitionType() == AmmoType.M_DAVY_CROCKETT_M) {
+        } else if (ammoType.getMunitionType() == AmmoType.M_DAVY_CROCKETT_M) {
             // The appropriate term here is "Bwahahahahaha..."
-            server.doNuclearExplosion(targetPos, 1, vPhaseReport);
+            gameManager.doNuclearExplosion(targetPos, 1, vPhaseReport);
+            return false;
+        } else if (ammoType.getMunitionType() == AmmoType.M_FASCAM) {
+            gameManager.deliverFASCAMMinefield(targetPos, ae.getOwner().getId(),
+                    ammoType.getRackSize(), ae.getId());
+            return false;
+        } else if (ammoType.getMunitionType() == AmmoType.M_SMOKE) {
+            gameManager.deliverArtillerySmoke(targetPos, vPhaseReport);
             return false;
         }
-        if (atype.getMunitionType() == AmmoType.M_FASCAM) {
-            server.deliverFASCAMMinefield(targetPos, ae.getOwner().getId(),
-                    atype.getRackSize(), ae.getId());
-            return false;
-        }
-        if (atype.getMunitionType() == AmmoType.M_SMOKE) {
-            server.deliverArtillerySmoke(targetPos, vPhaseReport);
-            return false;
-        }
+
         int altitude = 0;
         if (isFlak) {
             altitude = target.getElevation();
@@ -212,28 +190,22 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
             r.subject = subjectId;
             vPhaseReport.addElement(r);
 
-            AreaEffectHelper.clearMineFields(targetPos, Minefield.CLEAR_NUMBER_WEAPON, ae, vPhaseReport, game, server);
+            AreaEffectHelper.clearMineFields(targetPos, Minefield.CLEAR_NUMBER_WEAPON, ae, vPhaseReport, game, gameManager);
         }
 
-        server.artilleryDamageArea(targetPos, ae.getPosition(), atype,
+        gameManager.artilleryDamageArea(targetPos, ae.getPosition(), ammoType,
             subjectId, ae, isFlak, altitude, mineClear, vPhaseReport,
             asfFlak, -1);
 
-        // artillery may unintentionally clear minefields, but only if it wasn't
-        // trying to
-        // TODO: Does this apply to arty cannons?
+        // artillery may unintentionally clear minefields, but only if it wasn't trying to
+        // TODO : Does this apply to arty cannons?
         if (!mineClear) {
-            AreaEffectHelper.clearMineFields(targetPos, Minefield.CLEAR_NUMBER_WEAPON_ACCIDENT, ae, vPhaseReport, game, server);
+            AreaEffectHelper.clearMineFields(targetPos, Minefield.CLEAR_NUMBER_WEAPON_ACCIDENT, ae, vPhaseReport, game, gameManager);
         }
 
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
-     */
     @Override
     protected int calcDamagePerHit() {
         double toReturn = wtype.getDamage();

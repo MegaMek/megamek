@@ -16,9 +16,9 @@ Tank
 Thor Artillery Vehicle
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 3189

@@ -15,32 +15,29 @@
 */
 package megamek.common.util;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.HeadlessException;
-import java.awt.Image;
-import java.awt.RenderingHints;
-import java.awt.Toolkit;
-import java.awt.Transparency;
-import java.awt.image.BufferedImage;
-import java.awt.image.FilteredImageSource;
-import java.awt.image.ImageFilter;
-import java.awt.image.ImageObserver;
-import java.awt.image.ImageProducer;
+import java.awt.*;
+import java.awt.image.*;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Hashtable;
 import java.util.List;
 
+import megamek.MMConstants;
 import megamek.client.ui.swing.util.ImageAtlasMap;
 import megamek.client.ui.swing.util.ImprovedAveragingScaleFilter;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Coords;
+import megamek.common.Report;
 import megamek.common.annotations.Nullable;
 import org.apache.logging.log4j.LogManager;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
 
 /**
  * Generic utility methods for image data
@@ -57,6 +54,7 @@ public final class ImageUtil {
         try {
             gd = ge.getDefaultScreenDevice();
         } catch (HeadlessException ignored) {
+
         }
         GC = (null != gd) ? gd.getDefaultConfiguration() : null;
     }
@@ -133,17 +131,14 @@ public final class ImageUtil {
         if (scaleType == IMAGE_SCALE_BICUBIC) {
             BufferedImage scaled = createAcceleratedImage(newWidth, newHeight);
             Graphics2D g2 = (Graphics2D) scaled.getGraphics();
-            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-                    RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+            UIUtil.setHighQualityRendering(g2);
             g2.drawImage(img, 0, 0, newWidth, newHeight, null);
             return scaled;
         } else {
-            ImageFilter filter;
-            filter = new ImprovedAveragingScaleFilter(img.getWidth(null),
+            ImageFilter filter = new ImprovedAveragingScaleFilter(img.getWidth(null),
                     img.getHeight(null), newWidth, newHeight);
 
-            ImageProducer prod;
-            prod = new FilteredImageSource(img.getSource(), filter);
+            ImageProducer prod = new FilteredImageSource(img.getSource(), filter);
             Image result = Toolkit.getDefaultToolkit().createImage(prod);
             waitUntilLoaded(result);
             return ImageUtil.createAcceleratedImage(result);
@@ -166,6 +161,15 @@ public final class ImageUtil {
         }
     }
 
+    /**
+     * Loads and returns the image of the given fileName. This method does not make sure the image
+     * is fully loaded, this must be done by the caller when necessary (the simplest way is to
+     * create a new ImageIcon with the image). If the image cannot be loaded for any reason,
+     * the method returns a placeholder image but not null.
+     *
+     * @param fileName The image filename
+     * @return The image if possible, a placeholder image otherwise
+     */
     public static Image loadImageFromFile(String fileName) {
         if (null == fileName) {
             return failStandardImage();
@@ -253,7 +257,7 @@ public final class ImageUtil {
          * X,Y and W,H to find a sub-image within the original image and return that sub-image.
          */
         @Override
-        public Image loadImage(String fileName) {
+        public @Nullable Image loadImage(String fileName) {
             int tileStart = fileName.indexOf('(');
             int tileEnd = fileName.indexOf(')');
             if ((tileStart == -1) || (tileEnd == -1) || (tileEnd < tileStart)) {
@@ -274,7 +278,7 @@ public final class ImageUtil {
             if (!baseFile.exists()) {
                 return null;
             }
-            System.out.println("Loading atlas: " + baseFile);
+            LogManager.getLogger().info("Loading atlas: " + baseFile);
             Image base = Toolkit.getDefaultToolkit().getImage(baseFile.getPath());
             if (null == base) {
                 return null;
@@ -298,7 +302,6 @@ public final class ImageUtil {
      * the corresponding key which includes an atlas and offset.
      */
     public static class AtlasImageLoader extends TileMapImageLoader {
-
         ImageAtlasMap imgFileToAtlasMap;
 
         public AtlasImageLoader() {
@@ -356,7 +359,8 @@ public final class ImageUtil {
                    start.getX(), start.getY(), start.getX() + size.getX(), start.getY() + size.getY(), null);
                g2d.dispose();
                return img;
-            } else { // Otherwise just return the image loaded from the atlas
+            } else {
+                // Otherwise just return the image loaded from the atlas
                 return super.loadImage(imgFileToAtlasMap.get(p));
             }
         }
@@ -378,7 +382,7 @@ public final class ImageUtil {
             while (!observer.isLoaded() && runTime < maxRuntime) {
                 try {
                     Thread.sleep(10);
-                } catch (InterruptedException ex) {
+                } catch (InterruptedException ignored) {
                     // Do nothing
                 }
                 runTime = System.currentTimeMillis() - startTime;
@@ -417,5 +421,43 @@ public final class ImageUtil {
         public boolean isAnimated() {
             return animated;
         }
+    }
+
+    /**
+     * takes an image and converts it to text in the Base64 encoding.
+     */
+    public static String base64TextEncodeImage(BufferedImage img) {
+        String base64Text = "";
+
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write((RenderedImage) img, "png", baos);
+            baos.flush();
+            base64Text = Base64.getEncoder().encodeToString(baos.toByteArray());
+            baos.close();
+        } catch (final IOException ioe) {
+            throw new UncheckedIOException(ioe);
+        }
+
+        return base64Text;
+    }
+
+    /**
+     * creates a ? image, used when units are hidden in double blind
+     */
+    public static void createDoubleBlindHiddenImage(Hashtable<Integer, String> imgCache) {
+        BufferedImage image = new BufferedImage(56, 48, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D graphics = image.createGraphics();
+        UIUtil.setHighQualityRendering(graphics);
+        graphics.setComposite(AlphaComposite.Clear);
+        graphics.fillRect(0, 0, 56, 48);
+        graphics.setComposite(AlphaComposite.Src);
+        graphics.setColor(UIManager.getColor("Label.foreground"));
+        graphics.setFont(new Font(MMConstants.FONT_DIALOG, Font.BOLD, 26));
+        graphics.drawString("?", 20, 40);
+
+        String base64Text = base64TextEncodeImage(image);
+        String img = "<img src='data:image/png;base64," + base64Text + "'>";
+        imgCache.put(Report.HIDDEN_ENTITY_NUM, img);
     }
 }

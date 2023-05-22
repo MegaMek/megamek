@@ -1,17 +1,17 @@
 Version:1.1
 Prometheus
-(Standard)
+
 mul id:4871
 
 Config:Biped
-TechBase:Mixed (Clan Chassis)
+TechBase:Mixed (IS Chassis)
 Era:3053
 Source:Unbound - Clan Invasion
 Rules Level:4
 
 Mass:75
 Engine:375 XL Fusion Engine (Inner Sphere)
-Structure:Endo-Steel
+Structure:Clan Endo Steel
 Cockpit:Torso-Mounted Cockpit
 Myomer:Standard
 
@@ -121,22 +121,22 @@ Head:
 Sensors
 Sensors
 CLMG Ammo (100)
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+Clan Endo Steel
+Clan Endo Steel
 
 Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+Clan Endo Steel
+Clan Endo Steel

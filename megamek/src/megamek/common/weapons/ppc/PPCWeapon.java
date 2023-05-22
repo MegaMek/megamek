@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons.ppc;
 
-import megamek.common.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Game;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
@@ -24,6 +24,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.PPCHandler;
 import megamek.common.weapons.lasers.EnergyWeapon;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
@@ -49,8 +50,8 @@ public abstract class PPCWeapon extends EnergyWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              Server server) {
-        return new PPCHandler(toHit, waa, game, server);
+                                              GameManager manager) {
+        return new PPCHandler(toHit, waa, game, manager);
     }
 
     @Override
@@ -58,18 +59,18 @@ public abstract class PPCWeapon extends EnergyWeapon {
         double damage = 0;
         if (range <= getLongRange()) {
             //Variable damage weapons that cannot reach into the BF long range band use LR damage for the MR band
-            if (getDamage() == DAMAGE_VARIABLE
-                    && range == BattleForceElement.MEDIUM_RANGE
-                    && getLongRange() < BattleForceElement.LONG_RANGE) {
-                damage = getDamage(BattleForceElement.LONG_RANGE);
+            if ((getDamage() == DAMAGE_VARIABLE)
+                    && (range == AlphaStrikeElement.MEDIUM_RANGE)
+                    && (getLongRange() < AlphaStrikeElement.LONG_RANGE)) {
+                damage = getDamage(AlphaStrikeElement.LONG_RANGE);
             } else {
                 damage = getDamage(range);
             }
-            if (capacitor != null && capacitor.getType() instanceof MiscType
+            if ((capacitor != null) && (capacitor.getType() instanceof MiscType)
                     && capacitor.getType().hasFlag(MiscType.F_PPC_CAPACITOR)) {
                 damage = (damage + 5) / 2;
             }
-            if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
+            if ((range == AlphaStrikeElement.SHORT_RANGE) && (getMinimumRange() > 0)) {
                 damage = adjustBattleForceDamageForMinRange(damage);
             }
             if (getToHitModifier() != 0) {

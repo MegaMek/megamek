@@ -1,0 +1,12 @@
+3145 Magistracy of Canopus Fleet Dropships
+Leopard (2537),1
+Condor (3054),2
+Seeker (3054),3
+Lung Wang (3055),4
+Triumph (2593),5
+Union (3055),6
+Achilles (3055),5
+Kuan Ti (3055),4
+Overlord A3,3
+Vengeance DC,2
+Lung Wang P2,1

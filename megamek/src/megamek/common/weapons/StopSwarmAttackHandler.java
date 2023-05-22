@@ -22,7 +22,7 @@ import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Andrew Hunter
@@ -37,8 +37,8 @@ public class StopSwarmAttackHandler extends WeaponHandler {
      * @param g
      */
     public StopSwarmAttackHandler(ToHitData toHit, WeaponAttackAction waa,
-            Game g, Server s) {
-        super(toHit, waa, g, s);
+            Game g, GameManager m) {
+        super(toHit, waa, g, m);
     }
 
     /*
@@ -62,7 +62,7 @@ public class StopSwarmAttackHandler extends WeaponHandler {
         r.subject = subjectId;
         vPhaseReport.addElement(r);
         // Only apply the "stop swarm 'attack'" to the swarmed Mek.
-        if (ae.getSwarmTargetId() != target.getTargetId()) {
+        if (ae.getSwarmTargetId() != target.getId()) {
             Entity other = game.getEntity(ae.getSwarmTargetId());
             other.setSwarmAttackerId(Entity.NONE);
         } else {

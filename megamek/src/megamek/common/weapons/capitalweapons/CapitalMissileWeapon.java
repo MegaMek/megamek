@@ -20,12 +20,13 @@ import megamek.common.Mounted;
 import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.ArtilleryWeaponIndirectFireHandler;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
 import megamek.common.weapons.CapitalMissileHandler;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Jay Lawson
@@ -49,23 +50,28 @@ public abstract class CapitalMissileWeapon extends AmmoWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              Server server) {
+                                              GameManager manager) {
         Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
         Entity attacker = game.getEntity(waa.getEntityId());
         int rangeToTarget = attacker.getPosition().distance(waa.getTarget(game).getPosition());
         // Capital missiles work like artillery for surface to surface fire
         if (Compute.isGroundToGround(attacker, waa.getTarget(game))) {
-            return new ArtilleryWeaponIndirectFireHandler(toHit, waa, game, server);
+            return new ArtilleryWeaponIndirectFireHandler(toHit, waa, game, manager);
         }
         if (weapon.isInBearingsOnlyMode()
                 && (rangeToTarget >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM)) {
-            return new CapitalMissileBearingsOnlyHandler(toHit, waa, game, server);
+            return new CapitalMissileBearingsOnlyHandler(toHit, waa, game, manager);
         }
-        return new CapitalMissileHandler(toHit, waa, game, server);
+        return new CapitalMissileHandler(toHit, waa, game, manager);
     }
     
     @Override
     public int getBattleForceClass() {
         return BFCLASS_CAPITAL_MISSILE;
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted linked) {
+        return damage;
     }
 }

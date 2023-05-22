@@ -1,50 +1,49 @@
-Version:1.0
+Version:1.3
 Shogun
 SHG-2F
 mul id:2933
-
 Config:Biped
-TechBase:Inner Sphere
-Era:3029
-Source:TRO 3050 - Succession Wars
-Rules Level:2
+techbase:Inner Sphere
+era:3029
+source:TRO 3050 - Succession Wars
+rules level:2
 
-Mass:85
-Engine:255 Fusion Engine
-Structure:Standard
-Myomer:Standard
+mass:85
+engine:255 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:17 Single
-Walk MP:3
-Jump MP:3
+heat sinks:17 Single
+walk mp:3
+jump mp:3
 
-Armor:Standard Armor
-LA Armor:22
-RA Armor:22
-LT Armor:28
-RT Armor:28
-CT Armor:40
-HD Armor:9
-LL Armor:36
-RL Armor:36
-RTL Armor:8
-RTR Armor:8
-RTC Armor:11
+armor:Standard(Inner Sphere)
+LA armor:22
+RA armor:22
+LT armor:28
+RT armor:28
+CT armor:40
+HD armor:9
+LL armor:36
+RL armor:36
+RTL armor:8
+RTR armor:8
+RTC armor:11
 
 Weapons:5
-1 ISSRM6, Right Torso, Ammo:30
-1 ISSRM6, Left Torso
-1 ISLRM15, Left Arm
-1 ISLRM15, Right Arm, Ammo:16
-1 ISERPPC, Right Torso
+LRM 15, Left Arm
+LRM 15, Right Arm
+SRM 6, Left Torso
+SRM 6, Right Torso
+ER PPC, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISLRM15
-ISLRM15
-ISLRM15
+LRM 15
+LRM 15
+LRM 15
 -Empty-
 -Empty-
 -Empty-
@@ -56,9 +55,9 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISLRM15
-ISLRM15
-ISLRM15
+LRM 15
+LRM 15
+LRM 15
 -Empty-
 -Empty-
 -Empty-
@@ -69,10 +68,10 @@ ISLRM15
 Left Torso:
 Heat Sink
 Heat Sink
-ISSRM6
-ISSRM6
-ISSRM6 Ammo
-ISLRM15 Ammo
+SRM 6
+SRM 6
+IS Ammo SRM-6
+IS Ammo LRM-15
 ISCASE
 -Empty-
 -Empty-
@@ -83,13 +82,13 @@ ISCASE
 Right Torso:
 Heat Sink
 Heat Sink
-ISSRM6
-ISSRM6
 ISERPPC
 ISERPPC
 ISERPPC
-ISSRM6 Ammo
-ISLRM15 Ammo
+SRM 6
+SRM 6
+IS Ammo SRM-6
+IS Ammo LRM-15
 ISCASE
 -Empty-
 -Empty-
@@ -149,4 +148,17 @@ Jump Jet
 -Empty-
 -Empty-
 -Empty-
+
+overview:The initial specifications for the 'Mech were for a "highly survivable multi-role assault BattleMech." When the Shogun project started the design phase in 2771, those needs had altered little, save to compensate for fundamental flaws in the Stalker's design.
+capabilities:Though the Shogun isn't any faster than its predecessor, the inclusion of jump jets allows it to be much more maneuverable. The Shogun's CASE and ferro fiber armor also make it significantly more survivable than the Stalker.
+deployment:Though built for close combat, the weapons payload on the Shogun is built for long range combat. The 'Mech carries as its primary weapon a Magna Firestar ER PPC and two Coventry Star Fire LRM-15 launchers which allow the 'Mech to engage an enemy very effectively at long ranges. The 'Mech does carry two Thunderstroke SRM-6 launchers for close combat, allowing the 'Mech to find any weak spots in an enemy's armor when they do get to close ranges with the Shogun.
+history:The Shogun's history was cloaked in myth and legend, at least until the Clan and Inner Sphere records could be compared. The SLDF issued the original requirements for the Shogun in the late 26th century, although the 'Mech itself did not reach construction for another two centuries. The success and widespread distribution of the Stalker—which served the role of the Shogun, if imperfectly—along with the outbreak of the Reunification War, and then the tranquility of the Star League's Golden Age, saw the original design criteria scrapped. After General Kerensky's conflict, the SLDF needed a new attack BattleMech to replenish its ranks. The Shogun had a good chance of succeeding the Stalker, but Kerensky's Exodus and the First Succession War interfered. Mitchell Vehicles, who won the design when the SLDF regained Graham IV, completed only eight manufacturing runs prior to the Exodus, and only a few more before their plants were destroyed in the First Succession War. That left the Shogun to slip into obscurity—at least until the Wolf's Dragoons returned a few to the Inner Sphere before the Exodus, and only a few more runs before their factories were destroyed in the First Succession War. As a result, the Shogun died quickly—at least until the Wolf's Dragoons returned a few to the Inner Sphere.
+manufacturer:Refit
+primaryfactory:Outreach
+systemmanufacturer:CHASSIS:Kitushi Shogun
+systemmanufacturer:ENGINE:Strand 255
+systemmanufacturer:ARMOR:Riese-350
+systemmanufacturer:JUMPJET:Anderson Propulsion 21
+systemmanufacturer:COMMUNICATIONS:HartfordCo COM 4000
+systemmanufacturer:TARGETING:HartfordCo XKZ 1
 

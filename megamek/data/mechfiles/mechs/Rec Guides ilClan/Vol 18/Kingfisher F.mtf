@@ -1,0 +1,169 @@
+Version:1.0
+Kingfisher
+F
+mul id:1784
+
+Config:Biped Omnimech
+techbase:Clan
+era:3069
+source:Rec Guide:ilClan #18 - Jihad
+rules level:2
+
+mass:90
+engine:360 Fusion (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:17 Clan Double
+base chassis heat sinks:14
+walk mp:4
+jump mp:0
+
+armor:Ferro-Fibrous(Clan)
+LA armor:30
+RA armor:30
+LT armor:28
+RT armor:28
+CT armor:44
+HD armor:9
+LL armor:38
+RL armor:38
+RTL armor:10
+RTR armor:10
+RTC armor:13
+
+Weapons:5
+HAG/30, Left Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+ER Large Laser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLHAG30 (OMNIPOD)
+CLHAG30 (OMNIPOD)
+CLHAG30 (OMNIPOD)
+CLHAG30 (OMNIPOD)
+CLHAG30 (OMNIPOD)
+CLHAG30 (OMNIPOD)
+CLHAG30 (OMNIPOD)
+CLHAG30 (OMNIPOD)
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLERMediumLaser (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Hyper-Assault Gauss Rifle/30 Ammo (OMNIPOD)
+Hyper-Assault Gauss Rifle/30 Ammo (OMNIPOD)
+Hyper-Assault Gauss Rifle/30 Ammo (OMNIPOD)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+
+Right Torso:
+CLDoubleHeatSink
+CLDoubleHeatSink
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLERLargeLaser (OMNIPOD)
+CLECMSuite (OMNIPOD)
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:An early Clan assault OmniMech that may have influenced all subsequent assault OmniMech design, the Kingfisher is rugged and maneuverable. These traits make the Kingfisher an ideal choice for take and hold missions.
+
+capabilities:The tough Kingfisher mounts fourteen and a half tons of Ferro-Fibrous armor on an Endo Steel chassis, the most it can take. Unlike most modern front-line OmniMechs, the Kingfisher uses a standard engine. The 'Mech also has seventeen fixed double heat sinks, forcing three to be mounted outside of the engine.
+
+deployment:The F variant is equipped with an ECM, the main weapon is a HAG 30, with an ER Large Laser in the center torso and three ER Medium Lasers in the right arm.
+
+history:Based off the powerful but dezgra Pulverizer, Clan Snow Raven debuted the Kingfisher in 2887 as an early second-generation OmniMech, the Kingfisher's speed and relative invulnerability have kept it in heavy use even during the Clan Invasion era, especially by Clan Ghost Bear, alongside more recent assault OmniMechs like the Executioner.
+
+manufacturer:Snow Raven Industrial Complex Alpha, Strana Mechty ’Mech Production Facility Beta
+primaryfactory:Dante, Strana Mechty
+systemmanufacturer:CHASSIS:SL YT-A Endo
+systemmanufacturer:ENGINE:Star League Standard 360
+systemmanufacturer:ARMOR:Forging Z5 Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:Model 74/129.3 TCS
+systemmanufacturer:TARGETING:S438 Mk. III Mod. 7 TTS
+

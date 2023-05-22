@@ -14,23 +14,15 @@
  */
 package megamek.client.ui.swing.widget;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Image;
-import java.awt.Polygon;
-import java.util.Vector;
-
-import javax.swing.JComponent;
-
+import megamek.MMConstants;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
-import megamek.common.Aero;
-import megamek.common.Configuration;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.SmallCraft;
+import megamek.common.*;
 import megamek.common.util.fileUtils.MegaMekFile;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.Vector;
 
 /**
  * Class which keeps set of all areas required to 
@@ -66,10 +58,11 @@ public class SpheroidMapSet implements DisplayMapSet{
     private Polygon aftArmor = new Polygon (new int[] { 0, 20, 80, 100 },
             new int[] { 150, 200, 200, 150 }, 4);
 
-    private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN,
-            GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize"));
-    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN,
-            GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize"));
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+    private static final Font FONT_LABEL = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
+            GUIP.getUnitDisplayMechArmorSmallFontSize());
+    private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
+            GUIP.getUnitDisplayMechArmorLargeFontSize());
 
     public SpheroidMapSet(JComponent c, UnitDisplay unitDisplay) {
         this.unitDisplay = unitDisplay;
@@ -201,15 +194,12 @@ public class SpheroidMapSet implements DisplayMapSet{
         labels[11] = WidgetUtils.createLabel("K-F Boom:", fm, Color.white, 90, 240);
         labels[12] = WidgetUtils.createLabel("Collar:", fm, Color.white, 90, 255);
 
-        //Value labels for all parts of mek
-        //front
-        fm =  comp.getFontMetrics(FONT_VALUE);   
+        // Value labels for all parts of mek
+        // front
+        fm = comp.getFontMetrics(FONT_VALUE);
         vLabels[Aero.LOC_NOSE] = WidgetUtils.createValueLabel(50, 35, "", fm);
-        //   vLabels[Aero.LOC_NOSE + INT_STR_OFFSET] = WidgetUtils.createValueLabel(10, 58, "", fm);
         vLabels[Aero.LOC_LWING] = WidgetUtils.createValueLabel(20, 105, "", fm);
-        //   vLabels[Aero.LOC_LWING + INT_STR_OFFSET] = WidgetUtils.createValueLabel(10, 100, "", fm);
         vLabels[Aero.LOC_RWING] = WidgetUtils.createValueLabel(80, 105, "", fm);
-        //   vLabels[Aero.LOC_RWING + INT_STR_OFFSET] = WidgetUtils.createValueLabel(10, 100, "", fm);
         vLabels[Aero.LOC_AFT] = WidgetUtils.createValueLabel(50, 175, "", fm);
         vLabels[4] = WidgetUtils.createValueLabel(50, 135, "", fm);
         vLabels[5] = WidgetUtils.createValueLabel(40, 210, "", fm);

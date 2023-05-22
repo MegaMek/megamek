@@ -26,6 +26,7 @@ import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Game;
 import megamek.common.Player;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -37,9 +38,7 @@ import java.util.Vector;
 import java.util.stream.Collectors;
 
 public class ReplacePlayersDialog extends AbstractButtonDialog {
-    
-    private static final String PRINCESS_STRING = Messages.getString("ReplacePlayersDialog.princess");
-    private static final String NOREPLACE_STRING = Messages.getString("ReplacePlayersDialog.noReplacement");
+    private static final int PRINCESS_INDEX = 1;
     
     /** A ClientGUI given to the dialog. */
     private final ClientGUI clientGui;
@@ -73,16 +72,20 @@ public class ReplacePlayersDialog extends AbstractButtonDialog {
     @Override
     protected void initialize() {
         super.initialize();
-        UIUtil.adjustDialog(this.getContentPane());
-        finalizeInitialization();
+        adaptToGUIScale();
+        try {
+            finalizeInitialization();
+        } catch (Exception ex) {
+            LogManager.getLogger().error("Error finalizing the ReplacePlayersDialog. Returning the created dialog, but this is likely to cause some oddities.", ex);
+        }
     }
 
     @Override
     protected Container createCenterPane() {
-        // Construct the available replacements for the combobox chooser
+        // Construct the available replacements for the ComboBox chooser
         Vector<String> replacements = new Vector<>();
-        replacements.add(NOREPLACE_STRING);
-        replacements.add(PRINCESS_STRING);
+        replacements.add(Messages.getString("ReplacePlayersDialog.noReplacement"));
+        replacements.add(Messages.getString("ReplacePlayersDialog.princess"));
         
         var gridPanel = new JPanel();
         gridPanel.setLayout(new GridLayout(ghostPlayers.size() + 2, 4, 2, 2));
@@ -114,7 +117,7 @@ public class ReplacePlayersDialog extends AbstractButtonDialog {
             var chooser = new JComboBox<>(replacements);
             playerChoosers.put(ghost, chooser);
             if (savedSettingsExist) {
-                chooser.setSelectedItem(PRINCESS_STRING);
+                chooser.setSelectedIndex(PRINCESS_INDEX);
                 botConfigs.put(ghost, savedSettings.get(ghost.getName()));
             }
             chooser.addActionListener(e -> updateButtonStates());
@@ -154,7 +157,7 @@ public class ReplacePlayersDialog extends AbstractButtonDialog {
     private void updateButtonStates() {
         for (Player ghost : ghostPlayers) {
             JButton button = configButtons.get(ghost);
-            button.setEnabled(playerChoosers.get(ghost).getSelectedItem().equals(PRINCESS_STRING));
+            button.setEnabled(playerChoosers.get(ghost).getSelectedIndex() == PRINCESS_INDEX);
         }
     }
 
@@ -169,10 +172,14 @@ public class ReplacePlayersDialog extends AbstractButtonDialog {
         var result = new HashMap<String, BehaviorSettings>();
         for (Player ghost : ghostPlayers) {
             JComboBox<String> chooser = playerChoosers.get(ghost);
-            if (chooser.getSelectedItem().equals(PRINCESS_STRING)) {
+            if (chooser.getSelectedIndex() == PRINCESS_INDEX) {
                 result.put(ghost.getName(), botConfigs.get(ghost));
             }
         }
         return result;
+    }
+
+    private void adaptToGUIScale() {
+        UIUtil.adjustDialog(this,  UIUtil.FONT_SCALE1);
     }
 }

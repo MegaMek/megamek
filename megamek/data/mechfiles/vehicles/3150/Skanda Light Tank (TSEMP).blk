@@ -1,0 +1,95 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Skanda Light Tank
+</Name>
+
+<Model>
+(TSEMP)
+</Model>
+
+<mul id:>
+8058
+</mul id:>
+
+<year>
+3119
+</year>
+
+<originalBuildYear>
+3119
+</originalBuildYear>
+
+<type>
+Mixed (Clan Chassis) Advanced
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+7
+</cruiseMP>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+8
+</armor_tech>
+
+<armor>
+45
+32
+32
+15
+</armor>
+
+<Body Equipment>
+Clan ProtoMech AC/2 Ammo
+</Body Equipment>
+
+<Front Equipment>
+CLProtoMechAC2
+CLProtoMechAC2
+TSEMP Cannon
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<source>
+RS3150 - Dark Age
+</source>
+
+<tonnage>
+35.0
+</tonnage>
+

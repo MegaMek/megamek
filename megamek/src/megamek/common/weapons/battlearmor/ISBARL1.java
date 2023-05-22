@@ -19,22 +19,16 @@
  */
 package megamek.common.weapons.battlearmor;
 
+import megamek.common.Mounted;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.missiles.RLWeapon;
-
 
 /**
  * @author Sebastian Brocks
  */
 public class ISBARL1 extends RLWeapon {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 9080214985232453233L;
 
-    /**
-     *
-     */
     public ISBARL1() {
         super();
         name = "Rocket Launcher 1";
@@ -52,16 +46,23 @@ public class ISBARL1 extends RLWeapon {
         cost = 1500;
         tonnage = .025;
         criticals = 2;
-        flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_ONESHOT).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_ONESHOT).andNot(F_MECH_WEAPON)
+                .andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "261, TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_X, RATING_X, RATING_B, RATING_B)
-        .setISAdvancement(3050, 3050, 3052, DATE_NONE, DATE_NONE)
-        .setISApproximate(true, false, false, false, false)
-        .setPrototypeFactions(F_FS,F_LC)
-        .setProductionFactions(F_FS,F_LC);
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_X, RATING_B, RATING_B)
+                .setISAdvancement(3050, 3050, 3052, DATE_NONE, DATE_NONE)
+                .setISApproximate(true, false, false, false, false)
+                .setPrototypeFactions(F_FS, F_LC)
+                .setProductionFactions(F_FS, F_LC);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        // This value gets divided by 10 for being one-shot
+        return (range <= AlphaStrikeElement.MEDIUM_RANGE) ? 0.1 : 0;
     }
 }

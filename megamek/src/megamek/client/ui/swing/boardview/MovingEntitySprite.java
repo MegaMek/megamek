@@ -1,17 +1,12 @@
 package megamek.client.ui.swing.boardview;
 
-import java.awt.AlphaComposite;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Rectangle;
-import java.awt.image.ImageObserver;
-
+import megamek.MMConstants;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.util.ImageUtil;
+
+import java.awt.*;
+import java.awt.image.ImageObserver;
 
 class MovingEntitySprite extends Sprite {
 
@@ -23,17 +18,17 @@ class MovingEntitySprite extends Sprite {
 
     private int elevation;
 
-    public MovingEntitySprite(BoardView boardView1, final Entity entity,
-                              final Coords position, final int facing, final int elevation) {
+    public MovingEntitySprite(BoardView boardView1, final Entity entity, final Coords position,
+                              final int facing, final int elevation) {
         super(boardView1);
         this.entity = entity;
         this.facing = facing;
         this.elevation = elevation;
 
         String shortName = entity.getShortName();
-        Font font = new Font("SansSerif", Font.PLAIN, 10);
-        modelRect = new Rectangle(47, 55, bv.getFontMetrics(font).stringWidth(
-                shortName) + 1, bv.getFontMetrics(font).getAscent());
+        Font font = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 10);
+        modelRect = new Rectangle(47, 55, bv.getFontMetrics(font).stringWidth(shortName) + 1,
+                bv.getFontMetrics(font).getAscent());
 
         int altAdjust = 0;
         if (bv.useIsometric()

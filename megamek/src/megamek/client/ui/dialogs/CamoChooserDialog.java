@@ -17,6 +17,7 @@ package megamek.client.ui.dialogs;
 
 import megamek.client.ui.baseComponents.MMButton;
 import megamek.client.ui.panels.CamoChooser;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Camouflage;
@@ -89,6 +90,16 @@ public class CamoChooserDialog extends AbstractIconChooserDialog {
 
     @Override
     public Camouflage getSelectedItem() {
-        return useDefault ? new Camouflage() : ((Camouflage) super.getSelectedItem()).clone();
+        return isUseDefault() ? new Camouflage() : ((Camouflage) super.getSelectedItem()).clone();
+    }
+
+    @Override
+    protected void finalizeInitialization() throws Exception {
+        super.finalizeInitialization();
+        adaptToGUIScale();
+    }
+
+    private void adaptToGUIScale() {
+        UIUtil.adjustDialog(this,  UIUtil.FONT_SCALE1);
     }
 }

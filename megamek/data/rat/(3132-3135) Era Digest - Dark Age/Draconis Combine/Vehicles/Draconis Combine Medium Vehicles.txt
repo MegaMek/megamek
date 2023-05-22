@@ -1,0 +1,12 @@
+Medium Vehicles
+Condor Heavy Hover Tank (Standard), 1
+Hiryo Armored Infantry Transport (MRM), 2
+Vedette Medium Tank (NETC), 3
+Kamakiri Attack VTOL (Standard), 4
+Shillelagh Missile Tank (Standard), 5
+SM1A Tank Destroyer SM1A, 6
+Condor Heavy Hover Tank (Upgrade), 5
+Joust Medium Tank BE701, 4
+SM1 Tank Destroyer SM1, 3
+Cizin Hover Tank (Standard), 2
+Joust Medium Tank BE700, 1

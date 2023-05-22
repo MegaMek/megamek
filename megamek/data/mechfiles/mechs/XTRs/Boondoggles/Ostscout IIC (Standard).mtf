@@ -1,0 +1,152 @@
+Version:1.3
+Ostscout IIC
+
+mul id:5844
+Config:Biped
+techbase:Mixed (Clan Chassis)
+era:3067
+source:XTRO Boondoggles - Civil War
+rules level:4
+
+mass:35
+engine:385 XXL (Clan) Engine
+structure:Clan Endo Steel
+myomer:Standard
+cockpit:Small Cockpit
+gyro:XL Gyro
+
+heat sinks:10 Single
+walk mp:11
+jump mp:11
+
+armor:Ferro-Fibrous(Clan)
+LA armor:2
+RA armor:2
+LT armor:5
+RT armor:5
+CT armor:6
+HD armor:5
+LL armor:5
+RL armor:5
+RTL armor:1
+RTR armor:1
+RTC armor:1
+
+Weapons:1
+TAG (Clan), Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLTAG
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLPartialWing
+CLPartialWing
+CLPartialWing
+Jump Jet
+Jump Jet
+BloodhoundActiveProbe
+BloodhoundActiveProbe
+BloodhoundActiveProbe
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLPartialWing
+CLPartialWing
+CLPartialWing
+Jump Jet
+Jump Jet
+Jump Jet
+Jump Jet
+Jump Jet
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+
+Head:
+Life Support
+Sensors
+Cockpit
+Sensors
+ISAngelECMSuite
+ISAngelECMSuite
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+manufacturer:Olivetti Weaponry
+primaryfactory:Sudeten
+

@@ -55,6 +55,7 @@ public class CLImprovedPPC extends PPCWeapon {
                 .setClanAdvancement(2819, 2820, DATE_NONE, 2832, 3080)
                 .setClanApproximate(true, false, false, false, false)
                 .setPrototypeFactions(F_CSR).setProductionFactions(F_CSR)
-                .setReintroductionFactions(F_EI).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+                .setReintroductionFactions(F_EI)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 }

@@ -20,15 +20,16 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Game;
+import megamek.common.Mounted;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.missiles.MissileWeapon;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks, Modified by Greg
@@ -60,27 +61,21 @@ public abstract class CLIATMWeapon extends MissileWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, Server server) {
+            WeaponAttackAction waa, Game game, GameManager manager) {
         
         // MML does different handlers here. I think I'll go with implementing different ammo in the Handler.
-        return new CLIATMHandler(toHit, waa, game, server);
+        return new CLIATMHandler(toHit, waa, game, manager);
     }
 
     @Override
-    public double getBattleForceDamage(int range) {
-        double damage = 0;
-        if (range <= getLongRange()) {
-            damage = getRackSize();
-            if (range < BattleForceElement.MEDIUM_RANGE) {
-                damage *= 3;
-            } else if (range < BattleForceElement.LONG_RANGE) {
-                damage *= 2;
-            }
-            if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
-                damage = adjustBattleForceDamageForMinRange(damage);
-            }
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        if (range == AlphaStrikeElement.SHORT_RANGE) {
+            return 0.3 * rackSize;
+        } else if (range == AlphaStrikeElement.MEDIUM_RANGE) {
+            return 0.2 * rackSize;
+        } else {
+            return 0.1 * rackSize;
         }
-        return damage / 10.0;
     }
     
     @Override
@@ -88,6 +83,11 @@ public abstract class CLIATMWeapon extends MissileWeapon {
         return BFCLASS_IATM;
     }
     
+    @Override
+    public boolean isAlphaStrikeIndirectFire() {
+        return false;
+    }
+
     @Override
     public boolean hasIndirectFire() {
         return true;

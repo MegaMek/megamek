@@ -1,0 +1,153 @@
+Version:1.0
+Thunderbolt
+TDR-5Sb2
+mul id:6766
+
+Config:Biped
+techbase:Inner Sphere
+era:2680
+rules level:3
+
+mass:65
+engine:260 Fusion Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:14 IS Double
+walk mp:4
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:20
+RA armor:20
+LT armor:24
+RT armor:24
+CT armor:30
+HD armor:9
+LL armor:29
+RL armor:29
+RTL armor:6
+RTR armor:6
+RTC armor:11
+
+Weapons:8
+Small Pulse Laser, Left Arm
+Small Pulse Laser, Left Arm
+Medium Laser, Left Torso
+Medium Laser, Left Torso
+Medium Laser, Left Torso
+LRM 15, Right Torso
+Streak SRM 2, Right Torso
+PPC, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISSmallPulseLaser
+ISSmallPulseLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+PPC
+PPC
+PPC
+IS Endo Steel
+IS Endo Steel
+
+Left Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Medium Laser
+Medium Laser
+Medium Laser
+IS Endo Steel
+IS Endo Steel
+-Empty-
+
+Right Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+LRM 15
+LRM 15
+LRM 15
+ISArtemisIV
+ISStreakSRM2
+IS Streak SRM 2 Ammo
+IS Ammo LRM-15 Artemis-capable
+IS Ammo LRM-15 Artemis-capable
+ISCASE
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Endo Steel
+IS Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-

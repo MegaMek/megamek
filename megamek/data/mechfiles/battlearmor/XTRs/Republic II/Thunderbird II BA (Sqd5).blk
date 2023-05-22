@@ -1,0 +1,130 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Thunderbird II Battle Armor
+</Name>
+
+<model>
+(Sqd5)
+</Model>
+
+<mul id:>
+8823
+</mul id:>
+
+<year>
+3133
+</year>
+
+<originalBuildYear>
+3133
+</originalBuildYear>
+
+<type>
+Mixed (Clan Chassis) Advanced
+</type>
+
+<motion_type>
+Leg
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<armor_type>
+37
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<Point Equipment>
+Clan BA Laser Reflective (Reflec/Glazed):RA
+Clan BA Laser Reflective (Reflec/Glazed):Body
+Clan BA Laser Reflective (Reflec/Glazed):LA
+Clan BA Laser Reflective (Reflec/Glazed):Body
+Clan BA Laser Reflective (Reflec/Glazed):Body
+Clan BA Laser Reflective (Reflec/Glazed):Body
+Clan BA Laser Reflective (Reflec/Glazed):Body
+BABasicManipulator:LA
+BABasicManipulator:RA
+Battle Armor LB-X AC:DWP
+CLBAAPGaussRifle:DWP
+BattleArmorC3:Body
+ISDetachableWeaponPack:LA
+ISDetachableWeaponPack:RA
+</Point Equipment>
+
+<source>
+XTRO Republic II - Dark Ages
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+10
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+3
+</weightclass>
+
+<overview>
+The Thunderbird was created by Clan Nova Cat as a replacement Heavy Battle Armor.
+</overview>
+
+<capabilities>
+The armor's other qualities include a Jump Booster for added mobility and 250 kilograms of standard armor.
+</capabilities>
+
+<deployment>
+Produced on Shitara for The Republic of the Sphere, the Thunderbird II battle armor is an upgrade of the Thunderbird battle armor produced by Clan Nova Cat expats. The modular weapons mount of the original were replaced with a Detachable Weapon Pack in each arm. The left arm carries a single AP Gauss Rifle while the right arm carries a Battle Armor LB-X autocannon. Reflective armor protects the Thunderbird II. What makes it so deadly in the Republic Armed Forces is the integrated Battle Armor C3 system.
+</deployment>
+
+<history>
+Its development started in the mid-3080s as a needed replacement for their Touman's dwindling supply of frontline Elemental Battle Armor. The Nova Cats' supply of Elemental Suits had been rapidly been depleted due to its Abjuration in 3060 and the late conflicts of the Jihad. Development of the suit started when Khan Santin West firmly pressed his Technician and Scientist Castes to create a replacement suit in 3084. The Thunderbird first saw combat in October 3085, where it was deployed in combat in a Battle Armor Trinary with the 489th Assault Cluster. A combined arms raiding force of Inner Sphere Standard Battle Armor and 'Mechs raided Labrea where the 489th was stationed. The Thunderbirds of the Trinary showed their mettle with other Nova Cat Battle Armor troops. The design remained exclusively the Nova Cats' property despite inquires by various allies. The DCMS used information gathered from its evaluations of the Thunderbird for its own Kishi and Oni battle armor.
+</history>
+
+<manufacturer>
+Wayne Station
+</manufacturer>
+
+<primaryFactory>
+Shitara
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

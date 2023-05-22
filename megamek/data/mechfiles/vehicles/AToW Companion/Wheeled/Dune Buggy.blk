@@ -16,9 +16,13 @@ SupportTank
 Dune Buggy
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+9226
+</mul id:>
 
 <year>
 2000

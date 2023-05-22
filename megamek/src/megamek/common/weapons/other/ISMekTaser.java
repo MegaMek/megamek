@@ -13,15 +13,13 @@
  */
 package megamek.common.weapons.other;
 
-import megamek.common.AmmoType;
-import megamek.common.Game;
-import megamek.common.SimpleTechLevel;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.MechTaserHandler;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Jason Tighe
@@ -62,17 +60,14 @@ public class ISMekTaser extends AmmoWeapon {
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     * megamek.server.Server)
-     */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              Server server) {
-        return new MechTaserHandler(toHit, waa, game, server);
+                                              GameManager manager) {
+        return new MechTaserHandler(toHit, waa, game, manager);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range) {
+        return (range == AlphaStrikeElement.SHORT_RANGE) ? 0.1 : 0;
     }
 }

@@ -16,9 +16,13 @@ SupportVTOL
 HTE Micro-Copter
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+9229
+</mul id:>
 
 <year>
 3065

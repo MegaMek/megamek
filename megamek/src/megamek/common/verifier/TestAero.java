@@ -302,14 +302,10 @@ public class TestAero extends TestEntity {
             }
         }
         
-        // XXL engines take up extra space in the aft in conventional fighters
+        // Large engines take up extra space in the aft in conventional fighters
         if (((a.getEntityType() & Entity.ETYPE_CONV_FIGHTER) != 0)
-                && a.hasEngine() && (a.getEngine().getEngineType() == Engine.XXL_ENGINE)) {
-            if (a.getEngine().hasFlag(Engine.CLAN_ENGINE)) {
-                availSpace[Aero.LOC_AFT] -= 2;
-            } else {
-                availSpace[Aero.LOC_AFT] -= 4;
-            }
+                && a.hasEngine() && (a.getEngine().hasFlag(Engine.LARGE_ENGINE))) {
+            availSpace[Aero.LOC_AFT] -= 1; // same for ICE and fusion
         }
         return availSpace;
     }
@@ -376,7 +372,7 @@ public class TestAero extends TestEntity {
 
     /**
      * @return the maximum number of turns the given unit could fly at safe thrust given its fuel
-     * payload. Aerospace fighters consume 1 fuel point per thrust point spent up the the maximum
+     * payload. Aerospace fighters consume 1 fuel point per thrust point spent up the maximum
      * safe thrust, whereas conventional fighters with turbine engines consume 0.5 fuel points per
      * thrust point spent up to the maximum safe thrust.
      * See Strategic Operations pg 34.
@@ -398,7 +394,7 @@ public class TestAero extends TestEntity {
     /**
      * Computes and returns the maximum number of turns the given unit could
      * fly at max thrust given its fuel payload. Aerospace fighters consume
-     * 1 fuel point per thrust point spent up the the maximum safe thrust and
+     * 1 fuel point per thrust point spent up the maximum safe thrust and
      * 2 fuel points per thrust point afterwards, whereas conventional fighters 
      * with ICE engines consume 0.5 fuel points per thrust point spent up to 
      * the maximum safe thrust and 1 fuel point per thrust up to the maximum 
@@ -743,8 +739,9 @@ public class TestAero extends TestEntity {
         int numBombs = 0;
         
         for (Mounted m : aero.getWeaponList()) {
-            if (m.getLocation() == Entity.LOC_NONE)
+            if (m.getLocation() == Entity.LOC_NONE) {
                 continue;
+            }
             
             // Aeros can't use special munitions except for artemis, exceptions
             //  LBX's must use clusters
@@ -1417,7 +1414,7 @@ public class TestAero extends TestEntity {
      * 
      * @param eq       The equipment
      * @param fighter  If the aero is a fighter (including fixed wing support), the ammo is mounted in the
-     *                 fuselage. Otherwise it's in the location with the weapon.
+     *                 fuselage. Otherwise, it's in the location with the weapon.
      * @return         Whether the equipment needs to be assigned to a location with a firing arc.
      */
     public static boolean eqRequiresLocation(EquipmentType eq, boolean fighter) {
@@ -1435,7 +1432,9 @@ public class TestAero extends TestEntity {
         } else if (eq instanceof MiscType) {
             if (eq.hasFlag(MiscType.F_CASE)) {
                 return eq.isClan();
-            } else return !eq.hasFlag(MiscType.F_BLUE_SHIELD) && !eq.hasFlag(MiscType.F_LIFTHOIST);
+            } else {
+                return !eq.hasFlag(MiscType.F_BLUE_SHIELD) && !eq.hasFlag(MiscType.F_LIFTHOIST);
+            }
         } else {
             return !(eq instanceof AmmoType);
         }

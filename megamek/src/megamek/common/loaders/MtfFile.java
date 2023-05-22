@@ -23,6 +23,7 @@ import java.io.*;
 import java.util.*;
 
 import megamek.common.*;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * @author Ben
@@ -128,7 +129,8 @@ public class MtfFile implements IMechLoader {
      * Creates new MtfFile
      */
     public MtfFile(InputStream is) throws EntityLoadingException {
-        try (BufferedReader r = new BufferedReader(new InputStreamReader(is))) {
+        try (InputStreamReader isr = new InputStreamReader(is);
+             BufferedReader r = new BufferedReader(isr)) {
             String version = r.readLine();
             if (version == null) {
                 throw new EntityLoadingException("MTF File empty!");
@@ -151,13 +153,13 @@ public class MtfFile implements IMechLoader {
 
             readCrits(r);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            LogManager.getLogger().error("", ex);
             throw new EntityLoadingException("I/O Error reading file");
         } catch (StringIndexOutOfBoundsException ex) {
-            ex.printStackTrace();
+            LogManager.getLogger().error("", ex);
             throw new EntityLoadingException("StringIndexOutOfBoundsException reading file (format error)");
         } catch (NumberFormatException ex) {
-            ex.printStackTrace();
+            LogManager.getLogger().error("", ex);
             throw new EntityLoadingException("NumberFormatException reading file (format error)");
         }
     }
@@ -206,12 +208,11 @@ public class MtfFile implements IMechLoader {
                 continue;
             }
             critData[loc][slot++] = crit.trim();
-
         }
     }
 
     @Override
-    public Entity getEntity() throws EntityLoadingException {
+    public Entity getEntity() throws Exception {
         try {
             Mech mech;
 
@@ -221,22 +222,23 @@ public class MtfFile implements IMechLoader {
                 if (iGyroType == Mech.GYRO_UNKNOWN) {
                     iGyroType = Mech.GYRO_STANDARD;
                 }
-            } catch (Exception e) {
+            } catch (Exception ignored) {
                 iGyroType = Mech.GYRO_STANDARD;
             }
+
             int iCockpitType;
             try {
                 iCockpitType = Mech.getCockpitTypeForString(cockpitType.substring(8));
                 if (iCockpitType == Mech.COCKPIT_UNKNOWN) {
                     iCockpitType = Mech.COCKPIT_STANDARD;
                 }
-            } catch (Exception e) {
+            } catch (Exception ignored) {
                 iCockpitType = Mech.COCKPIT_STANDARD;
             }
             boolean fullHead;
             try {
                 fullHead = ejectionType.substring(9).equals(Mech.FULL_HEAD_EJECT_STRING);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
                 fullHead = false;
             }
             if (chassisConfig.contains("QuadVee")) {
@@ -246,7 +248,7 @@ public class MtfFile implements IMechLoader {
                     if (iMotiveType == QuadVee.MOTIVE_UNKNOWN) {
                         iMotiveType = QuadVee.MOTIVE_TRACK;
                     }
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                     iMotiveType = QuadVee.MOTIVE_TRACK;
                 }
                 mech = new QuadVee(iGyroType, iMotiveType);
@@ -259,7 +261,7 @@ public class MtfFile implements IMechLoader {
                     if (iLAMType == LandAirMech.LAM_UNKNOWN) {
                         iLAMType = LandAirMech.LAM_STANDARD;
                     }
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                     iLAMType = LandAirMech.LAM_STANDARD;
                 }
                 mech = new LandAirMech(iGyroType, iCockpitType, iLAMType);
@@ -312,7 +314,7 @@ public class MtfFile implements IMechLoader {
             }
 
             String thisStructureType = internalType.substring(internalType.indexOf(':') + 1);
-            if (thisStructureType.length() > 0) {
+            if (!thisStructureType.isBlank()) {
                 mech.setStructureType(thisStructureType);
             } else {
                 mech.setStructureType(EquipmentType.T_STRUCTURE_STANDARD);
@@ -366,7 +368,8 @@ public class MtfFile implements IMechLoader {
                 mech.setArmorTechLevel(mech.getTechLevel());
                 mech.setArmorType(thisArmorType);
             }
-            if (!(thisArmorType.length() > 0)) {
+
+            if (thisArmorType.isBlank()) {
                 mech.setArmorType(EquipmentType.T_ARMOR_STANDARD);
             }
             mech.recalculateTechAdvancement();
@@ -379,8 +382,7 @@ public class MtfFile implements IMechLoader {
                 if (thisArmorType.equals(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_PATCHWORK))) {
                     boolean clan = armorValues[x].contains("Clan");
                     String armorName = armorValues[x].substring(armorValues[x].indexOf(':') + 1, armorValues[x].indexOf('('));
-                    if (!armorName.contains("Clan")
-                        && !armorName.contains("IS")) {
+                    if (!armorName.contains("Clan") && !armorName.contains("IS")) {
                         if (clan) {
                             armorName = "Clan " + armorName;
                         } else {
@@ -430,14 +432,9 @@ public class MtfFile implements IMechLoader {
                     }
                 }
             }
+
             for (int x = 0; x < rearLocationOrder.length; x++) {
                 mech.initializeRearArmor(Integer.parseInt(armorValues[x + locationOrder.length].substring(10)), rearLocationOrder[x]);
-            }
-            
-            // Set capital fighter stats for LAMs
-            if (mech instanceof LandAirMech) {
-                ((LandAirMech) mech).autoSetCapArmor();
-                ((LandAirMech) mech).autoSetFatalThresh();
             }
 
             // oog, crits.
@@ -447,11 +444,17 @@ public class MtfFile implements IMechLoader {
             for (int i = mech.locations() - 1; i >= 0; i--) {
                 parseCrits(mech, i);
             }
+
             for (String equipment : noCritEquipment) {
                 parseNoCritEquipment(mech, equipment);
             }
-            if (mech.isClan()) {
-                mech.addClanCase();
+
+            if (mech instanceof LandAirMech) {
+                // Set capital fighter stats for LAMs
+                ((LandAirMech) mech).autoSetCapArmor();
+                ((LandAirMech) mech).autoSetFatalThresh();
+                int fuelTankCount = (int) mech.getEquipment().stream().filter(e -> e.is(EquipmentTypeLookup.LAM_FUEL_TANK)).count();
+                ((LandAirMech) mech).setFuel(80 * (1 + fuelTankCount));
             }
 
             // add any heat sinks not allocated
@@ -511,15 +514,9 @@ public class MtfFile implements IMechLoader {
                 mech.setManualBV(bv);
             }
             return mech;
-        } catch (NumberFormatException ex) {
-            ex.printStackTrace();
-            throw new EntityLoadingException("NumberFormatException parsing file");
-        } catch (NullPointerException ex) {
-            ex.printStackTrace();
-            throw new EntityLoadingException("NullPointerException parsing file");
-        } catch (StringIndexOutOfBoundsException ex) {
-            ex.printStackTrace();
-            throw new EntityLoadingException("StringIndexOutOfBoundsException parsing file");
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
+            throw new Exception(ex);
         }
     }
 
@@ -746,14 +743,15 @@ public class MtfFile implements IMechLoader {
                         m.setOmniPodMounted(isOmniPod);
                         hSharedEquip.put(etype, m);
                     } else if (((etype instanceof WeaponType) && ((WeaponType) etype).isSplitable()) || ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_SPLITABLE))) {
-                        // do we already have this one in this or an outer
-                        // location?
+                        // do we already have this one in this or an outer location?
                         Mounted m = null;
                         boolean bFound = false;
                         for (Mounted vSplitWeapon : vSplitWeapons) {
                             m = vSplitWeapon;
                             int nLoc = m.getLocation();
-                            if (((nLoc == loc) || (loc == Mech.getInnerLocation(nLoc))) && (m.getType() == etype)) {
+                            if ((((nLoc == loc) || (loc == Mech.getInnerLocation(nLoc)))
+                                    || ((nLoc == Mech.LOC_CT) && (loc == Mech.LOC_HEAD)))
+                                    && (m.getType() == etype)) {
                                 bFound = true;
                                 break;
                             }
@@ -809,8 +807,13 @@ public class MtfFile implements IMechLoader {
                                 size = BLKFile.getLegacyVariableSize(critName);
                             }
                             mount.setSize(size);
-                            // THe size may require additional critical slots
-                            for (int c = 1; c < mount.getCriticals(); c++) {
+                            // The size may require additional critical slots
+                            // Account for loading Superheavy oversized Variable Size components
+                            int critCount = mount.getCriticals();
+                            if (mech.isSuperHeavy()){
+                                critCount = (int)Math.ceil(critCount / 2.0);
+                            }
+                            for (int c = 1; c < critCount; c++) {
                                 CriticalSlot cs = new CriticalSlot(mount);
                                 mech.addCritical(loc, cs, i + c);
                             }
@@ -1028,7 +1031,7 @@ public class MtfFile implements IMechLoader {
             gyroType = line;
             return true;
         }
-        
+
         if (lineLower.startsWith(MOTIVE)) {
             motiveType = line;
             return true;
@@ -1057,7 +1060,7 @@ public class MtfFile implements IMechLoader {
         if (lineLower.startsWith(MYOMER)) {
             return true;
         }
-        
+
         if (lineLower.startsWith(LAM)) {
             lamType = line;
             return true;
@@ -1115,7 +1118,7 @@ public class MtfFile implements IMechLoader {
             noCritEquipment.add(line.substring(NO_CRIT.length()));
             return true;
         }
-        
+
         if (lineLower.startsWith(OVERVIEW)) {
             overview = line.substring(OVERVIEW.length());
             return true;
@@ -1125,12 +1128,12 @@ public class MtfFile implements IMechLoader {
             capabilities = line.substring(CAPABILITIES.length());
             return true;
         }
-                
+
         if (lineLower.startsWith(DEPLOYMENT)) {
             deployment = line.substring(DEPLOYMENT.length());
             return true;
         }
-        
+
         if (lineLower.startsWith(HISTORY)) {
             history = line.substring(HISTORY.length());
             return true;

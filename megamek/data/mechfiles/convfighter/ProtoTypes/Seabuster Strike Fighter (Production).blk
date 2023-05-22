@@ -13,12 +13,12 @@ ConvFighter
 </UnitType>
 
 <Name>
-SeaBuster Strike Fighter
+Seabuster Strike Fighter
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 5010

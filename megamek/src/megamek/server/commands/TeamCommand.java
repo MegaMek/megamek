@@ -13,10 +13,7 @@
  */
 package megamek.server.commands;
 
-import megamek.common.net.AbstractConnection;
 import megamek.server.Server;
-
-import java.util.Enumeration;
 
 /**
  * Team Chat
@@ -31,33 +28,26 @@ public class TeamCommand extends ServerCommand {
 
     @Override
     public void run(int connId, String[] args) {
-
         if (args.length > 1) {
-
             int team = server.getPlayer(connId).getTeam();
-
-            if (team < 1 || team > 8) {
+            if ((team < 1) || (team > 8)) {
                 server.sendServerChat(connId, "You are not on a team!");
                 return;
             }
 
             StringBuilder message = new StringBuilder();
-
-            String origin = "Team Chat[" + server.getPlayer(connId).getName()
-                    + "]";
+            String origin = "Team Chat[" + server.getPlayer(connId).getName() + "]";
 
             for (int pos = 1; pos < args.length; pos++) {
                 message.append(" ");
                 message.append(args[pos]);
             }
 
-            for (Enumeration<AbstractConnection> i = server.getConnections(); i.hasMoreElements();) {
-                AbstractConnection conn = i.nextElement();
-
-                if (server.getPlayer(conn.getId()).getTeam() == team)
+            server.forEachConnection(conn -> {
+                if (server.getPlayer(conn.getId()).getTeam() == team) {
                     server.sendChat(conn.getId(), origin, message.toString());
-            }
+                }
+            });
         }
     }
-
 }

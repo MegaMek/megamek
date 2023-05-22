@@ -22,19 +22,14 @@ import java.util.List;
 import megamek.common.options.OptionsConstants;
 
 public class BipedMech extends Mech {
-    /**
-     *
-     */
     private static final long serialVersionUID = 4166375446709772785L;
 
     private static final String[] LOCATION_NAMES =
-            {"Head", "Center Torso", "Right Torso", "Left Torso", "Right Arm", "Left Arm", "Right Leg", "Left Leg"};
+            { "Head", "Center Torso", "Right Torso", "Left Torso", "Right Arm", "Left Arm", "Right Leg", "Left Leg" };
 
-    private static final String[] LOCATION_ABBRS =
-            {"HD", "CT", "RT", "LT", "RA", "LA", "RL", "LL"};
+    private static final String[] LOCATION_ABBRS = { "HD", "CT", "RT", "LT", "RA", "LA", "RL", "LL" };
 
-    private static final int[] NUM_OF_SLOTS =
-            {6, 12, 12, 12, 12, 12, 6, 6};
+    private static final int[] NUM_OF_SLOTS = { 6, 12, 12, 12, 12, 12, 6, 6 };
 
     public BipedMech(String inGyroType, String inCockpitType) {
         this(getGyroTypeForString(inGyroType), getCockpitTypeForString(inCockpitType));
@@ -176,6 +171,10 @@ public class BipedMech extends Mech {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
             if (weatherMod != 0) {
                 wmp = Math.max(wmp + weatherMod, 0);
+            }
+            if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
+                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_TORNADO_F13)) {
+                wmp += 1;
             }
         }
         // gravity
@@ -856,6 +855,7 @@ public class BipedMech extends Mech {
     /**
      * Based on the mech's current damage status, return valid brace locations.
      */
+    @Override
     public List<Integer> getValidBraceLocations() {
         List<Integer> validLocations = new ArrayList<>();
         

@@ -16,9 +16,9 @@ Tank
 SRM Carrier
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 3030
@@ -80,10 +80,43 @@ SRM 6
 <Rear Equipment>
 </Rear Equipment>
 
-<source>
-TRO 3039 - Age of War
-</source>
 
 <tonnage>
 60.0
 </tonnage>
+
+<source>
+TRO 3039 - Age of War
+</source>
+
+
+<capabilities>
+The chassis for missile carriers vary in basic design, but they are all essentially military transport vehicles, tracked being the most common, adapted to carry the huge missile launchers and loading equipment. Those adaptations generally consist of reinforcing the suspension systems and armoring the crew and critical components areas enough to survive the back blast from so many missiles. With an average top speed of 54 km/h and armor unable to survive counterbattery fire, if forced to engage in direct combat a carrier's life expectancy is measured in seconds.
+</capabilities>
+
+<overview>
+Ever since the development of the first rocket centuries ago, military units have used mobile missile systems to provide cheap and effective fire support. Along with its LRM counterpart, the SRM Carrier serves in every military action across the Inner Sphere in a variety of shapes and forms.
+</overview>
+
+<deployment>
+While its chassis is identical to its LRM counterpart, the SRM Carrier mounts ten forward-firing SRM-6 launchers. Quikscell utilizes Holly brand launchers, but carriers produced by other manufacturers frequently use the launchers common to their House of origin, such as HoverTec SRMs in the Federated Suns or NCK in the Draconis Combine. While the SRM carrier must physically move to change firing angles a barrage fired from a missile carrier is a fearsome sight, and four tons of ammunition allow a carrier to keep up that rate of fire up for over a minute, but forces carriers to be tied to a functioning supply system to keep them in action for any extended period. 
+</deployment>
+
+<history>
+Manufactured by almost every major military supplier, the modern SRM Carrier is derived from those developed in the Age of War by Quik Products Inc, the future Quikscell Company. In many cases derived a little too closely; during the Succession Wars era many manufacturers were producing little more than shoddy direct copies that fell below even Quikscell's low quality standards. After the end of the Fourth Succession War Quikscell lodged lawsuits against those manufacturing clones of Quik based carriers, resulting the closure of many smaller manufacturers and larger manufacturers ending production. While those who produced their own designs were not affected, Quikscell's elimination of much of its competitors and its offer to exchange any missile carrier not produced by them for legitimate Quikscell versions and parts made it the number one player of the missile carrier market.
+</history>
+
+<manufacturer>
+Joint Equipment Systems,Quikscell Company,Quikscell Company,Caliphate Airfield Alpha,Quikscell Company,Quikscell Company,Maxwell Planetary Defense Consortium,Quikscell Company,Quikscell Company,Hadrian Mechanized Industries,Quikscell Company,Aldis Industries,Amaris Armored Vehicles
+</manufacturer>
+
+<primaryFactory>
+Alshain,Ares,Broken Wheel,Granada,Kalidasa,Layover,Maxwell,Oliver,Pandora,Pompey,Richvale,Terra,Timbuktu
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:InterComBust 180 ICE
+ARMOR:Simple Armor Plate Standard
+COMMUNICATIONS:Communicator
+TARGETING:FireScan with IndirecTrack
+</systemManufacturers>

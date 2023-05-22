@@ -16,9 +16,9 @@ Tank
 Saracen Medium Hover Tank
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 2796

@@ -1,0 +1,149 @@
+Version:1.1
+Exterminator
+EXT-6CS
+mul id:5551
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3079
+Source:XTRO ComStar - Jihad
+Rules Level:4
+
+Mass:65
+Engine:390 XL Fusion Engine
+Structure:Endo-Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:6
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:20
+RA Armor:20
+LT Armor:22
+RT Armor:22
+CT Armor:29
+HD Armor:9
+LL Armor:30
+RL Armor:30
+RTL Armor:8
+RTR Armor:8
+RTC Armor:10
+
+Weapons:5
+1 ISLightPPC, Right Arm
+1 ISLightPPC, Left Arm
+1 ISMediumPulseLaser, Head
+1 ISMediumPulseLaser, Center Torso
+1 ISMML7, Left Torso, Ammo:51
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISLightPPC
+ISLightPPC
+ChameleonLightPolarizationField
+NullSignatureSystem
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISLightPPC
+ISLightPPC
+ChameleonLightPolarizationField
+NullSignatureSystem
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Left Torso:
+Engine
+Engine
+Engine
+ISMML7
+ISMML7
+ISMML7
+ISMML7
+ChameleonLightPolarizationField
+NullSignatureSystem
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Right Torso:
+Engine
+Engine
+Engine
+ISMML7 LRM Ammo
+ISMML7 LRM Ammo
+ISMML7 SRM Ammo
+ChameleonLightPolarizationField
+NullSignatureSystem
+ISCASEII
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+ISMediumPulseLaser
+NullSignatureSystem
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISMediumPulseLaser
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ChameleonLightPolarizationField
+NullSignatureSystem
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ChameleonLightPolarizationField
+NullSignatureSystem
+
+overview:The Exterminator is a BattleMech that was designed in 2630 for the most dubious, but necessary, of purposes: Head Hunting.	
+
+capabilities:The weapons used by the Exterminator are not nearly as unique or high tech as the electronics on board. The primary weapons of the Exterminator are medium weight lasers, two of each in either arm. For long range engagements, the 'Mech also carries a missile launcher with one ton of reloads in the center torso. These weapons are backed up by a short range laser mounted in the head for when engagements close to point blank range, and, for defense against missile attacks, the Exterminator has a Anti-Missile System in the right torso with one ton of ammo.
+
+deployment:This experimental ComStar-produced variant first spotted in 3079 carries a light PPC in each arm, and a pair of medium pulse lasers as well. An MML 7 with three tons of ammunition in a CASE II–protected ammunition bay rounds out the armament. The anti-missile system is gone, but in its place are a Chameleon Light Polarization Shield and a Null-Signature System. These systems ensure that the 'Mech will be very difficult to hit.
+
+history:The Exterminator was outfitted with a special Null-Signature System, heat baffles and, in some cases, a Chameleon Light Polarization Shield. These advanced systems allowed it to easily infiltrate enemy lines. Once the Exterminator breached the enemy's rear, its mission was to find and destroy as much of the enemy's command structure as possible. This mission profile included attacking mobile headquarters, field bases and command level officers. Rather than be part of the standard formation, Exterminators were attached to a regimental or higher headquarters unit, often as a fifth member of the command lance itself, before being assigned to individual units. A regiment was considered lucky to have more than one Exterminator, and it was not unusual for its parent unit to pull all assigned Exterminators and pool them for a specific mission. It was widely believed that the Exterminator had not survived the fighting of the First Succession War as there were lances whose sole mission was to hunt down and destroy this type of 'Mech (coupled with the destruction of General Systems' primary factory on Caph in 2793). In 3007, Kallon Industries (Thermopolis, Free Worlds League), looking for a replacement for their aging Wolverine, recovered blueprints for the Exterminator and immediately modified the design so that it could be built using the technology readily available. The result was a BattleMech not only far less effective than the original, but below the capabilities of even the Wolverine it was meant to replace. Only twenty-five of these Exterminators were produced and none survived past the Fourth Succession War, making the design effectively extinct in the Inner Sphere. Only later was it revealed that the Exterminator still existed in ComStar's private army, the Com Guards, although even here few were of the hyper-advanced stealth models, and while the Exterminator was retained by the Clans its decidedly "dishonorable" method of fighting meant few were used. ComStar continued to produce variants which took advantage of recovered lostech, and the design was used by the Word of Blake during the Jihad.
+
+manufacturer:Refit
+primaryfactory:Various
+systemmanufacturer:CHASSIS:SL Special
+systemmanufacturer:ENGINE:Magna 390 XL
+systemmanufacturer:ARMOR:Fibrolyte Armorscale
+systemmanufacturer:COMMUNICATIONS:Tek BattleCom
+systemmanufacturer:TARGETING:Tek LOR T13d

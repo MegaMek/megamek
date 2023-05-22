@@ -1,0 +1,12 @@
+Light 'Mechs
+Hitman HM-2, 1
+Jenner JR7-C3, 2
+Valiant V4-LNT-K7, 3
+Venom SDR-9KB, 4
+Wight WGT-1LAW/SC, 5
+Panther PNT-12A, 6
+Phoenix Hawk L 'Fenikkusu Taka' PXH-11K, 5
+Spider SDR-8X, 4
+Owens OW-1, 3
+Arbalest 2, 2
+Ocelot 3, 1

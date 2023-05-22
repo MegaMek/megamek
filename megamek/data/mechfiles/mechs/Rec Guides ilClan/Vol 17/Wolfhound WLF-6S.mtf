@@ -1,0 +1,169 @@
+Version:1.2
+Wolfhound
+WLF-6S
+mul id:8223
+
+Config:Biped
+techbase:Inner Sphere
+era:3133
+source:Rec Guide:ilClan #17 - Dark Age
+rules level:3
+
+mass:35
+engine:245 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+ejection:Full Head Ejection System
+
+heat sinks:11 IS Double
+walk mp:7
+jump mp:0
+
+armor:Light Ferro-Fibrous(Inner Sphere)
+LA armor:12
+RA armor:12
+LT armor:11
+RT armor:11
+CT armor:16
+HD armor:9
+LL armor:16
+RL armor:16
+RTL armor:5
+RTR armor:5
+RTC armor:5
+
+Weapons:5
+Large Re-engineered Laser, Right Arm
+ER Medium Laser, Left Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Center Torso
+Small X-Pulse Laser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Large Re-engineered Laser
+Large Re-engineered Laser
+Large Re-engineered Laser
+Large Re-engineered Laser
+Large Re-engineered Laser
+ISAES
+IS Light Ferro-Fibrous
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISERMediumLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISERMediumLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERMediumLaser
+ISSmallXPulseLaser (R)
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+
+overview:The Wolfhound, a light, sturdy, and dependable design, first appeared in 3028. The ultimate design was a light 'Mech with an all-energy weapons payload effective at a variety of combat ranges, the most armor for a 'Mech of its weight class, and primarily standard components to keep costs down. 
+
+capabilities:Archon Katrina Steiner directed TharHes Industries to create a BattleMech to address a long-standing issue with the Lyran Commonwealth Armed Forces: tracking down and defeating the Panther and Jenner, quick light-weight 'Mechs of the Draconis Combine that had embarrassed the LCAF far too many times. The ultimate design was a light 'Mech with an all-energy weapons payload effective at a variety of combat ranges, the most armor for a 'Mech of its weight class, and primarily standard components to keep costs down. While the majority of the components used in the Wolfhound are Lyran in origin, the use of a Full-Head Ejection System required the help of the Federated Suns. Countless MechWarrior lives have been saved thanks to this system's ability to operate in traditionally hostile environments.
+
+deployment:A Dark Age variant, this Wolfhound carries an ER medium laser in each torso, while the center torso carries a small X-Pulse laser to cover the rear. The right arm is equipped with an Actuator Enhancement System to steady the large re-engineered laser that provides the bulk of the firepower. An XL engine is fitted and allows the Wolfhound to reach a top speed of 111 km/h. An endo steel chassis and light ferro-fibrous armor are fitted as well. 
+
+history:The Kell Hounds were the first unit chosen to field-test the Wolfhound in combat because of their intense loyalty to House Steiner, followed shortly after by Wolf's Dragoons. The design was put through its paces during the Fourth Succession War, where it outperformed all expectations. This was especially true when the Wolfhound faced its intended targets, hitting the Jenner beyond its capacity to return fire while closing the distance on the Panther to get inside range of its primary armament. After the war's triumphant conclusion, the Federated Commonwealth purchased more Wolfhounds to outfit its troops, and the design was utilized again during the War of 3039. Wolfhounds sustained substantially fewer deaths than other 'Mechs during that fight, and as a result, only a few were captured by the Combine. While awed by the 'Mech, the Kuritans were too proud to replicate it, instead relying on captured examples to help create the Wolf Trap particularly to defeat the 'Mech. Arc-Royal MechWorks was eventually recruited in to construct Wolfhounds under license from TharHes, and the recovery of lostech owing to the Helm Memory Core allowed for the production of a more advanced model to combat the Clan Invasion. Sadly, it took too long for TharHes' factories to be retooled in order to build the WLF-2 model, which was introduced in 3052, before ComStar ended the invasion with the Battle of Tukayyid. These updated Wolfhounds were still created for both FedCom member states, but once the Lyran Alliance was formed, TharHes manufacturers began creating the newer WLF-3S variant. This new type was only distributed to units loyal to the Lyran state, and so fought on Katherine Steiner-side Davion's during the FedCom Civil War. During the Jihad, the Word of Blake launched a crushing attack on Tharkad, essentially shutting down TharHes' Wolfhound factory line; in response, Arc-Royal expanded production and created the WLF-4 variant to compensate for allied troops combating the Blakists' losses.
+
+manufacturer:TharHes Industries
+primaryfactory:Tharkad
+systemmanufacturer:CHASSIS:Arc-Royal KH/3-E
+systemmanufacturer:ENGINE:GM 210 XL
+systemmanufacturer:ARMOR:Durallex Light
+systemmanufacturer:COMMUNICATIONS:O/P Com-22/H47
+systemmanufacturer:TARGETING:Digital Scanlok 347

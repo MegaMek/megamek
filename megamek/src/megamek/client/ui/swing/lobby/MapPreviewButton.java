@@ -18,7 +18,7 @@
  */
 package megamek.client.ui.swing.lobby;
 
-import megamek.client.ui.swing.GUIPreferences;
+import megamek.MMConstants;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.MapSettings;
 import megamek.common.util.ImageUtil;
@@ -155,7 +155,7 @@ public class MapPreviewButton extends JButton {
             // Add the labels (index, name, example)
             BufferedImage drawableImage = ImageUtil.createAcceleratedImage(scaledImage);
             Graphics g = drawableImage.getGraphics();
-            GUIPreferences.AntiAliasifSet(g);
+            UIUtil.setHighQualityRendering(g);
             if (lobby.isMultipleBoards()) {
                 drawIndex(g, w, h);
             }
@@ -189,7 +189,7 @@ public class MapPreviewButton extends JButton {
         String text = Integer.toString(index + 1);
         int fontSize = Math.min(w, h) / 4;
         fontSize = Math.min(fontSize, UIUtil.scaleForGUI(45));
-        g.setFont(new Font("Dialog", Font.PLAIN, fontSize));
+        g.setFont(new Font(MMConstants.FONT_DIALOG, Font.PLAIN, fontSize));
         FontMetrics fm = g.getFontMetrics(g.getFont());
         int cx = (w - fm.stringWidth(text)) / 2;
         int cy = (h + fm.getAscent() - fm.getDescent()) / 2;
@@ -200,7 +200,7 @@ public class MapPreviewButton extends JButton {
     private void drawExample(Graphics g, int w, int h) {
         String text = "Example board";
         int fontSize = Math.min(w / 10, UIUtil.scaleForGUI(25));
-        g.setFont(new Font("Dialog", Font.ITALIC, fontSize));
+        g.setFont(new Font(MMConstants.FONT_DIALOG, Font.ITALIC, fontSize));
         FontMetrics fm = g.getFontMetrics(g.getFont());
         int cx = (w - fm.stringWidth(text)) / 2;
         int cy = h / 10 + fm.getAscent();
@@ -259,9 +259,8 @@ public class MapPreviewButton extends JButton {
                     } else {
                         return false;
                     }
-                } catch (Exception exp) {
-                    LogManager.getLogger().error("A problem has occurred with map drag-and-drop.");
-                    exp.printStackTrace();
+                } catch (Exception ex) {
+                    LogManager.getLogger().error("A problem has occurred with map drag-and-drop.", ex);
                 }
             }
             return false;

@@ -2,16 +2,20 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 VTOL
 </UnitType>
+
 <Name>
 Cavalry Attack Helicopter
 </Name>
+
 <Model>
 Cadence Rain
 </Model>
@@ -19,50 +23,80 @@ Cadence Rain
 <mul id:>
 508
 </mul id:>
-<Tonnage>
-25
-</Tonnage>
+
+<year>
+3075
+</year>
+
+<originalBuildYear>
+3075
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+VTOL
+</motion_type>
+
+<transporters>
+troopspace:4.0
+</transporters>
+
 <cruiseMP>
 10
 </cruiseMP>
-<Armor>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+8
+</armor_type>
+
+<armor_tech>
+7
+</armor_tech>
+
+<armor>
 23
 15
 15
 9
 2
-</Armor>
+</armor>
+
+<Body Equipment>
+ISMagshotGR Ammo
+ISGuardianECMSuite
+ISVTOLJetBooster
+</Body Equipment>
+
 <Front Equipment>
 ISMagshotGR
 ISMagshotGR
 ISMagshotGR
 </Front Equipment>
-<Body Equipment>
-ISMagshotGR Ammo
-ISGuardianECM
-ISVTOLJetBooster
-</Body Equipment>
-<type>
-IS Level 4
-</type>
-<year>
-3075
-</year>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Rotor Equipment>
+</Rotor Equipment>
+
 <source>
-Jihad
+XTRO Davion - Jihad
 </source>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-8
-</armor_type>
-<transporters>
-TroopSpace: 4.0
-</transporters>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-VTOL
-</motion_type>
+
+<tonnage>
+25.0
+</tonnage>
+

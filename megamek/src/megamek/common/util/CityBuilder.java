@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Vector;
 
 import megamek.common.*;
+import megamek.common.annotations.Nullable;
 
 /**
  * @author Torren + Coelocanth
@@ -67,16 +68,17 @@ public class CityBuilder {
             addGenericRoad();
         }
 
-        if (cityType.equalsIgnoreCase("HUB"))
+        if (cityType.equalsIgnoreCase("HUB")) {
             buildHubCity(width, height, roads);
-        else if (cityType.equalsIgnoreCase("METRO"))
+        } else if (cityType.equalsIgnoreCase("METRO")) {
             buildMetroCity(width, height);
-        else if (cityType.equalsIgnoreCase("GRID"))
+        } else if (cityType.equalsIgnoreCase("GRID")) {
             buildGridCity(width, height, (roads + 5) / 6);
-        else if (cityType.equalsIgnoreCase("TOWN"))
+        } else if (cityType.equalsIgnoreCase("TOWN")) {
             return buildTown(width, height, roads, mapSettings.getTownSize());
-        else
+        } else {
             return new ArrayList<>();
+        }
 
         return placeBuildings(0);
     }
@@ -123,34 +125,31 @@ public class CityBuilder {
                     if (cityPlan.contains(next) || buildingUsed.contains(next)
                             || !board.contains(next)
                             || !isHexBuildable(board.getHex(next))) {
-                        break; // oh well, cant expand here
+                        break; // oh well, can't expand here
                     }
                     coordList.add(next);
                     buildingUsed.add(next);
                 }
 
-                int floors = mapSettings.getCityMaxFloors()
-                        - mapSettings.getCityMinFloors();
+                int floors = mapSettings.getCityMaxFloors() - mapSettings.getCityMinFloors();
 
-                if (floors <= 0)
+                if (floors <= 0) {
                     floors = mapSettings.getCityMinFloors();
-                else
-                    floors = Compute.randomInt(floors + 1)
-                            + mapSettings.getCityMinFloors();
+                } else {
+                    floors = Compute.randomInt(floors + 1) + mapSettings.getCityMinFloors();
+                }
 
-                int totalCF = mapSettings.getCityMaxCF()
-                        - mapSettings.getCityMinCF();
+                int totalCF = mapSettings.getCityMaxCF() - mapSettings.getCityMinCF();
 
-                if (totalCF <= 0)
+                if (totalCF <= 0) {
                     totalCF = mapSettings.getCityMinCF();
-                else
-                    totalCF = Compute.randomInt(totalCF + 1)
-                            + mapSettings.getCityMinCF();
+                } else {
+                    totalCF = Compute.randomInt(totalCF + 1) + mapSettings.getCityMinCF();
+                }
 
                 int type = getBuildingTypeByCF(totalCF);
 
-                buildingList.add(new BuildingTemplate(type, coordList, totalCF,
-                        floors, -1));
+                buildingList.add(new BuildingTemplate(type, coordList, totalCF, floors, -1));
             }
         }
 
@@ -302,7 +301,6 @@ public class CityBuilder {
         for (int dir = 0; dir < 8; dir++) {
             coords = new Coords(midX, midY);
             buildStraightRoad(coords, dir, 2);
-
         }
     }
 
@@ -343,11 +341,10 @@ public class CityBuilder {
      * @return true if the hex needs a bridge to cross
      */
     private boolean hexNeedsBridge(Hex hex) {
-        if (hex.containsTerrain(Terrains.ROAD)
-                || hex.containsTerrain(Terrains.BRIDGE))
+        if (hex.containsTerrain(Terrains.ROAD) || hex.containsTerrain(Terrains.BRIDGE)) {
             return false;
-        return (hex.containsTerrain(Terrains.WATER) || hex
-                .containsTerrain(Terrains.MAGMA));
+        }
+        return (hex.containsTerrain(Terrains.WATER) || hex.containsTerrain(Terrains.MAGMA));
     }
 
     private void addRoad(Hex hex, int exitDirection, int type) {
@@ -392,7 +389,7 @@ public class CityBuilder {
      * @param direction
      * @return coordinates to resume roadbuilding
      */
-    private Coords tryToBuildBridge(Coords start, int direction) {
+    private @Nullable Coords tryToBuildBridge(Coords start, int direction) {
         if (!board.contains(start)) {
             return null;
         }
@@ -415,14 +412,16 @@ public class CityBuilder {
 
         if (end != null) {
             // got start and end, can we make a bridge?
-            if (hexes.size() == 0)
+            if (hexes.isEmpty()) {
                 return null;
+            }
             int elev1 = board.getHex(start).getLevel();
             int elev2 = board.getHex(end).getLevel();
             int elevBridge = board.getHex(end).terrainLevel(Terrains.BRIDGE);
             if (elevBridge >= 0) {
-                if (Math.abs(elev2 + elevBridge - elev1) > 2)
+                if (Math.abs(elev2 + elevBridge - elev1) > 2) {
                     return null;
+                }
                 elev1 = elev2 + elevBridge;
             } else {
                 if (Math.abs(elev1 - elev2) > 4) {
@@ -477,10 +476,10 @@ public class CityBuilder {
             Coords next = extendRoad(coords, direction, roadStyle);
             if (next == null) {
                 coords = resumeAfterObstacle(coords, direction);
-            } else
+            } else {
                 coords = next;
+            }
         }
-
     }
 
     /**
@@ -490,13 +489,15 @@ public class CityBuilder {
      * @return building type
      */
     public static int getBuildingTypeByCF(int cf) {
-        if (cf <= 15)
+        if (cf <= 15) {
             return Building.LIGHT;
-        if (cf <= 40)
+        } else if (cf <= 40) {
             return Building.MEDIUM;
-        if (cf <= 90)
+        } else if (cf <= 90) {
             return Building.HEAVY;
-        return Building.HARDENED;
+        } else {
+            return Building.HARDENED;
+        }
     }
 
     /**

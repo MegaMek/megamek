@@ -152,20 +152,18 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:The Awesome was designed in 2665 for the Star League by the Technicron Conglomorate and was based on the aging STR-2C Striker. While not as fast as its forefather, the Awesome is a strong assault 'Mech.
 
-Overview: Tasked by the SLDF to replace their aging fleet of Strikers, Technicron Manufacturing would present their Awesome in 2665. Few at the time realized that the design would quickly become one of the most coveted Assault 'Mechs of the Succession Wars to come. Nearly always tasked with the heaviest attacks, the Awesome and its PPC-based armament would come to be regarded as the quintessential "zombie" design. Durable, reliable, and near unstoppable, officers jump at any opportunity to field the design within their commands.
+capabilities:The Awesome's abilities are nearly entirely dependent on its particle projection cannons. The AWS can withstand a severe and consistent onslaught from its weaponry thanks to several heat sinks. With one and a half tons more armor than the Striker, the AWS is more protected than even the BattleMaster. The Amazing, like any other BattleMech, has weaknesses. While it is lethal at range, it is less effective in close-quarters combat since its PPCs have a tougher time connecting with the victim. In that case, it just possesses a light weapon and a left fist to fall back on. Because of its limited mobility, it is vulnerable to flanking attacks from speedier opponents seeking to get past the PPCs. While they face arguably of the heaviest rear armor found on any BattleMech, the Awesome's lack of rear facing armaments or a weapon mount on its left arm has offered numerous MechWarriors a fighting chance. Formations of Awesomes (or even just a few) are incredibly effective and tough to stop or defeat when correctly placed by commanders who are knowledgeable of the AWS's limitations.
 
-Capabilities: The PPCs of most Awesomes give it intimidating firepower over long ranges. Its thick armor plating, intelligent system placement, and lack of explosive components makes disabling one a challenging task; indeed, even flaking 'Mechs will find their attempts thwarted by the Awesome's unusually heavy rear armor. Careful heat management is a must when at the helm of an Awesome. A standard "2-3-2" volley became the norm for most MechWarriors, giving the 'Mech the greatest damage output without compromizing its accuracy. Its slow speed and targeting trouble with the PPCs at short range does give it some weaknesses, however, and it always fares best when well supported by a larger formation.
+deployment:The 9M is an upgrade of the Awesome that uses Star League technologies and was introduced in 3049. The 'Mech is built around a 320 Hermes XL fusion engine, giving the 'Mech a top speed of 64.8 km/h. The heat sinks were upgraded to double heat sinks to allow this variant to be rearmed with three Fusigon Longtooth ER PPCs. The ER PPCs are backed up by two Hovertec Streak SRM-2s, split between the left arm and center torso and fed by one ton of reloads in the left leg, a Magna 400P Medium Pulse Laser also in the center torso, and a Diverse Optics Type 10 Small Pulse Laser in place of the head-mounted small laser.
 
-Deployment: The discovery of the Helm Memory Core put a wealth of technical data into the hands of House Marik. Applying this technological renaissance to their premier assault BattleMech, the Awesome, would lead to the appearance of the AWS-9M. While still built around a trio of PPCs, the 'Mechs role was heavily altered, and reception of the design was mixed. Even so, the 'Mech was wildly sold throughout the Inner Sphere, and may still be found in the armed forces of every Successor State.
+history:Awesomes can be found in every military House. Because the Free Worlds League has the last remaining manufacturing factories capable of generating the Awesome, it also has the most Awesomes of any of the Great Houses. Opinions on the 'Mech vary greatly within the League. Many people laud its powers, while others believe that its limited mobility is too high a price to pay for what it can do. Similar sentiments exist in the other Houses, but none of them can debate the issue beyond academics. Few commanders would turn down the opportunity to acquire an Awesome for their army. The Awesome is typically used to assault a fixed position or to breach the enemy's line of defense. They are also in demand for defensive operations. MechWarriors piloting the Awesome can expect to be involved in heavy battle and to be charged with obtaining or guarding the most crucial objectives from the adversary.
 
-systemmanufacturer:CHASSIS:Technicron
-systemmode:CHASSIS:Type G
-systemmanufacturer:ENGINE:Pitban
-systemmode:ENGINE:320 XL
-systemmanufacturer:ARMOR:Durallex
-systemmode:ARMOR:Heavy Special
-systemmanufacturer:COMMUNICATIONS:Garrett
-systemmode:COMMUNICATIONS:T19-G
-systemmanufacturer:TARGETING:Dynatec
-systemmode:TARGETING:2780
+manufacturer:Irian BattleMechs Unlimited,Technicron Manufacturing
+primaryfactory:Irian,Savannah
+systemmanufacturer:CHASSIS:Technicron Type G
+systemmanufacturer:ENGINE:320 Hermes XL
+systemmanufacturer:ARMOR:Durallex Heavy Special
+systemmanufacturer:COMMUNICATIONS:Garrett T19-G
+systemmanufacturer:TARGETING:Dynatec 2780

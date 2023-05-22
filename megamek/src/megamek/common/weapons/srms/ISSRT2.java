@@ -23,15 +23,8 @@ package megamek.common.weapons.srms;
  * @author Sebastian Brocks
  */
 public class ISSRT2 extends SRTWeapon {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 4156966181240837624L;
 
-    /**
-     *
-     */
     public ISSRT2() {
         super();
         name = "SRT 2";
@@ -52,14 +45,14 @@ public class ISSRT2 extends SRTWeapon {
         cost = 10000;
         rulesRefs = "230, TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_C)
-            .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
-            .setISAdvancement(2665, 2676, 3045, DATE_NONE, DATE_NONE)
-            .setISApproximate(true, false, false,false, false)
-            .setPrototypeFactions(F_TH)
-            .setProductionFactions(F_TH)
-            .setReintroductionFactions(F_FW);
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_C)
+                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+                .setISAdvancement(2665, 2676, 3045, DATE_NONE, DATE_NONE)
+                .setISApproximate(true, false, false, false, false)
+                .setPrototypeFactions(F_TH)
+                .setProductionFactions(F_TH)
+                .setReintroductionFactions(F_FW);
     }
 }

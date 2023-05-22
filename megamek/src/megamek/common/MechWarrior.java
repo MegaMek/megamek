@@ -13,6 +13,7 @@
  */
 package megamek.common;
 
+import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -99,16 +100,10 @@ public class MechWarrior extends EjectedCrew {
         this.pickedUpById = pickedUpById;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Infantry#calculateBattleValue()
-     */
     @Override
-    public int calculateBattleValue() {
+    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
         return 0;
     }
-
 
     /**
      * Ejected pilots do not get killed by ammo/fusion engine explosions

@@ -398,7 +398,7 @@ Extended LRM/10 Turret (Triple), 30
 Enhanced LRM/10 Turret (Quad), 29
 Extended LRM/15 Turret (Dual), 28
 Extended LRM/20 Turret (Single), 27
-Calliope Turret (Standard), 26
+Calliope Turret (3053), 26
 Imp.Heavy Gauss Turret (Single), 25
 Enhanced LRM/15 Turret (Triple), 24
 HV Autocannon/10 Turret (Triple), 23

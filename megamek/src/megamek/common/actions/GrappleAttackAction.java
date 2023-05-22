@@ -184,11 +184,13 @@ public class GrappleAttackAction extends PhysicalAttackAction {
      * @return
      */
     public static ToHitData checkIllegal(Game game, Entity ae, Targetable target, int grappleSide) {
-        if (ae == null)
+        if (ae == null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't attack from a null entity!");
+        }
 
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GRAPPLING))
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GRAPPLING)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "grappling attack not allowed");
+        }
 
         // LAM AirMechs can only grapple when grounded.
         if (ae.isAirborneVTOLorWIGE()) {
@@ -302,7 +304,7 @@ public class GrappleAttackAction extends PhysicalAttackAction {
         int atGr = ae.getGrappled();
         int deGr = te.getGrappled();
         if ((atGr != Entity.NONE || deGr != Entity.NONE)
-                && atGr != target.getTargetId() && te.isGrappleAttacker()) {
+                && atGr != target.getId() && te.isGrappleAttacker()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Already grappled");
         }
 

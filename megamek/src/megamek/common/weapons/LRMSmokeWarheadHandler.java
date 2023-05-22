@@ -19,39 +19,27 @@
  */
 package megamek.common.weapons;
 
-import java.util.Vector;
-
-import megamek.common.AmmoType;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Report;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.Server;
+import megamek.server.GameManager;
 import megamek.server.SmokeCloud;
+
+import java.util.Vector;
 
 /**
  * @author FogHat
  */
 public class LRMSmokeWarheadHandler extends LRMHandler {
-
-    /**
-     *
-     */
-
     private static final long serialVersionUID = -30934685350251837L;
 
     /**
      * @param t
      * @param w
      * @param g
-     * @param s
+     * @param m
      */
-    public LRMSmokeWarheadHandler(ToHitData t, WeaponAttackAction w, Game g,
-            Server s) {
-        super(t, w, g, s);
+    public LRMSmokeWarheadHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
     }
 
     /*
@@ -62,8 +50,7 @@ public class LRMSmokeWarheadHandler extends LRMHandler {
      * megamek.common.Entity, boolean)
      */
     @Override
-    protected boolean specialResolution(Vector<Report> vPhaseReport,
-            Entity entityTarget) {
+    protected boolean specialResolution(Vector<Report> vPhaseReport, Entity entityTarget) {
         Coords coords = target.getPosition();
         Coords center = coords;
 
@@ -101,9 +88,9 @@ public class LRMSmokeWarheadHandler extends LRMHandler {
                 smokeType = SmokeCloud.SMOKE_HEAVY;
             }
             
-            server.deliverMissileSmoke(center, smokeType, vPhaseReport);
+            gameManager.deliverMissileSmoke(center, smokeType, vPhaseReport);
         } else if (atype.getMunitionType() == AmmoType.M_ANTI_TSM) {
-            server.deliverMissileSmoke(center, SmokeCloud.SMOKE_GREEN, vPhaseReport);
+            gameManager.deliverMissileSmoke(center, SmokeCloud.SMOKE_GREEN, vPhaseReport);
             return false;
         }
         return true;

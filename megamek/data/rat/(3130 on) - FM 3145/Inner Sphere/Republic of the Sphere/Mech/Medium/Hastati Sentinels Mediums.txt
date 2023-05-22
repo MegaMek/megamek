@@ -1,0 +1,12 @@
+Hastati Sentinels Medium Mechs
+Shockwave SKW-2F,1
+Thunder Fox TFT-A9,2
+Griffin GRF-5M,3
+Blackjack BJ2-O,4
+Griffin IIC 3,5
+Lineholder KW1-LH8 'Linebreaker',6
+Hunchback HBK-6N,5
+Shadow Hawk SHD-11CS,4
+Osprey OSP-26,3
+Mad Cat III (Standard),2
+Shadow Hawk IIC 8,1

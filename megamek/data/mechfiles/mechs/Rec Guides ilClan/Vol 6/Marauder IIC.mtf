@@ -1,0 +1,171 @@
+Version:1.3
+Marauder IIC
+
+mul id:2065
+Config:Biped
+techbase:Clan
+era:2828
+source:Rec Guide:ilClan #6 - Succession Wars
+rules level:2
+
+mass:85
+engine:340 Fusion (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:21 Clan Double
+walk mp:4
+jump mp:0
+
+armor:Ferro-Fibrous(Clan)
+LA armor:24
+RA armor:24
+LT armor:26
+RT armor:26
+CT armor:30
+HD armor:9
+LL armor:27
+RL armor:27
+RTL armor:8
+RTR armor:8
+RTC armor:11
+
+Weapons:9
+ER PPC, Left Arm
+Medium Pulse Laser, Left Arm
+ER PPC, Right Arm
+Medium Pulse Laser, Right Arm
+ER PPC, Left Torso
+ER Small Laser, Left Torso
+ER Small Laser, Right Torso
+ER Small Laser, Center Torso
+ER Small Laser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLERPPC
+CLERPPC
+CLMediumPulseLaser
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLERPPC
+CLERPPC
+CLMediumPulseLaser
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERPPC
+CLERPPC
+CLERSmallLaser
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+
+Right Torso:
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERSmallLaser
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLERSmallLaser
+CLERSmallLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:Given the Marauder's outstanding performance and sterling reputation, it was only natural for the Clans to commit resources to constructing a worthy successor.
+
+capabilities:While fundamentally comparable to the original Marauder in many aspects, even Golden Century ClanTech's sophisticated capabilities could not prevent the BattleMech's chassis from growing to accommodate all of its enhancements. As a result, the Marauder IIC received ten tons of overall bulk, similar to other classic 'Mechs modified by the Clans at the period. The IIC followed in both function and form the huge footsteps of its ancestor, emphasizing a perfect blend of long-range, high yield firepower, robust armor, and the mobility to keep up with its supporting troops. Although the Clans' dueling heritage prized individual warrior prowess and rapid encounters over drawn-out campaigns, their choice for high-power energy weapons over ballistics and missiles allows this 'Mech to stay lethal in the hands of an expert MechWarrior nearly indefinitely. When combined with its other characteristics, the Marauder IIC's battlefield durability cemented its position as a suitable command 'Mech, as well as its appeal among the glory-seeking warriors that comprise the majority of the Clan officer corps.
+
+deployment:Built around the Extended-Range Particle Projector Cannon, one of the most powerful weapons in the Clan arsenal, the Marauder IIC's weapon layout is typical of the standard Marauder, each pod-like forearm carrying an ER PPC paired with Medium Pulse Lasers. Where the Marauder IIC differs is with its torso weaponry, replacing the top-mounted autocannon and its vulnerable ammunition-feed linkage with another ER PPC, and adding a set of four ER Small Lasers. Twenty-one double heat sinks keep heat levels manageable, with an enterprising MechWarrior able to use volley fire to keep up a steady barrage of fire.
+
+history:The Marauder IIC had that designation prior to the introduction of Omni technology and the construction of the Timber Wolf. The Marauder IIC was built from the ground up in the image of its forefather, taking full advantage of the cutting-edge technology available at the time to improve on every aspect of the original. The end result was a bigger, stronger, more resilient, and durable Marauder—one that is still popular today, despite being classified as a "second-line" BattleMech. The Jade Falcons continue to build the Marauder IIC in its original architecture, joining the Rasalhague Dominion's "Phoenix" versions as the fearsome core of numerous Clan attack formations.
+
+manufacturer:Olivetti Weaponry,Wolf Clan Site #2, Gorton, Kingsley, & Thorpe Enterprises (Refit),Olivetti Weaponry (Refit)
+primaryfactory:Sudeten,Strana Mechty (Wolf Enclave),Satalice,Sudeten
+systemmanufacturer:CHASSIS:Type 850 Light
+systemmanufacturer:ENGINE:Consolidated Fusion 340
+systemmanufacturer:ARMOR:Forging MD4 Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:Series D8 CC-25Xa
+systemmanufacturer:TARGETING:“Hermes” CT-42 Mk. II
+

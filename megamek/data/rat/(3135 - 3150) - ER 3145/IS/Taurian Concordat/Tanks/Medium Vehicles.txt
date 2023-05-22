@@ -8,5 +8,5 @@ Vedette Medium Tank (Standard),6
 Light SRM Carrier (Standard),5
 Prowler Multi-Terrain Vehicle (Standard),4
 Regulator Hovertank (Standard),3
-Condor Heavy Hover Tank (Upgrade) (Standard),2
+Condor Heavy Hover Tank (Upgrade),2
 Prowler Multi-Terrain Vehicle (ECM),1

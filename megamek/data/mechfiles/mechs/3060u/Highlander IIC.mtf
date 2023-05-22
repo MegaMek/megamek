@@ -1,12 +1,12 @@
 Version:1.0
 Highlander IIC
-(Standard)
+
 mul id:1524
 
 Config:Biped
 techbase:Clan
 era:2858
-source:TRO 3060
+source:TRO 3060 - Early Succession War
 rules level:2
 
 mass:90

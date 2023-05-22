@@ -20,7 +20,6 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.*;
 import megamek.common.actions.*;
 import megamek.common.enums.AimingMode;
-import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.Weapon;
 
@@ -207,14 +206,16 @@ public class FireCommand extends ClientCommand {
         }
 
         WeaponAttackAction waa = new WeaponAttackAction(cen, target
-                .getTargetType(), target.getTargetId(), weaponNum);
+                .getTargetType(), target.getId(), weaponNum);
 
         if (mounted.getLinked() != null && ((WeaponType) mounted.getType()).getAmmoType() != AmmoType.T_NA) {
             Mounted ammoMount = mounted.getLinked();
             AmmoType ammoType = (AmmoType) ammoMount.getType();
             waa.setAmmoId(ammoMount.getEntity().getEquipmentNum(ammoMount));
+            long ammoMunitionType = ammoType.getMunitionType();
+            waa.setAmmoMunitionType(ammoMunitionType);
             waa.setAmmoCarrier(ammoMount.getEntity().getId());
-            if (((ammoType.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB)
+            if (((ammoMunitionType == AmmoType.M_THUNDER_VIBRABOMB)
                     && (ammoType.getAmmoType() == AmmoType.T_LRM 
                     || ammoType.getAmmoType() == AmmoType.T_MML
                     || ammoType.getAmmoType() == AmmoType.T_LRM_IMP))
@@ -244,12 +245,13 @@ public class FireCommand extends ClientCommand {
             throw new IllegalArgumentException("current searchlight parameters are invalid");
         }
 
-        if (!SearchlightAttackAction.isPossible(getClient().getGame(), cen, target, null))
+        if (!SearchlightAttackAction.isPossible(getClient().getGame(), cen, target, null)) {
             return;
+        }
 
         // create and queue a searchlight action
         SearchlightAttackAction saa = new SearchlightAttackAction(cen, target.getTargetType(),
-                target.getTargetId());
+                target.getId());
         attacks.addElement(saa);
 
         // and add it into the game, temporarily
@@ -263,21 +265,18 @@ public class FireCommand extends ClientCommand {
             str = "";
             toHit = WeaponAttackAction.toHit(getClient().getGame(), cen, target, weaponId,
                     Entity.LOC_NONE, AimingMode.NONE, false);
-            // str += "Target: " + target.toString();
 
-            str += " Range: "
-                   + ce().getPosition().distance(target.getPosition());
+            str += " Range: " + ce().getPosition().distance(target.getPosition());
 
             Mounted m = ce().getEquipment(weaponId);
             if (m.isUsedThisRound()) {
                 str += " Can't shoot: "
                        + Messages.getString("FiringDisplay.alreadyFired");
             } else if ((m.getType().hasFlag(WeaponType.F_AUTO_TARGET) && !m.curMode().equals(Weapon.MODE_AMS_MANUAL))
-                        || (m.getType().hasModes() && m.curMode().equals("Point Defense"))) {
+                    || (m.getType().hasModes() && m.curMode().equals("Point Defense"))) {
                 str += " Can't shoot: "
                        + Messages.getString("FiringDisplay.autoFiringWeapon");
-            } else if (getClient().getGame().getPhase() == GamePhase.FIRING
-                        && m.isInBearingsOnlyMode()) {
+            } else if (getClient().getGame().getPhase().isFiring() && m.isInBearingsOnlyMode()) {
                 str += " Can't shoot: "
                         + Messages.getString("FiringDisplay.bearingsOnlyWrongPhase");
             } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {

@@ -235,153 +235,186 @@ public class Sensor implements Serializable {
                 || ((Infantry) te).hasSneakIR() || ((Infantry) te).hasDEST());
         boolean hasSneakECM = te.isConventionalInfantry() && ((Infantry) te).hasSneakECM();
 
-        // these are cumulative, so lets just plow through the table on pg. 224
-        // (ick)
-        // null sig
+        // these are cumulative, so lets just plow through the table on pg. 224 (ick)
         switch (type) {
-            case (TYPE_BAP):
-            case (TYPE_BAPP):    
-            case (TYPE_EW_EQUIPMENT):
+            case TYPE_BAP:
+            case TYPE_BAPP:
+            case TYPE_EW_EQUIPMENT:
                 if (te.isVoidSigActive()) {
                     mod += 6;
                 }
+
                 if (te.isNullSigActive()) {
                     mod += 5;
                 }
+
                 if (te.isStealthActive() && !te.isNullSigActive()) {
                     mod += 3;
                 }
+
                 if (hasSneakECM) {
                     mod += 3;
                 }
+
                 if (hasSneak) {
                     mod += 2;
                 }
                 break;
-            case (TYPE_WATCHDOG):
-            case (TYPE_NOVA): // WOR: same as above. No data available, assuming
-                              // Watchdog performancae
+            case TYPE_WATCHDOG:
+            case TYPE_NOVA:
+                // WOR : same as above. No data available, assuming Watchdog performance
                 if (te.isVoidSigActive()) {
                     mod += 6;
                 }
+
                 if (te.isNullSigActive()) {
                     mod += 5;
                 }
+
                 if (te.isStealthActive() && !te.isNullSigActive()) {
                     mod += 3;
                 }
+
                 if (hasSneakECM) {
                     mod += 2;
                 }
+
                 if (hasSneak) {
                     mod += 1;
                 }
                 break;
-            case (TYPE_CLAN_BAP):
+            case TYPE_CLAN_BAP:
                 if (te.isVoidSigActive()) {
                     mod += 5;
                 }
+
                 if (te.isNullSigActive()) {
                     mod += 5;
                 }
+
                 if (te.isStealthActive() && !te.isNullSigActive()) {
                     mod += 3;
                 }
+
                 if (hasSneakECM) {
                     mod += 2;
                 }
+
                 if (hasSneak) {
                     mod += 1;
                 }
                 break;
-            case (TYPE_BLOODHOUND):
+            case TYPE_BLOODHOUND:
                 if (te.isChameleonShieldActive()) {
                     mod += 1;
                 }
+
                 if (te.isVoidSigActive()) {
                     mod += 4;
                 }
+
                 if (te.isNullSigActive()) {
                     mod += 3;
                 }
+
                 if (te.isStealthActive() && !te.isNullSigActive()) {
                     mod += 1;
                 }
+
                 if (te.hasWorkingMisc(MiscType.F_VISUAL_CAMO, -1)) {
                     mod += 1;
                 }
+
                 if (hasSneakECM) {
                     mod += 1;
                 }
+
                 if (hasSneak) {
                     mod += 1;
                 }
                 break;
-            case (TYPE_LIGHT_AP):
+            case TYPE_LIGHT_AP:
                 if (te.isVoidSigActive()) {
                     mod += 6;
                 }
+
                 if (te.isNullSigActive()) {
                     mod += 6;
                 }
+
                 if (te.isStealthActive() && !te.isNullSigActive()) {
                     mod += 4;
                 }
+
                 if (hasSneakECM) {
                     mod += 3;
                 }
+
                 if (hasSneak) {
                     mod += 2;
                 }
                 break;
-            case (TYPE_MEK_RADAR):
+            case TYPE_MEK_RADAR:
                 if (te.isChameleonShieldActive()) {
                     mod += 2;
                 }
+
                 if (te.isVoidSigActive()) {
                     mod += 7;
                 }
+
                 if (te.isNullSigActive()) {
                     mod += 6;
                 }
+
                 if (te.isStealthActive() && !te.isNullSigActive()) {
                     mod += 4;
                 }
+
                 if (te.hasWorkingMisc(MiscType.F_VISUAL_CAMO, -1)) {
                     mod += 2;
                 }
+
                 if (hasSneakECM) {
                     mod += 4;
                 }
+
                 if (hasSneak) {
                     mod += 2;
                 }
                 break;
-            case (TYPE_VEE_RADAR):
-            case (TYPE_BA_IMPROVED):
+            case TYPE_VEE_RADAR:
+            case TYPE_BA_IMPROVED:
                 if (te.isChameleonShieldActive()) {
                     mod += 3;
                 }
+
                 if (te.isVoidSigActive()) {
                     mod += 7;
                 }
+
                 if (te.isNullSigActive()) {
                     mod += 7;
                 }
+
                 if (te.isStealthActive() && !te.isNullSigActive()) {
                     mod += 5;
                 }
+
                 if (te.hasWorkingMisc(MiscType.F_VISUAL_CAMO, -1)) {
                     mod += 3;
                 }
+
                 if (hasSneakECM) {
                     mod += 3;
                 }
+
                 if (hasSneak) {
                     mod += 1;
                 }
                 break;
         }
+
         return mod;
     }
 
@@ -390,13 +423,12 @@ public class Sensor implements Serializable {
      * 
      * @param en
      * @param allECMInfo  A collection of ECMInfo for all entities, this value
-     *                      can be null and it will be computed when it's
-     *                      needed, however passing in the pre-computed 
-     *                      collection is much faster
+     *                    can be null and it will be computed when it's
+     *                    needed, however passing in the pre-computed
+     *                    collection is much faster
      * @return
      */
     public int getModForECM(Entity en, List<ECMInfo> allECMInfo) {
-
         // how many ECM fields are affecting the entity?
         Coords pos = en.getPosition();
         ECMInfo ecmInfo = ComputeECM.getECMEffects(en, pos, pos, true,
@@ -409,21 +441,21 @@ public class Sensor implements Serializable {
         }
 
         switch (type) {
-            case (TYPE_BAP):
-            case (TYPE_BAPP):
-            case (TYPE_CLAN_BAP):
-            case (TYPE_WATCHDOG):
+            case TYPE_BAP:
+            case TYPE_BAPP:
+            case TYPE_CLAN_BAP:
+            case TYPE_WATCHDOG:
                 // as above, no data, assuming watchdog quality
-            case (TYPE_NOVA):
-            case (TYPE_EW_EQUIPMENT):
+            case TYPE_NOVA:
+            case TYPE_EW_EQUIPMENT:
                 return (int) Math.floor((ecm * 4) + (ecmAngel * 5));
-            case (TYPE_BLOODHOUND):
+            case TYPE_BLOODHOUND:
                 return (int) Math.floor((ecm * 2) + (ecmAngel * 3));
-            case (TYPE_LIGHT_AP):
-            case (TYPE_MEK_RADAR):
+            case TYPE_LIGHT_AP:
+            case TYPE_MEK_RADAR:
                 return (int) Math.floor((ecm * 5) + (ecmAngel * 6));
-            case (TYPE_VEE_RADAR):
-            case (TYPE_BA_IMPROVED):
+            case TYPE_VEE_RADAR:
+            case TYPE_BA_IMPROVED:
                 return (int) Math.floor((ecm * 6) + (ecmAngel * 7));
             default:
                 return 0;
@@ -431,13 +463,12 @@ public class Sensor implements Serializable {
     }
 
     public int getModForMetalContent(Entity en, Entity te) {
-        // how much metal is affecting the entity?
-        int metal = Compute.getMetalInPath(en, en.getPosition(),
-                te.getPosition());
+        // How much metal is affecting the entity?
+        int metal = Compute.getMetalInPath(en, en.getPosition(), te.getPosition());
 
         switch (type) {
-            case (TYPE_MEK_MAGSCAN):
-            case (TYPE_VEE_MAGSCAN):
+            case TYPE_MEK_MAGSCAN:
+            case TYPE_VEE_MAGSCAN:
                 return metal;
             default:
                 return 0;
@@ -445,18 +476,15 @@ public class Sensor implements Serializable {
     }
 
     public int entityAdjustments(int range, Entity target, Game game) {
-
-        // you need to have moved to be detected by sesmic and be on the ground
+        // You need to have moved to be detected by seismic and be on the ground
         if (((type == TYPE_MEK_SEISMIC) || (type == TYPE_VEE_SEISMIC))
                 && ((target.mpUsed == 0) || (target.getElevation() > 0))) {
             return 0;
         }
 
-        // if you have infrared, then each increment of 5 heat will increase the
-        // range
+        // If you have infrared, then each increment of 5 heat will increase the range
         if ((type == TYPE_MEK_IR) || (type == TYPE_VEE_IR)) {
-
-            // if the target isn't overheating then you can't detect it
+            // If the target isn't overheating then you can't detect it
             if (target.heat < 1) {
                 return 0;
             }
@@ -464,8 +492,7 @@ public class Sensor implements Serializable {
             range += target.heat / 5;
 
             if ((null != game.getBoard().getHex(target.getPosition()))
-                    && game.getBoard().getHex(target.getPosition())
-                            .containsTerrain(Terrains.FIRE)) {
+                    && game.getBoard().getHex(target.getPosition()).containsTerrain(Terrains.FIRE)) {
                 range += 1;
             }
         }
@@ -482,13 +509,11 @@ public class Sensor implements Serializable {
             }
 
             if ((null != game.getBoard().getHex(target.getPosition()))
-                    && game.getBoard().getHex(target.getPosition())
-                            .containsTerrain(Terrains.INDUSTRIAL)) {
+                    && game.getBoard().getHex(target.getPosition()).containsTerrain(Terrains.INDUSTRIAL)) {
                 return 0;
             }
         }
 
         return range;
     }
-
 }

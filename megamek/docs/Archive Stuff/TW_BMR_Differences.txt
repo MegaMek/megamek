@@ -214,7 +214,7 @@ The Mechanized Infantry are the same as the Mechanized Infantry first appearing 
 
 x2) LRM, SRM, MG, & Flamer Foot Infantry are now move or fire
 
-x3) Battle Armor Squads can now go to 6 Soldiers (for WOB/Comstar)
+x3) Battle Armor Squads can now go to 6 Soldiers (for WOB/ComStar)
 
 x4) Infantry do not suffer from penalties to hit for their movement
 

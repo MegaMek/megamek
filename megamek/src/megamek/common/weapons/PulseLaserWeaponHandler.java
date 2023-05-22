@@ -27,13 +27,13 @@ import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 public class PulseLaserWeaponHandler extends EnergyWeaponHandler {
     private static final long serialVersionUID = -5701939682138221449L;
 
-    public PulseLaserWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, Server s) {
-        super(toHit, waa, g, s);
+    public PulseLaserWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, GameManager m) {
+        super(toHit, waa, g, m);
     }
 
     @Override
@@ -49,7 +49,7 @@ public class PulseLaserWeaponHandler extends EnergyWeaponHandler {
         if ((ae instanceof BattleArmor)
             && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
             && !(weapon.isSquadSupportWeapon())
-            && (ae.getSwarmTargetId() == target.getTargetId())) {
+            && (ae.getSwarmTargetId() == target.getId())) {
             toReturn *= ((BattleArmor) ae).getShootingStrength();
         }
         // Check for Altered Damage from Energy Weapons (TacOp, pg.83)

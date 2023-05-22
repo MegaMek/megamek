@@ -35,6 +35,7 @@ import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
@@ -48,10 +49,10 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
      * @param t
      * @param w
      * @param g
-     * @param s
+     * @param m
      */
-    public CapitalMissileHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public CapitalMissileHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
         advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
     }
     
@@ -128,23 +129,23 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
         bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                 && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
         
-        // Used when using a grounded dropship with individual weapons
+        // Used when using a grounded DropShip with individual weapons
         // or a fighter squadron loaded with ASM or Alamo bombs.
         nDamPerHit = calcDamagePerHit();
         
-        //Point Defense fire vs Capital Missiles
+        // Point Defense fire vs Capital Missiles
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
                 && getParentBayHandler() != null) {
             WeaponHandler bayHandler = getParentBayHandler();
             CounterAV = bayHandler.getCounterAV();
         } else {
-            //This gets used if you're shooting at an airborne dropship. It can defend with PD bays.
+            // This gets used if you're shooting at an airborne DropShip. It can defend with PD bays.
             attackValue = calcAttackValue();
         }
-        //CalcAttackValue triggers counterfire, so now we can safely get this
+        // CalcAttackValue triggers counterfire, so now we can safely get this
         CapMissileAMSMod = getCapMissileAMSMod();
         
-        //Only do this if the missile wasn't destroyed
+        // Only do this if the missile wasn't destroyed
         if (CapMissileAMSMod > 0 && CapMissileArmor > 0) {
             toHit.addModifier(CapMissileAMSMod, "Damage from Point Defenses");
             if (roll < toHit.getValue()) {
@@ -311,7 +312,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
                 if (entityTarget != null) {
                     handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                             nCluster, bldgAbsorbs);
-                    server.creditKill(entityTarget, ae);
+                    gameManager.creditKill(entityTarget, ae);
                     hits -= nCluster;
                     firstHit = false;
                 }

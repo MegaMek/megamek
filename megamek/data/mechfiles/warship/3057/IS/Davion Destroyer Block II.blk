@@ -1,0 +1,339 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Davion Destroyer
+</Name>
+
+<Model>
+Block II
+</Model>
+
+<mul id:>
+4053
+</mul id:>
+
+<year>
+2552
+</year>
+
+<originalBuildYear>
+2552
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+smallcraftbay:18.0:6:1
+dockingcollar
+dockingcollar
+steeragequarters:280.0:0
+crewquarters:1120.0:0
+1stclassquarters:990.0:0
+cargobay:72216.5:2:7
+</transporters>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<heatsinks>
+1000
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+12500
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+11
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+105
+90
+90
+80
+85
+85
+</armor>
+
+<Nose Equipment>
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:100
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:100
+(B) PPC
+PPC
+PPC
+PPC
+(B) LRM 15
+LRM 15
+LRM 15
+LRM 15
+IS Ammo LRM-15:208
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:50
+(B) PPC
+PPC
+PPC
+PPC
+(B) Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+(B) LRM 15
+LRM 15
+IS Ammo LRM-15:112
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:50
+(B) PPC
+PPC
+PPC
+PPC
+(B) Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+(B) LRM 15
+LRM 15
+IS Ammo LRM-15:112
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:100
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:50
+(B) PPC
+PPC
+PPC
+PPC
+(B) LRM 15
+LRM 15
+LRM 15
+LRM 15
+IS Ammo LRM-15:160
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Naval Autocannon (NAC/25)
+Ammo NAC/25:50
+(B) LRM 15
+LRM 15
+IS Ammo LRM-15:104
+(B) Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Naval Autocannon (NAC/25)
+Ammo NAC/25:50
+(B) LRM 15
+LRM 15
+IS Ammo LRM-15:104
+(B) Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval Autocannon (NAC/30)
+Naval Autocannon (NAC/30)
+Ammo NAC/30:100
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval Autocannon (NAC/30)
+Naval Autocannon (NAC/30)
+Ammo NAC/30:100
+(B) Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+</Right Broadsides Equipment>
+
+<structural_integrity>
+60
+</structural_integrity>
+
+<capabilities>
+The procurement of the original Davions was marred by corruption, administrative incompetence and delays that resulted in a ship that was late into service and underwhelming in comparison to the original requirement. Alexander made sweeping reforms when he came into power, including dismantling the bureaucratic systems that resulted in the Block I Davion. After he authorized the production of the Block II Davions, the resulting heavy destroyers that began entering service forty years after the cancellation of the Block I ships were 60,000 tons heavier and vastly superior in performance; unlike the earlier ships, the Block II Davions had docking points for two DropShips, a full aerospace fighter wing, a substantially revised arsenal of weaponry and significantly more armor. Changing the armor used from standard armor to Ferro-Carbide Armor meant that while a Block II Davion only carried approximately 50 tons more armor in total than its predecessor, the amount of protection offered by that armor was almost double that of the earlier ships. Because of the improvements to the overall design, the Block II Davion was able to serve the navies of the Federated Suns for more than 200 years.
+</capabilities>
+
+<overview>
+The Block II Davion-class destroyer was commissioned by First Prince Alexander Davion, but despite officially being the second block of Davions, the Block IIs bore relatively little resemblance to the original Davion Block I WarShips.
+</overview>
+
+<deployment>
+Whereas a Block I Davion sported a mix of capital weapons, combining NAC/25s and NAC/30s with NL45s and Light Naval PPCs, the Block II Davion was instead designed to incorporate only naval autocannon. The mix of NAC/25s, NAC/30s and NAC/40s significantly boosted the amount of damage a Block II Davion could inflict with its capital weapons compared to a Block I Davion, but did leave the Block II Davions without weapons that could inflict damage at extreme range. The Block II Davion also incorporated a substantially increased anti-fighter arsenal compared to its predecessor, replacing the earlier ships LRM-20s with a larger number of LRM-15s, adding multiple PPCs to several arcs and boosting the number of lasers substantially. When first fielded, a Davion II would commonly transport a pair of assault DropShips, typically Achilles-class DropShips, but later Vengeance-class DropShips were permanently assigned to Davion IIs.
+</deployment>
+
+<history>
+The Davion II served in the Federated Suns navy throughout the Star League era; in 2765, no less than fifteen Davion IIs were in service across the four active fleets, making it the most numerous class in service with the Federated Suns at that point in time. While all of the Davion I class WarShips had been retired from active service, there were rumors at the time that the navy would reactive some mothballed Davion Is as a part of the rapid rearmament program, which would have resulted in both classes of ship potentially operating alongside each other. No Davion IIs survived the Succession Wars.
+</history>
+
+<manufacturer>
+Challenge Systems
+</manufacturer>
+
+<primaryFactory>
+Galax
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Destroyer
+</use>
+
+<length>
+685
+</length>
+
+<source>
+TRO 3057R - Age of War
+</source>
+
+<tonnage>
+580000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+65
+65
+</grav_decks>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+295
+</crew>
+
+<officers>
+45
+</officers>
+
+<gunners>
+31
+</gunners>
+
+<passengers>
+54
+</passengers>
+
+<marines>
+56
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+24
+</life_boat>
+
+<escape_pod>
+30
+</escape_pod>
+

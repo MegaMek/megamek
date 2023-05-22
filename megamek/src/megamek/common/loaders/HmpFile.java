@@ -364,11 +364,9 @@ public class HmpFile implements IMechLoader {
             }
 
             dis.close();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            /* OMIT_FOR_JHMPREAD_COMPILATION BLOCK_BEGIN */
-            throw new EntityLoadingException("I/O Error reading file");
-            /* BLOCK_END */
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
+            throw new EntityLoadingException("Error reading file");
         }
     }
 
@@ -514,17 +512,13 @@ public class HmpFile implements IMechLoader {
 
             setupCriticals(mech);
 
-            if (mech.isClan()) {
-                mech.addClanCase();
-            }
-
             mech.setArmorTonnage(mech.getArmorWeight());
 
             // add any heat sinks not allocated
             BigInteger heatSinkFlag;
-            if (heatSinkType ==  HeatSinkType.DOUBLE) {
+            if (heatSinkType == HeatSinkType.DOUBLE) {
                 heatSinkFlag = MiscType.F_DOUBLE_HEAT_SINK;
-            } else if (heatSinkType ==  HeatSinkType.LASER) {
+            } else if (heatSinkType == HeatSinkType.LASER) {
                 heatSinkFlag = MiscType.F_LASER_HEAT_SINK;
             } else if (heatSinkType == HeatSinkType.COMPACT) {
                 heatSinkFlag = MiscType.F_COMPACT_HEAT_SINK;
@@ -632,13 +626,10 @@ public class HmpFile implements IMechLoader {
                         } else if (jjType == 1) {
                             mech.addEquipment(EquipmentType.get("Improved Jump Jet"), location, false);
                         }
-                    } catch (LocationFullException ex) {
-                        System.err.print("Location was full when adding jump jets to slot #");
-                        System.err.print(i);
-                        System.err.print(" of location ");
-                        System.err.println(location);
-                        ex.printStackTrace(System.err);
-                        System.err.println("... aborting entity loading.");
+                    } catch (Exception ex) {
+                        LogManager.getLogger().error(String.format(
+                                "Location was full when adding jump jets to slot #%s of location %s. Aborting entity loading.",
+                                i, location), ex);
                         throw new EntityLoadingException(ex.getMessage());
                     }
                 } else if (criticalName != null) {
@@ -725,15 +716,10 @@ public class HmpFile implements IMechLoader {
                                 i--;
                             }
                         }
-                    } catch (LocationFullException ex) {
-                        System.err.print("Location was full when adding ");
-                        System.err.print(equipment.getInternalName());
-                        System.err.print(" to slot #");
-                        System.err.print(i);
-                        System.err.print(" of location ");
-                        System.err.println(location);
-                        ex.printStackTrace(System.err);
-                        System.err.println("... aborting entity loading.");
+                    } catch (Exception ex) {
+                        LogManager.getLogger().error(String.format(
+                                "Location was full when adding %s to slot #%s of location %s. Aborting entity loading.",
+                                equipment.getInternalName(), i, location), ex);
                         throw new EntityLoadingException(ex.getMessage());
                     }
                 }

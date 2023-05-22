@@ -1,0 +1,197 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SmallCraft
+</UnitType>
+
+<Name>
+Ares Close Assault Landing Craft
+</Name>
+
+<Model>
+Mk.II
+</Model>
+
+<mul id:>
+5804
+</mul id:>
+
+<year>
+2444
+</year>
+
+<originalBuildYear>
+2444
+</originalBuildYear>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+2ndclassquarters:0.0:0
+1stclassquarters:0.0:0
+crewquarters:0.0:0
+steeragequarters:25.0:0
+cargobay:7.5:1:5
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+38
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+720
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+40
+</armor_type>
+
+<armor_tech>
+7
+</armor_tech>
+
+<armor>
+76
+75
+75
+55
+</armor>
+
+<Nose Equipment>
+Large Laser
+Medium Laser
+Medium Laser
+</Nose Equipment>
+
+<Left Side Equipment>
+Large Laser
+LRM 15
+IS Ammo LRM-15
+IS Ammo LRM-15
+</Left Side Equipment>
+
+<Right Side Equipment>
+Large Laser
+LRM 15
+IS Ammo LRM-15
+IS Ammo LRM-15
+</Right Side Equipment>
+
+<Aft Equipment>
+Medium Laser
+Medium Laser
+</Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<structural_integrity>
+7
+</structural_integrity>
+
+<manufacturer>
+IncStar Dynamics
+</manufacturer>
+
+<primaryFactory>
+New Rhodes III
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<notes>
+Stat's adjusted from XTRO to be legal.
+</notes>
+
+<use>
+Combat Landing Craft
+</use>
+
+<length>
+27m
+</length>
+
+<width>
+24m
+</width>
+
+<source>
+XTRO Primitives II - Age of War
+</source>
+
+<tonnage>
+200.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+5
+</crew>
+
+<officers>
+1
+</officers>
+
+<gunners>
+2
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+0
+</escape_pod>
+

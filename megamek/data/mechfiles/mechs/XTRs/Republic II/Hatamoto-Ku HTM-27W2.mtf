@@ -1,40 +1,39 @@
-Version:1.0
+Version:1.3
 Hatamoto-Ku
 HTM-27W2
 mul id:7350
-
 Config:Biped
-TechBase:Inner Sphere
-Era:3115
-Source:XTRO Republic II - Late Republic 
-Rules Level:4
+techbase:Inner Sphere
+era:3115
+source:XTRO Republic II - Late Republic
+rules level:3
 
-Mass:80
-Engine:320 Fusion Engine(IS)
-Structure:IS Endo Steel
-Myomer:Standard
+mass:80
+engine:320 Fusion Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
 
-Heat Sinks:16 Double
-Walk MP:4
-Jump MP:0
+heat sinks:16 IS Double
+walk mp:4
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:26
-RA Armor:26
-LT Armor:25
-RT Armor:25
-CT Armor:34
-HD Armor:9
-LL Armor:34
-RL Armor:34
-RTL Armor:9
-RTR Armor:9
-RTC Armor:16
+armor:Standard(Inner Sphere)
+LA armor:26
+RA armor:26
+LT armor:25
+RT armor:25
+CT armor:34
+HD armor:9
+LL armor:34
+RL armor:34
+RTL armor:9
+RTR armor:9
+RTC armor:16
 
 Weapons:3
 ER PPC, Left Arm
 ER PPC, Right Arm
-LAC/5, Right Torso
+Light AC/5, Right Torso
 
 Left Arm:
 Shoulder

@@ -18,6 +18,9 @@
  */
 package megamek.client.ui.preferences;
 
+import megamek.codeUtilities.StringUtility;
+import org.apache.logging.log4j.LogManager;
+
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -37,7 +40,7 @@ public class JTabbedPanePreference extends PreferenceElement implements ChangeLi
     //endregion Variable Declarations
 
     //region Constructors
-    public JTabbedPanePreference(final JTabbedPane tabbedPane) {
+    public JTabbedPanePreference(final JTabbedPane tabbedPane) throws Exception {
         super(tabbedPane.getName());
         setSelectedIndex(tabbedPane.getSelectedIndex());
         weakReference = new WeakReference<>(tabbedPane);
@@ -66,8 +69,11 @@ public class JTabbedPanePreference extends PreferenceElement implements ChangeLi
     }
 
     @Override
-    protected void initialize(final String value) {
-        assert (value != null) && !value.isBlank();
+    protected void initialize(final String value) throws Exception {
+        if (StringUtility.isNullOrBlank(value)) {
+            LogManager.getLogger().error("Cannot create a JTabbedPanePreference because of a null or blank input value");
+            throw new Exception();
+        }
 
         final JTabbedPane element = getWeakReference().get();
         if (element != null) {

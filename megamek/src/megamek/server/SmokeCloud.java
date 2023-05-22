@@ -16,6 +16,7 @@ package megamek.server;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import megamek.common.Coords;
@@ -36,21 +37,19 @@ public class SmokeCloud implements Serializable {
     private final List<Coords> smokeHexList = new ArrayList<>();
     private int smokeLevel = 1;
     private boolean didDrift = false;
+    private int roundOfGeneration;
     
-    public SmokeCloud() {
-        
+    public SmokeCloud() { }
+    
+    public SmokeCloud(Coords coords, int level, int duration, int roundOfGeneration) {
+        this(List.of(coords), level, duration, roundOfGeneration);
     }
     
-    public SmokeCloud(Coords coords, int level, int duration) {
-        this.smokeDuration = duration;
-        this.smokeHexList.add(coords);
-        this.smokeLevel = level;
-    }
-    
-    public SmokeCloud(ArrayList<Coords> coords, int level, int duration) {
+    public SmokeCloud(List<Coords> coords, int level, int duration, int roundOfGeneration) {
         this.smokeDuration = duration;
         this.smokeLevel = level;
         this.smokeHexList.addAll(coords);
+        this.roundOfGeneration = roundOfGeneration;
     }
     
     public void setSmokeLevel(int level) {
@@ -69,9 +68,6 @@ public class SmokeCloud implements Serializable {
             case SMOKE_LI_HEAVY:
                 smokeLevel = SMOKE_LI_LIGHT;
                 break;
-            case SMOKE_LIGHT:
-            case SMOKE_LI_LIGHT:
-            case SMOKE_CHAFF_LIGHT:
             default:
                 smokeLevel = SMOKE_NONE;
                 break;
@@ -87,32 +83,52 @@ public class SmokeCloud implements Serializable {
     public int getSmokeLevel() {
         return smokeLevel;
     }
+
+    /** @return True when this SmokeCloud is at a smoke level of SMOKE_NONE (= 0). */
+    public boolean isCompletelyDissipated() {
+        return smokeLevel == SMOKE_NONE;
+    }
     
     public void addCoords(Coords coords) {
-        this.smokeHexList.add(coords);
+        smokeHexList.add(coords);
     }
     
     public void removeCoords(Coords coords) {
-        this.smokeHexList.remove(coords);
+        smokeHexList.remove(coords);
     }
     
     public List<Coords> getCoordsList() {
-        return this.smokeHexList;
+        return smokeHexList;
+    }
+
+    /** Removes all the previously stored Coords of this SmokeCloud and stores the given Coords instead. */
+    public void replaceCoords(Collection<Coords> newCoords) {
+        smokeHexList.clear();
+        smokeHexList.addAll(newCoords);
+    }
+
+    /** @return True when this SmokeCloud has no remaining smoke hex coordinates. */
+    public boolean hasNoHexes() {
+        return smokeHexList.isEmpty();
     }
     
     public void setDuration(int duration) {
-        this.smokeDuration = duration;
+        smokeDuration = duration;
     }
     
     public int getDuration() {
-        return this.smokeDuration;
+        return smokeDuration;
     }
     
     public void setDrift(boolean drift) {
-        this.didDrift = drift;
+        didDrift = drift;
     }
     
     public boolean didDrift() {
-        return this.didDrift;
+        return didDrift;
+    }
+
+    public int getRoundOfGeneration() {
+        return roundOfGeneration;
     }
 }

@@ -205,10 +205,11 @@ public class MoveCommand extends ClientCommand {
     private void clearAllMoves() {
         // switch back from swimming to normal mode.
         if (ce() != null) {
-            if (ce().getMovementMode() == EntityMovementMode.BIPED_SWIM)
+            if (ce().getMovementMode().isBipedSwim()) {
                 ce().setMovementMode(EntityMovementMode.BIPED);
-            else if (ce().getMovementMode() == EntityMovementMode.QUAD_SWIM)
+            } else if (ce().getMovementMode().isQuadSwim()) {
                 ce().setMovementMode(EntityMovementMode.QUAD);
+            }
 
             cmd = new MovePath(getClient().getGame(), ce());
         } else {

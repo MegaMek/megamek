@@ -61,7 +61,7 @@ public class ScenarioDialog extends JDialog implements ActionListener {
             m_typeChoices[x].addItem(Messages.getString("MegaMek.ScenarioDialog.me"));
             m_typeChoices[x].addItem(Messages.getString("MegaMek.ScenarioDialog.otherh"));
             m_typeChoices[x].addItem(Messages.getString("MegaMek.ScenarioDialog.bot"));
-            m_typeChoices[x].addItem(Messages.getString("MegaMek.ScenarioDialog.otherbot"));
+//            m_typeChoices[x].addItem(Messages.getString("MegaMek.ScenarioDialog.otherbot"));
             m_camoButtons[x] = new JButton();
             final JButton curButton = m_camoButtons[x];
             curButton.setText(Messages.getString("MegaMek.NoCamoBtn"));

@@ -97,7 +97,7 @@ public class VehicleTROView extends TROView {
         setModelData("turretMass", testTank.getTankWeightTurret());
         setModelData("turretMass2", testTank.getTankWeightDualTurret());
         final String atName = formatArmorType(tank, true);
-        if (atName.length() > 0) {
+        if (!atName.isBlank()) {
             setModelData("armorType", " (" + atName + ")");
         } else {
             setModelData("armorType", "");

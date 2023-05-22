@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -17,7 +17,7 @@ Red Kite Attack VTOL
 </Name>
 
 <Model>
-(Standard)
+
 </Model>
 
 <mul id:>
@@ -28,13 +28,20 @@ Red Kite Attack VTOL
 3093
 </year>
 
+<originalBuildYear>
+3093
+</originalBuildYear>
+
 <type>
-Mixed (IS Chassis) Experimental
+Mixed (IS Chassis)
 </type>
 
 <motion_type>
 VTOL
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 11
@@ -68,8 +75,8 @@ CLMediumChemLaserAmmo
 </Body Equipment>
 
 <Front Equipment>
-CLMediumChemLaser
-CLMediumChemLaser
+CLMediumChemicalLaser
+CLMediumChemicalLaser
 </Front Equipment>
 
 <Right Equipment>
@@ -85,10 +92,10 @@ CLMediumChemLaser
 </Rotor Equipment>
 
 <Turret Equipment>
-CLMediumChemLaser
-CLMediumChemLaser
-CLMediumChemLaser
-CLMediumChemLaser
+CLMediumChemicalLaser
+CLMediumChemicalLaser
+CLMediumChemicalLaser
+CLMediumChemicalLaser
 </Turret Equipment>
 
 <source>
@@ -98,3 +105,4 @@ TRO 3145 Free Worlds League - Late Republic
 <tonnage>
 25.0
 </tonnage>
+

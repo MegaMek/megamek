@@ -415,8 +415,9 @@ public class Coords implements Serializable {
      * Pass-thru version of the above that assumes current = iSrc.
      */
     public static Coords nextHex(Coords current, Coords destination) {
-        if (current == destination)
+        if (current == destination) {
             return current;
+        }
         int[] directions;
         if (current.getX() == destination.getX()) {
             if (current.getY() > destination.getY()) {
@@ -518,5 +519,13 @@ public class Coords implements Serializable {
 
     public int getY() {
         return y;
+    }
+
+    /**
+     * return true if this is between s and e
+     * based on distance
+     */
+    public boolean between(Coords s, Coords e) {
+        return (s.distance(e) == s.distance(this) + this.distance(e));
     }
 }

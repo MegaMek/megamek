@@ -59,12 +59,17 @@ public class PMSimplePolygonArea implements PMHotArea {
             Color hiBrdColor, boolean highlight, UnitDisplay unitDisplay,
             int loc) {
         this.areaShape = p;
-        if (backColor != null)
+        if (backColor != null) {
             this.backColor = backColor;
-        if (brdColor != null)
+        }
+
+        if (brdColor != null) {
             this.normalBorderColor = brdColor;
-        if (hiBrdColor != null)
+        }
+
+        if (hiBrdColor != null) {
             this.highlightBorderColor = hiBrdColor;
+        }
         this.highlight = highlight;
         this.unitDisplay = unitDisplay;
         this.loc = loc;
@@ -93,8 +98,9 @@ public class PMSimplePolygonArea implements PMHotArea {
 
     @Override
     public void drawInto(Graphics g) {
-        if ((g == null) || (!visible))
+        if ((g == null) || (!visible)) {
             return;
+        }
         Color oldColor = g.getColor();
         g.setColor(this.backColor);
         g.fillPolygon(areaShape);
@@ -145,21 +151,25 @@ public class PMSimplePolygonArea implements PMHotArea {
 
     @Override
     public void onMouseOver(MouseEvent e) {
-        if (highlight)
+        if (highlight) {
             selected = true;
+        }
     }
 
     @Override
     public void onMouseExit(MouseEvent e) {
-        if (highlight)
+        if (highlight) {
             selected = false;
+        }
     }
 
     @Override
     public void onMouseDown(MouseEvent e) {
+
     }
 
     @Override
     public void onMouseUp(MouseEvent e) {
+
     }
 }

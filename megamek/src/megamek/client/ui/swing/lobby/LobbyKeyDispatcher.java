@@ -18,6 +18,8 @@
  */
 package megamek.client.ui.swing.lobby;
 
+import megamek.client.ui.swing.util.UIUtil;
+
 import java.awt.KeyEventDispatcher;
 import java.awt.event.KeyEvent;
 
@@ -43,7 +45,7 @@ public class LobbyKeyDispatcher implements KeyEventDispatcher {
         // Don't consider hotkeys when the clientgui has a dialog visible and only react to key presses (not release)
         if (((lobby.getClientgui() != null) && lobby.getClientgui().shouldIgnoreHotKeys())
                 || lobby.isIgnoringEvents()
-                || lobby.isModalDialogShowing()
+                || UIUtil.isModalDialogDisplayed()
                 || (evt.getID() != KeyEvent.KEY_PRESSED)) {
             return false;
         }

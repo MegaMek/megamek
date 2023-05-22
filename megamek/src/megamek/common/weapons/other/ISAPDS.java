@@ -57,4 +57,9 @@ public class ISAPDS extends AmmoWeapon {
                 .setPrototypeFactions(F_RS)
                 .setProductionFactions(F_RS);
     }
+
+    @Override
+    public boolean isAlphaStrikePointDefense() {
+        return true;
+    }
 }

@@ -15,6 +15,7 @@
 package megamek.common;
 
 import java.util.Hashtable;
+import java.util.Objects;
 
 /**
  * <p>
@@ -55,8 +56,7 @@ public class EquipmentMode {
      * @param name unique mode identifier
      */
     protected EquipmentMode(String name) {
-        assert (name != null) : "Name must not be null";
-        this.name = name;
+        this.name = Objects.requireNonNull(name);
     }
 
     /**
@@ -78,8 +78,10 @@ public class EquipmentMode {
      */
     public String getDisplayableName(boolean wantNormal) {
         String result = EquipmentMessages.getString("EquipmentMode." + name);
-        if ((result != null) && (!wantNormal || result.length() > 0))
+        if ((result != null) && (!wantNormal || !result.isBlank())) {
             return result;
+        }
+
         if (wantNormal) {
             return EquipmentMessages.getString("EquipmentMode.Normal");
         } else {

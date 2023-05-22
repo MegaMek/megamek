@@ -1,0 +1,119 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Wraith Battle Armor
+</Name>
+
+<model>
+(Sqd6)
+</Model>
+
+<mul id:>
+9088
+</mul id:>
+
+<year>
+3116
+</year>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+31
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<Point Equipment>
+BABattleClawVibro:LA
+BABattleClawVibro:RA
+CLBAMG:LA
+CLBAMG:RA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+Clan BA Stealth (Basic):Body
+Clan BA Stealth (Basic):LA
+Clan BA Stealth (Basic):RA
+</Point Equipment>
+
+<source>
+TRO 3145 The Clans - Late Republic
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+10
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+
+<overview>
+The Wraith battle armor was designed by the Rasalhague Dominion to support conventional infantry as well as perform surgical strikes.
+</overview>
+
+<capabilities>
+It is equipped with Basic Stealth armor to hide it from enemy probes, and its jump jets allow it to cover ninety meters in a single jump. The suit was introduced after extensive testing of the Rogue Bear battle armor, and is a direct descendant of that design.
+</capabilities>
+
+<deployment>
+The typical Wraith suit is equipped with a single Machine Gun in each arm. These are supplemented by a Vibro-Claw on each arm for close quarter combat and anti-'Mech attacks. These are also useful during boarding actions.
+</deployment>
+
+<history>
+</history>
+
+<manufacturer>
+BA Facility Gamma
+</manufacturer>
+
+<primaryFactory>
+Mannedorf
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

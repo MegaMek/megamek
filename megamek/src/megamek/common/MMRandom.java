@@ -13,6 +13,8 @@
  */
 package megamek.common;
 
+import org.apache.logging.log4j.LogManager;
+
 import java.util.Random;
 
 /**
@@ -35,23 +37,20 @@ public abstract class MMRandom {
      * errors.
      */
     static MMRandom generate(int type) {
-        System.err.println("MMRandom: generating RNG type #" + type);
+        LogManager.getLogger().info("Generating RNG type #" + type);
         try {
             switch (type) {
                 case R_CRYPTO:
-                    return new MMRandom.CryptoRandom();
+                    return new CryptoRandom();
                 case R_POOL36:
-                    return new MMRandom.Pool36Random();
+                    return new Pool36Random();
                 case R_SUN:
                 default:
-                    return new MMRandom.SunRandom();
+                    return new SunRandom();
             }
         } catch (Exception ex) {
-            System.err.println("MMRandom: could not create desired RNG #"
-                    + type);
-            System.err.println("MMRandom: using SunRandom (#0) instead");
-
-            return new MMRandom.SunRandom();
+            LogManager.getLogger().error("Failed to create desired RNG " + type + ", using SunRandom instead.", ex);
+            return new SunRandom();
         }
     }
 

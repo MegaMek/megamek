@@ -1,38 +1,32 @@
 /*
- * MegaMek - Copyright (C) 2018 - The MegaMek Team
+ * Copyright (c) 2018-2022 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.templates;
+
+import megamek.common.*;
+import megamek.common.verifier.EntityVerifier;
+import megamek.common.verifier.TestSmallCraft;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import megamek.common.Aero;
-import megamek.common.Entity;
-import megamek.common.Messages;
-import megamek.common.Mounted;
-import megamek.common.SmallCraft;
-import megamek.common.verifier.EntityVerifier;
-import megamek.common.verifier.TestSmallCraft;
-
 /**
- * Creates a TRO template model for small craft and dropships
+ * Creates a TRO template model for small craft and DropShips
  *
  * @author Neoancient
- *
  */
 public class SmallCraftDropshipTROView extends AeroTROView {
-
     private final SmallCraft aero;
 
     public SmallCraftDropshipTROView(SmallCraft aero) {
@@ -42,10 +36,7 @@ public class SmallCraftDropshipTROView extends AeroTROView {
 
     @Override
     protected String getTemplateFileName(boolean html) {
-        if (html) {
-            return "aero_vessel.ftlh";
-        }
-        return "aero_vessel.ftl";
+        return html ? "aero_vessel.ftlh" : "aero_vessel.ftl";
     }
 
     @Override
@@ -97,19 +88,23 @@ public class SmallCraftDropshipTROView extends AeroTROView {
         addEntityFluff(aero);
         addEntityFluff(aero);
         final Map<String, String> dimensions = new HashMap<>();
-        if (aero.getFluff().getLength().length() > 0) {
+        if (!aero.getFluff().getLength().isEmpty()) {
             dimensions.put("length", aero.getFluff().getLength());
         }
-        if (aero.getFluff().getWidth().length() > 0) {
+
+        if (!aero.getFluff().getWidth().isEmpty()) {
             dimensions.put("width", aero.getFluff().getWidth());
         }
-        if (aero.getFluff().getHeight().length() > 0) {
+
+        if (!aero.getFluff().getHeight().isEmpty()) {
             dimensions.put("height", aero.getFluff().getHeight());
         }
+
         if (!dimensions.isEmpty()) {
             setModelData("dimensions", dimensions);
         }
-        if (aero.getFluff().getUse().length() > 0) {
+
+        if (!aero.getFluff().getUse().isEmpty()) {
             setModelData("use", aero.getFluff().getUse());
         }
     }
@@ -120,8 +115,7 @@ public class SmallCraftDropshipTROView extends AeroTROView {
                 + (aero.isSpheroid() ? Messages.getString("TROView.Spheroid") : Messages.getString("TROView.Aerodyne"));
     }
 
-    private static final String[][] SPHEROID_ARCS = { { "Nose" }, { "RS Fwd", "LS Fwd" }, { "RS Aft", "LS Aft" },
-            { "Aft" } };
+    private static final String[][] SPHEROID_ARCS = { { "Nose" }, { "RS Fwd", "LS Fwd" }, { "RS Aft", "LS Aft" }, { "Aft" } };
 
     private static final String[][] AERODYNE_ARCS = { { "Nose" }, { "RW", "LW" }, { "RW Aft", "LW Aft" }, { "Aft" } };
 
@@ -137,8 +131,9 @@ public class SmallCraftDropshipTROView extends AeroTROView {
                 return arcs[m.isRearMounted() ? 2 : 1][1];
             case Aero.LOC_AFT:
                 return arcs[3][0];
+            default:
+                return super.getArcAbbr(m);
         }
-        return super.getArcAbbr(m);
     }
 
     private static final int[][] SC_ARMOR_LOCS = { { SmallCraft.LOC_NOSE },
@@ -172,25 +167,30 @@ public class SmallCraftDropshipTROView extends AeroTROView {
         if (aero.getNOfficers() > 0) {
             addCrewEntry("officer", aero.getNOfficers());
         }
+
         final int nEnlisted = aero.getNCrew() - aero.getBayPersonnel() - aero.getNGunners() - aero.getNOfficers();
         if (nEnlisted > 0) {
             addCrewEntry("enlisted", nEnlisted);
         }
+
         if (aero.getNGunners() > 0) {
             addCrewEntry("gunner", aero.getNGunners());
         }
+
         if (aero.getBayPersonnel() > 0) {
             addCrewEntry("bayPersonnel", aero.getBayPersonnel());
         }
+
         if (aero.getNPassenger() > 0) {
             addCrewEntry("passenger", aero.getNPassenger());
         }
+
         if (aero.getNMarines() > 0) {
             addCrewEntry("marine", aero.getNMarines());
         }
+
         if (aero.getNBattleArmor() > 0) {
             addCrewEntry("baMarine", aero.getNBattleArmor());
         }
     }
-
 }

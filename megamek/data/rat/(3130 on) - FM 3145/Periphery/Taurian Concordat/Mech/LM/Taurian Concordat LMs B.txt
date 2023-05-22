@@ -1,0 +1,12 @@
+Taurian Concordat Light Mechs B
+Cadaver CVR-A1,1
+Locust LCT-5V,2
+Stinger STG-5T,3
+Cadaver CVR-A1,4
+Commando COM-4H,5
+Cadaver CVR-A1,6
+Commando COM-2Dr,5
+Toro TR-A-6,4
+Koshi (Standard),3
+Wasp WSP-7MAF,2
+Wolfhound WLF-1,1

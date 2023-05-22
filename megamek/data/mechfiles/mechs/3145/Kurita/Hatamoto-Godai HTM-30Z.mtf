@@ -1,45 +1,44 @@
-Version:1.1
+Version:1.3
 Hatamoto-Godai
 HTM-30Z
 mul id:6419
-
 Config:Biped
-TechBase:Mixed (IS Chassis)
-Era:3140
-Source:TRO 3145 Draconis Combine - Dark Ages
-Rules Level:4
+techbase:Mixed (IS Chassis)
+era:3140
+source:TRO 3145 Draconis Combine - Dark Ages
+rules level:3
 
-Mass:80
-Engine:240 Fusion Engine(IS)
-Structure:IS Standard
-Myomer:Standard
-Cockpit:Command Console
-Gyro:XL Gyro
+mass:80
+engine:240 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+cockpit:Command Console
+gyro:XL Gyro
 
-Heat Sinks:10 Double
-Walk MP:3
-Jump MP:0
+heat sinks:10 IS Double
+walk mp:3
+jump mp:0
 
-Armor:Ballistic-Reinforced(Inner Sphere)
-LA Armor:22
-RA Armor:22
-LT Armor:24
-RT Armor:24
-CT Armor:33
-HD Armor:9
-LL Armor:25
-RL Armor:25
-RTL Armor:8
-RTR Armor:8
-RTC Armor:10
+armor:Ballistic-Reinforced(Inner Sphere)
+LA armor:22
+RA armor:22
+LT armor:24
+RT armor:24
+CT armor:33
+HD armor:9
+LL armor:25
+RL armor:25
+RTL armor:8
+RTR armor:8
+RTC armor:10
 
 Weapons:6
-C3 Master Boosted with TAG, Left Torso
-C3 Master Boosted with TAG, Right Torso
-Laser AMS, Right Torso
-ER Medium Laser, Right Arm
-ER Medium Laser, Right Arm
 Extended LRM 15, Left Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+C3 Boosted System (Master), Left Torso
+C3 Boosted System (Master), Right Torso
+Laser AMS, Right Torso
 
 Left Arm:
 Shoulder
@@ -114,8 +113,8 @@ Fusion Engine
 Head:
 Life Support
 Sensors
-Cockpit (armored)
-Cockpit (armored)
+Cockpit (ARMORED)
+Cockpit (ARMORED)
 Sensors
 Life Support
 -Empty-

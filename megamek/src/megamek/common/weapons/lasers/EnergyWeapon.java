@@ -22,7 +22,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.EnergyWeaponHandler;
 import megamek.common.weapons.Weapon;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Andrew Hunter
@@ -32,22 +32,12 @@ public abstract class EnergyWeapon extends Weapon {
     private static final long serialVersionUID = 3128205629152612073L;
 
     public EnergyWeapon() {
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_PROTO_WEAPON)
-                .or(F_ENERGY);
+        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_PROTO_WEAPON).or(F_ENERGY);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     * megamek.server.Server)
-     */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, Server server) {
-        return new EnergyWeaponHandler(toHit, waa, game, server);
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, GameManager manager) {
+        return new EnergyWeaponHandler(toHit, waa, game, manager);
     }
     
     @Override

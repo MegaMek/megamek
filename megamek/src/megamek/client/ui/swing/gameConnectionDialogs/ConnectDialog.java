@@ -101,7 +101,7 @@ public class ConnectDialog extends AbstractGameConnectionDialog {
     public void actionPerformed(ActionEvent e) {
         // reached from the Okay button or pressing Enter in the text fields
         super.actionPerformed(e);
-        setServerAddress(serverAddressField.getText());
+        setServerAddress(serverAddressField.getText().trim());
 
         // update settings
         getClientPreferences().setLastConnectAddr(getServerAddress());
@@ -111,9 +111,13 @@ public class ConnectDialog extends AbstractGameConnectionDialog {
     @Override
     public void setVisible(boolean b) {
         if (b) {
-            UIUtil.adjustDialog(getContentPane());
+            adaptToGUIScale();
             pack();
         }
         super.setVisible(b);
+    }
+
+    private void adaptToGUIScale() {
+        UIUtil.adjustDialog(this,  UIUtil.FONT_SCALE1);
     }
 }

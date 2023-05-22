@@ -1,5 +1,10 @@
 package megamek.common;
 
+import megamek.common.alphaStrike.conversion.ASConverter;
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.BattleForceSUA;
+import org.apache.logging.log4j.LogManager;
+
 /**
  * Unit roles as defined by Alpha Strike Companion, used in formation building rules
  * in ASC and Campaign Operations
@@ -21,7 +26,8 @@ public enum UnitRole {
     FAST_DOGFIGHTER (false),
     FIRE_SUPPORT (false),
     INTERCEPTOR (false),
-    TRANSPORT (false);
+    TRANSPORT (false),
+	NONE (false);
 
     private boolean ground;
 
@@ -31,6 +37,10 @@ public enum UnitRole {
 
     public boolean isGroundRole() {
         return ground;
+    }
+
+    public boolean hasRole() {
+        return (this != UNDETERMINED) && (this != NONE);
     }
 
     public static UnitRole parseRole(String role) {
@@ -69,8 +79,10 @@ public enum UnitRole {
                 return INTERCEPTOR;
             case "transport":
                 return TRANSPORT;
+            case "none":
+            	return NONE;
             default:
-                System.err.println("Could not parse AS Role " + role);
+                LogManager.getLogger().error("Could not parse AS Role " + role);
                 return UNDETERMINED;
         }
     }
@@ -88,7 +100,7 @@ public enum UnitRole {
      * @return          Boolean value indicating whether the unit meets the qualifications for this role.
      */
     public boolean qualifiesForRole(Entity entity) {
-        return qualifiesForRole(new AlphaStrikeElement(entity), 0);
+        return qualifiesForRole(ASConverter.convert(entity), 0);
     }
 
     /**
@@ -107,7 +119,7 @@ public enum UnitRole {
      * @return          Boolean value indicating whether the unit meets the qualifications for this role.
      */
     public boolean qualifiesForRole(Entity entity, double tolerance) {
-        return qualifiesForRole(new AlphaStrikeElement(entity), tolerance);
+        return qualifiesForRole(ASConverter.convert(entity), tolerance);
     }
 
     /**
@@ -144,34 +156,34 @@ public enum UnitRole {
             case AMBUSHER:
                 /* Slow, light armor, preference for short range */
                 score -= Math.max(0, speed - 6) * 0.5;
-                score -= Math.max(0, unit.getFinalArmor() - 5);
-                if (unit.hasSPA(BattleForceSPA.ECM)
-                        || unit.hasSPA(BattleForceSPA.LECM)
-                        || unit.hasSPA(BattleForceSPA.WAT)) {
+                score -= Math.max(0, unit.getFullArmor() - 5);
+                if (unit.hasSUA(BattleForceSUA.ECM)
+                        || unit.hasSUA(BattleForceSUA.LECM)
+                        || unit.hasSUA(BattleForceSUA.WAT)) {
                     score++;
                 }
-                if (unit.hasSPA(BattleForceSPA.STL)
-                        || unit.hasSPA(BattleForceSPA.MAS)
-                        || unit.hasSPA(BattleForceSPA.LMAS)) {
+                if (unit.hasSUA(BattleForceSUA.STL)
+                        || unit.hasSUA(BattleForceSUA.MAS)
+                        || unit.hasSUA(BattleForceSUA.LMAS)) {
                     score++;
                 }
-                if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT) >
-                        unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM)) {
+                if (unit.getStandardDamage().S.damage >
+                        unit.getStandardDamage().M.damage) {
                     score++;
-                } else if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT) >
-                        unit.getDamage(AlphaStrikeElement.RANGE_BAND_LONG)) {
+                } else if (unit.getStandardDamage().S.damage >
+                        unit.getStandardDamage().L.damage) {
                     score += 0.5;
                 }
                 break;
             case BRAWLER:
                 /* Not too slow, preference for medium range */
                 score += Math.min(0, speed - 8);
-                if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM) >=
-                        unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT)) {
+                if (unit.getStandardDamage().M.damage >=
+                        unit.getStandardDamage().S.damage) {
                     score += 0.5;
                 }
-                if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM) >
-                        unit.getDamage(AlphaStrikeElement.RANGE_BAND_LONG)) {
+                if (unit.getStandardDamage().M.damage >
+                        unit.getStandardDamage().L.damage) {
                     score += 0.5;
                 }
                 break;
@@ -180,74 +192,73 @@ public enum UnitRole {
                 score -= Math.max(0, speed - 6) * 0.5;
                 /* Per ASC, a Juggernaut should have an armor value of 7, but there are a large number
                  * of smaller units with lower armor values that have an official role of juggernaut.*/
-                score += Math.min(0,  unit.getFinalArmor() - (unit.getSize() + 4));
-                if (Math.max(unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT),
-                            unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM))* 2 >= unit.getArmor()) {
+                score += Math.min(0,  unit.getFullArmor() - (unit.getSize() + 4));
+                if (Math.max(unit.getStandardDamage().S.damage,
+                            unit.getStandardDamage().M.damage)* 2 >= unit.getFullArmor()) {
                     score++;
                 }
-                if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT) >
-                        unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM)) {
+                if (unit.getStandardDamage().S.damage >
+                        unit.getStandardDamage().M.damage) {
                     score++;
-                } else if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT) >
-                        unit.getDamage(AlphaStrikeElement.RANGE_BAND_LONG)) {
+                } else if (unit.getStandardDamage().S.damage >
+                        unit.getStandardDamage().L.damage) {
                     score += 0.5;
                 }
-                if (unit.hasSPA(BattleForceSPA.MEL)
-                        || unit.hasSPA(BattleForceSPA.TSM)) {
+                if (unit.hasSUA(BattleForceSUA.MEL)
+                        || unit.hasSUA(BattleForceSUA.TSM)) {
                     score++;
                 }
-                if (unit.hasSPA(BattleForceSPA.CR)
-                        || unit.hasSPA(BattleForceSPA.RCA)
-                        || unit.hasSPA(BattleForceSPA.RFA)) {
+                if (unit.hasSUA(BattleForceSUA.CR)
+                        || unit.hasSUA(BattleForceSUA.RCA)
+                        || unit.hasSUA(BattleForceSUA.RFA)) {
                     score++;
                 }
-                if (unit.hasSPA(BattleForceSPA.AMS)
-                        || unit.hasSPA(BattleForceSPA.RAMS)) {
+                if (unit.hasSUA(BattleForceSUA.AMS)
+                        || unit.hasSUA(BattleForceSUA.RAMS)) {
                     score++;
                 }
                 break;
             case MISSILE_BOAT:
                 /* Any artillery piece or can do damage by indirect fire at long range */
-                return (unit.getDamage(AlphaStrikeElement.RANGE_BAND_LONG) > 0
-                            && unit.getIndirectFire() > 0)
-                        || unit.hasSPA(BattleForceSPA.ARTAIS)
-                        || unit.hasSPA(BattleForceSPA.ARTAC)
-                        || unit.hasSPA(BattleForceSPA.ARTBA)
-                        || unit.hasSPA(BattleForceSPA.ARTCM5)
-                        || unit.hasSPA(BattleForceSPA.ARTCM7)
-                        || unit.hasSPA(BattleForceSPA.ARTCM9)
-                        || unit.hasSPA(BattleForceSPA.ARTCM12)
-                        || unit.hasSPA(BattleForceSPA.ARTT)
-                        || unit.hasSPA(BattleForceSPA.ARTS)
-                        || unit.hasSPA(BattleForceSPA.ARTLT)
-                        || unit.hasSPA(BattleForceSPA.ARTTC)
-                        || unit.hasSPA(BattleForceSPA.ARTSC)
-                        || unit.hasSPA(BattleForceSPA.ARTLTC);
+                return (unit.getStandardDamage().L.damage > 0 && unit.hasSUA(BattleForceSUA.IF))
+                        || unit.hasSUA(BattleForceSUA.ARTAIS)
+                        || unit.hasSUA(BattleForceSUA.ARTAC)
+                        || unit.hasSUA(BattleForceSUA.ARTBA)
+                        || unit.hasSUA(BattleForceSUA.ARTCM5)
+                        || unit.hasSUA(BattleForceSUA.ARTCM7)
+                        || unit.hasSUA(BattleForceSUA.ARTCM9)
+                        || unit.hasSUA(BattleForceSUA.ARTCM12)
+                        || unit.hasSUA(BattleForceSUA.ARTT)
+                        || unit.hasSUA(BattleForceSUA.ARTS)
+                        || unit.hasSUA(BattleForceSUA.ARTLT)
+                        || unit.hasSUA(BattleForceSUA.ARTTC)
+                        || unit.hasSUA(BattleForceSUA.ARTSC)
+                        || unit.hasSUA(BattleForceSUA.ARTLTC);
             case SCOUT:
                 /* Fast (jump, WiGE, or VTOL helpful but not required), lightly armored, preference for short range */
                 score += Math.min(0, speed - 8) * 0.5;
-                score -= Math.max(0, unit.getFinalArmor() - 4);
+                score -= Math.max(0, unit.getFullArmor() - 4);
                 if (unit.getMovementModes().contains("j") || unit.getMovementModes().contains("g")
                         || unit.getMovementModes().contains("v")) {
                     score++;
                 }
-                if (unit.hasSPA(BattleForceSPA.RCN)) {
+                if (unit.hasSUA(BattleForceSUA.RCN)) {
                     score++;
                 }
-                if (unit.hasSPA(BattleForceSPA.BH)
-                        || unit.hasSPA(BattleForceSPA.PRB)
-                        || unit.hasSPA(BattleForceSPA.LPRB)
-                        || unit.hasSPA(BattleForceSPA.WAT)) {
+                if (unit.hasSUA(BattleForceSUA.BH)
+                        || unit.hasSUA(BattleForceSUA.PRB)
+                        || unit.hasSUA(BattleForceSUA.LPRB)
+                        || unit.hasSUA(BattleForceSUA.WAT)) {
                     score++;
                 }
-                if (unit.hasSPA(BattleForceSPA.ECM)) {
+                if (unit.hasSUA(BattleForceSUA.ECM)) {
                     score++;
                 }
-                if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT) >
-                        unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM)) {
+                if (unit.getStandardDamage().S.damage >
+                        unit.getStandardDamage().M.damage) {
                     score++;
-                } else if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT) >
-                        unit.getDamage(AlphaStrikeElement.RANGE_BAND_LONG)) {
+                } else if (unit.getStandardDamage().S.damage >
+                        unit.getStandardDamage().L.damage) {
                     score += 0.5;
                 }
                 break;
@@ -258,70 +269,69 @@ public enum UnitRole {
                 } else {
                     score += Math.min(0, speed - 9) * 0.5;
                 }
-                score += Math.min(0, unit.getFinalArmor() - 4) + Math.min(0, 8 - unit.getFinalArmor());
-                if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM) >=
-                        unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT)) {
+                score += Math.min(0, unit.getFullArmor() - 4) + Math.min(0, 8 - unit.getFullArmor());
+                if (unit.getStandardDamage().M.damage >=
+                        unit.getStandardDamage().S.damage) {
                     score += 0.5;
                 }
-                if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM) >
-                        unit.getDamage(AlphaStrikeElement.RANGE_BAND_LONG)) {
+                if (unit.getStandardDamage().M.damage >
+                        unit.getStandardDamage().L.damage) {
                     score += 0.5;
                 }
                 break;
             case SNIPER:
                 /* Can do damage at long range without LRMs */
-                return unit.getDamage(AlphaStrikeElement.RANGE_BAND_LONG)
-                        - unit.getDamage(AlphaStrikeElement.RANGE_BAND_LONG, WeaponType.BFCLASS_LRM) > 0;
+                return unit.getStandardDamage().L.damage - unit.getLRM().L.damage > 0;
             case STRIKER:
                 /* Fast and light-medium armor, preference for short range */
                 score += Math.min(0, speed - 9) * 0.5;
-                score -= Math.max(0, unit.getFinalArmor() - 5);
-                if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT) >
-                        unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM)) {
+                score -= Math.max(0, unit.getFullArmor() - 5);
+                if (unit.getStandardDamage().S.damage >
+                        unit.getStandardDamage().M.damage) {
                     score++;
-                } else if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT) >
-                        unit.getDamage(AlphaStrikeElement.RANGE_BAND_LONG)) {
+                } else if (unit.getStandardDamage().S.damage >
+                        unit.getStandardDamage().L.damage) {
                     score += 0.5;
                 }
                 break;
             case ATTACK_FIGHTER:
                 /* Slow, preference for short range */
                 score -= Math.max(0, speed - 5);
-                if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT) >
-                        unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM)) {
+                if (unit.getStandardDamage().S.damage >
+                        unit.getStandardDamage().M.damage) {
                     score++;
-                } else if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT) >
-                        unit.getDamage(AlphaStrikeElement.RANGE_BAND_LONG)) {
+                } else if (unit.getStandardDamage().S.damage >
+                        unit.getStandardDamage().L.damage) {
                     score += 0.5;
                 }
                 break;
             case DOGFIGHTER:
                 /* Medium speed, preference for medium range */
                 score += Math.min(0, speed - 5) + Math.min(0, 7 - speed) * 0.5;
-                if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM) >=
-                        unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT)) {
+                if (unit.getStandardDamage().M.damage >=
+                        unit.getStandardDamage().S.damage) {
                     score += 0.5;
                 }
-                if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM) >
-                        unit.getDamage(AlphaStrikeElement.RANGE_BAND_LONG)) {
+                if (unit.getStandardDamage().M.damage >
+                        unit.getStandardDamage().L.damage) {
                     score += 0.5;
                 }
                 break;
             case FAST_DOGFIGHTER:
                 /* Fast with preference for medium range */
                 score += Math.min(0, speed - 7) + Math.min(0, 9 - speed) * 0.5;
-                if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM) >=
-                        unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT)) {
+                if (unit.getStandardDamage().M.damage >=
+                        unit.getStandardDamage().S.damage) {
                     score += 0.5;
                 }
-                if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM) >
-                        unit.getDamage(AlphaStrikeElement.RANGE_BAND_LONG)) {
+                if (unit.getStandardDamage().M.damage >
+                        unit.getStandardDamage().L.damage) {
                     score += 0.5;
                 }
                 break;
             case FIRE_SUPPORT:
                 /* Not too slow and can do damage at long range */
-                if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_LONG) < 0.5) {
+                if (unit.getStandardDamage().L.damage < 0.5) {
                     return false;
                 }
                 score += Math.min(0, speed - 5) + Math.min(0, 7 - speed);
@@ -329,28 +339,27 @@ public enum UnitRole {
             case INTERCEPTOR:
                 /* Very fast, preference for damage at medium range */
                 score += Math.min(0, speed - 10);
-                if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM) >=
-                        unit.getDamage(AlphaStrikeElement.RANGE_BAND_SHORT)) {
+                if (unit.getStandardDamage().M.damage >=
+                        unit.getStandardDamage().S.damage) {
                     score += 0.5;
                 }
-                if (unit.getDamage(AlphaStrikeElement.RANGE_BAND_MEDIUM) >
-                        unit.getDamage(AlphaStrikeElement.RANGE_BAND_LONG)) {
+                if (unit.getStandardDamage().M.damage >
+                        unit.getStandardDamage().L.damage) {
                     score += 0.5;
                 }
                 break;
             case TRANSPORT:
                 /* Has transport capacity */
-                return unit.hasSPA(BattleForceSPA.CK)
-                        || unit.hasSPA(BattleForceSPA.IT)
-                        || unit.hasSPA(BattleForceSPA.AT)
-                        || unit.hasSPA(BattleForceSPA.PT)
-                        || unit.hasSPA(BattleForceSPA.VTM)
-                        || unit.hasSPA(BattleForceSPA.VTH)
-                        || unit.hasSPA(BattleForceSPA.VTS)
-                        || unit.hasSPA(BattleForceSPA.MT)
-                        || unit.hasSPA(BattleForceSPA.CT)
-                        || unit.hasSPA(BattleForceSPA.ST)
-                        || (unit.hasSPA(BattleForceSPA.CT) && unit.getSPA(BattleForceSPA.CT) >= 50);
+                return unit.hasSUA(BattleForceSUA.CK)
+                        || unit.hasSUA(BattleForceSUA.IT)
+                        || unit.hasSUA(BattleForceSUA.AT)
+                        || unit.hasSUA(BattleForceSUA.PT)
+                        || unit.hasSUA(BattleForceSUA.VTM)
+                        || unit.hasSUA(BattleForceSUA.VTH)
+                        || unit.hasSUA(BattleForceSUA.VTS)
+                        || unit.hasSUA(BattleForceSUA.MT)
+                        || unit.hasSUA(BattleForceSUA.CT)
+                        || unit.hasSUA(BattleForceSUA.ST);
             default:
                 break;
         }

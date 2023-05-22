@@ -13,11 +13,11 @@ SpaceStation
 </UnitType>
 
 <Name>
-Unpressurized Yard - Large
+Unpressurized Yard
 </Name>
 
 <Model>
-(2300)
+Large (2300)
 </Model>
 
 <mul id:>

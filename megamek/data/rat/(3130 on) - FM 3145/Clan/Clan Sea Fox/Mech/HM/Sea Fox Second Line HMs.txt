@@ -1,0 +1,12 @@
+Sea Fox Second Line Heavy Mechs
+Warhammer WHM-9S,1
+Archer ARC-9M,2
+Catapult CPLT-C5A,3
+Ursa URA-2A,4
+Jade Hawk (Standard),5
+Rifleman IIC 4,6
+Ha Otoko 3,5
+Rifleman IIC 6,4
+Jade Hawk 3,3
+Mad Cat Mk IV (Savage Wolf) PR (Standard),2
+Black Hawk-KU BHKU-O,1

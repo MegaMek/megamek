@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2019-2022 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -17,6 +17,9 @@
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.client.ui.preferences;
+
+import megamek.codeUtilities.StringUtility;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import java.awt.event.ItemEvent;
@@ -37,7 +40,7 @@ public class JComboBoxPreference extends PreferenceElement implements ItemListen
     //endregion Variable Declarations
 
     //region Constructors
-    public JComboBoxPreference(final JComboBox<?> comboBox) {
+    public JComboBoxPreference(final JComboBox<?> comboBox) throws Exception {
         super(comboBox.getName());
         setSelectedIndex(comboBox.getSelectedIndex());
         weakReference = new WeakReference<>(comboBox);
@@ -66,8 +69,11 @@ public class JComboBoxPreference extends PreferenceElement implements ItemListen
     }
 
     @Override
-    protected void initialize(final String value) {
-        assert (value != null) && !value.isBlank();
+    protected void initialize(final String value) throws Exception {
+        if (StringUtility.isNullOrBlank(value)) {
+            LogManager.getLogger().error("Cannot create a JComboBoxPreference because of a null or blank input value");
+            throw new Exception();
+        }
 
         final JComboBox<?> element = getWeakReference().get();
         if (element != null) {

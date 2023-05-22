@@ -16,9 +16,13 @@ SupportTank
 Small Steamer
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+9231
+</mul id:>
 
 <year>
 2100

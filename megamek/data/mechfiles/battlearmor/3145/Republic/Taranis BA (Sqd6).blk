@@ -1,0 +1,122 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Taranis Battle Armor
+</Name>
+
+<model>
+(Sqd6)
+</Model>
+
+<mul id:>
+9145
+</mul id:>
+
+<year>
+3123
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Leg
+</motion_type>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<armor_type>
+36
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<Squad Equipment>
+BABasicManipulator:LA
+BABasicManipulator:RA
+ISBAHeavyRecoillessRifle:DWP
+ISDetachableWeaponPack:RA
+ISBAMediumLaser:DWP
+ISDetachableWeaponPack:LA
+IS BA Mimetic:Body
+IS BA Mimetic:Body
+IS BA Mimetic:LA
+IS BA Mimetic:Body
+IS BA Mimetic:Body
+IS BA Mimetic:RA
+IS BA Mimetic:Body
+</Squad Equipment>
+
+<source>
+TRO 3145 Republic of the Sphere - Late Republic
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+10
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+3
+</weightclass>
+
+<overview>
+Introduced into service in 3123, the Taranis is a Heavy Class battle armor first created for the Armed Forces of the Republic of the Sphere.
+</overview>
+
+<capabilities>
+Principally designed for heavy combat, the suit comes well armed and armored. However, these qualities come at the price of mobility. To help achieve this, the pilot is protected by 500 kilograms of Mimetic Armor. With reduced visibility, the suit's armor can bring down chances of it being detected while it's readying for combat.
+</capabilities>
+
+<deployment>
+The Armor's primary firepower comes in the form of a Heavy Recoilless Rifle mounted on the suit's right arm with 20 rounds of ammo. In its left arm, is the suit's heavy anti-'Mech weapon, a Medium Laser with enough energy for 30 shots before running out. Each weapon is fitted in a Detachable Weapon Pack, which allows the operator to drop their now depleted weaponry for more mobility.
+</deployment>
+
+<history>
+Built on Terra, the heavyweight suit was designed to work closely with the RAF's Combined Arms formations, bringing its considerable toughness and firepower to bear. The battle armor is used in a range of roles from close combat to providing defense against incoming enemies. While in the service of the Republic, the Taranis was in a number of small and large conflicts where it proved its worth. The Taranis was used in combat on Markab in 3134, where the 3rd Principes Guards deployed them to help defeat elements of the Spirit Cats terrorizing local militia forces. The suit's considerable firepower pinned the Clan warriors in place for the rest of the 3rd Principes' forces to maneuver behind them and shatter them. During the Republic's efforts to exterminate renegade ComStar elements, the Taranis suits assigned to the 14th Hastati Sentinels were used during the campaign on Epsilon Eridani in 3141. The suits were deployed in airdrops on top of Com Guard positions, helping to lead the Republic to victory at a steep price.
+</history>
+
+<manufacturer>
+Krupp Armament Works
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

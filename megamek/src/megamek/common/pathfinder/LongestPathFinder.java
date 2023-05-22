@@ -1,6 +1,5 @@
 /*
-* MegaMek -
-* Copyright (C) 2014 The MegaMek Team
+* Copyright (c) 2014-2022 - The MegaMek Team. All Rights Reserved.
 *
 * This program is free software; you can redistribute it and/or modify it under
 * the terms of the GNU General Public License as published by the Free Software
@@ -12,25 +11,15 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.common.pathfinder;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Deque;
-import java.util.List;
-
 import megamek.client.bot.princess.MinefieldUtil;
-import megamek.common.Coords;
-import megamek.common.Game;
-import megamek.common.Infantry;
-import megamek.common.MovePath;
+import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.MoveStep;
-import megamek.common.Tank;
+import megamek.common.annotations.Nullable;
+import org.apache.logging.log4j.LogManager;
+
+import java.util.*;
 
 /**
  * Path finder that specialises in finding paths that can enter a single hex
@@ -178,16 +167,17 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
                      * Current implementation of doRelax() assumes that v is
                      * sorted in such way that this situation is impossible.
                      */
-                    System.err.println(new IllegalStateException(
-                            "Top Move Path uses more MPs than Move Path Candidate."));
+                    LogManager.getLogger().error(
+                            "Top Move Path uses more MPs than Move Path Candidate.",
+                            new IllegalStateException());
                     return null;
                 } else {
                     if (topMP.getHexesMoved() > mpCandidate.getHexesMoved()) {
-                        return null; //topMP path is longer and uses less or same mp.
+                        return null; // topMP path is longer and uses less or same mp.
                     }
                     if (topMP.getHexesMoved() == mpCandidate.getHexesMoved()) {
-                        //we want to preserve both forward and backward movements
-                        //that end in the same spot with the same cost.
+                        // we want to preserve both forward and backward movements
+                        // that end in the same spot with the same cost.
                         MoveStep topStep = topMP.getLastStep();
                         boolean topBackwards = topStep != null && topStep.isThisStepBackwards();
                         MoveStep mpCandStep = mpCandidate.getLastStep();
@@ -199,10 +189,10 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
                     }
 
                     if (topMpUsed == mpCMpUsed) {
-                        //mpCandidate is not strictly better than topMp so we won't use it.
+                        // mpCandidate is not strictly better than topMp so we won't use it.
                         return null;
                     } else if (topMpUsed < mpCMpUsed) {
-                        //topMP travels less but also uses less movement points so we should keep it
+                        // topMP travels less but also uses less movement points so we should keep it
                         // and add mpCandidate to the list of optimal longest paths.
                         break;
                     }
@@ -211,7 +201,6 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
             v.addLast(mpCandidate);
             return v;
         }
-
     }
 
     /**
@@ -231,17 +220,17 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
             if (!mp1.getEntity().isAero()) {
                 throw new IllegalArgumentException("wanted aero got:" + mp1.getClass().toString());
             }
-            //we want to process shorter paths first
+            // we want to process shorter paths first
             int dHT = mp1.getHexesMoved() - mp2.getHexesMoved();
             if (dHT != 0) {
                 return dHT;
             }
-            //then those which used less thrust
+            // then those which used less thrust
             int dMP = mp1.getMpUsed() - mp2.getMpUsed();
             if (dMP != 0) {
                 return dMP;
             }
-            //lastly those with more hexes flown straight.
+            // lastly those with more hexes flown straight.
             MoveStep lms1 = mp1.getLastStep(), lms2 = mp2.getLastStep();
             int hs1 = lms1 == null ? 0 : lms1.getNStraight();
             int hs2 = lms2 == null ? 0 : lms2.getNStraight();
@@ -260,16 +249,15 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
      * greater than current top of the stack.
      */
     public static class AeroMultiPathRelaxer implements EdgeRelaxer<Deque<MovePath>, MovePath> {
-        boolean inAthmosphere;
+        boolean inAtmosphere;
 
-        private AeroMultiPathRelaxer(boolean inAthmosphere) {
-            this.inAthmosphere = inAthmosphere;
+        private AeroMultiPathRelaxer(boolean inAtmosphere) {
+            this.inAtmosphere = inAtmosphere;
         }
 
         @Override
-        public Deque<MovePath> doRelax(Deque<MovePath> v, MovePath mpCandidate, Comparator<MovePath> comparator) {
-            if (mpCandidate == null)
-                throw new NullPointerException();
+        public @Nullable Deque<MovePath> doRelax(Deque<MovePath> v, MovePath mpCandidate, Comparator<MovePath> comparator) {
+            Objects.requireNonNull(mpCandidate);
             if (v == null) {
                 return new ArrayDeque<>(Collections.singleton(mpCandidate));
             }
@@ -285,31 +273,33 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
                  * Current implementation of doRelax() assumes that v is sorted
                  * in such way that this situation is impossible.
                  */
-                System.err.println(new IllegalStateException("Top Move Path moved more than Move Path Candidate."));
+                LogManager.getLogger().error(
+                        "Top Move Path moved more than Move Path Candidate.",
+                        new IllegalStateException());
             }
+
             if (dHT < 0) {
                 v.addLast(mpCandidate);
                 return v;
             }
 
-            // assert( topMP.getHexesMoved() == mpCandidate.getHexesMoved() );
             int dMP = topMP.getMpUsed() - mpCandidate.getMpUsed();
             if (dMP > 0) {
                 /*
                  * Current implementation of doRelax() assumes that v is sorted
                  * in such way that this situation is impossible.
                  */
-                System.err.println(new IllegalStateException(
-                        "Top Move Path uses more MPs than Move Path Candidate. "
-                        + "while traveling the same distance"));
+                LogManager.getLogger().error(
+                        "Top Move Path uses more MPs than Move Path Candidate while traveling the same distance",
+                        new IllegalStateException());
             }
 
-            // assert( topMP thrust used is less or equal than candidates and hexesMoved are equal)
-            if (!inAthmosphere) {
-                return null; //there is no point considering hexes flown straight if we are not in athmo
+            if (!inAtmosphere) {
+                // there is no point considering hexes flown straight if we are not in atmosphere
+                return null;
             }
 
-            //while in athmosphere we should consider paths that have higher thrust used but flew more hexes straight
+            // while in atmosphere we should consider paths that have higher thrust used but flew more hexes straight
             MoveStep topLastStep = topMP.getLastStep();
             MoveStep candidateLastStep = mpCandidate.getLastStep();
             int hs1 = topLastStep == null ? 0 : topLastStep.getNStraight();
@@ -318,9 +308,9 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
 
             if (-dHS > 0) {
                 if (dMP >= 0) {
-                    System.err.println(new IllegalStateException(
-                            "Top Move Path uses more MPs than Move Path Candidate and " +
-                            "Top Move Path moves a shorter straight line distance."));
+                    LogManager.getLogger().error(
+                            "Top Move Path uses more MPs than Move Path Candidate and Top Move Path moves a shorter straight line distance.",
+                            new IllegalStateException());
                 }
                 if (topLastStep != null && !topLastStep.dueFreeTurn()) {
                     v.add(mpCandidate);
@@ -340,17 +330,14 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
      * @param coords - the coordinates of the hex
      * @return the shortest move path to hex at given coordinates
      */
-    public MovePath getComputedPath(Coords coords) {
-        Deque<MovePath> q = getCost(coords, new Comparator<>() {
-            @Override
-            public int compare(Deque<MovePath> q1, Deque<MovePath> q2) {
-                MovePath mp1 = q1.getLast(), mp2 = q2.getLast();
-                int t = mp2.getHexesMoved() - mp1.getHexesMoved();
-                if (t != 0) {
-                    return t;
-                } else {
-                    return mp1.getMpUsed() - mp2.getMpUsed();
-                }
+    public @Nullable MovePath getComputedPath(Coords coords) {
+        Deque<MovePath> q = getCost(coords, (q1, q2) -> {
+            MovePath mp1 = q1.getLast(), mp2 = q2.getLast();
+            int t = mp2.getHexesMoved() - mp1.getHexesMoved();
+            if (t != 0) {
+                return t;
+            } else {
+                return mp1.getMpUsed() - mp2.getMpUsed();
             }
         });
         if (q != null) {
@@ -369,8 +356,9 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
                 }
                 return mp;
             }
-        } else
+        } else {
             return null;
+        }
     }
 
     /**
@@ -402,5 +390,4 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
         }
         return l;
     }
-
 }

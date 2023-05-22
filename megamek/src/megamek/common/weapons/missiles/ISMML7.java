@@ -19,6 +19,12 @@
  */
 package megamek.common.weapons.missiles;
 
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.Mounted;
+
+import static megamek.common.MountedHelper.isArtemisIV;
+import static megamek.common.MountedHelper.isArtemisProto;
+
 /**
  * @author Sebastian Brocks
  */
@@ -48,14 +54,27 @@ public class ISMML7 extends MMLWeapon {
         longAV = 4;
         maxRange = RANGE_LONG;
         rulesRefs = "229, TM";
+        //March 2022 - CGL (Greekfire) requested MML adjustments to Tech Progression.
         techAdvancement.setTechBase(TECH_BASE_IS)
         	.setIntroLevel(false)
         	.setUnofficial(false)
             .setTechRating(RATING_D)
             .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-            .setISAdvancement(3067, 3068, 3072, DATE_NONE, DATE_NONE)
-            .setISApproximate(true, false, false,false, false)
-            .setPrototypeFactions(F_MERC)
-            .setProductionFactions(F_WB);
+            .setISAdvancement(DATE_NONE, 3067, 3073, DATE_NONE, DATE_NONE)
+            .setISApproximate(false, false, true, false, false)
+            .setProductionFactions(F_MERC,F_WB);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        if (range == AlphaStrikeElement.SHORT_RANGE) {
+            return (isArtemisIV(fcs) || isArtemisProto(fcs)) ? 1.2 : 0.8;
+        } else if (range == AlphaStrikeElement.MEDIUM_RANGE) {
+            return (isArtemisIV(fcs) || isArtemisProto(fcs)) ? 0.9 : 0.6;
+        } else if (range == AlphaStrikeElement.LONG_RANGE) {
+            return (isArtemisIV(fcs) || isArtemisProto(fcs)) ? 0.6 : 0.4;
+        } else {
+            return 0;
+        }
     }
 }

@@ -1,0 +1,119 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+LargeSupportTank
+</UnitType>
+
+<Name>
+HMRV (Hazardous Materials Recovery Vehicle)
+</Name>
+
+<Model>
+'Oppie' O-65
+</Model>
+
+<mul id:>
+4739
+</mul id:>
+
+<year>
+2822
+</year>
+
+<originalBuildYear>
+2822
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+liquidcargobay:22.91:1:1
+</transporters>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
+100
+40
+40
+40
+40
+40
+</armor>
+
+<Body Equipment>
+Paramedic Equipment
+Environmental Sealing
+SV Chassis Mod [Tractor]
+</Body Equipment>
+
+<Front Equipment>
+ISMineSweeper
+Bulldozer
+Searchlight
+</Front Equipment>
+
+<Front Right Equipment>
+Manipulator [Non-Mech/Non-Battle Armor]
+Searchlight
+</Front Right Equipment>
+
+<Front Left Equipment>
+Manipulator [Non-Mech/Non-Battle Armor]
+Searchlight
+</Front Left Equipment>
+
+<Rear Right Equipment>
+Manipulator [Non-Mech/Non-Battle Armor]
+Tank Sprayer
+</Rear Right Equipment>
+
+<Rear Left Equipment>
+Manipulator [Non-Mech/Non-Battle Armor]
+Tank Sprayer
+</Rear Left Equipment>
+
+<Rear Equipment>
+Backhoe
+Searchlight
+</Rear Equipment>
+
+<barrating>
+8
+</barrating>
+
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
+<source>
+TRO 3075 - Succession Wars
+</source>
+
+<tonnage>
+150.0
+</tonnage>
+
+<fuel>
+0.0
+</fuel>

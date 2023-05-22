@@ -25,6 +25,7 @@ import megamek.client.ui.swing.ClientDialog;
 import megamek.client.ui.swing.CloseAction;
 import megamek.client.ui.swing.OkayAction;
 import megamek.client.ui.swing.dialog.DialogButton;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
@@ -99,7 +100,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
         initComponents();
 
         // if the player name is specified, overwrite the preference with it
-        if (!StringUtility.isNullOrEmpty(playerName)) {
+        if (!StringUtility.isNullOrBlank(playerName)) {
             setPlayerName(playerName);
         }
     }
@@ -145,7 +146,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
             if (playerNameCombo == null) {
                 playerNameCombo = new JComboBox<>(playerNames);
                 Dimension preferredSize = playerNameCombo.getPreferredSize();
-                preferredSize.setSize(180, preferredSize.getHeight());
+                preferredSize.setSize(UIUtil.scaleForGUI(180), UIUtil.scaleForGUI(25));
                 playerNameCombo.setPreferredSize(preferredSize);
                 playerNameCombo.setEditable(true);
             }

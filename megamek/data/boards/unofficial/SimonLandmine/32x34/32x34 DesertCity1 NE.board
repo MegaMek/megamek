@@ -1,4 +1,11 @@
 size 32 34
+tag "Rough (Auto)"
+tag "Cliffs (Auto)"
+tag "Water (Auto)"
+tag "HeavyUrban (Auto)"
+tag "Roads (Auto)"
+tag "DesertTheme (Auto)"
+tag "Woods (Auto)"
 hex 0101 -1 "water:1" "desert"
 hex 0201 0 "" "desert"
 hex 0301 0 "" "desert"

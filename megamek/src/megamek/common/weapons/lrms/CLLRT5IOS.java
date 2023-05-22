@@ -1,5 +1,5 @@
-/**
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+/*
+ * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -17,15 +17,8 @@ package megamek.common.weapons.lrms;
  * @author Sebastian Brocks
  */
 public class CLLRT5IOS extends LRTWeapon {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -3651580547253252279L;
 
-    /**
-     *
-     */
     public CLLRT5IOS() {
         super();
         name = "LRT 5 (I-OS)";
@@ -47,13 +40,13 @@ public class CLLRT5IOS extends LRTWeapon {
         cost = 24000;
         rulesRefs = "327, TO";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_B)
-            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-            .setClanAdvancement(3058, 3081, 3085, DATE_NONE, DATE_NONE)
-            .setClanApproximate(false, true, false,false, false)
-            .setPrototypeFactions(F_CNC)
-            .setProductionFactions(F_CNC);
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_B)
+                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                .setClanAdvancement(3058, 3081, 3085, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, true, false, false, false)
+                .setPrototypeFactions(F_CNC)
+                .setProductionFactions(F_CNC);
     }
 }

@@ -16,7 +16,6 @@ package megamek.common.commandline;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.common.Configuration;
-import megamek.server.Server;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.Locale;
@@ -49,24 +48,20 @@ public enum ClientServerCommandLineFlag {
     }
 
     ClientServerCommandLineFlag(final String helpText, boolean serverArg, boolean clientArg, boolean hostArg) {
-        this.helpText = helpText; //resources.getString(helpText);
+        this.helpText = helpText;
         this.serverArg = serverArg;
         this.clientArg = clientArg;
         this.hostArg = hostArg;
     }
+    //endregion Constructors
 
     public static ClientServerCommandLineFlag parseFromString(final String text) {
         try {
             return valueOf(text.toUpperCase(Locale.ROOT));
         } catch (Exception ex) {
-            LogManager.getLogger().error("Failed to parse the ClientServerCommandLineFlag from '%s' ", text);
+            LogManager.getLogger().error(String.format("Failed to parse the ClientServerCommandLineFlag from '%s'", text));
             throw(ex);
         }
-    }
-
-    @Override
-    public String toString() {
-        return super.toString();
     }
 
     public boolean isServerArg() {
@@ -83,5 +78,10 @@ public enum ClientServerCommandLineFlag {
 
     public boolean isHostArg() {
         return hostArg;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString();
     }
 }

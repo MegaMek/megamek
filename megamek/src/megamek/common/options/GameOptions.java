@@ -19,7 +19,7 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import megamek.common.TechConstants;
-import megamek.utils.MegaMekXmlUtil;
+import megamek.utilities.xml.MMXMLUtility;
 import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -56,8 +56,7 @@ public class GameOptions extends AbstractOptions {
         addOption(base, OptionsConstants.BASE_TEAM_INITIATIVE, true); 
         addOption(base, OptionsConstants.BASE_AUTOSAVE_MSG, true); 
         addOption(base, OptionsConstants.BASE_PARANOID_AUTOSAVE, false); 
-        addOption(base, OptionsConstants.BASE_EXCLUSIVE_DB_DEPLOYMENT, true); 
-        addOption(base, OptionsConstants.BASE_DEEP_DEPLOYMENT, false); 
+        addOption(base, OptionsConstants.BASE_EXCLUSIVE_DB_DEPLOYMENT, true);
         addOption(base, OptionsConstants.BASE_BLIND_DROP, false); 
         addOption(base, OptionsConstants.BASE_REAL_BLIND_DROP, false); 
         addOption(base, OptionsConstants.BASE_LOBBY_AMMO_DUMP, false); 
@@ -107,7 +106,7 @@ public class GameOptions extends AbstractOptions {
         IBasicOptionGroup advancedRules = addGroup("advancedRules"); 
         addOption(advancedRules, OptionsConstants.ADVANCED_MINEFIELDS, false); 
         addOption(advancedRules, OptionsConstants.ADVANCED_HIDDEN_UNITS, true); 
-        addOption(advancedRules, OptionsConstants.ADVANCED_DOUBLE_BLIND, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_DOUBLE_BLIND, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_SENSORS, false); 
         addOption(advancedRules, OptionsConstants.ADVANCED_SUPRESS_ALL_DB_MESSAGES, false); 
         addOption(advancedRules, OptionsConstants.ADVANCED_SUPPRESS_DB_BV, false); 
@@ -117,8 +116,8 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_GHOST_TARGET, false); 
         addOption(advancedRules, OptionsConstants.ADVANCED_GHOST_TARGET_MAX, 5); 
         addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_DIG_IN, false); 
-        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_BA_WEIGHT, false); 
-        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_TAKE_COVER, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_BA_WEIGHT, false);
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_TAKE_COVER, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_ANGEL_ECM, false); 
         addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_BATTLE_WRECK, false); 
         addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_SKIN_OF_THE_TEETH_EJECTION, false); 
@@ -146,11 +145,8 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedRules, OptionsConstants.ADVANCED_BA_GRAB_BARS, false); 
         addOption(advancedRules, OptionsConstants.ADVANCED_MAXTECH_MOVEMENT_MODS, false); 
         addOption(advancedRules, OptionsConstants.ADVANCED_ALTERNATE_MASC, false); 
-        addOption(advancedRules, OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED, false); 
-        addOption(advancedRules, OptionsConstants.ADVANCED_GEOMETRIC_MEAN_BV, false);
-        addOption(advancedRules, OptionsConstants.ADVANCED_REDUCED_OVERHEAT_MODIFIER_BV, false); 
-        addOption(advancedRules, OptionsConstants.ADVANCED_ALTERNATE_PILOT_BV_MOD, false); 
-        
+        addOption(advancedRules, OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED, false);
+        addOption(advancedRules, OptionsConstants.ADVANCED_SINGLE_BLIND_BOTS, false);
 
         IBasicOptionGroup advancedCombat = addGroup("advancedCombat"); 
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_AMS, false);
@@ -227,7 +223,8 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_TAKING_DAMAGE, false); 
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE, false); 
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_WALK_BACKWARDS, false); 
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_FAST_INFANTRY_MOVE, false); 
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_FAST_INFANTRY_MOVE, false);
+        addOption(advancedGroundMovement, OptionsConstants.ADVANCED_TACOPS_INF_PAVE_BONUS, false);
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT, false); 
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT_NUMBER, 4); 
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_VEHICLE_ACCELERATION, false); 
@@ -332,7 +329,7 @@ public class GameOptions extends AbstractOptions {
             
             Unmarshaller um = jc.createUnmarshaller();
             InputStream is = new FileInputStream(file);
-            GameOptionsXML opts = (GameOptionsXML) um.unmarshal(MegaMekXmlUtil.createSafeXmlSource(is));
+            GameOptionsXML opts = (GameOptionsXML) um.unmarshal(MMXMLUtility.createSafeXmlSource(is));
 
             for (IBasicOption bo : opts.getOptions()) {
                 changedOptions.add(parseOptionNode(bo, print));
@@ -475,18 +472,18 @@ public class GameOptions extends AbstractOptions {
      * @param indent the indent to write at
      */
     public void writeToXML(final PrintWriter pw, int indent) {
-        MegaMekXmlUtil.writeSimpleXMLOpenIndentedLine(pw, indent++, "gameOptions");
+        MMXMLUtility.writeSimpleXMLOpenTag(pw, indent++, "gameOptions");
         for (final Enumeration<IOptionGroup> groups = getGroups(); groups.hasMoreElements(); ) {
             final IOptionGroup group = groups.nextElement();
             for (final Enumeration<IOption> options = group.getOptions(); options.hasMoreElements(); ) {
                 final IOption option = options.nextElement();
-                MegaMekXmlUtil.writeSimpleXMLOpenIndentedLine(pw, indent++, "gameOption");
-                MegaMekXmlUtil.writeSimpleXMLTag(pw, indent, "name", option.getName());
-                MegaMekXmlUtil.writeSimpleXMLTag(pw, indent, "value", option.getValue().toString());
-                MegaMekXmlUtil.writeSimpleXMLCloseIndentedLine(pw, --indent, "gameOption");
+                MMXMLUtility.writeSimpleXMLOpenTag(pw, indent++, "gameOption");
+                MMXMLUtility.writeSimpleXMLTag(pw, indent, "name", option.getName());
+                MMXMLUtility.writeSimpleXMLTag(pw, indent, "value", option.getValue().toString());
+                MMXMLUtility.writeSimpleXMLCloseTag(pw, --indent, "gameOption");
             }
         }
-        MegaMekXmlUtil.writeSimpleXMLCloseIndentedLine(pw, --indent, "gameOptions");
+        MMXMLUtility.writeSimpleXMLCloseTag(pw, --indent, "gameOptions");
     }
 
     /**

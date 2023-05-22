@@ -1,5 +1,6 @@
 /*
- * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2003-2004 - Ben Mazur (bmazur@sev.org).
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -11,18 +12,13 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
 package megamek.common;
 
 /**
- * Represents a (cramped) volume of space set aside for carrying a mobile structure or spacecraft's crew
+ * Represents a (cramped) volume of space set aside for carrying a mobile structure or spacecraft's
+ * crew
  */
-
 public final class SteerageQuartersCargoBay extends Bay {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 4161027191694822726L;
 
     private double weight = 0;
@@ -30,12 +26,10 @@ public final class SteerageQuartersCargoBay extends Bay {
     /**
      * The default constructor is only for serialization.
      */
-    protected SteerageQuartersCargoBay() {
+    private SteerageQuartersCargoBay() {
         totalSpace = 0;
         currentSpace = 0;
     }
-
-    // Public constructors and methods.
 
     /**
      * Create a space for the given tonnage of troops. For this class, only the
@@ -45,9 +39,9 @@ public final class SteerageQuartersCargoBay extends Bay {
      * @param weight The weight of troops (in tons) this space can carry.
      */
     public SteerageQuartersCargoBay(double weight, int doors) {
-        totalSpace = ((int) weight)/5;
+        totalSpace = ((int) weight) / 5;
         this.weight = weight;
-        currentSpace = ((int) weight)/5;
+        currentSpace = ((int) weight) / 5;
         this.doors = doors;
         currentdoors = doors;
     }
@@ -55,20 +49,18 @@ public final class SteerageQuartersCargoBay extends Bay {
     /**
      * Create space for certain number of crew/passengers
      *
-     * @param space The number of crew or passengers to accomodate
+     * @param space The number of crew or passengers to accommodate
      */
     public SteerageQuartersCargoBay(int space) {
         this(space * 5, 0);
     }
 
     /**
-     * Determines if this object can accept the given unit. The unit may not be
-     * of the appropriate type or there may be no room for the unit.
+     * Determines if this object can accept the given unit. The unit may not be of the appropriate
+     * type or there may be no room for the unit.
      *
-     * @param unit
-     *            - the <code>Entity</code> to be loaded.
-     * @return <code>true</code> if the unit can be loaded, <code>false</code>
-     *         otherwise.
+     * @param unit the <code>Entity</code> to be loaded.
+     * @return <code>true</code> if the unit can be loaded, <code>false</code> otherwise.
      */
     @Override
     public boolean canLoad(Entity unit) {
@@ -77,7 +69,7 @@ public final class SteerageQuartersCargoBay extends Bay {
     }
 
     @Override
-    public String getUnusedString(boolean showrecovery) {
+    public String getUnusedString(boolean showRecovery) {
         return "Steerage Quarters (" + getCurrentDoors() + " doors) - " + (int) currentSpace;
     }
 
@@ -105,5 +97,4 @@ public final class SteerageQuartersCargoBay extends Bay {
     public long getCost() {
         return 5000L * (long) totalSpace;
     }
-
 }

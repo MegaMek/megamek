@@ -31,7 +31,7 @@ import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks
@@ -45,10 +45,10 @@ public class LRMSwarmHandler extends LRMHandler {
      * @param t
      * @param w
      * @param g
-     * @param s
+     * @param m
      */
-    public LRMSwarmHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public LRMSwarmHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
         sSalvoType = " swarm missile(s) ";
     }
 
@@ -252,7 +252,7 @@ public class LRMSwarmHandler extends LRMHandler {
             if (entityTarget != null) {
                 handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                         nCluster, bldgAbsorbs);
-                server.creditKill(entityTarget, ae);
+                gameManager.creditKill(entityTarget, ae);
                 hits -= nCluster;
                 firstHit = false;
             }
@@ -272,14 +272,15 @@ public class LRMSwarmHandler extends LRMHandler {
                 vPhaseReport.addElement(r);
                 weapon.setUsedThisRound(false);
                 WeaponAttackAction newWaa = new WeaponAttackAction(ae.getId(),
-                        swarmTarget.getTargetId(), waa.getWeaponId());
+                        swarmTarget.getId(), waa.getWeaponId());
                 newWaa.setSwarmingMissiles(true);
                 newWaa.setSwarmMissiles(swarmMissilesNowLeft);
-                newWaa.setOldTargetId(target.getTargetId());
+                newWaa.setOldTargetId(target.getId());
                 newWaa.setOldTargetType(target.getTargetType());
                 newWaa.setOriginalTargetId(waa.getOriginalTargetId());
                 newWaa.setOriginalTargetType(waa.getOriginalTargetType());
                 newWaa.setAmmoId(waa.getAmmoId());
+                newWaa.setAmmoMunitionType(waa.getAmmoMunitionType());
                 newWaa.setAmmoCarrier(waa.getAmmoCarrier());
                 Mounted m = ae.getEquipment(waa.getWeaponId());
                 Weapon w = (Weapon) m.getType();
@@ -287,7 +288,7 @@ public class LRMSwarmHandler extends LRMHandler {
                 // in the next line
                 weapon.getLinked().setShotsLeft(
                         weapon.getLinked().getBaseShotsLeft() + 1);
-                AttackHandler ah = w.fire(newWaa, game, server);
+                AttackHandler ah = w.fire(newWaa, game, gameManager);
                 LRMSwarmHandler wh = (LRMSwarmHandler) ah;
                 // attack the new target
                 wh.handledHeat = true;
@@ -376,14 +377,15 @@ public class LRMSwarmHandler extends LRMHandler {
             vPhaseReport.addElement(r);
             weapon.setUsedThisRound(false);
             WeaponAttackAction newWaa = new WeaponAttackAction(ae.getId(),
-                    swarmTarget.getTargetId(), waa.getWeaponId());
+                    swarmTarget.getId(), waa.getWeaponId());
             newWaa.setSwarmingMissiles(true);
             newWaa.setSwarmMissiles(swarmMissilesNowLeft);
-            newWaa.setOldTargetId(target.getTargetId());
+            newWaa.setOldTargetId(target.getId());
             newWaa.setOldTargetType(target.getTargetType());
             newWaa.setOriginalTargetId(waa.getOriginalTargetId());
             newWaa.setOriginalTargetType(waa.getOriginalTargetType());
             newWaa.setAmmoId(waa.getAmmoId());
+            newWaa.setAmmoMunitionType(waa.getAmmoMunitionType());
             newWaa.setAmmoCarrier(waa.getAmmoCarrier());
             Mounted m = ae.getEquipment(waa.getWeaponId());
             Weapon w = (Weapon) m.getType();
@@ -391,7 +393,7 @@ public class LRMSwarmHandler extends LRMHandler {
             // in the next line
             weapon.getLinked().setShotsLeft(
                     weapon.getLinked().getBaseShotsLeft() + 1);
-            AttackHandler ah = w.fire(newWaa, game, server);
+            AttackHandler ah = w.fire(newWaa, game, gameManager);
             LRMSwarmHandler wh = (LRMSwarmHandler) ah;
             // attack the new target
             wh.handledHeat = true;

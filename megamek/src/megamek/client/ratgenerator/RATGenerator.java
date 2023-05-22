@@ -13,10 +13,12 @@
  */
 package megamek.client.ratgenerator;
 
+import megamek.client.ratgenerator.FactionRecord.TechCategory;
+import megamek.client.ratgenerator.UnitTable.TableEntry;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.utils.MegaMekXmlUtil;
+import megamek.utilities.xml.MMXMLUtility;
 import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -32,6 +34,8 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.Map.Entry;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -123,8 +127,8 @@ public class RATGenerator {
         return null;
     }
 
-    public AvailabilityRating findChassisAvailabilityRecord(int era, String unit, FactionRecord fRec,
-            int year) {
+    public @Nullable AvailabilityRating findChassisAvailabilityRecord(int era, String unit,
+                                                                      FactionRecord fRec, int year) {
         if (fRec == null) {
             return null;
         }
@@ -134,7 +138,7 @@ public class RATGenerator {
                 retVal = chassisIndex.get(era).get(unit).get(fRec.getKey());
             } else if (fRec.getParentFactions().size() == 1) {
                 retVal = findChassisAvailabilityRecord(era, unit, fRec.getParentFactions().get(0), year);
-            } else if (fRec.getParentFactions().size() > 0) {
+            } else if (!fRec.getParentFactions().isEmpty()) {
                 ArrayList<AvailabilityRating> list = new ArrayList<>();
                 for (String alt : fRec.getParentFactions()) {
                     AvailabilityRating ar = findChassisAvailabilityRecord(era, unit, alt, year);
@@ -147,37 +151,41 @@ public class RATGenerator {
                 retVal = chassisIndex.get(era).get(unit).get("General");
             }
         }
+
         if (retVal != null && year >= retVal.getStartYear()) {
             return retVal;
         }
+
         return null;
     }
 
-    public AvailabilityRating findModelAvailabilityRecord(int era, String unit, String faction) {
+    public @Nullable AvailabilityRating findModelAvailabilityRecord(int era, String unit,
+                                                                    String faction) {
         if (factions.containsKey(faction)) {
             return findModelAvailabilityRecord(era, unit, factions.get(faction));
-        }
-        if (modelIndex.containsKey(era) && modelIndex.get(era).containsKey(unit)) {
+        } else if (modelIndex.containsKey(era) && modelIndex.get(era).containsKey(unit)) {
             return modelIndex.get(era).get(unit).get("General");
+        } else {
+            return null;
         }
-        return null;
     }
 
-    public AvailabilityRating findModelAvailabilityRecord(int era, String unit, FactionRecord fRec) {
+    public @Nullable AvailabilityRating findModelAvailabilityRecord(int era, String unit,
+                                                                    @Nullable FactionRecord fRec) {
         if (null == models.get(unit)) {
             LogManager.getLogger().error("Trying to find record for unknown model " + unit);
             return null;
-        }
-        if (fRec == null || models.get(unit).factionIsExcluded(fRec)) {
+        } else if ((fRec == null) || models.get(unit).factionIsExcluded(fRec)) {
             return null;
         }
         if (modelIndex.containsKey(era) && modelIndex.get(era).containsKey(unit)) {
             if (modelIndex.get(era).get(unit).containsKey(fRec.getKey())) {
                 return modelIndex.get(era).get(unit).get(fRec.getKey());
             }
+
             if (fRec.getParentFactions().size() == 1) {
                 return findModelAvailabilityRecord(era, unit, fRec.getParentFactions().get(0));
-            } else if (fRec.getParentFactions().size() > 0) {
+            } else if (!fRec.getParentFactions().isEmpty()) {
                 ArrayList<AvailabilityRating> list = new ArrayList<>();
                 for (String alt : fRec.getParentFactions()) {
                     AvailabilityRating ar = findModelAvailabilityRecord(era, unit, alt);
@@ -189,6 +197,7 @@ public class RATGenerator {
             }
             return modelIndex.get(era).get(unit).get("General");
         }
+
         return null;
     }
 
@@ -200,7 +209,7 @@ public class RATGenerator {
      * @return     A <code>Collection</code> of all the availability ratings for the unit in the era,
      *             or null if there are no records for that era.
      */
-    public Collection<AvailabilityRating> getModelFactionRatings(int era, String unit) {
+    public @Nullable Collection<AvailabilityRating> getModelFactionRatings(int era, String unit) {
         if (modelIndex.containsKey(era) && modelIndex.get(era).containsKey(unit)) {
             return modelIndex.get(era).get(unit).values();
         }
@@ -249,7 +258,8 @@ public class RATGenerator {
      * @return     A <code>Collection</code> of all the availability ratings for the chassis in the era,
      *             or null if there are no records for that era.
      */
-    public Collection<AvailabilityRating> getChassisFactionRatings(int era, String chassisKey) {
+    public @Nullable Collection<AvailabilityRating> getChassisFactionRatings(int era,
+                                                                             String chassisKey) {
         if (chassisIndex.containsKey(era) && chassisIndex.get(era).containsKey(chassisKey)) {
             return chassisIndex.get(era).get(chassisKey).values();
         }
@@ -342,7 +352,7 @@ public class RATGenerator {
             return (floor == null) ? year : floor;
         }
     }
-    
+
     public boolean eraIsLoaded(int era) {
         return chassisIndex.containsKey(era);
     }
@@ -356,7 +366,7 @@ public class RATGenerator {
      * @return A new AR with the average availability code from the various factions.
      */
     private AvailabilityRating mergeFactionAvailability(String faction, List<AvailabilityRating> list) {
-        if (list.size() == 0) {
+        if (list.isEmpty()) {
             return null;
         }
         double totalWt = 0;
@@ -387,7 +397,6 @@ public class RATGenerator {
      * @param now The year for which to calculate a value.
      * @return The value for the year in question. Returns null if av1 and av2 are both null.
      */
-    
     private Double interpolate(Number av1, Number av2, int year1, int year2, int now) {
         if (av1 == null && av2 == null) {
             return null;
@@ -446,6 +455,7 @@ public class RATGenerator {
         if (rating == null && fRec.getRatingLevels().size() == 1) {
             ratingLevel = factionRatings.indexOf(fRec.getRatingLevels().get(0));
         }
+
         if (rating != null && numRatingLevels > 1) {
             ratingLevel = factionRatings.indexOf(rating);
         }
@@ -477,18 +487,18 @@ public class RATGenerator {
                 double totalModelWeight = cRec.totalModelWeight(early,
                         cRec.isOmni() ? user : fRec);
                 for (ModelRecord mRec : cRec.getModels()) {
-                    if (mRec.getIntroYear() >= year
-                            || (weightClasses.size() > 0
+                    if (mRec.getIntroYear() > year
+                            || (!weightClasses.isEmpty()
                                     && !weightClasses.contains(mRec.getWeightClass()))
                             || (networkMask & mRec.getNetworkMask()) != networkMask) {
                         continue;
                     }
-                    if (movementModes.size() > 0 && !movementModes.contains(mRec.getMovementMode())) {
+
+                    if (!movementModes.isEmpty() && !movementModes.contains(mRec.getMovementMode())) {
                         continue;
                     }
-                    ar = findModelAvailabilityRecord(early,
-                            mRec.getKey(), fRec);
-                    if (ar == null || ar.getAvailability() == 0) {
+                    ar = findModelAvailabilityRecord(early, mRec.getKey(), fRec);
+                    if ((ar == null) || (ar.getAvailability() == 0)) {
                         continue;
                     }
                     double mAv = mRec.calcAvailability(ar, ratingLevel, numRatingLevels, early);
@@ -499,7 +509,6 @@ public class RATGenerator {
                     if (adjMAv != null) {
                         double mWt = AvailabilityRating.calcWeight(adjMAv) / totalModelWeight
                                 * AvailabilityRating.calcWeight(cAv);
-
                         if (mWt > 0) {
                             unitWeights.put(mRec, mWt);
                         }
@@ -508,42 +517,44 @@ public class RATGenerator {
             }                        
         }
 
-        if (unitWeights.size() == 0) {
+        if (unitWeights.isEmpty()) {
             return new ArrayList<>();
         }
-        
-        /* If there is more than one weight class and the faction record (or parent)
-         * indicates a certain distribution of weight classes, adjust the weight value
-         * to conform to the given ratio.
-         */
 
+        // If there is more than one weight class and the faction record (or parent) indicates a
+        // certain distribution of weight classes, adjust the weight value to conform to the given
+        // ratio.
         if (weightClasses.size() > 1) {
             // Get standard weight class distribution for faction
             ArrayList<Integer> wcd = fRec.getWeightDistribution(early, unitType);
-            
-            if (wcd != null && wcd.size() > 0) {
-                /* Ultra-light and superheavy are too rare to warrant their own values and
-                 * for weight class distribution purposes are grouped with light and
-                 * assault, respectively.
-                 */
-                final int[] wcdIndex = {0, 0, 1, 2, 3, 3};
-                //Find the totals of the weight for the generated table 
-                double totalMRWeight = unitWeights.values().stream().mapToDouble(Double::doubleValue).sum();
-                //Find the sum of the weight distribution values for all weight classes in use.
-                int totalWCDWeights = weightClasses.stream().filter(wc -> wcdIndex[wc] < wcd.size())
-                        .mapToInt(wc -> wcd.get(wcdIndex[wc])).sum();
-                
+
+            if ((wcd != null) && !wcd.isEmpty()) {
+                // Ultra-light and superheavy are too rare to warrant their own values and for
+                // weight class distribution purposes are grouped with light and assault,
+                // respectively.
+                final int[] wcdIndex = { 0, 0, 1, 2, 3, 3 };
+                // Find the totals of the weight for the generated table
+                double totalMRWeight = unitWeights.values().stream()
+                        .mapToDouble(Double::doubleValue)
+                        .sum();
+                // Find the sum of the weight distribution values for all weight classes in use.
+                int totalWCDWeights = weightClasses.stream()
+                        .filter(wc -> wcdIndex[wc] < wcd.size())
+                        .mapToInt(wc -> wcd.get(wcdIndex[wc]))
+                        .sum();
+
                 if (totalWCDWeights > 0) {
-                    //Group all the models of the generated table by weight class.
-                    java.util.function.Function<ModelRecord,Integer> grouper =
-                            mr -> wcdIndex[mr.getWeightClass()];
-                    Map<Integer,List<ModelRecord>> weightGroups = unitWeights.keySet().stream()
+                    // Group all the models of the generated table by weight class.
+                    Function<ModelRecord, Integer> grouper = mr -> wcdIndex[mr.getWeightClass()];
+                    Map<Integer, List<ModelRecord>> weightGroups = unitWeights.keySet().stream()
                             .collect(Collectors.groupingBy(grouper));
                     
-                    /* Go through the weight class groups and adjust the table weights so the
-                     * total of each group corresponds to the distribution for this faction. */
+                    // Go through the weight class groups and adjust the table weights so the total
+                    // of each group corresponds to the distribution for this faction.
                     for (int i : weightGroups.keySet()) {
-                        double totalWeight = weightGroups.get(i).stream().mapToDouble(unitWeights::get).sum();
+                        double totalWeight = weightGroups.get(i).stream()
+                                .mapToDouble(unitWeights::get)
+                                .sum();
                         if (totalWeight > 0) {
                             double adj = totalMRWeight * wcd.get(i) / (totalWeight * totalWCDWeights);
                             weightGroups.get(i).forEach(mr -> unitWeights.merge(mr, adj, (x, y) -> x * y));
@@ -556,15 +567,16 @@ public class RATGenerator {
         double total = unitWeights.values().stream().mapToDouble(Double::doubleValue).sum();
 
         if (fRec.getPctSalvage(early) != null) {
-            HashMap<String,Double> salvageEntries = new HashMap<>();
-            for (Map.Entry<String,Integer> entry : fRec.getSalvage(early).entrySet()) {
+            HashMap<String, Double> salvageEntries = new HashMap<>();
+            for (Entry<String, Integer> entry : fRec.getSalvage(early).entrySet()) {
                 salvageEntries.put(entry.getKey(),
                         interpolate(entry.getValue(),
                                 fRec.getSalvage(late).get(entry.getKey()),
                                         early, late, year));
             }
+
             if (!late.equals(early)) {
-                for (Map.Entry<String,Integer> entry : fRec.getSalvage(late).entrySet()) {
+                for (Entry<String, Integer> entry : fRec.getSalvage(late).entrySet()) {
                     if (!salvageEntries.containsKey(entry.getKey())) {
                         salvageEntries.put(entry.getKey(), interpolate(0.0,
                                 entry.getValue(), early, late, year));
@@ -580,7 +592,8 @@ public class RATGenerator {
                 salvage = salvage * total / (100 - salvage);
             }
             double totalFactionWeight = salvageEntries.values().stream()
-                    .mapToDouble(Double::doubleValue).sum();
+                    .mapToDouble(Double::doubleValue)
+                    .sum();
             for (String fKey : salvageEntries.keySet()) {
                 FactionRecord salvageFaction = factions.get(fKey);
                 if (salvageFaction == null) {
@@ -594,51 +607,48 @@ public class RATGenerator {
         }
         
         if (ratingLevel >= 0) {
-            adjustForRating(fRec, unitType, year, ratingLevel,
-                    unitWeights, salvageWeights, early, late);
+            adjustForRating(fRec, unitType, year, ratingLevel, unitWeights, salvageWeights, early, late);
         }
         
-        
-        /* Increase weights if necessary to keep smallest from rounding down to zero */
-        
+        // Increase weights if necessary to keep smallest from rounding down to zero
         double adj = 1.0;
-        DoubleSummaryStatistics stats = Stream.concat(salvageWeights.values().stream(),
-                unitWeights.values().stream())
+        DoubleSummaryStatistics stats = Stream
+                .concat(salvageWeights.values().stream(), unitWeights.values().stream())
                 .mapToDouble(Double::doubleValue)
                 .filter(d -> d > 0)
                 .summaryStatistics();
-        if (stats.getMin() < 0.5 || stats.getMax() > 1000) {
+        if ((stats.getMin() < 0.5) || (stats.getMax() > 1000)) {
             adj = 0.5 / stats.getMin();
             if (stats.getMax() * adj > 1000.0) {
                 adj = 1000.0 / stats.getMax();
             }
         }
         
-        List<UnitTable.TableEntry> retVal = new ArrayList<>();
+        List<TableEntry> retVal = new ArrayList<>();
         for (FactionRecord faction : salvageWeights.keySet()) {
             int wt = (int) (salvageWeights.get(faction) * adj + 0.5);
             if (wt > 0) {
-                retVal.add(new UnitTable.TableEntry(wt, faction));
+                retVal.add(new TableEntry(wt, faction));
             }
         }
         for (ModelRecord mRec : unitWeights.keySet()) {
             int wt = (int) (unitWeights.get(mRec) * adj + 0.5);
             if (wt > 0) {
-                retVal.add(new UnitTable.TableEntry(wt, mRec.getMechSummary()));
+                retVal.add(new TableEntry(wt, mRec.getMechSummary()));
             }
         }
         return retVal;
     }
 
-    private void adjustForRating(FactionRecord fRec, int unitType, int year,
-            int rating, HashMap<ModelRecord, Double> unitWeights,
-            HashMap<FactionRecord, Double> salvageWeights, Integer early,
-            Integer late) {
+    private void adjustForRating(FactionRecord fRec, int unitType, int year, int rating,
+                                 Map<ModelRecord, Double> unitWeights,
+                                 Map<FactionRecord, Double> salvageWeights, Integer early,
+                                 Integer late) {
         double total = 0.0;
         double totalOmni = 0.0;
         double totalClan = 0.0;
         double totalSL = 0.0;
-        for (Map.Entry<ModelRecord, Double> entry : unitWeights.entrySet()) {
+        for (Entry<ModelRecord, Double> entry : unitWeights.entrySet()) {
             total += entry.getValue();
             if (entry.getKey().isOmni()) {
                 totalOmni += entry.getValue();
@@ -655,38 +665,39 @@ public class RATGenerator {
         Double pctClan = null;
         Double pctOther = null;
         if (unitType == UnitType.MEK) {
-            pctOmni = interpolate(fRec.findPctTech(FactionRecord.TechCategory.OMNI, early, rating),
-                    fRec.findPctTech(FactionRecord.TechCategory.OMNI, late, rating), early, late, year);
-            pctClan = interpolate(fRec.findPctTech(FactionRecord.TechCategory.CLAN, early, rating),
-                    fRec.findPctTech(FactionRecord.TechCategory.CLAN, late, rating), early, late, year);
-            pctSL = interpolate(fRec.findPctTech(FactionRecord.TechCategory.IS_ADVANCED, early, rating),
-                    fRec.findPctTech(FactionRecord.TechCategory.IS_ADVANCED, late, rating), early, late, year);
+            pctOmni = interpolate(fRec.findPctTech(TechCategory.OMNI, early, rating),
+                    fRec.findPctTech(TechCategory.OMNI, late, rating), early, late, year);
+            pctClan = interpolate(fRec.findPctTech(TechCategory.CLAN, early, rating),
+                    fRec.findPctTech(TechCategory.CLAN, late, rating), early, late, year);
+            pctSL = interpolate(fRec.findPctTech(TechCategory.IS_ADVANCED, early, rating),
+                    fRec.findPctTech(TechCategory.IS_ADVANCED, late, rating), early, late, year);
         }
         if (unitType == UnitType.AERO) {
-            pctOmni = interpolate(fRec.findPctTech(FactionRecord.TechCategory.OMNI_AERO, early, rating),
-                    fRec.findPctTech(FactionRecord.TechCategory.OMNI_AERO, late, rating), early, late, year);
-            pctClan = interpolate(fRec.findPctTech(FactionRecord.TechCategory.CLAN_AERO, early, rating),
-                    fRec.findPctTech(FactionRecord.TechCategory.CLAN_AERO, late, rating), early, late, year);
-            pctSL = interpolate(fRec.findPctTech(FactionRecord.TechCategory.IS_ADVANCED_AERO, early, rating),
-                    fRec.findPctTech(FactionRecord.TechCategory.IS_ADVANCED_AERO, late, rating), early, late, year);
+            pctOmni = interpolate(fRec.findPctTech(TechCategory.OMNI_AERO, early, rating),
+                    fRec.findPctTech(TechCategory.OMNI_AERO, late, rating), early, late, year);
+            pctClan = interpolate(fRec.findPctTech(TechCategory.CLAN_AERO, early, rating),
+                    fRec.findPctTech(TechCategory.CLAN_AERO, late, rating), early, late, year);
+            pctSL = interpolate(fRec.findPctTech(TechCategory.IS_ADVANCED_AERO, early, rating),
+                    fRec.findPctTech(TechCategory.IS_ADVANCED_AERO, late, rating), early, late, year);
         }
         if (unitType == UnitType.TANK || unitType == UnitType.VTOL) {
-            pctClan = interpolate(fRec.findPctTech(FactionRecord.TechCategory.CLAN_VEE, early, rating),
-                    fRec.findPctTech(FactionRecord.TechCategory.CLAN_VEE, late, rating), early, late, year);
-            pctSL = interpolate(fRec.findPctTech(FactionRecord.TechCategory.IS_ADVANCED_VEE, early, rating),
-                    fRec.findPctTech(FactionRecord.TechCategory.IS_ADVANCED_VEE, late, rating), early, late, year);
+            pctClan = interpolate(fRec.findPctTech(TechCategory.CLAN_VEE, early, rating),
+                    fRec.findPctTech(TechCategory.CLAN_VEE, late, rating), early, late, year);
+            pctSL = interpolate(fRec.findPctTech(TechCategory.IS_ADVANCED_VEE, early, rating),
+                    fRec.findPctTech(TechCategory.IS_ADVANCED_VEE, late, rating), early, late, year);
         }
+
         /* Adjust for lack of precision in post-FM:Updates extrapolations */
         if (pctSL != null || pctClan != null) {
             pctOther = 100.0;
             if (pctSL != null) {
                 pctOther -= pctSL;
             }
+
             if (pctClan != null) {
                 pctOther -= pctClan;
             }
-            Double techMargin = interpolate(fRec.getTechMargin(early),
-                    fRec.getTechMargin(late),
+            Double techMargin = interpolate(fRec.getTechMargin(early), fRec.getTechMargin(late),
                     early, late, year);
             if (techMargin != null && techMargin > 0) {
                 if (pctClan != null) {
@@ -697,6 +708,7 @@ public class RATGenerator {
                         pctClan += techMargin;
                     }
                 }
+
                 if (pctSL != null) {
                     double pct = 100.0 * totalSL / total;
                     if (pct < pctSL - techMargin) {
@@ -706,10 +718,10 @@ public class RATGenerator {
                     }
                 }                    
             }
+
             Double upgradeMargin = interpolate(fRec.getUpgradeMargin(early),
-                    fRec.getUpgradeMargin(late),
-                    early, late, year);
-            if (upgradeMargin != null && upgradeMargin > 0) {
+                    fRec.getUpgradeMargin(late), early, late, year);
+            if ((upgradeMargin != null) && (upgradeMargin > 0)) {
                 double pct = 100.0 * (total - totalClan - totalSL) / total;
                 if (pct < pctOther - upgradeMargin) {
                     pctOther -= upgradeMargin;
@@ -737,10 +749,9 @@ public class RATGenerator {
             }
         }
         if (pctOmni != null) {
-            Double omniMargin = interpolate(fRec.getOmniMargin(early),
-                    fRec.getOmniMargin(late),
+            Double omniMargin = interpolate(fRec.getOmniMargin(early), fRec.getOmniMargin(late),
                     early, late, year);
-            if (omniMargin != null && omniMargin > 0) {
+            if ((omniMargin != null) && (omniMargin > 0)) {
                 double pct = 100.0 * totalOmni / total;
                 if (pct < pctOmni - omniMargin) {
                     pctOmni -= omniMargin;
@@ -751,10 +762,9 @@ public class RATGenerator {
             pctNonOmni = 100.0 - pctOmni;
         }            
                 
-        /* For non-Clan factions, the amount of salvage from Clan factions is
-         * part of the overall Clan percentage.
-         */
-        if (!fRec.isClan() && pctClan != null && totalClan > 0) {
+        // For non-Clan factions, the amount of salvage from Clan factions is part of the overall
+        // Clan percentage.
+        if (!fRec.isClan() && (pctClan != null) && (totalClan > 0)) {
             double clanSalvage = salvageWeights.keySet().stream().filter(FactionRecord::isClan)
                     .mapToDouble(salvageWeights::get).sum();
             total += clanSalvage;
@@ -870,7 +880,7 @@ public class RATGenerator {
         Document xmlDoc;
 
         try {
-            DocumentBuilder db = MegaMekXmlUtil.newSafeDocumentBuilder();
+            DocumentBuilder db = MMXMLUtility.newSafeDocumentBuilder();
             xmlDoc = db.parse(fis);
         } catch (Exception ex) {
             LogManager.getLogger().error("", ex);
@@ -929,7 +939,7 @@ public class RATGenerator {
         Document xmlDoc;
 
         try {
-            DocumentBuilder db = MegaMekXmlUtil.newSafeDocumentBuilder();
+            DocumentBuilder db = MMXMLUtility.newSafeDocumentBuilder();
             xmlDoc = db.parse(fis);
         } catch (Exception ex) {
             LogManager.getLogger().error("", ex);

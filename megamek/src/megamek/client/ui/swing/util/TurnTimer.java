@@ -13,11 +13,9 @@
  */
 package megamek.client.ui.swing.util;
 
-
 import megamek.client.Client;
 import megamek.client.ui.swing.AbstractPhaseDisplay;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.common.Game;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.Option;
 import megamek.common.options.OptionsConstants;
@@ -31,7 +29,6 @@ import java.awt.event.ActionListener;
  * This class takes a time limit, which is to be set in Basic Options and counts down to zero
  * When zero is reached, the ready() method of the given {@link AbstractPhaseDisplay} is called
  * to end the users current turn.
- *
  */
 public class TurnTimer {
     private Timer timer;
@@ -44,8 +41,8 @@ public class TurnTimer {
 
     public TurnTimer(int limit, AbstractPhaseDisplay pD) {
         phaseDisplay = pD;
-        // make it minutes here.
-        timeLimit = limit * 60;
+        // linit in seconds.
+        timeLimit = limit;
 
         display = new JPanel();
         progressBar = new JProgressBar(JProgressBar.HORIZONTAL, 0, timeLimit);
@@ -93,16 +90,21 @@ public class TurnTimer {
 
         });
     }
+
     public void stopTimer() {
         display.setVisible(false);
-        phaseDisplay.getClientgui().getMenuBar().remove(display);
+
+        if (phaseDisplay.getClientgui().getMenuBar() != null) {
+            phaseDisplay.getClientgui().getMenuBar().remove(display);
+        }
+
         timer.stop();
     }
 
     public static TurnTimer init(AbstractPhaseDisplay phaseDisplay, Client client) {
         // check if there should be a turn timer running
         if (timerShouldStart(client)) {
-            Option timer = (Option) client.getGame().getOptions().getOption("turn_timer");
+            Option timer = (Option) client.getGame().getOptions().getOption(OptionsConstants.BASE_TURN_TIMER);
             TurnTimer tt = new TurnTimer(timer.intValue(), phaseDisplay);
             tt.startTimer();
             return tt;
@@ -123,7 +125,7 @@ public class TurnTimer {
             GamePhase phase = client.getGame().getPhase();
 
             // turn timer should only kick in on firing, targeting, movement and physical attack phase
-            return phase == GamePhase.MOVEMENT || phase == GamePhase.FIRING || phase == GamePhase.PHYSICAL || phase == GamePhase.TARGETING;
+            return phase.isMovement() || phase.isFiring() || phase.isPhysical() || phase.isTargeting();
         }
         return false;
     }

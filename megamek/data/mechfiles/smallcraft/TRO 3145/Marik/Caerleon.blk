@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,9 +16,9 @@ SmallCraft
 Caerleon
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 6520
@@ -41,12 +41,12 @@ Aerodyne
 </motion_type>
 
 <transporters>
+cargobay:0.5:1:1
 2ndclassquarters:0.0:0
-battlearmorbay:3.0:1:2
-cargobay:0.5:1:3
 crewquarters:0.0:0
 1stclassquarters:0.0:0
 steeragequarters:20.0:0
+troopspace:20.0
 </transporters>
 
 <SafeThrust>
@@ -130,7 +130,7 @@ TRO 3145 Free Worlds League - Early Republic
 </designtype>
 
 <crew>
-22
+4
 </crew>
 
 <officers>
@@ -164,3 +164,4 @@ TRO 3145 Free Worlds League - Early Republic
 <escape_pod>
 0
 </escape_pod>
+

@@ -18,20 +18,15 @@ package megamek;
 import megamek.client.ui.Messages;
 import megamek.client.ui.preferences.SuitePreferences;
 import megamek.client.ui.swing.ButtonOrderPreferences;
-import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.MegaMekGUI;
-import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.commandline.AbstractCommandLineParser;
+import megamek.common.commandline.ClientServerCommandLineParser;
 import megamek.common.commandline.MegaMekCommandLineFlag;
 import megamek.common.commandline.MegaMekCommandLineParser;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.commandline.AbstractCommandLineParser;
-import megamek.common.commandline.ClientServerCommandLineParser;
-import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.common.verifier.*;
 import megamek.server.DedicatedServer;
-import megamek.server.Server;
-import megamek.utils.RATGeneratorEditor;
+import megamek.utilities.RATGeneratorEditor;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
@@ -46,7 +41,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Locale;
-import java.util.Vector;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -112,7 +106,7 @@ public class MegaMek {
                 startGUI();
             }
         } catch (MegaMekCommandLineParser.ParseException e) {
-            LogManager.getLogger().fatal(parser.formatErrorMessage(e));
+            LogManager.getLogger().fatal("Incorrect arguments:" + e.getMessage() + '\n' + parser.help());
             System.exit(1);
         }
     }
@@ -155,20 +149,6 @@ public class MegaMek {
         } catch (Exception ex) {
             LogManager.getLogger().error("Unable to redirect output to legacy.log", ex);
         }
-    }
-
-    public static void printToOut(String text) {
-        PrintStream out = new PrintStream(new FileOutputStream(FileDescriptor.out));
-        out.print(text);
-        out.flush();
-        out.close();
-    }
-
-    public static void printToErr(String text) {
-        PrintStream out = new PrintStream(new FileOutputStream(FileDescriptor.err));
-        out.print(text);
-        out.flush();
-        out.close();
     }
 
     public static SuitePreferences getMMPreferences() {
@@ -256,8 +236,7 @@ public class MegaMek {
         try {
             parser.parse();
         } catch (AbstractCommandLineParser.ParseException e) {
-            LogManager.getLogger().error(parser.formatErrorMessage(e));
-            MegaMek.printToErr(parser.formatErrorMessage(e) + "\n");
+            LogManager.getLogger().error("Incorrect arguments:" + e.getMessage() + '\n' + parser.help());
             System.exit(1);
         }
 
@@ -266,29 +245,52 @@ public class MegaMek {
                 PreferenceManager.getClientPreferences().getLastPlayerName() );
         LogManager.getLogger().info("Starting Host Server. " + Arrays.toString(args));
 
-        MegaMekGUI mmg = new MegaMekGUI();
-        mmg.start(false);
-        File gameFile = null;
-        if (resolver.saveGameFileName != null ) {
-            gameFile = new File(resolver.saveGameFileName);
-            if (!gameFile.isAbsolute()) {
-                gameFile = new File("./savegames", resolver.saveGameFileName);
-            }
-        }
+        SwingUtilities.invokeLater(() -> {
+            MegaMekGUI mmg = new MegaMekGUI();
+            mmg.start(false);
 
-        mmg.startHost(resolver.password, resolver.port, resolver.registerServer,
-                resolver.announceUrl, resolver.mailPropertiesFile, gameFile,
-                resolver.playerName );
+            File gameFile = null;
+            if (resolver.saveGameFileName != null ) {
+                gameFile = new File(resolver.saveGameFileName);
+                if (!gameFile.isAbsolute()) {
+                    gameFile = new File("./savegames", resolver.saveGameFileName);
+                }
+            }
+
+            mmg.startHost(resolver.password, resolver.port, resolver.registerServer,
+                    resolver.announceUrl, resolver.mailPropertiesFile, gameFile,
+                    resolver.playerName );
+        });
     }
 
     /**
      * Skip splash GUI, starts a host with using quicksave file
      */
     private static void startQuickLoad(String... args) {
-        LogManager.getLogger().info("Starting Quick Load Host Server. " + Arrays.toString(args));
-        MegaMekGUI mmg = new MegaMekGUI();
-        mmg.start(false);
-        mmg.quickLoadGame();
+        ClientServerCommandLineParser parser = new ClientServerCommandLineParser(args,
+                MegaMekCommandLineFlag.HOST.toString(), false, false, true);
+        try {
+            parser.parse();
+        } catch (AbstractCommandLineParser.ParseException e) {
+            LogManager.getLogger().error("Incorrect arguments:" + e.getMessage() + '\n' + parser.help());
+            System.exit(1);
+        }
+
+        ClientServerCommandLineParser.Resolver resolver = parser.getResolver(
+                null, MMConstants.DEFAULT_PORT, MMConstants.LOCALHOST,
+                PreferenceManager.getClientPreferences().getLastPlayerName() );
+        LogManager.getLogger().info("Starting Host Server. " + Arrays.toString(args));
+
+        SwingUtilities.invokeLater(() -> {
+            MegaMekGUI mmg = new MegaMekGUI();
+            mmg.start(false);
+
+            File gameFile = getQuickSaveFile();
+
+            mmg.startHost(resolver.password, resolver.port, resolver.registerServer,
+                    resolver.announceUrl, resolver.mailPropertiesFile, gameFile,
+                    resolver.playerName );
+        });
     }
 
     /**
@@ -300,8 +302,7 @@ public class MegaMek {
         try {
             parser.parse();
         } catch (AbstractCommandLineParser.ParseException e) {
-            LogManager.getLogger().error(parser.formatErrorMessage(e));
-            MegaMek.printToErr(parser.formatErrorMessage(e) + "\n");
+            LogManager.getLogger().error("Incorrect arguments:" + e.getMessage() + '\n' + parser.help(), e);
             System.exit(1);
         }
 
@@ -310,9 +311,11 @@ public class MegaMek {
                 PreferenceManager.getClientPreferences().getLastPlayerName());
 
         LogManager.getLogger().info("Starting Client Server. " + Arrays.toString(args));
-        MegaMekGUI mmg = new MegaMekGUI();
-        mmg.start(false);
-        mmg.startClient(resolver.playerName, resolver.serverAddress, resolver.port);
+        SwingUtilities.invokeLater(() -> {
+            MegaMekGUI mmg = new MegaMekGUI();
+            mmg.start(false);
+            mmg.startClient(resolver.playerName, resolver.serverAddress, resolver.port);
+        });
     }
 
     /**
@@ -320,7 +323,7 @@ public class MegaMek {
      */
     private static void startGUI() {
         LogManager.getLogger().info("Starting MegaMekGUI.");
-        new MegaMekGUI().start(true);
+        SwingUtilities.invokeLater(() -> new MegaMekGUI().start(true));
     }
 
     /**
@@ -339,9 +342,9 @@ public class MegaMek {
     public static String getUnderlyingInformation(final String originProject,
                                                   final String currentProject) {
         final LocalDateTime buildDate = getBuildDate();
-        return String.format("Starting %s v%s\n\tBuild Date: %s\n\tRelease Date: %s\n\tToday: %s\n\tOrigin Project: %s\n\tJava Vendor: %s\n\tJava Version: %s\n\tPlatform: %s %s (%s)\n\tSystem Locale: %s\n\tTotal memory available to %s: %,.0f GB",
+        return String.format("Starting %s v%s\n\tBuild Date: %s\n\tToday: %s\n\tOrigin Project: %s\n\tJava Vendor: %s\n\tJava Version: %s\n\tPlatform: %s %s (%s)\n\tSystem Locale: %s\n\tTotal memory available to %s: %,.0f GB",
                 currentProject, MMConstants.VERSION, ((buildDate == null) ? "N/A" : buildDate),
-                MMConstants.RELEASE_DATE, LocalDate.now(), originProject,
+                LocalDate.now(), originProject,
                 System.getProperty("java.vendor"), System.getProperty("java.version"),
                 System.getProperty("os.name"), System.getProperty("os.version"),
                 System.getProperty("os.arch"), Locale.getDefault(), currentProject,
@@ -359,6 +362,11 @@ public class MegaMek {
         } catch (Exception ignored) {
             return null;
         }
+    }
+
+    public static File getQuickSaveFile()
+    {
+        return new File(MMConstants.QUICKSAVE_PATH, MMConstants.QUICKSAVE_FILE + MMConstants.SAVE_FILE_GZ_EXT);
     }
 
     /**

@@ -7,7 +7,7 @@ The Historical Results of the battles were...
 Battle 1: Clan Smoke Jaguar (Lose) V Federated Commonwealth (Win)
 Battle 2: Clan Wolf (Draw) V St Ives Compact (Draw)  
 Battle 3: Clan Blood Spirit (Lose) V Draconis Combine (Win) 
-Battle 4: Clan Jade Falcon (Win) V Comstar (Lose)  
+Battle 4: Clan Jade Falcon (Win) V ComStar (Lose)
 Battle 5: Clan Star Adder (Win) V Free Worlds League (Lose)  
 Battle 6: Clan Fire Mandrill (Lose) V Capellan Confederation (Win)
 Battle 7: Clan Hells Horses (Lose) V Free Rasalhague Republic (Win) 

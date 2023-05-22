@@ -16,9 +16,9 @@ Tank
 SM2 Heavy Artillery Vehicle
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 6386

@@ -16,9 +16,9 @@ Tank
 Burke II Superheavy Tank
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 7328

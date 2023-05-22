@@ -16,9 +16,13 @@ SupportTank
 Tracked Quad
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+9228
+</mul id:>
 
 <year>
 2469

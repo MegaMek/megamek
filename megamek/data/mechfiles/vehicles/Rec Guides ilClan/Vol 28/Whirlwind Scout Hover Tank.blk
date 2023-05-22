@@ -1,0 +1,117 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Whirlwind Scout Hover Tank
+</Name>
+
+<Model>
+
+</Model>
+
+<mul id:>
+9362
+</mul id:>
+
+<year>
+2890
+</year>
+
+<originalBuildYear>
+2890
+</originalBuildYear>
+
+<type>
+IS Level 1
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<transporters>
+cargobay:0.5:1:1
+</transporters>
+
+<cruiseMP>
+8
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
+22
+20
+20
+20
+22
+</armor>
+
+<Body Equipment>
+IS Ammo AC/2
+IS Ammo AC/2
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Autocannon/2
+Autocannon/2
+Medium Laser
+Medium Laser
+</Turret Equipment>
+
+<capabilities>
+The Whirlwind was conceived for the dual roles of antiaircraft escort and IFV.
+</capabilities>
+
+<overview>
+The Whirlwind's claim to fame is that it was one of the very few fusion-powered conventional vehicles produced during the Succession Wars.
+</overview>
+
+<manufacturer>
+Jolassa-Kumbold Armored Weapons
+</manufacturer>
+
+<primaryFactory>
+Bristol
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:VLAR 125
+ARMOR:PyroTec ArmorSlab
+COMMUNICATIONS:HIV-13
+TARGETING:Garret D2j
+</systemManufacturers>
+
+<source>
+Rec Guide:ilClan #28 - Early Succession War
+</source>
+
+<tonnage>
+45.0
+</tonnage>
+

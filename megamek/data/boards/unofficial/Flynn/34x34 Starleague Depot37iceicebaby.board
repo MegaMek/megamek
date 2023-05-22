@@ -1,4 +1,8 @@
 size 34 34
+tag "SnowTheme (Auto)"
+tag "Roads (Auto)"
+tag "HighHills (Auto)"
+tag "IceTerrain (Auto)"
 hex 0101 0 "ice:1" "snow"
 hex 0201 0 "ice:1" "snow"
 hex 0301 0 "ice:1" "snow"

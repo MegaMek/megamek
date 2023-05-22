@@ -12,9 +12,9 @@ Tank
 <Name>
 Glory Heavy Fire Support Vehicle
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 4219

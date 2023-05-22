@@ -88,3 +88,34 @@ TRO 3039 - Succession Wars
 <tonnage>
 75.0
 </tonnage>
+
+<capabilities>
+The Von Luckner's fusion power plant provides it with the same level of efficiency and mobility as a BattleMech of comparable weight, as well as the indefinite operating range that only fusion can deliver. The Von Luckner's primary armament is typically comprised of powerful autocannons supported by missile racks, as well as a variety of light close-in weaponry deployed to protect against infantry and battlearmor. Finally, its rather thick armor hide helps it to stay in a combat for an extended period of time.
+</capabilities>
+
+<overview>
+This heavily armored and armed vehicle was intended as a BattleMech without legs, fueled by a fusion reactor and equipped with enough firepower to threaten 'Mechs up to its own weight.
+</overview>
+
+<deployment>
+This 3008 variant of the Von Luckner is more independent of ammunition. A PPC is added to the turret. The main gun had to be downgraded to an Autocannon/10 with two of tons ammo. Both SRM-6s had to be removed in order to make these changes possible. 
+</deployment>
+
+<history>
+After the Reunification War, HartfordCo Industries of Bryant produced the VNLK65N Von Luckner Heavy Tank. Count Felix von Luckner, a prominent twentieth-century Terran raider, inspired the name. The Von Luckner's power and resiliency make it a perfect choice for beefing up crucial defensive positions from the Terran Hegemony homeworlds to the far reaches of the Star League's newly gained Periphery territories. Though the Von Luckner became a mainstay of Terran and Star League defensive forces during the Star League's existence, the loss of the HartfordCo factories on Bryant in 2840—due to worsening global storms caused by the destruction of Bryant's Storm Inhibitors—instantly placed the vehicle on the endangered list. During the Amaris Coup and the First Succession War, several advanced Star League vehicles met this end. With many more cannibalized for BattleMech spare parts—an ironic twist on the vehicle's design standards—only a few Von Luckners remained in service as of 3030. Formerly common throughout the Inner Sphere, only Houses Davion, Steiner, Marik, and Kurita still deployed Von Luckners in significant numbers by 3039.
+</history>
+
+<manufacturer>
+Refit
+</manufacturer>
+
+<primaryFactory>
+Various
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:VOX 225 Fusion
+ARMOR:StarSlab/3
+COMMUNICATIONS:O/P 300
+TARGETING:O/P GRNDSTAT 50A
+</systemManufacturers>

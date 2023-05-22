@@ -16,9 +16,13 @@ SupportTank
 Eagre Firefighting ATV
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+9227
+</mul id:>
 
 <year>
 2469

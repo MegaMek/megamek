@@ -16,9 +16,9 @@ Warship
 Leviathan III Battleship
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 7394
@@ -616,11 +616,11 @@ Naval Laser 55
 (B) Sub-Capital Missile Launcher (Stingray)
 Sub-Capital Missile Launcher (Stingray)
 Sub-Capital Missile Launcher (Stingray)
-Ammo Stringray:150
+Ammo Stingray:150
 (B) Sub-Capital Missile Launcher (Stingray)
 Sub-Capital Missile Launcher (Stingray)
 Sub-Capital Missile Launcher (Stingray)
-Ammo Stringray:150
+Ammo Stingray:150
 (B) CLERPPC
 CLERPPC
 CLERPPC
@@ -708,11 +708,11 @@ Naval Laser 55
 (B) Sub-Capital Missile Launcher (Stingray)
 Sub-Capital Missile Launcher (Stingray)
 Sub-Capital Missile Launcher (Stingray)
-Ammo Stringray:150
+Ammo Stingray:150
 (B) Sub-Capital Missile Launcher (Stingray)
 Sub-Capital Missile Launcher (Stingray)
 Sub-Capital Missile Launcher (Stingray)
-Ammo Stringray:150
+Ammo Stingray:150
 (B) CLERPPC
 CLERPPC
 CLERPPC

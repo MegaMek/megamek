@@ -1,0 +1,120 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Golem Assault Armor
+</Name>
+
+<Model>
+(Fast Assault)(Sqd6)
+</Model>
+
+<mul id:>
+8985
+</mul id:>
+
+<year>
+3072
+</year>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<Point Equipment>
+CLBAMG:RA
+CLBASRM5OS:Body
+CLBAJumpBooster:Body
+BABasicManipulator:LA
+BABasicManipulator:RA
+BAAPMount:LA
+InfantryAssaultRifle:LA:APM
+</Point Equipment>
+
+<source>
+TRO 3075 - Jihad
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+2
+</jumpingMP>
+
+<armor>
+18
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+4
+</weightclass>
+
+<overview>
+The Golem is a battle armor design that was created by Clan Ghost Bear. 
+</overview>
+
+<capabilities>
+In addition, this armor is fire resistant, so it is unaffected by Flamers and Inferno rounds. Though it cannot jump, the Golem is still speedier than the other assault-class designs. While that does not make this battlesuit fast, it does give it the ability to bring its strong weapons to bear on a target, even as it can withstand the punishment meted out by an enemy.
+</capabilities>
+
+<deployment>
+This Horses variant goes in the opposite direction of the Rock Golem. It replaces the armor with standard battlesuit armor and retains the downgraded SRM launcher of the earlier variant, though it has the same protection. It reduces the ground speed to 10 km/h, but includes jump packs and a Jump Booster that enable it to jump ninety meters. This necessitated downgrading the weapon systems to a single Machine Gun and an Anti-Personnel Weapon Mount.
+</deployment>
+
+<history>
+Following their conflicts with first the Draconis Combine, then Clan Hell's Horses, the Bears decided they wanted something that could compete with the Kanazuchi and Gnome. The Golem is the result of that process and features enough armor to shrug off a Heavy Large Laser. 
+</history>
+
+
+<manufacturer>
+Csesztreg Industriplex Gamma,Transitional Facility A-4
+</manufacturer>
+
+<primaryFactory>
+Csesztreg,Nouveaux Paris
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<notes>
+</notes>

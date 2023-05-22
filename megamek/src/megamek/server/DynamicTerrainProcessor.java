@@ -19,10 +19,10 @@ import java.util.Vector;
 import megamek.common.Report;
 
 public abstract class DynamicTerrainProcessor {
-    protected Server server;
+    protected GameManager gameManager;
 
-    DynamicTerrainProcessor(Server server) {
-        this.server = server;
+    DynamicTerrainProcessor(GameManager gameManager) {
+        this.gameManager = gameManager;
     }
 
     /**

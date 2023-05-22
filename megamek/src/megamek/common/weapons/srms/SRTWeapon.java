@@ -19,15 +19,21 @@
  */
 package megamek.common.weapons.srms;
 
+import static megamek.common.MountedHelper.isArtemisIV;
+import static megamek.common.MountedHelper.isArtemisProto;
+import static megamek.common.MountedHelper.isArtemisV;
+
 import megamek.common.AmmoType;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Entity;
 import megamek.common.Game;
+import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.SRMHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks
@@ -52,13 +58,48 @@ public abstract class SRTWeapon extends MissileWeapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, Server server) {
-        return new SRMHandler(toHit, waa, game, server);
+            WeaponAttackAction waa, Game game, GameManager manager) {
+        return new SRMHandler(toHit, waa, game, manager);
     }
     
     @Override
-    public double getBattleForceDamage(int range) {
-        return super.getBattleForceDamage(range) * 2;
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        if (range >= AlphaStrikeElement.LONG_RANGE) {
+            return 0;
+        }
+        if (isClan()) {
+            if (rackSize == 2) {
+                if (isArtemisIV(fcs) || isArtemisProto(fcs)) {
+                    return 0.4;
+                } else if (isArtemisV(fcs)) {
+                    return 0.42;
+                } else {
+                    return 0.2;
+                }
+            } else if (rackSize == 4) {
+                if (isArtemisV(fcs)) {
+                    return 0.63;
+                } else {
+                    return 0.6;
+                }
+            } else {
+                if (isArtemisIV(fcs) || isArtemisProto(fcs)) {
+                    return 0.1;
+                } else if (isArtemisV(fcs)) {
+                    return 1.05;
+                } else {
+                    return 0.8;
+                }
+            }
+        } else {
+            if (rackSize == 2) {
+                return (isArtemisIV(fcs) || isArtemisProto(fcs)) ? 0.4 : 0.2;
+            } else if (rackSize == 4) {
+                return 0.6;
+            } else {
+                return (isArtemisIV(fcs) || isArtemisProto(fcs)) ? 1 : 0.8;
+            }
+        }
     }
     
     @Override

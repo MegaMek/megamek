@@ -28,7 +28,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks
@@ -40,21 +40,15 @@ public class SRMInfernoHandler extends SRMHandler {
      * @param t
      * @param w
      * @param g
-     * @param s
+     * @param m
      */
-    public SRMInfernoHandler(ToHitData t, WeaponAttackAction w, Game g,
-            Server s) {
-        super(t, w, g, s);
-        damageType = Server.DamageType.INFERNO;
+    public SRMInfernoHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
+        damageType = DamageType.INFERNO;
         sSalvoType = " inferno missile(s) ";
         bSalvo = false;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
-     */
     @Override
     protected int calcDamagePerHit() {
         return 0;
@@ -156,16 +150,13 @@ public class SRMInfernoHandler extends SRMHandler {
 
         if (bMissed && !missReported) {
             reportMiss(vPhaseReport);
-            // Works out fire setting, AMS shots, and whether continuation is
-            // necessary.
-            if (!handleSpecialMiss(entityTarget, bldgDamagedOnMiss, bldg,
-                    vPhaseReport)) {
+            // Works out fire setting, AMS shots, and whether continuation is necessary.
+            if (!handleSpecialMiss(entityTarget, bldgDamagedOnMiss, bldg, vPhaseReport)) {
                 return false;
             }
         }
 
-        // yeech. handle damage. . different weapons do this in very different
-        // ways
+        // yeech. handle damage. . different weapons do this in very different ways
         int hits = calcHits(vPhaseReport);
         Report.addNewline(vPhaseReport);
 
@@ -175,7 +166,7 @@ public class SRMInfernoHandler extends SRMHandler {
 
         // light inferno missiles all at once, if not missed
         if (!bMissed) {
-            vPhaseReport.addAll(server.deliverInfernoMissiles(ae, target, hits,
+            vPhaseReport.addAll(gameManager.deliverInfernoMissiles(ae, target, hits,
                     weapon.getCalledShot().getCall()));
         }
         return false;
@@ -293,18 +284,17 @@ public class SRMInfernoHandler extends SRMHandler {
         // a 5 or less
         // you do a normal ignition as though for intentional fires
         if ((bldg != null)
-                && server.tryIgniteHex(target.getPosition(), subjectId, false,
+                && gameManager.tryIgniteHex(target.getPosition(), subjectId, false,
                         true,
                         new TargetRoll(wtype.getFireTN(), wtype.getName()), 5,
                         vPhaseReport)) {
             return;
         }
-        Vector<Report> clearReports = server.tryClearHex(target.getPosition(),
+        Vector<Report> clearReports = gameManager.tryClearHex(target.getPosition(),
                 nDamage, subjectId);
-        if (clearReports.size() > 0) {
+        if (!clearReports.isEmpty()) {
             vPhaseReport.lastElement().newlines = 0;
         }
         vPhaseReport.addAll(clearReports);
-        return;
     }
 }

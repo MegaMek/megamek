@@ -5,6 +5,10 @@ package megamek.common;
 
 import megamek.common.options.OptionsConstants;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * An enum for the various rules levels
  * 
@@ -111,5 +115,9 @@ public enum SimpleTechLevel {
     
     public static SimpleTechLevel getGameTechLevel(Game game) {
         return SimpleTechLevel.parse(game.getOptions().stringOption(OptionsConstants.ALLOWED_TECHLEVEL));
+    }
+
+    public static List<String> getDescriptions() {
+        return Arrays.stream(SimpleTechLevel.values()).map(e -> e.strVal).collect(Collectors.toList());
     }
 }

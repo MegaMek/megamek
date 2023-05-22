@@ -19,6 +19,9 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
+import megamek.common.weapons.infantry.InfantryWeapon;
+import megamek.common.weapons.infantry.InfantryWeaponHandler;
+
 import org.apache.logging.log4j.LogManager;
 
 import java.text.DecimalFormat;
@@ -331,10 +334,10 @@ public class WeaponFireInfo {
         if (!(getWeapon().getType().hasFlag(WeaponType.F_ARTILLERY) 
                 || (getWeapon().getType() instanceof CapitalMissileWeapon
                         && Compute.isGroundToGround(shooter, target)))) {
-            return new WeaponAttackAction(getShooter().getId(), getTarget().getTargetType(), getTarget().getTargetId(),
+            return new WeaponAttackAction(getShooter().getId(), getTarget().getTargetType(), getTarget().getId(),
                                           getShooter().getEquipmentNum(getWeapon()));
         } else {
-            return new ArtilleryAttackAction(getShooter().getId(), getTarget().getTargetType(), getTarget().getTargetId(),
+            return new ArtilleryAttackAction(getShooter().getId(), getTarget().getTargetType(), getTarget().getId(),
                     getShooter().getEquipmentNum(getWeapon()), getGame());
         }
     }
@@ -342,7 +345,7 @@ public class WeaponFireInfo {
     private WeaponAttackAction buildBombAttackAction(final int[] bombPayload) {
         final WeaponAttackAction diveBomb = new WeaponAttackAction(getShooter().getId(),
                                                                    getTarget().getTargetType(),
-                                                                   getTarget().getTargetId(),
+                                                                   getTarget().getId(),
                                                                    getShooter().getEquipmentNum(getWeapon()));
         
         diveBomb.setBombPayload(bombPayload);
@@ -359,13 +362,13 @@ public class WeaponFireInfo {
         // bay weapons require special consideration, by looping through all weapons and adding up the damage
         // A bay's weapons may have different ranges, most noticeable in laser bays, where the damage potential
         // varies with distance to target.
-        if ((null != weapon.getBayWeapons()) && (weapon.getBayWeapons().size() > 0)) {
+        if ((null != weapon.getBayWeapons()) && !weapon.getBayWeapons().isEmpty()) {
             int bayDamage = 0;
             for (int weaponID : weapon.getBayWeapons()) {
                 Mounted bayWeapon = weapon.getEntity().getEquipment(weaponID);
                 WeaponType weaponType = (WeaponType) bayWeapon.getType();
-                int maxRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE) ?
-                        weaponType.getExtremeRange() : weaponType.getLongRange(); 
+                int maxRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
+                        ? weaponType.getExtremeRange() : weaponType.getLongRange();
                 int targetDistance = getShooter().getPosition().distance(getTarget().getPosition());
                 
                 // if the particular weapon is within range or we're an aircraft strafing a ground unit
@@ -375,10 +378,10 @@ public class WeaponFireInfo {
                     bayDamage += weaponType.getDamage();
                 }
             }
-            
+
             return bayDamage;
         }
-        
+
         // For clan plasma cannon, assume 7 "damage".
         final WeaponType weaponType = (WeaponType) weapon.getType();
         if (weaponType.hasFlag(WeaponType.F_PLASMA) &&
@@ -391,6 +394,15 @@ public class WeaponFireInfo {
         if ((weaponType.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) ||
            (weaponType.getDamage() == WeaponType.DAMAGE_ARTILLERY)) {
             return weaponType.getRackSize();
+        }
+
+        // infantry weapons use number of troopers multiplied by weapon damage, 
+        // with # troopers counting as 1 for support vehicles
+        if ((weaponType.getDamage() == WeaponType.DAMAGE_VARIABLE) &&
+                (weaponType instanceof InfantryWeapon)) {
+            int numTroopers = (shooter instanceof Infantry) ? 
+                    ((Infantry) shooter).getShootingStrength() : 1;
+            return InfantryWeaponHandler.calculateBaseDamage(shooter, weapon, weaponType) * numTroopers;
         }
         
         // this is a special case - if we're considering hitting a swarmed target
@@ -419,10 +431,10 @@ public class WeaponFireInfo {
      * @return Generated heat.
      */
     int computeHeat(Mounted weapon) {
-     // bay weapons require special consideration, by looping through all weapons and adding up the damage
+        // bay weapons require special consideration, by looping through all weapons and adding up the damage
         // A bay's weapons may have different ranges, most noticeable in laser bays, where the damage potential
         // varies with distance to target.
-        if ((null != weapon.getBayWeapons()) && (weapon.getBayWeapons().size() > 0)) {
+        if ((null != weapon.getBayWeapons()) && !weapon.getBayWeapons().isEmpty()) {
             int bayHeat = 0;
             for (int weaponID : weapon.getBayWeapons()) {
                 Mounted bayWeapon = weapon.getEntity().getEquipment(weaponID);
@@ -432,7 +444,7 @@ public class WeaponFireInfo {
             
             return bayHeat;
         } else {
-            return ((WeaponType) weapon.getType()).getHeat();
+            return weapon.getType().getHeat();
         }
     }
     
@@ -443,8 +455,7 @@ public class WeaponFireInfo {
      * @param bombedHex The target hex.
      * @return The expected damage of the attack.
      */
-    private double computeExpectedBombDamage(final Entity shooter,
-                                             final Mounted weapon,
+    private double computeExpectedBombDamage(final Entity shooter, final Mounted weapon,
                                              final Coords bombedHex) {
         double damage = 0D; //lol double damage I wish
         
@@ -504,8 +515,7 @@ public class WeaponFireInfo {
         // Set up the attack action and calculate the chance to hit.
         if ((null == bombPayload) || (0 == bombPayload.length)) {
             setAction(buildWeaponAttackAction());
-        }
-        else {
+        } else {
             setAction(buildBombAttackAction(bombPayload));
         }
         
@@ -635,11 +645,11 @@ public class WeaponFireInfo {
         if (!(getWeapon().getType().hasFlag(WeaponType.F_ARTILLERY)
                 || (getWeapon().getType() instanceof CapitalMissileWeapon
                         && Compute.isGroundToGround(shooter, target)))) {
-            setAction(new WeaponAttackAction(getShooter().getId(), getTarget().getTargetId(),
+            setAction(new WeaponAttackAction(getShooter().getId(), getTarget().getId(),
                     getShooter().getEquipmentNum(getWeapon())));
         } else {
             setAction(new ArtilleryAttackAction(getShooter().getId(), getTarget().getTargetType(),
-                    getTarget().getTargetId(), getShooter().getEquipmentNum(getWeapon()),
+                    getTarget().getId(), getShooter().getEquipmentNum(getWeapon()),
                     getGame()));
         }
         if (getAction() == null) {

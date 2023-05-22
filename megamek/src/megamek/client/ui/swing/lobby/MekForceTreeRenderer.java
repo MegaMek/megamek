@@ -18,6 +18,7 @@
  */ 
 package megamek.client.ui.swing.lobby;
 
+import megamek.MMConstants;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Configuration;
@@ -69,7 +70,7 @@ public class MekForceTreeRenderer extends DefaultTreeCellRenderer {
         }
         
         if (value instanceof Entity) {
-            Font scaledFont = new Font("Dialog", Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
+            Font scaledFont = new Font(MMConstants.FONT_DIALOG, Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
             setFont(scaledFont);
             entity = (Entity) value;
             this.row = row; 
@@ -88,14 +89,14 @@ public class MekForceTreeRenderer extends DefaultTreeCellRenderer {
             if (showAsUnknown) {
                 setIcon(getToolkit().getImage(UNKNOWN_UNIT), size - 5);
             } else {
-                Camouflage camo = entity.getCamouflageOrElse(entity.getOwner().getCamouflage());
+                Camouflage camo = entity.getCamouflageOrElseOwners();
                 Image image = lobby.getClientgui().getBoardView().getTilesetManager().loadPreviewImage(entity, camo, this);
                 setIconTextGap(UIUtil.scaleForGUI(10));
                 setIcon(image, size);
             }
         } else if (value instanceof Force) {
             entity = null;
-            Font scaledFont = new Font("Dialog", Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1 + 3));
+            Font scaledFont = new Font(MMConstants.FONT_DIALOG, Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1 + 3));
             setFont(scaledFont);
             Force force = (Force) value;
             if (lobby.isCompact()) {

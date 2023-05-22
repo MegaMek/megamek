@@ -1,0 +1,123 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Tortoise II
+</Name>
+
+<Model>
+(aSRM)(Sqd4)
+</Model>
+
+<mul id:>
+7362
+</mul id:>
+
+<year>
+3134
+</year>
+
+<type>
+Mixed (IS Chassis)
+</type>
+
+<motion_type>
+Leg
+</motion_type>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<armor_type>
+33
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<Squad Equipment>
+BA Stealth (Improved):Body
+BA Stealth (Improved):Body
+BA Stealth (Improved):Body
+BA Stealth (Improved):Body
+BA Stealth (Improved):Body
+BACLERMediumPulseLaser:DWP
+CLAdvancedSRM3:TU
+BA-Advanced SRM-3 Ammo:TU:Shots4#
+BA-Advanced SRM-3 Ammo:TU:Shots4#
+ISDetachableWeaponPack:Body
+</Squad Equipment>
+
+<source>
+XTRO Republic II - Dark Ages
+</source>
+
+<chassis>
+quad
+</chassis>
+
+<turret>
+Modular:5
+</turret>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+10
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+4
+</weightclass>
+
+<overview>
+The brainchild of Dr. Stephen Vance, Tortoise II Battle Armor was an Assault Class Quad Battle Armor developed by the Republic of the Sphere.
+</overview>
+
+<capabilities>
+Like other Assault-weight battle armor suits, the Tortoise II is slow. However, should a pilot need go beyond the armor's 10 km/h speed, the soldier wearing it could remove the suit's Detachable Weapons Mount to double its speed. The suit is protected by 350 kilograms of Clan Stealth Armor, allowing the unit to survive direct hits and making it harder to target.
+</capabilities>
+
+<deployment>
+The primary weapon systems the Tortoise II are split between a Modular Turret Mount and a Detachable Weapon Mount. Its main weapon is an ER Medium Pulse Laser located in the Detachable mount on the main body. A number of weapons can be fitted onto the turret mount: an Advanced SRM 3 Launcher with eight rounds of ammunition, a Clan SRM-6 launcher with three rounds of ammo, an LRM-4 with seven rounds of ammunition, or a Battle Armor C3 System and pair of Light Machine Guns with fifty rounds per gun.
+</deployment>
+
+<history>
+It was a hybrid of Inner Sphere and Clan technologies utilized by the Republic, which was costly for StarCorp Industries of Terra to develop. This was due to the unique design features Dr. Vance incorporated into it. Dr. Vance utilized wheels instead of rear legs to help the design carry its twin modules of weapons onto the battlefield. Nicknamed the "Wheelbarrel", the original Tortoise prototype was a money pit. After a redesign and some technology exchanged between Arc Royal MechWorks, the new Tortoise II proved to be successful redesign despite its critics. At its only known public trial demonstration against Republic forces in 3134, it showed it was a durable heavy weapon platform. This occurred prior to events leading to Fortress Republic.
+</history>
+
+<manufacturer>
+StarCorps Industries
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

@@ -16,9 +16,9 @@ Tank
 Sleipnir APC Tank
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 7613

@@ -20,7 +20,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks
@@ -72,7 +72,7 @@ public class ISBATaser extends AmmoWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              Server server) {
-        return new BATaserHandler(toHit, waa, game, server);
+                                              GameManager manager) {
+        return new BATaserHandler(toHit, waa, game, manager);
     }
 }

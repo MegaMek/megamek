@@ -32,6 +32,9 @@ import javax.swing.filechooser.FileFilter;
 import javax.xml.parsers.DocumentBuilder;
 
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -40,12 +43,12 @@ import megamek.client.ui.swing.dialog.MMConfirmDialog;
 import megamek.common.*;
 import megamek.common.options.*;
 import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
-import megamek.utils.MegaMekXmlUtil;
+import megamek.utilities.xml.MMXMLUtility;
 import static megamek.client.ui.swing.util.UIUtil.*;
 import static megamek.client.ui.Messages.*;
 
 /** Responsible for displaying the current game options and allowing the user to change them. */
-public class GameOptionsDialog extends AbstractButtonDialog implements ActionListener, DialogOptionListener {
+public class GameOptionsDialog extends AbstractButtonDialog implements ActionListener, DialogOptionListener, IPreferenceChangeListener {
 
     private ClientGUI clientGui;
     private JFrame frame;
@@ -137,6 +140,10 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         mainPanel.add(panPassword);
         mainPanel.add(Box.createVerticalStrut(5));
         mainPanel.add(panButtons);
+
+        adaptToGUIScale();
+        GUIPreferences.getInstance().addPreferenceChangeListener(this);
+
         return mainPanel;
     }
 
@@ -158,6 +165,9 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         panButtons.add(butDefaults);
         panButtons.add(butSave);
         panButtons.add(butLoad);
+
+        adaptToGUIScale();
+
         return panButtons;
     }
 
@@ -172,7 +182,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
 
         for (List<DialogOptionComponent> comps : optionComps.values()) {
             // Each option in the list should have the same value, so picking the first is fine
-            if (comps.size() > 0) {
+            if (!comps.isEmpty()) {
                 DialogOptionComponent comp = comps.get(0);
                 if (comp.hasChanged()) {
                     changed.addElement(comp.changedOption());
@@ -181,7 +191,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
             }
         }
 
-        if ((clientGui != null) && (changed.size() > 0)) {
+        if ((clientGui != null) && !changed.isEmpty()) {
             clientGui.getClient().sendGameOptions(texPass.getText(), changed);
         }
     }
@@ -196,7 +206,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         for (List<DialogOptionComponent> comps : optionComps.values()) {
             // Each option in the list should have the same value, so picking
             // the first is fine
-            if (comps.size() > 0) {
+            if (!comps.isEmpty()) {
                 IBasicOption option = comps.get(0).changedOption();
                 output.addElement(option);
             }
@@ -236,12 +246,12 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
     /** 
      * When show is true, options that contain the given String str are shown.
      * When show is false, these options are hidden and deselected. 
-     * Used to show/hide unofficial and legcy options.
+     * Used to show/hide unofficial and legacy options.
      */
     private void toggleOptions() {
         for (List<DialogOptionComponent> comps : optionComps.values()) {
             // Each option in the list should have the same value, so picking the first is fine
-            if (comps.size() > 0) {
+            if (!comps.isEmpty()) {
                 DialogOptionComponent comp = comps.get(0);
                 if (isUnofficialOption(comp) || isLegacyOption(comp)) {
                     comp.setVisible(shouldShow(comp));
@@ -525,6 +535,8 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         }
         List<DialogOptionComponent> comps = optionComps.computeIfAbsent(option.getName(), k -> new ArrayList<>());
         comps.add(optionComp);
+
+        UIUtil.adjustContainer(optionComp, UIUtil.FONT_SCALE1);
     }
 
     // Gets called when one of the option checkboxes is clicked.
@@ -837,7 +849,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
                     return true;
                 } else if (dir.getName().endsWith(".xml")) {
                     try {
-                        DocumentBuilder builder = MegaMekXmlUtil.newSafeDocumentBuilder();
+                        DocumentBuilder builder = MMXMLUtility.newSafeDocumentBuilder();
                         Document doc = builder.parse(dir);
                         NodeList listOfComponents = doc.getElementsByTagName("options");
                         return listOfComponents.getLength() > 0;
@@ -902,5 +914,15 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         return editable;
     }
 
+    private void adaptToGUIScale() {
+        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
+    }
 
+    @Override
+    public void preferenceChange(PreferenceChangeEvent e) {
+        // Update the text size when the GUI scaling changes
+        if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
+            adaptToGUIScale();
+        }
+    }
 }

@@ -1,6 +1,7 @@
 /*
  * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -14,7 +15,9 @@
  */
 package megamek.common;
 
-import megamek.common.loaders.EntityLoadingException;
+import megamek.common.alphaStrike.ASUnitType;
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.*;
 import org.apache.logging.log4j.LogManager;
@@ -30,9 +33,9 @@ import java.util.zip.ZipFile;
  * and server running in the same process can share it
  *
  * @author arlith
- * @author Others...
  */
 public class MechSummaryCache {
+    
     public interface Listener {
         void doneLoading();
     }
@@ -40,17 +43,17 @@ public class MechSummaryCache {
     private static final String FILENAME_UNITS_CACHE = "units.cache";
     private static final String FILENAME_LOOKUP = "name_changes.txt";
 
-    private static MechSummaryCache m_instance;
+    private static MechSummaryCache instance;
     private static boolean disposeInstance = false;
     private static boolean interrupted = false;
 
     private boolean initialized = false;
     private boolean initializing = false;
 
-    private MechSummary[] m_data;
-    private final Map<String, MechSummary> m_nameMap;
-    private final Map<String, MechSummary> m_fileNameMap;
-    private Map<String, String> hFailedFiles;
+    private MechSummary[] data;
+    private final Map<String, MechSummary> nameMap;
+    private final Map<String, MechSummary> fileNameMap;
+    private Map<String, String> failedFiles;
     private int cacheCount;
     private int fileCount;
     private int zipCount;
@@ -68,19 +71,18 @@ public class MechSummaryCache {
 
     public static synchronized MechSummaryCache getInstance(boolean ignoreUnofficial) {
         final boolean ignoringUnofficial = ignoreUnofficial;
-        if (m_instance == null) {
-            m_instance = new MechSummaryCache();
+        if (instance == null) {
+            instance = new MechSummaryCache();
         }
-        if (!m_instance.initialized && !m_instance.initializing) {
-            m_instance.initializing = true;
+        if (!instance.initialized && !instance.initializing) {
+            instance.initializing = true;
             interrupted = false;
             disposeInstance = false;
-            m_instance.loader = new Thread(() -> m_instance.loadMechData(ignoringUnofficial),
-                    "Mech Cache Loader");
-            m_instance.loader.setPriority(Thread.NORM_PRIORITY - 1);
-            m_instance.loader.start();
+            instance.loader = new Thread(() -> instance.loadMechData(ignoringUnofficial), "Mech Cache Loader");
+            instance.loader.setPriority(Thread.NORM_PRIORITY - 1);
+            instance.loader.start();
         }
-        return m_instance;
+        return instance;
     }
 
     /**
@@ -90,26 +92,27 @@ public class MechSummaryCache {
      * @param ignoreUnofficial If true, skips unofficial directories
      */
     public static void refreshUnitData(boolean ignoreUnofficial) {
-        m_instance.initializing = true;
-        m_instance.initialized = false;
+        instance.initializing = true;
+        instance.initialized = false;
         interrupted = false;
         disposeInstance = false;
+
         File unit_cache_path = new MegaMekFile(getUnitCacheDir(), FILENAME_UNITS_CACHE).getFile();
         long lastModified = unit_cache_path.exists() ? unit_cache_path.lastModified() : 0L;
 
-        m_instance.loader = new Thread(() -> m_instance.refreshCache(lastModified, ignoreUnofficial),
+        instance.loader = new Thread(() -> instance.refreshCache(lastModified, ignoreUnofficial),
                 "Mech Cache Loader");
-        m_instance.loader.setPriority(Thread.NORM_PRIORITY - 1);
-        m_instance.loader.start();
+        instance.loader.setPriority(Thread.NORM_PRIORITY - 1);
+        instance.loader.start();
     }
 
     public static void dispose() {
-        if (m_instance != null) {
+        if (instance != null) {
             synchronized (lock) {
                 interrupted = true;
-                m_instance.loader.interrupt();
+                instance.loader.interrupt();
                 // We can't do this, otherwise we can't notifyAll()
-                // m_instance = null;
+                // instance = null;
                 disposeInstance = true;
             }
         }
@@ -141,13 +144,19 @@ public class MechSummaryCache {
     }
 
     private MechSummaryCache() {
-        m_nameMap = new HashMap<>();
-        m_fileNameMap = new HashMap<>();
+        nameMap = new HashMap<>();
+        fileNameMap = new HashMap<>();
+
+        try {
+            QuirksHandler.initQuirksList();
+        } catch (Exception e) {
+            LogManager.getLogger().error("Error initializing quirks", e);
+        }
     }
 
     public MechSummary[] getAllMechs() {
         block();
-        return m_data;
+        return data;
     }
 
     private void block() {
@@ -155,8 +164,8 @@ public class MechSummaryCache {
             synchronized (lock) {
                 try {
                     lock.wait();
-                } catch (Exception e) {
-                    // Ignore
+                } catch (Exception ignored) {
+
                 }
             }
         }
@@ -164,17 +173,18 @@ public class MechSummaryCache {
 
     public MechSummary getMech(String sRef) {
         block();
-        if (m_nameMap.containsKey(sRef)) {
-            return m_nameMap.get(sRef);
+        if (nameMap.containsKey(sRef)) {
+            return nameMap.get(sRef);
         }
-        return m_fileNameMap.get(sRef);
+        return fileNameMap.get(sRef);
     }
 
     public Map<String, String> getFailedFiles() {
         block();
-        return hFailedFiles;
+        return failedFiles;
     }
 
+    @SuppressWarnings("unused") // Used in MHQ
     public void loadMechData() {
         loadMechData(false);
     }
@@ -185,7 +195,7 @@ public class MechSummaryCache {
         long lLastCheck = 0;
         entityVerifier = EntityVerifier.getInstance(new MegaMekFile(getUnitCacheDir(),
                 EntityVerifier.CONFIG_FILENAME).getFile());
-        hFailedFiles = new HashMap<>();
+        failedFiles = new HashMap<>();
 
         EquipmentType.initializeTypes(); // load master equipment lists
 
@@ -203,8 +213,8 @@ public class MechSummaryCache {
                     InputStream istream = new BufferedInputStream(
                             new FileInputStream(unit_cache_path));
                     ObjectInputStream fin = new ObjectInputStream(istream);
-                    Integer num_units = (Integer) fin.readObject();
-                    for (int i = 0; i < num_units; i++) {
+                    Integer nuunits = (Integer) fin.readObject();
+                    for (int i = 0; i < nuunits; i++) {
                         if (interrupted) {
                             done();
                             fin.close();
@@ -228,10 +238,10 @@ public class MechSummaryCache {
                     fin.close();
                     istream.close();
                 }
-            } catch (Exception e) {
+            } catch (Exception ex) {
                 loadReport.append("  Unable to load unit cache: ")
-                        .append(e.getMessage()).append("\n");
-                LogManager.getLogger().error(loadReport.toString(), e);
+                        .append(ex.getMessage()).append("\n");
+                LogManager.getLogger().error(loadReport.toString(), ex);
             }
         }
 
@@ -262,44 +272,42 @@ public class MechSummaryCache {
 
     private void updateData(Vector<MechSummary> vMechs) {
         // convert to array
-        m_data = new MechSummary[vMechs.size()];
-        vMechs.copyInto(m_data);
-        m_nameMap.clear();
-        m_fileNameMap.clear();
+        data = new MechSummary[vMechs.size()];
+        vMechs.copyInto(data);
+        nameMap.clear();
+        fileNameMap.clear();
 
         // store map references
-        for (MechSummary element : m_data) {
+        for (MechSummary element : data) {
             if (interrupted) {
                 done();
                 return;
             }
-            m_nameMap.put(element.getName(), element);
+            nameMap.put(element.getName(), element);
             String entryName = element.getEntryName();
             if (entryName == null) {
-                m_fileNameMap.put(element.getSourceFile().getName(), element);
+                fileNameMap.put(element.getSourceFile().getName(), element);
             } else {
                 String unitName = entryName;
 
                 if (unitName.contains("\\")) {
-                    unitName = unitName
-                            .substring(unitName.lastIndexOf("\\") + 1);
+                    unitName = unitName.substring(unitName.lastIndexOf("\\") + 1);
                 }
 
                 if (unitName.contains("/")) {
-                    unitName = unitName
-                            .substring(unitName.lastIndexOf("/") + 1);
+                    unitName = unitName.substring(unitName.lastIndexOf("/") + 1);
                 }
 
-                m_fileNameMap.put(unitName, element);
+                fileNameMap.put(unitName, element);
             }
         }
     }
 
     private void logReport() {
-        loadReport.append(m_data.length).append(" units loaded.\n");
+        loadReport.append(data.length).append(" units loaded.\n");
 
-        if (!hFailedFiles.isEmpty()) {
-            loadReport.append("  ").append(hFailedFiles.size())
+        if (!failedFiles.isEmpty()) {
+            loadReport.append("  ").append(failedFiles.size())
                     .append(" units failed to load...\n");
         }
 
@@ -317,7 +325,7 @@ public class MechSummaryCache {
             }
 
             if (disposeInstance) {
-                m_instance = null;
+                instance = null;
                 initialized = false;
             }
         }
@@ -325,16 +333,17 @@ public class MechSummaryCache {
 
     private void saveCache(List<MechSummary> data) {
         loadReport.append("Saving unit cache.\n");
-        File unit_cache_path = new MegaMekFile(getUnitCacheDir(), FILENAME_UNITS_CACHE).getFile();
-        try (ObjectOutputStream wr = new ObjectOutputStream(
-                new BufferedOutputStream(new FileOutputStream(unit_cache_path)))) {
-            wr.writeObject(data.size());
+        try (FileOutputStream fos = new FileOutputStream(
+                new MegaMekFile(getUnitCacheDir(), FILENAME_UNITS_CACHE).getFile());
+             BufferedOutputStream bos = new BufferedOutputStream(fos);
+             ObjectOutputStream oos = new ObjectOutputStream(bos)) {
+            oos.writeObject(data.size());
             for (MechSummary element : data) {
-                wr.writeObject(element);
+                oos.writeObject(element);
             }
-        } catch (Exception e) {
+        } catch (Exception ex) {
             loadReport.append(" Unable to save mech cache\n");
-            LogManager.getLogger().error("", e);
+            LogManager.getLogger().error("", ex);
         }
     }
 
@@ -345,7 +354,7 @@ public class MechSummaryCache {
         Set<String> knownFiles = new HashSet<>();
         // Loop through current contents and make sure the file is still there.
         // Note which files are represented so we can skip them if they haven't changed
-        for (MechSummary ms : m_data) {
+        for (MechSummary ms : data) {
             if (interrupted) {
                 done();
                 return;
@@ -377,7 +386,21 @@ public class MechSummaryCache {
         ms.setModel(e.getModel());
         ms.setMulId(e.getMulId());
         ms.setUnitType(UnitType.getTypeName(e.getUnitType()));
+        ms.setFullAccurateUnitType(Entity.getEntityTypeName(e.getEntityType()));
+        ms.setEntityType(e.getEntityType());
+        ms.setOmni(e.isOmni());
+        ms.setMilitary(e.isMilitary());
+        int tankTurrets = 0;
+        if (e instanceof Tank) {
+            if (!((Tank) e).hasNoDualTurret()) {
+                tankTurrets = 2;
+            } else if (!((Tank) e).hasNoTurret()) {
+                tankTurrets = 1;
+            }
+        }
+        ms.setTankTurrets(tankTurrets);
         ms.setSourceFile(f);
+        ms.setSource(e.getSource());
         ms.setEntryName(entry);
         ms.setYear(e.getYear());
         ms.setType(e.getTechLevel());
@@ -402,20 +425,12 @@ public class MechSummaryCache {
             ms.setSuitWeight(((BattleArmor) e).getTrooperWeight());
         }
         ms.setBV(e.calculateBattleValue());
-        e.setUseGeometricBV(true);
-        ms.setGMBV(e.calculateBattleValue());
-        e.setUseGeometricBV(false);
-        e.setUseReducedOverheatModifierBV(true);
-        ms.setRHBV(e.calculateBattleValue());
-        e.setUseGeometricBV(true);
-        ms.setRHGMBV(e.calculateBattleValue());
-        e.setUseGeometricBV(false);
-        e.setUseReducedOverheatModifierBV(false);
         ms.setLevel(TechConstants.T_SIMPLE_LEVEL[e.getTechLevel()]);
         ms.setAdvancedYear(e.getProductionDate(e.isClan()));
         ms.setStandardYear(e.getCommonDate(e.isClan()));
+        ms.setExtinctRange(e.getExtinctionRange());
         ms.setCost((long) e.getCost(false));
-        ms.setUnloadedCost(((long) e.getCost(true)));
+        ms.setDryCost((long) e.getCost(true));
         ms.setAlternateCost((int) e.getAlternateCost());
         ms.setCanon(e.isCanon());
         ms.setWalkMp(e.getWalkMP(false, false));
@@ -437,6 +452,8 @@ public class MechSummaryCache {
             ms.setUnitSubType(e.getMovementModeAsString());
         }
         ms.setEquipment(e.getEquipment());
+        ms.setQuirkNames(e.getQuirks());
+        ms.setWeaponQuirkNames(e);
         ms.setTotalArmor(e.getTotalArmor());
         ms.setTotalInternal(e.getTotalInternal());
         ms.setInternalsType(e.getStructureType());
@@ -449,6 +466,12 @@ public class MechSummaryCache {
         ms.setArmorType(armorTypes);
         ms.setArmorTypes(armorTypes);
         ms.setArmorTechTypes(armorTechTypes);
+        ms.setPatchwork(Arrays.stream(ms.getArmorTypes()).distinct().count() > 1);
+        ms.setDoomedOnGround(e.doomedOnGround());
+        ms.setDoomedInAtmosphere(e.doomedInAtmosphere());
+        ms.setDoomedInSpace(e.doomedInSpace());
+        ms.setDoomedInExtremeTemp(e.doomedInExtremeTemp());
+        ms.setDoomedInVacuum(e.doomedInVacuum());
 
         // Check to see if this entity has a cockpit, and if so, set it's type
         if ((e instanceof Mech)) {
@@ -462,7 +485,6 @@ public class MechSummaryCache {
             ms.setCockpitType(-2);
         }
 
-        // we can only test meks, vehicles, ASF, and Battlearmor right now
         TestEntity testEntity = null;
         if (e instanceof Mech) {
             testEntity = new TestMech((Mech) e, entityVerifier.mechOption, null);
@@ -487,7 +509,15 @@ public class MechSummaryCache {
         if (testEntity != null &&
                 !testEntity.correctEntity(new StringBuffer())) {
             ms.setLevel("F");
+            ms.setInvalid(true);
+        } else {
+            ms.setInvalid(false);
         }
+
+        ms.setTechLevel(e.getStaticTechLevel().toString());
+        ms.setTechBase(e.getTechBaseDescription());
+
+        ms.setFailedToLoadEquipment(e.getFailedEquipment().hasNext());
 
         ms.setGyroType(e.getGyroType());
         if (e.hasEngine()) {
@@ -508,6 +538,181 @@ public class MechSummaryCache {
             }
         } else {
             ms.setMyomerName("None");
+        }
+
+        int lowerArms = 0;
+        int hands = 0;
+
+        if (e instanceof Mech) {
+            lowerArms += e.hasSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_RARM) ? 1 : 0;
+            lowerArms += e.hasSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_LARM) ? 1 : 0;
+            hands += e.hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM) ? 1 : 0;
+            hands += e.hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM) ? 1 : 0;
+        }
+
+        ms.setLowerArms(lowerArms);
+        ms.setHands(hands);
+
+        double ts = e.getTroopCarryingSpace();
+        ts += e.getPodMountedTroopCarryingSpace();
+        ms.setTroopCarryingSpace(ts);
+
+        int aBays = 0;
+        int aDoors = 0;
+        double aUnits = 0;
+        int scBays = 0;
+        int scDoors = 0;
+        double scUnits = 0;
+        int dc = 0;
+        int mBays = 0;
+        int mDoors = 0;
+        double mUnits = 0;
+        int hvBays = 0;
+        int hvDoors = 0;
+        double hvUnits = 0;
+        int lvBays = 0;
+        int lvDoors = 0;
+        double lvUnits = 0;
+        int pmBays = 0;
+        int pmDoors = 0;
+        double pmUnits = 0;
+        int baBays = 0;
+        int baDoors = 0;
+        double baUnits = 0;
+        int iBays = 0;
+        int iDoors = 0;
+        double iUnits = 0;
+        int shvBays = 0;
+        int shvDoors = 0;
+        double shvUnits = 0;
+        int dBays = 0;
+        int dDoors = 0;
+        double dUnits = 0;
+        double cbUnits = 0;
+        int nrf = 0;
+        int bah = 0;
+        Vector<Transporter>  trs = e.getTransports();
+        for (Transporter t : trs) {
+            if (t instanceof ASFBay) {
+                aBays++;
+                aDoors += ((ASFBay) t).getCurrentDoors();
+                aUnits += t.getUnused();
+            }
+            if (t instanceof SmallCraftBay) {
+                scBays++;
+                scDoors += ((SmallCraftBay) t).getCurrentDoors();
+                scUnits +=  t.getUnused();
+            }
+            if (t instanceof DockingCollar) {
+                dc++;
+            }
+            if (t instanceof MechBay) {
+                mBays++;
+                mDoors += ((MechBay) t).getCurrentDoors();
+                mUnits += t.getUnused();
+            }
+            if (t instanceof HeavyVehicleBay) {
+                hvBays++;
+                hvDoors += ((HeavyVehicleBay) t).getCurrentDoors();
+                hvUnits += t.getUnused();
+            }
+            if (t instanceof LightVehicleBay) {
+                lvBays++;
+                lvDoors += ((LightVehicleBay) t).getCurrentDoors();
+                lvUnits += t.getUnused();
+            }
+            if (t instanceof ProtomechBay) {
+                pmBays++;
+                pmDoors += ((ProtomechBay) t).getCurrentDoors();
+                pmUnits += t.getUnused();
+            }
+            if (t instanceof BattleArmorBay) {
+                baBays++;
+                baDoors += ((BattleArmorBay) t).getCurrentDoors();
+                baUnits += t.getUnused();
+            }
+            if (t instanceof InfantryBay) {
+                iBays++;
+                iDoors += ((InfantryBay) t).getCurrentDoors();
+                iUnits += ((InfantryBay) t).getUnusedSlots();
+            }
+            if (t instanceof SuperHeavyVehicleBay) {
+                shvBays++;
+                shvDoors += ((SuperHeavyVehicleBay) t).getCurrentDoors();
+                shvUnits += t.getUnused();
+            }
+            if (t instanceof DropshuttleBay) {
+                dBays++;
+                dDoors += ((DropshuttleBay) t).getCurrentDoors();
+                dUnits += t.getUnused();
+            }
+            if (t instanceof BattleArmorHandles) {
+                bah++;
+            }
+            if (t instanceof  CargoBay) {
+                cbUnits += t.getUnused();
+            }
+            if (t instanceof  NavalRepairFacility) {
+                nrf++;
+            }
+        }
+        ms.setASFBays(aBays);
+        ms.setASFDoors(aDoors);
+        ms.setASFUnits(aUnits);
+        ms.setSmallCraftBays(scBays);
+        ms.setSmallCraftDoors(scDoors);
+        ms.setSmallCraftUnits(scUnits);
+        ms.setDockingCollars(dc);
+        ms.setMechBays(mBays);
+        ms.setMechDoors(mDoors);
+        ms.setMechUnits(mUnits);
+        ms.setHeavyVehicleBays(hvBays);
+        ms.setHeavyVehicleDoors(hvDoors);
+        ms.setHeavyVehicleUnits(hvUnits);
+        ms.setLightVehicleBays(lvBays);
+        ms.setLightVehicleDoors(lvDoors);
+        ms.setLightVehicleUnits(lvUnits);
+        ms.setProtoMecheBays(pmBays);
+        ms.setProtoMechDoors(pmDoors);
+        ms.setProtoMechUnits(pmUnits);
+        ms.setBattleArmorBays(baBays);
+        ms.setBattleArmorDoors(baDoors);
+        ms.setBattleArmorUnits(baUnits);
+        ms.setInfantryBays(iBays);
+        ms.setInfantryDoors(iDoors);
+        ms.setInfantryUnits(iUnits);
+        ms.setSuperHeavyVehicleBays(shvBays);
+        ms.setSuperHeavyVehicleDoors(shvDoors);
+        ms.setSuperHeavyVehicleUnits(shvUnits);
+        ms.setDropshuttleBays(dBays);
+        ms.setDropshuttleDoors(dDoors);
+        ms.setDropshuttelUnits(dUnits);
+        ms.setBattleArmorHandles(bah);
+        ms.setCargoBayUnits(cbUnits);
+        ms.setNavalRepairFacilities(nrf);
+
+        if (ASConverter.canConvert(e)) {
+            AlphaStrikeElement element = ASConverter.convertForMechCache(e);
+            ms.setAsUnitType(element.getASUnitType());
+            ms.setSize(element.getSize());
+            ms.setTmm(element.getTMM());
+            ms.setMovement(element.getMovement());
+            ms.setPrimaryMovementMode(element.getPrimaryMovementMode());
+            ms.setStandardDamage(element.getStandardDamage());
+            ms.setOverheat(element.getOV());
+            ms.setFrontArc(element.getFrontArc());
+            ms.setLeftArc(element.getLeftArc());
+            ms.setRightArc(element.getRightArc());
+            ms.setRearArc(element.getRearArc());
+            ms.setThreshold(element.getThreshold());
+            ms.setFullArmor(element.getFullArmor());
+            ms.setFullStructure(element.getFullStructure());
+            ms.setSquadSize(element.getSquadSize());
+            ms.setSpecialAbilities(element.getSpecialAbilities());
+            ms.setUnitRole(element.getRole());
+            ms.setPointValue(element.getPointValue());
+        } else {
+            ms.setAsUnitType(ASUnitType.UNKNOWN);
         }
 
         return ms;
@@ -614,31 +819,25 @@ public class MechSummaryCache {
                     fileCount++;
                     Iterator<String> failedEquipment = e.getFailedEquipment();
                     if (failedEquipment.hasNext()) {
-                        loadReport.append("    Loading from ").append(f)
-                                .append("\n");
+                        loadReport.append("    Loading from ").append(f).append("\n");
                         while (failedEquipment.hasNext()) {
-                            loadReport
-                                    .append("      Failed to load equipment: ")
-                                    .append(failedEquipment.next())
-                                    .append("\n");
+                            loadReport.append("      Failed to load equipment: ")
+                                    .append(failedEquipment.next()).append("\n");
                         }
                     }
-                } catch (EntityLoadingException ex) {
-                    loadReport.append("    Loading from ").append(f)
-                            .append("\n");
+                } catch (Exception ex) {
+                    loadReport.append("    Loading from ").append(f).append("\n");
                     loadReport.append("***   Unable to load file: ");
                     StringWriter stringWriter = new StringWriter();
                     PrintWriter printWriter = new PrintWriter(stringWriter);
                     ex.printStackTrace(printWriter);
                     loadReport.append(stringWriter.getBuffer()).append("\n");
-                    hFailedFiles.put(f.toString(), ex.getMessage());
+                    failedFiles.put(f.toString(), ex.getMessage());
                 }
             }
         }
 
-        loadReport.append("  ...loaded ").append(thisDirectoriesFileCount)
-                .append(" files.\n");
-
+        loadReport.append("  ...loaded ").append(thisDirectoriesFileCount).append(" files.\n");
         return bNeedsUpdate;
     }
 
@@ -667,8 +866,8 @@ public class MechSummaryCache {
                 try {
                     zFile.close();
                     return false;
-                } catch (IOException e) {
-                    LogManager.getLogger().error("", e);
+                } catch (Exception ex) {
+                    LogManager.getLogger().error("", ex);
                 }
             }
             ZipEntry zEntry = (ZipEntry) i.nextElement();
@@ -703,8 +902,7 @@ public class MechSummaryCache {
                 Iterator<String> failedEquipment = e.getFailedEquipment();
                 if (failedEquipment.hasNext()) {
                     loadReport.append("    Loading from zip file")
-                            .append(" >> ").append(zEntry.getName())
-                            .append("\n");
+                            .append(" >> ").append(zEntry.getName()).append("\n");
                     while (failedEquipment.hasNext()) {
                         loadReport.append("      Failed to load equipment: ")
                                 .append(failedEquipment.next()).append("\n");
@@ -719,7 +917,7 @@ public class MechSummaryCache {
                 ex.printStackTrace(printWriter);
                 loadReport.append(stringWriter.getBuffer()).append("\n");
                 if (!(ex.getMessage() == null)) {
-                    hFailedFiles.put(zEntry.getName(), ex.getMessage());
+                    failedFiles.put(zEntry.getName(), ex.getMessage());
                 }
             }
         }
@@ -739,33 +937,33 @@ public class MechSummaryCache {
     private void addLookupNames() {
         File lookupNames = new MegaMekFile(getUnitCacheDir(), FILENAME_LOOKUP).getFile();
         if (lookupNames.exists()) {
-            try (InputStream is = new FileInputStream(lookupNames);
-                 BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+            try (FileInputStream fis = new FileInputStream(lookupNames);
+                 InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
+                 BufferedReader br = new BufferedReader(isr)) {
                 String line;
                 String lookupName;
                 String entryName;
-                while (null != (line = reader.readLine())) {
+                while (null != (line = br.readLine())) {
                     if (line.startsWith("#")) {
                         continue;
                     }
-                    int index = line.indexOf("|");
+                    int index = line.indexOf('|');
                     if (index > 0) {
                         lookupName = line.substring(0, index);
                         entryName = line.substring(index + 1);
-                        if (!m_nameMap.containsKey(lookupName)) {
-                            MechSummary ms = m_nameMap.get(entryName);
+                        if (!nameMap.containsKey(lookupName)) {
+                            MechSummary ms = nameMap.get(entryName);
                             if (null != ms) {
-                                m_nameMap.put(lookupName, ms);
+                                nameMap.put(lookupName, ms);
                             }
                         }
                     }
                 }
-            } catch (IOException ex) {
+            } catch (Exception ex) {
                 LogManager.getLogger().error("", ex);
             }
         }
     }
-
 
     public int getCacheCount() {
         return cacheCount;
@@ -778,5 +976,4 @@ public class MechSummaryCache {
     public int getZipCount() {
         return zipCount;
     }
-
 }

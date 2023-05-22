@@ -92,3 +92,35 @@ RS 3145 NTNU - Late Republic
 <tonnage>
 50.0
 </tonnage>
+
+<capabilities>
+Carrying only one anti-vehicle weapon does not make it a less effective vehicle than a newer tank, but does reduce its ability to deal with a wide variety of targets. The Vedette uses its speed to great effect by moving into optimum autocannon range, opening fire, and then retreating as fast as possible to another fire position.
+</capabilities>
+
+<overview>
+The yardstick against which all other tanks are judged, the Vedette medium tank is one of the most popular and common combat vehicles in the Inner Sphere.
+</overview>
+
+<deployment>
+This Vedette was introduced in the Dark Age era. It is powered by a fuel cell engine. It carries a Gauss rifle and two Magshots for anti-infantry work. It is protected by Reflective Armor.
+</deployment>
+
+<history>
+There will be at least one Vedette wherever there are armored vehicles. It is not unrealistic to believe that this tank exists on every globe in the Inner Sphere.
+The Vedette, which was first created by the New Earth Trading Company and included specially licensed ComStar electronics, has spread to every realm and is now in routine production in multiple factories while also being a popular special-license item. It may be found in practically every House armored force as well as several mercenary armor battalions. The current technical rebirth brought forth by the memory core discovered on Helm has only increased the popularity of the Vedette, allowing more and more manufacturers to commence manufacturing.
+</history>
+
+<manufacturer>
+Arcturan Arms
+</manufacturer>
+
+<primaryFactory>
+Arcturus
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:250 Fuel Cell
+ARMOR:Bowie Glinting Blade Reflective
+COMMUNICATIONS:ComStar Rover
+TARGETING:ComStar Test-2
+</systemManufacturers>

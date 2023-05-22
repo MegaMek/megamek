@@ -59,7 +59,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
     @Override
     public void updateOptionValues() {
         gameOptions = clientGUI.getClient().getGame().getOptions();
-        enableYearLimits = gameOptions.booleanOption(OptionsConstants.ALLOWED_ERA_BASED);
+        enableYearLimits = true;
         allowedYear = gameOptions.intOption(OptionsConstants.ALLOWED_YEAR);
         canonOnly = gameOptions.booleanOption(OptionsConstants.ALLOWED_CANON_ONLY);
         allowInvalid = gameOptions.booleanOption(OptionsConstants.ALLOWED_ALLOW_ILLEGAL_UNITS);
@@ -101,8 +101,9 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         Entity e = getSelectedEntity();
         if (e != null) {
             Client client = null;
+            String name = (String) comboPlayer.getSelectedItem();
+
             if (comboPlayer.getSelectedIndex() > 0) {
-                String name = (String) comboPlayer.getSelectedItem();
                 client = clientGUI.getBots().get(name);
             }
 
@@ -112,6 +113,9 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
             autoSetSkillsAndName(e, client.getLocalPlayer());
             e.setOwner(client.getLocalPlayer());
             client.sendAddEntity(e);
+
+            String msg = clientGUI.getClient().getLocalPlayer() + " selected a unit for player: " + name;
+            clientGUI.getClient().sendServerChat(Player.PLAYER_NONE, msg);
         }
 
         if (close) {
@@ -174,7 +178,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         // we don't care about the failed loads.
         if (mscInstance.isInitialized()) {
             final Map<String, String> hFailedFiles = MechSummaryCache.getInstance().getFailedFiles();
-            if ((hFailedFiles != null) && (hFailedFiles.size() > 0)) {
+            if ((hFailedFiles != null) && !hFailedFiles.isEmpty()) {
                 // self-showing dialog
                 new UnitFailureDialog(frame, hFailedFiles);
             }
@@ -183,7 +187,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
 
     @Override
     public void setVisible(boolean visible) {
-        // Set the cursor in the text filter and mark the content so it can be directly replaced
+        // Set the cursor in the text filter and mark the content, so it can be directly replaced
         textFilter.grabFocus();
         textFilter.select(0, textFilter.getText().length());
         updatePlayerChoice();

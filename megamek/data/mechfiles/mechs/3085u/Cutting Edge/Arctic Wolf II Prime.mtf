@@ -4,47 +4,46 @@ Prime
 mul id:107
 
 Config:Biped Omnimech
-techbase:Clan
-era:3085
-source:Dark Age
-rules level:2
+TechBase:Clan
+Era:3085
+Source:Dark Age
+Rules Level:2
 
-mass:40
-engine:280 XL (Clan) Engine(IS)
-structure:Clan Endo Steel
-myomer:Standard
+Mass:40
+Engine:280 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
+Myomer:Standard
 
-heat sinks:10 Clan Double
-base chassis heat sinks:10
-walk mp:7
-jump mp:7
+Heat Sinks:11 Double
+Base Chassis Heat Sinks:10
+Walk MP:7
+Jump MP:7
 
-armor:Ferro-Fibrous(Clan)
-LA armor:12
-RA armor:12
-LT armor:16
-RT armor:16
-CT armor:18
-HD armor:9
-LL armor:14
-RL armor:14
-RTL armor:4
-RTR armor:4
-RTC armor:5
+Armor:Ferro-Fibrous(Clan)
+LA Armor:12
+RA Armor:12
+LT Armor:16
+RT Armor:16
+CT Armor:18
+HD Armor:9
+LL Armor:14
+RL Armor:14
+RTL Armor:4
+RTR Armor:4
+RTC Armor:5
 
-Weapons:6
-Streak SRM 4, Left Arm
-Streak SRM 4, Right Arm
-Streak SRM 4, Left Torso
-Streak SRM 4, Right Torso
+Weapons:5
+ER Medium Laser, Left Arm
+ER Medium Laser, Right Arm
+LRM 15, Left Torso
 Small Pulse Laser, Left Torso
-Small Pulse Laser, Left Torso
+LRM 15, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLStreakSRM4 (OMNIPOD)
+CLERMediumLaser (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -58,7 +57,7 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLStreakSRM4 (OMNIPOD)
+CLERMediumLaser (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -71,15 +70,15 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 Jump Jet
 Jump Jet
-CLStreakSRM4 (OMNIPOD)
-CLSmallPulseLaser (OMNIPOD)
-CLSmallPulseLaser (OMNIPOD)
-CLECMSuite (OMNIPOD)
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+CLSmallPulseLaser (omnipod)
 Clan Endo Steel
 Clan Endo Steel
--Empty-
 -Empty-
 
 Right Torso:
@@ -87,13 +86,13 @@ Fusion Engine
 Fusion Engine
 Jump Jet
 Jump Jet
-CLStreakSRM4 (OMNIPOD)
-Clan Streak SRM 4 Ammo (OMNIPOD)
-Clan Streak SRM 4 Ammo (OMNIPOD)
-CLActiveProbe (OMNIPOD)
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+Clan Ammo LRM-15 (omnipod)
+Clan Ammo LRM-15 (omnipod)
+Clan Ammo LRM-15 (omnipod)
 Clan Endo Steel
 Clan Endo Steel
--Empty-
 -Empty-
 
 Center Torso:
@@ -156,7 +155,8 @@ overview:The Arctic Wolf II is a Clan Wolf-in-Exile Medium OmniMech that was dev
 
 capabilities:The design is based on the OmniMech variant of the original Arctic Wolf. The original OmniMech version had a number of problems, including technical glitches and a lack of speed. The Arctic Wolf II addresses speed concerns by using the original Arctic Wolf's Light Force 280 rated XL Fusion Engine. Seven Grandthrust Mk. 4 Jump Jets were also installed to increase the Mech's tactical options and exploit capabilities that were gained from the failed OmniMech J Configuration. The 'Mech has over 14 tons of pod space available for its techs to install weapons and equipment. Perhaps one of the Arctic Wolf II's only weaknesses is its light armor protection, boasting only 6.5 ton of Ferro Fibrous armor.
 
-deployment:Primary Configuration is tailored to short-range engagements. It consists of four Streak SRM 4 launchers mounted in both arms and side torsos with two tons of ammunition to supply all four launchers. For backup weaponry, the 'Mech sports a pair of Small Pulse Lasers mounted in the right torso. This configuration also features an Active Probe and an ECM Suite.
+deployment:Designed for long-range engagements, the Primary configuration boasts a pair of shoulder mounted LRM-15 launchers with three tons of ammunition. The launchers are backed up by a pair of ER medium lasers mounted in each of the 'Mechs arms and a small pulse laser in the right torso. The 11 mounted double heat sinks handle the majority of the heat burden.
+
 manufacturer:WC Site 1
 primaryfactory:Arc-Royal
 systemmanufacturer:CHASSIS:AR1 Endo Steel
@@ -165,4 +165,3 @@ systemmanufacturer:ARMOR:Royal-7a Ferro-Fibrous
 systemmanufacturer:JUMPJET:Grandthrust Mk. 4
 systemmanufacturer:COMMUNICATIONS:HWLR Designation ComSys
 systemmanufacturer:TARGETING:Hunter (7) Dedicated TTS
-

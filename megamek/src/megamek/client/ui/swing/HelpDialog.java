@@ -13,6 +13,7 @@
 */  
 package megamek.client.ui.swing;
 
+import megamek.client.ui.swing.util.UIUtil;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
@@ -32,14 +33,13 @@ public class HelpDialog extends JDialog {
     private static final int HEIGHT = 400;
 
     private URL helpUrl;
-    private JEditorPane mainView;
 
     public HelpDialog(String title, URL helpURL) {
         setTitle(title);
         getContentPane().setLayout(new BorderLayout());
         this.helpUrl = helpURL;
 
-        mainView = new JEditorPane();
+        JEditorPane mainView = new JEditorPane();
         mainView.setEditable(false);
         try {
             mainView.setPage(helpUrl);
@@ -60,11 +60,16 @@ public class HelpDialog extends JDialog {
             }
         });
 
-        getContentPane().add(new JScrollPane(mainView));
+        add(new JScrollPane(mainView));
         setModalExclusionType(ModalExclusionType.TOOLKIT_EXCLUDE);
 
+        adaptToGUIScale();
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setSize(WIDTH, HEIGHT);
         setLocationRelativeTo(null);
+    }
+
+    private void adaptToGUIScale() {
+        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
     }
 }

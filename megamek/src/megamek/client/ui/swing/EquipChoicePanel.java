@@ -23,11 +23,11 @@ import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestBattleArmor;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.List;
 import java.util.*;
@@ -136,23 +136,7 @@ public class EquipChoicePanel extends JPanel {
         if (entity instanceof Mech) {
             Mech mech = (Mech) entity;
 
-            // Ejection Seat
-            boolean hasEjectSeat = true;
-            // torso mounted cockpits don't have an ejection seat
-            if (mech.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED
-                    || mech.hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT)) {
-                hasEjectSeat = false;
-            }
-            if (mech.isIndustrial()) {
-                hasEjectSeat = false;
-                // industrials can only eject when they have an ejection seat
-                for (Mounted misc : mech.getMisc()) {
-                    if (misc.getType().hasFlag(MiscType.F_EJECTION_SEAT)) {
-                        hasEjectSeat = true;
-                    }
-                }
-            }
-            if (hasEjectSeat) {
+            if (mech.hasEjectSeat()) {
                 add(labAutoEject, GBC.std());
                 add(chAutoEject, GBC.eol());
                 chAutoEject.setSelected(!mech.isAutoEject());
@@ -160,7 +144,7 @@ public class EquipChoicePanel extends JPanel {
 
             // Conditional Ejections
             if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
-                    && hasEjectSeat) {
+                    && mech.hasEjectSeat()) {
                 add(labCondEjectAmmo, GBC.std());
                 add(chCondEjectAmmo, GBC.eol());
                 chCondEjectAmmo.setSelected(mech.isCondEjectAmmo());
@@ -178,8 +162,7 @@ public class EquipChoicePanel extends JPanel {
             Aero aero = (Aero) entity;
 
             // Ejection Seat
-            boolean hasEjectSeat = !(entity.hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT));
-            if (hasEjectSeat) {
+            if (aero.hasEjectSeat()) {
                 add(labAutoEject, GBC.std());
                 add(chAutoEject, GBC.eol());
                 chAutoEject.setSelected(!aero.isAutoEject());
@@ -187,7 +170,7 @@ public class EquipChoicePanel extends JPanel {
 
             // Conditional Ejections
             if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
-                    && hasEjectSeat) {
+                    && aero.hasEjectSeat()) {
                 add(labCondEjectAmmo, GBC.std());
                 add(chCondEjectAmmo, GBC.eol());
                 chCondEjectAmmo.setSelected(aero.isCondEjectAmmo());
@@ -244,7 +227,7 @@ public class EquipChoicePanel extends JPanel {
         
         // Can't set up munitions on infantry.
         if (!((entity instanceof Infantry) && !((Infantry) entity)
-                .hasFieldGun()) || (entity instanceof BattleArmor)) {
+                .hasFieldWeapon()) || (entity instanceof BattleArmor)) {
             setupMunitions();
             panMunitions.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),
                     Messages.getString("CustomMechDialog.MunitionsPanelTitle"),
@@ -264,8 +247,9 @@ public class EquipChoicePanel extends JPanel {
             add(panBombs, GBC.eop().anchor(GridBagConstraints.CENTER));
         }
 
-        // Set up rapidfire mg
-        if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_BURST)) {
+        // Set up rapidfire mg; per errata infantry of any kind cannot use them
+        if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_BURST) &&
+                !(entity instanceof Infantry)) {
             setupRapidfireMGs();
             add(panRapidfireMGs, GBC.eop().anchor(GridBagConstraints.CENTER));
         }
@@ -277,7 +261,8 @@ public class EquipChoicePanel extends JPanel {
         }
 
         // Set up searchlight
-        if (clientgui.getClient().getGame().getPlanetaryConditions().getLight() > PlanetaryConditions.L_DUSK) {
+        if (!entity.getsAutoExternalSearchlight()
+                && (client.getGame().getPlanetaryConditions().getLight() > PlanetaryConditions.L_DUSK)) {
             add(labSearchlight, GBC.std());
             add(chSearchlight, GBC.eol());
             chSearchlight.setSelected(entity.hasSearchlight()
@@ -375,8 +360,10 @@ public class EquipChoicePanel extends JPanel {
         }
 
         // update searchlight setting
-        entity.setExternalSearchlight(chSearchlight.isSelected());
-        entity.setSearchlightState(chSearchlight.isSelected());
+        if (!entity.getsAutoExternalSearchlight()) {
+            entity.setExternalSearchlight(chSearchlight.isSelected());
+            entity.setSearchlightState(chSearchlight.isSelected());
+        }
 
         if (entity.hasC3() && (choC3.getSelectedIndex() > -1)) {
             Entity chosen = client.getEntity(entityCorrespondance[choC3.getSelectedIndex()]);
@@ -855,23 +842,20 @@ public class EquipChoicePanel extends JPanel {
                     
                 // Add the newly mounted weapon
                 try {
-                    Mounted newWeap =  entity.addEquipment(apType, 
-                            m_APmounted.getLocation());
+                    Mounted newWeap = entity.addEquipment(apType, m_APmounted.getLocation());
                     m_APmounted.setLinked(newWeap);
                     newWeap.setLinked(m_APmounted);
                     newWeap.setAPMMounted(true);
                 } catch (LocationFullException ex) {
                     // This shouldn't happen for BA...
-                    ex.printStackTrace();
+                    LogManager.getLogger().error("", ex);
                 }
-
             }
 
             @Override
             public void setEnabled(boolean enabled) {
                 m_choice.setEnabled(enabled);
             }
-
         }
         
         /**
@@ -898,7 +882,6 @@ public class EquipChoicePanel extends JPanel {
              * The BattleArmor mount location of the modular equipment adaptor.
              */
             private int baMountLoc;
-            
 
             MEAChoicePanel(Entity e, int mountLoc, Mounted m, 
                     ArrayList<MiscType> manips) {
@@ -964,23 +947,20 @@ public class EquipChoicePanel extends JPanel {
                     return;
                 }
                     
-                // Add the newly mounted maniplator
+                // Add the newly mounted manipulator
                 try {
-                    m_Manipmounted = entity.addEquipment(manipType, 
-                            m_Manipmounted.getLocation());
+                    m_Manipmounted = entity.addEquipment(manipType, m_Manipmounted.getLocation());
                     m_Manipmounted.setBaMountLoc(baMountLoc);
                 } catch (LocationFullException ex) {
                     // This shouldn't happen for BA...
-                    ex.printStackTrace();
+                    LogManager.getLogger().error("", ex);
                 }
-
             }
 
             @Override
             public void setEnabled(boolean enabled) {
                 m_choice.setEnabled(enabled);
             }
-
         }
 
         class MunitionChoicePanel extends JPanel {

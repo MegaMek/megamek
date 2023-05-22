@@ -57,6 +57,38 @@ IS Level 2
 <motion_type>
 Tracked
 </motion_type>
+
+<capabilities>
+With a top speed faster than most 'Mechs, the Galleon was well-armed but lacked protection, carrying only three and a half tons of armor.
+</capabilities>
+
+<overview>
+A light combat vehicle that first saw production in 2692 the Galleon proved to be an economical means of supporting infantry and BattleMechs.
+</overview>
+
+<deployment>
+The second of two variants that Vicore Industries produced starting in 3066, the 104 uses an XL engine for power. This 3066 variant transforms the Galleon into a fire support tank by removing the weapons and electronics (except for a C3i Computer) to mount an ER Large Laser linked to a Targeting Computer.
+</deployment>
+
+<history>
+Despite this, the vehicle served well during the Amaris Civil War, and after the Exodus, these tracked vehicles mostly fell into the possession of the Draconis Combine and the Free Worlds League. The Galleon is often paired with the Harasser Missile Platform.
+</history>
+
+<manufacturer>
+Terra
+</manufacturer>
+
+<primaryFactory>
+Vicore Armorworks LTD
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:GTEM 210 XL
+ARMOR:Jolassa 328 Ferro-Fibrous
+COMMUNICATIONS:Maxell 500 with ECM
+TARGETING:Maxell TA50
+</systemManufacturers>
+
 <source>
-Civil War
+TRO3058U - Succession Wars
 </source>

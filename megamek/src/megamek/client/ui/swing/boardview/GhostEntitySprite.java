@@ -1,12 +1,11 @@
 package megamek.client.ui.swing.boardview;
 
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Rectangle;
-import java.awt.image.ImageObserver;
-
+import megamek.MMConstants;
 import megamek.common.Entity;
 import megamek.common.util.ImageUtil;
+
+import java.awt.*;
+import java.awt.image.ImageObserver;
 
 class GhostEntitySprite extends Sprite {
 
@@ -19,7 +18,7 @@ class GhostEntitySprite extends Sprite {
         this.entity = entity;
 
         String shortName = entity.getShortName();
-        Font font = new Font("SansSerif", Font.PLAIN, 10);
+        Font font = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 10);
         modelRect = new Rectangle(47, 55, bv.getFontMetrics(font).stringWidth(
                 shortName) + 1, bv.getFontMetrics(font).getAscent());
         Rectangle tempBounds = new Rectangle(bv.hex_size).union(modelRect);

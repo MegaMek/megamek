@@ -21,20 +21,12 @@ package megamek.common.weapons.battlearmor;
 
 import megamek.common.weapons.srms.SRMWeapon;
 
-
 /**
  * @author Sebastian Brocks
  */
 public class ISBASRM1OS extends SRMWeapon {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -3895466103659984643L;
 
-    /**
-     *
-     */
     public ISBASRM1OS() {
         super();
         name = "SRM 1 (OS)";
@@ -49,16 +41,17 @@ public class ISBASRM1OS extends SRMWeapon {
         cost = 2500;
         tonnage = .05;
         criticals = 2;
-        flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_ONESHOT).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_ONESHOT).andNot(F_MECH_WEAPON)
+                .andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "261, TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_X, RATING_X, RATING_D, RATING_B)
-        .setISAdvancement(3050, 3050, 3051, DATE_NONE, DATE_NONE)
-        .setISApproximate(true, false, false, false, false)
-        .setPrototypeFactions(F_FS,F_LC)
-        .setProductionFactions(F_FS,F_LC);
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_X, RATING_D, RATING_B)
+                .setISAdvancement(3050, 3050, 3051, DATE_NONE, DATE_NONE)
+                .setISApproximate(true, false, false, false, false)
+                .setPrototypeFactions(F_FS, F_LC)
+                .setProductionFactions(F_FS, F_LC);
     }
 }

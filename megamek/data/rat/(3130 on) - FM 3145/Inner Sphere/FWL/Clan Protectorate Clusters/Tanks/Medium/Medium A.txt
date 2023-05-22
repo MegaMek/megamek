@@ -1,0 +1,12 @@
+3145 Clan Protectorate Medium Vehicles A
+Partisan AA Vehicle (Standard), 1
+Vedette Medium Tank (Light Gauss), 2
+R10 Mechanized ICV (Prime), 3
+Stygian Strike Tank (Standard), 4
+Condor Heavy Hover Tank (Upgrade), 5
+Cizin Hover Tank (Standard), 6
+Maxim Mk II Transport (Standard), 5
+JES I Tactical Missile Carrier (3082 Upgrade), 4
+Condor Heavy Hover Tank (Upgrade) (Laser), 3
+Joust Medium Tank BE701, 2
+Bellona Hover Tank (Standard), 1

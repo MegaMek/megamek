@@ -1,0 +1,106 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+ProtoMech
+</UnitType>
+
+<Name>
+Cecerops
+</Name>
+
+<Model>
+5
+</Model>
+
+<mul id:>
+8031
+</mul id:>
+
+<year>
+3146
+</year>
+
+<originalBuildYear>
+3146
+</originalBuildYear>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Biped
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<interface_cockpit>
+false
+</interface_cockpit>
+
+<engine_type>
+0
+</engine_type>
+
+<clan_engine>
+false
+</clan_engine>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+3
+5
+1
+1
+4
+</armor>
+
+<Body Equipment>
+CLAPGaussRifle Ammo (12)
+</Body Equipment>
+
+<Head Equipment>
+</Head Equipment>
+
+<Torso Equipment>
+ProtoMagneticClamp
+CLAPGaussRifle
+</Torso Equipment>
+
+<Right Arm Equipment>
+</Right Arm Equipment>
+
+<Left Arm Equipment>
+</Left Arm Equipment>
+
+<Legs Equipment>
+</Legs Equipment>
+
+<source>
+RS3150 - Dark Age
+</source>
+
+<tonnage>
+3.0
+</tonnage>
+

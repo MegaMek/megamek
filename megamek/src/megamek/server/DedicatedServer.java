@@ -13,14 +13,11 @@
  */
 package megamek.server;
 
-import megamek.MegaMek;
-import megamek.client.ui.Messages;
-import megamek.common.commandline.MegaMekCommandLineFlag;
-import megamek.common.commandline.MegaMekCommandLineParser;
-import megamek.common.preference.PreferenceManager;
 import megamek.common.commandline.AbstractCommandLineParser;
-import megamek.common.util.EmailService;
 import megamek.common.commandline.ClientServerCommandLineParser;
+import megamek.common.commandline.MegaMekCommandLineFlag;
+import megamek.common.preference.PreferenceManager;
+import megamek.common.util.EmailService;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.File;
@@ -36,7 +33,7 @@ public class DedicatedServer {
         try {
             parser.parse();
         } catch (AbstractCommandLineParser.ParseException e) {
-            LogManager.getLogger().error(parser.formatErrorMessage(e));
+            LogManager.getLogger().error("Incorrect arguments:" + e.getMessage() + '\n' + parser.help());
         }
 
         ClientServerCommandLineParser.Resolver resolver = parser.getResolver(
@@ -67,12 +64,9 @@ public class DedicatedServer {
         Server server;
 
         try {
-            server = new Server(resolver.password, resolver.port, resolver.registerServer, resolver.announceUrl, mailer, true);
-            MegaMek.printToOut(Messages.getFormattedString("MegaMek.ServerStarted", server.getHost(), server.getPort(), server.isPassworded() ? "enabled" : "disabled") + "\n");
+            server = new Server(resolver.password, resolver.port, new GameManager(), resolver.registerServer, resolver.announceUrl, mailer, true);
         } catch (Exception ex) {
             LogManager.getLogger().error("Error: could not start server at localhost" + ":" + resolver.port, ex);
-            MegaMek.printToOut(Messages.getFormattedString("MegaMek.ServerStartFailed"));
-            MegaMek.printToOut(ex.getLocalizedMessage());
             return;
         }
 
@@ -80,9 +74,4 @@ public class DedicatedServer {
             server.loadGame(new File(resolver.saveGameFileName));
         }
     }
-
-    public static void main(String[] args) {
-        start(args);
-    }
-
 }

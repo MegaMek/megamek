@@ -1,0 +1,117 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Undine Battle Armor
+</Name>
+
+<model>
+(Sqd5)
+</Model>
+
+<mul id:>
+8596
+</mul id:>
+
+<year>
+3059
+</year>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+umu
+</motion_type>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<Point Equipment>
+CLBAERMicroLaser:RA
+CLBALRM5 (OS):Body
+BABattleClaw:RA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+BASearchlight:Body
+</Point Equipment>
+
+<source>
+TRO 3058U - Clan Invasion
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+8
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+
+<overview>
+The Undine battle armor is a combat upgrade to the original "water elementals," the underwater exoskeletons that inspired Clan Wolf's Elemental battle armor.
+</overview>
+
+<capabilities>
+With its unique weaponry and revolutionary underwater motor system, the Undine is the perfect unit for amphibious warfare, though it comes with some drawbacks. Undines cannot perform typical anti-'Mech swarming attacks and can only make leg attacks against partially-submerged 'Mechs. The suit also only carries 200kg of armor, 20% less than the Elemental. Although the Goliath Scorpions won a number of defensive underwater Trials thanks largely to the Undine, its specialized nature and the rarity of underwater offensive operations meant most Clans simply were not interested in acquiring the suit for many years. 
+</capabilities>
+
+<deployment>
+The Undine carries an ER Micro Pulse Laser in its right arm and a Battle Claw in its left, however the centerpiece of the suit's weaponry is its LRM-5 launcher loaded with a single round of special amphibious missiles. A Searchlight provides additional illumination while an Underwater Maneuvering Unit allows the Undine to achieve speeds of over 32 km/h when submerged.
+</deployment>
+
+<history>
+ Clan Goliath Scorpion had been working for some time on a specialized missile which could also function as a torpedo, a separate weapon much-used by the Clans to protect their extensive underwater facilities, along with a battle suit designed to take advantage of this capability. While the modifications to the original suit for underwater combat were straightforward, developing a missile/torpedo hybrid proved elusive, and when the Goliath Scorpions failed to win a spot in Operation Revival the project languished in limbo for some years - at least until the Inner Sphere began developing their own battle suits which were rapidly matching or exceeding the venerable Elemental. While the other Clans went about developing specialized suits of their own, a breakthrough in 3059 allowed the Goliath Scorpions to complete development of their underwater combat suit. They christened it Undine after the mystical water spirits. It was not until 3068 that Clan Diamond Shark began to aggressively pursue acquiring the Undine and the Goliath Scorpions would not give it up without a fight. It took several Trials before the Sharks finally won on Roche, when a Star of their submarines defeated a Nova of Scorpion submarines and Undine; however since acquiring the suits no Diamond Shark units have been seen actually employing them, much to observers' curiosity.
+</history>
+
+<manufacturer>
+Unknown,W-7 Facilities
+</manufacturer>
+
+<primaryFactory>
+Dagda,Weingarten
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

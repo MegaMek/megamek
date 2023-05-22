@@ -16,9 +16,13 @@ SupportTank
 Harpoon ParaSub
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
+
+<mul id:>
+9230
+</mul id:>
 
 <year>
 2545

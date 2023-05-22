@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2004-2005 - Ben Mazur (bmazur@sev.org).
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -34,6 +34,7 @@ public class CLBARecoillessRifleLight extends Weapon {
         addLookupName("ISLight Recoilless Rifle");
         addLookupName("ISBALight Recoilless Rifle");
         sortingName = "Recoilless Rifle B";
+        shortName = "Light Recoiless Rifle";
         damage = 2;
         infDamageClass = WeaponType.WEAPON_BURST_1D6;
         ammoType = AmmoType.T_NA;
@@ -56,7 +57,7 @@ public class CLBARecoillessRifleLight extends Weapon {
                 .setISApproximate(true, false, false, false, false)
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 3062, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, true, false, false)
-                .setPrototypeFactions(F_FS,F_LC)
-                .setProductionFactions(F_FS,F_LC);
+                .setPrototypeFactions(F_FS, F_LC)
+                .setProductionFactions(F_FS, F_LC);
     }
 }

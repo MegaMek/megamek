@@ -1,0 +1,165 @@
+Version:1.3
+Wraith
+TR5
+mul id:9269
+Config:Biped
+techbase:Inner Sphere
+era:3140
+source:Rec Guide 25 - Dark Ages
+rules level:2
+
+mass:55
+engine:330 XL Engine(IS)
+structure:IS Endo-Composite
+myomer:Standard
+
+heat sinks:13 IS Double
+walk mp:6
+jump mp:7
+
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:14
+RA armor:14
+LT armor:18
+RT armor:18
+CT armor:23
+HD armor:8
+LL armor:20
+RL armor:20
+RTL armor:5
+RTR armor:5
+RTC armor:7
+
+Weapons:3
+Medium X-Pulse Laser, Left Arm
+Medium X-Pulse Laser, Left Arm
+Large X-Pulse Laser, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISMediumXPulseLaser
+ISMediumXPulseLaser
+IS Endo-Composite
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISLargeXPulseLaser
+ISLargeXPulseLaser
+IS Endo-Composite
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+IS Endo-Composite
+IS Endo-Composite
+IS Ferro-Fibrous
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Supercharger
+IS Endo-Composite
+IS Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Improved Jump Jet
+Improved Jump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo-Composite
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo-Composite
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Wraith is a 'Mech that, when properly employed, can wreak havoc on an enemy with its astounding speed and maneuverability. 
+
+capabilities:It is built around a massive LTV 385 XL engine that allows it to reach speeds of just under 119 km/h. The 'Mech is also fitted with seven CurtissJet 55 jump jets which allow it to jump up to two hundred and ten meters, giving it the ability to outmaneuver most BattleMechs in existence, and also allowing the Wraith to quickly traverse any rough terrain. The 'Mech's speed, firepower, and decent armor make the Wraith a considerable threat to many 'Mechs – some being almost twice its weight.
+
+deployment:The Wraith has a simple, yet effective, weapons payload. The 'Mech is armed with a Tronel XIII Large Pulse Laser that provides the majority of its firepower. Backing this up is a pair of Tronel XII Medium Pulse Lasers that provide firepower for close-in work. This pulse laser weaponry allows the 'Mech to negate most of the side effects on accuracy that are introduced by the Wraith's heavy use of jump jets, making it incredibly accurate and powerful for such a lightly armed 'Mech
+
+history:The Wraith marked Curtiss Militech's entry into BattleMech production. When the design was announced, many felt that the design would be little more than a walking water cooler. What the critics got was a shock. Following the destruction of its sole factory, Curtiss Hydroponics announced its withdrawal from the military market altogether and the sale of its Curtiss Militech assets. By 3085, Hellespont Industrials have expressed interest in the Wraith; and by 3145 Production had been ongoing at one of Hellespont Industrials locations in the Sian Commonality for Capellan use.
+
+manufacturer:Curtiss Militech, Hellespont 'Mech Works
+primaryfactory:Paradise, Sian
+systemmanufacturer:CHASSIS:Curtiss Wraith
+systemmanufacturer:ENGINE:330 XL
+systemmanufacturer:ARMOR:Kallon FWL Special Ferro-Fibrous
+systemmanufacturer:JUMPJET:CurtissJet 55
+systemmanufacturer:COMMUNICATIONS:CurtissComm Mk I
+systemmanufacturer:TARGETING:Dynatec 2780

@@ -18,18 +18,21 @@
  */
 package megamek.client.ui.swing.calculationReport;
 
+import megamek.MMConstants;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This is a Calculation Report that builds its output as a monospace-formatted pure text
+ * String. The report can be obtained from toString() as a String or from toJComponent()
+ * inside a JEditorPane.
+ */
 public class TextCalculationReport implements CalculationReport {
 
-    private final static int COL_SPACER = 3;
-
-    private enum LineType {
-        LINE, HEADER, SUBHEADER, RESULT_LINE
-    }
+    private final static int LINE_START_SPACER = 3;
 
     private static class ReportLine {
 
@@ -47,7 +50,7 @@ public class TextCalculationReport implements CalculationReport {
 
         int getWidth() {
             if (lineType == LineType.LINE) {
-                return content1.length() + content2.length() + content3.length() + 3 * COL_SPACER;
+                return content1.length() + content2.length() + content3.length() + 3 * LINE_START_SPACER;
             } else if ((lineType == LineType.HEADER) || (lineType == LineType.SUBHEADER)) {
                 return content1.length();
             } else {
@@ -72,28 +75,56 @@ public class TextCalculationReport implements CalculationReport {
      */
     private final List<ReportLine> reportLines = new ArrayList<>();
 
+    /** Tentative Section lines are kept in their own list. */
+    private final List<ReportLine> tentativeLines = new ArrayList<>();
+
+    private boolean tentativeSectionActive = false;
+
+
+    @Override
+    public void startTentativeSection() {
+        tentativeSectionActive = true;
+    }
+
+    @Override
+    public void endTentativeSection() {
+        reportLines.addAll(tentativeLines);
+        tentativeLines.clear();
+        tentativeSectionActive = false;
+    }
+
+    @Override
+    public void discardTentativeSection() {
+        tentativeLines.clear();
+        tentativeSectionActive = false;
+    }
+
+    private List<ReportLine> listToWrite() {
+        return tentativeSectionActive ? tentativeLines : reportLines;
+    }
+
     @Override
     public CalculationReport addLine(String type, String calculation, String result) {
-        reportLines.add(new ReportLine(type, calculation, result, LineType.LINE));
+        listToWrite().add(new ReportLine(type, calculation, result, LineType.LINE));
         return this;
     }
 
     @Override
     public CalculationReport addSubHeader(String text) {
-        reportLines.add(new ReportLine(text, "", "", LineType.SUBHEADER));
+        listToWrite().add(new ReportLine(text, "", "", LineType.SUBHEADER));
         return this;
     }
 
     @Override
     public CalculationReport addHeader(String text) {
-        reportLines.add(new ReportLine(text, "", "", LineType.HEADER));
+        listToWrite().add(new ReportLine(text, "", "", LineType.HEADER));
         return this;
     }
 
     @Override
     public CalculationReport addResultLine(String type, String calculation, String result) {
+        listToWrite().add(new ReportLine("", "", "", LineType.RESULT_LINE));
         addLine(type, calculation, result);
-        reportLines.add(new ReportLine("", "", "", LineType.RESULT_LINE));
         return this;
     }
 
@@ -102,7 +133,7 @@ public class TextCalculationReport implements CalculationReport {
         final JEditorPane editorPane = new JEditorPane("text/plain", this.toString());
         editorPane.setEditable(false);
         editorPane.setCaretPosition(0);
-        editorPane.setFont(new Font("Monospaced", Font.PLAIN, editorPane.getFont().getSize()));
+        editorPane.setFont(new Font(MMConstants.FONT_MONOSPACED, Font.PLAIN, editorPane.getFont().getSize()));
         return editorPane;
     }
 
@@ -114,11 +145,10 @@ public class TextCalculationReport implements CalculationReport {
         int calcBegin = calculationBeginColumn();
         for (ReportLine line : reportLines) {
             if (line.lineType == LineType.LINE) {
-                result.append(" ".repeat(COL_SPACER)).append(line.content1);
-                result.append(" ".repeat(calcBegin - line.content1.length() - COL_SPACER)).append(line.content2);
+                result.append(" ".repeat(LINE_START_SPACER)).append(line.content1);
+                result.append(" ".repeat(calcBegin - line.content1.length() - LINE_START_SPACER)).append(line.content2);
                 result.append(" ".repeat(width - line.content3.length() - calcBegin - line.content2.length())).append(line.content3);
             } else if (line.lineType == LineType.SUBHEADER) {
-                result.append(System.lineSeparator());
                 result.append(line.content1);
             } else if (line.lineType == LineType.HEADER) {
                 result.append(line.content1).append(System.lineSeparator());
@@ -140,7 +170,7 @@ public class TextCalculationReport implements CalculationReport {
     }
 
     private int requiredColumns() {
-        int lineMaxWidth = maxWidth(1) + maxWidth(2) + maxWidth(3) + 3 * COL_SPACER;
+        int lineMaxWidth = maxWidth(1) + maxWidth(2) + maxWidth(3) + 3 * LINE_START_SPACER;
         int headerMaxWidth = reportLines.stream()
                 .filter(l -> (l.lineType == LineType.HEADER) || (l.lineType == LineType.SUBHEADER))
                 .mapToInt(ReportLine::getWidth)
@@ -149,7 +179,7 @@ public class TextCalculationReport implements CalculationReport {
     }
 
     private int calculationBeginColumn() {
-        return 2 * COL_SPACER + reportLines.stream()
+        return 2 * LINE_START_SPACER + reportLines.stream()
                 .filter(l -> l.lineType == LineType.LINE)
                 .map(l -> l.content1)
                 .mapToInt(String::length)

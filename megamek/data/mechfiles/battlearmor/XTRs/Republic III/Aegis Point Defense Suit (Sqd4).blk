@@ -1,0 +1,134 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Aegis Point Defense Suit
+</Name>
+
+<model>
+(Sqd4)
+</Model>
+
+<mul id:>
+7388
+</mul id:>
+
+<year>
+3132
+</year>
+
+<originalBuildYear>
+3132
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Leg
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<armor_type>
+33
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<Squad Equipment>
+BABasicManipulator:LA
+BABasicManipulator:RA
+IS BA Stealth (Improved):Body
+IS BA Stealth (Improved):Body
+IS BA Stealth (Improved):Body
+IS BA Stealth (Improved):LA
+IS BA Stealth (Improved):LA
+BAAPMount:LA
+InfantryAssaultRifle:APM
+ISBAAPDS:RA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<capabilities>
+On its left arm is an Anti-Personnel Weapon Mount, typically equipped with a submachine gun, just above the wrist. Both arms end in fully functional Basic Manipulators slaved directly to the operator's own hands, giving it superior flexibility in holding and manipulating objects than other battle armor suits. While this comes at the cost of armor protection and hand-to-hand combat (hand injuries being the most common type for Achileus operators), the capability is invaluable in supporting the battlefield infiltration mission. Integral jump jets in the Achileus allow it to make leaps of 90 meters at a time, giving it good maneuverability. Its 360kg of Improved Stealth armor, while allowing the wearer to survive a couple of shots from a Small Laser, are more notable for their stealth features. Combining the aspects of an electronic and infrared-suppressing Sneak Suit, this stealth system can run indefinitely and protect the suit from being detected by a number of sensors, including Beagle Active Probes.
+</capabilities>
+
+<overview>
+Based on the Angerona, this suit introduced in 3132 is a testbed for the RISC Advanced Point Defense System for use on battle armor.
+</overview>
+
+<deployment>
+The Aegis is frequently used to thicken the anti-missile defenses of the Ares BattleMech. Ground speed and armor protection remains the same as the standard Angerona, but the camo system was removed to make room for the APDS. The Aegis suit retains the anti-personnel weapon mount as its only offensive option.
+</deployment>
+
+<history>
+During the early 3080s, the VIII Hastati Sentinels were given a squad of Angerona suits to test out. The 8th Hastati were called to the world of Shipka to handle Capellan backed militants who were terrorizing the planet's Foxborough continent. The Sentinels had sent in two battle armor squads into an area to scout for the enemy. The Capellans were equipped with Ying Long suits, and had ambushed one of the Hastati's squads of Purifier Battle Armor while investigating a town. The other Squad, equipped with Angeronas, watched its fellow soldiers get wiped out. Then they regrouped, stalked the militants in full stealth and cut down the two squads of Ying Longs. Only three of the militants managed to escape the Republic Angeronas. The suit's performance on Skipka helped to increase its popularity among Republic troops.
+</history>
+
+<manufacturer>
+Rhodes Foundry
+</manufacturer>
+
+<primaryFactory>
+Devil's Rock
+</primaryFactory>
+
+<source>
+XTRO Republic III - Dark Age
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+6
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+

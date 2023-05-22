@@ -1,0 +1,116 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Angerona Scout Suit
+</Name>
+
+<model>
+(Sqd6)
+</Model>
+
+<mul id:>
+8845
+</mul id:>
+
+<year>
+3083
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Leg
+</motion_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<armor_type>
+33
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<Squad Equipment>
+ISBALightRecoillessRifle:RA
+BAAPMount:LA
+Infantry Auto Rifle:APM:LA
+BABasicManipulator:LA
+BABasicManipulator:RA
+Camo System:Body
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+IS BA Stealth (Improved):Body
+IS BA Stealth (Improved):Body
+IS BA Stealth (Improved):LA
+IS BA Stealth (Improved):LA
+IS BA Stealth (Improved):RA
+</Squad Equipment>
+
+
+<source>
+TRO 3085 - Jihad
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+6
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+
+<overview>
+The Angerona Scout Suit was developed by StarCorp Industries on Terra. The suit was designed for the needs of the newly formed Republic of the Sphere's Armed Forces, with the lessons learned from Stone's Coalition during the Jihad in mind.
+</overview>
+
+<history>
+During the early 3080s, the VIII Hastati Sentinels were given a squad of Angerona suits to test out. The 8th Hastati were called to the world of Shipka to handle Capellan backed militants who were terrorizing the planet's Foxborough continent. The Sentinels had sent in two battle armor squads into an area to scout for the enemy. The Capellans were equipped with Ying Long suits, and had ambushed one of the Hastati's squads of Purifier Battle Armor while investigating a town. The other Squad, equipped with Angeronas, watched its fellow soldiers get wiped out. Then they regrouped, stalked the militants in full stealth and cut down the two squads of Ying Longs. Only three of the militants managed to escape the Republic Angeronas. The suit's performance on Skipka helped to increase its popularity among Republic troops.
+</history>
+
+<capabilities>
+The Angerona drops the usual Jump Jets most suits its size usually employ in exchange for a higher rate of ground speed. It can also be transported by either BattleMech or Armored Personnel Carrier. As part of the efforts to improve on previous designs that use mimetic armor, the suit has been outfitted with Improved Stealth Armor and a Camo System. This combination of armor and electronics systems allows the Angerona to move while not being seen. 
+</capabilities>
+
+<deployment>
+The suit's weaponry includes a Light Recoilless Rifle, with 20 rounds in its right arm, while employing an Anti-Personnel Weapons mount on the left.
+</deployment>
+
+<manufacturer>
+StarCorps Industries
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>

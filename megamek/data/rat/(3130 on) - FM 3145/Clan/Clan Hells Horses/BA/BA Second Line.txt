@@ -1,0 +1,12 @@
+3145 Clan Hell's Horses Battle Armor - Second Line
+Gnome Battle Armor (LRM),1
+Golem Assault Armor (Standard),2
+Resgate PA(L) (Support),3
+Constable Pacification Suit (LMG),4
+Golem Assault Armor (Fast Assault),5
+Elemental II Battle Armor (Standard),6
+Elemental Battle Armor [Laser],5
+Buraq Fast Battle Armor (Support),4
+Gnome Battle Armor (Standard),3
+Gnome Battle Armor (Upgrade) [Pulse Laser],2
+Buraq Fast Battle Armor (Standard),1

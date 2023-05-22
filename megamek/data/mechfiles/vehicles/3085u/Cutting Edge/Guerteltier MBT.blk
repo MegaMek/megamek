@@ -16,9 +16,9 @@ Tank
 Gurteltier MBT
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 4256

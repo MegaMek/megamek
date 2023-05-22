@@ -18,6 +18,9 @@
  */
 package megamek.client.ui.preferences;
 
+import megamek.codeUtilities.StringUtility;
+import org.apache.logging.log4j.LogManager;
+
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -37,9 +40,11 @@ public class JIntNumberSpinnerPreference extends PreferenceElement implements Ch
     //endregion Variable Declarations
 
     //region Constructors
-    public JIntNumberSpinnerPreference(final JSpinner spinner) {
+    public JIntNumberSpinnerPreference(final JSpinner spinner) throws Exception {
         super(spinner.getName());
-        assert spinner.getModel() instanceof SpinnerNumberModel;
+        if (!(spinner.getModel() instanceof SpinnerNumberModel)) {
+            throw new Exception("Cannot create an int spinner without using a number model");
+        }
         setIntValue((Integer) spinner.getValue());
         weakReference = new WeakReference<>(spinner);
         spinner.addChangeListener(this);
@@ -67,8 +72,11 @@ public class JIntNumberSpinnerPreference extends PreferenceElement implements Ch
     }
 
     @Override
-    protected void initialize(final String value) {
-        assert (value != null) && !value.isBlank();
+    protected void initialize(final String value) throws Exception {
+        if (StringUtility.isNullOrBlank(value)) {
+            LogManager.getLogger().error("Cannot create a JIntNumberSpinnerPreference because of a null or blank input value");
+            throw new Exception();
+        }
 
         final JSpinner element = getWeakReference().get();
         if (element != null) {

@@ -15,6 +15,7 @@ package megamek.common.weapons.battlearmor;
 
 import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 
 /**
  * @author Andrew Hunter
@@ -51,5 +52,10 @@ public class CLBAFlamer extends BAFlamerWeapon {
         techAdvancement.setPrototypeFactions(F_CWF).setProductionFactions(F_CWF);
         techAdvancement.setTechRating(RATING_C);
         techAdvancement.setAvailability(RATING_X, RATING_D, RATING_B, RATING_B);
+    }
+
+    @Override
+    public int getAlphaStrikeHeatDamage(int rangeband) {
+        return (rangeband <= AlphaStrikeElement.RANGE_BAND_SHORT) ? 2 : 0;
     }
 }

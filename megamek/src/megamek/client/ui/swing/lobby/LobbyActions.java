@@ -25,7 +25,9 @@ import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.ASStatsDialog;
 import megamek.client.ui.dialogs.CamoChooserDialog;
+import megamek.client.ui.dialogs.SBFStatsDialog;
 import megamek.client.ui.swing.CustomMechDialog;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.UnitEditorDialog;
@@ -36,6 +38,7 @@ import megamek.common.force.Force;
 import megamek.common.force.Forces;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.OptionsConstants;
+import megamek.common.strategicBattleSystems.SBFFormationConverter;
 import megamek.common.util.CollectionUtil;
 import org.apache.logging.log4j.LogManager;
 
@@ -49,10 +52,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static megamek.client.ui.swing.lobby.LobbyMekPopup.LMP_HULLDOWN;
 import static megamek.client.ui.swing.lobby.LobbyMekPopup.LMP_PRONE;
-import static megamek.client.ui.swing.lobby.LobbyUtility.haveSingleOwner;
-import static megamek.client.ui.swing.lobby.LobbyUtility.isBlindDrop;
-import static megamek.client.ui.swing.lobby.LobbyUtility.isRealBlindDrop;
-import static megamek.client.ui.swing.lobby.LobbyUtility.sameNhC3System;
+import static megamek.client.ui.swing.lobby.LobbyUtility.*;
 
 /** This class contains the methods that perform entity and force changes from the pop-up menu and elsewhere. */
 public class LobbyActions {
@@ -484,7 +484,7 @@ public class LobbyActions {
     void forceCreateEmpty() {
         // Ask for a name
         String name = JOptionPane.showInputDialog(frame(), "Choose a force designation");
-        if ((name == null) || (name.trim().length() == 0)) {
+        if ((name == null) || name.isBlank()) {
             return;
         }
         client().sendAddForce(Force.createToplevelForce(name, localPlayer()), new ArrayList<>());
@@ -504,7 +504,7 @@ public class LobbyActions {
         }
         // Ask for a name
         String name = JOptionPane.showInputDialog(frame(), "Choose a force designation");
-        if ((name == null) || (name.trim().length() == 0)) {
+        if ((name == null) || name.isBlank()) {
             return;
         }
         client().sendAddForce(Force.createToplevelForce(name, CollectionUtil.anyOneElement(entities).getOwner()), entities);
@@ -517,7 +517,7 @@ public class LobbyActions {
     void forceCreateSub(int parentId) {
         // Ask for a name
         String name = JOptionPane.showInputDialog(frame(), "Choose a force designation");
-        if ((name == null) || (name.trim().length() == 0)) {
+        if ((name == null) || name.isBlank()) {
             return;
         }
         client().sendAddForce(Force.createSubforce(name, game().getForces().getForce(parentId)), new ArrayList<>());
@@ -638,7 +638,7 @@ public class LobbyActions {
         }
         // Ask for a name
         String name = JOptionPane.showInputDialog(frame(), "Choose a force designation");
-        if ((name == null) || (name.trim().length() == 0)) {
+        if ((name == null) || name.isBlank()) {
             return;
         }
         forces.renameForce(name, forceId);
@@ -658,7 +658,7 @@ public class LobbyActions {
         Set<Force> finalFoDelete = new HashSet<>(foDelete);
         // Remove redundant entities = entities in the given forces
         Set<Entity> inForces = new HashSet<>();
-        foDelete.stream().map(forces::getFullEntities).forEach(inForces::addAll);
+        foDelete.stream().map(forces::getFullEntities).map(ForceAssignable::filterToEntityList).forEach(inForces::addAll);
         enDelete.removeIf(inForces::contains);
         Set<Entity> finalEnDelete = new HashSet<>(enDelete);
         
@@ -1009,7 +1009,7 @@ public class LobbyActions {
         
         // Ask for a squadron name
         String name = JOptionPane.showInputDialog(frame(), "Choose a squadron designation");
-        if ((name == null) || (name.trim().length() == 0)) {
+        if ((name == null) || name.isBlank()) {
             return;
         }
         
@@ -1040,7 +1040,21 @@ public class LobbyActions {
         return entities.stream().map(Entity::getOwner).findAny().get();
     }
 
-    /** 
+    /** Shows a non-modal dialog window with the Strategic BattleForce stats of the given forces. */
+    void showSbfView(Collection<Force> fo) {
+        if (fo.stream().anyMatch(f -> !SBFFormationConverter.canConvertToSbfFormation(f, lobby.game()))) {
+            LobbyErrors.showSBFConversion(frame());
+            return;
+        }
+        new SBFStatsDialog(frame(), fo, lobby.game()).setVisible(true);
+    }
+
+    /** Shows a non-modal dialog window with the AlphaStrike stats of the given entities. */
+    void showAlphaStrikeView(Collection<Entity> en) {
+        new ASStatsDialog(frame(), en).setVisible(true);
+    }
+
+    /**
      * Performs standard checks for updates (units must be present, visible and editable)
      * and returns false if that's not the case. Also shows an error message dialog.
      */

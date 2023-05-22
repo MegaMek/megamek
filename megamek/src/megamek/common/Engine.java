@@ -15,6 +15,8 @@
 package megamek.common;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class represents an engine, such as those driving 'Meks.
@@ -69,53 +71,18 @@ public class Engine implements Serializable, ITechnology {
             "ICE", "Fusion", "XL", "XXL", "FuelCell", "Light", "Compact", "Fission", "None",
             "MagLev", "Steam", "Battery", "Solar", "External"
     };
-    
-    //These are the SUPPORT VEHICLE ENGINE WEIGHT MULTIPLIERS from TM PG 127
-    //The other engine types are assumed to have a value of ) in the array
-    //if not listed.
+
+    // These are the SUPPORT VEHICLE ENGINE WEIGHT MULTIPLIERS from TM PG 127 (MagLev from TO:AU&E pg 62)
+    // The other engine types are assumed to have a value of 0 in the array
+    // if not listed.
     private static final double[][] SV_ENGINE_RATINGS = new double[NUM_ENGINE_TYPES][6];
-    static { 
-        SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_A] = 4.0;
-        SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_B] = 3.5;
-        SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_C] = 3.0;
-        SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_D] = 2.8;
-        SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_E] = 2.6;
-        SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_F] = 2.5;
-        
+    static {
         SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.RATING_A] = 0.0;
         SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.RATING_B] = 3.0;
         SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.RATING_C] = 2.0;
         SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.RATING_D] = 1.5;
         SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.RATING_E] = 1.3;
         SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.RATING_F] = 1.0;
-        
-        SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_A] = 0.0;
-        SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_B] = 0.0;
-        SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_C] = 1.5;
-        SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_D] = 1.2;
-        SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_E] = 1.0;
-        SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_F] = 0.8;
-        
-        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_A] = 0.0;
-        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_B] = 0.0;
-        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_C] = 1.2;
-        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_D] = 1.0;
-        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_E] = 0.9;
-        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_F] = 0.7;
-        
-        SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_A] = 0.0;
-        SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_B] = 0.0;
-        SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_C] = 5.0;
-        SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_D] = 4.5;
-        SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_E] = 4.0;
-        SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_F] = 3.5;
-        
-        SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_A] = 0.0;
-        SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_B] = 0.0;
-        SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_C] = 1.75;
-        SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_D] = 1.5;
-        SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_E] = 1.4;
-        SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_F] = 1.3;
 
         SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_A] = 0.0;
         SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_B] = 0.0;
@@ -123,6 +90,20 @@ public class Engine implements Serializable, ITechnology {
         SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_D] = 1.0;
         SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_E] = 0.75;
         SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_F] = 0.5;
+        
+        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_A] = 0.0;
+        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_B] = 0.0;
+        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_C] = 1.2;
+        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_D] = 1.0;
+        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_E] = 0.9;
+        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_F] = 0.7;
+
+        SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_A] = 0.0;
+        SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_B] = 0.0;
+        SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_C] = 1.75;
+        SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_D] = 1.5;
+        SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_E] = 1.4;
+        SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_F] = 1.3;
 
         SV_ENGINE_RATINGS[NONE][EquipmentType.RATING_A] = 0.0;
         SV_ENGINE_RATINGS[NONE][EquipmentType.RATING_B] = 0.0;
@@ -130,6 +111,34 @@ public class Engine implements Serializable, ITechnology {
         SV_ENGINE_RATINGS[NONE][EquipmentType.RATING_D] = 0.0;
         SV_ENGINE_RATINGS[NONE][EquipmentType.RATING_E] = 0.0;
         SV_ENGINE_RATINGS[NONE][EquipmentType.RATING_F] = 0.0;
+
+        SV_ENGINE_RATINGS[MAGLEV][EquipmentType.RATING_A] = 0.0;
+        SV_ENGINE_RATINGS[MAGLEV][EquipmentType.RATING_B] = 0.0;
+        SV_ENGINE_RATINGS[MAGLEV][EquipmentType.RATING_C] = 0.8;
+        SV_ENGINE_RATINGS[MAGLEV][EquipmentType.RATING_D] = 0.7;
+        SV_ENGINE_RATINGS[MAGLEV][EquipmentType.RATING_E] = 0.6;
+        SV_ENGINE_RATINGS[MAGLEV][EquipmentType.RATING_F] = 0.5;
+
+        SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_A] = 4.0;
+        SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_B] = 3.5;
+        SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_C] = 3.0;
+        SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_D] = 2.8;
+        SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_E] = 2.6;
+        SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_F] = 2.5;
+
+        SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_A] = 0.0;
+        SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_B] = 0.0;
+        SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_C] = 1.5;
+        SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_D] = 1.2;
+        SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_E] = 1.0;
+        SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_F] = 0.8;
+        
+        SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_A] = 0.0;
+        SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_B] = 0.0;
+        SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_C] = 5.0;
+        SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_D] = 4.5;
+        SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_E] = 4.0;
+        SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_F] = 3.5;
 
         SV_ENGINE_RATINGS[EXTERNAL][EquipmentType.RATING_A] = 0.0;
         SV_ENGINE_RATINGS[EXTERNAL][EquipmentType.RATING_B] = 1.4;
@@ -298,7 +307,10 @@ public class Engine implements Serializable, ITechnology {
                 && (engineType != NONE) && (engineType != BATTERY) && (engineType != SOLAR)
                 && (engineType != STEAM) && (engineType != MAGLEV) && (engineType != EXTERNAL);
     }
- 
+
+    public boolean isSolar() {
+        return engineType == SOLAR;
+    }
 
     /**
      * Returns the weight of the engine in tons, rounded to the next highest half
@@ -322,32 +334,32 @@ public class Engine implements Serializable, ITechnology {
         if ((entity.isSupportVehicle() || hasFlag(SUPPORT_VEE_ENGINE))
                 && isValidEngine()) {
             int mp = entity.getOriginalWalkMP();
-            if (entity.getMovementMode().equals(EntityMovementMode.RAIL)
-                    || entity.getMovementMode().equals(EntityMovementMode.MAGLEV)) {
+            if (entity.getMovementMode().isTrain()) {
                 mp = Math.max(0, mp - 2);
             }
             double movementFactor = 4 + mp * mp;
-            double engineWeightMult = SV_ENGINE_RATINGS[engineType][entity
-                    .getEngineTechRating()];
+            double engineWeightMult = SV_ENGINE_RATINGS[engineType][entity.getEngineTechRating()];
             double weight = entity.getBaseEngineValue() * movementFactor
                     * engineWeightMult * entity.getWeight();
             // Fusion engines have a minimum weight of 0.25t at D+ and 0.5t at C. Fission engines have
-            // a minimum of 0.5t at all tech ratings.
+            // a minimum of 5t at all tech ratings.
             if ((engineType == NORMAL_ENGINE) && (entity.getEngineTechRating() >= RATING_D)) {
                 weight = Math.max(weight, 0.25);
             } else if ((engineType == NORMAL_ENGINE) || (engineType == FISSION)) {
-                weight = Math.max(weight, 0.5);
+                weight = Math.max(weight, 5);
             }
+
             // Hovercraft have a minimum engine weight of 20% of the vehicle.
-            if (entity.getMovementMode().equals(EntityMovementMode.HOVER)) {
+            if (entity.getMovementMode().isHover()) {
                 weight = Math.max(weight, entity.getWeight() * 0.2);
             }
+
             return roundWeight.round(weight, entity);
-        }
-        // Protomech engines with rating < 40 use a special calculation
-        if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH) && (engineRating < 40)) {
+        } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH) && (engineRating < 40)) {
+            // ProtoMek engines with rating < 40 use a special calculation
             return roundWeight.round(engineRating * 0.025, entity);
         }
+
         double weight = ENGINE_RATINGS[(int) Math.ceil(engineRating / 5.0)];
         switch (engineType) {
             case COMBUSTION_ENGINE:
@@ -386,7 +398,7 @@ public class Engine implements Serializable, ITechnology {
         
         double toReturn = roundWeight.round(weight, entity);
         // hover have a minimum weight of 20%
-        if ((entity.getMovementMode() == EntityMovementMode.HOVER) && (entity instanceof Tank)) {
+        if (entity.getMovementMode().isHover() && (entity instanceof Tank)) {
             toReturn = Math.max(roundWeight.round(entity.getWeight() / 5.0, entity), toReturn);
         }
         return toReturn;
@@ -441,6 +453,16 @@ public class Engine implements Serializable, ITechnology {
         } else {
             return Messages.getString("Engine.invalid");
         }
+    }
+
+    public static List<String> getEngineTypes() {
+        List<String> result = new ArrayList<>();
+
+        for (int i = 0; i < Engine.NUM_ENGINE_TYPES; i++) {
+            result.add(Messages.getString("Engine." + TYPE_KEYS[i]));
+        }
+
+        return result;
     }
 
     /**
@@ -583,24 +605,22 @@ public class Engine implements Serializable, ITechnology {
      * @return the heat generated while the mech is standing still.
      */
     public int getStandingHeat() {
-        if (engineType == XXL_ENGINE) {
-            return 2;
-        }
-        return 0;
+        return (engineType == XXL_ENGINE) ? 2 : 0;
     }
 
     /**
      * @return the heat generated while the mech is walking.
      */
     public int getWalkHeat(Entity e) {
+        boolean hasSCM = (e instanceof Mech) && e.hasWorkingSCM();
         switch (engineType) {
             case COMBUSTION_ENGINE:
             case FUEL_CELL:
                 return 0;
             case XXL_ENGINE:
-                return 4;
+                return hasSCM ? 3 : 4;
             default:
-                return 1;
+                return hasSCM ? 0 : 1;
         }
     }
 
@@ -608,29 +628,31 @@ public class Engine implements Serializable, ITechnology {
      * @return the heat generated while the mech is running.
      */
     public int getRunHeat(Entity e) {
+        boolean hasSCM = (e instanceof Mech) && e.hasWorkingSCM();
         switch (engineType) {
             case COMBUSTION_ENGINE:
             case FUEL_CELL:
                 return 0;
             case XXL_ENGINE:
-                return 6;
+                return hasSCM ? 4 : 6;
             default:
-                return 2;
+                return hasSCM ? 0 : 2;
         }
     }
 
     /**
      * @return the heat generated while the mech is sprinting.
      */
-    public int getSprintHeat() {
+    public int getSprintHeat(Entity e) {
+        boolean hasSCM = (e instanceof Mech) && e.hasWorkingSCM();
         switch (engineType) {
             case COMBUSTION_ENGINE:
             case FUEL_CELL:
                 return 0;
             case XXL_ENGINE:
-                return 9;
+                return hasSCM ? 6 : 9;
             default:
-                return 3;
+                return hasSCM ? 0 : 3;
         }
     }
 
@@ -761,9 +783,10 @@ public class Engine implements Serializable, ITechnology {
             .setPrototypeFactions(F_LC).setProductionFactions(F_LC)
             .setTechRating(RATING_D).setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
-    
+    //Greekfire requested Errata March 2022 for RS Jihad book. 
     private static final TechAdvancement COMPACT_FUSION_TA = new TechAdvancement(TECH_BASE_IS)
-            .setISAdvancement(3060, 3068, 3072).setISApproximate(true)
+            .setISAdvancement(3060, 3066, 3072, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, false, true,false,false)
             .setPrototypeFactions(F_LC).setProductionFactions(F_LC)
             .setTechRating(RATING_E)
             .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
@@ -792,20 +815,20 @@ public class Engine implements Serializable, ITechnology {
             .setPrototypeFactions(F_CIH).setProductionFactions(F_CHH)
             .setTechRating(RATING_F).setAvailability(RATING_D, RATING_F, RATING_E, RATING_E)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
-    
+    //Greekfire requested Errata March 2022 for RS Jihad book. 
     private static final TechAdvancement IS_XXL_TA = new TechAdvancement(TECH_BASE_IS)
             .setISAdvancement(3055, 3125, DATE_NONE, DATE_NONE, DATE_NONE)
             .setISApproximate(false, true, false, false, false)
             .setPrototypeFactions(F_FS, F_LC).setProductionFactions(F_LC)
             .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     
     private static final TechAdvancement CLAN_XXL_TA = new TechAdvancement(TECH_BASE_CLAN)
             .setClanAdvancement(3030, 3125, DATE_NONE, DATE_NONE, DATE_NONE)
             .setClanApproximate(false, true)
             .setPrototypeFactions(F_CSF).setProductionFactions(F_CSF)
             .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     
     private static final TechAdvancement LARGE_IS_XXL_TA = new TechAdvancement(TECH_BASE_IS)
             .setISAdvancement(2630, 3130, DATE_NONE, DATE_NONE, DATE_NONE)

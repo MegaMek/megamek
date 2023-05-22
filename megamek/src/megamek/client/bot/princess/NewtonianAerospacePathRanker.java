@@ -39,7 +39,7 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
         List<Entity> enemies = getOwner().getEnemyEntities();
         for (Entity e : enemies) {
             // Also, skip withdrawing enemy bot units, to avoid humping disabled tanks and ejected mechwarriors
-            if (getOwner().getHonorUtil().isEnemyBroken(e.getTargetId(), e.getOwnerId(), getOwner().getForcedWithdrawal())) {
+            if (getOwner().getHonorUtil().isEnemyBroken(e.getId(), e.getOwnerId(), getOwner().getForcedWithdrawal())) {
                 continue;
             }
 
@@ -115,7 +115,7 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
 
         // placeholder logic:
         // if we are a spheroid, we can fire viably in any direction
-        // if we are a fighter or aerodyne dropship, our most effective arc is forward
+        // if we are a fighter or aerodyne DropShip, our most effective arc is forward
         // larger craft are usually bristling with weapons all around
         int arcToUse = ((IAero) path.getEntity()).isSpheroid() ? Compute.ARC_360 : Compute.ARC_NOSE;
         double vertexCoverage = 1.0;
@@ -165,7 +165,7 @@ public class NewtonianAerospacePathRanker extends BasicPathRanker implements IPa
     /**
      * Estimates the sensor shadow modifier for a given path.
      * Only checks adjacent hexes and doesn't attempt to count intervening craft
-     * also only counts friendly entites that have already moved
+     * also only counts friendly entities that have already moved
      * @param path The path to check
      * @return 0 if there's no
      */

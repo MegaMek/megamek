@@ -1,45 +1,44 @@
-Version:1.0
+Version:1.3
 Warhammer
 WHM-6R
 mul id:3488
-
 Config:Biped
-TechBase:Inner Sphere
-Era:2515
-Source:TRO 3039 - Age of War
-Rules Level:1
+techbase:Inner Sphere
+era:2515
+source:TRO 3039 - Age of War
+rules level:1
 
-Mass:70
-Engine:280 Fusion Engine(IS)
-Structure:Standard
-Myomer:Standard
+mass:70
+engine:280 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:18 Single
-Walk MP:4
-Jump MP:0
+heat sinks:18 Single
+walk mp:4
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:20
-RA Armor:20
-LT Armor:17
-RT Armor:17
-CT Armor:22
-HD Armor:9
-LL Armor:15
-RL Armor:15
-RTL Armor:8
-RTR Armor:8
-RTC Armor:9
+armor:Standard(Inner Sphere)
+LA armor:20
+RA armor:20
+LT armor:17
+RT armor:17
+CT armor:22
+HD armor:9
+LL armor:15
+RL armor:15
+RTL armor:8
+RTR armor:8
+RTC armor:9
 
 Weapons:9
 PPC, Left Arm
 PPC, Right Arm
 Medium Laser, Left Torso
+Small Laser, Left Torso
+Machine Gun, Left Torso
+SRM 6, Right Torso
 Medium Laser, Right Torso
 Small Laser, Right Torso
-Small Laser, Left Torso
-SRM 6, Right Torso
-Machine Gun, Left Torso
 Machine Gun, Right Torso
 
 Left Arm:
@@ -154,4 +153,19 @@ Heat Sink
 -Empty-
 -Empty-
 
+overview:The Warhammer proved to be a very capable 'Mech, and for centuries practically defined the entire class of heavy 'Mechs. Boasting incredible firepower and respectable armoring, the Warhammer served prominently in the Star League Defense Force and was one of the premier 'Mechs in the Gunslinger Program. Indeed, many of the greatest MechWarriors in history were Warhammer pilots.
+
+capabilities:The Warhammer was well-protected with strong armor for its age and weight, and the large number of heat sinks allowed it to "fire and maneuver" without fear. The most common engine arrangement propels the 'Mech to a cruising speed of 43.2 km/h and a top speed of 64.8 km/h, which is quick enough to keep up with most battles. The 'Mech's electronics, albeit antiquated by the 31st Century, were basic and functional, allowing it to assume command tasks when necessary. The targeting mechanism, in particular, made use of an unique Searchlight positioned above the 'Mech's left shoulder. The device could act as a conventional searchlight or immediately connect to the O/P 1500 ARB tracking system, transforming the 'Mech into a capable night fighter.
+
+deployment:The Warhammer 6R's primary armaments were a pair of arm-mounted Donal PPCs that utilised highly charged accelerated particles to deal severe damage to opponent 'Mechs at long ranges. Both PPCs together offered the combined firepower of an Autocannon/20 over a far larger range bracket. The Warhammer carried two Martell medium lasers and two Magna tiny lasers for close combat, one on each side of the torso. A Holly SRM-6 was carried over the right shoulder, with one ton of reloads in the corresponding side torso, to exploit any weak places in an enemy's armor. Ultimately, two Sperry Browning Machine Guns were distributed between the side torsos, with one ton of ammunition carried in the middle torso as a strong deterrent to infantry attacks.
+
+history:StarCorps Industries introduced the Warhammer BattleMech in 2515 as "a mobile 'Mech with adequate firepower to destroy or severely damage any 'Mech of the same weight class or lower." The Warhammer continued to serve in the forces of the Great Houses throughout the Succession Wars after the Star League's demise. Despite very modest production rates, the large number of Warhammer factories dispersed over both the Inner Sphere and Periphery contributed to its endurance; Ronin Inc. was never able to construct more than five Warhammers per year from their Wallis factory. The recovery of the Helm Memory Core would prompt Inner Sphere manufacturers to create a slew of new Lostech-powered Warhammer versions, while the Periphery continued to produce original models for mercenaries and black marketeers. After the Clan Invasion, StarCorps chose to rehabilitate the ancient 'Mech with the greatest technological advancements, giving it new life. Initially, the business planned to construct only one new variety from its Crofton plant, but when word of the idea spread, other departments within StarCorps became involved and gathered on Crofton for a week-long conference to iron out the details. The conference turned out to be more jubilant than expected, and at the end of the bacchanalian "negotiations," it was determined that four new variations would be built: one for each of the Federated Suns, Capellan, Free Worlds League, and Lyran forces, employing technology unique to each realm. During the FedCom Civil War, some of these new 'Mechs were put through their paces.
+
+manufacturer:Diplass BattleMechs,StarCorps (FWL) Industries,StarCorps Industries,Amalgamated Sword and Steel,Vandenberg Mechanized Industries,Hope Industrial Works,Olivetti Weaponry (Formerly Earthwerks Inc.),Taurus Territorial Industries,Nimakachi Fusion Products Ltd.,StarCorps Industries,Ronin Inc. (Selasys)
+primaryfactory:Apollo,Emris IV,Fletcher (TH),Oldsmith,Pinard,Randis IV,Sudeten,Taurus,Tematagi,Terra,Wallis,
+systemmanufacturer:CHASSIS:StarCorps 100
+systemmanufacturer:ENGINE:VOX 280
+systemmanufacturer:ARMOR:Leviathon Plus
+systemmanufacturer:COMMUNICATIONS:O/P 3000 COMSET
+systemmanufacturer:TARGETING:O/P 1500 ARB
 

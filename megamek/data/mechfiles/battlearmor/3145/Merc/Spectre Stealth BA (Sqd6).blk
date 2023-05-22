@@ -1,0 +1,122 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Spectre Stealth Battle Armor
+</Name>
+
+<model>
+(Sqd6)
+</Model>
+
+<mul id:>
+9124
+</mul id:>
+
+<year>
+3097
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Leg
+</motion_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<armor_type>
+33
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<Squad Equipment>
+BADavidLightGaussRifle:LA
+BA-Magnetic Clamp:Body
+ISMechanicalJumpBooster:Body
+BABattleClawVibro:RA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+IS BA Stealth (Improved):LA
+IS BA Stealth (Improved):Body
+IS BA Stealth (Improved):Body
+IS BA Stealth (Improved):RA
+IS BA Stealth (Improved):RA
+</Squad Equipment>
+
+<source>
+TRO 3145 Mercenaries - Early Republic
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+6
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+1
+</weightclass>
+
+<overview>
+The Spectre Battle Armor was developed and fielded by Protectorate Arms Conglomerate.
+</overview>
+
+<capabilities>
+The Spectre is pretty quick for a humanoid Battle Armor, but its Mechanical Jump Booster is not a true replacement for regular Jump Jets. Magnetic clamps adapted from the Fa Shih Battle Armor allow the Spectre to be carried into battle. While its armament gives it better combat ability than some early stealth suits, it still cannot stand up to larger battle armor like the Elemental or Kanazuchi.
+</capabilities>
+
+<deployment>
+The Spectre Battle Armor sports a very limited armament of one "David" Light Gauss Rifle with 20 shots and a single Battle Vibro-Claw.
+</deployment>
+
+<history>
+It has proliferated throughout the Periphery, reaching the Protectorate’s Filtvelt allies and the Raven Alliance in large numbers. Mercenaries have spread the Spectre throughout the rest of the Periphery and Inner Sphere. It has got its name from the Calderon Shield stealth armor that protects it. This armor, while good at hiding it from enemy sensors, fares very poorly when under fire. 
+</history>
+
+<manufacturer>
+Protectorate Arms Conglomerate (Formerly Protectorate Defense Conglomerate)
+</manufacturer>
+
+<primaryFactory>
+Diik
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

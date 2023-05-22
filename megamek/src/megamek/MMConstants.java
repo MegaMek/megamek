@@ -31,6 +31,10 @@ public final class MMConstants extends SuiteConstants {
     //endregion GUI Constants
 
     //region MMOptions
+    //region Nag Tab
+    public static final String NAG_NODE = "megamek/prefs/nags";
+    public static final String NAG_BOT_README = "nagBotReadme";
+    //endregion Nag Tab
     //endregion MMOptions
 
     //region File Paths
@@ -41,6 +45,8 @@ public final class MMConstants extends SuiteConstants {
     public static final String HISTORICAL_ETHNICITY_FILE = "data/names/historicalEthnicity.csv";
     public static final String GIVEN_NAME_MALE_FILE = "data/names/maleGivenNames.csv";
     public static final String SURNAME_FILE = "data/names/surnames.csv";
+    public static final String BOT_README_FILE_PATH = "docs/Bot Stuff/Princess Notes.txt";
+    public static final String SERIALKILLER_CONFIG_FILE = "mmconf/serialkiller.xml";
     public static final String USER_NAME_FACTIONS_DIRECTORY_PATH = "userdata/data/names/factions/";
     public static final String USER_CALLSIGN_FILE_PATH = "userdata/data/names/callsigns.csv";
     public static final String USER_GIVEN_NAME_FEMALE_FILE = "userdata/data/names/femaleGivenNames.csv";
@@ -72,4 +78,11 @@ public final class MMConstants extends SuiteConstants {
     public static final int DIVE_BOMB_MAX_ALTITUDE = 5;
     public static final double INFANTRY_PRIMARY_WEAPON_DAMAGE_CAP = 0.6;
     //endregion Unsorted Constants
+
+    //region Magic Numbers That Should Be Enums
+    // FIXME : TSEMP Constants
+    public static final int TSEMP_EFFECT_NONE = 0;
+    public static final int TSEMP_EFFECT_INTERFERENCE = 1;
+    public static final int TSEMP_EFFECT_SHUTDOWN = 2;
+    //endregion Magic Numbers That Should Be Enums
 }

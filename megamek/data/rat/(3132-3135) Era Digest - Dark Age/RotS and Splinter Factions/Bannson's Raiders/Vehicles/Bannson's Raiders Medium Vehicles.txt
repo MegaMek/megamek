@@ -1,0 +1,12 @@
+Medium Vehicles
+Sortek Assault Craft (Standard), 1
+Partisan AA Vehicle (Standard), 2
+Ranger Armored Fighting Vehicle VV1 (Interdictor), 3
+Demon Medium Tank (Armor), 4
+JES I Tactical Missile Carrier (Standard), 5
+Condor Heavy Hover Tank (Upgrade), 6
+Bellona Hover Tank (Standard), 5
+Joust Medium Tank BE701, 4
+SM1 Tank Destroyer SM1, 3
+Padilla Tube Artillery Tank (LTC), 2
+Aesir Medium AA Vehicle (Standard), 1

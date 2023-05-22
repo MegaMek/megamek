@@ -101,7 +101,7 @@ public class CrewDescriptor {
             if (ratingLevel == 0) {
                 bonus--;
             }
-            if (ratingLevel ==  levels - 1) {
+            if (ratingLevel == levels - 1) {
                 bonus++;
             }
         }

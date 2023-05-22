@@ -20,7 +20,7 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import megamek.client.ui.swing.lobby.LobbyUtility;
 import megamek.common.util.BuildingTemplate;
-import megamek.utils.MegaMekXmlUtil;
+import megamek.utilities.xml.MMXMLUtility;
 import org.apache.logging.log4j.LogManager;
 
 import javax.xml.namespace.QName;
@@ -169,6 +169,19 @@ public class MapSettings implements Serializable {
     /** maximum Size of a rough spot */
     @XmlElement(name = "SANDMAXHEXES")
     private int maxSandSize = 2;
+
+    /** how much sand spots at least */
+    @XmlElement(name = "SNOWMINSPOTS")
+    private int minSnowSpots = 0;
+    /** how much sand spots at most */
+    @XmlElement(name = "SNOWMAXSPOTS")
+    private int maxSnowSpots = 0;
+    /** minimum size of a rough spot */
+    @XmlElement(name = "SNOWMINHEXES")
+    private int minSnowSize = 0;
+    /** maximum Size of a rough spot */
+    @XmlElement(name = "SNOWMAXHEXES")
+    private int maxSnowSize = 0;
 
     /** how much planted field spots at least */
     @XmlElement(name = "PLANTEDFIELDMINSPOTS")
@@ -373,7 +386,7 @@ public class MapSettings implements Serializable {
             JAXBContext jc = JAXBContext.newInstance(MapSettings.class);
 
             Unmarshaller um = jc.createUnmarshaller();
-            ms = (MapSettings) um.unmarshal(MegaMekXmlUtil.createSafeXmlSource(is));
+            ms = (MapSettings) um.unmarshal(MMXMLUtility.createSafeXmlSource(is));
         } catch (Exception e) {
             LogManager.getLogger().error("Error loading XML for map settings: " + e.getMessage(), e);
         }
@@ -393,6 +406,7 @@ public class MapSettings implements Serializable {
     private MapSettings(int boardWidth, int boardHeight, int mapWidth, int mapHeight) {
         setBoardSize(boardWidth, boardHeight);
         setMapSize(mapWidth, mapHeight);
+        adjustPathSeparator();
     }
 
     /** Creates new MapSettings that is a duplicate of another */
@@ -442,6 +456,10 @@ public class MapSettings implements Serializable {
         maxSandSpots = other.getMaxSandSpots();
         minSandSize = other.getMinSandSize();
         maxSandSize = other.getMaxSandSize();
+        minSnowSpots = other.getMinSnowSpots();
+        maxSnowSpots = other.getMaxSnowSpots();
+        minSnowSize = other.getMinSnowSize();
+        maxSnowSize = other.getMaxSnowSize();
         minPlantedFieldSpots = other.getMinPlantedFieldSpots();
         maxPlantedFieldSpots = other.getMaxPlantedFieldSpots();
         minPlantedFieldSize = other.getMinPlantedFieldSize();
@@ -489,6 +507,7 @@ public class MapSettings implements Serializable {
         cityDensity = other.getCityDensity();
         boardBuildings = other.getBoardBuildings();
         townSize = other.getTownSize();
+        adjustPathSeparator();
     }
 
     /**
@@ -500,12 +519,11 @@ public class MapSettings implements Serializable {
      * 
      * While the available and selected boards should really be stored as lists
      * of Files, they have infrastructure built up around them and it's far
-     * easier to use this kludgy hack.
+     * easier to use this kludgy hack to always store in Linux style \ separator
      */
     public void adjustPathSeparator() {
         // Windows will happily accept a forward slash in the path, the only
-        // real issue is back-slashes (windows separators) in Linux
-        boolean isWindows = System.getProperty("os.name").contains("Windows");
+        // real issue is back-slashes (windows separators) in Linux and macOS
         boolean containsWindowsPathSeparator = false;
         for (String path : boardsAvailable) {
             if (path.contains("\\")) {
@@ -516,7 +534,7 @@ public class MapSettings implements Serializable {
             }
         }
 
-        if (!isWindows && containsWindowsPathSeparator) {
+        if (containsWindowsPathSeparator) {
             for (int i = 0; i < boardsAvailable.size(); i++) {
                 if (boardsAvailable.get(i) == null) {
                     continue;
@@ -749,6 +767,7 @@ public class MapSettings implements Serializable {
 
     public void setBoardsAvailableVector(ArrayList<String> boardsAvailable) {
         this.boardsAvailable = boardsAvailable;
+        adjustPathSeparator();
     }
 
     /**
@@ -848,6 +867,18 @@ public class MapSettings implements Serializable {
         }
         if (maxSandSize < minSandSize) {
             maxSandSize = minSandSize;
+        }
+        if (minSnowSpots < 0) {
+            minSnowSpots = 0;
+        }
+        if (maxSnowSpots < minSnowSpots) {
+            maxSnowSpots = minSnowSpots;
+        }
+        if (minSnowSize < 0) {
+            minSnowSize = 0;
+        }
+        if (maxSnowSize < minSnowSize) {
+            maxSnowSize = minSnowSize;
         }
         if (minPlantedFieldSpots < 0) {
             minPlantedFieldSpots = 0;
@@ -990,6 +1021,8 @@ public class MapSettings implements Serializable {
                 && (minRoughSize == other.getMinRoughSize()) && (maxRoughSize == other.getMaxRoughSize())
                 && (minSandSpots == other.getMinSandSpots()) && (maxSandSpots == other.getMaxSandSpots())
                 && (minSandSize == other.getMinSandSize()) && (maxSandSize == other.getMaxSandSize())
+                && (minSnowSpots == other.getMinSnowSpots()) && (maxSnowSpots == other.getMaxSnowSpots())
+                && (minSnowSize == other.getMinSnowSize()) && (maxSnowSize == other.getMaxSnowSize())
                 && (minPlantedFieldSpots == other.getMinPlantedFieldSpots())
                 && (maxPlantedFieldSpots == other.getMaxPlantedFieldSpots())
                 && (minPlantedFieldSize == other.getMinPlantedFieldSize())
@@ -1019,7 +1052,8 @@ public class MapSettings implements Serializable {
                 && (algorithmToUse == other.getAlgorithmToUse()) && (mountainHeightMin == other.getMountainHeightMin())
                 && (mountainHeightMax == other.getMountainHeightMax()) && (mountainPeaks == other.getMountainPeaks())
                 && (mountainStyle == other.getMountainStyle()) && (mountainWidthMin == other.getMountainWidthMin())
-                && (mountainWidthMax == other.getMountainWidthMax()) && (boardBuildings.equals(other.getBoardBuildings()));
+                && (mountainWidthMax == other.getMountainWidthMax()) && (boardBuildings.equals(other.getBoardBuildings())
+                && (medium == other.medium));
     }
 
     public int getInvertNegativeTerrain() {
@@ -1142,12 +1176,40 @@ public class MapSettings implements Serializable {
         this.minSandSize = minSandSize;
     }
 
-    public int getMaxSandSize() {
-        return maxSandSize;
-    }
+    public int getMaxSandSize() { return maxSandSize; }
 
     public void setMaxSandSize(int maxSandSize) {
         this.maxSandSize = maxSandSize;
+    }
+
+    public int getMinSnowSpots() {
+        return minSnowSpots;
+    }
+
+    public void setMinSnowSpots(int minSnowSpots) {
+        this.minSnowSpots = minSnowSpots;
+    }
+
+    public int getMaxSnowSpots() {
+        return maxSnowSpots;
+    }
+
+    public void setMaxSnowSpots(int maxSnowSpots) {
+        this.maxSnowSpots = maxSnowSpots;
+    }
+
+    public int getMinSnowSize() {
+        return minSnowSize;
+    }
+
+    public void setMinSnowSize(int minSnowSize) {
+        this.minSnowSize = minSnowSize;
+    }
+
+    public int getMaxSnowSize() { return maxSnowSize; }
+
+    public void setMaxSnowSize(int maxSnowSize) {
+        this.maxSnowSize = maxSnowSize;
     }
 
     public int getMinPlantedFieldSpots() {
@@ -1430,6 +1492,16 @@ public class MapSettings implements Serializable {
         maxSandSpots = maxSpots;
         minSandSize = minSize;
         maxSandSize = maxSize;
+    }
+
+    /**
+     * set the snow parameters for the Map Generator
+     */
+    public void setSnowParams(int minSpots, int maxSpots, int minSize, int maxSize) {
+        minSnowSpots = minSpots;
+        maxSnowSpots = maxSpots;
+        minSnowSize = minSize;
+        maxSnowSize = maxSize;
     }
 
     /**

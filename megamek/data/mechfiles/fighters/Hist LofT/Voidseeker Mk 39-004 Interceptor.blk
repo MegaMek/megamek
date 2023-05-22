@@ -1,0 +1,145 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Voidseeker
+</Name>
+
+<Model>
+Mk 39-004 Interceptor
+</Model>
+
+<mul id:>
+7144
+</mul id:>
+
+<year>
+2763
+</year>
+
+<originalBuildYear>
+2763
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
+
+<SafeThrust>
+7
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+16
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+58
+43
+43
+35
+</armor>
+
+<Nose Equipment>
+ISERLargeLaser
+BeagleActiveProbe
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISLargePulseLaser
+Medium Laser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISLargePulseLaser
+Medium Laser
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+ImprovedShieldedAeroSRCS
+</Fuselage Equipment>
+
+<capabilities>
+The Mk. 30's direct ancestor was the Mk. 39-004 Interceptor. It was able to rapidly approach its targets thanks to its nearly six gravities of thrust, bringing the wing-mounted pulse lasers into play for lethal effect. Alternately, the strong thrust enabled it to maintain range while sniping targets with the powerful, extended-range Blankenburg laser. The 004's ability to cut through enemy jamming made room for its larger cousin and SDS drones thanks to the Beagle Active Probe.
+</capabilities>
+
+<overview>
+The Mark 39 Voidseeker Attack Drone is an automated defense system of the SLDF based on the (then experimental) F-90 Stingray aerospace fighter.
+</overview>
+
+<deployment>
+Designed to work in conjunction with the much larger M-5 Caspar SDS drone warships, the Mark 39 is capable of engaging fighter sized targets which the Caspars are unable to target with their naval size armament. Smart Robotic Control System (Improved) gives the Mk. 39-004 Interceptor a Piloting Skill of 5, a Gunnery Skill of 4.
+</deployment>
+
+<history>
+he Voidseeker replaced the Mark 30 BlackWasp drone fighter and it can be speculated that, like the BlackWasp, the Mark 39 could be launched from the Caspar drones or carrier satellites. The Mark 39 is noted for having superior resistance to electronic warfare gear, compared to its predecessor. The most notable feature about the Mark 39 is that their sophisticated battle computers are capable of coordinating attacks with other Mark 39 and M-5 units by forming a decentralized computer network, which allows the drones to collectively make tactical decisions. The advantages include preventing overcommitting drones against a single target, and the impossibility of neutralizing the defenders by taking out any central command unit. The Mark 39 drones could also be slaved to a human controller. After the initial Voidseeker design was created and deemed successful, engineers created two versions: The MK 39-004 Interceptor and the MK 39-007 Striker. The Mark 39 family was very successful and deployed in vast numbers (by the thousands) in areas that did not warrant the deployment of M-5 Caspars, such as deep space naval installations like Camelot Command and planetary systems of minor value. Most of the Mark 39 systems had been destroyed, deactivated or otherwise neutralized by the end of the Second Succession War but some can still found in active service. Like landmines, the Mark 39 drones maintain a passive listening mode and respond to all ships that fail to provide a correct IFF transponder code.
+</history>
+
+<manufacturer>
+Ulsop Robotics
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>
+
+<notes>
+Adding 4 points of armor 1 to each wing, 2 to the aft. Also reduced fuel by 1 ton.
+</notes>
+
+<source>
+Hist: LofT Vol 1 - Star League
+</source>
+
+<tonnage>
+60.0
+</tonnage>
+

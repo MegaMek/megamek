@@ -1,6 +1,30 @@
 ##BUILDINGS WITH NON-STANDARD CLASS AND ARMOR##
 
 #GUN EMPLACEMENT
+super * "building:1;bldg_elev:*;bldg_cf:*;bldg_class:3;bldg_armor:*;bldg_fluff:1" "" "saxarba/gun_emplacement/gun_emplacement_light_a_01_ylw.png"
+super * "building:2;bldg_elev:*;bldg_cf:*;bldg_class:3;bldg_armor:*;bldg_fluff:1" "" "saxarba/gun_emplacement/gun_emplacement_medium_a_01_ylw.png"
+super * "building:3;bldg_elev:*;bldg_cf:*;bldg_class:3;bldg_armor:*;bldg_fluff:1" "" "saxarba/gun_emplacement/gun_emplacement_heavy_a_01_ylw.png"
+super * "building:4;bldg_elev:*;bldg_cf:*;bldg_class:3;bldg_armor:*;bldg_fluff:1" "" "saxarba/gun_emplacement/gun_emplacement_hard_a_01_ylw.png"
+super * "building:*;bldg_elev:*;bldg_cf:*;bldg_class:3;bldg_armor:*;bldg_fluff:1" "" "saxarba/gun_emplacement/gun_emplacement_light_a_01_ylw.png"
+
+super * "building:1;bldg_elev:*;bldg_cf:*;bldg_class:3;bldg_armor:*;bldg_fluff:2" "" "saxarba/gun_emplacement/gun_emplacement_light_a_01_grn.png"
+super * "building:2;bldg_elev:*;bldg_cf:*;bldg_class:3;bldg_armor:*;bldg_fluff:2" "" "saxarba/gun_emplacement/gun_emplacement_medium_a_01_grn.png"
+super * "building:3;bldg_elev:*;bldg_cf:*;bldg_class:3;bldg_armor:*;bldg_fluff:2" "" "saxarba/gun_emplacement/gun_emplacement_heavy_a_01_grn.png"
+super * "building:4;bldg_elev:*;bldg_cf:*;bldg_class:3;bldg_armor:*;bldg_fluff:2" "" "saxarba/gun_emplacement/gun_emplacement_hard_a_01_grn.png"
+super * "building:*;bldg_elev:*;bldg_cf:*;bldg_class:3;bldg_armor:*;bldg_fluff:2" "" "saxarba/gun_emplacement/gun_emplacement_light_a_01_grn.png"
+
+super * "building:1;bldg_elev:*;bldg_cf:*;bldg_class:3;bldg_armor:*;bldg_fluff:3" "" "saxarba/gun_emplacement/gun_emplacement_light_a_01_blu.png"
+super * "building:2;bldg_elev:*;bldg_cf:*;bldg_class:3;bldg_armor:*;bldg_fluff:3" "" "saxarba/gun_emplacement/gun_emplacement_medium_a_01_blu.png"
+super * "building:3;bldg_elev:*;bldg_cf:*;bldg_class:3;bldg_armor:*;bldg_fluff:3" "" "saxarba/gun_emplacement/gun_emplacement_heavy_a_01_blu.png"
+super * "building:4;bldg_elev:*;bldg_cf:*;bldg_class:3;bldg_armor:*;bldg_fluff:3" "" "saxarba/gun_emplacement/gun_emplacement_hard_a_01_blu.png"
+super * "building:*;bldg_elev:*;bldg_cf:*;bldg_class:3;bldg_armor:*;bldg_fluff:3" "" "saxarba/gun_emplacement/gun_emplacement_light_a_01_blu.png"
+
+super * "building:1;bldg_elev:*;bldg_cf:*;bldg_class:3;bldg_armor:*;bldg_fluff:4" "" "saxarba/gun_emplacement/gun_emplacement_light_a_01_cyn.png"
+super * "building:2;bldg_elev:*;bldg_cf:*;bldg_class:3;bldg_armor:*;bldg_fluff:4" "" "saxarba/gun_emplacement/gun_emplacement_medium_a_01_cyn.png"
+super * "building:3;bldg_elev:*;bldg_cf:*;bldg_class:3;bldg_armor:*;bldg_fluff:4" "" "saxarba/gun_emplacement/gun_emplacement_heavy_a_01_cyn.png"
+super * "building:4;bldg_elev:*;bldg_cf:*;bldg_class:3;bldg_armor:*;bldg_fluff:4" "" "saxarba/gun_emplacement/gun_emplacement_hard_a_01_cyn.png"
+super * "building:*;bldg_elev:*;bldg_cf:*;bldg_class:3;bldg_armor:*;bldg_fluff:4" "" "saxarba/gun_emplacement/gun_emplacement_light_a_01_cyn.png"
+
 super * "building:1;bldg_elev:*;bldg_cf:*;bldg_class:3;bldg_armor:*" "" "saxarba/gun_emplacement/gun_emplacement_light_a_01.png"
 super * "building:2;bldg_elev:*;bldg_cf:*;bldg_class:3;bldg_armor:*" "" "saxarba/gun_emplacement/gun_emplacement_medium_a_01.png"
 super * "building:3;bldg_elev:*;bldg_cf:*;bldg_class:3;bldg_armor:*" "" "saxarba/gun_emplacement/gun_emplacement_heavy_a_01.png"

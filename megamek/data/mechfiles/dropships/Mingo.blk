@@ -1,0 +1,183 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Mingo
+</Name>
+
+<Model>
+
+</Model>
+
+<mul id:>
+7473
+</mul id:>
+
+<year>
+2315
+</year>
+
+<originalBuildYear>
+2315
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+crewquarters:42.0:0
+1stclassquarters:20.0:0
+steeragequarters:50.0:0
+cargobay:2855.0:4:4
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<collartype>
+2
+</collartype>
+
+<heatsinks>
+45
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+8571
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+40
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+92
+80
+80
+65
+</armor>
+
+<Nose Equipment>
+(B) Autocannon/5
+IS Ammo AC/5:20
+(B) Medium Laser
+Medium Laser
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) Autocannon/5
+IS Ammo AC/5:20
+(B) Medium Laser
+Medium Laser
+(R) (B) Autocannon/5
+(R) IS Ammo AC/5:20
+(R) (B) Medium Laser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) Autocannon/5
+IS Ammo AC/5:20
+(B) Medium Laser
+Medium Laser
+(R) (B) Autocannon/5
+(R) IS Ammo AC/5:20
+(R) (B) Medium Laser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) Medium Laser
+Medium Laser
+</Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<structural_integrity>
+8
+</structural_integrity>
+
+<imagepath>
+.\data\images\fluff\Aero\Mingo.png
+</imagepath>
+
+<source>
+ToS - Valencia - Age of War
+</source>
+
+<tonnage>
+5000.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+8
+</crew>
+
+<officers>
+2
+</officers>
+
+<gunners>
+3
+</gunners>
+
+<passengers>
+10
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+6
+</escape_pod>
+

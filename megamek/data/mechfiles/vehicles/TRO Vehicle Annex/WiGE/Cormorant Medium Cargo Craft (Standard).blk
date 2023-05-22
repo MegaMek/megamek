@@ -16,9 +16,9 @@ SupportTank
 Cormorant Medium Cargo Craft
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 4004
@@ -93,3 +93,36 @@ TRO VAr - Star League
 <tonnage>
 70.0
 </tonnage>
+
+<capabilities>
+The Cormorant is designed to be a seaborne capable craft, which has an Amphibious Chassis for water landings. It has a Cargo Bay with a 30.5 ton capacity, with a rear-mounted bay door. It has a 1.5 tons of BAR 6 rated commercial armor protecting the craft from light damage.
+</capabilities>
+
+<overview>
+The Cormorant Medium Cargo Transport is a Federated Suns vehicle produced by Michaelson Aircraft, a division of Michaelson Heavy Industries.
+</overview>
+
+<deployment>
+The Cormorant is designed to be a seaborne capable craft, which has an Amphibious Chassis for water landings. It has a Cargo Bay with a 29.5 ton capacity, with a rear-mounted bay door.
+</deployment>
+
+<history>
+The Cormorant is noted for being the most common WiGE in the FedSuns, produced since the late twenty-seventh century. The WiGE was designed to be used on worlds with large oceans. One of its more notable features, it being inexpensive, due to having no need for airstrips. It was designed with modest protection to fend off natural and human planetary threats to its cargo. The vehicle was typically used on Ulysses, where natural born predators are known for their size and aggression. During the FedCom Civil War many smugglers on Ulysses also became users of the Cormorant to move illegal cargoes. Finally the Ulysses militia purchased several of the craft and used them to drop a battalion of marines on top of the pirates' headquarters. Michaelson's importance to The Republic of the Sphere meant that large numbers of Cormorants and Fulmar patrol craft were found in the RAF.
+</history>
+
+<manufacturer>
+Michaelson Aircraft
+</manufacturer>
+
+<primaryFactory>
+Ruchbah
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

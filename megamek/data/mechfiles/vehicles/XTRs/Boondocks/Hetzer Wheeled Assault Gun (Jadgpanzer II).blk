@@ -21,7 +21,7 @@ Jagdpanzer II
 </Name>
 
 <model>
-(Standard)	
+
 </model>
 
 <year>
@@ -29,7 +29,7 @@ Jagdpanzer II
 </year>
 
 <type>
-IS Level 4
+IS Level 3
 </type>
 
 <tonnage>
@@ -88,3 +88,37 @@ Machine Gun(ST)
 <Rear Equipment>
 </Rear Equipment>
 
+<capabilities>
+Its primary and only weapon is in the front, meaning the unit lacks a turret, making it difficult to employ in roles other than defensive ones. Also, its wheeled chassis restricts its mobility.
+</capabilities>
+
+<overview>
+The Hetzer was designed as a cheap, self-propelled artillery-piece to be stationed on worlds deemed worthy to defend, but not valuable enough to station a complete garrison force or even BattleMechs.
+</overview>
+
+<deployment>
+This is an Experimental Technology variant of the Hetzer which was introduced during the Jihad. The vehicle features six tons of Vehicular Stealth Armor and a Guardian ECM to help protect and hide the Jagdpanzer from its opponents. The original Assault Autocannon is removed in favor of an Ultra version with four tons of ammo. The vehicle has two Machine Guns, each mounted on a Sponson-type turret on either side of the vehicle. Lastly, the vehicle's engine is exchanged for an extralight fusion engine, which increases the vehicle's flank speed to 80 km/h.
+</deployment>
+
+<history>
+Due to its decent protection of six tons of standard armor and its Crusher SH Cannon, combined with its low price, the Hetzer is still a valuable asset for poor commands and is especially popular throughout the Periphery. However, Quikscell Company is largely known for its poor manufacturing standards, resulting in many Hetzers being shipped with only half their components installed or even completely lacking some of them. Crews reportedly refused new Hetzers meant to replace their older ones, because they couldn't be sure that the new models would work properly.
+</history>
+
+<manufacturer>
+Field Refit
+</manufacturer>
+
+<primaryFactory>
+Various
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:Fusion 140 XL
+ARMOR:Unknown
+COMMUNICATIONS:Johnston Q-Band with ECM
+TARGETING:Scantrex Dual Tac
+</systemManufacturers>
+
+<source>
+XTRO Boondocks - Jihad
+</source>

@@ -14,18 +14,19 @@
 package megamek.common.weapons.autocannons;
 
 import megamek.common.AmmoType;
-import megamek.common.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.UltraWeaponHandler;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
- * @since Sep 29, 2004
+ * @since Sept 29, 2004
  */
 public abstract class UACWeapon extends AmmoWeapon {
     private static final long serialVersionUID = -8041750694509751561L;
@@ -49,8 +50,8 @@ public abstract class UACWeapon extends AmmoWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              Server server) {
-        return new UltraWeaponHandler(toHit, waa, game, server);
+                                              GameManager manager) {
+        return new UltraWeaponHandler(toHit, waa, game, manager);
     }
     
     @Override
@@ -58,7 +59,7 @@ public abstract class UACWeapon extends AmmoWeapon {
         double damage = 0;
         if (range <= getLongRange()) {
             damage = getRackSize() * 1.5;
-            if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
+            if ((range == AlphaStrikeElement.SHORT_RANGE) && (getMinimumRange() > 0)) {
                 damage = adjustBattleForceDamageForMinRange(damage);
             }
         }

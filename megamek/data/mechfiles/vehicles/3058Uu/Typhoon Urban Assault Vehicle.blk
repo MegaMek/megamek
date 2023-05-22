@@ -12,9 +12,9 @@ Tank
 <Name>
 Typhoon Urban Assault Vehicle
 </Name>
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 3337

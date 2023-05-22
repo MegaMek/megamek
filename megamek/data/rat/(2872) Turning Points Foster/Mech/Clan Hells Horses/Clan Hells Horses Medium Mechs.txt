@@ -1,0 +1,22 @@
+Clan Hells Horses Medium Mechs
+Coyotl Prime, 1
+Coyotl A, 1
+Coyotl B, 1
+Phoenix Hawk C, 2
+Hellhound (Conjurer) (Standard),3
+Starslayer STY-2C, 4
+Corvis (Standard), 5
+Black Hawk (Nova) Prime, 6
+Black Hawk (Nova) A, 6
+Black Hawk (Nova) B, 6
+Black Hawk (Nova) C, 6
+Black Hawk (Nova) D, 6
+Hoplite HOP-4Cb, 5
+Kintaro KTO-19b, 4
+Black Hawk (Nova) Prime, 3
+Black Hawk (Nova) A, 3
+Black Hawk (Nova) B, 3
+Black Hawk (Nova) C, 3
+Black Hawk (Nova) D, 3
+Goshawk (Vapor Eagle) 6, 2
+Crab CRB-27b, 1

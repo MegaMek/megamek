@@ -23,13 +23,40 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * This is a Calculation Report that builds its output as an assembly of JLabels in a JPanel.
+ * This is best suited to being displayed in a dialog as it knows how wide and high it needs to be
+ * (better than an HTML report does). Its toString() method yields the HTML-coded report.
+ */
 public class SwingCalculationReport implements CalculationReport {
+
+    private static class ReportLine {
+
+        ReportLine(String c1, String c2, String c3, LineType lt) {
+            lineType = lt;
+            content1 = c1;
+            content2 = c2;
+            content3 = c3;
+        }
+
+        final LineType lineType;
+        final String content1;
+        final String content2;
+        final String content3;
+    }
 
     private final JPanel report = new JPanel(new GridBagLayout());
     private final GridBagConstraints gbc = new GridBagConstraints();
-    private final String COL_SPACER = "   ";
-    private final static int PADDING = 15;
+    private final String LINE_START_SPACER = "        ";
+    private final static int COL_SPACER = 35;
+
+    /** Tentative Section lines are kept in their own list. */
+    private final List<ReportLine> tentativeLines = new ArrayList<>();
+
+    private boolean tentativeSectionActive = false;
 
     @Override
     public JComponent toJComponent() {
@@ -37,63 +64,116 @@ public class SwingCalculationReport implements CalculationReport {
     }
 
     @Override
+    public void startTentativeSection() {
+        tentativeSectionActive = true;
+    }
+
+    @Override
+    public void endTentativeSection() {
+        tentativeSectionActive = false;
+        for (ReportLine line : tentativeLines) {
+            switch (line.lineType) {
+                case LINE:
+                    addLine(line.content1, line.content2, line.content3);
+                    break;
+                case HEADER:
+                    addHeader(line.content1);
+                    break;
+                case SUBHEADER:
+                    addSubHeader(line.content1);
+                    break;
+                case RESULT_LINE:
+                    addResultLine(line.content1, line.content2, line.content3);
+                    break;
+                default:
+                    addEmptyLine();
+            }
+        }
+        tentativeLines.clear();
+    }
+
+    @Override
+    public void discardTentativeSection() {
+        tentativeSectionActive = false;
+        tentativeLines.clear();
+    }
+
+    @Override
     public CalculationReport addResultLine(String type, String calculation, String result) {
-        newLine();
-        gbc.gridx = 3;
-        gbc.anchor = GridBagConstraints.LINE_END;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        JLabel resultLabel = new JLabel();
-        Color color = UIManager.getColor("Label.foreground");
-        resultLabel.setBorder(new CompoundBorder(new EmptyBorder(0, 0, 0, PADDING),
-                new MatteBorder(1, 0, 0, 0, color)));
-        report.add(resultLabel, gbc);
-        return addLine(type, calculation, result);
+        if (tentativeSectionActive) {
+            tentativeLines.add(new ReportLine(type, calculation, result, LineType.RESULT_LINE));
+            return this;
+        } else {
+            newLine();
+            gbc.gridx = 3;
+            gbc.anchor = GridBagConstraints.LINE_END;
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            JLabel resultLabel = new JLabel();
+            Color color = UIManager.getColor("Label.foreground");
+            resultLabel.setBorder(new CompoundBorder(new EmptyBorder(0, 0, 0, COL_SPACER),
+                    new MatteBorder(1, 0, 0, 0, color)));
+            gbc.weightx = 0;
+            report.add(resultLabel, gbc);
+            return addLine(type, calculation, result);
+        }
     }
 
     @Override
     public CalculationReport addLine(String type, String calculation, String result) {
-        newLine();
-        gbc.ipadx = 0;
-        report.add(new JLabel(COL_SPACER), gbc);
-        gbc.gridx++;
-        gbc.ipadx = PADDING;
-        report.add(new JLabel(type), gbc);
-        gbc.gridx++;
-        report.add(new JLabel(calculation), gbc);
-        gbc.gridx++;
-        gbc.anchor = GridBagConstraints.LINE_END;
-        report.add(new JLabel(result), gbc);
+        if (tentativeSectionActive) {
+            tentativeLines.add(new ReportLine(type, calculation, result, LineType.LINE));
+        } else {
+            newLine();
+            gbc.ipadx = 0;
+            report.add(new JLabel(LINE_START_SPACER), gbc);
+            gbc.gridx++;
+            gbc.ipadx = COL_SPACER;
+            report.add(new JLabel(type), gbc);
+            gbc.gridx++;
+            report.add(new JLabel(calculation), gbc);
+            gbc.gridx++;
+            gbc.anchor = GridBagConstraints.LINE_END;
+            gbc.weightx = 0;
+            report.add(new JLabel(result), gbc);
+        }
         return this;
     }
 
     @Override
     public CalculationReport addSubHeader(String text) {
-        newLine();
-        gbc.gridwidth = 4;
-        gbc.ipadx = 0;
-        report.add(new JLabel(text), gbc);
+        if (tentativeSectionActive) {
+            tentativeLines.add(new ReportLine(text, "", "", LineType.SUBHEADER));
+        } else {
+            newLine();
+            gbc.gridwidth = 4;
+            gbc.ipadx = 0;
+            report.add(new JLabel(text), gbc);
+        }
         return this;
     }
 
     @Override
     public CalculationReport addHeader(String text) {
-        newLine();
-        gbc.anchor = GridBagConstraints.CENTER;
-        gbc.gridwidth = 4;
-        JLabel header = new JLabel(text);
-        Font font = header.getFont();
-        int size = font.getSize() + 4;
-        header.setFont(new Font(font.getName(), Font.PLAIN, size));
-        report.add(header, gbc);
-        addEmptyLine();
+        if (tentativeSectionActive) {
+            tentativeLines.add(new ReportLine(text, "", "", LineType.HEADER));
+        } else {
+            newLine();
+            gbc.gridwidth = 4;
+            JLabel header = new JLabel("<HTML><U><FONT SIZE=+2>" + text);
+            report.add(header, gbc);
+        }
         return this;
     }
 
     @Override
     public CalculationReport addEmptyLine() {
-        newLine();
-        gbc.gridwidth = 4;
-        report.add(Box.createVerticalStrut(8), gbc);
+        if (tentativeSectionActive) {
+            tentativeLines.add(new ReportLine("", "", "", LineType.EMPTY));
+        } else {
+            newLine();
+            gbc.gridwidth = 4;
+            report.add(Box.createVerticalStrut(8), gbc);
+        }
         return this;
     }
 
@@ -101,7 +181,8 @@ public class SwingCalculationReport implements CalculationReport {
         gbc.anchor = GridBagConstraints.LINE_START;
         gbc.gridx = 0;
         gbc.gridwidth = 1;
-        gbc.ipadx = PADDING;
+        gbc.ipadx = COL_SPACER;
+        gbc.weightx = 1;
         gbc.fill = GridBagConstraints.NONE;
         gbc.gridy++;
     }

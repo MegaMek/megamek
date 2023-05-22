@@ -11,7 +11,6 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
 package megamek.common.templates;
 
 import freemarker.template.Configuration;
@@ -21,7 +20,6 @@ import freemarker.template.TemplateExceptionHandler;
  * Configuration for FreeMarker templates
  *
  * @author Neoancient
- *
  */
 public final class TemplateConfiguration {
 
@@ -35,8 +33,8 @@ public final class TemplateConfiguration {
     }
 
     private static Configuration createConfiguration() {
-        final Configuration cfg = new Configuration(Configuration.getVersion());
-        cfg.setClassForTemplateLoading(TemplateConfiguration.class, "/megamek/common/templates");
+        final Configuration cfg = new Configuration(Configuration.VERSION_2_3_31);
+        cfg.setClassForTemplateLoading(TemplateConfiguration.class, "/megamek/common/templates"); // TODO : Remove inline file path
         cfg.setDefaultEncoding("UTF-8");
         cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
         cfg.setLogTemplateExceptions(false);

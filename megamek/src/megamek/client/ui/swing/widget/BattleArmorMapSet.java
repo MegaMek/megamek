@@ -1,29 +1,21 @@
-/**
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
+/*
+ * Copyright (c) 2000-2002 - Ben Mazur (bmazur@sev.org).
+ * Copyright (c) 2013 - Edward Cullen (eddy@obsessedcomputers.co.uk).
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing.widget;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.util.Vector;
-
-import javax.swing.JComponent;
-
+import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.BattleArmor;
@@ -31,13 +23,15 @@ import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.util.fileUtils.MegaMekFile;
 
+import javax.swing.*;
+import java.awt.*;
+import java.util.Vector;
+
 /**
  * Class which keeps set of all areas required to represent Battle Armor unit in
- * MechDsiplay.ArmorPanel class.
+ * MechDisplay.ArmorPanel class.
  */
-
 public class BattleArmorMapSet implements DisplayMapSet {
-    
     // Picture with figure
     private Image battleArmorImage;
     // Images that shows how much armor + 1 internal damage left.
@@ -52,16 +46,18 @@ public class BattleArmorMapSet implements DisplayMapSet {
     private PMValueLabel[] armorLabels = new PMValueLabel[BattleArmor.BA_MAX_MEN];
     // Content group which will be sent to PicMap component
     private PMAreasGroup content = new PMAreasGroup();
-    // Set of Backgrpund drawers which will be sent to PicMap component
+    // Set of Background drawers which will be sent to PicMap component
     private Vector<BackGroundDrawer> bgDrawers = new Vector<>();
 
     private int stepY = 53;
 
-    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN,
-            GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize"));
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
+    private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
+            GUIP.getUnitDisplayMechArmorLargeFontSize());
 
     /**
-     * This constructor have to be called anly from addNotify() method
+     * This constructor can only be called from the addNotify method
      */
     public BattleArmorMapSet(JComponent c) {
         comp = c;
@@ -123,8 +119,7 @@ public class BattleArmorMapSet implements DisplayMapSet {
         }
 
         for (int i = 0; i < men; i++) {
-            armor = (ba.getArmor(i + 1, false) < 0) ? 0 : ba.getArmor(i + 1,
-                    false);
+            armor = (ba.getArmor(i + 1, false) < 0) ? 0 : ba.getArmor(i + 1, false);
             internal = (ba.getInternal(i + 1) < 0) ? 0 : ba.getInternal(i + 1);
             if ((armor + internal) == 0) {
                 armorAreas[i].setVisible(false);
@@ -138,78 +133,61 @@ public class BattleArmorMapSet implements DisplayMapSet {
     }
 
     private void setBackGround() {
-        UnitDisplaySkinSpecification udSpec = SkinXMLHandler
-                .getUnitDisplaySkin();
+        UnitDisplaySkinSpecification udSpec = SkinXMLHandler.getUnitDisplaySkin();
 
-        Image tile = comp.getToolkit()
-                .getImage(
-                        new MegaMekFile(Configuration.widgetsDir(), udSpec
-                                .getBackgroundTile()).toString());
+        Image tile = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
+                udSpec.getBackgroundTile()).toString());
         PMUtil.setImage(tile, comp);
         int b = BackGroundDrawer.TILING_BOTH;
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_TOP;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLine())
-                        .toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_BOTTOM;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLine())
-                        .toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getLeftLine())
-                        .toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getLeftLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getRightLine())
-                        .toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getRightLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-                | BackGroundDrawer.HALIGN_LEFT;
+        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLeftCorner())
-                        .toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLeftCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-                | BackGroundDrawer.HALIGN_LEFT;
+        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec
-                        .getBottomLeftCorner()).toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLeftCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-                | BackGroundDrawer.HALIGN_RIGHT;
-        tile = comp.getToolkit()
-                .getImage(
-                        new MegaMekFile(Configuration.widgetsDir(), udSpec
-                                .getTopRightCorner()).toString());
-        PMUtil.setImage(tile, comp);
-        bgDrawers.addElement(new BackGroundDrawer(tile, b));
-
-        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-                | BackGroundDrawer.HALIGN_RIGHT;
+        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec
-                        .getBottomRightCorner()).toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopRightCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
+        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM | BackGroundDrawer.HALIGN_RIGHT;
+        tile = comp.getToolkit().getImage(
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomRightCorner()).toString());
+        PMUtil.setImage(tile, comp);
+        bgDrawers.addElement(new BackGroundDrawer(tile, b));
     }
 
     // Redraws armor images
@@ -226,5 +204,4 @@ public class BattleArmorMapSet implements DisplayMapSet {
             g.fillRect(x, 0, 5, 12);
         }
     }
-
 }

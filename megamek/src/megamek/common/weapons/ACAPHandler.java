@@ -25,8 +25,7 @@ import megamek.common.Hex;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.Server;
-import megamek.server.Server.DamageType;
+import megamek.server.GameManager;
 
 /**
  * @author Andrew Hunter
@@ -35,44 +34,27 @@ import megamek.server.Server.DamageType;
 public class ACAPHandler extends ACWeaponHandler {
     private static final long serialVersionUID = -4251291510045646817L;
 
-    /**
-     * @param t
-     * @param w
-     * @param g
-     */
-    public ACAPHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public ACAPHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
         generalDamageType = HitData.DAMAGE_ARMOR_PIERCING;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common
-     * .Entity, java.util.Vector, megamek.common.Building, int, int, int, int)
-     */
     @Override
-    protected void handleEntityDamage(Entity entityTarget,
-            Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
-            int bldgAbsorbs) {
+    protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport,
+                                      Building bldg, int hits, int nCluster, int bldgAbsorbs) {
         AmmoType atype = (AmmoType) weapon.getLinked().getType();
-        int nDamage;
-        HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(),
-                toHit.getSideTable(), waa.getAimedLocation(),
-                waa.getAimingMode(), toHit.getCover());
+        HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit.getSideTable(),
+                waa.getAimedLocation(), waa.getAimingMode(), toHit.getCover());
         hit.setGeneralDamageType(generalDamageType);
         hit.setAttackerId(getAttackerId());
-        if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
-                .getCover(), Compute.targetSideTable(ae, entityTarget, weapon
-                .getCalledShot().getCall()))) {
+        if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(),
+                Compute.targetSideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {
             // Weapon strikes Partial Cover.
-            handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits,
-                                  nCluster, bldgAbsorbs);
+            handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits, nCluster, bldgAbsorbs);
             return;
         }
 
-        // Each hit in the salvo get's its own hit location.
+        // Each hit in the salvo gets its own hit location.
         Report r = new Report(3405);
         r.subject = subjectId;
         r.add(toHit.getTableDesc());
@@ -85,29 +67,28 @@ public class ACAPHandler extends ACWeaponHandler {
             vPhaseReport.addElement(r);
         }
         // Resolve damage normally.
-        nDamage = nDamPerHit * Math.min(nCluster, hits);
+        int nDamage = nDamPerHit * Math.min(nCluster, hits);
         if (bDirect && !target.isConventionalInfantry()) {
             hit.makeDirectBlow(toHit.getMoS() / 3);
         }
 
         // Report calcDmgPerHitReports here
-        if (calcDmgPerHitReport.size() > 0) {
+        if (!calcDmgPerHitReport.isEmpty()) {
             vPhaseReport.addAll(calcDmgPerHitReport);
         }
 
-
         // if the target was in partial cover, then we already handled
-        // damage absorption by the partial cover, if it would have happened
+        // damage absorption by the partial cover, if it would have already happened
         Hex targetHex = game.getBoard().getHex(target.getPosition());
         boolean targetStickingOutOfBuilding = unitStickingOutOfBuilding(targetHex, entityTarget);
                 
-        nDamage = absorbBuildingDamage(nDamage, entityTarget, bldgAbsorbs, 
-                vPhaseReport, bldg, targetStickingOutOfBuilding);
+        nDamage = absorbBuildingDamage(nDamage, entityTarget, bldgAbsorbs, vPhaseReport, bldg,
+                targetStickingOutOfBuilding);
 
         nDamage = checkTerrain(nDamage, entityTarget, vPhaseReport);
 
         // some buildings scale remaining damage that is not absorbed
-        // TODO: this isn't quite right for castles brian
+        // TODO : this isn't quite right for castles brian
         if ((null != bldg) && !targetStickingOutOfBuilding) {
             nDamage = (int) Math.floor(bldg.getDamageToScale() * nDamage);
         }
@@ -126,22 +107,19 @@ public class ACAPHandler extends ACWeaponHandler {
                 hit.makeGlancingBlow();
                 critModifier -= 2;
             }
-            
+
             if (bLowProfileGlancing) {
                 hit.makeGlancingBlow();
                 critModifier -= 2;
             }
-            
+
             if (bDirect) {
                 critModifier += toHit.getMoS() / 3;
             }
             hit.makeArmorPiercing(atype, critModifier);
-            vPhaseReport
-                    .addAll(server.damageEntity(entityTarget, hit, nDamage,
-                            false, ae.getSwarmTargetId() == entityTarget
-                                    .getId() ? DamageType.IGNORE_PASSENGER
-                                    : damageType, false, false, throughFront,
-                            underWater));
+            vPhaseReport.addAll(gameManager.damageEntity(entityTarget, hit, nDamage, false,
+                    ae.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER : damageType,
+                    false, false, throughFront, underWater));
         }
     }
 }

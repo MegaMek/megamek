@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,9 +16,9 @@ Tank
 Patton Tank
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 2450
@@ -28,6 +28,10 @@ Patton Tank
 3027
 </year>
 
+<originalBuildYear>
+3027
+</originalBuildYear>
+
 <type>
 IS Level 1
 </type>
@@ -35,6 +39,9 @@ IS Level 1
 <motion_type>
 Tracked
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 4
@@ -77,6 +84,37 @@ LRM 5
 Autocannon/10
 </Turret Equipment>
 
+<capabilities>
+The Patton mounts an AC/10, giving it twice the ammunition capacity and superior firing range while also enabling it to be fitted with more armor. The Patton is capable of fighting in short-ranged and urban environments, but is far more suited than the Rommel to engaging targets at medium to long range.
+</capabilities>
+
+<overview>
+The Patton tank is a 65-ton armored combat vehicle, specializing in conventional armored warfare. Identical to its twin, the Rommel, in every way but armament and armor configuration, the Patton has primarily served with the Lyran Commonwealth and the Lyran Alliance.
+</overview>
+
+<deployment>
+The Patton uses a single Defiance Killer Type T Autocannon/10 as its main armament. While not as able to cripple 'Mechs when compared to the Rommel's AC/20, the Patton has a longer ranged AC/10 and 14.5T of armor. More armor than the Rommel, and indeed many mechs. The Patton adds a Coventry Five-Tube LRM-5 for added punch at range. To counterattacking infantry, a turret-mounted Defiance ASL Small Laser, and a front-mounted Hotshot Flamer are equipped.
+</deployment>
+
+<history>
+Designed concurrently with the Rommel, Defiance Industries decided that a vehicle to replace 'Mechs was needed in the early 3000s. Since 'Mech production was nearly at a standstill, the ability to produce and field armored vehicles became a necessity no Successor State could ignore.
+</history>
+
+<manufacturer>
+Defiance Industries, General Motors
+</manufacturer>
+
+<primaryFactory>
+Hesperus II,Salem
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:Magna 260
+ARMOR:Durallex Heavy
+COMMUNICATIONS:TharHes Muse 54-58K
+TARGETING:TharHes Mars5
+</systemManufacturers>
+
 <source>
 TRO 3039 - Succession Wars
 </source>
@@ -84,3 +122,4 @@ TRO 3039 - Succession Wars
 <tonnage>
 65.0
 </tonnage>
+

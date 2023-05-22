@@ -16,9 +16,9 @@ Tank
 Zephyr Hovertank
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 3632

@@ -29,7 +29,7 @@ import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 public class ChemicalLaserHandler extends AmmoWeaponHandler {
     private static final long serialVersionUID = 2304364403526293671L;
@@ -39,8 +39,8 @@ public class ChemicalLaserHandler extends AmmoWeaponHandler {
      * @param waa
      * @param g
      */
-    public ChemicalLaserHandler(ToHitData toHit, WeaponAttackAction waa, Game g, Server s) {
-        super(toHit, waa, g, s);
+    public ChemicalLaserHandler(ToHitData toHit, WeaponAttackAction waa, Game g, GameManager m) {
+        super(toHit, waa, g, m);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }
 
@@ -58,7 +58,7 @@ public class ChemicalLaserHandler extends AmmoWeaponHandler {
         if ((ae instanceof BattleArmor)
             && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
             && !(weapon.isSquadSupportWeapon())
-            && (ae.getSwarmTargetId() == target.getTargetId())) {
+            && (ae.getSwarmTargetId() == target.getId())) {
             toReturn *= ((BattleArmor) ae).getShootingStrength();
         }
         // Check for Altered Damage from Energy Weapons (TacOp, pg.83)

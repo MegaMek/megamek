@@ -19,7 +19,6 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Vector;
-import java.util.stream.Stream;
 
 /**
  * buildingBlock is based on a file format I used in an online game. The
@@ -46,7 +45,7 @@ public class BuildingBlock {
      * array.
      *
      * @param data
-     *            This is most usefull for storing one block file inside
+     *            This is most useful for storing one block file inside
      *            another...but <I>data</I> can be an array of anything...such
      *            as comments.
      */
@@ -75,22 +74,23 @@ public class BuildingBlock {
         // empty the rawData holder...
         rawData.clear();
 
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+        try (InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
+             BufferedReader br = new BufferedReader(isr)) {
             // read the file till can't read anymore...
-            while (in.ready()) {
-                data = in.readLine();
+            while (br.ready()) {
+                data = br.readLine();
                 if (data == null) {
                     continue;
                 }
                 data = data.trim();
 
-                // check for blank lines & comment lines...
-                // don't add them to the rawData if they are
-                if ((data.length() > 0) && !data.startsWith("" + BuildingBlock.comment)) {
+                // check for blank lines & comment lines... and don't add them to the rawData if
+                // they are
+                if (!data.isBlank() && !data.startsWith("" + BuildingBlock.comment)) {
                     rawData.add(data);
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
             LogManager.getLogger().error("An Exception occurred while attempting to read a BuildingBlock stream.");
             return false;
         }
@@ -108,21 +108,17 @@ public class BuildingBlock {
      * @return Returns the start index of the block data. Or -1 if not found.
      */
     public int findStartIndex(String blockName) {
-
         String line;
         int startIndex = -1;
         StringBuffer buf = new StringBuffer();
-        String key = null;
 
         // Translate the block name to a key.
         buf.append('<').append(blockName).append('>');
-        key = buf.toString();
-        buf = null;
+        String key = buf.toString();
 
         // look for the block...
         for (int lineNum = 0; lineNum < rawData.size(); lineNum++) {
-
-            line = rawData.get(lineNum).toString();
+            line = rawData.get(lineNum);
 
             // look for "<blockName>"
             try {
@@ -130,17 +126,10 @@ public class BuildingBlock {
                     startIndex = ++lineNum;
                     break;
                 }
-            } catch (StringIndexOutOfBoundsException e) {
-
-                System.err.print("Was looking for ");
-                System.err.print(key);
-                System.err.println(" and caught a");
-                System.err.print("string index out of bounds exception on line: \"");
-                System.err.print(line);
-                System.err.println("\"");
-                System.err.print("rawData index number: ");
-                System.err.println(lineNum);
-
+            } catch (Exception ex) {
+                LogManager.getLogger().error(String.format(
+                        "Was looking for %s and caught an Exception parsing line \n\"%s\" \nat rawData index number %s",
+                        key, line, lineNum), ex);
             }
         }
         return startIndex;
@@ -159,17 +148,14 @@ public class BuildingBlock {
         String line;
         int endIndex = -1;
         StringBuffer buf = new StringBuffer();
-        String key = null;
 
         // Translate the block name to a key.
         buf.append('<').append('/').append(blockName).append('>');
-        key = buf.toString();
-        buf = null;
+        String key = buf.toString();
 
         // look for the block...
         for (int lineNum = 0; lineNum < rawData.size(); lineNum++) {
-
-            line = rawData.get(lineNum).toString();
+            line = rawData.get(lineNum);
 
             // look for "</blockName>"
             try {
@@ -177,16 +163,10 @@ public class BuildingBlock {
                     endIndex = lineNum;
                     break;
                 }
-            } catch (StringIndexOutOfBoundsException e) {
-
-                System.err.print("Was looking for ");
-                System.err.print(key);
-                System.err.println(" and caught a");
-                System.err.print("string index out of bounds exception on line: \"");
-                System.err.print(line);
-                System.err.println("\"");
-                System.err.print("rawData index number: ");
-                System.err.println(lineNum);
+            } catch (Exception ex) {
+                LogManager.getLogger().error(String.format(
+                        "Was looking for %s and caught an Exception parsing line \n\"%s\" \nwith rawData index number %s",
+                        key, line, lineNum));
             }
         }
         return endIndex;
@@ -200,7 +180,6 @@ public class BuildingBlock {
      * @return Returns an array of data.
      */
     public String[] getDataAsString(String blockName) {
-
         String[] data;
         int startIndex = 0, endIndex = 0;
 
@@ -650,19 +629,13 @@ public class BuildingBlock {
      * @return Returns the number in the [0] position.
      */
     public int getReturnedArraySize(String[] array) {
-
         try {
-
             return Integer.parseInt(array[0]);
-
-        } catch (NumberFormatException e) {
-
+        } catch (Exception ignored) {
             // couldn't parse it...
-            System.err.println("Couldn't find array size at [0]...is this an array I returned...?");
-            System.err.println("Trying to find size anyway...");
+            LogManager.getLogger().error("Couldn't find array size at [0]...is this an array I returned...? Trying to find the size anyway...");
             return this.countArray(array);
         }
-
     }
 
     // for those of us who like doing things indirectly ; -?
@@ -685,16 +658,12 @@ public class BuildingBlock {
      * @see getReturnedArraySize (String[])
      */
     public int getReturnedArraySize(float[] array) {
-
         try {
             return Integer.parseInt("" + array[0]);
-        } catch (NumberFormatException e) {
-
-            System.err.println("Couldn't find array size at [0]...is this an array I returned...?");
-            System.err.println("Trying to find size anyway...");
+        } catch (Exception ignored) {
+            LogManager.getLogger().error("Couldn't find array size at [0]...is this an array I returned...? Trying to find the size anyway...");
             return this.countArray(array);
         }
-
     }
 
     /**
@@ -705,9 +674,7 @@ public class BuildingBlock {
      * @return Returns the array's size.
      */
     public int countArray(String[] array) {
-
         return array.length;
-
     }
 
     /**

@@ -26,6 +26,7 @@ public class CLBAAPGaussRifle extends Weapon {
     public CLBAAPGaussRifle() {
         super();
         name = "Gauss Rifle [Anti-personnel Gauss Rifle]";
+        shortName = "AP Gauss";
         setInternalName("CLBAAPGaussRifle");
         heat = 1;
         damage = 3;
@@ -35,7 +36,7 @@ public class CLBAAPGaussRifle extends Weapon {
         longRange = 9;
         extremeRange = 12;
         tonnage = 0.2;
-        criticals = 1;
+        criticals = 2;
         bv = 21;
         cost = 10000;
         shortAV = 3;

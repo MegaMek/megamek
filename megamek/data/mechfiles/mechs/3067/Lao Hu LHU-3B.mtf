@@ -35,7 +35,7 @@ Weapons:4
 ER Large Laser, Left Arm
 LB 10-X AC, Right Arm
 LRM 10, Left Torso
-C3 Computer (Master), Right Torso
+C3 Computer [Master], Right Torso
 
 Left Arm:
 Shoulder
@@ -83,14 +83,14 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISC3MasterUnit
-ISC3MasterUnit
-ISC3MasterUnit
-ISC3MasterUnit
-ISC3MasterUnit
 IS LB 10-X AC Ammo
 IS LB 10-X Cluster Ammo
 IS LB 10-X Cluster Ammo
+ISC3MasterUnit
+ISC3MasterUnit
+ISC3MasterUnit
+ISC3MasterUnit
+ISC3MasterUnit
 IS Endo Steel
 
 Center Torso:

@@ -319,23 +319,4 @@ public class LAMPilot extends Crew {
     public boolean isCustom() {
         return getGunneryMech() != 4 || getGunneryAero() != 4 || getPilotingMech() != 5 || getPilotingAero() != 5;
     }
-
-    /**
-     * Returns the BV multiplier for this pilot's gunnery/piloting
-     *
-     * @param usePiloting
-     *            whether or not to use the default value non-anti-mech
-     *            infantry/BA should not use the anti-mech skill
-     * @param game The current {@link Game}
-     */
-    @Override
-    public double getBVSkillMultiplier(boolean usePiloting, Game game) {
-        int pilotVal = (getPilotingMech() + getPilotingAero()) / 2;
-        if (!usePiloting) {
-            pilotVal = 5;
-        }
-        return getBVImplantMultiplier()
-                * getBVSkillMultiplier((getGunneryMech() + getGunneryAero()) / 2, pilotVal, game);
-    }
-
 }

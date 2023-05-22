@@ -1,0 +1,151 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Se'irim Medium Battle Armor
+</Name>
+
+<Model>
+(Capture Team)(Sqd6)
+</Model>
+
+<mul id:>
+9032
+</mul id:>
+
+<year>
+3073
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<armor_type>
+31
+</armor_type>
+
+<armor_tech>
+3
+</armor_tech>
+
+<Squad Equipment>
+ISBALightMachineGun:RA
+ISBALightMachineGun:LA
+BABattleClaw:RA
+BABattleClaw:LA
+BASearchlight:Body
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+IS BA Stealth (Basic):Body
+IS BA Stealth (Basic):LA
+IS BA Stealth (Basic):RA
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+ISDetachableWeaponPack:Body
+ISBATaser:DWP
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+ISDetachableWeaponPack:Body
+ISBATaser:DWP
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+ISDetachableWeaponPack:Body
+ISBATaser:DWP
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+ISDetachableWeaponPack:Body
+ISBATaser:DWP
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+ISDetachableWeaponPack:Body
+ISBATaser:DWP
+</Trooper 5 Equipment>
+
+<Trooper 6 Equipment>
+ISDetachableWeaponPack:Body
+ISBATaser:DWP
+</Trooper 6 Equipment>
+
+<source>
+TRO 3075 - Jihad
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+6
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+
+<overview>
+The Se'irim is a battle armor design in the Word of Blake's Demon Series, named for the satyr-like beings from Hebrew folklore. 
+</overview>
+
+<capabilities>
+It carries 330kg of stealth armor, enough to stop a Medium Pulse Laser, which it uses along with its incredible ground speed get into cover and wait for the enemy's approach. Once in range Se'irim teams unleash a devastating first strike then use their mobility to close the gap quickly and swarm over the enemy. Their stealthy nature also allows teams of Se'irim to engage in reconnaissance and espionage strikes behind enemy lines.
+</capabilities>
+
+<deployment>
+This variant appeared in mid-3073 and is dedicated to capturing armor crews and MechWarriors. While retaining the searchlight of the standard and battle claws of the anti-infantry models, a Battle Armor Taser is mounted in a Detachable Weapon Mount on the suit's body for use in disabling and disrupting vehicles and 'Mechs. However the heavy Taser slows the suit down to 10 km/h, at least until it is jettisoned. More traditional armament comes in a pair of Light Machine Guns in either arm.
+</deployment>
+
+<history>
+Used only in significant numbers by the elite Manei Domini, the Se'irim is the stealthy complement to the Asura. Where the latter serves as a main battle suit the former specializes in ambush tactics.
+</history>
+
+<manufacturer>
+Gibson Federated BattleMechs (A Division of Free Worlds Defense Industries)
+</manufacturer>
+
+<primaryFactory>
+Gibson
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

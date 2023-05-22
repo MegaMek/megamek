@@ -1,0 +1,172 @@
+Version:1.0
+Warhammer
+WHM-7K
+mul id:3491
+
+Config:Biped
+techbase:Inner Sphere
+era:3054
+source:Rec Guide:ilClan #7 - Clan Invasion
+rules level:2
+
+mass:70
+engine:280 Fusion Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:18 Double
+walk mp:4
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:22
+RA armor:22
+LT armor:20
+RT armor:20
+CT armor:30
+HD armor:9
+LL armor:30
+RL armor:30
+RTL armor:10
+RTR armor:10
+RTC armor:13
+
+Weapons:9
+ER PPC, Left Arm
+ER PPC, Right Arm
+Medium Laser, Left Torso
+Small Pulse Laser, Left Torso
+Medium Laser, Right Torso
+Small Pulse Laser, Right Torso
+Streak SRM 2, Right Torso
+Streak SRM 2, Right Torso
+TAG, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISERPPC
+ISERPPC
+ISERPPC
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISERPPC
+ISERPPC
+ISERPPC
+
+Left Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Medium Laser
+ISSmallPulseLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Right Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Medium Laser
+ISSmallPulseLaser
+ISStreakSRM2
+ISStreakSRM2
+IS Streak SRM 2 Ammo
+IS Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Endo Steel
+IS Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISTAG
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Warhammer proved to be a very capable 'Mech, and for centuries practically defined the entire class of heavy 'Mechs. Boasting incredible firepower and respectable armoring, the Warhammer served prominently in the Star League Defense Force and was one of the premier 'Mechs in the Gunslinger Program. Indeed, many of the greatest MechWarriors in history were Warhammer pilots.
+
+capabilities:The Warhammer was well-protected with strong armor for its age and weight, and the large number of heat sinks allowed it to "fire and maneuver" without fear. The most common engine arrangement propels the 'Mech to a cruising speed of 43.2 km/h and a top speed of 64.8 km/h, which is quick enough to keep up with most battles. The 'Mech's electronics, albeit antiquated by the 31st Century, were basic and functional, allowing it to assume command tasks when necessary. The targeting mechanism, in particular, made use of an unique Searchlight positioned above the 'Mech's left shoulder. The device could act as a conventional searchlight or immediately connect to the O/P 1500 ARB tracking system, transforming the 'Mech into a capable night fighter.
+
+deployment:This House Kurita variant, introduced in 3054, was built on an Endo Steel skeleton. It carried ER PPCs, two medium lasers, and two small pulse lasers. The SRM-6 was replaced by a pair of Streak SRM-2 launchers, while a TAG system allowed the 7K to spot for friendly artillery units. 
+
+history:StarCorps Industries introduced the Warhammer BattleMech in 2515 as "a mobile 'Mech with adequate firepower to destroy or severely damage any 'Mech of the same weight class or lower." The Warhammer continued to serve in the forces of the Great Houses throughout the Succession Wars after the Star League's demise. Despite very modest production rates, the large number of Warhammer factories dispersed over both the Inner Sphere and Periphery contributed to its endurance; Ronin Inc. was never able to construct more than five Warhammers per year from their Wallis factory. The recovery of the Helm Memory Core would prompt Inner Sphere manufacturers to create a slew of new Lostech-powered Warhammer versions, while the Periphery continued to produce original models for mercenaries and black marketeers. After the Clan Invasion, StarCorps chose to rehabilitate the ancient 'Mech with the greatest technological advancements, giving it new life. Initially, the business planned to construct only one new variety from its Crofton plant, but when word of the idea spread, other departments within StarCorps became involved and gathered on Crofton for a week-long conference to iron out the details. The conference turned out to be more jubilant than expected, and at the end of the bacchanalian "negotiations," it was determined that four new variations would be built: one for each of the Federated Suns, Capellan, Free Worlds League, and Lyran forces, employing technology unique to each realm. During the FedCom Civil War, some of these new 'Mechs were put through their paces.
+
+manufacturer:Alshain Weapons (Refit)
+primaryfactory:Tok Do
+systemmanufacturer:CHASSIS:StarCorps 200-Endo Steel
+systemmanufacturer:ENGINE:VOX 280
+systemmanufacturer:ARMOR:Leviathon Plus
+systemmanufacturer:COMMUNICATIONS:O/P 3000 COMSET
+systemmanufacturer:TARGETING:O/P 1500 ARB
+

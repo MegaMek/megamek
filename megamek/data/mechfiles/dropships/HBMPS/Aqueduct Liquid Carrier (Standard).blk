@@ -16,9 +16,9 @@ Dropship
 Aqueduct Liquid Carrier
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 3712

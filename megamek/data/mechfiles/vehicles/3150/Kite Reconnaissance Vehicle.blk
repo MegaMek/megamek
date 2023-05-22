@@ -1,0 +1,97 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Kite Reconnaissance Vehicle
+</Name>
+
+<model>
+
+</model>
+
+<mul id:>
+6541
+</mul id:>
+
+<year>
+3105
+</year>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<cruiseMP>
+9
+</cruiseMP>
+
+<engine_type>
+6
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<armor>
+25
+20
+20
+20
+20
+</armor>
+
+<Body Equipment>
+CLActiveProbe
+CLAngelECMSuite
+CLArmoredMotiveSystem
+CLAPGaussRifle Ammo
+Clan Ammo SRM-2
+</Body Equipment>
+
+<Front Equipment>
+CLSRM2
+CLSRM2
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+CLAPGaussRifle
+CLAPGaussRifle
+CLLightTAG
+</Turret Equipment>
+
+<source>
+TRO 3145 Mercenaries - Late Republic
+</source>
+
+<tonnage>
+30.0
+</tonnage>

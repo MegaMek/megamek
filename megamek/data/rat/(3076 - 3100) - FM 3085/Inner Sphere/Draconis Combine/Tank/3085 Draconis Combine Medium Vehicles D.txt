@@ -9,4 +9,4 @@ Myrmidon Medium Tank (Standard),5
 Maxim (I) Heavy Hover Transport (Standard),4
 Hiryo Armored Infantry Transport (MRM),3
 Maxim Heavy Hover Transport (Fire Support),2
-Condor Heavy Hover Tank (Upgrade) (Standard),1
+Condor Heavy Hover Tank (Upgrade),1

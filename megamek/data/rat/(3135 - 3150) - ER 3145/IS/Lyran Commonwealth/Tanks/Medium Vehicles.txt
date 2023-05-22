@@ -4,7 +4,7 @@ Vedette Medium Tank (NETC),2
 Fulcrum Heavy Hovertank (Standard),3
 Vedette Medium Tank (Cell),4
 Drillson Heavy Hover Tank (Streak),5
-Condor Heavy Hover Tank (Upgrade) (Standard),6
+Condor Heavy Hover Tank (Upgrade),6
 Vedette Medium Tank V7,5
 Fulcrum Heavy Hovertank III,4
 Hadur Fast Support Vehicle (Standard),3

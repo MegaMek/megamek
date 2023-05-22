@@ -14,16 +14,7 @@
  */
 package megamek.client.ui.swing.widget;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.util.Enumeration;
-import java.util.Vector;
-
-import javax.swing.JComponent;
-
+import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Configuration;
@@ -33,6 +24,12 @@ import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.fileUtils.MegaMekFile;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  * Set of elements to represent pilot information in MechDisplay
@@ -48,10 +45,13 @@ public class PilotMapSet implements DisplayMapSet {
     private PMSimpleLabel pilotR, gunneryR, gunneryLR, gunneryMR, gunneryBR, toughBR, initBR, commandBR, hitsR;
     private PMSimpleLabel[] advantagesR;
     private Vector<BackGroundDrawer> bgDrawers = new Vector<>();
-    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN,
-            GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize"));
-    private static final Font FONT_TITLE = new Font("SansSerif", Font.ITALIC,
-            GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize"));
+
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
+    private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
+            GUIP.getUnitDisplayMechLargeFontSize());
+    private static final Font FONT_TITLE = new Font(MMConstants.FONT_SANS_SERIF, Font.ITALIC,
+            GUIP.getUnitDisplayMechLargeFontSize());
     private int yCoord = 1;
 
     /**

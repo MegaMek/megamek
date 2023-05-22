@@ -44,18 +44,14 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     private boolean jammedThisPhase = false;
     private boolean useless = false;
     private boolean fired = false; // Only true for used OS stuff and TSEMP.
-    private boolean tsempDowntime = false; // Needed for "every other turn"
-                                           // TSEMP.
+    private boolean tsempDowntime = false; // Needed for "every other turn" TSEMP.
     private boolean rapidfire = false; // MGs in rapid-fire mode
     private boolean hotloaded = false; // Hotloading for ammoType
     private boolean repairable = true; // can the equipment mounted here be
     // repaired
-    private boolean mechTurretMounted = false; // is this mounted in a
-                                               // mechturret
-    private boolean sponsonTurretMounted = false; // is this mounted in a
-                                                  // sponsonturret
-    private boolean pintleTurretMounted = false; // is this mounted in a
-                                                 // pintleturret
+    private boolean mechTurretMounted = false; // is this mounted in a mechturret
+    private boolean sponsonTurretMounted = false; // is this mounted in a sponsonturret
+    private boolean pintleTurretMounted = false; // is this mounted in a pintleturret
     private int facing = -1; // facing for turrets
 
     private int mode; // Equipment's current state. On or Off. Sixshot or
@@ -118,9 +114,9 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     // vibrabomb mine setting
     private int vibraSetting = 20;
 
-    //These arrays are used to track individual missing modular components on BA for MHQ
-    //in MM they probably shouldn't need to be touched. They are used to keep track of
-    //whether a modular mount is in use or not for a particular trooper.
+    // These arrays are used to track individual missing modular components on BA for MHQ
+    // in MM they probably shouldn't need to be touched. They are used to keep track of
+    // whether a modular mount is in use or not for a particular trooper.
     private boolean[] missingForTrooper = {false, false, false, false, false, false};
 
     /**
@@ -225,7 +221,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
     public void changeAmmoType(AmmoType at) {
         if (!(type instanceof AmmoType)) {
-            System.out.println("Attempted to change ammo type of non-ammo");
+            LogManager.getLogger().warn("Attempted to change ammo type of non-ammo");
             return;
         }
         type = at;
@@ -250,9 +246,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         }
 
         if (type == null) {
-            System.err
-                    .println("Mounted.restore: could not restore equipment type \""
-                            + typeName + "\"");
+            LogManager.getLogger().error("Could not restore equipment type \"" + typeName + "\"");
         }
     }
 
@@ -345,11 +339,6 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             if (newMode >= type.getModesCount()) {
                 return false;
             }
-            /*
-             * megamek.debug.Assert.assertTrue(newMode >= 0 && newMode <
-             * type.getModesCount(), "Invalid mode, mode=" + newMode +
-             * ", modesCount=" + type.getModesCount());
-             */
 
             if (canInstantSwitch(newMode)) {
                 mode = newMode;
@@ -362,8 +351,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                 }
             }
         }
-        // all communications equipment mounteds need to have the same mode at
-        // all times
+        // all communications equipment mounteds need to have the same mode at all times
         if ((getType() instanceof MiscType)
                 && getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
             for (Mounted m : entity.getMisc()) {
@@ -642,8 +630,41 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         }
     }
 
+    /**
+     * Returns true when this Mounted is not destroyed nor located in a blown-off
+     * or breached location. Does not check any other conditions such as DWP mounting or prior use.
+     * Also does not check if this mounted has been hit in this phase.
+     * This is equivalent to !{@link #isInoperable()}.
+     *
+     * @return True when this Mounted is operable
+     */
+    public boolean isOperable() {
+        return !isInoperable();
+    }
+
+    /**
+     * Returns true when this Mounted destroyed or located in a blown-off
+     * or breached location. Does not check any other conditions such as DWP mounting or prior use.
+     * Also does not check if this mounted has been hit in this phase.
+     * Equivalent to !{@link #isOperable()}.
+     *
+     * @return True when this Mounted is operable
+     */
     public boolean isInoperable() {
         return destroyed || missing || useless;
+    }
+
+    /**
+     * Returns true if this Mounted's EquipmentType is that identified by the given typeInternalName String. The
+     * given typeInternalName is compared to the internal name of the EquipmentType of this Mounted,
+     * not the (display) name!
+     * Best use the constants defined in EquipmentTypeLookup.
+     *
+     * @param typeInternalName An Equipment internal name to check
+     * @return true if the internalName of this equipment matches the given type
+     */
+    public boolean is(String typeInternalName) {
+        return getType().is(typeInternalName);
     }
 
     public boolean isHit() {
@@ -1215,7 +1236,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                 return 0;
             }
             if ((isHotLoaded() || hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS))
-                    && (getLinked().getUsableShotsLeft() > 0)) {
+                    && (getLinked() != null) && (getLinked().getUsableShotsLeft() > 0)) {
                 Mounted link = getLinked();
                 AmmoType atype = ((AmmoType) link.getType());
                 int damagePerShot = atype.getDamagePerShot();
@@ -2065,5 +2086,4 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         return ammoType.getMunitionType() == AmmoType.M_HOMING &&
                 curMode().equals("Homing");
     }
-
 }

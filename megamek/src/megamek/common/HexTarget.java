@@ -1,26 +1,22 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class HexTarget implements Targetable {
-    /**
-     *
-     */
     private static final long serialVersionUID = -5742445409423125942L;
     private Coords m_coords;
     private boolean m_bIgnite;
@@ -49,8 +45,18 @@ public class HexTarget implements Targetable {
     }
 
     @Override
-    public int getTargetId() {
+    public int getId() {
         return HexTarget.coordsToId(m_coords);
+    }
+
+    @Override
+    public int getOwnerId() {
+        return Player.PLAYER_NONE;
+    }
+
+    @Override
+    public int getStrength() {
+        return 0;
     }
 
     @Override
@@ -85,37 +91,38 @@ public class HexTarget implements Targetable {
 
     @Override
     public String getDisplayName() {
-        String name = "";
+        final String name;
         switch (m_type) {
-            case (Targetable.TYPE_FLARE_DELIVER):
+            case Targetable.TYPE_FLARE_DELIVER:
                 name = Messages.getString("HexTarget.DeliverFlare");
                 break;
-            case (Targetable.TYPE_MINEFIELD_DELIVER):
+            case Targetable.TYPE_MINEFIELD_DELIVER:
                 name = Messages.getString("HexTarget.DeliverMinefield");
                 break;
-            case (Targetable.TYPE_HEX_BOMB):
+            case Targetable.TYPE_HEX_BOMB:
+            case Targetable.TYPE_HEX_AERO_BOMB:
                 name = Messages.getString("HexTarget.Bomb");
                 break;
-            case (Targetable.TYPE_HEX_CLEAR):
+            case Targetable.TYPE_HEX_CLEAR:
                 name = Messages.getString("HexTarget.Clear");
                 break;
-            case (Targetable.TYPE_HEX_IGNITE):
+            case Targetable.TYPE_HEX_IGNITE:
                 name = Messages.getString("HexTarget.Ignite");
                 break;
-            case (Targetable.TYPE_HEX_ARTILLERY):
+            case Targetable.TYPE_HEX_ARTILLERY:
                 name = Messages.getString("HexTarget.Artillery");
                 break;
             case Targetable.TYPE_HEX_EXTINGUISH:
                 name = Messages.getString("HexTarget.Extinguish");
                 break;
-            case (Targetable.TYPE_HEX_SCREEN):
+            case Targetable.TYPE_HEX_SCREEN:
                 name = Messages.getString("HexTarget.Screen");
                 break;
-            case (Targetable.TYPE_HEX_AERO_BOMB):
-                name = Messages.getString("HexTarget.Bomb");
-                break;
-            case (Targetable.TYPE_HEX_TAG):
+            case Targetable.TYPE_HEX_TAG:
                 name = Messages.getString("HexTarget.Tag");
+                break;
+            default:
+                name = "";
                 break;
         }
         return "Hex: " + m_coords.getBoardNum() + name;

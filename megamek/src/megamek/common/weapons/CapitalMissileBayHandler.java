@@ -17,7 +17,7 @@ import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
-import megamek.server.Server;
+import megamek.server.GameManager;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.Vector;
@@ -33,11 +33,11 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
      * @param t
      * @param w
      * @param g
-     * @param s
+     * @param m
      */
     public CapitalMissileBayHandler(ToHitData t, WeaponAttackAction w, Game g,
-            Server s) {
-        super(t, w, g, s);
+            GameManager m) {
+        super(t, w, g, m);
         advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
     }
     
@@ -247,7 +247,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         if (!bMissed && (entityTarget != null)) {
             handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                     nCluster, bldgAbsorbs);
-            server.creditKill(entityTarget, ae);
+            gameManager.creditKill(entityTarget, ae);
         } else if (!bMissed) { // Hex is targeted, need to report a hit
             r = new Report(3390);
             r.subject = subjectId;
@@ -491,7 +491,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             Vector<Report> newReports = new Vector<>();
             bayW.getLinked().setShotsLeft(
                     bayW.getLinked().getBaseShotsLeft() + 1);
-            (w.fire(newWaa, game, server)).handle(phase, newReports);
+            (w.fire(newWaa, game, gameManager)).handle(phase, newReports);
             for (Report r : newReports) {
                 r.indent();
             }
@@ -714,7 +714,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                 if (bayWType instanceof Weapon) {
                     replaceReport = vPhaseReport.size();
                     WeaponAttackAction bayWaa = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(), waa.getTargetId(), wId);
-                    AttackHandler bayWHandler = ((Weapon) bayWType).getCorrectHandler(autoHit, bayWaa, game, server);
+                    AttackHandler bayWHandler = ((Weapon) bayWType).getCorrectHandler(autoHit, bayWaa, game, gameManager);
                     bayWHandler.setAnnouncedEntityFiring(false);
                     // This should always be true. Maybe there's a better way to write this?
                     if (bayWHandler instanceof WeaponHandler) {

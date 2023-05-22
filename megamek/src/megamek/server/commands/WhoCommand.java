@@ -14,11 +14,9 @@
  */
 package megamek.server.commands;
 
-import megamek.common.net.AbstractConnection;
+import megamek.common.net.connections.AbstractConnection;
 import megamek.common.preference.PreferenceManager;
 import megamek.server.Server;
-
-import java.util.Enumeration;
 
 /**
  * Lists all the players connected and some info about them.
@@ -38,10 +36,8 @@ public class WhoCommand extends ServerCommand {
                 connId, "[id#] : [name], [address], [pending], [bytes sent], [bytes received]");
 
         final boolean includeIPAddress = PreferenceManager.getClientPreferences().getShowIPAddressesInChat();
-        for (Enumeration<AbstractConnection> i = server.getConnections(); i.hasMoreElements();) {
-            AbstractConnection conn = i.nextElement();
-            server.sendServerChat(connId, getConnectionDescription(conn, includeIPAddress));
-        }
+        server.forEachConnection(conn ->
+                server.sendServerChat(connId, getConnectionDescription(conn, includeIPAddress)));
 
         server.sendServerChat(connId, "end list");
     }
@@ -52,8 +48,8 @@ public class WhoCommand extends ServerCommand {
         cb.append(server.getPlayer(conn.getId()).getName()).append(", ");
         cb.append(includeIPAddress ? conn.getInetAddress() : "<hidden>");
         cb.append(", ").append(conn.hasPending()).append(", ");
-        cb.append(conn.bytesSent());
-        cb.append(", ").append(conn.bytesReceived());
+        cb.append(conn.getBytesSent());
+        cb.append(", ").append(conn.getBytesReceived());
         return cb.toString();
     }
 }

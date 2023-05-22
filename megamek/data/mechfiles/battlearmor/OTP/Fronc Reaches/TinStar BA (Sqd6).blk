@@ -1,0 +1,121 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+TinStar BattleArmor
+</Name>
+
+<model>
+(Sqd6)
+</Model>
+
+<year>
+3087
+</year>
+
+<originalBuildYear>
+3087
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Leg
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<Squad Equipment>
+BABasicManipulator:LA
+BABasicManipulator:RA
+ISBASupportPPC:LA
+BADavidLightGaussRifle:RA
+InfantryAssaultRifle:APM
+BA-Magnetic Clamp:Body
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+BAAPMount:LA
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
+
+<Trooper 6 Equipment>
+</Trooper 6 Equipment>
+
+<overview>
+Fronc Reaches
+</overview>
+
+<manufacturer>
+Marshals Battle Armor Assembly Facility
+</manufacturer>
+
+<primaryFactory>
+Independence
+</primaryFactory>
+
+<source>
+OTP:Fronc Reaches - Early Republic
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+7
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+

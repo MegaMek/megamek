@@ -1,0 +1,118 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Salamander Battle Armor
+</Name>
+
+<model>
+(Sqd5)
+</Model>
+
+<mul id:>
+8584
+</mul id:>
+
+<chassis>
+biped
+</chassis>
+
+<weightclass>
+2
+</weightclass>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<Armor>
+7
+</Armor>
+
+<Point Equipment>
+CLBAFlamer:RA
+CLBAFlamer:LA
+CLBASRM1OS:Body
+BABattleClawMagnets:RA
+BABattleClawMagnets:LA
+Clan BA Fire Resistant:Body
+Clan BA Fire Resistant:LA
+Clan BA Fire Resistant:RA
+Clan BA Fire Resistant:RA
+Clan BA Fire Resistant:LA
+</Point Equipment>
+
+<type>
+Clan Level 2
+</type>
+
+<year>
+3058
+</year>
+
+<motion_type>
+Jump
+</motion_type>
+
+<source>
+TRO 3058U - Clan Invasion
+</source>
+
+<armor_type>
+35
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<overview>
+The Salamander battle armor, named after the mystic creature of fire, was based upon one of the many specialist designs that was eventually phased out in favor of the Elemental battle armor.
+</overview>
+
+<capabilities>
+The suit is devastating, both in an insurgent and counterinsurgent role, and is equally potent both in terms of weaponry and its psychological impact on the enemy. In honor of the Fire Mandrill, the Salamander heavily features flame-based weaponry which, in conjunction with its menacing look, is designed to break the enemy's morale. However, this same weaponry not only makes the Salamander dangerous against infantry but also 'Mechs, threatening to overheat the machines and cause them to shut down. Jump jets allow it to jump ninety meters at a time, while special manipulators give it superior climbing abilities to other suits. Unfortunately the Salamander also skimps on armor protection; less than half as much as the Gnome, and while its armor is immune to fire-based attacks, it is only able to stop a Clan medium laser and still function. Despite these shortcomings, the Salamander's effectiveness in combat has caused almost every other Clan to adopt the suit for their own toumans, with some Clans fielding their own variants to meet their particular needs.
+</capabilities>
+
+<deployment>
+Its primary armaments being a pair of Flamers slung under the arms and a single, one-shot short-range missile strapped to the shoulder, invariably one with an Inferno payload. This makes the Salamander especially potent against infantry and combat vehicles, though that does not mean it is less intimidating to MechWarriors: few would want to get caught in the sights of a Salamander Point. The Salamander also wields a pair of Battle Claws for hands and Magnetic Claws for feet, making it as easy for one to scale a 'Mech as it would walk across level ground and thus improving its ability to perform anti-'Mech attacks.
+</deployment>
+
+<history>
+A model that was designed for urban warfare against unarmored infantry, it ironically became obsolete as battle suits began replacing conventional forces for frontline combat between the Clans. It also did not help the suit's popularity that many warriors looked down on it for having such as "dishonorable" duty and few were sad to see it fade into history. The scientists of Clan Fire Mandrill's Kindraa Faraday-Tanaga however were inspired by Clan Hell's Horses' new Gnome suit and sought to develop a second-generation battle suit of their own which would honor their totem animal; the original Salamander presented a perfect foundation upon which to build as the scientists sought to enhance its combat potential against BattleMechs. A combination of design challenges and, unsurprisingly, ubiquitous infighting among the Kindraa delayed the development of the Salamander, though it finally went into production in 3058.
+</history>
+
+<manufacturer>
+Olivetti Weaponry,WC Site OZ-2,Unknown
+</manufacturer>
+
+<primaryFactory>
+Sudeten,Tamar,Shadow
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

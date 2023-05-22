@@ -1,34 +1,37 @@
 /*
-* MegaMek -
-* Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
-* Copyright (C) 2018 The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+ * Copyright (c) 2003-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2018-2023 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.common;
-
-import megamek.common.enums.GamePhase;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Vector;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Represents a volume of space set aside for carrying cargo of some sort
  * aboard large spacecraft and mobile structures
  */
 public class Bay implements Transporter, ITechnology {
-
-    // Private attributes and helper functions.
-
     private static final long serialVersionUID = -9056450317468016272L;
 
     public static final String FIELD_SEPARATOR = ":";
@@ -39,27 +42,19 @@ public class Bay implements Transporter, ITechnology {
     int currentdoors = doors;
     protected int unloadedThisTurn = 0;
     protected int loadedThisTurn = 0;
-    Vector<Integer> recoverySlots = new Vector<>();
+    List<Integer> recoverySlots = new ArrayList<>();
     int bayNumber = 0;
     transient Game game = null;
     private double damage;
 
-    /**
-     * The troops being carried.
-     */
-    /* package */Vector<Integer> troops = new Vector<>();
+    /** The troops being carried. */
+    Vector<Integer> troops = new Vector<>();
 
-    /**
-     * The total amount of space available for troops.
-     */
-    /* package */double totalSpace;
+    /** The total amount of space available for troops. */
+    double totalSpace;
 
-    /**
-     * The current amount of space not occupied by troops or cargo.
-     */
-    /* package */double currentSpace;
-
-    // Protected constructors and methods.
+    /** The current amount of space not occupied by troops or cargo. */
+    double currentSpace;
 
     /**
      * The default constructor is only for serialization.
@@ -70,23 +65,21 @@ public class Bay implements Transporter, ITechnology {
         damage = 0;
     }
 
-    // Public constructors and methods.
-
     /**
      * Create a space for the given tonnage of troops. For this class, only the
      * weight of the troops (and their equipment) are considered; if you'd like
      * to think that they are stacked like lumber, be my guest.
      *
-     * @param space
-     *            - The weight of troops (in tons) this space can carry.
-     * @param doors
-     * @param bayNumber
+     * @param space The weight of troops (in tons) this space can carry.
+     * @param doors      The number of bay doors
+     * @param bayNumber  The id number for the bay
      */
     public Bay(double space, int doors, int bayNumber) {
         totalSpace = space;
         currentSpace = space;
         this.doors = doors;
-        doorsNext = currentdoors;
+        doorsNext = doors;
+        this.currentdoors = doors;
         this.bayNumber = bayNumber;
         damage = 0;
     }
@@ -177,178 +170,76 @@ public class Bay implements Transporter, ITechnology {
         resetCounts();
     }
 
-    /**
-     * Determines if this object can accept the given unit. The unit may not be
-     * of the appropriate type or there may be no room for the unit.
-     *
-     * @param unit
-     *            - the <code>Entity</code> to be loaded.
-     * @return <code>true</code> if the unit can be loaded, <code>false</code>
-     *         otherwise.
-     */
     @Override
     public boolean canLoad(Entity unit) {
-        // Assume that we cannot carry the unit.
-        boolean result = true;
-
-        // We must have enough space for the new troops.
-        if (getUnused() < spaceForUnit(unit)) {
-            result = false;
-        }
-
-        // more doors than units loaded
-        if (currentdoors <= loadedThisTurn) {
-            result = false;
-        }
-
-        // Return our result.
-        return result;
+        return (getUnused() >= spaceForUnit(unit)) && (currentdoors > loadedThisTurn);
     }
 
     /**
-     * to unload units, a bay must have more doors available than units unloaded
-     * this turn
+     * To unload units, a bay must have more doors available than units unloaded
+     * this turn. Can't load, launch or recover into a damaged bay, but you can unload it
      *
-     * @return
+     * @return True when further doors are available to unload units this turn
      */
-
-    // can't load, launch or recover into a damaged bay, but you can unload it
     public boolean canUnloadUnits() {
         return currentdoors > unloadedThisTurn;
     }
 
-    /**
-     * Load the given unit.
-     *
-     * @param unit the <code>Entity</code> to be loaded.
-     * @throws IllegalArgumentException If the unit can't be loaded
-     */
     @Override
     public void load(Entity unit) throws IllegalArgumentException {
-        // If we can't load the unit, throw an exception.
         if (!canLoad(unit)) {
             throw new IllegalArgumentException("Can not load " + unit.getShortName() + " into this bay. " + getUnused());
         }
-
         currentSpace -= spaceForUnit(unit);
-        if ((unit.game.getPhase() != GamePhase.DEPLOYMENT) && (unit.game.getPhase() != GamePhase.LOUNGE)) {
-                loadedThisTurn += 1;
+        if (!unit.getGame().getPhase().isDeployment() && !unit.getGame().getPhase().isLounge()) {
+            loadedThisTurn += 1;
         }
-
-        // Add the unit to our list of troops.
         troops.addElement(unit.getId());
     }
 
-    /**
-     * Get a <code>List</code> of the units currently loaded into this payload.
-     *
-     * @return A <code>List</code> of loaded <code>Entity</code> units. This
-     *         list will never be <code>null</code>, but it may be empty. The
-     *         returned <code>List</code> is independent from the under- lying
-     *         data structure; modifying one does not affect the other.
-     */
     @Override
     public Vector<Entity> getLoadedUnits() {
-        // Return a copy of our list of troops.
-        Vector<Entity> loaded = new Vector<>();
-        for (int unit : troops) {
-            Entity entity = game.getEntity(unit);
-            
-            if (entity != null) {
-                loaded.add(game.getEntity(unit));
-            }
-        }
-        return loaded;
+        return troops.stream()
+                .map(unit -> game.getEntity(unit))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toCollection(Vector::new));
     }
-    
+
     /**
      * Generate a raw list of the Ids stored in troops. 
      * Used by MHQ in cases where we can't get the entities via Game
      *
-     * @return
+     * @return A list of unit IDs of loaded units
      */
     public List<Integer> getLoadedUnitIds() {
         // Return a copy of our list of troops.
-        List<Integer> loaded = new ArrayList<>();
-        for (int id : troops) {
-            loaded.add(id);
-        }
-        return loaded;
+        return new ArrayList<>(troops);
     }
 
-    /**
-     * get a vector of launchable units. This is different from loaded in that
-     * units in recovery cannot launch
-     */
-    public Vector<Entity> getLaunchableUnits() {
-
-        Vector<Entity> launchable = new Vector<>();
-
-        for (int i = 0; i < troops.size(); i++) {
-            Entity nextUnit = game.getEntity(troops.elementAt(i));
-            if (nextUnit.getRecoveryTurn() == 0) {
-                launchable.add(nextUnit);
-            }
-        }
-
-        return launchable;
+    /** @return A (possibly empty) list of units from this bay that can be launched. Units in recovery cannot launch. */
+    public List<Entity> getLaunchableUnits() {
+        return troops.stream().map(game::getEntity).filter(Objects::nonNull).filter(e -> e.getRecoveryTurn() == 0).collect(toList());
     }
 
-    /**
-     * get a vector of droppable units.
-     */
-    public Vector<Entity> getDroppableUnits() {
-
-        Vector<Entity> droppable = new Vector<>();
-
-        for (int i = 0; i < troops.size(); i++) {
-            Entity nextUnit = game.getEntity(troops.elementAt(i));
-            if (nextUnit.canAssaultDrop()) {
-                droppable.add(nextUnit);
-            }
-        }
-
-        return droppable;
+    /** @return A (possibly empty) list of units from this bay that can be assault-dropped. */
+    public List<Entity> getDroppableUnits() {
+        return troops.stream().map(game::getEntity).filter(Objects::nonNull).filter(Entity::canAssaultDrop).collect(toList());
     }
 
-    /***
-     * get a vector of units that are unloadable on the ground
-     */
-    public Vector<Entity> getUnloadableUnits() {
-
-        Vector<Entity> unloadable = new Vector<>();
-
+    /** @return A (possibly empty) list of units from this bay that can be unloaded on the ground. */
+    public List<Entity> getUnloadableUnits() {
         // TODO: we need to handle aeros and VTOLs differently
-        for (int i = 0; i < troops.size(); i++) {
-            Entity nextUnit = game.getEntity(troops.elementAt(i));
-            unloadable.add(nextUnit);
-        }
-
-        return unloadable;
+        return troops.stream().map(game::getEntity).filter(Objects::nonNull).collect(toList());
     }
 
-    /**
-     * Unload the given unit.
-     *
-     * @param unit
-     *            - the <code>Entity</code> to be unloaded.
-     * @return <code>true</code> if the unit was contained in this space,
-     *         <code>false</code> otherwise.
-     */
     @Override
     public boolean unload(Entity unit) {
-
-        // Remove the unit if we are carrying it.
-        boolean retval = troops.removeElement(unit.getId());
-
-        // If we removed it, restore our space.
-        if (retval) {
+        boolean wasCarried = troops.removeElement(unit.getId());
+        if (wasCarried) {
             currentSpace += spaceForUnit(unit);
             unloadedThisTurn += 1;
         }
-
-        // Return our status
-        return retval;
+        return wasCarried;
     }
 
     /**
@@ -356,14 +247,12 @@ public class Bay implements Transporter, ITechnology {
      *
      * @return A <code>String</code> meant for a human.
      */
-    public String getUnusedString(boolean showrecovery) {
-        return numDoorsString() + "  - " + getUnused()
-                + (getUnused() > 1 ? " units" : " unit");
+    public String getUnusedString(boolean showRecovery) {
+        return numDoorsString() + "  - " + getUnused() + ((getUnused() > 1) ? " units" : " unit");
     }
 
     protected String numDoorsString() {
-        return "(" + getCurrentDoors()
-            + ((getCurrentDoors() == 1) ? " door" : " doors") + ")";
+        return "(" + getCurrentDoors() + ((getCurrentDoors() == 1) ? " door" : " doors") + ")";
     }
 
     @Override
@@ -371,9 +260,6 @@ public class Bay implements Transporter, ITechnology {
         return getUnusedString(true);
     }
 
-    /**
-     * @return The amount of unused space in the bay.
-     */
     @Override
     public double getUnused() {
         return currentSpace - damage;
@@ -381,7 +267,7 @@ public class Bay implements Transporter, ITechnology {
 
     /**
      * @return The amount of unused space in the bay expressed in slots. For most bays this is the
-     *         same as the the unused space, but bays for units that can take up a variable amount
+     *         same as the unused space, but bays for units that can take up a variable amount
      *         of space (such as infantry bays) this calculates the number of the default unit size
      *         that can fit into the remaining space.
      */
@@ -397,40 +283,11 @@ public class Bay implements Transporter, ITechnology {
         return "";
     }
 
-    /**
-     * Determine if transported units prevent a weapon in the given location
-     * from firing.
-     *
-     * @param loc
-     *            - the <code>int</code> location attempting to fire.
-     * @param isRear
-     *            - a <code>boolean</code> value stating if the given location
-     *            is rear facing; if <code>false</code>, the location is front
-     *            facing.
-     * @return <code>true</code> if a transported unit is in the way,
-     *         <code>false</code> if the weapon can fire.
-     */
     @Override
     public boolean isWeaponBlockedAt(int loc, boolean isRear) {
         return false;
     }
 
-    /**
-     * If a unit is being transported on the outside of the transporter, it can
-     * suffer damage when the transporter is hit by an attack. Currently, no
-     * more than one unit can be at any single location; that same unit can be
-     * "spread" over multiple locations.
-     *
-     * @param loc
-     *            - the <code>int</code> location hit by attack.
-     * @param isRear
-     *            - a <code>boolean</code> value stating if the given location
-     *            is rear facing; if <code>false</code>, the location is front
-     *            facing.
-     * @return The <code>Entity</code> being transported on the outside at that
-     *         location. This value will be <code>null</code> if no unit is
-     *         transported on the outside at that location.
-     */
     @Override
     public Entity getExteriorUnitAt(int loc, boolean isRear) {
         return null;
@@ -438,8 +295,7 @@ public class Bay implements Transporter, ITechnology {
 
     @Override
     public final List<Entity> getExternalUnits() {
-        ArrayList<Entity> rv = new ArrayList<>(1);
-        return rv;
+        return new ArrayList<>(1);
     }
 
     @Override
@@ -451,19 +307,18 @@ public class Bay implements Transporter, ITechnology {
         return "Unknown";
     }
 
-    // destroy a door for next turn
+    /** Destroys a door for next turn. */
     public void destroyDoorNext() {
-
         if (getDoorsNext() > 0) {
             setDoorsNext(getDoorsNext() - 1);
         }
-
     }
 
     // destroy a door
     public void destroyDoor() {
-        if (getCurrentDoors() > 0)
+        if (getCurrentDoors() > 0) {
             setCurrentDoors(getCurrentDoors() - 1);
+        }
     }
 
     // restore a door
@@ -486,7 +341,9 @@ public class Bay implements Transporter, ITechnology {
         return unloadedThisTurn;
     }
 
-    /** Return the tonnage of the bay, not the actual mass or weight */
+    /**
+     * @return the tonnage of the bay, not the actual mass or weight
+     */
     public double getWeight() {
         return totalSpace;
     }
@@ -535,18 +392,14 @@ public class Bay implements Transporter, ITechnology {
     }
 
     @Override
-    public int hardpointCost() {
-        return 0;
-    }
-
-    @Override
     public void setGame(Game game) {
         this.game = game;
     }
 
     // Use cargo/infantry for default tech advancement
     public static TechAdvancement techAdvancement() {
-        return new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+        return new TechAdvancement(TECH_BASE_ALL)
+                .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
                 .setTechRating(RATING_A)
                 .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
@@ -557,9 +410,12 @@ public class Bay implements Transporter, ITechnology {
      * @return Tech advancement for advanced robotic transport system.
      */
     public static TechAdvancement artsTechAdvancement() {
-        return new TechAdvancement(TECH_BASE_ALL).setAdvancement(2600, 2609, DATE_NONE, 2804, 3068)
+        return new TechAdvancement(TECH_BASE_ALL)
+                .setAdvancement(2600, 2609, DATE_NONE, 2804, 3068)
                 .setApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH).setProductionFactions(F_TH).setReintroductionFactions(F_WB)
+                .setPrototypeFactions(F_TH)
+                .setProductionFactions(F_TH)
+                .setReintroductionFactions(F_WB)
                 .setTechRating(RATING_E)
                 .setAvailability(RATING_D, RATING_E, RATING_E, RATING_E)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
@@ -654,32 +510,23 @@ public class Bay implements Transporter, ITechnology {
         return getTechAdvancement().getStaticTechLevel();
     }
 
-    /**
-     * @return true if this bay represents crew quarters or seating rather than a unit transport bay.
-     */
+    /** @return true if this bay represents crew quarters or seating rather than a unit transport bay. */
     public boolean isQuarters() {
         return false;
     }
 
-    /**
-     * @return true if this bay represents cargo capacity rather than unit transport or crew quarters.
-     */
+    /** @return true if this bay represents cargo capacity rather than unit transport or crew quarters. */
     public boolean isCargo() {
         return false;
     }
 
-    /**
-     * @return The cost of the bay in C-bills
-     */
+    /** @return The cost of the bay in C-bills */
     public long getCost() {
         return 0;
     }
     
-    /**
-     * @return Safe launch rate for this particular bay: # of intact doors x 2
-     */
+    /** @return The safe launch rate for this particular bay: # of intact doors x 2 */
     public int getSafeLaunchRate() {
         return getCurrentDoors() * 2;
     }
-
- } // End package class TroopSpace implements Transporter
+}

@@ -16,9 +16,9 @@ VTOL
 DI Multipurpose VTOL
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 6595
@@ -29,7 +29,7 @@ DI Multipurpose VTOL
 </year>
 
 <type>
-IS Level 4
+IS Level 2
 </type>
 
 <motion_type>

@@ -16,9 +16,9 @@ LargeSupportTank
 BFFL 'Buffalo'
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 3819

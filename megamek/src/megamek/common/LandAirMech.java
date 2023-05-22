@@ -13,6 +13,7 @@
  */
 package megamek.common;
 
+import megamek.common.enums.MPBoosters;
 import megamek.common.options.OptionsConstants;
 import org.apache.logging.log4j.LogManager;
 
@@ -156,8 +157,6 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         }
 
         previousMovementMode = movementMode;
-        setFuel(80);
-
         setCrew(new LAMPilot(this));
     }
 
@@ -298,7 +297,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             if (hasHipCrit()) {
                 return getAirMechRunMP(gravity, ignoreheat, ignoremodulararmor);
             }
-            return getArmedMPBoosters().calcSprintMP(getAirMechWalkMP(gravity, ignoreheat, ignoremodulararmor));
+            return getArmedMPBoosters().calculateSprintMP(getAirMechWalkMP(gravity, ignoreheat, ignoremodulararmor));
         }
         return super.getSprintMP(gravity, ignoreheat, ignoremodulararmor);
     }
@@ -397,6 +396,11 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             if (weatherMod != 0) {
                 j = Math.max(j + weatherMod, 0);
             }
+
+            if(getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
+                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_TORNADO_F13)) {
+                j += 1;
+            }
         }
         return j;
     }
@@ -423,20 +427,12 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
      */
     @Override
     public MPBoosters getMPBoosters() {
-        if (getConversionMode() == CONV_MODE_MECH) {
-            return super.getMPBoosters();
-        } else {
-            return MPBoosters.NONE;
-        }
+        return (getConversionMode() == CONV_MODE_MECH) ? super.getMPBoosters() : MPBoosters.NONE;
     }
 
     @Override
     public MPBoosters getArmedMPBoosters() {
-        if (getConversionMode() == CONV_MODE_MECH) {
-            return super.getArmedMPBoosters();
-        } else {
-            return MPBoosters.NONE;
-        }
+        return (getConversionMode() == CONV_MODE_MECH) ? super.getArmedMPBoosters() : MPBoosters.NONE;
     }
 
     @Override
@@ -670,6 +666,21 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             default:
                 return super.getMovementAbbr(mtype);
         }
+    }
+
+    /**
+     * What's the range of the ECM equipment?
+     *
+     * @return the <code>int</code> range of this unit's ECM. This value will be
+     *         <code>Entity.NONE</code> if no ECM is active.
+     */
+    @Override
+    public int getECMRange() {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
+                || !game.getBoard().inSpace()) {
+            return super.getECMRange();
+        }
+        return Math.min(super.getECMRange(), 0);
     }
 
     /**
@@ -1135,6 +1146,12 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     }
 
     @Override
+    public int reduceMPByBombLoad(int t) {
+        // bombs don't impact movement
+        return t;
+    }
+
+    @Override
     public Targetable getVTOLBombTarget() {
         return airmechBombTarget;
     }
@@ -1147,6 +1164,15 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     @Override
     public boolean isMakingVTOLGroundAttack() {
         return airmechBombTarget != null;
+    }
+
+    @Override
+    public boolean isNightwalker() {
+        if (isAirborne()) {
+            return false;
+        } else {
+            return getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_NIGHTWALKER);
+        }
     }
 
     @Override
@@ -1322,7 +1348,8 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
                     }
                 }
             }
-            if (gearSlots.size() > 0) {
+
+            if (!gearSlots.isEmpty()) {
                 int index = Compute.randomInt(gearSlots.size());
                 gearSlots.get(index).setDestroyed(true);
             }
@@ -1915,34 +1942,6 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             }
         }
         applyDamage();
-    }
-
-    @Override
-    public void setBattleForceMovement(Map<String, Integer> movement) {
-        super.setBattleForceMovement(movement);
-        movement.put("g", getAirMechCruiseMP(true, false));
-        movement.put("a", getFighterModeWalkMP(true, false));
-    }
-
-    @Override
-    public void setAlphaStrikeMovement(Map<String, Integer> movement) {
-        super.setBattleForceMovement(movement);
-        movement.put("g", getAirMechCruiseMP(true, false) * 2);
-        movement.put("a", getFighterModeWalkMP(true, false));
-    }
-
-    @Override
-    public void addBattleForceSpecialAbilities(Map<BattleForceSPA, Integer> specialAbilities) {
-        super.addBattleForceSpecialAbilities(specialAbilities);
-        int bombs = (int) getEquipment().stream().filter(m -> m.getType().hasFlag(MiscType.F_BOMB_BAY)).count();
-        if (bombs > 0) {
-            specialAbilities.put(BattleForceSPA.BOMB, bombs / 5);
-        }
-        if (lamType == LAM_BIMODAL) {
-            specialAbilities.put(BattleForceSPA.BIM, null);
-        } else {
-            specialAbilities.put(BattleForceSPA.LAM, null);
-        }
     }
 
     @Override

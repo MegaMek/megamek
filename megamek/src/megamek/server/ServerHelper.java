@@ -18,9 +18,9 @@
  */
 package megamek.server;
 
+import megamek.MMConstants;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.other.TSEMPWeapon;
 
 import java.util.*;
 
@@ -69,7 +69,7 @@ public class ServerHelper {
      * Worker function that handles heat as applied to aerospace fighter
      */
     public static void resolveAeroHeat(Game game, Entity entity, Vector<Report> vPhaseReport, Vector<Report> rhsReports, 
-            int radicalHSBonus, int hotDogMod, Server s) {
+            int radicalHSBonus, int hotDogMod, GameManager s) {
         Report r;
         
         // If this aero is part of a squadron, we will deal with its
@@ -95,6 +95,9 @@ public class ServerHelper {
             r.subject = entity.getId();
             vPhaseReport.add(r);
         }
+
+        // Add or subtract heat due to extreme temperatures TO:AR p60
+        adjustHeatExtremeTemp(game, entity, vPhaseReport);
 
         // Combat computers help manage heat
         if (entity.hasQuirk(OptionsConstants.QUIRK_POS_COMBAT_COMPUTER)) {
@@ -210,7 +213,7 @@ public class ServerHelper {
         if ((entity.heat < autoShutDownHeat) && entity.isShutDown()) {
             // only start up if not shut down by taser or a TSEMP
             if ((entity.getTaserShutdownRounds() == 0)
-                    && (entity.getTsempEffect() != TSEMPWeapon.TSEMP_EFFECT_SHUTDOWN)) {
+                    && (entity.getTsempEffect() != MMConstants.TSEMP_EFFECT_SHUTDOWN)) {
                 if ((entity.heat < 14) && !entity.isManualShutdown()) {
                     // automatically starts up again
                     entity.setShutDown(false);
@@ -398,7 +401,45 @@ public class ServerHelper {
             vPhaseReport.addAll(s.destroyEntity(entity, "pilot death", true));
         }
     }
-    
+
+	public static void adjustHeatExtremeTemp(Game game, Entity entity, Vector<Report> vPhaseReport) {
+        Report r;
+        int tempDiff = game.getPlanetaryConditions().getTemperatureDifference(50, -30);
+        boolean heatArmor = false;
+        boolean laserHS = false;
+
+        if (entity instanceof Mech) {
+            laserHS = ((Mech) entity).hasLaserHeatSinks();
+            heatArmor = ((Mech) entity).hasIntactHeatDissipatingArmor();
+        }
+
+        if (game.getBoard().inSpace() || (tempDiff == 0) || laserHS) {
+            return;
+        } else {
+            if (game.getPlanetaryConditions().getTemperature() > 50) {
+                int heatToAdd = tempDiff;
+                if (heatArmor) {
+                    heatToAdd /= 2;
+                }
+                entity.heatFromExternal += heatToAdd;
+                r = new Report(5020);
+                r.subject = entity.getId();
+                r.add(heatToAdd);
+                vPhaseReport.add(r);
+                if (heatArmor) {
+                    r = new Report(5550);
+                    vPhaseReport.add(r);
+                }
+            } else {
+                entity.heatFromExternal -= tempDiff;
+                r = new Report(5025);
+                r.subject = entity.getId();
+                r.add(tempDiff);
+                vPhaseReport.add(r);
+            }
+        }
+    }
+
     /**
      * Helper function that causes an entity to sink to the bottom of the water
      * hex it's currently in.
@@ -426,7 +467,7 @@ public class ServerHelper {
     }
     
     public static void checkAndApplyMagmaCrust(Hex hex, int elevation, Entity entity, Coords curPos,
-            boolean jumpLanding, Vector<Report> vPhaseReport, Server server) {
+            boolean jumpLanding, Vector<Report> vPhaseReport, GameManager gameManager) {
         
         if ((hex.terrainLevel(Terrains.MAGMA) == 1) && (elevation == 0) && (entity.getMovementMode() != EntityMovementMode.HOVER)) {
             int reportID = jumpLanding ? 2396 : 2395;
@@ -443,18 +484,30 @@ public class ServerHelper {
             if (roll >= rollTarget) {
                 hex.removeTerrain(Terrains.MAGMA);
                 hex.addTerrain(new Terrain(Terrains.MAGMA, 2));
-                server.sendChangedHex(curPos);
+                gameManager.sendChangedHex(curPos);
                 for (Entity en : entity.getGame().getEntitiesVector(curPos)) {
-                    server.doMagmaDamage(en, false);
+                    if (en != entity) {
+                        gameManager.doMagmaDamage(en, false);
+                    }
                 }
             }
         }
     }
 
     /**
+     * Check for movement into magma hex and apply damage.
+     */
+    public static void checkEnteringMagma(Hex hex, int elevation, Entity entity, GameManager gameManager) {
+
+        if ((hex.terrainLevel(Terrains.MAGMA) == 2) && (elevation == 0) && (entity.getMovementMode() != EntityMovementMode.HOVER)) {
+            gameManager.doMagmaDamage(entity, false);
+        }
+    }
+
+    /**
      * Loops through all active entities in the game and performs mine detection
      */
-    public static void detectMinefields(Game game, Vector<Report> vPhaseReport, Server server) {
+    public static void detectMinefields(Game game, Vector<Report> vPhaseReport, GameManager gameManager) {
         boolean tacOpsBap = game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BAP);
         
         // if the entity is on the board
@@ -465,7 +518,7 @@ public class ServerHelper {
         for (Entity entity : game.getEntitiesVector()) {
             if (!entity.isOffBoard() && entity.isDeployed() &&
                     ((entity.delta_distance == 0) || !tacOpsBap)) {
-                detectMinefields(game, entity, entity.getPosition(), vPhaseReport, server);
+                detectMinefields(game, entity, entity.getPosition(), vPhaseReport, gameManager);
             }
         }
     }
@@ -475,7 +528,7 @@ public class ServerHelper {
      * @return True if any minefields have been detected.
      */
     public static boolean detectMinefields(Game game, Entity entity, Coords coords, 
-            Vector<Report> vPhaseReport, Server server) {
+            Vector<Report> vPhaseReport, GameManager gameManager) {
         if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) {
             return false;
         }
@@ -521,7 +574,7 @@ public class ServerHelper {
                         r.add(potentialMineCoords.toFriendlyString());
                         vPhaseReport.add(r);
                         
-                        server.revealMinefield(entity.getOwner(), minefield);
+                        gameManager.revealMinefield(entity.getOwner(), minefield);
                     }
                 }
             }
@@ -534,7 +587,7 @@ public class ServerHelper {
      * Checks to see if any units can detected hidden units.
      */
     public static boolean detectHiddenUnits(Game game, Entity detector, Coords detectorCoords,
-            Vector<Report> vPhaseReport, Server server) {
+            Vector<Report> vPhaseReport, GameManager gameManager) {
         // If hidden units aren't on, nothing to do
         if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
             return false;
@@ -608,7 +661,7 @@ public class ServerHelper {
             LosEffects los = LosEffects.calculateLOS(game, detector, detected, detectorCoords, detected.getPosition(), false);
             if (los.canSee() || !beyondPointBlankRange) {
                 detected.setHidden(false);
-                server.entityUpdate(detected.getId());
+                gameManager.entityUpdate(detected.getId());
                 Report r = new Report(9960);
                 r.addDesc(detector);
                 r.subject = detector.getId();
@@ -625,7 +678,7 @@ public class ServerHelper {
         if (!vPhaseReport.isEmpty() && game.getPhase().isMovement()
                 && ((game.getTurnIndex() + 1) < game.getTurnVector().size())) {
             for (Integer playerId : reportPlayers) {
-                server.send(playerId, server.createSpecialReportPacket());
+                gameManager.send(playerId, gameManager.createSpecialReportPacket());
             }
         }
         
@@ -636,12 +689,36 @@ public class ServerHelper {
      * Loop through the game and clear 'blood stalker' flag for
      * any entities that have the given unit as the blood stalker target.
      */
-    public static void clearBloodStalkers(Game game, int stalkeeID, Server server) {
+    public static void clearBloodStalkers(Game game, int stalkeeID, GameManager gameManager) {
         for (Entity entity : game.getEntitiesVector()) {
             if (entity.getBloodStalkerTarget() == stalkeeID) {
                 entity.setBloodStalkerTarget(Entity.BLOOD_STALKER_TARGET_CLEARED);
-                server.entityUpdate(entity.getId());
+                gameManager.entityUpdate(entity.getId());
             }
+        }
+    }
+
+    /**
+     * Returns the target number to avoid Radical Heat Sink Failure for the given number of rounds
+     * of consecutive use, IO p.89. The first round of use means consecutiveRounds = 1; this is
+     * the minimum as 0 rounds of use would not trigger a roll.
+     * @param consecutiveRounds The rounds the RHS has been used
+     * @return The roll target number to avoid failure
+     */
+    public static int radicalHeatSinkSuccessTarget(int consecutiveRounds) {
+        switch (consecutiveRounds) {
+            case 1:
+                return 3;
+            case 2:
+                return 5;
+            case 3:
+                return 7;
+            case 4:
+                return 10;
+            case 5:
+                return 11;
+            default:
+                return TargetRoll.AUTOMATIC_FAIL;
         }
     }
 }

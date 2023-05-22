@@ -103,8 +103,10 @@
      Michael Rowlett <eventsbeyondme@users.sourceforge.net>
 	 Juliez <juliez@users.sourceforge.net>
 	 Derrick Turk <derrickturk@users.sourceforge.net>
-	 Justin "Windchild" Bowen
 	 Graysho
+	 kuronekochomusuke
+
+	 
 
   XML Parser:
      Tom Gibara (original URL: http://gibaradunn.srac.org/tiny/index.shtml)
@@ -134,6 +136,9 @@
 	 Kaji
 	 UlyssesSockdrawer
 	 Stonewall072
+	 Ashnod
+	 Pokefan548
+	 MadCartographer
   
   German Readme:
      Black Ice <WKA_Online@yahoo.de>
@@ -261,6 +266,7 @@
      Jörg Harder <joergharder@t-online.de>
      Alexander Schölling <schoelling@users.sourceforge.net>
      Alexander "Twin_81" Manturov
+     IsWas - Spanish
 
   MegaMek Developers, Emeritus
      James Lacy <freakboy2571@users.sourceforge.net>

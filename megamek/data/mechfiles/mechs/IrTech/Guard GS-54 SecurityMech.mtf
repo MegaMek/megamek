@@ -6,8 +6,8 @@ mul id:4253
 Config:Quad
 techbase:Inner Sphere
 era:2914
-source:Succession Wars
-rules level:3
+source:TRO IrTech-Succession Wars
+rules level:2
 
 mass:15
 engine:75 ICE Engine(IS)

@@ -1,0 +1,166 @@
+Version:1.0
+Helepolis
+HEP-2X
+mul id:8471
+Config:Biped
+techbase:Inner Sphere
+era:2488
+source:TRO 3075 - Age of War
+rules level:3
+
+mass:75
+engine:225 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:10 Single
+walk mp:3
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:22
+RA armor:22
+LT armor:21
+RT armor:21
+CT armor:31
+HD armor:9
+LL armor:25
+RL armor:25
+RTL armor:10
+RTR armor:10
+RTC armor:12
+
+Weapons:5
+Large Laser, Left Arm
+Sniper, Right Torso
+LRM 10, Left Torso
+SRM 6, Center Torso
+Medium Laser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Heat Sink
+Large Laser
+Large Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+
+Left Torso:
+LRM 10
+LRM 10
+IS Ammo LRM-10
+IS Ammo SRM-6
+ISSniperAmmo
+ISSniperAmmo
+ISCASE
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+ISSniper
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+SRM 6
+SRM 6
+
+Head:
+Life Support
+Sensors
+Cockpit
+Medium Laser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:First unleashed by the Terran Hegemony in 2460, the Helepolis is a ponderous BattleMech designed to deliver artillery fire. 	
+
+capabilities:The Helepolis is built around an Armstrong Industries Sniper Artillery Piece. The accurate, long-range fire makes it effective against static defenses. 
+
+deployment:The 'Mech does carry some backup weapons to augment its screening forces. It can defend itself with a Coventry Starfire LRM-10 and Nova Large Laser. If an enemy gets close, the MechWarrior can call upon a Thunderstroke SRM-6 and a Starflash medium laser. This model which debuted in 2488, is identical to the -2H all respects except having 10 single heat sinks instead of 10 double heat sinks
+
+history:The 'Mech was proven ineffective on multiple occasions and, following the destruction of the production facilities in 2775, the design was lost during the Succession Wars. The HEP-2H dates to 2567, replacing the 2X. The Helepolis is a slow heavy 'Mech with a maximum speed of 54 km/h. It has a respectable thirteen tons of armor, however. When rebels within the Hegemony military launched the September Revolt, the new Director-General, Ian Cameron deployed batteries of Helepolis 'Mechs to keep them pinned down within the capital city of Geneva on Terra.
+
+manufacturer:Mitchell Vehicles
+primaryfactory:Graham IV
+systemmanufacturer:CHASSIS:Mitchell Heavy HEP
+systemmanufacturer:ENGINE:VOX 225
+systemmanufacturer:ARMOR:Armorscale with CASE
+systemmanufacturer:COMMUNICATIONS:Exeter Longscan 100
+systemmanufacturer:TARGETING:Tacticon Tracer 150b

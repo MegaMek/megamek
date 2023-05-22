@@ -1,0 +1,12 @@
+Clan Coyote Light Mechs
+UrbanMech IIC (Standard),1
+Icestorm (Standard), 2
+Mercury MCY-99, 3
+Locust IIC (Standard), 4
+Mercury MCY-99, 5 
+Peregrine (Horned Owl) (Standard), 6
+Hussar HSR-200-Db, 5
+Locust IIC (Standard), 4
+Mongoose MON-66b, 3
+Commando IIC (Standard), 2
+Stinger STG-3Gb, 1

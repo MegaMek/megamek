@@ -26,7 +26,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.PlasmaMFUKWeaponHandler;
 import megamek.common.weapons.lasers.EnergyWeapon;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Andrew Hunter
@@ -44,7 +44,7 @@ public abstract class PlasmaMFUKWeapon extends EnergyWeapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              Server server) {
-        return new PlasmaMFUKWeaponHandler(toHit, waa, game, server);
+                                              GameManager manager) {
+        return new PlasmaMFUKWeaponHandler(toHit, waa, game, manager);
     }
 }

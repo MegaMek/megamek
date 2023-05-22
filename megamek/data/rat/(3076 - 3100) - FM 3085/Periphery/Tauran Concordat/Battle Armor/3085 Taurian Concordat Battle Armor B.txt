@@ -1,5 +1,5 @@
 3085 Taurian Concordat Battle Armor B
-Tunnel Rat Mining Exoskeleton IV [Armored Glove/GL],1
+Tunnel Rat IV Mining Exoskeleton [Armored Glove/GL](Sqd4),1
 Purifier Adaptive Battle Armor [Laser],2
 Gray Death Scout Suit (Standard),3
 IS Standard Battle Armor [Laser],4

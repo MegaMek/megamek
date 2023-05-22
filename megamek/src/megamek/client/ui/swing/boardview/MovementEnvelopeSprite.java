@@ -6,7 +6,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Coords;
 
 /**
@@ -37,7 +37,7 @@ class MovementEnvelopeSprite extends HexSprite {
         // create image for buffer
         image = createNewHexImage();
         Graphics2D graph = (Graphics2D) image.getGraphics();
-        GUIPreferences.AntiAliasifSet(graph);
+        UIUtil.setHighQualityRendering(graph);
 
         // scale the following draws according to board zoom
         graph.scale(bv.scale, bv.scale);

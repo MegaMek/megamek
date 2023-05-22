@@ -13,6 +13,8 @@
  */
 package megamek.server.commands;
 
+import megamek.common.Game;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
@@ -23,10 +25,13 @@ import megamek.server.Server;
  */
 public class SkipCommand extends ServerCommand {
 
+    private final GameManager gameManager;
+
     /** Creates a new instance of SkipCommand */
-    public SkipCommand(Server server) {
+    public SkipCommand(Server server, GameManager gameManager) {
         super(server, "skip",
                 "Skips the current turn, if possible.  Usage: /skip");
+        this.gameManager = gameManager;
     }
 
     /**
@@ -40,10 +45,10 @@ public class SkipCommand extends ServerCommand {
             return;
         }
 
-        if (server.isTurnSkippable()) {
+        if (gameManager.isTurnSkippable()) {
             server.sendServerChat(server.getPlayer(connId).getName()
                     + " has issued the skip command...");
-            server.skipCurrentTurn();
+            gameManager.skipCurrentTurn();
         } else {
             server.sendServerChat("/skip : skip failed.");
         }

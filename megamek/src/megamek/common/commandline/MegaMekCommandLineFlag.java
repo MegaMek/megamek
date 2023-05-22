@@ -15,7 +15,6 @@ package megamek.common.commandline;
 
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.ClientGUI;
 import megamek.common.Configuration;
 import org.apache.logging.log4j.LogManager;
 
@@ -35,7 +34,6 @@ public enum MegaMekCommandLineFlag {
     EXPORT(Messages.getString("MegaMek.Help.UnitExport")),
     VALIDATE(Messages.getString("MegaMek.Help.UnitValidator")),
     OUL(Messages.getString("MegaMek.Help.OfficialUnitList")),
-    BFC(Messages.getString("MegaMek.Help.UnitBattleforceConversion")),
     ASC(Messages.getString("MegaMek.Help.UnitAlphastrikeConversion")),
     EDITRATGEN(Messages.getString("MegaMek.Help.RatgenEdit")),
     DATADIR(Messages.getFormattedString("MegaMek.Help.DataDir", Configuration.dataDir()));
@@ -51,7 +49,7 @@ public enum MegaMekCommandLineFlag {
         try {
             return valueOf(text.toUpperCase(Locale.ROOT));
         } catch (Exception ex) {
-            LogManager.getLogger().error("Failed to parse the MegaMekCommandLineFlag from text '%s'", text);
+            LogManager.getLogger().error("Failed to parse the MegaMekCommandLineFlag from text " + text);
             throw(ex);
         }
     }

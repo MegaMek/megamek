@@ -16,9 +16,9 @@ SupportTank
 Whitestreak Speedboat
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 5408

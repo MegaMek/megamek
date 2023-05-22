@@ -18,32 +18,37 @@
  */
 package megamek.client.ui.swing.lobby;
 
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.KeyStroke;
-
 import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.CamoChooserDialog;
 import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.tileset.EntityImage;
+import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.swing.util.MenuScroller;
 import megamek.client.ui.swing.util.ScalingPopup;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
+import megamek.common.icons.Camouflage;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
+import org.apache.logging.log4j.LogManager;
 
-import static megamek.client.ui.swing.util.UIUtil.*;
-import static megamek.common.util.CollectionUtil.*;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.*;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static megamek.client.ui.swing.util.UIUtil.menuItem;
+import static megamek.common.util.CollectionUtil.anyOneElement;
+import static megamek.common.util.CollectionUtil.theElement;
 
 /** Creates the Lobby Mek right-click pop-up menu for both the sortable table and the force tree. */
 class LobbyMekPopup {
@@ -85,6 +90,7 @@ class LobbyMekPopup {
     static final String LMP_FCREATESUB = "FCREATESUB";
     static final String LMP_FCREATETOP = "FCREATETOP";
     static final String LMP_FCREATEFROM = "FCREATEFROM";
+    static final String LMP_SBFFORMATION = "SBFFORMATION";
     static final String LMP_DELETE = "DELETE";
     static final String LMP_UNLOADALL = "UNLOADALL";
     static final String LMP_UNLOAD = "UNLOAD";
@@ -94,17 +100,18 @@ class LobbyMekPopup {
     static final String LMP_CONFIGURE_ALL = "CONFIGURE_ALL";
     static final String LMP_CONFIGURE = "CONFIGURE";
     static final String LMP_BV = "BV";
+    static final String LMP_COST = "COST";
     static final String LMP_VIEW = "VIEW";
     static final String LMP_MOVE_UP = "MOVE_UP";
     static final String LMP_PRIO_TARGET = "PRIO_TARGET";
+    static final String LMP_ALPHASTRIKE = "ALPHASTRIKE";
 
     private static final String NOINFO = "|-1";
     
     static final String LMP_UNLOADALLFROMBAY = "UNLOADALLFROMBAY";
     
-    static ScalingPopup getPopup(List<Entity> entities, List<Force> forces,
-            ActionListener listener, ChatLounge lobby) {
-
+    static ScalingPopup getPopup(List<Entity> entities, List<Force> forces, ActionListener listener,
+                                 ChatLounge lobby) {
         ClientGUI clientGui = lobby.getClientgui();
         Game game = lobby.game();
         GameOptions opts = game.getOptions();
@@ -117,7 +124,7 @@ class LobbyMekPopup {
         // A set of all selected entities and all entities in selected forces and their subforces
         Set<Entity> joinedEntities = new HashSet<>(entities);
         for (Force force: forces) {
-            joinedEntities.addAll(game.getForces().getFullEntities(force));
+            joinedEntities.addAll(ForceAssignable.filterToEntityList(game.getForces().getFullEntities(force)));
         }  
 
         // Find certain unit features among all units the player can access
@@ -138,20 +145,22 @@ class LobbyMekPopup {
         boolean anyHLOn = joinedEntities.stream().anyMatch(LobbyMekPopup::hasHotLoaded);
         boolean anyHLOff = joinedEntities.stream().anyMatch(LobbyMekPopup::hasNonHotLoaded);
 
+        boolean oneSelected = entities.size() == 1;
         boolean hasjoinedEntities = !joinedEntities.isEmpty();
-        boolean joinedOneEntitySelected = (entities.size() == 1) && forces.isEmpty();
+        boolean joinedOneEntitySelected = oneSelected && forces.isEmpty();
         boolean canSeeAll = lobby.canSeeAll(joinedEntities);
-        
+
         ScalingPopup popup = new ScalingPopup();
-        
+
         // All command strings should follow the layout COMMAND|INFO|ID1,ID2,I3...
         // and use -1 when something is not needed (COMMAND|-1|-1)
         String eId = "|" + (entities.isEmpty() ? "-1" : entities.get(0).getId());
         String eIds = enToken(entities);
         String seIds = enToken(joinedEntities);
-        
+
         popup.add(menuItem("View...", LMP_VIEW + NOINFO + seIds, hasjoinedEntities, listener, KeyEvent.VK_V));
         popup.add(menuItem("View BV Calculation...", LMP_BV + NOINFO + seIds, hasjoinedEntities, listener, KeyEvent.VK_B));
+        popup.add(menuItem("View Cost Calculation...", LMP_COST + NOINFO + seIds, hasjoinedEntities, listener));
         popup.add(ScalingPopup.spacer());
 
         if (joinedOneEntitySelected) {
@@ -161,7 +170,7 @@ class LobbyMekPopup {
         }
         popup.add(menuItem("Edit Damage...", LMP_DAMAGE + NOINFO + seIds, hasjoinedEntities, listener, KeyEvent.VK_E));
         popup.add(menuItem("Set individual camo...", LMP_INDI_CAMO + NOINFO + seIds, hasjoinedEntities, listener, KeyEvent.VK_I));
-        
+
         if (lobby.isForceView()) {
             JMenuItem moveUp = menuItem("Move Up", LMP_MOVE_UP + "|" + foToken(forces) + eIds, !forces.isEmpty() || !entities.isEmpty(), listener, KeyEvent.VK_I);
             moveUp.setAccelerator(KeyStroke.getKeyStroke("ctrl UP"));
@@ -170,12 +179,12 @@ class LobbyMekPopup {
             moveDn.setAccelerator(KeyStroke.getKeyStroke("ctrl DOWN"));
             popup.add(moveDn);
         }
-        
+
         popup.add(deployMenu(clientGui, hasjoinedEntities, listener, joinedEntities));
         popup.add(randomizeMenu(hasjoinedEntities, listener, seIds));
         popup.add(swapPilotMenu(hasjoinedEntities, joinedEntities, clientGui, listener));
         popup.add(prioTargetMenu(clientGui, hasjoinedEntities, listener, joinedEntities));
-        
+
         if (optBurstMG || optLRMHotLoad) {
             popup.add(equipMenu(anyRFMGOn, anyRFMGOff, anyHLOn, anyHLOff, optLRMHotLoad, optBurstMG, listener, seIds));
         }
@@ -204,16 +213,24 @@ class LobbyMekPopup {
         if (accessibleProtomeks) {
             popup.add(protoMenu(clientGui, allProtomeks, listener, joinedEntities));
         }
-        
+
         popup.add(c3Menu(hasjoinedEntities, joinedEntities, clientGui, listener));
         popup.add(forceMenu(lobby, entities, forces, listener));
-        
+
+        popup.add(ScalingPopup.spacer());
+        popup.add(menuItem("View AlphaStrike Stats", LMP_ALPHASTRIKE + NOINFO + seIds, true, listener));
+
+        if (oneSelected) {
+            popup.add(exportEntitySpriteMenu(clientGui.getFrame(), entities.get(0)));
+        }
+
+        popup.add(menuItem("Convert to SBF Formation", LMP_SBFFORMATION + "|" + foToken(forces) + eIds, lobby.isForceView(), listener));
         popup.add(ScalingPopup.spacer());
         popup.add(menuItem("Delete", LMP_DELETE + "|" + foToken(forces) + seIds, !entities.isEmpty() && forces.isEmpty(), listener, KeyEvent.VK_D));
-        
+
         return popup;
     }
-    
+
     /**
      * Returns the "Force" submenu, allowing assignment to forces
      */
@@ -223,7 +240,7 @@ class LobbyMekPopup {
             menu.add(menuItem("Create Force from...", LMP_FCREATEFROM + "|" + foToken(forces) + enToken(entities), true, listener));
         }
         menu.add(menuItem("Add empty Force...", LMP_FCREATETOP + NOINFO + NOINFO, true, listener));
-        
+
         // If exactly one force is selected, offer force options
         if ((forces.size() == 1) && entities.isEmpty()) {
             Force force = forces.get(0);
@@ -248,7 +265,7 @@ class LobbyMekPopup {
         menu.setEnabled(menu.getItemCount() > 0);
         return menu;
     }
-    
+
     private static JMenuItem forceTreeMenu(Force force, Game game, String enToken, ActionListener listener) {
         JMenuItem result;
         String item = "<HTML>" + force.getName() + idString(game, force.getId());
@@ -262,7 +279,7 @@ class LobbyMekPopup {
         }
         return result;
     }
-    
+
     static String idString(Game game, int id) {
         if (PreferenceManager.getClientPreferences().getShowUnitId()) {
             return " <FONT" + UIUtil.colorString(UIUtil.uiGray()) +">[" + id + "]</FONT>"; 
@@ -276,7 +293,6 @@ class LobbyMekPopup {
      */
     private static JMenu loadMenu(ClientGUI cg, boolean enabled, ActionListener listener,
                                   Collection<Entity> entities) {
-
         Game game = cg.getClient().getGame();
         JMenu menu = new JMenu("Load onto");
         if (enabled && !entities.isEmpty()) {
@@ -308,8 +324,7 @@ class LobbyMekPopup {
      * Returns the "Load ProtoMek" submenu
      */
     private static JMenu protoMenu(ClientGUI cg, boolean enabled, ActionListener listener,
-            Collection<Entity> entities) {
-
+                                   Collection<Entity> entities) {
         JMenu menu = new JMenu("Load ProtoMek");
         if (enabled && entities.stream().anyMatch(e -> e.hasETypeFlag(Entity.ETYPE_PROTOMECH))) {
             Entity entity = entities.stream().filter(e -> e.hasETypeFlag(Entity.ETYPE_PROTOMECH)).findAny().get();
@@ -354,8 +369,7 @@ class LobbyMekPopup {
      * create a fighter squadron
      */
     private static JMenu squadronMenu(ClientGUI cg, boolean enabled, ActionListener listener,
-            Collection<Entity> entities) {
-
+                                      Collection<Entity> entities) {
         JMenu menu = new JMenu("Fighter Squadrons");
         boolean hasFighter = entities.stream().anyMatch(Entity::isFighter);
         if (enabled && hasFighter) {
@@ -372,7 +386,7 @@ class LobbyMekPopup {
         menu.setEnabled(enabled && (menu.getItemCount() > 0));
         return menu;
     }
-    
+
     /**
      * Returns the "Priority Target" submenu, allowing to assign units as a strategic
      * target to a local Princess bot.
@@ -388,7 +402,7 @@ class LobbyMekPopup {
         menu.setEnabled(enabled && (menu.getItemCount() > 0));
         return menu;
     }
-    
+
     /** Returns true when the loader can load all the given entities (under lobby conditions). */
     private static boolean canLoadAll(Entity loader, Collection<Entity> entities) {
         return entities.stream().allMatch(e -> loader.canLoad(e, false));
@@ -451,8 +465,7 @@ class LobbyMekPopup {
     }
 
     /**
-     * Returns the "Randomize" submenu, allowing to randomly assign
-     * name, callsign and skills
+     * Returns the "Randomize" submenu, allowing to randomly assign name, callsign and skills
      */
     private static JMenu randomizeMenu(boolean enabled, ActionListener listener, String eIds) {
         // listener menu uses the following Mnemonic Keys: C, N, S
@@ -466,9 +479,10 @@ class LobbyMekPopup {
         menu.add(menuItem("Skills", LMP_SKILLS + NOINFO + eIds, enabled, listener, KeyEvent.VK_S));
         return menu;
     }
-    
+
     /** Returns the C3 computer submenu. */
-    private static JMenu c3Menu(boolean enabled, Collection<Entity> entities, ClientGUI cg, ActionListener listener) {
+    private static JMenu c3Menu(boolean enabled, Collection<Entity> entities, ClientGUI cg,
+                                ActionListener listener) {
         JMenu menu = new JMenu("C3");
 
         if (entities.stream().anyMatch(Entity::hasAnyC3System)) {
@@ -568,23 +582,23 @@ class LobbyMekPopup {
     /**
      * Returns the "Change Unit Owner" submenu.
      */
-    private static JMenu changeOwnerMenu(boolean enabled, ClientGUI clientGui, ActionListener listener, 
-            Collection<Entity> entities, Collection<Force> forces) {
-
+    private static JMenu changeOwnerMenu(boolean enabled, ClientGUI clientGui,
+                                         ActionListener listener, Collection<Entity> entities,
+                                         Collection<Force> forces) {
         JMenu menu = new JMenu(Messages.getString("ChatLounge.ChangeOwner"));
         menu.setEnabled(enabled);
         menu.setMnemonic(KeyEvent.VK_O);
-        
+
         Game game = clientGui.getClient().getGame();
         Forces gameForces = game.getForces();
-        
+
         if (!entities.isEmpty()) {
             for (Player player: game.getPlayersVector()) {
                 String command = LMP_ASSIGN + "|" + player.getId() + ":" + foToken(forces) + enToken(entities);
                 menu.add(menuItem(player.getName(), command, enabled, listener));
             }
         }
-        
+
         if (entities.isEmpty() && !forces.isEmpty()) {
             JMenu assignMenu = new JMenu("Assign to");
             JMenu fOnlyMenu = new JMenu("Force only");
@@ -608,11 +622,9 @@ class LobbyMekPopup {
     }
 
     /**
-     * Returns the "Quirks" submenu, allowing to save the quirks
-     * to the quirks config file.
+     * @return the "Quirks" submenu, allowing to save the quirks to the quirks config file.
      */
     private static JMenu quirksMenu(boolean enabled, ActionListener listener, String eIds) {
-
         JMenu menu = new JMenu(Messages.getString("ChatLounge.popup.quirks"));
         menu.setEnabled(enabled);
         menu.add(menuItem("Save Quirks for Chassis", LMP_SAVE_QUIRKS_ALL + NOINFO + eIds, enabled, listener));
@@ -621,13 +633,11 @@ class LobbyMekPopup {
     }
 
     /**
-     * Returns the "Equipment" submenu, allowing 
-     * hotloading LRMs and
-     * setting MGs to rapid fire mode
+     * @return the "Equipment" submenu, allowing hotloading LRMs and setting MGs to rapid fire mode
      */
-    private static JMenu equipMenu(boolean anyRFOn, boolean anyRFOff, boolean anyHLOn, boolean anyHLOff,
-            boolean optHL, boolean optRF, ActionListener listener, String eIds) {
-
+    private static JMenu equipMenu(boolean anyRFOn, boolean anyRFOff, boolean anyHLOn,
+                                   boolean anyHLOff, boolean optHL, boolean optRF,
+                                   ActionListener listener, String eIds) {
         JMenu menu = new JMenu(Messages.getString("ChatLounge.Equipment"));
         menu.setEnabled(anyRFOff || anyRFOn || anyHLOff || anyHLOn);        
         if (optRF) {
@@ -644,18 +654,17 @@ class LobbyMekPopup {
         }
         return menu;
     }
-    
+
     /**
      * Returns the "Offload from" submenu, allowing to offload
      * units from a specific bay of the given entity
      */
     private static JMenu offloadBayMenu(boolean enabled, Collection<Entity> entities, ActionListener listener) {
-
         JMenu menu = new JMenu("Offload All From...");
         if (enabled && entities.size() == 1) {
             Entity entity = theElement(entities);
             for (Bay bay : entity.getTransportBays()) {
-                if (bay.getLoadedUnits().size() > 0) {
+                if (!bay.getLoadedUnits().isEmpty()) {
                     String label = "Bay #" + bay.getBayNumber() + " (" + bay.getLoadedUnits().size() + " units)";
                     menu.add(menuItem(label, LMP_UNLOADALLFROMBAY + "|" + bay.getBayNumber() + enToken(entities), enabled, listener));
                 }
@@ -674,7 +683,7 @@ class LobbyMekPopup {
      */
     private static JMenu swapPilotMenu(boolean enabled, Collection<Entity> entities, ClientGUI clientGui, ActionListener listener) {
         Game game = clientGui.getClient().getGame();
-        
+
         JMenu menu = new JMenu("Swap pilots with");
         if (!entities.isEmpty()) {
             // use a random selected unit to determine the targets
@@ -696,8 +705,97 @@ class LobbyMekPopup {
         MenuScroller.createScrollBarsOnMenus(menu);
         return menu;
     }
-    
-    /** 
+
+    private static JMenu exportEntitySpriteMenu(final JFrame frame, final Entity entity) {
+        final JMenu exportUnitSpriteMenu = new JMenu(Messages.getString("exportUnitSpriteMenu.title"));
+        exportUnitSpriteMenu.setToolTipText(Messages.getString("exportUnitSpriteMenu.toolTipText"));
+        exportUnitSpriteMenu.setName("exportUnitSpriteMenu");
+
+        final JMenuItem miCurrentCamouflage = new JMenuItem(Messages.getString("miCurrentCamouflage.text"));
+        miCurrentCamouflage.setToolTipText(Messages.getString("miCurrentCamouflage.toolTipText"));
+        miCurrentCamouflage.setName("miCurrentCamouflage");
+        miCurrentCamouflage.addActionListener(evt ->
+                exportSprite(frame, entity, entity.getCamouflageOrElseOwners(), false));
+        exportUnitSpriteMenu.add(miCurrentCamouflage);
+
+        final JMenuItem miCurrentDamage = new JMenuItem(Messages.getString("miCurrentDamage.text"));
+        miCurrentDamage.setToolTipText(Messages.getString("miCurrentDamage.toolTipText"));
+        miCurrentDamage.setName("miCurrentDamage");
+        miCurrentDamage.addActionListener(evt ->
+                exportSprite(frame, entity, new Camouflage(), true));
+        exportUnitSpriteMenu.add(miCurrentDamage);
+
+        final JMenuItem miCurrentCamouflageAndDamage = new JMenuItem(
+                Messages.getString("miCurrentCamouflageAndDamage.text"));
+        miCurrentCamouflageAndDamage.setToolTipText(Messages.getString("miCurrentCamouflageAndDamage.toolTipText"));
+        miCurrentCamouflageAndDamage.setName("miCurrentCamouflageAndDamage");
+        miCurrentCamouflageAndDamage.addActionListener(evt ->
+                exportSprite(frame, entity, entity.getCamouflageOrElseOwners(), true));
+        exportUnitSpriteMenu.add(miCurrentCamouflageAndDamage);
+
+        final JMenuItem miSelectedCamouflage = new JMenuItem(Messages.getString("miSelectedCamouflage.text"));
+        miSelectedCamouflage.setToolTipText(Messages.getString("miSelectedCamouflage.toolTipText"));
+        miSelectedCamouflage.setName("miSelectedCamouflage");
+        miSelectedCamouflage.addActionListener(evt -> {
+            final CamoChooserDialog camoChooserDialog = new CamoChooserDialog(frame, entity.getCamouflageOrElseOwners());
+            if (camoChooserDialog.showDialog().isConfirmed()) {
+                exportSprite(frame, entity, camoChooserDialog.getSelectedItem(), false);
+            }
+        });
+        exportUnitSpriteMenu.add(miSelectedCamouflage);
+
+        final JMenuItem miSelectedCamouflageAndCurrentDamage = new JMenuItem(
+                Messages.getString("miSelectedCamouflageAndCurrentDamage.text"));
+        miSelectedCamouflageAndCurrentDamage.setToolTipText(
+                Messages.getString("miSelectedCamouflageAndCurrentDamage.toolTipText"));
+        miSelectedCamouflageAndCurrentDamage.setName("miSelectedCamouflageAndCurrentDamage");
+        miSelectedCamouflageAndCurrentDamage.addActionListener(evt -> {
+            final CamoChooserDialog camoChooserDialog = new CamoChooserDialog(frame, entity.getCamouflageOrElseOwners());
+            if (camoChooserDialog.showDialog().isConfirmed()) {
+                exportSprite(frame, entity, camoChooserDialog.getSelectedItem(), true);
+            }
+        });
+        exportUnitSpriteMenu.add(miSelectedCamouflageAndCurrentDamage);
+
+        return exportUnitSpriteMenu;
+    }
+
+    private static void exportSprite(final JFrame frame, final Entity entity,
+                                     final Camouflage camouflage, final boolean showDamage) {
+        // Save Location
+        FileDialog fd = new FileDialog(frame, Messages.getString("ExportUnitSpriteDialog.title"));
+        fd.setMode(FileDialog.SAVE);
+        fd.setDirectory("");
+        fd.setFile(entity.getDisplayName() + ".png");
+        fd.setFilenameFilter((dir, file) -> file.endsWith(".png"));
+        fd.setVisible(true);
+
+        String directory = fd.getDirectory();
+        String filename = fd.getFile();
+        if ((filename == null) || (directory == null)) {
+            return;
+        }
+        File file = new File(directory, filename);
+
+        // Ensure it's a PNG file
+        final String path = file.getPath();
+        if (!path.endsWith(".png")) {
+            file = new File(path + ".png");
+        }
+
+        // Get the Sprite
+        final Image base = MMStaticDirectoryManager.getMechTileset().imageFor(entity);
+        final Image sprite = new EntityImage(base, camouflage, frame, entity).loadPreviewImage(showDamage);
+
+        // Export to File
+        try {
+            ImageIO.write((BufferedImage) sprite, "png", file);
+        } catch (Exception ex) {
+            LogManager.getLogger().error("Failed to export to file", ex);
+        }
+    }
+
+    /**
      * Returns a command string token containing the IDs of the given entities and a leading |
      * E.g. |2,14,44,22
      */
@@ -720,9 +818,10 @@ class LobbyMekPopup {
         List<String> ids = forces.stream().map(Force::getId).map(Object::toString).collect(Collectors.toList());
         return String.join(",", ids);
     }
-    
 
-    /** Returns true when the entity has an MG set to rapid fire. */ 
+    /**
+     * @return true when the entity has an MG set to rapid fire.
+     */
     private static boolean hasRapidFireMG(Entity entity) {
         for (Mounted m: entity.getWeaponList()) {
             EquipmentType etype = m.getType();
@@ -732,7 +831,7 @@ class LobbyMekPopup {
         }
         return false;
     }
-    
+
     /** Returns true when the entity has an MG set to normal (non-rapid) fire. */ 
     private static boolean hasNormalFireMG(Entity entity) {
         for (Mounted m: entity.getWeaponList()) {
@@ -743,7 +842,7 @@ class LobbyMekPopup {
         }
         return false;
     }
-    
+
     /** Returns true when the entity has a weapon with ammo set to hot-loaded. */ 
     private static boolean hasHotLoaded(Entity entity) {
         for (Mounted ammo: entity.getAmmo()) {
@@ -754,7 +853,7 @@ class LobbyMekPopup {
         }
         return false;
     }
-    
+
     /** Returns true when the entity has a weapon with ammo set to non-hot-loaded. */ 
     private static boolean hasNonHotLoaded(Entity entity) {
         for (Mounted ammo: entity.getAmmo()) {
@@ -765,6 +864,4 @@ class LobbyMekPopup {
         }
         return false;
     }
-
 }
-

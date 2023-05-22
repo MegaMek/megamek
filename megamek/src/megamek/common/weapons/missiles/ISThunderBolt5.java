@@ -19,14 +19,10 @@
  */
 package megamek.common.weapons.missiles;
 
-import megamek.common.AmmoType;
-import megamek.common.SimpleTechLevel;
-
 /**
  * @author Sebastian Brocks
  */
-public class ISThunderBolt5 extends ThunderBoltWeapon {
-
+public class ISThunderBolt5 extends Thunderbolt5Weapon {
     private static final long serialVersionUID = 5295837076559643763L;
 
     public ISThunderBolt5() {
@@ -36,34 +32,8 @@ public class ISThunderBolt5 extends ThunderBoltWeapon {
         addLookupName("IS Thunderbolt-5");
         addLookupName("ISThunderbolt5");
         addLookupName("IS Thunderbolt 5");
-        sortingName = "Thunderbolt 05";
-        ammoType = AmmoType.T_TBOLT_5;
-        heat = 3;
-        minimumRange = 5;
-        shortRange = 6;
-        mediumRange = 12;
-        longRange = 18;
-        extremeRange = 24;
-        shortAV = 5;
-        medAV = 5;
-        maxRange = RANGE_MED;
         tonnage = 3.0;
-        criticals = 1;
         bv = 64;
         cost = 50000;
-        flags = flags.or(F_LARGEMISSILE);
-        this.missileArmor = 5;
-        rulesRefs = "347, TO";
-        //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        techAdvancement.setTechBase(TECH_BASE_IS)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-        .setISAdvancement(3052, 3072, 3081, DATE_NONE, DATE_NONE)
-        .setISApproximate(false, false, false,false, false)
-        .setPrototypeFactions(F_FS)
-        .setProductionFactions(F_FS,F_LC)
-        .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

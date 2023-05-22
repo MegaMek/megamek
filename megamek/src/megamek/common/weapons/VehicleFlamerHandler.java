@@ -29,6 +29,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.flamers.CLHeavyFlamer;
 import megamek.common.weapons.flamers.ISHeavyFlamer;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
@@ -44,8 +45,8 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
      * @param g
      */
     public VehicleFlamerHandler(ToHitData toHit, WeaponAttackAction waa,
-            Game g, Server s) {
-        super(toHit, waa, g, s);
+            Game g, GameManager m) {
+        super(toHit, waa, g, m);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }
     
@@ -141,7 +142,7 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
         TargetRoll tn = new TargetRoll(wtype.getFireTN(), wtype.getName());
         if (tn.getValue() != TargetRoll.IMPOSSIBLE) {
             Report.addNewline(vPhaseReport);
-            server.tryIgniteHex(target.getPosition(), subjectId, true, false,
+            gameManager.tryIgniteHex(target.getPosition(), subjectId, true, false,
                     tn, true, -1, vPhaseReport);
         }
     }
@@ -168,15 +169,14 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
         // a 5 or less
         // you do a normal ignition as though for intentional fires
         if ((bldg != null)
-                && server.tryIgniteHex(target.getPosition(), subjectId, true,
+                && gameManager.tryIgniteHex(target.getPosition(), subjectId, true,
                         false,
                         new TargetRoll(wtype.getFireTN(), wtype.getName()), 5,
                         vPhaseReport)) {
             return;
         }
-        Vector<Report> clearReports = server.tryClearHex(target.getPosition(),
-                nDamage, subjectId);
-        if (clearReports.size() > 0) {
+        Vector<Report> clearReports = gameManager.tryClearHex(target.getPosition(), nDamage, subjectId);
+        if (!clearReports.isEmpty()) {
             vPhaseReport.lastElement().newlines = 0;
         }
         vPhaseReport.addAll(clearReports);

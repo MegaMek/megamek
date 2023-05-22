@@ -1,0 +1,110 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Cuchulainn Support Armor
+</Name>
+
+<model>
+(Sqd5)
+</Model>
+
+<mul id:>
+8768
+</mul id:>
+
+<year>
+3134
+</year>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<armor_type>
+33
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<Point Equipment>
+CLDetachableWeaponPack:RA
+BACLERMediumPulseLaser:DWP
+BABasicManipulator:LA
+BABasicManipulator:RA
+Clan BA Stealth (Improved):LA
+Clan BA Stealth (Improved):Body
+Clan BA Stealth (Improved):LA
+Clan BA Stealth (Improved):Body
+Clan BA Stealth (Improved):Body
+</Point Equipment>
+
+
+<source>
+TRO 3145 Lyran Commonwealth - Dark Ages
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+12
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+3
+</weightclass>
+
+<overview>
+Cuchulainn Support Armor was named for a hero from Irish mythology and was the product of a joint program between Clan Wolf-in-Exile and the Kell Hounds. 
+</overview>
+
+<history>
+Manufactured on Arc-Royal from Arc-Royal MechWorks and WC Site 2, Cuchulainn suits entered service prior to the Blackout and fought in a number of combat operations soon after.
+</history>
+
+<capabilities>
+The Cuchulainn suits, which could only move at a speed of just over 10 km/h while carrying their Detachable Weapon Pack, were created to support other battle armour units directly with firepower by engaging enemy units at a distance while lighter suits swarmed units that tried to approach the Cuchulainns. The Cuchulainns were protected by nearly half a tonne of upgraded stealth armour while they assaulted the enemy at a distance, but despite being able to ride on mechanised transport and mounting a Basic Manipulator on each arm, they were unable to launch swarm or leg attacks.
+</capabilities>
+
+<deployment>
+The only ranged weapon system on a Cuchulainn suit was the ER Medium Pulse Laser mounted on the left arm in a detachable weapon pack, along with eleven rounds of ammunition. Once the ER Medium Pulse Laser had been detached the Cuchulainn's speed doubled.
+</deployment>
+
+<manufacturer>
+Arc-Royal MechWorks,WC Site 2
+</manufacturer>
+
+<primaryFactory>
+Arc-Royal,Arc-Royal
+</primaryFactory>

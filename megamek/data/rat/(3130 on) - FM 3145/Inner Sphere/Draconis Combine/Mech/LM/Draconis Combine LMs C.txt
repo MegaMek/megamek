@@ -1,0 +1,12 @@
+Draconis Combine Light Mechs C
+Jenner JR7-C3,1
+Panther PNT-16K,2
+Hitman HM-2,3
+Rokurokubi RK-4T,4
+Valiant V4-LNT-K7,5
+Venom SDR-9KB,6
+Wight WGT-1LAW/SC,5
+Panther PNT-12A,4
+Phoenix Hawk L 'Fenikkusu Taka' PXH-11K,3
+Spider SDR-8X,2
+Owens OW-1,1

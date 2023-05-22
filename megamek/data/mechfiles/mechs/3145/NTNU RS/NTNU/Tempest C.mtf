@@ -1,0 +1,153 @@
+Version:1.3
+Tempest
+C
+mul id:8005
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3150
+source:Dark Age
+rules level:2
+
+mass:65
+engine:260 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:12 IS Double
+walk mp:4
+jump mp:4
+
+armor:Standard(Clan)
+LA armor:18
+RA armor:18
+LT armor:24
+RT armor:24
+CT armor:32
+HD armor:9
+LL armor:28
+RL armor:28
+RTL armor:6
+RTR armor:6
+RTC armor:7
+
+Weapons:6
+Large Pulse Laser, Left Arm
+Gauss Rifle, Right Arm
+ATM 9, Left Torso
+Medium Laser, Center Torso
+Medium Laser, Center Torso
+Medium Laser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLLargePulseLaser
+CLLargePulseLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+Clan Gauss Ammo
+Clan Gauss Ammo
+IS Endo Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLATM9
+CLATM9
+CLATM9
+CLATM9
+Clan Ammo ATM-9
+Clan Ammo ATM-9
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Medium Laser
+Medium Laser
+
+Head:
+Life Support
+Sensors
+Cockpit
+Medium Laser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

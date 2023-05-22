@@ -1,8 +1,7 @@
 /*
-* MegaMek -
-* Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
-* Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
-* Copyright (C) 2018 The MegaMek Team
+* Copyright (c) 2003-2004 - Ben Mazur (bmazur@sev.org).
+* Copyright (c) 2013 - Edward Cullen (eddy@obsessedcomputers.co.uk).
+* Copyright (c) 2018-2022 - The MegaMek Team. All Rights Reserved.
 *
 * This program is free software; you can redistribute it and/or modify it under
 * the terms of the GNU General Public License as published by the Free Software
@@ -14,42 +13,23 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.client.ui.swing.widget;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Image;
-import java.util.Enumeration;
-import java.util.Vector;
-
-import javax.swing.JComponent;
-
+import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.common.Configuration;
-import megamek.common.Crew;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EntityMovementType;
-import megamek.common.GunEmplacement;
-import megamek.common.IAero;
-import megamek.common.Infantry;
-import megamek.common.Jumpship;
-import megamek.common.LandAirMech;
-import megamek.common.Mech;
-import megamek.common.QuadVee;
-import megamek.common.Sensor;
-import megamek.common.Tank;
-import megamek.common.Warship;
+import megamek.common.*;
 import megamek.common.options.*;
 import megamek.common.util.fileUtils.MegaMekFile;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  * Set of elements to represent general unit information in MechDisplay
  */
-
 public class GeneralInfoMapSet implements DisplayMapSet {
 
     private static String STAR3 = "***";
@@ -64,14 +44,17 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             elevationR, fuelR, curSensorsR, visualRangeR;
     private PMMultiLineLabel quirksAndPartReps;
     private Vector<BackGroundDrawer> bgDrawers = new Vector<>();
-    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN,
-            GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize"));
-    private static final Font FONT_TITLE = new Font("SansSerif", Font.ITALIC,
-            GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize"));
+
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
+    private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
+            GUIP.getUnitDisplayMechLargeFontSize());
+    private static final Font FONT_TITLE = new Font(MMConstants.FONT_SANS_SERIF, Font.ITALIC,
+            GUIP.getUnitDisplayMechLargeFontSize());
     private int yCoord = 1;
 
     /**
-     * This constructor have to be called anly from addNotify() method
+     * This constructor can only be called from the addNotify method
      */
     public GeneralInfoMapSet(JComponent c) {
         comp = c;
@@ -79,8 +62,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         setBackGround();
     }
 
-    // These two methods are used to vertically position new labels on the
-    // display.
+    // These two methods are used to vertically position new labels on the display.
     private int getYCoord() {
         return (yCoord * 15) - 5;
     }
@@ -369,6 +351,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             heatCapacityStr = heatCap + " [" + heatCapWater + "]";
         }
 
+        heatR.color = GUIP.getColorForHeat(en.heat, Color.WHITE);
         heatR.setString(en.heat
                 + " (" + heatCapacityStr + " " + Messages.getString("GeneralInfoMapSet.capacity") + ")");
 
@@ -390,7 +373,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
                 || (en instanceof Mech && ((Mech) en).hasTracks())) {
             movementTypeL.setString(Messages.getString("GeneralInfoMapSet.movementModeL"));
             if (en.getMovementMode() == EntityMovementMode.AERODYNE) {
-                //Show "Fighter/AirMech" instead of "Aerodyne/WiGE"
+                // Show "Fighter/AirMech" instead of "Aerodyne/WiGE"
                 movementTypeR.setString(Messages.getString("BoardView1.ConversionMode.AERODYNE"));
             } else if (en.getMovementMode() == EntityMovementMode.WIGE) {
                 movementTypeR.setString(Messages.getString("BoardView1.ConversionMode.WIGE"));
@@ -411,25 +394,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             curSensorsL.setVisible(true);
             visualRangeL.setVisible(true);
             curSensorsR.setString(en.getSensorDesc());
-            visualRangeR.setString(Integer.toString(en.getGame()
-                    .getPlanetaryConditions().getVisualRange(en, false)));
-            //If using sensors, update our visual range display to the automatic detection range of the current sensor
-            if (en.isSpaceborne() && en.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
-                int autoVisualRange = 0;
-                //For squadrons. Default to the passive thermal/optical value used by component fighters
-                if (en.hasETypeFlag(Entity.ETYPE_FIGHTER_SQUADRON)) {
-                    autoVisualRange = Sensor.ASF_OPTICAL_FIRING_SOLUTION_RANGE;
-                }
-                if (en.getActiveSensor() != null) {
-                    if (en.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
-                        // required because the return on this from the method below is for ground maps
-                        autoVisualRange = Sensor.ASF_RADAR_AUTOSPOT_RANGE;
-                    } else {
-                        autoVisualRange = (int) Math.ceil(en.getActiveSensor().getRangeByBracket() / 10.0);
-                    }
-                }
-                visualRangeR.setString(Integer.toString(autoVisualRange));
-            }
+            visualRangeR.setString(Integer.toString(Compute.getMaxVisualRange(en, false)));
         } else {
             curSensorsR.setVisible(false);
             visualRangeR.setVisible(false);

@@ -1,0 +1,165 @@
+Version:1.3
+Starslayer
+STY-4C
+mul id:9315
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3145
+source:Rec Guide:ilClan #26 - Dark Age
+rules level:2
+
+mass:50
+engine:250 Fusion Engine(IS)
+structure:IS Endo Steel
+myomer:Triple-Strength
+
+heat sinks:13 IS Double
+walk mp:5
+jump mp:5
+
+armor:Standard(Inner Sphere)
+LA armor:16
+RA armor:16
+LT armor:19
+RT armor:19
+CT armor:25
+HD armor:9
+LL armor:24
+RL armor:24
+RTL armor:5
+RTR armor:5
+RTC armor:6
+
+Weapons:6
+Improved Heavy Large Laser, Right Arm
+ER Medium Laser, Left Torso
+ER Medium Laser, Left Torso
+Improved Heavy Large Laser, Right Torso
+ER Small Laser, Head
+SRM 4 (I-OS), Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+Triple Strength Myomer
+Triple Strength Myomer
+Triple Strength Myomer
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+CLImprovedHeavyLargeLaser
+CLImprovedHeavyLargeLaser
+CLImprovedHeavyLargeLaser
+Triple Strength Myomer
+Triple Strength Myomer
+Triple Strength Myomer
+
+Left Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Jump Jet
+Jump Jet
+CLERMediumLaser
+CLERMediumLaser
+ISSRM4IOS
+Coolant Pod
+IS Endo Steel
+-Empty-
+-Empty-
+
+Right Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Jump Jet
+Jump Jet
+CLImprovedHeavyLargeLaser
+CLImprovedHeavyLargeLaser
+CLImprovedHeavyLargeLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+IS Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLERSmallLaser (R)
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Starslayer was intended to replace the Crab as the Star League's standard medium 'Mech after Cosara Weaponries were unable to meet the SLDF's required production volumes.
+capabilities:The Starslayer is built on a lightweight Thor-4 Endo Steel chassis and reaches a top speed of 86.4 km/h with its Magna 250 fusion engine. The Starslayer also has five Odin's Own Model 34z jump jets which give it the ability to jump up to one hundred and fifty meters. Finally, the design carries nine and a half tons of Norse-34 ferro-fibrous with CASE. The CASE protects the BattleMech from complete destruction in the event of an ammunition explosion.
+deployment:No information on this variant
+history:Though Blue Shot's design won selection in 2765, the Starslayer would also be plagued with technical delays with its tracking system that would delay full production until 2772 and the Amaris Civil War. Despite the SLDF's desperate need for matériel, tensions between General Kerensky and Archon Robert Steiner II would result in Blue Shot delaying SLDF shipments until 2781 due to lack of "up-to-date" shipping information and as a result the Starslayer would be far more common in the LCAF service than the SLDF. By now a thoroughly Lyran Commonwealth design, production of the original 2C Starslayer would cease during the technological decline of the early Succession Wars, with Blue Shot Weaponry resuming with the superior and updated STY-3C model in wake of the Clan Invasion.
+manufacturer:Blue Shot Weapons
+primaryfactory:Loxley
+systemmanufacturer:CHASSIS:Thor-4 Endo Steel
+systemmanufacturer:ENGINE:Magna 250
+systemmanufacturer:ARMOR:Unknown
+systemmanufacturer:JUMPJET:Odin’s Own Model 34z
+systemmanufacturer:COMMUNICATIONS:Tek BattleCom
+systemmanufacturer:TARGETING:FireScan with IndirecTrack
+

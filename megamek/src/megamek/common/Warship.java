@@ -12,9 +12,8 @@
  */
 package megamek.common;
 
-import java.text.NumberFormat;
-import java.util.Map;
-
+import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.common.cost.WarShipCostCalculator;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -180,196 +179,15 @@ public class Warship extends Jumpship {
     }
     
     @Override
-    public double getCost(boolean ignoreAmmo) {
-        double[] costs = new double[24];
-        int costIdx = 0;
-        double cost = 0;
-
-        // Control Systems
-        // Bridge
-        costs[costIdx++] += 200000 + 10 * weight;
-        // Computer
-        costs[costIdx++] += 200000;
-        // Life Support
-        costs[costIdx++] += 5000 * (getNCrew() + getNPassenger());
-        // Sensors
-        costs[costIdx++] += 80000;
-        // Fire Control Computer
-        costs[costIdx++] += 100000;
-        // Gunnery Control Systems
-        costs[costIdx++] += 10000 * getArcswGuns();
-        // Structural Integrity
-        costs[costIdx++] += 100000 * getSI();
-
-        // Maneuvering Drive
-        // Drive Unit
-        costs[costIdx++] += 500 * getOriginalWalkMP() * (weight / 100.0);
-        // Engine
-        costs[costIdx++] += 1000 * getOriginalWalkMP() * weight * 0.06;
-        // Engine Control Unit
-        costs[costIdx++] += 1000;
-
-        // KF Drive
-        double[] driveCost = new double[6];
-        int driveIdx = 0;
-        double driveCosts = 0;
-        // Drive Coil
-        driveCost[driveIdx++] += 60000000.0 + (75000000.0 * getDocks(true));
-        // Initiator
-        driveCost[driveIdx++] += 25000000.0 + (5000000.0 * getDocks(true));
-        // Controller
-        driveCost[driveIdx++] += 50000000.0;
-        // Tankage
-        driveCost[driveIdx++] += 50000.0 * getKFIntegrity();
-        // Sail
-        driveCost[driveIdx++] += 50000.0 * (30 + (weight / 20000.0));
-        // Charging System
-        driveCost[driveIdx++] += 500000.0 + (200000.0 * getDocks(true));
-        
-        for (int i = 0; i < driveIdx; i++) {
-            driveCosts += driveCost[i];
-        }
-
-        driveCosts *= 5;
-        if (hasLF()) {
-            driveCosts *= 3;
-        }
-
-        costs[costIdx++] += driveCosts;
-
-        // K-F Drive Support Systems
-        costs[costIdx++] += 20000000 * (50 + weight / 10000);
-
-        // Additional Ships Systems
-        // Attitude Thrusters
-        costs[costIdx++] += 25000;
-        // Docking Collars
-        costs[costIdx++] += 100000 * getDocks();
-        // Fuel Tanks
-        costs[costIdx++] += (200 * getFuel()) / getFuelPerTon() * 1.02;
-
-        // Armor
-        costs[costIdx++] += getArmorWeight() * EquipmentType.getArmorCost(armorType[0]);
-
-        // Heat Sinks
-        int sinkCost = 2000 + (4000 * getHeatType());
-        costs[costIdx++] += sinkCost * getHeatSinks();
-
-        // Escape Craft
-        costs[costIdx++] += 5000 * (getLifeBoats() + getEscapePods());
-
-        // Grav Decks
-        double deckCost = 0;
-        deckCost += 5000000 * getGravDeck();
-        deckCost += 10000000 * getGravDeckLarge();
-        deckCost += 40000000 * getGravDeckHuge();
-        costs[costIdx++] += deckCost;
-
-        // Transport Bays
-        int baydoors = 0;
-        long bayCost = 0;
-        long quartersCost = 0;
-        // Passenger and crew quarters and infantry bays are considered part of the structure
-        // and don't add to the cost
-        for (Bay next : getTransportBays()) {
-            baydoors += next.getDoors();
-            if (!next.isQuarters() && !(next instanceof InfantryBay) && !(next instanceof BattleArmorBay)) {
-                bayCost += next.getCost();
-            }
-        }
-
-        costs[costIdx++] += bayCost + (baydoors * 1000L);
-        costs[costIdx++] = quartersCost;
-
-        // Weapons and Equipment
-        // HPG
-        if (hasHPG()) {
-            costs[costIdx++] += 1000000000;
-        } else {
-            costs[costIdx++] += 0;
-        }
-        // Weapons and Equipment
-        costs[costIdx++] += getWeaponsAndEquipmentCost(ignoreAmmo);
-
-        // Sum Costs
-        for (int i = 0; i < costIdx; i++) {
-            cost += costs[i];
-        }
-
-        costs[costIdx++] = -getPriceMultiplier(); // Negative indicates multiplier
-        cost = Math.round(cost * getPriceMultiplier());
-        addCostDetails(cost, costs);
-        return cost;
+    public double getCost(CalculationReport calcReport, boolean ignoreAmmo) {
+        return WarShipCostCalculator.calculateCost(this, calcReport, ignoreAmmo);
     }
 
     @Override
     public double getPriceMultiplier() {
-        return 2.0; // Weight multiplier
+        return 2.0;
     }
     
-    private void addCostDetails(double cost, double[] costs) {
-        bvText = new StringBuffer();
-        String[] left = { "Bridge", "Computer", "Life Support", "Sensors", "FCS", "Gunnery Control Systems",
-                "Structural Integrity", "Drive Unit", "Engine", "Engine Control Unit",
-                "KF Drive", "KF Drive Support System", "Attitude Thrusters", "Docking Collars",
-                "Fuel Tanks", "Armor", "Heat Sinks", "Life Boats/Escape Pods", "Grav Decks",
-                "Bays", "Quarters", "HPG", "Weapons/Equipment", "Weight Multiplier" };
-
-        NumberFormat commafy = NumberFormat.getInstance();
-
-        bvText.append("<HTML><BODY><CENTER><b>Cost Calculations For ");
-        bvText.append(getChassis());
-        bvText.append(" ");
-        bvText.append(getModel());
-        bvText.append("</b></CENTER>");
-        bvText.append(nl);
-
-        bvText.append(startTable);
-        // find the maximum length of the columns.
-        for (int l = 0; l < left.length; l++) {
-            if (l == 21) {
-                getWeaponsAndEquipmentCost(true);
-            } else {
-                bvText.append(startRow);
-                bvText.append(startColumn);
-                bvText.append(left[l]);
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-
-                if (costs[l] == 0) {
-                    bvText.append("N/A");
-                } else if (costs[l] < 0) {
-                    bvText.append("x ");
-                    bvText.append(commafy.format(-costs[l]));
-                } else {
-                    bvText.append(commafy.format(costs[l]));
-
-                }
-                bvText.append(endColumn);
-                bvText.append(endRow);
-            }
-        }
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Total Cost:");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(commafy.format(cost));
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(endTable);
-        bvText.append("</BODY></HTML>");
-    }
-
     /**
      * All warships automatically have ECM if in space
      */
@@ -459,101 +277,6 @@ public class Warship extends Jumpship {
         return 0.8;
     }
 
-    @Override
-    public void setAlphaStrikeMovement(Map<String,Integer> moves) {
-        moves.put("", getWalkMP());
-    }
-
-    @Override
-    public int getBattleForceSize() {
-        // The tables are on page 356 of StartOps
-        if (getWeight() < 500000) {
-            return 1;
-        }
-        if (getWeight() < 800000) {
-            return 2;
-        }
-        if (getWeight() < 1200000) {
-            return 3;
-        }
-        return 4;
-    }
-
-    @Override
-    public int getBattleForceStructurePoints() {
-        return (int) Math.ceil(this.getSI() * 0.66);
-    }
-
-    @Override
-    public int getNumBattleForceWeaponsLocations() {
-        return 8;
-    }
-
-    @Override
-    public int getNumAlphaStrikeWeaponsLocations() {
-        return 4;
-    }
-
-    @Override
-    public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
-        if (index == location) {
-            return 1.0;
-        }
-        return 0;
-    }
-    
-    @Override
-    public double getAlphaStrikeLocationMultiplier(int index, int location, boolean rearMounted) {
-        switch (location) {
-            case LOC_NOSE:
-            case LOC_FLS:
-            case LOC_FRS:
-                if (index == 0) {
-                    return 1.0;
-                }
-                break;
-            case LOC_LBS:
-                if (index == 1) {
-                    return 1.0;
-                }
-                break;
-            case LOC_RBS:
-                if (index == 2) {
-                    return 1.0;
-                }
-                break;
-            case LOC_AFT:
-            case LOC_ALS:
-            case LOC_ARS:
-                if (index == 3) {
-                    return 1.0;
-                }
-                break;
-        }
-        return 0;
-    }
-
-    @Override
-    public String getBattleForceLocationName(int index) {
-        return getLocationAbbrs()[index];
-    }
-    
-    @Override
-    public String getAlphaStrikeLocationName(int index) {
-        switch (index) {
-            case 0:
-                return getLocationAbbrs()[LOC_NOSE];
-            case 1:
-                return getLocationAbbrs()[LOC_LBS];
-            case 2:
-                return getLocationAbbrs()[LOC_RBS];
-            case 3:
-                return getLocationAbbrs()[LOC_AFT];
-            default:
-                return "";
-        }
-    }
-    
     @Override
     public long getEntityType() {
         return Entity.ETYPE_AERO | Entity.ETYPE_JUMPSHIP | Entity.ETYPE_WARSHIP;

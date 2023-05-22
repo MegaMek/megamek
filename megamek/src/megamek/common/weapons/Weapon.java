@@ -13,20 +13,16 @@
  */
 package megamek.common.weapons;
 
-import java.io.Serializable;
-
-import megamek.common.AmmoType;
-import megamek.common.Game;
-import megamek.common.TargetRoll;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayweapons.CapitalLaserBayWeapon;
 import megamek.common.weapons.bayweapons.SubCapLaserBayWeapon;
-import megamek.server.Server;
+import megamek.server.GameManager;
+
+import java.io.Serializable;
 
 /**
  * A class representing a weapon.
@@ -88,19 +84,19 @@ public abstract class Weapon extends WeaponType implements Serializable {
     public static final String MODE_NORMAL = "Normal";
     
 
-    public @Nullable AttackHandler fire(WeaponAttackAction waa, Game game, Server server) {
+    public @Nullable AttackHandler fire(WeaponAttackAction waa, Game game, GameManager gameManager) {
         ToHitData toHit = waa.toHit(game);
         // FIXME: SUPER DUPER EVIL HACK: swarm missile handlers must be returned even
         // if the have an impossible to hit, because there might be other targets
         // someone else please please figure out how to do this nice
-        AttackHandler ah = getCorrectHandler(toHit, waa, game, server);
+        AttackHandler ah = getCorrectHandler(toHit, waa, game, gameManager);
         return (ah instanceof LRMSwarmHandler) ? ah
                 : (toHit.getValue() == TargetRoll.IMPOSSIBLE) ? null : ah;
     }
 
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, Server server) {
-        return new WeaponHandler(toHit, waa, game, server);
+            WeaponAttackAction waa, Game game, GameManager gameManager) {
+        return new WeaponHandler(toHit, waa, game, gameManager);
     }
     
     /**

@@ -1,11 +1,11 @@
 #  A MegaMek Scenario file
 MMSVersion=1
 Name=The Great Refusal - Battle 4
-Description=Strana Mechty, 23rd April 3060. Clan Jade Falcon V Comstar
+Description=Strana Mechty, 23rd April 3060. Clan Jade Falcon V ComStar
 BoardWidth=1
 BoardHeight=1
-Maps=MapSet2/16x17 Mountain Lake,
-Factions=JadeFalcon,Comstar
+Maps=Map Set 2/16x17 Mountain Lake,
+Factions=JadeFalcon,ComStar
 Location_JadeFalcon=N
 Location_Comstar=S
 Unit_JadeFalcon_1=Thor (Summoner) Prime,Marthe Pryde,2,2

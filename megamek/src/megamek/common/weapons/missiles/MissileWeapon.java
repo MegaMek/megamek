@@ -19,7 +19,7 @@
  */
 package megamek.common.weapons.missiles;
 
-import megamek.common.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Compute;
 import megamek.common.Game;
 import megamek.common.MiscType;
@@ -29,7 +29,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.MissileWeaponHandler;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks
@@ -58,8 +58,8 @@ public abstract class MissileWeapon extends AmmoWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, Server server) {
-        return new MissileWeaponHandler(toHit, waa, game, server);
+            WeaponAttackAction waa, Game game, GameManager manager) {
+        return new MissileWeaponHandler(toHit, waa, game, manager);
     }
     
     @Override
@@ -79,11 +79,11 @@ public abstract class MissileWeapon extends AmmoWeapon {
             } else if (fcs.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)) {
                 clusterRoll = 8;
             } else if (fcs.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
-                clusterRoll = 10;
+                clusterRoll = 11;
             }
         }
         double damage = Compute.calculateClusterHitTableAmount(clusterRoll, getRackSize());
-        if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
+        if ((range == AlphaStrikeElement.SHORT_RANGE) && (getMinimumRange() > 0)) {
             damage = adjustBattleForceDamageForMinRange(damage);
         }
         return damage / 10.0;
@@ -95,7 +95,7 @@ public abstract class MissileWeapon extends AmmoWeapon {
             return 0;
         }
         double damage = Compute.calculateClusterHitTableAmount(7, getRackSize() * baSquadSize);
-        if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
+        if ((range == AlphaStrikeElement.SHORT_RANGE) && (getMinimumRange() > 0)) {
             damage = adjustBattleForceDamageForMinRange(damage);
         }
         return damage / 10.0;

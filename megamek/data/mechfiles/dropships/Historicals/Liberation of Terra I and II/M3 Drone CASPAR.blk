@@ -13,11 +13,11 @@ Dropship
 </UnitType>
 
 <Name>
-M3 Drone
+Drone
 </Name>
 
 <Model>
-CASPAR
+M-3
 </Model>
 
 <mul id:>
@@ -230,6 +230,10 @@ H:Liberation of Terra I - Star League
 <tonnage>
 4000.0
 </tonnage>
+
+<bv>
+21351
+</bv>
 
 <designtype>
 1

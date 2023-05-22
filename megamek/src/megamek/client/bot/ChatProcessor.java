@@ -24,6 +24,7 @@ import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.util.StringUtil;
 import megamek.server.Server;
 import megamek.server.commands.DefeatCommand;
+import megamek.server.commands.GameMasterCommand;
 import megamek.server.commands.JoinTeamCommand;
 import org.apache.logging.log4j.LogManager;
 
@@ -34,7 +35,7 @@ public class ChatProcessor {
 
     boolean shouldBotAcknowledgeDefeat(String message, BotClient bot) {
         boolean result = false;
-        if (!StringUtility.isNullOrEmpty(message) &&
+        if (!StringUtility.isNullOrBlank(message) &&
             (message.contains("declares individual victory at the end of the turn.")
              || message.contains("declares team victory at the end of the turn."))) {
             String[] splitMessage = message.split(" ");
@@ -60,7 +61,7 @@ public class ChatProcessor {
     boolean shouldBotAcknowledgeVictory(String message, BotClient bot) {
         boolean result = false;
 
-        if (!StringUtility.isNullOrEmpty(message) && message.contains(DefeatCommand.wantsDefeat)) {
+        if (!StringUtility.isNullOrBlank(message) && message.contains(DefeatCommand.wantsDefeat)) {
             String[] splitMessage = message.split(" ");
             int i = 1;
             String name = splitMessage[i];
@@ -115,6 +116,8 @@ public class ChatProcessor {
             String msg = st.nextToken();
             if (msg.contains(JoinTeamCommand.SERVER_VOTE_PROMPT_MSG)) {
                 bot.sendChat("/allowTeamChange");
+            } else if (msg.contains(GameMasterCommand.SERVER_VOTE_PROMPT_MSG)) {
+                bot.sendChat("/allowGM");
             }
             return;
         } else if (p == null) {

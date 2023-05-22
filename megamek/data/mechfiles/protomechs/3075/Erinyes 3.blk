@@ -94,3 +94,36 @@ TRO 3075 - Jihad
 <tonnage>
 2.0
 </tonnage>
+
+<capabilities>
+The Erinyes were condemned to failure due to their poor pace, flimsy armor, and meager weaponry. The majority of these ProtoMechs and their pilots were deployed to the Jade Falcon Occupation Zone's Periphery flank and rear area security tasks.
+</capabilities>
+
+<overview>
+Clan Jade Falcon's initial design and production was the Erinyes ProtoMech. Khan Marthe Pryde cancelled the project in 3064 after seeing how poorly it performed in battle against the Lyran Alliance and Clan Wolf-in-Exile forces. The Erinyes had a simple problem: they were a proof-of-concept design meant to demonstrate that the ProtoMech program might operate.
+</overview>
+
+<deployment>
+The Erinyes 3 is apparently a derivative of the Erinyes 2, using the same larger engine. However, it increases leg armor protection and uses a Light Machine Gun. 
+</deployment>
+
+<history>
+Clan Smoke Jaguar struggled following the Battle of Tukayyid. Guerrilla attacks and uprisings in their Inner Sphere occupation zone had depleted supplies. Smoke Jaguar scientists discovered that their Clan worlds might soon lose BattleMech ores if nothing was done. The Clan's greatest scientists developed a revolutionary warfare unit that combined BattleMechs and Elemental Battle Armor. The smaller units would weigh one-tenth of BattleMechs and be half their height. With their smaller engines, the Smoke Jaguars could produce more of them for less material. ProtoMechs were designed to make a Point of five work as well as a BattleMech while using half the construction resources. Smoke Jaguar geneticists also started breeding pilots. To fit in a ProtoMech's torso, this new breed would need to be smaller than Elementals. Smoke Jaguar scientists and geneticists began working on ProtoMechs in secret, knowing that their Khans would not consider full-scale manufacturing unless they were proven useful in battle. Smoke Jaguar Khan Lincoln Osis discovered ProtoMechs during the Battle of Huntress. His Clan's dire requirements and the ProtoMechs' good performance against desperate odds mitigated his indignation at being uninformed about the secret endeavor. The Clans couldn't ignore the ProtoMech's premiere, even though the war was lost. After the Great Refusal and the demise of the Smoke Jaguars, numerous Clans raided Huntress to steal its technology. Clan Coyote and Clan Blood Spirit were the first to adopt the ProtoMech and enthusiastically develop it, especially the Spirits, who were resource-poor. Huntress salvaged ProtoMechs for most Clans. The Blood Spirits started a formal training program first. The Inner Sphere was uninterested in ProtoMech development. The machine needed Somebody to control it, and even if it could be reproduced, the moral and ethical issues would hinder broad use. Inner Sphere scientists also lacked the technological ability to reproduce ProtoMech's distinctive internal structure, armoring, and heat sinks, which would have resulted in bigger, less-effective units.
+</history>
+
+<manufacturer>
+CJF Factory Zone 5
+</manufacturer>
+
+<primaryFactory>
+Erewhon
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Teslan Perricote
+ENGINE:Unspecified
+ARMOR:ProtoMech Standard
+JUMPJET:MicroTan Streak
+COMMUNICATIONS:PMT-429
+TARGETING:Ribaldi 402 TTS
+</systemManufacturers>

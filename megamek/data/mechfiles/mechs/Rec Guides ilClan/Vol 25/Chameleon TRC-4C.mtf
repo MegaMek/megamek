@@ -1,0 +1,171 @@
+Version:1.3
+Chameleon
+TRC-4C
+mul id:9405
+Config:Biped
+techbase:Inner Sphere
+era:2820
+source:Rec Guide 25 - Early Succession War
+rules level:1
+
+mass:50
+engine:300 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:10 Single
+walk mp:6
+jump mp:6
+
+armor:Standard(Inner Sphere)
+LA armor:10
+RA armor:10
+LT armor:10
+RT armor:10
+CT armor:16
+HD armor:9
+LL armor:12
+RL armor:12
+RTL armor:2
+RTR armor:2
+RTC armor:3
+
+Weapons:9
+Medium Laser, Left Arm
+Large Laser, Right Arm
+Medium Laser, Right Arm
+Small Laser, Left Torso
+Small Laser, Left Torso
+Small Laser, Right Torso
+Small Laser, Right Torso
+Machine Gun, Center Torso
+Machine Gun, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Medium Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Large Laser
+Large Laser
+Medium Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Jump Jet
+Small Laser
+Small Laser
+IS Ammo MG - Full
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Jump Jet
+Small Laser
+Small Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Machine Gun
+Machine Gun
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:Since the Terran Hegemony introduced it in 2510, the Chameleon has been the premiere training BattleMech for light- and medium-BattleMech MechWarriors. 
+capabilities:The Chameleon was designed to help a new MechWarrior master the skills of maneuvering and heat management, with a top speed of 97.2 km/h and a jumping distance of 180 meters. The 'Mech also had an almost all energy weapons loadout, but cooled only by 10 single heat sinks; this paucity of freezers forces MechWarriors to concentrate on the 'Mech's heat levels.
+
+deployment:Also referred to as the CHM-3 Chameleon Training Scout, this formerly common but now obscure training 'Mech was armed with one large laser, two medium lasers, four small lasers, and two machine guns. With only 10 single heat sink this 'Mech was quite prone to overheating, forcing trainees to carefully manage their heat. As manufactured, this 'Mech is perhaps the only Level 1 official, if not canonical, design with 3 critical spaces of equipment installed in the center torso, two machine guns and half a ton of ammo, in violation of the design rules released with it. Additionally, as released, a quarter ton of armor remained unallocated.
+
+history:In fact, with its role away from the battlefield, except in the most desperate of circumstances, the Chameleon has suffered relatively little attrition. Combined with its continuous production on Hesperus II, the Chameleon is one of the most common BattleMechs. Even in the 31st century, the Chameleon is widely used at academies and training cadres throughout the Inner Sphere. In some instances, the Chameleon had been forced into combat situations, notably during the Dragoon Civil War. Production of the Chameleon halted briefly in 3052 when Defiance Industries decided to switch its production to the Nightsky, but was quickly resumed when J.B. BattleMechs Incorporated purchased the rights to the design. J.B. BattleMechs also introduced two battleworthy variants of the Chameleon. The Chameleon is a training 'Mech, intended to simulate a variety of opponents by mounting a wide variety of weapon systems. While a medium 'Mech by design, it doesn't always look like one; it can be fitted out with extra plates to modify its appearance, and carries special electronics to falsify its signature. It is these special abilities that let it look and scan as something other than what it is, hence the machine's name.
+
+manufacturer:Defiance Industries
+primaryfactory:Hesperus II
+systemmanufacturer:CHASSIS:Unknown
+systemmanufacturer:ENGINE:Unknown
+systemmanufacturer:ARMOR:Unknown
+systemmanufacturer:JUMPJET:Unknown
+systemmanufacturer:COMMUNICATIONS:Unknown
+systemmanufacturer:TARGETING:Unknown
+

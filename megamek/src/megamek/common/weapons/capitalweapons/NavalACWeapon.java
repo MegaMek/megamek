@@ -18,6 +18,8 @@
 package megamek.common.weapons.capitalweapons;
 
 import megamek.common.AmmoType;
+import megamek.common.Mounted;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.AmmoWeapon;
 
 /**
@@ -40,5 +42,11 @@ public abstract class NavalACWeapon extends AmmoWeapon {
     @Override
     public int getBattleForceClass() {
         return BFCLASS_CAPITAL;
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted linked) {
+        int maxRange = rackSize < 35 ? AlphaStrikeElement.LONG_RANGE : AlphaStrikeElement.MEDIUM_RANGE;
+        return (range <= maxRange) ? rackSize : 0;
     }
 }

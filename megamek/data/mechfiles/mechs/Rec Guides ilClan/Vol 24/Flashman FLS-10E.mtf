@@ -1,0 +1,173 @@
+Version:1.0
+Flashman
+FLS-10E
+mul id:8445
+
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3144
+source:Rec Guide:ilClan #24 - Dark Age
+rules level:3
+
+mass:75
+engine:375 XL (Clan) Engine
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:18 IS Double
+walk mp:5
+jump mp:0
+
+armor:Reflective(Inner Sphere)
+LA armor:24
+RA armor:24
+LT armor:22
+RT armor:22
+CT armor:30
+HD armor:9
+LL armor:32
+RL armor:32
+RTL armor:10
+RTR armor:10
+RTC armor:16
+
+Weapons:10
+ER Large Laser, Left Arm
+ER Large Laser, Center Torso
+ER Large Laser, Right Arm
+ER Small Laser, Head
+ER Medium Laser, Right Torso
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Torso
+ER Medium Laser, Left Torso
+ER Medium Laser, Right Arm
+Anti-Missile System, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+CLERLargeLaser
+CLERMediumLaser
+IS Reflective
+IS Reflective
+IS Reflective
+IS Reflective
+IS Reflective
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+CLERLargeLaser
+CLERMediumLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+CLERMediumLaser
+CLERMediumLaser (R)
+IS Endo Steel
+IS Reflective
+IS Reflective
+IS Reflective
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLERMediumLaser
+ISAntiMissileSystem
+ISAMS Ammo
+ISCASEII
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLERLargeLaser
+Supercharger
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLERSmallLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Reflective
+IS Reflective
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Flashman is an underrated heavy 'Mech, commonly called a "flashbulb" by MechWarriors for its heavy-energy configuration.
+
+capabilities:Designed to provide continuous energy based fire support for lancemates moving to attack or covering fire for withdrawing units. The use of a Faust/Shinji AT/TS targeting-tracking system gives the Flashman a level of accuracy few can match, while fifteen double heat sinks give it an effective heat management system. The 'Mech is also notable for using an extralight engine which makes it fast for its size, though not at the expense of protection thanks to thirteen and a half tons of armor.
+
+deployment:Unknown
+
+history:The Flashman, which was first introduced in 2701, is a 'Mech that is capable of engaging an enemy for extended periods of time with little re-supply. This made it one of the most prized 'Mechs in a commander's arsenal during the Star League and saw heavy use by line regiments, typically in a "fire brigade" role for heavy and assault lances. During advances it would stay to the rear to protect against ambushes and provide fire support for its lancemates. Towards the end of the Star League, several divisions had battalions composed of nothing but Flashmen, and thanks to its popularity these 'Mechs saw frequent use on the front lines. When the League dissolved, the design spread amongst the Successor States but fewer than 500 Flashmen were still operational at the start of the First Succession War. Their heavy use during this fighting saw many destroyed and production of new 'Mechs abruptly stopped in 2796 when Renault-Prime Industries on Wasat was destroyed. The Flashman was saved from extinction thanks to Defiance Industries, which was able to acquire the schematics and produced a downgraded version at their Hesperus II plant. Thanks to the fact that they owned the only remaining Flashman factory and could replace their combat losses, the Lyran Commonwealth remained the largest user of Flashman 'Mechs throughout the Succession Wars - at least until the unveiling of the Com Guards. ComStar also supplied examples of downgraded Flashmen to the Draconis Combine as part of Operation Rosebud. Following the recovery of the Helm Memory Core, Defiance Industries was able to restart production of original-model Flashman 'Mechs in the 3050s and built new variants for ComStar. After the Word of Blake seized control of Defiance Industries they also produced new variants which were supplied to their Militia for the Jihad.
+
+manufacturer:Defiance Industries
+primaryfactory:Hesperus II
+systemmanufacturer:CHASSIS:FLS/HV-1
+systemmanufacturer:ENGINE:GM 375 XL
+systemmanufacturer:ARMOR:Bowie Glinting Blade Reflective
+systemmanufacturer:COMMUNICATIONS:Duoteck 195
+systemmanufacturer:TARGETING:Faust/Shinji AT/TS
+

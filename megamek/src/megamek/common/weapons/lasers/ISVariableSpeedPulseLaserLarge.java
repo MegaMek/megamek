@@ -13,6 +13,7 @@
  */
 package megamek.common.weapons.lasers;
 
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.SimpleTechLevel;
 import megamek.common.WeaponType;
 
@@ -53,9 +54,21 @@ public class ISVariableSpeedPulseLaserLarge extends VariableSpeedPulseLaserWeapo
         medAV = 7;
         maxRange = RANGE_MED;
         rulesRefs = "321, TO";
+        //Nov 22 - CGL requested we move to Standard for Simple Tech Level 
         techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
                 .setISAdvancement(3070, 3072, 3080).setPrototypeFactions(F_FW,F_WB)
-                .setProductionFactions(F_FW,F_WB).setStaticTechLevel(SimpleTechLevel.ADVANCED);
+                .setProductionFactions(F_FW,F_WB).setStaticTechLevel(SimpleTechLevel.STANDARD);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range) {
+        if (range == AlphaStrikeElement.SHORT_RANGE) {
+            return 1.265;
+        } else if (range == AlphaStrikeElement.MEDIUM_RANGE) {
+            return 0.863;
+        } else {
+            return 0;
+        }
     }
 }

@@ -13,6 +13,8 @@
  */
 package megamek.common.weapons.lasers;
 
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.Mounted;
 /**
  * @author Andrew Hunter
  * @since Sep 12, 2004
@@ -53,5 +55,15 @@ public class CLERLaserMicro extends LaserWeapon {
                 .setClanApproximate(true, false, false, false, false)
                 .setPrototypeFactions(F_CSJ)
                 .setProductionFactions(F_CSJ);
+    }
+
+    @Override
+    public boolean isAlphaStrikePointDefense() {
+        return true;
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        return (range <= AlphaStrikeElement.SHORT_RANGE) ? 0.2 : 0;
     }
 }

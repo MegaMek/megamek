@@ -36,7 +36,7 @@ public class PilotOptions extends AbstractOptions {
         IBasicOptionGroup adv = addGroup("adv", LVL3_ADVANTAGES);
 
         addOption(adv, OptionsConstants.PILOT_ANIMAL_MIMIC, false);
-        // addOption(adv, OptionsConstants.PILOT_CROSS_COUNTRY, false);
+        addOption(adv, OptionsConstants.PILOT_CROSS_COUNTRY, false);
         addOption(adv, OptionsConstants.PILOT_DODGE_MANEUVER, false);
         // addOption(adv, OptionsConstants.PILOT_DUST_OFF, false);
         // addOption(adv, OptionsConstants.PILOT_HVY_LIFTER, false);
@@ -59,6 +59,7 @@ public class PilotOptions extends AbstractOptions {
         addOption(adv, OptionsConstants.PILOT_TM_FOREST_RANGER, false);
         addOption(adv, OptionsConstants.PILOT_TM_FROGMAN, false);
         addOption(adv, OptionsConstants.PILOT_TM_MOUNTAINEER, false);
+        addOption(adv, OptionsConstants.PILOT_TM_NIGHTWALKER, false);
         addOption(adv, OptionsConstants.PILOT_TM_SWAMP_BEAST, false);
         // addOption(adv, OptionsConstants.PILOT_WIND_WALKER, false);
         addOption(adv, OptionsConstants.PILOT_ZWEIHANDER, false);
@@ -87,7 +88,7 @@ public class PilotOptions extends AbstractOptions {
          // addOption(adv, OptionsConstants.MISC_COMBAT_INTUITION, false);
          // addOption(adv, OptionsConstants.MISC_DEMORALIZER, false);
          addOption(adv, OptionsConstants.MISC_EAGLE_EYES, false);
-         // addOption(adv, OptionsConstants.MISC_ENV_SPECIALIST, false);
+         addOption(adv, OptionsConstants.MISC_ENV_SPECIALIST, new Vector<>());
          addOption(adv, OptionsConstants.MISC_FORWARD_OBSERVER, false);
          addOption(adv, OptionsConstants.MISC_HUMAN_TRO, new Vector<>());
          addOption(adv, OptionsConstants.MISC_IRON_MAN, false);

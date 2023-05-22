@@ -53,7 +53,7 @@ public enum IlluminationLevel {
 
     /**
      * @return the level of illumination for a given coords. Different light sources affect how much
-     * the night-time penalties are reduced.
+     * the nighttime penalties are reduced.
      * Note: this method should be used for determining if a Coords/Hex is illuminated, not
      * Game::getIlluminatedPositions, as that just returns the hexes that are effected by
      * searchlights, whereas this one considers searchlights as well as other light sources.

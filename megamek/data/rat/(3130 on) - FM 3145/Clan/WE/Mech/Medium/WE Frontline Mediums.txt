@@ -1,0 +1,12 @@
+Wolf Empire Frontline Medium Mechs
+Lobo 2,1
+Griffin IIC 8,2
+Lobo 2,3
+Sun Cobra (Standard),4
+Lobo (Standard),5
+Sun Cobra (Standard),6
+Phantom Prime,5
+Fenris (Ice Ferret) Prime,4
+Black Hawk (Nova) Prime,3
+Fenris (Ice Ferret) Prime,2
+Phantom Prime,1

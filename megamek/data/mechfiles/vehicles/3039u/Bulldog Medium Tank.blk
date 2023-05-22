@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,9 +16,9 @@ Tank
 Bulldog Medium Tank
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 441
@@ -28,6 +28,10 @@ Bulldog Medium Tank
 2673
 </year>
 
+<originalBuildYear>
+2673
+</originalBuildYear>
+
 <type>
 IS Level 1
 </type>
@@ -35,6 +39,9 @@ IS Level 1
 <motion_type>
 Tracked
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 4
@@ -77,6 +84,38 @@ SRM 4
 Large Laser
 </Turret Equipment>
 
+<capabilities>
+Its speed is not exceptional and its protection of 6½ tons of standard armor is anything but ample. On the other hand, it is easy to repair and said to be a reliable and cheap asset for any field commander that needs a backbone for his vehicle forces.
+</capabilities>
+
+<overview>
+The Bulldog could be called a "Jack of all trades", featuring a classic layout of one main gun and a few secondary weapons.
+</overview>
+
+<deployment>
+The Large Laser is the tank's main gun. It has decent range and striking power, but critics note that mounting such a large energy weapon on an ICE-powered vehicle is a waste of tonnage. Two SRM-4-racks, supplied with two tons of ammunition, are reliable backups and the Hovertech Quad is well-known throughout the Inner Sphere. The Machine Gun mounted in the vehicle's front was developed by Bulldog Enterprises as well and is operated by the driver.
+</deployment>
+
+<history>
+Bulldog Enterprises was a well-known manufacturer of civilian vehicles that tried to break into the huge market for military hardware by producing the Bulldog Main Battle Tank. As the market for heavy vehicles was already largely saturated with well-constructed tanks, the Bulldog was not the economic success the company hoped for, despite its more than adequate firepower. It is worth noting that Bulldog Enterprises developed the tank's main weapon all by themselves to keep costs down. This is quite remarkable, given that it was producing strictly nonmilitary hardware prior to the Bulldog. The tank's sales were poor initially, and the Bulldog was meant to take advantage of the Star League Defense Force's buildup in late twenty-sixth century to finally produce a richer cash flow. In 2700, Bulldog Enterprises licensed rights to produce the tank to Quikscell Company, hoping that interested royalties would boost their sagging sales. It survived the Succession Wars due to its low cost and easily accessible replacement parts.
+</history>
+
+<manufacturer>
+Quikscell Company,Bulldog Enterprises
+</manufacturer>
+
+<primaryFactory>
+Ares,Proserpina
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Bulldog 240 ICE
+ARMOR:Bulldog Standard
+COMMUNICATIONS:Xilex-2000
+TARGETING:Xilex-2000
+</systemManufacturers>
+
 <source>
 TRO 3039 - Succession Wars
 </source>
@@ -84,3 +123,8 @@ TRO 3039 - Succession Wars
 <tonnage>
 60.0
 </tonnage>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+

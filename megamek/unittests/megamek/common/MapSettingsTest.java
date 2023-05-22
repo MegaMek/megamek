@@ -1,54 +1,60 @@
 /*
- * MegaMek -
- * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2000-2005 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.Assert.*;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author nderwin
  */
 public class MapSettingsTest {
 
-    @Rule
-    public TemporaryFolder tmpFolder = new TemporaryFolder();
+    @TempDir
+    private Path tempDirectory;
     
     @Test
-    public void testSaveAndLoad() throws UnsupportedEncodingException, IOException {
-        File f = tmpFolder.newFile("test-map-settings.xml");
-        OutputStream os = new FileOutputStream(f);
-        
+    public void testSaveAndLoad() throws IOException {
+        assertTrue(Files.isDirectory(tempDirectory));
+        final Path createdFilePath = Files.createFile(tempDirectory.resolve("test-map-settings.xml"));
+        final File file = createdFilePath.toFile();
+
         MapSettings testMe = MapSettings.getInstance();
-        testMe.setBoardSize(32, 34);
-        testMe.save(os);
-        
-        assertTrue(f.exists());
-        assertTrue(f.length() > 0);
-        
-        InputStream is = new FileInputStream(f);
-        testMe = MapSettings.getInstance(is);
+        try (OutputStream os = new FileOutputStream(file)) {
+            testMe.setBoardSize(32, 34);
+            testMe.save(os);
+        }
+
+        assertTrue(file.exists());
+        assertTrue(file.length() > 0);
+
+        try (InputStream is = new FileInputStream(file)) {
+            testMe = MapSettings.getInstance(is);
+        }
 
         assertEquals(32, testMe.getBoardWidth());
         assertEquals(34, testMe.getBoardHeight());
@@ -72,6 +78,10 @@ public class MapSettingsTest {
         assertEquals(10, testMe.getMaxSandSpots());
         assertEquals(1, testMe.getMinSandSize());
         assertEquals(2, testMe.getMaxSandSize());
+        assertEquals(0, testMe.getMinSnowSize());
+        assertEquals(0, testMe.getMaxSnowSize());
+        assertEquals(0, testMe.getMinSnowSpots());
+        assertEquals(0, testMe.getMaxSnowSpots());
         assertEquals(2, testMe.getMinPlantedFieldSpots());
         assertEquals(10, testMe.getMaxPlantedFieldSpots());
         assertEquals(1, testMe.getMinPlantedFieldSize());
@@ -128,5 +138,4 @@ public class MapSettingsTest {
         assertEquals(8, testMe.getMountainHeightMax());
         assertEquals(0, testMe.getMountainStyle());
     }
-
 }

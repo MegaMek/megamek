@@ -1,0 +1,12 @@
+Rasalhague Dominion Frontline Medium Mechs
+Ursus (Standard),1
+Beowulf IIC (Standard),2
+Ursus II (Standard),3
+Beowulf IIC (Standard),4
+Grendel (Mongrel) Prime,5
+Ursus (Standard),6
+Ryoken (Stormcrow) Prime,5
+Dasher II 2,4
+Dragonfly (Viper) Prime,3
+Black Hawk (Nova) Prime,2
+Dragonfly (Viper) A,1

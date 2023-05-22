@@ -14,11 +14,7 @@
 package megamek.common.weapons.missiles;
 
 import megamek.common.AmmoType;
-import megamek.common.BattleForceElement;
-import megamek.common.Compute;
 import megamek.common.Game;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.GameOptions;
@@ -41,7 +37,7 @@ import megamek.common.weapons.SRMHandler;
 import megamek.common.weapons.SRMInfernoHandler;
 import megamek.common.weapons.SRMSmokeWarheadHandler;
 import megamek.common.weapons.SRMTandemChargeHandler;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks
@@ -66,92 +62,67 @@ public abstract class MMLWeapon extends MissileWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, Server server) {
+            WeaponAttackAction waa, Game game, GameManager manager) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked().getType();
         if (atype.hasFlag(AmmoType.F_MML_LRM)) {
             if (atype.getMunitionType() == AmmoType.M_FRAGMENTATION) {
-                return new LRMFragHandler(toHit, waa, game, server);
+                return new LRMFragHandler(toHit, waa, game, manager);
             }
             if (atype.getMunitionType() == AmmoType.M_ANTI_TSM) {
-                return new LRMAntiTSMHandler(toHit, waa, game, server);
+                return new LRMAntiTSMHandler(toHit, waa, game, manager);
             }
             if (atype.getMunitionType() == AmmoType.M_THUNDER
                     || atype.getMunitionType() == AmmoType.M_THUNDER_ACTIVE
                     || atype.getMunitionType() == AmmoType.M_THUNDER_AUGMENTED
                     || atype.getMunitionType() == AmmoType.M_THUNDER_INFERNO
                     || atype.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB) {
-                return new LRMScatterableHandler(toHit, waa, game, server);
+                return new LRMScatterableHandler(toHit, waa, game, manager);
             }
             if (atype.getMunitionType() == AmmoType.M_SWARM) {
-                return new LRMSwarmHandler(toHit, waa, game, server);
+                return new LRMSwarmHandler(toHit, waa, game, manager);
             }
             if (atype.getMunitionType() == AmmoType.M_SWARM_I) {
-                return new LRMSwarmIHandler(toHit, waa, game, server);
+                return new LRMSwarmIHandler(toHit, waa, game, manager);
             }
             if (atype.getMunitionType() == AmmoType.M_DEAD_FIRE) {
-                return new LRMDeadFireHandler(toHit, waa, game, server);
+                return new LRMDeadFireHandler(toHit, waa, game, manager);
             }
             if (atype.getMunitionType() == AmmoType.M_FOLLOW_THE_LEADER) {
-                return new LRMFollowTheLeaderHandler(toHit, waa, game, server);
+                return new LRMFollowTheLeaderHandler(toHit, waa, game, manager);
             }
             if (atype.getMunitionType() == AmmoType.M_SMOKE_WARHEAD) {
-                return new LRMSmokeWarheadHandler(toHit, waa, game, server);
+                return new LRMSmokeWarheadHandler(toHit, waa, game, manager);
             }
 
-            return new LRMHandler(toHit, waa, game, server);
+            return new LRMHandler(toHit, waa, game, manager);
 
         }
         if (atype.getMunitionType() == AmmoType.M_FRAGMENTATION) {
-            return new SRMFragHandler(toHit, waa, game, server);
+            return new SRMFragHandler(toHit, waa, game, manager);
         }
         if (atype.getMunitionType() == AmmoType.M_AX_HEAD) {
-            return new SRMAXHandler(toHit, waa, game, server);
+            return new SRMAXHandler(toHit, waa, game, manager);
         }
         if (atype.getMunitionType() == AmmoType.M_ANTI_TSM) {
-            return new SRMAntiTSMHandler(toHit, waa, game, server);
+            return new SRMAntiTSMHandler(toHit, waa, game, manager);
         }
         if (atype.getMunitionType() == AmmoType.M_INFERNO) {
-            return new SRMInfernoHandler(toHit, waa, game, server);
+            return new SRMInfernoHandler(toHit, waa, game, manager);
         }
         if (atype.getMunitionType() == AmmoType.M_DEAD_FIRE) {
-            return new SRMDeadFireHandler(toHit, waa, game, server);
+            return new SRMDeadFireHandler(toHit, waa, game, manager);
         }
         if (atype.getMunitionType() == AmmoType.M_TANDEM_CHARGE) {
-            return new SRMTandemChargeHandler(toHit, waa, game, server);
+            return new SRMTandemChargeHandler(toHit, waa, game, manager);
         }
         if (atype.getMunitionType() == AmmoType.M_SMOKE_WARHEAD) {
-            return new SRMSmokeWarheadHandler(toHit, waa, game, server);
+            return new SRMSmokeWarheadHandler(toHit, waa, game, manager);
         }
 
-        return new SRMHandler(toHit, waa, game, server);
+        return new SRMHandler(toHit, waa, game, manager);
     }
-    
-    
-    @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
-        int clusterRoll = 7;
-        if (fcs != null && fcs.getType() instanceof MiscType) {
-            if (fcs.getType().hasFlag(MiscType.F_ARTEMIS)) {
-                clusterRoll = 9;
-            } else if (fcs.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)) {
-                clusterRoll = 8;
-            } else if (fcs.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
-                clusterRoll = 10;
-            }
-        }
-        double damage = Compute.calculateClusterHitTableAmount(clusterRoll, getRackSize());
-        if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
-            damage = adjustBattleForceDamageForMinRange(damage);
-        }
-        if (range < BattleForceElement.MEDIUM_RANGE) {
-            damage *= 2;
-        } else if (range < BattleForceElement.LONG_RANGE) {
-            damage *= 1.5;
-        }
-        return damage / 10.0;
-    }
-    
+
     @Override
     public int getBattleForceClass() {
         return BFCLASS_MML;

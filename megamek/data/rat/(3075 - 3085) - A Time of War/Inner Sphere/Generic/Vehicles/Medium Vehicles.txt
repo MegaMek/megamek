@@ -6,7 +6,7 @@ Drillson Heavy Hover Tank (Streak),4
 Myrmidon Medium Tank (Standard),5
 Vedette Medium Tank (Ultra),6
 Maxim Heavy Hover Transport (3052 Upgrade),5
-Condor Heavy Hover Tank (Upgrade) (Standard),4
+Condor Heavy Hover Tank (Upgrade),4
 Vedette Medium Tank (LB-X),3
 Goblin Infantry Support Vehicle (Standard),2
 Regulator Hovertank (Standard),1

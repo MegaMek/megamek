@@ -16,9 +16,9 @@ VTOL
 Kamakiri Attack VTOL
 </Name>
 
-<Model>
-(Standard)
-</Model>
+<model>
+
+</model>
 
 <mul id:>
 6382
@@ -91,3 +91,34 @@ TRO 3145 Draconis Combine - Early Republic
 <tonnage>
 55.0
 </tonnage>
+
+<capabilities>
+Moving as fast as many reconnaissance and strike platforms in service with the DCMS already thanks to the DAV 155 XL extra light engine, the original specification armor installed by Yan was replaced with seven tons of StarGuard Aurora Reflective at the request of the DCMS, who wanted to improve the Kamakari's protection against energy weapons, although the nature of the Reflective Armor didn't offer any additional protection against the flak commonly directed at VTOLs.
+</capabilities>
+
+<overview>
+The Kamakiri Attack VTOL was developed at the end of the thirty-first century by Yan Manufacturing of New Samarkand as a result of their growing success in the military aerospace market.
+</overview>
+
+<deployment>
+The Kamakiri mounted three weapon systems mounted in the front of the VTOL - a single Tiegart Particle Projection Cannon and a pair of Telos ThunderShot Thunderbolt 10 Missile Launchers. Three tons of ammunition for the Thunderbolt Launchers was stored inside the body of the Kamakiri.
+</deployment>
+
+<history>
+Dubbed as resembling a praying mantis, the Kamakiri was an immediate success; the Draconis Combine Mustered Soldiery personnel responsible for supervising the first vehicle trial watched for just two minutes before approving the Kamakiri for purchase.
+</history>
+
+<manufacturer>
+Yan Manufacturing
+</manufacturer>
+
+<primaryFactory>
+New Samarkand
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:DAV 155 XL Fusion
+ARMOR:StarGuard Aurora Reflective
+COMMUNICATIONS:Scuti Dualcom
+TARGETING:Radcom T11
+</systemManufacturers>

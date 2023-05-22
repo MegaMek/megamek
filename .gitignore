@@ -17,9 +17,11 @@ Thumbs.db
 out/
 .idea/
 .vscode/
+.run/
 .classpath
 .project
 .classpath
+.run
 settings_local.gradle
 properties_local.gradle
 

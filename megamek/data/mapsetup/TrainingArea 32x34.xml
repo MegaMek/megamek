@@ -4,8 +4,8 @@
     <BOARDHEIGHT>17</BOARDHEIGHT>
     <MAPWIDTH>2</MAPWIDTH>
     <MAPHEIGHT>2</MAPHEIGHT>
-    <BOARDS>\buildings_no_basement\Trainingsgelaende 1</BOARDS>
-    <BOARDS>\buildings_no_basement\Trainingsgelaende 2</BOARDS>
-    <BOARDS>\buildings_no_basement\Trainingsgelaende 3</BOARDS>
-    <BOARDS>\buildings_no_basement\Trainingsgelaende 4</BOARDS>
+    <BOARDS>/unofficial/DarkISI/16x17 Trainingsgelaende 1</BOARDS>
+    <BOARDS>/unofficial/DarkISI/16x17 Trainingsgelaende 2</BOARDS>
+    <BOARDS>/unofficial/DarkISI/16x17 Trainingsgelaende 3</BOARDS>
+    <BOARDS>/unofficial/DarkISI/16x17 Trainingsgelaende 4</BOARDS>
 </MAPSETUP>

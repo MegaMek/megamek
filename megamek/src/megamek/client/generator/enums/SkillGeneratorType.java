@@ -19,7 +19,6 @@
 package megamek.client.generator.enums;
 
 import megamek.MegaMek;
-import megamek.common.util.EncodeControl;
 
 import java.util.ResourceBundle;
 
@@ -27,7 +26,8 @@ public enum SkillGeneratorType {
     //region Enum Declarations
     INNER_SPHERE("SkillGeneratorType.INNER_SPHERE.text", "SkillGeneratorType.INNER_SPHERE.toolTipText"),
     CLAN("SkillGeneratorType.CLAN.text", "SkillGeneratorType.CLAN.toolTipText"),
-    MANEI_DOMINI("SkillGeneratorType.MANEI_DOMINI.text", "SkillGeneratorType.MANEI_DOMINI.toolTipText");
+    MANEI_DOMINI("SkillGeneratorType.MANEI_DOMINI.text", "SkillGeneratorType.MANEI_DOMINI.toolTipText"),
+    SOCIETY("SkillGeneratorType.SOCIETY.text", "SkillGeneratorType.SOCIETY.toolTipText");
     //endregion Enum Declarations
 
     //region Variable Declarations
@@ -38,7 +38,7 @@ public enum SkillGeneratorType {
     //region Constructors
     SkillGeneratorType(final String name, final String toolTipText) {
         final ResourceBundle resources = ResourceBundle.getBundle("megamek.client.messages",
-                MegaMek.getMMOptions().getLocale(), new EncodeControl());
+                MegaMek.getMMOptions().getLocale());
         this.name = resources.getString(name);
         this.toolTipText = resources.getString(toolTipText);
     }
@@ -61,6 +61,10 @@ public enum SkillGeneratorType {
 
     public boolean isManeiDomini() {
         return this == MANEI_DOMINI;
+    }
+    
+    public boolean isSociety() {
+        return this == SOCIETY;
     }
     //endregion Boolean Comparisons
 

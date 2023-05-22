@@ -27,6 +27,7 @@ import megamek.client.ui.renderers.AbstractIconRenderer;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
 import megamek.common.util.fileUtils.AbstractDirectory;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -160,7 +161,11 @@ public abstract class AbstractIconChooser extends AbstractPanel implements TreeS
         add(searchPanel(), BorderLayout.PAGE_START);
         add(getSplitPane(), BorderLayout.CENTER);
 
-        finalizeInitialization();
+        try {
+            finalizeInitialization();
+        } catch (Exception ex) {
+            LogManager.getLogger().error("Error finalizing the Icon Chooser. Returning the created dialog, but this is likely to cause some oddities.", ex);
+        }
     }
 
     private JPanel searchPanel() {
@@ -202,13 +207,16 @@ public abstract class AbstractIconChooser extends AbstractPanel implements TreeS
     /**
      * This provides a way to override the end of initialization, which is required for MekHQ's
      * ForcePieceIcons.
+     * @throws Exception if there's an issue finishing initialization. Normally this means there's
+     * an issue setting the preferences, which normally means that a component has had its name
+     * value set.
      */
-    protected void finalizeInitialization() {
+    protected void finalizeInitialization() throws Exception {
         setPreferences();
     }
 
     @Override
-    protected void setCustomPreferences(final PreferencesNode preferences) {
+    protected void setCustomPreferences(final PreferencesNode preferences) throws Exception {
         super.setCustomPreferences(preferences);
         preferences.manage(new JSplitPanePreference(getSplitPane()));
         preferences.manage(new JToggleButtonPreference(getChkIncludeSubdirectories()));

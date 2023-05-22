@@ -73,9 +73,9 @@ Jifty Transportable Field Repair Unit JI-50 (MG),3
 Jifty Transportable Field Repair Unit JI-50 (ML),3
 Jifty Transportable Field Repair Unit JI-50 (Q-Vehicle),3
 Korvin Tank KRV-2,3
-M.A.S.H. Truck (Standard),18
-M.A.S.H. Truck (Small),9
-M.A.S.H. Truck (ICE),27
+MASH Truck (Standard),18
+MASH Truck (Small),9
+MASH Truck (ICE),27
 Marsden I,9
 Merkava Heavy Tank Mk VI,3
 Merkava Heavy Tank Mk VII,9
@@ -107,7 +107,7 @@ CattleMaster CTL-3R3 SecurityMech,3
 Copper SecurityMech CPK-19,9
 Copper SecurityMech CPK-65,9
 Crosscut ED-X1 LoggerMech,18
-Crosscut ED-X2 ForestryMech,18
+Crosscut ED-X2 LoggerMech,18
 Crosscut ED-X2 (RL),3
 Crosscut ED-X2 (Flamer),9
 Crosscut ED-X2M LoggerMech MOD,18
@@ -148,7 +148,7 @@ Marco MR-8E,3
 Patron LoaderMech (Standard),18
 Patron MilitiaMech PTN-2,9
 Peacekeeper PK-6 SecurityMech,9
-Peacemaker PM6 PoliceMech,3
+Peacemaker PM-6 PoliceMech,3
 Pompier Firemech GM-3A,9
 Pompier Firemech GM-3CD,9
 Pompier Firemech GM-3HT,18

@@ -1,0 +1,170 @@
+Version:1.3
+Warhammer IIC
+
+mul id:3500
+Config:Biped
+techbase:Clan
+era:2829
+source:Rec Guide:ilClan #4 - Early Succession War
+rules level:2
+
+mass:80
+engine:320 Fusion (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:20 Clan Double
+walk mp:4
+jump mp:0
+
+armor:Ferro-Fibrous(Clan)
+LA armor:24
+RA armor:24
+LT armor:24
+RT armor:24
+CT armor:30
+HD armor:9
+LL armor:30
+RL armor:30
+RTL armor:10
+RTR armor:10
+RTC armor:15
+
+Weapons:8
+ER PPC, Left Arm
+ER PPC, Right Arm
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Right Torso
+Medium Pulse Laser, Right Torso
+SRM 6, Right Torso
+Medium Pulse Laser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLERPPC
+CLERPPC
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLERPPC
+CLERPPC
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLMediumPulseLaser
+CLMediumPulseLaser
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Right Torso:
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLSRM6
+Clan Ammo SRM-6
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLMediumPulseLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Clan's interpretation on the classic Warhammer has never been subtle. The BattleMech's hyper-advanced technology only emphasized and improved its duty as a frontline brawler; boosting its mass by 10 tons (with equivalent increases in armor protection) made it even more powerful.
+
+capabilities:Thanks to their technological expertise, they were able to add ten tons with the same speed and firepower and nearly double the armor of the original. The Warhammer IIC is built on an Endo Steel frame and is protected by tons of ferro-fibrous armor. The result is a dangerous 'Mech, able to hold its own in any battle against the Inner Sphere. Also note that the armor was the primary concern when designing the IIC version rivaling even 100 ton assault 'Mechs in durability and protection.
+
+deployment:Paired Mk. XVII ER PPCs allow the Warhammer IIC to inflict fifty percent more damage than the regular Successor States' PPCs. Added to an SRM-6 launcher and five Medium Pulse Lasers, this firepower overwhelms most 'Mechs of equal or lesser tonnage. Twenty double heat sinks keep the design relatively cool.
+
+history:The Warhammer IIC is now the most common Clan BattleMech in the Inner Sphere. These remarkable machines are fielded by every major Inner Sphere force, Clan, and many large mercenary groups. It is only found on the periphery, where its equally outstanding price tag is simply too high for these countries to justify.
+
+manufacturer:Snow Raven Industrial Complex Alpha,Mu Manufacturing Plant 3H,Sheridan LM-TA 8-10
+primaryfactory:Dante,Paxon,Sheridan
+systemmanufacturer:CHASSIS:SFX-80 Endo
+systemmanufacturer:ENGINE:Type 320 Fusion
+systemmanufacturer:ARMOR:Forging ZM15 Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:TDWS-37 Mk 2.2
+systemmanufacturer:TARGETING:“Hephaestus” CT-44
+

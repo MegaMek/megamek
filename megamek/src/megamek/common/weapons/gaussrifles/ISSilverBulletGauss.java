@@ -14,7 +14,7 @@
 package megamek.common.weapons.gaussrifles;
 
 import megamek.common.AmmoType;
-import megamek.common.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Compute;
 import megamek.common.Game;
 import megamek.common.SimpleTechLevel;
@@ -22,7 +22,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.LBXHandler;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Andrew Hunter
@@ -80,8 +80,8 @@ public class ISSilverBulletGauss extends GaussWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              Server server) {
-        return new LBXHandler(toHit, waa, game, server);
+                                              GameManager manager) {
+        return new LBXHandler(toHit, waa, game, manager);
     }
     
     @Override
@@ -90,7 +90,7 @@ public class ISSilverBulletGauss extends GaussWeapon {
         if (range <= getLongRange()) {
             damage = Compute.calculateClusterHitTableAmount(7, getRackSize()) / 10.0;
             damage *= 1.05; // -1 to hit
-            if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
+            if ((range == AlphaStrikeElement.SHORT_RANGE) && (getMinimumRange() > 0)) {
                 damage = adjustBattleForceDamageForMinRange(damage);
             }
         }

@@ -83,6 +83,7 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, OptionsConstants.QUIRK_POS_RUGGED_1, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_RUGGED_2, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_RUMBLE_SEAT, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_SCOUT_BIKE, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_SEARCHLIGHT, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_STABLE, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_TRAILER_HITCH, false);
@@ -390,6 +391,12 @@ public class Quirks extends AbstractOptions {
                     && (en.getMovementMode() == EntityMovementMode.VTOL)) {
                 return false;
             }
+            
+            if (qName.equals(OptionsConstants.QUIRK_POS_SCOUT_BIKE)) {
+                return (en.getMovementMode().isHover() ||
+                        en.getMovementMode().isWheeled()) &&
+                        (en.getWeight() <= 10.0);
+            }
                         
             return true;
         }
@@ -598,7 +605,6 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_POS_FINE_MANIPULATORS)
                     || qName.equals(OptionsConstants.QUIRK_POS_HYPER_ACTUATOR)
                     || qName.equals(OptionsConstants.QUIRK_POS_IMPROVED_SENSORS)
-                    || qName.equals(OptionsConstants.QUIRK_POS_IMP_LIFE_SUPPORT)
                     || qName.equals(OptionsConstants.QUIRK_POS_MULTI_TRAC)
                     || qName.equals(OptionsConstants.QUIRK_POS_NIMBLE_JUMPER)
                     || qName.equals(OptionsConstants.QUIRK_POS_OVERHEAD_ARMS)

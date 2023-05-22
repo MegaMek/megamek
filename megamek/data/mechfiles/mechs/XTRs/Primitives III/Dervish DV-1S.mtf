@@ -1,37 +1,36 @@
-Version:1.1
+Version:1.3
 Dervish
 DV-1S
 mul id:877
-
 Config:Biped
-TechBase:Inner Sphere
-Era:2520
-Source:XTRO Primitives III - Age of War
-Rules Level:4
+techbase:Inner Sphere
+era:2520
+source:XTRO Primitives III - Age of War
+rules level:3
 
-Mass:55
-Engine:265 Fusion Engine(IS)
-Structure:Standard
-Myomer:Standard
-Cockpit:Primitive Cockpit
-Gyro:Standard Gyro
+mass:55
+engine:265 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+cockpit:Primitive Cockpit
+gyro:Standard Gyro
 
-Heat Sinks:10 Single
-Walk MP:4
-Jump MP:3
+heat sinks:10 Single
+walk mp:4
+jump mp:3
 
-Armor:Primitive(Inner Sphere)
-LA Armor:9
-RA Armor:9
-LT Armor:13
-RT Armor:13
-CT Armor:20
-HD Armor:8
-LL Armor:13
-RL Armor:13
-RTL Armor:3
-RTR Armor:3
-RTC Armor:3
+armor:Primitive(Inner Sphere)
+LA armor:9
+RA armor:9
+LT armor:13
+RT armor:13
+CT armor:20
+HD armor:8
+LL armor:13
+RL armor:13
+RTL armor:3
+RTR armor:3
+RTC armor:3
 
 Weapons:4
 SRM 2, Left Arm
@@ -151,4 +150,20 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:At the higher end of the medium class, the Dervish is a highly mobile fire support BattleMech. Commissioned in 2520 by the Lyran Commonwealth
+
+capabilities:The Dervish has a maximum speed of 86.4 km/h, letting it keep up with and support most Succession Wars-era medium and light models. Five jump jets also gives the 'Mech a jumping capability of 150 meters, allowing it to move through rough terrain with ease; these were originally an afterthought in the design but have proven their worth. While regarded by some as a poor man's Archer, the Dervish's speed and weaponry nevertheless allow it to provide quick fire support and free larger 'Mechs for other duties. The design's major flaws lie in its lack of hand actuators and in its armoring. Having no hands limits its usefulness outside of combat and restricts its capability when confronted in close quarters. As for the armor, while sufficient to handle small and medium weapons, it is inadequate against heavier firepower. Commanders cannot overcome the first issue but they can affect the second, albeit at an apparent cost of firepower. The conundrum faced here is that the tradeoff becomes counterintuitive given the 'Mech's primary role in the field.
+
+deployment:The original version of the Dervish that was produced in 2520 was not up to the same standards as contemporary Terran Hegemony designs. The use of comparatively "primitive" parts resulted in a heavier cockpit, engine, and less efficient armor. Consequently, the 1S had a top speed of 64 km/h and could only jump 90 meters. While the missile launchers were the same as the 6M, it did not have that version's lasers. 1S variants continued to exist in militias, but were raided for parts during the Succession Wars. It was not intended for front line use, but for militia units. Though there were few, if any, remaining by the end of the 2990s, they once again began to be produced on low-tech worlds during the Jihad due to that conflict's disruption of supply lines.
+
+history:The Dervish was among the first 'Mechs mass produced by the Great Houses and has served as a workhorse for their armies since its introduction. It was eventually commissioned into the Star League Defense Force during the Reunification War, with the Terran Hegemony providing funds to allow their original model Dervishes be upgraded to the DV-6M standard in 2610. Its service in the SLDF ensured the widespread proliferation of the design; even ComStar Explorer Corps missions into the Deep Periphery have found examples of original-model Dervishes among the forces of Nueva Castile. Over the course of the Succession Wars however the 'Mech's numbers decreased due to loss or lack of parts, and all but one of Achernar's factories was destroyed. Though it could still be found throughout the Inner Sphere by the end of the Third Succession War, only the Federated Suns maintained production of the venerable design. The 'Mech remained one of the Suns' most common medium-weight machines, being particularly popular with the Avalon Hussars, and was earmarked for use by several newly forming Federated Commonwealth regiments after the Fourth Succession War. However, interest in the design began to wane in later years, and while the 7D refit of 3047 with its use of lostech generated higher sales, Achernar was forced to heavily lobby House Davion to keep buying them. Ironically the run-up to the FedCom Civil War and the conflict itself was enough to increase demand and prevent the company from retooling its Dervish lines. In the wake of the civil war the Federated Suns continued purchasing upgraded Dervishes while the Lyran Alliance adopted the Griffin. Older models can be found in militia and reserve units in other armies, while small mercenary outfits have found the 'Mech to be durable and easy to maintain. During the Jihad a number of manufacturers began manufacturing "retrotech" 'Mechs using details of the original production standard of primitive 'Mech designs; one of the designs that was reintroduced to service as a part of this retrotech manufacturing production was the original Dervish, with companies such as Sword of the Prophet Enterprises of Algedi producing primitive Dervishes; production at some sites continued beyond 3079.
+
+manufacturer:Sword of the Prophet Enterprises,Achernar Battlemechs,Arcturan Arms Refit Facility,Confederation Defense Corporation,Coventry Defense Conglomerate,Coalition Armory, Inc.,Achernar Battlemechs,McRae Quik Construct,New Samarkand Armor Works,Hope Industrial Works,Oriente Weapon Works
+primaryfactory:Algedi,Achernar,Arcturus,Boardwalk,Coventry,Filtvelt,New Avalon,New Ivaarsen,New Samarkand,Randis IV,Oriente
+systemmanufacturer:CHASSIS:Dorwinion Primitive
+systemmanufacturer:ENGINE:Fusion 265 Primitive
+systemmanufacturer:ARMOR:Unknown Primitve
+systemmanufacturer:JUMPJET:Unknown
+systemmanufacturer:COMMUNICATIONS:Unknown
+systemmanufacturer:TARGETING:Unknown
 

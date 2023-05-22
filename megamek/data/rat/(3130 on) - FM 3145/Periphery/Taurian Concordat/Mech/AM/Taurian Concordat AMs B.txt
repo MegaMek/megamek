@@ -1,0 +1,12 @@
+Taurian Concordat Assault Mechs B
+BattleMaster BLR-10S2,1
+Emperor EMP-6A,2
+Albatross ALB-3Ur,3
+Emperor EMP-6A,4
+Yu Huang Y-H9G,5
+Devastator DVS-1D,6
+Banshee BNC-3Mr,5
+Atlas AS7-K2,4
+Longbow LGB-13C,3
+Grand Titan T-IT-N11M,2
+Cerberus MR-V2,1

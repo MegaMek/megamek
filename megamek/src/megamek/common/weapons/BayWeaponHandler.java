@@ -17,6 +17,7 @@ import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
+import megamek.server.GameManager;
 import megamek.server.Server;
 import org.apache.logging.log4j.LogManager;
 
@@ -33,14 +34,8 @@ public class BayWeaponHandler extends WeaponHandler {
         // deserialization only
     }
 
-    /**
-     * @param t
-     * @param w
-     * @param g
-     * @param s
-     */
-    public BayWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public BayWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
     }
 
     /**
@@ -240,8 +235,7 @@ public class BayWeaponHandler extends WeaponHandler {
 
             // Works out fire setting, AMS shots, and whether continuation is
             // necessary.
-            if (!handleSpecialMiss(entityTarget, bldgDamagedOnMiss, bldg,
-                    vPhaseReport)) {
+            if (!handleSpecialMiss(entityTarget, bldgDamagedOnMiss, bldg, vPhaseReport)) {
                 return false;
             }
         }
@@ -263,8 +257,7 @@ public class BayWeaponHandler extends WeaponHandler {
         // Targeting a building.
         if (target.getTargetType() == Targetable.TYPE_BUILDING) {
             // The building takes the full brunt of the attack
-            handleBuildingDamage(vPhaseReport, bldg, nDamPerHit,
-                    target.getPosition());
+            handleBuildingDamage(vPhaseReport, bldg, nDamPerHit, target.getPosition());
             return false;
         }
 
@@ -318,20 +311,17 @@ public class BayWeaponHandler extends WeaponHandler {
                         // absorbed damage shouldn't reduce incoming damage,
                         // since the incoming damage was reduced in
                         // Compute.directBlowInfantryDamage
-                        nDamage = -wtype.getDamage(nRange)
-                                * Math.min(nCluster, hits);
+                        nDamage = -wtype.getDamage(nRange) * Math.min(nCluster, hits);
                     }
-                    bldgAbsorbs = (int) Math.round(nDamage
-                            * bldg.getInfDmgFromInside());
+                    bldgAbsorbs = (int) Math.round(nDamage * bldg.getInfDmgFromInside());
                 } else {
                     // Used later to indicate a special report
                     bldgAbsorbs = Integer.MIN_VALUE;
                 }
             }
 
-            handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
-                    nCluster, bldgAbsorbs);
-            server.creditKill(entityTarget, ae);
+            handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
+            gameManager.creditKill(entityTarget, ae);
         } // Handle the next weapon in the bay
         Report.addNewline(vPhaseReport);
         return false;
@@ -340,7 +330,6 @@ public class BayWeaponHandler extends WeaponHandler {
     /**
      * Calculate the starting armor value of a flight of Capital Missiles
      * Used for Aero Sanity. This is done in calcAttackValue() otherwise
-     *
      */
     protected int initializeCapMissileArmor() {
         return 0;
@@ -468,7 +457,7 @@ public class BayWeaponHandler extends WeaponHandler {
             vPhaseReport.addElement(r);
         }
 
-        //Don't add heat here, because that will be handled by individual weapons (even if heat by arc)
+        // Don't add heat here, because that will be handled by individual weapons (even if heat by arc)
         
         // Any necessary PSRs, jam checks, etc.
         // If this boolean is true, don't report
@@ -485,8 +474,8 @@ public class BayWeaponHandler extends WeaponHandler {
             return false;
         }
         
-        //Large missiles
-        //use this if AMS counterfire destroys all the missiles
+        // Large missiles
+        // use this if AMS counterfire destroys all the missiles
         if (amsBayEngagedCap && (CapMissileArmor <= 0)) {
             r = new Report(3356);
             r.indent();
@@ -494,7 +483,7 @@ public class BayWeaponHandler extends WeaponHandler {
             vPhaseReport.addElement(r);
             return false;
         }
-        //use this if PD counterfire destroys all the Capital missiles
+        // use this if PD counterfire destroys all the Capital missiles
         if (pdBayEngagedCap && (CapMissileArmor <= 0)) {
             r = new Report(3355);
             r.indent();
@@ -511,10 +500,10 @@ public class BayWeaponHandler extends WeaponHandler {
             }
         }
         
-        //Report point defense effects
-        //Set up a cluster hits table modifier
+        // Report point defense effects
+        // Set up a cluster hits table modifier
         double counterAVMod = getCounterAV();
-        //Report a failure due to overheating
+        // Report a failure due to overheating
         if (pdOverheated
                 && (!(amsBayEngaged
                         || amsBayEngagedCap
@@ -527,16 +516,16 @@ public class BayWeaponHandler extends WeaponHandler {
             r.indent();
             vPhaseReport.addElement(r);
         } else if (pdOverheated) {
-            //Report a partial failure
+            // Report a partial failure
             r = new Report (3361);
             r.subject = subjectId;
             r.indent();
             vPhaseReport.addElement(r);
-            //Halve the effectiveness of cluster hits modification
+            // Halve the effectiveness of cluster hits modification
             counterAVMod /= 2.0;
         }
-        //Now report the effects, if any
-        //Missiles using the cluster hits table
+        // Now report the effects, if any
+        // Missiles using the cluster hits table
         if (amsBayEngaged || pdBayEngaged) {
             r = new Report(3366);
             r.indent();
@@ -559,7 +548,7 @@ public class BayWeaponHandler extends WeaponHandler {
                 if (bayWType instanceof Weapon) {
                     replaceReport = vPhaseReport.size();
                     WeaponAttackAction bayWaa = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(), waa.getTargetId(), wId);
-                    AttackHandler bayWHandler = ((Weapon) bayWType).getCorrectHandler(autoHit, bayWaa, game, server);
+                    AttackHandler bayWHandler = ((Weapon) bayWType).getCorrectHandler(autoHit, bayWaa, game, gameManager);
                     bayWHandler.setAnnouncedEntityFiring(false);
                     // This should always be true
                     if (bayWHandler instanceof WeaponHandler) {
@@ -572,7 +561,7 @@ public class BayWeaponHandler extends WeaponHandler {
                     }
                     bayWHandler.handle(phase, vPhaseReport);
                     if (vPhaseReport.size() > replaceReport) {
-                        //fix the reporting - is there a better way to do this
+                        // fix the reporting - is there a better way to do this
                         Report currentReport = vPhaseReport.get(replaceReport);
                         while (null != currentReport) {
                             vPhaseReport.remove(replaceReport);

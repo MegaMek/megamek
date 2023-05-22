@@ -29,7 +29,7 @@ import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 public class EnergyWeaponHandler extends WeaponHandler {
     private static final long serialVersionUID = 2452514543790235562L;
@@ -39,8 +39,8 @@ public class EnergyWeaponHandler extends WeaponHandler {
      * @param waa
      * @param g
      */
-    public EnergyWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, Server s) {
-        super(toHit, waa, g, s);
+    public EnergyWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, GameManager m) {
+        super(toHit, waa, g, m);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }
 
@@ -61,7 +61,7 @@ public class EnergyWeaponHandler extends WeaponHandler {
         if ((ae instanceof BattleArmor)
             && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
             && !(weapon.isSquadSupportWeapon())
-            && (ae.getSwarmTargetId() == target.getTargetId())) {
+            && (ae.getSwarmTargetId() == target.getId())) {
             toReturn *= ((BattleArmor) ae).getShootingStrength();
         }
         // Check for Altered Damage from Energy Weapons (TacOp, pg.83)

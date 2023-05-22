@@ -1,0 +1,12 @@
+Sea Fox Keshik Light Mechs
+Arctic Fox AF1,1
+Puma (Adder) Prime,2
+Tiburon (Standard),3
+Fire Falcon Prime,4
+Uller (Kit Fox) Prime,5
+Tiburon (Standard),6
+Cougar Prime,5
+Dasher (Fire Moth) Prime,4
+Hankyu (Arctic Cheetah) Prime,3
+Solitaire (Standard),2
+Hellion Prime,1

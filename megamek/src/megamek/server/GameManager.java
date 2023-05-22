@@ -1995,6 +1995,7 @@ public class GameManager implements IGameManager {
             case VICTORY:
                 resetPlayersDone();
                 clearReports();
+                send(createAllReportsPacket());
                 prepareVictoryReport();
                 game.addReports(vPhaseReport);
                 // Before we send the full entities packet we need to loop
@@ -2054,7 +2055,6 @@ public class GameManager implements IGameManager {
                     }
                 }
                 send(createFullEntitiesPacket());
-                send(createAllReportsPacket());
                 send(createReportPacket(null));
                 send(createEndOfGamePacket());
                 break;

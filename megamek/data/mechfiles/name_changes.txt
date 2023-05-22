@@ -757,8 +757,12 @@ Mobile Long Tom Artillery Support Carriage LT-MOB-25|Mobile Long Tom Artillery L
 Mobile Long Tom Artillery (Unofficial) (+ Carriage)|Mobile Long Tom Artillery (+Carriages)(Unofficial)
 'Oppie' (HMRV DeConAid Trailer) |HMRV (Hazardous Materials Recovery Vehicle) DeConAid Trailer
 'Oppie' (HMRV Salvage Bed Trailer) |HMRV (Hazardous Materials Recovery Vehicle) Salvage Bed
+'Oppie' (HMRV DeConAid Trailer) (Standard)|HMRV (Hazardous Materials Recovery Vehicle) DeConAid Trailer
+'Oppie' (HMRV Salvage Bed Trailer) (Standard)|HMRV (Hazardous Materials Recovery Vehicle) Salvage Bed
 O-65 'Oppie' Hazardous Materials Recovery Vehicle O-65 HMRV|HMRV (Hazardous Materials Recovery Vehicle) 'Oppie' O-65
 O-66 'Oppie' Hazardous Materials Recovery Vehicle O-66 HMRV|HMRV (Hazardous Materials Recovery Vehicle) 'Oppie' O-66
+Schildkrote Line Tank|Schildkröte Line Tank
+
 
 
 

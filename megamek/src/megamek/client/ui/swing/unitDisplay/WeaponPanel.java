@@ -371,6 +371,15 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         this.unitDisplay = unitDisplay;
         panelMain = new JPanel(new GridBagLayout());
 
+        final GBC panelMainGBC = GBC.std().fill(GridBagConstraints.NONE)
+                .fill(GridBagConstraints.NONE)
+                .anchor(GridBagConstraints.NORTHWEST)
+                .insets(15, 9, 15, 9)
+                .weighty(1)
+                .gridwidth(1)
+                .gridx(0);
+
+
         int gridy = 0;
         wSortOrder = new JLabel(
                 Messages.getString("MechDisplay.WeaponSortOrder.label"),
@@ -382,7 +391,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         pWeaponOrder.setOpaque(false);
         int pgridy = 0;
 
-        pWeaponOrder.add(wSortOrder, GBC.std().fill(GridBagConstraints.HORIZONTAL)
+        pWeaponOrder.add(wSortOrder,
+                GBC.std().fill(GridBagConstraints.HORIZONTAL)
                .insets(15, 9, 1, 1).gridy(pgridy).gridx(0));
         comboWeaponSortOrder = new MMComboBox<>("comboWeaponSortOrder", WeaponSortOrder.values());
         pWeaponOrder.add(comboWeaponSortOrder,
@@ -391,10 +401,11 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                    .anchor(GridBagConstraints.WEST).gridy(pgridy)
                    .gridx(1));
 
-        panelMain.add(pWeaponOrder, GBC.std().fill(GridBagConstraints.NONE)
-                .anchor(GridBagConstraints.WEST)
-                .gridwidth(3)
-                .gridy(gridy).gridx(0));
+        panelMain.add(pWeaponOrder, GBC.std().gridy(pgridy));
+//                GBC.std().fill(GridBagConstraints.NONE)
+//                .anchor(GridBagConstraints.PAGE_START)
+//                .gridwidth(3)
+//                .gridy(gridy).gridx(0));
 
         gridy++;
 
@@ -406,13 +417,13 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         tWeaponScroll = new JScrollPane(weaponList);
         tWeaponScroll.setMinimumSize(new Dimension(500, GUIP.getUnitDisplayWeaponListHeight()));
         tWeaponScroll.setPreferredSize(new Dimension(500, GUIP.getUnitDisplayWeaponListHeight()));
-        panelMain.add(tWeaponScroll,
-            GBC.eol().insets(15, 9, 15, 9)
-               .fill(GridBagConstraints.HORIZONTAL)
-               .anchor(GridBagConstraints.WEST)
-               .gridy(gridy)
-               .gridwidth(3)
-               .gridx(0));
+        panelMain.add(tWeaponScroll, panelMainGBC.gridy(gridy));
+//            GBC.eol().insets(15, 9, 15, 9)
+//               .fill(GridBagConstraints.HORIZONTAL)
+//               .anchor(GridBagConstraints.WEST)
+//               .gridy(gridy)
+//               .gridwidth(3)
+//               .gridx(0));
         weaponList.resetKeyboardActions();
         for (KeyListener key : weaponList.getKeyListeners()) {
             weaponList.removeKeyListener(key);
@@ -450,10 +461,11 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                .anchor(GridBagConstraints.WEST)
                .insets(15, 9, 15, 1).gridy(pgridy).gridx(1));
 
-        panelMain.add(pAmmo, GBC.std().fill(GridBagConstraints.NONE)
-                .anchor(GridBagConstraints.WEST)
-                .gridwidth(3)
-                .gridy(gridy).gridx(0));
+        panelMain.add(pAmmo, panelMainGBC.gridy(gridy));
+//                ,GBC.std().fill(GridBagConstraints.NONE)
+//                .anchor(GridBagConstraints.WEST)
+//                .gridwidth(3)
+//                .gridy(gridy).gridx(0));
 
         gridy++;
         // Adding Heat Buildup
@@ -570,10 +582,11 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 .anchor(GridBagConstraints.WEST)
                 .insets(15, 1, 1, 1).gridy(pgridy).gridx(3));
 
-        panelMain.add(pCurrentWeapon, GBC.std().fill(GridBagConstraints.NONE)
-                .anchor(GridBagConstraints.WEST)
-                .gridwidth(3)
-                .gridy(gridy).gridx(0));
+        panelMain.add(pCurrentWeapon, panelMainGBC.gridy(gridy));
+//                , GBC.std().fill(GridBagConstraints.NONE)
+//                .anchor(GridBagConstraints.WEST)
+//                .gridwidth(3)
+//                .gridy(gridy).gridx(0));
 
         gridy++;
         // Adding range labels
@@ -793,10 +806,11 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                .anchor(GridBagConstraints.WEST)
                .insets(15, 1, 9, 1).gridy(pgridy).gridx(4));
 
-        panelMain.add(pRange, GBC.std().fill(GridBagConstraints.NONE)
-                .anchor(GridBagConstraints.WEST)
-                .gridwidth(3)
-                .gridy(gridy).gridx(0));
+        panelMain.add(pRange, panelMainGBC.gridy(gridy));
+//                , GBC.std().fill(GridBagConstraints.NONE)
+//                .anchor(GridBagConstraints.WEST)
+//                .gridwidth(3)
+//                .gridy(gridy).gridx(0));
 
         gridy++;
 
@@ -840,10 +854,11 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                .insets(15, 1, 1, 1).gridy(pgridy).gridx(1));
         pgridy++;
 
-        panelMain.add(pTarget, GBC.std().fill(GridBagConstraints.NONE)
-                .anchor(GridBagConstraints.WEST)
-                .gridwidth(3)
-                .gridy(gridy).gridx(0));
+        panelMain.add(pTarget, panelMainGBC.gridy(gridy));
+//                GBC.std().fill(GridBagConstraints.NONE)
+//                .anchor(GridBagConstraints.WEST)
+//                .gridwidth(3)
+//                .gridy(gridy).gridx(0));
 
         gridy++;
 
@@ -872,25 +887,36 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         wTargetInfo = new JButton("---");//, SwingConstants.CENTER);
         wTargetInfo.setOpaque(false);
         wTargetInfo.setForeground(Color.WHITE);
+        wTargetInfo.setHorizontalAlignment(SwingConstants.LEFT);
+        wTargetInfo.setVerticalAlignment(SwingConstants.TOP);
+        wTargetInfo.setOpaque(false);
         pInfo.add(wTargetInfo,
-                GBC.eol().fill(GridBagConstraints.HORIZONTAL)
+                GBC.eol().fill(GridBagConstraints.NONE)
                         .gridy(pgridy).gridx(0));
 
-        panelMain.add(pInfo,
-                GBC.eol().insets(15, 9, 15, 9)
-                        .fill(GridBagConstraints.HORIZONTAL)
-                        .anchor(GridBagConstraints.WEST)
-                        .gridy(gridy)
-                        .gridwidth(3)
-                        .gridx(0));
+        panelMain.add(pInfo, panelMainGBC.gridy(gridy)
+                .fill(GridBagConstraints.HORIZONTAL)
+                .weighty(0.5));
+//                GBC.eol().insets(15, 9, 15, 9)
+//                        .fill(GridBagConstraints.HORIZONTAL)
+//                        .anchor(GridBagConstraints.WEST)
+//                        .gridy(gridy)
+//                        .gridwidth(3)
+//                        .gridx(0));
 
         addListeners();
 
         adaptToGUIScale();
         GUIP.addPreferenceChangeListener(this);
-        setLayout(new BorderLayout());
-        add(panelMain);
         panelMain.setOpaque(false);
+        JScrollPane scrollPane = new JScrollPane(panelMain);
+        scrollPane.setBackground(Color.white);
+        scrollPane.setOpaque(false);
+        scrollPane.setOpaque(false);
+        scrollPane.getViewport().setOpaque(false);
+        setLayout(new BorderLayout());
+//                add(panelMain);
+        add(scrollPane);
 
         setBackGround();
         onResize();

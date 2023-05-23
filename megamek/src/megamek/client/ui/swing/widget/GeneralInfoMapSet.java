@@ -18,6 +18,7 @@ package megamek.client.ui.swing.widget;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.common.*;
 import megamek.common.options.*;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -393,7 +394,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             visualRangeR.setVisible(true);
             curSensorsL.setVisible(true);
             visualRangeL.setVisible(true);
-            curSensorsR.setString(en.getSensorDesc());
+            curSensorsR.setString(UnitToolTip.getSensorDesc(en));
             visualRangeR.setString(Integer.toString(Compute.getMaxVisualRange(en, false)));
         } else {
             curSensorsR.setVisible(false);

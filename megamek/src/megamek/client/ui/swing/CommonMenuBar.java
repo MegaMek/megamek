@@ -116,6 +116,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private JMenuItem viewResetWindowPositions = new JMenuItem(getString("CommonMenuBar.viewResetWindowPos"));
     private JCheckBoxMenuItem toggleIsometric = new JCheckBoxMenuItem(getString("CommonMenuBar.viewToggleIsometric"));
     private JCheckBoxMenuItem toggleHexCoords = new JCheckBoxMenuItem(getString("CommonMenuBar.viewToggleHexCoords"));
+    private JCheckBoxMenuItem toggleSensorRange = new JCheckBoxMenuItem(getString("CommonMenuBar.viewToggleSensorRange"));
     private JCheckBoxMenuItem toggleFieldOfFire = new JCheckBoxMenuItem(getString("CommonMenuBar.viewToggleFieldOfFire"));
     private JCheckBoxMenuItem toggleFovHighlight = new JCheckBoxMenuItem(getString("CommonMenuBar.viewToggleFovHighlight"));
     private JCheckBoxMenuItem toggleFovDarken = new JCheckBoxMenuItem(getString("CommonMenuBar.viewToggleFovDarken"));
@@ -290,7 +291,10 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         viewMovementEnvelope.setSelected(GUIP.getMoveEnvelope());
         initMenuItem(viewMovModEnvelope, menu, VIEW_MOVE_MOD_ENV);
         menu.addSeparator();
-        
+
+        initMenuItem(toggleSensorRange, menu, VIEW_TOGGLE_SENSOR_RANGE);
+        toggleSensorRange.setSelected(GUIP.getShowSensorRange());
+        toggleSensorRange.setToolTipText(Messages.getString("CommonMenuBar.viewToggleSensorRangeToolTip"));
         initMenuItem(toggleFieldOfFire, menu, VIEW_TOGGLE_FIELD_OF_FIRE);
         toggleFieldOfFire.setSelected(GUIP.getShowFieldOfFire());
         toggleFieldOfFire.setToolTipText(Messages.getString("CommonMenuBar.viewToggleFieldOfFireToolTip"));
@@ -318,6 +322,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     
     /** Sets/updates the accelerators from the KeyCommandBinds preferences. */
     private void setKeyBinds() {
+        toggleSensorRange.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.SENSOR_RANGE));
         toggleFieldOfFire.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.FIELD_FIRE));
         toggleIsometric.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.TOGGLE_ISO));
         viewMovementEnvelope.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.MOVE_ENVELOPE));
@@ -459,6 +464,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         
         viewLOSSetting.setEnabled(isInGameBoardView);
         viewUnitOverview.setEnabled(isInGameBoardView);
+        toggleSensorRange.setEnabled(isInGameBoardView);
         toggleFieldOfFire.setEnabled(isInGameBoardView);
         toggleFovHighlight.setEnabled(isInGameBoardView);
         toggleFovDarken.setEnabled(isInGameBoardView);
@@ -495,6 +501,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
             toggleIsometric.setSelected((Boolean) e.getNewValue());
         } else if (e.getName().equals(GUIPreferences.SHOW_FIELD_OF_FIRE)) {
             toggleFieldOfFire.setSelected((Boolean) e.getNewValue());
+        } else if (e.getName().equals(GUIPreferences.SHOW_SENSOR_RANGE)) {
+            toggleSensorRange.setSelected((Boolean) e.getNewValue());
         } else if (e.getName().equals(GUIPreferences.SHOW_KEYBINDS_OVERLAY)) {
             viewKeybindsOverlay.setSelected((Boolean) e.getNewValue());
         } else if (e.getName().equals(GUIPreferences.SHOW_PLANETARYCONDITIONS_OVERLAY)) {

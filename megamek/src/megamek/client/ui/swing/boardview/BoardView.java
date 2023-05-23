@@ -6485,7 +6485,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
         minSensorRange = 0;
 
-        if (game.getPlanetaryConditions().isSearchlightEffective()) {
+        if (game.getPlanetaryConditions().isIlluminationEffective()) {
             maxSensorRange = Compute.getMaxVisualRange(entity, true);
         } else {
             maxSensorRange = 0;

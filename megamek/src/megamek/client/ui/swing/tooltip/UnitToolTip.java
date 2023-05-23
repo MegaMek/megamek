@@ -1223,13 +1223,13 @@ public final class UnitToolTip {
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)
                 || game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
             String visualRange = Compute.getMaxVisualRange(entity, false) + "";
-            if (game.getPlanetaryConditions().isSearchlightEffective()) {
+            if (game.getPlanetaryConditions().isIlluminationEffective()) {
                 visualRange += " (" + Compute.getMaxVisualRange(entity, true) + ")";
             }
             result += addToTT("Sensors", BR, getSensorDesc(entity), visualRange);
         } else {
             String visualRange = Compute.getMaxVisualRange(entity, false) + "";
-            if (game.getPlanetaryConditions().isSearchlightEffective()) {
+            if (game.getPlanetaryConditions().isIlluminationEffective()) {
                 visualRange += " (" + Compute.getMaxVisualRange(entity, true) + ")";
             }
             result += addToTT("Visual", BR, visualRange);

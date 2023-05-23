@@ -6459,17 +6459,19 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         int minAirSensorRange = 0;
         int maxAirSensorRange = 0;
 
-        Compute.SensorRangeHelper srh = Compute.getSensorRanges(entity.getGame(), entity);
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
+            Compute.SensorRangeHelper srh = Compute.getSensorRanges(entity.getGame(), entity);
 
-        if (srh != null) {
-            if (entity.isAirborne() && entity.getGame().getBoard().onGround()) {
-                minSensorRange = srh.minGroundSensorRange;
-                maxSensorRange = srh.maxGroundSensorRange;
-                minAirSensorRange = srh.minSensorRange;
-                maxAirSensorRange = srh.maxSensorRange;
-            } else {
-                minSensorRange = srh.minSensorRange;
-                maxSensorRange = srh.maxSensorRange;
+            if (srh != null) {
+                if (entity.isAirborne() && entity.getGame().getBoard().onGround()) {
+                    minSensorRange = srh.minGroundSensorRange;
+                    maxSensorRange = srh.maxGroundSensorRange;
+                    minAirSensorRange = srh.minSensorRange;
+                    maxAirSensorRange = srh.maxSensorRange;
+                } else {
+                    minSensorRange = srh.minSensorRange;
+                    maxSensorRange = srh.maxSensorRange;
+                }
             }
         }
 

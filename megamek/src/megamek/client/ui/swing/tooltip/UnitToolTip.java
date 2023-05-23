@@ -1227,6 +1227,12 @@ public final class UnitToolTip {
                 visualRange += " (" + Compute.getMaxVisualRange(entity, true) + ")";
             }
             result += addToTT("Sensors", BR, getSensorDesc(entity), visualRange);
+        } else {
+            String visualRange = Compute.getMaxVisualRange(entity, false) + "";
+            if (game.getPlanetaryConditions().isSearchlightEffective()) {
+                visualRange += " (" + Compute.getMaxVisualRange(entity, true) + ")";
+            }
+            result += addToTT("Visual", BR, visualRange);
         }
 
         if (entity.hasAnyTypeNarcPodsAttached()) {

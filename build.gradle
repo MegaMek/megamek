@@ -16,7 +16,7 @@ allprojects {
 
 subprojects {
     group = 'org.megamek'
-    version = '0.49.13'
+    version = '0.49.14-SNAPSHOT'
 }
 
 ext {

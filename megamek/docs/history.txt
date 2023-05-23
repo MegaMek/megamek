@@ -4,8 +4,6 @@ VERSION HISTORY:
 + Fix #3914: LAM fuel tanks will now correctly provide fuel to the LAM
 + Fix #3951: Solar engine powered fixed wing support vehicles are now able to move and don't require fuel
 + Fix #3696: Altitude values no longer inadvertently influence space combat
-+ Data: #4223 Illegal/overweight BA units
-+ Data: #4206 Illegal armour type on the Kopis AI IIr
 + Fix #4229, #4249, #4278, #4415: Alpha Strike conversion and card fixes
 + Fix #4234: The mini round report now allows marking and copying text
 + Fix #4235: A player without a team no longer results in an error
@@ -82,7 +80,9 @@ VERSION HISTORY:
 + PR #4438: Split light visible range and other visible range calculations
 + Fix #4432: Issue with seen by client setting unit tool tip index mismatch
 + Fix #4446: Show teams before players on BV count report section
-+ Data: Fixing #4371, #4398, #4377, #4272, #4257, #4244 ,#4312
++ Data: Fixing #4223, #4206, #4371, #4398, #4377, #4272, #4257, #4244 ,#4312
++ PR #4430 - Highlight min/max visual and sensor ranges
+
 
 0.49.12 (2023-03-04 2200 UTC)
 + PR #4062: OS Thunderbolt Weapons are now available for construction and use

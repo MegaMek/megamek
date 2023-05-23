@@ -115,7 +115,8 @@ public enum KeyCommandBind {
     LOCAL_LOAD(true, "localLoad", VK_L, CTRL_DOWN_MASK),
     LOCAL_SAVE(true, "localSave", VK_S, CTRL_DOWN_MASK),
     REPLACE_PLAYER(true, "replacePlayer", VK_R, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
-    MOD_ENVELOPE(true, "viewModEnvelope", VK_W, CTRL_DOWN_MASK);
+    MOD_ENVELOPE(true, "viewModEnvelope", VK_W, CTRL_DOWN_MASK),
+    SENSOR_RANGE(true, "sensorRange", VK_C);
 
 
     /** The command associated with this binding. */

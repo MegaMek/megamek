@@ -13,8 +13,6 @@
  */
 package megamek.common;
 
-import megamek.common.options.OptionsConstants;
-
 /**
  * This is a support vehicle
  *
@@ -267,82 +265,6 @@ public class SupportTank extends Tank {
         return getExtraCommGearTons();
     }
 
-    @Override
-    public int getWalkMP(boolean gravity, boolean ignoreheat,
-                         boolean ignoremodulararmor) {
-        int mp = getOriginalWalkMP();
-        if (engineHit || isImmobile()) {
-            return 0;
-        }
-        if (hasWorkingMisc(MiscType.F_HYDROFOIL)) {
-            mp = (int) Math.round(mp * 1.25);
-        }
-        mp = Math.max(0, mp - motiveDamage);
-        mp = Math.max(0, mp - getCargoMpReduction(this));
-        if (null != game) {
-            int weatherMod = game.getPlanetaryConditions()
-                    .getMovementMods(this);
-            if (weatherMod != 0) {
-                mp = Math.max(mp + weatherMod, 0);
-            }
-
-            if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_SNOW)) {
-                if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM)) {
-                    mp += 2;
-                }
-
-                if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_SLEET)
-                        || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_LIGHT_SNOW)
-                        || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_MOD_SNOW)
-                        || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW)
-                        || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES)) {
-                    mp += 1;
-                }
-            }
-
-            if(getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_TORNADO_F13)) {
-                mp += 1;
-            }
-        }
-
-        if (!ignoremodulararmor && hasModularArmor()) {
-            mp--;
-        }
-        if (hasWorkingMisc(MiscType.F_DUNE_BUGGY) && (game != null)) {
-            mp--;
-        }
-
-        if (gravity) {
-            mp = applyGravityEffectsOnMP(mp);
-        }
-
-        //If the unit is towing trailers, adjust its walkMP, TW p205
-        if ((null != game) && !getAllTowedUnits().isEmpty()) {
-            double trainWeight = getWeight();
-            int lowestSuspensionFactor = getSuspensionFactor();
-            //Add up the trailers
-            for (int id : getAllTowedUnits()) {
-                Entity tr = game.getEntity(id);
-                if (tr == null) {
-                    //this isn't supposed to happen, but it can in rare cases when tr is destroyed
-                    continue;
-                }
-                if (tr instanceof Tank) {
-                    Tank trailer = (Tank) tr;
-                    if (trailer.getSuspensionFactor() < lowestSuspensionFactor) {
-                        lowestSuspensionFactor = trailer.getSuspensionFactor();
-                    }
-                }
-                trainWeight += tr.getWeight();
-            }
-            mp = (int) ((getEngine().getRating() + lowestSuspensionFactor) / trainWeight);
-        }
-
-        return mp;
-
-    }
-    
     // CONSTRUCTION INFORMATION
     //Support Vee Engine Information
     @Override

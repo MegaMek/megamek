@@ -960,52 +960,20 @@ public abstract class Mech extends Entity {
     }
 
     @Override
-    public int getRunMP(boolean gravity, boolean ignoreHeat, boolean ignoreModularArmor) {
+    public int getRunMP(MPCalculationSetting mpCalculationSetting) {
+        int mp;
         MPBoosters mpBoosters = getArmedMPBoosters();
-        if (!mpBoosters.isNone()) {
-            return mpBoosters.calculateRunMP(
-                    getWalkMP(gravity, ignoreHeat, ignoreModularArmor))
-                            - (hasMPReducingHardenedArmor() ? 1 : 0);
-        }
-        return Math.max(0, super.getRunMP(gravity, ignoreHeat, ignoreModularArmor)
-                - (hasMPReducingHardenedArmor() ? 1 : 0));
-    }
-
-    @Override
-    public int getRunMPwithOneMASC(boolean gravity, boolean ignoreHeat,
-                                   boolean ignoreModularArmor) {
-        MPBoosters mpBoosters = getArmedMPBoosters();
-        if (!mpBoosters.isNone()) {
-            return MPBoosters.MASC_ONLY.calculateRunMP(
-                    getWalkMP(gravity, ignoreHeat, ignoreModularArmor))
-                    - (hasMPReducingHardenedArmor() ? 1 : 0);
+        if (!mpCalculationSetting.ignoreMASC && !mpBoosters.isNone()) {
+            if (mpCalculationSetting.singleMASC) {
+                mp = MPBoosters.MASC_ONLY.calculateRunMP(getWalkMP(mpCalculationSetting));
+            } else {
+                mp = mpBoosters.calculateRunMP(getWalkMP(mpCalculationSetting));
+            }
+        } else {
+            mp = super.getRunMP(mpCalculationSetting);
         }
 
-        return super.getRunMP(gravity, ignoreHeat, ignoreModularArmor)
-                - (hasMPReducingHardenedArmor() ? 1 : 0);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Entity#getRunMPwithoutMASC(boolean, boolean, boolean)
-     */
-    @Override
-    public int getRunMPwithoutMASC(boolean gravity, boolean ignoreHeat,
-            boolean ignoreModularArmor) {
-        return super.getRunMP(gravity, ignoreHeat, ignoreModularArmor)
-                - (hasMPReducingHardenedArmor() ? 1 : 0);
-    }
-
-
-
-    /**
-     * @return The mech's run MP without MASC or supercharger, but with any reduction
-     *         due to hardened armor.
-     */
-    public int getOriginalRunMPwithoutMASC() {
-        return super.getOriginalRunMP()
-                - (hasMPReducingHardenedArmor() ? 1 : 0);
+        return Math.max(0, mp - hardenedArmorMPReduction());
     }
 
     /**
@@ -1038,116 +1006,34 @@ public abstract class Mech extends Entity {
         return extra + (hasEngine() ? getEngine().getRunHeat(this) : 0);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Entity#getSprintMP()
-     */
     @Override
-    public int getSprintMP() {
+    public int getSprintMP(MPCalculationSetting mpCalculationSetting) {
         if (hasHipCrit()) {
-            return getRunMP();
-        }
-        return getSprintMP(true, false, false);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Entity#getSprintMP(boolean, boolean, boolean)
-     */
-    @Override
-    public int getSprintMP(boolean gravity, boolean ignoreHeat,
-            boolean ignoreModularArmor) {
-        if (hasHipCrit()) {
-            return getRunMP(gravity, ignoreHeat, ignoreModularArmor);
+            return getRunMP(mpCalculationSetting);
         }
 
+        int mp;
         MPBoosters mpBoosters = getArmedMPBoosters();
-        if (!mpBoosters.isNone()) {
-            return mpBoosters.calculateSprintMP(
-                    getWalkMP(gravity, ignoreHeat, ignoreModularArmor))
-            - (hasMPReducingHardenedArmor() ? 1 : 0);
+        if (!mpCalculationSetting.ignoreMASC && !mpBoosters.isNone()) {
+            if (mpCalculationSetting.singleMASC) {
+                mp = MPBoosters.MASC_ONLY.calculateSprintMP(getWalkMP(mpCalculationSetting));
+            } else {
+                mp = mpBoosters.calculateSprintMP(getWalkMP(mpCalculationSetting));
+            }
+        } else {
+            mp = super.getSprintMP(mpCalculationSetting);
         }
 
-        return getSprintMPwithoutMASC(gravity, ignoreHeat, ignoreModularArmor);
+        return Math.max(0, mp - hardenedArmorMPReduction());
     }
 
-    @Override
-    public int getSprintMPwithOneMASC() {
-        return getSprintMPwithOneMASC(true, false, false);
-    }
-
-    @Override
-    public int getSprintMPwithOneMASC(boolean gravity, boolean ignoreHeat,
-                                      boolean ignoreModularArmor) {
-        if (hasHipCrit()) {
-            return getRunMPwithoutMASC(gravity, ignoreHeat, ignoreModularArmor);
-        }
-
-        MPBoosters mpBoosters = getArmedMPBoosters();
-        if (!mpBoosters.isNone()) {
-            return MPBoosters.MASC_ONLY.calculateSprintMP(
-                    getWalkMP(gravity, ignoreHeat, ignoreModularArmor))
-                    - (hasMPReducingHardenedArmor() ? 1 : 0);
-        }
-
-        return super.getRunMP(gravity, ignoreHeat, ignoreModularArmor)
-                - (hasMPReducingHardenedArmor() ? 1 : 0);
-    }
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Entity#getSprintMPwithoutMASC(boolean, boolean)
-     */
-    @Override
-    public int getSprintMPwithoutMASC() {
-        return getSprintMPwithoutMASC(true, false, false);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Entity#getSprintMPwithoutMASC(boolean, boolean,
-     * boolean)
-     */
-    @Override
-    public int getSprintMPwithoutMASC(boolean gravity, boolean ignoreHeat,
-            boolean ignoreModularArmor) {
-        if (hasHipCrit()) {
-            return getRunMPwithoutMASC(gravity, ignoreHeat, ignoreModularArmor);
-        }
-        return ((int) Math.ceil(getWalkMP(gravity, ignoreHeat,
-                ignoreModularArmor) * 2.0))
-                - (hasMPReducingHardenedArmor() ? 1 : 0);
-    }
-
-    public int getOriginalSprintMPwithoutMASC() {
-        return ((int) Math.ceil(getOriginalWalkMP() * 2.0)) - (hasMPReducingHardenedArmor() ? 1 : 0);
-    }
-
-    /**
-     * Returns this entity's Sprint mp as a string.
-     */
-    @Override
-    public String getSprintMPasString() {
-        MPBoosters armedBoosters = getArmedMPBoosters();
-        return !armedBoosters.isNone()
-                ? getRunMPwithoutMASC() + "(" + getSprintMP() + ")"
-                : Integer.toString(getSprintMP());
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Entity#getRunningGravityLimit()
-     */
     @Override
     public int getRunningGravityLimit() {
         if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT)) {
-            return getSprintMP(false, false, false);
+            return getSprintMP(MPCalculationSetting.NO_GRAVITY);
+        } else {
+            return getRunMP(MPCalculationSetting.NO_GRAVITY);
         }
-        return getRunMP(false, false, false);
     }
 
     /**
@@ -1159,79 +1045,73 @@ public abstract class Mech extends Entity {
         return extra + (hasEngine() ? getEngine().getSprintHeat(this) : 0);
     }
 
-    /**
-     * This mech's jumping MP modified for missing jump jets and gravity
-     */
     @Override
-    public int getJumpMP() {
-        return getJumpMP(true);
-    }
-
-    /**
-     * This mech's jumping MP modified for missing jump jets and possibly
-     * gravity
-     */
-    @Override
-    public int getJumpMP(boolean gravity) {
-        return getJumpMP(gravity, false);
-    }
-
-    public int getJumpMP(boolean gravity, boolean ignoreModularArmor) {
-        int jump = 0;
-
+    public int getJumpMP(MPCalculationSetting mpCalculationSetting) {
         if (hasShield() && (getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0)) {
             return 0;
         }
 
+        int mp = 0;
+        boolean isJumpBooster = false;
+
         for (Mounted mounted : getMisc()) {
             if (mounted.getType().hasFlag(MiscType.F_JUMP_JET)
                     && !mounted.isDestroyed() && !mounted.isBreached()) {
-                jump++;
+                mp++;
             } else if (mounted.getType().hasFlag(MiscType.F_JUMP_BOOSTER)
                     && !mounted.isDestroyed() && !mounted.isBreached()) {
-                jump = getOriginalJumpMP();
+                mp = getOriginalJumpMP();
+                isJumpBooster = true;
                 break;
             }
         }
 
+        if (!mpCalculationSetting.ignoreSubmergedJumpJets && hasOccupiedHex()
+                && !isJumpBooster && getElevation() < 0) {
+            int waterLevel = game.getBoard().getHex(getPosition()).terrainLevel(Terrains.WATER);
+            if (waterLevel > 1) {
+                return 0;
+            } else if (waterLevel == 1) {
+                mp = torsoJumpJets();
+            }
+        }
+
         // apply Partial Wing bonus if we have the ability to jump
-        if (jump > 0) {
+        if (mp > 0) {
             for (Mounted mount : getMisc()) {
                 if (mount.getType().hasFlag(MiscType.F_PARTIAL_WING)) {
-                    jump += getPartialWingJumpBonus(mount);
+                    mp += getPartialWingJumpBonus(mount, mpCalculationSetting);
                     break;
                 }
             }
         }
-        // Medium shield reduces jump mp by 1/shield
-        jump -= getNumberOfShields(MiscType.S_SHIELD_MEDIUM);
 
-        if (hasModularArmor() && !ignoreModularArmor) {
-            jump--;
+        // Medium shield reduces jump mp by 1/shield
+        mp -= getNumberOfShields(MiscType.S_SHIELD_MEDIUM);
+
+        if (!mpCalculationSetting.ignoreModularArmor && hasModularArmor()) {
+            mp--;
         }
         
-        if (gravity) {
-            return Math.max(applyGravityEffectsOnMP(jump), 0);
+        if (!mpCalculationSetting.ignoreGravity) {
+            return Math.max(applyGravityEffectsOnMP(mp), 0);
         }
-        return Math.max(jump, 0);
-    }
 
+        return Math.max(mp, 0);
+    }
 
     public int getPartialWingJumpWeightClassBonus()  {
-        int bonus;
-
-        if ((getWeightClass() <= EntityWeightClass.WEIGHT_MEDIUM)) {
-            bonus = 2;
-        } else {
-            bonus = 1;
-        }
-
-        return bonus;
+        return (getWeightClass() <= EntityWeightClass.WEIGHT_MEDIUM) ? 2 : 1;
     }
-    public int getPartialWingJumpAtmoBonus()  {
+
+    public int getPartialWingJumpAtmoBonus() {
+        return getPartialWingJumpAtmoBonus(MPCalculationSetting.STANDARD);
+    }
+
+    public int getPartialWingJumpAtmoBonus(MPCalculationSetting mpCalculationSetting)  {
         int bonus;
 
-        if (game != null) {
+        if (!mpCalculationSetting.ignoreWeather && (game != null)) {
             if ((getWeightClass() <= EntityWeightClass.WEIGHT_MEDIUM)) {
                 switch (game.getPlanetaryConditions().getAtmosphere()) {
                     case PlanetaryConditions.ATMO_VACUUM:
@@ -1280,18 +1160,15 @@ public abstract class Mech extends Entity {
      *            The mounted location of the Wing
      * @return The Jump MP bonus conferred by the wing
      */
-    public int getPartialWingJumpBonus(Mounted mount) {
-        int bonus;
-
-        bonus = getPartialWingJumpAtmoBonus();
-
-        // subtract jumping bonus for damaged criticals
-        bonus -= getBadCriticals(CriticalSlot.TYPE_EQUIPMENT,
-                getEquipmentNum(mount), Mech.LOC_RT);
-        bonus -= getBadCriticals(CriticalSlot.TYPE_EQUIPMENT,
-                getEquipmentNum(mount), Mech.LOC_LT);
-
+    public int getPartialWingJumpBonus(Mounted mount, MPCalculationSetting mpCalculationSetting) {
+        int bonus = getPartialWingJumpAtmoBonus(mpCalculationSetting);
+        bonus -= getBadCriticals(CriticalSlot.TYPE_EQUIPMENT, getEquipmentNum(mount), Mech.LOC_RT);
+        bonus -= getBadCriticals(CriticalSlot.TYPE_EQUIPMENT, getEquipmentNum(mount), Mech.LOC_LT);
         return Math.max(bonus, 0);
+    }
+
+    public int getPartialWingJumpBonus(Mounted mount) {
+        return getPartialWingJumpBonus(mount, MPCalculationSetting.STANDARD);
     }
 
     /**
@@ -1384,28 +1261,6 @@ public abstract class Mech extends Entity {
                 return 0;
             default:
                 return extra + (hasEngine() ? getEngine().getJumpHeat(movedMP) : 0);
-        }
-    }
-
-    /**
-     * Returns this mech's jumping MP, modified for missing and underwater jets
-     * and gravity.
-     */
-    @Override
-    public int getJumpMPWithTerrain() {
-        if ((getPosition() == null) || (game.getBoard().getHex(getPosition()) == null) || (getJumpType() == JUMP_BOOSTER)) {
-            return getJumpMP();
-        }
-        int waterLevel = 0;
-        if (!isOffBoard()) {
-            waterLevel = game.getBoard().getHex(getPosition()).terrainLevel(Terrains.WATER);
-        }
-        if ((waterLevel <= 0) || (getElevation() >= 0)) {
-            return getJumpMP();
-        } else if (waterLevel > 1) {
-            return 0;
-        } else { // waterLevel == 1
-            return applyGravityEffectsOnMP(torsoJumpJets());
         }
     }
 
@@ -5770,6 +5625,11 @@ public abstract class Mech extends Entity {
 
     public abstract boolean hasMPReducingHardenedArmor();
 
+    /** @return The MP reduction due to hardened armor on this unit; 1 if it has HA, 0 if not. */
+    protected int hardenedArmorMPReduction() {
+        return hasMPReducingHardenedArmor() ? 1 : 0;
+    }
+
     @Override
     public int getEngineHits() {
         int engineHits = 0;
@@ -6107,7 +5967,7 @@ public abstract class Mech extends Entity {
         // modular armor since they're reasonably permanent but ignoring heat
         // effects -- have dropped to 0, we're stuck even if we still have
         // jump jets because we can't get up anymore to *use* them.
-        if ((getWalkMP(true, true, false) <= 0) && isProne()) {
+        if ((getWalkMP(MPCalculationSetting.PERM_IMMOBILIZED) <= 0) && isProne()) {
             return true;
         }
         // Gyro destroyed? TW p. 258 at least heavily implies that that counts

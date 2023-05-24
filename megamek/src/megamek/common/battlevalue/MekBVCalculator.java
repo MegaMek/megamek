@@ -260,144 +260,6 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
     }
 
     @Override
-    protected void setRunMP() {
-        int wmp = entity.getOriginalWalkMP();
-        int legsDestroyed = 0;
-        int hipHits = 0;
-        int actuatorHits = 0;
-        Mech mek = (Mech) entity;
-        int legCount = 2;
-        if (mek instanceof QuadMech) {
-            legCount = 4;
-        } else if (mek instanceof TripodMech) {
-            legCount = 3;
-        }
-
-        // A mek has its movement reduced by 1/2 or 1/3 per leg or track destroyed
-        if (entity.getMovementMode().isTracked()) {
-            for (Mounted m : entity.getMisc()) {
-                if (m.getType().hasFlag(MiscType.F_TRACKS)) {
-                    if (m.isHit() || entity.isLocationBad(m.getLocation())) {
-                        legsDestroyed++;
-                    }
-                }
-            }
-            wmp = (wmp * (legCount - legsDestroyed)) / legCount;
-        } else {
-            for (int i = 0; i < entity.locations(); i++) {
-                if (entity.locationIsLeg(i)) {
-                    if (!entity.isLocationBad(i)) {
-                        if (mek.legHasHipCrit(i)) {
-                            hipHits++;
-                            continue;
-                        }
-                        actuatorHits += mek.countLegActuatorCrits(i);
-                    } else {
-                        legsDestroyed++;
-                    }
-                }
-            }
-
-            // leg damage effects
-            if (mek instanceof QuadMech) {
-                if (legsDestroyed == 1) {
-                    wmp--;
-                } else if (legsDestroyed == 2) {
-                    wmp = 1;
-                } else if (legsDestroyed > 0) {
-                    wmp = 0;
-                }
-                if (wmp > 0) {
-                    if (hipHits > 0) {
-                        for (int i = 0; i < hipHits; i++) {
-                            wmp = (int) Math.ceil(wmp / 2.0);
-                        }
-                    }
-                    wmp -= actuatorHits;
-                }
-            } else {
-                if (legsDestroyed > 0) {
-                    wmp = (legsDestroyed == 1) ? 1 : 0;
-                } else {
-                    if (hipHits > 0) {
-                        wmp = (hipHits == 1) ? (int) Math.ceil(wmp / 2.0) : 0;
-                    }
-                    wmp -= actuatorHits;
-                }
-            }
-        }
-
-        if (entity.hasShield()) {
-            wmp -= entity.getNumberOfShields(MiscType.S_SHIELD_LARGE);
-            wmp -= entity.getNumberOfShields(MiscType.S_SHIELD_MEDIUM);
-        }
-
-        if (entity.hasModularArmor()) {
-            wmp--;
-        }
-
-        wmp = Math.max(0, wmp);
-        if (mek instanceof LandAirMech) {
-            wmp = ((LandAirMech) mek).getBVWalkMP();
-        } else if (((entity.getEntityType() & Entity.ETYPE_QUADVEE) != 0)
-                && (entity.getMovementMode().isWheeled())) {
-            // Don't use bonus cruise MP in calculating BV
-            wmp = Math.max(0, entity.getOriginalWalkMP());
-        }
-        if (mek.hasTSM(false)) {
-            wmp++;
-        }
-        MPBoosters mpBooster = entity.getMPBoosters();
-        if (mpBooster.isMASCAndSupercharger()) {
-            runMP = (int) Math.ceil(wmp * 2.5);
-        } else if (mpBooster.isMASCXorSupercharger()) {
-            runMP = wmp * 2;
-        } else {
-            runMP = (int) Math.ceil(wmp * 1.5);
-        }
-        if (mek.hasMPReducingHardenedArmor()) {
-            runMP--;
-        }
-        runMP = Math.max(runMP, 0);
-    }
-
-    @Override
-    protected void setJumpMP() {
-        jumpMP = 0;
-        if (entity.hasShield() && (entity.getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0)) {
-            return;
-        }
-
-        int airmechMP = 0;
-        if ((entity instanceof LandAirMech) && ((LandAirMech) mek).getLAMType() == LandAirMech.LAM_STANDARD) {
-            airmechMP = ((LandAirMech) mek).getAirMechFlankMP();
-        }
-
-        for (Mounted mounted : entity.getMisc()) {
-            if (mounted.getType().hasFlag(MiscType.F_JUMP_JET)
-                    && !mounted.isDestroyed() && !mounted.isBreached()) {
-                jumpMP++;
-            } else if (mounted.getType().hasFlag(MiscType.F_JUMP_BOOSTER)
-                    && !mounted.isDestroyed() && !mounted.isBreached()) {
-                jumpMP = entity.getOriginalJumpMP();
-                break;
-            }
-        }
-
-        if ((jumpMP > 0) && entity.getMisc().stream().anyMatch(m -> m.getType().hasFlag(MiscType.F_PARTIAL_WING))) {
-            jumpMP += (entity.getWeightClass() <= EntityWeightClass.WEIGHT_MEDIUM) ? 2 : 1;
-        }
-
-        jumpMP -= entity.getNumberOfShields(MiscType.S_SHIELD_MEDIUM);
-
-        if (entity.hasModularArmor()) {
-            jumpMP--;
-        }
-
-        jumpMP = Math.max(jumpMP, airmechMP);
-    }
-
-    @Override
     protected void setUmuMP() {
         // On QuadVees, UMU MP depend on the movement mode. Therefore don't use getActiveUMUCount() here
         umuMP = 0;
@@ -438,10 +300,10 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
         int moveHeat;
         String moveHeatType = " (Run)";
         if ((mek instanceof LandAirMech) && (((LandAirMech) mek).getLAMType() == LandAirMech.LAM_STANDARD)) {
-            moveHeat = (int) Math.round(((LandAirMech) mek).getAirMechFlankMP(false, true) / 3d);
-        } else if ((mek.getJumpMP(false, true) > 0)
-                && (entity.getJumpHeat(mek.getJumpMP(false, true)) > entity.getRunHeat())) {
-            moveHeat = entity.getJumpHeat(mek.getJumpMP(false, true));
+            moveHeat = (int) Math.round(((LandAirMech) mek).getAirMechFlankMP(MPCalculationSetting.BV_CALCULATION) / 3d);
+        } else if ((mek.getJumpMP(MPCalculationSetting.BV_CALCULATION) > 0)
+                && (entity.getJumpHeat(mek.getJumpMP(MPCalculationSetting.BV_CALCULATION)) > entity.getRunHeat())) {
+            moveHeat = entity.getJumpHeat(mek.getJumpMP(MPCalculationSetting.BV_CALCULATION));
             moveHeatType = " (Jump)";
         } else {
             if (mek.hasSCM()) {

@@ -1767,12 +1767,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (checkCrew && ((getCrew() == null) || getCrew().isDead())) {
             return true;
         } else if (((getOriginalWalkMP() > 0) || (getOriginalRunMP() > 0) || (getOriginalJumpMP() > 0))
-                /*
-                 * Need to make sure here that we're ignoring heat because
-                 * that's not actually "permanent":
-                 */
-                && ((getWalkMP(true, true, false) == 0)
-                    && (getRunMP(true, true, false) == 0) && (getJumpMP() == 0))) {
+                // Need to make sure here that we're ignoring heat because
+                // that's not actually "permanent":
+                && ((getWalkMP(MPCalculationSetting.PERM_IMMOBILIZED) == 0)
+                && (getRunMP(MPCalculationSetting.PERM_IMMOBILIZED) == 0)
+                && (getJumpMP(MPCalculationSetting.PERM_IMMOBILIZED) == 0))) {
             return true;
         } else {
             return false;
@@ -2698,42 +2697,31 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         this.walkMP = walkMP;
     }
 
-    /**
-     * Returns this entity's walking/cruising mp, factored for heat and gravity.
-     */
-
+    /** @return this entity's walking/cruising mp, factoring in all MP-changing effects. */
     public int getWalkMP() {
-        return getWalkMP(true, false);
+        return getWalkMP(MPCalculationSetting.STANDARD);
     }
 
-    /**
-     * Returns this entity's walking/cruising mp, factored for heat and possibly
-     * gravity.
-     *
-     * @param gravity    Should the movement be factored for gravity
-     * @param ignoreHeat Should heat be ignored?
-     */
-    public int getWalkMP(boolean gravity, boolean ignoreHeat) {
-        return getWalkMP(gravity, ignoreHeat, false);
-    }
-
-    public int getWalkMP(boolean gravity, boolean ignoreHeat,
-                         boolean ignoreModularArmor) {
+    public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
         int mp = getOriginalWalkMP();
 
-        if (!ignoreHeat) {
+        if (!mpCalculationSetting.ignoreHeat) {
             mp = Math.max(0, mp - getHeatMPReduction());
         }
-        mp = Math.max(mp - getCargoMpReduction(this), 0);
-        if (null != game) {
-            int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
-            if (weatherMod != 0) {
-                mp = Math.max(mp + weatherMod, 0);
-            }
+
+        if (!mpCalculationSetting.ignoreCargo) {
+            mp = Math.max(mp - getCargoMpReduction(this), 0);
         }
-        if (gravity) {
+
+        if (!mpCalculationSetting.ignoreWeather && (game != null)) {
+            int weatherModifier = game.getPlanetaryConditions().getMovementMods(this);
+            mp = Math.max(mp + weatherModifier, 0);
+        }
+
+        if (!mpCalculationSetting.ignoreGravity) {
             mp = applyGravityEffectsOnMP(mp);
         }
+
         return mp;
     }
 
@@ -2780,54 +2768,26 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return 0;
     }
 
-    /**
-     * Returns this entity's unmodified running/flank mp.
-     */
+    /** @return This entity's unmodified running/flank mp. */
     public int getOriginalRunMP() {
         return (int) Math.ceil(getOriginalWalkMP() * 1.5);
     }
 
-    /**
-     * Returns this entity's running/flank mp modified for heat and gravity.
-     */
+    /** @return This entity's running/flank mp modified for all in-game effects. */
     public int getRunMP() {
-        return getRunMP(true, false, false);
+        return getRunMP(MPCalculationSetting.STANDARD);
     }
 
-    public int getRunMP(boolean gravity, boolean ignoreHeat,
-                        boolean ignoreModularArmor) {
-        return (int) Math.ceil(getWalkMP(gravity, ignoreHeat, ignoreModularArmor) * 1.5);
+    public int getRunMP(MPCalculationSetting mpCalculationSetting) {
+        return (int) Math.ceil(getWalkMP(mpCalculationSetting) * 1.5);
     }
 
-    /**
-     * Returns run MP with only one MASC system
-     */
-    public int getRunMPwithOneMASC() {
-        return getRunMPwithOneMASC(true, false, false);
-    }
-
-    /**
-     * Returns run MP with one MASC system, optionally figuring in gravity
-     * and possibly ignoring heat
-     */
-    public int getRunMPwithOneMASC(boolean gravity,
-                                            boolean ignoreHeat, boolean ignoreModularArmor) {
-    // only Mechs need to check if multiple systmes are availaible
-        return getRunMP(gravity, ignoreHeat, ignoreModularArmor);
-    }
     /**
      * Returns run MP without considering any MASC systems
      */
     public int getRunMPwithoutMASC() {
-        return getRunMPwithoutMASC(true, false, false);
+        return getRunMP(MPCalculationSetting.NO_MASC);
     }
-
-    /**
-     * Returns run MP without considering MASC, optionally figuring in gravity
-     * and possibly ignoring heat
-     */
-    public abstract int getRunMPwithoutMASC(boolean gravity,
-                                            boolean ignoreHeat, boolean ignoreModularArmor);
 
     /**
      * Returns this entity's running/flank mp as a string.
@@ -2844,38 +2804,31 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Returns this entity's unmodified sprint mp.
+     * Returns this entity's sprinting MP, modified for all its current circumstances such
+     * as gravity and damage. See {@link MPCalculationSetting#STANDARD}.
+     * For units that can't sprint, this is equal to the modified run/flank MP.
+     *
+     * @return This entity's modified sprinting MP
      */
-    protected int getOriginalSprintMP() {
-        return getOriginalRunMP();
+    public int getSprintMP() {
+        return getSprintMP(MPCalculationSetting.STANDARD);
     }
 
     /**
-     * Returns this entity's running/flank mp modified for heat and gravity.
+     * Returns this entity's sprinting MP, modified according to the given setting.
+     * For units that can't sprint, this is equal to the modified run/flank MP.
+     *
+     * @return This entity's modified sprinting MP
      */
-    public int getSprintMP() {
-        return getRunMP();
-    }
-
-    public int getSprintMP(boolean gravity, boolean ignoreHeat,
-                           boolean ignoreModularArmor) {
-        return getRunMP(gravity, ignoreHeat, ignoreModularArmor);
+    public int getSprintMP(MPCalculationSetting mpCalculationSetting) {
+        return getRunMP(mpCalculationSetting);
     }
 
     /**
      * Returns sprint MP without considering MASC
      */
     public int getSprintMPwithOneMASC() {
-        return getRunMPwithOneMASC();
-    }
-
-    /**
-     * Returns sprint MP without considering MASC, optionally figuring in
-     * gravity and possibly ignoring heat
-     */
-    public int getSprintMPwithOneMASC(boolean gravity, boolean ignoreHeat,
-                                      boolean ignoreModularArmor) {
-        return getRunMPwithOneMASC(gravity, ignoreHeat, ignoreModularArmor);
+        return getSprintMP(MPCalculationSetting.ONE_MASC);
     }
 
     /**
@@ -2883,22 +2836,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public int getSprintMPwithoutMASC() {
         return getRunMPwithoutMASC();
-    }
-
-    /**
-     * Returns sprint MP without considering MASC, optionally figuring in
-     * gravity and possibly ignoring heat
-     */
-    public int getSprintMPwithoutMASC(boolean gravity, boolean ignoreHeat,
-                                      boolean ignoreModularArmor) {
-        return getRunMPwithoutMASC(gravity, ignoreHeat, ignoreModularArmor);
-    }
-
-    /**
-     * Returns this entity's sprint mp as a string.
-     */
-    public String getSprintMPasString() {
-        return Integer.toString(getSprintMP());
     }
 
     /**
@@ -2912,7 +2849,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * get the gravity limit for ground movement
      */
     public int getRunningGravityLimit() {
-        return getRunMP(false, false, false);
+        return getRunMP(MPCalculationSetting.NO_GRAVITY);
     }
 
     /**
@@ -2943,20 +2880,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * factored for gravity.
      */
     public int getJumpMP() {
-        return getJumpMP(true);
+        return getJumpMP(MPCalculationSetting.STANDARD);
     }
 
-    /**
-     * return this entity's current jump MP, possibly affected by gravity
-     *
-     * @param gravity
-     * @return
-     */
-    public int getJumpMP(boolean gravity) {
-        if (gravity) {
+    public int getJumpMP(MPCalculationSetting mpCalculationSetting) {
+        if (mpCalculationSetting.ignoreGravity) {
+            return getOriginalJumpMP();
+        } else {
             return applyGravityEffectsOnMP(getOriginalJumpMP());
         }
-        return getOriginalJumpMP();
     }
 
     public int getJumpType() {
@@ -2978,7 +2910,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * water.)
      */
     public int getJumpMPWithTerrain() {
-        return getJumpMP();
+        return getJumpMP(MPCalculationSetting.DISCOUNT_SUBMERGED_JJ);
     }
 
     /**
@@ -7471,11 +7403,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         int maxSafeMP = 0;
         switch (moveType) {
             case MOVE_JUMP:
-                maxSafeMP = getJumpMP(false);
+                maxSafeMP = getJumpMP(MPCalculationSetting.noGravitySetting());
                 break;
             case MOVE_SPRINT:
             case MOVE_VTOL_SPRINT:
-                maxSafeMP = getSprintMP(false, true, true) + wigeBonus;
+                maxSafeMP = getSprintMP(MPCalculationSetting.SAFE_MOVE) + wigeBonus;
                 if (isEligibleForPavementBonus() && gotPavementBonus) {
                     maxSafeMP++;
                 }
@@ -7483,7 +7415,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             default:
                 // Max safe MP is based on whatever is the current maximum.
                 // http://bg.battletech.com/forums/index.php?topic=6681.msg154097#msg154097
-                maxSafeMP = getRunMP(false, true, true) + wigeBonus;
+                maxSafeMP = getRunMP(MPCalculationSetting.SAFE_MOVE) + wigeBonus;
                 if (isEligibleForPavementBonus() && gotPavementBonus) {
                     maxSafeMP++;
                 }
@@ -14319,16 +14251,19 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         setIsJumpingNow(false);
     }
 
-    /**
-     * Checks to see if the entities' elevation is below the surface of a water
-     * hex.
-     *
-     * @return True if the entity is underwater, else false.
-     */
+    /** @return True if this entity is completely submerged. */
     public boolean isUnderwater() {
+        if (!hasOccupiedHex()) {
+            return false;
+        }
         Hex occupiedHex = game.getBoard().getHex(getPosition());
-        return occupiedHex.containsTerrain(Terrains.WATER)
-                && (relHeight() < occupiedHex.getLevel());
+        return occupiedHex.containsTerrain(Terrains.WATER) && (relHeight() < occupiedHex.getLevel());
+    }
+
+    /** @return True if this entity has a non-null occupied hex, i.e. it has a game, a position, a board etc. */
+    public boolean hasOccupiedHex() {
+        return !isOffBoard() && (getPosition() != null) && (game != null) && (game.getBoard() != null)
+                && (game.getBoard().getHex(getPosition()) != null);
     }
 
     public int getTechLevelYear() {

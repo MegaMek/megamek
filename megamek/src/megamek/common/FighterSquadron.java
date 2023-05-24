@@ -124,9 +124,9 @@ public class FighterSquadron extends Aero {
     }
 
     @Override
-    public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
+    public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
         return getActiveSubEntities().stream()
-                .mapToInt(ent -> ent.getWalkMP(gravity, ignoreheat))
+                .mapToInt(ent -> ent.getWalkMP(mpCalculationSetting))
                 .min()
                 .orElse(0);
     }

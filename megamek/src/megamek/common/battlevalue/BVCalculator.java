@@ -268,6 +268,7 @@ public abstract class BVCalculator {
         weaponsForExcessiveAmmo.clear();
         heatEfficiencyExceeded = false;
         heatSum = 0;
+        collectedDefensiveEquipment.clear();
     }
 
     protected void assembleMovementPoints() {
@@ -290,7 +291,7 @@ public abstract class BVCalculator {
      * damage to the unit (engine hits, motive damage, immobile status).
      */
     protected void setRunMP() {
-        runMP = entity.getOriginalRunMP();
+        runMP = entity.getRunMP(MPCalculationSetting.BV_CALCULATION);
     }
 
     /**
@@ -298,7 +299,7 @@ public abstract class BVCalculator {
      * {@link #setRunMP()}.
      */
     protected void setJumpMP() {
-        jumpMP = entity.getOriginalJumpMP();
+        jumpMP = entity.getJumpMP(MPCalculationSetting.BV_CALCULATION);
     }
 
     /**

@@ -827,9 +827,9 @@ public class Princess extends BotClient {
         double total = 0;
         try {
             // Find out how fast this unit can move.
-            int fastestMove = entity.getRunMP(true, false, false);
-            if (entity.getJumpMP(true) > fastestMove) {
-                fastestMove = entity.getJumpMP(true);
+            int fastestMove = entity.getRunMP(MPCalculationSetting.STANDARD);
+            if (entity.getJumpMP() > fastestMove) {
+                fastestMove = entity.getJumpMP();
             }
             msg.append("\n\t\tFastest Move = ").append(fastestMove);
 

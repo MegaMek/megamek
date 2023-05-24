@@ -85,8 +85,8 @@ public class BipedMech extends Mech {
     }
     
     @Override
-    public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-        int wmp = getOriginalWalkMP();
+    public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
+        int mp = getOriginalWalkMP();
         int legsDestroyed = 0;
         int hipHits = 0;
         int actuatorHits = 0;
@@ -100,7 +100,7 @@ public class BipedMech extends Mech {
                     }
                 }
             }
-            wmp = (wmp * (2 - legsDestroyed)) / 2; 
+            mp = (mp * (2 - legsDestroyed)) / 2;
         } else {
             for (int i = 0; i < locations(); i++) {
                 if (locationIsLeg(i)) {
@@ -120,94 +120,86 @@ public class BipedMech extends Mech {
 
             // leg damage effects
             if (legsDestroyed > 0) {
-                wmp = (legsDestroyed == 1) ? 1 : 0;
+                mp = (legsDestroyed == 1) ? 1 : 0;
             } else {
                 if (hipHits > 0) {
                     if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
-                        wmp = (hipHits >= 1) ? wmp - (2 * hipHits) : 0;
+                        mp = (hipHits >= 1) ? mp - (2 * hipHits) : 0;
                     } else {
-                        wmp = (hipHits == 1) ? (int) Math.ceil(wmp / 2.0) : 0;
+                        mp = (hipHits == 1) ? (int) Math.ceil(mp / 2.0) : 0;
                     }
                 }
-                wmp -= actuatorHits;
+                mp -= actuatorHits;
             }
         }
 
         if (hasShield()) {
-            wmp -= getNumberOfShields(MiscType.S_SHIELD_LARGE);
-            wmp -= getNumberOfShields(MiscType.S_SHIELD_MEDIUM);
+            mp -= getNumberOfShields(MiscType.S_SHIELD_LARGE);
+            mp -= getNumberOfShields(MiscType.S_SHIELD_MEDIUM);
         }
 
-        if (!ignoremodulararmor && hasModularArmor()) {
-            wmp--;
+        if (!mpCalculationSetting.ignoreModularArmor && hasModularArmor()) {
+            mp--;
         }
 
-        if (!ignoreheat) {
+        if (!mpCalculationSetting.ignoreHeat) {
             // factor in heat
             if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
                 if (heat < 30) {
-                    wmp -= (heat / 5);
+                    mp -= (heat / 5);
                 } else if (heat >= 49) {
-                    wmp -= 9;
+                    mp -= 9;
                 } else if (heat >= 43) {
-                    wmp -= 8;
+                    mp -= 8;
                 } else if (heat >= 37) {
-                    wmp -= 7;
+                    mp -= 7;
                 } else if (heat >= 31) {
-                    wmp -= 6;
+                    mp -= 6;
                 } else {
-                    wmp -= 5;
+                    mp -= 5;
                 }
             } else {
-                wmp -= (heat / 5);
-            }
-            // TSM negates some heat, but provides no benefit when using tracks.
-            if ((heat >= 9) && hasTSM(false) && legsDestroyed == 0 && movementMode != EntityMovementMode.TRACKED) {
-                wmp += 2;
+                mp -= (heat / 5);
             }
         }
-        wmp = Math.max(wmp - getCargoMpReduction(this), 0);
-        if (null != game) {
+
+        // TSM negates some heat, but provides no benefit when using tracks.
+        if (((heat >= 9) || mpCalculationSetting.forceTSM) && hasTSM(false)
+                && legsDestroyed == 0 && movementMode != EntityMovementMode.TRACKED) {
+            mp += 2;
+        }
+
+        if (!mpCalculationSetting.ignoreCargo) {
+            mp = Math.max(mp - getCargoMpReduction(this), 0);
+        }
+
+        if (!mpCalculationSetting.ignoreWeather && (null != game)) {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
-            if (weatherMod != 0) {
-                wmp = Math.max(wmp + weatherMod, 0);
-            }
+            mp = Math.max(mp + weatherMod, 0);
+
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
                     && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_TORNADO_F13)) {
-                wmp += 1;
+                mp += 1;
             }
         }
-        // gravity
-        if (gravity) {
-            wmp = applyGravityEffectsOnMP(wmp);
+
+        if (!mpCalculationSetting.ignoreGravity) {
+            mp = applyGravityEffectsOnMP(mp);
         }
 
-        // For sanity sake...
-        wmp = Math.max(0, wmp);
-
-        return wmp;
+        return Math.max(0, mp);
     }
 
     /**
      * Returns this mech's running/flank mp modified for leg loss and stuff.
      */
     @Override
-    public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
+    public int getRunMP(MPCalculationSetting mpCalculationSetting) {
         if (countBadLegs() == 0) {
-            return super.getRunMP(gravity, ignoreheat, ignoremodulararmor);
+            return super.getRunMP(mpCalculationSetting);
+        } else {
+            return getWalkMP(mpCalculationSetting);
         }
-        return getWalkMP(gravity, ignoreheat, ignoremodulararmor);
-    }
-
-    /**
-     * Returns run MP without considering MASC modified for leg loss and stuff.
-     */
-    @Override
-    public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-        if (countBadLegs() == 0) {
-            return super.getRunMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
-        }
-        return getWalkMP(gravity, ignoreheat, ignoremodulararmor);
     }
 
     /**

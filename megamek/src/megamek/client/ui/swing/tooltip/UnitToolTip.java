@@ -1304,7 +1304,8 @@ public final class UnitToolTip {
                         paritalWingDistroyed += entity.getBadCriticals(CriticalSlot.TYPE_EQUIPMENT, eNum, Mech.LOC_RT);
                         paritalWingDistroyed += entity.getBadCriticals(CriticalSlot.TYPE_EQUIPMENT, eNum, Mech.LOC_LT);
 
-                        partialWingWeaterMod = ((Mech) entity).getPartialWingJumpAtmoBonus() - ((Mech) entity).getPartialWingJumpWeightClassBonus();
+                        partialWingWeaterMod = ((Mech) entity).getPartialWingJumpAtmoBonus()
+                                - ((Mech) entity).getPartialWingJumpWeightClassBonus();
                     }
                 }
 
@@ -1320,9 +1321,9 @@ public final class UnitToolTip {
                 sMove += "/" + jumpMP;
             }
 
-            int walkMPModified = entity.getWalkMP(true, false,false);
-            int runMPModified = entity.getRunMP(true, false, false);
-            int jumpMPModified = entity.getJumpMP(true);
+            int walkMPModified = entity.getWalkMP();
+            int runMPModified = entity.getRunMP();
+            int jumpMPModified = entity.getJumpMP();
 
             if ((walkMP != walkMPModified) || (runMP != runMPModified) || (jumpMP != jumpMPModified)) {
                 sMove += DOT_SPACER + walkMPModified + "/" + runMPModified;
@@ -1341,8 +1342,8 @@ public final class UnitToolTip {
                     String sGravity =  entity.getGame().getPlanetaryConditions().getGravity() + "g";
                     sMove += guiScaledFontHTML(GUIP.getWarningColor()) + sGravity + "</FONT>";
                 }
-                int walkMPNoHeat = entity.getWalkMP(true, true,false);
-                int runMPNoHeat = entity.getRunMP(true, true, false);
+                int walkMPNoHeat = entity.getWalkMP(MPCalculationSetting.NO_HEAT);
+                int runMPNoHeat = entity.getRunMP(MPCalculationSetting.NO_HEAT);
                 if ((walkMPNoHeat != walkMPModified) || (runMPNoHeat != runMPModified)) {
                     sMove += DOT_SPACER;
                     String sHeat = "\uD83D\uDD25";

@@ -114,8 +114,23 @@ public class GunEmplacement extends Tank {
     }
 
     @Override
-    public int getWalkMP(boolean gravity, boolean ignoreHeat) {
-        return 0;
+    public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
+        return 0; // Overridden for performance and to keep it from being made non-zero by any rule
+    }
+
+    @Override
+    public int getRunMP(MPCalculationSetting mpCalculationSetting) {
+        return 0; // Overridden for performance and to keep it from being made non-zero by any rule
+    }
+
+    @Override
+    public int getSprintMP(MPCalculationSetting mpCalculationSetting) {
+        return 0; // Overridden for performance and to keep it from being made non-zero by any rule
+    }
+
+    @Override
+    public int getJumpMP(MPCalculationSetting mpCalculationSetting) {
+        return 0; // Overridden for performance and to keep it from being made non-zero by any rule
     }
 
     @Override
@@ -230,11 +245,6 @@ public class GunEmplacement extends Tank {
     @Override
     public int[] getNoOfSlots() {
         return CRITICAL_SLOTS;
-    }
-
-    @Override
-    public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-        return 0;
     }
 
     @Override

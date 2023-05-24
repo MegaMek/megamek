@@ -40,48 +40,28 @@ public class BattleArmorBVCalculator extends BVCalculator {
         battleArmor = (BattleArmor) entity;
     }
 
-    @Override
-    protected void setRunMP() {
-        runMP = entity.getOriginalWalkMP();
-        if (battleArmor.hasMyomerBooster()) {
-            if (entity.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY) {
-                runMP++;
-            } else {
-                runMP += 2;
-            }
-        } else if (entity.hasWorkingMisc(MiscType.F_MECHANICAL_JUMP_BOOSTER)) {
-            // mechanical jump booster gives an extra MP
-            runMP++;
-        }
-        if (battleArmor.hasDWP()) {
-            if (entity.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) {
-                runMP -= 3;
-            } else if (entity.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY) {
-                runMP -= 2;
-            }
-            if (runMP == 0) {
-                runMP++;
-            }
-        }
-    }
-
-    @Override
-    protected void setJumpMP() {
-        if (battleArmor.isBurdened() || battleArmor.hasDWP() || battleArmor.getMovementMode().isUMUInfantry()) {
-            jumpMP = 0;
-            return;
-        }
-        jumpMP = battleArmor.getOriginalJumpMP();
-        if ((jumpMP == 0) && battleArmor.hasWorkingMisc(MiscType.F_MECHANICAL_JUMP_BOOSTER)) {
-            jumpMP++;
-        }
-        if ((jumpMP > 0) && battleArmor.hasWorkingMisc(MiscType.F_PARTIAL_WING)) {
-            jumpMP++;
-        }
-        if ((jumpMP > 0) && battleArmor.hasWorkingMisc(MiscType.F_JUMP_BOOSTER)) {
-            jumpMP++;
-        }
-    }
+    // TODO getSingleTrooperBV()
+    /**
+     * Calculates the Battle Value of this BattleArmor. When singleTrooper is true the Battle Value of one
+     * trooper is returned, otherwise the BV of the whole unit. Calling this method with the value of
+     * singleTrooper being false is equivalent to calling the standard calculateBattleValue methods.
+     *
+     * <P> As in all other BV calculations, the other parameters can be used to ignore C3 / skill-based changes
+     * to the BV. When both are true, the "base" BV of the unit is calculated. Note that when a unit has a manual BV
+     * value set in its definition file, this manual BV value is returned instead of a calculated BV value.
+     *
+     * @param ignoreC3    When true, the BV contributions of any C3 computers are not added
+     * @param ignoreSkill When true, the skill of the crew / pilot is not taken into account for BV
+     * @param singleTrooper When true, returns the BV of a single trooper of this BA, otherwise of the full unit
+     * @return The Battle Value of this BattleArmor
+     */
+//    public int calculateBattleValue(boolean ignoreC3, boolean ignoreSkill, boolean singleTrooper) {
+//        if (useManualBV) {
+//            return manualBV;
+//        }
+//        return BattleArmorBVCalculator.calculateBV(this, ignoreC3, ignoreSkill,
+//                new DummyCalculationReport(), singleTrooper);
+//    }
 
     @Override
     protected double tmmFactor(int tmmRunning, int tmmJumping, int tmmUmu) {
@@ -304,8 +284,8 @@ public class BattleArmorBVCalculator extends BVCalculator {
 
     @Override
     protected int offensiveSpeedFactorMP() {
-        return Math.max(battleArmor.getWalkMP(false, false, true, true, false),
-                Math.max(battleArmor.getJumpMP(false, true, true), battleArmor.getActiveUMUCount()));
+        return Math.max(battleArmor.getWalkMP(MPCalculationSetting.BV_CALCULATION),
+                Math.max(battleArmor.getJumpMP(MPCalculationSetting.BV_CALCULATION), battleArmor.getActiveUMUCount()));
     }
 
     @Override

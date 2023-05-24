@@ -4,11 +4,7 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
-import megamek.common.Entity;
-import megamek.common.Mech;
-import megamek.common.MiscType;
-import megamek.common.QuadMech;
-import megamek.common.TripodMech;
+import megamek.common.*;
 
 /**
  * A transient class used to lazy-load "calculated" information from an entity
@@ -63,7 +59,7 @@ public class CachedEntityState {
 
     public int getRunMPwithOneMASC() {
         if (runMPWithOneMasc == null) {
-            runMPWithOneMasc = backingEntity.getRunMPwithOneMASC();
+            runMPWithOneMasc = backingEntity.getRunMP(MPCalculationSetting.ONE_MASC);
         }
 
         return runMPWithOneMasc;
@@ -131,7 +127,7 @@ public class CachedEntityState {
     
     public int getJumpMPNoGravity() {
         if (jumpMPNoGravity == null) {
-            jumpMPNoGravity = backingEntity.getJumpMP(false);
+            jumpMPNoGravity = backingEntity.getJumpMP(MPCalculationSetting.noGravitySetting());
         }
         
         return jumpMPNoGravity;

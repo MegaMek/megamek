@@ -269,7 +269,8 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
         // - is friendly
         // - if we care only about mobile units, has no MP 
         for (Entity entity : game.getEntitiesVector(position, true)) {
-            if (!entity.isEnemyOf(shooter) && (includeMobileUnits || (entity.getWalkMP(true, false) == 0))) {
+            if (!entity.isEnemyOf(shooter)
+                    && (includeMobileUnits || (entity.getWalkMP(MPCalculationSetting.fullInGameSetting()) == 0))) {
                 friendlyFireCheckResults.put(position, true);
                 return true;
             }

@@ -73,10 +73,7 @@ final class ASMovementConverter {
         double walkMP = entity.getOriginalWalkMP();
         report.addLine("Base Walking MP", "", Integer.toString(entity.getOriginalWalkMP()));
 
-        int jumpMove = entity.getJumpMP(false) * 2;
-        if (entity instanceof Mech) {
-            jumpMove = ((Mech) entity).getJumpMP(false, false) * 2;
-        }
+        int jumpMove = entity.getJumpMP(MPCalculationSetting.alphaStrikeConversionSetting()) * 2;
 
         if (hasSupercharger(entity) && hasMechMASC(entity)) {
             walkMP *= 1.5;
@@ -135,12 +132,8 @@ final class ASMovementConverter {
         CalculationReport report = conversionData.conversionReport;
 
         var result = new HashMap<String, Integer>();
-        int walkingMP = entity.getWalkMP(false, true, true);
-        int jumpingMP = entity.getJumpMP();
-        if (entity instanceof BattleArmor) {
-            walkingMP = ((BattleArmor)entity).getWalkMP(true, true, true, true, true);
-            jumpingMP = ((BattleArmor)entity).getJumpMP(true, true, true);
-        }
+        int walkingMP = entity.getWalkMP(MPCalculationSetting.AS_CONVERSION);
+        int jumpingMP = entity.getJumpMP(MPCalculationSetting.AS_CONVERSION);
 
         report.addLine("Walking MP:", Integer.toString(walkingMP));
         report.addLine("Jumping MP:", Integer.toString(jumpingMP));
@@ -265,7 +258,7 @@ final class ASMovementConverter {
                 report.addLine(type, "Infantry (motorized)", "m");
                 return "m";
             case INF_JUMP:
-                if (entity.getJumpMP(false) > 0) {
+                if (entity.getJumpMP(MPCalculationSetting.alphaStrikeConversionSetting()) > 0) {
                     report.addLine(type, "Infantry (jump)", "j");
                     return "j";
                 } else {

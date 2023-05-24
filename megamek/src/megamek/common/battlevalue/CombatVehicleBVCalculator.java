@@ -151,10 +151,10 @@ public class CombatVehicleBVCalculator extends BVCalculator {
 
     @Override
     protected int offensiveSpeedFactorMP() {
-        int runMP = entity.getRunMP(false, true, true);
-        int jumpMP = entity.getJumpMP(false);
+        int runMP = entity.getRunMP(MPCalculationSetting.BV_CALCULATION);
+        int jumpMP = entity.getJumpMP(MPCalculationSetting.BV_CALCULATION);
         if (entity.getMovementMode().isTrain()) {
-            runMP = entity.getWalkMP(false, true, true);
+            runMP = entity.getWalkMP(MPCalculationSetting.BV_CALCULATION);
         }
         // trailers have original run MP of 0, but should count at 1 for speed factor calculation
         if (entity.getOriginalRunMP() == 0) {

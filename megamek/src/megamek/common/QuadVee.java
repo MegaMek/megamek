@@ -132,17 +132,16 @@ public class QuadVee extends QuadMech {
         return false;
     }
     
-    /**
-     * Current MP is calculated differently depending on whether the QuadVee is in Mech
-     * or vehicle mode. During conversion we use the mode we started in:
-     * bg.battletech.com/forums/index.php?topic=55261.msg1271935#msg1271935
-     */
+
     @Override
-    public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-        if (getConversionMode() == CONV_MODE_VEHICLE) {
-            return getCruiseMP(gravity, ignoreheat, ignoremodulararmor);
+    public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
+        // Current MP is calculated differently depending on whether the QuadVee is in Mech
+        // or vehicle mode. During conversion we use the mode we started in:
+        // bg.battletech.com/forums/index.php?topic=55261.msg1271935#msg1271935
+        if (!mpCalculationSetting.ignoreConversion && (getConversionMode() == CONV_MODE_VEHICLE)) {
+            return getCruiseMP(mpCalculationSetting);
         } else {
-            return super.getWalkMP(gravity, ignoreheat, ignoremodulararmor);
+            return super.getWalkMP(mpCalculationSetting);
         }
     }
     
@@ -150,11 +149,10 @@ public class QuadVee extends QuadMech {
      * In vehicle mode the QuadVee ignores actuator and hip criticals, but is subject to track/wheel
      * damage and various effects of vehicle motive damage.
      */
-    public int getCruiseMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-        int wmp = getOriginalWalkMP();
-        //Bonus for wheeled movement
+    public int getCruiseMP(MPCalculationSetting mpCalculationSetting) {
+        int mp = getOriginalWalkMP();
         if (getMotiveType() == MOTIVE_WHEEL) {
-            wmp++;
+            mp++;
         }
         
         // If a leg or its track/wheel is destroyed, it is treated as major motive system damage,
@@ -162,8 +160,7 @@ public class QuadVee extends QuadMech {
         // bg.battletech.com/forums/index.php?topic=55261.msg1271935#msg1271935
         int badTracks = 0;
         for (int loc = 0; loc < locations(); loc++) {
-            if (locationIsLeg(loc)
-                    && (isLocationBad(loc) || getCritical(loc, 5).isHit())) {
+            if (locationIsLeg(loc) && (isLocationBad(loc) || getCritical(loc, 5).isHit())) {
                 badTracks++;
             }
         }
@@ -171,106 +168,72 @@ public class QuadVee extends QuadMech {
         if (badTracks == 4) {
             return 0;
         } else if (badTracks > 1) {
-            wmp = wmp / (1 << badTracks);
+            mp = mp / (1 << badTracks);
         }
 
-        // Now apply modifiers
-        if (!ignoremodulararmor && hasModularArmor()) {
-            wmp--;
+        if (!mpCalculationSetting.ignoreModularArmor && hasModularArmor()) {
+            mp--;
         }
 
-        if (!ignoreheat) {
-            // factor in heat
+        if (!mpCalculationSetting.ignoreHeat) {
             if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
                 if (heat < 30) {
-                    wmp -= (heat / 5);
+                    mp -= (heat / 5);
                 } else if (heat >= 49) {
-                    wmp -= 9;
+                    mp -= 9;
                 } else if (heat >= 43) {
-                    wmp -= 8;
+                    mp -= 8;
                 } else if (heat >= 37) {
-                    wmp -= 7;
+                    mp -= 7;
                 } else if (heat >= 31) {
-                    wmp -= 6;
+                    mp -= 6;
                 } else {
-                    wmp -= 5;
+                    mp -= 5;
                 }
             } else {
-                wmp -= (heat / 5);
+                mp -= (heat / 5);
             }
         }
-        if (null != game) {
+
+        if (!mpCalculationSetting.ignoreWeather && (null != game)) {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
-            if (weatherMod != 0) {
-                wmp = Math.max(wmp + weatherMod, 0);
-            }
+            mp = Math.max(mp + weatherMod, 0);
 
             if(getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
                     && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_TORNADO_F13)) {
-                wmp += 1;
+                mp += 1;
             }
         }
-        // gravity
-        if (gravity) {
-            wmp = applyGravityEffectsOnMP(wmp);
+
+        if (!mpCalculationSetting.ignoreGravity) {
+            mp = applyGravityEffectsOnMP(mp);
         }
-        // For sanity sake...
-        wmp = Math.max(0, wmp);
-        return wmp;        
+
+        return Math.max(0, mp);
     }
 
     @Override
-    public int getSprintMP() {
-        if (getConversionMode() == CONV_MODE_VEHICLE && (game == null || !game.getOptions()
-                .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS))) {
-            return getRunMP();
-        }
-        return getSprintMP(true, false, false);
-    }
-
-    @Override
-    public int getSprintMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-        if (getConversionMode() == CONV_MODE_VEHICLE && (game == null || !game.getOptions()
-                .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS))) {
-            return getRunMP(gravity, ignoreheat, ignoremodulararmor);
-        }
-        return super.getSprintMP(gravity, ignoreheat, ignoremodulararmor);
-    }
-
-    @Override
-    public int getSprintMPwithoutMASC(boolean gravity, boolean ignoreheat,
-            boolean ignoremodulararmor) {
-        if (getConversionMode() == CONV_MODE_VEHICLE) {
-            if (game == null || !game.getOptions()
-                    .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
-                return getRunMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
-            } else {
-                return (int) Math.ceil(getWalkMP(gravity, ignoreheat,
-                        ignoremodulararmor) * 2.0);
-            }
+    public int getSprintMP(MPCalculationSetting mpCalculationSetting) {
+        if (!mpCalculationSetting.ignoreConversion && (getConversionMode() == CONV_MODE_VEHICLE)
+                && ((game == null) ||
+                !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS))) {
+            return getRunMP(mpCalculationSetting);
         } else {
-            return super.getSprintMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
+            return super.getSprintMP(mpCalculationSetting);
         }
     }
 
-    @Override
-    public int getOriginalSprintMPwithoutMASC() {
-        if (getConversionMode() == CONV_MODE_VEHICLE && (game == null || !game.getOptions()
-                .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS))) {
-            return getOriginalRunMP();
-        } else {
-            return (int) Math.ceil(getOriginalWalkMP() * 2.0);
-        }
-    }
     /*
      * No jumping in vehicle mode.
      */
     @Override
-    public int getJumpMP(boolean gravity, boolean ignoremodulararmor) {
-        if (getConversionMode() == CONV_MODE_VEHICLE || convertingNow) {
+    public int getJumpMP(MPCalculationSetting mpCalculationSetting) {
+        if (!mpCalculationSetting.ignoreConversion
+                && ((getConversionMode() == CONV_MODE_VEHICLE) || convertingNow)) {
             return 0;
+        } else {
+            return super.getJumpMP(mpCalculationSetting);
         }
-        return super.getJumpMP(gravity, ignoremodulararmor);
     }
 
     /*

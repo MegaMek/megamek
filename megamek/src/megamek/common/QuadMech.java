@@ -17,6 +17,7 @@
 package megamek.common;
 
 import megamek.common.enums.AimingMode;
+import megamek.common.enums.MPBoosters;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import org.apache.logging.log4j.LogManager;
@@ -81,8 +82,8 @@ public class QuadMech extends Mech {
     }
 
     @Override
-    public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-        int wmp = getOriginalWalkMP();
+    public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
+        int mp = getOriginalWalkMP();
 
         int legsDestroyed = 0;
         int hipHits = 0;
@@ -97,7 +98,7 @@ public class QuadMech extends Mech {
                     }
                 }
             }
-            wmp = (wmp * (4 - legsDestroyed)) / 4;
+            mp = (mp * (4 - legsDestroyed)) / 4;
         } else {
             for (int i = 0; i < locations(); i++) {
                 if (locationIsLeg(i)) {
@@ -117,101 +118,84 @@ public class QuadMech extends Mech {
             // leg damage effects
             if (legsDestroyed > 0) {
                 if (legsDestroyed == 1) {
-                    wmp--;
+                    mp--;
                 } else if (legsDestroyed == 2) {
-                    wmp = 1;
+                    mp = 1;
                 } else {
-                    wmp = 0;
+                    mp = 0;
                 }
             }        
-            if (wmp > 0) {
+            if (mp > 0) {
                 if (hipHits > 0) {
                     if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
-                        wmp = wmp - (2 * hipHits);
+                        mp = mp - (2 * hipHits);
                     } else {
                         for (int i = 0; i < hipHits; i++) {
-                            wmp = (int) Math.ceil(wmp / 2.0);
+                            mp = (int) Math.ceil(mp / 2.0);
                         }
                     }
                 }
-                wmp -= actuatorHits;
+                mp -= actuatorHits;
             }
         }
 
-        if (!ignoremodulararmor && hasModularArmor()) {
-            wmp--;
+        if (!mpCalculationSetting.ignoreModularArmor && hasModularArmor()) {
+            mp--;
         }
 
-        if (!ignoreheat) {
+        if (!mpCalculationSetting.ignoreHeat) {
             // factor in heat
             if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
                 if (heat < 30) {
-                    wmp -= (heat / 5);
+                    mp -= (heat / 5);
                 } else if (heat >= 49) {
-                    wmp -= 9;
+                    mp -= 9;
                 } else if (heat >= 43) {
-                    wmp -= 8;
+                    mp -= 8;
                 } else if (heat >= 37) {
-                    wmp -= 7;
+                    mp -= 7;
                 } else if (heat >= 31) {
-                    wmp -= 6;
+                    mp -= 6;
                 } else {
-                    wmp -= 5;
+                    mp -= 5;
                 }
             } else {
-                wmp -= (heat / 5);
+                mp -= (heat / 5);
             }
             // TSM negates some heat but has no benefit for 'Mechs using tracks or QuadVees in vehicle mode.
             if ((heat >= 9) && hasTSM(false) && legsDestroyed < 2
                     && movementMode != EntityMovementMode.TRACKED
                     && movementMode != EntityMovementMode.WHEELED) {
-                wmp += 2;
+                mp += 2;
             }
         }
-        if (null != game) {
+
+        if (!mpCalculationSetting.ignoreWeather && (null != game)) {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
-            if (weatherMod != 0) {
-                wmp = Math.max(wmp + weatherMod, 0);
-            }
+            mp = Math.max(mp + weatherMod, 0);
 
             if(getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
                     && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_TORNADO_F13)) {
-                wmp += 1;
+                mp += 1;
             }
         }
-        // gravity
-        if (gravity) {
-            wmp = applyGravityEffectsOnMP(wmp);
+
+        if (!mpCalculationSetting.ignoreGravity) {
+            mp = applyGravityEffectsOnMP(mp);
         }
-        // For sanity sake...
-        wmp = Math.max(0, wmp);
-        return wmp;
+
+        return Math.max(0, mp);
     }
 
-    /**
-     * @return this mek's running/flank mp modified for leg loss and stuff.
-     */
     @Override
-    public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
+    public int getRunMP(MPCalculationSetting mpCalculationSetting) {
         if (countBadLegs() <= 1
                 || (this instanceof QuadVee && getConversionMode() == QuadVee.CONV_MODE_VEHICLE
                 && !convertingNow)) {
-            return super.getRunMP(gravity, ignoreheat, ignoremodulararmor);
+            return super.getRunMP(mpCalculationSetting);
+        } else {
+            return getWalkMP(mpCalculationSetting);
         }
-        return getWalkMP(gravity, ignoreheat, ignoremodulararmor);
-    }
-
-    /**
-     * Returns run MP without considering MASC modified for leg loss and stuff.
-     */
-    @Override
-    public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-        if (countBadLegs() <= 1
-                || (this instanceof QuadVee && getConversionMode() == QuadVee.CONV_MODE_VEHICLE
-                && !convertingNow)) {
-            return super.getRunMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
-        }
-        return getWalkMP(gravity, ignoreheat);
     }
 
     @Override

@@ -406,76 +406,57 @@ public class BattleArmor extends Infantry {
         return jumpMP;
     }
 
-    /**
-     * Returns this entity's walking mp, factored for extreme temperatures and
-     * gravity.
-     */
     @Override
-    public int getWalkMP(boolean gravity, boolean ignoreheat,
-            boolean ignoremodulararmor) {
-        return getWalkMP(gravity, ignoreheat, ignoremodulararmor, false, false);
-    }
+    public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
+        int mp = getOriginalWalkMP();
 
-    public int getWalkMP(boolean gravity, boolean ignoreheat,
-            boolean ignoremodulararmor, boolean ignoreDWP,
-            boolean ignoreMyomerBooster) {
-        int j = getOriginalWalkMP();
         if (hasMyomerBooster()) {
-            if (!ignoreMyomerBooster) {
-                if (getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY) {
-                    j++;
-                } else {
-                    j += 2;
-                }
+            if (!mpCalculationSetting.ignoreMyomerBooster) {
+                mp += (getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY) ? 1 : 2;
             }
         } else if (hasWorkingMisc(MiscType.F_MECHANICAL_JUMP_BOOSTER)) {
-            // mechanical jump booster gives an extra MP
-            j++;
+            mp++;
         }
-        if (hasDWP() && !ignoreDWP) {
+
+        if (hasDWP() && !mpCalculationSetting.ignoreDWP) {
             if (getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) {
-                j -= 3;
+                mp -= 3;
             } else if (getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY) {
-                j -= 2;
+                mp -= 2;
             }
-            if (j == 0) {
-                j++;
-            }
-        }
-        if (null != game) {
-            int weatherMod = game.getPlanetaryConditions()
-                    .getMovementMods(this);
-            if (weatherMod != 0) {
-                j = Math.max(j + weatherMod, 0);
+            if (mp == 0) {
+                mp++;
             }
         }
-        if (null != game) {
-            if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_GUSTING_RAIN) && getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_RAIN)) {
-                j += 1;
+
+        if ((!mpCalculationSetting.ignoreWeather) && (null != game)) {
+            int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
+            mp = Math.max(mp + weatherMod, 0);
+
+            if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_GUSTING_RAIN)
+                    && getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_RAIN)) {
+                mp += 1;
             }
 
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
                     && ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_STRONG_GALE)
                     || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_STORM))) {
-                j += 1;
+                mp += 1;
             }
         }
-        if (gravity) {
-            j = applyGravityEffectsOnMP(j);
+
+        if (!mpCalculationSetting.ignoreGravity) {
+            mp = applyGravityEffectsOnMP(mp);
         }
-        return j;
+
+        return mp;
     }
 
     @Override
-    public int getRunMP(boolean gravity, boolean ignoreheat,
-            boolean ignoremodulararmor) {
-        boolean fastMove = (game != null) &&
+    public int getRunMP(MPCalculationSetting mpCalculationSetting) {
+        boolean fastMove = !mpCalculationSetting.ignoreOptionalRules && (game != null) &&
                 game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_FAST_INFANTRY_MOVE);
-        if (fastMove) {
-            return getWalkMP(gravity, ignoreheat, ignoremodulararmor, false,
-                    false) + 1;
-        }
-        return getWalkMP(gravity, ignoreheat, ignoremodulararmor, false, false);
+        return getWalkMP(mpCalculationSetting) + (fastMove ? 1 : 0);
     }
 
     /**
@@ -493,37 +474,21 @@ public class BattleArmor extends Infantry {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Infantry#getJumpMP(boolean)
-     */
     @Override
-    public int getJumpMP(boolean gravity) {
-        return getJumpMP(gravity, false, false);
-    }
+    public int getJumpMP(MPCalculationSetting mpCalculationSetting) {
+        if (isBurdened() && !mpCalculationSetting.ignoreBurden) {
+            return 0;
+        }
 
-    /**
-     * get this BA's jump MP, possibly ignoring gravity and burden
-     *
-     * @param gravity
-     * @param ignoreBurden
-     * @return
-     */
-    public int getJumpMP(boolean gravity, boolean ignoreBurden,
-            boolean ignoreDWP) {
-        if (isBurdened() && !ignoreBurden) {
+        if (hasDWP() && !mpCalculationSetting.ignoreDWP) {
             return 0;
         }
-        if (hasDWP() && !ignoreDWP) {
+
+        if (!mpCalculationSetting.ignoreWeather && (null != game)
+                && (game.getPlanetaryConditions().getWindStrength() >= PlanetaryConditions.WI_STORM)) {
             return 0;
         }
-        if (null != game) {
-            int windCond = game.getPlanetaryConditions().getWindStrength();
-            if (windCond >= PlanetaryConditions.WI_STORM) {
-                return 0;
-            }
-        }
+
         int mp = 0;
         if (getMovementMode() != EntityMovementMode.INF_UMU) {
             mp = getOriginalJumpMP();
@@ -533,19 +498,21 @@ public class BattleArmor extends Infantry {
         if ((mp == 0) && hasWorkingMisc(MiscType.F_MECHANICAL_JUMP_BOOSTER)) {
             mp++;
         }
-        // partial wing gives extra MP in atmosphere
+
         if ((mp > 0)
                 && hasWorkingMisc(MiscType.F_PARTIAL_WING)
-                && ((game == null) || !game.getPlanetaryConditions().isVacuum())) {
+                && (mpCalculationSetting.ignoreWeather || (game == null) || !game.getPlanetaryConditions().isVacuum())) {
             mp++;
         }
+
         if ((mp > 0) && hasWorkingMisc(MiscType.F_JUMP_BOOSTER)) {
-            // jump booster gives an extra MP
             mp++;
         }
-        if (gravity) {
+
+        if (!mpCalculationSetting.ignoreGravity) {
             mp = applyGravityEffectsOnMP(mp);
         }
+
         return mp;
     }
 
@@ -868,28 +835,6 @@ public class BattleArmor extends Infantry {
     }
 
     /**
-     * Calculates the Battle Value of this BattleArmor. When singleTrooper is true the Battle Value of one
-     * trooper is returned, otherwise the BV of the whole unit. Calling this method with the value of
-     * singleTrooper being false is equivalent to calling the standard calculateBattleValue methods.
-     *
-     * <P> As in all other BV calculations, the other parameters can be used to ignore C3 / skill-based changes
-     * to the BV. When both are true, the "base" BV of the unit is calculated. Note that when a unit has a manual BV
-     * value set in its definition file, this manual BV value is returned instead of a calculated BV value.
-     *
-     * @param ignoreC3    When true, the BV contributions of any C3 computers are not added
-     * @param ignoreSkill When true, the skill of the crew / pilot is not taken into account for BV
-     * @param singleTrooper When true, returns the BV of a single trooper of this BA, otherwise of the full unit
-     * @return The Battle Value of this BattleArmor
-     */
-//    public int calculateBattleValue(boolean ignoreC3, boolean ignoreSkill, boolean singleTrooper) {
-//        if (useManualBV) {
-//            return manualBV; // TODO : divide by the number of troopers when singleTrooper is true?
-//        }
-//        return BattleArmorBVCalculator.calculateBV(this, ignoreC3, ignoreSkill,
-//                new DummyCalculationReport(), singleTrooper);
-//    }
-
-    /**
      * Prepare the entity for a new round of action.
      */
     @Override
@@ -1007,8 +952,11 @@ public class BattleArmor extends Infantry {
      * pack. A <code>BattleArmor</code> must have 2 or more walking MP and be
      * Medium or heavier to mount DWP.
      *
-     * @return
+     * Used in MML!
+     *
+     * @return True if this BA can use a detachable weapon pack
      */
+    @SuppressWarnings("unused")
     public boolean canMountDWP() {
         return (getOriginalWalkMP() >= 2)
                 && (getWeightClass() >= EntityWeightClass.WEIGHT_MEDIUM);

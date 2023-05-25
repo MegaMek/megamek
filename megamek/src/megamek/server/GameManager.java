@@ -17,6 +17,7 @@ import megamek.MMConstants;
 import megamek.MegaMek;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.common.*;
 import megamek.common.Building.DemolitionCharge;
 import megamek.common.actions.*;
@@ -1778,6 +1779,32 @@ public class GameManager implements IGameManager {
         return result;
     }
 
+    private void entityStatusReport() {
+        List<Report> reports = new ArrayList<>();
+        List<Entity> entities = game.getEntitiesVector().stream().filter(e -> e.isDeployed()).collect(Collectors.toList());
+        Comparator<Entity> comp = Comparator.comparing((Entity e) -> e.getOwner().getTeam());
+        comp = comp.thenComparing((Entity e) -> e.getOwner().getName());
+        comp = comp.thenComparing((Entity e) -> e.getDisplayName());
+        entities.sort(comp);
+
+        Report r = new Report(7600);
+        reports.add(r);
+
+        for (Entity e : entities) {
+            r = new Report(1231);
+            r.subject = e.getId();
+            r.addDesc(e);
+            r.add(UnitToolTip.getEntityTipReport(e).toString());
+            reports.add(r);
+
+            r = new Report(1230, Report.PUBLIC);
+            r.add("<BR>");
+            reports.add(r);
+        }
+
+        vPhaseReport.addAll(reports);
+    }
+
     /**
      * Prepares for, presumably, the next phase. This typically involves
      * resetting the states of entities in the game and making sure the client
@@ -1959,6 +1986,8 @@ public class GameManager implements IGameManager {
                 resolveMechWarriorPickUp();
                 resolveVeeINarcPodRemoval();
                 resolveFortify();
+
+                entityStatusReport();
 
                 // Moved this to the very end because it makes it difficult to see
                 // more important updates when you have 300+ messages of smoke filling

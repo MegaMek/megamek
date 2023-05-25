@@ -49,7 +49,7 @@ public final class UnitToolTip {
 
     public static StringBuilder lobbyTip(InGameObject unit, Player localPlayer, MapSettings mapSettings) {
         if (unit instanceof Entity) {
-            return getEntityTipTable((Entity) unit, localPlayer, true, false, mapSettings);
+            return getEntityTipTable((Entity) unit, localPlayer, true, false, mapSettings, true);
         } else if (unit instanceof AlphaStrikeElement) {
             // TODO : Provide a suitable tip
             return new StringBuilder("AlphaStrikeElement " + ((AlphaStrikeElement) unit).getName());
@@ -61,29 +61,34 @@ public final class UnitToolTip {
     /** Returns the unit tooltip with values that are relevant in the lobby. */
     public static StringBuilder getEntityTipLobby(Entity entity, Player localPlayer,
                                                   MapSettings mapSettings) {
-        return getEntityTipTable(entity, localPlayer, true, false, mapSettings);
+        return getEntityTipTable(entity, localPlayer, true, false, mapSettings, true);
     }
 
     /** Returns the unit tooltip with values that are relevant in-game. */
     public static StringBuilder getEntityTipGame(Entity entity, Player localPlayer) {
-        return getEntityTipTable(entity, localPlayer, false, true, null);
+        return getEntityTipTable(entity, localPlayer, false, true, null, true);
     }
 
     /** Returns the unit tooltip with values that are relevant in-game without the Pilot info. */
     public static StringBuilder getEntityTipUnitDisplay(Entity entity, Player localPlayer) {
-        return getEntityTipTable(entity, localPlayer, true, false, null);
+        return getEntityTipTable(entity, localPlayer, true, false, null, true);
     }
 
     /** Returns the unit tooltip with minimal but useful information */
     public static StringBuilder getEntityTipVitals(Entity entity, Player localPlayer) {
-        return getEntityTipTable(entity, localPlayer, false, false, null);
+        return getEntityTipTable(entity, localPlayer, false, false, null, true);
+    }
+
+    /** Returns the unit tooltip with minimal but useful information */
+    public static StringBuilder getEntityTipReport(Entity entity) {
+        return getEntityTipTable(entity, null, false, true, null, false);
     }
 
     // PRIVATE
 
     /** Assembles the whole unit tooltip. */
     private static StringBuilder getEntityTipTable(Entity entity, Player localPlayer,
-           boolean details, boolean pilotInfo, @Nullable MapSettings mapSettings) {
+           boolean details, boolean pilotInfo, @Nullable MapSettings mapSettings, boolean showName) {
 
         // Tooltip info for a sensor blip
         if (EntityVisibilityUtils.onlyDetectedBySensors(localPlayer, entity)) {
@@ -94,23 +99,25 @@ public final class UnitToolTip {
         String result = "";
         Game game = entity.getGame();
 
-        // Unit Chassis and Player
-        Player owner = game.getPlayer(entity.getOwnerId());
-        Color ownerColor = (owner != null) ? owner.getColour().getColour() : uiGray();
-        String ownerName = (owner != null) ? owner.getName() : ReportMessages.getString("BoardView1.Tooltip.unknownOwner");
+        if (showName) {
+            String sChassisPlayerInfo = "";
+            // Unit Chassis and Player
+            Player owner = game.getPlayer(entity.getOwnerId());
+            Color ownerColor = (owner != null) ? owner.getColour().getColour() : uiGray();
+            String ownerName = (owner != null) ? owner.getName() : ReportMessages.getString("BoardView1.Tooltip.unknownOwner");
+            String msg_clanbrackets = Messages.getString("BoardView1.Tooltip.ClanBrackets");
+            String clanStr = entity.isClan() && !entity.isMixedTech() ? " " + msg_clanbrackets + " " : "";
+            sChassisPlayerInfo = entity.getChassis() + clanStr;
+            sChassisPlayerInfo += " (" + (int) entity.getWeight() + "t)";
+            sChassisPlayerInfo += "&nbsp;&nbsp;" + entity.getEntityTypeName(entity.getEntityType());
+            sChassisPlayerInfo += "<BR>" + ownerName;
+            String msg_id = MessageFormat.format(" [ID: {0}]", entity.getId());
+            sChassisPlayerInfo += UIUtil.guiScaledFontHTML(UIUtil.uiGray()) + msg_id + "</FONT>";
+            sChassisPlayerInfo = guiScaledFontHTML(ownerColor) + sChassisPlayerInfo +  "</FONT>";
+            result += sChassisPlayerInfo;
+        }
 
-        String msg_clanbrackets =Messages.getString("BoardView1.Tooltip.ClanBrackets");
-        String clanStr = entity.isClan() && !entity.isMixedTech() ? " " + msg_clanbrackets + " " : "";
-        String sChassisPlayerInfo = entity.getChassis() + clanStr;
-        sChassisPlayerInfo += " (" + (int) entity.getWeight() + "t)";
-        sChassisPlayerInfo += "&nbsp;&nbsp;" + entity.getEntityTypeName(entity.getEntityType());
-        sChassisPlayerInfo += "<BR>" + ownerName;
-        String msg_id = MessageFormat.format(" [ID: {0}]", entity.getId());
-        sChassisPlayerInfo += UIUtil.guiScaledFontHTML(UIUtil.uiGray()) + msg_id + "</FONT>";
-        sChassisPlayerInfo += forceEntry(entity, localPlayer);
-        sChassisPlayerInfo = guiScaledFontHTML(ownerColor) + sChassisPlayerInfo +  "</FONT>";
-
-        result += sChassisPlayerInfo;
+        result += forceEntry(entity, localPlayer);
 
         // Pilot; in the lounge the pilot is separate so don't add it there
         String sPilotInfo = "";

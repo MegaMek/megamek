@@ -1,15 +1,21 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2000-2003 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common;
 
@@ -26,7 +32,7 @@ import java.util.ArrayList;
  */
 public class LargeSupportTank extends SupportTank {
     private static final long serialVersionUID = -3177191060629774478L;
-    // locations
+
     public static final int LOC_FRONTRIGHT = 2;
     public static final int LOC_FRONTLEFT = 3;
     public static final int LOC_REARRIGHT = 4;
@@ -37,13 +43,13 @@ public class LargeSupportTank extends SupportTank {
     
     private double fuelTonnage = 0;
 
-    private static String[] LOCATION_ABBRS = { "BD", "FR", "FRRS", "FRLS",
+    private static final String[] LOCATION_ABBRS = { "BD", "FR", "FRRS", "FRLS",
             "RRRS", "RRLS", "RR", "TU", "TU2" };
 
-    private static String[] LOCATION_NAMES = { "Body", "Front", "Front Right",
+    private static final String[] LOCATION_NAMES = { "Body", "Front", "Front Right",
             "Front Left", "Rear Right", "Rear Left", "Rear", "Turret"};
     
-    private static String[] LOCATION_NAMES_DUAL_TURRET = { "Body", "Front", "Front Right",
+    private static final String[] LOCATION_NAMES_DUAL_TURRET = { "Body", "Front", "Front Right",
             "Front Left", "Rear Right", "Rear Left", "Rear", "Rear Turret",
             "Front Turret" };
 
@@ -74,9 +80,6 @@ public class LargeSupportTank extends SupportTank {
         return LOC_TURRET_2;
     }
 
-    /**
-     * Rolls up a hit location
-     */
     @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
                                    int cover) {
@@ -243,9 +246,6 @@ public class LargeSupportTank extends SupportTank {
         }
     }
 
-    /**
-     * Returns the number of locations in the entity
-     */
     @Override
     public int locations() {
         if (m_bHasNoDualTurret) {
@@ -269,9 +269,6 @@ public class LargeSupportTank extends SupportTank {
         return NUM_OF_SLOTS;
     }
 
-    /**
-     * Returns the Compute.ARC that the weapon fires into.
-     */
     @Override
     public int getWeaponArc(int wn) {
         final Mounted mounted = getEquipment(wn);
@@ -370,14 +367,12 @@ public class LargeSupportTank extends SupportTank {
             return true;
         }
 
-        // If this is not a military vehicle, we don't need to do a weapon
-        // check.
+        // If this is not a military vehicle, we don't need to do a weapon check.
         if (!isMilitary()) {
             return false;
         }
 
-        // no weapons can fire anymore, can cause no more than 5 points of
-        // combined weapons damage,
+        // no weapons can fire anymore, can cause no more than 5 points of combined weapons damage,
         // or has no weapons with range greater than 5 hexes
         if (!hasViableWeapons()) {
             LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: has no more viable weapons.");
@@ -392,9 +387,6 @@ public class LargeSupportTank extends SupportTank {
         return Entity.ETYPE_TANK | Entity.ETYPE_SUPPORT_TANK | Entity.ETYPE_LARGE_SUPPORT_TANK;
     }
 
-    /**
-     * Tanks have all sorts of prohibited terrain.
-     */
     @Override
     public boolean isLocationProhibited(Coords c, int currElevation) {
         Hex hex = game.getBoard().getHex(c);
@@ -422,7 +414,6 @@ public class LargeSupportTank extends SupportTank {
         return super.isLocationProhibited(c, currElevation);
     }
 
-    //FUEL CAPACITY TM 128
     @Override
     public double getFuelTonnage() {
         return fuelTonnage;

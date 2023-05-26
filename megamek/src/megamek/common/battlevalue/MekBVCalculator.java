@@ -261,11 +261,10 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
 
     @Override
     protected void setUmuMP() {
-        // On QuadVees, UMU MP depend on the movement mode. Therefore don't use getActiveUMUCount() here
-        umuMP = 0;
         if (entity.hasShield() && (entity.getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0)) {
             return;
         }
+        umuMP = 0;
         for (Mounted m : entity.getMisc()) {
             EquipmentType type = m.getType();
             if ((type instanceof MiscType) && type.hasFlag(MiscType.F_UMU) && !m.isInoperable()) {

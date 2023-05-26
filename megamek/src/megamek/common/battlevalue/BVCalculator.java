@@ -738,9 +738,16 @@ public abstract class BVCalculator {
     protected double processWeapon(Mounted weapon, boolean showInReport,
                                    boolean addToOffensiveValue, int weaponCount) {
         double weaponBV = weapon.getType().getBV(entity);
-        String multiplier = (weaponCount > 1) ? weaponCount + " x " : "";
-        String calculation = "+ " + multiplier + formatForReport(weaponBV);
+        String multiplierText = (weaponCount > 1) ? weaponCount + " x " : "";
+        String squadSupportDivisorText = "";
+        double squadSupportDivisor = 1;
+        if (entity instanceof BattleArmor && weapon.isSquadSupportWeapon()) {
+            squadSupportDivisorText = " / " + ((BattleArmor) entity).getShootingStrength();
+            squadSupportDivisor = ((BattleArmor) entity).getShootingStrength();
+        }
+        String calculation = "+ " + multiplierText + formatForReport(weaponBV) + squadSupportDivisorText;
         weaponBV *= weaponCount;
+        weaponBV /= squadSupportDivisor;
 
         if (entity.hasFunctionalArmAES(weapon.getLocation())) {
             weaponBV *= 1.25;
@@ -830,7 +837,7 @@ public abstract class BVCalculator {
         }
 
         if (showInReport) {
-            bvReport.addLine("- " + multiplier + equipmentDescriptor(weapon), calculation, result);
+            bvReport.addLine("- " + multiplierText + equipmentDescriptor(weapon), calculation, result);
         }
         return weaponBV;
     }
@@ -883,7 +890,7 @@ public abstract class BVCalculator {
         return (miscType.getBV(entity) > 0)
                 && !misc.isHit() && !misc.isInoperable()
                 && !misc.isWeaponGroup()
-                && ((MiscType) misc.getType()).isVibroblade();
+                && (miscType.isVibroblade() || miscType.hasFlag(MiscType.F_VIBROCLAW));
     }
 
     /** @return The BV modifier for AFC or BFC. Override as necessary. */

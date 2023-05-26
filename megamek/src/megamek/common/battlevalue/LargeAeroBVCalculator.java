@@ -46,6 +46,12 @@ public abstract class LargeAeroBVCalculator extends AeroBVCalculator {
     }
 
     @Override
+    protected void reset() {
+        super.reset();
+        collectedWeapons.clear();
+    }
+
+    @Override
     protected boolean usesWeaponHeat() {
         return false;
     }

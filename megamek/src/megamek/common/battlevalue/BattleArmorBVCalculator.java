@@ -108,10 +108,14 @@ public class BattleArmorBVCalculator extends BVCalculator {
         bvReport.finalizeTentativeSection(resultingBV > 0);
     }
 
-    Predicate<Mounted> weaponFilter = m -> (m.getLocation() == BattleArmor.LOC_SQUAD)
-            && !m.isSquadSupportWeapon();
+    private boolean isVibroClaw(Mounted mounted) {
+        return (mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_VIBROCLAW);
+    }
 
-    Predicate<Mounted> supportFilter = m -> (m.getLocation() == currentTrooper) && !m.getType().hasFlag(WeaponType.F_INFANTRY)
+    Predicate<Mounted> weaponFilter = m -> (m.getLocation() == BattleArmor.LOC_SQUAD)
+            && !m.isSquadSupportWeapon() && !isVibroClaw(m);
+
+    Predicate<Mounted> supportFilter = m -> !m.getType().hasFlag(WeaponType.F_INFANTRY)
             && ((m.getLocation() != BattleArmor.LOC_SQUAD) || m.isSquadSupportWeapon());
 
     Predicate<Mounted> antiMekClawFilter = m -> (m.getType() instanceof MiscType)

@@ -31,31 +31,6 @@ public class CombatVehicleBVCalculator extends BVCalculator {
     }
 
     @Override
-    protected void setRunMP() {
-        runMP = entity.getOriginalWalkMP();
-        if (entity.getEngineHits() != 0 || entity.isImmobile()) {
-            runMP = 0;
-            return;
-        }
-        if ((entity instanceof VTOL) && entity.isLocationBad(VTOL.LOC_ROTOR)) {
-            runMP = 0;
-            return;
-        }
-        if (entity.hasWorkingMisc(MiscType.F_HYDROFOIL)) {
-            runMP = (int) Math.round(runMP * 1.25);
-        }
-        runMP = Math.max(0, runMP - ((Tank) entity).getMotiveDamage());
-
-        if (entity.hasModularArmor()) {
-            runMP--;
-        }
-        if (entity.hasWorkingMisc(MiscType.F_DUNE_BUGGY)) {
-            runMP--;
-        }
-        runMP = Math.max((int) Math.ceil(runMP * 1.5), 0);
-    }
-
-    @Override
     protected int getUmuTMM() {
         return 0;
     }

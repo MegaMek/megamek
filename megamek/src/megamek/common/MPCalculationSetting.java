@@ -59,7 +59,7 @@ public class MPCalculationSetting {
      * myomer boosters, DWP, MASC, Cargo and Bombs and grounded state of Aeros.
      */
     public static final MPCalculationSetting BV_CALCULATION = new Builder().noGravity().noWeather()
-            .noMASC().noHeat().noCargo().noMyomerBooster().noDWP().noGrounded().noOptionalRules()
+            .noHeat().noCargo().noDWP().noGrounded().noOptionalRules()
             .noConversion().noModularArmor().forceTSM().build();
 
     public final boolean ignoreGravity;

@@ -105,30 +105,6 @@ public class AeroBVCalculator extends HeatTrackingBVCalculator {
     }
 
     @Override
-    protected void setRunMP() {
-        runMP = entity.getOriginalWalkMP();
-        // adjust for engine hits
-        if (entity.getEngineHits() >= aero.getMaxEngineHits()) {
-            runMP = 0;
-            return;
-        }
-        int engineLoss = 2;
-        if ((entity instanceof SmallCraft) || (entity instanceof Jumpship)) {
-            engineLoss = 1;
-        }
-        runMP = Math.max(0, runMP - (entity.getEngineHits() * engineLoss));
-        if (entity.hasModularArmor()) {
-            runMP--;
-        }
-        // partially repaired engine
-        if (entity.getPartialRepairs().booleanOption("aero_engine_crit")) {
-            runMP--;
-        }
-
-        runMP = (int) Math.ceil(runMP * 1.5);
-    }
-
-    @Override
     protected void processDefensiveFactor() { }
 
     @Override

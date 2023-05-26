@@ -28,57 +28,6 @@ public class ProtoMekBVCalculator extends BVCalculator {
         super(entity);
     }
 
-    /** Calculates the walk MP with the rules given for setRunMP. */
-    private int walkMP() {
-        int mp = protoMek.isEngineHit() ? 0 : protoMek.getOriginalWalkMP();
-        if (protoMek.isGlider()) {
-            // Torso crits reduce glider mp as jump
-            int torsoCrits = protoMek.getCritsHit(Protomech.LOC_TORSO);
-            if (torsoCrits == 1) {
-                mp--;
-            } else if (torsoCrits == 2) {
-                mp /= 2;
-            }
-            // Near misses damage the wings/flight systems, which reduce MP by one per hit.
-            mp -= protoMek.getWingHits();
-        } else {
-            int legCrits = protoMek.getCritsHit(Protomech.LOC_LEG);
-            if (legCrits == 1) {
-                mp--;
-            } else if (legCrits == 2) {
-                mp /= 2;
-            } else if (legCrits == 3) {
-                mp = 0;
-            }
-        }
-        return Math.max(mp, 0);
-    }
-
-    @Override
-    protected void setRunMP() {
-        // TM p306: The myomer booster is treated differently for defensive and offensive speeds
-        // In accordance with Mordel's calculation, I'm not implementing this
-        if (protoMek.hasMyomerBooster()) {
-            runMP = walkMP() * 2;
-        } else {
-            runMP = (int) Math.ceil(walkMP() * 1.5);
-        }
-    }
-
-    @Override
-    protected void setJumpMP() {
-        jumpMP = protoMek.getOriginalJumpMP();
-        int torsoCrits = protoMek.getCritsHit(Protomech.LOC_TORSO);
-        if (torsoCrits == 1) {
-            jumpMP = Math.max(jumpMP - 1, 0);
-        } else if (torsoCrits == 2) {
-            jumpMP /= 2;
-        }
-        if (protoMek.hasWorkingMisc(MiscType.F_PARTIAL_WING)) {
-            jumpMP += 2;
-        }
-    }
-
     @Override
     protected double getAmmoBV(Mounted ammo) {
         return ((AmmoType) ammo.getType()).getKgPerShotBV(ammo.getUsableShotsLeft());

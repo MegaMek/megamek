@@ -37,57 +37,6 @@ public class InfantryBVCalculator extends BVCalculator {
     }
 
     @Override
-    protected void setRunMP() {
-        runMP = infantry.getOriginalWalkMP();
-        // encumbering armor reduces MP by 1 to a minimum of one (TacOps, pg. 318)
-        if (infantry.isArmorEncumbering()) {
-            runMP = Math.max(runMP - 1, 1);
-        }
-        if ((infantry.getSecondaryWeaponsPerSquad() > 1)
-                && !infantry.hasAbility(OptionsConstants.MD_TSM_IMPLANT)
-                && !infantry.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
-                && (null != infantry.getSecondaryWeapon()) && infantry.getSecondaryWeapon().hasFlag(WeaponType.F_INF_SUPPORT)
-                && (infantry.getMovementMode() != EntityMovementMode.TRACKED)
-                && (infantry.getMovementMode() != EntityMovementMode.INF_JUMP)) {
-            runMP = Math.max(runMP - 1, 0);
-        }
-        //  PL-MASC IntOps p.84
-        if ((null != infantry.getCrew())
-                && infantry.hasAbility(OptionsConstants.MD_PL_MASC)
-                && infantry.getMovementMode().isLegInfantry()
-                && infantry.isConventionalInfantry()) {
-            runMP += 1;
-        }
-
-        if ((null != infantry.getCrew()) && infantry.hasAbility(OptionsConstants.INFANTRY_FOOT_CAV)
-                && ((infantry.getMovementMode() == EntityMovementMode.INF_LEG)
-                || (infantry.getMovementMode() == EntityMovementMode.INF_JUMP))) {
-            runMP += 1;
-        }
-        if (infantry.hasActiveFieldArtillery()) {
-            runMP = Math.min(runMP, 1);
-        }
-    }
-
-    @Override
-    protected void setJumpMP() {
-        jumpMP = 0;
-        if (!infantry.getMovementMode().isUMUInfantry() && !infantry.getMovementMode().isSubmarine()) {
-            jumpMP = infantry.getOriginalJumpMP();
-        }
-        if ((infantry.getSecondaryWeaponsPerSquad() > 1)
-                && !infantry.hasAbility(OptionsConstants.MD_TSM_IMPLANT)
-                && !infantry.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
-                && !infantry.getMovementMode().isSubmarine()
-                && (null != infantry.getSecondaryWeapon())
-                && infantry.getSecondaryWeapon().hasFlag(WeaponType.F_INF_SUPPORT)) {
-            jumpMP = Math.max(jumpMP - 1, 0);
-        } else if (infantry.getMovementMode().isVTOL() && infantry.getSecondaryWeaponsPerSquad() > 0) {
-            jumpMP = Math.max(jumpMP - 1, 0);
-        }
-    }
-
-    @Override
     protected void processStructure() {
         int men = Math.max(0, entity.getInternal(Infantry.LOC_INFANTRY));
         double dmgDivisor = infantry.calcDamageDivisor();

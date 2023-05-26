@@ -331,6 +331,9 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
                 if (ent != null) {
                     currentClientgui.getUnitDisplay().displayEntity(ent);
                     GUIP.setUnitDisplayEnabled(true);
+                    if (ent.isDeployed() && !ent.isOffBoard() && ent.getPosition() != null) {
+                        currentClientgui.getBoardView().centerOnHex(ent.getPosition());
+                    }
                 }
             } else if (evtDesc.startsWith(Report.TOOLTIP_LINK)) {
                 String desc = evtDesc.substring(Report.TOOLTIP_LINK.length());

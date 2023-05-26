@@ -1862,6 +1862,8 @@ public class GameManager implements IGameManager {
                     checkForSpaceDeath();
                 }
 
+                bvReports(true);
+
                 LogManager.getLogger().info("Round " + game.getRoundCount() + " memory usage: " + MegaMek.getMemoryUsed());
                 break;
             case DEPLOY_MINEFIELDS:
@@ -2005,8 +2007,6 @@ public class GameManager implements IGameManager {
                 break;
             case INITIATIVE_REPORT: {
                 autoSave();
-
-                bvReports(true);
             }
             case TARGETING_REPORT:
             case MOVEMENT_REPORT:
@@ -2024,6 +2024,7 @@ public class GameManager implements IGameManager {
             case VICTORY:
                 resetPlayersDone();
                 clearReports();
+                send(createAllReportsPacket());
                 prepareVictoryReport();
                 game.addReports(vPhaseReport);
                 // Before we send the full entities packet we need to loop
@@ -30082,6 +30083,13 @@ public class GameManager implements IGameManager {
      */
     private Packet createAllReportsPacket(Player p) {
         return new Packet(PacketCommand.SENDING_REPORTS_ALL, filterPastReports(getGame().getAllReports(), p));
+    }
+
+    /**
+     * Creates a packet containing all the round reports unfiltered
+     */
+    private Packet createAllReportsPacket() {
+        return new Packet(PacketCommand.SENDING_REPORTS_ALL, getGame().getAllReports());
     }
 
     /**

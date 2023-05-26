@@ -1,15 +1,21 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2000-2003 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common;
 
@@ -22,7 +28,8 @@ import megamek.common.options.OptionsConstants;
  */
 public class SupportTank extends Tank {
     private static final long serialVersionUID = -9028127010133768714L;
-    private int[] barRating;
+
+    private final int[] barRating;
     private double fuelTonnage = 0;
 
     public SupportTank() {
@@ -41,40 +48,19 @@ public class SupportTank extends Tank {
         }
     }
 
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Entity#getBARRating()
-     */
     @Override
     public int getBARRating(int loc) {
         return barRating[loc];
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Entity#hasBARArmor()
-     */
     @Override
     public boolean hasBARArmor(int loc) {
         return true;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Entity#hasArmoredChassis()
-     */
     @Override
     public boolean hasArmoredChassis() {
-        for (Mounted misc : miscList) {
-            if (misc.getType().hasFlag(MiscType.F_ARMORED_CHASSIS)) {
-                return true;
-            }
-        }
-        return false;
+        return hasMisc(MiscType.F_ARMORED_CHASSIS);
     }
     
     private static final TechAdvancement TA_HOVER = new TechAdvancement(TECH_BASE_ALL)
@@ -185,9 +171,6 @@ public class SupportTank extends Tank {
         }
     }
 
-    /**
-     * Tanks have all sorts of prohibited terrain.
-     */
     @Override
     public boolean isLocationProhibited(Coords c, int currElevation) {
         Hex hex = game.getBoard().getHex(c);
@@ -257,11 +240,6 @@ public class SupportTank extends Tank {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Entity#getTotalCommGearTons()
-     */
     @Override
     public int getTotalCommGearTons() {
         return getExtraCommGearTons();
@@ -343,8 +321,6 @@ public class SupportTank extends Tank {
 
     }
     
-    // CONSTRUCTION INFORMATION
-    //Support Vee Engine Information
     @Override
     public double getBaseChassisValue() {
         switch (movementMode) {
@@ -393,7 +369,6 @@ public class SupportTank extends Tank {
         }
     }
 
-    //Support Vee Engine Information
     @Override
     public double getBaseEngineValue() {
         switch (movementMode) {
@@ -457,7 +432,6 @@ public class SupportTank extends Tank {
         }
     }
 
-    //FUEL CAPACITY TM 128
     @Override
     public double getFuelTonnage() {
         return fuelTonnage;
@@ -468,14 +442,6 @@ public class SupportTank extends Tank {
         fuelTonnage = fuel;
     }
 
-    //DETERMINE SI TM 130
-    //ADD LIFT/DIVE EQUIPMENT TM 131
-    //ADD CONTROL AND CREW STUFF TM 131
-    //ADD HEAT SINKS TM 133
-    //ADD ARMOR
-    //ADD WEAPONS AMMO and EQUIPMENT
-      
-        
     @Override
     public int getTotalSlots() {
         return 5 + (int) Math.floor(getWeight() / 10);

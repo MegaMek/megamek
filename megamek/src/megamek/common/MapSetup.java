@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 /** 
  * A helper class that is used for storing and retrieving map setups in the 
@@ -54,7 +55,7 @@ public class MapSetup implements Serializable {
     @XmlElement(name = "MAPHEIGHT")
     private int mapHeight = 1;
     @XmlElement(name = "BOARDS")
-    private ArrayList<String> boards = new ArrayList<>();
+    private List<String> boards = new ArrayList<>();
 
     public MapSetup(MapSettings mapSettings) {
         boardWidth = mapSettings.getBoardWidth();
@@ -112,7 +113,7 @@ public class MapSetup implements Serializable {
         return mapHeight;
     }
 
-    public ArrayList<String> getBoards() {
+    public List<String> getBoards() {
         return boards;
     }
 }

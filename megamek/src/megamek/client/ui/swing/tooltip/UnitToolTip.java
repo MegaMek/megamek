@@ -1005,7 +1005,8 @@ public final class UnitToolTip {
                 result = ' '+msg_lightdmg ;
                 break;
             default:
-                result = "";
+                String msg_undamaged = Messages.getString("BoardView1.Tooltip.Undamaged");
+                result = "&nbsp;&nbsp;" + msg_undamaged;
                 break;
         }
         return result;

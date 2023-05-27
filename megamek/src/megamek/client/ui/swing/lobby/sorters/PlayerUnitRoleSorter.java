@@ -25,6 +25,7 @@ import megamek.client.ui.swing.lobby.MekTableModel;
 import megamek.common.Entity;
 import megamek.common.Player;
 import megamek.common.UnitRole;
+import megamek.common.UnitRoleHandler;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.conversion.ASConverter;
 
@@ -61,16 +62,10 @@ public class PlayerUnitRoleSorter implements MekTableSorter {
             return t_a - t_b;
         } else if (!p_a.equals(p_b)) {
             return p_a.getName().compareTo(p_b.getName());
-        } else if ((ASConverter.canConvert(a)) && (ASConverter.canConvert(b))) {
-            FlexibleCalculationReport reportA = new FlexibleCalculationReport();
-            AlphaStrikeElement elementA = ASConverter.convert(a, false, reportA);
-            FlexibleCalculationReport reportB = new FlexibleCalculationReport();
-            AlphaStrikeElement elementB = ASConverter.convert(b, false, reportB);
-            String aRole = elementA != null ? elementA.getRole().toString() : UnitRole.UNDETERMINED.toString();
-            String bRole = elementB != null ? elementB.getRole().toString() : UnitRole.UNDETERMINED.toString();
-            return aRole.compareTo(bRole) * d;
         } else {
-            return 0;
+            String aRole = UnitRoleHandler.getRoleFor(a).toString();
+            String bRole = UnitRoleHandler.getRoleFor(b).toString();
+            return aRole.compareTo(bRole) * d;
         }
     }
 

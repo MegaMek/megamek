@@ -166,8 +166,9 @@ class LobbyMekCellFormatter {
         if (ASConverter.canConvert(entity)) {
             FlexibleCalculationReport report = new FlexibleCalculationReport();
             AlphaStrikeElement element = ASConverter.convert(entity, false, report);
+            String unitRole = element != null ? element.getRole().toString() : UnitRole.UNDETERMINED.toString();
             result.append(DOT_SPACER);
-            result.append(element.getRole());
+            result.append(unitRole);
         }
         
         // Invalid Design

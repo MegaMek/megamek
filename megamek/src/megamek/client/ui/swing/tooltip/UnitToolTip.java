@@ -276,7 +276,7 @@ public final class UnitToolTip {
     /** Returns the graphical Armor representation. */
     private static StringBuilder addArmorMiniVisToTT(Entity entity) {
         if (!GUIP.getshowArmorMiniVisTT()) {
-            return new StringBuilder().append("");
+            return new StringBuilder();
         }
 
         String armorChar = GUIP.getUnitToolTipArmorMiniArmorChar();
@@ -528,7 +528,7 @@ public final class UnitToolTip {
     /** Returns the assembled weapons with ranges etc. */
     private static StringBuilder weaponList(Entity entity) {
         if (!GUIP.getShowWpsinTT()) {
-            return new StringBuilder().append("");
+            return new StringBuilder();
         }
 
         ArrayList<Mounted> weapons = entity.getWeaponList();
@@ -1019,7 +1019,7 @@ public final class UnitToolTip {
         String result = "";
 
         if (!inGameValue) {
-            return new StringBuilder().append("");
+            return new StringBuilder();
         }
 
         // BV Info
@@ -1513,7 +1513,7 @@ public final class UnitToolTip {
         String sWarnings = "";
 
         if (!details || (mapSettings == null)) {
-            return new StringBuilder().append("");
+            return new StringBuilder();
         }
 
         // Critical (red) warnings

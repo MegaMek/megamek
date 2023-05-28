@@ -71,7 +71,7 @@ public class Terrains implements Serializable {
 
     // Building stuff
     public static final int BUILDING = 22; // 1: light 2: medium 3: heavy 4:
-                                           // hardened 5: wall
+                                           // hardened [5: wall not implemented]
     public static final int BLDG_CF = 23;
     public static final int BLDG_ELEV = 24;
     public static final int BLDG_BASEMENT_TYPE = 25; // level equals

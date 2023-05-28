@@ -70,8 +70,8 @@ public class MapSettings implements Serializable {
     private int mapHeight = 1;
     private int medium = MEDIUM_GROUND;
 
-    private ArrayList<String> boardsSelected = new ArrayList<>();
-    private ArrayList<String> boardsAvailable = new ArrayList<>();
+    private List<String> boardsSelected = new ArrayList<>();
+    private List<String> boardsAvailable = new ArrayList<>();
     private ArrayList<BuildingTemplate> boardBuildings = new ArrayList<>();
 
     /**
@@ -406,11 +406,9 @@ public class MapSettings implements Serializable {
     private MapSettings(int boardWidth, int boardHeight, int mapWidth, int mapHeight) {
         setBoardSize(boardWidth, boardHeight);
         setMapSize(mapWidth, mapHeight);
-        adjustPathSeparator();
     }
 
     /** Creates new MapSettings that is a duplicate of another */
-    @SuppressWarnings("unchecked")
     private MapSettings(MapSettings other) {
         boardWidth = other.getBoardWidth();
         boardHeight = other.getBoardHeight();
@@ -419,8 +417,8 @@ public class MapSettings implements Serializable {
 
         medium = other.getMedium();
 
-        boardsSelected = (ArrayList<String>) other.getBoardsSelectedVector().clone();
-        boardsAvailable = (ArrayList<String>) other.getBoardsAvailableVector().clone();
+        boardsSelected = new ArrayList<>(other.getBoardsSelectedVector());
+        boardsAvailable = new ArrayList<>(other.getBoardsAvailableVector());
 
         invertNegativeTerrain = other.getInvertNegativeTerrain();
         mountainHeightMin = other.getMountainHeightMin();
@@ -507,47 +505,6 @@ public class MapSettings implements Serializable {
         cityDensity = other.getCityDensity();
         boardBuildings = other.getBoardBuildings();
         townSize = other.getTownSize();
-        adjustPathSeparator();
-    }
-
-    /**
-     * Odious hack to fix cross-platform issues. The Server generates the list
-     * of available boards and then sends them to the client. Instead of storing
-     * the boards as a File object, they are stored as lists of Strings. This
-     * means that, a Windows server will generate Windows paths that could then
-     * be sent to non-windows machines.
-     * 
-     * While the available and selected boards should really be stored as lists
-     * of Files, they have infrastructure built up around them and it's far
-     * easier to use this kludgy hack to always store in Linux style \ separator
-     */
-    public void adjustPathSeparator() {
-        // Windows will happily accept a forward slash in the path, the only
-        // real issue is back-slashes (windows separators) in Linux and macOS
-        boolean containsWindowsPathSeparator = false;
-        for (String path : boardsAvailable) {
-            if (path.contains("\\")) {
-                containsWindowsPathSeparator = true;
-            }
-            if (containsWindowsPathSeparator) {
-                break;
-            }
-        }
-
-        if (containsWindowsPathSeparator) {
-            for (int i = 0; i < boardsAvailable.size(); i++) {
-                if (boardsAvailable.get(i) == null) {
-                    continue;
-                }
-                boardsAvailable.set(i, boardsAvailable.get(i).replace("\\", "/"));
-            }
-            for (int i = 0; i < boardsSelected.size(); i++) {
-                if (boardsSelected.get(i) == null) {
-                    continue;
-                }
-                boardsSelected.set(i, boardsSelected.get(i).replace("\\", "/"));
-            }
-        }
     }
 
     public int getBoardWidth() {
@@ -630,16 +587,13 @@ public class MapSettings implements Serializable {
         mapWidth = newWidth;
     }
 
-    public Iterator<String> getBoardsSelected() {
-        return boardsSelected.iterator();
-    }
-
-    public ArrayList<String> getBoardsSelectedVector() {
+    public List<String> getBoardsSelectedVector() {
         return boardsSelected;
     }
 
-    public void setBoardsSelectedVector(ArrayList<String> boardsSelected) {
-        this.boardsSelected = boardsSelected;
+    public void setBoardsSelectedVector(List<String> newBoards) {
+        boardsSelected.clear();
+        boardsSelected.addAll(newBoards);
     }
 
     /**
@@ -736,7 +690,7 @@ public class MapSettings implements Serializable {
                     List<String> boards = LobbyUtility.extractSurpriseMaps(boardName);
                     ArrayList<String> remainingBoards = new ArrayList<>();
                     for (String board: boards) {
-                        if (boardsAvailable.indexOf(board) != -1) {
+                        if (boardsAvailable.contains(board)) {
                             remainingBoards.add(board);
                         }
                     }
@@ -749,7 +703,7 @@ public class MapSettings implements Serializable {
                         boardsSelected.set(i, MapSettings.BOARD_SURPRISE + remBoards);
                     }
                 } else {
-                    if (boardsAvailable.indexOf(boardName) == -1) {
+                    if (!boardsAvailable.contains(boardName)) {
                         boardsSelected.set(i, null);
                     }
                 }
@@ -757,17 +711,13 @@ public class MapSettings implements Serializable {
         }
     }
 
-    public Iterator<String> getBoardsAvailable() {
-        return boardsAvailable.iterator();
-    }
-
-    public ArrayList<String> getBoardsAvailableVector() {
+    public List<String> getBoardsAvailableVector() {
         return boardsAvailable;
     }
 
-    public void setBoardsAvailableVector(ArrayList<String> boardsAvailable) {
-        this.boardsAvailable = boardsAvailable;
-        adjustPathSeparator();
+    public void setBoardsAvailableVector(List<String> newBoards) {
+        boardsAvailable.clear();
+        boardsAvailable.addAll(newBoards);
     }
 
     /**

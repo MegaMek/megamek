@@ -4407,15 +4407,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public boolean hasMisc(BigInteger flag) {
-        for (Mounted m : miscList) {
-            if ((m.getType() instanceof MiscType)) {
-                MiscType type = (MiscType) m.getType();
-                if (type.hasFlag(flag)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return miscList.stream().anyMatch(misc -> misc.getType().hasFlag(flag));
     }
 
     public List<Mounted> getMiscEquipment(BigInteger flag) {
@@ -8185,17 +8177,37 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         throw new IllegalArgumentException(getShortName() + " can not load " + unit.getShortName());
     }
 
+    /**
+     * Load the given unit.
+     *
+     * @param unit the Entity to be loaded.
+     * @param checkElev When true, only allows the load if both units are at the same elevation
+     * @throws IllegalArgumentException If the unit can't be loaded
+     */
     public void load(Entity unit, boolean checkElev) {
-        this.load(unit, checkElev, -1);
+        load(unit, checkElev, -1);
     }
 
+    /**
+     * Load the given unit.
+     *
+     * @param unit the Entity to be loaded.
+     * @param bayNumber The bay to load into
+     * @throws IllegalArgumentException If the unit can't be loaded
+     */
     public void load(Entity unit, int bayNumber) {
-        this.load(unit, true, bayNumber);
+        load(unit, true, bayNumber);
     }
 
+    /**
+     * Load the given unit, checking if the elevation of both units is the same.
+     *
+     * @param unit the Entity to be loaded.
+     * @throws IllegalArgumentException If the unit can't be loaded
+     */
     @Override
     public void load(Entity unit) {
-        this.load(unit, true, -1);
+        load(unit, true, -1);
     }
 
     /**

@@ -1320,9 +1320,6 @@ public abstract class BVCalculator {
     private double armorMultiplier(int location) {
         double armorMultiplier;
         switch (entity.getArmorType(location)) {
-//            case EquipmentType.T_ARMOR_COMMERCIAL:
-//                armorMultiplier = 0.5;
-//                break;
             case EquipmentType.T_ARMOR_HARDENED:
                 armorMultiplier = 2.0;
                 break;

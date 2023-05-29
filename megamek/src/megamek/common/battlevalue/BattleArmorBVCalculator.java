@@ -40,28 +40,22 @@ public class BattleArmorBVCalculator extends BVCalculator {
         battleArmor = (BattleArmor) entity;
     }
 
-    // TODO getSingleTrooperBV()
     /**
-     * Calculates the Battle Value of this BattleArmor. When singleTrooper is true the Battle Value of one
-     * trooper is returned, otherwise the BV of the whole unit. Calling this method with the value of
-     * singleTrooper being false is equivalent to calling the standard calculateBattleValue methods.
+     * Calculates the Battle Value of a single trooper of this BattleArmor. This value is not influenced
+     * by the pilot skill or any force bonuses.
      *
-     * <P> As in all other BV calculations, the other parameters can be used to ignore C3 / skill-based changes
-     * to the BV. When both are true, the "base" BV of the unit is calculated. Note that when a unit has a manual BV
-     * value set in its definition file, this manual BV value is returned instead of a calculated BV value.
+     * @implNote Used in MML
      *
-     * @param ignoreC3    When true, the BV contributions of any C3 computers are not added
-     * @param ignoreSkill When true, the skill of the crew / pilot is not taken into account for BV
-     * @param singleTrooper When true, returns the BV of a single trooper of this BA, otherwise of the full unit
-     * @return The Battle Value of this BattleArmor
+     * @return The BV of a single trooper of this BattleArmor
      */
-//    public int calculateBattleValue(boolean ignoreC3, boolean ignoreSkill, boolean singleTrooper) {
-//        if (useManualBV) {
-//            return manualBV;
-//        }
-//        return BattleArmorBVCalculator.calculateBV(this, ignoreC3, ignoreSkill,
-//                new DummyCalculationReport(), singleTrooper);
-//    }
+    @SuppressWarnings("unused")
+    public int singleTrooperBattleValue() {
+        reset();
+        bvReport = new DummyCalculationReport();
+        currentTrooper = 1;
+        processTrooper();
+        return (int) Math.round(baseBV);
+    }
 
     @Override
     protected double tmmFactor(int tmmRunning, int tmmJumping, int tmmUmu) {
@@ -106,10 +100,6 @@ public class BattleArmorBVCalculator extends BVCalculator {
         bvReport.addLine(name, "", "");
         double resultingBV = processWeaponSection(true, weaponFilter, true);
         bvReport.finalizeTentativeSection(resultingBV > 0);
-    }
-
-    private boolean isVibroClaw(Mounted mounted) {
-        return (mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_VIBROCLAW);
     }
 
     private boolean isAnyBattleClaw(Mounted mounted) {

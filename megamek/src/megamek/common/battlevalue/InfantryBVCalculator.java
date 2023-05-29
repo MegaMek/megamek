@@ -18,8 +18,9 @@
  */
 package megamek.common.battlevalue;
 
-import megamek.common.*;
-import megamek.common.options.OptionsConstants;
+import megamek.common.Entity;
+import megamek.common.Infantry;
+import megamek.common.Mounted;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 import java.util.ArrayList;

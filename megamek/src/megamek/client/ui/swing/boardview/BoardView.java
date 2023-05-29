@@ -6459,7 +6459,8 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         int minAirSensorRange = 0;
         int maxAirSensorRange = 0;
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)
+                || game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
             Compute.SensorRangeHelper srh = Compute.getSensorRanges(entity.getGame(), entity);
 
             if (srh != null) {
@@ -6499,9 +6500,11 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
         for (RangeHelper rangeH : lBrackets) {
             sensorRanges.add(new HashSet<>());
+            int rangeMin = Math.min(rangeH.min, GUIP.getSenorMaxDrawRange());
+            int rangeMax = Math.min(rangeH.max, GUIP.getSenorMaxDrawRange());
 
-            if (rangeH.max > 0) {
-                for (int i = rangeH.min; i <= rangeH.max; i++) {
+            if (rangeMin != rangeMax) {
+                for (int i = rangeMin; i <= rangeMax; i++) {
                     // Add all hexes up to the range to separate lists
                     sensorRanges.get(j).addAll(c.allAtDistance(i));
                 }

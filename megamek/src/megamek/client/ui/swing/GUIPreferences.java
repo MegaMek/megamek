@@ -87,6 +87,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String BOARD_DARKEN_MAP_AT_NIGHT = "BoardDarkenMapAtNight";
     public static final String BOARD_TRANSLUCENT_HIDDEN_UNITS = "BoardTranslucentHiddenUnits";
     public static final String BOARD_TMM_PIP_MODE = "BoardTmmPipMode";
+    public static final String BOARD_SENSOR_MAX_DRAW_RANGE = "BoardSensorMaxDrawRange";
 
     public static final String UNIT_OVERVIEW_TEXT_SHADOW_COLOR = "UnitOverviewTextShadowColor";
     public static final String UNIT_OVERVIEW_CONDITION_SHADOW_COLOR = "UnitOverviewConditionShadowColor";
@@ -482,6 +483,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(BOARD_DARKEN_MAP_AT_NIGHT, false);
         store.setDefault(BOARD_TRANSLUCENT_HIDDEN_UNITS, true);
         setDefault(BOARD_TMM_PIP_MODE, 2); // show pips with colors based on move type
+        setDefault(BOARD_SENSOR_MAX_DRAW_RANGE, 121);
 
         setDefault(UNIT_OVERVIEW_TEXT_SHADOW_COLOR, Color.black);
         setDefault(UNIT_OVERVIEW_CONDITION_SHADOW_COLOR, Color.darkGray);
@@ -2583,6 +2585,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setECMTransparency(int i) {
         store.setValue(BOARD_ECM_TRANSPARENCY, i);
+    }
+
+    public int getSenorMaxDrawRange() {
+        return getInt(BOARD_SENSOR_MAX_DRAW_RANGE);
+    }
+
+    public void setSensorMaxDrawRange(int i) {
+        store.setValue(BOARD_SENSOR_MAX_DRAW_RANGE, i);
     }
 
     public boolean getDarkenMapAtNight() {

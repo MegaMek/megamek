@@ -220,6 +220,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private JSpinner ecmTransparency;
     private JTextField buttonsPerRow;
     private JTextField playersRemainingToShow;
+    private JSpinner sensorMaxDrawRange;
 
     private JComboBox<String> tmmPipModeCbo;
     private final JCheckBox darkenMapAtNight = new JCheckBox(Messages.getString("CommonSettingsDialog.darkenMapAtNight"));
@@ -705,6 +706,16 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         csbVisualRangeColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.VisualRangeColor"));
         csbVisualRangeColor.setColour(GUIP.getVisualRangeColor());
         row.add(csbVisualRangeColor);
+        comps.add(row);
+
+        SpinnerNumberModel msensorMaxDrawRange = new SpinnerNumberModel(GUIP.getSenorMaxDrawRange(), 0, 20000, 1);
+        sensorMaxDrawRange = new JSpinner(msensorMaxDrawRange);
+        sensorMaxDrawRange.setMaximumSize(new Dimension(150, 40));
+        JLabel sensorMaxDrawRangeLabel = new JLabel(Messages.getString("CommonSettingsDialog.sensorMaxDrawRange"));
+        row = new ArrayList<>();
+        row.add(sensorMaxDrawRangeLabel);
+        row.add(sensorMaxDrawRange);
+        sensorMaxDrawRange.setToolTipText(Messages.getString("CommonSettingsDialog.sensorMaxDrawRange.tooltip"));
         comps.add(row);
 
         addLineSpacer(comps);
@@ -1714,6 +1725,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         csbSensorRangeColor.setColour(GUIP.getSensorRangeColor());
         csbVisualRangeColor.setColour(GUIP.getVisualRangeColor());
+        sensorMaxDrawRange.setValue(GUIP.getSenorMaxDrawRange());
 
         csbUnitValidColor.setColour(GUIP.getUnitValidColor());
         csbUnitSelectedColor.setColour(GUIP.getUnitSelectedColor());
@@ -1868,6 +1880,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         GUIP.setSensorRangeColor(csbSensorRangeColor.getColour());
         GUIP.setVisualRangeColor(csbVisualRangeColor.getColour());
+        GUIP.setSensorMaxDrawRange((Integer) sensorMaxDrawRange.getValue());
 
         GUIP.setUnitValidColor(csbUnitValidColor.getColour());
         GUIP.setUnitSelectedColor(csbUnitSelectedColor.getColour());

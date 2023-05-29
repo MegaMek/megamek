@@ -20,7 +20,6 @@ package megamek.common.battlevalue;
 
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
-import megamek.common.enums.MPBoosters;
 import megamek.common.weapons.autocannons.HVACWeapon;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
 import megamek.common.weapons.lasers.CLImprovedHeavyLaserLarge;
@@ -356,7 +355,8 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
 
     @Override
     protected boolean isNominalRear(Mounted weapon) {
-        return switchRearAndFront ^ rearWeaponFilter().test(weapon);
+        return (switchRearAndFront ^ rearWeaponFilter().test(weapon)) && !mek.isArm(weapon.getLocation())
+                && !weapon.isMechTurretMounted();
     }
 
     @Override
@@ -484,5 +484,33 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
             }
         }
         return null;
+    }
+
+    @Override
+    protected int getRunningTMM() {
+        int mp = runMP;
+        if ((mek instanceof LandAirMech) && (((LandAirMech) mek).getLAMType() == LandAirMech.LAM_STANDARD)) {
+            mp = ((LandAirMech) mek).getAirMechFlankMP(MPCalculationSetting.BV_CALCULATION);
+            if (mp == 0) {
+                return 0;
+            } else {
+                return 1 + Compute.getTargetMovementModifier(mp, false, false, entity.getGame()).getValue();
+            }
+        } else {
+            if (mp == 0) {
+                return 0;
+            } else {
+                return Compute.getTargetMovementModifier(mp, false, false, entity.getGame()).getValue();
+            }
+        }
+    }
+
+    @Override
+    protected int offensiveSpeedFactorMP() {
+        if ((mek instanceof LandAirMech) && (((LandAirMech) mek).getLAMType() == LandAirMech.LAM_STANDARD)) {
+            return runMP + (int) (Math.round(((LandAirMech) mek).getAirMechFlankMP(MPCalculationSetting.BV_CALCULATION) / 2.0));
+        } else {
+            return runMP + (int) (Math.round(Math.max(jumpMP, umuMP) / 2.0));
+        }
     }
 }

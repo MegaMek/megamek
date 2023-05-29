@@ -60,7 +60,7 @@ public class MPCalculationSetting {
      */
     public static final MPCalculationSetting BV_CALCULATION = new Builder().noGravity().noWeather()
             .noHeat().noCargo().noDWP().noGrounded().noOptionalRules()
-            .noConversion().noModularArmor().forceTSM().build();
+            .noConversion().noModularArmor().forceTSM().baNoBurden().build();
 
     public final boolean ignoreGravity;
     public final boolean ignoreHeat;

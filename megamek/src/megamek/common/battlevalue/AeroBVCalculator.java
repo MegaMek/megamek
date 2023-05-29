@@ -42,7 +42,7 @@ public class AeroBVCalculator extends HeatTrackingBVCalculator {
             calculation += " x 1.2 (Blue Shield)";
         }
         defensiveValue += aero.getSI() * 2 * (hasBlueShield ? 1.2 : 1);
-        bvReport.addLine("Internal Structure:", calculation, "= " + formatForReport(defensiveValue));
+        bvReport.addLine("Structural Integrity:", calculation, "= " + formatForReport(defensiveValue));
     }
 
     @Override
@@ -95,7 +95,8 @@ public class AeroBVCalculator extends HeatTrackingBVCalculator {
         }
         String calculation = formatForReport(typeModifier);
         if (aero.hasStealth()) {
-            calculation = "(" + calculation + "+ 0.3 (Stealth))";
+            calculation = "(" + calculation + " + 0.3 (Stealth))";
+            typeModifier += 0.3;
         }
         calculation = formatForReport(defensiveValue) + " x " + calculation;
 
@@ -120,7 +121,7 @@ public class AeroBVCalculator extends HeatTrackingBVCalculator {
 
     @Override
     protected Predicate<Mounted> frontWeaponFilter() {
-        return weapon -> weapon.getLocation() == Aero.LOC_NOSE;
+        return weapon -> !weapon.isRearMounted() && !(weapon.getLocation() == Aero.LOC_AFT);
     }
 
     @Override

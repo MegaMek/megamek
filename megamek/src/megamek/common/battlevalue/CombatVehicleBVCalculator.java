@@ -106,6 +106,12 @@ public class CombatVehicleBVCalculator extends BVCalculator {
         return weapon -> weapon.getLocation() == Tank.LOC_FRONT;
     }
 
+    @Override
+    protected boolean isNominalRear(Mounted weapon) {
+        return (switchRearAndFront ^ rearWeaponFilter().test(weapon)) && !(weapon.getLocation() == Tank.LOC_TURRET)
+                && !(weapon.getLocation() == Tank.LOC_TURRET_2);
+    }
+
     private int rearLocation() {
         if (entity instanceof SuperHeavyTank) {
             return SuperHeavyTank.LOC_REAR;

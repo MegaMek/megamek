@@ -147,12 +147,10 @@ public abstract class HeatTrackingBVCalculator extends BVCalculator {
         WeaponType wType = (WeaponType) weapon.getType();
         double weaponHeat = wType.getHeat();
 
-        // one shot weapons count 1/4
         if (weapon.isOneShotWeapon()) {
-            weaponHeat *= 0.25;
+            weaponHeat /= 4;
         }
 
-        // double heat for ultras
         if ((wType.getAmmoType() == AmmoType.T_AC_ULTRA) || (wType.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
             weaponHeat *= 2;
         } else if (wType.getAmmoType() == AmmoType.T_AC_ROTARY) {

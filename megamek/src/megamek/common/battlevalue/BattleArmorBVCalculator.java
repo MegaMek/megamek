@@ -112,19 +112,26 @@ public class BattleArmorBVCalculator extends BVCalculator {
         return (mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_VIBROCLAW);
     }
 
+    private boolean isAnyBattleClaw(Mounted mounted) {
+        EquipmentType type = mounted.getType();
+        return (type instanceof MiscType)
+                && (type.hasFlag(MiscType.F_VIBROCLAW) || type.hasFlag(MiscType.F_MAGNET_CLAW));
+    }
+
     Predicate<Mounted> weaponFilter = m -> (m.getLocation() == BattleArmor.LOC_SQUAD)
-            && !m.isSquadSupportWeapon() && !isVibroClaw(m);
+            && !m.isSquadSupportWeapon() && !isAnyBattleClaw(m);
 
     Predicate<Mounted> supportFilter = m -> !m.getType().hasFlag(WeaponType.F_INFANTRY)
-            && ((m.getLocation() != BattleArmor.LOC_SQUAD) || m.isSquadSupportWeapon());
+            && ((m.getLocation() == currentTrooper) || m.isSquadSupportWeapon());
 
     Predicate<Mounted> antiMekClawFilter = m -> (m.getType() instanceof MiscType)
             && ((m.getLocation() == BattleArmor.LOC_SQUAD) || (m.getLocation() == currentTrooper))
-            && (m.getType().hasFlag(MiscType.F_MAGNET_CLAW) || m.getType().hasFlag(MiscType.F_VIBROCLAW));
+            && (isAnyBattleClaw(m));
 
     Predicate<Mounted> antiMekWeaponFilter = m -> (m.getType() instanceof WeaponType)
             && !m.getType().hasFlag(WeaponType.F_INFANTRY) && !m.getType().hasFlag(WeaponType.F_MISSILE)
-            && !m.isBodyMounted();
+            && !m.isBodyMounted()
+            && ((m.getLocation() == BattleArmor.LOC_SQUAD) || (m.getLocation() == currentTrooper));
 
     Predicate<Mounted> antiMekFilter = m -> antiMekClawFilter.test(m) || antiMekWeaponFilter.test(m);
 

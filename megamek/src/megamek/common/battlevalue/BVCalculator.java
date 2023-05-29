@@ -61,7 +61,7 @@ public abstract class BVCalculator {
     protected boolean frontAndRearDecided = false;
     protected boolean switchRearAndFront = false;
     protected boolean heatEfficiencyExceeded = false;
-    protected int heatSum;
+    protected double heatSum;
     private final Map<Mounted, Integer> collectedDefensiveEquipment = new HashMap<>();
 
     /** The unit's BV without any force adjustments */
@@ -404,12 +404,9 @@ public abstract class BVCalculator {
         }
     }
 
-    /**
-     * @return The base factor to multiply armor by, i.e. 25 for capital aerosapce, 1 for support
-     * vehicles and 2.5 for all others.
-     */
+    /** @return The base factor to multiply armor by, i.e. 25 for capital aerosapce and 2.5 for all others. */
     protected double armorFactor() {
-        return entity.isSupportVehicle() ? 1 : 2.5;
+        return 2.5;
     }
 
     protected String equipmentDescriptor(Mounted mounted) {
@@ -878,7 +875,8 @@ public abstract class BVCalculator {
         } else {
             WeaponType weaponType = (WeaponType) equipment.getType();
             return !weaponType.hasFlag(WeaponType.F_AMS) && !weaponType.hasFlag(WeaponType.F_B_POD)
-                    && !weaponType.hasFlag(WeaponType.F_M_POD) && (weaponType.getBV(entity) > 0)
+                    && !weaponType.hasFlag(WeaponType.F_M_POD)
+                    && ((weaponType.getBV(entity) > 0) || weaponType.hasFlag(WeaponType.F_MGA))
                     && !equipment.isInoperable() && !equipment.isHit()
                     && !equipment.isWeaponGroup() && !(weaponType.getAtClass() == WeaponType.CLASS_SCREEN)
                     && !(weaponType instanceof BayWeapon);
@@ -890,7 +888,8 @@ public abstract class BVCalculator {
         return (miscType.getBV(entity) > 0)
                 && !misc.isHit() && !misc.isInoperable()
                 && !misc.isWeaponGroup()
-                && (miscType.isVibroblade() || miscType.hasFlag(MiscType.F_VIBROCLAW));
+                && (miscType.isVibroblade() || miscType.hasFlag(MiscType.F_VIBROCLAW)
+                || miscType.hasFlag(MiscType.F_MAGNET_CLAW));
     }
 
     /** @return The BV modifier for AFC or BFC. Override as necessary. */
@@ -1043,12 +1042,29 @@ public abstract class BVCalculator {
 
     /** Processes the sum of offensive and defensive battle rating and modifiers that affect this sum. */
     protected void processSummarize() {
+        double cockpitMod = 1;
+        String modifier = "";
+        if (isDrone) {
+            cockpitMod = 0.95;
+            modifier = " (Drone Op. Sys.)";
+        }
         baseBV = defensiveValue + offensiveValue;
         bvReport.addEmptyLine();
         bvReport.addSubHeader("Battle Value:");
-        bvReport.addLine("--- Base Unit BV:",
-                formatForReport(defensiveValue) + " + " + formatForReport(offensiveValue) + ", rn",
-                "= " + (int) Math.round(baseBV));
+        if (cockpitMod != 1) {
+            bvReport.addLine("Defensive BR + Offensive BR:",
+                    formatForReport(defensiveValue) + " + " + formatForReport(offensiveValue),
+                    "= " + formatForReport(baseBV));
+            bvReport.addLine("Cockpit Modifier:",
+                    formatForReport(baseBV) + " x " + formatForReport(cockpitMod) + modifier,
+                    "= " + formatForReport(baseBV * cockpitMod));
+            baseBV *= cockpitMod;
+            bvReport.addLine("--- Base Unit BV:", "" + (int) Math.round(baseBV));
+        } else {
+            bvReport.addLine("--- Base Unit BV:",
+                    formatForReport(defensiveValue) + " + " + formatForReport(offensiveValue) + ", rn",
+                    "= " + (int) Math.round(baseBV));
+        }
     }
 
     protected void assembleAmmo() {
@@ -1304,9 +1320,9 @@ public abstract class BVCalculator {
     private double armorMultiplier(int location) {
         double armorMultiplier;
         switch (entity.getArmorType(location)) {
-            case EquipmentType.T_ARMOR_COMMERCIAL:
-                armorMultiplier = 0.5;
-                break;
+//            case EquipmentType.T_ARMOR_COMMERCIAL:
+//                armorMultiplier = 0.5;
+//                break;
             case EquipmentType.T_ARMOR_HARDENED:
                 armorMultiplier = 2.0;
                 break;

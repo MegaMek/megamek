@@ -37,7 +37,7 @@ public class JumpShipBVCalculator extends LargeAeroBVCalculator {
     protected void processStructure() {
         String calculation = "+ " + aero.getSI() + " x 20";
         defensiveValue += aero.getSI() * 20;
-        bvReport.addLine("Internal Structure:", calculation, "= " + formatForReport(defensiveValue));
+        bvReport.addLine("Structural Integrity:", calculation, "= " + formatForReport(defensiveValue));
     }
 
     @Override

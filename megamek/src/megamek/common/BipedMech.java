@@ -165,8 +165,13 @@ public class BipedMech extends Mech {
 
         // TSM negates some heat, but provides no benefit when using tracks.
         if (((heat >= 9) || mpCalculationSetting.forceTSM) && hasTSM(false)
-                && legsDestroyed == 0 && movementMode != EntityMovementMode.TRACKED) {
-            mp += 2;
+                && (legsDestroyed == 0) && !movementMode.isTracked()) {
+            if (mpCalculationSetting.forceTSM && mpCalculationSetting.ignoreHeat) {
+                // When forcing TSM but ignoring heat we must assume heat to be 9 to activate TSM, this adds -1 MP!
+                mp += 1;
+            } else {
+                mp += 2;
+            }
         }
 
         if (!mpCalculationSetting.ignoreCargo) {

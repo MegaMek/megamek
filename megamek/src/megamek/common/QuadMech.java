@@ -162,10 +162,15 @@ public class QuadMech extends Mech {
             } else {
                 mp -= (heat / 5);
             }
-            // TSM negates some heat but has no benefit for 'Mechs using tracks or QuadVees in vehicle mode.
-            if ((heat >= 9) && hasTSM(false) && legsDestroyed < 2
-                    && movementMode != EntityMovementMode.TRACKED
-                    && movementMode != EntityMovementMode.WHEELED) {
+        }
+
+        // TSM negates some heat, but provides no benefit when using tracks.
+        if (((heat >= 9) || mpCalculationSetting.forceTSM) && hasTSM(false) && (legsDestroyed < 2)
+                && !movementMode.isTracked() && !movementMode.isWheeled()) {
+            if (mpCalculationSetting.forceTSM && mpCalculationSetting.ignoreHeat) {
+                // When forcing TSM but ignoring heat we must assume heat to be 9 to activate TSM, this adds -1 MP!
+                mp += 1;
+            } else {
                 mp += 2;
             }
         }

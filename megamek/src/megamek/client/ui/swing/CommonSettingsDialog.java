@@ -32,7 +32,6 @@ import megamek.client.ui.swing.util.PlayerColour;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.common.Configuration;
-import megamek.common.Game;
 import megamek.common.KeyBindParser;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.WeaponSortOrder;

@@ -14,9 +14,7 @@
 package megamek.client.ui.swing;
 
 import megamek.client.ui.enums.DialogResult;
-import megamek.client.ui.swing.tooltip.HexTooltip;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
-import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;

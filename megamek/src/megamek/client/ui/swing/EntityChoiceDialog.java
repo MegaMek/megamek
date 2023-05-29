@@ -15,7 +15,6 @@ package megamek.client.ui.swing;
 
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
-import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
 import megamek.common.annotations.Nullable;
 

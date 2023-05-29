@@ -499,8 +499,11 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
     @Override
     protected void okAction() {
         savePrincessProperties();
-        String msg = client.getLocalPlayer() + " changed settings for bot " + getBotName();
-        client.sendServerChat(Player.PLAYER_NONE, msg);
+        
+        if (client != null) {
+            String msg = client.getLocalPlayer() + " changed settings for bot " + getBotName();
+            client.sendServerChat(Player.PLAYER_NONE, msg);
+        }
     }
     
     @Override

@@ -6892,7 +6892,7 @@ public class GameManager implements IGameManager {
 
             if (cachedGravityLimit < 0) {
                 cachedGravityLimit = EntityMovementType.MOVE_JUMP == moveType
-                        ? entity.getJumpMP(MPCalculationSetting.noGravitySetting())
+                        ? entity.getJumpMP(MPCalculationSetting.NO_GRAVITY)
                         : entity.getRunningGravityLimit();
             }
             // check for charge
@@ -8309,7 +8309,7 @@ public class GameManager implements IGameManager {
         // if we used ProtoMech myomer booster, roll 2d6
         // pilot damage on a 2
         if ((entity instanceof Protomech) && ((Protomech) entity).hasMyomerBooster()
-                && (md.getMpUsed() > entity.getRunMP(MPCalculationSetting.noMyomerBoosterSetting()))) {
+                && (md.getMpUsed() > entity.getRunMP(MPCalculationSetting.NO_MYOMERBOOSTER))) {
             r = new Report(2373);
             r.addDesc(entity);
             r.subject = entity.getId();
@@ -20129,7 +20129,7 @@ public class GameManager implements IGameManager {
                     if (game.getPlanetaryConditions().getGravity() < 1) {
                         int j = entity.mpUsed;
                         int damage = 0;
-                        while (j > entity.getJumpMP(MPCalculationSetting.noGravitySetting())) {
+                        while (j > entity.getJumpMP(MPCalculationSetting.NO_GRAVITY)) {
                             j--;
                             damage++;
                         }
@@ -20139,7 +20139,7 @@ public class GameManager implements IGameManager {
                     }
                     // high g, 1 damage for each MP we have less than normally
                     else if (game.getPlanetaryConditions().getGravity() > 1) {
-                        int damage = entity.getWalkMP(MPCalculationSetting.noGravitySetting())
+                        int damage = entity.getWalkMP(MPCalculationSetting.NO_GRAVITY)
                                 - entity.getWalkMP();
                         // Wee, direct internal damage
                         vPhaseReport.addAll(doExtremeGravityDamage(entity,
@@ -32177,7 +32177,7 @@ public class GameManager implements IGameManager {
                 } else if (moveType == EntityMovementType.MOVE_JUMP) {
                     LogManager.getLogger().debug("Gravity move check jump: "
                             + step.getMpUsed() + "/" + cachedMaxMPExpenditure);
-                    int origWalkMP = entity.getWalkMP(MPCalculationSetting.noGravitySetting());
+                    int origWalkMP = entity.getWalkMP(MPCalculationSetting.NO_GRAVITY);
                     int gravWalkMP = entity.getWalkMP();
                     if (step.getMpUsed() > cachedMaxMPExpenditure) {
                         // Jumped too far, make PSR to see if we get damaged

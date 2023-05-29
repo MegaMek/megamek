@@ -635,7 +635,7 @@ public class TestTank extends TestEntity {
         }
 
         // JJs take just 1 slot
-        if (tank.getJumpMP(MPCalculationSetting.noGravitySetting()) > 0) {
+        if (tank.getJumpMP(MPCalculationSetting.NO_GRAVITY) > 0) {
             buff.append(StringUtil.makeLength("Jump Jets", 30)).append("1\n");
         }
 

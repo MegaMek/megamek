@@ -127,7 +127,7 @@ public class CachedEntityState {
     
     public int getJumpMPNoGravity() {
         if (jumpMPNoGravity == null) {
-            jumpMPNoGravity = backingEntity.getJumpMP(MPCalculationSetting.noGravitySetting());
+            jumpMPNoGravity = backingEntity.getJumpMP(MPCalculationSetting.NO_GRAVITY);
         }
         
         return jumpMPNoGravity;

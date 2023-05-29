@@ -1320,7 +1320,7 @@ public class TestSupportVehicle extends TestEntity {
         // different engines take different amounts of slots
 
         // JJs take just 1 slot
-        if (supportVee.getJumpMP(MPCalculationSetting.noGravitySetting()) > 0) {
+        if (supportVee.getJumpMP(MPCalculationSetting.NO_GRAVITY) > 0) {
             buff.append(StringUtil.makeLength("Jump Jets", 30)).append("1\n");
         }
 

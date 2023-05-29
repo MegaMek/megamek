@@ -7403,7 +7403,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         int maxSafeMP = 0;
         switch (moveType) {
             case MOVE_JUMP:
-                maxSafeMP = getJumpMP(MPCalculationSetting.noGravitySetting());
+                maxSafeMP = getJumpMP(MPCalculationSetting.NO_GRAVITY);
                 break;
             case MOVE_SPRINT:
             case MOVE_VTOL_SPRINT:

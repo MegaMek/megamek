@@ -359,9 +359,9 @@ public class SharedUtility {
                             checkNag(rollTarget, nagReport, psrList);
                         }
                     } else if (moveType == EntityMovementType.MOVE_JUMP) {
-                        int origWalkMP = entity.getWalkMP(MPCalculationSetting.noGravitySetting());
+                        int origWalkMP = entity.getWalkMP(MPCalculationSetting.NO_GRAVITY);
                         int gravWalkMP = entity.getWalkMP();
-                        if (step.getMpUsed() > entity.getJumpMP(MPCalculationSetting.noGravitySetting())) {
+                        if (step.getMpUsed() > entity.getJumpMP(MPCalculationSetting.NO_GRAVITY)) {
                             rollTarget = entity.checkMovedTooFast(step, overallMoveType);
                             checkNag(rollTarget, nagReport, psrList);
                         } else if ((game.getPlanetaryConditions().getGravity() > 1)

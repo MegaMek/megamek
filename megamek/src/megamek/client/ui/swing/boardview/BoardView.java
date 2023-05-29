@@ -5743,7 +5743,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             result += sSpecialHex;
         }
 
-        String div = "<DIV WIDTH=" + UIUtil.scaleForGUI(500) + ">" + result + "</DIV>";
+        String div = "<DIV WIDTH=" + GUIP.getUnitToolTipMaxWidth() + ">" + result + "</DIV>";
         StringBuffer txt = new StringBuffer();
         txt.append(HTML_BEGIN + div + HTML_END);
 

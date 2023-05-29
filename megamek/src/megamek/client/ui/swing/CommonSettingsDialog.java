@@ -32,6 +32,7 @@ import megamek.client.ui.swing.util.PlayerColour;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.common.Configuration;
+import megamek.common.Game;
 import megamek.common.KeyBindParser;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.WeaponSortOrder;
@@ -319,6 +320,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private JTextField unitDisplayMechArmorSmallFontSizeText;
     private JTextField unitDisplayMechLargeFontSizeText;
     private JTextField unitDisplayMechMeduimFontSizeText;
+    private JSpinner unitTooltipMaxWidth;
 
     // Report
     private JTextPane reportKeywordsTextPane;
@@ -983,6 +985,16 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         row = new ArrayList<>();
         row.add(unitTooltipSeenbyLabel);
         row.add(unitTooltipSeenbyCbo);
+        comps.add(row);
+
+        SpinnerNumberModel munitTooltipMaxWidth = new SpinnerNumberModel(GUIP.getUnitToolTipMaxWidth(), 0, 20000, 1);
+        unitTooltipMaxWidth = new JSpinner(munitTooltipMaxWidth);
+        unitTooltipMaxWidth.setMaximumSize(new Dimension(150, 40));
+        JLabel unitTooltipMaxWidthLabel = new JLabel(Messages.getString("CommonSettingsDialog.unitTooltipMaxWidth"));
+        row = new ArrayList<>();
+        row.add(unitTooltipMaxWidth);
+        row.add(unitTooltipMaxWidthLabel);
+        unitTooltipMaxWidth.setToolTipText(Messages.getString("CommonSettingsDialog.unitTooltipMaxWidth.tooltip"));
         comps.add(row);
 
         JLabel phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.colors.UnitDisplayHeatLevels"));
@@ -1775,6 +1787,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         unitTooltipSeenbyCbo.setSelectedIndex(GUIP.getUnitToolTipSeenByResolution());
         unitDisplayWeaponListHeightText.setText(String.format("%d", GUIP.getUnitDisplayWeaponListHeight()));
 
+        unitTooltipMaxWidth.setValue(GUIP.getUnitToolTipMaxWidth());
+
         unitDisplayMechArmorLargeFontSizeText.setText(String.format("%d", GUIP.getUnitDisplayMechArmorLargeFontSize()));
         unitDisplayMechArmorMediumFontSizeText.setText(String.format("%d", GUIP.getUnitDisplayMechArmorMediumFontSize()));
         unitDisplayMechArmorSmallFontSizeText.setText(String.format("%d", GUIP.getUnitDisplayMechArmorSmallFontSize()));
@@ -2186,6 +2200,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         } catch (Exception ex) {
             LogManager.getLogger().error("", ex);
         }
+
+        GUIP.setUnitTooltipMaxWidth((Integer) unitTooltipMaxWidth.getValue());
 
         try {
             GUIP.setUnitDisplayMechArmorLargeFontSize(Integer.parseInt(unitDisplayMechArmorLargeFontSizeText.getText()));

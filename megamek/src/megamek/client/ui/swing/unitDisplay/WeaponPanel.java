@@ -16,6 +16,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.common.weapons.AreaEffectHelper;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.gaussrifles.HAGWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -1702,13 +1703,19 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         } else if (wtype.getDamage() == WeaponType.DAMAGE_SPECIAL) {
             wDamR.setText(Messages.getString("MechDisplay.Special"));
         } else if (wtype.getDamage() == WeaponType.DAMAGE_ARTILLERY) {
-            StringBuffer damage = new StringBuffer();
+            StringBuilder damage = new StringBuilder();
             int artyDamage = wtype.getRackSize();
             damage.append(artyDamage);
-            artyDamage -= 10;
-            while (artyDamage > 0) {
+            int falloff = 10;
+            if ((mounted.getLinked() != null) && (mounted.getLinked().getType() instanceof AmmoType)) {
+                AmmoType ammoType = (AmmoType) mounted.getLinked().getType();
+                int attackingBA = (entity instanceof BattleArmor) ? ((BattleArmor) entity).getShootingStrength() : -1;
+                falloff = AreaEffectHelper.calculateDamageFallOff(ammoType, attackingBA, false).falloff;
+            }
+            artyDamage -= falloff;
+            while ((artyDamage > 0) && (falloff > 0)) {
                 damage.append('/').append(artyDamage);
-                artyDamage -= 10;
+                artyDamage -= falloff;
             }
             wDamR.setText(damage.toString());
         } else if (wtype.hasFlag(WeaponType.F_ENERGY)
@@ -2131,6 +2138,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             // no twisting here
             ((DeploymentDisplay) gui.getCurrentPanel()).setWeaponFieldOfFire(entity, ranges, arc, loc);
         }
+
+        unitDisplay.getClientGUI().getBoardView().setSensorRange(entity, entity.getPosition());
     }
 
     private String formatAmmo(Mounted m) {
@@ -2657,6 +2666,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             // firing arc info when a weapon has been de-selected
             if (weaponList.getSelectedIndex() == -1) {
                 unitDisplay.getClientGUI().getBoardView().clearFieldOfFire();
+                unitDisplay.getClientGUI().getBoardView().clearSensorsRanges();
             }
         }
         onResize();

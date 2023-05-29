@@ -777,6 +777,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             setStatusBarText(yourTurnMsg);
         }
         clientgui.getBoardView().clearFieldOfFire();
+        clientgui.getBoardView().clearSensorsRanges();
         computeMovementEnvelope(ce);
     }
 
@@ -980,8 +981,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if (cmd == null || cmd.length() == 0) {
             updateDonePanelButtons( Messages.getString("MovementDisplay.Move"), Messages.getString("MovementDisplay.Skip"), false);
         } else {
-            boolean psrCheck = (!SharedUtility.doPSRCheck(cmd).isBlank())
-                    || (!SharedUtility.doThrustCheck(cmd, clientgui.getClient()).isBlank());
+            boolean psrCheck = (!SharedUtility.doPSRCheck(cmd.clone()).isBlank())
+                    || (!SharedUtility.doThrustCheck(cmd.clone(), clientgui.getClient()).isBlank());
             boolean damageCheck = cmd.shouldMechanicalJumpCauseFallDamage()
                     || cmd.hasActiveMASC()
                     || (!(ce() instanceof VTOL) && cmd.hasActiveSupercharger())
@@ -1002,6 +1003,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         setNextEnabled(true);
         setForwardIniEnabled(true);
         clientgui.getBoardView().clearFieldOfFire();
+        clientgui.getBoardView().clearSensorsRanges();
         if (numButtonGroups > 1) {
             getBtn(MoveCommand.MOVE_MORE).setEnabled(true);
         }
@@ -1042,6 +1044,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         clientgui.setSelectedEntityNum(Entity.NONE);
         clientgui.getBoardView().clearMovementData();
         clientgui.getBoardView().clearFieldOfFire();
+        clientgui.getBoardView().clearSensorsRanges();
     }
 
     /**
@@ -1150,6 +1153,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // create new current and considered paths
         cmd = new MovePath(clientgui.getClient().getGame(), ce);
         clientgui.getBoardView().setWeaponFieldOfFire(ce, cmd);
+        clientgui.getBoardView().setSensorRange(ce, cmd.getFinalCoords());
 
         // set to "walk," or the equivalent
         if (gear != MovementDisplay.GEAR_JUMP) {
@@ -1240,6 +1244,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             clientgui.getBoardView().cursor(cmd.getFinalCoords());
             clientgui.getBoardView().drawMovementData(entity, cmd);
             clientgui.getBoardView().setWeaponFieldOfFire(entity, cmd);
+            clientgui.getBoardView().setSensorRange(entity, cmd.getFinalCoords());
 
             // Set the button's label to "Done"
             // if the entire move is impossible.
@@ -1712,6 +1717,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 cmd = lPath;
             }
         }
+
+        clientgui.getBoardView().setSensorRange(ce(), cmd.getFinalCoords());
         clientgui.getBoardView().setWeaponFieldOfFire(ce(), cmd);
     }
 
@@ -2100,7 +2107,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if (ce == null) {
             return;
         }
-        boolean isNight = clientgui.getClient().getGame().getPlanetaryConditions().isSearchlightEffective();
+        boolean isNight = clientgui.getClient().getGame().getPlanetaryConditions().isIlluminationEffective();
         setSearchlightEnabled(isNight && ce.hasSearchlight() && !cmd.contains(MoveStepType.SEARCHLIGHT),
                 ce.isUsingSearchlight());
     }

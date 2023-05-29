@@ -129,7 +129,7 @@ public class WeaponOrderHandler {
             output.write("</" + ID +">");
             output.write("\n\t\t");
             output.write("<" + ORDER_TYPE +">");
-            output.write(weapOrder.orderType.toString());
+            output.write(weapOrder.orderType.name());
             output.write("</" + ORDER_TYPE +">");
             output.write("\n\t\t");
             output.write("<" + WEAPON_LIST +">");

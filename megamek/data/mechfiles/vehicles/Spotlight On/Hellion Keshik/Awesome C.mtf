@@ -1,0 +1,162 @@
+Version:1.3
+Awesome
+C
+mul id:8470
+Config:Biped
+techbase:Clan
+era:3143
+source:Spotlight On: Hellion Keshik - Dark Age 
+rules level:2
+
+mass:80
+engine:240 Fusion Engine(IS)
+structure:Clan Endo-Composite
+myomer:Standard
+
+heat sinks:27 Clan Double
+walk mp:3
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:26
+RA armor:26
+LT armor:24
+RT armor:24
+CT armor:31
+HD armor:9
+LL armor:34
+RL armor:34
+RTL armor:10
+RTR armor:10
+RTC armor:19
+
+Weapons:4
+ER PPC, Left Arm
+ER PPC, Right Torso
+ER PPC, Right Arm
+ER PPC, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERPPC
+CLERPPC
+Clan Endo-Composite
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERPPC
+CLERPPC
+Clan Endo-Composite
+
+Left Torso:
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERPPC
+CLERPPC
+
+Right Torso:
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERPPC
+CLERPPC
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Clan Endo-Composite
+Clan Endo-Composite
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Awesome was designed in 2665 for the Star League by the Technicron Conglomorate and was based on the aging STR-2C Striker. While not as fast as its forefather, the Awesome is a strong assault 'Mech.
+capabilities:The Awesome's abilities are nearly entirely dependent on its particle projection cannons. The AWS can withstand a severe and consistent onslaught from its weaponry thanks to several heat sinks. With one and a half tons more armor than the Striker, the AWS is more protected than even the BattleMaster. The Amazing, like any other BattleMech, has weaknesses. While it is lethal at range, it is less effective in close-quarters combat since its PPCs have a tougher time connecting with the victim. In that case, it just possesses a light weapon and a left fist to fall back on. Because of its limited mobility, it is vulnerable to flanking attacks from speedier opponents seeking to get past the PPCs. While they face arguably of the heaviest rear armor found on any BattleMech, the Awesome's lack of rear facing armaments or a weapon mount on its left arm has offered numerous MechWarriors a fighting chance. Formations of Awesomes (or even just a few) are incredibly effective and tough to stop or defeat when correctly placed by commanders who are knowledgeable of the AWS's limitations.
+deployment:Developed and manufactured by the Scorpion Empire, this variant uses mostly Clan technology and was introduced in 3143. By replacing the internal structure with Endo-Composite Structure and removing the small laser, this variant of the Awesome frees up the necessary tonnage but keeps enough critical space to mount four ER PPCs, one in each arm and side torso, 27 double heat sinks and 15.5 tons of armor. 
+history:Awesomes can be found in every military House. Because the Free Worlds League has the last remaining manufacturing factories capable of generating the Awesome, it also has the most Awesomes of any of the Great Houses. Opinions on the 'Mech vary greatly within the League. Many people laud its powers, while others believe that its limited mobility is too high a price to pay for what it can do. Similar sentiments exist in the other Houses, but none of them can debate the issue beyond academics. Few commanders would turn down the opportunity to acquire an Awesome for their army. The Awesome is typically used to assault a fixed position or to breach the enemy's line of defense. They are also in demand for defensive operations. MechWarriors piloting the Awesome can expect to be involved in heavy battle and to be charged with obtaining or guarding the most crucial objectives from the adversary.
+manufacturer:Field Refit
+primaryfactory:Field Refit
+systemmanufacturer:CHASSIS:Technicron Type G
+systemmanufacturer:ENGINE:Pitban 240
+systemmanufacturer:ARMOR:Durallex Heavy Special
+systemmanufacturer:COMMUNICATIONS:Garrett T19-G
+systemmanufacturer:TARGETING:Dynatec 2780
+

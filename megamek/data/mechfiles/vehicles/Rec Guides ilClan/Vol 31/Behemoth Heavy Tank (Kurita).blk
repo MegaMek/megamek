@@ -98,14 +98,6 @@ MRM 10
 MRM 10
 </Turret Equipment>
 
-<source>
-Civil War
-</source>
-
-<tonnage>
-100.0
-</tonnage>
-
 <capabilities>
 Despite the fact that the initial design plan allowed for a whopping twenty-one tons of armor, only thirteen were used to offer greater weight for weaponry. Though not as thick as originally envisioned, the protection is adequate against the majority of threats. With a peak speed of only 32 kph, even the slowest 'Mech can readily catch up to the Behemoth if it's ready to face the firepower.
 </capabilities>
@@ -115,7 +107,7 @@ The Behemoth was designed for increased firepower and heavy armor rather than sp
 </overview>
 
 <deployment>
-Developed in 3062 during the FedCom Civil War and produced by New Samarkand Metals, this version of the Behemoth removes all the standard weaponry. It carries a pair of Ultra AC/10s, a pair of MRM-10 launchers, and a pair of Artemis IV FCS enhanced SRM-6 launchers in the turret. To provide some additional long range firepower, it mounts a pair of LRM-5 launchers with Artemis guidance systems on the front of its hull. 
+Developed in 3062 during the FedCom Civil War and produced by New Samarkand Metals, this version of the Behemoth removes all the standard weaponry. It carries a pair of Ultra AC/10s, a pair of MRM-10 launchers, and a pair of Artemis IV FCS enhanced SRM-6 launchers in the turret. To provide some additional long range firepower, it mounts a pair of LRM-5 launchers with Artemis guidance systems on the front of its hull.
 </deployment>
 
 <history>
@@ -136,3 +128,12 @@ ARMOR:ArcShield Maxi II
 COMMUNICATIONS:Olmstead 30
 TARGETING:Cirxese Ballista- Check with Cirxese RockeCheck
 </systemManufacturers>
+
+<source>
+Rec Guide:ilClan #31 - Civil War
+</source>
+
+<tonnage>
+100.0
+</tonnage>
+

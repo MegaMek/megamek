@@ -1,0 +1,153 @@
+Version:1.3
+Shadow Hawk
+SHD-11CS2
+mul id:5036
+Config:Biped
+techbase:Inner Sphere
+era:3076
+source:TRO:Jihad - Jihad
+rules level:2
+
+mass:55
+engine:275 Light Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+ejection:Full Head Ejection System
+
+heat sinks:10 IS Double
+walk mp:5
+jump mp:5
+
+armor:Light Ferro-Fibrous(Inner Sphere)
+LA armor:17
+RA armor:17
+LT armor:19
+RT armor:19
+CT armor:26
+HD armor:9
+LL armor:25
+RL armor:25
+RTL armor:6
+RTR armor:6
+RTC armor:9
+
+Weapons:4
+ER Medium Laser, Left Arm
+ER Medium Laser, Right Arm
+Snub-Nose PPC, Left Torso
+LRM 15, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISERMediumLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISERMediumLaser
+IS Endo Steel
+IS Endo Steel
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+ISSNPPC
+ISSNPPC
+ISC3SlaveUnit
+ISGuardianECMSuite
+ISGuardianECMSuite
+IS Endo Steel
+IS Endo Steel
+IS Light Ferro-Fibrous
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+LRM 15
+LRM 15
+LRM 15
+ISArtemisIV
+IS Ammo LRM-15 Artemis-capable
+IS Ammo LRM-15 Artemis-capable
+ISCASE
+IS Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+IS Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+imagefile:.\data\images\fluff\Mech\shadow hawk SHD-7CS.jpg
+

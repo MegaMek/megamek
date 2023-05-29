@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -33,7 +33,7 @@ Lung Wang
 </originalBuildYear>
 
 <type>
-IS Level 4
+IS Level 3
 </type>
 
 <motion_type>
@@ -86,9 +86,9 @@ cargobay:24.5:1:7
 </armor>
 
 <Nose Equipment>
-(B) Sub-Capital Laser (SCL/3)
-Sub-Capital Laser (SCL/3)
-Sub-Capital Laser (SCL/3)
+(B) Sub-Capital Laser /3
+Sub-Capital Laser /3
+Sub-Capital Laser /3
 (B) Extended LRM 20
 Extended LRM 20
 Extended LRM 20
@@ -187,3 +187,4 @@ XTRO Liao - Jihad
 <escape_pod>
 2
 </escape_pod>
+

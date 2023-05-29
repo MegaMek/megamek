@@ -20,10 +20,15 @@ Manticore Heavy Tank
 (XL)
 </Model>
 
+<mul id:>
+9456
+</mul id:>
+
 <year>
 3117
 </year>
 
+<originalBuildYear>
 3117
 </originalBuildYear>
 
@@ -88,14 +93,6 @@ Enhanced LRM 10
 ISStreakSRM6
 </Turret Equipment>
 
-<source>
-Dark Age
-</source>
-
-<tonnage>
-60.0
-</tonnage>
-
 <capabilities>
 Although the Manticore mounts a variety of weapons to handle a variety of combat roles and ranges, and is heavily armored for a vehicle of its weight, it is not equipped to deal with the raw firepower of super-heavy vehicles such as the Demolisher or the Behemoth. Despite this, the popularity of the Manticore has remained high, even during the Succession Wars era with its use of an expensive and rare fusion engine.
 </capabilities>
@@ -106,7 +103,6 @@ The Manticore is one of the best-designed and most powerful tanks ever created, 
 
 <deployment>
 The Manticore (XL) is based on the Manticore II and even employs some of its armament solutions, such as an improved LRM launcher. The new variant's XL engine is lavish, but it is a less expensive option to the Manticore II's lavish XXL.
-It is adequate to allow the use of an extended-range PPC in conjunction with a hull-mounted medium laser controlled by the targeting computer that has become the standard for current Manticores. A substantial amount of strong ferro-fibrous armor protects the well-balanced armament.
 </deployment>
 
 <history>
@@ -114,7 +110,7 @@ It was created by TechniCorp for the Star League member nations and quickly gain
 </history>
 
 <manufacturer>
-Bulldog Enterprises, Defiance Industies, Jalastar Aerospace, Quikscell Company. 
+Bulldog Enterprises, Defiance Industies, Jalastar Aerospace, Quikscell Company.
 </manufacturer>
 
 <primaryFactory>
@@ -127,3 +123,12 @@ ARMOR:Aldis Heavy Ferro-Fibrous
 COMMUNICATIONS:O/P R Janxiir
 TARGETING:TargiTrack 717
 </systemManufacturers>
+
+<source>
+Rec Guide:ilClan #31 -  Dark Age
+</source>
+
+<tonnage>
+60.0
+</tonnage>
+

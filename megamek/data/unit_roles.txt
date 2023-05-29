@@ -3505,7 +3505,7 @@ Jump Platoon (Gauss):NONE
 Jump Platoon (Laser):AMBUSHER
 Jump Platoon (LRM):AMBUSHER
 Jump Platoon (MG):AMBUSHER
-Jump Platoon (Rifle):
+Jump Platoon (Rifle):AMBUSHER
 Jump Platoon (SRM):AMBUSHER
 Jump Support Infantry Star Corps Jump Assault Infantry:AMBUSHER
 Jupiter 2:SNIPER
@@ -5164,7 +5164,7 @@ Plainsman Medium Hovertank (Streak):STRIKER
 Plainsman Medium Hovertank:STRIKER
 Planetlifter Air Transport 'SuperPelican' aka 'Waddle':NONE
 Planetlifter Air Transport:TRANSPORT
-Planetlifter Support Aircraft:
+Planetlifter Support Aircraft:NONE
 Planetlifter Tactical Support:NONE
 Po Heavy Tank (HV Prototype):BRAWLER
 Po Heavy Tank (HV):BRAWLER

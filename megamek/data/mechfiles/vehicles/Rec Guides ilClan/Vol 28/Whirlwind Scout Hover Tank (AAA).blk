@@ -20,12 +20,16 @@ Whirlwind Scout Hover Tank
 (AAA)
 </Model>
 
+<mul id:>
+9364
+</mul id:>
+
 <year>
-3067
+3064
 </year>
 
 <originalBuildYear>
-3067
+3064
 </originalBuildYear>
 
 <type>
@@ -104,7 +108,7 @@ TARGETING:Garret D2j
 </systemManufacturers>
 
 <source>
-Rec Guide:ilClan #28 -
+Rec Guide:ilClan #28 - Civil War
 </source>
 
 <tonnage>

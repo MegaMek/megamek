@@ -16,6 +16,10 @@ BattleArmor
 Dragoon Battle Armor
 </Name>
 
+<mul id:>
+9381
+</mul id:>
+
 <Model>
 (Sqd6)
 </Model>

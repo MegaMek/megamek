@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -28,8 +28,12 @@ Cavalry Attack Helicopter
 3085
 </year>
 
+<originalBuildYear>
+3085
+</originalBuildYear>
+
 <type>
-IS Level 4
+IS Level 2
 </type>
 
 <motion_type>
@@ -66,6 +70,7 @@ troopspace:4.0
 </armor>
 
 <Body Equipment>
+IS Vehicular Stealth
 ISMagshotGR Ammo
 ISGuardianECMSuite
 </Body Equipment>
@@ -92,9 +97,10 @@ ISMagshotGR
 </Turret Equipment>
 
 <source>
-TRO Prototypes
+TRO Prototypes - Early Republic
 </source>
 
 <tonnage>
 25.0
 </tonnage>
+

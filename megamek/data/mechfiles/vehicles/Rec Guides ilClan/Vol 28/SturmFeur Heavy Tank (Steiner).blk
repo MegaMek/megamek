@@ -21,15 +21,15 @@ SturmFeur Heavy Tank
 </Model>
 
 <mul id:>
-6967
+9371
 </mul id:>
 
 <year>
-3080
+3079
 </year>
 
 <originalBuildYear>
-3080
+3079
 </originalBuildYear>
 
 <type>
@@ -115,7 +115,6 @@ The SturmFeur debuted in 3018. At that time, it was the largest combat vehicle d
 
 <deployment>
 Adapted from the Word of Blake variant with heavy-duty M-Pods replaced the
-A-Pods, and defenses were further enhanced with an ECM system in lieu of the Blakist improved C3.
 </deployment>
 
 <history>

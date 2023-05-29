@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<MAPSETUP>
+    <BOARDWIDTH>32</BOARDWIDTH>
+    <BOARDHEIGHT>34</BOARDHEIGHT>
+    <MAPWIDTH>2</MAPWIDTH>
+    <MAPHEIGHT>2</MAPHEIGHT>
+    <BOARDS>/unofficial/SimonLandmine/32x34/32x34 DesertCity1 NW</BOARDS>
+    <BOARDS>/unofficial/SimonLandmine/32x34/32x34 DesertCity1 NE</BOARDS>
+    <BOARDS>/unofficial/SimonLandmine/32x34/32x34 DesertCity1 SW</BOARDS>
+    <BOARDS>/unofficial/SimonLandmine/32x34/32x34 DesertCity1 SE</BOARDS>
+</MAPSETUP>

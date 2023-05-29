@@ -157,6 +157,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     public static final String VIEW_TOGGLE_HEXCOORDS = "viewToggleHexCoords";
     public static final String VIEW_LABELS = "viewLabels";
     public static final String VIEW_TOGGLE_FIELD_OF_FIRE = "viewToggleFieldOfFire";
+    public static final String VIEW_TOGGLE_SENSOR_RANGE = "viewToggleSensorRange";
     public static final String VIEW_TOGGLE_FOV_DARKEN = "viewToggleFovDarken";
     public static final String VIEW_TOGGLE_FOV_HIGHLIGHT = "viewToggleFovHighlight";
     public static final String VIEW_TOGGLE_FIRING_SOLUTIONS = "viewToggleFiringSolutions";
@@ -932,6 +933,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 break;
             case VIEW_TOGGLE_FIELD_OF_FIRE:
                 GUIP.setShowFieldOfFire(!GUIP.getShowFieldOfFire());
+                bv.repaint();
+                break;
+            case VIEW_TOGGLE_SENSOR_RANGE:
+                GUIP.setShowSensorRange(!GUIP.getShowSensorRange());
                 bv.repaint();
                 break;
             case VIEW_TOGGLE_FOV_DARKEN:
@@ -2268,6 +2273,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         public void gameEnd(GameEndEvent e) {
             bv.clearMovementData();
             bv.clearFieldOfFire();
+            bv.clearSensorsRanges();
             for (Client client2 : getBots().values()) {
                 client2.die();
             }

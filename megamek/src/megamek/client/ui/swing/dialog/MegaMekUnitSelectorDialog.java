@@ -58,7 +58,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
     @Override
     public void updateOptionValues() {
         gameOptions = clientGUI.getClient().getGame().getOptions();
-        enableYearLimits = gameOptions.booleanOption(OptionsConstants.ALLOWED_ERA_BASED);
+        enableYearLimits = true;
         allowedYear = gameOptions.intOption(OptionsConstants.ALLOWED_YEAR);
         canonOnly = gameOptions.booleanOption(OptionsConstants.ALLOWED_CANON_ONLY);
         allowInvalid = gameOptions.booleanOption(OptionsConstants.ALLOWED_ALLOW_ILLEGAL_UNITS);

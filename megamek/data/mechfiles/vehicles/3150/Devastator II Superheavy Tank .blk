@@ -1,0 +1,118 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Devastator II Superheavy Tank
+</Name>
+
+<Model>
+</Model>
+
+<mul id:>
+8037
+</mul id:>
+
+<source>
+RS 3150 - Dark Age
+</source>
+
+<year>
+3143
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+4
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+40
+30
+30
+30
+30
+20
+</armor>
+
+<Body Equipment>
+ISCASE
+ISAMS Ammo
+ISAMS Ammo
+ISImprovedHeavyGauss Ammo
+ISImprovedHeavyGauss Ammo
+ISImprovedHeavyGauss Ammo
+ISImprovedHeavyGauss Ammo
+ISImprovedHeavyGauss Ammo
+ISImprovedHeavyGauss Ammo
+ISImprovedHeavyGauss Ammo
+ISImprovedHeavyGauss Ammo
+ISImprovedHeavyGauss Ammo
+ISImprovedHeavyGauss Ammo
+IS Ammo SRM-4
+ISSponsonTurret
+IS Vehicle Flamer Ammo
+IS Light Machine Gun Ammo - Full
+</Body Equipment>
+
+<Front Equipment>
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISAntiMissileSystem
+Vehicle Flamer
+Small Laser
+</Front Equipment>
+
+<Front Right Equipment>
+ISERMediumLaser(ST)
+Light Machine Gun
+</Front Right Equipment>
+
+<Front Left Equipment>
+ISERMediumLaser(ST)
+Light Machine Gun
+</Front Left Equipment>
+
+<Rear Right Equipment>
+</Rear Right Equipment>
+
+<Rear Left Equipment>
+</Rear Left Equipment>
+
+<Rear Equipment>
+SRM 4
+</Rear Equipment>
+
+<tonnage>
+160.0
+</tonnage>
+

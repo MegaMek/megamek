@@ -10246,8 +10246,8 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createStingrayAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.name = "Stringray Ammo";
-        ammo.setInternalName("Ammo Stringray");
+        ammo.name = "Stingray Ammo";
+        ammo.setInternalName("Ammo Stingray");
         ammo.addLookupName("Stingray Ammo");
         ammo.addLookupName("ClStingray Ammo");
         ammo.damagePerShot = 3;

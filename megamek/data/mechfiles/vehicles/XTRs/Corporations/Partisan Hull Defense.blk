@@ -1,24 +1,24 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
 
 <UnitType>
 Tank
 </UnitType>
 
-<blockversion>
-1
-</blockversion>
-
 <Name>
 Partisan Hull Defense
 </Name>
 
-<model>
+<Model>
 
-</model>
+</Model>
 
 <mul id:>
 2446
@@ -28,25 +28,36 @@ Partisan Hull Defense
 3072
 </year>
 
+<originalBuildYear>
+3072
+</originalBuildYear>
+
 <type>
 IS Level 4
 </type>
-
-<tonnage>
-80.0
-</tonnage>
 
 <motion_type>
 Tracked
 </motion_type>
 
-<engine_type>
-0
-</engine_type>
+<transporters>
+</transporters>
 
 <cruiseMP>
 2
 </cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+3
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
 
 <armor>
 47
@@ -78,4 +89,12 @@ ISLargeXPulseLaser
 ISLargeXPulseLaser
 ISC3BoostedSystemSlaveUnit
 </Turret Equipment>
+
+<source>
+XTRO Corporations - Jihad
+</source>
+
+<tonnage>
+80.0
+</tonnage>
 

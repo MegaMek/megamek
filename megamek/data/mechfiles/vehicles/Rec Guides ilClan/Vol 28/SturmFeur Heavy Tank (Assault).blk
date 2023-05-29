@@ -20,12 +20,16 @@ SturmFeur Heavy Tank
 (Assault)
 </Model>
 
+<mul id:>
+9372
+</mul id:>
+
 <year>
-3080
+3150
 </year>
 
 <originalBuildYear>
-3080
+3150
 </originalBuildYear>
 
 <type>
@@ -129,7 +133,7 @@ TARGETING:SturmFeur Highlight with BlindFire Radar
 </systemManufacturers>
 
 <source>
-Rec Guide:ilClan #28 - Jihad
+Rec Guide:ilClan #28 - Dark Age
 </source>
 
 <tonnage>

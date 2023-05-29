@@ -65,8 +65,8 @@ CLERMediumLaser
 CLERMediumLaser
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
-CLDoubleHeatSink
-CLDoubleHeatSink
+-Empty-
+-Empty-
 
 Left Torso:
 Fusion Engine
@@ -129,8 +129,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
--Empty-
--Empty-
+CLDoubleHeatSink
+CLDoubleHeatSink
 -Empty-
 -Empty-
 -Empty-

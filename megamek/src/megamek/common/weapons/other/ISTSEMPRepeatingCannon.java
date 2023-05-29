@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2016-2023 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -15,10 +15,8 @@ package megamek.common.weapons.other;
 
 import megamek.common.SimpleTechLevel;
 
-/**
- * TODO : Implement Game Rules. See IO pg 94 for specifics.
- */
 public class ISTSEMPRepeatingCannon extends TSEMPWeapon {
+
     private static final long serialVersionUID = -4861067053206502295L;
 
     public ISTSEMPRepeatingCannon() {
@@ -26,12 +24,12 @@ public class ISTSEMPRepeatingCannon extends TSEMPWeapon {
         bv = 600;
         name = "TSEMP Repeating Cannon";
         setInternalName(name);
-        this.addLookupName("ISTSEMPREPEATING");
-        flags = flags.or(F_TSEMP).or(F_DIRECT_FIRE).or(F_REPEATING);
+        addLookupName("ISTSEMPREPEATING");
+        flags = flags.or(F_REPEATING);
         tonnage = 8;
         criticals  = 7;
         tankslots = 1;
-        rulesRefs = "92, IO";
+        rulesRefs = "88, IO:AE";
         techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_F)
                 .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
                 .setISAdvancement(3133, DATE_NONE, DATE_NONE, 3138, DATE_NONE)

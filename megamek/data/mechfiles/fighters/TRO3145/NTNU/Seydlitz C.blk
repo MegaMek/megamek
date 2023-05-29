@@ -1,0 +1,113 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Seydlitz
+</Name>
+
+<Model>
+C
+</Model>
+
+<mul id:>
+8014
+</mul id:>
+
+<year>
+3140
+</year>
+
+<originalBuildYear>
+3140
+</originalBuildYear>
+
+<type>
+Mixed (IS Chassis) Advanced
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
+
+<SafeThrust>
+11
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+10
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+240
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+3
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<armor>
+18
+11
+11
+16
+</armor>
+
+<Nose Equipment>
+CLERPPC
+PPC Capacitor
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+Clan Reflective
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+</Fuselage Equipment>
+
+<source>
+Dark Age
+</source>
+
+<tonnage>
+20.0
+</tonnage>
+

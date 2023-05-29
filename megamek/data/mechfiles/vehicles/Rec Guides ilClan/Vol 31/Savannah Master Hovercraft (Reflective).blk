@@ -20,6 +20,10 @@ Savannah Master Hovercraft
 (Reflective)
 </Model>
 
+<mul id:>
+9452
+</mul id:>
+
 <year>
 3094
 </year>
@@ -78,14 +82,6 @@ ISERMediumLaser
 <Rear Equipment>
 </Rear Equipment>
 
-<source>
-Dark Age
-</source>
-
-<tonnage>
-5.0
-</tonnage>
-
 <capabilities>
 The Savannah Master's attractiveness stems from its incredible ground speed—more than 200 kilometers per hour at full speed—combined with its extraordinary simplicity of design. Lewis designed it so that it could be easily maintained and repaired with readily available components. The hovercraft's electronics are made in the Lyran city of Tharkad, and its sole weapon varies.
 </capabilities>
@@ -114,5 +110,14 @@ Carlisle
 ENGINE:Edasich Omni 25 Fusion
 ARMOR:Bowie Glinting Blade Reflective
 COMMUNICATIONS:TharHes Hm 10
-TARGETING:TharHes Alpha-2a 
+TARGETING:TharHes Alpha-2a
 </systemManufacturers>
+
+<source>
+Rec Guide:ilClan #31 - Early Republic
+</source>
+
+<tonnage>
+5.0
+</tonnage>
+

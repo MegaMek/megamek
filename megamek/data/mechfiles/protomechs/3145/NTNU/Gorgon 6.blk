@@ -1,0 +1,111 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+ProtoMech
+</UnitType>
+
+<Name>
+Gorgon
+</Name>
+
+<Model>
+6
+</Model>
+
+<mul id:>
+8033
+</mul id:>
+
+<year>
+3130
+</year>
+
+<originalBuildYear>
+3130
+</originalBuildYear>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Biped
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+5
+</cruiseMP>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<interface_cockpit>
+false
+</interface_cockpit>
+
+<engine_type>
+0
+</engine_type>
+
+<clan_engine>
+false
+</clan_engine>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+4
+12
+4
+4
+7
+3
+</armor>
+
+<Body Equipment>
+CLMyomerBooster
+CLAPGaussRifle Ammo (12)
+</Body Equipment>
+
+<Head Equipment>
+</Head Equipment>
+
+<Torso Equipment>
+ISAngelECMSuite
+</Torso Equipment>
+
+<Right Arm Equipment>
+</Right Arm Equipment>
+
+<Left Arm Equipment>
+</Left Arm Equipment>
+
+<Legs Equipment>
+</Legs Equipment>
+
+<Main Gun Equipment>
+CLAPGaussRifle
+</Main Gun Equipment>
+
+<source>
+RS3130 - Late Republic
+</source>
+
+<tonnage>
+8.0
+</tonnage>
+

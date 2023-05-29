@@ -20,6 +20,10 @@ Auxiliary Defense Tank
 ADT-1
 </Model>
 
+<mul id:>
+8302
+</mul id:>
+
 <year>
 2833
 </year>
@@ -89,7 +93,7 @@ Rifle (Cannon, Medium)
 </barrating>
 
 <structural_tech_rating>
-2
+3
 </structural_tech_rating>
 
 <engine_tech_rating>

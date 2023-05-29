@@ -1,0 +1,109 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+ProtoMech
+</UnitType>
+
+<Name>
+Svartalfa
+</Name>
+
+<Model>
+3
+</Model>
+
+<mul id:>
+8035
+</mul id:>
+
+<year>
+3118
+</year>
+
+<originalBuildYear>
+3118
+</originalBuildYear>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+WiGE
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+5
+</cruiseMP>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<interface_cockpit>
+false
+</interface_cockpit>
+
+<engine_type>
+0
+</engine_type>
+
+<clan_engine>
+false
+</clan_engine>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+9
+14
+4
+4
+8
+</armor>
+
+<Body Equipment>
+CLMediumChemLaserAmmo (75)
+</Body Equipment>
+
+<Head Equipment>
+</Head Equipment>
+
+<Torso Equipment>
+CLMediumChemicalLaser
+CLMediumChemicalLaser
+CLMediumChemicalLaser
+</Torso Equipment>
+
+<Right Arm Equipment>
+CLMediumChemicalLaser
+</Right Arm Equipment>
+
+<Left Arm Equipment>
+CLMediumChemicalLaser
+</Left Arm Equipment>
+
+<Legs Equipment>
+</Legs Equipment>
+
+<source>
+RS3150 - Late Republic
+</source>
+
+<tonnage>
+14.0
+</tonnage>
+

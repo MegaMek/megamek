@@ -63,7 +63,7 @@ public class MPCalculationSetting {
     public static final MPCalculationSetting PERM_IMMOBILIZED = new Builder().noGrounded().noHeat().noCargo().build();
 
     /** A setting that reduces calculated jump MP for submerged jump jets. */
-    public static final MPCalculationSetting DISCOUNT_SUBMERGED_JJ = new Builder().discountSubmergedJumpJets().build();
+    public static final MPCalculationSetting DEDUCT_SUBMERGED_JJ = new Builder().deductSubmergedJumpJets().build();
 
     /**
      * The setting for Alpha Strike conversion, excluding scenario circumstances as well as
@@ -206,7 +206,7 @@ public class MPCalculationSetting {
         }
 
         /** Reduces jump MP for submerged jump jets. Does not affect any other MP calculation. */
-        private Builder discountSubmergedJumpJets() {
+        private Builder deductSubmergedJumpJets() {
             ignoreSubmergedJumpJets = false;
             return this;
         }

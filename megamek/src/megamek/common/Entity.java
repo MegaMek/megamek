@@ -2910,7 +2910,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * water.)
      */
     public int getJumpMPWithTerrain() {
-        return getJumpMP(MPCalculationSetting.DISCOUNT_SUBMERGED_JJ);
+        return getJumpMP(MPCalculationSetting.DEDUCT_SUBMERGED_JJ);
     }
 
     /**

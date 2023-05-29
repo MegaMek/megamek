@@ -42,16 +42,4 @@ public class ProtoMekBVCalculator extends BVCalculator {
     protected double tmmFactor(int tmmRunning, int tmmJumping, int tmmUmu) {
         return super.tmmFactor(tmmRunning, tmmJumping, tmmUmu) + 0.1;
     }
-
-    @Override
-    protected int offensiveSpeedFactorMP() {
-        // TM p306: The myomer booster is treated differently for defensive and offensive speeds
-        // This would be the code for that:
-//        int mp = (int) Math.ceil(walkMP() * 1.5);
-//        if (protoMek.hasMyomerBooster()) {
-//            mp++;
-//        }
-        // In accordance with Mordel's calculation, I'm not implementing this.
-        return runMP + (int) Math.round(Math.max(jumpMP, umuMP) / 2.0);
-    }
 }

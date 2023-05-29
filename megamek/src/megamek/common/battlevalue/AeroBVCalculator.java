@@ -154,6 +154,6 @@ public class AeroBVCalculator extends HeatTrackingBVCalculator {
 
     @Override
     protected int offensiveSpeedFactorMP() {
-        return aero.getRunMP();
+        return aero.getRunMP(MPCalculationSetting.BV_CALCULATION);
     }
 }

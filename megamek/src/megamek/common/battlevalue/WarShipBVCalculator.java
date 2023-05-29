@@ -200,7 +200,7 @@ public class WarShipBVCalculator extends JumpShipBVCalculator {
 
     @Override
     protected int offensiveSpeedFactorMP() {
-        return aero.getRunMP();
+        return aero.getRunMP(MPCalculationSetting.BV_CALCULATION);
     }
 
     @Override

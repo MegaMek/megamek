@@ -65,12 +65,8 @@ public class MPCalculationSetting {
     /** A setting that reduces calculated jump MP for submerged jump jets. */
     public static final MPCalculationSetting DEDUCT_SUBMERGED_JJ = new Builder().deductSubmergedJumpJets().build();
 
-    /** A setting for printing record sheets (so far in 2023, only in MML). */
-    public static final MPCalculationSetting RECORD_SHEET = new Builder().baNoBurden().noDWP().build();
-
-    /** A setting for printing record sheets (so far in 2023, only in MML). */
-    public static final MPCalculationSetting RECORD_SHEET_NO_GRAVITY = new Builder().noGravity().baNoBurden()
-            .noDWP().build();
+    /** A setting for finding full MP on BA, disregarding burdened status and DWP (Use: printing BA record sheets). */
+    public static final MPCalculationSetting BA_UNBURDENED = new Builder().noHeat().baNoBurden().noDWP().build();
 
     /**
      * The setting for Alpha Strike conversion, excluding scenario circumstances as well as

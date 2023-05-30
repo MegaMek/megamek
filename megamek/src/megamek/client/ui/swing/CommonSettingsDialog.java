@@ -708,7 +708,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         row.add(csbVisualRangeColor);
         comps.add(row);
 
-        SpinnerNumberModel msensorMaxDrawRange = new SpinnerNumberModel(GUIP.getSenorMaxDrawRange(), 0, 20000, 1);
+        SpinnerNumberModel msensorMaxDrawRange = new SpinnerNumberModel(GUIP.getSensorMaxDrawRange(), 0, 20000, 1);
         sensorMaxDrawRange = new JSpinner(msensorMaxDrawRange);
         sensorMaxDrawRange.setMaximumSize(new Dimension(150, 40));
         JLabel sensorMaxDrawRangeLabel = new JLabel(Messages.getString("CommonSettingsDialog.sensorMaxDrawRange"));
@@ -1725,7 +1725,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         csbSensorRangeColor.setColour(GUIP.getSensorRangeColor());
         csbVisualRangeColor.setColour(GUIP.getVisualRangeColor());
-        sensorMaxDrawRange.setValue(GUIP.getSenorMaxDrawRange());
+        sensorMaxDrawRange.setValue(GUIP.getSensorMaxDrawRange());
 
         csbUnitValidColor.setColour(GUIP.getUnitValidColor());
         csbUnitSelectedColor.setColour(GUIP.getUnitSelectedColor());

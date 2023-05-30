@@ -2587,7 +2587,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(BOARD_ECM_TRANSPARENCY, i);
     }
 
-    public int getSenorMaxDrawRange() {
+    public int getSensorMaxDrawRange() {
         return getInt(BOARD_SENSOR_MAX_DRAW_RANGE);
     }
 

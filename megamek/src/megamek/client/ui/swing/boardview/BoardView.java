@@ -6500,8 +6500,14 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
         for (RangeHelper rangeH : lBrackets) {
             sensorRanges.add(new HashSet<>());
-            int rangeMin = Math.min(rangeH.min, GUIP.getSenorMaxDrawRange());
-            int rangeMax = Math.min(rangeH.max, GUIP.getSenorMaxDrawRange());
+            // find max range possible on map, no need to check beyond it
+            int rangeToCorner = (new Coords(0, game.getBoard().getHeight())).distance(c);
+            rangeToCorner = Math.max(rangeToCorner, (new Coords(0, 0)).distance(c));
+            rangeToCorner = Math.max(rangeToCorner, (new Coords(game.getBoard().getWidth(), 0)).distance(c));
+            rangeToCorner = Math.max(rangeToCorner, (new Coords(game.getBoard().getWidth(), game.getBoard().getHeight())).distance(c));
+            int maxRange = Math.min(rangeToCorner, GUIP.getSensorMaxDrawRange());
+            int rangeMin = Math.min(rangeH.min, maxRange);
+            int rangeMax = Math.min(rangeH.max, maxRange);
 
             if (rangeMin != rangeMax) {
                 for (int i = rangeMin; i <= rangeMax; i++) {

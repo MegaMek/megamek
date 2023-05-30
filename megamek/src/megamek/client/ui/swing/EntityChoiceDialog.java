@@ -15,6 +15,7 @@ package megamek.client.ui.swing;
 
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
 import megamek.common.annotations.Nullable;
 
@@ -46,7 +47,7 @@ public class EntityChoiceDialog extends AbstractChoiceDialog<Entity> {
 
     @Override
     protected void detailLabel(JToggleButton button, Entity target) {
-        String div = "<DIV WIDTH=" + GUIP.getUnitToolTipMaxWidth() + ">" + UnitToolTip.getEntityTipVitals(target, null) + "</DIV>";
+        String div = "<DIV WIDTH=" + UIUtil.scaleForGUI(500) + ">" + UnitToolTip.getEntityTipVitals(target, null) + "</DIV>";
         button.setText("<html>" + div + "</html>");
     }
 

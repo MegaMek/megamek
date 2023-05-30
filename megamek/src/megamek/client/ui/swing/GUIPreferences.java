@@ -177,7 +177,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String UNIT_TOOLTIP_ARMORMINI_COLOR_PARTIAL_DMG = "UnitToolTipArmorMiniColorPartialDmg";
     public static final String UNIT_TOOLTIP_ARMORMINI_COLOR_DAMAGED = "UnitToolTipArmorMiniColorDamaged";
     public static final String UNIT_TOOLTIP_ARMORMINI_FONT_SIZE_MOD = "UnitToolTipArmorMiniFrontSizeMod";
-    public static final String UNIT_TOOLTIP_MAX_WIDTH = "UnitToolTipMaxWidth";
 
     public static final String SPLIT_PANE_A_DIVIDER_LOCATION = "SplitPaneADividerLocation";
     public static final String GAME_SUMMARY_BOARD_VIEW = "GameSummaryBoardView";
@@ -561,7 +560,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(UNIT_TOOLTIP_ARMORMINI_COLOR_DAMAGED, DEFAULT_MEDIUM_DARK_RED);
         store.setDefault(UNIT_TOOLTIP_ARMORMINI_FONT_SIZE_MOD, -2);
         setDefault(UNIT_DISPLAY_WEAPON_LIST_HEIGHT, 200);
-        store.setDefault(UNIT_TOOLTIP_MAX_WIDTH, 500);
 
         store.setDefault(GAME_SUMMARY_BOARD_VIEW, false);
         store.setDefault(ENTITY_OWNER_LABEL_COLOR, true);
@@ -2671,10 +2669,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return getInt(UNIT_TOOLTIP_ARMORMINI_FONT_SIZE_MOD);
     }
 
-    public int getUnitToolTipMaxWidth() {
-        return getInt(UNIT_TOOLTIP_MAX_WIDTH);
-    }
-
     public boolean getDockOnLeft() {
         return getBoolean(DOCK_ON_LEFT);
     }
@@ -2813,10 +2807,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setUnitToolTipArmorMiniFontSize(int i) {
         store.setValue(UNIT_TOOLTIP_ARMORMINI_FONT_SIZE_MOD, i);
-    }
-
-    public void setUnitTooltipMaxWidth(int i) {
-        store.setValue(UNIT_TOOLTIP_MAX_WIDTH, i);
     }
 
     public void setDockOnLeft(Boolean state) {

@@ -6498,14 +6498,15 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         List<Set<Coords>> sensorRanges = new ArrayList<>(1);
         int j = 0;
 
+        // find max range possible on map, no need to check beyond it
+        int rangeToCorner = (new Coords(0, game.getBoard().getHeight())).distance(c);
+        rangeToCorner = Math.max(rangeToCorner, (new Coords(0, 0)).distance(c));
+        rangeToCorner = Math.max(rangeToCorner, (new Coords(game.getBoard().getWidth(), 0)).distance(c));
+        rangeToCorner = Math.max(rangeToCorner, (new Coords(game.getBoard().getWidth(), game.getBoard().getHeight())).distance(c));
+        int maxRange = Math.min(rangeToCorner, GUIP.getSensorMaxDrawRange());
+
         for (RangeHelper rangeH : lBrackets) {
             sensorRanges.add(new HashSet<>());
-            // find max range possible on map, no need to check beyond it
-            int rangeToCorner = (new Coords(0, game.getBoard().getHeight())).distance(c);
-            rangeToCorner = Math.max(rangeToCorner, (new Coords(0, 0)).distance(c));
-            rangeToCorner = Math.max(rangeToCorner, (new Coords(game.getBoard().getWidth(), 0)).distance(c));
-            rangeToCorner = Math.max(rangeToCorner, (new Coords(game.getBoard().getWidth(), game.getBoard().getHeight())).distance(c));
-            int maxRange = Math.min(rangeToCorner, GUIP.getSensorMaxDrawRange());
             int rangeMin = Math.min(rangeH.min, maxRange);
             int rangeMax = Math.min(rangeH.max, maxRange);
 

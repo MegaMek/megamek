@@ -150,8 +150,8 @@ public class PrincessTest {
 
         // Test a BA unit.
         Entity mockBA = mock(BattleArmor.class);
-        when(mockBA.getRunMP(MPCalculationSetting.STANDARD)).thenReturn(1);
-        when(mockBA.getJumpMP(MPCalculationSetting.STANDARD)).thenReturn(3);
+        when(mockBA.getRunMP()).thenReturn(1);
+        when(mockBA.getJumpMP()).thenReturn(3);
         when(mockBA.isProne()).thenReturn(false);
         when(mockBA.isCommander()).thenReturn(false);
         when(mockBA.isMilitary()).thenReturn(true);

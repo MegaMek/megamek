@@ -172,7 +172,7 @@ public class TripodMech extends Mech {
                 if (hipHits > 0) {
                     if ((game != null)
                         && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
-                        mp = (hipHits >= 1) ? mp - (2 * hipHits) : 0;
+                        mp = mp - 2 * hipHits;
                     } else {
                         mp = (hipHits == 1) ? (int) Math.ceil(mp / 2.0) : 0;
                     }

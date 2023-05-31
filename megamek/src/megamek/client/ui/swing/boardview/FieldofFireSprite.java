@@ -52,20 +52,22 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
         0, 1, 6, 5, 1, 6, 7, 4, 2, 5, 3, 8, 0, 1, 4, 2, 6, 6, 7, 3,
         0, 7, 2, 5, 6, 4, 5, 8, 1, 2, 6, 3, 7, 5, 4, 8, 2, 3, 5, 8, 3, 8, 8, 0
     };
-    
+
+    private static final int COLORS_MAX = 5;
+
     // in this sprite type, the images are very repetitive
     // therefore they get saved in a static array
     // they will be painted only once for each border
     // arrangement and color and repainted only when
     // the board is zoomed
-    private static Image[][] images = new Image[64][5];
-    private static float oldZoom;
+    private static Image[][] images = new Image[64][COLORS_MAX];
+    private float oldZoom;
     
     // individual sprite values
-    private final Color fillColor;
+    private Color fillColor;
     private final int rangeBracket;
 
-    
+
     public FieldofFireSprite(BoardView boardView1, int rangeBracket, Coords l,
                              int borders) {
         // the color of the super doesn't matter
@@ -93,6 +95,42 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
         }
     }
 
+    protected void setFillColor(Color c) {
+        fillColor = c;
+    }
+
+    protected int getBorderOpac() {
+        return borderOpac;
+    }
+
+    protected float getOldZoom() {
+        return oldZoom;
+    }
+
+    protected void setOldZoom(float f) {
+        oldZoom = f;
+    }
+
+    protected int getRangeBracket() {
+        return rangeBracket;
+    }
+
+    protected Stroke getLineStroke() {
+        return lineStroke;
+    }
+
+    protected int[] getBTypes() {
+        return bTypes;
+    }
+
+    protected int[] getBDir() {
+        return bDir;
+    }
+
+    protected int getBorderW() {
+        return borderW;
+    }
+
     @Override
     public void prepare() {
         // adjust bounds (image size) to board zoom
@@ -107,7 +145,7 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
         // when the board is rezoomed, ditch all images
         if (bv.scale != oldZoom) {
             oldZoom = bv.scale;
-            images = new Image[64][5];
+            images = new Image[64][COLORS_MAX];
         }
 
         // create image for buffer
@@ -168,7 +206,7 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
         graph.dispose();
     }
     
-    private void drawBorderXC(Graphics2D graph, Shape fillShape, Shape lineShape) {
+    protected void drawBorderXC(Graphics2D graph, Shape fillShape, Shape lineShape) {
         // 1) thick transparent border
         graph.setColor(fillColor);
         graph.fill(fillShape);
@@ -177,8 +215,8 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
         graph.setColor(lineColor);
         graph.draw(lineShape);
     }
-    
-    private void drawLoneBorder(Graphics2D graph, int dir) {
+
+    protected void drawLoneBorder(Graphics2D graph, int dir) {
         // 1) thick transparent border
         graph.setColor(fillColor);
         graph.fill(getHexBorderArea(dir, CUT_BORDER, borderW));
@@ -188,7 +226,7 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
         graph.draw(getHexBorderLine(dir));
     }
     
-    private void drawNormalBorders(Graphics2D graph) {
+    protected void drawNormalBorders(Graphics2D graph) {
         // cycle through directions
         for (int i = 0; i < 6; i++) {
             if ((borders & (1 << i)) != 0) {

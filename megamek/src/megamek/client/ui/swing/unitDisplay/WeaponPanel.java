@@ -2168,6 +2168,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             // no twisting here
             ((DeploymentDisplay) gui.getCurrentPanel()).setWeaponFieldOfFire(entity, ranges, arc, loc);
         }
+
+        unitDisplay.getClientGUI().getBoardView().setSensorRange(entity, entity.getPosition());
     }
 
     private String formatAmmo(Mounted m) {
@@ -2694,6 +2696,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             // firing arc info when a weapon has been de-selected
             if (weaponList.getSelectedIndex() == -1) {
                 unitDisplay.getClientGUI().getBoardView().clearFieldOfFire();
+                unitDisplay.getClientGUI().getBoardView().clearSensorsRanges();
             }
         }
         onResize();

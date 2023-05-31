@@ -18675,7 +18675,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<unitType>Tank</unitType>
 		<quirk>easy_maintain</quirk>
 	</unit>
-
+	
 	<unit>
 		<chassis>Shillelagh Missile Tank</chassis>
 		<model>(Original)</model>
@@ -18692,7 +18692,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 	</unit>
 
 	<unit>
-		<chassis>Shillelagh Missile Tank</chassis>		
+		<chassis>Shillelagh Missile Tank</chassis>
 		<unitType>Tank</unitType>
 		<quirk>easy_maintain</quirk>
 		<quirk>hard_pilot</quirk>

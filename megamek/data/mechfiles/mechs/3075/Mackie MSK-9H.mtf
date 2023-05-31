@@ -1,40 +1,39 @@
-Version:1.0
+Version:1.3
 Mackie
 MSK-9H
 mul id:1975
-
 Config:Biped
-TechBase:Inner Sphere
-Era:2576
-Source:TRO 3075
-Rules Level:2
+techbase:Inner Sphere
+era:2576
+source:TRO 3075
+rules level:2
 
-Mass:100
-Engine:300 Fusion Engine
-Structure:Standard
-Myomer:Standard
+mass:100
+engine:300 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:20 Single
-Walk MP:3
-Jump MP:0
+heat sinks:20 Single
+walk mp:3
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:34
-RA Armor:34
-LT Armor:32
-RT Armor:32
-CT Armor:45
-HD Armor:9
-LL Armor:42
-RL Armor:42
-RTL Armor:10
-RTR Armor:10
-RTC Armor:14
+armor:Standard(Inner Sphere)
+LA armor:34
+RA armor:34
+LT armor:32
+RT armor:32
+CT armor:50
+HD armor:9
+LL armor:41
+RL armor:41
+RTL armor:10
+RTR armor:10
+RTC armor:11
 
 Weapons:5
-Autocannon/20, Right Arm
-Particle Cannon, Left Arm
-Particle Cannon, Left Arm
+PPC, Left Arm
+PPC, Left Arm
+AC/20, Right Arm
 Medium Laser, Center Torso
 Medium Laser, Center Torso
 
@@ -45,12 +44,12 @@ Lower Arm Actuator
 Heat Sink
 Heat Sink
 Heat Sink
-Particle Cannon
-Particle Cannon
-Particle Cannon
-Particle Cannon
-Particle Cannon
-Particle Cannon
+PPC
+PPC
+PPC
+PPC
+PPC
+PPC
 
 Right Arm:
 Shoulder

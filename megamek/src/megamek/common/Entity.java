@@ -4407,15 +4407,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public boolean hasMisc(BigInteger flag) {
-        for (Mounted m : miscList) {
-            if ((m.getType() instanceof MiscType)) {
-                MiscType type = (MiscType) m.getType();
-                if (type.hasFlag(flag)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return miscList.stream().anyMatch(misc -> misc.getType().hasFlag(flag));
     }
 
     public List<Mounted> getMiscEquipment(BigInteger flag) {
@@ -8185,17 +8177,37 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         throw new IllegalArgumentException(getShortName() + " can not load " + unit.getShortName());
     }
 
+    /**
+     * Load the given unit.
+     *
+     * @param unit the Entity to be loaded.
+     * @param checkElev When true, only allows the load if both units are at the same elevation
+     * @throws IllegalArgumentException If the unit can't be loaded
+     */
     public void load(Entity unit, boolean checkElev) {
-        this.load(unit, checkElev, -1);
+        load(unit, checkElev, -1);
     }
 
+    /**
+     * Load the given unit.
+     *
+     * @param unit the Entity to be loaded.
+     * @param bayNumber The bay to load into
+     * @throws IllegalArgumentException If the unit can't be loaded
+     */
     public void load(Entity unit, int bayNumber) {
-        this.load(unit, true, bayNumber);
+        load(unit, true, bayNumber);
     }
 
+    /**
+     * Load the given unit, checking if the elevation of both units is the same.
+     *
+     * @param unit the Entity to be loaded.
+     * @throws IllegalArgumentException If the unit can't be loaded
+     */
     @Override
     public void load(Entity unit) {
-        this.load(unit, true, -1);
+        load(unit, true, -1);
     }
 
     /**
@@ -12981,62 +12993,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public int getRearArc() {
         return Compute.ARC_REAR;
-    }
-
-    /**
-     * returns a description to the current sensing range of the active sensor
-     */
-    public String getSensorDesc() {
-        if (null == getActiveSensor()) {
-            return "none";
-        }
-        int bracket = Compute.getSensorBracket(getSensorCheck());
-        if (isSpaceborne()) {
-            bracket = Compute.getSensorBracket(7);
-        }
-        int range = getActiveSensor().getRangeByBracket();
-        int groundRange = 0;
-        if (getActiveSensor().isBAP()) {
-            groundRange = 2;
-        } else {
-            groundRange = 1;
-        }
-
-        //ASF sensors change range when in space, so we do that here
-        if (isSpaceborne()) {
-            if (getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
-                range = Sensor.ASF_RADAR_MAX_RANGE;
-            }
-
-            //If Aero/Spacecraft sensors are destroyed while in space, the range is 0.
-            if (isAeroSensorDestroyed()) {
-                range = 0;
-            }
-        }
-
-        //Dropships using radar in an atmosphere need a range that's a bit more sensible
-        if (hasETypeFlag(Entity.ETYPE_DROPSHIP) && !isSpaceborne()) {
-            if (getActiveSensor().getType() == Sensor.TYPE_SPACECRAFT_RADAR) {
-                range = Sensor.LC_RADAR_GROUND_RANGE;
-            }
-        }
-
-        int maxSensorRange = bracket * range;
-        int minSensorRange = Math.max((bracket - 1) * range, 0);
-        int maxGroundSensorRange = bracket * groundRange;
-        int minGroundSensorRange = Math.max((maxGroundSensorRange - 1), 0);
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE)) {
-            minSensorRange = 0;
-            minGroundSensorRange = 0;
-        }
-
-        if (isAirborne() && game.getBoard().onGround()) {
-            return getActiveSensor().getDisplayName() + " (" + minSensorRange + "-"
-                    + maxSensorRange + ")" + " {" + Messages.getString("Entity.sensor_range_vs_ground_target")
-                    + " (" + minGroundSensorRange + "-" + maxGroundSensorRange + ")}";
-        }
-        return getActiveSensor().getDisplayName() + " (" + minSensorRange + "-"
-               + maxSensorRange + ")";
     }
 
     @Override

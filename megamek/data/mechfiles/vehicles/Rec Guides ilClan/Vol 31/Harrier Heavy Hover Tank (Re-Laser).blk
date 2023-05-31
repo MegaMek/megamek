@@ -13,12 +13,16 @@ Tank
 </UnitType>
 
 <Name>
-Harrier Hover Tank
+Harrier Heavy Hover Tank
 </Name>
 
 <Model>
 (Re-Laser)
 </Model>
+
+<mul id:>
+9455
+</mul id:>
 
 <year>
 3149
@@ -82,10 +86,6 @@ ISStreakSRM6
 Medium Laser
 </Rear Equipment>
 
-<tonnage>
-50.0
-</tonnage>
-
 <capabilities>
 The Harrier is an excellent cavalry vehicle, blazing to wherever its firepower and armor protection are required.
 </capabilities>
@@ -116,3 +116,12 @@ ARMOR:Durallex Heavy
 COMMUNICATIONS:Maxell 600b
 TARGETING:Maxell AT70
 </systemManufacturers>
+
+<source>
+ilClan #31 - Dark Age
+</source>
+
+<tonnage>
+50.0
+</tonnage>
+

@@ -221,6 +221,8 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     public int fieldOfFireWpUnderwater = 0;
     private static final String[] rangeTexts = { "min", "S", "M", "L", "E" };
 
+    private ArrayList<HexSprite> sensorRangeSprites = new ArrayList<>();
+
     TilesetManager tileManager;
 
     // polygons for a few things
@@ -1104,6 +1106,11 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         // draw wrecks
         if (GUIP.getShowWrecks() && !useIsometric()) {
             drawSprites(g, wreckSprites);
+        }
+
+        // Sensor Range
+        if (!useIsometric() && shouldShowSensorRange()) {
+            drawSprites(g, sensorRangeSprites);
         }
 
         // Field of Fire
@@ -2168,6 +2175,10 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 drawSprites(boardGraph, wreckSprites);
             }
 
+            if (!useIsometric() && shouldShowSensorRange()) {
+                drawSprites(boardGraph, sensorRangeSprites);
+            }
+
             // Field of Fire
             if (!useIsometric() && shouldShowFieldOfFire()) {
                 drawSprites(boardGraph, fieldOfFireSprites);
@@ -2288,6 +2299,9 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                         if ((hex != null)) {
                             drawHex(c, g, saveBoardImage);
                             drawOrthograph(c, g);
+                            if (shouldShowSensorRange()) {
+                                drawHexSpritesForHex(c, g, sensorRangeSprites);
+                            }
                             if (shouldShowFieldOfFire()) {
                                 drawHexSpritesForHex(c, g, fieldOfFireSprites);
                             }
@@ -5109,6 +5123,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         flyOverSprites.clear();
         movementSprites.clear();
         fieldOfFireSprites.clear();
+        sensorRangeSprites.clear();
     }
 
     public synchronized void updateBoard() {
@@ -5766,7 +5781,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         if (mhex == null) {
             return;
         }
-        String result = HexTooltip.getHexTip(mhex, clientgui);
+        String result = HexTooltip.getHexTip(mhex, clientgui.getClient());
         txt.append(result);
     }
 
@@ -6003,6 +6018,10 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             spr.prepare();
         }
 
+        for (Sprite spr : sensorRangeSprites) {
+            spr.prepare();
+        }
+
         for (Sprite spr : fieldOfFireSprites) {
             spr.prepare();
         }
@@ -6122,6 +6141,10 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         }
 
         for (Sprite spr : moveModEnvSprites) {
+            spr.prepare();
+        }
+
+        for (Sprite spr : sensorRangeSprites) {
             spr.prepare();
         }
 
@@ -6245,6 +6268,11 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         fieldOfFireWpArc = -1;
         fieldOfFireUnit = null;
         fieldOfFireSprites.clear();
+        repaint();
+    }
+
+    public void clearSensorsRanges() {
+        sensorRangeSprites.clear();
         repaint();
     }
 
@@ -6402,6 +6430,120 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         repaint();
     }
 
+    public static class RangeHelper {
+        public int min;
+        public int max;
+
+        public RangeHelper(int min, int max) {
+            this.min = min;
+            this.max = max;
+        }
+    }
+
+    // prepares the sprites for visual and sensor ranges
+    public void setSensorRange(Entity entity, Coords c) {
+        if (entity == null || c == null) {
+            clearSensorsRanges();
+            return;
+        }
+
+        // Do not display anything for offboard units
+        if (entity.isOffBoard()) {
+            clearSensorsRanges();
+            return;
+        }
+
+        List<RangeHelper> lBrackets = new ArrayList<>(1);
+        int minSensorRange = 0;
+        int maxSensorRange = 0;
+        int minAirSensorRange = 0;
+        int maxAirSensorRange = 0;
+
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
+            Compute.SensorRangeHelper srh = Compute.getSensorRanges(entity.getGame(), entity);
+
+            if (srh != null) {
+                if (entity.isAirborne() && entity.getGame().getBoard().onGround()) {
+                    minSensorRange = srh.minGroundSensorRange;
+                    maxSensorRange = srh.maxGroundSensorRange;
+                    minAirSensorRange = srh.minSensorRange;
+                    maxAirSensorRange = srh.maxSensorRange;
+                } else {
+                    minSensorRange = srh.minSensorRange;
+                    maxSensorRange = srh.maxSensorRange;
+                }
+            }
+        }
+
+        lBrackets.add(new RangeHelper(minSensorRange, maxSensorRange));
+        lBrackets.add(new RangeHelper(minAirSensorRange, maxAirSensorRange));
+
+        minSensorRange = 0;
+        maxSensorRange = Compute.getMaxVisualRange(entity, false);
+
+        lBrackets.add(new RangeHelper(minSensorRange, maxSensorRange));
+
+        minSensorRange = 0;
+
+        if (game.getPlanetaryConditions().isIlluminationEffective()) {
+            maxSensorRange = Compute.getMaxVisualRange(entity, true);
+        } else {
+            maxSensorRange = 0;
+        }
+
+        lBrackets.add(new RangeHelper(minSensorRange, maxSensorRange));
+
+        // create the lists of hexes
+        List<Set<Coords>> sensorRanges = new ArrayList<>(1);
+        int j = 0;
+
+        for (RangeHelper rangeH : lBrackets) {
+            sensorRanges.add(new HashSet<>());
+
+            if (rangeH.max > 0) {
+                for (int i = rangeH.min; i <= rangeH.max; i++) {
+                    // Add all hexes up to the range to separate lists
+                    sensorRanges.get(j).addAll(c.allAtDistance(i));
+                }
+            }
+
+            // Remove hexes that are not on the board
+            sensorRanges.get(j).removeIf(h -> !game.getBoard().contains(h));
+            j++;
+        }
+
+        // create the sprites
+        sensorRangeSprites.clear();
+
+        // for all available range
+        for (int b = 0; b < lBrackets.size(); b++) {
+            if (sensorRanges.get(b) == null) {
+                continue;
+            }
+
+            for (Coords loc : sensorRanges.get(b)) {
+                // check surrounding hexes
+                int edgesToPaint = 0;
+
+                for (int dir = 0; dir < 6; dir++) {
+                    Coords adjacentHex = loc.translated(dir);
+
+                    if (!sensorRanges.get(b).contains(adjacentHex)) {
+                        edgesToPaint += (1 << dir);
+                    }
+                }
+
+                // create sprite if there's a border to paint
+                if (edgesToPaint > 0) {
+                    SensorRangeSprite srSprite = new SensorRangeSprite(this, b, loc, edgesToPaint);
+                    sensorRangeSprites.add(srSprite);
+                }
+            }
+        }
+
+        repaint();
+    }
+
     /** Displays a dialog and changes the theme of all
      *  board hexes to the user-chosen theme.
      */
@@ -6536,6 +6678,12 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
     public boolean shouldShowFieldOfFire() {
         return GUIP.getShowFieldOfFire() &&
+                (game.getPhase().isDeployment() || game.getPhase().isMovement()
+                        || game.getPhase().isTargeting() || game.getPhase().isFiring());
+    }
+
+    public boolean shouldShowSensorRange() {
+        return GUIP.getShowSensorRange() &&
                 (game.getPhase().isDeployment() || game.getPhase().isMovement()
                         || game.getPhase().isTargeting() || game.getPhase().isFiring());
     }

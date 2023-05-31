@@ -1,8 +1,7 @@
-Version:1.0
+Version:1.3
 Hellion
 P
 mul id:8327
-
 Config:Biped Omnimech
 techbase:Clan
 era:3124
@@ -34,16 +33,16 @@ RTC armor:5
 
 Weapons:16
 Micro Pulse Laser, Left Arm
-Micro Pulse Laser, Right Arm
 Micro Pulse Laser, Left Arm
 Micro Pulse Laser, Left Arm
 Micro Pulse Laser, Right Arm
 Micro Pulse Laser, Right Arm
-Micro Pulse Laser, Right Torso
+Micro Pulse Laser, Right Arm
+Improved Heavy Medium Laser, Left Torso
+Improved Heavy Medium Laser, Left Torso
+Improved Heavy Medium Laser, Left Torso
 Micro Pulse Laser, Left Torso
-Improved Heavy Medium Laser, Left Torso
-Improved Heavy Medium Laser, Left Torso
-Improved Heavy Medium Laser, Left Torso
+Micro Pulse Laser, Right Torso
 ER Micro Laser, Right Torso
 ER Micro Laser, Right Torso
 ER Micro Laser, Right Torso
@@ -67,6 +66,8 @@ Clan Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
 CLMicroPulseLaser (OMNIPOD)
 CLMicroPulseLaser (OMNIPOD)
 CLMicroPulseLaser (OMNIPOD)
@@ -74,8 +75,6 @@ Clan Endo Steel
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
--Empty-
--Empty-
 -Empty-
 
 Left Torso:
@@ -118,7 +117,7 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 CLECMSuite (OMNIPOD)
-Supercharger (Clan) (OMNIPOD)
+Supercharger (OMNIPOD)
 
 Head:
 Life Support

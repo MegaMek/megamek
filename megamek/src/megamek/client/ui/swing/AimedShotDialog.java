@@ -66,7 +66,7 @@ public class AimedShotDialog extends JDialog {
         gridbag.setConstraints(labMessage, c);
         getContentPane().add(labMessage);
 
-        JLabel labTarget = new JLabel("<html>" + UnitToolTip.getTargetTipDetail(target, clientGUI.getClient().getBoard(), clientGUI) + "</hmtl>",
+        JLabel labTarget = new JLabel("<html>" + UnitToolTip.getTargetTipDetail(target, clientGUI.getClient()) + "</hmtl>",
                 SwingConstants.LEFT);
         c.weightx = 1.0;
         c.weighty = 1.0;

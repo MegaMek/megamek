@@ -163,12 +163,9 @@ class LobbyMekCellFormatter {
         result.append("</FONT>");
 
         // Alpha Strike Unit Role
-        if (ASConverter.canConvert(entity)) {
-            FlexibleCalculationReport report = new FlexibleCalculationReport();
-            AlphaStrikeElement element = ASConverter.convert(entity, false, report);
-            result.append(DOT_SPACER);
-            result.append(element.getRole());
-        }
+        String unitRole = UnitRoleHandler.getRoleFor(entity).toString();
+        result.append(DOT_SPACER);
+        result.append(unitRole);
         
         // Invalid Design
         if (!forceView) {

@@ -1,35 +1,34 @@
-Version:1.0
+Version:1.3
 Raider
 JL-1
 mul id:6955
-
 Config:Biped
-TechBase:Inner Sphere
-Era:3134
-Source:ED: Dark Age
-Rules Level:4
+techbase:Inner Sphere
+era:3134
+source:ED: Dark Age
+rules level:2
 
-Mass:50
-Engine:200 I.C.E. Engine
-Structure:IS Standard
-Myomer:Triple-Strength
+mass:50
+engine:200 ICE Engine(IS)
+structure:IS Standard
+myomer:Triple-Strength
 
-Heat Sinks:2 Single
-Walk MP:4
-Jump MP:0
+heat sinks:2 Single
+walk mp:4
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:10
-RA Armor:10
-LT Armor:14
-RT Armor:14
-CT Armor:16
-HD Armor:9
-LL Armor:13
-RL Armor:13
-RTL Armor:4
-RTR Armor:4
-RTC Armor:5
+armor:Standard(Inner Sphere)
+LA armor:10
+RA armor:10
+LT armor:14
+RT armor:14
+CT armor:16
+HD armor:9
+LL armor:13
+RL armor:13
+RTL armor:4
+RTR armor:4
+RTC armor:5
 
 Weapons:2
 MRM 10, Right Torso
@@ -46,7 +45,7 @@ Dual Saw
 Dual Saw
 Dual Saw
 Dual Saw
-TSM
+Triple Strength Myomer
 -Empty-
 
 Right Arm:
@@ -54,7 +53,7 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-TSM
+Triple Strength Myomer
 -Empty-
 -Empty-
 -Empty-
@@ -64,7 +63,7 @@ TSM
 -Empty-
 
 Left Torso:
-TSM
+Triple Strength Myomer
 -Empty-
 -Empty-
 -Empty-
@@ -83,7 +82,7 @@ MRM 10
 MRM 10
 MRM 10
 IS MRM 10 Ammo
-TSM
+Triple Strength Myomer
 -Empty-
 -Empty-
 -Empty-
@@ -124,7 +123,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-TSM
+Triple Strength Myomer
 -Empty-
 -Empty-
 -Empty-
@@ -138,7 +137,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-TSM
+Triple Strength Myomer
 -Empty-
 -Empty-
 -Empty-

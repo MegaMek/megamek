@@ -384,6 +384,15 @@ public class PlanetaryConditions implements Serializable {
                 || (lightConditions == L_PITCH_BLACK);
     }
 
+    /**
+     * Returns true when visual range is increased by a illumination
+     * in the light condition, i.e. in dusk/dawn, full moon,
+     * moonless and pitch black night.
+     */
+    public boolean isIlluminationEffective() {
+        return (lightConditions > L_DAY);
+    }
+
     /** Returns true when the given weather is prohibited for temperatures of 30 degC and more. */
     public static boolean requiresLowTemp(int weather) {
         return weather == WE_LIGHT_HAIL ||
@@ -776,9 +785,9 @@ public class PlanetaryConditions implements Serializable {
 
         // TO:AR v6 p189
         // Illuminated?  Flat 45 hex distance
-        if (targetIlluminated && (lightConditions > L_DAY)) {
+        if (targetIlluminated && (isIlluminationEffective())) {
             lightRange = 45;
-        } else if (Spotlight && (lightConditions > L_DAY)) {
+        } else if (Spotlight && (isIlluminationEffective())) {
             // Using a searchlight?  Flat 30 hex range
             if (isMechVee || isAero || isLargeCraft) {
                 lightRange = 30;

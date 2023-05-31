@@ -206,6 +206,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private ColourSelectorButton csbFieldOfFireMediumColor;
     private ColourSelectorButton csbFieldOfFireLongColor;
     private ColourSelectorButton csbFieldOfFireExtremeColor;
+    private ColourSelectorButton csbSensorRangeColor;
+    private ColourSelectorButton csbVisualRangeColor;
     private ColourSelectorButton csbUnitValidColor;
     private ColourSelectorButton csbUnitSelectedColor;
     private ColourSelectorButton csbUnitTextColor;
@@ -694,6 +696,15 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         csbFieldOfFireExtremeColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.FieldOfFireExtremeColor"));
         csbFieldOfFireExtremeColor.setColour(GUIP.getFieldOfFireExtremeColor());
         row.add(csbFieldOfFireExtremeColor);
+        comps.add(row);
+
+        row = new ArrayList<>();
+        csbSensorRangeColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.SensorRangeColor"));
+        csbSensorRangeColor.setColour(GUIP.getSensorRangeColor());
+        row.add(csbSensorRangeColor);
+        csbVisualRangeColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.VisualRangeColor"));
+        csbVisualRangeColor.setColour(GUIP.getVisualRangeColor());
+        row.add(csbVisualRangeColor);
         comps.add(row);
 
         addLineSpacer(comps);
@@ -1701,6 +1712,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         csbFieldOfFireLongColor.setColour(GUIP.getFieldOfFireLongColor());
         csbFieldOfFireExtremeColor.setColour(GUIP.getFieldOfFireExtremeColor());
 
+        csbSensorRangeColor.setColour(GUIP.getSensorRangeColor());
+        csbVisualRangeColor.setColour(GUIP.getVisualRangeColor());
+
         csbUnitValidColor.setColour(GUIP.getUnitValidColor());
         csbUnitSelectedColor.setColour(GUIP.getUnitSelectedColor());
         csbUnitTextColor.setColour(GUIP.getUnitTextColor());
@@ -1851,6 +1865,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setBoardFieldOfFireMediumColor(csbFieldOfFireMediumColor.getColour());
         GUIP.setFieldOfFireLongColor(csbFieldOfFireLongColor.getColour());
         GUIP.setFieldOfFireExtremeColor(csbFieldOfFireExtremeColor.getColour());
+
+        GUIP.setSensorRangeColor(csbSensorRangeColor.getColour());
+        GUIP.setVisualRangeColor(csbVisualRangeColor.getColour());
 
         GUIP.setUnitValidColor(csbUnitValidColor.getColour());
         GUIP.setUnitSelectedColor(csbUnitSelectedColor.getColour());

@@ -76,6 +76,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String BOARD_FIELD_OF_FIRE_MEDIUM_COLOR = "BoardFieldOfFireMediumColor";
     public static final String BOARD_FIELD_OF_FIRE_LONG_COLOR = "BoardFieldOfFireLongColor";
     public static final String BOARD_FIELD_OF_FIRE_EXTREME_COLOR = "BoardFieldOfFireExtremeColor";
+    public static final String BOARD_SENSOR_RANGE_COLOR = "BoardSensorRangeColor";
+    public static final String BOARD_VISUAL_RANGE_COLOR = "BoardVisualRangeColor";
     public static final String BOARD_UNIT_SELECTED_COLOR = "BoardUnitSelectedColor";
     public static final String BOARD_UNIT_VALID_COLOR = "BoardUnitValidColor";
     public static final String BOARD_UNIT_TEXT_COLOR = "BoardUnitTextColor";
@@ -270,6 +272,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String RULER_SIZE_WIDTH = "RulerSizeWidth";
     public static final String SCROLL_SENSITIVITY = "ScrollSensitivity";
     public static final String SHOW_FIELD_OF_FIRE = "ShowFieldOfFire";
+    public static final String SHOW_SENSOR_RANGE = "ShowSensorRange";
     public static final String SHOW_MAPHEX_POPUP = "ShowMapHexPopup";
     public static final String SHOW_WPS_IN_TT = "ShowWpsinTT";
     public static final String SHOW_WPS_LOC_IN_TT = "ShowWpsLocinTT";
@@ -465,6 +468,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(BOARD_FIELD_OF_FIRE_MEDIUM_COLOR, new Color(80, 200, 80));
         setDefault(BOARD_FIELD_OF_FIRE_LONG_COLOR, new Color(60, 150, 60));
         setDefault(BOARD_FIELD_OF_FIRE_EXTREME_COLOR, new Color(40, 100, 40));
+        setDefault(BOARD_SENSOR_RANGE_COLOR, new Color(105, 105, 245));
+        setDefault(BOARD_VISUAL_RANGE_COLOR, new Color(100, 100, 150));
         setDefault(BOARD_UNIT_SELECTED_COLOR, DEFAULT_MAGENTA);
         setDefault(BOARD_UNIT_VALID_COLOR, DEFAULT_CYAN);
         setDefault(BOARD_UNIT_TEXT_COLOR, Color.white);
@@ -643,6 +648,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
         store.setDefault(SCROLL_SENSITIVITY, 3);
         store.setDefault(SHOW_FIELD_OF_FIRE, true);
+        store.setDefault(SHOW_SENSOR_RANGE, true);
         store.setDefault(SHOW_MAPHEX_POPUP, true);
         store.setDefault(SHOW_MOVE_STEP, true);
         store.setDefault(SHOW_WRECKS, true);
@@ -1299,6 +1305,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getShowFieldOfFire() {
         return store.getBoolean(SHOW_FIELD_OF_FIRE);
+    }
+
+    public boolean getShowSensorRange() {
+        return store.getBoolean(SHOW_SENSOR_RANGE);
     }
 
     public boolean getShowMapHexPopup() {
@@ -2050,6 +2060,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(SHOW_FIELD_OF_FIRE, state);
     }
 
+    public void setShowSensorRange(boolean state) {
+        store.setValue(SHOW_SENSOR_RANGE, state);
+    }
+
     public void setShowMapHexPopup(boolean state) {
         store.setValue(SHOW_MAPHEX_POPUP, state);
     }
@@ -2513,6 +2527,22 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setFieldOfFireExtremeColor(Color color) {
         store.setValue(BOARD_FIELD_OF_FIRE_EXTREME_COLOR, getColorString(color));
+    }
+
+    public Color getSensorRangeColor() {
+        return getColor(BOARD_SENSOR_RANGE_COLOR);
+    }
+
+    public void setSensorRangeColor(Color color) {
+        store.setValue(BOARD_SENSOR_RANGE_COLOR, getColorString(color));
+    }
+
+    public void setVisualRangeColor(Color color) {
+        store.setValue(BOARD_VISUAL_RANGE_COLOR, getColorString(color));
+    }
+
+    public Color getVisualRangeColor() {
+        return getColor(BOARD_VISUAL_RANGE_COLOR);
     }
 
     public Color getUnitValidColor() {

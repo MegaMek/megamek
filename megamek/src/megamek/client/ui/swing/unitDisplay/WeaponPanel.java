@@ -1,6 +1,8 @@
 package megamek.client.ui.swing.unitDisplay;
 
+import com.sun.mail.imap.protocol.BODY;
 import megamek.MMConstants;
+import megamek.client.Client;
 import megamek.client.event.MechDisplayEvent;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
@@ -286,6 +288,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     }
 
     private final UnitDisplay unitDisplay;
+    private final Client client;
 
     private MMComboBox<WeaponSortOrder> comboWeaponSortOrder;
     public JList<String> weaponList;
@@ -330,7 +333,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     private JLabel currentHeatBuildupL;
     private JLabel currentHeatBuildupR;
     private JLabel wRangeL;
-    public JTextPane wTargetExtraInfo;
+    public JLabel wTargetExtraInfo;
     public JLabel wRangeR;
     private JLabel wDamageTrooperL;
     private JLabel wDamageTrooperR;
@@ -347,8 +350,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     private JLabel wInfantryRange5L;
     private JLabel wInfantryRange5R;
     private JTextPane toHitText;
-    private JButton wTargetInfo;
-    private boolean targetInfoDetail = true;
+    private JTextPane wTargetInfo;
     private Targetable target;
 
     // I need to keep a pointer to the weapon list of the
@@ -359,16 +361,22 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     private int minTopMargin = 8;
     private int minLeftMargin = 8;
 
-    public static final int EXTERNAL_PANE_WIDTH = 450;
+    Color [] bgcolors = {Color.gray, Color.darkGray};
+    int gridy = 0;
     public static final int INTERNAL_PANE_WIDTH = 400;
+
+    public static final Color TEXT_FG = Color.WHITE;
+    public static final Color TEXT_BG = Color.DARK_GRAY;
     public static  final int LINE_HEIGHT = 25;
 
-    public  static final String html = "<html><body style=\" color:white background-color:SlateGray;\">%s<html>";
+    public static final String BODY = "<body style=\"color:white; background-color:SlateGray;\">";
+    public  static final String HTML_BODY = "<html>"+BODY+"%s<html>";
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
-    WeaponPanel(UnitDisplay unitDisplay) {
+    WeaponPanel(UnitDisplay unitDisplay, Client client) {
         this.unitDisplay = unitDisplay;
+        this.client = client;
         panelMain = new JPanel();
         panelMain.setOpaque(false);
         panelMain.setLayout(new GridBagLayout());
@@ -382,7 +390,6 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         createWeaponList(panelMain);
         createWeaponDisplay(panelMain);
         createRangeDisplay(panelMain);
-        createHeatDisplay(panelMain);
         createToHitDisplay(panelMain);
 
         panelLower = new JPanel();
@@ -409,9 +416,22 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         onResize();
     }
 
-    Color [] bgcolors = {Color.gray, Color.darkGray};
-    int gridy = 0;
-    private void addSubdisplay(JPanel parent, JComponent child, int minHeight) {
+    void setupLabel(JComponent label) {
+        label.setOpaque(false);
+        label.setForeground(TEXT_FG);
+        label.setBackground(TEXT_BG);
+    }
+
+    void setupTextPane(JTextPane pane) {
+        pane.setContentType("text/html");
+        pane.setForeground(TEXT_FG);
+        pane.setBackground(TEXT_BG);
+        pane.setEditable(false);
+        pane.setOpaque(true);
+        pane.setFont(new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 10));
+    }
+
+    private void addSubdisplay(JPanel parent, JComponent child, int minHeight, int fill) {
         child.setMinimumSize( new Dimension(INTERNAL_PANE_WIDTH, minHeight));
         // null means allow UI to recompute
         child.setMaximumSize(new Dimension(INTERNAL_PANE_WIDTH, minHeight*2));
@@ -430,10 +450,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         parent.setPreferredSize(pref);
 
         parent.add(child,GBC.eol()
-                        .gridy(gridy++)
-                        .insets(5, 1, 5, 1)
-                        .weighty(1)
-                        .fill(GridBagConstraints.BOTH)
+                .gridy(gridy++)
+                .insets(10, 1, 10, 1)
+                .weighty(1)
+                .fill(fill)
         );
     }
 
@@ -441,23 +461,20 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         wSortOrder = new JLabel(
                 Messages.getString("MechDisplay.WeaponSortOrder.label"),
                 SwingConstants.LEFT);
-        wSortOrder.setOpaque(false);
-        wSortOrder.setForeground(Color.WHITE);
+        setupLabel(wSortOrder);
 
         JPanel pWeaponOrder = new JPanel(new GridBagLayout());
         pWeaponOrder.setOpaque(false);
         int pgridy = 0;
 
         pWeaponOrder.add(wSortOrder,
-                GBC.std().fill(GridBagConstraints.HORIZONTAL)
-                        .insets(15, 9, 1, 1).gridy(pgridy).gridx(0));
+                GBC.std().insets(15, 1, 1, 1).gridy(pgridy).gridx(0));
         comboWeaponSortOrder = new MMComboBox<>("comboWeaponSortOrder", WeaponSortOrder.values());
-        pWeaponOrder.add(comboWeaponSortOrder,
-                GBC.eol().insets(15, 9, 15, 1)
-                        .fill(GridBagConstraints.HORIZONTAL)
-                        .anchor(GridBagConstraints.WEST).gridy(pgridy)
-                        .gridx(1));
-        addSubdisplay(parent, pWeaponOrder, LINE_HEIGHT);
+        pWeaponOrder.add(comboWeaponSortOrder, GBC.eol()
+                .fill(GridBagConstraints.HORIZONTAL)
+                .anchor(GridBagConstraints.WEST)
+                .insets(15, 9, 15, 1).gridy(pgridy).gridx(1));
+        addSubdisplay(parent, pWeaponOrder, LINE_HEIGHT, GridBagConstraints.BOTH);
 
         // weapon list
         weaponList = new JList<>(new DefaultListModel<>());
@@ -466,7 +483,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         weaponList.addMouseMotionListener(mouseAdapter);
 
         tWeaponScroll = new JScrollPane(weaponList);
-        addSubdisplay(parent, tWeaponScroll, GUIP.getUnitDisplayWeaponListHeight());
+        addSubdisplay(parent, tWeaponScroll, GUIP.getUnitDisplayWeaponListHeight(), GridBagConstraints.BOTH);
 
         weaponList.resetKeyboardActions();
         for (KeyListener key : weaponList.getKeyListeners()) {
@@ -475,13 +492,11 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
         // adding Ammo choice + label
         wAmmo = new JLabel(Messages.getString("MechDisplay.Ammo"), SwingConstants.LEFT);
-        wAmmo.setOpaque(false);
-        wAmmo.setForeground(Color.WHITE);
+        setupLabel(wAmmo);
         m_chAmmo = new JComboBox<>();
 
         wBayWeapon = new JLabel(Messages.getString("MechDisplay.Weapon"), SwingConstants.LEFT);
-        wBayWeapon.setOpaque(false);
-        wBayWeapon.setForeground(Color.WHITE);
+        setupLabel(wBayWeapon);
         m_chBayWeapon = new JComboBox<>();
 
         JPanel pAmmo = new JPanel(new GridBagLayout());
@@ -500,238 +515,209 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                         .anchor(GridBagConstraints.WEST)
                         .insets(15, 9, 15, 1).gridy(pgridy).gridx(1));
 
-        addSubdisplay(parent, pAmmo, LINE_HEIGHT *3 / 2);
+        addSubdisplay(parent, pAmmo, LINE_HEIGHT *3 / 2, GridBagConstraints.BOTH);
 
-    }
-
-    private void createHeatDisplay(JPanel parent) {
-        currentHeatBuildupL = new JLabel(Messages.getString("MechDisplay.HeatBuildup"), SwingConstants.RIGHT);
-        currentHeatBuildupL.setOpaque(false);
-        currentHeatBuildupL.setForeground(Color.WHITE);
-        currentHeatBuildupR = new JLabel("--", SwingConstants.LEFT);
-        currentHeatBuildupR.setOpaque(false);
-        currentHeatBuildupR.setForeground(Color.WHITE);
-        //
-        JPanel pHeatBuildup = new JPanel(new GridBagLayout());
-        pHeatBuildup.setOpaque(false);
-        int pgridy = 0;
-
-        pHeatBuildup.add(currentHeatBuildupL,
-                GBC.std().fill(GridBagConstraints.NONE)
-                        .anchor(GridBagConstraints.WEST)
-                        .anchor(GridBagConstraints.WEST).insets(15, 9, 1, 9)
-                        .gridy(pgridy).gridx(0));
-
-        pHeatBuildup.add(currentHeatBuildupR,
-                GBC.std().fill(GridBagConstraints.NONE)
-                        .anchor(GridBagConstraints.WEST)
-                        .insets(1, 9, 9, 9).gridy(pgridy).gridx(1));
-
-        addSubdisplay(parent, pHeatBuildup, LINE_HEIGHT);
     }
 
     private void createWeaponDisplay(JPanel parent) {
         // Adding weapon display labels
         wNameL = new JLabel(Messages.getString("MechDisplay.Name"), SwingConstants.CENTER);
-        wNameL.setOpaque(false);
-        wNameL.setForeground(Color.WHITE);
+        setupLabel(wNameL);
         wHeatL = new JLabel(Messages.getString("MechDisplay.Heat"), SwingConstants.CENTER);
-        wHeatL.setOpaque(false);
-        wHeatL.setForeground(Color.WHITE);
+        setupLabel(wHeatL);
         wDamL = new JLabel(Messages.getString("MechDisplay.Damage"), SwingConstants.CENTER);
-        wDamL.setOpaque(false);
-        wDamL.setForeground(Color.WHITE);
+        setupLabel(wDamL);
         wArcHeatL = new JLabel(Messages.getString("MechDisplay.ArcHeat"), SwingConstants.CENTER);
-        wArcHeatL.setOpaque(false);
-        wArcHeatL.setForeground(Color.WHITE);
+        setupLabel(wArcHeatL);
+
         wNameR = new JLabel("", SwingConstants.CENTER);
-        wNameR.setOpaque(false);
-        wNameR.setForeground(Color.WHITE);
+        setupLabel(wNameR);
+
         wHeatR = new JLabel("--", SwingConstants.CENTER);
-        wHeatR.setOpaque(false);
-        wHeatR.setForeground(Color.WHITE);
+        setupLabel(wHeatR);
+
         wDamR = new JLabel("--", SwingConstants.CENTER);
-        wDamR.setOpaque(false);
-        wDamR.setForeground(Color.WHITE);
+        setupLabel(wDamR);
+
         wArcHeatR = new JLabel("--", SwingConstants.CENTER);
-        wArcHeatR.setOpaque(false);
-        wArcHeatR.setForeground(Color.WHITE);
+        setupLabel(wArcHeatR);
 
         wDamageTrooperL = new JLabel(Messages.getString("MechDisplay.DamageTrooper"), SwingConstants.CENTER);
-        wDamageTrooperL.setOpaque(false);
-        wDamageTrooperL.setForeground(Color.WHITE);
+        setupLabel(wDamageTrooperL);
+
         wDamageTrooperR = new JLabel("---", SwingConstants.CENTER);
-        wDamageTrooperR.setOpaque(false);
-        wDamageTrooperR.setForeground(Color.WHITE);
+        setupLabel(wDamageTrooperR);
 
         JPanel pCurrentWeapon = new JPanel(new GridBagLayout());
         pCurrentWeapon.setOpaque(false);
         int pgridy = 0;
 
-        pCurrentWeapon.add(wNameL, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST).insets(15, 9, 1, 1).gridy(pgridy).gridx(0));
+        pCurrentWeapon.add(wNameL, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST).insets(5, 9, 1, 1).gridy(pgridy).gridx(0).weightx(1));
 
-        pCurrentWeapon.add(wHeatL, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST).insets(15, 9, 1, 1).gridy(pgridy).gridx(1));
+        pCurrentWeapon.add(wHeatL, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST).insets(15, 9, 1, 1).gridy(pgridy).gridx(1).weightx(1));
 
-        pCurrentWeapon.add(wDamL, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST).insets(15, 9, 1, 1).gridy(pgridy).gridx(2));
+        pCurrentWeapon.add(wDamL, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST).insets(15, 9, 1, 1).gridy(pgridy).gridx(2).weightx(1));
 
-        pCurrentWeapon.add(wArcHeatL, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST).insets(15, 9, 1, 1).gridy(pgridy).gridx(3));
+        pCurrentWeapon.add(wArcHeatL, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST).insets(15, 9, 1, 1).gridy(pgridy).gridx(3).weightx(1));
 
-        pCurrentWeapon.add(wDamageTrooperL, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST).insets(15, 9, 1, 1).gridy(pgridy).gridx(3));
+        pCurrentWeapon.add(wDamageTrooperL, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST).insets(15, 9, 1, 1).gridy(pgridy).gridx(3).weightx(1));
         pgridy++;
-        pCurrentWeapon.add(wNameR, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST).insets(15, 1, 1, 1).gridy(pgridy).gridx(0));
+        pCurrentWeapon.add(wNameR, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST).insets(5, 1, 1, 1).gridy(pgridy).gridx(0).weightx(1));
 
-        pCurrentWeapon.add(wHeatR, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST).insets(15, 1, 1, 1).gridy(pgridy).gridx(1));
+        pCurrentWeapon.add(wHeatR, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST).insets(15, 1, 1, 1).gridy(pgridy).gridx(1).weightx(1));
 
-        pCurrentWeapon.add(wDamR, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST).insets(15, 1, 1, 1).gridy(pgridy).gridx(2));
+        pCurrentWeapon.add(wDamR, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST).insets(15, 1, 1, 1).gridy(pgridy).gridx(2).weightx(1));
 
-        pCurrentWeapon.add(wArcHeatR, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST).insets(15, 1, 1, 1).gridy(pgridy).gridx(3));
+        pCurrentWeapon.add(wArcHeatR, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST).insets(15, 1, 1, 1).gridy(pgridy).gridx(3).weightx(1));
 
-        pCurrentWeapon.add(wDamageTrooperR, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST).insets(15, 1, 1, 1).gridy(pgridy).gridx(3));
+        pCurrentWeapon.add(wDamageTrooperR, GBC.std().fill(GridBagConstraints.NONE).anchor(GridBagConstraints.WEST).insets(15, 1, 1, 1).gridy(pgridy).gridx(3).weightx(1));
 
-        addSubdisplay(parent, pCurrentWeapon, LINE_HEIGHT*2);
+        addSubdisplay(parent, pCurrentWeapon, LINE_HEIGHT*2, GridBagConstraints.NONE);
     }
 
     private void createRangeDisplay(JPanel parent) {
 
+        final boolean opaqueFields = false;
         // Adding range labels
         wMinL = new JLabel(Messages.getString("MechDisplay.Min"), SwingConstants.CENTER);
-        wMinL.setOpaque(false);
-        wMinL.setForeground(Color.WHITE);
+        setupLabel(wMinL);
         wShortL = new JLabel(Messages.getString("MechDisplay.Short"), SwingConstants.CENTER);
-        wShortL.setOpaque(false);
-        wShortL.setForeground(Color.WHITE);
+        setupLabel(wShortL);
+
         wMedL = new JLabel(Messages.getString("MechDisplay.Med"), SwingConstants.CENTER);
-        wMedL.setOpaque(false);
-        wMedL.setForeground(Color.WHITE);
+        setupLabel(wMedL);
+
         wLongL = new JLabel(Messages.getString("MechDisplay.Long"), SwingConstants.CENTER);
-        wLongL.setOpaque(false);
-        wLongL.setForeground(Color.WHITE);
+        setupLabel(wLongL);
+
         wExtL = new JLabel(Messages.getString("MechDisplay.Ext"), SwingConstants.CENTER);
-        wExtL.setOpaque(false);
-        wExtL.setForeground(Color.WHITE);
+        setupLabel(wExtL);
+
         wMinR = new JLabel("---", SwingConstants.CENTER);
-        wMinR.setOpaque(false);
-        wMinR.setForeground(Color.WHITE);
+        setupLabel(wMinR);
+
         wShortR = new JLabel("---", SwingConstants.CENTER);
-        wShortR.setOpaque(false);
-        wShortR.setForeground(Color.WHITE);
+        setupLabel(wShortR);
+
         wMedR = new JLabel("---", SwingConstants.CENTER);
-        wMedR.setOpaque(false);
-        wMedR.setForeground(Color.WHITE);
+        setupLabel(wMedR);
+
         wLongR = new JLabel("---", SwingConstants.CENTER);
-        wLongR.setOpaque(false);
-        wLongR.setForeground(Color.WHITE);
+        setupLabel(wLongR);
+
         wExtR = new JLabel("---", SwingConstants.CENTER);
-        wExtR.setOpaque(false);
-        wExtR.setForeground(Color.WHITE);
+        setupLabel(wExtR);
+
         wAVL = new JLabel(Messages.getString("MechDisplay.AV"), SwingConstants.CENTER);
-        wAVL.setOpaque(false);
-        wAVL.setForeground(Color.WHITE);
+        setupLabel(wAVL);
+
         wShortAVR = new JLabel("---", SwingConstants.CENTER);
-        wShortAVR.setOpaque(false);
-        wShortAVR.setForeground(Color.WHITE);
+        setupLabel(wShortAVR);
+
         wMedAVR = new JLabel("---", SwingConstants.CENTER);
-        wMedAVR.setOpaque(false);
-        wMedAVR.setForeground(Color.WHITE);
+        setupLabel(wMedAVR);
+
         wLongAVR = new JLabel("---", SwingConstants.CENTER);
-        wLongAVR.setOpaque(false);
-        wLongAVR.setForeground(Color.WHITE);
+        setupLabel(wLongAVR);
+
         wExtAVR = new JLabel("---", SwingConstants.CENTER);
-        wExtAVR.setOpaque(false);
-        wExtAVR.setForeground(Color.WHITE);
+        setupLabel(wExtAVR);
+
 
         wInfantryRange0L = new JLabel("---", SwingConstants.CENTER);
-        wInfantryRange0L.setOpaque(false);
-        wInfantryRange0L.setForeground(Color.WHITE);
+        setupLabel(wInfantryRange0L);
+
         wInfantryRange0R = new JLabel("---", SwingConstants.CENTER);
-        wInfantryRange0R.setOpaque(false);
-        wInfantryRange0R.setForeground(Color.WHITE);
+        setupLabel(wInfantryRange0R);
+
         wInfantryRange1L = new JLabel("---", SwingConstants.CENTER);
-        wInfantryRange1L.setOpaque(false);
-        wInfantryRange1L.setForeground(Color.WHITE);
+        setupLabel(wInfantryRange1L);
+
         wInfantryRange1R = new JLabel("---", SwingConstants.CENTER);
-        wInfantryRange1R.setOpaque(false);
-        wInfantryRange1R.setForeground(Color.WHITE);
+        setupLabel(wInfantryRange1R);
+
         wInfantryRange2L = new JLabel("---", SwingConstants.CENTER);
-        wInfantryRange2L.setOpaque(false);
-        wInfantryRange2L.setForeground(Color.WHITE);
+        setupLabel(wInfantryRange2L);
+
         wInfantryRange2R = new JLabel("---", SwingConstants.CENTER);
-        wInfantryRange2R.setOpaque(false);
-        wInfantryRange2R.setForeground(Color.WHITE);
+        setupLabel(wInfantryRange2R);
+
         wInfantryRange3L = new JLabel("---", SwingConstants.CENTER);
-        wInfantryRange3L.setOpaque(false);
-        wInfantryRange3L.setForeground(Color.WHITE);
+        setupLabel(wInfantryRange3L);
+
         wInfantryRange3R = new JLabel("---", SwingConstants.CENTER);
-        wInfantryRange3R.setOpaque(false);
-        wInfantryRange3R.setForeground(Color.WHITE);
+        setupLabel(wInfantryRange3R);
+
         wInfantryRange4L = new JLabel("---", SwingConstants.CENTER);
-        wInfantryRange4L.setOpaque(false);
-        wInfantryRange4L.setForeground(Color.WHITE);
+        setupLabel(wInfantryRange4L);
+
         wInfantryRange4R = new JLabel("---", SwingConstants.CENTER);
-        wInfantryRange4R.setOpaque(false);
-        wInfantryRange4R.setForeground(Color.WHITE);
+        setupLabel(wInfantryRange4R);
+
         wInfantryRange5L = new JLabel("---", SwingConstants.CENTER);
-        wInfantryRange5L.setOpaque(false);
-        wInfantryRange5L.setForeground(Color.WHITE);
+        setupLabel(wInfantryRange5L);
+
         wInfantryRange5R = new JLabel("---", SwingConstants.CENTER);
-        wInfantryRange5R.setOpaque(false);
-        wInfantryRange5R.setForeground(Color.WHITE);
+        setupLabel(wInfantryRange5R);
+
 
         // range panel
         JPanel pRange = new JPanel(new GridBagLayout());
-        pRange.setOpaque(true);
+        pRange.setAlignmentX(Component.LEFT_ALIGNMENT);
+        pRange.setAlignmentY(Component.TOP_ALIGNMENT);
+        pRange.setOpaque(false);
         int pgridy = 0;
 
         pRange.add(wMinL,
                 GBC.std().fill(GridBagConstraints.NONE)
                         .anchor(GridBagConstraints.WEST)
-                        .insets(15, 9, 9, 1).gridy(pgridy).gridx(0));
+                        .insets(15, 9, 9, 1).gridy(pgridy).gridx(0).weightx(1));
 
         pRange.add(wShortL,
                 GBC.std().fill(GridBagConstraints.NONE)
                         .anchor(GridBagConstraints.WEST)
-                        .insets(15, 9, 9, 1).gridy(pgridy).gridx(1));
+                        .insets(15, 9, 9, 1).gridy(pgridy).gridx(1).weightx(1));
 
         pRange.add(wMedL,
                 GBC.std().fill(GridBagConstraints.NONE)
                         .anchor(GridBagConstraints.WEST)
-                        .insets(15, 9, 9, 1).gridy(pgridy).gridx(2));
+                        .insets(15, 9, 9, 1).gridy(pgridy).gridx(2).weightx(1));
 
         pRange.add(wLongL,
                 GBC.std().fill(GridBagConstraints.NONE)
                         .anchor(GridBagConstraints.WEST)
-                        .insets(15, 9, 9, 1).gridy(pgridy).gridx(3));
+                        .insets(15, 9, 9, 1).gridy(pgridy).gridx(3).weightx(1));
 
         pRange.add(wExtL,
                 GBC.std().fill(GridBagConstraints.NONE)
                         .anchor(GridBagConstraints.WEST)
-                        .insets(15, 9, 9, 1).gridy(pgridy).gridx(4));
+                        .insets(15, 9, 9, 1).gridy(pgridy).gridx(4).weightx(1));
 
         pgridy++;
 
         pRange.add(wInfantryRange0L, GBC.std().fill(GridBagConstraints.NONE)
                 .anchor(GridBagConstraints.WEST)
-                .insets(15, 9, 9, 1).gridy(pgridy).gridx(0));
+                .insets(15, 9, 9, 1).gridy(pgridy).gridx(0).weightx(1));
 
         pRange.add(wInfantryRange1L, GBC.std().fill(GridBagConstraints.NONE)
                 .anchor(GridBagConstraints.WEST)
-                .insets(15, 9, 9, 1).gridy(pgridy).gridx(1));
+                .insets(15, 9, 9, 1).gridy(pgridy).gridx(1).weightx(1));
 
         pRange.add(wInfantryRange2L, GBC.std().fill(GridBagConstraints.NONE)
                 .anchor(GridBagConstraints.WEST)
-                .insets(15, 9, 9, 1).gridy(pgridy).gridx(2));
+                .insets(15, 9, 9, 1).gridy(pgridy).gridx(2).weightx(1));
 
         pRange.add(wInfantryRange3L, GBC.std().fill(GridBagConstraints.NONE)
                 .anchor(GridBagConstraints.WEST)
-                .insets(15, 9, 9, 1).gridy(pgridy).gridx(3));
+                .insets(15, 9, 9, 1).gridy(pgridy).gridx(3).weightx(1));
 
         pRange.add(wInfantryRange4L, GBC.std().fill(GridBagConstraints.NONE)
                 .anchor(GridBagConstraints.WEST)
-                .insets(15, 9, 9, 1).gridy(pgridy).gridx(4));
+                .insets(15, 9, 9, 1).gridy(pgridy).gridx(4).weightx(1));
 
         pRange.add(wInfantryRange5L, GBC.std().fill(GridBagConstraints.NONE)
                 .anchor(GridBagConstraints.WEST)
-                .insets(15, 9, 9, 1).gridy(pgridy).gridx(4));
+                .insets(15, 9, 9, 1).gridy(pgridy).gridx(4).weightx(1));
 
         pgridy++;
         // ----------------
@@ -739,136 +725,145 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         pRange.add(wMinR,
                 GBC.std().fill(GridBagConstraints.NONE)
                         .anchor(GridBagConstraints.WEST)
-                        .insets(15, 1, 9, 1).gridy(pgridy).gridx(0));
+                        .insets(15, 1, 9, 1).gridy(pgridy).gridx(0).weightx(1));
 
         pRange.add(wShortR,
                 GBC.std().fill(GridBagConstraints.NONE)
                         .anchor(GridBagConstraints.WEST)
-                        .insets(15, 1, 9, 1).gridy(pgridy).gridx(1));
+                        .insets(15, 1, 9, 1).gridy(pgridy).gridx(1).weightx(1));
 
         pRange.add(wMedR,
                 GBC.std().fill(GridBagConstraints.NONE)
                         .anchor(GridBagConstraints.WEST)
-                        .insets(15, 1, 9, 1).gridy(pgridy).gridx(2));
+                        .insets(15, 1, 9, 1).gridy(pgridy).gridx(2).weightx(1));
 
         pRange.add(wLongR,
                 GBC.std().fill(GridBagConstraints.NONE)
                         .anchor(GridBagConstraints.WEST)
-                        .insets(15, 1, 9, 1).gridy(pgridy).gridx(3));
+                        .insets(15, 1, 9, 1).gridy(pgridy).gridx(3).weightx(1));
 
         pRange.add(wExtR,
                 GBC.std().fill(GridBagConstraints.NONE)
                         .anchor(GridBagConstraints.WEST)
-                        .insets(15, 1, 9, 1).gridy(pgridy).gridx(4));
+                        .insets(15, 1, 9, 1).gridy(pgridy).gridx(4).weightx(1));
 
         pRange.add(wInfantryRange0R, GBC.std().fill(GridBagConstraints.NONE)
                 .anchor(GridBagConstraints.WEST)
-                .insets(15, 1, 9, 1).gridy(pgridy).gridx(0));
+                .insets(15, 1, 9, 1).gridy(pgridy).gridx(0).weightx(1));
 
         pRange.add(wInfantryRange1R, GBC.std().fill(GridBagConstraints.NONE)
                 .anchor(GridBagConstraints.WEST)
-                .insets(15, 1, 9, 1).gridy(pgridy).gridx(1));
+                .insets(15, 1, 9, 1).gridy(pgridy).gridx(1).weightx(1));
 
         pRange.add(wInfantryRange2R, GBC.std().fill(GridBagConstraints.NONE)
                 .anchor(GridBagConstraints.WEST)
-                .insets(15, 1, 9, 1).gridy(pgridy).gridx(2));
+                .insets(15, 1, 9, 1).gridy(pgridy).gridx(2).weightx(1));
 
         pRange.add(wInfantryRange3R, GBC.std().fill(GridBagConstraints.NONE)
                 .anchor(GridBagConstraints.WEST)
-                .insets(15, 1, 9, 1).gridy(pgridy).gridx(3));
+                .insets(15, 1, 9, 1).gridy(pgridy).gridx(3).weightx(1));
 
         pRange.add(wInfantryRange4R, GBC.std().fill(GridBagConstraints.NONE)
                 .anchor(GridBagConstraints.WEST)
-                .insets(15, 1, 9, 1).gridy(pgridy).gridx(4));
+                .insets(15, 1, 9, 1).gridy(pgridy).gridx(4).weightx(1));
 
         pRange.add(wInfantryRange5R, GBC.std().fill(GridBagConstraints.NONE)
                 .anchor(GridBagConstraints.WEST)
-                .insets(15, 1, 9, 1).gridy(pgridy).gridx(5));
+                .insets(15, 1, 9, 1).gridy(pgridy).gridx(5).weightx(1));
 
         pgridy++;
         // ----------------
         pRange.add(wAVL,
                 GBC.std().fill(GridBagConstraints.NONE)
                         .anchor(GridBagConstraints.WEST)
-                        .insets(15, 1, 9, 1).gridy(pgridy).gridx(0));
+                        .insets(15, 1, 9, 1).gridy(pgridy).gridx(0).weightx(1));
 
         pRange.add(wShortAVR, GBC.std().fill(GridBagConstraints.NONE)
                 .anchor(GridBagConstraints.WEST)
-                .insets(15, 1, 9, 1).gridy(pgridy).gridx(1));
+                .insets(15, 1, 9, 1).gridy(pgridy).gridx(1).weightx(1));
 
         pRange.add(wMedAVR,
                 GBC.std().fill(GridBagConstraints.NONE)
                         .anchor(GridBagConstraints.WEST)
-                        .insets(15, 1, 9, 1).gridy(pgridy).gridx(2));
+                        .insets(15, 1, 9, 1).gridy(pgridy).gridx(2).weightx(1));
 
         pRange.add(wLongAVR,
                 GBC.std().fill(GridBagConstraints.NONE)
                         .anchor(GridBagConstraints.WEST)
-                        .insets(15, 1, 9, 1).gridy(pgridy).gridx(3));
+                        .insets(15, 1, 9, 1).gridy(pgridy).gridx(3).weightx(1));
 
         pRange.add(wExtAVR,
                 GBC.std().fill(GridBagConstraints.NONE)
                         .anchor(GridBagConstraints.WEST)
-                        .insets(15, 1, 9, 1).gridy(pgridy).gridx(4));
+                        .insets(15, 1, 9, 1).gridy(pgridy).gridx(4).weightx(1));
 
         pRange.setMinimumSize(new Dimension(INTERNAL_PANE_WIDTH, LINE_HEIGHT));
         pRange.setMaximumSize(new Dimension(INTERNAL_PANE_WIDTH, LINE_HEIGHT));
         pRange.setPreferredSize(new Dimension(INTERNAL_PANE_WIDTH, LINE_HEIGHT));
-        addSubdisplay(parent, pRange, LINE_HEIGHT*2);
+        addSubdisplay(parent, pRange, LINE_HEIGHT*2, GridBagConstraints.NONE);
     }
 
     private void createToHitDisplay(JPanel parent) {
         // to hit  panel
-        JPanel pTarget = new JPanel(new GridBagLayout());
-        pTarget.setOpaque(true);
+        JPanel pTargetInfo = new JPanel(new GridBagLayout());
+        pTargetInfo.setOpaque(true);
 
-        wRangeL = new JLabel(Messages.getString("MechDisplay.Range"), SwingConstants.CENTER);
-        wRangeL.setOpaque(false);
-        wRangeL.setForeground(Color.WHITE);
+        wRangeL = new JLabel(Messages.getString("MechDisplay.Range"), SwingConstants.LEFT);
+        setupLabel(wRangeL);
 
         wRangeR = new JLabel("---", SwingConstants.CENTER);
-        wRangeR.setOpaque(false);
-        wRangeR.setForeground(Color.WHITE);
+        setupLabel(wRangeR);
+
+        currentHeatBuildupL = new JLabel(Messages.getString("MechDisplay.HeatBuildup"), SwingConstants.RIGHT);
+        setupLabel(currentHeatBuildupL);
+
+        currentHeatBuildupR = new JLabel("--", SwingConstants.LEFT);
+        setupLabel(currentHeatBuildupR);
+
+//        wTargetExtraInfo = new JTextPane();
+//        setupTextPane(wTargetExtraInfo);
+        wTargetExtraInfo = new JLabel();
+        setupLabel(wTargetExtraInfo);
 
         int pgridy = 0;
-        pTarget.add(wRangeL,
+        pTargetInfo.add(currentHeatBuildupL,
                 GBC.std().fill(GridBagConstraints.NONE)
                         .anchor(GridBagConstraints.WEST)
-                        .insets(15, 1, 1, 1).gridy(pgridy).gridx(0));
+                        .insets(5, 1, 1, 1).gridy(pgridy).gridx(0));
 
-        pTarget.add(wRangeR,
-                GBC.eol().fill(GridBagConstraints.NONE)
+        pTargetInfo.add(currentHeatBuildupR,
+                GBC.std().fill(GridBagConstraints.NONE)
                         .anchor(GridBagConstraints.WEST)
-                        .insets(15, 1, 1, 1).gridy(pgridy).gridx(1));
+                        .insets(2, 1, 1, 1).gridy(pgridy).gridx(1));
 
-        wTargetExtraInfo = new JTextPane();
-        wTargetExtraInfo.setContentType("text/html");
-        wTargetExtraInfo.setForeground(Color.WHITE);
-        wTargetExtraInfo.setEditable(false);
-        wTargetExtraInfo.setOpaque(false);
-        addSubdisplay(parent, wTargetExtraInfo, LINE_HEIGHT);
+        pTargetInfo.add(wRangeL,
+                GBC.std().fill(GridBagConstraints.NONE)
+                        .anchor(GridBagConstraints.WEST)
+                        .insets(15, 1, 1, 1).gridy(pgridy).gridx(2));
+
+        pTargetInfo.add(wRangeR,
+                GBC.std().fill(GridBagConstraints.NONE)
+                        .anchor(GridBagConstraints.WEST)
+                        .insets(5, 1, 1, 1).gridy(pgridy).gridx(3));
+
+        pTargetInfo.add(wTargetExtraInfo,
+                GBC.eol().fill(GridBagConstraints.HORIZONTAL)
+                        .anchor(GridBagConstraints.WEST)
+                        .insets(15, 1, 5, 1).gridy(pgridy).gridx(4));
 
         toHitText = new JTextPane();
-        toHitText.setContentType("text/html");
-        toHitText.setForeground(Color.WHITE);
-        toHitText.setEditable(false);
-        toHitText.setOpaque(false);
-        toHitText.setFont(new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 10));
+        setupTextPane(toHitText);
 
-        JScrollPane scroll = new JScrollPane(toHitText);
+        JScrollPane toHitScroll = new JScrollPane(toHitText);
 
-        addSubdisplay(parent, pTarget, LINE_HEIGHT*2);
-        addSubdisplay(parent, wTargetExtraInfo, LINE_HEIGHT);
-        addSubdisplay(parent, scroll, LINE_HEIGHT * 3);
+        addSubdisplay(parent, pTargetInfo, LINE_HEIGHT, GridBagConstraints.HORIZONTAL);
+        addSubdisplay(parent, toHitScroll, LINE_HEIGHT * 3, GridBagConstraints.BOTH);
     }
 
     private void createTargetDisplay(JPanel parent) {
-        wTargetInfo = new JButton("---");
-        wTargetInfo.setBorderPainted(false);
-        wTargetInfo.setBackground(Color.DARK_GRAY);
-        wTargetInfo.setVerticalAlignment(SwingConstants.TOP);
-        wTargetInfo.setHorizontalAlignment(SwingConstants.CENTER);
-        addSubdisplay(parent, wTargetInfo, 200);
+        wTargetInfo = new JTextPane();
+        setupTextPane(wTargetInfo);
+        addSubdisplay(parent, wTargetInfo, LINE_HEIGHT * 2, GridBagConstraints.BOTH);
     }
 
     public void clearToHit() {
@@ -883,18 +878,18 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         switch (toHit.getValue()) {
             case TargetRoll.IMPOSSIBLE:
             case TargetRoll.AUTOMATIC_FAIL:
-                toHitText.setText(String.format("<html>To Hit: (0%%) %s</html>",
+                toHitText.setText(String.format("<html>%sTo Hit: (0%%) %s</body></html>", BODY,
                         toHit.getDesc()));
                 break;
             default:
-                toHitText.setText(String.format("<html>To Hit: <b>%2d</b> (%2.0f%%)  = %s</html>",
+                toHitText.setText(String.format("<html>%sTo Hit: <b>%2d (%2.0f%%)</b> <font color=gray> = %s</font></body></html>", BODY,
                         toHit.getValue(), Compute.oddsAbove(toHit.getValue(), natAptGunnery), toHit.getDesc()));
                 break;
         }
     }
 
     public void setToHit(String message) {
-        toHitText.setText("<html>" + message + "</html>");
+        toHitText.setText(String.format(HTML_BODY,message));
     }
 
     public void setTarget(@Nullable Targetable target, @Nullable String extraInfo) {
@@ -902,18 +897,18 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         updateTargetInfo();
         if (extraInfo == null || extraInfo.isEmpty()) {
             wTargetExtraInfo.setText("");
+            wTargetExtraInfo.setOpaque(false);
         } else {
-            wTargetExtraInfo.setText("<html>" + extraInfo + "</html>");
+            wTargetExtraInfo.setText(String.format(HTML_BODY, extraInfo));
+            wTargetExtraInfo.setOpaque(true);
         }
     }
 
     private void updateTargetInfo() {;
         if (target == null) {
-            wTargetInfo.setText(String.format(html, Messages.getString("MechDisplay.NoTarget")));
-        } else if (targetInfoDetail) {
-            wTargetInfo.setText(String.format(html, UnitToolTip.getTargetTipDetail(target, null)));
+            wTargetInfo.setText(String.format(HTML_BODY, Messages.getString("MechDisplay.NoTarget")));
         } else {
-            wTargetInfo.setText(String.format(html, UnitToolTip.getTargetTipSummary(target, null)));
+            wTargetInfo.setText(String.format(HTML_BODY, UnitToolTip.getTargetTipDetail(target, client)));
         }
     }
 
@@ -2799,15 +2794,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             if (entity.getOwner().equals(unitDisplay.getClientGUI().getClient().getLocalPlayer())) {
                 unitDisplay.getClientGUI().getClient().sendEntityWeaponOrderUpdate(entity);
             }
-        } else if (ev.getSource().equals(wTargetInfo)) {
-            toggleTargetInfoDetail();
         }
         onResize();
-    }
-
-    private void toggleTargetInfoDetail() {
-        targetInfoDetail = !targetInfoDetail;
-        updateTargetInfo();
     }
 
     void setWeaponComparator(final @Nullable WeaponSortOrder weaponSortOrder) {
@@ -2824,7 +2812,6 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         m_chAmmo.addActionListener(this);
         m_chBayWeapon.addActionListener(this);
         weaponList.addListSelectionListener(this);
-        wTargetInfo.addActionListener(this);
     }
 
     private void removeListeners() {
@@ -2832,7 +2819,6 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         m_chAmmo.removeActionListener(this);
         m_chBayWeapon.removeActionListener(this);
         weaponList.removeListSelectionListener(this);
-        wTargetInfo.removeActionListener(this);
     }
 
     public Targetable getPrevTarget() {

@@ -74,13 +74,13 @@ public class TargetChoiceDialog extends AbstractChoiceDialog<Targetable> {
     @Override
     protected void detailLabel(JToggleButton button, Targetable target) {
         button.setText("<html>" + infoText(target) + UnitToolTip.getTargetTipDetail(target,
-                clientGUI.getClient().getBoard(), clientGUI) + "</html>");
+                clientGUI.getClient()) + "</html>");
     }
 
     @Override
     protected void summaryLabel(JToggleButton button, Targetable target) {
         button.setText("<html>" + infoText(target) + "<BR>" + UnitToolTip.getTargetTipSummary(target,
-                clientGUI.getClient().getBoard(), clientGUI) + "</html>");
+                clientGUI.getClient()) + "</html>");
     }
 
     protected String infoText(Targetable target) {

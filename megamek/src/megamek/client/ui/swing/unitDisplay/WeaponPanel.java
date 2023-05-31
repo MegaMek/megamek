@@ -911,9 +911,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         if (target == null) {
             wTargetInfo.setText(String.format(html, Messages.getString("MechDisplay.NoTarget")));
         } else if (targetInfoDetail) {
-            wTargetInfo.setText(String.format(html, UnitToolTip.getTargetTipDetail(target, null, null)));
+            wTargetInfo.setText(String.format(html, UnitToolTip.getTargetTipDetail(target, null)));
         } else {
-            wTargetInfo.setText(String.format(html, UnitToolTip.getTargetTipSummary(target, null, null)));
+            wTargetInfo.setText(String.format(html, UnitToolTip.getTargetTipSummary(target, null)));
         }
     }
 

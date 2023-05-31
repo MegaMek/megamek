@@ -221,7 +221,7 @@ public class ASSpecialAbilityConverter {
                 || miscType.hasFlag(F_HYPERSPECTRAL_IMAGER)
                 || miscType.hasFlag(F_INFRARED_IMAGER)) {
             assign(misc, RCN);
-        } else if (miscType.hasFlag(F_SEARCHLIGHT)) {
+        } else if (miscType.hasFlag(F_SEARCHLIGHT) || miscType.hasFlag(F_BA_SEARCHLIGHT)) {
             assign(misc, SRCH);
         } else if (miscType.hasFlag(F_RADICAL_HEATSINK)) {
             assign(misc, RHS);

@@ -154,7 +154,7 @@ public final class PilotToolTip {
                 // Write the scaled portrait to file
                 // This is done to avoid using HTML rescaling on the portrait which does
                 // not do any smoothing and has extremely ugly results
-                String tempPath = Configuration.imagesDir() + "/temp/TT_Portrait_" + entity.getExternalIdAsString() + "_" + i + ".png";
+                String tempPath = Configuration.imagesDir() + "/temp/TT_Portrait_" + crew.getExternalIdAsString() + "_" + i + ".png";
                 File tempFile = new File(tempPath);
                 if (!tempFile.exists()) {
                     BufferedImage bufferedImage = new BufferedImage(portrait.getWidth(null), portrait.getHeight(null), BufferedImage.TYPE_INT_RGB);

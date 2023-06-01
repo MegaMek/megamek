@@ -73,6 +73,10 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.*;
 import java.util.zip.GZIPInputStream;
@@ -455,6 +459,20 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                     Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
             frame.setVisible(true);
             return;
+        }
+
+        // delete PilotToolTip cache
+        String tempPath = Configuration.imagesDir() + "/temp/";
+        String filter = "TT_Portrait_*.png";
+        try {
+            DirectoryStream<Path> ds = Files.newDirectoryStream(Paths.get(tempPath), filter);
+            for (Path p: ds) {
+                try {
+                    Files.delete(p);
+                } catch (Exception ex) {
+                }
+            }
+        } catch (Exception ex) {
         }
 
         client = new Client(playerName, serverAddress, port);

@@ -1111,7 +1111,7 @@ public class Crew implements Serializable {
      */
     public String getExternalIdAsString() {
         for (int i = 0; i < getSlotCount(); i++) {
-            if (!externalId[i].equals("-1")) {
+            if (externalId != null && !externalId[i].equals("-1")) {
                 return externalId[i];
             }
         }

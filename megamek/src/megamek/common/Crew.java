@@ -379,6 +379,8 @@ public class Crew implements Serializable {
 
     public void setPortrait(final Portrait portrait, final int pos) {
         getPortraits()[pos] = portrait;
+
+        // delete PilotToolTip cache for this portrait
         PilotToolTip.deleteImageCache(this, pos);
     }
 

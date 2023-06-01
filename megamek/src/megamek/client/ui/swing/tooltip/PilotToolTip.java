@@ -42,6 +42,10 @@ public final class PilotToolTip {
     private final static int PORTRAIT_BASESIZE = 72;
     final static String BG_COLOR = "#313131";
 
+    final static String TEMP_DIR = "/temp/";
+    final static String PORTRAIT_PREFIX = "TT_Portrait_";
+    final static String PNG_EXT = ".png";
+
     public static StringBuilder lobbyTip(InGameObject unit) {
         if (unit instanceof Entity) {
             return getPilotTipDetailed((Entity) unit, true);
@@ -158,7 +162,7 @@ public final class PilotToolTip {
                 // Write the scaled portrait to file
                 // This is done to avoid using HTML rescaling on the portrait which does
                 // not do any smoothing and has extremely ugly results
-                String tempPath = Configuration.imagesDir() + "/temp/TT_Portrait_" + crew.getExternalIdAsString() + "_" + i + ".png";
+                String tempPath = Configuration.imagesDir() + TEMP_DIR + PORTRAIT_PREFIX + crew.getExternalIdAsString() + "_" + i + PNG_EXT;
                 File tempFile = new File(tempPath);
                 if (!tempFile.exists()) {
                     BufferedImage bufferedImage = new BufferedImage(portrait.getWidth(null), portrait.getHeight(null), BufferedImage.TYPE_INT_RGB);
@@ -193,8 +197,8 @@ public final class PilotToolTip {
     private PilotToolTip() { }
 
     public static void deleteImageCache() {
-        String tempPath = Configuration.imagesDir() + "/temp/";
-        String filter = "TT_Portrait_*.png";
+        String tempPath = Configuration.imagesDir() + TEMP_DIR;
+        String filter = PORTRAIT_PREFIX + "*" + PNG_EXT;
         try {
             DirectoryStream<Path> ds = Files.newDirectoryStream(Paths.get(tempPath), filter);
             for (Path p: ds) {
@@ -208,8 +212,7 @@ public final class PilotToolTip {
     }
 
     public static void deleteImageCache(Crew crew, int pos) {
-        // delete PilotToolTip cache for this portrait
-        String tempPath = Configuration.imagesDir() + "/temp/TT_Portrait_" + crew.getExternalIdAsString() + "_" + pos + ".png";
+        String tempPath = Configuration.imagesDir() + TEMP_DIR + PORTRAIT_PREFIX + crew.getExternalIdAsString() + "_" + pos + PNG_EXT;
         File tempFile = new File(tempPath);
         try {
             Files.deleteIfExists(tempFile.toPath());

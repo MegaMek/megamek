@@ -181,14 +181,14 @@ public final class UnitToolTip {
         if (target == null) {
             return Messages.getString("BoardView1.Tooltip.NoTarget");
         } else if (target instanceof Entity) {
-            return getTargetTipSummary((Entity) target, client);
+            return getTargetTipSummaryEntity((Entity) target, client);
         } else if (target instanceof BuildingTarget) {
-            return HexTooltip.getOneLineSummary((BuildingTarget) target, client.getBoard());
+            return HexTooltip.getOneLineSummary((BuildingTarget) target, (client != null) ? client.getBoard() : null);
         }
         return target.getDisplayName();
     }
 
-    public static String getTargetTipSummary(Entity entity, @Nullable Client client ) {
+    public static String getTargetTipSummaryEntity(Entity entity, @Nullable Client client ) {
         if (entity == null) {
             return Messages.getString("BoardView1.Tooltip.NoTarget");
         }

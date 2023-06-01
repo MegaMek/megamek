@@ -1,6 +1,5 @@
 package megamek.client.ui.swing.unitDisplay;
 
-import com.sun.mail.imap.protocol.BODY;
 import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.client.event.MechDisplayEvent;
@@ -364,12 +363,11 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     Color [] bgcolors = {Color.gray, Color.darkGray};
     int gridy = 0;
     public static final int INTERNAL_PANE_WIDTH = 400;
-
-    public static final Color TEXT_FG = Color.WHITE;
-    public static final Color TEXT_BG = Color.DARK_GRAY;
     public static  final int LINE_HEIGHT = 25;
-
+    public static final Color COLOR_FG = Color.WHITE;
+    public static final Color TEXT_BG = Color.DARK_GRAY;
     public static final String BODY = "<body style=\"color:white; background-color:SlateGray;\">";
+    public static final String LOW_CONTRAST_FONT = "<font color=\"#D3D3D3\">";
     public  static final String HTML_BODY = "<html>"+BODY+"%s<html>";
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
@@ -418,13 +416,13 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
     void setupLabel(JComponent label) {
         label.setOpaque(false);
-        label.setForeground(TEXT_FG);
+        label.setForeground(COLOR_FG);
         label.setBackground(TEXT_BG);
     }
 
     void setupTextPane(JTextPane pane) {
         pane.setContentType("text/html");
-        pane.setForeground(TEXT_FG);
+        pane.setForeground(COLOR_FG);
         pane.setBackground(TEXT_BG);
         pane.setEditable(false);
         pane.setOpaque(true);
@@ -576,8 +574,6 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     }
 
     private void createRangeDisplay(JPanel parent) {
-
-        final boolean opaqueFields = false;
         // Adding range labels
         wMinL = new JLabel(Messages.getString("MechDisplay.Min"), SwingConstants.CENTER);
         setupLabel(wMinL);
@@ -820,12 +816,17 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         currentHeatBuildupR = new JLabel("--", SwingConstants.LEFT);
         setupLabel(currentHeatBuildupR);
 
-//        wTargetExtraInfo = new JTextPane();
-//        setupTextPane(wTargetExtraInfo);
         wTargetExtraInfo = new JLabel();
         setupLabel(wTargetExtraInfo);
 
         int pgridy = 0;
+        wTargetExtraInfo.setMinimumSize(new Dimension(20, LINE_HEIGHT));
+        pTargetInfo.add(wTargetExtraInfo,
+                GBC.eol().fill(GridBagConstraints.BOTH)
+                        .anchor(GridBagConstraints.WEST)
+                        .insets(5, 1, 5, 1).gridy(pgridy).gridx(0));
+        pgridy++;
+
         pTargetInfo.add(currentHeatBuildupL,
                 GBC.std().fill(GridBagConstraints.NONE)
                         .anchor(GridBagConstraints.WEST)
@@ -842,21 +843,16 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                         .insets(15, 1, 1, 1).gridy(pgridy).gridx(2));
 
         pTargetInfo.add(wRangeR,
-                GBC.std().fill(GridBagConstraints.NONE)
+                GBC.eol().fill(GridBagConstraints.NONE)
                         .anchor(GridBagConstraints.WEST)
-                        .insets(5, 1, 1, 1).gridy(pgridy).gridx(3));
-
-        pTargetInfo.add(wTargetExtraInfo,
-                GBC.eol().fill(GridBagConstraints.HORIZONTAL)
-                        .anchor(GridBagConstraints.WEST)
-                        .insets(15, 1, 5, 1).gridy(pgridy).gridx(4));
+                        .insets(5, 1, 5, 1).gridy(pgridy).gridx(3));
 
         toHitText = new JTextPane();
         setupTextPane(toHitText);
 
         JScrollPane toHitScroll = new JScrollPane(toHitText);
 
-        addSubdisplay(parent, pTargetInfo, LINE_HEIGHT, GridBagConstraints.HORIZONTAL);
+        addSubdisplay(parent, pTargetInfo, LINE_HEIGHT*2, GridBagConstraints.HORIZONTAL);
         addSubdisplay(parent, toHitScroll, LINE_HEIGHT * 3, GridBagConstraints.BOTH);
     }
 
@@ -882,8 +878,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                         toHit.getDesc()));
                 break;
             default:
-                toHitText.setText(String.format("<html>%sTo Hit: <b>%2d (%2.0f%%)</b> <font color=gray> = %s</font></body></html>", BODY,
-                        toHit.getValue(), Compute.oddsAbove(toHit.getValue(), natAptGunnery), toHit.getDesc()));
+                toHitText.setText(String.format("<html>%sTo Hit: <b>%2d (%2.0f%%)</b>%s = %s</font></body></html>", BODY,
+                        toHit.getValue(), Compute.oddsAbove(toHit.getValue(), natAptGunnery), LOW_CONTRAST_FONT, toHit.getDesc()));
                 break;
         }
     }

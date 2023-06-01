@@ -26,6 +26,10 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static megamek.client.ui.swing.tooltip.TipUtil.getOptionList;
 import static megamek.client.ui.swing.tooltip.TipUtil.scaledHTMLSpacer;
@@ -187,4 +191,29 @@ public final class PilotToolTip {
     }
 
     private PilotToolTip() { }
+
+    public static void deleteImageCache() {
+        String tempPath = Configuration.imagesDir() + "/temp/";
+        String filter = "TT_Portrait_*.png";
+        try {
+            DirectoryStream<Path> ds = Files.newDirectoryStream(Paths.get(tempPath), filter);
+            for (Path p: ds) {
+                try {
+                    Files.delete(p);
+                } catch (Exception ex) {
+                }
+            }
+        } catch (Exception ex) {
+        }
+    }
+
+    public static void deleteImageCache(Crew crew, int pos) {
+        // delete PilotToolTip cache for this portrait
+        String tempPath = Configuration.imagesDir() + "/temp/TT_Portrait_" + crew.getExternalIdAsString() + "_" + pos + ".png";
+        File tempFile = new File(tempPath);
+        try {
+            Files.deleteIfExists(tempFile.toPath());
+        } catch (Exception ex) {
+        }
+    }
 }

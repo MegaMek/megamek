@@ -16,6 +16,7 @@
 package megamek.common;
 
 import megamek.client.generator.RandomGenderGenerator;
+import megamek.client.ui.swing.tooltip.PilotToolTip;
 import megamek.common.enums.Gender;
 import megamek.common.icons.Portrait;
 import megamek.common.options.IOption;
@@ -24,9 +25,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.util.CrewSkillSummaryUtil;
 
-import java.io.File;
 import java.io.Serializable;
-import java.nio.file.Files;
 import java.util.*;
 
 /**
@@ -380,14 +379,7 @@ public class Crew implements Serializable {
 
     public void setPortrait(final Portrait portrait, final int pos) {
         getPortraits()[pos] = portrait;
-
-        // delete PilotToolTip cache for this portrait
-        String tempPath = Configuration.imagesDir() + "/temp/TT_Portrait_" + getExternalIdAsString() + "_" + pos + ".png";
-        File tempFile = new File(tempPath);
-        try {
-           Files.deleteIfExists(tempFile.toPath());
-        } catch (Exception ex) {
-        }
+        PilotToolTip.deleteImageCache(this, pos);
     }
 
     /**

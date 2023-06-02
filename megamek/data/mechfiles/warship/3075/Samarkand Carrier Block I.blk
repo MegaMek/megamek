@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -215,9 +215,49 @@ IS Ammo MG - Full:100
 71
 </structural_integrity>
 
+<capabilities>
+The Samarkand-class carriers were designed to utilize their large fighter complements to engage enemy DropShips and destroyers. They excelled in their role as carriers and escorts but were not intended for direct frontline combat. However, they were underarmored and outgunned, with vulnerability near the large engine mounts in the limited aft firing arcs. Despite impressive anti-aerospace defenses, the Samarkands could be easily overwhelmed in the absence of sufficient escorts.
+</capabilities>
+
+<overview>
+The Samarkand-class carrier was the brainchild of Coordinator Hehiro Kurita and was fast-tracked into production during the Reunification War. These carriers played a crucial role in boosting the economy of several planets. The Block I Samarkands, including the Benjamin, Dieron, and Alshain, were deployed during the war and later became symbols of the Dragon's prosperity as they supported colonial expansion and delivered supplies and resources.
+</overview>
+
+<history>
+The Samarkand carriers were deployed during the Reunification War, with the first ships, including the Samarkand and Benjamin, entering service in 2581. After the war, the surviving carriers supported the Dragon's economic expansion and became iconic symbols of prosperity. In 2668, newer Block II versions were authorized, taking advantage of advancements in armor and weapons technologies. Many Samarkands served as escorts in the Star League Defense Force but were largely destroyed during the liberation of Terra. Only one Samarkand, the Togura, remains as a museum piece orbiting New Samarkand. During the Succession Wars, the few remaining carriers defended strategic locations along the Lyran and Suns borders but were mostly destroyed. Samarkands were often used in last-ditch delaying tactics to buy time for ground defenders, although they became vulnerable due to limited escorts and shortages of spare parts and fighters.
+</history>
+
+<manufacturer>
+Tengoku no Ken Master Shipwrights Ltd.
+</manufacturer>
+
+<primaryFactory>
+Mizunami
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
 <notes>
 Unit as constructed in TRO is 2 tons overweight. Removed 2 tons of Cargo to make unit legal.
 </notes>
+
+<use>
+Carrier
+</use>
+
+<length>
+501 m
+</length>
+
+<height>
+967 m Sail
+</height>
 
 <source>
 TRO3075 - Star League
@@ -239,6 +279,10 @@ TRO3075 - Star League
 150
 60
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 384
@@ -271,3 +315,4 @@ TRO3075 - Star League
 <escape_pod>
 25
 </escape_pod>
+

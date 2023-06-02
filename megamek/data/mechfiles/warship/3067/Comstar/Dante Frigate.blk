@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,9 +16,9 @@ Warship
 Dante Frigate
 </Name>
 
-<model>
+<Model>
 
-</model>
+</Model>
 
 <mul id:>
 4047
@@ -45,9 +45,9 @@ dockingcollar
 dockingcollar
 crewquarters:1267.0:0
 1stclassquarters:590.0:0
-asfbay:12.0:4:3
-cargobay:15550.5:1:4
-cargobay:15550.5:1:5
+asfbay:12.0:4:5
+cargobay:15550.5:1:6
+cargobay:15550.5:1:7
 </transporters>
 
 <SafeThrust>
@@ -312,6 +312,46 @@ Ammo NAC/35:50
 50
 </structural_integrity>
 
+<capabilities>
+Despite being smaller than some destroyers, the Dante-class frigates were highly regarded for their combination of speed, firepower, and armor. Their primary role was to serve as command and escort vessels for DropShip flotillas. While the Dante-class design was also capable of raiding tactics, its limited cargo bays and fuel capacity restricted its ability to operate independently.
+</capabilities>
+
+<overview>
+The Dante-class vessels, built by ComStar between 2935 and 2949, were a response to the increased militarism within the organization and the need for a more efficient and automated WarShip. These frigates were intended to support the ComStar Guards and Militia while other vessels were refurbished and new crews trained.
+</overview>
+
+<history>
+The first Dante-class vessel, the Narbonne, entered service in 2941, followed by the Bordeaux in 2944 and the Montpellier in 2948. The renovation of the remaining fleet and the challenges of concealing both the vessels and the sizable naval personnel led to the program being frozen in 2949. Although the design proved successful, further units in the class were not commissioned due to the escalating costs and other priorities within ComStar. The Blakist invasion of 3058 further disrupted any plans for expanding the Dante-class fleet. Despite its limitations, the Dante-class frigates continued to play a vital role in command and escort duties for ComStar's DropShip flotillas, serving as a symbol of ComStar's military presence and capabilities.
+</history>
+
+<manufacturer>
+O'Neil Yards - Titan Yards
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Frigate
+</use>
+
+<length>
+640 m
+</length>
+
+<height>
+610 m Sail
+</height>
+
 <source>
 TRO3067 - Late Succession War - LosTech
 </source>
@@ -335,6 +375,10 @@ TRO3067 - Late Succession War - LosTech
 <grav_decks>
 135
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 240
@@ -367,3 +411,4 @@ TRO3067 - Late Succession War - LosTech
 <escape_pod>
 24
 </escape_pod>
+

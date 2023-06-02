@@ -16,9 +16,9 @@ Warship
 Bug-Eye Surveillance Ship
 </Name>
 
-<model>
+<Model>
 
-</model>
+</Model>
 
 <mul id:>
 5801
@@ -37,13 +37,12 @@ IS Level 4
 </type>
 
 <motion_type>
-Aerodyne
+None
 </motion_type>
 
 <transporters>
-cargobay:270.5:1:4
-steeragequarters:310.0:0
-2ndclassquarters:70.0:0
+steeragequarters:360.0:0
+cargobay:41.5:1:1
 </transporters>
 
 <SafeThrust>
@@ -62,10 +61,6 @@ steeragequarters:310.0:0
 960
 </fuel>
 
-<engine_type>
-1
-</engine_type>
-
 <armor_type>
 13
 </armor_type>
@@ -73,6 +68,10 @@ steeragequarters:310.0:0
 <armor_tech>
 5
 </armor_tech>
+
+<internal_type>
+-1
+</internal_type>
 
 <armor>
 2
@@ -88,9 +87,11 @@ steeragequarters:310.0:0
 </Nose Equipment>
 
 <Left Front Side Equipment>
+(B) Large Laser
 </Left Front Side Equipment>
 
 <Right Front Side Equipment>
+(B) Large Laser
 </Right Front Side Equipment>
 
 <Aft Equipment>
@@ -106,17 +107,15 @@ IS Ammo AC/20:30
 
 <Hull Equipment>
 ISLargeNavalCommScannerSuite
-ISLookDownRadar
-ISInfraredImager
 ISHighResImager
+ISInfraredImager
+ISLookDownRadar
 </Hull Equipment>
 
 <Left Broadsides Equipment>
-(B) Large Laser
 </Left Broadsides Equipment>
 
 <Right Broadsides Equipment>
-(B) Large Laser
 </Right Broadsides Equipment>
 
 <structural_integrity>
@@ -136,8 +135,7 @@ With little solid information about the class ever revealed, no variants are kno
 </deployment>
 
 <history>
-Commissioned by the HAF to replace the aging Nightwing and Tracker vessels in 2524, the distinguished service record of the compact and highly complex Bug-Eye continued when it entered service with the Star League Navy in 2620. The Bug-Eye was effectively obsolete in the Inner Sphere from 2770 onwards, although at least one vessel would find her way into service with the company Interstellar Expeditions as late as the thirty-first century. While a few examples survived the liberation of Terra and accompanied the Exodus fleet, the tactical role of the Bug-Eye has no place among the Clans who mothballed the design. The Terran Hegemony continued to operate Bug-Eye ships throughout the Star League era, keeping a watching eye on its neighbors and the Periphery states. The Hegemony Armed Forces spared no expense in equipping the Bug-Eye to be a premiere spy ship, giving over almost a tenth of the total mass of the ship to advanced equipment such as a large naval communications scanner suite, as well as a lookdown radar and hyperspectral scanner for observing locations on the ground. The Bug-Eye was kept intentionally to the size of common aerodyne DropShips of the era such as the Buccaneer and Baby Sylvester and was designed in such a fashion that with just a few weeks of work inside a shipyard, modular fittings could be installed onto the Bug-Eye that would make it resemble other vessels both optically and thermally. This allowed the crew of the Bug-Eye to convincingly explain why the supposed DropShip didn't land on planets, by instead masquerading as DropShip designs such as passenger or luxury liners that didn't need to land. Common deployment tactics for the Bug-Eye included either jumping into a system alongside a civilian JumpShip, arriving approximately twenty-eight kilometers apart - the minimum safe separation between vessels - or instead jumping into the outer fringes of the system and then maneuvering to pass through a safe jump point as the JumpShip arrived.
-Bug-Eyes were considered to be spartan vessels despite the generous amount of crew space aboard; the lack of any grav decks meant that personnel had to follow zero-g exercise regimens and undergo medical treatments to prevent bone deterioration, in addition to dealing with the constant stress of operating as the crew of a dedicated spyship.
+Commissioned by the HAF to replace the aging Nightwing and Tracker vessels in 2524, the distinguished service record of the compact and highly complex Bug-Eye continued when it entered service with the Star League Navy in 2620. The Bug-Eye was effectively obsolete in the Inner Sphere from 2770 onwards, although at least one vessel would find her way into service with the company Interstellar Expeditions as late as the thirty-first century. While a few examples survived the liberation of Terra and accompanied the Exodus fleet, the tactical role of the Bug-Eye has no place among the Clans who mothballed the design. The Terran Hegemony continued to operate Bug-Eye ships throughout the Star League era, keeping a watching eye on its neighbors and the Periphery states. The Hegemony Armed Forces spared no expense in equipping the Bug-Eye to be a premiere spy ship, giving over almost a tenth of the total mass of the ship to advanced equipment such as a large naval communications scanner suite, as well as a lookdown radar and hyperspectral scanner for observing locations on the ground. The Bug-Eye was kept intentionally to the size of common aerodyne DropShips of the era such as the Buccaneer and Baby Sylvester and was designed in such a fashion that with just a few weeks of work inside a shipyard, modular fittings could be installed onto the Bug-Eye that would make it resemble other vessels both optically and thermally. This allowed the crew of the Bug-Eye to convincingly explain why the supposed DropShip didn't land on planets, by instead masquerading as DropShip designs such as passenger or luxury liners that didn't need to land. Common deployment tactics for the Bug-Eye included either jumping into a system alongside a civilian JumpShip, arriving approximately twenty-eight kilometers apart - the minimum safe separation between vessels - or instead jumping into the outer fringes of the system and then maneuvering to pass through a safe jump point as the JumpShip arrived. Bug-Eyes were considered to be spartan vessels despite the generous amount of crew space aboard; the lack of any grav decks meant that personnel had to follow zero-g exercise regimens and undergo medical treatments to prevent bone deterioration, in addition to dealing with the constant stress of operating as the crew of a dedicated spyship.
 </history>
 
 <manufacturer>
@@ -181,12 +179,16 @@ IE3 - Star League
 </tonnage>
 
 <kf_core>
-1
+2
 </kf_core>
 
 <sail>
 1
 </sail>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 60

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,9 +16,9 @@ Warship
 Agamemnon Heavy Cruiser
 </Name>
 
-<model>
+<Model>
 
-</model>
+</Model>
 
 <mul id:>
 3680
@@ -393,6 +393,46 @@ ISAMS Ammo:144
 40
 </structural_integrity>
 
+<capabilities>
+With a displacement of 815,000 tons, the Agamemnon-class heavy cruiser packs a significant punch and holds its own against the firepower of the Black Lion. While it may lack the same level of armor protection, the ship compensates through its agility, relying on speed and maneuverability to evade damage. The Agamemnon features robust anti-fighter defenses, making it a daunting adversary for aerospace attacks. Additionally, the cruiser carries its own complement of aerospace fighters, further enhancing its offensive and defensive capabilities.
+</capabilities>
+
+<overview>
+The Agamemnon-class heavy cruiser, named after the legendary Mycenaean king, follows a long lineage of naval vessels bearing the esteemed name. The first Agamemnon, dating back to the pre-stellar age, served as the inaugural command of Horatio Nelson, a renowned naval commander. The FWLM's Agamemnon-class cruisers, with the Menelaus as the first commissioned ship in 3058, boast substantial size, falling between the Star League's Black Lion and the Clan's Sovetskii Soyuz-class WarShips. While the Agamemnon matches the Black Lion in firepower, it trades off armor protection for superior speed and maneuverability. The vessel also possesses formidable anti-fighter defenses and houses its own aerospace wing, making it a challenging target for aerospace attacks.
+</overview>
+
+<history>
+The FWLM's first Agamemnon-class cruiser, the Menelaus, entered service in late 3058. Following its successful deployment, the second vessel of the class, the Aineas, joined the ranks a few months behind schedule in 3060. The third ship, the Hippolyta, was deployed in 3063, adding to the growing fleet of Agamemnon cruisers. Originally, a fourth vessel named the FWLS Troy was scheduled to enter service in early 3069. However, with the assistance of Word of Blake crews, its shakedown trials are expected to commence in the coming months, demonstrating the ongoing development and expansion of the Agamemnon-class heavy cruisers within the Free Worlds League Military.
+</history>
+
+<manufacturer>
+Imstar AeroSpace, Irian Technologies - Irian Naval Systems of Clipperton
+</manufacturer>
+
+<primaryFactory>
+Atreus (FWL), Clipperton
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Cruiser
+</use>
+
+<length>
+720 m
+</length>
+
+<height>
+615 m Sail
+</height>
+
 <source>
 TRO3067 - Clan Invasion
 </source>
@@ -417,6 +457,10 @@ TRO3067 - Clan Invasion
 130
 130
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 396
@@ -449,3 +493,4 @@ TRO3067 - Clan Invasion
 <escape_pod>
 50
 </escape_pod>
+

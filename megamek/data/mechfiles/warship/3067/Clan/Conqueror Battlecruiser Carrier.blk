@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,9 +16,9 @@ Warship
 Conqueror Battlecruiser Carrier
 </Name>
 
-<model>
+<Model>
 
-</model>
+</Model>
 
 <mul id:>
 3991
@@ -43,12 +43,12 @@ Aerodyne
 <transporters>
 dockingcollar
 dockingcollar
-asfbay:50.0:6:1
-asfbay:50.0:6:2
+asfbay:50.0:6:3
+asfbay:50.0:6:4
 2ndclassquarters:1400.0:0
 1stclassquarters:520.0:0
 crewquarters:1792.0:0
-cargobay:22427.0:1:6
+cargobay:22427.0:1:8
 </transporters>
 
 <SafeThrust>
@@ -70,6 +70,10 @@ cargobay:22427.0:1:6
 <engine_type>
 1
 </engine_type>
+
+<clan_engine>
+false
+</clan_engine>
 
 <armor_type>
 12
@@ -383,6 +387,46 @@ Ammo Barracuda:10
 70
 </structural_integrity>
 
+<capabilities>
+The Conqueror-class battlecruisers feature fighter bays capable of accommodating two aerospace Clusters along with their crew and support staff. This addition led to a slight reduction in acceleration. The vessel's weapons systems have been extensively upgraded, with a focus on enhanced anti-fighter defenses. Barracuda missiles augment the layered laser, autocannon, and point-defense systems, while the ship's energy-based armament has been replaced by devastating naval autocannons. These autocannons provide the Conqueror-class with a substantial offensive capability, comparable to other cruisers of similar size. The Conquerors are primarily designed as carrier-escorts, supporting the operations of the Raven-Ghost Bear Leviathan and its aerospace forces. With their fighter bays, they can launch and recover aerospace Clusters, providing valuable air support during combat engagements. The combination of advanced weaponry, including the powerful naval autocannons, and extensive anti-fighter defenses makes the Conqueror-class formidable in both offensive and defensive roles. Their size and capabilities contribute to their effectiveness as powerful assets within Clan fleets.
+</capabilities>
+
+<overview>
+The Conqueror-class battlecruisers are advanced WarShips developed by the Clans as carrier-escorts for the Raven-Ghost Bear Leviathan. They were based on the hulls of Krester Ship Construction's Kimagure-class pursuit cruisers. With their formidable size and capabilities, the Conquerors are among the newest and most powerful WarShip designs utilized by the Clans.
+</overview>
+
+<history>
+The Conqueror-class battlecruisers were developed alongside the Raven-Ghost Bear Leviathan as part of a joint project. Originally based on the hulls of the Kimagure-class pursuit cruisers, the Conquerors were intended to serve as carrier-escorts for the Leviathan. However, the Ravens decided to complete the two partially assembled Conquerors even after withdrawing from the Leviathan project due to the absence of Inner Sphere WarShips. The first Conqueror-class vessel, named Conqueror, was launched in 3052 and successfully completed trials by June of that year. The second vessel, Ark Royal, faced delays due to technical malfunctions and was launched in 3059. The Conqueror-class underwent significant modifications during their development, particularly in terms of their weapons systems and anti-fighter defenses. These advanced battlecruisers have since become integral components of Clan fleets, serving as carrier-escorts and providing crucial support to Clan aerospace forces. Their capabilities, including the powerful naval autocannons and advanced fighter bays, have made them formidable assets on the battlefield. The Conqueror-class continues to play a significant role in Clan naval operations, demonstrating their effectiveness and contributing to the strength of the Clans in their ongoing conflicts within the Inner Sphere.
+</history>
+
+<manufacturer>
+Refit
+</manufacturer>
+
+<primaryFactory>
+Lum
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Battlecruise-Carrier
+</use>
+
+<length>
+720 m
+</length>
+
+<height>
+980 m Sail
+</height>
+
 <source>
 TRO3067 - Clan Invasion
 </source>
@@ -407,6 +451,10 @@ TRO3067 - Clan Invasion
 65
 85
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 508
@@ -439,3 +487,4 @@ TRO3067 - Clan Invasion
 <escape_pod>
 20
 </escape_pod>
+

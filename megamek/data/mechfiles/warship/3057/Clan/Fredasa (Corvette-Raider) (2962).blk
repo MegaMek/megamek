@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -13,7 +13,7 @@ Warship
 </UnitType>
 
 <Name>
-Fredasa Corvette Raider
+Fredasa (Corvette-Raider)
 </Name>
 
 <Model>
@@ -47,7 +47,7 @@ cargobay:3300.0:1:3
 dockingcollar
 1stclassquarters:190.0:0
 crewquarters:651.0:0
-cargobay:50.0:0:6
+cargobay:50.0:0:7
 </transporters>
 
 <SafeThrust>
@@ -69,6 +69,10 @@ cargobay:50.0:0:6
 <engine_type>
 1
 </engine_type>
+
+<clan_engine>
+false
+</clan_engine>
 
 <armor_type>
 12
@@ -207,6 +211,50 @@ Naval Laser 45
 40
 </structural_integrity>
 
+<capabilities>
+The Fredasa is known for its exceptional speed, capable of reaching 4Gs of acceleration in short bursts. Its agility and low signature enable it to quickly engage targets before facing significant opposition. While it carries less armament and armor compared to the Inner Sphere's corvettes, it excels at hit-and-run tactics. The Fredasa is often deployed as a picket ship but is equally capable of raiding operations. Its arsenal consists of extended-range lasers, Gauss rifles in the nose for forward firepower, and SRMs and LRMs for anti-fighter capabilities.
+</capabilities>
+
+<overview>
+The Fredasa is a small WarShip design introduced by the Clans in the mid-30th century. While the Clans classify it as a corvette, it is often referred to as a raider by Inner Sphere naval officers due to its perceived primary mission. The Fredasa is smaller and more agile than the Inner Sphere's Fox-class corvette, making it a formidable raider vessel. It has a smaller profile and can achieve high acceleration, allowing it to outmaneuver enemy escorts.
+</overview>
+
+<history>
+The Fredasa has primarily been deployed by Clans Nova Cat and Ghost Bear in the Inner Sphere, although intelligence suggests that Clan Steel Viper also possesses vessels of this class. The design's speed and agility, combined with its firepower, make it a versatile asset for Clan forces. Despite its relatively light armor, the Fredasa's Valiant Lamellor ferro-carbide armor provides superior protection compared to similar-sized Star League vessels.
+</history>
+
+<manufacturer>
+Unknown
+</manufacturer>
+
+<primaryFactory>
+Unknown
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Corvette
+</use>
+
+<length>
+415 m
+</length>
+
+<height>
+830 m Sail
+</height>
+
+<source>
+TRO 3057R - Late Succession War - LosTech
+</source>
+
 <tonnage>
 180000.0
 </tonnage>
@@ -226,6 +274,10 @@ Naval Laser 45
 <grav_decks>
 50
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 162
@@ -258,3 +310,4 @@ Naval Laser 45
 <escape_pod>
 0
 </escape_pod>
+

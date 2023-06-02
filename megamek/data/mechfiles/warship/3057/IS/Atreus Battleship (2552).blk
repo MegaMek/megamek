@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -264,6 +264,46 @@ Small Laser
 80
 </structural_integrity>
 
+<capabilities>
+The Atreus-class battleships boasted impressive armor and agility for their mass, capable of sustaining 1.5Gs and achieving 2.5G sprints. Armed with naval autocannons, lasers, and PPCs, they delivered devastating firepower at both close and long ranges. However, a notable weakness lay in the limited ammunition capacity of the main cannons, with only ten rounds per gun. This necessitated swift victories or reliance on energy weapons. The Atreus-class ships had limited anti-fighter and anti-missile defenses, relying on their fighter squadrons for screening against smaller enemy craft.
+</capabilities>
+
+<overview>
+The Atreus-class battleships, designed during the Age of War, became the backbone of several Free Worlds naval battlegroups until their ultimate demise in the First Succession War. These 1.1 million-ton vessels showcased the economic and military prowess of the Free Worlds League, ranking among the largest in existence when they debuted in 2552. With upgrades over time, the Atreus-class matched and surpassed the capabilities of rival factions such as the Lyran Commonwealth, Capellan Confederation, and Terran Hegemony.
+</overview>
+
+<history>
+The Atreus-class battleships entered service in 2552 and quickly asserted their dominance over rival vessels from other factions. Despite some losses in conflicts with neighboring powers and the Reunification War, a significant number of Atreus-class ships remained in service when the Star League collapsed. These battleships played a pivotal role in the Free Worlds League's advances during the First Succession War. However, all remaining Atreus-class ships were ultimately lost during this intense conflict, with the final vessel falling prey to Lyran fighters in 2809, marking the end of the Atreus-class battleships' formidable presence.
+</history>
+
+<manufacturer>
+Technicron Manufacturing Corp. Tamarind Yards
+</manufacturer>
+
+<primaryFactory>
+Tamarind
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Battleship
+</use>
+
+<length>
+1100 m
+</length>
+
+<height>
+1200 m Sail
+</height>
+
 <source>
 TRO 3057R - Age of War
 </source>
@@ -284,6 +324,10 @@ TRO 3057R - Age of War
 95
 55
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 533
@@ -316,3 +360,4 @@ TRO 3057R - Age of War
 <escape_pod>
 25
 </escape_pod>
+

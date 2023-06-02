@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,9 +16,9 @@ Warship
 Eagle Frigate
 </Name>
 
-<model>
+<Model>
 
-</model>
+</Model>
 
 <mul id:>
 4112
@@ -49,7 +49,7 @@ dockingcollar
 dockingcollar
 1stclassquarters:900.0:0
 crewquarters:3150.0:0
-cargobay:34894.0:1:5
+cargobay:34894.0:1:9
 </transporters>
 
 <SafeThrust>
@@ -311,6 +311,46 @@ ISAMS Ammo:300
 45
 </structural_integrity>
 
+<capabilities>
+The Eagle-class frigate is armed with sixteen naval autocannons and a single heavy naval Gauss cannon, providing potent anti-WarShip capabilities. The Gauss cannon, although restricted in firing arc, is capable of destroying a DropShip with a single hit. The frigate also utilizes a significant number of naval lasers for anti-WarShip and anti-DropShip combat. Its anti-fighter arsenal consists of successive weapon batteries, including laser and ballistic point-defense cannons, to effectively engage targets at different ranges. While the frigate lacks advanced armor composites, it compensates with a spacious cargo capacity often utilized for storing ammunition and lithium-fusion battery systems.
+</capabilities>
+
+<overview>
+The Eagle-class frigate was specifically designed as an escort vessel for the Thera super-carrier. It possesses a well-balanced combination of anti-ship and anti-fighter weapons systems. With a main arsenal consisting of naval autocannons and a heavy naval Gauss cannon, the Eagle is capable of engaging both enemy WarShips and DropShips. Additionally, it is equipped with an array of naval lasers and point-defense cannons to combat enemy fighters.
+</overview>
+
+<history>
+Currently, nine Eagle-class frigates are in active service, each assigned to different super-carriers. The Lancelot and Galahad serve with the Santorini, the Tristram and Bedvere are deployed alongside the Sardis, and the Gawain and Mordred operate with the Corinith. The Bors and Kay frigates are part of the Delphi fleet, while the Leodegrance, accompanied by the Percival undergoing trials, is intended for service with Attica. These frigates play a crucial role in escorting and protecting their respective super-carriers in various operations.
+</history>
+
+<manufacturer>
+Illium Naval Engineering - Illium Yard
+</manufacturer>
+
+<primaryFactory>
+Ionus
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Frigate
+</use>
+
+<length>
+640 m
+</length>
+
+<height>
+790 m Sail
+</height>
+
 <source>
 TRO3067 - Clan Invasion
 </source>
@@ -335,6 +375,10 @@ TRO3067 - Clan Invasion
 110
 110
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 552
@@ -367,3 +411,4 @@ TRO3067 - Clan Invasion
 <escape_pod>
 30
 </escape_pod>
+

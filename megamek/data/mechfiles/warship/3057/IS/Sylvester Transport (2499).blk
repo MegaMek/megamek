@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -364,6 +364,46 @@ IS Ammo LRM-10:108
 20
 </structural_integrity>
 
+<capabilities>
+The Sylvester-class merchant ship was renowned for its vast cargo space, accommodating over a quarter of a million tons of cargo. It featured two DropShip docking hardports and four small craft bays for additional vessels and personnel transports. Armed with a mix of capital-class weapons and anti-fighter defenses, the Sylvester was a formidable force, discouraging attacks and prioritizing avoidance of direct confrontation.
+</capabilities>
+
+<overview>
+The Sylvester-class merchant ship, originally conceived by Graf Hans Sylvester of the Lyran Commonwealth, aimed to establish Lyran traders' dominance and protect Commonwealth shipping against piracy. As the most heavily armed civilian craft at the time, it boasted a massive cargo capacity, DropShip docking ports, and formidable weaponry. However, its high price tag and fragile armor contributed to its limited production and eventual cancellation by the Commonwealth.
+</overview>
+
+<history>
+After only 15 years of production and the completion of four vessels, the Sylvester program was officially canceled by the Lyran Commonwealth due to its exorbitant cost. However, the Terran Hegemony later developed its own military version known as the Carrack-class, based on the Sylvester design. Additionally, Graf Hans Sylvester commissioned a smaller, more economically viable version of the vessel called the "baby Sylvester," which saw wider production until the Bolson Shipyards' destruction during the early days of the First Succession War.
+</history>
+
+<manufacturer>
+Di Tron Heavy Industries
+</manufacturer>
+
+<primaryFactory>
+Alarion
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Transport
+</use>
+
+<length>
+905 m
+</length>
+
+<height>
+1200 m Sail
+</height>
+
 <source>
 TRO 3057R - Age of War
 </source>
@@ -384,6 +424,10 @@ TRO 3057R - Age of War
 98
 98
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 222
@@ -416,3 +460,4 @@ TRO 3057R - Age of War
 <escape_pod>
 10
 </escape_pod>
+

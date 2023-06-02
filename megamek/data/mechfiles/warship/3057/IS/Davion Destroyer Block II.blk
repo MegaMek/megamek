@@ -241,19 +241,15 @@ Medium Laser
 </structural_integrity>
 
 <capabilities>
-The procurement of the original Davions was marred by corruption, administrative incompetence and delays that resulted in a ship that was late into service and underwhelming in comparison to the original requirement. Alexander made sweeping reforms when he came into power, including dismantling the bureaucratic systems that resulted in the Block I Davion. After he authorized the production of the Block II Davions, the resulting heavy destroyers that began entering service forty years after the cancellation of the Block I ships were 60,000 tons heavier and vastly superior in performance; unlike the earlier ships, the Block II Davions had docking points for two DropShips, a full aerospace fighter wing, a substantially revised arsenal of weaponry and significantly more armor. Changing the armor used from standard armor to Ferro-Carbide Armor meant that while a Block II Davion only carried approximately 50 tons more armor in total than its predecessor, the amount of protection offered by that armor was almost double that of the earlier ships. Because of the improvements to the overall design, the Block II Davion was able to serve the navies of the Federated Suns for more than 200 years.
+The Block II Davion-class destroyers were substantially improved compared to their Block I counterparts. They boasted twice the armor protection, increased firepower, and carried a full fighter wing. Notably, they had the ability to dock two DropShips, allowing for additional operational flexibility. These upgrades made the Block II Davions a formidable force in naval engagements.
 </capabilities>
 
 <overview>
-The Block II Davion-class destroyer was commissioned by First Prince Alexander Davion, but despite officially being the second block of Davions, the Block IIs bore relatively little resemblance to the original Davion Block I WarShips.
+The Davion-class destroyer, once the backbone of the Federated Suns' WarShip fleet, had a service life spanning three centuries due to significant modifications. The Block I series of Davions, plagued by bureaucratic issues and underwhelming performance, saw limited use in secondary duties. However, the Block II ships, authorized by Prince Alexander Davion, featured enhanced armor, firepower, and the ability to dock two DropShips, becoming a formidable asset for the Federated Suns' navy.
 </overview>
 
-<deployment>
-Whereas a Block I Davion sported a mix of capital weapons, combining NAC/25s and NAC/30s with NL45s and Light Naval PPCs, the Block II Davion was instead designed to incorporate only naval autocannon. The mix of NAC/25s, NAC/30s and NAC/40s significantly boosted the amount of damage a Block II Davion could inflict with its capital weapons compared to a Block I Davion, but did leave the Block II Davions without weapons that could inflict damage at extreme range. The Block II Davion also incorporated a substantially increased anti-fighter arsenal compared to its predecessor, replacing the earlier ships LRM-20s with a larger number of LRM-15s, adding multiple PPCs to several arcs and boosting the number of lasers substantially. When first fielded, a Davion II would commonly transport a pair of assault DropShips, typically Achilles-class DropShips, but later Vengeance-class DropShips were permanently assigned to Davion IIs.
-</deployment>
-
 <history>
-The Davion II served in the Federated Suns navy throughout the Star League era; in 2765, no less than fifteen Davion IIs were in service across the four active fleets, making it the most numerous class in service with the Federated Suns at that point in time. While all of the Davion I class WarShips had been retired from active service, there were rumors at the time that the navy would reactive some mothballed Davion Is as a part of the rapid rearmament program, which would have resulted in both classes of ship potentially operating alongside each other. No Davion IIs survived the Succession Wars.
+The initial Block I Davions faced numerous setbacks and shortcomings, leading to limited deployment and lackluster performance. However, Prince Alexander Davion revitalized the Davion program, resulting in the development of the Block II ships. The Block II Davions served during the Succession Wars but were eventually destroyed. Surprisingly, several surviving Block I Davions found their way into the service of the Clans. Prince Alexander leased most of the surviving Block I Davions to the SLDF, which were later acquired and upgraded by the Star League and the Clans, becoming known as the Whirlwind-class destroyers.
 </history>
 
 <manufacturer>
@@ -277,7 +273,7 @@ Destroyer
 </use>
 
 <length>
-685
+685 m
 </length>
 
 <source>

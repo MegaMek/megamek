@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -237,6 +237,46 @@ Naval Laser 55
 90
 </structural_integrity>
 
+<capabilities>
+The Athena-class cruiser, born from brainstorming and simulations rather than practical deep space warfare experience, was designed for space-to-space nuclear warfare and support for Alliance troops. It featured heavy capital missile batteries, potent laser batteries for anti-fighter and anti-shipping roles, and supplementary autocannons for high-speed engagements. The stern-heavy weaponry reflected its bombardment platform role, while the lack of docking collars indicated its original design to house large drop shuttles and smaller shuttles. The redesigned docking bays of the Magistracy version could accommodate aerospace fighters and shuttles, providing a moderate fighter screen and independent transport capability.
+</capabilities>
+
+<overview>
+The Athena-class cruiser, considered an outgrowth of James McKenna's naval construction programs, shares its roots with the Aegis-class. However, the concept of the Athena was actually conceived nearly a century before McKenna's time, during the Terran Alliance era. Originally designed as a combat JumpShip, the Athena evolved into an iconic heavy cruiser for the Terrans and later underwent modifications by the Magistracy of Canopus, resulting in a version that closely adhered to the original blueprints.
+</overview>
+
+<history>
+The Athena-class cruiser originated from the Terran Alliance's fear of separatists establishing their own colonies or engaging in nuclear terrorism. James McKenna discovered the dormant plans for the Athena during his time at Annapolis Academy and developed an infatuation with the concept. As other interstellar powers began developing armed JumpShips, the Hegemony revised the Athena's blueprints, leading to the creation of the Aegis-class. The original Athena concept remained a footnote until the Magistracy of Canopus implemented a more faithful version, aligning closely with the original blueprints and incorporating local component availability. The Athenas served as flagships, offering spacious quarters and gravity decks for personnel and passengers.
+</history>
+
+<manufacturer>
+Carmen Shipwrights, Ltd./Athena Corporation
+</manufacturer>
+
+<primaryFactory>
+Harminous
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Cruiser
+</use>
+
+<length>
+625 m
+</length>
+
+<height>
+1208 m Sail
+</height>
+
 <source>
 FR2765:Periphery- Star League
 </source>
@@ -257,6 +297,10 @@ FR2765:Periphery- Star League
 225
 225
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 512
@@ -289,3 +333,4 @@ FR2765:Periphery- Star League
 <escape_pod>
 100
 </escape_pod>
+

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -167,6 +167,46 @@ Naval PPC (Light)
 90
 </structural_integrity>
 
+<capabilities>
+The Dart-class cruiser featured a unique design optimized for independent duty. It had a substantial cargo bay comprising over 15% of the ship's mass, along with six drop collars for handling military and civilian DropShips. The ship's maneuver drives, the Century 4000s, were known for their robustness and reliability. The Dart-class was equipped with a combination of heavy energy weapons and naval autocannons, providing firepower for various combat scenarios.
+</capabilities>
+
+<overview>
+The Dart-class cruiser was developed by Di Tron Heavy Industries in response to the Terran Navy's need for a versatile WarShip that could operate independently in various roles, including combat, exploration, and cargo transport. With its large fuel storage tanks, significant cargo bay, and reinforced structure, the Dart-class was designed to withstand the demands of space exploration and combat in the harsh environments of the Inner Sphere and beyond.
+</overview>
+
+<history>
+The Dart-class cruisers served the Terran Navy for nearly 200 years before being retired and replaced by the new Avatar cruisers. However, many of these retired Darts were purchased by Periphery nations and repurposed for non-military roles. They continued to see service, albeit with their weapons removed, during the Reunification War. The last known Dart-class cruiser, SLS Gettysburg, was destroyed during the New Vandenberg revolt in 2722. It faced an attempt by fanatical Periphery separatists to destroy the newer Essex-class destroyer. By the end of their operational life, the Dart-class cruisers had become a relic, making way for more advanced WarShips in the ever-evolving landscape of naval warfare.
+</history>
+
+<manufacturer>
+Di Tron Heavy Industries, Di Tron Heavy Industries
+</manufacturer>
+
+<primaryFactory>
+Terra, Zebebelgenubi
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Light Cruiser
+</use>
+
+<length>
+703 m
+</length>
+
+<height>
+1135 m Sail
+</height>
+
 <source>
 TRO 3057 - Age of War
 </source>
@@ -187,6 +227,10 @@ TRO 3057 - Age of War
 145
 145
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 247
@@ -219,3 +263,4 @@ TRO 3057 - Age of War
 <escape_pod>
 29
 </escape_pod>
+

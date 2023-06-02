@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -160,6 +160,46 @@ Naval Laser 35
 30
 </structural_integrity>
 
+<capabilities>
+The Essex-class destroyers were known for their light frame and relatively simple design. While not as rugged as later ships, they introduced key features that defined Hegemony destroyers. Throughout their service, they underwent gradual replacements and enhancements. However, by the time of the Succession Wars, the Essex-class was outmatched and proved vulnerable targets.
+</capabilities>
+
+<overview>
+The Essex-class served as the Terran Hegemony's initial major destroyer class, playing a significant role in the Hegemony's early WarShip fleet. Although comparatively small and simple by Star League standards, these vessels pioneered features that became characteristic of Hegemony destroyers. They gradually gave way to more advanced ship classes like the Carson and Baron, eventually being decommissioned in favor of the Naga-class in 2645.
+</overview>
+
+<history>
+nitially decommissioned and acquired as military surplus, the Essex I-class experienced a unique revival during the turmoil of the Amaris Coup in the 2760s. With the Capellan Confederation facing naval infrastructure challenges, Delhi WarShips clandestinely smuggled the plans for the Vincent and Essex classes to Capellan shipyards, resuming production. These outdated and underweight ships bolstered the Capellan Confederation's navy during the Succession Wars, providing some operational flexibility early on. However, as the conflicts progressed, the aged Essexes became easy prey and none survived beyond 2830.
+</history>
+
+<manufacturer>
+Delhi WarShips, Delhi WarShips, Daussault-Shimmon Enterprises
+</manufacturer>
+
+<primaryFactory>
+Carver V, Capella, New Earth
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Destroyer
+</use>
+
+<length>
+602 m
+</length>
+
+<height>
+1003 m Sail
+</height>
+
 <source>
 FR2765-P - Star League
 </source>
@@ -179,6 +219,10 @@ FR2765-P - Star League
 <grav_decks>
 60
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 300
@@ -211,3 +255,4 @@ FR2765-P - Star League
 <escape_pod>
 25
 </escape_pod>
+

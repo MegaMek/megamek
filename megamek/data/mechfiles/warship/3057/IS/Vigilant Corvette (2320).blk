@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -145,6 +145,46 @@ Large Laser
 33
 </structural_integrity>
 
+<capabilities>
+The Vigilant corvette was equipped with a formidable array of weaponry considering its size, including five small naval autocannons and three White Shark missile systems. Additionally, it had lasers, autocannons, and PPCs. However, the Vigilant faced challenges in effectively utilizing its armament due to limitations in its targeting and tracking system. Furthermore, the corvette had insufficient armor and its acceleration capabilities were underwhelming.
+</capabilities>
+
+<overview>
+The Vigilant-class corvette, together with the Bonaventure corvette and surveillance satellites, served as the Terran Hegemony's initial defense against neighboring invasions. Despite being phased out in the 2400s, the Vigilant remained in service for two more centuries due to its firepower. It was smaller and less armored than conventional JumpShips, with limited acceleration and sensor capabilities, but its raw firepower, fighter squadrons, and small craft made it effective in engaging enemy naval forces. Eventually replaced by the more efficient Vincent-class, the Vigilants were mothballed or sold to various Houses, and most were believed to be destroyed during the early Succession Wars.
+</overview>
+
+<history>
+During the era of the Terran Hegemony, the Vigilant-class corvette played a vital role as the first line of defense against neighboring realm invasions. Alongside the Bonaventure corvette and a network of remote surveillance satellites, the heavily armed yet agile Vigilant-class corvette served its purpose faithfully. Although all three naval assets were eventually phased out in the early 2400s with the introduction of the faster Vincent-class, the Vigilant continued to serve for another two centuries among the navies of various Houses due to its firepower. Despite its effectiveness, the Vigilant faced inherent limitations. Being smaller in size, it was outmassed by conventional JumpShips and offered minimal armor protection comparable to a light military DropShip. Its engines allowed for a maximum acceleration of 2.5 G, which was barely sufficient to keep up with larger WarShips and DropShips in combat. However, the most notable deficiency of the Vigilant was its relatively modest sensor and computer capabilities, resulting in restricted detection range and accuracy. Nevertheless, the Vigilant compensated for its shortcomings through its abundant raw firepower, surpassing that of the Bonaventure corvettes. In addition to heavy weaponry, the Vigilant boasted bays capable of housing a squadron of fighters and a quartet of small craft, enabling it to provide close support and engage invading naval forces effectively. The most common deployment strategy involved pairing Vigilant-class corvettes with two Bonaventure corvettes, enhancing their detection capabilities and providing additional fire support. Although this four-ship "buddy system" was not particularly cost-effective, it proved sufficient until the Hegemony faced a Capellan invasion of Terra Firma in 2409. The resulting conflict prompted the Hegemony navy to develop the more efficient Vincent-class, leading to the retirement of the Vigilant-class corvettes. The Vigilants were subsequently either mothballed or sold off to various Houses as the Vincent-class replaced them. Notably, none of the Vigilants accompanied Kerensky's exodus fleet during the events of the Star League. The few that managed to survive the downfall of the Star League were believed to have been destroyed during the early Succession Wars that followed.
+</history>
+
+<manufacturer>
+Boeing Interstellar
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Corvette
+</use>
+
+<length>
+266 m
+</length>
+
+<height>
+660 m Sail
+</height>
+
 <source>
 TRO 3057R - Age of War
 </source>
@@ -164,6 +204,10 @@ TRO 3057R - Age of War
 <grav_decks>
 30
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 162
@@ -196,3 +240,4 @@ TRO 3057R - Age of War
 <escape_pod>
 20
 </escape_pod>
+

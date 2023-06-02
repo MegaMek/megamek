@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,9 +16,9 @@ Warship
 Avalon Cruiser
 </Name>
 
-<model>
+<Model>
 
-</model>
+</Model>
 
 <mul id:>
 3757
@@ -317,9 +317,49 @@ ISArtemisIV
 120
 </structural_integrity>
 
+<capabilities>
+The Avalon-class cruiser was designed to be heavily armed and armored, serving as the focal point of a naval task force. With its substantial fuel capacity, the Avalon could support the operations of an entire task force for extended periods. As per AFFC naval doctrine, each Avalon was accompanied by a dozen or more Assault DropShips, which allowed the cruiser to prioritize its anti-ship capabilities rather than extensive point-defense weaponry.
+</capabilities>
+
+<overview>
+The Avalon-class cruiser, designed during the Clan invasion, underwent significant modifications and evolved into a missile cruiser on orders from the AFFC Admiralty. Intended to be the centerpiece of a naval task force, the Avalon boasted impressive armament, armor, and fuel capacity, allowing it to sustain prolonged operations. However, the FedCom Civil War took a toll on the class, with only a limited number of surviving vessels.
+</overview>
+
+<history>
+Despite initial delays in construction due to the costs of post-invasion rebuilding, the Avalon underwent continuous design modifications during its dormant years. The AFFC Admiralty ordered the transformation of the cruiser into a missile cruiser, aligning it with evolving naval technology. However, the FedCom Civil War took a toll on the class, resulting in only two confirmed surviving vessels. The whereabouts of a third vessel remain unknown.
+</history>
+
+<manufacturer>
+Kathil Shipworks - McKenna Shipyards, Universal Air
+</manufacturer>
+
+<primaryFactory>
+Kathil,Kathil
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
 <notes>
 Unit as constructed in TRO is 4 tons overweight. Removed 4 tons of Cargo to make unit legal.
 </notes>
+
+<use>
+Cruiser
+</use>
+
+<length>
+812 m
+</length>
+
+<height>
+1375 m Sail
+</height>
 
 <source>
 TRO3067 - Clan Invasion
@@ -345,6 +385,10 @@ TRO3067 - Clan Invasion
 145
 210
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 311
@@ -377,3 +421,4 @@ TRO3067 - Clan Invasion
 <escape_pod>
 35
 </escape_pod>
+

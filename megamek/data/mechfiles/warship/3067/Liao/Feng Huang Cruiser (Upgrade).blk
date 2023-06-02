@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -53,7 +53,7 @@ dockingcollar
 1stclassquarters:540.0:0
 crewquarters:3941.0:0
 2ndclassquarters:3661.0:0
-cargobay:39639.0:1:7
+cargobay:39639.0:1:13
 </transporters>
 
 <SafeThrust>
@@ -254,6 +254,46 @@ ISERPPC
 90
 </structural_integrity>
 
+<capabilities>
+The Feng Huang-class cruiser, named after the Phoenix, was intended to hold its own against the formidable Thera super-carrier. These cruisers prioritize armor and protection, a departure from the typical WarShip design that sacrifices armor for weaponry. The first cruiser of the class, Elias Jung, faced initial problems but re-entered service after an overhaul. Currently, there are four Feng Huang cruisers in service: Elias Jung, Franco Martell, Aleisha Kris, and Sundermann Rhys. However, the IIsa Hyung recently suffered a catastrophic explosion, causing extensive damage and necessitating repairs.
+</capabilities>
+
+<overview>
+The Impavido-class destroyer was the result of joint efforts between the Capellan Confederation and the Free Worlds League to develop a WarShip fleet. However, Chancellor Sun-Tzu Liao anticipated a future conflict with House Marik and secretly initiated the development of a larger cruiser with assistance from the Word of Blake. The Feng Huang-class cruiser was designed to prioritize armor protection over extensive weaponry, aligning with Sun-Tzu's strategy of maximizing defense capabilities.
+</overview>
+
+<history>
+The Impavido-class destroyer was developed through collaboration between the Capellan Confederation and the Free Worlds League to enhance their WarShip capabilities. Recognizing the growing threat posed by the League fleet, Chancellor Sun-Tzu Liao secretly pursued the construction of the Feng Huang-class cruiser with assistance from the Word of Blake. The first cruiser, Elias Jung, faced initial challenges but returned to service after improvements. The Capellan fleet currently operates four Feng Huang cruisers, while the IIsa Hyung is undergoing repairs following a suspected act of terrorism.
+</history>
+
+<manufacturer>
+Rashpur Owens, Inc. (Refit),Aris Memorial Yards (Refit)
+</manufacturer>
+
+<primaryFactory>
+Capella, Necromo
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Cruiser
+</use>
+
+<length>
+1155 m
+</length>
+
+<height>
+1025 m Sail
+</height>
+
 <source>
 TRO3067 - Jihad
 </source>
@@ -278,6 +318,10 @@ TRO3067 - Jihad
 90
 90
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 705
@@ -310,3 +354,4 @@ TRO3067 - Jihad
 <escape_pod>
 110
 </escape_pod>
+

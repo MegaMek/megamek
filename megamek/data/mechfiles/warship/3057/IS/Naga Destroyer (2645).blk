@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -158,6 +158,46 @@ Naval Laser 35
 68
 </structural_integrity>
 
+<capabilities>
+The Naga-class was designed for close-quarters combat against larger ships, equipped with a concentrated array of light naval autocannons and energy weapons. Its logistical efficiency was enhanced by utilizing only three types of ammunition. The vessel boasted a spacious cargo bay that could be used for extended missions, storing additional supplies or ammunition. Additionally, the Naga carried up to two squadrons of aerospace craft and a pair of heavy combat shuttles for anti-fighter defense.
+</capabilities>
+
+<overview>
+The Naga-class light destroyer was a formidable asset in the Terran Hegemony's fleet, replacing the older Essex-class in 2645. With its blend of heavy armor and firepower, the Naga became the premier destroyer of the Hegemony navy for fifty years. However, advancements in technology eventually rendered it obsolete, leading to its diminished role.
+</overview>
+
+<history>
+Following its introduction in 2645, the Naga-class light destroyer served as the backbone of the Terran Hegemony's fleet. It outshone comparable contemporaries like the Carson- and Baron-classes and remained the premier choice for half a century. However, its decline began when the upgraded Essex-class was commissioned in 2707. Today, only three Nagas remain, mothballed since the fall of the Star League. Despite efforts to reactivate these vessels, their extensive structural fatigue and engine flaws, exacerbated by their age, make restoration a costly and impractical endeavor.
+</history>
+
+<manufacturer>
+Riga Interstellar Shipyards
+</manufacturer>
+
+<primaryFactory>
+Dyev
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Destroyer
+</use>
+
+<length>
+540 m
+</length>
+
+<height>
+1200 m Sail
+</height>
+
 <source>
 TRO 3057R - Star League
 </source>
@@ -177,6 +217,10 @@ TRO 3057R - Star League
 <grav_decks>
 50
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 235
@@ -209,3 +253,4 @@ TRO 3057R - Star League
 <escape_pod>
 10
 </escape_pod>
+

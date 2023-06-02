@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,9 +16,9 @@ Warship
 Faslane Yardship
 </Name>
 
-<model>
+<Model>
 
-</model>
+</Model>
 
 <mul id:>
 5802
@@ -46,9 +46,9 @@ dockingcollar
 dockingcollar
 1stclassquarters:250.0:0
 2ndclassquarters:630.0:0
-navalrepairunpressurized:2000000.0:1:4:f0
+navalrepairunpressurized:2000000.0:1:6:f0
 crewquarters:1190.0:0
-cargobay:128610.0:1:6
+cargobay:128610.0:1:8
 </transporters>
 
 <SafeThrust>
@@ -248,6 +248,46 @@ ISArtemisIV
 30
 </structural_integrity>
 
+<capabilities>
+Faslanes serve as ship-repair yards in space and support operations of the Com Guards and Explorer Corps. They are armed with anti-fighter lasers, LRM launchers, medium naval PPCs, and autocannons for defensive purposes. The presence of weaponry and armor allows them to defend against potential threats while conducting their repair and maintenance tasks. While not designed for direct combat, their weapons systems provide a respectable level of defense.
+</capabilities>
+
+<overview>
+The Faslane-class yardships are specialized WarShips constructed around ship-repair yards. Despite their relatively small size of 550,000 tons, these vessels are nearly three times the length of a Clan Whirlwind destroyer. Originally based on the Star League Newgrange class, six Faslanes were constructed by the Com Guards between 2882 and 2949. While primarily non-combat vessels, Faslanes are equipped with respectable weapon and defensive systems to protect themselves. They carry anti-fighter lasers, LRM launchers, medium naval PPCs, and autocannons. The Faslanes also feature 100 tons of ferro-aluminum armor primarily designed to withstand accidental collisions.
+</overview>
+
+<history>
+Six Faslane-class yardships were constructed by the Com Guards between 2882 and 2949, with two vessels dispatched to the Periphery to support Explorer Corps operations. The remaining Faslanes were docked at holding facilities in Luyten 68-28 and Ross 248, carefully protected from pirates and concealed from the Clans. After assisting in the search for the Clan homeworlds, most of the Faslanes were destroyed by the Word of Blake. The surviving three ships eventually merged into the naval forces of the Republic of the Sphere and are currently stationed in the Terran system. They now serve as repair tenders, aiding in the recovery and restoration of the Titan shipyards damaged during the wartime conflicts.
+</history>
+
+<manufacturer>
+O'Neil Yards - Titan Yards
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Yardship
+</use>
+
+<length>
+1810 m
+</length>
+
+<height>
+920 m Sail
+</height>
+
 <source>
 IE3 - Early Succession War
 </source>
@@ -268,6 +308,10 @@ IE3 - Early Succession War
 110
 110
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 205
@@ -300,3 +344,4 @@ IE3 - Early Succession War
 <escape_pod>
 10
 </escape_pod>
+

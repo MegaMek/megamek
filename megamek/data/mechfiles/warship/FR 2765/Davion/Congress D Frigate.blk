@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,9 +16,9 @@ Warship
 Congress D Frigate
 </Name>
 
-<model>
+<Model>
 
-</model>
+</Model>
 
 <mul id:>
 6987
@@ -157,6 +157,46 @@ Ammo White Shark:10
 75
 </structural_integrity>
 
+<capabilities>
+The Congress frigates, both the Hegemony and Davion variants, possessed formidable firepower, with the Davion Congresses having thirty percent more broadside firepower than their Hegemony counterparts. While lacking some advanced sensors and technologies, the Davion Congresses compensated with their enhanced armament. They primarily served as escorts for New Syrtis carriers and led destroyer squadrons, proving effective in their roles.
+</capabilities>
+
+<overview>
+The Congress-class frigates were introduced as a replacement for the outdated Quixote-class frigates in the Terran Hegemony. However, legal complications and allegations of stolen designs delayed their construction. Eventually, a compromise settlement was reached, involving the shipbuilding firm Challenge Systems, which resulted in the production of variant Congress frigates for the Federated Suns. Despite lacking some advanced features of the Hegemony's Congress ships, the Davion Congresses offered increased firepower.
+</overview>
+
+<history>
+Following their introduction, the Congress-class frigates saw action in the Reunification War, serving alongside other warships of the Terran Hegemony. However, as the centuries of the Star League progressed, the Congress frigates gradually diminished in numbers within fleet rosters. By the start of the Succession Wars, only a handful remained, and they faced losses against various factions. The last Davion Congress D was lost during the Second Succession War, falling victim to a Capellan minefield, which highlighted the vulnerability of these frigates compared to their Hegemony counterparts. Over time, the Congress-class frigates faded into obscurity, symbolizing the changing tides of warfare and technological advancements in the Inner Sphere.
+</history>
+
+<manufacturer>
+Challenge Systems
+</manufacturer>
+
+<primaryFactory>
+Galax
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Frigate
+</use>
+
+<length>
+703 m
+</length>
+
+<height>
+1207 m Sail
+</height>
+
 <source>
 FR2765-AFFS - Star League
 </source>
@@ -176,6 +216,10 @@ FR2765-AFFS - Star League
 <grav_decks>
 90
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 288
@@ -208,3 +252,4 @@ FR2765-AFFS - Star League
 <escape_pod>
 8
 </escape_pod>
+

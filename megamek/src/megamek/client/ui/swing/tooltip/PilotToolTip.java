@@ -30,6 +30,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.stream.StreamSupport;
 
 import static megamek.client.ui.swing.tooltip.TipUtil.getOptionList;
 import static megamek.client.ui.swing.tooltip.TipUtil.scaledHTMLSpacer;
@@ -199,14 +200,16 @@ public final class PilotToolTip {
     public static void deleteImageCache() {
         String tempPath = Configuration.imagesDir() + TEMP_DIR;
         String filter = PORTRAIT_PREFIX + "*" + PNG_EXT;
+
         try {
-            DirectoryStream<Path> ds = Files.newDirectoryStream(Paths.get(tempPath), filter);
-            for (Path p: ds) {
-                try {
-                    Files.delete(p);
-                } catch (Exception ex) {
-                }
-            }
+            StreamSupport.stream(Files.newDirectoryStream(Paths.get(tempPath), filter).spliterator(), true)
+                    .forEach(p -> {
+                                try {
+                                    Files.delete(p);
+                                } catch (Exception ex) {
+                                }
+                            }
+                    );
         } catch (Exception ex) {
         }
     }

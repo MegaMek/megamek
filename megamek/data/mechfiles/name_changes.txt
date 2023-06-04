@@ -762,6 +762,7 @@ Mobile Long Tom Artillery (Unofficial) (+ Carriage)|Mobile Long Tom Artillery (+
 O-65 'Oppie' Hazardous Materials Recovery Vehicle O-65 HMRV|HMRV (Hazardous Materials Recovery Vehicle) 'Oppie' O-65
 O-66 'Oppie' Hazardous Materials Recovery Vehicle O-66 HMRV|HMRV (Hazardous Materials Recovery Vehicle) 'Oppie' O-66
 Schildkrote Line Tank|Schildkröte Line Tank
+Schildkröte Line Tank (Standard)|Schildkröte Line Tank
 
 #Warships
 Aegis Heavy Cruiser (Clan)|Aegis Heavy Cruiser (2843)

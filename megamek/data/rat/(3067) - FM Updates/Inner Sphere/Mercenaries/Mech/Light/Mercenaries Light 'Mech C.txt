@@ -1,5 +1,5 @@
 Mercenaries Light C 'Mech
-Tarantula ZPH-1A,1
+Tarantula ZPH-1,1
 Battle Hawk BH-K305,2
 Spider SDR-7M,3
 Panther PNT-10K,4

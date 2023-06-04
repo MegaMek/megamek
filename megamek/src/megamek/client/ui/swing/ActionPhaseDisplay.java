@@ -151,8 +151,10 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
         }
         butSkipTurn.setText("<html><b>" + skipButtonLabel + "</b></html>");
 
-        // enable/disable
-        if (this.isDoingAction || ignoreNoActionNag) {
+        if (!clientgui.getClient().isMyTurn()) {
+            butDone.setEnabled(false);
+            butSkipTurn.setEnabled(false);
+        } else if (this.isDoingAction || ignoreNoActionNag) {
             butDone.setEnabled(true);
             butSkipTurn.setEnabled(false);
         } else {

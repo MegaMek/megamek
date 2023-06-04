@@ -9115,7 +9115,7 @@
 	</chassis>
 	<chassis name='Tarantula' unitType='Mek'>
 		<availability>CS:2,MOC:2+,CC:3,FWL:3+,IS:2+,WOB:3,MERC:3+,DC:3</availability>
-		<model name='ZPH-1A'>
+		<model name='ZPH-1'>
 			<roles>recon</roles>
 			<availability>CC:8,MOC:8,General:8,FWL:8,MERC:8,DC:8</availability>
 		</model>

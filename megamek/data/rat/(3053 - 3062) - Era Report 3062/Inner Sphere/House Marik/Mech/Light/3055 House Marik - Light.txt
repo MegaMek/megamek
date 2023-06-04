@@ -1,5 +1,5 @@
 3055 House Marik - Light
-Tarantula ZPH-1A,1
+Tarantula ZPH-1,1
 Eagle EGL-1M,2
 Jackal JA-KL-1532,3
 Hermes HER-1A,4

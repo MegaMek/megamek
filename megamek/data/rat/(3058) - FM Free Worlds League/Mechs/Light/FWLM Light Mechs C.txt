@@ -1,5 +1,5 @@
 3059 Free Worlds League Light Mechs, Tech Level C
-Tarantula ZPH-1A,1
+Tarantula ZPH-1,1
 Ostscout OTT-7J,2
 Stinger STG-5M,3
 Javelin JVN-10P,4

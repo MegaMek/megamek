@@ -29,6 +29,7 @@ import javax.swing.SwingConstants;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.IndexedRadioButton;
 import megamek.common.Targetable;
 import megamek.common.annotations.Nullable;
@@ -43,6 +44,8 @@ public class AimedShotDialog extends JDialog {
      */
     private IndexedRadioButton[] checkboxes;
     private boolean[] boxEnabled;
+
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     public AimedShotDialog(JFrame parent, String title, String message,
                            String[] choices, boolean[] enabled, int selectedIndex,
@@ -66,8 +69,8 @@ public class AimedShotDialog extends JDialog {
         gridbag.setConstraints(labMessage, c);
         getContentPane().add(labMessage);
 
-        JLabel labTarget = new JLabel("<html>" + UnitToolTip.getTargetTipDetail(target, clientGUI.getClient().getBoard(), clientGUI) + "</hmtl>",
-                SwingConstants.LEFT);
+        String div = "<DIV WIDTH=" + UIUtil.scaleForGUI(500) + ">" + UnitToolTip.getTargetTipDetail(target, clientGUI.getClient().getBoard(), clientGUI) + "</DIV>";
+        JLabel labTarget = new JLabel("<html>" + div + "</hmtl>", SwingConstants.LEFT);
         c.weightx = 1.0;
         c.weighty = 1.0;
         c.gridwidth = 0;

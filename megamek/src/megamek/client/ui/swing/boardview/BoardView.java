@@ -605,6 +605,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                     newX = scrollpane.getViewport().getViewPosition().x;
                 }
                 scrollpane.getViewport().setViewPosition(new Point(newX, newY));
+                pingMinimap();
             }
         };
         addMouseMotionListener(mouseMotionListener);

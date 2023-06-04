@@ -1861,6 +1861,7 @@ public class BoardEditor extends JPanel
             setExitsState(texTerrExits.getNumber() != 0);
             updateWhenSelected();
         } else if (ae.getActionCommand().equals(ClientGUI.VIEW_MINI_MAP)) {
+            guip.toggleMinimapEnabled();
             minimapW.setVisible(guip.getMinimapEnabled());
         } else if (ae.getActionCommand().equals(ClientGUI.HELP_ABOUT)) {
             showAbout();

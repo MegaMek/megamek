@@ -50,7 +50,17 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
     @Override
     protected void updateDonePanel()
     {
-        updateDonePanelButtons(getDoneButtonLabel(), getSkipTurnButtonLabel(), !attacks.isEmpty());
+        if (attacks.isEmpty() || (attacks.size() == 1 && attacks.firstElement() instanceof TorsoTwistAction)){
+            updateDonePanelButtons(getDoneButtonLabel(), getSkipTurnButtonLabel(), false, null);
+        } else {
+
+            StringBuilder tooltip = new StringBuilder();
+            for (var a : attacks) {
+                tooltip.append(a.toDisplayableString(clientgui.getClient()));
+                tooltip.append("<br>");
+            }
+            updateDonePanelButtons(getDoneButtonLabel(), getSkipTurnButtonLabel(), true, tooltip.toString());
+        }
     }
 
     protected void removeAttack(Object o)

@@ -1048,22 +1048,52 @@ public class MovementDisplay extends ActionPhaseDisplay {
     @Override
     protected void updateDonePanel() {
         if (cmd == null || cmd.length() == 0) {
-            updateDonePanelButtons( Messages.getString("MovementDisplay.Move"), Messages.getString("MovementDisplay.Skip"), false);
+            updateDonePanelButtons( Messages.getString("MovementDisplay.Move"), Messages.getString("MovementDisplay.Skip"), false, null);
             return;
         } else {
             MovePath possible = cmd.clone();
             possible.clipToPossible();
             if (possible.length() == 0) {
-                updateDonePanelButtons(Messages.getString("MovementDisplay.Move"), Messages.getString("MovementDisplay.Skip"), false);
+                updateDonePanelButtons(Messages.getString("MovementDisplay.Move"), Messages.getString("MovementDisplay.Skip"), false, null);
             } else if (!possible.isMoveLegal()) {
-                updateDonePanelButtons(Messages.getString("MovementDisplay.IllegalMove"), Messages.getString("MovementDisplay.Skip"), false);
+                updateDonePanelButtons(Messages.getString("MovementDisplay.IllegalMove"), Messages.getString("MovementDisplay.Skip"), false, null);
             } else {
                 int mp = possible.countMp(possible.isJumping());
                 boolean psrCheck = (!SharedUtility.doPSRCheck(cmd.clone()).isBlank()) || (!SharedUtility.doThrustCheck(cmd.clone(), clientgui.getClient()).isBlank());
                 boolean damageCheck = cmd.shouldMechanicalJumpCauseFallDamage() || cmd.hasActiveMASC() || (!(ce() instanceof VTOL) && cmd.hasActiveSupercharger()) || cmd.willCrushBuildings();
+
+                StringBuilder tooltip = new StringBuilder();
+                MoveStepType lastType = null;
+                int lastTypeCount = 0;
+                int lastTypeMP = 0;
+                boolean lastIsDanger = false;
+                final String format = "%s x%d (%dMP)%s";
+                for (final Enumeration<MoveStep> step = cmd.getSteps(); step.hasMoreElements(); ) {
+                    MoveStep thisStep = step.nextElement();
+                    MoveStepType thisType =  thisStep.getType();
+                    boolean thisIsDanger = thisStep.isDanger();
+
+                    if (lastTypeCount != 0 && lastType == thisType && lastIsDanger == thisIsDanger) {
+                        lastTypeMP += thisStep.getMp();
+                        lastTypeCount++;
+                        continue;
+                    }
+
+                    if (lastTypeCount != 0) {
+                        tooltip.append(String.format(format, lastType, lastTypeCount, lastTypeMP, lastIsDanger ? "*" : ""));
+                        tooltip.append("<br>");
+                    }
+
+                    lastType = thisType;
+                    lastTypeCount = 1;
+                    lastTypeMP = thisStep.getMp();
+                    lastIsDanger = thisIsDanger;
+                }
+                tooltip.append(String.format(format, lastType, lastTypeCount, lastTypeMP, lastIsDanger ? "*" : ""));
                 String moveMsg = Messages.getString("MovementDisplay.Move")
                         + " (" + mp + "MP)" + (psrCheck ? "*" : "") + (psrCheck ? "*" : "") + (damageCheck ? "!" : "");
-                updateDonePanelButtons(moveMsg, Messages.getString("MovementDisplay.Skip"), true);
+
+                updateDonePanelButtons(moveMsg, Messages.getString("MovementDisplay.Skip"), true, tooltip.toString());
             }
         }
     }

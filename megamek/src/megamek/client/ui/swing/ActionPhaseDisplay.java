@@ -23,6 +23,7 @@ import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
+import megamek.common.annotations.Nullable;
 import megamek.common.preference.PreferenceChangeEvent;
 
 import javax.swing.*;
@@ -135,7 +136,7 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
      * @param skipButtonLabel
      * @param isDoingAction true if user has entered actions for this turn, false if not.
      */
-    protected void updateDonePanelButtons(String doneButtonLabel, String skipButtonLabel, boolean isDoingAction) {
+    protected void updateDonePanelButtons(final String doneButtonLabel, final String skipButtonLabel, final boolean isDoingAction, @Nullable final String tooltip) {
         this.isDoingAction = isDoingAction;
         if (GUIP.getNagForNoAction()) {
             butDone.setText("<html><b>" + doneButtonLabel + "</b></html>");
@@ -161,5 +162,14 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
             butDone.setEnabled(!GUIP.getNagForNoAction());
             butSkipTurn.setEnabled(true);
         }
+
+        if (tooltip == null || tooltip.isEmpty()) {
+            String f = guiScaledFontHTML(UIUtil.uiLightViolet()) + KeyCommandBind.getDesc(KeyCommandBind.DONE) + "</FONT>";
+            butDone.setToolTipText("<html><body>" + f + "</body></html>");
+        } else {
+            String f = guiScaledFontHTML(UIUtil.uiLightViolet()) + KeyCommandBind.getDesc(KeyCommandBind.DONE) + "</FONT>";
+            butDone.setToolTipText("<html><body>" + f + "<br>" + tooltip + "</body></html>");
+        }
+
     }
 }

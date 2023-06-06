@@ -1062,38 +1062,46 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 boolean psrCheck = (!SharedUtility.doPSRCheck(cmd.clone()).isBlank()) || (!SharedUtility.doThrustCheck(cmd.clone(), clientgui.getClient()).isBlank());
                 boolean damageCheck = cmd.shouldMechanicalJumpCauseFallDamage() || cmd.hasActiveMASC() || (!(ce() instanceof VTOL) && cmd.hasActiveSupercharger()) || cmd.willCrushBuildings();
 
-                StringBuilder tooltip = new StringBuilder();
-                MoveStepType lastType = null;
-                int lastTypeCount = 0;
-                int lastTypeMP = 0;
-                boolean lastIsDanger = false;
-                final String format = "%s x%d (%dMP)%s";
-                for (final Enumeration<MoveStep> step = cmd.getSteps(); step.hasMoreElements(); ) {
-                    MoveStep thisStep = step.nextElement();
-                    MoveStepType thisType =  thisStep.getType();
-                    boolean thisIsDanger = thisStep.isDanger();
+//                final String format = "%-12s x%2d (%2dMP)%s";
+                final String format = "%-3s %-12s %2dMP%s";
 
-                    if (lastTypeCount != 0 && lastType == thisType && lastIsDanger == thisIsDanger) {
-                        lastTypeMP += thisStep.getMp();
-                        lastTypeCount++;
+                MoveStepType accumType = null;
+                int accumTypeCount = 0;
+                int accumMP = 0;
+                int accumDanger = 0;
+                ArrayList<String> turnDetails = new ArrayList<String>();
+                for (final Enumeration<MoveStep> step = cmd.getSteps(); step.hasMoreElements(); ) {
+                    MoveStep currentStep = step.nextElement();
+                    MoveStepType currentType =  currentStep.getType();
+                    int currentDanger = currentStep.isDanger() ? 1 : 0;
+
+                    if (accumTypeCount != 0 && accumType == currentType) {
+                        accumTypeCount++;
+                        accumMP += currentStep.getMp();
+                        accumDanger += currentDanger;
                         continue;
                     }
 
-                    if (lastTypeCount != 0) {
-                        tooltip.append(String.format(format, lastType, lastTypeCount, lastTypeMP, lastIsDanger ? "*" : ""));
-                        tooltip.append("<br>");
+                    if (accumTypeCount != 0) {
+                        turnDetails.add(String.format(format,
+                                accumTypeCount == 1 ? "" : "x"+accumTypeCount,
+                                accumType,  accumMP, "*".repeat(accumDanger)));
                     }
 
-                    lastType = thisType;
-                    lastTypeCount = 1;
-                    lastTypeMP = thisStep.getMp();
-                    lastIsDanger = thisIsDanger;
+                    accumType = currentType;
+                    accumTypeCount = 1;
+                    accumMP = currentStep.getMp();
+                    accumDanger = currentDanger;
                 }
-                tooltip.append(String.format(format, lastType, lastTypeCount, lastTypeMP, lastIsDanger ? "*" : ""));
+
+                turnDetails.add(String.format(format,
+                        accumTypeCount == 1 ? "" : "x"+accumTypeCount,
+                        accumType,  accumMP, "*".repeat(accumDanger)));
+
                 String moveMsg = Messages.getString("MovementDisplay.Move")
                         + " (" + mp + "MP)" + (psrCheck ? "*" : "") + (psrCheck ? "*" : "") + (damageCheck ? "!" : "");
 
-                updateDonePanelButtons(moveMsg, Messages.getString("MovementDisplay.Skip"), true, tooltip.toString());
+                updateDonePanelButtons(moveMsg, Messages.getString("MovementDisplay.Skip"), true, turnDetails);
             }
         }
     }

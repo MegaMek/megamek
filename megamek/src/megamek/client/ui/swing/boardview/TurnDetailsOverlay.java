@@ -13,13 +13,14 @@
  */
 package megamek.client.ui.swing.boardview;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.common.Game;
 
+import java.awt.*;
 import java.util.ArrayList;
-import java.awt.Color;
-import java.awt.Rectangle;
 import java.util.List;
 
 /**
@@ -32,16 +33,36 @@ public class TurnDetailsOverlay extends AbstractBoardViewOverlay {
     /**
      * An overlay for the Boardview that shows details about a players turn
      */
+
+    List<String> lines = new ArrayList<>();
+
     public TurnDetailsOverlay(Game game, ClientGUI cg) {
-        super(game, cg);
+        super(game, cg, new Font(Font.MONOSPACED, Font.PLAIN, 12),
+                Messages.getString("KeyBindingsDisplay.heading", KeyCommandBind.getDesc(KeyCommandBind.KEY_BINDS)) );
     }
 
 
     /** @return an ArrayList of all text lines to be shown. */
     @Override
     protected List<String> assembleTextLines() {
-        List<String> result = new ArrayList<>();
-        return result;
+        return lines;
+    }
+
+    public void setLines(List<String> value) {
+        lines.clear();;
+        if (value != null) {
+//            addHeader(lines);
+            lines.addAll(value);
+        }
+        setDirty();
+    }
+
+    @Override
+    protected void gameTurnOrPhaseChange() {
+        if (!clientGui.getClient().isMyTurn()) {
+            lines.clear();
+        }
+        super.gameTurnOrPhaseChange();
     }
 
     @Override
@@ -59,7 +80,7 @@ public class TurnDetailsOverlay extends AbstractBoardViewOverlay {
 
     @Override
     protected int getDistTop(Rectangle clipBounds, int overlayHeight) {
-        return clipBounds.height - (overlayHeight + 100);
+        return clipBounds.height - (overlayHeight + 5);
     }
 
     @Override

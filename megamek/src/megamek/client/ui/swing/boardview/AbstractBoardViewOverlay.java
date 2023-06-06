@@ -14,8 +14,10 @@
 package megamek.client.ui.swing.boardview;
 
 import megamek.client.ui.IDisplayable;
+import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Game;
 import megamek.common.KeyBindParser;
@@ -49,7 +51,6 @@ import java.util.List;
  *
  */
 public abstract class AbstractBoardViewOverlay implements IDisplayable, IPreferenceChangeListener {
-    private static final Font FONT = new Font("SansSerif", Font.PLAIN, 13);
     private static final int PADDING_X = 10;
     private static final int PADDING_Y = 5;
     private static final Color SHADOW_COLOR = Color.DARK_GRAY;
@@ -60,12 +61,16 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
     /** True when the overlay is displayed or fading in. */
     private boolean visible;
     /** True indicates the strings should be redrawn. */
-    private boolean changed = true;
+    private boolean dirty = true;
+    private boolean hasContents = false;
     /** The cached image for this Display. */
-    Image displayImage;
+    private Image displayImage;
     /** The current game phase. */
-    GamePhase currentPhase;
-    Game currentGame;
+    protected GamePhase currentPhase;
+    protected final Game currentGame;
+
+    protected final Font font;
+
     /** True while fading in this overlay. */
     private boolean fadingIn = false;
     /** True while fading out this overlay. */
@@ -74,10 +79,13 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
     private float alpha = 1;
     private int overlayWidth = 500;
     private int overlayHeight = 500;
+
+    private final String header;
     /**
      * An overlay for the Boardview
      */
-    public AbstractBoardViewOverlay(Game game, ClientGUI cg) {
+    public AbstractBoardViewOverlay(Game game, ClientGUI cg, Font font, String headerText ) {
+        this.font = font;
         this.visible =  getVisibilityGUIPreference();
         currentGame = game;
         currentPhase = game.getPhase();
@@ -85,6 +93,16 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
         clientGui = cg;
         KeyBindParser.addPreferenceChangeListener(this);
         GUIP.addPreferenceChangeListener(this);
+
+        Color colorTitle = GUIP.getPlanetaryConditionsColorTitle();
+        header = String.format("#%02X%02X%02X %s",
+                colorTitle.getRed(), colorTitle.getGreen(), colorTitle.getBlue(), headerText);
+    }
+
+    protected void addHeader(List<String> lines) {
+        if (GUIP.getPlanetaryConditionsShowHeader()) {
+            lines.add(header);
+        }
     }
 
     @Override
@@ -99,54 +117,60 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
 
         // At startup, phase and turn change and when the Planetary Conditions change,
         // the cached image is (re)created
-        if (changed) {
-            changed = false;
+        if (dirty) {
+            dirty = false;
 
             // calculate the size from the text lines, font and padding
-            Font newFont = FONT.deriveFont(FONT.getSize() * GUIP.getGUIScale());
+            Font newFont = font.deriveFont(font.getSize() * GUIP.getGUIScale());
             graph.setFont(newFont);
             FontMetrics fm = graph.getFontMetrics(newFont);
             List<String> allLines = assembleTextLines();
-            Rectangle r = getSize(graph, allLines, fm);
-            r = new Rectangle(r.width + 2 * PADDING_X, r.height + 2 * PADDING_Y);
-            overlayWidth = r.width;
-            overlayHeight = r.height;
+            if (allLines.size() == 0) {
+                hasContents = false;
+            } else {
+                hasContents = true;
+                Rectangle r = getSize(graph, allLines, fm);
+                r = new Rectangle(r.width + 2 * PADDING_X, r.height + 2 * PADDING_Y);
+                overlayWidth = r.width;
+                overlayHeight = r.height;
 
-            displayImage = ImageUtil.createAcceleratedImage(r.width, r.height);
-            Graphics intGraph = displayImage.getGraphics();
-            UIUtil.setHighQualityRendering(intGraph);
+                displayImage = ImageUtil.createAcceleratedImage(r.width, r.height);
+                Graphics intGraph = displayImage.getGraphics();
+                UIUtil.setHighQualityRendering(intGraph);
 
-            // draw a semi-transparent background rectangle
-            Color colorBG = GUIP.getPlanetaryConditionsColorBackground();
-            intGraph.setColor(new Color(colorBG.getRed(), colorBG.getGreen(), colorBG.getBlue(), GUIP.getPlanetaryConditionsBackgroundTransparency()));
-            intGraph.fillRoundRect(0, 0, r.width, r.height, PADDING_X, PADDING_Y);
+                // draw a semi-transparent background rectangle
+                Color colorBG = GUIP.getPlanetaryConditionsColorBackground();
+                intGraph.setColor(new Color(colorBG.getRed(), colorBG.getGreen(), colorBG.getBlue(), GUIP.getPlanetaryConditionsBackgroundTransparency()));
+                intGraph.fillRoundRect(0, 0, r.width, r.height, PADDING_X, PADDING_Y);
 
-            // The coordinates to write the texts to
-            int x = PADDING_X;
-            int y = PADDING_Y + fm.getAscent();
+                // The coordinates to write the texts to
+                int x = PADDING_X;
+                int y = PADDING_Y + fm.getAscent();
 
-            // write the strings
-            for (String line: allLines) {
-                drawShadowedString(intGraph, line, x, y);
-                y += fm.getHeight();
+                // write the strings
+                for (String line : allLines) {
+                    drawShadowedString(intGraph, line, x, y);
+                    y += fm.getHeight();
+                }
             }
         }
 
-        // draw the cached image to the boardview
-        // uses Composite to draw the image with variable transparency
-        int distSide = getDistSide(clipBounds, overlayWidth);
-        int distTop = getDistTop(clipBounds, overlayHeight);
+        if (hasContents) {
+            // draw the cached image to the boardview
+            // uses Composite to draw the image with variable transparency
+            int distSide = getDistSide(clipBounds, overlayWidth);
+            int distTop = getDistTop(clipBounds, overlayHeight);
 
-
-        if (alpha < 1) {
-            // Save the former composite and set an alpha blending composite
-            Composite saveComp = ((Graphics2D) graph).getComposite();
-            int type = AlphaComposite.SRC_OVER;
-            ((Graphics2D) graph).setComposite(AlphaComposite.getInstance(type, alpha));
-            graph.drawImage(displayImage, clipBounds.x + distSide, clipBounds.y + distTop, null);
-            ((Graphics2D) graph).setComposite(saveComp);
-        } else {
-            graph.drawImage(displayImage, clipBounds.x + distSide, clipBounds.y + distTop, null);
+            if (alpha < 1) {
+                // Save the former composite and set an alpha blending composite
+                Composite saveComp = ((Graphics2D) graph).getComposite();
+                int type = AlphaComposite.SRC_OVER;
+                ((Graphics2D) graph).setComposite(AlphaComposite.getInstance(type, alpha));
+                graph.drawImage(displayImage, clipBounds.x + distSide, clipBounds.y + distTop, null);
+                ((Graphics2D) graph).setComposite(saveComp);
+            } else {
+                graph.drawImage(displayImage, clipBounds.x + distSide, clipBounds.y + distTop, null);
+            }
         }
     }
 
@@ -193,7 +217,7 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
 
         if (s.length() > 0) {
             AttributedString text = new AttributedString(s);
-            text.addAttribute(TextAttribute.FONT, new Font(FONT.getFontName(), Font.PLAIN, (int) (FONT.getSize() * GUIP.getGUIScale())), 0, s.length());
+            text.addAttribute(TextAttribute.FONT, new Font(font.getFontName(), Font.PLAIN, (int) (font.getSize() * GUIP.getGUIScale())), 0, s.length());
 
             graph.setColor(SHADOW_COLOR);
             graph.drawString(text.getIterator(), x + 1, y + 1);
@@ -249,25 +273,32 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
         return false;
     }
 
-    /** Detects phase and turn changes to display Planetary Conditions. */
+    /** Detects phase and turn changes to display*/
     private GameListener gameListener = new GameListenerAdapter() {
         @Override
         public void gamePhaseChange(GamePhaseChangeEvent e) {
             currentPhase = e.getNewPhase();
-            changed = true;
+            gameTurnOrPhaseChange();
         }
 
         @Override
         public void gameTurnChange(GameTurnChangeEvent e) {
             // The active player has changed
-            changed = true;
+            gameTurnOrPhaseChange();
         }
     };
 
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
         // change on any preference change
-        changed = true;
+    }
+
+    protected void setDirty() {
+        dirty = true;
+    }
+
+    protected void gameTurnOrPhaseChange() {
+        setDirty();
     }
 
     protected abstract void setVisibilityGUIPreference(boolean value);
@@ -275,4 +306,5 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
     protected abstract Color getTextColorGUIPreference();
     protected abstract int getDistTop(Rectangle clipBounds,  int overlayHeight);
     protected abstract int getDistSide(Rectangle clipBounds, int overlayWidth);
+
 }

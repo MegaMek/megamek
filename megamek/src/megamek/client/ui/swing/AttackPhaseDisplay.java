@@ -54,12 +54,14 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
             // a torso twist alone should not trigger Done button
             updateDonePanelButtons(getDoneButtonLabel(), getSkipTurnButtonLabel(), false, null);
         } else {
-            StringBuilder tooltip = new StringBuilder();
-            for (var a : attacks) {
-                tooltip.append(a.toDisplayableString(clientgui.getClient()));
-                tooltip.append("<br>");
+            ArrayList<String> turnDetails = new ArrayList<String>();
+            for (EntityAction a : attacks) {
+//                turnDetails.add( String.format("%12s %8s (%2d%%)"),
+//                        a.toString()
+//                        );
+                turnDetails.add(toString());
             }
-            updateDonePanelButtons(getDoneButtonLabel(), getSkipTurnButtonLabel(), true, tooltip.toString());
+            updateDonePanelButtons(getDoneButtonLabel(), getSkipTurnButtonLabel(), true, turnDetails);
         }
     }
 

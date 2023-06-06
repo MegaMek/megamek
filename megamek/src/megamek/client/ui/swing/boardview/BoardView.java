@@ -401,10 +401,10 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     /** Stores the correct tooltip dismiss delay so it can be restored when exiting the boardview */
     private int dismissDelay = ToolTipManager.sharedInstance().getDismissDelay();
 
-    /** A map overlay showing some important keybinds. */
+    /** map overlays */
     KeyBindingsOverlay keybindOverlay;
-
     PlanetaryConditionsOverlay planetaryConditionsOverlay;
+    public TurnDetailsOverlay turnDetailsOverlay;
 
     /** The coords where the mouse was last. */
     Coords lastCoords;
@@ -441,6 +441,12 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         // Avoid showing the planetary Conditions when they can't be used (in the lobby map preview)
         if (controller != null) {
             addDisplayable(planetaryConditionsOverlay);
+        }
+
+        turnDetailsOverlay = new TurnDetailsOverlay(game, clientgui);
+        // Avoid showing the planetary Conditions when they can't be used (in the lobby map preview)
+        if (controller != null) {
+            addDisplayable(turnDetailsOverlay);
         }
 
         ourTask = scheduleRedrawTimer(); // call only once

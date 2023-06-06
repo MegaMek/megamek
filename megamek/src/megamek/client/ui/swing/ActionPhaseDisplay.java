@@ -136,7 +136,8 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
      * @param skipButtonLabel
      * @param isDoingAction true if user has entered actions for this turn, false if not.
      */
-    protected void updateDonePanelButtons(final String doneButtonLabel, final String skipButtonLabel, final boolean isDoingAction, @Nullable final String tooltip) {
+    protected void updateDonePanelButtons(final String doneButtonLabel, final String skipButtonLabel, final boolean isDoingAction,
+                                          @Nullable java.util.List<String> turnDetails) {
         this.isDoingAction = isDoingAction;
         if (GUIP.getNagForNoAction()) {
             butDone.setText("<html><b>" + doneButtonLabel + "</b></html>");
@@ -163,13 +164,6 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
             butSkipTurn.setEnabled(true);
         }
 
-        if (tooltip == null || tooltip.isEmpty()) {
-            String f = guiScaledFontHTML(UIUtil.uiLightViolet()) + KeyCommandBind.getDesc(KeyCommandBind.DONE) + "</FONT>";
-            butDone.setToolTipText("<html><body>" + f + "</body></html>");
-        } else {
-            String f = guiScaledFontHTML(UIUtil.uiLightViolet()) + KeyCommandBind.getDesc(KeyCommandBind.DONE) + "</FONT>";
-            butDone.setToolTipText("<html><body>" + f + "<br>" + tooltip + "</body></html>");
-        }
-
+        clientgui.getBoardView().turnDetailsOverlay.setLines(turnDetails);
     }
 }

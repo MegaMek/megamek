@@ -20,10 +20,9 @@ import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.common.Game;
 import megamek.common.PlanetaryConditions;
 
+import java.awt.*;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.awt.Color;
-import java.awt.Rectangle;
 import java.util.List;
 
 /**
@@ -50,28 +49,20 @@ public class PlanetaryConditionsOverlay extends AbstractBoardViewOverlay {
      * for the current game situation.
      */
     public PlanetaryConditionsOverlay(Game game, ClientGUI cg) {
-        super(game, cg);
+        super(game, cg, new Font("SansSerif", Font.PLAIN, 13),
+                Messages.getString(MSG_HEADING, KeyCommandBind.getDesc(KeyCommandBind.PLANETARY_CONDITIONS)) );
     }
 
     /** @return an ArrayList of all text lines to be shown. */
     @Override
     protected List<String> assembleTextLines() {
         List<String> result = new ArrayList<>();
-
-        Color colorTitle = GUIP.getPlanetaryConditionsColorTitle();
+        addHeader(result);
+//        Color colorTitle = GUIP.getPlanetaryConditionsColorTitle();
         Color colorHot = GUIP.getPlanetaryConditionsColorHot();
         Color colorCold = GUIP.getPlanetaryConditionsColorCold();
 
         String toggleKey = KeyCommandBind.getDesc(KeyCommandBind.PLANETARY_CONDITIONS);
-
-        String tmpStr = "";
-        Boolean showHeading = GUIP.getPlanetaryConditionsShowHeader();
-        String titleColor = String.format("#%02X%02X%02X", colorTitle.getRed(), colorTitle.getGreen(), colorTitle.getBlue());
-        tmpStr = (showHeading ? titleColor + MessageFormat.format(MSG_HEADING, toggleKey) : "");
-
-        if (tmpStr.length()  > 0) {
-            result.add(tmpStr);
-        }
 
         if (clientGui != null && !currentGame.getBoard().inSpace()) {
             // In a game, not the Board Editor
@@ -91,6 +82,7 @@ public class PlanetaryConditionsOverlay extends AbstractBoardViewOverlay {
             Boolean showValue = GUIP.getPlanetaryConditionsShowValues();
             Boolean showIndicator = GUIP.getPlanetaryConditionsShowIndicators();
 
+            String tmpStr;
 
             if (((showDefaultConditions) || ((!showDefaultConditions) && (currentGame.getPlanetaryConditions().isExtremeTemperature())))) {
                 tmpStr = (showLabel ? MSG_TEMPERATURE + "  " : "");

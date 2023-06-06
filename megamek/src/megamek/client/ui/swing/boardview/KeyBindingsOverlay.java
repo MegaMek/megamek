@@ -84,25 +84,15 @@ public class KeyBindingsOverlay extends AbstractBoardViewOverlay {
      * for the current game situation.
      */
     public KeyBindingsOverlay(Game game, ClientGUI cg) {
-        super(game, cg);
+        super(game, cg, new Font("SansSerif", Font.PLAIN, 13),
+                Messages.getString("KeyBindingsDisplay.heading", KeyCommandBind.getDesc(KeyCommandBind.KEY_BINDS)) );
     }
 
     /** @return an ArrayList of all text lines to be shown. */
     @Override
     protected List<String> assembleTextLines() {
         List<String> result = new ArrayList<>();
-
-        Color colorTitle = GUIP.getPlanetaryConditionsColorTitle();
-        String toggleKey = KeyCommandBind.getDesc(KeyCommandBind.KEY_BINDS);
-
-        String tmpStr = "";
-        Boolean showHeading = GUIP.getPlanetaryConditionsShowHeader();
-        String titleColor = String.format("#%02X%02X%02X", colorTitle.getRed(), colorTitle.getGreen(), colorTitle.getBlue());
-        tmpStr = (showHeading ? titleColor + Messages.getString("KeyBindingsDisplay.heading", toggleKey) : "");
-
-        if (tmpStr.length()  > 0) {
-            result.add(tmpStr);
-        }
+        addHeader(result);
 
         if (clientGui != null) {
             // In a game, not the Board Editor

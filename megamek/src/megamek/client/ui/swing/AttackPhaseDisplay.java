@@ -51,9 +51,9 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
     protected void updateDonePanel()
     {
         if (attacks.isEmpty() || (attacks.size() == 1 && attacks.firstElement() instanceof TorsoTwistAction)){
+            // a torso twist alone should not trigger Done button
             updateDonePanelButtons(getDoneButtonLabel(), getSkipTurnButtonLabel(), false, null);
         } else {
-
             StringBuilder tooltip = new StringBuilder();
             for (var a : attacks) {
                 tooltip.append(a.toDisplayableString(clientgui.getClient()));

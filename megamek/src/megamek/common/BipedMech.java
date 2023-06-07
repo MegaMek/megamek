@@ -83,7 +83,7 @@ public class BipedMech extends Mech {
 
         return canFlip;
     }
-    
+
     @Override
     public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         int wmp = getOriginalWalkMP();
@@ -100,7 +100,7 @@ public class BipedMech extends Mech {
                     }
                 }
             }
-            wmp = (wmp * (2 - legsDestroyed)) / 2; 
+            wmp = (wmp * (2 - legsDestroyed)) / 2;
         } else {
             for (int i = 0; i < locations(); i++) {
                 if (locationIsLeg(i)) {
@@ -173,7 +173,7 @@ public class BipedMech extends Mech {
                 wmp = Math.max(wmp + weatherMod, 0);
             }
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_TORNADO_F13)) {
+                    && (game.getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_TORNADO_F13)) {
                 wmp += 1;
             }
         }
@@ -837,9 +837,9 @@ public class BipedMech extends Mech {
     public long getEntityType() {
         return Entity.ETYPE_MECH | Entity.ETYPE_BIPED_MECH;
     }
-    
+
     /**
-     * 
+     *
      * @return true if this unit is capable of Zweihandering (melee attack with both hands)
      */
     public boolean canZweihander() {
@@ -858,15 +858,15 @@ public class BipedMech extends Mech {
     @Override
     public List<Integer> getValidBraceLocations() {
         List<Integer> validLocations = new ArrayList<>();
-        
+
         if (!isLocationBad(Mech.LOC_RARM)) {
             validLocations.add(Mech.LOC_RARM);
         }
-        
+
         if (!isLocationBad(Mech.LOC_LARM)) {
             validLocations.add(Mech.LOC_LARM);
         }
-        
+
         return validLocations;
     }
 
@@ -879,7 +879,7 @@ public class BipedMech extends Mech {
                 || !isLocationBad(Mech.LOC_LARM))
                 && !isProne();
     }
-    
+
     @Override
     public int getBraceMPCost() {
         return 1;

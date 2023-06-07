@@ -23,37 +23,37 @@ import megamek.common.options.OptionsConstants;
 
 /**
  * Quad Mek that can convert into either tracked or wheeled vehicle mode.
- * 
+ *
  * @author Neoancient
  */
 public class QuadVee extends QuadMech {
     private static final long serialVersionUID = 1283551018632228647L;
-    
+
     public static final int CONV_MODE_MECH    = 0;
     public static final int CONV_MODE_VEHICLE = 1;
 
     public static final int SYSTEM_CONVERSION_GEAR = 15;
-    
+
     public static final String[] systemNames = { "Life Support", "Sensors",
             "Cockpit", "Engine", "Gyro", null, null, "Shoulder", "Upper Arm",
             "Lower Arm", "Hand", "Hip", "Upper Leg", "Lower Leg", "Foot",
             "Conversion Gear"};
-    
+
     public static final int MOTIVE_UNKNOWN = -1;
     public static final int MOTIVE_TRACK = 0;
     public static final int MOTIVE_WHEEL = 1;
-    
+
     public static final String[] MOTIVE_STRING = { "Track", "Wheel" };
-    
+
     private int motiveType;
-    
+
     public QuadVee() {
         this(GYRO_STANDARD, MOTIVE_TRACK);
     }
-    
+
     public QuadVee(int inGyroType, int inMotiveType) {
         super(inGyroType, COCKPIT_QUADVEE);
-        
+
         motiveType = inMotiveType;
 
         setCritical(LOC_RARM, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_CONVERSION_GEAR));
@@ -95,7 +95,7 @@ public class QuadVee extends QuadMech {
         }
         return MOTIVE_STRING[motiveType];
     }
-    
+
     public String getMotiveTypeString() {
         return getMotiveTypeString(getMotiveType());
     }
@@ -111,7 +111,7 @@ public class QuadVee extends QuadMech {
         }
         return MOTIVE_UNKNOWN;
     }
-    
+
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
     return new TechAdvancement(TECH_BASE_CLAN)
@@ -131,7 +131,7 @@ public class QuadVee extends QuadMech {
     public boolean hasTracks() {
         return false;
     }
-    
+
     /**
      * Current MP is calculated differently depending on whether the QuadVee is in Mech
      * or vehicle mode. During conversion we use the mode we started in:
@@ -145,7 +145,7 @@ public class QuadVee extends QuadMech {
             return super.getWalkMP(gravity, ignoreheat, ignoremodulararmor);
         }
     }
-    
+
     /**
      * In vehicle mode the QuadVee ignores actuator and hip criticals, but is subject to track/wheel
      * damage and various effects of vehicle motive damage.
@@ -156,7 +156,7 @@ public class QuadVee extends QuadMech {
         if (getMotiveType() == MOTIVE_WHEEL) {
             wmp++;
         }
-        
+
         // If a leg or its track/wheel is destroyed, it is treated as major motive system damage,
         // which we are interpreting as a cumulative 1/2 MP.
         // bg.battletech.com/forums/index.php?topic=55261.msg1271935#msg1271935
@@ -206,7 +206,7 @@ public class QuadVee extends QuadMech {
             }
 
             if(getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_TORNADO_F13)) {
+                    && (game.getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_TORNADO_F13)) {
                 wmp += 1;
             }
         }
@@ -216,7 +216,7 @@ public class QuadVee extends QuadMech {
         }
         // For sanity sake...
         wmp = Math.max(0, wmp);
-        return wmp;        
+        return wmp;
     }
 
     @Override
@@ -283,7 +283,7 @@ public class QuadVee extends QuadMech {
         }
         return super.torsoJumpJets();
     }
-    
+
     /**
      * UMUs do not function in vehicle mode
      */
@@ -293,7 +293,7 @@ public class QuadVee extends QuadMech {
             return 0;
         }
         return super.getActiveUMUCount();
-    }    
+    }
 
     /**
      * QuadVees cannot benefit from MASC in vehicle mode
@@ -372,7 +372,7 @@ public class QuadVee extends QuadMech {
             return EntityMovementMode.TRACKED;
         }
     }
-    
+
     @Override
     public void setMovementMode(EntityMovementMode mode) {
         if (mode.isTrackedOrWheeled()) {
@@ -382,7 +382,7 @@ public class QuadVee extends QuadMech {
         }
         super.setMovementMode(mode);
     }
-    
+
     @Override
     public void setConversionMode(int mode) {
         if (mode == getConversionMode()) {
@@ -398,20 +398,20 @@ public class QuadVee extends QuadMech {
         }
         super.setConversionMode(mode);
     }
-    
+
     @Override
     public boolean isEligibleForPavementBonus() {
         // Since pavement bonus only applies if driving on pavement the entire turn,
         // there is no pavement bonus unless it spends the entire turn in vehicle mode.
         return getConversionMode() == CONV_MODE_VEHICLE && !convertingNow;
     }
-    
+
     @Override
     public boolean canFall(boolean gyroLegDamage) {
         // QuadVees cannot fall due to failed PSR in vehicle mode.
         return getConversionMode() == CONV_MODE_MECH || convertingNow;
     }
-    
+
     /**
      * The cost to convert between quad and vehicle modes.
      * @return
@@ -458,7 +458,7 @@ public class QuadVee extends QuadMech {
     public boolean canChangeSecondaryFacing() {
         return true;
     }
-    
+
     /**
      * Can this mech torso twist in the given direction?
      */
@@ -471,7 +471,7 @@ public class QuadVee extends QuadMech {
         if (getConversionMode() == CONV_MODE_VEHICLE) {
             return true;
         }
-        
+
         // In 'Mech mode the torso rotation can be limited by gyro damage.
         int gyroHits = getGyroHits();
         if (getGyroType() == GYRO_HEAVY_DUTY) {
@@ -500,7 +500,7 @@ public class QuadVee extends QuadMech {
         } else {
             roll.addModifier(2, "pilot incapacitated");
         }
-        
+
         if (getConversionMode() == CONV_MODE_VEHICLE) {
             for (int loc = 0; loc < locations(); loc++) {
                 if (locationIsLeg(loc)
@@ -537,7 +537,7 @@ public class QuadVee extends QuadMech {
             return super.addEntityBonuses(roll);
         }
     }
-    
+
     @Override
     public boolean usesTurnMode() {
         return getConversionMode() == CONV_MODE_VEHICLE && !convertingNow

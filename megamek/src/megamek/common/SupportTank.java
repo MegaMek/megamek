@@ -62,7 +62,7 @@ public class SupportTank extends Tank {
     public boolean hasArmoredChassis() {
         return hasMisc(MiscType.F_ARMORED_CHASSIS);
     }
-    
+
     private static final TechAdvancement TA_HOVER = new TechAdvancement(TECH_BASE_ALL)
             .setTechRating(RATING_C).setAdvancement(DATE_PS, DATE_ES, DATE_ES)
             .setAvailability(RATING_A, RATING_B, RATING_A, RATING_A)
@@ -200,7 +200,7 @@ public class SupportTank extends Tank {
             case TRACKED:
                 return (hex.terrainLevel(Terrains.WOODS) > 1)
                         || ((hex.terrainLevel(Terrains.WATER) > 0)
-                                && !hex.containsTerrain(Terrains.ICE) 
+                                && !hex.containsTerrain(Terrains.ICE)
                                 && !hasEnvironmentalSealing())
                         || hex.containsTerrain(Terrains.JUNGLE)
                         || (hex.terrainLevel(Terrains.MAGMA) > 1)
@@ -210,7 +210,7 @@ public class SupportTank extends Tank {
                 return hex.containsTerrain(Terrains.WOODS)
                         || hex.containsTerrain(Terrains.ROUGH)
                         || ((hex.terrainLevel(Terrains.WATER) > 0)
-                                && !hex.containsTerrain(Terrains.ICE) 
+                                && !hex.containsTerrain(Terrains.ICE)
                                 && !hasEnvironmentalSealing())
                         || hex.containsTerrain(Terrains.RUBBLE)
                         || hex.containsTerrain(Terrains.MAGMA)
@@ -279,7 +279,7 @@ public class SupportTank extends Tank {
             }
 
             if(getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_TORNADO_F13)) {
+                    && (game.getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_TORNADO_F13)) {
                 mp += 1;
             }
         }
@@ -320,7 +320,7 @@ public class SupportTank extends Tank {
         return mp;
 
     }
-    
+
     @Override
     public double getBaseChassisValue() {
         switch (movementMode) {

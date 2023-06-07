@@ -146,7 +146,7 @@ public class TripodMech extends Mech {
                     }
                 }
             }
-            wmp = (wmp * (3 - legsDestroyed)) / 3; 
+            wmp = (wmp * (3 - legsDestroyed)) / 3;
         } else {
             for (int i = 0; i < locations(); i++) {
                 if (locationIsLeg(i)) {
@@ -224,7 +224,7 @@ public class TripodMech extends Mech {
                 wmp = Math.max(wmp + weatherMod, 0);
             }
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_TORNADO_F13)) {
+                    && (game.getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_TORNADO_F13)) {
                 wmp += 1;
             }
         }
@@ -297,7 +297,7 @@ public class TripodMech extends Mech {
         } else {
             roll.addModifier(2, "pilot incapacitated");
         }
-        
+
         int[] locsToCheck = new int[3];
 
         locsToCheck[0] = Mech.LOC_RLEG;

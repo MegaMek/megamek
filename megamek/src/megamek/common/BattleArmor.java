@@ -265,7 +265,7 @@ public class BattleArmor extends Infantry {
      * How many mount locations are possible?
      */
     public static final int MOUNT_NUM_LOCS = 4;
-    
+
     // Quad BA can add critical space by adding a turret mount.
     private int turretSize = 0;
     private boolean modularTurret = false;
@@ -385,11 +385,11 @@ public class BattleArmor extends Infantry {
                 .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD) // assault
     };
-    
+
     public static TechAdvancement getConstructionTechAdvancement(int weightClass) {
         return new TechAdvancement(TA_BATTLEARMOR[weightClass]);
     }
-    
+
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
         int index = getWeightClass();
@@ -456,8 +456,8 @@ public class BattleArmor extends Infantry {
             }
 
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_STRONG_GALE)
-                    || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_STORM))) {
+                    && ((game.getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_STRONG_GALE)
+                    || (game.getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_STORM))) {
                 j += 1;
             }
         }
@@ -1459,7 +1459,7 @@ public class BattleArmor extends Infantry {
         buff.append(newline);
         buff.append("</armor>");
         buff.append(newline);
-        
+
         if (getTurretCapacity() > 0) {
             buff.append("<turret>");
             buff.append(newline);
@@ -1799,10 +1799,10 @@ public class BattleArmor extends Infantry {
         if (hasMyomerBooster()) {
             damage += getTroopers() * 2;
         }
-        
+
         // we only track vibro claws at the squad level, so we have either 0, 1 or 2. See TW page 223.
         damage += getVibroClaws();
-        
+
         return damage;
     }
 
@@ -1975,7 +1975,7 @@ public class BattleArmor extends Infantry {
                 return 4;
         }
     }
-    
+
     public int getBodyCrits() {
         if (getChassisType() == CHASSIS_TYPE_QUAD) {
             int turret = 0;
@@ -2010,19 +2010,19 @@ public class BattleArmor extends Infantry {
             }
         }
     }
-    
+
     public int getTurretCapacity() {
         return turretSize;
     }
-    
+
     public void setTurretSize(int capacity) {
         turretSize = capacity;
     }
-    
+
     public boolean hasModularTurretMount() {
         return modularTurret;
     }
-    
+
     public void setModularTurret(boolean modular) {
         modularTurret = modular;
     }

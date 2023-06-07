@@ -7091,7 +7091,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if (((conditions.getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES)
                     || (conditions.getWeather() == PlanetaryConditions.WE_SLEET)
                     || (conditions.getWeather() == PlanetaryConditions.WE_ICE_STORM))
-                    && isAirborneVTOLorWIGE()) {
+                    && (isAirborneVTOLorWIGE() || isAirborne())) {
                 roll.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
             }
         }

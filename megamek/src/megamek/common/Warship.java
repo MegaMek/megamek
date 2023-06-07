@@ -218,65 +218,6 @@ public class Warship extends Jumpship {
         return range;
     }
 
-    /**
-     * find the adjacent firing arc on this vessel clockwise
-     */
-    @Override
-    public int getAdjacentArcCW(int arc) {
-        switch (arc) {
-            case Compute.ARC_NOSE:
-                return Compute.ARC_RIGHTSIDE_SPHERE;
-            case Compute.ARC_LEFTSIDE_SPHERE:
-                return Compute.ARC_NOSE;
-            case Compute.ARC_RIGHTSIDE_SPHERE:
-                return Compute.ARC_RIGHT_BROADSIDE;
-            case Compute.ARC_LEFTSIDEA_SPHERE:
-                return Compute.ARC_LEFT_BROADSIDE;
-            case Compute.ARC_RIGHTSIDEA_SPHERE:
-                return Compute.ARC_AFT;
-            case Compute.ARC_LEFT_BROADSIDE:
-                return Compute.ARC_LEFTSIDE_SPHERE;
-            case Compute.ARC_RIGHT_BROADSIDE:
-                return Compute.ARC_RIGHTSIDEA_SPHERE;
-            case Compute.ARC_AFT:
-                return Compute.ARC_LEFTSIDEA_SPHERE;
-            default:
-                return Integer.MIN_VALUE;
-        }
-    }
-
-    /**
-     * find the adjacent firing arc on this vessel counter-clockwise
-     */
-    @Override
-    public int getAdjacentArcCCW(int arc) {
-        switch (arc) {
-            case Compute.ARC_NOSE:
-                return Compute.ARC_LEFTSIDE_SPHERE;
-            case Compute.ARC_RIGHTSIDE_SPHERE:
-                return Compute.ARC_NOSE;
-            case Compute.ARC_LEFTSIDE_SPHERE:
-                return Compute.ARC_LEFT_BROADSIDE;
-            case Compute.ARC_LEFTSIDEA_SPHERE:
-                return Compute.ARC_AFT;
-            case Compute.ARC_RIGHTSIDEA_SPHERE:
-                return Compute.ARC_RIGHT_BROADSIDE;
-            case Compute.ARC_LEFT_BROADSIDE:
-                return Compute.ARC_LEFTSIDEA_SPHERE;
-            case Compute.ARC_RIGHT_BROADSIDE:
-                return Compute.ARC_RIGHTSIDE_SPHERE;
-            case Compute.ARC_AFT:
-                return Compute.ARC_RIGHTSIDEA_SPHERE;
-            default:
-                return Integer.MIN_VALUE;
-        }
-    }
-
-    @Override
-    public double getBVTypeModifier() {
-        return 0.8;
-    }
-
     @Override
     public long getEntityType() {
         return Entity.ETYPE_AERO | Entity.ETYPE_JUMPSHIP | Entity.ETYPE_WARSHIP;

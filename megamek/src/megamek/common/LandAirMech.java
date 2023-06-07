@@ -233,36 +233,31 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
      * ground movement.
      */
     @Override
-    public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
+    public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
         int mp;
-        if (getConversionMode() == CONV_MODE_FIGHTER) {
-            mp = getFighterModeWalkMP(gravity, ignoremodulararmor);
-        } else if (getConversionMode() == CONV_MODE_AIRMECH) {
-            mp = getAirMechCruiseMP(gravity, ignoremodulararmor);
+        if (!mpCalculationSetting.ignoreConversion && (getConversionMode() == CONV_MODE_FIGHTER)) {
+            mp = getFighterModeWalkMP(mpCalculationSetting);
+        } else if (!mpCalculationSetting.ignoreConversion && (getConversionMode() == CONV_MODE_AIRMECH)) {
+            mp = getAirMechCruiseMP(mpCalculationSetting);
         } else {
-            mp = super.getWalkMP(gravity, ignoreheat, ignoremodulararmor);
+            mp = super.getWalkMP(mpCalculationSetting);
         }
-        if (convertingNow) {
+        if (!mpCalculationSetting.ignoreConversion && convertingNow) {
             mp /= 2;
         }
         return mp;
     }
-    
-    // Use Mech mode to determine walk MP for BV calculations
-    public int getBVWalkMP() {
-        return super.getWalkMP(false, true, true);
-    }
 
     @Override
-    public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
+    public int getRunMP(MPCalculationSetting mpCalculationSetting) {
         int mp;
-        if (getConversionMode() == CONV_MODE_FIGHTER) {
-            mp = getFighterModeRunMP(gravity, ignoremodulararmor);
-        } else if (getConversionMode() == CONV_MODE_AIRMECH) {
-            mp = getAirMechFlankMP(gravity, ignoremodulararmor);
+        if (!mpCalculationSetting.ignoreConversion && (getConversionMode() == CONV_MODE_FIGHTER)) {
+            mp = getFighterModeRunMP(mpCalculationSetting);
+        } else if (!mpCalculationSetting.ignoreConversion && (getConversionMode() == CONV_MODE_AIRMECH)) {
+            mp = getAirMechFlankMP(mpCalculationSetting);
         } else {
             // conversion reduction has already been done at this point
-            return super.getRunMP(gravity, ignoreheat, ignoremodulararmor);
+            return super.getRunMP(mpCalculationSetting);
         }
         if (convertingNow) {
             mp /= 2;
@@ -271,113 +266,71 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     }
 
     @Override
-    public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-        int mp;
-        if (getConversionMode() == CONV_MODE_FIGHTER) {
-            mp = getFighterModeRunMP(gravity, ignoremodulararmor);
-        } else if (getConversionMode() == CONV_MODE_AIRMECH) {
-            mp = getAirMechFlankMP(gravity, ignoremodulararmor);
-        } else {
-            return super.getRunMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
-        }
-        if (convertingNow) {
-            mp /= 2;
-        }
-        return mp;
-    }
-
-    /**
-     * This value should only be used for biped and airmech ground movement.
-     */
-    @Override
-    public int getSprintMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-        if (getConversionMode() == CONV_MODE_FIGHTER) {
+    public int getSprintMP(MPCalculationSetting mpCalculationSetting) {
+        if (!mpCalculationSetting.ignoreConversion && (getConversionMode() == CONV_MODE_FIGHTER)) {
             return getRunMP();
-        } else if (getConversionMode() == CONV_MODE_AIRMECH) {
+        } else if (!mpCalculationSetting.ignoreConversion && (getConversionMode() == CONV_MODE_AIRMECH)) {
             if (hasHipCrit()) {
-                return getAirMechRunMP(gravity, ignoreheat, ignoremodulararmor);
+                return getAirMechRunMP(mpCalculationSetting);
             }
-            return getArmedMPBoosters().calculateSprintMP(getAirMechWalkMP(gravity, ignoreheat, ignoremodulararmor));
-        }
-        return super.getSprintMP(gravity, ignoreheat, ignoremodulararmor);
-    }
-
-    /**
-     * This value should only be used for biped and airmech ground movement.
-     */
-    @Override
-    public int getSprintMPwithoutMASC(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-        if (getConversionMode() == CONV_MODE_FIGHTER) {
-            return getRunMP();
-        } else if (getConversionMode() == CONV_MODE_AIRMECH) {
-            if (hasHipCrit()) {
-                return getAirMechRunMP(gravity, ignoreheat, ignoremodulararmor);
+            if (!mpCalculationSetting.ignoreMASC) {
+                return getArmedMPBoosters().calculateSprintMP(getAirMechWalkMP(mpCalculationSetting));
             }
-            return getAirMechWalkMP(gravity, ignoreheat, ignoremodulararmor) * 2;
         }
-        return super.getSprintMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
+        return super.getSprintMP(mpCalculationSetting);
     }
 
-    @Override
-    public int getOriginalSprintMPwithoutMASC() {
-        if (getConversionMode() == CONV_MODE_MECH) {
-            return (int) Math.ceil(getOriginalWalkMP() * 2.0);
-        } else {
-            return getOriginalRunMP();
-        }
-    }
-
-    public int getAirMechCruiseMP(boolean gravity, boolean ignoremodulararmor) {
+    public int getAirMechCruiseMP(MPCalculationSetting mpCalculationSetting) {
         if (game != null && game.getBoard().inAtmosphere()
                 && (isLocationBad(Mech.LOC_LT) || isLocationBad(Mech.LOC_RT))) {
             return 0;
         }
-        return getJumpMP(gravity, ignoremodulararmor) * 3;
+        return getJumpMP(mpCalculationSetting) * 3;
     }
 
-    public int getAirMechFlankMP(boolean gravity, boolean ignoremodulararmor) {
+    public int getAirMechFlankMP(MPCalculationSetting mpCalculationSetting) {
         if (game != null && game.getBoard().inAtmosphere()
                 && (isLocationBad(Mech.LOC_LT) || isLocationBad(Mech.LOC_RT))) {
             return 0;
         }
-        return (int) Math.ceil(getAirMechCruiseMP(gravity, ignoremodulararmor) * 1.5);
+        return (int) Math.ceil(getAirMechCruiseMP(mpCalculationSetting) * 1.5);
     }
 
     public int getAirMechWalkMP() {
-        return getAirMechWalkMP(true, false, false);
+        return getAirMechWalkMP(MPCalculationSetting.STANDARD);
     }
 
-    public int getAirMechWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-        int mp = (int) Math.ceil(super.getWalkMP(gravity, ignoreheat, ignoremodulararmor) * 0.33);
-        if (convertingNow) {
+    public int getAirMechWalkMP(MPCalculationSetting mpCalculationSetting) {
+        int mp = (int) Math.ceil(super.getWalkMP(mpCalculationSetting) * 0.33);
+        if (!mpCalculationSetting.ignoreConversion && convertingNow) {
             mp /= 2;
         }
         return mp;
     }
 
     public int getAirMechRunMP() {
-        return getAirMechRunMP(true, false, false);
+        return getAirMechRunMP(MPCalculationSetting.STANDARD);
     }
 
-    public int getAirMechRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-        int mp = (int) Math.ceil(getAirMechWalkMP(gravity, ignoreheat, ignoremodulararmor) * 1.5);
-        if (convertingNow) {
+    public int getAirMechRunMP(MPCalculationSetting mpCalculationSetting) {
+        int mp = (int) Math.ceil(getAirMechWalkMP(mpCalculationSetting) * 1.5);
+        if (!mpCalculationSetting.ignoreConversion && convertingNow) {
             mp /= 2;
         }
         return mp;
     }
 
-    public int getFighterModeWalkMP(boolean gravity, boolean ignoremodulararmor) {
-        int thrust = getCurrentThrust();
-        if (!isAirborne()) {
+    public int getFighterModeWalkMP(MPCalculationSetting mpCalculationSetting) {
+        int thrust = getCurrentThrust(mpCalculationSetting);
+        if (!mpCalculationSetting.ignoreGrounded && !isAirborne()) {
             thrust /= 2;
         }
         return thrust;
     }
 
-    public int getFighterModeRunMP(boolean gravity, boolean ignoremodulararmor) {
-        int walk = getFighterModeWalkMP(gravity, ignoremodulararmor);
-        if (isAirborne()) {
+    public int getFighterModeRunMP(MPCalculationSetting mpCalculationSetting) {
+        int walk = getFighterModeWalkMP(mpCalculationSetting);
+        if (mpCalculationSetting.ignoreGrounded || isAirborne()) {
             return (int) Math.ceil(walk * 1.5);
         } else {
             return walk; // Grounded asfs cannot use flanking movement
@@ -405,20 +358,30 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         return j;
     }
 
+    public int getCurrentThrust(MPCalculationSetting mpCalculationSetting) {
+        // Cannot fly in atmosphere with missing side torso
+        if (!isSpaceborne() && (isLocationBad(LOC_RT) || isLocationBad(LOC_LT))) {
+            return 0;
+        }
+        int j = getJumpMP();
+        if (!mpCalculationSetting.ignoreWeather && (null != game)) {
+            int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
+            j = Math.max(j + weatherMod, 0);
+
+            if(getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
+                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_TORNADO_F13)) {
+                j += 1;
+            }
+        }
+        return j;
+    }
+
     public int getAirMechCruiseMP() {
-        return getAirMechCruiseMP(true, false);
+        return getAirMechCruiseMP(MPCalculationSetting.STANDARD);
     }
 
     public int getAirMechFlankMP() {
-        return getAirMechFlankMP(true, false);
-    }
-
-    public int getFighterModeWalkMP() {
-        return getFighterModeWalkMP(true, false);
-    }
-
-    public int getFighterModeRunMP() {
-        return getFighterModeRunMP(true, false);
+        return getAirMechFlankMP(MPCalculationSetting.STANDARD);
     }
 
     /**

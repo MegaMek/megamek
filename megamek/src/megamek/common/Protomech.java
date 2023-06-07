@@ -14,7 +14,6 @@
 package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.battlevalue.ProtoMekBVCalculator;
 import megamek.common.cost.ProtoMekCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.preference.PreferenceManager;
@@ -226,70 +225,52 @@ public class Protomech extends Entity {
     }
 
     @Override
-    public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
+    public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
         if (isEngineHit()) {
             return 0;
         }
-        int wmp = getOriginalWalkMP();
-        int j;
-        if (null != game) {
-            int weatherMod = game.getPlanetaryConditions()
-                    .getMovementMods(this);
-            if (weatherMod != 0) {
-                wmp = Math.max(wmp + weatherMod, 0);
-            }
+        int mp = getOriginalWalkMP();
+
+        if (!mpCalculationSetting.ignoreWeather && (game != null)) {
+            int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
+            mp = Math.max(mp + weatherMod, 0);
         }
         // Gravity, Protos can't get faster
-        if (gravity) {
-            j = applyGravityEffectsOnMP(wmp);
-        } else {
-            j = wmp;
+        if (!mpCalculationSetting.ignoreGravity) {
+            mp = Math.min(mp, applyGravityEffectsOnMP(mp));
         }
-        if (j < wmp) {
-            wmp = j;
-        }
+
         if (isGlider()) {
             // Torso crits reduce glider mp as jump
-            int torsoCrits = getCritsHit(LOC_TORSO);
-            switch (torsoCrits) {
-                case 0:
-                    break;
-                case 1:
-                    if (wmp > 0) {
-                        wmp--;
-                    }
-                    break;
-                case 2:
-                    wmp /= 2;
-                    break;
+            int torsoCrits = getCritsHit(Protomech.LOC_TORSO);
+            if (torsoCrits == 1) {
+                mp--;
+            } else if (torsoCrits == 2) {
+                mp /= 2;
             }
             // Near misses damage the wings/flight systems, which reduce MP by one per hit.
-            wmp = Math.max(0, wmp - wingHits);
+            mp -= getWingHits();
         } else {
-            int legCrits = getCritsHit(LOC_LEG);
-            switch (legCrits) {
-                case 0:
-                    break;
-                case 1:
-                    wmp--;
-                    break;
-                case 2:
-                    wmp = wmp / 2;
-                    break;
-                case 3:
-                    wmp = 0;
-                    break;
+            int legCrits = getCritsHit(Protomech.LOC_LEG);
+            if (legCrits == 1) {
+                mp--;
+            } else if (legCrits == 2) {
+                mp /= 2;
+            } else if (legCrits == 3) {
+                mp = 0;
             }
         }
-        return wmp;
+
+        return Math.max(mp, 0);
     }
 
     @Override
     public String getRunMPasString() {
         if (hasMyomerBooster()) {
-            return getRunMPwithoutMyomerBooster(true, false, false) + "(" + getRunMP() + ")";
+            return getRunMP(MPCalculationSetting.NO_MYOMERBOOSTER) + "(" + getRunMP() + ")";
+        } else {
+            return Integer.toString(getRunMP());
         }
-        return Integer.toString(getRunMP());
     }
 
     /**
@@ -419,11 +400,11 @@ public class Protomech extends Entity {
 
     } // End public void newRound()
 
-    /**
-     * This pmech's jumping MP modified for missing jump jets and gravity.
-     */
     @Override
-    public int getJumpMP(boolean gravity) {
+    public int getJumpMP(MPCalculationSetting mpCalculationSetting) {
+        if (mpCalculationSetting.ignoreSubmergedJumpJets && isUnderwater()) {
+            return 0;
+        }
         int jump = jumpMP;
         int torsoCrits = getCritsHit(LOC_TORSO);
         switch (torsoCrits) {
@@ -438,7 +419,7 @@ public class Protomech extends Entity {
                 jump = jump / 2;
                 break;
         }
-        if (hasWorkingMisc(MiscType.F_PARTIAL_WING)) {
+        if (!mpCalculationSetting.ignoreWeather && hasWorkingMisc(MiscType.F_PARTIAL_WING)) {
             int atmo = PlanetaryConditions.ATMO_STANDARD;
             if (game != null) {
                 atmo = game.getPlanetaryConditions().getAtmosphere();
@@ -457,35 +438,8 @@ public class Protomech extends Entity {
                     break;
             }
         }
-        if (!gravity) {
-            return jump;
-        } else {
-            if (applyGravityEffectsOnMP(jump) > jump) {
-                return jump;
-            }
-            return applyGravityEffectsOnMP(jump);
-        }
-    }
 
-    public int getJumpJets() {
-        return jumpMP;
-    }
-
-    /**
-     * Returns this mech's jumping MP, modified for missing and underwater jets.
-     */
-    @Override
-    public int getJumpMPWithTerrain() {
-        if (getPosition() == null) {
-            return getJumpMP();
-        }
-
-        int waterLevel = game.getBoard().getHex(getPosition())
-                .terrainLevel(Terrains.WATER);
-        if ((waterLevel <= 0) || (getElevation() >= 0)) {
-            return getJumpMP();
-        }
-        return 0;
+        return mpCalculationSetting.ignoreGravity ? jump : Math.min(applyGravityEffectsOnMP(jump), jump);
     }
 
     @Override
@@ -600,33 +554,16 @@ public class Protomech extends Entity {
         return false;
     }
 
-    /**
-     * get this ProtoMech's run MP without factoring in a possible myomer
-     * booster
-     *
-     * @param gravity
-     * @param ignoreheat
-     * @return
-     */
-    public int getRunMPwithoutMyomerBooster(boolean gravity,
-            boolean ignoreheat, boolean ignoremodulararmor) {
-        return super.getRunMP(gravity, ignoreheat, ignoremodulararmor);
-    }
-
     @Override
-    public int getRunMP(boolean gravity, boolean ignoreheat,
-            boolean ignoremodulararmor) {
-        if (hasMyomerBooster()) {
-            return (getWalkMP(gravity, ignoreheat, ignoremodulararmor) * 2);
+    public int getRunMP(MPCalculationSetting mpCalculationSetting) {
+        if (!mpCalculationSetting.ignoreMyomerBooster && hasMyomerBooster()) {
+            return (getWalkMP(mpCalculationSetting) * 2);
+        } else {
+            return super.getRunMP(mpCalculationSetting);
         }
-        return super.getRunMP(gravity, ignoreheat, ignoremodulararmor);
     }
 
-    /**
-     * does this protomech mount a myomer booster?
-     *
-     * @return
-     */
+    /** @return True if this ProtoMek mounts an operable Myomer Booster. See {@link Mounted#isOperable()}. */
     public boolean hasMyomerBooster() {
         for (Mounted mEquip : getMisc()) {
             MiscType mtype = (MiscType) mEquip.getType();
@@ -999,11 +936,6 @@ public class Protomech extends Entity {
     }
 
     @Override
-    protected int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
-        return ProtoMekBVCalculator.calculateBV(this, ignoreSkill, calculationReport);
-    }
-
-    @Override
     public Vector<Report> victoryReport() {
         Vector<Report> vDesc = new Vector<>();
 
@@ -1305,12 +1237,6 @@ public class Protomech extends Entity {
                     "Forced landing with insufficient thrust.");
         }
         return new PilotingRollData(getId(), 4, "Attempting to land");
-    }
-
-    @Override
-    public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat,
-            boolean ignoremodulararmor) {
-        return getRunMP(gravity, ignoreheat, ignoremodulararmor);
     }
 
     @Override

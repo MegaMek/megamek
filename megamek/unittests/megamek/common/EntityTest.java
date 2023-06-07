@@ -20,6 +20,7 @@
 package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.common.battlevalue.BVCalculator;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -27,8 +28,7 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -40,11 +40,13 @@ public class EntityTest {
 
     private Entity setupGunEmplacement() {
         Entity testEntity = mock(GunEmplacement.class);
+        when(testEntity.getBvCalculator()).thenReturn(BVCalculator.getBVCalculator(testEntity));
         when(testEntity.calculateBattleValue()).thenCallRealMethod();
         when(testEntity.calculateBattleValue(anyBoolean(), anyBoolean())).thenCallRealMethod();
         when(testEntity.doBattleValueCalculation(anyBoolean(), anyBoolean(),
                 any(CalculationReport.class))).thenCallRealMethod();
         when(testEntity.getTotalArmor()).thenReturn(100);
+        when(testEntity.getBARRating(anyInt())).thenCallRealMethod();
         ArrayList<Mounted> equipment = new ArrayList<>(2);
         WeaponType ppcType = mock(WeaponType.class);
         when(ppcType.getBV(any(Entity.class))).thenReturn(50.0);
@@ -63,7 +65,7 @@ public class EntityTest {
     public void testCalculateBattleValue() {
         // Test a gun emplacement.
         Entity testEntity = setupGunEmplacement();
-        int expected = 94;
+        int expected = 169;
         int actual = testEntity.calculateBattleValue(true, true);
         assertEquals(expected, actual);
         when(testEntity.getTotalArmor()).thenReturn(0); // Gun Emplacement with no armor.

@@ -433,9 +433,9 @@ public class MechSummaryCache {
         ms.setDryCost((long) e.getCost(true));
         ms.setAlternateCost((int) e.getAlternateCost());
         ms.setCanon(e.isCanon());
-        ms.setWalkMp(e.getWalkMP(false, false));
-        ms.setRunMp(e.getRunMP(false, false, false));
-        ms.setJumpMp(e.getJumpMP(false));
+        ms.setWalkMp(e.getWalkMP());
+        ms.setRunMp(e.getRunMP(MPCalculationSetting.NO_GRAVITY));
+        ms.setJumpMp(e.getJumpMP());
         ms.setClan(e.isClan());
         if (e.isSupportVehicle()) {
             ms.setSupport(true);

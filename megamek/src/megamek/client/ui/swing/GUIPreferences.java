@@ -469,7 +469,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(BOARD_FIELD_OF_FIRE_LONG_COLOR, new Color(60, 150, 60));
         setDefault(BOARD_FIELD_OF_FIRE_EXTREME_COLOR, new Color(40, 100, 40));
         setDefault(BOARD_SENSOR_RANGE_COLOR, new Color(105, 105, 245));
-        setDefault(BOARD_VISUAL_RANGE_COLOR, new Color(100, 100, 150));
+        setDefault(BOARD_VISUAL_RANGE_COLOR, new Color(255, 204, 255));
         setDefault(BOARD_UNIT_SELECTED_COLOR, DEFAULT_MAGENTA);
         setDefault(BOARD_UNIT_VALID_COLOR, DEFAULT_CYAN);
         setDefault(BOARD_UNIT_TEXT_COLOR, Color.white);

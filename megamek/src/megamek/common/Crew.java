@@ -16,6 +16,7 @@
 package megamek.common;
 
 import megamek.client.generator.RandomGenderGenerator;
+import megamek.client.ui.swing.tooltip.PilotToolTip;
 import megamek.common.enums.Gender;
 import megamek.common.icons.Portrait;
 import megamek.common.options.IOption;
@@ -378,6 +379,9 @@ public class Crew implements Serializable {
 
     public void setPortrait(final Portrait portrait, final int pos) {
         getPortraits()[pos] = portrait;
+
+        // delete PilotToolTip cache for this portrait
+        PilotToolTip.deleteImageCache(this, pos);
     }
 
     /**
@@ -1101,7 +1105,7 @@ public class Crew implements Serializable {
      */
     public String getExternalIdAsString() {
         for (int i = 0; i < getSlotCount(); i++) {
-            if (!externalId[i].equals("-1")) {
+            if (externalId != null && !externalId[i].equals("-1")) {
                 return externalId[i];
             }
         }

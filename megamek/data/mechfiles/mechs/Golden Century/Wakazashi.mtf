@@ -3,11 +3,11 @@ Wakazashi
 
 mul id:3475
 
-
 Config:Biped
 TechBase:Clan
 Era:2830
 Rules Level:2
+source:TRO: Golden Century - Early Succession War
 
 Mass:85
 Engine:255 Fusion Engine

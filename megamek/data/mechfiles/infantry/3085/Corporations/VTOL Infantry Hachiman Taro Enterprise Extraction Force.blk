@@ -40,7 +40,7 @@ VTOL
 </Field Guns Equipment>
 
 <source>
-TRO 3085
+TRO: 3085
 </source>
 
 <squad_size>
@@ -60,5 +60,5 @@ MyomerVest
 </armorKit>
 
 <era>
-TRO 3085 - Late Succession War - Renaissance
+TRO: 3085 - Late Succession War - Renaissance
 </era>

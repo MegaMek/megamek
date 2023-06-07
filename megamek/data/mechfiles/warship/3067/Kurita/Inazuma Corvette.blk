@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,9 +16,9 @@ Warship
 Inazuma Corvette
 </Name>
 
-<model>
+<Model>
 
-</model>
+</Model>
 
 <mul id:>
 4362
@@ -48,7 +48,7 @@ dockingcollar
 dockingcollar
 1stclassquarters:20.0:0
 2ndclassquarters:735.0:0
-cargobay:2081.0:1:5
+cargobay:2081.0:1:8
 </transporters>
 
 <SafeThrust>
@@ -211,6 +211,46 @@ Ammo NAC/20:50
 46
 </structural_integrity>
 
+<capabilities>
+With its compact size, the Inazuma maximizes its firepower potential while prioritizing space and weight efficiency. Crew quarters are spartan, with most personnel sharing bunks, and the vessel lacks luxuries. However, it can operate independently for extended periods if necessary. The Draconis Combine Admiralty recognizes the strain on crews and implements a two-crew rotation system. The Inazuma's weaponry includes naval PPCs, naval autocannons, lasers, and anti-missile systems.
+</capabilities>
+
+<overview>
+The Inazuma-class Corvette, meaning "lightning" in Japanese, is designed for stealth attacks, swiftly approaching unsuspecting enemy DropShips and armed JumpShips to overwhelm them with superior firepower before rapidly withdrawing. Its high G-Force rating allows for quick insertion of 'Mech forces. Despite its impressive arsenal, the Inazuma sacrifices armor for weight efficiency and has adequate anti-fighter capabilities.
+</overview>
+
+<history>
+The Inazuma-class Corvette represents the third design of the Draconis Combine's post-Succession Wars WarShip fleet. Currently, the Draconis Combine Mustered Soldiery (DCS) operates four Inazuma-class vessels: Night of Agony, Winds of Heaven, Amber Lotus, and Swiping Claw. Unfortunately, an unknown sabotage incident destroyed the section of the Dieron shipyards where a fifth Inazuma-class Corvette was under construction in 3065. Although the line was reopened in 3066, there are no plans for further corvette construction. The Inazuma's mission as a stealth attacker and its limited production make it a unique asset in the Draconis Combine's naval fleet, embodying the Combine's commitment to striking swiftly and decisively in service to the Dragon.
+</history>
+
+<manufacturer>
+Stellar Trek Enterprises - Terada Shipyards, Midway Warship Yard
+</manufacturer>
+
+<primaryFactory>
+Dieron, Midway
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Corvette
+</use>
+
+<length>
+412 m
+</length>
+
+<height>
+800 m Sail
+</height>
+
 <source>
 TRO3067 - Clan Invasion
 </source>
@@ -234,6 +274,10 @@ TRO3067 - Clan Invasion
 <grav_decks>
 75
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 129
@@ -266,3 +310,4 @@ TRO3067 - Clan Invasion
 <escape_pod>
 0
 </escape_pod>
+

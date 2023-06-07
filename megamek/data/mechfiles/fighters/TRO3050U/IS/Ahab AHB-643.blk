@@ -104,7 +104,7 @@ IS MRM 40 Ammo
 </Fuselage Equipment>
 
 <source>
-TRO 3050u - Civil War
+TRO: 3050u - Civil War
 </source>
 
 <tonnage>
@@ -144,7 +144,7 @@ TARGETING:Antron 7
 </systemManufacturers>
 
 <source>
-TRO 3050u - Star League
+TRO: 3050u - Star League
 </source>
 
 <tonnage>

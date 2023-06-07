@@ -6,7 +6,7 @@ mul id:1420
 Config:Biped Omnimech
 techbase:Inner Sphere
 era:3060
-source:TRO 3060
+source:TRO: 3060
 rules level:2
 
 mass:95

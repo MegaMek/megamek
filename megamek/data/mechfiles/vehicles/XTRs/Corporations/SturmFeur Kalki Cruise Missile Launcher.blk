@@ -91,7 +91,7 @@ Machine Gun
 </Turret Equipment>
 
 <source>
-XTR Corporations - Jihad
+XTR: Corporations - Jihad
 </source>
 
 <tonnage>
@@ -103,7 +103,7 @@ For point-blank anti-infantry protection, the SturmFeur carries two huge missile
 </capabilities>
 
 <overview>
-The SturmFeur debuted in 3018. At that time, it was the largest combat vehicle dedicated to providing missile support in the Inner Sphere. The unit is 12.5 tons overweight. The unit in the TRO has been built wrong(IS calculated as if not Super-Heavy) and will likely be impossible to fix.  Included only for completeness.
+The SturmFeur debuted in 3018. At that time, it was the largest combat vehicle dedicated to providing missile support in the Inner Sphere. The unit is 12.5 tons overweight. The unit in the TRO: has been built wrong(IS calculated as if not Super-Heavy) and will likely be impossible to fix.  Included only for completeness.
 </overview>
 
 <deployment>

@@ -282,12 +282,8 @@ Ammo NAC/10:40
 40
 </structural_integrity>
 
-<imagepath>
-.\data\images\fluff\Aero\Molinya Corvette.png
-</imagepath>
-
 <source>
-Succession War
+TRO: Golden Century - Late Succession War - LosTech
 </source>
 
 <tonnage>

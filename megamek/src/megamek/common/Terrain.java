@@ -670,6 +670,8 @@ public class Terrain implements Serializable {
             rv = false;
         } else if (type == Terrains.ICE && level != 1) {
             rv = false;
+        } else if (type == Terrains.BLACK_ICE && level != 1) {
+            rv = false;
         } else if (type == Terrains.GEYSER && (level < 1 || level > 3)) {
             rv = false;
         } else if (type == Terrains.FORTIFIED && level != 1) {

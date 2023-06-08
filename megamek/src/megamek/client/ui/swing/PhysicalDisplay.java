@@ -126,8 +126,6 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         clientgui.getBoardView().addBoardViewListener(this);
         setupStatusBar(Messages.getString("PhysicalDisplay.waitingForPhysicalAttackPhase"));
 
-        attacks = new Vector<>();
-
         setButtons();
         setButtonsTooltips();
 
@@ -347,7 +345,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             }
         }
         disableButtons();
-        clientgui.getClient().sendAttackData(cen, attacks);
+        clientgui.getClient().sendAttackData(cen, attacks.toVector());
         removeAllAttacks();
         // close aimed shot display, if any
         ash.closeDialog();

@@ -182,9 +182,6 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
         phase = offboard ? GamePhase.OFFBOARD : GamePhase.TARGETING;
         shiftheld = false;
 
-        // fire
-        attacks = new Vector<>();
-
         setupStatusBar(Messages.getString("TargetingPhaseDisplay.waitingForTargetingPhase"));
 
         setButtons();
@@ -776,7 +773,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
         removeTempAttacks();
 
         // send out attacks
-        clientgui.getClient().sendAttackData(cen, attacks);
+        clientgui.getClient().sendAttackData(cen, attacks.toVector());
 
         // clear queue
        removeAllAttacks();
@@ -949,9 +946,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
         }
 
         // remove attacks, set weapons available again
-        Enumeration<EntityAction> i = attacks.elements();
-        while (i.hasMoreElements()) {
-            Object o = i.nextElement();
+        for( EntityAction o : attacks) {
             if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) o;
                 ce().getEquipment(waa.getWeaponId()).setUsedThisRound(false);

@@ -204,9 +204,6 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
 
         shiftheld = false;
 
-        // fire
-        attacks = new Vector<>();
-
         setupStatusBar(Messages.getString("FiringDisplay.waitingForFiringPhase"));
 
         setButtons();
@@ -1793,9 +1790,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         }
 
         // remove attacks, set weapons available again
-        Enumeration<EntityAction> i = attacks.elements();
-        while (i.hasMoreElements()) {
-            Object o = i.nextElement();
+        for( EntityAction o : attacks) {
             if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) o;
                 ce().getEquipment(waa.getWeaponId()).setUsedThisRound(false);

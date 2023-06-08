@@ -11,18 +11,10 @@ import java.util.List;
 import java.util.ListIterator;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.tooltip.EntityActionLog;
 import megamek.client.ui.swing.util.StraightArrowPolygon;
 import megamek.common.*;
-import megamek.common.actions.AttackAction;
-import megamek.common.actions.ChargeAttackAction;
-import megamek.common.actions.ClubAttackAction;
-import megamek.common.actions.DfaAttackAction;
-import megamek.common.actions.KickAttackAction;
-import megamek.common.actions.ProtomechPhysicalAttackAction;
-import megamek.common.actions.PunchAttackAction;
-import megamek.common.actions.PushAttackAction;
-import megamek.common.actions.SearchlightAttackAction;
-import megamek.common.actions.WeaponAttackAction;
+import megamek.common.actions.*;
 import megamek.common.enums.GamePhase;
 
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
@@ -56,7 +48,7 @@ class AttackSprite extends Sprite {
 
     private String targetDesc;
 
-    ArrayList<String> weaponDescs = new ArrayList<>();
+    EntityActionLog weaponDescs;
 
     private final Entity ae;
 
@@ -70,6 +62,7 @@ class AttackSprite extends Sprite {
 
     public AttackSprite(BoardView boardView1, final AttackAction attack) {
         super(boardView1);
+        weaponDescs = new EntityActionLog(boardView1.clientgui.getClient(), false);
         this.boardView1 = boardView1;
         entityId = attack.getEntityId();
         targetType = attack.getTargetType();
@@ -106,36 +99,14 @@ class AttackSprite extends Sprite {
         // set names & stuff
         attackerDesc = ae.getDisplayName();
         targetDesc = target.getDisplayName();
-        if (attack instanceof WeaponAttackAction) {
-            addWeapon((WeaponAttackAction) attack);
-        }
-        if (attack instanceof KickAttackAction) {
-            addWeapon((KickAttackAction) attack);
-        }
-        if (attack instanceof PunchAttackAction) {
-            addWeapon((PunchAttackAction) attack);
-        }
-        if (attack instanceof PushAttackAction) {
-            addWeapon((PushAttackAction) attack);
-        }
-        if (attack instanceof ClubAttackAction) {
-            addWeapon((ClubAttackAction) attack);
-        }
-        if (attack instanceof ChargeAttackAction) {
-            addWeapon((ChargeAttackAction) attack);
-        }
-        if (attack instanceof DfaAttackAction) {
-            addWeapon((DfaAttackAction) attack);
-        }
-        if (attack instanceof ProtomechPhysicalAttackAction) {
-            addWeapon((ProtomechPhysicalAttackAction) attack);
-        }
-        if (attack instanceof SearchlightAttackAction) {
-            addWeapon((SearchlightAttackAction) attack);
-        }
+        addEntityAction(attack);
 
         // nullify image
         image = null;
+    }
+
+    public void addEntityAction(EntityAction entityAction) {
+        weaponDescs.add(entityAction);
     }
 
     private void makePoly() {
@@ -265,145 +236,6 @@ class AttackSprite extends Sprite {
         return targetId;
     }
 
-    /**
-     * Adds a weapon to this attack
-     */
-    public void addWeapon(WeaponAttackAction attack) {
-        final Entity entity = this.boardView1.game.getEntity(attack.getEntityId());
-        final WeaponType wtype = (WeaponType) entity.getEquipment(
-                attack.getWeaponId()).getType();
-        final String roll = attack.toHit(this.boardView1.game).getValueAsString();
-        String table = attack.toHit(this.boardView1.game).getTableDesc();
-        if (!table.isEmpty()) {
-            table = " " + table;
-        }
-        boolean b = false;
-        ListIterator<String> i = weaponDescs.listIterator();
-        while (i.hasNext()) {
-             String s = i.next();
-            if (s.contains(wtype.getName())) {
-                i.set(s + ", " + roll + table);
-                b = true;
-            }
-        }
-
-        if (!b) {
-            weaponDescs.add(wtype.getName() + Messages.getString("BoardView1.needs") + roll + table);
-        }
-    }
-
-    public void addWeapon(KickAttackAction attack) {
-        String bufer = "";
-        String rollLeft = "";
-        String rollRight = "";
-        final int leg = attack.getLeg();
-        switch (leg) {
-            case KickAttackAction.BOTH:
-                rollLeft = KickAttackAction.toHit(
-                        this.boardView1.game,
-                        attack.getEntityId(),
-                        this.boardView1.game.getTarget(attack.getTargetType(),
-                                attack.getTargetId()),
-                        KickAttackAction.LEFT).getValueAsString();
-                rollRight = KickAttackAction.toHit(
-                        this.boardView1.game,
-                        attack.getEntityId(),
-                        this.boardView1.game.getTarget(attack.getTargetType(),
-                                attack.getTargetId()),
-                        KickAttackAction.RIGHT).getValueAsString();
-                bufer = Messages.getString("BoardView1.kickBoth", rollLeft, rollRight);
-                break;
-            case KickAttackAction.LEFT:
-                rollLeft = KickAttackAction.toHit(
-                        this.boardView1.game,
-                        attack.getEntityId(),
-                        this.boardView1.game.getTarget(attack.getTargetType(),
-                                attack.getTargetId()),
-                        KickAttackAction.LEFT).getValueAsString();
-                bufer = Messages.getString("BoardView1.kickLeft", rollLeft);
-                break;
-            case KickAttackAction.RIGHT:
-                rollRight = KickAttackAction.toHit(
-                        this.boardView1.game,
-                        attack.getEntityId(),
-                        this.boardView1.game.getTarget(attack.getTargetType(),
-                                attack.getTargetId()),
-                        KickAttackAction.RIGHT).getValueAsString();
-                bufer = Messages.getString("BoardView1.kickRight", rollRight);
-                break;
-        }
-        weaponDescs.add(bufer);
-    }
-
-    public void addWeapon(PunchAttackAction attack) {
-        String bufer = "";
-        String rollLeft;
-        String rollRight;
-        final int arm = attack.getArm();
-        switch (arm) {
-            case PunchAttackAction.BOTH:
-                rollLeft = PunchAttackAction.toHit(
-                        this.boardView1.game,
-                        attack.getEntityId(),
-                        this.boardView1.game.getTarget(attack.getTargetType(), attack.getTargetId()),
-                        PunchAttackAction.LEFT, false).getValueAsString();
-                rollRight = PunchAttackAction.toHit(
-                        this.boardView1.game,
-                        attack.getEntityId(),
-                        this.boardView1.game.getTarget(attack.getTargetType(), attack.getTargetId()),
-                        PunchAttackAction.RIGHT, false).getValueAsString();
-                bufer = Messages.getString("BoardView1.punchBoth", rollLeft, rollRight);
-                break;
-            case PunchAttackAction.LEFT:
-                rollLeft = PunchAttackAction.toHit(
-                        this.boardView1.game,
-                        attack.getEntityId(),
-                        this.boardView1.game.getTarget(attack.getTargetType(), attack.getTargetId()),
-                        PunchAttackAction.LEFT, false).getValueAsString();
-                bufer = Messages.getString("BoardView1.punchLeft", rollLeft);
-                break;
-            case PunchAttackAction.RIGHT:
-                rollRight = PunchAttackAction.toHit(
-                        this.boardView1.game,
-                        attack.getEntityId(),
-                        this.boardView1.game.getTarget(attack.getTargetType(), attack.getTargetId()),
-                        PunchAttackAction.RIGHT, false).getValueAsString();
-                bufer = Messages.getString("BoardView1.punchRight", rollRight);
-                break;
-        }
-        weaponDescs.add(bufer);
-    }
-
-    public void addWeapon(PushAttackAction attack) {
-        final String roll = attack.toHit(this.boardView1.game).getValueAsString();
-        weaponDescs.add(Messages.getString("BoardView1.push", roll));
-    }
-
-    public void addWeapon(ClubAttackAction attack) {
-        final String roll = attack.toHit(this.boardView1.game).getValueAsString();
-        final String club = attack.getClub().getName();
-        weaponDescs.add(Messages.getString("BoardView1.hit", club, roll));
-    }
-
-    public void addWeapon(ChargeAttackAction attack) {
-        final String roll = attack.toHit(this.boardView1.game).getValueAsString();
-        weaponDescs.add(Messages.getString("BoardView1.charge", roll));
-    }
-
-    public void addWeapon(DfaAttackAction attack) {
-        final String roll = attack.toHit(this.boardView1.game).getValueAsString();
-        weaponDescs.add(Messages.getString("BoardView1.DFA", roll));
-    }
-
-    public void addWeapon(ProtomechPhysicalAttackAction attack) {
-        final String roll = attack.toHit(this.boardView1.game).getValueAsString();
-        weaponDescs.add(Messages.getString("BoardView1.proto", roll));
-    }
-
-    public void addWeapon(SearchlightAttackAction attack) {
-        weaponDescs.add(Messages.getString("BoardView1.Searchlight"));
-    }
-
     @Override
     public StringBuffer getTooltip() {
         GamePhase phase = this.boardView1.game.getPhase();
@@ -414,7 +246,7 @@ class AttackSprite extends Sprite {
         result = guiScaledFontHTML(attackColor) + sAttacherDesc + "</FONT>";
         String sAttacks = "";
         if ((phase.isFiring()) || (phase.isPhysical())) {
-            for (String wpD : weaponDescs) {
+            for (String wpD : weaponDescs.getDescriptions()) {
                 sAttacks += "<BR>" + wpD;
             }
             result += guiScaledFontHTML(uiBlack()) + sAttacks + "</FONT>";

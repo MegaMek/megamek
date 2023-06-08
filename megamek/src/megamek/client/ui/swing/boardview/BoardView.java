@@ -4197,46 +4197,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             if ((sprite.getEntityId() == aa.getEntityId())
                 && (sprite.getTargetId() == aa.getTargetId())) {
                 // use existing attack, but add this weapon
-                if (aa instanceof WeaponAttackAction) {
-                    WeaponAttackAction waa = (WeaponAttackAction) aa;
-                    if (aa.getTargetType() != Targetable.TYPE_HEX_ARTILLERY) {
-                        sprite.addWeapon(waa);
-                    } else if (waa.getEntity(game).getOwner().getId() == localPlayer.getId()) {
-                        sprite.addWeapon(waa);
-                    }
-                }
-
-                if (aa instanceof KickAttackAction) {
-                    sprite.addWeapon((KickAttackAction) aa);
-                }
-
-                if (aa instanceof PunchAttackAction) {
-                    sprite.addWeapon((PunchAttackAction) aa);
-                }
-
-                if (aa instanceof PushAttackAction) {
-                    sprite.addWeapon((PushAttackAction) aa);
-                }
-
-                if (aa instanceof ClubAttackAction) {
-                    sprite.addWeapon((ClubAttackAction) aa);
-                }
-
-                if (aa instanceof ChargeAttackAction) {
-                    sprite.addWeapon((ChargeAttackAction) aa);
-                }
-
-                if (aa instanceof DfaAttackAction) {
-                    sprite.addWeapon((DfaAttackAction) aa);
-                }
-
-                if (aa instanceof ProtomechPhysicalAttackAction) {
-                    sprite.addWeapon((ProtomechPhysicalAttackAction) aa);
-                }
-
-                if (aa instanceof SearchlightAttackAction) {
-                    sprite.addWeapon((SearchlightAttackAction) aa);
-                }
+                sprite.addEntityAction(aa);
                 return;
             }
         }

@@ -353,8 +353,9 @@ public class RandomMapDialog extends JDialog implements ActionListener {
             return;
         }
 
-        // Cache the selected boards, so we can restore them
-        List<String> selectedBoards = mapSettings.getBoardsSelectedVector();
+        // Cache the selected boards if they exist, so we can restore them
+        List<String> selectedBoards = mapSettings != null ? mapSettings.getBoardsSelectedVector() : null;
+
         // Load the file.  If there is an error, log it and return.
         try (InputStream is = new FileInputStream(selectedFile)) {
             mapSettings = MapSettings.getInstance(is);
@@ -362,9 +363,13 @@ public class RandomMapDialog extends JDialog implements ActionListener {
             LogManager.getLogger().error("", e);
             return;
         }
-        mapSettings.setBoardsSelectedVector(selectedBoards);
+
+        if(selectedBoards != null) {
+            mapSettings.setBoardsSelectedVector(selectedBoards);
+        }
 
         // Pass the loaded settings into the two different views.
+        choTheme.setSelectedItem(mapSettings.getTheme());
         basicPanel.setMapSettings(mapSettings);
         advancedPanel.setMapSettings(mapSettings);
     }

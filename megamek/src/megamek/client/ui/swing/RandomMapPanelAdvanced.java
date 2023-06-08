@@ -27,6 +27,8 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -610,6 +612,11 @@ public class RandomMapPanelAdvanced extends JPanel {
         JLabel cityTypeLabel = new JLabel(Messages.getString("RandomMapDialog.labCity"));
         panel.add(cityTypeLabel);
         cityTypeCombo.setToolTipText(Messages.getString("RandomMapDialog.cityTypeCombo.toolTip"));
+
+        // don't nag the user about city parameters if the city is NONE
+        cityTypeCombo.addActionListener(e -> {
+            setCityPanelState();
+        });
         panel.add(cityTypeCombo);
         panel.add(new JLabel());
         panel.add(new JLabel());
@@ -660,7 +667,23 @@ public class RandomMapPanelAdvanced extends JPanel {
                                          Messages.getString("RandomMapDialog.borderCity")));
 
         RandomMapPanelBasic.makeCompactGrid(panel, 6, 4, 6, 6, 6, 6);
+        setCityPanelState();
         return panel;
+    }
+
+    /**
+     * Worker function that sets up the state of the city-related textboxes
+     */
+    private void setCityPanelState() {
+        boolean enableCityControls = cityTypeCombo.getSelectedIndex() != 0;
+
+        cityBlocks.setEnabled(enableCityControls);
+        cityCFMaxField.setEnabled(enableCityControls);
+        cityCFMinField.setEnabled(enableCityControls);
+        cityFloorsMaxField.setEnabled(enableCityControls);
+        cityFloorsMinField.setEnabled(enableCityControls);
+        cityDensityField.setEnabled(enableCityControls);
+        townSizeField.setEnabled(enableCityControls);
     }
 
     private JScrollPane setupEffectsPanel() {

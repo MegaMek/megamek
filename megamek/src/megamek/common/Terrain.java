@@ -358,6 +358,11 @@ public class Terrain implements Serializable {
                     roll.addModifier(4, "Ice");
                 }
                 break;
+            case Terrains.BLACK_ICE:
+                if ((moveMode != EntityMovementMode.HOVER) && (moveMode != EntityMovementMode.WIGE)) {
+                    roll.addModifier(4, "Black Ice");
+                }
+                break;
             case Terrains.INDUSTRIAL:
                 roll.addModifier(1, "Industrial Zone");
                 break;
@@ -498,6 +503,7 @@ public class Terrain implements Serializable {
                 }
                 return Math.max(0, mp);
             case Terrains.ICE:
+            case Terrains.BLACK_ICE:
                 if ((moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.WIGE)) {
                     return 0;
                 }

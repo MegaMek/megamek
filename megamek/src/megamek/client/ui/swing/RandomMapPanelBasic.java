@@ -656,13 +656,13 @@ public class RandomMapPanelBasic extends JPanel {
 
     private void setupWoods(String woodsValue, MapSettings mapSettings) {
         if (NONE.equalsIgnoreCase(woodsValue)) {
-            mapSettings.setForestParams(0, 0, 0, 0, 0);
+            mapSettings.setForestParams(0, 0, 0, 0, 0, 0);
         } else if (LOW.equalsIgnoreCase(woodsValue)) {
-            mapSettings.setForestParams(3, 6, 3, 6, 20);
+            mapSettings.setForestParams(3, 6, 3, 6, 20, 0);
         } else if (MEDIUM.equalsIgnoreCase(woodsValue)) {
-            mapSettings.setForestParams(4, 8, 3, 10, 30);
+            mapSettings.setForestParams(4, 8, 3, 10, 30, 0);
         } else {
-            mapSettings.setForestParams(6, 10, 8, 13, 45);
+            mapSettings.setForestParams(6, 10, 8, 13, 45, 5);
         }
     }
     

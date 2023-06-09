@@ -127,6 +127,10 @@ public class MapSettings implements Serializable {
     /** probability for heavy woods, Range 0..100 */
     @XmlElement(name = "FORESTHEAVYPROB")
     private int probHeavy = 30;
+
+    /** probability for ultra woods, Range 0..100 */
+    @XmlElement(name = "FORESTULTRAPROB")
+    private int probUltra = 0;
     
     /** how much foliage at least */
     @XmlElement(name = "FOLIAGEMINSPOTS")
@@ -441,6 +445,7 @@ public class MapSettings implements Serializable {
         minForestSize = other.getMinForestSize();
         maxForestSize = other.getMaxForestSize();
         probHeavy = other.getProbHeavy();
+        probUltra = other.getProbUltra();
         minFoliageSpots = other.getMinFoliageSpots();
         maxFoliageSpots = other.getMaxFoliageSpots();
         minFoliageSize = other.getMinFoliageSize();
@@ -964,6 +969,7 @@ public class MapSettings implements Serializable {
                 && (probDeep == other.getProbDeep()) && (minForestSpots == other.getMinForestSpots())
                 && (maxForestSpots == other.getMaxForestSpots()) && (minForestSize == other.getMinForestSize())
                 && (maxForestSize == other.getMaxForestSize()) && (probHeavy == other.getProbHeavy())
+                && (probUltra == other.getProbUltra())
                 && (minFoliageSpots == other.getMinFoliageSpots())
                 && (maxFoliageSpots == other.getMaxFoliageSpots()) && (minFoliageSize == other.getMinFoliageSize())
                 && (maxFoliageSize == other.getMaxFoliageSize()) && (probFoliageHeavy == other.getProbFoliageHeavy())
@@ -1062,9 +1068,9 @@ public class MapSettings implements Serializable {
         return maxForestSize;
     }
 
-    public int getProbHeavy() {
-        return probHeavy;
-    }
+    public int getProbHeavy() { return probHeavy; }
+
+    public int getProbUltra() { return probUltra; }
     
     public int getMinFoliageSpots() {
         return minFoliageSpots;
@@ -1405,12 +1411,13 @@ public class MapSettings implements Serializable {
     /**
      * set the Parameters for the Map Generator
      */
-    public void setForestParams(int minSpots, int maxSpots, int minSize, int maxSize, int prob) {
+    public void setForestParams(int minSpots, int maxSpots, int minSize, int maxSize, int probHeavy, int probUltra) {
         minForestSpots = minSpots;
         maxForestSpots = maxSpots;
         minForestSize = minSize;
         maxForestSize = maxSize;
-        probHeavy = prob;
+        this.probHeavy = probHeavy;
+        this.probUltra = probUltra;
     }
     
     /**

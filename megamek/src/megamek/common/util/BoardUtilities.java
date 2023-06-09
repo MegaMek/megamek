@@ -186,7 +186,8 @@ public class BoardUtilities {
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
             placeSomeTerrain(result, Terrains.WOODS,
-                    mapSettings.getProbHeavy(), mapSettings.getMinForestSize(),
+                    mapSettings.getProbHeavy(), mapSettings.getProbUltra(),
+                    mapSettings.getMinForestSize(),
                     mapSettings.getMaxForestSize(), reverseHex, true);
         }
         
@@ -397,7 +398,15 @@ public class BoardUtilities {
     }
 
     /**
-     * Places randomly some connected Woods.
+     * Overload that places some connected terrain with no chance of "ultra" version
+     */
+    protected static void placeSomeTerrain(Board board, int terrainType, int probMore, int minHexes,
+                                           int maxHexes, Map<Hex, Point> reverseHex, boolean exclusive) {
+        placeSomeTerrain(board, terrainType, probMore, 0, minHexes, maxHexes, reverseHex, exclusive);
+    }
+
+    /**
+     * Places randomly some connected terrain.
      *
      * @param board The board the terrain goes on.
      * @param terrainType The type of terrain to place {@link Terrains}.
@@ -406,7 +415,7 @@ public class BoardUtilities {
      * @param reverseHex
      * @param exclusive Set TRUE if this terrain cannot be combined with any other terrain types.
      */
-    protected static void placeSomeTerrain(Board board, int terrainType, int probMore, int minHexes,
+    protected static void placeSomeTerrain(Board board, int terrainType, int probMore, int probUltra, int minHexes,
                                            int maxHexes, Map<Hex, Point> reverseHex, boolean exclusive) {
         Point p = new Point(Compute.randomInt(board.getWidth()), Compute.randomInt(board.getHeight()));
         int count = minHexes;
@@ -437,12 +446,10 @@ public class BoardUtilities {
             if (exclusive) {
                 field.removeAllTerrains();
             }
-            int tempInt = (Compute.randomInt(100) < probMore) ? 2 : 1;
-            Terrain tempTerrain = new Terrain(terrainType, tempInt);
+            int terrainDensity = pickTerrainDensity(probMore, probUltra);//(Compute.randomInt(100) < probMore) ? 2 : 1;
+            Terrain tempTerrain = new Terrain(terrainType, terrainDensity);
             field.addTerrain(tempTerrain);
-            if (terrainType == Terrains.WOODS) {
-                field.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 2));
-            }
+            growTreesIfNecessary(field, terrainType, terrainDensity);
             unUsed.remove(field);
             findAllUnused(board, terrainType, alreadyUsed, unUsed, field, reverseHex);
         }
@@ -468,9 +475,43 @@ public class BoardUtilities {
 
         }
     }
+
+    /**
+     * Worker function that picks a terrain density (light, heavy, ultra) based on the passed-in weights.
+     * Likelyhood of light is 100 - probHeavy.
+     */
+    private static int pickTerrainDensity(int probHeavy, int probUltra) {
+        int heavyThreshold = 100 - probHeavy;
+        int ultraThreshold = 100;
+        int sum = 100 + probUltra;
+
+        int roll = Compute.randomInt(sum);
+
+        if (roll < heavyThreshold) {
+            return 1;
+        } else if (roll < ultraThreshold) {
+            return 2;
+        } else {
+            return 3;
+        }
+    }
+
+    /**
+     * Helper method that places a FOLIAGE_ELEV terrain if necessary
+     */
+    private static void growTreesIfNecessary(Hex field, int terrainType, int terrainDensity) {
+        // light/heavy woods and jungle go up two levels
+        if (((terrainType == Terrains.WOODS) || (terrainType == Terrains.JUNGLE))
+                && ((terrainDensity == 1) || (terrainDensity == 2))) {
+            field.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 2));
+        // ultra woods and jungle go up three levels
+        } else if ((terrainType == Terrains.WOODS) && (terrainDensity == 3)) {
+            field.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 3));
+        }
+    }
     
     /**
-     * Places randomly some connected Woods.
+     * Places randomly some connected foliage.
      *
      * @param board The board the terrain goes on.
      * @param terrainType The type of terrain to place {@link Terrains}.

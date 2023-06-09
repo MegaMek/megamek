@@ -6,7 +6,7 @@ mul id:1994
 Config:Biped Omnimech
 techbase:Inner Sphere
 era:3069
-source:TRO 3075
+source:TRO: 3075
 rules level:2
 
 mass:30

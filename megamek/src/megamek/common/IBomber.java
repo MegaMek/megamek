@@ -1,5 +1,20 @@
-/**
- * 
+/*
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common;
 
@@ -13,13 +28,12 @@ import megamek.common.options.OptionsConstants;
  * LandAirMech, and VTOL.
  * 
  * @author Neoancient
- *
  */
 public interface IBomber {
     
-    public static final String SPACE_BOMB_ATTACK = "SpaceBombAttack";
-    public static final String DIVE_BOMB_ATTACK = "DiveBombAttack";
-    public static final String ALT_BOMB_ATTACK = "AltBombAttack";
+    String SPACE_BOMB_ATTACK = "SpaceBombAttack";
+    String DIVE_BOMB_ATTACK = "DiveBombAttack";
+    String ALT_BOMB_ATTACK = "AltBombAttack";
 
     /**
      * @return The total number of bomb points that the bomber can carry.
@@ -68,11 +82,12 @@ public interface IBomber {
      * Used by VTOLs and LAMs in airmech mode to declare the target hex for a bomb attack during the movement
      * phase.
      */
-    
     default void setVTOLBombTarget(Targetable target) {}
+
     default Targetable getVTOLBombTarget() {
         return null;
     }
+
     default boolean isVTOLBombing() {
         return getVTOLBombTarget() != null;
     }
@@ -122,7 +137,7 @@ public interface IBomber {
                 // some bombs need an associated weapon and if so
                 // they need a weapon for each bomb
                 if (null != BombType.getBombWeaponName(type)) {
-                    Mounted m = null;
+                    Mounted m;
                     try {
                         m = ((Entity) this).addBomb(EquipmentType.get(BombType
                                 .getBombWeaponName(type)), loc);

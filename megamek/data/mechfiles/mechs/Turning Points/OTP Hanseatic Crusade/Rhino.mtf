@@ -1,0 +1,153 @@
+Version:1.0
+Rhino
+
+mul id:7883
+
+Config:Quad
+techbase:Mixed (Clan Chassis)
+era:3140
+source:OTP: Hanseatic Crusade - Dark Age
+rules level:4
+
+mass:50
+engine:300 XL (Clan) Engine
+structure:IS Reinforced
+myomer:Standard
+
+heat sinks:12 Double
+walk mp:6
+jump mp:0
+
+armor:Ferro-Fibrous(Clan)
+FLL armor:21
+FRL armor:21
+LT armor:20
+RT armor:20
+CT armor:26
+HD armor:9
+RLL armor:21
+RRL armor:21
+RTL armor:4
+RTR armor:4
+RTC armor:5
+
+Weapons:5
+ER Medium Laser, Head
+ER Medium Laser, Front Right Leg
+ER Medium Laser, Front Left Leg
+ER Medium Laser, Front Right Leg
+ER Medium Laser, Front Left Leg
+
+Front Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLERMediumLaser
+CLERMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Front Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLERMediumLaser
+CLERMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Ram Plate
+Spikes
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Ram Plate
+Spikes
+CLMASC
+CLMASC
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Ram Plate
+Spikes
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLERMediumLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

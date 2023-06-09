@@ -1,0 +1,122 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<Name>
+Croyle Systems Cortez Series N
+</Name>
+
+<model>
+
+</model>
+
+<mul id:>
+4027
+</mul id:>
+
+<year>
+2582
+</year>
+
+<originalBuildYear>
+2582
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+infantrybay:1.0:1:1:Foot
+cargobay:8.92:1:2
+</transporters>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
+21
+18
+18
+15
+16
+</armor>
+
+<Body Equipment>
+AmphibiousChassis
+Basic Fire Control
+Environmental Sealing
+</Body Equipment>
+
+<Front Equipment>
+BeagleActiveProbe
+Manipulator [Non-Mech/Non-Battle Armor]
+Manipulator [Non-Mech/Non-Battle Armor]
+HHSearchlight
+HHSearchlight
+HHSearchlight
+</Front Equipment>
+
+<Right Equipment>
+HHSearchlight
+HHSearchlight
+HHSearchlight
+</Right Equipment>
+
+<Left Equipment>
+HHSearchlight
+HHSearchlight
+HHSearchlight
+</Left Equipment>
+
+<Rear Equipment>
+Cargo Container (10 tons)
+RemoteSensorDispenser
+HHSearchlight
+HHSearchlight
+HHSearchlight
+</Rear Equipment>
+
+<Turret Equipment>
+Medium Laser
+Searchlight
+</Turret Equipment>
+
+<barrating>
+8
+</barrating>
+
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
+<source>
+TRO: VAr - Star League
+</source>
+
+<tonnage>
+75.0
+</tonnage>
+
+<fuel>
+0.0
+</fuel>

@@ -762,6 +762,7 @@ Mobile Long Tom Artillery (Unofficial) (+ Carriage)|Mobile Long Tom Artillery (+
 O-65 'Oppie' Hazardous Materials Recovery Vehicle O-65 HMRV|HMRV (Hazardous Materials Recovery Vehicle) 'Oppie' O-65
 O-66 'Oppie' Hazardous Materials Recovery Vehicle O-66 HMRV|HMRV (Hazardous Materials Recovery Vehicle) 'Oppie' O-66
 Schildkrote Line Tank|Schildkröte Line Tank
+Schildkröte Line Tank (Standard)|Schildkröte Line Tank
 
 #Warships
 Aegis Heavy Cruiser (Clan)|Aegis Heavy Cruiser (2843)
@@ -783,7 +784,8 @@ Essex Destroyer (Clan)|Essex II Destroyer (2862)
 Essex I Destroyer (Standard)|Essex I Destroyer (2351)
 Farragut Battleship (Standard)|Farragut Battleship (2448)
 Fox Corvette (Standard)|Fox Corvette (3057)
-Fredasa Corvette Raider (Standard)|Fredasa Corvette Raider (2962)
+Fredasa Corvette Raider (Standard)|Fredasa (Corvette-Raider) (2962)
+Fredasa Corvette Raider (2962)|Fredasa (Corvette-Raider) (2962)
 Impavido Destroyer (Standard)|Impavido Destroyer (3058)
 Kimagure Pursuit Cruiser (Standard)|Kimagure Pursuit Cruiser (2582)
 Kirishima Cruiser (Standard)|Kirishima Cruiser (3061)

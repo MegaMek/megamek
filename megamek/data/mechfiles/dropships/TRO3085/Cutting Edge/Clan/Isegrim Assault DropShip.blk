@@ -1,0 +1,224 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Isegrim Assault DropShip
+</Name>
+
+<model>
+
+</model>
+
+<mul id:>
+4376
+</mul id:>
+
+<year>
+3083
+</year>
+
+<originalBuildYear>
+3083
+</originalBuildYear>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+smallcraftbay:1.0:1:2
+2ndclassquarters:0.0:0
+steeragequarters:50.0:0
+1stclassquarters:50.0:0
+crewquarters:147.0:0
+cargobay:418.0:2:6
+</transporters>
+
+<SafeThrust>
+8
+</SafeThrust>
+
+<heatsinks>
+210
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+9000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<armor>
+671
+501
+501
+338
+</armor>
+
+<Nose Equipment>
+(B) Sub-Capital Missile Launcher (Piranha)
+Sub-Capital Missile Launcher (Piranha)
+Sub-Capital Missile Launcher (Piranha)
+Ammo Piranha:30
+(B) Sub-Capital Missile Launcher (Manta Ray)
+Sub-Capital Missile Launcher (Manta Ray)
+Sub-Capital Missile Launcher (Manta Ray)
+Ammo Manta Ray:30
+(B) CLERPPC
+CLERPPC
+CLERPPC
+(B) CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) CLHAG40
+CLHAG40
+CLHAG40
+Hyper-Assault Gauss Rifle/40 Ammo:60
+(B) CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+(B) CLATM12
+CLATM12
+CLATM12
+Clan Ammo ATM-12:30
+Clan Ammo ATM-12 ER:30
+Clan Ammo ATM-12 HE:30
+(B) CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAMS Ammo:72
+(R) (B) CLAntiMissileSystem
+(R) CLAntiMissileSystem
+(R) CLAntiMissileSystem
+(R) CLAMS Ammo:72
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) CLHAG40
+CLHAG40
+CLHAG40
+Hyper-Assault Gauss Rifle/40 Ammo:60
+(B) CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+(B) CLATM12
+CLATM12
+CLATM12
+Clan Ammo ATM-12:30
+Clan Ammo ATM-12 ER:30
+Clan Ammo ATM-12 HE:30
+(B) CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAMS Ammo:72
+(R) (B) CLAntiMissileSystem
+(R) CLAntiMissileSystem
+(R) CLAntiMissileSystem
+(R) CLAMS Ammo:72
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) CLHAG40
+CLHAG40
+CLHAG40
+Hyper-Assault Gauss Rifle/40 Ammo:60
+(B) CLERPPC
+CLERPPC
+CLERPPC
+(B) CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+(B) CLATM12
+CLATM12
+CLATM12
+Clan Ammo ATM-12:30
+Clan Ammo ATM-12 ER:30
+Clan Ammo ATM-12 HE:30
+</Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<structural_integrity>
+21
+</structural_integrity>
+
+<source>
+TRO: 3085 - Jihad
+</source>
+
+<tonnage>
+8500.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+26
+</crew>
+
+<officers>
+5
+</officers>
+
+<gunners>
+13
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+10
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+3
+</life_boat>
+
+<escape_pod>
+3
+</escape_pod>

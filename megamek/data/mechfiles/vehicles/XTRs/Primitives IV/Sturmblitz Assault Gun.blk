@@ -1,0 +1,94 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<Name>
+Sturmblitz Assault Gun
+</Name>
+
+<model>
+
+</model>
+
+<mul id:>
+7191
+</mul id:>
+
+<year>
+2488
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<engine_type>
+1
+</engine_type>
+
+<fuel>
+1
+</fuel>
+
+<armor>
+40
+38
+38
+10
+</armor>
+
+<barrating>
+10
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<Body Equipment>
+Armored Chassis
+Advanced Fire Control
+ISAC20p Ammo
+ISAC20p Ammo
+ISAC20p Ammo
+ISAC20p Ammo
+</Body Equipment>
+
+<Front Equipment>
+Autocannon/20 Primitive
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<source>
+XTR: Primitives IV - Age of War
+</source>
+
+<tonnage>
+75.0
+</tonnage>

@@ -1,0 +1,132 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Axel Heavy Tank IIC
+</Name>
+
+<model>
+
+</model>
+
+<mul id:>
+182
+</mul id:>
+
+<year>
+3074
+</year>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<armor>
+65
+45
+45
+30
+35
+</armor>
+
+<Body Equipment>
+Clan Ammo LRM-15 (Clan) Artemis-capable
+Clan Ammo LRM-15 (Clan) Artemis-capable
+Clan Ammo LRM-15 (Clan) Artemis-capable
+Clan Ammo LRM-15 (Clan) Artemis-capable
+CLAPGaussRifle Ammo
+CLECMSuite
+CLCASE
+</Body Equipment>
+
+<Front Equipment>
+CLAPGaussRifle
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+CLLargePulseLaser
+CLLRM15
+CLArtemisIV
+CLLRM15
+CLArtemisIV
+</Turret Equipment>
+
+<source>
+TRO: 3058 - Jihad
+</source>
+
+<tonnage>
+65.0
+</tonnage>
+
+<capabilities>
+To make room for the engine, the tank is only protected by ten and a half tons of armor. The internal combustion engine also reduces the top speed of the tank to 54 km/h.
+</capabilities>
+
+<overview>
+The Axel series of heavy tanks are based on the popular Rommel design, but uses an internal combustion engine.
+</overview>
+
+<deployment>
+Created during the Jihad, this version of the Axel uses a fusion engine to reach a top speed of 64 km/h. The weaponry has been completely replaced with Clan equipment. The weapons include an AP Gauss Rifle, Large Pulse Laser, and two LRM-15 missile launchers equipped with Artemis IV fire control systems. The tank is protected by an ECM Suite, CASE and eleven and a half tons of ferro-fibrous armor. 
+</deployment>
+
+<history>
+The tank was produced by engineers working for the Free Rasalhague Republic. Despite the lighter armor and lower top speed, the Axel family was widely used by the Free Rasalhague Republic.
+</history>
+
+<manufacturer>
+Benson and Bjorn
+</manufacturer>
+
+<primaryFactory>
+Spittal
+</primaryFactory>
+
+<source>
+Rec Guide:ilClan #27 - Jihad
+</source>
+
+<tonnage>
+65.0
+</tonnage>

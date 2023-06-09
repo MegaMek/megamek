@@ -12,7 +12,6 @@
 package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.battlevalue.JumpShipBVCalculator;
 import megamek.common.cost.JumpShipCostCalculator;
 import megamek.common.options.OptionsConstants;
 
@@ -1108,11 +1107,6 @@ public class Jumpship extends Aero {
         return 6;
     }
 
-    @Override
-    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
-        return JumpShipBVCalculator.calculateBV(this, ignoreC3, ignoreSkill, calculationReport);
-    }
-
     public int getArcswGuns() {
         // return the number
         int nArcs = 0;
@@ -1349,9 +1343,9 @@ public class Jumpship extends Aero {
     }
 
     @Override
-    public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
+    public int getRunMP(MPCalculationSetting mpCalculationSetting) {
         if (!hasStationKeepingDrive()) {
-            return super.getRunMP(gravity, ignoreheat, ignoremodulararmor);
+            return super.getRunMP(mpCalculationSetting);
         }
         return (int) Math.floor(getAccumulatedThrust());
     }

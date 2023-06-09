@@ -259,4 +259,18 @@ public interface CalculationReport {
      * has no effect.
      */
     void discardTentativeSection();
+
+    /**
+     * End the current section of lines, keeping or discarding the section depending on the given
+     * keepSection. Calls either {@link #endTentativeSection()} or {@link #discardTentativeSection()}.
+     *
+     * @param keepSection When true, keeps the current section, otherwise discards it.
+     */
+    default void finalizeTentativeSection(boolean keepSection) {
+        if (keepSection) {
+            endTentativeSection();
+        } else {
+            discardTentativeSection();
+        }
+    }
 }

@@ -6,7 +6,7 @@ mul id:3361
 Config:Biped
 techbase:Clan
 era:2849
-source:TRO 3060
+source:TRO: 3060
 rules level:2
 
 mass:30

@@ -1,7 +1,7 @@
 3145 LCAF Medium Vehicles F
 Hetzer Wheeled Assault Gun (LB-X), 1
 Glaive Medium Tank (Standard), 2
-Schildkröte Line Tank,3
+Schildkrote Line Tank,3
 Vedette Medium Tank (NETC), 4
 Drillson Heavy Hover Tank (Standard), 5
 Fulcrum Heavy Hovertank (Standard), 6

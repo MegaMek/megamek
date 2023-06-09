@@ -1,0 +1,117 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<Name>
+Donovan-Miter Magellan Series Four
+</Name>
+
+<model>
+
+</model>
+
+<mul id:>
+4088
+</mul id:>
+
+<year>
+3056
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+troopspace:5.0
+cargobay:9.98:1
+</transporters>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<engine_type>
+6
+</engine_type>
+
+<fuel>
+3
+</fuel>
+
+<armor>
+18
+13
+13
+8
+19
+</armor>
+
+<barrating>
+5
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<armor_tech_rating>
+4
+</armor_tech_rating>
+
+<engine_tech_rating>
+3
+</engine_tech_rating>
+
+<Body Equipment>
+Basic Fire Control
+IS Machine Gun Ammo - Half
+Environmental Sealing
+AmphibiousChassis
+</Body Equipment>
+
+<Front Equipment>
+Searchlight
+Manipulator
+Manipulator
+</Front Equipment>
+
+<Right Equipment>
+Searchlight
+</Right Equipment>
+
+<Left Equipment>
+Searchlight
+</Left Equipment>
+
+<Rear Equipment>
+Lift Hoist
+</Rear Equipment>
+
+<Turret Equipment>
+Machine Gun
+Machine Gun
+Searchlight
+</Turret Equipment>
+
+<source>
+TRO: VAr - Clan Invasion
+</source>
+
+<tonnage>
+75.0
+</tonnage>

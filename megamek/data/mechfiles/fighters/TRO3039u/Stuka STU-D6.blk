@@ -112,7 +112,7 @@ IS Ammo LRM-20
 </Fuselage Equipment>
 
 <source>
-TRO 3039 - Clan Invasion
+TRO: 3039 - Clan Invasion
 </source>
 
 <tonnage>
@@ -156,7 +156,7 @@ This variant is unique to the MUL as it has the ER PPCs. But I've adjusted the d
 </notes>
 
 <source>
-H:Operation Klondyke - Star League
+Historical:Operation Klondike - Star League
 </source>
 
 <tonnage>

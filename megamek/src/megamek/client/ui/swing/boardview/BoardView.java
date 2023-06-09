@@ -611,6 +611,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                     newX = scrollpane.getViewport().getViewPosition().x;
                 }
                 scrollpane.getViewport().setViewPosition(new Point(newX, newY));
+                pingMinimap();
             }
         };
         addMouseMotionListener(mouseMotionListener);
@@ -6409,7 +6410,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
     // prepares the sprites for visual and sensor ranges
     public void setSensorRange(Entity entity, Coords c) {
-        if (entity == null || c == null) {
+        if (entity == null || c == null || !GUIP.getShowSensorRange()) {
             clearSensorsRanges();
             return;
         }
@@ -6426,7 +6427,8 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         int minAirSensorRange = 0;
         int maxAirSensorRange = 0;
 
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)
+                || game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
             Compute.SensorRangeHelper srh = Compute.getSensorRanges(entity.getGame(), entity);
 
             if (srh != null) {
@@ -6464,11 +6466,19 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         List<Set<Coords>> sensorRanges = new ArrayList<>(1);
         int j = 0;
 
+        // find max range possible on map, no need to check beyond it
+        int rangeToCorner = (new Coords(0, game.getBoard().getHeight())).distance(c);
+        rangeToCorner = Math.max(rangeToCorner, (new Coords(0, 0)).distance(c));
+        rangeToCorner = Math.max(rangeToCorner, (new Coords(game.getBoard().getWidth(), 0)).distance(c));
+        rangeToCorner = Math.max(rangeToCorner, (new Coords(game.getBoard().getWidth(), game.getBoard().getHeight())).distance(c));
+
         for (RangeHelper rangeH : lBrackets) {
             sensorRanges.add(new HashSet<>());
+            int rangeMin = Math.min(rangeH.min, rangeToCorner);
+            int rangeMax = Math.min(rangeH.max, rangeToCorner);
 
-            if (rangeH.max > 0) {
-                for (int i = rangeH.min; i <= rangeH.max; i++) {
+            if (rangeMin != rangeMax) {
+                for (int i = rangeMin; i <= rangeMax; i++) {
                     // Add all hexes up to the range to separate lists
                     sensorRanges.get(j).addAll(c.allAtDistance(i));
                 }

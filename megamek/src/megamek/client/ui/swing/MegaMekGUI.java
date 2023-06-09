@@ -32,6 +32,7 @@ import megamek.client.ui.swing.dialog.MainMenuUnitBrowserDialog;
 import megamek.client.ui.swing.gameConnectionDialogs.ConnectDialog;
 import megamek.client.ui.swing.gameConnectionDialogs.HostDialog;
 import megamek.client.ui.swing.skinEditor.SkinEditorMainGUI;
+import megamek.client.ui.swing.tooltip.PilotToolTip;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.MegamekButton;
@@ -456,6 +457,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             frame.setVisible(true);
             return;
         }
+
+        // delete PilotToolTip cache
+        PilotToolTip.deleteImageCache();
 
         client = new Client(playerName, serverAddress, port);
         ClientGUI gui = new ClientGUI(client, controller);

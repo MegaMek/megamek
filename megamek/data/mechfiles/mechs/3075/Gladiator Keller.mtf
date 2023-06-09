@@ -6,6 +6,7 @@ Config:Biped
 techbase:Inner Sphere
 era:3071
 rules level:4
+source:TRO: 3075 - Jihad
 
 mass:55
 engine:220 Light Engine(IS)

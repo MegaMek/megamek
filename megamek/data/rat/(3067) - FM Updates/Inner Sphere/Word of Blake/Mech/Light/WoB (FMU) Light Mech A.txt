@@ -8,5 +8,5 @@ Gurkha GUR-2G,6
 Mercury MCY-97,5
 Locust LCT-5M,4
 Nexus NXS1-B,3
-Tarantula ZPH-1A,2
+Tarantula ZPH-1,2
 Ostscout OTT-9CS,1

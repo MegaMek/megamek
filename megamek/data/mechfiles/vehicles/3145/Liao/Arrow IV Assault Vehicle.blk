@@ -1,0 +1,111 @@
+#building block data file
+<BlockVersion>
+1.1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Arrow IV Assault Vehicle
+</Name>
+
+<model>
+
+</model>
+
+<mul id:>
+6446
+</mul id:>
+
+<year>
+3089
+</year>
+
+<originalBuildYear>
+3089
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+6
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+45
+44
+44
+50
+52
+32
+</armor>
+
+<Body Equipment>
+ISAMS Ammo
+ISAMS Ammo
+ISArrowIVAmmo
+ISArrowIVAmmo
+ISArrowIVAmmo
+ISArrowIVAmmo
+ISCASE
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+ISAntiMissileSystem
+</Right Equipment>
+
+<Left Equipment>
+ISAntiMissileSystem
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Rear Turret Equipment>
+ISArrowIV
+</Rear Turret Equipment>
+
+<Front Turret Equipment>
+ISMediumVSPLaser
+ISMediumVSPLaser
+</Front Turret Equipment>
+
+<source>
+TRO: 3145 Capellan Confederation - Early Republic
+</source>
+
+<tonnage>
+80.0
+</tonnage>
+

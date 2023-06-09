@@ -882,7 +882,7 @@ public class BasicPathRankerTest {
         when(unmovedMech.isSelectableThisTurn()).thenReturn(true);
         when(unmovedMech.isImmobile()).thenReturn(false);
         // Movement should cause it to be further away.
-        when(unmovedMech.getWalkMP(anyBoolean(), anyBoolean(), anyBoolean())).thenReturn(6);
+        when(unmovedMech.getWalkMP()).thenReturn(6);
         enemyList.add(unmovedMech);
         assertEquals(enemyMech, testRanker.findClosestEnemy(me, position, mockGame));
 

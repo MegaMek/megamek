@@ -1,7 +1,7 @@
 3059 Free Worlds League Light Mechs, Tech Level B
 Firestarter FS9-S1,1
-Tarantula ZPH-1A,2
-Tarantula ZPH-1A,3
+Tarantula ZPH-1,2
+Tarantula ZPH-1,3
 Wasp WSP-3M,4
 Stinger STG-5M,5
 Locust LCT-3M,6

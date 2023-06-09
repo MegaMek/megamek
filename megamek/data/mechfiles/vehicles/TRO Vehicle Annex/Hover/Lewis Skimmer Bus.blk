@@ -1,0 +1,104 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+LargeSupportTank
+</UnitType>
+
+<Name>
+Lewis Skimmer Bus
+</Name>
+
+<model>
+
+</model>
+
+<mul id:>
+4503
+</mul id:>
+
+<year>
+3026
+</year>
+
+<originalBuildYear>
+3026
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<transporters>
+cargobay:18.05:1:1
+standardseats:86.0:0
+</transporters>
+
+<cruiseMP>
+6
+</cruiseMP>
+
+<engine_type>
+6
+</engine_type>
+
+<armor>
+11
+9
+9
+9
+9
+10
+</armor>
+
+<Body Equipment>
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Front Right Equipment>
+</Front Right Equipment>
+
+<Front Left Equipment>
+</Front Left Equipment>
+
+<Rear Right Equipment>
+</Rear Right Equipment>
+
+<Rear Left Equipment>
+</Rear Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<barrating>
+4
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<source>
+TRO: VAr - Succession Wars
+</source>
+
+<tonnage>
+80.0
+</tonnage>
+
+<fuel>
+4.0
+</fuel>

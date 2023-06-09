@@ -206,12 +206,12 @@ public class VerifiableTextField extends JTextField implements FocusListener {
     /**
      * Compares the text field's value to the list of {@link DataVerifier} objects to ensure the validity of the data.
      * If the text value passes all validation checks, a NULL value will be returned.  Otherwise a description of
-     * the failed validation will be returned.
+     * the failed validation will be returned. Does not verify if the field is disabled.
      *
      * @return NULL if the text in the field is valid. A description of the failure otherwise.
      */
     public String verifyTextS() {
-        if (verifiers.isEmpty()) {
+        if (verifiers.isEmpty() || !isEnabled()) {
             return null;
         }
 

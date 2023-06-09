@@ -425,7 +425,7 @@ public class MechFileParser {
                     ent.getSensors().add(new Sensor(Sensor.TYPE_NOVA));
                     ent.setNextSensor(ent.getSensors().lastElement());
                 } else if (m.getType().getInternalName().equals(Sensor.CLAN_AP)) {
-                    ent.getSensors().add(new Sensor(Sensor.TYPE_CLAN_BAP));
+                    ent.getSensors().add(new Sensor(Sensor.TYPE_CLAN_AP));
                     ent.setNextSensor(ent.getSensors().lastElement());
                 } else if (m.getType().getInternalName()
                         .equals(Sensor.LIGHT_AP)) {

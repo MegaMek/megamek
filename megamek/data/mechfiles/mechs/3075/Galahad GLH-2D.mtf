@@ -6,7 +6,7 @@ mul id:1168
 Config:Biped
 techbase:Inner Sphere
 era:2594
-source:TRO 3075
+source:TRO: 3075
 rules level:2
 
 mass:60

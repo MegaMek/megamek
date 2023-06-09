@@ -1,0 +1,102 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+LargeSupportTank
+</UnitType>
+
+<Name>
+Prairie Schooner Land Train
+</Name>
+
+<model>
+
+</model>
+
+<mul id:>
+7334
+</mul id:>
+
+<year>
+3058
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<fuel>
+0
+</fuel>
+
+<armor>
+34
+30
+30
+30
+30
+30
+</armor>
+
+<barrating>
+6
+</barrating>
+
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
+<Body Equipment>
+Tractor
+ISOffRoadChassis
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Front Right Equipment>
+</Front Right Equipment>
+
+<Front Left Equipment>
+</Front Left Equipment>
+
+<Rear Right Equipment>
+</Rear Right Equipment>
+
+<Rear Left Equipment>
+</Rear Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<transporters>
+cargobay:17:1
+2ndclassquarters:21:3
+</transporters>
+
+<source>
+TRO: VAr - Clan Invasion
+</source>
+
+<tonnage>
+90.0
+</tonnage>

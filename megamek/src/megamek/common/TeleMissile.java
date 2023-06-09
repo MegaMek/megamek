@@ -160,15 +160,15 @@ public class TeleMissile extends Aero {
     public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
         return 0;
     }
-    
+
     @Override
-    public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
+    public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
         return getCurrentFuel();
     }
 
     @Override
-    public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-        return getWalkMP(gravity, ignoreheat, ignoremodulararmor);
+    public int getRunMP(MPCalculationSetting mpCalculationSetting) {
+        return getWalkMP(mpCalculationSetting);
     }
 
     @Override

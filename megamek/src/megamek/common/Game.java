@@ -1238,7 +1238,7 @@ public class Game extends AbstractGame implements Serializable {
         if ((entity instanceof Mech)
                 && getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)) {
             ((Mech) entity).setAutoEject(true);
-            ((Mech) entity).setCondEjectAmmo(!entity.hasCase() && !((Mech) entity).hasCASEIIAnywhere());
+            ((Mech) entity).setCondEjectAmmo(!entity.hasCase() && !entity.hasCASEII());
             ((Mech) entity).setCondEjectEngine(true);
             ((Mech) entity).setCondEjectCTDest(true);
             ((Mech) entity).setCondEjectHeadshot(true);

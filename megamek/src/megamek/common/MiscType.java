@@ -7780,10 +7780,10 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CLNavalTugAdaptor");
         misc.flags = misc.flags.or(F_NAVAL_TUG_ADAPTOR).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_WS_EQUIPMENT);
         misc.rulesRefs = "334, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_F)
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_F)
                 .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
-                .setISAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false).setStaticTechLevel(SimpleTechLevel.ADVANCED);
+                .setAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
+                .setApproximate(false, false, false, false, false).setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         return misc;
     }
@@ -8283,6 +8283,7 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createHarJelII() {
         MiscType misc = new MiscType();
+        misc.shortName = "HarJel II";
         misc.name = "HarJel Repair Systems (HarJel II)";
         misc.setInternalName(misc.name);
         misc.addLookupName("HarJel II Self-Repair System");
@@ -8308,6 +8309,7 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createHarJelIII() {
         MiscType misc = new MiscType();
+        misc.shortName = "HarJel III";
         misc.name = "HarJel Repair Systems (HarJel III)";
         misc.addLookupName("HarJel III Self-Repair System");
         misc.setInternalName(misc.name);
@@ -10432,7 +10434,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_BATTLE_CLAW).or(F_BA_MANIPULATOR);
-        misc.bv = 1;
+        misc.bv = 0;
         misc.cost = 10000;
         misc.rulesRefs = "259, TM";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)

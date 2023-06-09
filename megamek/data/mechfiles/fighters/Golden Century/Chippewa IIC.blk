@@ -123,9 +123,7 @@ Clan Ammo LRM-15 (Clan) Artemis-capable
 Clan Streak SRM 4 Ammo
 </Fuselage Equipment>
 
-<source>
-Succession Wars
-</source>
+
 
 <tonnage>
 90.0
@@ -160,7 +158,7 @@ TARGETING:Rander TAS
 </systemManufacturers>
 
 <source>
-TR:Golden Century - Succession Wars
+TRO: Golden Century - Early Succession War
 </source>
 
 <tonnage>

@@ -229,19 +229,15 @@ ISArtemisIV
 </structural_integrity>
 
 <capabilities>
-The Impavidos nose bay anti-fighter weaponry featured twin Gauss rifles, Artemis IV FCS-equipped LRM-20s, and anti-missile systems, along with an ER large laser paired with a standard large laser, while the capital grade firepower consisted of twin NAC/20s, a NAC/10, NL45, and light NPPC. The forward and aft angles each duplicate the nose bay, save for excluding Gauss Rifles, AMS and naval PPC. The Impavidos broadside bays are weak link of the vessel, limited to an ER and standard Large Laser, two LRM-20s, a Large Pulse Laser, two NL45s and light naval PPC on each side. Even directly aft is better armed, removing the Gauss Rifles and naval PPCs but mirroring the impressive nose bays.
+The Impavido-class destroyer boasts formidable capabilities, designed to rival the emerging fleets of other Great Houses. Its advanced maneuvering drive, of particular interest, enables exceptional agility and speed, outmaneuvering most transport vessels. Armed with a combination of naval gauss rifles, naval autocannons, heavy naval PPCs, and an array of lasers and missile launchers, the Impavido possesses a potent offensive arsenal. Its advanced ferro-aluminum armor provides superior protection compared to similar-sized Star League ships. The ship's primary mission is often perceived as raiding, given its agility and firepower. However, it can also serve as a picket ship, fulfilling multiple roles within a fleet. The Impavido-class destroyer's deployment is limited to select factions, including Clan Nova Cat, Clan Ghost Bear, and possibly Clan Steel Viper. Its existence and development are met with concern due to the secretive involvement of the Word of Blake and the potential implications for the balance of power in the Inner Sphere.
 </capabilities>
 
 <overview>
-One of the first generation of post–Succession Wars era WarShip designs produced, the Impavido-class destroyer is a collaboration between the Free Worlds League, Word of Blake and Capellan Confederation.
+The Impavido-class destroyer is a highly secretive and technologically advanced WarShip prototype developed through collaboration between the Free Worlds League, Capellan Confederation, and the Word of Blake. Its production at Technicron Manufacturing in the Free Worlds League has generated intrigue and speculation. The ship's origins and advanced systems remain shrouded in mystery, leading to theories about their source and implications.
 </overview>
 
-<deployment>
-Only six Impavidos were constructed prior to the collapse of détente between both nations, three for each state, where with further Blakist assistance the League and the Confederation turned to producing their own unique WarShip designs.
-</deployment>
-
 <history>
-While much of the driving focus behind the WarShip buildup of the Federated Commonwealth and Draconis Combine was the threat of the Clan fleets, for the League and Confederation it was the Federated Commonwealth and thus they designed the Impavido to primarily combat the Fox corvette. Unable to yet produce WarShips on their own, the Free Worlds League constructed the vessels while the all important interplanetary drives were produced by the Capellan Confederation, both goals made possible with the technical expertise offered by the Word of Blake.
+The history of the Impavido-class destroyer is rooted in the efforts of the Free Worlds League and the Capellan Confederation to establish their own WarShip fleets, aiming to compete with other Great Houses. The collaboration between these factions and the clandestine involvement of the Word of Blake in its development raised suspicions and speculation among intelligence agencies. The exact source of the Impavido's advanced systems remains unknown, with theories ranging from newly discovered Star League caches to salvaging from derelict vessels. As the prototype ship was being constructed at Technicron Manufacturing, its progress and technological advancements garnered attention. The launch of the Impavido-class destroyer was projected for the early months of 3058, but its internal arrangement and capabilities were closely guarded secrets. Concerns were raised about the involvement of the Word of Blake and the potential consequences of unchecked WarShip production. The Impavido-class destroyer stands as a symbol of technological advancement and political intrigue in the ongoing power struggles of the Inner Sphere.
 </history>
 
 <manufacturer>
@@ -268,8 +264,12 @@ Destroyer
 450 m
 </length>
 
+<height>
+1060 m Sail
+</height>
+
 <source>
-TRO 3057R - Clan Invasion
+TRO: 3057R - Clan Invasion
 </source>
 
 <tonnage>

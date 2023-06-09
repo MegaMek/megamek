@@ -737,6 +737,14 @@ public class EquipmentType implements ITechnology {
         return EquipmentType.allTypes.elements();
     }
 
+    /** @return All equipment types as a List. The list is a copy and can safely be modified. */
+    public static List<EquipmentType> allTypes() {
+        if (EquipmentType.allTypes == null) {
+            EquipmentType.initializeTypes();
+        }
+        return new ArrayList<>(EquipmentType.allTypes);
+    }
+
     protected static void addType(EquipmentType type) {
         if (null == EquipmentType.allTypes) {
             EquipmentType.initializeTypes();
@@ -1518,6 +1526,6 @@ public class EquipmentType implements ITechnology {
     }
 
     public static List<String> getArmorNames() {
-        return Arrays.stream(armorNames).filter(s -> !s.equals("Patchwork")).collect(Collectors.toList());
+        return Arrays.stream(armorNames).collect(Collectors.toList());
     }
 }

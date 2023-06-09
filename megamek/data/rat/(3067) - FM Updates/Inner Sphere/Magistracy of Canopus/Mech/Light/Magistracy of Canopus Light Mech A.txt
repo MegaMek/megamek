@@ -3,7 +3,7 @@ Wasp WSP-3L,1
 Stinger STG-6L,2
 Eagle EGL-2M,3
 Anubis ABS-3L,4
-Tarantula ZPH-1A,5
+Tarantula ZPH-1,5
 Spider SDR-7M,6
 Javelin JVN-10P,5
 Anubis ABS-3R,4

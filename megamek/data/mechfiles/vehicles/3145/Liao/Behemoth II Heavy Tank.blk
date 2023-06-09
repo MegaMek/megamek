@@ -1,0 +1,141 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Behemoth II Heavy Tank
+</Name>
+
+<model>
+
+</model>
+
+<mul id:>
+6447
+</mul id:>
+
+<year>
+3102
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+65
+55
+55
+38
+55
+</armor>
+
+<Body Equipment>
+IS Gauss Ammo
+IS Gauss Ammo
+IS Ammo Thunderbolt-5
+IS Ammo Thunderbolt-5
+IS Ammo Thunderbolt-5
+IS Ammo Thunderbolt-5
+IS Ammo Thunderbolt-5
+IS Ammo Thunderbolt-5
+IS Ammo Thunderbolt-5
+IS Ammo Thunderbolt-5
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+ISGaussRifle
+Thunderbolt 5
+Thunderbolt 5
+Thunderbolt 5
+Thunderbolt 5
+Thunderbolt 5
+Thunderbolt 5
+Thunderbolt 5
+Thunderbolt 5
+RL10
+RL10
+RL10
+RL10
+</Turret Equipment>
+
+<source>
+TRO: 3145 Capellan Confederation - Late Republic
+</source>
+
+<tonnage>
+100.0
+</tonnage>
+
+<capabilities>
+The vehicle is powered by a Vlar 300 rated Extra-Light Fusion Engine, to allow it to move at 50 km/h, and allow it to carry its extensive amount of weaponry and its 15 tons of ferro-fibrous armor.
+</capabilities>
+
+<overview>
+ A product of Aldis Industries, the company heavily marketed the Behemoth II to worlds who were not necessarily looking for another combat vehicle. 
+</overview>
+
+<deployment>
+All of the Tank's weaponry is mounted in its turret. The vehicle is armed mostly with long range weaponry comprised of a single Gauss rifle and eight Thunderbolt 5 missile launchers, but is also equipped with four Rocket Launcher 10s to defend itself, should the enemy close in on its position.
+</deployment>
+
+<history>
+The Behemoth II Heavy Tank designed in 3102, which was a vehicle utilized by military forces in the 3100s. The company would end up gifting vehicles to reluctant military commands between 3108 to 3110 in order to promote the vehicle. The efforts would prove to be successful, Sales suddenly skyrocketed with twice as many tanks being sold than they had gifted away. The tank gained a reputation to be feared among MechWarriors during the Victoria War. Among some noted actions using the vehicle, was in 3117, when elements of the 4th Oriente Hussars encountered a platoon of 4 Behemoth II tanks used to help defend the Capellan world of Shuen Wan during a raid. The Capellan defenders utilized the tank's capacities to hold the high deserts plateau where they encountered the Hussars. The Behemoth IIs proved to be resilient in combat and remained operational throughout the fight, forcing the Hussars to withdraw.
+</history>
+
+<manufacturer>
+Aldis Industries,Aldis Industries
+</manufacturer>
+
+<primaryFactory>
+Betelgeuse,Terra
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:Vlar 300 XL Fusion
+ARMOR:ArcShield Max III Advanced Ferro-Fibrous
+COMMUNICATIONS:Olmstead 44
+TARGETING:Omicron VIII
+</systemManufacturers>

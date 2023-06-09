@@ -1,0 +1,105 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<Name>
+Pit Bull Medium Truck
+</Name>
+
+<model>
+
+</model>
+
+<mul id:>
+4828
+</mul id:>
+
+<year>
+3035
+</year>
+
+<originalBuildYear>
+3035
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<transporters>
+standardseats:4.0:0
+cargobay:1.383:1:1
+</transporters>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<engine_type>
+1
+</engine_type>
+
+<armor>
+1
+1
+1
+1
+</armor>
+
+<Body Equipment>
+ISOffRoadChassis
+</Body Equipment>
+
+<Front Equipment>
+HHSearchlight
+HHSearchlight
+HHSearchlight
+HHSearchlight
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<barrating>
+2
+</barrating>
+
+<structural_tech_rating>
+1
+</structural_tech_rating>
+
+<source>
+TRO: VAr - Succession Wars
+</source>
+
+<tonnage>
+3.0
+</tonnage>
+
+<fuel>
+0.045
+</fuel>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>

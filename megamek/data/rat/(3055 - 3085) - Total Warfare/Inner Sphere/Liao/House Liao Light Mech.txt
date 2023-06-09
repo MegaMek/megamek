@@ -7,7 +7,7 @@ Firestarter FS9-S,5
 Raven RVN-3L,6
 Spider SDR-5V,5
 Cossack C-SK1,4
-Tarantula ZPH-1A,3
+Tarantula ZPH-1,3
 Javelin JVN-10N,2
 UrbanMech UM-R60,1
 #Edited by Harold "BATTLEMASTER" N.

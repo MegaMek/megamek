@@ -121,7 +121,7 @@ IS Ammo SRM-6
 </Fuselage Equipment>
 
 <source>
-TRO 3075 - Star League
+TRO: 3075 - Star League
 </source>
 
 <tonnage>
@@ -161,7 +161,7 @@ TARGETING:Antron 7
 </systemManufacturers>
 
 <source>
-TRO 3050u - Star League
+TRO: 3050u - Star League
 </source>
 
 <tonnage>

@@ -1,0 +1,97 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<Name>
+Champion Hoversports Crimson Streak Hover Racer
+</Name>
+
+<model>
+
+</model>
+
+<mul id:>
+3941
+</mul id:>
+
+<year>
+3065
+</year>
+
+<originalBuildYear>
+3065
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<transporters>
+cargobay:0.053:1:1
+standardseats:1.0:0
+</transporters>
+
+<cruiseMP>
+17
+</cruiseMP>
+
+<engine_type>
+6
+</engine_type>
+
+<armor>
+2
+2
+2
+1
+</armor>
+
+<Body Equipment>
+UltraLightChassisMod
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<barrating>
+8
+</barrating>
+
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
+<source>
+TRO: VAr - Civil War
+</source>
+
+<tonnage>
+3.5
+</tonnage>
+
+<fuel>
+0.451
+</fuel>

@@ -159,19 +159,15 @@ Ammo White Shark:10
 </structural_integrity>
 
 <capabilities>
-Capable of 1.5 Gs of acceleration, the Congress was swift and well-armed for a convoy escort of the era, also equipped with some of the most advanced and sophisticated sensor systems to perform its secondary role as an information-gathering vessel in enemy territory. Introduced in 2542, the genesis of the Congress was marred by a three year legal battle after Challenge Systems of the Federated Suns world of Galax accused DeKirk Aerospace of industrial espionage and theft of the ship's design, with the Terran Hegemony finally brokering a compromise deal in 2540. While no party admitted liability, Challenge was included as a partner in construction and the Armed Forces of the Federated Suns received a heavy discount on orders for the Congress with the more advanced Hegemony technology absent.
+The Congress frigate excelled in its dual mission as a convoy escort and intelligence-gathering vessel. It boasted swiftness, advanced snooping gear, and the ability to endure extended voyages under challenging conditions. With an emphasis on functionality and accessibility, the interior design of the Congress frigates maximized efficiency and ease of maintenance. The ship's primary armament included eight cannons in five turrets, a missile launcher capable of launching Killer Whale missiles, and two additional missile launchers for White Shark missiles. It could also accommodate two DropShips for various purposes, including troop and 'Mech transport. Fighter carriers, such as the Vengeance-class, often accompanied Congress frigates to provide fighter support.
 </capabilities>
 
 <overview>
-Built to replace the sluggish and outmoded Quixote-class, the Congress-class frigate was one of the swiftest convoy escort and reconnaissance WarShips built in the 26th century.
+The Congress-class frigates emerged as a pivotal asset in both the Terran Hegemony Navy and the Star League Navy. These versatile vessels, designed by Dekirk Aerospace, replaced the outdated Quixote-class frigates and became renowned for their exceptional capabilities. With a dual mission of convoy escort and intelligence gathering, the Congress frigates boasted impressive speed, advanced snooping equipment, and extended voyage endurance, making them an indispensable presence in enemy territory. Their reputation for functionality, accessibility, and crew comfort further solidified the Congress-class frigates' status as an esteemed and reliable fleet unit.
 </overview>
 
-<deployment>
-The Congress's main armament is sixteen Naval Autocannons, eight Armstrong LN-10 Naval Autocannon NAC/10's along the forward angles and eight Oriente-30 NAC/30s mounted in the rear quarters, secondary firepower coming in the form of Capital Missile Launchers with a massive Killer Whale missile tube mounted in the nose, with a White Shark launcher fitted in each broadside. Eight Magna Large Lasers provide scant protection against fighters.
-</deployment>
-
 <history>
-Introduced in 2542, the genesis of the Congress was marred by a three year legal battle after Challenge Systems of the Federated Suns world of Galax accused DeKirk Aerospace of industrial espionage and theft of the ship's design, with the Terran Hegemony finally brokering a compromise deal in 2540. While no party admitted liability, Challenge was included as a partner in construction and the Armed Forces of the Federated Suns received a heavy discount on orders for the Congress with the more advanced Hegemony technology absent.
+The Congress-class frigates entered the scene in 2536, as the admirals of the Terran Hegemony recognized the limitations of the aging Quixote-class frigates. Engagements with foreign warships demonstrated the Quixote's vulnerability and prompted the search for a more capable replacement. Dekirk Aerospace, known for its innovative designs, presented a remarkable proposal that earned swift approval from the Hegemony Navy in the following year. However, the construction of the first Congress frigates faced a significant setback due to a lawsuit filed by the Federated Suns against Dekirk Aerospace and the Hegemony government. Challenge Systems, a shipbuilding firm from the Davion world of Galax, accused Dekirk of industrial espionage, claiming that much of the Congress frigate design was stolen from their own creations. This legal dispute continued for three years, ultimately leading to a compromise agreement in 2540. The agreement involved Challenge Systems becoming a partner in the construction of the Congress frigates, and the Federated Suns acquired some of the frigates at a reduced price, albeit without the advanced Hegemony technology.
 </history>
 
 <manufacturer>
@@ -183,23 +179,27 @@ Galax,Graham IV
 </primaryFactory>
 
 <systemManufacturers>
-CHASSIS:Unknown
-ENGINE:Unknown
-ARMOR:Unknown
-COMMUNICATIONS:Unknown
-TARGETING:Unknown
+CHASSIS:Endo Steel AN
+ENGINE:GM 8050 Starlifters
+ARMOR:Blue Nose 440CL
+COMMUNICATIONS:5T Vargas
+TARGETING:Wolf 157
 </systemManufacturers>
 
 <use>
-Convoy Escort/Reconnaissance
+Frigate
 </use>
 
 <length>
 703 m
 </length>
 
+<height>
+1207 m Sail
+</height>
+
 <source>
-TRO 3057R - Age of War
+TRO: 3057R - Age of War
 </source>
 
 <tonnage>

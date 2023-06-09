@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -136,8 +136,48 @@ Large Laser
 40
 </structural_integrity>
 
+<capabilities>
+The Vincent corvette's notable features include its increased size and the implementation of "smart modularity." This innovative approach involved collaboration with other contractors to standardize ship fittings and systems, resulting in the adoption of long-lasting components that are still utilized in newer ships. The spacious interior of the Vincent allowed for the accommodation of various technological advancements over time, enabling engineers to replace engines, computers, and weapons as needed. Equipped with the Ulsop Al Surveillance Computer, the Vincent Mark XXXIX boasts enhanced detection capabilities, almost doubling the range compared to its predecessor, the Mark XXXVIII. With its four naval autocannons, eight lasers, and two missile systems, the Vincent possesses credible firepower, making it a formidable asset, particularly in squadron-based combat situations. Additionally, the Vincent Mark XXXIX is powered by two Howser 2G2 "Hotfire" engines, providing exceptional swiftness and maneuverability.
+</capabilities>
+
+<overview>
+The Vincent corvette, commissioned by the Hegemony Armed Forces (HAF) to address the need for a powerful patrol vessel, played a vital role in defending Hegemony worlds. With its larger size and "smart modularity" concept, the Vincent stood out among previous corvettes. Delhi Ships, a manufacturer that later became Delhi Warships, won the contract to build the Vincent due to its design capabilities and strategic location. This marked a significant milestone for Delhi, as the Vincent design became widely produced, serving the HAF and Star League Defense Force (SLDF) for over three centuries and establishing Delhi as a major defense contractor.
+</overview>
+
+<history>
+The need for a capable patrol vessel became evident as the Terran Hegemony found itself surrounded by Inner Sphere realms, prompting the HAF to seek a vessel that could effectively deter intruders. However, compromises in previous corvette designs hindered the Hegemony's defense capabilities, leading to the formation of mixed corvette squadrons. These squadrons consisted of Bonaventure Class ships, renowned for their surveillance capabilities but lacking in armament, and Vigilant Class ships, armed but limited in detection capability. The vulnerability of the Hegemony was exposed when the Capellan army invaded Terra Firma in 2409, catching the HAF off guard. Following the eventual recapture of Terra Firma, a portion of the Liao reparations was allocated to commission a new corvette design. Delhi Ships, based on Capella and willing to accept payment in military reparations, won the contract to build the new corvette, named the Vincent. To maintain secrecy regarding Hegemony technology integrated into the Vincent, Delhi Ships agreed to establish a new facility in the Carver System. The Vincent's design, produced in large numbers, served the HAF and SLDF for over three centuries, contributing significantly to Delhi's ascent as a major Star League defense contractor.
+</history>
+
+<manufacturer>
+Delhi WarShips, Delhi WarShips
+</manufacturer>
+
+<primaryFactory>
+Capella, Carver V
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Corvette
+</use>
+
+<length>
+402 m
+</length>
+
+<height>
+1005 m Sail
+</height>
+
 <source>
-TRO 3057R - Age of War
+TRO: 3057R - Age of War
 </source>
 
 <tonnage>
@@ -155,6 +195,10 @@ TRO 3057R - Age of War
 <grav_decks>
 60
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 191
@@ -187,3 +231,4 @@ TRO 3057R - Age of War
 <escape_pod>
 8
 </escape_pod>
+

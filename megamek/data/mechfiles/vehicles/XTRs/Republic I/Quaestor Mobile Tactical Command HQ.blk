@@ -1,0 +1,81 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Quaestor Mobile Tactical Command HQ
+</Name>
+
+<model>
+
+</model>
+
+<mul id:>
+7297
+</mul id:>
+
+<year>
+3095
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<cruiseMP>
+6
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
+35
+23
+23
+15
+</armor>
+
+<Body Equipment>
+IS Machine Gun Ammo - Half
+Communications Equipment (5 ton)
+ISGuardianECMSuite
+</Body Equipment>
+
+<Front Equipment>
+ISERSmallLaser
+</Front Equipment>
+
+<Right Equipment>
+Machine Gun(ST)
+</Right Equipment>
+
+<Left Equipment>
+Machine Gun(ST)
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<source>
+XTR: Republic I - Early Republic
+</source>
+
+<tonnage>
+30.0
+</tonnage>

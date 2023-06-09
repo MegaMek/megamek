@@ -76,7 +76,7 @@ SRM 6
 </Turret Equipment>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039 - Succession Wars
 </source>
 
 <tonnage>
@@ -115,5 +115,5 @@ TARGETING:Exeter LongScan with ReconLock
 </systemManufacturers>
 
 <source>
-TRO 3039 - Succession Wars
+TRO: 3039 - Succession Wars
 </source>

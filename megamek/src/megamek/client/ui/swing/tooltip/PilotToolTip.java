@@ -26,6 +26,11 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.stream.StreamSupport;
 
 import static megamek.client.ui.swing.tooltip.TipUtil.getOptionList;
 import static megamek.client.ui.swing.tooltip.TipUtil.scaledHTMLSpacer;
@@ -37,6 +42,10 @@ public final class PilotToolTip {
     /** the portrait base size */
     private final static int PORTRAIT_BASESIZE = 72;
     final static String BG_COLOR = "#313131";
+
+    final static String TEMP_DIR = "/temp/";
+    final static String PORTRAIT_PREFIX = "TT_Portrait_";
+    final static String PNG_EXT = ".png";
 
     public static StringBuilder lobbyTip(InGameObject unit) {
         if (unit instanceof Entity) {
@@ -168,7 +177,7 @@ public final class PilotToolTip {
                 // Write the scaled portrait to file
                 // This is done to avoid using HTML rescaling on the portrait which does
                 // not do any smoothing and has extremely ugly results
-                String tempPath = Configuration.imagesDir() + "/temp/TT_Portrait_" + entity.getExternalIdAsString() + "_" + i + ".png";
+                String tempPath = Configuration.imagesDir() + TEMP_DIR + PORTRAIT_PREFIX + crew.getExternalIdAsString() + "_" + i + PNG_EXT;
                 File tempFile = new File(tempPath);
                 if (!tempFile.exists()) {
                     BufferedImage bufferedImage = new BufferedImage(portrait.getWidth(null), portrait.getHeight(null), BufferedImage.TYPE_INT_RGB);
@@ -201,4 +210,30 @@ public final class PilotToolTip {
     }
 
     private PilotToolTip() { }
+
+    public static void deleteImageCache() {
+        String tempPath = Configuration.imagesDir() + TEMP_DIR;
+        String filter = PORTRAIT_PREFIX + "*" + PNG_EXT;
+
+        try {
+            StreamSupport.stream(Files.newDirectoryStream(Paths.get(tempPath), filter).spliterator(), true)
+                    .forEach(p -> {
+                                try {
+                                    Files.delete(p);
+                                } catch (Exception ex) {
+                                }
+                            }
+                    );
+        } catch (Exception ex) {
+        }
+    }
+
+    public static void deleteImageCache(Crew crew, int pos) {
+        String tempPath = Configuration.imagesDir() + TEMP_DIR + PORTRAIT_PREFIX + crew.getExternalIdAsString() + "_" + pos + PNG_EXT;
+        File tempFile = new File(tempPath);
+        try {
+            Files.deleteIfExists(tempFile.toPath());
+        } catch (Exception ex) {
+        }
+    }
 }

@@ -1,0 +1,122 @@
+Version:1.0
+Arion
+
+mul id:6252
+
+Config:QuadVee
+TechBase:Clan
+Era:3136
+Source:TRO: 3145 The Clans - Late Republic
+Rules Level:3
+
+Mass:35
+Engine:210 Fusion (Clan) Engine(IS)
+Structure:Clan Endo Steel
+Myomer:Standard
+Motive:Track
+
+Heat Sinks:10 Laser
+Walk MP:6
+Jump MP:0
+
+Armor:Ferro-Fibrous(Clan)
+FLL Armor:5
+FRL Armor:5
+LT Armor:5
+RT Armor:5
+CT Armor:6
+HD Armor:3
+RLL Armor:5
+RRL Armor:5
+RTL Armor:3
+RTR Armor:3
+RTC Armor:3
+
+Weapons:3
+ER Large Laser, Center Torso
+SRM 4, Left Torso
+SRM 4, Right Torso
+
+Front Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Conversion Gear
+Tracks
+
+Front Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Conversion Gear
+Tracks
+
+Left Torso:
+Laser Heat Sink
+Laser Heat Sink
+CLSRM4
+Clan Ammo SRM-4
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+
+Right Torso:
+Laser Heat Sink
+Laser Heat Sink
+CLSRM4
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLERLargeLaser
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Cockpit
+Sensors
+Life Support
+
+Rear Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Conversion Gear
+Tracks
+
+Rear Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Conversion Gear
+Tracks
+
+

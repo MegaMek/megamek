@@ -1,0 +1,267 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Colossus
+</Name>
+
+<model>
+
+</model>
+
+<mul id:>
+3972
+</mul id:>
+
+<year>
+2718
+</year>
+
+<originalBuildYear>
+2718
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+heavyvehiclebay:72.0:2:1
+mechbay:36.0:4
+infantrybay:12.0:2:3:Foot
+2ndclassquarters:0.0:0
+crewquarters:322.0:0
+1stclassquarters:90.0:0
+cargobay:1040.5:0:7
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+255
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+7500
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+252
+221
+221
+192
+</armor>
+
+<Nose Equipment>
+(B) ISGaussRifle
+ISGaussRifle
+IS Gauss Ammo:96
+(B) ISERLargeLaser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+(B) ISERPPC
+ISERPPC
+(B) ISArrowIV
+ISArrowIVAmmo:15
+(B) ISArrowIV
+ISArrowIVAmmo:15
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) ISERPPC
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:48
+ISArtemisIV
+ISArtemisIV
+(B) ISERLargeLaser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+(R) (B) ISERPPC
+(R) (B) LRM 20
+(R) LRM 20
+(R) IS Ammo LRM-20 Artemis-capable:48
+ISArtemisIV
+ISArtemisIV
+(R) (B) ISERLargeLaser
+(R) Medium Laser
+(R) Medium Laser
+(R) Medium Laser
+(R) Medium Laser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) ISERPPC
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20 Artemis-capable:48
+ISArtemisIV
+ISArtemisIV
+(B) ISERLargeLaser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+(R) (B) ISERPPC
+(R) (B) LRM 20
+(R) LRM 20
+(R) IS Ammo LRM-20 Artemis-capable:48
+ISArtemisIV
+ISArtemisIV
+(R) (B) ISERLargeLaser
+(R) Medium Laser
+(R) Medium Laser
+(R) Medium Laser
+(R) Medium Laser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) ISERLargeLaser
+ISERLargeLaser
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+</Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<structural_integrity>
+20
+</structural_integrity>
+
+<capabilities>
+There are two known build standards of the Colossus; the original variant and the upgraded version introduced in 2760. The original Colossus 2660 was largely identical to the Colossus 2760, except that it mounted standard PPCs rather than the ER PPCs of the later variant. The Colossus carries a dizzying array of weaponry, both to protect itself and provide fire support for its RCT. Located in the nose of the ship are two Arrow IV artillery systems, which can only be used when the ship is grounded. Joining them are two Gauss rifles, two ER PPCs and an ER Large Laser with four medium lasers. Covering its fore left and right firing arcs are two LRM-20s, an ER PPC and an ER Large Laser with four medium lasers, with the same setup covering the rear firing arcs. Protecting the aft of the ship are two ER Large Lasers with four medium lasers. All four LRM-20s are fitted with Artemis IV fire control systems, and the ship's ammunition complement includes 30 Arrow IV missiles, 96 LRM-20 missiles, and 96 Gauss Rifle rounds. 
+</capabilities>
+
+<overview>
+Seeking a class of DropShip that could carry and support this new formation during operations, Mitchell Vehicles Interstellar responded with the Colossus-class, a bold design massing 20,000 tons and the largest assault DropShip ever built.
+</overview>
+
+<deployment>
+The Colossus is equipped with four Cargo Bays, designed to carry elements of a Regimental Combat Team and its equipment to the battlefield. The first bay is a dedicated vehicle bay, able to carry 72 heavy vehicles, and is serviced by two doors. The second bay carries 36 BattleMechs able to enter and exit through four doors. The third bay is dedicated to transporting infantry, normally twelve foot platoons, also with four access doors. The last bay is reserved for general supplies, with a capacity of 726 tons.
+</deployment>
+
+<history>
+After being embarrassed by a lack of coordination and cooperation among their units taking part in "war games" held in the Periphery in 2651, the SLDF High Command responded by creating their famous "Regimental Combat Teams" (RCT). The Colossus was designed from the start to fulfill the needs of an RCT and enhance the unit's qualities. It was equipped with the most advanced armor and weapons technologies for the era, driving the vessel costs to over 700 million Star League Dollars per ship. Despite the high cost, the Colossus was designed to be easily repaired and its components were remarkably robust, adding to its reliability.
+While they performed their intended function admirably, the cost of replacing them was too prohibitive. After both the manufacturer and the majority of the ships were destroyed during the Amaris-Kerensky Civil War, the Colossus was replaced by the smaller yet just as capable Excalibur, at half the cost. After the war, only five Colossus ships were known to have survived; those disappeared with Kerensky's army. A few examples have since been discovered: One crashed example was found on the Lyran Commonwealth world of Phecda by Snord's Irregulars in 3024, from which they salvaged unknown but presumably substantial amounts of Star League-era equipment; The ship was later cannibalized by Lyran Commonwealth forces. Another crash-landed vessel was recovered from a hidden Star League depot on Epsilon Eridani by the Lone Star Regiment in 3067 and restored to flight status. During the Jihad, a Federated Suns repair shipyard in orbit of Firgrove named Clyde Shipyards began building the ancient design once more for the AFFS.
+</history>
+
+<manufacturer>
+Clyde Spaceyards
+</manufacturer>
+
+<primaryFactory>
+Firgrove
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Assault DropShip
+</use>
+
+<length>
+125 meters
+</length>
+
+<width>
+135 meters
+</width>
+
+<height>
+165 meters
+</height>
+
+<source>
+TRO: 3075 - Star League
+</source>
+
+<tonnage>
+20000.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+1030
+</crew>
+
+<officers>
+9
+</officers>
+
+<gunners>
+9
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+4
+</life_boat>
+
+<escape_pod>
+25
+</escape_pod>
+

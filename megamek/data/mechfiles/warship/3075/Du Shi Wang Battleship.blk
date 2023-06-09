@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,9 +16,9 @@ Warship
 Du Shi Wang Battleship
 </Name>
 
-<model>
+<Model>
 
-</model>
+</Model>
 
 <mul id:>
 4103
@@ -48,7 +48,7 @@ dockingcollar
 crewquarters:1855.0:0
 1stclassquarters:650.0:0
 steeragequarters:50.0:0
-cargobay:73529.0:4:6
+cargobay:73529.0:4:8
 </transporters>
 
 <SafeThrust>
@@ -145,6 +145,46 @@ Naval Laser 45
 150
 </structural_integrity>
 
+<capabilities>
+The Du Shi Wang battleship was equipped with energy-based weapons, eliminating the need for ammunition storage and reloading systems. Its frontal attack design featured four heavy naval PPCs on the front, delivering devastating firepower. The ship had a pair of grav decks to maintain crew health during long patrols. While its armor and offensive capabilities were impressive, the ship's maneuverability relied on the skill of the navigation crew. However, it was limited to a standard level of thrust and faced challenges in crew distribution and escape provisions.
+</capabilities>
+
+<overview>
+The Du Shi Wang was the first battleship of the Capellan Confederation, designed by the Duchy of Liao as a centerpiece for their expanding fleet. This formidable ship was armed with energy-based weaponry and boasted a frontal attack design, featuring heavy naval PPCs and enhanced armor. However, it suffered from limitations in maneuverability and class-based living arrangements, impacting crew distribution and escape capabilities.
+</overview>
+
+<history>
+The Du Shi Wang battleship played a significant role in the opening engagements of the Age of War and gained recognition for its unique orbital bombardment at Novaya Zemlya in 2399. Despite its early successes, only a small number of Du Shi Wang-class battleships survived into the First Succession War, and by the end of the Second Succession War, they had all been lost. One captured Du Shi Wang, renamed the Quicksilver Mongoose, joined General Kerensky on his Exodus and served Clan Mongoose until its eventual mothballing after near destruction by the Smoke Jaguars. It currently resides in the Strana Mechty system as a part of Clan history.
+</history>
+
+<manufacturer>
+Cynthiana Shipwrights Ltd.
+</manufacturer>
+
+<primaryFactory>
+Aldebaran
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Battleship
+</use>
+
+<length>
+870 m
+</length>
+
+<height>
+1300 m Sail
+</height>
+
 <source>
 TRO3075 - Star League
 </source>
@@ -165,6 +205,10 @@ TRO3075 - Star League
 150
 70
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 361
@@ -197,3 +241,4 @@ TRO3075 - Star League
 <escape_pod>
 15
 </escape_pod>
+

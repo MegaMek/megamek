@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -167,8 +167,48 @@ Naval Laser 35
 30
 </structural_integrity>
 
+<capabilities>
+The Baron-class Destroyer, constructed in the Terran Hegemony, was intended to support the strategy of "aggressive peacemaking" by providing a technological advantage. However, delays caused by flaws in the Palenkov-Reese engines hindered the class's performance, making it less effective than anticipated. Nevertheless, the Baron-class Destroyers offered generously sized fuel bunkers and extra accommodation for thirty passengers, which made them suitable as armed transports for high-ranking Star League diplomats, officials, and officers during travel, particularly in the Periphery.
+</capabilities>
+
+<overview>
+By the beginning of the twenty-sixth century, the Terran Hegemony adopted a strategy of "aggressive peacemaking" in dealing with other Inner Sphere powers. To support this policy, the Hegemony Armed Forces focused on maintaining technological superiority, even as diplomatic efforts were made to establish trade and peace treaties. However, the rapid pace of technological development often rendered equipment outdated before it could enter service. The Baron-class Destroyer, initially promising, faced significant delays and flaws in its engines, ultimately leading to disappointing performance. Despite this, the Baron-class Destroyers found use as armed transports for high-ranking Star League personnel, especially in the Periphery. The SLDF decommissioned the class in 2720, selling them to member states, and the last remaining Baron-class Destroyer was destroyed in 2853.
+</overview>
+
+<deployment>
+In 2515, construction began on the first Baron-class Destroyer, but flaws in the Palenkov-Reese engines were discovered, leading to a two-year delay for corrections. However, the drive performance of the class remained significantly reduced. Despite their disappointing performance, over half of the existing Baron-class Destroyers were distributed to Star League member states in 2582, while the remainder served in the SLDF. Although the Baron-class Destroyers saw action during the Reunification War, their performance remained lackluster. The SLDF decommissioned the class in 2720, selling the vessels to member states. The last Baron-class Destroyer, the DCS Yedo, was destroyed in 2853 by the battlecruiser LCS Invincible at the nadir jump point of the Hesperus system.
+</deployment>
+
+<manufacturer>
+Krester Ship Construction
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Destroyer
+</use>
+
+<length>
+545.5 m
+</length>
+
+<height>
+1150 m Sail
+</height>
+
 <source>
-TRO 3057R - Age of War
+TRO: 3057R - Age of War
 </source>
 
 <tonnage>
@@ -186,6 +226,10 @@ TRO 3057R - Age of War
 <grav_decks>
 65
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 275
@@ -218,3 +262,4 @@ TRO 3057R - Age of War
 <escape_pod>
 38
 </escape_pod>
+

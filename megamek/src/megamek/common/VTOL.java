@@ -570,26 +570,26 @@ public class VTOL extends Tank implements IBomber {
     }
 
     @Override
-    public int getWalkMP(boolean gravity, boolean ignoreheat,
-            boolean ignoremodulararmor) {
-        int j = getOriginalWalkMP();
-        if (engineHit) {
+    public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
+        int mp = getOriginalWalkMP();
+
+        if (engineHit || isLocationBad(LOC_ROTOR)) {
             return 0;
         }
-        if (isLocationBad(LOC_ROTOR)) {
-            return 0;
+
+        mp = Math.max(0, mp - motiveDamage);
+
+        if (!mpCalculationSetting.ignoreCargo) {
+            mp = Math.max(0, mp - getCargoMpReduction(this));
         }
-        j = Math.max(0, j - motiveDamage);
-        j = Math.max(0, j - getCargoMpReduction(this));
-        if (null != game) {
+
+        if (!mpCalculationSetting.ignoreWeather && (null != game)) {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
-            if (weatherMod != 0) {
-                j = Math.max(j + weatherMod, 0);
-            }
+            mp = Math.max(mp + weatherMod, 0);
 
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_SNOW)) {
                 if (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM) {
-                    j += 2;
+                    mp += 2;
                 }
 
                 if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_SLEET)
@@ -597,26 +597,28 @@ public class VTOL extends Tank implements IBomber {
                         || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_MOD_SNOW)
                         || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW)
                         || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES)) {
-                    j += 1;
+                    mp += 1;
                 }
             }
         }
 
-        if (!ignoremodulararmor && hasModularArmor()) {
-            j--;
+        if (!mpCalculationSetting.ignoreModularArmor && hasModularArmor()) {
+            mp--;
         }
+
         if (hasWorkingMisc(MiscType.F_DUNE_BUGGY)) {
-            j--;
+            mp--;
         }
 
-        j = reduceMPByBombLoad(j);
-
-        if (gravity) {
-            j = applyGravityEffectsOnMP(j);
+        if (!mpCalculationSetting.ignoreCargo) {
+            mp = reduceMPByBombLoad(mp);
         }
 
-        return j;
+        if (!mpCalculationSetting.ignoreGravity) {
+            mp = applyGravityEffectsOnMP(mp);
+        }
 
+        return mp;
     }
 
     @Override

@@ -50,7 +50,12 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
     @Override
     protected void updateDonePanel()
     {
-        updateDonePanelButtons(getDoneButtonLabel(), getSkipTurnButtonLabel(), !attacks.isEmpty());
+        if (attacks.isEmpty() || (attacks.size() == 1 && attacks.firstElement() instanceof TorsoTwistAction)){
+            // a torso twist alone should not trigger Done button
+            updateDonePanelButtons(getDoneButtonLabel(), getSkipTurnButtonLabel(), false);
+        } else {
+            updateDonePanelButtons(getDoneButtonLabel(), getSkipTurnButtonLabel(), true);
+        }
     }
 
     protected void removeAttack(Object o)

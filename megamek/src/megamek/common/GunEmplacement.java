@@ -15,7 +15,6 @@
 package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.battlevalue.GunEmplacementBVCalculator;
 import megamek.common.cost.CostCalculator;
 import megamek.common.enums.AimingMode;
 import org.apache.logging.log4j.LogManager;
@@ -113,8 +112,23 @@ public class GunEmplacement extends Tank {
     }
 
     @Override
-    public int getWalkMP(boolean gravity, boolean ignoreHeat) {
-        return 0;
+    public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
+        return 0; // Overridden for performance and to keep it from being made non-zero by any rule
+    }
+
+    @Override
+    public int getRunMP(MPCalculationSetting mpCalculationSetting) {
+        return 0; // Overridden for performance and to keep it from being made non-zero by any rule
+    }
+
+    @Override
+    public int getSprintMP(MPCalculationSetting mpCalculationSetting) {
+        return 0; // Overridden for performance and to keep it from being made non-zero by any rule
+    }
+
+    @Override
+    public int getJumpMP(MPCalculationSetting mpCalculationSetting) {
+        return 0; // Overridden for performance and to keep it from being made non-zero by any rule
     }
 
     @Override
@@ -162,11 +176,6 @@ public class GunEmplacement extends Tank {
     }
 
     @Override
-    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
-        return GunEmplacementBVCalculator.calculateBV(this, ignoreC3, ignoreSkill, calculationReport);
-    }
-
-    @Override
     public PilotingRollData addEntityBonuses(PilotingRollData prd) {
         return prd;
     }
@@ -174,11 +183,6 @@ public class GunEmplacement extends Tank {
     @Override
     public int[] getNoOfSlots() {
         return CRITICAL_SLOTS;
-    }
-
-    @Override
-    public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-        return 0;
     }
 
     @Override

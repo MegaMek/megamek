@@ -14,8 +14,8 @@
 package megamek.client.ui.swing;
 
 import megamek.client.ui.enums.DialogResult;
-import megamek.client.ui.swing.tooltip.HexTooltip;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
@@ -30,6 +30,8 @@ import java.util.List;
 public class TargetChoiceDialog extends AbstractChoiceDialog<Targetable> {
     final ClientGUI clientGUI;
     Entity firingEntity;
+
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
      /**
      * This creates a modal dialog to pick one or more Targetable objects.
@@ -73,8 +75,9 @@ public class TargetChoiceDialog extends AbstractChoiceDialog<Targetable> {
 
     @Override
     protected void detailLabel(JToggleButton button, Targetable target) {
-        button.setText("<html>" + infoText(target) + UnitToolTip.getTargetTipDetail(target,
-                clientGUI.getClient()) + "</html>");
+        String div = "<DIV WIDTH=" + UIUtil.scaleForGUI(500) + ">" +  infoText(target) + " " + UnitToolTip.getTargetTipDetail(target,
+                clientGUI.getClient()) + "</DIV>";
+        button.setText("<html>" + div + "</html>");
     }
 
     @Override

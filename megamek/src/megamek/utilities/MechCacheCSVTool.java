@@ -43,7 +43,7 @@ public class MechCacheCSVTool {
 
             StringBuilder csvLine = new StringBuilder();
 
-            csvLine.append("Chassis,Model,MUL ID,Combined,Clan,Source,Weight,Intro Date,Experimental year,Advanced year," +
+            csvLine.append("Chassis,Model,MUL ID,Combined,Clan,Source,File Location,Weight,Intro Date,Experimental year,Advanced year," +
                     "Standard year,Extinct Year,Unit Type,Role,BV,Cost,Rules,Engine Name,Internal Structure,Myomer," +
                     "Cockpit Type,Gyro Type,Armor Types,Equipment (multiple entries)\n");
             bw.write(csvLine.toString());
@@ -59,6 +59,7 @@ public class MechCacheCSVTool {
                 csvLine.append(unit.getMulId()).append(",");
                 csvLine.append(unit.getChassis()).append(" ").append(unit.getModel()).append(",");
                 csvLine.append(unit.isClan()).append(",");
+                csvLine.append(unit.getSource()).append(",");
                 csvLine.append(unit.getSourceFile()).append(",");
                 csvLine.append(unit.getTons()).append(",");
                 csvLine.append(unit.getYear()).append(",");

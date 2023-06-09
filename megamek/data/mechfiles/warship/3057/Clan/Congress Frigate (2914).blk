@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -48,7 +48,7 @@ dockingcollar
 dockingcollar
 1stclassquarters:430.0:0
 crewquarters:1491.0:0
-cargobay:400.0:1:6
+cargobay:400.0:1:8
 </transporters>
 
 <SafeThrust>
@@ -70,6 +70,10 @@ cargobay:400.0:1:6
 <engine_type>
 1
 </engine_type>
+
+<clan_engine>
+false
+</clan_engine>
 
 <armor_type>
 11
@@ -160,8 +164,48 @@ Ammo White Shark:10
 75
 </structural_integrity>
 
+<capabilities>
+The Congress frigate excelled in its dual mission as a convoy escort and intelligence-gathering vessel. It boasted swiftness, advanced snooping gear, and the ability to endure extended voyages under challenging conditions. With an emphasis on functionality and accessibility, the interior design of the Congress frigates maximized efficiency and ease of maintenance. The ship's primary armament included eight cannons in five turrets, a missile launcher capable of launching Killer Whale missiles, and two additional missile launchers for White Shark missiles. It could also accommodate two DropShips for various purposes, including troop and 'Mech transport. Fighter carriers, such as the Vengeance-class, often accompanied Congress frigates to provide fighter support.
+</capabilities>
+
+<overview>
+The Congress-class frigates emerged as a pivotal asset in both the Terran Hegemony Navy and the Star League Navy. These versatile vessels, designed by Dekirk Aerospace, replaced the outdated Quixote-class frigates and became renowned for their exceptional capabilities. With a dual mission of convoy escort and intelligence gathering, the Congress frigates boasted impressive speed, advanced snooping equipment, and extended voyage endurance, making them an indispensable presence in enemy territory. Their reputation for functionality, accessibility, and crew comfort further solidified the Congress-class frigates' status as an esteemed and reliable fleet unit.
+</overview>
+
+<history>
+Introduced in 2536 as a replacement for the Quixote-class frigates, the Congress-class vessels quickly proved their superiority in the Terran Hegemony and Star League fleets. Despite facing a lawsuit filed by the Federated Suns, a compromise settlement was reached in 2540, leading to the inclusion of Challenge Systems as a partner in construction. The Congress frigates excelled in their role as convoy escorts and information-gathering vessels, featuring advanced reconnaissance equipment and a powerful armament. While their numbers dwindled over time, Congress-class frigates made an appearance in Clan fleets, such as the Fire Rose, which boasted an additional lithium-fusion battery system.
+</history>
+
+<manufacturer>
+Refit
+</manufacturer>
+
+<primaryFactory>
+Unknown
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Frigate
+</use>
+
+<length>
+703 m
+</length>
+
+<height>
+1207 m Sail
+</height>
+
 <source>
-TRO3057R - Succession Wars - Late
+TRO: 3057R - Late Succession War - LosTech
 </source>
 
 <tonnage>
@@ -183,6 +227,10 @@ TRO3057R - Succession Wars - Late
 <grav_decks>
 90
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 301
@@ -215,3 +263,4 @@ TRO3057R - Succession Wars - Late
 <escape_pod>
 8
 </escape_pod>
+

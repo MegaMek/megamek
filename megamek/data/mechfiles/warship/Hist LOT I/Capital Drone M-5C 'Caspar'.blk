@@ -182,11 +182,11 @@ Ammo AR10 Killer Whale:20
 </structural_integrity>
 
 <capabilities>
-The Caspar has four Class-55 Naval Lasers, two Heavy NPPCs, and one Killer Whale (20 missiles), which gives it lots of long-range armament and contributes to the deadly nature of its slicing strikes. Almost every ship of the day may be destroyed by two Class-55 Naval Lasers, three NAC/20's (300 rounds), and one AR-10 Launcher (with 10 Killer Whale and 20 Barracuda missiles), positioned in the forward quarters facing to give the maximum shooting arc. With one Class-55 Naval Laser, four Class-25 Naval Autocannons (200 rounds per pairing, split into groups of two to help concentrate firepower against enemies), and two AR-10 Launchers (with 20 Killer Whale and 20 Barracuda missiles), the Caspar was able to dive into enemy formations and rip them to pieces. To complete up its powerful armament, the rear quarters are equipped with two Class-55 Naval Lasers, three Class-20 Naval Autocannons, and two Barracuda Launchers, each of which can fire 40 missiles. [5] The self-destruct system that was integrated into the engine compartment was thought to be the single weakness of this ideal WarShip. The WarShip drone might be destroyed if the drone received a lucky blow to the aft. Ferro-Carbide armour weighing 322.5 tonnes encased the hull of the Caspar.
+The M-5 Caspars had a formidable array of weapons, including naval lasers, heavy naval PPCs, and autocannon broadsides. Their advanced neural network, the Autonomous Tactical Analysis Computer (ATAC), allowed for precise coordination and efficient attacks. The M-5C variant, equipped with the ATAC, could direct up to fifty other SDS drones and relied on the network for targeting assistance. Although the M-5C downgraded its own SDS Drone computer, the additional naval PPCs significantly improved its bow armament.
 </capabilities>
 
 <overview>
-Considered the pinnacle of the SDS network, the M-5 drones were named after an ancient Terran commander and would go on to become the thing of legends after the Star League fell and is still talked about in revered tones to this day.
+The M-5 drones, known as Caspars, were the pinnacle of the SDS network and became legendary in the Inner Sphere. Designed as capital-class drones, the M-5 Caspars featured heavily modified Lola block II hulls and advanced drone control systems. They possessed firepower comparable to larger WarShips while maintaining the agility of destroyer-class ships. With their slashing assaults and superior coordination, the Caspars were considered the perfect WarShips, although they had a self-destruct system as a flaw.
 </overview>
 
 <deployment>
@@ -194,7 +194,7 @@ The SDS Drone Control System provides for (Gunnery 3, Piloting 4).
 </deployment>
 
 <history>
-The Caspar was the primary capital-class SDS drone. The M-5 was based upon the Lola block II hull, which was heavily modifying to make it a nightmare for any opponent. The design of the M-5 allowed it to nearly mount the firepower of a battleship-class ship while maintaining the thrust of a destroyer-class ship. Most worlds of the Hegemony were protected by at least a handful of M-5 drones while key worlds had multiple squadrons. Terra itself was defended by two hundred and fifty of these drones and if not for Kerensky's technicians devising a jamming system against them, the Inner Sphere today might still have the Amaris Empire sitting at its center.
+The M-5 Caspar drones, as the pinnacle of the SDS network, played a pivotal role during the tumultuous period of the Amaris Civil War. Most worlds within the Terran Hegemony possessed at least a handful of M-5 drones, with key worlds fielding multiple squadrons. However, it was Terra itself that housed the largest concentration of these formidable WarShip drones, with estimates suggesting that there were at least two hundred and fifty stationed there. The M-5 Caspars, named after an ancient Terran commander, were designed to be the primary capital-class drones within the SDS network. Using the unequipped Lola block II hull as a starting point, the M-5 underwent extensive modifications to achieve its final form. Although not intended for extended deployments and requiring external support for major repairs, the M-5 sacrificed cargo space to accommodate advanced drone control systems. This allowed it to possess firepower nearly equivalent to the larger Texas-class WarShip while maintaining the agility of a destroyer-class vessel.With a battery of naval lasers and paired heavy naval PPCs mounted in the nose, the Caspars had the ability to execute slashing assaults that often struck from outside an opponent's effective attack range. The extensive array of heat sinks enabled the drones to dive into enemy formations, unleashing their autocannon broadsides without fear of overheating. Considered by many as the perfect WarShip, the only notable flaw in the design was the self-destruct system built into the engine compartment. A well-placed hit to the aft section could trigger this system and destroy the M-5 drone. Despite their formidable capabilities, the M-5 Caspars were not invincible. General Aleksandr Kerensky and his forces faced the daunting task of devising a strategy to defeat the waves of M-5 drones guarding Terra. Recognizing the coordination network of the Caspars as their greatest strength, Kerensky's technicians developed a jamming system to disrupt their communication and coordination capabilities. This countermeasure proved crucial in turning the tide of the conflict and ultimately defeating the drones. Following the fall of Amaris and the Exodus of Kerensky's forces from the Inner Sphere, the M-5 Caspars were left behind. Some of the surviving drones were likely mothballed in naval caches, serving as reminders of their once-dominant presence. The Inner Sphere would continue to recount tales of the legendary M-5 Caspar drones, acknowledging their significant impact on the outcome of the Amaris Civil War and the shaping of history
 </history>
 
 <manufacturer>
@@ -209,12 +209,16 @@ New Earth
 SDS Drone Control System (Gunnery 3, Piloting 4).
 </notes>
 
+<use>
+Capital Drone
+</use>
+
 <length>
 628 meters
 </length>
 
 <source>
-LofT Vol 1 - Star League
+Historical:Liberation of Terra I - Star League
 </source>
 
 <tonnage>
@@ -232,6 +236,10 @@ LofT Vol 1 - Star League
 <sail>
 1
 </sail>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 229

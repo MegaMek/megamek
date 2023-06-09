@@ -140,11 +140,11 @@ The Bonaventure was poorly armed, even compared with vessels of similar size dat
 </capabilities>
 
 <overview>
-Among contemporary naval vessels of the day, the Bonaventure-class was superb. The class boasted one of the most (if not the most) sophisticated sensor suites to have been designed by the beginning of the twenty-fifth century.
+The Bonaventure-class corvette was developed during the tumultuous era of the Terran Alliance's decline. Led by Admiral James McKenna, the project continued under the newly formed Terran Hegemony, featuring excellent mobility and advanced sensor capabilities. Initially paired with the Vigilant-class corvette, the Bonaventure served in reconnaissance missions and later transitioned to picket duty, providing early warning and intercepting intruders. However, with the advent of the Vincent-class corvette in 2432, the Bonaventure-class was eventually replaced.
 </overview>
 
 <history>
-The designing of the Bonaventure-class corvette was one of the last acts of the failing Terran Alliance. While Admiral James McKenna was staging his political coup and removing corrupt politicians from the Alliance government, he ordered the design of the Bonaventure as insurance and a means of consolidating his growing power base. Indeed, the Bonaventure-class was instrumental in consolidating the Terran Hegemony after the reorganization that occured in the wake of the McKenna Coup. However, compared with most other vessels, the Bonaventure was not well armed. The weakness of the Bonaventure became apparent after Hegemony operations over Capella. Thereafter, the Bonaventure was relegated to squadron formations of four Bonaventures, or surveillance squadrons composed of paired pairs of Bonaventures and Vigilants. These surveillance squadrons would patrol shipping routes in and out of the Hegemony. Bonaventures were also deployed as picket vessels to garrison the Terran Hegemony border. The Bonaventure-class was replaced in service from 2432 with the introduction of the Vincent Mk. 39-class corvette. During the Star League era the Terran hegemony sold or gifted away a number of outdated warships to the various member states; the Rim Worlds Republic was one beneficiary of this practice, and as at April 2765 had thirty-two Bonaventure-class corvettes openly in service. The Republic's fleet of Bonaventures were primarily manufactured and supported by the Roe Weapon Systems (RWS) production facilities in the Finmark system, along with the Republic's fleet of Pinto-class corvettes.
+The development of the Bonaventure-class corvette began during the final days of the Terran Alliance, spearheaded by Admiral James McKenna. As he rose to power and formed the Terran Hegemony, the project continued uninterrupted, showcasing the corvette's impressive mobility and sophisticated sensor suite. However, during the Capella campaign, it became evident that the Bonaventure lacked sufficient firepower. To address this limitation, the Hegemony Armed Forces (HAF) decided to pair the Bonaventure-class with the heavily armed Vigilant-class corvette, forming four-corvette squadrons for data gathering sweeps before invasions. As the borders of the Terran Hegemony stabilized, the Bonaventure shifted to picket duty, utilizing its exceptional long-range detection capabilities to provide early warnings and coordinate interception efforts. During one notable engagement, a Kurita destroyer squadron attacked a HAF patrol squadron, resulting in the destruction of all but the THS Cochran, which evaded pursuit using the Bonaventure-class corvette's advanced sensors and superior speed. The Cochran's successful resistance led to the christening of the next Monsoon-class Battleship as the Cochran, honoring the valor displayed in the battle. However, the Bonaventure-class corvette was eventually replaced by the more versatile Vincent-class corvette upon its introduction in 2432, marking the end of an era for the Bonaventure-class in the Terran Hegemony's naval forces.
 </history>
 
 <manufacturer>
@@ -172,7 +172,7 @@ Corvette
 </length>
 
 <source>
-TRO 3057R - Age of War
+TRO: 3057R - Age of War
 </source>
 
 <tonnage>
@@ -190,6 +190,10 @@ TRO 3057R - Age of War
 <grav_decks>
 50
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 127

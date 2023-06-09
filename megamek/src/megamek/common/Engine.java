@@ -297,15 +297,16 @@ public class Engine implements Serializable, ITechnology {
         }
     }
 
-    /**
-     * returns true if and only if this engine is a fusion engine
-     *
-     * @return true if it is not an internal combustion engine.
-     */
+    /** @return True if this engine is a fusion engine. */
     public boolean isFusion() {
         return (engineType != COMBUSTION_ENGINE) && (engineType != FISSION) && (engineType != FUEL_CELL)
                 && (engineType != NONE) && (engineType != BATTERY) && (engineType != SOLAR)
                 && (engineType != STEAM) && (engineType != MAGLEV) && (engineType != EXTERNAL);
+    }
+
+    /** @return True if this engine is a fission engine. */
+    public boolean isFission() {
+        return engineType == FISSION;
     }
 
     public boolean isSolar() {

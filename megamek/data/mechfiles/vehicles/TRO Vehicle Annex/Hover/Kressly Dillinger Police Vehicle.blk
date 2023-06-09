@@ -1,0 +1,102 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<Name>
+Kressly Dillinger Police Vehicle
+</Name>
+
+<model>
+
+</model>
+
+<mul id:>
+4464
+</mul id:>
+
+<year>
+3059
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<transporters>
+troopspace:3
+standardseats:.975:13
+cargobay:5.275:1
+</transporters>
+
+<cruiseMP>
+7
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
+6
+6
+6
+6
+7
+</armor>
+
+<barrating>
+10
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<Body Equipment>
+Armored Chassis
+Basic Fire Control
+IS Ammo MG - Full
+CommsGear:1
+</Body Equipment>
+
+<Front Equipment>
+Machine Gun
+</Front Equipment>
+
+<Right Equipment>
+Machine Gun
+</Right Equipment>
+
+<Left Equipment>
+Machine Gun
+</Left Equipment>
+
+<Rear Equipment>
+Paramedic Equipment
+</Rear Equipment>
+
+<Turret Equipment>
+Machine Gun
+</Turret Equipment>
+
+<source>
+TRO: VAr - Clan Invasion
+</source>
+
+<tonnage>
+40.0
+</tonnage>

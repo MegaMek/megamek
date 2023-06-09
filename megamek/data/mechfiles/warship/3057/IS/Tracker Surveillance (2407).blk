@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -125,8 +125,48 @@ Ammo Barracuda:24
 36
 </structural_integrity>
 
+<capabilities>
+The Tracker surveillance vessel was designed to mimic a commercial JumpShip's sensor readings. It had the capability to rapidly change its silhouette by attaching special panels to hard points on the hull. The vessel could also modify its transponder, using various aliases to operate covertly. This allowed the Tracker to navigate space lanes without arousing suspicion. With sufficient speed and firepower, including the ability to engage anything short of a capital ship, the Trackers were capable of defending themselves in case their cover was exposed. Additionally, these spy ships often carried innocent DropShips on their docking collars to maintain their cover.
+</capabilities>
+
+<overview>
+Director-General Judith Cameron, concerned about the escalating conflicts with neighboring states, ordered an increase in covert monitoring operations by the Hegemony Intelligence. To fulfill this need, the Tracker surveillance vessel was developed. The Tracker was designed to provide sensor readings similar to a commercial JumpShip and had the ability to quickly alter its silhouette using special panels. It could also change its transponder, operating under different aliases for covert operations. Equipped with speed and firepower, the Trackers could gather intelligence, monitor fleet movements, and defend themselves if their cover was compromised. Despite becoming obsolete over time, some Trackers remained in service until the end of the Reunification War, primarily engaging pirates and Taurian Concordat raiders as Q-Ships.
+</overview>
+
+<history>
+Director-General Judith Cameron directed Hegemony Intelligence to intensify covert monitoring operations due to concerns over the belligerence of the Terran Hegemony's neighbors. The Tracker surveillance vessel was developed as a result, specifically to keep a close watch on the neighboring states. The success of the Tracker's design, with its ability to alter its silhouette and transponder, led to the creation of the Nightwing vessel. During the capture of Terra Firma by the Capellan Confederation in 2409, the THS Marlow, a Tracker, played a crucial role by gathering data on Capellan troop movements. This information enabled the Hegemony Armed Forces to liberate Terra Firma later that year. While the Tracker became obsolete by the beginning of the 26th century, several vessels remained in service until the end of the Reunification War, serving as Q-Ships to combat pirates and Taurian Concordat raiders.
+</history>
+
+<manufacturer>
+Bowie Industries
+</manufacturer>
+
+<primaryFactory>
+Wasat
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Surveillance
+</use>
+
+<length>
+318 m
+</length>
+
+<height>
+1150 m Sail
+</height>
+
 <source>
-TRO 3057R - Age of War
+TRO: 3057R - Age of War
 </source>
 
 <tonnage>
@@ -144,6 +184,10 @@ TRO 3057R - Age of War
 <grav_decks>
 75
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 93
@@ -176,3 +220,4 @@ TRO 3057R - Age of War
 <escape_pod>
 15
 </escape_pod>
+

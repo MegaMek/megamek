@@ -1,0 +1,86 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Saladin Mk II HCV
+</Name>
+
+<model>
+
+</model>
+
+<mul id:>
+6371
+</mul id:>
+
+<year>
+3137
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<cruiseMP>
+10
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+6
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+45
+23
+23
+18
+</armor>
+
+<Body Equipment>
+IS Streak SRM 4 Ammo
+</Body Equipment>
+
+<Front Equipment>
+ISSNPPC
+ISStreakSRM4
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<source>
+TRO: 3145 Draconis Combine - Dark Ages
+</source>
+
+<tonnage>
+35.0
+</tonnage>

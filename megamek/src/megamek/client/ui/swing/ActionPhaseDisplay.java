@@ -47,8 +47,8 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
         butSkipTurn.setPreferredSize(new Dimension(DONE_BUTTON_WIDTH, MIN_BUTTON_SIZE.height * 1));
         String f = guiScaledFontHTML(UIUtil.uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE_NO_ACTION)+ "</FONT>";
         butSkipTurn.setToolTipText("<html><body>" + f + "</body></html>");
+        addToDonePanel(donePanel, butSkipTurn);
 
-        donePanel.add(butSkipTurn);
         if (clientgui != null) {
             butSkipTurn.addActionListener(new AbstractAction() {
                 private static final long serialVersionUID = -5034474968902280850L;
@@ -151,8 +151,10 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
         }
         butSkipTurn.setText("<html><b>" + skipButtonLabel + "</b></html>");
 
-        // enable/disable
-        if (this.isDoingAction || ignoreNoActionNag) {
+        if (!clientgui.getClient().isMyTurn()) {
+            butDone.setEnabled(false);
+            butSkipTurn.setEnabled(false);
+        } else if (this.isDoingAction || ignoreNoActionNag) {
             butDone.setEnabled(true);
             butSkipTurn.setEnabled(false);
         } else {

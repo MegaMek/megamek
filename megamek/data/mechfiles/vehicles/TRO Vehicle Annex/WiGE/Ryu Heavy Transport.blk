@@ -1,0 +1,109 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+LargeSupportTank
+</UnitType>
+
+<Name>
+Ryu Heavy Transport
+</Name>
+
+<model>
+
+</model>
+
+<mul id:>
+4956
+</mul id:>
+
+<year>
+3064
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+WiGE
+</motion_type>
+
+<transporters>
+cargobay:108:2
+</transporters>
+
+<cruiseMP>
+5
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
+17
+15
+15
+15
+15
+11
+17
+</armor>
+
+<barrating>
+6
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<Body Equipment>
+AmphibiousChassis
+Basic Fire Control
+IS Ammo MG - Full
+IS Ammo AC/5
+IS Ammo AC/5
+</Body Equipment>
+
+<Front Equipment>
+Machine Gun
+Machine Gun
+</Front Equipment>
+
+<Front Right Equipment>
+Machine Gun
+</Front Right Equipment>
+
+<Front Left Equipment>
+Machine Gun
+</Front Left Equipment>
+
+<Rear Right Equipment>
+</Rear Right Equipment>
+
+<Rear Left Equipment>
+</Rear Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Autocannon/5
+</Turret Equipment>
+
+<source>
+TRO: VAr - Civil War
+</source>
+
+<tonnage>
+240
+</tonnage>

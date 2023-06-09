@@ -102,7 +102,7 @@ ISAntiMissileSystem:OMNI
 </Turret Equipment>
 
 <source>
-Jihad
+TRO: 3085 - Jihad
 </source>
 
 <tonnage>

@@ -1,0 +1,313 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Fredasa (Corvette-Raider)
+</Name>
+
+<Model>
+(2962)
+</Model>
+
+<mul id:>
+4185
+</mul id:>
+
+<year>
+2962
+</year>
+
+<originalBuildYear>
+2962
+</originalBuildYear>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+smallcraftbay:2.0:1:1
+asfbay:20.0:4:2
+cargobay:3300.0:1:3
+dockingcollar
+1stclassquarters:190.0:0
+crewquarters:651.0:0
+cargobay:50.0:0:7
+</transporters>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<heatsinks>
+373
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+30000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<clan_engine>
+false
+</clan_engine>
+
+<armor_type>
+12
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<armor>
+40
+30
+30
+35
+30
+30
+</armor>
+
+<Nose Equipment>
+(B) CLGaussRifle
+CLGaussRifle
+Clan Gauss Ammo:8
+Clan Gauss Ammo:8
+Clan Gauss Ammo:8
+Clan Gauss Ammo:8
+Clan Gauss Ammo:8
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) CLERSmallLaser
+CLERSmallLaser
+CLERSmallLaser
+CLERSmallLaser
+(B) Naval Autocannon (NAC/40)
+Ammo NAC/40:100
+(B) Naval Laser 45
+Naval Laser 45
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:200
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) Naval Autocannon (NAC/10)
+Naval Autocannon (NAC/10)
+Ammo NAC/10:200
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) CLERSmallLaser
+CLERSmallLaser
+CLERSmallLaser
+CLERSmallLaser
+(B) Naval Laser 45
+Naval Laser 45
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) CLLRM20
+CLLRM20
+Clan Ammo LRM-20 (Clan) Artemis-capable:6
+Clan Ammo LRM-20 (Clan) Artemis-capable:6
+Clan Ammo LRM-20 (Clan) Artemis-capable:6
+Clan Ammo LRM-20 (Clan) Artemis-capable:6
+CLArtemisIV
+CLArtemisIV
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) CLLRM20
+CLLRM20
+Clan Ammo LRM-20 (Clan) Artemis-capable:6
+Clan Ammo LRM-20 (Clan) Artemis-capable:6
+Clan Ammo LRM-20 (Clan) Artemis-capable:6
+Clan Ammo LRM-20 (Clan) Artemis-capable:6
+CLArtemisIV
+CLArtemisIV
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) CLERSmallLaser
+CLERSmallLaser
+CLERSmallLaser
+CLERSmallLaser
+(B) CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6
+Clan Streak SRM 6 Ammo:15
+Clan Streak SRM 6 Ammo:15
+Clan Streak SRM 6 Ammo:15
+Clan Streak SRM 6 Ammo:15
+Clan Streak SRM 6 Ammo:15
+Clan Streak SRM 6 Ammo:15
+(B) Naval Laser 45
+Naval Laser 45
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) CLERSmallLaser
+CLERSmallLaser
+CLERSmallLaser
+CLERSmallLaser
+(B) CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6
+Clan Streak SRM 6 Ammo:15
+Clan Streak SRM 6 Ammo:15
+Clan Streak SRM 6 Ammo:15
+Clan Streak SRM 6 Ammo:15
+Clan Streak SRM 6 Ammo:15
+Clan Streak SRM 6 Ammo:15
+(B) Naval Laser 45
+Naval Laser 45
+</Right Broadsides Equipment>
+
+<structural_integrity>
+40
+</structural_integrity>
+
+<capabilities>
+The Fredasa is known for its exceptional speed, capable of reaching 4Gs of acceleration in short bursts. Its agility and low signature enable it to quickly engage targets before facing significant opposition. While it carries less armament and armor compared to the Inner Sphere's corvettes, it excels at hit-and-run tactics. The Fredasa is often deployed as a picket ship but is equally capable of raiding operations. Its arsenal consists of extended-range lasers, Gauss rifles in the nose for forward firepower, and SRMs and LRMs for anti-fighter capabilities.
+</capabilities>
+
+<overview>
+The Fredasa is a small WarShip design introduced by the Clans in the mid-30th century. While the Clans classify it as a corvette, it is often referred to as a raider by Inner Sphere naval officers due to its perceived primary mission. The Fredasa is smaller and more agile than the Inner Sphere's Fox-class corvette, making it a formidable raider vessel. It has a smaller profile and can achieve high acceleration, allowing it to outmaneuver enemy escorts.
+</overview>
+
+<history>
+The Fredasa has primarily been deployed by Clans Nova Cat and Ghost Bear in the Inner Sphere, although intelligence suggests that Clan Steel Viper also possesses vessels of this class. The design's speed and agility, combined with its firepower, make it a versatile asset for Clan forces. Despite its relatively light armor, the Fredasa's Valiant Lamellor ferro-carbide armor provides superior protection compared to similar-sized Star League vessels.
+</history>
+
+<manufacturer>
+Unknown
+</manufacturer>
+
+<primaryFactory>
+Unknown
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Corvette
+</use>
+
+<length>
+415 m
+</length>
+
+<height>
+830 m Sail
+</height>
+
+<source>
+TRO: 3057R - Late Succession War - LosTech
+</source>
+
+<tonnage>
+180000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<lithium-fusion>
+1
+</lithium-fusion>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+50
+</grav_decks>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+162
+</crew>
+
+<officers>
+19
+</officers>
+
+<gunners>
+21
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+15
+</life_boat>
+
+<escape_pod>
+0
+</escape_pod>
+

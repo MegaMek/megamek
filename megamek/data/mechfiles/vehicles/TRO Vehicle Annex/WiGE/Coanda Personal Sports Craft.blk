@@ -1,0 +1,101 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<Name>
+Coanda Personal Sports Craft
+</Name>
+
+<model>
+
+</model>
+
+<mul id:>
+3970
+</mul id:>
+
+<year>
+3054
+</year>
+
+<originalBuildYear>
+3054
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+WiGE
+</motion_type>
+
+<transporters>
+cargobay:0.019:1:1
+standardseats:2.0:0
+</transporters>
+
+<cruiseMP>
+11
+</cruiseMP>
+
+<engine_type>
+1
+</engine_type>
+
+<armor>
+1
+1
+1
+1
+</armor>
+
+<Body Equipment>
+AmphibiousChassis
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<barrating>
+6
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<source>
+TRO: VAr - Clan Invasion
+</source>
+
+<tonnage>
+3.5
+</tonnage>
+
+<fuel>
+0.475
+</fuel>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>

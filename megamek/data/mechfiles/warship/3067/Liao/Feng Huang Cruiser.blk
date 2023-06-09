@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,9 +16,9 @@ Warship
 Feng Huang Cruiser
 </Name>
 
-<model>
+<Model>
 
-</model>
+</Model>
 
 <mul id:>
 4160
@@ -50,8 +50,8 @@ dockingcollar
 dockingcollar
 crewquarters:1638.0:0
 1stclassquarters:1740.0:0
-cargobay:77778.0:6:4
-cargobay:39210.0:6:5
+cargobay:77778.0:6:10
+cargobay:39210.0:6:11
 2ndclassquarters:5124.0:0
 </transporters>
 
@@ -225,6 +225,46 @@ Naval PPC (Heavy)
 90
 </structural_integrity>
 
+<capabilities>
+The Feng Huang-class cruiser, named after the Phoenix, was intended to hold its own against the formidable Thera super-carrier. These cruisers prioritize armor and protection, a departure from the typical WarShip design that sacrifices armor for weaponry. The first cruiser of the class, Elias Jung, faced initial problems but re-entered service after an overhaul. Currently, there are four Feng Huang cruisers in service: Elias Jung, Franco Martell, Aleisha Kris, and Sundermann Rhys. However, the IIsa Hyung recently suffered a catastrophic explosion, causing extensive damage and necessitating repairs.
+</capabilities>
+
+<overview>
+The Impavido-class destroyer was the result of joint efforts between the Capellan Confederation and the Free Worlds League to develop a WarShip fleet. However, Chancellor Sun-Tzu Liao anticipated a future conflict with House Marik and secretly initiated the development of a larger cruiser with assistance from the Word of Blake. The Feng Huang-class cruiser was designed to prioritize armor protection over extensive weaponry, aligning with Sun-Tzu's strategy of maximizing defense capabilities.
+</overview>
+
+<history>
+The Impavido-class destroyer was developed through collaboration between the Capellan Confederation and the Free Worlds League to enhance their WarShip capabilities. Recognizing the growing threat posed by the League fleet, Chancellor Sun-Tzu Liao secretly pursued the construction of the Feng Huang-class cruiser with assistance from the Word of Blake. The first cruiser, Elias Jung, faced initial challenges but returned to service after improvements. The Capellan fleet currently operates four Feng Huang cruisers, while the IIsa Hyung is undergoing repairs following a suspected act of terrorism.
+</history>
+
+<manufacturer>
+Aris Memorial Yards
+</manufacturer>
+
+<primaryFactory>
+Necromo
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Cruiser
+</use>
+
+<length>
+1155 m
+</length>
+
+<height>
+1025 m Sail
+</height>
+
 <source>
 TRO3067 - Clan Invasion
 </source>
@@ -249,6 +289,10 @@ TRO3067 - Clan Invasion
 90
 90
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 421
@@ -281,3 +325,4 @@ TRO3067 - Clan Invasion
 <escape_pod>
 24
 </escape_pod>
+

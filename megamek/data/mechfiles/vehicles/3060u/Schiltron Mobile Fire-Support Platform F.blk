@@ -108,7 +108,7 @@ ISERMediumLaser:OMNI
 </Turret Equipment>
 
 <source>
-Jihad
+TRO: 3060 - Jihad
 </source>
 
 <tonnage>

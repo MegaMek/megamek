@@ -1,0 +1,166 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Vampire
+</Name>
+
+<model>
+
+</model>
+
+<mul id:>
+5333
+</mul id:>
+
+<year>
+2715
+</year>
+
+<originalBuildYear>
+2715
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+cargobay:10.0:1:2
+2ndclassquarters:0.0:0
+1stclassquarters:20.0:0
+crewquarters:0.0:0
+steeragequarters:35.0:0
+infantrybay:3.0:4:6:Jump
+</transporters>
+
+<SafeThrust>
+6
+</SafeThrust>
+
+<heatsinks>
+34
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+2660
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+134
+109
+109
+92
+</armor>
+
+<Nose Equipment>
+(B) Medium Laser
+Medium Laser
+(B) SRM 6
+IS Ammo SRM-6:30
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) LRM 20
+IS Ammo LRM-20:12
+IS Ammo LRM-20:6
+(B) Large Laser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) LRM 20
+IS Ammo LRM-20:12
+IS Ammo LRM-20:6
+(B) Large Laser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) Medium Laser
+Medium Laser
+</Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<structural_integrity>
+11
+</structural_integrity>
+
+<source>
+TRO: 3075 - Star League
+</source>
+
+<tonnage>
+400.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+70
+</crew>
+
+<officers>
+2
+</officers>
+
+<gunners>
+2
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+0
+</escape_pod>

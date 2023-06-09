@@ -1999,7 +1999,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         ranges[0] = wtype.getRanges(mounted);
 
         AmmoType atype = null;
-        if (mounted.getLinked() != null) {
+        if ((mounted.getLinked() != null) && (mounted.getLinked().getType() instanceof AmmoType)) {
             atype = (AmmoType) mounted.getLinked().getType();
         }
 

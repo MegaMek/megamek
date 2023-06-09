@@ -228,12 +228,12 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
 
     @Override
     protected String getDoneButtonLabel() {
-        return Messages.getString("FiringDisplay.Fire");
+        return Messages.getString("FiringDisplay.DoneTurn");
     }
 
     @Override
     protected String getSkipTurnButtonLabel() {
-        return Messages.getString("FiringDisplay.Skip");
+        return Messages.getString("FiringDisplay.SkipTurn");
     }
 
     @Override

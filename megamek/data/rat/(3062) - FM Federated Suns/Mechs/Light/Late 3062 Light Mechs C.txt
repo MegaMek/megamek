@@ -1,5 +1,5 @@
 Late 3062 AFFS Light Mechs, Tech Level C
-Tarantula ZPH-1A,1
+Tarantula ZPH-1,1
 Raven RVN-3L,2
 Wolfhound WLF-2,3
 Firestarter FS9-S,4

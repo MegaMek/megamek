@@ -156,15 +156,15 @@ Naval PPC (Medium)
 </structural_integrity>
 
 <capabilities>
-The Essex's main weapons are its twelve Whirlwind-20 Series NAC/20s, manufactured by Karon Naval Armaments of Terra and unmatched for reliability, mounted in four turrets. The Essex carries three missile tubes capable of firing Barracuda missiles, the smallest and smartest of the three standard missile types used by the Star League Navy. The remainder of the vessel's weaponry consists of a mixture of Magna-35 NL35s and Rand-10 Medium NPPCs.
+The SLS Essex was known for its swiftness and reliability, equipped with three compact and dependable InterSystem Class VII engines. It utilized the Diamond Green Combat Computer, valued for its simplicity and reliability. The Essex carried twelve autocannons in four turrets, manufactured by Karon Naval Armaments, and had three missile tubes capable of launching Barracuda missiles. It also had a bay for six AeroSpace Fighters.
 </capabilities>
 
 <overview>
-The second class of WarShip to bear the name, the Essex-class destroyer (also known as Essex II) was designed in response to Star League Navy's request for a quick destroyer that could also make sustained voyages far from support, replacing the older Naga-class which had in turn replaced the original HAF era Essex I-class in 2645.
+The Essex-class destroyers served in the Terran Hegemony Navy during the 25th and 26th centuries. Originally designed for sentinel duty and as command ships for corvette squadrons, the class was later replaced by the Naga Class in 2645. A new version of the Essex-class was developed in 2707 by the Star League Defense Forces to replace the Naga.
 </overview>
 
 <history>
-The modern SLS Essex slipped its moorings from the Mitchell Vehicles shipyards above Graham IV in late 2711. Because its designers had wished to emphasize the vessel's swiftness and reliability, they had given it three compact and dependable lnterSystem Class VII engines, built by the Saro Company of Keid, which produce great thrust. The ship's computer systems were built by the Nirasaki Computers Collective, allowing the Essex's crew to do everything from monitor remote surveillance satellites to orchestrating corvette squadrons. However, the Essex was noted for its ammunition bays, which were too lightly armored to protect its missiles and autocannon shells adequately, and became quite evident with the destruction of Essex destroyers in action against Periphery forces in the 2730s and during the Amaris-Kerensky Civil War. Less than thirty survived the campaign to liberate Terra and the bulk left with the Exodus Fleet, but surviving examples continue to serve in the fleets of ComStar, the Free Worlds League, the Word of Blake as well as various Clan Toumans.
+ne notable Essex-class destroyer was the SLS Gettysburg, launched in 2722, which played a significant role in overseeing the New Vandenberg star system and defeating Periphery separatists. In 2757, Major Evgeny Baratynsky took command of the Gettysburg, leading the ship with skill and courage during isolation in the Taurian Concordat region. Unfortunately, the Gettysburg was destroyed by Caspar drone warships above Terra in 2777.
 </history>
 
 <manufacturer>
@@ -191,8 +191,12 @@ Destroyer
 615 m
 </length>
 
+<height>
+1120 m Sail
+</height>
+
 <source>
-TRO 3057R - Star League
+TRO: 3057R - Star League
 </source>
 
 <tonnage>

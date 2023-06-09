@@ -19,14 +19,15 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.Dimension;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.swing.*;
 
+import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
@@ -227,11 +228,19 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     protected UIUtil.FixedXPanel setupDonePanel()
     {
         var donePanel = new UIUtil.FixedXPanel();
+        donePanel.setPreferredSize(new Dimension(DONE_BUTTON_WIDTH+5, MIN_BUTTON_SIZE.height*2+5));
         donePanel.setOpaque(false);
-        donePanel.setLayout(new GridLayout(2,1));
-        donePanel.add(butDone);
-        butDone.setPreferredSize(new Dimension(DONE_BUTTON_WIDTH, MIN_BUTTON_SIZE.height * 2));
+        donePanel.setBackground(Color.darkGray);
+        donePanel.setBorder( BorderFactory.createLoweredBevelBorder() );
+        donePanel.setLayout(new GridBagLayout());
+        addToDonePanel(donePanel, butDone);
         return donePanel;
+    }
+
+    protected void addToDonePanel(JPanel donePanel, JComponent item) {
+        item.setPreferredSize(new Dimension(DONE_BUTTON_WIDTH, MIN_BUTTON_SIZE.height));
+        butDone.setAlignmentX(LEFT_ALIGNMENT);
+        donePanel.add(item, GBC.eol().fill(GridBagConstraints.BOTH).weighty(1));
     }
 
     /** Clears the actions of this phase. */

@@ -202,6 +202,19 @@ public class BoardUtilities {
                     mapSettings.getProbFoliageHeavy(), mapSettings.getMinFoliageSize(),
                     mapSettings.getMaxFoliageSize(), reverseHex, true);
         }
+
+        // Add the jungle
+        count = mapSettings.getMinJungleSpots();
+        if (mapSettings.getMaxJungleSpots() > 0) {
+            count += Compute.randomInt(mapSettings.getMaxJungleSpots() + 1);
+        }
+        count = (int) Math.round(count * sizeScale);
+        for (int i = 0; i < count; i++) {
+            placeSomeTerrain(result, Terrains.JUNGLE,
+                    mapSettings.getProbHeavyJungle(), mapSettings.getProbUltraJungle(),
+                    mapSettings.getMinJungleSize(),
+                    mapSettings.getMaxJungleSize(), reverseHex, true);
+        }
         
         // Add the rough
         count = mapSettings.getMinRoughSpots();

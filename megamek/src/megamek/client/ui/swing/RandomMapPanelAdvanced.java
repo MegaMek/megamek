@@ -120,9 +120,23 @@ public class RandomMapPanelAdvanced extends JPanel {
             new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
     private final VerifiableTextField woodsHeavyChanceField = 
             new VerifiableTextField(4, true, true, new VerifyInRange(0, 100, true));
-
     private final VerifiableTextField woodsUltraChanceField =
             new VerifiableTextField(4, true, true, new VerifyInRange(0, 100, true));
+
+
+    private final VerifiableTextField jungleMinField =
+            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
+    private final VerifiableTextField jungleMaxField =
+            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
+    private final VerifiableTextField jungleMinSizeField =
+            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
+    private final VerifiableTextField jungleMaxSizeField =
+            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
+    private final VerifiableTextField jungleHeavyChanceField =
+            new VerifiableTextField(4, true, true, new VerifyInRange(0, 100, true));
+    private final VerifiableTextField jungleUltraChanceField =
+            new VerifiableTextField(4, true, true, new VerifyInRange(0, 100, true));
+
     private final VerifiableTextField foliageMinField = 
             new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
     private final VerifiableTextField foliageMaxField = 
@@ -304,6 +318,12 @@ public class RandomMapPanelAdvanced extends JPanel {
         woodsMaxSizeField.setText(String.valueOf(mapSettings.getMaxForestSize()));
         woodsHeavyChanceField.setText(String.valueOf(mapSettings.getProbHeavy()));
         woodsUltraChanceField.setText(String.valueOf(mapSettings.getProbUltra()));
+        jungleMinField.setText(String.valueOf(mapSettings.getMinJungleSpots()));
+        jungleMaxField.setText(String.valueOf(mapSettings.getMaxJungleSpots()));
+        jungleMinSizeField.setText(String.valueOf(mapSettings.getMinJungleSize()));
+        jungleMaxSizeField.setText(String.valueOf(mapSettings.getMaxJungleSize()));
+        jungleHeavyChanceField.setText(String.valueOf(mapSettings.getProbHeavyJungle()));
+        jungleUltraChanceField.setText(String.valueOf(mapSettings.getProbUltraJungle()));
         foliageMinField.setText(String.valueOf(mapSettings.getMinFoliageSpots()));
         foliageMaxField.setText(String.valueOf(mapSettings.getMaxFoliageSpots()));
         foliageMinSizeField.setText(String.valueOf(mapSettings.getMinFoliageSize()));
@@ -725,6 +745,7 @@ public class RandomMapPanelAdvanced extends JPanel {
         panel.add(setupSandsPanel());
         panel.add(setupSwampsPanel());
         panel.add(setupWoodsPanel());
+        panel.add(setupJunglePanel());
         panel.add(setupFoliagePanel());
         panel.add(setupSnowPanel());
 
@@ -768,6 +789,47 @@ public class RandomMapPanelAdvanced extends JPanel {
 
         panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1),
                                          Messages.getString("RandomMapDialog.borderWoods")));
+        RandomMapPanelBasic.makeCompactGrid(panel, 4, 4, 6, 6, 6, 6);
+        return panel;
+    }
+
+    private JPanel setupJunglePanel() {
+        JPanel panel = new FeaturePanel(new SpringLayout());
+
+        JLabel numberJungleLabel = new JLabel(Messages.getString("RandomMapDialog.labJungleSpots"));
+        panel.add(numberJungleLabel);
+        jungleMinField.setToolTipText(Messages.getString("RandomMapDialog.jungleMinField.toolTip"));
+        panel.add(jungleMinField);
+        JLabel numberJungleToLabel = new JLabel(Messages.getString("to"));
+        panel.add(numberJungleToLabel);
+        jungleMaxField.setToolTipText(Messages.getString("RandomMapDialog.jungleMaxField.toolTip"));
+        panel.add(jungleMaxField);
+
+        JLabel sizesJungleLabel = new JLabel(Messages.getString("RandomMapDialog.labJungleSize"));
+        panel.add(sizesJungleLabel);
+        jungleMinSizeField.setToolTipText(Messages.getString("RandomMapDialog.jungleMinSizeField.toolTip"));
+        panel.add(jungleMinSizeField);
+        JLabel sizeJungleToLabel = new JLabel(Messages.getString("to"));
+        panel.add(sizeJungleToLabel);
+        jungleMaxSizeField.setToolTipText(Messages.getString("RandomMapDialog.jungleMaxSizeField.toolTip"));
+        panel.add(jungleMaxSizeField);
+
+        JLabel heavyJungleLabel = new JLabel(Messages.getString("RandomMapDialog.labProbHeavyJungle"));
+        panel.add(heavyJungleLabel);
+        jungleHeavyChanceField.setToolTipText(Messages.getString("RandomMapDialog.jungleHeavyChanceField.toolTip"));
+        panel.add(jungleHeavyChanceField);
+        panel.add(new JLabel());
+        panel.add(new JLabel());
+
+        JLabel ultraJungleLabel = new JLabel(Messages.getString("RandomMapDialog.labProbUltraJungle"));
+        panel.add(ultraJungleLabel);
+        jungleUltraChanceField.setToolTipText(Messages.getString("RandomMapDialog.jungleUltraChanceField.toolTip"));
+        panel.add(jungleUltraChanceField);
+        panel.add(new JLabel());
+        panel.add(new JLabel());
+
+        panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1),
+                Messages.getString("RandomMapDialog.borderJungle")));
         RandomMapPanelBasic.makeCompactGrid(panel, 4, 4, 6, 6, 6, 6);
         return panel;
     }
@@ -1253,6 +1315,22 @@ public class RandomMapPanelAdvanced extends JPanel {
         if (!isFieldVerified(woodsUltraChanceField)) {
             return false;
         }
+
+        if (!isMinMaxVerified(jungleMinField, jungleMaxField)) {
+            return false;
+        }
+
+        if (!isMinMaxVerified(jungleMinSizeField, jungleMaxSizeField)) {
+            return false;
+        }
+
+        if (!isFieldVerified(jungleHeavyChanceField)) {
+            return false;
+        }
+
+        if (!isFieldVerified(jungleUltraChanceField)) {
+            return false;
+        }
         
         if (!isMinMaxVerified(foliageMinField, foliageMaxField)) {
             return false;
@@ -1426,6 +1504,12 @@ public class RandomMapPanelAdvanced extends JPanel {
                                        woodsMaxSizeField.getAsInt(),
                                        woodsHeavyChanceField.getAsInt(),
                                         woodsUltraChanceField.getAsInt());
+        newMapSettings.setJungleParams(jungleMinField.getAsInt(),
+                                        jungleMaxField.getAsInt(),
+                                        jungleMinSizeField.getAsInt(),
+                                        jungleMaxSizeField.getAsInt(),
+                                        jungleHeavyChanceField.getAsInt(),
+                                        jungleUltraChanceField.getAsInt());
         newMapSettings.setFoliageParams(foliageMinField.getAsInt(),
                                        foliageMaxField.getAsInt(),
                                        foliageMinSizeField.getAsInt(),

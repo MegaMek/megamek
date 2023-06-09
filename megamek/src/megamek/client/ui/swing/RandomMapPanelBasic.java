@@ -63,6 +63,7 @@ public class RandomMapPanelBasic extends JPanel {
     private final CheckpointComboBox<String> sandsCombo = new CheckpointComboBox<>(LOW_HIGH_CHOICES);
     private final CheckpointComboBox<String> swampsCombo = new CheckpointComboBox<>(LOW_HIGH_CHOICES);
     private final CheckpointComboBox<String> woodsCombo = new CheckpointComboBox<>(LOW_HIGH_CHOICES);
+    private final CheckpointComboBox<String> jungleCombo = new CheckpointComboBox<>(LOW_HIGH_CHOICES);
     private final CheckpointComboBox<String> foliageCombo = new CheckpointComboBox<>(LOW_HIGH_CHOICES);
     private final CheckpointComboBox<String> snowCombo = new CheckpointComboBox<>(LOW_HIGH_CHOICES);
 
@@ -110,54 +111,77 @@ public class RandomMapPanelBasic extends JPanel {
                                                 this.mapSettings.getMinWaterSpots(),
                                                 this.mapSettings.getProbDeep()));
         lakesCombo.checkpoint();
+
         riversCombo.setSelectedItem(percentageToRange(this.mapSettings.getProbRiver()));
         riversCombo.checkpoint();
+
         iceCombo.setSelectedItem(iceToRange(this.mapSettings.getMinIceSize(), this.mapSettings.getMinIceSpots()));
         iceCombo.checkpoint();
+
         roughsCombo.setSelectedItem(roughsToRange(this.mapSettings.getMinRoughSize(),
                                                   this.mapSettings.getMinRoughSpots()));
         roughsCombo.checkpoint();
+
         sandsCombo.setSelectedItem(sandsToRange(this.mapSettings.getMinSandSize(),
                                                 this.mapSettings.getMinSandSpots()));
         sandsCombo.checkpoint();
+
         swampsCombo.setSelectedItem(swampsToRange(this.mapSettings.getMinSwampSize(),
                                                   this.mapSettings.getMinSwampSpots()));
         swampsCombo.checkpoint();
+
         woodsCombo.setSelectedItem(woodsToRange(this.mapSettings.getMinForestSize(),
                                                 this.mapSettings.getMinForestSpots(),
                                                 this.mapSettings.getProbHeavy()));
         woodsCombo.checkpoint();
+
+        jungleCombo.setSelectedItem(woodsToRange(this.mapSettings.getMinJungleSize(),
+                this.mapSettings.getMinJungleSpots(),
+                this.mapSettings.getProbHeavyJungle()));
+        jungleCombo.checkpoint();
+
         foliageCombo.setSelectedItem(woodsToRange(this.mapSettings.getMinFoliageSize(),
                 this.mapSettings.getMinFoliageSpots(),
                 this.mapSettings.getProbFoliageHeavy()));
         foliageCombo.checkpoint();
+
         snowCombo.setSelectedItem(sandsToRange(this.mapSettings.getMinSnowSize(),
                 this.mapSettings.getMinSnowSpots()));
         snowCombo.checkpoint();
+
         cliffsCombo.setSelectedItem(percentageToRange(this.mapSettings.getCliffs()));
         cliffsCombo.checkpoint();
+
         cratersCombo.setSelectedItem(cratersToRange(this.mapSettings.getProbCrater()));
         cratersCombo.checkpoint();
+
         hillinessCombo.setSelectedItem(percentageToRange(this.mapSettings.getHilliness()));
         hillinessCombo.checkpoint();
+
         mountainCombo.setSelectedItem(convertMountain(this.mapSettings.getMountainPeaks(),
                                                       this.mapSettings.getMountainHeightMin(),
                                                       this.mapSettings.getMountainWidthMin(),
                                                       this.mapSettings.getMountainStyle()));
         mountainCombo.checkpoint();
+
         cityTypeCombo.setSelectedItem(this.mapSettings.getCityType());
         cityTypeCombo.checkpoint();
+
         fortifiedCombo.setSelectedItem(fortifiedToRange(this.mapSettings.getMinFortifiedSize(),
                                                         this.mapSettings.getMinFortifiedSpots()));
         fortifiedCombo.checkpoint();
+
         pavementCombo.setSelectedItem(pavementToRange(this.mapSettings.getMinPavementSize(),
                                                       this.mapSettings.getMinPavementSpots()));
         pavementCombo.checkpoint();
+
         plantedFieldsCombo.setSelectedItem(plantedFieldsToRange(this.mapSettings.getMinPlantedFieldSize(),
                                                                 this.mapSettings.getMinPlantedFieldSpots()));
         plantedFieldsCombo.checkpoint();
+
         roadsCombo.setSelectedItem(percentageToRange(this.mapSettings.getProbRoad()));
         roadsCombo.checkpoint();
+
         rubbleCombo.setSelectedItem(rubbleToRange(this.mapSettings.getMinRubbleSize(),
                                                   this.mapSettings.getMinRubbleSpots()));
         rubbleCombo.checkpoint();
@@ -230,6 +254,11 @@ public class RandomMapPanelBasic extends JPanel {
         woodsCombo.setToolTipText(Messages.getString("RandomMapDialog.woodsCombo.toolTip"));
         panel.add(woodsCombo);
 
+        final JLabel jungleLabel = new JLabel(Messages.getString("RandomMapDialog.labJungle"));
+        panel.add(jungleLabel);
+        jungleCombo.setToolTipText(Messages.getString("RandomMapDialog.jungleCombo.toolTip"));
+        panel.add(jungleCombo);
+
         final JLabel foliageLabel = new JLabel(Messages.getString("RandomMapDialog.labFoliage"));
         panel.add(foliageLabel);
         foliageCombo.setToolTipText(Messages.getString("RandomMapDialog.foliageCombo.toolTip"));
@@ -240,7 +269,7 @@ public class RandomMapPanelBasic extends JPanel {
         snowCombo.setToolTipText(Messages.getString("RandomMapDialog.snowCombo.toolTip"));
         panel.add(snowCombo);
         
-        makeCompactGrid(panel, 6, 2, 6, 6, 6, 6);
+        makeCompactGrid(panel, 7, 2, 6, 6, 6, 6);
         return new JScrollPane(panel);
     }
 
@@ -391,6 +420,12 @@ public class RandomMapPanelBasic extends JPanel {
         if (woodsCombo.hasChanged()) {
             value = (String) woodsCombo.getSelectedItem();
             setupWoods(value, newMapSettings);
+            anyChanges = true;
+        }
+
+        if (jungleCombo.hasChanged()) {
+            value = (String) jungleCombo.getSelectedItem();
+            setupJungle(value, newMapSettings);
             anyChanges = true;
         }
         
@@ -663,6 +698,18 @@ public class RandomMapPanelBasic extends JPanel {
             mapSettings.setForestParams(4, 8, 3, 10, 30, 0);
         } else {
             mapSettings.setForestParams(6, 10, 8, 13, 45, 5);
+        }
+    }
+
+    private void setupJungle(String jungleValue, MapSettings mapSettings) {
+        if (NONE.equalsIgnoreCase(jungleValue)) {
+            mapSettings.setJungleParams(0, 0, 0, 0, 0, 0);
+        } else if (LOW.equalsIgnoreCase(jungleValue)) {
+            mapSettings.setJungleParams(3, 6, 3, 6, 20, 0);
+        } else if (MEDIUM.equalsIgnoreCase(jungleValue)) {
+            mapSettings.setJungleParams(4, 8, 3, 10, 30, 0);
+        } else {
+            mapSettings.setJungleParams(6, 10, 8, 13, 45, 5);
         }
     }
     

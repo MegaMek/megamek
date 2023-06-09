@@ -127,10 +127,28 @@ public class MapSettings implements Serializable {
     /** probability for heavy woods, Range 0..100 */
     @XmlElement(name = "FORESTHEAVYPROB")
     private int probHeavy = 30;
-
     /** probability for ultra woods, Range 0..100 */
     @XmlElement(name = "FORESTULTRAPROB")
     private int probUltra = 0;
+
+    /** how much forests at least */
+    @XmlElement(name = "JUNGLEMINSPOTS")
+    private int minJungleSpots = 0;
+    /** how much forests at most */
+    @XmlElement(name = "JUNGLEMAXSPOTS")
+    private int maxJungleSpots = 0;
+    /** minimum size of a forest */
+    @XmlElement(name = "JUNGLEMINHEXES")
+    private int minJungleSize = 0;
+    /** maximum Size of a forest */
+    @XmlElement(name = "JUNGLEMAXHEXES")
+    private int maxJungleSize = 0;
+    /** probability for heavy woods, Range 0..100 */
+    @XmlElement(name = "JUNGLEHEAVYPROB")
+    private int probHeavyJungle = 0;
+    /** probability for ultra woods, Range 0..100 */
+    @XmlElement(name = "JUNGLEULTRAPROB")
+    private int probUltraJungle = 0;
     
     /** how much foliage at least */
     @XmlElement(name = "FOLIAGEMINSPOTS")
@@ -446,6 +464,12 @@ public class MapSettings implements Serializable {
         maxForestSize = other.getMaxForestSize();
         probHeavy = other.getProbHeavy();
         probUltra = other.getProbUltra();
+        minJungleSpots = other.getMinJungleSpots();
+        maxJungleSpots = other.getMaxJungleSpots();
+        minJungleSize = other.getMinJungleSize();
+        maxJungleSize = other.getMaxJungleSize();
+        probHeavyJungle = other.getProbHeavyJungle();
+        probUltraJungle = other.getProbUltraJungle();
         minFoliageSpots = other.getMinFoliageSpots();
         maxFoliageSpots = other.getMaxFoliageSpots();
         minFoliageSize = other.getMinFoliageSize();
@@ -781,6 +805,38 @@ public class MapSettings implements Serializable {
         if (probHeavy > 100) {
             probHeavy = 100;
         }
+        if (probUltra < 0) {
+            probUltra = 0;
+        }
+        if (probUltra > 100) {
+            probUltra = 100;
+        }
+
+        if (minJungleSpots < 0) {
+            minJungleSpots = 0;
+        }
+        if (maxJungleSpots < minJungleSpots) {
+            maxJungleSpots = minJungleSpots;
+        }
+        if (minJungleSize < 0) {
+            minJungleSize = 0;
+        }
+        if (maxJungleSize < minJungleSize) {
+            maxJungleSize = minJungleSize;
+        }
+        if (probHeavyJungle < 0) {
+            probHeavyJungle = 0;
+        }
+        if (probHeavyJungle > 100) {
+            probHeavyJungle = 100;
+        }
+        if (probUltraJungle < 0) {
+            probUltraJungle = 0;
+        }
+        if (probUltraJungle > 100) {
+            probUltraJungle = 100;
+        }
+
         if (minFoliageSpots < 0) {
             minFoliageSpots = 0;
         }
@@ -970,6 +1026,10 @@ public class MapSettings implements Serializable {
                 && (maxForestSpots == other.getMaxForestSpots()) && (minForestSize == other.getMinForestSize())
                 && (maxForestSize == other.getMaxForestSize()) && (probHeavy == other.getProbHeavy())
                 && (probUltra == other.getProbUltra())
+                && (minJungleSpots == other.getMinJungleSpots())
+                && (maxJungleSpots == other.getMaxJungleSpots()) && (minJungleSize == other.getMinJungleSize())
+                && (maxJungleSize == other.getMaxJungleSize()) && (probHeavyJungle == other.getProbHeavyJungle())
+                && (probUltraJungle == other.getProbUltraJungle())
                 && (minFoliageSpots == other.getMinFoliageSpots())
                 && (maxFoliageSpots == other.getMaxFoliageSpots()) && (minFoliageSize == other.getMinFoliageSize())
                 && (maxFoliageSize == other.getMaxFoliageSize()) && (probFoliageHeavy == other.getProbFoliageHeavy())
@@ -1071,6 +1131,26 @@ public class MapSettings implements Serializable {
     public int getProbHeavy() { return probHeavy; }
 
     public int getProbUltra() { return probUltra; }
+
+    public int getMinJungleSpots() {
+        return minJungleSpots;
+    }
+
+    public int getMaxJungleSpots() {
+        return maxJungleSpots;
+    }
+
+    public int getMinJungleSize() {
+        return minJungleSize;
+    }
+
+    public int getMaxJungleSize() {
+        return maxJungleSize;
+    }
+
+    public int getProbHeavyJungle() { return probHeavyJungle; }
+
+    public int getProbUltraJungle() { return probUltraJungle; }
     
     public int getMinFoliageSpots() {
         return minFoliageSpots;
@@ -1409,7 +1489,7 @@ public class MapSettings implements Serializable {
     }
 
     /**
-     * set the Parameters for the Map Generator
+     * set the forest parameters for the Map Generator
      */
     public void setForestParams(int minSpots, int maxSpots, int minSize, int maxSize, int probHeavy, int probUltra) {
         minForestSpots = minSpots;
@@ -1418,6 +1498,18 @@ public class MapSettings implements Serializable {
         maxForestSize = maxSize;
         this.probHeavy = probHeavy;
         this.probUltra = probUltra;
+    }
+
+    /**
+     * set the jungle parameters for the Map Generator
+     */
+    public void setJungleParams(int minSpots, int maxSpots, int minSize, int maxSize, int probHeavy, int probUltra) {
+        minJungleSpots = minSpots;
+        maxJungleSpots = maxSpots;
+        minJungleSize = minSize;
+        maxJungleSize = maxSize;
+        this.probHeavyJungle = probHeavy;
+        this.probUltraJungle = probUltra;
     }
     
     /**

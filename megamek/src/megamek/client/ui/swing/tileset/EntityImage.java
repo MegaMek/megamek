@@ -350,8 +350,7 @@ public class EntityImage {
 
                     // Pretreat with the camo overlay (but not Infantry, they're too small, it'll just darken them)
                     int oalpha = 128;
-                    if (GUIP.getUseCamoOverlay()
-                            && !isInfantry) {
+                    if (GUIP.getUseCamoOverlay() && !isInfantry && isSingleHex) {
                         oalpha = pOverlays[facing][i] & 0xff;
                     }
 

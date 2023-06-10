@@ -223,7 +223,7 @@ public class BoardUtilities {
         }
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
-            placeSomeTerrain(result, Terrains.ROUGH, 0, mapSettings
+            placeSomeTerrain(result, Terrains.ROUGH, mapSettings.getProbUltraRough(), mapSettings
                     .getMinRoughSize(), mapSettings.getMaxRoughSize(),
                     reverseHex, true);
         }
@@ -307,7 +307,7 @@ public class BoardUtilities {
         }
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
-            placeSomeTerrain(result, Terrains.RUBBLE, 0, mapSettings
+            placeSomeTerrain(result, Terrains.RUBBLE, mapSettings.getProbUltraRubble(), mapSettings
                     .getMinRubbleSize(), mapSettings.getMaxRubbleSize(),
                     reverseHex, true);
         }
@@ -471,7 +471,7 @@ public class BoardUtilities {
             if (exclusive) {
                 field.removeAllTerrains();
             }
-            int terrainDensity = pickTerrainDensity(probMore, probUltra);//(Compute.randomInt(100) < probMore) ? 2 : 1;
+            int terrainDensity = pickTerrainDensity(terrainType, probMore, probUltra);
             Terrain tempTerrain = new Terrain(terrainType, terrainDensity);
             field.addTerrain(tempTerrain);
             growTreesIfNecessary(field, terrainType, terrainDensity);
@@ -505,20 +505,40 @@ public class BoardUtilities {
      * Worker function that picks a terrain density (light, heavy, ultra) based on the passed-in weights.
      * Likelyhood of light is 100 - probHeavy.
      */
-    private static int pickTerrainDensity(int probHeavy, int probUltra) {
+    private static int pickTerrainDensity(int terrainType, int probHeavy, int probUltra) {
         int heavyThreshold = 100 - probHeavy;
         int ultraThreshold = 100;
         int sum = 100 + probUltra;
 
         int roll = Compute.randomInt(sum);
 
+        // for most terrains, this results in "standard/heavy/ultra" versions of the terrain
+        // but rubble is implemented weirdly, and there are probably maps that use the current
+        // implementation of rubble so here we are
         if (roll < heavyThreshold) {
-            return 1;
+            return terrainType == Terrains.RUBBLE ? pickRandomRubble() : 1;
         } else if (roll < ultraThreshold) {
-            return 2;
+            // rubble 6 is considered "ultra"
+            return terrainType == Terrains.RUBBLE ? 6 : 2;
         } else {
             return 3;
         }
+    }
+
+    /**
+     * Worker method to pick out a random usable type of "standard" rubble
+     */
+    private static int pickRandomRubble() {
+        // there are three usable types of rubble, so we pick one
+        int roll = Compute.randomInt(3) + 1;
+
+        // rubble 3 looks identical to rubble 6, which is ultra-rough, so we don't want
+        // to visually deceive the user, thus 3 becomes 4
+        if (roll == 3) {
+            roll = 4;
+        }
+
+        return roll;
     }
 
     /**

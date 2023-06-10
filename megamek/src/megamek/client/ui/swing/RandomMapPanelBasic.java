@@ -611,13 +611,13 @@ public class RandomMapPanelBasic extends JPanel {
 
     private void setupRubble(String rubbleValue, MapSettings mapSettings) {
         if (NONE.equalsIgnoreCase(rubbleValue)) {
-            mapSettings.setRubbleParams(0, 0, 0, 0);
+            mapSettings.setRubbleParams(0, 0, 0, 0, 0);
         } else if (LOW.equalsIgnoreCase(rubbleValue)) {
-            mapSettings.setRubbleParams(2, 6, 1, 2);
+            mapSettings.setRubbleParams(2, 6, 1, 2, 0);
         } else if (MEDIUM.equalsIgnoreCase(rubbleValue)) {
-            mapSettings.setRubbleParams(3, 8, 2, 5);
+            mapSettings.setRubbleParams(3, 8, 2, 5, 0);
         } else {
-            mapSettings.setRubbleParams(5, 10, 3, 7);
+            mapSettings.setRubbleParams(5, 10, 3, 7, 0);
         }
     }
 
@@ -695,13 +695,13 @@ public class RandomMapPanelBasic extends JPanel {
 
     private void setupRoughs(String roughsValue, MapSettings mapSettings) {
         if (NONE.equalsIgnoreCase(roughsValue)) {
-            mapSettings.setRoughParams(0, 0, 0, 0);
+            mapSettings.setRoughParams(0, 0, 0, 0, 0);
         } else if (LOW.equalsIgnoreCase(roughsValue)) {
-            mapSettings.setRoughParams(2, 6, 1, 2);
+            mapSettings.setRoughParams(2, 6, 1, 2, 0);
         } else if (MEDIUM.equalsIgnoreCase(roughsValue)) {
-            mapSettings.setRoughParams(3, 8, 2, 5);
+            mapSettings.setRoughParams(3, 8, 2, 5, 0);
         } else {
-            mapSettings.setRoughParams(5, 10, 3, 7);
+            mapSettings.setRoughParams(5, 10, 3, 7, 0);
         }
     }
 

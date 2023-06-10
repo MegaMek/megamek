@@ -94,6 +94,10 @@ public class RandomMapPanelAdvanced extends JPanel {
             new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
     private final VerifiableTextField roughsMaxSizeField = 
             new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
+
+    private final VerifiableTextField roughsUltraChanceField =
+            new VerifiableTextField(4, true, true, new VerifyInRange(0, 100, true));
+
     private final VerifiableTextField sandsMinField = 
             new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
     private final VerifiableTextField sandsMaxField = 
@@ -201,6 +205,10 @@ public class RandomMapPanelAdvanced extends JPanel {
             new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
     private final VerifiableTextField rubbleSizeMaxField = 
             new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
+
+    private final VerifiableTextField rubbleUltraChanceField =
+            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
+
     private final JComboBox<String> cityTypeCombo = new JComboBox<>(CT_CHOICES);
     private final VerifiableTextField cityBlocks = 
             new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
@@ -300,6 +308,7 @@ public class RandomMapPanelAdvanced extends JPanel {
         rubbleMaxField.setText(String.valueOf(mapSettings.getMaxRubbleSpots()));
         rubbleSizeMinField.setText(String.valueOf(mapSettings.getMinRubbleSize()));
         rubbleSizeMaxField.setText(String.valueOf(mapSettings.getMaxRubbleSize()));
+        rubbleUltraChanceField.setText(String.valueOf(mapSettings.getProbUltraRubble()));
         roadChanceField.setText(String.valueOf(mapSettings.getProbRoad()));
         pavementMinField.setText(String.valueOf(mapSettings.getMinPavementSpots()));
         pavementMaxField.setText(String.valueOf(mapSettings.getMaxPavementSpots()));
@@ -358,6 +367,7 @@ public class RandomMapPanelAdvanced extends JPanel {
         roughsMaxField.setText(String.valueOf(mapSettings.getMaxRoughSpots()));
         roughsMinSizeField.setText(String.valueOf(mapSettings.getMinRoughSize()));
         roughsMaxSizeField.setText(String.valueOf(mapSettings.getMaxRoughSize()));
+        roughsUltraChanceField.setText(String.valueOf(mapSettings.getProbUltraRough()));
         craterChanceField.setText(String.valueOf(mapSettings.getProbCrater()));
         craterAmountMinField.setText(String.valueOf(mapSettings.getMinCraters()));
         craterAmountMaxField.setText(String.valueOf(mapSettings.getMaxCraters()));
@@ -566,10 +576,17 @@ public class RandomMapPanelAdvanced extends JPanel {
         rubbleSizeMaxField.setToolTipText(Messages.getString("RandomMapDialog.rubbleSizeMaxField.toolTip"));
         panel.add(rubbleSizeMaxField);
 
+        JLabel ultraRubbleLabel = new JLabel(Messages.getString("RandomMapDialog.labProbUltraRubble"));
+        panel.add(ultraRubbleLabel);
+        rubbleUltraChanceField.setToolTipText(Messages.getString("RandomMapDialog.rubbleUltraChanceField.toolTip"));
+        panel.add(rubbleUltraChanceField);
+        panel.add(new JLabel());
+        panel.add(new JLabel());
+
         panel.setBorder(new TitledBorder(new LineBorder(Color.black, 2),
                                          Messages.getString("RandomMapDialog.borderRubble")));
 
-        RandomMapPanelBasic.makeCompactGrid(panel, 2, 4, 6, 6, 6, 6);
+        RandomMapPanelBasic.makeCompactGrid(panel, 3, 4, 6, 6, 6, 6);
         return panel;
     }
 
@@ -1032,10 +1049,17 @@ public class RandomMapPanelAdvanced extends JPanel {
         roughsMaxSizeField.setToolTipText(Messages.getString("RandomMapDialog.roughsMaxSizeField.toolTip"));
         panel.add(roughsMaxSizeField);
 
+        JLabel ultraRoughLabel = new JLabel(Messages.getString("RandomMapDialog.labProbUltraRough"));
+        panel.add(ultraRoughLabel);
+        roughsUltraChanceField.setToolTipText(Messages.getString("RandomMapDialog.roughsUltraChanceField.toolTip"));
+        panel.add(roughsUltraChanceField);
+        panel.add(new JLabel());
+        panel.add(new JLabel());
+
         panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1),
                                          Messages.getString("RandomMapDialog.borderRough")));
 
-        RandomMapPanelBasic.makeCompactGrid(panel, 2, 4, 6, 6, 6, 6);
+        RandomMapPanelBasic.makeCompactGrid(panel, 3, 4, 6, 6, 6, 6);
         return panel;
     }
 
@@ -1318,6 +1342,10 @@ public class RandomMapPanelAdvanced extends JPanel {
             return false;
         }
 
+        if (!isFieldVerified(roughsUltraChanceField)) {
+            return false;
+        }
+
         if (!isMinMaxVerified(sandsMinField, sandsMaxField)) {
             return false;
         }
@@ -1430,6 +1458,10 @@ public class RandomMapPanelAdvanced extends JPanel {
             return false;
         }
 
+        if (!isFieldVerified(rubbleUltraChanceField)) {
+            return false;
+        }
+
         if (!isFieldVerified(cityBlocks)) {
             return false;
         }
@@ -1535,7 +1567,8 @@ public class RandomMapPanelAdvanced extends JPanel {
         newMapSettings.setRoughParams(roughsMinField.getAsInt(),
                                       roughsMaxField.getAsInt(),
                                       roughsMinSizeField.getAsInt(),
-                                      roughsMaxSizeField.getAsInt());
+                                      roughsMaxSizeField.getAsInt(),
+                                    roughsUltraChanceField.getAsInt());
         newMapSettings.setSandParams(sandsMinField.getAsInt(),
                                      sandsMaxField.getAsInt(),
                                      sandsSizeMinField.getAsInt(),
@@ -1584,7 +1617,8 @@ public class RandomMapPanelAdvanced extends JPanel {
         newMapSettings.setRubbleParams(rubbleMinField.getAsInt(),
                                        rubbleMaxField.getAsInt(),
                                        rubbleSizeMinField.getAsInt(),
-                                       rubbleSizeMaxField.getAsInt());
+                                       rubbleSizeMaxField.getAsInt(),
+                                        rubbleUltraChanceField.getAsInt());
         newMapSettings.setRoadParam(roadChanceField.getAsInt());
         newMapSettings.setCityParams(cityBlocks.getAsInt(),
                                      (String) cityTypeCombo.getSelectedItem(),

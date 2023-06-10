@@ -179,6 +179,10 @@ public class MapSettings implements Serializable {
     @XmlElement(name = "ROUGHMAXHEXES")
     private int maxRoughSize = 2;
 
+    /** probability a rough spot is upgraded to an ultra-rough */
+    @XmlElement(name = "ROUGHULTRAPROB")
+    private int probUltraRough = 0;
+
     /** how much sand spots at least */
     @XmlElement(name = "SANDMINSPOTS")
     private int minSandSpots = 2;
@@ -269,6 +273,10 @@ public class MapSettings implements Serializable {
     /** maximum Size of a rubble spot */
     @XmlElement(name = "RUBBLEMAXHEXES")
     private int maxRubbleSize = 6;
+
+    /** probability of a rubble  ultraspot */
+    @XmlElement(name = "RUBBLEULTRAPROB")
+    private int probUltraRubble = 0;
 
     /** how much fortified spots at least */
     @XmlElement(name = "FORTIFIEDMINSPOTS")
@@ -492,6 +500,7 @@ public class MapSettings implements Serializable {
         maxRoughSpots = other.getMaxRoughSpots();
         minRoughSize = other.getMinRoughSize();
         maxRoughSize = other.getMaxRoughSize();
+        probUltraRough = other.getProbUltraRough();
         minSandSpots = other.getMinSandSpots();
         maxSandSpots = other.getMaxSandSpots();
         minSandSize = other.getMinSandSize();
@@ -520,6 +529,7 @@ public class MapSettings implements Serializable {
         maxRubbleSpots = other.getMaxRubbleSpots();
         minRubbleSize = other.getMinRubbleSize();
         maxRubbleSize = other.getMaxRubbleSize();
+        probUltraRubble = other.getProbUltraRubble();
         minFortifiedSpots = other.getMinFortifiedSpots();
         maxFortifiedSpots = other.getMaxFortifiedSpots();
         minFortifiedSize = other.getMinFortifiedSize();
@@ -884,6 +894,12 @@ public class MapSettings implements Serializable {
         if (maxRoughSize < minRoughSize) {
             maxRoughSize = minRoughSize;
         }
+        if (probUltraRough < 0) {
+            probUltraRough = 0;
+        }
+        if (probUltraRough > 100) {
+            probUltraRough = 100;
+        }
         if (minSandSpots < 0) {
             minSandSpots = 0;
         }
@@ -967,6 +983,12 @@ public class MapSettings implements Serializable {
         }
         if (maxRubbleSize < minRubbleSize) {
             maxRubbleSize = minRubbleSize;
+        }
+        if (probUltraRubble < 0) {
+            probUltraRubble = 0;
+        }
+        if (probUltraRubble > 100) {
+            probUltraRubble = 100;
         }
         if (minFortifiedSpots < 0) {
             minFortifiedSpots = 0;
@@ -1063,7 +1085,7 @@ public class MapSettings implements Serializable {
                 && (maxFoliageSpots == other.getMaxFoliageSpots()) && (minFoliageSize == other.getMinFoliageSize())
                 && (maxFoliageSize == other.getMaxFoliageSize()) && (probFoliageHeavy == other.getProbFoliageHeavy())
                 && (minRoughSpots == other.getMinRoughSpots()) && (maxRoughSpots == other.getMaxRoughSpots())
-                && (minRoughSize == other.getMinRoughSize()) && (maxRoughSize == other.getMaxRoughSize())
+                && (minRoughSize == other.getMinRoughSize()) && (maxRoughSize == other.getMaxRoughSize() && (probUltraRough == other.getProbUltraRough()))
                 && (minSandSpots == other.getMinSandSpots()) && (maxSandSpots == other.getMaxSandSpots())
                 && (minSandSize == other.getMinSandSize()) && (maxSandSize == other.getMaxSandSize())
                 && (minSnowSpots == other.getMinSnowSpots()) && (maxSnowSpots == other.getMaxSnowSpots())
@@ -1080,7 +1102,7 @@ public class MapSettings implements Serializable {
                 && (maxPavementSpots == other.getMaxPavementSpots()) && (minPavementSize == other.getMinPavementSize())
                 && (maxPavementSize == other.getMaxPavementSize()) && (minRubbleSpots == other.getMinRubbleSpots())
                 && (maxRubbleSpots == other.getMaxRubbleSpots()) && (minRubbleSize == other.getMinRubbleSize())
-                && (maxRubbleSize == other.getMaxRubbleSize()) && (minFortifiedSpots == other.getMinFortifiedSpots())
+                && (maxRubbleSize == other.getMaxRubbleSize()) && (minFortifiedSpots == other.getMinFortifiedSpots() && (probUltraRubble == other.getProbUltraRubble()))
                 && (maxFortifiedSpots == other.getMaxFortifiedSpots())
                 && (minFortifiedSize == other.getMinFortifiedSize())
                 && (maxFortifiedSize == other.getMaxFortifiedSize()) && (minIceSpots == other.getMinIceSpots())
@@ -1218,6 +1240,8 @@ public class MapSettings implements Serializable {
     public int getMaxRoughSize() {
         return maxRoughSize;
     }
+
+    public int getProbUltraRough() {return probUltraRough; }
 
     public int getMinSandSpots() {
         return minSandSpots;
@@ -1387,6 +1411,10 @@ public class MapSettings implements Serializable {
 
     public int getMaxRubbleSize() {
         return maxRubbleSize;
+    }
+
+    public int getProbUltraRubble() {
+        return probUltraRubble;
     }
 
     public int getMinFortifiedSpots() {
@@ -1585,13 +1613,14 @@ public class MapSettings implements Serializable {
     }
 
     /**
-     * set the Parameters for the Map Generator
+     * set rough terrain parameters for the Map Generator
      */
-    public void setRoughParams(int minSpots, int maxSpots, int minSize, int maxSize) {
+    public void setRoughParams(int minSpots, int maxSpots, int minSize, int maxSize, int probUltra) {
         minRoughSpots = minSpots;
         maxRoughSpots = maxSpots;
         minRoughSize = minSize;
         maxRoughSize = maxSize;
+        probUltraRough = probUltra;
     }
 
     /**
@@ -1657,11 +1686,12 @@ public class MapSettings implements Serializable {
     /**
      * set the Parameters for the Map Generator
      */
-    public void setRubbleParams(int minSpots, int maxSpots, int minSize, int maxSize) {
+    public void setRubbleParams(int minSpots, int maxSpots, int minSize, int maxSize, int probUltra) {
         minRubbleSpots = minSpots;
         maxRubbleSpots = maxSpots;
         minRubbleSize = minSize;
         maxRubbleSize = maxSize;
+        probUltraRubble = probUltra;
     }
 
     /**

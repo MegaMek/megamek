@@ -8580,16 +8580,19 @@ public class GameManager implements IGameManager {
         // but the danger isn't over yet! landing from a jump can be risky!
         if ((overallMoveType == EntityMovementType.MOVE_JUMP) && !entity.isMakingDfa()) {
             final Hex curHex = game.getBoard().getHex(curPos);
+
             // check for damaged criticals
             rollTarget = entity.checkLandingWithDamage(overallMoveType);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 doSkillCheckInPlace(entity, rollTarget);
             }
+
             // check for prototype JJs
             rollTarget = entity.checkLandingWithPrototypeJJ(overallMoveType);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 doSkillCheckInPlace(entity, rollTarget);
             }
+
             // check for jumping into heavy woods
             if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_PSR_JUMP_HEAVY_WOODS)) {
                 rollTarget = entity.checkLandingInHeavyWoods(overallMoveType, curHex);
@@ -8597,6 +8600,7 @@ public class GameManager implements IGameManager {
                     doSkillCheckInPlace(entity, rollTarget);
                 }
             }
+
             // Mechanical jump boosters fall damage
             if (md.shouldMechanicalJumpCauseFallDamage()) {
                 vPhaseReport.addAll(doEntityFallsInto(entity,
@@ -8604,6 +8608,7 @@ public class GameManager implements IGameManager {
                         curPos, entity.getBasePilotingRoll(overallMoveType),
                         false, entity.getJumpMP()));
             }
+
             // jumped into water?
             int waterLevel = curHex.terrainLevel(Terrains.WATER);
             if (curHex.containsTerrain(Terrains.ICE) && (waterLevel > 0)) {
@@ -8660,6 +8665,20 @@ public class GameManager implements IGameManager {
                 }
             }
 
+            // check for black ice
+            // FIXME Check weather and optional rule for black ice.
+            boolean useBlackIce = game.getOptions().booleanOption(OptionsConstants.ADVANCED_BLACK_ICE);
+            boolean goodTemp = game.getPlanetaryConditions().getTemperature() <= -30;
+            boolean goodWeather = game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM;
+            if ((useBlackIce && goodTemp) || goodWeather) {
+                if (ServerHelper.checkEnteringBlackIce(this, curPos, curHex, useBlackIce, goodTemp, goodWeather)) {
+                    rollTarget = entity.checkLandingOnBlackIce(overallMoveType, curHex);
+                    if (!doSkillCheckInPlace(entity, rollTarget)) {
+                        entity.applyDamage();
+                    }
+                }
+            }
+
             // check for building collapse
             Building bldg = game.getBoard().getBuildingAt(curPos);
             if (bldg != null) {
@@ -8703,6 +8722,7 @@ public class GameManager implements IGameManager {
                     }
                 }
             }
+
             // If the entity is being swarmed, jumping may dislodge the fleas.
             if (Entity.NONE != swarmerId) {
                 final Entity swarmer = game.getEntity(swarmerId);

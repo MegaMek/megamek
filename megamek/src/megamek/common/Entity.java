@@ -7384,6 +7384,26 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
+     * Checks if the entity is landing (from a jump) on black ice.
+     */
+    public PilotingRollData checkLandingOnBlackIce(
+            EntityMovementType overallMoveType, Hex curHex) {
+        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
+
+        if (curHex.containsTerrain(Terrains.BLACK_ICE)) {
+            roll.append(new PilotingRollData(getId(), 0,
+                    "landing on black ice"));
+            addPilotingModifierForTerrain(roll);
+            adjustDifficultTerrainPSRModifier(roll);
+        } else {
+            roll.addModifier(TargetRoll.CHECK_FALSE,
+                    "hex is not covered by black ice");
+        }
+
+        return roll;
+    }
+
+    /**
      * return a <code>PilotingRollData</code> checking for whether this Entity
      * moved too fast due to low gravity
      *

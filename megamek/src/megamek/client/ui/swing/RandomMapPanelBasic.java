@@ -844,6 +844,10 @@ public class RandomMapPanelBasic extends JPanel {
             y = Spring.sum(y, Spring.sum(height, Spring.constant(yPad)));
         }
 
+        // for some reason the bottom border runs over the bottom textboxes in
+        // some of these, so we add an experimentally established padding to the bottom
+        y = Spring.sum(y, Spring.constant(13));
+
         //Set the parent's size.
         SpringLayout.Constraints pCons = layout.getConstraints(parent);
         pCons.setConstraint(SpringLayout.SOUTH, y);

@@ -5782,7 +5782,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         if (mhex == null) {
             return;
         }
-        String result = HexTooltip.getHexTip(mhex, clientgui);
+        String result = HexTooltip.getHexTip(mhex, clientgui.getClient());
         txt.append(result);
     }
 

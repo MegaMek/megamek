@@ -47,13 +47,13 @@ public class EntityChoiceDialog extends AbstractChoiceDialog<Entity> {
 
     @Override
     protected void detailLabel(JToggleButton button, Entity target) {
-        String div = "<DIV WIDTH=" + UIUtil.scaleForGUI(500) + ">" + UnitToolTip.getEntityTipVitals(target, null) + "</DIV>";
+        String div = "<DIV WIDTH=" + UIUtil.scaleForGUI(500) + ">" + UnitToolTip.getEntityTipAsTarget(target, null) + "</DIV>";
         button.setText("<html>" + div + "</html>");
     }
 
     @Override
     protected void summaryLabel(JToggleButton button, Entity target) {
-        button.setText("<html><b>" + target.getDisplayName() + "</b></html>");
+        button.setText("<html><b>" +UnitToolTip.getTargetTipSummaryEntity(target, null) + "</b></html>");
     }
 
     /**

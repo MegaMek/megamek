@@ -307,7 +307,7 @@ class AimedShotHandler implements ActionListener, ItemListener {
             if (this.firingDisplay.target instanceof GunEmplacement) {
                 return GunEmplacement.HIT_LOCATION_NAMES[aimingAt];
             } else if (this.firingDisplay.target instanceof Entity) {
-                return ((Entity) this.firingDisplay.target).getLocationAbbrs()[aimingAt];
+                return ((Entity) this.firingDisplay.target).getLocationName(aimingAt);
             }
         }
         return null;

@@ -1,16 +1,16 @@
-/*  
-* MegaMek - Copyright (C) 2020 - The MegaMek Team  
-*  
-* This program is free software; you can redistribute it and/or modify it under  
-* the terms of the GNU General Public License as published by the Free Software  
-* Foundation; either version 2 of the License, or (at your option) any later  
-* version.  
-*  
-* This program is distributed in the hope that it will be useful, but WITHOUT  
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS  
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more  
-* details.  
-*/  
+/*
+* MegaMek - Copyright (C) 2020 - The MegaMek Team
+*
+* This program is free software; you can redistribute it and/or modify it under
+* the terms of the GNU General Public License as published by the Free Software
+* Foundation; either version 2 of the License, or (at your option) any later
+* version.
+*
+* This program is distributed in the hope that it will be useful, but WITHOUT
+* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+* details.
+*/
 package megamek.client.ui.swing.tooltip;
 
 import megamek.client.ui.Messages;
@@ -38,7 +38,7 @@ import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 import static megamek.client.ui.swing.util.UIUtil.uiQuirksColor;
 
 public final class PilotToolTip {
-    
+
     /** the portrait base size */
     private final static int PORTRAIT_BASESIZE = 72;
     final static String BG_COLOR = "#313131";
@@ -61,16 +61,20 @@ public final class PilotToolTip {
     public static StringBuilder getPilotTipDetailed(Entity entity, boolean showPortrait) {
         return getPilotTip(entity, true, showPortrait, true);
     }
-    
+
     public static StringBuilder getPilotTipShort(Entity entity, boolean showPortrait) {
         return getPilotTip(entity, false, showPortrait, false);
+    }
+
+    public static StringBuilder getPilotTipLine(Entity entity) {
+        return crewInfoLine(entity);
     }
 
     // PRIVATE
 
     private static StringBuilder getPilotTip(final Entity entity, boolean detailed, boolean showPortrait, boolean showDefaultPortrait) {
         String result = "";
-        
+
         if (!detailed) {
             result += "<HR STYLE=WIDTH:90% />";
         }
@@ -103,13 +107,23 @@ public final class PilotToolTip {
 
         return new StringBuilder().append(result);
     }
-    
+
+    private static StringBuilder crewInfoLine(final Entity entity) {
+        Crew crew = entity.getCrew();
+        Game game = entity.getGame();
+        String result = "";
+        // Effective entity skill for the whole crew
+        boolean rpg_skills = game.getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
+        result += CrewSkillSummaryUtil.getSkillNames(entity) + ": " + crew.getSkillsAsString(rpg_skills);
+        return new StringBuilder(result);
+    }
+
     /** Returns a tooltip part with names and skills of the crew. */
     private static StringBuilder crewInfoCell(final Entity entity) {
         Crew crew = entity.getCrew();
         Game game = entity.getGame();
         String result = "";
-        
+
         // Name / Callsign and Status for each crew member
         for (int i = 0; i < crew.getSlotCount(); i++) {
             String sCrew = "";
@@ -129,13 +143,13 @@ public final class PilotToolTip {
             if (crew.getSlotCount() > 1) {
                 sCrew += " \u2B1D " + crew.getCrewType().getRoleName(i);
             }
-            
+
             if (!crew.getStatusDesc(i).isEmpty()) {
                 sCrew += guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()) + " (" + crew.getStatusDesc(i) + ")</FONT>";
             }
             result += sCrew + "<BR>";
         }
-        
+
         // Effective entity skill for the whole crew
         boolean rpg_skills = game.getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
         result += CrewSkillSummaryUtil.getSkillNames(entity) + ": " + crew.getSkillsAsString(rpg_skills);
@@ -144,7 +158,7 @@ public final class PilotToolTip {
 
         return new StringBuilder().append(col);
     }
-    
+
     /** Returns a tooltip part with crew portraits. */
     private static StringBuilder crewPortraits(final Entity entity, boolean showDefaultPortrait) {
         Crew crew = entity.getCrew();
@@ -179,8 +193,8 @@ public final class PilotToolTip {
 
         return new StringBuilder().append(col);
     }
-    
-    /** 
+
+    /**
      * Returns a tooltip part with crew advantages. When detailed is
      * true, the advantages will be fully listed, otherwise only the
      * groups and number of advantages per group are given.

@@ -1,20 +1,20 @@
 /*
-* MegaMek - Copyright (C) 2020 - The MegaMek Team
-*
-* This program is free software; you can redistribute it and/or modify it under
-* the terms of the GNU General Public License as published by the Free Software
-* Foundation; either version 2 of the License, or (at your option) any later
-* version.
-*
-* This program is distributed in the hope that it will be useful, but WITHOUT
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
-* details.
-*/
+ * MegaMek - Copyright (C) 2020 - The MegaMek Team
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ */
 package megamek.client.ui.swing.tooltip;
 
+import megamek.client.Client;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
@@ -49,7 +49,8 @@ public final class UnitToolTip {
 
     public static StringBuilder lobbyTip(InGameObject unit, Player localPlayer, MapSettings mapSettings) {
         if (unit instanceof Entity) {
-            return getEntityTipTable((Entity) unit, localPlayer, true, false, mapSettings, true, false);
+            return getEntityTipTable((Entity) unit, localPlayer, true, false, mapSettings,
+                    true, false, false, false, false);
         } else if (unit instanceof AlphaStrikeElement) {
             // TODO : Provide a suitable tip
             return new StringBuilder("AlphaStrikeElement " + ((AlphaStrikeElement) unit).getName());
@@ -61,35 +62,40 @@ public final class UnitToolTip {
     /** Returns the unit tooltip with values that are relevant in the lobby. */
     public static StringBuilder getEntityTipLobby(Entity entity, Player localPlayer,
                                                   MapSettings mapSettings) {
-        return getEntityTipTable(entity, localPlayer, true, false, mapSettings, true, false);
+        return getEntityTipTable(entity, localPlayer, true, false, mapSettings,
+                true, false, false, false, false);
     }
 
     /** Returns the unit tooltip with values that are relevant in-game. */
     public static StringBuilder getEntityTipGame(Entity entity, Player localPlayer) {
-        return getEntityTipTable(entity, localPlayer, false, true, null, true, true);
+        return getEntityTipTable(entity, localPlayer, false, true, null,
+                true, true, true, true, true);
     }
 
     /** Returns the unit tooltip with values that are relevant in-game without the Pilot info. */
     public static StringBuilder getEntityTipUnitDisplay(Entity entity, Player localPlayer) {
-        return getEntityTipTable(entity, localPlayer, true, false, null, true, true);
+        return getEntityTipTable(entity, localPlayer, true, false, null,
+                true, true, true, true, true);
     }
 
     /** Returns the unit tooltip with minimal but useful information */
-    public static StringBuilder getEntityTipVitals(Entity entity, Player localPlayer) {
-        return getEntityTipTable(entity, localPlayer, false, false, null, true, true);
+    public static StringBuilder getEntityTipAsTarget(Entity entity, Player localPlayer) {
+        return getEntityTipTable(entity, localPlayer, false, false, null,
+                true, true, false, false, false );
     }
 
     /** Returns the unit tooltip with minimal but useful information */
     public static StringBuilder getEntityTipReport(Entity entity) {
-        return getEntityTipTable(entity, null, true, true, null, false, true);
+        return getEntityTipTable(entity, null, true, true, null,
+                false, true, false, false, false);
     }
 
     // PRIVATE
 
     /** Assembles the whole unit tooltip. */
     private static StringBuilder getEntityTipTable(Entity entity, Player localPlayer,
-           boolean details, boolean pilotInfo, @Nullable MapSettings mapSettings, boolean showName, boolean inGameValue) {
-
+           boolean details, boolean pilotInfo, @Nullable MapSettings mapSettings, boolean showName,
+           boolean inGameValue, boolean showBV, boolean showSensors, boolean showSeenBy) {
         // Tooltip info for a sensor blip
         if (EntityVisibilityUtils.onlyDetectedBySensors(localPlayer, entity)) {
             String msg_senorreturn = Messages.getString("BoardView1.sensorReturn");
@@ -106,7 +112,7 @@ public final class UnitToolTip {
         result += forceEntry(entity, localPlayer);
 
         // In Game Values
-        result += inGameValues(entity, localPlayer, inGameValue);
+        result += inGameValues(entity, localPlayer, inGameValue, showBV, showSensors, showSeenBy);
 
         // Deployment Warnings
         result += deploymentWarnings(entity, mapSettings, details);
@@ -159,34 +165,51 @@ public final class UnitToolTip {
         return new StringBuilder().append(table);
     }
 
-    public static String getTargetTipDetail(Targetable target, @Nullable Board board,
-                                     @Nullable ClientGUI clientGUI) {
+    public static String getTargetTipDetail(Targetable target, @Nullable Client client) {
         if (target instanceof Entity) {
-           return UnitToolTip.getEntityTipVitals((Entity) target, null).toString();
+            return UnitToolTip.getEntityTipAsTarget((Entity) target, (client != null) ? client.getLocalPlayer() : null).toString();
         } else if (target instanceof BuildingTarget) {
-            return HexTooltip.getBuildingTargetTip((BuildingTarget) target, board);
+            return HexTooltip.getBuildingTargetTip((BuildingTarget) target, (client != null) ? client.getBoard() : null);
         } else if (target instanceof Hex) {
-            return HexTooltip.getHexTip((Hex) target, clientGUI);
+            return HexTooltip.getHexTip((Hex) target, client);
         } else {
-            return getTargetTipSummary(target, board);
+            return getTargetTipSummary(target, client);
         }
     }
 
-    public static String getTargetTipSummary(Targetable target, @Nullable Board board) {
-        if (target instanceof Entity) {
-            return UnitToolTip.getOneLineSummary((Entity) target);
+    public static String getTargetTipSummary(Targetable target, @Nullable Client client) {
+        if (target == null) {
+            return Messages.getString("BoardView1.Tooltip.NoTarget");
+        } else if (target instanceof Entity) {
+            return getTargetTipSummaryEntity((Entity) target, client);
         } else if (target instanceof BuildingTarget) {
-           return HexTooltip.getOneLineSummary((BuildingTarget) target, board);
+            return HexTooltip.getOneLineSummary((BuildingTarget) target, (client != null) ? client.getBoard() : null);
         }
         return target.getDisplayName();
     }
 
-    private static String getDisplayNames(Entity entity, Game game, boolean showName) {
+    public static String getTargetTipSummaryEntity(Entity entity, @Nullable Client client ) {
+        if (entity == null) {
+            return Messages.getString("BoardView1.Tooltip.NoTarget");
+        }
+
+        // Tooltip info for a sensor blip
+        if ((client != null) && EntityVisibilityUtils.onlyDetectedBySensors(client.getLocalPlayer(), entity)) {
+            return Messages.getString("BoardView1.sensorReturn");
+        }
+
+        String result = getDisplayNames(entity, (client != null) ? client.getGame() : null, true);
+        result += "<BR>";
+        result += UnitToolTip.getOneLineSummary(entity);
+        return result;
+    }
+
+    private static String getDisplayNames(Entity entity, @Nullable Game game, boolean showName) {
         String result = "";
 
         if (showName) {
             // Unit Chassis and Player
-            Player owner = game.getPlayer(entity.getOwnerId());
+            Player owner = (game != null) ? game.getPlayer(entity.getOwnerId()) : null;
             Color ownerColor = (owner != null) ? owner.getColour().getColour() : uiGray();
             String ownerName = (owner != null) ? owner.getName() : ReportMessages.getString("BoardView1.Tooltip.unknownOwner");
             String msg_clanbrackets = Messages.getString("BoardView1.Tooltip.ClanBrackets");
@@ -204,13 +227,11 @@ public final class UnitToolTip {
     }
 
     private static String getPilotInfo(Entity entity, boolean pilotInfo) {
-        String result = "";
-
         if (pilotInfo) {
-            result += PilotToolTip.getPilotTipShort(entity, GUIP.getshowPilotPortraitTT());
+            return PilotToolTip.getPilotTipShort(entity, GUIP.getshowPilotPortraitTT()).toString();
+        } else {
+            return "<BR>" + PilotToolTip.getPilotTipLine(entity).toString();
         }
-
-        return result;
     }
 
     private static String getQuirks(Entity entity, Game game, boolean details) {
@@ -948,12 +969,13 @@ public final class UnitToolTip {
 
         return new HeatDisplayHelper(heatCapacityStr, heatCapWater);
     }
-      
+
     public static String getOneLineSummary(Entity entity) {
         String result = "";
         boolean isGunEmplacement = entity instanceof GunEmplacement;
-
-        result += Messages.getString("BoardView1.Tooltip.ArmorInternals", entity.getTotalArmor(), entity.getTotalInternal());
+        String armorStr = entity.getTotalArmor() + " / " + entity.getTotalOArmor();
+        String internalStr = entity.getTotalInternal() + " / " + entity.getTotalOInternal();
+        result += Messages.getString("BoardView1.Tooltip.ArmorInternals",armorStr, internalStr);
 
         result += getDamageLevelDesc(entity);
 
@@ -1013,7 +1035,8 @@ public final class UnitToolTip {
     }
 
     /** Returns values that only are relevant when in-game such as heat. */
-    private static StringBuilder inGameValues(Entity entity, Player localPlayer, boolean inGameValue) {
+    private static StringBuilder inGameValues(Entity entity, Player localPlayer, boolean inGameValue,
+                                              boolean showBV, boolean showSensors, boolean showSeenBy) {
         Game game = entity.getGame();
         boolean isGunEmplacement = entity instanceof GunEmplacement;
         String result = "";
@@ -1022,18 +1045,19 @@ public final class UnitToolTip {
             return new StringBuilder();
         }
 
-        // BV Info
-        // Hidden for invisible units when in double blind and hide enemy bv is selected
-        // Also not shown in the lobby as BV is shown there outside the tooltip
-        boolean showEnemyBV = !(game.getOptions().booleanOption(OptionsConstants.ADVANCED_SUPPRESS_DB_BV) &&
-                game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND));
-        boolean isVisible = EntityVisibilityUtils.trackThisEntitiesVisibilityInfo(localPlayer, entity);
+        if (showBV) {
+            // BV Info
+            // Hidden for invisible units when in double blind and hide enemy bv is selected
+            // Also not shown in the lobby as BV is shown there outside the tooltip
+            boolean showEnemyBV = !(game.getOptions().booleanOption(OptionsConstants.ADVANCED_SUPPRESS_DB_BV) && game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND));
+            boolean isVisible = EntityVisibilityUtils.trackThisEntitiesVisibilityInfo(localPlayer, entity);
 
-        if (isVisible || showEnemyBV) {
-            int currentBV = entity.calculateBattleValue(false, false);
-            int initialBV = entity.getInitialBV();
-            double percentage = (double) currentBV / initialBV;
-            result += addToTT("BV", BR, currentBV, initialBV, percentage).toString();
+            if (isVisible || showEnemyBV) {
+                int currentBV = entity.calculateBattleValue(false, false);
+                int initialBV = entity.getInitialBV();
+                double percentage = (double) currentBV / initialBV;
+                result += addToTT("BV", BR, currentBV, initialBV, percentage).toString();
+            }
         }
 
         result += getDamageLevelDesc(entity);
@@ -1198,63 +1222,66 @@ public final class UnitToolTip {
             result += guiScaledFontHTML() + sSpotting + "</FONT>";
         }
 
-        // If Double Blind, add information about who sees this Entity
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) {
-            StringBuffer tempList = new StringBuffer();
-            boolean teamVision = game.getOptions().booleanOption(
-                    OptionsConstants.ADVANCED_TEAM_VISION);
-            int seenByResolution = GUIP.getUnitToolTipSeenByResolution();
-            String tmpStr = "";
+        if (showSeenBy) {
+            // If Double Blind, add information about who sees this Entity
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) {
+                StringBuffer tempList = new StringBuffer();
+                boolean teamVision = game.getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION);
+                int seenByResolution = GUIP.getUnitToolTipSeenByResolution();
+                String tmpStr = "";
 
-            dance: for (Player player :  entity.getWhoCanSee()) {
-                if (player.isEnemyOf(entity.getOwner()) || !teamVision) {
-                    switch (seenByResolution) {
-                        case 0:
-                            String msg_someone = Messages.getString("BoardView1.Tooltip.Someone");
-                            tempList.append(msg_someone);
+                dance:
+                for (Player player : entity.getWhoCanSee()) {
+                    if (player.isEnemyOf(entity.getOwner()) || !teamVision) {
+                        switch (seenByResolution) {
+                            case 0:
+                                String msg_someone = Messages.getString("BoardView1.Tooltip.Someone");
+                                tempList.append(msg_someone);
+                                tempList.append(", ");
+                                break dance;
+                            case 1:
+                                Team team = game.getTeamForPlayer(player);
+                                tmpStr = team != null ? team.toString() : "";
+                                break;
+                            case 2:
+                                tmpStr = player.getName();
+                                break;
+                            case 3:
+                                tmpStr = player.toString();
+                                break;
+                            default:
+                                break dance;
+                        }
+
+                        if (tempList.indexOf(tmpStr) == -1) {
+                            tempList.append(tmpStr);
                             tempList.append(", ");
-                            break dance;
-                        case 1:
-                            Team team = game.getTeamForPlayer(player);
-                            tmpStr = team != null ? team.toString() : "";
-                            break;
-                        case 2:
-                            tmpStr = player.getName();
-                            break;
-                        case 3:
-                            tmpStr = player.toString();
-                            break;
-                        default:
-                            break dance;
-                    }
-
-                    if (tempList.indexOf(tmpStr) == -1) {
-                        tempList.append(tmpStr);
-                        tempList.append(", ");
+                        }
                     }
                 }
-            }
-            if (tempList.length() > 1) {
-                tempList.delete(tempList.length() - 2, tempList.length());
-                String sSeenBy = addToTT("SeenBy", BR, tempList.toString()).toString();
-                result += guiScaledFontHTML() + sSeenBy + "</FONT>";
+                if (tempList.length() > 1) {
+                    tempList.delete(tempList.length() - 2, tempList.length());
+                    String sSeenBy = addToTT("SeenBy", BR, tempList.toString()).toString();
+                    result += guiScaledFontHTML() + sSeenBy + "</FONT>";
+                }
             }
         }
 
-        // If sensors, display what sensors this unit is using
-        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)
-                || game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
-            String visualRange = Compute.getMaxVisualRange(entity, false) + "";
-            if (game.getPlanetaryConditions().isIlluminationEffective()) {
-                visualRange += " (" + Compute.getMaxVisualRange(entity, true) + ")";
+        if (showSensors) {
+            // If sensors, display what sensors this unit is using
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS) || game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
+                String visualRange = Compute.getMaxVisualRange(entity, false) + "";
+                if (game.getPlanetaryConditions().isIlluminationEffective()) {
+                    visualRange += " (" + Compute.getMaxVisualRange(entity, true) + ")";
+                }
+                result += addToTT("Sensors", BR, getSensorDesc(entity), visualRange);
+            } else {
+                String visualRange = Compute.getMaxVisualRange(entity, false) + "";
+                if (game.getPlanetaryConditions().isIlluminationEffective()) {
+                    visualRange += " (" + Compute.getMaxVisualRange(entity, true) + ")";
+                }
+                result += addToTT("Visual", BR, visualRange);
             }
-            result += addToTT("Sensors", BR, getSensorDesc(entity), visualRange);
-        } else {
-            String visualRange = Compute.getMaxVisualRange(entity, false) + "";
-            if (game.getPlanetaryConditions().isIlluminationEffective()) {
-                visualRange += " (" + Compute.getMaxVisualRange(entity, true) + ")";
-            }
-            result += addToTT("Visual", BR, visualRange);
         }
 
         if (entity.hasAnyTypeNarcPodsAttached()) {
@@ -1495,10 +1522,11 @@ public final class UnitToolTip {
             if (!armorType.isBlank()) {
                 String msg_armorcapital = Messages.getString("BoardView1.Tooltip.ArmorCapital");
                 armorType = (entity.isCapitalScale() ? msg_armorcapital + " " : "") + armorType;
-                armorType = " (" + armorType + ")";
+                armorType = " (" + armorType + ") ";
             }
-            String armorStr = " " + entity.getTotalArmor() + " / " + entity.getTotalOArmor() + armorType;
-            String sArmorInternals = addToTT("ArmorInternals", NOBR, armorStr, entity.getTotalInternal()).toString() + " / " + entity.getTotalOInternal();
+            String armorStr = entity.getTotalArmor() + " / " + entity.getTotalOArmor() + armorType;
+            String internalStr = entity.getTotalInternal() + " / " + entity.getTotalOInternal();
+            String sArmorInternals = addToTT("ArmorInternals" , NOBR, armorStr, internalStr).toString();
             l1 = "<Li style=\"list-style-type: none; list-style-image: none; margin: 0; padding: 0;\">" + sArmorInternals + "</Li>";
         }
 

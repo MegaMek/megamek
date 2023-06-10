@@ -75,19 +75,19 @@ public class TargetChoiceDialog extends AbstractChoiceDialog<Targetable> {
 
     @Override
     protected void detailLabel(JToggleButton button, Targetable target) {
-        String div = "<DIV WIDTH=" + UIUtil.scaleForGUI(500) + ">" +  infoText(target) + UnitToolTip.getTargetTipDetail(target,
-                clientGUI.getClient().getBoard(), clientGUI) + "</DIV>";
+        String div = "<DIV WIDTH=" + UIUtil.scaleForGUI(500) + ">" +  infoText(target) + " " + UnitToolTip.getTargetTipDetail(target,
+                clientGUI.getClient()) + "</DIV>";
         button.setText("<html>" + div + "</html>");
     }
 
     @Override
     protected void summaryLabel(JToggleButton button, Targetable target) {
-        button.setText("<html>" + infoText(target) + UnitToolTip.getTargetTipSummary(target,
-                clientGUI.getClient().getBoard()) + "</html>");
+        button.setText("<html>" + infoText(target) + "<BR>" + UnitToolTip.getTargetTipSummary(target,
+                clientGUI.getClient()) + "</html>");
     }
 
     protected String infoText(Targetable target) {
-        String result = "<b>" + target.getDisplayName() + "</b>";
+        String result = "";
 
         if (firingEntity != null) {
             ToHitData thd = WeaponAttackAction.toHit(clientGUI.getClient().getGame(), firingEntity.getId(), target);

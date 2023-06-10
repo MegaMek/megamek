@@ -142,35 +142,34 @@ public class EntityActionLog implements Collection<EntityAction> {
 
     void addDescription(EntityAction entityAction) {
         if (entityAction instanceof WeaponAttackAction) {
-            addWeapon((WeaponAttackAction) entityAction);
+            addEntityAction((WeaponAttackAction) entityAction);
         } else if (entityAction instanceof KickAttackAction) {
-            addWeapon((KickAttackAction) entityAction);
+            addEntityAction((KickAttackAction) entityAction);
         } else if (entityAction instanceof PunchAttackAction) {
-            addWeapon((PunchAttackAction) entityAction);
+            addEntityAction((PunchAttackAction) entityAction);
         } else if (entityAction instanceof PushAttackAction) {
-            addWeapon((PushAttackAction) entityAction);
+            addEntityAction((PushAttackAction) entityAction);
         } else if (entityAction instanceof ClubAttackAction) {
-            addWeapon((ClubAttackAction) entityAction);
+            addEntityAction((ClubAttackAction) entityAction);
         } else if (entityAction instanceof ChargeAttackAction) {
-            addWeapon((ChargeAttackAction) entityAction);
+            addEntityAction((ChargeAttackAction) entityAction);
         } else if (entityAction instanceof DfaAttackAction) {
-            addWeapon((DfaAttackAction) entityAction);
+            addEntityAction((DfaAttackAction) entityAction);
         } else if (entityAction instanceof ProtomechPhysicalAttackAction) {
-            addWeapon((ProtomechPhysicalAttackAction) entityAction);
+            addEntityAction((ProtomechPhysicalAttackAction) entityAction);
         } else if (entityAction instanceof SearchlightAttackAction) {
-            addWeapon((SearchlightAttackAction) entityAction);
+            addEntityAction((SearchlightAttackAction) entityAction);
         } else if (entityAction instanceof SpotAction) {
-            addWeapon((SpotAction) entityAction);
+            addEntityAction((SpotAction) entityAction);
         } else {
-            infoCache.put(entityAction, "");
-            descriptions.add(entityAction.toDisplayableString(client));
+            addEntityAction(entityAction);
         }
     }
 
     /**
      * Adds a weapon to this attack
      */
-    void addWeapon(WeaponAttackAction attack) {
+    void addEntityAction(WeaponAttackAction attack) {
         final Entity entity = game.getEntity(attack.getEntityId());
         final WeaponType wtype = (WeaponType) entity.getEquipment(attack.getWeaponId()).getType();
         final Targetable target = attack.getTarget(game);
@@ -206,7 +205,7 @@ public class EntityActionLog implements Collection<EntityAction> {
         }
     }
 
-    void addWeapon(KickAttackAction attack) {
+    void addEntityAction(KickAttackAction attack) {
         String buffer;
         if (infoCache.containsKey(attack)) {
             buffer = infoCache.get(attack);
@@ -236,7 +235,7 @@ public class EntityActionLog implements Collection<EntityAction> {
         descriptions.add(buffer);
     }
 
-    void addWeapon(PunchAttackAction attack) {
+    void addEntityAction(PunchAttackAction attack) {
         String buffer;
         if (infoCache.containsKey(attack)) {
             buffer = infoCache.get(attack);
@@ -266,87 +265,101 @@ public class EntityActionLog implements Collection<EntityAction> {
         descriptions.add(buffer);
     }
 
-    void addWeapon(PushAttackAction attack) {
+    void addEntityAction(PushAttackAction attack) {
         String buffer;
         if (infoCache.containsKey(attack)) {
             buffer = infoCache.get(attack);
         } else {
             final String roll = attack.toHit(game).getValueAsString();
-            buffer = Messages.getString("BoardView1.push", roll);
+            buffer = Messages.getString("BoardView1.PushAttackAction", roll);
             infoCache.put(attack, buffer);
         }
         descriptions.add(buffer);
     }
 
-    void addWeapon(ClubAttackAction attack) {
+    void addEntityAction(ClubAttackAction attack) {
         String buffer;
         if (infoCache.containsKey(attack)) {
             buffer = infoCache.get(attack);
         } else {
             final String roll = attack.toHit(game).getValueAsString();
             final String club = attack.getClub().getName();
-            buffer = Messages.getString("BoardView1.hit", club, roll);
+            buffer = Messages.getString("BoardView1.ClubAttackAction", club, roll);
             infoCache.put(attack, buffer);
         }
         descriptions.add(buffer);
     }
 
-    void addWeapon(ChargeAttackAction attack) {
+    void addEntityAction(ChargeAttackAction attack) {
         String buffer;
         if (infoCache.containsKey(attack)) {
             buffer = infoCache.get(attack);
         } else {
             final String roll = attack.toHit(game).getValueAsString();
-            buffer = Messages.getString("BoardView1.charge", roll);
+            buffer = Messages.getString("BoardView1.ChargeAttackAction", roll);
             infoCache.put(attack, buffer);
         }
         descriptions.add(buffer);
     }
 
-    void addWeapon(DfaAttackAction attack) {
+    void addEntityAction(DfaAttackAction attack) {
         String buffer;
         if (infoCache.containsKey(attack)) {
             buffer = infoCache.get(attack);
         } else {
             final String roll = attack.toHit(game).getValueAsString();
-            buffer = Messages.getString("BoardView1.DFA", roll);
+            buffer = Messages.getString("BoardView1.DfaAttackAction", roll);
             infoCache.put(attack, buffer);
         }
         descriptions.add(buffer);
     }
 
-    void addWeapon(ProtomechPhysicalAttackAction attack) {
+    void addEntityAction(ProtomechPhysicalAttackAction attack) {
         String buffer;
         if (infoCache.containsKey(attack)) {
             buffer = infoCache.get(attack);
         } else {
             final String roll = attack.toHit(game).getValueAsString();
-            buffer = Messages.getString("BoardView1.proto", roll);
+            buffer = Messages.getString("BoardView1.ProtomechPhysicalAttackAction", roll);
             infoCache.put(attack, buffer);
         }
         descriptions.add(buffer);
     }
 
-    void addWeapon(SearchlightAttackAction attack) {
+    void addEntityAction(SearchlightAttackAction attack) {
         String buffer;
         if (infoCache.containsKey(attack)) {
             buffer = infoCache.get(attack);
         } else {
-            buffer = Messages.getString("BoardView1.Searchlight");
+            Entity target = game.getEntity(attack.getTargetId());
+            buffer = Messages.getString("BoardView1.SearchlightAttackAction")  + ((target != null) ? ' ' +target.getShortName() : "");
             infoCache.put(attack, buffer);
         }
         descriptions.add(buffer);
     }
 
-    void addWeapon(SpotAction attack) {
+    void addEntityAction(SpotAction attack) {
         String buffer;
-        Entity target = game.getEntity(attack.getTargetId());
 
         if (infoCache.containsKey(attack)) {
             buffer = infoCache.get(attack);
         } else {
-            buffer = Messages.getString("BoardView1.Spot", (target != null) ? target.getShortName() : "" );
+            Entity target = game.getEntity(attack.getTargetId());
+            buffer = Messages.getString("BoardView1.SpotAction", (target != null) ? target.getShortName() : "" );
             infoCache.put(attack, buffer);
+        }
+        descriptions.add(buffer);
+    }
+
+    void addEntityAction(EntityAction entityAction) {
+        String buffer;
+
+        if (infoCache.containsKey(entityAction)) {
+            buffer = infoCache.get(entityAction);
+        } else {
+            String typeName = entityAction.getClass().getTypeName();
+            buffer = typeName.substring(typeName.lastIndexOf('.') + 1);
+            infoCache.put(entityAction, buffer);
         }
         descriptions.add(buffer);
     }

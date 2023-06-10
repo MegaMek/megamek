@@ -334,7 +334,7 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
         
         if ((OptionsConstants.GUNNERY_SANDBLASTER).equals(option.getName())) {
             optionComp.addValue(Messages.getString("CustomMechDialog.None"));
-            PilotSPAHelper.sandblasterValidWeaponNames(entity).forEach(optionComp::addValue);
+            PilotSPAHelper.sandblasterValidWeaponNames(entity, gameOptions()).forEach(optionComp::addValue);
             optionComp.setSelected(option.stringValue());
         }
 

@@ -66,6 +66,7 @@ public class RandomMapPanelBasic extends JPanel {
     private final CheckpointComboBox<String> jungleCombo = new CheckpointComboBox<>(LOW_HIGH_CHOICES);
     private final CheckpointComboBox<String> foliageCombo = new CheckpointComboBox<>(LOW_HIGH_CHOICES);
     private final CheckpointComboBox<String> snowCombo = new CheckpointComboBox<>(LOW_HIGH_CHOICES);
+    private final CheckpointComboBox<String> tundraCombo = new CheckpointComboBox<>(LOW_HIGH_CHOICES);
 
     // Water
     private final CheckpointComboBox<String> lakesCombo = new CheckpointComboBox<>(LOW_HIGH_CHOICES);
@@ -148,6 +149,10 @@ public class RandomMapPanelBasic extends JPanel {
         snowCombo.setSelectedItem(sandsToRange(this.mapSettings.getMinSnowSize(),
                 this.mapSettings.getMinSnowSpots()));
         snowCombo.checkpoint();
+
+        tundraCombo.setSelectedItem(sandsToRange(this.mapSettings.getMinTundraSize(),
+                this.mapSettings.getMinTundraSpots()));
+        tundraCombo.checkpoint();
 
         cliffsCombo.setSelectedItem(percentageToRange(this.mapSettings.getCliffs()));
         cliffsCombo.checkpoint();
@@ -268,8 +273,13 @@ public class RandomMapPanelBasic extends JPanel {
         panel.add(snowLabel);
         snowCombo.setToolTipText(Messages.getString("RandomMapDialog.snowCombo.toolTip"));
         panel.add(snowCombo);
+
+        final JLabel tundraLabel = new JLabel(Messages.getString(("RandomMapDialog.labTundra")));
+        panel.add(tundraLabel);
+        tundraCombo.setToolTipText(Messages.getString("RandomMapDialog.tundraCombo.toolTip"));
+        panel.add(tundraCombo);
         
-        makeCompactGrid(panel, 7, 2, 6, 6, 6, 6);
+        makeCompactGrid(panel, 8, 2, 6, 6, 6, 6);
         return new JScrollPane(panel);
     }
 
@@ -438,6 +448,12 @@ public class RandomMapPanelBasic extends JPanel {
         if (snowCombo.hasChanged()) {
             value = (String) snowCombo.getSelectedItem();
             setupSnow(value, newMapSettings);
+            anyChanges = true;
+        }
+
+        if (tundraCombo.hasChanged()) {
+            value = (String) tundraCombo.getSelectedItem();
+            setupTundra(value, newMapSettings);
             anyChanges = true;
         }
 
@@ -662,6 +678,18 @@ public class RandomMapPanelBasic extends JPanel {
             mapSettings.setSnowParams(3, 8, 2, 5);
         } else {
             mapSettings.setSnowParams(5, 10, 3, 7);
+        }
+    }
+
+    private void setupTundra(String snowsValue, MapSettings mapSettings) {
+        if (NONE.equalsIgnoreCase(snowsValue)) {
+            mapSettings.setTundraParams(0, 0, 0, 0);
+        } else if (LOW.equalsIgnoreCase(snowsValue)) {
+            mapSettings.setTundraParams(2, 6, 1, 2);
+        } else if (MEDIUM.equalsIgnoreCase(snowsValue)) {
+            mapSettings.setTundraParams(3, 8, 2, 5);
+        } else {
+            mapSettings.setTundraParams(5, 10, 3, 7);
         }
     }
 

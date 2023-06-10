@@ -157,6 +157,15 @@ public class RandomMapPanelAdvanced extends JPanel {
     private final VerifiableTextField snowSizeMaxField =
             new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
 
+    private final VerifiableTextField tundraMinField =
+            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
+    private final VerifiableTextField tundraMaxField =
+            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
+    private final VerifiableTextField tundraSizeMinField =
+            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
+    private final VerifiableTextField tundraSizeMaxField =
+            new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
+
     // Civilized Features.
     private final VerifiableTextField fieldsMinField = 
             new VerifiableTextField(4, true, true, new VerifyIsPositiveInteger());
@@ -341,6 +350,10 @@ public class RandomMapPanelAdvanced extends JPanel {
         snowMaxField.setText(String.valueOf(mapSettings.getMaxSnowSpots()));
         snowSizeMinField.setText(String.valueOf(mapSettings.getMinSnowSize()));
         snowSizeMaxField.setText(String.valueOf(mapSettings.getMaxSnowSize()));
+        tundraMinField.setText(String.valueOf(mapSettings.getMinTundraSpots()));
+        tundraMaxField.setText(String.valueOf(mapSettings.getMaxTundraSpots()));
+        tundraSizeMinField.setText(String.valueOf(mapSettings.getMinTundraSize()));
+        tundraSizeMaxField.setText(String.valueOf(mapSettings.getMaxTundraSize()));
         roughsMinField.setText(String.valueOf(mapSettings.getMinRoughSpots()));
         roughsMaxField.setText(String.valueOf(mapSettings.getMaxRoughSpots()));
         roughsMinSizeField.setText(String.valueOf(mapSettings.getMinRoughSize()));
@@ -748,6 +761,7 @@ public class RandomMapPanelAdvanced extends JPanel {
         panel.add(setupJunglePanel());
         panel.add(setupFoliagePanel());
         panel.add(setupSnowPanel());
+        panel.add(setupTundraPanel());
 
         return new JScrollPane(panel);
     }
@@ -964,6 +978,34 @@ public class RandomMapPanelAdvanced extends JPanel {
 
         panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1),
                 Messages.getString("RandomMapDialog.borderSnow")));
+
+        RandomMapPanelBasic.makeCompactGrid(panel, 2, 4, 6, 6, 6, 6);
+        return panel;
+    }
+
+    private JPanel setupTundraPanel() {
+        JPanel panel = new FeaturePanel(new SpringLayout());
+
+        JLabel numberTundraLabel = new JLabel(Messages.getString("RandomMapDialog.labTundraSpots"));
+        panel.add(numberTundraLabel);
+        tundraMinField.setToolTipText(Messages.getString("RandomMapDialog.tundraMinField.toolTip"));
+        panel.add(tundraMinField);
+        JLabel numberTundraToLabel = new JLabel(Messages.getString("to"));
+        panel.add(numberTundraToLabel);
+        tundraMaxField.setToolTipText(Messages.getString("RandomMapDialog.tundraMaxField.toolTip"));
+        panel.add(tundraMaxField);
+
+        JLabel sizeTundraLabel = new JLabel(Messages.getString("RandomMapDialog.labTundraSize"));
+        panel.add(sizeTundraLabel);
+        tundraSizeMinField.setToolTipText(Messages.getString("RandomMapDialog.tundraSizeMinField.toolTip"));
+        panel.add(tundraSizeMinField);
+        JLabel sizeTundraToLabel = new JLabel(Messages.getString("to"));
+        panel.add(sizeTundraToLabel);
+        tundraSizeMaxField.setToolTipText(Messages.getString("RandomMapDialog.tundraSizeMaxField.toolTip"));
+        panel.add(tundraSizeMaxField);
+
+        panel.setBorder(new TitledBorder(new LineBorder(Color.black, 1),
+                Messages.getString("RandomMapDialog.borderTundra")));
 
         RandomMapPanelBasic.makeCompactGrid(panel, 2, 4, 6, 6, 6, 6);
         return panel;
@@ -1292,6 +1334,14 @@ public class RandomMapPanelAdvanced extends JPanel {
             return false;
         }
 
+        if (!isMinMaxVerified(tundraMinField, tundraMaxField)) {
+            return false;
+        }
+
+        if (!isMinMaxVerified(tundraSizeMinField, tundraSizeMaxField)) {
+            return false;
+        }
+
         if (!isMinMaxVerified(swampsMinField, swampsMaxField)) {
             return false;
         }
@@ -1494,6 +1544,10 @@ public class RandomMapPanelAdvanced extends JPanel {
                                     snowMaxField.getAsInt(),
                                     snowSizeMinField.getAsInt(),
                                     snowSizeMaxField.getAsInt());
+        newMapSettings.setTundraParams(tundraMinField.getAsInt(),
+                                    tundraMaxField.getAsInt(),
+                                    tundraSizeMinField.getAsInt(),
+                                    tundraSizeMaxField.getAsInt());
         newMapSettings.setSwampParams(swampsMinField.getAsInt(),
                                       swampsMaxField.getAsInt(),
                                       swampsMinSizeField.getAsInt(),

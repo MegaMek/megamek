@@ -252,6 +252,18 @@ public class BoardUtilities {
                     reverseHex, true);
         }
 
+        // Add the tundra
+        count = mapSettings.getMinTundraSpots();
+        if (mapSettings.getMaxTundraSpots() > 0) {
+            count += Compute.randomInt(mapSettings.getMaxTundraSpots() + 1);
+        }
+        count = (int) Math.round(count * sizeScale);
+        for (int i = 0; i < count; i++) {
+            placeSomeTerrain(result, Terrains.TUNDRA, 0, mapSettings
+                            .getMinTundraSize(), mapSettings.getMaxTundraSize(),
+                    reverseHex, true);
+        }
+
         // Add the planted field
         count = mapSettings.getMinPlantedFieldSpots();
         if (mapSettings.getMaxPlantedFieldSpots() > 0) {

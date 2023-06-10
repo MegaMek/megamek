@@ -192,18 +192,31 @@ public class MapSettings implements Serializable {
     @XmlElement(name = "SANDMAXHEXES")
     private int maxSandSize = 2;
 
-    /** how much sand spots at least */
+    /** how much snow spots at least */
     @XmlElement(name = "SNOWMINSPOTS")
     private int minSnowSpots = 0;
-    /** how much sand spots at most */
+    /** how much snow spots at most */
     @XmlElement(name = "SNOWMAXSPOTS")
     private int maxSnowSpots = 0;
-    /** minimum size of a rough spot */
+    /** minimum size of a snow spot */
     @XmlElement(name = "SNOWMINHEXES")
     private int minSnowSize = 0;
-    /** maximum Size of a rough spot */
+    /** maximum Size of a snow spot */
     @XmlElement(name = "SNOWMAXHEXES")
     private int maxSnowSize = 0;
+
+    /** how much tundra spots at least */
+    @XmlElement(name = "TUNDRAMINSPOTS")
+    private int minTundraSpots = 0;
+    /** how much tundra spots at most */
+    @XmlElement(name = "TUNDRAMAXSPOTS")
+    private int maxTundraSpots = 0;
+    /** minimum size of a tundra spot */
+    @XmlElement(name = "TUNDRAMINHEXES")
+    private int minTundraSize = 0;
+    /** maximum Size of a tundra spot */
+    @XmlElement(name = "TUNDRAMAXHEXES")
+    private int maxTundraSize = 0;
 
     /** how much planted field spots at least */
     @XmlElement(name = "PLANTEDFIELDMINSPOTS")
@@ -487,6 +500,10 @@ public class MapSettings implements Serializable {
         maxSnowSpots = other.getMaxSnowSpots();
         minSnowSize = other.getMinSnowSize();
         maxSnowSize = other.getMaxSnowSize();
+        minTundraSpots = other.getMinTundraSpots();
+        maxTundraSpots = other.getMaxTundraSpots();
+        minTundraSize = other.getMinTundraSize();
+        maxTundraSize = other.getMaxTundraSize();
         minPlantedFieldSpots = other.getMinPlantedFieldSpots();
         maxPlantedFieldSpots = other.getMaxPlantedFieldSpots();
         minPlantedFieldSize = other.getMinPlantedFieldSize();
@@ -891,6 +908,18 @@ public class MapSettings implements Serializable {
         if (maxSnowSize < minSnowSize) {
             maxSnowSize = minSnowSize;
         }
+        if (minTundraSpots < 0) {
+            minTundraSpots = 0;
+        }
+        if (maxTundraSpots < minTundraSpots) {
+            maxTundraSpots = minTundraSpots;
+        }
+        if (minTundraSize < 0) {
+            minTundraSize = 0;
+        }
+        if (maxTundraSize < minTundraSize) {
+            maxTundraSize = minTundraSize;
+        }
         if (minPlantedFieldSpots < 0) {
             minPlantedFieldSpots = 0;
         }
@@ -1039,6 +1068,8 @@ public class MapSettings implements Serializable {
                 && (minSandSize == other.getMinSandSize()) && (maxSandSize == other.getMaxSandSize())
                 && (minSnowSpots == other.getMinSnowSpots()) && (maxSnowSpots == other.getMaxSnowSpots())
                 && (minSnowSize == other.getMinSnowSize()) && (maxSnowSize == other.getMaxSnowSize())
+                && (minTundraSpots == other.getMinTundraSpots()) && (maxTundraSpots == other.getMaxTundraSpots())
+                && (minTundraSize == other.getMinTundraSize()) && (maxTundraSize == other.getMaxTundraSize())
                 && (minPlantedFieldSpots == other.getMinPlantedFieldSpots())
                 && (maxPlantedFieldSpots == other.getMaxPlantedFieldSpots())
                 && (minPlantedFieldSize == other.getMinPlantedFieldSize())
@@ -1246,6 +1277,36 @@ public class MapSettings implements Serializable {
 
     public void setMaxSnowSize(int maxSnowSize) {
         this.maxSnowSize = maxSnowSize;
+    }
+
+    public int getMinTundraSpots() {
+        return minTundraSpots;
+    }
+
+    public void setMinTundraSpots(int minTundraSpots) {
+        this.minTundraSpots = minTundraSpots;
+    }
+
+    public int getMaxTundraSpots() {
+        return maxTundraSpots;
+    }
+
+    public void setMaxTundraSpots(int maxTundraSpots) {
+        this.maxTundraSpots = maxTundraSpots;
+    }
+
+    public int getMinTundraSize() {
+        return minTundraSize;
+    }
+
+    public void setMinTundraSize(int minTundraSize) {
+        this.minTundraSize = minTundraSize;
+    }
+
+    public int getMaxTundraSize() { return maxTundraSize; }
+
+    public void setMaxTundraSize(int maxTundraSize) {
+        this.maxTundraSize = maxTundraSize;
     }
 
     public int getMinPlantedFieldSpots() {
@@ -1508,8 +1569,8 @@ public class MapSettings implements Serializable {
         maxJungleSpots = maxSpots;
         minJungleSize = minSize;
         maxJungleSize = maxSize;
-        this.probHeavyJungle = probHeavy;
-        this.probUltraJungle = probUltra;
+        probHeavyJungle = probHeavy;
+        probUltraJungle = probUltra;
     }
     
     /**
@@ -1551,6 +1612,16 @@ public class MapSettings implements Serializable {
         maxSnowSpots = maxSpots;
         minSnowSize = minSize;
         maxSnowSize = maxSize;
+    }
+
+    /**
+     * set the tundra parameters for the Map Generator
+     */
+    public void setTundraParams(int minSpots, int maxSpots, int minSize, int maxSize) {
+        minTundraSpots = minSpots;
+        maxTundraSpots = maxSpots;
+        minTundraSize = minSize;
+        maxTundraSize = maxSize;
     }
 
     /**

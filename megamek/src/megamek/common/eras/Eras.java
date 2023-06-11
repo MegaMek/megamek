@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022-2023 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -19,6 +19,7 @@
 package megamek.common.eras;
 
 import megamek.MMConstants;
+import megamek.common.annotations.Nullable;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.utilities.xml.MMXMLUtility;
 import org.apache.logging.log4j.LogManager;
@@ -32,18 +33,21 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
+import static java.util.stream.Collectors.toList;
+
 /**
- * This singleton class represents the Eras of the BT Universe like the Civil War or the Succession Wars.
- * The Eras are read from the eras.xml definition file and are thus moddable.
+ * This singleton class is a handler for the Eras of the BT Universe like the Civil War or the
+ * Succession Wars. The Eras are read from the eras.xml definition file and are thus moddable.
+ * The class therefore has a few methods that deal with validation and is supposed to be
+ * resistant to wrong data.
  *
  * @author Justin "Windchild" Bowen
  * @author Simon (Juliez)
  */
-public class Eras {
+public final class Eras {
 
     /** @return The sole instance of Eras. Calling this also initialises and loads the eras. */
     public static Eras getInstance() {
@@ -88,16 +92,62 @@ public class Eras {
         return (era != null) && era.equals(eraAtDate);
     }
 
+    /**
+     * Returns a list of all Eras, ordered by their end dates, i.e. in their natural order with the oldest
+     * being first.
+     *
+     * @return All Eras
+     */
+    public static List<Era> getEras() {
+        return new ArrayList<>(getInstance().eras.values());
+    }
+
+    /** @return True if the given Era is the first (earliest) of all eras. */
+    public static boolean isFirstEra(@Nullable Era era) {
+        return (era != null) && era.equals(getInstance().eras.firstEntry().getValue());
+    }
+
+    /** @return The era directly preceding the given Era, if any, null if the given Era is the first era (or null). */
+    public static @Nullable Era previousEra(@Nullable Era era) {
+        if (era == null) {
+            return null;
+        } else {
+            return getInstance().eras.lowerEntry(era.end()).getValue();
+        }
+    }
+
+    /** @return The era directly following the given Era, if any, null if the given Era is the last era (or null). */
+    public static @Nullable Era nextEra(@Nullable Era era) {
+        if (era == null) {
+            return null;
+        } else {
+            return getInstance().eras.higherEntry(era.end()).getValue();
+        }
+    }
+
+    /** @return The starting date of the given Era or LocalDate.MIN if the given Era is the first era. */
+    public static LocalDate startDate(Era era) {
+        if (isFirstEra(era)) {
+            return LocalDate.MIN;
+        } else {
+            return previousEra(era).end().with(TemporalAdjusters.ofDateAdjuster(date -> date.plusDays(1)));
+        }
+    }
+
     //region non-public
 
     private static final Era ERA_PLACEHOLDER = new Era("???", "Unknown", null, null, -1, null);
     private static Eras instance;
 
+    /** This Map contains the sorted eras and is used for public methods. */
     private final TreeMap<LocalDate, Era> eras = new TreeMap<>();
+
+    /** This list contains all eras, even if they're malformed and is used for trouble-shooting. */
+    private final List<Era> eraList = new ArrayList<>();
 
     private Eras() {
         try {
-            initializeEras();
+            loadErasFromXML();
         } catch (Exception ex) {
             addEra(ERA_PLACEHOLDER);
             LogManager.getLogger().error("", ex);
@@ -106,9 +156,10 @@ public class Eras {
 
     private void addEra(Era era) {
         eras.put(era.end(), era);
+        eraList.add(era);
     }
 
-    private void initializeEras() throws Exception {
+    private void loadErasFromXML() throws Exception {
         final File file = new MegaMekFile(MMConstants.ERAS_FILE_PATH).getFile();
         if ((file == null) || !file.exists()) {
             throw new IOException("The eras definition file " + MMConstants.ERAS_FILE_PATH + " does not exist.");
@@ -130,9 +181,13 @@ public class Eras {
                 addEra(generateInstanceFromXML(wn.getChildNodes()));
             }
         }
+        eraList.sort(Comparator.comparing(Era::end));
+        if (!areAllValid(null)) {
+            LogManager.getLogger().error("The eras definition file " + MMConstants.ERAS_FILE_PATH + "contains malformed eras!");
+        }
     }
 
-    private static Era generateInstanceFromXML(final NodeList nl) {
+    private Era generateInstanceFromXML(final NodeList nl) {
         try {
             String code = "";
             String name = "";
@@ -150,7 +205,7 @@ public class Eras {
                         name = MMXMLUtility.unEscape(wn.getTextContent().trim());
                         break;
                     case "end":
-                        end = parseDate(wn.getTextContent().trim());
+                        end = MMXMLUtility.parseDate(wn.getTextContent().trim());
                         break;
                     case "flag":
                         flags.add(EraFlag.valueOf(wn.getTextContent().trim()));
@@ -169,27 +224,52 @@ public class Eras {
         }
     }
 
+    /** @return True when the code, name and mulId of the era are valid. When true, the era may still be invalid. */
+    private boolean isValid(Era era) {
+        return !era.code().isBlank() && !era.name().isBlank()
+                && ((era.mulId() == -1) || (era.mulId() > 0));
+    }
+
     /**
-     * Parse an end date from an XML node's content, assuming the last day of the year or month, if
-     * only a year or month is given.
+     * Returns true when the set of eras is valid (meaning the xml file has no malformed entries.)
+     * A Set can be passed in that will receive all invalid eras if there are any. Note that the
+     * Set is not emptied before being used.
      *
-     * @param value The date from an XML node's content.
-     * @return The Date retrieved from the XML node content.
+     * @param invalidErasReturn An optional Set to receive invalid eras.
+     * @return True when all eras are valid, false otherwise
      */
-    private static LocalDate parseDate(final String value) throws DateTimeParseException {
-        // Accepts: yyyy-mm-dd
-        // Accepts (assumes last day of month): yyyy-mm
-        // Accepts (assumes last day of year): yyyy
-        switch (value.length()) {
-            case 4:
-                LocalDate year = LocalDate.parse(value + "-01-01");
-                return year.with(TemporalAdjusters.lastDayOfYear());
-            case 7:
-                LocalDate yearMonth = LocalDate.parse(value + "-01");
-                return yearMonth.with(TemporalAdjusters.lastDayOfMonth());
-            default:
-                throw new DateTimeParseException("Wrong date format", value, 0);
+    boolean areAllValid(@Nullable Set<Era> invalidErasReturn) {
+        if (invalidErasReturn == null) {
+            invalidErasReturn = new HashSet<>();
         }
+        for (Era era : eraList) {
+            if (!isValid(era)) {
+                invalidErasReturn.add(era);
+                continue;
+            }
+            // No two eras may share a code
+            if (eraList.stream().filter(era2 -> era2.code().equals(era.code())).count() != 1) {
+                invalidErasReturn.add(era);
+            }
+        }
+
+        // Exactly one era must be the last era
+        if (eraList.stream().filter(Era::isLastEra).count() != 1) {
+            invalidErasReturn.addAll(eraList.stream().filter(Era::isLastEra).collect(toList()));
+        }
+
+        return invalidErasReturn.isEmpty();
+    }
+
+    /**
+     * Returns all Eras, possibly including invalid ones. This is only for Era editing when even invalid eras
+     * should be available. Use {@link #getEras()} in all other circumstances. This method is intentionally
+     * package private.
+     *
+     * @return All eras, possibly also invalid ones.
+     */
+    static List<Era> getAllEras() {
+        return getInstance().eraList;
     }
 
     //endregion non-public

@@ -21,8 +21,11 @@ package megamek.common.eras;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
+import megamek.common.util.ImageUtil;
+import megamek.common.util.fileUtils.MegaMekFile;
 import org.apache.logging.log4j.LogManager;
 
+import javax.swing.*;
 import java.io.File;
 import java.time.LocalDate;
 import java.util.Collection;
@@ -79,6 +82,15 @@ public final class Era {
         return !iconFilePath.isBlank();
     }
 
+    public ImageIcon getIcon() {
+        try {
+            MegaMekFile iconfile = new MegaMekFile(Configuration.universeImagesDir(), iconFilePath);
+            return new ImageIcon(iconfile.getFile().getPath());
+        } catch (Exception exception) {
+            return new ImageIcon(ImageUtil.failStandardImage());
+        }
+    }
+
     /** @return True when this Era has at least one of the given flags. */
     public boolean hasAnyFlagOf(final EraFlag... flags) {
         return Stream.of(flags).anyMatch(this.flags::contains);
@@ -97,6 +109,20 @@ public final class Era {
     /** @return True when the given date is part of this era. */
     public boolean isThisEra(LocalDate date) {
         return Eras.isThisEra(date, this);
+    }
+
+    /** @return True when this is the last Era (it has no end date in the xml file). */
+    public boolean isLastEra() {
+        return end.equals(LocalDate.MAX);
+    }
+
+    /** @return True when this is the last Era (it has no end date in the xml file). */
+    public boolean isFirstEra() {
+        return Eras.isFirstEra(this);
+    }
+
+    public LocalDate start() {
+        return Eras.startDate(this);
     }
 
     @Override

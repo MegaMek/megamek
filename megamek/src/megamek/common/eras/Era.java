@@ -185,7 +185,7 @@ public final class Era {
         if (iconFilePath != null) {
             File iconFile = new File(Configuration.universeImagesDir(), iconFilePath);
             if (!iconFile.exists()) {
-                LogManager.getLogger().warn("Icon file at " + iconFile.getPath() + " not found.");
+                LogManager.getLogger().warn("Icon file at " + iconFilePath + " not found.");
                 this.iconFilePath = "";
             } else {
                 this.iconFilePath = iconFilePath;

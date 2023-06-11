@@ -58,11 +58,8 @@ public class PlanetaryConditionsOverlay extends AbstractBoardViewOverlay {
     protected List<String> assembleTextLines() {
         List<String> result = new ArrayList<>();
         addHeader(result);
-//        Color colorTitle = GUIP.getPlanetaryConditionsColorTitle();
         Color colorHot = GUIP.getPlanetaryConditionsColorHot();
         Color colorCold = GUIP.getPlanetaryConditionsColorCold();
-
-        String toggleKey = KeyCommandBind.getDesc(KeyCommandBind.PLANETARY_CONDITIONS);
 
         if (clientGui != null && !currentGame.getBoard().inSpace()) {
             // In a game, not the Board Editor
@@ -163,10 +160,6 @@ public class PlanetaryConditionsOverlay extends AbstractBoardViewOverlay {
     @Override
     protected boolean getVisibilityGUIPreference() {
         return GUIP.getShowPlanetaryConditionsOverlay();
-    }
-    @Override
-    protected Color getTextColorGUIPreference() {
-        return GUIP.getPlanetaryConditionsColorText();
     }
 
     @Override

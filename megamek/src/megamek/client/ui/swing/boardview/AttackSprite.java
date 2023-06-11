@@ -62,7 +62,7 @@ class AttackSprite extends Sprite {
 
     public AttackSprite(BoardView boardView1, final AttackAction attack) {
         super(boardView1);
-        weaponDescs = new EntityActionLog(boardView1.clientgui.getClient(), false);
+        weaponDescs = new EntityActionLog(boardView1.clientgui.getClient());
         this.boardView1 = boardView1;
         entityId = attack.getEntityId();
         targetType = attack.getTargetType();

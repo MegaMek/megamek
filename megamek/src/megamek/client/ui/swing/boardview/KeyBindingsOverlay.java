@@ -145,11 +145,6 @@ public class KeyBindingsOverlay extends AbstractBoardViewOverlay {
     protected boolean getVisibilityGUIPreference() {
         return GUIP.getShowKeybindsOverlay();
     }
-    @Override
-    protected Color getTextColorGUIPreference() {
-        // FIXME there is currently no custom option for key bindings
-        return GUIP.getPlanetaryConditionsColorText();
-    }
 
     @Override
     protected int getDistTop(Rectangle clipBounds, int overlayHeight) {

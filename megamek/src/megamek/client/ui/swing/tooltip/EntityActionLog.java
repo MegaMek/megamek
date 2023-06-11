@@ -15,23 +15,17 @@ import java.util.stream.Stream;
 public class EntityActionLog implements Collection<EntityAction> {
     final Game game;
     final Client client;
-
     final protected ArrayList<EntityAction> actions = new ArrayList<EntityAction>();
-    // need to cache to hit values since it goes to IMPOSSIBLE after action placed in attacks list
+    // cache to prevent regeneration of info if action already processed
     final HashMap<EntityAction, String> infoCache = new HashMap<EntityAction, String>();
-    final HashMap<EntityAction, Targetable> targetCache = new HashMap<EntityAction, Targetable>();
-
     final ArrayList<String> descriptions = new ArrayList<>();
 
-    final boolean showTarget;
-
-    public EntityActionLog(Client client, boolean showTarget) {
+    public EntityActionLog(Client client) {
         this.client = client;
         this.game = client.getGame();
-        this.showTarget = showTarget;
     }
 
-    /** @return a list of descrition strings. Note that there may be fewer than the number of actions
+    /** @return a list of description strings. Note that there may be fewer than the number of actions
      * as similar actions are summarized in a single entry
      */
     public List<String> getDescriptions() {
@@ -142,7 +136,12 @@ public class EntityActionLog implements Collection<EntityAction> {
 
     void addDescription(EntityAction entityAction) {
         if (entityAction instanceof WeaponAttackAction) {
+            // WeaponAttacks are merged summarized in as few lines as possible,
+            // so always need a certain level of reormatting
             addEntityAction((WeaponAttackAction) entityAction);
+        } else if (infoCache.containsKey(entityAction)) {
+            //reuse previous description
+            descriptions.add(infoCache.get(entityAction));
         } else if (entityAction instanceof KickAttackAction) {
             addEntityAction((KickAttackAction) entityAction);
         } else if (entityAction instanceof PunchAttackAction) {
@@ -170,23 +169,16 @@ public class EntityActionLog implements Collection<EntityAction> {
      * Adds a weapon to this attack
      */
     void addEntityAction(WeaponAttackAction attack) {
+        final String buffer;
+        if (infoCache.containsKey(attack)) {
+            buffer = infoCache.get(attack);
+        } else {
+            String table = attack.toHit(game).getTableDesc();
+            buffer = attack.toHit(game).getValueAsString() + ((!table.isEmpty()) ? ' '+table : "");
+            infoCache.put(attack, buffer);
+        }
         final Entity entity = game.getEntity(attack.getEntityId());
         final WeaponType wtype = (WeaponType) entity.getEquipment(attack.getWeaponId()).getType();
-        final Targetable target = attack.getTarget(game);
-
-        final String roll;
-        if (infoCache.containsKey(attack)) {
-            roll = infoCache.get(attack);
-        } else {
-            roll = attack.toHit(game).getValueAsString();
-            infoCache.put(attack, roll);
-            targetCache.put(attack, target);
-        }
-
-        String table = attack.toHit(game).getTableDesc();
-        if (!table.isEmpty()) {
-            table = " " + table;
-        }
 
         //add to an existing entry if possible
         boolean found = false;
@@ -194,14 +186,14 @@ public class EntityActionLog implements Collection<EntityAction> {
         while (i.hasNext()) {
             String s = i.next();
             if (s.startsWith(wtype.getName())) {
-                i.set(s + ", " + roll + table);
+                i.set(s + ", " + buffer);
                 found = true;
                 break;
             }
         }
 
         if (!found) {
-            descriptions.add(wtype.getName() + Messages.getString("BoardView1.needs") + roll + table);
+            descriptions.add(wtype.getName() + Messages.getString("BoardView1.needs") + buffer);
         }
     }
 

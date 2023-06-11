@@ -290,20 +290,30 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
 
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
-        // change on any preference change
+        String name = e.getName();
+        if (getVisibilityGUIPreference() != visible) {
+            visible = getVisibilityGUIPreference();
+            setDirty();
+        }
     }
 
     protected void setDirty() {
         dirty = true;
+        //TODO force boardview redraw
+        clientGui.getBoardView().boardChanged();
     }
 
     protected void gameTurnOrPhaseChange() {
         setDirty();
     }
 
+    protected Color getTextColorGUIPreference() {
+        // FIXME there is currently no custom option for key bindings
+        return GUIP.getPlanetaryConditionsColorText();
+    }
+
     protected abstract void setVisibilityGUIPreference(boolean value);
     protected abstract boolean getVisibilityGUIPreference();
-    protected abstract Color getTextColorGUIPreference();
     protected abstract int getDistTop(Rectangle clipBounds,  int overlayHeight);
     protected abstract int getDistSide(Rectangle clipBounds, int overlayWidth);
 

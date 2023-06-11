@@ -38,7 +38,7 @@ public class TurnDetailsOverlay extends AbstractBoardViewOverlay {
 
     public TurnDetailsOverlay(Game game, ClientGUI cg) {
         super(game, cg, new Font(Font.MONOSPACED, Font.PLAIN, 12),
-                Messages.getString("KeyBindingsDisplay.heading", KeyCommandBind.getDesc(KeyCommandBind.KEY_BINDS)) );
+                Messages.getString("TurnDetailsOverlay.heading", KeyCommandBind.getDesc(KeyCommandBind.TURN_DETAILS)) );
     }
 
 
@@ -48,11 +48,11 @@ public class TurnDetailsOverlay extends AbstractBoardViewOverlay {
         return lines;
     }
 
-    public void setLines(List<String> value) {
-        lines.clear();;
-        if (value != null) {
-//            addHeader(lines);
-            lines.addAll(value);
+    public void setLines(List<String> newLines) {
+        lines.clear();
+        if (newLines != null && newLines.size() != 0) {
+            addHeader(lines);
+            lines.addAll(newLines);
         }
         setDirty();
     }
@@ -67,15 +67,11 @@ public class TurnDetailsOverlay extends AbstractBoardViewOverlay {
 
     @Override
     protected void setVisibilityGUIPreference(boolean value) {
-        GUIP.setValue(GUIPreferences.SHOW_PLANETARYCONDITIONS_OVERLAY, value);
+        GUIP.setTurnDetailsOverlay(value);
     }
     @Override
     protected boolean getVisibilityGUIPreference() {
-        return GUIP.getShowPlanetaryConditionsOverlay();
-    }
-    @Override
-    protected Color getTextColorGUIPreference() {
-        return GUIP.getPlanetaryConditionsColorText();
+        return GUIP.getTurnDetailsOverlay();
     }
 
     @Override

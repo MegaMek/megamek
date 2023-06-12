@@ -186,7 +186,8 @@ public class BoardUtilities {
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
             placeSomeTerrain(result, Terrains.WOODS,
-                    mapSettings.getProbHeavy(), mapSettings.getMinForestSize(),
+                    mapSettings.getProbHeavy(), mapSettings.getProbUltra(),
+                    mapSettings.getMinForestSize(),
                     mapSettings.getMaxForestSize(), reverseHex, true);
         }
         
@@ -201,6 +202,19 @@ public class BoardUtilities {
                     mapSettings.getProbFoliageHeavy(), mapSettings.getMinFoliageSize(),
                     mapSettings.getMaxFoliageSize(), reverseHex, true);
         }
+
+        // Add the jungle
+        count = mapSettings.getMinJungleSpots();
+        if (mapSettings.getMaxJungleSpots() > 0) {
+            count += Compute.randomInt(mapSettings.getMaxJungleSpots() + 1);
+        }
+        count = (int) Math.round(count * sizeScale);
+        for (int i = 0; i < count; i++) {
+            placeSomeTerrain(result, Terrains.JUNGLE,
+                    mapSettings.getProbHeavyJungle(), mapSettings.getProbUltraJungle(),
+                    mapSettings.getMinJungleSize(),
+                    mapSettings.getMaxJungleSize(), reverseHex, true);
+        }
         
         // Add the rough
         count = mapSettings.getMinRoughSpots();
@@ -209,7 +223,7 @@ public class BoardUtilities {
         }
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
-            placeSomeTerrain(result, Terrains.ROUGH, 0, mapSettings
+            placeSomeTerrain(result, Terrains.ROUGH, mapSettings.getProbUltraRough(), mapSettings
                     .getMinRoughSize(), mapSettings.getMaxRoughSize(),
                     reverseHex, true);
         }
@@ -235,6 +249,18 @@ public class BoardUtilities {
         for (int i = 0; i < count; i++) {
             placeSomeTerrain(result, Terrains.SNOW, 0, mapSettings
                             .getMinSnowSize(), mapSettings.getMaxSnowSize(),
+                    reverseHex, true);
+        }
+
+        // Add the tundra
+        count = mapSettings.getMinTundraSpots();
+        if (mapSettings.getMaxTundraSpots() > 0) {
+            count += Compute.randomInt(mapSettings.getMaxTundraSpots() + 1);
+        }
+        count = (int) Math.round(count * sizeScale);
+        for (int i = 0; i < count; i++) {
+            placeSomeTerrain(result, Terrains.TUNDRA, 0, mapSettings
+                            .getMinTundraSize(), mapSettings.getMaxTundraSize(),
                     reverseHex, true);
         }
 
@@ -281,7 +307,7 @@ public class BoardUtilities {
         }
         count = (int) Math.round(count * sizeScale);
         for (int i = 0; i < count; i++) {
-            placeSomeTerrain(result, Terrains.RUBBLE, 0, mapSettings
+            placeSomeTerrain(result, Terrains.RUBBLE, mapSettings.getProbUltraRubble(), mapSettings
                     .getMinRubbleSize(), mapSettings.getMaxRubbleSize(),
                     reverseHex, true);
         }
@@ -397,7 +423,15 @@ public class BoardUtilities {
     }
 
     /**
-     * Places randomly some connected Woods.
+     * Overload that places some connected terrain with no chance of "ultra" version
+     */
+    protected static void placeSomeTerrain(Board board, int terrainType, int probMore, int minHexes,
+                                           int maxHexes, Map<Hex, Point> reverseHex, boolean exclusive) {
+        placeSomeTerrain(board, terrainType, probMore, 0, minHexes, maxHexes, reverseHex, exclusive);
+    }
+
+    /**
+     * Places randomly some connected terrain.
      *
      * @param board The board the terrain goes on.
      * @param terrainType The type of terrain to place {@link Terrains}.
@@ -406,7 +440,7 @@ public class BoardUtilities {
      * @param reverseHex
      * @param exclusive Set TRUE if this terrain cannot be combined with any other terrain types.
      */
-    protected static void placeSomeTerrain(Board board, int terrainType, int probMore, int minHexes,
+    protected static void placeSomeTerrain(Board board, int terrainType, int probMore, int probUltra, int minHexes,
                                            int maxHexes, Map<Hex, Point> reverseHex, boolean exclusive) {
         Point p = new Point(Compute.randomInt(board.getWidth()), Compute.randomInt(board.getHeight()));
         int count = minHexes;
@@ -437,12 +471,10 @@ public class BoardUtilities {
             if (exclusive) {
                 field.removeAllTerrains();
             }
-            int tempInt = (Compute.randomInt(100) < probMore) ? 2 : 1;
-            Terrain tempTerrain = new Terrain(terrainType, tempInt);
+            int terrainDensity = pickTerrainDensity(terrainType, probMore, probUltra);
+            Terrain tempTerrain = new Terrain(terrainType, terrainDensity);
             field.addTerrain(tempTerrain);
-            if (terrainType == Terrains.WOODS) {
-                field.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 2));
-            }
+            growTreesIfNecessary(field, terrainType, terrainDensity);
             unUsed.remove(field);
             findAllUnused(board, terrainType, alreadyUsed, unUsed, field, reverseHex);
         }
@@ -468,9 +500,63 @@ public class BoardUtilities {
 
         }
     }
+
+    /**
+     * Worker function that picks a terrain density (light, heavy, ultra) based on the passed-in weights.
+     * Likelyhood of light is 100 - probHeavy.
+     */
+    private static int pickTerrainDensity(int terrainType, int probHeavy, int probUltra) {
+        int heavyThreshold = 100 - probHeavy;
+        int ultraThreshold = 100;
+        int sum = 100 + probUltra;
+
+        int roll = Compute.randomInt(sum);
+
+        // for most terrains, this results in "standard/heavy/ultra" versions of the terrain
+        // but rubble is implemented weirdly, and there are probably maps that use the current
+        // implementation of rubble so here we are
+        if (roll < heavyThreshold) {
+            return terrainType == Terrains.RUBBLE ? pickRandomRubble() : 1;
+        } else if (roll < ultraThreshold) {
+            // rubble 6 is considered "ultra"
+            return terrainType == Terrains.RUBBLE ? 6 : 2;
+        } else {
+            return 3;
+        }
+    }
+
+    /**
+     * Worker method to pick out a random usable type of "standard" rubble
+     */
+    private static int pickRandomRubble() {
+        // there are three usable types of rubble, so we pick one
+        int roll = Compute.randomInt(3) + 1;
+
+        // rubble 3 looks identical to rubble 6, which is ultra-rough, so we don't want
+        // to visually deceive the user, thus 3 becomes 4
+        if (roll == 3) {
+            roll = 4;
+        }
+
+        return roll;
+    }
+
+    /**
+     * Helper method that places a FOLIAGE_ELEV terrain if necessary
+     */
+    private static void growTreesIfNecessary(Hex field, int terrainType, int terrainDensity) {
+        // light/heavy woods and jungle go up two levels
+        if (((terrainType == Terrains.WOODS) || (terrainType == Terrains.JUNGLE))
+                && ((terrainDensity == 1) || (terrainDensity == 2))) {
+            field.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 2));
+        // ultra woods and jungle go up three levels
+        } else if ((terrainType == Terrains.WOODS) && (terrainDensity == 3)) {
+            field.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 3));
+        }
+    }
     
     /**
-     * Places randomly some connected Woods.
+     * Places randomly some connected foliage.
      *
      * @param board The board the terrain goes on.
      * @param terrainType The type of terrain to place {@link Terrains}.

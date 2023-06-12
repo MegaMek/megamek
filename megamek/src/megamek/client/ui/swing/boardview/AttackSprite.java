@@ -6,9 +6,6 @@ import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.image.ImageObserver;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.tooltip.EntityActionLog;
@@ -48,7 +45,7 @@ class AttackSprite extends Sprite {
 
     private String targetDesc;
 
-    EntityActionLog weaponDescs;
+    EntityActionLog attacks;
 
     private final Entity ae;
 
@@ -62,7 +59,7 @@ class AttackSprite extends Sprite {
 
     public AttackSprite(BoardView boardView1, final AttackAction attack) {
         super(boardView1);
-        weaponDescs = new EntityActionLog(boardView1.clientgui.getClient());
+        attacks = new EntityActionLog(boardView1.clientgui.getClient());
         this.boardView1 = boardView1;
         entityId = attack.getEntityId();
         targetType = attack.getTargetType();
@@ -106,7 +103,13 @@ class AttackSprite extends Sprite {
     }
 
     public void addEntityAction(EntityAction entityAction) {
-        weaponDescs.add(entityAction);
+        attacks.add(entityAction);
+    }
+
+    /** reuild the text descriptions to reflect changes in ToHits from adding or removing other attacks such as secondaryTarget */
+    public void rebuildDescriptions()
+    {
+        attacks.rebuildDescriptions();
     }
 
     private void makePoly() {
@@ -246,7 +249,7 @@ class AttackSprite extends Sprite {
         result = guiScaledFontHTML(attackColor) + sAttacherDesc + "</FONT>";
         String sAttacks = "";
         if ((phase.isFiring()) || (phase.isPhysical())) {
-            for (String wpD : weaponDescs.getDescriptions()) {
+            for (String wpD : attacks.getDescriptions()) {
                 sAttacks += "<BR>" + wpD;
             }
             result += guiScaledFontHTML(uiBlack()) + sAttacks + "</FONT>";

@@ -58,7 +58,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     // Fourshot, etc
     private int pendingMode = -1; // if mode changes happen at end of turn
     private boolean modeSwitchable = true; // disallow mode switching
-    
+
     private int location;
     private boolean rearMounted;
 
@@ -90,7 +90,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     // and now Machine Gun Arrays too!
     private Vector<Integer> bayWeapons = new Vector<>();
     private Vector<Integer> bayAmmo = new Vector<>();
-    
+
     // on capital fighters and squadrons some weapon mounts actually represent
     // multiple weapons of the same type
     // provide a boolean indicating this type of mount and the number of weapons
@@ -155,7 +155,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      * weapon mount?
      */
     private boolean isAPMMounted = false;
-    
+
     /**
      * Does this Mounted represent equipmented that is pod mounted in an omni unit?
      */
@@ -253,7 +253,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public EquipmentType getType() {
         return (null != type) ? type : (type = EquipmentType.get(typeName));
     }
-    
+
     /**
      * @return the current mode of the equipment, or <code>null</code> if it's
      *         not available.
@@ -571,11 +571,11 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     }
 
     public boolean isReady() {
-        return isReady(false);
+        return isReady(false, false);
     }
 
-    public boolean isReady(boolean isStrafing) {
-        return (!usedThisRound || isStrafing) && !destroyed && !missing
+    public boolean isReady(boolean isStrafing, boolean evenIfAlreadyFired) {
+        return (!usedThisRound || evenIfAlreadyFired || isStrafing) && !destroyed && !missing
                 && !jammed && !useless && !fired
                 && (!isDWPMounted || (isDWPMounted && (getLinkedBy() != null)));
     }
@@ -816,7 +816,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             return 2;
         }
         // sets number of shots for AC rapid mode
-        else if (((wtype.getAmmoType() == AmmoType.T_AC) 
+        else if (((wtype.getAmmoType() == AmmoType.T_AC)
                 || (wtype.getAmmoType() == AmmoType.T_LAC)
                 || (wtype.getAmmoType() == AmmoType.T_AC_IMP)
                 || (wtype.getAmmoType() == AmmoType.T_PAC))
@@ -880,11 +880,11 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public void setSize(double size) {
         this.size = size;
     }
-    
+
     /**
      * The capacity of an ammo bin may be different than the weight of the original shots
      * in the case of AR10s due to variable missile weight.
-     * 
+     *
      * @return The capacity of a mounted ammo bin in tons.
      * @deprecated Use {@link #getSize()}
      */
@@ -895,7 +895,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
     /**
      * Sets the maximum tonnage of ammo for a mounted ammo bin.
-     * 
+     *
      * @param capacity The capacity of the bin in tons.
      * @deprecated Use {@link #setSize(double)}
      */
@@ -911,8 +911,8 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public void setRapidfire(boolean rapidfire) {
         this.rapidfire = rapidfire;
     }
-    
-       
+
+
     /**
      * Checks to see if the current ammo for this weapon is hotloaded
      *
@@ -982,7 +982,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         }
 
     }
-    
+
     /** Returns true when m is a PPC Capacitor and not destroyed. */
     private boolean isWorkingCapacitor(Mounted m) {
         return !m.isDestroyed()
@@ -990,9 +990,9 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         && ((MiscType) m.getType()).hasFlag(MiscType.F_PPC_CAPACITOR);
     }
 
-    /** 
+    /**
      * Returns 1 or 2 if this Mounted has a linked
-     * and charged (= set to charge in an earlier turn) 
+     * and charged (= set to charge in an earlier turn)
      * PPC Capacitor.
      */
     public int hasChargedCapacitor() {
@@ -1010,11 +1010,11 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         return 0;
     }
 
-    /** 
+    /**
      * Returns 1 or 2 if this Mounted has a linked
-     * and charged (= set to charge in an earlier turn) 
+     * and charged (= set to charge in an earlier turn)
      * or charging (= set to charge this turn)
-     * PPC Capacitor. Used to determine heat. 
+     * PPC Capacitor. Used to determine heat.
      */
     public int hasChargedOrChargingCapacitor() {
         int isCharged = hasChargedCapacitor();
@@ -1192,18 +1192,18 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                     && (((BombType) type).getBombType() == BombType.B_ASEW)) {
                 damagePerShot = 5;
             }
-            
+
             //Capital missiles need a racksize for this
             if (type.hasFlag(AmmoType.F_CAP_MISSILE)) {
                 rackSize = 1;
             }
-            
+
             //Screen launchers need a racksize. Damage is 15 per TW p251
             if (atype.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER) {
                 rackSize = 1;
                 damagePerShot = 15;
             }
-            
+
             long mType = atype.getMunitionType();
             // both Dead-Fire and Tandem-charge SRM's do 3 points of damage per
             // shot when critted
@@ -1325,13 +1325,16 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      *         <code>false</code> otherwise.
      */
     public boolean canFire() {
-        return canFire(false);
+        return canFire(false, false);
     }
 
-    public boolean canFire(boolean isStrafing) {
+    public boolean canFire(boolean isStrafing, boolean evenIfAlreadyFired) {
+        if (!evenIfAlreadyFired && isFired()) {
+            return false;
+        }
 
         // Equipment operational?
-        if (!isReady(isStrafing) || isBreached() || isMissing() || isFired()) {
+        if (!isReady(isStrafing, evenIfAlreadyFired) || isBreached() || isMissing()) {
             return false;
         }
 
@@ -1344,6 +1347,23 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         // Otherwise, the equipment can be fired.
         return true;
     }
+
+//    public boolean canFire(boolean isStrafing) {
+//
+//        // Equipment operational?
+//        if (!isReady(isStrafing) || isBreached() || isMissing() || isFired()) {
+//            return false;
+//        }
+//
+//        // Is the entity even active?
+//        if (entity.isShutDown()
+//                || ((null != entity.getCrew()) && !entity.getCrew().isActive())) {
+//            return false;
+//        }
+//
+//        // Otherwise, the equipment can be fired.
+//        return true;
+//    }
 
     /**
      * Determines whether this weapon should be considered crippled for damage
@@ -1561,7 +1581,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public void addWeaponToBay(int w) {
         bayWeapons.add(w);
     }
-    
+
     public Vector<Integer> getBayWeapons() {
         return bayWeapons;
     }
@@ -1594,13 +1614,13 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     /**
      * Convenience "property" to reduce typing, which returns true if the current
      * piece of equipment is a bomb capable of striking ground targets.
-     * @return True if 
+     * @return True if
      */
     public boolean isGroundBomb() {
         return getType().hasFlag(WeaponType.F_DIVE_BOMB) || getType().hasFlag(WeaponType.F_ALT_BOMB) ||
                 getType().hasFlag(AmmoType.F_GROUND_BOMB);
     }
-    
+
     // is ammo in the same bay as the weapon
     public boolean ammoInBay(int mAmmoId) {
         for (int nextAmmoId : bayAmmo) {
@@ -1688,11 +1708,11 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public void setAPMMounted(boolean apmMounted) {
         isAPMMounted = apmMounted;
     }
-    
+
     public boolean isOmniPodMounted() {
         return omniPodMounted;
     }
-    
+
     public void setOmniPodMounted(boolean omniPodMounted) {
         this.omniPodMounted = omniPodMounted;
     }
@@ -1860,7 +1880,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public void setModeSwitchable(boolean b) {
         modeSwitchable = b;
     }
-    
+
     /**
      * Method that checks to see if our capital missile bay is in bearings-only mode
      * Only available in space games
@@ -1880,7 +1900,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         }
         return false;
     }
-    
+
     /**
      * Method that checks to see if our capital missile bay is in waypoint launch mode
      * Only available in space games
@@ -1897,7 +1917,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         }
         return false;
     }
-    
+
     /**
      * Method that adds/removes available capital missile modes as we move between space and atmospheric maps
      * Called by Entity.setGameOptions(), which is in turn called during a mode change by server.
@@ -1920,11 +1940,11 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         /*
         //Placeholder. This will be used to add the space modes back when we're able to switch maps.
         if (getEntity().isSpaceborne()) {
-            
+
         }
         */
     }
-    
+
     public int getBaMountLoc() {
         return baMountLoc;
     }
@@ -1942,7 +1962,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public boolean isOneShotWeapon() {
         return (getType() instanceof WeaponType) && getType().hasFlag(WeaponType.F_ONESHOT);
     }
-    
+
     /**
      * Checks whether this mount is either one a one-shot weapon or ammo for a one-shot weapon.
      * @return
@@ -1966,10 +1986,10 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         }
         return false;
     }
-    
+
     /**
      * Check for whether this mount is linked by a one-shot weapon
-     * 
+     *
      * @return {@code true} if this is one-shot ammo
      */
     public boolean isOneShotAmmo() {
@@ -2073,7 +2093,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             return false;
         }
     }
-    
+
     /**
      * Returns true if this Mounted is ammunition in homing mode.
      */
@@ -2081,7 +2101,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         if (!(getType() instanceof AmmoType)) {
             return false;
         }
-        
+
         AmmoType ammoType = (AmmoType) getType();
         return ammoType.getMunitionType() == AmmoType.M_HOMING &&
                 curMode().equals("Homing");

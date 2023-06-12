@@ -1663,12 +1663,14 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
             waa.setStrafingFirstShot(firstShot);
             firstShot = false;
 
-            // add the attack to our temporary queue
-            addAttack(waa);
-
-            // and add it into the game, temporarily
+            // Temporarily add attack into the game. On turn done
+            // this will be recomputed from the local
+            // @attacks EntityAttackLog, but Game actions
+            // must be populated to calculate ToHit mods etc.
             game.addAction(waa);
 
+            // add the attack to our temporary queue
+            addAttack(waa);
         }
         // set the weapon as used
         mounted.setUsedThisRound(true);

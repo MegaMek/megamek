@@ -4193,12 +4193,14 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         }
 
         repaint(100);
+        int attackerId = aa.getEntityId();
         for (AttackSprite sprite : attackSprites) {
             // can we just add this attack to an existing one?
-            if ((sprite.getEntityId() == aa.getEntityId())
+            if ((sprite.getEntityId() == attackerId)
                 && (sprite.getTargetId() == aa.getTargetId())) {
                 // use existing attack, but add this weapon
                 sprite.addEntityAction(aa);
+                rebuildAllSpriteDescriptions(attackerId);
                 return;
             }
         }
@@ -4214,7 +4216,22 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         } else {
             attackSprites.add(new AttackSprite(this, aa));
         }
+        rebuildAllSpriteDescriptions(attackerId);
     }
+
+    /** adding a new EntityAction may affect the ToHits of other attacks
+     * so rebuild. The underlying data is cached when possible, so the should
+     * o the minumum amount of work needed
+     */
+    void rebuildAllSpriteDescriptions(int attackerId) {
+        for (AttackSprite sprite : attackSprites) {
+            if (sprite.getEntityId() == attackerId) {
+                sprite.rebuildDescriptions();
+            }
+        }
+
+    }
+
 
     /**
      * Removes all attack sprites from a certain entity

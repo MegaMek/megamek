@@ -16,6 +16,7 @@ public class EntityActionLog implements Collection<EntityAction> {
     final Game game;
     final Client client;
     final protected ArrayList<EntityAction> actions = new ArrayList<EntityAction>();
+//    final protected ArrayList<WeaponAttackAction> weaponAttackActions = new ArrayList<WeaponAttackAction>();
     // cache to prevent regeneration of info if action already processed
     final HashMap<EntityAction, String> infoCache = new HashMap<EntityAction, String>();
     final ArrayList<String> descriptions = new ArrayList<>();
@@ -32,25 +33,26 @@ public class EntityActionLog implements Collection<EntityAction> {
         return descriptions;
     }
 
-    void rebuild() {
+    public void rebuildDescriptions() {
         descriptions.clear();
-        for (EntityAction entityAction : infoCache.keySet()) {
+        for (EntityAction entityAction : actions) {
             addDescription(entityAction);
         }
     }
 
     /**
-     * @return a clone of the internal Vector of EntityActions
+     * @return a clone of the internal List of EntityActions
      */
     public Vector<EntityAction> toVector() {
         return new Vector<>(actions);
     }
 
     /**
-     * remove all items from collection
+     * remove all items from all internal collections
      */
     @Override
     public void clear() {
+        actions.clear();
         infoCache.clear();
         descriptions.clear();
     }
@@ -60,13 +62,13 @@ public class EntityActionLog implements Collection<EntityAction> {
         if (!actions.add(entityAction)) {
             return false;
         }
-        addDescription(entityAction);
+        rebuildDescriptions();
         return true;
     }
 
     public void add(int index, EntityAction entityAction) {
         actions.add(index, entityAction);
-        addDescription(entityAction);
+        rebuildDescriptions();
     }
 
     /**
@@ -79,7 +81,7 @@ public class EntityActionLog implements Collection<EntityAction> {
             return false;
         }
         infoCache.remove(o);
-        rebuild();
+        rebuildDescriptions();
         return true;
     }
 
@@ -93,9 +95,7 @@ public class EntityActionLog implements Collection<EntityAction> {
         if (!actions.addAll(c)) {
             return false;
         }
-        for (var a : c) {
-            addDescription(a);
-        }
+        rebuildDescriptions();
         return true;
     }
 
@@ -107,7 +107,7 @@ public class EntityActionLog implements Collection<EntityAction> {
         for (var a : c) {
             infoCache.remove(a);
         }
-        rebuild();
+        rebuildDescriptions();
         return true;
     }
 
@@ -136,11 +136,11 @@ public class EntityActionLog implements Collection<EntityAction> {
 
     void addDescription(EntityAction entityAction) {
         if (entityAction instanceof WeaponAttackAction) {
-            // WeaponAttacks are merged summarized in as few lines as possible,
-            // so always need a certain level of reormatting
+            // ToHit may change as other actions are added,
+            // so always re-evaluate all WeaponAttack Actions
             addEntityAction((WeaponAttackAction) entityAction);
         } else if (infoCache.containsKey(entityAction)) {
-            //reuse previous description
+            // reuse previous description
             descriptions.add(infoCache.get(entityAction));
         } else if (entityAction instanceof KickAttackAction) {
             addEntityAction((KickAttackAction) entityAction);
@@ -169,23 +169,18 @@ public class EntityActionLog implements Collection<EntityAction> {
      * Adds a weapon to this attack
      */
     void addEntityAction(WeaponAttackAction attack) {
-        final String buffer;
-        if (infoCache.containsKey(attack)) {
-            buffer = infoCache.get(attack);
-        } else {
-            String table = attack.toHit(game).getTableDesc();
-            buffer = attack.toHit(game).getValueAsString() + ((!table.isEmpty()) ? ' '+table : "");
-            infoCache.put(attack, buffer);
-        }
+        ToHitData toHit = attack.toHit(game, true);
+        String table = toHit.getTableDesc();
+        final String buffer = toHit.getValueAsString() + ((!table.isEmpty()) ? ' '+table : "");
         final Entity entity = game.getEntity(attack.getEntityId());
-        final WeaponType wtype = (WeaponType) entity.getEquipment(attack.getWeaponId()).getType();
+        final String weaponName =  ((WeaponType) entity.getEquipment(attack.getWeaponId()).getType()).getName();
 
         //add to an existing entry if possible
         boolean found = false;
         ListIterator<String> i = descriptions.listIterator();
         while (i.hasNext()) {
             String s = i.next();
-            if (s.startsWith(wtype.getName())) {
+            if (s.startsWith(weaponName)) {
                 i.set(s + ", " + buffer);
                 found = true;
                 break;
@@ -193,7 +188,7 @@ public class EntityActionLog implements Collection<EntityAction> {
         }
 
         if (!found) {
-            descriptions.add(wtype.getName() + Messages.getString("BoardView1.needs") + buffer);
+            descriptions.add(weaponName + Messages.getString("BoardView1.needs") + buffer);
         }
     }
 

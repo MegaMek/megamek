@@ -7258,6 +7258,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // move path has ice
         boolean isFoggy = game.getPlanetaryConditions().getFog() != PlanetaryConditions.FOG_NONE;
         boolean isDark = game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DUSK;
+        boolean isBlackIce;
+
+        if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM)
+                || (game.getOptions().booleanOption(OptionsConstants.ADVANCED_BLACK_ICE)
+                && game.getPlanetaryConditions().getTemperature() <= -30)) {
+            isBlackIce = true;
+        } else {
+            isBlackIce = false;
+        }
 
         // if we are jumping, then no worries
         if (moveType == EntityMovementType.MOVE_JUMP) {
@@ -7283,6 +7292,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         } else if (curHex.containsTerrain(Terrains.ICE)) {
             roll.append(new PilotingRollData(getId(), 0, "moving recklessly"));
         } else if (curHex.containsTerrain(Terrains.BLACK_ICE)) {
+            roll.append(new PilotingRollData(getId(), 0, "moving recklessly"));
+        } else if (curHex.hasPavement() && isBlackIce) {
             roll.append(new PilotingRollData(getId(), 0, "moving recklessly"));
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE, "not moving recklessly");

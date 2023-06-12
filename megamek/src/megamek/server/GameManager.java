@@ -7808,6 +7808,20 @@ public class GameManager implements IGameManager {
                 }
             }
 
+            // Check for black ice
+            boolean useBlackIce = game.getOptions().booleanOption(OptionsConstants.ADVANCED_BLACK_ICE);
+            boolean goodTemp = game.getPlanetaryConditions().getTemperature() <= -30;
+            boolean goodWeather = game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM;
+            if (isPavementStep && ((useBlackIce && goodTemp) || goodWeather)) {
+                if (!curHex.containsTerrain(Terrains.BLACK_ICE)) {
+                    int blackIceChance = Compute.d6(1);
+                    if (blackIceChance > 1) {
+                        curHex.addTerrain(new Terrain(Terrains.BLACK_ICE, 1));
+                        sendChangedHex(curPos);
+                    }
+                }
+            }
+
             // Handle loading units.
             if (step.getType() == MovePath.MoveStepType.LOAD) {
 

@@ -7256,13 +7256,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         // this only applies in fog, night conditions, or if a hex along the
         // move path has ice
+        int minTemp = -30;
         boolean isFoggy = game.getPlanetaryConditions().getFog() != PlanetaryConditions.FOG_NONE;
         boolean isDark = game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DUSK;
         boolean isBlackIce;
 
         if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM)
                 || (game.getOptions().booleanOption(OptionsConstants.ADVANCED_BLACK_ICE)
-                && game.getPlanetaryConditions().getTemperature() <= -30)) {
+                && game.getPlanetaryConditions().getTemperature() <= minTemp)) {
             isBlackIce = true;
         } else {
             isBlackIce = false;

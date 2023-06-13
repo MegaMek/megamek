@@ -7809,8 +7809,9 @@ public class GameManager implements IGameManager {
             }
 
             // Check for black ice
+            int minTemp = -30;
             boolean useBlackIce = game.getOptions().booleanOption(OptionsConstants.ADVANCED_BLACK_ICE);
-            boolean goodTemp = game.getPlanetaryConditions().getTemperature() <= -30;
+            boolean goodTemp = game.getPlanetaryConditions().getTemperature() <= minTemp;
             boolean goodWeather = game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM;
             if (isPavementStep && ((useBlackIce && goodTemp) || goodWeather)) {
                 if (!curHex.containsTerrain(Terrains.BLACK_ICE)) {
@@ -8680,9 +8681,9 @@ public class GameManager implements IGameManager {
             }
 
             // check for black ice
-            // FIXME Check weather and optional rule for black ice.
+            int minTemp = -30;
             boolean useBlackIce = game.getOptions().booleanOption(OptionsConstants.ADVANCED_BLACK_ICE);
-            boolean goodTemp = game.getPlanetaryConditions().getTemperature() <= -30;
+            boolean goodTemp = game.getPlanetaryConditions().getTemperature() <= minTemp;
             boolean goodWeather = game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM;
             if ((useBlackIce && goodTemp) || goodWeather) {
                 if (ServerHelper.checkEnteringBlackIce(this, curPos, curHex, useBlackIce, goodTemp, goodWeather)) {

@@ -98,7 +98,7 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
 
     /**
      * Creates and lays out a new mech display.
-     * 
+     *
      * @param clientgui
      *            The ClientGUI for the GUI that is creating this UnitDisplay.
      *            This could be null, if there is no ClientGUI, such as with
@@ -107,7 +107,7 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
     public UnitDisplay(@Nullable ClientGUI clientgui) {
         this(clientgui, null);
     }
-        
+
     public UnitDisplay(@Nullable ClientGUI clientgui,
             @Nullable MegaMekController controller) {
         super(new GridBagLayout());
@@ -120,7 +120,7 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
         mPan = new SummaryPanel(this);
         pPan = new PilotPanel(this);
         aPan = new ArmorPanel(clientgui != null ? clientgui.getClient().getGame() : null, this);
-        wPan = new WeaponPanel(this);
+        wPan = new WeaponPanel(this, clientgui != null ? clientgui.getClient() : null);
         sPan = new SystemPanel(this);
         ePan = new ExtraPanel(this);
 

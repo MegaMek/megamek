@@ -3218,7 +3218,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_CAPITAL_ARMOR).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         misc.omniFixedOnly = true;
         misc.rulesRefs = "152,SO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_F)
+        misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
                 .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
                 .setISAdvancement(2600, 2615, DATE_NONE, 2950, 3055).setISApproximate(true, false, false, false, false)
                 .setClanAdvancement(2600, 2615, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -3241,7 +3241,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_CAPITAL_ARMOR).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         misc.omniFixedOnly = true;
         misc.rulesRefs = "152,SO";
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_E)
                 .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
                 .setClanAdvancement(2600, 2615, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)

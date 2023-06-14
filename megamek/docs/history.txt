@@ -17,7 +17,11 @@ VERSION HISTORY:
 + Fix #4480, #3494: Selecting BA Anti-Personnel weapons during the firing phase no longer results in an error
 + PR #4474: Improvements to Battle Value calculation and reports
 + PR #4502: Map generator parameter dialog now loads theme from preset; various bugfixes to map generator parameter dialog
-+ Fix #4462: Use bilinear interpol. instead of bicubic to remove the lag
++ Fix #4462: Fixed the extreme lag players encountered when a Windows OS scaling other than 100% was combined with MM's HQ rendering
++ PR #4423: The WeaponsPanel of the Unit Display now shows considerably more info about the target
++ PR #4509: Stand-alone MegaMek now also contains pilot portraits
++ PR #4516: Additional icons, among them a large icon for grounded Buccaneer DropShips
++ PR #4514: The random map generator now supports ultra-heavy terrain (woods, rubble, rough), jungles and tundra
 
 0.49.13 (2023-05-23 2000 UTC)
 + Fix #3914: LAM fuel tanks will now correctly provide fuel to the LAM

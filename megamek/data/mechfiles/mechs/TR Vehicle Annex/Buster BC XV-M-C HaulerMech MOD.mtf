@@ -1,12 +1,12 @@
 Version:1.0
-Buster BC XV-M-C HaulerMech
-MOD
+Buster BC
+XV-M-C HaulerMechMOD
 mul id:7178
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3076
-Source:RS IA
+Source:RS IA - Jihad
 Rules Level:2
 
 Mass:50

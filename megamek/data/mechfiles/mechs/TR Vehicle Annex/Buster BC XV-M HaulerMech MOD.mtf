@@ -1,12 +1,12 @@
 Version:1.0
-Buster BC XV-M HaulerMech
-MOD
+Buster BC
+XV-M HaulerMechMOD
 mul id:453
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2801
-Source:RS IA
+Source:RS IA - Early Succession War
 Rules Level:2
 
 Mass:50

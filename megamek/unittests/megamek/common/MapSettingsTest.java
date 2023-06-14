@@ -70,6 +70,7 @@ public class MapSettingsTest {
         assertEquals(4, testMe.getMinForestSize());
         assertEquals(12, testMe.getMaxForestSize());
         assertEquals(30, testMe.getProbHeavy());
+        assertEquals(0, testMe.getProbUltra());
         assertEquals(2, testMe.getMinRoughSpots());
         assertEquals(10, testMe.getMaxRoughSpots());
         assertEquals(1, testMe.getMinRoughSize());

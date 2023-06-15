@@ -36,8 +36,10 @@ public class TurnDetailsOverlay extends AbstractBoardViewOverlay {
 
     List<String> lines = new ArrayList<>();
 
+    static String validTextColor, invalidTextColor;
+
     public TurnDetailsOverlay(Game game, ClientGUI cg) {
-        super(game, cg, new Font(Font.MONOSPACED, Font.PLAIN, 12),
+        super(game, cg, new Font(Font.MONOSPACED, Font.BOLD, 12),
                 Messages.getString("TurnDetailsOverlay.heading", KeyCommandBind.getDesc(KeyCommandBind.TURN_DETAILS)) );
     }
 

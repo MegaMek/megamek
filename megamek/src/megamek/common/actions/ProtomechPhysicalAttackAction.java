@@ -14,6 +14,7 @@
 
 package megamek.common.actions;
 
+import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 
@@ -108,9 +109,9 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
         final int attackerElevation = ae.getElevation() + attHex.getLevel();
         final int targetHeight = target.relHeight() + targHex.getLevel();
         final int targetElevation = target.getElevation() + targHex.getLevel();
-        
+
         boolean inSameBuilding = Compute.isInSameBuilding(game, ae, te);
-        
+
         ToHitData toHit;
 
         // can't target yourself
@@ -177,7 +178,7 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
         // target terrain
         if (te != null) {
             toHit.append(Compute.getTargetTerrainModifier(game, te, 0, inSameBuilding));
-        }        
+        }
 
         // target prone
         if ((te != null) && te.isProne()) {
@@ -201,5 +202,11 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
 
         // done!
         return toHit;
+    }
+
+    @Override
+    public String toSummaryString(final Game game) {
+        final String roll = this.toHit(game).getValueAsString();
+        return Messages.getString("BoardView1.ProtomechPhysicalAttackAction", roll);
     }
 }

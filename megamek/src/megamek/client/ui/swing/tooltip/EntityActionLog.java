@@ -72,8 +72,7 @@ public class EntityActionLog implements Collection<EntityAction> {
     }
 
     /**
-     * Remove an item and its description cache
-     * @param entityAction
+     * Remove an item and its caches
      */
     @Override
     public boolean remove(Object o) {
@@ -138,37 +137,21 @@ public class EntityActionLog implements Collection<EntityAction> {
         if (entityAction instanceof WeaponAttackAction) {
             // ToHit may change as other actions are added,
             // so always re-evaluate all WeaponAttack Actions
-            addEntityAction((WeaponAttackAction) entityAction);
+            addWeaponAttackAction((WeaponAttackAction) entityAction);
         } else if (infoCache.containsKey(entityAction)) {
             // reuse previous description
             descriptions.add(infoCache.get(entityAction));
-        } else if (entityAction instanceof KickAttackAction) {
-            addEntityAction((KickAttackAction) entityAction);
-        } else if (entityAction instanceof PunchAttackAction) {
-            addEntityAction((PunchAttackAction) entityAction);
-        } else if (entityAction instanceof PushAttackAction) {
-            addEntityAction((PushAttackAction) entityAction);
-        } else if (entityAction instanceof ClubAttackAction) {
-            addEntityAction((ClubAttackAction) entityAction);
-        } else if (entityAction instanceof ChargeAttackAction) {
-            addEntityAction((ChargeAttackAction) entityAction);
-        } else if (entityAction instanceof DfaAttackAction) {
-            addEntityAction((DfaAttackAction) entityAction);
-        } else if (entityAction instanceof ProtomechPhysicalAttackAction) {
-            addEntityAction((ProtomechPhysicalAttackAction) entityAction);
-        } else if (entityAction instanceof SearchlightAttackAction) {
-            addEntityAction((SearchlightAttackAction) entityAction);
-        } else if (entityAction instanceof SpotAction) {
-            addEntityAction((SpotAction) entityAction);
         } else {
-            addEntityAction(entityAction);
+            final String buffer = entityAction.toSummaryString(game);
+            descriptions.add(buffer);
+            infoCache.put(entityAction, buffer);
         }
     }
 
     /**
-     * Adds a weapon to this attack
+     * Adds description, using an existing line if the same weapon type was already listed
      */
-    void addEntityAction(WeaponAttackAction attack) {
+    void addWeaponAttackAction(WeaponAttackAction attack) {
         ToHitData toHit = attack.toHit(game, true);
         String table = toHit.getTableDesc();
         final String buffer = toHit.getValueAsString() + ((!table.isEmpty()) ? ' '+table : "");
@@ -188,167 +171,8 @@ public class EntityActionLog implements Collection<EntityAction> {
         }
 
         if (!found) {
-            descriptions.add(weaponName + Messages.getString("BoardView1.needs") + buffer);
+            descriptions.add( weaponName + Messages.getString("BoardView1.needs") + buffer);
         }
-    }
-
-    void addEntityAction(KickAttackAction attack) {
-        String buffer;
-        if (infoCache.containsKey(attack)) {
-            buffer = infoCache.get(attack);
-        } else {
-            String rollLeft;
-            String rollRight;
-            final int leg = attack.getLeg();
-            switch (leg) {
-                case KickAttackAction.BOTH:
-                    rollLeft = KickAttackAction.toHit(game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), KickAttackAction.LEFT).getValueAsString();
-                    rollRight = KickAttackAction.toHit(game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), KickAttackAction.RIGHT).getValueAsString();
-                    buffer = Messages.getString("BoardView1.kickBoth", rollLeft, rollRight);
-                    break;
-                case KickAttackAction.LEFT:
-                    rollLeft = KickAttackAction.toHit(game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), KickAttackAction.LEFT).getValueAsString();
-                    buffer = Messages.getString("BoardView1.kickLeft", rollLeft);
-                    break;
-                case KickAttackAction.RIGHT:
-                    rollRight = KickAttackAction.toHit(game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), KickAttackAction.RIGHT).getValueAsString();
-                    buffer = Messages.getString("BoardView1.kickRight", rollRight);
-                    break;
-                default:
-                    buffer = "Error on kick action";
-            }
-            infoCache.put(attack, buffer);
-        }
-        descriptions.add(buffer);
-    }
-
-    void addEntityAction(PunchAttackAction attack) {
-        String buffer;
-        if (infoCache.containsKey(attack)) {
-            buffer = infoCache.get(attack);
-        } else {
-            String rollLeft;
-            String rollRight;
-            final int arm = attack.getArm();
-            switch (arm) {
-                case PunchAttackAction.BOTH:
-                    rollLeft = PunchAttackAction.toHit(game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), PunchAttackAction.LEFT, false).getValueAsString();
-                    rollRight = PunchAttackAction.toHit(game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), PunchAttackAction.RIGHT, false).getValueAsString();
-                    buffer = Messages.getString("BoardView1.punchBoth", rollLeft, rollRight);
-                    break;
-                case PunchAttackAction.LEFT:
-                    rollLeft = PunchAttackAction.toHit(game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), PunchAttackAction.LEFT, false).getValueAsString();
-                    buffer = Messages.getString("BoardView1.punchLeft", rollLeft);
-                    break;
-                case PunchAttackAction.RIGHT:
-                    rollRight = PunchAttackAction.toHit(game, attack.getEntityId(), game.getTarget(attack.getTargetType(), attack.getTargetId()), PunchAttackAction.RIGHT, false).getValueAsString();
-                    buffer = Messages.getString("BoardView1.punchRight", rollRight);
-                    break;
-                default:
-                    buffer = "Error on punch action";
-            }
-            infoCache.put(attack, buffer);
-        }
-        descriptions.add(buffer);
-    }
-
-    void addEntityAction(PushAttackAction attack) {
-        String buffer;
-        if (infoCache.containsKey(attack)) {
-            buffer = infoCache.get(attack);
-        } else {
-            final String roll = attack.toHit(game).getValueAsString();
-            buffer = Messages.getString("BoardView1.PushAttackAction", roll);
-            infoCache.put(attack, buffer);
-        }
-        descriptions.add(buffer);
-    }
-
-    void addEntityAction(ClubAttackAction attack) {
-        String buffer;
-        if (infoCache.containsKey(attack)) {
-            buffer = infoCache.get(attack);
-        } else {
-            final String roll = attack.toHit(game).getValueAsString();
-            final String club = attack.getClub().getName();
-            buffer = Messages.getString("BoardView1.ClubAttackAction", club, roll);
-            infoCache.put(attack, buffer);
-        }
-        descriptions.add(buffer);
-    }
-
-    void addEntityAction(ChargeAttackAction attack) {
-        String buffer;
-        if (infoCache.containsKey(attack)) {
-            buffer = infoCache.get(attack);
-        } else {
-            final String roll = attack.toHit(game).getValueAsString();
-            buffer = Messages.getString("BoardView1.ChargeAttackAction", roll);
-            infoCache.put(attack, buffer);
-        }
-        descriptions.add(buffer);
-    }
-
-    void addEntityAction(DfaAttackAction attack) {
-        String buffer;
-        if (infoCache.containsKey(attack)) {
-            buffer = infoCache.get(attack);
-        } else {
-            final String roll = attack.toHit(game).getValueAsString();
-            buffer = Messages.getString("BoardView1.DfaAttackAction", roll);
-            infoCache.put(attack, buffer);
-        }
-        descriptions.add(buffer);
-    }
-
-    void addEntityAction(ProtomechPhysicalAttackAction attack) {
-        String buffer;
-        if (infoCache.containsKey(attack)) {
-            buffer = infoCache.get(attack);
-        } else {
-            final String roll = attack.toHit(game).getValueAsString();
-            buffer = Messages.getString("BoardView1.ProtomechPhysicalAttackAction", roll);
-            infoCache.put(attack, buffer);
-        }
-        descriptions.add(buffer);
-    }
-
-    void addEntityAction(SearchlightAttackAction attack) {
-        String buffer;
-        if (infoCache.containsKey(attack)) {
-            buffer = infoCache.get(attack);
-        } else {
-            Entity target = game.getEntity(attack.getTargetId());
-            buffer = Messages.getString("BoardView1.SearchlightAttackAction")  + ((target != null) ? ' ' +target.getShortName() : "");
-            infoCache.put(attack, buffer);
-        }
-        descriptions.add(buffer);
-    }
-
-    void addEntityAction(SpotAction attack) {
-        String buffer;
-
-        if (infoCache.containsKey(attack)) {
-            buffer = infoCache.get(attack);
-        } else {
-            Entity target = game.getEntity(attack.getTargetId());
-            buffer = Messages.getString("BoardView1.SpotAction", (target != null) ? target.getShortName() : "" );
-            infoCache.put(attack, buffer);
-        }
-        descriptions.add(buffer);
-    }
-
-    void addEntityAction(EntityAction entityAction) {
-        String buffer;
-
-        if (infoCache.containsKey(entityAction)) {
-            buffer = infoCache.get(entityAction);
-        } else {
-            String typeName = entityAction.getClass().getTypeName();
-            buffer = typeName.substring(typeName.lastIndexOf('.') + 1);
-            infoCache.put(entityAction, buffer);
-        }
-        descriptions.add(buffer);
     }
 
     @Override

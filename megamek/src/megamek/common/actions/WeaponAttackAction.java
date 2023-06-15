@@ -5143,4 +5143,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     public String toDisplayableString(Client client) {
         return "attacking " + getTarget(client.getGame()).getDisplayName() + " with " + getEntity(client.getGame()).getEquipment(weaponId).getName();
     }
+
+    @Override
+    public String toSummaryString(final Game game) {
+        ToHitData toHit = this.toHit(game, true);
+        String table = toHit.getTableDesc();
+        final String buffer = toHit.getValueAsString() + ((!table.isEmpty()) ? ' '+table : "");
+        final Entity entity = game.getEntity(this.getEntityId());
+        final String weaponName =  ((WeaponType) entity.getEquipment(this.getWeaponId()).getType()).getName();
+        return weaponName + Messages.getString("BoardView1.needs") + buffer;
+    }
 }

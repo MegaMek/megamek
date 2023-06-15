@@ -53,7 +53,7 @@ import java.util.List;
 public abstract class AbstractBoardViewOverlay implements IDisplayable, IPreferenceChangeListener {
     private static final int PADDING_X = 10;
     private static final int PADDING_Y = 5;
-    private static final Color SHADOW_COLOR = Color.DARK_GRAY;
+    private static final Color SHADOW_COLOR = java.awt.Color.DARK_GRAY;
     private static final float FADE_SPEED = 0.2f;
     ClientGUI clientGui;
     protected static final GUIPreferences GUIP = GUIPreferences.getInstance();
@@ -200,7 +200,7 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
      * otherwise TEXT_COLOR is used.
      */
     private void drawShadowedString(Graphics graph, String s, int x, int y) {
-        Color textColor = getTextColorGUIPreference();
+        Color textColor = getTextColor();
         // Extract a color code from the start of the string
         // used to display headlines if it's there
         if (s.startsWith("#") && s.length() > 7) {
@@ -307,8 +307,7 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
         setDirty();
     }
 
-    protected Color getTextColorGUIPreference() {
-        // FIXME there is currently no custom option for key bindings
+    public static Color getTextColor() {
         return GUIP.getPlanetaryConditionsColorText();
     }
 
@@ -316,5 +315,16 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
     protected abstract boolean getVisibilityGUIPreference();
     protected abstract int getDistTop(Rectangle clipBounds,  int overlayHeight);
     protected abstract int getDistSide(Rectangle clipBounds, int overlayWidth);
+
+    public static String colorToHex(Color color) {
+        return String.format("#%02X%02X%02X",
+                color.getRed(), color.getGreen(),color.getBlue(), color.getAlpha());
+    }
+
+    public static String colorToHex(Color color, float brightnessMultiplier) {
+        return String.format("#%02X%02X%02X",
+                (int)(color.getRed() * brightnessMultiplier), (int)(color.getGreen() *  brightnessMultiplier),
+                (int)(color.getBlue() *  brightnessMultiplier), (int)(color.getAlpha()));
+    }
 
 }

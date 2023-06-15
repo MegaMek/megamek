@@ -735,6 +735,19 @@ public abstract class BVCalculator {
     protected double processWeapon(Mounted weapon, boolean showInReport,
                                    boolean addToOffensiveValue, int weaponCount) {
         double weaponBV = weapon.getType().getBV(entity);
+
+        // MG Arrays need to sum up their linked MGs
+        if ((weapon.getType() instanceof WeaponType) && weapon.getType().hasFlag(WeaponType.F_MGA)) {
+            double mgBV = 0;
+            for (int eqNum : weapon.getBayWeapons()) {
+                Mounted mg = entity.getEquipment(eqNum);
+                if ((mg != null) && (!mg.isDestroyed())) {
+                    mgBV += mg.getType().getBV(entity);
+                }
+            }
+            weaponBV = mgBV * (weapon.getType().isClan() ? 0.1 : 0.67);
+        }
+
         String multiplierText = (weaponCount > 1) ? weaponCount + " x " : "";
         String squadSupportDivisorText = "";
         double squadSupportDivisor = 1;
@@ -776,18 +789,6 @@ public abstract class BVCalculator {
                 double capBV = ((MiscType) weapon.getLinkedBy().getType()).getBV(entity, weapon);
                 weaponBV += capBV;
                 calculation += " + " + formatForReport(capBV) + " (Cap)";
-            }
-
-            // MG Array
-            if (weaponType.hasFlag(WeaponType.F_MGA)) {
-                double mgBV = 0;
-                for (int eqNum : weapon.getBayWeapons()) {
-                    Mounted mg = entity.getEquipment(eqNum);
-                    if ((mg != null) && (!mg.isDestroyed())) {
-                        mgBV += mg.getType().getBV(entity);
-                    }
-                }
-                weaponBV = mgBV * 0.67;
             }
 
             // artemis bumps up the value

@@ -1137,7 +1137,7 @@ public abstract class BVCalculator {
 
         processExternalStores();
 
-        if (pilotFactor != 1) {
+        if ((pilotFactor != 1) || !pilotModifiers.isEmpty()) {
             bvReport.addLine("Pilot Modifier:",
                     formatForReport(adjustedBV) + " x " + formatForReport(pilotFactor)
                             + (pilotModifiers.isEmpty() ? "" : " (" + String.join(", ", pilotModifiers) + ")"),
@@ -1145,7 +1145,7 @@ public abstract class BVCalculator {
             adjustedBV *= pilotFactor;
         }
 
-        if (adjustedBV != (int) Math.round(baseBV)) {
+        if ((adjustedBV != (int) Math.round(baseBV)) || !pilotModifiers.isEmpty()) {
             bvReport.addLine("--- Adjusted BV:", formatForReport(adjustedBV) + ", rn",
                     "= " + (int) Math.round(adjustedBV));
         }

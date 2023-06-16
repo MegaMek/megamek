@@ -22,6 +22,9 @@ VERSION HISTORY:
 + PR #4509: Stand-alone MegaMek now also contains pilot portraits
 + PR #4516: Additional icons, among them a large icon for grounded Buccaneer DropShips
 + PR #4514: The random map generator now supports ultra-heavy terrain (woods, rubble, rough), jungles and tundra
++ PR #4533: Displaying the visual/sensor ranges now has a keybind configuration field in the client settings
++ Fix #4523: Fixes an error with the unit status report (picked up pilots are now excluded from the report)
++ PR #4517: The BT Universe's Eras are now loaded from a definition XML file. The eras are moddable.
 
 0.49.13 (2023-05-23 2000 UTC)
 + Fix #3914: LAM fuel tanks will now correctly provide fuel to the LAM

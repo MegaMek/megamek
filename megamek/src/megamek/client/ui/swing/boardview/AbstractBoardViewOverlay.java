@@ -129,7 +129,7 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
                 hasContents = false;
             } else {
                 hasContents = true;
-                Rectangle r = getSize(graph, allLines, fm);
+                Rectangle r = getSize(allLines, fm);
                 r = new Rectangle(r.width + 2 * PADDING_X, r.height + 2 * PADDING_Y);
                 overlayWidth = r.width;
                 overlayHeight = r.height;
@@ -175,7 +175,7 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
     }
 
     /** Calculates the pixel size of the display from the necessary text lines. */
-    private Rectangle getSize(Graphics graph, List<String> lines, FontMetrics fm) {
+    private Rectangle getSize(List<String> lines, FontMetrics fm) {
         int width = 0;
         for (String line: lines) {
             if (fm.stringWidth(line) > width) {
@@ -290,7 +290,6 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
 
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
-        String name = e.getName();
         if (getVisibilityGUIPreference() != visible) {
             visible = getVisibilityGUIPreference();
             setDirty();
@@ -318,13 +317,13 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
 
     public static String colorToHex(Color color) {
         return String.format("#%02X%02X%02X",
-                color.getRed(), color.getGreen(),color.getBlue(), color.getAlpha());
+                color.getRed(), color.getGreen(),color.getBlue());
     }
 
     public static String colorToHex(Color color, float brightnessMultiplier) {
         return String.format("#%02X%02X%02X",
-                (int)(color.getRed() * brightnessMultiplier), (int)(color.getGreen() *  brightnessMultiplier),
-                (int)(color.getBlue() *  brightnessMultiplier), (int)(color.getAlpha()));
+                (int)(color.getRed() * brightnessMultiplier), (int)(color.getGreen() * brightnessMultiplier),
+                (int)(color.getBlue() * brightnessMultiplier));
     }
 
 }

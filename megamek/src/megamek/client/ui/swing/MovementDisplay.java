@@ -1048,11 +1048,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
     }
 
-    /** toggles the status of the Done and No Nag buttons based on if the current move order is valid */
+    /**
+     * toggles the status of the Done and No Nag buttons based on if the current move order is valid
+     */
     @Override
     protected void updateDonePanel() {
         if (cmd == null || cmd.length() == 0) {
-            updateDonePanelButtons( Messages.getString("MovementDisplay.Move"), Messages.getString("MovementDisplay.Skip"), false, null);
+            updateDonePanelButtons(Messages.getString("MovementDisplay.Move"), Messages.getString("MovementDisplay.Skip"), false, null);
             return;
         } else {
             MovePath possible = cmd.clone();
@@ -1062,80 +1064,78 @@ public class MovementDisplay extends ActionPhaseDisplay {
             } else if (!possible.isMoveLegal()) {
                 updateDonePanelButtons(Messages.getString("MovementDisplay.IllegalMove"), Messages.getString("MovementDisplay.Skip"), false, null);
             } else {
-                String validTextColor = AbstractBoardViewOverlay.colorToHex( AbstractBoardViewOverlay.getTextColor());
-                String invalidTextColor = AbstractBoardViewOverlay.colorToHex( AbstractBoardViewOverlay.getTextColor(), 0.7f);
-
                 int mp = possible.countMp(possible.isJumping());
                 boolean psrCheck = (!SharedUtility.doPSRCheck(cmd.clone()).isBlank()) || (!SharedUtility.doThrustCheck(cmd.clone(), clientgui.getClient()).isBlank());
                 boolean damageCheck = cmd.shouldMechanicalJumpCauseFallDamage() || cmd.hasActiveMASC() || (!(ce() instanceof VTOL) && cmd.hasActiveSupercharger()) || cmd.willCrushBuildings();
-
-                MoveStepType accumType = null;
-                int accumTypeCount = 0;
-                int accumMP = 0;
-                int accumDanger = 0;
-                boolean accumLegal = true;
-                String unicodeIcon = "";
-                ArrayList<String> turnDetails = new ArrayList<>();
-                for (final Enumeration<MoveStep> step = cmd.getSteps(); step.hasMoreElements(); ) {
-                    MoveStep currentStep = step.nextElement();
-                    MoveStepType currentType =  currentStep.getType();
-                    int currentDanger = currentStep.isDanger() ? 1 : 0;
-                    boolean currentLegal = currentStep.isLegal(cmd);
-
-                    if (accumTypeCount != 0 && accumType == currentType && accumLegal == currentLegal) {
-                        accumTypeCount++;
-                        accumMP += currentStep.getMp();
-                        accumDanger += currentDanger;
-                        continue;
-                    }
-
-                    // switching to a new move type, so write a line
-                    if (accumTypeCount != 0) {
-                        turnDetails.add(String.format(turnDetailsFormat,
-                                accumLegal ? validTextColor : invalidTextColor,
-                                accumTypeCount == 1 ? "" : "x"+accumTypeCount,
-                                accumType,  unicodeIcon, accumMP, "*".repeat(accumDanger)));
-                    }
-
-                    // switching to a new move type, reset
-                    accumType = currentType;
-                    accumTypeCount = 1;
-                    accumMP = currentStep.getMp();
-                    accumDanger = currentDanger;
-                    accumLegal = currentLegal;
-                    switch (accumType) {
-                        case TURN_LEFT:
-                            unicodeIcon = "\u21B0";
-                            break;
-                        case TURN_RIGHT:
-                            unicodeIcon = "\u21B1";
-                            break;
-                        case FORWARDS:
-                            unicodeIcon = "\u2191";
-                            break;
-                        case BACKWARDS:
-                            unicodeIcon = "\u2193";
-                            break;
-                        case START_JUMP:
-                            unicodeIcon = "\u21EF";
-                            break;
-                        default:
-                            unicodeIcon = "";
-                            break;
-                    }
-                }
-
-                turnDetails.add(String.format(turnDetailsFormat,
-                        accumLegal ? validTextColor : invalidTextColor,
-                        accumTypeCount == 1 ? "" : "x"+accumTypeCount,
-                        accumType,  unicodeIcon, accumMP, "*".repeat(accumDanger)));
-
-                String moveMsg = Messages.getString("MovementDisplay.Move")
-                        + " (" + mp + "MP)" + (psrCheck ? "*" : "") + (psrCheck ? "*" : "") + (damageCheck ? "!" : "");
-
-                updateDonePanelButtons(moveMsg, Messages.getString("MovementDisplay.Skip"), true, turnDetails);
+                String moveMsg = Messages.getString("MovementDisplay.Move") + " (" + mp + "MP)" + (psrCheck ? "*" : "") + (damageCheck ? "!" : "");
+                updateDonePanelButtons(moveMsg, Messages.getString("MovementDisplay.Skip"), true, computeTurnDetails());
             }
         }
+    }
+
+    ArrayList<String> computeTurnDetails(){
+        String validTextColor = AbstractBoardViewOverlay.colorToHex(AbstractBoardViewOverlay.getTextColor());
+        String invalidTextColor = AbstractBoardViewOverlay.colorToHex(AbstractBoardViewOverlay.getTextColor(), 0.7f);
+
+        MoveStepType accumType = null;
+        int accumTypeCount = 0;
+        int accumMP = 0;
+        int accumDanger = 0;
+        boolean accumLegal = true;
+        String unicodeIcon = "";
+        ArrayList<String> turnDetails = new ArrayList<>();
+        for( final Enumeration<MoveStep> step = cmd.getSteps(); step.hasMoreElements();) {
+            MoveStep currentStep = step.nextElement();
+            MoveStepType currentType = currentStep.getType();
+            int currentDanger = currentStep.isDanger() ? 1 : 0;
+            boolean currentLegal = currentStep.isLegal(cmd);
+
+            if (accumTypeCount != 0 && accumType == currentType && accumLegal == currentLegal) {
+                accumTypeCount++;
+                accumMP += currentStep.getMp();
+                accumDanger += currentDanger;
+                continue;
+            }
+
+            // switching to a new move type, so write a line
+            if (accumTypeCount != 0) {
+                turnDetails.add(String.format(turnDetailsFormat, accumLegal ? validTextColor : invalidTextColor, accumTypeCount == 1 ? "" : "x" + accumTypeCount, accumType, unicodeIcon, accumMP, "*".repeat(accumDanger)));
+            }
+
+            // switching to a new move type, reset
+            accumType = currentType;
+            accumTypeCount = 1;
+            accumMP = currentStep.getMp();
+            accumDanger = currentDanger;
+            accumLegal = currentLegal;
+            switch (accumType) {
+                case TURN_LEFT:
+                    unicodeIcon = "\u21B0";
+                    break;
+                case TURN_RIGHT:
+                    unicodeIcon = "\u21B1";
+                    break;
+                case FORWARDS:
+                    unicodeIcon = "\u2191";
+                    break;
+                case BACKWARDS:
+                    unicodeIcon = "\u2193";
+                    break;
+                case START_JUMP:
+                    unicodeIcon = "\u21EF";
+                    break;
+                default:
+                    unicodeIcon = "";
+                    break;
+            }
+        }
+
+        // add line for last moves
+        turnDetails.add(String.format(turnDetailsFormat,
+                accumLegal ?validTextColor :invalidTextColor,
+                accumTypeCount ==1?"":"x"+accumTypeCount,
+                accumType,unicodeIcon,accumMP,"*".repeat(accumDanger)));
+        return turnDetails;
     }
 
     /**

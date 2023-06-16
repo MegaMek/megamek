@@ -1124,7 +1124,8 @@ public abstract class BVCalculator {
     protected void adjustBV() {
         adjustedBV = (int) Math.round(baseBV);
         double c3Bonus = ignoreC3 ? 0 : entity.getExtraC3BV((int) Math.round(adjustedBV));
-        double pilotFactor = ignoreSkill ? 1 : BVCalculator.bvMultiplier(entity);
+        List<String> pilotModifiers = new ArrayList<>();
+        double pilotFactor = ignoreSkill ? 1 : BVCalculator.bvMultiplier(entity, pilotModifiers);
 
         processTagBonus();
 
@@ -1138,7 +1139,8 @@ public abstract class BVCalculator {
 
         if (pilotFactor != 1) {
             bvReport.addLine("Pilot Modifier:",
-                    formatForReport(adjustedBV) + " x " + formatForReport(pilotFactor),
+                    formatForReport(adjustedBV) + " x " + formatForReport(pilotFactor)
+                            + (pilotModifiers.isEmpty() ? "" : " (" + String.join(", ", pilotModifiers) + ")"),
                     "= " + formatForReport(adjustedBV * pilotFactor));
             adjustedBV *= pilotFactor;
         }
@@ -1171,7 +1173,7 @@ public abstract class BVCalculator {
      * @param entity The entity to get the skill modifier for
      * @return The BV multiplier for the given entity's pilot
      */
-    public static double bvMultiplier(Entity entity) {
+    public static double bvMultiplier(Entity entity, List<String> pilotModifiers) {
         if (entity.getCrew() == null) {
             return 1;
         }
@@ -1186,7 +1188,53 @@ public abstract class BVCalculator {
             gunnery = (lamPilot.getGunneryMech() + lamPilot.getGunneryAero()) / 2;
             piloting = (lamPilot.getPilotingMech() + lamPilot.getPilotingAero()) / 2;
         }
-        return bvImplantMultiplier(entity) * bvSkillMultiplier(gunnery, piloting);
+        double skillMultiplier = bvSkillMultiplier(gunnery, piloting);
+        if (skillMultiplier != 1) {
+            pilotModifiers.add("Skill");
+        }
+
+        if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
+            piloting = Math.max(0, piloting - 1);
+            pilotModifiers.add("Pain Shunt");
+        }
+        if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_COMM_IMPLANT)) {
+            piloting = Math.max(0, piloting - 1);
+            pilotModifiers.add("Comm. Implant");
+        }
+        if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
+                && entity.hasMisc(MiscType.F_BATTLEMECH_NIU)) {
+            piloting = Math.max(0, piloting - 1);
+            gunnery = Math.max(0, gunnery - 1);
+            pilotModifiers.add("VDNI");
+        }
+        if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)
+                && entity.hasMisc(MiscType.F_BATTLEMECH_NIU)) {
+            gunnery = Math.max(0, gunnery - 1);
+            pilotModifiers.add("Buf. VDNI");
+        }
+        if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_MM_IMPLANTS)
+                || entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_ENH_MM_IMPLANTS)
+                || entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_LASER)
+                || entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_AUDIO)
+                || entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_VISUAL)) {
+            gunnery = Math.max(0, gunnery - 1);
+            pilotModifiers.add("Sensory Implants");
+        }
+        if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_PROTO_DNI)
+                && entity.hasMisc(MiscType.F_BATTLEMECH_NIU)) {
+            piloting = Math.max(0, piloting - 3);
+            gunnery = Math.max(0, gunnery - 2);
+            pilotModifiers.add("Proto DNI");
+        }
+        if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_TRIPLE_CORE_PROCESSOR)) {
+            if (entity.isMek() || entity.isCombatVehicle() || entity.isAerospaceFighter()) {
+                gunnery = Math.max(0, gunnery - 1);
+            } else {
+                piloting = Math.max(0, piloting - 1);
+            }
+            pilotModifiers.add("TCP");
+        }
+        return bvSkillMultiplier(gunnery, piloting);
     }
 
     /**
@@ -1199,27 +1247,6 @@ public abstract class BVCalculator {
      */
     public static double bvSkillMultiplier(int gunnery, int piloting) {
         return bvMultipliers[MathUtility.clamp(gunnery, 0, 8)][MathUtility.clamp(piloting, 0, 8)];
-    }
-
-    /**
-     * Returns the BV multiplier for any MD implants that the crew of the given entity has. When the crew
-     * doesn't have any relevant MD implants, returns 1.
-     *
-     * @param entity The entity to get the skill modifier for
-     * @return a multiplier to the BV of the given entity
-     */
-    public static double bvImplantMultiplier(Entity entity) {
-        int level = 1;
-        if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
-            level = 2;
-        }
-        if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)) {
-            level = 3;
-        }
-        if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
-            level = 5;
-        }
-        return level / 4.0 + 0.75;
     }
 
     /**

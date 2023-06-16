@@ -1347,24 +1347,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         // Otherwise, the equipment can be fired.
         return true;
     }
-
-//    public boolean canFire(boolean isStrafing) {
-//
-//        // Equipment operational?
-//        if (!isReady(isStrafing) || isBreached() || isMissing() || isFired()) {
-//            return false;
-//        }
-//
-//        // Is the entity even active?
-//        if (entity.isShutDown()
-//                || ((null != entity.getCrew()) && !entity.getCrew().isActive())) {
-//            return false;
-//        }
-//
-//        // Otherwise, the equipment can be fired.
-//        return true;
-//    }
-
+    
     /**
      * Determines whether this weapon should be considered crippled for damage
      * level purposes.

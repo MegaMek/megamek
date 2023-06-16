@@ -397,9 +397,8 @@ public class Infantry extends Entity {
                 }
             }
 
-            if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_NONE)) {
-                if (game.getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_MOD_GALE){
+            if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)) {
+                if (game.getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_MOD_GALE) {
                     mp += 1;
                 }
 

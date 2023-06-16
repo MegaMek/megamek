@@ -224,7 +224,7 @@ public class TripodMech extends Mech {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_TORNADO_F13)) {
+                    && (game.getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_TORNADO_F13)) {
                 mp += 1;
             }
         }
@@ -277,7 +277,7 @@ public class TripodMech extends Mech {
         } else {
             roll.addModifier(2, "pilot incapacitated");
         }
-        
+
         int[] locsToCheck = new int[3];
 
         locsToCheck[0] = Mech.LOC_RLEG;

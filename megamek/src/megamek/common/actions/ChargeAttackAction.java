@@ -15,6 +15,7 @@ package megamek.common.actions;
 
 import java.util.Enumeration;
 
+import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.options.OptionsConstants;
@@ -495,4 +496,9 @@ public class ChargeAttackAction extends DisplacementAttackAction {
                                                                                           .getWeight() + entity.getWeight())) / 10);
     }
 
+    @Override
+    public String toSummaryString(final Game game) {
+        final String roll = this.toHit(game).getValueAsString();
+        return Messages.getString("BoardView1.ChargeAttackAction", roll);
+    }
 }

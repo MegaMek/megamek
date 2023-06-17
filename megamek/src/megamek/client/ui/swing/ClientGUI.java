@@ -162,6 +162,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     public static final String VIEW_TOGGLE_FOV_HIGHLIGHT = "viewToggleFovHighlight";
     public static final String VIEW_TOGGLE_FIRING_SOLUTIONS = "viewToggleFiringSolutions";
     public static final String VIEW_MOVE_ENV = "viewMovementEnvelope";
+    public static final String VIEW_TURN_DETAILS_OVERLAY = "viewTurnDetailsOverlay";
     public static final String VIEW_MOVE_MOD_ENV = "viewMovModEnvelope";
     public static final String VIEW_CHANGE_THEME = "viewChangeTheme";
     public static final String VIEW_ROUND_REPORT = "viewRoundReport";
@@ -961,6 +962,11 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 if (curPanel instanceof MovementDisplay) {
                     GUIP.setMoveEnvelope(!GUIP.getMoveEnvelope());
                     ((MovementDisplay) curPanel).computeMovementEnvelope(getUnitDisplay().getCurrentEntity());
+                }
+                break;
+            case VIEW_TURN_DETAILS_OVERLAY:
+                if (curPanel instanceof ActionPhaseDisplay) {
+                    GUIP.setTurnDetailsOverlay(!GUIP.getTurnDetailsOverlay());
                 }
                 break;
             case VIEW_MOVE_MOD_ENV:

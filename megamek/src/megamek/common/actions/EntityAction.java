@@ -14,6 +14,7 @@
 package megamek.common.actions;
 
 import megamek.client.Client;
+import megamek.common.Game;
 
 public interface EntityAction {
     int getEntityId();
@@ -21,4 +22,6 @@ public interface EntityAction {
     void setEntityId(int entityId);
 
     String toDisplayableString(Client client);
+
+    String toSummaryString(Game game);
 }

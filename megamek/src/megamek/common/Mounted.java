@@ -1347,7 +1347,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         // Otherwise, the equipment can be fired.
         return true;
     }
-    
+
     /**
      * Determines whether this weapon should be considered crippled for damage
      * level purposes.

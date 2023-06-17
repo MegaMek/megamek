@@ -248,8 +248,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     /**
      *
      * @param game
-     * @param evenIfAlreadyFired true if evaluating hit change even if the weapon has already fired or is otherwise unable to fire
-     * @return
+     * @param evenIfAlreadyFired false: an already fired weapon will return a ToHitData with value IMPOSSIBLE
+     *                          true: an already fired weapon will return a ToHitData with the value of its chance to hit
      */
     public ToHitData toHit(Game game, boolean evenIfAlreadyFired) {
         return toHit(game, getEntityId(), game.getTarget(getTargetType(), getTargetId()),

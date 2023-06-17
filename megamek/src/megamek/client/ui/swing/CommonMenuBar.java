@@ -265,6 +265,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         viewKeybindsOverlay.setSelected(GUIP.getShowKeybindsOverlay());
         initMenuItem(viewPlanetaryConditionsOverlay, menu, VIEW_PLANETARYCONDITIONS_OVERLAY);
         viewPlanetaryConditionsOverlay.setSelected(GUIP.getShowPlanetaryConditionsOverlay());
+        initMenuItem(viewTurnDetailsOverlay, menu, VIEW_TURN_DETAILS_OVERLAY);
+        viewTurnDetailsOverlay.setSelected(GUIP.getTurnDetailsOverlay());
         initMenuItem(viewUnitOverview, menu, VIEW_UNIT_OVERVIEW);
         menu.addSeparator();
 
@@ -290,8 +292,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         toggleFovHighlight.setSelected(GUIP.getFovHighlight());
         initMenuItem(viewMovementEnvelope, menu, VIEW_MOVE_ENV);
         viewMovementEnvelope.setSelected(GUIP.getMoveEnvelope());
-        initMenuItem(viewTurnDetailsOverlay, menu, VIEW_TURN_DETAILS_OVERLAY);
-        viewTurnDetailsOverlay.setSelected(GUIP.getTurnDetailsOverlay());
         initMenuItem(viewMovModEnvelope, menu, VIEW_MOVE_MOD_ENV);
         menu.addSeparator();
 

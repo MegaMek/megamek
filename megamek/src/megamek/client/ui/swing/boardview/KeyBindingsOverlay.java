@@ -15,7 +15,6 @@ package megamek.client.ui.swing.boardview;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.common.Game;
 
@@ -137,10 +136,6 @@ public class KeyBindingsOverlay extends AbstractBoardViewOverlay {
         return result;
     }
 
-    @Override
-    protected void setVisibilityGUIPreference(boolean value) {
-        GUIP.setValue(GUIPreferences.SHOW_KEYBINDS_OVERLAY, value);
-    }
     @Override
     protected boolean getVisibilityGUIPreference() {
         return GUIP.getShowKeybindsOverlay();

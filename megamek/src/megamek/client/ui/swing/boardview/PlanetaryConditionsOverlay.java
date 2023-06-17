@@ -15,21 +15,17 @@ package megamek.client.ui.swing.boardview;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.common.Game;
 import megamek.common.PlanetaryConditions;
 
 import java.awt.*;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * An overlay for the Boardview that displays a selection of Planetary Conditions
  * for the current game situation
- *
- *
  */
 public class PlanetaryConditionsOverlay extends AbstractBoardViewOverlay {
     private static final String MSG_TEMPERATURE = Messages.getString("PlanetaryConditionsOverlay.Temperature");
@@ -69,7 +65,7 @@ public class PlanetaryConditionsOverlay extends AbstractBoardViewOverlay {
             if (currentGame.getPlanetaryConditions().isExtremeTemperatureHeat()) {
                 tempColor = colorToHex(colorHot);
             } else if (currentGame.getPlanetaryConditions().isExtremeTemperatureCold()) {
-                tempColor = colorToHex(colorHot);
+                tempColor = colorToHex(colorCold);
             }
 
             boolean showDefaultConditions = GUIP.getPlanetaryConditionsShowDefaults();
@@ -82,8 +78,8 @@ public class PlanetaryConditionsOverlay extends AbstractBoardViewOverlay {
 
             if (showDefaultConditions || (currentGame.getPlanetaryConditions().isExtremeTemperature())) {
                 tmpStr = (showLabel ? MSG_TEMPERATURE + "  " : "");
-                tmpStr = tmpStr + (showValue ? temp + "\u00B0C  " : "");
-                tmpStr = tmpStr + (showIndicator ? (!showValue ? temp + "\u00B0C   " : "" ) + currentGame.getPlanetaryConditions().getTemperatureIndicator() : "");
+                tmpStr = tmpStr + (showValue ? temp + "°C  " : "");
+                tmpStr = tmpStr + (showIndicator ? (!showValue ? temp + "°C   " : "" ) + currentGame.getPlanetaryConditions().getTemperatureIndicator() : "");
                 result.add(tempColor + tmpStr);
             }
 
@@ -152,10 +148,6 @@ public class PlanetaryConditionsOverlay extends AbstractBoardViewOverlay {
         return result;
     }
 
-    @Override
-    protected void setVisibilityGUIPreference(boolean value) {
-        GUIP.setValue(GUIPreferences.SHOW_PLANETARYCONDITIONS_OVERLAY, value);
-    }
     @Override
     protected boolean getVisibilityGUIPreference() {
         return GUIP.getShowPlanetaryConditionsOverlay();

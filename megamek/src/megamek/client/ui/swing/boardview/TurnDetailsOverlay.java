@@ -15,7 +15,6 @@ package megamek.client.ui.swing.boardview;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.common.Game;
 
@@ -26,25 +25,16 @@ import java.util.List;
 /**
  * An overlay for the Boardview that displays info about the users turn, such as list of users Move or Attack commands
  * for the current game situation
- *
- *
  */
 public class TurnDetailsOverlay extends AbstractBoardViewOverlay {
-    /**
-     * An overlay for the Boardview that shows details about a players turn
-     */
 
     List<String> lines = new ArrayList<>();
-
-    static String validTextColor, invalidTextColor;
 
     public TurnDetailsOverlay(Game game, ClientGUI cg) {
         super(game, cg, new Font(Font.MONOSPACED, Font.BOLD, 12),
                 Messages.getString("TurnDetailsOverlay.heading", KeyCommandBind.getDesc(KeyCommandBind.TURN_DETAILS)) );
     }
 
-
-    /** @return an ArrayList of all text lines to be shown. */
     @Override
     protected List<String> assembleTextLines() {
         return lines;
@@ -67,10 +57,6 @@ public class TurnDetailsOverlay extends AbstractBoardViewOverlay {
         super.gameTurnOrPhaseChange();
     }
 
-    @Override
-    protected void setVisibilityGUIPreference(boolean value) {
-        GUIP.setTurnDetailsOverlay(value);
-    }
     @Override
     protected boolean getVisibilityGUIPreference() {
         return GUIP.getTurnDetailsOverlay();

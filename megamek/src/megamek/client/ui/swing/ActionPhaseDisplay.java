@@ -29,6 +29,7 @@ import megamek.common.preference.PreferenceChangeEvent;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.List;
 
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 
@@ -137,7 +138,11 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
      * @param isDoingAction true if user has entered actions for this turn, false if not.
      */
     protected void updateDonePanelButtons(final String doneButtonLabel, final String skipButtonLabel, final boolean isDoingAction,
-                                          @Nullable java.util.List<String> turnDetails) {
+                                          @Nullable List<String> turnDetails) {
+        if (isIgnoringEvents()) {
+            return;
+        }
+
         this.isDoingAction = isDoingAction;
         if (GUIP.getNagForNoAction()) {
             butDone.setText("<html><b>" + doneButtonLabel + "</b></html>");
@@ -164,6 +169,8 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
             butSkipTurn.setEnabled(true);
         }
 
-        clientgui.getBoardView().turnDetailsOverlay.setLines(turnDetails);
+        if (clientgui.getBoardView().turnDetailsOverlay != null) {
+            clientgui.getBoardView().turnDetailsOverlay.setLines(turnDetails);
+        }
     }
 }

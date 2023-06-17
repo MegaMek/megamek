@@ -26,10 +26,9 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static megamek.client.ui.swing.tooltip.TipUtil.getOptionList;
@@ -46,6 +45,8 @@ public final class PilotToolTip {
     final static String TEMP_DIR = "/temp/";
     final static String PORTRAIT_PREFIX = "TT_Portrait_";
     final static String PNG_EXT = ".png";
+
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     public static StringBuilder lobbyTip(InGameObject unit) {
         if (unit instanceof Entity) {
@@ -79,16 +80,21 @@ public final class PilotToolTip {
             result += "<HR STYLE=WIDTH:90% />";
         }
 
+        String rows = "";
+        String row = "";
+        String cols = "";
+
         // The crew info (names etc.) and portraits, if shown, are placed
         // in a table side by side
-        String cols = "";
         if (showPortrait) {
             cols = crewPortraits(entity, showDefaultPortrait).toString();
         }
 
-        cols += crewInfoCell(entity).toString();
-        String row = "<TR>" + cols + "</TR>";
-        String table = "<TABLE BORDER=0 BGCOLOR=" + BG_COLOR + " >" + row + "</TABLE>";
+        cols += crewInfoCell(entity);
+        cols += crewPickedUpCell(entity);
+        row = "<TR>" + cols + "</TR>";
+        rows += row;
+        String table = "<TABLE BORDER=0 BGCOLOR=" + BG_COLOR + " >" + rows + "</TABLE>";
         result += "<DIV BGCOLOR=" + BG_COLOR + "  width=100% >" + table + "</DIV>";
 
         if (!detailed) {
@@ -145,7 +151,7 @@ public final class PilotToolTip {
             }
 
             if (!crew.getStatusDesc(i).isEmpty()) {
-                sCrew += guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()) + " (" + crew.getStatusDesc(i) + ")</FONT>";
+                sCrew += guiScaledFontHTML(GUIP.getWarningColor()) + " (" + crew.getStatusDesc(i) + ")</FONT>";
             }
             result += sCrew + "<BR>";
         }
@@ -154,7 +160,26 @@ public final class PilotToolTip {
         boolean rpg_skills = game.getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
         result += CrewSkillSummaryUtil.getSkillNames(entity) + ": " + crew.getSkillsAsString(rpg_skills);
         result = guiScaledFontHTML() + result + "</FONT>";
-        String col = "<TD>" + result + "</TD>";
+        String col = "<TD align=\"left\">" + result + "</TD>";
+
+        return new StringBuilder().append(col);
+    }
+
+    /** Returns a tooltip part with any pilots picked up by this unit. */
+    private static StringBuilder crewPickedUpCell(final Entity entity) {
+        Game game = entity.getGame();
+
+        String pickedUp = game.getEntitiesVector().stream()
+                .filter(e -> (e.isDeployed() && ((e instanceof MechWarrior) && ((MechWarrior) e).getPickedUpById() == entity.getId())))
+                .map(e -> e.getCrew().getName())
+                .collect(Collectors.joining(", "));
+
+        String col = "";
+
+        if (!pickedUp.isEmpty()) {
+            pickedUp = guiScaledFontHTML(GUIP.getCautionColor()) +  Messages.getString("BoardView1.Tooltip.PickedUp") + pickedUp + "</FONT>";
+            col = "<TD>" + pickedUp + "</TD>";
+        }
 
         return new StringBuilder().append(col);
     }

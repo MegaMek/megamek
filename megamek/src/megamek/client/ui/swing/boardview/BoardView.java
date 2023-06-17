@@ -433,19 +433,19 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
         // Avoid showing the key binds when they can't be used (in the lobby map preview)
         if (controller != null) {
-            keybindOverlay = new KeyBindingsOverlay(game, clientgui);
+            keybindOverlay = new KeyBindingsOverlay(this);
             addDisplayable(keybindOverlay);
         }
 
         // Avoid showing the planetary Conditions when they can't be used (in the lobby map preview)
         if (controller != null) {
-            planetaryConditionsOverlay = new PlanetaryConditionsOverlay(game, clientgui);
+            planetaryConditionsOverlay = new PlanetaryConditionsOverlay(this);
             addDisplayable(planetaryConditionsOverlay);
         }
 
         // Avoid showing the planetary Conditions when they can't be used (in the lobby map preview)
         if (controller != null) {
-            turnDetailsOverlay = new TurnDetailsOverlay(game, clientgui);
+            turnDetailsOverlay = new TurnDetailsOverlay(this);
             addDisplayable(turnDetailsOverlay);
         }
 
@@ -900,27 +900,6 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 getTilesetManager().reloadUnitIcons();
                 break;
 
-            case GUIPreferences.SHOW_KEYBINDS_OVERLAY:
-                if (keybindOverlay != null) {
-                    keybindOverlay.setVisible((boolean) e.getNewValue());
-                    repaint();
-                }
-                break;
-
-            case GUIPreferences.SHOW_PLANETARYCONDITIONS_OVERLAY:
-                if (planetaryConditionsOverlay != null) {
-                    planetaryConditionsOverlay.setVisible((boolean) e.getNewValue());
-                    repaint();
-                }
-                break;
-
-            case GUIPreferences.TURN_DETAILS_OVERLAY:
-                if (turnDetailsOverlay != null) {
-                    turnDetailsOverlay.setVisible((boolean) e.getNewValue());
-                    repaint();
-                }
-                break;
-
             case GUIPreferences.AOHEXSHADOWS:
             case GUIPreferences.FLOATINGISO:
             case GUIPreferences.LEVELHIGHLIGHT:
@@ -941,14 +920,6 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             case GUIPreferences.INCLINES:
                 game.getBoard().initializeAllAutomaticTerrain((boolean) e.getNewValue());
                 clearHexImageCache();
-                repaint();
-                break;
-
-            case KeyBindParser.KEYBINDS_CHANGED:
-            case GUIPreferences.GUI_SCALE:
-                keybindOverlay.setDirty();
-                planetaryConditionsOverlay.setDirty();
-                turnDetailsOverlay.setDirty();
                 repaint();
                 break;
 

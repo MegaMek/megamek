@@ -19,27 +19,33 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.StringDrawer;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Game;
+import megamek.common.KeyBindParser;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.ImageUtil;
 import org.apache.logging.log4j.LogManager;
 
 import java.awt.*;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
  * This is a framework for boardview overlays that can show a list of data, conditions etc.
  */
-public abstract class AbstractBoardViewOverlay implements IDisplayable {
+public abstract class AbstractBoardViewOverlay implements IDisplayable, IPreferenceChangeListener {
     private static final int PADDING_X = 10;
     private static final int PADDING_Y = 5;
     private static final float FADE_SPEED = 0.2f;
+    /** The ClientGUI of the boardview. May be null! */
     protected final ClientGUI clientGui;
     protected static final GUIPreferences GUIP = GUIPreferences.getInstance();
+    protected final BoardView boardView;
 
     /** True when the overlay is displayed or fading in. */
     private boolean visible;
@@ -63,36 +69,31 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable {
     private int overlayWidth = 500;
     private int overlayHeight = 500;
 
-    private final String header;
-    /**
-     * An overlay for the Boardview
-     */
-    public AbstractBoardViewOverlay(Game game, ClientGUI cg, Font font, String headerText ) {
+    public AbstractBoardViewOverlay(BoardView boardView, Font font) {
         this.font = font;
-        this.visible =  getVisibilityGUIPreference();
-        currentGame = game;
-        currentPhase = game.getPhase();
-        game.addGameListener(gameListener);
-        clientGui = cg;
-
-        Color colorTitle = GUIP.getPlanetaryConditionsColorTitle();
-        header = String.format("#%02X%02X%02X%s",
-                colorTitle.getRed(), colorTitle.getGreen(), colorTitle.getBlue(), headerText);
+        visible =  getVisibilityGUIPreference();
+        this.boardView = Objects.requireNonNull(boardView);
+        clientGui = boardView.clientgui;
+        currentGame = Objects.requireNonNull(boardView.game);
+        currentPhase = currentGame.getPhase();
+        currentGame.addGameListener(gameListener);
+        GUIPreferences.getInstance().addPreferenceChangeListener(this);
+        KeyBindParser.addPreferenceChangeListener(this);
     }
 
     protected void addHeader(List<String> lines) {
         if (GUIP.getPlanetaryConditionsShowHeader()) {
-            lines.add(header);
+            Color colorTitle = GUIP.getPlanetaryConditionsColorTitle();
+            lines.add(colorToHex(colorTitle) + getHeaderText());
         }
     }
+
+    /** Override to return the localized header text, possibly including the current keyboard shortcut to toggle it. */
+    protected abstract String getHeaderText();
 
     @Override
     public void draw(Graphics graph, Rectangle clipBounds) {
         if (!visible && !isSliding()) {
-            return;
-        }
-
-        if ((clientGui == null) || (currentGame == null)) {
             return;
         }
 
@@ -127,7 +128,8 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable {
 
                 // write the strings
                 for (String line : allLines) {
-                    drawLine(intGraph, line, PADDING_X, y);
+                    new StringDrawer(cleanedLine(line)).at(PADDING_X, y).font(font).fontSize(fontSize)
+                            .color(lineColor(line)).draw(intGraph);
                     y += fm.getHeight();
                 }
             }
@@ -160,19 +162,13 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable {
         return new Rectangle(width, height);
     }
 
-    /** Returns an ArrayList of all text lines to be shown. */
+    /** Override to return a List of all text lines to be shown. Use {@link #addHeader(List)}. */
     protected abstract List<String> assembleTextLines();
 
-    /**
-     * Draws the String line to the Graphics graph at position x, y.
-     * If the string starts with #789ABC then 789ABC
-     * is converted to a color to write the rest of the text,
-     * otherwise TEXT_COLOR is used.
-     */
-    private void drawLine(Graphics graph, String line, int x, int y) {
+    /** Returns the color encoded in the given line if there is one; the standard text color otherwise. */
+    private Color lineColor(String line) {
         Color textColor = getTextColor();
-        // Extract a color code from the start of the string
-        // used to display headlines if it's there
+        // Extract a color code from the start of the line
         if (line.startsWith("#") && line.length() > 7) {
             try {
                 int red = Integer.parseInt(line.substring(1, 3), 16);
@@ -183,12 +179,10 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable {
                 LogManager.getLogger().error("", e);
             }
         }
-
-        int fontSize = UIUtil.scaleForGUI(font.getSize());
-        new StringDrawer(cleanedLine(line)).at(PADDING_X, y).font(font).fontSize(fontSize).color(textColor).draw(graph);
+        return textColor;
     }
 
-    /** Returns the line but without any color codes at the start. */
+    /** Returns the line but without the color code at the start if there was one. */
     private String cleanedLine(String line) {
         if (line.startsWith("#") && line.length() > 7) {
             return line.substring(7);
@@ -198,10 +192,9 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable {
     }
 
     /**
-     * Activates or deactivates the overlay, fading it in or out.
-     * Also saves the visibility to the GUIPreferences so
+     * Activates or deactivates the overlay, fading it in or out. Also saves the visibility to the GUIPreferences so
      * MegaMek remembers it.
-     * */
+     */
     public void setVisible(boolean vis) {
         visible = vis;
 
@@ -244,7 +237,7 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable {
         return false;
     }
 
-    /** Detects phase and turn changes to display*/
+    /** Detects phase and turn changes to display */
     private final GameListener gameListener = new GameListenerAdapter() {
         @Override
         public void gamePhaseChange(GamePhaseChangeEvent e) {
@@ -261,9 +254,7 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable {
 
     protected void setDirty() {
         dirty = true;
-        if (clientGui != null) {
-            clientGui.getBoardView().repaint();
-        }
+        scheduleBoardViewRepaint();
     }
 
     protected void gameTurnOrPhaseChange() {
@@ -288,5 +279,20 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable {
         return String.format("#%02X%02X%02X",
                 (int)(color.getRed() * brightnessMultiplier), (int)(color.getGreen() * brightnessMultiplier),
                 (int)(color.getBlue() * brightnessMultiplier));
+    }
+
+    @Override
+    public void preferenceChange(PreferenceChangeEvent e) {
+        switch (e.getName()) {
+            case KeyBindParser.KEYBINDS_CHANGED:
+            case GUIPreferences.GUI_SCALE:
+                setDirty();
+                break;
+        }
+    }
+
+    /** Makes the BoardView redraw, updating the overlay in the process. */
+    protected void scheduleBoardViewRepaint() {
+        boardView.repaint();
     }
 }

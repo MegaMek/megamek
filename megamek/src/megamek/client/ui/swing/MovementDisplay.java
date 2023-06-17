@@ -1073,7 +1073,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
     }
 
-    ArrayList<String> computeTurnDetails(){
+    private List<String> computeTurnDetails(){
         String validTextColor = AbstractBoardViewOverlay.colorToHex(AbstractBoardViewOverlay.getTextColor());
         String invalidTextColor = AbstractBoardViewOverlay.colorToHex(AbstractBoardViewOverlay.getTextColor(), 0.7f);
 

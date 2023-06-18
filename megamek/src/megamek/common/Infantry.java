@@ -166,7 +166,7 @@ public class Infantry extends Entity {
 
     @Override
     public CrewType defaultCrewType() {
-        return CrewType.CREW;
+        return CrewType.INFANTRY_CREW;
     }
 
     public static TechAdvancement getMotiveTechAdvancement(EntityMovementMode movementMode) {

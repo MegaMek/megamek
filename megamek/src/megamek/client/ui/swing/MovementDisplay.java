@@ -342,7 +342,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
     public static final int GEAR_LONGEST_RUN = 10;
     public static final int GEAR_LONGEST_WALK = 11;
     public static final int GEAR_STRAFE = 12;
-    public static final String turnDetailsFormat = "%s%-3s %-12s %1s %2dMP%s";
+    public static final String turnDetailsFormat = "%s%-3s %-14s %1s %2dMP%s";
 
     /**
      * Creates and lays out a new movement phase display for the specified
@@ -1073,7 +1073,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
     }
 
-    ArrayList<String> computeTurnDetails(){
+    private List<String> computeTurnDetails(){
         String validTextColor = AbstractBoardViewOverlay.colorToHex(AbstractBoardViewOverlay.getTextColor());
         String invalidTextColor = AbstractBoardViewOverlay.colorToHex(AbstractBoardViewOverlay.getTextColor(), 0.7f);
 
@@ -1110,19 +1110,19 @@ public class MovementDisplay extends ActionPhaseDisplay {
             accumLegal = currentLegal;
             switch (accumType) {
                 case TURN_LEFT:
-                    unicodeIcon = "\u21B0";
+                    unicodeIcon = "↰";
                     break;
                 case TURN_RIGHT:
-                    unicodeIcon = "\u21B1";
+                    unicodeIcon = "↱";
                     break;
                 case FORWARDS:
-                    unicodeIcon = "\u2191";
+                    unicodeIcon = "↑";
                     break;
                 case BACKWARDS:
-                    unicodeIcon = "\u2193";
+                    unicodeIcon = "↓";
                     break;
                 case START_JUMP:
-                    unicodeIcon = "\u21EF";
+                    unicodeIcon = "⇯";
                     break;
                 default:
                     unicodeIcon = "";
@@ -1132,9 +1132,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         // add line for last moves
         turnDetails.add(String.format(turnDetailsFormat,
-                accumLegal ?validTextColor :invalidTextColor,
-                accumTypeCount ==1?"":"x"+accumTypeCount,
-                accumType,unicodeIcon,accumMP,"*".repeat(accumDanger)));
+                accumLegal ? validTextColor : invalidTextColor,
+                accumTypeCount == 1 ? "" : "x" + accumTypeCount,
+                accumType, unicodeIcon, accumMP, "*".repeat(accumDanger)));
         return turnDetails;
     }
 

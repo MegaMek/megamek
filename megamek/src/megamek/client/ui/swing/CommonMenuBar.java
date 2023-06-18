@@ -265,6 +265,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         viewKeybindsOverlay.setSelected(GUIP.getShowKeybindsOverlay());
         initMenuItem(viewPlanetaryConditionsOverlay, menu, VIEW_PLANETARYCONDITIONS_OVERLAY);
         viewPlanetaryConditionsOverlay.setSelected(GUIP.getShowPlanetaryConditionsOverlay());
+        initMenuItem(viewTurnDetailsOverlay, menu, VIEW_TURN_DETAILS_OVERLAY);
+        viewTurnDetailsOverlay.setSelected(GUIP.getTurnDetailsOverlay());
         initMenuItem(viewUnitOverview, menu, VIEW_UNIT_OVERVIEW);
         menu.addSeparator();
 
@@ -290,8 +292,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         toggleFovHighlight.setSelected(GUIP.getFovHighlight());
         initMenuItem(viewMovementEnvelope, menu, VIEW_MOVE_ENV);
         viewMovementEnvelope.setSelected(GUIP.getMoveEnvelope());
-        initMenuItem(viewTurnDetailsOverlay, menu, VIEW_TURN_DETAILS_OVERLAY);
-        viewTurnDetailsOverlay.setSelected(GUIP.getTurnDetailsOverlay());
         initMenuItem(viewMovModEnvelope, menu, VIEW_MOVE_MOD_ENV);
         menu.addSeparator();
 
@@ -370,6 +370,12 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
             }
         } else if (event.getActionCommand().equals(ClientGUI.VIEW_PLANETARYCONDITIONS_OVERLAY)) {
             GUIP.togglePlanetaryConditionsOverlay();
+
+        } else if (event.getActionCommand().equals(VIEW_KEYBINDS_OVERLAY)) {
+            GUIP.toggleKeybindsOverlay();
+
+        } else if (event.getActionCommand().equals(VIEW_TURN_DETAILS_OVERLAY)) {
+            GUIP.setTurnDetailsOverlay(!GUIP.getTurnDetailsOverlay());
 
         } else if (event.getActionCommand().equals(ClientGUI.VIEW_LABELS)) {
             GUIP.setUnitLabelStyle(GUIP.getUnitLabelStyle().next());
@@ -463,7 +469,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         viewZoomOut.setEnabled(isBoardView);
         toggleIsometric.setEnabled(isBoardView);
         viewKeybindsOverlay.setEnabled(isBoardView);
-        viewPlanetaryConditionsOverlay.setEnabled(isBoardView);
+        viewPlanetaryConditionsOverlay.setEnabled(isInGameBoardView);
         toggleHexCoords.setEnabled(isBoardView);
 
         viewLOSSetting.setEnabled(isInGameBoardView);
@@ -512,6 +518,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
             viewKeybindsOverlay.setSelected((Boolean) e.getNewValue());
         } else if (e.getName().equals(GUIPreferences.SHOW_PLANETARYCONDITIONS_OVERLAY)) {
             viewPlanetaryConditionsOverlay.setSelected((Boolean) e.getNewValue());
+        } else if (e.getName().equals(GUIPreferences.TURN_DETAILS_OVERLAY)) {
+            viewTurnDetailsOverlay.setSelected((Boolean) e.getNewValue());
         } else if (e.getName().equals(GUIPreferences.SHOW_UNIT_OVERVIEW)) {
             viewUnitOverview.setSelected((Boolean) e.getNewValue());
         } else if (e.getName().equals(GUIPreferences.GUI_SCALE)) {

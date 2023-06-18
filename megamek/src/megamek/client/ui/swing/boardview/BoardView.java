@@ -431,21 +431,21 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         game.addGameListener(gameListener);
         game.getBoard().addBoardListener(this);
 
-        keybindOverlay = new KeyBindingsOverlay(game, clientgui);
         // Avoid showing the key binds when they can't be used (in the lobby map preview)
         if (controller != null) {
+            keybindOverlay = new KeyBindingsOverlay(this);
             addDisplayable(keybindOverlay);
         }
 
-        planetaryConditionsOverlay = new PlanetaryConditionsOverlay(game, clientgui);
         // Avoid showing the planetary Conditions when they can't be used (in the lobby map preview)
         if (controller != null) {
+            planetaryConditionsOverlay = new PlanetaryConditionsOverlay(this);
             addDisplayable(planetaryConditionsOverlay);
         }
 
-        turnDetailsOverlay = new TurnDetailsOverlay(game, clientgui);
         // Avoid showing the planetary Conditions when they can't be used (in the lobby map preview)
         if (controller != null) {
+            turnDetailsOverlay = new TurnDetailsOverlay(this);
             addDisplayable(turnDetailsOverlay);
         }
 
@@ -900,15 +900,6 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 getTilesetManager().reloadUnitIcons();
                 break;
 
-            case GUIPreferences.SHOW_KEYBINDS_OVERLAY:
-                keybindOverlay.setVisible((boolean) e.getNewValue());
-                repaint();
-                break;
-            case GUIPreferences.SHOW_PLANETARYCONDITIONS_OVERLAY:
-                planetaryConditionsOverlay.setVisible((boolean) e.getNewValue());
-                repaint();
-                break;
-
             case GUIPreferences.AOHEXSHADOWS:
             case GUIPreferences.FLOATINGISO:
             case GUIPreferences.LEVELHIGHLIGHT:
@@ -932,7 +923,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 repaint();
                 break;
 
-            case KeyBindParser.KEYBINDS_CHANGED:
+            case GUIPreferences.SHOW_SENSOR_RANGE:
                 repaint();
                 break;
         }
@@ -5763,11 +5754,10 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
      * Appends HTML describing the buildings and minefields in a given hex
      */
     public void appendBuildingsTooltip(StringBuffer txt, @Nullable Hex mhex) {
-        if (mhex == null) {
-            return;
+        if ((mhex != null) && (clientgui != null)) {
+            String result = HexTooltip.getHexTip(mhex, clientgui.getClient());
+            txt.append(result);
         }
-        String result = HexTooltip.getHexTip(mhex, clientgui.getClient());
-        txt.append(result);
     }
 
     /**

@@ -878,9 +878,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             case VIEW_MINI_MAP:
                 GUIP.toggleMinimapEnabled();
                 break;
-            case VIEW_KEYBINDS_OVERLAY:
-                GUIP.toggleKeybindsOverlay();
-                break;
             case VIEW_TOGGLE_HEXCOORDS:
                 GUIP.toggleCoords();
                 break;
@@ -938,7 +935,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 break;
             case VIEW_TOGGLE_SENSOR_RANGE:
                 GUIP.setShowSensorRange(!GUIP.getShowSensorRange());
-                bv.repaint();
                 break;
             case VIEW_TOGGLE_FOV_DARKEN:
                 GUIP.setFovDarken(!GUIP.getFovDarken());
@@ -962,11 +958,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 if (curPanel instanceof MovementDisplay) {
                     GUIP.setMoveEnvelope(!GUIP.getMoveEnvelope());
                     ((MovementDisplay) curPanel).computeMovementEnvelope(getUnitDisplay().getCurrentEntity());
-                }
-                break;
-            case VIEW_TURN_DETAILS_OVERLAY:
-                if (curPanel instanceof ActionPhaseDisplay) {
-                    GUIP.setTurnDetailsOverlay(!GUIP.getTurnDetailsOverlay());
                 }
                 break;
             case VIEW_MOVE_MOD_ENV:

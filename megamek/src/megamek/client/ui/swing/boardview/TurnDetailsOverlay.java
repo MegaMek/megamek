@@ -14,10 +14,9 @@
 package megamek.client.ui.swing.boardview;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.KeyCommandBind;
-import megamek.common.Game;
+import megamek.common.preference.PreferenceChangeEvent;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -26,25 +25,20 @@ import java.util.List;
 /**
  * An overlay for the Boardview that displays info about the users turn, such as list of users Move or Attack commands
  * for the current game situation
- *
- *
  */
 public class TurnDetailsOverlay extends AbstractBoardViewOverlay {
-    /**
-     * An overlay for the Boardview that shows details about a players turn
-     */
 
     List<String> lines = new ArrayList<>();
 
-    static String validTextColor, invalidTextColor;
-
-    public TurnDetailsOverlay(Game game, ClientGUI cg) {
-        super(game, cg, new Font(Font.MONOSPACED, Font.BOLD, 12),
-                Messages.getString("TurnDetailsOverlay.heading", KeyCommandBind.getDesc(KeyCommandBind.TURN_DETAILS)) );
+    public TurnDetailsOverlay(BoardView boardView) {
+        super(boardView, new Font(Font.MONOSPACED, Font.BOLD, 12));
     }
 
+    @Override
+    protected String getHeaderText() {
+        return Messages.getString("TurnDetailsOverlay.heading", KeyCommandBind.getDesc(KeyCommandBind.TURN_DETAILS));
+    }
 
-    /** @return an ArrayList of all text lines to be shown. */
     @Override
     protected List<String> assembleTextLines() {
         return lines;
@@ -61,16 +55,12 @@ public class TurnDetailsOverlay extends AbstractBoardViewOverlay {
 
     @Override
     protected void gameTurnOrPhaseChange() {
-        if (!clientGui.getClient().isMyTurn()) {
+        if ((clientGui == null) || !clientGui.getClient().isMyTurn()) {
             lines.clear();
         }
         super.gameTurnOrPhaseChange();
     }
 
-    @Override
-    protected void setVisibilityGUIPreference(boolean value) {
-        GUIP.setTurnDetailsOverlay(value);
-    }
     @Override
     protected boolean getVisibilityGUIPreference() {
         return GUIP.getTurnDetailsOverlay();
@@ -84,5 +74,14 @@ public class TurnDetailsOverlay extends AbstractBoardViewOverlay {
     @Override
     protected int getDistSide(Rectangle clipBounds, int overlayWidth) {
         return clipBounds.width - (overlayWidth + 100);
+    }
+
+    @Override
+    public void preferenceChange(PreferenceChangeEvent e) {
+        if (e.getName().equals(GUIPreferences.TURN_DETAILS_OVERLAY)) {
+            setVisible((boolean) e.getNewValue());
+            scheduleBoardViewRepaint();
+        }
+        super.preferenceChange(e);
     }
 }

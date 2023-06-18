@@ -14,10 +14,9 @@
 package megamek.client.ui.swing.boardview;
 
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.KeyCommandBind;
-import megamek.common.Game;
+import megamek.common.preference.PreferenceChangeEvent;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -83,9 +82,13 @@ public class KeyBindingsOverlay extends AbstractBoardViewOverlay {
      * An overlay for the Boardview that displays a selection of keybinds
      * for the current game situation.
      */
-    public KeyBindingsOverlay(Game game, ClientGUI cg) {
-        super(game, cg, new Font("SansSerif", Font.PLAIN, 13),
-                Messages.getString("KeyBindingsDisplay.heading", KeyCommandBind.getDesc(KeyCommandBind.KEY_BINDS)) );
+    public KeyBindingsOverlay(BoardView boardView) {
+        super(boardView, new Font("SansSerif", Font.PLAIN, 13));
+    }
+
+    @Override
+    protected String getHeaderText() {
+        return Messages.getString("KeyBindingsDisplay.heading", KeyCommandBind.getDesc(KeyCommandBind.KEY_BINDS));
     }
 
     /** @return an ArrayList of all text lines to be shown. */
@@ -138,10 +141,6 @@ public class KeyBindingsOverlay extends AbstractBoardViewOverlay {
     }
 
     @Override
-    protected void setVisibilityGUIPreference(boolean value) {
-        GUIP.setValue(GUIPreferences.SHOW_KEYBINDS_OVERLAY, value);
-    }
-    @Override
     protected boolean getVisibilityGUIPreference() {
         return GUIP.getShowKeybindsOverlay();
     }
@@ -154,5 +153,14 @@ public class KeyBindingsOverlay extends AbstractBoardViewOverlay {
     @Override
     protected int getDistSide(Rectangle clipBounds, int overlayWidth) {
         return 30;
+    }
+
+    @Override
+    public void preferenceChange(PreferenceChangeEvent e) {
+        if (e.getName().equals(GUIPreferences.SHOW_KEYBINDS_OVERLAY)) {
+            setVisible((boolean) e.getNewValue());
+            scheduleBoardViewRepaint();
+        }
+        super.preferenceChange(e);
     }
 }

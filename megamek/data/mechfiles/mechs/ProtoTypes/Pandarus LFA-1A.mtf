@@ -7,6 +7,7 @@ Config:Biped
 TechBase:Inner Sphere
 Era:3083
 Rules Level:4
+Source:TRO: Prototypes 
 
 Mass:75
 Engine:300 Fusion Engine(IS)

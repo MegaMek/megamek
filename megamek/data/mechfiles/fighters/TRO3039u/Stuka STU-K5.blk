@@ -105,7 +105,7 @@ IS Ammo SRM-4
 </Fuselage Equipment>
 
 <source>
-TRO: 3039 - Star League
+TRO: 3039
 </source>
 
 <tonnage>
@@ -148,7 +148,7 @@ This variant is unique to the MUL as it has the ER PPCs. But I've adjusted the d
 </notes>
 
 <source>
-Historical:Operation Klondike - Star League
+Historical: Operation Klondike
 </source>
 
 <tonnage>

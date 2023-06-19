@@ -121,3 +121,7 @@ ARMOR:StarSlab/1 Ferro-Fibrous
 COMMUNICATIONS:ROMTECH 100
 TARGETING:O/P 10-40 LTR
 </systemManufacturers>
+
+<source>
+TRO: 3025
+</source>

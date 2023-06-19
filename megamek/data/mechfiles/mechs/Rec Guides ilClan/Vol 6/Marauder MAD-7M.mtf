@@ -7,7 +7,7 @@ Config:Biped
 techbase:Inner Sphere
 era:3074
 rules level:2
-source:Rec Guide:ilClan #6 - Jihad
+source:Rec Guide:ilClan #6
 
 mass:75
 engine:300 XL Engine(IS)

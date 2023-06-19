@@ -7,6 +7,7 @@ Config:Biped
 TechBase:Inner Sphere
 Era:2751
 Rules Level:2
+source:Historical: Operation Klondike
 
 Mass:60
 Engine:300 Fusion Engine

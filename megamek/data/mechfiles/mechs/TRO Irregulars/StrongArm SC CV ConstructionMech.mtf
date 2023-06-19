@@ -1,0 +1,160 @@
+Version:1.1
+StrongArm
+SC CV ConstructionMech
+mul id:7857
+
+Config:Biped
+techbase:Inner Sphere
+era:3094
+source:TRO: Irregulars
+rules level:2
+
+mass:35
+engine:140 ICE Engine(IS)
+structure:IS Industrial
+myomer:Standard
+cockpit:Industrial Cockpit
+gyro:Standard Gyro
+
+heat sinks:0 Single
+walk mp:4
+jump mp:0
+
+armor:Industrial (Inner Sphere)
+LA armor:6
+RA armor:6
+LT armor:7
+RT armor:7
+CT armor:10
+HD armor:9
+LL armor:8
+RL armor:9
+RTL armor:2
+RTR armor:2
+RTC armor:3
+
+Weapons:0
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Lift Hoist/Arresting Hoist
+Lift Hoist/Arresting Hoist
+Lift Hoist/Arresting Hoist
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Lift Hoist/Arresting Hoist
+Lift Hoist/Arresting Hoist
+Lift Hoist/Arresting Hoist
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Cargo:size:0.5
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The StrongArm MOD should serve as a cautionary example of the worst possible modification one can perform on an IndustrialMech. All MODs tend to be shoddy, yet generally at least minimally combat-worthy, but the StrongArm MOD features no upgrade to its armor, lacks gunsights and a proper cooling system, and has a flamer that is as dangerous to itself as it is to the enemy. Even the user’s manual—aptly named Brainless Guide to Piloting® the StrongArm MOD—yields no better guidance than to roughly point the weapon at the enemy and hope for the best.
+capabilities:The original StrongArm ConstructionMech is a high-quality product of the Sitwell Corporation, heavily based on their established Powerman. The modification comes with all the drawbacks of similarly militarized IndustrialMechs, in that the right arm heavy flamer installation is open and improvised, but its workmanship is even poorer than on most other documented chassis. Its single retrofitted heat sink does not come close to dissipating the hellish temperature of the ’Mech-class weapon when fired, it lacks any targeting system, and the heavy armor is not upgraded, thereby limiting the pilot’s protection in combat situations. Though it is purchased by everyone and their grandmother, the StrongArm MOD is a deluded man’s ride and it speaks volumes that its producer would stay anonymous, selling refit kits via third parties.
+deployment:Given how widespread the StrongArm has become throughout the Republic, it is no surprise that nearly every RAF unit has at least one story of meeting an overconfident and sometimes even delusional StrongArm MOD pilot on the field. The cheapness of the base model and the ease with which it can be modded more than offset the severe lack of effectiveness the design provides, making it one of the more common militarized IndustrialMechs seen in the wild. Perhaps the most infamous incident occurred in 3126 on Caselton, when the workers of Caselton Consolidated Construction Professionals staged a two-week work stoppage on the site of Battlement’s new opera house. Though Governor Lafontaine Avendout favored waiting out the striking workers, Legate Dumaka Odoh pushed for a more aggressive solution. When, as part of their demands, the workers were supplied with several kegs of Wolf Cola and meals from local favorite Krüpe Meats, Legate Odoh ordered the food and drink drugged, ostensibly in the hopes of incapacitating the workers. However, as later revealed in court testimony, the actual drugs made the workers paranoid and violent and they burst forth from their barricades in their ConstructionMechs, over half of which were StrongArm MODs. The possession of military-scale weaponry by the workers, even weaponry as ridiculously ineffectual as that of the StrongArm, took local militia forces by surprise and in the ensuing confusion three militia soldiers and all twenty-eight construction workers were killed, along with millions of stones of damage to surrounding buildings within the capital. The official investigation of the incident uncovered the Legate’s plan to use the strike to get an increase in his budget and the backchannel deals he set up to supply the striking workers with MOD kits for their ConstructionMechs in order to make them a more effective threat. Governor Avendout resigned in the wake of the scandal, despite no evidence of wrongdoing on his part, and Legate Odoh was sentenced to life imprisonment in a mining colony in the Bordon system.
+
+manufacturer:Sitwell Corporation
+primaryfactory:Saiph
+systemmanufacturer:CHASSIS:PowerBuild CCV
+systemmanufacturer:ENGINE:Skobel 140 ICE
+systemmanufacturer:ARMOR:Hughes IndusWeave
+systemmanufacturer:COMMUNICATIONS:SineWave 5000
+

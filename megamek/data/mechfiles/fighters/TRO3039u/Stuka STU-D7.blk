@@ -120,7 +120,7 @@ ISRotaryAC5 Ammo
 </Fuselage Equipment>
 
 <source>
-TRO: 3039 - Jihad
+TRO: 3039
 </source>
 
 <tonnage>
@@ -164,7 +164,7 @@ This variant is unique to the MUL as it has the ER PPCs. But I've adjusted the d
 </notes>
 
 <source>
-Historical:Operation Klondike - Star League
+Historical: Operation Klondike
 </source>
 
 <tonnage>

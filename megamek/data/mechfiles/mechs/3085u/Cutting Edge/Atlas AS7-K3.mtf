@@ -6,7 +6,7 @@ mul id:146
 Config:Biped
 techbase:Inner Sphere
 era:3083
-source:TRO: 3085 - Early Republic
+source:TRO: 3085
 rules level:2
 
 mass:100

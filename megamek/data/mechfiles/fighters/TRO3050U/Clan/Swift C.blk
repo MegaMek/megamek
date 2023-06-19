@@ -103,7 +103,7 @@ CLERMediumLaser
 </Fuselage Equipment>
 
 <source>
-TRO: 3050u - Succession Wars
+TRO: 3050
 </source>
 
 <tonnage>
@@ -139,5 +139,5 @@ TARGETING:PhantomTrac 55
 </systemManufacturers>
 
 <source>
-TRO: 3050u - Star League
+TRO: 3050
 </source>

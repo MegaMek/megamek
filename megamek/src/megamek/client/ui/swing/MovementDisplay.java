@@ -1110,19 +1110,19 @@ public class MovementDisplay extends ActionPhaseDisplay {
             accumLegal = currentLegal;
             switch (accumType) {
                 case TURN_LEFT:
-                    unicodeIcon = "↰";
+                    unicodeIcon = "\u21B0";
                     break;
                 case TURN_RIGHT:
-                    unicodeIcon = "↱";
+                    unicodeIcon = "\u21B1";
                     break;
                 case FORWARDS:
-                    unicodeIcon = "↑";
+                    unicodeIcon = "\u2191";
                     break;
                 case BACKWARDS:
-                    unicodeIcon = "↓";
+                    unicodeIcon = "\u2193";
                     break;
                 case START_JUMP:
-                    unicodeIcon = "⇯";
+                    unicodeIcon = "\u21EF";
                     break;
                 default:
                     unicodeIcon = "";

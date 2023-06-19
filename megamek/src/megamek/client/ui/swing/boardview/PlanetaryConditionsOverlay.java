@@ -82,8 +82,8 @@ public class PlanetaryConditionsOverlay extends AbstractBoardViewOverlay {
 
             if (showDefaultConditions || (currentGame.getPlanetaryConditions().isExtremeTemperature())) {
                 tmpStr = (showLabel ? MSG_TEMPERATURE + "  " : "");
-                tmpStr = tmpStr + (showValue ? temp + "°C  " : "");
-                tmpStr = tmpStr + (showIndicator ? (!showValue ? temp + "°C   " : "" ) + currentGame.getPlanetaryConditions().getTemperatureIndicator() : "");
+                tmpStr = tmpStr + (showValue ? temp + "\u00B0C  " : "");
+                tmpStr = tmpStr + (showIndicator ? (!showValue ? temp + "\u00B0C   " : "" ) + currentGame.getPlanetaryConditions().getTemperatureIndicator() : "");
                 result.add(tempColor + tmpStr);
             }
 

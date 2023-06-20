@@ -25,8 +25,6 @@ import megamek.common.weapons.autocannons.ACWeapon;
 import megamek.common.weapons.autocannons.LBXACWeapon;
 import megamek.common.weapons.autocannons.UACWeapon;
 import megamek.common.weapons.bayweapons.BayWeapon;
-import megamek.common.weapons.lrms.StreakLRMWeapon;
-import megamek.common.weapons.srms.StreakSRMWeapon;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,7 +43,8 @@ public final class PilotSPAHelper {
     public static boolean isWeaponSpecialistValid(EquipmentType equipmentType) {
         return (equipmentType instanceof WeaponType) && !(equipmentType instanceof BayWeapon)
                 && !equipmentType.hasFlag(WeaponType.F_AMS) && !equipmentType.is("Screen Launcher")
-                && !equipmentType.hasFlag(WeaponType.F_C3M) && !equipmentType.hasFlag(WeaponType.F_C3MBS);
+                && !equipmentType.hasFlag(WeaponType.F_C3M) && !equipmentType.hasFlag(WeaponType.F_C3MBS)
+                && !equipmentType.hasFlag(WeaponType.F_INFANTRY_ATTACK);
     }
 
     /**
@@ -102,8 +101,7 @@ public final class PilotSPAHelper {
 
         return (equipmentType instanceof WeaponType)
                 && ((equipmentType instanceof UACWeapon) || (equipmentType instanceof LBXACWeapon) || rapidFireAC
-                || ((WeaponType) equipmentType).damage == WeaponType.DAMAGE_BY_CLUSTERTABLE)
-                && !(equipmentType instanceof StreakLRMWeapon) && !(equipmentType instanceof StreakSRMWeapon);
+                || ((WeaponType) equipmentType).damage == WeaponType.DAMAGE_BY_CLUSTERTABLE);
     }
 
     /**

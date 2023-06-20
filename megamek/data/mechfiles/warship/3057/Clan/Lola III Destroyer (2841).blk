@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -67,6 +67,10 @@ cargobay:107696.0:1:5
 <engine_type>
 1
 </engine_type>
+
+<clan_engine>
+false
+</clan_engine>
 
 <armor_type>
 11
@@ -165,6 +169,46 @@ Ammo Barracuda:20
 50
 </structural_integrity>
 
+<capabilities>
+The Lola-class destroyers are renowned for their formidable capabilities and durability. The upgraded Lola III variant features Ferro-Carbide armor, providing enhanced protection compared to the original version. The advanced computer system reduces the crew size from 154 to 120, optimizing operational efficiency. This modification allows the Lola III to carry a complement of ten aerospace fighters and ten Small Craft, significantly bolstering its defensive capabilities against enemy fighters. Additionally, the Lola III is equipped with a powerful Lithium-Fusion Battery, enhancing its energy reserves for sustained operations. With its impressive armament, including naval lasers and small-caliber autocannons, the Lola-class destroyer possesses significant firepower. The naval lasers offer extensive range, while the autocannons provide effective broadside engagement capabilities. The presence of missile systems such as the Barracuda and White Shark further enhances the Lola III's offensive potential. These destroyers are versatile assets, excelling in escort duties, picket missions, and providing crucial protection against pirate threats.
+</capabilities>
+
+<overview>
+The Lola-class WarShip is a heavily armed and armored destroyer designed for escort duty in the Periphery and picket duty in the Terran Hegemony. Named after Rear Admiral Adelaide Lola, the first Lola III entered service in 2662. The Clan's upgraded Lola III incorporates advanced modifications, including Ferro-Carbide armor, an advanced computer system, and an expanded aerospace fighter complement.
+</overview>
+
+<history>
+Introduced in 2662, the Lola-class destroyers quickly gained a reputation for reliability and cost-effectiveness. Serving as escort and picket ships for over seven centuries in the Terran Hegemony, these vessels became a mainstay of the Hegemony Navy. However, advancements in technology led to the Lola-class ships facing obsolescence. During the Clan era, the Lola III underwent significant upgrades, making notable modifications to the original design. The replacement of conventional armor with Ferro-Carbide armor greatly improved the Lola III's defensive capabilities. The integration of an advanced computer system reduced crew requirements and allowed for an expanded aerospace fighter and Small Craft complement, enhancing its defensive and offensive capabilities. The addition of a Lithium-Fusion Battery further increased the ship's operational efficiency. Today, the Lola-class destroyers, particularly the upgraded Lola III variant, continue to play pivotal roles in Clan fleets. Their history of reliable service, combined with advanced modifications, makes them formidable assets in combat scenarios. Whether fulfilling escort duties, conducting picket missions, or defending against enemy fighters, the Lola-class destroyers uphold their legacy as versatile and potent WarShips.
+</history>
+
+<manufacturer>
+Refit
+</manufacturer>
+
+<primaryFactory>
+Unknown
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Destroyer
+</use>
+
+<length>
+653 m
+</length>
+
+<height>
+1100 m Sail
+</height>
+
 <source>
 TRO: 3057 Revised
 </source>
@@ -184,6 +228,10 @@ TRO: 3057 Revised
 <sail>
 1
 </sail>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 300
@@ -216,3 +264,4 @@ TRO: 3057 Revised
 <escape_pod>
 8
 </escape_pod>
+

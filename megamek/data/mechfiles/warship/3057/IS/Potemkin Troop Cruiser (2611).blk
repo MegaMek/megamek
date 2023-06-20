@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -191,6 +191,46 @@ Naval PPC (Heavy)
 80
 </structural_integrity>
 
+<capabilities>
+The Potemkin-class troop cruiser was purpose-built for mass transportation, accommodating the movement of an entire division of troops. Its immense size, measuring over a kilometer in length and weighing one and a half million tons, enabled it to serve as a reliable transport platform. The cruiser's distinctive feature was its five concentric rings, each equipped with five docking collars, providing a total of twenty-five DropShip hardpoints—the highest number ever seen on a deployed vessel. Enhanced with thick armor and formidable weaponry comparable to that of a heavy cruiser, the Potemkin possessed the ability to protect its attached DropShips without compromise. This capability not only ensured the survival of the Potemkin itself but also facilitated the safe transport of troops and equipment in the face of enemy threats. However, the Potemkin was not without its drawbacks. The deployment of such a massive vessel made it a prime target for enemy forces seeking to disable the attached DropShips. The extensive fuel requirements for operating the twenty-five DropShips necessitated the use of accompanying tankers, further increasing the need for protection. Additionally, the facilities onboard the ship primarily catered to the Potemkin's crew, with limited amenities for the DropShip crews, which could lead to discomfort during extended stays.
+</capabilities>
+
+<overview>
+The Potemkin-class troop cruiser, known as the "Corncob Cruiser," was developed in the early 2600s to address the vulnerability of poorly protected transports. With a massive size exceeding that of many battleships and an arrangement of twenty-five DropShip docking collars encircling its hull, the Potemkin became the largest vessel ever deployed for transportation purposes. Its robust armor and powerful weaponry allowed it to safeguard its attached DropShips effectively, making it a formidable presence in war zones.
+</overview>
+
+<history>
+The Potemkin-class troop cruiser production ceased in 2781 as advancements in escort tactics and smaller craft diminished the need for such large ships. A total of 106 Potemkins were built, with approximately 30 surviving the Amaris coup and departing with General Aleksandr Kerensky during the Exodus. Notably, the LCS Nightwind, one of the Potemkins, remained in the Inner Sphere and served during the tumultuous First Succession War. Despite its eventual decline in deployment, the Potemkin's legacy endured as a testament to its role in mass transportation and its ability to protect the DropShips under its charge. The design's sheer size and formidable capabilities made it an imposing force on the battlefield, although its vulnerabilities and logistical challenges necessitated careful strategic considerations during its operational lifespan.
+</history>
+
+<manufacturer>
+Riga Interstellar Shipyards
+</manufacturer>
+
+<primaryFactory>
+Dyev
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:KF Mark LC
+ENGINE:Chatham 7500
+ARMOR:Grumman TR8
+COMMUNICATIONS:TelStar HN
+TARGETING:KTI 6001
+</systemManufacturers>
+
+<use>
+Troop Cruiser
+</use>
+
+<length>
+1508 m
+</length>
+
+<height>
+1345 m Sail
+</height>
+
 <source>
 TRO: 3057 Revised
 </source>
@@ -210,6 +250,10 @@ TRO: 3057 Revised
 <grav_decks>
 95
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 445
@@ -242,3 +286,4 @@ TRO: 3057 Revised
 <escape_pod>
 50
 </escape_pod>
+

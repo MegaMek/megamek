@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,9 +16,9 @@ Warship
 Quicksilver Mongoose Battleship
 </Name>
 
-<model>
+<Model>
 
-</model>
+</Model>
 
 <mul id:>
 4888
@@ -48,7 +48,7 @@ dockingcollar
 1stclassquarters:600.0:0
 steeragequarters:125.0:0
 crewquarters:2639.0:0
-cargobay:51084.0:4:6
+cargobay:51084.0:4:8
 </transporters>
 
 <SafeThrust>
@@ -219,6 +219,46 @@ CLLargePulseLaser
 150
 </structural_integrity>
 
+<capabilities>
+The Quicksilver Mongoose underwent significant refitting by Clan Mongoose, enhancing its firepower and defensive capabilities. The ship's front-arc capital weaponry was doubled, featuring eight Heavy and four Medium Naval PPCs. Additional enhancements included augmented Class 45 Naval Lasers on its sides and an increased number of NLs per arc. Its aft remained unchanged, equipped with a pair of Medium Naval PPCs. To improve self-defense against smaller Aerospace fighter attacks, the ship was armed with sets of Large and Small Pulse Lasers in all arcs.
+</capabilities>
+
+<overview>
+The Quicksilver Mongoose, originally the Jasmine Liao, was a modified Du Shi Wang-class battleship built by the Capellan Confederation. It served as a crucial vessel in various conflicts, capturing attention for its impressive actions. After its capture by the Star League and subsequent inclusion in the Exodus Fleet, it became part of Clan Mongoose's WarShip fleet, where it was renamed the Quicksilver Mongoose. Renovated with Clan technologies, it became the flagship of Clan Mongoose and played a notable role in battles against Clan Smoke Jaguar.
+</overview>
+
+<history>
+Originally named the Jasmine Liao, the ship was an active Du Shi Wang-class battleship constructed by the Capellan Confederation, likely around 2380. Captured by the Star League prior to the Liberation of Terra, it joined General Aleksandr Kerensky's Exodus Fleet in 2784. After the formation of the Clans, it became part of Clan Mongoose's WarShip fleet and underwent extensive modifications. In the Clan's Trial of Absorption in 2868, the Quicksilver Mongoose played a crucial role in a crippling attack against the Clan Smoke Jaguar fleet around Circe, particularly against the Jaguar flagship, CSJ Obsidian. However, the ship was eventually disabled by the Jaguar destroyer CSJ Storm Cat, leading to the surrender of the Mongoose fleet. Following the Smoke Jaguars' absorption of the Mongooses, the Quicksilver Mongoose was mothballed in the Strana Mechty system. Prior to losing contact with the Inner Sphere, the ship remained in that location, serving as a testament to its storied past and the conflicts it had been involved in.
+</history>
+
+<manufacturer>
+Refit
+</manufacturer>
+
+<primaryFactory>
+Unknown
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+BattleShip
+</use>
+
+<length>
+870 m
+</length>
+
+<height>
+1300 m Sail
+</height>
+
 <source>
 Era Digest: Golden Century
 </source>
@@ -239,6 +279,10 @@ Era Digest: Golden Century
 150
 70
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 537
@@ -271,3 +315,4 @@ Era Digest: Golden Century
 <escape_pod>
 15
 </escape_pod>
+

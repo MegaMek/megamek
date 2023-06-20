@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -209,6 +209,46 @@ Small Laser
 48
 </structural_integrity>
 
+<capabilities>
+League destroyers were designed to engage a range of opponents and carried a mix of capital autocannons, lighter cannons, naval lasers, and conventional lasers. They also had hangars to accommodate a wing of fighters and shuttles, enhancing their versatility. These ships were well-suited for antipiracy duties and providing escort support to larger battleships like the Atreus. In the twenty-eighth century, the League-class saw a resurgence as decommissioned vessels were reactivated and upgraded to meet modern standards. The Block II Leagues featured improved armor composites and replaced their autocannon bays with naval Gauss rifles, showcasing technological advancements.
+</capabilities>
+
+<overview>
+The League-class destroyers of the Free Worlds League became the backbone of their fleet during the Age of War. Despite being constructed from components sourced across League space, these ships proved rugged and reliable. Equipped with capital autocannons as their primary firepower, complemented by lighter cannons, naval lasers, and conventional lasers, the League destroyers were versatile combatants suitable for various missions, including antipiracy patrols and escorting battleships. However, age and combat eventually led to the decommissioning or capture of many League-class ships.
+</overview>
+
+<history>
+The League-class destroyers initially served as the mainstay of the Free Worlds League fleet, constructed through distributed assembly at various locations within League space and final assembly at the SelaSys yards at Loyalty. Over time, decommissioning and piracy depleted the League-class ships, with FWLS Palatine being the last active-duty vessel destroyed in combat. In the twenty-eighth century, the League-class experienced a revival as restrictions on House fleets were eased, leading to the reactivation and upgrading of decommissioned ships. The final Block II Leagues suffered from energy shortages due to the power demands of the naval Gauss rifles and maintenance challenges.
+</history>
+
+<manufacturer>
+SelaSys Inc.
+</manufacturer>
+
+<primaryFactory>
+Loyalty
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Destroyer
+</use>
+
+<length>
+450 m
+</length>
+
+<height>
+1000 m Sail
+</height>
+
 <source>
 Field Report 2765 FWLM
 </source>
@@ -228,6 +268,10 @@ Field Report 2765 FWLM
 <grav_decks>
 75
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 286
@@ -260,3 +304,4 @@ Field Report 2765 FWLM
 <escape_pod>
 12
 </escape_pod>
+

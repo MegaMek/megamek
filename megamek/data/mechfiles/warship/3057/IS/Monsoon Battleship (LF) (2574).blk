@@ -13,23 +13,23 @@ Warship
 </UnitType>
 
 <Name>
-Monsoon Battleship
+Monsoon Battleship (LF)
 </Name>
 
 <Model>
-(2368)
+(2574)
 </Model>
 
 <mul id:>
-4660
+4659
 </mul id:>
 
 <year>
-2368
+2574
 </year>
 
 <originalBuildYear>
-2368
+2574
 </originalBuildYear>
 
 <type>
@@ -43,7 +43,6 @@ Aerodyne
 <transporters>
 asfbay:18.0:2:1
 smallcraftbay:8.0:2:2
-cargobay:295601.5:2:3
 dockingcollar
 dockingcollar
 dockingcollar
@@ -52,6 +51,7 @@ dockingcollar
 dockingcollar
 1stclassquarters:1020.0:0
 crewquarters:3325.0:0
+cargobay:282505.5:2:11
 </transporters>
 
 <SafeThrust>
@@ -59,7 +59,7 @@ crewquarters:3325.0:0
 </SafeThrust>
 
 <heatsinks>
-4985
+4981
 </heatsinks>
 
 <sink_type>
@@ -193,7 +193,7 @@ The origins of the Monsoon-class battleship can be traced back to the TAS Dreadn
 </history>
 
 <manufacturer>
-Di Tron Heavy Industries
+Di Tron Heavy Industries (Refit)
 </manufacturer>
 
 <primaryFactory>
@@ -231,6 +231,10 @@ TRO: 3057 Revised
 <kf_core>
 1
 </kf_core>
+
+<lithium-fusion>
+1
+</lithium-fusion>
 
 <sail>
 1

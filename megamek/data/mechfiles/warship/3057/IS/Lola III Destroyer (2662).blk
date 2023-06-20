@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -164,6 +164,38 @@ Ammo Barracuda:20
 50
 </structural_integrity>
 
+<capabilities>
+The Lola-class destroyers are known for their exceptional firepower and durability. Equipped with powerful naval lasers, they have extensive range and are capable of inflicting significant damage. Small-caliber autocannons provide additional firepower within the broadside arcs, while missile systems like the Barracuda and White Shark offer engagement capabilities at various ranges. These destroyers also carry a squadron of heavy aerospace fighters for defense against enemy fighters. With their remarkable armament, Lola-class vessels excel as escort ships and act as effective deterrents against pirate threats. The Lola-class destroyers incorporate advanced technology, including the innovative baffled-deadspace system. Although later replaced by more sophisticated armor compounds, this system initially boosted armor protection at a lower cost. The ship's larger-than-normal engines compensate for the increased weight but result in cramped crew quarters. However, the Clan Lola variant utilizes advanced computers to reduce the required crew size and alleviate some of the space constraints.
+</capabilities>
+
+<overview>
+The Lola-class WarShip is a heavily armed and armored destroyer designed for escort duty in the Periphery and picket duty in the Terran Hegemony. Named after Rear Admiral Adelaide Lola, the first Lola III entered service in 2662. It features an innovative baffled-deadspace system that enhances armor protection at a relatively low cost.
+</overview>
+
+<history>
+Introduced in 2662, the Lola-class destroyers quickly gained a reputation for reliability and cost-effectiveness. Serving as escort and picket ships for over seven centuries in the Terran Hegemony, these vessels became a mainstay of the Hegemony Navy. However, as technology advanced, the Lola-class ships faced obsolescence and were eventually relegated to reserve fleets or converted for training purposes. During the Amaris Crisis, several Lola-class destroyers were seized by Stephan Amaris loyalists, including three undergoing refitting at the time of Terra's occupation. Surviving the conflict, a significant number of Lola-class destroyers joined Aleksandr Kerensky's Exodus fleet, serving as vital cargo and DropShip carriers. After the fleet settled in the Pentagon Cluster, the Lola-class destroyers, along with other Avatars, were mothballed and placed in long-term storage. In the early 31st century, as the Clans prepared for their invasion of the Inner Sphere, the Lola-class destroyers were reactivated and underwent extensive upgrades by Clan technicians. These upgrades focused on enhancing offensive capabilities, defensive systems, and overall combat performance. The Lola-class destroyers continued to serve as formidable escort and patrol vessels, playing crucial roles in Clan military operations. Today, Lola-class destroyers remain prominently featured in most Clan fleets, reflecting their enduring role and adaptability in various combat scenarios. Their history of reliable service, innovative design, and potent firepower continues to make them a valued asset in the ongoing conflicts of the Inner Sphere and the Periphery.
+</history>
+
+<manufacturer>
+Boeing Interstellar
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Destroyer
+</use>
+
 <source>
 TRO: 3057 Revised
 </source>
@@ -179,6 +211,10 @@ TRO: 3057 Revised
 <sail>
 1
 </sail>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 252
@@ -211,3 +247,4 @@ TRO: 3057 Revised
 <escape_pod>
 8
 </escape_pod>
+

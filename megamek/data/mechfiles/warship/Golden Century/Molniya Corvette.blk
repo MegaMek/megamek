@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -282,6 +282,46 @@ Ammo NAC/10:40
 40
 </structural_integrity>
 
+<capabilities>
+The Molniya-class WarShips were optimized for DropShip carriage rather than heavy naval weapons, resembling the Federated Commonwealth's Fox-class in concept and capabilities. The ship's successive drafts prioritized lightweight and flexible missile launchers over heavier naval armaments. The Molniyas' engines were initially manufactured by Wolf engineers but chronic failures led to the decision to import engines from Clan Snow Raven, providing the ships with a sustained thrust of 2 Gs. The shuttle bay was expanded to accommodate four Stars of fighters. However, the Molniyas proved difficult to maintain due to poor systems layouts.
+</capabilities>
+
+<overview>
+The Molniya-class WarShips, introduced by Clan Wolf in 2951, were intended to be a learning experience for the Clan's aerospace industry. They represented the Clan's first all-new WarShips, designed and built domestically to address the naval arms race among the Clan Homeworlds. However, the Molniyas faced challenges due to limited tonnage and decisions made by a warrior caste committee, resulting in a ship optimized for DropShip carriage rather than weaponry. Despite being unpopular with Wolf naval personnel, the Molniya class showcased respectable missile launchers and the ability to carry fighters.
+</overview>
+
+<history>
+Introduced in 2951, Clan Wolf's Molniya-class WarShips were intended to be a stepping stone for the Clan's aerospace industry, marking their first attempt at designing and building all-new WarShips domestically. The goal was to gain the necessary experience and capabilities to compete in the naval arms race among the Clan Homeworlds without relying on retrofitted SLDF WarShips. The Molniyas faced challenges from the start. The ship's design and performance were influenced by a warrior caste committee that included MechWarriors more interested in an armed transport than a corvette. Additionally, the ship's tonnage was limited by domestic industry capabilities, further impacting its capabilities. Despite these limitations, the Molniya class proceeded with successive drafts that traded heavier naval weapons for AR-10s and lightweight missile launchers. One of the notable challenges in the Molniya's development was the Wolf engineers' inability to manufacture WarShip-scale fusion engines. As a result, the decision was made to import engines from Clan Snow Raven, ensuring the ships had a sustained thrust of 2 Gs. However, the ship's maintenance became a difficulty due to novice engineers' poor system layouts. In 2966, Clan Wolf deployed four of its six Molniyas to the Snow Raven world of Lum for a Trial of Possession. The Wolves sought to capture a factory station that produced WarShip fusion engines, aiming to rectify their domestic inability to master WarShip engine construction. Carefully planning their approach, the Wolves timed the Trial when most Raven WarShips were deployed elsewhere, and they jumped to Lum's L1 point to limit the Ravens' response time. The Snow Ravens were aware of the Wolves' intentions, thanks to clumsy questioning by visiting Wolf merchants. Prepared for the defense, the Ravens had the Swift Wing Naval Assault Star and the Corvidae, their first York-class carrier, ready to counter the Wolves' forces. The ensuing battle proved disastrous for the Wolves. The Corvidae engaged the Molniyas and released its fighters for a high-speed closing engagement. The Wolf fighters, splitting up to deal with multiple threats, were unable to effectively counter the coordinated Raven defense. During the battle, one Molniya was outright destroyed, and the remaining ships suffered significant damage. However, the surviving Molniya, named the Tundra, managed to scatter the approaching fighter Cluster, impressing the Snow Ravens with its performance. This stalwart stand of the Tundra won the survivors hegira (permission to withdraw) from the Snow Ravens. Recriminations from the Battle of Lum would echo through the Wolf Clan naval forces for decades. The surviving Molniyas were not repaired, and the two remaining ships were eventually scrapped. By the dawn of the fourth millennium, the Molniya class had ceased to exist.
+</history>
+
+<manufacturer>
+Unknown
+</manufacturer>
+
+<primaryFactory>
+Unknown
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Corvette
+</use>
+
+<length>
+540 m
+</length>
+
+<height>
+980 m Sail
+</height>
+
 <source>
 TRO: Golden Century
 </source>
@@ -305,6 +345,10 @@ TRO: Golden Century
 <grav_decks>
 75
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 203
@@ -337,3 +381,4 @@ TRO: Golden Century
 <escape_pod>
 15
 </escape_pod>
+

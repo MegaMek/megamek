@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -73,6 +73,10 @@ crewquarters:2436.0:0
 <engine_type>
 1
 </engine_type>
+
+<clan_engine>
+false
+</clan_engine>
 
 <armor_type>
 11
@@ -301,6 +305,50 @@ CLERSmallLaser
 85
 </structural_integrity>
 
+<capabilities>
+The Liberator-class cruiser is armed with advanced Clan weaponry, with a particular focus on anti-fighter systems rather than anti-ship capabilities. Its ferro-carbide armor provides nearly 50% more protection compared to the Avatar's conventional armor, while still maintaining a massive cargo facility. The Liberator is equipped with three Stars of OmniFighters to enhance its armaments. Additionally, the cruiser features quarters for two Stars of battle-armored Elementals, who serve to protect the vessel against boarding actions and conduct their own boarding operations against enemy craft. The Liberator also has additional cabins that allow for the transportation of an additional Cluster of conventional troops, although this capability is rarely utilized. The versatility of the Liberator-class cruiser enables it to undertake various missions, ranging from small planetary assaults to naval battles and boarding actions, making it a formidable asset in combat.
+</capabilities>
+
+<overview>
+The Liberator-class cruiser is a refitted design based on the Avatar-class heavy cruiser of the Star League Defense Force (SLDF). Originally introduced in 2531, the Avatar was later phased out and replaced by the Luxor-class WarShip. However, a few Avatars survived and were included in Aleksandr Kerensky's Exodus fleet due to their valuable cargo and DropShip capacities. In the 31st century, the Clans upgraded and renamed these vessels to become the Liberator-class cruisers.
+</overview>
+
+<history>
+The Liberator-class cruiser is derived from the Avatar-class heavy cruiser, which was initially introduced by the SLDF in 2531. As the SLDF transitioned to newer designs like the Luxor-class, many Avatars were placed in reserve fleets or repurposed as training vessels. However, during Stephan Amaris' takeover of Terra in 2766, the usurpers gained control of three Avatar-class vessels that were undergoing refitting at the Ian Cameron yards. Only six Avatars survived until the end of the wars, with five remaining in service with the SLDF and one captured by the Rim Worlds Republic. When Aleksandr Kerensky led the Exodus fleet, the Avatars were taken along due to their valuable cargo and DropShip capacities. Upon arriving at the Pentagon worlds, the Avatars, including the Liberator-class cruisers, were mothballed and remained in storage until the Clans began preparing for their invasion of the Inner Sphere. Clan technicians upgraded and renamed the Avatars, converting them into the formidable Liberator-class cruisers. The upgrades included the installation of Ferro-Carbide armor for enhanced protection, advanced Clan weaponry, and provisions for battle-armored Elementals to engage in boarding actions. With their versatility and upgraded capabilities, the Liberator-class cruisers became valuable assets for the Clans during their conquest of the Inner Sphere, capable of executing a range of military operations independently.
+</history>
+
+<manufacturer>
+Refit
+</manufacturer>
+
+<primaryFactory>
+Unknown
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Cruiser
+</use>
+
+<length>
+855 m
+</length>
+
+<height>
+1450 m Sail
+</height>
+
+<source>
+TRO: 3057 Revised
+</source>
+
 <tonnage>
 830000.0
 </tonnage>
@@ -320,6 +368,10 @@ CLERSmallLaser
 <grav_decks>
 145
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 539
@@ -353,6 +405,3 @@ CLERSmallLaser
 60
 </escape_pod>
 
-<source>
-TRO: 3057 Revised
-</source>

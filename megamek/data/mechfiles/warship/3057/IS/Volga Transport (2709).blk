@@ -243,6 +243,14 @@ Eaton AeroSpace
 Inglesmond
 </primaryFactory>
 
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
 <use>
 Transport
 </use>
@@ -250,6 +258,10 @@ Transport
 <length>
 715 m
 </length>
+
+<height>
+1205 m Sail
+</height>
 
 <source>
 TRO: 3057 Revised

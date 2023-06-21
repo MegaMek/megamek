@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,9 +16,9 @@ Warship
 Thera Carrier
 </Name>
 
-<model>
+<Model>
 
-</model>
+</Model>
 
 <mul id:>
 5221
@@ -47,12 +47,12 @@ dockingcollar
 dockingcollar
 dockingcollar
 dockingcollar
-asfbay:108.0:4:3
-smallcraftbay:4.0:1:2
+asfbay:108.0:4:7
+smallcraftbay:4.0:1:8
 crewquarters:8400.0:0
 1stclassquarters:4640.0:0
 2ndclassquarters:2268.0:0
-cargobay:61699.0:1:8
+cargobay:61699.0:1:12
 </transporters>
 
 <SafeThrust>
@@ -597,6 +597,46 @@ ISAMS Ammo:300
 90
 </structural_integrity>
 
+<capabilities>
+The Thera-class super-carriers are designed to establish total aerospace fighter superiority for the Free Worlds League Military (FWLM). With the ability to carry four regiments of fighters, each consisting of 54 fighters, these super-carriers can dominate a solar system and overwhelm opponents. Their cargo capacity surpasses that of both the Star League and Clan navies, enabling them to accommodate four full aerospace regiments and eight small craft. The Thera-class vessels also provide luxurious accommodations for their 2,100-member crew, including personal staterooms for officers and double-occupancy cabins for the rest of the crew. The super-carriers feature multiple docking points for DropShips and are assigned a dedicated escort of attack DropShips.
+</capabilities>
+
+<overview>
+The Thera-class super-carriers are the most powerful WarShips in the Free Worlds League fleet. Known for their impressive armament and armor, these slow but formidable vessels entered service in 3060. Currently, four Thera super-carriers, namely FWLS Santorini, Sardis, Corinth, and Delphi, are operational, with two more, Delos and Thessaly, scheduled to join the fleet in 3068 and 3070 respectively. These super-carriers have exceptional carrying capacity, luxurious accommodations for their crew, and are accompanied by a dedicated escort of attack DropShips.
+</overview>
+
+<history>
+To date, only one Thera-class super-carrier, the Sardis, has seen action. It was deployed to Arcadia by "rogue" Marshal of Tamarind, Jeremy Brett, in a cross-border incursion to rescue the survivors of Kristen's Krushers. The Thera's aerospace complement played a crucial role in achieving local aerospace superiority, allowing the FWLM forces to overwhelm the Lyran opposition with minimal losses. Despite their significant capabilities, the Thera-class carriers have remained relatively untested in combat due to limited engagements. While the Thera-class super-carriers excel in providing fighter support and maintaining crew comfort during long deployments, they have a notable weakness in their low speed. Engineers faced challenges fitting larger engines into the ship without compromising the size of the aerospace fighter bays, which were prioritized to maximize fighter support. As a result, larger engines were omitted from the design. Each Thera-class ship is equipped with an onboard hyperpulse generator, which was operated by Word of Blake personnel before the Jihad. The Thera-class super-carriers represent a significant advancement in the Free Worlds League's naval capabilities and serve as a force multiplier in achieving aerospace superiority. With their impressive carrying capacity, luxurious accommodations, and dedicated escort, they play a crucial role in the FWLM's military operations.
+</history>
+
+<manufacturer>
+Illium Naval Engineering - Illium Yard
+</manufacturer>
+
+<primaryFactory>
+Ionus
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Carrier
+</use>
+
+<length>
+1130 m
+</length>
+
+<height>
+1020 m Sail
+</height>
+
 <source>
 TRO: 3067
 </source>
@@ -622,6 +662,10 @@ TRO: 3067
 130
 110
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 1912
@@ -654,3 +698,4 @@ TRO: 3067
 <escape_pod>
 70
 </escape_pod>
+

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -13,7 +13,7 @@ Warship
 </UnitType>
 
 <Name>
-York Destroyer Carrier
+York Destroyer-Carrier
 </Name>
 
 <Model>
@@ -48,7 +48,7 @@ dockingcollar
 dockingcollar
 1stclassquarters:400.0:0
 crewquarters:1400.0:0
-cargobay:68293.5:0:6
+cargobay:68293.5:0:8
 </transporters>
 
 <SafeThrust>
@@ -70,6 +70,10 @@ cargobay:68293.5:0:6
 <engine_type>
 1
 </engine_type>
+
+<clan_engine>
+false
+</clan_engine>
 
 <armor_type>
 12
@@ -221,6 +225,46 @@ Ammo NAC/30:200
 60
 </structural_integrity>
 
+<capabilities>
+The Riga-class destroyer/carrier demonstrated its effectiveness during the war, with 26 vessels surviving and showcasing the capabilities of the design. These vessels became an essential component of the Exodus fleet, serving as primary patrol vessels. After undergoing extensive refits, the Riga-class evolved into the York-class, which retained the excellent armor and weapons of its predecessor while incorporating additional anti-fighter systems such as point-defense lasers. The fighter capacity was expanded with the inclusion of five complete hangar decks, capable of accommodating a full Star of OmniFighters.
+</capabilities>
+
+<overview>
+The Riga-class destroyer/carrier, launched in 2747, is named after a Hegemony frigate design from centuries earlier. Originally rushed into production after the death of First Lord Simon Cameron and the increasing likelihood of war between the member states, the Riga-class proved to be a capable and resilient vessel. Surviving the turbulent events of the ensuing war, these vessels became a significant part of the Exodus fleet and later underwent extensive refits to become the York-class, featuring enhanced anti-fighter systems and expanded fighter capacity.
+</overview>
+
+<history>
+Following the death of First Lord Simon Cameron and the potential outbreak of war, the Riga-class vessels were rapidly produced and deployed. While most of the Rigas were stationed in the Periphery, a few remained within the Hegemony. However, two of the Hegemony-based vessels were among the first casualties of Jonathan Cameron's Reagan Space Defense System during the events in Geneva. Despite these losses, an impressive number of 26 Riga-class vessels survived the war, highlighting the effectiveness of the design. These vessels joined the Exodus fleet and served as crucial patrol ships. Over time, as newer post-Exodus designs gained prominence, the Rigas underwent extensive refits, leading to the birth of the York-class. This new class, introduced in 2947, retained the impressive armor and weaponry of the Riga-class while incorporating advancements such as enhanced anti-fighter systems. The York-class also boasted an expanded fighter capacity, with five hangar decks capable of accommodating a full Star of OmniFighters. The surviving Riga-class vessels served for over a century, playing a role in the conflicts between the remnants of the SLDF in the early 29th century. However, only six Rigas that accompanied Nicholas Kerensky to Strana Mechty managed to survive. Despite their eventual obsolescence in the face of newer designs, the Riga-class ships had a lasting impact on Clan Star Adder's victory over Clan Nova Cat in the battle for the Brim BattleMech factory.
+</history>
+
+<manufacturer>
+Unknown
+</manufacturer>
+
+<primaryFactory>
+Lum
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Destoyer-Carrier
+</use>
+
+<length>
+630 m
+</length>
+
+<height>
+1180 m Sail
+</height>
+
 <source>
 TRO: 3057 Revised
 </source>
@@ -245,6 +289,10 @@ TRO: 3057 Revised
 140
 65
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 365
@@ -277,3 +325,4 @@ TRO: 3057 Revised
 <escape_pod>
 20
 </escape_pod>
+

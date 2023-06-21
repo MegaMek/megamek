@@ -328,7 +328,7 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
 
         if ((OptionsConstants.GUNNERY_WEAPON_SPECIALIST).equals(option.getName())) {
             optionComp.addValue(Messages.getString("CustomMechDialog.None"));
-            PilotSPAHelper.weaponSpecialistValidWeaponNames(entity).forEach(optionComp::addValue);
+            PilotSPAHelper.weaponSpecialistValidWeaponNames(entity, gameOptions()).forEach(optionComp::addValue);
             optionComp.setSelected(option.stringValue());
         }
         

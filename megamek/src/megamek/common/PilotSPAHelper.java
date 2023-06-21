@@ -35,14 +35,18 @@ import java.util.stream.Collectors;
 public final class PilotSPAHelper {
 
     /** @return True when the given Mounted equipment is a valid choice for the Weapons Specialist SPA. */
-    public static boolean isWeaponSpecialistValid(Mounted mounted) {
-        return isWeaponSpecialistValid(mounted.getType());
+    public static boolean isWeaponSpecialistValid(Mounted mounted, @Nullable GameOptions options) {
+        return isWeaponSpecialistValid(mounted.getType(), options);
     }
 
     /** @return True when the given EquipmentType is a valid choice for the Weapons Specialist SPA. */
-    public static boolean isWeaponSpecialistValid(EquipmentType equipmentType) {
+    public static boolean isWeaponSpecialistValid(EquipmentType equipmentType, @Nullable GameOptions options) {
+        boolean amsAsWeapon = (options != null) && options.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS)
+                && (equipmentType.hasFlag(WeaponType.F_AMS));
+
         return (equipmentType instanceof WeaponType) && !(equipmentType instanceof BayWeapon)
-                && !equipmentType.hasFlag(WeaponType.F_AMS) && !equipmentType.is("Screen Launcher")
+                && (!equipmentType.hasFlag(WeaponType.F_AMS) || amsAsWeapon)
+                && !equipmentType.is("Screen Launcher")
                 && !equipmentType.hasFlag(WeaponType.F_C3M) && !equipmentType.hasFlag(WeaponType.F_C3MBS)
                 && !equipmentType.hasFlag(WeaponType.F_INFANTRY_ATTACK);
     }
@@ -53,10 +57,10 @@ public final class PilotSPAHelper {
      *
      * @return A list of weapon names from the given Entity that are valid choices for the Weapon Specialist SPA
      */
-    public static List<String> weaponSpecialistValidWeaponNames(Entity entity) {
+    public static List<String> weaponSpecialistValidWeaponNames(Entity entity, @Nullable GameOptions options) {
         return entity.getTotalWeaponList().stream()
                 .map(Mounted::getType)
-                .filter(PilotSPAHelper::isWeaponSpecialistValid)
+                .filter(mounted -> isWeaponSpecialistValid(mounted, options))
                 .map(EquipmentType::getName)
                 .distinct()
                 .collect(Collectors.toList());
@@ -64,14 +68,14 @@ public final class PilotSPAHelper {
 
     /**
      * Returns a List of weapons from those present on the given Entity that are valid choices for the
-     * Weapon Specialist SPA. Unlike {@link #weaponSpecialistValidWeaponNames(Entity)}, weapons
+     * Weapon Specialist SPA. Unlike {@link #weaponSpecialistValidWeaponNames(Entity, GameOptions)}, weapons
      * appear in this list as often as they are present on the given Entity.
      *
      * @return A list of weapons from the given Entity that are valid choices for the Weapon Specialist SPA
      */
-    public static List<Mounted> weaponSpecialistValidWeapons(Entity entity) {
+    public static List<Mounted> weaponSpecialistValidWeapons(Entity entity, @Nullable GameOptions options) {
         return entity.getTotalWeaponList().stream()
-                .filter(PilotSPAHelper::isWeaponSpecialistValid)
+                .filter(mounted -> isWeaponSpecialistValid(mounted, options))
                 .collect(Collectors.toList());
     }
 

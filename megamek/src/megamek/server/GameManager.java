@@ -1781,7 +1781,9 @@ public class GameManager implements IGameManager {
 
     private void entityStatusReport() {
         List<Report> reports = new ArrayList<>();
-        List<Entity> entities = game.getEntitiesVector().stream().filter(e -> e.isDeployed()).collect(Collectors.toList());
+        List<Entity> entities = game.getEntitiesVector().stream()
+                .filter(e -> (e.isDeployed() && !((e instanceof MechWarrior) && ((MechWarrior) e).getPickedUpById() != Entity.NONE)))
+                .collect(Collectors.toList());
         Comparator<Entity> comp = Comparator.comparing((Entity e) -> e.getOwner().getTeam());
         comp = comp.thenComparing((Entity e) -> e.getOwner().getName());
         comp = comp.thenComparing((Entity e) -> e.getDisplayName());

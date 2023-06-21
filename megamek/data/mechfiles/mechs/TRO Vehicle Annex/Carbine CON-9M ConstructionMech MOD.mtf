@@ -1,0 +1,151 @@
+Version:1.0
+Carbine CON-9M ConstructionMech
+MOD
+mul id:7164
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3078
+Source:Record Sheets: Vehicle Annex - IndustrialMechs & Exoskeletons
+Rules Level:2
+
+Mass:30
+Engine:90 ICE Engine(IS)
+Structure:IS Industrial
+Myomer:Standard
+
+Heat Sinks:1 Single
+Walk MP:3
+Jump MP:0
+
+Armor:Standard(IS/Clan)
+LA Armor:3
+RA Armor:3
+LT Armor:4
+RT Armor:4
+CT Armor:5
+HD Armor:7
+LL Armor:5
+RL Armor:5
+RTL Armor:1
+RTR Armor:1
+RTC Armor:2
+
+Weapons:3
+LRM 10, Center Torso
+Machine Gun, Right Arm
+Machine Gun, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Lift Hoist
+Lift Hoist
+Lift Hoist
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Machine Gun
+Machine Gun
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+IS Ammo LRM-10
+IS Machine Gun Ammo - Half
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+LRM 10
+LRM 10
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

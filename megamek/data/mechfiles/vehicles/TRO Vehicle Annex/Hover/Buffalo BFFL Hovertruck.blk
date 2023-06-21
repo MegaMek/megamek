@@ -13,7 +13,7 @@ LargeSupportTank
 </UnitType>
 
 <Name>
-BFFL 'Buffalo'
+Buffalo BFFL Hovertruck
 </Name>
 
 <model>
@@ -94,7 +94,7 @@ Cargo Container (10 tons)
 </structural_tech_rating>
 
 <source>
-TRO: VAr - Star League
+TRO: Vehicle Annex (Revised)
 </source>
 
 <tonnage>

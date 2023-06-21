@@ -1,12 +1,12 @@
 Version:1.1
 Powerman SC XI LoaderMech
 
-mul id:2564
-
 Config:Biped
 TechBase:Inner Sphere
 Era:2764
 Rules Level:2
+source:Historical: Operation Klondike
+mul id:2564
 
 Mass:35
 Engine:140 I.C.E. Engine

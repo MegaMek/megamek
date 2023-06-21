@@ -112,3 +112,7 @@ Configuration B - change Turret weaponry from 1 ML & 1 ERSL to 3 ERSL
 <baseChassisTurretWeight>
 1.5
 </baseChassisTurretWeight>
+
+<source>
+TRO: 3067
+</source>

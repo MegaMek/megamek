@@ -1,0 +1,114 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<Name>
+Sturmvogel Maritime Patrol WiGE
+</Name>
+
+<Model>
+(LB-10X)
+</Model>
+
+<mul id:>
+7815
+</mul id:>
+
+<year>
+3065
+</year>
+
+<originalBuildYear>
+3065
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+WiGE
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+8
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
+11
+7
+7
+4
+</armor>
+
+<Body Equipment>
+Armored Chassis
+AmphibiousChassis
+Advanced Fire Control
+IS LB 10-X AC Ammo
+IS LB 10-X AC Ammo
+IS LB 10-X Cluster Ammo
+IS LB 10-X Cluster Ammo
+</Body Equipment>
+
+<Front Equipment>
+ISLBXAC10
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+ISVehicularMineDispenser
+ISVehicularMineDispenser
+ISVehicularMineDispenser
+</Rear Equipment>
+
+<barrating>
+10
+</barrating>
+
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
+<engine_tech_rating>
+4
+</engine_tech_rating>
+
+<armor_tech_rating>
+3
+</armor_tech_rating>
+
+<source>
+TRO: Irregulars
+</source>
+
+<tonnage>
+50.0
+</tonnage>
+
+<fuel>
+0.0
+</fuel>
+

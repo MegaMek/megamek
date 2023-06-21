@@ -7,7 +7,7 @@ Config:Biped
 techbase:Inner Sphere
 era:3087
 rules level:2
-source:Rec Guide:ilClan #11 - Early Republic
+source:Rec Guide:ilClan #11
 
 mass:45
 engine:270 Light Engine(IS)

@@ -6,7 +6,7 @@ mul id:9498
 Config:Biped
 techbase:Inner Sphere
 era:3130
-source:ForcePack UrbanMech  - Late Republiic
+source:ForcePack UrbanMech
 rules level:3
 
 mass:30

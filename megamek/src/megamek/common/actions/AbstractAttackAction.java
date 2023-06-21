@@ -15,6 +15,7 @@
 package megamek.common.actions;
 
 import megamek.client.Client;
+import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.IlluminationLevel;
@@ -74,7 +75,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
     public @Nullable Entity getEntity(Game g) {
         return getEntity(g, getEntityId());
     }
-    
+
     /**
      * Gets an entity with the given ID, using the passed-in game object.
      * @return the entity even if it was destroyed or fled.
@@ -125,7 +126,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
                 }
             }
         }
-        // Searchlights reduce the penalty to zero (or 1 for pitch-black) 
+        // Searchlights reduce the penalty to zero (or 1 for pitch-black)
         // (except for dusk/dawn)
         int searchlightMod = Math.min(3, night_modifier);
         if ((te != null) && (lightCond > PlanetaryConditions.L_DUSK)
@@ -150,11 +151,11 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
             night_modifier -= searchlightMod;
         } else if (atype != null) {
             // Certain ammunitions reduce the penalty
-            if (((atype.getAmmoType() == AmmoType.T_AC) 
+            if (((atype.getAmmoType() == AmmoType.T_AC)
                     || (atype.getAmmoType() == AmmoType.T_LAC)
                     || (atype.getAmmoType() == AmmoType.T_AC_IMP)
                     || (atype.getAmmoType() == AmmoType.T_PAC))
-                    && ((atype.getMunitionType() == AmmoType.M_INCENDIARY_AC) 
+                    && ((atype.getMunitionType() == AmmoType.M_INCENDIARY_AC)
                             || (atype.getMunitionType() == AmmoType.M_TRACER))) {
                 toHit.addModifier(-1, "incendiary/tracer ammo");
                 night_modifier--;

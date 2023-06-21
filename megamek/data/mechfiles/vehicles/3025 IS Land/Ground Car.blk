@@ -74,6 +74,6 @@ troopspace:0.5
 3.0
 </tonnage>
 
-<bv>
-55
-</bv>
+<source>
+TRO: 3025
+</source>

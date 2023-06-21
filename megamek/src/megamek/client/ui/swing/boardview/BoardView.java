@@ -401,10 +401,10 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     /** Stores the correct tooltip dismiss delay so it can be restored when exiting the boardview */
     private int dismissDelay = ToolTipManager.sharedInstance().getDismissDelay();
 
-    /** A map overlay showing some important keybinds. */
+    /** map overlays */
     KeyBindingsOverlay keybindOverlay;
-
     PlanetaryConditionsOverlay planetaryConditionsOverlay;
+    public TurnDetailsOverlay turnDetailsOverlay;
 
     /** The coords where the mouse was last. */
     Coords lastCoords;
@@ -431,16 +431,22 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         game.addGameListener(gameListener);
         game.getBoard().addBoardListener(this);
 
-        keybindOverlay = new KeyBindingsOverlay(game, clientgui);
         // Avoid showing the key binds when they can't be used (in the lobby map preview)
         if (controller != null) {
+            keybindOverlay = new KeyBindingsOverlay(this);
             addDisplayable(keybindOverlay);
         }
 
-        planetaryConditionsOverlay = new PlanetaryConditionsOverlay(game, clientgui);
         // Avoid showing the planetary Conditions when they can't be used (in the lobby map preview)
         if (controller != null) {
+            planetaryConditionsOverlay = new PlanetaryConditionsOverlay(this);
             addDisplayable(planetaryConditionsOverlay);
+        }
+
+        // Avoid showing the planetary Conditions when they can't be used (in the lobby map preview)
+        if (controller != null) {
+            turnDetailsOverlay = new TurnDetailsOverlay(this);
+            addDisplayable(turnDetailsOverlay);
         }
 
         ourTask = scheduleRedrawTimer(); // call only once
@@ -894,15 +900,6 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 getTilesetManager().reloadUnitIcons();
                 break;
 
-            case GUIPreferences.SHOW_KEYBINDS_OVERLAY:
-                keybindOverlay.setVisible((boolean) e.getNewValue());
-                repaint();
-                break;
-            case GUIPreferences.SHOW_PLANETARYCONDITIONS_OVERLAY:
-                planetaryConditionsOverlay.setVisible((boolean) e.getNewValue());
-                repaint();
-                break;
-
             case GUIPreferences.AOHEXSHADOWS:
             case GUIPreferences.FLOATINGISO:
             case GUIPreferences.LEVELHIGHLIGHT:
@@ -926,7 +923,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 repaint();
                 break;
 
-            case KeyBindParser.KEYBINDS_CHANGED:
+            case GUIPreferences.SHOW_SENSOR_RANGE:
                 repaint();
                 break;
         }
@@ -4187,51 +4184,14 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         }
 
         repaint(100);
+        int attackerId = aa.getEntityId();
         for (AttackSprite sprite : attackSprites) {
             // can we just add this attack to an existing one?
-            if ((sprite.getEntityId() == aa.getEntityId())
+            if ((sprite.getEntityId() == attackerId)
                 && (sprite.getTargetId() == aa.getTargetId())) {
                 // use existing attack, but add this weapon
-                if (aa instanceof WeaponAttackAction) {
-                    WeaponAttackAction waa = (WeaponAttackAction) aa;
-                    if (aa.getTargetType() != Targetable.TYPE_HEX_ARTILLERY) {
-                        sprite.addWeapon(waa);
-                    } else if (waa.getEntity(game).getOwner().getId() == localPlayer.getId()) {
-                        sprite.addWeapon(waa);
-                    }
-                }
-
-                if (aa instanceof KickAttackAction) {
-                    sprite.addWeapon((KickAttackAction) aa);
-                }
-
-                if (aa instanceof PunchAttackAction) {
-                    sprite.addWeapon((PunchAttackAction) aa);
-                }
-
-                if (aa instanceof PushAttackAction) {
-                    sprite.addWeapon((PushAttackAction) aa);
-                }
-
-                if (aa instanceof ClubAttackAction) {
-                    sprite.addWeapon((ClubAttackAction) aa);
-                }
-
-                if (aa instanceof ChargeAttackAction) {
-                    sprite.addWeapon((ChargeAttackAction) aa);
-                }
-
-                if (aa instanceof DfaAttackAction) {
-                    sprite.addWeapon((DfaAttackAction) aa);
-                }
-
-                if (aa instanceof ProtomechPhysicalAttackAction) {
-                    sprite.addWeapon((ProtomechPhysicalAttackAction) aa);
-                }
-
-                if (aa instanceof SearchlightAttackAction) {
-                    sprite.addWeapon((SearchlightAttackAction) aa);
-                }
+                sprite.addEntityAction(aa);
+                rebuildAllSpriteDescriptions(attackerId);
                 return;
             }
         }
@@ -4247,7 +4207,22 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         } else {
             attackSprites.add(new AttackSprite(this, aa));
         }
+        rebuildAllSpriteDescriptions(attackerId);
     }
+
+    /** adding a new EntityAction may affect the ToHits of other attacks
+     * so rebuild. The underlying data is cached when possible, so the should
+     * o the minumum amount of work needed
+     */
+    void rebuildAllSpriteDescriptions(int attackerId) {
+        for (AttackSprite sprite : attackSprites) {
+            if (sprite.getEntityId() == attackerId) {
+                sprite.rebuildDescriptions();
+            }
+        }
+
+    }
+
 
     /**
      * Removes all attack sprites from a certain entity
@@ -5779,11 +5754,10 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
      * Appends HTML describing the buildings and minefields in a given hex
      */
     public void appendBuildingsTooltip(StringBuffer txt, @Nullable Hex mhex) {
-        if (mhex == null) {
-            return;
+        if ((mhex != null) && (clientgui != null)) {
+            String result = HexTooltip.getHexTip(mhex, clientgui.getClient());
+            txt.append(result);
         }
-        String result = HexTooltip.getHexTip(mhex, clientgui);
-        txt.append(result);
     }
 
     /**

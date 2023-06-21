@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -74,6 +74,10 @@ crewquarters:3374.0:0
 <engine_type>
 1
 </engine_type>
+
+<clan_engine>
+false
+</clan_engine>
 
 <armor_type>
 11
@@ -223,8 +227,48 @@ Naval PPC (Heavy)
 95
 </structural_integrity>
 
+<capabilities>
+The McKenna-class battleship possesses unmatched firepower and defensive capabilities. Equipped with a vast array of weapons, including forty-eight Kreuss PPCs and a mix of White Shark and Barracuda missile launchers, it can engage and neutralize targets within an extensive range. The battleship also carries a complement of eight aerospace fighter squadrons and six DropShips, augmenting its offensive capabilities and providing additional protection against enemy fighters. Notably, the McKenna-class battleship incorporates a Lithium-Fusion Battery system, which allows for immediate jumps to friendly star systems, enhancing its strategic flexibility.
+</capabilities>
+
+<overview>
+The McKenna-class battleship is a renowned warship recognized for its imposing size, angular turrets, and towering sensor islands. Serving as flagship vessels, these battleships are the highlight of naval careers and are highly sought-after assignments. With their fearsome reputation and distinctive features, McKenna-class battleships are instantly recognizable and command respect on the battlefield.
+</overview>
+
+<history>
+Introduced in 2652, the McKenna-class battleship quickly earned a reputation as an exceptional combat vessel. Serving on a McKenna-class ship became a highlight of naval careers, signifying prestige and honor. However, during the war to liberate Terra, McKennas became prime targets, resulting in significant losses. Out of the 280 McKenna-class battleships produced in the 130 years before the fall of the Star League, only 29 survived to witness the liberation. Eleven of these vessels were extensively damaged and scuttled. The remaining ships joined the Exodus fleet, with only three observed in service with the Clans. One notable McKenna-class battleship, McKenna's Pride, serves as the flagship of Aleksandr and later Nicholas Kerensky. It is said to maintain a geosynchronous orbit above Strana Mechty, carefully preserved by technicians from all Clans. Rumors suggest that McKenna's Pride is a centerpiece of the Clan Founding Day celebrations, symbolizing their aspiration to capture Terra and establish an ilClan. Until that day comes, the majestic McKenna's Pride continues to watch over Strana Mechty, a testament to the enduring legacy of the McKenna-class battleships. The McKenna-class battleship has left an indelible mark in history, not only for its formidable capabilities but also for the valor of those who served on these impressive vessels. Despite their losses, McKennas remain a symbol of power and prestige, embodying the steadfast determination and military prowess of their crews.
+</history>
+
+<manufacturer>
+Unknown
+</manufacturer>
+
+<primaryFactory>
+Refit
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Battleship
+</use>
+
+<length>
+1405 m
+</length>
+
+<height>
+1560 m Sail
+</height>
+
 <source>
-TRO: 3057R - Early Succession War
+TRO: 3057 Revised
 </source>
 
 <tonnage>
@@ -248,6 +292,10 @@ TRO: 3057R - Early Succession War
 45
 75
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 759
@@ -280,3 +328,4 @@ TRO: 3057R - Early Succession War
 <escape_pod>
 30
 </escape_pod>
+

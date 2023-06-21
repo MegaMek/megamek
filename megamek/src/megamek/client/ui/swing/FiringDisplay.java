@@ -16,6 +16,7 @@ package megamek.client.ui.swing;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.unitDisplay.WeaponPanel;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
@@ -203,9 +204,6 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         clientgui.getBoardView().addBoardViewListener(this);
 
         shiftheld = false;
-
-        // fire
-        attacks = new Vector<>();
 
         setupStatusBar(Messages.getString("FiringDisplay.waitingForFiringPhase"));
 
@@ -841,7 +839,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
                 setFindClubEnabled(false);
                 setFlipArmsEnabled(false);
                 setStrafeEnabled(false);
-                clientgui.getUnitDisplay().wPan.toHitText.setText("Hidden units are only allowed to spot!");
+                clientgui.getUnitDisplay().wPan.setToHit("Hidden units are only allowed to spot!");
             }
         } else {
             LogManager.getLogger().error("Tried to select non-existent entity " + en);
@@ -1495,7 +1493,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
             // Could check legality on buildings, but I don't believe there are
             // any weapons that are still legal that aren't legal on buildings
         }
-        clientgui.getUnitDisplay().wPan.toHitText.setText(toHitBuff.toString());
+        clientgui.getUnitDisplay().wPan.setToHit(toHitBuff.toString());
     }
 
     private int[] getBombPayload(boolean isSpace, int limit) {
@@ -1666,12 +1664,14 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
             waa.setStrafingFirstShot(firstShot);
             firstShot = false;
 
-            // add the attack to our temporary queue
-            addAttack(waa);
-
-            // and add it into the game, temporarily
+            // Temporarily add attack into the game. On turn done
+            // this will be recomputed from the local
+            // @attacks EntityAttackLog, but Game actions
+            // must be populated to calculate ToHit mods etc.
             game.addAction(waa);
 
+            // add the attack to our temporary queue
+            addAttack(waa);
         }
         // set the weapon as used
         mounted.setUsedThisRound(true);
@@ -1793,9 +1793,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         }
 
         // remove attacks, set weapons available again
-        Enumeration<EntityAction> i = attacks.elements();
-        while (i.hasMoreElements()) {
-            Object o = i.nextElement();
+        for( EntityAction o : attacks) {
             if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) o;
                 ce().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
@@ -1916,15 +1914,18 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         }
 
         // update target panel
+
         final int weaponId = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
         if (isStrafing && weaponId != -1) {
-            clientgui.getUnitDisplay().wPan.wTargetR.setText(Messages
-                    .getString("FiringDisplay.Strafing.TargetLabel"));
+            clientgui.getUnitDisplay().wPan.setTarget(target, Messages
+                    .getString("FiringDisplay.Strafing.TargetLabel") );
+
             updateStrafingTargets();
         } else if ((ce() != null) && ce().equals(clientgui.getUnitDisplay().getCurrentEntity())
             && (target != null) && (target.getPosition() != null)
             && (weaponId != -1)) {
             ToHitData toHit;
+
             if (!ash.getAimingMode().isNone()) {
                 Mounted weapon = ce().getEquipment(weaponId);
                 boolean aiming = ash.isAimingAtLocation() && ash.allowAimedShotWith(weapon);
@@ -1933,21 +1934,18 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
                     toHit = WeaponAttackAction.toHit(game, cen, target,
                             weaponId, ash.getAimingAt(), ash.getAimingMode(),
                             false);
-
-                    String t =  String.format("<html><div WIDTH=%d>%s</div></html>", WeaponPanel.TARGET_DISPLAY_WIDTH, target.getDisplayName() + " (" + ash.getAimingLocation() + ")");
-                    clientgui.getUnitDisplay().wPan.wTargetR.setText(t);
+                    clientgui.getUnitDisplay().wPan.setTarget(target, Messages.getFormattedString("MechDisplay.AimingAt", ash.getAimingLocation()));
                 } else {
                     toHit = WeaponAttackAction.toHit(game, cen, target, weaponId, Entity.LOC_NONE,
                             AimingMode.NONE, false);
-                    String t =  String.format("<html><div WIDTH=%d>%s</div></html>", WeaponPanel.TARGET_DISPLAY_WIDTH, target.getDisplayName());
-                    clientgui.getUnitDisplay().wPan.wTargetR.setText(t);
+                    clientgui.getUnitDisplay().wPan.setTarget(target, null);
+
                 }
                 ash.setPartialCover(toHit.getCover());
             } else {
                 toHit = WeaponAttackAction.toHit(game, cen, target, weaponId,
                         Entity.LOC_NONE, AimingMode.NONE, false);
-                String t =  String.format("<html><div WIDTH=%d>%s</div></html>", WeaponPanel.TARGET_DISPLAY_WIDTH, target.getDisplayName());
-                clientgui.getUnitDisplay().wPan.wTargetR.setText(t);
+                clientgui.getUnitDisplay().wPan.setTarget(target, null);
             }
             int effectiveDistance = Compute.effectiveDistance(game, ce(), target);
             clientgui.getUnitDisplay().wPan.wRangeR.setText("" + effectiveDistance);
@@ -1958,38 +1956,33 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
                 clientgui.getUnitDisplay().wPan.selectWeapon(weaponId);
             }
             if (m.isUsedThisRound()) {
-                clientgui.getUnitDisplay().wPan.wToHitR.setText(
-                        Messages.getString("FiringDisplay.alreadyFired"));
+                clientgui.getUnitDisplay().wPan.setToHit(Messages.getString("FiringDisplay.alreadyFired"));
                 setFireEnabled(false);
             } else if ((m.getType().hasFlag(WeaponType.F_AUTO_TARGET)
                     && !m.curMode().equals(Weapon.MODE_AMS_MANUAL))
                     || (m.getType().hasModes() && m.curMode().equals("Point Defense"))) {
-                clientgui.getUnitDisplay().wPan.wToHitR.setText(
-                        Messages.getString("FiringDisplay.autoFiringWeapon"));
+                clientgui.getUnitDisplay().wPan.setToHit(Messages.getString("FiringDisplay.autoFiringWeapon"));
                 setFireEnabled(false);
             } else if (m.isInBearingsOnlyMode()) {
-                clientgui.getUnitDisplay().wPan.wToHitR.setText(
-                        Messages.getString("FiringDisplay.bearingsOnlyWrongPhase"));
+                clientgui.getUnitDisplay().wPan.setToHit(Messages.getString("FiringDisplay.bearingsOnlyWrongPhase"));
                 setFireEnabled(false);
             } else if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
-                clientgui.getUnitDisplay().wPan.wToHitR.setText(toHit.getValueAsString());
+                clientgui.getUnitDisplay().wPan.setToHit(toHit);
                 setFireEnabled(false);
             } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
-                clientgui.getUnitDisplay().wPan.wToHitR.setText(toHit.getValueAsString());
+                clientgui.getUnitDisplay().wPan.setToHit(toHit);
                 setFireEnabled(true);
             } else {
                 boolean natAptGunnery = ce().hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
-                clientgui.getUnitDisplay().wPan.wToHitR.setText(toHit.getValueAsString()
-                        + " (" + Compute.oddsAbove(toHit.getValue(), natAptGunnery) + "%)");
+                clientgui.getUnitDisplay().wPan.setToHit(toHit, true);
+
                 setFireEnabled(true);
             }
-            clientgui.getUnitDisplay().wPan.toHitText.setText(toHit.getDesc());
             setSkipEnabled(true);
         } else {
-            clientgui.getUnitDisplay().wPan.wTargetR.setText("---");
+            clientgui.getUnitDisplay().wPan.setTarget(null, null);
             clientgui.getUnitDisplay().wPan.wRangeR.setText("---");
-            clientgui.getUnitDisplay().wPan.wToHitR.setText("---");
-            clientgui.getUnitDisplay().wPan.toHitText.setText("");
+            clientgui.getUnitDisplay().wPan.clearToHit();
         }
 
         if ((weaponId != -1) && (ce() != null) && !isStrafing) {
@@ -2010,7 +2003,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
             setFindClubEnabled(false);
             setFlipArmsEnabled(false);
             setStrafeEnabled(false);
-            clientgui.getUnitDisplay().wPan.toHitText.setText("Hidden units are only allowed to spot!");
+            clientgui.getUnitDisplay().wPan.setToHit("Hidden units are only allowed to spot!");
         }
     }
 

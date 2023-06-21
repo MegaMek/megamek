@@ -13,6 +13,7 @@
  */
 package megamek.common.actions;
 
+import megamek.client.ui.Messages;
 import megamek.common.Compute;
 import megamek.common.Dropship;
 import megamek.common.Entity;
@@ -46,7 +47,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
         super(entityId, targetId);
         this.arm = arm;
     }
-    
+
     /**
      * Punch attack vs an entity or other type of target (e.g. building)
      */
@@ -71,9 +72,9 @@ public class PunchAttackAction extends PhysicalAttackAction {
     public void setArm(int arm) {
         this.arm = arm;
     }
-    
+
     /**
-     * 
+     *
      * @return true if the entity is zweihandering (attacking with both hands)
      */
     public boolean isZweihandering() {
@@ -254,7 +255,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
         if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, armLoc)) {
             toHit.addModifier(2, "Lower arm actuator missing or destroyed");
         }
-        
+
         if (zweihandering) {
             if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, otherArm)) {
                 toHit.addModifier(2, "Upper arm actuator destroyed");
@@ -350,7 +351,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
         if (((Mech) entity).hasClaw(armLoc)) {
             damage = (int) Math.ceil(entity.getWeight() / 7.0);
         }
-        
+
         //CamOps, pg. 82
         if (zweihandering) {
             damage += (int) Math.floor(entity.getWeight() / 10.0);
@@ -380,5 +381,31 @@ public class PunchAttackAction extends PhysicalAttackAction {
             toReturn = Math.max(1, toReturn / 10);
         }
         return toReturn;
+    }
+
+    @Override
+    public String toSummaryString(final Game game) {
+        String buffer;
+        String rollLeft;
+        String rollRight;
+        final int arm = this.getArm();
+        switch (arm) {
+            case PunchAttackAction.BOTH:
+                rollLeft = PunchAttackAction.toHit(game, this.getEntityId(), game.getTarget(this.getTargetType(), this.getTargetId()), PunchAttackAction.LEFT, false).getValueAsString();
+                rollRight = PunchAttackAction.toHit(game, this.getEntityId(), game.getTarget(this.getTargetType(), this.getTargetId()), PunchAttackAction.RIGHT, false).getValueAsString();
+                buffer = Messages.getString("BoardView1.punchBoth", rollLeft, rollRight);
+                break;
+            case PunchAttackAction.LEFT:
+                rollLeft = PunchAttackAction.toHit(game, this.getEntityId(), game.getTarget(this.getTargetType(), this.getTargetId()), PunchAttackAction.LEFT, false).getValueAsString();
+                buffer = Messages.getString("BoardView1.punchLeft", rollLeft);
+                break;
+            case PunchAttackAction.RIGHT:
+                rollRight = PunchAttackAction.toHit(game, this.getEntityId(), game.getTarget(this.getTargetType(), this.getTargetId()), PunchAttackAction.RIGHT, false).getValueAsString();
+                buffer = Messages.getString("BoardView1.punchRight", rollRight);
+                break;
+            default:
+                buffer = "Error on punch action";
+        }
+        return buffer;
     }
 }

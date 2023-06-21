@@ -6,7 +6,7 @@ mul id:219
 Config:Biped
 techbase:Inner Sphere
 era:3065
-source:TRO: 3055 - Civil War
+source:TRO: 3055
 rules level:2
 
 mass:75

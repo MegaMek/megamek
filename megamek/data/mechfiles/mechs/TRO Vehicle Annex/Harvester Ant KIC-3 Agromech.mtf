@@ -1,0 +1,150 @@
+Version:1.1
+Harvester Ant
+KIC-3 AgroMech
+mul id:4265
+
+Config:Quad
+TechBase:Inner Sphere
+Era:2650
+Source:TRO: Vehicle Annex (Revised)
+Rules Level:2
+
+Mass:25
+Engine:75 ICE Engine(IS)
+Structure:IS Industrial
+Myomer:Standard
+Cockpit:Industrial Cockpit
+Gyro:Standard Gyro
+
+Heat Sinks:0 Single
+Walk MP:3
+Jump MP:0
+
+Armor:Commercial(Inner Sphere)
+FLL Armor:3
+FRL Armor:3
+LT Armor:7
+RT Armor:7
+CT Armor:8
+HD Armor:8
+RLL Armor:3
+RRL Armor:3
+RTL Armor:2
+RTR Armor:2
+RTC Armor:2
+
+Weapons:0
+
+Front Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Front Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Combine
+Combine
+Combine
+Combine
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Combine
+Combine
+Combine
+Combine
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Cargo (2 tons)
+Cargo (2 tons)
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

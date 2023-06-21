@@ -88,7 +88,7 @@ ISERMediumLaser
 </Turret Equipment>
 
 <source>
-XTR: Marik - Jihad
+XTR: Marik
 </source>
 
 <tonnage>
@@ -127,5 +127,5 @@ TARGETING:Maxell TA50
 </systemManufacturers>
 
 <source>
-TRO3058U - Succession Wars
+TRO: 3058 Upgrade
 </source>

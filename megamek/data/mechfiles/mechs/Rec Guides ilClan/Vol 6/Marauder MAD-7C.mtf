@@ -7,7 +7,7 @@ Config:Biped
 techbase:Inner Sphere
 era:3103
 rules level:4
-source:Rec Guide:ilClan #6 - Late Republic
+source:Rec Guide:ilClan #6
 
 mass:75
 engine:300 XL Engine(IS)

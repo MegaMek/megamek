@@ -162,6 +162,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     public static final String VIEW_TOGGLE_FOV_HIGHLIGHT = "viewToggleFovHighlight";
     public static final String VIEW_TOGGLE_FIRING_SOLUTIONS = "viewToggleFiringSolutions";
     public static final String VIEW_MOVE_ENV = "viewMovementEnvelope";
+    public static final String VIEW_TURN_DETAILS_OVERLAY = "viewTurnDetailsOverlay";
     public static final String VIEW_MOVE_MOD_ENV = "viewMovModEnvelope";
     public static final String VIEW_CHANGE_THEME = "viewChangeTheme";
     public static final String VIEW_ROUND_REPORT = "viewRoundReport";
@@ -877,9 +878,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             case VIEW_MINI_MAP:
                 GUIP.toggleMinimapEnabled();
                 break;
-            case VIEW_KEYBINDS_OVERLAY:
-                GUIP.toggleKeybindsOverlay();
-                break;
             case VIEW_TOGGLE_HEXCOORDS:
                 GUIP.toggleCoords();
                 break;
@@ -937,7 +935,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 break;
             case VIEW_TOGGLE_SENSOR_RANGE:
                 GUIP.setShowSensorRange(!GUIP.getShowSensorRange());
-                bv.repaint();
                 break;
             case VIEW_TOGGLE_FOV_DARKEN:
                 GUIP.setFovDarken(!GUIP.getFovDarken());

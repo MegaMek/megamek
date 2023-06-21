@@ -24,6 +24,7 @@ import megamek.common.options.*;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.*;
 import megamek.common.weapons.bayweapons.ArtilleryBayWeapon;
+import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
 
 import javax.swing.*;
@@ -34,6 +35,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * A dialog that a player can use to customize his mech before battle.
@@ -326,27 +328,13 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
 
         if ((OptionsConstants.GUNNERY_WEAPON_SPECIALIST).equals(option.getName())) {
             optionComp.addValue(Messages.getString("CustomMechDialog.None"));
-            TreeSet<String> uniqueWeapons = new TreeSet<>();
-            for (int i = 0; i < entity.getWeaponList().size(); i++) {
-                Mounted m = entity.getWeaponList().get(i);
-                uniqueWeapons.add(m.getName());
-            }
-            for (String name : uniqueWeapons) {
-                optionComp.addValue(name);
-            }
+            PilotSPAHelper.weaponSpecialistValidWeaponNames(entity, gameOptions()).forEach(optionComp::addValue);
             optionComp.setSelected(option.stringValue());
         }
         
         if ((OptionsConstants.GUNNERY_SANDBLASTER).equals(option.getName())) {
             optionComp.addValue(Messages.getString("CustomMechDialog.None"));
-            TreeSet<String> uniqueWeapons = new TreeSet<>();
-            for (int i = 0; i < entity.getWeaponList().size(); i++) {
-                Mounted m = entity.getWeaponList().get(i);
-                uniqueWeapons.add(m.getName());
-            }
-            for (String name : uniqueWeapons) {
-                optionComp.addValue(name);
-            }
+            PilotSPAHelper.sandblasterValidWeaponNames(entity, gameOptions()).forEach(optionComp::addValue);
             optionComp.setSelected(option.stringValue());
         }
 

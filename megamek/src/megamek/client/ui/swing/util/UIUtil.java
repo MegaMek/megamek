@@ -1173,6 +1173,24 @@ public final class UIUtil {
                 .anyMatch(w -> w.isShowing() && (w instanceof JDialog) && ((JDialog) w).isModal());
     }
 
+    /**
+     *  Automatically determines the correct row heights for each row of the given JTable and sets it.
+     *  Note: Just calling this after a data change or after {@link #adjustDialog(JDialog, int)} will
+     *  typically not work well. Instead, it must be called from a {@link javax.swing.event.TableModelListener},
+     *  a {@link javax.swing.event.TableColumnModelListener} and (if a row sorter is used) a
+     *  {@link javax.swing.event.RowSorterListener} to be effective.
+     */
+    public static void updateRowHeights(JTable table) {
+        for (int row = 0; row < table.getRowCount(); row++) {
+            int rowHeight = table.getRowHeight();
+            for (int column = 0; column < table.getColumnCount(); column++) {
+                Component comp = table.prepareRenderer(table.getCellRenderer(row, column), row, column);
+                rowHeight = Math.max(rowHeight, comp.getPreferredSize().height);
+            }
+            table.setRowHeight(row, rowHeight);
+        }
+    }
+
     // PRIVATE
     
     private final static Color LIGHTUI_GREEN = new Color(20, 140, 20);

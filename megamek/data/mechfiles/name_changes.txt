@@ -840,6 +840,7 @@ Whirlwind Destroyer (Clan)|Whirlwind Destroyer (2901)
 Winchester Cruiser (Standard)|Winchester Cruiser (2364)
 York Destroyer Carrier (Standard)|York Destroyer Carrier (2947)
 York Destroyer/Carrier|York Destroyer-Carrier
+York Destroyer/Carrier|York Destroyer-Carrier (2947)
 
 #These are the units impact by the removal of the (Standard) designation that the MUL has discontinued. Done as part of 0.49.13 May 10/2023
 AC/2 Carrier (Standard)|AC/2 Carrier

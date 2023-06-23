@@ -124,7 +124,7 @@ public class QuadMech extends Mech {
                 } else {
                     mp = 0;
                 }
-            }        
+            }
             if (mp > 0) {
                 if (hipHits > 0) {
                     if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
@@ -180,7 +180,8 @@ public class QuadMech extends Mech {
             mp = Math.max(mp + weatherMod, 0);
 
             if(getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_TORNADO_F13)) {
+                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_NONE)
+                    && (game.getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_TORNADO_F13)) {
                 mp += 1;
             }
         }
@@ -207,7 +208,7 @@ public class QuadMech extends Mech {
     public boolean canChangeSecondaryFacing() {
         return hasQuirk(OptionsConstants.QUIRK_POS_EXT_TWIST) && !isProne();
     }
-    
+
     @Override
     public boolean isValidSecondaryFacing(int dir) {
         int rotate = dir - getFacing();
@@ -814,7 +815,7 @@ public class QuadMech extends Mech {
     @Override
     public boolean removePartialCoverHits(int location, int cover, int side) {
         // treat front legs like legs not arms.
-        
+
         // Handle upper cover specially, as treating it as a bitmask will lead
         //  to every location being covered
         if (cover  == LosEffects.COVER_UPPER) {
@@ -825,7 +826,7 @@ public class QuadMech extends Mech {
                 return true;
             }
         }
-        
+
         // left and right cover are from attacker's POV.
         // if hitting front arc, need to swap them
         if (side == ToHitData.SIDE_FRONT) {

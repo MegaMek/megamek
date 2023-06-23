@@ -29,6 +29,8 @@ VERSION HISTORY:
 + Fix #894: TO fatigue is now calculated from the better of Gunnery/Anti-Mek for Infantry
 + PR #4539: Picked-up pilots are now shown on the unit tooltip in pilot info
 + PR #4532, #4536: BV Calculation updates for MG Arrays and Manei Domini options
++ Fix #206: The allowed weapons for the Sandblaster and Weapon Specialist SPAs have been corrected; some are available depending on game options;
+            Weapon choices are now shown in the pilot tooltip
 
 0.49.13 (2023-05-23 2000 UTC)
 + Fix #3914: LAM fuel tanks will now correctly provide fuel to the LAM

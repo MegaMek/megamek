@@ -23,10 +23,7 @@ import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
-import megamek.common.weapons.bayweapons.LaserBayWeapon;
-import megamek.common.weapons.bayweapons.PPCBayWeapon;
-import megamek.common.weapons.bayweapons.PulseLaserBayWeapon;
-import megamek.common.weapons.bayweapons.ScreenLauncherBayWeapon;
+import megamek.common.weapons.bayweapons.*;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
 import megamek.common.weapons.gaussrifles.ISHGaussRifle;
@@ -717,8 +714,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         toHit = compileEnvironmentalToHitMods(game, ae, target, wtype, atype, toHit, isArtilleryIndirect);
 
         // Collect the modifiers for the crew/pilot
-        toHit = compileCrewToHitMods(game, ae, te, toHit, wtype);
-
+        toHit = compileCrewToHitMods(game, ae, te, toHit, weapon);
+        
         // Collect the modifiers for the attacker's condition/actions
         if (ae != null) {
             //Conventional fighter, Aerospace and fighter LAM attackers
@@ -3945,12 +3942,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param ae The Entity making this attack
      * @param te The target Entity
      * @param toHit The running total ToHitData for this WeaponAttackAction
-     *
-     * @param wtype The WeaponType of the weapon being used
-     *
+     * @param weapon The weapon being used (it's type should be WeaponType!)
+     * 
      */
-    private static ToHitData compileCrewToHitMods(Game game, Entity ae, Entity te, ToHitData toHit, WeaponType wtype) {
-
+    private static ToHitData compileCrewToHitMods(Game game, Entity ae, Entity te, ToHitData toHit, Mounted weapon) {
+        
         if (ae == null) {
             // These checks won't work without a valid attacker
             return toHit;
@@ -4014,6 +4010,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.Vdni"));
         }
 
+        WeaponType wtype = ((weapon != null) && (weapon.getType() instanceof WeaponType)) ? (WeaponType) weapon.getType() : null;
+
         if (ae.isConventionalInfantry()) {
             // check for cyber eye laser sighting on ranged attacks
             if (ae.hasAbility(OptionsConstants.MD_CYBER_IMP_LASER)
@@ -4041,15 +4039,17 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // Is the pilot a weapon specialist?
-        if (wtype != null && ae.hasAbility(OptionsConstants.GUNNERY_WEAPON_SPECIALIST, wtype.getName())) {
+        if (wtype instanceof BayWeapon
+                && weapon.getBayWeapons().stream().map(ae::getEquipment)
+                .allMatch(w -> ae.hasAbility(OptionsConstants.GUNNERY_WEAPON_SPECIALIST, w.getName()))) {
+            // All weapons in a bay must match the specialization
+            toHit.addModifier(-2, Messages.getString("WeaponAttackAction.WeaponSpec"));
+        } else if (wtype != null && ae.hasAbility(OptionsConstants.GUNNERY_WEAPON_SPECIALIST, wtype.getName())) {
             toHit.addModifier(-2, Messages.getString("WeaponAttackAction.WeaponSpec"));
         } else if (ae.hasAbility(OptionsConstants.GUNNERY_SPECIALIST)) {
-            // aToW style gunnery specialist: -1 to specialized weapon and +1 to
-            // all other weapons
-            // Note that weapon specialist supersedes gunnery specialization, so
-            // if you have
-            // a specialization in Medium Lasers and a Laser specialization, you
-            // only get the -2 specialization mod
+            // aToW style gunnery specialist: -1 to specialized weapon and +1 to all other weapons
+            // Note that weapon specialist supersedes gunnery specialization, so if you have
+            // a specialization in Medium Lasers and a Laser specialization, you only get the -2 specialization mod
             if (wtype != null && wtype.hasFlag(WeaponType.F_ENERGY)) {
                 if (ae.hasAbility(OptionsConstants.GUNNERY_SPECIALIST, Crew.SPECIAL_ENERGY)) {
                     toHit.addModifier(-1, Messages.getString("WeaponAttackAction.EnergySpec"));

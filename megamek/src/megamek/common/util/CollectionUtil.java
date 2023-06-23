@@ -23,13 +23,15 @@ import java.util.Collection;
 import java.util.List;
 
 /** Some utility methods for Collections. */
-public class CollectionUtil {
+public final class CollectionUtil {
 
-    /** 
+    private CollectionUtil() { }
+
+    /**
      * Returns a list that is the concatenation of the provided lists. Does NOT
      * do anything else (e.g. remove duplicate entries). 
      */
-    public static final <T> List<T> union(List<T> c1, List<T> c2) {
+    public static <T> List<T> union(List<T> c1, List<T> c2) {
         List<T> result = new ArrayList<>(c1);
         result.addAll(c2);
         return result;
@@ -39,8 +41,8 @@ public class CollectionUtil {
      * Returns a random element of the collection or the element if it has only one.
      * Throws a NoSuchElement exception if it is empty.
      */
-    public static final <T> T anyOneElement(Collection<T> collection) {
-        return collection.stream().findFirst().get();
+    public static <T> T anyOneElement(Collection<T> collection) {
+        return collection.stream().findFirst().orElseThrow();
     }
     
     /** 
@@ -48,10 +50,10 @@ public class CollectionUtil {
      * Throws an IllegalArgument exception if the collection size is greater than 1.
      * Throws a NoSuchElement exception if it is empty.
      */
-    public static final <T> T theElement(Collection<T> collection) {
+    public static <T> T theElement(Collection<T> collection) {
         if (collection.size() > 1) {
             throw new IllegalArgumentException("The given collection has more than one element.");
         }
-        return collection.stream().findFirst().get();
+        return collection.stream().findFirst().orElseThrow();
     }
 }

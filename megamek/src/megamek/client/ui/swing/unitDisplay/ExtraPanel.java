@@ -12,6 +12,7 @@ import megamek.client.ui.swing.widget.*;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
+import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
@@ -333,11 +334,15 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener, IPrefer
             chSensors.setEnabled(true);
             dontChange = false;
         }
+
+        Game game = clientgui.getClient().getGame();
+        GameOptions gameOptions = game.getOptions();
+
         // Walk through the list of teams. There
         // can't be more teams than players.
         StringBuffer buff;
         if (clientgui != null) {
-            Enumeration<Player> loop = clientgui.getClient().getGame().getPlayers();
+            Enumeration<Player> loop = game.getPlayers();
             while (loop.hasMoreElements()) {
                 Player player = loop.nextElement();
                 int team = player.getTeam();
@@ -520,9 +525,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener, IPrefer
                 hasTSM = true;
             }
 
-            if ((clientgui != null)
-                    && clientgui.getClient().getGame().getOptions()
-                            .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
+            if ((clientgui != null) && gameOptions.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
                 mtHeat = true;
             }
             heatR.setForeground(GUIPreferences.getInstance().getColorForHeat(en.heat));
@@ -537,7 +540,12 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener, IPrefer
         refreshSensorChoices(en);
 
         if (null != en.getActiveSensor()) {
-            String tmpStr = Messages.getString("MechDisplay.CurrentSensors") + " " + UnitToolTip.getSensorDesc(en);
+            String sensorDesc = "";
+            if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)
+                    || (gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) && en.isSpaceborne()) {
+                sensorDesc = UnitToolTip.getSensorDesc(en);
+            }
+            String tmpStr = Messages.getString("MechDisplay.CurrentSensors") + " " + sensorDesc;
             tmpStr = String.format("<html><div WIDTH=%d>%s</div></html>",  250, tmpStr);
             curSensorsL.setText(tmpStr);
         } else {

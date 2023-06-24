@@ -1,0 +1,52 @@
+name: Validate Name Changes List
+
+# This Action Definition should be triggered only on master being updated or Pull Requests being added or updated against master.
+on:
+  push:
+    branches: [ master ]
+    paths:
+      # Necessary when the name_changes.txt list is updated or any unit file.
+      - 'megamek/data/mechfiles/**.blk'
+      - 'megamek/data/mechfiles/**.mtf'
+      - 'megamek/data/mechfiles/name_changes.txt'
+  pull_request:
+    branches: [ master ]
+    paths:
+      - 'megamek/data/mechfiles/**.blk'
+      - 'megamek/data/mechfiles/**.mtf'
+      - 'megamek/data/mechfiles/name_changes.txt'
+
+jobs:
+  board_validator:
+    runs-on: ${{ matrix.os }}
+
+    # Run this job once for each combination in the matrix below.
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ] # For Board Validation running on *nix is sufficient
+        java-distribution: [ temurin ]
+        java-version: [ 17 ]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      # Setup the requested Java Distribution and Version from the matrix
+      - name: Set up ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
+        uses: actions/setup-java@v3
+        with:
+          distribution: ${{ matrix.java-distribution }}
+          java-version: ${{ matrix.java-version }}
+
+      # Make sure we can execute the Gradle wrapper
+      - name: Grant execute permission for gradlew (*nix or MacOS)
+        run: chmod +x gradlew
+        if: runner.os != 'Windows'
+
+      # Build the MegaMek project
+      - name: Create MM Jar
+        run: ./gradlew jar --stacktrace
+
+      # Run the Boards Validator
+      - name: Validate Name Changes
+        working-directory: megamek
+        run: java -cp build/libs/MegaMek.jar megamek.utilities.NameChangesValidator

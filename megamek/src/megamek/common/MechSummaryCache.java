@@ -41,7 +41,7 @@ public class MechSummaryCache {
     }
 
     private static final String FILENAME_UNITS_CACHE = "units.cache";
-    private static final String FILENAME_LOOKUP = "name_changes.txt";
+    public static final String FILENAME_LOOKUP = "name_changes.txt";
 
     private static MechSummaryCache instance;
     private static boolean disposeInstance = false;

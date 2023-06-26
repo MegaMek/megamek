@@ -12,6 +12,7 @@ import megamek.client.ui.swing.widget.*;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
+import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
@@ -333,13 +334,15 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener, IPrefer
             chSensors.setEnabled(true);
             dontChange = false;
         }
+
         // Walk through the list of teams. There
         // can't be more teams than players.
         StringBuffer buff;
         if (clientgui != null) {
-            Enumeration<Player> loop = clientgui.getClient().getGame().getPlayers();
-            while (loop.hasMoreElements()) {
-                Player player = loop.nextElement();
+            Game game = clientgui.getClient().getGame();
+            GameOptions gameOptions = game.getOptions();
+
+            for (Player player : game.getPlayersList()) {
                 int team = player.getTeam();
                 if (en.isNarcedBy(team) && !player.isObserver()) {
                     buff = new StringBuffer(Messages.getString("MechDisplay.NARCedBy"));
@@ -467,81 +470,84 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener, IPrefer
             if (narcList.getModel().getSize() == 0) {
                 ((DefaultListModel<String>) narcList.getModel()).addElement(" ");
             }
-        }
 
 
-        // transport values
-        String unused = en.getUnusedString();
-        if (unused.isBlank()) {
-            unused = Messages.getString("MechDisplay.None");
-        }
-        unusedR.setText(unused);
-        carrysR.setText(null);
-        // boolean hasText = false;
-        for (Entity other : en.getLoadedUnits()) {
-            carrysR.append(other.getShortName());
-            carrysR.append("\n");
-        }
+            // transport values
+            String unused = en.getUnusedString();
+            if (unused.isBlank()) {
+                unused = Messages.getString("MechDisplay.None");
+            }
+            unusedR.setText(unused);
+            carrysR.setText(null);
+            // boolean hasText = false;
+            for (Entity other : en.getLoadedUnits()) {
+                carrysR.append(other.getShortName());
+                carrysR.append("\n");
+            }
 
-        // Show club(s).
-        for (Mounted club : en.getClubs()) {
-            carrysR.append(club.getName());
-            carrysR.append("\n");
-        }
+            // Show club(s).
+            for (Mounted club : en.getClubs()) {
+                carrysR.append(club.getName());
+                carrysR.append("\n");
+            }
 
-        // Show searchlight
-        if (en.hasSearchlight()) {
-            if (en.isUsingSearchlight()) {
-                carrysR.append(Messages.getString("MechDisplay.SearchlightOn"));
+            // Show searchlight
+            if (en.hasSearchlight()) {
+                if (en.isUsingSearchlight()) {
+                    carrysR.append(Messages.getString("MechDisplay.SearchlightOn"));
+                } else {
+                    carrysR.append(Messages.getString("MechDisplay.SearchlightOff"));
+                }
+            }
+
+            // Show Heat Effects, but only for Mechs.
+            heatR.setText("");
+            sinksR.setText("");
+
+            if (en instanceof Mech) {
+                Mech m = (Mech) en;
+
+                sinks2B.setEnabled(!dontChange);
+                sinks = m.getActiveSinksNextRound();
+                if (m.hasDoubleHeatSinks()) {
+                    sinksR.append(Messages.getString("MechDisplay.activeSinksTextDouble",
+                            sinks, sinks * 2));
+                } else {
+                    sinksR.append(Messages.getString("MechDisplay.activeSinksTextSingle", sinks));
+                }
+
+                boolean hasTSM = false;
+                boolean mtHeat = false;
+                if (((Mech) en).hasTSM(false)) {
+                    hasTSM = true;
+                }
+
+                if (gameOptions.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
+                    mtHeat = true;
+                }
+                heatR.setForeground(GUIPreferences.getInstance().getColorForHeat(en.heat));
+                heatR.append(HeatEffects.getHeatEffects(en.heat, mtHeat, hasTSM));
             } else {
-                carrysR.append(Messages.getString("MechDisplay.SearchlightOff"));
+                // Non-Mechs cannot configure their heat sinks
+                sinks2B.setEnabled(false);
             }
-        }
 
-        // Show Heat Effects, but only for Mechs.
-        heatR.setText("");
-        sinksR.setText("");
+            dumpBombs.setEnabled(false);
 
-        if (en instanceof Mech) {
-            Mech m = (Mech) en;
+            refreshSensorChoices(en);
 
-            sinks2B.setEnabled(!dontChange);
-            sinks = m.getActiveSinksNextRound();
-            if (m.hasDoubleHeatSinks()) {
-                sinksR.append(Messages.getString("MechDisplay.activeSinksTextDouble",
-                        sinks, sinks * 2));
+            if (null != en.getActiveSensor()) {
+                String sensorDesc = "";
+                if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)
+                        || (gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) && en.isSpaceborne()) {
+                    sensorDesc = UnitToolTip.getSensorDesc(en);
+                }
+                String tmpStr = Messages.getString("MechDisplay.CurrentSensors") + " " + sensorDesc;
+                tmpStr = String.format("<html><div WIDTH=%d>%s</div></html>",  250, tmpStr);
+                curSensorsL.setText(tmpStr);
             } else {
-                sinksR.append(Messages.getString("MechDisplay.activeSinksTextSingle", sinks));
+                curSensorsL.setText((Messages.getString("MechDisplay.CurrentSensors")).concat(" "));
             }
-
-            boolean hasTSM = false;
-            boolean mtHeat = false;
-            if (((Mech) en).hasTSM(false)) {
-                hasTSM = true;
-            }
-
-            if ((clientgui != null)
-                    && clientgui.getClient().getGame().getOptions()
-                            .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
-                mtHeat = true;
-            }
-            heatR.setForeground(GUIPreferences.getInstance().getColorForHeat(en.heat));
-            heatR.append(HeatEffects.getHeatEffects(en.heat, mtHeat, hasTSM));
-        } else {
-            // Non-Mechs cannot configure their heat sinks
-            sinks2B.setEnabled(false);
-        }
-
-        dumpBombs.setEnabled(false);
-
-        refreshSensorChoices(en);
-
-        if (null != en.getActiveSensor()) {
-            String tmpStr = Messages.getString("MechDisplay.CurrentSensors") + " " + UnitToolTip.getSensorDesc(en);
-            tmpStr = String.format("<html><div WIDTH=%d>%s</div></html>",  250, tmpStr);
-            curSensorsL.setText(tmpStr);
-        } else {
-            curSensorsL.setText((Messages.getString("MechDisplay.CurrentSensors")).concat(" "));
         }
         
         if (en.getLastTarget() != Entity.NONE) {

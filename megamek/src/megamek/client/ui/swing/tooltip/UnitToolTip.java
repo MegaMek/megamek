@@ -20,6 +20,7 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.annotations.Nullable;
+import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.templates.TROView;
@@ -1038,6 +1039,7 @@ public final class UnitToolTip {
     private static StringBuilder inGameValues(Entity entity, Player localPlayer, boolean inGameValue,
                                               boolean showBV, boolean showSensors, boolean showSeenBy) {
         Game game = entity.getGame();
+        GameOptions gameOptions = game.getOptions();
         boolean isGunEmplacement = entity instanceof GunEmplacement;
         String result = "";
 
@@ -1049,7 +1051,7 @@ public final class UnitToolTip {
             // BV Info
             // Hidden for invisible units when in double blind and hide enemy bv is selected
             // Also not shown in the lobby as BV is shown there outside the tooltip
-            boolean showEnemyBV = !(game.getOptions().booleanOption(OptionsConstants.ADVANCED_SUPPRESS_DB_BV) && game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND));
+            boolean showEnemyBV = !(gameOptions.booleanOption(OptionsConstants.ADVANCED_SUPPRESS_DB_BV) && gameOptions.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND));
             boolean isVisible = EntityVisibilityUtils.trackThisEntitiesVisibilityInfo(localPlayer, entity);
 
             if (isVisible || showEnemyBV) {
@@ -1224,9 +1226,9 @@ public final class UnitToolTip {
 
         if (showSeenBy) {
             // If Double Blind, add information about who sees this Entity
-            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) {
+            if (gameOptions.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) {
                 StringBuffer tempList = new StringBuffer();
-                boolean teamVision = game.getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION);
+                boolean teamVision = gameOptions.booleanOption(OptionsConstants.ADVANCED_TEAM_VISION);
                 int seenByResolution = GUIP.getUnitToolTipSeenByResolution();
                 String tmpStr = "";
 
@@ -1269,7 +1271,8 @@ public final class UnitToolTip {
 
         if (showSensors) {
             // If sensors, display what sensors this unit is using
-            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS) || game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
+            if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)
+                    || (gameOptions.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) && entity.isSpaceborne()) {
                 String visualRange = Compute.getMaxVisualRange(entity, false) + "";
                 if (game.getPlanetaryConditions().isIlluminationEffective()) {
                     visualRange += " (" + Compute.getMaxVisualRange(entity, true) + ")";

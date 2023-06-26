@@ -453,7 +453,7 @@ Tunnel Rat IV Mining Exoskeleton [Battle Claw/LMG]|Tunnel Rat IV Mining Exoskele
 Undine Battle Armor (Standard)|Undine Battle Armor (Sqd5)
 Undine Battle Armor (Upgrade)|Undine Battle Armor (Upgrade)(Sqd5)
 Undine Battle Armor [IS] (Standard)|Undine Battle Armor (Sqd4)
-Undine Battle Armor 'Sebastian'|Undine Battle Armor 'Sebastian'(Sqd5)
+Undine Battle Armor 'Sebastian'|Undine Battle Armor 'Sebastian'(Sqd4)
 Void Medium Battle Armor (DCA)|Void Medium Battle Armor (DCA)(Sqd4)
 Void Medium Battle Armor (Minelayer)|Void Medium Battle Armor (Minelayer)(Sqd4)
 Void Medium Battle Armor (Nova Cat)|Void Medium Battle Armor (Nova Cat)(Sqd5)

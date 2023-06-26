@@ -1801,7 +1801,6 @@ public class GameManager implements IGameManager {
                 etr = UnitToolTip.getEntityTipReport(e).toString();
             } catch (Exception ex) {
                 LogManager.getLogger().error("", ex);
-                etr = ex.getMessage();
             }
             r.add(etr);
             reports.add(r);

@@ -15539,4 +15539,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         return bvCalculator;
     }
+
+    /**
+     * Returns the GameOptions of this Entity's game if it has one. If game is null (happens in unit
+     * construction in MML), a new (default) options object is returned. Prefer this method over directly
+     * calling game.getOptions() to avoid NPEs in places where game is null.
+     *
+     * @return The GameOptions of this Entity's game if it has one, otherwise a default options object.
+     * */
+    protected final GameOptions gameOptions() {
+        return game != null ? game.getOptions() : new GameOptions();
+    }
 }

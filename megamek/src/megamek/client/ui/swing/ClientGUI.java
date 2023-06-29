@@ -2241,6 +2241,16 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         }
 
         @Override
+        public void gameEntityChange(GameEntityChangeEvent e) {
+            if ((unitDisplay != null) && (unitDisplay.getCurrentEntity() != null)
+                && (e.getEntity() != null)
+                    && (unitDisplay.getCurrentEntity().getId() == e.getEntity().getId())) {
+                // underlying object may have changed, so reset
+                unitDisplay.displayEntity(e.getEntity());
+            }
+        }
+
+        @Override
         public void gameReport(GameReportEvent e) {
             // Normally the Report Display is updated when the panel is
             // switched during a phase change.

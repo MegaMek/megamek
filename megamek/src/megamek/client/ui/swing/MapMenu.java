@@ -42,6 +42,8 @@ import java.awt.event.MouseEvent;
 import java.math.BigInteger;
 import java.util.*;
 
+import static java.util.stream.Collectors.toList;
+
 /**
  * Context menu for the board.
  */
@@ -177,13 +179,13 @@ public class MapMenu extends JPopupMenu {
                     this.add(menu);
                     itemCount++;
                 }
-                
+
                 menu = createRotateTurretMenu();
                 if (menu.getItemCount() > 0) {
                     this.add(menu);
                     itemCount++;
                 }
-                
+
             } else if ((currentPanel instanceof PhysicalDisplay)) {
                 menu = createPhysicalMenu(false);
 
@@ -212,7 +214,7 @@ public class MapMenu extends JPopupMenu {
                 add(item);
             }
         }
-        
+
         menu = touchOffExplosivesMenu();
         if (menu.getItemCount() > 0) {
             this.add(menu);
@@ -220,6 +222,12 @@ public class MapMenu extends JPopupMenu {
         }
 
         menu = createSpecialHexDisplayMenu();
+        if (menu.getItemCount() > 0) {
+            this.add(menu);
+            itemCount++;
+        }
+
+        menu = createGameMasterMenu();
         if (menu.getItemCount() > 0) {
             this.add(menu);
             itemCount++;
@@ -382,6 +390,39 @@ public class MapMenu extends JPopupMenu {
         return menu;
     }
 
+    /**
+     * Create various menus related to GameMaster (GM) mode
+     *
+     * @return
+     */
+    private JMenu createGameMasterMenu() {
+        JMenu menu = new JMenu("Game Master");
+        if (!client.getLocalPlayer().getGameMaster()) {
+            return menu;
+        } else {
+            JMenu dmgMenu = new JMenu("Edit Damage");
+            for (Entity entity : client.getGame().getEntitiesVector(coords)) {
+                dmgMenu.add(createEditUnitMenuItem(entity));
+            }
+            if (dmgMenu.getItemCount() != 0) {
+                menu.add(dmgMenu);
+            }
+            return menu;
+        }
+    }
+
+    JMenuItem createEditUnitMenuItem(Entity entity) {
+        JMenuItem item = new JMenuItem(Messages.getString("EditDamage "+entity.getDisplayName()));
+        item.addActionListener(evt -> {
+            UnitEditorDialog med = new UnitEditorDialog(gui.getFrame(), entity);
+            gui.getBoardView().setShouldIgnoreKeys(true);
+            med.setVisible(true);
+            client.sendUpdateEntity(entity);
+            gui.getBoardView().setShouldIgnoreKeys(false);
+        });
+        return item;
+    }
+
     private JMenu createSelectMenu() {
         JMenu menu = new JMenu("Select");
         // add select options
@@ -398,9 +439,9 @@ public class MapMenu extends JPopupMenu {
     private JMenu createViewMenu() {
         JMenu menu = new JMenu("View");
         Game game = client.getGame();
-                
+
         Player localPlayer = client.getLocalPlayer();
-        
+
         for (Entity entity : game.getEntitiesVector(coords, true)) {
             // Only add the unit if it's actually visible
             //  With double blind on, the game may unseen units
@@ -661,7 +702,7 @@ public class MapMenu extends JPopupMenu {
         if (myEntity.isHidden()) {
             return menu;
         }
-        
+
         menu.add(createFireJMenuItem());
         menu.add(createSkipJMenuItem());
         menu.add(createAlphaStrikeJMenuItem());
@@ -916,7 +957,7 @@ public class MapMenu extends JPopupMenu {
 
     private JMenu createConvertMenu() {
         JMenu menu = new JMenu(Messages.getString("MovementDisplay.moveModeConvert"));
-        
+
         if (myEntity instanceof Mech && ((Mech) myEntity).hasTracks()) {
             menu.add(createConvertMenuItem("MovementDisplay.moveModeLeg",
                     MovementDisplay.MoveCommand.MOVE_MODE_LEG, false));
@@ -928,7 +969,7 @@ public class MapMenu extends JPopupMenu {
                     myEntity.getConversionMode() == QuadVee.CONV_MODE_MECH));
             menu.add(createConvertMenuItem("MovementDisplay.moveModeVee",
                     MovementDisplay.MoveCommand.MOVE_MODE_VEE,
-                    myEntity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE));            
+                    myEntity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE));
         } else if (myEntity instanceof LandAirMech) {
             int currentMode = myEntity.getConversionMode();
             JMenuItem item = createConvertMenuItem("MovementDisplay.moveModeMech",
@@ -992,9 +1033,9 @@ public class MapMenu extends JPopupMenu {
         final boolean isTargetingDisplay = (currentPanel instanceof TargetingPhaseDisplay);
         final boolean canStartFires = client.getGame().getOptions()
                 .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE);
-        
+
         Player localPlayer = client.getLocalPlayer();
-        
+
         // Add menu item to target each entity in the coords
         for (Entity entity : client.getGame().getEntitiesVector(coords)) {
             // Only add the unit if it's actually visible

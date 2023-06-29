@@ -216,7 +216,7 @@ public class MechView {
         }
         
         TableElement tpTable = new TableElement(3);
-        String tableSpacer = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+        String tableSpacer = "     ";
         tpTable.setColNames(Messages.getString("MechView.Level"), tableSpacer,
                 Messages.getString("MechView.Era"));
         tpTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_LEFT,TableElement.JUSTIFIED_LEFT);
@@ -471,7 +471,7 @@ public class MechView {
         Game game = entity.getGame();
 
         if ((game == null) || game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
-            StringJoiner quirksList = new StringJoiner("<br/>\n");
+            List<String> quirksList = new ArrayList<>();
             Quirks quirks = entity.getQuirks();
 
             for (Enumeration<IOptionGroup> optionGroups = quirks.getGroups(); optionGroups.hasMoreElements();) {
@@ -487,14 +487,14 @@ public class MechView {
                     }
                 }
             }
-            if (quirksList.length() > 0) {
+            if (!quirksList.isEmpty()) {
+                sFluff.add(new SingleLine());
                 ItemList list = new ItemList(Messages.getString("MechView.Quirks"));
-                list.addItem(quirksList.toString());
+                quirksList.forEach(list::addItem);
                 sFluff.add(list);
             }
 
-            String wpQuirksList = "";
-
+            List<String> wpQuirksList = new ArrayList<>();
             for (Mounted weapon: entity.getWeaponList()) {
                 for (Enumeration<IOptionGroup> optionGroups = weapon.getQuirks().getGroups(); optionGroups.hasMoreElements();) {
                     IOptionGroup group = optionGroups.nextElement();
@@ -512,15 +512,16 @@ public class MechView {
 
                         if (!wq.isEmpty()) {
                             wq = weapon.getDesc() + ": " + wq.substring(0, wq.length() - 2);
-                            wpQuirksList += wq + "<BR/>";
+                            wpQuirksList.add(wq);
                         }
                     }
                 }
             }
 
             if (!wpQuirksList.isEmpty()) {
-                ItemList list = new ItemList("<BR/>" + Messages.getString("MechView.WeaponQuirks"));
-                list.addItem(wpQuirksList);
+                sFluff.add(new SingleLine());
+                ItemList list = new ItemList(Messages.getString("MechView.WeaponQuirks"));
+                wpQuirksList.forEach(list::addItem);
                 sFluff.add(list);
             }
         }

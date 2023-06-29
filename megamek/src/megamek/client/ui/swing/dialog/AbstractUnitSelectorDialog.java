@@ -214,7 +214,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                     }
                 });
 
-
         for (int i = 0; i < unitModel.getColumnCount(); i++) {
             tableUnits.getColumnModel().getColumn(i).setPreferredWidth(unitModel.getPreferredWidth(i));
         }
@@ -225,8 +224,8 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         scrollTableUnits = new JScrollPane(tableUnits);
         scrollTableUnits.setName("scrollTableUnits");
 
-        unitModel.addTableModelListener((e) -> UIUtil.updateRowHeights(tableUnits));
-        sorter.addRowSorterListener((e) -> UIUtil.updateRowHeights(tableUnits));
+        unitModel.addTableModelListener((e) -> UIUtil.updateRowHeightsForEqualHeights(tableUnits));
+        sorter.addRowSorterListener((e) -> UIUtil.updateRowHeightsForEqualHeights(tableUnits));
         unitColumnModel.addColumnModelListener(columnModelListener);
 
         gridBagConstraints.insets = new Insets(5, 0, 0, 0);
@@ -973,17 +972,17 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
         @Override
         public void columnMoved(TableColumnModelEvent e) {
-            UIUtil.updateRowHeights(tableUnits);
+            UIUtil.updateRowHeightsForEqualHeights(tableUnits);
         }
 
         @Override
         public void columnMarginChanged(ChangeEvent e) {
-            UIUtil.updateRowHeights(tableUnits);
+            UIUtil.updateRowHeightsForEqualHeights(tableUnits);
         }
 
         @Override
         public void columnSelectionChanged(ListSelectionEvent e) {
-            UIUtil.updateRowHeights(tableUnits);
+            if (!e.getValueIsAdjusting()) UIUtil.updateRowHeightsForEqualHeights(tableUnits);
         }
     };
 }

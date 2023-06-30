@@ -42,8 +42,6 @@ import java.awt.event.MouseEvent;
 import java.math.BigInteger;
 import java.util.*;
 
-import static java.util.stream.Collectors.toList;
-
 /**
  * Context menu for the board.
  */
@@ -227,7 +225,7 @@ public class MapMenu extends JPopupMenu {
             itemCount++;
         }
 
-        menu = createGameMasterMenu();
+        menu = createGamemasterMenu();
         if (menu.getItemCount() > 0) {
             this.add(menu);
             itemCount++;
@@ -395,12 +393,12 @@ public class MapMenu extends JPopupMenu {
      *
      * @return
      */
-    private JMenu createGameMasterMenu() {
-        JMenu menu = new JMenu("Game Master");
+    private JMenu createGamemasterMenu() {
+        JMenu menu = new JMenu(Messages.getString("Gamemaster.Gamemaster"));
         if (!client.getLocalPlayer().getGameMaster()) {
             return menu;
         } else {
-            JMenu dmgMenu = new JMenu("Edit Damage");
+            JMenu dmgMenu = new JMenu(Messages.getString("Gamemaster.EditDamage"));
             for (Entity entity : client.getGame().getEntitiesVector(coords)) {
                 dmgMenu.add(createEditUnitMenuItem(entity));
             }
@@ -412,7 +410,7 @@ public class MapMenu extends JPopupMenu {
     }
 
     JMenuItem createEditUnitMenuItem(Entity entity) {
-        JMenuItem item = new JMenuItem(Messages.getString("EditDamage "+entity.getDisplayName()));
+        JMenuItem item = new JMenuItem(entity.getDisplayName());
         item.addActionListener(evt -> {
             UnitEditorDialog med = new UnitEditorDialog(gui.getFrame(), entity);
             gui.getBoardView().setShouldIgnoreKeys(true);

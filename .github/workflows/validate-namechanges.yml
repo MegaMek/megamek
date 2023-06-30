@@ -19,8 +19,6 @@ on:
 jobs:
   name_changes_validator:
     runs-on: ubuntu-latest
-    java-distribution: temurin
-    java-version: 17
 
     steps:
       - uses: actions/checkout@v3

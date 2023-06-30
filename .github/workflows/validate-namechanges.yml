@@ -33,7 +33,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build MM Jar
-        run: ./gradlew jar --stacktrace
+        run: ./gradlew build
 
       - name: Validate Name Changes
         working-directory: megamek

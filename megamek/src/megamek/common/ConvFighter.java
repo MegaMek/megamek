@@ -14,6 +14,7 @@ package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.ConvFighterCostCalculator;
+import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -73,7 +74,7 @@ public class ConvFighter extends Aero {
         int used = safeThrust + (2 * overThrust);
         if (!getEngine().isFusion()) {
             used = (int) Math.floor(safeThrust * 0.5) + overThrust;
-        } else if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_CONV_FUSION_BONUS)) {
+        } else if (gameOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_CONV_FUSION_BONUS)) {
             used = (int) Math.floor(safeThrust * 0.5) + (2 * overThrust);
         }
         return used;

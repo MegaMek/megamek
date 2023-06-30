@@ -769,10 +769,11 @@ public interface IAero {
     }
 
     default int getFuelUsed(int thrust) {
-        if (((Entity) this).getEngine().isSolar()) {
+        Entity entity = (Entity) this;
+        if (entity.hasEngine() && entity.getEngine().isSolar()) {
             return 0;
         } else {
-            int overThrust = Math.max(thrust - ((Entity) this).getWalkMP(), 0);
+            int overThrust = Math.max(thrust - entity.getWalkMP(), 0);
             int safeThrust = thrust - overThrust;
             return safeThrust + (2 * overThrust);
         }

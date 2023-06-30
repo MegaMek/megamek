@@ -1782,7 +1782,7 @@ public class GameManager implements IGameManager {
     private void entityStatusReport() {
         List<Report> reports = new ArrayList<>();
         List<Entity> entities = game.getEntitiesVector().stream()
-                .filter(e -> (e.isDeployed() && !((e instanceof MechWarrior) && ((MechWarrior) e).getPickedUpById() != Entity.NONE)))
+                .filter(e -> (e.isDeployed() && e.getPosition() != null))
                 .collect(Collectors.toList());
         Comparator<Entity> comp = Comparator.comparing((Entity e) -> e.getOwner().getTeam());
         comp = comp.thenComparing((Entity e) -> e.getOwner().getName());
@@ -1796,7 +1796,13 @@ public class GameManager implements IGameManager {
             r = new Report(1231);
             r.subject = e.getId();
             r.addDesc(e);
-            r.add(UnitToolTip.getEntityTipReport(e).toString());
+            String etr = "";
+            try {
+                etr = UnitToolTip.getEntityTipReport(e).toString();
+            } catch (Exception ex) {
+                LogManager.getLogger().error("", ex);
+            }
+            r.add(etr);
             reports.add(r);
 
             r = new Report(1230, Report.PUBLIC);

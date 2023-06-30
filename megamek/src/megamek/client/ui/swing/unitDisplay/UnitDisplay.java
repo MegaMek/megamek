@@ -566,8 +566,7 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
         updateDisplay();
     }
 
-    public void updateDisplay() {
-
+    protected void updateDisplay() {
         if (clientgui != null) {
             String enName = currentlyDisplaying.getShortName();
             switch (currentlyDisplaying.getDamageLevel()) {

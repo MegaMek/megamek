@@ -3025,6 +3025,9 @@ public class MoveStep implements Serializable {
         boolean goodWeather = game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM;
 
         if (isPavementStep && ((useBlackIce && goodTemp) || goodWeather)) {
+            if (destHex.containsTerrain(Terrains.BLACK_ICE)){
+                mp ++;
+            }
             if (destHex.containsTerrain(Terrains.BLACK_ICE)
                     && !isCareful()
                     && (nDestEl == destHex.getLevel())) {

@@ -27096,7 +27096,7 @@ public class GameManager implements IGameManager {
             }
 
             // Mechanized BA that could die on a 3+
-            ArrayList<Entity> externalUnits = entity.getExternalUnits();
+            List<Entity> externalUnits = entity.getExternalUnits();
 
             // Handle escape of transported units.
             if (!entity.getLoadedUnits().isEmpty()) {

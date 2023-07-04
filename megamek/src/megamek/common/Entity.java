@@ -8718,46 +8718,22 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return result;
     }
 
-    /**
-     * Unload the given unit.
-     *
-     * @param unit - the <code>Entity</code> to be unloaded.
-     * @return <code>true</code> if the unit was contained in this space,
-     * <code>false</code> otherwise.
-     */
     @Override
     public boolean unload(Entity unit) {
-        // Walk through this entity's transport components;
-        // try to remove the unit from each in turn.
-        // Stop after the first match.
-        Enumeration<Transporter> iter = transports.elements();
-        while (iter.hasMoreElements()) {
-            Transporter next = iter.nextElement();
-            if (next.unload(unit)) {
+        // Walk through this entity's transport components; try to remove the unit from each in turn.
+        for (Transporter trsp : transports) {
+            if (trsp.unload(unit)) {
                 return true;
             }
         }
-
-        // If we got here, none of our transports currently carry the unit.
         return false;
     }
 
     @Override
     public void resetTransporter() {
-        // Walk through this entity's transport components;
-        // and resets them
-        Enumeration<Transporter> iter = transports.elements();
-        while (iter.hasMoreElements()) {
-            Transporter next = iter.nextElement();
-            next.resetTransporter();
-        }
+        transports.forEach(Transporter::resetTransporter);
     }
 
-    /**
-     * Return a string that identifies the unused capacity of this transporter.
-     *
-     * @return A <code>String</code> meant for a human.
-     */
     @Override
     public String getUnusedString() {
         return getUnusedString(false);
@@ -8765,11 +8741,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     @Override
     public double getUnused() {
-        double capacity = 0;
-        for (Transporter transport : transports) {
-            capacity += transport.getUnused();
-        }
-        return capacity;
+        return transports.stream().mapToDouble(Transporter::getUnused).sum();
     }
 
     /**
@@ -8838,80 +8810,31 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return result.toString();
     }
 
-    /**
-     * Determine if transported units prevent a weapon in the given location
-     * from firing.
-     *
-     * @param loc    - the <code>int</code> location attempting to fire.
-     * @param isRear - a <code>boolean</code> value stating if the given location
-     *               is rear facing; if <code>false</code>, the location is front
-     *               facing.
-     * @return <code>true</code> if a transported unit is in the way,
-     * <code>false</code> if the weapon can fire.
-     */
     @Override
     public boolean isWeaponBlockedAt(int loc, boolean isRear) {
-        // Walk through this entity's transport components;
-        // check each for blockage in turn.
-        // Stop after the first match.
-        for (Transporter next : transports) {
-            if (next.isWeaponBlockedAt(loc, isRear)) {
-                return true;
-            }
-        }
-
-        // If we got here, none of our transports
-        // carry a blocking unit at that location.
-        return false;
+        return transports.stream().anyMatch(trsp -> trsp.isWeaponBlockedAt(loc, isRear));
     }
 
-    /**
-     * If a unit is being transported on the outside of the transporter, it can
-     * suffer damage when the transporter is hit by an attack. Currently, no
-     * more than one unit can be at any single location; that same unit can be
-     * "spread" over multiple locations.
-     *
-     * @param loc    - the <code>int</code> location hit by attack.
-     * @param isRear - a <code>boolean</code> value stating if the given location
-     *               is rear facing; if <code>false</code>, the location is front
-     *               facing.
-     * @return The <code>Entity</code> being transported on the outside at that
-     * location. This value will be <code>null</code> if no unit is
-     * transported on the outside at that location.
-     */
     @Override
     public Entity getExteriorUnitAt(int loc, boolean isRear) {
-        // Walk through this entity's transport components;
-        // check each for an exterior unit in turn.
-        // Stop after the first match.
-        for (Transporter next : transports) {
-            Entity exterior = next.getExteriorUnitAt(loc, isRear);
-            if (null != exterior) {
-                return exterior;
-            }
-        }
-
-        // If we got here, none of our transports
-        // carry an exterior unit at that location.
-        return null;
+        return transports.stream()
+                .map(trsp -> trsp.getExteriorUnitAt(loc, isRear))
+                .filter(Objects::nonNull)
+                .findFirst().orElse(null);
     }
 
     @Override
-    public ArrayList<Entity> getExternalUnits() {
-        ArrayList<Entity> rv = new ArrayList<>();
+    public List<Entity> getExternalUnits() {
+        List<Entity> externalUnits = new ArrayList<>();
         for (Transporter t : transports) {
-            rv.addAll(t.getExternalUnits());
+            externalUnits.addAll(t.getExternalUnits());
         }
-        return rv;
+        return externalUnits;
     }
 
     @Override
     public int getCargoMpReduction(Entity carrier) {
-        int rv = 0;
-        for (Transporter t : transports) {
-            rv += t.getCargoMpReduction(carrier);
-        }
-        return rv;
+        return transports.stream().mapToInt(t -> t.getCargoMpReduction(carrier)).sum();
     }
 
     public HitData getTrooperAtLocation(HitData hit, Entity transport) {

@@ -30,6 +30,8 @@ import megamek.common.actions.GrappleAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
+import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.common.verifier.*;
 import megamek.common.weapons.other.CLFireExtinguisher;
 import megamek.common.weapons.other.ISFireExtinguisher;
 import org.apache.logging.log4j.LogManager;
@@ -41,6 +43,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.math.BigInteger;
 import java.util.*;
+import java.util.List;
 
 /**
  * Context menu for the board.
@@ -398,18 +401,37 @@ public class MapMenu extends JPopupMenu {
         if (!client.getLocalPlayer().getGameMaster()) {
             return menu;
         } else {
+
             JMenu dmgMenu = new JMenu(Messages.getString("Gamemaster.EditDamage"));
-            for (Entity entity : client.getGame().getEntitiesVector(coords)) {
-                dmgMenu.add(createEditUnitMenuItem(entity));
+            JMenu cfgMenu = new JMenu(Messages.getString("Gamemaster.Configure"));
+            var entities = client.getGame().getEntitiesVector(coords);
+            for (Entity entity : entities ) {
+                dmgMenu.add(createUnitEditorMenuItem(entity));
+                cfgMenu.add(createCustomMechMenuItem(entity));
             }
             if (dmgMenu.getItemCount() != 0) {
                 menu.add(dmgMenu);
+            }
+            if (cfgMenu.getItemCount() != 0) {
+                menu.add(cfgMenu);
             }
             return menu;
         }
     }
 
-    JMenuItem createEditUnitMenuItem(Entity entity) {
+    JMenuItem createCustomMechMenuItem(Entity entity) {
+        JMenuItem item = new JMenuItem(entity.getDisplayName());
+        item.addActionListener(evt -> {
+            CustomMechDialog med = new CustomMechDialog(gui, client, Collections.singletonList(entity), true, false);
+            gui.getBoardView().setShouldIgnoreKeys(true);
+            med.setVisible(true);
+            client.sendUpdateEntity(entity);
+            gui.getBoardView().setShouldIgnoreKeys(false);
+        });
+        return item;
+    }
+
+    JMenuItem createUnitEditorMenuItem(Entity entity) {
         JMenuItem item = new JMenuItem(entity.getDisplayName());
         item.addActionListener(evt -> {
             UnitEditorDialog med = new UnitEditorDialog(gui.getFrame(), entity);
@@ -421,6 +443,39 @@ public class MapMenu extends JPopupMenu {
         return item;
     }
 
+    protected boolean validateEntity(Entity entity) {
+        //from CustomMechDialog
+        EntityVerifier verifier = EntityVerifier.getInstance(new MegaMekFile(
+                Configuration.unitsDir(), EntityVerifier.CONFIG_FILENAME).getFile());
+        TestEntity testEntity = null;
+        if (entity instanceof Mech) {
+            testEntity = new TestMech((Mech) entity, verifier.mechOption, null);
+        } else if ((entity instanceof Tank)
+                && !(entity instanceof GunEmplacement)) {
+            if (entity.isSupportVehicle()) {
+                testEntity = new TestSupportVehicle(entity, verifier.tankOption, null);
+            } else {
+                testEntity = new TestTank((Tank) entity, verifier.tankOption, null);
+            }
+        } else if (entity.getEntityType() == Entity.ETYPE_AERO
+                && entity.getEntityType() != Entity.ETYPE_DROPSHIP
+                && entity.getEntityType() != Entity.ETYPE_SMALL_CRAFT
+                && entity.getEntityType() != Entity.ETYPE_FIGHTER_SQUADRON
+                && entity.getEntityType() != Entity.ETYPE_JUMPSHIP
+                && entity.getEntityType() != Entity.ETYPE_SPACE_STATION) {
+            testEntity = new TestAero((Aero) entity, verifier.mechOption, null);
+        } else if (entity instanceof BattleArmor) {
+            testEntity = new TestBattleArmor((BattleArmor) entity, verifier.baOption, null);
+        } else if (entity instanceof Infantry) {
+            testEntity = new TestInfantry((Infantry) entity, verifier.infOption, null);
+        }
+        int gameTL = TechConstants.getGameTechLevel(client.getGame(), entity.isClan());
+
+        boolean isValidEntity = (testEntity == null) || testEntity.correctEntity(new StringBuffer(), gameTL);
+        entity.setDesignValid(isValidEntity);
+        return isValidEntity;
+    }
+    
     private JMenu createSelectMenu() {
         JMenu menu = new JMenu("Select");
         // add select options

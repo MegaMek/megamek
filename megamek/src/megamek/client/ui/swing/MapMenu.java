@@ -442,39 +442,6 @@ public class MapMenu extends JPopupMenu {
         });
         return item;
     }
-
-    protected boolean validateEntity(Entity entity) {
-        //from CustomMechDialog
-        EntityVerifier verifier = EntityVerifier.getInstance(new MegaMekFile(
-                Configuration.unitsDir(), EntityVerifier.CONFIG_FILENAME).getFile());
-        TestEntity testEntity = null;
-        if (entity instanceof Mech) {
-            testEntity = new TestMech((Mech) entity, verifier.mechOption, null);
-        } else if ((entity instanceof Tank)
-                && !(entity instanceof GunEmplacement)) {
-            if (entity.isSupportVehicle()) {
-                testEntity = new TestSupportVehicle(entity, verifier.tankOption, null);
-            } else {
-                testEntity = new TestTank((Tank) entity, verifier.tankOption, null);
-            }
-        } else if (entity.getEntityType() == Entity.ETYPE_AERO
-                && entity.getEntityType() != Entity.ETYPE_DROPSHIP
-                && entity.getEntityType() != Entity.ETYPE_SMALL_CRAFT
-                && entity.getEntityType() != Entity.ETYPE_FIGHTER_SQUADRON
-                && entity.getEntityType() != Entity.ETYPE_JUMPSHIP
-                && entity.getEntityType() != Entity.ETYPE_SPACE_STATION) {
-            testEntity = new TestAero((Aero) entity, verifier.mechOption, null);
-        } else if (entity instanceof BattleArmor) {
-            testEntity = new TestBattleArmor((BattleArmor) entity, verifier.baOption, null);
-        } else if (entity instanceof Infantry) {
-            testEntity = new TestInfantry((Infantry) entity, verifier.infOption, null);
-        }
-        int gameTL = TechConstants.getGameTechLevel(client.getGame(), entity.isClan());
-
-        boolean isValidEntity = (testEntity == null) || testEntity.correctEntity(new StringBuffer(), gameTL);
-        entity.setDesignValid(isValidEntity);
-        return isValidEntity;
-    }
     
     private JMenu createSelectMenu() {
         JMenu menu = new JMenu("Select");

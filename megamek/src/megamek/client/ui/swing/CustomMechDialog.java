@@ -1099,7 +1099,9 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
             }
             tabAll.addTab(Messages.getString("CustomMechDialog.tabEquipment"), scrEquip);
         }
-        tabAll.addTab(Messages.getString("CustomMechDialog.tabDeployment"), new JScrollPane(panDeploy));
+        tabAll.addTab(Messages.getString(
+                editableDeployment ? "CustomMechDialog.tabDeployment" : "CustomMechDialog.tabState" ),
+                new JScrollPane(panDeploy));
         if (quirksEnabled && !multipleEntities) {
             JScrollPane scrQuirks = new JScrollPane(panQuirks);
             scrQuirks.getVerticalScrollBar().setUnitIncrement(16);

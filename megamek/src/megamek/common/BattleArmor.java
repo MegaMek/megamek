@@ -79,7 +79,7 @@ public class BattleArmor extends Infantry {
         "BABattleClawMagnets", "BABattleClawVibro",
         "BAHeavyBattleClaw", "BAHeavyBattleClawMagnets",
         "BAHeavyBattleClawVibro",
-        "BASalvageArm", "BACargoLifter", "BAIndustrialDrill" };
+        "BASalvageArm", EquipmentTypeLookup.BA_MANIPULATOR_CARGO_LIFTER, "BAIndustrialDrill" };
 
     /**
      * A list of the display names for the different manipulator types.

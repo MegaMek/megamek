@@ -61,6 +61,7 @@ public class EquipmentTypeLookup {
     @EquipmentName public static final String BA_PARTIAL_WING = "BAPartialWing";
     @EquipmentName public static final String BA_JUMP_BOOSTER = "BAJumpBooster";
     @EquipmentName public static final String BA_MECHANICAL_JUMP_BOOSTER = "BAMechanicalJumpBooster";
+    @EquipmentName public static final String BA_MANIPULATOR_CARGO_LIFTER = "BACargoLifter";
 
     @EquipmentName public static final String SINGLE_HS = "Heat Sink";
     @EquipmentName public static final String IS_DOUBLE_HS = "ISDoubleHeatSink";

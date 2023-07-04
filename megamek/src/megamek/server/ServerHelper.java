@@ -512,7 +512,7 @@ public class ServerHelper {
         if (isPavement && ((useBlackIce && goodTemp) || isIceStorm)) {
             if (!curHex.containsTerrain(Terrains.BLACK_ICE)) {
                 int blackIceChance = Compute.d6(1);
-                if (blackIceChance > 1) {
+                if (blackIceChance > 4) {
                     curHex.addTerrain(new Terrain(Terrains.BLACK_ICE, 1));
                     gameManager.sendChangedHex(curPos);
                     return true;

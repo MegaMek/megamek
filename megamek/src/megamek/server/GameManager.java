@@ -7816,7 +7816,7 @@ public class GameManager implements IGameManager {
             if (isPavementStep && ((useBlackIce && goodTemp) || goodWeather)) {
                 if (!curHex.containsTerrain(Terrains.BLACK_ICE)) {
                     int blackIceChance = Compute.d6(1);
-                    if (blackIceChance > 1) {
+                    if (blackIceChance > 4) {
                         curHex.addTerrain(new Terrain(Terrains.BLACK_ICE, 1));
                         sendChangedHex(curPos);
                     }

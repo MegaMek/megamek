@@ -217,7 +217,8 @@ public class BayMunitionsChoicePanel extends JPanel {
                     || !atype.isLegal(game.getOptions().intOption(OptionsConstants.ALLOWED_YEAR),
                             SimpleTechLevel.getGameTechLevel(game), 
                             techBase == AmmoType.TECH_BASE_CLAN, 
-                            techBase == AmmoType.TECH_BASE_ALL)) {
+                            techBase == AmmoType.TECH_BASE_ALL,
+                            game.getOptions().booleanOption(OptionsConstants.ALLOWED_IGNORE_EXTINCT))) {
                 return false;
             }
             if (atype.hasFlag(AmmoType.F_NUCLEAR)

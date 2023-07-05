@@ -1933,11 +1933,15 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     // Read the units from the file.
                     final Vector<Entity> loadedUnits = new MULParser(unitFile, getClient().getGame().getOptions()).getEntities();
 
+                    // in the Lounge, set default deployment to "Before Game Start", round 0
+                    // but in a game in-progress, deploy at the start of next round
+                    final int loadBeforeRound = client.getGame().getRoundCount() + ((client.getGame().getPhase() == GamePhase.LOUNGE) ? 0 : 1);
+
                     // Add the units from the file.
                     for (Entity entity : loadedUnits) {
                         entity.setOwner(player);
                         if (reinforce) {
-                            entity.setDeployRound(client.getGame().getRoundCount() + 1);
+                            entity.setDeployRound(loadBeforeRound);
                             entity.setGame(client.getGame());
                             // Set these to true, otherwise units reinforced in
                             // the movement turn are considered selectable

@@ -281,14 +281,14 @@ public interface ITechnology {
                 || year < getReintroductionDate());
     }
 
-    default boolean isAvailableIn(int year, boolean clan, boolean ignoreExtinct) {
+    default boolean isAvailableIn(int year, boolean clan, boolean ignoreExtinction) {
         return year >= getIntroductionDate(clan) && (getIntroductionDate(clan) != DATE_NONE)
-                && (ignoreExtinct || !isExtinct(year, clan));
+                && (ignoreExtinction || !isExtinct(year, clan));
     }
 
-    default boolean isAvailableIn(int year, boolean ignoreExtinct) {
+    default boolean isAvailableIn(int year, boolean ignoreExtinction) {
         return year >= getIntroductionDate() && (getIntroductionDate() != DATE_NONE)
-                && (ignoreExtinct || !isExtinct(year));
+                && (ignoreExtinction || !isExtinct(year));
     }
 
     default boolean isAvailableIn(int year, boolean clan, int faction) {

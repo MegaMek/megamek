@@ -98,7 +98,7 @@ public class GameOptions extends AbstractOptions {
                 TechConstants.T_SIMPLE_NAMES[TechConstants.T_SIMPLE_STANDARD]);
         addOption(allowed, OptionsConstants.ALLOWED_ERA_BASED, false);
         addOption(allowed, OptionsConstants.ALLOWED_ALLOW_ILLEGAL_UNITS, false);
-        addOption(allowed, OptionsConstants.ALLOWED_IGNORE_EXTINCT, false);
+        addOption(allowed, OptionsConstants.ALLOWED_SHOW_EXTINCT, false);
         addOption(allowed, OptionsConstants.ALLOWED_CLAN_IGNORE_EQ_LIMITS, false); 
         addOption(allowed, OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL, false); 
         addOption(allowed, OptionsConstants.ALLOWED_ALLOW_NUKES, false); 

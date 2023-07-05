@@ -218,7 +218,7 @@ public class BayMunitionsChoicePanel extends JPanel {
                             SimpleTechLevel.getGameTechLevel(game), 
                             techBase == AmmoType.TECH_BASE_CLAN, 
                             techBase == AmmoType.TECH_BASE_ALL,
-                            game.getOptions().booleanOption(OptionsConstants.ALLOWED_IGNORE_EXTINCT))) {
+                            game.getOptions().booleanOption(OptionsConstants.ALLOWED_SHOW_EXTINCT))) {
                 return false;
             }
             if (atype.hasFlag(AmmoType.F_NUCLEAR)

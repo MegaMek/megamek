@@ -1935,13 +1935,13 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
                     // in the Lounge, set default deployment to "Before Game Start", round 0
                     // but in a game in-progress, deploy at the start of next round
-                    final int loadBeforeRound = client.getGame().getRoundCount() + ((client.getGame().getPhase() == GamePhase.LOUNGE) ? 0 : 1);
+                    final int deployRound = client.getGame().getRoundCount() + ((client.getGame().getPhase() == GamePhase.LOUNGE) ? 0 : 1);
 
                     // Add the units from the file.
                     for (Entity entity : loadedUnits) {
                         entity.setOwner(player);
                         if (reinforce) {
-                            entity.setDeployRound(loadBeforeRound);
+                            entity.setDeployRound(deployRound);
                             entity.setGame(client.getGame());
                             // Set these to true, otherwise units reinforced in
                             // the movement turn are considered selectable

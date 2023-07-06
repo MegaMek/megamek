@@ -73,7 +73,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ClientGUI extends JPanel implements BoardViewListener,
                     ActionListener, ComponentListener, IPreferenceChangeListener {
@@ -2795,32 +2794,31 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     }
 
     void replacePlayer() {
-        Set<Player> ghostPlayers = client.getGame().getPlayersVector().stream()
-                .filter(Player::isGhost).collect(Collectors.toSet());
-        if (ghostPlayers.isEmpty()) {
-            doAlertDialog( Messages.getString("ClientGUI.noGhostPlayersToReplace"),
-                    Messages.getString("ClientGUI.noGhosts"), JOptionPane.INFORMATION_MESSAGE);
-            return;
-        }
-
-        var rpd = new ReplacePlayersDialog(frame, this);
-        rpd.setVisible(true);
-        if (rpd.getResult() == DialogResult.CANCELLED) {
+        var mpd = new ManagePlayersDialog(frame, this);
+        mpd.setVisible(true);
+        if (mpd.getResult() == DialogResult.CANCELLED) {
             return;
         }
 
         AddBotUtil util = new AddBotUtil();
-        Map<String, BehaviorSettings> newBotSettings = rpd.getNewBots();
-        for (String player : newBotSettings.keySet()) {
+        Map<String, BehaviorSettings> newBotSettings = mpd.getNewBots();
+        for (String ghostOrBotName : newBotSettings.keySet()) {
             StringBuilder message = new StringBuilder();
-            Princess princess = util.addBot(newBotSettings.get(player), player,
-                    client.getGame(), client.getHost(), client.getPort(), message);
+            Princess princess = util.replaceGhostOrBot(newBotSettings.get(ghostOrBotName), ghostOrBotName,
+                    client, this, message);
             systemMessage(message.toString());
             // Make this princess a locally owned bot if in the lobby. This way it
             // can be configured, and it will faithfully press Done when the local player does.
             if ((princess != null) && client.getGame().getPhase().isLounge()) {
-                getBots().put(player, princess);
+                getBots().put(ghostOrBotName, princess);
             }
+        }
+
+        Set<String> kickBotNames = mpd.getKickBots();
+        for (String botName : kickBotNames) {
+            StringBuilder message = new StringBuilder();
+            util.kickBot( botName, client, message);
+            systemMessage(message.toString());
         }
     }
 

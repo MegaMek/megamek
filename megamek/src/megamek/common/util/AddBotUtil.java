@@ -13,16 +13,20 @@
  */
 package megamek.common.util;
 
+import megamek.client.Client;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
+import megamek.client.ui.swing.ClientGUI;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.Game;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
+import megamek.common.net.enums.PacketCommand;
+import megamek.common.net.packets.Packet;
 
 import javax.swing.*;
 import java.awt.*;
@@ -58,9 +62,9 @@ public class AddBotUtil {
     }
 
     public String addBot(final String[] args,
-            final Game game,
-            final String host,
-            final int port) {
+                             final Game game,
+                             final String host,
+                             final int port) {
         if (2 > args.length) {
             results.add(USAGE);
             return concatResults();
@@ -178,10 +182,21 @@ public class AddBotUtil {
         return concatResults();
     }
 
-    public @Nullable Princess addBot(final BehaviorSettings behavior, final String playerName,
-            final Game game, final String host, final int port, StringBuilder message) {
-        
+    /**
+     * Replace a ghost player or an existing Princess bot with a new bot
+     * @return the new Princess bot or null if not able to replace
+     */
+    public @Nullable Princess replaceGhostOrBot(final BehaviorSettings behavior, final String playerName,
+                                                final Client client, final @Nullable ClientGUI clientGUI,
+                                                StringBuilder message) {
+
+        Objects.requireNonNull(client);
         Objects.requireNonNull(behavior);
+
+        final Game game = client.getGame();
+        final String host = client.getHost();
+        final int port = client.getPort();
+
         Objects.requireNonNull(game);
 
         Optional<Player> possible = game.getPlayersVector().stream()
@@ -189,26 +204,73 @@ public class AddBotUtil {
         if (possible.isEmpty()) {
             message.append("No player with the name '" + playerName + "'.");
             return null;
-        } else if (!possible.get().isGhost()) {
-            message.append("Player '" + playerName + "' is not a ghost.");
+        } else if (!possible.get().isGhost() && !possible.get().isBot()) {
+            message.append("Player '" + playerName + "' is neither a ghost nor an existing bot.");
             return null;
         }
-        
+
         final Player target = possible.get();
-        final Princess princess = new Princess(target.getName(), host, port);
-        princess.setBehaviorSettings(behavior);
-        if (!GraphicsEnvironment.isHeadless()) {
-            // FIXME : I should be able to use a frame through proper channels
-            princess.getGame().addGameListener(new BotGUI(new JFrame(), princess));
+        if (target.isGhost()) {
+            final Princess princess = new Princess(target.getName(), host, port);
+            princess.setBehaviorSettings(behavior);
+            if (!GraphicsEnvironment.isHeadless()) {
+                princess.getGame().addGameListener(new BotGUI(clientGUI.getFrame(), princess));
+            }
+            try {
+                princess.connect();
+            } catch (final Exception e) {
+                message.append("Princess failed to connect.");
+            }
+            princess.setLocalPlayerNumber(target.getId());
+            message.append("Princess has replaced " + playerName + ".");
+            return princess;
+        } else {
+            Client bot = client.bots.get(target.getName());
+            if (bot == null) {
+                message.append("Player '" + playerName + "' is not a local bot.");
+                return null;
+            }
+            if (!(bot instanceof Princess)) {
+                message.append("Player '" + playerName + "' is not a Princess bot.");
+                return null;
+            }
+            Princess princess = (Princess) bot;
+            princess.setBehaviorSettings(behavior);
+            return princess;
         }
-        try {
-            princess.connect();
-        } catch (final Exception e) {
-            message.append("Princess failed to connect.");
+    }
+
+    public boolean kickBot(final String playerName,
+                           final Client client,
+                           StringBuilder message) {
+
+        Objects.requireNonNull(client);
+
+        final Game game = client.getGame();
+        final String host = client.getHost();
+        final int port = client.getPort();
+
+        Objects.requireNonNull(game);
+
+        Optional<Player> possible = game.getPlayersVector().stream()
+                .filter(p -> p.getName().equals(playerName)).findFirst();
+
+        if (possible.isEmpty()) {
+            message.append("No player with the name '" + playerName + "'.");
+            return false;
         }
-        princess.setLocalPlayerNumber(target.getId());
-        message.append("Princess has replaced " + playerName + ".");
-        return princess;
+        else if (possible.get().isGhost()) {
+            message.append("Player '" + playerName + "' is a ghost.");
+            return false;
+
+        } else if (!possible.get().isBot()) {
+            message.append("Player '" + playerName + "' is not a bot.");
+            return false;
+        }
+
+        final Player target = possible.get();
+        client.sendChat("/kick "+target.getId());
+        return true;
     }
 
     BotClient makeNewPrincessClient(final Player target, final String host, final int port) {

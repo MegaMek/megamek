@@ -502,7 +502,8 @@ public class EquipChoicePanel extends JPanel {
             }
             
             // Check to see if the tech level of the equipment is legal
-            if (!eq.isLegal(gameYear, legalLevel, entity.isClan(), entity.isMixedTech())) {
+            if (!eq.isLegal(gameYear, legalLevel, entity.isClan(), entity.isMixedTech(),
+                    entity.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_SHOW_EXTINCT))) {
                 continue;
             }
             
@@ -611,7 +612,7 @@ public class EquipChoicePanel extends JPanel {
                 boolean bTechMatch = false;
                 if (game.getOptions().booleanOption(OptionsConstants.ALLOWED_ERA_BASED)) {
                     bTechMatch = atCheck.isLegal(gameYear, legalLevel, entity.isClan(),
-                            entity.isMixedTech());
+                            entity.isMixedTech(), game.getOptions().booleanOption(OptionsConstants.ALLOWED_SHOW_EXTINCT));
                 } else {
                     bTechMatch = atCheck.getStaticTechLevel().ordinal() <= legalLevel.ordinal();
                 }
@@ -1375,7 +1376,8 @@ public class EquipChoicePanel extends JPanel {
             for (Enumeration<EquipmentType> e = MiscType.getAllTypes(); e.hasMoreElements();) {
                 final EquipmentType et = e.nextElement();
                 if (et.hasFlag(MiscType.F_ARMOR_KIT)
-                        && et.isLegal(year, gameTechLevel, entity.isClan(), entity.isMixedTech())) {
+                        && et.isLegal(year, gameTechLevel, entity.isClan(), entity.isMixedTech(),
+                        entity.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_SHOW_EXTINCT))) {
                     armorKits.add(et);
                 }
             }

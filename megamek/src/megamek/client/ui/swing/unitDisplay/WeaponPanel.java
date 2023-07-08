@@ -874,14 +874,17 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         switch (toHit.getValue()) {
             case TargetRoll.IMPOSSIBLE:
             case TargetRoll.AUTOMATIC_FAIL:
-                toHitText.setText(String.format("<html>%sTo Hit: (0%%) %s</body></html>", BODY,
-                        toHit.getDesc()));
+                toHitText.setText(String.format("<html>%sTo Hit: (0%%) %s</body></html>", BODY, toHit.getDesc()));
+                break;
+            case TargetRoll.AUTOMATIC_SUCCESS:
+                toHitText.setText(String.format("<html>%sTo Hit: (100%%) %s</body></html>", BODY, toHit.getDesc()));
                 break;
             default:
                 toHitText.setText(String.format("<html>%sTo Hit: <b>%2d (%2.0f%%)</b>%s = %s</font></body></html>", BODY,
                         toHit.getValue(), Compute.oddsAbove(toHit.getValue(), natAptGunnery), LOW_CONTRAST_FONT, toHit.getDesc()));
                 break;
         }
+        toHitText.setCaretPosition(0);
     }
 
     public void setToHit(String message) {

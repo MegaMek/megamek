@@ -43,8 +43,8 @@ public class ReplacePlayersDialog extends AbstractButtonDialog {
     private static final int REPLACE_WITH_PRINCESS_INDEX = 1;
 
     // edit existing local bot combo box choices
-    private static final int EDIT_CONFIG_INDEX = 1;
-    private static final int KICK_INDEX = 2;
+    private static final int KICK_INDEX = 1;
+    private static final int EDIT_CONFIG_INDEX = 2;
 
     /** A ClientGUI given to the dialog. */
     private final ClientGUI clientGui;
@@ -58,8 +58,10 @@ public class ReplacePlayersDialog extends AbstractButtonDialog {
     /** Maps a ghost player to the combobox that sets its replacement */
     private Map<Player, JComboBox<String>> ghostChoosers = new HashMap<>();
 
+    /** Maps a bot player to the combobox that allows it to be edited or kicked */
+    private Map<Player, JComboBox<String>> localBotChoosers = new HashMap<>();
     /** Maps a bot player to the combobox that allows it to be kicked */
-    private Map<Player, JComboBox<String>> botChoosers = new HashMap<>();
+    private Map<Player, JComboBox<String>> remoteBotChoosers = new HashMap<>();
 
     /** Maps a ghost player to the config button for the bot settings */
     private Map<Player, JButton> configButtons = new HashMap<>();
@@ -96,14 +98,18 @@ public class ReplacePlayersDialog extends AbstractButtonDialog {
     }
     @Override
     protected Container createCenterPane() {
-        Vector<String> ghostReplacementOptions = new Vector<>();
-        ghostReplacementOptions.add(Messages.getString("ReplacePlayersDialog.optionDoNotReplace"));
-        ghostReplacementOptions.add(Messages.getString("ReplacePlayersDialog.optionReplace"));
+        Vector<String> ghostOptions = new Vector<>();
+        ghostOptions.add(Messages.getString("ReplacePlayersDialog.optionDoNotReplace"));
+        ghostOptions.add(Messages.getString("ReplacePlayersDialog.optionReplace"));
 
-        Vector<String> botReplacementOptions = new Vector<>();
-        botReplacementOptions.add(Messages.getString("ReplacePlayersDialog.optionNone"));
-        botReplacementOptions.add(Messages.getString("ReplacePlayersDialog.optionEdit"));
-        botReplacementOptions.add(Messages.getString("ReplacePlayersDialog.optionKick"));
+        Vector<String> localBotOptions = new Vector<>();
+        localBotOptions.add(Messages.getString("ReplacePlayersDialog.optionNone"));
+        localBotOptions.add(Messages.getString("ReplacePlayersDialog.optionKick"));
+        localBotOptions.add(Messages.getString("ReplacePlayersDialog.optionEdit"));
+
+        Vector<String> remoteBotOptions = new Vector<>();
+        remoteBotOptions.add(Messages.getString("ReplacePlayersDialog.optionNone"));
+        remoteBotOptions.add(Messages.getString("ReplacePlayersDialog.optionKick"));
 
         var gridPanel = new JPanel();
         gridPanel.setLayout(new GridLayout(0, 5, 2,2));
@@ -130,7 +136,7 @@ public class ReplacePlayersDialog extends AbstractButtonDialog {
             if (player.isGhost()) {
                 gridPanel.add(new JLabel( "Ghost"));
 
-                var ghostChooser = new JComboBox<>(ghostReplacementOptions);
+                var ghostChooser = new JComboBox<>(ghostOptions);
                 ghostChoosers.put(player, ghostChooser);
                 if (savedSettingsExist) {
                     // it was presumably Princess before, so default to replace
@@ -165,8 +171,8 @@ public class ReplacePlayersDialog extends AbstractButtonDialog {
                         // fallback to default
                     }
 
-                    var botChooser = new JComboBox<>(botReplacementOptions);
-                    botChoosers.put(player, botChooser);
+                    var botChooser = new JComboBox<>(localBotOptions);
+                    localBotChoosers.put(player, botChooser);
                     botChooser.setSelectedIndex(0);
                     botChooser.addActionListener(e -> updateButtonStates());
 
@@ -188,11 +194,22 @@ public class ReplacePlayersDialog extends AbstractButtonDialog {
                     gridPanel.add(new JLabel());
                     gridPanel.add(new JLabel());
                 }
+            } else if (player.isBot()) {
+                gridPanel.add(new JLabel(REMOTE + " Bot"));
+                var botChooser = new JComboBox<>(remoteBotOptions);
+                remoteBotChoosers.put(player, botChooser);
+                botChooser.setSelectedIndex(0);
+                var cPanel = new JPanel();
+                cPanel.add(botChooser);
+                gridPanel.add(cPanel);
+                gridPanel.add(new JLabel());
+                gridPanel.add(new JLabel());
             } else {
                 gridPanel.add(new JLabel(
                         (clientGui.getClient().getLocalPlayer().equals(player) ? LOCAL : REMOTE) + ' '
-                                + (player.isBot() ? "Bot" : player.isGameMaster() ? "GM" : player.isObserver() ? "Observer" : "Player"))
+                                + (player.isGameMaster() ? "GM" : player.isObserver() ? "Observer" : "Player"))
                 );
+                gridPanel.add(new JLabel());
                 gridPanel.add(new JLabel());
                 gridPanel.add(new JLabel());
             }
@@ -236,8 +253,8 @@ public class ReplacePlayersDialog extends AbstractButtonDialog {
         bcd.setVisible(true);
         if (bcd.getResult() == DialogResult.CONFIRMED) {
             botConfigs.put(botOrGhost, bcd.getBehaviorSettings());
-            if (botChoosers.containsKey(botOrGhost)) {
-                botChoosers.get(botOrGhost).setSelectedIndex(EDIT_CONFIG_INDEX);
+            if (localBotChoosers.containsKey(botOrGhost)) {
+                localBotChoosers.get(botOrGhost).setSelectedIndex(EDIT_CONFIG_INDEX);
             }
         }
     }
@@ -262,9 +279,9 @@ public class ReplacePlayersDialog extends AbstractButtonDialog {
             button.setEnabled(ghostChoosers.get(ghost).getSelectedIndex() == REPLACE_WITH_PRINCESS_INDEX);
         }
 
-        for (Player bot : botChoosers.keySet()) {
+        for (Player bot : localBotChoosers.keySet()) {
             JButton button = configButtons.get(bot);
-            button.setEnabled(botChoosers.get(bot).getSelectedIndex() != KICK_INDEX);
+            button.setEnabled(localBotChoosers.get(bot).getSelectedIndex() != KICK_INDEX);
         }
     }
 
@@ -296,8 +313,8 @@ public class ReplacePlayersDialog extends AbstractButtonDialog {
     public Map<String, BehaviorSettings> getChangedBots() {
         // All local bots with edited configs option selected
         var result = new HashMap<String, BehaviorSettings>();
-        for (Player bot : botChoosers.keySet()) {
-            JComboBox<String> chooser = botChoosers.get(bot);
+        for (Player bot : localBotChoosers.keySet()) {
+            JComboBox<String> chooser = localBotChoosers.get(bot);
             if (chooser.getSelectedIndex() == EDIT_CONFIG_INDEX) {
                 result.put(bot.getName(), botConfigs.get(bot));
             }
@@ -312,8 +329,14 @@ public class ReplacePlayersDialog extends AbstractButtonDialog {
      */
     public Set<String> getKickBots() {
         var result = new HashSet<String>();
-        for (Player bot : botChoosers.keySet()) {
-            JComboBox<String> chooser = botChoosers.get(bot);
+        for (Player bot : localBotChoosers.keySet()) {
+            JComboBox<String> chooser = localBotChoosers.get(bot);
+            if (chooser.getSelectedIndex() == KICK_INDEX) {
+                result.add(bot.getName());
+            }
+        }
+        for (Player bot : remoteBotChoosers.keySet()) {
+            JComboBox<String> chooser = remoteBotChoosers.get(bot);
             if (chooser.getSelectedIndex() == KICK_INDEX) {
                 result.add(bot.getName());
             }

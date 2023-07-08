@@ -162,6 +162,7 @@ public class AddBotUtil {
         }
 
         if (!GraphicsEnvironment.isHeadless()) {
+            // GUI to show bot help nag if needed
             // FIXME : I should be able to access the JFrame by proper ways
             botClient.getGame().addGameListener(new BotGUI(new JFrame(), botClient));
         }
@@ -183,7 +184,7 @@ public class AddBotUtil {
     }
 
     public @Nullable Princess replaceGhostWithBot(final BehaviorSettings behavior, final String playerName,
-                                     final Client client, final @Nullable ClientGUI clientGUI,
+                                     final Client client,
                                      StringBuilder message) {
         Objects.requireNonNull(client);
         Objects.requireNonNull(behavior);
@@ -207,10 +208,7 @@ public class AddBotUtil {
         final Player target = possible.get();
         final Princess princess = new Princess(target.getName(), host, port);
         princess.setBehaviorSettings(behavior);
-        if (!GraphicsEnvironment.isHeadless()) {
-            // FIXME : I should be able to use a frame through proper channels
-            princess.getGame().addGameListener(new BotGUI(new JFrame(), princess));
-        }
+
         try {
             princess.connect();
         } catch (final Exception e) {
@@ -226,7 +224,7 @@ public class AddBotUtil {
      * @return the new Princess bot or null if not able to replace
      */
     public @Nullable Princess changeBotSettings(final BehaviorSettings behavior, final String playerName,
-                                                final Client client, final @Nullable ClientGUI clientGUI,
+                                                final Client client,
                                                 StringBuilder message) {
         Objects.requireNonNull(client);
         Objects.requireNonNull(behavior);
@@ -251,9 +249,6 @@ public class AddBotUtil {
         if (target.isGhost()) {
             final Princess princess = new Princess(target.getName(), host, port);
             princess.setBehaviorSettings(behavior);
-            if (!GraphicsEnvironment.isHeadless()) {
-                princess.getGame().addGameListener(new BotGUI(clientGUI.getFrame(), princess));
-            }
             try {
                 princess.connect();
             } catch (final Exception e) {
@@ -283,11 +278,7 @@ public class AddBotUtil {
                            StringBuilder message) {
 
         Objects.requireNonNull(client);
-
         final Game game = client.getGame();
-        final String host = client.getHost();
-        final int port = client.getPort();
-
         Objects.requireNonNull(game);
 
         Optional<Player> possible = game.getPlayersVector().stream()

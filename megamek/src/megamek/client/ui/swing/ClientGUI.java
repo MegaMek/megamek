@@ -2805,7 +2805,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         for (String ghostName : newBotSettings.keySet()) {
             StringBuilder message = new StringBuilder();
             Princess princess = util.replaceGhostWithBot(newBotSettings.get(ghostName), ghostName,
-                    client, this, message);
+                    client, message);
             systemMessage(message.toString());
             // Make this princess a locally owned bot if in the lobby. This way it
             // can be configured, and it will faithfully press Done when the local player does.
@@ -2818,7 +2818,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         for (String botName : changedBots.keySet()) {
             StringBuilder message = new StringBuilder();
             util.changeBotSettings(changedBots.get(botName), botName,
-                    client, this, message);
+                    client, message);
             systemMessage(message.toString());
         }
 

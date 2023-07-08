@@ -2794,27 +2794,35 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     }
 
     void replacePlayer() {
-        var mpd = new ManagePlayersDialog(frame, this);
-        mpd.setVisible(true);
-        if (mpd.getResult() == DialogResult.CANCELLED) {
+        var rpd = new ReplacePlayersDialog(frame, this);
+        rpd.setVisible(true);
+        if (rpd.getResult() == DialogResult.CANCELLED) {
             return;
         }
 
         AddBotUtil util = new AddBotUtil();
-        Map<String, BehaviorSettings> newBotSettings = mpd.getNewBots();
-        for (String ghostOrBotName : newBotSettings.keySet()) {
+        Map<String, BehaviorSettings> newBotSettings = rpd.getNewBots();
+        for (String ghostName : newBotSettings.keySet()) {
             StringBuilder message = new StringBuilder();
-            Princess princess = util.replaceGhostOrBot(newBotSettings.get(ghostOrBotName), ghostOrBotName,
+            Princess princess = util.replaceGhostWithBot(newBotSettings.get(ghostName), ghostName,
                     client, this, message);
             systemMessage(message.toString());
             // Make this princess a locally owned bot if in the lobby. This way it
             // can be configured, and it will faithfully press Done when the local player does.
             if ((princess != null) && client.getGame().getPhase().isLounge()) {
-                getBots().put(ghostOrBotName, princess);
+                getBots().put(ghostName, princess);
             }
         }
 
-        Set<String> kickBotNames = mpd.getKickBots();
+        Map<String, BehaviorSettings> changedBots = rpd.getChangedBots();
+        for (String botName : changedBots.keySet()) {
+            StringBuilder message = new StringBuilder();
+            util.changeBotSettings(changedBots.get(botName), botName,
+                    client, this, message);
+            systemMessage(message.toString());
+        }
+
+        Set<String> kickBotNames = rpd.getKickBots();
         for (String botName : kickBotNames) {
             StringBuilder message = new StringBuilder();
             util.kickBot( botName, client, message);

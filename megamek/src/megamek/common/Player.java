@@ -401,7 +401,7 @@ public final class Player extends TurnOrdered {
         if (null == other) {
             return true;
         }
-        return (id != other.getId())
+        return (id != other.getId()) 
             && ((team == TEAM_NONE) || (team == TEAM_UNASSIGNED) || (team != other.getTeam()));
     }
 
@@ -610,14 +610,14 @@ public final class Player extends TurnOrdered {
         if (game.getEntitiesVector() == null) {
             return 0;
         }
-
+        
         // per TacOps:AR page 162-163, only the highest bonus should available should be used.
         for (Entity entity : game.getEntitiesVector()) {
             if (entity.getOwner().equals(this)) {
                 if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_MOBILE_HQS)) {
                     bonus = Math.max(entity.getHQIniBonus(), bonus);
                 }
-
+                
                 bonus = Math.max(bonus, entity.getQuirkIniBonus());
             }
         }
@@ -630,11 +630,11 @@ public final class Player extends TurnOrdered {
      */
     public int getCommandBonus() {
         int commandb = 0;
-
+        
         if (game == null) {
             return 0;
         }
-
+        
         for (Entity entity : game.getEntitiesVector()) {
             if ((null != entity.getOwner())
                     && entity.getOwner().equals(this)
@@ -701,7 +701,7 @@ public final class Player extends TurnOrdered {
 
     @Override
     public String toString() {
-        return "Player " + getId() + " (" + getName() + ")@" +System.identityHashCode(this) ;
+        return "Player " + getId() + " (" + getName() + ")";
     }
 
     /**

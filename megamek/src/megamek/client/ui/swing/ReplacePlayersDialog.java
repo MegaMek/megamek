@@ -86,7 +86,7 @@ public class ReplacePlayersDialog extends AbstractButtonDialog {
         try {
             finalizeInitialization();
         } catch (Exception ex) {
-            LogManager.getLogger().error("Error finalizing the ManagePlayersDialog. Returning the created dialog, but this is likely to cause some oddities.", ex);
+            LogManager.getLogger().error("Error finalizing the ReplacePlayersDialog. Returning the created dialog, but this is likely to cause some oddities.", ex);
         }
     }
 
@@ -96,6 +96,7 @@ public class ReplacePlayersDialog extends AbstractButtonDialog {
         ghostAndBotPlayers.sort(Comparator.comparingInt(Player::getId));
         ghostAndBotPlayers.forEach(p -> botConfigs.put(p, new BehaviorSettings()));
     }
+    
     @Override
     protected Container createCenterPane() {
         Vector<String> ghostOptions = new Vector<>();

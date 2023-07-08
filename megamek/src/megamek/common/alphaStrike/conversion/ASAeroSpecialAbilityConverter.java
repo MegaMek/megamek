@@ -42,6 +42,13 @@ public class ASAeroSpecialAbilityConverter extends ASSpecialAbilityConverter {
     }
 
     @Override
+    protected void processENE() {
+        if (element.getStandardDamage().hasDamage()) {
+            super.processENE();
+        }
+    }
+
+    @Override
     protected void processUnitFeatures() {
         super.processUnitFeatures();
 

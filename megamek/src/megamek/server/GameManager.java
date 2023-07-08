@@ -8395,6 +8395,15 @@ public class GameManager implements IGameManager {
                     && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION))
                     || (entity instanceof TeleMissile)) {
                 int fuelUsed = ((IAero) entity).getFuelUsed(thrust);
+                
+                // if we're a gas hog, aerospace fighter and going faster than walking, then use 2x fuel
+                if (((overallMoveType == EntityMovementType.MOVE_RUN) ||
+                        (overallMoveType == EntityMovementType.MOVE_SPRINT) ||
+                        (overallMoveType == EntityMovementType.MOVE_OVER_THRUST)) &&
+                        entity.hasQuirk(OptionsConstants.QUIRK_NEG_GAS_HOG)) {
+                    fuelUsed *= 2;
+                }
+                
                 a.useFuel(fuelUsed);
             }
 

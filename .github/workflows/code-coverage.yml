@@ -28,7 +28,7 @@ jobs:
 
     steps:
     # Checkout the Pull Request source and put it in: ./megamek
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         path: megamek
 

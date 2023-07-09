@@ -30,7 +30,7 @@ jobs:
 
     steps:
     # Checkout the latest source and put it in: ./megamek
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         path: megamek
 

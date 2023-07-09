@@ -2999,11 +2999,18 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     @Override
+    /**
+     * Returns true if this is an aerospace or conventional fighter 
+     * but not a larger craft (i.e. "SmallCraft" or "Dropship" and bigger
+     */
     public boolean isFighter() {
         return true;
     }
 
     @Override
+    /**
+     * Returns true if and only if this is an aerospace fighter.
+     */
     public boolean isAerospaceFighter() {
         return true;
     }

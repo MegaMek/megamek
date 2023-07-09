@@ -74,6 +74,7 @@ public class GameOptions extends AbstractOptions {
         addOption(base, OptionsConstants.BASE_RANDOM_BASEMENTS, true); 
         addOption(base, OptionsConstants.BASE_AUTO_AMS, true); 
         addOption(base, OptionsConstants.BASE_TURN_TIMER, 0);
+        addOption(base, OptionsConstants.BASE_SUPPRESS_UNIT_TOOLTIP_IN_REPORT_LOG, false);
         addOption(base, OptionsConstants.BASE_HIDE_UNOFFICIAL, false);
         addOption(base, OptionsConstants.BASE_HIDE_LEGACY, false);
 
@@ -97,7 +98,8 @@ public class GameOptions extends AbstractOptions {
         addOption(allowed, OptionsConstants.ALLOWED_TECHLEVEL, IOption.CHOICE,
                 TechConstants.T_SIMPLE_NAMES[TechConstants.T_SIMPLE_STANDARD]);
         addOption(allowed, OptionsConstants.ALLOWED_ERA_BASED, false);
-        addOption(allowed, OptionsConstants.ALLOWED_ALLOW_ILLEGAL_UNITS, false); 
+        addOption(allowed, OptionsConstants.ALLOWED_ALLOW_ILLEGAL_UNITS, false);
+        addOption(allowed, OptionsConstants.ALLOWED_SHOW_EXTINCT, true);
         addOption(allowed, OptionsConstants.ALLOWED_CLAN_IGNORE_EQ_LIMITS, false); 
         addOption(allowed, OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL, false); 
         addOption(allowed, OptionsConstants.ALLOWED_ALLOW_NUKES, false); 

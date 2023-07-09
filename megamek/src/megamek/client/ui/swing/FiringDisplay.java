@@ -1974,7 +1974,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
                 setFireEnabled(true);
             } else {
                 boolean natAptGunnery = ce().hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
-                clientgui.getUnitDisplay().wPan.setToHit(toHit, true);
+                clientgui.getUnitDisplay().wPan.setToHit(toHit, natAptGunnery);
 
                 setFireEnabled(true);
             }

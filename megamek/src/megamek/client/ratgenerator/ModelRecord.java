@@ -102,7 +102,7 @@ public class ModelRecord extends AbstractUnitRecord {
             if (eq == null) {
                 continue;
             }
-            if (!eq.isAvailableIn(3000)) {
+            if (!eq.isAvailableIn(3000, false)) {
                 //FIXME: needs to filter out primitive
                 losTech = true;
             }

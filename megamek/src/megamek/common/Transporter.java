@@ -84,15 +84,11 @@ public interface Transporter extends Serializable {
     String getUnusedString();
 
     /**
-     * Determine if transported units prevent a weapon in the given location
-     * from firing.
+     * Determine if transported units prevent a weapon in the given location from firing.
      *
-     * @param loc - the <code>int</code> location attempting to fire.
-     * @param isRear - a <code>boolean</code> value stating if the given
-     *            location is rear facing; if <code>false</code>, the
-     *            location is front facing.
-     * @return <code>true</code> if a transported unit is in the way,
-     *         <code>false</code> if the weapon can fire.
+     * @param loc the location attempting to fire.
+     * @param isRear true if the weapon is rear-facing
+     * @return True if a transported unit is in the way, false if the weapon can fire.
      */
     boolean isWeaponBlockedAt(int loc, boolean isRear);
 

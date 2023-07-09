@@ -30,13 +30,13 @@ jobs:
 
     steps:
     # Checkout the latest source and put it in: ./megamek
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         path: megamek
 
     # Setup the requested Java Distribution and Version from the matrix
     - name: Set up ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
-      uses: actions/setup-java@v2
+      uses: actions/setup-java@v3
       with:
         distribution: ${{ matrix.java-distribution }}
         java-version: ${{ matrix.java-version }}
@@ -55,7 +55,7 @@ jobs:
         build-root-directory: megamek
 
     - name: Upload Test Logs on Failure
-      uses: actions/upload-artifact@v2.2.4
+      uses: actions/upload-artifact@v3
       if: failure()
       with:
         name: ${{ matrix.os }}-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}-ci-failure-logs
@@ -65,7 +65,7 @@ jobs:
     #
     # NB: Due to a GitHub Actions limitation we won't know what the filename is in order to display it somewhere.
     - name: Upload Nix/Mac Releases
-      uses: actions/upload-artifact@v2.2.4
+      uses: actions/upload-artifact@v3
       if: always() && matrix.os == 'ubuntu-latest'
       with:
         name: mm-release-nix-mac-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
@@ -75,8 +75,8 @@ jobs:
     #
     # NB: Due to a GitHub Actions limitation we won't know what the filename is in order to display it somewhere.
     - name: Upload Windows Release
-      uses: actions/upload-artifact@v2.2.4
+      uses: actions/upload-artifact@v3
       if: always() && matrix.os == 'windows-latest'
       with:
         name: mm-release-win-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
-        path: megamek/megamek/build/distributions/*.zip
+        path: megamek/megamek/build/distributions/megamek-windows-*.zip

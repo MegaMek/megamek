@@ -1780,6 +1780,10 @@ public class GameManager implements IGameManager {
     }
 
     private void entityStatusReport() {
+        if (game.getOptions().booleanOption(OptionsConstants.BASE_SUPPRESS_UNIT_TOOLTIP_IN_REPORT_LOG)) {
+            return;
+        }
+
         List<Report> reports = new ArrayList<>();
         List<Entity> entities = game.getEntitiesVector().stream()
                 .filter(e -> (e.isDeployed() && e.getPosition() != null))
@@ -1789,7 +1793,12 @@ public class GameManager implements IGameManager {
         comp = comp.thenComparing((Entity e) -> e.getDisplayName());
         entities.sort(comp);
 
-        Report r = new Report(7600);
+        // turn off preformatted text for unit tool tip
+        Report r = new Report(1230, Report.PUBLIC);
+        r.add("</pre>");
+        reports.add(r);
+
+        r = new Report(7600);
         reports.add(r);
 
         for (Entity e : entities) {
@@ -1809,6 +1818,11 @@ public class GameManager implements IGameManager {
             r.add("<BR>");
             reports.add(r);
         }
+
+        // turn preformatted text back on, so that text after will display properly
+        r = new Report(1230, Report.PUBLIC);
+        r.add("<pre>");
+        reports.add(r);
 
         vPhaseReport.addAll(reports);
     }
@@ -8395,6 +8409,15 @@ public class GameManager implements IGameManager {
                     && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION))
                     || (entity instanceof TeleMissile)) {
                 int fuelUsed = ((IAero) entity).getFuelUsed(thrust);
+                
+                // if we're a gas hog, aerospace fighter and going faster than walking, then use 2x fuel
+                if (((overallMoveType == EntityMovementType.MOVE_RUN) ||
+                        (overallMoveType == EntityMovementType.MOVE_SPRINT) ||
+                        (overallMoveType == EntityMovementType.MOVE_OVER_THRUST)) &&
+                        entity.hasQuirk(OptionsConstants.QUIRK_NEG_GAS_HOG)) {
+                    fuelUsed *= 2;
+                }
+                
                 a.useFuel(fuelUsed);
             }
 
@@ -27096,7 +27119,7 @@ public class GameManager implements IGameManager {
             }
 
             // Mechanized BA that could die on a 3+
-            ArrayList<Entity> externalUnits = entity.getExternalUnits();
+            List<Entity> externalUnits = entity.getExternalUnits();
 
             // Handle escape of transported units.
             if (!entity.getLoadedUnits().isEmpty()) {

@@ -783,24 +783,27 @@ public class MechFileParser {
     }
 
     /**
-     * Links Dumpers to Cargo equipment if there is one in the same location. Works only for variable size
-     * Cargo, {@link MiscType#createCargo()}, (but not Liquid Storage, Cargo containers/bays)
+     * Links each Dumper to the first (unlinked) Cargo equipment if there is one in the same location.
+     * Works only for variable size Cargo, {@link MiscType#createCargo()}, but not Liquid Storage,
+     * Cargo containers or bays.
      *
      * @param entity The entity to add links to
      */
     static void linkDumpers(Entity entity) {
         List<Mounted> dumpers = entity.getMisc().stream()
                 .filter(mounted -> mounted.getType().hasFlag(MiscType.F_DUMPER)).collect(Collectors.toList());
+
         List<Mounted> cargos = entity.getMisc().stream()
                 .filter(mounted -> mounted.is(EquipmentTypeLookup.CARGO)).collect(Collectors.toList());
+        cargos.forEach(cargo -> cargo.setLinkedBy(null));
 
         for (Mounted dumper : dumpers) {
-            if (dumper.getLinked() == null) {
-                for (Mounted cargo : cargos) {
-                    if ((cargo.getLinkedBy() == null) && (cargo.getLocation() == dumper.getLocation())) {
-                        dumper.setLinked(cargo);
-                        break;
-                    }
+            dumper.setLinked(null);
+            for (Mounted cargo : cargos) {
+                if ((cargo.getLinkedBy() == null) && (cargo.getLocation() == dumper.getLocation())) {
+                    dumper.setLinked(cargo);
+                    cargo.setLinkedBy(dumper);
+                    break;
                 }
             }
         }

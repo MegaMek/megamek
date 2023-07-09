@@ -880,6 +880,8 @@ public class MiscType extends EquipmentType {
         } else if (hasFlag(F_LADDER)) {
             // 0.1 tons per 20 meters
             return RoundWeight.nearestKg(size / 200.0);
+        } else if (is(EquipmentTypeLookup.BA_MANIPULATOR_CARGO_LIFTER)) {
+            return 0.030 * Math.ceil(size * 2);
         } else if (hasFlag(F_BA_MISSION_EQUIPMENT)) {
             // Size is weight in kg
             return RoundWeight.nearestKg(size / 1000.0);
@@ -915,6 +917,8 @@ public class MiscType extends EquipmentType {
                 costValue = getTonnage(entity, loc) * 1000;
             } else if (hasFlag(F_ARMORED_MOTIVE_SYSTEM)) {
                 costValue = getTonnage(entity, loc) * 100000;
+            } else if (is(EquipmentTypeLookup.BA_MANIPULATOR_CARGO_LIFTER)) {
+                return 250 * Math.ceil(size * 2);
             } else if (hasFlag(F_DRONE_OPERATING_SYSTEM)) {
                 costValue = (getTonnage(entity, loc) * 10000) + 5000;
             } else if (hasFlag(MiscType.F_MASC)) {
@@ -3218,7 +3222,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_CAPITAL_ARMOR).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         misc.omniFixedOnly = true;
         misc.rulesRefs = "152,SO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_F)
+        misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
                 .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
                 .setISAdvancement(2600, 2615, DATE_NONE, 2950, 3055).setISApproximate(true, false, false, false, false)
                 .setClanAdvancement(2600, 2615, DATE_NONE, DATE_NONE, DATE_NONE)
@@ -3241,7 +3245,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_CAPITAL_ARMOR).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         misc.omniFixedOnly = true;
         misc.rulesRefs = "152,SO";
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_E)
                 .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
                 .setClanAdvancement(2600, 2615, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
@@ -10474,19 +10478,17 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createBACargoLifter() {
         MiscType misc = new MiscType();
-
         misc.name = "BA Manipulators [Cargo Lifter]";
-        misc.setInternalName("BACargoLifter"); // This value MUST match the name
-                                               // in
+        misc.setInternalName(EquipmentTypeLookup.BA_MANIPULATOR_CARGO_LIFTER); // This value MUST match the name in
                                                // BattleArmor.MANIPULATOR_TYPE_STRINGS
         misc.shortName = "Cargo Lifter";
-        misc.tonnage = 0.03;
+        // Note: The size value for BA Cargo Lifters is the tonnage they can lift; the smallest relevant size is 0.5
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.cost = COST_VARIABLE;
         misc.criticals = 0;
-        misc.cost = 250;
         misc.hittable = false;
-        misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_CARGOLIFTER).or(F_BA_MANIPULATOR);
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_CARGOLIFTER).or(F_BA_MANIPULATOR).or(F_VARIABLE_SIZE);
         misc.bv = 0;
-        misc.cost = 500;
         misc.rulesRefs = "259, TM";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
                 .setTechRating(RATING_C).setAvailability(RATING_D, RATING_D, RATING_D, RATING_C)

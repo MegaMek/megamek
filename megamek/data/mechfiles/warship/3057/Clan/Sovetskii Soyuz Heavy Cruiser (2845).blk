@@ -164,7 +164,7 @@ Naval PPC (Medium)
 </structural_integrity>
 
 <source>
-TRO: 3057R - Early Succession War
+TRO: 3057 Revised
 </source>
 
 <tonnage>
@@ -219,3 +219,28 @@ TRO: 3057R - Early Succession War
 <escape_pod>
 20
 </escape_pod>
+
+<capabilities>
+In its Clan variant, the Sovetskii Soyuz underwent significant enhancements to its capabilities. One notable upgrade is the addition of a fifth docking hardpoint along the vessel's spine, expanding its capacity to carry and support a larger complement of DropShips. This modification further enhanced the ship's versatility and logistical capabilities. Another significant improvement is the integration of a lithium-fusion battery system, augmenting the vessel's power supply and providing increased energy reserves for its advanced systems. This technology, harnessed from the Clan's technological advancements, contributed to the ship's overall performance and operational efficiency. Furthermore, the Clan Soyuz boasts the capability to deploy two full Stars of OmniFighters, greatly enhancing its offensive and defensive capabilities. These agile and versatile OmniFighters complement the Sovetskii Soyuz's arsenal, allowing for precise strikes and efficient engagement with enemy forces in both space and atmospheric combat scenarios. To bolster its defensive capabilities, the Clan Soyuz features an upgraded armor composition made of ferro-aluminum. This advanced armor material offers superior protection while reducing the tonnage required for armor, allowing for increased space and weight allocations for other critical systems and armaments. With these enhancements, the Clan version of the Sovetskii Soyuz represents an even more formidable and versatile WarShip, exemplifying the technological advancements and combat prowess of the Clans in the ongoing conflicts within the Inner Sphere and beyond.
+</capabilities>
+
+<overview>
+The Sovetskii Soyuz, renowned for its devastating weaponry and formidable firepower, underwent modifications in the Clan era, transforming it into an even more formidable vessel. With the addition of a fifth docking hardpoint and a lithium-fusion battery system, as well as an enhanced armor made of ferro-aluminum, the Clan version of the Sovetskii Soyuz showcased further advancements in its capabilities.
+</overview>
+
+<history>
+The Sovetskii Soyuz was commissioned as part of the Star League's effort to revitalize its military capabilities under General Rebecca Fredasa's New Arms Order. This initiative aimed to rectify the neglect the SLDF had suffered under Lord Jonathan Cameron, who had prioritized ineffective automated space defense systems over maintaining a strong military. Facing the growing military strength of the League's member states, General Fredasa called for extensive upgrades to the SLDF's ships and weapons. The Sovetskii Soyuz emerged as one of the prominent designs from this endeavor, showcasing the latest Star League technology and a formidable armament. During the campaign to liberate Terra, many of the original 400 Sovetskii Soyuz-class vessels were destroyed. However, around forty of these powerful cruisers survived and became part of the Exodus fleet. Over time, these vessels formed the core of the Clan fleet, carrying their formidable reputation into the Clan era. Notably, the SLS Kharkov, one of the surviving Sovetskii Soyuz-class vessels, was later renamed the Dire Wolf and became the flagship of the Wolf Clan, attesting to the enduring legacy and significance of the Sovetskii Soyuz-class cruisers in shaping the course of interstellar conflicts.
+</history>
+
+<manufacturer>
+Unknown
+</manufacturer>
+
+<primaryFactory>
+Refit
+</primaryFactory>
+
+
+<use>
+Heavy Cruiser
+</use>

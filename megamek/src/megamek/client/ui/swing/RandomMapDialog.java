@@ -474,6 +474,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
     public void setVisible(boolean b) {
         if (b) {
             adaptToGUIScale();
+            pack();
             loadWindowSettings();
         } else {
             saveWindowSettings();

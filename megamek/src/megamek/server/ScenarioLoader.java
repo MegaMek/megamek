@@ -135,7 +135,8 @@ public class ScenarioLoader {
         } else if (!(newAmmoType instanceof AmmoType)) {
             LogManager.getLogger().error(String.format("Equipment %s is not an ammo type", newAmmoType.getName()));
             return null;
-        } else if (!newAmmoType.isLegal(year, SimpleTechLevel.getGameTechLevel(game), e.isClan(), e.isMixedTech())) {
+        } else if (!newAmmoType.isLegal(year, SimpleTechLevel.getGameTechLevel(game), e.isClan(),
+                e.isMixedTech(), game.getOptions().booleanOption(OptionsConstants.ALLOWED_SHOW_EXTINCT))) {
             LogManager.getLogger().warn(String.format("Ammo %s (TL %d) is not legal for year %d (TL %d)",
                     newAmmoType.getName(), newAmmoType.getTechLevel(year), year,
                     TechConstants.getGameTechLevel(game, e.isClan())));

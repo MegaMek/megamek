@@ -16,6 +16,8 @@ package megamek.common;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.codeUtilities.StringUtility;
+import megamek.common.eras.Era;
+import megamek.common.eras.Eras;
 import megamek.common.options.*;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -213,18 +215,30 @@ public class MechView {
             sHead.add(new SingleLine(Messages.getString("MechView.DesignInvalid")));
         }
         
-        TableElement tpTable = new TableElement(2);
-        tpTable.setColNames(Messages.getString("MechView.Level"), Messages.getString("MechView.Era"));
-        tpTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_CENTER);
+        TableElement tpTable = new TableElement(3);
+        String tableSpacer = "     ";
+        tpTable.setColNames(Messages.getString("MechView.Level"), tableSpacer,
+                Messages.getString("MechView.Era"));
+        tpTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_LEFT,TableElement.JUSTIFIED_LEFT);
+
+        String eraText = entity.getExperimentalRange()
+                + eraText(entity.getPrototypeDate(), entity.getProductionDate());
         tpTable.addRow(TechConstants.getSimpleLevelName(TechConstants.T_SIMPLE_EXPERIMENTAL),
-                entity.getExperimentalRange());
+                tableSpacer, eraText);
+
+        eraText = entity.getAdvancedRange()
+                + eraText(entity.getProductionDate(), entity.getCommonDate());
         tpTable.addRow(TechConstants.getSimpleLevelName(TechConstants.T_SIMPLE_ADVANCED),
-                entity.getAdvancedRange());
+                tableSpacer, eraText);
+
+        eraText = entity.getStandardRange()
+                + eraText(entity.getCommonDate(), ITechnology.DATE_NONE);
         tpTable.addRow(TechConstants.getSimpleLevelName(TechConstants.T_SIMPLE_STANDARD),
-                entity.getStandardRange());
+                tableSpacer, eraText);
+
         String extinctRange = entity.getExtinctionRange();
         if (extinctRange.length() > 1) {
-            tpTable.addRow(Messages.getString("MechView.Extinct"), extinctRange);
+            tpTable.addRow(Messages.getString("MechView.Extinct"), tableSpacer, extinctRange);
         }
         sHead.add(tpTable);
             
@@ -457,7 +471,7 @@ public class MechView {
         Game game = entity.getGame();
 
         if ((game == null) || game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
-            StringJoiner quirksList = new StringJoiner("<br/>\n");
+            List<String> quirksList = new ArrayList<>();
             Quirks quirks = entity.getQuirks();
 
             for (Enumeration<IOptionGroup> optionGroups = quirks.getGroups(); optionGroups.hasMoreElements();) {
@@ -473,14 +487,14 @@ public class MechView {
                     }
                 }
             }
-            if (quirksList.length() > 0) {
+            if (!quirksList.isEmpty()) {
+                sFluff.add(new SingleLine());
                 ItemList list = new ItemList(Messages.getString("MechView.Quirks"));
-                list.addItem(quirksList.toString());
+                quirksList.forEach(list::addItem);
                 sFluff.add(list);
             }
 
-            String wpQuirksList = "";
-
+            List<String> wpQuirksList = new ArrayList<>();
             for (Mounted weapon: entity.getWeaponList()) {
                 for (Enumeration<IOptionGroup> optionGroups = weapon.getQuirks().getGroups(); optionGroups.hasMoreElements();) {
                     IOptionGroup group = optionGroups.nextElement();
@@ -498,15 +512,16 @@ public class MechView {
 
                         if (!wq.isEmpty()) {
                             wq = weapon.getDesc() + ": " + wq.substring(0, wq.length() - 2);
-                            wpQuirksList += wq + "<BR/>";
+                            wpQuirksList.add(wq);
                         }
                     }
                 }
             }
 
             if (!wpQuirksList.isEmpty()) {
-                ItemList list = new ItemList("<BR/>" + Messages.getString("MechView.WeaponQuirks"));
-                list.addItem(wpQuirksList);
+                sFluff.add(new SingleLine());
+                ItemList list = new ItemList(Messages.getString("MechView.WeaponQuirks"));
+                wpQuirksList.forEach(list::addItem);
                 sFluff.add(list);
             }
         }
@@ -528,6 +543,22 @@ public class MechView {
             sFluff.add(new LabeledElement("History", entity.getFluff().getHistory()));
         }
         sFluff.add(new SingleLine());
+    }
+
+    private String eraText(int startYear, int endYear) {
+        String eraText = "";
+        if (startYear != ITechnology.DATE_NONE) {
+            Era startEra = Eras.getEra(startYear);
+            Era endEra = Eras.getEra(endYear - 1);
+            eraText = " (" + startEra.name();
+            if (endYear == ITechnology.DATE_NONE) {
+                eraText += " -";
+            } else if (!endEra.equals(startEra)) {
+                eraText += " to " + endEra.name();
+            }
+            eraText += ")";
+        }
+        return eraText;
     }
     
     /**

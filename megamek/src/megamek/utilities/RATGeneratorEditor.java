@@ -22,6 +22,7 @@ import megamek.common.Configuration;
 import megamek.common.EntityMovementMode;
 import megamek.common.UnitRoleHandler;
 import megamek.common.UnitType;
+import megamek.common.eras.Eras;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
@@ -1522,29 +1523,7 @@ public class RATGeneratorEditor extends JFrame {
     }
 
     private static String getEra(int year) {
-        if (year <= 2570) {
-            return "AoW";
-        } else if (year <= 2780) {
-            return "SL";
-        } else if (year <= 2900) {
-            return "ESW";
-        } else if (year <= 3049) {
-            return "LSW";
-        } else if (year <= 3061) {
-            return "Clans";
-        } else if (year <= 3067) {
-            return "Civil W";
-        } else if (year <= 3080) {
-            return "Jihad";
-        } else if (year <= 3100) {
-            return "ERep";
-        } else if (year <= 3130) {
-            return "LRep";
-        } else if (year <= 3150) {
-            return "Dark Age";
-        } else {
-            return "ilClan";
-        }
+        return Eras.getEra(year).code();
     }
 
     /**

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,9 +16,9 @@ Warship
 Soyal Heavy Cruiser
 </Name>
 
-<model>
+<Model>
 
-</model>
+</Model>
 
 <mul id:>
 6984
@@ -47,7 +47,7 @@ dockingcollar
 dockingcollar
 mechbay:48.0:2
 dockingcollar
-smallcraftbay:2.0:1:4
+smallcraftbay:2.0:1:7
 1stclassquarters:700.0:0
 crewquarters:2737.0:0
 steeragequarters:140.0:0
@@ -177,8 +177,48 @@ Ammo Killer Whale:60
 120
 </structural_integrity>
 
+<capabilities>
+The Soyal-class cruiser was known for its implementation of the advanced mass driver weapon system, which provided the ability to deliver devastating opening volleys. This revolutionary technology set it apart from conventional naval combat vessels. However, the over-engineered design of the ship, primarily to handle the stresses of firing the mass driver, resulted in an enormous size exceeding a million tons. The ship's secondary weapons were relatively minimal, as the focus was on its bow-on combat profile, which was believed to negate the need for broadside weapons.
+</capabilities>
+
+<overview>
+he Soyal-class cruiser was a revolutionary combat vessel developed by Delhi WarShips in response to a tender for a new Star League vessel. Its key feature was the incorporation of a powerful mass driver weapon system, which offered the ability to deliver massive opening volley damage. Although oversized and radical in design, the Soyal garnered attention due to its unique characteristics and gained orders from the Capellan Confederation and the Free Worlds League. However, the limitations of the mass driver's field of fire would later prove to be a significant weakness for the ship.
+</overview>
+
+<history>
+In 2725, Delhi WarShips saw an opportunity to make a breakthrough in the bidding for a new Star League vessel by proposing the Soyal-class cruiser. Its defining feature was the inclusion of a powerful mass driver weapon system, considered a game-changer in naval combat. However, Delhi's access to mass driver technology and research proved more limited than anticipated, leading to an over-engineered design that rivaled battleships in size. Despite its excessive design, the Soyal-class cruiser was not chosen for the Star League Navy contract. However, the Capellan Confederation recognized its potential and modified the design to fit their needs, ordering four ships for their fleet. This sparked interest from the neighboring Free Worlds League, who also placed orders for the Soyal cruisers. Although the deployment of the mass driver initially generated public demand for a similar ship in the SLDF, the limitations of the weapon system would become apparent during the Succession Wars. The Soyal's restricted field of fire made it vulnerable to faster and more maneuverable vessels, leading to embarrassing defeats. Ultimately, the Soyal-class cruisers would see limited action and fall out of use as newer ships proved more effective in combat.
+</history>
+
+<manufacturer>
+Delhi WarShips
+</manufacturer>
+
+<primaryFactory>
+Capella
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Heavy Cruiser
+</use>
+
+<length>
+1100 m
+</length>
+
+<height>
+1200 m Sail
+</height>
+
 <source>
-Field Report 2765 CCAF - Star League
+Field Report 2765 CCAF
 </source>
 
 <tonnage>
@@ -197,6 +237,10 @@ Field Report 2765 CCAF - Star League
 145
 145
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 591
@@ -229,3 +273,4 @@ Field Report 2765 CCAF - Star League
 <escape_pod>
 21
 </escape_pod>
+

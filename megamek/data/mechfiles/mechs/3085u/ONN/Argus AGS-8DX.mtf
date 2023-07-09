@@ -6,7 +6,7 @@ mul id:110
 Config:Biped
 TechBase:Inner Sphere
 Era:3074
-source:TRO: 3085 - Jihad
+source:TRO: 3085
 Rules Level:4
 
 Mass:60
@@ -149,4 +149,4 @@ Endo Steel
 -Empty-
 -Empty-
 
-imagefile:.\data\images\fluff\Mech\TRO3067_Argus.jpg
+

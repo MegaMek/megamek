@@ -20,7 +20,6 @@ out/
 .run/
 .classpath
 .project
-.classpath
 .run
 settings_local.gradle
 properties_local.gradle
@@ -68,7 +67,9 @@ megamek/userdata/**
 /megamek/data/images/*_atlas.png
 /megamek/data/images/imgFileAtlasMap.xml
 #Portraits
-/megamek/data/images/portraits/
+/megamek/data/images/portraits/*
+!/megamek/data/images/portraits/Female
+!/megamek/data/images/portraits/Male
 /megamek/data/images/temp/
 !/megamek/data/images/portraits/default.gif
 
@@ -82,7 +83,6 @@ megamek/userdata/**
 /megamek/*.pdf
 /megamek/*.ps
 /megamek/*.png
-/megamek/*.ps
 /megamek/atlasedImages.txt
 /megamek/Entity Issues.txt
 /megamek/apidocs/

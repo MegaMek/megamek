@@ -30,11 +30,10 @@ import static megamek.client.ui.swing.util.UIUtil.uiBlack;
 
 public final class HexTooltip {
 
-    public static String getHexTip(Hex mhex, @Nullable ClientGUI clientGUI) {
+    public static String getHexTip(Hex mhex, @Nullable Client client) {
         StringBuilder result = new StringBuilder();
         Coords mcoords = mhex.getCoords();
         // All of the following can be null even if there's a ClientGUI!
-        Client client = (clientGUI != null) ? clientGUI.getClient() : null;
         Game game = (client != null) ? client.getGame() : null;
         Player localPlayer = (client != null) ? client.getLocalPlayer() : null;
 

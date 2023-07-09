@@ -7,6 +7,7 @@ Config:Biped
 techbase:Inner Sphere
 era:2862
 rules level:4
+source:Touring the Stars: Valencia
 
 mass:75
 engine:180 ICE Engine(IS)

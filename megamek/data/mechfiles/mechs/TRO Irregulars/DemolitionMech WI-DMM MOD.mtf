@@ -1,0 +1,151 @@
+Version:1.0
+DemolitionMech
+WI-DMM MOD
+mul id:7839
+
+Config:Biped
+techbase:Inner Sphere
+era:3100
+source:TRO: Irregulars
+rules level:2
+
+mass:35
+engine:105 Fuel Cell Engine(IS)
+structure:IS Industrial
+myomer:Standard
+
+heat sinks:4 Single
+walk mp:3
+jump mp:0
+
+armor:Industrial (Inner Sphere)
+LA armor:8
+RA armor:8
+LT armor:8
+RT armor:8
+CT armor:10
+HD armor:8
+LL armor:10
+RL armor:10
+RTL armor:5
+RTR armor:5
+RTC armor:5
+
+Weapons:3
+MagShot, Right Arm
+MagShot, Right Arm
+Medium Laser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+IS Wrecking Ball
+IS Wrecking Ball
+IS Wrecking Ball
+IS Wrecking Ball
+IS Wrecking Ball
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISMagshotGR
+ISMagshotGR
+ISMagshotGR
+ISMagshotGR
+ISMagshotGR Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Medium Laser
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

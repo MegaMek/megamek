@@ -1,15 +1,21 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common.net.connections;
 
@@ -21,38 +27,30 @@ import java.net.Socket;
 import java.net.SocketException;
 
 /**
- * Implementation of the <code>Connection</code> that uses the
- * <code>DataInputStream</code> and <code>DataOutputStream</code> to
- * send/receive data.
+ * Implementation of the AbstractConnection that uses the DataInputStream and
+ * DataOutputStream to send/receive data.
  */
 public class DataStreamConnection extends AbstractConnection {
 
-    /**
-     * Input stream
-     */
     private DataInputStream in;
-
-    /**
-     * Output stream
-     */
     private DataOutputStream out;
 
     /**
-     * Creates new server connection
+     * Creates new server connection.
      * 
-     * @param socket
-     * @param id
+     * @param socket The network socket to use
+     * @param id The connection ID
      */
     public DataStreamConnection(Socket socket, int id) {
         super(socket, id);
     }
 
     /**
-     * Creates new Client connection
+     * Creates new Client connection.
      * 
-     * @param host
-     * @param port
-     * @param id
+     * @param host The host address
+     * @param port The network port
+     * @param id The connection ID
      */
     public DataStreamConnection(String host, int port, int id) {
         super(host, port, id);
@@ -123,10 +121,8 @@ public class DataStreamConnection extends AbstractConnection {
                 }
             }
         } catch (SocketException ignored) {
-            // close this connection, because it's broken
-            // This can happen if the connection is closed while being written
-            // to, and it's not a big deal, since the connection is being broken
-            // anyways
+            // close this connection, because it's broken. This can happen if the connection is closed while
+            // being written to, and it's not a big deal, since the connection is being broken anyway
             close();
         } catch (IOException ex) {
             LogManager.getLogger().error("", ex);
@@ -138,51 +134,5 @@ public class DataStreamConnection extends AbstractConnection {
     @Override
     public String toString() {
         return "DataStreamConnection Id " + getId();
-    }
-
-    private static class NetworkPacket implements INetworkPacket {
-
-        /**
-         * Is data compressed
-         */
-        private boolean compressed;
-
-        /**
-         * Data marshalling type
-         */
-        private int marshallingType;
-
-        /**
-         * Packet data
-         */
-        private byte[] data;
-
-        /**
-         * Creates new packet
-         * 
-         * @param compressed
-         * @param marshallingType
-         * @param data
-         */
-        NetworkPacket(boolean compressed, int marshallingType, byte[] data) {
-            this.compressed = compressed;
-            this.marshallingType = marshallingType;
-            this.data = data;
-        }
-
-        @Override
-        public int getMarshallingType() {
-            return marshallingType;
-        }
-
-        @Override
-        public byte[] getData() {
-            return data;
-        }
-
-        @Override
-        public boolean isCompressed() {
-            return compressed;
-        }
     }
 }

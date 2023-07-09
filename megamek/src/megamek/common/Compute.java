@@ -4977,7 +4977,13 @@ public class Compute {
         if (null == e.getActiveSensor()) {
             return null;
         }
-        int bracket = Compute.getSensorBracket(e.getSensorCheck());
+
+        int check = e.getSensorCheck();
+        if ((null != e.getCrew()) && e.hasAbility(OptionsConstants.UNOFF_SENSOR_GEEK)) {
+            check -= 2;
+        }
+
+        int bracket = Compute.getSensorBracket(check);
         if (e.isSpaceborne()) {
             bracket = Compute.getSensorBracket(7);
         }

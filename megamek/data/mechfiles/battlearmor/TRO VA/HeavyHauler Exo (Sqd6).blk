@@ -49,14 +49,14 @@ Leg
 </armor_tech>
 
 <Squad Equipment>
-BACargoLifter:RA
-BACargoLifter:LA
+BACargoLifter:RA:SIZE:2.5
+BACargoLifter:LA:SIZE:2.5
 BACuttingTorch:Body
 BASearchlight:Body
 </Squad Equipment>
 
 <source>
-TRO: Vehicle Annex (r) - Clan Invasion
+TRO: Vehicle Annex Revised
 </source>
 
 <chassis>

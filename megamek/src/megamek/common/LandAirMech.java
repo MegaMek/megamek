@@ -121,7 +121,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     private int straightMoves = 0;
     private int altLoss = 0;
     private int altLossThisRound = 0;
-    
+
     //Autoejection
     private boolean critThresh = false;
 
@@ -351,7 +351,8 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             }
 
             if(getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_TORNADO_F13)) {
+                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_NONE)
+                    && (game.getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_TORNADO_F13)) {
                 j += 1;
             }
         }
@@ -369,7 +370,8 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             j = Math.max(j + weatherMod, 0);
 
             if(getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_TORNADO_F13)) {
+                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_NONE)
+                    && (game.getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_TORNADO_F13)) {
                 j += 1;
             }
         }
@@ -713,7 +715,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             if (moved == EntityMovementType.MOVE_OVER_THRUST) {
                 roll.addModifier(+1, "Used more than safe thrust");
             }
-            
+
             int vel = getCurrentVelocity();
             int vmod = vel - (2 * getWalkMP());
             if (!getGame().getBoard().inSpace() && (vmod > 0)) {
@@ -1010,7 +1012,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     public boolean canFall(boolean gyroLegDamage) {
         return getConversionMode() != CONV_MODE_FIGHTER && !isAirborneVTOLorWIGE() && super.canFall(gyroLegDamage);
     }
-    
+
     private static final TechAdvancement[] TA_LAM = {
             new TechAdvancement(TECH_BASE_IS).setISAdvancement(2683, 2688, DATE_NONE, 3085)
                 .setClanAdvancement(DATE_NONE, 2688, DATE_NONE, 2825)
@@ -1023,12 +1025,12 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
                 .setTechRating(RATING_E).setAvailability(RATING_E, RATING_F, RATING_X, RATING_X)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL) // bimodal
     };
-    
+
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
         return TA_LAM[lamType];
     }
-    
+
     @Override
     public int height() {
         if (getConversionMode() == CONV_MODE_MECH) {
@@ -1039,7 +1041,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
 
     /**
      * LAMs can only carry mechanized BA in mech mode
-     * 
+     *
      * @return
      */
     @Override
@@ -1338,7 +1340,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             return hits > 3 ? 5 : hits;
         }
     }
-    
+
     //Landing mods for partial repairs
     @Override
     public int getLandingGearPartialRepairs() {
@@ -1350,7 +1352,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         return 0;
         }
     }
-    
+
     //Avionics mods for partial repairs
     @Override
     public int getAvionicsMisreplaced() {
@@ -1360,7 +1362,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         return 0;
         }
     }
-    
+
     @Override
     public int getAvionicsMisrepaired() {
         if (getPartialRepairs().booleanOption("aero_avionics_crit")) {
@@ -1368,7 +1370,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         } else {
         return 0;
         }
-    }    
+    }
 
     /**
      * In fighter mode the weapon arcs need to be translated to Aero arcs.
@@ -1575,7 +1577,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         return fuel;
         }
     }
-    
+
     @Override
     public int getCurrentFuel() {
         if ((getPartialRepairs().booleanOption("aero_asf_fueltank_crit"))
@@ -1588,7 +1590,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
 
     /**
      * Sets the number of fuel points.
-     * 
+     *
      * @param gas
      *            Number of fuel points.
      */
@@ -1597,7 +1599,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         fuel = gas;
         currentfuel = gas;
     }
-    
+
     @Override
     public void setCurrentFuel(int gas) {
         currentfuel = gas;
@@ -2055,7 +2057,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     public long getEntityType() {
         return Entity.ETYPE_MECH | Entity.ETYPE_BIPED_MECH | Entity.ETYPE_LAND_AIR_MECH;
     }
-    
+
     /**
      * A method to add/remove sensors that only work in space as we transition in and out of an atmosphere
      */

@@ -1,0 +1,149 @@
+Version:1.0
+Buster BC
+XV-M-B HaulerMech MOD
+mul id:454
+
+Config:Biped
+TechBase:Inner Sphere
+Era:2801
+Source:Record Sheets: Vehicle Annex - IndustrialMechs & Exoskeletons
+Rules Level:2
+
+Mass:50
+Engine:150 ICE Engine(IS)
+Structure:IS Industrial
+Myomer:Standard
+
+Heat Sinks:10 Single
+Walk MP:3
+Jump MP:0
+
+Armor:Commercial(Inner Sphere)
+LA Armor:10
+RA Armor:10
+LT Armor:10
+RT Armor:10
+CT Armor:11
+HD Armor:9
+LL Armor:10
+RL Armor:10
+RTL Armor:4
+RTR Armor:4
+RTC Armor:8
+
+Weapons:1
+PPC, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Heat Sink
+Cargo (2 tons)
+Cargo (2 tons)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+PPC
+PPC
+PPC
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Heat Sink
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

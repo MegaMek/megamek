@@ -1,0 +1,153 @@
+Version:1.0
+Lumberjack
+LM5/M
+mul id:7177
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3070
+Source:Record Sheets: 3075
+Rules Level:2
+
+Mass:70
+Engine:210 Fusion Engine(IS)
+Structure:IS Industrial
+Myomer:Standard
+
+Heat Sinks:11 Single
+Walk MP:3
+Jump MP:3
+
+Armor:Heavy Industrial(Inner Sphere)
+LA Armor:20
+RA Armor:20
+LT Armor:23
+RT Armor:23
+CT Armor:30
+HD Armor:9
+LL Armor:24
+RL Armor:24
+RTL Armor:6
+RTR Armor:6
+RTC Armor:7
+
+Weapons:5
+Medium Laser, Left Arm
+Large Laser, Right Arm
+Medium Laser, Right Arm
+LRM 15, Left Torso
+LRM 15, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Medium Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Large Laser
+Large Laser
+Medium Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+LRM 15
+LRM 15
+LRM 15
+IS Ammo LRM-15
+IS Ammo LRM-15
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+LRM 15
+LRM 15
+LRM 15
+IS Ammo LRM-15
+IS Ammo LRM-15
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Heat Sink
+Jump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

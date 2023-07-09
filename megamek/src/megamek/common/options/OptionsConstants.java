@@ -291,6 +291,7 @@ public class OptionsConstants {
     public static final String BASE_BREEZE = "breeze";
     public static final String BASE_RANDOM_BASEMENTS = "random_basements";
     public static final String BASE_AUTO_AMS = "auto_ams";
+    public static final String BASE_SUPPRESS_UNIT_TOOLTIP_IN_REPORT_LOG = "suppress_unit_tooltip_in_report_log";
     public static final String BASE_HIDE_UNOFFICIAL = "hide_unofficial";
     public static final String BASE_HIDE_LEGACY = "hide_legacy";
 
@@ -312,6 +313,7 @@ public class OptionsConstants {
     public static final String ALLOWED_TECHLEVEL = "techlevel";
     public static final String ALLOWED_ERA_BASED = "era_based";
     public static final String ALLOWED_ALLOW_ILLEGAL_UNITS = "allow_illegal_units";
+    public static final String ALLOWED_SHOW_EXTINCT = "show_extinct";
     public static final String ALLOWED_CLAN_IGNORE_EQ_LIMITS = "clan_ignore_eq_limits";
     public static final String ALLOWED_NO_CLAN_PHYSICAL = "no_clan_physical";
     public static final String ALLOWED_ALLOW_NUKES = "allow_nukes";

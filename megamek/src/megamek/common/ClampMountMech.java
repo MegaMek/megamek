@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2002 - Ben Mazur (bmazur@sev.org).
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022-2023 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -24,40 +24,12 @@ package megamek.common;
 public class ClampMountMech extends BattleArmorHandles {
     private static final long serialVersionUID = -5687854937528642266L;
 
-    /**
-     * The <code>String</code> reported when the handles are in use.
-     */
     private static final String NO_VACANCY_STRING = "A BA squad with magnetic clamps is loaded";
-
-    /**
-     * The <code>String</code> reported when the handles are available.
-     */
     private static final String HAVE_VACANCY_STRING = "One BA-magclamp squad";
 
-    /**
-     * Get the <code>String</code> to report the presence (or lack thereof) of a loaded squad of
-     * Battle Armor troopers.
-     * <p>
-     * Sub-classes are encouraged to override this method.
-     *
-     * @param isLoaded A <code>boolean</code> that indicates that troopers are currently loaded
-     *                (if the value is <code>true</code>) or not (if the value is <code>false</code>).
-     * @return a <code>String</code> describing the occupancy state of this transporter.
-     */
     @Override
-    protected String getVacancyString(boolean isLoaded) {
-        if (isLoaded) {
-            return ClampMountMech.NO_VACANCY_STRING;
-        }
-        return ClampMountMech.HAVE_VACANCY_STRING;
-    }
-
-    /**
-     * Create a space to mount clamp-equipped troopers on a Mech.
-     */
-    public ClampMountMech() {
-        // Initialize our super-class.
-        super();
+    public String getUnusedString() {
+        return (carriedUnit != Entity.NONE) ? NO_VACANCY_STRING : HAVE_VACANCY_STRING;
     }
 
     @Override
@@ -67,20 +39,11 @@ public class ClampMountMech extends BattleArmorHandles {
 
     @Override
     public boolean canLoad(Entity unit) {
-        if (!(unit instanceof BattleArmor)) {
-            // Only BattleArmor can be carried in BattleArmorHandles.
-            return false;
-        } else if (troopers != -1) {
-            // We must have enough space for the new troopers.
-            return false;
-        } else {
-            // The unit must be capable of doing mechanized BA
-            return ((BattleArmor) unit).hasMagneticClamps();
-        }
+        return (carriedUnit == Entity.NONE) && (unit instanceof BattleArmor) && ((BattleArmor) unit).hasMagneticClamps();
     }
 
     @Override
     public String toString() {
-        return "ClampMountMech - troopers:" + troopers;
+        return "ClampMountMech - troopers:" + carriedUnit;
     }
 }

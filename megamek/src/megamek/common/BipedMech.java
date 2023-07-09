@@ -83,7 +83,7 @@ public class BipedMech extends Mech {
 
         return canFlip;
     }
-    
+
     @Override
     public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
         int mp = getOriginalWalkMP();
@@ -183,7 +183,8 @@ public class BipedMech extends Mech {
             mp = Math.max(mp + weatherMod, 0);
 
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
-                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_TORNADO_F13)) {
+                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_NONE)
+                    && (game.getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_TORNADO_F13)) {
                 mp += 1;
             }
         }
@@ -835,9 +836,9 @@ public class BipedMech extends Mech {
     public long getEntityType() {
         return Entity.ETYPE_MECH | Entity.ETYPE_BIPED_MECH;
     }
-    
+
     /**
-     * 
+     *
      * @return true if this unit is capable of Zweihandering (melee attack with both hands)
      */
     public boolean canZweihander() {
@@ -856,15 +857,15 @@ public class BipedMech extends Mech {
     @Override
     public List<Integer> getValidBraceLocations() {
         List<Integer> validLocations = new ArrayList<>();
-        
+
         if (!isLocationBad(Mech.LOC_RARM)) {
             validLocations.add(Mech.LOC_RARM);
         }
-        
+
         if (!isLocationBad(Mech.LOC_LARM)) {
             validLocations.add(Mech.LOC_LARM);
         }
-        
+
         return validLocations;
     }
 
@@ -877,7 +878,7 @@ public class BipedMech extends Mech {
                 || !isLocationBad(Mech.LOC_LARM))
                 && !isProne();
     }
-    
+
     @Override
     public int getBraceMPCost() {
         return 1;

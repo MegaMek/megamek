@@ -1,0 +1,284 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Monsoon Battleship (LF)
+</Name>
+
+<Model>
+(2574)
+</Model>
+
+<mul id:>
+4659
+</mul id:>
+
+<year>
+2574
+</year>
+
+<originalBuildYear>
+2574
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+asfbay:18.0:2:1
+smallcraftbay:8.0:2:2
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+1stclassquarters:1020.0:0
+crewquarters:3325.0:0
+cargobay:282505.5:2:11
+</transporters>
+
+<SafeThrust>
+2
+</SafeThrust>
+
+<heatsinks>
+4981
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+15000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+187
+160
+160
+170
+160
+160
+</armor>
+
+<Nose Equipment>
+(B) Naval Autocannon (NAC/30)
+Ammo NAC/30:30
+(B) Naval PPC (Medium)
+Naval PPC (Medium)
+Naval PPC (Medium)
+Naval PPC (Medium)
+(B) Capital Missile Launcher (White Shark)
+Ammo White Shark:20
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Naval Autocannon (NAC/30)
+Naval Autocannon (NAC/30)
+Ammo NAC/30:50
+(B) Naval PPC (Medium)
+Naval PPC (Medium)
+Naval PPC (Medium)
+(B) Capital Missile Launcher (White Shark)
+Ammo White Shark:20
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Naval Autocannon (NAC/30)
+Naval Autocannon (NAC/30)
+Ammo NAC/30:50
+(B) Naval PPC (Medium)
+Naval PPC (Medium)
+Naval PPC (Medium)
+(B) Capital Missile Launcher (White Shark)
+Ammo White Shark:20
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Naval Autocannon (NAC/30)
+Ammo NAC/30:30
+(B) Naval PPC (Medium)
+Naval PPC (Medium)
+Naval PPC (Medium)
+Naval PPC (Medium)
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Naval Autocannon (NAC/30)
+Ammo NAC/30:40
+(B) Naval PPC (Medium)
+Naval PPC (Medium)
+Naval PPC (Medium)
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Naval Autocannon (NAC/30)
+Ammo NAC/30:40
+(B) Naval PPC (Medium)
+Naval PPC (Medium)
+Naval PPC (Medium)
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval Autocannon (NAC/35)
+Naval Autocannon (NAC/35)
+Ammo NAC/35:40
+(B) Naval Autocannon (NAC/35)
+Naval Autocannon (NAC/35)
+Ammo NAC/35:40
+(B) Naval Autocannon (NAC/35)
+Naval Autocannon (NAC/35)
+Ammo NAC/35:40
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval Autocannon (NAC/35)
+Naval Autocannon (NAC/35)
+Ammo NAC/35:40
+(B) Naval Autocannon (NAC/35)
+Naval Autocannon (NAC/35)
+Ammo NAC/35:40
+(B) Naval Autocannon (NAC/35)
+Naval Autocannon (NAC/35)
+Ammo NAC/35:40
+</Right Broadsides Equipment>
+
+<structural_integrity>
+90
+</structural_integrity>
+
+<capabilities>
+The Monsoon-class battleship represented a pinnacle of technological and tactical improvements achieved through the development of early WarShips, notably the TAS Dreadnought. Designed to dominate space warfare, these battleships boasted advanced features and capabilities. They were armed with a formidable array of weaponry, including powerful naval autocannons, missile launchers, and other offensive systems. Their operational range allowed for extended engagements, making them a force to be reckoned with on the battlefield. Additionally, their robust defensive systems provided enhanced protection against enemy attacks. The Monsoons set the standard for subsequent ship designs, showcasing conceptual and technological superiority. They played a crucial role in the expansion of the Terran Hegemony and later during the destructive "Age of War." However, as technological advancements continued, newer ship designs emerged that outclassed the Monsoon-class battleships. Efforts were made to upgrade and modernize these venerable ships, with the installation of lithium-fusion batteries being the last major modification attempted. Unfortunately, due to budget constraints and the changing tides of warfare, the Monsoons gradually became outdated, leading to their retirement in 2668.
+</capabilities>
+
+<overview>
+The Monsoon-class battleship played a significant role in the advancement of modern fighting starships, serving as the blueprint for subsequent designs. Introduced during the Terran Hegemony era, these powerful vessels showcased superior technological advancements and became renowned for their formidable reputation. However, despite their legacy, the Monsoons eventually faced obsolescence and were retired after the Reunification War.
+</overview>
+
+<history>
+The origins of the Monsoon-class battleship can be traced back to the TAS Dreadnought, launched in 2300 under the command of Admiral James McKenna. Utilizing the Dreadnought and its sister ships, Admiral McKenna overthrew the corrupt Terran Alliance and established the Terran Hegemony. The early battles fought by the Hegemony Navy significantly influenced the development of advanced ship designs, culminating in the creation of the Monsoon-class battleship. These immense vessels became the benchmark for naval architecture for over four hundred years. The Monsoons gained a fearsome reputation during the expansion of the Hegemony and played a vital role during the destructive "Age of War." Despite their unparalleled status and legendary names such as Barham, Richelie, and Thunderer, the Admiralty of the Terran Hegemony found it difficult to retire these revered ships. Sentimentality clouded their judgment, leading to excessive spending on repairs and upgrades, as many Admirals had begun their careers aboard Monsoon-class battleships. However, as the Reunification War unfolded, it became increasingly clear that the Great Houses possessed designs capable of outclassing the Monsoons. In a final attempt to keep up with advancements, the Admiralty initiated a modification project to fit lithium-fusion batteries onto the remaining ships. The process proved challenging and costly. Following the war, with budgetary cutbacks and changing priorities, the Admiralty struggled to justify the expense of upgrading the entire fleet. As a result, the Monsoons were gradually decommissioned, with only ten ships receiving the battery installation before the retirement of the class in 2668. Some decommissioned Monsoon-class battleships found new homes among Star League member states. For instance, the Rim Worlds Republic incorporated seven Monsoons into its navy. Additionally, at least one Monsoon joined Alexander Kerensky's Exodus Fleet, its final fate shrouded in mystery. The Monsoons left an indelible mark on history, serving as a testament to the advancements and traditions of naval warfare within the Inner Sphere.
+</history>
+
+<manufacturer>
+Di Tron Heavy Industries (Refit)
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Battleship
+</use>
+
+<length>
+1400 m
+</length>
+
+<height>
+1400 m Sail
+</height>
+
+<source>
+TRO: 3057 Revised
+</source>
+
+<tonnage>
+1310000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<lithium-fusion>
+1
+</lithium-fusion>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+95
+65
+55
+</grav_decks>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+653
+</crew>
+
+<officers>
+102
+</officers>
+
+<gunners>
+55
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+32
+</life_boat>
+
+<escape_pod>
+12
+</escape_pod>
+

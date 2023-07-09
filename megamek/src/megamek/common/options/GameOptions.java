@@ -74,6 +74,7 @@ public class GameOptions extends AbstractOptions {
         addOption(base, OptionsConstants.BASE_RANDOM_BASEMENTS, true);
         addOption(base, OptionsConstants.BASE_AUTO_AMS, true);
         addOption(base, OptionsConstants.BASE_TURN_TIMER, 0);
+        addOption(base, OptionsConstants.BASE_SUPPRESS_UNIT_TOOLTIP_IN_REPORT_LOG, false);
         addOption(base, OptionsConstants.BASE_HIDE_UNOFFICIAL, false);
         addOption(base, OptionsConstants.BASE_HIDE_LEGACY, false);
 
@@ -98,14 +99,15 @@ public class GameOptions extends AbstractOptions {
                 TechConstants.T_SIMPLE_NAMES[TechConstants.T_SIMPLE_STANDARD]);
         addOption(allowed, OptionsConstants.ALLOWED_ERA_BASED, false);
         addOption(allowed, OptionsConstants.ALLOWED_ALLOW_ILLEGAL_UNITS, false);
-        addOption(allowed, OptionsConstants.ALLOWED_CLAN_IGNORE_EQ_LIMITS, false);
-        addOption(allowed, OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL, false);
-        addOption(allowed, OptionsConstants.ALLOWED_ALLOW_NUKES, false);
-        addOption(allowed, OptionsConstants.ALLOWED_REALLY_ALLOW_NUKES, false);
-
-        IBasicOptionGroup advancedRules = addGroup("advancedRules");
-        addOption(advancedRules, OptionsConstants.ADVANCED_MINEFIELDS, false);
-        addOption(advancedRules, OptionsConstants.ADVANCED_HIDDEN_UNITS, true);
+        addOption(allowed, OptionsConstants.ALLOWED_SHOW_EXTINCT, true);
+        addOption(allowed, OptionsConstants.ALLOWED_CLAN_IGNORE_EQ_LIMITS, false); 
+        addOption(allowed, OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL, false); 
+        addOption(allowed, OptionsConstants.ALLOWED_ALLOW_NUKES, false); 
+        addOption(allowed, OptionsConstants.ALLOWED_REALLY_ALLOW_NUKES, false); 
+           
+        IBasicOptionGroup advancedRules = addGroup("advancedRules"); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_MINEFIELDS, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_HIDDEN_UNITS, true); 
         addOption(advancedRules, OptionsConstants.ADVANCED_BLACK_ICE, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_DOUBLE_BLIND, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_SENSORS, false);

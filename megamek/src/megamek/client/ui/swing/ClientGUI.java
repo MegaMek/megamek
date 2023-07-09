@@ -162,6 +162,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     public static final String VIEW_TOGGLE_FOV_HIGHLIGHT = "viewToggleFovHighlight";
     public static final String VIEW_TOGGLE_FIRING_SOLUTIONS = "viewToggleFiringSolutions";
     public static final String VIEW_MOVE_ENV = "viewMovementEnvelope";
+    public static final String VIEW_TURN_DETAILS_OVERLAY = "viewTurnDetailsOverlay";
     public static final String VIEW_MOVE_MOD_ENV = "viewMovModEnvelope";
     public static final String VIEW_CHANGE_THEME = "viewChangeTheme";
     public static final String VIEW_ROUND_REPORT = "viewRoundReport";
@@ -877,9 +878,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             case VIEW_MINI_MAP:
                 GUIP.toggleMinimapEnabled();
                 break;
-            case VIEW_KEYBINDS_OVERLAY:
-                GUIP.toggleKeybindsOverlay();
-                break;
             case VIEW_TOGGLE_HEXCOORDS:
                 GUIP.toggleCoords();
                 break;
@@ -937,7 +935,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 break;
             case VIEW_TOGGLE_SENSOR_RANGE:
                 GUIP.setShowSensorRange(!GUIP.getShowSensorRange());
-                bv.repaint();
                 break;
             case VIEW_TOGGLE_FOV_DARKEN:
                 GUIP.setFovDarken(!GUIP.getFovDarken());
@@ -1936,11 +1933,15 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     // Read the units from the file.
                     final Vector<Entity> loadedUnits = new MULParser(unitFile, getClient().getGame().getOptions()).getEntities();
 
+                    // in the Lounge, set default deployment to "Before Game Start", round 0
+                    // but in a game in-progress, deploy at the start of next round
+                    final int deployRound = client.getGame().getRoundCount() + ((client.getGame().getPhase() == GamePhase.LOUNGE) ? 0 : 1);
+
                     // Add the units from the file.
                     for (Entity entity : loadedUnits) {
                         entity.setOwner(player);
                         if (reinforce) {
-                            entity.setDeployRound(client.getGame().getRoundCount() + 1);
+                            entity.setDeployRound(deployRound);
                             entity.setGame(client.getGame());
                             // Set these to true, otherwise units reinforced in
                             // the movement turn are considered selectable

@@ -6,7 +6,7 @@ mul id:9502
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3078
-source:Shrapnel #12 - Jihad
+source:Shrapnel #12
 rules level:2
 
 mass:65

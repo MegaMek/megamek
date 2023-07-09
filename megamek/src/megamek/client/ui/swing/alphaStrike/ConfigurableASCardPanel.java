@@ -19,6 +19,7 @@
 package megamek.client.ui.swing.alphaStrike;
 
 import megamek.MMConstants;
+import megamek.client.ui.WrapLayout;
 import megamek.client.ui.dialogs.ASConversionInfoDialog;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
@@ -91,23 +92,20 @@ public class ConfigurableASCardPanel extends JPanel {
 
         conversionButton.addActionListener(e -> showConversionReport());
 
-        var chooserLine = new UIUtil.FixedYPanel(new FlowLayout(FlowLayout.LEFT));
-        chooserLine.setBorder(new EmptyBorder(10, 0, 10, 0));
-        chooserLine.add(Box.createHorizontalStrut(15));
-        chooserLine.add(new JLabel(Messages.getString("CASCardPanel.font")));
-        chooserLine.add(fontChooser);
-        chooserLine.add(Box.createHorizontalStrut(15));
-        chooserLine.add(new JLabel(Messages.getString("CASCardPanel.cardSize")));
-        chooserLine.add(sizeChooser);
-        chooserLine.add(Box.createHorizontalStrut(15));
+        var chooserLine = new UIUtil.FixedYPanel(new WrapLayout(FlowLayout.LEFT, 15, 10));
+        chooserLine.setBorder(new EmptyBorder(10, 15, 10, 15));
+        JPanel fontChooserPanel = new JPanel();
+        fontChooserPanel.add(new JLabel(Messages.getString("CASCardPanel.font")));
+        fontChooserPanel.add(fontChooser);
+        JPanel sizeChooserPanel = new JPanel();
+        sizeChooserPanel.add(new JLabel(Messages.getString("CASCardPanel.cardSize")));
+        sizeChooserPanel.add(sizeChooser);
+        chooserLine.add(fontChooserPanel);
+        chooserLine.add(sizeChooserPanel);
         chooserLine.add(copyButton);
-        chooserLine.add(Box.createHorizontalStrut(15));
         chooserLine.add(copyStatsButton);
-        chooserLine.add(Box.createHorizontalStrut(15));
         chooserLine.add(printButton);
-        chooserLine.add(Box.createHorizontalStrut(15));
         chooserLine.add(mulButton);
-        chooserLine.add(Box.createHorizontalStrut(15));
         chooserLine.add(conversionButton);
 
         var cardLine = new JScrollPane(cardPanel);

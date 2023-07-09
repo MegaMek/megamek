@@ -6,6 +6,7 @@ Config:Biped
 techbase:Inner Sphere
 era:3067
 rules level:2
+source: Videogame (Apocryphal)
 
 mass:65
 engine:260 Light Engine(IS)

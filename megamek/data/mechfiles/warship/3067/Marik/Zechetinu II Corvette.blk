@@ -232,7 +232,7 @@ Small Laser
 </structural_integrity>
 
 <source>
-TRO3067 - Clan Invasion
+TRO: 3067
 </source>
 
 <tonnage>
@@ -286,3 +286,43 @@ TRO3067 - Clan Invasion
 <escape_pod>
 0
 </escape_pod>
+
+<capabilities>
+Four Zechetinus in the FWLM fleet, namely the FWLS Tirana, FWLS Karelia, FWLS Attica, and FWLS Sparta, retain the original design specifications with a focus on anti-DropShip/WarShip weapons and fighter-defense systems. On the other hand, the FWLS Scorpion and the remaining Zechetinus feature Barracuda and White Shark missile systems instead of the fore and aft naval-laser batteries. This diverse armament ensures the Zechetinu's effectiveness in various combat scenarios.
+</capabilities>
+
+<overview>
+The Zechetinu-class corvette, also known as the "Zec," is a versatile WarShip designed to operate as an independent convoy-raider, picket ship, or escort vessel. Known for its exceptional speed and maneuverability, it can sustain acceleration of up to 2.5 Gs and reach bursts of up to 4 Gs. With its formidable array of anti-DropShip/WarShip weapons and fighter-defense systems, the Zechetinu is among the fastest and most agile WarShips in its class.
+</overview>
+
+<history>
+The Zechetinu-class corvettes made an immediate impact when the first vessel surpassed expectations during mock battle exercises. Its outstanding performance prompted the Free Worlds League Military to authorize the construction of ten additional Zechetinu-class corvettes. Building upon the success of the original design, the exercises also led to the development of the newer Zechetinu II standard, which introduced slight modifications to the weapons array, further enhancing the corvettes' combat capabilities. These Zechetinu-class corvettes quickly became an integral part of the FWLM fleet, playing vital roles as convoy-raiders, picket ships, and escorts. Their speed and maneuverability made them invaluable for rapid response and interception missions. Equipped with a versatile armament, including anti-DropShip/WarShip weapons and fighter-defense systems, the Zechetinu-class corvettes provided effective support and defense, ensuring the safety of Free Worlds League assets and interests. The Zechetinu-class corvettes earned a reputation as highly valued assets within the Free Worlds League. Their exceptional performance, combined with their ability to adapt to different combat scenarios, solidified their position as key contributors to the FWLM's military might. With their speed, maneuverability, and formidable armament, the Zechetinu-class corvettes continue to serve as a symbol of the Free Worlds League's commitment to maintaining a strong and capable naval force.
+</history>
+
+<manufacturer>
+Illium Naval Engineering - Illium Yard
+</manufacturer>
+
+<primaryFactory>
+Ionus
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Corvette
+</use>
+
+<length>
+440 m
+</length>
+
+<height>
+502 m Sail
+</height>

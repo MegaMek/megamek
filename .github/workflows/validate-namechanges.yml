@@ -1,0 +1,38 @@
+name: Validate Name Changes List
+
+# This Action Definition should be triggered only on master being updated or Pull Requests being added or updated against master.
+on:
+  push:
+    branches: [ master ]
+    paths:
+      # Necessary when the name_changes.txt list is updated or any unit file.
+      - 'megamek/data/mechfiles/**.blk'
+      - 'megamek/data/mechfiles/**.mtf'
+      - 'megamek/data/mechfiles/name_changes.txt'
+  pull_request:
+    branches: [ master ]
+    paths:
+      - 'megamek/data/mechfiles/**.blk'
+      - 'megamek/data/mechfiles/**.mtf'
+      - 'megamek/data/mechfiles/name_changes.txt'
+
+jobs:
+  name_changes_validator:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Grant execute permission for gradlew (*nix or MacOS)
+        run: chmod +x gradlew
+
+      - name: Build MM Jar
+        run: ./gradlew build
+
+      - name: Validate Name Changes
+        working-directory: megamek
+        run: java -cp build/libs/MegaMek.jar megamek.utilities.NameChangesValidator

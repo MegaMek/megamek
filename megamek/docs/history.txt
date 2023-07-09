@@ -17,7 +17,35 @@ VERSION HISTORY:
 + Fix #4480, #3494: Selecting BA Anti-Personnel weapons during the firing phase no longer results in an error
 + PR #4474: Improvements to Battle Value calculation and reports
 + PR #4502: Map generator parameter dialog now loads theme from preset; various bugfixes to map generator parameter dialog
-+ Fix #4462: Use bilinear interpol. instead of bicubic to remove the lag
++ Fix #4462: Fixed the extreme lag players encountered when a Windows OS scaling other than 100% was combined with MM's HQ rendering
++ PR #4423: The WeaponsPanel of the Unit Display now shows considerably more info about the target
++ PR #4509: Stand-alone MegaMek now also contains pilot portraits
++ PR #4516: Additional icons, among them a large icon for grounded Buccaneer DropShips
++ PR #4514: The random map generator now supports ultra-heavy terrain (woods, rubble, rough), jungles and tundra
++ PR #4533: Displaying the visual/sensor ranges now has a keybind configuration field in the client settings
++ Fix #4523: Fixes an error with the unit status report (picked up pilots are now excluded from the report)
++ PR #4517: The BT Universe's Eras are now loaded from a definition XML file. The eras are moddable
++ PR #4513: Details of the current turn such as the planned movement or planned firing can now be shown as a list of actions in an overlay
++ Fix #894: TO fatigue is now calculated from the better of Gunnery/Anti-Mek for Infantry
++ PR #4539: Picked-up pilots are now shown on the unit tooltip in pilot info
++ PR #4532, #4536: BV Calculation updates for MG Arrays and Manei Domini options
++ Fix #206: The allowed weapons for the Sandblaster and Weapon Specialist SPAs have been corrected; some are available depending on game options;
+            Weapon choices are now shown in the pilot tooltip
++ PR #4549, #4551: GUI improvements to the Unit Selector
++ Fix #4305: Environmental Specialist SPA is now properly reducing penalties from high wind
++ PR #4567: The unofficial sensor geek modifier is now applied to sensor ranges displayed on the map
++ PR #4565: Sensor info and sensor range are no longer erroneously shown in the combination of a ground map with TO Sensor Rules off and SO Advanced Sensors on
++ Fix #4548: Fix soft-lock after physical attack round report
++ PR #4573: The text export for the unit summary no longer contains HTML tags
++ Fix MML-#1256: The Flotation Hull chassis mod is now allowed for Wige vehicles
++ PR #4587: BA Cargo Lifter Manipulators can now have different sizes (different carrying capacities)
++ Fix #4598: Load from MUL in lounge now sets unit's deployment round to 0 by default
++ Fix #4574: Mortar turret ammo selection dropdown is empty
++ Fix #4543, 4547: Auto-success/fail message in to-hit display; set scroll to top when selecting new target for reduced annoyance
++ PR #4609: There is now a client setting to hide the unit tooltips in the game reports
++ PR #4607: Alpha Strike Conversion updates
++ PR #4610: Implemented Gas Hog quirk (only relevant for aerospace units at the moment)
+
 
 0.49.13 (2023-05-23 2000 UTC)
 + Fix #3914: LAM fuel tanks will now correctly provide fuel to the LAM

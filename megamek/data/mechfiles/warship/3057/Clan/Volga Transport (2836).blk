@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -71,6 +71,10 @@ crewquarters:1631.0:0
 <engine_type>
 1
 </engine_type>
+
+<clan_engine>
+false
+</clan_engine>
 
 <armor_type>
 13
@@ -220,8 +224,52 @@ Ammo Heavy N-Gauss:100
 75
 </structural_integrity>
 
+<capabilities>
+In the nose bay, two NAC/20s, an NL45, and four ER large lasers, medium lasers and medium pulse lasers each provide notable head-on firepower, backed up by two NAC/30s, another NL45 along with another four ER large and medium lasers in each front quarter. Each broadside carries two NL35s and a heavy N-Gauss cannon, backed up four ER PPCs and medium pulse lasers. The aft quarters carry two NL45, four ER PPCs, four large pulse lasers, directly aft mirroring the nose bay, save for excluding the naval laser. The Volgas lack of firepower is further hampered by a poorly designed coolant circuit, allowing only 45 percent of its weapons to operate at any given time. Beyond periodic maintenance upgrades such as using new computers and life-support, the sole major modification between the SLDF and Clan Volgas is the addition of a Lithium-Fusion Battery System.
+</capabilities>
+
+<overview>
+The Volga-class tranport was developed in response to an SLDF commission for an armored cargo transport vessel able to ensure the steady supply and support of Star League bases in the Periphery states.
+</overview>
+
+<deployment>
+Intended as a transport, the Volga carries a weapons array geared towards defense against aerospace fighters, a rarity for Star League era craft, proving only marginally effective against other WarShips.
+</deployment>
+
+<history>
+Eaton AeroSpace used the hull of the mothballed Quixote-class frigate as the basis of their design; the small drive that doomed the Quixote enabled the Volga to carry an unusually large amount of cargo - almost 25 percent of the vessel's mass. The well armored Volga saw extensive action during the war to liberate Terra, but a lack of firepower and a poorly designed coolant system resulted in the destruction of more than 200 Volgas during the Amaris crisis. Only about two dozen of the class survived to join the Exodus fleet, finally returning to the Inner Sphere in the fleets of several Clans in the wake of the Battle of Tukayyid, transporting troops and matériel between the occupation zones and Clan Homeworlds.
+</history>
+
+<manufacturer>
+Refit
+</manufacturer>
+
+<primaryFactory>
+Unknown
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Transport
+</use>
+
+<length>
+715 m
+</length>
+
+<height>
+1205 m Sail
+</height>
+
 <source>
-TRO: 3057R - Early Succession War
+TRO: 3057 Revised
 </source>
 
 <tonnage>
@@ -244,6 +292,10 @@ TRO: 3057R - Early Succession War
 145
 120
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 320
@@ -276,3 +328,4 @@ TRO: 3057R - Early Succession War
 <escape_pod>
 20
 </escape_pod>
+

@@ -13,6 +13,7 @@
  */
 package megamek.common.actions;
 
+import megamek.client.ui.Messages;
 import megamek.common.Compute;
 import megamek.common.CriticalSlot;
 import megamek.common.Entity;
@@ -50,7 +51,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
         this.club = club;
         aiming = aimTable;
     }
-    
+
     /**
      * Creates a new club attack
      * @param entityId - id of entity performing the attack
@@ -66,7 +67,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
         this.club = club;
         aiming = aimTable;
         this.zweihandering = zweihandering;
-        
+
     }
 
     /**
@@ -147,7 +148,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
         } else if (mType.hasSubType(MiscType.S_SPOT_WELDER)) {
             nDamage = 5;
         }
-        
+
         //SMASH! CamOps, pg. 82
         if (zweihandering) {
             nDamage += (int) Math.floor(entity.getWeight() / 10.0);
@@ -227,13 +228,13 @@ public class ClubAttackAction extends PhysicalAttackAction {
     }
 
     /**
-     * 
+     *
      * @return true if the entity is zweihandering (attacking with both hands)
      */
     public boolean isZweihandering() {
         return zweihandering;
     }
-    
+
     public ToHitData toHit(Game game) {
         return ClubAttackAction.toHit(game, getEntityId(),
                                       game.getTarget(getTargetType(), getTargetId()), getClub(),
@@ -318,7 +319,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
                                     + targHex.getLevel();
         final int targetHeight = targetElevation + target.getHeight();
         final boolean bothArms = (club.getType().hasFlag(MiscType.F_CLUB)
-                                  && ((MiscType) club.getType()).hasSubType(MiscType.S_CLUB)) 
+                                  && ((MiscType) club.getType()).hasSubType(MiscType.S_CLUB))
                     || zweihandering;
         // Cast is safe because non-'Mechs never even get here.
         final boolean hasClaws = ((Mech) ae).hasClaw(Mech.LOC_RARM)
@@ -561,5 +562,12 @@ public class ClubAttackAction extends PhysicalAttackAction {
 
     public void setClub(Mounted club) {
         this.club = club;
+    }
+
+    @Override
+    public String toSummaryString(final Game game) {
+        final String roll = this.toHit(game).getValueAsString();
+        final String club = this.getClub().getName();
+        return Messages.getString("BoardView1.ClubAttackAction", club, roll);
     }
 }

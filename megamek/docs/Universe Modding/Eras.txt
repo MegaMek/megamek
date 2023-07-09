@@ -1,0 +1,20 @@
+The eras used in MM and MHQ can be modified by using the EraEditor or changing the file data/universe/eras.xml.
+
+Each Era consists of the following fields:
+- Code: The unique key (String) for the era.
+- Name: The full (display) name of the era.
+- End: The end date for the era. This can be in the formats "yyyy-MM-dd", "yyyy-MM" (assuming last day of the month),
+and "yyyy" (assuming last day of the year).
+- Flag: Internal flags that denote the canon era an era belongs to.
+- Mulid: A number that is used on the Master Unit List to identify the era. Used to link to the MUL.
+- icon: A path to an era icon (png, jpg) relative to data/images/universe/
+
+Eras can be customized, added and removed. When doing this, note the following:
+- make sure to use a unique code for each era
+- the names need not be different from each other
+- you may use the flags to signify what canon era any era belongs to (this may affect modifiers and other behavior)
+- multiple flags may be used for an era by using one complete tag line for each (each line having <flag>THEFLAG</flag>)
+- only the end dates determine the order of eras, not the order in this file
+- make sure to keep exactly one era without an end date; this will be the last era
+- the MUL ID can be omitted
+- the icon path can be omitted

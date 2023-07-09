@@ -1173,6 +1173,47 @@ public final class UIUtil {
                 .anyMatch(w -> w.isShowing() && (w instanceof JDialog) && ((JDialog) w).isModal());
     }
 
+    /**
+     *  Automatically determines the correct row heights for each row of the given JTable and sets it.
+     *  Note: Just calling this after a data change or after {@link #adjustDialog(JDialog, int)} will
+     *  typically not work well. Instead, it must be called from a {@link javax.swing.event.TableModelListener},
+     *  a {@link javax.swing.event.TableColumnModelListener} and (if a row sorter is used) a
+     *  {@link javax.swing.event.RowSorterListener} to be effective.
+     *  Note: For tables of more than about 200 entries or with slow renderers this will become noticeably slow
+     *  when drag-resizing the table. When the table has uniform row heights, better use
+     *  {@link #updateRowHeightsForEqualHeights(JTable)}.
+     */
+    public static void updateRowHeights(JTable table) {
+        for (int row = 0; row < table.getRowCount(); row++) {
+            int rowHeight = table.getRowHeight();
+            for (int column = 0; column < table.getColumnCount(); column++) {
+                Component comp = table.prepareRenderer(table.getCellRenderer(row, column), row, column);
+                rowHeight = Math.max(rowHeight, comp.getPreferredSize().height);
+            }
+            table.setRowHeight(row, rowHeight);
+        }
+    }
+
+    /**
+     *  Automatically determines the correct row height for the given JTable and sets it, assuming it has a
+     *  uniform row height for all rows.
+     *  Note: Just calling this after a data change or after {@link #adjustDialog(JDialog, int)} will
+     *  typically not work well. Instead, it must be called from a {@link javax.swing.event.TableModelListener},
+     *  a {@link javax.swing.event.TableColumnModelListener} and (if a row sorter is used) a
+     *  {@link javax.swing.event.RowSorterListener} to be effective.
+     */
+    public static void updateRowHeightsForEqualHeights(JTable table) {
+        if (table.getRowCount() > 0) {
+            int row = 0;
+            int rowHeight = 0;
+            for (int column = 0; column < table.getColumnCount(); column++) {
+                Component comp = table.prepareRenderer(table.getCellRenderer(row, column), row, column);
+                rowHeight = Math.max(rowHeight, comp.getPreferredSize().height);
+            }
+            table.setRowHeight(rowHeight);
+        }
+    }
+
     // PRIVATE
     
     private final static Color LIGHTUI_GREEN = new Color(20, 140, 20);

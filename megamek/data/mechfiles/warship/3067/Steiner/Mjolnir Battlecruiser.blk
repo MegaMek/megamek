@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,9 +16,9 @@ Warship
 Mjolnir Battlecruiser
 </Name>
 
-<model>
+<Model>
 
-</model>
+</Model>
 
 <mul id:>
 4647
@@ -45,12 +45,12 @@ dockingcollar
 dockingcollar
 dockingcollar
 dockingcollar
-asfbay:18.0:4:1
-asfbay:18.0:4:2
+asfbay:18.0:4:5
+asfbay:18.0:4:6
 1stclassquarters:650.0:0
 crewquarters:2219.0:0
 2ndclassquarters:280.0:0
-cargobay:30914.0:1:6
+cargobay:30914.0:1:10
 </transporters>
 
 <SafeThrust>
@@ -325,8 +325,48 @@ ISArtemisIV
 140
 </structural_integrity>
 
+<capabilities>
+The Mjolnir possesses impressive capabilities that make it a force to be reckoned with in combat. Its acceleration at 3 Gs, comparable to vessels half its mass, demonstrates its surprising maneuverability. The ship's offensive armament includes batteries of heavy naval autocannons and Gauss cannons, delivering devastating firepower. It also features conventional weapons for anti-fighter defense and an array of Naval PPCs. The standout weapons are the Heavy Naval Gauss cannons, capable of striking targets at long distances and breaching the armor of smaller vessels with a single shot. To protect itself, the Mjolnir boasts unmatched armor, consisting of 3500 tons of Ferro-Carbide armor. This exceptional protection has proven its worth in numerous battles, including surviving nuclear warhead strikes and conventional fire. The ship's interplanetary drives, produced through a unique manufacturing process within the Lyran Alliance, provide exceptional thrust-to-weight ratio, allowing the Mjolnir to achieve a staggering acceleration of three gs. This speed is crucial for closing in on targets since some of the ship's potent weaponry has limited range.
+</capabilities>
+
+<overview>
+The Mjolnir is a formidable WarShip developed by the Lyran Alliance, originally designed as a light cruiser but modified to rival the Federated Suns' Avalon-class vessels. It showcases a tough and powerful design, emphasizing mass, firepower, and maneuverability. With its heavy naval autocannons, Gauss cannons, and exceptional armor, the Mjolnir stands as a symbol of the Lyran Alliance's independent naval program and its determination to defend its interests in the Inner Sphere.
+</overview>
+
+<history>
+Originally intended as a light cruiser, the Mjolnir underwent revisions after the Lyran Secession to create a vessel capable of rivaling the Avalon-class vessels of the Federated Suns. This modification served not only to provide a credible opponent but also as a demonstration of the Alliance's capability to produce a tough and powerful design independently. The ship's name, derived from Norse mythology, reflects its focus on mass and firepower. During the Lyran Alliance's efforts to establish an independent naval program, the Mjolnir faced challenges in acquiring parts for its interplanetary drive, exacerbated by the Word of Blake's seizure of Terra. To overcome this, the Lyran Alliance commissioned factories within its borders to produce the engines piece by piece, a challenging and expensive endeavor. The engines were then assembled at the Port Sydney Naval yards at Alarion, providing exceptional thrust-to-weight ratio and enabling the ship's impressive acceleration. The completion of the first operational Mjolnir, the LAS Yggdrasil, marked a significant milestone for the Lyran Alliance. The ship faced limitations during the civil war due to issues with the sensor suite and sail-reefing assembly. Nevertheless, it showcased its firepower, maneuverability, and resilience in various battles. Notable achievements include surviving combat over Alarion, escaping Blakist assaults over Skye, and supporting the liberation of Tharkad, the LAAF's capital. The Mjolnir stands as a testament to the Lyran Alliance's determination and industrial prowess in developing its own WarShip program. It serves as a formidable asset, embodying the Alliance's commitment to defend its interests and contribute to the Inner Sphere's balance of power.
+</history>
+
+<manufacturer>
+Bowie Industries - Port Sydney, Ioto Galactic Enterprises - Port Sydney Naval Yards
+</manufacturer>
+
+<primaryFactory>
+Alarion,Alarion
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Battlecruiser
+</use>
+
+<length>
+960m
+</length>
+
+<height>
+1150 m Sail
+</height>
+
 <source>
-TRO3067 - Clan Invasion
+TRO: 3067
 </source>
 
 <tonnage>
@@ -344,6 +384,10 @@ TRO3067 - Clan Invasion
 <grav_decks>
 135
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 454
@@ -376,3 +420,4 @@ TRO3067 - Clan Invasion
 <escape_pod>
 35
 </escape_pod>
+

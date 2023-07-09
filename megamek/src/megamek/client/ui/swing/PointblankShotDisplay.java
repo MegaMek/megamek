@@ -860,24 +860,20 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
                     toHit = WeaponAttackAction.toHit(game, cen, target,
                             weaponId, ash.getAimingAt(), ash.getAimingMode(),
                             false, false, null, null, false, true);
-                    String t =  String.format("<html><div WIDTH=%d>%s</div></html>", WeaponPanel.TARGET_DISPLAY_WIDTH, target.getDisplayName() + " (" + ash.getAimingLocation() + ")");
-                    clientgui.getUnitDisplay().wPan.wTargetR.setText(t);
+                    clientgui.getUnitDisplay().wPan.setTarget(target, Messages.getFormattedString("MechDisplay.AimingAt", ash.getAimingLocation()));
+
                 } else {
                     toHit = WeaponAttackAction.toHit(game, cen, target, weaponId, Entity.LOC_NONE,
                             AimingMode.NONE, false, false,
                             null, null, false, true);
-
-                    String t =  String.format("<html><div WIDTH=%d>%s</div></html>", WeaponPanel.TARGET_DISPLAY_WIDTH, target.getDisplayName());
-                    clientgui.getUnitDisplay().wPan.wTargetR.setText(t);
+                    clientgui.getUnitDisplay().wPan.setTarget(target, null);
                 }
                 ash.setPartialCover(toHit.getCover());
             } else {
                 toHit = WeaponAttackAction.toHit(game, cen, target, weaponId, Entity.LOC_NONE,
                         AimingMode.NONE, false, false, null,
                         null, false, true);
-
-                String t =  String.format("<html><div WIDTH=%d>%s</div></html>", WeaponPanel.TARGET_DISPLAY_WIDTH, target.getDisplayName());
-                clientgui.getUnitDisplay().wPan.wTargetR.setText(t);
+                clientgui.getUnitDisplay().wPan.setTarget(target, null);
             }
             int effectiveDistance = Compute.effectiveDistance(game, ce(), target);
             clientgui.getUnitDisplay().wPan.wRangeR.setText("" + effectiveDistance);
@@ -889,30 +885,27 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
             }
 
             if (m.isUsedThisRound()) {
-                clientgui.getUnitDisplay().wPan.wToHitR.setText(Messages.getString("FiringDisplay.alreadyFired"));
+                clientgui.getUnitDisplay().wPan.setToHit(Messages.getString("FiringDisplay.alreadyFired"));
                 setFireEnabled(false);
             } else if ((m.getType().hasFlag(WeaponType.F_AUTO_TARGET) && !m.curMode().equals(Weapon.MODE_AMS_MANUAL))) {
-                clientgui.getUnitDisplay().wPan.wToHitR.setText(Messages.getString("FiringDisplay.autoFiringWeapon"));
+                clientgui.getUnitDisplay().wPan.setToHit(Messages.getString("FiringDisplay.autoFiringWeapon"));
                 setFireEnabled(false);
             } else if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
-                clientgui.getUnitDisplay().wPan.wToHitR.setText(toHit.getValueAsString());
+                clientgui.getUnitDisplay().wPan.setToHit(toHit);
                 setFireEnabled(false);
             } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
-                clientgui.getUnitDisplay().wPan.wToHitR.setText(toHit.getValueAsString());
+                clientgui.getUnitDisplay().wPan.setToHit(toHit);
                 setFireEnabled(true);
             } else {
                 boolean natAptGunnery = ce().hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
-                clientgui.getUnitDisplay().wPan.wToHitR.setText(toHit.getValueAsString()
-                        + " (" + Compute.oddsAbove(toHit.getValue(), natAptGunnery) + "%)");
+                clientgui.getUnitDisplay().wPan.setToHit(toHit, natAptGunnery);
                 setFireEnabled(true);
             }
-            clientgui.getUnitDisplay().wPan.toHitText.setText(toHit.getDesc());
             setSkipEnabled(true);
         } else {
-            clientgui.getUnitDisplay().wPan.wTargetR.setText("---");
+            clientgui.getUnitDisplay().wPan.setTarget(null, null);
             clientgui.getUnitDisplay().wPan.wRangeR.setText("---");
-            clientgui.getUnitDisplay().wPan.wToHitR.setText("---");
-            clientgui.getUnitDisplay().wPan.toHitText.setText("");
+            clientgui.getUnitDisplay().wPan.clearToHit();
         }
 
         if ((weaponId != -1) && (ce() != null)) {

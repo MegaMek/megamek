@@ -2,11 +2,12 @@ Version:1.1
 Gunslinger
 GUN-1ERD (Jared)
 mul id:1348
+source:Record Sheets: Unique Mechs
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3063
-source:RS:Unique Mechs - Civil War
+source:Record Sheets: Unique Mechs
 Rules Level:2
 
 Mass:85

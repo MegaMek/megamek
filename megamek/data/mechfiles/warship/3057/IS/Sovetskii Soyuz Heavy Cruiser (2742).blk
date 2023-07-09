@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -180,23 +180,39 @@ Naval PPC (Medium)
 </structural_integrity>
 
 <capabilities>
-The class carries such a large armament that some officers consider the Sovetskii Soyuz a mini-Battlecruiser. Its formidable weapons array consists of 12 Class-20 Naval Autocannons, 6 Class 45 Naval Lasers, 8 Medium Naval Particle Projection Cannons, 2 White Shark and 4 Barracuda Missile Launcher batteries. The size and number of these weapons however required a sacrifice in armor, with the ship mounting almost 50% less armor than the smaller Black Lion battlecruiser. Despite the light armor the Sovetskii Soyuz class were able to perform well in the war to liberate Terra, using its long range firepower to keep adversaries at a distance
+The Sovetskii Soyuz exemplified the pinnacle of Star League technology, featuring advanced computer control systems that facilitated precise command and control. Its primary offensive strength came from naval autocannons, providing devastating firepower. Additionally, an impressive array of naval lasers and particle cannons ensured formidable long-range capabilities, making it particularly effective in prolonged engagements. To maintain its maneuverability while maximizing firepower, the designers opted to reduce the vessel's armor to 743 tons, a decision that initially raised concerns among officers. However, the Sovetskii Soyuz's exceptional long-range firepower proved sufficient to keep threats at bay, compensating for its lighter armor.
 </capabilities>
 
 <overview>
-The Sovetskii Soyuz was originally classed as a heavy cruiser developed as part of an overhaul of the Star League Defense Forces naval fleet following years of neglect due to large amounts of money being spent on the automated Space Defense Systems. While SDS construction had been going on, the Star League fleet had fallen behind in technology and capability when compared to newer WarShips emerging from member state shipyards. The Sovetskii Soyuz was one of a number of new designs to emerge following the New Arms Order of 2735 and was notable for its large use of computer control as well as its heavy armament. Four hundred ships of this class would be built before the Amaris Civil War brought about the downfall of the Star League. The vast majority were destroyed in the attempt to depose Amaris, but around 40 surviving vessels left with General Kerensky's Exodus fleet and a number continue to serve in the Clan toumans.[3] It became public knowledge in the second half of the thirty-first century that ComStar maintained two Sovetskii Soyuzes in service as a part of their WarShip fleet,[4][5] and during the course of the Jihad it became apparent that the Word of Blake had recovered two Sovetskii Soyuzes of their own and restored them to service.
+The Sovetskii Soyuz, initially classified as a heavy cruiser, was revered by many SLDF officers for its devastating weaponry, leading them to consider it more akin to a battlecruiser. Built by Blue Nose Clipperships under General Rebecca Fredasa's New Arms Order of 2735, the 800-meter vessel embodied the Star League's commitment to upgrading its ships and weapons. With cutting-edge technology and a formidable arsenal, the Sovetskii Soyuz showcased its exceptional offensive power and long-range firepower, compensating for its reduced armor.
 </overview>
 
-<deployment>
-As with all their WarShips, the Clans have performed periodic maintenance upgrades which have introduced new tech. The main differences between the ships used by the Clans and the Star League Navy are an increased fighter compliment, upgrading the armor to Ferro-Aluminum armor and adding HarJel hull sealant units
-</deployment>
-
 <history>
-lets see if anything breaks
+The Sovetskii Soyuz was commissioned as part of the Star League's effort to revitalize its military capabilities under General Rebecca Fredasa's New Arms Order. This initiative aimed to rectify the neglect the SLDF had suffered under Lord Jonathan Cameron, who had prioritized ineffective automated space defense systems over maintaining a strong military. Facing the growing military strength of the League's member states, General Fredasa called for extensive upgrades to the SLDF's ships and weapons. The Sovetskii Soyuz emerged as one of the prominent designs from this endeavor, showcasing the latest Star League technology and a formidable armament. During the campaign to liberate Terra, many of the original 400 Sovetskii Soyuz-class vessels were destroyed. However, around forty of these powerful cruisers survived and became part of the Exodus fleet. Over time, these vessels formed the core of the Clan fleet, carrying their formidable reputation into the Clan era. Notably, the SLS Kharkov, one of the surviving Sovetskii Soyuz-class vessels, was later renamed the Dire Wolf and became the flagship of the Wolf Clan, attesting to the enduring legacy and significance of the Sovetskii Soyuz-class cruisers in shaping the course of interstellar conflicts.
 </history>
 
+<manufacturer>
+Blue Nose Clipperships
+</manufacturer>
+
+<primaryFactory>
+Mars
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:KF King LX
+ENGINE:Harlan B8-160s
+ARMOR:Bowman JK3
+COMMUNICATIONS:KAT 701
+TARGETING:ASTROC 4-b
+</systemManufacturers>
+
+<use>
+Heavy Cruiser
+</use>
+
 <source>
-TRO: 3057R - Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>
@@ -215,6 +231,10 @@ TRO: 3057R - Star League
 55
 90
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 337
@@ -247,3 +267,4 @@ TRO: 3057R - Star League
 <escape_pod>
 20
 </escape_pod>
+

@@ -190,7 +190,7 @@ The Star League Defense Force navy leased 22 of the original Davion-class WarShi
 </history>
 
 <manufacturer>
-Eaton Aerospace
+Eaton Aerospace (Refit)
 </manufacturer>
 
 <primaryFactory>
@@ -213,8 +213,12 @@ Destroyer
 610 m
 </length>
 
+<height>
+1120 m Sail
+</height>
+
 <source>
-TRO: 3057R - Star League
+TRO: 3057 Revised
 </source>
 
 <tonnage>

@@ -23,6 +23,7 @@ import org.apache.logging.log4j.LogManager;
 import java.io.*;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.zip.ZipFile;
 
 /**
@@ -778,6 +779,31 @@ public class MechFileParser {
             ent.setCanon(true);
         }        
         ent.initMilitary();
+        linkDumpers(ent);
+    }
+
+    /**
+     * Links Dumpers to Cargo equipment if there is one in the same location. Works only for variable size
+     * Cargo, {@link MiscType#createCargo()}, (but not Liquid Storage, Cargo containers/bays)
+     *
+     * @param entity The entity to add links to
+     */
+    static void linkDumpers(Entity entity) {
+        List<Mounted> dumpers = entity.getMisc().stream()
+                .filter(mounted -> mounted.getType().hasFlag(MiscType.F_DUMPER)).collect(Collectors.toList());
+        List<Mounted> cargos = entity.getMisc().stream()
+                .filter(mounted -> mounted.is(EquipmentTypeLookup.CARGO)).collect(Collectors.toList());
+
+        for (Mounted dumper : dumpers) {
+            if (dumper.getLinked() == null) {
+                for (Mounted cargo : cargos) {
+                    if ((cargo.getLinkedBy() == null) && (cargo.getLocation() == dumper.getLocation())) {
+                        dumper.setLinked(cargo);
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     /**

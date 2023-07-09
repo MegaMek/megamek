@@ -71,7 +71,7 @@ jobs:
 
     # Upload our Code Coverage Reports to CodeCov.io
     - name: CodeCov.io Coverage Report
-      uses: codecov/codecov-action@v2
+      uses: codecov/codecov-action@v3
       with:
         directory: ./megamek/megamek/build/reports/jacoco/test
         fail_ci_if_error: false

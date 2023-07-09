@@ -25,11 +25,13 @@ import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.client.ui.swing.widget.MechPanelTabStrip;
+import megamek.client.ui.swing.widget.*;
+import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.annotations.Nullable;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
+import megamek.common.util.fileUtils.MegaMekFile;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
@@ -116,6 +118,13 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
         labTitle = new JLabel("Title");
 
         tabStrip = new MechPanelTabStrip(this);
+        UnitDisplaySkinSpecification udSpec = SkinXMLHandler.getUnitDisplaySkin();
+        Image tile = getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getBackgroundTile()).toString());
+        PMUtil.setImage(tile, this);
+        int b = BackGroundDrawer.TILING_BOTH;
+        BackGroundDrawer bgd = new BackGroundDrawer(tile, b);
+        tabStrip.addBgDrawer(bgd);
+
         displayP = new JPanel(new CardLayout());
         mPan = new SummaryPanel(this);
         pPan = new PilotPanel(this);

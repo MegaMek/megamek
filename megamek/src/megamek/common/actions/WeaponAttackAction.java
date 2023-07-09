@@ -1508,20 +1508,20 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // for spheroid dropships in atmosphere (and on ground), the rules about
         // firing arcs are more complicated
         // TW errata 2.1
-        boolean isLandedSpheroid = ae.isAero() && ((IAero) ae).isSpheroid() && (ae.getAltitude() == 0) && game.getBoard().onGround();
-        int altDif = target.getAltitude() - ae.getAltitude();
-        boolean noseWeaponAimedAtGroundTarget = (weapon != null) && (weapon.getLocation() == Aero.LOC_NOSE) && (altDif < 1);
         
         if ((Compute.useSpheroidAtmosphere(game, ae) ||
-                isLandedSpheroid)
+                (ae.isAero() && ((IAero) ae).isSpheroid() && (ae.getAltitude() == 0) && game.getBoard().onGround()))
                 && (weapon != null)) {
             int range = Compute.effectiveDistance(game, ae, target, false);
             // Only aft-mounted weapons can be fired at range 0 (targets directly underneath)
             if (!ae.isAirborne() && (range == 0) && (weapon.getLocation() != Aero.LOC_AFT)) {
                 return Messages.getString("WeaponAttackAction.OnlyAftAtZero");
             }
+            
+            int altDif = target.getAltitude() - ae.getAltitude();
+            
             // Nose-mounted weapons can only be fired at targets at least 1 altitude higher
-            if (noseWeaponAimedAtGroundTarget
+            if ((weapon.getLocation() == Aero.LOC_NOSE) && (altDif < 1)
                     && wtype != null
                     // Unless the weapon is used as artillery
                     && (!(wtype instanceof ArtilleryWeapon || wtype.hasFlag(WeaponType.F_ARTILLERY)
@@ -2200,7 +2200,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     return Messages.getString("WeaponAttackAction.InvalidForFirefighting");
                 }
                 Hex hexTarget = game.getBoard().getHex(target.getPosition());
-                if (!hexTarget.containsTerrain(Terrains.FIRE)) {
+                if ((hexTarget != null) && !hexTarget.containsTerrain(Terrains.FIRE)) {
                     return Messages.getString("WeaponAttackAction.TargetNotBurning");
                 }
             } else if (wtype.hasFlag(WeaponType.F_EXTINGUISHER)) {

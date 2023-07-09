@@ -63,7 +63,7 @@ jobs:
     #
     # The logs will be relative to the ./megamek directory.
     - name: Upload Test Logs on Failure
-      uses: actions/upload-artifact@v2.2.4
+      uses: actions/upload-artifact@v3
       if: failure()
       with:
         name: cd-failure-logs

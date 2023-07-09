@@ -63,7 +63,7 @@ jobs:
     # If the build step fails, try to upload any test logs in case it was a unit test failure.
     # The logs will be relative to the ./megamek directory.
     - name: Upload Test Logs on Failure
-      uses: actions/upload-artifact@v2.2.4
+      uses: actions/upload-artifact@v3
       if: failure()
       with:
         name: cd-failure-logs
@@ -92,14 +92,14 @@ jobs:
     # Put the Windows Release in an artifact
     # NB: Due to a GitHub Actions limitation we won't know what the filename is in order to display it somewhere.
     - name: Upload Windows Release
-      uses: actions/upload-artifact@v2.2.4
+      uses: actions/upload-artifact@v3
       with:
         name: mm-release-win-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
         path: ./megamek/megamek/build/distributions/*.zip
 
     # Put the non-Windows release in an artifact
     - name: Upload Nix/Mac Release
-      uses: actions/upload-artifact@v2.2.4
+      uses: actions/upload-artifact@v3
       with:
         name: mm-release-nix-mac-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
         path: ./megamek/megamek/build/distributions/*.tar

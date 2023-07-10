@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,9 +16,9 @@ LargeSupportTank
 Brunel Dump Truck
 </Name>
 
-<model>
+<Model>
 
-</model>
+</Model>
 
 <mul id:>
 3866
@@ -28,6 +28,10 @@ Brunel Dump Truck
 2637
 </year>
 
+<originalBuildYear>
+2637
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -35,6 +39,9 @@ IS Level 3
 <motion_type>
 Wheeled
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 3
@@ -44,14 +51,6 @@ Wheeled
 1
 </engine_type>
 
-<fuel>
-4
-</fuel>
-
-<barrating>
-6
-</barrating>
-
 <armor>
 21
 13
@@ -60,14 +59,6 @@ Wheeled
 13
 10
 </armor>
-
-<structural_tech_rating>
-3
-</structural_tech_rating>
-
-<armor_tech_rating>
-2
-</armor_tech_rating>
 
 <Body Equipment>
 ISOffRoadChassis
@@ -91,16 +82,42 @@ Backhoe
 
 <Rear Equipment>
 Dumper (Rear)
+Cargo:SIZE:50.0
 </Rear Equipment>
 
-<tonnage>
-150.0
-</tonnage>
+<barrating>
+6
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<engine_tech_rating>
+3
+</engine_tech_rating>
+
+<armor_tech_rating>
+2
+</armor_tech_rating>
+
+<history>
+Armor is based on fluff.  No Record Sheet available.
+</history>
 
 <source>
 TRO: Vehicle Annex (Revised)
 </source>
 
-<history>
-Armor is based on fluff.  No Record Sheet available.
-</history>
+<tonnage>
+150.0
+</tonnage>
+
+<fuel>
+4.0
+</fuel>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+

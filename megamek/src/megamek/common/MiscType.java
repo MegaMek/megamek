@@ -23,6 +23,7 @@ import megamek.common.weapons.ppc.ISHeavyPPC;
 import megamek.common.weapons.ppc.ISLightPPC;
 import megamek.common.weapons.ppc.ISPPC;
 import megamek.common.weapons.ppc.ISSnubNosePPC;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * @author Ben
@@ -885,7 +886,7 @@ public class MiscType extends EquipmentType {
         } else if (hasFlag(F_BA_MISSION_EQUIPMENT)) {
             // Size is weight in kg
             return RoundWeight.nearestKg(size / 1000.0);
-        } else if (hasFlag(MiscType.F_RAM_PLATE)) {
+        } else if (hasFlag(F_RAM_PLATE)) {
             return RoundWeight.nextTon(entity.getWeight() / 10.0);
         }
        // okay, I'm out of ideas
@@ -7988,7 +7989,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Cargo";
-        misc.setInternalName(misc.name);
+        misc.setInternalName(EquipmentTypeLookup.CARGO);
         misc.addLookupName("Cargo (1 ton)");
         misc.addLookupName("Cargo (0.5 tons)");
         misc.addLookupName("Cargo (1.5 tons)");

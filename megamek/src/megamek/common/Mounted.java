@@ -542,11 +542,11 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      */
     public double getTonnage(RoundWeight defaultRounding) {
         if ((getType() instanceof MiscType) && getType().hasFlag(MiscType.F_DUMPER)) {
-            final Bay bay = getEntity().getBayById(getLinkedBayId());
-            if (bay != null) {
-                return defaultRounding.round(bay.getCapacity() * 0.05, getEntity());
+            Mounted cargo = getLinked();
+            if (cargo != null) {
+                return defaultRounding.round(cargo.getSize() * 0.05, getEntity());
             }
-            LogManager.getLogger().warn("Found dumper not linked to a cargo bay. Using zero for the weight.");
+            LogManager.getLogger().warn("Found dumper not linked to a Cargo equipment. Using zero for the weight.");
             return 0.0;
         }
         double retVal = getType().getTonnage(getEntity(), getLocation(), getSize(), defaultRounding);

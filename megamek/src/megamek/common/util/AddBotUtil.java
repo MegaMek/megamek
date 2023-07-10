@@ -168,7 +168,7 @@ public class AddBotUtil {
         }
         try {
             botClient.connect();
-        } catch (final Exception e) {
+        } catch (final Exception ex) {
             results.add(botName + " failed to connect.");
             return concatResults();
         }
@@ -211,7 +211,7 @@ public class AddBotUtil {
 
         try {
             princess.connect();
-        } catch (final Exception e) {
+        } catch (final Exception ex) {
             message.append("Princess failed to connect.");
         }
         princess.setLocalPlayerNumber(target.getId());
@@ -251,7 +251,7 @@ public class AddBotUtil {
             princess.setBehaviorSettings(behavior);
             try {
                 princess.connect();
-            } catch (final Exception e) {
+            } catch (final Exception ex) {
                 message.append("Princess failed to connect.");
             }
             princess.setLocalPlayerNumber(target.getId());
@@ -262,8 +262,7 @@ public class AddBotUtil {
             if (bot == null) {
                 message.append("Player '" + playerName + "' is not a local bot.");
                 return null;
-            }
-            if (!(bot instanceof Princess)) {
+            } else if (!(bot instanceof Princess)) {
                 message.append("Player '" + playerName + "' is not a Princess bot.");
                 return null;
             }
@@ -287,11 +286,9 @@ public class AddBotUtil {
         if (possible.isEmpty()) {
             message.append("No player with the name '" + playerName + "'.");
             return false;
-        }
-        else if (possible.get().isGhost()) {
+        } else if (possible.get().isGhost()) {
             message.append("Player '" + playerName + "' is a ghost.");
             return false;
-
         } else if (!possible.get().isBot()) {
             message.append("Player '" + playerName + "' is not a bot.");
             return false;

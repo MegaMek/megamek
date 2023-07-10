@@ -92,11 +92,11 @@ public class ReplacePlayersDialog extends AbstractButtonDialog {
 
     protected void refreshPlayers() {
         ghostAndBotPlayers = game.getPlayersVector().stream()
-                .filter(c -> c.isGhost() || c.isBot()).collect(Collectors.toList());
-        ghostAndBotPlayers.sort(Comparator.comparingInt(Player::getId));
-        ghostAndBotPlayers.forEach(p -> botConfigs.put(p, new BehaviorSettings()));
+                .filter(client -> client.isGhost() || client.isBot())
+                .sorted(Comparator.comparingInt(Player::getId)).collect(Collectors.toList());
+        ghostAndBotPlayers.forEach(player -> botConfigs.put(player, new BehaviorSettings()));
     }
-    
+
     @Override
     protected Container createCenterPane() {
         Vector<String> ghostOptions = new Vector<>();
@@ -146,12 +146,12 @@ public class ReplacePlayersDialog extends AbstractButtonDialog {
                     try {
                         // Copy to protect the saved settings
                         botConfigs.put(player, savedSettings.get(player.getName()).getCopy());
-                    } catch (PrincessException e) {
-                        LogManager.getLogger().error("", e);
+                    } catch (PrincessException ex) {
+                        LogManager.getLogger().error("", ex);
                         // fallback to default
                     }
                 }
-                ghostChooser.addActionListener(e -> updateButtonStates());
+                ghostChooser.addActionListener(evt -> updateButtonStates());
 
                 var cPanel = new JPanel();
                 cPanel.add(ghostChooser);
@@ -162,7 +162,7 @@ public class ReplacePlayersDialog extends AbstractButtonDialog {
             } else if (clientGui.getClient().isLocalBot(player)) {
                 Client bot = clientGui.getClient().getBotClient(player);
                 if (bot instanceof Princess) {
-                    gridPanel.add(new JLabel( LOCAL + " Princess"));
+                    gridPanel.add(new JLabel(LOCAL + " Princess"));
                     Princess princess = (Princess) bot;
                     try {
                         // Copy to protect the current settings

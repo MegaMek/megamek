@@ -21,7 +21,6 @@ import megamek.common.annotations.Nullable;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.IlluminationLevel;
-import megamek.common.options.Option;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.Weapon;
@@ -1338,15 +1337,10 @@ public class Compute {
         if (isIndirect) {
             c3spotter = ae; // no c3 when using indirect fire
         }
-        if (isIndirect
-            && game.getOptions().booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)
-            && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_INDIRECT_ALWAYS_POSSIBLE)
-            && LosEffects.calculateLOS(game, ae, target).canSee()
-            && (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) || Compute
-                .canSee(game, ae, target))
-            && !(wtype instanceof MekMortarWeapon)) {
+        
+        if (isIndirect && indirectAttackImpossible(game, ae, target, wtype, weapon)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Indirect fire impossible with direct LOS");
+                    Messages.getString("WeaponAttackAction.NoIndirectWithLOS"));
         }
 
         int c3dist = Compute.effectiveDistance(game, c3spotter, target, false);
@@ -7186,6 +7180,24 @@ public class Compute {
         }
         // are we in atmosphere?
         return en.isAirborne();
+    }
+    
+    /**
+     * Worker function that checks if an indirect attack is impossible for the given passed-in arguments
+     */
+    public static boolean indirectAttackImpossible(Game game, Entity ae, Targetable target, WeaponType wtype, Mounted weapon) {        
+        boolean isLandedSpheroid = ae.isAero() && ((IAero) ae).isSpheroid() && (ae.getAltitude() == 0) && game.getBoard().onGround();
+        int altDif = target.getAltitude() - ae.getAltitude();
+        boolean noseWeaponAimedAtGroundTarget = (weapon != null) && (weapon.getLocation() == Aero.LOC_NOSE) && (altDif < 1);
+        
+        return game.getOptions().booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)
+                    && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_INDIRECT_ALWAYS_POSSIBLE)
+                    && LosEffects.calculateLOS(game, ae, target).canSee()
+                    && (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
+                            || Compute.canSee(game, ae, target))
+                    && !(wtype instanceof ArtilleryCannonWeapon)
+                    && !wtype.hasFlag(WeaponType.F_MORTARTYPE_INDIRECT)
+                    && !(isLandedSpheroid && noseWeaponAimedAtGroundTarget);
     }
 
 } // End public class Compute

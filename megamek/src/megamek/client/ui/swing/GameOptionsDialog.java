@@ -356,6 +356,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         lblSearch.setLabelFor(txtSearch);
         lblSearch.setToolTipText(Messages.getString("GameOptionsDialog.SearchToolTip"));
         txtSearch.setToolTipText(Messages.getString("GameOptionsDialog.SearchToolTip"));
+        txtSearch.setColumns(20);
         txtSearch.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void changedUpdate(DocumentEvent e) {

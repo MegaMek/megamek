@@ -79,13 +79,16 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                         + (game.getRoundCount() + aaa.getTurnsTilHit())
                         + ", fired by "
                         + game.getPlayer(aaa.getPlayerId()).getName();
-                game.getBoard().addSpecialHexDisplay(
-                        aaa.getTarget(game).getPosition(),
-                        new SpecialHexDisplay(
-                                SpecialHexDisplay.Type.ARTILLERY_INCOMING, game
-                                        .getRoundCount() + aaa.getTurnsTilHit(),
-                                game.getPlayer(aaa.getPlayerId()), artyMsg,
-                                SpecialHexDisplay.SHD_OBSCURED_TEAM));
+                // Check for offboard target that has disengaged
+                if (aaa.getTarget(game) != null) {
+                    game.getBoard().addSpecialHexDisplay(
+                            aaa.getTarget(game).getPosition(),
+                            new SpecialHexDisplay(
+                                    SpecialHexDisplay.Type.ARTILLERY_INCOMING, game
+                                    .getRoundCount() + aaa.getTurnsTilHit(),
+                                    game.getPlayer(aaa.getPlayerId()), artyMsg,
+                                    SpecialHexDisplay.SHD_OBSCURED_TEAM));
+                }
             }
             // if this is the last targeting phase before we hit,
             // make it so the firing entity is announced in the

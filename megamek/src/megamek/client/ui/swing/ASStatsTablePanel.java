@@ -30,10 +30,13 @@ import megamek.common.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.*;
+import java.util.stream.Collectors;
 
-public class ASStatsTablePanel {
+public class ASStatsTablePanel implements ActionListener {
 
     private final int COLUMNS = 15;
     private final static Color GROUP_NAME_COLOR = UIUtil.uiLightGreen();
@@ -43,8 +46,8 @@ public class ASStatsTablePanel {
     private int rows;
     private final List<EntityGroup> groups = new ArrayList<>();
     private final JFrame frame;
-    private final List<AlphaStrikeElement> elements = new ArrayList<>();
-
+    private JButton pvButton;
+    private final AlphaStrikeElementComparator aseComparator = new AlphaStrikeElementComparator();
     /**
      * Constructs a panel with a table of AlphaStrike stats for any units that are added to it.
      * To add units to it, call {@link #add(Collection)} or {@link #add(Collection, String)}. These
@@ -70,6 +73,7 @@ public class ASStatsTablePanel {
      */
     public ASStatsTablePanel add(Collection<? extends ForceAssignable> units, @Nullable String name) {
         groups.add(new EntityGroup(units, name));
+        rebuildPanel();
         return this;
     }
 
@@ -82,6 +86,7 @@ public class ASStatsTablePanel {
      */
     public ASStatsTablePanel add(Collection<? extends ForceAssignable> units) {
         groups.add(new EntityGroup(units, ""));
+        rebuildPanel();
         return this;
     }
 
@@ -96,43 +101,36 @@ public class ASStatsTablePanel {
         return panel;
     }
 
+    /** returns a new sorted list of elements */
     public List<AlphaStrikeElement> getElements() {
-        return elements;
+        // TODO sort groups?
+        return groups.stream()
+                .flatMap(group -> group.elements.stream()
+                .sorted(aseComparator)).collect(Collectors.toList());
     }
 
     /** Assembles the JPanel. It is empty before calling this method. */
     private void constructPanel() {
         addVerticalSpace();
         for (EntityGroup group : groups) {
-            addGrouptoPanel(group);
+            addGroupToPanel(group);
         }
         finalizePanel();
     }
 
-    /** Adds one group of units to the JPanel. */
-    private void addGrouptoPanel(EntityGroup group) {
-        // Conversion to AlphaStrike
-        final List<AlphaStrikeElement> elementList = new ArrayList<>();
-        final Map<AlphaStrikeElement, FlexibleCalculationReport> reports = new HashMap<>();
-        for (ForceAssignable unit : group.entities) {
-            AlphaStrikeElement element = null;
-            if (unit instanceof AlphaStrikeElement) {
-                element = (AlphaStrikeElement) unit;
-            } else if ((unit instanceof Entity) && (ASConverter.canConvert((Entity) unit))) {
-                element = ASConverter.convert((Entity) unit, new FlexibleCalculationReport());
-            }
-            if (element != null) {
-                elementList.add(element);
-                if (element.hasConversionReport()) {
-                    reports.put(element, (FlexibleCalculationReport) element.getConversionReport());
-                }
-            }
-        }
-        elements.addAll(elementList);
+    private void rebuildPanel() {
+        rows = 0;
+        panel.removeAll();
+        constructPanel();
+    }
 
+
+    /** Adds one group of units to the JPanel. */
+    private void addGroupToPanel(EntityGroup group) {
         // Print the elements
         rows++;
         addGroupName(group.name);
+//        addHeader("Name");
         addHeader("Type");
         addHeader("SZ");
         addHeader("TMM");
@@ -144,12 +142,12 @@ public class ASStatsTablePanel {
         addHeader("Str");
         addHeader("Th");
         addHeader("Skill");
-        addHeader("PV");
+        pvButton = addSortableHeader("PV");
         addHeader("Specials");
         addHeader("Conversion");
         addLine();
 
-        for (AlphaStrikeElement element : elementList) {
+        for (AlphaStrikeElement element : group.elements.stream().sorted(aseComparator).collect(Collectors.toList())) {
             boolean oddRow = (rows++ % 2) == 1;
             addGridElementLeftAlign(element.getName(), oddRow);
             addGridElement(element.getASUnitType() + "", oddRow);
@@ -169,7 +167,7 @@ public class ASStatsTablePanel {
             } else {
                 addGridElementLeftAlign(element.getSpecialsDisplayString(element), oddRow);
             }
-            addConversionInfo(oddRow, reports.get(element), element, frame);
+            addConversionInfo(oddRow, group.reports.get(element), element, frame);
         }
 
         addVerticalSpace();
@@ -220,10 +218,19 @@ public class ASStatsTablePanel {
     }
 
     private void addHeader(String text) {
-        var textLabel = new JLabel(text, SwingConstants.CENTER);
+        var textLabel = new JLabel(text);
         textLabel.setForeground(HEADER_COLOR);
         textLabel.setFont(UIUtil.getScaledFont());
         panel.add(textLabel);
+    }
+
+    private JButton addSortableHeader(String text) {
+        var textLabel = new JButton(text);
+        textLabel.addActionListener(this);
+        textLabel.setForeground(HEADER_COLOR);
+        textLabel.setFont(UIUtil.getScaledFont());
+        panel.add(textLabel);
+        return textLabel;
     }
 
     private String getArcedSpecials(AlphaStrikeElement element) {
@@ -253,14 +260,75 @@ public class ASStatsTablePanel {
         }
     }
 
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == pvButton) {
+            aseComparator.togglePV();
+        }
+        rebuildPanel();
+    }
+
     /** A record to store added groups of units before constructing the panel. */
     private static class EntityGroup {
-        private final List<ForceAssignable> entities;
+        private final List<AlphaStrikeElement> elements = new ArrayList<>();
+        private final Map<AlphaStrikeElement, FlexibleCalculationReport> reports = new HashMap<>();
         private final String name;
 
         private EntityGroup(Collection<? extends ForceAssignable> entities, String name) {
-            this.entities = new ArrayList<>(entities);
             this.name = Objects.requireNonNullElse(name, "");
+
+            for (ForceAssignable unit : entities) {
+                AlphaStrikeElement element = null;
+                if (unit instanceof AlphaStrikeElement) {
+                    element = (AlphaStrikeElement) unit;
+                } else if ((unit instanceof Entity) && (ASConverter.canConvert((Entity) unit))) {
+                    element = ASConverter.convert((Entity) unit, new FlexibleCalculationReport());
+                }
+                if (element != null) {
+                    elements.add(element);
+                    if (element.hasConversionReport()) {
+                        reports.put(element, (FlexibleCalculationReport) element.getConversionReport());
+                    }
+                }
+            }
+        }
+    }
+
+//    private class ModifiableComparator implements Comparator<AlphaStrikeElement> {
+//
+//    }
+
+    /** Orderable, optional sorting criteria for AlphaStrikeElements*/
+    private class AlphaStrikeElementComparator implements Comparator<AlphaStrikeElement> {
+        private static final int REVERSE_SORT = -1;
+        private static final int NO_SORT = 0;
+        private static final int SORT = 1;
+        //sort criteria: 1 is sort, 0 is do not sort, -1 is reverse sort
+        private int sortByPV = 0,  sortByName = 0;
+        @Override
+        public int compare(AlphaStrikeElement o1,AlphaStrikeElement o2) {
+            if (sortByPV != 0) {
+                int result = Integer.compare(o1.getPointValue(), o2.getPointValue());
+                if (result != 0) {
+                    return result * sortByPV;
+                }
+            }
+
+            if (sortByName != 0) {
+                int result = o1.getName().compareTo(o2.getName());
+                if (result != 0) {
+                    return result * sortByName;
+                }
+            }
+            return 0;
+        }
+
+        public void togglePV() {
+            sortByPV = toggle(sortByPV);
+        }
+
+        private int toggle(int current) {
+            return current < 0 ? 0 : current > 0 ? -1 : 1;
         }
     }
 }

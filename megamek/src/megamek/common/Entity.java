@@ -7524,7 +7524,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             roll.append(new PilotingRollData(getId(), getMovementBeforeSkidPSRModifier(distance), "turning on ice"));
             adjustDifficultTerrainPSRModifier(roll);
             return roll;
-        } else if (prevHex.containsTerrain(Terrains.BLACK_ICE)
+        } else if ((prevHex != null) && prevHex.containsTerrain(Terrains.BLACK_ICE)
                 && (((movementMode != EntityMovementMode.HOVER) && (movementMode != EntityMovementMode.WIGE))
                 || (((movementMode == EntityMovementMode.HOVER) || (movementMode == EntityMovementMode.WIGE))
                     && ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW)

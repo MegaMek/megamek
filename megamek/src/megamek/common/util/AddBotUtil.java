@@ -42,7 +42,7 @@ public class AddBotUtil {
             "\nUsage /replacePlayer <-b:TestBot/Princess> <-c:Config> <-v:Verbosity> " +
             "<-p:>name." +
             "\n  <-b> Specifies use if either TestBot or Princess.  If left out, " +
-            "Princess will be used." +
+            "TestBot will be used." +
             "\n  <-c> Specifies a saved configuration to be used by Princess.  If left out" +
             " DEFAULT will be used." +
             "\n  <-v> Specifies the verbosity level for Princess " +

@@ -70,8 +70,16 @@ public class DedicatedServer {
             return;
         }
 
+        File gameFile = null;
+        if (resolver.saveGameFileName != null ) {
+            gameFile = new File(resolver.saveGameFileName);
+            if (!gameFile.isAbsolute()) {
+                gameFile = new File("./savegames", resolver.saveGameFileName);
+            }
+        }
+
         if (null != resolver.saveGameFileName) {
-            server.loadGame(new File(resolver.saveGameFileName));
+            server.loadGame(gameFile);
         }
     }
 }

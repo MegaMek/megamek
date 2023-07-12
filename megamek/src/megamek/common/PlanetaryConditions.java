@@ -67,6 +67,7 @@ public class PlanetaryConditions implements Serializable {
     public static final int WE_HEAVY_HAIL       = 13;// NYI
     public static final int WE_LIGHTNING_STORM  = 14;// NYI
     //  public static final int WE_BLIZZARD         = 11; does not exist anymore
+    public static final int BLACK_ICE_TEMP      = -30;
     private static final String MSG_NAME_WEATHER_CLEAR = Messages.getString("PlanetaryConditions.DisplayableName.Weather.Clear");
     private static final String MSG_NAME_WEATHER_LIGHTRAIN = Messages.getString("PlanetaryConditions.DisplayableName.Weather.Light Rain");
     private static final String MSG_NAME_WEATHER_MODRAIN = Messages.getString("PlanetaryConditions.DisplayableName.Weather.Moderate Rain");
@@ -373,8 +374,8 @@ public class PlanetaryConditions implements Serializable {
 
         return penalty;
     }
-    
-    /** 
+
+    /**
      * Returns true when the light conditions give a hit penalty and
      * the hit penalty can be offset by a searchlight, i.e. in full moon,
      * moonless and pitch black night.
@@ -397,11 +398,11 @@ public class PlanetaryConditions implements Serializable {
     public static boolean requiresLowTemp(int weather) {
         return weather == WE_LIGHT_HAIL ||
                 weather == WE_HEAVY_HAIL ||
-                weather == WE_LIGHT_SNOW || 
+                weather == WE_LIGHT_SNOW ||
                 weather == WE_SLEET ||
                 weather == WE_SNOW_FLURRIES ||
                 weather == WE_HEAVY_SNOW ||
-                weather == WE_ICE_STORM || 
+                weather == WE_ICE_STORM ||
                 weather == WE_MOD_SNOW;
     }
 
@@ -775,7 +776,7 @@ public class PlanetaryConditions implements Serializable {
             isAero = (en.isAero()) && !isLargeCraft;
         }
         // anything else is infantry
-        
+
         // Beyond altitude 9, Aeros can't see. No need to repeat this test.
         if (isAero && (en.getAltitude() > 9)) {
             return 0;

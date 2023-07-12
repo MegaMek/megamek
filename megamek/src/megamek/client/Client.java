@@ -107,7 +107,7 @@ public class Client implements IClientCommandHandler {
     private final UnitNameTracker unitNameTracker = new UnitNameTracker();
 
     /** The bots controlled by the local player; maps a bot's name String to a bot's client. */
-    public Map<String, Client> bots = new TreeMap<>(String::compareTo);
+    public Map<String, Client> localBots = new TreeMap<>(String::compareTo);
 
     // Hashtable for storing image tags containing base64Text src
     private Hashtable<Integer, String> imgCache;
@@ -1397,7 +1397,7 @@ public class Client implements IClientCommandHandler {
                     receivePlayerInfo(c);
                     break;
                 case PLAYER_REMOVE:
-                    for (Iterator<Client> botIterator = bots.values().iterator(); botIterator.hasNext(); ) {
+                    for (Iterator<Client> botIterator = localBots.values().iterator(); botIterator.hasNext(); ) {
                         Client bot = botIterator.next();
                         if (bot.localPlayerNumber == c.getIntValue(0)) {
                             botIterator.remove();
@@ -1880,7 +1880,7 @@ public class Client implements IClientCommandHandler {
 
     /** Returns true when the player is a bot added/controlled by this client. */
     public boolean isLocalBot(Player player) {
-        return bots.containsKey(player.getName());
+        return localBots.containsKey(player.getName());
     }
 
     /**
@@ -1888,6 +1888,6 @@ public class Client implements IClientCommandHandler {
      * the player is not a local bot, returns null.
      */
     public Client getBotClient(Player player) {
-        return bots.get(player.getName());
+        return localBots.get(player.getName());
     }
 }

@@ -20,13 +20,10 @@ import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
-import megamek.client.ui.swing.ClientGUI;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.Game;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
-import megamek.common.net.enums.PacketCommand;
-import megamek.common.net.packets.Packet;
 
 import javax.swing.*;
 import java.awt.*;
@@ -45,7 +42,7 @@ public class AddBotUtil {
             "\nUsage /replacePlayer <-b:TestBot/Princess> <-c:Config> <-v:Verbosity> " +
             "<-p:>name." +
             "\n  <-b> Specifies use if either TestBot or Princess.  If left out, " +
-            "TestBot will be used." +
+            "Princess will be used." +
             "\n  <-c> Specifies a saved configuration to be used by Princess.  If left out" +
             " DEFAULT will be used." +
             "\n  <-v> Specifies the verbosity level for Princess " +
@@ -258,7 +255,7 @@ public class AddBotUtil {
             message.append("Princess has replaced " + playerName + ".");
             return princess;
         } else {
-            Client bot = client.bots.get(target.getName());
+            Client bot = client.localBots.get(target.getName());
             if (bot == null) {
                 message.append("Player '" + playerName + "' is not a local bot.");
                 return null;

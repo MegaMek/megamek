@@ -16,7 +16,6 @@ package megamek.client.bot;
 import megamek.client.Client;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.ReportDisplay;
 import megamek.common.*;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
@@ -40,10 +39,10 @@ public abstract class BotClient extends Client {
 
     private List<Entity> currentTurnEnemyEntities;
     private List<Entity> currentTurnFriendlyEntities;
-    
+
     // a frame, to show stuff in
     public JFrame frame;
-    
+
     /**
      * Keeps track of whether this client has started to calculate a turn this phase.
      */
@@ -67,9 +66,9 @@ public abstract class BotClient extends Client {
 
     public BotClient(String playerName, String host, int port) {
         super(playerName, host, port);
-        
+
         boardClusterTracker = new BoardClusterTracker();
-        
+
         game.addGameListener(new GameListenerAdapter() {
 
             @Override
@@ -203,7 +202,7 @@ public abstract class BotClient extends Client {
     protected abstract void calculateDeployment() throws Exception;
 
     protected void initTargeting() { }
-    
+
     /**
      * Calculates the targeting/offboard turn
      * This includes firing TAG and non-direct-fire artillery
@@ -226,11 +225,11 @@ public abstract class BotClient extends Client {
 
     @Nullable
     protected abstract PhysicalOption calculatePhysicalTurn();
-    
-    protected Vector<EntityAction> calculatePointBlankShot(int firingEntityID, int targetID) { 
+
+    protected Vector<EntityAction> calculatePointBlankShot(int firingEntityID, int targetID) {
         return new Vector<>();
     }
-    
+
     protected int pickTagTarget(GameCFREvent evt) {
         return 0;
     }
@@ -256,37 +255,37 @@ public abstract class BotClient extends Client {
     }
 
     /**
-     * Helper function that determines which of this bot's entities are stranded inside immobilized transports. 
+     * Helper function that determines which of this bot's entities are stranded inside immobilized transports.
      * @return Array of entity IDs.
      */
     public int[] getStrandedEntities() {
         List<Integer> entitiesToUnload = new ArrayList<>();
-        
+
         // Basically, we loop through all entities owned by the current player
         // And if the entity happens to be in a disabled transport, then we unload it
         // unless doing so would kill it or be illegal due to stacking violation
         for (Entity currentEntity : getGame().getPlayerEntities(getLocalPlayer(), true)) {
             Entity transport = currentEntity.getTransportId() != Entity.NONE ? getGame().getEntity(currentEntity.getTransportId()) : null;
-            
+
             if (transport != null && transport.isPermanentlyImmobilized(true)) {
                 boolean stackingViolation = null != Compute.stackingViolation(game, currentEntity.getId(), transport.getPosition());
                 boolean unloadFatal = currentEntity.isBoardProhibited(getGame().getBoard().getType()) ||
                         currentEntity.isLocationProhibited(transport.getPosition());
-                        
+
                 if (!stackingViolation && !unloadFatal) {
                     entitiesToUnload.add(currentEntity.getId());
                 }
             }
         }
-        
+
         int[] entityIDs = new int[entitiesToUnload.size()];
         for (int x = 0; x < entitiesToUnload.size(); x++) {
             entityIDs[x] = entitiesToUnload.get(x);
         }
-        
+
         return entityIDs;
     }
-    
+
     public List<Entity> getEntitiesOwned() {
         ArrayList<Entity> result = new ArrayList<>();
         for (Entity entity : game.getEntitiesVector()) {
@@ -297,20 +296,20 @@ public abstract class BotClient extends Client {
         }
         return result;
     }
-    
+
     protected Entity getArbitraryEntity() {
         for (Entity entity : game.getEntitiesVector()) {
             if (entity.getOwner().equals(getLocalPlayer())) {
                 return entity;
             }
         }
-        
+
         return null;
     }
 
     /**
      * Lazy-loaded list of enemy entities that we should consider firing at.
-     * Only good for the current entity turn calculation, as this list can change between individual entity turns. 
+     * Only good for the current entity turn calculation, as this list can change between individual entity turns.
      */
     public List<Entity> getEnemyEntities() {
         if (currentTurnEnemyEntities == null) {
@@ -319,18 +318,18 @@ public abstract class BotClient extends Client {
                 if (entity.getOwner().isEnemyOf(getLocalPlayer())
                     && (entity.getPosition() != null) && !entity.isOffBoard()
                     && (entity.getCrew() != null) && !entity.getCrew().isDead()) {
-    
+
                     currentTurnEnemyEntities.add(entity);
                 }
             }
         }
-        
+
         return currentTurnEnemyEntities;
     }
 
     /**
      * Lazy-loaded list of friendly entities.
-     * Only good for the current entity turn calculation, as this list can change between individual entity turns. 
+     * Only good for the current entity turn calculation, as this list can change between individual entity turns.
      */
     public List<Entity> getFriendEntities() {
         if (currentTurnFriendlyEntities == null) {
@@ -342,7 +341,7 @@ public abstract class BotClient extends Client {
                 }
             }
         }
-        
+
         return currentTurnFriendlyEntities;
     }
 
@@ -470,7 +469,7 @@ public abstract class BotClient extends Client {
         }
         return unMoved.get(Compute.randomInt(unMoved.size()));
     }
-    
+
     /**
      * Calculate what to do on my turn.
      * Has a retry mechanism for when the turn calculation fails due to concurrency issues
@@ -478,7 +477,7 @@ public abstract class BotClient extends Client {
     private synchronized void calculateMyTurn() {
         int retryCount = 0;
         boolean success = false;
-        
+
         while ((retryCount < BOT_TURN_RETRY_COUNT) && !success) {
             success = calculateMyTurnWorker();
 
@@ -551,7 +550,7 @@ public abstract class BotClient extends Client {
             } else if (game.getPhase().isPremovement() || game.getPhase().isPrefiring()) {
                 calculatePrephaseTurn();
             }
-            
+
             return true;
         } catch (Exception ex) {
             LogManager.getLogger().error("", ex);
@@ -577,7 +576,7 @@ public abstract class BotClient extends Client {
 
         return mass;
     }
-    
+
     /**
      * Gets valid and empty starting coords around the specified point. This
      * method iterates through the list of Coords and returns the first Coords
@@ -708,7 +707,7 @@ public abstract class BotClient extends Client {
         }
 
         double highestFitness = -5000;
-        
+
         for (RankedCoords coord : validCoords) {
 
             // Calculate the fitness factor for each hex and save it to the array
@@ -875,7 +874,7 @@ public abstract class BotClient extends Client {
                 coord.fitness -= potentialBuildingDamage(coord.getX(), coord.getY(),
                                                          deployed_ent);
             }
-            
+
             // ProtoMech
             // ->
             // -> Trees increase fitness by +2 (minor)
@@ -888,7 +887,7 @@ public abstract class BotClient extends Client {
 
             // Make sure I'm not stuck in a dead-end.
             coord.fitness += calculateEdgeAccessFitness(deployed_ent, board);
-            
+
             if (coord.fitness > highestFitness) {
                 highestFitness = coord.fitness;
             }
@@ -903,7 +902,7 @@ public abstract class BotClient extends Client {
                 rc.fitness += getClusterTracker().getBoardClusterSize(deployed_ent, rc.coords, false);
             }
         }
-        
+
         // Now sort the valid array.
         Collections.sort(validCoords);
 
@@ -917,7 +916,7 @@ public abstract class BotClient extends Client {
 
     /**
      * Determines if the given entity has reasonable access to the "opposite" edge of the board from its
-     * current position. Returns 0 if this can be accomplished without destroying any terrain, 
+     * current position. Returns 0 if this can be accomplished without destroying any terrain,
      * -50 if this can be accomplished but terrain must be destroyed,
      * -100 if this cannot be accomplished at all
      */
@@ -926,12 +925,12 @@ public abstract class BotClient extends Client {
         if (entity.isAirborne() || entity instanceof VTOL) {
             return 0;
         }
-        
+
         CardinalEdge destinationEdge = BoardUtilities.determineOppositeEdge(entity);
-        
+
         int noReductionZoneSize = getClusterTracker().getDestinationCoords(entity, destinationEdge, false).size();
         int reductionZoneSize = getClusterTracker().getDestinationCoords(entity, destinationEdge, true).size();
-        
+
         if (noReductionZoneSize > 0) {
             return 0;
         } else if (reductionZoneSize > 0) {
@@ -1147,7 +1146,7 @@ public abstract class BotClient extends Client {
         // If we have a clientgui, it keeps track of a Name -> Client map, and
         //  we need to update that map with this name change.
         if (getClientGUI() != null) {
-            Map<String, Client> bots = getClientGUI().getBots();
+            Map<String, Client> bots = getClientGUI().getLocalBots();
             String oldName = getName();
             String newName = (String) (inP.getObject(0));
             if (!this.equals(bots.get(oldName))) {
@@ -1170,13 +1169,13 @@ public abstract class BotClient extends Client {
     public void endOfTurnProcessing() {
         // Do nothing;
     }
-    
+
     @Override
     @SuppressWarnings("unchecked")
     protected void receiveBuildingCollapse(Packet packet) {
         game.getBoard().collapseBuilding((Vector<Coords>) packet.getObject(0));
     }
-    
+
     /**
      * The bot client doesn't really need a text report
      * Let's save ourselves a little processing time and not deal with any of it
@@ -1185,14 +1184,14 @@ public abstract class BotClient extends Client {
     public String receiveReport(Vector<Report> v) {
         return "";
     }
-    
+
     /**
      * The bot client has no need of image tag caching
      * Let's save ourselves some CPU and memory and not deal with it
      */
     @Override
     protected void cacheImgTag(Entity entity) {
-        
+
     }
 
     public BoardClusterTracker getClusterTracker() {

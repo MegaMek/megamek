@@ -110,7 +110,7 @@ public class SkillGenerationDialog extends AbstractButtonDialog {
 
         final DefaultComboBoxModel<String> clientsModel = new DefaultComboBoxModel<>();
         clientsModel.addElement(getClientGUI().getClient().getName());
-        clientsModel.addAll(getClientGUI().getBots().values().stream().map(Client::getName)
+        clientsModel.addAll(getClientGUI().getLocalBots().values().stream().map(Client::getName)
                 .collect(Collectors.toList()));
         final MMComboBox<String> comboClients = new MMComboBox<>("comboClients", clientsModel);
         comboClients.setToolTipText(resources.getString("comboClients.toolTipText"));
@@ -118,7 +118,7 @@ public class SkillGenerationDialog extends AbstractButtonDialog {
         comboClients.setEnabled(comboClients.getItemCount() > 1);
         comboClients.addActionListener(evt -> getSkillGenerationOptionsPanel().changeClient(
                 (comboClients.getSelectedIndex() > 0)
-                        ? getClientGUI().getBots().get(comboClients.getSelectedItem())
+                        ? getClientGUI().getLocalBots().get(comboClients.getSelectedItem())
                         : getClientGUI().getClient()));
         panel.add(comboClients);
         return panel;

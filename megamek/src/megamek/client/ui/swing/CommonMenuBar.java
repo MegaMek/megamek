@@ -67,7 +67,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private JMenuItem gameQLoad = new JMenuItem(getString("CommonMenuBar.fileGameQuickLoad"));
     private JMenuItem gameSaveServer = new JMenuItem(getString("CommonMenuBar.fileGameSaveServer"));
     private JCheckBoxMenuItem gameRoundReport = new JCheckBoxMenuItem(getString("CommonMenuBar.viewRoundReport"));
-    private JMenuItem gameReplacePlayer = new JMenuItem(getString("CommonMenuBar.replacePlayer"));
+    private JMenuItem gameEditBots = new JMenuItem(getString("CommonMenuBar.editBots"));
     private JCheckBoxMenuItem gamePlayerList = new JCheckBoxMenuItem(getString("CommonMenuBar.viewPlayerList"));
     private JMenuItem gameGameOptions = new JMenuItem(getString("CommonMenuBar.viewGameOptions"));
     private JMenuItem gamePlayerSettings = new JMenuItem(getString("CommonMenuBar.viewPlayerSettings"));
@@ -183,7 +183,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         add(menu);
         menu.setMnemonic(VK_G);
 
-        initMenuItem(gameReplacePlayer, menu, FILE_GAME_REPLACE_PLAYER, VK_R);
+        initMenuItem(gameEditBots, menu, FILE_GAME_EDIT_BOTS, VK_R);
         menu.addSeparator();
 
         initMenuItem(gameGameOptions, menu, VIEW_GAME_OPTIONS, VK_O);
@@ -351,7 +351,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         gameQSave.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.QUICK_SAVE));
         gameSave.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.LOCAL_SAVE));
         gameLoad.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.LOCAL_LOAD));
-        gameReplacePlayer.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.REPLACE_PLAYER));
+        gameEditBots.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.REPLACE_PLAYER));
     }
 
     @Override
@@ -445,7 +445,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         gameSave.setEnabled(isLobby || (isInGame && canSave));
         gameSaveServer.setEnabled(isLobby || (isInGame && canSave));
         gameQSave.setEnabled(isLobby || (isInGame && canSave));
-        gameReplacePlayer.setEnabled(isLobby || (isInGame && canSave));
+        gameEditBots.setEnabled(isLobby || (isInGame && canSave));
         boardSave.setEnabled(isBoardEditor);
         boardSaveAs.setEnabled(isBoardEditor || isInGame); // TODO: should work in the lobby
         boardSaveAsImage.setEnabled(isBoardEditor || isInGame); // TODO: should work in the lobby

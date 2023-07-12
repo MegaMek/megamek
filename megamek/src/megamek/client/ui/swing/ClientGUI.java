@@ -108,7 +108,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     public static final String FILE_GAME_SCENARIO = "fileGameScenario";
     public static final String FILE_GAME_CONNECT_BOT = "fileGameConnectBot";
     public static final String FILE_GAME_CONNECT = "fileGameConnect";
-    public static final String FILE_GAME_REPLACE_PLAYER = "replacePlayer";
+    public static final String FILE_GAME_EDIT_BOTS = "editBots";
     // board submenu
     public static final String BOARD_NEW = "fileBoardNew";
     public static final String BOARD_OPEN = "fileBoardOpen";
@@ -900,8 +900,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 boardSaveAsImage(false);
                 ignoreHotKeys = false;
                 break;
-            case FILE_GAME_REPLACE_PLAYER:
-                replacePlayer();
+            case FILE_GAME_EDIT_BOTS:
+                editBots();
                 break;
             case VIEW_ACCESSIBILITY_WINDOW:
                 toggleAccessibilityWindow();
@@ -2270,10 +2270,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             bv.clearMovementData();
             bv.clearFieldOfFire();
             bv.clearSensorsRanges();
-            for (Client client2 : getBots().values()) {
+            for (Client client2 : getLocalBots().values()) {
                 client2.die();
             }
-            getBots().clear();
+            getLocalBots().clear();
 
             // Make a list of the player's living units.
             ArrayList<Entity> living = getClient().getGame().getPlayerEntities(getClient().getLocalPlayer(), false);
@@ -2576,8 +2576,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         return client;
     }
 
-    public Map<String, Client> getBots() {
-        return client.bots;
+    public Map<String, Client> getLocalBots() {
+        return client.localBots;
     }
 
     /**
@@ -2793,8 +2793,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
     }
 
-    void replacePlayer() {
-        var rpd = new ReplacePlayersDialog(frame, this);
+    void editBots() {
+        var rpd = new EditBotsDialog(frame, this);
         rpd.setVisible(true);
         if (rpd.getResult() == DialogResult.CANCELLED) {
             return;
@@ -2810,7 +2810,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             // Make this princess a locally owned bot if in the lobby. This way it
             // can be configured, and it will faithfully press Done when the local player does.
             if ((princess != null) && client.getGame().getPhase().isLounge()) {
-                getBots().put(ghostName, princess);
+                getLocalBots().put(ghostName, princess);
             }
         }
 

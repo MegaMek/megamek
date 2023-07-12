@@ -60,20 +60,20 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
 
     private JLabel nameLabel = new JLabel(Messages.getString("BotConfigDialog.nameLabel"));
     private TipTextField nameField = new TipTextField("", 16);
-    
+
     private JButton addTargetButton = new TipButton(Messages.getString("BotConfigDialog.addHexTarget"));
     private JButton addUnitButton = new TipButton(Messages.getString("BotConfigDialog.addUnitTarget"));
     private JButton removeTargetButton = new TipButton(Messages.getString("BotConfigDialog.removeTarget"));
     private DefaultListModel<Object> targetsListModel = new DefaultListModel<>();
     private TipList<Object> targetsList = new TipList<>(targetsListModel);
-    
+
     private MMToggleButton forcedWithdrawalCheck = new TipMMToggleButton(Messages.getString("BotConfigDialog.forcedWithdrawalCheck"));
     private JLabel withdrawEdgeLabel = new JLabel(Messages.getString("BotConfigDialog.retreatEdgeLabel"));
     private MMComboBox<CardinalEdge> withdrawEdgeCombo = new TipCombo<>("EdgeToWithdraw", CardinalEdge.values());
     private MMToggleButton autoFleeCheck = new TipMMToggleButton(Messages.getString("BotConfigDialog.autoFleeCheck"));
     private JLabel fleeEdgeLabel = new JLabel(Messages.getString("BotConfigDialog.homeEdgeLabel"));
     private MMComboBox<CardinalEdge> fleeEdgeCombo = new TipCombo<>("EdgeToFlee", CardinalEdge.values());
-    
+
     private TipSlider aggressionSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
     private TipSlider fallShameSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
     private TipSlider herdingSlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
@@ -81,40 +81,40 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
     private TipSlider braverySlidebar = new TipSlider(SwingConstants.HORIZONTAL, 0, 10, 5);
     private TipButton savePreset = new TipButton(Messages.getString("BotConfigDialog.save"));
     private TipButton saveNewPreset = new TipButton(Messages.getString("BotConfigDialog.saveNew"));
-    
+
     private JButton princessHelpButton = new JButton(Messages.getString("BotConfigDialog.help"));
-            
+
     private JPanel presetsPanel;
     private JLabel chooseLabel = new JLabel(Messages.getString("BotConfigDialog.behaviorNameLabel"));
     /** A copy of the current presets. Modifications will only be saved when accepted. */
     private List<String> presets;
     private PresetsModel presetsModel = new PresetsModel();
     private JList<String> presetsList = new JList<>(presetsModel);
-    
+
     private final JButton butOK = new JButton(Messages.getString("Okay"));
     private final JButton butCancel = new JButton(Messages.getString("Cancel"));
 
     /** The pre-existing bot player name that is affected by the dialog, if there is one. Null otherwise. */
     private final String fixedBotPlayerName;
     private final boolean isNewBot;
-    
+
     /** Stores the currently chosen preset. Used to detect if the player has changed the sliders. */
     private BehaviorSettings chosenPreset;
-    
+
     /** Stores the original Behavior if one was given in the constructor (= a save game Behavior). */
     private final BehaviorSettings saveGameBehavior;
-    
+
     /** A ClientGUI given to the dialog. */
     private final ClientGUI clientGui;
-    
+
     /** Convenience field for clientGui.getClient(). */
     private final Client client;
-    
+
     public BotConfigDialog(JFrame parent, @Nullable String botName) {
         this(parent, botName, null, null);
-    } 
-    
-    public BotConfigDialog(JFrame parent, @Nullable String botName, 
+    }
+
+    public BotConfigDialog(JFrame parent, @Nullable String botName,
             @Nullable BehaviorSettings behavior, @Nullable ClientGUI cg) {
         super(parent, "BotConfigDialog", "BotConfigDialog.title");
         fixedBotPlayerName = botName;
@@ -128,7 +128,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         updateDialogFields();
         adaptToGUIScale();
     }
-    
+
     @Override
     protected void initialize() {
         // Make Enter confirm and close the dialog
@@ -143,7 +143,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         });
         super.initialize();
     }
-    
+
     @Override
     protected Container createCenterPane() {
         JPanel result = new JPanel();
@@ -152,21 +152,21 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         result.add(settingSection());
         return result;
     }
-    
+
     /** The setting section contains the presets list on the left side and the princess settings on the right. */
     private JPanel settingSection() {
         var princessScroll = new JScrollPane(princessPanel());
         princessScroll.getVerticalScrollBar().setUnitIncrement(16);
         princessScroll.setBorder(null);
         presetsPanel = presetsPanel();
-        
+
         var result = new JPanel(new BorderLayout(0, 0));
         result.setAlignmentX(LEFT_ALIGNMENT);
         result.add(princessScroll, BorderLayout.CENTER);
         result.add(presetsPanel, BorderLayout.LINE_START);
         return result;
     }
-    
+
     /** The princess panel contains the individual princess settings. */
     private JPanel princessPanel() {
         JPanel result = new JPanel();
@@ -176,7 +176,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         result.add(targetsSection());
         return result;
     }
-    
+
     private JPanel nameSection() {
         JPanel result = new JPanel();
         result.setLayout(new BoxLayout(result, BoxLayout.PAGE_AXIS));
@@ -184,7 +184,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         Content panContent = new Content();
         panContent.setLayout(new BoxLayout(panContent, BoxLayout.PAGE_AXIS));
         result.add(panContent);
-        
+
         var namePanel = new JPanel();
         nameField.setToolTipText(Messages.getString("BotConfigDialog.namefield.tooltip"));
         // When the dialog configures an existing player, the name must not be changed
@@ -194,14 +194,14 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         nameLabel.setDisplayedMnemonic(KeyEvent.VK_N);
         namePanel.add(nameLabel);
         namePanel.add(nameField);
-        
+
         panContent.add(namePanel);
         return result;
     }
-    
-    /** 
+
+    /**
      * Returns a name that is not used by another player. Starts with "Princess"
-     * and subsequently adds numbers (Princess1 etc.) until a free one is found. 
+     * and subsequently adds numbers (Princess1 etc.) until a free one is found.
      */
     private String getFreePrincessName() {
         String baseName = "Princess";
@@ -216,19 +216,19 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         }
         return name;
     }
-    
+
     /** The presets panel has a list of behavior presets for Princess. */
     private JPanel presetsPanel() {
         var result = new JPanel();
         result.setLayout(new BoxLayout(result, BoxLayout.PAGE_AXIS));
         result.setBorder(new EmptyBorder(0, 10, 0, 20));
-        
+
         chooseLabel.setAlignmentX(CENTER_ALIGNMENT);
         chooseLabel.setDisplayedMnemonic(KeyEvent.VK_P);
         chooseLabel.setLabelFor(presetsList);
         var headerPanel = new FixedYPanel();
         headerPanel.add(chooseLabel);
-        
+
         presetsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         presetsList.addListSelectionListener(this);
         presetsList.setCellRenderer(new PresetsRenderer());
@@ -237,10 +237,10 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         result.add(headerPanel);
         result.add(Box.createVerticalStrut(10));
         result.add(presetsList);
-        
+
         return result;
     }
-    
+
     private JPanel behaviorSection() {
         JPanel result = new OptionPanel("BotConfigDialog.behaviorSection");
         Content panContent = new Content();
@@ -275,11 +275,11 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
                 Messages.getString("BotConfigDialog.fallShameSliderMax"),
                 Messages.getString("BotConfigDialog.fallShameToolTip"),
                 Messages.getString("BotConfigDialog.fallShameSliderTitle")));
-        
+
         var buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
         buttonPanel.setAlignmentX(SwingConstants.CENTER);
         result.add(buttonPanel);
-        
+
         savePreset.addActionListener(this);
         savePreset.setMnemonic(KeyEvent.VK_S);
         savePreset.setToolTipText(Messages.getString("BotConfigDialog.saveTip"));
@@ -291,31 +291,31 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
 
         return result;
     }
-    
+
     private JPanel targetsSection() {
         JPanel result = new OptionPanel("BotConfigDialog.targetsSection");
         Content panContent = new Content();
         panContent.setLayout(new BoxLayout(panContent, BoxLayout.PAGE_AXIS));
         result.add(panContent);
-        
+
         addTargetButton.setMnemonic(KeyEvent.VK_X);
         addTargetButton.addActionListener(this);
-        
+
         addUnitButton.setMnemonic(KeyEvent.VK_U);
         addUnitButton.addActionListener(this);
-        
+
         removeTargetButton.setMnemonic(KeyEvent.VK_R);
         removeTargetButton.setFont(UIUtil.getScaledFont());
         removeTargetButton.setForeground(GUIPreferences.getInstance().getWarningColor());
         removeTargetButton.addActionListener(this);
-        
+
         JPanel removeButtonPanel = new FixedXPanel(new FlowLayout(FlowLayout.RIGHT));
         removeButtonPanel.add(removeTargetButton);
-        
+
         var addButtonPanel = new FixedXPanel(new FlowLayout(FlowLayout.LEFT));
         addButtonPanel.add(addUnitButton);
         addButtonPanel.add(addTargetButton);
-        
+
         var buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
         buttonPanel.add(addButtonPanel);
@@ -331,13 +331,13 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         targetsList.setVisibleRowCount(6);
         targetsList.setPrototypeCellValue(new Coords(21, 22));
         JScrollPane targetsListScroller = new JScrollPane(targetsList);
-        
+
         panContent.add(buttonPanel);
         panContent.add(targetsListScroller);
-        
+
         return result;
     }
-    
+
     private JPanel retreatSection() {
         JPanel result = new OptionPanel("BotConfigDialog.retreatSection");
         Content panContent = new Content();
@@ -347,12 +347,12 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         autoFleeCheck.setToolTipText(Messages.getString("BotConfigDialog.autoFleeTooltip"));
         autoFleeCheck.addActionListener(this);
         autoFleeCheck.setMnemonic(KeyEvent.VK_F);
-        
+
         fleeEdgeCombo.removeItem(CardinalEdge.NONE);
         fleeEdgeCombo.setToolTipText(Messages.getString("BotConfigDialog.homeEdgeTooltip"));
         fleeEdgeCombo.setSelectedIndex(0);
         fleeEdgeCombo.addActionListener(this);
-        
+
         forcedWithdrawalCheck.setToolTipText(Messages.getString("BotConfigDialog.forcedWithdrawalTooltip"));
         forcedWithdrawalCheck.addActionListener(this);
         forcedWithdrawalCheck.setMnemonic(KeyEvent.VK_W);
@@ -374,10 +374,10 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         panContent.add(firstLine);
         panContent.add(Box.createVerticalStrut(5));
         panContent.add(secondLine);
-        
+
         return result;
     }
-    
+
     /** Returns the full behavior setting that the player entered in this dialog. */
     public BehaviorSettings getBehaviorSettings() {
         savePrincessProperties();
@@ -391,16 +391,16 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         herdingSlidebar.setValue(princessBehavior.getHerdMentalityIndex());
         braverySlidebar.setValue(princessBehavior.getBraveryIndex());
     }
-    
+
     private void updateDialogFields() {
         updatePresetFields();
 
         forcedWithdrawalCheck.setSelected(princessBehavior.isForcedWithdrawal());
         withdrawEdgeCombo.setSelectedItem(princessBehavior.getRetreatEdge());
-        
+
         autoFleeCheck.setSelected(princessBehavior.shouldAutoFlee());
         fleeEdgeCombo.setSelectedItem(princessBehavior.getDestinationEdge());
-        
+
         targetsListModel.clear();
         for (String t : princessBehavior.getStrategicBuildingTargets()) {
             int begin = t.indexOf("(") + 1;
@@ -415,7 +415,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         targetsListModel.addAll(princessBehavior.getPriorityUnitTargets());
         updateEnabledStates();
     }
-    
+
     /** Updates all necessary enabled states of buttons/dropdowns. */
     private void updateEnabledStates() {
         fleeEdgeLabel.setEnabled(autoFleeCheck.isSelected());
@@ -425,10 +425,10 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         savePreset.setEnabled(isChangedPreset());
         removeTargetButton.setEnabled(!targetsList.isSelectionEmpty());
     }
-    
+
     /** Returns true if a preset is selected and is different from the current slider settings. */
     private boolean isChangedPreset() {
-        return (chosenPreset != null) 
+        return (chosenPreset != null)
                 && (chosenPreset.getSelfPreservationIndex() != selfPreservationSlidebar.getValue()
                 || chosenPreset.getHyperAggressionIndex() != aggressionSlidebar.getValue()
                 || chosenPreset.getFallShameIndex() != fallShameSlidebar.getValue()
@@ -436,7 +436,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
                 || chosenPreset.getBraveryIndex() != braverySlidebar.getValue());
     }
 
-    private JPanel buildSlider(JSlider thisSlider, String minMsgProperty, 
+    private JPanel buildSlider(JSlider thisSlider, String minMsgProperty,
             String maxMsgProperty, String toolTip, String title) {
         var result = new TipPanel();
         result.setLayout(new BoxLayout(result, BoxLayout.PAGE_AXIS));
@@ -445,13 +445,13 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         thisSlider.setPaintLabels(false);
         thisSlider.setSnapToTicks(true);
         thisSlider.addChangeListener(this);
-        
+
         var panLabels = new JPanel();
         panLabels.setLayout(new BoxLayout(panLabels, BoxLayout.LINE_AXIS));
         panLabels.add(new JLabel(minMsgProperty, SwingConstants.LEFT));
         panLabels.add(Box.createHorizontalGlue());
         panLabels.add(new JLabel(maxMsgProperty, SwingConstants.RIGHT));
-        
+
         result.add(panLabels);
         result.add(thisSlider);
         return result;
@@ -464,28 +464,28 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         butOK.addActionListener(this::okButtonActionPerformed);
         butOK.setMnemonic(KeyEvent.VK_K);
         result.add(butOK);
-        
+
         butCancel.addActionListener(this::cancelActionPerformed);
         butCancel.setMnemonic(KeyEvent.VK_C);
         result.add(butCancel);
-        
+
         princessHelpButton.addActionListener(this);
         princessHelpButton.setMnemonic(KeyEvent.VK_H);
         result.add(princessHelpButton);
 
         return result;
     }
-    
+
     private void showPrincessHelp() {
         new PrincessHelpDialog(getFrame()).setVisible(true);
     }
-    
+
     @Override
     protected void okButtonActionPerformed(ActionEvent evt) {
-        // Only allow adding the bot if its name is unique. It does not strictly have 
+        // Only allow adding the bot if its name is unique. It does not strictly have
         // to be unique among all players as the server will make it unique by
         // adding ".2" when necessary. But it has to be unique among local bots as otherwise
-        // the connection between the client.bots stored name and the server-given name 
+        // the connection between the client.bots stored name and the server-given name
         // gets lost. It doesn't hurt to check against all players though.
         boolean playerNameTaken = (client != null) && client.getGame().getPlayersVector().stream()
                 .anyMatch(p -> p.getName().equals(nameField.getText()));
@@ -495,17 +495,17 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
             super.okButtonActionPerformed(evt);
         }
     }
-    
+
     @Override
     protected void okAction() {
         savePrincessProperties();
-        
+
         if (client != null) {
             String msg = client.getLocalPlayer() + " changed settings for bot " + getBotName();
             client.sendServerChat(Player.PLAYER_NONE, msg);
         }
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == addTargetButton) {
@@ -529,19 +529,19 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
 
         } else if (e.getSource() == autoFleeCheck) {
             updateEnabledStates();
-            
+
         } else if (e.getSource() == forcedWithdrawalCheck) {
             updateEnabledStates();
-            
+
         } else if (e.getSource() == princessHelpButton) {
             showPrincessHelp();
-            
+
         } else if (e.getSource() == savePreset) {
             savePreset();
-            
+
         } else if (e.getSource() == saveNewPreset) {
             saveAsNewPreset();
-            
+
         }
     }
 
@@ -553,7 +553,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
                 return;
             }
             if (!behaviorSettingsFactory.getBehaviorNameList().contains(name)) {
-                // OK: this name is not taken. Save the preset 
+                // OK: this name is not taken. Save the preset
                 writePreset(name);
                 updatePresets();
                 presetsList.setSelectedValue(name, true);
@@ -563,7 +563,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
             JOptionPane.showMessageDialog(getFrame(), Messages.getString("BotConfigDialog.saveNewTaken"));
         }
     }
-    
+
     /** Saves the current Behavior to the currently selected Behavior Preset. */
     private void savePreset() {
         if (!presetsList.isSelectionEmpty()) {
@@ -571,8 +571,8 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
             updatePresets();
         }
     }
-    
-    /** 
+
+    /**
      * Writes the current Behavior under the given name to the stored Behavior Presets.
      * Will overwrite a Behavior Preset if there is one with the same name.
      */
@@ -598,10 +598,10 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         behaviorSettingsFactory.saveBehaviorSettings(false);
         updatePresets();
     }
-    
+
     /** Copies the Configuration from another local bot player. */
     private void copyFromOtherBot(String botName) {
-        var bc = client.bots.get(botName);
+        var bc = client.localBots.get(botName);
         if (bc instanceof Princess) {
             try {
                 princessBehavior = ((Princess) bc).getBehaviorSettings().getCopy();
@@ -611,7 +611,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
             }
         }
     }
-    
+
     private void savePrincessProperties() {
         BehaviorSettings tempBehavior = new BehaviorSettings();
         tempBehavior.setFallShameIndex(fallShameSlidebar.getValue());
@@ -636,28 +636,28 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
     public String getBotName() {
         return nameField.getText();
     }
-    
+
     public void setBotName(String value) {
         nameField.setText(value);
     }
-    
+
     @Override
     public void valueChanged(ListSelectionEvent event) {
         if (event.getValueIsAdjusting()) {
             return;
         }
-        
+
         if (event.getSource() == targetsList.getSelectionModel()) {
             updateEnabledStates();
-            
+
         } else if (event.getSource() == presetsList) {
             presetSelected();
         }
     }
-    
+
     /** Shows a popup menu for a behavior preset, allowing to delete it. */
     private MouseListener presetsMouseListener = new MouseAdapter() {
-        
+
         @Override
         public void mouseReleased(MouseEvent e) {
             int row = presetsList.locationToIndex(e.getPoint());
@@ -670,7 +670,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
                 popup.show(e.getComponent(), e.getX(), e.getY());
             }
         }
-        
+
         @Override
         public void mouseClicked(MouseEvent evt) {
             if (SwingUtilities.isLeftMouseButton(evt) && evt.getClickCount() == 1) {
@@ -678,11 +678,11 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
             }
         }
     };
-    
-    /** 
+
+    /**
      * Called when a Preset is selected. This will often be called twice when clicking
      * with the mouse (by the listselectionlistener and the mouselistener). In this way
-     * the list will react when copying a Preset from another bot and then clicking the 
+     * the list will react when copying a Preset from another bot and then clicking the
      * already selected Preset again. And it will also react to keyboard navigation.
      */
     private void presetSelected() {
@@ -710,21 +710,21 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         }
         updateEnabledStates();
     }
-    
+
 
     /** Sets up/Updates the displayed preset list (e.g. after adding or deleting a preset) */
     private void updatePresets() {
         presets = new ArrayList<>(Arrays.asList(behaviorSettingsFactory.getBehaviorNames()));
-        
+
         // Add the Configuration from a save game, if any to the top of the list
         if (saveGameBehavior != null) {
             presets.add(0, Messages.getString("BotConfigDialog.previousConfig"));
         }
-        
+
         // Other local bot Configurations
         if (client != null) {
-            // Find if there actually are other bots 
-            Set<String> otherBots = new HashSet<>(client.bots.keySet());
+            // Find if there actually are other bots
+            Set<String> otherBots = new HashSet<>(client.localBots.keySet());
             if (fixedBotPlayerName != null) {
                 otherBots.remove(fixedBotPlayerName);
             }
@@ -735,9 +735,9 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         }
         ((PresetsModel) presetsList.getModel()).fireUpdate();
     }
-    
+
     private class PresetsModel extends DefaultListModel<String> {
-        
+
         @Override
         public int getSize() {
             return presets.size();
@@ -747,16 +747,16 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         public String getElementAt(int index) {
             return presets.get(index);
         }
-        
+
         /** Call when elements of the list change. */
         private void fireUpdate() {
             fireContentsChanged(this, 0, getSize() - 1);
         }
     }
 
-    /** 
+    /**
      * A renderer for the Behavior Presets list. Adapts the font size to the gui scaling and
-     * colors the special list elements (other bot Configurations and original Config). 
+     * colors the special list elements (other bot Configurations and original Config).
      */
     private class PresetsRenderer extends DefaultListCellRenderer {
 
@@ -776,14 +776,14 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
             return comp;
         }
     }
-    
+
     /** A renderer for the strategic targets list. */
     private class TargetsRenderer extends DefaultListCellRenderer {
 
         @Override
         public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
                 boolean cellHasFocus) {
-            
+
             String content;
             boolean invalid = true;
             if (value instanceof Coords) {
@@ -801,13 +801,13 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
                     } else if (!board.getHex(coords).containsAnyTerrainOf(BUILDING, FUEL_TANK, BRIDGE)) {
                         content += Messages.getString("BotConfigDialog.hexListNoBg");
                     } else {
-                        final Hex hex = board.getHex(coords); 
+                        final Hex hex = board.getHex(coords);
                         final Building bldg = board.getBuildingAt(coords);
                         if (hex.containsTerrain(BUILDING)) {
                             content += Messages.getString("BotConfigDialog.hexListBldg", Building.typeName(bldg.getType()),
                                     Building.className(bldg.getBldgClass()), hex.terrainLevel(BLDG_ELEV), hex.terrainLevel(BLDG_CF));
                         } else if (hex.containsTerrain(FUEL_TANK)) {
-                            content += Messages.getString("BotConfigDialog.hexListFuel", 
+                            content += Messages.getString("BotConfigDialog.hexListFuel",
                                     hex.terrainLevel(FUEL_TANK_CF), hex.terrainLevel(FUEL_TANK_MAGN));
                         } else {
                             content += Messages.getString("BotConfigDialog.hexListBrdg", Building.typeName(bldg.getType()),

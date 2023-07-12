@@ -1,6 +1,6 @@
 2821 Operations Klondike Armed Industrials A
 Harvester Ant KIC-3M AgroMech MOD,1
-Crosscut ED-X2 (RL),1
+Crosscut ED-X2 LoggerMech (RL),1
 Buster BC XV-M HaulerMech MOD,2
 Marco MR-8D,1
 Crosscut ED-X2M LoggerMech MOD,1

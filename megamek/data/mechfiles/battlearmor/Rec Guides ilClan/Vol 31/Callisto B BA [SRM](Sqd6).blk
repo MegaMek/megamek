@@ -13,11 +13,11 @@ BattleArmor
 </UnitType>
 
 <Name>
-Callisto Battle Armor B
+Callisto Battle Armor
 </Name>
 
 <Model>
-[SRM](Sqd6)
+B [SRM](Sqd6)
 </Model>
 
 <mul id:>

@@ -1,49 +1,48 @@
-Version:1.0
-Reptar MilitiaMech
-EPT-C-1
-mul id:5797
+Version:1.1
+Harvester
+HVR-99 AgroMech
+mul id:4264
 
 Config:Biped
-TechBase:Clan
-Era:3086
-Source:Intersteller Players 3
-Rules Level:3
+TechBase:Inner Sphere
+Era:3049
+Source:TRO: Vehicle Annex (Revised)
+Rules Level:2
 
-Mass:35
-Engine:175 Fuel Cell (Clan) Engine(IS)
-Structure:Clan Industrial
+Mass:30
+Engine:120 ICE Engine(IS)
+Structure:IS Industrial
 Myomer:Standard
+Cockpit:Industrial Cockpit
+Gyro:Standard Gyro
 
-Heat Sinks:2 Single
-Walk MP:5
+Heat Sinks:0 Single
+Walk MP:4
 Jump MP:0
 
-Armor:Heavy Industrial(Clan)
+Armor:Standard(Clan)
 LA Armor:8
 RA Armor:8
 LT Armor:9
 RT Armor:9
-CT Armor:12
-HD Armor:9
-LL Armor:9
-RL Armor:9
-RTL Armor:2
-RTR Armor:2
-RTC Armor:3
+CT Armor:10
+HD Armor:5
+LL Armor:10
+RL Armor:10
+RTL Armor:3
+RTR Armor:3
+RTC Armor:5
 
-Weapons:3
-ProtoMech AC/8, Right Arm
-Light Machine Gun, Left Torso
-Light Machine Gun, Right Torso
+Weapons:0
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Hand Actuator
--Empty-
--Empty-
--Empty-
+Combine
+Combine
+Combine
+Combine
 -Empty-
 -Empty-
 -Empty-
@@ -54,19 +53,19 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Hand Actuator
-CLProtoMechAC8
-CLProtoMechAC8
-CLProtoMechAC8
-CLProtoMechAC8
+Lift Hoist
+Lift Hoist
+Lift Hoist
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 
 Left Torso:
-CLLightMG
-Clan Light Machine Gun Ammo - Half
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -79,9 +78,9 @@ Clan Light Machine Gun Ammo - Half
 -Empty-
 
 Right Torso:
-CLLightMG
-Clan ProtoMech AC/8 Ammo
-Clan ProtoMech AC/8 Ammo
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -103,7 +102,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
--Empty-
+Cargo (0.5 tons)
 -Empty-
 
 Head:

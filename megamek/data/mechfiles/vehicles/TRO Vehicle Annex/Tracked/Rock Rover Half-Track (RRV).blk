@@ -13,11 +13,11 @@ SupportTank
 </UnitType>
 
 <Name>
-RRV 'Rock Rover' Half-Track
+Rock Rover Half-Track
 </Name>
 
 <model>
-
+RRV
 </model>
 
 <mul id:>

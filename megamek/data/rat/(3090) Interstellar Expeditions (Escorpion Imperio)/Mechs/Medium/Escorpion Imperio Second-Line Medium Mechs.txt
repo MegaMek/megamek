@@ -1,6 +1,6 @@
 Escorpion Imperio Second-Line Medium Mechs (3090)
-Arana MilitiaMech ARA-S-1,1
-Arana MilitiaMech ARA-S-1,2
+Arana ARA-S-1 MilitiaMech,1
+Arana ARA-S-1 MilitiaMech,2
 Shadow Hawk SHD-1R,3
 Hunchback HBK-4P,4
 Trebuchet TBT-5S,5

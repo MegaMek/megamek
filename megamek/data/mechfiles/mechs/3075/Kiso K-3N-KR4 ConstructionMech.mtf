@@ -1,7 +1,7 @@
 Version:1.1
-Kiso ConstructionMech
-K-3N-KR5
-mul id:1803
+Kiso
+K-3N-KR4 ConstructionMech
+mul id:1802
 
 Config:Quad
 TechBase:Inner Sphere
@@ -64,32 +64,32 @@ Searchlight
 -Empty-
 
 Left Torso:
+Heat Sink
 Communications Equipment (3 ton)
 Communications Equipment (3 ton)
 Communications Equipment (3 ton)
 Lift Hoist
 Lift Hoist
 Lift Hoist
-Backhoe
-Backhoe
-Backhoe
-Backhoe
-Backhoe
-Backhoe
+Rock Cutter
+Rock Cutter
+Rock Cutter
+Rock Cutter
+Rock Cutter
 
 Right Torso:
 Heat Sink
-Heat Sink
 Lift Hoist
 Lift Hoist
 Lift Hoist
-Dual Saw
-Dual Saw
-Dual Saw
-Dual Saw
-Dual Saw
-Dual Saw
-Dual Saw
+Pile Driver
+Pile Driver
+Pile Driver
+Pile Driver
+Pile Driver
+Pile Driver
+Pile Driver
+Pile Driver
 
 Center Torso:
 Fusion Engine

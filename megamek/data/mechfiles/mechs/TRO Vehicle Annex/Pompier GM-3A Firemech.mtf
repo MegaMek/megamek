@@ -1,11 +1,11 @@
-Version:1.0
-Pompier Firemech
-GM-3CD
-mul id:4843
+Version:1.1
+Pompier
+GM-3A Firemech
+mul id:4842
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3062
+Era:3044
 Source:TRO: Vehicle Annex (Revised)
 Rules Level:3
 
@@ -13,6 +13,8 @@ Mass:15
 Engine:30 Fuel Cell Engine(IS)
 Structure:IS Industrial
 Myomer:Standard
+Cockpit:Industrial Cockpit
+Gyro:Standard Gyro
 
 Heat Sinks:1 Single
 Walk MP:2
@@ -38,7 +40,7 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Environmental Sealing
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -51,8 +53,8 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Environmental Sealing
--Empty-
+Salvage Arm
+Salvage Arm
 -Empty-
 -Empty-
 -Empty-
@@ -62,9 +64,9 @@ Environmental Sealing
 -Empty-
 
 Left Torso:
-BeagleActiveProbe
-BeagleActiveProbe
-Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -76,9 +78,9 @@ Environmental Sealing
 -Empty-
 
 Right Torso:
-Liquid Storage (1 ton)
 Searchlight
-Environmental Sealing
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -101,13 +103,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 MechSprayer
-Environmental Sealing
+Liquid Storage (1 ton)
 
 Head:
 Life Support
 Sensors
 Cockpit
-Environmental Sealing
+-Empty-
 Sensors
 Life Support
 -Empty-
@@ -122,7 +124,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Environmental Sealing
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -136,7 +138,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Environmental Sealing
+-Empty-
 -Empty-
 -Empty-
 -Empty-

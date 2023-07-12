@@ -672,7 +672,7 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Marsden II MBT' unitType='Tank'>
+	<chassis name='Marsden MBT' unitType='Tank'>
 		<availability>LA:4</availability>
 		<model name='II (Primitive)'>
 			<availability>General:4</availability>

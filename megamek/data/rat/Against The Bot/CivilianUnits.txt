@@ -76,7 +76,7 @@ Korvin Tank KRV-2,3
 MASH Truck (Standard),18
 MASH Truck (Small),9
 MASH Truck (ICE),27
-Marsden I,9
+Marsden MBT I,9
 Merkava Heavy Tank Mk VI,3
 Merkava Heavy Tank Mk VII,9
 O-65 'Oppie' Hazardous Materials Recovery Vehicle O-65 HMRV,9
@@ -89,7 +89,7 @@ Stoat Scout Car (Standard),9
 Transportable Field Repair Unit JI-100,9
 Wayland Mobile Base (Standard),3
 #IndustrialMechs
-Arbiter SecurityMech ARB-001,1
+Arbiter ARB-001 SecurityMech,1
 Buster BC XV-M HaulerMech MOD,18
 Buster BC XV-M-B HaulerMech MOD,18
 Buster BC XV-M-C HaulerMech MOD,9
@@ -108,7 +108,7 @@ Copper SecurityMech CPK-19,9
 Copper SecurityMech CPK-65,9
 Crosscut ED-X1 LoggerMech,18
 Crosscut ED-X2 LoggerMech,18
-Crosscut ED-X2 (RL),3
+Crosscut ED-X2 LoggerMech (RL),3
 Crosscut ED-X2 (Flamer),9
 Crosscut ED-X2M LoggerMech MOD,18
 Crosscut ED-X4 LoggerMech,18
@@ -149,10 +149,10 @@ Patron LoaderMech (Standard),18
 Patron MilitiaMech PTN-2,9
 Peacekeeper PK-6 SecurityMech,9
 Peacemaker PM-6 PoliceMech,3
-Pompier Firemech GM-3A,9
-Pompier Firemech GM-3CD,9
-Pompier Firemech GM-3HT,18
-Pompier Firemech GM-FL,3
+Pompier GM-3A Firemech,9
+Pompier GM-3CD Firemech,9
+Pompier GM-3HT Firemech,18
+Pompier GM-FL FireMech,3
 Powerman SC XI LoaderMech (Standard),27
 Powerman SC XI-M LoaderMech MOD,18
 Powerman SC XI-M-B LoaderMech MOD,18
@@ -164,8 +164,8 @@ Quasit MilitiaMech QUA-51T,18
 Rock Hound ProspectorMech AM-PRM-RH7,3
 Rock Hound ProspectorMech AM-PRM-RH7 'Rock Possum',3
 Rock Hound ProspectorMech AM-PRM-RH7A 'Rock Otter',9
-ScavengerMech SC-V SalvageMech (Standard),18
-ScavengerMech SC-V-M MilitiaMech (Standard),9
+Scavenger SC-V SalvageMech,18
+Scavenger SC-V-M MilitiaMech,9
 Shugosha PTN-LAW LoaderMech,18
 Shugosha LAW-QM1 Q-Mech,1
 Shugosha LAW-QM2 Q-Mech,1

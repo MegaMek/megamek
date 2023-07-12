@@ -1656,9 +1656,9 @@
 			<availability>General:4</availability>
 		</model>
 	</chassis>
-	<chassis name='Arbiter SecurityMech' unitType='Mek'>
+	<chassis name='Arbiter' unitType='Mek'>
 		<availability>Periphery.R:4-,LA:2-,IS:1-,FWL:2-,MERC:2-,CP:2-</availability>
-		<model name='ARB-001'>
+		<model name='ARB-001 SecurityMech'>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
@@ -10479,13 +10479,13 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Kiso ConstructionMech' unitType='Mek'>
+	<chassis name='Kiso' unitType='Mek'>
 		<availability>DC:1</availability>
-		<model name='K-3N-KR4'>
+		<model name='K-3N-KR4 ConstructionMech'>
 			<roles>support</roles>
 			<availability>General:8</availability>
 		</model>
-		<model name='K-3N-KR5'>
+		<model name='K-3N-KR5 ConstructionMech'>
 			<roles>support</roles>
 			<availability>General:1</availability>
 		</model>
@@ -11428,7 +11428,7 @@
 			<roles>support</roles>
 			<availability>LA:2</availability>
 		</model>
-		<model name='LM5/M'>
+		<model name='LM5/M MilitiaMech'>
 			<availability>LA:1-</availability>
 		</model>
 	</chassis>
@@ -12017,7 +12017,7 @@
 			<availability>CHH:4,RD:3,ROS:4</availability>
 		</model>
 	</chassis>
-	<chassis name='Marsden II MBT' unitType='Tank'>
+	<chassis name='Marsden MBT' unitType='Tank'>
 		<availability>Periphery.R:3,RF:4,LA:6,Periphery.HR:3,Periphery.CM:3,Periphery.MW:3,ROS:4,Periphery.ME:3,DA:4,FS:4</availability>
 		<model name='II-A (LB-X)'>
 			<availability>General:8</availability>
@@ -13132,7 +13132,7 @@
 	</chassis>
 	<chassis name='Nishikigoi Support Aircraft' unitType='Tank'>
 		<availability>DC:4</availability>
-		<model name='Koi Variant'>
+		<model name='Koi'>
 			<roles>cargo</roles>
 			<availability>General:8-</availability>
 		</model>
@@ -20373,7 +20373,7 @@
 			<availability>General:4</availability>
 		</model>
 	</chassis>
-	<chassis name='York Destroyer Carrier' unitType='Warship'>
+	<chassis name='York Destroyer-Carrier' unitType='Warship'>
 		<availability>CP:1,RA:1</availability>
 		<model name='(2947)'>
 			<roles>asf_carrier,destroyer</roles>

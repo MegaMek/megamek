@@ -7,6 +7,6 @@ DemolitionMech WI-DM2, 5
 Powerman SC XI LoaderMech (Standard), 6
 Buster BC XV-M-W HaulerMech MOD, 5
 Hyena HYN-4A SalvageMech, 4
-Kiso ConstructionMech K-3N-KR4, 3
+Kiso K-3N-KR4 ConstructionMech, 3
 Peacemaker PM-6 PoliceMech,2
-Crosscut ED-X2 (RL), 1
+Crosscut ED-X2 LoggerMech (RL), 1

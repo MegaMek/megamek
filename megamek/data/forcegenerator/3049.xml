@@ -4739,13 +4739,13 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Kiso ConstructionMech' unitType='Mek'>
+	<chassis name='Kiso' unitType='Mek'>
 		<availability>DC:1</availability>
-		<model name='K-3N-KR4'>
+		<model name='K-3N-KR4 ConstructionMech'>
 			<roles>support</roles>
 			<availability>General:8</availability>
 		</model>
-		<model name='K-3N-KR5'>
+		<model name='K-3N-KR5 ConstructionMech'>
 			<roles>support</roles>
 			<availability>General:1</availability>
 		</model>
@@ -8478,7 +8478,7 @@
 			<availability>CLAN:8</availability>
 		</model>
 	</chassis>
-	<chassis name='York Destroyer Carrier' unitType='Warship'>
+	<chassis name='York Destroyer-Carrier' unitType='Warship'>
 		<availability>CSA:2,CCC:3,CIH:1,CSR:1,CBS:1,CNC:1,CSJ:2,CGB:1,CB:2</availability>
 		<model name='(2947)'>
 			<roles>asf_carrier,destroyer</roles>

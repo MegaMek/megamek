@@ -1,13 +1,13 @@
 Version:1.1
-Harvester HVR-99 AgroMech
-
-mul id:4264
+Carbine
+CON-1 ConstructionMech
+mul id:461
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3049
-Source:TRO: Vehicle Annex (Revised)
+Era:2691
 Rules Level:2
+Source:Record Sheets: Operation Klondike
 
 Mass:30
 Engine:120 ICE Engine(IS)
@@ -20,18 +20,18 @@ Heat Sinks:0 Single
 Walk MP:4
 Jump MP:0
 
-Armor:Standard(Clan)
-LA Armor:8
-RA Armor:8
-LT Armor:9
-RT Armor:9
-CT Armor:10
-HD Armor:5
-LL Armor:10
-RL Armor:10
-RTL Armor:3
-RTR Armor:3
-RTC Armor:5
+Armor:Industrial(Inner Sphere)
+LA Armor:3
+RA Armor:3
+LT Armor:4
+RT Armor:4
+CT Armor:4
+HD Armor:4
+LL Armor:3
+RL Armor:3
+RTL Armor:1
+RTR Armor:1
+RTC Armor:2
 
 Weapons:0
 
@@ -39,10 +39,10 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Combine
-Combine
-Combine
-Combine
+Lift Hoist
+Lift Hoist
+Lift Hoist
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -53,12 +53,12 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Lift Hoist
-Lift Hoist
-Lift Hoist
--Empty-
--Empty-
--Empty-
+Backhoe
+Backhoe
+Backhoe
+Backhoe
+Backhoe
+Backhoe
 -Empty-
 -Empty-
 -Empty-
@@ -102,7 +102,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Cargo (0.5 tons)
+-Empty-
 -Empty-
 
 Head:

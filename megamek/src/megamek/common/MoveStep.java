@@ -3019,9 +3019,8 @@ public class MoveStep implements Serializable {
         }
 
         // Be careful on pavement during cold weather, there may be black ice.
-        int minTemp = -30;
         boolean useBlackIce = game.getOptions().booleanOption(OptionsConstants.ADVANCED_BLACK_ICE);
-        boolean goodTemp = game.getPlanetaryConditions().getTemperature() <= minTemp;
+        boolean goodTemp = game.getPlanetaryConditions().getTemperature() <= PlanetaryConditions.BLACK_ICE_TEMP;
         boolean goodWeather = game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM;
 
         if (isPavementStep && ((useBlackIce && goodTemp) || goodWeather)) {

@@ -16,6 +16,7 @@ package megamek.client.ui.swing.util;
 
 import megamek.common.*;
 import megamek.common.alphaStrike.ASCardDisplayable;
+import megamek.common.alphaStrike.ASUnitType;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.fileUtils.MegaMekFile;
 
@@ -76,17 +77,12 @@ public class FluffImageHelper {
 
     /**
      * Attempt to load a fluff image by combining elements of type and name.
-     * @param unit The unit.
+     * @param entity The unit.
      * @return An image or {@code null}.
      */
-    public static @Nullable Image loadFluffImageHeuristic(final Entity unit) {
-        Image fluff = null;
-        var file = new MegaMekFile(Configuration.fluffImagesDir(), getImagePath(unit)).getFile();
-        File fluff_image_file = findFluffImage(file, unit.getModel(), unit.getChassis());
-        if (fluff_image_file != null) {
-            fluff = new ImageIcon(fluff_image_file.toString()).getImage();
-        }
-        return fluff;
+    public static @Nullable Image loadFluffImageHeuristic(final Entity entity) {
+        var path = new MegaMekFile(Configuration.fluffImagesDir(), getImagePath(entity));
+        return loadFluffImageHeuristic(path, entity.getModel(), entity.getChassis());
     }
 
     /**
@@ -95,13 +91,17 @@ public class FluffImageHelper {
      * @return An image or null
      */
     public static @Nullable Image loadFluffImageHeuristic(final ASCardDisplayable element) {
-        Image fluff = null;
-        var file = new MegaMekFile(Configuration.fluffImagesDir(), getImagePath(element)).getFile();
-        File fluff_image_file = findFluffImage(file, element.getModel(), element.getChassis());
+        var path = new MegaMekFile(Configuration.fluffImagesDir(), getImagePath(element));
+        return loadFluffImageHeuristic(path, element.getModel(), element.getChassis());
+    }
+
+    private static @Nullable Image loadFluffImageHeuristic(MegaMekFile path, String model, String chassis) {
+        File fluff_image_file = findFluffImage(path.getFile(), model, chassis);
         if (fluff_image_file != null) {
-            fluff = new ImageIcon(fluff_image_file.toString()).getImage();
+            return new ImageIcon(fluff_image_file.toString()).getImage();
+        } else {
+            return null;
         }
-        return fluff;
     }
 
     /**
@@ -184,6 +184,9 @@ public class FluffImageHelper {
     private FluffImageHelper() { }
 
     private static String getImagePath(final ASCardDisplayable element) {
+        if ((element.getASUnitType() == ASUnitType.SV) && (element.hasMovementMode("a"))) {
+            return DIR_NAME_CONVFIGHTER;
+        }
         switch (element.getASUnitType()) {
             case WS:
                 return DIR_NAME_WARSHIP;
@@ -207,6 +210,8 @@ public class FluffImageHelper {
             case CV:
             case SV:
                 return DIR_NAME_VEHICLE;
+            case AF:
+                return DIR_NAME_FIGHTER;
             default:
                 return DIR_NAME_MECH;
         }

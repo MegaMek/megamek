@@ -79,7 +79,6 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                         + (game.getRoundCount() + aaa.getTurnsTilHit())
                         + ", fired by "
                         + game.getPlayer(aaa.getPlayerId()).getName();
-                // Check for offboard target that has disengaged
                 if (aaa.getTarget(game) != null) {
                     game.getBoard().addSpecialHexDisplay(
                             aaa.getTarget(game).getPosition(),

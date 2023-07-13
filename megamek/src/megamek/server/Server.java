@@ -863,7 +863,7 @@ public class Server implements Runnable {
      * @return A <code>boolean</code> value whether or not the loading was successful
      */
     public boolean loadGame(File f, boolean sendInfo) {
-        LogManager.getLogger().info("s: loading saved game file '" + f + '\'');
+        LogManager.getLogger().info("s: loading saved game file '" + f.getAbsolutePath() + '\'');
 
         Game newGame;
         try (InputStream is = new FileInputStream(f)) {

@@ -258,9 +258,10 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
     }
 
     public class Resolver {
-        public final String playerName, serverAddress, password, saveGameFileName, announceUrl, mailPropertiesFile;
+        public final String playerName, serverAddress, password, announceUrl, mailPropertiesFile;
         public final boolean registerServer;
         public final int port;
+        protected final String saveGameFileName;
 
         public Resolver(ClientServerCommandLineParser parser, String defaultPassword, int defaultPort,
                         String defaultServerAddress, String defaultPlayerName)
@@ -325,5 +326,36 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
             this.registerServer = registerServer;
             this.mailPropertiesFile = mailPropertiesFile;
         }
+
+        /**
+         * path resolves the saveGameFileName arg if it was provided.
+         * If it is an absolute path, uses that, otherwise looks first in
+         * current working directory and then in ./savegame/
+         * @return File object if valid file, null if not
+         */
+        public File getSaveGameFile() {
+            if (saveGameFileName == null) {
+                return null;
+            }
+            File gameFile = new File(saveGameFileName);
+
+            if (gameFile.canRead()) {
+                return gameFile;
+            } else if (gameFile.isAbsolute()) {
+                LogManager.getLogger().error("Unable to read savegame file: " + gameFile.getPath());
+                return null;
+            } else {
+                String searched = '"'+gameFile.getAbsolutePath()+'"';
+                gameFile = new File("./savegames", saveGameFileName);
+                if (gameFile.canRead()) {
+                    return gameFile;
+                } else {
+                    searched += " or \"" + gameFile.getAbsolutePath()+'"';
+                    LogManager.getLogger().error("Unable to read savegame file at " + searched);
+                    return null;
+                }
+            }
+        }
+
     }
 }

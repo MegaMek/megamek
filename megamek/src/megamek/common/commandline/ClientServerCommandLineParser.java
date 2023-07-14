@@ -21,6 +21,7 @@ import megamek.server.Server;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.File;
+import java.net.URI;
 
 public class ClientServerCommandLineParser extends AbstractCommandLineParser {
 
@@ -112,11 +113,11 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
     protected void start() throws ParseException {
         while (getTokenType() != TOK_EOF) {
             int tokenType = getTokenType();
-            final String tokenValue = getTokenValue();
+            final String value = getTokenValue();
             switch (tokenType) {
                 case TOK_OPTION:
                     try {
-                        switch (ClientServerCommandLineFlag.parseFromString(tokenValue)) {
+                        switch (ClientServerCommandLineFlag.parseFromString(value)) {
                             case HELP:
                                 LogManager.getLogger().info(help());
                                 System.exit(0);
@@ -162,16 +163,14 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
                     }
                     break;
                 case TOK_LITERAL:
-                    // this is old behavior, but it didn't seem to work
-                    // It works now and I left it in just in case
-                    saveGameFileName = tokenValue;
+                    saveGameFileName = value;
                     nextToken();
                     break;
                 case TOK_EOF:
                     // Do nothing, although this shouldn't happen
                     break;
                 default:
-                    throw new ParseException(String.format("Unexpected input %s", tokenValue));
+                    throw new ParseException(String.format("Unexpected input %s", value));
             }
             nextToken();
         }
@@ -342,10 +341,10 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
             if (gameFile.canRead()) {
                 return gameFile;
             } else if (gameFile.isAbsolute()) {
-                LogManager.getLogger().error("Unable to read savegame file: " + gameFile.getPath());
+                LogManager.getLogger().error("Unable to read savegame file: " + gameFile.getAbsolutePath());
                 return null;
             } else {
-                String searched = '"'+gameFile.getAbsolutePath()+'"';
+                String searched = '"'+ gameFile.getAbsolutePath()+'"';
                 gameFile = new File("./savegames", saveGameFileName);
                 if (gameFile.canRead()) {
                     return gameFile;
@@ -356,6 +355,5 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
                 }
             }
         }
-
     }
 }

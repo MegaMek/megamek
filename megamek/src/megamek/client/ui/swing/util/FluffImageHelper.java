@@ -184,9 +184,6 @@ public class FluffImageHelper {
     private FluffImageHelper() { }
 
     private static String getImagePath(final ASCardDisplayable element) {
-        if ((element.getASUnitType() == ASUnitType.SV) && (element.hasMovementMode("a"))) {
-            return DIR_NAME_CONVFIGHTER;
-        }
         switch (element.getASUnitType()) {
             case WS:
                 return DIR_NAME_WARSHIP;
@@ -209,7 +206,9 @@ public class FluffImageHelper {
                 return DIR_NAME_PROTOMEK;
             case CV:
             case SV:
-                return DIR_NAME_VEHICLE;
+                if (!element.hasMovementMode("a")) {
+                    return DIR_NAME_VEHICLE;
+                } // intentional fall through
             case AF:
                 return DIR_NAME_FIGHTER;
             default:

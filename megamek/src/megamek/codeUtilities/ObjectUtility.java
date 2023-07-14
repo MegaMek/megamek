@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022-2023 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -47,7 +47,7 @@ public class ObjectUtility {
 
     /**
      * @return the first non-<i>null</i> argument, else <i>null</i> if all are <i>null</i>
-     * @see #nonNull(Object, Object, Object...)
+     * @see #nonNull(Object, Object)
      */
     @SafeVarargs
     public static <T> T nonNull(final @Nullable T first, final @Nullable T second,
@@ -66,6 +66,14 @@ public class ObjectUtility {
         return result;
     }
 
+    /**
+     * Compares two nullable values using the provided comparator
+     * @param a the first value
+     * @param b the second value
+     * @param comparator the comparator to use to compare provided they are both not null
+     * @return the comparison sort value
+     * @param <T> the specified class
+     */
     public static <T> int compareNullable(final @Nullable T a, final @Nullable T b,
                                           final Comparator<? super T> comparator) {
         if (a == b) { // Strict comparison is desired, to handle both null too
@@ -88,6 +96,7 @@ public class ObjectUtility {
      * <p>
      * <code>collection.get(Compute.randomInt(collection.size());</code>
      *
+     * @param collection the collect to get a random item from, which may be null
      * @return a random item from the collection. Returns <code>null</code> if the collection
      * itself is null or empty. It can also return <code>null</code> if the collection contains
      * <code>null</code> items.
@@ -111,6 +120,7 @@ public class ObjectUtility {
      * <p>
      * <code>list.get(Compute.randomInt(list.size());</code>
      *
+     * @param list the list to get a random item from, which may be <code>null</code>
      * @return a random item from the list. This will be <code>null</code> if the list itself is
      * null or empty, and can be <code>null</code> if the list contains <code>null</code> items.
      */

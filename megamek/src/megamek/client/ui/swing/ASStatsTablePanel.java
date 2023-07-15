@@ -46,8 +46,8 @@ public class ASStatsTablePanel implements ActionListener {
     private int rows;
     private final List<EntityGroup> groups = new ArrayList<>();
     private final JFrame frame;
-    private JButton pvButton;
-    private final AlphaStrikeElementComparator aseComparator = new AlphaStrikeElementComparator();
+    private final Map<JButton, AlphaStrikeElementComparator> buttonMap = new HashMap<>();
+    private final ASETableComparator aseTableComparator = new ASETableComparator();
     /**
      * Constructs a panel with a table of AlphaStrike stats for any units that are added to it.
      * To add units to it, call {@link #add(Collection)} or {@link #add(Collection, String)}. These
@@ -60,6 +60,97 @@ public class ASStatsTablePanel implements ActionListener {
      */
     public ASStatsTablePanel(JFrame frame) {
         this.frame = frame;
+
+        // the table sorting rules
+        aseTableComparator.comparatorList.add(new AlphaStrikeElementComparator("Name") {
+            @Override
+            public int compare(AlphaStrikeElement o1, AlphaStrikeElement o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
+        aseTableComparator.comparatorList.add(new AlphaStrikeElementComparator("Type") {
+            @Override
+            public int compare(AlphaStrikeElement o1, AlphaStrikeElement o2) {
+                return o1.getASUnitType().toString().compareTo(o2.getASUnitType().toString());
+            }
+        });
+
+        aseTableComparator.comparatorList.add(new AlphaStrikeElementComparator("SZ") {
+            @Override
+            public int compare(AlphaStrikeElement o1, AlphaStrikeElement o2) {
+                return Integer.compare(o1.getSize(), o2.getSize());
+            }
+        });
+
+        aseTableComparator.comparatorList.add(new AlphaStrikeElementComparator("TMM") {
+            @Override
+            public int compare(AlphaStrikeElement o1, AlphaStrikeElement o2) {
+                return Integer.compare(o1.getTMM(), o2.getTMM());
+            }
+        });
+
+        aseTableComparator.comparatorList.add(new AlphaStrikeElementComparator("MV (THR)") {
+            @Override
+            public int compare(AlphaStrikeElement o1, AlphaStrikeElement o2) {
+                return o1.getMovementAsString().compareTo(o2.getMovementAsString());
+            }
+        });
+
+        aseTableComparator.comparatorList.add(new AlphaStrikeElementComparator("Role") {
+            @Override
+            public int compare(AlphaStrikeElement o1, AlphaStrikeElement o2) {
+                return o1.getRole().compareTo(o2.getRole());
+            }
+        });
+
+        aseTableComparator.comparatorList.add(new AlphaStrikeElementComparator("Dmg S/M/L") {
+            @Override
+            public int compare(AlphaStrikeElement o1, AlphaStrikeElement o2) {
+                return o1.getStandardDamage().toString().compareTo(o2.getStandardDamage().toString());
+            }
+        });
+
+        aseTableComparator.comparatorList.add(new AlphaStrikeElementComparator("OV") {
+            @Override
+            public int compare(AlphaStrikeElement o1, AlphaStrikeElement o2) {
+                return Integer.compare(o1.getOV(), o2.getOV());
+            }
+        });
+
+        aseTableComparator.comparatorList.add(new AlphaStrikeElementComparator("Arm") {
+            @Override
+            public int compare(AlphaStrikeElement o1, AlphaStrikeElement o2) {
+                return Integer.compare(o1.getFullArmor(), o2.getFullArmor());
+            }
+        });
+
+        aseTableComparator.comparatorList.add(new AlphaStrikeElementComparator("Str") {
+            @Override
+            public int compare(AlphaStrikeElement o1, AlphaStrikeElement o2) {
+                return Integer.compare(o1.getFullStructure(), o2.getFullStructure());
+            }
+        });
+
+        aseTableComparator.comparatorList.add(new AlphaStrikeElementComparator("Th") {
+            @Override
+            public int compare(AlphaStrikeElement o1, AlphaStrikeElement o2) {
+                return Integer.compare(o1.getThreshold(), o2.getThreshold());
+            }
+        });
+
+        aseTableComparator.comparatorList.add(new AlphaStrikeElementComparator("Skill") {
+            @Override
+            public int compare(AlphaStrikeElement o1, AlphaStrikeElement o2) {
+                return Integer.compare(o1.getSkill(), o2.getSkill());
+            }
+        });
+
+        aseTableComparator.comparatorList.add(new AlphaStrikeElementComparator("PV") {
+            @Override
+            public int compare(AlphaStrikeElement o1, AlphaStrikeElement o2) {
+                return Integer.compare(o1.getPointValue(), o2.getPointValue());
+            }
+        });
     }
 
     /**
@@ -97,7 +188,7 @@ public class ASStatsTablePanel implements ActionListener {
      * @return The swing JPanel
      */
     public JPanel getPanel() {
-        constructPanel();
+        rebuildPanel();
         return panel;
     }
 
@@ -106,48 +197,38 @@ public class ASStatsTablePanel implements ActionListener {
         // TODO sort groups?
         return groups.stream()
                 .flatMap(group -> group.elements.stream()
-                .sorted(aseComparator)).collect(Collectors.toList());
+                .sorted(aseTableComparator)).collect(Collectors.toList());
     }
 
-    /** Assembles the JPanel. It is empty before calling this method. */
-    private void constructPanel() {
+    private void rebuildPanel() {
+        panel.removeAll();
         addVerticalSpace();
+        buttonMap.clear();
+        rows = 0;
         for (EntityGroup group : groups) {
             addGroupToPanel(group);
         }
         finalizePanel();
     }
 
-    private void rebuildPanel() {
-        rows = 0;
-        panel.removeAll();
-        constructPanel();
-    }
-
 
     /** Adds one group of units to the JPanel. */
     private void addGroupToPanel(EntityGroup group) {
-        // Print the elements
+        // A the elements
+//        rows++;
+//
+//        addGroupName(group.name);
+//        for (int i = 1; i <= aseTableComparator.comparatorList.size()+2; i++) {
+//            addHeader("");
+//        }
+//        addLine();
+
         rows++;
-        addGroupName(group.name);
-//        addHeader("Name");
-        addHeader("Type");
-        addHeader("SZ");
-        addHeader("TMM");
-        addHeader("MV (THR)");
-        addHeader("Role");
-        addHeader("Dmg S/M/L");
-        addHeader("OV");
-        addHeader("Arm");
-        addHeader("Str");
-        addHeader("Th");
-        addHeader("Skill");
-        pvButton = addSortableHeader("PV");
+        aseTableComparator.comparatorList.stream().forEach(mc -> addSortableHeader(mc));
         addHeader("Specials");
         addHeader("Conversion");
         addLine();
-
-        for (AlphaStrikeElement element : group.elements.stream().sorted(aseComparator).collect(Collectors.toList())) {
+        for (AlphaStrikeElement element : group.elements.stream().sorted(aseTableComparator).collect(Collectors.toList())) {
             boolean oddRow = (rows++ % 2) == 1;
             addGridElementLeftAlign(element.getName(), oddRow);
             addGridElement(element.getASUnitType() + "", oddRow);
@@ -224,13 +305,15 @@ public class ASStatsTablePanel implements ActionListener {
         panel.add(textLabel);
     }
 
-    private JButton addSortableHeader(String text) {
-        var textLabel = new JButton(text);
-        textLabel.addActionListener(this);
-        textLabel.setForeground(HEADER_COLOR);
-        textLabel.setFont(UIUtil.getScaledFont());
-        panel.add(textLabel);
-        return textLabel;
+    private JButton addSortableHeader( AlphaStrikeElementComparator comparator ) {
+        var button = new JButton(comparator.getLabel());
+        button.addActionListener(this);
+        button.setForeground(HEADER_COLOR);
+        button.setFont(UIUtil.getScaledFont());
+        button.setToolTipText("Click to sort by "+comparator.name);
+        panel.add(button);
+        buttonMap.put(button, comparator);
+        return button;
     }
 
     private String getArcedSpecials(AlphaStrikeElement element) {
@@ -262,10 +345,13 @@ public class ASStatsTablePanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == pvButton) {
-            aseComparator.togglePV();
+        if (buttonMap.containsKey(e.getSource())) {
+            JButton button = (JButton) e.getSource();
+            AlphaStrikeElementComparator comparator = buttonMap.get(button);
+            comparator.toggleSort();
+            button.setText(comparator.getLabel());
+            rebuildPanel();
         }
-        rebuildPanel();
     }
 
     /** A record to store added groups of units before constructing the panel. */
@@ -294,41 +380,46 @@ public class ASStatsTablePanel implements ActionListener {
         }
     }
 
-//    private class ModifiableComparator implements Comparator<AlphaStrikeElement> {
-//
-//    }
-
-    /** Orderable, optional sorting criteria for AlphaStrikeElements*/
-    private class AlphaStrikeElementComparator implements Comparator<AlphaStrikeElement> {
+    private abstract class AlphaStrikeElementComparator implements Comparator<AlphaStrikeElement> {
         private static final int REVERSE_SORT = -1;
         private static final int NO_SORT = 0;
         private static final int SORT = 1;
+        private int sort = 0;
+        private String name;
+
+        AlphaStrikeElementComparator(String name) {
+            this.name = name;
+        }
+
+        private String getLabel() {
+            return name + (sort < 0 ? '-' : sort > 0 ? '+' : "");
+        }
+        private void toggleSort() {
+            sort = sort < 0 ? 0 : sort > 0 ? -1 : 1;
+        }
+    }
+
+    /** Orderable, optional sorting criteria for AlphaStrikeElements. Sort in order of
+     * <code>comparatorList</code>*/
+    private class ASETableComparator implements Comparator<AlphaStrikeElement> {
         //sort criteria: 1 is sort, 0 is do not sort, -1 is reverse sort
-        private int sortByPV = 0,  sortByName = 0;
+        private final List<AlphaStrikeElementComparator> comparatorList = new ArrayList<>();
+
         @Override
         public int compare(AlphaStrikeElement o1,AlphaStrikeElement o2) {
-            if (sortByPV != 0) {
-                int result = Integer.compare(o1.getPointValue(), o2.getPointValue());
-                if (result != 0) {
-                    return result * sortByPV;
-                }
-            }
-
-            if (sortByName != 0) {
-                int result = o1.getName().compareTo(o2.getName());
-                if (result != 0) {
-                    return result * sortByName;
+            for (var comparator : comparatorList) {
+                if (comparator.sort != 0) {
+                    int result = comparator.compare(o1, o2);
+                    if (result != 0) {
+                        // reverse sort if sort is -1
+                        return result * comparator.sort;
+                    }
                 }
             }
             return 0;
         }
 
-        public void togglePV() {
-            sortByPV = toggle(sortByPV);
-        }
 
-        private int toggle(int current) {
-            return current < 0 ? 0 : current > 0 ? -1 : 1;
-        }
+
     }
 }

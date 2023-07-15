@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -17,19 +17,19 @@ Nishikigoi Support Aircraft
 </Name>
 
 <Model>
-Koi Variant
+
 </Model>
 
 <mul id:>
-4728
+2288
 </mul id:>
 
 <year>
-3079
+3071
 </year>
 
 <originalBuildYear>
-3079
+3071
 </originalBuildYear>
 
 <type>
@@ -41,7 +41,8 @@ WiGE
 </motion_type>
 
 <transporters>
-cargobay:51.5:1:1
+standardseats:8.0:0
+cargobay:81.0:1:1
 </transporters>
 
 <cruiseMP>
@@ -64,7 +65,6 @@ cargobay:51.5:1:1
 
 <Body Equipment>
 AmphibiousChassis
-Armored Chassis
 Advanced Fire Control
 Supercharger
 IS Ammo Thunderbolt-10
@@ -77,8 +77,7 @@ IS Ammo Thunderbolt-10
 IS Ammo Thunderbolt-10
 IS Ammo Thunderbolt-10
 IS Ammo Thunderbolt-10
-ISAMS Ammo
-Communications Equipment (8 ton)
+Communications Equipment:SIZE:8.0
 </Body Equipment>
 
 <Front Equipment>
@@ -91,11 +90,13 @@ Communications Equipment (8 ton)
 </Front Left Equipment>
 
 <Rear Right Equipment>
-ISAntiMissileSystem
+ISChaffPod
+ISChaffPod
 </Rear Right Equipment>
 
 <Rear Left Equipment>
-ISAntiMissileSystem
+ISChaffPod
+ISChaffPod
 </Rear Left Equipment>
 
 <Rear Equipment>
@@ -109,12 +110,24 @@ Thunderbolt 10
 </Turret Equipment>
 
 <barrating>
-10
+8
 </barrating>
 
 <structural_tech_rating>
 4
 </structural_tech_rating>
+
+<engine_tech_rating>
+4
+</engine_tech_rating>
+
+<armor_tech_rating>
+4
+</armor_tech_rating>
+
+<source>
+XTR: Boondocks
+</source>
 
 <tonnage>
 240.0
@@ -124,6 +137,3 @@ Thunderbolt 10
 0.0
 </fuel>
 
-<source>
-TRO: Prototypes
-</source>

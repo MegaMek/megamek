@@ -8531,13 +8531,13 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Kiso ConstructionMech' unitType='Mek'>
+	<chassis name='Kiso' unitType='Mek'>
 		<availability>DC:1</availability>
-		<model name='K-3N-KR4'>
+		<model name='K-3N-KR4 ConstructionMech'>
 			<roles>support</roles>
 			<availability>General:8</availability>
 		</model>
-		<model name='K-3N-KR5'>
+		<model name='K-3N-KR5 ConstructionMech'>
 			<roles>support</roles>
 			<availability>General:1</availability>
 		</model>
@@ -9358,7 +9358,7 @@
 			<roles>support</roles>
 			<availability>LA:2</availability>
 		</model>
-		<model name='LM5/M'>
+		<model name='LM5/M MilitiaMech'>
 			<availability>LA:2-</availability>
 		</model>
 	</chassis>
@@ -9797,7 +9797,7 @@
 			<availability>CSA:3,CHH:4,CCC:3,CIH:4,CGS:3,CCO:3,CGB:3,CB:3</availability>
 		</model>
 	</chassis>
-	<chassis name='Marsden II MBT' unitType='Tank'>
+	<chassis name='Marsden MBT' unitType='Tank'>
 		<availability>LA:3</availability>
 		<model name='II-A (LB-X)'>
 			<availability>General:8</availability>
@@ -16429,7 +16429,7 @@
 	<chassis name='Ymir' unitType='Mek'>
 		<availability>LA:3-,MERC:2-,DC:2-,TC:3-</availability>
 	</chassis>
-	<chassis name='York Destroyer Carrier' unitType='Warship'>
+	<chassis name='York Destroyer-Carrier' unitType='Warship'>
 		<availability>CSA:4,CCC:3,CIH:1,CSR:1,CBS:1,CNC:1,CCO:1</availability>
 		<model name='(2947)'>
 			<roles>asf_carrier,destroyer</roles>

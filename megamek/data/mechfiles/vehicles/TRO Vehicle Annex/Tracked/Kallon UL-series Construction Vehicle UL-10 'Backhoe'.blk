@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -28,6 +28,10 @@ UL-10 'Backhoe'
 3054
 </year>
 
+<originalBuildYear>
+3054
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -35,6 +39,10 @@ IS Level 2
 <motion_type>
 Tracked
 </motion_type>
+
+<transporters>
+cargobay:0.5:1:1
+</transporters>
 
 <cruiseMP>
 1
@@ -44,24 +52,12 @@ Tracked
 1
 </engine_type>
 
-<fuel>
-.5
-</fuel>
-
 <armor>
 5
 5
 5
 5
 </armor>
-
-<barrating>
-3
-</barrating>
-
-<structural_tech_rating>
-2
-</structural_tech_rating>
 
 <Body Equipment>
 </Body Equipment>
@@ -79,6 +75,22 @@ Backhoe
 <Rear Equipment>
 </Rear Equipment>
 
+<barrating>
+3
+</barrating>
+
+<structural_tech_rating>
+2
+</structural_tech_rating>
+
+<engine_tech_rating>
+2
+</engine_tech_rating>
+
+<armor_tech_rating>
+2
+</armor_tech_rating>
+
 <source>
 TRO: Vehicle Annex (Revised)
 </source>
@@ -86,3 +98,12 @@ TRO: Vehicle Annex (Revised)
 <tonnage>
 10.0
 </tonnage>
+
+<fuel>
+0.5
+</fuel>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+

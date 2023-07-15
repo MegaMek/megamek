@@ -8,5 +8,5 @@ Lumberjack LM4/P, 6
 Dig Lord RCL-4M MiningMech MOD, 5
 Uni ATAE-70 MilitiaMech (Standard), 4
 Deep Lord MilitiaMech RCL-Z1M, 3
-Lumberjack LM5/M, 2
+Lumberjack LM5/M MilitiaMech, 2
 Grommet D90 MilitiaMech (Standard), 1

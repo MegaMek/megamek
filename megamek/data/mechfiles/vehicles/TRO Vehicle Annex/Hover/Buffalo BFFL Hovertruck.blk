@@ -13,11 +13,11 @@ LargeSupportTank
 </UnitType>
 
 <Name>
-Buffalo BFFL Hovertruck
+Buffalo
 </Name>
 
 <model>
-
+BFFL Hovertruck
 </model>
 
 <mul id:>

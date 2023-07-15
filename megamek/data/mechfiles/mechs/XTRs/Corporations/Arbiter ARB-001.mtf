@@ -1,6 +1,6 @@
 Version:1.1
-Arbiter SecurityMech
-ARB-001
+Arbiter
+ARB-001 SecurityMech
 mul id:3714
 
 Config:Biped

@@ -1684,9 +1684,9 @@
 			<availability>General:3</availability>
 		</model>
 	</chassis>
-	<chassis name='Arbiter SecurityMech' unitType='Mek'>
-		<availability>Periphery.R:4-,LA:2-,IS:1-,FWL:2-,CIR:4-,MERC:2-</availability>
-		<model name='ARB-001'>
+<chassis name='Arbiter' unitType='Mek'>
+			<availability>Periphery.R:4-,LA:2-,IS:1-,FWL:2-,CIR:4-,MERC:2-</availability>
+		<model name='ARB-001 SecurityMech'>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
@@ -9727,13 +9727,13 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Kiso ConstructionMech' unitType='Mek'>
+	<chassis name='Kiso' unitType='Mek'>
 		<availability>DC:1</availability>
-		<model name='K-3N-KR4'>
+		<model name='K-3N-KR4 ConstructionMech'>
 			<roles>support</roles>
 			<availability>General:8</availability>
 		</model>
-		<model name='K-3N-KR5'>
+		<model name='K-3N-KR5 ConstructionMech'>
 			<roles>support</roles>
 			<availability>General:1</availability>
 		</model>
@@ -10627,7 +10627,7 @@
 			<roles>support</roles>
 			<availability>LA:2</availability>
 		</model>
-		<model name='LM5/M'>
+		<model name='LM5/M MilitiaMech'>
 			<availability>LA:2-</availability>
 		</model>
 	</chassis>
@@ -11112,7 +11112,7 @@
 			<availability>CSA:4,CHH:4,CCC:3,CSL:4,CGS:3,CCO:3,CGB:3</availability>
 		</model>
 	</chassis>
-	<chassis name='Marsden II MBT' unitType='Tank'>
+	<chassis name='Marsden MBT' unitType='Tank'>
 		<availability>LA:5</availability>
 		<model name='II-A (LB-X)'>
 			<availability>General:8</availability>
@@ -12204,7 +12204,7 @@
 	</chassis>
 	<chassis name='Nishikigoi Support Aircraft' unitType='Tank'>
 		<availability>DC:4</availability>
-		<model name='Koi Variant'>
+		<model name='Koi'>
 			<roles>cargo</roles>
 			<availability>General:8-</availability>
 		</model>
@@ -18544,7 +18544,7 @@
 	<chassis name='Ymir' unitType='Mek'>
 		<availability>LA:3-,MERC:2-,DC:2-,TC:3-</availability>
 	</chassis>
-	<chassis name='York Destroyer Carrier' unitType='Warship'>
+	<chassis name='York Destroyer-Carrier' unitType='Warship'>
 		<availability>CSA:4,CCC:3,CSR:1,CBS:1,CNC:1,CCO:1</availability>
 		<model name='(2947)'>
 			<roles>asf_carrier,destroyer</roles>

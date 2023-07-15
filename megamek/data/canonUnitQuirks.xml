@@ -6262,13 +6262,13 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<weaponQuirk>
 			<weaponQuirkName>exposed_linkage</weaponQuirkName>
 			<location>RA</location>
-			<slot>3</slot>
+			<slot>4</slot>
 			<weaponName>Flamer</weaponName>
 		</weaponQuirk>
 		<weaponQuirk>
 			<weaponQuirkName>exposed_linkage</weaponQuirkName>
 			<location>LA</location>
-			<slot>3</slot>
+			<slot>4</slot>
 			<weaponName>Flamer</weaponName>
 		</weaponQuirk>
 	</unit>
@@ -12575,9 +12575,9 @@ Example: You can define quirks that affect all units of a given chassis and then
 			<weaponName>Bombast Laser</weaponName>
 		</weaponQuirk>
 	</unit>
+	
 	<unit>
-		<chassis>Peregrine (Horned Owl)</chassis>
-		
+		<chassis>Peregrine (Horned Owl)</chassis>		
 		<unitType>Mech</unitType>
 		<weaponQuirk>
 			<weaponQuirkName>stable_weapon</weaponQuirkName>
@@ -12598,6 +12598,18 @@ Example: You can define quirks that affect all units of a given chassis and then
 			<weaponName>CLERPPC</weaponName>
 		</weaponQuirk>
 	</unit>
+	
+	<unit>
+		<chassis>Peregrine (Horned Owl)</chassis>
+		<model>4</model>
+		<unitType>Mech</unitType>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>CT</location>
+			<slot>10</slot>
+			<weaponName>CLERMediumLaser</weaponName>
+		</weaponQuirk>
+	</unit>
 
 	<unit>
 		<chassis>Peregrine (Horned Owl)</chassis>
@@ -12608,18 +12620,6 @@ Example: You can define quirks that affect all units of a given chassis and then
 			<location>CT</location>
 			<slot>10</slot>
 			<weaponName>CLHeavyMediumLaser</weaponName>
-		</weaponQuirk>
-	</unit>
-
-	<unit>
-		<chassis>Peregrine (Horned Owl)</chassis>
-		<model>4</model>
-		<unitType>Mech</unitType>
-		<weaponQuirk>
-			<weaponQuirkName>stable_weapon</weaponQuirkName>
-			<location>CT</location>
-			<slot>10</slot>
-			<weaponName>CLERMediumLaser</weaponName>
 		</weaponQuirk>
 	</unit>
 

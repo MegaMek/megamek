@@ -13,11 +13,11 @@ Tank
 </UnitType>
 
 <Name>
-SM1 Tank Destroyer
+SM Tank Destroyer
 </Name>
 
 <Model>
-(Telos)
+SM1 'Telos'
 </Model>
 
 <mul id:>

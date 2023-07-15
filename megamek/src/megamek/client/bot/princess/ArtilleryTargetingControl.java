@@ -430,8 +430,8 @@ public class ArtilleryTargetingControl {
             // calculate damage: damage - (10 * distance to me), floored at 0
             // we only say that it will actually be damage if the attack coming in is landing right after the movement phase
             double actualDamage = 0.0;
-            
-            if (aaa.getTurnsTilHit() == 0) {
+
+            if ((aaa.getTurnsTilHit() == 0) && (aaa.getTarget(operator.getGame()) != null)) {
                 // damage for artillery weapons is, for some reason, derived from the weapon type's rack size
                 Mounted weapon = aaa.getEntity(operator.getGame()).getEquipment(aaa.getWeaponId());
                 int damage = ((WeaponType) weapon.getType()).getRackSize();

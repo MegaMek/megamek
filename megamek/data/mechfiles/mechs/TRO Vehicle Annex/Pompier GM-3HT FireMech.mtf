@@ -1,50 +1,48 @@
-Version:1.0
-Pompier Firemech
-GM-FL
-mul id:5780
+Version:1.1
+Pompier
+GM-3HT Firemech
+mul id:4844
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3076
-Source:XTR: Most Wanted
-Rules Level:4
+Era:3060
+Source:TRO: Vehicle Annex (Revised)
+Rules Level:3
 
 Mass:15
-Engine:60 Fusion Engine(IS)
+Engine:30 Fuel Cell Engine(IS)
 Structure:IS Industrial
 Myomer:Standard
+Cockpit:Industrial Cockpit
+Gyro:Standard Gyro
 
-Heat Sinks:10 Single
-Walk MP:4
+Heat Sinks:1 Single
+Walk MP:2
 Jump MP:0
 
-Armor:Commercial(Inner Sphere)
-LA Armor:1
-RA Armor:1
-LT Armor:1
-RT Armor:1
-CT Armor:2
-HD Armor:1
-LL Armor:1
-RL Armor:1
-RTL Armor:1
-RTR Armor:1
-RTC Armor:1
+Armor:Heavy Industrial(Inner Sphere)
+LA Armor:2
+RA Armor:2
+LT Armor:2
+RT Armor:2
+CT Armor:3
+HD Armor:3
+LL Armor:2
+RL Armor:2
+RTL Armor:2
+RTR Armor:2
+RTC Armor:2
 
-Weapons:4
-Flamer, Right Arm
-Fluid Gun, Right Torso
-Machine Gun, Left Arm
-Machine Gun, Left Arm
+Weapons:0
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Machine Gun
-Machine Gun
-IS Machine Gun Ammo - Half
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -55,8 +53,8 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Hand Actuator
-Flamer
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -66,10 +64,10 @@ Flamer
 -Empty-
 
 Left Torso:
-Heat Sink
-Heat Sink
-Heat Sink
-Heat Sink
+Liquid Storage (1 ton)
+Liquid Storage (1 ton)
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -80,13 +78,13 @@ Heat Sink
 -Empty-
 
 Right Torso:
-Heat Sink
-Heat Sink
-Heat Sink
-Heat Sink
-IS Fluid Gun
-IS Fluid Gun
-ISFluidGun Ammo
+Liquid Storage (1 ton)
+Searchlight
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -104,8 +102,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Supercharger
--Empty-
+MechSprayer
+Liquid Storage (1 ton)
 
 Head:
 Life Support

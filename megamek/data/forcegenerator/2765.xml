@@ -1977,13 +1977,13 @@
 			<availability>SL.R:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Kiso ConstructionMech' unitType='Mek'>
+	<chassis name='Kiso' unitType='Mek'>
 		<availability>DC:3</availability>
-		<model name='K-3N-KR4'>
+		<model name='K-3N-KR4 ConstructionMech'>
 			<roles>support</roles>
 			<availability>General:8</availability>
 		</model>
-		<model name='K-3N-KR5'>
+		<model name='K-3N-KR5 ConstructionMech'>
 			<roles>support</roles>
 			<availability>General:2</availability>
 		</model>
@@ -2323,7 +2323,7 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Marsden II MBT' unitType='Tank'>
+	<chassis name='Marsden MBT' unitType='Tank'>
 		<availability>Periphery.R:3,LA:3-,Periphery.MW:3,Periphery.HR:3,Periphery.CM:3,IS:3-,Periphery:3</availability>
 		<model name='(Standard)'>
 			<availability>General:8</availability>

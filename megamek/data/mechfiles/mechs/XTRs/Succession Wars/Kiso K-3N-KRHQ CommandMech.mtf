@@ -1,16 +1,16 @@
 Version:1.1
-Kiso ConstructionMech
-K-3N-KR4
-mul id:1802
+Kiso
+K-3N-KRHQ CommandMech
+mul id:5773
 
 Config:Quad
 TechBase:Inner Sphere
-Era:2703
-source:TRO: 3075
-Rules Level:2
+Era:2823
+Source:XTR: Succession Wars
+Rules Level:4
 
 Mass:100
-Engine:200 Fusion Engine
+Engine:200 Fusion Engine(IS)
 Structure:Industrial
 Myomer:Standard
 Cockpit:Command Console
@@ -33,7 +33,10 @@ RTL Armor:14
 RTR Armor:14
 RTC Armor:16
 
-Weapons:0
+Weapons:3
+Machine Gun, Left Torso
+Machine Gun, Left Torso
+Machine Gun, Left Torso
 
 Front Left Leg:
 Hip
@@ -65,31 +68,31 @@ Searchlight
 
 Left Torso:
 Heat Sink
+Heat Sink
+Machine Gun
+Machine Gun
+Machine Gun (R)
+IS Machine Gun Ammo - Half
 Communications Equipment (3 ton)
 Communications Equipment (3 ton)
 Communications Equipment (3 ton)
 Lift Hoist
 Lift Hoist
 Lift Hoist
-Rock Cutter
-Rock Cutter
-Rock Cutter
-Rock Cutter
-Rock Cutter
 
 Right Torso:
-Heat Sink
-Lift Hoist
-Lift Hoist
-Lift Hoist
-Pile Driver
-Pile Driver
-Pile Driver
-Pile Driver
-Pile Driver
-Pile Driver
-Pile Driver
-Pile Driver
+ISCollapsibleCommandModule
+ISCollapsibleCommandModule
+ISCollapsibleCommandModule
+ISCollapsibleCommandModule
+ISCollapsibleCommandModule
+ISCollapsibleCommandModule
+ISCollapsibleCommandModule
+ISCollapsibleCommandModule
+ISCollapsibleCommandModule
+ISCollapsibleCommandModule
+ISCollapsibleCommandModule
+ISCollapsibleCommandModule
 
 Center Torso:
 Fusion Engine
@@ -147,4 +150,5 @@ Searchlight
 -Empty-
 -Empty-
 
+history:This mech is NOT valid. Command Console Isn't coded into MegaMek included for completeness.
 

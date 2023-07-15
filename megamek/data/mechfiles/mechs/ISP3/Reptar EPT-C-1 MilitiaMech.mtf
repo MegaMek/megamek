@@ -1,39 +1,40 @@
-Version:1.1
-Pompier Firemech
-GM-3HT
-mul id:4844
+Version:1.0
+Reptar
+EPT-C-1 MilitiaMech
+mul id:5797
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3060
-Source:TRO: Vehicle Annex (Revised)
+TechBase:Clan
+Era:3086
+Source:Intersteller Players 3
 Rules Level:3
 
-Mass:15
-Engine:30 Fuel Cell Engine(IS)
-Structure:IS Industrial
+Mass:35
+Engine:175 Fuel Cell (Clan) Engine(IS)
+Structure:Clan Industrial
 Myomer:Standard
-Cockpit:Industrial Cockpit
-Gyro:Standard Gyro
 
-Heat Sinks:1 Single
-Walk MP:2
+Heat Sinks:2 Single
+Walk MP:5
 Jump MP:0
 
-Armor:Heavy Industrial(Inner Sphere)
-LA Armor:2
-RA Armor:2
-LT Armor:2
-RT Armor:2
-CT Armor:3
-HD Armor:3
-LL Armor:2
-RL Armor:2
+Armor:Heavy Industrial(Clan)
+LA Armor:8
+RA Armor:8
+LT Armor:9
+RT Armor:9
+CT Armor:12
+HD Armor:9
+LL Armor:9
+RL Armor:9
 RTL Armor:2
 RTR Armor:2
-RTC Armor:2
+RTC Armor:3
 
-Weapons:0
+Weapons:3
+ProtoMech AC/8, Right Arm
+Light Machine Gun, Left Torso
+Light Machine Gun, Right Torso
 
 Left Arm:
 Shoulder
@@ -53,19 +54,19 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
+Hand Actuator
+CLProtoMechAC8
+CLProtoMechAC8
+CLProtoMechAC8
+CLProtoMechAC8
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 
 Left Torso:
-Liquid Storage (1 ton)
-Liquid Storage (1 ton)
+CLLightMG
+Clan Light Machine Gun Ammo - Half
 -Empty-
 -Empty-
 -Empty-
@@ -78,9 +79,9 @@ Liquid Storage (1 ton)
 -Empty-
 
 Right Torso:
-Liquid Storage (1 ton)
-Searchlight
--Empty-
+CLLightMG
+Clan ProtoMech AC/8 Ammo
+Clan ProtoMech AC/8 Ammo
 -Empty-
 -Empty-
 -Empty-
@@ -102,8 +103,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-MechSprayer
-Liquid Storage (1 ton)
+-Empty-
+-Empty-
 
 Head:
 Life Support

@@ -8,5 +8,5 @@ Carbine CON-7 ConstructionMech (Standard),6
 CattleMaster CTL-3R 'Herder' IndustrialMech,5
 Harvester Ant KIC-3 AgroMech,4
 Harvester HVR-99 AgroMech (Standard),3
-Pompier Firemech GM-3A,2
+Pompier GM-3A Firemech,2
 Marco MR-8C ExplorerMech,1

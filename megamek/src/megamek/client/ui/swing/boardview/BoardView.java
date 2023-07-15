@@ -6664,13 +6664,15 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     public boolean shouldShowFieldOfFire() {
         return GUIP.getShowFieldOfFire() &&
                 (game.getPhase().isDeployment() || game.getPhase().isMovement()
-                        || game.getPhase().isTargeting() || game.getPhase().isFiring());
+                        || game.getPhase().isTargeting() || game.getPhase().isFiring()
+                        || game.getPhase().isOffboard());
     }
 
     public boolean shouldShowSensorRange() {
         return GUIP.getShowSensorRange() &&
                 (game.getPhase().isDeployment() || game.getPhase().isMovement()
-                        || game.getPhase().isTargeting() || game.getPhase().isFiring());
+                        || game.getPhase().isTargeting() || game.getPhase().isFiring()
+                        || game.getPhase().isOffboard());
     }
 
 }

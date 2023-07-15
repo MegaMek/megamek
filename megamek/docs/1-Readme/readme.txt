@@ -414,50 +414,21 @@ CUSTOM UNITS
 All units (mechs, vehicles, infantry, etc.) are located in the
 data/mechfiles directory. They may be individual files or zipped up
 into archives (".zip"), and you may also create subdirectories if you
-like. There is also a special directory, named "unsupported" that
-contains units that you would like MegaMek to ignore. Mechs can be
-loaded from any of several formats:
+like. 
 
- **MegaMek Native** - files with the extension ".mtf"
-    A simple format that is very whitespace sensitive. All of the
-    meks distributed with MegaMek are in this format, so just look
-    inside the zips for examples of the format. Units of this
-    file type can be created with _MegaMekLab_, _Solaris Skunk Werks_,
-    and the _HMPRead_ program.
+We recommend creating a folder called Customs in the data/mechfiles directory.
+Then using this folder to store all custom units. 
 
- **Heavy Metal** - files with the extensions ".hmp" and ".hmv"
-    This is a commercial mech design program officially sanctioned by
-    FanPro. MegaMek can read most ".hmp or ".hmv" files directly, but
-    there are still some known problems. Please note that neither
-    Heavy Metal Pro nor Heavy Metal Vee is associated with MegaMek, so
-    please do not email its authors about MegaMek.
+As of 0.49.13 We've removed the unsupported and unofficial folders. Over the years
+the unsupported units dropped to only a couple. The unofficial folder is available from
+https://github.com/MegaMek/megamek-extras part of our repository.
 
- **The Drawing Board** - files with the extension ".xml"
-    The Drawing Board is a very slick freeware editor written by
-    Blackstone Interactive (Cord Awtry). In order to use it with MegaMek,
-    you must install the program and then use the patch to update to
-    version 2.0.23. Once you have created your mech, use the "File"->"Save
-    as XML file" command to create the ".xml" file.
-
- **MekMaker** - files with the extension ".blk"
-    Mech files with the extension ".blk" are created by MekMaker, a Java
-    mech design program specifically created to work with MegaMek.
-    MekMaker was the official mech design program, but it has since been
-    abandoned and is therefore not up to date with the current ruleset.
-    Its homepage is at: http://mekmaker.sourceforge.net/
-
- **Mech Engineer Pro** - files with the extension ".mep"
-   This is an older freeware program not made by the makers of
-   MegaMek. You can find this program on many BattleTech web sites.
-   It is not up to date with the current ruleset.
-
-_Note on mixed tech units:_
-Units that contain both Inner Sphere and Clan technology are allowed
-with certain restrictions. Only ".mtf", ".xml", and ".blk" files may
-contain mixed tech units. In addition, some equipment cannot differ
-in technology type from the base chassis. Units with an Inner Sphere
-chassis must mount Inner Sphere engines, internal structure, armor,
-and CASE. Clan units have the same restricted equipment list.
+Over the years the number of custom mech builders that support MegaMek has shrunk. For 
+best compatibility we recommend using MegaMekLab. Any issues from the use of other programs
+should be directed to their developers for support. 
+ 
+_Note of file types_
+MegaMek uses two file types for units. Files with the extension MTF are mechs, and all other unit types are BLK files.  Both our editable with a quality text editor, but we recommend not hand editing files as it can break the programs. 
 
 
 ADVANCED MAP SETTINGS

@@ -936,14 +936,14 @@ public class TestMech extends TestEntity {
                         illegal = true;
                         buff.append("Mech can only mount ").append(misc.getName())
                                 .append(" in arm with no lower arm actuator.\n");
-                } else if (requiresHandActuator(misc) && !mech.hasSystem(Mech.ACTUATOR_HAND, m.getLocation())) {
+                } else if (requiresHandActuator(misc) && (m.getLocation() != Entity.LOC_NONE) && !mech.hasSystem(Mech.ACTUATOR_HAND, m.getLocation())) {
                     illegal = true;
                     buff.append("Mech requires a hand actuator in the arm that mounts ").append(misc.getName()).append("\n");
-                } else if (requiresLowerArm(misc) && !mech.hasSystem(Mech.ACTUATOR_LOWER_ARM, m.getLocation())) {
+                } else if (requiresLowerArm(misc) && (m.getLocation() != Entity.LOC_NONE) && !mech.hasSystem(Mech.ACTUATOR_LOWER_ARM, m.getLocation())) {
                     illegal = true;
                     buff.append("Mech requires a lower arm actuator in the arm that mounts ").append(misc.getName()).append("\n");
                 }
-                if (replacesHandActuator(misc)) {
+                if (replacesHandActuator(misc) && (m.getLocation() != Entity.LOC_NONE)) {
                     String errorMsg = "Can only mount a single equipment item in the "
                             + mech.getLocationName(m.getLocation())
                             + " that replaces the hand actuator\n";

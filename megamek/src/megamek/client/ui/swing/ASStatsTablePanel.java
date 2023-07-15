@@ -192,9 +192,8 @@ public class ASStatsTablePanel implements ActionListener {
         return panel;
     }
 
-    /** returns a new sorted list of elements */
-    public List<AlphaStrikeElement> getElements() {
-        // TODO sort groups?
+    /** returns the list of elements in the panel, sorted in the same way they are displayed */
+    public List<AlphaStrikeElement> getSortedElements() {
         return groups.stream()
                 .flatMap(group -> group.elements.stream()
                 .sorted(aseTableComparator)).collect(Collectors.toList());
@@ -205,29 +204,17 @@ public class ASStatsTablePanel implements ActionListener {
         addVerticalSpace();
         buttonMap.clear();
         rows = 0;
+        addElementHeaders();
         for (EntityGroup group : groups) {
             addGroupToPanel(group);
         }
         finalizePanel();
     }
 
-
     /** Adds one group of units to the JPanel. */
     private void addGroupToPanel(EntityGroup group) {
-        // A the elements
-//        rows++;
-//
-//        addGroupName(group.name);
-//        for (int i = 1; i <= aseTableComparator.comparatorList.size()+2; i++) {
-//            addHeader("");
-//        }
-//        addLine();
+        addGroupHeaders(group);
 
-        rows++;
-        aseTableComparator.comparatorList.stream().forEach(mc -> addSortableHeader(mc));
-        addHeader("Specials");
-        addHeader("Conversion");
-        addLine();
         for (AlphaStrikeElement element : group.elements.stream().sorted(aseTableComparator).collect(Collectors.toList())) {
             boolean oddRow = (rows++ % 2) == 1;
             addGridElementLeftAlign(element.getName(), oddRow);
@@ -299,7 +286,7 @@ public class ASStatsTablePanel implements ActionListener {
     }
 
     private void addHeader(String text) {
-        var textLabel = new JLabel(text);
+        var textLabel = new JLabel(text, SwingConstants.CENTER);
         textLabel.setForeground(HEADER_COLOR);
         textLabel.setFont(UIUtil.getScaledFont());
         panel.add(textLabel);
@@ -328,6 +315,27 @@ public class ASStatsTablePanel implements ActionListener {
         rows++;
         for (int col = 0; col < COLUMNS; col++) {
             panel.add(Box.createVerticalStrut(20));
+        }
+    }
+
+    private void addElementHeaders() {
+        rows++;
+        aseTableComparator.comparatorList.stream().forEach(mc -> addSortableHeader(mc));
+        addHeader("Specials");
+        addHeader("Conversion");
+        addLine();
+    }
+
+    /** Adds a line of JSeperators to the panel. The additional strut is required for the line to show. */
+    private void addGroupHeaders(EntityGroup group) {
+        rows++;
+        addGroupName(group.name);
+        for (int col = 1; col < COLUMNS; col++) {
+            var spacerPanel = new UIUtil.FixedYPanel();
+            spacerPanel.setLayout(new BoxLayout(spacerPanel, BoxLayout.PAGE_AXIS));
+            spacerPanel.add(new JSeparator());
+            spacerPanel.add(Box.createVerticalStrut(2));
+            panel.add(spacerPanel);
         }
     }
 

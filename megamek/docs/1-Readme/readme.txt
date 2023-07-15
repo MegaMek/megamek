@@ -576,7 +576,7 @@ CONTACT & FURTHER INFORMATION
 =============================
 For more information, and to get the latest version of MegaMek, visit the
 website at:
-http://www.megamek.info/
+http://www.megamek.org
 
 For more information about the BattleTech board game, visit it's website at:
 http://bg.battletech.com/
@@ -584,13 +584,13 @@ http://bg.battletech.com/
 To submit a bug report, suggestion, or feature request please visit
 https://github.com/MegaMek/megamek/issues
 
-To discuss all things MegaMek, please visit the forums at http://megamek.info/forums/
+To discuss all things MegaMek, please visit our Discord https://discord.gg/u2vJ5U2QpD
 
 
 
 COPYRIGHT & LICENSE INFORMATION
 ===============================
-MegaMek - Copyright (C) 2002 Ben Mazur (bmazur@sev.org)
+MegaMek - Copyright (C) 2002 Ben Mazur (megamekteam@gmail.com)
 
 This program is free software; you can redistribute it and/or modify it 
 under the terms of the GNU General Public License as published by the Free 

@@ -943,6 +943,21 @@ public class TestMech extends TestEntity {
                     illegal = true;
                     buff.append("Mech requires a lower arm actuator in the arm that mounts ").append(misc.getName()).append("\n");
                 }
+                if (replacesHandActuator(misc)) {
+                    String errorMsg = "Can only mount a single equipment item in the "
+                            + mech.getLocationName(m.getLocation())
+                            + " that replaces the hand actuator\n";
+                    // This error message would appear once for each offending equipment; instead, add it only once
+                    if (!buff.toString().contains(errorMsg)) {
+                        int miscId = mech.getEquipmentNum(m);
+                        if (mech.getMisc().stream().filter(otherMisc -> mech.getEquipmentNum(otherMisc) != miscId)
+                                .filter(otherMisc -> otherMisc.getLocation() == m.getLocation())
+                                .anyMatch(otherMisc -> replacesHandActuator((MiscType) otherMisc.getType()))) {
+                            illegal = true;
+                            buff.append(errorMsg);
+                        }
+                    }
+                }
             }
             if (misc.hasFlag(MiscType.F_HEAD_TURRET)
                     && isCockpitLocation(Mech.LOC_HEAD)) {

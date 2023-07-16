@@ -1358,6 +1358,10 @@ public abstract class TestEntity implements TestEntityOption {
             if (m.getType().hasFlag(MiscType.F_C3I) || m.getType().hasFlag(MiscType.F_NOVA)) {
                 networks++;
             }
+            if (m.is(Sensor.NOVA) && (!getEntity().hasEngine() || !getEntity().getEngine().isFusion())) {
+                buff.append("Nova CEWS may only be used on units with a fusion engine\n");
+                illegal = true;
+            }
             if (m.getType().hasFlag(MiscType.F_SRCS) || m.getType().hasFlag(MiscType.F_SASRCS)
                     || m.getType().hasFlag(MiscType.F_CASPAR) || m.getType().hasFlag(MiscType.F_CASPARII)) {
                 robotics++;

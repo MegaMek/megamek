@@ -70,8 +70,9 @@ public class DedicatedServer {
             return;
         }
 
-        if (null != resolver.saveGameFileName) {
-            server.loadGame(new File(resolver.saveGameFileName));
+        File gameFile = resolver.getSaveGameFile();
+        if (null != gameFile) {
+            server.loadGame(gameFile);
         }
     }
 }

@@ -249,14 +249,7 @@ public class MegaMek {
             MegaMekGUI mmg = new MegaMekGUI();
             mmg.start(false);
 
-            File gameFile = null;
-            if (resolver.saveGameFileName != null ) {
-                gameFile = new File(resolver.saveGameFileName);
-                if (!gameFile.isAbsolute()) {
-                    gameFile = new File("./savegames", resolver.saveGameFileName);
-                }
-            }
-
+            File gameFile = resolver.getSaveGameFile();
             mmg.startHost(resolver.password, resolver.port, resolver.registerServer,
                     resolver.announceUrl, resolver.mailPropertiesFile, gameFile,
                     resolver.playerName );

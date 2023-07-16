@@ -5396,7 +5396,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_CASEP).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT)
-                .or(F_FIGHTER_EQUIPMENT).or(F_HEAVY_EQUIPMENT);
+                .or(F_FIGHTER_EQUIPMENT).or(F_HEAVY_EQUIPMENT).or(F_PROTOTYPE);
         misc.cost = 150000;
         misc.bv = 0;
         misc.rulesRefs = "71, IO";
@@ -6110,7 +6110,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_BAP).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT)
                 .or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT)
                 .or(F_DS_EQUIPMENT).andNot(F_WS_EQUIPMENT).andNot(F_JS_EQUIPMENT)
-                .andNot(F_SS_EQUIPMENT).or(F_HEAVY_EQUIPMENT);
+                .andNot(F_SS_EQUIPMENT).or(F_HEAVY_EQUIPMENT).or(F_PROTOTYPE);
         misc.bv = 10;
         misc.rulesRefs = "71, IO";
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false)
@@ -6266,7 +6266,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 1000000;
         misc.flags = misc.flags.or(F_ECM).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT)
                 .or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).andNot(F_WS_EQUIPMENT).andNot(F_JS_EQUIPMENT).andNot(F_SS_EQUIPMENT)
-                .or(F_HEAVY_EQUIPMENT);
+                .or(F_HEAVY_EQUIPMENT).or(F_PROTOTYPE);
         misc.bv = 61;
         misc.setModes(new String[] { "ECM" });
         misc.setInstantModeSwitch(false);
@@ -6500,7 +6500,8 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.hittable = true;
         misc.flags = misc.flags.or(F_MECH_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT).or(F_SENSOR_DISPENSER);
+                .or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT).or(F_SENSOR_DISPENSER)
+                .or(F_PROTOTYPE);
         misc.bv = 0;
         misc.cost = 60000;
         misc.industrial = true;
@@ -6687,7 +6688,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 100000;
         misc.flags = misc.flags.or(F_ARTEMIS_PROTO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT)
                 .or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT)
-                .or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT).or(F_HEAVY_EQUIPMENT);
+                .or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT).or(F_HEAVY_EQUIPMENT).or(F_PROTOTYPE);
         misc.rulesRefs = "217, IO";
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
                 .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)

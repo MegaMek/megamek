@@ -41,6 +41,7 @@ public class ASStatsTablePanel implements ActionListener {
     private final int COLUMNS = 15;
     private final static Color GROUP_NAME_COLOR = UIUtil.uiLightGreen();
     private final static Color HEADER_COLOR = UIUtil.uiLightBlue();
+    private final static Color SORTED_HEADER_COLOR = UIUtil.uiYellow();
 
     private final JPanel panel = new JPanel(new SpringLayout());
     private int rows;
@@ -199,6 +200,7 @@ public class ASStatsTablePanel implements ActionListener {
                 .sorted(aseTableComparator)).collect(Collectors.toList());
     }
 
+    /** remove and rebuild the table grid */
     private void rebuildPanel() {
         panel.removeAll();
         addVerticalSpace();
@@ -292,10 +294,11 @@ public class ASStatsTablePanel implements ActionListener {
         panel.add(textLabel);
     }
 
+    /** add a header button that connects to the <code>sort</code> of an AlphaStrikeElementComparator */
     private JButton addSortableHeader( AlphaStrikeElementComparator comparator ) {
         var button = new JButton(comparator.getLabel());
         button.addActionListener(this);
-        button.setForeground(HEADER_COLOR);
+        button.setForeground( comparator.sort == 0 ? HEADER_COLOR : SORTED_HEADER_COLOR);
         button.setFont(UIUtil.getScaledFont());
         button.setToolTipText("Click to sort by "+comparator.name);
         panel.add(button);
@@ -326,7 +329,7 @@ public class ASStatsTablePanel implements ActionListener {
         addLine();
     }
 
-    /** Adds a line of JSeperators to the panel. The additional strut is required for the line to show. */
+    /** Adds an entry for the Group name, followed by separators. */
     private void addGroupHeaders(EntityGroup group) {
         rows++;
         addGroupName(group.name);
@@ -388,10 +391,9 @@ public class ASStatsTablePanel implements ActionListener {
         }
     }
 
+    /** Extend this class to create a comparator triggered by a button*/
     private abstract class AlphaStrikeElementComparator implements Comparator<AlphaStrikeElement> {
-        private static final int REVERSE_SORT = -1;
-        private static final int NO_SORT = 0;
-        private static final int SORT = 1;
+        // 0 is do not sort, 1 is sort, -q is reverse sort
         private int sort = 0;
         private String name;
 
@@ -407,7 +409,7 @@ public class ASStatsTablePanel implements ActionListener {
         }
     }
 
-    /** Orderable, optional sorting criteria for AlphaStrikeElements. Sort in order of
+    /** Orderable, optional sorting criteria for AlphaStrikeElements. Execute sorts in order of
      * <code>comparatorList</code>*/
     private class ASETableComparator implements Comparator<AlphaStrikeElement> {
         //sort criteria: 1 is sort, 0 is do not sort, -1 is reverse sort
@@ -426,8 +428,5 @@ public class ASStatsTablePanel implements ActionListener {
             }
             return 0;
         }
-
-
-
     }
 }

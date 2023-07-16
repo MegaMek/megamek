@@ -571,37 +571,40 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
         if (en == null) {
             return;
         }
-        String enName = en.getShortName();
-        switch (en.getDamageLevel()) {
-            case Entity.DMG_CRIPPLED:
-                enName += " [CRIPPLED]";
-                break;
-            case Entity.DMG_HEAVY:
-                enName += " [HEAVY DMG]";
-                break;
-            case Entity.DMG_MODERATE:
-                enName += " [MODERATE DMG]";
-                break;
-            case Entity.DMG_LIGHT:
-                enName += " [LIGHT DMG]";
-                break;
-            default:
-                enName += " [UNDAMAGED]";
-        }
+        currentlyDisplaying = en;
+        updateDisplay();
+    }
 
+    protected void updateDisplay() {
         if (clientgui != null) {
+            String enName = currentlyDisplaying.getShortName();
+            switch (currentlyDisplaying.getDamageLevel()) {
+                case Entity.DMG_CRIPPLED:
+                    enName += " [CRIPPLED]";
+                    break;
+                case Entity.DMG_HEAVY:
+                    enName += " [HEAVY DMG]";
+                    break;
+                case Entity.DMG_MODERATE:
+                    enName += " [MODERATE DMG]";
+                    break;
+                case Entity.DMG_LIGHT:
+                    enName += " [LIGHT DMG]";
+                    break;
+                default:
+                    enName += " [UNDAMAGED]";
+            }
+
             clientgui.getUnitDisplayDialog().setTitle(enName);
             labTitle.setText(enName);
         }
 
-        currentlyDisplaying = en;
-
-        mPan.displayMech(en);
-        pPan.displayMech(en);
-        aPan.displayMech(en);
-        wPan.displayMech(en);
-        sPan.displayMech(en);
-        ePan.displayMech(en);
+        mPan.displayMech(currentlyDisplaying);
+        pPan.displayMech(currentlyDisplaying);
+        aPan.displayMech(currentlyDisplaying);
+        wPan.displayMech(currentlyDisplaying);
+        sPan.displayMech(currentlyDisplaying);
+        ePan.displayMech(currentlyDisplaying);
     }
 
     /**

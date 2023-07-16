@@ -1300,7 +1300,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
         } else if (targets.size() > 1) {;
             // If we have multiple choices, display a selection dialog.
             choice = TargetChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(),
-                    Messages.getString("FiringDisplay.ChooseTargetDialog.title"),
+                    "FiringDisplay.ChooseTargetDialog.title",
                     Messages.getString("FiringDisplay.ChooseTargetDialog.message", new Object[] { pos.getBoardNum() }),
                     targets, clientgui, ce());
         }

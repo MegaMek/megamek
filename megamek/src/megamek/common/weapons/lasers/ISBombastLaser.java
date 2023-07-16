@@ -56,7 +56,7 @@ public class ISBombastLaser extends LaserWeapon {
         shortAV = 12;
         medAV = 12;
         maxRange = RANGE_MED;
-        flags = flags.or(F_BOMBAST_LASER);
+        flags = flags.or(F_BOMBAST_LASER).andNot(F_PROTO_WEAPON);
         rulesRefs = "319, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_D)

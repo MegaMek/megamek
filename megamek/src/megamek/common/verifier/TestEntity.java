@@ -1501,6 +1501,19 @@ public abstract class TestEntity implements TestEntityOption {
             }
         }
 
+        // Find all locations with modular armor and map the number in that location to the location index.
+        Map<Integer, Long> modArmorByLocation = getEntity().getMisc().stream()
+                .filter(m -> m.getType().hasFlag(MiscType.F_MODULAR_ARMOR))
+                .filter(m -> m.getLocation() != Entity.LOC_NONE)
+                .collect(Collectors.groupingBy(Mounted::getLocation, Collectors.counting()));
+        for (Integer loc : modArmorByLocation.keySet()) {
+            if (modArmorByLocation.get(loc) > 1) {
+                buff.append("Only one modular armor slot may be mounted in a single location (")
+                        .append(getEntity().getLocationName(loc)).append(")\n");
+                illegal = true;
+            }
+        }
+
         if (artemisIV + artemisV + artemisP > 0) {
             if (((artemisIV > 0) && (artemisV + artemisP > 0))
                     || ((artemisV > 0) && (artemisP > 0))) {

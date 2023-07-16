@@ -47,6 +47,11 @@ VERSION HISTORY:
 + Issue #4527: Allow indirect LRM launches from nose cones of grounded spheroid dropships
 + Issue #4614: unit display tab strip background respects theme
 + Issue #4553: offboard artillery Disengage causes uncaught nullpointer exception
++ PR #4632, #4630, #4627, #4626: Tests for flagging units as invalid have been expanded (Nova CEWS, internal structure slots, modular armor, industrial equipment)
++ PR #4622: Fluff images for some unit types are now loaded from the right directories
++ Fix #4618: Improved and unified savegame path resolution and error reporting for -dedicated and -host starts; should now find savegames without path
++ Fix #4540: Field of fire and sensors rings now display during indirect attack declaration (-> TAG)
++ PR #4576: Gamemaster mode can now edit units during a game
 
 0.49.13 (2023-05-23 2000 UTC)
 + Fix #3914: LAM fuel tanks will now correctly provide fuel to the LAM

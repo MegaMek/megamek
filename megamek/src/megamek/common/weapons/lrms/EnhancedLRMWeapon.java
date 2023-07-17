@@ -33,6 +33,7 @@ public abstract class EnhancedLRMWeapon extends LRMWeapon {
 
     public EnhancedLRMWeapon() {
         super();
+        flags = flags.andNot(F_PROTO_WEAPON);
         ammoType = AmmoType.T_NLRM;
     }
 

@@ -9043,7 +9043,6 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.hittable = false;
-        misc.spreadable = true;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_REINFORCED);
         misc.omniFixedOnly = true;

@@ -241,6 +241,13 @@ class PlayerTable extends JTable {
                 result.append("</FONT>");
             }
 
+            if (player.getGameMaster()) {
+                result.append(UIUtil.DOT_SPACER);
+                result.append(guiScaledFontHTML(uiGreen()));
+                result.append("\uD83D\uDD2E  GM");
+                result.append("</FONT>");
+            }
+
             setText(result.toString());
 
             setIconTextGap(scaleForGUI(10));

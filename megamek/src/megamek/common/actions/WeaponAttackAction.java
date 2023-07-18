@@ -3793,9 +3793,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
             // grounded aero
             if (!ae.isAirborne() && !ae.isSpaceborne()) {
-                if (!(ae instanceof Dropship)) {
+                if (ae.isFighter()) {
                     toHit.addModifier(+2, Messages.getString("WeaponAttackAction.GroundedAero"));
-                } else if (!target.isAirborne() && !isArtilleryIndirect) {
+                } else if (!isArtilleryIndirect) {
                     toHit.addModifier(-2, Messages.getString("WeaponAttackAction.GroundedDs"));
                 }
             }

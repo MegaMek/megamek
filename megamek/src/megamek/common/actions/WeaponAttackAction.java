@@ -3795,7 +3795,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (!ae.isAirborne() && !ae.isSpaceborne()) {
                 if (ae.isFighter()) {
                     toHit.addModifier(+2, Messages.getString("WeaponAttackAction.GroundedAero"));
-                } else if (!isArtilleryIndirect) {
+                } else if (!target.isAirborne() && !isArtilleryIndirect) {
                     toHit.addModifier(-2, Messages.getString("WeaponAttackAction.GroundedDs"));
                 }
             }

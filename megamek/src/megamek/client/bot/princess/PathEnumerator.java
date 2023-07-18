@@ -277,7 +277,8 @@ public class PathEnumerator {
                     @Override
                     public boolean shouldStay(MovePath movePath) {
                         return movePath.isMoveLegal()
-                                && (Compute.stackingViolation(getGame(), mover.getId(), movePath.getFinalCoords()) == null);
+                                && (Compute.stackingViolation(getGame(), mover.getId(), movePath.getFinalCoords(),
+                                mover.climbMode()) == null);
                     }
                 };
                 paths = new ArrayList<>(filter.doFilter(paths));

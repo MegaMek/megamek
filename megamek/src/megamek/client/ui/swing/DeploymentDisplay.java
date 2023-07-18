@@ -510,7 +510,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             msg = Messages.getString("DeploymentDisplay.elevationTooLow", ce().getShortName(), moveto.getBoardNum());
             JOptionPane.showMessageDialog(clientgui.frame, msg, title, JOptionPane.ERROR_MESSAGE);
             return;
-        } else if ((Compute.stackingViolation(game, ce().getId(), moveto) != null) && (bldg == null)) {
+        } else if ((Compute.stackingViolation(game, ce().getId(), moveto, ce().climbMode()) != null) && (bldg == null)) {
             // check if deployed unit violates stacking
             return;
         } else {
@@ -574,18 +574,18 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         ArrayList<String> floorNames = new ArrayList<>(height + 1);
         ArrayList<Integer> floorValues = new ArrayList<>(height + 1);
 
-        if (Compute.stackingViolation(game, ce(), 0, moveto, null) == null) {
+        if (Compute.stackingViolation(game, ce(), 0, moveto, null, ce().climbMode()) == null) {
             floorNames.add(Messages.getString("DeploymentDisplay.ground"));
             floorValues.add(0);
         }
 
         for (int loop = 1; loop < height; loop++) {
-            if (Compute.stackingViolation(game, ce(), loop, moveto, null) == null) {
+            if (Compute.stackingViolation(game, ce(), loop, moveto, null, ce().climbMode()) == null) {
                 floorNames.add(Messages.getString("DeploymentDisplay.floor") + loop);
                 floorValues.add(loop);
             }
         }
-        if (Compute.stackingViolation(game, ce(), height, moveto, null) == null) {
+        if (Compute.stackingViolation(game, ce(), height, moveto, null, ce().climbMode()) == null) {
             floorNames.add(Messages.getString("DeploymentDisplay.top"));
             floorValues.add(height);
         }

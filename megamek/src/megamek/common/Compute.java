@@ -300,14 +300,19 @@ public class Compute {
      *
      * The position, and elevation for the stacking violation are derived from
      * the Entity represented by the passed Entity ID.
+     *
+     * @param game       The Game instance
+     * @param enteringId The gameId of the moving Neity
+     * @param coords     The hex being entered
+     * @param climbMode  The moving Entity's climb mode at the point it enters the destination hex
      */
     public static Entity stackingViolation(Game game, int enteringId,
-            Coords coords) {
+            Coords coords, boolean climbMode) {
         Entity entering = game.getEntity(enteringId);
         if (entering == null) {
             return null;
         }
-        return Compute.stackingViolation(game, entering, coords, null);
+        return Compute.stackingViolation(game, entering, coords, null, climbMode);
     }
 
     /**
@@ -317,14 +322,17 @@ public class Compute {
      * The position, and elevation for the stacking violation are derived from
      * the passed Entity.
      *
-     * @param transport
-     *            Represents the unit transporing entering, which may affect
-     *            stacking, can be null
+     * @param game       The Game instance
+     * @param entering   The Entity entering the hex
+     * @param dest       The hex being entered
+     * @param transport  Represents the unit transporting entering, which may affect
+     *                   stacking, can be null
+     * @param climbMode  The moving Entity's climb mode at the point it enters the destination hex
      */
     public static Entity stackingViolation(Game game, Entity entering,
-            Coords dest, Entity transport) {
+            Coords dest, Entity transport, boolean climbMode) {
         return stackingViolation(game, entering, entering.getElevation(), dest,
-                transport);
+                transport, climbMode);
     }
 
     /**
@@ -335,14 +343,18 @@ public class Compute {
      * The position is derived from the passed Entity, while the elevation is
      * derived from the passed Entity parameter.
      *
-     * @param transport
-     *            Represents the unit transporing entering, which may affect
-     *            stacking, can be null
+     * @param game       The Game instance
+     * @param entering   The Entity entering the hex
+     * @param elevation  The elevation of the moving Entity
+     * @param dest       The hex being entered
+     * @param transport  Represents the unit transporting entering, which may affect
+     *                   stacking, can be null
+     * @param climbMode  The moving Entity's climb mode at the point it enters the destination hex
      */
     public static Entity stackingViolation(Game game, Entity entering,
-            int elevation, Coords dest, Entity transport) {
+            int elevation, Coords dest, Entity transport, boolean climbMode) {
         return stackingViolation(game, entering, entering.getPosition(),
-                elevation, dest, transport);
+                elevation, dest, transport, climbMode);
     }
 
     /**
@@ -352,12 +364,17 @@ public class Compute {
      *
      * The position and elevation is derived from the passed Entity parameter.
      *
-     * @param transport
-     *            Represents the unit transporing entering, which may affect
-     *            stacking, can be null
+     * @param game         The Game instance
+     * @param entering     The Entity entering the hex
+     * @param origPosition The coords of the hex the moving Entity is leaving
+     * @param elevation    The elevation of the moving Entity
+     * @param dest         The hex being entered
+     * @param transport    Represents the unit transporting entering, which may affect
+     *                     stacking, can be null
+     * @param climbMode    The moving Entity's climb mode at the point it enters the destination hex
      */
     public static Entity stackingViolation(Game game, Entity entering,
-            Coords origPosition, int elevation, Coords dest, Entity transport) {
+            Coords origPosition, int elevation, Coords dest, Entity transport, boolean climbMode) {
         // no stacking violations on the low-atmosphere and space maps
         if (!game.getBoard().onGround()) {
             return null;
@@ -392,8 +409,7 @@ public class Compute {
             if ((coords != null) && (origPosition != null)) {
                 thisLowStackingLevel = entering.calcElevation(game.getBoard()
                         .getHex(origPosition), game.getBoard()
-                        .getHex(coords), elevation, entering
-                        .climbMode(), false);
+                        .getHex(coords), elevation, climbMode, false);
             }
             int thisHighStackingLevel = thisLowStackingLevel;
             // mechs only occupy one level of a building
@@ -767,7 +783,7 @@ public class Compute {
 
         // if there's an entity in the way, can they be displaced in that
         // direction?
-        Entity inTheWay = Compute.stackingViolation(game, entityId, dest);
+        Entity inTheWay = Compute.stackingViolation(game, entityId, dest, false);
         if (inTheWay != null) {
             return Compute.isValidDisplacement(game, inTheWay.getId(),
                     inTheWay.getPosition(), direction);
@@ -6779,7 +6795,7 @@ public class Compute {
             // elevations
 
             if (!unit.isLocationProhibited(pos)
-                && (null == stackingViolation(game, unit.getId(), pos))
+                && (null == stackingViolation(game, unit.getId(), pos, unit.climbMode()))
                 && (Math.abs(hex.getLevel() - elev) < 3)) {
                 acceptable.add(pos);
             }

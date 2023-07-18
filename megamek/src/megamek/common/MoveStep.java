@@ -1113,7 +1113,7 @@ public class MoveStep implements Serializable {
 
         // Check for a stacking violation.
         final Entity violation = Compute.stackingViolation(game,
-                entity, getElevation(), getPosition(), null);
+                entity, getElevation(), getPosition(), null, climbMode);
         if ((violation != null) && (getType() != MoveStepType.CHARGE)
                 && (getType() != MoveStepType.DFA)) {
             setStackingViolation(true);
@@ -2619,7 +2619,7 @@ public class MoveStep implements Serializable {
                     }
                     Entity other = (Entity) target;
                     if ((null != Compute.stackingViolation(game, other, curPos,
-                            entity)) || other.isLocationProhibited(curPos, getElevation())) {
+                            entity, climbMode)) || other.isLocationProhibited(curPos, getElevation())) {
                         movementType = EntityMovementType.MOVE_ILLEGAL;
                     }
                 } else {
@@ -2645,7 +2645,7 @@ public class MoveStep implements Serializable {
             if (target instanceof Entity) {
                 Entity other = (Entity) target;
                 if ((null != Compute.stackingViolation(game, other, curPos,
-                        entity)) || other.isLocationProhibited(curPos, getElevation())) {
+                        entity, climbMode)) || other.isLocationProhibited(curPos, getElevation())) {
                     movementType = EntityMovementType.MOVE_ILLEGAL;
                 }
             } else {

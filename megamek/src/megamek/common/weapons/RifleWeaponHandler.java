@@ -137,6 +137,7 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
         // Report calcDmgPerHitReports here
         if (!calcDmgPerHitReport.isEmpty()) {
             vPhaseReport.addAll(calcDmgPerHitReport);
+            calcDmgPerHitReport.clear();
         }
 
         // if the target was in partial cover, then we already handled

@@ -368,6 +368,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         boolean isIndirect = (wtype.hasModes() && weapon.curMode().equals(Weapon.MODE_MISSILE_INDIRECT));
 
+        // BMM p. 31, semi-guided indirect missile attacks vs tagged targets ignore terrain modifiers
+        boolean semiGuidedIndirectVsTaggedTarget = isIndirect &&
+                (atype != null) && atype.getMunitionType() == AmmoType.M_SEMIGUIDED &&
+                Compute.isTargetTagged(target, game);
+
         boolean isInferno = ((atype != null)
                 && ((atype.getAmmoType() == AmmoType.T_SRM)
                         || (atype.getAmmoType() == AmmoType.T_SRM_IMP)
@@ -615,7 +620,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
             }
 
-            if (wtype.hasFlag(WeaponType.F_MORTARTYPE_INDIRECT) && isIndirect) {
+            if (wtype.hasFlag(WeaponType.F_MORTARTYPE_INDIRECT) || semiGuidedIndirectVsTaggedTarget) {
                 los.setArcedAttack(true);
             }
 
@@ -4529,12 +4534,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 (atype != null) && atype.getMunitionType() == AmmoType.M_SEMIGUIDED &&
                         Compute.isTargetTagged(target, game);
 
+        // TW p.111
+        boolean indirectMortarWithoutSpotter = (wtype != null) && wtype.hasFlag(WeaponType.F_MORTARTYPE_INDIRECT)
+                && isIndirect && (Compute.findSpotter(game, ae, target) == null);
+
         // Base terrain calculations, not applicable when delivering minefields or bombs
         // also not applicable in pointblank shots from hidden units
-        if ((ttype != Targetable.TYPE_MINEFIELD_DELIVER) && !isPointBlankShot && !semiGuidedIndirectVsTaggedTarget) {
+        if ((ttype != Targetable.TYPE_MINEFIELD_DELIVER) && !isPointBlankShot && !semiGuidedIndirectVsTaggedTarget
+                && !indirectMortarWithoutSpotter) {
             toHit.append(Compute.getTargetTerrainModifier(game, target, eistatus, inSameBuilding, underWater));
-            toSubtract += Compute.getTargetTerrainModifier(game, target, eistatus, inSameBuilding, underWater)
-                    .getValue();
         }
 
         // Fortified/Dug-In Infantry

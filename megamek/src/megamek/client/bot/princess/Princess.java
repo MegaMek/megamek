@@ -513,12 +513,8 @@ public class Princess extends BotClient {
                 final int buildingHeight = hex.terrainLevel(Terrains.BLDG_ELEV);
                 
                 // check stacking violation at the roof level
-                final Entity violation = Compute.stackingViolation(game,
-                                                                   deployedUnit,
-                                                                   coords,
-                                                                   buildingHeight,
-                                                                   coords,
-                                                                   null);
+                final Entity violation = Compute.stackingViolation(game, deployedUnit, coords, buildingHeight, coords,
+                        null, deployedUnit.climbMode());
                 // Ignore coords that could cause a stacking violation
                 if (null == violation) {
                     turretDeploymentLocations.add(coords);
@@ -1974,7 +1970,8 @@ public class Princess extends BotClient {
                         loadedEntity.isLocationProhibited(pathEndpoint);
                 
                 // Unloading a unit may sometimes cause a stacking violation, take that into account when planning
-                boolean unloadIllegal = Compute.stackingViolation(getGame(), loadedEntity, pathEndpoint, movingEntity) != null;
+                boolean unloadIllegal = Compute.stackingViolation(getGame(), loadedEntity, pathEndpoint, movingEntity,
+                        loadedEntity.climbMode()) != null;
                 
                 // this is a primitive condition that checks whether we're within "engagement range" of an enemy
                 // where "engagement range" is defined as the maximum range of our weapons plus our walking movement

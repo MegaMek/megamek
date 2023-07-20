@@ -269,7 +269,8 @@ public abstract class BotClient extends Client {
             Entity transport = currentEntity.getTransportId() != Entity.NONE ? getGame().getEntity(currentEntity.getTransportId()) : null;
             
             if (transport != null && transport.isPermanentlyImmobilized(true)) {
-                boolean stackingViolation = null != Compute.stackingViolation(game, currentEntity.getId(), transport.getPosition());
+                boolean stackingViolation = null != Compute.stackingViolation(game, currentEntity.getId(),
+                        transport.getPosition(), currentEntity.climbMode());
                 boolean unloadFatal = currentEntity.isBoardProhibited(getGame().getBoard().getType()) ||
                         currentEntity.isLocationProhibited(transport.getPosition());
                         
@@ -588,7 +589,7 @@ public abstract class BotClient extends Client {
         // Check all of the hexes in order.
         for (Coords dest : possibleDeployCoords) {
             Entity violation = Compute.stackingViolation(game, deployedUnit,
-                    dest, deployedUnit.getElevation(), dest, null);
+                    dest, deployedUnit.getElevation(), dest, null, deployedUnit.climbMode());
             // Ignore coords that could cause a stacking violation
             if (violation != null) {
                 continue;

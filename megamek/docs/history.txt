@@ -55,6 +55,7 @@ VERSION HISTORY:
 + Fix #4591: Grounded SmallCraft now receive a -2 attack bonus instead of a +2 malus that only applies to fighters
 + PR #4637: There is now an indicator in the player table showing the GM player
 + Fix #4599: The Alpha Strike stats table that can be accessed from the lobby is now sortable. Sorting also applies to printing AS cards
++ Issue #4582: Infantry (over) stacking in building hex
 
 
 0.49.13 (2023-05-23 2000 UTC)

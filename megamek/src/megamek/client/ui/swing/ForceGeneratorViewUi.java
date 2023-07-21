@@ -47,7 +47,7 @@ import java.util.stream.Collectors;
  * Presents controls for selecting parameters of the force to generate and a tree structure showing
  * the generated force. The left and right sides of the view are made available separately for use by
  * RandomArmyDialog.
- * 
+ *
  * @author Neoancient
  */
 public class ForceGeneratorViewUi implements ActionListener {
@@ -197,7 +197,7 @@ public class ForceGeneratorViewUi implements ActionListener {
         scroll.setBorder(BorderFactory.createTitledBorder(Messages.getString("RandomArmyDialog.Army")));
         tblChosen.addMouseListener(tableMouseListener);
         tblChosen.addKeyListener(tableKeyListener);
-        
+
         leftPanel = new JPanel();
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
         leftPanel.add(panControls);
@@ -226,11 +226,11 @@ public class ForceGeneratorViewUi implements ActionListener {
                 && (forceTree.getModel().getRoot() instanceof ForceDescriptor)) {
             configureNetworks((ForceDescriptor) forceTree.getModel().getRoot());
         }
-        
+
         List<Entity> entities = new ArrayList<>(modelChosen.allEntities().size());
         Client c = null;
         if (null != playerName) {
-            c = clientGui.getBots().get(playerName);
+            c = clientGui.getLocalBots().get(playerName);
         }
         if (null == c) {
             c = clientGui.getClient();
@@ -583,7 +583,7 @@ public class ForceGeneratorViewUi implements ActionListener {
         public boolean hasEntity(final @Nullable Entity en) {
             return (en != null) && entityIds.contains(en.getExternalIdAsString());
         }
-        
+
         public void addEntity(Entity en) {
             if (!entityIds.contains(en.getExternalIdAsString())) {
                 entities.add(en);

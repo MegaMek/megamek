@@ -2,10 +2,10 @@ MegaMek contains a single bot client, Princess. First, we'll go through the basi
 
 1)
 Behavior - There are 4 behaviors pre-configured with Princess:
-     •DEFAULT - Basic "balanced" settings. 
-     •BERSERK - Highly aggressive. Princess will ignore danger to herself and will not run away under any circumstances. 
-     •COWARDLY - Really doesn't want to get shot. 
-     •ESCAPE - Not quite as fearful as cowardly but she will try to escape from her home board edge ASAP. 
+     ï¿½DEFAULT - Basic "balanced" settings.
+     ï¿½BERSERK - Highly aggressive. Princess will ignore danger to herself and will not run away under any circumstances.
+     ï¿½COWARDLY - Really doesn't want to get shot.
+     ï¿½ESCAPE - Not quite as fearful as cowardly but she will try to escape from her home board edge ASAP.
 
 You can also enter a name to save your own configurations for later games or for use with the replacePlayer command.
 
@@ -13,7 +13,7 @@ Verbosity - Used to set the level of logging Princess will use. DEBUG mode is ve
 
 Forced Withdrawal - Used to make the Princess follow the Forced Withdrawal rules outlined in Total Warfare.
 
-Immediate Withdrawal - Used to make Princess send her units to her home edge from the start of the game, regardless of damage level. This can be handy for Chase and Breakthrough scenarios. 
+Immediate Withdrawal - Used to make Princess send her units to her home edge from the start of the game, regardless of damage level. This can be handy for Chase and Breakthrough scenarios.
 
 Auto Flee Board - (Only available when Immediate Withdrawal is in effect.) If this is checked, Princess will issue the Flee command as soon as her units reach her home edge, regardless of damage level.
 
@@ -95,7 +95,7 @@ Displays a list of available chat commands for Princess.
 
 Replacing an Absent Player with the Princess Bot
 
-If a player has become disconnected (the word "(ghost)" appears next to their name, you can replace that player with a bot. There are two methods for replacing a player. The first is the Replace Player command under the File menu. This will bring up a version of the Bot Config Dialog along with a list of players that can be replaced. The second option is to use the /replacePlayer command in the chat window:
+If a player has become disconnected (the word "(ghost)" appears next to their name, you can replace that player with a bot. There are two methods for replacing a player. The first is the Edit Bots command under the File menu. This will bring up a version of the Bot Config Dialog along with a list of players that can be replaced. The second option is to use the /replacePlayer command in the chat window:
 
     /replacePlayer -b:Princess <-c:ConfigName> <-v:VerbosityLevel> <-p:>PlayerName
 

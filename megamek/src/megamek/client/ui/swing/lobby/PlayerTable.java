@@ -80,7 +80,7 @@ class PlayerTable extends JTable {
         if ((lobby.client() instanceof BotClient) && player.equals(lobby.localPlayer())) {
             String msg_thisbot = Messages.getString("ChatLounge.ThisBot");
             result.append(" (" + UIUtil.BOT_MARKER + " " + msg_thisbot + ")");
-        } else if (lobby.client().bots.containsKey(player.getName())) {
+        } else if (lobby.client().localBots.containsKey(player.getName())) {
             String msg_yourbot = Messages.getString("ChatLounge.YourBot");
             result.append(" (" + UIUtil.BOT_MARKER + " " + msg_yourbot + ")");
         } else if (lobby.localPlayer().equals(player)) {
@@ -98,7 +98,7 @@ class PlayerTable extends JTable {
             result.append(msg_noinitiativemodifier);
         }
         if (lobby.game().getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) {
-            int mines = player.getNbrMFConventional() + player.getNbrMFActive() 
+            int mines = player.getNbrMFConventional() + player.getNbrMFActive()
             + player.getNbrMFInferno() + player.getNbrMFVibra();
             String msg_totalminefields = Messages.getString("ChatLounge.TotalMinefields");
             result.append("<BR>" + msg_totalminefields + ": ").append(mines);
@@ -177,7 +177,7 @@ class PlayerTable extends JTable {
             StringBuilder result = new StringBuilder("<HTML><NOBR>" + UIUtil.guiScaledFontHTML());
             // First Line - Player Name
             if ((lobby.client() instanceof BotClient) && player.equals(lobby.localPlayer())
-                    || lobby.client().bots.containsKey(player.getName())) {
+                    || lobby.client().localBots.containsKey(player.getName())) {
                 result.append(UIUtil.BOT_MARKER);
             }
             result.append(player.getName());
@@ -208,12 +208,12 @@ class PlayerTable extends JTable {
                 result.append(msg_start + ": " + msg_none);
             }
             result.append("</FONT>");
-            
+
             if (!LobbyUtility.isValidStartPos(lobby.game(), player)) {
-                result.append(guiScaledFontHTML(uiYellow())); 
+                result.append(guiScaledFontHTML(uiYellow()));
                 result.append(WARNING_SIGN + "</FONT>");
             }
-            
+
             // Player BV
             result.append(UIUtil.DOT_SPACER);
             result.append(guiScaledFontHTML());

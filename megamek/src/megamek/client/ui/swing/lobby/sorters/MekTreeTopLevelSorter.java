@@ -39,7 +39,7 @@ public class MekTreeTopLevelSorter implements Comparator<Object> {
                 || !((b instanceof Entity) || (b instanceof Force))) {
             throw new IllegalArgumentException("Can only compare Entities/Forces");
         }
-        
+
         Game game = client.getGame();
         Forces forces = game.getForces();
 
@@ -63,8 +63,8 @@ public class MekTreeTopLevelSorter implements Comparator<Object> {
             idB = ((Entity) b).getId();
         }
 
-        boolean isLocalBotA = (ownerA != null) && client.bots.containsKey(ownerA.getName());
-        boolean isLocalBotB = (ownerB != null) && client.bots.containsKey(ownerB.getName());
+        boolean isLocalBotA = (ownerA != null) && client.localBots.containsKey(ownerA.getName());
+        boolean isLocalBotB = (ownerB != null) && client.localBots.containsKey(ownerB.getName());
 
 
         boolean isLocalAllyA = (ownerA) != null && !ownerA.equals(localPlayer) && !ownerA.isEnemyOf(localPlayer);

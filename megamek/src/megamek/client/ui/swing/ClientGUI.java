@@ -73,7 +73,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ClientGUI extends JPanel implements BoardViewListener,
                     ActionListener, ComponentListener, IPreferenceChangeListener {
@@ -109,7 +108,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     public static final String FILE_GAME_SCENARIO = "fileGameScenario";
     public static final String FILE_GAME_CONNECT_BOT = "fileGameConnectBot";
     public static final String FILE_GAME_CONNECT = "fileGameConnect";
-    public static final String FILE_GAME_REPLACE_PLAYER = "replacePlayer";
+    public static final String FILE_GAME_EDIT_BOTS = "editBots";
     // board submenu
     public static final String BOARD_NEW = "fileBoardNew";
     public static final String BOARD_OPEN = "fileBoardOpen";
@@ -901,8 +900,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 boardSaveAsImage(false);
                 ignoreHotKeys = false;
                 break;
-            case FILE_GAME_REPLACE_PLAYER:
-                replacePlayer();
+            case FILE_GAME_EDIT_BOTS:
+                editBots();
                 break;
             case VIEW_ACCESSIBILITY_WINDOW:
                 toggleAccessibilityWindow();
@@ -2285,10 +2284,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             bv.clearMovementData();
             bv.clearFieldOfFire();
             bv.clearSensorsRanges();
-            for (Client client2 : getBots().values()) {
+            for (Client client2 : getLocalBots().values()) {
                 client2.die();
             }
-            getBots().clear();
+            getLocalBots().clear();
 
             // Make a list of the player's living units.
             ArrayList<Entity> living = getClient().getGame().getPlayerEntities(getClient().getLocalPlayer(), false);
@@ -2591,8 +2590,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         return client;
     }
 
-    public Map<String, Client> getBots() {
-        return client.bots;
+    public Map<String, Client> getLocalBots() {
+        return client.localBots;
     }
 
     /**
@@ -2808,16 +2807,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
     }
 
-    void replacePlayer() {
-        Set<Player> ghostPlayers = client.getGame().getPlayersVector().stream()
-                .filter(Player::isGhost).collect(Collectors.toSet());
-        if (ghostPlayers.isEmpty()) {
-            doAlertDialog( Messages.getString("ClientGUI.noGhostPlayersToReplace"),
-                    Messages.getString("ClientGUI.noGhosts"), JOptionPane.INFORMATION_MESSAGE);
-            return;
-        }
-
-        var rpd = new ReplacePlayersDialog(frame, this);
+    void editBots() {
+        var rpd = new EditBotsDialog(frame, this);
         rpd.setVisible(true);
         if (rpd.getResult() == DialogResult.CANCELLED) {
             return;
@@ -2825,16 +2816,31 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
         AddBotUtil util = new AddBotUtil();
         Map<String, BehaviorSettings> newBotSettings = rpd.getNewBots();
-        for (String player : newBotSettings.keySet()) {
+        for (String ghostName : newBotSettings.keySet()) {
             StringBuilder message = new StringBuilder();
-            Princess princess = util.addBot(newBotSettings.get(player), player,
-                    client.getGame(), client.getHost(), client.getPort(), message);
+            Princess princess = util.replaceGhostWithBot(newBotSettings.get(ghostName), ghostName,
+                    client, message);
             systemMessage(message.toString());
             // Make this princess a locally owned bot if in the lobby. This way it
             // can be configured, and it will faithfully press Done when the local player does.
             if ((princess != null) && client.getGame().getPhase().isLounge()) {
-                getBots().put(player, princess);
+                getLocalBots().put(ghostName, princess);
             }
+        }
+
+        Map<String, BehaviorSettings> changedBots = rpd.getChangedBots();
+        for (String botName : changedBots.keySet()) {
+            StringBuilder message = new StringBuilder();
+            util.changeBotSettings(changedBots.get(botName), botName,
+                    client, message);
+            systemMessage(message.toString());
+        }
+
+        Set<String> kickBotNames = rpd.getKickBots();
+        for (String botName : kickBotNames) {
+            StringBuilder message = new StringBuilder();
+            util.kickBot( botName, client, message);
+            systemMessage(message.toString());
         }
     }
 

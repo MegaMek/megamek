@@ -333,9 +333,11 @@ public class GameOptions extends AbstractOptions {
             InputStream is = new FileInputStream(file);
             GameOptionsXML opts = (GameOptionsXML) um.unmarshal(MMXMLUtility.createSafeXmlSource(is));
 
+            StringBuilder logMessages = new StringBuilder("\n");
             for (IBasicOption bo : opts.getOptions()) {
-                changedOptions.add(parseOptionNode(bo, print));
+                changedOptions.add(parseOptionNode(bo, print, logMessages));
             }
+            LogManager.getLogger().info(logMessages.toString());
         } catch (Exception e) {
             LogManager.getLogger().error("Error loading XML for game options: " + e.getMessage(), e);
         }
@@ -343,7 +345,7 @@ public class GameOptions extends AbstractOptions {
         return changedOptions;
     }
 
-    private IOption parseOptionNode(final IBasicOption node, final boolean print) {
+    private IOption parseOptionNode(final IBasicOption node, final boolean print, final StringBuilder logMessages) {
         IOption option = null;
 
         String name = node.getName();
@@ -372,17 +374,17 @@ public class GameOptions extends AbstractOptions {
                         }
 
                         if (print) {
-                            LogManager.getLogger().info(String.format("Set option '%s' to '%s'.", name, value));
+                            logMessages.append(String.format("\tSet option '%s' to '%s'\n", name, value));
                         }
 
                         option = tempOption;
                     } catch (Exception ex) {
                         LogManager.getLogger().error(String.format(
-                                "Error trying to load option '%s' with a value of '%s'.", name, value));
+                                "Error trying to load option '%s' with a value of '%s'!", name, value));
                     }
                 }
             } else {
-                LogManager.getLogger().warn("Invalid option '" + name + "' when trying to load options file.");
+                LogManager.getLogger().warn("Invalid option '" + name + "' when trying to load options file!");
             }
         }
 

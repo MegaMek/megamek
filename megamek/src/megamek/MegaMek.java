@@ -178,6 +178,11 @@ public class MegaMek {
             filename = "MegaMek.app/Contents/Resources/Java/" + filename;
         }
 
+        if (!new File(filename).exists()) {
+            LogManager.getLogger().warn("MegaMek.jar not found. Returning null checksum.");
+            return null;
+        }
+
         MessageDigest md;
         // Calculate the digest for the given file.
         try {

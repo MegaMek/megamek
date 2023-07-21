@@ -5835,7 +5835,7 @@ public class AmmoType extends EquipmentType {
         //IntOPs doesn't have an extinct date for IIW but code indicates its extinct. Giving benefit of the
         //doubt and assigning F code for Dark Age for Homeworld Clans.
         ammo.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_X)
+                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
                 .setClanAdvancement(3070, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CCY)
                 .setProductionFactions(F_CCY).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
@@ -5864,7 +5864,7 @@ public class AmmoType extends EquipmentType {
         //IntOPs doesn't have an extinct date for IIW but code indicates its extinct. Giving benefit of the
         //doubt and assigning F code for Dark Age for Homeworld Clans.
         ammo.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_X)
+                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
                 .setClanAdvancement(3070, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CCY)
                 .setProductionFactions(F_CCY).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
@@ -5893,7 +5893,7 @@ public class AmmoType extends EquipmentType {
         //IntOPs doesn't have an extinct date for IIW but code indicates its extinct. Giving benefit of the
         //doubt and assigning F code for Dark Age for Homeworld Clans.
         ammo.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_X)
+                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
                 .setClanAdvancement(3070, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CCY)
                 .setProductionFactions(F_CCY).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
@@ -5922,7 +5922,7 @@ public class AmmoType extends EquipmentType {
         //IntOPs doesn't have an extinct date for IIW but code indicates its extinct. Giving benefit of the
         //doubt and assigning F code for Dark Age for Homeworld Clans.
         ammo.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_X)
+                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
                 .setClanAdvancement(3070, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CCY)
                 .setProductionFactions(F_CCY).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);

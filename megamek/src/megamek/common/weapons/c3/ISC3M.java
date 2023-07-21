@@ -13,6 +13,7 @@
  */
 package megamek.common.weapons.c3;
 
+import megamek.common.SimpleTechLevel;
 import megamek.common.weapons.tag.TAGWeapon;
 
 /**
@@ -54,6 +55,7 @@ public class ISC3M extends TAGWeapon {
                 .setISAdvancement(3039, 3050, 3065, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
                 .setPrototypeFactions(F_DC)
-                .setProductionFactions(F_DC);
+                .setProductionFactions(F_DC)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

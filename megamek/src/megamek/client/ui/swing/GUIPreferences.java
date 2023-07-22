@@ -284,6 +284,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SOUND_BING_FILENAME_CHAT = "SoundBingFilenameChat";
     public static final String SOUND_BING_FILENAME_MY_TURN = "SoundBingFilenameMyTurn";
     public static final String SOUND_BING_FILENAME_OTHERS_TURN = "SoundBingFilenameOthersTurn";
+    public static final String MASTER_VOLUME = "MasterVolume";
     public static final String SOUND_MUTE_CHAT = "SoundMuteChat";
     public static final String SOUND_MUTE_MY_TURN = "SoundMuteMyTurn";
     public static final String SOUND_MUTE_OTHERS_TURN = "SoundMuteOthersTurn";
@@ -1343,6 +1344,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(SHOW_WRECKS);
     }
 
+    public int getMasterVolume() {
+        return store.getInt(MASTER_VOLUME);
+    }
+
     public String getSoundBingFilenameChat() {
         return store.getString(SOUND_BING_FILENAME_CHAT);
     }
@@ -2110,6 +2115,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setSoundBingFilenameOthersTurn(String name) {
         store.setValue(SOUND_BING_FILENAME_OTHERS_TURN, name);
+    }
+
+    public void setMasterVolume(int state) {
+        store.setValue(MASTER_VOLUME, state);
     }
 
     public void setSoundMuteChat(boolean state) {

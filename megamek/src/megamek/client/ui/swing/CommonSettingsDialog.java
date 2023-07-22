@@ -137,12 +137,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private final JCheckBox nagForNoUnJamRAC = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForUnJamRAC"));
     private final JCheckBox animateMove = new JCheckBox(Messages.getString("CommonSettingsDialog.animateMove"));
     private final JCheckBox showWrecks = new JCheckBox(Messages.getString("CommonSettingsDialog.showWrecks"));
-    private final JCheckBox soundMuteChat = new JCheckBox(Messages.getString("CommonSettingsDialog.soundMuteChat"));
-    private JTextField tfSoundMuteChatFileName;
-    private final JCheckBox soundMuteMyTurn = new JCheckBox(Messages.getString("CommonSettingsDialog.soundMuteMyTurn"));
-    private JTextField tfSoundMuteMyTurntFileName;
-    private final JCheckBox soundMuteOthersTurn = new JCheckBox(Messages.getString("CommonSettingsDialog.soundMuteOthersTurn"));
-    private JTextField tfSoundMuteOthersFileName;
     private final JCheckBox chkHighQualityGraphics = new JCheckBox(Messages.getString("CommonSettingsDialog.highQualityGraphics"));
     private final JCheckBox showWpsinTT = new JCheckBox(Messages.getString("CommonSettingsDialog.showWpsinTT"));
     private final JCheckBox showWpsLocinTT = new JCheckBox(Messages.getString("CommonSettingsDialog.showWpsLocinTT"));
@@ -156,6 +150,16 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private JTextField maxPathfinderTime;
     private final JCheckBox getFocus = new JCheckBox(Messages.getString("CommonSettingsDialog.getFocus"));
     private JSlider guiScale;
+
+    // Audio Tab
+    private final JLabel masterVolumeLabel = new JLabel(Messages.getString("CommonSettingsDialog.masterVolume"));
+    private JSlider masterVolumeSlider;
+    private final JCheckBox soundMuteChat = new JCheckBox(Messages.getString("CommonSettingsDialog.soundMuteChat"));
+    private JTextField tfSoundMuteChatFileName;
+    private final JCheckBox soundMuteMyTurn = new JCheckBox(Messages.getString("CommonSettingsDialog.soundMuteMyTurn"));
+    private JTextField tfSoundMuteMyTurnFileName;
+    private final JCheckBox soundMuteOthersTurn = new JCheckBox(Messages.getString("CommonSettingsDialog.soundMuteOthersTurn"));
+    private JTextField tfSoundMuteOthersFileName;
 
     private final JCheckBox keepGameLog = new JCheckBox(Messages.getString("CommonSettingsDialog.keepGameLog"));
     private JTextField gameLogFilename;
@@ -411,6 +415,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         JScrollPane settingsPane = new JScrollPane(getSettingsPanel());
         settingsPane.getVerticalScrollBar().setUnitIncrement(16);
+        JScrollPane audioPane = new JScrollPane(getAudioPanel());
+        audioPane.getVerticalScrollBar().setUnitIncrement(16);
         JScrollPane keyBindPane = new JScrollPane(getKeyBindPanel());
         keyBindPane.getVerticalScrollBar().setUnitIncrement(16);
         JScrollPane advancedSettingsPane = new JScrollPane(getAdvancedSettingsPanel());
@@ -429,6 +435,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         autoDisplayPane.getVerticalScrollBar().setUnitIncrement(16);
 
         panTabs.add(Messages.getString("CommonSettingsDialog.main"), settingsPane);
+        panTabs.add(Messages.getString("CommonSettingsDialog.audio"), audioPane);
         panTabs.add(Messages.getString("CommonSettingsDialog.keyBinds"), keyBindPane);
         panTabs.add(Messages.getString("CommonSettingsDialog.gameBoard"), gameBoardPane);
         panTabs.add(Messages.getString("CommonSettingsDialog.unitDisplay"), unitDisplayPane);
@@ -442,6 +449,67 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         adaptToGUIScale();
 
         return panTabs;
+    }
+
+    private JPanel getAudioPanel() {
+        List<List<Component>> comps = new ArrayList<>();
+        ArrayList<Component> row;
+
+        row = new ArrayList<>();
+        row.add(masterVolumeLabel);
+        comps.add(row);
+
+        masterVolumeSlider = new JSlider();
+        masterVolumeSlider.setMinorTickSpacing(5);
+        masterVolumeSlider.setMajorTickSpacing(25);
+        masterVolumeSlider.setMinimum(0);
+        masterVolumeSlider.setMaximum(100);
+        Hashtable<Integer, JComponent> table = new Hashtable<>();
+        table.put(0, new JLabel("0%"));
+        table.put(25, new JLabel("25%"));
+        table.put(50, new JLabel("50%"));
+        table.put(75, new JLabel("75%"));
+        table.put(100, new JLabel("100%"));
+        masterVolumeSlider.setLabelTable(table);
+        masterVolumeSlider.setPaintTicks(true);
+        masterVolumeSlider.setPaintLabels(true);
+        masterVolumeSlider.setMaximumSize(new Dimension(250, 100));
+        masterVolumeSlider.setToolTipText(Messages.getString("CommonSettingsDialog.masterVolumeTT"));
+        row = new ArrayList<>();
+        row.add(masterVolumeSlider);
+        comps.add(row);
+
+        addLineSpacer(comps);
+
+        comps.add(checkboxEntry(soundMuteChat, null));
+
+        tfSoundMuteChatFileName = new JTextField(5);
+        tfSoundMuteChatFileName.setMaximumSize(new Dimension(450, 40));
+        row = new ArrayList<>();
+        row.add(tfSoundMuteChatFileName);
+        comps.add(row);
+
+        addLineSpacer(comps);
+
+        comps.add(checkboxEntry(soundMuteMyTurn, null));
+
+        tfSoundMuteMyTurnFileName = new JTextField(5);
+        tfSoundMuteMyTurnFileName.setMaximumSize(new Dimension(450, 40));
+        row = new ArrayList<>();
+        row.add(tfSoundMuteMyTurnFileName);
+        comps.add(row);
+
+        addLineSpacer(comps);
+
+        comps.add(checkboxEntry(soundMuteOthersTurn, null));
+
+        tfSoundMuteOthersFileName = new JTextField(5);
+        tfSoundMuteOthersFileName.setMaximumSize(new Dimension(450, 40));
+        row = new ArrayList<>();
+        row.add(tfSoundMuteOthersFileName);
+        comps.add(row);
+
+        return createSettingsPanel(comps);
     }
 
     private JPanel getGameBoardPanel() {
@@ -1377,27 +1445,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         addLineSpacer(comps);
 
-        comps.add(checkboxEntry(soundMuteChat, null));
-        tfSoundMuteChatFileName = new JTextField(5);
-        tfSoundMuteChatFileName.setMaximumSize(new Dimension(450, 40));
-        row = new ArrayList<>();
-        row.add(tfSoundMuteChatFileName);
-        comps.add(row);
-        comps.add(checkboxEntry(soundMuteMyTurn, null));
-        tfSoundMuteMyTurntFileName = new JTextField(5);
-        tfSoundMuteMyTurntFileName.setMaximumSize(new Dimension(450, 40));
-        row = new ArrayList<>();
-        row.add(tfSoundMuteMyTurntFileName);
-        comps.add(row);
-        comps.add(checkboxEntry(soundMuteOthersTurn, null));
-        tfSoundMuteOthersFileName = new JTextField(5);
-        tfSoundMuteOthersFileName.setMaximumSize(new Dimension(450, 40));
-        row = new ArrayList<>();
-        row.add(tfSoundMuteOthersFileName);
-        comps.add(row);
-
-        addLineSpacer(comps);
-
         JLabel unitStartCharLabel = new JLabel(Messages.getString("CommonSettingsDialog.protoMechUnitCodes"));
         unitStartChar = new JComboBox<>();
         // Add option for "A, B, C, D..."
@@ -1492,9 +1539,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             nagForNoUnJamRAC.setSelected(GUIP.getNagForNoUnJamRAC());
             animateMove.setSelected(GUIP.getShowMoveStep());
             showWrecks.setSelected(GUIP.getShowWrecks());
-            soundMuteChat.setSelected(GUIP.getSoundMuteChat());
-            soundMuteMyTurn.setSelected(GUIP.getSoundMuteMyTurn());
-            soundMuteOthersTurn.setSelected(GUIP.getSoundMuteOthersTurn());
             tooltipDelay.setText(Integer.toString(GUIP.getTooltipDelay()));
             tooltipDismissDelay.setText(Integer.toString(GUIP.getTooltipDismissDelay()));
             tooltipDistSupression.setText(Integer.toString(GUIP.getTooltipDistSuppression()));
@@ -1517,8 +1561,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
                 }
             }
 
+            masterVolumeSlider.setValue(GUIP.getMasterVolume());
+            soundMuteChat.setSelected(GUIP.getSoundMuteChat());
+            soundMuteMyTurn.setSelected(GUIP.getSoundMuteMyTurn());
+            soundMuteOthersTurn.setSelected(GUIP.getSoundMuteOthersTurn());
             tfSoundMuteChatFileName.setText(GUIP.getSoundBingFilenameChat());
-            tfSoundMuteMyTurntFileName.setText(GUIP.getSoundBingFilenameMyTurn());
+            tfSoundMuteMyTurnFileName.setText(GUIP.getSoundBingFilenameMyTurn());
             tfSoundMuteOthersFileName.setText(GUIP.getSoundBingFilenameOthersTurn());
 
             maxPathfinderTime.setText(Integer.toString(CP.getMaxPathfinderTime()));
@@ -1834,9 +1882,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setNagForNoUnJamRAC(nagForNoUnJamRAC.isSelected());
         GUIP.setShowMoveStep(animateMove.isSelected());
         GUIP.setShowWrecks(showWrecks.isSelected());
-        GUIP.setSoundMuteChat(soundMuteChat.isSelected());
-        GUIP.setSoundMuteMyTurn(soundMuteMyTurn.isSelected());
-        GUIP.setSoundMuteOthersTurn(soundMuteOthersTurn.isSelected());
         GUIP.setShowWpsinTT(showWpsinTT.isSelected());
         GUIP.setShowWpsLocinTT(showWpsLocinTT.isSelected());
         GUIP.setshowArmorMiniVisTT(showArmorMiniVisTT.isSelected());
@@ -1928,8 +1973,13 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         GUIP.setMoveDefaultClimbMode(moveDefaultClimbMode.isSelected());
 
+        GUIP.setMasterVolume(masterVolumeSlider.getValue());
+        GUIP.setSoundMuteChat(soundMuteChat.isSelected());
+        GUIP.setSoundMuteMyTurn(soundMuteMyTurn.isSelected());
+        GUIP.setSoundMuteOthersTurn(soundMuteOthersTurn.isSelected());
+
         GUIP.setSoundBingFilenameChat(tfSoundMuteChatFileName.getText());
-        GUIP.setSoundBingFilenameMyTurn(tfSoundMuteMyTurntFileName.getText());
+        GUIP.setSoundBingFilenameMyTurn(tfSoundMuteMyTurnFileName.getText());
         GUIP.setSoundBingFilenameOthersTurn(tfSoundMuteOthersFileName.getText());
 
         try {

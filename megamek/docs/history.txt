@@ -42,7 +42,7 @@ VERSION HISTORY:
 + Fix #4574: Mortar turret ammo selection dropdown is empty
 + Fix #4543, 4547: Auto-success/fail message in to-hit display; set scroll to top when selecting new target for reduced annoyance
 + PR #4609: There is now a client setting to hide the unit tooltips in the game reports
-+ PR #4607: Alpha Strike Conversion updates
++ PR #4607, #4654: Alpha Strike Conversion updates
 + PR #4610: Implemented Gas Hog quirk (only relevant for aerospace units at the moment)
 + Issue #4527: Allow indirect LRM launches from nose cones of grounded spheroid dropships
 + Issue #4614: unit display tab strip background respects theme

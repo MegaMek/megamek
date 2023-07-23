@@ -28,65 +28,65 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
-public class SoundManager {
-    private static final SoundManager instance = new SoundManager();
-
+public class SoundManager implements AudioService {
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
-    private Sound bingChat;
-    private Sound bingMyTurn;
-    private Sound bingOthersTurn;
-
-    public static SoundManager getInstance() {
-        return instance;
-    }
-
-    protected SoundManager() {
-    }
-
-    /**
-     * Plays a sound when a chat message is entered
-     */
-    public void bingChat() {
-        if(!GUIP.getSoundMuteChat()) {
-            setVolume(bingChat);
-            bingChat.play();
-        }
-    }
-
-    /**
-     * Plays a sound when it is the user's turn during a game
-     */
-    public void bingMyTurn() {
-        if(!GUIP.getSoundMuteMyTurn()) {
-            setVolume(bingMyTurn);
-            bingMyTurn.play();
-        }
-    }
-
-    /**
-     * Plays a sound when it is another user's turn during a game
-     */
-    public void bingOthersTurn() {
-        if(!GUIP.getSoundMuteOthersTurn()) {
-            setVolume(bingOthersTurn);
-            bingOthersTurn.play();
-        }
-    }
+    private final Map<Integer, Sound> sounds = new HashMap<>();
 
     /**
      * Loads the sound files from the paths given in the client settings
      */
+    @Override
     public void loadSoundFiles()  {
+        if(!sounds.isEmpty()) {
+            sounds.clear();
+        }
+
+        Sound sound;
+
         final Clip bingClipChat = loadSoundClip(GUIP.getSoundBingFilenameChat());
-        bingChat = new Sound(bingClipChat);
+        sound = new Sound(bingClipChat);
+        sounds.put(0, sound);
 
         final Clip bingClipMyTurn = loadSoundClip(GUIP.getSoundBingFilenameMyTurn());
-        bingMyTurn = new Sound(bingClipMyTurn);
+        sound = new Sound(bingClipMyTurn);
+        sounds.put(1, sound);
 
         final Clip bingClipOthersTurn = loadSoundClip(GUIP.getSoundBingFilenameOthersTurn());
-        bingOthersTurn = new Sound(bingClipOthersTurn);
+        sound = new Sound(bingClipOthersTurn);
+        sounds.put(2, sound);
+    }
+
+    @Override
+    public void playSound(SoundType id) {
+        Sound sound = null;
+
+        switch(id)
+        {
+            case BING_CHAT:
+                if(!GUIP.getSoundMuteChat()) {
+                    sound = sounds.get(0);
+                }
+                break;
+            case BING_MY_TURN:
+                if(!GUIP.getSoundMuteMyTurn()) {
+                    sound = sounds.get(1);
+                }
+                break;
+            case BING_OTHERS_TURN:
+                if(!GUIP.getSoundMuteMyTurn()) {
+                    sound = sounds.get(2);
+                }
+                break;
+        }
+
+        if(sound != null) {
+            setVolume(sound);
+            sound.play();
+        }
     }
 
     private @Nullable Clip loadSoundClip(@Nullable String filename) {
@@ -114,7 +114,7 @@ public class SoundManager {
     }
 
     private void setVolume(final Sound sound) {
-        float volume = GUIP.getMasterVolume() / 100.0f;
+        final float volume = GUIP.getMasterVolume() / 100.0f;
 
         if(sound != null) {
             sound.setVolume(volume);

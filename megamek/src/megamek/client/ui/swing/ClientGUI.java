@@ -29,7 +29,9 @@ import megamek.client.ui.dialogs.UnitDisplayDialog;
 import megamek.client.ui.dialogs.helpDialogs.AbstractHelpDialog;
 import megamek.client.ui.dialogs.helpDialogs.MMReadMeHelpDialog;
 import megamek.client.ui.enums.DialogResult;
+import megamek.client.ui.swing.audio.AudioService;
 import megamek.client.ui.swing.audio.SoundManager;
+import megamek.client.ui.swing.audio.SoundType;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.dialog.AbstractUnitSelectorDialog;
 import megamek.client.ui.swing.dialog.MegaMekUnitSelectorDialog;
@@ -81,7 +83,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     private static final long serialVersionUID = 3913466735610109147L;
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
-    private SoundManager SM = SoundManager.getInstance();
     private static final ClientPreferences CP = PreferenceManager.getClientPreferences();
 
     private static final String FILENAME_ICON_16X16 = "megamek-icon-16x16.png";
@@ -323,6 +324,12 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      * shot.
      */
     private int pointblankEID = Entity.NONE;
+
+    /**
+     * Audio system
+     */
+    private final AudioService audioService = new SoundManager();
+
     //endregion Variable Declarations
 
     /**
@@ -342,7 +349,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         panDisplay.add(panMain, BorderLayout.CENTER);
         panDisplay.add(panSecondary, BorderLayout.SOUTH);
         add(panDisplay, BorderLayout.CENTER);
-        SM.loadSoundFiles();
+        audioService.loadSoundFiles();
     }
 
     public BoardView getBoardView() {
@@ -2131,15 +2138,15 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      * Make a "bing" sound.
      */
     public void bingChat() {
-        SM.bingChat();
+        audioService.playSound(SoundType.BING_CHAT);
     }
 
     public void bingMyTurn() {
-        SM.bingMyTurn();
+        audioService.playSound(SoundType.BING_MY_TURN);
     }
 
     public void bingOthersTurn() {
-        SM.bingOthersTurn();
+        audioService.playSound(SoundType.BING_OTHERS_TURN);
     }
 
     private void setWeaponOrderPrefs(boolean prefChange) {
@@ -2867,7 +2874,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         } else if ((e.getName().equals(GUIPreferences.SOUND_BING_FILENAME_CHAT))
                 || (e.getName().equals(GUIPreferences.SOUND_BING_FILENAME_MY_TURN))
                 || (e.getName().equals(GUIPreferences.SOUND_BING_FILENAME_OTHERS_TURN))) {
-            SM.loadSoundFiles();
+            audioService.loadSoundFiles();
         }
     }
 }

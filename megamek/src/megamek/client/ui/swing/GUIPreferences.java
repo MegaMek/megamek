@@ -654,6 +654,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(SHOW_MAPHEX_POPUP, true);
         store.setDefault(SHOW_MOVE_STEP, true);
         store.setDefault(SHOW_WRECKS, true);
+
+        store.setDefault(MASTER_VOLUME, 100);
         store.setDefault(SOUND_BING_FILENAME_CHAT, "data/sounds/call.wav");
         store.setDefault(SOUND_BING_FILENAME_MY_TURN, "data/sounds/call.wav");
         store.setDefault(SOUND_BING_FILENAME_OTHERS_TURN, "data/sounds/call.wav");

@@ -20,6 +20,10 @@ package megamek.utilities;
 
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.verifier.EntityVerifier;
+import megamek.common.verifier.TestBattleArmor;
+import megamek.common.verifier.TestEntity;
+
 import java.io.File;
 
 /**
@@ -45,8 +49,15 @@ public final class FilteredUnitListTool {
      * @return True if this unit is to be listed
      */
     private static boolean filter(final Entity entity, final MechSummary summary) {
-        return summary.getASUnitType().isBattleArmor() && entity.getMovementMode().isJumpInfantry()
-                && entity.getJumpMP() == 0;
+//        return summary.getASUnitType().isBattleArmor() && entity.getMovementMode().isJumpInfantry()
+//                && entity.getJumpMP() == 0;
+        if (!entity.isBattleArmor()) {
+            return false;
+        }
+        EntityVerifier entityVerifier = EntityVerifier.getInstance(new File(
+                "data/mechfiles/UnitVerifierOptions.xml"));
+        TestBattleArmor testBattleArmor = new TestBattleArmor((BattleArmor) entity, entityVerifier.baOption, null);
+        return !testBattleArmor.correctEntity(new StringBuffer(), entity.getTechLevel());
     }
 
     // No changes necessary after here:

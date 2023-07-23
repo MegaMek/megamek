@@ -1473,7 +1473,8 @@ public class TestMech extends TestEntity {
         // Test if the crit slots for internal structure match the required crits; Note that this intentionally
         // counts crit slots, not mounted equipment as the latter only works with a fully loaded unit in MML and
         // will make units appear invalid during loading (MML calls UnitUtil.expandUnitMounts() after loading)
-        String structureName = EquipmentType.getStructureTypeName(mech.getStructureType(), mech.isClan());
+        String structureName = EquipmentType.getStructureTypeName(mech.getStructureType(),
+                TechConstants.isClan(mech.getStructureTechLevel()));
         EquipmentType structure = EquipmentType.get(structureName);
         int requiredStructureCrits = structure.getCriticals(mech);
         if (mech.getNumberOfCriticals(structure) != requiredStructureCrits) {

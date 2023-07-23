@@ -19,9 +19,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * @author Jay Lawson (Taharqa)
@@ -671,33 +669,20 @@ public class TestBattleArmor extends TestEntity {
             return false;
         }
 
+        if ((ba.getOriginalWalkMP() < 2) && ba.hasWorkingMisc(MiscType.F_DETACHABLE_WEAPON_PACK)) {
+            buff.append("BattleArmor must not have their MP reduced to less than zero by DWPs");
+            return false;
+        }
+
         if (ba.hasWorkingMisc(MiscType.F_JUMP_BOOSTER)
-                && ((ba.getMovementMode() != EntityMovementMode.INF_JUMP) || (ba
-                        .getJumpMP() < 1))) {
-            buff.append("BattleArmor with jump boosters "
-                    + "must have jump jets with a least 1MP!");
+                && ((ba.getMovementMode() != EntityMovementMode.INF_JUMP) || (ba.getJumpMP() < 1))) {
+            buff.append("BattleArmor with jump boosters must have jump jets with a least 1MP!");
             return false;
         }
 
         if (ba.hasWorkingMisc(MiscType.F_PARTIAL_WING)
-                && ((ba.getMovementMode() != EntityMovementMode.INF_JUMP) || (ba
-                        .getJumpMP() < 1))) {
-            buff.append("BattleArmor with a partial wing "
-                    + "must have jump jets with a least 1MP!");
-            return false;
-        }
-
-        if (ba.hasWorkingMisc(MiscType.F_JUMP_BOOSTER)
-                && ba.hasWorkingMisc(MiscType.F_PARTIAL_WING)) {
-            buff.append("BattleArmor may not mount a jump booster "
-                    + "and a partial wing!");
-            return false;
-        }
-
-        if (ba.hasWorkingMisc(MiscType.F_MECHANICAL_JUMP_BOOSTER)
-                && ba.hasMyomerBooster()) {
-            buff.append("BattleArmor may not mount a mechanical jump booster "
-                    + "and a myomer booster!");
+                && ((ba.getMovementMode() != EntityMovementMode.INF_JUMP) || (ba.getJumpMP() < 1))) {
+            buff.append("BattleArmor with a partial wing must have jump jets with a least 1MP!");
             return false;
         }
 
@@ -740,7 +725,7 @@ public class TestBattleArmor extends TestEntity {
         if (!unallocated.isEmpty()) {
             buff.append("Unallocated Equipment:\n");
             for (Mounted mount : unallocated) {
-                buff.append(mount.getType().getInternalName()).append("\n");
+                buff.append("- ").append(mount.getName()).append("\n");
             }
             correct = false;
         }
@@ -1061,6 +1046,10 @@ public class TestBattleArmor extends TestEntity {
                     }
                     correct = false;
                 }
+                if (ba.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD) {
+                    buff.append("Quad BattleArmor cannot use manipulators\n");
+                    correct = false;
+                }
             }
         }
 
@@ -1371,4 +1360,76 @@ public class TestBattleArmor extends TestEntity {
         return totalWeight;
     }
 
+    @Override
+    public boolean hasIllegalEquipmentCombinations(StringBuffer buff) {
+        BattleArmor battleArmor = (BattleArmor) getEntity();
+        Map<String, Integer> equipmentCount = new HashMap<>();
+        List<String> currentErrors = new ArrayList<>();
+
+        for (Mounted mount : battleArmor.getEquipment()) {
+            equipmentCount.merge(mount.getType().getInternalName(), 1, Integer::sum);
+
+            if (mount.getType() instanceof WeaponType) {
+                if (!mount.getType().hasFlag(WeaponType.F_BA_WEAPON) && !mount.getType().hasFlag(WeaponType.F_INFANTRY)
+                        && !mount.getType().hasFlag(WeaponType.F_INFANTRY_ATTACK)) {
+                    currentErrors.add(mount.getName() + " is not a legal BattleArmor weapon");
+                }
+
+            } else if (mount.getType() instanceof MiscType) {
+
+                if (!mount.getType().hasFlag(MiscType.F_BA_EQUIPMENT)) {
+                    currentErrors.add(mount.getName() + " is not legal BattleArmor equipment");
+                }
+
+                if (mount.getType().hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
+                    if ((battleArmor.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD)
+                            || (battleArmor.getWeightClass() == EntityWeightClass.WEIGHT_ASSAULT)) {
+                        currentErrors.add("Quad and Assault BattleArmor cannot use magnetic clamps");
+                    }
+                    if (battleArmor.getMovementMode().isUMUInfantry()) {
+                        currentErrors.add("BattleArmor with UMU movement cannot use magnetic clamps");
+                    }
+                }
+
+                if (mount.getType().hasFlag(MiscType.F_PARAFOIL)) {
+                    if ((mount.getBaMountLoc() != BattleArmor.MOUNT_LOC_BODY)
+                            && (mount.getBaMountLoc() != Entity.LOC_NONE)) {
+                        currentErrors.add("A parafoil can only be mounted in the body location");
+                    }
+                }
+
+                if (mount.getType().hasFlag(MiscType.F_PARTIAL_WING) && ba.hasWorkingMisc(MiscType.F_JUMP_BOOSTER)) {
+                    currentErrors.add("BattleArmor may not mount a jump booster and partial wings!");
+                }
+
+                if (mount.getType().hasFlag(MiscType.F_MECHANICAL_JUMP_BOOSTER) && ba.hasMyomerBooster()) {
+                    currentErrors.add("BattleArmor may not mount a mechanical jump booster and a myomer booster!");
+                }
+            }
+        }
+
+        if (equipmentCount.getOrDefault(EquipmentTypeLookup.BA_PARTIAL_WING, 0) > 1) {
+            currentErrors.add("Cannot mount multiple partial wings");
+        }
+        if (equipmentCount.getOrDefault(EquipmentTypeLookup.BA_MAGNETIC_CLAMP, 0) > 1) {
+            currentErrors.add("Cannot mount multiple magnetic clamps");
+        }
+        if (equipmentCount.getOrDefault(EquipmentTypeLookup.BA_PARAFOIL, 0) > 1) {
+            currentErrors.add("Cannot mount multiple parafoils");
+        }
+        if (equipmentCount.getOrDefault(EquipmentTypeLookup.BA_MISSION_EQUIPMENT, 0) > 1) {
+            currentErrors.add("Cannot mount multiple mission equipment items");
+        }
+        if (equipmentCount.containsKey(EquipmentTypeLookup.BA_DWP)) {
+            if ((battleArmor.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT)
+                    || (battleArmor.getWeightClass() == EntityWeightClass.WEIGHT_ULTRA_LIGHT)) {
+                currentErrors.add("Cannot mount detachable weapon packs on light BattleArmor");
+            }
+        }
+
+        if (!currentErrors.isEmpty()) {
+            buff.append(String.join("\n", currentErrors)).append("\n");
+        }
+        return (!currentErrors.isEmpty()) || super.hasIllegalEquipmentCombinations(buff);
+    }
 }

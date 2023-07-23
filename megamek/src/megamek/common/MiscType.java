@@ -10249,7 +10249,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Parafoil";
-        misc.setInternalName("BAParafoil");
+        misc.setInternalName(EquipmentTypeLookup.BA_PARAFOIL);
         misc.tonnage = .035;
         misc.criticals = 1;
         misc.hittable = false;
@@ -10776,7 +10776,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Magnetic Clamps [BA]";
-        misc.setInternalName("BA-Magnetic Clamp");
+        misc.setInternalName(EquipmentTypeLookup.BA_MAGNETIC_CLAMP);
         misc.addLookupName("Magnetic Clamp");
         misc.shortName = "Magnetic Clamps";
         misc.tonnage = .030;
@@ -10985,7 +10985,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Detachable Weapon Pack";
-        misc.setInternalName("ISDetachableWeaponPack");
+        misc.setInternalName(EquipmentTypeLookup.BA_DWP);
         misc.addLookupName("CLDetachableWeaponPack");
         misc.tonnage = 0;
         misc.criticals = 1;
@@ -11035,7 +11035,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("Mission Equipment Storage (20 kg)");
         misc.addLookupName("Mission Equipment Storage (5kg)");
         misc.addLookupName("Mission Equipment Storage (200 kg)");
-        misc.setInternalName(misc.name);
+        misc.setInternalName(EquipmentTypeLookup.BA_MISSION_EQUIPMENT);
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.flags = misc.flags.or(F_VARIABLE_SIZE).or(F_BA_EQUIPMENT).or(F_BA_MISSION_EQUIPMENT)

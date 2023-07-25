@@ -6377,10 +6377,15 @@ public class GameManager implements IGameManager {
             // check for MASC failure on first step
             // also check Tanks because they can have superchargers that act
             // like MASc
-            if (firstStep && ((entity instanceof Mech) || (entity instanceof Tank))) {
-                // Not necessarily a fall, but we need to give them a new turn to plot movement with
-                // likely reduced MP.
-                fellDuringMovement = checkMASCFailure(entity, md) || checkSuperchargerFailure(entity, md);
+            if (firstStep) {
+                if (entity instanceof VTOL) {
+                    // No roll for failure, but +3 on rolls to avoid sideslip.
+                    entity.setMASCUsed(md.hasActiveMASC());
+                } else if ((entity instanceof Mech) || (entity instanceof Tank)) {
+                    // Not necessarily a fall, but we need to give them a new turn to plot movement with
+                    // likely reduced MP.
+                    fellDuringMovement = checkMASCFailure(entity, md) || checkSuperchargerFailure(entity, md);
+                }
             }
 
             if (firstStep) {

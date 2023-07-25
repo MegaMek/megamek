@@ -14,6 +14,7 @@
 package megamek.common;
 
 import megamek.common.enums.AimingMode;
+import megamek.common.enums.MPBoosters;
 import megamek.common.options.OptionsConstants;
 
 import java.util.ArrayList;
@@ -622,6 +623,17 @@ public class VTOL extends Tank implements IBomber {
     }
 
     @Override
+    public MPBoosters getMPBoosters(boolean onlyArmed) {
+        for (Mounted m : getEquipment()) {
+            if (!m.isInoperable() && (m.getType() instanceof MiscType)
+                    && m.getType().hasFlag(MiscType.F_MASC)) {
+                return MPBoosters.VTOL_JET_BOOSTER;
+            }
+        }
+        return MPBoosters.NONE;
+    }
+
+        @Override
     public int height() {
         if (isSuperHeavy()) {
             return 1;

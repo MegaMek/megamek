@@ -23,7 +23,8 @@ public enum MPBoosters {
     NONE,
     MASC_ONLY,
     SUPERCHARGER_ONLY,
-    MASC_AND_SUPERCHARGER;
+    MASC_AND_SUPERCHARGER,
+    VTOL_JET_BOOSTER;
     //endregion Enum Declarations
 
     //region Boolean Comparisons
@@ -54,10 +55,14 @@ public enum MPBoosters {
     public boolean isMASCXorSupercharger() {
         return isMASCOnly() || isSuperchargerOnly();
     }
+
+    public boolean isJetBooster() {
+        return this == VTOL_JET_BOOSTER;
+    }
     //endregion Boolean Comparisons
 
     public int calculateRunMP(int walkMP) {
-        if (isMASCXorSupercharger()) {
+        if (isMASCXorSupercharger() || isJetBooster()) {
             return (int) Math.ceil(walkMP * 2);
         } else if (isMASCAndSupercharger()) {
             return (int) Math.ceil(walkMP * 2.5);
@@ -67,7 +72,7 @@ public enum MPBoosters {
     }
 
     public int calculateSprintMP(int walkMP) {
-        if (isMASCXorSupercharger()) {
+        if (isMASCXorSupercharger() || isJetBooster()) {
             return (int) Math.ceil(walkMP * 2.5);
         } else if (isMASCAndSupercharger()) {
             return (int) Math.ceil(walkMP * 3);

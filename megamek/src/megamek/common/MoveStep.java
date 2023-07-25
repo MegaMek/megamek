@@ -2876,7 +2876,9 @@ public class MoveStep implements Serializable {
      */
     private void UseEitherMASCOrSupercharger(boolean hasMASCBeenUsed, boolean hasSuperchargerBeenUsed) {
         MPBoosters mpBoosters = entity.getArmedMPBoosters();
-        if (!hasMASCBeenUsed && !hasSuperchargerBeenUsed) {
+        if (mpBoosters.isJetBooster() && !hasMASCBeenUsed) {
+            setUsingMASC(true);
+        } else if (!hasMASCBeenUsed && !hasSuperchargerBeenUsed) {
             int scTarget = mpBoosters.hasSupercharger() ? entity.getSuperchargerTarget() : 2000;
             int mascTarget = mpBoosters.hasMASC() ? entity.getMASCTarget() : 2000;
             if (mascTarget < scTarget) {

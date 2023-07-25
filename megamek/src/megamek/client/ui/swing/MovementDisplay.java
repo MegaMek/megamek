@@ -1438,7 +1438,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             }
         }
 
-        if (GUIP.getNagForMASC() && cmd.hasActiveMASC()) {
+        if (GUIP.getNagForMASC() && cmd.hasActiveMASC() && !(ce() instanceof VTOL)) {
             // pop up are you sure dialog
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
                     Messages.getString("MovementDisplay.areYouSure"),

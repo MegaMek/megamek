@@ -11348,7 +11348,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public PilotingRollData checkSideSlip(EntityMovementType moveType,
                                           Hex prevHex, EntityMovementType overallMoveType,
                                           MoveStep prevStep, int prevFacing, int curFacing, Coords lastPos,
-                                          Coords curPos, int distance) {
+                                          Coords curPos, int distance, boolean usingJetBooster) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         if ((moveType != EntityMovementType.MOVE_JUMP)
@@ -11365,8 +11365,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if (isUsingManAce()) {
                 roll.addModifier(-1, "Maneuvering Ace");
             }
-            if ((getMovementMode() == EntityMovementMode.VTOL) && isMASCUsed()
-                    && hasWorkingMisc(MiscType.F_JET_BOOSTER)) {
+            if (usingJetBooster) {
                 roll.addModifier(3, "used VTOL Jet Booster");
             }
         } else if (moveType != EntityMovementType.MOVE_JUMP

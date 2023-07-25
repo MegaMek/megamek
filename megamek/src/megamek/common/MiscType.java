@@ -2180,6 +2180,7 @@ public class MiscType extends EquipmentType {
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_PARTIAL_WING).or(F_MECH_EQUIPMENT);
         misc.rulesRefs = "292, TO";
+        misc.omniFixedOnly = true;
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_F)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
@@ -2203,6 +2204,7 @@ public class MiscType extends EquipmentType {
         misc.spreadable = true;
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_PARTIAL_WING).or(F_MECH_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.rulesRefs = "292, TO";
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN).setIntroLevel(false).setUnofficial(false)

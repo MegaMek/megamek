@@ -855,6 +855,8 @@ public class TestMech extends TestEntity {
         boolean hasTC = false;
         boolean hasMASC = false;
         boolean hasAES = false;
+        boolean hasMechJumpBooster = false;
+        boolean hasPartialWing = false;
         EquipmentType advancedMyomer = null;
 
         //First we find all the equipment that is required or incompatible with other equipment,
@@ -873,6 +875,8 @@ public class TestMech extends TestEntity {
                     || m.getType().hasFlag(MiscType.F_SCM)) {
                 advancedMyomer = m.getType();
             }
+            hasMechJumpBooster |= m.is(EquipmentTypeLookup.MECH_JUMP_BOOSTER);
+            hasPartialWing |= m.getType().hasFlag(MiscType.F_PARTIAL_WING);
         }
 
         for (Mounted m : getEntity().getMisc()) {
@@ -1479,6 +1483,11 @@ public class TestMech extends TestEntity {
         int requiredStructureCrits = structure.getCriticals(mech);
         if (mech.getNumberOfCriticals(structure) != requiredStructureCrits) {
             buff.append("The internal structure of this mek is not using the correct number of crit slots\n");
+            illegal = true;
+        }
+
+        if (hasPartialWing && hasMechJumpBooster) {
+            buff.append("Partial wings cannot be combined with any type of jump boosters\n");
             illegal = true;
         }
 

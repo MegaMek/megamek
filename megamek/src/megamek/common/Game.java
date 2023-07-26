@@ -89,7 +89,7 @@ public class Game extends AbstractGame implements Serializable {
     /**
      * The current turn list
      */
-    private Vector<GameTurn> turnVector = new Vector<>();
+    private final Vector<GameTurn> turnVector = new Vector<>();
     private int turnIndex = 0;
 
     /**
@@ -554,10 +554,12 @@ public class Game extends AbstractGame implements Serializable {
      */
     @Override
     public @Nullable GameTurn getTurn() {
-        if ((turnIndex < 0) || (turnIndex >= turnVector.size())) {
-            return null;
+        synchronized(turnVector) {
+            if ((turnIndex < 0) || (turnIndex >= turnVector.size())) {
+                return null;
+            }
+            return turnVector.elementAt(turnIndex);
         }
-        return turnVector.elementAt(turnIndex);
     }
 
     /**
@@ -565,10 +567,12 @@ public class Game extends AbstractGame implements Serializable {
      * turns to play
      */
     public @Nullable GameTurn getTurnForPlayer(int pn) {
-        for (int i = turnIndex; i < turnVector.size(); i++) {
-            GameTurn gt = turnVector.get(i);
-            if (gt.isValid(pn, this)) {
-                return gt;
+        synchronized (turnVector) {
+            for (int i = turnIndex; i < turnVector.size(); i++) {
+                GameTurn gt = turnVector.get(i);
+                if (gt.isValid(pn, this)) {
+                    return gt;
+                }
             }
         }
         return null;
@@ -578,8 +582,10 @@ public class Game extends AbstractGame implements Serializable {
      * Changes to the next turn, returning it.
      */
     public GameTurn changeToNextTurn() {
-        turnIndex++;
-        return getTurn();
+        synchronized (turnVector) {
+            turnIndex++;
+            return getTurn();
+        }
     }
 
     /**
@@ -607,10 +613,12 @@ public class Game extends AbstractGame implements Serializable {
      * Inserts a turn after the specific index
      */
     public void insertTurnAfter(GameTurn turn, int index) {
-        if ((index + 1) >= turnVector.size()) {
-            turnVector.add(turn);
-        } else {
-            turnVector.insertElementAt(turn, index + 1);
+        synchronized (turnVector) {
+            if ((index + 1) >= turnVector.size()) {
+                turnVector.add(turn);
+            } else {
+                turnVector.insertElementAt(turn, index + 1);
+            }
         }
     }
 
@@ -618,10 +626,12 @@ public class Game extends AbstractGame implements Serializable {
      * Swaps the turn at index 1 with the turn at index 2.
      */
     public void swapTurnOrder(int index1, int index2) {
-        GameTurn turn1 = turnVector.get(index1);
-        GameTurn turn2 = turnVector.get(index2);
-        turnVector.set(index2, turn1);
-        turnVector.set(index1, turn2);
+        synchronized (turnVector) {
+            GameTurn turn1 = turnVector.get(index1);
+            GameTurn turn2 = turnVector.get(index2);
+            turnVector.set(index2, turn1);
+            turnVector.set(index1, turn2);
+        }
     }
 
     /**
@@ -662,8 +672,10 @@ public class Game extends AbstractGame implements Serializable {
      * Sets the current turn vector
      */
     public void setTurnVector(List<GameTurn> turnVector) {
-        this.turnVector.clear();
-        this.turnVector.addAll(turnVector);
+        synchronized (turnVector) {
+            this.turnVector.clear();
+            this.turnVector.addAll(turnVector);
+        }
     }
 
     @Override
@@ -2022,11 +2034,13 @@ public class Game extends AbstractGame implements Serializable {
             throw new Exception("Cannot remove first turn for an entity when it is the movement phase");
         }
 
-        for (int i = turnIndex; i < turnVector.size(); i++) {
-            GameTurn turn = turnVector.elementAt(i);
-            if (turn.isValidEntity(entity, this)) {
-                turnVector.removeElementAt(i);
-                return turn;
+        synchronized (turnVector) {
+            for (int i = turnIndex; i < turnVector.size(); i++) {
+                GameTurn turn = turnVector.elementAt(i);
+                if (turn.isValidEntity(entity, this)) {
+                    turnVector.removeElementAt(i);
+                    return turn;
+                }
             }
         }
         return null;
@@ -2050,14 +2064,16 @@ public class Game extends AbstractGame implements Serializable {
                     OptionsConstants.INIT_INF_PROTO_MOVE_MULTI)) != 1) {
                 // exception, if the _next_ turn is an infantry turn, remove that
                 // contrived, but may come up e.g. one inf accidentally kills another
-                if (hasMoreTurns()) {
-                    GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
-                    if (nextTurn instanceof GameTurn.EntityClassTurn) {
-                        GameTurn.EntityClassTurn ect =
-                                (GameTurn.EntityClassTurn) nextTurn;
-                        if (ect.isValidClass(GameTurn.CLASS_INFANTRY)
-                            && !ect.isValidClass(~GameTurn.CLASS_INFANTRY)) {
-                            turnVector.removeElementAt(turnIndex + 1);
+                synchronized(turnVector) {
+                    if (hasMoreTurns()) {
+                        GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
+                        if (nextTurn instanceof GameTurn.EntityClassTurn) {
+                            GameTurn.EntityClassTurn ect =
+                                    (GameTurn.EntityClassTurn) nextTurn;
+                            if (ect.isValidClass(GameTurn.CLASS_INFANTRY)
+                                    && !ect.isValidClass(~GameTurn.CLASS_INFANTRY)) {
+                                turnVector.removeElementAt(turnIndex + 1);
+                            }
                         }
                     }
                 }
@@ -2071,14 +2087,16 @@ public class Game extends AbstractGame implements Serializable {
                     .intOption(OptionsConstants.INIT_INF_PROTO_MOVE_MULTI)) != 1) {
                 // exception, if the _next_ turn is an ProtoMek turn, remove that
                 // contrived, but may come up e.g. one inf accidentally kills another
-                if (hasMoreTurns()) {
-                    GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
-                    if (nextTurn instanceof GameTurn.EntityClassTurn) {
-                        GameTurn.EntityClassTurn ect =
-                                (GameTurn.EntityClassTurn) nextTurn;
-                        if (ect.isValidClass(GameTurn.CLASS_PROTOMECH)
-                            && !ect.isValidClass(~GameTurn.CLASS_PROTOMECH)) {
-                            turnVector.removeElementAt(turnIndex + 1);
+                synchronized (turnVector) {
+                    if (hasMoreTurns()) {
+                        GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
+                        if (nextTurn instanceof GameTurn.EntityClassTurn) {
+                            GameTurn.EntityClassTurn ect =
+                                    (GameTurn.EntityClassTurn) nextTurn;
+                            if (ect.isValidClass(GameTurn.CLASS_PROTOMECH)
+                                    && !ect.isValidClass(~GameTurn.CLASS_PROTOMECH)) {
+                                turnVector.removeElementAt(turnIndex + 1);
+                            }
                         }
                     }
                 }
@@ -2093,14 +2111,16 @@ public class Game extends AbstractGame implements Serializable {
                     .intOption(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT_NUMBER)) != 1) {
                 // exception, if the _next_ turn is a tank turn, remove that
                 // contrived, but may come up e.g. one tank accidentally kills another
-                if (hasMoreTurns()) {
-                    GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
-                    if (nextTurn instanceof GameTurn.EntityClassTurn) {
-                        GameTurn.EntityClassTurn ect =
-                                (GameTurn.EntityClassTurn) nextTurn;
-                        if (ect.isValidClass(GameTurn.CLASS_TANK)
-                            && !ect.isValidClass(~GameTurn.CLASS_TANK)) {
-                            turnVector.removeElementAt(turnIndex + 1);
+                synchronized (turnVector) {
+                    if (hasMoreTurns()) {
+                        GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
+                        if (nextTurn instanceof GameTurn.EntityClassTurn) {
+                            GameTurn.EntityClassTurn ect =
+                                    (GameTurn.EntityClassTurn) nextTurn;
+                            if (ect.isValidClass(GameTurn.CLASS_TANK)
+                                    && !ect.isValidClass(~GameTurn.CLASS_TANK)) {
+                                turnVector.removeElementAt(turnIndex + 1);
+                            }
                         }
                     }
                 }
@@ -2115,14 +2135,16 @@ public class Game extends AbstractGame implements Serializable {
                     .intOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT_NUMBER)) != 1) {
                 // exception, if the _next_ turn is a mech turn, remove that
                 // contrived, but may come up e.g. one mech accidentally kills another
-                if (hasMoreTurns()) {
-                    GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
-                    if (nextTurn instanceof GameTurn.EntityClassTurn) {
-                        GameTurn.EntityClassTurn ect =
-                                (GameTurn.EntityClassTurn) nextTurn;
-                        if (ect.isValidClass(GameTurn.CLASS_MECH)
-                            && !ect.isValidClass(~GameTurn.CLASS_MECH)) {
-                            turnVector.removeElementAt(turnIndex + 1);
+                synchronized (turnVector) {
+                    if (hasMoreTurns()) {
+                        GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
+                        if (nextTurn instanceof GameTurn.EntityClassTurn) {
+                            GameTurn.EntityClassTurn ect =
+                                    (GameTurn.EntityClassTurn) nextTurn;
+                            if (ect.isValidClass(GameTurn.CLASS_MECH)
+                                    && !ect.isValidClass(~GameTurn.CLASS_MECH)) {
+                                turnVector.removeElementAt(turnIndex + 1);
+                            }
                         }
                     }
                 }
@@ -2143,12 +2165,14 @@ public class Game extends AbstractGame implements Serializable {
             useInfantryMoveLaterCheck = false;
         }
 
-        for (int i = turnVector.size() - 1; i >= turnIndex; i--) {
-            GameTurn turn = turnVector.elementAt(i);
+        synchronized (turnVector) {
+            for (int i = turnVector.size() - 1; i >= turnIndex; i--) {
+                GameTurn turn = turnVector.elementAt(i);
 
-            if (turn.isValidEntity(entity, this, useInfantryMoveLaterCheck)) {
-                turnVector.removeElementAt(i);
-                break;
+                if (turn.isValidEntity(entity, this, useInfantryMoveLaterCheck)) {
+                    turnVector.removeElementAt(i);
+                    break;
+                }
             }
         }
     }
@@ -2163,11 +2187,13 @@ public class Game extends AbstractGame implements Serializable {
     public int removeSpecificEntityTurnsFor(Entity entity) {
         List<GameTurn> turnsToRemove = new ArrayList<>();
 
-        for (GameTurn turn : turnVector) {
-            if (turn instanceof SpecificEntityTurn) {
-                int turnOwner = ((SpecificEntityTurn) turn).getEntityNum();
-                if (entity.getId() == turnOwner) {
-                    turnsToRemove.add(turn);
+        synchronized (turnVector) {
+            for (GameTurn turn : turnVector) {
+                if (turn instanceof SpecificEntityTurn) {
+                    int turnOwner = ((SpecificEntityTurn) turn).getEntityNum();
+                    if (entity.getId() == turnOwner) {
+                        turnsToRemove.add(turn);
+                    }
                 }
             }
         }

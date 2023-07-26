@@ -938,6 +938,7 @@ public class MoveStep implements Serializable {
                                 mpUsed += 1;
                             }
                         }
+                        setHasJustStood(true);
                     } else {
                         for (int location = Mech.LOC_RARM; location <= Mech.LOC_LLEG; location++) {
                             if (entity.isLocationBad(location)) {

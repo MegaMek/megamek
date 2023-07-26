@@ -40,10 +40,21 @@ import java.util.*;
 public final class ASConverter {
 
     //TODO: LG, SLG, VLG support vehicles, MS
-    //TODO: pilot skill not working
 
+    /**
+     *  Performs Alpha Strike conversion for the MechSummaryCache (without trying to get a clean unit first,
+     *  without storing a conversion report and without considering pilot skill).
+     */
     public static AlphaStrikeElement convertForMechCache(Entity entity) {
         return performConversion(entity, false, new DummyCalculationReport(), entity.getCrew());
+    }
+
+    /**
+     *  Performs Alpha Strike conversion for use in MML (without trying to get a clean unit first,
+     *  without considering pilot skill but with storing a conversion report).
+     */
+    public static AlphaStrikeElement convertInMML(Entity entity, CalculationReport report) {
+        return performConversion(entity, false, report, entity.getCrew());
     }
 
     public static AlphaStrikeElement convert(Entity entity, CalculationReport conversionReport) {

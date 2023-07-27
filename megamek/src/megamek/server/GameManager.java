@@ -7416,7 +7416,7 @@ public class GameManager implements IGameManager {
                     && step.getClearance() > 0)) {
                 rollTarget = entity.checkSideSlip(moveType, prevHex,
                         overallMoveType, prevStep, prevFacing, curFacing,
-                        lastPos, curPos, distance, ((entity instanceof VTOL) && md.hasActiveMASC()));
+                        lastPos, curPos, distance, md.hasActiveMASC());
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     int moF = doSkillCheckWhileMoving(entity, lastElevation,
                             lastPos, curPos, rollTarget, false);

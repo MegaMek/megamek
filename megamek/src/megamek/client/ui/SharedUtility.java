@@ -332,7 +332,7 @@ public class SharedUtility {
                             && step.getClearance() > 0)) {
                 rollTarget = entity.checkSideSlip(moveType, prevHex,
                         overallMoveType, prevStep, prevFacing, curFacing,
-                        lastPos, curPos, distance, ((entity instanceof VTOL) && md.hasActiveMASC()));
+                        lastPos, curPos, distance, md.hasActiveMASC());
                 checkNag(rollTarget, nagReport, psrList);
             }
 

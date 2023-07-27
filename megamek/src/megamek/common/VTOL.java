@@ -633,6 +633,19 @@ public class VTOL extends Tank implements IBomber {
         return MPBoosters.NONE;
     }
 
+    @Override
+    public PilotingRollData checkSideSlip(EntityMovementType moveType,
+                                          Hex prevHex, EntityMovementType overallMoveType,
+                                          MoveStep prevStep, int prevFacing, int curFacing, Coords lastPos,
+                                          Coords curPos, int distance, boolean speedBooster) {
+        PilotingRollData roll = super.checkSideSlip(moveType, prevHex, overallMoveType, prevStep, prevFacing,
+                curFacing, lastPos, curPos, distance, speedBooster);
+        if (speedBooster) {
+            roll.addModifier(3, "used VTOL Jet Booster");
+        }
+        return roll;
+    }
+
         @Override
     public int height() {
         if (isSuperHeavy()) {

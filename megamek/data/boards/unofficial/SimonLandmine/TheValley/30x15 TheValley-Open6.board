@@ -1,8 +1,8 @@
 size 30 15
 tag "GrassTheme (Auto)"
 tag "Roads (Auto)"
-tag "LightForest (Auto)"
 tag "LowHills (Auto)"
+tag "LightForest (Auto)"
 tag "Woods (Auto)"
 hex 0101 3 "" "grass"
 hex 0201 3 "" "grass"

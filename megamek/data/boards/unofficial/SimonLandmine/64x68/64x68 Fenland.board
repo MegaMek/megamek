@@ -1,11 +1,11 @@
 size 64 68
 tag "Foliage (Auto)"
-tag "GrassTheme (Auto)"
 tag "Water (Auto)"
+tag "GrassTheme (Auto)"
 tag "Roads (Auto)"
 tag "Fields (Auto)"
-tag "LightForest (Auto)"
 tag "LowHills (Auto)"
+tag "LightForest (Auto)"
 tag "Woods (Auto)"
 tag "MediumUrban (Auto)"
 hex 0101 0 "planted_fields:5" "grass"

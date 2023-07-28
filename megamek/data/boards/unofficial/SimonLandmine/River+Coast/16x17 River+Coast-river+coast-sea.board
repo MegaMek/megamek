@@ -1,6 +1,6 @@
 size 16 17
-tag "GrassTheme (Auto)"
 tag "Water (Auto)"
+tag "GrassTheme (Auto)"
 tag "Ocean (Auto)"
 tag "Flat (Auto)"
 hex 0101 0 "water:2" "Grass"

@@ -1,36 +1,35 @@
-Version:1.0
+Version:1.3
 Black Hawk-KU
 BHKU-O (Albert)
 mul id:346
-
 Config:Biped Omnimech
-TechBase:Mixed (IS Chassis)
-Era:3070
-Rules Level:4
+techbase:Mixed (IS Chassis)
+era:3070
 source:Jihad Turning Points: Luthien
+rules level:3
 
-Mass:60
-Engine:300 XL Engine(IS)
-Structure:IS Standard
-Myomer:Standard
+mass:60
+engine:300 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:16 Double
-Base Chassis Heat Sinks:12
-Walk MP:5
-Jump MP:5
+heat sinks:16 IS Double
+base chassis heat sinks:12
+walk mp:5
+jump mp:5
 
-Armor:Standard(Inner Sphere)
-LA Armor:20
-RA Armor:20
-LT Armor:20
-RT Armor:20
-CT Armor:30
-HD Armor:9
-LL Armor:28
-RL Armor:28
-RTL Armor:8
-RTR Armor:8
-RTC Armor:9
+armor:Standard(Inner Sphere)
+LA armor:20
+RA armor:20
+LT armor:20
+RT armor:20
+CT armor:30
+HD armor:9
+LL armor:28
+RL armor:28
+RTL armor:8
+RTR armor:8
+RTC armor:9
 
 Weapons:6
 ER Medium Laser, Left Arm
@@ -38,18 +37,18 @@ ER Medium Laser, Left Arm
 ER Medium Laser, Right Arm
 ER Medium Laser, Right Arm
 ER PPC, Left Torso
-C3 Master with TAG, Right Torso
+C3 Computer (Master), Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-CLERMediumLaser (omnipod)
-CLERMediumLaser (omnipod)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -59,8 +58,8 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERMediumLaser (omnipod)
-CLERMediumLaser (omnipod)
+CLERMediumLaser (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -75,11 +74,11 @@ Fusion Engine
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-CLERPPC (omnipod)
-CLERPPC (omnipod)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+CLERPPC (OMNIPOD)
+CLERPPC (OMNIPOD)
 -Empty-
 
 Right Torso:
@@ -89,11 +88,11 @@ Fusion Engine
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISC3MasterUnit (omnipod)
-ISC3MasterUnit (omnipod)
-ISC3MasterUnit (omnipod)
-ISC3MasterUnit (omnipod)
-ISC3MasterUnit (omnipod)
+ISC3MasterUnit (OMNIPOD)
+ISC3MasterUnit (OMNIPOD)
+ISC3MasterUnit (OMNIPOD)
+ISC3MasterUnit (OMNIPOD)
+ISC3MasterUnit (OMNIPOD)
 -Empty-
 
 Center Torso:

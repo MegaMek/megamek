@@ -1,0 +1,166 @@
+Version:1.3
+Albatross
+C 'Sooty Albatross' 
+mul id:9508
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3148
+source:Shrapnel #13
+rules level:2
+
+mass:95
+engine:380 XL Engine(IS)
+structure:IS Composite
+myomer:Standard
+cockpit:Standard Cockpit
+gyro:XL Gyro
+
+heat sinks:15 IS Double
+walk mp:4
+jump mp:4
+
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:32
+RA armor:32
+LT armor:28
+RT armor:28
+CT armor:48
+HD armor:9
+LL armor:40
+RL armor:40
+RTL armor:12
+RTR armor:12
+RTC armor:12
+
+Weapons:6
+ER Large Pulse Laser, Right Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+Plasma Cannon, Left Torso
+Gauss Rifle, Left Arm
+ATM 9, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLERLargePulseLaser
+CLERLargePulseLaser
+CLERLargePulseLaser
+ISERMediumLaser
+ISERMediumLaser
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLPlasmaCannon
+Clan Ammo ATM-9 HE
+Clan Ammo ATM-9
+Clan Ammo ATM-9 ER
+CLPlasmaCannonAmmo
+Clan Gauss Ammo
+Clan Gauss Ammo
+ISCASEII
+IS Ferro-Fibrous
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLATM9
+CLATM9
+CLATM9
+CLATM9
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Albatross, designed by the Free Worlds League in 3053 in anticipation of a potential conflict with the advancing Clans, is a versatile workhorse 'Mech that does not specialize in one specific role.
+capabilities:Weighing 95 tons, it is one of House Marik's heaviest 'Mechs and utilizes a GM 380 XL engine, enabling speeds of up to 65 kph. To prioritize weapon capacity, the designers opted against incorporating an endo steel chassis or ferro-fibrous armor. The Albatross boasts impressive weaponry designed for various engagement ranges. It features an LRM rack and extended-range lasers for potent long-range firepower, while a combination of an autocannon and lasers effectively engages foes at closer distances. For opponents closing in, MechWarriors can employ the SRMs. With thirteen tons of armor, the Albatross offers enhanced battlefield survivability, though it is prone to overheating. Additionally, the 'Mech incorporates CASE technology for safeguarding against ammunition explosions.
+deployment:No information on Variant
+history:Following its commissioning, the first Albatross 'Mech rolled off the production line in 3053, becoming the signature 'Mech of the Knights of the Inner Sphere rather than being distributed among regular line units. As Operation Guerrero and the counterassault against the Clans unfolded, the Albatross saw increased deployment. While primarily limited to prestigious Free Worlds League Military (FWLM) units, a small number were exported to close League allies. Initially, the Albatross symbolized a bright future as the distinguished BattleMech of the noble Knights of the Inner Sphere. However, with the fall of the Knights and their ideals early in the Jihad, the Albatross became associated with the shame and fracture of the Free Worlds League rather than a symbol of renewal. Despite this tarnished reputation, the Albatross remained a formidable presence on the battlefield, with Irian BattleMechs producing various variants for the Army of the Marik-Stewart Commonwealth (AMSC), although export sales were limited. The Albatross demonstrated mobility and power, albeit with a reputation for being temperamental. Its solid performance during the doomed AMSC campaign against Operation Hammerfall helped restore some of its standing just as the re-formed Free Worlds League had to relinquish the factory to the emerging Wolf Empire.
+manufacturer:Irian BattleMechs Unlimited
+primaryfactory:Washburn
+systemmanufacturer:CHASSIS:Albat-75 Composite
+systemmanufacturer:ENGINE:GM 380 XL
+systemmanufacturer:ARMOR:Jolassa 328 Ferro-Fibrous with CASE II
+systemmanufacturer:COMMUNICATIONS:Irian Technologies HMR-35s
+systemmanufacturer:TARGETING:Omicron TrackerKeeper
+

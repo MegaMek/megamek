@@ -105,8 +105,7 @@
 	 Derrick Turk <derrickturk@users.sourceforge.net>
 	 Graysho
 	 kuronekochomusuke
-
-	 
+	 PakFront
 
   XML Parser:
      Tom Gibara (original URL: http://gibaradunn.srac.org/tiny/index.shtml)
@@ -139,6 +138,7 @@
 	 Ashnod
 	 Pokefan548
 	 MadCartographer
+	 Jacob "Lanceman" Wall
   
   German Readme:
      Black Ice <WKA_Online@yahoo.de>
@@ -152,9 +152,9 @@
      Taerkar
      coralbeach
      Robert Heath <blasty_mcnasty@users.sourceforge.net>
-     Jacob Wall <lancemanprime@users.sourceforge.net>
      Alexander Schölling <schoelling@users.sourceforge.net>
      fastsammy <fastsammy@users.sourceforge.net>
+     Jacob "Lanceman" Wall
      Sni77 <sni77@users.sourceforge.net>
      Jellico
      Brock Peterman <bh-21@users.sourceforge.net>

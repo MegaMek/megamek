@@ -295,6 +295,104 @@ public final class UnitToolTip {
         return new StringBuilder().append(result);
     }
 
+    private static StringBuilder sysStabilizers(Tank tank, int loc, String locAbbr) {
+        String result = "";
+        int total = 1;
+        int hits = tank.isStabiliserHit(loc) ? 1 :0;
+        int good = total - hits;
+        boolean bad = hits > 0;
+
+        locAbbr = "&nbsp;&nbsp;" + locAbbr + ":&nbsp;";
+        result = guiScaledFontHTML(TT_SMALLFONT_DELTA) + locAbbr + "</FONT>";
+        result += systemBar(good, hits, bad);
+
+        return new StringBuilder().append(result);
+    }
+
+    private static StringBuilder sysTurretLocked(Tank tank, int loc, String locAbbr) {
+        String result = "";
+        int total = 1;
+        int hits = tank.isTurretLocked(loc) ? 1 :0;
+        int good = total - hits;
+        boolean bad = hits > 0;
+
+        locAbbr = "&nbsp;&nbsp;" + locAbbr + ":&nbsp;";
+        result = guiScaledFontHTML(TT_SMALLFONT_DELTA) + locAbbr + "</FONT>";
+        result += systemBar(good, hits, bad);
+
+        return new StringBuilder().append(result);
+    }
+
+    private static StringBuilder sysEngineHit(Tank tank, String locAbbr) {
+        String result = "";
+        int total = 1;
+        int hits = tank.isEngineHit() ? 1 :0;
+        int good = total - hits;
+        boolean bad = hits > 0;
+
+        locAbbr = "&nbsp;&nbsp;" + locAbbr + ":&nbsp;";
+        result = guiScaledFontHTML(TT_SMALLFONT_DELTA) + locAbbr + "</FONT>";
+        result += systemBar(good, hits, bad);
+
+        return new StringBuilder().append(result);
+    }
+
+    private static StringBuilder sysSensorHit(Tank tank, String locAbbr) {
+        String result = "";
+        int total = 4;
+        int hits = tank.getSensorHits();
+        int good = total - hits;
+        boolean bad = hits > 0;
+
+        locAbbr = "&nbsp;&nbsp;" + locAbbr + ":&nbsp;";
+        result = guiScaledFontHTML(TT_SMALLFONT_DELTA) + locAbbr + "</FONT>";
+        result += systemBar(good, hits, bad);
+
+        return new StringBuilder().append(result);
+    }
+
+    private static StringBuilder sysMinorMovementDamage(Tank tank, String locAbbr) {
+        String result = "";
+        int total = 1;
+        int hits = tank.hasMinorMovementDamage() ? 1 :0;
+        int good = total - hits;
+        boolean bad = hits > 0;
+
+        locAbbr = "&nbsp;&nbsp;" + locAbbr + ":&nbsp;";
+        result = guiScaledFontHTML(TT_SMALLFONT_DELTA) + locAbbr + "</FONT>";
+        result += systemBar(good, hits, bad);
+
+        return new StringBuilder().append(result);
+    }
+
+    private static StringBuilder sysModerateMovementDamage(Tank tank, String locAbbr) {
+        String result = "";
+        int total = 1;
+        int hits = tank.hasModerateMovementDamage() ? 1 :0;
+        int good = total - hits;
+        boolean bad = hits > 0;
+
+        locAbbr = "&nbsp;&nbsp;" + locAbbr + ":&nbsp;";
+        result = guiScaledFontHTML(TT_SMALLFONT_DELTA) + locAbbr + "</FONT>";
+        result += systemBar(good, hits, bad);
+
+        return new StringBuilder().append(result);
+    }
+
+    private static StringBuilder sysHeavyMovementDamage(Tank tank, String locAbbr) {
+        String result = "";
+        int total = 1;
+        int hits = tank.hasHeavyMovementDamage() ? 1 :0;
+        int good = total - hits;
+        boolean bad = hits > 0;
+
+        locAbbr = "&nbsp;&nbsp;" + locAbbr + ":&nbsp;";
+        result = guiScaledFontHTML(TT_SMALLFONT_DELTA) + locAbbr + "</FONT>";
+        result += systemBar(good, hits, bad);
+
+        return new StringBuilder().append(result);
+    }
+
     /** Returns the graphical Armor representation. */
     private static StringBuilder addArmorMiniVisToTT(Entity entity) {
         if (!GUIP.getshowArmorMiniVisTT()) {
@@ -311,6 +409,24 @@ public final class UnitToolTip {
         String col3 = "";
         String row = "";
         String rows = "";
+
+        String msg_abbr_sensors = Messages.getString("BoardView1.Tooltip.AbbreviationSensors");
+        String msg_abbr_lifesupport = Messages.getString("BoardView1.Tooltip.AbbreviationLifeSupport");
+        String msg_abbr_engine = Messages.getString("BoardView1.Tooltip.AbbreviationEngine");
+        String msg_abbr_gyro = Messages.getString("BoardView1.Tooltip.AbbreviationGyro");
+        String msg_abbr_shoulder = Messages.getString("BoardView1.Tooltip.AbbreviationShoulder");
+        String msg_abbr_upperarm = Messages.getString("BoardView1.Tooltip.AbbreviationUpperArm");
+        String msg_abbr_lowerarm = Messages.getString("BoardView1.Tooltip.AbbreviationLowerArm");
+        String msg_abbr_hand = Messages.getString("BoardView1.Tooltip.AbbreviationHand");
+        String msg_abbr_hip = Messages.getString("BoardView1.Tooltip.AbbreviationHip");
+        String msg_abbr_upperleg = Messages.getString("BoardView1.Tooltip.AbbreviationUpperLeg");
+        String msg_abbr_lowerleg = Messages.getString("BoardView1.Tooltip.AbbreviationLowerLeg");
+        String msg_abbr_foot = Messages.getString("BoardView1.Tooltip.AbbreviationLowerFoot");
+        String msg_abbr_stabilizers = Messages.getString("BoardView1.Tooltip.AbbreviationStabilizers");
+        String msg_abbr_turretlocked = Messages.getString("BoardView1.Tooltip.AbbreviationTurretLocked");
+        String msg_abbr_minormovementdamage = Messages.getString("BoardView1.Tooltip.AbbreviationMinorMovementDamage");
+        String msg_abbr_moderatemovementdamage = Messages.getString("BoardView1.Tooltip.AbbreviationModerateMovementDamage");
+        String msg_abbr_heavymovementdamage = Messages.getString("BoardView1.Tooltip.AbbreviationHeavyMovementDamage");
 
         for (int loc = 0 ; loc < entity.locations(); loc++) {
             // do not show locations that do not support/have armor/internals like HULL on Aero
@@ -346,55 +462,110 @@ public final class UnitToolTip {
                 col2 += intactLocBar(entity.getOArmor(loc), entity.getArmor(loc), armorChar).toString();
             }
 
-            String msg_abbr_sensors = Messages.getString("BoardView1.Tooltip.AbbreviationSensors");
-            String msg_abbr_lifesupport = Messages.getString("BoardView1.Tooltip.AbbreviationLifeSupport");
-            String msg_abbr_engine = Messages.getString("BoardView1.Tooltip.AbbreviationEngine");
-            String msg_abbr_gyro = Messages.getString("BoardView1.Tooltip.AbbreviationGyro");
-            String msg_abbr_shoulder = Messages.getString("BoardView1.Tooltip.AbbreviationShoulder");
-            String msg_abbr_upperarm = Messages.getString("BoardView1.Tooltip.AbbreviationUpperArm");
-            String msg_abbr_lowerarm = Messages.getString("BoardView1.Tooltip.AbbreviationLowerArm");
-            String msg_abbr_hand = Messages.getString("BoardView1.Tooltip.AbbreviationHand");
-            String msg_abbr_hip = Messages.getString("BoardView1.Tooltip.AbbreviationHip");
-            String msg_abbr_upperleg = Messages.getString("BoardView1.Tooltip.AbbreviationUpperLeg");
-            String msg_abbr_lowerleg = Messages.getString("BoardView1.Tooltip.AbbreviationLowerLeg");
-            String msg_abbr_foot = Messages.getString("BoardView1.Tooltip.AbbreviationLowerFoot");
+            if (entity instanceof Mech) {
+                switch (loc) {
+                    case 0:
+                        col3 = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, loc, msg_abbr_sensors).toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, loc, msg_abbr_lifesupport).toString();
+                        break;
+                    case 1:
+                        col3 = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, loc, msg_abbr_engine).toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, loc, msg_abbr_gyro).toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, loc, msg_abbr_sensors).toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, loc, msg_abbr_lifesupport).toString();
+                        break;
+                    case 2:
+                    case 3:
+                        col3 = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, loc, msg_abbr_engine).toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, loc, msg_abbr_gyro).toString();
+                        break;
+                    case 4:
+                    case 5:
+                        col3 = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, loc, msg_abbr_shoulder).toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_ARM, loc, msg_abbr_upperarm).toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM, loc, msg_abbr_lowerarm).toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HAND, loc, msg_abbr_hand).toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, loc, msg_abbr_hip).toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, loc, msg_abbr_upperleg).toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, loc, msg_abbr_lowerleg).toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, loc, msg_abbr_foot).toString();
+                        break;
+                    case 6:
+                    case 7:
+                    case 8:
+                        col3 = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, loc, msg_abbr_hip).toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, loc, msg_abbr_upperleg).toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, loc, msg_abbr_lowerleg).toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, loc, msg_abbr_foot).toString();
+                        break;
+                    default:
+                        col3 = "";
+                }
+            } else if (entity instanceof Tank) {
+                Tank tank = (Tank) entity;
+                boolean isSuperHeavyTank = entity instanceof SuperHeavyTank;
+                int tankTurrets = 0;
 
-            switch (loc) {
-                case 0:
-                    col3 = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, loc, msg_abbr_sensors).toString();
-                    col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, loc, msg_abbr_lifesupport).toString();
-                    break;
-                case 1:
-                    col3 = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, loc, msg_abbr_engine).toString();
-                    col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, loc, msg_abbr_gyro).toString();
-                    col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, loc, msg_abbr_sensors).toString();
-                    col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, loc, msg_abbr_lifesupport).toString();
-                    break;
-                case 2:
-                case 3:
-                    col3 = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, loc, msg_abbr_engine).toString();
-                    col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, loc, msg_abbr_gyro).toString();
-                    break;
-                case 4:
-                case 5:
-                    col3 = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, loc, msg_abbr_shoulder).toString();
-                    col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_ARM, loc, msg_abbr_upperarm).toString();
-                    col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM, loc, msg_abbr_lowerarm).toString();
-                    col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HAND, loc, msg_abbr_hand).toString();
-                    col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, loc, msg_abbr_hip).toString();
-                    col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, loc, msg_abbr_upperleg).toString();
-                    col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, loc, msg_abbr_lowerleg).toString();
-                    col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, loc, msg_abbr_foot).toString();
-                    break;
-                case 6:
-                case 7:
-                case 8:
-                    col3 = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, loc, msg_abbr_hip).toString();
-                    col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, loc, msg_abbr_upperleg).toString();
-                    col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, loc, msg_abbr_lowerleg).toString();
-                    col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, loc, msg_abbr_foot).toString();
-                    break;
+                if (!tank.hasNoDualTurret()) {
+                    tankTurrets = 2;
+                } else if (!tank.hasNoTurret()) {
+                    tankTurrets = 1;
+                }
+
+                String turretLocked = "";
+
+                switch (loc) {
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                        col3 = sysStabilizers(tank, loc, msg_abbr_stabilizers).toString();
+                        break;
+                    case 5:
+                    case 6:
+                        col3 = isSuperHeavyTank ? sysStabilizers(tank, loc, msg_abbr_stabilizers).toString() : "";
+                        turretLocked = tankTurrets > 0 ? sysTurretLocked(tank, loc, msg_abbr_turretlocked).toString() : "";
+                        col3 += isSuperHeavyTank ? "" : turretLocked;
+                        break;
+                    case 7:
+                    case 8:
+                        turretLocked = tankTurrets > 0 ? sysTurretLocked(tank, loc, msg_abbr_turretlocked).toString() : "";
+                        col3 = isSuperHeavyTank ? turretLocked : "";
+                        break;
+                    default:
+                        col3 = "";
+                }
             }
+
+            col1 = "<TD>" + col1 + "</TD>";
+            col2 = "<TD>" + col2 + "</TD>";
+            col3 = "<TD>" + col3 + "</TD>";
+            row = "<TR>" + col1 + col2 + col3 + "</TR>";
+            rows += row;
+        }
+
+        if (entity instanceof GunEmplacement) {
+            Tank tank = (Tank) entity;
+            col1 = "";
+            col2 = sysSensorHit(tank, msg_abbr_sensors).toString();
+            col3 = "";
+
+            col1 = "<TD>" + col1 + "</TD>";
+            col2 = "<TD>" + col2 + "</TD>";
+            col3 = "<TD>" + col3 + "</TD>";
+            row = "<TR>" + col1 + col2 + col3 + "</TR>";
+            rows += row;
+        } else if (entity instanceof Tank) {
+            Tank tank = (Tank) entity;
+            Boolean isVTOL = entity instanceof VTOL;
+
+            col1 = "";
+            col2 = sysEngineHit(tank, msg_abbr_engine).toString();
+            col2 += sysSensorHit(tank, msg_abbr_sensors).toString();
+            col3 = isVTOL ? "" : sysMinorMovementDamage(tank, msg_abbr_minormovementdamage).toString();
+            col3 += isVTOL ? "" : sysModerateMovementDamage(tank, msg_abbr_moderatemovementdamage).toString();
+            col3 += isVTOL ? "" : sysHeavyMovementDamage(tank, msg_abbr_heavymovementdamage).toString();
 
             col1 = "<TD>" + col1 + "</TD>";
             col2 = "<TD>" + col2 + "</TD>";

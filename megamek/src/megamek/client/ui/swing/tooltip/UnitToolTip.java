@@ -501,9 +501,8 @@ public final class UnitToolTip {
                     default:
                         col3 = "";
                 }
-            } else if (entity instanceof Tank) {
+            } else if (entity instanceof SuperHeavyTank || entity instanceof LargeSupportTank) {
                 Tank tank = (Tank) entity;
-                boolean isSuperHeavyTank = entity instanceof SuperHeavyTank;
                 int tankTurrets = 0;
 
                 if (!tank.hasNoDualTurret()) {
@@ -512,7 +511,33 @@ public final class UnitToolTip {
                     tankTurrets = 1;
                 }
 
-                String turretLocked = "";
+                switch (loc) {
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                        col3 = sysStabilizers(tank, loc, msg_abbr_stabilizers).toString();
+                        break;
+                    case 7:
+                    case 8:
+                        col3 = sysStabilizers(tank, loc, msg_abbr_stabilizers).toString();
+                        col3 += tankTurrets > 0 ? sysTurretLocked(tank, loc, msg_abbr_turretlocked).toString() : "";
+                        break;
+                    default:
+                        col3 = "";
+                }
+            } else if (entity instanceof Tank) {
+                Tank tank = (Tank) entity;
+                int tankTurrets = 0;
+
+                if (!tank.hasNoDualTurret()) {
+                    tankTurrets = 2;
+                } else if (!tank.hasNoTurret()) {
+                    tankTurrets = 1;
+                }
 
                 switch (loc) {
                     case 0:
@@ -524,14 +549,8 @@ public final class UnitToolTip {
                         break;
                     case 5:
                     case 6:
-                        col3 = isSuperHeavyTank ? sysStabilizers(tank, loc, msg_abbr_stabilizers).toString() : "";
-                        turretLocked = tankTurrets > 0 ? sysTurretLocked(tank, loc, msg_abbr_turretlocked).toString() : "";
-                        col3 += isSuperHeavyTank ? "" : turretLocked;
-                        break;
-                    case 7:
-                    case 8:
-                        turretLocked = tankTurrets > 0 ? sysTurretLocked(tank, loc, msg_abbr_turretlocked).toString() : "";
-                        col3 = isSuperHeavyTank ? turretLocked : "";
+                        col3 = sysStabilizers(tank, loc, msg_abbr_stabilizers).toString();
+                        col3 += tankTurrets > 0 ? sysTurretLocked(tank, loc, msg_abbr_turretlocked).toString() : "";
                         break;
                     default:
                         col3 = "";
@@ -558,7 +577,7 @@ public final class UnitToolTip {
             rows += row;
         } else if (entity instanceof Tank) {
             Tank tank = (Tank) entity;
-            Boolean isVTOL = entity instanceof VTOL;
+            boolean isVTOL = entity instanceof VTOL;
 
             col1 = "";
             col2 = sysEngineHit(tank, msg_abbr_engine).toString();

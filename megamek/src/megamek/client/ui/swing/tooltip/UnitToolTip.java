@@ -298,7 +298,7 @@ public final class UnitToolTip {
     private static StringBuilder sysStabilizers(Tank tank, int loc, String locAbbr) {
         String result = "";
         int total = 1;
-        int hits = tank.isStabiliserHit(loc) ? 1 :0;
+        int hits = tank.isStabiliserHit(loc) ? 1 : 0;
         int good = total - hits;
         boolean bad = hits > 0;
 
@@ -312,7 +312,7 @@ public final class UnitToolTip {
     private static StringBuilder sysTurretLocked(Tank tank, int loc, String locAbbr) {
         String result = "";
         int total = 1;
-        int hits = tank.isTurretLocked(loc) ? 1 :0;
+        int hits = tank.isTurretLocked(loc) ? 1 : 0;
         int good = total - hits;
         boolean bad = hits > 0;
 
@@ -326,7 +326,7 @@ public final class UnitToolTip {
     private static StringBuilder sysEngineHit(Tank tank, String locAbbr) {
         String result = "";
         int total = 1;
-        int hits = tank.isEngineHit() ? 1 :0;
+        int hits = tank.isEngineHit() ? 1 : 0;
         int good = total - hits;
         boolean bad = hits > 0;
 
@@ -354,7 +354,7 @@ public final class UnitToolTip {
     private static StringBuilder sysMinorMovementDamage(Tank tank, String locAbbr) {
         String result = "";
         int total = 1;
-        int hits = tank.hasMinorMovementDamage() ? 1 :0;
+        int hits = tank.hasMinorMovementDamage() ? 1 : 0;
         int good = total - hits;
         boolean bad = hits > 0;
 
@@ -368,7 +368,7 @@ public final class UnitToolTip {
     private static StringBuilder sysModerateMovementDamage(Tank tank, String locAbbr) {
         String result = "";
         int total = 1;
-        int hits = tank.hasModerateMovementDamage() ? 1 :0;
+        int hits = tank.hasModerateMovementDamage() ? 1 : 0;
         int good = total - hits;
         boolean bad = hits > 0;
 
@@ -382,7 +382,7 @@ public final class UnitToolTip {
     private static StringBuilder sysHeavyMovementDamage(Tank tank, String locAbbr) {
         String result = "";
         int total = 1;
-        int hits = tank.hasHeavyMovementDamage() ? 1 :0;
+        int hits = tank.hasHeavyMovementDamage() ? 1 : 0;
         int good = total - hits;
         boolean bad = hits > 0;
 
@@ -503,13 +503,6 @@ public final class UnitToolTip {
                 }
             } else if (entity instanceof SuperHeavyTank || entity instanceof LargeSupportTank) {
                 Tank tank = (Tank) entity;
-                int tankTurrets = 0;
-
-                if (!tank.hasNoDualTurret()) {
-                    tankTurrets = 2;
-                } else if (!tank.hasNoTurret()) {
-                    tankTurrets = 1;
-                }
 
                 switch (loc) {
                     case 0:
@@ -524,20 +517,13 @@ public final class UnitToolTip {
                     case 7:
                     case 8:
                         col3 = sysStabilizers(tank, loc, msg_abbr_stabilizers).toString();
-                        col3 += tankTurrets > 0 ? sysTurretLocked(tank, loc, msg_abbr_turretlocked).toString() : "";
+                        col3 += tank.getTurretCount() > 0 ? sysTurretLocked(tank, loc, msg_abbr_turretlocked).toString() : "";
                         break;
                     default:
                         col3 = "";
                 }
             } else if (entity instanceof Tank) {
                 Tank tank = (Tank) entity;
-                int tankTurrets = 0;
-
-                if (!tank.hasNoDualTurret()) {
-                    tankTurrets = 2;
-                } else if (!tank.hasNoTurret()) {
-                    tankTurrets = 1;
-                }
 
                 switch (loc) {
                     case 0:
@@ -550,7 +536,7 @@ public final class UnitToolTip {
                     case 5:
                     case 6:
                         col3 = sysStabilizers(tank, loc, msg_abbr_stabilizers).toString();
-                        col3 += tankTurrets > 0 ? sysTurretLocked(tank, loc, msg_abbr_turretlocked).toString() : "";
+                        col3 += tank.getTurretCount() > 0 ? sysTurretLocked(tank, loc, msg_abbr_turretlocked).toString() : "";
                         break;
                     default:
                         col3 = "";
@@ -575,16 +561,26 @@ public final class UnitToolTip {
             col3 = "<TD>" + col3 + "</TD>";
             row = "<TR>" + col1 + col2 + col3 + "</TR>";
             rows += row;
-        } else if (entity instanceof Tank) {
+        } else if (entity instanceof VTOL) {
             Tank tank = (Tank) entity;
-            boolean isVTOL = entity instanceof VTOL;
-
             col1 = "";
             col2 = sysEngineHit(tank, msg_abbr_engine).toString();
             col2 += sysSensorHit(tank, msg_abbr_sensors).toString();
-            col3 = isVTOL ? "" : sysMinorMovementDamage(tank, msg_abbr_minormovementdamage).toString();
-            col3 += isVTOL ? "" : sysModerateMovementDamage(tank, msg_abbr_moderatemovementdamage).toString();
-            col3 += isVTOL ? "" : sysHeavyMovementDamage(tank, msg_abbr_heavymovementdamage).toString();
+            col3 = "";
+
+            col1 = "<TD>" + col1 + "</TD>";
+            col2 = "<TD>" + col2 + "</TD>";
+            col3 = "<TD>" + col3 + "</TD>";
+            row = "<TR>" + col1 + col2 + col3 + "</TR>";
+            rows += row;
+        } else if (entity instanceof Tank) {
+            Tank tank = (Tank) entity;
+            col1 = "";
+            col2 = sysEngineHit(tank, msg_abbr_engine).toString();
+            col2 += sysSensorHit(tank, msg_abbr_sensors).toString();
+            col3 = sysMinorMovementDamage(tank, msg_abbr_minormovementdamage).toString();
+            col3 += sysModerateMovementDamage(tank, msg_abbr_moderatemovementdamage).toString();
+            col3 += sysHeavyMovementDamage(tank, msg_abbr_heavymovementdamage).toString();
 
             col1 = "<TD>" + col1 + "</TD>";
             col2 = "<TD>" + col2 + "</TD>";

@@ -210,6 +210,18 @@ public class Tank extends Entity {
         return m_bHasNoDualTurret;
     }
 
+    public int getTurretCount() {
+        int tankTurrets = 0;
+
+        if (!hasNoDualTurret()) {
+            tankTurrets = 2;
+        } else if (!hasNoTurret()) {
+            tankTurrets = 1;
+        }
+
+        return tankTurrets;
+    }
+
     public void setHasNoTurret(boolean b) {
         m_bHasNoTurret = b;
     }

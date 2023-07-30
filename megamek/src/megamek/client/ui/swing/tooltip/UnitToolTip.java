@@ -464,23 +464,23 @@ public final class UnitToolTip {
 
             if (entity instanceof Mech) {
                 switch (loc) {
-                    case 0:
+                    case Mech.LOC_HEAD:
                         col3 = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, loc, msg_abbr_sensors).toString();
                         col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, loc, msg_abbr_lifesupport).toString();
                         break;
-                    case 1:
+                    case Mech.LOC_CT:
                         col3 = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, loc, msg_abbr_engine).toString();
                         col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, loc, msg_abbr_gyro).toString();
                         col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, loc, msg_abbr_sensors).toString();
                         col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, loc, msg_abbr_lifesupport).toString();
                         break;
-                    case 2:
-                    case 3:
+                    case Mech.LOC_RT:
+                    case Mech.LOC_LT:
                         col3 = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, loc, msg_abbr_engine).toString();
                         col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, loc, msg_abbr_gyro).toString();
                         break;
-                    case 4:
-                    case 5:
+                    case Mech.LOC_RARM:
+                    case Mech.LOC_LARM:
                         col3 = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, loc, msg_abbr_shoulder).toString();
                         col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_ARM, loc, msg_abbr_upperarm).toString();
                         col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM, loc, msg_abbr_lowerarm).toString();
@@ -490,9 +490,9 @@ public final class UnitToolTip {
                         col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, loc, msg_abbr_lowerleg).toString();
                         col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, loc, msg_abbr_foot).toString();
                         break;
-                    case 6:
-                    case 7:
-                    case 8:
+                    case Mech.LOC_RLEG:
+                    case Mech.LOC_LLEG:
+                    case Mech.LOC_CLEG:
                         col3 = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, loc, msg_abbr_hip).toString();
                         col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, loc, msg_abbr_upperleg).toString();
                         col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, loc, msg_abbr_lowerleg).toString();
@@ -505,17 +505,17 @@ public final class UnitToolTip {
                 Tank tank = (Tank) entity;
 
                 switch (loc) {
-                    case 0:
-                    case 1:
-                    case 2:
-                    case 3:
-                    case 4:
-                    case 5:
-                    case 6:
+                    case SuperHeavyTank.LOC_BODY:
+                    case SuperHeavyTank.LOC_FRONT:
+                    case SuperHeavyTank.LOC_RIGHT:
+                    case SuperHeavyTank.LOC_LEFT:
+                    case SuperHeavyTank.LOC_REARRIGHT:
+                    case SuperHeavyTank.LOC_REARLEFT:
+                    case SuperHeavyTank.LOC_REAR:
                         col3 = sysStabilizers(tank, loc, msg_abbr_stabilizers).toString();
                         break;
-                    case 7:
-                    case 8:
+                    case SuperHeavyTank.LOC_TURRET:
+                    case SuperHeavyTank.LOC_TURRET_2:
                         col3 = sysStabilizers(tank, loc, msg_abbr_stabilizers).toString();
                         col3 += tank.getTurretCount() > 0 ? sysTurretLocked(tank, loc, msg_abbr_turretlocked).toString() : "";
                         break;
@@ -526,15 +526,15 @@ public final class UnitToolTip {
                 Tank tank = (Tank) entity;
 
                 switch (loc) {
-                    case 0:
-                    case 1:
-                    case 2:
-                    case 3:
-                    case 4:
+                    case Tank.LOC_BODY:
+                    case Tank.LOC_FRONT:
+                    case Tank.LOC_RIGHT:
+                    case Tank.LOC_LEFT:
+                    case Tank.LOC_REAR:
                         col3 = sysStabilizers(tank, loc, msg_abbr_stabilizers).toString();
                         break;
-                    case 5:
-                    case 6:
+                    case Tank.LOC_TURRET:
+                    case Tank.LOC_TURRET_2:
                         col3 = sysStabilizers(tank, loc, msg_abbr_stabilizers).toString();
                         col3 += tank.getTurretCount() > 0 ? sysTurretLocked(tank, loc, msg_abbr_turretlocked).toString() : "";
                         break;

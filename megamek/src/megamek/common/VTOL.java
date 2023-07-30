@@ -363,7 +363,7 @@ public class VTOL extends Tank implements IBomber {
                             }
                         }
                     case 9:
-                        if (getSensorHits() < 4) {
+                        if (getSensorHits() < Tank.CRIT_SENSOR_MAX) {
                             return CRIT_SENSOR;
                         }
                     case 10:
@@ -414,7 +414,7 @@ public class VTOL extends Tank implements IBomber {
                             }
                         }
                     case 10:
-                        if (getSensorHits() < 4) {
+                        if (getSensorHits() < Tank.CRIT_SENSOR_MAX) {
                             return CRIT_SENSOR;
                         }
                     case 11:

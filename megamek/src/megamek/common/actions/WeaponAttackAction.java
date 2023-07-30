@@ -1124,7 +1124,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Vehicles Sensor Hits
         } else if (ae instanceof Tank) {
             sensorHits = ((Tank) ae).getSensorHits();
-            if (sensorHits > 3) {
+            if (sensorHits >= Tank.CRIT_SENSOR) {
                 return Messages.getString("WeaponAttackAction.SensorsDestroyed");
             }
         // Industrialmechs and other unit types have destroyed sensors with 2 or more hits

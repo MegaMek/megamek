@@ -339,7 +339,7 @@ public final class UnitToolTip {
 
     private static StringBuilder sysSensorHit(Tank tank, String locAbbr) {
         String result = "";
-        int total = 4;
+        int total = Tank.CRIT_SENSOR_MAX;
         int hits = tank.getSensorHits();
         int good = total - hits;
         boolean bad = hits > 0;

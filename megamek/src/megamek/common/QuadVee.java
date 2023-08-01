@@ -373,7 +373,7 @@ public class QuadVee extends QuadMech {
     @Override
     public boolean canFall(boolean gyroLegDamage) {
         // QuadVees cannot fall due to failed PSR in vehicle mode.
-        return getConversionMode() == CONV_MODE_MECH || convertingNow;
+        return getConversionMode() == CONV_MODE_MECH || (convertingNow && game.getPhase().isMovement());
     }
 
     /**

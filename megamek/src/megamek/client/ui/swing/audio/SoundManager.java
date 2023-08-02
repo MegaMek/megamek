@@ -28,13 +28,13 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SoundManager implements AudioService {
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
-    private final Map<Integer, Sound> sounds = new HashMap<>();
+    private final List<Sound> sounds = new ArrayList<>();
 
     /**
      * Loads the sound files from the paths given in the client settings
@@ -49,15 +49,17 @@ public class SoundManager implements AudioService {
 
         final Clip bingClipChat = loadSoundClip(GUIP.getSoundBingFilenameChat());
         sound = new Sound(bingClipChat);
-        sounds.put(0, sound);
+        sounds.add(sound);
 
         final Clip bingClipMyTurn = loadSoundClip(GUIP.getSoundBingFilenameMyTurn());
         sound = new Sound(bingClipMyTurn);
-        sounds.put(1, sound);
+        sounds.add(sound);
 
         final Clip bingClipOthersTurn = loadSoundClip(GUIP.getSoundBingFilenameOthersTurn());
         sound = new Sound(bingClipOthersTurn);
-        sounds.put(2, sound);
+        sounds.add(sound);
+
+        setVolume();
     }
 
     @Override
@@ -84,8 +86,13 @@ public class SoundManager implements AudioService {
         }
 
         if(sound != null) {
-            setVolume(sound);
             sound.play();
+        }
+    }
+
+    public void setVolume() {
+        for (var sound: sounds) {
+            setVolume(sound);
         }
     }
 
@@ -116,8 +123,6 @@ public class SoundManager implements AudioService {
     private void setVolume(final Sound sound) {
         final float volume = GUIP.getMasterVolume() / 100.0f;
 
-        if(sound != null) {
-            sound.setVolume(volume);
-        }
+        sound.setVolume(volume);
     }
 }

@@ -22,4 +22,5 @@ package megamek.client.ui.swing.audio;
 public interface AudioService {
     void loadSoundFiles();
     void playSound(SoundType id);
+    void setVolume();
 }

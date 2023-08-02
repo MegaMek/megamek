@@ -349,6 +349,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         panDisplay.add(panMain, BorderLayout.CENTER);
         panDisplay.add(panSecondary, BorderLayout.SOUTH);
         add(panDisplay, BorderLayout.CENTER);
+
         audioService.loadSoundFiles();
     }
 
@@ -2875,6 +2876,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 || (e.getName().equals(GUIPreferences.SOUND_BING_FILENAME_MY_TURN))
                 || (e.getName().equals(GUIPreferences.SOUND_BING_FILENAME_OTHERS_TURN))) {
             audioService.loadSoundFiles();
+        } else if (e.getName().equals(GUIPreferences.MASTER_VOLUME)) {
+            audioService.setVolume();
         }
     }
 }

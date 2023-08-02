@@ -19,6 +19,8 @@
 
 package megamek.client.ui.swing.audio;
 
+import megamek.common.annotations.Nullable;
+
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
 
@@ -26,7 +28,7 @@ public class Sound
 {
     private final Clip clip;
 
-    public Sound(final Clip clip) {
+    public Sound(@Nullable final Clip clip) {
         this.clip = clip;
     }
 
@@ -42,7 +44,9 @@ public class Sound
             throw new IllegalArgumentException("Invalid volume: " + volume);
         }
 
-        FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-        gainControl.setValue(20f * (float) Math.log10(volume));
+        if(clip != null) {
+            FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+            gainControl.setValue(20f * (float) Math.log10(volume));
+        }
     }
 }

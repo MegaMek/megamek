@@ -717,7 +717,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     public void miniReportDisplayAddReportPages() {
         ignoreHotKeys = true;
         if (getMiniReportDisplay() != null) {
-            getMiniReportDisplay().addReportPages();
+            getMiniReportDisplay().addReportPages(client.getGame().getPhase());
         }
         ignoreHotKeys = false;
     }

@@ -305,7 +305,10 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
             tabs.removeAll();
         } else if (tabs.getTabCount() > 1) {
             tabs.removeTabAt(tabs.getTabCount() - 1);
-            tabs.removeTabAt(tabs.getTabCount() - 1);
+            // don't remove on round change
+            if (tabs.getTabCount() == numRounds) {
+                tabs.removeTabAt(tabs.getTabCount() - 1);
+            }
             startIndex = tabs.getTabCount() + 1;
         }
 

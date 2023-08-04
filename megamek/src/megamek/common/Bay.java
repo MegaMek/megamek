@@ -37,6 +37,8 @@ public class Bay implements Transporter, ITechnology {
     public static final String FIELD_SEPARATOR = ":";
     public static final String FACING_PREFIX = "f";
 
+    /** Minimum number of doors for all bays (except infantry) is 1 **/
+    int minDoors = 1;
     int doors = 1;
     int doorsNext = 1;
     int currentdoors = doors;
@@ -103,11 +105,11 @@ public class Bay implements Transporter, ITechnology {
     public void setBayDamage(double damage) {
         this.damage = Math.min(damage, totalSpace);
     }
-    
+
     /**
      * Method used by MHQ to update bay space when loading units in lobby. See Utilities.loadPlayerTransports
      * This ensures that consumed space is kept in sync between the MM client and MHQ game thread
-     * 
+     *
      * @param space - double representing space consumed by the unit being loaded. 1 except in the case of infantry
      */
     public void setCurrentSpace(double space) {
@@ -119,6 +121,10 @@ public class Bay implements Transporter, ITechnology {
         return doors;
     }
 
+    // the required minimum number of doors for the bay.
+    public int getMinDoors() {
+        return minDoors;
+    }
     public void setDoors(int d) {
         doors = d;
         doorsNext = d;
@@ -206,7 +212,7 @@ public class Bay implements Transporter, ITechnology {
     }
 
     /**
-     * Generate a raw list of the Ids stored in troops. 
+     * Generate a raw list of the Ids stored in troops.
      * Used by MHQ in cases where we can't get the entities via Game
      *
      * @return A list of unit IDs of loaded units
@@ -524,7 +530,7 @@ public class Bay implements Transporter, ITechnology {
     public long getCost() {
         return 0;
     }
-    
+
     /** @return The safe launch rate for this particular bay: # of intact doors x 2 */
     public int getSafeLaunchRate() {
         return getCurrentDoors() * 2;

@@ -17,6 +17,7 @@ import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.BASE64ToolKit;
 import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.enums.GamePhase;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
@@ -295,11 +296,23 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
         return new JScrollPane(ta);
     }
 
-    public void addReportPages() {
+    public void addReportPages(GamePhase phase) {
         int numRounds = currentClient.getGame().getRoundCount();
-        tabs.removeAll();
+        int startIndex = 1;
 
-        for (int round = 1; round <= numRounds; round++) {
+        // only reload what has changed
+        if (numRounds < 2 || phase.isVictory()) {
+            tabs.removeAll();
+        } else if (tabs.getTabCount() > 1) {
+            tabs.removeTabAt(tabs.getTabCount() - 1);
+            // don't remove on round change
+            if (tabs.getTabCount() == numRounds) {
+                tabs.removeTabAt(tabs.getTabCount() - 1);
+            }
+            startIndex = tabs.getTabCount() + 1;
+        }
+
+        for (int round = startIndex; round <= numRounds; round++) {
             String text = currentClient.receiveReport(currentClient.getGame().getReports(round));
             tabs.add(Messages.getString("MiniReportDisplay.Round") + " " + round, loadHtmlScrollPane(text));
         }
@@ -360,7 +373,7 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
                 default:
                     if ((!e.getNewPhase().equals((e.getOldPhase())))
                             && ((e.getNewPhase().isReport()) || ((e.getNewPhase().isOnMap()) && (tabs.getTabCount() == 0)))){
-                        addReportPages();
+                        addReportPages(e.getNewPhase());
                         updatePlayerChoice();
                         updateEntityChoice();
                     }

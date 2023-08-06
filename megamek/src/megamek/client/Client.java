@@ -1195,7 +1195,6 @@ public class Client implements IClientCommandHandler {
         }
     }
 
-
     // Should be private?
     public String receiveReport(Vector<Report> v) {
         if (v == null) {
@@ -1209,7 +1208,7 @@ public class Client implements IClientCommandHandler {
 
         Set<Integer> set = new HashSet<>();
         //find id stored in spans and extract it
-        Pattern p = Pattern.compile("<span id=(.*?)span>");
+        Pattern p = Pattern.compile("<span id=(.*?)></span>");
         Matcher m = p.matcher(report.toString());
 
         // add all instances to a hashset to prevent duplicates

@@ -24,6 +24,9 @@ import megamek.common.annotations.Nullable;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
 
+/**
+ * Contains a sound Clip to allow for managing playback
+ */
 public class Sound
 {
     private final Clip clip;
@@ -32,6 +35,9 @@ public class Sound
         this.clip = clip;
     }
 
+    /**
+     * Starts playback of the contained sound file, if one has been loaded
+     */
     public void play() {
         if (clip != null) {
             clip.setFramePosition(0);
@@ -39,6 +45,10 @@ public class Sound
         }
     }
 
+    /**
+     * Sets the output volume of the sound
+     * @param volume - float value of the output volume
+     */
     public void setVolume(float volume) {
         if(volume < 0.0f || volume > 1.0f) {
             throw new IllegalArgumentException("Invalid volume: " + volume);

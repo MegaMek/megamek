@@ -62,6 +62,10 @@ public class SoundManager implements AudioService {
         setVolume();
     }
 
+    /**
+     * Starts playback of a sound if it has been loaded
+     * @param id - SoundType enum indicating which sound to play
+     */
     @Override
     public void playSound(SoundType id) {
         Sound sound = null;
@@ -90,6 +94,9 @@ public class SoundManager implements AudioService {
         }
     }
 
+    /**
+     * Sets the output volume of all sounds that are loaded
+     */
     @Override
     public void setVolume() {
         for (var sound: sounds) {

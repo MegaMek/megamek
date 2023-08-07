@@ -90,6 +90,7 @@ public class SoundManager implements AudioService {
         }
     }
 
+    @Override
     public void setVolume() {
         for (var sound: sounds) {
             setVolume(sound);

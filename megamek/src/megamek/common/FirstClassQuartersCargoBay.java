@@ -40,6 +40,7 @@ public final class FirstClassQuartersCargoBay extends Bay {
         totalSpace = (int) weight / 10;
         this.weight = weight;
         currentSpace = (int) weight / 10;
+        this.minDoors = 0;
         this.doors = doors;
         currentdoors = doors;
     }

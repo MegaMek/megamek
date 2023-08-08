@@ -46,6 +46,7 @@ public final class BattleArmorBay extends Bay {
     public BattleArmorBay(double space, int doors, int bayNumber, boolean isClan, boolean isComStar) {
         totalSpace = space;
         currentSpace = space;
+        this.minDoors = 0;
         this.doors = doors;
         doorsNext = doors;
         this.bayNumber = bayNumber;

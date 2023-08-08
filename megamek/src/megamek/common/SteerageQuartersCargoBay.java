@@ -42,6 +42,7 @@ public final class SteerageQuartersCargoBay extends Bay {
         totalSpace = ((int) weight) / 5;
         this.weight = weight;
         currentSpace = ((int) weight) / 5;
+        this.minDoors = 0;
         this.doors = doors;
         currentdoors = doors;
     }

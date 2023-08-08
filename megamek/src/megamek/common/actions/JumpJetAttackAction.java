@@ -166,6 +166,11 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
                     "Jump jets missing or destroyed");
         }
 
+        if (ae.moved == EntityMovementType.MOVE_JUMP) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                    "Attacker jumped this turn");
+        }
+
         // check if attacker has fired leg-mounted weapons
         for (Mounted mounted : ae.getWeaponList()) {
             if (mounted.isUsedThisRound()) {

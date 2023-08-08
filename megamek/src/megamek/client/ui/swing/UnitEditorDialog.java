@@ -642,7 +642,7 @@ public class UnitEditorDialog extends JDialog {
         gridBagConstraints.weightx = 0.0;
         panSystem.add(new JLabel("<html><b>" + Messages.getString("UnitEditorDialog.sensor") + "</b><br></html>"),
                 gridBagConstraints);
-        sensorCrit = new CheckCritPanel(4, tank.getSensorHits());
+        sensorCrit = new CheckCritPanel(Tank.CRIT_SENSOR_MAX, tank.getSensorHits());
         gridBagConstraints.gridx = 1;
         gridBagConstraints.weightx = 1.0;
         panSystem.add(sensorCrit, gridBagConstraints);
@@ -786,7 +786,7 @@ public class UnitEditorDialog extends JDialog {
         gridBagConstraints.weightx = 0.0;
         panSystem.add(new JLabel("<html><b>" + Messages.getString("UnitEditorDialog.sensor") + "</b><br></html>"),
                 gridBagConstraints);
-        sensorCrit = new CheckCritPanel(4, vtol.getSensorHits());
+        sensorCrit = new CheckCritPanel(Tank.CRIT_SENSOR_MAX, vtol.getSensorHits());
         gridBagConstraints.gridx = 1;
         gridBagConstraints.weightx = 1.0;
         panSystem.add(sensorCrit, gridBagConstraints);

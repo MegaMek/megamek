@@ -83,6 +83,8 @@ public class Tank extends Entity {
     public static final int CRIT_TURRET_LOCK = 13;
     public static final int CRIT_TURRET_DESTROYED = 14;
 
+    public static final int CRIT_SENSOR_MAX = 4;
+
     //Fortify terrain just like infantry
     public static final int DUG_IN_NONE = 0;
     public static final int DUG_IN_FORTIFYING1 = 1;
@@ -208,6 +210,18 @@ public class Tank extends Entity {
 
     public boolean hasNoDualTurret() {
         return m_bHasNoDualTurret;
+    }
+
+    public int getTurretCount() {
+        int tankTurrets = 0;
+
+        if (!hasNoDualTurret()) {
+            tankTurrets = 2;
+        } else if (!hasNoTurret()) {
+            tankTurrets = 1;
+        }
+
+        return tankTurrets;
     }
 
     public void setHasNoTurret(boolean b) {
@@ -1861,7 +1875,7 @@ public class Tank extends Entity {
                             }
                         }
                     case 9:
-                        if (getSensorHits() < 4) {
+                        if (getSensorHits() < CRIT_SENSOR_MAX) {
                             return CRIT_SENSOR;
                         }
                     case 10:

@@ -29,6 +29,9 @@ import megamek.client.ui.dialogs.UnitDisplayDialog;
 import megamek.client.ui.dialogs.helpDialogs.AbstractHelpDialog;
 import megamek.client.ui.dialogs.helpDialogs.MMReadMeHelpDialog;
 import megamek.client.ui.enums.DialogResult;
+import megamek.client.ui.swing.audio.AudioService;
+import megamek.client.ui.swing.audio.SoundManager;
+import megamek.client.ui.swing.audio.SoundType;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.dialog.AbstractUnitSelectorDialog;
 import megamek.client.ui.swing.dialog.MegaMekUnitSelectorDialog;
@@ -264,13 +267,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     private File curfileBoard;
 
     /**
-     * Cache for the "bing" soundclip.
-     */
-    private Clip bingClipChat;
-    private Clip bingClipMyTurn;
-    private Clip bingClipOthersTurn;
-
-    /**
      * Map each phase to the name of the card for the main display area.
      */
     private Map<String, String> mainNames = new HashMap<>();
@@ -328,6 +324,12 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      * shot.
      */
     private int pointblankEID = Entity.NONE;
+
+    /**
+     * Audio system
+     */
+    private final AudioService audioService = new SoundManager();
+
     //endregion Variable Declarations
 
     /**
@@ -341,31 +343,14 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         this.addComponentListener(this);
         this.client = client;
         controller = c;
-        loadSoundFiles();
         panMain.setLayout(cardsMain);
         panSecondary.setLayout(cardsSecondary);
         JPanel panDisplay = new JPanel(new BorderLayout());
         panDisplay.add(panMain, BorderLayout.CENTER);
         panDisplay.add(panSecondary, BorderLayout.SOUTH);
         add(panDisplay, BorderLayout.CENTER);
-    }
 
-    private void loadSoundFiles() {
-        if (bingClipChat != null) {
-            bingClipChat.close();
-        }
-
-        if (bingClipMyTurn != null) {
-            bingClipMyTurn.close();
-        }
-
-        if (bingClipOthersTurn != null) {
-            bingClipOthersTurn.close();
-        }
-
-        bingClipChat = loadSoundClip(GUIP.getSoundBingFilenameChat());
-        bingClipMyTurn = loadSoundClip(GUIP.getSoundBingFilenameMyTurn());
-        bingClipOthersTurn = loadSoundClip(GUIP.getSoundBingFilenameOthersTurn());
+        audioService.loadSoundFiles();
     }
 
     public BoardView getBoardView() {
@@ -2154,24 +2139,15 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      * Make a "bing" sound.
      */
     public void bingChat() {
-        if (!GUIP.getSoundMuteChat() && (bingClipMyTurn != null)) {
-            bingClipChat.setFramePosition(0);
-            bingClipChat.start();
-        }
+        audioService.playSound(SoundType.BING_CHAT);
     }
 
     public void bingMyTurn() {
-        if (!GUIP.getSoundMuteMyTurn() && (bingClipMyTurn != null)) {
-            bingClipMyTurn.setFramePosition(0);
-            bingClipMyTurn.start();
-        }
+        audioService.playSound(SoundType.BING_MY_TURN);
     }
 
     public void bingOthersTurn() {
-        if (!GUIP.getSoundMuteOthersTurn() && (bingClipMyTurn != null)) {
-            bingClipOthersTurn.setFramePosition(0);
-            bingClipOthersTurn.start();
-        }
+        audioService.playSound(SoundType.BING_OTHERS_TURN);
     }
 
     private void setWeaponOrderPrefs(boolean prefChange) {
@@ -2899,7 +2875,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         } else if ((e.getName().equals(GUIPreferences.SOUND_BING_FILENAME_CHAT))
                 || (e.getName().equals(GUIPreferences.SOUND_BING_FILENAME_MY_TURN))
                 || (e.getName().equals(GUIPreferences.SOUND_BING_FILENAME_OTHERS_TURN))) {
-            loadSoundFiles();
+            audioService.loadSoundFiles();
+        } else if (e.getName().equals(GUIPreferences.MASTER_VOLUME)) {
+            audioService.setVolume();
         }
     }
 }

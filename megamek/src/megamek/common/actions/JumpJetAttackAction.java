@@ -13,19 +13,7 @@
  */
 package megamek.common.actions;
 
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.GunEmplacement;
-import megamek.common.Game;
-import megamek.common.Hex;
-import megamek.common.ILocationExposureStatus;
-import megamek.common.LandAirMech;
-import megamek.common.Mech;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -163,8 +151,8 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
         }
 
         // check if attacker even has jump jets!
+        boolean hasJJ = false;
         for (Mounted m : ae.getMisc()) {
-            boolean hasJJ = false;
             int loc = m.getLocation();
             if (m.getType().hasFlag(MiscType.F_JUMP_JET)
                     && m.isReady()
@@ -172,10 +160,10 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
                 hasJJ = true;
                 break;
             }
-            if (!hasJJ) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE,
-                        "Jump jets missing or destroyed");
-            }
+        }
+        if (!hasJJ) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                    "Jump jets missing or destroyed");
         }
 
         // check if attacker has fired leg-mounted weapons

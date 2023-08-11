@@ -284,9 +284,10 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
         handleClearDamage(vPhaseReport, bldg, hexDamage, false);
         ratedDamage -= bldgAbsorbs;
-        Hex hex = game.getBoard().getHex(coords);
         
         if (ratedDamage > 0) {
+            Hex hex = game.getBoard().getHex(coords);
+            
             for (Entity entity : game.getEntitiesVector(coords)) {
                 if (!bMissed && (entity == entityTarget)) {
                         continue; // don't splash the original target unless it's a miss

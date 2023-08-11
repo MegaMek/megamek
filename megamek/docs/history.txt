@@ -7,6 +7,7 @@ VERSION HISTORY:
 + PR #4691: Correct max # of bay doors for space stations and jumpships
 + PR #4661: Add audio tab and master volume setting to client settings
 + PR #4678: Display vehicle crit effects in unit tooltip
++ Issue #4687: Fixes to jump jet attack logic
 
 0.49.14 (2023-07-28 2100 UTC)
 + Fix #4452: Fixes a bug with detecting if Infantry dies due to extreme temperatures

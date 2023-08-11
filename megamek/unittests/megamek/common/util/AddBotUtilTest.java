@@ -79,7 +79,7 @@ public class AddBotUtilTest {
                 // Test most basic version of command.
                 final String actual = testAddBotUtil.addBot(new String[] { "/replacePlayer", BOT_PLAYER_NAME },
                                 mockGame, mockClient.getHost(), mockClient.getPort());
-                assertEquals("Princess has replaced MockBot.\n", actual);
+                assertEquals("Princess has replaced MockBot.  Config: DEFAULT.\n", actual);
         }
 
         @Test
@@ -146,7 +146,7 @@ public class AddBotUtilTest {
                 final String actual = testAddBotUtil.addBot(
                                 new String[] { "/replacePlayer", "-b:InvalidBot", BOT_PLAYER_NAME }, mockGame,
                                 mockClient.getHost(), mockClient.getPort());
-                assertEquals("Unrecognized bot: 'InvalidBot'.  Defaulting to Princess.\nPrincess has replaced MockBot.\n",
+                assertEquals("Unrecognized bot: 'InvalidBot'.  Defaulting to Princess.\nPrincess has replaced MockBot.  Config: DEFAULT.\n",
                                 actual);
         }
 

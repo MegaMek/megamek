@@ -28,9 +28,6 @@ import megamek.common.Coords;
 import megamek.common.Game;
 import megamek.common.Player;
 import megamek.common.event.GamePlayerChatEvent;
-import megamek.server.Server;
-import megamek.server.commands.DefeatCommand;
-import megamek.server.commands.VictoryCommand;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -111,84 +108,6 @@ public class ChatProcessorTest {
     }
 
     @Test
-    public void testShouldBotAcknowledgeDefeat() {
-        final ChatProcessor chatProcessor = new ChatProcessor();
-
-        // Test individual human victory.
-        String cmd = VictoryCommand.getDeclareIndividual(mockHumanPlayerDave.getName());
-        String msg = Server.formatChatMessage(Server.ORIGIN, cmd);
-        assertTrue(mockHumanPlayerDave.isEnemyOf(mockBotPlayerHal));
-        assertTrue(chatProcessor.shouldBotAcknowledgeDefeat(msg, mockBotHal));
-
-        // Test team human victory.
-        cmd = VictoryCommand.getDeclareTeam(mockHumanPlayerDave.getName());
-        msg = Server.formatChatMessage(Server.ORIGIN, cmd);
-        assertTrue(chatProcessor.shouldBotAcknowledgeDefeat(msg, mockBotHal));
-
-        // Test a different message.
-        msg = "This is general chat message with no bot commands.";
-        assertFalse(chatProcessor.shouldBotAcknowledgeDefeat(msg, mockBotHal));
-
-        // Test a null message.
-        assertFalse(chatProcessor.shouldBotAcknowledgeDefeat(null, mockBotHal));
-
-        // Test an empty message.
-        msg = "";
-        assertFalse(chatProcessor.shouldBotAcknowledgeDefeat(msg, mockBotHal));
-
-        // Test victory by human partner.
-        cmd = VictoryCommand.getDeclareIndividual(mockHumanPlayerKirk.getName());
-        msg = Server.formatChatMessage(Server.ORIGIN, cmd);
-        assertFalse(chatProcessor.shouldBotAcknowledgeDefeat(msg, mockBotHal));
-
-        // Test victory by self.
-        cmd = VictoryCommand.getDeclareIndividual(mockBotPlayerHal.getName());
-        msg = Server.formatChatMessage(Server.ORIGIN, cmd);
-        assertFalse(chatProcessor.shouldBotAcknowledgeDefeat(msg, mockBotHal));
-
-        // Test victory by opposing bot.
-        cmd = VictoryCommand.getDeclareIndividual(mockBotPlayerVGer.getName());
-        msg = Server.formatChatMessage(Server.ORIGIN, cmd);
-        assertTrue(chatProcessor.shouldBotAcknowledgeDefeat(msg, mockBotHal));
-    }
-
-    @Test
-    public void testShouldBotAcknowledgeVictory() {
-        final ChatProcessor chatProcessor = new ChatProcessor();
-
-        // Test enemy wants defeat.
-        String cmd = DefeatCommand.getWantsDefeat(mockHumanPlayerDave.getName());
-        String msg = Server.formatChatMessage(Server.ORIGIN, cmd);
-        assertTrue(chatProcessor.shouldBotAcknowledgeVictory(msg, mockBotHal));
-
-        // Test enemy admits defeat.
-        cmd = DefeatCommand.getAdmitsDefeat(mockHumanPlayerDave.getName());
-        msg = Server.formatChatMessage(Server.ORIGIN, cmd);
-        assertFalse(chatProcessor.shouldBotAcknowledgeVictory(msg, mockBotHal));
-
-        // Test ally wants defeat.
-        cmd = DefeatCommand.getWantsDefeat(mockHumanPlayerKirk.getName());
-        msg = Server.formatChatMessage(Server.ORIGIN, cmd);
-        assertFalse(chatProcessor.shouldBotAcknowledgeVictory(msg, mockBotHal));
-
-        // Test ally admits defeat.
-        cmd = DefeatCommand.getAdmitsDefeat(mockHumanPlayerKirk.getName());
-        msg = Server.formatChatMessage(Server.ORIGIN, cmd);
-        assertFalse(chatProcessor.shouldBotAcknowledgeVictory(msg, mockBotHal));
-
-        // Test a different message.
-        msg = "This is general chat message with no bot commands.";
-        assertFalse(chatProcessor.shouldBotAcknowledgeVictory(msg, mockBotHal));
-
-        // Test null message.
-        assertFalse(chatProcessor.shouldBotAcknowledgeVictory(null, mockBotHal));
-
-        // Test empty message.
-        msg = "";
-        assertFalse(chatProcessor.shouldBotAcknowledgeVictory(msg, mockBotHal));
-    }
-
-    @Test
     public void testAdditionalPrincessCommands() {
         final ChatProcessor testChatProcessor = new ChatProcessor();
 
@@ -221,7 +140,6 @@ public class ChatProcessorTest {
         doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
         assertFalse(mockPrincess.getFallBack());
-
 
         // Test the 'flee' command sent to a different bot player.
         mockChatEvent = mock(GamePlayerChatEvent.class);
@@ -298,7 +216,7 @@ public class ChatProcessorTest {
         doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
         assertEquals(BehaviorSettingsFactory.getInstance().COWARDLY_BEHAVIOR,
-                            mockPrincess.getBehaviorSettings());
+                mockPrincess.getBehaviorSettings());
 
         // Test the 'behavior' command with no arguments.
         mockChatEvent = mock(GamePlayerChatEvent.class);
@@ -312,7 +230,8 @@ public class ChatProcessorTest {
         doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
         doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
-        assertEquals(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR, mockPrincess.getBehaviorSettings());
+        assertEquals(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR,
+                mockPrincess.getBehaviorSettings());
 
         // Test the 'behavior' command with an invalid behavior name
         mockChatEvent = mock(GamePlayerChatEvent.class);
@@ -326,7 +245,8 @@ public class ChatProcessorTest {
         doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
         doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
-        assertEquals(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR, mockPrincess.getBehaviorSettings());
+        assertEquals(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR,
+                mockPrincess.getBehaviorSettings());
 
         // Test the 'caution' command.
         mockChatEvent = mock(GamePlayerChatEvent.class);

@@ -48,27 +48,6 @@ public final class PhysicalCalculator {
         // should never call this
     }
 
-    static PhysicalOption calculatePhysicalTurn(TestBot bot) {
-        int entNum = bot.getGame().getFirstEntityNum(bot.getMyTurn());
-        int first = entNum;
-        do {
-            // take the first entity that can do an attack
-            Entity en = bot.getGame().getEntity(entNum);
-            PhysicalOption bestAttack = getBestPhysical(en, bot.getGame());
-
-            if (bestAttack != null) {
-
-                return bestAttack;
-
-            } // End no-attack
-            entNum = bot.getGame().getNextEntityNum(bot.getMyTurn(), entNum);
-
-        } while ((entNum != -1) && (entNum != first));
-
-        // Didn't find any physical attack.
-        return null;
-    }
-
     public static PhysicalOption getBestPhysical(Entity entity, Game game) {
         // Infantry can't conduct physical attacks.
         if (entity instanceof Infantry) {
@@ -285,22 +264,22 @@ public final class PhysicalCalculator {
             if (target.equals(entity)) {
                 continue;
             }
-            
+
             // don't consider friendly targets
             if (!target.isEnemyOf(entity)) {
                 continue;
             }
-            
+
             // don't consider targets not on the board
             if (target.getPosition() == null) {
                 continue;
             }
-            
+
             // don't consider targets beyond melee range
             if (Compute.effectiveDistance(game, entity, target) > 1) {
                 continue;
             }
-            
+
             // don't bother stomping mechwarriors
             if (target instanceof MechWarrior) {
                 continue;
@@ -322,12 +301,12 @@ public final class PhysicalCalculator {
     static PhysicalOption getBestPhysicalAttack(Entity from, Entity to,
                                                 Game game) {
         Targetable target = to;
-        
+
         // if the object of our affections is in a building, we have to target the building instead
         if (Compute.isInBuilding(game, to) || (to instanceof GunEmplacement)) {
             target = new BuildingTarget(to.getPosition(), game.getBoard(), false);
         }
-        
+
         double bestDmg = 0.0;
         double dmg;
         int damage;
@@ -607,14 +586,14 @@ public final class PhysicalCalculator {
         double coll_damage = 0.0;
         int damage;
         boolean targetConvInfantry = false;
-        
+
         Targetable target = to;
-        
+
         // if the object of our affections is in a building, we have to target the building instead
         if (Compute.isInBuilding(game, to) || (to instanceof GunEmplacement)) {
             target = new BuildingTarget(to.getPosition(), game.getBoard(), false);
         }
-        
+
         ToHitData odds = KickAttackAction.toHit(game, from.getId(), target, action);
         if (odds.getValue() > 12) {
             return 0.0;

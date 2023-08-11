@@ -86,7 +86,9 @@ public class EditBotsDialog extends AbstractButtonDialog {
         try {
             finalizeInitialization();
         } catch (Exception ex) {
-            LogManager.getLogger().error("Error finalizing the EditBotsDialog. Returning the created dialog, but this is likely to cause some oddities.", ex);
+            LogManager.getLogger().error(
+                    "Error finalizing the EditBotsDialog. Returning the created dialog, but this is likely to cause some oddities.",
+                    ex);
         }
     }
 
@@ -113,14 +115,14 @@ public class EditBotsDialog extends AbstractButtonDialog {
         remoteBotOptions.add(Messages.getString("EditBotsDialog.optionKick"));
 
         var gridPanel = new JPanel();
-        gridPanel.setLayout(new GridLayout(0, 5, 2,2));
-        //column labels
+        gridPanel.setLayout(new GridLayout(0, 5, 2, 2));
+        // column labels
         gridPanel.add(new JLabel(Messages.getString("EditBotsDialog.playerNameHeader")));
         gridPanel.add(new JLabel(Messages.getString("EditBotsDialog.playerTypeHeader")));
         gridPanel.add(new JLabel(Messages.getString("EditBotsDialog.chooseActionHeader")));
         gridPanel.add(new JLabel());
         gridPanel.add(new JLabel(Messages.getString("EditBotsDialog.configAvailableHeader")));
-        //spacer row
+        // spacer row
         gridPanel.add(new JSeparator());
         gridPanel.add(new JSeparator());
         gridPanel.add(new JSeparator());
@@ -135,7 +137,7 @@ public class EditBotsDialog extends AbstractButtonDialog {
             boolean savedSettingsExist = (savedSettings != null) && savedSettings.containsKey(player.getName());
 
             if (player.isGhost()) {
-                gridPanel.add(new JLabel( "Ghost"));
+                gridPanel.add(new JLabel("Ghost"));
 
                 var ghostChooser = new JComboBox<>(ghostOptions);
                 ghostChoosers.put(player, ghostChooser);
@@ -183,14 +185,14 @@ public class EditBotsDialog extends AbstractButtonDialog {
 
                     gridPanel.add(configButton(player));
                     gridPanel.add(restoreButton(player, savedSettingsExist));
-                } else if (bot == null){
+                } else if (bot == null) {
                     gridPanel.add(new JLabel(LOCAL + " Null Bot"));
                     gridPanel.add(new JLabel());
                     gridPanel.add(new JLabel());
                     gridPanel.add(new JLabel());
                 } else {
-                    // Not a Ghost or Princess, something else, maybe a TestBot
-                    gridPanel.add(new JLabel( LOCAL + ' ' +bot.getClass().toString()));
+                    // Not a Ghost or Princess, something else
+                    gridPanel.add(new JLabel(LOCAL + ' ' + bot.getClass().toString()));
                     gridPanel.add(new JLabel());
                     gridPanel.add(new JLabel());
                     gridPanel.add(new JLabel());
@@ -208,8 +210,7 @@ public class EditBotsDialog extends AbstractButtonDialog {
             } else {
                 gridPanel.add(new JLabel(
                         (clientGui.getClient().getLocalPlayer().equals(player) ? LOCAL : REMOTE) + ' '
-                                + (player.isGameMaster() ? "GM" : player.isObserver() ? "Observer" : "Player"))
-                );
+                                + (player.isGameMaster() ? "GM" : player.isObserver() ? "Observer" : "Player")));
                 gridPanel.add(new JLabel());
                 gridPanel.add(new JLabel());
                 gridPanel.add(new JLabel());
@@ -235,7 +236,7 @@ public class EditBotsDialog extends AbstractButtonDialog {
         return panel;
     }
 
-    private JComponent restoreButton(Player player, boolean savedSettingsExist ) {
+    private JComponent restoreButton(Player player, boolean savedSettingsExist) {
         if (savedSettingsExist) {
             JButton restoreButton = new JButton(Messages.getString("EditBotsDialog.configAvailable"));
             restoreButton.addActionListener(e -> callRestoreConfig(player));
@@ -248,7 +249,10 @@ public class EditBotsDialog extends AbstractButtonDialog {
         }
     }
 
-    /** Called from the config buttons. Opens a BotConfig Dialog and saves the result, if any. */
+    /**
+     * Called from the config buttons. Opens a BotConfig Dialog and saves the
+     * result, if any.
+     */
     private void callConfig(Player botOrGhost) {
         var bcd = new BotConfigDialog(getFrame(), botOrGhost.getName(), botConfigs.get(botOrGhost), clientGui);
         bcd.setVisible(true);
@@ -273,7 +277,10 @@ public class EditBotsDialog extends AbstractButtonDialog {
         }
     }
 
-    /** Updates the config button enabled states (only enabled when Princess bot is selected). */
+    /**
+     * Updates the config button enabled states (only enabled when Princess bot is
+     * selected).
+     */
     private void updateButtonStates() {
         for (Player ghost : ghostChoosers.keySet()) {
             JButton button = configButtons.get(ghost);
@@ -287,11 +294,14 @@ public class EditBotsDialog extends AbstractButtonDialog {
     }
 
     /**
-     * @return the result of the dialog with respect to ghost players to be replaced by Princess bots.
-     * The returned map links zero, one or more BehaviorSettings (a Princess configuration)
-     * to the ghost player name they were chosen for. The returned map only
-     * includes entries for those ghost players that had a Princess Bot replacement selected.
-     * The result may be empty, but not null.
+     * @return the result of the dialog with respect to ghost players to be replaced
+     *         by Princess bots.
+     *         The returned map links zero, one or more BehaviorSettings (a Princess
+     *         configuration)
+     *         to the ghost player name they were chosen for. The returned map only
+     *         includes entries for those ghost players that had a Princess Bot
+     *         replacement selected.
+     *         The result may be empty, but not null.
      */
     public Map<String, BehaviorSettings> getNewBots() {
         var result = new HashMap<String, BehaviorSettings>();
@@ -305,11 +315,15 @@ public class EditBotsDialog extends AbstractButtonDialog {
     }
 
     /**
-     * @return the result of the dialog with respect to Princess bots whose configuration is to be changed
-     * The returned map links zero, one or more BehaviorSettings (a Princess configuration)
-     * to the Princess player name they were chosen for. The returned map only
-     * includes entries for those Princess players that had the Edit option selected.
-     * The result may be empty, but not null.
+     * @return the result of the dialog with respect to Princess bots whose
+     *         configuration is to be changed
+     *         The returned map links zero, one or more BehaviorSettings (a Princess
+     *         configuration)
+     *         to the Princess player name they were chosen for. The returned map
+     *         only
+     *         includes entries for those Princess players that had the Edit option
+     *         selected.
+     *         The result may be empty, but not null.
      */
     public Map<String, BehaviorSettings> getChangedBots() {
         // All local bots with edited configs option selected
@@ -324,8 +338,10 @@ public class EditBotsDialog extends AbstractButtonDialog {
     }
 
     /**
-     * Returns the result of the dialog with respect to selected princess bots to be kicked
+     * Returns the result of the dialog with respect to selected princess bots to be
+     * kicked
      * The result may be empty, but not null.
+     * 
      * @return a Set of bot player names to be kicked. May be empty but not null
      */
     public Set<String> getKickBots() {
@@ -346,6 +362,6 @@ public class EditBotsDialog extends AbstractButtonDialog {
     }
 
     private void adaptToGUIScale() {
-        UIUtil.adjustDialog(this,  UIUtil.FONT_SCALE1);
+        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
     }
 }

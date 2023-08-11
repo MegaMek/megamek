@@ -196,7 +196,7 @@ public class MoveOption extends MovePath {
             current.setDanger(true);
         }
 
-        //Don't jump onto a building with CF < weight
+        // Don't jump onto a building with CF < weight
         Hex h = getGame().getBoard().getHex(getFinalCoords());
         if ((h != null) && (h.getTerrain(Terrains.BLDG_CF) != null)) {
             int cf = h.getTerrain(Terrains.BLDG_CF).getTerrainFactor();
@@ -212,15 +212,12 @@ public class MoveOption extends MovePath {
                         .2 * getEntity().getWeight(), ToHitData.SIDE_REAR)
                         * (1 - Math.pow(getCEntity().base_psr_odds, 2));
                 movement_threat += cur_threat;
-                if (centity.getTb().debug) {
-                    tv.add(cur_threat + " Movement Threat \r\n");
-                }
             }
         }
         return this;
     }
 
-    public int getMovementheatBuildup() {
+    public int getMovementHeatBuildup() {
         MoveStep last = getLastStep();
         if (last == null) {
             return 0;
@@ -274,8 +271,9 @@ public class MoveOption extends MovePath {
         }
         if ((last.getType() != MoveStepType.FORWARDS)
                 || (isClan
-                    && getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL) && (getEntity()
-                        .getSwarmAttackerId() == Entity.NONE))) {
+                        && getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL)
+                        && (getEntity()
+                                .getSwarmAttackerId() == Entity.NONE))) {
             return false;
         }
         // TODO: this just takes the first target
@@ -428,7 +426,7 @@ public class MoveOption extends MovePath {
             return utility;
         }
         // self threat and self damage are considered transient
-        double temp_threat = (threat + movement_threat + self_threat + ((double) getMovementheatBuildup() / 20))
+        double temp_threat = (threat + movement_threat + self_threat + ((double) getMovementHeatBuildup() / 20))
                 / getCEntity().strategy.attack;
         double temp_damage = (damage + self_damage) * centity.strategy.attack;
         if ((threat + movement_threat) > (4 * centity.avg_armor)) {
@@ -472,7 +470,7 @@ public class MoveOption extends MovePath {
         double mod = 1;
         // heat effect modifiers
         if (enemy.isJumping()
-            || ((enemy.getEntity().heat + enemy.getEntity().heatBuildup) > 4)) {
+                || ((enemy.getEntity().heat + enemy.getEntity().heatBuildup) > 4)) {
             if (enemy.centity.overheat == CEntity.OVERHEAT_LOW) {
                 mod = .75;
             } else if (enemy.centity.overheat == CEntity.OVERHEAT_HIGH) {
@@ -482,29 +480,35 @@ public class MoveOption extends MovePath {
             }
         }
         boolean aptGunnery = enemy.getEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
-        int[] enemy_firing_arcs = { 0, 0, 0};
-        enemy_firing_arcs[0] =CEntity.getThreatHitArc(enemy
-                .getFinalCoords(), MovePath.getAdjustedFacing(enemy
-                        .getFinalFacing(), MoveStepType.NONE), getFinalCoords());
-        enemy_firing_arcs[0] =CEntity.getThreatHitArc(enemy
-                .getFinalCoords(), MovePath.getAdjustedFacing(enemy
-                        .getFinalFacing(), MoveStepType.TURN_LEFT), getFinalCoords());
-        enemy_firing_arcs[0] =CEntity.getThreatHitArc(enemy
-                .getFinalCoords(), MovePath.getAdjustedFacing(enemy
-                        .getFinalFacing(), MoveStepType.TURN_RIGHT), getFinalCoords());
+        int[] enemy_firing_arcs = { 0, 0, 0 };
+        enemy_firing_arcs[0] = CEntity.getThreatHitArc(enemy
+                .getFinalCoords(),
+                MovePath.getAdjustedFacing(enemy
+                        .getFinalFacing(), MoveStepType.NONE),
+                getFinalCoords());
+        enemy_firing_arcs[0] = CEntity.getThreatHitArc(enemy
+                .getFinalCoords(),
+                MovePath.getAdjustedFacing(enemy
+                        .getFinalFacing(), MoveStepType.TURN_LEFT),
+                getFinalCoords());
+        enemy_firing_arcs[0] = CEntity.getThreatHitArc(enemy
+                .getFinalCoords(),
+                MovePath.getAdjustedFacing(enemy
+                        .getFinalFacing(), MoveStepType.TURN_RIGHT),
+                getFinalCoords());
         max = enemy.centity.getModifiedDamage((apc == 1) ? CEntity.TT
-                                                         : enemy_firing_arcs[0], distance, modifier, aptGunnery);
+                : enemy_firing_arcs[0], distance, modifier, aptGunnery);
 
         if (enemy_firing_arcs[1] == ToHitData.SIDE_FRONT) {
             max = Math.max(max, enemy.centity.getModifiedDamage(CEntity.TT,
-                                                                distance, modifier, aptGunnery));
+                    distance, modifier, aptGunnery));
         } else {
             max = Math.max(max, enemy.centity.getModifiedDamage(
                     enemy_firing_arcs[1], distance, modifier, aptGunnery));
         }
         if (enemy_firing_arcs[2] == ToHitData.SIDE_FRONT) {
             max = Math.max(max, enemy.centity.getModifiedDamage(CEntity.TT,
-                                                                distance, modifier, aptGunnery));
+                    distance, modifier, aptGunnery));
         } else {
             max = Math.max(max, enemy.centity.getModifiedDamage(
                     enemy_firing_arcs[2], distance, modifier, aptGunnery));
@@ -523,10 +527,10 @@ public class MoveOption extends MovePath {
                                 : .05)
                         * centity.entity.getWeight()
                         * Compute.oddsAbove(3 + modifier,
-                                            getEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)))
+                                getEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)))
                         / 100)
                         + (((1 - enemy.centity.base_psr_odds)
-                            * enemy.getEntity().getWeight()) / 10.0);
+                                * enemy.getEntity().getWeight()) / 10.0);
             }
         }
         return max;

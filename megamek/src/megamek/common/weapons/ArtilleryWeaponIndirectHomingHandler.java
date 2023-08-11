@@ -147,7 +147,6 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         r.add(roll);
         vPhaseReport.addElement(r);
 
-        roll = 12;
         // do we hit?
         bMissed = roll < toHit.getValue();
 

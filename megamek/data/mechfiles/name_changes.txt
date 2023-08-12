@@ -1028,6 +1028,8 @@ Dasher II (Standard)|Dasher II
 Death Trike (Standard)|Death Trike
 Defender Battlecruiser (Standard)|Defender Battlecruiser
 Delphyne (Standard)|Delphyne
+Demolisher Heavy Tank (Standard Mk. I) |Demolisher Heavy Tank (Mk. I)
+Demolisher Heavy Tank (Standard Mk. II) |Demolisher Heavy Tank (Mk. II)
 Demolisher II Heavy Tank (Standard)|Demolisher II Heavy Tank
 Demon Medium Tank (Standard)|Demon Medium Tank
 Demon Tank (Standard)|Demon Tank

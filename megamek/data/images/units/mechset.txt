@@ -3095,7 +3095,7 @@ chassis "Hammerhands" "mechs/Hammerhands.png"
 exact "Hammerhands HMH-4D" "mechs/Hammerhands HMH-4D.png"
 exact "Hammerhands HMH-6D" "mechs/Hammerhands HMH-6D.png"
 exact "Hammerhands HMH-6E" "mechs/Hammerhands HMH-6D.png"
-exact "Hammerhead (Standard)" "mechs/Hammerhead.png"
+exact "Hammerhead" "mechs/Hammerhead.png"
 #ARCTIC_CHEETAH
 chassis "Hankyu (Arctic Cheetah)" "mechs/Hankyu-CO.png"
 exact "Hankyu (Arctic Cheetah) A" "mechs/Hankyu_A-CO.png"

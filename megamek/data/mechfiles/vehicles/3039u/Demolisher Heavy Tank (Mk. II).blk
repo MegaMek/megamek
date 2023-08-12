@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -17,20 +17,16 @@ Demolisher Heavy Tank
 </Name>
 
 <Model>
-(Standard Mk. I)
+(Mk. II)
 </Model>
 
 <mul id:>
-863
+864
 </mul id:>
 
 <year>
-2803
+2823
 </year>
-
-<originalBuildYear>
-2803
-</originalBuildYear>
 
 <type>
 IS Level 1
@@ -39,9 +35,6 @@ IS Level 1
 <motion_type>
 Tracked
 </motion_type>
-
-<transporters>
-</transporters>
 
 <cruiseMP>
 3
@@ -83,6 +76,14 @@ Autocannon/20
 Autocannon/20
 </Turret Equipment>
 
+<source>
+TRO: 3039
+</source>
+
+<tonnage>
+80.0
+</tonnage>
+
 <capabilities>
 The Demolisher is an intimidating machine with two turret-mounted heavy guns. The titanic weapons employ a well-known propellant system that combines two chemicals in suspension to propel a stream of massive shells at the unlucky target. This generated a tremendous amount of heat in older models. As a result, crew members were required to wear special coolant suits because the inside of the tank can become unbearably hot during a sustained firefight. The current model addressed the issue by directing the majority of the ejection gases through the barrels. The Demolisher is a defensive unit that works best in urban environments. The two massive autocannons can easily take down an assault 'Mech when they emerge from hiding. The vehicle's lack of secondary weapons, however, forces it to rely on friendly infantry to screen against enemy light armour and infantry.
 </capabilities>
@@ -97,14 +98,15 @@ The Demolisher is armed with two 185mm ChemJet Gun Autocannon/20s, which are eno
 
 <history>
 Aldis Industries was nearly destroyed during Aleksandr Kerensky's liberation of Terra in 2767 after being seized by Rim Worlds Republic troops. Aldis was rebuilt under the auspices of Jerome Blake's Terran reconstruction programme and has operated under the neutrality ComStar crafted for Terra.
+During the early days of the First Succession War, engineers at Aldis Industries devised a solution to the 'Mech technology problem. Their plan was to build a vehicle powerful enough to destroy any 'Mech but appealing to worlds that couldn't afford 'Mech forces. The tank, dubbed the Demolisher, made its debut in 2803 and has since earned a reputation as one of the most lethal vehicles on the battlefield.
 </history>
 
 <manufacturer>
-Aldis Industries
+Aldis Industries,Lüneburg Vehicle Corporation,Vengeance Industries,New Samarkand Metals,General Motors/Blackwell Corporation,Trellshire Heavy Industries,Aldis Industries
 </manufacturer>
 
 <primaryFactory>
-Terra
+Betelgeuse,Braunschweig,Haven Star Cluster,New Samarkand,New Valencia,Sudeten,Terra
 </primaryFactory>
 
 <systemManufacturers>
@@ -114,16 +116,3 @@ ARMOR:Durandal 160 Standard
 COMMUNICATIONS:Omicron 5000
 TARGETING:Omicron VII
 </systemManufacturers>
-
-<source>
-TRO: 3039
-</source>
-
-<tonnage>
-80.0
-</tonnage>
-
-<fuelType>
-PETROCHEMICALS
-</fuelType>
-

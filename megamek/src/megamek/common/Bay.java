@@ -363,9 +363,27 @@ public class Bay implements Transporter, ITechnology {
         return 0;
     }
 
+    /**
+     * Updated toString() and helpers to normalize bay string output
+     * To match new 6-field format:
+     *      type:space(current or total):doors:bayNumber:infantryType:facing:status bitmap
+     * See BLKFile.java:BLKFile constants
+     */
     @Override
     public String toString() {
-        return "bay:" + totalSpace + ":" + doors + ":"+ bayNumber;
+        return this.bayString("bay", totalSpace, doors, bayNumber, "", Entity.LOC_NONE, 0);
+    }
+
+    public String bayString(String bayType, double space, int doors, int bayNumber, String infType, int facing, int bitmap){
+        return String.format("%s:%s:%s:%s:%s:%s:%s", bayType, space, doors, bayNumber, infType, facing, bitmap);
+    }
+
+    public String bayString(String bayType, double space, int doors, int bayNumber){
+        return String.format("%s:%s:%s:%s:%s:%s:%s", bayType, space, doors, bayNumber, "", Entity.LOC_NONE, 0);
+    }
+
+    public String bayString(String bayType, double space, int doors){
+        return String.format("%s:%s:%s:%s:%s:%s:%s", bayType, space, doors, -1, "", Entity.LOC_NONE, 0);
     }
 
     /**

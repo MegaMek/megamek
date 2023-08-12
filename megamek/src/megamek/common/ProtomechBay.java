@@ -96,7 +96,13 @@ public final class ProtomechBay extends Bay {
 
     @Override
     public String toString() {
-        return "ProtoMekBay:" + totalSpace + ":" + doors + ":"+ bayNumber;
+        String bayType = "ProtoMekBay";
+        return this.bayString(
+                bayType,
+                totalSpace,
+                doors,
+                bayNumber
+        );
     }
     
     public static TechAdvancement techAdvancement() {

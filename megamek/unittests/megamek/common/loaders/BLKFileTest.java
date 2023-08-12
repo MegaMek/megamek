@@ -18,6 +18,7 @@
  */
 package megamek.common.loaders;
 
+import com.sun.mail.util.DecodingException;
 import megamek.common.*;
 import megamek.common.InfantryBay.PlatoonType;
 import megamek.common.loaders.BLKFile.ParsedBayInfo;
@@ -25,14 +26,13 @@ import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BLKFileTest {
-    
+
     /**
      * Strips the bay type identifier from the bay string.
-     * 
+     *
      * @param bay The Bay being parsed
      * @return    The part of the bay string containing the parameters (size, doors, num, etc)
      */
@@ -40,7 +40,7 @@ public class BLKFileTest {
         String bayString = bay.toString();
         return bayString.substring(bayString.indexOf(Bay.FIELD_SEPARATOR) + 1);
     }
-    
+
     @Test
     public void parseBayDataAssignsMissingBayNumber() {
         final double SIZE = 2.0;
@@ -49,12 +49,18 @@ public class BLKFileTest {
         HashSet<Integer> bayNums = new HashSet<>();
         bayNums.add(0);
         bayNums.add(1);
-        
-        ParsedBayInfo pbi = new ParsedBayInfo(bayString, bayNums);
-        
-        assertEquals(pbi.getSize(), SIZE, 0.01);
-        assertEquals(pbi.getDoors(), DOORS);
-        assertEquals(pbi.getBayNumber(), 2);
+
+
+        try {
+            ParsedBayInfo pbi = new ParsedBayInfo(bayString, bayNums);
+            assertEquals(pbi.getSize(), SIZE, 0.01);
+            assertEquals(pbi.getDoors(), DOORS);
+            assertEquals(pbi.getBayNumber(), 2);
+        }
+        catch(DecodingException e){
+            fail("Unexpected exception!");
+        }
+
     }
 
     @Test
@@ -65,96 +71,141 @@ public class BLKFileTest {
         HashSet<Integer> bayNums = new HashSet<>();
         bayNums.add(0);
         bayNums.add(1);
-        
-        ParsedBayInfo pbi = new ParsedBayInfo(getBayNumbers(bay), bayNums);
-        
-        assertEquals(pbi.getSize(), SIZE, 0.01);
-        assertEquals(pbi.getDoors(), DOORS);
-        assertEquals(pbi.getBayNumber(), 2);
+
+        try {
+            ParsedBayInfo pbi = new ParsedBayInfo(getBayNumbers(bay), bayNums);
+
+            assertEquals(pbi.getSize(), SIZE, 0.01);
+            assertEquals(pbi.getDoors(), DOORS);
+            assertEquals(pbi.getBayNumber(), 2);
+        }
+        catch(DecodingException e) {
+            fail("Unexpected exception!");
+        }
     }
-    
+
     @Test
     public void parseBayTypeIndicatorWithBayNumber() {
         Bay bay = new BattleArmorBay(2.0, 1, 1, false, true);
 
-        ParsedBayInfo pbi = new ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
-        
-        assertTrue(pbi.isComstarBay());
-        assertEquals(pbi.getBayNumber(), 1);
+        try {
+            ParsedBayInfo pbi = new ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
+
+            assertTrue(pbi.isComstarBay());
+            assertEquals(pbi.getBayNumber(), 1);
+        }
+        catch(DecodingException e) {
+            fail("Unexpected exception!");
+        }
     }
 
     @Test
     public void parseBayTypeIndicatorWithoutBayNumber() {
         Bay bay = new BattleArmorBay(2.0, 1, 4, false, true);
-        String numbers = getBayNumbers(bay).replace(":4", "");
+        String numbers = getBayNumbers(bay).replace(":4", ":-1");
         HashSet<Integer> bayNums = new HashSet<>();
         bayNums.add(0);
         bayNums.add(1);
-        
-        ParsedBayInfo pbi = new ParsedBayInfo(numbers, bayNums);
-        
-        assertTrue(pbi.isComstarBay());
-        assertEquals(pbi.getBayNumber(), 2);
+
+        try {
+            ParsedBayInfo pbi = new ParsedBayInfo(numbers, bayNums);
+
+            assertTrue(pbi.isComstarBay());
+            assertEquals(pbi.getBayNumber(), 2);
+        }
+        catch(DecodingException e) {
+            fail("Unexpected exception!");
+        }
     }
 
     @Test
     public void parseFootInfantryBay() {
         Bay bay = new InfantryBay(2.0, 1, 0, PlatoonType.FOOT);
-        
-        ParsedBayInfo pbi = new ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
-        
-        assertEquals(pbi.getPlatoonType(), PlatoonType.FOOT);
+
+        try {
+            ParsedBayInfo pbi = new ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
+
+            assertEquals(pbi.getPlatoonType(), PlatoonType.FOOT);
+        }
+        catch(DecodingException e) {
+            fail("Unexpected exception!");
+        }
     }
 
     @Test
     public void parseJumpInfantryBay() {
         Bay bay = new InfantryBay(2.0, 1, 0, PlatoonType.JUMP);
-        
-        ParsedBayInfo pbi = new ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
-        
-        assertEquals(pbi.getPlatoonType(), PlatoonType.JUMP);
+
+        try {
+            ParsedBayInfo pbi = new ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
+
+            assertEquals(pbi.getPlatoonType(), PlatoonType.JUMP);
+        }
+        catch(DecodingException e) {
+            fail("Unexpected exception!");
+        }
     }
 
     @Test
     public void parseMotorizedInfantryBay() {
         Bay bay = new InfantryBay(2.0, 1, 0, PlatoonType.MOTORIZED);
-        
-        ParsedBayInfo pbi = new ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
-        
-        assertEquals(pbi.getPlatoonType(), PlatoonType.MOTORIZED);
+
+        try {
+            ParsedBayInfo pbi = new ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
+
+            assertEquals(pbi.getPlatoonType(), PlatoonType.MOTORIZED);
+        }
+        catch(DecodingException e) {
+            fail("Unexpected exception!");
+        }
     }
 
     @Test
     public void parseMechanizedInfantryBay() {
         Bay bay = new InfantryBay(2.0, 1, 0, PlatoonType.MECHANIZED);
-        
-        ParsedBayInfo pbi = new ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
-        
-        assertEquals(pbi.getPlatoonType(), PlatoonType.MECHANIZED);
+
+        try {
+            ParsedBayInfo pbi = new ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
+
+            assertEquals(pbi.getPlatoonType(), PlatoonType.MECHANIZED);
+        }
+        catch(DecodingException e) {
+            fail("Unexpected exception!");
+        }
     }
-    
+
     @Test
     public void parseDropShuttleBay() {
         Bay bay = new DropshuttleBay(1, -1, Jumpship.LOC_AFT);
-        
-        ParsedBayInfo pbi = new ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
-        
-        assertEquals(pbi.getDoors(), 1);
-        assertEquals(pbi.getBayNumber(), 1);
-        assertEquals(pbi.getFacing(), Jumpship.LOC_AFT);
+
+        try {
+            ParsedBayInfo pbi = new ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
+
+            assertEquals(pbi.getDoors(), 1);
+            assertEquals(pbi.getBayNumber(), 1);
+            assertEquals(pbi.getFacing(), Jumpship.LOC_AFT);
+        }
+        catch(DecodingException e) {
+            fail(String.format("Unexpected exception (%s)!", e.toString()));
+        }
     }
-    
+
     @Test
     public void parseNavalRepairFacility() {
         final double SIZE = 5000.0;
         final int DOORS = 2;
         Bay bay = new NavalRepairFacility(SIZE, DOORS, -1, Jumpship.LOC_AFT, true);
-        
-        ParsedBayInfo pbi = new ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
-        
-        assertEquals(pbi.getSize(), SIZE, 0.01);
-        assertEquals(pbi.getDoors(), DOORS);
-        assertEquals(pbi.getBayNumber(), 1);
-        assertEquals(pbi.getFacing(), Jumpship.LOC_AFT);
+
+        try {
+            ParsedBayInfo pbi = new ParsedBayInfo(getBayNumbers(bay), new HashSet<>());
+
+            assertEquals(pbi.getSize(), SIZE, 0.01);
+            assertEquals(pbi.getDoors(), DOORS);
+            assertEquals(pbi.getBayNumber(), 1);
+            assertEquals(pbi.getFacing(), Jumpship.LOC_AFT);
+        }
+        catch(DecodingException e) {
+            fail("Unexpected exception!");
+        }
     }
 }

@@ -49,7 +49,12 @@ public final class EjectionSeatCargoBay extends StandardSeatCargoBay {
 
     @Override
     public String toString() {
-        return "ejectionseats:" + currentSpace + ":" + doors;
+        String bayType = "ejectionseats";
+        return this.bayString(
+                bayType,
+                currentSpace,
+                doors
+        );
     }
 
     @Override

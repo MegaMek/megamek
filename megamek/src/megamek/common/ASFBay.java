@@ -97,7 +97,13 @@ public final class ASFBay extends AbstractSmallCraftASFBay {
 
     @Override
     public String toString() {
-        return (hasARTS() ? "artsasfbay:" : "asfbay:") + totalSpace + ":" + doors + ":" + bayNumber;
+        String bayType = (hasARTS() ? "artsasfbay" : "asfbay");
+        return this.bayString(
+                bayType,
+                totalSpace,
+                doors,
+                bayNumber
+        );
     }
 
     public static TechAdvancement techAdvancement() {

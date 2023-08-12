@@ -53,9 +53,9 @@ public class Aero extends Entity implements IAero, IBomber {
     public static final int COCKPIT_SMALL = 1;
     public static final int COCKPIT_COMMAND_CONSOLE = 2;
     public static final int COCKPIT_PRIMITIVE = 3;
-    public static final String[] COCKPIT_STRING = { "Standard Cockpit", "Small Cockpit", "Command Console",
-            "Primitive Cockpit" };
-    public static final String[] COCKPIT_SHORT_STRING = { "Standard", "Small", "Command Console", "Primitive" };
+    public static final String[] COCKPIT_STRING = {"Standard Cockpit", "Small Cockpit", "Command Console",
+            "Primitive Cockpit"};
+    public static final String[] COCKPIT_SHORT_STRING = {"Standard", "Small", "Command Console", "Primitive"};
 
     // critical hits
     public static final int CRIT_NONE = -1;
@@ -86,10 +86,10 @@ public class Aero extends Entity implements IAero, IBomber {
     // this needs to be larger, it is too easy to go over when you get to
     // warships
     // and bombs and such
-    private static final int[] NUM_OF_SLOTS = { 100, 100, 100, 100, 100, 100, 100 };
+    private static final int[] NUM_OF_SLOTS = {100, 100, 100, 100, 100, 100, 100};
 
-    private static String[] LOCATION_ABBRS = { "NOS", "LWG", "RWG", "AFT", "WNG", "FSLG" };
-    private static String[] LOCATION_NAMES = { "Nose", "Left Wing", "Right Wing", "Aft", "Wings", "Fuselage" };
+    private static String[] LOCATION_ABBRS = {"NOS", "LWG", "RWG", "AFT", "WNG", "FSLG"};
+    private static String[] LOCATION_NAMES = {"Nose", "Left Wing", "Right Wing", "Aft", "Wings", "Fuselage"};
 
     @Override
     public String[] getLocationAbbrs() {
@@ -111,7 +111,7 @@ public class Aero extends Entity implements IAero, IBomber {
     private int structIntegrity;
     private int orig_structIntegrity;
     // set up damage threshold
-    protected int[] damThresh = { 0, 0, 0, 0, 0, 0 };
+    protected int[] damThresh = {0, 0, 0, 0, 0, 0};
     // set up an int for what the critical effect would be
     private int potCrit = CRIT_NONE;
 
@@ -212,7 +212,7 @@ public class Aero extends Entity implements IAero, IBomber {
     private Set<String> escapeCraftList = new HashSet<>();
 
     //Maps unique id of each assigned marine to marine point value
-    private Map<UUID,Integer> marines;
+    private Map<UUID, Integer> marines;
 
     public Aero() {
         super();
@@ -230,7 +230,7 @@ public class Aero extends Entity implements IAero, IBomber {
             .setTechRating(RATING_D).setAvailability(RATING_C, RATING_E, RATING_D, RATING_C)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
     protected static final TechAdvancement TA_ASF_PRIMITIVE = new TechAdvancement(TECH_BASE_IS)
-    		//Per MUL team and per availability codes should exist to around 2781
+            //Per MUL team and per availability codes should exist to around 2781
             .setISAdvancement(DATE_ES, 2200, DATE_NONE, 2781, DATE_NONE)
             .setISApproximate(false, true, false, true, false).setProductionFactions(F_TA)
             .setTechRating(RATING_D).setAvailability(RATING_D, RATING_X, RATING_F, RATING_F)
@@ -247,28 +247,28 @@ public class Aero extends Entity implements IAero, IBomber {
 
     protected static final TechAdvancement[] COCKPIT_TA = {
             new TechAdvancement(TECH_BASE_ALL).setAdvancement(2460, 2470, 2491)
-                .setApproximate(true, false, false).setPrototypeFactions(F_TH)
-                .setPrototypeFactions(F_TH).setTechRating(RATING_C)
-                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD), //Standard
+                    .setApproximate(true, false, false).setPrototypeFactions(F_TH)
+                    .setPrototypeFactions(F_TH).setTechRating(RATING_C)
+                    .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+                    .setStaticTechLevel(SimpleTechLevel.STANDARD), //Standard
             new TechAdvancement(TECH_BASE_IS).setISAdvancement(3065, 3070, 3080)
-                .setClanAdvancement(DATE_NONE, DATE_NONE, 3080)
-                .setISApproximate(true, false, false).setPrototypeFactions(F_WB)
-                .setPrototypeFactions(F_WB, F_CSR).setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD), //Small
+                    .setClanAdvancement(DATE_NONE, DATE_NONE, 3080)
+                    .setISApproximate(true, false, false).setPrototypeFactions(F_WB)
+                    .setPrototypeFactions(F_WB, F_CSR).setTechRating(RATING_E)
+                    .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                    .setStaticTechLevel(SimpleTechLevel.STANDARD), //Small
             new TechAdvancement(TECH_BASE_ALL).setISAdvancement(2625, 2631, DATE_NONE, 2850, 3030)
-                .setISApproximate(true, false, false, true, true)
-                .setClanAdvancement(2625, 2631).setClanApproximate(true, false)
-                .setClanApproximate(true, false).setPrototypeFactions(F_TH)
-                .setPrototypeFactions(F_TH).setReintroductionFactions(F_FS).setTechRating(RATING_D)
-                .setAvailability(RATING_C, RATING_F, RATING_E, RATING_D)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED), //Cockpit command console
+                    .setISApproximate(true, false, false, true, true)
+                    .setClanAdvancement(2625, 2631).setClanApproximate(true, false)
+                    .setClanApproximate(true, false).setPrototypeFactions(F_TH)
+                    .setPrototypeFactions(F_TH).setReintroductionFactions(F_FS).setTechRating(RATING_D)
+                    .setAvailability(RATING_C, RATING_F, RATING_E, RATING_D)
+                    .setStaticTechLevel(SimpleTechLevel.ADVANCED), //Cockpit command console
             new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_ES, 2300, DATE_NONE, 2520)
-                .setISApproximate(false, true, false, false)
-                .setPrototypeFactions(F_TA).setTechRating(RATING_C)
-                .setAvailability(RATING_D, RATING_X, RATING_X, RATING_F)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD), //Primitive
+                    .setISApproximate(false, true, false, false)
+                    .setPrototypeFactions(F_TA).setTechRating(RATING_C)
+                    .setAvailability(RATING_D, RATING_X, RATING_X, RATING_F)
+                    .setStaticTechLevel(SimpleTechLevel.STANDARD), //Primitive
     };
 
     public static TechAdvancement getCockpitTechAdvancement(int cockpitType) {
@@ -747,9 +747,9 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public int getAvionicsMisreplaced() {
         if (getPartialRepairs().booleanOption("aero_avionics_replace")) {
-        return 1;
+            return 1;
         } else {
-        return 0;
+            return 0;
         }
     }
 
@@ -2496,15 +2496,15 @@ public class Aero extends Entity implements IAero, IBomber {
                 if (!first) {
                     toReturn.append(", ");
                 }
-            toReturn.append(String.format(Messages.getString("Aero.bayDamageString"), next.getType(), next.getBayNumber()));
-            first = false;
+                toReturn.append(String.format(Messages.getString("Aero.bayDamageString"), next.getType(), next.getBayNumber()));
+                first = false;
             }
             if (next.getCurrentDoors() < next.getDoors()) {
                 if (!first) {
                     toReturn.append(", ");
                 }
-            toReturn.append(String.format(Messages.getString("Aero.bayDoorDamageString"), next.getType(), next.getBayNumber(), (next.getDoors() - next.getCurrentDoors())));
-            first = false;
+                toReturn.append(String.format(Messages.getString("Aero.bayDoorDamageString"), next.getType(), next.getBayNumber(), (next.getDoors() - next.getCurrentDoors())));
+                first = false;
             }
         }
         return toReturn.toString();
@@ -2662,8 +2662,8 @@ public class Aero extends Entity implements IAero, IBomber {
         if (!isAirborne() || hasWorkingMisc(MiscType.F_RECON_CAMERA) || hasWorkingMisc(MiscType.F_INFRARED_IMAGER)
                 || hasWorkingMisc(MiscType.F_HYPERSPECTRAL_IMAGER)
                 || (hasWorkingMisc(MiscType.F_HIRES_IMAGER)
-                        && ((game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_DAY)
-                                || (game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_DUSK)))) {
+                && ((game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_DAY)
+                || (game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_DUSK)))) {
             return true;
         } else {
             return false;
@@ -2842,7 +2842,7 @@ public class Aero extends Entity implements IAero, IBomber {
      * Returns our list of unique individuals being transported as marines
      * @return
      */
-    public Map<UUID,Integer> getMarines() {
+    public Map<UUID, Integer> getMarines() {
         return marines;
     }
 
@@ -3000,7 +3000,7 @@ public class Aero extends Entity implements IAero, IBomber {
 
     @Override
     /**
-     * Returns true if this is an aerospace or conventional fighter 
+     * Returns true if this is an aerospace or conventional fighter
      * but not a larger craft (i.e. "SmallCraft" or "Dropship" and bigger
      */
     public boolean isFighter() {
@@ -3044,7 +3044,7 @@ public class Aero extends Entity implements IAero, IBomber {
                 // Skip anything that's not an AMS, AMS Bay or Point Defense Bay
                 if (!weapon.getType().hasFlag(WeaponType.F_AMS)
                         && !weapon.getType().hasFlag(WeaponType.F_AMSBAY)
-                        && !weapon.getType().hasFlag(WeaponType.F_PDBAY))  {
+                        && !weapon.getType().hasFlag(WeaponType.F_PDBAY)) {
                     continue;
                 }
 
@@ -3067,7 +3067,7 @@ public class Aero extends Entity implements IAero, IBomber {
                     Mounted bayWAmmo = bayW.getLinked();
                     if (!(weapon.getType().hasFlag(WeaponType.F_ENERGY))
                             && ((bayWAmmo == null) || (bayWAmmo.getUsableShotsLeft() == 0)
-                                    || bayWAmmo.isDumping())) {
+                            || bayWAmmo.isDumping())) {
                         loadWeapon(weapon);
                         bayWAmmo = weapon.getLinked();
                     }
@@ -3075,7 +3075,7 @@ public class Aero extends Entity implements IAero, IBomber {
                     // try again
                     if (!(weapon.getType().hasFlag(WeaponType.F_ENERGY))
                             && ((bayWAmmo == null) || (bayWAmmo.getUsableShotsLeft() == 0)
-                                    || bayWAmmo.isDumping())) {
+                            || bayWAmmo.isDumping())) {
                         // No ammo for this AMS.
                         continue;
                     }
@@ -3132,7 +3132,7 @@ public class Aero extends Entity implements IAero, IBomber {
             }
             getSensors().removeAll(sensorsToRemove);
             if (sensorsToRemove.size() >= 1) {
-            setNextSensor(getSensors().firstElement());
+                setNextSensor(getSensors().firstElement());
             }
         }
         //If we are in space, add them back...
@@ -3154,7 +3154,7 @@ public class Aero extends Entity implements IAero, IBomber {
                     }
                 }
             } else if (hasETypeFlag(Entity.ETYPE_AERO)
-                        || hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
+                    || hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
                 //ASFs and small craft get thermal/optical sensors
                 if (!hasAeroThermal) {
                     getSensors().add(new Sensor(Sensor.TYPE_AERO_THERMAL));
@@ -3165,6 +3165,7 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     // autoejection methods
+
     /**
      * @return unit has an ejection seat
      */

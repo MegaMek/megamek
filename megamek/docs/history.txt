@@ -8,6 +8,8 @@ VERSION HISTORY:
 + PR #4661: Add audio tab and master volume setting to client settings
 + PR #4678: Display vehicle crit effects in unit tooltip
 + Issue #4687: Fixes to jump jet attack logic
++ Issue #4705: Reset 'turn interrupted' flag between phases (possible SimFire fix)
++ Issue #4699: Fix homing Arty splash
 
 0.49.14 (2023-07-28 2100 UTC)
 + Fix #4452: Fixes a bug with detecting if Infantry dies due to extreme temperatures

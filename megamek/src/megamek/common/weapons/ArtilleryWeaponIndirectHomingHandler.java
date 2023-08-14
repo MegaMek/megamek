@@ -179,9 +179,11 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
             bMissed = true;
         }
         nDamPerHit = wtype.getRackSize();
+        
+        AmmoType ammoType = (AmmoType) ammo.getType();
 
         // copperhead gets 10 damage less than standard
-        if (((AmmoType) ammo.getType()).getAmmoType() != AmmoType.T_ARROW_IV) {
+        if (ammoType.getAmmoType() != AmmoType.T_ARROW_IV) {
             nDamPerHit -= 10;
         }
 
@@ -282,24 +284,18 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
         handleClearDamage(vPhaseReport, bldg, hexDamage, false);
         ratedDamage -= bldgAbsorbs;
+        
         if (ratedDamage > 0) {
+            Hex hex = game.getBoard().getHex(coords);
+            
             for (Entity entity : game.getEntitiesVector(coords)) {
-                if (!bMissed) {
-                    if (entity == entityTarget) {
-                        continue; // don't splash the target unless missile
-                        // missed
-                    }
+                if (!bMissed && (entity == entityTarget)) {
+                        continue; // don't splash the original target unless it's a miss
                 }
-                toHit.setSideTable(entity.sideTable(aaa.getCoords()));
-                HitData hit = entity.rollHitLocation(toHit.getHitTable(),
-                        toHit.getSideTable(), waa.getAimedLocation(),
-                        waa.getAimingMode(), toHit.getCover());
-                hit.setAttackerId(getAttackerId());
-                // BA gets damage to all troopers
-                vPhaseReport.addAll(gameManager.damageEntity(entity, hit,
-                            ratedDamage, false, DamageType.NONE, false, true,
-                            throughFront, underWater));
-                gameManager.creditKill(entity, ae);
+                
+                AreaEffectHelper.artilleryDamageEntity(entity, ratedDamage, bldg, bldgAbsorbs, 
+                        targetInBuilding, bldgDamagedOnMiss, missReported, ratedDamage, coords, ammoType, 
+                        coords, targetingHex, entityTarget, hex, hexDamage, vPhaseReport, gameManager);
             }
         }
         Report.addNewline(vPhaseReport);

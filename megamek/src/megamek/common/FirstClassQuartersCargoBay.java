@@ -97,7 +97,7 @@ public final class FirstClassQuartersCargoBay extends Bay {
         String bayType = "1stclassquarters";
         return this.bayString(
                 bayType,
-                totalSpace,
+                weight,
                 doors
         );
     }

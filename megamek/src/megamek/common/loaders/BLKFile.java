@@ -1292,13 +1292,13 @@ public class BLKFile {
 
             String[] fields = {};
             try {
-                // Turn 2-, 3-, or 4-field number lines into standardized 5-field line.
-                fields = this.normalizeTransporterNumbers(numbers);
+                // Turn 2-, 3-, or 4-field number lines into standardized 6-field line.
+                fields = normalizeTransporterNumbers(numbers);
 
                 size = Double.parseDouble(fields[0]);
                 doors = Integer.parseInt(fields[1]);
                 bayNumber = Integer.parseInt(fields[2]);
-                platoonType = this.decodePlatoonType(fields[3]);
+                platoonType = decodePlatoonType(fields[3]);
                 facing = Integer.parseInt(fields[4]);
 
                 // Split up bitmap
@@ -1358,7 +1358,7 @@ public class BLKFile {
             return facing;
         }
 
-        public String[] normalizeTransporterNumbers(String numbers) throws DecodingException {
+        public static String[] normalizeTransporterNumbers(String numbers) throws DecodingException {
             /** In order to make all transporter bays use the same number of data fields,
              *  but maintain compatibility with older blk files, we will do some
              *  pre-processing to check what format of field we are looking at, and convert it
@@ -1376,9 +1376,10 @@ public class BLKFile {
 
             // Expand old-format to new-format size; initialize new field.
             String[] temp = new String[TRANSPORTER_FIELDS];
+            // Copy initial two fields; subsequent fields get defaults or are set later
             System.arraycopy(numbersArray,0,temp,0,2);
             // Fill in other fields with default/unset values
-            temp[2] = String.valueOf(bayNumber);
+            temp[2] = String.valueOf(-1);
             temp[3] = "";
             temp[4] = String.valueOf(Entity.LOC_NONE);
             temp[5] = String.valueOf(0);
@@ -1386,6 +1387,14 @@ public class BLKFile {
             // If 2-field format, return with default values set.
             if (numbersArray.length == 2){
                 return temp;
+            }
+            else if (numbersArray.length > 2){
+                // Attempt to parse index 2 as an integer bay number, otherwise leave it as default
+                try{
+                    temp[2] = String.valueOf(Integer.parseInt(numbersArray[2]));
+                } catch (NumberFormatException e){
+                    // pass
+                }
             }
 
             // Add bitmap field
@@ -1398,6 +1407,7 @@ public class BLKFile {
                 potentialBayTypeIndicator = numbersArray[2];
             } else if (numbersArray.length == 4) {
                 potentialBayTypeIndicator = numbersArray[3];
+                temp[2] = numbersArray[2];
             }
 
             if (!potentialBayTypeIndicator.isEmpty()) {
@@ -1427,7 +1437,7 @@ public class BLKFile {
             return temp;
         }
 
-        public PlatoonType decodePlatoonType(String typeString) throws DecodingException {
+        public static PlatoonType decodePlatoonType(String typeString) throws DecodingException {
             // Handle platoon type decoding from strings of various casing
 
             if (typeString.equalsIgnoreCase("jump")) {
@@ -1438,8 +1448,8 @@ public class BLKFile {
                 return PlatoonType.MOTORIZED;
             } else if (typeString.equalsIgnoreCase("mechanized")) {
                 return PlatoonType.MECHANIZED;
-            } else if (typeString == "") {
-                return platoonType;
+            } else if (typeString.isEmpty()) {
+                return PlatoonType.FOOT;
             } else {
                 throw new DecodingException(String.format("Cannot determine platoon type from '%s'", typeString));
             }

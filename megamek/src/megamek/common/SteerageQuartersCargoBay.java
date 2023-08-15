@@ -94,7 +94,7 @@ public final class SteerageQuartersCargoBay extends Bay {
         String bayType = "steeragequarters";
         return this.bayString(
                 bayType,
-                totalSpace,
+                weight,
                 doors
         );
     }

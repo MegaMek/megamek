@@ -23,8 +23,6 @@ import megamek.common.*;
 import megamek.common.InfantryBay.PlatoonType;
 import megamek.common.loaders.BLKFile.ParsedBayInfo;
 import org.junit.jupiter.api.Test;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.util.HashSet;
 

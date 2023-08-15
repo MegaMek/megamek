@@ -116,7 +116,7 @@ public final class BattleArmorBay extends Bay {
         // See BLKFile.java:BLKFile constants
         int bitmap = 0;
         bitmap |= (isComStar? 1 : 0);
-        bitmap |= (isClan? 1 << 2 : 0);
+        bitmap |= (isClan? 1 << 1 : 0);
         String bayType = "battlearmorbay";
         return this.bayString(
                 bayType,
@@ -147,6 +147,10 @@ public final class BattleArmorBay extends Bay {
     @Override
     public boolean isClan() {
         return isClan;
+    }
+
+    public boolean isComStar() {
+        return isComStar;
     }
 
     @Override

@@ -235,7 +235,7 @@ public class BLKFileTest {
                 });
     }
 
-    public boolean confirmTransporterNumbers(String numbers, String[] expNumArray) {
+    private boolean confirmTransporterNumbers(String numbers, String[] expNumArray) {
         // Verifies matches between array generated from numbers list and expected array
         try {
             String[] genNumArray = ParsedBayInfo.normalizeTransporterNumbers(numbers);

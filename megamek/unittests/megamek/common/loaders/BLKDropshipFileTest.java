@@ -18,18 +18,12 @@
  */
 package megamek.common.loaders;
 
-import com.sun.mail.util.DecodingException;
 import megamek.common.*;
-import megamek.common.InfantryBay.PlatoonType;
-import megamek.common.loaders.BLKFile.ParsedBayInfo;
 import megamek.common.util.BuildingBlock;
 import org.junit.jupiter.api.Test;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.HashSet;
 import java.util.Vector;
 
 import static org.junit.jupiter.api.Assertions.*;

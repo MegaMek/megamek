@@ -1079,10 +1079,7 @@ public class MapMenu extends JPopupMenu {
             if (canStartFires
                 && (h.containsTerrain(Terrains.WOODS)
                     || h.containsTerrain(Terrains.JUNGLE)
-                    || h.containsTerrain(Terrains.FIELDS)
-                    || hasMunitionType(AmmoType.M_INFERNO)
-                    || hasMunitionType(AmmoType.M_INFERNO_IV)
-                    || hasMunitionType(AmmoType.M_THUNDER_INFERNO))) {
+                    || h.containsTerrain(Terrains.FIELDS))) {
                 menu.add(TargetMenuItem(new HexTarget(coords, Targetable.TYPE_HEX_IGNITE)));
             }
             // Targeting fuel tanks

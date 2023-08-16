@@ -1250,7 +1250,7 @@ public class BLKFile {
                             throw new DecodingException(String.format("Could not decode transporter type '%s'", startsWith));
                     } // End switch-case
                 }
-                catch(DecodingException x){
+                catch(DecodingException|NumberFormatException x){
                     throw new EntityLoadingException(
                         String.format(
                                 "Error decoding transporter '%s' (was '%s')", transporter, x
@@ -1307,7 +1307,7 @@ public class BLKFile {
                 isClanBay = (TECH_CLAN_BASE & bitmap) > 0;
 
             }
-            catch(DecodingException e){
+            catch(DecodingException|NumberFormatException e){
                 throw new DecodingException(
                         String.format(
                                 "Failure to load '%s' (was '%s'", numbers, e.toString()
@@ -1421,7 +1421,7 @@ public class BLKFile {
                     // Found an infantry type in the last field (2 or 3)
                     // Assign to field 3
                     temp[3] = potentialBayTypeIndicator;
-                    if (temp[2] == temp[3]){
+                    if (temp[2].equals(temp[3])){
                         // We found the infantry type in the bay number field; unset bay number
                         temp[2] = String.valueOf(-1);
                     }

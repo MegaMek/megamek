@@ -207,7 +207,7 @@ public class BLKDropshipFileTest {
         try{
             Dropship ds = loadDropshipFromString(newFormatDSwithMixedBA);
             parsed = true;
-            mixedTech = ds.isMixedTech() & ds.isClan(); // confirm mixed-tech Clan design
+            mixedTech = ds.isMixedTech() && ds.isClan(); // confirm mixed-tech Clan design
             bays = ds.getTransportBays();
             ISBACorrect = confirmBayTypeinBays(bays, "BA_IS");
             ClanBACorrect = confirmBayTypeinBays(bays, "BA_CLAN");

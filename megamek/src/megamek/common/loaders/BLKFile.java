@@ -1109,7 +1109,7 @@ public class BLKFile {
     }
 
     protected void addTransports(Entity e) throws EntityLoadingException {
-        if (dataFile.exists("transporters") && dataFile.containsData("transporters")) {
+        if (dataFile.containsData("transporters")) {
             String[] transporters = dataFile.getDataAsString("transporters");
             HashSet<Integer> usedBayNumbers = new HashSet<>();
 

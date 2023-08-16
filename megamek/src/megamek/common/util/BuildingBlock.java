@@ -707,4 +707,20 @@ public class BuildingBlock {
 
         return true;
     }
+
+    /**
+     *  Checks if a block exists and has data.
+     */
+    public boolean containsData(String blockName) {
+        if(!exists(blockName)){
+            return false;
+        }
+        // If the end index is the next line after the start index,
+        // the block is empty.
+        // Otherwise it contains data.
+        int start = findStartIndex(blockName);
+        int end = findEndIndex(blockName);
+        return (end - start) > 1;
+
+    }
 }

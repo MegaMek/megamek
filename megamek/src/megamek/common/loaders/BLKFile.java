@@ -597,16 +597,20 @@ public class BLKFile {
 
         blk.writeBlockData("motion_type", t.getMovementModeAsString());
 
-        String[] transporter_array = new String[t.getTransports().size()];
-        int index = 0;
-        for (Transporter transporter : t.getTransports()) {
-            transporter_array[index] = transporter.toString();
-            if (t.isPodMountedTransport(transporter)) {
-                transporter_array[index] += ":omni";
+        if(t.getTransports().size() > 0) {
+            // We should only write the transporters block for units that can and do
+            // have transporter bays.  Empty Transporters blocks cause issues.
+            String[] transporter_array = new String[t.getTransports().size()];
+            int index = 0;
+            for (Transporter transporter : t.getTransports()) {
+                transporter_array[index] = transporter.toString();
+                if (t.isPodMountedTransport(transporter)) {
+                    transporter_array[index] += ":omni";
+                }
+                index++;
             }
-            index++;
+            blk.writeBlockData("transporters", transporter_array);
         }
-        blk.writeBlockData("transporters", transporter_array);
 
         if (!t.isConventionalInfantry()) {
             if (t instanceof Aero) {
@@ -1105,7 +1109,7 @@ public class BLKFile {
     }
 
     protected void addTransports(Entity e) throws EntityLoadingException {
-        if (dataFile.exists("transporters")) {
+        if (dataFile.exists("transporters") && dataFile.containsData("transporters")) {
             String[] transporters = dataFile.getDataAsString("transporters");
             HashSet<Integer> usedBayNumbers = new HashSet<>();
 

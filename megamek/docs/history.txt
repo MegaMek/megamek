@@ -10,6 +10,8 @@ VERSION HISTORY:
 + Issue #4687: Fixes to jump jet attack logic
 + Issue #4705: Reset 'turn interrupted' flag between phases (possible SimFire fix)
 + Issue #4699: Fix homing Arty splash
++ Issue #4707: Prevent bot crash when firing large craft weapons from bays
++ Issue #935: Disallow targeting of hexes for ignition that cannot be set on fire as per BMM p. 107
 
 0.49.14 (2023-07-28 2100 UTC)
 + Fix #4452: Fixes a bug with detecting if Infantry dies due to extreme temperatures

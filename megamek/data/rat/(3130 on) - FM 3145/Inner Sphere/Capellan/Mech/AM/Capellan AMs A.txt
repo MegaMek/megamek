@@ -1,4 +1,4 @@
-Capellan Confederation Assault Mechs A
+Capellan Confederation Assault Mechs 3130 A
 Emperor EMP-7L,1
 Yu Huang Y-H10G,2
 BattleMaster BLR-4L,3

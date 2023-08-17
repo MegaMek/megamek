@@ -1,4 +1,4 @@
-Capellan Confederation Medium Mechs F
+Capellan Confederation Medium Mechs 3130 F
 Calliope CAL-1MAF,1
 Huron Warrior HUR-WO-R4O,2
 Raven II RVN-5X,3

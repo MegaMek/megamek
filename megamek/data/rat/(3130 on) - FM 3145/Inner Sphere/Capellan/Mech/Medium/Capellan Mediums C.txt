@@ -1,4 +1,4 @@
-Capellan Confederation Medium Mechs C
+Capellan Confederation Medium Mechs 3130 C
 Sha Yu SYU-6B,1
 Vindicator VND-4L,2
 Shadow Hawk SHD-8L,3

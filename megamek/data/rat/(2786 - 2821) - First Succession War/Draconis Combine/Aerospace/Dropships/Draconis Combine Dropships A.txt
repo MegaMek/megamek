@@ -1,5 +1,5 @@
 Draconis Combine Dropships A
-Dictator (Standard),1
+Dictator,1
 Triumph (2593),2
 Leopard CV (2581),3
 Achilles (2582),4

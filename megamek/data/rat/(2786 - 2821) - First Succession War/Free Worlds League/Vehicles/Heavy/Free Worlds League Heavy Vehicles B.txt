@@ -1,12 +1,12 @@
 Free Worlds League Heavy Vehicle B
-Thumper Artillery Vehicle (Standard),1
-LRM Carrier (Standard),2
-Bulldog Medium Tank (Standard),3
-Burke Defense Tank (Standard),4
-Manticore Heavy Tank (Standard),5
-Magi Infantry Support Vehicle (Standard),6
+Thumper Artillery Vehicle,1
+LRM Carrier,2
+Bulldog Medium Tank,3
+Burke Defense Tank,4
+Manticore Heavy Tank,5
+Magi Infantry Support Vehicle,6
 Von Luckner Heavy Tank VNL-K65N,5
-Marksman Artillery Vehicle (Standard),4
-Demon Tank (Standard),3
+Marksman Artillery Vehicle,4
+Demon Tank,3
 Von Luckner Heavy Tank (Star League),2
-Marksman Artillery Vehicle (Standard),1
+Marksman Artillery Vehicle,1

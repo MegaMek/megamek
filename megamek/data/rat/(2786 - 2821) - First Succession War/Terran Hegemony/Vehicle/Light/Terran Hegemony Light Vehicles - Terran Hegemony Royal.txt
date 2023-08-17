@@ -1,12 +1,12 @@
 Terran Hegemony Light Vehicles - Terran Hegemony Royal
 Lightning Attack Hovercraft (Royal),2
-Beagle Hover Scout (Standard),3
+Beagle Hover Scout,3
 Rotunda Scout Vehicle RND-J-1-11,4
-Cobra Transport VTOL (Standard),5
+Cobra Transport VTOL,5
 Cyrano Gunship (Royal),6
 Lightning Attack Hovercraft (Royal),7
-J. Edgar Light Hover Tank (Standard),6
+J. Edgar Light Hover Tank,6
 Ripper Infantry Transport (Royal),5
 Nightshade ECM VTOL (Royal),4
-Chevalier Light Tank (Standard),3
-Gabriel Reconnaissance Hovercraft (Standard),2
+Chevalier Light Tank,3
+Gabriel Reconnaissance Hovercraft,2

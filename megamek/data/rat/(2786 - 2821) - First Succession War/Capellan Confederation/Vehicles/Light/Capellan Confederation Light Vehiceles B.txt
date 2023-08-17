@@ -1,12 +1,12 @@
 Capellan Confederation Light Vehicles B
 Armored Personnel Carrier (Hover SRM),1
-Heavy Wheeled APC (Standard),2
+Heavy Wheeled APC,2
 Galleon Light Tank GAL-100,3
-J. Edgar Light Hover Tank (Standard),4
-Cyrano Gunship (Standard),5
-Ripper Infantry Transport (Standard),6
-Chevalier Light Tank (Standard),5
-Beagle Hover Scout (Standard),4
-Lightning Attack Hovercraft (Standard),3
-Gabriel Reconnaissance Hovercraft (Standard),2
-Maultier Hover APC (Standard),1
+J. Edgar Light Hover Tank,4
+Cyrano Gunship,5
+Ripper Infantry Transport,6
+Chevalier Light Tank,5
+Beagle Hover Scout,4
+Lightning Attack Hovercraft,3
+Gabriel Reconnaissance Hovercraft,2
+Maultier Hover APC,1

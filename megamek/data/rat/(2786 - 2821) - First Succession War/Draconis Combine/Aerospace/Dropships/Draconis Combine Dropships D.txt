@@ -2,7 +2,7 @@ Draconis Combine Dropships D
 Vulture (2312),1
 Leopard (2537),2
 Lion (2595),3
-Dictator (Standard),4
+Dictator,4
 Triumph (2593),5
 Leopard CV (2581),6
 Achilles (2582),5

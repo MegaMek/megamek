@@ -2,8 +2,8 @@ Free Worlds League Dropships F
 Leopard (2537),1
 Fury (2638),2
 Gazelle (2531),3
-Black Eagle (Standard),4
-Dictator (Standard),5
+Black Eagle,4
+Dictator,5
 Leopard CV (2581),6
 Triumph (2593),5
 Union (2708),4

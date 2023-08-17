@@ -2498,7 +2498,10 @@ public class FireControl {
             final List<Mounted> ammo = shooter.getAmmo();
             final List<Mounted> validAmmo = new ArrayList<>();
             for (final Mounted a : ammo) {
-                if (AmmoType.isAmmoValid(a, weaponType) && AmmoType.canSwitchToAmmo(weapon, (AmmoType) a.getType())) {
+                if (AmmoType.isAmmoValid(a, weaponType)
+                        && AmmoType.canSwitchToAmmo(weapon, (AmmoType) a.getType())
+                        && (!shooter.isLargeCraft()
+                            || shooter.whichBay(shooter.getEquipmentNum(weapon)).ammoInBay(shooter.getEquipmentNum(a)))) {
                     validAmmo.add(a);
                 }
             }

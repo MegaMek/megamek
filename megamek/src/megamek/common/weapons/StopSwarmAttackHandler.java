@@ -64,7 +64,10 @@ public class StopSwarmAttackHandler extends WeaponHandler {
         // Only apply the "stop swarm 'attack'" to the swarmed Mek.
         if (ae.getSwarmTargetId() != target.getId()) {
             Entity other = game.getEntity(ae.getSwarmTargetId());
-            other.setSwarmAttackerId(Entity.NONE);
+            
+            if (other != null) {
+                other.setSwarmAttackerId(Entity.NONE);
+            }
         } else {
             entityTarget.setSwarmAttackerId(Entity.NONE);
         }

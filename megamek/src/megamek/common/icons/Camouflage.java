@@ -27,6 +27,7 @@ import org.w3c.dom.Node;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.PrintWriter;
+import java.util.Objects;
 
 /**
  * Camouflage is an implementation of AbstractIcon that contains and displays a Camouflage, which
@@ -35,13 +36,18 @@ import java.io.PrintWriter;
  * @see AbstractIcon
  */
 public class Camouflage extends AbstractIcon {
-    //region Variable Declarations
     private static final long serialVersionUID = 1093277025745250375L;
 
     public static final String NO_CAMOUFLAGE = "-- No Camo --";
     public static final String COLOUR_CAMOUFLAGE = "-- Colour Camo --";
     public static final String XML_TAG = "camouflage";
-    //endregion Variable Declarations
+
+    // Rotation and scaling are stored as integers to avoid the usual rounding problems with doubles (e.g.
+    // when comparing camos with equals())
+    /** The angle in degrees by which to rotate this camo when applying it to units. */
+    private int rotationAngle = 0;
+    /** The scale times 10 (10 = no scaling) to apply to this camo when applying it to units. */
+    private int scale = 10;
 
     //region Constructors
     public Camouflage() {
@@ -118,6 +124,52 @@ public class Camouflage extends AbstractIcon {
 
     @Override
     public Camouflage clone() {
-        return new Camouflage(getCategory(), getFilename());
+        Camouflage newCamo = new Camouflage(getCategory(), getFilename());
+        newCamo.setRotationAngle(rotationAngle);
+        newCamo.setScale(scale);
+        return newCamo;
+    }
+
+    public void setRotationAngle(int rotationAngle) {
+        this.rotationAngle = rotationAngle;
+    }
+
+    public int getRotationAngle() {
+        return rotationAngle;
+    }
+
+    public void setScale(int scale) {
+        this.scale = scale;
+    }
+
+    public void resetScale() {
+        scale = 10;
+    }
+
+    public int getScale() {
+        return scale;
+    }
+
+    public double getScaleFactor() {
+        return scale / 10d;
+    }
+
+    public double getRotationRadians() {
+        return rotationAngle * Math.PI / 180;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (super.equals(other) && other instanceof Camouflage) {
+            Camouflage otherCamo = (Camouflage) other;
+            return (otherCamo.rotationAngle == rotationAngle) && (otherCamo.scale == scale);
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getFilename(), getCategory(), rotationAngle, scale);
     }
 }

@@ -41,7 +41,7 @@ public class FighterSquadron extends Aero {
     // when using the option for larger squadrons
     public static final int ALTERNATE_MAX_SIZE = 10;
 
-    private static final Predicate<Entity> ACTIVE_CHECK = ent -> !(ent.isDestroyed() || ent.isDoomed());
+    private static final Predicate<Entity> ACTIVE_CHECK = ent -> !((ent == null) || ent.isDestroyed() || ent.isDoomed());
     
     private final List<Integer> fighters = new ArrayList<>();
 

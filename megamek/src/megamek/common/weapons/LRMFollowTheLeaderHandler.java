@@ -42,6 +42,15 @@ public class LRMFollowTheLeaderHandler extends LRMHandler {
         nSalvoBonus = 1;
     }
 
+    @Override
+    public int getSalvoBonus() {
+        if (ComputeECM.isAffectedByECM(ae, ae.getPosition(), target.getPosition())) {
+            return 0;
+        } else {
+            return nSalvoBonus;
+        }
+    }
+
     /*
      * (non-Javadoc)
      * 

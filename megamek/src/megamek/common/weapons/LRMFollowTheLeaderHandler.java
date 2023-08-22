@@ -13,6 +13,7 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.ComputeECM;
 import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -48,7 +49,11 @@ public class LRMFollowTheLeaderHandler extends LRMHandler {
      */
     @Override
     protected int calcnCluster() {
-        return Integer.MAX_VALUE;
+        if (ComputeECM.isAffectedByECM(ae, ae.getPosition(), target.getPosition())) {
+            return super.calcnCluster();
+        } else {
+            return Integer.MAX_VALUE;
+        }
     }
 
     /*
@@ -60,5 +65,4 @@ public class LRMFollowTheLeaderHandler extends LRMHandler {
     protected int calcDamagePerHit() {
         return 1;
     }
-
 }

@@ -433,7 +433,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 && ((atype.getAmmoType() == AmmoType.T_MML)
                         || (atype.getAmmoType() == AmmoType.T_LRM)
                         || (atype.getAmmoType() == AmmoType.T_LRM_IMP))
-                && (munition == AmmoType.M_FOLLOW_THE_LEADER);
+                && (munition == AmmoType.M_FOLLOW_THE_LEADER)
+                && !ComputeECM.isAffectedByECM(ae, ae.getPosition(), target.getPosition());
 
         Mounted mLinker = weapon.getLinkedBy();
 

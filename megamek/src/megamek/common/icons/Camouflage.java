@@ -138,22 +138,35 @@ public class Camouflage extends AbstractIcon {
         return rotationAngle;
     }
 
+    /**
+     * Set the camo scaling to the given scale value. Use for serialization etc.
+     *
+     * @param scale The scale factor times 10
+     */
     public void setScale(int scale) {
         this.scale = scale;
     }
 
+    /** Resets the camo scaling to the neutral value (no scaling).  */
     public void resetScale() {
         scale = 10;
     }
 
+    /**
+     * @return The camo scaling; this value is 10 times the scaling that is used, so a return value of 10
+     * means no scaling is applied. Use for serialization etc. Use {@link #getScaleFactor()} to get the
+     * value by which to actually scale the camo.
+     */
     public int getScale() {
         return scale;
     }
 
+    /** @return The scaling to apply to the camo. A value of 1 means no scaling. */
     public double getScaleFactor() {
         return scale / 10d;
     }
 
+    /** @return The camo rotation in radians. */
     public double getRotationRadians() {
         return rotationAngle * Math.PI / 180;
     }

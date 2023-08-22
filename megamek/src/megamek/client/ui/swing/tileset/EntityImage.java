@@ -379,6 +379,16 @@ public class EntityImage {
         return ImageUtil.createAcceleratedImage(result);
     }
 
+    /**
+     * Returns a color from the given camoImage lookup array where the given lookup index is rotated by the
+     * given angle and scaled by the given scale.
+     *
+     * @param originalIndex The original lookup index (0 ... 84 x 72 - 1)
+     * @param angle The rotation angle in radians (0 = no change)
+     * @param scale The scale factor (1 = no change)
+     * @param camoImage The image pixelgrabber lookup array
+     * @return The rotated and scaled image pixel color as an int value (as from the image lookup array)
+     */
     private int rotatedAndScaledColor(int originalIndex, double angle, double scale, int[] camoImage) {
         // get the pixel coordinates
         int y = originalIndex / 84;
@@ -396,27 +406,22 @@ public class EntityImage {
         int ry2 = ry1 + 1;
         double dx = rx - rx1;
         double dy = ry - ry1;
-        int index11 = mirroredIndex(rx1, ry1);
-        int index12 = mirroredIndex(rx1, ry2);
-        int index21 = mirroredIndex(rx2, ry1);
-        int index22 = mirroredIndex(rx2, ry2);
-
-        int pixel11 = camoImage[index11];
+        int pixel11 = camoImage[mirroredIndex(rx1, ry1)];
         int red11 = (pixel11 >> 16) & 0xff;
         int green11 = (pixel11 >> 8) & 0xff;
         int blue11 = (pixel11) & 0xff;
 
-        int pixel12 = camoImage[index12];
+        int pixel12 = camoImage[mirroredIndex(rx1, ry2)];
         int red12 = (pixel12 >> 16) & 0xff;
         int green12 = (pixel12 >> 8) & 0xff;
         int blue12 = (pixel12) & 0xff;
 
-        int pixel21 = camoImage[index21];
+        int pixel21 = camoImage[mirroredIndex(rx2, ry1)];
         int red21 = (pixel21 >> 16) & 0xff;
         int green21 = (pixel21 >> 8) & 0xff;
         int blue21 = (pixel21) & 0xff;
 
-        int pixel22 = camoImage[index22];
+        int pixel22 = camoImage[mirroredIndex(rx2, ry2)];
         int red22 = (pixel22 >> 16) & 0xff;
         int green22 = (pixel22 >> 8) & 0xff;
         int blue22 = (pixel22) & 0xff;
@@ -435,14 +440,20 @@ public class EntityImage {
         return (red2 << 16) | (green2 << 8) | blue2;
     }
 
+    /**
+     * Returns a valid lookup index for the pixel array for any values of x and y. The lookup is
+     * calculated so that the image is mirrored vertically and horizontally to avoid unnecessary seams at
+     * the image border. Note that for a pixel at (0,0) the pixel color extends from -0.5, -0.5 to +0.5, +0.5.
+     *
+     * @param x the image x coordinate (any value allowed)
+     * @param y the image y coordinate (any value allowed)
+     * @return a lookup within allowed values (0 ... 84 x 72 - 1)
+     */
     private int mirroredIndex(double x, double y) {
+        // double x values may range from -0.5 to 83.5
         if (x <= -0.5) {
             x = -1 - x;
         }
-        if (y <= -0.5) {
-            y = -1 - y;
-        }
-        // double x values may range from -0.5 to 83.5
         if (x > 0) {
             x = x % 167; // 2 * (84 - 1) + 1
         }
@@ -450,13 +461,15 @@ public class EntityImage {
             x = 167 - x;
         }
         // double y values may range from -0.5 to 71.5
+        if (y <= -0.5) {
+            y = -1 - y;
+        }
         if (y > 0) {
             y = y % 143; // 2 * (72 - 1) + 1
         }
         if (y >= 71.5) {
             y = 143 - y;
         }
-
         return (int) (Math.round(x) + Math.round(y) * 84);
     }
 

@@ -1,4 +1,4 @@
-Federated Suns Heavy Mechs A
+Federated Suns Heavy Mechs 3130 A
 BattleAxe BKX-8D,1
 Avatar AV1-O,2
 Falconer FLC-8R,3

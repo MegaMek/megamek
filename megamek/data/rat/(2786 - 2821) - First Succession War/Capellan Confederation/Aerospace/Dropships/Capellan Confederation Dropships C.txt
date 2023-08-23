@@ -1,9 +1,9 @@
 Capellan Confederation Dropships C
-Black Eagle (Standard),1
+Black Eagle,1
 Fury (2638),2
 Confederate (2602),3
 Gazelle (2531),4
-Dictator (Standard),5
+Dictator,5
 Triumph (2593),6
 Leopard CV (2581),5
 Union (2708),4

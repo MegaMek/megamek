@@ -1,12 +1,12 @@
 Lyran Commonwealth Heavy Vehicle F
-SRM Carrier (Standard),1
+SRM Carrier,1
 Merkava Heavy Tank Mk VIII,2
-Gallant Urban Assault Tank (Standard),3
-Thumper Artillery Vehicle (Standard),4
-LRM Carrier (Standard),5
-Bulldog Medium Tank (Standard),6
-Burke Defense Tank (Standard),5
-Manticore Heavy Tank (Standard),4
-Magi Infantry Support Vehicle (Standard),3
+Gallant Urban Assault Tank,3
+Thumper Artillery Vehicle,4
+LRM Carrier,5
+Bulldog Medium Tank,6
+Burke Defense Tank,5
+Manticore Heavy Tank,4
+Magi Infantry Support Vehicle,3
 Von Luckner Heavy Tank VNL-K65N,2
-Marksman Artillery Vehicle (Standard),1
+Marksman Artillery Vehicle,1

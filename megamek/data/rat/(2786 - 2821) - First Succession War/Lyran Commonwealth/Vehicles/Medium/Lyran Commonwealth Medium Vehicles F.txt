@@ -1,12 +1,12 @@
 Lyran Commonwealth Medium Vehicles F
 Tiger Medium Tank T-12,1
-Condor Heavy Hover Tank (Standard),2
-Maxim Heavy Hover Transport (Standard),3
-Goblin Medium Tank (Standard),4
-LTV-4 Hover Tank (Standard),5
-Prowler Multi-Terrain Vehicle (Standard),6
-Turhan Urban Combat Vehicle (Standard),5
-Zephyr Hovertank (Standard),4
-Maxim Heavy Hover Transport (Standard),3
-Kanga Medium Hovertank (Standard),2
-Chaparral Missile Artillery Tank (Standard),1
+Condor Heavy Hover Tank,2
+Maxim Heavy Hover Transport,3
+Goblin Medium Tank,4
+LTV-4 Hover Tank,5
+Prowler Multi-Terrain Vehicle,6
+Turhan Urban Combat Vehicle,5
+Zephyr Hovertank,4
+Maxim Heavy Hover Transport,3
+Kanga Medium Hovertank,2
+Chaparral Missile Artillery Tank,1

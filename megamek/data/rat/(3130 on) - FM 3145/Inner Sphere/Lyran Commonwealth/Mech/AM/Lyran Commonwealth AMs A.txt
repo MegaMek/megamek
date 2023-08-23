@@ -1,4 +1,4 @@
-Lyran Commonwealth Assault Mechs A
+Lyran Commonwealth Assault Mechs 3130 A
 BattleMaster BLR-10S,1
 Zeus-X ZEU-X4,2
 Atlas AS7-S2,3

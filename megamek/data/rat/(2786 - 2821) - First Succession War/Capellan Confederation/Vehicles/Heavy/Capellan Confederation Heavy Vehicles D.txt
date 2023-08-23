@@ -1,12 +1,12 @@
 Capellan Confederation Heavy Vehicle D
 Merkava Heavy Tank Mk VIII,1
-Gallant Urban Assault Tank (Standard),2
-Thumper Artillery Vehicle (Standard),3
-LRM Carrier (Standard),4
-Bulldog Medium Tank (Standard),5
-Burke Defense Tank (Standard),6
-Manticore Heavy Tank (Standard),5
-Magi Infantry Support Vehicle (Standard),4
+Gallant Urban Assault Tank,2
+Thumper Artillery Vehicle,3
+LRM Carrier,4
+Bulldog Medium Tank,5
+Burke Defense Tank,6
+Manticore Heavy Tank,5
+Magi Infantry Support Vehicle,4
 Von Luckner Heavy Tank VNL-K65N,3
-Marksman Artillery Vehicle (Standard),2
-Demon Tank (Standard),1
+Marksman Artillery Vehicle,2
+Demon Tank,1

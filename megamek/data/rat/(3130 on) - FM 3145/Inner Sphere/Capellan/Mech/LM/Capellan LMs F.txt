@@ -1,4 +1,4 @@
-Capellan Confederation Light Mechs F
+Capellan Confederation Light Mechs 3130 F
 Raven RVN-4L,1
 Stinger STG-5G,2
 Locust LCT-1Vb,3

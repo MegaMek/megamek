@@ -1,4 +1,4 @@
-Lyran Commonwealth Light Mechs F
+Lyran Commonwealth Light Mechs 3130 F
 Dart DRT-4S,1
 Storm Raider STM-R3,2
 Mjolnir MLR-B2,3

@@ -1,12 +1,12 @@
 Federated Suns Medium Vehicles A
-LTV-4 Hover Tank (Standard),1
-Prowler Multi-Terrain Vehicle (Standard),2
-Turhan Urban Combat Vehicle (Standard),3
-Zephyr Hovertank (Standard),4
-Maxim Heavy Hover Transport (Standard),5
-Kanga Medium Hovertank (Standard),6
-Chaparral Missile Artillery Tank (Standard),5
+LTV-4 Hover Tank,1
+Prowler Multi-Terrain Vehicle,2
+Turhan Urban Combat Vehicle,3
+Zephyr Hovertank,4
+Maxim Heavy Hover Transport,5
+Kanga Medium Hovertank,6
+Chaparral Missile Artillery Tank,5
 Goblin Medium Tank (SRM),4
-Condor Heavy Hover Tank (Standard),3
-Thor Artillery Vehicle (Standard),2
-Chaparral Missile Artillery Tank (Standard),1
+Condor Heavy Hover Tank,3
+Thor Artillery Vehicle,2
+Chaparral Missile Artillery Tank,1

@@ -1,11 +1,11 @@
 Capellan Confederation Dropships F
 Colossus Mk I,1
 Leopard (2537),2
-Black Eagle (Standard),3
+Black Eagle,3
 Fury (2638),4
 Confederate (2602),5
 Gazelle (2531),6
-Dictator (Standard),5
+Dictator,5
 Triumph (2593),4
 Leopard CV (2581),3
 Union (2708),2

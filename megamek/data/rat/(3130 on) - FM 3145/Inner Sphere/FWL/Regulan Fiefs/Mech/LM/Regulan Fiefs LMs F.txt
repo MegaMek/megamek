@@ -1,4 +1,4 @@
-Regulan Fiefs Light Mechs F
+Regulan Fiefs Light Mechs 3130 F
 Wasp WSP-3M,1
 Stinger STG-5G,2
 Flea FLE-17,3

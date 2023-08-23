@@ -1,4 +1,4 @@
-Capellan Confederation Light Mechs D
+Capellan Confederation Light Mechs 3130 D
 Locust LCT-1Vb,1
 UrbanMech UM-R80,2
 Anubis ABS-3T,3

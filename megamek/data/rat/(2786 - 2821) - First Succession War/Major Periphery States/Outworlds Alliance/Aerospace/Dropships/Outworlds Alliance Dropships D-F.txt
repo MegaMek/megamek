@@ -1,9 +1,9 @@
 Outworlds Alliance Dropships D-F
-Czar Dropship (Standard),1
+Czar Dropship,1
 Leopard CV (2581),2
 Vulture (2312),3
 Gazelle (2531),4
-Dictator (Standard),5
+Dictator,5
 Leopard CV (2581),6
 Trojan (Blockade Runner),5
 Triumph (2593),4

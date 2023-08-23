@@ -1,10 +1,10 @@
 Federated Suns Dropships D
 Confederate (2602),1
 Colossus Mk I,2
-Vampire (Standard),3
+Vampire,3
 Leopard (2537),4
 Lion (2595),5
-Dictator (Standard),6
+Dictator,6
 Union (2708),5
 Leopard CV (2581),4
 Triumph (2593),3

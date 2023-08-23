@@ -91,7 +91,12 @@ public final class SteerageQuartersCargoBay extends Bay {
 
     @Override
     public String toString() {
-        return "steeragequarters:" + weight + ":" + doors;
+        String bayType = "steeragequarters";
+        return this.bayString(
+                bayType,
+                weight,
+                doors
+        );
     }
 
     @Override

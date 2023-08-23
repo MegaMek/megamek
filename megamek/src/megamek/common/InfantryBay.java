@@ -188,8 +188,16 @@ public final class InfantryBay extends Bay {
 
     @Override
     public String toString() {
-        return "infantrybay:" + (totalSpace / platoonType.getWeight()) + ":" + doors + ":"
-                + bayNumber + ":" + platoonType;
+        String bayType = "infantrybay";
+        return this.bayString(
+                bayType,
+                (totalSpace / platoonType.getWeight()),
+                doors,
+                bayNumber,
+                platoonType.toString(),
+                Entity.LOC_NONE,
+                0
+        );
     }
 
     public PlatoonType getPlatoonType() {

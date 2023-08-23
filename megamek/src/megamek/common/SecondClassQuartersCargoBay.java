@@ -92,7 +92,12 @@ public final class SecondClassQuartersCargoBay extends Bay {
 
     @Override
     public String toString() {
-        return "2ndclassquarters:" + weight + ":" + doors;
+        String bayType = "2ndclassquarters";
+        return this.bayString(
+                bayType,
+                weight,
+                doors
+        );
     }
 
     @Override

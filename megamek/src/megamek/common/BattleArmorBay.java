@@ -113,7 +113,20 @@ public final class BattleArmorBay extends Bay {
 
     @Override
     public String toString() {
-        return "battlearmorbay:" + totalSpace + ":" + doors + ":"+bayNumber+(isComStar?":C*":"");
+        // See BLKFile.java:BLKFile constants
+        int bitmap = 0;
+        bitmap |= (isComStar? 1 : 0);
+        bitmap |= (isClan? 1 << 1 : 0);
+        String bayType = "battlearmorbay";
+        return this.bayString(
+                bayType,
+                totalSpace,
+                doors,
+                bayNumber,
+                "",
+                Entity.LOC_NONE,
+                bitmap
+        );
     }
 
     public static TechAdvancement techAdvancement() {
@@ -134,6 +147,10 @@ public final class BattleArmorBay extends Bay {
     @Override
     public boolean isClan() {
         return isClan;
+    }
+
+    public boolean isComStar() {
+        return isComStar;
     }
 
     @Override

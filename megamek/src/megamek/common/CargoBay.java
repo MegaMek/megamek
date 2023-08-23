@@ -80,9 +80,15 @@ public final class CargoBay extends Bay {
 
     @Override
     public String toString() {
-        return "cargobay:" + totalSpace + ":" + doors + ":" + bayNumber;
+        String bayType = "cargobay";
+        return this.bayString(
+                bayType,
+                totalSpace,
+                doors,
+                bayNumber
+        );
     }
-    
+
     @Override
     public boolean isCargo() {
         return true;

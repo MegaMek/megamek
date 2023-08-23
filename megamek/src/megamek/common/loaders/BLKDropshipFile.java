@@ -13,6 +13,7 @@
  */
 package megamek.common.loaders;
 
+import com.sun.mail.util.DecodingException;
 import megamek.common.*;
 import megamek.common.util.BuildingBlock;
 
@@ -206,6 +207,7 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
         }
 
         addTransports(a);
+
         a.setArmorTonnage(a.getArmorWeight());
         return a;
     }

@@ -89,7 +89,13 @@ public final class LiquidCargoBay extends Bay {
 
     @Override
     public String toString() {
-        return "LiquidCargoBay: " + totalSpace + ":" + doors + ":" + bayNumber;
+        String bayType = "LiquidCargoBay";
+        return this.bayString(
+                bayType,
+                totalSpace,
+                doors,
+                bayNumber
+        );
     }
 
     @Override

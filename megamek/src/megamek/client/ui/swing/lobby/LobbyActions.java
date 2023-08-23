@@ -256,7 +256,9 @@ public class LobbyActions {
         // Display the CamoChooser and await the result
         // The dialog is preset to a random entity's settings
         Entity entity = CollectionUtil.anyOneElement(entities);
-        CamoChooserDialog ccd = new CamoChooserDialog(frame(), entity.getOwner().getCamouflage());
+        boolean hasIndividualCamo = entities.stream().anyMatch(e -> !e.getCamouflage().hasDefaultCategory());
+        CamoChooserDialog ccd = new CamoChooserDialog(frame(), entity.getCamouflageOrElseOwners(), hasIndividualCamo);
+        ccd.setDisplayedEntity(entity);
         if (ccd.showDialog().isCancelled()) {
             return;
         }

@@ -1146,11 +1146,19 @@ public final class UIUtil {
     }
 
     /**
-     * Returns vertical spacer Swing component ({@link Box#createVerticalStrut(int)} with the given height
+     * Returns a vertical spacer Swing component ({@link Box#createVerticalStrut(int)}) with the given height
      * scaled by the current GUI scaling.
      */
     public static Component scaledVerticalSpacer(int unscaledHeight) {
-        return Box.createVerticalStrut((int) (unscaledHeight * GUIPreferences.getInstance().getGUIScale()));
+        return Box.createVerticalStrut(scaleForGUI(unscaledHeight));
+    }
+
+    /**
+     * Returns a horizontal spacer Swing component ({@link Box#createHorizontalStrut(int)}) with the given width
+     * scaled by the current GUI scaling.
+     */
+    public static Component scaledHorizontalSpacer(int unscaledHeight) {
+        return Box.createHorizontalStrut(scaleForGUI(unscaledHeight));
     }
 
     /**

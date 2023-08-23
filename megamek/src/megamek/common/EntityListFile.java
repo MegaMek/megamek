@@ -757,6 +757,12 @@ public class EntityListFile {
                 output.write("\" camoFileName=\"");
                 output.write(entity.getCamouflage().getFilename());
             }
+            if (!entity.getCamouflage().hasDefaultCategory()) {
+                output.write("\" camoRotation=\"");
+                output.write(Integer.toString(entity.getCamouflage().getRotationAngle()));
+                output.write("\" camoScale=\"");
+                output.write(Integer.toString(entity.getCamouflage().getScale()));
+            }
 
             if ((entity instanceof MechWarrior) && !((MechWarrior) entity).getPickedUpByExternalIdAsString().equals("-1")) {
                 output.write("\" pickUpId=\"");

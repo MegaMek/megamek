@@ -26,6 +26,7 @@ import megamek.client.ui.preferences.PreferencesNode;
 import megamek.client.ui.renderers.AbstractIconRenderer;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
+import megamek.common.icons.Camouflage;
 import megamek.common.util.fileUtils.AbstractDirectory;
 import org.apache.logging.log4j.LogManager;
 
@@ -422,7 +423,9 @@ public abstract class AbstractIconChooser extends AbstractPanel implements TreeS
         // Select the root if the selection could not be found
         if (found) {
             getTreeCategories().setSelectionPath(new TreePath(currentNode.getPath()));
-            getImageList().setSelectedValue(icon, true);
+            // Since camos in the chooser are all free of rotation and scaling, must remove these to find the item
+            Camouflage cleanedCamo = new Camouflage(icon.getCategory(), icon.getFilename());
+            getImageList().setSelectedValue(cleanedCamo, true);
         } else {
             getTreeCategories().setSelectionPath(new TreePath(root.getPath()));
         }

@@ -101,6 +101,8 @@ public class MULParser {
     private static final String MODEL = "model";
     private static final String CAMO_CATEGORY = "camoCategory";
     private static final String CAMO_FILENAME = "camoFileName";
+    private static final String CAMO_ROTATION = "camoRotation";
+    private static final String CAMO_SCALE = "camoScale";
 
     /**
      * The names of the attributes recognized by this parser. Not every
@@ -773,6 +775,16 @@ public class MULParser {
         // Camo
         entity.getCamouflage().setCategory(entityTag.getAttribute(CAMO_CATEGORY));
         entity.getCamouflage().setFilename(entityTag.getAttribute(CAMO_FILENAME));
+
+        try {
+            String rotationString = entityTag.getAttribute(CAMO_ROTATION);
+            entity.getCamouflage().setRotationAngle(Integer.parseInt(rotationString));
+            String scaleString = entityTag.getAttribute(CAMO_SCALE);
+            entity.getCamouflage().setScale(Integer.parseInt(scaleString));
+        } catch (NumberFormatException ex) {
+            entity.getCamouflage().setRotationAngle(0);
+            entity.getCamouflage().resetScale();
+        }
 
         // external id
         String extId = entityTag.getAttribute(EXT_ID);

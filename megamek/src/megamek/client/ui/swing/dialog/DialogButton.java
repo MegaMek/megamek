@@ -28,7 +28,7 @@ public class DialogButton extends JButton {
     private static final long serialVersionUID = 952919304556828345L;
     
     /** The minimum width this button will have at GUI scale == 1 */
-    private final static int BUTTON_MIN_WIDTH = 120;
+    private final static int BUTTON_MIN_WIDTH = 95;
     
     public DialogButton(String text) {
         super(text);

@@ -17,6 +17,7 @@ package megamek.client.ui.swing.tileset;
 
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.PlayerColour;
+import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.Camouflage;
@@ -343,7 +344,8 @@ public class EntityImage {
 
                 // Apply the camo only on the icon pixels, not on transparent pixels
                 if (alpha != 0) {
-                    int pixel1 = colourCamouflage ? colour : pCamo[i];
+                    int pixel1 = colourCamouflage ? colour :
+                            rotatedAndScaledColor(i, getCamouflage().getRotationRadians(), getCamouflage().getScaleFactor(), pCamo);
                     int red1 = (pixel1 >> 16) & 0xff;
                     int green1 = (pixel1 >> 8) & 0xff;
                     int blue1 = (pixel1) & 0xff;
@@ -375,6 +377,100 @@ public class EntityImage {
         
         Image result = parent.createImage(new MemoryImageSource(IMG_WIDTH, IMG_HEIGHT, pMech, 0, IMG_WIDTH));
         return ImageUtil.createAcceleratedImage(result);
+    }
+
+    /**
+     * Returns a color from the given camoImage lookup array where the given lookup index is rotated by the
+     * given angle and scaled by the given scale.
+     *
+     * @param originalIndex The original lookup index (0 ... 84 x 72 - 1)
+     * @param angle The rotation angle in radians (0 = no change)
+     * @param scale The scale factor (1 = no change)
+     * @param camoImage The image pixelgrabber lookup array
+     * @return The rotated and scaled image pixel color as an int value (as from the image lookup array)
+     */
+    private int rotatedAndScaledColor(int originalIndex, double angle, double scale, int[] camoImage) {
+        // get the pixel coordinates
+        int y = originalIndex / 84;
+        int x = originalIndex - y * 84;
+        // center coordinates to rotate around the image center
+        double cy = y - 35.5;
+        double cx = x - 41.5;
+        // rotate, scale and remove centering
+        double ry = (Math.sin(angle) * cx + Math.cos(angle) * cy) / scale + 35.5;
+        double rx = (Math.cos(angle) * cx - Math.sin(angle) * cy) / scale + 41.5;
+        // interpolate between the four surrounding actual image pixels
+        int rx1 = (int) rx;
+        int rx2 = rx1 + 1;
+        int ry1 = (int) ry;
+        int ry2 = ry1 + 1;
+        double dx = rx - rx1;
+        double dy = ry - ry1;
+        int pixel11 = camoImage[mirroredIndex(rx1, ry1)];
+        int red11 = (pixel11 >> 16) & 0xff;
+        int green11 = (pixel11 >> 8) & 0xff;
+        int blue11 = (pixel11) & 0xff;
+
+        int pixel12 = camoImage[mirroredIndex(rx1, ry2)];
+        int red12 = (pixel12 >> 16) & 0xff;
+        int green12 = (pixel12 >> 8) & 0xff;
+        int blue12 = (pixel12) & 0xff;
+
+        int pixel21 = camoImage[mirroredIndex(rx2, ry1)];
+        int red21 = (pixel21 >> 16) & 0xff;
+        int green21 = (pixel21 >> 8) & 0xff;
+        int blue21 = (pixel21) & 0xff;
+
+        int pixel22 = camoImage[mirroredIndex(rx2, ry2)];
+        int red22 = (pixel22 >> 16) & 0xff;
+        int green22 = (pixel22 >> 8) & 0xff;
+        int blue22 = (pixel22) & 0xff;
+
+        int redx1 = MathUtility.lerp(red11, red21, dx);
+        int redx2 = MathUtility.lerp(red12, red22, dx);
+        int red2 = MathUtility.lerp(redx1, redx2, dy);
+
+        int greenx1 = MathUtility.lerp(green11, green21, dx);
+        int greenx2 = MathUtility.lerp(green12, green22, dx);
+        int green2 = MathUtility.lerp(greenx1, greenx2, dy);
+
+        int bluex1 = MathUtility.lerp(blue11, blue21, dx);
+        int bluex2 = MathUtility.lerp(blue12, blue22, dx);
+        int blue2 = MathUtility.lerp(bluex1, bluex2, dy);
+        return (red2 << 16) | (green2 << 8) | blue2;
+    }
+
+    /**
+     * Returns a valid lookup index for the pixel array for any values of x and y. The lookup is
+     * calculated so that the image is mirrored vertically and horizontally to avoid unnecessary seams at
+     * the image border. Note that for a pixel at (0,0) the pixel color extends from -0.5, -0.5 to +0.5, +0.5.
+     *
+     * @param x the image x coordinate (any value allowed)
+     * @param y the image y coordinate (any value allowed)
+     * @return a lookup within allowed values (0 ... 84 x 72 - 1)
+     */
+    private int mirroredIndex(double x, double y) {
+        // double x values may range from -0.5 to 83.5
+        if (x <= -0.5) {
+            x = -1 - x;
+        }
+        if (x > 0) {
+            x = x % 167; // 2 * (84 - 1) + 1
+        }
+        if (x >= 83.5) {
+            x = 167 - x;
+        }
+        // double y values may range from -0.5 to 71.5
+        if (y <= -0.5) {
+            y = -1 - y;
+        }
+        if (y > 0) {
+            y = y % 143; // 2 * (72 - 1) + 1
+        }
+        if (y >= 71.5) {
+            y = 143 - y;
+        }
+        return (int) (Math.round(x) + Math.round(y) * 84);
     }
 
     /** Applies the damage decal image to the icon. */

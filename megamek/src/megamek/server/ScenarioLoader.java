@@ -370,6 +370,11 @@ public class ScenarioLoader {
                 entity.setId(entityId);
                 ++ entityId;
                 g.addEntity(entity);
+                // Grounded DropShips don't set secondary positions unless they're part of a game and can verify
+                // they're not on a space map.
+                if (entity.isLargeCraft() && !entity.isAirborne()) {
+                    entity.setAltitude(0);
+                }
             }
         }
         // game's ready

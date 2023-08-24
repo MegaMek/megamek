@@ -335,6 +335,7 @@ public class BLKDropshipFileTest {
         boolean mixedTech = false;
         boolean clan = false;
         boolean ClanBACorrect = false;
+        boolean ISBAExists = false;
         Vector<Bay> bays = null;
 
         try{
@@ -344,12 +345,14 @@ public class BLKDropshipFileTest {
             clan = ds.isClan();             // confirm clan tech base
             bays = ds.getTransportBays();
             ClanBACorrect = confirmBayTypeinBays(bays, "BA_CLAN");
+            ISBAExists = confirmBayTypeinBays(bays, "BA_IS");
         } catch (Exception e){
         }
         assertTrue(parsed);
         assertTrue(clan);
         assertFalse(mixedTech);
         assertTrue(ClanBACorrect);
+        assertFalse(ISBAExists);
 
     }
 }

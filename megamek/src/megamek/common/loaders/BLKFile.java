@@ -1185,7 +1185,7 @@ public class BLKFile {
                             e.addTransporter(new InfantryBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(), pbi.getPlatoonType()), isPod);
                             break;
                         case "battlearmorbay":
-                            pbi = new ParsedBayInfo(numbers, usedBayNumbers);
+                            pbi = new ParsedBayInfo(numbers, usedBayNumbers, e.isClan());
                             e.addTransporter(new BattleArmorBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber(),
                                     pbi.isClan(), pbi.isComstarBay()), isPod);
                             break;
@@ -1284,6 +1284,11 @@ public class BLKFile {
         private int tech_base = 0;
 
         public ParsedBayInfo(String numbers, HashSet<Integer> usedBayNumbers) throws DecodingException {
+            // Overloaded constructor that assumes IS tech base
+            this(numbers, usedBayNumbers, false);
+        }
+
+        public ParsedBayInfo(String numbers, HashSet<Integer> usedBayNumbers, boolean clanTechBase) throws DecodingException {
             // expected format of "numbers" string:
             // 0:1:2:3:4:5
             // Field 0 is the size of the bay, in tons or # of units and is required
@@ -1305,8 +1310,11 @@ public class BLKFile {
                 platoonType = decodePlatoonType(fields[3]);
                 facing = Integer.parseInt(fields[4]);
 
-                // Split up bitmap
+                // Convert and unpack bitmap
                 int bitmap = Integer.parseInt(fields[5]);
+                // update bitmap for old-style Clan bay format if clanTechBase set
+                bitmap = (clanTechBase)? bitmap | TECH_CLAN_BASE : bitmap;
+
                 isComstarBay = (COMSTAR_BIT & bitmap) > 0;
                 isClanBay = (TECH_CLAN_BASE & bitmap) > 0;
 

@@ -141,6 +141,114 @@ public class BLKDropshipFileTest {
             "</escape_pod>"
             );
 
+    private static String oldFormatClanDSwithBA = String.join(
+            System.getProperty("line.separator"),
+            "<BlockVersion>",
+            "1",
+            "</BlockVersion>",
+            "<Version>",
+            "MAM0",
+            "</Version>",
+            "<UnitType>",
+            "Dropship",
+            "</UnitType>",
+            "<Name>",
+            "Old",
+            "</Name>",
+            "<Model>",
+            "Dropship",
+            "</Model>",
+            "<year>",
+            "3145",
+            "</year>",
+            "<originalBuildYear>",
+            "3145",
+            "</originalBuildYear>",
+            "<type>",
+            "Clan Level 3",
+            "</type>",
+            "<motion_type>",
+            "Aerodyne",
+            "</motion_type>",
+            "<transporters>",
+            "battlearmorbay:5.0:1:1",
+            "1stclassquarters:10.0:0:-1::-1:0",
+            "crewquarters:28.0:0:-1::-1:0",
+            "</transporters>",
+            "<SafeThrust>",
+            "2",
+            "</SafeThrust>",
+            "<heatsinks>",
+            "1",
+            "</heatsinks>",
+            "<sink_type>",
+            "1",
+            "</sink_type>",
+            "<fuel>",
+            "4280",
+            "</fuel>",
+            "<armor_type>",
+            "41",
+            "</armor_type>",
+            "<armor_tech>",
+            "2",
+            "</armor_tech>",
+            "<internal_type>",
+            "-1",
+            "</internal_type>",
+            "<armor>",
+            "85",
+            "70",
+            "70",
+            "57",
+            "</armor>",
+            "<Nose Equipment>",
+            "</Nose Equipment>",
+            "<Left Side Equipment>",
+            "</Left Side Equipment>",
+            "<Right Side Equipment>",
+            "</Right Side Equipment>",
+            "<Aft Equipment>",
+            "</Aft Equipment>",
+            "<Hull Equipment>",
+            "</Hull Equipment>",
+            "<structural_integrity>",
+            "3",
+            "</structural_integrity>",
+            "<tonnage>",
+            "200.0",
+            "</tonnage>",
+            "<designtype>",
+            "1",
+            "</designtype>",
+            "<crew>",
+            "41",
+            "</crew>",
+            "<officers>",
+            "1",
+            "</officers>",
+            "<gunners>",
+            "0",
+            "</gunners>",
+            "<passengers>",
+            "0",
+            "</passengers>",
+            "<marines>",
+            "0",
+            "</marines>",
+            "<battlearmor>",
+            "0",
+            "</battlearmor>",
+            "<otherpassenger>",
+            "0",
+            "</otherpassenger>",
+            "<life_boat>",
+            "0",
+            "</life_boat>",
+            "<escape_pod>",
+            "0",
+            "</escape_pod>"
+    );
     private Dropship loadDropshipFromString(String strOfBLK) throws Exception {
         /**
          *  Load a string of BLK-style blocks as an InputStream and create a new DropShip
@@ -219,6 +327,29 @@ public class BLKDropshipFileTest {
         assertTrue(ISBACorrect);
         assertTrue(ClanBACorrect);
         assertTrue(ComStarBACorrect);
+
+    }
+    @Test
+    public void testLoadOldFormatDSHasClanBATechLevels() {
+        boolean parsed = false;
+        boolean mixedTech = false;
+        boolean clan = false;
+        boolean ClanBACorrect = false;
+        Vector<Bay> bays = null;
+
+        try{
+            Dropship ds = loadDropshipFromString(oldFormatClanDSwithBA);
+            parsed = true;
+            mixedTech = ds.isMixedTech();   // confirm not mixed tech
+            clan = ds.isClan();             // confirm clan tech base
+            bays = ds.getTransportBays();
+            ClanBACorrect = confirmBayTypeinBays(bays, "BA_CLAN");
+        } catch (Exception e){
+        }
+        assertTrue(parsed);
+        assertTrue(clan);
+        assertFalse(mixedTech);
+        assertTrue(ClanBACorrect);
 
     }
 }

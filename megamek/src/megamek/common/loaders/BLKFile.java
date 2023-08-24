@@ -1302,7 +1302,7 @@ public class BLKFile {
             String[] fields = {};
             try {
                 // Turn 2-, 3-, or 4-field number lines into standardized 6-field line.
-                fields = normalizeTransporterNumbers(numbers);
+                fields = normalizeTransporterNumbers(numbers, clanTechBase);
 
                 size = Double.parseDouble(fields[0]);
                 doors = Integer.parseInt(fields[1]);
@@ -1312,8 +1312,6 @@ public class BLKFile {
 
                 // Convert and unpack bitmap
                 int bitmap = Integer.parseInt(fields[5]);
-                // update bitmap for old-style Clan bay format if clanTechBase set
-                bitmap = (clanTechBase)? bitmap | TECH_CLAN_BASE : bitmap;
 
                 isComstarBay = (COMSTAR_BIT & bitmap) > 0;
                 isClanBay = (TECH_CLAN_BASE & bitmap) > 0;
@@ -1371,6 +1369,10 @@ public class BLKFile {
         }
 
         public static String[] normalizeTransporterNumbers(String numbers) throws DecodingException {
+            // If we don't care about the tech base (e.g., non BA bays) use default value
+            return normalizeTransporterNumbers(numbers, false);
+        }
+        public static String[] normalizeTransporterNumbers(String numbers, boolean clanTechBase) throws DecodingException {
             /** In order to make all transporter bays use the same number of data fields,
              *  but maintain compatibility with older blk files, we will do some
              *  pre-processing to check what format of field we are looking at, and convert it
@@ -1411,6 +1413,9 @@ public class BLKFile {
 
             // Add bitmap field
             int bitmap = 0;
+            if (clanTechBase){
+               bitmap |= TECH_CLAN_BASE;
+            }
 
             // the bay type indicator will be either the third or fourth item, but the bay number always comes before it,
             // so we make sure to pick the last item in the array

@@ -330,7 +330,9 @@ public class BLKDropshipFileTest {
 
     }
     @Test
-    public void testLoadOldFormatDSHasClanBATechLevels() {
+    public void testLoadOldFormatClanDSHasClanBATech() {
+        // We want to verify that the correct tech type is applied to non-mixed
+        // Clan BA bays when loading old-format files.
         boolean parsed = false;
         boolean mixedTech = false;
         boolean clan = false;

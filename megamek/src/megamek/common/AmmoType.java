@@ -149,7 +149,7 @@ public class AmmoType extends EquipmentType {
             AmmoType.T_LRM_STREAK, AmmoType.T_LRM_TORPEDO, AmmoType.T_LRM_TORPEDO_COMBO, AmmoType.T_SRM,
             AmmoType.T_SRM_ADVANCED, AmmoType.T_SRM_PRIMITIVE, AmmoType.T_SRM_STREAK, AmmoType.T_SRM_TORPEDO,
             AmmoType.T_MRM, AmmoType.T_ROCKET_LAUNCHER, AmmoType.T_EXLRM, AmmoType.T_MML, AmmoType.T_NLRM, AmmoType.T_MG, AmmoType.T_MG_LIGHT, AmmoType.T_MG_HEAVY,
-            AmmoType.T_NAIL_RIVET_GUN, };
+            AmmoType.T_NAIL_RIVET_GUN, AmmoType.T_ATM, AmmoType.T_IATM, };
 
     /**
      * Contains the set of {@code AmmoType}s which could share ammo (e.g. SRM 2 and
@@ -413,6 +413,12 @@ public class AmmoType extends EquipmentType {
             } else if (other.is(T_MML) && !other.hasFlag(AmmoType.F_MML_LRM) && is(T_SRM)) {
                 return true;
             }
+        }
+
+        // ATM Launchers
+        if (((is(T_ATM) && other.is(T_IATM)) || (is(T_IATM) && other.is(T_ATM))) && (getMunitionType() == other.getMunitionType())) {
+	    // Ammo exclusive to iATMs couldn't have the same munition type as standard ATMs
+	    return true;
         }
 
         // General Launchers

@@ -543,7 +543,8 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                     MechTableModel mechModel = entry.getModel();
                     MechSummary mech = mechModel.getMechSummary(entry.getIdentifier());
                     boolean techLevelMatch = false;
-                    int type = enableYearLimits ? mech.getType(allowedYear) : mech.getType();
+                    int type = gameOptions.booleanOption(OptionsConstants.ALLOWED_ERA_BASED) ?
+                            mech.getType(allowedYear) : mech.getType();
                     for (int tl : nTypes) {
                         if (type == tl) {
                             techLevelMatch = true;

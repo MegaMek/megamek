@@ -5564,7 +5564,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 String rows = row;
 
                 if (!wSprite.entity.getCrew().isEjected()) {
-                    String sPilot = PilotToolTip.getPilotTipShort(wSprite.entity, GUIP.getshowPilotPortraitTT()).toString();
+                    String sPilot = PilotToolTip.getPilotTipShort(wSprite.entity, GUIP.getshowPilotPortraitTT(), false).toString();
                     col = "<TD>" + sPilot + "</TD>";
                     row = "<TR>" + col + "</TR>";
                     rows += row;

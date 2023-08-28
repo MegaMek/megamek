@@ -1253,6 +1253,7 @@ public class BLKFile {
                         default:
                             // Some Transport types (e.g. BattleArmorHandles) are not added here.
                             // Do nothing for now.
+                            break;
                     } // End switch-case
                 }
                 catch(DecodingException|NumberFormatException x){

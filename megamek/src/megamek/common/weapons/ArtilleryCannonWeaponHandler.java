@@ -15,6 +15,7 @@
 package megamek.common.weapons;
 
 import megamek.common.*;
+import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.server.GameManager;
@@ -45,7 +46,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
         if (!cares(phase)) {
             return true;
         }
-        
+
         Coords targetPos = target.getPosition();
         boolean isFlak = (target instanceof VTOL) || target.isAero();
         boolean asfFlak = target.isAero();
@@ -148,7 +149,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
         }
 
         // According to TacOps eratta, artillery cannons can only fire standard
-        // rounds.
+        // rounds and fuel-air cannon shells (Interstellar Ops p165).
         // But, they're still in as unofficial tech, because they're fun. :)
         if (ammoType.getMunitionType() == AmmoType.M_FLARE) {
             int radius;
@@ -171,6 +172,11 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
             return false;
         } else if (ammoType.getMunitionType() == AmmoType.M_SMOKE) {
             gameManager.deliverArtillerySmoke(targetPos, vPhaseReport);
+            return false;
+        } else if (ammoType.getMunitionType() == AmmoType.M_FAE) {
+            AreaEffectHelper.processFuelAirDamage(targetPos,
+                    ammoType, ae, vPhaseReport, gameManager);
+
             return false;
         }
 

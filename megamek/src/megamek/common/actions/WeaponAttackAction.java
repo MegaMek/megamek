@@ -32,6 +32,7 @@ import megamek.common.weapons.lasers.VariableSpeedPulseLaserWeapon;
 import megamek.common.weapons.lrms.LRTWeapon;
 import megamek.common.weapons.mortars.MekMortarWeapon;
 import megamek.common.weapons.srms.SRTWeapon;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.Serializable;
@@ -359,12 +360,17 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             bMekTankStealthActive = ae.isStealthActive();
         }
 
+        // Collate artillery / artillery cannon types for flak check
+        int[] artillery_types = {AmmoType.T_LONG_TOM, AmmoType.T_SNIPER, AmmoType.T_THUMPER, AmmoType.T_LONG_TOM_CANNON, AmmoType.T_SNIPER_CANNON, AmmoType.T_THUMPER_CANNON};
         boolean isFlakAttack = !game.getBoard().inSpace() && (te != null)
                 && (te.isAirborne() || te.isAirborneVTOLorWIGE()) && (atype != null)
-                && ((((atype.getAmmoType() == AmmoType.T_AC_LBX) || (atype.getAmmoType() == AmmoType.T_AC_LBX_THB)
-                        || (atype.getAmmoType() == AmmoType.T_SBGAUSS))
-                        && (munition == AmmoType.M_CLUSTER))
-                        || (munition == AmmoType.M_FLAK) || (atype.getAmmoType() == AmmoType.T_HAG));
+                && (
+                        (((atype.getAmmoType() == AmmoType.T_AC_LBX) || (atype.getAmmoType() == AmmoType.T_AC_LBX_THB)
+                            || (atype.getAmmoType() == AmmoType.T_SBGAUSS))
+                            && (munition == AmmoType.M_CLUSTER))
+                        || (munition == AmmoType.M_FLAK) || (atype.getAmmoType() == AmmoType.T_HAG)
+                        || (ArrayUtils.contains(artillery_types, atype.getAmmoType()) && atype.getMunitionType() == AmmoType.M_STANDARD)
+        );
 
         boolean isIndirect = (wtype.hasModes() && weapon.curMode().equals(Weapon.MODE_MISSILE_INDIRECT));
 
@@ -721,7 +727,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // Collect the modifiers for the crew/pilot
         toHit = compileCrewToHitMods(game, ae, te, toHit, weapon);
-        
+
         // Collect the modifiers for the attacker's condition/actions
         if (ae != null) {
             //Conventional fighter, Aerospace and fighter LAM attackers
@@ -1514,7 +1520,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // for spheroid dropships in atmosphere (and on ground), the rules about
         // firing arcs are more complicated
         // TW errata 2.1
-        
+
         if ((Compute.useSpheroidAtmosphere(game, ae) ||
                 (ae.isAero() && ((IAero) ae).isSpheroid() && (ae.getAltitude() == 0) && game.getBoard().onGround()))
                 && (weapon != null)) {
@@ -1523,15 +1529,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (!ae.isAirborne() && (range == 0) && (weapon.getLocation() != Aero.LOC_AFT)) {
                 return Messages.getString("WeaponAttackAction.OnlyAftAtZero");
             }
-            
+
             int altDif = target.getAltitude() - ae.getAltitude();
-            
+
             // Nose-mounted weapons can only be fired at targets at least 1 altitude higher
             if ((weapon.getLocation() == Aero.LOC_NOSE) && (altDif < 1)
                     && wtype != null
                     // Unless the weapon is used as artillery
                     && (!(wtype instanceof ArtilleryWeapon || wtype.hasFlag(WeaponType.F_ARTILLERY)
-                            || (ae.getAltitude() == 0 && wtype instanceof CapitalMissileWeapon) 
+                            || (ae.getAltitude() == 0 && wtype instanceof CapitalMissileWeapon)
                             || isIndirect))) {
                 return Messages.getString("WeaponAttackAction.TooLowForNose");
             }
@@ -3947,10 +3953,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param te The target Entity
      * @param toHit The running total ToHitData for this WeaponAttackAction
      * @param weapon The weapon being used (it's type should be WeaponType!)
-     * 
+     *
      */
     private static ToHitData compileCrewToHitMods(Game game, Entity ae, Entity te, ToHitData toHit, Mounted weapon) {
-        
+
         if (ae == null) {
             // These checks won't work without a valid attacker
             return toHit;

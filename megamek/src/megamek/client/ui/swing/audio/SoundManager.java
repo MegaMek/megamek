@@ -83,7 +83,7 @@ public class SoundManager implements AudioService {
                 }
                 break;
             case BING_OTHERS_TURN:
-                if(!GUIP.getSoundMuteMyTurn()) {
+                if(!GUIP.getSoundMuteOthersTurn()) {
                     sound = sounds.get(2);
                 }
                 break;

@@ -20,6 +20,7 @@ VERSION HISTORY:
 + Issue #4708: Respect variable tech level game option/allowed era settings
 + Issue #4711: Prevent squadron-related NPE in lobby
 + Issue #4692: Landed dropships introduced in megamek scenarios should deploy properly
++ PR #4728: Mute "other players turn" sound properly
 
 0.49.14 (2023-07-28 2100 UTC)
 + Fix #4452: Fixes a bug with detecting if Infantry dies due to extreme temperatures

@@ -1251,7 +1251,9 @@ public class BLKFile {
                             e.addTransporter(new DockingCollar(pbi.getBayNumber()));
                             break;
                         default:
-                            throw new DecodingException(String.format("Could not decode transporter type '%s'", startsWith));
+                            // Some Transport types (e.g. BattleArmorHandles) are not added here.
+                            // Do nothing for now.
+                            break;
                     } // End switch-case
                 }
                 catch(DecodingException|NumberFormatException x){

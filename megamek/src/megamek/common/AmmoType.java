@@ -15,6 +15,7 @@
 package megamek.common;
 
 import megamek.common.options.OptionsConstants;
+import org.apache.commons.lang.ArrayUtils;
 
 import java.math.BigInteger;
 import java.util.*;
@@ -263,7 +264,7 @@ public class AmmoType extends EquipmentType {
     public static final long M_FASCAM = 1L << 40;
     public static final long M_INFERNO_IV = 1L << 41;
     public static final long M_VIBRABOMB_IV = 1L << 42;
-//  public static final long M_ACTIVE_IV   
+//  public static final long M_ACTIVE_IV
     public static final long M_SMOKE = 1L << 43;
     public static final long M_LASER_INHIB = 1L << 44;
 
@@ -328,6 +329,13 @@ public class AmmoType extends EquipmentType {
 
     // Short name of Ammo or RS Printing
     protected String shortName = "";
+
+
+    // Collate artillery / artillery cannon types for flak check
+    // Add ADA here when implemented
+    private int[] ARTILLERY_TYPES = {T_LONG_TOM, T_SNIPER, T_THUMPER, T_ARROW_IV};
+    private int[] ARTILLERY_CANNON_TYPES = {T_LONG_TOM_CANNON, T_SNIPER_CANNON, T_THUMPER_CANNON};
+    private long[] ARTILLERY_FLAK_MUNITIONS = {M_CLUSTER, M_STANDARD};
 
     public AmmoType() {
         criticals = 1;
@@ -434,6 +442,23 @@ public class AmmoType extends EquipmentType {
      */
     public boolean is(int ammoType) {
         return getAmmoType() == ammoType;
+    }
+
+    /**
+     * We need a way to quickly determine if a given ammo type / munition counts as "Flak"
+     * Note, not _is_ Flak (as in the case of M_FLAK) but can be considered Flak by TW/TO/IO
+     * rules.
+     * @return counts true if this ammo can be considered Flak in some situations
+     */
+    public boolean countsAsFlak() {
+        boolean counts = false;
+
+        if(ArrayUtils.contains(ARTILLERY_TYPES, this.getAmmoType())){
+            counts = ArrayUtils.contains(ARTILLERY_FLAK_MUNITIONS, this.getMunitionType());
+        } else if(ArrayUtils.contains(ARTILLERY_CANNON_TYPES, this.getAmmoType())){
+            counts = this.getMunitionType() == AmmoType.M_STANDARD;
+        }
+        return counts;
     }
 
     public long getMunitionType() {
@@ -795,7 +820,7 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createISThunderbolt15Ammo());
         EquipmentType.addType(AmmoType.createISThunderbolt20Ammo());
         EquipmentType.addType(AmmoType.createISMagshotGRAmmo());
-        //Removed all references to Phoenix/Hawk/Streak MRM. Was ammo only with 
+        //Removed all references to Phoenix/Hawk/Streak MRM. Was ammo only with
         //no weapon or code to support them.
         EquipmentType.addType(AmmoType.createISHeavyMGAmmo());
         EquipmentType.addType(AmmoType.createISHeavyMGAmmoHalf());
@@ -1810,7 +1835,7 @@ public class AmmoType extends EquipmentType {
                         .setProductionFactions(F_TH).setStaticTechLevel(SimpleTechLevel.ADVANCED),
                 "371, TO"));
 
-        //Note of Swarms the intro dates in IntOps are off and it allows Swarm-I to appear before Swarm during the 
+        //Note of Swarms the intro dates in IntOps are off and it allows Swarm-I to appear before Swarm during the
         //Clan Invasion. Proposed errata makes 3052 for Swarm-I a hard date, and 3053 for Swarm re-iintroduction a flexible date.
         munitions.add(new MunitionMutator("Swarm", 1, M_SWARM, new TechAdvancement(TECH_BASE_IS).setIntroLevel(false)
                 .setUnofficial(false).setTechRating(RATING_E).setAvailability(RATING_E, RATING_X, RATING_D, RATING_D)
@@ -4878,7 +4903,7 @@ public class AmmoType extends EquipmentType {
                 .setClanApproximate(false, false, false, true, false);
         return ammo;
     }
-    
+
     // Machine Gun Ammos
     // Standard MGs
     private static AmmoType createISMGAmmo() {
@@ -6172,7 +6197,7 @@ public class AmmoType extends EquipmentType {
             .setPrototypeFactions(F_FS)
             .setProductionFactions(F_FS)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
-        
+
         return ammo;
     }
 
@@ -12779,7 +12804,7 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
 
-  
+
 
     private static AmmoType createISAC10iAmmo() {
         AmmoType ammo = new AmmoType();
@@ -13483,7 +13508,7 @@ public class AmmoType extends EquipmentType {
                     || (munition.getAmmoType() == AmmoType.T_SRM_IMP) || (munition.getAmmoType() == AmmoType.T_NLRM))
                     && ((munition.getMunitionType() == AmmoType.M_DEAD_FIRE))) {
                 cost *= 0.6;
-                // TODO - DEAD-FIRE AMMO needs BV which is not a constant but launcher Ammo. 
+                // TODO - DEAD-FIRE AMMO needs BV which is not a constant but launcher Ammo.
             }
 
             if (((munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM)

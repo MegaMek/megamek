@@ -360,16 +360,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             bMekTankStealthActive = ae.isStealthActive();
         }
 
-        // Collate artillery / artillery cannon types for flak check
-        int[] artillery_types = {AmmoType.T_LONG_TOM, AmmoType.T_SNIPER, AmmoType.T_THUMPER, AmmoType.T_LONG_TOM_CANNON, AmmoType.T_SNIPER_CANNON, AmmoType.T_THUMPER_CANNON};
         boolean isFlakAttack = !game.getBoard().inSpace() && (te != null)
                 && (te.isAirborne() || te.isAirborneVTOLorWIGE()) && (atype != null)
                 && (
                         (((atype.getAmmoType() == AmmoType.T_AC_LBX) || (atype.getAmmoType() == AmmoType.T_AC_LBX_THB)
                             || (atype.getAmmoType() == AmmoType.T_SBGAUSS))
-                            && (munition == AmmoType.M_CLUSTER))
+                            && (munition == AmmoType.M_CLUSTER)
+                        )
                         || (munition == AmmoType.M_FLAK) || (atype.getAmmoType() == AmmoType.T_HAG)
-                        || (ArrayUtils.contains(artillery_types, atype.getAmmoType()) && atype.getMunitionType() == AmmoType.M_STANDARD)
+                        || atype.countsAsFlak()
         );
 
         boolean isIndirect = (wtype.hasModes() && weapon.curMode().equals(Weapon.MODE_MISSILE_INDIRECT));

@@ -1752,7 +1752,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 // homing ammo.
 
                 if ((ttype != Targetable.TYPE_HEX_ARTILLERY) && (ttype != Targetable.TYPE_MINEFIELD_CLEAR)
-                        && !isArtilleryFLAK && !isHoming && !target.isOffBoard()) {
+                        && !(isArtilleryFLAK || (atype != null && atype.countsAsFlak())) && !isHoming && !target.isOffBoard()) {
                     return Messages.getString("WeaponAttackAction.ArtyAttacksOnly");
                 }
                 // Airborne units can't make direct-fire artillery attacks
@@ -1801,6 +1801,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
             // Direct-fire artillery attacks.
             if (isArtilleryDirect) {
+                if ((atype != null && atype.countsAsFlak()) && !(target.isAirborne() || target.isAirborneVTOLorWIGE())){
+                    return Messages.getString("WeaponAttackAction.FlakOnGroundedAero");
+                }
                 // Cruise missiles cannot make direct-fire attacks
                 if (isCruiseMissile) {
                     return Messages.getString("WeaponAttackAction.NoDirectCruiseMissile");
@@ -5056,7 +5059,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (isArtilleryDirect) {
             //If an airborne unit occupies the target hex, standard artillery ammo makes a flak attack against it
             //TN is a flat 3 + the altitude mod + the attacker's weapon skill
-            if (isArtilleryFLAK && te != null) {
+            if ((isArtilleryFLAK || (atype != null && atype.countsAsFlak())) && te != null) {
                 toHit.addModifier(3, Messages.getString("WeaponAttackAction.ArtyFlak"));
                 if (te.isAirborne()) {
                     if (te.getAltitude() > 3) {

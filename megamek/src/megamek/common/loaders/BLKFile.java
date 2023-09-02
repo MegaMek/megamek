@@ -1193,8 +1193,10 @@ public class BLKFile {
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);
                             e.addTransporter(new Bay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
                             break;
-                        // case "protomekbay":
+                        case "protomekbay":
+                            // Newer custom BLK handling
                         case "protomechbay":
+                            // Backward compatibility
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);
                             e.addTransporter(new ProtomechBay(pbi.getSize(), pbi.getDoors(), pbi.getBayNumber()), isPod);
                             break;

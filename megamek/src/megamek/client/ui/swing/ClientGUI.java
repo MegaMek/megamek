@@ -1208,6 +1208,11 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         if (curPanel instanceof Distractable) {
             ((Distractable) curPanel).setIgnoringEvents(false);
         }
+
+        // Make the new panel the focus, if the Client option says so
+        if (GUIP.getFocus() && !(client instanceof BotClient)) {
+            curPanel.requestFocus();
+        }
     }
 
     public void updateButtonPanel(GamePhase phase) {
@@ -2250,6 +2255,15 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 // (possible, if he gets one which he didn't use, and his
                 // opponent got and used one) and if so activates it.
                 reportDisplayResetRerollInitiative();
+
+                if (!(getClient() instanceof BotClient)) {
+                    doAlertDialog(Messages.getString("ClientGUI.dialogTacticalGeniusReport"), e.getReport());
+                }
+            } else {
+                // Continued movement after getting up
+                if (!(getClient() instanceof BotClient)) {
+                    doAlertDialog(Messages.getString("ClientGUI.dialogMovementReport"), e.getReport());
+                }
             }
         }
 

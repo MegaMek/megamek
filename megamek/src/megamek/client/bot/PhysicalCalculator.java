@@ -328,7 +328,7 @@ public final class PhysicalCalculator {
         }
 
         // Find arc the attack comes in
-        target_arc = CEntity.getThreatHitArc(to.getPosition(), to.getFacing(),
+        target_arc = getThreatHitArc(to.getPosition(), to.getFacing(),
                                              from.getPosition());
 
         // Check for punches
@@ -813,5 +813,30 @@ public final class PhysicalCalculator {
 
         return final_multiplier;
 
+    }
+
+    public static int getThreatHitArc(Coords dest, int dest_facing, Coords src) {
+        int fa = getFiringAngle(dest, dest_facing, src);
+        if ((fa >= 300) || (fa <= 60)) {
+            return ToHitData.SIDE_FRONT;
+        }
+        if ((fa >= 60) && (fa <= 120)) {
+            return ToHitData.SIDE_RIGHT;
+        }
+        if ((fa >= 240) && (fa <= 300)) {
+            return ToHitData.SIDE_LEFT;
+        }
+        return ToHitData.SIDE_REAR;
+    }
+
+    public static int getFiringAngle(final Coords dest, int dest_facing,
+                                     final Coords src) {
+        int fa = dest.degree(src) - ((dest_facing % 6) * 60);
+        if (fa < 0) {
+            fa += 360;
+        } else if (fa >= 360) {
+            fa -= 360;
+        }
+        return fa;
     }
 }

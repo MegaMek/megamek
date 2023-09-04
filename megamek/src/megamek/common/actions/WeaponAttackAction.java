@@ -32,6 +32,7 @@ import megamek.common.weapons.lasers.VariableSpeedPulseLaserWeapon;
 import megamek.common.weapons.lrms.LRTWeapon;
 import megamek.common.weapons.mortars.MekMortarWeapon;
 import megamek.common.weapons.srms.SRTWeapon;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.Serializable;
@@ -361,10 +362,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         boolean isFlakAttack = !game.getBoard().inSpace() && (te != null)
                 && (te.isAirborne() || te.isAirborneVTOLorWIGE()) && (atype != null)
-                && ((((atype.getAmmoType() == AmmoType.T_AC_LBX) || (atype.getAmmoType() == AmmoType.T_AC_LBX_THB)
-                        || (atype.getAmmoType() == AmmoType.T_SBGAUSS))
-                        && (munition == AmmoType.M_CLUSTER))
-                        || (munition == AmmoType.M_FLAK) || (atype.getAmmoType() == AmmoType.T_HAG));
+                && (
+                        (((atype.getAmmoType() == AmmoType.T_AC_LBX) || (atype.getAmmoType() == AmmoType.T_AC_LBX_THB)
+                            || (atype.getAmmoType() == AmmoType.T_SBGAUSS))
+                            && (munition == AmmoType.M_CLUSTER)
+                        )
+                        || (munition == AmmoType.M_FLAK) || (atype.getAmmoType() == AmmoType.T_HAG)
+                        || atype.countsAsFlak()
+        );
 
         boolean isIndirect = (wtype.hasModes() && weapon.curMode().equals(Weapon.MODE_MISSILE_INDIRECT));
 
@@ -721,7 +726,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // Collect the modifiers for the crew/pilot
         toHit = compileCrewToHitMods(game, ae, te, toHit, weapon);
-        
+
         // Collect the modifiers for the attacker's condition/actions
         if (ae != null) {
             //Conventional fighter, Aerospace and fighter LAM attackers
@@ -1514,7 +1519,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // for spheroid dropships in atmosphere (and on ground), the rules about
         // firing arcs are more complicated
         // TW errata 2.1
-        
+
         if ((Compute.useSpheroidAtmosphere(game, ae) ||
                 (ae.isAero() && ((IAero) ae).isSpheroid() && (ae.getAltitude() == 0) && game.getBoard().onGround()))
                 && (weapon != null)) {
@@ -1523,15 +1528,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (!ae.isAirborne() && (range == 0) && (weapon.getLocation() != Aero.LOC_AFT)) {
                 return Messages.getString("WeaponAttackAction.OnlyAftAtZero");
             }
-            
+
             int altDif = target.getAltitude() - ae.getAltitude();
-            
+
             // Nose-mounted weapons can only be fired at targets at least 1 altitude higher
             if ((weapon.getLocation() == Aero.LOC_NOSE) && (altDif < 1)
                     && wtype != null
                     // Unless the weapon is used as artillery
                     && (!(wtype instanceof ArtilleryWeapon || wtype.hasFlag(WeaponType.F_ARTILLERY)
-                            || (ae.getAltitude() == 0 && wtype instanceof CapitalMissileWeapon) 
+                            || (ae.getAltitude() == 0 && wtype instanceof CapitalMissileWeapon)
                             || isIndirect))) {
                 return Messages.getString("WeaponAttackAction.TooLowForNose");
             }
@@ -1747,7 +1752,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 // homing ammo.
 
                 if ((ttype != Targetable.TYPE_HEX_ARTILLERY) && (ttype != Targetable.TYPE_MINEFIELD_CLEAR)
-                        && !isArtilleryFLAK && !isHoming && !target.isOffBoard()) {
+                        && !(isArtilleryFLAK || (atype != null && atype.countsAsFlak())) && !isHoming && !target.isOffBoard()) {
                     return Messages.getString("WeaponAttackAction.ArtyAttacksOnly");
                 }
                 // Airborne units can't make direct-fire artillery attacks
@@ -1796,6 +1801,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
             // Direct-fire artillery attacks.
             if (isArtilleryDirect) {
+                if ((atype != null && atype.countsAsFlak()) && !(target.isAirborne() || target.isAirborneVTOLorWIGE())){
+                    return Messages.getString("WeaponAttackAction.FlakOnGroundedAero");
+                }
                 // Cruise missiles cannot make direct-fire attacks
                 if (isCruiseMissile) {
                     return Messages.getString("WeaponAttackAction.NoDirectCruiseMissile");
@@ -3947,10 +3955,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param te The target Entity
      * @param toHit The running total ToHitData for this WeaponAttackAction
      * @param weapon The weapon being used (it's type should be WeaponType!)
-     * 
+     *
      */
     private static ToHitData compileCrewToHitMods(Game game, Entity ae, Entity te, ToHitData toHit, Mounted weapon) {
-        
+
         if (ae == null) {
             // These checks won't work without a valid attacker
             return toHit;
@@ -5051,7 +5059,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (isArtilleryDirect) {
             //If an airborne unit occupies the target hex, standard artillery ammo makes a flak attack against it
             //TN is a flat 3 + the altitude mod + the attacker's weapon skill
-            if (isArtilleryFLAK && te != null) {
+            if ((isArtilleryFLAK || (atype != null && atype.countsAsFlak())) && te != null) {
                 toHit.addModifier(3, Messages.getString("WeaponAttackAction.ArtyFlak"));
                 if (te.isAirborne()) {
                     if (te.getAltitude() > 3) {

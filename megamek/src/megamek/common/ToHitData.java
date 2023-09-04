@@ -46,7 +46,7 @@ public class ToHitData extends TargetRoll {
     private int hitTable = HIT_NORMAL;
     private int sideTable = SIDE_FRONT;
     private int cover = LosEffects.COVER_NONE;
-    private int margineOfSuccess = 0;
+    private int marginOfSuccess = 0;
 
     private Coords location;
 
@@ -230,14 +230,14 @@ public class ToHitData extends TargetRoll {
      * MoS returns a positive while
      * MoF returns a negative
      *
-     * @return <code>int</code> 
+     * @return <code>int</code>
      */
     public int getMoS() {
-        return margineOfSuccess;
+        return marginOfSuccess;
     }
 
     public void setMoS(int moS) {
-        margineOfSuccess = moS;
+        marginOfSuccess = moS;
     }
 
     public void setLocation(Coords l) {

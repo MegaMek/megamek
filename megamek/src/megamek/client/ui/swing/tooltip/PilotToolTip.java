@@ -40,7 +40,7 @@ import static megamek.client.ui.swing.util.UIUtil.uiQuirksColor;
 public final class PilotToolTip {
 
     /** the portrait base size */
-    private final static int PORTRAIT_BASESIZE = 72;
+    public final static int PORTRAIT_BASESIZE = 72;
     final static String BG_COLOR = "#313131";
 
     final static String TEMP_DIR = "/temp/";
@@ -215,11 +215,8 @@ public final class PilotToolTip {
                     }
                     img = "<IMG SRC=file:" + tempPath + ">";
                 } else {
-                    // convert image to base64, add to the <img> tag and store in cache
-                    BufferedImage bufferedImage = new BufferedImage(portrait.getWidth(null), portrait.getHeight(null), BufferedImage.TYPE_INT_RGB);
-                    bufferedImage.getGraphics().drawImage(portrait, 0, 0, null);
-                    String base64Text = ImageUtil.base64TextEncodeImage(bufferedImage);
-                    img = "<img src='data:image/png;base64," + base64Text + "'>";
+                    // span crew tag replaced later in Client.receiveReport with crew portrait
+                    img = "<span crew='" + entity.getId() + ":" + i + "'></span>";
                 }
                 col += "<TD VALIGN=TOP>" + img + "</TD>";
             } catch (Exception e) {

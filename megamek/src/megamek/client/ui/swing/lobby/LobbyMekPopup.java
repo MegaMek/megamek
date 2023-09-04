@@ -210,7 +210,7 @@ class LobbyMekPopup {
             popup.add(squadronMenu(clientGui, true, listener, joinedEntities));
         }
 
-        if (accessibleProtomeks) {
+        if (allProtomeks) {
             popup.add(protoMenu(clientGui, allProtomeks, listener, joinedEntities));
         }
 
@@ -326,40 +326,56 @@ class LobbyMekPopup {
     private static JMenu protoMenu(ClientGUI cg, boolean enabled, ActionListener listener,
                                    Collection<Entity> entities) {
         JMenu menu = new JMenu("Load ProtoMek");
-        if (enabled && entities.stream().anyMatch(e -> e.hasETypeFlag(Entity.ETYPE_PROTOMECH))) {
-            Entity entity = entities.stream().filter(e -> e.hasETypeFlag(Entity.ETYPE_PROTOMECH)).findAny().get();
-            for (Entity loader: cg.getClient().getGame().getEntitiesVector()) {
-                if (!loader.hasETypeFlag(Entity.ETYPE_MECH) || !loader.canLoad(entity, false)) {
-                    continue;
-                }
-                Transporter front = null;
-                Transporter rear = null;
-                for (Transporter t : loader.getTransports()) {
-                    if (t instanceof ProtomechClampMount) {
-                        if (((ProtomechClampMount) t).isRear()) {
-                            rear = t;
-                        } else {
-                            front = t;
-                        }
+        if(!(enabled || entities.stream().allMatch(e -> e.hasETypeFlag(Entity.ETYPE_PROTOMECH)))){
+            return menu;
+        }
+
+        Game game = cg.getClient().getGame();
+        Entity entity = entities.stream().filter(e -> e.hasETypeFlag(Entity.ETYPE_PROTOMECH)).findAny().get();
+        List<Entity> loaders = game.getEntitiesVector();
+
+        // Handle front and rear Magnetic Clamp Mounts
+        for (Entity loader: loaders) {
+            if (!loader.hasETypeFlag(Entity.ETYPE_MECH)) {
+                continue;
+            }
+            Transporter front = null;
+            Transporter rear = null;
+            for (Transporter t : loader.getTransports()) {
+                if (t instanceof ProtomechClampMount) {
+                    if (((ProtomechClampMount) t).isRear()) {
+                        rear = t;
+                    } else {
+                        front = t;
                     }
                 }
-                JMenu loaderMenu = new JMenu(loader.getShortName());
-                if ((front != null) && front.canLoad(entity)
-                        && ((entity.getWeightClass() < EntityWeightClass.WEIGHT_SUPER_HEAVY)
-                                || (rear == null) || rear.getLoadedUnits().isEmpty())) {
-                    loaderMenu.add(menuItem("Onto Front", LMP_LOAD + "|" + loader.getId() + ":0" + enToken(entities), enabled, listener));
-                }
-                boolean frontUltra = (front != null)
-                        && front.getLoadedUnits().stream()
-                        .anyMatch(l -> l.getWeightClass() == EntityWeightClass.WEIGHT_SUPER_HEAVY);
-                if ((rear != null) && rear.canLoad(entity) && !frontUltra) {
-                    loaderMenu.add(menuItem("Onto Rear", LMP_LOAD + "|" + loader.getId() + ":1" + enToken(entities), enabled, listener));
-                }
-                if (loaderMenu.getItemCount() > 0) {
-                    menu.add(loaderMenu);
-                }
+            }
+            JMenu loaderMenu = new JMenu(loader.getShortName());
+            if ((front != null) && front.canLoad(entity)
+                    && ((entity.getWeightClass() < EntityWeightClass.WEIGHT_SUPER_HEAVY)
+                            || (rear == null) || rear.getLoadedUnits().isEmpty())) {
+                loaderMenu.add(menuItem("Onto Front", LMP_LOAD + "|" + loader.getId() + ":0" + enToken(entities), enabled, listener));
+            }
+            boolean frontUltra = (front != null)
+                    && front.getLoadedUnits().stream()
+                    .anyMatch(l -> l.getWeightClass() == EntityWeightClass.WEIGHT_SUPER_HEAVY);
+            if ((rear != null) && rear.canLoad(entity) && !frontUltra) {
+                loaderMenu.add(menuItem("Onto Rear", LMP_LOAD + "|" + loader.getId() + ":1" + enToken(entities), enabled, listener));
+            }
+            if (loaderMenu.getItemCount() > 0) {
+                menu.add(loaderMenu);
             }
         }
+
+        // Handle all other valid loaders, such as Dropships
+        loaders.stream()
+                .filter(e -> !e.isCapitalFighter(true))
+                .filter(e -> !entities.contains(e))
+                .filter(e -> canLoadAll(e, entities))
+                .forEach(e -> menu.add(menuItem(
+                        "<HTML>" + e.getShortNameRaw() + idString(game, e.getId()),
+                        LMP_LOAD + "|" + e.getId() + ":-1" + enToken(entities), enabled, listener)));
+
         menu.setEnabled(enabled && (menu.getItemCount() > 0));
         return menu;
     }

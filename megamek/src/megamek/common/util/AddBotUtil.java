@@ -15,7 +15,6 @@ package megamek.common.util;
 
 import megamek.client.Client;
 import megamek.client.bot.BotClient;
-import megamek.client.bot.TestBot;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.Princess;
@@ -39,10 +38,9 @@ public class AddBotUtil {
     private final List<String> results = new ArrayList<>();
     public static final String COMMAND = "replacePlayer";
     public static final String USAGE = "Replaces a player who is a ghost with a bot." +
-            "\nUsage /replacePlayer <-b:TestBot/Princess> <-c:Config> <-v:Verbosity> " +
+            "\nUsage /replacePlayer <-b:Princess> <-c:Config> <-v:Verbosity> " +
             "<-p:>name." +
-            "\n  <-b> Specifies use if either TestBot or Princess.  If left out, " +
-            "TestBot will be used." +
+            "\n  <-b> Specifies use if Princess. " +
             "\n  <-c> Specifies a saved configuration to be used by Princess.  If left out" +
             " DEFAULT will be used." +
             "\n  <-v> Specifies the verbosity level for Princess " +
@@ -59,15 +57,15 @@ public class AddBotUtil {
     }
 
     public String addBot(final String[] args,
-                             final Game game,
-                             final String host,
-                             final int port) {
+            final Game game,
+            final String host,
+            final int port) {
         if (2 > args.length) {
             results.add(USAGE);
             return concatResults();
         }
 
-        StringBuilder botName = new StringBuilder("TestBot");
+        StringBuilder botName = new StringBuilder("Princess");
         StringBuilder configName = new StringBuilder();
         StringBuilder playerName = new StringBuilder();
 
@@ -117,7 +115,7 @@ public class AddBotUtil {
         }
 
         Player target = null;
-        for (final Enumeration<Player> i = game.getPlayers(); i.hasMoreElements(); ) {
+        for (final Enumeration<Player> i = game.getPlayers(); i.hasMoreElements();) {
             final Player player = i.nextElement();
             if (player.getName().equals(playerName.toString())) {
                 target = player;
@@ -150,12 +148,10 @@ public class AddBotUtil {
             } else {
                 ((Princess) botClient).setBehaviorSettings(BehaviorSettingsFactory.getInstance().DEFAULT_BEHAVIOR);
             }
-        } else if ("TestBot".equalsIgnoreCase(botName.toString())) {
-            botClient = makeNewTestBotClient(target, host, port);
         } else {
-            results.add("Unrecognized bot: '" + botName + "'.  Defaulting to TestBot.");
-            botName = new StringBuilder("TestBot");
-            botClient = makeNewTestBotClient(target, host, port);
+            results.add("Unrecognized bot: '" + botName + "'.  Defaulting to Princess.");
+            botName = new StringBuilder("Princess");
+            botClient = makeNewPrincessClient(target, host, port);
         }
 
         if (!GraphicsEnvironment.isHeadless()) {
@@ -174,15 +170,16 @@ public class AddBotUtil {
         final StringBuilder result = new StringBuilder(botName);
         result.append(" has replaced ").append(target.getName()).append(".");
         if (botClient instanceof Princess) {
-            result.append("  Config: ").append(((Princess) botClient).getBehaviorSettings().getDescription()).append(".");
+            result.append("  Config: ").append(((Princess) botClient).getBehaviorSettings().getDescription())
+                    .append(".");
         }
         results.add(result.toString());
         return concatResults();
     }
 
     public @Nullable Princess replaceGhostWithBot(final BehaviorSettings behavior, final String playerName,
-                                     final Client client,
-                                     StringBuilder message) {
+            final Client client,
+            StringBuilder message) {
         Objects.requireNonNull(client);
         Objects.requireNonNull(behavior);
 
@@ -218,11 +215,12 @@ public class AddBotUtil {
 
     /**
      * Replace a ghost player or an existing Princess bot with a new bot
+     *
      * @return the new Princess bot or null if not able to replace
      */
     public @Nullable Princess changeBotSettings(final BehaviorSettings behavior, final String playerName,
-                                                final Client client,
-                                                StringBuilder message) {
+            final Client client,
+            StringBuilder message) {
         Objects.requireNonNull(client);
         Objects.requireNonNull(behavior);
 
@@ -270,8 +268,8 @@ public class AddBotUtil {
     }
 
     public boolean kickBot(final String playerName,
-                           final Client client,
-                           StringBuilder message) {
+            final Client client,
+            StringBuilder message) {
 
         Objects.requireNonNull(client);
         final Game game = client.getGame();
@@ -292,15 +290,11 @@ public class AddBotUtil {
         }
 
         final Player target = possible.get();
-        client.sendChat("/kick "+target.getId());
+        client.sendChat("/kick " + target.getId());
         return true;
     }
 
     BotClient makeNewPrincessClient(final Player target, final String host, final int port) {
         return new Princess(target.getName(), host, port);
-    }
-
-    BotClient makeNewTestBotClient(final Player target, final String host, final int port) {
-        return new TestBot(target.getName(), host, port);
     }
 }

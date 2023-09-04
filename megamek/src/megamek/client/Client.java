@@ -1228,7 +1228,7 @@ public class Client implements IClientCommandHandler {
         // loop through the hashset of unique ids and replace the ids with img tags
         for (int i : setEntity) {
             if (getCachedImgTag(i) != null) {
-                updatedReport = updatedReport.replaceAll("<span id='" + i + "'></span>", getCachedImgTag(i));
+                updatedReport = updatedReport.replace("<span id='" + i + "'></span>", getCachedImgTag(i));
             }
         }
 
@@ -1269,7 +1269,7 @@ public class Client implements IClientCommandHandler {
                 bufferedImage.getGraphics().drawImage(portrait, 0, 0, null);
                 String base64Text = ImageUtil.base64TextEncodeImage(bufferedImage);
                 String img = "<img src='data:image/png;base64," + base64Text + "'>";
-                updatedReport = updatedReport.replaceAll("<span crew='" + entityID + ":" + crewID + "'></span>", img);
+                updatedReport = updatedReport.replace("<span crew='" + entityID + ":" + crewID + "'></span>", img);
             }
         }
 

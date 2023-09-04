@@ -1210,12 +1210,12 @@ public class Client implements IClientCommandHandler {
 
         Set<Integer> setEntity = new HashSet<>();
         //find id stored in spans and extract it
-        Pattern pEntity = Pattern.compile("<span id=(.*?)></span>");
+        Pattern pEntity = Pattern.compile("<span id='(.*?)'></span>");
         Matcher mEntity = pEntity.matcher(report.toString());
 
         // add all instances to a hashset to prevent duplicates
         while (mEntity.find()) {
-            String cleanedText = mEntity.group(1).replaceAll("[^\\d-]", "");
+            String cleanedText = mEntity.group(1);
             if (!cleanedText.isBlank()) {
                 try {
                     setEntity.add(Integer.parseInt(cleanedText));
@@ -1234,7 +1234,7 @@ public class Client implements IClientCommandHandler {
 
         Set<String> setCrew = new HashSet<>();
         //find id stored in spans and extract it
-        Pattern pCrew = Pattern.compile("<span crew=(.*?)></span>");
+        Pattern pCrew = Pattern.compile("<span crew='(.*?)'></span>");
         Matcher mCrew = pCrew.matcher(report.toString());
 
         // add all instances to a hashset to prevent duplicates
@@ -1247,7 +1247,7 @@ public class Client implements IClientCommandHandler {
 
         // loop through the hashset of unique ids and replace the ids with img tags
         for (String tmpCrew : setCrew) {
-            String[] crewS = tmpCrew.replaceAll("'", "").split(":");
+            String[] crewS = tmpCrew.split(":");
             int entityID = -1;
             int crewID = -1;
 

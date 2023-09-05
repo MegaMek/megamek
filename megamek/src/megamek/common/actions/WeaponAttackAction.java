@@ -407,7 +407,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 && ((((te.getMovementMode() == EntityMovementMode.VTOL)
                         || (te.getMovementMode() == EntityMovementMode.WIGE)) && te.isAirborneVTOLorWIGE())
                         || (te.isAirborne()))
-                && (atype != null) && (usesAmmo && (atype.getMunitionType() == AmmoType.M_STANDARD));
+                && (atype != null) && (usesAmmo && (atype.countsAsFlak()));
 
         boolean isHaywireINarced = ae.isINarcedWith(INarcPod.HAYWIRE);
 
@@ -5058,9 +5058,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Handle direct artillery attacks.
         if (isArtilleryDirect) {
             //If an airborne unit occupies the target hex, standard artillery ammo makes a flak attack against it
-            //TN is a flat 3 + the altitude mod + the attacker's weapon skill
+            //TN is a flat 3 + the altitude mod + the attacker's weapon skill - 2 for Flak
             if ((isArtilleryFLAK || (atype != null && atype.countsAsFlak())) && te != null) {
                 toHit.addModifier(3, Messages.getString("WeaponAttackAction.ArtyFlak"));
+                toHit.addModifier(-2, Messages.getString("WeaponAttackAction.Flak"));
                 if (te.isAirborne()) {
                     if (te.getAltitude() > 3) {
                         if (te.getAltitude() > 9) {

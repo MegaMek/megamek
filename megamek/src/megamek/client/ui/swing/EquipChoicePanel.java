@@ -625,27 +625,27 @@ public class EquipChoicePanel extends JPanel {
                 muniType &= ~AmmoType.M_INCENDIARY_LRM;
                 if (!gameOpts.booleanOption(OptionsConstants.ALLOWED_CLAN_IGNORE_EQ_LIMITS)
                         && entity.isClan()
-                        && ((muniType == AmmoType.M_SEMIGUIDED)
-                                || (muniType == AmmoType.M_SWARM_I)
-                                || (muniType == AmmoType.M_THUNDER_AUGMENTED)
-                                || (muniType == AmmoType.M_THUNDER_INFERNO)
-                                || (muniType == AmmoType.M_THUNDER_VIBRABOMB)
-                                || (muniType == AmmoType.M_THUNDER_ACTIVE)
-                                || (muniType == AmmoType.M_INFERNO_IV)
-                                || (muniType == AmmoType.M_VIBRABOMB_IV)
-                                || (muniType == AmmoType.M_LISTEN_KILL)
-                                || (muniType == AmmoType.M_ANTI_TSM)
-                                || (muniType == AmmoType.M_DEAD_FIRE) 
-                                || (muniType == AmmoType.M_MINE_CLEARANCE))) {
+                        && ((muniType.contains(AmmoType.Munitions.M_SEMIGUIDED)
+                                || (muniType.contains(AmmoType.Munitions.M_SWARM_I)
+                                || (muniType.contains(AmmoType.Munitions.M_THUNDER_AUGMENTED)
+                                || (muniType.contains(AmmoType.Munitions.M_THUNDER_INFERNO)
+                                || (muniType.contains(AmmoType.Munitions.M_THUNDER_VIBRABOMB)
+                                || (muniType.contains(AmmoType.Munitions.M_THUNDER_ACTIVE)
+                                || (muniType.contains(AmmoType.Munitions.M_INFERNO_IV)
+                                || (muniType.contains(AmmoType.Munitions.M_VIBRABOMB_IV)
+                                || (muniType.contains(AmmoType.Munitions.M_LISTEN_KILL)
+                                || (muniType.contains(AmmoType.Munitions.M_ANTI_TSM)
+                                || (muniType.contains(AmmoType.Munitions.M_DEAD_FIRE) 
+                                || (muniType.contains(AmmoType.Munitions.M_MINE_CLEARANCE))) {
                     bTechMatch = false;
                 }
                 
-                if ((muniType == AmmoType.M_ARTEMIS_CAPABLE)
+                if ((muniType.contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE)
                         && !entity.hasWorkingMisc(MiscType.F_ARTEMIS)
                         && !entity.hasWorkingMisc(MiscType.F_ARTEMIS_PROTO)) {
                     continue;
                 }
-                if ((muniType == AmmoType.M_ARTEMIS_V_CAPABLE)
+                if ((muniType.contains(AmmoType.Munitions.M_ARTEMIS_V_CAPABLE)
                         && !entity.hasWorkingMisc(MiscType.F_ARTEMIS_V)
                         && !entity.hasWorkingMisc(MiscType.F_ARTEMIS_PROTO)) {
                     continue;

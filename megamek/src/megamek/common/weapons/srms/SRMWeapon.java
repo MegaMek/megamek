@@ -65,44 +65,44 @@ public abstract class SRMWeapon extends MissileWeapon {
                                               GameManager manager) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked().getType();
-        if (atype.getMunitionType() == AmmoType.M_FRAGMENTATION) {
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_FRAGMENTATION)) {
             return new SRMFragHandler(toHit, waa, game, manager);
         }
-        if (atype.getMunitionType() == AmmoType.M_AX_HEAD) {
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_AX_HEAD)) {
             return new SRMAXHandler(toHit, waa, game, manager);
         }
-        if (atype.getMunitionType() == AmmoType.M_ANTI_TSM) {
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_ANTI_TSM)) {
             return new SRMAntiTSMHandler(toHit, waa, game, manager);
         }
-        if (atype.getMunitionType() == AmmoType.M_INFERNO) {
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_INFERNO)) {
             return new SRMInfernoHandler(toHit, waa, game, manager);
         }
-        if (atype.getMunitionType() == AmmoType.M_DEAD_FIRE) {
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
             return new SRMDeadFireHandler(toHit, waa, game, manager);
         }
-        if (atype.getMunitionType() == AmmoType.M_TANDEM_CHARGE) {
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_TANDEM_CHARGE)) {
             return new SRMTandemChargeHandler(toHit, waa, game, manager);
         }
-        if (atype.getMunitionType() == AmmoType.M_SMOKE_WARHEAD) {
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_SMOKE_WARHEAD)) {
             return new SRMSmokeWarheadHandler(toHit, waa, game, manager);
         }
-        if (atype.getMunitionType() == AmmoType.M_MINE_CLEARANCE) {
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_MINE_CLEARANCE)) {
             return new MissileMineClearanceHandler(toHit, waa, game, manager);
         }
         return new SRMHandler(toHit, waa, game, manager);
 
     }
-    
+
     @Override
     public double getBattleForceDamage(int range, Mounted fcs) {
         return super.getBattleForceDamage(range, fcs) * 2;
     }
-    
+
     @Override
     public double getBattleForceDamage(int range, int baSquadSize) {
         return super.getBattleForceDamage(range, baSquadSize) * 2;
     }
-    
+
     @Override
     public int getBattleForceClass() {
         return BFCLASS_SRM;

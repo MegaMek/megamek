@@ -54,7 +54,7 @@ public class ACFlakHandler extends LBXHandler {
 
     @Override
     protected boolean usesClusterTable() {
-        return ((AmmoType) ammo.getType()).getMunitionType() == AmmoType.M_FLAK;
+        return ((AmmoType) ammo.getType()).getMunitionType().contains(AmmoType.Munitions.M_FLAK);
     }
 
 }

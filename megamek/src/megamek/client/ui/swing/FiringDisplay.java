@@ -1641,11 +1641,11 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
                 long ammoMunitionType = ammoType.getMunitionType();
                 waa.setAmmoMunitionType(ammoMunitionType);
                 waa.setAmmoCarrier(ammoMount.getEntity().getId());
-                if (((ammoMunitionType == AmmoType.M_THUNDER_VIBRABOMB) &&
+                if (((ammoMunitionType.contains(AmmoType.Munitions.M_THUNDER_VIBRABOMB) &&
                         ((ammoType.getAmmoType() == AmmoType.T_LRM)
                         || (ammoType.getAmmoType() == AmmoType.T_LRM_IMP)
                         || (ammoType.getAmmoType() == AmmoType.T_MML)))
-                        || (ammoType.getMunitionType() == AmmoType.M_VIBRABOMB_IV)) {
+                        || (ammoType.getMunitionType().contains(AmmoType.Munitions.M_VIBRABOMB_IV)) {
                     VibrabombSettingDialog vsd = new VibrabombSettingDialog(
                             clientgui.frame);
                     vsd.setVisible(true);
@@ -2540,16 +2540,16 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
             long munitionType = aType.getMunitionType();
             // Mek mortar flares should default to deliver flare
             if ((aType.getAmmoType() == AmmoType.T_MEK_MORTAR)
-                    && (munitionType == AmmoType.M_FLARE)) {
+                    && (munitionType.contains(AmmoType.Munitions.M_FLARE)) {
                 return new HexTarget(pos, Targetable.TYPE_FLARE_DELIVER);
             // Certain mek mortar types and LRMs should target hexes
             } else if (((aType.getAmmoType() == AmmoType.T_MEK_MORTAR)
                     || (aType.getAmmoType() == AmmoType.T_LRM)
                     || (aType.getAmmoType() == AmmoType.T_LRM_IMP))
-                    && ((munitionType == AmmoType.M_AIRBURST)
-                            || (munitionType == AmmoType.M_SMOKE_WARHEAD))) {
+                    && ((munitionType.contains(AmmoType.Munitions.M_AIRBURST)
+                            || (munitionType.contains(AmmoType.Munitions.M_SMOKE_WARHEAD))) {
                 return new HexTarget(pos, Targetable.TYPE_HEX_CLEAR);
-            } else if (munitionType == AmmoType.M_MINE_CLEARANCE) {
+            } else if (munitionType.contains(AmmoType.Munitions.M_MINE_CLEARANCE) {
                 return new HexTarget(pos, Targetable.TYPE_HEX_CLEAR);
             }
         }

@@ -117,7 +117,7 @@ public class EntityListFile {
             if (mount.getEntity().isSupportVehicle()
                     && (mount.getType() instanceof InfantryWeapon)) {
                 for (Mounted ammo = mount.getLinked(); ammo != null; ammo = ammo.getLinked()) {
-                    if (((AmmoType) ammo.getType()).getMunitionType() == AmmoType.M_INFERNO) {
+                    if (((AmmoType) ammo.getType()).getMunitionType().contains(AmmoType.Munitions.M_INFERNO) {
                         output.append("\" inferno=\"").append(ammo.getBaseShotsLeft())
                             .append(":").append(ammo.getOriginalShots());
                     } else {

@@ -408,7 +408,7 @@ public class ArtilleryTargetingControl {
             break;
             
             // TODO: Attempt to select homing ammo if the target is tagged. 
-            // To do so, check ammoType.getMunitionType() == AmmoType.M_HOMING
+            // To do so, check ammoType.getMunitionType().contains(AmmoType.Munitions.M_HOMING
         }
         
         return new HelperAmmo(ammoEquipmentNum, ammoMunitionType);

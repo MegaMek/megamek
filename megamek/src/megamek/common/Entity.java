@@ -9099,11 +9099,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         for (Mounted amounted : getAmmo()) {
             AmmoType atype = (AmmoType) amounted.getType();
             if (((atype.getAmmoType() == AmmoType.T_SRM) || (atype.getAmmoType() == AmmoType.T_SRM_IMP)
-                    || (atype.getAmmoType() == AmmoType.T_MML)) && (atype.getMunitionType() == AmmoType.M_INFERNO)
+                    || (atype.getAmmoType() == AmmoType.T_MML)) && (atype.getMunitionType().contains(AmmoType.Munitions.M_INFERNO))
                     && (amounted.getHittableShotsLeft() > 0)) {
                 found = true;
             }
-            if ((atype.getAmmoType() == AmmoType.T_IATM) && (atype.getMunitionType() == AmmoType.M_IATM_IIW)
+            if ((atype.getAmmoType() == AmmoType.T_IATM) && (atype.getMunitionType().contains(AmmoType.Munitions.M_IATM_IIW))
                     && (amounted.getHittableShotsLeft() > 0)) {
                 found = true;
             }

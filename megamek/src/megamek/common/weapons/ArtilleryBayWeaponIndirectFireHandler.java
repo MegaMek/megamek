@@ -361,7 +361,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                 return !bMissed;
             }
         }
-        if (atype.getMunitionType() == AmmoType.M_FLARE) {
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_FLARE) {
             int radius;
             if (atype.getAmmoType() == AmmoType.T_ARROW_IV) {
                 radius = 4;
@@ -384,7 +384,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             }
             return false;
         }
-        if (atype.getMunitionType() == AmmoType.M_DAVY_CROCKETT_M) {
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_DAVY_CROCKETT_M) {
             // The appropriate term here is "Bwahahahahaha..."
             if (!bMissed) {
                 // Keep blasting the target hex with each weapon in the bay that fired
@@ -400,7 +400,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             }
             return false;
         }
-        if (atype.getMunitionType() == AmmoType.M_FASCAM) {
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_FASCAM) {
             if (!bMissed) {
                 // If we hit, only one effect will stack in the target hex
                 gameManager.deliverFASCAMMinefield(targetPos, ae.getOwner().getId(),
@@ -414,7 +414,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             }
             return false;
         }
-        if (atype.getMunitionType() == AmmoType.M_INFERNO_IV) {
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_INFERNO_IV) {
             if (!bMissed) {
                 // If we hit, only one effect will stack in the target hex
                 gameManager.deliverArtilleryInferno(targetPos, ae, subjectId, vPhaseReport);
@@ -426,7 +426,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             }
             return false;
         }
-        if (atype.getMunitionType() == AmmoType.M_VIBRABOMB_IV) {
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_VIBRABOMB_IV) {
             if (!bMissed) {
                 // If we hit, only one effect will stack in the target hex
                 gameManager.deliverThunderVibraMinefield(targetPos, ae.getOwner().getId(),
@@ -440,7 +440,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             }
             return false;
         }
-        if (atype.getMunitionType() == AmmoType.M_SMOKE) {
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_SMOKE) {
             if (!bMissed) {
                 // If we hit, only one effect will stack in the target hex
                 gameManager.deliverArtillerySmoke(targetPos, vPhaseReport);
@@ -452,7 +452,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             }
             return false;
         }
-        if (atype.getMunitionType() == AmmoType.M_LASER_INHIB) {
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_LASER_INHIB) {
             if (!bMissed) {
                 //If we hit, only one effect will stack in the target hex
                 gameManager.deliverLIsmoke(targetPos, vPhaseReport);

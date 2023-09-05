@@ -69,15 +69,15 @@ public class InfantryWeaponHandler extends WeaponHandler {
     @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         int nHitMod = 0;
-        
+
         if (bGlancing) {
             nHitMod -= 4;
         }
-        
+
         if (this.bLowProfileGlancing) {
             nHitMod -= 4;
         }
-        
+
         int troopersHit = 0;
         //when swarming all troopers hit
         if (ae.getSwarmTargetId() == target.getId()) {
@@ -89,17 +89,17 @@ public class InfantryWeaponHandler extends WeaponHandler {
                 .getShootingStrength(), nHitMod);
         }
         double damage = calculateBaseDamage(ae, weapon, wtype);
-        
+
         if ((ae instanceof Infantry)
                 && nRange == 0
                 && ae.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
             damage += 0.14;
         }
         int damageDealt = (int) Math.round(damage * troopersHit);
-        
+
         // conventional infantry weapons with high damage get treated as if they have the infantry burst mod
-        if (target.isConventionalInfantry() && 
-                (wtype.hasFlag(WeaponType.F_INF_BURST) || 
+        if (target.isConventionalInfantry() &&
+                (wtype.hasFlag(WeaponType.F_INF_BURST) ||
                 (ae.isConventionalInfantry() && ((Infantry) ae).primaryWeaponDamageCapped()))) {
             damageDealt += Compute.d6();
         }
@@ -186,7 +186,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
             super.useAmmo();
         }
     }
-    
+
     /**
      * Utility function to calculate variable damage based only on the firing entity.
      */
@@ -197,7 +197,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
             return ((Infantry) ae).getDamagePerTrooper();
         } else if (ae.isSupportVehicle()) {
             // Damage for some weapons depends on what type of ammo is being used
-            if (((AmmoType) weapon.getLinked().getType()).getMunitionType() == AmmoType.M_INFERNO) {
+            if (((AmmoType) weapon.getLinked().getType()).getMunitionType().contains(AmmoType.Munitions.M_INFERNO)) {
                 return ((InfantryWeapon) wtype).getInfernoVariant().getInfantryDamage();
             } else {
                 return ((InfantryWeapon) wtype).getNonInfernoVariant().getInfantryDamage();

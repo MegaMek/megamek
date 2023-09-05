@@ -193,7 +193,7 @@ public class AmmoType extends EquipmentType {
     // ammo munitions, used for custom loadouts
     // N.B. We use EnumSet<Munitions> allow "incendiary"
     // to be combined to other munition types.
-    public static enum Munitions{
+    public enum Munitions{
         M_STANDARD,
 
         // AC Munition Types
@@ -3134,7 +3134,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CL Long Tom Cannon Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 20;
-        ammo.ammoType = AmmoType.T_LONG_TOMunitions.M_CANNON;
+        ammo.ammoType = AmmoType.T_LONG_TOM_CANNON;
         ammo.shots = 5;
         ammo.bv = 41;
         ammo.cost = 20000;
@@ -3161,7 +3161,7 @@ public class AmmoType extends EquipmentType {
      * ammo.addLookupName("CLLongTomArtilleryCannon Ammo");
      * ammo.addLookupName("CL Ammo Long Tom Cannon");
      * ammo.addLookupName("CL Long Tom Cannon Ammo"); ammo.damagePerShot = 1;
-     * ammo.rackSize = 20; ammo.ammoType = AmmoType.T_LONG_TOMunitions.M_CANNON; ammo.shots =
+     * ammo.rackSize = 20; ammo.ammoType = AmmoType.T_LONG_TOM_CANNON; ammo.shots =
      * 5; ammo.bv = 41; ammo.cost = 20000; ammo.rulesRefs = "285, TO";
      *
      * ammo.techAdvancement.setTechBase(TECH_BASE_CLAN);
@@ -3621,7 +3621,7 @@ public class AmmoType extends EquipmentType {
         ammo.toHitModifier = -1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_AC_LBX;
-        ammo.munitionType = Munitions.M_CLUSTER;
+        ammo.munitionType = EnumSet.of(Munitions.M_CLUSTER);
         ammo.shots = 45;
         ammo.bv = 6;
         ammo.cost = 3300;
@@ -3648,7 +3648,7 @@ public class AmmoType extends EquipmentType {
         ammo.toHitModifier = -1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_AC_LBX;
-        ammo.munitionType = Munitions.M_CLUSTER;
+        ammo.munitionType = EnumSet.of(Munitions.M_CLUSTER);
         ammo.shots = 20;
         ammo.bv = 12;
         ammo.cost = 15000;
@@ -3675,7 +3675,7 @@ public class AmmoType extends EquipmentType {
         ammo.toHitModifier = -1;
         ammo.rackSize = 10;
         ammo.ammoType = AmmoType.T_AC_LBX;
-        ammo.munitionType = Munitions.M_CLUSTER;
+        ammo.munitionType = EnumSet.of(Munitions.M_CLUSTER);
         ammo.shots = 10;
         ammo.bv = 19;
         ammo.cost = 20000;
@@ -3703,7 +3703,7 @@ public class AmmoType extends EquipmentType {
         ammo.toHitModifier = -1;
         ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_AC_LBX;
-        ammo.munitionType = Munitions.M_CLUSTER;
+        ammo.munitionType = EnumSet.of(Munitions.M_CLUSTER);
         ammo.shots = 5;
         ammo.bv = 30;
         ammo.cost = 34000;
@@ -3730,7 +3730,7 @@ public class AmmoType extends EquipmentType {
         ammo.toHitModifier = -1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_AC_LBX;
-        ammo.munitionType = Munitions.M_CLUSTER;
+        ammo.munitionType = EnumSet.of(Munitions.M_CLUSTER);
         ammo.shots = 45;
         ammo.bv = 5;
         ammo.cost = 3300;
@@ -3757,7 +3757,7 @@ public class AmmoType extends EquipmentType {
         ammo.toHitModifier = -1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_AC_LBX;
-        ammo.munitionType = Munitions.M_CLUSTER;
+        ammo.munitionType = EnumSet.of(Munitions.M_CLUSTER);
         ammo.shots = 20;
         ammo.bv = 10;
         ammo.cost = 15000;
@@ -3784,7 +3784,7 @@ public class AmmoType extends EquipmentType {
         ammo.toHitModifier = -1;
         ammo.rackSize = 10;
         ammo.ammoType = AmmoType.T_AC_LBX;
-        ammo.munitionType = Munitions.M_CLUSTER;
+        ammo.munitionType = EnumSet.of(Munitions.M_CLUSTER);
         ammo.shots = 10;
         ammo.bv = 19;
         ammo.cost = 20000;
@@ -3810,7 +3810,7 @@ public class AmmoType extends EquipmentType {
         ammo.toHitModifier = -1;
         ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_AC_LBX;
-        ammo.munitionType = Munitions.M_CLUSTER;
+        ammo.munitionType = EnumSet.of(Munitions.M_CLUSTER);
         ammo.shots = 5;
         ammo.bv = 30;
         ammo.cost = 34000;
@@ -4826,7 +4826,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 15;
         ammo.ammoType = AmmoType.T_SBGAUSS;
-        ammo.munitionType = Munitions.M_CLUSTER;
+        ammo.munitionType = EnumSet.of(Munitions.M_CLUSTER);
         ammo.shots = 8;
         ammo.bv = 25;
         ammo.cost = 25000;
@@ -4855,7 +4855,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 0;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_VGL;
-        ammo.munitionType = AmmoType.Munitions.M_STANDARD;
+        ammo.munitionType = EnumSet.of(Munitions.M_STANDARD);
         ammo.shots = 1;
         ammo.bv = 0;
         ammo.cost = 0;
@@ -4880,8 +4880,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 0;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_VGL;
-        ammo.munitionType =
-        AmmoType.Munitions.M_STANDARD;
+        ammo.munitionType = EnumSet.of(Munitions.M_STANDARD);
         ammo.shots = 1;
         ammo.bv = 0;
         ammo.cost = 0;
@@ -5328,7 +5327,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_ATM;
-        ammo.munitionType = Munitions.M_EXTENDED_RANGE;
+        ammo.munitionType = EnumSet.of(Munitions.M_EXTENDED_RANGE);
         ammo.shots = 20;
         ammo.bv = 14;
         ammo.cost = 75000;
@@ -5354,7 +5353,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_ATM;
-        ammo.munitionType = Munitions.M_EXTENDED_RANGE;
+        ammo.munitionType = EnumSet.of(Munitions.M_EXTENDED_RANGE);
         ammo.shots = 10;
         ammo.bv = 26;
         ammo.cost = 75000;
@@ -5380,7 +5379,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 9;
         ammo.ammoType = AmmoType.T_ATM;
-        ammo.munitionType = Munitions.M_EXTENDED_RANGE;
+        ammo.munitionType = EnumSet.of(Munitions.M_EXTENDED_RANGE);
         ammo.shots = 7;
         ammo.bv = 36;
         ammo.cost = 75000;
@@ -5406,7 +5405,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 12;
         ammo.ammoType = AmmoType.T_ATM;
-        ammo.munitionType = Munitions.M_EXTENDED_RANGE;
+        ammo.munitionType = EnumSet.of(Munitions.M_EXTENDED_RANGE);
         ammo.shots = 5;
         ammo.bv = 52;
         ammo.cost = 75000;
@@ -5433,7 +5432,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 3;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_ATM;
-        ammo.munitionType = Munitions.M_HIGH_EXPLOSIVE;
+        ammo.munitionType = EnumSet.of(Munitions.M_HIGH_EXPLOSIVE);
         ammo.shots = 20;
         ammo.bv = 14;
         ammo.cost = 75000;
@@ -5457,7 +5456,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 3;
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_ATM;
-        ammo.munitionType = Munitions.M_HIGH_EXPLOSIVE;
+        ammo.munitionType = EnumSet.of(Munitions.M_HIGH_EXPLOSIVE);
         ammo.shots = 10;
         ammo.bv = 26;
         ammo.cost = 75000;
@@ -5481,7 +5480,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 3;
         ammo.rackSize = 9;
         ammo.ammoType = AmmoType.T_ATM;
-        ammo.munitionType = Munitions.M_HIGH_EXPLOSIVE;
+        ammo.munitionType = EnumSet.of(Munitions.M_HIGH_EXPLOSIVE);
         ammo.shots = 7;
         ammo.bv = 36;
         ammo.cost = 75000;
@@ -5505,7 +5504,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 3;
         ammo.rackSize = 12;
         ammo.ammoType = AmmoType.T_ATM;
-        ammo.munitionType = Munitions.M_HIGH_EXPLOSIVE;
+        ammo.munitionType = EnumSet.of(Munitions.M_HIGH_EXPLOSIVE);
         ammo.shots = 5;
         ammo.bv = 52;
         ammo.cost = 75000;
@@ -5633,7 +5632,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_IATM;
-        ammo.munitionType = Munitions.M_EXTENDED_RANGE;
+        ammo.munitionType = EnumSet.of(Munitions.M_EXTENDED_RANGE);
         ammo.shots = 20;
         ammo.bv = 21;
         ammo.cost = 75000;
@@ -5659,7 +5658,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_IATM;
-        ammo.munitionType = Munitions.M_EXTENDED_RANGE;
+        ammo.munitionType = EnumSet.of(Munitions.M_EXTENDED_RANGE);
         ammo.shots = 10;
         ammo.bv = 39;
         ammo.cost = 75000;
@@ -5684,7 +5683,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 9;
         ammo.ammoType = AmmoType.T_IATM;
-        ammo.munitionType = Munitions.M_EXTENDED_RANGE;
+        ammo.munitionType = EnumSet.of(Munitions.M_EXTENDED_RANGE);
         ammo.shots = 7;
         ammo.bv = 54;
         ammo.cost = 75000;
@@ -5710,7 +5709,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 12;
         ammo.ammoType = AmmoType.T_IATM;
-        ammo.munitionType = Munitions.M_EXTENDED_RANGE;
+        ammo.munitionType = EnumSet.of(Munitions.M_EXTENDED_RANGE);
         ammo.shots = 5;
         ammo.bv = 78;
         ammo.cost = 75000;
@@ -5737,7 +5736,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 3;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_IATM;
-        ammo.munitionType = Munitions.M_HIGH_EXPLOSIVE;
+        ammo.munitionType = EnumSet.of(Munitions.M_HIGH_EXPLOSIVE);
         ammo.shots = 20;
         ammo.bv = 21;
         ammo.cost = 75000;
@@ -5763,7 +5762,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 3;
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_IATM;
-        ammo.munitionType = Munitions.M_HIGH_EXPLOSIVE;
+        ammo.munitionType = EnumSet.of(Munitions.M_HIGH_EXPLOSIVE);
         ammo.shots = 10;
         ammo.bv = 39;
         ammo.cost = 75000;
@@ -5789,7 +5788,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 3;
         ammo.rackSize = 9;
         ammo.ammoType = AmmoType.T_IATM;
-        ammo.munitionType = Munitions.M_HIGH_EXPLOSIVE;
+        ammo.munitionType = EnumSet.of(Munitions.M_HIGH_EXPLOSIVE);
         ammo.shots = 7;
         ammo.bv = 54;
         ammo.cost = 75000;
@@ -5815,7 +5814,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 3;
         ammo.rackSize = 12;
         ammo.ammoType = AmmoType.T_IATM;
-        ammo.munitionType = Munitions.M_HIGH_EXPLOSIVE;
+        ammo.munitionType = EnumSet.of(Munitions.M_HIGH_EXPLOSIVE);
         ammo.shots = 5;
         ammo.bv = 78;
         ammo.cost = 75000;
@@ -5843,7 +5842,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_IATM;
-        ammo.munitionType = Munitions.M_IATM_IIW;
+        ammo.munitionType = EnumSet.of(Munitions.M_IATM_IIW);
         ammo.shots = 20;
         ammo.bv = 27; // 21 * 1.3 = 27.3, round down (?)
         ammo.cost = 75000;
@@ -5872,7 +5871,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_IATM;
-        ammo.munitionType = Munitions.M_IATM_IIW;
+        ammo.munitionType = EnumSet.of(Munitions.M_IATM_IIW);
         ammo.shots = 10;
         ammo.bv = 51; // 50.7 round up (?)
         ammo.cost = 75000;
@@ -5901,7 +5900,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 9;
         ammo.ammoType = AmmoType.T_IATM;
-        ammo.munitionType = Munitions.M_IATM_IIW;
+        ammo.munitionType = EnumSet.of(Munitions.M_IATM_IIW);
         ammo.shots = 7;
         ammo.bv = 70; // 54 * 1.3 = 70.2, round down (?)
         ammo.cost = 75000;
@@ -5930,7 +5929,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 12;
         ammo.ammoType = AmmoType.T_IATM;
-        ammo.munitionType = Munitions.M_IATM_IIW;
+        ammo.munitionType = EnumSet.of(Munitions.M_IATM_IIW);
         ammo.shots = 5;
         ammo.bv = 101; // 78 * 1.3 = 101.4, round down (?)
         ammo.cost = 75000;
@@ -5960,7 +5959,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_IATM;
-        ammo.munitionType = Munitions.M_IATM_IMP;
+        ammo.munitionType = EnumSet.of(Munitions.M_IATM_IMP);
         ammo.shots = 20;
         ammo.bv = 42; // 21 * 2 = 42
         ammo.cost = 75000;
@@ -5987,7 +5986,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_IATM;
-        ammo.munitionType = Munitions.M_IATM_IMP;
+        ammo.munitionType = EnumSet.of(Munitions.M_IATM_IMP);
         ammo.shots = 10;
         ammo.bv = 78; // 39 * 2 = 78
         ammo.cost = 75000;
@@ -6014,7 +6013,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 9;
         ammo.ammoType = AmmoType.T_IATM;
-        ammo.munitionType = Munitions.M_IATM_IMP;
+        ammo.munitionType = EnumSet.of(Munitions.M_IATM_IMP);
         ammo.shots = 7;
         ammo.bv = 108; // 54 * 2 = 108
         ammo.cost = 75000;
@@ -6041,7 +6040,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 12;
         ammo.ammoType = AmmoType.T_IATM;
-        ammo.munitionType = Munitions.M_IATM_IMP;
+        ammo.munitionType = EnumSet.of(Munitions.M_IATM_IMP);
         ammo.shots = 5;
         ammo.bv = 156; // 78 * 2 = 156
         ammo.cost = 75000;
@@ -6495,7 +6494,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLStreakLRM5 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_STREAK;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
         ammo.shots = 24;
         ammo.bv = 11;
         ammo.cost = 60000;
@@ -6521,7 +6520,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLStreakLRM10 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 10;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_STREAK;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
         ammo.shots = 12;
         ammo.bv = 22;
         ammo.cost = 60000;
@@ -6547,7 +6546,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLStreakLRM15 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 15;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_STREAK;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
         ammo.shots = 8;
         ammo.bv = 32;
         ammo.cost = 60000;
@@ -6573,7 +6572,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLStreakLRM20 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 20;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_STREAK;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
         ammo.shots = 6;
         ammo.bv = 43;
         ammo.cost = 60000;
@@ -6600,7 +6599,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLStreakLRM1 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_STREAK;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
         ammo.flags = ammo.flags.or(F_PROTOMECH);
         ammo.shots = 1;
         ammo.kgPerShot = 8.33;
@@ -6626,7 +6625,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLStreakLRM2 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_STREAK;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
         ammo.flags = ammo.flags.or(F_PROTOMECH);
         ammo.shots = 1;
         ammo.kgPerShot = 16.67;
@@ -6652,7 +6651,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLStreakLRM3 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_STREAK;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
         ammo.flags = ammo.flags.or(F_PROTOMECH);
         ammo.shots = 1;
         ammo.kgPerShot = 24.99;
@@ -6678,7 +6677,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLStreakLRM4 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 4;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_STREAK;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
         ammo.flags = ammo.flags.or(F_PROTOMECH);
         ammo.shots = 1;
         ammo.kgPerShot = 33.32;
@@ -6704,7 +6703,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLStreakLRM6 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 6;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_STREAK;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
         ammo.flags = ammo.flags.or(F_PROTOMECH);
         ammo.shots = 1;
         ammo.kgPerShot = 49.98;
@@ -6730,7 +6729,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLStreakLRM7 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 7;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_STREAK;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
         ammo.flags = ammo.flags.or(F_PROTOMECH);
         ammo.shots = 1;
         ammo.kgPerShot = 58.31;
@@ -6756,7 +6755,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLStreakLRM8 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 8;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_STREAK;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
         ammo.flags = ammo.flags.or(F_PROTOMECH);
         ammo.shots = 1;
         ammo.kgPerShot = 66.64;
@@ -6782,7 +6781,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLStreakLRM9 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 9;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_STREAK;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
         ammo.flags = ammo.flags.or(F_PROTOMECH);
         ammo.shots = 1;
         ammo.kgPerShot = 74.97;
@@ -6808,7 +6807,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLStreakLRM11 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 11;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_STREAK;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
         ammo.flags = ammo.flags.or(F_PROTOMECH);
         ammo.shots = 1;
         ammo.kgPerShot = 91.63;
@@ -6834,7 +6833,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLStreakLRM12 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 12;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_STREAK;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
         ammo.flags = ammo.flags.or(F_PROTOMECH);
         ammo.shots = 1;
         ammo.kgPerShot = 99.96;
@@ -6860,7 +6859,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLStreakLRM13 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 13;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_STREAK;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
         ammo.flags = ammo.flags.or(F_PROTOMECH);
         ammo.shots = 1;
         ammo.kgPerShot = 108.29;
@@ -6886,7 +6885,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLStreakLRM14 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 14;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_STREAK;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
         ammo.flags = ammo.flags.or(F_PROTOMECH);
         ammo.shots = 1;
         ammo.kgPerShot = 116.62;
@@ -6912,7 +6911,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLStreakLRM16 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 16;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_STREAK;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
         ammo.flags = ammo.flags.or(F_PROTOMECH);
         ammo.shots = 1;
         ammo.kgPerShot = 133.28;
@@ -6938,7 +6937,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLStreakLRM17 mmo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 17;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_STREAK;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
         ammo.flags = ammo.flags.or(F_PROTOMECH);
         ammo.shots = 1;
         ammo.kgPerShot = 141.61;
@@ -6964,7 +6963,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLStreakLRM18 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 18;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_STREAK;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
         ammo.flags = ammo.flags.or(F_PROTOMECH);
         ammo.shots = 1;
         ammo.kgPerShot = 149.94;
@@ -6990,7 +6989,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLStreakLRM19 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 19;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_STREAK;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
         ammo.flags = ammo.flags.or(F_PROTOMECH);
         ammo.shots = 1;
         ammo.kgPerShot = 158.27;
@@ -8036,7 +8035,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLStreakSRM2 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
-        ammo.ammoType = AmmoType.T_SRMunitions.M_STREAK;
+        ammo.ammoType = AmmoType.T_SRM_STREAK;
         ammo.shots = 50;
         ammo.bv = 5;
         ammo.cost = 54000;
@@ -8060,7 +8059,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLStreakSRM4 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 4;
-        ammo.ammoType = AmmoType.T_SRMunitions.M_STREAK;
+        ammo.ammoType = AmmoType.T_SRM_STREAK;
         ammo.shots = 25;
         ammo.bv = 10;
         ammo.cost = 54000;
@@ -8084,7 +8083,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLStreakSRM6 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 6;
-        ammo.ammoType = AmmoType.T_SRMunitions.M_STREAK;
+        ammo.ammoType = AmmoType.T_SRM_STREAK;
         ammo.shots = 15;
         ammo.bv = 15;
         ammo.cost = 54000;
@@ -8108,7 +8107,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLStreakSRM1 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 1;
-        ammo.ammoType = AmmoType.T_SRMunitions.M_STREAK;
+        ammo.ammoType = AmmoType.T_SRM_STREAK;
         ammo.shots = 100;
         ammo.bv = 3;
         ammo.kgPerShot = 10;
@@ -8132,7 +8131,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLStreakSRM3 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 3;
-        ammo.ammoType = AmmoType.T_SRMunitions.M_STREAK;
+        ammo.ammoType = AmmoType.T_SRM_STREAK;
         ammo.shots = 100;
         ammo.bv = 7;
         ammo.kgPerShot = 30;
@@ -8156,7 +8155,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLStreakSRM5 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 5;
-        ammo.ammoType = AmmoType.T_SRMunitions.M_STREAK;
+        ammo.ammoType = AmmoType.T_SRM_STREAK;
         ammo.shots = 100;
         ammo.bv = 13;
         ammo.kgPerShot = 50;
@@ -8182,7 +8181,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("ISStreakSRM2 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
-        ammo.ammoType = AmmoType.T_SRMunitions.M_STREAK;
+        ammo.ammoType = AmmoType.T_SRM_STREAK;
         ammo.shots = 50;
         ammo.bv = 4;
         ammo.cost = 54000;
@@ -8206,7 +8205,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("ISStreakSRM4 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 4;
-        ammo.ammoType = AmmoType.T_SRMunitions.M_STREAK;
+        ammo.ammoType = AmmoType.T_SRM_STREAK;
         ammo.shots = 25;
         ammo.bv = 7;
         ammo.cost = 54000;
@@ -8229,7 +8228,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("ISStreakSRM6 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 6;
-        ammo.ammoType = AmmoType.T_SRMunitions.M_STREAK;
+        ammo.ammoType = AmmoType.T_SRM_STREAK;
         ammo.shots = 15;
         ammo.bv = 11;
         ammo.cost = 54000;
@@ -8281,7 +8280,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 4;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_NARC;
-        ammo.munitionType = Munitions.M_NARC_EX;
+        ammo.munitionType = EnumSet.of(Munitions.M_NARC_EX);
         ammo.shots = 6;
         ammo.bv = 0;
         ammo.cost = 1500;
@@ -8303,7 +8302,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 4;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_NARC;
-        ammo.munitionType = AmmoType.Munitions.M_NARC_EX;
+        ammo.munitionType = EnumSet.of(Munitions.M_NARC_EX);
         ammo.shots = 6;
         ammo.bv = 0;
         ammo.cost = 1500;
@@ -8353,7 +8352,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 3; // only used for ammo crits
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_INARC;
-        ammo.munitionType = AmmoType.Munitions.M_ECM;
+        ammo.munitionType = EnumSet.of(Munitions.M_ECM);
         ammo.shots = 4;
         ammo.bv = 0;
         ammo.cost = 15000;
@@ -8376,7 +8375,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 6; // only used for ammo crits
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_INARC;
-        ammo.munitionType = AmmoType.Munitions.M_EXPLOSIVE;
+        ammo.munitionType = EnumSet.of(Munitions.M_EXPLOSIVE);
         ammo.shots = 4;
         ammo.bv = 0;
         ammo.cost = 1500;
@@ -8399,7 +8398,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 3; // only used for ammo crits
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_INARC;
-        ammo.munitionType = AmmoType.Munitions.M_HAYWIRE;
+        ammo.munitionType = EnumSet.of(Munitions.M_HAYWIRE);
         ammo.shots = 4;
         ammo.bv = 0;
         ammo.cost = 20000;
@@ -8422,7 +8421,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 3; // only used for ammo crits
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_INARC;
-        ammo.munitionType = AmmoType.Munitions.M_NEMESIS;
+        ammo.munitionType = EnumSet.of(Munitions.M_NEMESIS);
         ammo.shots = 4;
         ammo.bv = 0;
         ammo.cost = 10000;
@@ -8447,7 +8446,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("ISLRT5 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_TORPEDO;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 24;
         ammo.bv = 6;
         ammo.cost = 30000;
@@ -8473,7 +8472,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("ISLRT10 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 10;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_TORPEDO;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 12;
         ammo.bv = 11;
         ammo.cost = 30000;
@@ -8499,7 +8498,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("ISLRT15 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 15;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_TORPEDO;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 8;
         ammo.bv = 17;
         ammo.cost = 30000;
@@ -8525,7 +8524,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("ISLRT20 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 20;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_TORPEDO;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 6;
         ammo.bv = 23;
         ammo.cost = 30000;
@@ -8551,7 +8550,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("ISSRT2 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
-        ammo.ammoType = AmmoType.T_SRMunitions.M_TORPEDO;
+        ammo.ammoType = AmmoType.T_SRM_TORPEDO;
         ammo.shots = 50;
         ammo.bv = 3;
         ammo.cost = 27000;
@@ -8574,7 +8573,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("ISSRT4 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 4;
-        ammo.ammoType = AmmoType.T_SRMunitions.M_TORPEDO;
+        ammo.ammoType = AmmoType.T_SRM_TORPEDO;
         ammo.shots = 25;
         ammo.bv = 5;
         ammo.cost = 27000;
@@ -8597,7 +8596,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("ISSRT6 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 6;
-        ammo.ammoType = AmmoType.T_SRMunitions.M_TORPEDO;
+        ammo.ammoType = AmmoType.T_SRM_TORPEDO;
         ammo.shots = 15;
         ammo.bv = 7;
         ammo.cost = 27000;
@@ -8622,7 +8621,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("Clan LRTorpedo 1 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_TORPEDO;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 2;
         ammo.kgPerShot = 8.33;
@@ -8649,7 +8648,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("Clan LRTorpedo 2 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_TORPEDO;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 3;
         ammo.kgPerShot = 16.66;
@@ -8676,7 +8675,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("Clan LRTorpedo 3 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_TORPEDO;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 5;
         ammo.kgPerShot = 24.99;
@@ -8703,7 +8702,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("Clan LRTorpedo 4 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 4;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_TORPEDO;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 6;
         ammo.kgPerShot = 33.32;
@@ -8730,7 +8729,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLLRT5 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_TORPEDO;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 24;
         ammo.bv = 7;
         ammo.cost = 30000;
@@ -8755,7 +8754,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("Clan LRTorpedo 6 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 6;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_TORPEDO;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 9;
         ammo.kgPerShot = 49.98;
@@ -8782,7 +8781,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("Clan LRTorpedo 7 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 7;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_TORPEDO;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 10;
         ammo.kgPerShot = 58.31;
@@ -8809,7 +8808,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("Clan LRTorpedo 8 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 8;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_TORPEDO;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 11;
         ammo.kgPerShot = 66.64;
@@ -8836,7 +8835,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("Clan LRTorpedo 9 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 9;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_TORPEDO;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 12;
         ammo.kgPerShot = 74.97;
@@ -8863,7 +8862,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLLRT10 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 10;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_TORPEDO;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 12;
         ammo.bv = 14;
         ammo.cost = 30000;
@@ -8888,7 +8887,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("Clan LRTorpedo 11 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 11;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_TORPEDO;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 18;
         ammo.kgPerShot = 91.63;
@@ -8915,7 +8914,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("Clan LRTorpedo 12 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 12;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_TORPEDO;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 18;
         ammo.kgPerShot = 99.96;
@@ -8942,7 +8941,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("Clan LRTorpedo 13 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 13;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_TORPEDO;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 20;
         ammo.kgPerShot = 108.29;
@@ -8969,7 +8968,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("Clan LRTorpedo 14 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 14;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_TORPEDO;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 21;
         ammo.kgPerShot = 116.62;
@@ -8996,7 +8995,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLLRT15 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 15;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_TORPEDO;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 8;
         ammo.bv = 21;
         ammo.cost = 30000;
@@ -9021,7 +9020,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("Clan LRTorpedo 16 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 16;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_TORPEDO;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 27;
         ammo.kgPerShot = 133.28;
@@ -9048,7 +9047,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("Clan LRTorpedo 17 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 17;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_TORPEDO;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 27;
         ammo.kgPerShot = 141.61;
@@ -9075,7 +9074,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("Clan LRTorpedo 18 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 18;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_TORPEDO;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 27;
         ammo.kgPerShot = 149.94;
@@ -9102,7 +9101,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("Clan LRTorpedo 19 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 19;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_TORPEDO;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 27;
         ammo.kgPerShot = 158.27;
@@ -9129,7 +9128,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLLRT20 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 20;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_TORPEDO;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 6;
         ammo.bv = 27;
         ammo.cost = 30000;
@@ -9155,7 +9154,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("Clan SRTorpedo 1 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 1;
-        ammo.ammoType = AmmoType.T_SRMunitions.M_TORPEDO;
+        ammo.ammoType = AmmoType.T_SRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 2;
         ammo.kgPerShot = 10;
@@ -9181,7 +9180,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLSRT2 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
-        ammo.ammoType = AmmoType.T_SRMunitions.M_TORPEDO;
+        ammo.ammoType = AmmoType.T_SRM_TORPEDO;
         ammo.shots = 50;
         ammo.bv = 3;
         ammo.cost = 27000;
@@ -9205,7 +9204,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("Clan SRTorpedo 3 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 3;
-        ammo.ammoType = AmmoType.T_SRMunitions.M_TORPEDO;
+        ammo.ammoType = AmmoType.T_SRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 4;
         ammo.kgPerShot = 30;
@@ -9231,7 +9230,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLSRT4 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 4;
-        ammo.ammoType = AmmoType.T_SRMunitions.M_TORPEDO;
+        ammo.ammoType = AmmoType.T_SRM_TORPEDO;
         ammo.shots = 25;
         ammo.bv = 5;
         ammo.cost = 27000;
@@ -9255,7 +9254,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("Clan SRTorpedo 5 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 5;
-        ammo.ammoType = AmmoType.T_SRMunitions.M_TORPEDO;
+        ammo.ammoType = AmmoType.T_SRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 6;
         ammo.kgPerShot = 50;
@@ -9281,7 +9280,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLSRT6 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 6;
-        ammo.ammoType = AmmoType.T_SRMunitions.M_TORPEDO;
+        ammo.ammoType = AmmoType.T_SRM_TORPEDO;
         ammo.shots = 15;
         ammo.bv = 7;
         ammo.cost = 27000;
@@ -10796,7 +10795,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("IS LRM 5 Primitive Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_PRIMITIVE;
+        ammo.ammoType = AmmoType.T_LRM_PRIMITIVE;
         ammo.shots = 18;
         ammo.bv = 6;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
@@ -10824,7 +10823,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("IS LRM 10 Primitive Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 10;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_PRIMITIVE;
+        ammo.ammoType = AmmoType.T_LRM_PRIMITIVE;
         ammo.shots = 9;
         ammo.bv = 11;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
@@ -10852,7 +10851,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("IS LRM 15 Primitive Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 15;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_PRIMITIVE;
+        ammo.ammoType = AmmoType.T_LRM_PRIMITIVE;
         ammo.shots = 6;
         ammo.bv = 17;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
@@ -10880,7 +10879,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("IS LRM 20 Primitive Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 20;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_PRIMITIVE;
+        ammo.ammoType = AmmoType.T_LRM_PRIMITIVE;
         ammo.shots = 5;
         ammo.bv = 23;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
@@ -10908,7 +10907,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("IS SRM 2 Primitive Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
-        ammo.ammoType = AmmoType.T_SRMunitions.M_PRIMITIVE;
+        ammo.ammoType = AmmoType.T_SRM_PRIMITIVE;
         ammo.shots = 38;
         ammo.bv = 3;
         ammo.cost = 27000;
@@ -10934,7 +10933,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("IS SRM 4 Primitive Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 4;
-        ammo.ammoType = AmmoType.T_SRMunitions.M_PRIMITIVE;
+        ammo.ammoType = AmmoType.T_SRM_PRIMITIVE;
         ammo.shots = 19;
         ammo.bv = 5;
         ammo.cost = 27000;
@@ -10960,7 +10959,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("IS SRM 6 Primitive Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 6;
-        ammo.ammoType = AmmoType.T_SRMunitions.M_PRIMITIVE;
+        ammo.ammoType = AmmoType.T_SRM_PRIMITIVE;
         ammo.shots = 11;
         ammo.bv = 7;
         ammo.cost = 27000;
@@ -10985,7 +10984,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("ISPrimitiveLongTomArtillery Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 25;
-        ammo.ammoType = AmmoType.T_LONG_TOMunitions.M_PRIM;
+        ammo.ammoType = AmmoType.T_LONG_TOM_PRIM;
         ammo.shots = 4;
         ammo.bv = 35;
         ammo.cost = 10000;
@@ -11117,7 +11116,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLImpLRM5Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_IMP;
+        ammo.ammoType = AmmoType.T_LRM_IMP;
         ammo.shots = 24;
         ammo.bv = 6;
         ammo.cost = 30000;
@@ -11141,7 +11140,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLImpLRM10Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 10;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_IMP;
+        ammo.ammoType = AmmoType.T_LRM_IMP;
         ammo.shots = 12;
         ammo.bv = 11;
         ammo.cost = 30000;
@@ -11165,7 +11164,7 @@ public class AmmoType extends EquipmentType {
         ammo.shortName = "iLRM 15";
         ammo.damagePerShot = 1;
         ammo.rackSize = 15;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_IMP;
+        ammo.ammoType = AmmoType.T_LRM_IMP;
         ammo.shots = 8;
         ammo.bv = 17;
         ammo.cost = 30000;
@@ -11189,7 +11188,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLImpLRM20Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 20;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_IMP;
+        ammo.ammoType = AmmoType.T_LRM_IMP;
         ammo.shots = 6;
         ammo.bv = 23;
         ammo.cost = 30000;
@@ -11235,7 +11234,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLImpSRM2 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
-        ammo.ammoType = AmmoType.T_SRMunitions.M_IMP;
+        ammo.ammoType = AmmoType.T_SRM_IMP;
         ammo.shots = 50;
         ammo.bv = 4;
         ammo.cost = 27000;
@@ -11258,7 +11257,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLImpSRM4 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 4;
-        ammo.ammoType = AmmoType.T_SRMunitions.M_IMP;
+        ammo.ammoType = AmmoType.T_SRM_IMP;
         ammo.shots = 25;
         ammo.bv = 7;
         ammo.cost = 27000;
@@ -11281,7 +11280,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLImpSRM6 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 6;
-        ammo.ammoType = AmmoType.T_SRMunitions.M_IMP;
+        ammo.ammoType = AmmoType.T_SRM_IMP;
         ammo.shots = 15;
         ammo.bv = 10;
         ammo.cost = 27000;
@@ -11332,7 +11331,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLTorpedoLRM5 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
-        ammo.ammoType = AmmoType.T_LRMunitions.M_TORPEDO_COMBO;
+        ammo.ammoType = AmmoType.T_LRM_TORPEDO_COMBO;
         ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 7;
@@ -11895,7 +11894,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("BAAdvancedSRM1 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 1;
-        ammo.ammoType = AmmoType.T_SRMunitions.M_ADVANCED;
+        ammo.ammoType = AmmoType.T_SRM_ADVANCED;
         ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 2;
@@ -11920,7 +11919,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("BAAdvanced SRM2 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
-        ammo.ammoType = AmmoType.T_SRMunitions.M_ADVANCED;
+        ammo.ammoType = AmmoType.T_SRM_ADVANCED;
         ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 4;
@@ -11944,7 +11943,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("BAAdvancedSRM3 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 3;
-        ammo.ammoType = AmmoType.T_SRMunitions.M_ADVANCED;
+        ammo.ammoType = AmmoType.T_SRM_ADVANCED;
         ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 6;
@@ -11968,7 +11967,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("BAAdvancedSRM4 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 4;
-        ammo.ammoType = AmmoType.T_SRMunitions.M_ADVANCED;
+        ammo.ammoType = AmmoType.T_SRM_ADVANCED;
         ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 8;
@@ -11992,7 +11991,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("BAAdvanced SRM5 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 5;
-        ammo.ammoType = AmmoType.T_SRMunitions.M_ADVANCED;
+        ammo.ammoType = AmmoType.T_SRM_ADVANCED;
         ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 10;
@@ -12016,7 +12015,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("BAAdvancedSRM6 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 6;
-        ammo.ammoType = AmmoType.T_SRMunitions.M_ADVANCED;
+        ammo.ammoType = AmmoType.T_SRM_ADVANCED;
         ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 12;
@@ -12328,7 +12327,7 @@ public class AmmoType extends EquipmentType {
         ammo.toHitModifier = -1;
         ammo.rackSize = 15;
         ammo.ammoType = AmmoType.T_MPOD;
-        ammo.munitionType = Munitions.M_CLUSTER;
+        ammo.munitionType = EnumSet.of(Munitions.M_CLUSTER);
         ammo.shots = 1;
         ammo.bv = 0;
         ammo.cost = 0;
@@ -12353,7 +12352,7 @@ public class AmmoType extends EquipmentType {
         ammo.toHitModifier = -1;
         ammo.rackSize = 15;
         ammo.ammoType = AmmoType.T_MPOD;
-        ammo.munitionType = Munitions.M_CLUSTER;
+        ammo.munitionType = EnumSet.of(Munitions.M_CLUSTER);
         ammo.shots = 1;
         ammo.bv = 0;
         ammo.cost = 0;
@@ -12503,7 +12502,7 @@ public class AmmoType extends EquipmentType {
         ammo.toHitModifier = -1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_AC_LBX_THB;
-        ammo.munitionType = Munitions.M_CLUSTER;
+        ammo.munitionType = EnumSet.of(Munitions.M_CLUSTER);
         ammo.shots = 40;
         ammo.bv = 5;
         ammo.cost = 4950;
@@ -12530,7 +12529,7 @@ public class AmmoType extends EquipmentType {
         ammo.toHitModifier = -1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_AC_LBX_THB;
-        ammo.munitionType = Munitions.M_CLUSTER;
+        ammo.munitionType = EnumSet.of(Munitions.M_CLUSTER);
         ammo.shots = 16;
         ammo.bv = 11;
         ammo.cost = 25000;
@@ -12557,7 +12556,7 @@ public class AmmoType extends EquipmentType {
         ammo.toHitModifier = -1;
         ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_AC_LBX_THB;
-        ammo.munitionType = Munitions.M_CLUSTER;
+        ammo.munitionType = EnumSet.of(Munitions.M_CLUSTER);
         ammo.shots = 4;
         ammo.bv = 26;
         ammo.cost = 51000;
@@ -13046,7 +13045,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Inferno Ammo";
         ammo.setInternalName(EquipmentTypeLookup.INFANTRY_INFERNO_AMMO);
         ammo.ammoType = AmmoType.T_INFANTRY;
-        ammo.munitionType = Munitions.M_INFERNO;
+        ammo.munitionType = EnumSet.of(Munitions.M_INFERNO);
         ammo.techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_A)
                 .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
@@ -13062,23 +13061,23 @@ public class AmmoType extends EquipmentType {
         // first the normal munition types
         if (at != null) {
             // LRM-20's, RL-20's, and MRM 20, 30, and 40 can clear minefields
-            if (((at.getAmmoType() == T_LRM) || (at.getAmmoType() == T_LRMunitions.M_IMP) || (at.getAmmoType() == T_LRMunitions.M_STREAK)
+            if (((at.getAmmoType() == T_LRM) || (at.getAmmoType() == T_LRM_IMP) || (at.getAmmoType() == T_LRM_STREAK)
                     || (at.getAmmoType() == T_EXLRM) || (at.getAmmoType() == T_MRM)
                     || (at.getAmmoType() == T_ROCKET_LAUNCHER))
                     && (at.getRackSize() >= 20)
-                    && ((at.getMunitionType() == Munitions.M_STANDARD) || (at.getMunitionType() == Munitions.M_ARTEMIS_CAPABLE)
-                            || (at.getMunitionType() == Munitions.M_ARTEMIS_V_CAPABLE)
-                            || (at.getMunitionType() == Munitions.M_NARC_CAPABLE))) {
+                    && ((at.getMunitionType().contains(Munitions.M_STANDARD)) || (at.getMunitionType().contains(Munitions.M_ARTEMIS_CAPABLE))
+                            || (at.getMunitionType().contains(Munitions.M_ARTEMIS_V_CAPABLE))
+                            || (at.getMunitionType().contains(Munitions.M_NARC_CAPABLE)))) {
                 return true;
             }
             // ATMs
-            if ((at.getAmmoType() == T_ATM) && ((at.getRackSize() >= 12 && at.getMunitionType() != Munitions.M_EXTENDED_RANGE)
-                    || (at.getRackSize() >= 9 && at.getMunitionType() == Munitions.M_HIGH_EXPLOSIVE))) {
+            if ((at.getAmmoType() == T_ATM) && ((at.getRackSize() >= 12 && !(at.getMunitionType().contains(Munitions.M_EXTENDED_RANGE))
+                    || (at.getRackSize() >= 9 && at.getMunitionType().contains(Munitions.M_HIGH_EXPLOSIVE))))) {
                 return true;
             }
             // Artillery
             if (((at.getAmmoType() == T_ARROW_IV) || (at.getAmmoType() == T_LONG_TOM) || (at.getAmmoType() == T_SNIPER)
-                    || (at.getAmmoType() == T_THUMPER)) && (at.getMunitionType() == Munitions.M_STANDARD)) {
+                    || (at.getAmmoType() == T_THUMPER)) && (at.getMunitionType().contains(Munitions.M_STANDARD))) {
                 return true;
             }
         }
@@ -13089,12 +13088,12 @@ public class AmmoType extends EquipmentType {
 
     public static boolean canDeliverMinefield(AmmoType at) {
         return (at != null)
-                && ((at.getAmmoType() == T_LRM) || (at.getAmmoType() == AmmoType.T_LRMunitions.M_IMP)
+                && ((at.getAmmoType() == T_LRM) || (at.getAmmoType() == AmmoType.T_LRM_IMP)
                         || (at.getAmmoType() == AmmoType.T_MML))
-                && ((at.getMunitionType() == Munitions.M_THUNDER) || (at.getMunitionType() == Munitions.M_THUNDER_INFERNO)
-                        || (at.getMunitionType() == Munitions.M_THUNDER_AUGMENTED)
-                        || (at.getMunitionType() == Munitions.M_THUNDER_VIBRABOMB)
-                        || (at.getMunitionType() == Munitions.M_THUNDER_ACTIVE));
+                && ((at.getMunitionType().contains(Munitions.M_THUNDER)) || (at.getMunitionType().contains(Munitions.M_THUNDER_INFERNO))
+                        || (at.getMunitionType().contains(Munitions.M_THUNDER_AUGMENTED))
+                        || (at.getMunitionType().contains(Munitions.M_THUNDER_VIBRABOMB))
+                        || (at.getMunitionType().contains(Munitions.M_THUNDER_ACTIVE)));
     }
 
     private void addToEnd(AmmoType base, String modifier) {
@@ -13132,17 +13131,17 @@ public class AmmoType extends EquipmentType {
         /**
          * The munition flag(s) for this type.
          */
-        private long type;
+        private EnumSet<Munitions> type;
 
         protected String rulesRefs;
 
         private TechAdvancement techAdvancement;
 
-        public MunitionMutator(String munitionName, int weightRatio, long munitionType,
+        public MunitionMutator(String munitionName, int weightRatio, Munitions munitionType,
                                TechAdvancement techAdvancement, String rulesRefs) {
             name = munitionName;
             weight = weightRatio;
-            type = munitionType;
+            type = EnumSet.of(munitionType);
             this.techAdvancement = new TechAdvancement(techAdvancement);
             this.rulesRefs = rulesRefs;
         }
@@ -13221,16 +13220,16 @@ public class AmmoType extends EquipmentType {
                     }
                     break;
                 case AmmoType.T_SRM:
-                case AmmoType.T_SRMunitions.M_PRIMITIVE:
-                case AmmoType.T_SRMunitions.M_IMP:
+                case AmmoType.T_SRM_PRIMITIVE:
+                case AmmoType.T_SRM_IMP:
                 case AmmoType.T_MRM:
                 case AmmoType.T_LRM:
-                case AmmoType.T_LRMunitions.M_PRIMITIVE:
-                case AmmoType.T_LRMunitions.M_IMP:
+                case AmmoType.T_LRM_PRIMITIVE:
+                case AmmoType.T_LRM_IMP:
                 case AmmoType.T_MML:
                 case AmmoType.T_NLRM:
-                case AmmoType.T_SRMunitions.M_TORPEDO:
-                case AmmoType.T_LRMunitions.M_TORPEDO:
+                case AmmoType.T_SRM_TORPEDO:
+                case AmmoType.T_LRM_TORPEDO:
                     // Add the munition name to the end of some ammo names.
                     nameBuf = new StringBuilder(" ");
                     nameBuf.append(name);
@@ -13264,15 +13263,15 @@ public class AmmoType extends EquipmentType {
                     // Replace "Shaped Charge" with the submunition name
                     munition.name = base.name.replace("Shaped Charge", name);
                     String abr = "SC";
-                    if (type == AmmoType.Munitions.M_AIRBURST) {
+                    if (type.contains(Munitions.M_AIRBURST)) {
                         abr = "AB";
-                    } else if (type == AmmoType.Munitions.M_ANTI_PERSONNEL) {
+                    } else if (type.contains(Munitions.M_ANTI_PERSONNEL)) {
                         abr = "AP";
-                    } else if (type == AmmoType.Munitions.M_FLARE) {
+                    } else if (type.contains(Munitions.M_FLARE)) {
                         abr = "FL";
-                    } else if (type == AmmoType.Munitions.M_SMOKE_WARHEAD) {
+                    } else if (type.contains(Munitions.M_SMOKE_WARHEAD)) {
                         abr = "SM";
-                    } else if (type == AmmoType.Munitions.M_SEMIGUIDED) {
+                    } else if (type.contains(Munitions.M_SEMIGUIDED)) {
                         abr = "SG";
                     }
                     munition.shortName = base.shortName.replace("SC", abr);
@@ -13280,10 +13279,10 @@ public class AmmoType extends EquipmentType {
                     munition.setInternalName(internalName.toString());
                     break;
                 case AmmoType.T_LONG_TOM:
-                case AmmoType.T_LONG_TOMunitions.M_PRIM:
+                case AmmoType.T_LONG_TOM_PRIM:
                 case AmmoType.T_SNIPER:
                 case AmmoType.T_THUMPER:
-                case AmmoType.T_LONG_TOMunitions.M_CANNON:
+                case AmmoType.T_LONG_TOM_CANNON:
                 case AmmoType.T_SNIPER_CANNON:
                 case AmmoType.T_THUMPER_CANNON:
                 case AmmoType.T_VEHICLE_FLAMER:
@@ -13322,7 +13321,7 @@ public class AmmoType extends EquipmentType {
             munition.rulesRefs = rulesRefs;
 
             // Reduce base number of shots to reflect the munition's weight.
-            if (munition.getMunitionType() == AmmoType.Munitions.M_CASELESS) {
+            if (munition.getMunitionType().contains(Munitions.M_CASELESS)) {
                 munition.shots = Math.max(1, base.shots * 2);
                 munition.kgPerShot = base.kgPerShot * (weight / 2);
             } else {
@@ -13336,193 +13335,193 @@ public class AmmoType extends EquipmentType {
             double cost = base.cost;
             double bv = base.bv;
 
-            if (((munition.getAmmoType() == T_LONG_TOM) || (munition.getAmmoType() == T_LONG_TOMunitions.M_CANNON)
+            if (((munition.getAmmoType() == T_LONG_TOM) || (munition.getAmmoType() == T_LONG_TOM_CANNON)
                     || (munition.getAmmoType() == T_SNIPER) || (munition.getAmmoType() == T_SNIPER_CANNON)
                     || (munition.getAmmoType() == T_THUMPER) || (munition.getAmmoType() == T_THUMPER_CANNON))
-                    && munition.getMunitionType() == AmmoType.Munitions.M_FAE) {
+                    && munition.getMunitionType().contains(Munitions.M_FAE)) {
                 bv *= 1.4;
                 cost *= 3;
             }
 
             if ((munition.getAmmoType() == T_AC) || (munition.getAmmoType() == T_LAC)
                     || (munition.getAmmoType() == T_PAC)) {
-                if (munition.getMunitionType() == AmmoType.Munitions.M_ARMOR_PIERCING) {
+                if (munition.getMunitionType().contains(Munitions.M_ARMOR_PIERCING)) {
                     cost *= 4;
-                } else if ((munition.getMunitionType() == AmmoType.Munitions.M_FLECHETTE)
-                        || (munition.getMunitionType() == AmmoType.Munitions.M_FLAK)) {
+                } else if ((munition.getMunitionType().contains(Munitions.M_FLECHETTE))
+                        || (munition.getMunitionType().contains(Munitions.M_FLAK))) {
                     cost *= 1.5;
-                } else if (munition.getMunitionType() == AmmoType.Munitions.M_TRACER) {
+                } else if (munition.getMunitionType().contains(Munitions.M_TRACER)) {
                     cost *= 1.5;
                     bv *= 0.25;
-                } else if (munition.getMunitionType() == AmmoType.Munitions.M_INCENDIARY_AC) {
+                } else if (munition.getMunitionType().contains(Munitions.M_INCENDIARY_AC)) {
                     cost *= 2;
-                } else if (munition.getMunitionType() == AmmoType.Munitions.M_PRECISION) {
+                } else if (munition.getMunitionType().contains(Munitions.M_PRECISION)) {
                     cost *= 6;
-                } else if (munition.getMunitionType() == AmmoType.Munitions.M_CASELESS) {
+                } else if (munition.getMunitionType().contains(Munitions.M_CASELESS)) {
                     cost *= 1.5;
                     bv *= 1.0;
                 }
             }
 
             if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_MML)
-                    || (munition.getAmmoType() == AmmoType.T_SRM) || (munition.getAmmoType() == AmmoType.T_SRMunitions.M_IMP)
+                    || (munition.getAmmoType() == AmmoType.T_SRM) || (munition.getAmmoType() == AmmoType.T_SRM_IMP)
                     || (munition.getAmmoType() == AmmoType.T_NLRM))
-                    && (munition.getMunitionType() == AmmoType.Munitions.M_AX_HEAD)) {
+                    && (munition.getMunitionType().contains(Munitions.M_AX_HEAD))) {
                 cost *= 0.5;
                 bv *= 1;
             }
 
-            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRMunitions.M_IMP)
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRM_IMP)
                     || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM)
-                    || (munition.getAmmoType() == AmmoType.T_SRMunitions.M_IMP) || (munition.getAmmoType() == AmmoType.T_NLRM))
-                    && (munition.getMunitionType() == AmmoType.Munitions.M_SMOKE_WARHEAD)) {
+                    || (munition.getAmmoType() == AmmoType.T_SRM_IMP) || (munition.getAmmoType() == AmmoType.T_NLRM))
+                    && (munition.getMunitionType().contains(Munitions.M_SMOKE_WARHEAD))) {
                 cost *= 0.5;
                 bv *= 1;
             }
 
-            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRMunitions.M_IMP)
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRM_IMP)
                     || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_NLRM))
-                    && (munition.getMunitionType() == AmmoType.Munitions.M_INCENDIARY_LRM)) {
+                    && (munition.getMunitionType().contains(Munitions.M_INCENDIARY_LRM))) {
                 cost *= 1.5;
             }
 
-            if (((munition.getAmmoType() == AmmoType.T_SRM) || (munition.getAmmoType() == AmmoType.T_SRMunitions.M_IMP)
+            if (((munition.getAmmoType() == AmmoType.T_SRM) || (munition.getAmmoType() == AmmoType.T_SRM_IMP)
                     || (munition.getAmmoType() == AmmoType.T_MML))
-                    && (munition.getMunitionType() == AmmoType.Munitions.M_INFERNO)) {
+                    && (munition.getMunitionType().contains(Munitions.M_INFERNO))) {
                 cost = 13500;
             }
 
-            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRMunitions.M_IMP)
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRM_IMP)
                     || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_NLRM))
-                    && (munition.getMunitionType() == AmmoType.Munitions.M_SEMIGUIDED)) {
+                    && (munition.getMunitionType().contains(Munitions.M_SEMIGUIDED))) {
                 cost *= 3;
                 bv *= 1;
             }
 
-            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRMunitions.M_IMP)
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRM_IMP)
                     || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_NLRM))
-                    && (munition.getMunitionType() == AmmoType.Munitions.M_SWARM)) {
+                    && (munition.getMunitionType().contains(Munitions.M_SWARM))) {
                 cost *= 2;
                 bv *= 1;
             }
 
-            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRMunitions.M_IMP)
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRM_IMP)
                     || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_NLRM))
-                    && (munition.getMunitionType() == AmmoType.Munitions.M_SWARM_I)) {
+                    && (munition.getMunitionType().contains(Munitions.M_SWARM_I))) {
                 cost *= 3;
                 bv *= 0.2;
             }
 
-            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRMunitions.M_IMP)
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRM_IMP)
                     || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_NLRM))
-                    && (munition.getMunitionType() == AmmoType.Munitions.M_THUNDER)) {
+                    && (munition.getMunitionType().contains(Munitions.M_THUNDER))) {
                 cost *= 2;
             }
 
-            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRMunitions.M_IMP)
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRM_IMP)
                     || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_NLRM))
-                    && (munition.getMunitionType() == AmmoType.Munitions.M_THUNDER_AUGMENTED)) {
+                    && (munition.getMunitionType().contains(Munitions.M_THUNDER_AUGMENTED))) {
                 cost *= 4;
             }
 
-            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRMunitions.M_IMP)
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRM_IMP)
                     || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_NLRM))
-                    && (munition.getMunitionType() == AmmoType.Munitions.M_THUNDER_INFERNO)) {
+                    && (munition.getMunitionType().contains(Munitions.M_THUNDER_INFERNO))) {
                 cost *= 1;
             }
 
-            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRMunitions.M_IMP)
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRM_IMP)
                     || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_NLRM))
-                    && (munition.getMunitionType() == AmmoType.Munitions.M_THUNDER_VIBRABOMB)) {
+                    && (munition.getMunitionType().contains(Munitions.M_THUNDER_VIBRABOMB))) {
                 cost *= 2.5;
             }
 
-            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRMunitions.M_IMP)
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRM_IMP)
                     || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_NLRM))
-                    && (munition.getMunitionType() == AmmoType.Munitions.M_THUNDER_ACTIVE)) {
+                    && (munition.getMunitionType().contains(Munitions.M_THUNDER_ACTIVE))) {
                 cost *= 3;
             }
 
-            if (munition.getMunitionType() == AmmoType.Munitions.M_HOMING) {
+            if (munition.getMunitionType().contains(Munitions.M_HOMING)) {
                 cost = 15000;
                 // Allow Homing munitions to instantly switch between modes
                 munition.instantModeSwitch = true;
                 munition.setModes("Homing", "Non-Homing");
             }
 
-            if (munition.getMunitionType() == AmmoType.Munitions.M_FASCAM) {
+            if (munition.getMunitionType().contains(Munitions.M_FASCAM)) {
                 cost *= 1.5;
             }
 
-            if (munition.getMunitionType() == AmmoType.Munitions.M_INFERNO_IV) {
+            if (munition.getMunitionType().contains(Munitions.M_INFERNO_IV)) {
                 cost *= 1;
             }
 
-            if (munition.getMunitionType() == AmmoType.Munitions.M_VIBRABOMB_IV) {
+            if (munition.getMunitionType().contains(Munitions.M_VIBRABOMB_IV)) {
                 cost *= 2;
             }
 
             // This is just a hack to make it expensive.
             // We don't actually have a price for this.
-            if (munition.getMunitionType() == AmmoType.Munitions.M_DAVY_CROCKETT_M) {
+            if (munition.getMunitionType().contains(Munitions.M_DAVY_CROCKETT_M)) {
                 cost *= 50;
             }
-            if (munition.getMunitionType() == AmmoType.Munitions.M_LASER_INHIB) {
+            if (munition.getMunitionType().contains(Munitions.M_LASER_INHIB)) {
                 cost *= 4;
             }
-            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRMunitions.M_IMP)
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRM_IMP)
                     || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM)
-                    || (munition.getAmmoType() == AmmoType.T_SRMunitions.M_IMP) || (munition.getAmmoType() == AmmoType.T_NLRM))
-                    && (munition.getMunitionType() == AmmoType.Munitions.M_NARC_CAPABLE)) {
+                    || (munition.getAmmoType() == AmmoType.T_SRM_IMP) || (munition.getAmmoType() == AmmoType.T_NLRM))
+                    && (munition.getMunitionType().contains(Munitions.M_NARC_CAPABLE))) {
                 cost *= 2;
             }
-            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRMunitions.M_IMP)
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRM_IMP)
                     || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM)
-                    || (munition.getAmmoType() == AmmoType.T_SRMunitions.M_IMP) || (munition.getAmmoType() == AmmoType.T_NLRM))
-                    && (munition.getMunitionType() == AmmoType.Munitions.M_ARTEMIS_CAPABLE)) {
+                    || (munition.getAmmoType() == AmmoType.T_SRM_IMP) || (munition.getAmmoType() == AmmoType.T_NLRM))
+                    && (munition.getMunitionType().contains(Munitions.M_ARTEMIS_CAPABLE))) {
                 cost *= 2;
             }
-            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRMunitions.M_IMP)
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRM_IMP)
                     || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM)
-                    || (munition.getAmmoType() == AmmoType.T_SRMunitions.M_IMP) || (munition.getAmmoType() == AmmoType.T_NLRM))
-                    && (munition.getMunitionType() == AmmoType.Munitions.M_LISTEN_KILL)) {
+                    || (munition.getAmmoType() == AmmoType.T_SRM_IMP) || (munition.getAmmoType() == AmmoType.T_NLRM))
+                    && (munition.getMunitionType().contains(Munitions.M_LISTEN_KILL))) {
                 cost *= 1.1;
             }
-            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRMunitions.M_IMP)
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRM_IMP)
                     || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM)
-                    || (munition.getAmmoType() == AmmoType.T_SRMunitions.M_IMP) || (munition.getAmmoType() == AmmoType.T_NLRM))
-                    && ((munition.getMunitionType() == AmmoType.Munitions.M_ANTI_TSM)
-                            || (munition.getMunitionType() == AmmoType.Munitions.M_FRAGMENTATION))) {
+                    || (munition.getAmmoType() == AmmoType.T_SRM_IMP) || (munition.getAmmoType() == AmmoType.T_NLRM))
+                    && ((munition.getMunitionType().contains(Munitions.M_ANTI_TSM))
+                            || (munition.getMunitionType().contains(Munitions.M_FRAGMENTATION)))) {
                 cost *= 2;
             }
 
-            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRMunitions.M_IMP)
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRM_IMP)
                     || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM)
-                    || (munition.getAmmoType() == AmmoType.T_SRMunitions.M_IMP) || (munition.getAmmoType() == AmmoType.T_NLRM))
-                    && ((munition.getMunitionType() == AmmoType.Munitions.M_DEAD_FIRE))) {
+                    || (munition.getAmmoType() == AmmoType.T_SRM_IMP) || (munition.getAmmoType() == AmmoType.T_NLRM))
+                    && ((munition.getMunitionType().contains(Munitions.M_DEAD_FIRE)))) {
                 cost *= 0.6;
                 // TODO - DEAD-FIRE AMMO needs BV which is not a constant but launcher Ammo.
             }
 
             if (((munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM)
-                    || (munition.getAmmoType() == AmmoType.T_SRMunitions.M_IMP))
-                    && ((munition.getMunitionType() == AmmoType.Munitions.M_TANDEM_CHARGE)
-                            || (munition.getMunitionType() == AmmoType.Munitions.M_ARTEMIS_V_CAPABLE))) {
+                    || (munition.getAmmoType() == AmmoType.T_SRM_IMP))
+                    && ((munition.getMunitionType().contains(Munitions.M_TANDEM_CHARGE))
+                            || (munition.getMunitionType().contains(Munitions.M_ARTEMIS_V_CAPABLE)))) {
                 cost *= 5;
             }
 
-            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRMunitions.M_IMP)
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRM_IMP)
                     || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM)
-                    || (munition.getAmmoType() == AmmoType.T_SRMunitions.M_IMP) || (munition.getAmmoType() == AmmoType.T_NLRM))
-                    && ((munition.getMunitionType() == AmmoType.Munitions.M_HEAT_SEEKING)
-                            || (munition.getMunitionType() == AmmoType.Munitions.M_FOLLOW_THE_LEADER))) {
+                    || (munition.getAmmoType() == AmmoType.T_SRM_IMP) || (munition.getAmmoType() == AmmoType.T_NLRM))
+                    && ((munition.getMunitionType().contains(Munitions.M_HEAT_SEEKING))
+                            || (munition.getMunitionType().contains(Munitions.M_FOLLOW_THE_LEADER)))) {
                 cost *= 2;
                 bv *= 0.5;
             }
             if (((munition.getAmmoType() == AmmoType.T_VEHICLE_FLAMER)
                     || (munition.getAmmoType() == AmmoType.T_HEAVY_FLAMER)
                     || (munition.getAmmoType() == AmmoType.T_FLUID_GUN))
-                    && (munition.getMunitionType() == AmmoType.Munitions.M_COOLANT)) {
+                    && (munition.getMunitionType().contains(Munitions.M_COOLANT))) {
                 cost = 3000;
             }
             // Account for floating point imprecision
@@ -13640,8 +13639,8 @@ public class AmmoType extends EquipmentType {
                 && (otherAmmo.getAmmoType() == AmmoType.T_AC_LBX)
                 && (currentAmmoType.getRackSize() == otherAmmo.getRackSize());
 
-        boolean caselessLoaded = currentAmmoType.getMunitionType() == AmmoType.Munitions.M_CASELESS;
-        boolean otherBinCaseless = otherAmmo.getMunitionType() == AmmoType.Munitions.M_CASELESS;
+        boolean caselessLoaded = currentAmmoType.getMunitionType().contains(Munitions.M_CASELESS);
+        boolean otherBinCaseless = otherAmmo.getMunitionType().contains(Munitions.M_CASELESS);
         boolean caselessMismatch = caselessLoaded != otherBinCaseless;
 
         boolean hasStaticFeed = weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED);

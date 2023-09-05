@@ -263,14 +263,14 @@ public class BayMunitionsChoicePanel extends JPanel {
                 }
             }
             
-            if ((atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)
-                    || (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE)) {
+            if ((atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE)
+                    || (atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_V_CAPABLE)) {
                 return Messages.getString("CustomMechDialog.Artemis");
             }
             
             // ATM munitions
-            if ((atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE)
-                    || (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE)) {
+            if ((atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)
+                    || (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
                 return atype.getDesc();
             }
             
@@ -280,7 +280,7 @@ public class BayMunitionsChoicePanel extends JPanel {
                         || atype.getAmmoType() == AmmoType.T_SNIPER
                         || atype.getAmmoType() == AmmoType.T_THUMPER
                         || atype.getAmmoType() == AmmoType.T_CRUISE_MISSILE) {
-                    if (atype.getMunitionType() == AmmoType.M_STANDARD) {
+                    if (atype.getMunitionType().contains(AmmoType.Munitions.M_STANDARD) {
                         return Messages.getString("CustomMechDialog.StandardMunition");
                     }
                     return atype.getShortName();

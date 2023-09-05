@@ -196,7 +196,7 @@ public class EquipmentType implements ITechnology {
     // static list of eq
     protected static Vector<EquipmentType> allTypes;
     protected static Hashtable<String, EquipmentType> lookupHash;
-    
+
     /**
     * Keeps track of page numbers for rules references.
     */
@@ -214,7 +214,7 @@ public class EquipmentType implements ITechnology {
     public long getSubType() {
         return subType;
     }
-    
+
     public void setSubType(int newFlags) {
         subType = newFlags;
     }
@@ -250,7 +250,7 @@ public class EquipmentType implements ITechnology {
     public String getInternalName() {
         return internalName;
     }
-    
+
     public String getRulesRefs() {
         return rulesRefs;
     }
@@ -297,12 +297,12 @@ public class EquipmentType implements ITechnology {
     public int getTechLevel(int date) {
         return techAdvancement.getTechLevel(date);
     }
-    
+
     @Override
     public int getTechLevel(int date, boolean clan) {
         return techAdvancement.getTechLevel(date, clan);
     }
-    
+
     @Override
     public SimpleTechLevel getStaticTechLevel() {
         if (null != techAdvancement.getStaticTechLevel()) {
@@ -398,7 +398,7 @@ public class EquipmentType implements ITechnology {
         if (null == mounted) {
             return explosive;
         }
-        
+
         // Special case: discharged M- and B-pods shouldn't explode.
         if (((this instanceof MPodWeapon) || (this instanceof BPodWeapon))
                 && ((mounted.getLinked() == null) || (mounted.getLinked()
@@ -434,7 +434,7 @@ public class EquipmentType implements ITechnology {
             }
             Mounted ammo = mounted.getLinked();
             if ((ammo == null) || !(ammo.getType() instanceof AmmoType)
-                    || (((AmmoType) ammo.getType()).getMunitionType() != AmmoType.M_INCENDIARY_AC)) {
+                    || (!((AmmoType) ammo.getType()).getMunitionType().contains(AmmoType.Munitions.M_INCENDIARY_AC))) {
                 return false;
             }
         }
@@ -527,7 +527,7 @@ public class EquipmentType implements ITechnology {
     public boolean hasModes() {
         return (modes != null) && (!modes.isEmpty());
     }
-    
+
     /**
      * Simple way to check if a piece of equipment has a specific usage/firing mode
      * @param modeType The name of the mode to check.
@@ -610,7 +610,7 @@ public class EquipmentType implements ITechnology {
             return false;
         }
     }
-    
+
     /**
      * Add a mode to the Equipment
      *
@@ -791,7 +791,7 @@ public class EquipmentType implements ITechnology {
     public static boolean isArmorType(EquipmentType et) {
         return getArmorType(et) != T_ARMOR_UNKNOWN;
     }
-    
+
     public static int getStructureType(EquipmentType et) {
         if (et == null) {
             return T_STRUCTURE_UNKNOWN;
@@ -886,10 +886,10 @@ public class EquipmentType implements ITechnology {
                 return 0.05;
         }
     }
-    
+
     /**
      * Computes protomech armor weight by point.
-     *  
+     *
      * @param type    The armor type
      * @return        The weight of a point of armor in kg
      */
@@ -964,7 +964,7 @@ public class EquipmentType implements ITechnology {
         }
         return SV_ARMOR_COST[Math.min(bar, SV_ARMOR_COST.length - 1)];
     }
-    
+
     /* Armor and structure are stored as integers and standard uses a generic MiscType that
      * does not have its own TechAdvancement.
      */
@@ -1023,7 +1023,7 @@ public class EquipmentType implements ITechnology {
 
     /**
      * Tech advancement for armor based on the armor type index and tech base
-     * 
+     *
      * @param at   The armor type constant
      * @param clan The armor tech base
      * @return     The tech advancement for the armor
@@ -1145,12 +1145,12 @@ public class EquipmentType implements ITechnology {
     public boolean isClan() {
         return techAdvancement.getTechBase() == TECH_BASE_CLAN;
     }
-    
+
     @Override
     public boolean isMixedTech() {
         return techAdvancement.getTechBase() == TECH_BASE_ALL;
     }
-    
+
     @Override
     public int getTechBase() {
         return techAdvancement.getTechBase();
@@ -1169,12 +1169,12 @@ public class EquipmentType implements ITechnology {
     public int getIntroductionDate(boolean clan) {
         return techAdvancement.getIntroductionDate(clan);
     }
-    
+
     @Override
     public int getIntroductionDate() {
         return techAdvancement.getIntroductionDate();
     }
-    
+
     @Override
     public int getIntroductionDate(boolean clan, int faction) {
         return techAdvancement.getIntroductionDate(clan, faction);
@@ -1269,7 +1269,7 @@ public class EquipmentType implements ITechnology {
         final EquipmentType other = (EquipmentType) obj;
         return Objects.equals(internalName, other.internalName);
     }
-    
+
     @Override
     public int hashCode() {
         return Objects.hashCode(internalName);
@@ -1478,7 +1478,7 @@ public class EquipmentType implements ITechnology {
     /**
      * This does not include heat generated by stealth armor, as that depends on whether
      * it is installed as patchwork and does not appear in the equipment list of all unit types.
-     * 
+     *
      * @return The amount of heat generated by the equipment
      */
     public int getHeat() {

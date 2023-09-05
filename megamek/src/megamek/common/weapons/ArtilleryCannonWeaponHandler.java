@@ -151,7 +151,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
         // According to TacOps eratta, artillery cannons can only fire standard
         // rounds and fuel-air cannon shells (Interstellar Ops p165).
         // But, they're still in as unofficial tech, because they're fun. :)
-        if (ammoType.getMunitionType() == AmmoType.M_FLARE) {
+        if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_FLARE)) {
             int radius;
             if (ammoType.getAmmoType() == AmmoType.T_LONG_TOM) {
                 radius = 3;
@@ -162,15 +162,15 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
             }
             gameManager.deliverArtilleryFlare(targetPos, radius);
             return false;
-        } else if (ammoType.getMunitionType() == AmmoType.M_DAVY_CROCKETT_M) {
+        } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_DAVY_CROCKETT_M)) {
             // The appropriate term here is "Bwahahahahaha..."
             gameManager.doNuclearExplosion(targetPos, 1, vPhaseReport);
             return false;
-        } else if (ammoType.getMunitionType() == AmmoType.M_FASCAM) {
+        } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_FASCAM)) {
             gameManager.deliverFASCAMMinefield(targetPos, ae.getOwner().getId(),
                     ammoType.getRackSize(), ae.getId());
             return false;
-        } else if (ammoType.getMunitionType() == AmmoType.M_SMOKE) {
+        } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_SMOKE)) {
             gameManager.deliverArtillerySmoke(targetPos, vPhaseReport);
             return false;
         } else if (ammoType.getMunitionType() == AmmoType.M_FAE) {

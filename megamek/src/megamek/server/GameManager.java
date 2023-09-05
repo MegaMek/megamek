@@ -1076,7 +1076,7 @@ public class GameManager implements IGameManager {
             entity.setUsedSearchlight(false);
             entity.setCarefulStand(false);
             entity.setNetworkBAP(false);
-            
+
             // this flag is relevant only within the context of a single phase, but not between phases
             entity.setTurnInterrupted(false);
 
@@ -8419,7 +8419,7 @@ public class GameManager implements IGameManager {
                     && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION))
                     || (entity instanceof TeleMissile)) {
                 int fuelUsed = ((IAero) entity).getFuelUsed(thrust);
-                
+
                 // if we're a gas hog, aerospace fighter and going faster than walking, then use 2x fuel
                 if (((overallMoveType == EntityMovementType.MOVE_RUN) ||
                         (overallMoveType == EntityMovementType.MOVE_SPRINT) ||
@@ -8427,7 +8427,7 @@ public class GameManager implements IGameManager {
                         entity.hasQuirk(OptionsConstants.QUIRK_NEG_GAS_HOG)) {
                     fuelUsed *= 2;
                 }
-                
+
                 a.useFuel(fuelUsed);
             }
 
@@ -22606,7 +22606,7 @@ public class GameManager implements IGameManager {
                                 if (m.getType() instanceof AmmoType) {
                                     AmmoType at = (AmmoType) m.getType();
                                     if (((at.getAmmoType() == AmmoType.T_SRM) || (at.getAmmoType() == AmmoType.T_MML))
-                                            && (at.getMunitionType() == AmmoType.M_INFERNO)) {
+                                            && (at.getMunitionType().contains(AmmoType.Munitions.M_INFERNO))) {
                                         infernos += at.getRackSize() * m.getHittableShotsLeft();
                                     }
                                 } else if (m.getType().hasFlag(MiscType.F_FIRE_RESISTANT)) {
@@ -27380,8 +27380,8 @@ public class GameManager implements IGameManager {
                 || (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_SRM_IMP)
                 || (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_IATM)
                 || (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_MML))
-                && (((AmmoType) mounted.getType()).getMunitionType() == AmmoType.M_INFERNO)
-                && (mounted.getHittableShotsLeft() > 0)) {
+                && (((AmmoType) mounted.getType()).getMunitionType().contains(AmmoType.Munitions.M_INFERNO)
+                && (mounted.getHittableShotsLeft() > 0))) {
             en.heatBuildup += Math.min(mounted.getExplosionDamage(), 30);
         }
 
@@ -27400,16 +27400,16 @@ public class GameManager implements IGameManager {
                 || (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_SRM_IMP)
                 || (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_LRM)
                 || (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_LRM_IMP))
-                && (((AmmoType) mounted.getType()).getMunitionType() == AmmoType.M_SMOKE_WARHEAD)
-                && (mounted.getHittableShotsLeft() > 0)) {
+                && (((AmmoType) mounted.getType()).getMunitionType().contains(AmmoType.Munitions.M_SMOKE_WARHEAD)
+                && (mounted.getHittableShotsLeft() > 0))) {
             damage = ((mounted.getExplosionDamage()) / 2);
         }
         // coolant explodes for 2 damage and reduces heat by 3
         if ((mounted.getType() instanceof AmmoType)
                 && ((((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_VEHICLE_FLAMER)
                 || (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_HEAVY_FLAMER))
-                && (((AmmoType) mounted.getType()).getMunitionType() == AmmoType.M_COOLANT)
-                && (mounted.getHittableShotsLeft() > 0)) {
+                && (((AmmoType) mounted.getType()).getMunitionType().contains(AmmoType.Munitions.M_COOLANT)
+                && (mounted.getHittableShotsLeft() > 0))) {
             damage = 2;
             en.coolFromExternal += 3;
         }
@@ -27452,7 +27452,7 @@ public class GameManager implements IGameManager {
                             // Dead-Fire ammo bins are designed not to explode
                             // from the chain reaction
                             // Of Critted Launchers with DFM or HotLoaded ammo.
-                            && (((AmmoType) ammo.getType()).getMunitionType() != AmmoType.M_DEAD_FIRE)) {
+                            && !(((AmmoType) ammo.getType()).getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE))) {
                         ammoExploded++;
                         vDesc.addAll(this.explodeEquipment(en, loc, ammo));
                         break;
@@ -27568,7 +27568,7 @@ public class GameManager implements IGameManager {
                 if ((atype.getAmmoType() == AmmoType.T_COOLANT_POD)
                         || (((atype.getAmmoType() == AmmoType.T_VEHICLE_FLAMER)
                         || (atype.getAmmoType() == AmmoType.T_HEAVY_FLAMER))
-                        && (atype.getMunitionType() == AmmoType.M_COOLANT))) {
+                        && (atype.getMunitionType().contains(AmmoType.Munitions.M_COOLANT)))) {
                     continue;
                 }
                 // ignore empty, destroyed, or missing bins
@@ -30445,8 +30445,8 @@ public class GameManager implements IGameManager {
                 if (mounted.getType() instanceof AmmoType) {
                     AmmoType atype = (AmmoType) mounted.getType();
                     if (!atype.isExplosive(mounted)
-                            || ((atype.getMunitionType() != AmmoType.M_INFERNO)
-                            && (atype.getMunitionType() != AmmoType.M_IATM_IIW))) {
+                            || (!(atype.getMunitionType().contains(AmmoType.Munitions.M_INFERNO))
+                            && !(atype.getMunitionType().contains(AmmoType.Munitions.M_IATM_IIW)))) {
                         continue;
                     }
                     // ignore empty, destroyed, or missing bins
@@ -33960,7 +33960,7 @@ public class GameManager implements IGameManager {
                 && !(flak && (((altitude > hex.terrainLevel(Terrains.BLDG_ELEV))
                 || (altitude > hex.terrainLevel(Terrains.BRIDGE_ELEV)))))) {
             bldgAbsorbs = bldg.getAbsorbtion(coords);
-            if (!((ammo != null) && (ammo.getMunitionType() == AmmoType.M_FLECHETTE))) {
+            if (!((ammo != null) && (ammo.getMunitionType().contains(AmmoType.Munitions.M_FLECHETTE)))) {
                 int actualDamage = damage;
 
                 if (isFuelAirBomb) {

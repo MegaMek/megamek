@@ -1852,7 +1852,7 @@ public class MULParser {
                 }
                 if (entity.isSupportVehicle() && (mounted.getType() instanceof InfantryWeapon)) {
                     for (Mounted ammo = mounted.getLinked(); ammo != null; ammo = ammo.getLinked()) {
-                        if (((AmmoType) ammo.getType()).getMunitionType() == AmmoType.M_INFERNO) {
+                        if (((AmmoType) ammo.getType()).getMunitionType().contains(AmmoType.Munitions.M_INFERNO) {
                             if (!inferno.isBlank()) {
                                 String[] fields = inferno.split(":");
                                 ammo.setShotsLeft(Integer.parseInt(fields[0]));

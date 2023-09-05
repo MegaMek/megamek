@@ -218,7 +218,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
                 && !mLinker.isBreached() && mLinker.getType().hasFlag(
                         MiscType.F_ARTEMIS))
-                && atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE) {
+                && atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE) {
             bonus = (int) Math.ceil(atype.getRackSize() / 5.0);
             if ((atype.getAmmoType() == AmmoType.T_SRM) || (atype.getAmmoType() == AmmoType.T_SRM_IMP))  {
                 bonus = 2;
@@ -230,7 +230,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
                 && !mLinker.isBreached() && mLinker.getType().hasFlag(
                         MiscType.F_ARTEMIS_V))
-                && (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE)) {
+                && (atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_V_CAPABLE)) {
             // MML3 WOULD get a bonus from Artemis V, if you were crazy enough
             // to cross-tech it
             bonus = (int) Math.ceil(atype.getRackSize() / 5.0);
@@ -239,12 +239,12 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
             }
         }
 
-        if (atype.getMunitionType() == AmmoType.M_CLUSTER) {
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER) {
             current_av = Math.floor(0.6 * current_av);
         } else if (AmmoType.T_ATM == atype.getAmmoType()) {
-            if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
+            if (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE) {
                 current_av = bayWType.getShortAV() / 2;
-            } else if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
+            } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE) {
                 current_av = 1.5 * current_av;
                 if (range > WeaponType.RANGE_SHORT) {
                     current_av = 0.0;

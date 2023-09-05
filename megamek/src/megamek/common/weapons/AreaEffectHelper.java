@@ -97,7 +97,7 @@ public class AreaEffectHelper {
         // this is relatively inefficient, but probably the least inefficient of the options
         // to acquire a list of the ammo types
         for (AmmoType at : AmmoType.getMunitionsFor(ammoType)) {
-            if (at.getMunitionType() == AmmoType.M_FAE) {
+            if (at.getMunitionType().contains(AmmoType.Munitions.M_FAE)) {
                 fuelAirBlastRadiusIndex.put(at.getInternalName(), blastRadius);
             }
         }
@@ -394,7 +394,7 @@ public class AreaEffectHelper {
         if (attackSource != null) {
             toHit.setSideTable(entity.sideTable(attackSource));
             if ((ammo != null)
-                && (ammo.getMunitionType() == AmmoType.M_CLUSTER)
+                && (ammo.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER))
                 && attackSource.equals(coords)) {
                 if (entity instanceof Mech) {
                     toHit.setHitTable(ToHitData.HIT_ABOVE);
@@ -418,13 +418,13 @@ public class AreaEffectHelper {
 
         // Entity/ammo specific damage modifiers
         if (ammo != null) {
-            if (ammo.getMunitionType() == AmmoType.M_CLUSTER) {
+            if (ammo.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER)) {
                 if (hex.containsTerrain(Terrains.FORTIFIED) && entity.isConventionalInfantry()) {
                     hits *= 2;
                 }
             }
             // fuel-air bombs do an additional 2x damage to infantry
-            else if (ammo.getMunitionType() == AmmoType.M_FLECHETTE) {
+            else if (ammo.getMunitionType().contains(AmmoType.Munitions.M_FLECHETTE)) {
 
                 // wheeled and hover tanks take movement critical
                 if ((entity instanceof Tank)
@@ -624,7 +624,7 @@ public class AreaEffectHelper {
             damage *= attackingBA;
             falloff = 2 * attackingBA;
         }
-        if (ammo.getMunitionType() == AmmoType.M_CLUSTER) {
+        if (ammo.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER)) {
             // non-arrow-iv cluster does 5 less than standard
             if (ammo.getAmmoType() != AmmoType.T_ARROW_IV) {
                 damage -= 5;
@@ -635,7 +635,7 @@ public class AreaEffectHelper {
             }
 
             clusterMunitionsFlag = true;
-        } else if (ammo.getMunitionType() == AmmoType.M_FLECHETTE) {
+        } else if (ammo.getMunitionType().contains(AmmoType.Munitions.M_FLECHETTE)) {
             switch (ammo.getAmmoType()) {
                 // for flechette, damage and falloff is number of d6, not absolute
                 // damage

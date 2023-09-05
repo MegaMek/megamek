@@ -45,7 +45,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
     public boolean cares(final GamePhase phase) {
         return phase.isOffboard() || phase.isTargeting();
     }
-        
+
     @Override
     protected void useAmmo() {
         nweaponsHit = weapon.getBayWeapons().size();
@@ -63,7 +63,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             //if this option is on, we may have odd amounts of ammo in multiple bins. Only fire rounds that we have.
             if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS)) {
                 if (bayWAmmo.getUsableShotsLeft() < 1) {
-                    nweaponsHit--;                    
+                    nweaponsHit--;
                 } else {
                     bayWAmmo.setShotsLeft(bayWAmmo.getBaseShotsLeft() - 1);
                 }
@@ -147,10 +147,10 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             LogManager.getLogger().error("Artillery Entity is null!");
             return true;
         }
-        
+
         Mounted ammoUsed = ae.getEquipment(aaa.getAmmoId());
         final AmmoType atype = (AmmoType) ammoUsed.getType();
-        
+
         // Are there any valid spotters?
         if ((null != spottersBefore) && !isFlak) {
             // fetch possible spotters now
@@ -302,7 +302,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             if (!mineClear) {
                 vPhaseReport.addElement(r);
             }
-            artyMsg = "Artillery hit here on round " + game.getRoundCount() 
+            artyMsg = "Artillery hit here on round " + game.getRoundCount()
                     + ", fired by " + game.getPlayer(aaa.getPlayerId()).getName()
                     + " (this hex is now an auto-hit)";
             game.getBoard().addSpecialHexDisplay(targetPos,
@@ -361,7 +361,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                 return !bMissed;
             }
         }
-        if (atype.getMunitionType().contains(AmmoType.Munitions.M_FLARE) {
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_FLARE)) {
             int radius;
             if (atype.getAmmoType() == AmmoType.T_ARROW_IV) {
                 radius = 4;
@@ -384,7 +384,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             }
             return false;
         }
-        if (atype.getMunitionType().contains(AmmoType.Munitions.M_DAVY_CROCKETT_M) {
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_DAVY_CROCKETT_M)) {
             // The appropriate term here is "Bwahahahahaha..."
             if (!bMissed) {
                 // Keep blasting the target hex with each weapon in the bay that fired
@@ -400,7 +400,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             }
             return false;
         }
-        if (atype.getMunitionType().contains(AmmoType.Munitions.M_FASCAM) {
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_FASCAM)) {
             if (!bMissed) {
                 // If we hit, only one effect will stack in the target hex
                 gameManager.deliverFASCAMMinefield(targetPos, ae.getOwner().getId(),
@@ -414,7 +414,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             }
             return false;
         }
-        if (atype.getMunitionType().contains(AmmoType.Munitions.M_INFERNO_IV) {
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_INFERNO_IV)) {
             if (!bMissed) {
                 // If we hit, only one effect will stack in the target hex
                 gameManager.deliverArtilleryInferno(targetPos, ae, subjectId, vPhaseReport);
@@ -426,7 +426,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             }
             return false;
         }
-        if (atype.getMunitionType().contains(AmmoType.Munitions.M_VIBRABOMB_IV) {
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_VIBRABOMB_IV)) {
             if (!bMissed) {
                 // If we hit, only one effect will stack in the target hex
                 gameManager.deliverThunderVibraMinefield(targetPos, ae.getOwner().getId(),
@@ -440,7 +440,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             }
             return false;
         }
-        if (atype.getMunitionType().contains(AmmoType.Munitions.M_SMOKE) {
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_SMOKE)) {
             if (!bMissed) {
                 // If we hit, only one effect will stack in the target hex
                 gameManager.deliverArtillerySmoke(targetPos, vPhaseReport);
@@ -452,7 +452,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             }
             return false;
         }
-        if (atype.getMunitionType().contains(AmmoType.Munitions.M_LASER_INHIB) {
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_LASER_INHIB)) {
             if (!bMissed) {
                 //If we hit, only one effect will stack in the target hex
                 gameManager.deliverLIsmoke(targetPos, vPhaseReport);
@@ -535,7 +535,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                 gameManager.artilleryDamageArea(c, aaa.getCoords(), atype, subjectId, ae, isFlak,
                         altitude, mineClear, vPhaseReport, asfFlak, -1);
             }
-            
+
         }
         return false;
     }

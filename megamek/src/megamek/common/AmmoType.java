@@ -319,7 +319,7 @@ public class AmmoType extends EquipmentType {
     protected int damagePerShot;
     protected int rackSize;
     protected int ammoType;
-    protected EnumSet<Munitions> munitionType;
+    protected EnumSet<Munitions> munitionType = EnumSet.of(Munitions.M_STANDARD);
     protected int shots;
     private double kgPerShot = -1;
 

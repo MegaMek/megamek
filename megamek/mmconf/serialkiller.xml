@@ -10,6 +10,7 @@
         <regexps>
             <regexp>\[C$</regexp>
             <regexp>\[I$</regexp>
+            <regexp>\[Ljava\.lang.Enum;$</regexp>
             <regexp>java\.io\.File$</regexp>
             <regexp>java\.lang\.Boolean$</regexp>
             <regexp>java\.lang\.Enum$</regexp>
@@ -31,6 +32,7 @@
             <regexp>java\.util\.concurrent\.locks\.ReentrantLock\$Sync$</regexp>
             <regexp>java\.util\.UUID$</regexp>
             <regexp>java\.util\.EnumMap$</regexp>
+            <regexp>java\.util\.EnumSet.*</regexp>
             <regexp>java\.util\.HashMap$</regexp>
             <regexp>java\.util\.HashSet$</regexp>
             <regexp>java\.util\.Hashtable$</regexp>

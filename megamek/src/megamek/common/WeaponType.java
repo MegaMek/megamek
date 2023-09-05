@@ -398,13 +398,13 @@ public class WeaponType extends EquipmentType {
         boolean hasLoadedAmmo = (weapon.getLinked() != null);
         if ((getAmmoType() == AmmoType.T_ATM) && hasLoadedAmmo) {
             AmmoType atype = (AmmoType) weapon.getLinked().getType();
-            if ((atype.getAmmoType() == AmmoType.T_ATM) && (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
+            if ((atype.getAmmoType() == AmmoType.T_ATM) && (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))) {
                 minRange = 4;
                 sRange = 9;
                 mRange = 18;
                 lRange = 27;
                 eRange = 36;
-            } else if ((atype.getAmmoType() == AmmoType.T_ATM) && (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) {
+            } else if ((atype.getAmmoType() == AmmoType.T_ATM) && (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE))) {
                 minRange = 0;
                 sRange = 3;
                 mRange = 6;
@@ -414,13 +414,15 @@ public class WeaponType extends EquipmentType {
         }
         if ((getAmmoType() == AmmoType.T_IATM) && hasLoadedAmmo) {
             AmmoType atype = (AmmoType) weapon.getLinked().getType();
-            if ((atype.getAmmoType() == AmmoType.T_IATM) && (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
+            if ((atype.getAmmoType() == AmmoType.T_IATM) && (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))) {
                 minRange = 4;
                 sRange = 9;
                 mRange = 18;
                 lRange = 27;
                 eRange = 36;
-            } else if ((atype.getAmmoType() == AmmoType.T_IATM) && ((atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)||(atype.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP))) {
+            } else if ((atype.getAmmoType() == AmmoType.T_IATM)
+                    && ((atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE))
+                        || (atype.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP)))) {
                 minRange = 0;
                 sRange = 3;
                 mRange = 6;
@@ -443,7 +445,7 @@ public class WeaponType extends EquipmentType {
                 lRange = 9;
                 eRange = 12;
             }
-            if (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE) {
+            if (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
                 if (atype.hasFlag(AmmoType.F_MML_LRM)) {
                     minRange = 4;
                     sRange = 5;
@@ -461,7 +463,7 @@ public class WeaponType extends EquipmentType {
         }
         if ((getAmmoType() == AmmoType.T_LRM) && hasLoadedAmmo) {
             AmmoType atype = (AmmoType) weapon.getLinked().getType();
-            if ((atype.getAmmoType() == AmmoType.T_LRM) && (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
+            if ((atype.getAmmoType() == AmmoType.T_LRM) && (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE))) {
                 minRange = 4;
                 sRange = 5;
                 mRange = 10;
@@ -471,7 +473,7 @@ public class WeaponType extends EquipmentType {
         }
         if ((getAmmoType() == AmmoType.T_SRM) && hasLoadedAmmo) {
             AmmoType atype = (AmmoType) weapon.getLinked().getType();
-            if ((atype.getAmmoType() == AmmoType.T_SRM) && (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
+            if ((atype.getAmmoType() == AmmoType.T_SRM) && (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE))) {
                 minRange = 0;
                 sRange = 2;
                 mRange = 4;
@@ -538,9 +540,9 @@ public class WeaponType extends EquipmentType {
         if (null != weapon) {
             if (getAmmoType() == AmmoType.T_ATM) {
                 AmmoType atype = (AmmoType) weapon.getLinked().getType();
-                if ((atype.getAmmoType() == AmmoType.T_ATM) && (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
+                if ((atype.getAmmoType() == AmmoType.T_ATM) && (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))) {
                     return RANGE_EXT;
-                } else if ((atype.getAmmoType() == AmmoType.T_ATM) && (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) {
+                } else if ((atype.getAmmoType() == AmmoType.T_ATM) && (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE))) {
                     return RANGE_SHORT;
                 }
             }

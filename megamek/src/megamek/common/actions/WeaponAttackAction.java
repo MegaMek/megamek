@@ -48,7 +48,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
     private int weaponId;
     private int ammoId = -1;
-    private EnumSet<AmmoType.Munitions> ammoMunitionType;
+    private EnumSet<AmmoType.Munitions> ammoMunitionType = EnumSet.noneOf(AmmoType.Munitions.class);
     private int ammoCarrier = -1;
     private int aimedLocation = Entity.LOC_NONE;
     private AimingMode aimMode = AimingMode.NONE;
@@ -1293,7 +1293,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         //Torpedos must remain in the water over their whole path to the target
         if ((atype != null)
-                && ((atype.getAmmoType() == AmmoType.T_LRM_TORPEDO))
+                && (((atype.getAmmoType() == AmmoType.T_LRM_TORPEDO))
                         || (atype.getAmmoType() == AmmoType.T_SRM_TORPEDO)
                         || (((atype.getAmmoType() == AmmoType.T_SRM)
                                 || (atype.getAmmoType() == AmmoType.T_SRM_IMP)
@@ -1301,7 +1301,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                                 || (atype.getAmmoType() == AmmoType.T_LRM)
                                 || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
                                 || (atype.getAmmoType() == AmmoType.T_MML)) && (atype.getMunitionType().contains(AmmoType.Munitions.M_TORPEDO)))
-                && (los.getMinimumWaterDepth() < 1)) {
+                && (los.getMinimumWaterDepth() < 1))) {
             return Messages.getString("WeaponAttackAction.TorpOutOfWater");
         }
 

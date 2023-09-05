@@ -173,7 +173,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
         } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_SMOKE)) {
             gameManager.deliverArtillerySmoke(targetPos, vPhaseReport);
             return false;
-        } else if (ammoType.getMunitionType() == AmmoType.M_FAE) {
+        } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_FAE)) {
             AreaEffectHelper.processFuelAirDamage(targetPos,
                     ammoType, ae, vPhaseReport, gameManager);
 

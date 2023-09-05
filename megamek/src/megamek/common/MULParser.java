@@ -592,7 +592,7 @@ public class MULParser {
         Entity newEntity = null;
 
         // First check for ejected MechWarriors, vee crews, escape pods and spacecraft crews
-        if (chassis.equals(EjectedCrew.VEE_EJECT_NAME) 
+        if (chassis.equals(EjectedCrew.VEE_EJECT_NAME)
                 || chassis.equals(EjectedCrew.SPACE_EJECT_NAME)) {
             return new EjectedCrew();
         } else if (chassis.equals(EjectedCrew.PILOT_EJECT_NAME)
@@ -701,7 +701,7 @@ public class MULParser {
         } catch (Exception e) {
             entity.setStartingWidth(3);
         }
-        
+
         // deployment zone offset
         try {
             int deployZoneOffset = Integer.parseInt(entityTag.getAttribute(DEPLOYMENT_ZONE_OFFSET));
@@ -759,7 +759,7 @@ public class MULParser {
         if (entity instanceof VTOL) {
             String elevString = entityTag.getAttribute(ELEVATION);
             VTOL v = (VTOL) entity;
-            
+
             if (!elevString.isBlank()) {
                 int elevation = 0;
 
@@ -865,7 +865,7 @@ public class MULParser {
             if (!infSpec.isBlank()) {
                 inf.setSpecializations(Integer.parseInt(infSpec));
             }
-            
+
             String infSquadNum = entityTag.getAttribute(INF_SQUAD_NUM);
             if (!infSquadNum.isBlank()) {
                 inf.setSquadCount(Integer.parseInt(infSquadNum));
@@ -1053,7 +1053,7 @@ public class MULParser {
                 crew.setCurrentSize(Compute.getFullCrewSize(entity));
             }
         }
-        
+
         if (attributes.containsKey(CURRENTSIZE)) {
             if (!attributes.get(CURRENTSIZE).isBlank()) {
                 int crewCurrentSize = 1;
@@ -1852,7 +1852,7 @@ public class MULParser {
                 }
                 if (entity.isSupportVehicle() && (mounted.getType() instanceof InfantryWeapon)) {
                     for (Mounted ammo = mounted.getLinked(); ammo != null; ammo = ammo.getLinked()) {
-                        if (((AmmoType) ammo.getType()).getMunitionType().contains(AmmoType.Munitions.M_INFERNO) {
+                        if (((AmmoType) ammo.getType()).getMunitionType().contains(AmmoType.Munitions.M_INFERNO)) {
                             if (!inferno.isBlank()) {
                                 String[] fields = inferno.split(":");
                                 ammo.setShotsLeft(Integer.parseInt(fields[0]));
@@ -2295,7 +2295,7 @@ public class MULParser {
             }
         }
     }
-    
+
     /**
      * Parse an EscapeCraft tag for the given <code>Entity</code>.
      *
@@ -2316,7 +2316,7 @@ public class MULParser {
             warning.append("Invalid external entity id in EscapeCraft tag.\n");
         }
     }
-    
+
     /**
      * Parse an EscapedPassengers tag for the given <code>Entity</code>.
      *
@@ -2378,7 +2378,7 @@ public class MULParser {
             }
         }
     }
-    
+
     /**
      * Parse an original si tag for the given <code>Entity</code>. Used by Escape Pods
      *
@@ -2394,7 +2394,7 @@ public class MULParser {
             warning.append("Invalid SI value in original structural integrity tag.\n");
         }
     }
-    
+
     /**
      * Parse an original men tag for the given <code>Entity</code>. Used by Escaped spacecraft crew
      *
@@ -2410,7 +2410,7 @@ public class MULParser {
             warning.append("Invalid internal value in original number of men tag.\n");
         }
     }
-    
+
     /**
      * Parse a conveyance tag for the given <code>Entity</code>. Used to resolve crew damage to transported entities
      *
@@ -2426,7 +2426,7 @@ public class MULParser {
             warning.append("Invalid transport id in conveyance tag.\n");
         }
     }
-    
+
     /**
      * Parse an id tag for the given <code>Entity</code>. Used to resolve crew damage to transported entities
      *
@@ -2446,9 +2446,9 @@ public class MULParser {
             warning.append("Invalid id in conveyance tag.\n");
         }
     }
-    
+
     /**
-     * Parse a force tag for the given <code>Entity</code>. 
+     * Parse a force tag for the given <code>Entity</code>.
      */
     private void parseForce(Element forceTag, Entity entity) {
         entity.setForceString(forceTag.getAttribute(FORCEATT));

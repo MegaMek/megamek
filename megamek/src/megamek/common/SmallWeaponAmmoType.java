@@ -16,6 +16,7 @@ package megamek.common;
 
 import megamek.common.weapons.infantry.InfantryWeapon;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,10 +33,10 @@ public class SmallWeaponAmmoType extends AmmoType {
         setInternalName(generateInternalName(weapon));
         name = weapon.name + " Ammo";
         if (weapon.getInternalName().endsWith("Inferno")) {
-            munitionType = M_INFERNO;
+            munitionType = EnumSet.of(AmmoType.Munitions.M_INFERNO);
             name += " (Inferno)";
         } else {
-            munitionType = M_STANDARD;
+            munitionType = EnumSet.of(AmmoType.Munitions.M_STANDARD);
         }
         tonnage = weapon.getAmmoWeight();
         cost = weapon.getAmmoCost();

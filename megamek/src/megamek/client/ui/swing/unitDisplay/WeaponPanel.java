@@ -227,7 +227,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                     || (en.isSupportVehicle() && (wtype.getAmmoType() == AmmoType.T_INFANTRY))) {
                 int shotsLeft = 0;
                 int totalShots = 0;
-                long munition = ((AmmoType) mounted.getLinked().getType()).getMunitionType();
+                EnumSet<AmmoType.Munitions> munition = ((AmmoType) mounted.getLinked().getType()).getMunitionType();
                 for (Mounted current = mounted.getLinked(); current != null; current = current.getLinked()) {
                     if (((AmmoType) current.getType()).getMunitionType() == munition) {
                         shotsLeft += current.getUsableShotsLeft();
@@ -2015,9 +2015,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                     || (wtype.getAmmoType() == AmmoType.T_LRM)
                     || (wtype.getAmmoType() == AmmoType.T_LRM_IMP)
                     || (wtype.getAmmoType() == AmmoType.T_MML)) {
-                if (atype.getMunitionType().contains(AmmoType.Munitions.M_TORPEDO) {
+                if (atype.getMunitionType().contains(AmmoType.Munitions.M_TORPEDO)) {
                     ranges[1] = wtype.getRanges(mounted);
-                } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_MULTI_PURPOSE) {
+                } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_MULTI_PURPOSE)) {
                     ranges[1] = wtype.getRanges(mounted);
                 }
             }
@@ -2050,33 +2050,33 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         // Override for the various ATM and MML ammos
         if (atype != null) {
             if (atype.getAmmoType() == AmmoType.T_ATM) {
-                if (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE) {
+                if (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
                     ranges[0] = new int[] { 4, 9, 18, 27, 36 };
-                } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE) {
+                } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) {
                     ranges[0] = new int[] { 0, 3, 6, 9, 12 };
                 } else {
                     ranges[0] = new int[] { 4, 5, 10, 15, 20 };
                 }
             } else if (atype.getAmmoType() == AmmoType.T_MML) {
                 if (atype.hasFlag(AmmoType.F_MML_LRM)) {
-                    if (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE) {
+                    if (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
                         ranges[0] = new int[] { 4, 5, 10, 15, 20 };
                     } else {
                         ranges[0] = new int[] { 6, 7, 14, 21, 28 };
                     }
                 } else {
-                    if (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE) {
+                    if (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
                         ranges[0] = new int[] { 0, 2, 4, 6, 8 };
                     } else {
                         ranges[0] = new int[] { 0, 3, 6, 9, 12 };
                     }
                 }
             } else if (atype.getAmmoType() == AmmoType.T_IATM) {
-                if (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE) {
+                if (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
                     ranges[0] = new int[] { 4, 9, 18, 27, 36 };
-                } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE) {
+                } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) {
                     ranges[0] = new int[] { 0, 3, 6, 9, 12 };
-                } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP) {
+                } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP)) {
                     ranges[0] = new int[] { 0, 3, 6, 9, 12 };
                 } else {
                     ranges[0] = new int[] { 4, 5, 10, 15, 20 };
@@ -2109,9 +2109,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
                 if (atype != null) {
                     if (atype.getAmmoType() == AmmoType.T_ATM) {
-                        if (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE) {
+                        if (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
                             maxr = WeaponType.RANGE_EXT;
-                        } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE) {
+                        } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) {
                             maxr = WeaponType.RANGE_SHORT;
                         }
                     } else if (atype.getAmmoType() == AmmoType.T_MML) {
@@ -2205,13 +2205,13 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         AmmoType atype = (AmmoType) mAmmo.getType();
         // Only override the display for the various ATM and MML ammos
         if (atype.getAmmoType() == AmmoType.T_ATM) {
-            if (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE) {
+            if (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
                 wMinR.setText("4");
                 wShortR.setText("1 - 9");
                 wMedR.setText("10 - 18");
                 wLongR.setText("19 - 27");
                 wExtR.setText("28 - 36");
-            } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE) {
+            } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) {
                 wMinR.setText("---");
                 wShortR.setText("1 - 3");
                 wMedR.setText("4 - 6");
@@ -2226,7 +2226,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             }
         } else if (atype.getAmmoType() == AmmoType.T_MML) {
             if (atype.hasFlag(AmmoType.F_MML_LRM)) {
-                if (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE) {
+                if (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
                     wMinR.setText("4");
                     wShortR.setText("1 - 5");
                     wMedR.setText("6 - 10");
@@ -2240,7 +2240,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                     wExtR.setText("21 - 28");
                 }
             } else {
-                if (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE) {
+                if (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
                     wMinR.setText("---");
                     wShortR.setText("1 - 2");
                     wMedR.setText("3 - 4");
@@ -2255,25 +2255,25 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 }
             }
         } else if (atype.getAmmoType() == AmmoType.T_IATM) {
-            if (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE) {
+            if (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
                 wMinR.setText("4");
                 wShortR.setText("1 - 9");
                 wMedR.setText("10 - 18");
                 wLongR.setText("19 - 27");
                 wExtR.setText("28 - 36");
-            } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE) {
+            } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) {
                 wMinR.setText("---");
                 wShortR.setText("1 - 3");
                 wMedR.setText("4 - 6");
                 wLongR.setText("7 - 9");
                 wExtR.setText("10 - 12");
-            } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_IATM_IIW) {
+            } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_IATM_IIW)) {
                 wMinR.setText("4");
                 wShortR.setText("1 - 5");
                 wMedR.setText("6 - 10");
                 wLongR.setText("11 - 15");
                 wExtR.setText("16 - 20");
-            } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP) {
+            } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP)) {
                 wMinR.setText("---");
                 wShortR.setText("1 - 3");
                 wMedR.setText("4 - 6");
@@ -2286,13 +2286,13 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 wLongR.setText("11 - 15");
                 wExtR.setText("16 - 20");
             }
-        } else if ((atype.getAmmoType() == AmmoType.T_LRM) && (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
+        } else if ((atype.getAmmoType() == AmmoType.T_LRM) && (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE))) {
             wMinR.setText("4");
             wShortR.setText("1 - 5");
             wMedR.setText("6 - 10");
             wLongR.setText("11 - 15");
             wExtR.setText("16 - 20");
-        } else if ((atype.getAmmoType() == AmmoType.T_SRM) && (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
+        } else if ((atype.getAmmoType() == AmmoType.T_SRM) && (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE))) {
             wMinR.setText("---");
             wShortR.setText("1 - 2");
             wMedR.setText("3 - 4");
@@ -2391,13 +2391,13 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                                         double avMed, double avLong, double avExt, int maxr) {
 
         if (AmmoType.T_ATM == atype.getAmmoType()) {
-            if (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE) {
+            if (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
                 maxr = WeaponType.RANGE_EXT;
                 avShort = avShort / 2;
                 avMed = avMed / 2;
                 avLong = avMed;
                 avExt = avMed;
-            } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE) {
+            } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE)) {
                 maxr = WeaponType.RANGE_SHORT;
                 avShort = avShort + (avShort / 2);
                 avMed = 0;
@@ -2408,7 +2408,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         else if (atype.getAmmoType() == AmmoType.T_MML) {
             // first check for artemis
             int bonus = 0;
-            if (atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE) {
+            if (atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE)) {
                 int rack = atype.getRackSize();
                 if (rack == 5) {
                     bonus += 1;
@@ -2432,7 +2432,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 || (atype.getAmmoType() == AmmoType.T_SRM)
                 || (atype.getAmmoType() == AmmoType.T_SRM_IMP)) {
 
-            if (atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE) {
+            if (atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE)) {
                 if ((atype.getAmmoType() == AmmoType.T_LRM) || (atype.getAmmoType() == AmmoType.T_LRM_IMP)) {
                     int bonus = (int) Math.ceil(atype.getRackSize() / 5.0);
                     avShort = avShort + bonus;
@@ -2444,7 +2444,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 }
             }
         } else if (atype.getAmmoType() == AmmoType.T_AC_LBX) {
-            if (atype.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER) {
+            if (atype.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER)) {
                 int newAV = (int) Math.floor(0.6 * atype.getRackSize());
                 avShort = newAV;
                 if (avMed > 0) {

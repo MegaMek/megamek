@@ -1212,21 +1212,21 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                 damagePerShot = 15;
             }
 
-            long mType = atype.getMunitionType();
+            EnumSet<AmmoType.Munitions> mType = atype.getMunitionType();
             // both Dead-Fire and Tandem-charge SRM's do 3 points of damage per
             // shot when critted
             // Dead-Fire LRM's do 2 points of damage per shot when critted.
-            if ((mType.contains(AmmoType.Munitions.M_DEAD_FIRE)
-                    || (mType.contains(AmmoType.Munitions.M_TANDEM_CHARGE)) {
+            if ((mType.contains(AmmoType.Munitions.M_DEAD_FIRE))
+                    || (mType.contains(AmmoType.Munitions.M_TANDEM_CHARGE))) {
                 damagePerShot++;
             } else if (atype.getAmmoType() == AmmoType.T_TASER) {
                 damagePerShot = 6;
             }
 
             if (atype.getAmmoType() == AmmoType.T_MEK_MORTAR) {
-                if ((mType.contains(AmmoType.Munitions.M_AIRBURST)
-                        || (mType.contains(AmmoType.Munitions.M_FLARE)
-                        || (mType.contains(AmmoType.Munitions.M_SMOKE_WARHEAD)) {
+                if ((mType.contains(AmmoType.Munitions.M_AIRBURST))
+                        || (mType.contains(AmmoType.Munitions.M_FLARE))
+                        || (mType.contains(AmmoType.Munitions.M_SMOKE_WARHEAD))) {
                     damagePerShot = 1;
                 } else {
                     damagePerShot = 2;
@@ -1248,9 +1248,9 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                 Mounted link = getLinked();
                 AmmoType atype = ((AmmoType) link.getType());
                 int damagePerShot = atype.getDamagePerShot();
-                // Launchers with Dead-Fire missles in them do an extra point of
+                // Launchers with Dead-Fire missiles in them do an extra point of
                 // damage per shot when critted
-                if (atype.getAmmoType().contains(AmmoType.Munitions.M_DEAD_FIRE) {
+                if (atype.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
                     damagePerShot++;
                 }
 
@@ -2098,7 +2098,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         }
 
         AmmoType ammoType = (AmmoType) getType();
-        return ammoType.getMunitionType().contains(AmmoType.Munitions.M_HOMING &&
+        return ammoType.getMunitionType().contains(AmmoType.Munitions.M_HOMING) &&
                 curMode().equals("Homing");
     }
 }

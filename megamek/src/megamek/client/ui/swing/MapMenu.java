@@ -442,7 +442,7 @@ public class MapMenu extends JPopupMenu {
         });
         return item;
     }
-    
+
     private JMenu createSelectMenu() {
         JMenu menu = new JMenu("Select");
         // add select options
@@ -1105,16 +1105,16 @@ public class MapMenu extends JPopupMenu {
                 if ((hasAmmoType(AmmoType.T_LRM)
                         || hasAmmoType(AmmoType.T_LRM_IMP)
                         || hasAmmoType(AmmoType.T_MML))
-                    && (hasMunitionType(AmmoType.M_FASCAM)
-                        || hasMunitionType(AmmoType.M_THUNDER)
-                        || hasMunitionType(AmmoType.M_THUNDER_ACTIVE)
-                        || hasMunitionType(AmmoType.M_THUNDER_AUGMENTED)
-                        || hasMunitionType(AmmoType.M_THUNDER_INFERNO)
-                        || hasMunitionType(AmmoType.M_THUNDER_VIBRABOMB))) {
+                    && (hasMunitionType(AmmoType.Munitions.M_FASCAM)
+                        || hasMunitionType(AmmoType.Munitions.M_THUNDER)
+                        || hasMunitionType(AmmoType.Munitions.M_THUNDER_ACTIVE)
+                        || hasMunitionType(AmmoType.Munitions.M_THUNDER_AUGMENTED)
+                        || hasMunitionType(AmmoType.Munitions.M_THUNDER_INFERNO)
+                        || hasMunitionType(AmmoType.Munitions.M_THUNDER_VIBRABOMB))) {
                     menu.add(TargetMenuItem(new HexTarget(coords, Targetable.TYPE_MINEFIELD_DELIVER)));
                 }
 
-                if (hasMunitionType(AmmoType.M_FLARE)) {
+                if (hasMunitionType(AmmoType.Munitions.M_FLARE)) {
                     menu.add(TargetMenuItem(new HexTarget(coords, Targetable.TYPE_FLARE_DELIVER)));
                 }
 
@@ -1234,13 +1234,13 @@ public class MapMenu extends JPopupMenu {
         return false;
     }
 
-    private boolean hasMunitionType(long munition) {
+    private boolean hasMunitionType(AmmoType.Munitions munition) {
         if (myEntity.getAmmo().isEmpty()) {
             return false;
         }
 
         for (Mounted ammo : myEntity.getAmmo()) {
-            if (((AmmoType) ammo.getType()).getMunitionType() == munition) {
+            if (((AmmoType) ammo.getType()).getMunitionType().contains(munition)) {
                 return true;
             }
         }

@@ -1272,9 +1272,10 @@ public abstract class BVCalculator {
             }
             for (Mounted mounted : otherEntity.getAmmo()) {
                 AmmoType atype = (AmmoType) mounted.getType();
-                long munitionType = atype.getMunitionType();
+                EnumSet<AmmoType.Munitions> munitionType = atype.getMunitionType();
                 if ((mounted.getUsableShotsLeft() > 0)
-                        && ((munitionType == M_SEMIGUIDED) || (munitionType == M_HOMING))) {
+                        && ((munitionType.contains(AmmoType.Munitions.M_SEMIGUIDED))
+                            || (munitionType.contains(AmmoType.Munitions.M_HOMING)))) {
                     adjustedBV += mounted.getType().getBV(entity) * tagCount;
                     bvReport.addLine("- " + equipmentDescriptor(mounted),
                             "+ " + tagCount + " x " + formatForReport(mounted.getType().getBV(entity))

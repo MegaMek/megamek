@@ -619,8 +619,9 @@ public class EquipChoicePanel extends JPanel {
 
                 // If clan_ignore_eq_limits is unchecked,
                 // do NOT allow Clans to use IS-only ammo.
+                // "Incendiary" munition type gets removed here for reasons unknown.
                 EnumSet<AmmoType.Munitions> muniType = atCheck.getMunitionType();
-                muniType.add(AmmoType.Munitions.M_INCENDIARY_LRM);
+                muniType.remove(AmmoType.Munitions.M_INCENDIARY_LRM);
                 if (!gameOpts.booleanOption(OptionsConstants.ALLOWED_CLAN_IGNORE_EQ_LIMITS)
                         && entity.isClan()
                         && ((muniType.contains(AmmoType.Munitions.M_SEMIGUIDED))

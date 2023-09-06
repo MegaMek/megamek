@@ -335,7 +335,7 @@ public class AmmoType extends EquipmentType {
     // Add ADA here when implemented
     private int[] ARTILLERY_TYPES = {T_LONG_TOM, T_SNIPER, T_THUMPER, T_ARROW_IV};
     private int[] ARTILLERY_CANNON_TYPES = {T_LONG_TOM_CANNON, T_SNIPER_CANNON, T_THUMPER_CANNON};
-    private EnumSet<Munitions> ARTILLERY_FLAK_MUNITIONS = EnumSet.of(Munitions.M_CLUSTER, Munitions.M_STANDARD);
+    private EnumSet<Munitions> ARTILLERY_FLAK_MUNITIONS = EnumSet.of(Munitions.M_CLUSTER, Munitions.M_STANDARD, Munitions.M_ADA);
 
     public AmmoType() {
         criticals = 1;
@@ -448,6 +448,7 @@ public class AmmoType extends EquipmentType {
      * We need a way to quickly determine if a given ammo type / munition counts as "Flak"
      * Note, not _is_ Flak (as in the case of M_FLAK) but can be considered Flak by TW/TO/IO
      * rules.
+     * Arrow IV missiles with M_CLUSTER, M_ADA, or M_STANDARD (not M_HOMING) count as Flak (TO:AU&E pp166-167, 224)
      * @return counts true if this ammo can be considered Flak in some situations
      */
     public boolean countsAsFlak() {
@@ -2315,14 +2316,14 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for IS Arrow IV launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("Air-Defense Arrow (ADA) Missiles", 1, Munitions.M_FLAK,
+        munitions.add(new MunitionMutator("Air-Defense Arrow (ADA) Missiles", 1, Munitions.M_ADA,
                  new TechAdvancement(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false)
                      .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
                      .setPrototypeFactions(F_CC)
                      .setISAdvancement(3068, 3080, DATE_NONE, DATE_NONE, DATE_NONE)
                      .setApproximate(false, false, false, false, false).setTechRating(RATING_E)
                      .setProductionFactions(F_CC).setStaticTechLevel(SimpleTechLevel.ADVANCED)
-                     , "353, TO"));
+                     , "165, TO:AU&E"));
 
         munitions.add(new MunitionMutator("Cluster", 1, Munitions.M_CLUSTER,
                 new TechAdvancement(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
@@ -2423,14 +2424,14 @@ public class AmmoType extends EquipmentType {
         // Create the munition types for Clan Arrow IV launchers.
         munitions.clear();
 
-        munitions.add(new MunitionMutator("Air-Defense Arrow (ADA) Missiles", 1, Munitions.M_FLAK,
+        munitions.add(new MunitionMutator("Air-Defense Arrow (ADA) Missiles", 1, Munitions.M_ADA,
                 new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
                         .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
                         .setClanAdvancement(3068, 3080, DATE_NONE, DATE_NONE, DATE_NONE)
                         .setClanApproximate(false, false, false, false, false).setPrototypeFactions(F_CC)
                         .setProductionFactions(F_CC)
                         .setStaticTechLevel(SimpleTechLevel.ADVANCED),
-                "353, TO"));
+                "165, TO:AU&E"));
 
         munitions.add(new MunitionMutator("Cluster", 1, Munitions.M_CLUSTER,
                 new TechAdvancement(TECH_BASE_CLAN).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)

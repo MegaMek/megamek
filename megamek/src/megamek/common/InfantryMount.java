@@ -14,6 +14,9 @@
  */
 package megamek.common;
 
+import java.util.List;
+import java.util.StringJoiner;
+
 /**
  * Stats for beast mounted infantry units. See TO:AU&E, p. 106
  */
@@ -57,7 +60,7 @@ public class InfantryMount {
         public int buildingDamage() {
             return buildingMP * 2;
         }
-    };
+    }
 
     private final String name;
     private final BeastSize size;
@@ -70,11 +73,12 @@ public class InfantryMount {
     private final int maxWaterDepth;
     private final int secondaryGroundMP;
     private final int uwEndurance;
+    private final boolean custom;
 
-    public InfantryMount(String name, BeastSize size, double weight, int movementPoints,
+    private InfantryMount(String name, BeastSize size, double weight, int movementPoints,
                          EntityMovementMode movementMode, int burstDamage,
                          int vehicleDamage, double damageDivisor, int maxWaterDepth,
-                         int secondaryGroundMP, int uwEndurance) {
+                         int secondaryGroundMP, int uwEndurance, boolean custom) {
         this.name = name;
         this.size = size;
         this.weight = weight;
@@ -86,7 +90,17 @@ public class InfantryMount {
         this.maxWaterDepth = maxWaterDepth;
         this.secondaryGroundMP = secondaryGroundMP;
         this.uwEndurance = uwEndurance;
+        this.custom = custom;
     }
+
+    public InfantryMount(String name, BeastSize size, double weight, int movementPoints,
+                          EntityMovementMode movementMode, int burstDamage,
+                          int vehicleDamage, double damageDivisor, int maxWaterDepth,
+                          int secondaryGroundMP, int uwEndurance) {
+        this(name, size, weight, movementPoints, movementMode, burstDamage, vehicleDamage, damageDivisor,
+                maxWaterDepth, secondaryGroundMP, uwEndurance, true);
+    }
+
 
     /**
      * @return The name of the beast.
@@ -169,47 +183,114 @@ public class InfantryMount {
         return uwEndurance;
     }
 
+    @Override
+    public String toString() {
+        if (custom) {
+            StringJoiner sj = new StringJoiner(",");
+            sj.add(name).add(size.name()).add(String.valueOf(weight)).add(String.valueOf(movementPoints))
+                    .add(movementMode.name()).add(String.valueOf(burstDamage)).add(String.valueOf(vehicleDamage))
+                    .add(String.valueOf(damageDivisor)).add(String.valueOf(maxWaterDepth))
+                    .add(String.valueOf(secondaryGroundMP)).add(String.valueOf(uwEndurance));
+            return "Beast:Custom:" + sj;
+        } else {
+            return "Beast:" + name;
+        }
+    }
+
+    public static InfantryMount parse(String str) {
+        final String toParse = str.trim().replace("Beast:", "");
+        if (toParse.startsWith("Custom:")) {
+            // Provide some decent information about which field is causing the problem
+            String[] fields = toParse.replace("Custom:", "").split(",");
+            if (fields.length < 11) {
+                throw new IllegalArgumentException("Infantry mount string " + str + " does not have enough fields.");
+            }
+            BeastSize size;
+            try {
+                size = BeastSize.valueOf(fields[1]);
+            } catch (Exception ex) {
+                throw new IllegalArgumentException("Could not parse BeastSize " + fields[1]);
+            }
+            double weight;
+            try {
+                weight = Double.parseDouble(fields[2]);
+            } catch (Exception ex) {
+                throw new IllegalArgumentException("Could not parse InfantryMount movementMode " + fields[4]);
+            }
+            EntityMovementMode mode;
+            try {
+                mode = EntityMovementMode.valueOf(fields[4]);
+            } catch (Exception ex) {
+                throw new IllegalArgumentException("Could not parse InfantryMount movementMode " + fields[4]);
+            }
+            double divisor;
+            try {
+                divisor = Double.parseDouble(fields[7]);
+            } catch (Exception ex) {
+                throw new IllegalArgumentException("Could not parse InfantryMount damageDivisor " + fields[7]);
+            }
+            return new InfantryMount(fields[0], size, weight, parseIntField(fields[3], "movementPoints"),
+                    mode, parseIntField(fields[5], "burstDamage"), parseIntField(fields[6], "vehicleDamage"),
+                    divisor, parseIntField(fields[8], "maxWaterDepth"), parseIntField(fields[9], "secondaryGroundMP"),
+                    parseIntField(fields[10], "uwEndurance"));
+        } else {
+            return sampleMounts.stream().filter(it -> it.name.equals(toParse)).findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("Could not parse beast mount " + toParse));
+        }
+    }
+
+    private static int parseIntField(String field, String fieldName) {
+        try {
+            return Integer.parseInt(field);
+        } catch (Exception ex) {
+            throw new IllegalArgumentException("Could not parse InfantryMount field " + fieldName + " value " + field);
+        }
+    }
+
     public static final InfantryMount DONKEY = new InfantryMount("Donkey", BeastSize.LARGE,
             0.15, 2, EntityMovementMode.INF_LEG, 0, 0, 1.0,
-            0, 0, 0);
+            0, 0, 0, false);
 
     public static final InfantryMount COVENTRY_KANGAROO = new InfantryMount("Coventry Kangaroo", BeastSize.LARGE,
             0.11, 3, EntityMovementMode.INF_LEG, 1, 1, 1.0,
-            0, 0, 0);
+            0, 0, 0, false);
 
     public static final InfantryMount HORSE = new InfantryMount("Horse", BeastSize.LARGE,
             0.5, 3, EntityMovementMode.INF_LEG, 0, 0, 1.0,
-            0, 0, 0);
+            0, 0, 0, false);
 
     public static final InfantryMount CAMEL = new InfantryMount("Camel", BeastSize.LARGE,
             0.65, 2, EntityMovementMode.INF_LEG, 0, 0, 1.0,
-            0, 0, 0);
+            0, 0, 0, false);
 
     public static final InfantryMount BRANTH = new InfantryMount("Branth", BeastSize.LARGE,
             0.72, 6, EntityMovementMode.VTOL, 2, 1, 1.0,
-            0, 0, 0);
+            0, 0, 0, false);
 
     public static final InfantryMount ODESSAN_RAXX = new InfantryMount("Odessan Raxx", BeastSize.LARGE,
             2.4, 2, EntityMovementMode.INF_LEG, 1, 1, 1.0,
-            0, 0, 0);
+            0, 0, 0, false);
 
     public static final InfantryMount TABIRANTH = new InfantryMount("Tabiranth", BeastSize.LARGE,
             0.25, 2, EntityMovementMode.INF_LEG, 1, 1, 1.0,
-            0, 0, 0);
+            0, 0, 0, false);
 
     public static final InfantryMount TARIQ = new InfantryMount("Tariq", BeastSize.LARGE,
             0.51, 5, EntityMovementMode.INF_LEG, 0, 0, 1.0,
-            0, 0, 0);
+            0, 0, 0, false);
 
     public static final InfantryMount ELEPHANT = new InfantryMount("Elephant", BeastSize.VERY_LARGE,
             6.0, 2, EntityMovementMode.INF_LEG, 1, 1, 2.0,
-            1, 0, 0);
+            1, 0, 0, false);
 
     public static final InfantryMount ORCA = new InfantryMount("Orca", BeastSize.VERY_LARGE,
             7.2, 5, EntityMovementMode.SUBMARINE, 2, 1, 2.0,
-            Integer.MAX_VALUE, 0, 180);
+            Integer.MAX_VALUE, 0, 180, false);
 
     public static final InfantryMount HIPPOSAUR = new InfantryMount("Hipposaur", BeastSize.MONSTROUS,
             35.5, 2, EntityMovementMode.SUBMARINE, 10, 4, 4.0,
-            Integer.MAX_VALUE, 1, 2);
+            Integer.MAX_VALUE, 1, 2, false);
+
+    public static final List<InfantryMount> sampleMounts = List.of(DONKEY, COVENTRY_KANGAROO, HORSE, CAMEL, BRANTH,
+            ODESSAN_RAXX, TABIRANTH, TARIQ, ELEPHANT, ORCA, HIPPOSAUR);
 }

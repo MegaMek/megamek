@@ -21,6 +21,7 @@ package megamek.common;
 
 import megamek.MMConstants;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.common.annotations.Nullable;
 import megamek.common.cost.InfantryCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
@@ -1459,14 +1460,20 @@ public class Infantry extends Entity {
 
     public void setMount(InfantryMount mount) {
         this.mount = mount;
-        setMovementMode(mount.getMovementMode());
-        if (mount.getMovementMode().isLegInfantry()) {
-            setOriginalWalkMP(mount.getMP());
-        } else {
-            setOriginalWalkMP(mount.getSecondaryGroundMP());
-            setOriginalJumpMP(mount.getMP());
+        if (mount != null) {
+            setMovementMode(mount.getMovementMode());
+            if (mount.getMovementMode().isLegInfantry()) {
+                setOriginalWalkMP(mount.getMP());
+            } else {
+                setOriginalWalkMP(mount.getSecondaryGroundMP());
+                setOriginalJumpMP(mount.getMP());
+            }
+            setArmorDamageDivisor(mount.getDamageDivisor());
         }
-        setArmorDamageDivisor(mount.getDamageDivisor());
+    }
+
+    public @Nullable InfantryMount getMount() {
+        return mount;
     }
 
     /**

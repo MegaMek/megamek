@@ -302,6 +302,11 @@ public class Aero extends Entity implements IAero, IBomber {
         designType = design;
     }
 
+    @Override
+    public void setDestroyed(boolean destroyed) {
+        this.destroyed = destroyed;
+        land();
+    }
     /**
      * Returns the unit's design type
      */

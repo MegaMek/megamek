@@ -1731,15 +1731,21 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             int artyDamage = wtype.getRackSize();
             damage.append(artyDamage);
             int falloff = 10;
+            boolean specialArrowIV = false;
             if ((mounted.getLinked() != null) && (mounted.getLinked().getType() instanceof AmmoType)) {
                 AmmoType ammoType = (AmmoType) mounted.getLinked().getType();
+                specialArrowIV = (ammoType.is(AmmoType.T_ARROW_IV)
+                        && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ADA)
+                        || ammoType.getMunitionType().contains(AmmoType.Munitions.M_HOMING)));
                 int attackingBA = (entity instanceof BattleArmor) ? ((BattleArmor) entity).getShootingStrength() : -1;
                 falloff = AreaEffectHelper.calculateDamageFallOff(ammoType, attackingBA, false).falloff;
             }
-            artyDamage -= falloff;
-            while ((artyDamage > 0) && (falloff > 0)) {
-                damage.append('/').append(artyDamage);
+            if(!specialArrowIV) {
                 artyDamage -= falloff;
+                while ((artyDamage > 0) && (falloff > 0)) {
+                    damage.append('/').append(artyDamage);
+                    artyDamage -= falloff;
+                }
             }
             wDamR.setText(damage.toString());
         } else if (wtype.hasFlag(WeaponType.F_ENERGY)
@@ -2039,10 +2045,12 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         // 6 to 17 in the other phases as it will be
         // direct fire then
         if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
+            boolean isADA = (mounted.getLinked() != null
+                    && ((AmmoType) mounted.getLinked().getType()).getMunitionType().contains(AmmoType.Munitions.M_ADA));
             if (gui.getCurrentPanel() instanceof TargetingPhaseDisplay) {
-                ranges[0] = new int[] { 0, 0, 0, 100, 0 };
+                ranges[0] = (!isADA? new int[] { 0, 0, 0, 100, 0 } : new int[] { 0, 0, 0, 51, 0 });
             } else {
-                ranges[0] = new int[] { 6, 0, 0, 17, 0 };
+                ranges[0] = (!isADA? new int[] { 6, 0, 0, 17, 0 } : wtype.getRanges(mounted));
             }
             ranges[1] = new int[] { 0, 0, 0, 0, 0 };
         }
@@ -2298,6 +2306,16 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             wMedR.setText("3 - 4");
             wLongR.setText("5 - 6");
             wExtR.setText("7 - 8");
+        } else if (atype.getAmmoType() == AmmoType.T_ARROW_IV) {
+            // Special casing for ADA ranges
+            if(atype.getMunitionType().contains(AmmoType.Munitions.M_ADA)){
+                wMinR.setText("---");
+                wShortR.setText("1 - 17 [0]");
+                wMedR.setText("18 - 34 [1]");
+                wLongR.setText("35 - 51 [2]");
+                wExtR.setText("---");
+            }
+
         }
 
         // Min range 0 for hotload

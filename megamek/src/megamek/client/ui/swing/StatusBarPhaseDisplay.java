@@ -44,7 +44,7 @@ import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
 /**
  * This is a parent class for the button display for each phase.  Every phase
  * has a panel of control buttons along with a Done button. Each button
- * correspondes to a command that can be carried out in the current phase.
+ * corresponds to a command that can be carried out in the current phase.
  * This class formats the button panel, the done button, and a status display area.
  * Control buttons are grouped and the groups can be cycled through.
  */

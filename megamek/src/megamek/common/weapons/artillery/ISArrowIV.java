@@ -13,10 +13,7 @@
  */
 package megamek.common.weapons.artillery;
 
-import megamek.common.AmmoType;
-import megamek.common.Game;
-import megamek.common.SimpleTechLevel;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.ADAMissileWeaponHandler;
 import megamek.common.weapons.AttackHandler;
@@ -61,6 +58,28 @@ public class ISArrowIV extends ArtilleryWeapon {
                 .setProductionFactions(F_TH)
                 .setReintroductionFactions(F_CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    }
+
+    @Override
+    public int[] getRanges(Mounted weapon) {
+        // modify the ranges for Arrow missile systems based on the ammo selected
+        int minRange = getMinimumRange();
+        int sRange = getShortRange();
+        int mRange = getMediumRange();
+        int lRange = getLongRange();
+        int eRange = getExtremeRange();
+        boolean hasLoadedAmmo = (weapon.getLinked() != null);
+        if (hasLoadedAmmo) {
+            AmmoType atype = (AmmoType) weapon.getLinked().getType();
+            if (atype.getMunitionType().contains(AmmoType.Munitions.M_ADA)) {
+                minRange = 0;
+                sRange = 17;
+                mRange = 34;
+                lRange = 51;
+                eRange = 0;
+            }
+        }
+        return new int[] { minRange, sRange, mRange, lRange, eRange };
     }
 
     @Override

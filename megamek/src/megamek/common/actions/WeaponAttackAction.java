@@ -4781,28 +4781,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
         }
 
-        // Air-Defense Arrow missiles use a much-simplified to-hit calculation because they:
-        // A) are Flak; B) are not Artillery, C) use three ranges (same low-alt hex, 1 hex, 2 hexes)
-        // as S/M/L
-        if (atype != null && atype.getMunitionType().contains(AmmoType.Munitions.M_ADA)){
-            int distance = Compute.effectiveDistance(game, ae, target);
-            toHit = new ToHitData(ae.getCrew().getGunnery(), Messages.getString("WeaponAttackAction.GunSkill"));
-            // Flak
-            toHit.addModifier(-2, Messages.getString("WeaponAttackAction.Flak"));
-            // AMM
-            toHit.append(Compute.getAttackerMovementModifier(game, ae.getId()));
-            // LOS
-            toHit.append(Compute.getTargetTerrainModifier(game, target));
-            // Special range calc
-            toHit.addModifier(Compute.getADARangeModifier(distance), Messages.getString("WeaponAttackAction.ADARangeBracket"));
-            // Vs Aero, hits from below
-            if (Compute.isGroundToAir(ae, target) && ((ae.getAltitude() - target.getAltitude()) > 2)) {
-                toHit.setHitTable(ToHitData.HIT_BELOW);
-            }
-
-            srt.setSpecialResolution(true);
-            return toHit;
-        }
         //If we get here, no special weapons apply. Return the input data and continue on
         return toHit;
     }
@@ -5089,9 +5067,37 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // Handle direct artillery attacks.
         if (isArtilleryDirect) {
+            // Air-Defense Arrow missiles use a much-simplified to-hit calculation because they:
+            // A) are Flak; B) are not Artillery, C) use three ranges (same low-alt hex, 1 hex, 2 hexes)
+            // as S/M/L
+            // Per TO:AR 6th printing, p153, other mods are: Flak (-2), AMM, damage, intervening trees/jungle
+            if (atype != null && atype.getMunitionType().contains(AmmoType.Munitions.M_ADA)){
+                int distance = Compute.effectiveDistance(game, ae, target);
+                toHit = new ToHitData(ae.getCrew().getGunnery(), Messages.getString("WeaponAttackAction.GunSkill"));
+                // Flak
+                toHit.addModifier(-2, Messages.getString("WeaponAttackAction.Flak"));
+                // AMM
+                toHit.append(Compute.getAttackerMovementModifier(game, ae.getId()));
+                // LOS
+                toHit.append(losMods);
+                // Special range calc
+                toHit.addModifier(Compute.getADARangeModifier(distance), Messages.getString("WeaponAttackAction.ADARangeBracket"));
+                // actuator & sensor damage to attacker
+                if (weapon != null) {
+                    toHit.append(Compute.getDamageWeaponMods(ae, weapon));
+                }
+                // Vs Aero, hits from below
+                if (Compute.isGroundToAir(ae, target) && ((ae.getAltitude() - target.getAltitude()) > 2)) {
+                    toHit.setHitTable(ToHitData.HIT_BELOW);
+                }
+
+                srt.setSpecialResolution(true);
+                return toHit;
+            }
             //If an airborne unit occupies the target hex, standard artillery ammo makes a flak attack against it
             //TN is a flat 3 + the altitude mod + the attacker's weapon skill - 2 for Flak
-            if ((isArtilleryFLAK || (atype != null && atype.countsAsFlak())) && te != null) {
+            //Grounded/destroyed/landed/wrecked ASF/VTOL/WiGE should be treated as normal.
+            else if ((isArtilleryFLAK || (atype != null && atype.countsAsFlak())) && te != null) {
                 toHit.addModifier(3, Messages.getString("WeaponAttackAction.ArtyFlak"));
                 toHit.addModifier(-2, Messages.getString("WeaponAttackAction.Flak"));
                 if (te.isAirborne()) {
@@ -5107,30 +5113,30 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
                 srt.setSpecialResolution(true);
                 return toHit;
-            } else {
-                //All other direct fire artillery attacks
-                toHit.addModifier(4, Messages.getString("WeaponAttackAction.DirectArty"));
-                toHit.append(Compute.getAttackerMovementModifier(game, ae.getId()));
-                toHit.append(losMods);
-                toHit.append(Compute.getSecondaryTargetMod(game, ae, target));
-                // actuator & sensor damage to attacker
-                if (weapon != null) {
-                    toHit.append(Compute.getDamageWeaponMods(ae, weapon));
-                }
-                // heat
-                if (ae.getHeatFiringModifier() != 0) {
-                    toHit.addModifier(ae.getHeatFiringModifier(), Messages.getString("WeaponAttackAction.Heat"));
-                }
-                // weapon to-hit modifier
-                if (wtype.getToHitModifier() != 0) {
-                    toHit.addModifier(wtype.getToHitModifier(), Messages.getString("WeaponAttackAction.WeaponMod"));
-                }
-                // ammo to-hit modifier
-                if (usesAmmo && (atype != null) && (atype.getToHitModifier() != 0)) {
-                    toHit.addModifier(atype.getToHitModifier(),
-                            atype.getSubMunitionName()
-                                    + Messages.getString("WeaponAttackAction.AmmoMod"));
-                }
+            }
+
+            //All other direct fire artillery attacks
+            toHit.addModifier(4, Messages.getString("WeaponAttackAction.DirectArty"));
+            toHit.append(Compute.getAttackerMovementModifier(game, ae.getId()));
+            toHit.append(losMods);
+            toHit.append(Compute.getSecondaryTargetMod(game, ae, target));
+            // actuator & sensor damage to attacker
+            if (weapon != null) {
+                toHit.append(Compute.getDamageWeaponMods(ae, weapon));
+            }
+            // heat
+            if (ae.getHeatFiringModifier() != 0) {
+                toHit.addModifier(ae.getHeatFiringModifier(), Messages.getString("WeaponAttackAction.Heat"));
+            }
+            // weapon to-hit modifier
+            if (wtype.getToHitModifier() != 0) {
+                toHit.addModifier(wtype.getToHitModifier(), Messages.getString("WeaponAttackAction.WeaponMod"));
+            }
+            // ammo to-hit modifier
+            if (usesAmmo && (atype != null) && (atype.getToHitModifier() != 0)) {
+                toHit.addModifier(atype.getToHitModifier(),
+                        atype.getSubMunitionName()
+                                + Messages.getString("WeaponAttackAction.AmmoMod"));
             }
             srt.setSpecialResolution(true);
             return toHit;

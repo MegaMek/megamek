@@ -50,6 +50,13 @@ public class InfantryMount {
             this.canMakeSwarmAttacks = canMakeSwarmAttacks;
             this.buildingMP = buildingMP;
         }
+
+        /**
+         * @return The amount of CF damage done to a building when entering its hex.
+         */
+        public int buildingDamage() {
+            return buildingMP * 2;
+        }
     };
 
     private final String name;

@@ -30704,13 +30704,20 @@ public class GameManager implements IGameManager {
                 }
             }
 
-            // Infantry and BA are damaged by buildings but do not damage them
-            if (entity instanceof Infantry) {
-                return;
-            }
             // Damage the building. The CF can never drop below 0.
-            int toBldg = (int) Math.floor(bldg.getDamageToScale()
-                    * Math.ceil(entity.getWeight() / 10.0));
+            int toBldg;
+            // Infantry and BA are damaged by buildings but do not damage them, except large beast-mounted infantry
+            if (entity instanceof Infantry) {
+                InfantryMount mount = ((Infantry) entity).getMount();
+                if ((mount != null) && (mount.getSize().buildingDamage() > 0)) {
+                    toBldg = mount.getSize().buildingDamage();
+                } else {
+                    return;
+                }
+            } else {
+                toBldg = (int) Math.floor(bldg.getDamageToScale()
+                        * Math.ceil(entity.getWeight() / 10.0));
+            }
             int curCF = bldg.getCurrentCF(entering ? curPos : lastPos);
             curCF -= Math.min(curCF, toBldg);
             bldg.setCurrentCF(curCF, entering ? curPos : lastPos);

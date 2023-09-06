@@ -13,13 +13,7 @@
  */
 package megamek.common.loaders;
 
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.Infantry;
-import megamek.common.LocationFullException;
-import megamek.common.MiscType;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.util.BuildingBlock;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
@@ -81,15 +75,19 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
         }
         String sMotion = dataFile.getDataAsString("motion_type")[0];
         t.setMicrolite(sMotion.equalsIgnoreCase("microlite"));
-        EntityMovementMode nMotion = EntityMovementMode.parseFromString(sMotion);
-        if (nMotion.isNone()) {
-            throw new EntityLoadingException("Invalid movement type: " + sMotion);
-        }
-        if (nMotion == EntityMovementMode.INF_UMU
-                && sMotion.toLowerCase().contains("motorized")) {
-            t.setMotorizedScuba();
+        if (sMotion.startsWith("Beast:")) {
+            t.setMount(InfantryMount.parse(sMotion));
         } else {
-            t.setMovementMode(nMotion);
+            EntityMovementMode nMotion = EntityMovementMode.parseFromString(sMotion);
+            if (nMotion.isNone()) {
+                throw new EntityLoadingException("Invalid movement type: " + sMotion);
+            }
+            if (nMotion == EntityMovementMode.INF_UMU
+                    && sMotion.toLowerCase().contains("motorized")) {
+                t.setMotorizedScuba();
+            } else {
+                t.setMovementMode(nMotion);
+            }
         }
 
         // get primary and secondary weapons

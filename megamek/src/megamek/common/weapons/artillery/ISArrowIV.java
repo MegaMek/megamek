@@ -14,7 +14,13 @@
 package megamek.common.weapons.artillery;
 
 import megamek.common.AmmoType;
+import megamek.common.Game;
 import megamek.common.SimpleTechLevel;
+import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.ADAMissileWeaponHandler;
+import megamek.common.weapons.AttackHandler;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks
@@ -25,6 +31,7 @@ public class ISArrowIV extends ArtilleryWeapon {
 
     public ISArrowIV() {
         super();
+
         name = "Arrow IV";
         setInternalName("ISArrowIV");
         addLookupName("ISArrowIVSystem");
@@ -54,5 +61,14 @@ public class ISArrowIV extends ArtilleryWeapon {
                 .setProductionFactions(F_TH)
                 .setReintroductionFactions(F_CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    }
+
+    @Override
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+                                              WeaponAttackAction waa, Game game, GameManager manager) {
+        if(waa.getAmmoMunitionType().contains(AmmoType.Munitions.M_ADA)){
+            return new ADAMissileWeaponHandler(toHit, waa, game, manager);
+        }
+        return super.getCorrectHandler(toHit, waa, game, manager);
     }
 }

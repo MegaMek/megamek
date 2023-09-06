@@ -1067,7 +1067,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             return Messages.getString("WeaponAttackAction.AeEvading");
         }
 
-        //If we're lying mines, we can't shoot.
+        //If we're laying mines, we can't shoot.
         if (ae.isLayingMines()) {
             return Messages.getString("WeaponAttackAction.BusyLayingMines");
         }
@@ -1779,6 +1779,20 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                             return Messages.getString("WeaponAttackAction.OnlyArrowArty");
                         }
                     }
+                } else if ((wtype.getAmmoType() == AmmoType.T_ARROW_IV)
+                        && atype != null && atype.getMunitionType().contains(AmmoType.Munitions.M_ADA) ) {
+                    // Air-Defense Arrow IV can only target airborne enemy units between 1 and 51 hexes away
+                    // (same ground map/Low Altitude hex, 1 LAH, or 2 Low Altitude hexes away) and below
+                    // altitude 8.
+                    if(!(target.isAirborne() || target.isAirborneVTOLorWIGE())){
+                        return Messages.getString("WeaponAttackAction.AaaGroundAttack");
+                    }
+                    if (target.getAltitude() > 8){
+                        return Messages.getString("WeaponAttackAction.OutOfRange");
+                    }
+                    if (distance > Board.DEFAULT_BOARD_HEIGHT * 3){
+                        return Messages.getString("WeaponAttackAction.OutOfRange");
+                    }
                 }
             } else if (weapon.isInBearingsOnlyMode()) {
                 // We don't really need to do anything here. This just prevents these weapons
@@ -1810,7 +1824,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     return Messages.getString("WeaponAttackAction.TooShortForDirectArty");
                 }
                 // ...or more than 17 hexes
-                if (distance > Board.DEFAULT_BOARD_HEIGHT) {
+                if (distance > Board.DEFAULT_BOARD_HEIGHT
+                        && !atype.getMunitionType().contains(AmmoType.Munitions.M_ADA)) {
                     return Messages.getString("WeaponAttackAction.TooLongForDirectArty");
                 }
                 if (isHoming) {
@@ -4767,6 +4782,29 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 srt.setSpecialResolution(true);
                 return toHit;
             }
+        }
+
+        // Air-Defense Arrow missiles use a much-simplified to-hit calculation because they:
+        // A) are Flak; B) are not Artillery, C) use three ranges (same low-alt hex, 1 hex, 2 hexes)
+        // as S/M/L
+        if (atype != null && atype.getMunitionType().contains(AmmoType.Munitions.M_ADA)){
+            int distance = Compute.effectiveDistance(game, ae, target);
+            toHit = new ToHitData(ae.getCrew().getGunnery(), Messages.getString("WeaponAttackAction.GunSkill"));
+            // Flak
+            toHit.addModifier(-2, Messages.getString("WeaponAttackAction.Flak"));
+            // AMM
+            toHit.append(Compute.getAttackerMovementModifier(game, ae.getId()));
+            // LOS
+            toHit.append(Compute.getTargetTerrainModifier(game, target));
+            // Special range calc
+            toHit.addModifier(Compute.getADARangeModifier(distance), Messages.getString("WeaponAttackAction.ADARangeBracket"));
+            // Vs Aero, hits from below
+            if (Compute.isGroundToAir(ae, target) && ((ae.getAltitude() - target.getAltitude()) > 2)) {
+                toHit.setHitTable(ToHitData.HIT_BELOW);
+            }
+
+            srt.setSpecialResolution(true);
+            return toHit;
         }
         //If we get here, no special weapons apply. Return the input data and continue on
         return toHit;

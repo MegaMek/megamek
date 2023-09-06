@@ -335,7 +335,7 @@ public class AmmoType extends EquipmentType {
     // Add ADA here when implemented
     private int[] ARTILLERY_TYPES = {T_LONG_TOM, T_SNIPER, T_THUMPER, T_ARROW_IV};
     private int[] ARTILLERY_CANNON_TYPES = {T_LONG_TOM_CANNON, T_SNIPER_CANNON, T_THUMPER_CANNON};
-    private EnumSet<Munitions> ARTILLERY_FLAK_MUNITIONS = EnumSet.of(Munitions.M_CLUSTER, Munitions.M_STANDARD, Munitions.M_ADA);
+    private EnumSet<Munitions> ARTILLERY_FLAK_MUNITIONS = EnumSet.of(Munitions.M_CLUSTER, Munitions.M_STANDARD);
 
     public AmmoType() {
         criticals = 1;
@@ -455,7 +455,9 @@ public class AmmoType extends EquipmentType {
         boolean counts = false;
 
         if(ArrayUtils.contains(ARTILLERY_TYPES, this.getAmmoType())){
-            counts = ARTILLERY_FLAK_MUNITIONS.containsAll(this.getMunitionType());
+            // Air-Defense Arrow IV _is_ Flak, but is _not_ Artillery
+            counts = ARTILLERY_FLAK_MUNITIONS.containsAll(this.getMunitionType())
+                    || this.getMunitionType().contains(Munitions.M_ADA);
         } else if(ArrayUtils.contains(ARTILLERY_CANNON_TYPES, this.getAmmoType())){
             counts = this.getMunitionType().contains(Munitions.M_STANDARD);
         }

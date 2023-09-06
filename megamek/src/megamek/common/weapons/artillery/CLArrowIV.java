@@ -14,7 +14,14 @@
 package megamek.common.weapons.artillery;
 
 import megamek.common.AmmoType;
+import megamek.common.Game;
 import megamek.common.SimpleTechLevel;
+import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.ADAMissileWeaponHandler;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.ThunderBoltWeaponHandler;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks
@@ -54,4 +61,14 @@ public class CLArrowIV extends ArtilleryWeapon {
                 .setPrototypeFactions(F_CHH)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
+
+    @Override
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+                                              WeaponAttackAction waa, Game game, GameManager manager) {
+        if(waa.getAmmoMunitionType().contains(AmmoType.Munitions.M_ADA)){
+            return new ADAMissileWeaponHandler(toHit, waa, game, manager);
+        }
+        return super.getCorrectHandler(toHit, waa, game, manager);
+    }
+
 }

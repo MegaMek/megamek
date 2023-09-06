@@ -22,6 +22,7 @@ import megamek.common.enums.AimingMode;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.IlluminationLevel;
 import megamek.common.options.OptionsConstants;
+import megamek.common.verifier.TestEntity;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
@@ -4954,6 +4955,14 @@ public class Compute {
         }
 
         return range;
+
+    }
+
+    public static int getADARangeModifier(int distance) {
+        // +0 for same ground map / Low-Altitude hex
+        // +2 for 1 LAH away
+        // +4 for 2 LAH away
+        return (distance / Board.DEFAULT_BOARD_HEIGHT * 2);
 
     }
 

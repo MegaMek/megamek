@@ -150,7 +150,7 @@ public class InfantryMount {
      * @return For units with a primary movement mode other than ground, this is
      *         the number of ground MP available.
      */
-    public int seconaryGroundMP() {
+    public int getSecondaryGroundMP() {
         return secondaryGroundMP;
     }
 

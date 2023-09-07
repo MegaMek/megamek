@@ -167,6 +167,18 @@ public class ArtilleryTargetingControl {
         targetSet = null;
     }
 
+    private boolean getADAAvailable(Entity shooter){
+        boolean available = false;
+        for (Mounted weapon: shooter.getWeaponList()){
+            if(((AmmoType) weapon.getLinked().getType()).getMunitionType().contains(AmmoType.Munitions.M_ADA)
+                && !weapon.isFired() && weapon.getLinked().getUsableShotsLeft() > 0){
+                available = true;
+                break;
+            }
+        }
+
+        return available;
+    }
     /**
      * Builds a list of eligible targets for artillery strikes.
      * This includes hexes on and within the max radius of all non-airborne enemy entities
@@ -177,10 +189,20 @@ public class ArtilleryTargetingControl {
      */
     private void buildTargetList(Entity shooter, Game game, Princess owner) {
         targetSet = new HashSet<>();
+        boolean adaAvailable = getADAAvailable(shooter);
 
         for (Iterator<Entity> enemies = game.getAllEnemyEntities(shooter); enemies.hasNext();) {
             Entity e = enemies.next();
 
+            // Given how accurate and long-ranged ADA missiles are, prioritize airborne targets if ADA is available
+            // Short-circuit Indirect fire artillery targeting to leave tubes available for ADA direct fire.
+            if (e.isAirborne() || e.isAirborneVTOLorWIGE() || e.isAirborneAeroOnGroundMap()){
+               if(adaAvailable){
+                   // Forget about indirect fire for now.
+                   targetSet = new HashSet<>();
+                   return;
+               }
+            }
             // skip airborne entities, and those off board - we'll handle them later and don't target ignored units
             if (!e.isAirborne()
                     && !e.isAirborneVTOLorWIGE()

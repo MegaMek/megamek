@@ -111,6 +111,7 @@ public class FireControl {
     static final TargetRollModifier TH_WEAP_PRONE_ARMLESS = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "prone and missing an arm");
     static final TargetRollModifier TH_WEAP_ARM_PROP = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "using arm as prop");
     static final TargetRollModifier TH_WEAP_PRONE_LEG = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "prone leg weapon");
+    static final TargetRollModifier TH_WEAP_ADA = new TargetRollModifier(-2, "Air-Defense Arrow IV vs airborne target");
     static final TargetRollModifier TH_WEAPON_NO_ARC = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "not in arc");
     static final TargetRollModifier TH_INF_ZERO_RNG = new TargetRollModifier(TargetRoll.AUTOMATIC_FAIL, "non-infantry shooting with zero range");
     static final TargetRollModifier TH_STOP_SWARM_INVALID = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "not swarming a Mek");
@@ -836,8 +837,13 @@ public class FireControl {
             && (null != weapon.getLinked())
             && (weapon.getLinked().getType() instanceof AmmoType)) {
             final AmmoType ammoType = (AmmoType) weapon.getLinked().getType();
-            if ((null != ammoType) && (0 != ammoType.getToHitModifier())) {
-                toHit.addModifier(ammoType.getToHitModifier(), TH_AMMO_MOD);
+            if (null != ammoType){
+                if (0 != ammoType.getToHitModifier()) {
+                    toHit.addModifier(ammoType.getToHitModifier(), TH_AMMO_MOD);
+                }
+                if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ADA)){
+                    toHit.addModifier(TH_WEAP_ADA);
+                }
             }
         }
 

@@ -689,8 +689,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             if (!choices.isEmpty()) {
                 // If we have multiple choices, display a selection dialog.
                 Entity other = EntityChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(),
+                        "DeploymentDisplay.loadUnitDialog.title",
                         Messages.getString("DeploymentDisplay.loadUnitDialog.message", ce().getShortName(), ce().getUnusedString()),
-                        Messages.getString("DeploymentDisplay.loadUnitDialog.title"),
                         choices);
 
                 if (!(other instanceof Infantry)) {
@@ -765,8 +765,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             if (!choices.isEmpty()) {
 
                 Entity loaded = EntityChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(),
+                        "DeploymentDisplay.unloadUnitDialog.title",
                         Messages.getString("DeploymentDisplay.unloadUnitDialog.message", ce().getShortName(), ce().getUnusedString()),
-                        Messages.getString("DeploymentDisplay.unloadUnitDialog.title"),
                         choices);
 
                 if (loaded != null) {

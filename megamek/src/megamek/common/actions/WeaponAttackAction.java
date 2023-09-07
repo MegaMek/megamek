@@ -5074,7 +5074,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (atype != null && atype.getMunitionType().contains(AmmoType.Munitions.M_ADA)){
                 int distance = Compute.effectiveDistance(game, ae, target);
                 toHit = new ToHitData(ae.getCrew().getGunnery(), Messages.getString("WeaponAttackAction.GunSkill"));
-                // Flak
+                // Flak (TO-DO: remove once fix_4359_add_minus_two_flak_bonus_to_artie_flak is pulled)
                 toHit.addModifier(-2, Messages.getString("WeaponAttackAction.Flak"));
                 // AMM
                 toHit.append(Compute.getAttackerMovementModifier(game, ae.getId()));

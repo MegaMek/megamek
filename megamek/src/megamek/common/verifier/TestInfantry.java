@@ -17,6 +17,8 @@ package megamek.common.verifier;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.Infantry;
+import megamek.common.InfantryMount;
+import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -152,14 +154,14 @@ public class TestInfantry extends TestEntity {
             }
         }
 
-        max = maxSquadSize(inf.getMovementMode(), inf.hasMicrolite() || (inf.getAllUMUCount() > 1));
+        max = maxSquadSize(inf.getMovementMode(), inf.hasMicrolite() || (inf.getAllUMUCount() > 1), inf.getMount());
         if (inf.getSquadSize() > max) {
             buff.append("Maximum squad size is " + max + "\n\n");
             correct = false;
         }
 
         max = maxUnitSize(inf.getMovementMode(), inf.hasMicrolite() || (inf.getAllUMUCount() > 1),
-                inf.hasSpecialization(Infantry.COMBAT_ENGINEERS | Infantry.MOUNTAIN_TROOPS));
+                inf.hasSpecialization(Infantry.COMBAT_ENGINEERS | Infantry.MOUNTAIN_TROOPS), inf.getMount());
         if (inf.getShootingStrength() > max) {
             buff.append("Maximum platoon size is " + max + "\n\n");
             correct = false;
@@ -197,27 +199,33 @@ public class TestInfantry extends TestEntity {
      * 
      * @param movementMode  The platoon's movement mode
      * @param alt           True indicates that VTOL is microlite and INF_UMU is motorized.
+     * @param mount         The mount if the unit is beast-mounted, otherwise null.
      * @return              The maximum size of a squad.
      */
-    public static int maxSquadSize(EntityMovementMode movementMode, boolean alt) {
-        switch (movementMode) {
-            case HOVER:
-            case SUBMARINE:
-                return 5;
-            case WHEELED:
-                return 6;
-            case TRACKED:
-                return 7;
-            case INF_UMU:
-                 return alt? 6 : 10;
-            case VTOL:
-                return alt? 2 : 4;
-            default:
-                return 10;
+    public static int maxSquadSize(EntityMovementMode movementMode, boolean alt, @Nullable InfantryMount mount) {
+        if ((mount == null) || (mount.getSize().troopsPerCreature == 1)) {
+            switch (movementMode) {
+                case HOVER:
+                case SUBMARINE:
+                    return 5;
+                case WHEELED:
+                    return 6;
+                case TRACKED:
+                    return 7;
+                case INF_UMU:
+                    return alt ? 6 : 10;
+                case VTOL:
+                    return alt ? 2 : 4;
+                default:
+                    return 10;
+            }
+        } else {
+            return mount.getSize().troopsPerCreature;
         }
     }
     
-    public static int maxUnitSize(EntityMovementMode movementMode, boolean alt, boolean engOrMountain) {
+    public static int maxUnitSize(EntityMovementMode movementMode, boolean alt, boolean engOrMountain,
+                                  InfantryMount mount) {
         int max;
         switch (movementMode) {
             case INF_UMU:
@@ -238,11 +246,14 @@ public class TestInfantry extends TestEntity {
                 max = 28;
                 break;
             case VTOL:
-                max = maxSquadSize(movementMode, alt) * 4;
+                max = maxSquadSize(movementMode, alt, mount) * 4;
                 break;
             default:
                 max = 30;
                 break;
+        }
+        if (mount != null) {
+            max = Math.max(max, mount.getSize().creaturesPerPlatoon * mount.getSize().troopsPerCreature);
         }
         if (engOrMountain) {
             max = Math.min(max, 20);

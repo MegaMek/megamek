@@ -171,6 +171,17 @@ public class Infantry extends Entity {
         return CrewType.INFANTRY_CREW;
     }
 
+    public TechAdvancement getMotiveTechAdvancement() {
+        return getMotiveTechAdvancement(mount == null ? getMovementMode() : EntityMovementMode.NONE);
+    }
+
+    /**
+     * Generates the {@link TechAdvancement} for the unit's motive type. A value of EntityMovementMode.NONE indicates
+     * Beast-mounted infantry.
+     *
+     * @param movementMode An infantry movement mode.
+     * @return The Tech Advancement data for the movement mode.
+     */
     public static TechAdvancement getMotiveTechAdvancement(EntityMovementMode movementMode) {
         TechAdvancement techAdvancement = new TechAdvancement(TECH_BASE_ALL)
                 .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
@@ -216,6 +227,11 @@ public class Infantry extends Entity {
                     .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED);
                 break;
+            case NONE:
+                // Beast-mounted
+                techAdvancement.setAdvancement(DATE_PS, DATE_PS).setTechRating(RATING_A)
+                        .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+                        .setStaticTechLevel(SimpleTechLevel.ADVANCED);
             case INF_LEG:
             default:
                 techAdvancement.setTechRating(RATING_A)
@@ -290,7 +306,7 @@ public class Infantry extends Entity {
     @Override
     protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
         super.addSystemTechAdvancement(ctl);
-        ctl.addComponent(Infantry.getMotiveTechAdvancement(movementMode));
+        ctl.addComponent(getMotiveTechAdvancement());
         if (hasSpecialization(COMBAT_ENGINEERS)) {
             ctl.addComponent(Infantry.getCombatEngineerTA());
         }
@@ -1610,7 +1626,7 @@ public class Infantry extends Entity {
                 default:
                     setOriginalWalkMP(1);
             }
-            addTechComponent(Infantry.getMotiveTechAdvancement(movementMode));
+            addTechComponent(getMotiveTechAdvancement());
         }
     }
 

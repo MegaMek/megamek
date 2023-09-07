@@ -297,12 +297,12 @@ public class SharedUtility {
                     lastPos, curPos, isPavementStep);
             checkNag(rollTarget, nagReport, psrList);
 
-            // check for non-mech entering a fire
+            // check for non-heat tracking entering a fire
             boolean underwater = curHex.containsTerrain(Terrains.WATER)
                     && (curHex.depth() > 0)
                     && (step.getElevation() < curHex.getLevel());
             if (curHex.containsTerrain(Terrains.FIRE) && !underwater
-                    && !(entity instanceof Mech) && (step.getElevation() <= 1)
+                    && !entity.tracksHeat() && (step.getElevation() <= 1) && !entity.isAirborne()
                     && (moveType != EntityMovementType.MOVE_JUMP)
                     && !(curPos.equals(lastPos))) {
                 nagReport.append(Messages.getString("MovementDisplay.FireMoving", 8));

@@ -7607,21 +7607,15 @@ public class GameManager implements IGameManager {
 
             // check to see if we are a mech and we've moved OUT of fire
             Hex lastHex = game.getBoard().getHex(lastPos);
-            if (entity instanceof Mech) {
+            if (entity.tracksHeat() && !entity.isAirborne()) {
                 if (!lastPos.equals(curPos) && (prevStep != null)
-                        && ((lastHex.containsTerrain(Terrains.FIRE)
-                        && (prevStep.getElevation() <= 1))
-                        || (lastHex.containsTerrain(Terrains.MAGMA)
-                        && (prevStep.getElevation() == 0)))
+                        && ((lastHex.containsTerrain(Terrains.FIRE) && (prevStep.getElevation() <= 1))
+                        || (lastHex.containsTerrain(Terrains.MAGMA) && (prevStep.getElevation() == 0)))
                         && ((stepMoveType != EntityMovementType.MOVE_JUMP)
-                        // Bug #828741 -- jumping bypasses fire, but not
-                        // on the
-                        // first step
+                        // Bug #828741 -- jumping bypasses fire, but not on the first step
                         // getMpUsed -- total MP used to this step
                         // getMp -- MP used in this step
-                        // the difference will always be 0 on the "first
-                        // step"
-                        // of a jump,
+                        // the difference will always be 0 on the "first step" of a jump,
                         // and >0 on a step in the midst of a jump
                         || (0 == (step.getMpUsed() - step.getMp())))) {
                     int heat = 0;
@@ -7633,7 +7627,9 @@ public class GameManager implements IGameManager {
                     } else if (lastHex.terrainLevel(Terrains.MAGMA) == 2) {
                         heat += 5;
                     }
-                    if (((Mech) entity).hasIntactHeatDissipatingArmor()) {
+                    boolean isMekWithHeatDissipatingArmor = (entity instanceof Mech)
+                            && ((Mech) entity).hasIntactHeatDissipatingArmor();
+                    if (isMekWithHeatDissipatingArmor) {
                         heat /= 2;
                     }
                     entity.heatFromExternal += heat;
@@ -7642,7 +7638,7 @@ public class GameManager implements IGameManager {
                     r.addDesc(entity);
                     r.add(heat);
                     addReport(r);
-                    if (((Mech) entity).hasIntactHeatDissipatingArmor()) {
+                    if (isMekWithHeatDissipatingArmor) {
                         r = new Report(5550);
                         addReport(r);
                     }
@@ -18621,6 +18617,24 @@ public class GameManager implements IGameManager {
                 }
             }
 
+            if (entity.tracksHeat() && (entityHex != null) && entityHex.containsTerrain(Terrains.FIRE) && (entityHex.getFireTurn() > 0)
+                    && (entity.getElevation() <= 1) && (entity.getAltitude() == 0)) {
+                int heatToAdd = 5;
+                boolean isMekWithHeatDissipatingArmor = (entity instanceof Mech) && ((Mech) entity).hasIntactHeatDissipatingArmor();
+                if (isMekWithHeatDissipatingArmor) {
+                    heatToAdd /= 2;
+                }
+                entity.heatFromExternal += heatToAdd;
+                r = new Report(5030);
+                r.add(heatToAdd);
+                r.subject = entity.getId();
+                addReport(r);
+                if (isMekWithHeatDissipatingArmor) {
+                    r = new Report(5550);
+                    addReport(r);
+                }
+            }
+
             // put in ASF heat build-up first because there are few differences
             if (entity instanceof Aero && !(entity instanceof ConvFighter)) {
                 ServerHelper.resolveAeroHeat(game, entity, vPhaseReport, rhsReports, radicalHSBonus, hotDogMod, this);
@@ -18731,22 +18745,6 @@ public class GameManager implements IGameManager {
             // Add +5 Heat if the hex you're in is on fire
             // and was on fire for the full round.
             if (entityHex != null) {
-                if (entityHex.containsTerrain(Terrains.FIRE) && (entityHex.getFireTurn() > 0)
-                        && (entity.getElevation() <= 1)) {
-                    int heatToAdd = 5;
-                    if (((Mech) entity).hasIntactHeatDissipatingArmor()) {
-                        heatToAdd /= 2;
-                    }
-                    entity.heatFromExternal += heatToAdd;
-                    r = new Report(5030);
-                    r.add(heatToAdd);
-                    r.subject = entity.getId();
-                    addReport(r);
-                    if (((Mech) entity).hasIntactHeatDissipatingArmor()) {
-                        r = new Report(5550);
-                        addReport(r);
-                    }
-                }
                 int magma = entityHex.terrainLevel(Terrains.MAGMA);
                 if ((magma > 0) && (entity.getElevation() == 0)) {
                     int heatToAdd = 5 * magma;
@@ -19481,6 +19479,11 @@ public class GameManager implements IGameManager {
      * @param coordinates the coordinate location of the fire
      */
     private void doFlamingDamage(final Entity entity, final Coords coordinates) {
+        // TO:AR p.41,p.43
+        if (entity.tracksHeat() || entity.isDropShip()) {
+            return;
+        }
+
         Report r;
         int boomRoll = Compute.d6(2);
 
@@ -19502,11 +19505,6 @@ public class GameManager implements IGameManager {
             r.indent(1);
             r.addDesc(entity);
             addReport(r);
-            return;
-        }
-
-        // mechs shouldn't be here, but just in case
-        if (entity instanceof Mech) {
             return;
         }
 

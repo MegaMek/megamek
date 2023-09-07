@@ -1816,14 +1816,17 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 if (isCruiseMissile) {
                     return Messages.getString("WeaponAttackAction.NoDirectCruiseMissile");
                 }
-                // Direct fire artillery cannot be fired at less than 6 hexes
-                if (isArtilleryDirect && !(target.isAirborne() || target.isAirborneVTOLorWIGE()) && (Compute.effectiveDistance(game, ae, target) <= 6)) {
-                    return Messages.getString("WeaponAttackAction.TooShortForDirectArty");
-                }
-                // ...or more than 17 hexes
-                if (distance > Board.DEFAULT_BOARD_HEIGHT
-                        && !atype.getMunitionType().contains(AmmoType.Munitions.M_ADA)) {
-                    return Messages.getString("WeaponAttackAction.TooLongForDirectArty");
+                // ADA is _fired_ by artillery but is just a Flak attack, and so bypasses these restrictions
+                if (!atype.getMunitionType().contains(AmmoType.Munitions.M_ADA)) {
+                    // Direct fire artillery cannot be fired at less than 6 hexes,
+                    // except at ASFs in the air (TO:AR 6th print, p153.)
+                    if (!(target.isAirborne()) && (Compute.effectiveDistance(game, ae, target) <= 6)) {
+                        return Messages.getString("WeaponAttackAction.TooShortForDirectArty");
+                    }
+                    // ...or more than 17 hexes
+                    if (distance > Board.DEFAULT_BOARD_HEIGHT) {
+                        return Messages.getString("WeaponAttackAction.TooLongForDirectArty");
+                    }
                 }
                 if (isHoming) {
                     if ((te == null) || (te.getTaggedBy() == -1)) {
@@ -5074,7 +5077,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (atype != null && atype.getMunitionType().contains(AmmoType.Munitions.M_ADA)){
                 int distance = Compute.effectiveDistance(game, ae, target);
                 toHit = new ToHitData(ae.getCrew().getGunnery(), Messages.getString("WeaponAttackAction.GunSkill"));
-                // Flak (TO-DO: remove once fix_4359_add_minus_two_flak_bonus_to_artie_flak is pulled)
+                // Flak; ADA won't hit the later artillery flak check so add this modifier directly.
                 toHit.addModifier(-2, Messages.getString("WeaponAttackAction.Flak"));
                 // AMM
                 toHit.append(Compute.getAttackerMovementModifier(game, ae.getId()));
@@ -5098,9 +5101,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             //TN is a flat 3 + the altitude mod + the attacker's weapon skill - 2 for Flak
             //Grounded/destroyed/landed/wrecked ASF/VTOL/WiGE should be treated as normal.
             else if ((isArtilleryFLAK || (atype != null && atype.countsAsFlak())) && te != null) {
-                toHit.addModifier(3, Messages.getString("WeaponAttackAction.ArtyFlak"));
-                toHit.addModifier(-2, Messages.getString("WeaponAttackAction.Flak"));
-                if (te.isAirborne()) {
+                if (te.isAirborne() || te.isAirborneVTOLorWIGE()) {
+                    toHit.addModifier(3, Messages.getString("WeaponAttackAction.ArtyFlak"));
+                    toHit.addModifier(-2, Messages.getString("WeaponAttackAction.Flak"));
                     if (te.getAltitude() > 3) {
                         if (te.getAltitude() > 9) {
                             toHit.addModifier(3, Messages.getString("WeaponAttackAction.AeroTeAlt10"));

@@ -25,6 +25,11 @@ VERSION HISTORY:
 + PR #4746: Removed Testbot
 + Fix #3546: Artillery cannons now generate proper damage values for Fuel-Air ammunition
 + Fix #4359: Artillery cannons now use flak modifiers correctly
++ Fix #4734: Non-Mek heat-tracking units no longer burn to death in a terrain fire
++ Fix #4750: Prevent errors for some dialogs
++ PR #4753: Small Craft are no longer shown as invalid in the lobby after configuring them
++ PR #4751: Tech level filtering in the unit selector dialog has been corrected (also affects MML and MHQ)
++ PR #4748: Alpha strike filters now correctly apply when creating random creating a random army
 
 0.49.14 (2023-07-28 2100 UTC)
 + Fix #4452: Fixes a bug with detecting if Infantry dies due to extreme temperatures

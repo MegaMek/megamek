@@ -37,11 +37,9 @@ Wheeled
 </motion_type>
 
 <transporters>
-troopspace:12.0
-</transporters>
-
-<transporters>
+troopspace:4.0
 BattleArmorHandles - troopers:-1
+troopspace:8.0:OMNI
 </transporters>
 
 <transporters>

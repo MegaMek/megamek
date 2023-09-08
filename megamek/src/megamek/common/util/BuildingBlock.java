@@ -720,7 +720,7 @@ public class BuildingBlock {
         // Otherwise it contains data.
         int start = findStartIndex(blockName);
         int end = findEndIndex(blockName);
-        return (end - start) > 1;
+        return (end - start) >= 1;
 
     }
 }

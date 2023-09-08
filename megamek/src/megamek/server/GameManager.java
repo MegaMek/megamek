@@ -1682,26 +1682,30 @@ public class GameManager implements IGameManager {
 
             playerReport.addAll(bvReport(player.getColorForPlayer(), player.getId(), bvcPlayer, checkBlind));
 
-            BVCountHelper bvcTeam = teamsInfo.get(player.getTeam());
-            bvcTeam.bv += bvcPlayer.bv;
-            bvcTeam.bvInitial += bvcPlayer.bvInitial;
-            bvcTeam.bvFled += bvcPlayer.bvFled;
-            bvcTeam.unitsCount += bvcPlayer.unitsCount;
-            bvcTeam.unitsInitialCount += bvcPlayer.unitsInitialCount;
-            bvcTeam.unitsLightDamageCount += bvcPlayer.unitsLightDamageCount;
-            bvcTeam.unitsModerateDamageCount += bvcPlayer.unitsModerateDamageCount;
-            bvcTeam.unitsHeavyDamageCount += bvcPlayer.unitsHeavyDamageCount;
-            bvcTeam.unitsCrippledCount += bvcPlayer.unitsCrippledCount;
-            bvcTeam.unitsDestroyedCount += bvcPlayer.unitsDestroyedCount;
-            bvcTeam.unitsCrewEjectedCount += bvcPlayer.unitsCrewEjectedCount;
-            bvcTeam.unitsCrewTrappedCount += bvcPlayer.unitsCrewTrappedCount;
-            bvcTeam.unitsCrewKilledCount += bvcPlayer.unitsCrewKilledCount;
-            bvcTeam.unitsFledCount += bvcPlayer.unitsFledCount;
-            bvcTeam.ejectedCrewActiveCount += bvcPlayer.ejectedCrewActiveCount;
-            bvcTeam.ejectedCrewPickedUpByTeamCount += bvcPlayer.ejectedCrewPickedUpByTeamCount;
-            bvcTeam.ejectedCrewPickedUpByEnemyTeamCount += bvcPlayer.ejectedCrewPickedUpByEnemyTeamCount;
-            bvcTeam.ejectedCrewKilledCount += bvcPlayer.ejectedCrewKilledCount;
-            bvcTeam.ejectedCrewFledCount += bvcPlayer.ejectedCrewFledCount;
+            int playerTeam = player.getTeam();
+
+            if (playerTeam != Player.TEAM_UNASSIGNED && playerTeam != Player.TEAM_NONE) {
+                BVCountHelper bvcTeam = teamsInfo.get(playerTeam);
+                bvcTeam.bv += bvcPlayer.bv;
+                bvcTeam.bvInitial += bvcPlayer.bvInitial;
+                bvcTeam.bvFled += bvcPlayer.bvFled;
+                bvcTeam.unitsCount += bvcPlayer.unitsCount;
+                bvcTeam.unitsInitialCount += bvcPlayer.unitsInitialCount;
+                bvcTeam.unitsLightDamageCount += bvcPlayer.unitsLightDamageCount;
+                bvcTeam.unitsModerateDamageCount += bvcPlayer.unitsModerateDamageCount;
+                bvcTeam.unitsHeavyDamageCount += bvcPlayer.unitsHeavyDamageCount;
+                bvcTeam.unitsCrippledCount += bvcPlayer.unitsCrippledCount;
+                bvcTeam.unitsDestroyedCount += bvcPlayer.unitsDestroyedCount;
+                bvcTeam.unitsCrewEjectedCount += bvcPlayer.unitsCrewEjectedCount;
+                bvcTeam.unitsCrewTrappedCount += bvcPlayer.unitsCrewTrappedCount;
+                bvcTeam.unitsCrewKilledCount += bvcPlayer.unitsCrewKilledCount;
+                bvcTeam.unitsFledCount += bvcPlayer.unitsFledCount;
+                bvcTeam.ejectedCrewActiveCount += bvcPlayer.ejectedCrewActiveCount;
+                bvcTeam.ejectedCrewPickedUpByTeamCount += bvcPlayer.ejectedCrewPickedUpByTeamCount;
+                bvcTeam.ejectedCrewPickedUpByEnemyTeamCount += bvcPlayer.ejectedCrewPickedUpByEnemyTeamCount;
+                bvcTeam.ejectedCrewKilledCount += bvcPlayer.ejectedCrewKilledCount;
+                bvcTeam.ejectedCrewFledCount += bvcPlayer.ejectedCrewFledCount;
+            }
         }
 
         // Show teams BVs

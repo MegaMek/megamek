@@ -19508,11 +19508,6 @@ public class GameManager implements IGameManager {
             return;
         }
 
-        // fire has no effect on dropships
-        if (entity instanceof Dropship) {
-            return;
-        }
-
         // Must roll 8+ to survive...
         r = new Report(5100);
         r.subject = entity.getId();

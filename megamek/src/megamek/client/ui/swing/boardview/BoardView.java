@@ -5407,8 +5407,8 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         } else if (entities.size() > 1) {
             // If we have multiple choices, display a selection dialog.
             choice = EntityChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(),
+                    "BoardView1.ChooseEntityDialog.title",
                     Messages.getString("BoardView1.ChooseEntityDialog.message", pos.getBoardNum()),
-                    Messages.getString("BoardView1.ChooseEntityDialog.title"),
                     entities);
         }
 

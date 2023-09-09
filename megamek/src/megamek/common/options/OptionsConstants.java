@@ -74,7 +74,8 @@ public class OptionsConstants {
     // TODO Game Rules
     public static final String QUIRK_POS_VESTIGIAL_HANDS_LA = "vestigial_hands_la";
     public static final String QUIRK_POS_VESTIGIAL_HANDS_RA = "vestigial_hands_ra";
-    public static final String QUIRK_POS_VTOL_ROTOR = "vtol_rotor";
+    public static final String QUIRK_POS_VTOL_ROTOR_COAXIAL = "vtol_rotor_coaxial";
+    public static final String QUIRK_POS_VTOL_ROTOR_DUAL = "vtol_rotor_dual";
 
     public static final String QUIRK_WEAP_POS_ACCURATE = "accurate";
     public static final String QUIRK_WEAP_POS_IMP_COOLING = "imp_cooling";

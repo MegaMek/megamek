@@ -3019,6 +3019,27 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
+     * Returns true if the specified hex contains some sort of deadly
+     * terrain.
+     */
+    public boolean isLocationDeadly(Coords c) {
+        return isLocationDeadly(c, elevation);
+    }
+
+    /**
+     * Returns true if the specified hex contains some sort of deadly
+     * terrain if the Entity is at the specified elevation.  Elevation generally
+     * only matters for units like WiGEs or VTOLs.
+     *
+     * @param c
+     * @param currElevation
+     * @return
+     */
+    public boolean isLocationDeadly(Coords c, int currElevation) {
+        return false;
+    }
+
+    /**
      * Returns the name of the type of movement used.
      */
     public abstract String getMovementString(EntityMovementType mtype);

@@ -4130,6 +4130,20 @@ public abstract class Mech extends Entity {
                 || (hex.terrainLevel(Terrains.JUNGLE) > 2);
     }
 
+    @Override
+    public boolean isLocationDeadly(Coords c, int currElevation) {
+        Hex hex = game.getBoard().getHex(c);
+
+        if (this.isIndustrial()
+                && !this.hasEnvironmentalSealing()
+                && (this.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)
+                && hex.terrainLevel(Terrains.WATER) >= 2) {
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * Get an '.mtf' file representation of the mech. This string can be
      * directly written to disk as a file and later loaded by the MtfFile class.

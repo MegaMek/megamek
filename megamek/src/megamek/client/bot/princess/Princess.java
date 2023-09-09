@@ -1966,8 +1966,9 @@ public class Princess extends BotClient {
                 
                 // this condition is a simple check that we're not unloading infantry into deep space
                 // or into lava or some other such nonsense
-                boolean unloadFatal = loadedEntity.isBoardProhibited(getGame().getBoard().getType()) ||
-                        loadedEntity.isLocationProhibited(pathEndpoint);
+                boolean unloadFatal = loadedEntity.isBoardProhibited(getGame().getBoard().getType())
+                        || loadedEntity.isLocationProhibited(pathEndpoint)
+                        || loadedEntity.isLocationDeadly(pathEndpoint);
                 
                 // Unloading a unit may sometimes cause a stacking violation, take that into account when planning
                 boolean unloadIllegal = Compute.stackingViolation(getGame(), loadedEntity, pathEndpoint, movingEntity,

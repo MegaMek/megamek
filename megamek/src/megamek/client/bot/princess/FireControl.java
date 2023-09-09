@@ -112,6 +112,7 @@ public class FireControl {
     static final TargetRollModifier TH_WEAP_ARM_PROP = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "using arm as prop");
     static final TargetRollModifier TH_WEAP_PRONE_LEG = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "prone leg weapon");
     static final TargetRollModifier TH_WEAP_ADA = new TargetRollModifier(-2, "Air-Defense Arrow IV vs airborne target");
+    static final TargetRollModifier TH_WEAP_FLAK = new TargetRollModifier(-1, "Flak vs airborne target");
     static final TargetRollModifier TH_WEAPON_NO_ARC = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "not in arc");
     static final TargetRollModifier TH_INF_ZERO_RNG = new TargetRollModifier(TargetRoll.AUTOMATIC_FAIL, "non-infantry shooting with zero range");
     static final TargetRollModifier TH_STOP_SWARM_INVALID = new TargetRollModifier(TargetRoll.IMPOSSIBLE, "not swarming a Mek");
@@ -838,11 +839,35 @@ public class FireControl {
             && (weapon.getLinked().getType() instanceof AmmoType)) {
             final AmmoType ammoType = (AmmoType) weapon.getLinked().getType();
             if (null != ammoType){
+                // Set of munitions we'll consider for Flak targeting
+                EnumSet<AmmoType.Munitions> aaMunitions = EnumSet.of(
+                        AmmoType.Munitions.M_CLUSTER,
+                        AmmoType.Munitions.M_FLAK
+                );
+                EnumSet<AmmoType.Munitions> ArtyOnlyMunitions = EnumSet.of(
+                        AmmoType.Munitions.M_FLECHETTE,
+                        AmmoType.Munitions.M_FAE
+                );
                 if (0 != ammoType.getToHitModifier()) {
                     toHit.addModifier(ammoType.getToHitModifier(), TH_AMMO_MOD);
                 }
+                // Air-defense Arrow IV handling; can only fire at airborne targets
                 if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ADA)){
-                    toHit.addModifier(TH_WEAP_ADA);
+                    if(target.isAirborne() || target.isAirborneVTOLorWIGE()){
+                        toHit.addModifier(TH_WEAP_ADA);
+                    }
+                    else{
+                        toHit.addModifier(TH_WEAP_CANNOT_FIRE);
+                    }
+                }
+                // Handle cluster, flak, AAA vs Airborne, Arty-only vs Airborne
+                if (target.isAirborne() || target.isAirborneVTOLorWIGE()){
+                    if (ammoType.getMunitionType().stream().anyMatch(aaMunitions::contains)
+                        || ammoType.countsAsFlak()){
+                        toHit.addModifier(TH_WEAP_FLAK);
+                    } else if (ammoType.getMunitionType().stream().anyMatch(ArtyOnlyMunitions::contains)){
+                        toHit.addModifier(TH_WEAP_CANNOT_FIRE);
+                    }
                 }
             }
         }
@@ -2360,7 +2385,7 @@ public class FireControl {
             // only a little over half of a cluster will generally hit
             // but some cluster munitions do more than 1 point of damage per individual hit
             // still better than just discounting them completely.
-            if (weaponDamage == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
+            if (weaponDamage == WeaponType.DAMAGE_BY_CLUSTERTABLE || weaponType.hasFlag(WeaponType.F_ARTILLERY)) {
                 weaponDamage = weaponType.getRackSize();
             }
 
@@ -2543,7 +2568,7 @@ public class FireControl {
                 // Entity targets.
             } else if (null != targetEntity) {
                 // Airborne targets
-                if (targetEntity.isAirborne() || (targetEntity instanceof VTOL)) {
+                if (targetEntity.isAirborne() || (targetEntity.isAirborneVTOLorWIGE())) {
                     msg.append("\n\tTarget is airborne... ");
                     preferredAmmo = getAntiAirAmmo(validAmmo, weaponType, range);
                     if (null != preferredAmmo) {
@@ -2981,15 +3006,26 @@ public class FireControl {
 
         for (final Mounted ammo : ammoList) {
             final AmmoType ammoType = (AmmoType) ammo.getType();
-            if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER)
-                || ammoType.getMunitionType().contains(AmmoType.Munitions.M_FLAK)) {
+            if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ADA)){
+                // Air-Defense Arrow IVs are the premiere long-range AA munition.
+                returnAmmo = ammo;
+                break;
+            } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER)
+                || ammoType.getMunitionType().contains(AmmoType.Munitions.M_FLAK)
+                || ammoType.countsAsFlak()) {
 
                 // MMLs have additional considerations.
                 // There are no "flak" or "cluster" missile munitions at this point in time.  Code is included in case
                 // they are added to the game at some later date.
                 if (!(weaponType instanceof MMLWeapon)) {
-                    returnAmmo = ammo;
-                    break;
+                    // Naively assume that easier-hitting is better
+                    if (returnAmmo != null) {
+                        AmmoType returnAmmoType = (AmmoType)(returnAmmo.getType());
+                        returnAmmo = ((ammoType.getToHitModifier() > returnAmmoType.getToHitModifier())? ammo : returnAmmo);
+                    } else {
+                        // Any Cluster/Flak ammo is usually a good bet for AAA.
+                        returnAmmo = ammo;
+                    }
                 }
                 if ((null == mmlLrm) && ammoType.hasFlag(AmmoType.F_MML_LRM)) {
                     mmlLrm = ammo;

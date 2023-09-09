@@ -361,7 +361,7 @@ public class AreaEffectHelper {
 
         // flak against ASF should only hit Aeros, because their elevation
         // is actually altitude, so shouldn't hit VTOLs
-        if (asfFlak && !entity.isAero()) {
+        if (asfFlak && !(entity.isAirborne())) {
             return;
         }
 
@@ -393,14 +393,22 @@ public class AreaEffectHelper {
         // Work out hit table to use
         if (attackSource != null) {
             toHit.setSideTable(entity.sideTable(attackSource));
-            if ((ammo != null)
-                && (ammo.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER))
-                && attackSource.equals(coords)) {
-                if (entity instanceof Mech) {
-                    toHit.setHitTable(ToHitData.HIT_ABOVE);
-                } else if (entity instanceof Tank) {
-                    toHit.setSideTable(ToHitData.SIDE_FRONT);
-                    toHit.addModifier(2, "cluster artillery hitting a Tank");
+            if (ammo != null){
+                if(ammo.getMunitionType().contains(AmmoType.Munitions.M_ADA)){
+                    if(entity.isAero()) {
+                        toHit.setHitTable(ToHitData.HIT_BELOW);
+                    }
+                    // Also update cluster value to be identical to damage;
+                    // this should also be done for homing, I believe
+                    cluster = damage;
+                } else if (ammo.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER)
+                        && attackSource.equals(coords)) {
+                    if (entity instanceof Mech) {
+                        toHit.setHitTable(ToHitData.HIT_ABOVE);
+                    } else if (entity instanceof Tank) {
+                        toHit.setSideTable(ToHitData.SIDE_FRONT);
+                        toHit.addModifier(2, "cluster artillery hitting a Tank");
+                    }
                 }
             }
         }
@@ -623,6 +631,11 @@ public class AreaEffectHelper {
         if (ammo.getAmmoType() == AmmoType.T_BA_TUBE) {
             damage *= attackingBA;
             falloff = 2 * attackingBA;
+        }
+        // Air-Defense Arrow IV missiles
+        if (ammo.getAmmoType() == AmmoType.T_ARROW_IV
+            && ammo.getMunitionType().contains(AmmoType.Munitions.M_ADA)){
+            falloff = damage;
         }
         if (ammo.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER)) {
             // non-arrow-iv cluster does 5 less than standard

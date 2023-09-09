@@ -56,4 +56,9 @@ public class ADAMissileWeaponHandler extends MissileWeaponHandler {
     protected int calcnCluster() {
         return 1;
     }
+
+    @Override
+    protected boolean usesClusterTable(){
+        return false;
+    }
 }

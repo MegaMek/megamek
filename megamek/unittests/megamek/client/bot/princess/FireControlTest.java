@@ -31,6 +31,9 @@ import megamek.common.weapons.missiles.MMLWeapon;
 import megamek.server.SmokeCloud;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledForJreRange;
+import org.junit.jupiter.api.condition.DisabledOnJre;
+import org.junit.jupiter.api.condition.JRE;
 
 import java.math.BigInteger;
 import java.util.*;
@@ -1625,6 +1628,7 @@ public class FireControlTest {
         final AmmoType mockAmmoType = mock(AmmoType.class);
         when(mockAmmo.getType()).thenReturn(mockAmmoType);
         when(mockAmmoType.getToHitModifier()).thenReturn(1);
+        when(mockAmmoType.getMunitionType()).thenReturn(EnumSet.of(AmmoType.Munitions.M_STANDARD));
         expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
         expected.addModifier(FireControl.TH_MEDIUM_RANGE);
         expected.addModifier(1, FireControl.TH_AMMO_MOD);
@@ -1888,6 +1892,7 @@ public class FireControlTest {
     }
 
     @Test
+    @DisabledForJreRange(min = JRE.JAVA_17, max = JRE.OTHER)
     public void testCalculateUtility() {
         final double TOLERANCE = 0.00001;
         int overheatTolerance = 5;

@@ -75,7 +75,7 @@ public class CLArrowIV extends ArtilleryWeapon {
                 sRange = 17;
                 mRange = 34;
                 lRange = 51;
-                eRange = 0;
+                eRange = 51;
             }
         }
         return new int[] { minRange, sRange, mRange, lRange, eRange };

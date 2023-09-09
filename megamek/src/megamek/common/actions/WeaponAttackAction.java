@@ -5113,9 +5113,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                             toHit.addModifier(1, Messages.getString("WeaponAttackAction.AeroTeAlt46"));
                         }
                     }
+                    srt.setSpecialResolution(true);
+                    return toHit;
                 }
-                srt.setSpecialResolution(true);
-                return toHit;
             }
 
             //All other direct fire artillery attacks

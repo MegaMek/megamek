@@ -242,7 +242,7 @@ public class BayMunitionsChoicePanel extends JPanel {
                         AmmoType.Munitions.M_ARTEMIS_CAPABLE,
                         AmmoType.Munitions.M_ARTEMIS_V_CAPABLE
                 );
-                if (atype.getMunitionType().stream().anyMatch(artemisCapable::contains)) {
+                if (atype.getMunitionType().stream().noneMatch(artemisCapable::contains)) {
                     return Messages.getString(atype.hasFlag(AmmoType.F_MML_LRM)
                             ? "CustomMechDialog.LRM" : "CustomMechDialog.SRM");
                 } else {

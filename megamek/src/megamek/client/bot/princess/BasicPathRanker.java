@@ -959,7 +959,11 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         }
 
         // Unsealed unit will drown.
-        if (movingUnit instanceof Mech && ((Mech) movingUnit).isIndustrial()) {
+        if (movingUnit instanceof Mech
+                && ((Mech) movingUnit).isIndustrial()
+                && !movingUnit.hasEnvironmentalSealing()
+                && (movingUnit.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)
+                && hex.depth() >= 2) {
             logMsg.append("Industrial mechs drown too (1000).");
             return UNIT_DESTRUCTION_FACTOR;
         }

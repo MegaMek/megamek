@@ -119,7 +119,7 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
                     try {
                         switch (ClientServerCommandLineFlag.parseFromString(value)) {
                             case HELP:
-                                LogManager.getLogger().info(help());
+                                System.out.println(help());
                                 System.exit(0);
                             case PORT:
                                 nextToken();

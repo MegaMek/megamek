@@ -29,7 +29,7 @@ public enum MegaMekCommandLineFlag {
     CLIENT(Messages.getString("MegaMek.Help.Client")),
     QUICK(Messages.getFormattedString("MegaMek.Help.Quick", MMConstants.QUICKSAVE_FILE)),
     // exporters and utilities
-    EQDB("MegaMek.Help.EquipmentDB"),
+    EQDB(Messages.getString("MegaMek.Help.EquipmentDB")),
     EQEDB(Messages.getString("MegaMek.Help.EquipmentExtendedDB")),
     EXPORT(Messages.getString("MegaMek.Help.UnitExport")),
     VALIDATE(Messages.getString("MegaMek.Help.UnitValidator")),

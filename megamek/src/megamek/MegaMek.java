@@ -15,7 +15,6 @@
  */
 package megamek;
 
-import megamek.client.ui.Messages;
 import megamek.client.ui.preferences.SuitePreferences;
 import megamek.client.ui.swing.ButtonOrderPreferences;
 import megamek.client.ui.swing.MegaMekGUI;
@@ -31,7 +30,9 @@ import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.net.URL;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
@@ -73,6 +74,7 @@ public class MegaMek {
         MegaMekCommandLineParser parser = new MegaMekCommandLineParser(args);
 
         try {
+            // Parse the command line arguments and deal with them, if they are about data export or help
             parser.parse();
 
             String[] restArgs = parser.getRestArgs();
@@ -114,41 +116,6 @@ public class MegaMek {
     public static void initializeLogging(final String originProject) {
         final String initialMessage = getUnderlyingInformation(originProject);
         LogManager.getLogger().info(initialMessage);
-        handleLegacyLogging();
-        System.out.println(initialMessage);
-    }
-
-    /**
-     * This function redirects the standard error and output streams... It's a legacy method that
-     * is currently being used as a fallback while migrating the last of our legacy logging and
-     * testing out the new global exception handling
-     */
-    @Deprecated
-    public static void handleLegacyLogging() {
-        try {
-            LogManager.getLogger().info("Redirecting System.out, System.err, and Throwable::printStackTrace output to legacy.log");
-            File logDir = new File("logs");
-            if (!logDir.exists()) {
-                logDir.mkdir();
-            }
-
-            File file = new File(PreferenceManager.getClientPreferences().getLogDirectory()
-                    + File.separator + "legacy.log");
-            if (file.exists()) {
-                try (PrintWriter writer = new PrintWriter(file)) {
-                    writer.print("");
-                } catch (Exception ex) {
-                    LogManager.getLogger().error("Failed to write to legacy.log", ex);
-                }
-            }
-
-            // Note: these are not closed on purpose
-            PrintStream ps = new PrintStream(new BufferedOutputStream(new FileOutputStream(file, true), 64));
-            System.setOut(ps);
-            System.setErr(ps);
-        } catch (Exception ex) {
-            LogManager.getLogger().error("Unable to redirect output to legacy.log", ex);
-        }
     }
 
     public static SuitePreferences getMMPreferences() {

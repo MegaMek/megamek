@@ -30,6 +30,10 @@ VERSION HISTORY:
 + PR #4753: Small Craft are no longer shown as invalid in the lobby after configuring them
 + PR #4751: Tech level filtering in the unit selector dialog has been corrected (also affects MML and MHQ)
 + PR #4748: Alpha strike filters now correctly apply when creating random creating a random army
++ Issue #4690: Improvements to MegaMek command-line handling
++ Issue #4286: RATGeneratorEditor: Show unit type instead of number
++ issue #4756: Quirks: VTOL Rotor Arrangement Co-Axial/Dual Rotor
++ Issue #4756: Correct NPE in bvReports when player is not on a team
 
 0.49.14 (2023-07-28 2100 UTC)
 + Fix #4452: Fixes a bug with detecting if Infantry dies due to extreme temperatures

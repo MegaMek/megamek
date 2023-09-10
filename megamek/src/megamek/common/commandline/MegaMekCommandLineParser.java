@@ -91,7 +91,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
             try {
                 switch (MegaMekCommandLineFlag.parseFromString(tokenVal)) {
                     case HELP:
-                        LogManager.getLogger().info(help());
+                        System.out.println(help());
                         System.exit(0);
                     case EQDB:
                         processEquipmentDb();

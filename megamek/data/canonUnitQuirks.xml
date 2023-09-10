@@ -18894,21 +18894,21 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<chassis>Balac Strike VTOL</chassis>
 		<model>all</model>
 		<unitType>VTOL</unitType>
-		<quirk>vtol_rotor</quirk>
+		<quirk>vtol_rotor_coaxial</quirk>
 	</unit>
 
 	<unit>
 		<chassis>Bishop Transport VTOL</chassis>		
 		<unitType>VTOL</unitType>
 		<quirk>easy_pilot</quirk>
-		<quirk>vtol_rotor</quirk>
+		<quirk>vtol_rotor_dual</quirk>
 	</unit>
 
 	<unit>
 		<chassis>Cardinal Transport</chassis>
 		<model>all</model>
 		<unitType>VTOL</unitType>
-		<quirk>vtol_rotor</quirk>
+		<quirk>vtol_rotor_dual</quirk>
 	</unit>
 
 	<unit>
@@ -18924,7 +18924,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<unitType>VTOL</unitType>
 		<quirk>non_standard</quirk>
 		<quirk>obsolete</quirk>
-		<quirk>vtol_rotor</quirk>
+		<quirk>vtol_rotor_dual</quirk>
 	</unit>
 
 	<unit>
@@ -18933,13 +18933,13 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<unitType>VTOL</unitType>
 		<quirk>non_standard</quirk>
 		<quirk>obsolete</quirk>
-		<quirk>vtol_rotor</quirk>
+		<quirk>vtol_rotor_dual</quirk>
 	</unit>
 
 	<unit>
 		<chassis>Crane Heavy Transport</chassis>		
 		<unitType>VTOL</unitType>
-		<quirk>vtol_rotor</quirk>
+		<quirk>vtol_rotor_dual</quirk>
 	</unit>
 
 	<unit>
@@ -18955,7 +18955,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<model>all</model>
 		<unitType>VTOL</unitType>
 		<quirk>imp_com</quirk>
-		<quirk>vtol_rotor</quirk>
+		<quirk>vtol_rotor_coaxial</quirk>
 	</unit>
 
 	<unit>
@@ -18981,16 +18981,16 @@ Example: You can define quirks that affect all units of a given chassis and then
 
 	<unit>
 		<chassis>Hawk Moth Gunship</chassis>
-		<model>'Vedwandlung'</model>
+		<model>'Verwandlung'</model>
 		<unitType>VTOL</unitType>
-		<quirk>vtol_rotor</quirk>
+		<quirk>vtol_rotor_coaxial</quirk>
 	</unit>
 
 	<unit>
 		<chassis>Hawk Moth II Gunship</chassis>
 		<model>all</model>
 		<unitType>VTOL</unitType>
-		<quirk>vtol_rotor</quirk>
+		<quirk>vtol_rotor_coaxial</quirk>
 	</unit>
 
 
@@ -18998,7 +18998,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<chassis>Kamakiri Attack VTOL</chassis>
 		<model>all</model>
 		<unitType>VTOL</unitType>
-		<quirk>vtol_rotor</quirk>
+		<quirk>vtol_rotor_dual</quirk>
 		<quirk>hard_pilot</quirk>
 	</unit>
 
@@ -19006,7 +19006,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<chassis>Karnov UR Transport</chassis>
 		<model>(Heavy Stealth)</model>
 		<unitType>VTOL</unitType>
-		<quirk>vtol_rotor</quirk>
+		<quirk>vtol_rotor_dual</quirk>
 		<quirk>non_standard</quirk>
 	</unit>
 
@@ -19014,7 +19014,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<chassis>Karnov UR Transport</chassis>
 		<model>all</model>
 		<unitType>VTOL</unitType>
-		<quirk>vtol_rotor</quirk>
+		<quirk>vtol_rotor_dual</quirk>
 	</unit>
 
 	<unit>
@@ -19035,7 +19035,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<model>(Production)</model>
 		<unitType>VTOL</unitType>
 		<quirk>bad_rep_is</quirk>
-		<quirk>vtol_rotor</quirk>
+		<quirk>vtol_rotor_dual</quirk>
 		<quirk>imp_sensors</quirk>
 	</unit>
 
@@ -19049,7 +19049,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 	<unit>
 		<chassis>Red Kite Attack VTOL</chassis>		
 		<unitType>VTOL</unitType>
-		<quirk>vtol_rotor</quirk>
+		<quirk>vtol_rotor_dual</quirk>
 		<weaponQuirk>
 			<weaponQuirkName>ammo_feed_problems</weaponQuirkName>
 			<location>TU</location>
@@ -19097,7 +19097,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 	<unit>
 		<chassis>Skadi Swift Attack VTOL</chassis>		
 		<unitType>VTOL</unitType>
-		<quirk>vtol_rotor</quirk>
+		<quirk>vtol_rotor_dual</quirk>
 	</unit>
 
 	<unit>
@@ -19118,7 +19118,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<chassis>Warrior Attack Helicopter</chassis>
 		<model>all</model>
 		<unitType>VTOL</unitType>
-		<quirk>vtol_rotor</quirk>
+		<quirk>vtol_rotor_coaxial</quirk>
 	</unit>
 
 	<unit>

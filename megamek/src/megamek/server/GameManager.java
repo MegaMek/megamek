@@ -1684,7 +1684,7 @@ public class GameManager implements IGameManager {
 
             int playerTeam = player.getTeam();
 
-            if (playerTeam != Player.TEAM_UNASSIGNED && playerTeam != Player.TEAM_NONE) {
+            if ((playerTeam != Player.TEAM_UNASSIGNED) && (playerTeam != Player.TEAM_NONE)) {
                 BVCountHelper bvcTeam = teamsInfo.get(playerTeam);
                 bvcTeam.bv += bvcPlayer.bv;
                 bvcTeam.bvInitial += bvcPlayer.bvInitial;

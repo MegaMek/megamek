@@ -1288,7 +1288,7 @@ public class RATGeneratorEditor extends JFrame {
                 if (row == 0) {
                     return "Salvage %";
                 } else if (row > factionRec.getRatingLevels().size() * CATEGORIES.length) {
-                    return WEIGHT_DIST_UNIT_TYPES[row - 1 - factionRec.getRatingLevels().size() * CATEGORIES.length];
+                    return UnitType.getTypeName(WEIGHT_DIST_UNIT_TYPES[row - 1 - factionRec.getRatingLevels().size() * CATEGORIES.length]);
                 } else {
                     return CATEGORIES[(row - 1) / factionRec.getRatingLevels().size()]
                             + " " + factionRec.getRatingLevels().get((row - 1) % factionRec.getRatingLevels().size());

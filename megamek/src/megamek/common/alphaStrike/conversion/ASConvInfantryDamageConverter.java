@@ -42,14 +42,13 @@ public class ASConvInfantryDamageConverter extends ASDamageConverter {
 
     @Override
     protected void processDamage() {
-        if (infantry.hasFieldWeapon()) {
+        if (infantry.hasFieldWeapon() && !infantry.hasActiveFieldArtillery()) {
             processSDamage();
             processMDamage();
             processLDamage();
             processFrontSpecialDamage(AC);
             processFrontSpecialDamage(FLK);
-        }
-        if (!infantry.hasFieldWeapon() || infantry.hasActiveFieldArtillery()){
+        } else {
             int baseRange = 0;
             if ((infantry.getSecondaryWeapon() != null) && (infantry.getSecondaryWeaponsPerSquad() >= 2)) {
                 baseRange = infantry.getSecondaryWeapon().getInfantryRange();

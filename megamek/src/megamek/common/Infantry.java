@@ -1668,6 +1668,7 @@ public class Infantry extends Entity {
 
         double ton = activeTroopers * mult;
         ton += activeFieldWeapons().stream().mapToDouble(Mounted::getTonnage).sum();
+        ton += getAmmo().stream().mapToDouble(Mounted::getTonnage).sum();
         return RoundWeight.nearestHalfTon(ton);
     }
 

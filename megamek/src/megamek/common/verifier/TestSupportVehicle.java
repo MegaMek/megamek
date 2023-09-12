@@ -84,7 +84,7 @@ public class TestSupportVehicle extends TestEntity {
         }
 
         /**
-         * Finds the enum value corresponding to a support vehicle based on movement mode.
+         * Finds the enum value corresponding to a support vehicle.
          *
          * @param entity The support vehicle
          * @return       The support vehicle type, or {@code null} if the entity's movement type is not
@@ -92,6 +92,10 @@ public class TestSupportVehicle extends TestEntity {
          */
         public static @Nullable
         SVType getVehicleType(Entity entity) {
+            // When grounded, FWS revert to wheeled movement mode; must be independent of this
+            if (entity instanceof FixedWingSupport) {
+                return FIXED_WING;
+            }
             switch (entity.getMovementMode()) {
                 case AIRSHIP:
                     return AIRSHIP;

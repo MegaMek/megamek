@@ -403,7 +403,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
     /** map overlays */
     KeyBindingsOverlay keybindOverlay;
-    PlanetaryConditionsOverlay planetaryConditionsOverlay;
+    public PlanetaryConditionsOverlay planetaryConditionsOverlay;
     public TurnDetailsOverlay turnDetailsOverlay;
 
     /** The coords where the mouse was last. */
@@ -437,7 +437,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             addDisplayable(keybindOverlay);
         }
 
-        // Avoid showing the planetary Conditions when they can't be used (in the lobby map preview)
+        // Avoid showing the planetary Conditions when they can't be used (in the lobby map preview or board editor)
         if (controller != null) {
             planetaryConditionsOverlay = new PlanetaryConditionsOverlay(this);
             addDisplayable(planetaryConditionsOverlay);

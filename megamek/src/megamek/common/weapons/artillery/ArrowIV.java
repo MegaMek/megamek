@@ -23,8 +23,17 @@ import megamek.server.GameManager;
  * @author Martin Metke
  * @since Sep 12, 2023
  */
+
+
 public class ArrowIV extends ArtilleryWeapon {
     private static final long serialVersionUID = -4495524659692575107L;
+
+    // Air-Defense Arrow IV (ADA) missile ranges differ from normal Arrow IV ammo
+    public final int ADA_MIN_RANGE = 0;
+    public final int ADA_SHORT_RANGE = 17;
+    public final int ADA_MED_RANGE = 34;
+    public final int ADA_LONG_RANGE = 51;
+    public final int ADA_EXT_RANGE = 51;
 
     public ArrowIV() {
         super();
@@ -56,11 +65,11 @@ public class ArrowIV extends ArtilleryWeapon {
         if (hasLoadedAmmo) {
             AmmoType atype = (AmmoType) weapon.getLinked().getType();
             if (atype.getMunitionType().contains(AmmoType.Munitions.M_ADA)) {
-                minRange = 0;
-                sRange = 17;
-                mRange = 34;
-                lRange = 51;
-                eRange = 51;
+                minRange = ADA_MIN_RANGE;
+                sRange = ADA_SHORT_RANGE;
+                mRange = ADA_MED_RANGE;
+                lRange = ADA_LONG_RANGE;
+                eRange = ADA_EXT_RANGE;
             }
         }
         return new int[] { minRange, sRange, mRange, lRange, eRange };

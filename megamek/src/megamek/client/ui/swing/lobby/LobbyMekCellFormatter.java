@@ -182,7 +182,7 @@ class LobbyMekCellFormatter {
             if (entity.isShutDown()) {
                 result.append(DOT_SPACER);
                 result.append(guiScaledFontHTML(GUIP.getWarningColor()));
-                result.append("\u23FC ").append(Messages.getString("ChatLounge.shutdown"));
+                result.append(WARNING_SIGN).append(Messages.getString("ChatLounge.shutdown"));
                 result.append("</FONT>");
             }
         }

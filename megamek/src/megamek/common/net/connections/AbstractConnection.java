@@ -286,6 +286,7 @@ public abstract class AbstractConnection {
             }
         } catch (java.io.InvalidClassException ex) {
             LogManager.getLogger().error(getConnectionTypeText(), ex);
+            close();
         } catch (SocketException | EOFException ignored) {
             // Do nothing, happens when the socket closes
             close();

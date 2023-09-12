@@ -21,7 +21,13 @@ import megamek.server.GameManager;
 import java.util.Vector;
 
 /**
- * @author Sebastian Brocks
+ * @author Martin Metke
+ *
+ * This class extends MissleWeaponHandler to ensure that Air-Defense Arrow IV
+ * missiles, which act differently from most other missiles, are handled correctly.
+ *
+ * Specifically, ADA Missiles do a single hit of 20 damage to 1 location without
+ * AE damage and without rolling on the cluster table.
  */
 public class ADAMissileWeaponHandler extends MissileWeaponHandler {
     private static final long serialVersionUID = 6329291710822071023L;

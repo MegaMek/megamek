@@ -3150,7 +3150,7 @@ public class Compute {
             if ((!ComputeECM.isAffectedByECM(attacker, attacker.getPosition(), g
                     .getEntity(waa.getTargetId()).getPosition(), allECMInfo))
                 && (wt.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE)
-                && (wt.hasFlag(WeaponType.F_MISSILE))) {
+                && (wt.hasFlag(WeaponType.F_MISSILE)) && null != at) {
                 // Check for linked artemis guidance system
                 if ((wt.getAmmoType() == AmmoType.T_LRM)
                         || (wt.getAmmoType() == AmmoType.T_LRM_IMP)
@@ -4962,7 +4962,10 @@ public class Compute {
         // +0 for same ground map / Low-Altitude hex
         // +2 for 1 LAH away
         // +4 for 2 LAH away
-        return (distance / Board.DEFAULT_BOARD_HEIGHT * 2);
+        if (distance <= 0){
+            return 0;
+        }
+        return (((distance - 1) / Board.DEFAULT_BOARD_HEIGHT) * 2);
 
     }
 

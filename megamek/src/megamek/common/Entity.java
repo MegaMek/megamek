@@ -11382,7 +11382,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     @Override
     public boolean isAirborneVTOLorWIGE() {
         // Dead VTOLs/ WiGEs can't be airborne
-        if(isDestroyed()){
+        if (isDestroyed()) {
             return false;
         }
 

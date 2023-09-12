@@ -14,29 +14,20 @@
 package megamek.common.weapons.artillery;
 
 import megamek.common.*;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.ADAMissileWeaponHandler;
-import megamek.common.weapons.AttackHandler;
-import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks
  * @since Oct 20, 2004
  */
-public class ISArrowIV extends ArtilleryWeapon {
-    private static final long serialVersionUID = -4495524659692575107L;
+public class ISArrowIV extends ArrowIV {
 
     public ISArrowIV() {
         super();
 
-        name = "Arrow IV";
         setInternalName("ISArrowIV");
         addLookupName("ISArrowIVSystem");
         addLookupName("IS Arrow IV System");
         addLookupName("IS Arrow IV Missile System");
-        heat = 10;
-        rackSize = 20;
-        ammoType = AmmoType.T_ARROW_IV;
         shortRange = 1;
         mediumRange = 2;
         longRange = 8;
@@ -44,11 +35,6 @@ public class ISArrowIV extends ArtilleryWeapon {
         tonnage = 15;
         criticals = 15;
         svslots = 7;
-        bv = 240;
-        cost = 450000;
-        this.flags = flags.or(F_MISSILE);
-        this.missileArmor = 20;
-        rulesRefs = "284, TO";
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setTechRating(RATING_E)
                 .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
@@ -58,36 +44,5 @@ public class ISArrowIV extends ArtilleryWeapon {
                 .setProductionFactions(F_TH)
                 .setReintroductionFactions(F_CC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    }
-
-    @Override
-    public int[] getRanges(Mounted weapon) {
-        // modify the ranges for Arrow missile systems based on the ammo selected
-        int minRange = getMinimumRange();
-        int sRange = getShortRange();
-        int mRange = getMediumRange();
-        int lRange = getLongRange();
-        int eRange = getExtremeRange();
-        boolean hasLoadedAmmo = (weapon.getLinked() != null);
-        if (hasLoadedAmmo) {
-            AmmoType atype = (AmmoType) weapon.getLinked().getType();
-            if (atype.getMunitionType().contains(AmmoType.Munitions.M_ADA)) {
-                minRange = 0;
-                sRange = 17;
-                mRange = 34;
-                lRange = 51;
-                eRange = 51;
-            }
-        }
-        return new int[] { minRange, sRange, mRange, lRange, eRange };
-    }
-
-    @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-                                              WeaponAttackAction waa, Game game, GameManager manager) {
-        if(waa.getAmmoMunitionType().contains(AmmoType.Munitions.M_ADA)){
-            return new ADAMissileWeaponHandler(toHit, waa, game, manager);
-        }
-        return super.getCorrectHandler(toHit, waa, game, manager);
     }
 }

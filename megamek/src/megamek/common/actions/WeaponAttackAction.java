@@ -1817,7 +1817,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     return Messages.getString("WeaponAttackAction.NoDirectCruiseMissile");
                 }
                 // ADA is _fired_ by artillery but is just a Flak attack, and so bypasses these restrictions
-                if (!atype.getMunitionType().contains(AmmoType.Munitions.M_ADA)) {
+                if (null != atype && !atype.getMunitionType().contains(AmmoType.Munitions.M_ADA)) {
                     // Direct fire artillery cannot be fired at less than 6 hexes,
                     // except at ASFs in the air (TO:AR 6th print, p153.)
                     if (!(target.isAirborne()) && (Compute.effectiveDistance(game, ae, target) <= 6)) {

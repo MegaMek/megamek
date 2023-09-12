@@ -1740,7 +1740,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 int attackingBA = (entity instanceof BattleArmor) ? ((BattleArmor) entity).getShootingStrength() : -1;
                 falloff = AreaEffectHelper.calculateDamageFallOff(ammoType, attackingBA, false).falloff;
             }
-            if(!specialArrowIV) {
+            if (!specialArrowIV) {
                 artyDamage -= falloff;
                 while ((artyDamage > 0) && (falloff > 0)) {
                     damage.append('/').append(artyDamage);
@@ -2308,7 +2308,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             wExtR.setText("7 - 8");
         } else if (atype.getAmmoType() == AmmoType.T_ARROW_IV) {
             // Special casing for ADA ranges
-            if(atype.getMunitionType().contains(AmmoType.Munitions.M_ADA)){
+            if (atype.getMunitionType().contains(AmmoType.Munitions.M_ADA)) {
                 wMinR.setText("---");
                 wShortR.setText("1 - 17 [0]");
                 wMedR.setText("18 - 34 [1]");

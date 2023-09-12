@@ -196,8 +196,8 @@ public class ArtilleryTargetingControl {
 
             // Given how accurate and long-ranged ADA missiles are, prioritize airborne targets if ADA is available
             // Short-circuit Indirect fire artillery targeting to leave tubes available for ADA direct fire.
-            if (e.isAirborne() || e.isAirborneVTOLorWIGE() || e.isAirborneAeroOnGroundMap()){
-               if(adaAvailable){
+            if(adaAvailable){
+                if (e.isAirborne() || e.isAirborneVTOLorWIGE() || e.isAirborneAeroOnGroundMap()){
                    // Forget about indirect fire for now.
                    targetSet = new HashSet<>();
                    return;

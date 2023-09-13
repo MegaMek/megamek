@@ -25,7 +25,7 @@ import megamek.server.GameManager;
  */
 
 
-public class ArrowIV extends ArtilleryWeapon {
+public abstract class ArrowIV extends ArtilleryWeapon {
     private static final long serialVersionUID = -4495524659692575107L;
 
     // Air-Defense Arrow IV (ADA) missile ranges differ from normal Arrow IV ammo

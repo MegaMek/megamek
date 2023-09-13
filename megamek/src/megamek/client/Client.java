@@ -27,6 +27,8 @@ import megamek.client.generator.skillGenerators.ModifiedTotalWarfareSkillGenerat
 import megamek.client.ui.IClientCommandHandler;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.boardview.BoardView;
+import megamek.client.ui.swing.tooltip.PilotToolTip;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.Building.DemolitionCharge;
 import megamek.common.actions.*;
@@ -1206,17 +1208,17 @@ public class Client implements IClientCommandHandler {
             report.append(r.getText());
         }
 
-        Set<Integer> set = new HashSet<>();
+        Set<Integer> setEntity = new HashSet<>();
         //find id stored in spans and extract it
-        Pattern p = Pattern.compile("<span id=(.*?)></span>");
-        Matcher m = p.matcher(report.toString());
+        Pattern pEntity = Pattern.compile("<span id='(.*?)'></span>");
+        Matcher mEntity = pEntity.matcher(report.toString());
 
         // add all instances to a hashset to prevent duplicates
-        while (m.find()) {
-            String cleanedText = m.group(1).replaceAll("[^\\d-]", "");
+        while (mEntity.find()) {
+            String cleanedText = mEntity.group(1);
             if (!cleanedText.isBlank()) {
                 try {
-                    set.add(Integer.parseInt(cleanedText));
+                    setEntity.add(Integer.parseInt(cleanedText));
                 } catch (Exception ignored) {
                 }
             }
@@ -1224,11 +1226,53 @@ public class Client implements IClientCommandHandler {
 
         String updatedReport = report.toString();
         // loop through the hashset of unique ids and replace the ids with img tags
-        for (int i : set) {
+        for (int i : setEntity) {
             if (getCachedImgTag(i) != null) {
-                updatedReport = updatedReport.replaceAll("<span id='" + i + "'></span>", getCachedImgTag(i));
+                updatedReport = updatedReport.replace("<span id='" + i + "'></span>", getCachedImgTag(i));
             }
         }
+
+        Set<String> setCrew = new HashSet<>();
+        //find id stored in spans and extract it
+        Pattern pCrew = Pattern.compile("<span crew='(.*?)'></span>");
+        Matcher mCrew = pCrew.matcher(report.toString());
+
+        // add all instances to a hashset to prevent duplicates
+        while (mCrew.find()) {
+            String cleanedText = mCrew.group(1);
+            if (!cleanedText.isBlank()) {
+                setCrew.add(cleanedText);
+            }
+        }
+
+        // loop through the hashset of unique ids and replace the ids with img tags
+        for (String tmpCrew : setCrew) {
+            String[] crewS = tmpCrew.split(":");
+            int entityID = -1;
+            int crewID = -1;
+
+            try {
+                entityID = Integer.parseInt(crewS[0]);
+                crewID = Integer.parseInt(crewS[1]);
+            } catch (Exception ignored) {
+            }
+
+            if (entityID != -1 && crewID != -1) {
+                Entity e = game.getEntity(entityID);
+                Crew crew = e.getCrew();
+                // Adjust the portrait size to the GUI scale and number of pilots
+                float imgSize = UIUtil.scaleForGUI(PilotToolTip.PORTRAIT_BASESIZE);
+                imgSize /= 0.2f * (crew.getSlotCount() - 1) + 1;
+                Image portrait = crew.getPortrait(crewID).getBaseImage().getScaledInstance(-1, (int) imgSize, Image.SCALE_SMOOTH);
+                // convert image to base64, add to the <img> tag and store in cache
+                BufferedImage bufferedImage = new BufferedImage(portrait.getWidth(null), portrait.getHeight(null), BufferedImage.TYPE_INT_RGB);
+                bufferedImage.getGraphics().drawImage(portrait, 0, 0, null);
+                String base64Text = ImageUtil.base64TextEncodeImage(bufferedImage);
+                String img = "<img src='data:image/png;base64," + base64Text + "'>";
+                updatedReport = updatedReport.replace("<span crew='" + entityID + ":" + crewID + "'></span>", img);
+            }
+        }
+
         return updatedReport;
     }
 

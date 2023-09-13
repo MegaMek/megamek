@@ -1,6 +1,6 @@
 #building block data file
 <BlockVersion>
-1.1
+1
 </BlockVersion>
 
 ##Write the version number just in case...
@@ -41,8 +41,9 @@ Hover
 </motion_type>
 
 <transporters>
-troopspace:8.0
 BattleArmorHandles - troopers:-1
+troopspace:4.0
+troopspace:4.0:omni
 </transporters>
 
 <cruiseMP>

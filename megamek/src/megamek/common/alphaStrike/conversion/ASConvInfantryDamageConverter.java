@@ -42,7 +42,7 @@ public class ASConvInfantryDamageConverter extends ASDamageConverter {
 
     @Override
     protected void processDamage() {
-        if (infantry.hasFieldWeapon()) {
+        if (infantry.hasFieldWeapon() && !infantry.hasActiveFieldArtillery()) {
             processSDamage();
             processMDamage();
             processLDamage();

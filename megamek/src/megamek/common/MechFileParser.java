@@ -465,7 +465,8 @@ public class MechFileParser {
                 if ((m.getLocation() != Mech.LOC_LARM)
                         && (m.getLocation() != Mech.LOC_LLEG)
                         && (m.getLocation() != Mech.LOC_RARM)
-                        && (m.getLocation() != Mech.LOC_RLEG)) {
+                        && (m.getLocation() != Mech.LOC_RLEG)
+                        && (m.getLocation() != Mech.LOC_CLEG)) {
                     throw new EntityLoadingException(
                             "Unable to load AES due to incompatible location for "+ent.getShortName());
                 }

@@ -24,6 +24,7 @@ import megamek.common.*;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.event.GameUnitDiedEvent;
 import megamek.common.options.OptionsConstants;
 
 import java.awt.event.ActionEvent;
@@ -314,6 +315,11 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         if (clientgui.getClient().getGame().getPhase().isSetArtilleryAutohitHexes()) {
             setStatusBarText(Messages.getString("SelectArtyAutoHitHexDisplay.waitingMinefieldPhase"));
         }
+    }
+
+    @Override
+    public void gameUnitDied(GameUnitDiedEvent evt){
+        // Do nothing
     }
 
     //

@@ -28,6 +28,7 @@ import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.event.GameUnitDiedEvent;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.FiringSolution;
 import megamek.common.weapons.Weapon;
@@ -1530,6 +1531,11 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
         clientgui.getClient().getGame().removeGameListener(this);
         clientgui.getBoardView().removeBoardViewListener(this);
         clientgui.getUnitDisplay().wPan.weaponList.removeListSelectionListener(this);
+    }
+
+    @Override
+    public void gameUnitDied(GameUnitDiedEvent evt){
+        // Do nothing
     }
 
     @Override

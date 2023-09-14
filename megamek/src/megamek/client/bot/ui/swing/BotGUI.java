@@ -124,7 +124,7 @@ public class BotGUI implements GameListener {
     }
     
     @Override
-    public void gameClientFeedbackRequest(GameCFREvent evt) {
+    public void gameClientFeedbackRequest(GameCFREvent e) {
 
     }
 
@@ -132,4 +132,10 @@ public class BotGUI implements GameListener {
     public void gameVictory(GameVictoryEvent e) {       
 
     }
+
+    @Override
+    public void gameUnitDied(GameUnitDiedEvent e){
+        // Do nothing
+    }
+
 }

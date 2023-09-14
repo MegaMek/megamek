@@ -14,6 +14,9 @@
 
 package megamek.common.event;
 import megamek.common.Entity;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.Weapon;
+import megamek.server.GameManager;
 
 /**
  * This adapter class overrides just the GameUnitDiedEvent handling of the
@@ -26,12 +29,21 @@ import megamek.common.Entity;
 public class GameUnitDiedListenerAdapter extends GameListenerAdapter {
 
     // Who would claim the death as a kill?
-    private Entity attacker;
+    private final Entity attacker;
+    // How was it done?
+    private final WeaponAttackAction action;
 
-    public GameUnitDiedListenerAdapter(Entity attacker){
+    public GameUnitDiedListenerAdapter(Entity attacker, WeaponAttackAction action){
         this.attacker = attacker;
+        this.action = action;
     }
     @Override
-    public void gameUnitDied(GameUnitDiedEvent e){
+    public void gameUnitDied(GameUnitDiedEvent e) {
+        GameManager gm = (GameManager) e.getSource();
+        Entity en = (Entity) e.getEntity();
+        // If our attacker's weapon action originally targeted this entity, take credit
+        if (action.getOriginalTargetId() == en.getId()){
+            gm.creditKill(en, attacker);
+        }
     }
 }

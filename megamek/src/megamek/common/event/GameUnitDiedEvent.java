@@ -16,6 +16,7 @@ package megamek.common.event;
 import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.IEntityRemovalConditions;
+import megamek.server.GameManager;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -36,8 +37,10 @@ public class GameUnitDiedEvent extends GameEvent {
     /**
      * Track game entity that just died
      */
-    private Entity entity;
-    private int condition;
+    private final Entity entity;
+    private final Game game;
+    private final int damage;
+    private final String reason;
 
     /**
      * @param source event source
@@ -45,10 +48,12 @@ public class GameUnitDiedEvent extends GameEvent {
      * @param entity that died
      */
     @SuppressWarnings("unchecked")
-    public GameUnitDiedEvent(Object source, Game game, Entity entity, int condition) {
+    public GameUnitDiedEvent(Object source, Game game, Entity entity, int damage, String reason) {
         super(source);
         this.entity = entity;
-        this.condition = condition;
+        this.game = game;
+        this.damage = damage;
+        this.reason = reason;
     }
 
     @Override
@@ -60,4 +65,12 @@ public class GameUnitDiedEvent extends GameEvent {
     public String getEventName() {
         return "Unit Died";
     }
+
+    public Entity getEntity(){
+        return this.entity;
+    }
+
+    public Game getGame() { return this.game; }
+    public int getDamage() { return this.damage; }
+    public String getReason() { return this.reason; }
 }

@@ -38,6 +38,7 @@ import megamek.common.actions.RamAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.event.GameUnitDiedEvent;
 import megamek.common.options.AbstractOptions;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
@@ -5223,6 +5224,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
             updateLoadButtons();
             butDone.setEnabled(true);
         }
+    }
+
+    @Override
+    public void gameUnitDied(GameUnitDiedEvent evt){
+        // Do nothing
     }
 
     /**

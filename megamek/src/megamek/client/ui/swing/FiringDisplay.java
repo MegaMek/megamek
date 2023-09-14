@@ -27,6 +27,7 @@ import megamek.common.actions.*;
 import megamek.common.enums.AimingMode;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.event.GameUnitDiedEvent;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.FiringSolution;
 import megamek.common.weapons.Weapon;
@@ -2457,6 +2458,12 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
     public void itemStateChanged(ItemEvent ev) {
 
     }
+
+    @Override
+    public void gameUnitDied(GameUnitDiedEvent evt){
+        // Do nothing
+    }
+
 
     // board view listener
     @Override

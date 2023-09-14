@@ -23,6 +23,7 @@ import megamek.common.actions.*;
 import megamek.common.enums.AimingMode;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.event.GameUnitDiedEvent;
 import megamek.common.options.OptionsConstants;
 import org.apache.logging.log4j.LogManager;
 
@@ -1479,6 +1480,11 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         if (clientgui.getClient().getGame().getPhase().isPhysical()) {
             setStatusBarText(Messages.getString("PhysicalDisplay.waitingForPhysicalAttackPhase"));
         }
+    }
+
+    @Override
+    public void gameUnitDied(GameUnitDiedEvent evt){
+        // Do nothing
     }
 
     //

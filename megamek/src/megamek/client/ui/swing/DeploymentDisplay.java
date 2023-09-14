@@ -27,6 +27,7 @@ import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.*;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.event.GameUnitDiedEvent;
 import megamek.common.options.OptionsConstants;
 import org.apache.logging.log4j.LogManager;
 
@@ -441,6 +442,11 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         if (clientgui.getClient().getGame().getPhase().isDeployment()) {
             setStatusBarText(Messages.getString("DeploymentDisplay.waitingForDeploymentPhase"));
         }
+    }
+
+    @Override
+    public void gameUnitDied(GameUnitDiedEvent evt){
+        // Do nothing
     }
 
     //

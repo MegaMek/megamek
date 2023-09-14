@@ -27122,9 +27122,6 @@ public class GameManager implements IGameManager {
 
         // Destroy the entity, unless it's already destroyed.
         if (!entity.isDoomed() && !entity.isDestroyed()) {
-            GameUnitDiedEvent gude = new GameUnitDiedEvent(this, game, entity, entity.damageThisRound, reason);
-            game.processGameEvent(gude);
-
             r = new Report(6365);
             r.subject = entity.getId();
             r.addDesc(entity);
@@ -27132,6 +27129,11 @@ public class GameManager implements IGameManager {
             vDesc.addElement(r);
 
             entity.setDoomed(true);
+
+            // Fire GameUnitDiedEvent here?
+            // @sleet01
+            GameUnitDiedEvent gude = new GameUnitDiedEvent(this, game, entity, entity.damageThisRound, reason);
+            game.processGameEvent(gude);
 
             // Kill any picked up MechWarriors
             Enumeration<Integer> iter = entity.getPickedUpMechWarriors().elements();

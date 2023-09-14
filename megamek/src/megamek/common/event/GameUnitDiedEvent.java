@@ -22,9 +22,10 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 /**
- * An event that is fired at the end of the victory phase, before the game state
- * is reset. It can be used to retrieve information from the game before the
- * state is reset and the lounge phase begins.
+ * An event that we will fire when an entity is destroyed or otherwise dies;
+ * attackers will register listeners temporarily, allowing us to determine if
+ * the current death occurred because of a specific units action - and give that
+ * unit credit for the kill
  *
  * @see Game#end(int, int)
  * @see GameListener
@@ -33,119 +34,30 @@ public class GameUnitDiedEvent extends GameEvent {
     private static final long serialVersionUID = -8470655646019563063L;
 
     /**
-     * Track game entities
+     * Track game entity that just died
      */
-    private Vector<Entity> entities = new Vector<>();
-    private Hashtable<Integer, Entity> entityIds = new Hashtable<>();
-
-    /**
-     * Track entities removed from the game (probably by death)
-     */
-    Vector<Entity> vOutOfGame = new Vector<>();
+    private Entity entity;
+    private int condition;
 
     /**
      * @param source event source
+     * @param game the game in question
+     * @param entity that died
      */
     @SuppressWarnings("unchecked")
-    public GameUnitDiedEvent(Object source, Game game) {
+    public GameUnitDiedEvent(Object source, Game game, Entity entity, int condition) {
         super(source);
-        for (Entity entity : game.getEntitiesVector()) {
-            entities.add(entity);
-            entityIds.put(entity.getId(), entity);
-        }
-
-        vOutOfGame = (Vector<Entity>) game.getOutOfGameEntitiesVector().clone();
-        for (Entity entity : vOutOfGame) {
-            entityIds.put(entity.getId(), entity);
-        }
+        this.entity = entity;
+        this.condition = condition;
     }
 
     @Override
     public void fireEvent(GameListener gl) {
-        gl.gameVictory(this);
+        gl.gameUnitDied(this);
     }
 
     @Override
     public String getEventName() {
-        return "Game Victory";
-    }
-
-    /**
-     * @return an enumeration of all the entities in the game.
-     */
-    public Enumeration<Entity> getEntities() {
-        return entities.elements();
-    }
-
-    /**
-     * @return the entity with the given id number, if any.
-     */
-    public Entity getEntity(int id) {
-        return entityIds.get(id);
-    }
-
-    /**
-     * @return an enumeration of salvageable entities.
-     */
-    // TODO: Correctly implement "Captured" Entities
-    public Enumeration<Entity> getGraveyardEntities() {
-        Vector<Entity> graveyard = new Vector<>();
-
-        for (Entity entity : vOutOfGame) {
-            if ((entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_SALVAGEABLE)
-                    || (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_CAPTURED)
-                    || (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_EJECTED)) {
-                graveyard.addElement(entity);
-            }
-        }
-
-        return graveyard.elements();
-    }
-
-    /**
-     * @return an enumeration of wrecked entities.
-     */
-    public Enumeration<Entity> getWreckedEntities() {
-        Vector<Entity> wrecks = new Vector<>();
-        for (Entity entity : vOutOfGame) {
-            if ((entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_SALVAGEABLE)
-                    || (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_EJECTED)
-                    || (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_CAPTURED)) {
-                wrecks.addElement(entity);
-            }
-        }
-
-        return wrecks.elements();
-    }
-
-    /**
-     * Returns an enumeration of entities that have retreated
-     */
-    public Enumeration<Entity> getRetreatedEntities() {
-        Vector<Entity> sanctuary = new Vector<>();
-
-        for (Entity entity : vOutOfGame) {
-            if ((entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_IN_RETREAT)
-                    || (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_PUSHED)) {
-                sanctuary.addElement(entity);
-            }
-        }
-
-        return sanctuary.elements();
-    }
-
-    /**
-     * Returns an enumeration of entities that were utterly destroyed
-     */
-    public Enumeration<Entity> getDevastatedEntities() {
-        Vector<Entity> smithereens = new Vector<>();
-
-        for (Entity entity : vOutOfGame) {
-            if (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_DEVASTATED) {
-                smithereens.addElement(entity);
-            }
-        }
-
-        return smithereens.elements();
+        return "Unit Died";
     }
 }

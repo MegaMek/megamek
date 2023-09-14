@@ -103,4 +103,7 @@ public class GameListenerAdapter implements GameListener {
     public void gameVictory(GameVictoryEvent e) {        
     }    
 
+    @Override
+    public void gameUnitDied(GameUnitDiedEvent e){
+    }
 }

@@ -28,6 +28,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.enums.WeaponSortOrder;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameVictoryEvent;
+import megamek.common.event.GameUnitDiedEvent;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
 import megamek.common.net.enums.PacketCommand;
@@ -981,8 +982,16 @@ public class GameManager implements IGameManager {
                 send(createTurnVectorPacket());
             }
             entityUpdate(entity.getId());
+
+            // Fire GameUnitDiedEvent here?
+            // GameVictoryEvent gve = new GameVictoryEvent(this, game);
+            // game.processGameEvent(gve);
+            GameUnitDiedEvent gude = new GameUnitDiedEvent(this, game, entity, condition);
+            game.processGameEvent(gude);
+
             game.removeEntity(entity.getId(), condition);
             send(createRemoveEntityPacket(entity.getId(), condition));
+
         }
     }
 
@@ -14053,6 +14062,8 @@ public class GameManager implements IGameManager {
                 if (ah != null) {
                     ah.setStrafing(waa.isStrafing());
                     ah.setStrafingFirstShot(waa.isStrafingFirstShot());
+                    // TODO: @sleet01 Possibly add GameUnitDiedEvent GameListenerAdapter here!
+                    // ideally we can pass the attacker and damage of the attack, at least.
                     game.addAttack(ah);
                 }
             }
@@ -34327,6 +34338,8 @@ public class GameManager implements IGameManager {
                     handleAttackReports.addElement(r);
                     ah.setAnnouncedEntityFiring(true);
                     lastAttackerId = aId;
+                    // TODO: @sleet01 Possibly add GameUnitDiedEvent GameListenerAdapter here!
+                    // ideally we can pass the attacker and damage of the attack, at least.
                 }
                 boolean keep = ah.handle(game.getPhase(), handleAttackReports);
                 if (keep) {

@@ -1021,7 +1021,8 @@ public abstract class Mech extends Entity {
                 mp = mpBoosters.calculateSprintMP(getWalkMP(mpCalculationSetting));
             }
         } else {
-            mp = super.getSprintMP(mpCalculationSetting);
+            // normally, sprint MP is just 2x walk speed
+            mp = getWalkMP(mpCalculationSetting) * 2;
         }
 
         return Math.max(0, mp - hardenedArmorMPReduction());

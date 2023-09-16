@@ -3705,7 +3705,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // check for heavy gauss rifle on fighter of small craft
             // Arguably a weapon effect, except that it only applies when used by a fighter (isn't recoil fun?)
             // So it's here instead of with other weapon mods that apply across the board
-            if ((wtype instanceof ISHGaussRifle) && !(ae instanceof Dropship)
+            if ((wtype != null) &&
+                    ((wtype.ammoType == AmmoType.T_GAUSS_HEAVY) ||
+                    (wtype.ammoType == AmmoType.T_IGAUSS_HEAVY)) && 
+                    !(ae instanceof Dropship)
                     && !(ae instanceof Jumpship)) {
                 toHit.addModifier(+1, Messages.getString("WeaponAttackAction.FighterHeavyGauss"));
             }

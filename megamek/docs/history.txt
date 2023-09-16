@@ -41,6 +41,8 @@ VERSION HISTORY:
 + Fix #4754: Updates to some VTOL and CV units that feature transportation capabilities which may not have loaded correctly
 + Fix #4727: Fixes an error with pilot images in reports
 + PR #4776: Fixed Wing Support with STOL no longer show as invalid in the lobby when set to altitude 0
++ Issue #1552: Added Arrow IV air defense missiles; Princess can use them if available
++ Issue #4782: Argotera now has full-head ejection system
 
 
 0.49.14 (2023-07-28 2100 UTC)

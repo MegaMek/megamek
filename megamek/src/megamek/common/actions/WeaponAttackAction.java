@@ -5221,6 +5221,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit = new ToHitData();
         }
 
+        // Anti-air targeting quirk vs airborne unit (excluding Indirect)
+        if (ae.hasQuirk(OptionsConstants.QUIRK_POS_ANTI_AIR) && (null != te)) {
+            if (te.isAirborneVTOLorWIGE() || te.isAirborne()) {
+                toHit.addModifier(-2, Messages.getString("WeaponAttackAction.AaVsAir"));
+            }
+        }
+
         //Homing warheads just need a flat 4 to seek out a successful TAG
         if (isHoming) {
             srt.setSpecialResolution(true);

@@ -4131,7 +4131,7 @@ public abstract class Mech extends Entity {
     }
 
     @Override
-    public boolean isLocationDeadly(Coords c, int currElevation) {
+    public boolean isLocationDeadly(Coords c) {
         Hex hex = game.getBoard().getHex(c);
 
         if (this.isIndustrial()

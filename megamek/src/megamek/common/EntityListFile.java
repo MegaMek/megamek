@@ -100,7 +100,7 @@ public class EntityListFile {
             if (mount.getType() instanceof AmmoType) {
                 output.append("\" shots=\"")
                         .append(mount.getBaseShotsLeft());
-                if (mount.getEntity().usesWeaponBays() 
+                if (mount.getEntity().usesWeaponBays()
                         || (mount.getEntity() instanceof Dropship)) {
                     output.append("\" capacity=\"")
                         .append(mount.getSize());
@@ -117,7 +117,7 @@ public class EntityListFile {
             if (mount.getEntity().isSupportVehicle()
                     && (mount.getType() instanceof InfantryWeapon)) {
                 for (Mounted ammo = mount.getLinked(); ammo != null; ammo = ammo.getLinked()) {
-                    if (((AmmoType) ammo.getType()).getMunitionType() == AmmoType.M_INFERNO) {
+                    if (((AmmoType) ammo.getType()).getMunitionType().contains(AmmoType.Munitions.M_INFERNO)) {
                         output.append("\" inferno=\"").append(ammo.getBaseShotsLeft())
                             .append(":").append(ammo.getOriginalShots());
                     } else {
@@ -258,9 +258,9 @@ public class EntityListFile {
                 }
             }
 
-            // 
+            //
             Map<Mounted, Integer> baySlotMap = new HashMap<>();
-            
+
             // Walk through the slots in this location.
             for (int loop = 0; loop < entity.getNumberOfCriticals(loc); loop++) {
 
@@ -289,7 +289,7 @@ public class EntityListFile {
                         mount = slot.getMount();
                     }
 
-                    // if the "equipment" is a weapons bay, 
+                    // if the "equipment" is a weapons bay,
                     // then let's make a note of it
                     if (entity.usesWeaponBays() && (mount != null)
                             && !mount.getBayAmmo().isEmpty()) {
@@ -343,27 +343,27 @@ public class EntityListFile {
                     // N.B. the slot CAN\"T be damaged at this point.
                     else if (!isDestroyed && (mount != null)
                             && (mount.getType() instanceof AmmoType)) {
-                        
+
                         String bayIndex = "";
-                        
+
                         for (Mounted bay : baySlotMap.keySet()) {
                             if (bay.ammoInBay(entity.getEquipmentNum(mount))) {
                                 bayIndex = String.valueOf(baySlotMap.get(bay));
                             }
                         }
-                        
+
                         thisLoc.append(indentStr(indentLvl + 1) + "<slot index=\"");
                         thisLoc.append(loop + 1);
                         thisLoc.append("\" type=\"");
                         thisLoc.append(mount.getType().getInternalName());
                         thisLoc.append("\" shots=\"");
                         thisLoc.append(mount.getBaseShotsLeft());
-                        
+
                         if (!bayIndex.isEmpty()) {
                             thisLoc.append("\" weaponsBayIndex=\"");
                             thisLoc.append(bayIndex);
                         }
-                        
+
                         thisLoc.append("\"/>\n");
                         haveSlot = true;
                     }
@@ -620,7 +620,7 @@ public class EntityListFile {
             }
             devastated.add(entity);
         }
-        
+
         if (!living.isEmpty()) {
             output.write("\n");
             output.write(indentStr(1) + "<survivors>\n\n");
@@ -837,7 +837,7 @@ public class EntityListFile {
                 // crits
                 output.write(EntityListFile.getTankCritString(tentity));
             }
-            
+
             // Aero stuff that also applies to LAMs
             if (entity instanceof IAero) {
                 IAero a = (IAero) entity;
@@ -921,7 +921,7 @@ public class EntityListFile {
 
                 // general aero crits
                 output.write(EntityListFile.getAeroCritString(a));
-                
+
                 // dropship only crits
                 if (a instanceof Dropship) {
                     Dropship d = (Dropship) a;
@@ -984,7 +984,7 @@ public class EntityListFile {
                 }
                 output.write(indentStr(indentLvl + 1) + "</c3iset>\n");
             }
-            
+
             // Write the NC3 Data if needed
             if (entity.hasNavalC3()) {
                 output.write(indentStr(indentLvl + 1) + "<NC3set>\n");
@@ -1000,7 +1000,7 @@ public class EntityListFile {
                 }
                 output.write(indentStr(indentLvl + 1) + "</NC3set>\n");
             }
-            
+
             // Record if this entity is transported by another
             if (entity.getTransportId() != Entity.NONE) {
                 output.write(indentStr(indentLvl + 1) + "<Conveyance id=\"" + entity.getTransportId());
@@ -1022,7 +1022,7 @@ public class EntityListFile {
                 output.write(entity.getGame().getForces().forceStringFor(entity));
                 output.write("\"/>\n");
             }
-            
+
             // Write the escape craft data, if needed
             if (entity instanceof Aero) {
                 Aero aero = (Aero) entity;
@@ -1053,12 +1053,12 @@ public class EntityListFile {
                     }
                     output.write(indentStr(indentLvl + 1) + "</EscapedPassengers>\n");
                 }
-                if (craft instanceof EscapePods) {                   
+                if (craft instanceof EscapePods) {
                     // Original number of pods, used to set the strength of a group of pods
                     output.write(indentStr(indentLvl + 1) + "<ONumberOfPods number=\"" + craft.get0SI());
                     output.write("\"/>\n");
                 }
-                
+
             } else if (entity instanceof EjectedCrew) {
                 EjectedCrew eCrew = (EjectedCrew) entity;
                 if (!eCrew.getNOtherCrew().isEmpty()) {
@@ -1091,7 +1091,7 @@ public class EntityListFile {
 
     /**
      * Writes crew attributes that are tracked individually for multi-crew cockpits.
-     * 
+     *
      * @param output
      * @param entity
      * @param crew
@@ -1165,7 +1165,7 @@ public class EntityListFile {
             output.write(extraData);
         }
     }
-    
+
     private static void writeLAMAeroAttributes(Writer output, final LAMPilot crew,
             boolean rpgGunnery) throws IOException {
         output.write("\" gunneryAero=\"");
@@ -1180,11 +1180,11 @@ public class EntityListFile {
         }
         output.write("\" pilotingAero=\"");
         output.write(String.valueOf(crew.getPilotingAero()));
-    }    
+    }
 
     /**
      * Writes attributes that pertain to entire crew.
-     * 
+     *
      * @param output
      * @param entity
      * @param crew
@@ -1263,7 +1263,7 @@ public class EntityListFile {
         retVal = retVal.concat("\"/>\n");
         return retVal;
     }
-    
+
     // Aero crits
     private static String getAeroCritString(Aero a) {
 

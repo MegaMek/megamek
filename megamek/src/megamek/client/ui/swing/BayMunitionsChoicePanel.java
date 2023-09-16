@@ -31,15 +31,15 @@ import java.util.stream.Collectors;
  */
 public class BayMunitionsChoicePanel extends JPanel {
     private static final long serialVersionUID = -7741380967676720496L;
-    
+
     private final Entity entity;
     private final Game game;
     private final List<AmmoRowPanel> rows = new ArrayList<>();
-    
+
     public BayMunitionsChoicePanel(Entity entity, Game game) {
         this.entity = entity;
         this.game = game;
-        
+
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.WEST;
@@ -66,7 +66,7 @@ public class BayMunitionsChoicePanel extends JPanel {
             }
         }
     }
-    
+
     /**
      * Change the munition types of the bay ammo mounts to the selected values. If there are more
      * munition types than there were originally, additional ammo bin mounts will be added. If fewer,
@@ -119,26 +119,26 @@ public class BayMunitionsChoicePanel extends JPanel {
             }
         }
     }
-    
+
     class AmmoRowPanel extends JPanel implements ChangeListener {
         /**
-         * 
+         *
          */
         private static final long serialVersionUID = 7251618728823971065L;
-        
+
         private final JLabel lblTonnage = new JLabel();
-        
+
         private final Mounted bay;
         private final int at;
         private final int rackSize;
         private final int techBase;
         private final List<Mounted> ammoMounts;
-        
+
         private final List<JSpinner> spinners;
         private final List<AmmoType> munitions;
-        
+
         private double tonnage;
-        
+
         AmmoRowPanel(Mounted bay, int at, int rackSize, List<Mounted> ammoMounts) {
             this.bay = bay;
             this.at = at;
@@ -146,15 +146,15 @@ public class BayMunitionsChoicePanel extends JPanel {
             this.ammoMounts = new ArrayList<>(ammoMounts);
             this.spinners = new ArrayList<>();
             Dimension spinnerSize =new Dimension(55, 25);
-            
+
             final Optional<WeaponType> wtype = bay.getBayWeapons().stream()
                     .map(entity::getEquipment)
                     .map(m -> (WeaponType) m.getType()).findAny();
-            
+
             // set the bay's tech base to that of any weapon in the bay
             // an assumption is made here that bays don't mix clan-only and IS-only tech base
             this.techBase = wtype.map(EquipmentType::getTechBase).orElse(WeaponType.TECH_BASE_ALL);
-            
+
             munitions = AmmoType.getMunitionsFor(at).stream()
                     .filter(this::includeMunition).collect(Collectors.toList());
             tonnage = ammoMounts.stream().mapToDouble(Mounted::getSize).sum();
@@ -175,7 +175,7 @@ public class BayMunitionsChoicePanel extends JPanel {
                 }
                 spinners.add(spn);
             }
-            
+
             setLayout(new GridBagLayout());
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.gridx = 0;
@@ -206,7 +206,7 @@ public class BayMunitionsChoicePanel extends JPanel {
             }
             recalcMaxValues();
         }
-        
+
         private boolean includeMunition(AmmoType atype) {
             if (!atype.canAeroUse(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS))
                     || (atype.getAmmoType() != at)
@@ -215,8 +215,8 @@ public class BayMunitionsChoicePanel extends JPanel {
                             && (atype.getTechBase() != AmmoType.TECH_BASE_ALL)
                             && (techBase != AmmoType.TECH_BASE_ALL))
                     || !atype.isLegal(game.getOptions().intOption(OptionsConstants.ALLOWED_YEAR),
-                            SimpleTechLevel.getGameTechLevel(game), 
-                            techBase == AmmoType.TECH_BASE_CLAN, 
+                            SimpleTechLevel.getGameTechLevel(game),
+                            techBase == AmmoType.TECH_BASE_CLAN,
                             techBase == AmmoType.TECH_BASE_ALL,
                             game.getOptions().booleanOption(OptionsConstants.ALLOWED_SHOW_EXTINCT))) {
                 return false;
@@ -226,20 +226,23 @@ public class BayMunitionsChoicePanel extends JPanel {
                             OptionsConstants.ADVAERORULES_AT2_NUKES)) {
                 return false;
             }
-            if ((atype.getMunitionType() & AmmoType.M_ARTEMIS_CAPABLE) != 0) {
+            if (atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE)) {
                 return entity.hasWorkingMisc(MiscType.F_ARTEMIS)
                         || entity.hasWorkingMisc(MiscType.F_ARTEMIS_PROTO);
             }
-            if ((atype.getMunitionType() & AmmoType.M_ARTEMIS_V_CAPABLE) != 0) {
+            if (atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_V_CAPABLE)) {
                 return entity.hasWorkingMisc(MiscType.F_ARTEMIS_V);
             }
             return true;
         }
-        
+
         private String createMunitionLabel(AmmoType atype) {
             if (atype.getAmmoType() == AmmoType.T_MML) {
-                if ((atype.getMunitionType() & (AmmoType.M_ARTEMIS_CAPABLE | AmmoType.M_ARTEMIS_V_CAPABLE))
-                        == 0) {
+                EnumSet<AmmoType.Munitions> artemisCapable = EnumSet.of(
+                        AmmoType.Munitions.M_ARTEMIS_CAPABLE,
+                        AmmoType.Munitions.M_ARTEMIS_V_CAPABLE
+                );
+                if (atype.getMunitionType().stream().noneMatch(artemisCapable::contains)) {
                     return Messages.getString(atype.hasFlag(AmmoType.F_MML_LRM)
                             ? "CustomMechDialog.LRM" : "CustomMechDialog.SRM");
                 } else {
@@ -247,7 +250,7 @@ public class BayMunitionsChoicePanel extends JPanel {
                             ? "CustomMechDialog.LRMArtemis" : "CustomMechDialog.SRMArtemis");
                 }
             }
-            
+
             if (atype.hasFlag(AmmoType.F_CAP_MISSILE)) {
                 String tele = atype.hasFlag(AmmoType.F_TELE_MISSILE) ? "-T" : "";
                 if (atype.hasFlag(AmmoType.F_PEACEMAKER)) {
@@ -262,25 +265,25 @@ public class BayMunitionsChoicePanel extends JPanel {
                     return Messages.getString("CustomMechDialog.Barracuda") + tele;
                 }
             }
-            
-            if ((atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)
-                    || (atype.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE)) {
+
+            if ((atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE))
+                    || (atype.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_V_CAPABLE))) {
                 return Messages.getString("CustomMechDialog.Artemis");
             }
-            
+
             // ATM munitions
-            if ((atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE)
-                    || (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE)) {
+            if ((atype.getMunitionType().contains(AmmoType.Munitions.M_HIGH_EXPLOSIVE))
+                    || (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))) {
                 return atype.getDesc();
             }
-            
+
             if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS)) {
                 if (atype.getAmmoType() == AmmoType.T_ARROW_IV
                         || atype.getAmmoType() == AmmoType.T_LONG_TOM
                         || atype.getAmmoType() == AmmoType.T_SNIPER
                         || atype.getAmmoType() == AmmoType.T_THUMPER
                         || atype.getAmmoType() == AmmoType.T_CRUISE_MISSILE) {
-                    if (atype.getMunitionType() == AmmoType.M_STANDARD) {
+                    if (atype.getMunitionType().contains(AmmoType.Munitions.M_STANDARD)) {
                         return Messages.getString("CustomMechDialog.StandardMunition");
                     }
                     return atype.getShortName();
@@ -288,7 +291,7 @@ public class BayMunitionsChoicePanel extends JPanel {
             }
             return Messages.getString("CustomMechDialog.StandardMunition");
         }
-        
+
         private void recalcMaxValues() {
             double[] currentWeight = new double[spinners.size()];
             double remaining = tonnage;

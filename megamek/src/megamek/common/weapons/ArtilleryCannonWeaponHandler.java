@@ -151,33 +151,35 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
         // According to TacOps eratta, artillery cannons can only fire standard
         // rounds and fuel-air cannon shells (Interstellar Ops p165).
         // But, they're still in as unofficial tech, because they're fun. :)
-        if (ammoType.getMunitionType() == AmmoType.M_FLARE) {
-            int radius;
-            if (ammoType.getAmmoType() == AmmoType.T_LONG_TOM) {
-                radius = 3;
-            } else if (ammoType.getAmmoType() == AmmoType.T_SNIPER) {
-                radius = 2;
-            } else {
-                radius = 1;
-            }
-            gameManager.deliverArtilleryFlare(targetPos, radius);
-            return false;
-        } else if (ammoType.getMunitionType() == AmmoType.M_DAVY_CROCKETT_M) {
-            // The appropriate term here is "Bwahahahahaha..."
-            gameManager.doNuclearExplosion(targetPos, 1, vPhaseReport);
-            return false;
-        } else if (ammoType.getMunitionType() == AmmoType.M_FASCAM) {
-            gameManager.deliverFASCAMMinefield(targetPos, ae.getOwner().getId(),
-                    ammoType.getRackSize(), ae.getId());
-            return false;
-        } else if (ammoType.getMunitionType() == AmmoType.M_SMOKE) {
-            gameManager.deliverArtillerySmoke(targetPos, vPhaseReport);
-            return false;
-        } else if (ammoType.getMunitionType() == AmmoType.M_FAE) {
-            AreaEffectHelper.processFuelAirDamage(targetPos,
-                    ammoType, ae, vPhaseReport, gameManager);
+        if(null != ammoType) {
+            if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_FLARE)) {
+                int radius;
+                if (ammoType.getAmmoType() == AmmoType.T_LONG_TOM) {
+                    radius = 3;
+                } else if (ammoType.getAmmoType() == AmmoType.T_SNIPER) {
+                    radius = 2;
+                } else {
+                    radius = 1;
+                }
+                gameManager.deliverArtilleryFlare(targetPos, radius);
+                return false;
+            } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_DAVY_CROCKETT_M)) {
+                // The appropriate term here is "Bwahahahahaha..."
+                gameManager.doNuclearExplosion(targetPos, 1, vPhaseReport);
+                return false;
+            } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_FASCAM)) {
+                gameManager.deliverFASCAMMinefield(targetPos, ae.getOwner().getId(),
+                        ammoType.getRackSize(), ae.getId());
+                return false;
+            } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_SMOKE)) {
+                gameManager.deliverArtillerySmoke(targetPos, vPhaseReport);
+                return false;
+            } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_FAE)) {
+                AreaEffectHelper.processFuelAirDamage(targetPos,
+                        ammoType, ae, vPhaseReport, gameManager);
 
-            return false;
+                return false;
+            }
         }
 
         int altitude = 0;

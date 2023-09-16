@@ -13,26 +13,21 @@
  */
 package megamek.common.weapons.artillery;
 
-import megamek.common.AmmoType;
-import megamek.common.SimpleTechLevel;
+import megamek.common.*;
 
 /**
  * @author Sebastian Brocks
  * @since Oct 20, 2004
  */
-public class ISArrowIV extends ArtilleryWeapon {
-    private static final long serialVersionUID = -4495524659692575107L;
+public class ISArrowIV extends ArrowIV {
 
     public ISArrowIV() {
         super();
-        name = "Arrow IV";
+
         setInternalName("ISArrowIV");
         addLookupName("ISArrowIVSystem");
         addLookupName("IS Arrow IV System");
         addLookupName("IS Arrow IV Missile System");
-        heat = 10;
-        rackSize = 20;
-        ammoType = AmmoType.T_ARROW_IV;
         shortRange = 1;
         mediumRange = 2;
         longRange = 8;
@@ -40,11 +35,6 @@ public class ISArrowIV extends ArtilleryWeapon {
         tonnage = 15;
         criticals = 15;
         svslots = 7;
-        bv = 240;
-        cost = 450000;
-        this.flags = flags.or(F_MISSILE);
-        this.missileArmor = 20;
-        rulesRefs = "284, TO";
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setTechRating(RATING_E)
                 .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)

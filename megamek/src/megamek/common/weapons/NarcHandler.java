@@ -50,7 +50,7 @@ public class NarcHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -72,7 +72,7 @@ public class NarcHandler extends MissileWeaponHandler {
             calcCounterAV();
         }
         // Report AMS/Pointdefense failure due to Overheating.
-        if (pdOverheated 
+        if (pdOverheated
                 && (!(amsBayEngaged
                         || amsBayEngagedCap
                         || amsBayEngagedMissile
@@ -83,7 +83,7 @@ public class NarcHandler extends MissileWeaponHandler {
             r.subject = subjectId;
             r.indent();
             vPhaseReport.addElement(r);
-        } 
+        }
         if (amsEngaged || apdsEngaged || amsBayEngagedMissile || pdBayEngagedMissile) {
             Report r = new Report(3235);
             r.subject = subjectId;
@@ -109,7 +109,7 @@ public class NarcHandler extends MissileWeaponHandler {
         }
         return 1;
     }
-    
+
     /**
      * Sets the appropriate AMS Bay reporting flag depending on what type of missile this is
      */
@@ -117,7 +117,7 @@ public class NarcHandler extends MissileWeaponHandler {
     protected void setAMSBayReportingFlag() {
         amsBayEngagedMissile = true;
     }
-    
+
     /**
      * Sets the appropriate PD Bay reporting flag depending on what type of missile this is
      */
@@ -128,14 +128,14 @@ public class NarcHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
     @Override
     protected int calcnCluster() {
         return 1;
     }
-    
+
     @Override
     /**
      * Narcs apply "damage" all in one block for AMS purposes
@@ -147,7 +147,7 @@ public class NarcHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -157,7 +157,7 @@ public class NarcHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common
      * .Entity, java.util.Vector, megamek.common.Building, int, int, int, int)
@@ -181,7 +181,7 @@ public class NarcHandler extends MissileWeaponHandler {
             }
         }
         hit.setAttackerId(getAttackerId());
-        
+
         // Catch Protomech near-misses here.
         // So what do we do for a near miss on a glider? Assume attach to wings.
         if (entityTarget instanceof Protomech
@@ -192,7 +192,7 @@ public class NarcHandler extends MissileWeaponHandler {
             vPhaseReport.add(r);
             return;
         }
-        
+
         if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
                 .getCover(), Compute.targetSideTable(ae, entityTarget, weapon
                 .getCalledShot().getCall()))) {
@@ -210,7 +210,7 @@ public class NarcHandler extends MissileWeaponHandler {
                 hit = entityTarget.getTransferLocation(hit);
             }
         }
-        
+
         // Now the same check for ProtoMechs. We've already covered near-misses
         // above, so here we only have to worry about the actual hits left over.
         if (entityTarget instanceof Protomech) {
@@ -219,7 +219,7 @@ public class NarcHandler extends MissileWeaponHandler {
                 hit = entityTarget.getTransferLocation(hit);
             }
         }
-       
+
         AmmoType atype = (AmmoType) ammo.getType();
         if (atype.getAmmoType() == AmmoType.T_NARC) {
             // narced
@@ -234,7 +234,7 @@ public class NarcHandler extends MissileWeaponHandler {
         } else if (atype.getAmmoType() == AmmoType.T_INARC) {
             // iNarced
             INarcPod pod = null;
-            if (atype.getMunitionType() == AmmoType.M_ECM) {
+            if (atype.getMunitionType().contains(AmmoType.Munitions.M_ECM)) {
                 pod = new INarcPod(ae.getOwner().getTeam(), INarcPod.ECM,
                         hit.getLocation());
                 Report r = new Report(3251);
@@ -242,7 +242,7 @@ public class NarcHandler extends MissileWeaponHandler {
                 r.add(entityTarget.getDisplayName());
                 r.add(entityTarget.getLocationAbbr(hit));
                 vPhaseReport.addElement(r);
-            } else if (atype.getMunitionType() == AmmoType.M_HAYWIRE) {
+            } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_HAYWIRE)) {
                 pod = new INarcPod(ae.getOwner().getTeam(), INarcPod.HAYWIRE,
                         hit.getLocation());
                 Report r = new Report(3252);
@@ -250,7 +250,7 @@ public class NarcHandler extends MissileWeaponHandler {
                 r.add(entityTarget.getDisplayName());
                 r.add(entityTarget.getLocationAbbr(hit));
                 vPhaseReport.addElement(r);
-            } else if (atype.getMunitionType() == AmmoType.M_NEMESIS) {
+            } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_NEMESIS)) {
                 pod = new INarcPod(ae.getOwner().getTeam(), INarcPod.NEMESIS,
                         hit.getLocation());
                 Report r = new Report(3253);
@@ -270,7 +270,7 @@ public class NarcHandler extends MissileWeaponHandler {
             entityTarget.attachINarcPod(pod);
         }
     }
-    
+
     private boolean narcCanAttachTo(Entity entity, int location) {
         return (entity.getInternal(location) > 0)
             && !entity.isLocationBlownOff(location)

@@ -28,6 +28,7 @@ import megamek.common.actions.WeaponAttackAction;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.EnumSet;
 import java.util.Vector;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -126,7 +127,7 @@ public class FiringPlanTest {
         //noinspection PointlessArithmeticExpression
         double expected = 1 - ((1 - 0) * (1 - 0.0024) * (1 - 0));
         assertEquals(expected, testFiringPlan.getKillProbability(), TOLERANCE);
-        
+
         when(mockWeaponFireInfoMG.getKillProbability()).thenReturn(1.0);
         when(mockWeaponFireInfoPPC.getKillProbability()).thenReturn(0.0024);
         when(mockWeaponFireInfoERML.getKillProbability()).thenReturn(0.0);
@@ -134,7 +135,7 @@ public class FiringPlanTest {
         //noinspection PointlessArithmeticExpression
         expected = 1 - ((1 - 1) * (1 - 0.0024) * (1 - 0));
         assertEquals(expected, testFiringPlan.getKillProbability(), TOLERANCE);
-        
+
         when(mockWeaponFireInfoMG.getKillProbability()).thenReturn(0.5);
         when(mockWeaponFireInfoPPC.getKillProbability()).thenReturn(0.5);
         when(mockWeaponFireInfoERML.getKillProbability()).thenReturn(0.5);
@@ -195,7 +196,7 @@ public class FiringPlanTest {
         when(mockLRM.getLinked()).thenReturn(mockAmmoLRM);
         AmmoType mockAmmoTypeLRM = mock(AmmoType.class);
         when(mockAmmoLRM.getType()).thenReturn(mockAmmoTypeLRM);
-        when(mockAmmoTypeLRM.getMunitionType()).thenReturn(AmmoType.M_STANDARD);
+        when(mockAmmoTypeLRM.getMunitionType()).thenReturn(EnumSet.of(AmmoType.Munitions.M_STANDARD));
         when(mockAmmoTypeLRM.getDamagePerShot()).thenReturn(1);
 
         WeaponFireInfo mockInfoLBX = mock(WeaponFireInfo.class);
@@ -209,10 +210,10 @@ public class FiringPlanTest {
         Mounted mockAmmoLBX = mock(Mounted.class);
         when(mockLBX.getLinked()).thenReturn(mockAmmoLBX);
         AmmoType mockAmmoTypeLBXCluster = mock(AmmoType.class);
-        when(mockAmmoTypeLBXCluster.getMunitionType()).thenReturn(AmmoType.M_CLUSTER);
+        when(mockAmmoTypeLBXCluster.getMunitionType()).thenReturn(EnumSet.of(AmmoType.Munitions.M_CLUSTER));
         when(mockAmmoTypeLBXCluster.getDamagePerShot()).thenReturn(1);
         AmmoType mockAmmoTypeLBXSlug = mock(AmmoType.class);
-        when(mockAmmoTypeLBXSlug.getMunitionType()).thenReturn(AmmoType.M_STANDARD);
+        when(mockAmmoTypeLBXSlug.getMunitionType()).thenReturn(EnumSet.of(AmmoType.Munitions.M_STANDARD));
         when(mockAmmoTypeLBXSlug.getDamagePerShot()).thenReturn(1);
 
         WeaponFireInfo mockInfoSRM = mock(WeaponFireInfo.class);
@@ -227,7 +228,7 @@ public class FiringPlanTest {
         when(mockSRM.getLinked()).thenReturn(mockAmmoSRM);
         AmmoType mockAmmoTypeSRM = mock(AmmoType.class);
         when(mockAmmoSRM.getType()).thenReturn(mockAmmoTypeSRM);
-        when(mockAmmoTypeSRM.getMunitionType()).thenReturn(AmmoType.M_STANDARD);
+        when(mockAmmoTypeSRM.getMunitionType()).thenReturn(EnumSet.of(AmmoType.Munitions.M_STANDARD));
         when(mockAmmoTypeSRM.getDamagePerShot()).thenReturn(2);
 
         FiringPlan testPlan = spy(new FiringPlan(mockTarget));

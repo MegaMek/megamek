@@ -284,6 +284,9 @@ public abstract class AbstractConnection {
             while ((np = readNetworkPacket()) != null) {
                 processPacket(np);
             }
+        } catch (java.io.InvalidClassException ex) {
+            LogManager.getLogger().error(getConnectionTypeText(), ex);
+            close();
         } catch (SocketException | EOFException ignored) {
             // Do nothing, happens when the socket closes
             close();

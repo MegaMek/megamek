@@ -46,8 +46,8 @@ public class MekMortarSmokeHandler extends AmmoWeaponHandler {
 
         Mounted ammoUsed = ae.getEquipment(waa.getAmmoId());
         final AmmoType ammoType = (ammoUsed == null) ? null : (AmmoType) ammoUsed.getType();
-        
-        if ((ammoType == null) || (ammoType.getMunitionType() != AmmoType.M_SMOKE_WARHEAD)) {
+
+        if ((ammoType == null) || (!ammoType.getMunitionType().contains(AmmoType.Munitions.M_SMOKE_WARHEAD))) {
             LogManager.getLogger().error("Not using smoke ammo!");
             return true;
         }
@@ -104,7 +104,7 @@ public class MekMortarSmokeHandler extends AmmoWeaponHandler {
         // Set Margin of Success/Failure.
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
         int duration = wtype.getRackSize() * 2;
-        
+
         if (!bMissed) {
             r = new Report(3190);
             r.subject = subjectId;
@@ -115,7 +115,7 @@ public class MekMortarSmokeHandler extends AmmoWeaponHandler {
             targetPos = Compute.scatter(targetPos, 1);
             if (game.getBoard().contains(targetPos)) {
                 // misses and scatters to another hex
-                r = new Report(3195);                    
+                r = new Report(3195);
                 r.subject = subjectId;
                 r.add(targetPos.getBoardNum());
                 vPhaseReport.addElement(r);

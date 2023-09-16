@@ -744,18 +744,18 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
             Mounted ammoMount = mounted.getLinked();
             AmmoType ammoType = (AmmoType) ammoMount.getType();
             waa.setAmmoId(ammoMount.getEntity().getEquipmentNum(ammoMount));
-            long ammoMunitionType = ammoType.getMunitionType();
+            EnumSet<AmmoType.Munitions> ammoMunitionType = ammoType.getMunitionType();
             waa.setAmmoMunitionType(ammoMunitionType);
             waa.setAmmoCarrier(ammoMount.getEntity().getId());
-            if (((ammoMunitionType == AmmoType.M_THUNDER_VIBRABOMB)
+            if (((ammoMunitionType.contains(AmmoType.Munitions.M_THUNDER_VIBRABOMB))
                     && ((ammoType.getAmmoType() == AmmoType.T_LRM)
                             || (ammoType.getAmmoType() == AmmoType.T_LRM_IMP)
                             || (ammoType.getAmmoType() == AmmoType.T_MML)))
-                    || (ammoType.getMunitionType() == AmmoType.M_VIBRABOMB_IV)) {
+                    || (ammoType.getMunitionType().contains(AmmoType.Munitions.M_VIBRABOMB_IV))) {
                 VibrabombSettingDialog vsd = new VibrabombSettingDialog(clientgui.frame);
                 vsd.setVisible(true);
                 waa.setOtherAttackInfo(vsd.getSetting());
-                waa.setHomingShot(ammoType.getMunitionType() == AmmoType.M_HOMING && ammoMount.curMode().equals("Homing"));
+                waa.setHomingShot(ammoType.getMunitionType().contains(AmmoType.Munitions.M_HOMING) && ammoMount.curMode().equals("Homing"));
             }
         }
 

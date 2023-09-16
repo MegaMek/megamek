@@ -13,20 +13,17 @@
  */
 package megamek.common.weapons.artillery;
 
-import megamek.common.AmmoType;
-import megamek.common.SimpleTechLevel;
+import megamek.common.*;
 
 /**
  * @author Sebastian Brocks
  * @since Oct 20, 2004
  */
-public class CLArrowIV extends ArtilleryWeapon {
-    private static final long serialVersionUID = -8623816593973861926L;
+public class CLArrowIV extends ArrowIV {
 
     public CLArrowIV() {
         super();
 
-        name = "Arrow IV";
         setInternalName("CLArrowIV");
         addLookupName("CLArrowIVSystem");
         addLookupName("Clan Arrow IV System");
@@ -41,11 +38,6 @@ public class CLArrowIV extends ArtilleryWeapon {
         tonnage = 12;
         criticals = 12;
         svslots = 6;
-        bv = 240;
-        cost = 450000;
-        this.flags = flags.or(F_MISSILE);
-        this.missileArmor = 20;
-        rulesRefs = "284, TO";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
                 .setTechRating(RATING_F)
                 .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)

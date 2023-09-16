@@ -812,12 +812,12 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                                                    jumpLanding, step, logMsg);
                     break;
                 case Terrains.ICE:
-                    hazardValue += calcIceHazard(movingUnit, hex, step,
+                    hazardValue += calcIceHazard(movingUnit, hex, step, movePath,
                                                  jumpLanding, logMsg);
                     break;
                 case Terrains.WATER:
                     if (!hazards.contains(Terrains.ICE)) {
-                        hazardValue += calcWaterHazard(movingUnit, hex, step,
+                        hazardValue += calcWaterHazard(movingUnit, hex, step, movePath,
                                                        logMsg);
                     }
                     break;
@@ -885,7 +885,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         return 0;
     }
 
-    private double calcIceHazard(Entity movingUnit, Hex hex, MoveStep step, boolean jumpLanding,
+    private double calcIceHazard(Entity movingUnit, Hex hex, MoveStep step, MovePath movePath, boolean jumpLanding,
                                  StringBuilder logMsg) {
         logMsg.append("\n\tCalculating ice hazard:  ");
 
@@ -908,14 +908,14 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         logMsg.append("\n\t\tChance to break through ice: ")
               .append(LOG_PERCENT.format(breakthroughMod));
 
-        double hazard = calcWaterHazard(movingUnit, hex, step, logMsg) *
+        double hazard = calcWaterHazard(movingUnit, hex, step, movePath, logMsg) *
                         breakthroughMod;
         logMsg.append("\n\t\tHazard value (")
               .append(LOG_DECIMAL.format(hazard)).append(").");
         return hazard;
     }
 
-    private double calcWaterHazard(Entity movingUnit, Hex hex, MoveStep step,
+    private double calcWaterHazard(Entity movingUnit, Hex hex, MoveStep step, MovePath movePath,
                                    StringBuilder logMsg) {
         logMsg.append("\n\tCalculating water hazard:  ");
 
@@ -958,12 +958,14 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             return UNIT_DESTRUCTION_FACTOR;
         }
 
+        MoveStep lastStep = movePath.getLastStep();
         // Unsealed unit will drown.
         if (movingUnit instanceof Mech
                 && ((Mech) movingUnit).isIndustrial()
                 && !movingUnit.hasEnvironmentalSealing()
                 && (movingUnit.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)
-                && hex.depth() >= 2) {
+                && hex.depth() >= 2
+                && step.equals(lastStep)) {
             logMsg.append("Industrial mechs drown too (1000).");
             return UNIT_DESTRUCTION_FACTOR;
         }

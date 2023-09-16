@@ -13,6 +13,7 @@ mass:50
 engine:300 XL Engine(IS)
 structure:IS Endo Steel
 myomer:Standard
+ejection:Full Head Ejection System
 
 heat sinks:10 Double
 walk mp:6

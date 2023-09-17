@@ -43,6 +43,9 @@ VERSION HISTORY:
 + PR #4776: Fixed Wing Support with STOL no longer show as invalid in the lobby when set to altitude 0
 + Issue #1552: Added Arrow IV air defense missiles; Princess can use them if available
 + Issue #4782: Argotera now has full-head ejection system
++ Fix #4780: Players can once again fire during the point blank phase
++ Fix #4779: Mechs can once again sprint
++ Fix #4768: Improved gauss rifles nerfed - take a +1 penalty to the TN when fired from small aeros
 
 
 0.49.14 (2023-07-28 2100 UTC)

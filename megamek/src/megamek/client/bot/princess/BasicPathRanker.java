@@ -964,10 +964,11 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                 && ((Mech) movingUnit).isIndustrial()
                 && !movingUnit.hasEnvironmentalSealing()
                 && (movingUnit.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)
-                && hex.depth() >= 2
+                && hex.depth() >= 1
                 && step.equals(lastStep)) {
-            logMsg.append("Industrial mechs drown too (1000).");
-            return UNIT_DESTRUCTION_FACTOR;
+            double destructionFactor = hex.depth() >=2 ? UNIT_DESTRUCTION_FACTOR : UNIT_DESTRUCTION_FACTOR * 0.5d;
+            logMsg.append(String.format("Industrial mechs drown too (%f).", destructionFactor));
+            return destructionFactor;
         }
 
         // Find the submerged locations.

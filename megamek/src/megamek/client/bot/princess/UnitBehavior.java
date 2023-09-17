@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import megamek.common.Entity;
+import megamek.common.Mech;
 
 public class UnitBehavior {
     public enum BehaviorType {
@@ -30,7 +31,7 @@ public class UnitBehavior {
      */
     private BehaviorType calculateUnitBehavior(Entity entity, Princess owner) {
         BehaviorSettings botSettings = owner.getBehaviorSettings();
-        
+
         if (botSettings.isForcedWithdrawal() && entity.isCrippled()) {
             if (owner.getClusterTracker().getDestinationCoords(entity, owner.getHomeEdge(entity), true).isEmpty()) {
                 return BehaviorType.NoPathToDestination;
@@ -43,6 +44,12 @@ public class UnitBehavior {
             }
             
             return BehaviorType.MoveToDestination;
+        } else if ((entity instanceof Mech) && ((Mech) entity).isJustMovedIntoIndustrialKillingWater()) {
+            if (owner.getClusterTracker().getDestinationCoords(entity, owner.getHomeEdge(entity), true).isEmpty()) {
+                return BehaviorType.NoPathToDestination;
+            }
+
+            return BehaviorType.ForcedWithdrawal;
         } else {
             // if we can't see anyone, move to contact
             if (!entity.getGame().getAllEnemyEntities(entity).hasNext()) {

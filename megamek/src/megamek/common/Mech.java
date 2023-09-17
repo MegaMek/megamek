@@ -5397,6 +5397,17 @@ public abstract class Mech extends Entity {
     }
 
     /**
+     * set if this mech should die at the end of turn because it's an IndustrialMech
+     * without environmental sealing that moved into water last round and stayed
+      * there?
+     *
+     * @param moved
+     */
+    public void setShouldDieAtEndOfTurnBecauseOfWater(boolean moved) {
+        shouldDieAtEndOfTurnBecauseOfWater = moved;
+    }
+
+    /**
      * Set if this Mech's ICE Engine is stalled or not should only be used for
      * industrial mechs carrying an ICE engine
      *

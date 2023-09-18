@@ -3076,7 +3076,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // VSP Lasers
 
-        // Quirks
+        // Quirks and SPAs now handled in toHit
         processAttackerQuirks(toHit, ae, target, weapon);
 
         // SPAs
@@ -4278,14 +4278,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
         }
 
-        // blood stalker SPA
-        if (ae.getBloodStalkerTarget() > Entity.NONE) {
-            if (ae.getBloodStalkerTarget() == target.getId()) {
-                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.BloodStalkerTarget"));
-            } else {
-                toHit.addModifier(+2, Messages.getString("WeaponAttackAction.BloodStalkerNonTarget"));
-            }
-        }
+        // Quirks
+        processAttackerQuirks(toHit, ae, te, weapon);
+
+        // SPAs
+        processAttackerSPAs(toHit, ae, te, weapon, game);
+        processDefenderSPAs(toHit, ae, te, weapon, game);
 
         return toHit;
     }
@@ -4873,6 +4871,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // Per TO:AR 6th printing, p153, other mods are: Flak (-2), AMM, damage, intervening trees/jungle
             int distance = Compute.effectiveDistance(game, ae, target);
             toHit = new ToHitData(ae.getCrew().getGunnery(), Messages.getString("WeaponAttackAction.GunSkill"));
+
+            // Quirks
+            processAttackerQuirks(toHit, ae, te, weapon);
+
+            // SPAs
+            processAttackerSPAs(toHit, ae, te, weapon, game);
+            processDefenderSPAs(toHit, ae, te, weapon, game);
+
             // Flak; ADA won't hit the later artillery flak check so add this modifier directly.
             toHit.addModifier(-2, Messages.getString("WeaponAttackAction.Flak"));
             // AMM
@@ -5086,30 +5092,42 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.addModifier(+1, Messages.getString("WeaponAttackAction.SensorGhosts"));
         }
 
-        // Flat -1 for Accurate Weapon
-        if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_POS_ACCURATE)) {
-            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.AccWeapon"));
-        }
-        // Flat +1 for Inaccurate Weapon
-        if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_INACCURATE)) {
-            toHit.addModifier(+1, Messages.getString("WeaponAttackAction.InAccWeapon"));
-        }
-        // Stable Weapon - Reduces running/flanking penalty by 1
-        if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_POS_STABLE_WEAPON) && (ae.moved == EntityMovementType.MOVE_RUN)) {
-            toHit.addModifier(-1, Messages.getString("WeaponAttackAction.StableWeapon"));
-        }
-        // +1 for a Misrepaired Weapon - See StratOps Partial Repairs
-        if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_MISREPAIRED)) {
-            toHit.addModifier(+1, Messages.getString("WeaponAttackAction.MisrepairedWeapon"));
-        }
-        // +1 for a Misreplaced Weapon - See StratOps Partial Repairs
-        if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_MISREPLACED)) {
-            toHit.addModifier(+1, Messages.getString("WeaponAttackAction.MisreplacedWeapon"));
+        if (null != weapon) {
+
+            // Flat -1 for Accurate Weapon
+            if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_POS_ACCURATE)) {
+                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.AccWeapon"));
+            }
+            // Flat +1 for Inaccurate Weapon
+            if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_INACCURATE)) {
+                toHit.addModifier(+1, Messages.getString("WeaponAttackAction.InAccWeapon"));
+            }
+            // Stable Weapon - Reduces running/flanking penalty by 1
+            if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_POS_STABLE_WEAPON) && (ae.moved == EntityMovementType.MOVE_RUN)) {
+                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.StableWeapon"));
+            }
+            // +1 for a Misrepaired Weapon - See StratOps Partial Repairs
+            if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_MISREPAIRED)) {
+                toHit.addModifier(+1, Messages.getString("WeaponAttackAction.MisrepairedWeapon"));
+            }
+            // +1 for a Misreplaced Weapon - See StratOps Partial Repairs
+            if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_MISREPLACED)) {
+                toHit.addModifier(+1, Messages.getString("WeaponAttackAction.MisreplacedWeapon"));
+            }
         }
         return toHit;
     }
 
     public static ToHitData processAttackerSPAs(ToHitData toHit, Entity ae, Targetable target, Mounted weapon, Game game){
+
+        // blood stalker SPA
+        if (ae.getBloodStalkerTarget() > Entity.NONE) {
+            if (ae.getBloodStalkerTarget() == target.getId()) {
+                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.BloodStalkerTarget"));
+            } else {
+                toHit.addModifier(+2, Messages.getString("WeaponAttackAction.BloodStalkerNonTarget"));
+            }
+        }
 
         WeaponType wtype = ((weapon != null) && (weapon.getType() instanceof WeaponType)) ? (WeaponType) weapon.getType() : null;
 

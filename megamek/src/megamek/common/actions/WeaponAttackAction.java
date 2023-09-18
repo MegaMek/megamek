@@ -3075,12 +3075,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // VSP Lasers
-
         // Quirks and SPAs now handled in toHit
-        processAttackerQuirks(toHit, ae, target, weapon);
-
-        // SPAs
-        processAttackerSPAs(toHit, ae, target, weapon, game);
 
         return toHit;
     }
@@ -3494,9 +3489,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                         "stabiliser damage");
             }
         }
-
-        // Quirks
-        processAttackerQuirks(toHit, ae, target, weapon);
 
         return toHit;
     }
@@ -3938,12 +3930,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
         }
 
-        // Attacker SPAs
-        processAttackerSPAs(toHit, ae, te, weapon, game);
-
-        // Target SPAs
-        processDefenderSPAs(toHit, ae, te, weapon, game);
-
         return toHit;
     }
 
@@ -3951,6 +3937,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * Convenience method that compiles the ToHit modifiers applicable to the defender's condition and actions
      * -4 for shooting at an immobile target?  You'll find that here.
      * Attacker strafing?  Using a weapon with a TH penalty?  Those are in other methods.
+     * For simplicity's sake, Quirks and SPAs now get applied here for general cases (elsewhere for Artillery or ADA)
      *
      * @param game The current {@link Game}
      * @param ae The Entity making this attack
@@ -4872,6 +4859,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             int distance = Compute.effectiveDistance(game, ae, target);
             toHit = new ToHitData(ae.getCrew().getGunnery(), Messages.getString("WeaponAttackAction.GunSkill"));
 
+            /// Re-apply quirks and SPAs after wiping out toHit
             // Quirks
             processAttackerQuirks(toHit, ae, te, weapon);
 

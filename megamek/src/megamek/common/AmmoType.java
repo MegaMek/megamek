@@ -407,7 +407,7 @@ public class AmmoType extends EquipmentType {
         }
 
         // MML Launchers, ugh.
-        if ((is(T_MML) || other.is(T_MML)) && (getMunitionType().containsAll(other.getMunitionType()))) {
+        if ((is(T_MML) || other.is(T_MML)) && (getMunitionType().equals(other.getMunitionType()))) {
             // LRMs...
             if (is(T_MML) && hasFlag(F_MML_LRM) && other.is(T_LRM)) {
                 return true;
@@ -424,7 +424,7 @@ public class AmmoType extends EquipmentType {
         }
 
         // General Launchers
-        if (is(other.getAmmoType()) && (getMunitionType().containsAll(other.getMunitionType()))) {
+        if (is(other.getAmmoType()) && (getMunitionType().equals(other.getMunitionType()))) {
             return true;
         }
 

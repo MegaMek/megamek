@@ -34,6 +34,7 @@ import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import org.apache.logging.log4j.LogManager;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.FilteredImageSource;
@@ -560,6 +561,10 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     public Image loadPreviewImage(Entity entity, Camouflage camouflage, Component bp) {
         Image base = MMStaticDirectoryManager.getMechTileset().imageFor(entity);
         EntityImage entityImage = new EntityImage(base, camouflage, bp, entity);
+        if (entity instanceof FighterSquadron) {
+            entityImage = new FighterSquadronIcon(base, camouflage, bp, entity);
+            entityImage.loadPreviewImage(false);
+        }
         entityImage.loadFacings();
         Image preview = entityImage.getFacing(entity.getFacing());
 
@@ -601,6 +606,10 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         // if we don't have a cached image, make a new one
         if (entityImage == null) {
             entityImage = new EntityImage(base, wreck, camouflage, boardview, entity, secondaryPos);
+            if (entity instanceof FighterSquadron) {
+                entityImage = new FighterSquadronIcon(base, camouflage, boardview, entity);
+                entityImage.loadPreviewImage(false);
+            }
             mechImageList.add(entityImage);
             entityImage.loadFacings();
             for (int j = 0; j < 6; j++) {

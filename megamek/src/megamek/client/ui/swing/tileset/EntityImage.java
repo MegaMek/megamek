@@ -101,7 +101,7 @@ public class EntityImage {
     }
 
     /** The base (unit) image used for this icon. */
-    private Image base;
+    protected Image base;
     /** The wreck base image used for this icon. */
     private Image wreck;
     /** The damage decal image used for this icon. */
@@ -109,9 +109,9 @@ public class EntityImage {
     /** The smoke image used for this icon. */
     private Image smoke;
     /** A smaller icon used for the unit overview. */
-    private Image icon;
+    protected Image icon;
     private Camouflage camouflage;
-    private Image[] facings = new Image[6];
+    protected Image[] facings = new Image[6];
     private Image[] wreckFacings = new Image[6];
     private Component parent;
     /** The damage level, from none to crippled. */
@@ -253,7 +253,7 @@ public class EntityImage {
     }
 
     /** Rotates a given unit image into direction dir. */
-    private BufferedImage rotateImage(Image img, int dir) {
+    protected BufferedImage rotateImage(Image img, int dir) {
         double cx = base.getWidth(parent) / 2.0;
         double cy = base.getHeight(parent) / 2.0;
         AffineTransformOp xform = new AffineTransformOp(
@@ -307,7 +307,7 @@ public class EntityImage {
     }
 
     /** Applies the unit individual or player camouflage to the icon. */
-    private Image applyColor(Image image, int facing) {
+    protected Image applyColor(Image image, int facing) {
         if (image == null) {
             return null;
         }

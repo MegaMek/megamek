@@ -572,7 +572,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener, IPrefer
                 condition = " (Disabled)";
             }
             chSensors.addItem(sensor.getDisplayName() + condition);
-            if (sensor.getType() == en.getNextSensor().getType()) {
+            if ((en.getNextSensor() != null) && (sensor.getType() == en.getNextSensor().getType())) {
                 chSensors.setSelectedIndex(i);
             }
         }

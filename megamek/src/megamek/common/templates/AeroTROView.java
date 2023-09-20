@@ -65,16 +65,20 @@ public class AeroTROView extends TROView {
         setModelData("isSupportVehicle", aero.isSupportVehicle());
         setModelData("isVSTOL", aero.isVSTOL());
         final TestAero testAero = new TestAero(aero, verifier.aeroOption, null);
-        setModelData("engineName", stripNotes(aero.getEngine().getEngineName()));
-        setModelData("engineMass", NumberFormat.getInstance().format(testAero.getWeightEngine()));
+        if (aero.hasEngine()) {
+            setModelData("engineName", stripNotes(aero.getEngine().getEngineName()));
+            setModelData("engineMass", NumberFormat.getInstance().format(testAero.getWeightEngine()));
+        }
         setModelData("safeThrust", aero.getWalkMP());
         setModelData("maxThrust", aero.getRunMP());
         setModelData("si", aero.get0SI());
-        setModelData("vstolMass", testAero.getWeightMisc());
-        setModelData("hsCount",
-                aero.getHeatType() == Aero.HEAT_DOUBLE ? aero.getOHeatSinks() + " [" + (aero.getOHeatSinks() * 2) + "]"
-                        : aero.getOHeatSinks());
-        setModelData("hsMass", NumberFormat.getInstance().format(testAero.getWeightHeatSinks()));
+        if (!(aero instanceof FighterSquadron)) {
+            setModelData("vstolMass", testAero.getWeightMisc());
+            setModelData("hsCount",
+                    aero.getHeatType() == Aero.HEAT_DOUBLE ? aero.getOHeatSinks() + " [" + (aero.getOHeatSinks() * 2) + "]"
+                            : aero.getOHeatSinks());
+            setModelData("hsMass", NumberFormat.getInstance().format(testAero.getWeightHeatSinks()));
+        }
         setModelData("fuelPoints", aero.getFuel());
         setModelData("fuelMass", aero.getFuelTonnage());
         if (aero.getCockpitType() == Aero.COCKPIT_STANDARD) {

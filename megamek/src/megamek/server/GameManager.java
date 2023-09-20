@@ -3646,6 +3646,26 @@ public class GameManager implements IGameManager {
             send(createTurnVectorPacket());
         }
 
+        // Fighter Squadrons may become too big for the bay they're parked in
+        if ((loader instanceof FighterSquadron) && (loader.getTransportId() != Entity.NONE)) {
+            Entity carrier = game.getEntity(loader.getTransportId());
+            Transporter bay = carrier.getBay(loader);
+
+            if (bay.getUnused() < 1) {
+                if (getGame().getPhase().isLounge()) {
+                    // In the lobby, unload the squadron if too big
+                    loader.setTransportId(Entity.NONE);
+                    carrier.unload(loader);
+                    entityUpdate(carrier.getId());
+                } else {
+                    // Outside the lobby, reject the load
+                    entityUpdate(unit.getId());
+                    entityUpdate(loader.getId());
+                    return;
+                }
+            }
+        }
+
         // When loading an Aero into a squadron in the lounge, make sure the
         // loaded aero has the same bomb loadout as the squadron
         // We want to do this before the fighter is loaded: when the fighter
@@ -3653,6 +3673,8 @@ public class GameManager implements IGameManager {
         // adjusted based on the bomb loadout on the fighter.
         if (getGame().getPhase().isLounge() && (loader instanceof FighterSquadron)) {
             ((IBomber) unit).setBombChoices(((FighterSquadron) loader).getBombChoices());
+            ((FighterSquadron) loader).updateSkills();
+            ((FighterSquadron) loader).updateWeaponGroups();
         }
 
         // Load the unit. Do not check for elevation during deployment
@@ -29453,6 +29475,14 @@ public class GameManager implements IGameManager {
         if ((oldEntity != null) && (!oldEntity.getOwner().isEnemyOf(game.getPlayer(connIndex)))) {
             game.setEntity(entity.getId(), entity);
             entityUpdate(entity.getId());
+            if (entity.isPartOfFighterSquadron()) {
+                // Update the stats of any Squadrons that the new units are part of
+                FighterSquadron squadron = (FighterSquadron) game.getEntity(entity.getTransportId());
+                squadron.updateSkills();
+                squadron.updateWeaponGroups();
+                squadron.updateSensors();
+                entityUpdate(squadron.getId());
+            }
             // In the chat lounge, notify players of customizing of unit
             if (game.getPhase().isLounge()) {
                 sendServerChat(ServerLobbyHelper.entityUpdateMessage(entity, game));
@@ -29480,6 +29510,14 @@ public class GameManager implements IGameManager {
                 game.setEntity(entity.getId(), entity);
                 sendServerChat(ServerLobbyHelper.entityUpdateMessage(entity, game));
                 newEntities.add(game.getEntity(entity.getId()));
+                if (entity.isPartOfFighterSquadron()) {
+                    // Update the stats of any Squadrons that the new units are part of
+                    FighterSquadron squadron = (FighterSquadron) game.getEntity(entity.getTransportId());
+                    squadron.updateSkills();
+                    squadron.updateWeaponGroups();
+                    squadron.updateSensors();
+                    newEntities.add(squadron);
+                }
             }
         }
         send(new Packet(PacketCommand.ENTITY_MULTIUPDATE, newEntities));

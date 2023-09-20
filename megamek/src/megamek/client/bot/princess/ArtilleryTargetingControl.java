@@ -170,13 +170,14 @@ public class ArtilleryTargetingControl {
     private boolean getADAAvailable(Entity shooter){
         boolean available = false;
         for (Mounted weapon: shooter.getWeaponList()){
-            if(((AmmoType) weapon.getLinked().getType()).getMunitionType().contains(AmmoType.Munitions.M_ADA)
-                && !weapon.isFired() && weapon.getLinked().getUsableShotsLeft() > 0){
-                available = true;
-                break;
+            if (weapon.getType().hasFlag(WeaponType.F_ARTILLERY)){
+                if(((AmmoType) weapon.getLinked().getType()).getMunitionType().contains(AmmoType.Munitions.M_ADA)
+                    && !weapon.isFired() && weapon.getLinked().getUsableShotsLeft() > 0) {
+                    available = true;
+                    break;
+                }
             }
         }
-
         return available;
     }
     /**

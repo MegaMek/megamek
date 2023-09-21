@@ -46,6 +46,10 @@ VERSION HISTORY:
 + Fix #4780: Players can once again fire during the point blank phase
 + Fix #4779: Mechs can once again sprint
 + Fix #4768: Improved gauss rifles nerfed - take a +1 penalty to the TN when fired from small aeros
++ Issue #4550: Improve Princess logic regarding placement of units in deep water
++ Issue #2698: Attempt to reduce bot speed in low gravity
++ Fix #3870, 4524: Properly apply quirks and SPAs to artillery attacks
++ Issue #4730: Multi-crew units with command console receive correct crew count
 
 
 0.49.14 (2023-07-28 2100 UTC)

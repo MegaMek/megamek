@@ -346,6 +346,12 @@ public abstract class Mech extends Entity {
         return UnitType.MEK;
     }
 
+    @Override
+    public CrewType defaultCrewType() {
+        return (cockpitType == COCKPIT_COMMAND_CONSOLE) || (cockpitType == COCKPIT_SUPERHEAVY_COMMAND_CONSOLE)
+                || (cockpitType == COCKPIT_SMALL_COMMAND_CONSOLE) ? CrewType.COMMAND_CONSOLE : CrewType.SINGLE;
+    }
+
     /**
      * @return if this mech cannot stand up from hulldown
      */

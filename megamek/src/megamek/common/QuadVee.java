@@ -132,6 +132,10 @@ public class QuadVee extends QuadMech {
         return false;
     }
 
+    @Override
+    public CrewType defaultCrewType() {
+        return CrewType.QUADVEE;
+    }
 
     @Override
     public int getWalkMP(MPCalculationSetting mpCalculationSetting) {

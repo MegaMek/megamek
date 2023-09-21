@@ -229,7 +229,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 int totalShots = 0;
                 EnumSet<AmmoType.Munitions> munition = ((AmmoType) mounted.getLinked().getType()).getMunitionType();
                 for (Mounted current = mounted.getLinked(); current != null; current = current.getLinked()) {
-                    if (((AmmoType) current.getType()).getMunitionType() == munition) {
+                    if (((AmmoType) current.getType()).getMunitionType().equals(munition)) {
                         shotsLeft += current.getUsableShotsLeft();
                         totalShots += current.getOriginalShots();
                     }

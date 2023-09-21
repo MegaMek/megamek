@@ -9147,6 +9147,7 @@ public class GameManager implements IGameManager {
 
             } else {
                 ((Mech) entity).setJustMovedIntoIndustrialKillingWater(false);
+                ((Mech) entity).setShouldDieAtEndOfTurnBecauseOfWater(false);
             }
         }
     }

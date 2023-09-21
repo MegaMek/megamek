@@ -270,8 +270,9 @@ public abstract class BotClient extends Client {
             if (transport != null && transport.isPermanentlyImmobilized(true)) {
                 boolean stackingViolation = null != Compute.stackingViolation(game, currentEntity.getId(),
                         transport.getPosition(), currentEntity.climbMode());
-                boolean unloadFatal = currentEntity.isBoardProhibited(getGame().getBoard().getType()) ||
-                        currentEntity.isLocationProhibited(transport.getPosition());
+                boolean unloadFatal = currentEntity.isBoardProhibited(getGame().getBoard().getType())
+                        || currentEntity.isLocationProhibited(transport.getPosition())
+                        || currentEntity.isLocationDeadly(transport.getPosition());
 
                 if (!stackingViolation && !unloadFatal) {
                     entitiesToUnload.add(currentEntity.getId());
@@ -628,7 +629,8 @@ public abstract class BotClient extends Client {
             for (int y = 0; y <= board.getHeight(); y++) {
                 Coords c = new Coords(x, y);
                 if (board.isLegalDeployment(c, deployed_ent)
-                    && !deployed_ent.isLocationProhibited(c)) {
+                    && !deployed_ent.isLocationProhibited(c)
+                    && !deployed_ent.isLocationDeadly(c)) {
                     validCoords.add(new RankedCoords(c, 0));
                 }
             }

@@ -1822,6 +1822,17 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 }
             }
         }
+
+        for (int i = 0; i < drawHeight; i++) {
+            for (int j = 0; j < drawWidth; j++) {
+                Coords c = new Coords(j + drawX, i + drawY);
+                if (board.isLegalDeployment(c, en_Deployer) &&
+                        !en_Deployer.isLocationProhibited(c) &&
+                        en_Deployer.isLocationDeadly(c)) {
+                    drawHexBorder(g, getHexLocation(c), GUIP.getWarningColor());
+                }
+            }
+        }
     }
 
     /**

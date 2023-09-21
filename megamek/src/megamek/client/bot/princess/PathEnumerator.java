@@ -235,8 +235,8 @@ public class PathEnumerator {
                 paths.add(new MovePath(game, mover));
             } else { // Non-Aero movement
                 // TODO: Will this cause Princess to never use MASC?
-                LongestPathFinder lpf = LongestPathFinder
-                        .newInstanceOfLongestPath(mover.getRunMPwithoutMASC(),
+                int maxMove = Math.min(mover.getRunMPwithoutMASC(), mover.getRunMP(MPCalculationSetting.NO_GRAVITY));
+                LongestPathFinder lpf = LongestPathFinder.newInstanceOfLongestPath(maxMove,
                                 MoveStepType.FORWARDS, getGame());
                 lpf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
                 lpf.run(new MovePath(game, mover));

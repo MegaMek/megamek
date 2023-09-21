@@ -155,7 +155,18 @@ public class EntityImage {
         }
     }
 
-    protected EntityImage(Image base, Image wreck, Camouflage camouflage, Component comp,
+    // Used by MHQ
+    public EntityImage(Image base, Camouflage camouflage, Component comp, Entity entity) {
+        this(base, null, camouflage, comp, entity, -1, true);
+    }
+
+    // Used by MHQ
+    public EntityImage(Image base, Image wreck, Camouflage camouflage, Component comp,
+                       Entity entity, int secondaryPos) {
+        this(base, wreck, camouflage, comp, entity, secondaryPos, false);
+    }
+
+    public EntityImage(Image base, Image wreck, Camouflage camouflage, Component comp,
                        Entity entity, int secondaryPos, boolean preview) {
         this.base = base;
         setCamouflage(camouflage);

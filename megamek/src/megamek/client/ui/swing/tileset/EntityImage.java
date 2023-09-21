@@ -133,16 +133,29 @@ public class EntityImage {
     /** True for tanks */
     private final boolean isTank;
 
-    public EntityImage(Image base, Camouflage camouflage, Component comp, Entity entity) {
-        this(base, null, camouflage, comp, entity, -1, true);
+    public static EntityImage createIcon(Image base, Camouflage camouflage, Component comp, Entity entity) {
+        return createIcon(base, null, camouflage, comp, entity, -1, true);
     }
 
-    public EntityImage(Image base, Image wreck, Camouflage camouflage, Component comp,
-                       Entity entity, int secondaryPos) {
-        this(base, wreck, camouflage, comp, entity, secondaryPos, false);
+    public static EntityImage createLobbyIcon(Image base, Camouflage camouflage, Component comp, Entity entity) {
+        return createIcon(base, null, camouflage, comp, entity, -1, true);
     }
 
-    public EntityImage(Image base, Image wreck, Camouflage camouflage, Component comp,
+    public static EntityImage createIcon(Image base, Image wreck, Camouflage camouflage, Component comp,
+                                         Entity entity, int secondaryPos) {
+        return createIcon(base, wreck, camouflage, comp, entity, secondaryPos, false);
+    }
+
+    public static EntityImage createIcon(Image base, Image wreck, Camouflage camouflage, Component comp,
+                                         Entity entity, int secondaryPos, boolean preview) {
+        if (entity instanceof FighterSquadron) {
+            return new FighterSquadronIcon(base, wreck, camouflage, comp, entity, secondaryPos, preview);
+        } else {
+            return new EntityImage(base, wreck, camouflage, comp, entity, secondaryPos, preview);
+        }
+    }
+
+    protected EntityImage(Image base, Image wreck, Camouflage camouflage, Component comp,
                        Entity entity, int secondaryPos, boolean preview) {
         this.base = base;
         setCamouflage(camouflage);

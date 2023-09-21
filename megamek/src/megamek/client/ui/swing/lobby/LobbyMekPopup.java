@@ -749,29 +749,31 @@ class LobbyMekPopup {
                 exportSprite(frame, entity, entity.getCamouflageOrElseOwners(), true));
         exportUnitSpriteMenu.add(miCurrentCamouflageAndDamage);
 
-        final JMenuItem miSelectedCamouflage = new JMenuItem(Messages.getString("miSelectedCamouflage.text"));
-        miSelectedCamouflage.setToolTipText(Messages.getString("miSelectedCamouflage.toolTipText"));
-        miSelectedCamouflage.setName("miSelectedCamouflage");
-        miSelectedCamouflage.addActionListener(evt -> {
-            final CamoChooserDialog camoChooserDialog = new CamoChooserDialog(frame, entity.getCamouflageOrElseOwners());
-            if (camoChooserDialog.showDialog().isConfirmed()) {
-                exportSprite(frame, entity, camoChooserDialog.getSelectedItem(), false);
-            }
-        });
-        exportUnitSpriteMenu.add(miSelectedCamouflage);
+        if (!(entity instanceof FighterSquadron)) {
+            final JMenuItem miSelectedCamouflage = new JMenuItem(Messages.getString("miSelectedCamouflage.text"));
+            miSelectedCamouflage.setToolTipText(Messages.getString("miSelectedCamouflage.toolTipText"));
+            miSelectedCamouflage.setName("miSelectedCamouflage");
+            miSelectedCamouflage.addActionListener(evt -> {
+                final CamoChooserDialog camoChooserDialog = new CamoChooserDialog(frame, entity.getCamouflageOrElseOwners());
+                if (camoChooserDialog.showDialog().isConfirmed()) {
+                    exportSprite(frame, entity, camoChooserDialog.getSelectedItem(), false);
+                }
+            });
+            exportUnitSpriteMenu.add(miSelectedCamouflage);
 
-        final JMenuItem miSelectedCamouflageAndCurrentDamage = new JMenuItem(
-                Messages.getString("miSelectedCamouflageAndCurrentDamage.text"));
-        miSelectedCamouflageAndCurrentDamage.setToolTipText(
-                Messages.getString("miSelectedCamouflageAndCurrentDamage.toolTipText"));
-        miSelectedCamouflageAndCurrentDamage.setName("miSelectedCamouflageAndCurrentDamage");
-        miSelectedCamouflageAndCurrentDamage.addActionListener(evt -> {
-            final CamoChooserDialog camoChooserDialog = new CamoChooserDialog(frame, entity.getCamouflageOrElseOwners());
-            if (camoChooserDialog.showDialog().isConfirmed()) {
-                exportSprite(frame, entity, camoChooserDialog.getSelectedItem(), true);
-            }
-        });
-        exportUnitSpriteMenu.add(miSelectedCamouflageAndCurrentDamage);
+            final JMenuItem miSelectedCamouflageAndCurrentDamage = new JMenuItem(
+                    Messages.getString("miSelectedCamouflageAndCurrentDamage.text"));
+            miSelectedCamouflageAndCurrentDamage.setToolTipText(
+                    Messages.getString("miSelectedCamouflageAndCurrentDamage.toolTipText"));
+            miSelectedCamouflageAndCurrentDamage.setName("miSelectedCamouflageAndCurrentDamage");
+            miSelectedCamouflageAndCurrentDamage.addActionListener(evt -> {
+                final CamoChooserDialog camoChooserDialog = new CamoChooserDialog(frame, entity.getCamouflageOrElseOwners());
+                if (camoChooserDialog.showDialog().isConfirmed()) {
+                    exportSprite(frame, entity, camoChooserDialog.getSelectedItem(), true);
+                }
+            });
+            exportUnitSpriteMenu.add(miSelectedCamouflageAndCurrentDamage);
+        }
 
         return exportUnitSpriteMenu;
     }
@@ -801,7 +803,7 @@ class LobbyMekPopup {
 
         // Get the Sprite
         final Image base = MMStaticDirectoryManager.getMechTileset().imageFor(entity);
-        final Image sprite = new EntityImage(base, camouflage, frame, entity).loadPreviewImage(showDamage);
+        final Image sprite = EntityImage.createLobbyIcon(base, camouflage, frame, entity).loadPreviewImage(showDamage);
 
         // Export to File
         try {

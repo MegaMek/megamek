@@ -560,11 +560,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     @Override
     public Image loadPreviewImage(Entity entity, Camouflage camouflage, Component bp) {
         Image base = MMStaticDirectoryManager.getMechTileset().imageFor(entity);
-        EntityImage entityImage = new EntityImage(base, camouflage, bp, entity);
-        if (entity instanceof FighterSquadron) {
-            entityImage = new FighterSquadronIcon(base, camouflage, bp, entity);
-            entityImage.loadPreviewImage(false);
-        }
+        EntityImage entityImage = EntityImage.createIcon(base, camouflage, bp, entity);
         entityImage.loadFacings();
         Image preview = entityImage.getFacing(entity.getFacing());
 
@@ -587,14 +583,13 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         Image wreck = wreckTileset.imageFor(entity, secondaryPos);
 
         Player player = entity.getOwner();
-
         Camouflage camouflage = (player == null) ? new Camouflage()
                 : entity.getCamouflageOrElse(player.getCamouflage());
+
         EntityImage entityImage = null;
 
         // check if we have a duplicate image already loaded
-        for (Iterator<EntityImage> j = mechImageList.iterator(); j.hasNext();) {
-            EntityImage onList = j.next();
+        for (EntityImage onList : mechImageList) {
             if ((onList.getBase() != null) && onList.getBase().equals(base)
                     && onList.getCamouflage().equals(camouflage)
                     && (onList.getDmgLvl() == entity.getDamageLevel(false))) {
@@ -605,11 +600,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
 
         // if we don't have a cached image, make a new one
         if (entityImage == null) {
-            entityImage = new EntityImage(base, wreck, camouflage, boardview, entity, secondaryPos);
-            if (entity instanceof FighterSquadron) {
-                entityImage = new FighterSquadronIcon(base, camouflage, boardview, entity);
-                entityImage.loadPreviewImage(false);
-            }
+            entityImage = EntityImage.createIcon(base, wreck, camouflage, boardview, entity, secondaryPos);
             mechImageList.add(entityImage);
             entityImage.loadFacings();
             for (int j = 0; j < 6; j++) {

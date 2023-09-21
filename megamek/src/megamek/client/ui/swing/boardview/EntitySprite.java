@@ -553,7 +553,7 @@ class EntitySprite extends Sprite {
             }
 
             // Transporting (but not Squadrons that are obviously composed of subunits)
-            if (!entity.getLoadedUnits().isEmpty() && !(entity instanceof FighterSquadron)) {
+            if (!entity.getLoadedUnits().isEmpty() && !isSquadron) {
                 stStr.add(new Status(GUIP.getCautionColor(), "T", SMALL));
             }
 

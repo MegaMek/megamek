@@ -124,7 +124,7 @@ public final class TipUtil {
                 List<String> origList = new ArrayList<>();
                 for (Enumeration<IOption> advs = advGroup.getOptions(); advs.hasMoreElements();) {
                     IOption adv = advs.nextElement();
-                    if (adv.booleanValue()) {
+                    if (adv != null && adv.booleanValue()) {
                         origList.add(adv.getDisplayableNameWithValue());
                     }
                 }

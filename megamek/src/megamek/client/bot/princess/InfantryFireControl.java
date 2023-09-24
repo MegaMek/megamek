@@ -135,7 +135,7 @@ public class InfantryFireControl extends FireControl {
                 maxFGDamage += damage;
             } else if (otherWeaponsMayShoot) {
                 // case 5
-                if (shooter.isInfantry()) {
+                if (shooterIsActualInfantry) {
                     // field guns can't fire if the infantry unit has done anything
                     // other than turning, so we only get here if infantry has not used MP.
                     // All valid Infantry Field Weapons can consider rackSize as their damage.

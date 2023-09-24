@@ -22,8 +22,6 @@ import org.apache.logging.log4j.LogManager;
 import java.util.ArrayList;
 import java.util.List;
 
-import static megamek.common.WeaponType.F_ARTILLERY;
-
 /**
  * This class is intended to help the bot calculate firing plans for infantry
  * units.
@@ -110,10 +108,8 @@ public class InfantryFireControl extends FireControl {
 
                 maxInfantryWeaponDamage += ((InfantryWeapon) weaponType).getInfantryDamage()
                         * infantryCount;
-                // field guns can't fire if the infantry unit has done anything
-                // other than turning
             } else if (targetIsActualInfantry && otherWeaponsMayShoot) {
-                double damage = 0;
+                double damage;
 
                 // if we're outside, use the direct blow infantry damage
                 // calculation

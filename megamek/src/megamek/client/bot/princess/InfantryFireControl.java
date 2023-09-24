@@ -22,8 +22,6 @@ import org.apache.logging.log4j.LogManager;
 import java.util.ArrayList;
 import java.util.List;
 
-import static megamek.common.WeaponType.F_ARTILLERY;
-
 /**
  * This class is intended to help the bot calculate firing plans for infantry
  * units.
@@ -67,8 +65,7 @@ public class InfantryFireControl extends FireControl {
         boolean shooterIsActualInfantry = shooter.hasETypeFlag(Entity.ETYPE_INFANTRY)
                 && !shooter.hasETypeFlag(Entity.ETYPE_BATTLEARMOR);
         // field guns can't fire if the unit in question moved
-        boolean fieldGunsDoDamage = (shooterIsActualInfantry && shooterPath.getMpUsed() == 0)
-                || !shooterIsActualInfantry;
+        boolean otherWeaponsMayShoot = !shooterIsActualInfantry || shooterPath.getMpUsed() == 0;
         boolean inBuilding = Compute.isInBuilding(target.getGame(), targetPath.getFinalElevation(),
                 targetPath.getFinalCoords());
         boolean inOpen = ServerHelper.infantryInOpen(target, targetHex, target.getGame(), targetIsPlatoon, false,
@@ -96,8 +93,8 @@ public class InfantryFireControl extends FireControl {
             // weapon damage, multiply by building dmg reduction.
             // 4. Shooter is non-infantry, target is infantry in "cover". Use
             // "directBlowInfantryDamage".
-            // 5. Shooter is non-infantry, target is non-infantry. Use base
-            // class.
+            // 5. Shooter is infantry with field gun / field artillery and needs special damage calc.
+            // 6. Shooter is non-infantry, target is non-infantry. Use base class.
 
             // case 1
             if (weaponType.hasFlag(WeaponType.F_INFANTRY)) {
@@ -111,10 +108,8 @@ public class InfantryFireControl extends FireControl {
 
                 maxInfantryWeaponDamage += ((InfantryWeapon) weaponType).getInfantryDamage()
                         * infantryCount;
-                // field guns can't fire if the infantry unit has done anything
-                // other than turning
-            } else if (targetIsActualInfantry && fieldGunsDoDamage) {
-                double damage = 0;
+            } else if (targetIsActualInfantry && otherWeaponsMayShoot) {
+                double damage;
 
                 // if we're outside, use the direct blow infantry damage
                 // calculation
@@ -134,15 +129,17 @@ public class InfantryFireControl extends FireControl {
                 }
 
                 maxFGDamage += damage;
-                // field guns can't fire if the infantry unit has done anything
-                // other than turning
-            // case 5
-            } else if (fieldGunsDoDamage) {
-                // Some FGs are artillery, so check both damage/shot * shot num _and_ rack size.
-                AmmoType ammoType = (AmmoType) weapon.getLinked().getType();
-                int wDamage = (weaponType.hasFlag(F_ARTILLERY) ? weaponType.rackSize : weaponType.getDamage());
-                int ammoDamage = ammoType.getDamagePerShot()*ammoType.getShots();
-                maxFGDamage += Math.max(wDamage, ammoDamage);
+            } else if (otherWeaponsMayShoot) {
+                // case 5
+                if (shooterIsActualInfantry) {
+                    // field guns can't fire if the infantry unit has done anything
+                    // other than turning, so we only get here if infantry has not used MP.
+                    // All valid Infantry Field Weapons can consider rackSize as their damage.
+                    maxFGDamage += weaponType.rackSize;
+                // Case 6: all other unit types / weapons
+                } else {
+                    maxFGDamage += weaponType.getDamage();
+                }
             }
         }
 

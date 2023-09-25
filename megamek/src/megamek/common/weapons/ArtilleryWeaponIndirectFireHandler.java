@@ -103,7 +103,16 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         }
 
         final Vector<Integer> spottersBefore = aaa.getSpotterIds();
-        Coords targetPos = target.getPosition();
+
+        // Handle counter-battery on fleeing/fled off-board targets.
+        Coords targetPos;
+        try {
+            targetPos = target.getPosition();
+        } catch (Exception e) {
+            LogManager.getLogger().error(String.format("Artillery Target %s is missing; off-board target fled?", waa.getTargetId()));
+            return false;
+        }
+
         final int playerId = aaa.getPlayerId();
         boolean targetIsEntity = target.getTargetType() == Targetable.TYPE_ENTITY;
         boolean targetIsAirborneVTOL = targetIsEntity && target.isAirborneVTOLorWIGE();

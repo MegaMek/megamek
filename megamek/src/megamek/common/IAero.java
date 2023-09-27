@@ -482,7 +482,7 @@ public interface IAero {
         boolean rough = false;
         boolean heavyWoods = false;
         boolean clear = false;
-        boolean paved = true;
+        boolean paved = false;
 
         Set<Coords> landingPositions = new HashSet<>();
         boolean isDropship = (this instanceof Dropship);
@@ -516,8 +516,9 @@ public interface IAero {
                 heavyWoods = true;
             } else if (hex.containsTerrain(Terrains.WOODS, 1)) {
                 lightWoods = true;
-            } else if (!hex.containsTerrain(Terrains.PAVEMENT) && !hex.containsTerrain(Terrains.ROAD)) {
-                paved = false;
+            } else if (hex.containsTerrain(Terrains.PAVEMENT) || hex.containsTerrain(Terrains.ROAD)) {
+                paved = true;
+            } else {
                 // Landing in other terrains isn't allowed, so if we reach here
                 // it must be a clear hex
                 clear = true;

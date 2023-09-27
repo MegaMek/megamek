@@ -525,22 +525,30 @@ public interface IAero {
         }
 
         if (heavyWoods) {
-            roll.addModifier(+5, "heavy woods in landing path");
+            addLandingModifier(roll, +5, "heavy woods in landing path", isVertical);
         }
         if (lightWoods) {
-            roll.addModifier(+4, "light woods in landing path");
+            addLandingModifier(roll, +4, "light woods in landing path", isVertical);
         }
         if (rough) {
-            roll.addModifier(+3, "rough/rubble in landing path");
+            addLandingModifier(roll, +3, "rough/rubble in landing path", isVertical);
         }
         if (paved) {
-            roll.addModifier(+0, "paved/road landing strip");
+            addLandingModifier(roll, +0, "paved/road landing strip", isVertical);
         }
         if (clear) {
-            roll.addModifier(+2, "clear hex in landing path");
+            addLandingModifier(roll, +2, "clear hex in landing path", isVertical);
         }
 
         return roll;
+    }
+
+    default void addLandingModifier(PilotingRollData roll, int mod, String reason, boolean isVertical) {
+        if (isVertical) {
+            // divide by 2, rounding up
+            mod = mod / 2 + mod % 2;
+        }
+        roll.addModifier(mod, reason);
     }
 
     /**

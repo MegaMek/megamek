@@ -4023,11 +4023,10 @@ public class GameManager implements IGameManager {
         if (landingPositions.stream().map(c -> game.getBoard().getHex(c))
                 .anyMatch(h -> h.containsTerrain(Terrains.ROUGH) || h.containsTerrain(Terrains.RUBBLE))) {
             aero.setGearHit(true);
+            Report r = new Report(9125);
+            r.subject = ((Entity) aero).getId();
+            addReport(r);
         }
-        Report r = new Report(9125);
-        r.subject = ((Entity) aero).getId();
-        addReport(r);
-
     }
 
     private boolean launchUnit(Entity unloader, Targetable unloaded,

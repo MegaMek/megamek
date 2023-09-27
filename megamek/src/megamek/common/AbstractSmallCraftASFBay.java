@@ -40,9 +40,21 @@ public abstract class AbstractSmallCraftASFBay extends Bay {
         if (!canLoad(unit)) {
             throw new IllegalArgumentException("Can not load " + unit.getShortName() + " into this bay. " + getUnused());
         }
-
-        currentSpace -= 1;
+        currentSpace -= spaceForUnit(unit);
         troops.addElement(unit.getId());
+    }
+
+    @Override
+    public double spaceForUnit(Entity unit) {
+        return (unit instanceof FighterSquadron) ? unit.getSubEntities().size() : 1;
+    }
+
+    @Override
+    public double getUnused() {
+        // loaded fighter squadrons can change size, therefore always update this
+        int used = troops.stream().map(game::getEntity).mapToInt(t -> (int) spaceForUnit(t)).sum();
+        currentSpace = totalSpace - used;
+        return currentSpace - getBayDamage();
     }
 
     /**

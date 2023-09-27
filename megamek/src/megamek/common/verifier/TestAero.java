@@ -808,11 +808,7 @@ public class TestAero extends TestEntity {
         boolean correct = true;
 
         // We only support Conventional Fighters and ASF
-        if (aero.getEntityType() == Entity.ETYPE_DROPSHIP ||
-                aero.getEntityType() == Entity.ETYPE_SMALL_CRAFT ||
-                aero.getEntityType() == Entity.ETYPE_FIGHTER_SQUADRON ||
-                aero.getEntityType() == Entity.ETYPE_JUMPSHIP ||
-                aero.getEntityType() == Entity.ETYPE_SPACE_STATION) {
+        if (!aero.isFighter()) {
             System.out.println("TestAero only supports Aerospace Fighters " +
                     "and Conventional fighters.  Supplied unit was a " +
                     Entity.getEntityTypeName(aero.getEntityType()));

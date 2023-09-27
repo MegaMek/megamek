@@ -484,29 +484,9 @@ public interface IAero {
         boolean clear = false;
         boolean paved = false;
 
-        Set<Coords> landingPositions = new HashSet<>();
+        Set<Coords> landingPositions = getLandingCoords(isVertical, landingPos, face);
         boolean isDropship = (this instanceof Dropship);
         // Vertical landing just checks the landing hex
-        if (isVertical) {
-            landingPositions.add(landingPos);
-            // Dropships must also check the adjacent 6 hexes
-            if (isDropship) {
-                for (int i = 0; i < 6; i++) {
-                    landingPositions.add(landingPos.translated(i));
-                }
-            }
-            // Horizontal landing requires checking whole landing strip
-        } else {
-            for (int i = 0; i < getLandingLength(); i++) {
-                Coords pos = landingPos.translated(face, i);
-                landingPositions.add(pos);
-                // Dropships have to check the front adjacent hexes
-                if (isDropship) {
-                    landingPositions.add(pos.translated((face + 4) % 6));
-                    landingPositions.add(pos.translated((face + 2) % 6));
-                }
-            }
-        }
 
         for (Coords pos : landingPositions) {
             Hex hex = ((Entity) this).getGame().getBoard().getHex(pos);
@@ -542,6 +522,31 @@ public interface IAero {
         }
 
         return roll;
+    }
+
+    default Set<Coords> getLandingCoords(boolean isVertical, Coords landingPos, int facing) {
+        Set<Coords> landingPositions = new HashSet<Coords>();
+        if (isVertical) {
+            landingPositions.add(landingPos);
+            // Dropships must also check the adjacent 6 hexes
+            if (this instanceof Dropship) {
+                for (int i = 0; i < 6; i++) {
+                    landingPositions.add(landingPos.translated(i));
+                }
+            }
+            // Horizontal landing requires checking whole landing strip
+        } else {
+            for (int i = 0; i < getLandingLength(); i++) {
+                Coords pos = landingPos.translated(facing, i);
+                landingPositions.add(pos);
+                // Dropships have to check the front adjacent hexes
+                if (this instanceof Dropship) {
+                    landingPositions.add(pos.translated((facing + 4) % 6));
+                    landingPositions.add(pos.translated((facing + 2) % 6));
+                }
+            }
+        }
+        return landingPositions;
     }
 
     default void addLandingModifier(PilotingRollData roll, int mod, String reason, boolean isVertical) {

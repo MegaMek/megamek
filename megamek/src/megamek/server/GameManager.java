@@ -4011,6 +4011,25 @@ public class GameManager implements IGameManager {
         }
     }
 
+    /**
+     * Any aerospace unit that lands in a rough or rubble hex takes landing hear damage.
+     * @param aero      The landing unit
+     * @param vertical  Whether the landing is vertical
+     * @param pos       The coordinates of the hex of touchdown
+     * @param facing    The facing of the landing unit
+     */
+    private void checkForLandingGearDamage(IAero aero, boolean vertical, Coords pos, int facing) {
+        Set<Coords> landingPositions = aero.getLandingCoords(vertical, pos, facing);
+        if (landingPositions.stream().map(c -> game.getBoard().getHex(c))
+                .anyMatch(h -> h.containsTerrain(Terrains.ROUGH) || h.containsTerrain(Terrains.RUBBLE))) {
+            aero.setGearHit(true);
+        }
+        Report r = new Report(9125);
+        r.subject = ((Entity) aero).getId();
+        addReport(r);
+
+    }
+
     private boolean launchUnit(Entity unloader, Targetable unloaded,
                                Coords pos, int facing, int velocity, int altitude, int[] moveVec,
                                int bonus) {
@@ -6124,6 +6143,7 @@ public class GameManager implements IGameManager {
             rollTarget = a.checkLanding(md.getLastStepMovementType(), md.getFinalVelocity(),
                     md.getFinalCoords(), md.getFinalFacing(), false);
             attemptLanding(entity, rollTarget);
+            checkForLandingGearDamage(a, true, md.getFinalCoords(), md.getFinalFacing());
             a.land();
             entity.setPosition(md.getFinalCoords().translated(md.getFinalFacing(),
                     a.getLandingLength()));
@@ -6141,6 +6161,7 @@ public class GameManager implements IGameManager {
             if (entity instanceof Dropship) {
                 applyDropShipLandingDamage(md.getFinalCoords(), (Dropship) a);
             }
+            checkForLandingGearDamage(a, true, md.getFinalCoords(), md.getFinalFacing());
             a.land();
             entity.setPosition(md.getFinalCoords());
             entity.setDone(true);

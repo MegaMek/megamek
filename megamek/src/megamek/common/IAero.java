@@ -15,11 +15,7 @@
 
 package megamek.common;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 
 import megamek.common.MovePath.MoveStepType;
 import org.apache.logging.log4j.LogManager;
@@ -477,48 +473,39 @@ public interface IAero {
                 roll.addModifier(+4, "no thrust");
             }
         }
-        // terrain mods
-        boolean lightWoods = false;
-        boolean rough = false;
-        boolean heavyWoods = false;
-        boolean clear = false;
-        boolean paved = false;
 
+        // Per TW p. 87, the modifier is added once for each terrain type
+        Set<List<Integer>> terrains = new HashSet<>();
         Set<Coords> landingPositions = getLandingCoords(isVertical, landingPos, face);
-        boolean isDropship = (this instanceof Dropship);
-        // Vertical landing just checks the landing hex
-
+        // Any hex without terrain is clear, which is a +2 modifier.
+        boolean clear = false;
         for (Coords pos : landingPositions) {
             Hex hex = ((Entity) this).getGame().getBoard().getHex(pos);
-            if (hex.containsTerrain(Terrains.ROUGH) || hex.containsTerrain(Terrains.RUBBLE)) {
-                rough = true;
-            } else if (hex.containsTerrain(Terrains.WOODS, 2)) {
-                heavyWoods = true;
-            } else if (hex.containsTerrain(Terrains.WOODS, 1)) {
-                lightWoods = true;
-            } else if (hex.containsTerrain(Terrains.PAVEMENT) || hex.containsTerrain(Terrains.ROAD)) {
-                paved = true;
-            } else {
-                // Landing in other terrains isn't allowed, so if we reach here
-                // it must be a clear hex
+            if (hex.hasPavement()) {
+                continue;
+            }
+            if (hex.isClearHex()) {
                 clear = true;
+            } else {
+                for (int terrain : hex.getTerrainTypes()) {
+                    if ((terrain == Terrains.WATER) && hex.containsTerrain(Terrains.ICE)) {
+                        continue;
+                    }
+                    if (Terrains.landingModifier(terrain, hex.terrainLevel(terrain)) > 0) {
+                        terrains.add(List.of(terrain, hex.terrainLevel(terrain)));
+                    }
+                }
             }
         }
-
-        if (heavyWoods) {
-            addLandingModifier(roll, +5, "heavy woods in landing path", isVertical);
-        }
-        if (lightWoods) {
-            addLandingModifier(roll, +4, "light woods in landing path", isVertical);
-        }
-        if (rough) {
-            addLandingModifier(roll, +3, "rough/rubble in landing path", isVertical);
-        }
-        if (paved) {
-            addLandingModifier(roll, +0, "paved/road landing strip", isVertical);
-        }
         if (clear) {
-            addLandingModifier(roll, +2, "clear hex in landing path", isVertical);
+            roll.addModifier(isVertical ? 1 : 2, "Clear terrain in landing path");
+        }
+        for (List<Integer> terrain : terrains) {
+            int mod = Terrains.landingModifier(terrain.get(0), terrain.get(1));
+            if (isVertical) {
+                mod = mod / 2 + mod % 2;
+            }
+            roll.addModifier(mod, Terrains.getDisplayName(terrain.get(0), terrain.get(1)) + " in landing path");
         }
 
         return roll;
@@ -547,14 +534,6 @@ public interface IAero {
             }
         }
         return landingPositions;
-    }
-
-    default void addLandingModifier(PilotingRollData roll, int mod, String reason, boolean isVertical) {
-        if (isVertical) {
-            // divide by 2, rounding up
-            mod = mod / 2 + mod % 2;
-        }
-        roll.addModifier(mod, reason);
     }
 
     /**

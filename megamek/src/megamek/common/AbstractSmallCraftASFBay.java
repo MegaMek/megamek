@@ -52,7 +52,13 @@ public abstract class AbstractSmallCraftASFBay extends Bay {
     @Override
     public double getUnused() {
         // loaded fighter squadrons can change size, therefore always update this
-        int used = troops.stream().map(game::getEntity).mapToInt(t -> (int) spaceForUnit(t)).sum();
+        int used = 0;
+        if (game != null) {
+            used = troops.stream()
+                    .map(game::getEntity)
+                    .mapToInt(t -> (int) spaceForUnit(t))
+                    .sum();
+        }
         currentSpace = totalSpace - used;
         return currentSpace - getBayDamage();
     }

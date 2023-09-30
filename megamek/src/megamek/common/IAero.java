@@ -481,7 +481,7 @@ public interface IAero {
         boolean clear = false;
         for (Coords pos : landingPositions) {
             Hex hex = ((Entity) this).getGame().getBoard().getHex(pos);
-            if (hex.hasPavement()) {
+            if ((hex == null) || hex.hasPavement()) {
                 continue;
             }
             if (hex.isClearHex()) {
@@ -729,6 +729,14 @@ public interface IAero {
         // landing must contain only acceptable terrain
         if (!hex.isClearForLanding()) {
             return "Unacceptable terrain for landing";
+        }
+        // Aerospace units are destroyed by water landings except for those that have flotation hulls.
+        // LAMs are not.
+        if (hex.containsTerrain(Terrains.WATER) && !hex.containsTerrain(Terrains.ICE)
+                && (hex.terrainLevel(Terrains.WATER) > 0)
+                && (this instanceof Aero)
+                && !((Entity) this).hasWorkingMisc(MiscType.F_FLOTATION_HULL)) {
+            return "cannot land on water";
         }
 
         return null;

@@ -4013,19 +4013,35 @@ public class GameManager implements IGameManager {
 
     /**
      * Any aerospace unit that lands in a rough or rubble hex takes landing hear damage.
-     * @param aero      The landing unit
-     * @param vertical  Whether the landing is vertical
-     * @param pos       The coordinates of the hex of touchdown
-     * @param facing    The facing of the landing unit
+     * @param aero         The landing unit
+     * @param vertical     Whether the landing is vertical
+     * @param touchdownPos The coordinates of the hex of touchdown
+     * @param finalPos     The coordinates of the hex in which the unit comes to a stop
+     * @param facing       The facing of the landing unit
+     * @
      */
-    private void checkForLandingGearDamage(IAero aero, boolean vertical, Coords pos, int facing) {
-        Set<Coords> landingPositions = aero.getLandingCoords(vertical, pos, facing);
-        if (landingPositions.stream().map(c -> game.getBoard().getHex(c))
+    private void checkLandingTerrainEffects(IAero aero, boolean vertical, Coords touchdownPos, Coords finalPos, int facing) {
+        // Landing in a rough for rubble hex damages landing gear.
+        Set<Coords> landingPositions = aero.getLandingCoords(vertical, touchdownPos, facing);
+        if (landingPositions.stream().map(c -> game.getBoard().getHex(c)).filter(Objects::nonNull)
                 .anyMatch(h -> h.containsTerrain(Terrains.ROUGH) || h.containsTerrain(Terrains.RUBBLE))) {
             aero.setGearHit(true);
             Report r = new Report(9125);
             r.subject = ((Entity) aero).getId();
             addReport(r);
+        }
+        // Landing in water can destroy or immobilize the unit.
+        Hex hex = game.getBoard().getHex(finalPos);
+        if ((aero instanceof Aero) && hex.containsTerrain(Terrains.WATER) && !hex.containsTerrain(Terrains.ICE)
+                && (hex.terrainLevel(Terrains.WATER) > 0)
+                && !((Entity) aero).hasWorkingMisc(MiscType.F_FLOTATION_HULL)) {
+            if ((hex.terrainLevel(Terrains.WATER) > 1) || !(aero instanceof Dropship)) {
+                Report r = new Report(9702);
+                r.subject(((Entity) aero).getId());
+                r.addDesc((Entity) aero);
+                addReport(r);
+                addReport(destroyEntity((Entity) aero, "landing in deep water"));
+            }
         }
     }
 
@@ -6142,7 +6158,8 @@ public class GameManager implements IGameManager {
             rollTarget = a.checkLanding(md.getLastStepMovementType(), md.getFinalVelocity(),
                     md.getFinalCoords(), md.getFinalFacing(), false);
             attemptLanding(entity, rollTarget);
-            checkForLandingGearDamage(a, true, md.getFinalCoords(), md.getFinalFacing());
+            checkLandingTerrainEffects(a, true, md.getFinalCoords(),
+                    md.getFinalCoords().translated(md.getFinalFacing(), a.getLandingLength()), md.getFinalFacing());
             a.land();
             entity.setPosition(md.getFinalCoords().translated(md.getFinalFacing(),
                     a.getLandingLength()));
@@ -6160,7 +6177,7 @@ public class GameManager implements IGameManager {
             if (entity instanceof Dropship) {
                 applyDropShipLandingDamage(md.getFinalCoords(), (Dropship) a);
             }
-            checkForLandingGearDamage(a, true, md.getFinalCoords(), md.getFinalFacing());
+            checkLandingTerrainEffects(a, true, md.getFinalCoords(), md.getFinalCoords(), md.getFinalFacing());
             a.land();
             entity.setPosition(md.getFinalCoords());
             entity.setDone(true);

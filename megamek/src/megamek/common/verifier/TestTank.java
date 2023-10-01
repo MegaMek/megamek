@@ -545,15 +545,19 @@ public class TestTank extends TestEntity {
 
     @Override
     public boolean correctWeight(StringBuffer buff, boolean showO, boolean showU) {
-        boolean correct = super.correctWeight(buff, showO, showU);
-        double max = maxTonnage(getEntity().getMovementMode(), getEntity().isSuperHeavy());
-        if (getEntity().getWeight() > max) {
-            correct = false;
-            buff.append("Exceeds maximum tonnage of ").append(max).append(" for ")
-                    .append(getEntity().getMovementModeAsString())
-                    .append(" combat vehicle.\n");
+        if (!(getEntity() instanceof GunEmplacement)) {
+            boolean correct = super.correctWeight(buff, showO, showU);
+            double max = maxTonnage(getEntity().getMovementMode(), getEntity().isSuperHeavy());
+            if (getEntity().getWeight() > max) {
+                correct = false;
+                buff.append("Exceeds maximum tonnage of ").append(max).append(" for ")
+                        .append(getEntity().getMovementModeAsString())
+                        .append(" combat vehicle.\n");
+            }
+            return correct;
+        } else {
+            return true;
         }
-        return correct;
     }
 
     public boolean correctCriticals(StringBuffer buff) {
@@ -891,7 +895,7 @@ public class TestTank extends TestEntity {
      */
     public static boolean isValidTankLocation(Tank tank, EquipmentType eq, int location,
                                               @Nullable StringBuffer buffer) {
-        if (isBodyEquipment(eq) && (location != Tank.LOC_BODY)) {
+        if ((isBodyEquipment(eq) || (tank instanceof GunEmplacement)) && (location != Tank.LOC_BODY)) {
             if (buffer != null) {
                 buffer.append(eq.getName()).append(" must be mounted in the body.\n");
             }
@@ -993,7 +997,8 @@ public class TestTank extends TestEntity {
                 return false;
             }
             if (!eq.hasFlag(WeaponType.F_C3M) && !eq.hasFlag(WeaponType.F_C3MBS)
-                    && !eq.hasFlag(WeaponType.F_TAG) && (location == Tank.LOC_BODY)) {
+                    && !eq.hasFlag(WeaponType.F_TAG) && (location == Tank.LOC_BODY)
+                    && !(tank instanceof GunEmplacement)) {
                 if (buffer != null) {
                     buffer.append(eq.getName()).append(" cannot be mounted in the body.\n");
                 }

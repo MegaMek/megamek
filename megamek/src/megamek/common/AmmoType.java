@@ -13419,30 +13419,40 @@ public class AmmoType extends EquipmentType {
                     || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_NLRM))
                     && (munition.getMunitionType().contains(Munitions.M_THUNDER))) {
                 cost *= 2;
+                // TO:AUE, pp.185,197,198: Half the rack size on 7 hexes; standard mines
+                bv = base.rackSize * munition.shots / 5.0 * 4;
             }
 
             if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRM_IMP)
                     || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_NLRM))
                     && (munition.getMunitionType().contains(Munitions.M_THUNDER_AUGMENTED))) {
                 cost *= 4;
+                // TO:AUE, pp.185,197,198: Half the rack size on 7 hexes; standard mines
+                bv = Math.ceil(base.rackSize / 2.0) * 7 * munition.shots / 5.0 * 4;
             }
 
             if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRM_IMP)
                     || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_NLRM))
                     && (munition.getMunitionType().contains(Munitions.M_THUNDER_INFERNO))) {
                 cost *= 1;
+                // TO:AUE, pp.185,197,198
+                bv = base.rackSize * munition.shots;
             }
 
             if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRM_IMP)
                     || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_NLRM))
                     && (munition.getMunitionType().contains(Munitions.M_THUNDER_VIBRABOMB))) {
                 cost *= 2.5;
+                // TO:AUE, pp.185,197,198
+                bv = base.rackSize * munition.shots;
             }
 
             if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRM_IMP)
                     || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_NLRM))
                     && (munition.getMunitionType().contains(Munitions.M_THUNDER_ACTIVE))) {
                 cost *= 3;
+                // TO:AUE, pp.185,197,198
+                bv = base.rackSize * munition.shots / 5.0 * 6;
             }
 
             if (munition.getMunitionType().contains(Munitions.M_HOMING)) {
@@ -13454,6 +13464,12 @@ public class AmmoType extends EquipmentType {
 
             if (munition.getMunitionType().contains(Munitions.M_FASCAM)) {
                 cost *= 1.5;
+                // TO:AR, p.152 and TO:AUE, pp.197,198
+                int rackSize = base.getRackSize();
+                if (munition.getAmmoType() == AmmoType.T_ARROW_IV) {
+                    rackSize = munition.isClan() ? 30 : 20;
+                }
+                bv = rackSize * munition.shots / 5.0 * 4;
             }
 
             if (munition.getMunitionType().contains(Munitions.M_INFERNO_IV)) {
@@ -13461,6 +13477,8 @@ public class AmmoType extends EquipmentType {
             }
 
             if (munition.getMunitionType().contains(Munitions.M_VIBRABOMB_IV)) {
+                // TO:AR 152 and TO:AUE 197,198
+                bv = 20 * munition.shots;
                 cost *= 2;
             }
 

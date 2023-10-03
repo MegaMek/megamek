@@ -329,8 +329,10 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             return false;
         }
         if (atype.getMunitionType().contains(AmmoType.Munitions.M_FASCAM)) {
-            // Arrow IVs deliver fixed 30-point minefields.
-            int rackSize = (atype.getAmmoType() == AmmoType.T_ARROW_IV) ? 30 : atype.getRackSize();
+            int rackSize = atype.getRackSize();
+            if (atype.getAmmoType() == AmmoType.T_ARROW_IV) {
+                rackSize = atype.isClan() ? 30 : 20;
+            }
             gameManager.deliverFASCAMMinefield(targetPos, ae.getOwner().getId(), rackSize, ae.getId());
             return false;
         }

@@ -999,7 +999,7 @@ public abstract class BVCalculator {
         }
     }
 
-    /** @return The unit's head dissipation for BV purposes. Override as necessary. */
+    /** @return The unit's heat dissipation for BV purposes. Override as necessary. */
     protected int heatEfficiency() {
         return NO_HEAT;
     }

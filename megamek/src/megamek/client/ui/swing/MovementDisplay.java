@@ -1697,6 +1697,22 @@ public class MovementDisplay extends ActionPhaseDisplay {
             }
         }
 
+        if (cmd.contains(MoveStepType.LAND) || cmd.contains(MoveStepType.VLAND)) {
+            Set<Coords> landingPath = ((IAero) ce()).getLandingCoords(cmd.contains(MoveStepType.VLAND),
+                    cmd.getFinalCoords(), cmd.getFinalFacing());
+            if (landingPath.stream().map(c -> game().getBoard().getHex(c)).filter(Objects::nonNull)
+                    .anyMatch(h -> h.containsTerrain(Terrains.ROUGH) || h.containsTerrain(Terrains.RUBBLE))) {
+                ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
+                        Messages.getString("MovementDisplay.areYourSure"),
+                        Messages.getString("MovementDisplay.ConfirmLandingGearDamage"),
+                        false);
+                nag.setVisible(true);
+                if (!nag.getAnswer()) {
+                    return;
+                }
+            }
+        }
+
         if (isUsingChaff) {
             addStepToMovePath(MoveStepType.CHAFF);
             isUsingChaff = false;

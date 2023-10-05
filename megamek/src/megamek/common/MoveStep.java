@@ -4019,7 +4019,8 @@ public class MoveStep implements Serializable {
      */
     public boolean isFacingChangeManeuver() {
         return maneuver && (
-                maneuverType == ManeuverType.MAN_IMMELMAN
+                maneuverType == ManeuverType.MAN_HAMMERHEAD
+                || maneuverType == ManeuverType.MAN_IMMELMAN
                 || maneuverType == ManeuverType.MAN_SPLIT_S
             );
     }

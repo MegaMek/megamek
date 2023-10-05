@@ -206,8 +206,8 @@ public class MovePath implements Cloneable, Serializable {
         return addStep(new MoveStep(this, type, noCost));
     }
 
-    public MovePath addStep(final MoveStepType type, final boolean noCost, final boolean isManeuver) {
-        return addStep(new MoveStep(this, type, noCost, isManeuver));
+    public MovePath addStep(final MoveStepType type, final boolean noCost, final boolean isManeuver, final int maneuverType) {
+        return addStep(new MoveStep(this, type, noCost, isManeuver, maneuverType));
     }
 
     public MovePath addStep(final MoveStepType type, final Minefield mf) {
@@ -570,7 +570,7 @@ public class MovePath implements Cloneable, Serializable {
             } else if (step.getManeuverType() != ManeuverType.MAN_NONE) {
                 step = new MoveStep(this, step.getType(), -1, -1, step.getManeuverType());
             } else if (step.isManeuver()) {
-                step = new MoveStep(this, step.getType(), step.hasNoCost(), step.isManeuver());
+                step = new MoveStep(this, step.getType(), step.hasNoCost(), step.isManeuver(), step.getManeuverType());
             } else if (step.hasNoCost()) {
                 step = new MoveStep(this, step.getType(), step.hasNoCost());
             } else if (null != step.getMinefield()) {
@@ -1440,11 +1440,12 @@ public class MovePath implements Cloneable, Serializable {
         while (!getFinalCoords().equals(subDest)) {
             // adjust facing
             rotatePathfinder((getFinalCoords().direction(subDest) + (step == MoveStepType.BACKWARDS ? 3 : 0)) % 6,
-                    false);
+                    false, ManeuverType.MAN_NONE);
             // step forwards
             addStep(step);
         }
-        rotatePathfinder((getFinalCoords().direction(dest) + (step == MoveStepType.BACKWARDS ? 3 : 0)) % 6, false);
+        rotatePathfinder((getFinalCoords().direction(dest) + (step == MoveStepType.BACKWARDS ? 3 : 0)) % 6,
+                false, ManeuverType.MAN_NONE);
         if (!dest.equals(getFinalCoords())) {
             addStep(type);
         }
@@ -1553,10 +1554,10 @@ public class MovePath implements Cloneable, Serializable {
     /**
      * Rotate from the current facing to the destination facing.
      */
-    public void rotatePathfinder(final int destFacing, final boolean isManeuver) {
+    public void rotatePathfinder(final int destFacing, final boolean isManeuver, int maneuverType) {
         while (getFinalFacing() != destFacing) {
             final MoveStepType stepType = getDirection(getFinalFacing(), destFacing);
-            addStep(stepType, isManeuver, isManeuver);
+            addStep(stepType, isManeuver, isManeuver, maneuverType);
         }
     }
 

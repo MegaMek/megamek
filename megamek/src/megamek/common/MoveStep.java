@@ -3898,10 +3898,9 @@ public class MoveStep implements Serializable {
         }
 
         // if its part of a maneuver then you can turn
-        if (isFacingChangeManeuver()) {
+        if (isManeuver()) {
             return true;
         }
-
 
         if (en instanceof ConvFighter) {
             // conventional fighters can only turn on free turns or maneuvers
@@ -4012,17 +4011,6 @@ public class MoveStep implements Serializable {
 
     public boolean isManeuver() {
         return maneuver;
-    }
-
-    /**
-     * @return Whether this step is a maneuver that allows a free facing change.
-     */
-    public boolean isFacingChangeManeuver() {
-        return maneuver && (
-                maneuverType == ManeuverType.MAN_HAMMERHEAD
-                || maneuverType == ManeuverType.MAN_IMMELMAN
-                || maneuverType == ManeuverType.MAN_SPLIT_S
-            );
     }
 
     public Minefield getMinefield() {

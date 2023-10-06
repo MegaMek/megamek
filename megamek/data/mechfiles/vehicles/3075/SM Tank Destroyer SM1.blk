@@ -13,19 +13,19 @@ Tank
 </blockversion>
 
 <Name>
-SM1A Tank Destroyer
+SM Tank Destroyer
 </Name>
 
 <Model>
-SM1A
+SM1
 </Model>
 
 <mul id:>
-2972
+2971
 </mul id:>
 
 <year>
-3070
+3068
 </year>
 
 <source>
@@ -73,17 +73,17 @@ Hover
 </armor>
 
 <Body Equipment>
-Clan LB 20-X AC Ammo
-Clan LB 20-X AC Ammo
-Clan LB 20-X AC Ammo
-Clan LB 20-X AC Ammo
-Clan LB 20-X AC Ammo
+Clan Ultra AC/20 Ammo
+Clan Ultra AC/20 Ammo
+Clan Ultra AC/20 Ammo
+Clan Ultra AC/20 Ammo
+Clan Ultra AC/20 Ammo
+Clan Ultra AC/20 Ammo
 Clan Light Machine Gun Ammo - Half
 </Body Equipment>
 
 <Front Equipment>
-CLLBXAC20
-CLLightActiveProbe
+CLUltraAC20
 </Front Equipment>
 
 <Right Equipment>
@@ -101,7 +101,6 @@ CLLightMG
 CLLightMG
 CLLightMG
 CLLightMG
-CLLMGA
 </Turret Equipment>
 
 <capabilities>
@@ -113,7 +112,7 @@ The SM1 Tank Destroyer was designed as a speedy infighter by scientists from Cla
 </overview>
 
 <deployment>
-This variant swaps out the Ultra AC for an LB-X Autocannon/20 with five tons of ammunition. The weight saved goes towards a Light Active Probe, and a Light Machine Gun Array to guide its 4 light machine guns. The vehicle became available during the FedCom Civil War.
+The SM1 mounts a deadly Type 10 Ultra Autocannon/20 fixed in its nose. The gun has six tons of ammunition. The tank also mounts four Series 2C Light Machine Guns in its small turret for anti-infantry work.
 </deployment>
 
 <history>

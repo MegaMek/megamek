@@ -567,10 +567,10 @@ public class MovePath implements Cloneable, Serializable {
                 step = new MoveStep(this, step.getType(), step.getBraceLocation());
             } else if (!step.getLaunched().isEmpty()) {
                 step = new MoveStep(this, step.getType(), step.getLaunched());
-            } else if (step.getManeuverType() != ManeuverType.MAN_NONE) {
-                step = new MoveStep(this, step.getType(), -1, -1, step.getManeuverType());
             } else if (step.isManeuver()) {
                 step = new MoveStep(this, step.getType(), step.hasNoCost(), step.isManeuver(), step.getManeuverType());
+            } else if (step.getManeuverType() != ManeuverType.MAN_NONE) {
+                step = new MoveStep(this, step.getType(), -1, -1, step.getManeuverType());
             } else if (step.hasNoCost()) {
                 step = new MoveStep(this, step.getType(), step.hasNoCost());
             } else if (null != step.getMinefield()) {

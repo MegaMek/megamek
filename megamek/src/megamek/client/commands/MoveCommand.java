@@ -16,10 +16,7 @@ package megamek.client.commands;
 
 import megamek.client.Client;
 import megamek.client.ui.swing.MovementDisplay;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.MovePath;
+import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.options.OptionsConstants;
 
@@ -164,7 +161,7 @@ public class MoveCommand extends ClientCommand {
     private void currentMove(Coords dest) {
         if (dest != null) {
             if (gear == GEAR_TURN) {
-                cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), false);
+                cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), false, ManeuverType.MAN_NONE);
             } else if (gear == GEAR_LAND || gear == GEAR_JUMP) {
                 cmd.findPathTo(dest, MoveStepType.FORWARDS);
             } else if (gear == GEAR_BACKUP) {

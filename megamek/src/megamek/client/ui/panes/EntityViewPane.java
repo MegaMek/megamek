@@ -34,7 +34,7 @@ import javax.swing.*;
  */
 public class EntityViewPane extends AbstractTabbedPane {
     //region Variable Declarations
-    private MechViewPanel entityPanel;
+    private ConfigurableMechViewPanel entityPanel;
     private MechViewPanel troPanel;
     private final ConfigurableASCardPanel cardPanel = new ConfigurableASCardPanel(getFrame());
     //endregion Variable Declarations
@@ -48,11 +48,11 @@ public class EntityViewPane extends AbstractTabbedPane {
     //endregion Constructors
 
     //region Getters/Setters
-    public MechViewPanel getEntityPanel() {
+    public ConfigurableMechViewPanel getEntityPanel() {
         return entityPanel;
     }
 
-    public void setEntityPanel(final MechViewPanel entityPanel) {
+    public void setEntityPanel(final ConfigurableMechViewPanel entityPanel) {
         this.entityPanel = entityPanel;
     }
 
@@ -73,7 +73,7 @@ public class EntityViewPane extends AbstractTabbedPane {
      */
     @Override
     protected void initialize() {
-        setEntityPanel(new MechViewPanel());
+        setEntityPanel(new ConfigurableMechViewPanel());
         getEntityPanel().setName("entityPanel");
         addTab(resources.getString("Summary.title"), getEntityPanel());
 
@@ -95,7 +95,7 @@ public class EntityViewPane extends AbstractTabbedPane {
             getEntityPanel().reset();
             getTROPanel().reset();
         } else {
-            getEntityPanel().setMech(entity, false);
+            getEntityPanel().setEntity(entity);
             getTROPanel().setMech(entity, TROView.createView(entity, true));
         }
         if (ASConverter.canConvert(entity)) {

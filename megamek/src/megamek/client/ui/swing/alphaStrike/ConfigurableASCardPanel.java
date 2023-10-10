@@ -19,23 +19,20 @@
 package megamek.client.ui.swing.alphaStrike;
 
 import megamek.MMConstants;
+import megamek.client.ui.Messages;
 import megamek.client.ui.WrapLayout;
 import megamek.client.ui.dialogs.ASConversionInfoDialog;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.client.ui.Messages;
 import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.alphaStrike.ASStatsExporter;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.cardDrawer.ASCardPrinter;
 import megamek.common.annotations.Nullable;
-import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.datatransfer.*;
-import java.net.URL;
 import java.util.List;
 
 /**
@@ -87,13 +84,12 @@ public class ConfigurableASCardPanel extends JPanel {
         copyStatsButton.addActionListener(ev -> copyStats());
         printButton.addActionListener(ev -> printCard());
 
-        mulButton.addActionListener(ev -> showMUL());
+        mulButton.addActionListener(ev -> UIUtil.showMUL(mulId, this));
         mulButton.setToolTipText("Show the Master Unit List entry for this unit. Opens a browser window.");
 
         conversionButton.addActionListener(e -> showConversionReport());
 
         var chooserLine = new UIUtil.FixedYPanel(new WrapLayout(FlowLayout.LEFT, 15, 10));
-        chooserLine.setBorder(new EmptyBorder(10, 15, 10, 15));
         JPanel fontChooserPanel = new JPanel();
         fontChooserPanel.add(new JLabel(Messages.getString("CASCardPanel.font")));
         fontChooserPanel.add(fontChooser);
@@ -109,7 +105,6 @@ public class ConfigurableASCardPanel extends JPanel {
         chooserLine.add(conversionButton);
 
         var cardLine = new JScrollPane(cardPanel);
-        cardPanel.setBorder(new EmptyBorder(5, 65, 0, 0));
         cardLine.getVerticalScrollBar().setUnitIncrement(16);
 
         add(chooserLine);
@@ -155,17 +150,6 @@ public class ConfigurableASCardPanel extends JPanel {
         if (sizeChooser.getSelectedItem() != null) {
             cardPanel.setScale((Float) sizeChooser.getSelectedItem());
             GUIPreferences.getInstance().setAsCardSize((Float) sizeChooser.getSelectedItem());
-        }
-    }
-
-    private void showMUL() {
-        try {
-            if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-                Desktop.getDesktop().browse(new URL(MMConstants.MUL_URL_PREFIX + mulId).toURI());
-            }
-        } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
         }
     }
 

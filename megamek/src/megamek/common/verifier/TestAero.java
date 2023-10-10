@@ -40,7 +40,7 @@ import java.util.function.Function;
  * @author Reinhard Vicinus
  */
 public class TestAero extends TestEntity {
-    private Aero aero = null;
+    private Aero aero;
 
     /**
      * An enumeration that keeps track of the legal armors for Aerospace and
@@ -50,7 +50,7 @@ public class TestAero extends TestEntity {
      *
      * @author arlith
      */
-    public static enum AeroArmor {
+    public enum AeroArmor {
         STANDARD(EquipmentType.T_ARMOR_STANDARD, 0, 0, false),
         CLAN_FERRO_ALUM(EquipmentType.T_ARMOR_ALUM, 1, 1, true),
         FERRO_LAMELLOR(EquipmentType.T_ARMOR_FERRO_LAMELLOR, 2, 1, true),
@@ -580,19 +580,13 @@ public class TestAero extends TestEntity {
 
     @Override
     public String printWeightControls() {
-        StringBuffer retVal = new StringBuffer(StringUtil.makeLength(
-                aero.getCockpitTypeString() + ":", getPrintSize() - 5));
-        retVal.append(makeWeightString(getWeightControls()));
-        retVal.append("\n");
-        return retVal.toString();
+        return StringUtil.makeLength(aero.getCockpitTypeString() + ":", getPrintSize() - 5)
+                + makeWeightString(getWeightControls()) + "\n";
     }
 
     public String printWeightFuel() {
-        StringBuffer retVal = new StringBuffer(StringUtil.makeLength(
-                "Fuel: ", getPrintSize() - 5));
-        retVal.append(makeWeightString(getWeightFuel()));
-        retVal.append("\n");
-        return retVal.toString();
+        return StringUtil.makeLength("Fuel: ", getPrintSize() - 5)
+                + makeWeightString(getWeightFuel()) + "\n";
     }
 
     public Aero getAero() {
@@ -936,11 +930,12 @@ public class TestAero extends TestEntity {
      *                  conventional fighter, or fixed wing support vehicle
      */
     public static boolean isValidAeroLocation(EquipmentType eq, int location, @Nullable StringBuffer buffer) {
+        if (buffer == null) {
+            buffer = new StringBuffer();
+        }
         if (eq instanceof AmmoType) {
             if (location != Aero.LOC_FUSELAGE) {
-                if (buffer != null) {
-                    buffer.append(eq.getName()).append(" must be mounted in the fuselage.\n");
-                }
+                buffer.append(eq.getName()).append(" must be mounted in the fuselage.\n");
                 return false;
             }
         } else if (eq instanceof MiscType) {
@@ -952,31 +947,23 @@ public class TestAero extends TestEntity {
                     || eq.hasFlag(MiscType.F_PPC_CAPACITOR)
                     || eq.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) && (location >= Aero.LOC_WINGS)) {
                 if (location != Aero.LOC_FUSELAGE) {
-                    if (buffer != null) {
-                        buffer.append(eq.getName()).append(" must be mounted in a location with a firing arc.\n");
-                    }
+                    buffer.append(eq.getName()).append(" must be mounted in a location with a firing arc.\n");
                     return false;
                 }
             } else if ((eq.hasFlag(MiscType.F_BLUE_SHIELD) || eq.hasFlag(MiscType.F_LIFTHOIST)
                     || (eq.hasFlag(MiscType.F_CASE) && !eq.isClan())) && (location != Aero.LOC_FUSELAGE)) {
-                if (buffer != null) {
-                    buffer.append(eq.getName()).append(" must be mounted in the fuselage.\n");
-                }
+                buffer.append(eq.getName()).append(" must be mounted in the fuselage.\n");
                 return false;
             }
         } else if (eq instanceof WeaponType) {
             if ((((WeaponType) eq).getAmmoType() == AmmoType.T_GAUSS_HEAVY)
                     && (location != Aero.LOC_NOSE) && (location != Aero.LOC_AFT)) {
-                if (buffer != null) {
-                    buffer.append(eq.getName()).append(" must be mounted in the nose or aft.\n");
-                }
+                buffer.append(eq.getName()).append(" must be mounted in the nose or aft.\n");
                 return false;
             }
             if (!eq.hasFlag(WeaponType.F_C3M) && !eq.hasFlag(WeaponType.F_C3MBS)
                     && !eq.hasFlag(WeaponType.F_TAG) && (location == Aero.LOC_FUSELAGE)) {
-                if (buffer != null) {
-                    buffer.append(eq.getName()).append(" must be mounted in a location with a firing arc.\n");
-                }
+                buffer.append(eq.getName()).append(" must be mounted in a location with a firing arc.\n");
                 return false;
             }
         }

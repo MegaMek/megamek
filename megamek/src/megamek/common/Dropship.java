@@ -474,6 +474,18 @@ public class Dropship extends SmallCraft {
         return 4;
     }
 
+    @Override
+    public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
+        // A grounded dropship with the center hex in level 1 water is immobile.
+        if ((game != null) && !game.getBoard().inSpace() && !isAirborne()) {
+            Hex hex = game.getBoard().getHex(getPosition());
+            if ((hex != null) && (hex.containsTerrain(Terrains.WATER, 1) && !hex.containsTerrain(Terrains.ICE))) {
+                return 0;
+            }
+        }
+        return super.getWalkMP(mpCalculationSetting);
+    }
+
     /*
      * (non-Javadoc)
      *

@@ -40,9 +40,6 @@ Mixed (IS Chassis)
 Jump
 </motion_type>
 
-<transporters>
-</transporters>
-
 <cruiseMP>
 1
 </cruiseMP>
@@ -66,37 +63,25 @@ CLAdvancedSRM4OS:Body
 ISBASupportPPC:RA
 </Squad Equipment>
 
-<source>
-TRO: 3150
-</source>
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
 
-<chassis>
-biped
-</chassis>
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
 
-<jumpingMP>
-3
-</jumpingMP>
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
 
-<armor>
-10
-</armor>
-
-<Trooper Count>
-5
-</Trooper Count>
-
-<weightclass>
-2
-</weightclass>
-
-<overview>
-The Longinus was the Free Worlds League's attempt to duplicate Elemental Battle Armor. 
-</overview>
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
 
 <capabilities>
 The Longinus came closest to mimicking the capabilities of the Elemental suit that inspired it, and was thus considered one of the best ever built by the Inner Sphere at the time. It was also revolutionary for carrying an advanced armor composite which almost perfectly matched the Clans' composite on their suits. The 360kg of plating covering the Longinus is enough to withstand a full blast from a Large Laser and keep the trooper wearing it alive. It was also responsible for the tremendous price increase of the suit as new manufacturing processes were required to supply enough of this material.
 </capabilities>
+
+<overview>
+The Longinus was the Free Worlds League's attempt to duplicate Elemental Battle Armor.
+</overview>
 
 <deployment>
 The suit's right arm ends in a Modular Weapon Mount which could carry the standard Small Laser, Flamer, or Machine Gun (in 3063 it could also accommodate a "David" Light Gauss Rifle). Its left arm ends in a Battle Claw and features an Anti-Personnel Weapon Mount which can carry a light weapon for use against unarmored infantry, such as a sub-machine gun. Most importantly the suit features an integral SRM-2 launcher carried on a special detachable mounting. Safety mechanisms prevent the Longinus from engaging its jump jets while the launcher is still attached, but once jettisoned it can make leaps of up to 90 meters at a time. Jettisoning the launcher is also required in order for the battle armor to make anti-'Mech attacks. Finally the launcher carries only a single round of missiles due to the additional safety mechanisms taking up space.
@@ -114,7 +99,6 @@ Kali Yama Weapons Industries Inc.,Corean Enterprises - MacAdams-Suharno
 Kalidasa,Stewart
 </primaryFactory>
 
-
 <systemManufacturers>
 CHASSIS:Unknown
 ENGINE:Unknown
@@ -123,3 +107,28 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<source>
+TRO: 3150
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+10
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+

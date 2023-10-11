@@ -30,24 +30,19 @@ import megamek.common.templates.TROView;
 import javax.swing.*;
 
 /**
- * The EntityViewPane displays the Entity Summary and the TRO panels within a Tabbed Pane.
+ * The EntityViewPane displays the entity summary, TRO and AS card panels within a TabbedPane.
  */
 public class EntityViewPane extends AbstractTabbedPane {
-    //region Variable Declarations
     private ConfigurableMechViewPanel entityPanel;
     private MechViewPanel troPanel;
     private final ConfigurableASCardPanel cardPanel = new ConfigurableASCardPanel(getFrame());
-    //endregion Variable Declarations
 
-    //region Constructors
     public EntityViewPane(final JFrame frame, final @Nullable Entity entity) {
         super(frame, "EntityViewPane");
         initialize();
         updateDisplayedEntity(entity);
     }
-    //endregion Constructors
 
-    //region Getters/Setters
     public ConfigurableMechViewPanel getEntityPanel() {
         return entityPanel;
     }
@@ -63,9 +58,7 @@ public class EntityViewPane extends AbstractTabbedPane {
     public void setTROPanel(final MechViewPanel troPanel) {
         this.troPanel = troPanel;
     }
-    //endregion Getters/Setters
 
-    //region Initialization
     /**
      * This purposefully does not set preferences, as it may be used on differing panes for
      * differing uses and thus you don't want to remember the selected tab between the different
@@ -83,14 +76,13 @@ public class EntityViewPane extends AbstractTabbedPane {
 
         addTab("AS Card", cardPanel);
     }
-    //endregion Initialization
 
     /**
-     * This updates the pane's currently displayed entity
-     * @param entity the entity to update to, or null if the panels are to be reset.
+     * Updates the pane's currently displayed entity.
+     *
+     * @param entity the entity to update to, or null if the panels are to be emptied.
      */
     public void updateDisplayedEntity(final @Nullable Entity entity) {
-        // Null entity, which means to reset the panels
         if (entity == null) {
             getEntityPanel().reset();
             getTROPanel().reset();

@@ -28,7 +28,10 @@ import megamek.client.ui.preferences.PreferencesNode;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 
-/** A dialog showing the unit readout for a given unit. */
+/**
+ * A dialog showing the unit readout for a given unit. It shows an {@link EntityViewPane} with the entity summary,
+ * TRO and AS card panels within a TabbedPane.
+ */
 public class EntityReadoutDialog extends AbstractDialog {
 
     private final Entity entity;

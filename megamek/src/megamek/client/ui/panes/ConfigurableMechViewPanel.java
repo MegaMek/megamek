@@ -32,6 +32,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.util.Locale;
 
 /**
  * This class wraps the MechView / MechViewPanel and gives it a toolbar to choose font, open the MUL
@@ -56,8 +57,11 @@ public class ConfigurableMechViewPanel extends JPanel {
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
         fontChooser.addItem("");
-        for (String family : GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()) {
-            fontChooser.addItem(family);
+        for (String family : GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames(Locale.US)) {
+            Font f = Font.decode(family);
+            if (f.canDisplayUpTo("anzANZ150/[]") == -1) {
+                fontChooser.addItem(family);
+            }
         }
         fontChooser.addActionListener(ev -> updateFont());
         fontChooser.setSelectedItem(GUIPreferences.getInstance().getSummaryFont());

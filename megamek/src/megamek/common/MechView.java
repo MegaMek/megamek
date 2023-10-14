@@ -17,16 +17,13 @@ import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.codeUtilities.StringUtility;
 import megamek.common.annotations.Nullable;
 import megamek.common.eras.Era;
 import megamek.common.eras.Eras;
 import megamek.common.options.*;
-import megamek.common.util.StringUtil;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
-import java.awt.*;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.*;
@@ -284,7 +281,7 @@ public class MechView {
                 dFormatter.format(cost) + " C-bills"));
         String source = entity.getSource();
         if (!source.isBlank()) {
-            if (source.contains("Shrapnel")) {
+            if (source.contains(MMConstants.SOURCE_TEXT_SHRAPNEL)) {
                 sHead.add(new HyperLinkElement(Messages.getString("MechView.Source"), MMConstants.BT_URL_SHRAPNEL, source));
             } else {
                 sHead.add(new LabeledElement(Messages.getString("MechView.Source"), source));

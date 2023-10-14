@@ -558,7 +558,7 @@ public class MoveStep implements Serializable {
             int building = hex.terrainLevel(Terrains.BLDG_ELEV);
             int depth = -hex.depth(true);
 
-            // Set depth to 0 (surface level in several cases:
+            // Set depth to 0 (surface level) in several cases:
             // 1. Jumping onto ice-covered water hex,
             // 2. Jumping onto water with Hover move mode,
             // 3. Jumping onto water with WiGE move mode
@@ -591,7 +591,14 @@ public class MoveStep implements Serializable {
                 // infantry can jump into a building
                 setElevation(Math.max(depth, Math.min(building, maxElevation)));
             } else {
-                setElevation(Math.max(depth, building));
+                int subDepth = Math.max(depth, building);
+                // Put jumping Hover or WiGE at their elevation above the substrate level,
+                // or they get implicitly landed (which affects their movement next turn)
+                if (entity.getMovementMode().isHoverOrWiGE()) {
+                    setElevation(elevation + subDepth);
+                } else {
+                    setElevation(subDepth);
+                }
             }
             if (climbMode()
                     && (maxElevation >= hex.terrainLevel(Terrains.BRIDGE_ELEV))) {

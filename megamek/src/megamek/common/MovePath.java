@@ -1618,7 +1618,7 @@ public class MovePath implements Cloneable, Serializable {
 
     /**
      * Airborne WiGEs that move less than five hexes (four for glider protomech) in a movement phase must
-     * land unless it has taken off in the same phase or it is a LAM or glider ProtoMech that is using hover
+     * land unless it has taken off in the same phase, jumped, or it is a LAM or glider ProtoMech that is using hover
      * movement.
      *
      * @param includeMovePathHexes  Whether to include the hexes plotted in this MovePath in the total distance
@@ -1639,6 +1639,10 @@ public class MovePath implements Cloneable, Serializable {
             } else {
                 return getEntity().isAirborneVTOLorWIGE();
             }
+        }
+        // A WiGE that jumped A) has to have been flying and B) cannot land this turn.
+        if (isJumping()) {
+            return false;
         }
         // If movement has been interrupted (such as by a sideslip) and remaining movement points have
         // been spent, this MovePath only contains the hexes moved after the interruption. The hexes already
@@ -1854,12 +1858,12 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     /**
-     * Worker function that counts the number of steps of the given type 
+     * Worker function that counts the number of steps of the given type
      * at the end of the given path before another step type occurs.
      */
     public int getEndStepCount(MoveStepType stepType) {
         int stepCount = 0;
-        
+
         for (int index = getStepVector().size() - 1; index >= 0; index--) {
             if (getStepVector().get(index).getType() == stepType) {
                 stepCount++;
@@ -1867,10 +1871,10 @@ public class MovePath implements Cloneable, Serializable {
                 break;
             }
         }
-        
+
         return stepCount;
     }
-    
+
     /**
      * Debugging method that calculates a destruction-aware move path to the destination coordinates
      */

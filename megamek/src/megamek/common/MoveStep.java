@@ -557,12 +557,21 @@ public class MoveStep implements Serializable {
                     .getBoard().getHex(entity.getPosition()).getLevel()) - hex.getLevel();
             int building = hex.terrainLevel(Terrains.BLDG_ELEV);
             int depth = -hex.depth(true);
-            // need to adjust depth for potential ice over water
-            if ((hex.containsTerrain(Terrains.ICE) && hex
-                    .containsTerrain(Terrains.WATER))
-                    || (entity.getMovementMode() == EntityMovementMode.HOVER)) {
-                depth = 0;
+
+            // Set depth to 0 (surface level in several cases:
+            // 1. Jumping onto ice-covered water hex,
+            // 2. Jumping onto water with Hover move mode,
+            // 3. Jumping onto water with WiGE move mode
+            if (hex.containsTerrain(Terrains.WATER)) {
+                if (
+                    hex.containsTerrain(Terrains.ICE) ||
+                    entity.getMovementMode() == EntityMovementMode.HOVER ||
+                    entity.getMovementMode() == EntityMovementMode.WIGE
+                ) {
+                  depth = 0;
+                }
             }
+
             // grounded DropShips are treated as level 10 buildings for purposes
             // of jumping over
             boolean grdDropship = false;

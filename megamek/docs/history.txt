@@ -62,7 +62,7 @@ VERSION HISTORY:
 + Fix #4820: Fix Immelman and Split-S maneuvers
 + PR #4818: Separate structure class from TestEntity
 + PR #4816: TestTank: Adapt some tests for GunEmplacements
-
++ Fix #4828: Use standard ECM range for Watchdog/Nova CEWS
 
 
 0.49.14 (2023-07-28 2100 UTC)

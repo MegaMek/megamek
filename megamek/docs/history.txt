@@ -58,7 +58,11 @@ VERSION HISTORY:
 + Fix #4706: The BV calculation now includes special values for minefield artillery rounds
 + Fix #4743: Units making vertical landings now only apply half the terrain modifiers
 + PR #4813: Aero landing now considers terrain modifiers for advanced terrain from TO; a unit takes damage when the landing path includes rough or rubble; a unit that lands in water of sufficient depth (2 for DS, 1 otherwise) is destroyed; dropships landing in depth 1 water are permanently immobile
-
++ Data: Fixes for #4808, #4752, #4685, #4677, #4619, and #4597
++ Fix #4820: Fix Immelman and Split-S maneuvers
++ PR #4818: Separate structure class from TestEntity
++ PR #4816: TestTank: Adapt some tests for GunEmplacements
++ Fix #4828: Use standard ECM range for Watchdog/Nova CEWS
 
 
 0.49.14 (2023-07-28 2100 UTC)

@@ -292,10 +292,11 @@ public class MoveStep implements Serializable {
     }
 
     public MoveStep(MovePath path, MoveStepType type, boolean noCost,
-                    boolean isManeuver) {
+                    boolean isManeuver, int maneuverType) {
         this(path, type);
         this.noCost = noCost;
         maneuver = isManeuver;
+        this.maneuverType = maneuverType;
     }
 
     public MoveStep(MovePath path, MoveStepType type, int recovery,

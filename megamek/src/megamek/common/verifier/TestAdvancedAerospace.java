@@ -32,7 +32,7 @@ public class TestAdvancedAerospace extends TestAero {
     
     private final Jumpship vessel;
 
-    public enum CapitalArmor{
+    public enum CapitalArmor {
         PRIMITIVE(EquipmentType.T_ARMOR_PRIMITIVE_AERO, false),   
         STANDARD(EquipmentType.T_ARMOR_AEROSPACE, false),   
         CLAN_STANDARD(EquipmentType.T_ARMOR_AEROSPACE, true),
@@ -47,12 +47,12 @@ public class TestAdvancedAerospace extends TestAero {
          * The type, corresponding to types defined in 
          * <code>EquipmentType</code>.
          */
-        public int type;
+        public final int type;
                 
         /**
          * Denotes whether this armor is Clan or not.
          */
-        public boolean isClan;
+        public final boolean isClan;
         
         CapitalArmor(int t, boolean c) {
             type = t;
@@ -406,26 +406,6 @@ public class TestAdvancedAerospace extends TestAero {
     }
 
     @Override
-    public boolean isTank() {
-        return false;
-    }
-
-    @Override
-    public boolean isMech() {
-        return false;
-    }
-    
-    @Override
-    public boolean isAero() {
-        return true;
-    }
-    
-    @Override
-    public boolean isSmallCraft() {
-        return false;
-    }
-    
-    @Override
     public boolean isAdvancedAerospace() {
         return true;
     }
@@ -657,20 +637,14 @@ public class TestAdvancedAerospace extends TestAero {
 
     @Override
     public String printWeightControls() {
-        StringBuffer retVal = new StringBuffer(StringUtil.makeLength(
-                "Control Systems:", getPrintSize() - 5));
-        retVal.append(makeWeightString(getWeightControls()));
-        retVal.append("\n");
-        return retVal.toString();
+        return StringUtil.makeLength("Control Systems:", getPrintSize() - 5)
+                + makeWeightString(getWeightControls()) + "\n";
     }
         
     @Override
     public String printWeightFuel() {
-        StringBuffer retVal = new StringBuffer(StringUtil.makeLength(
-                "Fuel: ", getPrintSize() - 5));
-        retVal.append(makeWeightString(getWeightFuel()));
-        retVal.append("\n");
-        return retVal.toString();
+        return StringUtil.makeLength("Fuel: ", getPrintSize() - 5)
+                + makeWeightString(getWeightFuel()) + "\n";
     }
 
     @Override
@@ -682,16 +656,11 @@ public class TestAdvancedAerospace extends TestAero {
         return vessel;
     }
 
-    @Override
-    public String printArmorLocProp(int loc, int wert) {
-        return " is greater than " + wert + "!";
-    }
-
     /**
      * Checks to see if this unit has valid armor assignment.
      * 
-     * @param buff
-     * @return
+     * @param buff The StringBuffer to receive error descriptions
+     * @return False when something is invalid, true otherwise
      */
     @Override
     public boolean correctArmor(StringBuffer buff) {
@@ -711,16 +680,16 @@ public class TestAdvancedAerospace extends TestAero {
     /**
      * Checks that the heatsink type is a legal value.
      * 
-     * @param buff
-     * @return
+     * @param buff The StringBuffer to receive error descriptions
+     * @return False when something is invalid, true otherwise
      */
     @Override
     public boolean correctHeatSinks(StringBuffer buff) {
         if ((vessel.getHeatType() != Aero.HEAT_SINGLE) 
                 && (vessel.getHeatType() != Aero.HEAT_DOUBLE)) {
-            buff.append("Invalid heatsink type!  Valid types are "
-                    + Aero.HEAT_SINGLE + " and " + Aero.HEAT_DOUBLE
-                    + ".  Found " + vessel.getHeatType() + ".");
+            buff.append("Invalid heatsink type!  Valid types are " + Aero.HEAT_SINGLE + " and "
+                            + Aero.HEAT_DOUBLE + ".  Found ")
+                    .append(vessel.getHeatType()).append(".");
             return false;
         }
         return true;
@@ -741,8 +710,7 @@ public class TestAdvancedAerospace extends TestAero {
         if (getCountHeatSinks() < weightFreeHeatSinks(vessel)) {
             buff.append("Heat Sinks:\n");
             buff.append(" Total     " + getCountHeatSinks() + "\n");
-            buff.append(" Required  " + weightFreeHeatSinks(vessel)
-                    + "\n");
+            buff.append(" Required  " + weightFreeHeatSinks(vessel) + "\n");
             correct = false;
         }                
         

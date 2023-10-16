@@ -987,14 +987,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
         updateMove();
     }
 
-    private void addStepToMovePath(MoveStepType moveStep, boolean noCost,  boolean isManeuver) {
-        cmd.addStep(moveStep, noCost, isManeuver);
+    private void addStepToMovePath(MoveStepType moveStep, boolean noCost,  boolean isManeuver, int maneuverType) {
+        cmd.addStep(moveStep, noCost, isManeuver, maneuverType);
         updateMove();
     }
 
-    private void addStepsToMovePath(boolean noCost, boolean isManeuver, MoveStepType ... moveSteps) {
+    private void addStepsToMovePath(boolean noCost, boolean isManeuver, int maneuverType, MoveStepType ... moveSteps) {
         for (MoveStepType moveStep : moveSteps) {
-            cmd.addStep(moveStep, noCost, isManeuver);
+            cmd.addStep(moveStep, noCost, isManeuver, maneuverType);
         }
         updateMove();
     }
@@ -1747,7 +1747,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
      */
     private void currentMove(Coords dest) {
         if (shiftheld || (gear == GEAR_TURN)) {
-            cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), false);
+            cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), false, ManeuverType.MAN_NONE);
         } else if ((gear == GEAR_JUMP)
                    && (ce().getJumpType() == Mech.JUMP_BOOSTER)) {
             // Jumps with mechanical jump boosters are special
@@ -1836,19 +1836,19 @@ public class MovementDisplay extends ActionPhaseDisplay {
         } else if (gear == GEAR_RAM) {
             cmd.findPathTo(dest, MoveStepType.FORWARDS);
         } else if (gear == GEAR_IMMEL) {
-            addStepsToMovePath(true, true,
+            addStepsToMovePath(true, true, ManeuverType.MAN_IMMELMAN,
                     MoveStepType.UP,
                     MoveStepType.UP,
                     MoveStepType.DEC,
                     MoveStepType.DEC);
-            cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), true);
+            cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), true, ManeuverType.MAN_IMMELMAN);
             gear = GEAR_LAND;
         } else if (gear == GEAR_SPLIT_S) {
-            addStepsToMovePath(true, true,
+            addStepsToMovePath(true, true, ManeuverType.MAN_SPLIT_S,
                     MoveStepType.DOWN,
                     MoveStepType.DOWN,
                     MoveStepType.ACC);
-            cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), true);
+            cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), true, ManeuverType.MAN_SPLIT_S);
             gear = GEAR_LAND;
         }
         if (gear == GEAR_LONGEST_WALK || gear == GEAR_LONGEST_RUN) {
@@ -4244,13 +4244,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
         cmd.addManeuver(type);
         switch (type) {
             case ManeuverType.MAN_HAMMERHEAD:
-                addStepToMovePath(MoveStepType.YAW, true, true);
+                addStepToMovePath(MoveStepType.YAW, true, true, type);
                 return true;
             case ManeuverType.MAN_HALF_ROLL:
-                addStepToMovePath(MoveStepType.ROLL, true, true);
+                addStepToMovePath(MoveStepType.ROLL, true, true, type);
                 return true;
             case ManeuverType.MAN_BARREL_ROLL:
-                addStepToMovePath(MoveStepType.DEC, true, true);
+                addStepToMovePath(MoveStepType.DEC, true, true, type);
                 return true;
             case ManeuverType.MAN_IMMELMAN:
                 gear = MovementDisplay.GEAR_IMMEL;
@@ -4269,7 +4269,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     vel = last.getVelocityLeft();
                 }
                 while (vel > 0) {
-                    addStepToMovePath(MoveStepType.DEC, true, true);
+                    addStepToMovePath(MoveStepType.DEC, true, true, type);
                     vel--;
                 }
                 addStepToMovePath(MoveStepType.UP);
@@ -4279,13 +4279,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 // See Total Warfare pg 85
                 if (clientgui.getClient().getGame().getBoard().getType() == Board.T_GROUND) {
                     for (int i = 0; i < 8; i++) {
-                        addStepToMovePath(MoveStepType.LATERAL_LEFT, true, true);
+                        addStepToMovePath(MoveStepType.LATERAL_LEFT, true, true, type);
                     }
                     for (int i = 0; i < 8; i++) {
-                        addStepToMovePath(MoveStepType.FORWARDS, true, true);
+                        addStepToMovePath(MoveStepType.FORWARDS, true, true, type);
                     }
                 } else {
-                    addStepToMovePath(MoveStepType.LATERAL_LEFT, true, true);
+                    addStepToMovePath(MoveStepType.LATERAL_LEFT, true, true, type);
                 }
                 return true;
             case ManeuverType.MAN_SIDE_SLIP_RIGHT:
@@ -4293,17 +4293,17 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 // See Total Warfare pg 85
                 if (clientgui.getClient().getGame().getBoard().getType() == Board.T_GROUND) {
                     for (int i = 0; i < 8; i++) {
-                        addStepToMovePath(MoveStepType.LATERAL_RIGHT, true, true);
+                        addStepToMovePath(MoveStepType.LATERAL_RIGHT, true, true, type);
                     }
                     for (int i = 0; i < 8; i++) {
-                        addStepToMovePath(MoveStepType.FORWARDS, true, true);
+                        addStepToMovePath(MoveStepType.FORWARDS, true, true, type);
                     }
                 } else {
-                    addStepToMovePath(MoveStepType.LATERAL_RIGHT, true, true);
+                    addStepToMovePath(MoveStepType.LATERAL_RIGHT, true, true, type);
                 }
                 return true;
             case ManeuverType.MAN_LOOP:
-                addStepToMovePath(MoveStepType.LOOP, true, true);
+                addStepToMovePath(MoveStepType.LOOP, true, true, type);
                 return true;
             default:
                 return false;

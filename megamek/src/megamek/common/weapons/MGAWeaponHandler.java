@@ -41,6 +41,7 @@ public class MGAWeaponHandler extends MGHandler {
     @Override
     protected int calcDamagePerHit() {
         if (target.isConventionalInfantry()) {
+            calcDmgPerHitReport.add(new Report(950));
             int damage = Compute.directBlowInfantryDamage(
                     wtype.getDamage(), bDirect ? toHit.getMoS() / 3 : 0,
                     wtype.getInfantryDamageClass(),

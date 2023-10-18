@@ -1350,6 +1350,12 @@ public final class UnitToolTip {
             HeatDisplayHelper hdh = getHeatCapacityForDisplay(entity);
             sHeat += " / "+ hdh.heatCapacityStr;
             result += guiScaledFontHTML(GUIP.getColorForHeat(heat)) + sHeat + "</FONT>";
+
+            if (entity instanceof Mech && ((Mech) entity).hasActiveTSM()) {
+                result += DOT_SPACER;
+                String sTSM = "TSM";
+                result += guiScaledFontHTML(GUIP.getPrecautionColor()) + sTSM + "</FONT>";
+            }
         }
 
         String searchLight = entity.isUsingSearchlight() ? DOT_SPACER +"\uD83D\uDD26" : "";

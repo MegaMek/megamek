@@ -3899,7 +3899,7 @@ public class MoveStep implements Serializable {
         }
 
         // if its part of a maneuver then you can turn
-        if (isManeuver()) {
+        if (isFacingChangeManeuver()) {
             return true;
         }
 
@@ -4016,6 +4016,17 @@ public class MoveStep implements Serializable {
 
     public Minefield getMinefield() {
         return mf;
+    }
+
+
+    /**
+     * @return Whether this step is a maneuver that allows a free facing change.
+     */
+    public boolean isFacingChangeManeuver() {
+        return maneuver && (
+                maneuverType == ManeuverType.MAN_IMMELMAN
+                        || maneuverType == ManeuverType.MAN_SPLIT_S
+        );
     }
 
     /**

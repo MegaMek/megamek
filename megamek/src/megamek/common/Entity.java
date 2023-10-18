@@ -11376,7 +11376,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 && lastPos.direction(curPos) % 3 != curFacing % 3
                 && !(isUsingManAce() && (overallMoveType == EntityMovementType.MOVE_WALK
                 || overallMoveType == EntityMovementType.MOVE_VTOL_WALK))) {
-            roll.append(new PilotingRollData(getId(), 0, "controlled sideslip"));
+            roll.append(new PilotingRollData(getId(), -1, "controlled sideslip"));
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
                     "Check false: not apparently sideslipping");

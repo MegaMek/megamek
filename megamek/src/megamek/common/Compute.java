@@ -6400,10 +6400,11 @@ public class Compute {
      * Used to get a human-readable string that represents the passed damage
      * type.
      *
-     * @param damageType
-     * @return
+     * @param damageType      The dmaageType constant
+     * @param burstMultiplier The multiplier for burst damage, used by machine gun arrays against conventional infantry
+     * @return A string representation of the damage type
      */
-    public static String getDamageTypeString(int damageType) {
+    public static String getDamageTypeString(int damageType, int burstMultiplier) {
         switch (damageType) {
             case WeaponType.WEAPON_DIRECT_FIRE:
                 return Messages.getString("WeaponType.DirectFire");
@@ -6417,6 +6418,7 @@ public class Compute {
             case WeaponType.WEAPON_CLUSTER_MISSILE_3D6:
                 return Messages.getString("WeaponType.Missile");
             case WeaponType.WEAPON_BURST_HALFD6:
+                return Messages.getString("WeaponType.BurstHalf");
             case WeaponType.WEAPON_BURST_1D6:
             case WeaponType.WEAPON_BURST_2D6:
             case WeaponType.WEAPON_BURST_3D6:
@@ -6425,7 +6427,8 @@ public class Compute {
             case WeaponType.WEAPON_BURST_6D6:
             case WeaponType.WEAPON_BURST_7D6:
             default:
-                return Messages.getString("WeaponType.Burst");
+                return String.format("%s (%dD6)", Messages.getString("WeaponType.Burst"),
+                        burstMultiplier * (damageType - WeaponType.WEAPON_BURST_HALFD6));
         }
     }
 
@@ -6572,14 +6575,14 @@ public class Compute {
             r.subject = attackerId;
             r.indent(2);
 
-            r.add(getDamageTypeString(origDamageType));
+            r.add(getDamageTypeString(origDamageType, mgaSize));
             if (origDamageType != damageType) {
                 if (isAttackThruBuilding) {
                     r.messageId = 9973;
                 } else {
                     r.messageId = 9972;
                 }
-                r.add(getDamageTypeString(damageType));
+                r.add(getDamageTypeString(damageType, mgaSize));
             } else if (isAttackThruBuilding) {
                 r.messageId = 9971;
             } else {

@@ -63,6 +63,9 @@ VERSION HISTORY:
 + PR #4818: Separate structure class from TestEntity
 + PR #4816: TestTank: Adapt some tests for GunEmplacements
 + Fix #4828: Use standard ECM range for Watchdog/Nova CEWS
++ Fix 4830: WiGE units with jump jets no longer jump to the bottom of water hexes
++ PR #4834: The unit tooltip now indicates when TSM is active
++ PR #4822: Formatting updates and utilities for the unit summary (unit selector/lobby unit view)
 
 
 0.49.14 (2023-07-28 2100 UTC)

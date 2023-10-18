@@ -50,9 +50,9 @@ public class MGAWeaponHandler extends MGHandler {
             damage = applyGlancingBlowModifier(damage, true);
             if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)) {
                 if (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) {
-                    damage *= 0.75;
+                    damage = (int) Math.floor(damage * 0.75);
                 } else if (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME]) {
-                    damage *= 0.5;
+                    damage = (int) Math.floor(damage * 0.5);
                 }
             }
             return damage;

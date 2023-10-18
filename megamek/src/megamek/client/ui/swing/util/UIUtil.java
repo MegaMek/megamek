@@ -22,6 +22,7 @@ import megamek.client.ui.swing.MMToggleButton;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.ImageUtil;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -35,6 +36,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.image.ImageObserver;
+import java.net.URL;
 import java.util.List;
 import java.util.*;
 import java.util.stream.Stream;
@@ -59,6 +61,21 @@ public final class UIUtil {
     public static final String DOT_SPACER = " \u2B1D ";
     public static final String BOT_MARKER = " \u259A ";
 
+
+    public static void showMUL(int mulId, Component parent) {
+        browse(MMConstants.MUL_URL_PREFIX + mulId, parent);
+    }
+
+    public static void browse(String url, Component parent) {
+        try {
+            if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+                Desktop.getDesktop().browse(new URL(url).toURI());
+            }
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
+            JOptionPane.showMessageDialog(parent, ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
     public static String repeat(String str, int count) {
         return String.valueOf(str).repeat(Math.max(0, count));
@@ -1355,7 +1372,6 @@ public final class UIUtil {
         y = Math.min(y, h - vh);
         return y;
     }
-
 
     private UIUtil() { }
 }

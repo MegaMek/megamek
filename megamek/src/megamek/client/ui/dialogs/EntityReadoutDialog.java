@@ -25,9 +25,13 @@ import megamek.client.ui.baseComponents.AbstractDialog;
 import megamek.client.ui.panes.EntityViewPane;
 import megamek.client.ui.preferences.JTabbedPanePreference;
 import megamek.client.ui.preferences.PreferencesNode;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 
-/** A dialog showing the unit readout for a given unit. */
+/**
+ * A dialog showing the unit readout for a given unit. It shows an {@link EntityViewPane} with the entity summary,
+ * TRO and AS card panels within a TabbedPane.
+ */
 public class EntityReadoutDialog extends AbstractDialog {
 
     private final Entity entity;
@@ -56,5 +60,14 @@ public class EntityReadoutDialog extends AbstractDialog {
     protected void setCustomPreferences(final PreferencesNode preferences) throws Exception {
         super.setCustomPreferences(preferences);
         preferences.manage(new JTabbedPanePreference(entityView));
+    }
+
+    @Override
+    public void setVisible(boolean visible) {
+        if (visible) {
+            UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
+        }
+
+        super.setVisible(visible);
     }
 }

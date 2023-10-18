@@ -15,7 +15,9 @@ package megamek.common;
 
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
-import megamek.codeUtilities.StringUtility;
+import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.annotations.Nullable;
 import megamek.common.eras.Era;
 import megamek.common.eras.Eras;
 import megamek.common.options.*;
@@ -25,6 +27,7 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.*;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -76,7 +79,7 @@ public class MechView {
     private List<ViewElement> sLoadout = new ArrayList<>();
     private List<ViewElement> sFluff = new ArrayList<>();
     
-    private boolean html;
+    private final boolean html;
 
     /**
      * Compiles information about an {@link Entity} useful for showing a summary of its abilities.
@@ -147,20 +150,35 @@ public class MechView {
         isJumpship = entity instanceof Jumpship;
         isSpaceStation = entity instanceof SpaceStation;
 
-        sLoadout.addAll(getWeapons(showDetail));
-        sLoadout.add(new SingleLine());
+        List<ViewElement> weapons = getWeapons(showDetail);
+        if (!weapons.isEmpty()) {
+            sLoadout.add(new SingleLine());
+            sLoadout.addAll(getWeapons(showDetail));
+        }
+
         if ((!entity.usesWeaponBays() || !showDetail) && !entity.getAmmo().isEmpty()) {
+            sLoadout.add(new SingleLine());
             sLoadout.add(getAmmo());
-            sLoadout.add(new SingleLine());
         }
+
         if (entity instanceof IBomber) {
-            sLoadout.addAll(getBombs());
-            sLoadout.add(new SingleLine());
+            List<ViewElement> bombs = getBombs();
+            if (!bombs.isEmpty()) {
+                sLoadout.add(new SingleLine());
+                sLoadout.addAll(getBombs());
+            }
         }
-        sLoadout.addAll(getMisc()); // has to occur before basic is processed
-        sLoadout.add(new SingleLine());
-        sLoadout.add(getFailed());
-        sLoadout.add(new SingleLine());
+
+        List<ViewElement> miscEquipment = getMisc();
+        if (!miscEquipment.isEmpty()) {
+            sLoadout.addAll(getMisc()); // has to occur before basic is processed
+        }
+
+        ViewElement failedEquipment = getFailed();
+        if (!(failedEquipment instanceof EmptyElement)) {
+            sLoadout.add(new SingleLine());
+            sLoadout.add(failedEquipment);
+        }
 
         if (isInf) {
             Infantry inf = (Infantry) entity;
@@ -261,18 +279,16 @@ public class MechView {
         }
         sHead.add(new LabeledElement(Messages.getString("MechView.Cost"),
                 dFormatter.format(cost) + " C-bills"));
-        if (entity.hasMulId()) {
-            sHead.add(new HyperLinkElement(MMConstants.MUL_URL_PREFIX + entity.getMulId(),
-                    Messages.getString("MechView.Source")));
-            if (!entity.getSource().isEmpty()) {
-                sHead.add(new LabeledElement("", entity.getSource()));
+        String source = entity.getSource();
+        if (!source.isBlank()) {
+            if (source.contains(MMConstants.SOURCE_TEXT_SHRAPNEL)) {
+                sHead.add(new HyperLinkElement(Messages.getString("MechView.Source"), MMConstants.BT_URL_SHRAPNEL, source));
             } else {
-                sHead.add(new LabeledElement("", Messages.getString("MechView.Unknown")));
+                sHead.add(new LabeledElement(Messages.getString("MechView.Source"), source));
             }
         } else {
-            if (!entity.getSource().isEmpty()) {
-                sHead.add(new LabeledElement(Messages.getString("MechView.Source"), entity.getSource()));
-            }
+            sHead.add(new LabeledElement(Messages.getString("MechView.Source"),
+                    Messages.getString("MechView.Unknown")));
         }
 
         UnitRole role = UnitRoleHandler.getRoleFor(entity);
@@ -466,7 +482,6 @@ public class MechView {
                 sBasic.addAll(getInternalAndArmor());
             }
         }
-        sBasic.add(new SingleLine());
 
         Game game = entity.getGame();
 
@@ -526,23 +541,22 @@ public class MechView {
             }
         }
 
-        sFluff.add(new SingleLine());
         if (!entity.getFluff().getOverview().isEmpty()) {
+            sFluff.add(new SingleLine());
             sFluff.add(new LabeledElement("Overview", entity.getFluff().getOverview()));
         }
-        sFluff.add(new SingleLine());        
         if (!entity.getFluff().getCapabilities().isEmpty()) {
+            sFluff.add(new SingleLine());
             sFluff.add(new LabeledElement("Capabilities", entity.getFluff().getCapabilities()));
         }
-        sFluff.add(new SingleLine());        
         if (!entity.getFluff().getDeployment().isEmpty()) {
+            sFluff.add(new SingleLine());
             sFluff.add(new LabeledElement("Deployment", entity.getFluff().getDeployment()));
         }
-        sFluff.add(new SingleLine());        
         if (!entity.getFluff().getHistory().isEmpty()) {
+            sFluff.add(new SingleLine());
             sFluff.add(new LabeledElement("History", entity.getFluff().getHistory()));
         }
-        sFluff.add(new SingleLine());
     }
 
     private String eraText(int startYear, int endYear) {
@@ -611,10 +625,19 @@ public class MechView {
      * @return A summary including all four sections. 
      */
     public String getMechReadout() {
-        String docStart = html?
-                "<div style=\"font:12pt monospaced\">" : "";
-        String docEnd = html?
-                "</div>" : "";
+        return getMechReadout(null);
+    }
+
+    /**
+     * @return A summary including all four sections.
+     */
+    public String getMechReadout(@Nullable String fontName) {
+        String docStart = "";
+        String docEnd = "";
+        if (html && (fontName != null)) {
+            docStart = "<div style=\"font-family:" + fontName + ";\">";
+            docEnd = "</div>";
+        }
         return docStart + getMechReadoutHead()
                 + getMechReadoutBasic() + getMechReadoutLoadout()
                 + getMechReadoutFluff() + docEnd;
@@ -668,8 +691,8 @@ public class MechView {
         if (!(isInf && !isBA)) {
             TableElement locTable = new TableElement(5);
             locTable.setColNames("", "Internal", "Armor", "", ""); // last two columns are patchwork armor and location damage
-            locTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_RIGHT,
-                    TableElement.JUSTIFIED_RIGHT, TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_LEFT);
+            locTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_CENTER,
+                    TableElement.JUSTIFIED_CENTER, TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_LEFT);
             for (int loc = 0; loc < entity.locations(); loc++) {
                 // Skip empty sections.
                 if (entity.getInternal(loc) == IArmorState.ARMOR_NA) {
@@ -760,7 +783,7 @@ public class MechView {
         if (!entity.isCapitalFighter()) {
             TableElement locTable = new TableElement(3);
             locTable.setColNames("", "Armor", "");
-            locTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_RIGHT,
+            locTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_CENTER,
                     TableElement.JUSTIFIED_LEFT);
             for (int loc = 0; loc < entity.locations(); loc++) {
 
@@ -838,9 +861,9 @@ public class MechView {
         }
         
         TableElement wpnTable = new TableElement(4);
-        wpnTable.setColNames("Weapons", "Loc", "Heat", entity.isOmni() ? "Omni" : "");
+        wpnTable.setColNames("Weapons  ", "  Loc  ", "  Heat  ", entity.isOmni() ? "  Omni  " : "");
         wpnTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_CENTER,
-                TableElement.JUSTIFIED_CENTER, TableElement.JUSTIFIED_LEFT);
+                TableElement.JUSTIFIED_CENTER, TableElement.JUSTIFIED_CENTER);
         for (Mounted mounted : entity.getWeaponList()) {
             String[] row = { mounted.getDesc(), entity.joinLocationAbbr(mounted.allLocations(), 3), "", "" };
             WeaponType wtype = (WeaponType) mounted.getType();
@@ -886,9 +909,9 @@ public class MechView {
             }
             if (mounted.isDestroyed()) {
                 if (mounted.isRepairable()) {
-                    wpnTable.addRowWithBgColor("yellow", row);
+                    wpnTable.addRowWithColor("yellow", row);
                 } else {
-                    wpnTable.addRowWithBgColor("red", row);
+                    wpnTable.addRowWithColor("red", row);
                 }
             } else {
                 wpnTable.addRow(row);
@@ -914,9 +937,9 @@ public class MechView {
                     }
                     if (m.isDestroyed()) {
                         if (m.isRepairable()) {
-                            wpnTable.addRowWithBgColor("yellow", row);
+                            wpnTable.addRowWithColor("yellow", row);
                         } else {
-                            wpnTable.addRowWithBgColor("red", row);
+                            wpnTable.addRowWithColor("red", row);
                         }
                     } else {
                         wpnTable.addRow(row);
@@ -935,9 +958,9 @@ public class MechView {
                     if (mounted.getLocation() != Entity.LOC_NONE) {
                         row = new String[] { m.getName(), String.valueOf(m.getBaseShotsLeft()), "", "" };
                         if (m.isDestroyed()) {
-                            wpnTable.addRowWithBgColor("red", row);
+                            wpnTable.addRowWithColor("red", row);
                         } else if (m.getUsableShotsLeft() < 1) {
-                            wpnTable.addRowWithBgColor("yellow", row);
+                            wpnTable.addRowWithColor("yellow", row);
                         } else {
                             wpnTable.addRow(row);
                         }
@@ -953,7 +976,7 @@ public class MechView {
         TableElement ammoTable = new TableElement(4);
         ammoTable.setColNames("Ammo", "Loc", "Shots", entity.isOmni() ? "Omni" : "");
         ammoTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_CENTER,
-                TableElement.JUSTIFIED_RIGHT, TableElement.JUSTIFIED_LEFT);
+                TableElement.JUSTIFIED_CENTER, TableElement.JUSTIFIED_CENTER);
 
         for (Mounted mounted : entity.getAmmo()) {
             // Ignore ammo for one-shot launchers
@@ -977,9 +1000,9 @@ public class MechView {
             }
 
             if (mounted.isDestroyed()) {
-                ammoTable.addRowWithBgColor("red", row);
+                ammoTable.addRowWithColor("red", row);
             } else if (mounted.getUsableShotsLeft() < 1) {
-                ammoTable.addRowWithBgColor("yellow", row);
+                ammoTable.addRowWithColor("yellow", row);
             } else {
                 ammoTable.addRow(row);
             }
@@ -1000,9 +1023,9 @@ public class MechView {
                     shotsLeft += current.getUsableShotsLeft();
                 }
                 if (mounted.isDestroyed()) {
-                    ammoTable.addRowWithBgColor("red", row);
+                    ammoTable.addRowWithColor("red", row);
                 } else if (shotsLeft < 1) {
-                    ammoTable.addRowWithBgColor("yellow", row);
+                    ammoTable.addRowWithColor("yellow", row);
                 } else {
                     ammoTable.addRow(row);
                 }
@@ -1010,8 +1033,6 @@ public class MechView {
         }
         return ammoTable;
     }
-    
-    
 
     private List<ViewElement> getBombs() {
         List<ViewElement> retVal = new ArrayList<>();
@@ -1031,7 +1052,7 @@ public class MechView {
         TableElement miscTable = new TableElement(3);
         miscTable.setColNames("Equipment", "Loc", entity.isOmni() ? "Omni" : "");
         miscTable.setJustification(TableElement.JUSTIFIED_LEFT, TableElement.JUSTIFIED_CENTER,
-                TableElement.JUSTIFIED_LEFT);
+                TableElement.JUSTIFIED_CENTER);
         int nEquip = 0;
         for (Mounted mounted : entity.getMisc()) {
             String name = mounted.getName();
@@ -1066,25 +1087,30 @@ public class MechView {
             }
 
             if (mounted.isDestroyed()) {
-                miscTable.addRowWithBgColor("red", row);
+                miscTable.addRowWithColor("red", row);
             } else {
                 miscTable.addRow(row);
             }
         }
 
         if (nEquip > 0) {
+            retVal.add(new SingleLine());
             retVal.add(miscTable);
         }
 
-        retVal.add(new SingleLine());
-        String capacity = entity.getUnusedString(html);
-        if (!StringUtility.isNullOrBlank(capacity)) {
-            // The entries have already been formatted into a list, but we're still going to
-            // format it as a list to get the items under the label.
-            ItemList list = new ItemList(Messages.getString("MechView.CarryingCapacity"));
-            list.addItem(capacity);
-            retVal.add(list);
+        String transportersString = entity.getUnusedString(html);
+        if (!transportersString.isBlank()) {
             retVal.add(new SingleLine());
+            // Reformat the list to a table to keep the formatting similar between blocks
+            TableElement transportTable = new TableElement(1);
+            transportTable.setColNames(Messages.getString("MechView.CarryingCapacity"));
+            transportTable.setJustification(TableElement.JUSTIFIED_LEFT);
+            String separator = html ? "<br>" : "\r\n";
+            String[] transportersLines = transportersString.split(separator);
+            for (String line : transportersLines) {
+                transportTable.addRow(line);
+            }
+            retVal.add(transportTable);
         }
 
         if (isSmallCraft || isJumpship) {
@@ -1108,6 +1134,7 @@ public class MechView {
             if (a.getNBattleArmor() > 0) {
                 crewTable.addRow(Messages.getString("MechView.BAMarines"), String.valueOf(a.getNBattleArmor()));
             }
+            retVal.add(new SingleLine());
             retVal.add(crewTable);
         }
         if (isVehicle && ((Tank) entity).getExtraCrewSeats() > 0) {
@@ -1140,15 +1167,13 @@ public class MechView {
             }
         }
         if (percentRemaining < 0) {
-            return "<span style='color:white;background-color:black'>X</span>";
+            return "<FONT " + UIUtil.colorString(GUIPreferences.getInstance().getWarningColor()) + ">X</FONT>";
         } else if (percentRemaining <= .25) {
-            return "<span style='color:white;background-color:red'>" + armor + "</span>";
-        } else if (percentRemaining <= .75) {
-            return "<span style='color:black;background-color:yellow'>" + armor + "</span>";
+            return "<FONT " + UIUtil.colorString(GUIPreferences.getInstance().getWarningColor()) + ">" + armor + "</FONT>";
         } else if (percentRemaining < 1.00) {
-            return "<span style='color:black;background-color:green'>" + armor + "</span>";
+            return "<FONT " + UIUtil.colorString(GUIPreferences.getInstance().getCautionColor()) + ">" + armor + "</FONT>";
         } else {
-            return "<span style='color:black;background-color:white'>" + armor + "</span>";
+            return armor;
         }
     }
 
@@ -1184,12 +1209,16 @@ public class MechView {
         
         @Override
         public String toPlainText() {
-            return label + ": " + value + "\n";
+            String htmlCleanedText = value.replaceAll("<[Bb][Rr]> *", "\n")
+                    .replaceAll("<[Pp]> *", "\n\n")
+                    .replaceAll("</[Pp]> *", "\n")
+                    .replaceAll("<[^>]*>", "");
+            return label + ": " + htmlCleanedText + "\n";
         }
         
         @Override
         public String toHTML() {
-            return "<b>" + label + "</b>: " + value + "<br/>\n";
+            return "<b>" + label + "</b>: " + value + "<br>";
         }
     }
     
@@ -1209,7 +1238,7 @@ public class MechView {
         private final String[] colNames;
         private final List<String[]> data = new ArrayList<>();
         private final Map<Integer,Integer> colWidth = new HashMap<>();
-        private final Map<Integer,String> bgColors = new HashMap<>();
+        private final Map<Integer,String> colors = new HashMap<>();
         
         TableElement(int colCount) {
             justification = new int[colCount];
@@ -1240,9 +1269,9 @@ public class MechView {
             }
         }
         
-        void addRowWithBgColor(String color, String... row) {
+        void addRowWithColor(String color, String... row) {
             addRow(row);
-            bgColors.put(data.size() - 1, color);
+            colors.put(data.size() - 1, color);
         }
         
         private String leftPad(String s, int fieldSize) {
@@ -1289,9 +1318,7 @@ public class MechView {
             sb.append("\n");
             if (colNames.length > 0) {
                 int w = sb.length() - 1;
-                for (int i = 0; i < w; i++) {
-                    sb.append("-");
-                }
+                sb.append("-".repeat(Math.max(0, w)));
                 sb.append("\n");
             }
             for (String[] row : data) {
@@ -1319,13 +1346,20 @@ public class MechView {
                     } else {
                         sb.append("<th align=\"left\">");
                     }
-                    sb.append(colNames[col]).append("</th>");
+                    if (justification[col] != JUSTIFIED_LEFT) {
+                        sb.append("&nbsp;&nbsp;");
+                    }
+                    sb.append(colNames[col]);
+                    if (justification[col] != JUSTIFIED_RIGHT) {
+                        sb.append("&nbsp;&nbsp;");
+                    }
+                    sb.append("</th>");
                 }
                 sb.append("</tr>\n");
             }
             for (int r = 0; r < data.size(); r++) {
-                if (bgColors.containsKey(r)) {
-                    sb.append("<tr bgcolor=\"").append(bgColors.get(r)).append("\">");
+                if (colors.containsKey(r)) {
+                    sb.append("<tr color=\"").append(colors.get(r)).append("\">");
                 } else {
                     sb.append("<tr>");
                 }
@@ -1338,7 +1372,14 @@ public class MechView {
                     } else {
                         sb.append("<td align=\"left\">");
                     }
-                    sb.append(row[col]).append("</td>");
+                    if (justification[col] != JUSTIFIED_LEFT) {
+                        sb.append("&nbsp;&nbsp;");
+                    }
+                    sb.append(row[col]);
+                    if (justification[col] != JUSTIFIED_RIGHT) {
+                        sb.append("&nbsp;&nbsp;");
+                    }
+                    sb.append("</td>");
                 }
                 sb.append("</tr>\n");
             }
@@ -1368,9 +1409,7 @@ public class MechView {
             StringBuilder sb = new StringBuilder();
             if (null != heading) {
                 sb.append(heading).append("\n");
-                for (int i = 0; i < heading.length(); i++) {
-                    sb.append("-");
-                }
+                sb.append("-".repeat(heading.length()));
                 sb.append("\n");
             }
             for (String item : data) {
@@ -1423,22 +1462,32 @@ public class MechView {
      */
     private static class HyperLinkElement implements ViewElement {
 
+        private final String label;
         private final String address;
         private final String displayText;
 
         HyperLinkElement(String address, String displayText) {
+            label = "";
+            this.address = address;
+            this.displayText = displayText;
+        }
+
+        HyperLinkElement(String label, String address, String displayText) {
+            this.label = (label == null) ? "" : label;
             this.address = address;
             this.displayText = displayText;
         }
 
         @Override
         public String toPlainText() {
-            return displayText;
+            String result = label.isBlank() ? "" : label + ": ";
+            return result + displayText + "\n";
         }
 
         @Override
         public String toHTML() {
-            return "<A HREF=" + address + ">" + displayText + "</A>";
+            String result = label.isBlank() ? "" : "<B>" + label + "</B>: ";
+            return result + "<A HREF=" + address + ">" + displayText + "</A><BR>";
         }
     }
     

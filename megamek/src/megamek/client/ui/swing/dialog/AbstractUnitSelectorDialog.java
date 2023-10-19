@@ -601,7 +601,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
      */
     protected Entity refreshUnitView() {
         Entity selectedEntity = getSelectedEntity();
-        panePreview.updateDisplayedEntity(selectedEntity);
+        panePreview.updateDisplayedEntity(selectedEntity, getSelectedMechSummary());
         // Empty the unit preview icon if there's no entity selected
         if (selectedEntity == null) {
             labelImage.setIcon(null);
@@ -629,6 +629,17 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                             + ": " + e.getMessage(), e);
             return null;
         }
+    }
+
+    /** @return The MechSummary for the selected unit. */
+    public @Nullable MechSummary getSelectedMechSummary() {
+        int view = tableUnits.getSelectedRow();
+        if (view < 0) {
+            // selection got filtered away
+            return null;
+        }
+        int selected = tableUnits.convertRowIndexToModel(view);
+        return mechs[selected];
     }
 
     @Override

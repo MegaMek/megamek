@@ -29,12 +29,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This singleton class reads in the available fonts when first called. Lists of available fonts can be obtained by
+ * This singleton class reads in the available fonts when first called, including those in
+ * {@link MMConstants#FONT_DIRECTORY}. Lists of available fonts can be obtained by
  * calling {@link #getAvailableNonSymbolFonts()} and {@link #getAvailableFonts()}.
  */
 public final class FontHandler {
 
     private static final FontHandler instance = new FontHandler();
+    private static final String SYMBOL_TEST_STRING = "abcdefgnzABCDEFGNZ1234567890/()[]";
 
     private final List<String> nonSymbolFontNames = new ArrayList<>();
     private final List<String> allFontNames = new ArrayList<>();
@@ -45,23 +47,10 @@ public final class FontHandler {
      * cannot display any of the characters "abcdefgnzABCDEFGNZ1234567890/()[]"). This list is only
      * read from the GraphicsEnvironment once and then not updated while the application is running.
      */
-    public static void initialize() {
-        if (!instance.initialized) {
-            synchronized(instance) {
-                if (!instance.initialized) {
-                    instance.initializeFonts();
-                }
-            }
-        }
-    }
-
-    /**
-     * Returns a list of available font names excluding some symbol fonts (specifically, excluding fonts that
-     * cannot display any of the characters "abcdefgnzABCDEFGNZ1234567890/()[]"). This list is only
-     * read from the GraphicsEnvironment once and then not updated while the application is running.
-     */
     public static List<String> getAvailableNonSymbolFonts() {
-        initialize();
+        if (!instance.initialized) {
+            initialize();
+        }
         return instance.nonSymbolFontNames;
     }
 
@@ -70,8 +59,22 @@ public final class FontHandler {
      * then not updated while the application is running.
      */
     public static List<String> getAvailableFonts() {
-        initialize();
+        if (!instance.initialized) {
+            initialize();
+        }
         return instance.allFontNames;
+    }
+
+    /**
+     * Initializes the FontHandler, reading in and storing the available fonts for retrieval. Also reads in any
+     * fonts in {@link MMConstants#FONT_DIRECTORY}.
+     */
+    public static void initialize() {
+        synchronized(instance) {
+            if (!instance.initialized) {
+                instance.initializeFonts();
+            }
+        }
     }
 
     private void initializeFonts() {
@@ -79,7 +82,7 @@ public final class FontHandler {
         for (String fontName : GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()) {
             allFontNames.add(fontName);
             Font font = Font.decode(fontName);
-            if (font.canDisplayUpTo("abcdefgnzABCDEFGNZ1234567890/()[]") == -1) {
+            if (font.canDisplayUpTo(SYMBOL_TEST_STRING) == -1) {
                 nonSymbolFontNames.add(fontName);
             }
         }
@@ -92,7 +95,7 @@ public final class FontHandler {
      *
      * @param directory the directory to parse
      */
-    private void parseFontsInDirectory(final File directory) {
+    public static void parseFontsInDirectory(final File directory) {
         final String[] filenames = directory.list();
         if (filenames == null) {
             return;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2021-2023 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -23,6 +23,8 @@ import megamek.client.ui.swing.MechViewPanel;
 import megamek.client.ui.swing.alphaStrike.ConfigurableASCardPanel;
 import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
 import megamek.common.Entity;
+import megamek.common.alphaStrike.ASCardDisplayable;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.annotations.Nullable;
 import megamek.common.templates.TROView;
@@ -33,30 +35,14 @@ import javax.swing.*;
  * The EntityViewPane displays the entity summary, TRO and AS card panels within a TabbedPane.
  */
 public class EntityViewPane extends AbstractTabbedPane {
-    private ConfigurableMechViewPanel entityPanel;
-    private MechViewPanel troPanel;
+    private final ConfigurableMechViewPanel summaryPanel = new ConfigurableMechViewPanel();
+    private final MechViewPanel troPanel = new MechViewPanel();
     private final ConfigurableASCardPanel cardPanel = new ConfigurableASCardPanel(getFrame());
 
     public EntityViewPane(final JFrame frame, final @Nullable Entity entity) {
         super(frame, "EntityViewPane");
         initialize();
         updateDisplayedEntity(entity);
-    }
-
-    public ConfigurableMechViewPanel getEntityPanel() {
-        return entityPanel;
-    }
-
-    public void setEntityPanel(final ConfigurableMechViewPanel entityPanel) {
-        this.entityPanel = entityPanel;
-    }
-
-    public MechViewPanel getTROPanel() {
-        return troPanel;
-    }
-
-    public void setTROPanel(final MechViewPanel troPanel) {
-        this.troPanel = troPanel;
     }
 
     /**
@@ -66,34 +52,42 @@ public class EntityViewPane extends AbstractTabbedPane {
      */
     @Override
     protected void initialize() {
-        setEntityPanel(new ConfigurableMechViewPanel());
-        getEntityPanel().setName("entityPanel");
-        addTab(resources.getString("Summary.title"), getEntityPanel());
+        summaryPanel.setName("entityPanel");
+        troPanel.setName("troPanel");
 
-        setTROPanel(new MechViewPanel());
-        getTROPanel().setName("troPanel");
-        addTab(resources.getString("TRO.title"), getTROPanel());
-
-        addTab("AS Card", cardPanel);
+        addTab(resources.getString("Summary.title"), summaryPanel);
+        addTab(resources.getString("TRO.title"), troPanel);
+        addTab(resources.getString("ASCard.title"), cardPanel);
     }
 
     /**
-     * Updates the pane's currently displayed entity.
+     * Updates the pane's currently displayed entity in all tabs. Performs Alpha Strike conversion if possible.
      *
      * @param entity the entity to update to, or null if the panels are to be emptied.
      */
     public void updateDisplayedEntity(final @Nullable Entity entity) {
-        if (entity == null) {
-            getEntityPanel().reset();
-            getTROPanel().reset();
-        } else {
-            getEntityPanel().setEntity(entity);
-            getTROPanel().setMech(entity, TROView.createView(entity, true));
-        }
+        AlphaStrikeElement asUnit = null;
         if (ASConverter.canConvert(entity)) {
-            cardPanel.setASElement(ASConverter.convert(entity, new FlexibleCalculationReport()));
-        } else {
-            cardPanel.setASElement(null);
+            asUnit = ASConverter.convert(entity, new FlexibleCalculationReport());
         }
+        updateDisplayedEntity(entity, asUnit);
+    }
+
+    /**
+     * Updates the pane's currently displayed entity / AS unit to the respective given units. The method
+     * assumes that asUnit corresponds to entity and does no conversion. When the AS Element or MechSummary
+     * is available, passing it in as asUnit saves the time for AS conversion.
+     *
+     * @param entity the entity to update to, or null if the panels are to be emptied.
+     * @param asUnit the Alpha Strike unit corresponding to entity (may be a MechSummary)
+     */
+    public void updateDisplayedEntity(final @Nullable Entity entity, @Nullable ASCardDisplayable asUnit) {
+        if (entity == null) {
+            troPanel.reset();
+        } else {
+            troPanel.setMech(entity, TROView.createView(entity, true));
+        }
+        summaryPanel.setEntity(entity);
+        cardPanel.setASElement(asUnit);
     }
 }

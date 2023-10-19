@@ -18,6 +18,7 @@
  */
 package megamek.client.ui.displayWrappers;
 
+import megamek.client.ui.swing.util.FontHandler;
 import megamek.common.annotations.Nullable;
 
 import java.awt.*;
@@ -54,9 +55,7 @@ public class FontDisplay {
     //endregion Getters/Setters
 
     public static List<FontDisplay> getSortedFontDisplays() {
-        return Stream.of(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames())
-                .map(FontDisplay::new)
-                .collect(Collectors.toList());
+        return FontHandler.getAvailableFonts().stream().map(FontDisplay::new).collect(Collectors.toList());
     }
 
     @Override

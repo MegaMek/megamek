@@ -134,12 +134,11 @@ class LobbyMekPopup {
         boolean accessibleFighters = accessibleEntities.stream().anyMatch(Entity::isFighter);
         boolean accessibleTransportBays = accessibleEntities.stream().anyMatch(e -> !e.getTransportBays().isEmpty());
         boolean accessibleCarriers = accessibleEntities.stream().anyMatch(e -> !e.getLoadedUnits().isEmpty());
-        boolean accessibleProtomeks = accessibleEntities.stream().anyMatch(e -> e.hasETypeFlag(Entity.ETYPE_PROTOMECH));
 
         // Find what can be done with the selected entities incl. those in selected forces
         boolean anyCarrier = joinedEntities.stream().anyMatch(e -> !e.getLoadedUnits().isEmpty());
         boolean noneEmbarked = joinedEntities.stream().allMatch(e -> e.getTransportId() == Entity.NONE);
-        boolean allProtomeks = joinedEntities.stream().allMatch(e -> e.hasETypeFlag(Entity.ETYPE_PROTOMECH));
+        boolean allProtomeks = !joinedEntities.isEmpty() && joinedEntities.stream().allMatch(e -> e instanceof Protomech);
         boolean anyRFMGOn = joinedEntities.stream().anyMatch(LobbyMekPopup::hasRapidFireMG);
         boolean anyRFMGOff = joinedEntities.stream().anyMatch(LobbyMekPopup::hasNormalFireMG);
         boolean anyHLOn = joinedEntities.stream().anyMatch(LobbyMekPopup::hasHotLoaded);

@@ -216,6 +216,8 @@ public class TROView {
         if (entity.hasEngine()) {
             model.put("engineDesc", formatSystemFluff(EntityFluff.System.ENGINE, entity.getFluff(),
                     () -> stripNotes(entity.getEngine().getEngineName())));
+        } else {
+            model.put("engineDesc", "None");
         }
         if (!entity.isAero()) {
             model.put("cruisingSpeed", entity.getWalkMP() * 10.8);

@@ -23,6 +23,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.WrapLayout;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.MechViewPanel;
+import megamek.client.ui.swing.util.FontHandler;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
 import megamek.common.MechView;
@@ -32,7 +33,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.util.Locale;
+import java.util.Vector;
 
 /**
  * This class wraps the MechView / MechViewPanel and gives it a toolbar to choose font, open the MUL
@@ -40,7 +41,7 @@ import java.util.Locale;
  */
 public class ConfigurableMechViewPanel extends JPanel {
 
-    private final JComboBox<String> fontChooser = new JComboBox<>();
+    private final JComboBox<String> fontChooser;
     private final JButton copyHtmlButton = new JButton(Messages.getString("CMVPanel.copyHTML"));
     private final JButton copyTextButton = new JButton(Messages.getString("CMVPanel.copyText"));
     private final JButton mulButton = new JButton(Messages.getString("CMVPanel.MUL"));
@@ -56,13 +57,8 @@ public class ConfigurableMechViewPanel extends JPanel {
     public ConfigurableMechViewPanel(@Nullable Entity entity) {
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
+        fontChooser = new JComboBox<>(new Vector<>(FontHandler.getAvailableNonSymbolFonts()));
         fontChooser.addItem("");
-        for (String family : GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames(Locale.US)) {
-            Font f = Font.decode(family);
-            if (f.canDisplayUpTo("anzANZ150/[]") == -1) {
-                fontChooser.addItem(family);
-            }
-        }
         fontChooser.addActionListener(ev -> updateFont());
         fontChooser.setSelectedItem(GUIPreferences.getInstance().getSummaryFont());
 

@@ -213,8 +213,12 @@ public class TROView {
         addEntityFluff(entity);
         model.put("massDesc", NumberFormat.getInstance().format(entity.getWeight())
                 + Messages.getString(entity.getWeight() == 1.0 ? "TROView.ton" : "TROView.tons"));
-        model.put("engineDesc", formatSystemFluff(EntityFluff.System.ENGINE, entity.getFluff(),
-                () -> stripNotes(entity.getEngine().getEngineName())));
+        if (entity.hasEngine()) {
+            model.put("engineDesc", formatSystemFluff(EntityFluff.System.ENGINE, entity.getFluff(),
+                    () -> stripNotes(entity.getEngine().getEngineName())));
+        } else {
+            model.put("engineDesc", "None");
+        }
         if (!entity.isAero()) {
             model.put("cruisingSpeed", entity.getWalkMP() * 10.8);
             model.put("maxSpeed", entity.getRunMP() * 10.8);

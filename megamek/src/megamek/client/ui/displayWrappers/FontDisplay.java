@@ -18,12 +18,12 @@
  */
 package megamek.client.ui.displayWrappers;
 
+import megamek.client.ui.swing.util.FontHandler;
 import megamek.common.annotations.Nullable;
 
 import java.awt.*;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * FontDisplay is a display wrapper around a Font, primarily to be used in ComboBoxes. This is
@@ -54,9 +54,7 @@ public class FontDisplay {
     //endregion Getters/Setters
 
     public static List<FontDisplay> getSortedFontDisplays() {
-        return Stream.of(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames())
-                .map(FontDisplay::new)
-                .collect(Collectors.toList());
+        return FontHandler.getAvailableFonts().stream().map(FontDisplay::new).collect(Collectors.toList());
     }
 
     @Override

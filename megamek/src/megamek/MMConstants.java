@@ -25,6 +25,9 @@ public final class MMConstants extends SuiteConstants {
     //region General Constants
     public static final String PROJECT_NAME = "MegaMek";
     public static final String MUL_URL_PREFIX = "http://www.masterunitlist.info/Unit/Details/";
+    public static final String BT_URL_SHRAPNEL = "https://bg.battletech.com/shrapnel/";
+    /** When this text is found in the source field, the Mek View will display a link to {@link #BT_URL_SHRAPNEL} */
+    public static final String SOURCE_TEXT_SHRAPNEL = "Shrapnel";
     //endregion General Constants
 
     //region GUI Constants

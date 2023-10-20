@@ -27,6 +27,7 @@ import megamek.client.ui.baseComponents.MMButton;
 import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.swing.StatusBarPhaseDisplay.PhaseCommand;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
+import megamek.client.ui.swing.util.FontHandler;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.client.ui.swing.util.UIUtil;
@@ -199,7 +200,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private ColourSelectorButton csbMoveBackColor;
     private ColourSelectorButton csbMoveSprintColor;
 
-    private final JComboBox<String> fontTypeChooserMoveFont = new JComboBox<>();
+    private JComboBox<String> fontTypeChooserMoveFont = new JComboBox<>();
     private JTextField moveFontSize;
     private final JComboBox<String> fontStyleChooserMoveFont = new JComboBox<>();
 
@@ -674,10 +675,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         addLineSpacer(comps);
 
-        for (String family : GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()) {
-            fontTypeChooserMoveFont.addItem(family);
-        }
-
+        fontTypeChooserMoveFont = new JComboBox<>(new Vector<>(FontHandler.getAvailableNonSymbolFonts()));
         fontTypeChooserMoveFont.setSelectedItem(GUIP.getMoveFontType());
 
         JLabel moveFontTypeLabel = new JLabel(Messages.getString("CommonSettingsDialog.moveFontType"));

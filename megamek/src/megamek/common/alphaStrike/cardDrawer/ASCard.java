@@ -67,6 +67,7 @@ public class ASCard {
     private static final String FILENAME_BT_LOGO = "BT_Logo_BW.png";
     private static final Image btLogo = ImageUtil.loadImageFromFile(
             new MegaMekFile(Configuration.miscImagesDir(), FILENAME_BT_LOGO).toString());
+    private static ImageIcon scaledBtLogo;
 
     protected final ASCardDisplayable element;
     protected final Image fluffImage;
@@ -511,8 +512,10 @@ public class ASCard {
             g.drawPolyline(pointsX, pointsY, 3);
 
             // Logo
-            ImageIcon icon = new ImageIcon(btLogo.getScaledInstance(445, 77, Image.SCALE_AREA_AVERAGING));
-            g.drawImage(icon.getImage(), 568, 646, null);
+            if (scaledBtLogo == null) {
+                scaledBtLogo = new ImageIcon(btLogo.getScaledInstance(445, 77, Image.SCALE_AREA_AVERAGING));
+            }
+            g.drawImage(scaledBtLogo.getImage(), 568, 646, null);
         }
 
         new StringDrawer("(C) " + LocalDate.now().getYear() + " The Topps Company. All rights reserved.").at(1014, copyrightY).rotate(-Math.PI / 2)

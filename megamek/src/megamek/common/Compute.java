@@ -6400,10 +6400,11 @@ public class Compute {
      * Used to get a human-readable string that represents the passed damage
      * type.
      *
-     * @param damageType
-     * @return
+     * @param damageType      The dmaageType constant
+     * @param burstMultiplier The multiplier for burst damage, used by machine gun arrays against conventional infantry
+     * @return A string representation of the damage type
      */
-    public static String getDamageTypeString(int damageType) {
+    public static String getDamageTypeString(int damageType, int burstMultiplier) {
         switch (damageType) {
             case WeaponType.WEAPON_DIRECT_FIRE:
                 return Messages.getString("WeaponType.DirectFire");
@@ -6417,6 +6418,7 @@ public class Compute {
             case WeaponType.WEAPON_CLUSTER_MISSILE_3D6:
                 return Messages.getString("WeaponType.Missile");
             case WeaponType.WEAPON_BURST_HALFD6:
+                return Messages.getString("WeaponType.BurstHalf");
             case WeaponType.WEAPON_BURST_1D6:
             case WeaponType.WEAPON_BURST_2D6:
             case WeaponType.WEAPON_BURST_3D6:
@@ -6425,7 +6427,8 @@ public class Compute {
             case WeaponType.WEAPON_BURST_6D6:
             case WeaponType.WEAPON_BURST_7D6:
             default:
-                return Messages.getString("WeaponType.Burst");
+                return String.format("%s (%dD6)", Messages.getString("WeaponType.Burst"),
+                        burstMultiplier * (damageType - WeaponType.WEAPON_BURST_HALFD6));
         }
     }
 
@@ -6448,8 +6451,31 @@ public class Compute {
      * @return
      */
     public static int directBlowInfantryDamage(double damage, int mos,
+               int damageType, boolean isNonInfantryAgainstMechanized,
+               boolean isAttackThruBuilding, int attackerId, Vector<Report> vReport) {
+        return directBlowInfantryDamage(damage, mos, damageType, isNonInfantryAgainstMechanized,
+                isAttackThruBuilding, attackerId, vReport, 1);
+    }
+
+    /**
+     * Method replicates the Non-Conventional Damage against Infantry damage
+     * table as well as shifting for direct blows. also adjust for non-infantry
+     * damaging mechanized infantry
+     *
+     * @param damage      The base amount of damage
+     * @param mos         The margin of success
+     * @param damageType  The damage class of the weapon, used to adjust damage against infantry
+     * @param isNonInfantryAgainstMechanized Whether this is a non-infantry attack against mechanized infantry
+     * @param isAttackThruBuilding Whether the attack is coming through a building hex
+     * @param attackerId  The entity id of the attacking unit
+     * @param vReport     The report messages vector
+     * @param mgaSize     For machine gun array attacks, the number of linked weapons. For other weapons this should be 1.
+     * @return The adjusted damage
+     */
+    public static int directBlowInfantryDamage(double damage, int mos,
             int damageType, boolean isNonInfantryAgainstMechanized,
-            boolean isAttackThruBuilding, int attackerId, Vector<Report> vReport) {
+            boolean isAttackThruBuilding, int attackerId, Vector<Report> vReport,
+            int mgaSize) {
 
         int origDamageType = damageType;
         damageType += mos;
@@ -6488,43 +6514,43 @@ public class Compute {
                 }
                 break;
             case WeaponType.WEAPON_BURST_1D6:
-                damage = Compute.d6();
+                damage = Compute.d6(mgaSize);
                 if (isAttackThruBuilding) {
                     damage *= 0.5;
                 }
                 break;
             case WeaponType.WEAPON_BURST_2D6:
-                damage = Compute.d6(2);
+                damage = Compute.d6(2 * mgaSize);
                 if (isAttackThruBuilding) {
                     damage *= 0.5;
                 }
                 break;
             case WeaponType.WEAPON_BURST_3D6:
-                damage = Compute.d6(3);
+                damage = Compute.d6(3 * mgaSize);
                 if (isAttackThruBuilding) {
                     damage *= 0.5;
                 }
                 break;
             case WeaponType.WEAPON_BURST_4D6:
-                damage = Compute.d6(4);
+                damage = Compute.d6(4 * mgaSize);
                 if (isAttackThruBuilding) {
                     damage *= 0.5;
                 }
                 break;
             case WeaponType.WEAPON_BURST_5D6:
-                damage = Compute.d6(5);
+                damage = Compute.d6(5 * mgaSize);
                 if (isAttackThruBuilding) {
                     damage *= 0.5;
                 }
                 break;
             case WeaponType.WEAPON_BURST_6D6:
-                damage = Compute.d6(6);
+                damage = Compute.d6(6 * mgaSize);
                 if (isAttackThruBuilding) {
                     damage *= 0.5;
                 }
                 break;
             case WeaponType.WEAPON_BURST_7D6:
-                damage = Compute.d6(7);
+                damage = Compute.d6(7 * mgaSize);
                 if (isAttackThruBuilding) {
                     damage *= 0.5;
                 }
@@ -6549,14 +6575,14 @@ public class Compute {
             r.subject = attackerId;
             r.indent(2);
 
-            r.add(getDamageTypeString(origDamageType));
+            r.add(getDamageTypeString(origDamageType, mgaSize));
             if (origDamageType != damageType) {
                 if (isAttackThruBuilding) {
                     r.messageId = 9973;
                 } else {
                     r.messageId = 9972;
                 }
-                r.add(getDamageTypeString(damageType));
+                r.add(getDamageTypeString(damageType, mgaSize));
             } else if (isAttackThruBuilding) {
                 r.messageId = 9971;
             } else {

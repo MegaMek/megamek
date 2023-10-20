@@ -20,6 +20,10 @@ Callisto Battle Armor
 A [HMG](Sqd6)
 </Model>
 
+<mul id:>
+9445
+</mul id:>
+
 <year>
 3147
 </year>
@@ -28,14 +32,6 @@ A [HMG](Sqd6)
 3147
 </originalBuildYear>
 
-<mul id:>
-9445
-</mul id:>
-
-<source>
-Rec Guide:ilClan #31
-</source>
-
 <type>
 Clan Level 2
 </type>
@@ -43,9 +39,6 @@ Clan Level 2
 <motion_type>
 Leg
 </motion_type>
-
-<transporters>
-</transporters>
 
 <cruiseMP>
 3
@@ -84,6 +77,13 @@ BABattleClaw:LA
 <Trooper 5 Equipment>
 </Trooper 5 Equipment>
 
+<Trooper 6 Equipment>
+</Trooper 6 Equipment>
+
+<source>
+Rec Guide:ilClan #31
+</source>
+
 <chassis>
 biped
 </chassis>
@@ -97,7 +97,7 @@ biped
 </armor>
 
 <Trooper Count>
-5
+6
 </Trooper Count>
 
 <weightclass>

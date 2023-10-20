@@ -5299,9 +5299,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                         && (this instanceof BattleArmor)) {
                         toReturn = 2;
                     }
-                    if (type.hasFlag(MiscType.F_EW_EQUIPMENT)
-                        || type.hasFlag(MiscType.F_NOVA)
-                        || type.hasFlag(MiscType.F_WATCHDOG)) {
+                    if (type.hasFlag(MiscType.F_EW_EQUIPMENT)) {
                         toReturn = 3;
                     }
                     if (game.getPlanetaryConditions().hasEMI()) {
@@ -11378,7 +11376,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 && lastPos.direction(curPos) % 3 != curFacing % 3
                 && !(isUsingManAce() && (overallMoveType == EntityMovementType.MOVE_WALK
                 || overallMoveType == EntityMovementType.MOVE_VTOL_WALK))) {
-            roll.append(new PilotingRollData(getId(), 0, "controlled sideslip"));
+            roll.append(new PilotingRollData(getId(), -1, "controlled sideslip"));
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
                     "Check false: not apparently sideslipping");
@@ -11471,20 +11469,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                && isFighter();
     }
 
-    /**
-     * a function that let's us know if this entity has capital-scale armor
-     *
-     * @return
-     */
+    /** @return True when this unit has capital-scale armor. */
     public boolean isCapitalScale() {
-
-        if ((this instanceof Jumpship) || (this instanceof FighterSquadron)
-            || isCapitalFighter()) {
-            return true;
-        }
-
-        return false;
-
+        return isCapitalFighter();
     }
 
     /**

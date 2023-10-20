@@ -20,6 +20,7 @@
 package megamek.client.ui.swing;
 
 import megamek.client.ui.swing.util.FluffImageHelper;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.util.UIUtil.FixedXPanel;
 import megamek.common.Entity;
 import megamek.common.MechView;
@@ -60,18 +61,13 @@ public class MechViewPanel extends JPanel {
         txtMek.setMinimumSize(new Dimension(width, height));
         txtMek.setPreferredSize(new Dimension(width, height));
         txtMek.addHyperlinkListener(e -> {
-            try {
-                if (HyperlinkEvent.EventType.ACTIVATED == e.getEventType()) {
-                    if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-                        Desktop.getDesktop().browse(e.getURL().toURI());
-                    }
-                }
-            } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
-                JOptionPane.showMessageDialog(this, ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
+            if (HyperlinkEvent.EventType.ACTIVATED == e.getEventType()) {
+                UIUtil.browse(e.getURL().toString(), this);
             }
         });
         scrMek = new JScrollPane(txtMek);
+        scrMek.getVerticalScrollBar().setUnitIncrement(16);
+
         if (noBorder) {
             scrMek.setBorder(null);
         }
@@ -104,6 +100,12 @@ public class MechViewPanel extends JPanel {
         setFluffImage(entity);
     }
 
+    public void setMech(Entity entity, MechView mechView, String fontName) {
+        txtMek.setText(mechView.getMechReadout(fontName));
+        txtMek.setCaretPosition(0);
+        setFluffImage(entity);
+    }
+
     public void setMech(Entity entity, TROView troView) {
         txtMek.setText(troView.processTemplate());
         txtMek.setCaretPosition(0);
@@ -113,6 +115,11 @@ public class MechViewPanel extends JPanel {
     public void setMech(Entity entity, boolean useAlternateCost) {
         MechView mechView = new MechView(entity, false, useAlternateCost);
         setMech(entity, mechView);
+    }
+
+    public void setMech(Entity entity, String fontName) {
+        MechView mechView = new MechView(entity, false, false);
+        setMech(entity, mechView, fontName);
     }
 
     private void setFluffImage(Entity entity) {

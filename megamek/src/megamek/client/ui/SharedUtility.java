@@ -70,7 +70,7 @@ public class SharedUtility {
         // iterate through steps
         for (final Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements();) {
             final MoveStep step = i.nextElement();
-            
+
             // stop for illegal movement
             if (step.getMovementType(md.isEndStep(step)) == EntityMovementType.MOVE_ILLEGAL) {
                 break;
@@ -103,7 +103,7 @@ public class SharedUtility {
                         step.getVelocity(), curPos, curFacing, false);
                 checkNag(rollTarget, nagReport, psrList);
             }
-            
+
             if (step.getType() == MoveStepType.VLAND) {
                 rollTarget = ((IAero) entity).checkLanding(moveType,
                         step.getVelocity(), curPos, curFacing, true);
@@ -111,7 +111,7 @@ public class SharedUtility {
             }
 
             // Check for Ejecting
-            if (step.getType() == MoveStepType.EJECT 
+            if (step.getType() == MoveStepType.EJECT
                     && (entity.isFighter())) {
                 rollTarget = GameManager.getEjectModifiers(game, entity, 0, false);
                 checkNag(rollTarget, nagReport, psrList);
@@ -150,7 +150,7 @@ public class SharedUtility {
         }
         return psrList;
     }
-    
+
     /**
      * Checks to see if piloting skill rolls are needed for the currently
      * selected movement. This code is basically a simplified version of
@@ -387,10 +387,10 @@ public class SharedUtility {
                     }
                 }
             }
-            
+
             // Sheer Cliffs, TO p.39
             // Roads over cliffs cancel the cliff effects for units that move on roads
-            boolean vehicleAffectedByCliff = entity instanceof Tank 
+            boolean vehicleAffectedByCliff = entity instanceof Tank
                     && !entity.isAirborneVTOLorWIGE();
             boolean quadveeVehMode = entity instanceof QuadVee
                     && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE;
@@ -399,12 +399,12 @@ public class SharedUtility {
                     && !entity.isAero();
             // Cliffs should only exist towards 1 or 2 level drops, check just to make sure
             // Everything that does not have a 1 or 2 level drop shouldn't be handled as a cliff
-            int stepHeight = curElevation + curHex.getLevel() 
+            int stepHeight = curElevation + curHex.getLevel()
                     - (lastElevation + prevHex.getLevel());
-            boolean isUpCliff = !lastPos.equals(curPos) 
+            boolean isUpCliff = !lastPos.equals(curPos)
                     && curHex.hasCliffTopTowards(prevHex)
                     && (stepHeight == 1 || stepHeight == 2);
-            boolean isDownCliff = !lastPos.equals(curPos) 
+            boolean isDownCliff = !lastPos.equals(curPos)
                     && prevHex.hasCliffTopTowards(curHex)
                     && (stepHeight == -1 || stepHeight == -2);
 
@@ -492,13 +492,13 @@ public class SharedUtility {
                     checkNag(rollTarget, nagReport, psrList);
                 }
             }
-            
+
             if (step.isTurning()) {
                 rollTarget = entity.checkTurnModeFailure(overallMoveType,
                         prevStep == null? 0 : prevStep.getNStraight(), md.getMpUsed(), curPos);
                 checkNag(rollTarget, nagReport, psrList);
             }
-            
+
             if (step.getType() == MoveStepType.BOOTLEGGER) {
                 rollTarget = entity.getBasePilotingRoll(overallMoveType);
                 entity.addPilotingModifierForTerrain(rollTarget);
@@ -531,7 +531,7 @@ public class SharedUtility {
 
         rollTarget = entity.checkUsingOverdrive(overallMoveType);
         checkNag(rollTarget, nagReport, psrList);
-            
+
         rollTarget = entity.checkGunningIt(overallMoveType);
         checkNag(rollTarget, nagReport, psrList);
 
@@ -557,7 +557,7 @@ public class SharedUtility {
                     nagReport.append(Messages.getString("MovementDisplay.IceLanding"));
                 }
             } else if (!(prevStep.climbMode() && hex.containsTerrain(Terrains.BRIDGE))) {
-                if (!entity.getMovementMode().isHover()) {
+                if (!entity.getMovementMode().isHoverOrWiGE()) {
                     rollTarget = entity.checkWaterMove(waterLevel, overallMoveType);
                     checkNag(rollTarget, nagReport, psrList);
                 }
@@ -822,7 +822,7 @@ public class SharedUtility {
                 for (Entity ent : game.getEntitiesVector(left)) {
                     leftTonnage += ent.getWeight();
                 }
-                
+
                 double rightTonnage = 0;
                 for (Entity ent : game.getEntitiesVector(right)) {
                     rightTonnage += ent.getWeight();

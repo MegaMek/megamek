@@ -103,7 +103,15 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         }
 
         final Vector<Integer> spottersBefore = aaa.getSpotterIds();
+
         Coords targetPos = target.getPosition();
+
+        // Handle counter-battery on fleeing/fled off-board targets.
+        if (null == targetPos) {
+            LogManager.getLogger().error(String.format("Artillery Target %s is missing; off-board target fled?", waa.getTargetId()));
+            return false;
+        }
+
         final int playerId = aaa.getPlayerId();
         boolean targetIsEntity = target.getTargetType() == Targetable.TYPE_ENTITY;
         boolean targetIsAirborneVTOL = targetIsEntity && target.isAirborneVTOLorWIGE();
@@ -321,8 +329,10 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             return false;
         }
         if (atype.getMunitionType().contains(AmmoType.Munitions.M_FASCAM)) {
-            // Arrow IVs deliver fixed 30-point minefields.
-            int rackSize = (atype.getAmmoType() == AmmoType.T_ARROW_IV) ? 30 : atype.getRackSize();
+            int rackSize = atype.getRackSize();
+            if (atype.getAmmoType() == AmmoType.T_ARROW_IV) {
+                rackSize = atype.isClan() ? 30 : 20;
+            }
             gameManager.deliverFASCAMMinefield(targetPos, ae.getOwner().getId(), rackSize, ae.getId());
             return false;
         }

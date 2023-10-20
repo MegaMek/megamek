@@ -4399,11 +4399,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 toHit.setCover(LosEffects.COVER_UPPER);
             } else {
                 if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PARTIAL_COVER)) {
-                    toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
                     toHit.setCover(los.getTargetCover());
                 } else {
-                    toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
                     toHit.setCover(LosEffects.COVER_HORIZONTAL);
+                }
+                // If this is a called shot (high) the table has already been set and should be used instead of partial cover.
+                if (toHit.getHitTable() != ToHitData.HIT_ABOVE) {
+                    toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
                 }
                 // Set damageable cover state information
                 toHit.setDamagableCoverTypePrimary(los.getDamagableCoverTypePrimary());

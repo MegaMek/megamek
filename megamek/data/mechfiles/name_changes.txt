@@ -764,6 +764,10 @@ Schildkröte Line Tank (Standard)|Schildkröte Line Tank
 Schildkrote Line Tank|Schildkröte Line Tank
 Sleipnir APC (SRM)|Sleipnir AP Tank (SRM)
 Sleipnir APC|Sleipnir AP Tank
+SM Tank Destroyer SM1 'Telos'|SM Tank Destroyer SM1 'Telos'
+SM1 Tank Destroyer SM1|SM Tank Destroyer SM1
+SM1A Tank Destroyer SM1A|SM Tank Destroyer SM1A
+SM3 Tank Destroyer SM3|SM Tank Destroyer SM3
 St. Christopher Cargo Lifter C1|St. Christopher Cargo Transport C1
 St. Christopher Cargo Lifter C1|St. Christopher Cargo Transport C2
 SturmFeur "Kalki" Cruise Missile Launcher (Standard)|SturmFeur 'Kalki' Cruise Missile Launcher (Standard)
@@ -775,6 +779,8 @@ Vector (Attack)|Vector Combat Support VTOL (Attack)
 Vector (EW)|Vector Combat Support VTOL (EW)
 Vector (Scout)|Vector Combat Support VTOL (Scout)
 Vector (Transport)|Vector Combat Support VTOL (Transport)
+
+
 
 #Warships
 Aegis Heavy Cruiser (Clan)|Aegis Heavy Cruiser (2843)

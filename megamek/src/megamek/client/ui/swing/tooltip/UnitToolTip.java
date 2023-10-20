@@ -1350,6 +1350,12 @@ public final class UnitToolTip {
             HeatDisplayHelper hdh = getHeatCapacityForDisplay(entity);
             sHeat += " / "+ hdh.heatCapacityStr;
             result += guiScaledFontHTML(GUIP.getColorForHeat(heat)) + sHeat + "</FONT>";
+
+            if (entity instanceof Mech && ((Mech) entity).hasActiveTSM()) {
+                result += DOT_SPACER;
+                String sTSM = "TSM";
+                result += guiScaledFontHTML(GUIP.getPrecautionColor()) + sTSM + "</FONT>";
+            }
         }
 
         String searchLight = entity.isUsingSearchlight() ? DOT_SPACER +"\uD83D\uDD26" : "";
@@ -1705,7 +1711,12 @@ public final class UnitToolTip {
         String l1= "";
 
         // Armor and Internals
-        if (!isGunEmplacement) {
+        if (entity instanceof FighterSquadron) {
+            String msg_armorcapital = Messages.getString("BoardView1.Tooltip.ArmorCapital");
+            String armorStr = entity.getTotalArmor() + " / " + entity.getTotalOArmor() + " " + msg_armorcapital;
+            String sArmorInternals = Messages.getString("BoardView1.Tooltip.FSQTotalArmor", armorStr);
+            l1 = "<Li style=\"list-style-type: none; list-style-image: none; margin: 0; padding: 0;\">" + sArmorInternals + "</Li>";
+        } else if (!isGunEmplacement) {
             String msg_unknown = Messages.getString("BoardView1.Tooltip.Unknown");
             String armorType = TROView.formatArmorType(entity, true).replace(msg_unknown, "");
             if (!armorType.isBlank()) {

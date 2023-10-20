@@ -19,24 +19,23 @@
 package megamek.client.ui.swing.alphaStrike;
 
 import megamek.MMConstants;
+import megamek.client.ui.Messages;
 import megamek.client.ui.WrapLayout;
 import megamek.client.ui.dialogs.ASConversionInfoDialog;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.FontHandler;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.client.ui.Messages;
 import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.alphaStrike.ASStatsExporter;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.cardDrawer.ASCardPrinter;
 import megamek.common.annotations.Nullable;
-import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.datatransfer.*;
-import java.net.URL;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * This is a JPanel that displays an AlphaStrike unit card and elements to configure the display of
@@ -45,7 +44,7 @@ import java.util.List;
  */
 public class ConfigurableASCardPanel extends JPanel {
 
-    private final JComboBox<String> fontChooser = new JComboBox<>();
+    private final JComboBox<String> fontChooser;
     private final JComboBox<Float> sizeChooser = new JComboBox<>();
     private final JButton copyButton = new JButton(Messages.getString("CASCardPanel.copyCard"));
     private final JButton copyStatsButton = new JButton(Messages.getString("CASCardPanel.copyStats"));
@@ -66,10 +65,8 @@ public class ConfigurableASCardPanel extends JPanel {
         this.parent = parent;
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
+        fontChooser = new JComboBox<>(new Vector<>(FontHandler.getAvailableNonSymbolFonts()));
         fontChooser.addItem("");
-        for (String family : GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()) {
-            fontChooser.addItem(family);
-        }
         fontChooser.addActionListener(ev -> updateFont());
         fontChooser.setSelectedItem(GUIPreferences.getInstance().getAsCardFont());
 
@@ -87,13 +84,12 @@ public class ConfigurableASCardPanel extends JPanel {
         copyStatsButton.addActionListener(ev -> copyStats());
         printButton.addActionListener(ev -> printCard());
 
-        mulButton.addActionListener(ev -> showMUL());
+        mulButton.addActionListener(ev -> UIUtil.showMUL(mulId, this));
         mulButton.setToolTipText("Show the Master Unit List entry for this unit. Opens a browser window.");
 
         conversionButton.addActionListener(e -> showConversionReport());
 
         var chooserLine = new UIUtil.FixedYPanel(new WrapLayout(FlowLayout.LEFT, 15, 10));
-        chooserLine.setBorder(new EmptyBorder(10, 15, 10, 15));
         JPanel fontChooserPanel = new JPanel();
         fontChooserPanel.add(new JLabel(Messages.getString("CASCardPanel.font")));
         fontChooserPanel.add(fontChooser);
@@ -109,7 +105,6 @@ public class ConfigurableASCardPanel extends JPanel {
         chooserLine.add(conversionButton);
 
         var cardLine = new JScrollPane(cardPanel);
-        cardPanel.setBorder(new EmptyBorder(5, 65, 0, 0));
         cardLine.getVerticalScrollBar().setUnitIncrement(16);
 
         add(chooserLine);
@@ -155,17 +150,6 @@ public class ConfigurableASCardPanel extends JPanel {
         if (sizeChooser.getSelectedItem() != null) {
             cardPanel.setScale((Float) sizeChooser.getSelectedItem());
             GUIPreferences.getInstance().setAsCardSize((Float) sizeChooser.getSelectedItem());
-        }
-    }
-
-    private void showMUL() {
-        try {
-            if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-                Desktop.getDesktop().browse(new URL(MMConstants.MUL_URL_PREFIX + mulId).toURI());
-            }
-        } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
         }
     }
 

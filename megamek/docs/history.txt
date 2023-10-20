@@ -50,6 +50,24 @@ VERSION HISTORY:
 + Issue #2698: Attempt to reduce bot speed in low gravity
 + Fix #3870, 4524: Properly apply quirks and SPAs to artillery attacks
 + Issue #4730: Multi-crew units with command console receive correct crew count
++ PR #4800: Improvements to aerospace and fighter squadron UI
++ Fix #4789: Prevent bot hang when smoke drifts off-board
++ Fix #4790: Prevent soft lock when processing artillery attacks against fled/destroyed off-board artillery
++ Fix #4738: Aim-high attacks no longer use partial cover hit table when target is in partial cover
++ PR #4815: Some illegal ammos have been removed from artillery cannons
++ Fix #4706: The BV calculation now includes special values for minefield artillery rounds
++ Fix #4743: Units making vertical landings now only apply half the terrain modifiers
++ PR #4813: Aero landing now considers terrain modifiers for advanced terrain from TO; a unit takes damage when the landing path includes rough or rubble; a unit that lands in water of sufficient depth (2 for DS, 1 otherwise) is destroyed; dropships landing in depth 1 water are permanently immobile
++ Data: Fixes for #4808, #4752, #4685, #4677, #4619, and #4597
++ Fix #4820: Fix Immelman and Split-S maneuvers
++ PR #4818: Separate structure class from TestEntity
++ PR #4816: TestTank: Adapt some tests for GunEmplacements
++ Fix #4828: Use standard ECM range for Watchdog/Nova CEWS
++ Fix 4830: WiGE units with jump jets no longer jump to the bottom of water hexes
++ PR #4834: The unit tooltip now indicates when TSM is active
++ PR #4822, #4844: Formatting updates and utilities for the unit summary (unit selector/lobby unit view)
++ Fix #4786: Fix modifier for controlled sideslip
++ Fix #4745: Fix machine gun array burst damage against conventional infantry
 
 
 0.49.14 (2023-07-28 2100 UTC)

@@ -1472,4 +1472,9 @@ public class Jumpship extends Aero {
     public boolean isLargeAerospace() {
         return true;
     }
+
+    @Override
+    public boolean isCapitalScale() {
+        return true;
+    }
 }

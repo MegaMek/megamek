@@ -1773,7 +1773,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createLadder());
         EquipmentType.addType(MiscType.createMaritimeLifeboat());
         EquipmentType.addType(MiscType.createMaritimeEscapePod());
-        EquipmentType.addType(MiscType.createAtmossphericLifeboat());
+        EquipmentType.addType(MiscType.createAtmosphericLifeboat());
 
         // 3145 Stuff
         EquipmentType.addType(MiscType.createAntiPenetrativeAblation());
@@ -6054,13 +6054,13 @@ public class MiscType extends EquipmentType {
     // Down the road it might be better to make this into a separate Small
     // Support Vee,
     // But for now leaving it as equipment.
-    public static MiscType createAtmossphericLifeboat() {
+    public static MiscType createAtmosphericLifeboat() {
         MiscType misc = new MiscType();
         misc.name = "Lifeboat (Atmospheric)";
         misc.setInternalName(misc.name);
         misc.tankslots = 0;
-        misc.tonnage = 7;
-        misc.cost = 5000;
+        misc.tonnage = 1;
+        misc.cost = 6000;
         misc.bv = 0;
         misc.industrial = true;
         misc.flags = misc.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_LIFEBOAT);

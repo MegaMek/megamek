@@ -65,7 +65,7 @@ VERSION HISTORY:
 + Fix #4828: Use standard ECM range for Watchdog/Nova CEWS
 + Fix 4830: WiGE units with jump jets no longer jump to the bottom of water hexes
 + PR #4834: The unit tooltip now indicates when TSM is active
-+ PR #4822: Formatting updates and utilities for the unit summary (unit selector/lobby unit view)
++ PR #4822, #4844: Formatting updates and utilities for the unit summary (unit selector/lobby unit view)
 + Fix #4786: Fix modifier for controlled sideslip
 + Fix #4745: Fix machine gun array burst damage against conventional infantry
 

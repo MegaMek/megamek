@@ -24,7 +24,6 @@ import megamek.common.annotations.Nullable;
 import java.awt.*;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * FontDisplay is a display wrapper around a Font, primarily to be used in ComboBoxes. This is

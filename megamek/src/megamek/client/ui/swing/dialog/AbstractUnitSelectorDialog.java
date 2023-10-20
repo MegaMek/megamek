@@ -613,13 +613,11 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
      * @return the selected entity
      */
     public @Nullable Entity getSelectedEntity() {
-        int view = tableUnits.getSelectedRow();
-        if (view < 0) {
-            // selection got filtered away
+        MechSummary ms = getSelectedMechSummary();
+        if (ms == null) {
             return null;
         }
-        int selected = tableUnits.convertRowIndexToModel(view);
-        MechSummary ms = mechs[selected];
+
         try {
             // For some unknown reason the base path gets screwed up after you
             // print so this sets the source file to the full path.

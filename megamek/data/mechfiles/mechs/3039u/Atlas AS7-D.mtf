@@ -152,6 +152,12 @@ Heat Sink
 -Empty-
 -Empty-
 
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:command_mech
+quirk:distracting
+quirk:imp_com
+
 overview:"A 'Mech as powerful as possible, as impenetrable as possible, and as ugly and foreboding as conceivable, so that fear itself will be our ally.”-Aleksandr Kerensky
 
 capabilities:The Atlas is probably the best-known BattleMech to ever set foot on the modern battlefield. Designed with specifications from Aleksandr Kerensky himself in 2755 in the midst of the Cameron Edicts, the Atlas was originally intended to ensure SLDF superiority over the Star League member states. Carrying the largest LRM launcher, the largest autocannon, and the largest SRM launcher possible, the Atlas can deal frightening amounts of damage in short amounts of time. Often used as a command vehicle, the Atlas mounts an advanced antenna and communications array, allowing it to engage in surface-to space communications in real time. The massive 19-ton hide of armor that protects the Atlas makes it a difficult foe to take down. Indeed, most MechWarriors choose to fall back rather than face one head-one, as its lumbering gait mean it can rarely catch up to other 'Mechs that choose to flee it. A full year of development went into crafting the famous "Death's Head" of the 'Mech to achieve the perfect ratio of functionality and fear. The head is also quite roomy and allows a small satellite dish to be mounted for surface-to-space communications. During combat the pilot can easily fold up the dish and store it within a protective portion of the head.

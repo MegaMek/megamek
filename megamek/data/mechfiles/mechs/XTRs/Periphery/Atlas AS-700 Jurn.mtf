@@ -2,6 +2,7 @@ Version:1.1
 Atlas
 AS7-00 (Jurn)
 mul id:5564
+base unit:mechs/3039u/Atlas AS7-D.mtf
 
 Config:Biped
 TechBase:Inner Sphere
@@ -151,6 +152,10 @@ RemoteSensorDispenser
 -Empty-
 -Empty-
 -Empty-
+
+quirk:prototype
+quirk:non_standard
+notquirk:imp_com
 
 overview:"A 'Mech as powerful as possible, as impenetrable as possible, and as ugly and foreboding as conceivable, so that fear itself will be our ally.”-Aleksandr Kerensky
 

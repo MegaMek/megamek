@@ -23,7 +23,7 @@ import java.util.Objects;
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 2012-03-05
  */
-class QuirkEntry {
+public class QuirkEntry {
     private String quirk; //The name of the quirk.
 
     //The following only apply to weapon quirks.
@@ -40,7 +40,7 @@ class QuirkEntry {
      * @param quirk  The quirk being created.
      * @param unitId The ID (chassis & model) of the unit to which the quirk belongs.
      */
-    QuirkEntry(String quirk, String unitId) {
+    public QuirkEntry(String quirk, String unitId) {
         if (StringUtility.isNullOrBlank(quirk)) {
             throw new IllegalArgumentException("Quirk definition missing for " + unitId);
         }
@@ -60,7 +60,7 @@ class QuirkEntry {
      * @param weaponName The MegaMek name for the weapon (i.e. ISERLargeLaser)
      * @param unitId     The ID (chassis & model) of the unit to which the quirk belongs.
      */
-    QuirkEntry(String quirk, String location, int slot, String weaponName, String unitId) {
+    public QuirkEntry(String quirk, String location, int slot, String weaponName, String unitId) {
         if (StringUtility.isNullOrBlank(quirk)) {
             throw new IllegalArgumentException("Quirk definition missing for " + unitId);
         } else if (StringUtility.isNullOrBlank(location)) {
@@ -154,7 +154,7 @@ class QuirkEntry {
         }
         final QuirkEntry other = (QuirkEntry) obj;
         return Objects.equals(location, other.location) && Objects.equals(weaponName, other.weaponName)
-                && (slot == other.slot);
+                && (slot == other.slot) && Objects.equals(quirk, other.quirk);
     }
 
     @Override

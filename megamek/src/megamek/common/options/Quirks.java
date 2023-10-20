@@ -15,19 +15,11 @@
 package megamek.common.options;
 
 
-import megamek.common.Aero;
-import megamek.common.BattleArmor;
-import megamek.common.Dropship;
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.GunEmplacement;
-import megamek.common.Jumpship;
-import megamek.common.Mech;
-import megamek.common.Protomech;
-import megamek.common.SupportTank;
-import megamek.common.SupportVTOL;
-import megamek.common.Tank;
+import megamek.common.*;
+
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
 
 /**
  * Contains the options determining quirks of the unit
@@ -675,6 +667,22 @@ public class Quirks extends AbstractOptions {
 
         return false;
 
+    }
+
+    public List<QuirkEntry> getQuirkEntries() {
+        List<QuirkEntry> quirkEntries = new ArrayList<>();
+        for (final Enumeration<IOptionGroup> optionGroups = getGroups(); optionGroups.hasMoreElements();) {
+            final IOptionGroup group = optionGroups.nextElement();
+            if (count(group.getKey()) > 0) {
+                for (final Enumeration<IOption> options = group.getOptions(); options.hasMoreElements();) {
+                    final IOption option = options.nextElement();
+                    if ((option != null) && option.booleanValue()) {
+                        quirkEntries.add(new QuirkEntry(option.getName(), ""));
+                    }
+                }
+            }
+        }
+        return quirkEntries;
     }
 
     private static class QuirksInfo extends AbstractOptionsInfo {

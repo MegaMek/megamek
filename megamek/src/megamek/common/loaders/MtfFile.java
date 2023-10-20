@@ -19,11 +19,14 @@
  */
 package megamek.common.loaders;
 
+import megamek.common.*;
+import megamek.common.options.IOption;
+import megamek.common.options.IOptionGroup;
+import megamek.common.options.WeaponQuirks;
+import org.apache.logging.log4j.LogManager;
+
 import java.io.*;
 import java.util.*;
-
-import megamek.common.*;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * @author Ben
@@ -40,6 +43,7 @@ public class MtfFile implements IMechLoader {
     private String techYear;
     private String rulesLevel;
     private String source = "Source:";
+    private String baseUnitName = "";
 
     private String tonnage;
     private String engine;
@@ -76,11 +80,14 @@ public class MtfFile implements IMechLoader {
     private final Map<EquipmentType, Mounted> hSharedEquip = new HashMap<>();
     private final List<Mounted> vSplitWeapons = new ArrayList<>();
 
+    private final List<String> quirkLines = new ArrayList<>();
+
     public static final int[] locationOrder =
             {Mech.LOC_LARM, Mech.LOC_RARM, Mech.LOC_LT, Mech.LOC_RT, Mech.LOC_CT, Mech.LOC_HEAD, Mech.LOC_LLEG, Mech.LOC_RLEG, Mech.LOC_CLEG};
     public static final int[] rearLocationOrder =
             {Mech.LOC_LT, Mech.LOC_RT, Mech.LOC_CT};
 
+    public static final String COMMENT = "#";
     public static final String COCKPIT = "cockpit:";
     public static final String GYRO = "gyro:";
     public static final String MOTIVE = "motive:";
@@ -124,6 +131,11 @@ public class MtfFile implements IMechLoader {
     public static final String NO_CRIT = "nocrit:";
     public static final String SIZE = ":SIZE:";
     public static final String MUL_ID = "mul id:";
+    public static final String BASE_UNIT = "base unit:";
+    public static final String QUIRK = "quirk:";
+    public static final String WEAPON_QUIRK = "weaponquirk:";
+    public static final String NOT_QUIRK = "notquirk:";
+    public static final String NOT_WEAPON_QUIRK = "notweaponquirk:";
 
     /**
      * Creates new MtfFile
@@ -135,6 +147,7 @@ public class MtfFile implements IMechLoader {
             if (version == null) {
                 throw new EntityLoadingException("MTF File empty!");
             }
+
             // Version 1.0: Initial version.
             // Version 1.1: Added level 3 cockpit and gyro options.
             // version 1.2: added full head ejection
@@ -172,7 +185,7 @@ public class MtfFile implements IMechLoader {
         int armorLocation;
         while (r.ready()) {
             crit = r.readLine().trim();
-            if (crit.isEmpty()) {
+            if (crit.isEmpty() || crit.startsWith(COMMENT)) {
                 continue;
             }
 
@@ -215,6 +228,17 @@ public class MtfFile implements IMechLoader {
     public Entity getEntity() throws Exception {
         try {
             Mech mech;
+
+            Mech baseUnit = null;
+            if (!baseUnitName.isBlank()) {
+                try {
+                    File baseFile = new File(Configuration.unitsDir() + "/" + baseUnitName);
+                    baseUnit = (Mech) new MechFileParser(baseFile).getEntity();
+                } catch (Exception ex) {
+                    LogManager.getLogger().error("Could not load the base unit (" + baseUnitName + ") for " + name + model);
+                    // Continue without base unit
+                }
+            }
 
             int iGyroType;
             try {
@@ -513,11 +537,72 @@ public class MtfFile implements IMechLoader {
                 mech.setUseManualBV(true);
                 mech.setManualBV(bv);
             }
+
+            List<QuirkEntry> quirks = new ArrayList<>();
+            if (baseUnit != null) {
+                quirks.addAll(baseUnit.getQuirks().getQuirkEntries());
+                for (Mounted m : baseUnit.getWeaponList()) {
+                    WeaponQuirks wpnQuirks = m.getQuirks();
+                    for (Enumeration<IOptionGroup> i = wpnQuirks.getGroups(); i.hasMoreElements(); ) {
+                        IOptionGroup group = i.nextElement();
+                        for (Enumeration<IOption> j = group.getSortedOptions(); j.hasMoreElements(); ) {
+                            IOption option = j.nextElement();
+                            if ((option != null) && option.booleanValue()) {
+                                QuirkEntry weaponQuirk = new QuirkEntry(option.getName(),
+                                        baseUnit.getLocationAbbr(m.getLocation()),
+                                        getCriticalSlot(m, baseUnit),
+                                        m.getType().getInternalName(),
+                                        baseUnit.getShortNameRaw());
+                                quirks.add(weaponQuirk);
+                            }
+                        }
+                    }
+                }
+            }
+
+            for (String quirkLine : quirkLines) {
+                // Add/remove quirks
+                if (quirkLine.startsWith(NOT_QUIRK)) {
+                    quirks.remove(new QuirkEntry(quirkLine.substring(NOT_QUIRK.length()), mech.getShortNameRaw()));
+                } else if (quirkLine.startsWith(QUIRK)) {
+                    QuirkEntry quirkEntry = new QuirkEntry(quirkLine.substring(QUIRK.length()), mech.getShortNameRaw());
+                    quirks.add(quirkEntry);
+                } else if (quirkLine.startsWith(WEAPON_QUIRK)) {
+                    String[] fields = quirkLine.substring(WEAPON_QUIRK.length()).split(":");
+                    int slot = Integer.parseInt(fields[2]);
+                    QuirkEntry quirkEntry = new QuirkEntry(fields[0], fields[1], slot, fields[3], mech.getShortNameRaw());
+                    quirks.add(quirkEntry);
+                } else if (quirkLine.startsWith(NOT_WEAPON_QUIRK)) {
+                    String[] fields = quirkLine.substring(NOT_WEAPON_QUIRK.length()).split(":");
+                    int slot = Integer.parseInt(fields[2]);
+                    QuirkEntry quirkEntry = new QuirkEntry(fields[0], fields[1], slot, fields[3], mech.getShortNameRaw());
+                    quirks.remove(quirkEntry);
+                }
+            }
+            mech.loadQuirks(quirks);
+
             return mech;
         } catch (Exception ex) {
             LogManager.getLogger().error("", ex);
             throw new Exception(ex);
         }
+    }
+
+    private int getCriticalSlot(Mounted mounted, Mech mek) {
+        int location = mounted.getLocation();
+        if (location == Entity.LOC_NONE) {
+            return -1;
+        }
+        for (int slot = 0; slot < mek.getNumberOfCriticals(location); slot++) {
+            CriticalSlot cs = mek.getCritical(location, slot);
+            if ((cs != null) && (cs.getType() == CriticalSlot.TYPE_EQUIPMENT)) {
+                if (cs.getMount().equals(mounted) ||
+                        ((cs.getMount2() != null) && (cs.getMount2().equals(mounted)))) {
+                    return slot;
+                }
+            }
+        }
+        return -1;
     }
 
     private void setTechLevel(Mech mech) throws EntityLoadingException {
@@ -1188,6 +1273,17 @@ public class MtfFile implements IMechLoader {
 
         if (lineLower.startsWith(MUL_ID)) {
             mulId = Integer.parseInt(line.substring(MUL_ID.length()));
+            return true;
+        }
+
+        if (lineLower.startsWith(BASE_UNIT)) {
+            baseUnitName = line.substring(BASE_UNIT.length());
+            return true;
+        }
+
+        if (lineLower.startsWith(QUIRK) || lineLower.startsWith(NOT_QUIRK) || lineLower.startsWith(WEAPON_QUIRK)
+                || lineLower.startsWith(NOT_WEAPON_QUIRK)) {
+            quirkLines.add(line);
             return true;
         }
 

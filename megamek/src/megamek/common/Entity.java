@@ -14046,15 +14046,83 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
     }
 
-    public void loadDefaultQuirks() {
-        // Get a list of quirks for this entity.
-        List<QuirkEntry> quirks;
-        try {
-            quirks = QuirksHandler.getQuirks(this);
-        } catch (Exception e) {
-            LogManager.getLogger().error("", e);
-            return;
-        }
+//    public void loadDefaultQuirks() {
+//        // Get a list of quirks for this entity.
+//        List<QuirkEntry> quirks;
+//        try {
+//            quirks = QuirksHandler.getQuirks(this);
+//        } catch (Exception e) {
+//            LogManager.getLogger().error("", e);
+//            return;
+//        }
+//
+//        // If this unit has no quirks, we do not need to proceed further.
+//        if ((quirks == null) || quirks.isEmpty()) {
+//            return;
+//        }
+//
+//        // Load all the unit's quirks.
+//        for (QuirkEntry q : quirks) {
+//            // If the quirk doesn't have a location, then it is a unit quirk, not a weapon quirk.
+//            if (StringUtility.isNullOrBlank(q.getLocation())) {
+//                // Activate the unit quirk.
+//                if (getQuirks().getOption(q.getQuirk()) == null) {
+//                    LogManager.getLogger().warn(String.format("%s failed for %s %s - Invalid quirk!",
+//                            q.toLog(), getChassis(), getModel()));
+//                    continue;
+//                }
+//                getQuirks().getOption(q.getQuirk()).setValue(true);continue;
+//            }
+//
+//            // Get the weapon in the indicated location and slot.
+//            CriticalSlot cs = getCritical(getLocationFromAbbr(q.getLocation()), q.getSlot());
+//            if (cs == null) {
+//                LogManager.getLogger().warn(String.format("%s failed for %s %s - Critical slot (%s-%s) did not load!",
+//                        q.toLog(), getChassis(), getModel(), q.getLocation(), q.getSlot()));
+//                continue;
+//            }
+//            Mounted m = cs.getMount();
+//            if (m == null) {
+//                LogManager.getLogger().warn(String.format("%s failed for %s %s - Critical slot (%s-%s) is empty!",
+//                        q.toLog(), getChassis(), getModel(), q.getLocation(), q.getSlot()));
+//                continue;
+//            }
+//
+//            // Make sure this is a weapon.
+//            if (!(m.getType() instanceof WeaponType) && !(m.getType().hasFlag(MiscType.F_CLUB))) {
+//                LogManager.getLogger().warn(String.format("%s failed for %s %s - %s is not a weapon!",
+//                        q.toLog(), getChassis(), getModel(), m.getName()));
+//                continue;
+//            }
+//
+//            // Make sure it is the weapon we expect.
+//            boolean matchFound = false;
+//            Enumeration<String> typeNames = m.getType().getNames();
+//            while (typeNames.hasMoreElements()) {
+//                String typeName = typeNames.nextElement();
+//                if (typeName.equals(q.getWeaponName())) {
+//                    matchFound = true;
+//                    break;
+//                }
+//            }
+//
+//            if (!matchFound) {
+//                LogManager.getLogger().warn(String.format("%s failed for %s %s - %s != %s",
+//                        q.toLog(), getChassis(), getModel(), m.getType().getName(), q.getWeaponName()));
+//                continue;
+//            }
+//
+//            // Activate the weapon quirk.
+//            if (m.getQuirks().getOption(q.getQuirk()) == null) {
+//                LogManager.getLogger().warn(String.format("%s failed for %s %s - Invalid quirk!",
+//                        q.toLog(), getChassis(), getModel()));
+//                continue;
+//            }
+//            m.getQuirks().getOption(q.getQuirk()).setValue(true);
+//        }
+//    }
+
+    public void loadQuirks(List<QuirkEntry> quirks) {
 
         // If this unit has no quirks, we do not need to proceed further.
         if ((quirks == null) || quirks.isEmpty()) {

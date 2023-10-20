@@ -89,8 +89,6 @@ public class EntityViewPane extends AbstractTabbedPane {
             troPanel.setMech(entity, TROView.createView(entity, true));
         }
         summaryPanel.setEntity(entity);
-        if (ASConverter.canConvert(entity)) {
-            cardPanel.setASElement(asUnit);
-        }
+        cardPanel.setASElement(ASConverter.canConvert(entity) ? asUnit : null);
     }
 }

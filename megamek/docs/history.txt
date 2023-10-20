@@ -66,6 +66,8 @@ VERSION HISTORY:
 + Fix 4830: WiGE units with jump jets no longer jump to the bottom of water hexes
 + PR #4834: The unit tooltip now indicates when TSM is active
 + PR #4822: Formatting updates and utilities for the unit summary (unit selector/lobby unit view)
++ Fix #4786: Fix modifier for controlled sideslip
++ Fix #4745: Fix machine gun array burst damage against conventional infantry
 
 
 0.49.14 (2023-07-28 2100 UTC)

@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-0.49.15-SNAPSHOT
+0.49.15 (2023-10-21 1530 UTC)
 + PR #4688: Round reports should no longer take increasingly long to load
 + PR #4686: QuadVee should no longer be able to fall after converting to vehicle mode
 + PR #4684: Added game option for GM to advance report phases without waiting for other players

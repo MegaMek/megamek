@@ -31,8 +31,8 @@ public class ISHVAC2 extends HVACWeapon {
         addLookupName("IS Hyper Velocity Autocannon/2");
         sortingName = "HVAC/02";
         heat = 1;
-        damage = 2;
-        rackSize = 2;
+        damage = 4;
+        rackSize = 4;
         minimumRange = 3;
         shortRange = 10;
         mediumRange = 20;
@@ -47,7 +47,7 @@ public class ISHVAC2 extends HVACWeapon {
         longAV = 2;
         extAV = 2;
         maxRange = RANGE_EXT;
-        explosionDamage = 2;
+        explosionDamage = 1;
         rulesRefs = "285, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_IS)

@@ -1258,18 +1258,24 @@ public class Client implements IClientCommandHandler {
             }
 
             if (entityID != -1 && crewID != -1) {
-                Entity e = game.getEntity(entityID);
-                Crew crew = e.getCrew();
-                // Adjust the portrait size to the GUI scale and number of pilots
-                float imgSize = UIUtil.scaleForGUI(PilotToolTip.PORTRAIT_BASESIZE);
-                imgSize /= 0.2f * (crew.getSlotCount() - 1) + 1;
-                Image portrait = crew.getPortrait(crewID).getBaseImage().getScaledInstance(-1, (int) imgSize, Image.SCALE_SMOOTH);
-                // convert image to base64, add to the <img> tag and store in cache
-                BufferedImage bufferedImage = new BufferedImage(portrait.getWidth(null), portrait.getHeight(null), BufferedImage.TYPE_INT_RGB);
-                bufferedImage.getGraphics().drawImage(portrait, 0, 0, null);
-                String base64Text = ImageUtil.base64TextEncodeImage(bufferedImage);
-                String img = "<img src='data:image/png;base64," + base64Text + "'>";
-                updatedReport = updatedReport.replace("<span crew='" + entityID + ":" + crewID + "'></span>", img);
+                Entity e = game.getEntityFromAllSources(entityID);
+
+                if (e != null) {
+                    Crew crew = e.getCrew();
+
+                    if (crew != null) {
+                        // Adjust the portrait size to the GUI scale and number of pilots
+                        float imgSize = UIUtil.scaleForGUI(PilotToolTip.PORTRAIT_BASESIZE);
+                        imgSize /= 0.2f * (crew.getSlotCount() - 1) + 1;
+                        Image portrait = crew.getPortrait(crewID).getBaseImage().getScaledInstance(-1, (int) imgSize, Image.SCALE_SMOOTH);
+                        // convert image to base64, add to the <img> tag and store in cache
+                        BufferedImage bufferedImage = new BufferedImage(portrait.getWidth(null), portrait.getHeight(null), BufferedImage.TYPE_INT_RGB);
+                        bufferedImage.getGraphics().drawImage(portrait, 0, 0, null);
+                        String base64Text = ImageUtil.base64TextEncodeImage(bufferedImage);
+                        String img = "<img src='data:image/png;base64," + base64Text + "'>";
+                        updatedReport = updatedReport.replace("<span crew='" + entityID + ":" + crewID + "'></span>", img);
+                    }
+                }
             }
         }
 

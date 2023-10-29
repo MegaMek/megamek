@@ -32047,7 +32047,7 @@ public class GameManager implements IGameManager {
         int damage = 0;
         PhysicalResult pr = new PhysicalResult();
         ToHitData toHit = new ToHitData();
-        if (ae.getCrew() != null) {
+        if (aaa instanceof PhysicalAttackAction && ae.getCrew() != null) {
             pr.roll = ae.getCrew().rollPilotingSkill();
         } else {
             pr.roll = Compute.d6(2);

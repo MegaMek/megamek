@@ -32047,7 +32047,11 @@ public class GameManager implements IGameManager {
         int damage = 0;
         PhysicalResult pr = new PhysicalResult();
         ToHitData toHit = new ToHitData();
-        pr.roll = Compute.d6(2);
+        if (ae.getCrew() != null) {
+            pr.roll = ae.getCrew().rollPilotingSkill();
+        } else {
+            pr.roll = Compute.d6(2);
+        }
         pr.aaa = aaa;
         if (aaa instanceof BrushOffAttackAction) {
             BrushOffAttackAction baa = (BrushOffAttackAction) aaa;
@@ -32061,7 +32065,11 @@ public class GameManager implements IGameManager {
             damage = BrushOffAttackAction.getDamageFor(ae, BrushOffAttackAction.LEFT);
             pr.damageRight = BrushOffAttackAction.getDamageFor(ae, BrushOffAttackAction.RIGHT);
             baa.setArm(arm);
-            pr.rollRight = Compute.d6(2);
+            if (ae.getCrew() != null) {
+                pr.rollRight = ae.getCrew().rollPilotingSkill();
+            } else {
+                pr.rollRight = Compute.d6(2);
+            }
         } else if (aaa instanceof ChargeAttackAction) {
             ChargeAttackAction caa = (ChargeAttackAction) aaa;
             toHit = caa.toHit(game);
@@ -32151,7 +32159,11 @@ public class GameManager implements IGameManager {
             }
             pr.damageRight = damageRight;
             pr.toHitRight = toHitRight;
-            pr.rollRight = Compute.d6(2);
+            if (ae.getCrew() != null) {
+                pr.rollRight = ae.getCrew().rollPilotingSkill();
+            } else {
+                pr.rollRight = Compute.d6(2);
+            }
         } else if (aaa instanceof PushAttackAction) {
             PushAttackAction paa = (PushAttackAction) aaa;
             toHit = paa.toHit(game);

@@ -1,7 +1,8 @@
 VERSION HISTORY:
 ----------------
 0.49.16-SNAPSHOT
-+ Fix #4854 - check getEntityFromAllSources
++ Fix #4854 - fix multiple end-of-game and end-of-phase hangs
++ Fix #4541 - natural piloting SPA applies to physical attacks
 
 0.49.15 (2023-10-21 1530 UTC)
 + PR #4688: Round reports should no longer take increasingly long to load

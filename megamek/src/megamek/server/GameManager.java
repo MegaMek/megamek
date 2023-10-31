@@ -3682,7 +3682,7 @@ public class GameManager implements IGameManager {
                 && !getGame().getPhase().isDeployment();
         try {
             loader.load(unit, checkElevation, bayNumber);
-        }catch(IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             LogManager.getLogger().info(e.getMessage());
             sendServerChat(e.getMessage());
             return;

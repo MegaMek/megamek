@@ -56,40 +56,49 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#addHeatUseAmmo()
      */
     @Override
     protected void useAmmo() {
         setDone();
         checkAmmo();
+        howManyShots = (weapon.curMode().equals(Weapon.MODE_AC_SINGLE) ? 1 : 2);
         int total = ae.getTotalAmmoOfType(ammo.getType());
-        if ((total > 1) && !weapon.curMode().equals(Weapon.MODE_AC_SINGLE)) {
-            howManyShots = 2;
-        } else {
+        if (total > 1 ) {
+            // No need to change howManyShots
+        } else if (total == 1) {
             howManyShots = 1;
+        } else {
+            howManyShots = 0;
         }
 
+        // Handle bins that are empty or will be emptied by this attack
+        attemptToReloadWeapon();
+        reduceShotsLeft(howManyShots);
+    }
+
+    protected void attemptToReloadWeapon() {
+        // We _may_ be able to reload from another ammo source, but in case
+        // a previous attack burned through all the ammo, this attack may be SOL.
         if (ammo.getUsableShotsLeft() == 0) {
             ae.loadWeapon(weapon);
             ammo = weapon.getLinked();
-            // there will be some ammo somewhere, otherwise shot will not have been fired.
         }
+    }
 
-        if (ammo.getUsableShotsLeft() == 1) {
+    protected void reduceShotsLeft(int shotsNeedFiring) {
+        while (shotsNeedFiring > ammo.getUsableShotsLeft()) {
+            shotsNeedFiring -= ammo.getBaseShotsLeft();
             ammo.setShotsLeft(0);
-            ae.loadWeapon(weapon);
-            ammo = weapon.getLinked();
-            // that fired one, do we need to fire another?
-            ammo.setShotsLeft(ammo.getBaseShotsLeft() - ((howManyShots == 2) ? 1 : 0));
-        } else {
-            ammo.setShotsLeft(ammo.getBaseShotsLeft() - howManyShots);
+            attemptToReloadWeapon();
         }
+        ammo.setShotsLeft(ammo.getBaseShotsLeft() - shotsNeedFiring);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -138,7 +147,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
      */
     @Override
@@ -165,7 +174,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override

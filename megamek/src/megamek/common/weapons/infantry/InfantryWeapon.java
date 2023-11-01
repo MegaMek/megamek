@@ -15,10 +15,11 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.Weapon;
 import megamek.server.GameManager;
-import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
@@ -248,11 +249,25 @@ public abstract class InfantryWeapon extends Weapon {
         Mounted m = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
         if (((null != m) && (m.curMode().equals(Weapon.MODE_FLAMER_HEAT)
                 || (waa.getEntity(game).isSupportVehicle()
-                    && m.getLinked() != null
-                    && m.getLinked().getType() != null
-                    && (((AmmoType) m.getLinked().getType()).getMunitionType().contains(AmmoType.Munitions.M_INFERNO)))))) {
+                && m.getLinked() != null
+                && m.getLinked().getType() != null
+                && (((AmmoType) m.getLinked().getType()).getMunitionType().contains(AmmoType.Munitions.M_INFERNO)))))) {
             return new InfantryHeatWeaponHandler(toHit, waa, game, manager);
         }
         return new InfantryWeaponHandler(toHit, waa, game, manager);
+    }
+
+    public void adaptToGameOptions(GameOptions gOp) {
+        super.adaptToGameOptions(gOp);
+        // Additional flags that are treated like flamers for infantry weapons
+        if (hasFlag(WeaponType.F_INFERNO) || hasFlag(WeaponType.F_PLASMA) || hasFlag(F_INCENDIARY_NEEDLES)) {
+            if (!gOp.booleanOption(OptionsConstants.BASE_FLAMER_HEAT)) {
+                addMode(MODE_FLAMER_DAMAGE);
+                addMode(MODE_FLAMER_HEAT);
+            } else {
+                removeMode(MODE_FLAMER_DAMAGE);
+                removeMode(MODE_FLAMER_HEAT);
+            }
+        }
     }
 }

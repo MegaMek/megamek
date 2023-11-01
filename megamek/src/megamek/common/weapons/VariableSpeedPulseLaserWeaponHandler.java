@@ -48,7 +48,7 @@ public class VariableSpeedPulseLaserWeaponHandler extends EnergyWeaponHandler {
         double toReturn = wtype.getDamage(nRange);
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)
-                && wtype.hasModes()) {
+                && weapon.hasModes()) {
             toReturn = Compute.dialDownDamage(weapon, wtype, nRange);
         }
 

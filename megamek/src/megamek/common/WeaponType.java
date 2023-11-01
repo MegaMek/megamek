@@ -482,7 +482,7 @@ public class WeaponType extends EquipmentType {
             }
         }
         if (hasFlag(WeaponType.F_PDBAY)) {
-            if (hasModes() && weapon.curMode().equals("Point Defense")) {
+            if (weapon.hasModes() && weapon.curMode().equals("Point Defense")) {
                 sRange = 1;
             } else {
                 sRange = 6;

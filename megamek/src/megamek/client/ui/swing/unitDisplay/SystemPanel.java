@@ -415,7 +415,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
             sb.append(hotLoaded);
         }
 
-        if (m.getType().hasModes()) {
+        if (m.hasModes()) {
             if (!m.curMode().getDisplayableName().isEmpty()) {
                 sb.append(" (");
                 sb.append(m.curMode().getDisplayableName());
@@ -451,7 +451,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
                     && (ev.getStateChange() == ItemEvent.SELECTED)) {
                 Mounted m = getSelectedEquipment();
                 CriticalSlot cs = getSelectedCritical();
-                if ((m != null) && m.getType().hasModes()) {
+                if ((m != null) && m.hasModes()) {
                     int nMode = m_chMode.getSelectedIndex();
                     if (nMode >= 0) {
 
@@ -760,7 +760,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
                 int round = client.getGame().getRoundCount();
                 boolean inSquadron = ((en instanceof Aero) && ((Aero) en)
                         .isInASquadron());
-                if ((m != null) && bOwner && m.getType().hasModes()) {
+                if ((m != null) && bOwner && m.hasModes()) {
                     if (!m.isInoperable() && !m.isDumping()
                             && (en.isActive() || en.isActive(round) || inSquadron)
                             && m.isModeSwitchable()) {

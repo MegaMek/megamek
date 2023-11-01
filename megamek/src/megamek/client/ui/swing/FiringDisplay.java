@@ -1006,7 +1006,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
 
         // If the weapon does not have modes, just exit.
         Mounted m = ce().getEquipment(wn);
-        if ((m == null) || !m.getType().hasModes()) {
+        if ((m == null) || !m.hasModes()) {
             return;
         }
 
@@ -1960,7 +1960,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
                 setFireEnabled(false);
             } else if ((m.getType().hasFlag(WeaponType.F_AUTO_TARGET)
                     && !m.curMode().equals(Weapon.MODE_AMS_MANUAL))
-                    || (m.getType().hasModes() && m.curMode().equals("Point Defense"))) {
+                    || (m.hasModes() && m.curMode().equals("Point Defense"))) {
                 clientgui.getUnitDisplay().wPan.setToHit(Messages.getString("FiringDisplay.autoFiringWeapon"));
                 setFireEnabled(false);
             } else if (m.isInBearingsOnlyMode()) {
@@ -2395,7 +2395,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
      * @param m The active weapon
      */
     protected void adaptFireModeEnabled(Mounted m) {
-        setFireModeEnabled(m.isModeSwitchable() & m.getType().hasModes());
+        setFireModeEnabled(m.isModeSwitchable() & m.hasModes());
     }
 
     protected void setFireCalledEnabled(boolean enabled) {

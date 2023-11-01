@@ -65,11 +65,11 @@ public class InfantrySupportLRMInfernoWeapon extends InfantryWeapon {
 
         // Indirect Fire
         if (gOp.booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
-            addMode("");
-            addMode("Indirect");
+            addMode(MODE_MISSILE_INDIRECT);
+            addMode(MODE_INDIRECT_HEAT);
         } else {
-            removeMode("");
-            removeMode("Indirect");
+            removeMode(MODE_MISSILE_INDIRECT);
+            removeMode(MODE_INDIRECT_HEAT);
         }
     }
 }

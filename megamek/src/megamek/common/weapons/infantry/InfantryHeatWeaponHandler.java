@@ -48,8 +48,7 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
             int bldgAbsorbs) {
-        if ((entityTarget instanceof Mech)
-                && game.getOptions().booleanOption(OptionsConstants.BASE_FLAMER_HEAT)) {
+        if (entityTarget.tracksHeat()) {
             // heat
             hit = entityTarget.rollHitLocation(toHit.getHitTable(),
                     toHit.getSideTable(), waa.getAimedLocation(), waa
@@ -66,22 +65,25 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
             Report r = new Report(3400);
             r.subject = subjectId;
             r.indent(2);
+            int nDamage = nDamPerHit * Math.min(nCluster, hits);
             if (entityTarget.getArmor(hit) > 0 && 
                     (entityTarget.getArmorType(hit.getLocation()) == 
                     EquipmentType.T_ARMOR_HEAT_DISSIPATING)) {
-                entityTarget.heatFromExternal += nDamPerHit / 2;
-                r.add(nDamPerHit / 2);
+                entityTarget.heatFromExternal += nDamage / 2;
+                r.add(nDamage / 2);
                 r.choose(true);
                 r.messageId=3406;
                 r.add(EquipmentType.armorNames
                         [entityTarget.getArmorType(hit.getLocation())]);
             } else {
-                entityTarget.heatFromExternal += nDamPerHit;
-                r.add(nDamPerHit);
+                entityTarget.heatFromExternal += nDamage;
+                r.add(nDamage);
                 r.choose(true);
             }
             vPhaseReport.addElement(r);
-        } else {
+        }
+        // Do damage to non-heat-tracking unit or if using the BMM heat option
+        if (!entityTarget.tracksHeat() || game.getOptions().booleanOption(OptionsConstants.BASE_FLAMER_HEAT)) {
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                     nCluster, bldgAbsorbs);
         }

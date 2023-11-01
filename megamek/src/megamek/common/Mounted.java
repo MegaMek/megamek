@@ -267,6 +267,10 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         return type.hasModes();
     }
 
+    public boolean hasModeType(String mode) {
+        return getType().hasModeType(mode);
+    }
+
     public void adaptToGameOptions(GameOptions options) {
         if (getType() instanceof Weapon) {
             ((Weapon) getType()).adaptToGameOptions(options);

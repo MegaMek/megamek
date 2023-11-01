@@ -569,7 +569,7 @@ public class LobbyActions {
                 // TODO: The following should ideally be part of setHotLoad in Mounted
                 if (hotLoadOn) {
                     m.setMode("HotLoad");
-                } else if (m.getType().hasModeType("HotLoad")) {
+                } else if (m.hasModeType("HotLoad")) {
                     m.setMode("");
                 }
                 updateCandidates.add(entity);

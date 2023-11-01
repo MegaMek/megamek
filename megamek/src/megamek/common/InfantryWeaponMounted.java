@@ -90,6 +90,11 @@ public class InfantryWeaponMounted extends Mounted {
         return !getModes().isEmpty();
     }
 
+    @Override
+    public boolean hasModeType(String mode) {
+        return modes.contains(EquipmentMode.getMode(mode));
+    }
+
     public boolean canInstantSwitch(int newMode) {
         if (getType().hasModes() && (getType().getMode(newMode) != null)) {
             return super.canInstantSwitch(newMode);

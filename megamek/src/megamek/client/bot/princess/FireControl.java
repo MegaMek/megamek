@@ -2166,7 +2166,7 @@ public class FireControl {
         }
 
         for (Mounted weapon : shooter.getWeaponList()) {
-            if (weapon.getType().hasModeType(Weapon.MODE_MISSILE_INDIRECT)) {
+            if (weapon.hasModeType(Weapon.MODE_MISSILE_INDIRECT)) {
                 fireControlState.getEntityIDFStates().put(shooter.getId(), true);
                 return true;
             }
@@ -3244,7 +3244,7 @@ public class FireControl {
         // check that we're operating a missile weapon that can switch direct/indirect modes
         // don't bother checking non-missile weapons
         if (weapon.getType().hasFlag(Weapon.F_MISSILE) &&
-                weapon.getType().hasModeType(Weapon.MODE_MISSILE_INDIRECT)) {
+                weapon.hasModeType(Weapon.MODE_MISSILE_INDIRECT)) {
 
             // if we are able to switch the weapon to indirect fire mode, do so and try again
             if (!weapon.curMode().equals(Weapon.MODE_MISSILE_INDIRECT)) {

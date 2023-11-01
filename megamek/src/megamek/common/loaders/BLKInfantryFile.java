@@ -13,13 +13,7 @@
  */
 package megamek.common.loaders;
 
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.Infantry;
-import megamek.common.LocationFullException;
-import megamek.common.MiscType;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.util.BuildingBlock;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
@@ -102,7 +96,7 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
         }
         String primaryName = dataFile.getDataAsString("Primary")[0];
         EquipmentType ptype = EquipmentType.get(primaryName);
-        if ((null == ptype) || !(ptype instanceof InfantryWeapon)) {
+        if (!(ptype instanceof InfantryWeapon)) {
             throw new EntityLoadingException("primary weapon is not an infantry weapon");
         }
         t.setPrimaryWeapon((InfantryWeapon) ptype);
@@ -120,18 +114,18 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
         // if there is more than one secondary weapon per squad, then add that
         // to the unit
         // otherwise add the primary weapon
-        if ((t.getSecondaryWeaponsPerSquad() > 1) && (null != stype)) {
-            try {
-                t.addEquipment(stype, Infantry.LOC_INFANTRY);
-            } catch (LocationFullException ex) {
-                throw new EntityLoadingException(ex.getMessage());
-            }
+        Mounted m;
+        if ((t.getSecondaryWeaponsPerSquad() > 1)) {
+            m = new InfantryWeaponMounted(t, stype, ptype);
+        } else if (t.getSecondaryWeaponsPerSquad() == 1) {
+            m = new InfantryWeaponMounted(t, ptype, stype);
         } else {
-            try {
-                t.addEquipment(ptype, Infantry.LOC_INFANTRY);
-            } catch (LocationFullException ex) {
-                throw new EntityLoadingException(ex.getMessage());
-            }
+            m = new Mounted(t, ptype);
+        }
+        try {
+            t.addEquipment(m, Infantry.LOC_INFANTRY, false);
+        } catch (LocationFullException ex) {
+            throw new EntityLoadingException(ex.getMessage());
         }
         //TAG infantry have separate attacks for primary and secondary weapons.
         if (null != stype && stype.hasFlag(WeaponType.F_TAG)) {

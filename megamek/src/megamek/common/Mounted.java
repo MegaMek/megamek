@@ -16,6 +16,7 @@ package megamek.common;
 
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
+import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.WeaponQuirks;
 import megamek.common.weapons.AmmoWeapon;
@@ -254,13 +255,31 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         return (null != type) ? type : (type = EquipmentType.get(typeName));
     }
 
+    public int getModesCount() {
+        return type.getModesCount();
+    }
+
+    protected EquipmentMode getMode(int mode) {
+        return type.getMode(mode);
+    }
+
+    public boolean hasModes() {
+        return type.hasModes();
+    }
+
+    public void adaptToGameOptions(GameOptions options) {
+        if (getType() instanceof Weapon) {
+            ((Weapon) getType()).adaptToGameOptions(options);
+        }
+    }
+
     /**
      * @return the current mode of the equipment, or <code>null</code> if it's
      *         not available.
      */
     public EquipmentMode curMode() {
-        if ((mode >= 0) && (mode < type.getModesCount())) {
-            return type.getMode(mode);
+        if ((mode >= 0) && (mode < getModesCount())) {
+            return getMode(mode);
         }
         return EquipmentMode.getMode("None");
     }
@@ -269,7 +288,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      * @return the pending mode of the equipment.
      */
     public EquipmentMode pendingMode() {
-        if ((pendingMode < 0) || (pendingMode >= type.getModesCount())) {
+        if ((pendingMode < 0) || (pendingMode >= getModesCount())) {
             return EquipmentMode.getMode("None");
         }
         return type.getMode(pendingMode);
@@ -284,24 +303,24 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      * @return new mode number, or <code>-1</code> if it's not available.
      */
     public int switchMode(boolean forward) {
-        if (type.hasModes()) {
+        if (hasModes()) {
             int nMode = 0;
             if (pendingMode > -1) {
                 if (forward) {
-                    nMode = (pendingMode + 1) % type.getModesCount();
+                    nMode = (pendingMode + 1) % getModesCount();
                 } else {
                     nMode = (pendingMode - 1);
                     if (nMode < 0) {
-                        nMode = type.getModesCount() - 1;
+                        nMode = getModesCount() - 1;
                     }
                 }
             } else {
                 if (forward) {
-                    nMode = (mode + 1) % type.getModesCount();
+                    nMode = (mode + 1) % getModesCount();
                 } else {
                     nMode = (mode - 1);
                     if (nMode < 0) {
-                        nMode = type.getModesCount() - 1;
+                        nMode = getModesCount() - 1;
                     }
                 }
             }
@@ -318,8 +337,8 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      * @return new mode number on success, <code>-1</code> otherwise.
      */
     public int setMode(String newMode) {
-        for (int x = 0, e = type.getModesCount(); x < e; x++) {
-            if (type.getMode(x).equals(newMode)) {
+        for (int x = 0, e = getModesCount(); x < e; x++) {
+            if (getMode(x).equals(newMode)) {
                 setMode(x);
                 return x;
             }
@@ -334,9 +353,9 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      *            the number of the desired new mode
      */
     public boolean setMode(int newMode) {
-        if (type.hasModes()) {
+        if (hasModes()) {
 
-            if (newMode >= type.getModesCount()) {
+            if (newMode >= getModesCount()) {
                 return false;
             }
 

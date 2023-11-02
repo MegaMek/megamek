@@ -1468,7 +1468,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         }
 
         if (!bSalvo) {
-            // Each hit in the salvo get's its own hit location.
+            // Each hit in the salvo gets its own hit location.
             Report r = new Report(3405);
             r.subject = subjectId;
             r.add(toHit.getTableDesc());

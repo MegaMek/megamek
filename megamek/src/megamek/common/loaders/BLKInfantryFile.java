@@ -115,12 +115,16 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
         // to the unit
         // otherwise add the primary weapon
         Mounted m;
-        if ((t.getSecondaryWeaponsPerSquad() > 1)) {
-            m = new InfantryWeaponMounted(t, stype, ptype);
-        } else if (t.getSecondaryWeaponsPerSquad() == 1) {
-            m = new InfantryWeaponMounted(t, ptype, stype);
-        } else {
-            m = new Mounted(t, ptype);
+        try {
+            if ((t.getSecondaryWeaponsPerSquad() > 1)) {
+                m = new InfantryWeaponMounted(t, stype, (InfantryWeapon) ptype);
+            } else if (stype != null) {
+                m = new InfantryWeaponMounted(t, ptype, (InfantryWeapon) stype);
+            } else {
+                m = new Mounted(t, ptype);
+            }
+        } catch (ClassCastException ex) {
+            throw new EntityLoadingException(ex.getMessage());
         }
         try {
             t.addEquipment(m, Infantry.LOC_INFANTRY, false);

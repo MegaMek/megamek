@@ -253,14 +253,16 @@ public abstract class InfantryWeapon extends Weapon {
                 && m.getLinked().getType() != null
                 && (((AmmoType) m.getLinked().getType()).getMunitionType().contains(AmmoType.Munitions.M_INFERNO)))))) {
             return new InfantryHeatWeaponHandler(toHit, waa, game, manager);
+        } else if (game.getOptions().booleanOption(OptionsConstants.BASE_FLAMER_HEAT)
+                && (isFlameBased() || (m instanceof InfantryWeaponMounted)
+                                        &&  ((InfantryWeaponMounted) m).getOtherWeapon().isFlameBased())) {
+            return new InfantryHeatWeaponHandler(toHit, waa, game, manager);
         }
         return new InfantryWeaponHandler(toHit, waa, game, manager);
     }
 
     public void adaptToGameOptions(GameOptions gOp) {
-        super.adaptToGameOptions(gOp);
-        // Additional flags that are treated like flamers for infantry weapons
-        if (hasFlag(WeaponType.F_INFERNO) || hasFlag(WeaponType.F_PLASMA) || hasFlag(F_INCENDIARY_NEEDLES)) {
+        if (isFlameBased()) {
             if (!gOp.booleanOption(OptionsConstants.BASE_FLAMER_HEAT)) {
                 addMode(MODE_FLAMER_DAMAGE);
                 addMode(MODE_FLAMER_HEAT);
@@ -269,5 +271,12 @@ public abstract class InfantryWeapon extends Weapon {
                 removeMode(MODE_FLAMER_HEAT);
             }
         }
+    }
+
+    public boolean isFlameBased() {
+        return hasFlag(WeaponType.F_FLAMER)
+                || hasFlag(WeaponType.F_INFERNO)
+                || hasFlag(WeaponType.F_INCENDIARY_NEEDLES)
+                || hasFlag(WeaponType.F_PLASMA);
     }
 }

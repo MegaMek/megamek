@@ -16,6 +16,7 @@ package megamek.common;
 
 import megamek.common.options.GameOptions;
 import megamek.common.weapons.Weapon;
+import megamek.common.weapons.infantry.InfantryWeapon;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -28,7 +29,7 @@ import java.util.List;
  */
 public class InfantryWeaponMounted extends Mounted {
 
-    transient private EquipmentType otherWeapon;
+    transient private InfantryWeapon otherWeapon;
     private final String typeName;
 
     transient private List<EquipmentMode> modes;
@@ -41,16 +42,16 @@ public class InfantryWeaponMounted extends Mounted {
      * @param rangeWeapon The weapon used to calculate range.
      * @param otherWeapon The other weapon
      */
-    public InfantryWeaponMounted(Entity entity, EquipmentType rangeWeapon, EquipmentType otherWeapon) {
+    public InfantryWeaponMounted(Entity entity, EquipmentType rangeWeapon, InfantryWeapon otherWeapon) {
         super(entity, rangeWeapon);
         this.typeName = otherWeapon.getInternalName();
         this.otherWeapon = otherWeapon;
         rebuildModeList();
     }
 
-    public EquipmentType getOtherWeapon() {
+    public InfantryWeapon getOtherWeapon() {
         if (otherWeapon == null) {
-            otherWeapon = EquipmentType.get(typeName);
+            otherWeapon = (InfantryWeapon) EquipmentType.get(typeName);
         }
         return otherWeapon;
     }

@@ -62,15 +62,21 @@ public class InfantrySupportMortarHeavyInfernoWeapon extends InfantryWeapon {
 
 	@Override
 	public void adaptToGameOptions(GameOptions gOp) {
+		removeMode("");
+		removeMode(MODE_MISSILE_INDIRECT);
+		removeMode(MODE_INDIRECT_HEAT);
+		// add heat options
 		super.adaptToGameOptions(gOp);
 
 		// Indirect Fire
 		if (gOp.booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
-			addMode(MODE_MISSILE_INDIRECT);
-			addMode(MODE_INDIRECT_HEAT);
-		} else {
-			removeMode(MODE_MISSILE_INDIRECT);
-			removeMode(MODE_INDIRECT_HEAT);
+			if (gOp.booleanOption(OptionsConstants.BASE_FLAMER_HEAT)) {
+				addMode("");
+				addMode(MODE_MISSILE_INDIRECT);
+			} else {
+				addMode(MODE_MISSILE_INDIRECT);
+				addMode(MODE_INDIRECT_HEAT);
+			}
 		}
 	}
 }

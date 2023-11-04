@@ -256,15 +256,15 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     }
 
     public int getModesCount() {
-        return type.getModesCount();
+        return getType().getModesCount();
     }
 
     protected EquipmentMode getMode(int mode) {
-        return type.getMode(mode);
+        return getType().getMode(mode);
     }
 
     public boolean hasModes() {
-        return type.hasModes();
+        return getType().hasModes();
     }
 
     public boolean hasModeType(String mode) {

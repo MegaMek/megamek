@@ -9665,7 +9665,6 @@ public class GameManager implements IGameManager {
                 // Make sure we got the right type of response
                 if (!cfrType.isCFRTeleguidedTarget()) {
                     LogManager.getLogger().error("Expected a CFR_TELEGUIDED_TARGET CFR packet, received: " + cfrType);
-                    LogManager.getLogger().error("Exped2cted a CFR_TELEGUIDED_TARGET CFR packet, received: " + cfrType);
                     continue;
                 }
                 // Check packet came from right ID

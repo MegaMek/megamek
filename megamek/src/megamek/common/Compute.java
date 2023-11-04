@@ -138,45 +138,52 @@ public class Compute {
             { 40, 12, 12, 18, 24, 24, 24, 24, 32, 32, 40, 40 } };
 
     /**
+     * Wrapper to random#d6()
+     */
+    public static int d6() {
+        return d6( 1);
+    }
+
+    /**
      * Wrapper to random#d6(n)
      */
     public static int d6(int dice) {
-        Roll roll = random.d6(dice);
-        if (Server.getServerInstance() != null) {
-            if (Server.getServerInstance().getGame().getOptions()
-                      .booleanOption(OptionsConstants.BASE_RNG_LOG)) {
-                Server.getServerInstance().reportRoll(roll);
-            }
-        }
-        return roll.getIntValue();
+        return rollD6(dice).getIntValue();
     }
 
     /**
      * Wrapper to random#d6(n)
      */
     public static int d6(int dice, int keep) {
-        Roll roll = random.d6(dice, keep);
-        if (Server.getServerInstance() != null) {
-            if (Server.getServerInstance().getGame().getOptions()
-                      .booleanOption(OptionsConstants.BASE_RNG_LOG)) {
-                Server.getServerInstance().reportRoll(roll);
-            }
-        }
-        return roll.getIntValue();
+        return rollD6(dice, keep).getIntValue();
     }
 
     /**
-     * Wrapper to random#d6()
+     * Wrapper to random#d6(n)
      */
-    public static int d6() {
-        Roll roll = random.d6();
+    public static Roll rollD6(int dice) {
+        Roll roll = random.d6(dice);
         if (Server.getServerInstance() != null) {
             if (Server.getServerInstance().getGame().getOptions()
-                      .booleanOption(OptionsConstants.BASE_RNG_LOG)) {
+                    .booleanOption(OptionsConstants.BASE_RNG_LOG)) {
                 Server.getServerInstance().reportRoll(roll);
             }
         }
-        return roll.getIntValue();
+        return roll;
+    }
+
+    /**
+     * Wrapper to random#d6(n)
+     */
+    public static Roll rollD6(int dice, int keep) {
+        Roll roll = random.d6(dice, keep);
+        if (Server.getServerInstance() != null) {
+            if (Server.getServerInstance().getGame().getOptions()
+                    .booleanOption(OptionsConstants.BASE_RNG_LOG)) {
+                Server.getServerInstance().reportRoll(roll);
+            }
+        }
+        return roll;
     }
 
     /**

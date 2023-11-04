@@ -5462,9 +5462,11 @@ public abstract class Mech extends Entity {
             vPhaseReport.add(Report.subjectReport(2285, getId()).add(psr.getValueAsString()).add(psr.getDesc()));
             vPhaseReport.add(Report.subjectReport(2290, getId()).indent().noNL().add(1).add(psr.getPlainDesc()));
 
-            int diceRoll = getCrew().rollPilotingSkill();
-            Report r = Report.subjectReport(2300, getId()).add(psr).add(diceRoll);
-            if (diceRoll < psr.getValue()) {
+            Roll diceRoll = getCrew().rollPilotingSkill();
+            int rollValue = diceRoll.getIntValue();
+            String rollReport = diceRoll.getReport();
+            Report r = Report.subjectReport(2300, getId()).add(psr).addDataWithTooltip(String.valueOf(rollValue), rollReport);
+            if (rollValue < psr.getValue()) {
                 setStalled(true);
                 vPhaseReport.add(r.noNL().choose(false));
                 vPhaseReport.add(Report.subjectReport(2303, getId()));
@@ -5492,9 +5494,11 @@ public abstract class Mech extends Entity {
             vPhaseReport.add(Report.subjectReport(2285, getId()).add(psr.getValueAsString()).add(psr.getDesc()));
             vPhaseReport.add(Report.subjectReport(2290, getId()).indent().noNL().add(1).add(psr.getPlainDesc()));
 
-            int diceRoll = getCrew().rollPilotingSkill();
-            Report r = Report.subjectReport(2300, getId()).add(psr).add(diceRoll);
-            if (diceRoll < psr.getValue()) {
+            Roll diceRoll = getCrew().rollPilotingSkill();
+            int rollValue = diceRoll.getIntValue();
+            String rollReport = diceRoll.getReport();
+            Report r = Report.subjectReport(2300, getId()).add(psr).addDataWithTooltip(String.valueOf(rollValue), rollReport);
+            if (rollValue < psr.getValue()) {
                 vPhaseReport.add(r.choose(false));
             } else {
                 setStalled(false);

@@ -247,13 +247,15 @@ public class ServerHelper {
                                     break;
                             }
                         }
-                        int startupRoll = entity.getCrew().rollPilotingSkill();
+                        Roll diceRoll = entity.getCrew().rollPilotingSkill();
+                        int rollValue = diceRoll.getIntValue();
+                        String rollReport = diceRoll.getReport();
                         r = new Report(5050);
                         r.subject = entity.getId();
                         r.addDesc(entity);
                         r.add(startup);
-                        r.add(startupRoll);
-                        if (startupRoll >= startup) {
+                        r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+                        if (rollValue >= startup) {
                             // start 'er back up
                             entity.setShutDown(false);
                             r.choose(true);

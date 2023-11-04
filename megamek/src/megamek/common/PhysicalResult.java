@@ -31,6 +31,8 @@ public class PhysicalResult implements Serializable {
     public ToHitData toHitRight = null;
     public int roll = -1;
     public int rollRight = -1;
+    public String rollReport = "";
+    public String rollRightReport = "";
     public int damage = 0;
     public int damageRight = 0;
     public boolean pushBackResolved = false;

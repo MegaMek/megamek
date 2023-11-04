@@ -45,6 +45,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected HitData hit;
     public WeaponAttackAction waa;
     public int roll;
+    public String rollReport;
     protected boolean isJammed = false;
 
     protected Game game;
@@ -902,7 +903,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             r = new Report(3155);
             r.newlines = 0;
             r.subject = subjectId;
-            r.add(roll);
+            r.addDataWithTooltip(String.valueOf(roll), rollReport);
             vPhaseReport.addElement(r);
 
             // do we hit?
@@ -1165,9 +1166,13 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     r.subject = ae.getId();
                     vPhaseReport.addElement(r);
                     if (null != ae.getCrew()) {
-                        roll = ae.getCrew().rollGunnerySkill();
+                        Roll diceRoll = ae.getCrew().rollGunnerySkill();
+                        roll = diceRoll.getIntValue();
+                        rollReport = diceRoll.getReport();
                     } else {
-                        roll = Compute.d6(2);
+                        Roll diceRoll = Compute.rollD6(2);
+                        roll = diceRoll.getIntValue();
+                        rollReport = diceRoll.getReport();
                     }
                 }
             }
@@ -1761,9 +1766,13 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // is this an underwater attack on a surface naval vessel?
         underWater = toHit.getHitTable() == ToHitData.HIT_UNDERWATER;
         if (null != ae.getCrew()) {
-            roll = ae.getCrew().rollGunnerySkill();
+            Roll diceRoll = ae.getCrew().rollGunnerySkill();
+            roll = diceRoll.getIntValue();
+            rollReport = diceRoll.getReport();
         } else {
-            roll = Compute.d6(2);
+            Roll diceRoll = Compute.rollD6(2);
+            roll = diceRoll.getIntValue();
+            rollReport = diceRoll.getReport();
         }
 
         nweapons = getNumberWeapons();

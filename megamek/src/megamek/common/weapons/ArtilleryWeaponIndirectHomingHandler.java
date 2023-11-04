@@ -144,7 +144,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         r = new Report(3155);
         r.newlines = 0;
         r.subject = subjectId;
-        r.add(roll);
+        r.addDataWithTooltip(String.valueOf(roll), rollReport);
         vPhaseReport.addElement(r);
 
         // do we hit?

@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 0.49.16-SNAPSHOT
++ Fix #4769 - BA Tube Artillery should support smoke rounds
 + Fix #4854 - fix multiple end-of-game and end-of-phase hangs
 + Fix #4541 - natural piloting SPA applies to physical attacks
 

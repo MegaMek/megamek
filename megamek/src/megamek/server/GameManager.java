@@ -3902,7 +3902,9 @@ public class GameManager implements IGameManager {
                 if (unloader.getElevation() > 0) {
                     psr.addModifier(unloader.getElevation(), "elevation");
                 }
-                int roll = Compute.d6(2);
+                Roll diceRoll = Compute.rollD6(2);
+                int rollValue = diceRoll.getIntValue();
+                String rollReport = diceRoll.getReport();
 
                 // Report ziplining
                 Report r = new Report(9920);
@@ -3916,15 +3918,15 @@ public class GameManager implements IGameManager {
                 r.subject = unit.getId();
                 r.add(psr.getValue());
                 r.add(psr.getDesc());
-                r.add(roll);
+                r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                 r.newlines = 0;
                 addReport(r);
 
-                if (roll < psr.getValue()) { // Failure!
+                if (rollValue < psr.getValue()) { // Failure!
                     r = new Report(9923);
                     r.subject = unit.getId();
                     r.add(psr.getValue());
-                    r.add(roll);
+                    r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                     addReport(r);
 
                     HitData hit = unit.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
@@ -3934,7 +3936,7 @@ public class GameManager implements IGameManager {
                     r = new Report(9922);
                     r.subject = unit.getId();
                     r.add(psr.getValue());
-                    r.add(roll);
+                    r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                     addReport(r);
                 }
                 addNewLines();
@@ -3997,17 +3999,19 @@ public class GameManager implements IGameManager {
         addReport(r);
 
         // roll
-        final int diceRoll = Compute.d6(2);
+        final Roll diceRoll = Compute.rollD6(2);
+        int rollValue = diceRoll.getIntValue();
+        String rollReport = diceRoll.getReport();
         r = new Report(9606);
         r.subject = entity.getId();
         r.add(roll.getValueAsString());
         r.add(roll.getDesc());
-        r.add(diceRoll);
+        r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
         // boolean suc;
-        if (diceRoll < roll.getValue()) {
+        if (rollValue < roll.getValue()) {
             r.choose(false);
             addReport(r);
-            int mof = roll.getValue() - diceRoll;
+            int mof = roll.getValue() - rollValue;
             int damage = 10 * (mof);
             // Report damage taken
             r = new Report(9609);
@@ -4130,18 +4134,20 @@ public class GameManager implements IGameManager {
         if (bonus > 0) {
             PilotingRollData psr = unit.getBasePilotingRoll();
             psr.addModifier(bonus, "safe launch rate exceeded");
-            int ctrlroll = Compute.d6(2);
+            Roll diceRoll = Compute.rollD6(2);
+            int rollValue = diceRoll.getIntValue();
+            String rollReport = diceRoll.getReport();
             r = new Report(9375);
             r.subject = unit.getId();
             r.add(unit.getDisplayName());
             r.add(psr);
-            r.add(ctrlroll);
+            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
             r.indent(1);
-            if (ctrlroll < psr.getValue()) {
+            if (rollValue < psr.getValue()) {
                 r.choose(false);
                 addReport(r);
                 // damage the unit
-                int damage = 10 * (psr.getValue() - ctrlroll);
+                int damage = 10 * (psr.getValue() - rollValue);
                 HitData hit = unit.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
                 Vector<Report> rep = damageEntity(unit, hit, damage);
                 Report.indentAll(rep, 1);
@@ -4915,15 +4921,17 @@ public class GameManager implements IGameManager {
                                 r.add(psr.getDesc());
                                 addReport(r);
                             } else {
-                                int roll = Compute.d6(2);
+                                Roll diceRoll = Compute.rollD6(2);
+                                int rollValue = diceRoll.getIntValue();
+                                String rollReport = diceRoll.getReport();
                                 r = new Report(2425);
                                 r.subject = target.getId();
                                 r.addDesc(target);
                                 r.add(psr);
                                 r.add(psr.getDesc());
-                                r.add(roll);
+                                r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                                 addReport(r);
-                                if (roll >= psr.getValue()) {
+                                if (rollValue >= psr.getValue()) {
                                     game.removeTurnFor(target);
                                     avoidedChargeUnits.add(target);
                                     continue;
@@ -4944,7 +4952,9 @@ public class GameManager implements IGameManager {
                         ToHitData toHit = caa.toHit(game, true);
 
                         // roll
-                        int roll = Compute.d6(2);
+                        Roll diceRoll = Compute.rollD6(2);
+                        int rollValue = diceRoll.getIntValue();
+                        String rollReport = diceRoll.getReport();
                         // Update report.
                         r = new Report(2050);
                         r.subject = entity.getId();
@@ -4954,7 +4964,7 @@ public class GameManager implements IGameManager {
                         r.newlines = 0;
                         addReport(r);
                         if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
-                            roll = -12;
+                            rollValue = -12;
                             r = new Report(2055);
                             r.subject = entity.getId();
                             r.add(toHit.getDesc());
@@ -4966,13 +4976,13 @@ public class GameManager implements IGameManager {
                             r.add(toHit.getDesc());
                             r.newlines = 0;
                             addReport(r);
-                            roll = Integer.MAX_VALUE;
+                            rollValue = Integer.MAX_VALUE;
                         } else {
                             // report the roll
                             r = new Report(2065);
                             r.subject = entity.getId();
                             r.add(toHit);
-                            r.add(roll);
+                            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                             r.newlines = 0;
                             addReport(r);
                         }
@@ -4980,7 +4990,7 @@ public class GameManager implements IGameManager {
                         // Resolve a charge against the target.
                         // ASSUMPTION: buildings block damage for
                         // *EACH* entity charged.
-                        if (roll < toHit.getValue()) {
+                        if (rollValue < toHit.getValue()) {
                             r = new Report(2070);
                             r.subject = entity.getId();
                             addReport(r);
@@ -5392,7 +5402,9 @@ public class GameManager implements IGameManager {
                 && ((entity.getMovementMode() == EntityMovementMode.TRACKED)
                 || (entity.getMovementMode() == EntityMovementMode.WHEELED)));
 
-        int roll = Compute.d6(2);
+        Roll diceRoll = Compute.rollD6(2);
+        int rollValue = diceRoll.getIntValue();
+        String rollReport = diceRoll.getReport();
 
         Report r = new Report(2505);
         r.subject = entity.getId();
@@ -5401,7 +5413,7 @@ public class GameManager implements IGameManager {
         addReport(r);
         r = new Report(6310);
         r.subject = entity.getId();
-        r.add(roll);
+        r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
         r.newlines = 0;
         addReport(r);
         r = new Report(3340);
@@ -5412,12 +5424,12 @@ public class GameManager implements IGameManager {
 
         r = new Report(1210);
         r.subject = entity.getId();
-        roll += modifier;
-        if (roll < 8) {
+        rollValue += modifier;
+        if (rollValue < 8) {
             r.messageId = 2506;
             // minor fishtail, fail to turn
             turnDirection = 0;
-        } else if (roll < 10) {
+        } else if (rollValue < 10) {
             r.messageId = 2507;
             // moderate fishtail, turn an extra hexside and roll for motive damage at -1.
             if (turnDirection == 0) {
@@ -5427,7 +5439,7 @@ public class GameManager implements IGameManager {
             }
             motiveDamage = true;
             motiveDamageMod = -1;
-        } else if (roll < 12) {
+        } else if (rollValue < 12) {
             r.messageId = 2508;
             // serious fishtail, turn an extra hexside and roll for motive damage. Turn ends.
             if (turnDirection == 0) {
@@ -5441,7 +5453,7 @@ public class GameManager implements IGameManager {
             r.messageId = 2509;
             // Turn fails and vehicle skids
             // Wheeled and naval vehicles start to flip if the roll is high enough.
-            if (roll > 13) {
+            if (rollValue > 13) {
                 if (entity.getMovementMode() == EntityMovementMode.WHEELED) {
                     r.messageId = 2510;
                     flip = true;
@@ -5550,15 +5562,17 @@ public class GameManager implements IGameManager {
             IAero ta = (IAero) target;
             PilotingRollData psr = target.getBasePilotingRoll();
             psr.addModifier(0, "avoiding collision");
-            int ctrlroll = Compute.d6(2);
+            Roll diceRoll = Compute.rollD6(2);
+            int rollValue = diceRoll.getIntValue();
+            String rollReport = diceRoll.getReport();
             r = new Report(9045);
             r.subject = target.getId();
             r.add(target.getDisplayName());
             r.add(psr);
-            r.add(ctrlroll);
+            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
             r.newlines = 0;
             r.indent(2);
-            if (ctrlroll < psr.getValue()) {
+            if (rollValue < psr.getValue()) {
                 r.choose(false);
                 addReport(r);
             } else {
@@ -5780,14 +5794,16 @@ public class GameManager implements IGameManager {
                     if (victim instanceof Infantry) {
                         target = 3;
                     }
-                    int roll = Compute.d6();
+                    Roll diceRoll = Compute.rollD6(1);
+                    int rollValue = diceRoll.getIntValue();
+                    String rollReport = diceRoll.getReport();
                     r = new Report(9705, Report.PUBLIC);
                     r.indent();
                     r.addDesc(victim);
                     r.add(target);
                     r.add(crash_damage);
-                    r.add(roll);
-                    if (roll > target) {
+                    r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+                    if (rollValue > target) {
                         r.choose(true);
                         vReport.add(r);
                         // apply half the crash damage in 5 point clusters
@@ -6844,9 +6860,11 @@ public class GameManager implements IGameManager {
                                 doorReport = new Report(9378);
                                 doorReport.subject = entity.getId();
                                 doorReport.indent(2);
-                                int roll = Compute.d6(2);
-                                doorReport.add(roll);
-                                if (roll == 2) {
+                                Roll diceRoll = Compute.rollD6(2);
+                                int rollValue = diceRoll.getIntValue();
+                                String rollReport = diceRoll.getReport();
+                                r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+                                if (rollValue == 2) {
                                     doorDamage = true;
                                     doorReport.choose(true);
                                     currentBay.destroyDoorNext();
@@ -7883,13 +7901,15 @@ public class GameManager implements IGameManager {
                     && !lastPos.equals(curPos) && !(entity instanceof Infantry)
                     && !(isPavementStep && curHex.containsTerrain(Terrains.BRIDGE))) {
                 if (step.getElevation() == 0) {
-                    int roll = Compute.d6(1);
+                    Roll diceRroll = Compute.rollD6(1);
+                    int rollValue = diceRroll.getIntValue();
+                    String rollReport = diceRroll.getReport();
                     r = new Report(2118);
                     r.addDesc(entity);
-                    r.add(roll);
+                    r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                     r.subject = entity.getId();
                     addReport(r);
-                    if (roll == 6) {
+                    if (rollValue == 6) {
                         entity.setPosition(curPos);
                         addReport(resolveIceBroken(curPos));
                         curPos = entity.getPosition();
@@ -8020,7 +8040,9 @@ public class GameManager implements IGameManager {
                 if (isDS && (((Dropship) entity).getCollarType() == Dropship.COLLAR_PROTOTYPE)) {
                     rollTarget.addModifier(2, "prototype kf-boom");
                 }
-                int ctrlroll = Compute.d6(2);
+                Roll diceRoll = Compute.rollD6(2);
+                int rollValue = diceRoll.getIntValue();
+                String rollReport = diceRoll.getReport();
                 if (isDS) {
                     r = new Report(9388);
                 } else {
@@ -8030,22 +8052,22 @@ public class GameManager implements IGameManager {
                 r.add(entity.getDisplayName());
                 r.add(loader.getDisplayName());
                 r.add(rollTarget);
-                r.add(ctrlroll);
+                r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                 r.newlines = 0;
                 r.indent(1);
-                if (ctrlroll < rollTarget.getValue()) {
+                if (rollValue < rollTarget.getValue()) {
                     r.choose(false);
                     addReport(r);
                     // damage unit
                     HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-                    addReport(damageEntity(entity, hit, 2 * (rollTarget.getValue() - ctrlroll)));
+                    addReport(damageEntity(entity, hit, 2 * (rollTarget.getValue() - rollValue)));
                 } else {
                     r.choose(true);
                     addReport(r);
                     recovered = true;
                 }
                 // check for door damage
-                if (ctrlroll == 2) {
+                if (rollValue == 2) {
                     loader.damageDoorRecovery(entity);
                     r = new Report(9384);
                     r.subject = entity.getId();
@@ -8452,9 +8474,11 @@ public class GameManager implements IGameManager {
             r = new Report(2373);
             r.addDesc(entity);
             r.subject = entity.getId();
-            int roll = Compute.d6(2);
-            r.add(roll);
-            if (roll > 2) {
+            Roll diceRoll = Compute.rollD6(2);
+            int rollValue = diceRoll.getIntValue();
+            String rollReport = diceRoll.getReport();
+            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+            if (rollValue > 2) {
                 r.choose(true);
                 addReport(r);
             } else {
@@ -8630,13 +8654,15 @@ public class GameManager implements IGameManager {
             addReport(r);
 
             // roll
-            final int diceRoll = Compute.d6(2);
+            final Roll diceRoll = Compute.rollD6(2);
+            int rollValue = diceRoll.getIntValue();
+            String rollReport = diceRoll.getReport();
             r = new Report(2130);
             r.subject = entity.getId();
             r.add(rollTarget.getValueAsString());
             r.add(rollTarget.getDesc());
-            r.add(diceRoll);
-            if (diceRoll < rollTarget.getValue()) {
+            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+            if (rollValue < rollTarget.getValue()) {
                 r.choose(false);
                 addReport(r);
             } else {
@@ -8714,13 +8740,15 @@ public class GameManager implements IGameManager {
             if (curHex.containsTerrain(Terrains.ICE) && (waterLevel > 0)) {
                 if (!(entity instanceof Infantry)) {
                     // check for breaking ice
-                    int roll = Compute.d6(1);
+                    Roll diceRoll = Compute.rollD6(1);
+                    int rollValue = diceRoll.getIntValue();
+                    String rollReport = diceRoll.getReport();
                     r = new Report(2122);
                     r.add(entity.getDisplayName(), true);
-                    r.add(roll);
+                    r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                     r.subject = entity.getId();
                     addReport(r);
-                    if (roll >= 4) {
+                    if (rollValue >= 4) {
                         // oops!
                         entity.setPosition(curPos);
                         addReport(resolveIceBroken(curPos));
@@ -8733,10 +8761,10 @@ public class GameManager implements IGameManager {
                             // apply damage now, or it will show up as a
                             // possible breach, if ice is broken
                             entity.applyDamage();
-                            roll = Compute.d6(1);
+                            int roll = Compute.d6(1);
                             r = new Report(2118);
                             r.addDesc(entity);
-                            r.add(roll);
+                            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                             r.subject = entity.getId();
                             addReport(r);
                             if (roll == 6) {
@@ -8831,13 +8859,15 @@ public class GameManager implements IGameManager {
                 addReport(r);
 
                 // roll
-                final int diceRoll = Compute.d6(2);
+                final Roll diceRoll = Compute.rollD6(2);
+                int rollValue = diceRoll.getIntValue();
+                String rollReport = diceRoll.getReport();
                 r = new Report(2130);
                 r.subject = entity.getId();
                 r.add(rollTarget.getValueAsString());
                 r.add(rollTarget.getDesc());
-                r.add(diceRoll);
-                if (diceRoll < rollTarget.getValue()) {
+                r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+                if (rollValue < rollTarget.getValue()) {
                     r.choose(false);
                     addReport(r);
                 } else {
@@ -10328,13 +10358,16 @@ public class GameManager implements IGameManager {
                         vPhaseReport.add(r);
                         vPhaseReport.addAll(deliverInfernoMissiles(ae, e, missiles, called));
                     } else {
-                        int roll = Compute.d6();
+                        Roll diceRoll = Compute.rollD6(1);
+                        int rollValue = diceRoll.getIntValue();
+                        String rollReport = diceRoll.getReport();
+
                         r = new Report(3570);
                         r.subject = e.getId();
                         r.addDesc(e);
-                        r.add(roll);
+                        r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                         vPhaseReport.add(r);
-                        if (roll >= 5) {
+                        if (rollValue >= 5) {
                             vPhaseReport.addAll(deliverInfernoMissiles(ae, e, missiles, called));
                         }
                     }
@@ -10379,14 +10412,16 @@ public class GameManager implements IGameManager {
                         continue;
                     }
                     for (int m = 0; m < missiles; m++) {
-                        int roll = Compute.d6();
+                        Roll diceRoll = Compute.rollD6(1);
+                        int rollValue = diceRoll.getIntValue();
+                        String rollReport = diceRoll.getReport();
                         r = new Report(3570);
                         r.subject = e.getId();
                         r.indent(3);
                         r.addDesc(e);
-                        r.add(roll);
+                        r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                         vPhaseReport.add(r);
-                        if (roll >= 5) {
+                        if (rollValue >= 5) {
                             Vector<Report> dmgReports = deliverInfernoMissiles(ae, e, 1, called);
                             for (Report rep : dmgReports) {
                                 rep.indent(4);
@@ -10752,7 +10787,9 @@ public class GameManager implements IGameManager {
                     || (mf.getType() == Minefield.TYPE_ACTIVE)
                     || (mf.getType() == Minefield.TYPE_INFERNO))) {
                 // Check to see if the minesweeper clears
-                int roll = Compute.d6(2);
+                Roll diceRoll = Compute.rollD6(2);
+                int rollValue = diceRoll.getIntValue();
+                String  rollReport = diceRoll.getReport();
 
                 // Report minefield roll
                 if (doBlind()) { // only report if DB, otherwise all players see
@@ -10760,12 +10797,12 @@ public class GameManager implements IGameManager {
                     r.player = mf.getPlayerId();
                     r.add(Minefield.getDisplayableName(mf.getType()));
                     r.add(mf.getCoords().getBoardNum());
-                    r.add(roll);
+                    r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                     r.newlines = 0;
                     vMineReport.add(r);
                 }
 
-                if (roll >= 6) {
+                if (rollValue >= 6) {
                     // Report hit
                     if (doBlind()) {
                         r = new Report(5543, Report.PLAYER);
@@ -10853,7 +10890,9 @@ public class GameManager implements IGameManager {
                 }
             }
 
-            int roll = Compute.d6(2);
+            Roll diceRoll = Compute.rollD6(2);
+            int rollValue = diceRoll.getIntValue();
+            String rollReport = diceRoll.getReport();
 
             // Report minefield roll
             if (doBlind()) { // Only do if DB, otherwise all players will see
@@ -10862,12 +10901,12 @@ public class GameManager implements IGameManager {
                 r.add(Minefield.getDisplayableName(mf.getType()));
                 r.add(mf.getCoords().getBoardNum());
                 r.add(target);
-                r.add(roll);
+                r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                 r.newlines = 0;
                 vMineReport.add(r);
             }
 
-            if (roll < target) {
+            if (rollValue < target) {
                 // Report miss
                 if (doBlind()) {
                     r = new Report(2217, Report.PLAYER);
@@ -11029,24 +11068,27 @@ public class GameManager implements IGameManager {
     public boolean clearMinefield(Minefield mf, Entity en, int target,
                                   int botch, Vector<Report> vClearReport, int indent) {
         Report r;
-        int roll = Compute.d6(2);
-        if (roll >= target) {
+        Roll diceRoll = Compute.rollD6(2);
+        int rollValue = diceRoll.getIntValue();
+        String rollReport = diceRoll.getReport();
+
+        if (rollValue >= target) {
             r = new Report(2250);
             r.subject = en.getId();
             r.add(Minefield.getDisplayableName(mf.getType()));
             r.add(target);
-            r.add(roll);
+            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
             r.indent(indent);
             vClearReport.add(r);
             return true;
-        } else if (roll <= botch) {
+        } else if (rollValue <= botch) {
             // TODO : detonate the minefield
             r = new Report(2255);
             r.subject = en.getId();
             r.indent(indent);
             r.add(Minefield.getDisplayableName(mf.getType()));
             r.add(target);
-            r.add(roll);
+            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
             vClearReport.add(r);
             // The detonation damages any units that were also attempting to
             // clear mines in the same hex
@@ -11082,7 +11124,7 @@ public class GameManager implements IGameManager {
             r.indent(indent);
             r.add(Minefield.getDisplayableName(mf.getType()));
             r.add(target);
-            r.add(roll);
+            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
             vClearReport.add(r);
         }
         return false;
@@ -11666,12 +11708,14 @@ public class GameManager implements IGameManager {
         addReport(r);
 
         // roll
-        final int diceRoll = Compute.d6(2);
+        final Roll diceRoll = Compute.rollD6(2);
+        int rollValue = diceRoll.getIntValue();
+        String rollReport = diceRoll.getReport();
         r = new Report(9335);
         r.subject = entity.getId();
         r.add(Integer.toString(targetNumber));
-        r.add(diceRoll);
-        if (diceRoll < targetNumber) {
+        r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+        if (rollValue < targetNumber) {
             r.choose(false);
             addReport(r);
             addReport(damageCrew(entity, 1));
@@ -11701,14 +11745,16 @@ public class GameManager implements IGameManager {
         addReport(r);
 
         // roll
-        final int diceRoll = Compute.d6(2);
+        final Roll diceRoll = Compute.rollD6(2);
+        int rollValue = diceRoll.getIntValue();
+        String rollReport = diceRoll.getReport();
         r = new Report(9325);
         r.subject = entity.getId();
         r.add(roll.getValueAsString());
         r.add(roll.getDesc());
-        r.add(diceRoll);
+        r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
         boolean suc;
-        if (diceRoll < roll.getValue()) {
+        if (rollValue < roll.getValue()) {
             r.choose(false);
             addReport(r);
             suc = false;
@@ -11748,17 +11794,19 @@ public class GameManager implements IGameManager {
         addReport(r);
 
         // roll
-        final int diceRoll = Compute.d6(2);
+        final Roll diceRoll = Compute.rollD6(2);
+        int rollValue = diceRoll.getIntValue();
+        String rollReport = diceRoll.getReport();
         r = new Report(9321);
         r.subject = entity.getId();
         r.add(roll.getValueAsString());
         r.add(roll.getDesc());
-        r.add(diceRoll);
+        r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
         r.newlines = 0;
         addReport(r);
         boolean suc = false;
-        if (diceRoll < roll.getValue()) {
-            int mof = roll.getValue() - diceRoll;
+        if (rollValue < roll.getValue()) {
+            int mof = roll.getValue() - rollValue;
             if (mof < 3) {
                 r = new Report(9322);
                 r.subject = entity.getId();
@@ -11838,14 +11886,16 @@ public class GameManager implements IGameManager {
         addReport(r);
 
         // roll
-        final int diceRoll = Compute.d6(2);
+        final Roll diceRoll = Compute.rollD6(2);
+        int rollValue = diceRoll.getIntValue();
+        String rollReport = diceRoll.getReport();
         r = new Report(9601);
         r.subject = entity.getId();
         r.add(roll.getValueAsString());
         r.add(roll.getDesc());
-        r.add(diceRoll);
+        r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
         boolean suc;
-        if (diceRoll < roll.getValue()) {
+        if (rollValue < roll.getValue()) {
             r.choose(false);
             addReport(r);
             suc = false;
@@ -11948,13 +11998,15 @@ public class GameManager implements IGameManager {
         addReport(r);
 
         // roll
-        final int diceRoll = Compute.d6(2);
+        final Roll diceRoll = Compute.rollD6(2);
+        int rollValue = diceRoll.getIntValue();
+        String rollReport = diceRoll.getReport();
         r = new Report(2190);
         r.subject = entity.getId();
         r.add(roll.getValueAsString());
         r.add(roll.getDesc());
-        r.add(diceRoll);
-        if (diceRoll < roll.getValue()) {
+        r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+        if (rollValue < roll.getValue()) {
             r.choose(false);
             addReport(r);
             // failed a PSR, possibly check for engine stalling
@@ -12202,7 +12254,10 @@ public class GameManager implements IGameManager {
 
             if (toHit.getValue() != TargetRoll.AUTOMATIC_FAIL) {
                 // collision roll
-                final int diceRoll = Compute.d6(2);
+                final Roll diceRoll = Compute.rollD6(2);
+                int rollValue = diceRoll.getIntValue();
+                String rollReport = diceRoll.getReport();
+
                 if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
                     r = new Report(2212);
                     r.add(toHit.getValue());
@@ -12210,12 +12265,12 @@ public class GameManager implements IGameManager {
                     r = new Report(2215);
                     r.subject = entity.getId();
                     r.add(toHit.getValue());
-                    r.add(diceRoll);
+                    r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                     r.newlines = 0;
                 }
                 r.indent();
                 vPhaseReport.add(r);
-                if (diceRoll >= toHit.getValue()) {
+                if (rollValue >= toHit.getValue()) {
                     // deal damage to target
                     int damage = Compute.getAffaDamageFor(entity);
                     r = new Report(2220);
@@ -12450,14 +12505,16 @@ public class GameManager implements IGameManager {
 
         if (destHex.containsTerrain(Terrains.ICE) && destHex.containsTerrain(Terrains.WATER)) {
             if (!(entity instanceof Infantry)) {
-                int d6 = Compute.d6(1);
+                Roll diceRoll = Compute.rollD6(1);
+                int rollValue = diceRoll.getIntValue();
+                String rollReport = diceRoll.getReport();
                 r = new Report(2118);
                 r.addDesc(entity);
-                r.add(d6);
+                r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                 r.subject = entity.getId();
                 vPhaseReport.add(r);
 
-                if (d6 == 6) {
+                if (rollValue == 6) {
                     vPhaseReport.addAll(resolveIceBroken(dest));
                 }
             }
@@ -12497,7 +12554,9 @@ public class GameManager implements IGameManager {
                     && !entity.getIsJumpingNow()
                     && (stepForward.isMoveLegal() || stepBackwards.isMoveLegal())) {
                 // First, we need to make a PSR to see if we can step out
-                int result = Compute.d6(2);
+                Roll diceRoll = Compute.rollD6(2);
+                int rollValue = diceRoll.getIntValue();
+                String rollReport = diceRoll.getReport();
                 roll = entity.getBasePilotingRoll();
 
                 r = new Report(2351);
@@ -12505,9 +12564,9 @@ public class GameManager implements IGameManager {
                 r.subject = violation.getId();
                 r.addDesc(violation);
                 r.add(roll);
-                r.add(result);
+                r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                 vPhaseReport.add(r);
-                if (result < roll.getValue()) {
+                if (rollValue < roll.getValue()) {
                     r.choose(false);
                     Vector<Report> newReports = doEntityDisplacement(violation,
                             dest, dest.translated(direction),
@@ -14298,14 +14357,16 @@ public class GameManager implements IGameManager {
             if (mounted.isJammed() && !mounted.isDestroyed()) {
                 WeaponType wtype = (WeaponType) mounted.getType();
                 if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
-                    int roll = Compute.d6(2);
+                    Roll diceRoll = Compute.rollD6(2);
+                    int rollValue = diceRoll.getIntValue();
+                    String rollReport = diceRoll.getReport();
                     r = new Report(3030);
                     r.indent();
                     r.subject = entity.getId();
                     r.add(wtype.getName());
                     r.add(TN);
-                    r.add(roll);
-                    if (roll >= TN) {
+                    r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+                    if (rollValue >= TN) {
                         r.choose(true);
                         mounted.setJammed(false);
                     } else {
@@ -14322,14 +14383,16 @@ public class GameManager implements IGameManager {
                         || (wtype.getAmmoType() == AmmoType.T_PAC)
                         || (wtype.getAmmoType() == AmmoType.T_LAC))
                         && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UNJAM_UAC)) {
-                    int roll = Compute.d6(2);
+                    Roll diceRoll = Compute.rollD6(2);
+                    int rollValue = diceRoll.getIntValue();
+                    String rollReport = diceRoll.getReport();
                     r = new Report(3030);
                     r.indent();
                     r.subject = entity.getId();
                     r.add(wtype.getName());
                     r.add(TN);
-                    r.add(roll);
-                    if (roll >= TN) {
+                    r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+                    if (rollValue >= TN) {
                         r.choose(true);
                         mounted.setJammed(false);
                     } else {
@@ -14505,13 +14568,15 @@ public class GameManager implements IGameManager {
                 return false;
             }
             nTargetRoll.addModifier(2, "accidental");
-            int accidentRoll = Compute.d6(2);
+            Roll diceRoll = Compute.rollD6(2);
+            int rollValue = diceRoll.getIntValue();
+            String rollReport = diceRoll.getReport();
             r = new Report(3066);
             r.subject = entityId;
             r.add(accidentTarget);
-            r.add(accidentRoll);
+            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
             r.indent(2);
-            if (accidentRoll > accidentTarget) {
+            if (rollValue > accidentTarget) {
                 r.choose(false);
                 vPhaseReport.add(r);
                 return false;
@@ -15763,8 +15828,13 @@ public class GameManager implements IGameManager {
                     false, false, throughFront));
             if (((Protomech) ae).isEDPCharged()) {
                 r = new Report(3701);
-                int taserRoll = Compute.d6(2) - 2;
-                r.add(taserRoll);
+                Roll diceRoll = Compute.rollD6(2);
+                int rollValue = diceRoll.getIntValue();
+                rollReport = diceRoll.getReport();
+                String rollCalc = rollValue + " - 2]";
+                rollValue -= 2;
+                rollCalc = rollValue + " [" + rollCalc;
+                r.addDataWithTooltip(rollCalc, rollReport);
                 r.newlines = 0;
                 vPhaseReport.add(r);
 
@@ -15780,7 +15850,7 @@ public class GameManager implements IGameManager {
                             targetTrooper.isRear(), 0, false, false, 0));
                 } else if (te instanceof Mech) {
                     if (((Mech) te).isIndustrial()) {
-                        if (taserRoll >= 8) {
+                        if (rollValue >= 8) {
                             r = new Report(3705);
                             r.addDesc(te);
                             r.add(4);
@@ -15794,7 +15864,7 @@ public class GameManager implements IGameManager {
                             te.setTaserInterference(2, 4, true);
                         }
                     } else {
-                        if (taserRoll >= 11) {
+                        if (rollValue >= 11) {
                             r = new Report(3705);
                             r.addDesc(te);
                             r.add(3);
@@ -15811,7 +15881,7 @@ public class GameManager implements IGameManager {
                     }
                 } else if ((te instanceof Protomech) || (te instanceof Tank)
                         || (te instanceof Aero)) {
-                    if (taserRoll >= 8) {
+                    if (rollValue >= 8) {
                         r = new Report(3705);
                         r.addDesc(te);
                         r.add(4);
@@ -16085,13 +16155,15 @@ public class GameManager implements IGameManager {
         r.subject = ae.getId();
         r.addDesc(ae);
         addReport(r);
-        final int diceRoll = Compute.d6(2);
+        final Roll diceRoll = Compute.rollD6(2);
+        int rollValue = diceRoll.getIntValue();
+        rollReport = diceRoll.getReport();
         r = new Report(2190);
         r.subject = ae.getId();
         r.add(rollData.getValueAsString());
         r.add(rollData.getDesc());
-        r.add(diceRoll);
-        if (diceRoll < rollData.getValue()) {
+        r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+        if (rollValue < rollData.getValue()) {
             r.choose(false);
             addReport(r);
             addReport(doEntityFall(ae, rollData));
@@ -16537,15 +16609,17 @@ public class GameManager implements IGameManager {
                 && (te.getArmor(hit) > 0)
                 && (te.getArmorType(hit.getLocation()) != EquipmentType.T_ARMOR_HARDENED)
                 && (te.getArmorType(hit.getLocation()) != EquipmentType.T_ARMOR_FERRO_LAMELLOR)) {
-            roll = Compute.d6(2);
+            Roll diceRoll = Compute.rollD6(2);
+            int rollValue = diceRoll.getIntValue();
+            rollReport = diceRoll.getReport();
             // Pierce checking report
             r = new Report(4021);
             r.indent(2);
             r.subject = ae.getId();
             r.add(te.getLocationAbbr(hit));
-            r.add(roll);
+            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
             addReport(r);
-            if (roll >= 10) {
+            if (rollValue >= 10) {
                 hit.makeGlancingBlow();
                 addReport(damageEntity(te, hit, 1, false, DamageType.NONE,
                         true, false, throughFront));
@@ -16598,7 +16672,9 @@ public class GameManager implements IGameManager {
                     && !te.isLocationDoomed(loc));
 
             if (mightTrip) {
-                roll = Compute.d6(2);
+                Roll diceRoll = Compute.rollD6(2);
+                int rollValue = diceRoll.getIntValue();
+                rollReport = diceRoll.getReport();
                 int toHitValue = toHit.getValue();
                 String toHitDesc = toHit.getDesc();
                 if ((ae instanceof Mech) && ((Mech) ae).hasActiveTSM(false)) {
@@ -16611,12 +16687,12 @@ public class GameManager implements IGameManager {
                 r.add(ae.getShortName());
                 r.add(te.getShortName());
                 r.addDataWithTooltip(String.valueOf(toHitValue), toHitDesc);
-                r.add(roll);
+                r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                 r.indent(2);
                 r.newlines = 0;
                 addReport(r);
 
-                if (roll >= toHitValue) {
+                if (rollValue >= toHitValue) {
                     r = new Report(2270);
                     r.subject = ae.getId();
                     r.newlines = 0;
@@ -16642,7 +16718,9 @@ public class GameManager implements IGameManager {
                 PhysicalResult grappleResult = new PhysicalResult();
                 grappleResult.aaa = gaa;
                 grappleResult.toHit = grappleHit;
-                grappleResult.roll = Compute.d6(2);
+                Roll diceRoll = Compute.rollD6(2);
+                grappleResult.roll = diceRoll.getIntValue();
+                grappleResult.rollReport = diceRoll.getReport();
                 resolveGrappleAttack(grappleResult, lastEntityId, grappleSide,
                         (hit.getLocation() == Mech.LOC_RARM) ? Entity.GRAPPLE_RIGHT : Entity.GRAPPLE_LEFT);
             }
@@ -17747,12 +17825,14 @@ public class GameManager implements IGameManager {
         }
 
         // steel yourself for attack
-        int steelRoll = Compute.d6(2);
+        Roll diceRoll = Compute.rollD6(2);
+        int rollValue = diceRoll.getIntValue();
+        rollReport = diceRoll.getReport();
         r = new Report(9020);
         r.subject = ae.getId();
-        r.add(steelRoll);
+        r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
 
-        if (steelRoll >= 11) {
+        if (rollValue >= 11) {
             r.choose(true);
             addReport(r);
         } else {
@@ -18063,15 +18143,17 @@ public class GameManager implements IGameManager {
                 r.addDesc(ae);
                 r.add("successful ramming attack");
                 reports.add(r);
-                int diceRoll = Compute.d6(2);
+                Roll diceRoll = Compute.rollD6(2);
+                int rollValue = diceRoll.getIntValue();
+                String rollReport = diceRoll.getReport();
                 // different reports depending on out-of-control status
                 r = new Report(9606);
                 r.subject = ae.getId();
                 r.add(controlRoll.getValueAsString());
                 r.add(controlRoll.getDesc());
-                r.add(diceRoll);
+                r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                 r.newlines = 1;
-                if (diceRoll < controlRoll.getValue()) {
+                if (rollValue < controlRoll.getValue()) {
                     r.choose(false);
                     reports.add(r);
                     crashAirMech(ae, controlRoll, reports);
@@ -18668,16 +18750,18 @@ public class GameManager implements IGameManager {
                 r.add(radicalHSBonus);
                 rhsReports.add(r);
 
-                int rhsRoll = Compute.d6(2);
+                Roll diceRoll = Compute.rollD6(2);
+                int rollValue = diceRoll.getIntValue();
+                String rollReport = diceRoll.getReport();
                 entity.setConsecutiveRHSUses(entity.getConsecutiveRHSUses() + 1);
                 int targetNumber = ServerHelper.radicalHeatSinkSuccessTarget(entity.getConsecutiveRHSUses());
-                boolean rhsFailure = rhsRoll < targetNumber;
+                boolean rhsFailure = rollValue < targetNumber;
 
                 r = new Report(5541);
                 r.indent(2);
                 r.subject = entity.getId();
                 r.add(targetNumber);
-                r.add(rhsRoll);
+                r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                 r.choose(rhsFailure);
                 rhsReports.add(r);
 
@@ -18994,21 +19078,23 @@ public class GameManager implements IGameManager {
                     int boom = (4 + (entity.heat >= 14 ? 2 : 0) + (entity.heat >= 19 ? 2 : 0)
                             + (entity.heat >= 23 ? 2 : 0) + (entity.heat >= 28 ? 2 : 0))
                             - hotDogMod;
-                    int boomRoll = Compute.d6(2);
-                    if (entity.getCrew().hasActiveTechOfficer()) {
-                        boomRoll += 2;
-                    }
+                    Roll diceRoll = Compute.rollD6(2);
+                    int rollValue = diceRoll.getIntValue();
+                    String rollReport = diceRoll.getReport();
                     r = new Report(5040);
                     r.subject = entity.getId();
                     r.addDesc(entity);
                     r.add(boom);
                     if (entity.getCrew().hasActiveTechOfficer()) {
-                        r.add(boomRoll + "(" + (boomRoll - 2) + "+2)");
+                        String rollCalc = rollValue + " + 2]";
+                        rollValue += 2;
+                        rollCalc = rollValue + " [" + rollCalc;
+                        r.addDataWithTooltip(rollCalc, rollReport);
                     } else {
-                        r.add(boomRoll);
+                        r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                     }
 
-                    if (boomRoll >= boom) {
+                    if (rollValue >= boom) {
                         // avoided
                         r.choose(true);
                         addReport(r);
@@ -19065,13 +19151,15 @@ public class GameManager implements IGameManager {
                                         startup += 1;
                                 }
                             }
-                            int suRoll = Compute.d6(2);
+                            Roll diceRoll = Compute.rollD6(2);
+                            int rollValue = diceRoll.getIntValue();
+                            String rollReport = diceRoll.getReport();
                             r = new Report(5050);
                             r.subject = entity.getId();
                             r.addDesc(entity);
                             r.add(startup);
-                            r.add(suRoll);
-                            if (suRoll >= startup) {
+                            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+                            if (rollValue >= startup) {
                                 // start 'er back up
                                 entity.setShutDown(false);
                                 r.choose(true);
@@ -19138,18 +19226,22 @@ public class GameManager implements IGameManager {
                                     shutdown += 1;
                             }
                         }
-                        int shutdownRoll = Compute.d6(2);
+                        Roll diceRoll = Compute.rollD6(2);
+                        int rollValue = diceRoll.getIntValue();
+                        String rollReport = diceRoll.getReport();
                         r = new Report(5060);
                         r.subject = entity.getId();
                         r.addDesc(entity);
                         r.add(shutdown);
                         if (entity.getCrew().hasActiveTechOfficer()) {
-                            r.add((shutdownRoll + 2) + " (" + shutdownRoll + "+2)");
-                            shutdownRoll += 2;
+                            String rollCalc = rollValue + "]";
+                            rollValue += 2;
+                            rollCalc = rollValue + " [" + rollCalc;
+                            r.addDataWithTooltip(rollCalc, rollReport);
                         } else {
-                            r.add(shutdownRoll);
+                            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                         }
-                        if (shutdownRoll >= shutdown) {
+                        if (rollValue >= shutdown) {
                             // avoided
                             r.choose(true);
                             addReport(r);
@@ -19186,18 +19278,22 @@ public class GameManager implements IGameManager {
                 if (((Mech) entity).hasLaserHeatSinks()) {
                     boom--;
                 }
-                int boomRoll = Compute.d6(2);
+                Roll diceRoll = Compute.rollD6(2);
+                int rollValue = diceRoll.getIntValue();
+                String rollReport = diceRoll.getReport();
                 r = new Report(5065);
                 r.subject = entity.getId();
                 r.addDesc(entity);
                 r.add(boom);
                 if (entity.getCrew().hasActiveTechOfficer()) {
-                    r.add((boomRoll + 2) + " (" + boomRoll + "+2)");
-                    boomRoll += 2;
+                    String rollCalc = rollValue + " + 2]";
+                    rollValue += 2;
+                    rollCalc = rollValue + " [" + rollCalc;
+                    r.addDataWithTooltip(rollCalc, rollReport);
                 } else {
-                    r.add(boomRoll);
+                    r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                 }
-                if (boomRoll >= boom) {
+                if (rollValue >= boom) {
                     // mech is ok
                     r.choose(true);
                     addReport(r);
@@ -19271,7 +19367,9 @@ public class GameManager implements IGameManager {
                     && !entity.getCrew().isDoomed()
                     && !entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
                 // Crew may take damage from heat if MaxTech option is set
-                int heatRoll = Compute.d6(2);
+                Roll diceRoll = Compute.rollD6(2);
+                int rollValue = diceRoll.getIntValue();
+                String rollReport = diceRoll.getReport();
                 int avoidNumber;
                 if (entity.heat >= 47) {
                     avoidNumber = 12;
@@ -19285,8 +19383,8 @@ public class GameManager implements IGameManager {
                 r.subject = entity.getId();
                 r.addDesc(entity);
                 r.add(avoidNumber);
-                r.add(heatRoll);
-                if (heatRoll >= avoidNumber) {
+                r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+                if (rollValue >= avoidNumber) {
                     // damage avoided
                     r.choose(true);
                     addReport(r);
@@ -19310,7 +19408,9 @@ public class GameManager implements IGameManager {
             // With MaxTech Heat Scale, there may occur critical damage
             if (mtHeat) {
                 if (entity.heat >= 36) {
-                    int damageRoll = Compute.d6(2);
+                    Roll diceRoll = Compute.rollD6(2);
+                    int rollValue = diceRoll.getIntValue();
+                    String rollReport = diceRoll.getReport();
                     int damageNumber;
                     if (entity.heat >= 44) {
                         damageNumber = 10;
@@ -19322,9 +19422,9 @@ public class GameManager implements IGameManager {
                     r.subject = entity.getId();
                     r.addDesc(entity);
                     r.add(damageNumber);
-                    r.add(damageRoll);
+                    r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                     r.newlines = 0;
-                    if (damageRoll >= damageNumber) {
+                    if (rollValue >= damageNumber) {
                         r.choose(true);
                     } else {
                         r.choose(false);
@@ -19340,7 +19440,9 @@ public class GameManager implements IGameManager {
             if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_COOLANT_FAILURE)
                     && (entity.getHeatCapacity() > entity.getCoolantFailureAmount())
                     && (entity.heat >= 5)) {
-                int roll = Compute.d6(2);
+                Roll diceRoll = Compute.rollD6(2);
+                int rollValue = diceRoll.getIntValue();
+                String rollReport = diceRoll.getReport();
                 int hitNumber = 10;
 
                 hitNumber -= Math.max(0, (int) Math.ceil(entity.heat / 5.0) - 2);
@@ -19349,10 +19451,10 @@ public class GameManager implements IGameManager {
                 r.subject = entity.getId();
                 r.add(entity.getShortName());
                 r.add(hitNumber);
-                r.add(roll);
+                r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                 r.newlines = 0;
                 addReport(r);
-                if (roll >= hitNumber) {
+                if (rollValue >= hitNumber) {
                     r = new Report(5052);
                     r.subject = entity.getId();
                     addReport(r);
@@ -19384,13 +19486,15 @@ public class GameManager implements IGameManager {
         if ((entity.heat >= 5) && !a.isRandomMove()) {
             int controlAvoid = (5 + (entity.heat >= 10 ? 1 : 0) + (entity.heat >= 15 ? 1 : 0)
                     + (entity.heat >= 20 ? 1 : 0) + (entity.heat >= 25 ? 2 : 0)) - hotDogMod;
-            int controlRoll = Compute.d6(2);
+            Roll diceRoll = Compute.rollD6(2);
+            int rollValue = diceRoll.getIntValue();
+            String rollReport = diceRoll.getReport();
             Report r = new Report(9210);
             r.subject = entity.getId();
             r.addDesc(entity);
             r.add(controlAvoid);
-            r.add(controlRoll);
-            if (controlRoll >= controlAvoid) {
+            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+            if (rollValue >= controlAvoid) {
                 // in control
                 r.choose(true);
                 addReport(r);
@@ -19574,7 +19678,9 @@ public class GameManager implements IGameManager {
         }
 
         Report r;
-        int boomRoll = Compute.d6(2);
+        Roll diceRoll = Compute.rollD6(2);
+        int rollValue = diceRoll.getIntValue();
+        String rollReport = diceRoll.getReport();
 
         if ((entity.getMovementMode() == EntityMovementMode.VTOL) && !entity.infernos.isStillBurning()) {
             // VTOLs don't check as long as they are flying higher than
@@ -19603,8 +19709,8 @@ public class GameManager implements IGameManager {
         r.newlines = 0;
         r.addDesc(entity);
         r.add(coordinates.getBoardNum());
-        r.add(boomRoll);
-        if (boomRoll >= 8) {
+        r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+        if (rollValue >= 8) {
             // phew!
             r.choose(true);
             addReport(r);
@@ -19744,10 +19850,12 @@ public class GameManager implements IGameManager {
         Report r = new Report(9800);
         r.addDesc(entity);
         r.add(reason);
-        int roll = Compute.d6(2);
-        r.add(roll);
+        Roll diceRoll = Compute.rollD6(2);
+        int rollValue = diceRoll.getIntValue();
+        String rollReport = diceRoll.getReport();
+        r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
         out.add(r);
-        if (roll >= 10) {
+        if (rollValue >= 10) {
             Report s = new Report(9805);
             ((Mech) entity).setCoolingFlawActive(true);
             out.add(s);
@@ -19989,13 +20097,15 @@ public class GameManager implements IGameManager {
             final Entity entity = i.next();
             if (!(entity instanceof Aero) && entity.hasActiveBlueShield()
                     && (entity.getBlueShieldRounds() >= 6)) {
-                int roll = Compute.d6(2);
+                Roll diceRoll = Compute.rollD6(2);
+                int rollValue = diceRoll.getIntValue();
+                String rollReport = diceRoll.getReport();
                 int target = (3 + entity.getBlueShieldRounds()) - 6;
                 r = new Report(1240);
                 r.addDesc(entity);
                 r.add(target);
-                r.add(roll);
-                if (roll < target) {
+                r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+                if (rollValue < target) {
                     for (Mounted m : entity.getMisc()) {
                         if (m.getType().hasFlag(MiscType.F_BLUE_SHIELD)) {
                             m.setBreached(true);
@@ -20244,19 +20354,21 @@ public class GameManager implements IGameManager {
             r.add(rollTarget.getLastPlainDesc());
             vPhaseReport.add(r);
             // roll
-            final int diceRoll = Compute.d6(2);
+            final Roll diceRoll = Compute.rollD6(2);
+            int rollValue = diceRoll.getIntValue();
+            String rollReport = diceRoll.getReport();
             r = new Report(2190);
             r.subject = entity.getId();
             r.add(rollTarget.getValueAsString());
             r.add(rollTarget.getDesc());
-            r.add(diceRoll);
-            if ((diceRoll < rollTarget.getValue())
+            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+            if ((rollValue < rollTarget.getValue())
                     || (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FUMBLES)
-                    && (diceRoll == 2))) {
+                    && (rollValue == 2))) {
                 r.choose(false);
                 // Report the fumble
                 if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FUMBLES)
-                        && (diceRoll == 2)) {
+                        && (rollValue == 2)) {
                     r.messageId = 2306;
                 }
                 vPhaseReport.add(r);
@@ -20663,14 +20775,16 @@ public class GameManager implements IGameManager {
                     r.add(j + 1);
                     r.add(modifier.getPlainDesc());
                     vReport.add(r);
-                    int diceRoll = Compute.d6(2);
+                    Roll diceRoll = Compute.rollD6(2);
+                    int rollValue = diceRoll.getIntValue();
+                    String rollReport = diceRoll.getReport();
                     // different reports depending on out-of-control status
                     if (a != null && a.isOutControl()) {
                         r = new Report(9360);
                         r.subject = e.getId();
                         r.add(target);
-                        r.add(diceRoll);
-                        if (diceRoll < (target.getValue() - 5)) {
+                        r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+                        if (rollValue < (target.getValue() - 5)) {
                             r.choose(false);
                             vReport.add(r);
                             a.setRandomMove(true);
@@ -20682,15 +20796,15 @@ public class GameManager implements IGameManager {
                         r = new Report(9315);
                         r.subject = e.getId();
                         r.add(target);
-                        r.add(diceRoll);
+                        r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                         r.newlines = 1;
-                        if (diceRoll < target.getValue()) {
+                        if (rollValue < target.getValue()) {
                             r.choose(false);
                             vReport.add(r);
                             if (a != null) {
                                 a.setOutControl(true);
                                 // do we have random movement?
-                                if ((target.getValue() - diceRoll) > 5) {
+                                if ((target.getValue() - rollValue) > 5) {
                                     r = new Report(9365);
                                     r.newlines = 0;
                                     r.subject = e.getId();
@@ -20735,7 +20849,7 @@ public class GameManager implements IGameManager {
                                     }
                                 }
                             } else if (e.isAirborneVTOLorWIGE()) {
-                                int loss = target.getValue() - diceRoll;
+                                int loss = target.getValue() - rollValue;
                                 r = new Report(9366);
                                 r.subject = e.getId();
                                 r.addDesc(e);
@@ -20777,12 +20891,14 @@ public class GameManager implements IGameManager {
             r.addDesc(e);
             r.add(base.getDesc());
             vReport.add(r);
-            int diceRoll = Compute.d6(2);
+            Roll diceRoll = Compute.rollD6(2);
+            int rollValue = diceRoll.getIntValue();
+            String rollReport = diceRoll.getReport();
             r = new Report(9350);
             r.subject = e.getId();
             r.add(base);
-            r.add(diceRoll);
-            if (diceRoll < base.getValue()) {
+            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+            if (rollValue < base.getValue()) {
                 r.choose(false);
                 vReport.add(r);
             } else {
@@ -20983,9 +21099,11 @@ public class GameManager implements IGameManager {
                 if (edgeUsed) {
                     e.getCrew().decreaseEdge();
                 }
-                int roll = Compute.d6(2);
+                Roll diceRoll = Compute.rollD6(2);
+                int rollValue = diceRoll.getIntValue();
+                String rollReport = diceRoll.getReport();
                 if (e.hasAbility(OptionsConstants.MISC_PAIN_RESISTANCE)) {
-                    roll = Math.min(12, roll + 1);
+                    rollValue = Math.min(12, rollValue + 1);
                 }
                 Report r = new Report(6030);
                 r.indent(2);
@@ -20994,8 +21112,8 @@ public class GameManager implements IGameManager {
                 r.addDesc(e);
                 r.add(e.getCrew().getName(crewPos));
                 r.add(rollTarget);
-                r.add(roll);
-                if (roll >= rollTarget) {
+                r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+                if (rollValue >= rollTarget) {
                     e.getCrew().setKoThisRound(false, crewPos);
                     r.choose(true);
                 } else {
@@ -21052,10 +21170,17 @@ public class GameManager implements IGameManager {
                     }
                     if (e.getCrew().isUnconscious(pos)
                             && !e.getCrew().isKoThisRound(pos)) {
-                        int roll = Compute.d6(2);
+                        Roll diceRoll = Compute.rollD6(2);
+                        int rollValue = diceRoll.getIntValue();
+                        String rollReport = diceRoll.getReport();
+                        String rollCalc;
 
                         if (e.hasAbility(OptionsConstants.MISC_PAIN_RESISTANCE)) {
-                            roll = Math.min(12, roll + 1);
+                            rollCalc = rollValue + " + 1] max 12";
+                            rollValue = Math.min(12, rollValue + 1);
+                            rollCalc = rollValue + " [" + rollCalc;
+                        } else {
+                            rollCalc = String.valueOf(rollValue);
                         }
 
                         int rollTarget = Compute.getConsciousnessNumber(e.getCrew()
@@ -21066,8 +21191,8 @@ public class GameManager implements IGameManager {
                         r.addDesc(e);
                         r.add(e.getCrew().getName(pos));
                         r.add(rollTarget);
-                        r.add(roll);
-                        if (roll >= rollTarget) {
+                        r.addDataWithTooltip(rollCalc, rollReport);
+                        if (rollValue >= rollTarget) {
                             r.choose(true);
                             e.getCrew().setUnconscious(false, pos);
                         } else {
@@ -21555,13 +21680,15 @@ public class GameManager implements IGameManager {
 
         // Infantry with TSM implants get 2d6 burst damage from ATSM munitions
         if (damageType.equals(DamageType.ANTI_TSM) && te.isConventionalInfantry() && te.antiTSMVulnerable()) {
-            int burst = Compute.d6(2);
+            Roll diceRoll = Compute.rollD6(2);
+            int rollValue = diceRoll.getIntValue();
+            String rollReport = diceRoll.getReport();
             r = new Report(6434);
             r.subject = te_n;
-            r.add(burst);
+            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
             r.indent(2);
             vDesc.addElement(r);
-            damage += burst;
+            damage += rollValue;
         }
 
         // area effect against infantry is double damage
@@ -21914,15 +22041,17 @@ public class GameManager implements IGameManager {
 
                 }
                 if (spotlightHittable) {
-                    int spotroll = Compute.d6(2);
+                    Roll diceRoll = Compute.rollD6(2);
+                    int rollValue = diceRoll.getIntValue();
+                    String rollReport = diceRoll.getReport();
                     r = new Report(6072);
                     r.indent(2);
                     r.subject = te_n;
                     r.add("7+");
                     r.add("Searchlight");
-                    r.add(spotroll);
+                    r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                     vDesc.addElement(r);
-                    if (spotroll >= 7) {
+                    if (rollValue >= 7) {
                         r = new Report(6071);
                         r.subject = te_n;
                         r.indent(2);
@@ -22501,12 +22630,14 @@ public class GameManager implements IGameManager {
 
                     te.damageThisPhase += damage;
 
-                    int roll = Compute.d6(2);
+                    Roll diceRoll = Compute.rollD6(2);
+                    int rollValue = diceRoll.getIntValue();
+                    String rollReport = diceRoll.getReport();
                     r = new Report(6127);
                     r.subject = te.getId();
-                    r.add(roll);
+                    r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                     vDesc.add(r);
-                    if (roll >= 8) {
+                    if (rollValue >= 8) {
                         hit.setEffect(HitData.EFFECT_NO_CRITICALS);
                     }
                 }
@@ -22710,11 +22841,13 @@ public class GameManager implements IGameManager {
                                 }
                             }
                             if (infernos > 0) {
-                                int roll = Compute.d6(2);
+                                Roll diceRoll = Compute.rollD6(2);
+                                int rollValue = diceRoll.getIntValue();
+                                String rollReport = diceRoll.getReport();
                                 r = new Report(6680);
-                                r.add(roll);
+                                r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                                 vDesc.add(r);
-                                if (roll >= 8) {
+                                if (rollValue >= 8) {
                                     Coords c = te.getPosition();
                                     if (c == null) {
                                         Entity transport = game.getEntity(te.getTransportId());
@@ -23027,16 +23160,18 @@ public class GameManager implements IGameManager {
                 && ((te instanceof Mech) || (te instanceof Protomech))
                 && te.hasActiveEiCockpit()) {
             Report.addNewline(vDesc);
-            int roll = Compute.d6(2);
+            Roll dieRoll = Compute.rollD6(2);
+            int rollValue = dieRoll.getIntValue();
+            String rollReport = dieRoll.getReport();
             r = new Report(5075);
             r.subject = te.getId();
             r.addDesc(te);
             r.add(7);
-            r.add(roll);
-            r.choose(roll >= 7);
+            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+            r.choose(rollValue >= 7);
             r.indent(2);
             vDesc.add(r);
-            if (roll < 7) {
+            if (rollValue < 7) {
                 vDesc.addAll(damageCrew(te, 1));
             }
         }
@@ -23047,16 +23182,18 @@ public class GameManager implements IGameManager {
                 && !te.hasAbility(OptionsConstants.MD_BVDNI)
                 && !te.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
             Report.addNewline(vDesc);
-            int roll = Compute.d6(2);
+            Roll dieRoll = Compute.rollD6(2);
+            int rollValue = dieRoll.getIntValue();
+            String rollReport = dieRoll.getReport();
             r = new Report(3580);
             r.subject = te.getId();
             r.addDesc(te);
             r.add(7);
-            r.add(roll);
-            r.choose(roll >= 8);
+            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+            r.choose(rollValue >= 8);
             r.indent(2);
             vDesc.add(r);
-            if (roll >= 8) {
+            if (rollValue >= 8) {
                 vDesc.addAll(damageCrew(te, 1));
             }
         }
@@ -23293,8 +23430,10 @@ public class GameManager implements IGameManager {
                     break;
             }
         }
-        int explosionRoll = Compute.d6(2);
-        boolean didExplode = explosionRoll >= explosionBTH;
+        Roll dieRoll = Compute.rollD6(2);
+        int rollValue = dieRoll.getIntValue();
+        String rollReport = dieRoll.getReport();
+        boolean didExplode = rollValue >= explosionBTH;
 
         Report r;
         r = new Report(6150);
@@ -23307,7 +23446,7 @@ public class GameManager implements IGameManager {
         r.subject = en.getId();
         r.indent(2);
         r.add(explosionBTH);
-        r.add(explosionRoll);
+        r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
         vDesc.addElement(r);
 
         if (!didExplode) {
@@ -23989,16 +24128,18 @@ public class GameManager implements IGameManager {
                 && (game.getBoard().getHex(entity.getPosition()).terrainLevel(Terrains.BUILDING) == 4));
 
         // Roll 2d6.
-        int roll = Compute.d6(2);
+        Roll diceRoll = Compute.rollD6(2);
+        int rollValue = diceRoll.getIntValue();
+        String rollReport = diceRoll.getReport();
 
         Report r = new Report(6555);
         r.subject = entity.getId();
         r.add(entity.getDisplayName());
-        r.add(roll);
+        r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
 
         // If they are in protective structure, add 2 to the roll.
         if (inHardenedBuilding) {
-            roll += 2;
+            rollValue += 2;
             r.add(" + 2 (unit is in hardened building)");
         } else {
             r.add("");
@@ -24011,7 +24152,7 @@ public class GameManager implements IGameManager {
         // of
         // "nuclear hardening" as equipment for a support vehicle, for example.
         if (entity.isNuclearHardened()) {
-            roll += 2;
+            rollValue += 2;
             r.add(" + 2 (unit is hardened against EMI)");
         } else {
             r.add("");
@@ -24021,7 +24162,7 @@ public class GameManager implements IGameManager {
         vDesc.add(r);
 
         // Now, compare it to the table, and apply the effects.
-        if (roll <= 4) {
+        if (rollValue <= 4) {
             // The unit is destroyed.
             // Sucks, doesn't it?
             // This applies to all units.
@@ -24030,7 +24171,7 @@ public class GameManager implements IGameManager {
                     "nuclear explosion secondary effects", false, false));
             // Kill the crew
             entity.getCrew().setDoomed(true);
-        } else if (roll <= 6) {
+        } else if (rollValue <= 6) {
             if (entity instanceof BattleArmor) {
                 // It takes 50% casualties, rounded up.
                 BattleArmor myBA = (BattleArmor) entity;
@@ -24074,7 +24215,7 @@ public class GameManager implements IGameManager {
             }
             // Buildings and gun emplacements and such are only affected by the EMI.
             // No auto-crits or anything.
-        } else if (roll <= 10) {
+        } else if (rollValue <= 10) {
             if (entity instanceof BattleArmor) {
                 // It takes 25% casualties, rounded up.
                 BattleArmor myBA = (BattleArmor) entity;
@@ -24178,16 +24319,18 @@ public class GameManager implements IGameManager {
         // if using buffered VDNI then a possible pilot hit
         if (en.hasAbility(OptionsConstants.MD_BVDNI) && !en.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
             Report.addNewline(vDesc);
-            int roll = Compute.d6(2);
+            Roll diceRoll = Compute.rollD6(2);
+            int rollValue = diceRoll.getIntValue();
+            String rollReport = diceRoll.getReport();
             r = new Report(3580);
             r.subject = en.getId();
             r.addDesc(en);
             r.add(7);
-            r.add(roll);
-            r.choose(roll >= 8);
+            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+            r.choose(rollValue >= 8);
             r.indent(2);
             vDesc.add(r);
-            if (roll >= 8) {
+            if (rollValue >= 8) {
                 vDesc.addAll(damageCrew(en, 1));
             }
         }
@@ -25961,13 +26104,15 @@ public class GameManager implements IGameManager {
                 vDesc.add(r);
 
                 // roll
-                final int diceRoll = Compute.d6(2);
+                final Roll diceRoll = Compute.rollD6(2);
+                int rollValue = diceRoll.getIntValue();
+                String rollReport = diceRoll.getReport();
                 r = new Report(2185);
                 r.subject = en.getId();
                 r.add(psr.getValueAsString());
                 r.add(psr.getDesc());
-                r.add(diceRoll);
-                if (diceRoll < psr.getValue()) {
+                r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+                if (rollValue < psr.getValue()) {
                     r.choose(false);
                     vDesc.add(r);
                     vDesc.addAll(crashVTOLorWiGE(en, true));
@@ -26099,14 +26244,16 @@ public class GameManager implements IGameManager {
             if (newElevation <= 0) {
                 boolean waterFall = fallHex.containsTerrain(Terrains.WATER);
                 if (waterFall && fallHex.containsTerrain(Terrains.ICE)) {
-                    int roll = Compute.d6(1);
+                    Roll diceRoll = Compute.rollD6(1);
+                    int rollValue = diceRoll.getIntValue();
+                    String rollReport = diceRoll.getReport();
                     r = new Report(2119);
                     r.subject = en.getId();
                     r.addDesc(en);
-                    r.add(roll);
+                    r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                     r.subject = en.getId();
                     vDesc.add(r);
-                    if (roll > 3) {
+                    if (rollValue > 3) {
                         vDesc.addAll(resolveIceBroken(crashPos));
                     } else {
                         waterFall = false; // saved by ice
@@ -26341,14 +26488,16 @@ public class GameManager implements IGameManager {
 
             Report.addNewline(vDesc);
             // need some kind of report
-            int nukeroll = Compute.d6(2);
+            Roll diceRoll = Compute.rollD6(2);
+            int rollValue = diceRoll.getIntValue();
+            String rollReport = diceRoll.getReport();
             r = new Report(9145);
             r.subject = a.getId();
             r.indent(3);
             r.add(capitalMissile);
-            r.add(nukeroll);
+            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
             vDesc.add(r);
-            if (nukeroll >= capitalMissile) {
+            if (rollValue >= capitalMissile) {
                 // Allow a reroll with edge
                 if (a.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_NUKE_CRIT)
                         && a.getCrew().hasEdgeRemaining()) {
@@ -26359,16 +26508,18 @@ public class GameManager implements IGameManager {
                     r.add(a.getCrew().getOptions().intOption(OptionsConstants.EDGE));
                     vDesc.add(r);
                     // Reroll
-                    nukeroll = Compute.d6(2);
+                    diceRoll = Compute.rollD6(2);
+                    rollValue = diceRoll.getIntValue();
+                    rollReport = diceRoll.getReport();
                     // and report the new results
                     r = new Report(9149);
                     r.subject = a.getId();
                     r.indent(3);
                     r.add(capitalMissile);
-                    r.add(nukeroll);
-                    r.choose(nukeroll >= capitalMissile);
+                    r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+                    r.choose(rollValue >= capitalMissile);
                     vDesc.add(r);
-                    if (nukeroll < capitalMissile) {
+                    if (rollValue < capitalMissile) {
                         // We might be vaporized by the damage itself, but no additional effect
                         return;
                     }
@@ -26931,12 +27082,14 @@ public class GameManager implements IGameManager {
                     vDesc.addElement(r);
                     target += 1;
                 }
-                breachroll = Compute.d6(2);
+                Roll diceRoll = Compute.rollD6(2);
+                breachroll = diceRoll.getIntValue();
+                String rollReport = diceRoll.getReport();
                 r = new Report(6345);
                 r.subject = entity.getId();
                 r.indent(3);
                 r.add(entity.getLocationAbbr(loc));
-                r.add(breachroll);
+                r.addDataWithTooltip(String.valueOf(breachroll), rollReport);
                 r.newlines = 0;
                 if (breachroll >= target) {
                     r.choose(false);
@@ -27531,16 +27684,18 @@ public class GameManager implements IGameManager {
         // Mounted is a weapon and has Hot-Loaded ammo in it and it exploded now
         // we need to roll for chain reaction
         if ((mounted.getType() instanceof WeaponType) && mounted.isHotLoaded()) {
-            int roll = Compute.d6(2);
+            Roll diceRoll = Compute.rollD6(2);
+            int rollValue = diceRoll.getIntValue();
+            String rollReport = diceRoll.getReport();
             int ammoExploded = 0;
             r = new Report(6077);
             r.subject = en.getId();
-            r.add(roll);
+            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
             r.indent(2);
             vDesc.addElement(r);
 
             // roll of 2-5 means a chain reaction happened
-            if (roll < 6) {
+            if (rollValue < 6) {
                 for (Mounted ammo : en.getAmmo()) {
                     if ((ammo.getLocation() == loc) && (ammo.getExplosionDamage() > 0)
                             // Dead-Fire ammo bins are designed not to explode
@@ -28333,7 +28488,9 @@ public class GameManager implements IGameManager {
             return false;
         }
 
-        int fireRoll = Compute.d6(2);
+        Roll diceRoll = Compute.rollD6(2);
+        int rollValue = diceRoll.getIntValue();
+        String rollReport = diceRoll.getReport();
         Report r;
         if (entityId != Entity.NONE) {
             r = new Report(3430);
@@ -28341,10 +28498,10 @@ public class GameManager implements IGameManager {
             r.subject = entityId;
             r.add(roll.getValueAsString());
             r.add(roll.getDesc());
-            r.add(fireRoll);
+            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
             vPhaseReport.add(r);
         }
-        if (fireRoll >= roll.getValue()) {
+        if (rollValue >= roll.getValue()) {
             ignite(c, Terrains.FIRE_LVL_NORMAL, vPhaseReport);
             return true;
         }
@@ -30649,10 +30806,12 @@ public class GameManager implements IGameManager {
         r = new Report(3590, Report.PUBLIC);
         r.add(c.getBoardNum());
         r.indent(2);
-        int effect = Compute.d6(2);
+        Roll diceRoll = Compute.rollD6(2);
+        int rollValue = diceRoll.getIntValue();
+        String rollReport = diceRoll.getReport();
         r.add(8);
-        r.add(effect);
-        if (effect > 7) {
+        r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+        if (rollValue > 7) {
             r.choose(true);
             r.newlines = 0;
             vDesc.add(r);
@@ -30661,23 +30820,23 @@ public class GameManager implements IGameManager {
             boolean minorExp = false;
             boolean elecExp = false;
             boolean majorExp = false;
-            if (effect == 8) {
+            if (rollValue == 8) {
                 onFire = true;
                 r = new Report(3600, Report.PUBLIC);
                 r.newlines = 0;
                 vDesc.add(r);
-            } else if (effect == 9) {
+            } else if (rollValue == 9) {
                 powerLine = true;
                 r = new Report(3605, Report.PUBLIC);
                 r.newlines = 0;
                 vDesc.add(r);
-            } else if (effect == 10) {
+            } else if (rollValue == 10) {
                 minorExp = true;
                 onFire = true;
                 r = new Report(3610, Report.PUBLIC);
                 r.newlines = 0;
                 vDesc.add(r);
-            } else if (effect == 11) {
+            } else if (rollValue == 11) {
                 elecExp = true;
                 r = new Report(3615, Report.PUBLIC);
                 r.newlines = 0;
@@ -32768,22 +32927,24 @@ public class GameManager implements IGameManager {
             r.add(rollTarget.getLastPlainDesc(), true);
             r.indent();
             vDesc.addElement(r);
-            int roll = Compute.d6(2);
-            int MOS = (roll - Math.max(2, rollTarget.getValue()));
+            Roll diceRoll = Compute.rollD6(2);
+            int rollValue = diceRoll.getIntValue();
+            String rollReport = diceRoll.getReport();
+            int MOS = (rollValue - Math.max(2, rollTarget.getValue()));
             //Report the roll
             r = new Report(2190);
             r.subject = entity.getId();
             r.add(rollTarget.getValueAsString());
             r.add(rollTarget.getDesc());
-            r.add(roll);
+            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
             r.indent();
-            r.choose(roll >= rollTarget.getValue());
+            r.choose(rollValue >= rollTarget.getValue());
             vDesc.addElement(r);
             //Per SO p27, you get a certain number of escape pods away per turn per 100k tons of ship
             int escapeMultiplier = (int) (entity.getWeight() / 100000);
             //Set up the maximum number that CAN launch
             int toLaunch = 0;
-            if (roll < rollTarget.getValue()) {
+            if (rollValue < rollTarget.getValue()) {
                 toLaunch = 1;
             } else {
                 toLaunch = (1 + MOS) * Math.max(1, escapeMultiplier);
@@ -33820,15 +33981,17 @@ public class GameManager implements IGameManager {
         } else {
             psr = entity.getBasePilotingRoll();
         }
-        int roll = Compute.d6(2);
+        Roll diceRoll = Compute.rollD6(2);
+        int rollValue = diceRoll.getIntValue();
+        String rollReport = diceRoll.getReport();
         // check for a safe landing
         addNewLines();
         r.subject = entity.getId();
         r.add(entity.getDisplayName(), true);
         r.add(psr);
-        r.add(roll);
+        r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
         r.newlines = 1;
-        r.choose(roll >= psr.getValue());
+        r.choose(rollValue >= psr.getValue());
         addReport(r);
 
         // if we are on an atmospheric map or the entity is off the map for some reason
@@ -33846,8 +34009,8 @@ public class GameManager implements IGameManager {
             return;
         }
 
-        if (roll < psr.getValue()) {
-            int fallHeight = psr.getValue() - roll;
+        if (rollValue < psr.getValue()) {
+            int fallHeight = psr.getValue() - rollValue;
 
             // if you fail by more than 7, you automatically fail
             if (fallHeight > 7) {
@@ -34372,17 +34535,19 @@ public class GameManager implements IGameManager {
      * @return    A report showing the results of the roll
      */
     private Report checkBreakSpikes(Entity e, int loc) {
-        int roll = Compute.d6(2);
+        Roll diceRoll = Compute.rollD6(2);
+        int rollValue = diceRoll.getIntValue();
+        String rollReport = diceRoll.getReport();
         Report r;
-        if (roll < 9) {
+        if (rollValue < 9) {
             r = new Report(4445);
             r.indent(2);
-            r.add(roll);
+            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
             r.subject = e.getId();
         } else {
             r = new Report(4440);
             r.indent(2);
-            r.add(roll);
+            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
             r.subject = e.getId();
             for (Mounted m : e.getMisc()) {
                 if (m.getType().hasFlag(MiscType.F_SPIKES)

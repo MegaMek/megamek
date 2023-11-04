@@ -432,24 +432,26 @@ public class Building implements Serializable {
             Report r = new Report(2111, Report.PUBLIC);
             r.add(getName());
             r.add(coords.getBoardNum());
-            int basementRoll = Compute.d6(2);
-            r.add(basementRoll);
-            if (basementRoll == 2) {
+            Roll diceRoll = Compute.rollD6(2);
+            int rollValue = diceRoll.getIntValue();
+            String rollReport = diceRoll.getReport();
+            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+            if (rollValue == 2) {
                 basement.put(coords, BasementType.TWO_DEEP_FEET);
                 hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).ordinal()));
-            } else if (basementRoll == 3) {
+            } else if (rollValue == 3) {
                 basement.put(coords, BasementType.ONE_DEEP_FEET);
                 hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).ordinal()));
-            } else if (basementRoll == 4) {
+            } else if (rollValue == 4) {
                 basement.put(coords, BasementType.ONE_DEEP_NORMAL);
                 hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).ordinal()));
-            } else if (basementRoll == 10) {
+            } else if (rollValue == 10) {
                 basement.put(coords, BasementType.ONE_DEEP_NORMAL);
                 hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).ordinal()));
-            } else if (basementRoll == 11) {
+            } else if (rollValue == 11) {
                 basement.put(coords, BasementType.ONE_DEEP_HEAD);
                 hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).ordinal()));
-            } else if (basementRoll == 12) {
+            } else if (rollValue == 12) {
                 basement.put(coords, BasementType.TWO_DEEP_HEAD);
                 hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).ordinal()));
             } else {

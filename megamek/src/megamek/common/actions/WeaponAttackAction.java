@@ -366,8 +366,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                         || atype.countsAsFlak()
         );
 
-        boolean isIndirect = (weapon.hasModes() && (weapon.curMode().equals(Weapon.MODE_MISSILE_INDIRECT)
-                ||weapon.curMode().equals(Weapon.MODE_INDIRECT_HEAT)));
+        boolean isIndirect = weapon.hasModes() && (weapon.curMode().isIndirect());
 
         // BMM p. 31, semi-guided indirect missile attacks vs tagged targets ignore terrain modifiers
         boolean semiGuidedIndirectVsTaggedTarget = isIndirect &&

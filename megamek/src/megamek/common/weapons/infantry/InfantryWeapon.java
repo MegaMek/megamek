@@ -247,7 +247,7 @@ public abstract class InfantryWeapon extends Weapon {
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, GameManager manager) {
         Mounted m = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
-        if (((null != m) && (m.curMode().equals(Weapon.MODE_FLAMER_HEAT) || m.curMode().equals(Weapon.MODE_INDIRECT_HEAT)
+        if (((null != m) && ((m.hasModes() && m.curMode().isIndirect())
                 || (waa.getEntity(game).isSupportVehicle()
                 && m.getLinked() != null
                 && m.getLinked().getType() != null

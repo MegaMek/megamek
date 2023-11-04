@@ -100,7 +100,7 @@ public class RACHandler extends UltraWeaponHandler {
         setDone();
         checkAmmo();
 
-        switch (weapon.curMode().toString()){
+        switch (weapon.curMode().toString()) {
             case Weapon.MODE_RAC_SIX_SHOT: howManyShots = 6;
                 break;
             case Weapon.MODE_RAC_FIVE_SHOT: howManyShots = 5;

@@ -2395,7 +2395,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
      * @param m The active weapon
      */
     protected void adaptFireModeEnabled(Mounted m) {
-        setFireModeEnabled(m.isModeSwitchable() & m.hasModes());
+        setFireModeEnabled(m.isModeSwitchable() && m.hasModes());
     }
 
     protected void setFireCalledEnabled(boolean enabled) {

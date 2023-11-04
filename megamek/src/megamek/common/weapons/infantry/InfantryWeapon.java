@@ -261,6 +261,7 @@ public abstract class InfantryWeapon extends Weapon {
         return new InfantryWeaponHandler(toHit, waa, game, manager);
     }
 
+    @Override
     public void adaptToGameOptions(GameOptions gOp) {
         if (isFlameBased()) {
             if (!gOp.booleanOption(OptionsConstants.BASE_FLAMER_HEAT)) {

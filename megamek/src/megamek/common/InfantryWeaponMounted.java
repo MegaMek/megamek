@@ -96,6 +96,7 @@ public class InfantryWeaponMounted extends Mounted {
         return modes.contains(EquipmentMode.getMode(mode));
     }
 
+    @Override
     public boolean canInstantSwitch(int newMode) {
         if (getType().hasModes() && (getType().getMode(newMode) != null)) {
             return super.canInstantSwitch(newMode);

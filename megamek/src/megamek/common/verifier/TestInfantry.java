@@ -203,7 +203,7 @@ public class TestInfantry extends TestEntity {
      * @return              The maximum size of a squad.
      */
     public static int maxSquadSize(EntityMovementMode movementMode, boolean alt, @Nullable InfantryMount mount) {
-        if ((mount == null) || (mount.getSize().troopsPerCreature == 1)) {
+        if (mount == null) {
             switch (movementMode) {
                 case HOVER:
                 case SUBMARINE:
@@ -219,6 +219,8 @@ public class TestInfantry extends TestEntity {
                 default:
                     return 10;
             }
+        } else if (mount.getSize().troopsPerCreature == 1) {
+            return 10; // use foot infantry limit
         } else {
             return mount.getSize().troopsPerCreature;
         }
@@ -227,33 +229,34 @@ public class TestInfantry extends TestEntity {
     public static int maxUnitSize(EntityMovementMode movementMode, boolean alt, boolean engOrMountain,
                                   InfantryMount mount) {
         int max;
-        switch (movementMode) {
-            case INF_UMU:
-                if (alt) {
-                    max = 12;
-                } else {
+        if (mount == null) {
+            switch (movementMode) {
+                case INF_UMU:
+                    if (alt) {
+                        max = 12;
+                    } else {
+                        max = 30;
+                    }
+                    break;
+                case HOVER:
+                case SUBMARINE:
+                    max = 20;
+                    break;
+                case WHEELED:
+                    max = 24;
+                    break;
+                case TRACKED:
+                    max = 28;
+                    break;
+                case VTOL:
+                    max = maxSquadSize(movementMode, alt, mount) * 4;
+                    break;
+                default:
                     max = 30;
-                }
-                break;
-            case HOVER:
-            case SUBMARINE:
-                max = 20;
-                break;
-            case WHEELED:
-                max = 24;
-                break;
-            case TRACKED:
-                max = 28;
-                break;
-            case VTOL:
-                max = maxSquadSize(movementMode, alt, mount) * 4;
-                break;
-            default:
-                max = 30;
-                break;
-        }
-        if (mount != null) {
-            max = Math.min(max, mount.getSize().creaturesPerPlatoon * mount.getSize().troopsPerCreature);
+                    break;
+            }
+        } else {
+            max = mount.getSize().creaturesPerPlatoon * mount.getSize().troopsPerCreature;
         }
         if (engOrMountain) {
             max = Math.min(max, 20);

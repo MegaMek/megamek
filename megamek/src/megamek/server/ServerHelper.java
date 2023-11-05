@@ -356,11 +356,13 @@ public class ServerHelper {
             r.subject = entity.getId();
             r.addDesc(entity);
             r.add(boom);
+
+            Roll diceRoll = Compute.rollD6(2);
+            int rollValue = diceRoll.getIntValue();
+            String rollReport = diceRoll.getReport();
+            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
             
-            int roll = Compute.d6(2);
-            r.add(roll);
-            
-            if (roll >= boom) {
+            if (rollValue >= boom) {
                 // no ammo explosion
                 r.choose(true);
                 vPhaseReport.add(r);
@@ -473,17 +475,20 @@ public class ServerHelper {
         
         if ((hex.terrainLevel(Terrains.MAGMA) == 1) && (elevation == 0) && (entity.getMovementMode() != EntityMovementMode.HOVER)) {
             int reportID = jumpLanding ? 2396 : 2395;
-            
-            int roll = Compute.d6();
+
+
+            Roll diceRoll = Compute.rollD6(1);
+            int rollValue = diceRoll.getIntValue();
+            String rollReport = diceRoll.getReport();
             Report r = new Report(reportID);
             r.addDesc(entity);
-            r.add(roll);
+            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
             r.subject = entity.getId();
             vPhaseReport.add(r);
             
             int rollTarget = jumpLanding ? 4 : 6;
             
-            if (roll >= rollTarget) {
+            if (rollValue >= rollTarget) {
                 hex.removeTerrain(Terrains.MAGMA);
                 hex.addTerrain(new Terrain(Terrains.MAGMA, 2));
                 gameManager.sendChangedHex(curPos);

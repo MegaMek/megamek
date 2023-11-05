@@ -13454,31 +13454,33 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 if (isSupercharger) {
                     // do the damage - engine crits
                     int hits = 0;
-                    int roll = Compute.d6(2);
+                    Roll diceRoll = Compute.rollD6(2);
+                    int rollValue = diceRoll.getIntValue();
+                    String rollReport = diceRoll.getReport();
                     r = new Report(6310);
                     r.subject = getId();
-                    r.add(roll);
+                    r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                     r.newlines = 0;
                     vDesc.addElement(r);
-                    if (roll <= 7) {
+                    if (rollValue <= 7) {
                         // no effect
                         r = new Report(6005);
                         r.subject = getId();
                         r.newlines = 0;
                         vDesc.addElement(r);
-                    } else if ((roll >= 8) && (roll <= 9)) {
+                    } else if ((rollValue >= 8) && (rollValue <= 9)) {
                         hits = 1;
                         r = new Report(6315);
                         r.subject = getId();
                         r.newlines = 0;
                         vDesc.addElement(r);
-                    } else if ((roll >= 10) && (roll <= 11)) {
+                    } else if ((rollValue >= 10) && (rollValue <= 11)) {
                         hits = 2;
                         r = new Report(6320);
                         r.subject = getId();
                         r.newlines = 0;
                         vDesc.addElement(r);
-                    } else if (roll == 12) {
+                    } else if (rollValue == 12) {
                         hits = 3;
                         r = new Report(6325);
                         r.subject = getId();

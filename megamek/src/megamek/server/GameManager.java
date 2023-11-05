@@ -17641,6 +17641,7 @@ public class GameManager implements IGameManager {
         final Targetable target = game.getTarget(taa.getTargetType(), taa.getTargetId());
         final ToHitData toHit = pr.toHit;
         int roll = pr.roll;
+        String rollReport = pr.rollReport;
         int amsDamage = taa.CounterAVInt;
         Entity te = null;
         if ((target != null) && (target.getTargetType() == Targetable.TYPE_ENTITY)) {
@@ -17752,7 +17753,7 @@ public class GameManager implements IGameManager {
             r.subject = ae.getId();
             r.add(toHit);
             r.add(toHit.getDesc());
-            r.add(roll);
+            r.addDataWithTooltip(String.valueOf(roll), rollReport);
             r.newlines = 0;
         }
         addReport(r);
@@ -26937,14 +26938,16 @@ public class GameManager implements IGameManager {
                 if (reactiveArmorCrit) {
                     Mounted mount = slot.getMount();
                     if ((mount != null) && mount.getType().hasFlag(MiscType.F_REACTIVE)) {
-                        int roll = Compute.d6(2);
+                        Roll diceRoll = Compute.rollD6(2);
+                        int rollValue = diceRoll.getIntValue();
+                        String rollReport = diceRoll.getReport();
                         r = new Report(6082);
                         r.subject = en.getId();
                         r.indent(3);
-                        r.add(roll);
+                        r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                         vDesc.addElement(r);
                         // big budda boom
-                        if (roll == 2) {
+                        if (rollValue == 2) {
                             r = new Report(6083);
                             r.subject = en.getId();
                             r.indent(4);
@@ -33834,7 +33837,14 @@ public class GameManager implements IGameManager {
         if (te.hasWorkingMisc(MiscType.F_ARMORED_MOTIVE_SYSTEM)) {
             modifier -= 2;
         }
-        int roll = Compute.d6(2) + modifier;
+
+        Roll diceRoll = Compute.rollD6(2);
+        int rollValue = diceRoll.getIntValue();
+        String rollReport = diceRoll.getReport();
+        String rollCalc = rollValue + " + " + modifier + "]";
+        rollValue += modifier;
+        rollCalc = rollValue + " [" + rollCalc;
+
         r = new Report(6306);
         r.subject = te.getId();
         r.newlines = 0;
@@ -33843,7 +33853,11 @@ public class GameManager implements IGameManager {
         if (!noRoll) {
             r = new Report(6310);
             r.subject = te.getId();
-            r.add(roll);
+            if (modifier != 0) {
+                r.addDataWithTooltip(rollCalc, rollReport);
+            } else {
+                r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+            }
             r.newlines = 0;
             vDesc.add(r);
             r = new Report(3340);
@@ -33852,27 +33866,27 @@ public class GameManager implements IGameManager {
             vDesc.add(r);
         }
 
-        if ((noRoll && (damageType == 0)) || (!noRoll && (roll <= 5))) {
+        if ((noRoll && (damageType == 0)) || (!noRoll && (rollValue <= 5))) {
             // no effect
             r = new Report(6005);
             r.subject = te.getId();
             r.indent(3);
             vDesc.add(r);
-        } else if ((noRoll && (damageType == 1)) || (!noRoll && (roll <= 7))) {
+        } else if ((noRoll && (damageType == 1)) || (!noRoll && (rollValue <= 7))) {
             // minor damage
             r = new Report(6470);
             r.subject = te.getId();
             r.indent(3);
             vDesc.add(r);
             te.addMovementDamage(1);
-        } else if ((noRoll && (damageType == 2)) || (!noRoll && (roll <= 9))) {
+        } else if ((noRoll && (damageType == 2)) || (!noRoll && (rollValue <= 9))) {
             // moderate damage
             r = new Report(6471);
             r.subject = te.getId();
             r.indent(3);
             vDesc.add(r);
             te.addMovementDamage(2);
-        } else if ((noRoll && (damageType == 3)) || (!noRoll && (roll <= 11))) {
+        } else if ((noRoll && (damageType == 3)) || (!noRoll && (rollValue <= 11))) {
             // heavy damage
             r = new Report(6472);
             r.subject = te.getId();

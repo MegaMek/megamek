@@ -247,13 +247,13 @@ public abstract class InfantryWeapon extends Weapon {
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, GameManager manager) {
         Mounted m = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
-        if (((null != m) && ((m.hasModes() && m.curMode().isIndirect())
+        if (((null != m) && ((m.hasModes() && m.curMode().isHeat())
                 || (waa.getEntity(game).isSupportVehicle()
                 && m.getLinked() != null
                 && m.getLinked().getType() != null
                 && (((AmmoType) m.getLinked().getType()).getMunitionType().contains(AmmoType.Munitions.M_INFERNO)))))) {
             return new InfantryHeatWeaponHandler(toHit, waa, game, manager);
-        } else if (game.getOptions().booleanOption(OptionsConstants.BASE_FLAMER_HEAT)
+        } else if (game.getOptions().booleanOption(OptionsConstants.BASE_INFANTRY_DAMAGE_HEAT)
                 && (isFlameBased() || (m instanceof InfantryWeaponMounted)
                                         &&  ((InfantryWeaponMounted) m).getOtherWeapon().isFlameBased())) {
             return new InfantryHeatWeaponHandler(toHit, waa, game, manager);
@@ -264,7 +264,7 @@ public abstract class InfantryWeapon extends Weapon {
     @Override
     public void adaptToGameOptions(GameOptions gOp) {
         if (isFlameBased()) {
-            if (!gOp.booleanOption(OptionsConstants.BASE_FLAMER_HEAT)) {
+            if (!gOp.booleanOption(OptionsConstants.BASE_INFANTRY_DAMAGE_HEAT)) {
                 addMode(MODE_FLAMER_DAMAGE);
                 addMode(MODE_FLAMER_HEAT);
             } else {

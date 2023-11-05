@@ -118,6 +118,10 @@ public class EquipmentMode {
         return getName();
     }
 
+    public boolean isHeat() {
+        return name.equals(Weapon.MODE_FLAMER_HEAT) || name.equals(Weapon.MODE_INDIRECT_HEAT);
+    }
+
     public boolean isIndirect() {
         return name.equals(Weapon.MODE_MISSILE_INDIRECT) || name.equals(Weapon.MODE_INDIRECT_HEAT);
     }

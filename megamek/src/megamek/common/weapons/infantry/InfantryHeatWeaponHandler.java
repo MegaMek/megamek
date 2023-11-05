@@ -88,7 +88,7 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
             }
 
             // If using BMM heat option, do damage as well as heat
-            if (game.getOptions().booleanOption(OptionsConstants.BASE_FLAMER_HEAT)) {
+            if (game.getOptions().booleanOption(OptionsConstants.BASE_INFANTRY_DAMAGE_HEAT)) {
                 vPhaseReport.addAll(gameManager.damageEntity(entityTarget, hit, nDamage, false,
                         ae.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER : damageType,
                         false, false, throughFront, underWater, nukeS2S));

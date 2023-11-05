@@ -4,6 +4,7 @@ VERSION HISTORY:
 + Fix #4769 - BA Tube Artillery should support smoke rounds
 + Fix #4854 - fix multiple end-of-game and end-of-phase hangs
 + Fix #4541 - natural piloting SPA applies to physical attacks
++ PR #4871 - Allow HTML tags in the TROView fluff
 
 0.49.15 (2023-10-21 1530 UTC)
 + PR #4688: Round reports should no longer take increasingly long to load

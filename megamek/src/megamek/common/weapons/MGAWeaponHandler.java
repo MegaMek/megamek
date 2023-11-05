@@ -15,17 +15,10 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.Building;
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.HitData;
-import megamek.common.Game;
-import megamek.common.Hex;
-import megamek.common.Report;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.server.GameManager;
-import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
@@ -43,6 +36,29 @@ public class MGAWeaponHandler extends MGHandler {
      */
     public MGAWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
         super(t, w, g, m);
+    }
+
+    @Override
+    protected int calcDamagePerHit() {
+        if (target.isConventionalInfantry()) {
+            calcDmgPerHitReport.add(new Report(950));
+            int damage = Compute.directBlowInfantryDamage(
+                    wtype.getDamage(), bDirect ? toHit.getMoS() / 3 : 0,
+                    wtype.getInfantryDamageClass(),
+                    ((Infantry) target).isMechanized(),
+                    toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport, howManyShots);
+            damage = applyGlancingBlowModifier(damage, true);
+            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)) {
+                if (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) {
+                    damage = (int) Math.floor(damage * 0.75);
+                } else if (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME]) {
+                    damage = (int) Math.floor(damage * 0.5);
+                }
+            }
+            return damage;
+        } else {
+            return super.calcDamagePerHit();
+        }
     }
 
     /*
@@ -86,24 +102,21 @@ public class MGAWeaponHandler extends MGHandler {
         int shotsHit;
         int nMod = getClusterModifiers(true);
 
-        switch (howManyShots) {
-            case 1:
-                shotsHit = 1;
-                break;
-            default:
-                shotsHit = allShotsHit() ? howManyShots : Compute.missilesHit(
-                        howManyShots, nMod);
-                Report r = new Report(3325);
-                r.subject = subjectId;
-                r.add(shotsHit);
-                r.add(" shot(s) ");
-                r.add(toHit.getTableDesc());
-                r.newlines = 0;
-                vPhaseReport.addElement(r);
-                r = new Report(3345);
-                r.subject = subjectId;
-                vPhaseReport.addElement(r);
-                break;
+        if ((howManyShots == 1) || target.isConventionalInfantry()) {
+            shotsHit = 1;
+        } else {
+            shotsHit = allShotsHit() ? howManyShots : Compute.missilesHit(
+                    howManyShots, nMod);
+            Report r = new Report(3325);
+            r.subject = subjectId;
+            r.add(shotsHit);
+            r.add(" shot(s) ");
+            r.add(toHit.getTableDesc());
+            r.newlines = 0;
+            vPhaseReport.addElement(r);
+            r = new Report(3345);
+            r.subject = subjectId;
+            vPhaseReport.addElement(r);
         }
         bSalvo = true;
         return shotsHit;
@@ -151,7 +164,7 @@ public class MGAWeaponHandler extends MGHandler {
 
         hit.setGeneralDamageType(generalDamageType);
         if (!bSalvo) {
-            // Each hit in the salvo get's its own hit location.
+            // Each hit in the salvo gets its own hit location.
             Report r = new Report(3405);
             r.subject = subjectId;
             r.add(toHit.getTableDesc());

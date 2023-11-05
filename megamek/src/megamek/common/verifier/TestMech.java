@@ -120,7 +120,7 @@ public class TestMech extends TestEntity {
         return legalArmors;
     }
     
-    private Mech mech = null;
+    private Mech mech;
 
     public TestMech(Mech mech, TestEntityOption option, String fileString) {
         super(option, mech.getEngine(), getArmor(mech), getStructure(mech));
@@ -483,7 +483,7 @@ public class TestMech extends TestEntity {
             Vector<Serializable> allocation, StringBuffer buff) {
         int location = mounted.getLocation();
         EquipmentType et = mounted.getType();
-        int criticals = 0;
+        int criticals;
         if (et instanceof MiscType) {
             criticals = calcMiscCrits((MiscType) et, mounted.getSize());
         } else {
@@ -506,7 +506,7 @@ public class TestMech extends TestEntity {
         }
 
         if ((et instanceof WeaponType) && mounted.isSplit()) {
-            int secCound = 0;
+            int secCound;
             for (int locations = 0; locations < entity.locations(); locations++) {
                 if (locations == location) {
                     continue;

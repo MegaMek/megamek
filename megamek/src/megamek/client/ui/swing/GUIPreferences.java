@@ -328,6 +328,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String AS_CARD_SIZE = "AsCardSize";
     public static final String SBFSHEET_HEADERFONT = "SBFSheetHeaderFont";
     public static final String SBFSHEET_VALUEFONT = "SBFSheetValueFont";
+    public static final String SUMMARY_FONT = "SummaryCardFont";
+
 
     // RAT dialog preferences
     public static String RAT_TECH_LEVEL = "RATTechLevel";
@@ -718,6 +720,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(AS_CARD_SIZE, 0.75f);
         setDefault(SBFSHEET_HEADERFONT, "");
         setDefault(SBFSHEET_VALUEFONT, "");
+        setDefault(SUMMARY_FONT, "");
     }
 
     public void setDefault(String name, Color color) {
@@ -1436,6 +1439,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public String getAsCardFont() {
         return store.getString(AS_CARD_FONT);
+    }
+
+    public String getSummaryFont() {
+        return store.getString(SUMMARY_FONT);
     }
 
     public String getSbfSheetHeaderFont() {
@@ -2209,6 +2216,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setAsCardFont(String asCardFont) {
         store.setValue(AS_CARD_FONT, asCardFont);
+    }
+
+    public void setSummaryFont(String summaryFont) {
+        store.setValue(SUMMARY_FONT, summaryFont);
     }
 
     public void setAsCardSize(float size) {

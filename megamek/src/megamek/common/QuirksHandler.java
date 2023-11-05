@@ -542,7 +542,7 @@ public class QuirksHandler {
                 while (quirkOptions.hasMoreElements()) {
                     IOption option = quirkOptions.nextElement();
                     // Ignore illegal quirks, and ones that aren't set
-                    if (!Quirks.isQuirkLegalFor(option, entity) || !option.booleanValue()) {
+                    if (option == null || !(Quirks.isQuirkLegalFor(option, entity) && option.booleanValue())) {
                         continue;
                     }
                     // Add new QuirkEntry

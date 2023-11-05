@@ -14,6 +14,7 @@ structure:IS Endo Steel
 myomer:Standard
 cockpit:Standard Cockpit
 gyro:XL Gyro
+ejection:Full Head Ejection System
 
 heat sinks:10 IS Double
 walk mp:6

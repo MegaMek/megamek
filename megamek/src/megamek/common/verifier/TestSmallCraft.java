@@ -218,7 +218,7 @@ public class TestSmallCraft extends TestAero {
     }
     
     public static int weightFreeHeatSinks(SmallCraft sc) {
-        double engineTonnage = calculateEngineTonnage(sc.isClan(), sc.getWeight(), sc.getWalkMP(),
+        double engineTonnage = calculateEngineTonnage(sc.isClan(), sc.getWeight(), sc.getOriginalWalkMP(),
                 sc.hasETypeFlag(Entity.ETYPE_DROPSHIP), sc.getOriginalBuildYear());
         if (sc.isSpheroid()) {
             if (sc.isPrimitive()) {

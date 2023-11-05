@@ -14,6 +14,7 @@
  */
 package megamek.common;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +49,7 @@ public class BombType extends AmmoType {
                                               "Arrow IV Homing Missile", "Inferno Bomb",
                                               "LAA Missile", "Thunder Bomb", "Torpedo Bomb",
                                               "Alamo Missile", "Fuel-Air Bomb (small)", "Fuel-Air Bomb (large)" };
-    
+
     public static final String[] bombInternalNames = { "HEBomb","ClusterBomb","LGBomb",
                                                       "RL 10 Ammo (Bomb)", "TAGBomb", "AAAMissile Ammo",
                                                       "ASMissile Ammo",
@@ -62,28 +63,28 @@ public class BombType extends AmmoType {
                                                     null, "LAAMissile", null, null, "AlamoMissile", null, null };
 
     public static final int[] bombCosts = { 1, 1, 1, 1, 1, 5, 6, 6, 5, 5, 1, 2, 1, 1, 10, 1, 2 };
-    
+
     public static final Map<String, Integer> blastRadius;
     private int bombType;
 
     static {
         blastRadius = new HashMap<>();
     }
-    
+
     /**
      * Get the blast radius of a particular bomb type, given the internal name.
      */
     public static int getBombBlastRadius(String name) {
         return blastRadius.getOrDefault(name, 0);
     }
-    
+
     public static String getBombName(int type) {
         if ((type >= B_NUM) || (type < 0)) {
             return "Unknown bomb type";
         }
         return bombNames[type];
     }
-    
+
     public static int getBombTypeFromName(String name) {
         for (int i = 0; i < B_NUM; i++) {
             if (bombNames[i].equals(name)) {
@@ -92,7 +93,7 @@ public class BombType extends AmmoType {
         }
         return B_NONE;
     }
-    
+
     public static int getBombTypeFromInternalName(String name) {
         for (int i = 0; i < B_NUM; i++) {
             if (bombInternalNames[i].equalsIgnoreCase(name)) {
@@ -108,7 +109,7 @@ public class BombType extends AmmoType {
         }
         return bombWeaponNames[type];
     }
-    
+
     public static int getBombTypeForWeapon(EquipmentType weapon) {
         for (int i = 0; i < B_NUM; i++) {
             if (bombWeaponNames[i] != null
@@ -204,7 +205,7 @@ public class BombType extends AmmoType {
                 .map(eType -> (BombType) eType)
                 .collect(toList());
     }
-    
+
     public static BombType createBombByType(int bType)    {
         switch (bType) {
             case B_HE:
@@ -245,7 +246,7 @@ public class BombType extends AmmoType {
                 return null;
         }
     }
-    
+
     // START OF BOMBS
 
     private static BombType createAAAMissileBomb() {
@@ -351,7 +352,7 @@ public class BombType extends AmmoType {
         bomb.rackSize = 20;
         bomb.ammoType = AmmoType.T_ARROW_IV_BOMB;
         bomb.bombType = BombType.B_HOMING;
-        bomb.munitionType = AmmoType.M_HOMING;
+        bomb.munitionType = EnumSet.of(AmmoType.Munitions.M_HOMING);
         // Allow Homing munitions to instantly switch between modes
         bomb.instantModeSwitch = true;
         bomb.setModes("Homing", "Non-Homing");
@@ -463,7 +464,7 @@ public class BombType extends AmmoType {
                 .setClanApproximate(false, false, false, false, false);
 
         blastRadius.put(BombType.getBombInternalName(BombType.B_FAE_SMALL), 2);
-        
+
         return bomb;
     }
 
@@ -489,7 +490,7 @@ public class BombType extends AmmoType {
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false);
-        
+
         blastRadius.put(BombType.getBombInternalName(BombType.B_FAE_LARGE), 3);
 
         return bomb;

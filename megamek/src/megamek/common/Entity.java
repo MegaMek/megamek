@@ -3019,6 +3019,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
+     * Returns true if the specified hex contains some sort of deadly
+     * terrain.
+     */
+    public boolean isLocationDeadly(Coords c) {
+        return false;
+    }
+
+    /**
      * Returns the name of the type of movement used.
      */
     public abstract String getMovementString(EntityMovementType mtype);
@@ -5291,9 +5299,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                         && (this instanceof BattleArmor)) {
                         toReturn = 2;
                     }
-                    if (type.hasFlag(MiscType.F_EW_EQUIPMENT)
-                        || type.hasFlag(MiscType.F_NOVA)
-                        || type.hasFlag(MiscType.F_WATCHDOG)) {
+                    if (type.hasFlag(MiscType.F_EW_EQUIPMENT)) {
                         toReturn = 3;
                     }
                     if (game.getPlanetaryConditions().hasEMI()) {
@@ -9099,11 +9105,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         for (Mounted amounted : getAmmo()) {
             AmmoType atype = (AmmoType) amounted.getType();
             if (((atype.getAmmoType() == AmmoType.T_SRM) || (atype.getAmmoType() == AmmoType.T_SRM_IMP)
-                    || (atype.getAmmoType() == AmmoType.T_MML)) && (atype.getMunitionType() == AmmoType.M_INFERNO)
+                    || (atype.getAmmoType() == AmmoType.T_MML)) && (atype.getMunitionType().contains(AmmoType.Munitions.M_INFERNO))
                     && (amounted.getHittableShotsLeft() > 0)) {
                 found = true;
             }
-            if ((atype.getAmmoType() == AmmoType.T_IATM) && (atype.getMunitionType() == AmmoType.M_IATM_IIW)
+            if ((atype.getAmmoType() == AmmoType.T_IATM) && (atype.getMunitionType().contains(AmmoType.Munitions.M_IATM_IIW))
                     && (amounted.getHittableShotsLeft() > 0)) {
                 found = true;
             }
@@ -11370,7 +11376,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 && lastPos.direction(curPos) % 3 != curFacing % 3
                 && !(isUsingManAce() && (overallMoveType == EntityMovementType.MOVE_WALK
                 || overallMoveType == EntityMovementType.MOVE_VTOL_WALK))) {
-            roll.append(new PilotingRollData(getId(), 0, "controlled sideslip"));
+            roll.append(new PilotingRollData(getId(), -1, "controlled sideslip"));
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
                     "Check false: not apparently sideslipping");
@@ -11381,6 +11387,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     @Override
     public boolean isAirborneVTOLorWIGE() {
+        // Dead VTOLs/ WiGEs can't be airborne
+        if (isDestroyed()) {
+            return false;
+        }
+
         // stuff that moves like a VTOL is flying unless at elevation 0 or on
         // top of/in a building,
         if ((getMovementMode() == EntityMovementMode.VTOL)
@@ -11458,20 +11469,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                && isFighter();
     }
 
-    /**
-     * a function that let's us know if this entity has capital-scale armor
-     *
-     * @return
-     */
+    /** @return True when this unit has capital-scale armor. */
     public boolean isCapitalScale() {
-
-        if ((this instanceof Jumpship) || (this instanceof FighterSquadron)
-            || isCapitalFighter()) {
-            return true;
-        }
-
-        return false;
-
+        return isCapitalFighter();
     }
 
     /**
@@ -12861,7 +12861,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     @Override
     public boolean isAirborne() {
-        return (getAltitude() > 0)
+        return (!isDestroyed())
+               && (getAltitude() > 0)
                || (getMovementMode() == EntityMovementMode.AERODYNE)
                || (getMovementMode() == EntityMovementMode.SPHEROID);
     }
@@ -12876,7 +12877,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * is the unit flying Nape of the Earth? (i.e. one elevation above ground)
+     * is the unit flying Nap of the Earth? (i.e. one elevation above ground)
      */
     public boolean isNOE() {
 

@@ -1773,7 +1773,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createLadder());
         EquipmentType.addType(MiscType.createMaritimeLifeboat());
         EquipmentType.addType(MiscType.createMaritimeEscapePod());
-        EquipmentType.addType(MiscType.createAtmossphericLifeboat());
+        EquipmentType.addType(MiscType.createAtmosphericLifeboat());
 
         // 3145 Stuff
         EquipmentType.addType(MiscType.createAntiPenetrativeAblation());
@@ -6054,13 +6054,13 @@ public class MiscType extends EquipmentType {
     // Down the road it might be better to make this into a separate Small
     // Support Vee,
     // But for now leaving it as equipment.
-    public static MiscType createAtmossphericLifeboat() {
+    public static MiscType createAtmosphericLifeboat() {
         MiscType misc = new MiscType();
         misc.name = "Lifeboat (Atmospheric)";
         misc.setInternalName(misc.name);
         misc.tankslots = 0;
-        misc.tonnage = 7;
-        misc.cost = 5000;
+        misc.tonnage = 1;
+        misc.cost = 6000;
         misc.bv = 0;
         misc.industrial = true;
         misc.flags = misc.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_LIFEBOAT);
@@ -7559,14 +7559,15 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         misc.tonnage = 1;
         misc.cost = 25000;
-        misc.name = "Refueling Drogue/Fluid Suction System (Aero)";
+        misc.name = "Refueling Drogue";
         misc.setInternalName(EquipmentTypeLookup.REFUELING_DROGUE);
         misc.flags = misc.flags.or(F_REFUELING_DROGUE).or(F_FIGHTER_EQUIPMENT).or(F_VTOL_EQUIPMENT)
                 .or(F_SUPPORT_TANK_EQUIPMENT).or(F_SC_EQUIPMENT);
         misc.industrial = true;
         misc.rulesRefs = "247, TM";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
-                .setTechRating(RATING_A).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+                // IO:AE, page 36, 3rd printing
+                .setTechRating(RATING_C).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
                 .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
@@ -7788,7 +7789,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CLNavalTugAdaptor");
         misc.flags = misc.flags.or(F_NAVAL_TUG_ADAPTOR).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_WS_EQUIPMENT);
         misc.rulesRefs = "334, TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_F)
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_C)
                 .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
                 .setAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
                 .setApproximate(false, false, false, false, false).setStaticTechLevel(SimpleTechLevel.ADVANCED);

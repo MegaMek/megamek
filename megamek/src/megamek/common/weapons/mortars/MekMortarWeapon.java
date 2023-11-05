@@ -55,25 +55,25 @@ public abstract class MekMortarWeapon extends AmmoWeapon {
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, Game game, GameManager manager) {
-        
+
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked().getType();
-        if (atype.getMunitionType() == AmmoType.M_AIRBURST) {
+        if (atype.getMunitionType().contains(AmmoType.Munitions.M_AIRBURST)) {
             return new MekMortarAirburstHandler(toHit, waa, game, manager);
-        } else if (atype.getMunitionType() == AmmoType.M_ANTI_PERSONNEL) {
+        } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_ANTI_PERSONNEL)) {
             return new MekMortarAntiPersonnelHandler(toHit, waa, game, manager);
-        } else if (atype.getMunitionType() == AmmoType.M_FLARE) {
+        } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_FLARE)) {
             return new MekMortarFlareHandler(toHit, waa, game, manager);
-        } else if (atype.getMunitionType() == AmmoType.M_SEMIGUIDED) {
+        } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_SEMIGUIDED)) {
             // Semi-guided works like shaped-charge, but can benefit from tag
             return new MekMortarHandler(toHit, waa, game, manager);
-        } else if (atype.getMunitionType() == AmmoType.M_SMOKE_WARHEAD) {
+        } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_SMOKE_WARHEAD)) {
             return new MekMortarSmokeHandler(toHit, waa, game, manager);
         }
         // If it doesn't match other types, it's the default armor-piercing
         return new MekMortarHandler(toHit, waa, game, manager);
     }
-    
+
     @Override
     public double getBattleForceDamage(int range) {
         if (range > getLongRange()) {
@@ -90,7 +90,7 @@ public abstract class MekMortarWeapon extends AmmoWeapon {
     public boolean hasIndirectFire() {
         return true;
     }
-    
+
     @Override
     public void adaptToGameOptions(GameOptions gOp) {
         super.adaptToGameOptions(gOp);

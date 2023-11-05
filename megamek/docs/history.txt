@@ -1,6 +1,11 @@
 VERSION HISTORY:
 ----------------
-0.49.15-SNAPSHOT
+0.49.16-SNAPSHOT
++ Fix #4769 - BA Tube Artillery should support smoke rounds
++ Fix #4854 - fix multiple end-of-game and end-of-phase hangs
++ Fix #4541 - natural piloting SPA applies to physical attacks
+
+0.49.15 (2023-10-21 1530 UTC)
 + PR #4688: Round reports should no longer take increasingly long to load
 + PR #4686: QuadVee should no longer be able to fall after converting to vehicle mode
 + PR #4684: Added game option for GM to advance report phases without waiting for other players
@@ -25,6 +30,50 @@ VERSION HISTORY:
 + PR #4746: Removed Testbot
 + Fix #3546: Artillery cannons now generate proper damage values for Fuel-Air ammunition
 + Fix #4359: Artillery cannons now use flak modifiers correctly
++ Fix #4734: Non-Mek heat-tracking units no longer burn to death in a terrain fire
++ Fix #4750: Prevent errors for some dialogs
++ PR #4753: Small Craft are no longer shown as invalid in the lobby after configuring them
++ PR #4751: Tech level filtering in the unit selector dialog has been corrected (also affects MML and MHQ)
++ PR #4748: Alpha strike filters now correctly apply when creating random creating a random army
++ Issue #4690: Improvements to MegaMek command-line handling
++ Issue #4286: RATGeneratorEditor: Show unit type instead of number
++ issue #4756: Quirks: VTOL Rotor Arrangement Co-Axial/Dual Rotor
++ Issue #4756: Correct NPE in bvReports when player is not on a team
++ Fix #4694: Silver Bullet Gauss Rifle now use the correct Aero damage of 9
++ Fix #4774: Tripod Meks with AES now load correctly
++ Fix #4737: The planetary conditions overlay should now be more consistently shown or hidden
++ PR #4771: Alpha Strike conversion updates
++ Fix #4754: Updates to some VTOL and CV units that feature transportation capabilities which may not have loaded correctly
++ Fix #4727: Fixes an error with pilot images in reports
++ PR #4776: Fixed Wing Support with STOL no longer show as invalid in the lobby when set to altitude 0
++ Issue #1552: Added Arrow IV air defense missiles; Princess can use them if available
++ Issue #4782: Argotera now has full-head ejection system
++ Fix #4780: Players can once again fire during the point blank phase
++ Fix #4779: Mechs can once again sprint
++ Fix #4768: Improved gauss rifles nerfed - take a +1 penalty to the TN when fired from small aeros
++ Issue #4550: Improve Princess logic regarding placement of units in deep water
++ Issue #2698: Attempt to reduce bot speed in low gravity
++ Fix #3870, 4524: Properly apply quirks and SPAs to artillery attacks
++ Issue #4730: Multi-crew units with command console receive correct crew count
++ PR #4800: Improvements to aerospace and fighter squadron UI
++ Fix #4789: Prevent bot hang when smoke drifts off-board
++ Fix #4790: Prevent soft lock when processing artillery attacks against fled/destroyed off-board artillery
++ Fix #4738: Aim-high attacks no longer use partial cover hit table when target is in partial cover
++ PR #4815: Some illegal ammos have been removed from artillery cannons
++ Fix #4706: The BV calculation now includes special values for minefield artillery rounds
++ Fix #4743: Units making vertical landings now only apply half the terrain modifiers
++ PR #4813: Aero landing now considers terrain modifiers for advanced terrain from TO; a unit takes damage when the landing path includes rough or rubble; a unit that lands in water of sufficient depth (2 for DS, 1 otherwise) is destroyed; dropships landing in depth 1 water are permanently immobile
++ Data: Fixes for #4808, #4752, #4685, #4677, #4619, and #4597
++ Fix #4820: Fix Immelman and Split-S maneuvers
++ PR #4818: Separate structure class from TestEntity
++ PR #4816: TestTank: Adapt some tests for GunEmplacements
++ Fix #4828: Use standard ECM range for Watchdog/Nova CEWS
++ Fix 4830: WiGE units with jump jets no longer jump to the bottom of water hexes
++ PR #4834: The unit tooltip now indicates when TSM is active
++ PR #4822, #4844: Formatting updates and utilities for the unit summary (unit selector/lobby unit view)
++ Fix #4786: Fix modifier for controlled sideslip
++ Fix #4745: Fix machine gun array burst damage against conventional infantry
+
 
 0.49.14 (2023-07-28 2100 UTC)
 + Fix #4452: Fixes a bug with detecting if Infantry dies due to extreme temperatures

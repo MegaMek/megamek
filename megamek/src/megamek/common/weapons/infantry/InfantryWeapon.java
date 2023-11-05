@@ -132,7 +132,7 @@ public abstract class InfantryWeapon extends Weapon {
     public int getCrew() {
         return crew;
     }
-    
+
     /**
      * The long range of this weapon type. Infantry weapons calculate ranges based on the "infantry range" value rather than
      * explicit short/long/medium ranges
@@ -235,7 +235,7 @@ public abstract class InfantryWeapon extends Weapon {
     public int getSupportVeeSlots(Entity entity) {
         return 1;
     }
-    
+
     /*
      * (non-Javadoc)
      *
@@ -250,7 +250,7 @@ public abstract class InfantryWeapon extends Weapon {
                 || (waa.getEntity(game).isSupportVehicle()
                     && m.getLinked() != null
                     && m.getLinked().getType() != null
-                    && (((AmmoType) m.getLinked().getType()).getMunitionType() == AmmoType.M_INFERNO))))) {
+                    && (((AmmoType) m.getLinked().getType()).getMunitionType().contains(AmmoType.Munitions.M_INFERNO)))))) {
             return new InfantryHeatWeaponHandler(toHit, waa, game, manager);
         }
         return new InfantryWeaponHandler(toHit, waa, game, manager);

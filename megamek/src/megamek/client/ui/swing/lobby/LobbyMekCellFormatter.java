@@ -163,9 +163,11 @@ class LobbyMekCellFormatter {
         result.append("</FONT>");
 
         // Alpha Strike Unit Role
-        String unitRole = UnitRoleHandler.getRoleFor(entity).toString();
-        result.append(DOT_SPACER);
-        result.append(unitRole);
+        if (!entity.isUnitGroup()) {
+            String unitRole = UnitRoleHandler.getRoleFor(entity).toString();
+            result.append(DOT_SPACER);
+            result.append(unitRole);
+        }
         
         // Invalid Design
         if (!forceView) {
@@ -182,7 +184,7 @@ class LobbyMekCellFormatter {
             if (entity.isShutDown()) {
                 result.append(DOT_SPACER);
                 result.append(guiScaledFontHTML(GUIP.getWarningColor()));
-                result.append("\u23FC ").append(Messages.getString("ChatLounge.shutdown"));
+                result.append(WARNING_SIGN).append(Messages.getString("ChatLounge.shutdown"));
                 result.append("</FONT>");
             }
         }

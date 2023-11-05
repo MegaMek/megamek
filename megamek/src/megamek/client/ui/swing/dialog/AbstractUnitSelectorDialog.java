@@ -116,6 +116,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     protected boolean allowInvalid = true;
     protected int gameTechLevel = TechConstants.T_SIMPLE_INTRO;
     protected int techLevelDisplayType = TECH_LEVEL_DISPLAY_IS_CLAN;
+    protected boolean eraBasedTechLevel = false;
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     //endregion Variable Declarations
 
@@ -543,7 +544,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                     MechTableModel mechModel = entry.getModel();
                     MechSummary mech = mechModel.getMechSummary(entry.getIdentifier());
                     boolean techLevelMatch = false;
-                    int type = gameOptions.booleanOption(OptionsConstants.ALLOWED_ERA_BASED) ?
+                    int type = eraBasedTechLevel ?
                             mech.getType(allowedYear) : mech.getType();
                     for (int tl : nTypes) {
                         if (type == tl) {
@@ -600,7 +601,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
      */
     protected Entity refreshUnitView() {
         Entity selectedEntity = getSelectedEntity();
-        panePreview.updateDisplayedEntity(selectedEntity);
+        panePreview.updateDisplayedEntity(selectedEntity, getSelectedMechSummary());
         // Empty the unit preview icon if there's no entity selected
         if (selectedEntity == null) {
             labelImage.setIcon(null);
@@ -612,13 +613,11 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
      * @return the selected entity
      */
     public @Nullable Entity getSelectedEntity() {
-        int view = tableUnits.getSelectedRow();
-        if (view < 0) {
-            // selection got filtered away
+        MechSummary ms = getSelectedMechSummary();
+        if (ms == null) {
             return null;
         }
-        int selected = tableUnits.convertRowIndexToModel(view);
-        MechSummary ms = mechs[selected];
+
         try {
             // For some unknown reason the base path gets screwed up after you
             // print so this sets the source file to the full path.
@@ -628,6 +627,17 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                             + ": " + e.getMessage(), e);
             return null;
         }
+    }
+
+    /** @return The MechSummary for the selected unit. */
+    public @Nullable MechSummary getSelectedMechSummary() {
+        int view = tableUnits.getSelectedRow();
+        if (view < 0) {
+            // selection got filtered away
+            return null;
+        }
+        int selected = tableUnits.convertRowIndexToModel(view);
+        return mechs[selected];
     }
 
     @Override

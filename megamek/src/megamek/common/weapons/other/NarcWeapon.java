@@ -49,7 +49,7 @@ public abstract class NarcWeapon extends MissileWeapon {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
@@ -60,8 +60,8 @@ public abstract class NarcWeapon extends MissileWeapon {
             WeaponAttackAction waa, Game game, GameManager manager) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked().getType();
-        if ((atype.getMunitionType() == AmmoType.M_NARC_EX)
-                || (atype.getMunitionType() == AmmoType.M_EXPLOSIVE)) {
+        if ((atype.getMunitionType().contains(AmmoType.Munitions.M_NARC_EX))
+                || (atype.getMunitionType().contains(AmmoType.Munitions.M_EXPLOSIVE))) {
             return new NarcExplosiveHandler(toHit, waa, game, manager);
         }
         return new NarcHandler(toHit, waa, game, manager);

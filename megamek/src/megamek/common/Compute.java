@@ -22,6 +22,7 @@ import megamek.common.enums.AimingMode;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.IlluminationLevel;
 import megamek.common.options.OptionsConstants;
+import megamek.common.verifier.TestEntity;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
@@ -1213,9 +1214,9 @@ public class Compute {
                 || (wtype.getAmmoType() == AmmoType.T_LRM_IMP)
                 || (wtype.getAmmoType() == AmmoType.T_MML)) {
                 AmmoType atype = (AmmoType) weapon.getLinked().getType();
-                if (atype.getMunitionType() == AmmoType.M_TORPEDO) {
+                if (atype.getMunitionType().contains(AmmoType.Munitions.M_TORPEDO)) {
                     weaponRanges = wtype.getRanges(weapon);
-                } else if (atype.getMunitionType() == AmmoType.M_MULTI_PURPOSE) {
+                } else if (atype.getMunitionType().contains(AmmoType.Munitions.M_MULTI_PURPOSE)) {
                     weaponRanges = wtype.getRanges(weapon);
                     MPM = true;
                 }
@@ -1353,7 +1354,7 @@ public class Compute {
         if (isIndirect) {
             c3spotter = ae; // no c3 when using indirect fire
         }
-        
+
         if (isIndirect && indirectAttackImpossible(game, ae, target, wtype, weapon)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     Messages.getString("WeaponAttackAction.NoIndirectWithLOS"));
@@ -3049,7 +3050,7 @@ public class Compute {
             loaded_ammo = (AmmoType) weapon.getLinked().getType();
             if (((loaded_ammo.getAmmoType() == AmmoType.T_AC_LBX) || (loaded_ammo
                                                                               .getAmmoType() == AmmoType.T_AC_LBX_THB))
-                && (loaded_ammo.getMunitionType() == AmmoType.M_CLUSTER)) {
+                && (loaded_ammo.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER))) {
                 use_table = true;
             }
         }
@@ -3149,7 +3150,7 @@ public class Compute {
             if ((!ComputeECM.isAffectedByECM(attacker, attacker.getPosition(), g
                     .getEntity(waa.getTargetId()).getPosition(), allECMInfo))
                 && (wt.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE)
-                && (wt.hasFlag(WeaponType.F_MISSILE))) {
+                && (wt.hasFlag(WeaponType.F_MISSILE)) && null != at) {
                 // Check for linked artemis guidance system
                 if ((wt.getAmmoType() == AmmoType.T_LRM)
                         || (wt.getAmmoType() == AmmoType.T_LRM_IMP)
@@ -3165,11 +3166,11 @@ public class Compute {
                         // -> Hook for Artemis V Level 3 Clan tech here; use
                         // 1.30f multiplier when implemented
                         if (((weapon.curMode() == null) || !weapon.curMode().equals("Indirect"))
-                                && (at.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)) {
+                                && (at.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE))) {
                             fHits *= 1.2f;
                         }
                         if (((weapon.curMode() == null) || !weapon.curMode().equals("Indirect"))
-                                && (at.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE)) {
+                                && (at.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_V_CAPABLE))) {
                             fHits *= 1.3f;
                         }
                     }
@@ -3189,7 +3190,7 @@ public class Compute {
                             || (at.getAmmoType() == AmmoType.T_MML)
                             || (at.getAmmoType() == AmmoType.T_SRM)
                             || (at.getAmmoType() == AmmoType.T_SRM_IMP))
-                            && (at.getMunitionType() == AmmoType.M_NARC_CAPABLE)) {
+                            && (at.getMunitionType().contains(AmmoType.Munitions.M_NARC_CAPABLE))) {
                         fHits *= 1.2f;
                     }
                 }
@@ -3530,12 +3531,12 @@ public class Compute {
                                     || (abin_type.getAmmoType() == AmmoType.T_MML)
                                     || (abin_type.getAmmoType() == AmmoType.T_SRM)
                                     || (abin_type.getAmmoType() == AmmoType.T_SRM_IMP)))
-                                    && (abin_type.getMunitionType() == AmmoType.M_FRAGMENTATION))
+                                    && (abin_type.getMunitionType().contains(AmmoType.Munitions.M_FRAGMENTATION)))
                                     || (((abin_type.getAmmoType() == AmmoType.T_AC)
                                             || (abin_type.getAmmoType() == AmmoType.T_LAC)
                                             || (abin_type.getAmmoType() == AmmoType.T_AC_IMP)
                                             || (abin_type.getAmmoType() == AmmoType.T_PAC))
-                                            && (abin_type.getMunitionType() == AmmoType.M_FLECHETTE))) {
+                                            && (abin_type.getMunitionType().contains(AmmoType.Munitions.M_FLECHETTE)))) {
                                 ammo_multiple = target.isConventionalInfantry() ? 2.0 : 0.0;
                             }
 
@@ -3547,7 +3548,7 @@ public class Compute {
                             if (((abin_type.getAmmoType() == AmmoType.T_AC_LBX)
                                     || (abin_type.getAmmoType() == AmmoType.T_AC_LBX_THB)
                                     || (abin_type.getAmmoType() == AmmoType.T_SBGAUSS))
-                                    && (abin_type.getMunitionType() == AmmoType.M_CLUSTER)) {
+                                    && (abin_type.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER))) {
                                 if (target.getArmorRemainingPercent() <= 0.25) {
                                     ammo_multiple = 1.0 + (wtype.getRackSize() / 10.0);
                                 }
@@ -3566,7 +3567,7 @@ public class Compute {
                                     || (abin_type.getAmmoType() == AmmoType.T_LAC)
                                     || (abin_type.getAmmoType() == AmmoType.T_AC_IMP)
                                     || (abin_type.getAmmoType() == AmmoType.T_PAC))
-                                && (abin_type.getMunitionType() == AmmoType.M_ARMOR_PIERCING)) {
+                                && (abin_type.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING))) {
                                 if ((target instanceof Mech)
                                     || (target instanceof Tank)) {
                                     ammo_multiple = 1.0 + (wtype.getRackSize() / 10);
@@ -3583,7 +3584,7 @@ public class Compute {
                             if (((abin_type.getAmmoType() == AmmoType.T_SRM)
                                     || (abin_type.getAmmoType() == AmmoType.T_SRM_IMP)
                                     || (abin_type.getAmmoType() == AmmoType.T_MML))
-                                && (abin_type.getMunitionType() == AmmoType.M_INFERNO)) {
+                                && (abin_type.getMunitionType().contains(AmmoType.Munitions.M_INFERNO))) {
                                 ammo_multiple = 0.5;
                                 if (target instanceof Mech) {
                                     if ((target.infernos.getTurnsLeftToBurn() < 4)
@@ -3608,7 +3609,7 @@ public class Compute {
                             // one, give 'em one by making it an attractive
                             // option
                             if ((wtype.getAmmoType() == AmmoType.T_NARC)
-                                    && (abin_type.getMunitionType() == AmmoType.M_STANDARD)) {
+                                    && (abin_type.getMunitionType().contains(AmmoType.Munitions.M_STANDARD))) {
                                 if (!(target.isNarcedBy(shooter.getOwner().getTeam()))
                                         && !(target instanceof Infantry)) {
                                     ex_damage = 5.0;
@@ -3622,7 +3623,7 @@ public class Compute {
                             // one, give 'em one by making it an attractive
                             // option
                             if (wtype.getAmmoType() == AmmoType.T_INARC) {
-                                if ((abin_type.getMunitionType() == AmmoType.M_STANDARD)
+                                if ((abin_type.getMunitionType().contains(AmmoType.Munitions.M_STANDARD))
                                         && !(target instanceof Infantry)) {
                                     if (!(target.isINarcedBy(shooter.getOwner().getTeam()))) {
                                         ex_damage = 7.0;
@@ -3640,9 +3641,9 @@ public class Compute {
                                 // loads
                                 // when "true" double blind is implemented
                                 if ((abin_type.getAmmoType() == AmmoType.T_INARC)
-                                        && (abin_type.getMunitionType() == AmmoType.M_ECM)
+                                        && (abin_type.getMunitionType().contains(AmmoType.Munitions.M_ECM))
                                         && !(target instanceof Infantry)) {
-                                    if (!target.isINarcedWith(AmmoType.M_ECM)) {
+                                    if (!target.isINarcedWith(INarcPod.ECM)) {
                                         if (!(target.getC3MasterId() == Entity.NONE)
                                                 || target.hasC3M()
                                                 || target.hasC3MM()
@@ -3671,9 +3672,9 @@ public class Compute {
                                 // priority because they are usually out
                                 // front
                                 if ((abin_type.getAmmoType() == AmmoType.T_INARC)
-                                        && (abin_type.getMunitionType() == AmmoType.M_NEMESIS)
+                                        && (abin_type.getMunitionType().contains(AmmoType.Munitions.M_NEMESIS))
                                         && !(target instanceof Infantry)) {
-                                    if (!target.isINarcedWith(AmmoType.M_NEMESIS)) {
+                                    if (!target.isINarcedWith(INarcPod.NEMESIS)) {
                                         ex_damage = (double) (target.getWalkMP() + target.getJumpMP()) / 2;
                                     } else {
                                         ex_damage = 0.5;
@@ -4954,6 +4955,17 @@ public class Compute {
         }
 
         return range;
+
+    }
+
+    public static int getADARangeModifier(int distance) {
+        // +0 for same ground map / Low-Altitude hex
+        // +2 for 1 LAH away
+        // +4 for 2 LAH away
+        if (distance <= 0){
+            return 0;
+        }
+        return (((distance - 1) / Board.DEFAULT_BOARD_HEIGHT) * 2);
 
     }
 
@@ -6388,10 +6400,11 @@ public class Compute {
      * Used to get a human-readable string that represents the passed damage
      * type.
      *
-     * @param damageType
-     * @return
+     * @param damageType      The dmaageType constant
+     * @param burstMultiplier The multiplier for burst damage, used by machine gun arrays against conventional infantry
+     * @return A string representation of the damage type
      */
-    public static String getDamageTypeString(int damageType) {
+    public static String getDamageTypeString(int damageType, int burstMultiplier) {
         switch (damageType) {
             case WeaponType.WEAPON_DIRECT_FIRE:
                 return Messages.getString("WeaponType.DirectFire");
@@ -6405,6 +6418,7 @@ public class Compute {
             case WeaponType.WEAPON_CLUSTER_MISSILE_3D6:
                 return Messages.getString("WeaponType.Missile");
             case WeaponType.WEAPON_BURST_HALFD6:
+                return Messages.getString("WeaponType.BurstHalf");
             case WeaponType.WEAPON_BURST_1D6:
             case WeaponType.WEAPON_BURST_2D6:
             case WeaponType.WEAPON_BURST_3D6:
@@ -6413,7 +6427,8 @@ public class Compute {
             case WeaponType.WEAPON_BURST_6D6:
             case WeaponType.WEAPON_BURST_7D6:
             default:
-                return Messages.getString("WeaponType.Burst");
+                return String.format("%s (%dD6)", Messages.getString("WeaponType.Burst"),
+                        burstMultiplier * (damageType - WeaponType.WEAPON_BURST_HALFD6));
         }
     }
 
@@ -6436,8 +6451,31 @@ public class Compute {
      * @return
      */
     public static int directBlowInfantryDamage(double damage, int mos,
+               int damageType, boolean isNonInfantryAgainstMechanized,
+               boolean isAttackThruBuilding, int attackerId, Vector<Report> vReport) {
+        return directBlowInfantryDamage(damage, mos, damageType, isNonInfantryAgainstMechanized,
+                isAttackThruBuilding, attackerId, vReport, 1);
+    }
+
+    /**
+     * Method replicates the Non-Conventional Damage against Infantry damage
+     * table as well as shifting for direct blows. also adjust for non-infantry
+     * damaging mechanized infantry
+     *
+     * @param damage      The base amount of damage
+     * @param mos         The margin of success
+     * @param damageType  The damage class of the weapon, used to adjust damage against infantry
+     * @param isNonInfantryAgainstMechanized Whether this is a non-infantry attack against mechanized infantry
+     * @param isAttackThruBuilding Whether the attack is coming through a building hex
+     * @param attackerId  The entity id of the attacking unit
+     * @param vReport     The report messages vector
+     * @param mgaSize     For machine gun array attacks, the number of linked weapons. For other weapons this should be 1.
+     * @return The adjusted damage
+     */
+    public static int directBlowInfantryDamage(double damage, int mos,
             int damageType, boolean isNonInfantryAgainstMechanized,
-            boolean isAttackThruBuilding, int attackerId, Vector<Report> vReport) {
+            boolean isAttackThruBuilding, int attackerId, Vector<Report> vReport,
+            int mgaSize) {
 
         int origDamageType = damageType;
         damageType += mos;
@@ -6476,43 +6514,43 @@ public class Compute {
                 }
                 break;
             case WeaponType.WEAPON_BURST_1D6:
-                damage = Compute.d6();
+                damage = Compute.d6(mgaSize);
                 if (isAttackThruBuilding) {
                     damage *= 0.5;
                 }
                 break;
             case WeaponType.WEAPON_BURST_2D6:
-                damage = Compute.d6(2);
+                damage = Compute.d6(2 * mgaSize);
                 if (isAttackThruBuilding) {
                     damage *= 0.5;
                 }
                 break;
             case WeaponType.WEAPON_BURST_3D6:
-                damage = Compute.d6(3);
+                damage = Compute.d6(3 * mgaSize);
                 if (isAttackThruBuilding) {
                     damage *= 0.5;
                 }
                 break;
             case WeaponType.WEAPON_BURST_4D6:
-                damage = Compute.d6(4);
+                damage = Compute.d6(4 * mgaSize);
                 if (isAttackThruBuilding) {
                     damage *= 0.5;
                 }
                 break;
             case WeaponType.WEAPON_BURST_5D6:
-                damage = Compute.d6(5);
+                damage = Compute.d6(5 * mgaSize);
                 if (isAttackThruBuilding) {
                     damage *= 0.5;
                 }
                 break;
             case WeaponType.WEAPON_BURST_6D6:
-                damage = Compute.d6(6);
+                damage = Compute.d6(6 * mgaSize);
                 if (isAttackThruBuilding) {
                     damage *= 0.5;
                 }
                 break;
             case WeaponType.WEAPON_BURST_7D6:
-                damage = Compute.d6(7);
+                damage = Compute.d6(7 * mgaSize);
                 if (isAttackThruBuilding) {
                     damage *= 0.5;
                 }
@@ -6537,14 +6575,14 @@ public class Compute {
             r.subject = attackerId;
             r.indent(2);
 
-            r.add(getDamageTypeString(origDamageType));
+            r.add(getDamageTypeString(origDamageType, mgaSize));
             if (origDamageType != damageType) {
                 if (isAttackThruBuilding) {
                     r.messageId = 9973;
                 } else {
                     r.messageId = 9972;
                 }
-                r.add(getDamageTypeString(damageType));
+                r.add(getDamageTypeString(damageType, mgaSize));
             } else if (isAttackThruBuilding) {
                 r.messageId = 9971;
             } else {
@@ -6902,14 +6940,14 @@ public class Compute {
                 if (((atype.getAmmoType() == AmmoType.T_AC_LBX_THB)
                      || (atype.getAmmoType() == AmmoType.T_AC_LBX)
                      || (atype.getAmmoType() == AmmoType.T_SBGAUSS))
-                    && (atype.getMunitionType() == AmmoType.M_CLUSTER)) {
+                    && (atype.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER))) {
                     return false;
                 }
                 // Flak Ammo can't make aimed shots
                 if (((atype.getAmmoType() == AmmoType.T_AC)
                      || (atype.getAmmoType() == AmmoType.T_AC_ULTRA)
                      || (atype.getAmmoType() == AmmoType.T_AC_ULTRA_THB))
-                    && (atype.getMunitionType() == AmmoType.M_FLAK)) {
+                    && (atype.getMunitionType().contains(AmmoType.Munitions.M_FLAK))) {
                     return false;
                 }
 
@@ -6928,7 +6966,7 @@ public class Compute {
                     && ((atype.getAmmoType() == AmmoType.T_AC_LBX_THB)
                         || (atype.getAmmoType() == AmmoType.T_AC_LBX)
                         || (atype.getAmmoType() == AmmoType.T_SBGAUSS))
-                    && (atype.getMunitionType() == AmmoType.M_CLUSTER)) {
+                    && (atype.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER))) {
                     return false;
                 }
 
@@ -6937,7 +6975,7 @@ public class Compute {
                     && ((atype.getAmmoType() == AmmoType.T_AC)
                         || (atype.getAmmoType() == AmmoType.T_AC_ULTRA)
                         || (atype.getAmmoType() == AmmoType.T_AC_ULTRA_THB))
-                    && (atype.getMunitionType() == AmmoType.M_FLAK)) {
+                    && (atype.getMunitionType().contains(AmmoType.Munitions.M_FLAK))) {
                     return false;
                 }
                 break;
@@ -7197,15 +7235,15 @@ public class Compute {
         // are we in atmosphere?
         return en.isAirborne();
     }
-    
+
     /**
      * Worker function that checks if an indirect attack is impossible for the given passed-in arguments
      */
-    public static boolean indirectAttackImpossible(Game game, Entity ae, Targetable target, WeaponType wtype, Mounted weapon) {        
+    public static boolean indirectAttackImpossible(Game game, Entity ae, Targetable target, WeaponType wtype, Mounted weapon) {
         boolean isLandedSpheroid = ae.isAero() && ((IAero) ae).isSpheroid() && (ae.getAltitude() == 0) && game.getBoard().onGround();
         int altDif = target.getAltitude() - ae.getAltitude();
         boolean noseWeaponAimedAtGroundTarget = (weapon != null) && (weapon.getLocation() == Aero.LOC_NOSE) && (altDif < 1);
-        
+
         return game.getOptions().booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)
                     && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_INDIRECT_ALWAYS_POSSIBLE)
                     && LosEffects.calculateLOS(game, ae, target).canSee()

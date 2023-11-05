@@ -10647,7 +10647,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<unitType>Mech</unitType>
 		<quirk>imp_target_long</quirk>
 		<quirk>rugged_1</quirk>
-		<quirk>em_inter_whole</quirk>
+		<quirk>difficult_maintain</quirk>
 	</unit>
 
 	<unit>
@@ -16241,13 +16241,486 @@ Example: You can define quirks that affect all units of a given chassis and then
 
 	<unit>
 		<chassis>Vixen (Incubus)</chassis>
-		<model></model>
 		<unitType>Mech</unitType>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>RT</location>
+			<slot>2</slot>
+			<weaponName>CLERMediumLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>RT</location>
+			<slot>3</slot>
+			<weaponName>CLMG</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>RT</location>
+			<slot>4</slot>
+			<weaponName>CLMG</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>LT</location>
+			<slot>2</slot>
+			<weaponName>CLERMediumLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>LT</location>
+			<slot>3</slot>
+			<weaponName>CLMG</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>LT</location>
+			<slot>4</slot>
+			<weaponName>CLMG</weaponName>
+		</weaponQuirk>
 		<weaponQuirk>
 			<weaponQuirkName>jettison_capable</weaponQuirkName>
 			<location>RA</location>
 			<slot>4</slot>
 			<weaponName>CLLargePulseLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>RA</location>
+			<slot>4</slot>
+			<weaponName>CLLargePulseLaser</weaponName>
+		</weaponQuirk>
+	</unit>
+	
+	<unit>
+		<chassis>Vixen (Incubus)</chassis>
+		<model>2</model>
+		<unitType>Mech</unitType>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>RT</location>
+			<slot>2</slot>
+			<weaponName>CLERMediumLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>RT</location>
+			<slot>3</slot>
+			<weaponName>CLMG</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>RT</location>
+			<slot>4</slot>
+			<weaponName>CLMG</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>LT</location>
+			<slot>2</slot>
+			<weaponName>CLERMediumLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>LT</location>
+			<slot>3</slot>
+			<weaponName>CLMG</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>LT</location>
+			<slot>4</slot>
+			<weaponName>CLMG</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>jettison_capable</weaponQuirkName>
+			<location>RA</location>
+			<slot>4</slot>
+			<weaponName>CLERPPC</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>RA</location>
+			<slot>4</slot>
+			<weaponName>CLERPPC</weaponName>
+		</weaponQuirk>
+	</unit>
+	
+	<unit>
+		<chassis>Vixen (Incubus)</chassis>
+		<model>3</model>
+		<unitType>Mech</unitType>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>RT</location>
+			<slot>2</slot>
+			<weaponName>CLMediumPulseLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>RT</location>
+			<slot>3</slot>
+			<weaponName>CLMG</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>RT</location>
+			<slot>4</slot>
+			<weaponName>CLMG</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>LT</location>
+			<slot>2</slot>
+			<weaponName>CLMediumPulseLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>LT</location>
+			<slot>3</slot>
+			<weaponName>CLMG</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>LT</location>
+			<slot>4</slot>
+			<weaponName>CLMG</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>jettison_capable</weaponQuirkName>
+			<location>RA</location>
+			<slot>4</slot>
+			<weaponName>CLStreakSRM6</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>RA</location>
+			<slot>4</slot>
+			<weaponName>CLStreakSRM6</weaponName>
+		</weaponQuirk>
+	</unit>
+	
+	<unit>
+		<chassis>Vixen (Incubus)</chassis>
+		<model>4</model>
+		<unitType>Mech</unitType>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>RT</location>
+			<slot>2</slot>
+			<weaponName>CLMediumPulseLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>RT</location>
+			<slot>3</slot>
+			<weaponName>CLMicroPulseLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>RT</location>
+			<slot>4</slot>
+			<weaponName>CLERMicroLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>LT</location>
+			<slot>2</slot>
+			<weaponName>CLMediumPulseLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>LT</location>
+			<slot>3</slot>
+			<weaponName>CLMicroPulseLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>LT</location>
+			<slot>4</slot>
+			<weaponName>CLERMicroLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>jettison_capable</weaponQuirkName>
+			<location>RA</location>
+			<slot>4</slot>
+			<weaponName>CLHeavyLargeLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>RA</location>
+			<slot>4</slot>
+			<weaponName>CLHeavyLargeLaser</weaponName>
+		</weaponQuirk>
+	</unit>
+
+	<unit>
+		<chassis>Vixen (Incubus)</chassis>
+		<model>5</model>
+		<unitType>Mech</unitType>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>RT</location>
+			<slot>2</slot>
+			<weaponName>CLERMediumLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>RT</location>
+			<slot>3</slot>
+			<weaponName>CLLightMG</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>RT</location>
+			<slot>4</slot>
+			<weaponName>CLLightMG</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>LT</location>
+			<slot>2</slot>
+			<weaponName>CLERMediumLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>LT</location>
+			<slot>3</slot>
+			<weaponName>CLLightMG</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>LT</location>
+			<slot>4</slot>
+			<weaponName>CLLightMG</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>jettison_capable</weaponQuirkName>
+			<location>RA</location>
+			<slot>4</slot>
+			<weaponName>CLATM6</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>RA</location>
+			<slot>4</slot>
+			<weaponName>CLATM6</weaponName>
+		</weaponQuirk>
+	</unit>
+	
+	<unit>
+		<chassis>Vixen (Incubus)</chassis>
+		<model>6</model>
+		<unitType>Mech</unitType>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>RT</location>
+			<slot>4</slot>
+			<weaponName>CLERMicroLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>RT</location>
+			<slot>5</slot>
+			<weaponName>CLERMicroLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>RT</location>
+			<slot>6</slot>
+			<weaponName>CLERMicroLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>LT</location>
+			<slot>4</slot>
+			<weaponName>CLERMicroLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>LT</location>
+			<slot>5</slot>
+			<weaponName>CLERMicroLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>LT</location>
+			<slot>6</slot>
+			<weaponName>CLERMicroLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>RA</location>
+			<slot>3</slot>
+			<weaponName>CLERPPC</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>jettison_capable</weaponQuirkName>
+			<location>LA</location>
+			<slot>4</slot>
+			<weaponName>CLSRM6</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>LA</location>
+			<slot>4</slot>
+			<weaponName>CLSRM6</weaponName>
+		</weaponQuirk>
+	</unit>
+	
+	<unit>
+		<chassis>Vixen (Incubus)</chassis>
+		<model>7</model>
+		<unitType>Mech</unitType>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>RT</location>
+			<slot>2</slot>
+			<weaponName>CLERMediumLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>RT</location>
+			<slot>3</slot>
+			<weaponName>CLMG</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>RT</location>
+			<slot>4</slot>
+			<weaponName>CLMG</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>LT</location>
+			<slot>2</slot>
+			<weaponName>CLERMediumLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>LT</location>
+			<slot>3</slot>
+			<weaponName>CLMG</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>LT</location>
+			<slot>4</slot>
+			<weaponName>CLMG</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>jettison_capable</weaponQuirkName>
+			<location>RA</location>
+			<slot>4</slot>
+			<weaponName>CLUltraAC2</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>RA</location>
+			<slot>4</slot>
+			<weaponName>CLUltraAC2</weaponName>
+		</weaponQuirk>
+	</unit>
+	
+	<unit>
+		<chassis>Vixen (Incubus)</chassis>
+		<model>8</model>
+		<unitType>Mech</unitType>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>RT</location>
+			<slot>2</slot>
+			<weaponName>CLERMediumLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>RT</location>
+			<slot>3</slot>
+			<weaponName>CLMG</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>RT</location>
+			<slot>4</slot>
+			<weaponName>CLMG</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>LT</location>
+			<slot>2</slot>
+			<weaponName>CLERMediumLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>LT</location>
+			<slot>3</slot>
+			<weaponName>CLMG</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>LT</location>
+			<slot>4</slot>
+			<weaponName>CLMG</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>jettison_capable</weaponQuirkName>
+			<location>RA</location>
+			<slot>4</slot>
+			<weaponName>CLLRM20</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>RA</location>
+			<slot>4</slot>
+			<weaponName>CLLRM20</weaponName>
+		</weaponQuirk>
+	</unit>
+	
+	<unit>
+		<chassis>Vixen (Incubus)</chassis>
+		<model>9</model>
+		<unitType>Mech</unitType>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>RT</location>
+			<slot>4</slot>
+			<weaponName>CLERMediumPulseLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>RT</location>
+			<slot>6</slot>
+			<weaponName>CLAPGaussRifle</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>LT</location>
+			<slot>4</slot>
+			<weaponName>CLERMediumPulseLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>LT</location>
+			<slot>6</slot>
+			<weaponName>CLAPGaussRifle</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>LT</location>
+			<slot>7</slot>
+			<weaponName>CLAPGaussRifle</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>jettison_capable</weaponQuirkName>
+			<location>RA</location>
+			<slot>4</slot>
+			<weaponName>CLERLargePulseLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>RA</location>
+			<slot>4</slot>
+			<weaponName>CLERLargePulseLaser</weaponName>
 		</weaponQuirk>
 	</unit>
 
@@ -18894,21 +19367,21 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<chassis>Balac Strike VTOL</chassis>
 		<model>all</model>
 		<unitType>VTOL</unitType>
-		<quirk>vtol_rotor</quirk>
+		<quirk>vtol_rotor_coaxial</quirk>
 	</unit>
 
 	<unit>
 		<chassis>Bishop Transport VTOL</chassis>		
 		<unitType>VTOL</unitType>
 		<quirk>easy_pilot</quirk>
-		<quirk>vtol_rotor</quirk>
+		<quirk>vtol_rotor_dual</quirk>
 	</unit>
 
 	<unit>
 		<chassis>Cardinal Transport</chassis>
 		<model>all</model>
 		<unitType>VTOL</unitType>
-		<quirk>vtol_rotor</quirk>
+		<quirk>vtol_rotor_dual</quirk>
 	</unit>
 
 	<unit>
@@ -18924,7 +19397,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<unitType>VTOL</unitType>
 		<quirk>non_standard</quirk>
 		<quirk>obsolete</quirk>
-		<quirk>vtol_rotor</quirk>
+		<quirk>vtol_rotor_dual</quirk>
 	</unit>
 
 	<unit>
@@ -18933,13 +19406,13 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<unitType>VTOL</unitType>
 		<quirk>non_standard</quirk>
 		<quirk>obsolete</quirk>
-		<quirk>vtol_rotor</quirk>
+		<quirk>vtol_rotor_dual</quirk>
 	</unit>
 
 	<unit>
 		<chassis>Crane Heavy Transport</chassis>		
 		<unitType>VTOL</unitType>
-		<quirk>vtol_rotor</quirk>
+		<quirk>vtol_rotor_dual</quirk>
 	</unit>
 
 	<unit>
@@ -18955,7 +19428,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<model>all</model>
 		<unitType>VTOL</unitType>
 		<quirk>imp_com</quirk>
-		<quirk>vtol_rotor</quirk>
+		<quirk>vtol_rotor_coaxial</quirk>
 	</unit>
 
 	<unit>
@@ -18981,16 +19454,16 @@ Example: You can define quirks that affect all units of a given chassis and then
 
 	<unit>
 		<chassis>Hawk Moth Gunship</chassis>
-		<model>'Vedwandlung'</model>
+		<model>'Verwandlung'</model>
 		<unitType>VTOL</unitType>
-		<quirk>vtol_rotor</quirk>
+		<quirk>vtol_rotor_coaxial</quirk>
 	</unit>
 
 	<unit>
 		<chassis>Hawk Moth II Gunship</chassis>
 		<model>all</model>
 		<unitType>VTOL</unitType>
-		<quirk>vtol_rotor</quirk>
+		<quirk>vtol_rotor_coaxial</quirk>
 	</unit>
 
 
@@ -18998,7 +19471,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<chassis>Kamakiri Attack VTOL</chassis>
 		<model>all</model>
 		<unitType>VTOL</unitType>
-		<quirk>vtol_rotor</quirk>
+		<quirk>vtol_rotor_dual</quirk>
 		<quirk>hard_pilot</quirk>
 	</unit>
 
@@ -19006,7 +19479,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<chassis>Karnov UR Transport</chassis>
 		<model>(Heavy Stealth)</model>
 		<unitType>VTOL</unitType>
-		<quirk>vtol_rotor</quirk>
+		<quirk>vtol_rotor_dual</quirk>
 		<quirk>non_standard</quirk>
 	</unit>
 
@@ -19014,7 +19487,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<chassis>Karnov UR Transport</chassis>
 		<model>all</model>
 		<unitType>VTOL</unitType>
-		<quirk>vtol_rotor</quirk>
+		<quirk>vtol_rotor_dual</quirk>
 	</unit>
 
 	<unit>
@@ -19035,7 +19508,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<model>(Production)</model>
 		<unitType>VTOL</unitType>
 		<quirk>bad_rep_is</quirk>
-		<quirk>vtol_rotor</quirk>
+		<quirk>vtol_rotor_dual</quirk>
 		<quirk>imp_sensors</quirk>
 	</unit>
 
@@ -19049,7 +19522,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 	<unit>
 		<chassis>Red Kite Attack VTOL</chassis>		
 		<unitType>VTOL</unitType>
-		<quirk>vtol_rotor</quirk>
+		<quirk>vtol_rotor_dual</quirk>
 		<weaponQuirk>
 			<weaponQuirkName>ammo_feed_problems</weaponQuirkName>
 			<location>TU</location>
@@ -19097,7 +19570,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 	<unit>
 		<chassis>Skadi Swift Attack VTOL</chassis>		
 		<unitType>VTOL</unitType>
-		<quirk>vtol_rotor</quirk>
+		<quirk>vtol_rotor_dual</quirk>
 	</unit>
 
 	<unit>
@@ -19118,7 +19591,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<chassis>Warrior Attack Helicopter</chassis>
 		<model>all</model>
 		<unitType>VTOL</unitType>
-		<quirk>vtol_rotor</quirk>
+		<quirk>vtol_rotor_coaxial</quirk>
 	</unit>
 
 	<unit>

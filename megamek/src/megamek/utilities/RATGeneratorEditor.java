@@ -16,6 +16,7 @@ package megamek.utilities;
 import megamek.MMConstants;
 import megamek.client.ratgenerator.*;
 import megamek.client.ratgenerator.FactionRecord.TechCategory;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.util.UIUtil.FixedXPanel;
 import megamek.client.ui.swing.util.UIUtil.FixedYPanel;
 import megamek.common.Configuration;
@@ -266,7 +267,7 @@ public class RATGeneratorEditor extends JFrame {
         });
         unitSearchPanel.add(Box.createHorizontalStrut(15));
         unitSearchPanel.add(butMUL);
-        butMUL.addActionListener(e -> showMUL());
+        butMUL.addActionListener(e -> UIUtil.showMUL(currentMulId, this));
 
         tblMasterUnitList.setModel(masterUnitListModel);
         masterUnitListSorter = new TableRowSorter<>(masterUnitListModel);
@@ -308,18 +309,6 @@ public class RATGeneratorEditor extends JFrame {
         factionEditSide.add(Box.createVerticalStrut(5));
         factionEditSide.add(createUnitChassisEditor());
         return new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, unitContainer, factionEditSide);
-    }
-
-    private void showMUL() {
-        try {
-            if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)
-                    && currentMulId > 0) {
-                Desktop.getDesktop().browse(new URL(MMConstants.MUL_URL_PREFIX + currentMulId).toURI());
-            }
-        } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
-        }
     }
 
     private JComponent createCopyBetweenButtonPanel() {
@@ -1288,7 +1277,7 @@ public class RATGeneratorEditor extends JFrame {
                 if (row == 0) {
                     return "Salvage %";
                 } else if (row > factionRec.getRatingLevels().size() * CATEGORIES.length) {
-                    return WEIGHT_DIST_UNIT_TYPES[row - 1 - factionRec.getRatingLevels().size() * CATEGORIES.length];
+                    return UnitType.getTypeName(WEIGHT_DIST_UNIT_TYPES[row - 1 - factionRec.getRatingLevels().size() * CATEGORIES.length]);
                 } else {
                     return CATEGORIES[(row - 1) / factionRec.getRatingLevels().size()]
                             + " " + factionRec.getRatingLevels().get((row - 1) % factionRec.getRatingLevels().size());

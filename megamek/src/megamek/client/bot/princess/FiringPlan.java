@@ -38,17 +38,17 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
     private Targetable target;
     private int twist;
     private boolean flipArms;
-    
+
     FiringPlan() {
         setTwist(0);
         setUtility(0);
     }
-    
+
     FiringPlan(Targetable target) {
         this();
         this.target = target;
     }
-    
+
     FiringPlan(Targetable target, boolean flipArms) {
         this(target);
         this.flipArms = flipArms;
@@ -92,15 +92,15 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
      * Models the probability of each individual weapon getting a kill shot.
      * We treat each weapon shot as a Bernoulli trial and compute the probability
      * of the target surviving each shot.  We can then take 1 - surviveChance to
-     * get the chance of getting a kill.  This model doesn't take into 
-     * consideration multiple weapons hitting the same location. 
-     *   
-     * @return The odds of getting a kill based on the odds of each individual 
+     * get the chance of getting a kill.  This model doesn't take into
+     * consideration multiple weapons hitting the same location.
+     *
+     * @return The odds of getting a kill based on the odds of each individual
      *      weapon getting a kill.  The result will be between 0 and 1.
      */
     synchronized double getKillProbability() {
         double surviveProbability = 1;
-        
+
         for (WeaponFireInfo weaponFireInfo : this) {
             surviveProbability *= 1 - weaponFireInfo.getKillProbability();
         }
@@ -132,16 +132,16 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
         if (size() == 0) {
             return actionVector;
         }
-        
+
         if (getTwist() != 0) {
             actionVector.add(new TorsoTwistAction(get(0).getShooter().getId(),
                 FireControl.correctFacing(get(0).getShooter().getFacing() + getTwist())));
         }
-        
+
         if (flipArms) {
             actionVector.addElement(new FlipArmsAction(get(0).getShooter().getId(), flipArms));
         }
-        
+
         for (WeaponFireInfo weaponFireInfo : this) {
             actionVector.add(weaponFireInfo.getWeaponAttackAction());
         }
@@ -155,7 +155,7 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
         if (size() == 0) {
             return "Empty FiringPlan!";
         }
-        
+
         StringBuilder description = new StringBuilder("Firing Plan for ").append(get(0).getShooter().getChassis())
                                                                          .append(" at ");
         Set<Integer> targets = new HashSet<>();
@@ -166,13 +166,13 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
                 targets.add(weaponFireInfo.getTarget().getId());
             }
         }
-        
+
         // chop off the last ", "
         description.deleteCharAt(description.length() - 1);
         description.deleteCharAt(description.length() - 1);
-        
+
         description.append("; ").append(size()).append(" weapons fired ");
-        
+
         if (detailed) {
             for (WeaponFireInfo weaponFireInfo : this) {
                 description.append("\n\t\t").append(weaponFireInfo.getDebugDescription());
@@ -201,11 +201,11 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
     public void setTwist(int twist) {
         this.twist = twist;
     }
-    
+
     public boolean getFlipArms() {
         return flipArms;
     }
-    
+
     public void setFlipArms(boolean flipArms) {
         this.flipArms = flipArms;
     }
@@ -248,7 +248,7 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
             return true;
         }
     }
-    
+
     @Override
     public String toString() {
         String desc = "Utility: " + utility + " ";
@@ -300,7 +300,7 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
             if ((ammo1 != null) && (ammo1.getType() instanceof AmmoType)) {
                 AmmoType ammoType = (AmmoType) ammo1.getType();
                 if ((WeaponType.DAMAGE_BY_CLUSTERTABLE == weaponType1.getDamage())
-                        || (AmmoType.M_CLUSTER == ammoType.getMunitionType())) {
+                        || (ammoType.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER))) {
                     dmg1 = ammoType.getDamagePerShot();
                 }
             }
@@ -312,7 +312,7 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements Comparable<
             if ((ammo2 != null) && (ammo2.getType() instanceof AmmoType)) {
                 AmmoType ammoType = (AmmoType) ammo2.getType();
                 if ((WeaponType.DAMAGE_BY_CLUSTERTABLE == weaponType2.getDamage())
-                        || (AmmoType.M_CLUSTER == ammoType.getMunitionType())) {
+                        || (ammoType.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER))) {
                     dmg2 = ammoType.getDamagePerShot();
                 }
             }

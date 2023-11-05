@@ -859,10 +859,10 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
                 && (((WeaponType) mounted.getType()).getAmmoType() != AmmoType.T_NA)) {
             Mounted ammoMount = mounted.getLinked();
             waa.setAmmoId(ammoMount.getEntity().getEquipmentNum(ammoMount));
-            long ammoMunitionType = ((AmmoType) ammoMount.getType()).getMunitionType();
+            EnumSet<AmmoType.Munitions> ammoMunitionType = ((AmmoType) ammoMount.getType()).getMunitionType();
             waa.setAmmoMunitionType(ammoMunitionType);
             waa.setAmmoCarrier(ammoMount.getEntity().getId());
-            if (ammoMunitionType == AmmoType.M_VIBRABOMB_IV) {
+            if (ammoMunitionType.contains(AmmoType.Munitions.M_VIBRABOMB_IV)) {
                 VibrabombSettingDialog vsd = new VibrabombSettingDialog(clientgui.frame);
                 vsd.setVisible(true);
                 waa.setOtherAttackInfo(vsd.getSetting());

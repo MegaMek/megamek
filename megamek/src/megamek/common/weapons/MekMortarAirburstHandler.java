@@ -41,7 +41,7 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
 
         Mounted ammoUsed = ae.getEquipment(waa.getAmmoId());
         final AmmoType ammoType = (ammoUsed == null) ? null : (AmmoType) ammoUsed.getType();
-        if ((ammoType == null) || (ammoType.getMunitionType() != AmmoType.M_AIRBURST)) {
+        if ((ammoType == null) || (!ammoType.getMunitionType().contains(AmmoType.Munitions.M_AIRBURST))) {
             LogManager.getLogger().error("Not using airburst ammo!");
             return true;
         }
@@ -97,22 +97,22 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
         bMissed = roll < toHit.getValue();
         // Set Margin of Success/Failure.
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
-        
+
         if (bMissed) {
             // misses
-            r = new Report(3196);                    
+            r = new Report(3196);
             r.subject = subjectId;
             r.add(targetPos.getBoardNum());
-            vPhaseReport.addElement(r);     
+            vPhaseReport.addElement(r);
             return false;
         }
-        
+
         // Report hit
         r = new Report(3190);
         r.subject = subjectId;
         r.add(targetPos.getBoardNum());
         vPhaseReport.addElement(r);
-        
+
         // Report amount of damage
         r = new Report(9940);
         r.subject = subjectId;
@@ -121,7 +121,7 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
         r.add(wtype.getName() + " " + ammoType.getSubMunitionName());
         r.add(wtype.getRackSize());
         vPhaseReport.addElement(r);
-        
+
         Vector<Report> newReports;
         int numRounds = wtype.getRackSize();
         // Damage building directly
@@ -131,7 +131,7 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
             adjustReports(newReports);
             vPhaseReport.addAll(newReports);
         }
-        
+
         // Damage Terrain if applicable
         Hex h = game.getBoard().getHex(targetPos);
         newReports = new Vector<>();
@@ -143,18 +143,18 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
             r.add(numRounds);
             newReports.add(r);
         }
-        
+
         // Update hex and report any changes
         newReports.addAll(gameManager.tryClearHex(targetPos, numRounds, subjectId));
         adjustReports(newReports);
         vPhaseReport.addAll(newReports);
-        
+
         for (Entity target : game.getEntitiesVector(targetPos)) {
             // Ignore airborne units
             if (target.isAirborne() || target.isAirborneVTOLorWIGE()) {
                 continue;
             }
-            
+
             // Units in a building apply damage to building
             if (Compute.isInBuilding(game, target, targetPos)) {
                 Player tOwner = target.getOwner();
@@ -219,14 +219,14 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
                 }
             }
         }
-        
+
         return false;
     }
-    
+
     /**
      * Indents all reports in the collection, and adds a new line to the last
      * one.  This is used to make nested reports line-up and look nicer.
-     * 
+     *
      * @param reports
      */
     private void adjustReports(Vector<Report> reports) {

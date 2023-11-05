@@ -101,7 +101,7 @@ public class EntityImage {
     }
 
     /** The base (unit) image used for this icon. */
-    private Image base;
+    protected Image base;
     /** The wreck base image used for this icon. */
     private Image wreck;
     /** The damage decal image used for this icon. */
@@ -109,9 +109,9 @@ public class EntityImage {
     /** The smoke image used for this icon. */
     private Image smoke;
     /** A smaller icon used for the unit overview. */
-    private Image icon;
+    protected Image icon;
     private Camouflage camouflage;
-    private Image[] facings = new Image[6];
+    protected Image[] facings = new Image[6];
     private Image[] wreckFacings = new Image[6];
     private Component parent;
     /** The damage level, from none to crippled. */
@@ -133,10 +133,34 @@ public class EntityImage {
     /** True for tanks */
     private final boolean isTank;
 
+    public static EntityImage createIcon(Image base, Camouflage camouflage, Component comp, Entity entity) {
+        return createIcon(base, null, camouflage, comp, entity, -1, true);
+    }
+
+    public static EntityImage createLobbyIcon(Image base, Camouflage camouflage, Component comp, Entity entity) {
+        return createIcon(base, null, camouflage, comp, entity, -1, true);
+    }
+
+    public static EntityImage createIcon(Image base, Image wreck, Camouflage camouflage, Component comp,
+                                         Entity entity, int secondaryPos) {
+        return createIcon(base, wreck, camouflage, comp, entity, secondaryPos, false);
+    }
+
+    public static EntityImage createIcon(Image base, Image wreck, Camouflage camouflage, Component comp,
+                                         Entity entity, int secondaryPos, boolean preview) {
+        if (entity instanceof FighterSquadron) {
+            return new FighterSquadronIcon(base, wreck, camouflage, comp, entity, secondaryPos, preview);
+        } else {
+            return new EntityImage(base, wreck, camouflage, comp, entity, secondaryPos, preview);
+        }
+    }
+
+    // Used by MHQ
     public EntityImage(Image base, Camouflage camouflage, Component comp, Entity entity) {
         this(base, null, camouflage, comp, entity, -1, true);
     }
 
+    // Used by MHQ
     public EntityImage(Image base, Image wreck, Camouflage camouflage, Component comp,
                        Entity entity, int secondaryPos) {
         this(base, wreck, camouflage, comp, entity, secondaryPos, false);
@@ -253,7 +277,7 @@ public class EntityImage {
     }
 
     /** Rotates a given unit image into direction dir. */
-    private BufferedImage rotateImage(Image img, int dir) {
+    protected BufferedImage rotateImage(Image img, int dir) {
         double cx = base.getWidth(parent) / 2.0;
         double cy = base.getHeight(parent) / 2.0;
         AffineTransformOp xform = new AffineTransformOp(
@@ -307,7 +331,7 @@ public class EntityImage {
     }
 
     /** Applies the unit individual or player camouflage to the icon. */
-    private Image applyColor(Image image, int facing) {
+    protected Image applyColor(Image image, int facing) {
         if (image == null) {
             return null;
         }

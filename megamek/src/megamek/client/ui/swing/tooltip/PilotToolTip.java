@@ -20,6 +20,7 @@ import megamek.common.*;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.CrewSkillSummaryUtil;
+import megamek.common.util.ImageUtil;
 import org.apache.logging.log4j.LogManager;
 
 import javax.imageio.ImageIO;
@@ -39,7 +40,7 @@ import static megamek.client.ui.swing.util.UIUtil.uiQuirksColor;
 public final class PilotToolTip {
 
     /** the portrait base size */
-    private final static int PORTRAIT_BASESIZE = 72;
+    public final static int PORTRAIT_BASESIZE = 72;
     final static String BG_COLOR = "#313131";
 
     final static String TEMP_DIR = "/temp/";
@@ -60,11 +61,11 @@ public final class PilotToolTip {
     }
 
     public static StringBuilder getPilotTipDetailed(Entity entity, boolean showPortrait) {
-        return getPilotTip(entity, true, showPortrait, true);
+        return getPilotTip(entity, true, showPortrait, true, false);
     }
 
-    public static StringBuilder getPilotTipShort(Entity entity, boolean showPortrait) {
-        return getPilotTip(entity, false, showPortrait, false);
+    public static StringBuilder getPilotTipShort(Entity entity, boolean showPortrait, boolean report) {
+        return getPilotTip(entity, false, showPortrait, false, report);
     }
 
     public static StringBuilder getPilotTipLine(Entity entity) {
@@ -73,7 +74,7 @@ public final class PilotToolTip {
 
     // PRIVATE
 
-    private static StringBuilder getPilotTip(final Entity entity, boolean detailed, boolean showPortrait, boolean showDefaultPortrait) {
+    private static StringBuilder getPilotTip(final Entity entity, boolean detailed, boolean showPortrait, boolean showDefaultPortrait, boolean report) {
         String result = "";
 
         if (!detailed) {
@@ -87,7 +88,7 @@ public final class PilotToolTip {
         // The crew info (names etc.) and portraits, if shown, are placed
         // in a table side by side
         if (showPortrait) {
-            cols = crewPortraits(entity, showDefaultPortrait).toString();
+            cols = crewPortraits(entity, showDefaultPortrait, report).toString();
         }
 
         cols += crewInfoCell(entity);
@@ -185,7 +186,7 @@ public final class PilotToolTip {
     }
 
     /** Returns a tooltip part with crew portraits. */
-    private static StringBuilder crewPortraits(final Entity entity, boolean showDefaultPortrait) {
+    private static StringBuilder crewPortraits(final Entity entity, boolean showDefaultPortrait, boolean report) {
         Crew crew = entity.getCrew();
         String col = "";
 
@@ -199,17 +200,24 @@ public final class PilotToolTip {
                 float imgSize = UIUtil.scaleForGUI(PORTRAIT_BASESIZE);
                 imgSize /= 0.2f * (crew.getSlotCount() - 1) + 1;
                 Image portrait = crew.getPortrait(i).getBaseImage().getScaledInstance(-1, (int) imgSize, Image.SCALE_SMOOTH);
-                // Write the scaled portrait to file
-                // This is done to avoid using HTML rescaling on the portrait which does
-                // not do any smoothing and has extremely ugly results
-                String tempPath = Configuration.imagesDir() + TEMP_DIR + PORTRAIT_PREFIX + crew.getExternalIdAsString() + "_" + i + PNG_EXT;
-                File tempFile = new File(tempPath);
-                if (!tempFile.exists()) {
-                    BufferedImage bufferedImage = new BufferedImage(portrait.getWidth(null), portrait.getHeight(null), BufferedImage.TYPE_INT_RGB);
-                    bufferedImage.getGraphics().drawImage(portrait, 0, 0, null);
-                    ImageIO.write(bufferedImage, "PNG", tempFile);
+                String img = "";
+
+                if (!report) {
+                    // Write the scaled portrait to file
+                    // This is done to avoid using HTML rescaling on the portrait which does
+                    // not do any smoothing and has extremely ugly results
+                    String tempPath = Configuration.imagesDir() + TEMP_DIR + PORTRAIT_PREFIX + crew.getExternalIdAsString() + "_" + i + PNG_EXT;
+                    File tempFile = new File(tempPath);
+                    if (!tempFile.exists()) {
+                        BufferedImage bufferedImage = new BufferedImage(portrait.getWidth(null), portrait.getHeight(null), BufferedImage.TYPE_INT_RGB);
+                        bufferedImage.getGraphics().drawImage(portrait, 0, 0, null);
+                        ImageIO.write(bufferedImage, "PNG", tempFile);
+                    }
+                    img = "<IMG SRC=file:" + tempPath + ">";
+                } else {
+                    // span crew tag replaced later in Client.receiveReport with crew portrait
+                    img = "<span crew='" + entity.getId() + ":" + i + "'></span>";
                 }
-                String img = "<IMG SRC=file:" + tempPath + ">";
                 col += "<TD VALIGN=TOP>" + img + "</TD>";
             } catch (Exception e) {
                 LogManager.getLogger().error("", e);

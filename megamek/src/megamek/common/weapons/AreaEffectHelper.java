@@ -97,7 +97,7 @@ public class AreaEffectHelper {
         // this is relatively inefficient, but probably the least inefficient of the options
         // to acquire a list of the ammo types
         for (AmmoType at : AmmoType.getMunitionsFor(ammoType)) {
-            if (at.getMunitionType() == AmmoType.M_FAE) {
+            if (at.getMunitionType().contains(AmmoType.Munitions.M_FAE)) {
                 fuelAirBlastRadiusIndex.put(at.getInternalName(), blastRadius);
             }
         }
@@ -361,7 +361,7 @@ public class AreaEffectHelper {
 
         // flak against ASF should only hit Aeros, because their elevation
         // is actually altitude, so shouldn't hit VTOLs
-        if (asfFlak && !entity.isAero()) {
+        if (asfFlak && !(entity.isAirborne())) {
             return;
         }
 
@@ -393,14 +393,22 @@ public class AreaEffectHelper {
         // Work out hit table to use
         if (attackSource != null) {
             toHit.setSideTable(entity.sideTable(attackSource));
-            if ((ammo != null)
-                && (ammo.getMunitionType() == AmmoType.M_CLUSTER)
-                && attackSource.equals(coords)) {
-                if (entity instanceof Mech) {
-                    toHit.setHitTable(ToHitData.HIT_ABOVE);
-                } else if (entity instanceof Tank) {
-                    toHit.setSideTable(ToHitData.SIDE_FRONT);
-                    toHit.addModifier(2, "cluster artillery hitting a Tank");
+            if (ammo != null){
+                if(ammo.getMunitionType().contains(AmmoType.Munitions.M_ADA)){
+                    if(entity.isAero()) {
+                        toHit.setHitTable(ToHitData.HIT_BELOW);
+                    }
+                    // Also update cluster value to be identical to damage;
+                    // this should also be done for homing, I believe
+                    cluster = damage;
+                } else if (ammo.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER)
+                        && attackSource.equals(coords)) {
+                    if (entity instanceof Mech) {
+                        toHit.setHitTable(ToHitData.HIT_ABOVE);
+                    } else if (entity instanceof Tank) {
+                        toHit.setSideTable(ToHitData.SIDE_FRONT);
+                        toHit.addModifier(2, "cluster artillery hitting a Tank");
+                    }
                 }
             }
         }
@@ -418,13 +426,13 @@ public class AreaEffectHelper {
 
         // Entity/ammo specific damage modifiers
         if (ammo != null) {
-            if (ammo.getMunitionType() == AmmoType.M_CLUSTER) {
+            if (ammo.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER)) {
                 if (hex.containsTerrain(Terrains.FORTIFIED) && entity.isConventionalInfantry()) {
                     hits *= 2;
                 }
             }
             // fuel-air bombs do an additional 2x damage to infantry
-            else if (ammo.getMunitionType() == AmmoType.M_FLECHETTE) {
+            else if (ammo.getMunitionType().contains(AmmoType.Munitions.M_FLECHETTE)) {
 
                 // wheeled and hover tanks take movement critical
                 if ((entity instanceof Tank)
@@ -624,7 +632,12 @@ public class AreaEffectHelper {
             damage *= attackingBA;
             falloff = 2 * attackingBA;
         }
-        if (ammo.getMunitionType() == AmmoType.M_CLUSTER) {
+        // Air-Defense Arrow IV missiles
+        if (ammo.getAmmoType() == AmmoType.T_ARROW_IV
+            && ammo.getMunitionType().contains(AmmoType.Munitions.M_ADA)){
+            falloff = damage;
+        }
+        if (ammo.getMunitionType().contains(AmmoType.Munitions.M_CLUSTER)) {
             // non-arrow-iv cluster does 5 less than standard
             if (ammo.getAmmoType() != AmmoType.T_ARROW_IV) {
                 damage -= 5;
@@ -635,7 +648,7 @@ public class AreaEffectHelper {
             }
 
             clusterMunitionsFlag = true;
-        } else if (ammo.getMunitionType() == AmmoType.M_FLECHETTE) {
+        } else if (ammo.getMunitionType().contains(AmmoType.Munitions.M_FLECHETTE)) {
             switch (ammo.getAmmoType()) {
                 // for flechette, damage and falloff is number of d6, not absolute
                 // damage

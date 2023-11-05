@@ -267,7 +267,7 @@ public enum GamePhase {
                         || (ammoType.getAmmoType() == AmmoType.T_LONG_TOM)
                         || (ammoType.getAmmoType() == AmmoType.T_SNIPER)
                         || (ammoType.getAmmoType() == AmmoType.T_THUMPER))
-                        && (ammoType.getMunitionType() == AmmoType.M_HOMING)) {
+                        && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_HOMING))) {
                     return true;
                 }
             }
@@ -284,7 +284,7 @@ public enum GamePhase {
         // unit having left the field already, for example
         return game.getAttacksVector().stream()
                 .map(attackHandler -> attackHandler.getWaa())
-                .filter(Objects::nonNull).anyMatch(waa -> waa.getAmmoMunitionType() == AmmoType.M_HOMING);
+                .filter(Objects::nonNull).anyMatch(waa -> waa.getAmmoMunitionType().contains(AmmoType.Munitions.M_HOMING));
     }
 
     /**

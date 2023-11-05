@@ -51,7 +51,7 @@ public final class UnitToolTip {
     public static StringBuilder lobbyTip(InGameObject unit, Player localPlayer, MapSettings mapSettings) {
         if (unit instanceof Entity) {
             return getEntityTipTable((Entity) unit, localPlayer, true, false, mapSettings,
-                    true, false, false, false, false);
+                    true, false, false, false, false, false);
         } else if (unit instanceof AlphaStrikeElement) {
             // TODO : Provide a suitable tip
             return new StringBuilder("AlphaStrikeElement " + ((AlphaStrikeElement) unit).getName());
@@ -64,31 +64,31 @@ public final class UnitToolTip {
     public static StringBuilder getEntityTipLobby(Entity entity, Player localPlayer,
                                                   MapSettings mapSettings) {
         return getEntityTipTable(entity, localPlayer, true, false, mapSettings,
-                true, false, false, false, false);
+                true, false, false, false, false,false);
     }
 
     /** Returns the unit tooltip with values that are relevant in-game. */
     public static StringBuilder getEntityTipGame(Entity entity, Player localPlayer) {
         return getEntityTipTable(entity, localPlayer, false, true, null,
-                true, true, true, true, true);
+                true, true, true, true, true,false);
     }
 
     /** Returns the unit tooltip with values that are relevant in-game without the Pilot info. */
     public static StringBuilder getEntityTipUnitDisplay(Entity entity, Player localPlayer) {
         return getEntityTipTable(entity, localPlayer, true, false, null,
-                true, true, true, true, true);
+                true, true, true, true, true, false);
     }
 
     /** Returns the unit tooltip with minimal but useful information */
     public static StringBuilder getEntityTipAsTarget(Entity entity, Player localPlayer) {
         return getEntityTipTable(entity, localPlayer, false, false, null,
-                true, true, false, false, false );
+                true, true, false, false, false, false);
     }
 
     /** Returns the unit tooltip with minimal but useful information */
     public static StringBuilder getEntityTipReport(Entity entity) {
         return getEntityTipTable(entity, null, true, true, null,
-                false, true, false, false, false);
+                false, true, false, false, false, true);
     }
 
     // PRIVATE
@@ -96,7 +96,7 @@ public final class UnitToolTip {
     /** Assembles the whole unit tooltip. */
     private static StringBuilder getEntityTipTable(Entity entity, Player localPlayer,
            boolean details, boolean pilotInfo, @Nullable MapSettings mapSettings, boolean showName,
-           boolean inGameValue, boolean showBV, boolean showSensors, boolean showSeenBy) {
+           boolean inGameValue, boolean showBV, boolean showSensors, boolean showSeenBy, boolean report) {
         // Tooltip info for a sensor blip
         if (EntityVisibilityUtils.onlyDetectedBySensors(localPlayer, entity)) {
             String msg_senorreturn = Messages.getString("BoardView1.sensorReturn");
@@ -119,7 +119,7 @@ public final class UnitToolTip {
         result += deploymentWarnings(entity, mapSettings, details);
 
         // Pilot
-        result += getPilotInfo(entity, pilotInfo);
+        result += getPilotInfo(entity, pilotInfo, report);
 
         // An empty squadron should not show any info
         if (entity instanceof FighterSquadron && entity.getLoadedUnits().isEmpty()) {
@@ -227,9 +227,9 @@ public final class UnitToolTip {
         return result;
     }
 
-    private static String getPilotInfo(Entity entity, boolean pilotInfo) {
+    private static String getPilotInfo(Entity entity, boolean pilotInfo, boolean report) {
         if (pilotInfo) {
-            return PilotToolTip.getPilotTipShort(entity, GUIP.getshowPilotPortraitTT()).toString();
+            return PilotToolTip.getPilotTipShort(entity, GUIP.getshowPilotPortraitTT(), report).toString();
         } else {
             return "<BR>" + PilotToolTip.getPilotTipLine(entity).toString();
         }
@@ -1350,6 +1350,12 @@ public final class UnitToolTip {
             HeatDisplayHelper hdh = getHeatCapacityForDisplay(entity);
             sHeat += " / "+ hdh.heatCapacityStr;
             result += guiScaledFontHTML(GUIP.getColorForHeat(heat)) + sHeat + "</FONT>";
+
+            if (entity instanceof Mech && ((Mech) entity).hasActiveTSM()) {
+                result += DOT_SPACER;
+                String sTSM = "TSM";
+                result += guiScaledFontHTML(GUIP.getPrecautionColor()) + sTSM + "</FONT>";
+            }
         }
 
         String searchLight = entity.isUsingSearchlight() ? DOT_SPACER +"\uD83D\uDD26" : "";
@@ -1705,7 +1711,12 @@ public final class UnitToolTip {
         String l1= "";
 
         // Armor and Internals
-        if (!isGunEmplacement) {
+        if (entity instanceof FighterSquadron) {
+            String msg_armorcapital = Messages.getString("BoardView1.Tooltip.ArmorCapital");
+            String armorStr = entity.getTotalArmor() + " / " + entity.getTotalOArmor() + " " + msg_armorcapital;
+            String sArmorInternals = Messages.getString("BoardView1.Tooltip.FSQTotalArmor", armorStr);
+            l1 = "<Li style=\"list-style-type: none; list-style-image: none; margin: 0; padding: 0;\">" + sArmorInternals + "</Li>";
+        } else if (!isGunEmplacement) {
             String msg_unknown = Messages.getString("BoardView1.Tooltip.Unknown");
             String armorType = TROView.formatArmorType(entity, true).replace(msg_unknown, "");
             if (!armorType.isBlank()) {

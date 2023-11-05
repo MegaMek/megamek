@@ -48,7 +48,7 @@ public class LBXHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -82,7 +82,7 @@ public class LBXHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(Vector<Report>
      * vPhaseReport)
      */
@@ -140,7 +140,7 @@ public class LBXHandler extends AmmoWeaponHandler {
 
     @Override
     protected boolean usesClusterTable() {
-        return ((AmmoType) ammo.getType()).getMunitionType() == AmmoType.M_CLUSTER;
+        return ((AmmoType) ammo.getType()).getMunitionType().contains(AmmoType.Munitions.M_CLUSTER);
     }
 
 }

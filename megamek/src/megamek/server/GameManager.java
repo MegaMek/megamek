@@ -1076,7 +1076,7 @@ public class GameManager implements IGameManager {
             entity.setUsedSearchlight(false);
             entity.setCarefulStand(false);
             entity.setNetworkBAP(false);
-            
+
             // this flag is relevant only within the context of a single phase, but not between phases
             entity.setTurnInterrupted(false);
 
@@ -1682,26 +1682,30 @@ public class GameManager implements IGameManager {
 
             playerReport.addAll(bvReport(player.getColorForPlayer(), player.getId(), bvcPlayer, checkBlind));
 
-            BVCountHelper bvcTeam = teamsInfo.get(player.getTeam());
-            bvcTeam.bv += bvcPlayer.bv;
-            bvcTeam.bvInitial += bvcPlayer.bvInitial;
-            bvcTeam.bvFled += bvcPlayer.bvFled;
-            bvcTeam.unitsCount += bvcPlayer.unitsCount;
-            bvcTeam.unitsInitialCount += bvcPlayer.unitsInitialCount;
-            bvcTeam.unitsLightDamageCount += bvcPlayer.unitsLightDamageCount;
-            bvcTeam.unitsModerateDamageCount += bvcPlayer.unitsModerateDamageCount;
-            bvcTeam.unitsHeavyDamageCount += bvcPlayer.unitsHeavyDamageCount;
-            bvcTeam.unitsCrippledCount += bvcPlayer.unitsCrippledCount;
-            bvcTeam.unitsDestroyedCount += bvcPlayer.unitsDestroyedCount;
-            bvcTeam.unitsCrewEjectedCount += bvcPlayer.unitsCrewEjectedCount;
-            bvcTeam.unitsCrewTrappedCount += bvcPlayer.unitsCrewTrappedCount;
-            bvcTeam.unitsCrewKilledCount += bvcPlayer.unitsCrewKilledCount;
-            bvcTeam.unitsFledCount += bvcPlayer.unitsFledCount;
-            bvcTeam.ejectedCrewActiveCount += bvcPlayer.ejectedCrewActiveCount;
-            bvcTeam.ejectedCrewPickedUpByTeamCount += bvcPlayer.ejectedCrewPickedUpByTeamCount;
-            bvcTeam.ejectedCrewPickedUpByEnemyTeamCount += bvcPlayer.ejectedCrewPickedUpByEnemyTeamCount;
-            bvcTeam.ejectedCrewKilledCount += bvcPlayer.ejectedCrewKilledCount;
-            bvcTeam.ejectedCrewFledCount += bvcPlayer.ejectedCrewFledCount;
+            int playerTeam = player.getTeam();
+
+            if ((playerTeam != Player.TEAM_UNASSIGNED) && (playerTeam != Player.TEAM_NONE)) {
+                BVCountHelper bvcTeam = teamsInfo.get(playerTeam);
+                bvcTeam.bv += bvcPlayer.bv;
+                bvcTeam.bvInitial += bvcPlayer.bvInitial;
+                bvcTeam.bvFled += bvcPlayer.bvFled;
+                bvcTeam.unitsCount += bvcPlayer.unitsCount;
+                bvcTeam.unitsInitialCount += bvcPlayer.unitsInitialCount;
+                bvcTeam.unitsLightDamageCount += bvcPlayer.unitsLightDamageCount;
+                bvcTeam.unitsModerateDamageCount += bvcPlayer.unitsModerateDamageCount;
+                bvcTeam.unitsHeavyDamageCount += bvcPlayer.unitsHeavyDamageCount;
+                bvcTeam.unitsCrippledCount += bvcPlayer.unitsCrippledCount;
+                bvcTeam.unitsDestroyedCount += bvcPlayer.unitsDestroyedCount;
+                bvcTeam.unitsCrewEjectedCount += bvcPlayer.unitsCrewEjectedCount;
+                bvcTeam.unitsCrewTrappedCount += bvcPlayer.unitsCrewTrappedCount;
+                bvcTeam.unitsCrewKilledCount += bvcPlayer.unitsCrewKilledCount;
+                bvcTeam.unitsFledCount += bvcPlayer.unitsFledCount;
+                bvcTeam.ejectedCrewActiveCount += bvcPlayer.ejectedCrewActiveCount;
+                bvcTeam.ejectedCrewPickedUpByTeamCount += bvcPlayer.ejectedCrewPickedUpByTeamCount;
+                bvcTeam.ejectedCrewPickedUpByEnemyTeamCount += bvcPlayer.ejectedCrewPickedUpByEnemyTeamCount;
+                bvcTeam.ejectedCrewKilledCount += bvcPlayer.ejectedCrewKilledCount;
+                bvcTeam.ejectedCrewFledCount += bvcPlayer.ejectedCrewFledCount;
+            }
         }
 
         // Show teams BVs
@@ -3642,6 +3646,26 @@ public class GameManager implements IGameManager {
             send(createTurnVectorPacket());
         }
 
+        // Fighter Squadrons may become too big for the bay they're parked in
+        if ((loader instanceof FighterSquadron) && (loader.getTransportId() != Entity.NONE)) {
+            Entity carrier = game.getEntity(loader.getTransportId());
+            Transporter bay = carrier.getBay(loader);
+
+            if (bay.getUnused() < 1) {
+                if (getGame().getPhase().isLounge()) {
+                    // In the lobby, unload the squadron if too big
+                    loader.setTransportId(Entity.NONE);
+                    carrier.unload(loader);
+                    entityUpdate(carrier.getId());
+                } else {
+                    // Outside the lobby, reject the load
+                    entityUpdate(unit.getId());
+                    entityUpdate(loader.getId());
+                    return;
+                }
+            }
+        }
+
         // When loading an Aero into a squadron in the lounge, make sure the
         // loaded aero has the same bomb loadout as the squadron
         // We want to do this before the fighter is loaded: when the fighter
@@ -3649,6 +3673,8 @@ public class GameManager implements IGameManager {
         // adjusted based on the bomb loadout on the fighter.
         if (getGame().getPhase().isLounge() && (loader instanceof FighterSquadron)) {
             ((IBomber) unit).setBombChoices(((FighterSquadron) loader).getBombChoices());
+            ((FighterSquadron) loader).updateSkills();
+            ((FighterSquadron) loader).updateWeaponGroups();
         }
 
         // Load the unit. Do not check for elevation during deployment
@@ -4004,6 +4030,40 @@ public class GameManager implements IGameManager {
             r.choose(true);
             addReport(r);
             // suc = true;
+        }
+    }
+
+    /**
+     * Any aerospace unit that lands in a rough or rubble hex takes landing hear damage.
+     * @param aero         The landing unit
+     * @param vertical     Whether the landing is vertical
+     * @param touchdownPos The coordinates of the hex of touchdown
+     * @param finalPos     The coordinates of the hex in which the unit comes to a stop
+     * @param facing       The facing of the landing unit
+     * @
+     */
+    private void checkLandingTerrainEffects(IAero aero, boolean vertical, Coords touchdownPos, Coords finalPos, int facing) {
+        // Landing in a rough for rubble hex damages landing gear.
+        Set<Coords> landingPositions = aero.getLandingCoords(vertical, touchdownPos, facing);
+        if (landingPositions.stream().map(c -> game.getBoard().getHex(c)).filter(Objects::nonNull)
+                .anyMatch(h -> h.containsTerrain(Terrains.ROUGH) || h.containsTerrain(Terrains.RUBBLE))) {
+            aero.setGearHit(true);
+            Report r = new Report(9125);
+            r.subject = ((Entity) aero).getId();
+            addReport(r);
+        }
+        // Landing in water can destroy or immobilize the unit.
+        Hex hex = game.getBoard().getHex(finalPos);
+        if ((aero instanceof Aero) && hex.containsTerrain(Terrains.WATER) && !hex.containsTerrain(Terrains.ICE)
+                && (hex.terrainLevel(Terrains.WATER) > 0)
+                && !((Entity) aero).hasWorkingMisc(MiscType.F_FLOTATION_HULL)) {
+            if ((hex.terrainLevel(Terrains.WATER) > 1) || !(aero instanceof Dropship)) {
+                Report r = new Report(9702);
+                r.subject(((Entity) aero).getId());
+                r.addDesc((Entity) aero);
+                addReport(r);
+                addReport(destroyEntity((Entity) aero, "landing in deep water"));
+            }
         }
     }
 
@@ -6120,6 +6180,8 @@ public class GameManager implements IGameManager {
             rollTarget = a.checkLanding(md.getLastStepMovementType(), md.getFinalVelocity(),
                     md.getFinalCoords(), md.getFinalFacing(), false);
             attemptLanding(entity, rollTarget);
+            checkLandingTerrainEffects(a, true, md.getFinalCoords(),
+                    md.getFinalCoords().translated(md.getFinalFacing(), a.getLandingLength()), md.getFinalFacing());
             a.land();
             entity.setPosition(md.getFinalCoords().translated(md.getFinalFacing(),
                     a.getLandingLength()));
@@ -6137,6 +6199,7 @@ public class GameManager implements IGameManager {
             if (entity instanceof Dropship) {
                 applyDropShipLandingDamage(md.getFinalCoords(), (Dropship) a);
             }
+            checkLandingTerrainEffects(a, true, md.getFinalCoords(), md.getFinalCoords(), md.getFinalFacing());
             a.land();
             entity.setPosition(md.getFinalCoords());
             entity.setDone(true);
@@ -7607,21 +7670,15 @@ public class GameManager implements IGameManager {
 
             // check to see if we are a mech and we've moved OUT of fire
             Hex lastHex = game.getBoard().getHex(lastPos);
-            if (entity instanceof Mech) {
+            if (entity.tracksHeat() && !entity.isAirborne()) {
                 if (!lastPos.equals(curPos) && (prevStep != null)
-                        && ((lastHex.containsTerrain(Terrains.FIRE)
-                        && (prevStep.getElevation() <= 1))
-                        || (lastHex.containsTerrain(Terrains.MAGMA)
-                        && (prevStep.getElevation() == 0)))
+                        && ((lastHex.containsTerrain(Terrains.FIRE) && (prevStep.getElevation() <= 1))
+                        || (lastHex.containsTerrain(Terrains.MAGMA) && (prevStep.getElevation() == 0)))
                         && ((stepMoveType != EntityMovementType.MOVE_JUMP)
-                        // Bug #828741 -- jumping bypasses fire, but not
-                        // on the
-                        // first step
+                        // Bug #828741 -- jumping bypasses fire, but not on the first step
                         // getMpUsed -- total MP used to this step
                         // getMp -- MP used in this step
-                        // the difference will always be 0 on the "first
-                        // step"
-                        // of a jump,
+                        // the difference will always be 0 on the "first step" of a jump,
                         // and >0 on a step in the midst of a jump
                         || (0 == (step.getMpUsed() - step.getMp())))) {
                     int heat = 0;
@@ -7633,7 +7690,9 @@ public class GameManager implements IGameManager {
                     } else if (lastHex.terrainLevel(Terrains.MAGMA) == 2) {
                         heat += 5;
                     }
-                    if (((Mech) entity).hasIntactHeatDissipatingArmor()) {
+                    boolean isMekWithHeatDissipatingArmor = (entity instanceof Mech)
+                            && ((Mech) entity).hasIntactHeatDissipatingArmor();
+                    if (isMekWithHeatDissipatingArmor) {
                         heat /= 2;
                     }
                     entity.heatFromExternal += heat;
@@ -7642,7 +7701,7 @@ public class GameManager implements IGameManager {
                     r.addDesc(entity);
                     r.add(heat);
                     addReport(r);
-                    if (((Mech) entity).hasIntactHeatDissipatingArmor()) {
+                    if (isMekWithHeatDissipatingArmor) {
                         r = new Report(5550);
                         addReport(r);
                     }
@@ -8423,7 +8482,7 @@ public class GameManager implements IGameManager {
                     && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION))
                     || (entity instanceof TeleMissile)) {
                 int fuelUsed = ((IAero) entity).getFuelUsed(thrust);
-                
+
                 // if we're a gas hog, aerospace fighter and going faster than walking, then use 2x fuel
                 if (((overallMoveType == EntityMovementType.MOVE_RUN) ||
                         (overallMoveType == EntityMovementType.MOVE_SPRINT) ||
@@ -8431,7 +8490,7 @@ public class GameManager implements IGameManager {
                         entity.hasQuirk(OptionsConstants.QUIRK_NEG_GAS_HOG)) {
                     fuelUsed *= 2;
                 }
-                
+
                 a.useFuel(fuelUsed);
             }
 
@@ -8688,7 +8747,7 @@ public class GameManager implements IGameManager {
                     }
                 }
             } else if (!(prevStep.climbMode() && curHex.containsTerrain(Terrains.BRIDGE))
-                    && !(entity.getMovementMode() == EntityMovementMode.HOVER)) {
+                    && !(entity.getMovementMode().isHoverOrWiGE())) {
                 rollTarget = entity.checkWaterMove(waterLevel, overallMoveType);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     // For falling elevation, Entity must not on hex surface
@@ -9147,6 +9206,7 @@ public class GameManager implements IGameManager {
 
             } else {
                 ((Mech) entity).setJustMovedIntoIndustrialKillingWater(false);
+                ((Mech) entity).setShouldDieAtEndOfTurnBecauseOfWater(false);
             }
         }
     }
@@ -18621,6 +18681,24 @@ public class GameManager implements IGameManager {
                 }
             }
 
+            if (entity.tracksHeat() && (entityHex != null) && entityHex.containsTerrain(Terrains.FIRE) && (entityHex.getFireTurn() > 0)
+                    && (entity.getElevation() <= 1) && (entity.getAltitude() == 0)) {
+                int heatToAdd = 5;
+                boolean isMekWithHeatDissipatingArmor = (entity instanceof Mech) && ((Mech) entity).hasIntactHeatDissipatingArmor();
+                if (isMekWithHeatDissipatingArmor) {
+                    heatToAdd /= 2;
+                }
+                entity.heatFromExternal += heatToAdd;
+                r = new Report(5030);
+                r.add(heatToAdd);
+                r.subject = entity.getId();
+                addReport(r);
+                if (isMekWithHeatDissipatingArmor) {
+                    r = new Report(5550);
+                    addReport(r);
+                }
+            }
+
             // put in ASF heat build-up first because there are few differences
             if (entity instanceof Aero && !(entity instanceof ConvFighter)) {
                 ServerHelper.resolveAeroHeat(game, entity, vPhaseReport, rhsReports, radicalHSBonus, hotDogMod, this);
@@ -18731,22 +18809,6 @@ public class GameManager implements IGameManager {
             // Add +5 Heat if the hex you're in is on fire
             // and was on fire for the full round.
             if (entityHex != null) {
-                if (entityHex.containsTerrain(Terrains.FIRE) && (entityHex.getFireTurn() > 0)
-                        && (entity.getElevation() <= 1)) {
-                    int heatToAdd = 5;
-                    if (((Mech) entity).hasIntactHeatDissipatingArmor()) {
-                        heatToAdd /= 2;
-                    }
-                    entity.heatFromExternal += heatToAdd;
-                    r = new Report(5030);
-                    r.add(heatToAdd);
-                    r.subject = entity.getId();
-                    addReport(r);
-                    if (((Mech) entity).hasIntactHeatDissipatingArmor()) {
-                        r = new Report(5550);
-                        addReport(r);
-                    }
-                }
                 int magma = entityHex.terrainLevel(Terrains.MAGMA);
                 if ((magma > 0) && (entity.getElevation() == 0)) {
                     int heatToAdd = 5 * magma;
@@ -19481,6 +19543,11 @@ public class GameManager implements IGameManager {
      * @param coordinates the coordinate location of the fire
      */
     private void doFlamingDamage(final Entity entity, final Coords coordinates) {
+        // TO:AR p.41,p.43
+        if (entity.tracksHeat() || entity.isDropShip()) {
+            return;
+        }
+
         Report r;
         int boomRoll = Compute.d6(2);
 
@@ -19502,16 +19569,6 @@ public class GameManager implements IGameManager {
             r.indent(1);
             r.addDesc(entity);
             addReport(r);
-            return;
-        }
-
-        // mechs shouldn't be here, but just in case
-        if (entity instanceof Mech) {
-            return;
-        }
-
-        // fire has no effect on dropships
-        if (entity instanceof Dropship) {
             return;
         }
 
@@ -22613,7 +22670,7 @@ public class GameManager implements IGameManager {
                                 if (m.getType() instanceof AmmoType) {
                                     AmmoType at = (AmmoType) m.getType();
                                     if (((at.getAmmoType() == AmmoType.T_SRM) || (at.getAmmoType() == AmmoType.T_MML))
-                                            && (at.getMunitionType() == AmmoType.M_INFERNO)) {
+                                            && (at.getMunitionType().contains(AmmoType.Munitions.M_INFERNO))) {
                                         infernos += at.getRackSize() * m.getHittableShotsLeft();
                                     }
                                 } else if (m.getType().hasFlag(MiscType.F_FIRE_RESISTANT)) {
@@ -27387,8 +27444,8 @@ public class GameManager implements IGameManager {
                 || (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_SRM_IMP)
                 || (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_IATM)
                 || (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_MML))
-                && (((AmmoType) mounted.getType()).getMunitionType() == AmmoType.M_INFERNO)
-                && (mounted.getHittableShotsLeft() > 0)) {
+                && (((AmmoType) mounted.getType()).getMunitionType().contains(AmmoType.Munitions.M_INFERNO)
+                && (mounted.getHittableShotsLeft() > 0))) {
             en.heatBuildup += Math.min(mounted.getExplosionDamage(), 30);
         }
 
@@ -27407,16 +27464,16 @@ public class GameManager implements IGameManager {
                 || (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_SRM_IMP)
                 || (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_LRM)
                 || (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_LRM_IMP))
-                && (((AmmoType) mounted.getType()).getMunitionType() == AmmoType.M_SMOKE_WARHEAD)
-                && (mounted.getHittableShotsLeft() > 0)) {
+                && (((AmmoType) mounted.getType()).getMunitionType().contains(AmmoType.Munitions.M_SMOKE_WARHEAD)
+                && (mounted.getHittableShotsLeft() > 0))) {
             damage = ((mounted.getExplosionDamage()) / 2);
         }
         // coolant explodes for 2 damage and reduces heat by 3
         if ((mounted.getType() instanceof AmmoType)
                 && ((((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_VEHICLE_FLAMER)
                 || (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_HEAVY_FLAMER))
-                && (((AmmoType) mounted.getType()).getMunitionType() == AmmoType.M_COOLANT)
-                && (mounted.getHittableShotsLeft() > 0)) {
+                && (((AmmoType) mounted.getType()).getMunitionType().contains(AmmoType.Munitions.M_COOLANT)
+                && (mounted.getHittableShotsLeft() > 0))) {
             damage = 2;
             en.coolFromExternal += 3;
         }
@@ -27459,7 +27516,7 @@ public class GameManager implements IGameManager {
                             // Dead-Fire ammo bins are designed not to explode
                             // from the chain reaction
                             // Of Critted Launchers with DFM or HotLoaded ammo.
-                            && (((AmmoType) ammo.getType()).getMunitionType() != AmmoType.M_DEAD_FIRE)) {
+                            && !(((AmmoType) ammo.getType()).getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE))) {
                         ammoExploded++;
                         vDesc.addAll(this.explodeEquipment(en, loc, ammo));
                         break;
@@ -27575,7 +27632,7 @@ public class GameManager implements IGameManager {
                 if ((atype.getAmmoType() == AmmoType.T_COOLANT_POD)
                         || (((atype.getAmmoType() == AmmoType.T_VEHICLE_FLAMER)
                         || (atype.getAmmoType() == AmmoType.T_HEAVY_FLAMER))
-                        && (atype.getMunitionType() == AmmoType.M_COOLANT))) {
+                        && (atype.getMunitionType().contains(AmmoType.Munitions.M_COOLANT)))) {
                     continue;
                 }
                 // ignore empty, destroyed, or missing bins
@@ -29456,6 +29513,14 @@ public class GameManager implements IGameManager {
         if ((oldEntity != null) && (!oldEntity.getOwner().isEnemyOf(game.getPlayer(connIndex)))) {
             game.setEntity(entity.getId(), entity);
             entityUpdate(entity.getId());
+            if (entity.isPartOfFighterSquadron()) {
+                // Update the stats of any Squadrons that the new units are part of
+                FighterSquadron squadron = (FighterSquadron) game.getEntity(entity.getTransportId());
+                squadron.updateSkills();
+                squadron.updateWeaponGroups();
+                squadron.updateSensors();
+                entityUpdate(squadron.getId());
+            }
             // In the chat lounge, notify players of customizing of unit
             if (game.getPhase().isLounge()) {
                 sendServerChat(ServerLobbyHelper.entityUpdateMessage(entity, game));
@@ -29483,6 +29548,14 @@ public class GameManager implements IGameManager {
                 game.setEntity(entity.getId(), entity);
                 sendServerChat(ServerLobbyHelper.entityUpdateMessage(entity, game));
                 newEntities.add(game.getEntity(entity.getId()));
+                if (entity.isPartOfFighterSquadron()) {
+                    // Update the stats of any Squadrons that the new units are part of
+                    FighterSquadron squadron = (FighterSquadron) game.getEntity(entity.getTransportId());
+                    squadron.updateSkills();
+                    squadron.updateWeaponGroups();
+                    squadron.updateSensors();
+                    newEntities.add(squadron);
+                }
             }
         }
         send(new Packet(PacketCommand.ENTITY_MULTIUPDATE, newEntities));
@@ -30452,8 +30525,8 @@ public class GameManager implements IGameManager {
                 if (mounted.getType() instanceof AmmoType) {
                     AmmoType atype = (AmmoType) mounted.getType();
                     if (!atype.isExplosive(mounted)
-                            || ((atype.getMunitionType() != AmmoType.M_INFERNO)
-                            && (atype.getMunitionType() != AmmoType.M_IATM_IIW))) {
+                            || (!(atype.getMunitionType().contains(AmmoType.Munitions.M_INFERNO))
+                            && !(atype.getMunitionType().contains(AmmoType.Munitions.M_IATM_IIW)))) {
                         continue;
                     }
                     // ignore empty, destroyed, or missing bins
@@ -31981,7 +32054,11 @@ public class GameManager implements IGameManager {
         int damage = 0;
         PhysicalResult pr = new PhysicalResult();
         ToHitData toHit = new ToHitData();
-        pr.roll = Compute.d6(2);
+        if (aaa instanceof PhysicalAttackAction && ae.getCrew() != null) {
+            pr.roll = ae.getCrew().rollPilotingSkill();
+        } else {
+            pr.roll = Compute.d6(2);
+        }
         pr.aaa = aaa;
         if (aaa instanceof BrushOffAttackAction) {
             BrushOffAttackAction baa = (BrushOffAttackAction) aaa;
@@ -31995,7 +32072,11 @@ public class GameManager implements IGameManager {
             damage = BrushOffAttackAction.getDamageFor(ae, BrushOffAttackAction.LEFT);
             pr.damageRight = BrushOffAttackAction.getDamageFor(ae, BrushOffAttackAction.RIGHT);
             baa.setArm(arm);
-            pr.rollRight = Compute.d6(2);
+            if (ae.getCrew() != null) {
+                pr.rollRight = ae.getCrew().rollPilotingSkill();
+            } else {
+                pr.rollRight = Compute.d6(2);
+            }
         } else if (aaa instanceof ChargeAttackAction) {
             ChargeAttackAction caa = (ChargeAttackAction) aaa;
             toHit = caa.toHit(game);
@@ -32085,7 +32166,11 @@ public class GameManager implements IGameManager {
             }
             pr.damageRight = damageRight;
             pr.toHitRight = toHitRight;
-            pr.rollRight = Compute.d6(2);
+            if (ae.getCrew() != null) {
+                pr.rollRight = ae.getCrew().rollPilotingSkill();
+            } else {
+                pr.rollRight = Compute.d6(2);
+            }
         } else if (aaa instanceof PushAttackAction) {
             PushAttackAction paa = (PushAttackAction) aaa;
             toHit = paa.toHit(game);
@@ -33974,7 +34059,7 @@ public class GameManager implements IGameManager {
                 && !(flak && (((altitude > hex.terrainLevel(Terrains.BLDG_ELEV))
                 || (altitude > hex.terrainLevel(Terrains.BRIDGE_ELEV)))))) {
             bldgAbsorbs = bldg.getAbsorbtion(coords);
-            if (!((ammo != null) && (ammo.getMunitionType() == AmmoType.M_FLECHETTE))) {
+            if (!((ammo != null) && (ammo.getMunitionType().contains(AmmoType.Munitions.M_FLECHETTE)))) {
                 int actualDamage = damage;
 
                 if (isFuelAirBomb) {

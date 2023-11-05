@@ -312,11 +312,11 @@ public class FighterSquadron extends Aero {
                     // Sensors destroyed. Check the next fighter
                     continue;
                 }
-                if (fighter.getActiveSensor().isBAP()) {
-                    //BAP active. Check the next fighter
-                    continue;
-                }
                 if (fighter.getActiveSensor() != null) {
+                    if (fighter.getActiveSensor().isBAP()) {
+                        //BAP active. Check the next fighter
+                        continue;
+                    }
                     for (Sensor sensor : fighter.getSensors()) {
                         getSensors().add(sensor);
                     }
@@ -335,8 +335,8 @@ public class FighterSquadron extends Aero {
     public void updateWeaponGroups() {
         // first we need to reset all the weapons in our existing mounts to zero
         // until proven otherwise
-        for (String key : weaponGroups.keySet()) {
-            getEquipment(weaponGroups.get(key)).setNWeapons(0);
+        for (Integer group : weaponGroups.values()) {
+            getEquipment(group).setNWeapons(0);
         }
         // now collect a hash of all the same weapons in each location by id
         Map<String, Integer> groups = new HashMap<>();
@@ -732,6 +732,16 @@ public class FighterSquadron extends Aero {
 
     @Override
     public boolean isUnitGroup() {
+        return true;
+    }
+
+    @Override
+    public boolean isFighter() {
+        return false;
+    }
+
+    @Override
+    public boolean isCapitalScale() {
         return true;
     }
 }

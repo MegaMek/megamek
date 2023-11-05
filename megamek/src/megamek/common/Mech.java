@@ -346,6 +346,12 @@ public abstract class Mech extends Entity {
         return UnitType.MEK;
     }
 
+    @Override
+    public CrewType defaultCrewType() {
+        return (cockpitType == COCKPIT_COMMAND_CONSOLE) || (cockpitType == COCKPIT_SUPERHEAVY_COMMAND_CONSOLE)
+                || (cockpitType == COCKPIT_SMALL_COMMAND_CONSOLE) ? CrewType.COMMAND_CONSOLE : CrewType.SINGLE;
+    }
+
     /**
      * @return if this mech cannot stand up from hulldown
      */
@@ -1021,7 +1027,8 @@ public abstract class Mech extends Entity {
                 mp = mpBoosters.calculateSprintMP(getWalkMP(mpCalculationSetting));
             }
         } else {
-            mp = super.getSprintMP(mpCalculationSetting);
+            // normally, sprint MP is just 2x walk speed
+            mp = getWalkMP(mpCalculationSetting) * 2;
         }
 
         return Math.max(0, mp - hardenedArmorMPReduction());
@@ -4130,6 +4137,20 @@ public abstract class Mech extends Entity {
                 || (hex.terrainLevel(Terrains.JUNGLE) > 2);
     }
 
+    @Override
+    public boolean isLocationDeadly(Coords c) {
+        Hex hex = game.getBoard().getHex(c);
+
+        if (this.isIndustrial()
+                && !this.hasEnvironmentalSealing()
+                && (this.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)
+                && hex.terrainLevel(Terrains.WATER) >= 2) {
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * Get an '.mtf' file representation of the mech. This string can be
      * directly written to disk as a file and later loaded by the MtfFile class.
@@ -5380,6 +5401,17 @@ public abstract class Mech extends Entity {
      */
     public boolean shouldDieAtEndOfTurnBecauseOfWater() {
         return shouldDieAtEndOfTurnBecauseOfWater;
+    }
+
+    /**
+     * set if this mech should die at the end of turn because it's an IndustrialMech
+     * without environmental sealing that moved into water last round and stayed
+      * there?
+     *
+     * @param moved
+     */
+    public void setShouldDieAtEndOfTurnBecauseOfWater(boolean moved) {
+        shouldDieAtEndOfTurnBecauseOfWater = moved;
     }
 
     /**

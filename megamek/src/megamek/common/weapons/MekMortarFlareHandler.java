@@ -46,7 +46,7 @@ public class MekMortarFlareHandler extends AmmoWeaponHandler {
 
         Mounted ammoUsed = ae.getEquipment(waa.getAmmoId());
         final AmmoType ammoType = (ammoUsed == null) ? null : (AmmoType) ammoUsed.getType();
-        if ((ammoType == null) || ammoType.getMunitionType() != AmmoType.M_FLARE) {
+        if ((ammoType == null) || !ammoType.getMunitionType().contains(AmmoType.Munitions.M_FLARE)) {
             LogManager.getLogger().error("Trying to use a Mek Mortar Flare with non-flare ammo");
             return true;
         }
@@ -103,7 +103,7 @@ public class MekMortarFlareHandler extends AmmoWeaponHandler {
         // Set Margin of Success/Failure.
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
         int duration = wtype.getRackSize() * 2;
-        
+
         if (!bMissed) {
             r = new Report(3190);
             r.subject = subjectId;
@@ -114,7 +114,7 @@ public class MekMortarFlareHandler extends AmmoWeaponHandler {
             targetPos = Compute.scatter(targetPos, 1);
             if (game.getBoard().contains(targetPos)) {
                 // misses and scatters to another hex
-                r = new Report(3195);                    
+                r = new Report(3195);
                 r.subject = subjectId;
                 r.add(targetPos.getBoardNum());
                 vPhaseReport.addElement(r);

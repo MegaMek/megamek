@@ -252,12 +252,18 @@ public class RandomArmyCreator {
             }
 
             //ignoring infantry, BA and Proto for advancedSearch filter
-            if (((!m.getUnitType().equals(UnitType.getTypeName(UnitType.INFANTRY)))
-                    && (!m.getUnitType().equals(UnitType.getTypeName(UnitType.PROTOMEK)))
-                    && (!m.getUnitType().equals(UnitType.getTypeName(UnitType.BATTLE_ARMOR))))
-                    && (p.advancedSearchFilter != null && !MechSearchFilter.isMatch(m, p.advancedSearchFilter))
-                    && p.asPanel.matches(m))
-            {
+            if (!m.getUnitType().equals(UnitType.getTypeName(UnitType.INFANTRY))
+                    && !m.getUnitType().equals(UnitType.getTypeName(UnitType.PROTOMEK))
+                    && !m.getUnitType().equals(UnitType.getTypeName(UnitType.BATTLE_ARMOR))
+                    && (p.advancedSearchFilter != null && !MechSearchFilter.isMatch(m, p.advancedSearchFilter))) {
+                continue;
+            }
+
+            //ignoring infantry, BA and Proto for AS filter
+            if (!m.getUnitType().equals(UnitType.getTypeName(UnitType.INFANTRY))
+                && !m.getUnitType().equals(UnitType.getTypeName(UnitType.PROTOMEK))
+                && !m.getUnitType().equals(UnitType.getTypeName(UnitType.BATTLE_ARMOR))
+                && !p.asPanel.matches(m)) {
                 continue;
             }
 

@@ -13,7 +13,6 @@
  */
 package megamek.server;
 
-import jdk.javadoc.doclet.Reporter;
 import megamek.MMConstants;
 import megamek.MegaMek;
 import megamek.client.bot.princess.BehaviorSettings;
@@ -15828,13 +15827,13 @@ public class GameManager implements IGameManager {
                     false, false, throughFront));
             if (((Protomech) ae).isEDPCharged()) {
                 r = new Report(3701);
-                Roll diceRoll = Compute.rollD6(2);
-                int rollValue = diceRoll.getIntValue();
-                rollReport = diceRoll.getReport();
-                String rollCalc = rollValue + " - 2]";
-                rollValue -= 2;
-                rollCalc = rollValue + " [" + rollCalc;
-                r.addDataWithTooltip(rollCalc, rollReport);
+                Roll diceRoll2 = Compute.rollD6(2);
+                int rollValue2 = diceRoll2.getIntValue();
+                String rollReport2 = diceRoll2.getReport();
+                String rollCalc2 = rollValue2 + " - 2]";
+                rollValue2 -= 2;
+                rollCalc2 = rollValue2 + " [" + rollCalc2;
+                r.addDataWithTooltip(rollCalc2, rollReport2);
                 r.newlines = 0;
                 vPhaseReport.add(r);
 
@@ -15850,7 +15849,7 @@ public class GameManager implements IGameManager {
                             targetTrooper.isRear(), 0, false, false, 0));
                 } else if (te instanceof Mech) {
                     if (((Mech) te).isIndustrial()) {
-                        if (rollValue >= 8) {
+                        if (rollValue2 >= 8) {
                             r = new Report(3705);
                             r.addDesc(te);
                             r.add(4);
@@ -15864,7 +15863,7 @@ public class GameManager implements IGameManager {
                             te.setTaserInterference(2, 4, true);
                         }
                     } else {
-                        if (rollValue >= 11) {
+                        if (rollValue2 >= 11) {
                             r = new Report(3705);
                             r.addDesc(te);
                             r.add(3);
@@ -15881,7 +15880,7 @@ public class GameManager implements IGameManager {
                     }
                 } else if ((te instanceof Protomech) || (te instanceof Tank)
                         || (te instanceof Aero)) {
-                    if (rollValue >= 8) {
+                    if (rollValue2 >= 8) {
                         r = new Report(3705);
                         r.addDesc(te);
                         r.add(4);
@@ -16155,15 +16154,15 @@ public class GameManager implements IGameManager {
         r.subject = ae.getId();
         r.addDesc(ae);
         addReport(r);
-        final Roll diceRoll = Compute.rollD6(2);
-        int rollValue = diceRoll.getIntValue();
-        rollReport = diceRoll.getReport();
+        final Roll diceRoll2 = Compute.rollD6(2);
+        int rollValue2 = diceRoll2.getIntValue();
+        String rollReport2 = diceRoll2.getReport();
         r = new Report(2190);
         r.subject = ae.getId();
         r.add(rollData.getValueAsString());
         r.add(rollData.getDesc());
-        r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
-        if (rollValue < rollData.getValue()) {
+        r.addDataWithTooltip(String.valueOf(rollValue2), rollReport2);
+        if (rollValue2 < rollData.getValue()) {
             r.choose(false);
             addReport(r);
             addReport(doEntityFall(ae, rollData));
@@ -16609,17 +16608,17 @@ public class GameManager implements IGameManager {
                 && (te.getArmor(hit) > 0)
                 && (te.getArmorType(hit.getLocation()) != EquipmentType.T_ARMOR_HARDENED)
                 && (te.getArmorType(hit.getLocation()) != EquipmentType.T_ARMOR_FERRO_LAMELLOR)) {
-            Roll diceRoll = Compute.rollD6(2);
-            int rollValue = diceRoll.getIntValue();
-            rollReport = diceRoll.getReport();
+            Roll diceRoll2 = Compute.rollD6(2);
+            int rollValue2 = diceRoll2.getIntValue();
+            String rollReport2 = diceRoll2.getReport();
             // Pierce checking report
             r = new Report(4021);
             r.indent(2);
             r.subject = ae.getId();
             r.add(te.getLocationAbbr(hit));
-            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+            r.addDataWithTooltip(String.valueOf(rollValue2), rollReport2);
             addReport(r);
-            if (rollValue >= 10) {
+            if (rollValue2 >= 10) {
                 hit.makeGlancingBlow();
                 addReport(damageEntity(te, hit, 1, false, DamageType.NONE,
                         true, false, throughFront));
@@ -16672,9 +16671,9 @@ public class GameManager implements IGameManager {
                     && !te.isLocationDoomed(loc));
 
             if (mightTrip) {
-                Roll diceRoll = Compute.rollD6(2);
-                int rollValue = diceRoll.getIntValue();
-                rollReport = diceRoll.getReport();
+                Roll diceRoll3 = Compute.rollD6(2);
+                int rollValue3 = diceRoll3.getIntValue();
+                String rollReport3 = diceRoll3.getReport();
                 int toHitValue = toHit.getValue();
                 String toHitDesc = toHit.getDesc();
                 if ((ae instanceof Mech) && ((Mech) ae).hasActiveTSM(false)) {
@@ -16687,12 +16686,12 @@ public class GameManager implements IGameManager {
                 r.add(ae.getShortName());
                 r.add(te.getShortName());
                 r.addDataWithTooltip(String.valueOf(toHitValue), toHitDesc);
-                r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+                r.addDataWithTooltip(String.valueOf(rollValue3), rollReport3);
                 r.indent(2);
                 r.newlines = 0;
                 addReport(r);
 
-                if (rollValue >= toHitValue) {
+                if (rollValue3 >= toHitValue) {
                     r = new Report(2270);
                     r.subject = ae.getId();
                     r.newlines = 0;
@@ -17825,14 +17824,14 @@ public class GameManager implements IGameManager {
         }
 
         // steel yourself for attack
-        Roll diceRoll = Compute.rollD6(2);
-        int rollValue = diceRoll.getIntValue();
-        rollReport = diceRoll.getReport();
+        Roll diceRoll2 = Compute.rollD6(2);
+        int rollValue2 = diceRoll2.getIntValue();
+        String rollReport2 = diceRoll2.getReport();
         r = new Report(9020);
         r.subject = ae.getId();
-        r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+        r.addDataWithTooltip(String.valueOf(rollValue2), rollReport2);
 
-        if (rollValue >= 11) {
+        if (rollValue2 >= 11) {
             r.choose(true);
             addReport(r);
         } else {
@@ -26508,18 +26507,18 @@ public class GameManager implements IGameManager {
                     r.add(a.getCrew().getOptions().intOption(OptionsConstants.EDGE));
                     vDesc.add(r);
                     // Reroll
-                    diceRoll = Compute.rollD6(2);
-                    rollValue = diceRoll.getIntValue();
-                    rollReport = diceRoll.getReport();
+                    Roll diceRoll2 = Compute.rollD6(2);
+                    int rollValue2 = diceRoll2.getIntValue();
+                    String rollReport2 = diceRoll2.getReport();
                     // and report the new results
                     r = new Report(9149);
                     r.subject = a.getId();
                     r.indent(3);
                     r.add(capitalMissile);
-                    r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
-                    r.choose(rollValue >= capitalMissile);
+                    r.addDataWithTooltip(String.valueOf(rollValue2), rollReport2);
+                    r.choose(rollValue2 >= capitalMissile);
                     vDesc.add(r);
-                    if (rollValue < capitalMissile) {
+                    if (rollValue2 < capitalMissile) {
                         // We might be vaporized by the damage itself, but no additional effect
                         return;
                     }

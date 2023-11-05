@@ -22,9 +22,9 @@ import java.util.StringJoiner;
  */
 public class InfantryMount {
     public enum BeastSize {
-        LARGE(1, 21, 0, 0, true, true, 0),
-        VERY_LARGE(2, 7, -1, 2, true, false, 1),
-        MONSTROUS(4, 2, -2, 3, false, false, 2);
+        LARGE(1, 21, 0, 0, true, true, 0, "BeastSize.large"),
+        VERY_LARGE(2, 7, -1, 2, true, false, 1, "BeastSize.very_large"),
+        MONSTROUS(4, 2, -2, 3, false, false, 2, "BeastSize.monstrous");
 
         /** Maximum number of troopers that can be mounted on each beast. For values > 2,
          * each creature is a separate squad. */
@@ -41,10 +41,11 @@ public class InfantryMount {
         public final boolean canMakeSwarmAttacks;
         /** Additional MP required to enter a building hex. The building takes twice this much CF damage. */
         public final int buildingMP;
+        private final String messageId;
 
         BeastSize(int troopsPerCreature, int creaturesPerPlatoon, int toHitMod,
                   int supportWeaponsPerCreature, boolean canMakeLegAttacks,
-                  boolean canMakeSwarmAttacks, int buildingMP) {
+                  boolean canMakeSwarmAttacks, int buildingMP, String messageId) {
             this.troopsPerCreature = troopsPerCreature;
             this.creaturesPerPlatoon = creaturesPerPlatoon;
             this.toHitMod = toHitMod;
@@ -52,6 +53,7 @@ public class InfantryMount {
             this.canMakeLegAttacks = canMakeLegAttacks;
             this.canMakeSwarmAttacks = canMakeSwarmAttacks;
             this.buildingMP = buildingMP;
+            this.messageId = messageId;
         }
 
         /**
@@ -59,6 +61,10 @@ public class InfantryMount {
          */
         public int buildingDamage() {
             return buildingMP * 2;
+        }
+
+        public String displayName() {
+            return Messages.getString(messageId);
         }
     }
 

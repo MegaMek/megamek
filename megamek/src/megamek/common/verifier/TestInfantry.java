@@ -253,7 +253,7 @@ public class TestInfantry extends TestEntity {
                 break;
         }
         if (mount != null) {
-            max = Math.max(max, mount.getSize().creaturesPerPlatoon * mount.getSize().troopsPerCreature);
+            max = Math.min(max, mount.getSize().creaturesPerPlatoon * mount.getSize().troopsPerCreature);
         }
         if (engOrMountain) {
             max = Math.min(max, 20);

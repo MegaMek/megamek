@@ -1485,6 +1485,11 @@ public class Infantry extends Entity {
                 setOriginalJumpMP(mount.getMP());
             }
             setArmorDamageDivisor(mount.getDamageDivisor());
+        } else {
+            EquipmentType armorKit = getArmorKit();
+            if (armorKit != null) {
+                setArmorDamageDivisor(((MiscType) armorKit).getDamageDivisor());
+            }
         }
     }
 

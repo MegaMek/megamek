@@ -14,13 +14,14 @@
  */
 package megamek.common;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.StringJoiner;
 
 /**
  * Stats for beast mounted infantry units. See TO:AU&E, p. 106
  */
-public class InfantryMount {
+public class InfantryMount implements Serializable {
     public enum BeastSize {
         LARGE(1, 21, 0, 0, true, true, 0, "BeastSize.large"),
         VERY_LARGE(2, 7, -1, 2, true, false, 1, "BeastSize.very_large"),

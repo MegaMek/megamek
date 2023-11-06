@@ -1243,7 +1243,6 @@ public class Infantry extends Entity {
             } catch (LocationFullException ex) {
                 LogManager.getLogger().error("", ex);
             }
-            damageDivisor = ((MiscType) armorKit).getDamageDivisor();
             encumbering = (armorKit.getSubType() & MiscType.S_ENCUMBERING) != 0;
             spaceSuit = (armorKit.getSubType() & MiscType.S_SPACE_SUIT) != 0;
             dest = (armorKit.getSubType() & MiscType.S_DEST) != 0;
@@ -1251,10 +1250,15 @@ public class Infantry extends Entity {
             sneak_ir = (armorKit.getSubType() & MiscType.S_SNEAK_IR) != 0;
             sneak_ecm = (armorKit.getSubType() & MiscType.S_SNEAK_ECM) != 0;
         }
+        calcDamageDivisor();
     }
 
     public double calcDamageDivisor() {
-        double divisor = damageDivisor;
+        double divisor = 1.0;
+        EquipmentType armorKit = getArmorKit();
+        if (armorKit != null) {
+            divisor = ((MiscType) armorKit).getDamageDivisor();
+        }
         // TSM implant reduces divisor to 0.5 if no other armor is worn
         if ((divisor == 1.0) && hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
             divisor = 0.5;
@@ -1262,6 +1266,9 @@ public class Infantry extends Entity {
         // Dermal armor adds one to the divisor, cumulative with armor kit and TSM implant
         if (hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
             divisor += 1.0;
+        }
+        if (mount != null) {
+            divisor += mount.getDamageDivisor() - 1;
         }
         return divisor;
     }
@@ -1486,12 +1493,8 @@ public class Infantry extends Entity {
                 setOriginalJumpMP(mount.getMP());
             }
             setArmorDamageDivisor(mount.getDamageDivisor());
-        } else {
-            EquipmentType armorKit = getArmorKit();
-            if (armorKit != null) {
-                setArmorDamageDivisor(((MiscType) armorKit).getDamageDivisor());
-            }
         }
+        calcDamageDivisor();
     }
 
     public @Nullable InfantryMount getMount() {

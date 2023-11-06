@@ -1,4 +1,10 @@
 size 100 78
+tag "LunarTheme (Auto)"
+tag "Cliffs (Auto)"
+tag "Roads (Auto)"
+tag "HighHills (Auto)"
+tag "Woods (Auto)"
+tag "MediumUrban (Auto)"
 hex 0101 0 "bldg_elev:30;bldg_armor:100;building:5:12;bldg_cf:150" "lunar"
 hex 0201 0 "bldg_elev:30;bldg_armor:100;building:5:50;bldg_cf:150" "lunar"
 hex 0301 0 "bldg_elev:30;bldg_armor:100;building:5:20;bldg_cf:150" "lunar"

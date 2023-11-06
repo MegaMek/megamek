@@ -1,8 +1,8 @@
 size 48 51
 option exit_roads_to_pavement false
 tag "Rough (Auto)"
-tag "Cliffs (Auto)"
 tag "Water (Auto)"
+tag "Cliffs (Auto)"
 tag "Roads (Auto)"
 tag "Ocean (Auto)"
 tag "HighHills (Auto)"

@@ -1,8 +1,8 @@
 size 48 34
 option exit_roads_to_pavement false
 tag "GrassTheme (Auto)"
-tag "Roads (Auto)"
 tag "Fields (Auto)"
+tag "Roads (Auto)"
 tag "Flat (Auto)"
 tag "Woods (Auto)"
 hex 0101 0 "road:1:36" "grass"

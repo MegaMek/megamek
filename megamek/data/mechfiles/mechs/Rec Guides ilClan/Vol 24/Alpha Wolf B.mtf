@@ -151,6 +151,15 @@ IS Stealth
 -Empty-
 -Empty-
 
+overview:<p>The Alpha Wolf, an agile Assault OmniMech engineered by Clan Wolf, marks the clan's third totemic 'Mech. Initially delayed due to a concentrated effort on rejuvenating the Wolf Touman, its production commenced at the dawn of 3150. Drawing inspiration and components from the Warwolf, Timber Wolf, and Wulfen, this unit epitomizes a paradigm shift in Clan military doctrine, notably with the integration of Stealth Armor, aiming for enhanced defensive capabilities amidst battlefield adversities.</p>
+
+capabilities:<p>Envisioned as an amalgam of the Warwolf and Timber Wolf within an assault 'Mech framework, the Alpha Wolf incorporates the stealth armor from the Wulfen. While the incorporation of stealth armor on an assault 'Mech initially garnered skepticism, its efficacy in scrambling enemy targeting systems, thereby prolonging the Alpha Wolf's survivability in direct confrontations, justified the design choice. This armor, rather than facilitating traditional stealth roles like scouting or infiltration, accentuates the Alpha Wolf's prowess in standup battles.</p>
+
+deployment:<p>This brawler configuration relies on a Gauss rifle and two large pulse lasers, with two SRM-6 launchers enhanced by Artemis V for close-range firepower. All explosive components are safeguarded by CASE II.</p>
+
+history:<p>The journey of the Alpha Wolf began as a much-delayed venture, which could have seen the light of day much earlier if not for the intense focus on bolstering the Wolf Touman. The interim saw the production of the Stormwolf, with the Alpha Wolf only entering full production recently. However, the delay bore fruit as it allowed the Empire's scientists to react to rival advancements, like the Jade Phoenix, ensuring that when the Alpha Wolf was finally unveiled, it truly epitomized the pinnacle of Clan Wolf's engineering prowess.</p>
+<p>The pre-production Alpha Wolf units were swiftly dispatched among front-line Clusters for field testing, showcasing a bid for potential independence from auxiliary services. The recent battle for Skye served as its trial by fire, where two new prototypes in the A configuration demonstrated exceptional combat efficacy. Their stellar performance against the Turkina Keshik and the Falcons validated the stealth armor's operational advantage, further manifested in subsequent encounters with a Jade Phoenix and a Shrike. The Alpha Wolf's deployments in the Republic's counterattack into Wolf Empire space and the confrontation on Gacrux further underscored its combat potential, marking it as a valuable asset in Clan Wolf's arsenal.</p> 
+
 manufacturer:Kallon Weapon Industries
 primaryfactory:Thermopolis
 systemmanufacturer:CHASSIS:AW-4c Endo-Composite
@@ -158,4 +167,5 @@ systemmanufacturer:ENGINE:Light Force 360 XL
 systemmanufacturer:ARMOR:Imstar V-Stealth
 systemmanufacturer:COMMUNICATIONS:Garret T11-b with ECM Suite
 systemmanufacturer:TARGETING:Sync Tracker (39-42071)
+
 

@@ -1,36 +1,35 @@
-Version:1.0
+Version:1.3
 Black Hawk-KU
 BHKU-O
 mul id:345
-
 Config:Biped Omnimech
-TechBase:Inner Sphere
-Era:3055
-Source:TRO: 3058
-Rules Level:2
+techbase:Inner Sphere
+era:3055
+source:TRO: 3058
+rules level:2
 
-Mass:60
-Engine:300 XL Engine(IS)
-Structure:IS Standard
-Myomer:Standard
+mass:60
+engine:300 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:16 Double
-Base Chassis Heat Sinks:12
-Walk MP:5
-Jump MP:5
+heat sinks:16 IS Double
+base chassis heat sinks:12
+walk mp:5
+jump mp:5
 
-Armor:Standard(Inner Sphere)
-LA Armor:20
-RA Armor:20
-LT Armor:20
-RT Armor:20
-CT Armor:30
-HD Armor:9
-LL Armor:28
-RL Armor:28
-RTL Armor:8
-RTR Armor:8
-RTC Armor:9
+armor:Standard(Inner Sphere)
+LA armor:20
+RA armor:20
+LT armor:20
+RT armor:20
+CT armor:30
+HD armor:9
+LL armor:28
+RL armor:28
+RTL armor:8
+RTR armor:8
+RTC armor:9
 
 Weapons:12
 Medium Pulse Laser, Left Arm
@@ -50,11 +49,11 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISMediumPulseLaser (omnipod)
-ISMediumPulseLaser (omnipod)
-Medium Laser (omnipod)
-Medium Laser (omnipod)
-Medium Laser (omnipod)
+ISMediumPulseLaser (OMNIPOD)
+ISMediumPulseLaser (OMNIPOD)
+Medium Laser (OMNIPOD)
+Medium Laser (OMNIPOD)
+Medium Laser (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -64,11 +63,11 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISMediumPulseLaser (omnipod)
-ISMediumPulseLaser (omnipod)
-Medium Laser (omnipod)
-Medium Laser (omnipod)
-Medium Laser (omnipod)
+ISMediumPulseLaser (OMNIPOD)
+ISMediumPulseLaser (OMNIPOD)
+Medium Laser (OMNIPOD)
+Medium Laser (OMNIPOD)
+Medium Laser (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -81,10 +80,10 @@ Fusion Engine
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-Small Laser (omnipod)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+Small Laser (OMNIPOD)
 -Empty-
 -Empty-
 
@@ -95,10 +94,10 @@ Fusion Engine
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-Small Laser (omnipod)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+ISDoubleHeatSink (OMNIPOD)
+Small Laser (OMNIPOD)
 -Empty-
 -Empty-
 
@@ -157,3 +156,20 @@ Jump Jet
 -Empty-
 -Empty-
 -Empty-
+
+overview:<p>The Black Hawk-KU, an Inner Sphere adaptation of the Clan's Black Hawk OmniMech, emerged from the Draconis Combine's endeavor to bridge the technological divide post the battle for Wolcott. The design, although ten tons heavier, mirrors its Clan counterpart's performance profile, showcasing a blend of agility, speed, and lethal armament flexibility.</p>
+
+capabilities:<p>The Black Hawk-KU is recognized for its speed and agility despite its size, making it a formidable and versatile weapons platform. Its design supports various standard configurations courtesy of its pod technology, allowing customization to cater to mission requirements and pilot preferences. The configurations range from mirroring the Clan original to optimizing the strengths and weaknesses of Inner Sphere weapons systems. The utilization of standard weapons in many configurations helps in better heat management, thus reducing the chances of heat-induced shutdowns following alpha strikes, albeit at the cost of range and firepower. The model features a Vlar 300 XL engine, nearly maximum armor protection, five jump jets across configurations, and fourteen double heat sinks to manage substantial heat generated, especially pronounced in alternate configurations.</p>
+
+deployment:<p>This configuration is armed with six medium lasers complemented by four Medium Pulse Lasers and two Small Lasers for increased accuracy and firepower at close range. Additionally, it features two more double heat sinks over the base chassis to manage heat efficiently.</p>
+
+history:<p>The inception of the Black Hawk-KU is rooted in the aftermath of the battle for Wolcott, where the Draconis Combine managed to obtain several Clan OmniMechs. This acquisition spurred a crash program to develop OmniMechs, leading to the birth of the Black Hawk-KU. Luthien Armor Works played a pivotal role in replicating the Clan's Black Hawk design, employing available technologies to a significant extent. Although the resultant design necessitated a ten-ton heavier build to accommodate a robust engine and chassis, it achieved a performance profile comparable to its Clan sibling. The Black Hawk-KU went through initial field tests with the Legion of Vega and saw action against Clan Smoke Jaguar, later serving with distinction in the Ghost Bear incursion and conflicts against the Federated Suns. This combat history, coupled with its diverse configurations, not only demonstrated its resilience and adaptability on the battlefield but also underscored its contribution in narrowing the technological gap between Inner Sphere and Clan technologies.</p>
+
+manufacturer:Coventry,Crofton,Loburg,Luthien,Marduk,New Avalon,Son Hoa,St. Ives
+primaryfactory:Coventry Metal Works,StarCorps Industries,Luthien Armor Works - OmniMech Production Facility,Victory Industries (formerly Norse BattleMech Works),Corean Enterprises,StarCorps Industries
+systemmanufacturer:CHASSIS:Alshain 52 Endo Steel
+systemmanufacturer:ENGINE:Vlar 300 XL
+systemmanufacturer:ARMOR:Mitchel Argon
+systemmanufacturer:COMMUNICATIONS:Sipher CommSys 4b
+systemmanufacturer:TARGETING:Matabushi Sentinel Plus
+

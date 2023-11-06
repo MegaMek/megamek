@@ -232,6 +232,7 @@ public class Infantry extends Entity {
                 techAdvancement.setAdvancement(DATE_PS, DATE_PS).setTechRating(RATING_A)
                         .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
                         .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+                break;
             case INF_LEG:
             default:
                 techAdvancement.setTechRating(RATING_A)

@@ -995,7 +995,10 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
             // Center on the starting hex of the moving unit.
             UnitLocation loc = movePath.get(0);
-            centerOnHex(loc.getCoords());
+
+            if (GUIP.getAutoCenter()) {
+                centerOnHex(loc.getCoords());
+            }
         }
     }
 

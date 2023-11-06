@@ -77,22 +77,26 @@ public class InfantryTROView extends TROView {
             setModelData("notes", String.join(" ", notes));
         }
 
-        switch (inf.getMovementMode()) {
-            case INF_LEG:
-                setModelData("motiveType", Messages.getString("TROView.Foot"));
-                break;
-            case TRACKED:
-            case HOVER:
-            case WHEELED:
-                setModelData("motiveType",
-                        Messages.getString("TROView.Mechanized") + "/" + inf.getMovementModeAsString());
-                break;
-            case SUBMARINE:
-                setModelData("motiveType", Messages.getString("TROView.MechanizedSCUBA"));
-                break;
-            default:
-                setModelData("motiveType", inf.getMovementModeAsString());
-                break;
+        if (inf.getMount() != null) {
+            setModelData("motiveType", Messages.getString("TROView.BeastMounted") + ", " + inf.getMount().getName());
+        } else {
+            switch (inf.getMovementMode()) {
+                case INF_LEG:
+                    setModelData("motiveType", Messages.getString("TROView.Foot"));
+                    break;
+                case TRACKED:
+                case HOVER:
+                case WHEELED:
+                    setModelData("motiveType",
+                            Messages.getString("TROView.Mechanized") + "/" + inf.getMovementModeAsString());
+                    break;
+                case SUBMARINE:
+                    setModelData("motiveType", Messages.getString("TROView.MechanizedSCUBA"));
+                    break;
+                default:
+                    setModelData("motiveType", inf.getMovementModeAsString());
+                    break;
+            }
         }
         StringJoiner sj = new StringJoiner(", ");
         for (int i = 0; i < Infantry.NUM_SPECIALIZATIONS; i++) {
@@ -191,6 +195,16 @@ public class InfantryTROView extends TROView {
             }
             if (inf.getSecondaryWeapon().hasFlag(WeaponType.F_FLAMER)) {
                 notes.add(Messages.getString("TROView.InfantryNote.Heat"));
+            }
+        }
+        if (inf.getMount() != null) {
+            if (inf.getMount().getBurstDamageDice() > 0) {
+                notes.add(String.format(Messages.getString("TROView.InfantryNote.MountInfantryDamage.format"),
+                        inf.getMount().getBurstDamageDice()));
+            }
+            if (inf.getMount().getVehicleDamage() > 0) {
+                notes.add(String.format(Messages.getString("TROView.InfantryNote.MountVehicleDamage.format"),
+                        inf.getMount().getVehicleDamage()));
             }
         }
     }

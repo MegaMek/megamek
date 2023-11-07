@@ -289,6 +289,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public int coolFromExternal = 0;
     public int delta_distance = 0;
     public int mpUsed = 0;
+    public int underwaterRounds = 0;
     public EntityMovementType moved = EntityMovementType.MOVE_NONE;
     public EntityMovementType movedLastRound = EntityMovementType.MOVE_NONE;
     private boolean movedBackwards = false;

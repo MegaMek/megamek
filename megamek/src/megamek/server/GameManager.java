@@ -8419,6 +8419,11 @@ public class GameManager implements IGameManager {
         entity.delta_distance = distance;
         entity.moved = moveType;
         entity.mpUsed = mpUsed;
+        if (md.isAllUnderwater()) {
+            entity.underwaterRounds++;
+        } else {
+            entity.underwaterRounds = 0;
+        }
         entity.setClimbMode(curClimbMode);
         if (!sideslipped && !fellDuringMovement && !crashedDuringMovement
                 && (entity.getMovementMode() == EntityMovementMode.VTOL)) {

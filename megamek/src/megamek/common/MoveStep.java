@@ -98,6 +98,7 @@ public class MoveStep implements Serializable {
     private boolean isTakingCover = false;
     private int wigeBonus = 0;
     private int nWigeDescent = 0;
+    private boolean isUnderwater = false;
 
     /**
      * The Entity that is taking this MoveStep.
@@ -1302,12 +1303,15 @@ public class MoveStep implements Serializable {
             }
             // if entity already moved into water it can't run now
             if (curHex.containsTerrain(Terrains.WATER)
-                    && (entity.getElevation() < 0) && (distance > 0)
-                    && (nMove != EntityMovementMode.NAVAL)
-                    && (nMove != EntityMovementMode.HYDROFOIL)
-                    && (nMove != EntityMovementMode.SUBMARINE)
-                    && (nMove != EntityMovementMode.INF_UMU)) {
-                isRunProhibited = true;
+                    && (entity.getElevation() < 0)) {
+                isUnderwater = true;
+                if ((distance > 0)
+                        && (nMove != EntityMovementMode.NAVAL)
+                        && (nMove != EntityMovementMode.HYDROFOIL)
+                        && (nMove != EntityMovementMode.SUBMARINE)
+                        && (nMove != EntityMovementMode.INF_UMU)) {
+                    isRunProhibited = true;
+                }
             }
         }
     }
@@ -1459,6 +1463,10 @@ public class MoveStep implements Serializable {
 
     public boolean isEvading() {
         return isEvading;
+    }
+
+    public boolean isUnderwater() {
+        return isUnderwater;
     }
 
     public boolean isShuttingDown() {

@@ -1669,6 +1669,13 @@ public class MovePath implements Cloneable, Serializable {
         }
     }
 
+    /**
+     * @return Whether the entire path is submerged under water
+     */
+    public boolean isAllUnderwater() {
+        return steps.stream().allMatch(MoveStep::isUnderwater);
+    }
+
     protected static class MovePathComparator implements Comparator<MovePath> {
         private final Coords destination;
         boolean backward;

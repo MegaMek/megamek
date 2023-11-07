@@ -154,7 +154,7 @@ public class InfantryMount implements Serializable {
     }
 
     /**
-     * @return The amount of additonal damage done to vehicles in the same hex.
+     * @return The amount of additonal damage done to units other than conventional infantry in the same hex.
      */
     public int getVehicleDamage() {
         return vehicleDamage;

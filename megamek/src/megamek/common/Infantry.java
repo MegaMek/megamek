@@ -1268,7 +1268,7 @@ public class Infantry extends Entity {
             divisor += 1.0;
         }
         if (mount != null) {
-            divisor += mount.getDamageDivisor() - 1;
+            divisor *= mount.getDamageDivisor();
         }
         return divisor;
     }

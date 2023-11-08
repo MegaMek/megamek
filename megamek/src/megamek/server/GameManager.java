@@ -8419,7 +8419,7 @@ public class GameManager implements IGameManager {
         entity.delta_distance = distance;
         entity.moved = moveType;
         entity.mpUsed = mpUsed;
-        if (md.isAllUnderwater()) {
+        if (md.isAllUnderwater(game)) {
             entity.underwaterRounds++;
         } else {
             entity.underwaterRounds = 0;

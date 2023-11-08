@@ -590,7 +590,7 @@ public class Infantry extends Entity {
                 return !getMovementMode().isHover() && !getMovementMode().isUMUInfantry()
                         && !getMovementMode().isSubmarine() && !getMovementMode().isVTOL();
             } else {
-                return hex.terrainLevel(Terrains.WATER) <= mount.getMaxWaterDepth();
+                return hex.terrainLevel(Terrains.WATER) > mount.getMaxWaterDepth();
             }
         }
         return false;

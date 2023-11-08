@@ -1672,8 +1672,15 @@ public class MovePath implements Cloneable, Serializable {
     /**
      * @return Whether the entire path is submerged under water
      */
-    public boolean isAllUnderwater() {
-        return steps.stream().allMatch(MoveStep::isUnderwater);
+    public boolean isAllUnderwater(Game game) {
+        for (MoveStep step : steps) {
+            Hex hex = game.getBoard().getHex(step.getPosition());
+            if (!hex.containsTerrain(Terrains.WATER)
+                    || (step.getElevation() >= 0)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     protected static class MovePathComparator implements Comparator<MovePath> {

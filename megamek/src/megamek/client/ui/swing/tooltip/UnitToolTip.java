@@ -1316,6 +1316,17 @@ public final class UnitToolTip {
             }
         }
 
+        if (entity instanceof Infantry) {
+            InfantryMount mount = ((Infantry) entity).getMount();
+            if ((mount != null) && (entity.underwaterRounds > 0)) {
+                String uw = "<br/>" + addToTT("InfUWDuration", NOBR, mount.getUWEndurance() - entity.underwaterRounds).toString();
+                if (entity.underwaterRounds >=mount.getUWEndurance()) {
+                    uw = guiScaledFontHTML(GUIP.getWarningColor()) + uw + "</font>";
+                }
+                result += uw;
+            }
+        }
+
         String sAeroInfo = "";
 
         if (entity.isAero()) {

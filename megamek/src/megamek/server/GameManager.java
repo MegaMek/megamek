@@ -8421,6 +8421,13 @@ public class GameManager implements IGameManager {
         entity.mpUsed = mpUsed;
         if (md.isAllUnderwater(game)) {
             entity.underwaterRounds++;
+            if ((entity instanceof Infantry) && (((Infantry) entity).getMount() != null)
+                    && entity.underwaterRounds > ((Infantry) entity).getMount().getUWEndurance()) {
+                r = new Report(2412);
+                r.addDesc(entity);
+                addReport(r);
+                destroyEntity(entity, "mount drowned");
+            }
         } else {
             entity.underwaterRounds = 0;
         }

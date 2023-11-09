@@ -2334,7 +2334,8 @@ public class MoveStep implements Serializable {
         if ((getEntity().getMovementMode() == EntityMovementMode.BIPED_SWIM)
                 || (getEntity().getMovementMode() == EntityMovementMode.QUAD_SWIM)
                 || ((getEntity() instanceof Infantry
-                        && getEntity().getMovementMode() == EntityMovementMode.SUBMARINE))) {
+                        && getEntity().getMovementMode().isSubmarine()
+                        && (currHex.terrainLevel(Terrains.WATER) > 0)))) {
             tmpWalkMP = entity.getActiveUMUCount();
         }
 

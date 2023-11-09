@@ -602,6 +602,21 @@ public class Infantry extends Entity {
     }
 
     @Override
+    public boolean isElevationValid(int assumedElevation, Hex hex) {
+        if (mount != null) {
+            // Mounted infantry can enter water hexes if the mount allows it
+            if (hex.containsTerrain(Terrains.WATER) && (hex.terrainLevel(Terrains.WATER) <= mount.getMaxWaterDepth())) {
+                return true;
+            }
+            // Aquatic mounts may be able to move onto land
+            if (!hex.containsTerrain(Terrains.WATER) && movementMode.isSubmarine()) {
+                return mount.getSecondaryGroundMP() > 0;
+            }
+        }
+        return super.isElevationValid(assumedElevation, hex);
+    }
+
+        @Override
     public String getMovementString(EntityMovementType mtype) {
         switch (mtype) {
             case MOVE_NONE:

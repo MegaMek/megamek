@@ -5,7 +5,9 @@ VERSION HISTORY:
 + Fix #4854 - fix multiple end-of-game and end-of-phase hangs
 + Fix #4541 - natural piloting SPA applies to physical attacks
 + PR #4871 - Allow HTML tags in the TROView fluff
-+ Data: Update Boards and Tagging. Fluff project continues. 
++ Data: Update Boards and Tagging. Fluff project continues.
++ Fix #4793 - Flame Based Infantry Bugs
++ Issue #4213 - RFE: Add CI indirect fire for mortars
 
 0.49.15 (2023-10-21 1530 UTC)
 + PR #4688: Round reports should no longer take increasingly long to load

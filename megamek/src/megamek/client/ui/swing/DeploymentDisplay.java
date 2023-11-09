@@ -530,10 +530,12 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             } else if (!isAero && !isWiGE) {
                 // hovers and naval units go on the surface
                 if ((ce().getMovementMode() == EntityMovementMode.NAVAL)
-                        || (ce().getMovementMode() == EntityMovementMode.SUBMARINE)
                         || (ce().getMovementMode() == EntityMovementMode.HYDROFOIL)
                         || (ce().getMovementMode() == EntityMovementMode.HOVER)) {
                     ce().setElevation(0);
+                } else if (ce().getMovementMode().isSubmarine()) {
+                    // submarines have one level above the surface
+                    ce().setElevation(-ce().height());
                 } else if (isVTOL) {
                     // VTOLs go to elevation 1... unless set in the Lounge.
                     // or if mechanized BA, since VTOL movement is then illegal

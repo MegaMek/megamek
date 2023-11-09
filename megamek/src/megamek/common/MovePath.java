@@ -1670,13 +1670,13 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     /**
-     * @return Whether the entire path is submerged under water
+     * @return Whether the entire path is submerged
      */
     public boolean isAllUnderwater(Game game) {
         for (MoveStep step : steps) {
             Hex hex = game.getBoard().getHex(step.getPosition());
             if (!hex.containsTerrain(Terrains.WATER)
-                    || (step.getElevation() >= 0)) {
+                    || (step.getElevation() >= -entity.height())) {
                 return false;
             }
         }

@@ -1720,7 +1720,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         if (ce() instanceof Infantry) {
             InfantryMount mount = ((Infantry) ce()).getMount();
-            if ((mount != null) && (ce().underwaterRounds >= mount.getUWEndurance())
+            if ((mount != null) && ce().getMovementMode().isSubmarine() && (ce().underwaterRounds >= mount.getUWEndurance())
                     && cmd.isAllUnderwater(game())) {
                 ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
                         Messages.getString("MovementDisplay.areYouSure"),

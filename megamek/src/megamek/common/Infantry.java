@@ -501,6 +501,11 @@ public class Infantry extends Entity {
     }
 
     @Override
+    public int height() {
+        return mount == null ? 0 : mount.getSize().height;
+    }
+
+    @Override
     public boolean antiTSMVulnerable() {
         if (!hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
             return false;

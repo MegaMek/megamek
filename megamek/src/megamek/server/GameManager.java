@@ -8422,6 +8422,7 @@ public class GameManager implements IGameManager {
         if (md.isAllUnderwater(game)) {
             entity.underwaterRounds++;
             if ((entity instanceof Infantry) && (((Infantry) entity).getMount() != null)
+                    && entity.getMovementMode().isSubmarine()
                     && entity.underwaterRounds > ((Infantry) entity).getMount().getUWEndurance()) {
                 r = new Report(2412);
                 r.addDesc(entity);
@@ -11642,7 +11643,8 @@ public class GameManager implements IGameManager {
                     entity.setLocationStatus(Mech.LOC_CLEG, ILocationExposureStatus.WET);
                     vPhaseReport.addAll(breachCheck(entity, Mech.LOC_CLEG, hex));
                 }
-            } else {
+                // Beast-mounted infantry can sit above the water level
+            } else if (!entity.isConventionalInfantry() || (hex.terrainLevel(Terrains.WATER) > entity.height())) {
                 for (int loop = 0; loop < entity.locations(); loop++) {
                     entity.setLocationStatus(loop, ILocationExposureStatus.WET);
                     vPhaseReport.addAll(breachCheck(entity, loop, hex));

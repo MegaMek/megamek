@@ -6619,7 +6619,7 @@ public class Compute {
     public static int dialDownDamage(Mounted weapon, WeaponType wtype, int range) {
         int toReturn = wtype.getDamage(range);
 
-        if (!wtype.hasModes()) {
+        if (!weapon.hasModes()) {
             return toReturn;
         }
 
@@ -6658,7 +6658,7 @@ public class Compute {
     public static int dialDownHeat(Mounted weapon, WeaponType wtype, int range) {
         int toReturn = wtype.getHeat();
 
-        if (!wtype.hasModes()) {
+        if (!weapon.hasModes()) {
             return toReturn;
         }
 

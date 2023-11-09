@@ -3953,7 +3953,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             && (!(mounted.getType().hasFlag(WeaponType.F_AMS) && mounted.curMode().equals(Weapon.MODE_AMS_ON)))
             && (!(mounted.getType().hasFlag(WeaponType.F_AMS) && mounted.curMode().equals(Weapon.MODE_AMS_OFF)))
             && (!mounted.getType().hasFlag(WeaponType.F_AMSBAY))
-            && (!(mounted.getType().hasModes() && mounted.curMode().equals("Point Defense")))
+            && (!(mounted.hasModes() && mounted.curMode().equals("Point Defense")))
             && ((mounted.getLinked() == null)
                 || mounted.getLinked().getType().hasFlag(MiscType.F_AP_MOUNT)
                 || (mounted.getLinked().getUsableShotsLeft() > 0))) {
@@ -4375,7 +4375,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         OUTER: for (Mounted m : getMisc()) {
             if (!m.isInoperable() && m.getType().hasFlag(flag)
                     && ((location == -1) || (m.getLocation() == location))) {
-                if (m.getType().hasModes()) {
+                if (m.hasModes()) {
                     for (Enumeration<EquipmentMode> e = m.getType().getModes(); e.hasMoreElements();) {
                         if (e.nextElement().equals("On") && !m.curMode().equals("On")) {
                             continue OUTER;
@@ -4393,7 +4393,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         OUTER: for (Mounted m : getMisc()) {
             if (!m.isInoperable() && m.getType().getInternalName().equalsIgnoreCase(internalName)
                     && ((location == -1) || (m.getLocation() == location))) {
-                if (m.getType().hasModes()) {
+                if (m.hasModes()) {
                     for (Enumeration<EquipmentMode> e = m.getType().getModes(); e.hasMoreElements();) {
                         if (e.nextElement().equals("On") && !m.curMode().equals("On")) {
                             continue OUTER;
@@ -11433,7 +11433,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 && m.getType().hasFlag(WeaponType.F_MGA)
                 && !(m.isDestroyed() || m.isBreached())
                 && m.getBayWeapons().contains(getEquipmentNum(mounted))
-                && m.getType().hasModes() && m.curMode().equals("Linked")) {
+                && m.hasModes() && m.curMode().equals("Linked")) {
                 return true;
             }
         }
@@ -11887,9 +11887,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         for (Mounted mounted : getWeaponList()) {
-            if (mounted.getType() instanceof Weapon) {
-                ((Weapon) mounted.getType()).adaptToGameOptions(game.getOptions());
-            }
+            mounted.adaptToGameOptions(game.getOptions());
             mounted.setModesForMapType();
         }
 

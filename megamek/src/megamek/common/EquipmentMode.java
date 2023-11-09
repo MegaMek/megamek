@@ -14,6 +14,8 @@
 
 package megamek.common;
 
+import megamek.common.weapons.Weapon;
+
 import java.util.Hashtable;
 import java.util.Objects;
 
@@ -114,5 +116,13 @@ public class EquipmentMode {
     @Override
     public String toString() {
         return getName();
+    }
+
+    public boolean isHeat() {
+        return name.equals(Weapon.MODE_FLAMER_HEAT) || name.equals(Weapon.MODE_INDIRECT_HEAT);
+    }
+
+    public boolean isIndirect() {
+        return name.equals(Weapon.MODE_MISSILE_INDIRECT) || name.equals(Weapon.MODE_INDIRECT_HEAT);
     }
 }

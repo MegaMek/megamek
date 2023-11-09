@@ -71,7 +71,7 @@ public class PPCHandler extends EnergyWeaponHandler {
         double toReturn = wtype.getDamage(nRange);
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)
-                && wtype.hasModes()) {
+                && weapon.hasModes()) {
             toReturn = Compute.dialDownDamage(weapon, wtype, nRange);
         }
 
@@ -136,7 +136,7 @@ public class PPCHandler extends EnergyWeaponHandler {
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         // Resolve roll for disengaged field inhibitors on PPCs, if needed
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PPC_INHIBITORS)
-                && wtype.hasModes()
+                && weapon.hasModes()
                 && weapon.curMode().equals("Field Inhibitor OFF")) {
             int rollTarget = 0;
             int dieRoll = Compute.d6(2);

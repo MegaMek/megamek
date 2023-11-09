@@ -716,7 +716,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
 
         // If the weapon does not have modes, just exit.
         Mounted m = ce().getEquipment(wn);
-        if ((m == null) || !m.getType().hasModes()) {
+        if ((m == null) || !m.hasModes()) {
             return;
         }
 

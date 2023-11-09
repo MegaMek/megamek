@@ -366,7 +366,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                         || atype.countsAsFlak()
         );
 
-        boolean isIndirect = (wtype.hasModes() && weapon.curMode().equals(Weapon.MODE_MISSILE_INDIRECT));
+        boolean isIndirect = weapon.hasModes() && (weapon.curMode().isIndirect());
 
         // BMM p. 31, semi-guided indirect missile attacks vs tagged targets ignore terrain modifiers
         boolean semiGuidedIndirectVsTaggedTarget = isIndirect &&
@@ -2236,7 +2236,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
             // Gauss weapons using the TacOps powered down rule can't fire
             if ((wtype instanceof GaussWeapon)
-                    && wtype.hasModes() && weapon.curMode().equals(Weapon.MODE_GAUSS_POWERED_DOWN)) {
+                    && weapon.hasModes() && weapon.curMode().equals(Weapon.MODE_GAUSS_POWERED_DOWN)) {
                 return Messages.getString("WeaponAttackAction.WeaponNotReady");
             }
 
@@ -2397,7 +2397,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 return Messages.getString("WeaponAttackAction.NoWorkingMGs");
             }
             // Or if the array is off
-            if (wtype.hasFlag(WeaponType.F_MGA) && wtype.hasModes() && weapon.curMode().equals(Weapon.MODE_AMS_OFF)) {
+            if (wtype.hasFlag(WeaponType.F_MGA) && weapon.hasModes() && weapon.curMode().equals(Weapon.MODE_AMS_OFF)) {
                 return Messages.getString("WeaponAttackAction.MGArrayOff");
             } else if (wtype.hasFlag(WeaponType.F_MG)) {
                 // and you can't fire an individual MG if it's in an array
@@ -2518,7 +2518,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // Weapon Bays
 
             // Large Craft weapon bays cannot bracket small craft at short range
-            if (wtype.hasModes()
+            if (weapon.hasModes()
                     && (weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_80) || weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_60)
                             || weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_40))
                     && target.isAero() && te!= null && !te.isLargeCraft()
@@ -2528,20 +2528,20 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
 
             // you must have enough weapons in your bay to be able to use bracketing
-            if (wtype.hasModes() && weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_80) && (weapon.getBayWeapons().size() < 2)) {
+            if (weapon.hasModes() && weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_80) && (weapon.getBayWeapons().size() < 2)) {
                 return Messages.getString("WeaponAttackAction.BayTooSmallForBracket");
             }
-            if (wtype.hasModes() && weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_60) && (weapon.getBayWeapons().size() < 3)) {
+            if (weapon.hasModes() && weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_60) && (weapon.getBayWeapons().size() < 3)) {
                 return Messages.getString("WeaponAttackAction.BayTooSmallForBracket");
             }
-            if (wtype.hasModes() && weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_40) && (weapon.getBayWeapons().size() < 4)) {
+            if (weapon.hasModes() && weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_40) && (weapon.getBayWeapons().size() < 4)) {
                 return Messages.getString("WeaponAttackAction.BayTooSmallForBracket");
             }
 
             // If you're an aero, can't fire an AMS Bay at all or a Point Defense bay that's in PD Mode
             if (wtype.hasFlag(WeaponType.F_AMSBAY)) {
                 return Messages.getString("WeaponAttackAction.AutoWeapon");
-            } else if (wtype.hasModes() && weapon.curMode().equals(Weapon.MODE_POINT_DEFENSE)) {
+            } else if (weapon.hasModes() && weapon.curMode().equals(Weapon.MODE_POINT_DEFENSE)) {
                 return Messages.getString("WeaponAttackAction.PDWeapon");
             }
 
@@ -2943,7 +2943,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // AAA mode makes targeting large craft more difficult
-        if (wtype.hasModes() && weapon.curMode().equals(Weapon.MODE_CAP_LASER_AAA) && te != null && te.isLargeCraft()) {
+        if (weapon.hasModes() && weapon.curMode().equals(Weapon.MODE_CAP_LASER_AAA) && te != null && te.isLargeCraft()) {
             toHit.addModifier(+1, Messages.getString("WeaponAttackAction.AAALaserAtShip"));
         }
 
@@ -2958,13 +2958,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // Bracketing modes
-        if (wtype.hasModes() && weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_80)) {
+        if (weapon.hasModes() && weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_80)) {
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.Bracket80"));
         }
-        if (wtype.hasModes() && weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_60)) {
+        if (weapon.hasModes() && weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_60)) {
             toHit.addModifier(-2, Messages.getString("WeaponAttackAction.Bracket60"));
         }
-        if (wtype.hasModes() && weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_40)) {
+        if (weapon.hasModes() && weapon.curMode().equals(Weapon.MODE_CAPITAL_BRACKET_40)) {
             toHit.addModifier(-3, Messages.getString("WeaponAttackAction.Bracket40"));
         }
 
@@ -2983,7 +2983,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 && (wtype.getAtClass() != WeaponType.CLASS_AR10) && te != null && !te.isLargeCraft()) {
             // Capital Lasers have an AAA mode for shooting at small targets
             int aaaMod = 0;
-            if (wtype.hasModes() && weapon.curMode().equals(Weapon.MODE_CAP_LASER_AAA)) {
+            if (weapon.hasModes() && weapon.curMode().equals(Weapon.MODE_CAP_LASER_AAA)) {
                 aaaMod = 2;
             }
             if (wtype.isSubCapital()) {

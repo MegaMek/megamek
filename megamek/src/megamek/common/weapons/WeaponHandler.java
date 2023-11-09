@@ -1269,13 +1269,13 @@ public class WeaponHandler implements AttackHandler, Serializable {
      */
     protected double getBracketingMultiplier() {
         double mult = 1.0;
-        if (wtype.hasModes() && weapon.curMode().equals("Bracket 80%")) {
+        if (weapon.hasModes() && weapon.curMode().equals("Bracket 80%")) {
             mult = 0.8;
         }
-        if (wtype.hasModes() && weapon.curMode().equals("Bracket 60%")) {
+        if (weapon.hasModes() && weapon.curMode().equals("Bracket 60%")) {
             mult = 0.6;
         }
-        if (wtype.hasModes() && weapon.curMode().equals("Bracket 40%")) {
+        if (weapon.hasModes() && weapon.curMode().equals("Bracket 40%")) {
             mult = 0.4;
         }
         return mult;
@@ -1441,7 +1441,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
         initHit(entityTarget);
 
-        boolean isIndirect = wtype.hasModes() && weapon.curMode().equals("Indirect");
+        boolean isIndirect = weapon.hasModes() && weapon.curMode().equals("Indirect");
 
         Hex targetHex = game.getBoard().getHex(target.getPosition());
         boolean mechPokingOutOfShallowWater = unitGainsPartialCoverFromWater(targetHex, entityTarget);
@@ -1468,7 +1468,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         }
 
         if (!bSalvo) {
-            // Each hit in the salvo get's its own hit location.
+            // Each hit in the salvo gets its own hit location.
             Report r = new Report(3405);
             r.subject = subjectId;
             r.add(toHit.getTableDesc());

@@ -206,6 +206,10 @@ public class InfantryTROView extends TROView {
                 notes.add(String.format(Messages.getString("TROView.InfantryNote.MountVehicleDamage.format"),
                         inf.getMount().getVehicleDamage()));
             }
+            if (inf.getMount().getSize().toHitMod != 0) {
+                notes.add(String.format(Messages.getString("TROView.InfantryNote.MountSizeMod.format"),
+                        inf.getMount().getSize().toHitMod));
+            }
         }
     }
 

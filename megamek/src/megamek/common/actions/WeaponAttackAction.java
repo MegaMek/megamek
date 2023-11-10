@@ -4208,8 +4208,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.BaTarget"));
         }
 
-        // infantry squads are also hard to hit
-        if ((te instanceof Infantry) && te.isConventionalInfantry() && ((Infantry) te).isSquad()) {
+        if ((te instanceof Infantry) && te.isConventionalInfantry()) {
+            // infantry squads are also hard to hit
             if (((Infantry) te).isSquad()) {
                 toHit.addModifier(1, Messages.getString("WeaponAttackAction.SquadTarget"));
             }

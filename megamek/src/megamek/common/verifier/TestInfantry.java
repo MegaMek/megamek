@@ -139,6 +139,10 @@ public class TestInfantry extends TestEntity {
 
         if (inf.getSecondaryWeapon() != null) {
             int secondaryCrew = inf.getSecondaryWeapon().getCrew();
+            // Beast mounted infantry divide crew requirement in half, rounding up.
+            if (inf.getMount() != null) {
+                secondaryCrew = secondaryCrew / 2 + secondaryCrew % 2;
+            }
             if (inf.getCrew() != null) {
                 if (inf.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
                     secondaryCrew--;
@@ -171,12 +175,17 @@ public class TestInfantry extends TestEntity {
     }
     
     public static int maxSecondaryWeapons(Infantry inf) {
-        int max = 2;
-        if (inf.getMovementMode() == EntityMovementMode.VTOL) {
+        int max;
+        if (inf.getMount() != null) {
+            max = inf.getMount().getSize().supportWeaponsPerCreature;
+        } else if (inf.getMovementMode() == EntityMovementMode.VTOL) {
             max = inf.hasMicrolite() ? 0 : 1;
         } else if (inf.getMovementMode() == EntityMovementMode.INF_UMU) {
             max = inf.getAllUMUCount();
+        } else {
+            max = 2;
         }
+
         if (inf.hasSpecialization(Infantry.COMBAT_ENGINEERS)) {
             max = 0;
         }

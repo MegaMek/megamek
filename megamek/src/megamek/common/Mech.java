@@ -6252,13 +6252,15 @@ public abstract class Mech extends Entity {
         }
         if (coolantSystem != null) {
             boolean bFailure = false;
-            int nRoll = Compute.d6(2);
+            Roll diceRoll = Compute.rollD6(2);
+            int rollValue = diceRoll.getIntValue();
+            String rollReport = diceRoll.getReport();
             bUsedCoolantSystem = true;
             vDesc.addElement(Report.subjectReport(2365, getId()).addDesc(this).add(coolantSystem.getName()));
             int requiredRoll = EMERGENCY_COOLANT_SYSTEM_FAILURE[nCoolantSystemLevel];
-            Report r = Report.subjectReport(2370, getId()).indent().add(requiredRoll).add(nRoll);
+            Report r = Report.subjectReport(2370, getId()).indent().add(requiredRoll).addDataWithTooltip(String.valueOf(rollValue), rollReport);
 
-            if (nRoll < requiredRoll) {
+            if (rollValue < requiredRoll) {
                 // uh oh
                 bFailure = true;
                 r.choose(false);
@@ -6298,7 +6300,7 @@ public abstract class Mech extends Entity {
             } else {
                 r.choose(true);
                 vDesc.addElement(r);
-                nCoolantSystemMOS = nRoll - EMERGENCY_COOLANT_SYSTEM_FAILURE[nCoolantSystemLevel];
+                nCoolantSystemMOS = rollValue - EMERGENCY_COOLANT_SYSTEM_FAILURE[nCoolantSystemLevel];
             }
             return bFailure;
         }

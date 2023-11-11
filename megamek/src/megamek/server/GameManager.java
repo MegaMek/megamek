@@ -4179,12 +4179,16 @@ public class GameManager implements IGameManager {
         if ((((Aero) unloader).isOutControlTotal() && !unit.isDoomed())
                 || ((((Aero) unloader).getCurrentVelocity() > 2) && !game
                 .getBoard().inSpace())) {
-            int damageRoll = Compute.d6(2);
-            int damage = damageRoll * 10;
+            Roll diceRoll = Compute.rollD6(2);
+            int rollValue = diceRoll.getIntValue();
+            String rollReport = diceRoll.getReport();
+            String rollCalc = rollValue + " * 10]";
+            int damage = rollValue * 10;
+            rollCalc = damage + "[" + rollCalc;
             r = new Report(9385);
             r.subject = unit.getId();
             r.add(unit.getDisplayName());
-            r.add(damage);
+            r.addDataWithTooltip(rollCalc, rollReport);
             addReport(r);
             HitData hit = unit.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
             addReport(damageEntity(unit, hit, damage));
@@ -8760,13 +8764,15 @@ public class GameManager implements IGameManager {
                             // apply damage now, or it will show up as a
                             // possible breach, if ice is broken
                             entity.applyDamage();
-                            int roll = Compute.d6(1);
+                            Roll diceRoll2 = Compute.rollD6(1);
+                            int rollValue2 = diceRoll2.getIntValue();
+                            String rollReport2 = diceRoll2.getReport();
                             r = new Report(2118);
                             r.addDesc(entity);
-                            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+                            r.addDataWithTooltip(String.valueOf(rollValue2), rollReport2);
                             r.subject = entity.getId();
                             addReport(r);
-                            if (roll == 6) {
+                            if (rollValue2 == 6) {
                                 entity.setPosition(curPos);
                                 addReport(resolveIceBroken(curPos));
                                 curPos = entity.getPosition();
@@ -19506,14 +19512,16 @@ public class GameManager implements IGameManager {
                 // elevation decline
                 if (!a.isOutControl() && !a.isSpaceborne()
                         && a.isAirborne()) {
-                    int loss = Compute.d6(1);
+                    Roll diceRoll2 = Compute.rollD6(1);
+                    int rollValue2 = diceRoll2.getIntValue();
+                    String rollReport2 = diceRoll2.getReport();
                     r = new Report(9366);
                     r.newlines = 0;
                     r.subject = entity.getId();
                     r.addDesc(entity);
-                    r.add(loss);
+                    r.addDataWithTooltip(String.valueOf(rollValue2), rollReport2);
                     addReport(r);
-                    entity.setAltitude(entity.getAltitude() - loss);
+                    entity.setAltitude(entity.getAltitude() - rollValue2);
                     // check for crash
                     if (checkCrash(entity, entity.getPosition(), entity.getAltitude())) {
                         addReport(processCrash(entity, a.getCurrentVelocity(), entity.getPosition()));
@@ -20815,31 +20823,39 @@ public class GameManager implements IGameManager {
                                 // and check
                                 // for crash
                                 if (!a.isSpaceborne() && a.isAirborne()) {
-                                    int loss = Compute.d6(1);
+                                    Roll diceRoll2 = Compute.rollD6(1);
+                                    int rollValue2 = diceRoll2.getIntValue();
+                                    String rollReport2 = diceRoll2.getReport();
+
                                     int origAltitude = e.getAltitude();
-                                    e.setAltitude(e.getAltitude() - loss);
+                                    e.setAltitude(e.getAltitude() - rollValue2);
                                     // Reroll altitude loss with edge if the new altitude would result in a crash
                                     if (e.getAltitude() <= 0
                                             // Don't waste the edge if it won't help
                                             && origAltitude > 1
                                             && e.getCrew().hasEdgeRemaining()
                                             && e.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_AERO_ALT_LOSS)) {
-                                        loss = Compute.d6(1);
+                                        Roll diceRoll3 = Compute.rollD6(1);
+                                        int rollValue3 = diceRoll3.getIntValue();
+                                        String rollReport3 = diceRoll3.getReport();
+
                                         // Report the edge use
                                         r = new Report(9367);
                                         r.newlines = 1;
                                         r.subject = e.getId();
                                         vReport.add(r);
-                                        e.setAltitude(origAltitude - loss);
+                                        e.setAltitude(origAltitude - rollValue3);
                                         // and spend the edge point
                                         e.getCrew().decreaseEdge();
+                                        rollValue2 = rollValue3;
+                                        rollReport2 = rollReport3;
                                     }
                                     //Report the altitude loss
                                     r = new Report(9366);
                                     r.newlines = 0;
                                     r.subject = e.getId();
                                     r.addDesc(e);
-                                    r.add(loss);
+                                    r.addDataWithTooltip(String.valueOf(rollValue2), rollReport2);
                                     vReport.add(r);
                                     // check for crash
                                     if (checkCrash(e, e.getPosition(), e.getAltitude())) {

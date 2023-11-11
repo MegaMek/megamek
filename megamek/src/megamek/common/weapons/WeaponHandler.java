@@ -594,18 +594,21 @@ public class WeaponHandler implements AttackHandler, Serializable {
                             r.subject = subjectId;
                             vPhaseReport.add(r);
                             for (int i = 0; i < nweaponsHit; i++) {
-                                int destroyRoll = Compute.d6();
-                                if (destroyRoll <= 3) {
+                                Roll diceRoll = Compute.rollD6(1);
+                                int rollValue = diceRoll.getIntValue();
+                                String rollReport = diceRoll.getReport();
+
+                                if (rollValue <= 3) {
                                     r = new Report(3240);
                                     r.subject = subjectId;
                                     r.add("missile");
-                                    r.add(destroyRoll);
+                                    r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                                     vPhaseReport.add(r);
                                     AMSHits += 1;
                                 } else {
                                     r = new Report(3241);
                                     r.add("missile");
-                                    r.add(destroyRoll);
+                                    r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                                     r.subject = subjectId;
                                     vPhaseReport.add(r);
                                 }
@@ -637,18 +640,21 @@ public class WeaponHandler implements AttackHandler, Serializable {
                                 r.subject = subjectId;
                                 vPhaseReport.add(r);
                             }
-                            int destroyRoll = Compute.d6();
-                            if (destroyRoll <= 3) {
+                            Roll diceRoll = Compute.rollD6(1);
+                            int rollValue = diceRoll.getIntValue();
+                            String rollReport = diceRoll.getReport();
+
+                            if (rollValue <= 3) {
                                 r = new Report(3240);
                                 r.subject = subjectId;
                                 r.add("missile");
-                                r.add(destroyRoll);
+                                r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                                 vPhaseReport.add(r);
                                 AMSHits = 1;
                             } else {
                                 r = new Report(3241);
                                 r.add("missile");
-                                r.add(destroyRoll);
+                                r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                                 r.subject = subjectId;
                                 vPhaseReport.add(r);
                             }
@@ -719,18 +725,21 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     r.subject = subjectId;
                     vPhaseReport.add(r);
                     for (int i = 0; i < nweaponsHit; i++) {
-                        int destroyRoll = Compute.d6();
-                        if (destroyRoll <= 3) {
+                        Roll diceRoll = Compute.rollD6(1);
+                        int rollValue = diceRoll.getIntValue();
+                        String rollReport = diceRoll.getReport();
+
+                        if (rollValue <= 3) {
                             r = new Report(3240);
                             r.subject = subjectId;
                             r.add("missile");
-                            r.add(destroyRoll);
+                            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                             vPhaseReport.add(r);
                             hits = 0;
                         } else {
                             r = new Report(3241);
                             r.add("missile");
-                            r.add(destroyRoll);
+                            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                             r.subject = subjectId;
                             vPhaseReport.add(r);
                             hits = 1;

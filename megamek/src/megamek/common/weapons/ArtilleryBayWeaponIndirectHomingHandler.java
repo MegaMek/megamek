@@ -24,23 +24,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Vector;
 
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.BombType;
-import megamek.common.Building;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.HitData;
-import megamek.common.Game;
-import megamek.common.Infantry;
-import megamek.common.Mounted;
-import megamek.common.Report;
-import megamek.common.TagInfo;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
@@ -513,12 +497,15 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
                 r.indent(1);
                 r.subject = subjectId;
                 vPhaseReport.add(r);
-                int destroyRoll = Compute.d6();
-                if (destroyRoll <= 3) {
+                Roll diceRoll = Compute.rollD6(1);
+                int rollValue = diceRoll.getIntValue();
+                String rollReport = diceRoll.getReport();
+
+                if (rollValue <= 3) {
                     r = new Report(3240);
                     r.subject = subjectId;
                     r.add("missile");
-                    r.add(destroyRoll);
+                    r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                     vPhaseReport.add(r);
                     nDamPerHit = 0;
                     hits = 0;
@@ -526,7 +513,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
                 } else {
                     r = new Report(3241);
                     r.add("missile");
-                    r.add(destroyRoll);
+                    r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                     r.subject = subjectId;
                     vPhaseReport.add(r);
                     hits = 1;

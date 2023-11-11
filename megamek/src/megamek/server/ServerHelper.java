@@ -318,13 +318,15 @@ public class ServerHelper {
                                 break;
                         }
                     }
-                    int shutdownRoll = Compute.d6(2);
+                    Roll diceRoll = Compute.rollD6(2);
+                    int rollValue = diceRoll.getIntValue();
+                    String rollReport = diceRoll.getReport();
                     r = new Report(5060);
                     r.subject = entity.getId();
                     r.addDesc(entity);
                     r.add(shutdown);
-                    r.add(shutdownRoll);
-                    if (shutdownRoll >= shutdown) {
+                    r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+                    if (rollValue >= shutdown) {
                         // avoided
                         r.choose(true);
                         vPhaseReport.add(r);
@@ -377,13 +379,15 @@ public class ServerHelper {
         // heat effects: pilot damage
         if (entity.heat >= 21) {
             int ouch = (6 + (entity.heat >= 27 ? 3 : 0)) - hotDogMod;
-            int ouchRoll = Compute.d6(2);
+            Roll diceRoll = Compute.rollD6(2);
+            int rollValue = diceRoll.getIntValue();
+            String rollReport = diceRoll.getReport();
             r = new Report(5075);
             r.subject = entity.getId();
             r.addDesc(entity);
             r.add(ouch);
-            r.add(ouchRoll);
-            if (ouchRoll >= ouch) {
+            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+            if (rollValue >= ouch) {
                 // pilot is ok
                 r.choose(true);
                 vPhaseReport.add(r);

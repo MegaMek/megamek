@@ -19,11 +19,7 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.Compute;
-import megamek.common.Game;
-import megamek.common.Infantry;
-import megamek.common.Report;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.GameManager;
 
@@ -53,13 +49,15 @@ public class ACCaselessHandler extends ACWeaponHandler {
         }
         
         if ((roll <= 2) && !(ae instanceof Infantry)) {
-            int caselesscrit = Compute.d6(2);
+            Roll diceRoll = Compute.rollD6(2);
+            int rollValue = diceRoll.getIntValue();
+            String rollReport = diceRoll.getReport();
 
             Report r = new Report(3164);
             r.subject = subjectId;
-            r.add(caselesscrit);
+            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
 
-            if (caselesscrit >= 8) {
+            if (rollValue >= 8) {
                 // Round explodes destroying weapon
                 weapon.setDestroyed(true);
                 r.choose(false);

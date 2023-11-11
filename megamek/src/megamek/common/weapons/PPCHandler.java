@@ -21,17 +21,7 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.BattleArmor;
-import megamek.common.Compute;
-import megamek.common.CriticalSlot;
-import megamek.common.Entity;
-import megamek.common.HitData;
-import megamek.common.Game;
-import megamek.common.Infantry;
-import megamek.common.Mounted;
-import megamek.common.RangeType;
-import megamek.common.Report;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.server.GameManager;
@@ -139,7 +129,9 @@ public class PPCHandler extends EnergyWeaponHandler {
                 && wtype.hasModes()
                 && weapon.curMode().equals("Field Inhibitor OFF")) {
             int rollTarget = 0;
-            int dieRoll = Compute.d6(2);
+            Roll diceRoll = Compute.rollD6(2);
+            int rollValue = diceRoll.getIntValue();
+            String rollReport = diceRoll.getReport();
             int distance = Compute.effectiveDistance(game, ae, target);
 
             if (distance >= 3) {
@@ -159,8 +151,8 @@ public class PPCHandler extends EnergyWeaponHandler {
             r.subject = subjectId;
             r.indent();
             r.add(rollTarget);
-            r.add(dieRoll);
-            if (dieRoll < rollTarget) {
+            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+            if (rollValue < rollTarget) {
                 // Oops, we ruined our day...
                 int wlocation = weapon.getLocation();
                 weapon.setHit(true);

@@ -843,12 +843,14 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
                 if (!bMissed && amsEngaged && !isTbolt() && !ae.isCapitalFighter()) {
                     // handle single AMS action against standard missiles
-                    int amsRoll = Compute.d6();
+                    Roll diceRoll = Compute.rollD6(1);
+                    int rollValue = diceRoll.getIntValue();
+                    String rollReport = diceRoll.getReport();
                     r = new Report(3352);
                     r.subject = subjectId;
-                    r.add(amsRoll);
+                    r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
                     vPhaseReport.add(r);
-                    hits = Math.max(0, hits - amsRoll);
+                    hits = Math.max(0, hits - rollValue);
                 }
                 // Report any AMS bay action against standard missiles.
                 if (amsBayEngaged && (originalAV <= 0)) {

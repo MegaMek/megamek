@@ -55,7 +55,7 @@ public class MechTaserHandler extends AmmoWeaponHandler {
         Roll diceRoll = Compute.rollD6(2);
         int rollValue = diceRoll.getIntValue();
         String rollReport = diceRoll.getReport();
-        r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+        r.addDataWithTooltip(rollValue, rollReport);
         r.newlines = 0;
         vPhaseReport.add(r);
         if (entityTarget.getWeight() > 100) {

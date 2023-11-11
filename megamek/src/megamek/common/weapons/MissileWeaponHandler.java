@@ -739,7 +739,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         r = new Report(3155);
         r.newlines = 0;
         r.subject = subjectId;
-        r.addDataWithTooltip(String.valueOf(roll), rollReport);
+        r.addDataWithTooltip(roll, rollReport);
         vPhaseReport.addElement(r);
 
         // do we hit?
@@ -848,7 +848,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                     String rollReport = diceRoll.getReport();
                     r = new Report(3352);
                     r.subject = subjectId;
-                    r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+                    r.addDataWithTooltip(rollValue, rollReport);
                     vPhaseReport.add(r);
                     hits = Math.max(0, hits - rollValue);
                 }

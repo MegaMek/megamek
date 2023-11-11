@@ -602,13 +602,13 @@ public class WeaponHandler implements AttackHandler, Serializable {
                                     r = new Report(3240);
                                     r.subject = subjectId;
                                     r.add("missile");
-                                    r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+                                    r.addDataWithTooltip(rollValue, rollReport);
                                     vPhaseReport.add(r);
                                     AMSHits += 1;
                                 } else {
                                     r = new Report(3241);
                                     r.add("missile");
-                                    r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+                                    r.addDataWithTooltip(rollValue, rollReport);
                                     r.subject = subjectId;
                                     vPhaseReport.add(r);
                                 }
@@ -648,13 +648,13 @@ public class WeaponHandler implements AttackHandler, Serializable {
                                 r = new Report(3240);
                                 r.subject = subjectId;
                                 r.add("missile");
-                                r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+                                r.addDataWithTooltip(rollValue, rollReport);
                                 vPhaseReport.add(r);
                                 AMSHits = 1;
                             } else {
                                 r = new Report(3241);
                                 r.add("missile");
-                                r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+                                r.addDataWithTooltip(rollValue, rollReport);
                                 r.subject = subjectId;
                                 vPhaseReport.add(r);
                             }
@@ -733,13 +733,13 @@ public class WeaponHandler implements AttackHandler, Serializable {
                             r = new Report(3240);
                             r.subject = subjectId;
                             r.add("missile");
-                            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+                            r.addDataWithTooltip(rollValue, rollReport);
                             vPhaseReport.add(r);
                             hits = 0;
                         } else {
                             r = new Report(3241);
                             r.add("missile");
-                            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+                            r.addDataWithTooltip(rollValue, rollReport);
                             r.subject = subjectId;
                             vPhaseReport.add(r);
                             hits = 1;
@@ -912,7 +912,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             r = new Report(3155);
             r.newlines = 0;
             r.subject = subjectId;
-            r.addDataWithTooltip(String.valueOf(roll), rollReport);
+            r.addDataWithTooltip(roll, rollReport);
             vPhaseReport.addElement(r);
 
             // do we hit?

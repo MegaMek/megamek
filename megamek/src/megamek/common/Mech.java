@@ -5465,7 +5465,7 @@ public abstract class Mech extends Entity {
             Roll diceRoll = getCrew().rollPilotingSkill();
             int rollValue = diceRoll.getIntValue();
             String rollReport = diceRoll.getReport();
-            Report r = Report.subjectReport(2300, getId()).add(psr).addDataWithTooltip(String.valueOf(rollValue), rollReport);
+            Report r = Report.subjectReport(2300, getId()).add(psr).addDataWithTooltip(rollValue, rollReport);
             if (rollValue < psr.getValue()) {
                 setStalled(true);
                 vPhaseReport.add(r.noNL().choose(false));
@@ -5497,7 +5497,7 @@ public abstract class Mech extends Entity {
             Roll diceRoll = getCrew().rollPilotingSkill();
             int rollValue = diceRoll.getIntValue();
             String rollReport = diceRoll.getReport();
-            Report r = Report.subjectReport(2300, getId()).add(psr).addDataWithTooltip(String.valueOf(rollValue), rollReport);
+            Report r = Report.subjectReport(2300, getId()).add(psr).addDataWithTooltip(rollValue, rollReport);
             if (rollValue < psr.getValue()) {
                 vPhaseReport.add(r.choose(false));
             } else {
@@ -6258,7 +6258,7 @@ public abstract class Mech extends Entity {
             bUsedCoolantSystem = true;
             vDesc.addElement(Report.subjectReport(2365, getId()).addDesc(this).add(coolantSystem.getName()));
             int requiredRoll = EMERGENCY_COOLANT_SYSTEM_FAILURE[nCoolantSystemLevel];
-            Report r = Report.subjectReport(2370, getId()).indent().add(requiredRoll).addDataWithTooltip(String.valueOf(rollValue), rollReport);
+            Report r = Report.subjectReport(2370, getId()).indent().add(requiredRoll).addDataWithTooltip(rollValue, rollReport);
 
             if (rollValue < requiredRoll) {
                 // uh oh

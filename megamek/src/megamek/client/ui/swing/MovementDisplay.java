@@ -4215,7 +4215,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             r.subject = ce().getId();
             r.add(ce().getDisplayName());
             r.add(psr);
-            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+            r.addDataWithTooltip(rollValue, rollReport);
             r.newlines = 0;
             r.indent(1);
             if (rollValue < psr.getValue()) {

@@ -435,7 +435,7 @@ public class Building implements Serializable {
             Roll diceRoll = Compute.rollD6(2);
             int rollValue = diceRoll.getIntValue();
             String rollReport = diceRoll.getReport();
-            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+            r.addDataWithTooltip(rollValue, rollReport);
             if (rollValue == 2) {
                 basement.put(coords, BasementType.TWO_DEEP_FEET);
                 hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).ordinal()));

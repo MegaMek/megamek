@@ -57,7 +57,7 @@ public class BATaserHandler extends AmmoWeaponHandler {
         int rollValue = diceRoll.getIntValue();
         String rollReport = diceRoll.getReport();
 
-        r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+        r.addDataWithTooltip(rollValue, rollReport);
         r.newlines = 0;
         vPhaseReport.add(r);
         if (entityTarget instanceof BattleArmor) {
@@ -128,7 +128,7 @@ public class BATaserHandler extends AmmoWeaponHandler {
         String rollReport2 = diceRoll2.getReport();
         r = new Report(3715);
         r.addDesc(ae);
-        r.addDataWithTooltip(String.valueOf(rollValue2), rollReport2);
+        r.addDataWithTooltip(rollValue2, rollReport2);
         r.newlines = 0;
         r.indent(2);
         vPhaseReport.add(r);

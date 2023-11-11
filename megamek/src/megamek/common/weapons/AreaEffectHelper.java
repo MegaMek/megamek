@@ -269,7 +269,7 @@ public class AreaEffectHelper {
         r.subject = attacker.getId();
         r.newlines = 1;
         r.add(rollTarget);
-        r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+        r.addDataWithTooltip(rollValue, rollReport);
         r.add(distFromCenter);
         r.choose(destroyed);
         vPhaseReport.addElement(r);

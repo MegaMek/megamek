@@ -105,7 +105,7 @@ public class AmmoWeaponHandler extends WeaponHandler {
             Report r = new Report(3173);
             r.subject = subjectId;
             r.newlines = 0;
-            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+            r.addDataWithTooltip(rollValue, rollReport);
             vPhaseReport.addElement(r);                
             
             if (rollValue == 12) {

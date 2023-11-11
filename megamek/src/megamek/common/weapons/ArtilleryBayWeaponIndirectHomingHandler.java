@@ -150,7 +150,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
         r = new Report(3155);
         r.newlines = 0;
         r.subject = subjectId;
-        r.addDataWithTooltip(String.valueOf(roll), rollReport);
+        r.addDataWithTooltip(roll, rollReport);
         vPhaseReport.addElement(r);
 
         // do we hit?
@@ -505,7 +505,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
                     r = new Report(3240);
                     r.subject = subjectId;
                     r.add("missile");
-                    r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+                    r.addDataWithTooltip(rollValue, rollReport);
                     vPhaseReport.add(r);
                     nDamPerHit = 0;
                     hits = 0;
@@ -513,7 +513,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
                 } else {
                     r = new Report(3241);
                     r.add("missile");
-                    r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+                    r.addDataWithTooltip(rollValue, rollReport);
                     r.subject = subjectId;
                     vPhaseReport.add(r);
                     hits = 1;

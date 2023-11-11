@@ -55,7 +55,7 @@ public class ACCaselessHandler extends ACWeaponHandler {
 
             Report r = new Report(3164);
             r.subject = subjectId;
-            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+            r.addDataWithTooltip(rollValue, rollReport);
 
             if (rollValue >= 8) {
                 // Round explodes destroying weapon

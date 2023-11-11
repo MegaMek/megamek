@@ -115,7 +115,7 @@ public class CenturionWeaponSystemHandler extends EnergyWeaponHandler {
             r.indent(3);
             r.addDesc(entityTarget);
             r.add(shutdown);
-            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+            r.addDataWithTooltip(rollValue, rollReport);
             if (rollValue >= shutdown) {
                 // avoided
                 r.choose(true);

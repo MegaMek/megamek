@@ -13444,7 +13444,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             r.subject = getId();
             r.indent();
             r.add(isSupercharger ? getSuperchargerTarget() : getMASCTarget());
-            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+            r.addDataWithTooltip(rollValue, rollReport);
 
             if ((!isSupercharger && (rollValue < getMASCTarget()))
                     || (isSupercharger && (rollValue < getSuperchargerTarget()))) {
@@ -13461,7 +13461,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     String rollReport2 = diceRoll2.getReport();
                     r = new Report(6310);
                     r.subject = getId();
-                    r.addDataWithTooltip(String.valueOf(rollValue2), rollReport2);
+                    r.addDataWithTooltip(rollValue2, rollReport2);
                     r.newlines = 0;
                     vDesc.addElement(r);
                     if (rollValue2 <= 7) {

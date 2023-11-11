@@ -409,6 +409,10 @@ public class Report implements Serializable {
         return this;
     }
 
+    public Report addDataWithTooltip(Integer data, String tooltip) {
+        return addDataWithTooltip(String.valueOf(data), tooltip);
+    }
+
     /**
      * Adds a field to the report with additional data available as a tooltip
      *

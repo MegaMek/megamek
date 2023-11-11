@@ -254,7 +254,7 @@ public class ServerHelper {
                         r.subject = entity.getId();
                         r.addDesc(entity);
                         r.add(startup);
-                        r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+                        r.addDataWithTooltip(rollValue, rollReport);
                         if (rollValue >= startup) {
                             // start 'er back up
                             entity.setShutDown(false);
@@ -325,7 +325,7 @@ public class ServerHelper {
                     r.subject = entity.getId();
                     r.addDesc(entity);
                     r.add(shutdown);
-                    r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+                    r.addDataWithTooltip(rollValue, rollReport);
                     if (rollValue >= shutdown) {
                         // avoided
                         r.choose(true);
@@ -362,7 +362,7 @@ public class ServerHelper {
             Roll diceRoll = Compute.rollD6(2);
             int rollValue = diceRoll.getIntValue();
             String rollReport = diceRoll.getReport();
-            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+            r.addDataWithTooltip(rollValue, rollReport);
             
             if (rollValue >= boom) {
                 // no ammo explosion
@@ -386,7 +386,7 @@ public class ServerHelper {
             r.subject = entity.getId();
             r.addDesc(entity);
             r.add(ouch);
-            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+            r.addDataWithTooltip(rollValue, rollReport);
             if (rollValue >= ouch) {
                 // pilot is ok
                 r.choose(true);
@@ -486,7 +486,7 @@ public class ServerHelper {
             String rollReport = diceRoll.getReport();
             Report r = new Report(reportID);
             r.addDesc(entity);
-            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+            r.addDataWithTooltip(rollValue, rollReport);
             r.subject = entity.getId();
             vPhaseReport.add(r);
             

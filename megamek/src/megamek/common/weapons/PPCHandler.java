@@ -151,7 +151,7 @@ public class PPCHandler extends EnergyWeaponHandler {
             r.subject = subjectId;
             r.indent();
             r.add(rollTarget);
-            r.addDataWithTooltip(String.valueOf(rollValue), rollReport);
+            r.addDataWithTooltip(rollValue, rollReport);
             if (rollValue < rollTarget) {
                 // Oops, we ruined our day...
                 int wlocation = weapon.getLocation();

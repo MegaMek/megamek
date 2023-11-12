@@ -38,7 +38,7 @@ public abstract class AbstractPhaseDisplay extends SkinnedJPanel implements
         BoardViewListener, GameListener, Distractable {
     private static final long serialVersionUID = 4421205210788230341L;
 
-    public static final int DONE_BUTTON_WIDTH = 125;
+    public static final int DONE_BUTTON_WIDTH = 160;
     // Distraction implementation.
     protected DistractableAdapter distracted = new DistractableAdapter();
 

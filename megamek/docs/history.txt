@@ -1,13 +1,17 @@
 VERSION HISTORY:
 ----------------
 0.49.16-SNAPSHOT
-+ Fix #4769 - BA Tube Artillery should support smoke rounds
-+ Fix #4854 - fix multiple end-of-game and end-of-phase hangs
-+ Fix #4541 - natural piloting SPA applies to physical attacks
-+ PR #4871 - Allow HTML tags in the TROView fluff
++ Fix #4769: BA Tube Artillery should support smoke rounds
++ Fix #4854: Fix multiple end-of-game and end-of-phase hangs
++ Fix #4541: Natural piloting SPA applies to physical attacks
++ PR #4871: Allow HTML tags in the TROView fluff
 + Data: Update Boards and Tagging. Fluff project continues.
-+ Fix #4793 - Flame Based Infantry Bugs
-+ Issue #4213 - RFE: Add CI indirect fire for mortars
++ Fix #4793: Flame Based Infantry Bugs
++ Issue #4213: RFE Add CI indirect fire for mortars
++ PR #4877: Add client setting for auto centering
++ PR #4875: Done and skip buttons handle changes in GUI Scale better
++ Issue #4861: Fix for RAC and UAC ammo bingo state hanging game
++ PR #4853: Fixes MekHQ #3594, MekHQ #3773
 
 0.49.15 (2023-10-21 1530 UTC)
 + PR #4688: Round reports should no longer take increasingly long to load

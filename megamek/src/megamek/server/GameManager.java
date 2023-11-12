@@ -3680,8 +3680,13 @@ public class GameManager implements IGameManager {
         // Load the unit. Do not check for elevation during deployment
         boolean checkElevation = !getGame().getPhase().isLounge()
                 && !getGame().getPhase().isDeployment();
-        loader.load(unit, checkElevation, bayNumber);
-
+        try {
+            loader.load(unit, checkElevation, bayNumber);
+        } catch (IllegalArgumentException e) {
+            LogManager.getLogger().info(e.getMessage());
+            sendServerChat(e.getMessage());
+            return;
+        }
         // The loaded unit is being carried by the loader.
         unit.setTransportId(loader.getId());
 

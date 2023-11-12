@@ -168,7 +168,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     private int fullStructure;
     private int squadSize;
     private ASSpecialAbilityCollection specialAbilities = new ASSpecialAbilityCollection();
-    private UnitRole role;
+    private UnitRole role = UnitRole.UNDETERMINED;
 
     public MechSummary() {
         armorTypeSet = new HashSet<>();

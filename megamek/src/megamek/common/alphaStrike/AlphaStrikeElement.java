@@ -76,7 +76,7 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
     private int tmm;
     private Map<String,Integer> movement = new LinkedHashMap<>();
     private String primaryMovementMode = "";
-    private UnitRole role;
+    private UnitRole role = UnitRole.UNDETERMINED;
     private int skill = 4;
 
     /**

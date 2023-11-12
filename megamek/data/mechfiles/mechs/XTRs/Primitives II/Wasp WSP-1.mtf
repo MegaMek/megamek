@@ -8,6 +8,7 @@ TechBase:Inner Sphere
 Era:2464
 Source:XTR: Primitives II
 Rules Level:4
+role:Scout
 
 Mass:20
 Engine:120 Fusion Engine(IS)

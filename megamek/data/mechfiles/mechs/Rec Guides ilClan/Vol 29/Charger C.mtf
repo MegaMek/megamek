@@ -7,6 +7,7 @@ techbase:Mixed (Clan Chassis)
 era:3130
 source:Rec Guide:ilClan #29
 rules level:3
+role:Scout
 
 mass:80
 engine:400 XL Engine(IS)

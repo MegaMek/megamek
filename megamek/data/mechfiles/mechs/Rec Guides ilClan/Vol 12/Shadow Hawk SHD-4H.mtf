@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3101
 source:Rec Guide:ilClan #12
 rules level:2
+role:Sniper
 
 mass:55
 engine:275 Fusion Engine(IS)

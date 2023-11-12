@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3100
 source:TRO: Irregulars
 rules level:2
+role:Ambusher
 
 mass:35
 engine:105 Fuel Cell Engine(IS)

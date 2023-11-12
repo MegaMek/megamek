@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3138
 source:TRO: 3145 Republic of the Sphere
 rules level:4
+role:Scout
 
 mass:15
 engine:225 XXL Engine(IS)

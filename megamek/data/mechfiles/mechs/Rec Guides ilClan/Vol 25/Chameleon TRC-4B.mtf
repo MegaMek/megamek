@@ -7,6 +7,7 @@ techbase:Inner Sphere
 era:2510
 source:Rec Guide:ilClan #25
 rules level:1
+role:Scout
 
 mass:50
 engine:300 Fusion Engine(IS)

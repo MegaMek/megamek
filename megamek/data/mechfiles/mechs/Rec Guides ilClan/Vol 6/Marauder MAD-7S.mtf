@@ -7,6 +7,7 @@ Config:Biped
 techbase:Inner Sphere
 era:3086
 rules level:4
+role:Sniper
 source:Rec Guide:ilClan #6
 
 mass:75

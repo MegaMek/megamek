@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3045
 source:Shrapnel #4
 rules level:2
+role:Sniper
 
 mass:30
 engine:120 Fusion Engine(IS)

@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3087
 source:Rec Guide:ilClan #12
 rules level:2
+role:Missile Boat
 
 mass:55
 engine:220 XL Engine(IS)

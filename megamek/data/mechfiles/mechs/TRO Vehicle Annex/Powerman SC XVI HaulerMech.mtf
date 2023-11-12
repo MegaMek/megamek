@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3068
 source:TRO: Vehicle Annex (Revised)
 rules level:2
+role:Ambusher
 
 mass:35
 engine:140 ICE Engine(IS)

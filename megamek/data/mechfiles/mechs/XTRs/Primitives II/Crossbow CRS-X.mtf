@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:2468
 source:XTR: Primitives II
 rules level:4
+role:Missile Boat
 
 mass:60
 engine:290 Fusion Engine(IS)

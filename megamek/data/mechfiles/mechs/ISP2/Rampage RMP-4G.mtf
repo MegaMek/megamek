@@ -8,6 +8,7 @@ Config:Biped
 TechBase:Inner Sphere
 Era:2750
 Rules Level:2
+role:Sniper
 
 Mass:85
 Engine:340 XL Engine

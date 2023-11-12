@@ -8,6 +8,7 @@ techbase:Mixed (IS Chassis)
 era:3135
 source:XTR: Caveat Emptor
 rules level:3
+role:Juggernaut
 
 mass:75
 engine:300 XL (Clan) Engine

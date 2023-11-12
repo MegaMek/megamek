@@ -8,6 +8,7 @@ techbase:Mixed (IS Chassis)
 era:3076
 source:XTR: Steiner
 rules level:4
+role:Striker
 
 mass:45
 engine:315 XL Engine(IS)

@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3073
 source:TRO: Clan Invasion
 rules level:2
+role:Skirmisher
 
 mass:85
 engine:255 XL Engine(IS)

@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3140
 source:Operational Turning Points: Hanseatic Crusade
 rules level:3
+role:Skirmisher
 
 mass:55
 engine:330 XL Engine(IS)

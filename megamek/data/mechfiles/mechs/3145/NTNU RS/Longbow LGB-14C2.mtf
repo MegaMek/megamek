@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3088
 source:Record Sheets: 3145 New Tech New Upgrades
 rules level:3
+role:Missile Boat
 
 mass:85
 engine:255 XL Engine(IS)

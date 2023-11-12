@@ -8,6 +8,7 @@ techbase:Clan
 era:3131
 source:Rec Guide:ilClan #21
 rules level:2
+role:Juggernaut
 
 mass:100
 engine:400 XL (Clan) Engine(IS)

@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:2719
 source:Era Report 2750
 rules level:4
+role:Skirmisher
 
 mass:50
 engine:250 XL Engine(IS)

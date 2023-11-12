@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3000
 source:TRO: Irregulars
 rules level:2
+role:Ambusher
 
 mass:25
 engine:100 Fission Engine(IS)

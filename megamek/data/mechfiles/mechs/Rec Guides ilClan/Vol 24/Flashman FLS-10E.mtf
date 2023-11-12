@@ -8,6 +8,7 @@ techbase:Mixed (IS Chassis)
 era:3144
 source:Rec Guide:ilClan #24
 rules level:3
+role:Skirmisher
 
 mass:75
 engine:375 XL (Clan) Engine

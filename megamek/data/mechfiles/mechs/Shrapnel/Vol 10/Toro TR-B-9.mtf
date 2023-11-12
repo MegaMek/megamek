@@ -7,6 +7,7 @@ techbase:Inner Sphere
 era:3108
 source:Shrapnel #10
 rules level:2
+role:Brawler
 
 mass:35
 engine:175 Fusion Engine(IS)

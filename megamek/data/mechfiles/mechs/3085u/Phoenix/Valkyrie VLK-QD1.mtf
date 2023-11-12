@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3067
 source:TRO: Project Pheonix
 rules level:2
+role:Missile Boat
 
 mass:30
 engine:150 XL Engine(IS)

@@ -8,6 +8,7 @@ techbase:Clan
 era:3050
 source:Rec Guide:ilClan #3
 rules level:2
+role:Scout
 
 mass:35
 engine:210 XL (Clan) Engine(IS)

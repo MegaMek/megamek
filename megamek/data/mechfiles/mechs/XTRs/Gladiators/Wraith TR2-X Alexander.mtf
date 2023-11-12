@@ -7,6 +7,7 @@ Config:Biped
 TechBase:Mixed (IS Chassis)
 Era:3076
 Rules Level:4
+role:Skirmisher
 Source:XTR: Gladiators
 
 Mass:55

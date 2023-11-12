@@ -6,6 +6,7 @@ Config:Biped
 techbase:Mixed (IS Chassis)
 era:3146
 rules level:2
+role:Sniper
 mul id:9487
 Source:Rec Guide:ilClan #32
 

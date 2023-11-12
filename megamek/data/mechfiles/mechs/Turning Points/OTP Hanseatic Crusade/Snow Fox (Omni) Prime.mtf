@@ -8,6 +8,7 @@ techbase:Clan
 era:3111
 source:Operational Turning Points: Hanseatic Crusade
 rules level:2
+role:Scout
 
 mass:20
 engine:160 XL (Clan) Engine(IS)

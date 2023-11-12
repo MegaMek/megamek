@@ -7,6 +7,7 @@ techbase:Inner Sphere
 era:3042
 source:Shrapnel #9
 rules level:2
+role:Striker
 mul id:9238
 
 mass:35

@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3072
 source:Touring the Stars: Kaumberg
 rules level:4
+role:Scout
 
 mass:25
 engine:150 Fusion Engine(IS)

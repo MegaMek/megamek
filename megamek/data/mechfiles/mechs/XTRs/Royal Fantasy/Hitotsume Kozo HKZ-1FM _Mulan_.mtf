@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3136
 source:XTR: Royal Fantasy
 rules level:3
+role:Skirmisher
 
 mass:55
 engine:330 XL Engine(IS)

@@ -8,6 +8,7 @@ techbase:Clan
 era:3147
 source:Shrapnel #5
 rules level:2
+role:Missile Boat
 
 mass:65
 engine:325 XL (Clan) Engine(IS)

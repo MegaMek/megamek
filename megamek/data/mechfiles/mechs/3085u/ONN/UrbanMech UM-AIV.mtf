@@ -8,6 +8,7 @@ TechBase:Inner Sphere
 Era:3072
 source:TRO: 3085
 Rules Level:3
+role:Missile Boat
 
 Mass:30
 Engine:60 XL Engine(IS)

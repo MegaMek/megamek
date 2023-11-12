@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3090
 source:XTR: Caveat Emptor
 rules level:5
+role:Sniper
 
 mass:50
 engine:150 ICE Engine(IS)

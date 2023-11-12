@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3090
 source:XTR: Caveat Emptor
 rules level:4
+role:Skirmisher
 
 mass:50
 engine:300 XXL Engine(IS)

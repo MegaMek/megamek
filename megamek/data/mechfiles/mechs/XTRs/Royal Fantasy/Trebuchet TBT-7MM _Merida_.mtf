@@ -8,6 +8,7 @@ techbase:Mixed (IS Chassis)
 era:3100
 source:XTR: Royal Fantasy
 rules level:3
+role:Sniper
 
 mass:50
 engine:250 XL Engine(IS)

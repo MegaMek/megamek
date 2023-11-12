@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3080
 source:TRO: Irregulars
 rules level:3
+role:None
 
 mass:10
 engine:40 ICE Engine(IS)

@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:2780
 source:Arano Restoration
 rules level:2
+role:Juggernaut
 
 mass:100
 engine:300 Fusion Engine(IS)

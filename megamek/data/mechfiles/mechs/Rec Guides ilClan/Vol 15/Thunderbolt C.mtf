@@ -8,6 +8,7 @@ techbase:Mixed (IS Chassis)
 era:2832
 source:Rec Guide:ilClan #15
 rules level:3
+role:Sniper
 
 mass:65
 engine:260 Fusion Engine(IS)

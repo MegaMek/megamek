@@ -8,6 +8,7 @@ techbase:Clan
 era:3134
 source:Rec Guide:ilClan #14
 rules level:2
+role:Brawler
 
 mass:50
 engine:250 XL (Clan) Engine(IS)

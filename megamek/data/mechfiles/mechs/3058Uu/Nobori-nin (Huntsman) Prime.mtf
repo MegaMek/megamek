@@ -8,6 +8,7 @@ techbase:Clan
 era:3049
 source:TRO: 3058
 rules level:2
+role:Skirmisher
 
 mass:50
 engine:250 XL (Clan) Engine(IS)

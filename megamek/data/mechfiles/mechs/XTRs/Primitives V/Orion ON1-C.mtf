@@ -7,6 +7,7 @@ techbase:Inner Sphere
 era:2453
 source:XTR: Primitives V
 rules level:3
+role:Brawler
 
 mass:75
 engine:360 Fusion Engine(IS)

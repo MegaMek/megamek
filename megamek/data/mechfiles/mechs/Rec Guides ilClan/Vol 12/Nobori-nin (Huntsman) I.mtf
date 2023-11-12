@@ -7,6 +7,7 @@ Config:Biped Omnimech
 techbase:Clan
 era:3088
 rules level:2
+role:Sniper
 source:Rec Guide:ilClan #12
 
 mass:50

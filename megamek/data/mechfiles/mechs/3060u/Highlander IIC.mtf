@@ -8,6 +8,7 @@ techbase:Clan
 era:2858
 source:TRO: 3060
 rules level:2
+role:Missile Boat
 
 mass:90
 engine:270 Fusion (Clan) Engine(IS)

@@ -8,6 +8,7 @@ Config:Biped
 TechBase:Inner Sphere
 Era:2823
 Rules Level:2
+role:Striker
 
 Mass:45
 Engine:270 XL Engine

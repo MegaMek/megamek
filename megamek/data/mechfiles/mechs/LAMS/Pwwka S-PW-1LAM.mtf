@@ -8,6 +8,7 @@ techbase:Mixed (IS Chassis)
 era:3078
 source:Jihad: Final Reckoning
 rules level:4
+role:Striker
 
 mass:30
 engine:180 Fusion Engine(IS)

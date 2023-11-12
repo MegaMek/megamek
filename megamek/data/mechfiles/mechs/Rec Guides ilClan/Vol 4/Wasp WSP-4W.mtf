@@ -7,6 +7,7 @@ Config:Biped
 techbase:Inner Sphere
 era:3065
 rules level:2
+role:Scout
 source:Rec Guide:ilClan #4
 
 mass:20

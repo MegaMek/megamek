@@ -8,6 +8,7 @@ techbase:Mixed (IS Chassis)
 era:3151
 source:Dominions Divided
 rules level:3
+role:Juggernaut
 
 mass:135
 engine:270 Fusion Engine(IS)

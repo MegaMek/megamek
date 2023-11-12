@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3088
 source:Rec Guide:ilClan #17
 rules level:2
+role:Brawler
 
 mass:65
 engine:260 XL Engine(IS)

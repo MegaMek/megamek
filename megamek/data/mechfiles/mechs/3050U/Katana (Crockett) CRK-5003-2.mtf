@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3035
 source:TRO: 3050
 rules level:2
+role:Juggernaut
 
 mass:85
 engine:255 Fusion Engine(IS)

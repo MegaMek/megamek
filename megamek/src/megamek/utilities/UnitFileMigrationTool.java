@@ -20,14 +20,19 @@ public class UnitFileMigrationTool {
             if (file.toString().toLowerCase().endsWith(".mtf")) {
                 List<String> lines = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
                 int line = 0;
+                boolean found = false;
                 for (; line < lines.size(); line++) {
                     if (lines.get(line).toLowerCase().startsWith("rules level")) {
+                        found = true;
                         break;
                     }
                 }
-
-                lines.add(line+1, "role:"+ UnitRoleHandler.getRoleFor(unit));
-                Files.write(file.toPath(), lines, StandardCharsets.UTF_8);
+                if (found) {
+                    lines.add(line + 1, "role:" + UnitRoleHandler.getRoleFor(unit));
+                    Files.write(file.toPath(), lines, StandardCharsets.UTF_8);
+                } else {
+                    System.out.println("rules level line not found for: " + unit.getName());
+                }
             }
 
 

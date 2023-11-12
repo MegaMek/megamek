@@ -8,6 +8,7 @@ techbase:Mixed (IS Chassis)
 era:3140
 source:Rec Guide:ilClan #12
 rules level:3
+role:Striker
 
 mass:45
 engine:225 XL (Clan) Engine

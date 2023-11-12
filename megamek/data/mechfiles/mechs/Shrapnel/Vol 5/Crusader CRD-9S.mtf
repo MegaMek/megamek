@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3086
 source:Shrapnel #5
 rules level:3
+role:Sniper
 
 mass:65
 engine:260 XL Engine(IS)

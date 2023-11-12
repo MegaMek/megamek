@@ -7,6 +7,7 @@ techbase:Inner Sphere
 era:3139
 source:Rec Guide:ilClan #26
 rules level:2
+role:Scout
 
 mass:20
 engine:180 Light Engine(IS)

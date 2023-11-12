@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3101
 source:TRO: 3145 Draconis Combine
 rules level:4
+role:Sniper
 
 mass:95
 engine:285 Light Engine(IS)

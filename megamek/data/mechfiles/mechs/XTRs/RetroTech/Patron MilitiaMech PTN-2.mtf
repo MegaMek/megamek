@@ -8,6 +8,7 @@ TechBase:Inner Sphere
 Era:3076
 Source:XTR: RetroTech
 Rules Level:2
+role:Sniper
 
 Mass:15
 Engine:30 Fuel-Cell Engine

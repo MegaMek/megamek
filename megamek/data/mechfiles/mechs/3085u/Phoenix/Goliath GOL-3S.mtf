@@ -7,6 +7,7 @@ techbase:Inner Sphere
 era:3066
 source:TRO: 3085u 
 rules level:2
+role:Missile Boat
 
 mass:80
 engine:320 Light Engine(IS)

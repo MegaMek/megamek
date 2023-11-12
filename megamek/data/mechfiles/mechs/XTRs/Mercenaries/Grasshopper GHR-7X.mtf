@@ -7,6 +7,7 @@ Config:Biped
 TechBase:Inner Sphere
 Era:3075
 Rules Level:4
+role:Skirmisher
 source:XTR: Mercenaries
 
 Mass:70

@@ -22,6 +22,7 @@ package megamek.common.loaders;
 import java.io.*;
 import java.util.*;
 
+import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import org.apache.logging.log4j.LogManager;
 
@@ -72,6 +73,7 @@ public class MtfFile implements IMechLoader {
     private String imagePath = "";
 
     private int bv = 0;
+    private String role;
 
     private final Map<EquipmentType, Mounted> hSharedEquip = new HashMap<>();
     private final List<Mounted> vSplitWeapons = new ArrayList<>();
@@ -124,6 +126,7 @@ public class MtfFile implements IMechLoader {
     public static final String NO_CRIT = "nocrit:";
     public static final String SIZE = ":SIZE:";
     public static final String MUL_ID = "mul id:";
+    public static final String ROLE = "role:";
 
     /**
      * Creates new MtfFile
@@ -276,6 +279,11 @@ public class MtfFile implements IMechLoader {
             mech.setMulId(mulId);
             mech.setYear(Integer.parseInt(techYear.substring(4).trim()));
             mech.setSource(source.substring("Source:".length()).trim());
+            if (StringUtility.isNullOrBlank(role)) {
+                mech.setUnitRole(UnitRole.UNDETERMINED);
+            } else {
+                mech.setUnitRole(UnitRole.parseRole(role));
+            }
 
             if (chassisConfig.contains("Omni")) {
                 mech.setOmni(true);
@@ -1188,6 +1196,11 @@ public class MtfFile implements IMechLoader {
 
         if (lineLower.startsWith(MUL_ID)) {
             mulId = Integer.parseInt(line.substring(MUL_ID.length()));
+            return true;
+        }
+
+        if (lineLower.startsWith(ROLE)) {
+            role = line.substring(ROLE.length());
             return true;
         }
 

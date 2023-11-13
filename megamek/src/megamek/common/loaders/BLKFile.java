@@ -74,6 +74,37 @@ public class BLKFile {
         return rear ? 3 : 0;
     }
 
+    protected void setBasicEntityData(Entity entity) throws EntityLoadingException {
+        if (!dataFile.exists("Name")) {
+            throw new EntityLoadingException("Could not find name block.");
+        }
+
+        entity.setChassis(dataFile.getDataAsString("Name")[0]);
+
+        // Model is not strictly necessary.
+        if (dataFile.exists("Model") && (dataFile.getDataAsString("Model")[0] != null)) {
+            entity.setModel(dataFile.getDataAsString("Model")[0]);
+        } else {
+            entity.setModel("");
+        }
+
+        if (dataFile.exists(MtfFile.MUL_ID)) {
+            entity.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);
+        }
+
+        if (dataFile.exists("role")) {
+            entity.setUnitRole(UnitRole.parseRole(dataFile.getDataAsString("role")[0]));
+        }
+
+        if (dataFile.exists("source")) {
+            entity.setSource(dataFile.getDataAsString("source")[0]);
+        }
+
+        setTechLevel(entity);
+        setFluff(entity);
+        checkManualBV(entity);
+    }
+
     public int defaultAeroVGLFacing(int location, boolean rearFacing) {
         switch (location) {
             case Aero.LOC_LWING:

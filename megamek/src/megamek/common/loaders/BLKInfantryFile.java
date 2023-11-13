@@ -33,27 +33,7 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
     public Entity getEntity() throws EntityLoadingException {
 
         Infantry t = new Infantry();
-
-        if (!dataFile.exists("name")) {
-            throw new EntityLoadingException("Could not find name block.");
-        }
-        t.setChassis(dataFile.getDataAsString("Name")[0]);
-
-        if (!dataFile.exists("model")) {
-            throw new EntityLoadingException("Could not find model block.");
-        }
-        t.setModel(dataFile.getDataAsString("Model")[0]);
-        if (dataFile.exists(MtfFile.MUL_ID)) {
-            t.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);
-        }
-
-        setTechLevel(t);
-        setFluff(t);
-        checkManualBV(t);
-
-        if (dataFile.exists("source")) {
-            t.setSource(dataFile.getDataAsString("source")[0]);
-        }
+        setBasicEntityData(t);
 
         if (!dataFile.exists("squad_size")) {
             throw new EntityLoadingException("Could not find squad size.");

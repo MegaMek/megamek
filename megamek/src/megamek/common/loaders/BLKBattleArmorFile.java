@@ -32,30 +32,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
     public Entity getEntity() throws EntityLoadingException {
 
         BattleArmor t = new BattleArmor();
-
-        if (!dataFile.exists("name")) {
-            throw new EntityLoadingException("Could not find name block.");
-        }
-        t.setChassis(dataFile.getDataAsString("Name")[0]);
-
-        // Model is not strictly necessary.
-        if (dataFile.exists("Model") && (dataFile.getDataAsString("Model")[0] != null)) {
-            t.setModel(dataFile.getDataAsString("Model")[0]);
-        } else {
-            t.setModel("");
-        }
-
-        if (dataFile.exists(MtfFile.MUL_ID)) {
-            t.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);
-        }
-
-        setTechLevel(t);
-        setFluff(t);
-        checkManualBV(t);
-
-        if (dataFile.exists("source")) {
-            t.setSource(dataFile.getDataAsString("source")[0]);
-        }
+        setBasicEntityData(t);
 
         if (dataFile.exists("exoskeleton") && dataFile.getDataAsString("exoskeleton")[0].equalsIgnoreCase("true")) {
             t.setIsExoskeleton(true);

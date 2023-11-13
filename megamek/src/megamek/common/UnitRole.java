@@ -63,7 +63,7 @@ public enum UnitRole {
             case "striker":
                 return STRIKER;
             case "attack_fighter":
-            case "attack figher":
+            case "attack fighter":
             case "attack":
                 return ATTACK_FIGHTER;
             case "dogfighter":

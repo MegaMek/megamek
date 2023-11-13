@@ -30,31 +30,12 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
     public Entity getEntity() throws EntityLoadingException {
 
         Warship a = new Warship();
-
-        if (!dataFile.exists("Name")) {
-            throw new EntityLoadingException("Could not find name block.");
-        }
-        a.setChassis(dataFile.getDataAsString("Name")[0]);
-        if (dataFile.exists("Model") && (dataFile.getDataAsString("Model")[0] != null)) {
-            a.setModel(dataFile.getDataAsString("Model")[0]);
-        } else {
-            a.setModel("");
-        }
-        if (dataFile.exists(MtfFile.MUL_ID)) {
-            a.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);
-        }
-        if (dataFile.exists("source")) {
-            a.setSource(dataFile.getDataAsString("source")[0]);
-        }
+        setBasicEntityData(a);
 
         if (!dataFile.exists("year")) {
             throw new EntityLoadingException("Could not find year block.");
         }
         a.setYear(dataFile.getDataAsInt("year")[0]);
-
-        setTechLevel(a);
-        setFluff(a);
-        checkManualBV(a);
 
         // Tonnage
         if (!dataFile.exists("tonnage")) {

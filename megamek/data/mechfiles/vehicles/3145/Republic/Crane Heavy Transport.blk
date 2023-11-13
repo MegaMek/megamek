@@ -32,6 +32,10 @@ Crane Heavy Transport
 IS Level 2
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 VTOL
 </motion_type>

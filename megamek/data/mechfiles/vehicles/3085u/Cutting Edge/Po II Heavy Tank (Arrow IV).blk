@@ -32,6 +32,10 @@ Po II Heavy Tank
 IS Level 3
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <tonnage>
 60
 </tonnage>

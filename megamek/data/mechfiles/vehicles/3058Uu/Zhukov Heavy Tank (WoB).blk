@@ -32,6 +32,10 @@ Zhukov Heavy Tank
 IS Level 3
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Tracked
 </motion_type>

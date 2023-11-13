@@ -36,6 +36,10 @@ Gulltoppr OmniMonitor
 Mixed (IS Chassis) Experimental
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Tracked
 </motion_type>

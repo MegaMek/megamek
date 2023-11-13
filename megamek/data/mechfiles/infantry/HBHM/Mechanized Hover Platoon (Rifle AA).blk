@@ -37,6 +37,10 @@ InfantryMk2PortableAA
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 <year>
 3067
 </year>

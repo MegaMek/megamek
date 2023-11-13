@@ -32,6 +32,10 @@ Engineering Vehicle
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Tracked
 </motion_type>

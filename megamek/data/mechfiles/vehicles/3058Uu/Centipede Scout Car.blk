@@ -47,6 +47,10 @@ Ammo Vehicle Flamer
 <type>
 IS Level 2
 </type>
+
+<role>
+Scout
+</role>
 <year>
 3054
 </year>

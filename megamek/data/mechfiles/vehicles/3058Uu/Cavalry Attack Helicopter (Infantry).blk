@@ -32,6 +32,10 @@ Cavalry Attack Helicopter
 IS Level 2
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 VTOL
 </motion_type>

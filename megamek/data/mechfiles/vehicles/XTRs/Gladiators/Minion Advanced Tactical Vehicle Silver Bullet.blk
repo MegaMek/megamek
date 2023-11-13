@@ -32,6 +32,10 @@ Minion Advanced Tactical Vehicle
 Mixed (IS Chassis) Experimental
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Hover
 </motion_type>

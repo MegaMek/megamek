@@ -42,6 +42,10 @@ ISArmorPiercingMortarAmmo1
 <type>
 IS Level 3
 </type>
+
+<role>
+Sniper
+</role>
 <year>
 2580
 </year>

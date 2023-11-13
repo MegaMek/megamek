@@ -32,6 +32,10 @@ Minion Advanced Tactical Vehicle
 IS Level 3
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Hover
 </motion_type>

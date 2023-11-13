@@ -43,6 +43,10 @@ ISMG Ammo (200)
 <type>
 IS Level 1
 </type>
+
+<role>
+Scout
+</role>
 <year>
 2822
 </year>

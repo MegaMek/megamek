@@ -32,6 +32,10 @@ Coolant Truck
 IS Level 1
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>

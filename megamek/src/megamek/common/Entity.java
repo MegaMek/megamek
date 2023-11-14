@@ -8172,22 +8172,27 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // find those that can load the unit.
         // load the unit into the best match.
         if (unit.getElevation() == getElevation()) {
-            for (Transporter nextbay : transports) {
-                if ((nextbay instanceof DockingCollar) && nextbay.canLoad(unit)) {
-                    ((DockingCollar) nextbay).recover(unit);
-                    return;
+            if (unit.isDropShip()) {
+                for (Transporter nextbay : transports) {
+                    if ((nextbay instanceof DockingCollar) && nextbay.canLoad(unit)) {
+                        ((DockingCollar) nextbay).recover(unit);
+                        return;
+                    }
                 }
-            }
-            for (Bay nextbay : getTransportBays()) {
-                if ((nextbay instanceof ASFBay) && nextbay.canLoad(unit)) {
-                    ((ASFBay) nextbay).recover(unit);
-                    return;
+            } else {
+                if (unit.isFighter()) {
+                    for (Bay nextbay : getTransportBays()) {
+                        if ((nextbay instanceof ASFBay) && nextbay.canLoad(unit)) {
+                            ((ASFBay) nextbay).recover(unit);
+                            return;
+                        }
+                    }
                 }
-            }
-            for (Bay nextbay : getTransportBays()) {
-                if ((nextbay instanceof SmallCraftBay) && nextbay.canLoad(unit)) {
-                    ((SmallCraftBay) nextbay).recover(unit);
-                    return;
+                for (Bay nextbay : getTransportBays()) {
+                    if ((nextbay instanceof SmallCraftBay) && nextbay.canLoad(unit)) {
+                        ((SmallCraftBay) nextbay).recover(unit);
+                        return;
+                    }
                 }
             }
         }

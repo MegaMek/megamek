@@ -136,6 +136,15 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             aaa.decrementTurnsTilHit();
             return true;
         }
+        // Offboard shots are targeted at an entity rather than a hex. If null, the target has disengaged.
+        if (target == null) {
+            Report r = new Report(3158);
+            r.indent();
+            r.subject = subjectId;
+            r.add(wtype.getName());
+            vPhaseReport.add(r);
+            return true;
+        }
         final Vector<Integer> spottersBefore = aaa.getSpotterIds();
         Coords targetPos = target.getPosition();
         final int playerId = aaa.getPlayerId();

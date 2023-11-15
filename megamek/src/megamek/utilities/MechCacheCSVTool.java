@@ -159,8 +159,9 @@ public final class MechCacheCSVTool {
                 }
                 for (int i = 0; i < armorType.size(); i++) {
                     csvLine.append(EquipmentType.getArmorTypeName(armorType.get(i),
-                            TechConstants.isClan(armorTech.get(i)))).append(DELIM);
+                            TechConstants.isClan(armorTech.get(i)))).append(",");
                 }
+                csvLine.append(DELIM);
 
                 // Equipment Names
                 List<String> equipmentNames = new ArrayList<>();

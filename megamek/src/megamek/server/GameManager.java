@@ -11643,15 +11643,9 @@ public class GameManager implements IGameManager {
                     entity.setLocationStatus(Mech.LOC_CLEG, ILocationExposureStatus.WET);
                     vPhaseReport.addAll(breachCheck(entity, Mech.LOC_CLEG, hex));
                 }
-                // Beast-mounted infantry can sit above the water level
-            } else if (!entity.isConventionalInfantry() || (entity.relHeight() < 0)) {
-                for (int loop = 0; loop < entity.locations(); loop++) {
-                    entity.setLocationStatus(loop, ILocationExposureStatus.WET);
-                    vPhaseReport.addAll(breachCheck(entity, loop, hex));
-                }
             } else {
                 int status = ILocationExposureStatus.WET;
-                if (entity.isConventionalInfantry() && (entity.relHeight() >= 0)) {
+                if (entity.relHeight() >= 0) {
                     status = game.getPlanetaryConditions().isVacuum() ?
                             ILocationExposureStatus.VACUUM : ILocationExposureStatus.NORMAL;
                 }

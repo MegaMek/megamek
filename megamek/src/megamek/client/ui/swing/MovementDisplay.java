@@ -2490,6 +2490,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
             setAccNEnabled(false);
         }
 
+        // Disable accn/decn if a jumpship has changed facing
+        if ((a instanceof Jumpship) && ((Jumpship) a).hasStationKeepingDrive()
+                && (cmd.contains(MoveStepType.TURN_LEFT) || cmd.contains(MoveStepType.TURN_RIGHT))) {
+            setDecNEnabled(false);
+            setAccNEnabled(false);
+        }
+
         // if in atmosphere, limit acceleration to 2x safe thrust
         if (!clientgui.getClient().getGame().getBoard().inSpace()
                 && (vel == (2 * ce.getWalkMP()))) {

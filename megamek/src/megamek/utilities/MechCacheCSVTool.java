@@ -22,6 +22,9 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
+
+import megamek.codeUtilities.ObjectUtility;
+import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.templates.TROView;
@@ -219,7 +222,13 @@ public final class MechCacheCSVTool {
                     csvLine.append(entity.getFluff().getOverview().isBlank() ? "no" : "yes").append(DELIM);
                     csvLine.append(entity.getFluff().getDeployment().isBlank() ? "no" : "yes").append(DELIM);
                     csvLine.append(entity.getFluff().getHistory().isBlank() ? "no" : "yes").append(DELIM);
-                    csvLine.append(entity.getFluff().getNotes().isBlank() ? "no" : "yes").append(DELIM);
+
+                    String notes = entity.getFluff().getNotes();
+                    if (!StringUtility.isNullOrBlank(notes)) {
+                        csvLine.append(notes);
+                    } else {
+                        csvLine.append("--");
+                    }
                 }
 
                 csvLine.append("\n");

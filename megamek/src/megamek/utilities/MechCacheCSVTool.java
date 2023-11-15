@@ -87,7 +87,7 @@ public class MechCacheCSVTool {
                	// Unit Type.
                 csvLine.append(unit.getFullAccurateUnitType()).append(",");
                 // Unit Role
-                csvLine.append(UnitRoleHandler.getRoleFor(unit)).append(",");
+                csvLine.append(unit.getRole()).append(",");
                 // Unit BV
                 csvLine.append(unit.getBV()).append(",");
                 // Unit Dry Cost

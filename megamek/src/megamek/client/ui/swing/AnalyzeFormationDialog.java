@@ -321,7 +321,7 @@ public class AnalyzeFormationDialog extends JDialog {
                     if (null == mr) {
                         return UnitRole.UNDETERMINED.toString();
                     } else {
-                        return UnitRoleHandler.getRoleFor(mr.getKey()).toString();
+                        return mr.getMechSummary().getRole().toString();
                     }
                 default:
                     Function<MechSummary,?> metric = formationType.getReportMetric(colNames.get(columnIndex));

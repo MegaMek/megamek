@@ -1,9 +1,29 @@
+/*
+ * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.common;
 
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.BattleForceSUA;
 import org.apache.logging.log4j.LogManager;
+
+import java.util.Arrays;
 
 /**
  * Unit roles as defined by Alpha Strike Companion, used in formation building rules
@@ -12,7 +32,9 @@ import org.apache.logging.log4j.LogManager;
  * @author Neoancient
  */
 public enum UnitRole {
+    /** This is the default role; given to units where the role definition is missing from their file. */
     UNDETERMINED (false),
+
     AMBUSHER (true),
     BRAWLER (true),
     JUGGERNAUT (true),
@@ -27,9 +49,11 @@ public enum UnitRole {
     FIRE_SUPPORT (false),
     INTERCEPTOR (false),
     TRANSPORT (false),
+
+    /** This role is used for some large aerospace units that intentionally have none of the combat roles. */
 	NONE (false);
 
-    private boolean ground;
+    private final boolean ground;
 
     UnitRole(boolean ground) {
         this.ground = ground;
@@ -37,6 +61,14 @@ public enum UnitRole {
 
     public boolean isGroundRole() {
         return ground;
+    }
+
+    public boolean isAvailableTo(BTObject unit) {
+        return (ground == unit.isGround()) && !unit.isUnitGroup();
+    }
+
+    public boolean isAnyOf(UnitRole role, UnitRole... otherRoles) {
+        return (this == role) || Arrays.stream(otherRoles).anyMatch(otherRole -> this == otherRole);
     }
 
     public boolean hasRole() {
@@ -114,7 +146,7 @@ public enum UnitRole {
      *
      * @param entity      The unit to be checked for role qualification
      * @param tolerance A measure of how strictly to apply the qualifications. A value of zero is
-     *                  more or less by the book, while values &lt; 0 are more liberal and &gt; 0 are
+     *                  more or less by the book, while values below 0 are more liberal and above 0 are
      *                  more strict.
      * @return          Boolean value indicating whether the unit meets the qualifications for this role.
      */

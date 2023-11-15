@@ -28,6 +28,7 @@ import java.util.Map;
  * 
  * @author Neoancient
  */
+@Deprecated
 public class UnitRoleHandler {
     
     private static final String FILE_LOC = "unit_roles.txt";

@@ -63,8 +63,8 @@ public class PlayerUnitRoleSorter implements MekTableSorter {
         } else if (!p_a.equals(p_b)) {
             return p_a.getName().compareTo(p_b.getName());
         } else {
-            String aRole = UnitRoleHandler.getRoleFor(a).toString();
-            String bRole = UnitRoleHandler.getRoleFor(b).toString();
+            String aRole = a.getRole().toString();
+            String bRole = b.getRole().toString();
             return aRole.compareTo(bRole) * d;
         }
     }

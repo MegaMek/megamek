@@ -726,7 +726,7 @@ public class RATGeneratorEditor extends JFrame {
                 case COL_ROLE:
                     return data.get(row).getRoles().stream().map(Object::toString).collect(Collectors.joining(","));
                 case COL_CANON_ROLE:
-                    return UnitRoleHandler.getRoleFor(data.get(row).getChassis() + " " + data.get(row).getModel()).toString();
+                    return data.get(row).getMechSummary().getRole().toString();
                 case COL_DEPLOYED_WITH:
                     StringJoiner sj = new StringJoiner(",");
                     data.get(row).getDeployedWith().forEach(sj::add);

@@ -42,20 +42,20 @@ Aerodyne
 
 <transporters>
 navalrepairunpressurized:2100000.0:1:1:f0
-mechbay:36.0:1
-cargobay:12000.0:0:3
-smallcraftbay:72.0:6:4
-cargobay:24000.0:1:5
+mechbay:36.0:1:-1::-1:0
+cargobay:12000.0:0:3::-1:0
+smallcraftbay:72.0:6:4::-1:0
+cargobay:24000.0:1:5::-1:0
 dockingcollar
 dockingcollar
 dockingcollar
 dockingcollar
-cargobay:250000.0:0:10
-2ndclassquarters:14000.0:0
-1stclassquarters:2690.0:0
-steeragequarters:25600.0:0
-crewquarters:3178.0:0
-cargobay:359090.5:1:15
+cargobay:250000.0:0:10::-1:0
+2ndclassquarters:14000.0:0:-1::-1:0
+1stclassquarters:2690.0:0:-1::-1:0
+steeragequarters:25600.0:0:-1::-1:0
+crewquarters:3178.0:0:-1::-1:0
+cargobay:354640.5:1:15::-1:0
 </transporters>
 
 <SafeThrust>

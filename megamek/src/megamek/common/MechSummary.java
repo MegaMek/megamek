@@ -15,10 +15,12 @@
 package megamek.common;
 
 import megamek.common.alphaStrike.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.Quirks;
 import megamek.common.options.WeaponQuirks;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.File;
 import java.io.Serializable;
@@ -1276,5 +1278,20 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     @Override
     public String formatSUA(BattleForceSUA sua, String delimiter, ASSpecialAbilityCollector collection) {
         return AlphaStrikeHelper.formatAbility(sua, collection, this, delimiter);
+    }
+
+    /**
+     * Loads and returns the entity for this MechSummary. If the entity cannot be loaded, the error is logged
+     * and null is returned.
+     *
+     * @return The loaded entity or null in case of an error
+     */
+    public @Nullable Entity loadEntity() {
+        try {
+            return new MechFileParser(sourceFile, entryName).getEntity();
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
+            return null;
+        }
     }
 }

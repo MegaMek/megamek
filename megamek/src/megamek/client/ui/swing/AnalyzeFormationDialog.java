@@ -9,7 +9,6 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.EntityWeightClass;
 import megamek.common.MechSummary;
 import megamek.common.UnitRole;
-import megamek.common.UnitRoleHandler;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;

@@ -13,7 +13,6 @@
  */
 package megamek.utilities;
 
-import megamek.MMConstants;
 import megamek.client.ratgenerator.*;
 import megamek.client.ratgenerator.FactionRecord.TechCategory;
 import megamek.client.ui.swing.util.UIUtil;
@@ -21,7 +20,6 @@ import megamek.client.ui.swing.util.UIUtil.FixedXPanel;
 import megamek.client.ui.swing.util.UIUtil.FixedYPanel;
 import megamek.common.Configuration;
 import megamek.common.EntityMovementMode;
-import megamek.common.UnitRoleHandler;
 import megamek.common.UnitType;
 import megamek.common.eras.Eras;
 import org.apache.logging.log4j.LogManager;
@@ -36,7 +34,6 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.io.File;
-import java.net.URL;
 import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;

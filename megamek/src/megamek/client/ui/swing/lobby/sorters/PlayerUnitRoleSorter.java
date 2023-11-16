@@ -20,14 +20,9 @@ package megamek.client.ui.swing.lobby.sorters;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.swing.lobby.MekTableModel;
 import megamek.common.Entity;
 import megamek.common.Player;
-import megamek.common.UnitRole;
-import megamek.common.UnitRoleHandler;
-import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.alphaStrike.conversion.ASConverter;
 
 /** A Lobby Mek Table sorter that sorts by 1) player 2) unit role. */
 public class PlayerUnitRoleSorter implements MekTableSorter {

@@ -8171,42 +8171,32 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // Walk through this entity's transport components;
         // find those that can load the unit.
         // load the unit into the best match.
-        int choice = 0;
-        for (Transporter nextbay : transports) {
-            if (nextbay.canLoad(unit) && (unit.getElevation() == getElevation())) {
-                if (nextbay instanceof DockingCollar) {
-                    choice = 3;
+        if (unit.getElevation() == getElevation()) {
+            if (unit.isDropShip()) {
+                for (Transporter nextbay : transports) {
+                    if ((nextbay instanceof DockingCollar) && nextbay.canLoad(unit)) {
+                        ((DockingCollar) nextbay).recover(unit);
+                        return;
+                    }
                 }
-                if (nextbay instanceof ASFBay) {
-                    choice = 2;
+            } else {
+                if (unit.isFighter()) {
+                    for (Bay nextbay : getTransportBays()) {
+                        if ((nextbay instanceof ASFBay) && nextbay.canLoad(unit)) {
+                            ((ASFBay) nextbay).recover(unit);
+                            return;
+                        }
+                    }
                 }
-                if (nextbay instanceof SmallCraftBay) {
-                    choice = 1;
-                }
-            }
-        }
-        if (choice == 3) {
-            for (Transporter nextbay : transports) {
-                while (nextbay instanceof DockingCollar) {
-                    ((DockingCollar) nextbay).recover(unit);
-                    return;
-                }
-            }
-        } else if (choice == 2) {
-            for (Bay nextbay : getTransportBays()) {
-                while (nextbay instanceof ASFBay) {
-                    ((ASFBay) nextbay).recover(unit);
-                    return;
-                }
-            }
-        } else if (choice == 1) {
-            for (Bay nextbay : getTransportBays()) {
-                while (nextbay instanceof SmallCraftBay) {
-                    ((SmallCraftBay) nextbay).recover(unit);
-                    return;
+                for (Bay nextbay : getTransportBays()) {
+                    if ((nextbay instanceof SmallCraftBay) && nextbay.canLoad(unit)) {
+                        ((SmallCraftBay) nextbay).recover(unit);
+                        return;
+                    }
                 }
             }
         }
+        throw new IllegalArgumentException(getDisplayName() + " does not have a bay that can load" + unit.getDisplayName());
     }
 
 

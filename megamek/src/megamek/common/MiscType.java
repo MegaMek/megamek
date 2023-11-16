@@ -455,10 +455,9 @@ public class MiscType extends EquipmentType {
 
     @Override
     public Double variableStepSize() {
-        if (hasFlag(F_CARGO) || hasFlag(F_LIQUID_CARGO)) {
+        if (hasFlag(F_CARGO) || hasFlag(F_LIQUID_CARGO) || hasFlag(F_CARGOLIFTER)) {
             return 0.5;
-        }
-        if (hasFlag(F_LADDER)) {
+        } else if (hasFlag(F_LADDER)) {
             return 20.0;
         }
         return super.variableStepSize();

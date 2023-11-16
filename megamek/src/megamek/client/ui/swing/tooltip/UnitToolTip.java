@@ -1600,6 +1600,8 @@ public final class UnitToolTip {
                 if (jumpMPModified > 0) {
                     sMove += "/" + jumpMPModified;
                 }
+            } else if ((entity instanceof Jumpship) && ((Jumpship) entity).hasStationKeepingDrive()) {
+                sMove += String.format("%s%1.1f", DOT_SPACER, ((Jumpship) entity).getAccumulatedThrust());
             }
 
             sMove += DOT_SPACER;

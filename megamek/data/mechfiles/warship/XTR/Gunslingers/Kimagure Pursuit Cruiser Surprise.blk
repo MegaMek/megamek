@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -47,10 +47,10 @@ Aerodyne
 <transporters>
 dockingcollar
 dockingcollar
-asfbay:36.0:6:1
-1stclassquarters:500.0:0
-crewquarters:1645.0:0
-cargobay:18635.0:1:5
+asfbay:36.0:6:3::-1:0
+1stclassquarters:500.0:0:-1::-1:0
+crewquarters:1645.0:0:-1::-1:0
+cargobay:16895.0:1:6::-1:0
 </transporters>
 
 <SafeThrust>
@@ -222,6 +222,10 @@ XTR: Gunslingers
 85
 </grav_decks>
 
+<designtype>
+1
+</designtype>
+
 <crew>
 357
 </crew>
@@ -253,3 +257,4 @@ XTR: Gunslingers
 <escape_pod>
 20
 </escape_pod>
+

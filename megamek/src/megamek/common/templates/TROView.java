@@ -196,7 +196,7 @@ public class TROView {
      * @return The fluff display name, which consists of the manufacturer and the
      *         model separated by a space. If either is missing it is left out.
      */
-    protected String formatSystemFluff(EntityFluff.System system, EntityFluff fluff, Supplier<String> altText) {
+    public static String formatSystemFluff(EntityFluff.System system, EntityFluff fluff, Supplier<String> altText) {
         final StringJoiner sj = new StringJoiner(" ");
         if (!fluff.getSystemManufacturer(system).isBlank()) {
             sj.add(fluff.getSystemManufacturer(system));

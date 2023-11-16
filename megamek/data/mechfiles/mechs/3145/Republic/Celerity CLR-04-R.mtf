@@ -1,8 +1,7 @@
-Version:1.1
+Version:1.3
 Celerity
 CLR-04-R
 mul id:6709
-
 Config:Quad
 techbase:Inner Sphere
 era:3138
@@ -86,9 +85,9 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 ISDroneOperatingSystem
-TSEMP_OS
-TSEMP_OS
-TSEMP_OS
+TSEMP One-Shot
+TSEMP One-Shot
+TSEMP One-Shot
 IS Endo Steel
 IS Endo Steel
 

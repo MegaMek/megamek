@@ -188,29 +188,25 @@ public class TestBattleArmor extends TestEntity {
          * The type, corresponding to types defined in
          * <code>EquipmentType</code>.
          */
-        public int type;
+        public final int type;
 
         /**
          * The name of this manipulator
          */
-        public String internalName;
+        public final String internalName;
 
-        public String displayName;
+        public final String displayName;
 
         /**
          * Denotes whether this armor is Clan or not.
          */
-        public boolean pairMounted;
+        public final boolean pairMounted;
 
         BAManipulator(int t, boolean p) {
             type = t;
             internalName = BattleArmor.MANIPULATOR_TYPE_STRINGS[t];
             displayName = BattleArmor.MANIPULATOR_NAME_STRINGS[t];
             pairMounted = p;
-        }
-
-        public static int getNumBAArmors() {
-            return values().length;
         }
 
         /**

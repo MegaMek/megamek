@@ -151,24 +151,24 @@
      Martis Truesight
      Taerkar
      coralbeach
-     Robert Heath <blasty_mcnasty@users.sourceforge.net>
-     Alexander Schölling <schoelling@users.sourceforge.net>
-     fastsammy <fastsammy@users.sourceforge.net>
+     Robert Heath
+     Alexander Schölling
+     fastsammy
      Jacob "Lanceman" Wall
-     Sni77 <sni77@users.sourceforge.net>
+     Sni77
      Jellico
-     Brock Peterman <bh-21@users.sourceforge.net>
+     Brock Peterman
      DarkISI
-     Dave Nawton <hammer-gs@users.sourceforge.net>
+     Dave Nawton
      Phoenixstorm
 	 Greekfire
 	 SuperStucco
 
   Updates to the Ant build file:
-     Robert Schuster <thebohemian@users.sourceforge.net>
+     Robert Schuster
 
   Testing, Ideas and Feedback (just a few of many):
-     Jeff "Shrike" Biron <Shrike@dropshipcommand.com>
+     Jeff "Shrike" Biron
      Jason Kean
      Jess Freeman
      Jeff Kean
@@ -183,8 +183,8 @@
 
   Various Images(including Sprites):
      Nehal Mistry
-     Paolo D'Inca <paolodinca@hotmail.com>
-     Ian Hamilton <jabberwocky@planethalflife.com>
+     Paolo D'Inca
+     Ian Hamilton
      Charlie Brown
      <Cyric27@users.sourceforge.net>
      <rakkasan@users.sourceforge.net>

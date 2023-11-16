@@ -7124,6 +7124,7 @@ chassis "Beast Infantry (Branth)" "Infantry/Branth.png"
 chassis "Beast Infantry (Camel)" "Infantry/Camel.png"
 chassis "Beast Infantry (Donkey)" "Infantry/Donkey.png"
 chassis "Beast Infantry (Horse)" "Infantry/Horse.png"
+chassis "Beast Infantry (Elephant)" "Infantry/Elephant.png"
 
 #Jumpships
 chassis "Invader Jumpship" "jumpships/invader.png"

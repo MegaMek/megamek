@@ -4208,9 +4208,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.BaTarget"));
         }
 
-        // infantry squads are also hard to hit
-        if ((te instanceof Infantry) && te.isConventionalInfantry() && ((Infantry) te).isSquad()) {
-            toHit.addModifier(1, Messages.getString("WeaponAttackAction.SquadTarget"));
+        if ((te instanceof Infantry) && te.isConventionalInfantry()) {
+            // infantry squads are also hard to hit
+            if (((Infantry) te).isSquad()) {
+                toHit.addModifier(1, Messages.getString("WeaponAttackAction.SquadTarget"));
+            }
+            InfantryMount mount = ((Infantry) te).getMount();
+            if ((mount != null) && (mount.getSize().toHitMod != 0)) {
+                toHit.addModifier(mount.getSize().toHitMod, Messages.getString("WeaponAttackAction.MountSize"));
+            }
         }
 
         // pl-masc makes foot infantry harder to hit - IntOps p.84

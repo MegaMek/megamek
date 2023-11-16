@@ -7119,6 +7119,12 @@ exact "Foot Platoon (Laser TAG)" "Infantry/laser_infantry_platoon.png"
 exact "Foot Platoon (Laser XCT)" "Infantry/laser_infantry_platoon.png"
 exact "Foot Platoon (Laser Heavy XCT)" "Infantry/xenoplanetary_infantry.png"
 
+#Beast Infantry
+chassis "Beast Infantry (Branth)" "Infantry/Branth.png"
+chassis "Beast Infantry (Camel)" "Infantry/Camel.png"
+chassis "Beast Infantry (Donkey)" "Infantry/Donkey.png"
+chassis "Beast Infantry (Horse)" "Infantry/Horse.png"
+
 #Jumpships
 chassis "Invader Jumpship" "jumpships/invader.png"
 chassis "Invader" "jumpships/invader.png"

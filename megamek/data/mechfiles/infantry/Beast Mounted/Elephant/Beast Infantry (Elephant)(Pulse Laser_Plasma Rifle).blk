@@ -1,0 +1,69 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Beast Infantry (Elephant)
+</Name>
+
+<Model>
+(Pulse Laser/Plasma Rifle)
+</Model>
+
+<year>
+3065
+</year>
+
+<originalBuildYear>
+3065
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Beast:Elephant
+</motion_type>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<squad_size>
+2
+</squad_size>
+
+<squadn>
+5
+</squadn>
+
+<secondn>
+1
+</secondn>
+
+<Primary>
+Pulse Laser Rifle (Inner Sphere)
+</Primary>
+
+<Secondary>
+Plasma Rifle (Man-Portable)
+</Secondary>
+
+<antimek>
+5
+</antimek>
+
+<armorKit>
+Clothing, Fatigues/Civilian/Non-Armored
+</armorKit>
+

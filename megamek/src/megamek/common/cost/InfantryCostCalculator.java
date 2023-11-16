@@ -92,11 +92,13 @@ public class InfantryCostCalculator {
         costs[idx++] = -infantry.getPriceMultiplier();
 
         // add in field gun costs
-        costs[idx] = infantry.originalFieldWeapons().stream()
+        costs[idx++] = infantry.originalFieldWeapons().stream()
                 .mapToDouble(m -> m.getType().getCost(infantry, false, m.getLocation())).sum();
 
+        costs[idx] = infantry.getMount() == null ? 0 : 5000 * infantry.getWeight();
+
         double cost = CostCalculator.calculateCost(costs);
-        String[] systemNames = { "Weapons", "Armor", "Multiplier", "Field Gun" };
+        String[] systemNames = { "Weapons", "Armor", "Multiplier", "Field Gun", "Mount" };
         CostCalculator.fillInReport(costReport, infantry, ignoreAmmo, systemNames, -1, cost, costs);
         return cost;
     }

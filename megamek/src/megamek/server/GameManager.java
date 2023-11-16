@@ -8424,6 +8424,19 @@ public class GameManager implements IGameManager {
         entity.delta_distance = distance;
         entity.moved = moveType;
         entity.mpUsed = mpUsed;
+        if (md.isAllUnderwater(game)) {
+            entity.underwaterRounds++;
+            if ((entity instanceof Infantry) && (((Infantry) entity).getMount() != null)
+                    && entity.getMovementMode().isSubmarine()
+                    && entity.underwaterRounds > ((Infantry) entity).getMount().getUWEndurance()) {
+                r = new Report(2412);
+                r.addDesc(entity);
+                addReport(r);
+                destroyEntity(entity, "mount drowned");
+            }
+        } else {
+            entity.underwaterRounds = 0;
+        }
         entity.setClimbMode(curClimbMode);
         if (!sideslipped && !fellDuringMovement && !crashedDuringMovement
                 && (entity.getMovementMode() == EntityMovementMode.VTOL)) {
@@ -11636,9 +11649,16 @@ public class GameManager implements IGameManager {
                     vPhaseReport.addAll(breachCheck(entity, Mech.LOC_CLEG, hex));
                 }
             } else {
+                int status = ILocationExposureStatus.WET;
+                if (entity.relHeight() >= 0) {
+                    status = game.getPlanetaryConditions().isVacuum() ?
+                            ILocationExposureStatus.VACUUM : ILocationExposureStatus.NORMAL;
+                }
                 for (int loop = 0; loop < entity.locations(); loop++) {
-                    entity.setLocationStatus(loop, ILocationExposureStatus.WET);
-                    vPhaseReport.addAll(breachCheck(entity, loop, hex));
+                    entity.setLocationStatus(loop, status);
+                    if (status == ILocationExposureStatus.WET) {
+                        vPhaseReport.addAll(breachCheck(entity, loop, hex));
+                    }
                 }
             }
         } else {
@@ -30782,13 +30802,20 @@ public class GameManager implements IGameManager {
                 }
             }
 
-            // Infantry and BA are damaged by buildings but do not damage them
-            if (entity instanceof Infantry) {
-                return;
-            }
             // Damage the building. The CF can never drop below 0.
-            int toBldg = (int) Math.floor(bldg.getDamageToScale()
-                    * Math.ceil(entity.getWeight() / 10.0));
+            int toBldg;
+            // Infantry and BA are damaged by buildings but do not damage them, except large beast-mounted infantry
+            if (entity instanceof Infantry) {
+                InfantryMount mount = ((Infantry) entity).getMount();
+                if ((mount != null) && (mount.getSize().buildingDamage() > 0)) {
+                    toBldg = mount.getSize().buildingDamage();
+                } else {
+                    return;
+                }
+            } else {
+                toBldg = (int) Math.floor(bldg.getDamageToScale()
+                        * Math.ceil(entity.getWeight() / 10.0));
+            }
             int curCF = bldg.getCurrentCF(entering ? curPos : lastPos);
             curCF -= Math.min(curCF, toBldg);
             bldg.setCurrentCF(curCF, entering ? curPos : lastPos);

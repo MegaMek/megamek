@@ -340,6 +340,9 @@ public class MechView {
                         .append(warningEnd());
                 }
             }
+            if (entity.isConventionalInfantry() && ((Infantry) entity).getMount() != null) {
+                moveString.append(" (").append(((Infantry) entity).getMount().getName()).append(")");
+            }
 
             // TODO : Add STOL message as part of the movement line
             if (isConvFighter && ((Aero) entity).isVSTOL()) {

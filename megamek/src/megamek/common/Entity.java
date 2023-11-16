@@ -289,6 +289,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public int coolFromExternal = 0;
     public int delta_distance = 0;
     public int mpUsed = 0;
+    public int underwaterRounds = 0;
     public EntityMovementType moved = EntityMovementType.MOVE_NONE;
     public EntityMovementType movedLastRound = EntityMovementType.MOVE_NONE;
     private boolean movedBackwards = false;
@@ -1947,7 +1948,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * A helper function for fiddling with elevation. Takes the current hex, a
      * hex being moved to, returns the elevation the Entity will be considered
-     * to be at w/r/t it's new hex.
+     * to be at w/r/t its new hex.
      */
     public int calcElevation(Hex current, Hex next, int assumedElevation,
             boolean climb, boolean wigeEndClimbPrevious) {
@@ -1990,12 +1991,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
             // Elevation is this height of the level above the actual surface elevation of the hex.
             retVal = nextLevel - next.getLevel();
-        } else if ((getMovementMode() == EntityMovementMode.SUBMARINE)
-                || ((getMovementMode() == EntityMovementMode.INF_UMU)
+        } else if (((getMovementMode().isSubmarine() || getMovementMode().isUMUInfantry())
                     && next.containsTerrain(Terrains.WATER) && current.containsTerrain(Terrains.WATER))
-                || (getMovementMode() == EntityMovementMode.VTOL)
-                || ((getMovementMode() == EntityMovementMode.QUAD_SWIM) && hasUMU())
-                || ((getMovementMode() == EntityMovementMode.BIPED_SWIM) && hasUMU())) {
+                || getMovementMode().isVTOL()
+                || (getMovementMode().isQuadSwim() && hasUMU())
+                || (getMovementMode().isBipedSwim() && hasUMU())) {
             retVal += current.getLevel();
             retVal -= next.getLevel();
         } else {
@@ -2350,8 +2350,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
             // only mechs can move underwater
             if (hex.containsTerrain(Terrains.WATER)
-                && (assumedAlt < hex.getLevel()) && !(this instanceof Mech)
-                && !(this instanceof Protomech)) {
+                    && (assumedAlt < hex.getLevel()) && !(this instanceof Mech)
+                    && !(this instanceof Protomech)) {
                 return false;
             }
             // can move on the ground unless its underwater

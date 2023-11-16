@@ -1703,7 +1703,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             if (landingPath.stream().map(c -> game().getBoard().getHex(c)).filter(Objects::nonNull)
                     .anyMatch(h -> h.containsTerrain(Terrains.ROUGH) || h.containsTerrain(Terrains.RUBBLE))) {
                 ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                        Messages.getString("MovementDisplay.areYourSure"),
+                        Messages.getString("MovementDisplay.areYouSure"),
                         Messages.getString("MovementDisplay.ConfirmLandingGearDamage"),
                         false);
                 nag.setVisible(true);
@@ -1716,6 +1716,21 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if (isUsingChaff) {
             addStepToMovePath(MoveStepType.CHAFF);
             isUsingChaff = false;
+        }
+
+        if (ce() instanceof Infantry) {
+            InfantryMount mount = ((Infantry) ce()).getMount();
+            if ((mount != null) && ce().getMovementMode().isSubmarine() && (ce().underwaterRounds >= mount.getUWEndurance())
+                    && cmd.isAllUnderwater(game())) {
+                ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
+                        Messages.getString("MovementDisplay.areYouSure"),
+                        Messages.getString("MovementDisplay.ConfirmMountSuffocation"),
+                        false);
+                nag.setVisible(true);
+                if (!nag.getAnswer()) {
+                    return;
+                }
+            }
         }
 
         disableButtons();

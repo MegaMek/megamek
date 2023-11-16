@@ -82,9 +82,6 @@ public class Jumpship extends Aero {
     private int escapePodsLaunched = 0;
     private int lifeBoatsLaunched = 0;
 
-    // Battlestation
-    private boolean isBattleStation = false;
-
     // HPG
     private boolean hasHPG = false;
 
@@ -482,13 +479,8 @@ public class Jumpship extends Aero {
         return hasHPG;
     }
 
-    public void setBattleStation(boolean b) {
-        isBattleStation = b;
-
-    }
-
     public boolean isBattleStation() {
-        return isBattleStation;
+        return false;
     }
 
     public void setLF(boolean b) {

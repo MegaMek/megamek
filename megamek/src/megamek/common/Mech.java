@@ -4215,6 +4215,10 @@ public abstract class Mech extends Entity {
         sb.append(MtfFile.RULES_LEVEL).append(
                 TechConstants.T_SIMPLE_LEVEL[techLevel]);
         sb.append(newLine);
+        if (hasRole()) {
+            sb.append(MtfFile.ROLE).append(getRole().toString());
+            sb.append(newLine);
+        }
         sb.append(newLine);
 
         sb.append(MtfFile.MASS).append((int) weight).append(newLine);

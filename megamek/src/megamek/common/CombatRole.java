@@ -30,6 +30,6 @@ public interface CombatRole {
 
     /** @return True when this combat unit has a battlefield role which isn't UNDETERMINED or NONE. */
     default boolean hasRole() {
-        return (getRole() != UnitRole.UNDETERMINED) && (getRole() != UnitRole.NONE);
+        return getRole().hasRole();
     }
 }

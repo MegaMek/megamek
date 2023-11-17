@@ -639,7 +639,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     @Override
     public UnitRole getRole() {
-        return role;
+        return (role == null) ? UnitRole.UNDETERMINED : role;
     }
 
     public void setFullAccurateUnitType(String type) {

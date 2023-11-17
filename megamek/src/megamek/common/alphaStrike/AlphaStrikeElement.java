@@ -136,7 +136,7 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
 
     @Override
     public UnitRole getRole() {
-        return role;
+        return (role == null) ? UnitRole.UNDETERMINED : role;
     }
 
     /** @return The AS element's display name, including duplicate markers such as "#2". */

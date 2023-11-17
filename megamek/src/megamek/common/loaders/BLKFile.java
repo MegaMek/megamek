@@ -626,6 +626,10 @@ public class BLKFile {
         }
         blk.writeBlockData("type", type);
 
+        if (t.hasRole()) {
+            blk.writeBlockData("role", t.getRole().toString());
+        }
+
         blk.writeBlockData("motion_type", t.getMovementModeAsString());
 
         if(t.getTransports().size() > 0) {

@@ -15477,6 +15477,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     @Override
     public UnitRole getRole() {
-        return role;
+        return (role == null) ? UnitRole.UNDETERMINED : role;
     }
 }

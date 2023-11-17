@@ -72,7 +72,7 @@ public enum UnitRole {
     }
 
     public boolean hasRole() {
-        return (this != UNDETERMINED) && (this != NONE);
+        return this != UNDETERMINED;
     }
 
     public static UnitRole parseRole(String role) {

@@ -1,56 +1,55 @@
-Version:1.0
+Version:1.3
 Poseidon
 PSD-V2
 mul id:6684
 
-Config:Tripod Battlemech
-TechBase:Mixed (IS Chassis)
-Era:3136
-Source:TRO: 3145 Republic of the Sphere
-Rules Level:3
+Config:Tripod
+techbase:Mixed (IS Chassis)
+era:3136
+source:TRO: 3145 Republic of the Sphere
+rules level:3
 role:Juggernaut
 
-Mass:125
-Engine:375 XL Engine
-Structure:Endo-Steel
-Myomer:Standard
-Gyro:Superheavy Gyro
-Cockpit:Superheavy Tripod Cockpit
+mass:125
+engine:375 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+cockpit:Superheavy Tripod Cockpit
+gyro:Superheavy Gyro
 
-Heat Sinks:20 Double
-Base Chassis Heat Sinks:10
-Walk MP:3
-Jump MP:0
+heat sinks:20 IS Double
+walk mp:3
+jump mp:0
 
-Armor:Standard
-LA Armor:36
-RA Armor:36
-LT Armor:40
-RT Armor:40
-CT Armor:55
-HD Armor:12
-LL Armor:40
-RL Armor:40
-CL Armor:40
-RTL Armor:12
-RTR Armor:12
-RTC Armor:21
+armor:Standard(Inner Sphere)
+LA armor:36
+RA armor:36
+LT armor:40
+RT armor:40
+CT armor:55
+HD armor:12
+LL armor:40
+RL armor:40
+CL armor:40
+RTL armor:12
+RTR armor:12
+RTC armor:21
 
 Weapons:14
-CLERPPC, Left Arm
-CLERPPC, Left Arm
-ISMRM20, Right Arm
-ISTSEMPCannon, Right Arm
-CLERMediumLaser, Left Torso
-CLERSmallLaser, Left Torso
-ISLRM5, Left Torso
-ISSRM2, Left Torso
-CLERMediumLaser, Right Torso
-CLERSmallLaser, Right Torso
-ISLRM5, Right Torso
-ISSRM2, Right Torso
-ISSRM2, Center Torso
-CLERSmallLaser, Center Torso
+ER PPC, Left Arm
+ER PPC, Left Arm
+MRM 20, Right Arm
+TSEMP Cannon, Right Arm
+ER Medium Laser, Left Torso
+ER Small Laser, Left Torso
+LRM 5, Left Torso
+SRM 2, Left Torso
+ER Medium Laser, Right Torso
+ER Small Laser, Right Torso
+LRM 5, Right Torso
+SRM 2, Right Torso
+SRM 2, Center Torso
+ER Small Laser, Center Torso
 
 Left Arm:
 Shoulder
@@ -59,10 +58,10 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 CLERPPC
 CLERPPC
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 
@@ -71,12 +70,12 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISMRM20
-ISMRM20
-IS MRM Apollo FCS
-ISTSEMP
-ISTSEMP
-ISTSEMP
+MRM 20
+MRM 20
+ISApollo
+TSEMP Cannon
+TSEMP Cannon
+TSEMP Cannon
 -Empty-
 -Empty-
 
@@ -87,13 +86,12 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 CLERMediumLaser
 CLERSmallLaser
-ISLRM5
-ISSRM2
-ISSRM2 Ammo
-ISMRM20 Ammo
-CLCaseII
-Endo Steel
-
+LRM 5
+SRM 2
+IS Ammo SRM-2
+IS MRM 20 Ammo
+CLCASEII
+IS Endo Steel
 
 Right Torso:
 Fusion Engine
@@ -102,12 +100,12 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 CLERMediumLaser
 CLERSmallLaser
-ISLRM5
-ISSRM2
-ISLRM5 Ammo
-ISMRM20 Ammo
-CLCaseII
-Endo Steel
+LRM 5
+SRM 2
+IS Ammo LRM-5
+IS MRM 20 Ammo
+CLCASEII
+-Empty-
 
 Center Torso:
 Fusion Engine
@@ -119,15 +117,15 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISSRM2
+SRM 2
 CLERSmallLaser
-Endo Steel
+IS Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+IS Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -142,8 +140,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISAPod
-ISAPod
+ISAntiPersonnelPod
+ISAntiPersonnelPod
 -Empty-
 -Empty-
 -Empty-
@@ -156,8 +154,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISAPod
-ISAPod
+ISAntiPersonnelPod
+ISAntiPersonnelPod
 -Empty-
 -Empty-
 -Empty-
@@ -170,11 +168,31 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISAPod
-ISAPod
+ISAntiPersonnelPod
+ISAntiPersonnelPod
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
+overview:<p>The Poseidon represents a groundbreaking achievement in BattleMech engineering, successfully surpassing the “100-ton barrier” that had long been a limit for Mech design. Emergent from the chaos of the Jihad and the technological innovations of the Word of Blake, the Poseidon was developed by the Republic of the Sphere as part of the ambitious Rhodes Project. This super-heavy tripod Mech, often referred to as a "Colossal," embodies the culmination of efforts to create a Mech that is bigger, stronger, and more formidable than any predecessor. It stands as a testament to the Republic's readiness to embrace advanced warfare technology in the wake of the Blackout and the subsequent Fortress Republic initiative.</p>
+capabilities:<p>The PSD-V2 Poseidon, drawing inspiration from the Orca project and the Word of Blake’s Omega, features reengineered endo steel bones and reinforced actuators for enhanced stability and battlefield flexibility. Unlike its spiritual predecessor, the Orca, the Poseidon boasts greater stability and flexibility, making it a formidable presence on the battlefield. This super-heavy tripod is designed not just for raw power but also for operational versatility, showcasing the pinnacle of Mech engineering in the post-Jihad era.</p>
+history:<p>
+The Poseidon BattleMech, emerging in the wake of the Jihad and amid the complex political landscape of the Fortress Republic, represents a significant milestone in the evolution of BattleMech technology. Developed as part of the Republic of the Sphere's ambitious Rhodes Project, the Poseidon broke through the “100-ton barrier,” a long-standing limitation in Mech design, to become a symbol of the Republic's commitment to advanced warfare technology.
+
+<p>
+The Poseidon's first deployment at the Serbian proving grounds on Terra in 3135 was a pivotal moment in its history. Engaged against rebel senatorial forces, the PSD-X1 test bed models of the Poseidon achieved a stunning victory, thanks largely to their imposing presence and formidable weaponry. This crucial engagement underlined the effectiveness of the Poseidon in combat and led to the refinements that characterized the final PSD-V2 models.
+
+<p>
+In the current era, Poseidon-class superheavy tripods are exclusively deployed by the most elite and reliable commands of the Republic Armed Forces (RAF). Their primary role remains defensive, underscoring their strategic importance as a deterrent and a symbol of strength. The deployment and operational history of the Poseidon reflect not just the Republic's technological prowess but also its strategic acumen in leveraging such advanced machines in the ever-evolving landscape of interstellar warfare.
+</p>
+manufacturer:Rhodes Foundry
+primaryfactory:Devil’s Rock
+systemmanufacturer:CHASSIS:Rhodes-P Endo Steel
+systemmanufacturer:ENGINE:PlasmaStar 375 XL
+systemmanufacturer:ARMOR:Maximillian 320 with CASE II
+systemmanufacturer:COMMUNICATIONS:Titan’s Shout Mk. IVA
+systemmanufacturer:TARGETING:Titan’s Vantage Mk. II with Apollo FCS
+

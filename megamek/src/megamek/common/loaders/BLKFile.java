@@ -630,7 +630,11 @@ public class BLKFile {
             blk.writeBlockData("role", t.getRole().toString());
         }
 
-        blk.writeBlockData("motion_type", t.getMovementModeAsString());
+        if ((t instanceof Infantry) && ((Infantry) t).getMount() != null) {
+            blk.writeBlockData("motion_type", ((Infantry) t).getMount().toString());
+        } else {
+            blk.writeBlockData("motion_type", t.getMovementModeAsString());
+        }
 
         if(t.getTransports().size() > 0) {
             // We should only write the transporters block for units that can and do

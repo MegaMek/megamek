@@ -1958,6 +1958,13 @@ public class MoveStep implements Serializable {
                         && (velocity != 0) && (getNTurns() > 1)) {
                     return;
                 }
+
+                // Jumpships cannot change velocity and use attitude jets in the same turn.
+                if ((a instanceof Jumpship) && ((Jumpship) a).hasStationKeepingDrive()
+                        && (prev.getMovementType(false) == EntityMovementType.MOVE_OVER_THRUST)
+                        && ((type == MoveStepType.TURN_LEFT) || (type == MoveStepType.TURN_RIGHT))) {
+                    return;
+                }
             }
 
             // atmosphere has its own rules about turning

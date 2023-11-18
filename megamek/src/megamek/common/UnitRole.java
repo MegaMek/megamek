@@ -24,6 +24,9 @@ import megamek.common.alphaStrike.BattleForceSUA;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.Arrays;
+import java.util.function.Predicate;
+
+import static megamek.common.UnitRole.Availability.*;
 
 /**
  * Unit roles as defined by Alpha Strike Companion, used in formation building rules
@@ -32,49 +35,50 @@ import java.util.Arrays;
  * @author Neoancient
  */
 public enum UnitRole {
-    /** This is the default role; given to units where the role definition is missing from their file. */
-    UNDETERMINED (false),
 
-    AMBUSHER (true),
-    BRAWLER (true),
-    JUGGERNAUT (true),
-    MISSILE_BOAT (true),
-    SCOUT (true),
-    SKIRMISHER (true),
-    SNIPER (true),
-    STRIKER (true),
-    ATTACK_FIGHTER (false),
-    DOGFIGHTER (false),
-    FAST_DOGFIGHTER (false),
-    FIRE_SUPPORT (false),
-    INTERCEPTOR (false),
-    TRANSPORT (false),
+    /** This is the default role; given to units where the role definition is missing. */
+    UNDETERMINED (ALL),
+
+    AMBUSHER (GROUND),
+    BRAWLER (GROUND),
+    JUGGERNAUT (GROUND),
+    MISSILE_BOAT (GROUND),
+    SCOUT (GROUND),
+    SKIRMISHER (GROUND),
+    SNIPER (GROUND),
+    STRIKER (GROUND),
+
+    ATTACK_FIGHTER (AERO),
+    DOGFIGHTER (AERO),
+    FAST_DOGFIGHTER (AERO),
+    FIRE_SUPPORT (AERO),
+    INTERCEPTOR (AERO),
+    TRANSPORT (AERO),
 
     /** This role is used for some large aerospace units that intentionally have none of the combat roles. */
-	NONE (false);
+	NONE (AERO);
 
-    private final boolean ground;
-
-    UnitRole(boolean ground) {
-        this.ground = ground;
-    }
-
-    public boolean isGroundRole() {
-        return ground;
-    }
-
+    /** @return True when the given unit may use this role. Used in MML. */
+    @SuppressWarnings("unused")
     public boolean isAvailableTo(BTObject unit) {
-        return (ground == unit.isGround()) && !unit.isUnitGroup();
+        return availableTo.fits(unit) && !unit.isUnitGroup();
     }
 
     public boolean isAnyOf(UnitRole role, UnitRole... otherRoles) {
         return (this == role) || Arrays.stream(otherRoles).anyMatch(otherRole -> this == otherRole);
     }
 
+    /** @return True when this role is not UNDETERMINED. (Returns true for NONE.) */
     public boolean hasRole() {
         return this != UNDETERMINED;
     }
 
+    /**
+     * Parses the given string into the UnitRole if possible and returns it. If it can't parse the string,
+     * logs an error and returns UNDETERMINED. Does not return null.
+     *
+     * @return The UnitRole given as a string or UNDETERMINED.
+     */
     public static UnitRole parseRole(String role) {
         switch (role.toLowerCase()) {
             case "ambusher":
@@ -114,7 +118,7 @@ public enum UnitRole {
             case "none":
             	return NONE;
             default:
-                LogManager.getLogger().error("Could not parse AS Role " + role);
+                LogManager.getLogger().error("Could not parse role " + role);
                 return UNDETERMINED;
         }
     }
@@ -182,6 +186,9 @@ public enum UnitRole {
      * @return			Boolean value indicating whether the unit meets the qualifications for this role.
      */
     public boolean qualifiesForRole(AlphaStrikeElement unit, double tolerance) {
+        if (!isAvailableTo(unit)) {
+            return false;
+        }
         double score = 0;
         int speed = unit.getPrimaryMovementValue();
         switch (this) {
@@ -407,5 +414,29 @@ public enum UnitRole {
                     .append(word.substring(1).toLowerCase()).append(" ");
         }
         return sb.toString().trim();
+    }
+
+    // PRIVATE
+
+    private final Availability availableTo;
+
+    UnitRole(Availability availableTo) {
+        this.availableTo = availableTo;
+    }
+
+    enum Availability {
+        GROUND(BTObject::isGround),
+        AERO(BTObject::isAerospace),
+        ALL(unit -> true);
+
+        private final Predicate<BTObject> fits;
+
+        Availability(Predicate<BTObject> fits) {
+            this.fits = fits;
+        }
+
+        boolean fits(BTObject unit) {
+            return fits.test(unit);
+        }
     }
 }

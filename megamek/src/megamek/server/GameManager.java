@@ -16322,8 +16322,12 @@ public class GameManager implements IGameManager {
             r.subject = ae.getId();
             r.add(toHit);
             r.add(pr.roll);
+            r.newlines = 0;
+            addReport(r);// miss
+            r = new Report(4035);
+            r.subject = ae.getId();
             addReport(r);
-            // setup miss
+            // setup autohit
             ToHitData newToHit = new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "hit with own flail/wrecking ball");
             pr.damage = ClubAttackAction.getDamageFor(ae, caa.getClub(), false, caa.isZweihandering());
             pr.damage = (pr.damage / 2) + (pr.damage % 2);

@@ -147,11 +147,6 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
             a.setModular(true);
         }
 
-        // BattleStation
-        if (dataFile.exists("Battlestation")) {
-            a.setBattleStation(true);
-        }
-
         // Grav Decks - two approaches
         // First, the old method, where a number of grav decks for each category is specified
         //  This doesn't allow us to specify precise size

@@ -6852,7 +6852,7 @@ public class GameManager implements IGameManager {
                                 doorReport.subject = entity.getId();
                                 doorReport.indent(2);
                                 Roll diceRoll = Compute.rollD6(2);
-                                r.add(diceRoll);
+                                doorReport.add(diceRoll);
 
                                 if (diceRoll.getIntValue() == 2) {
                                     doorDamage = true;

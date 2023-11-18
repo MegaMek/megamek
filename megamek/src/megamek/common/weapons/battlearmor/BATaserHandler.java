@@ -54,14 +54,12 @@ public class BATaserHandler extends AmmoWeaponHandler {
         }
         Report r = new Report(3700);
         Roll diceRoll = Compute.rollD6(2);
-        int rollValue = diceRoll.getIntValue();
-        String rollReport = diceRoll.getReport();
 
-        r.addDataWithTooltip(rollValue, rollReport);
+        r.add(diceRoll);
         r.newlines = 0;
         vPhaseReport.add(r);
         if (entityTarget instanceof BattleArmor) {
-            if (rollValue >= 9) {
+            if (diceRoll.getIntValue() >= 9) {
                 initHit(entityTarget);
             
                 r = new Report(3706);
@@ -81,14 +79,14 @@ public class BATaserHandler extends AmmoWeaponHandler {
             }
         } else if (entityTarget instanceof Mech) {
             if (((Mech) entityTarget).isIndustrial()) {
-                if (rollValue >= 11) {
+                if (diceRoll.getIntValue() >= 11) {
                     entityTarget.taserShutdown(3, true);
                 } else {
                     // suffer +1 to piloting and gunnery for 3 rounds
                     entityTarget.setTaserInterference(1, 3, true);
                 }
             } else {
-                if (rollValue >= 12) {
+                if (diceRoll.getIntValue() >= 12) {
                     r = new Report(3705);
                     r.addDesc(entityTarget);
                     r.add(3);
@@ -106,7 +104,7 @@ public class BATaserHandler extends AmmoWeaponHandler {
         } else if ((entityTarget instanceof Protomech)
                 || (entityTarget instanceof Tank)
                 || (entityTarget instanceof Aero)) {
-            if (rollValue >= 11) {
+            if (diceRoll.getIntValue() >= 11) {
                 r = new Report(3705);
                 r.addDesc(entityTarget);
                 r.add(3);
@@ -124,15 +122,13 @@ public class BATaserHandler extends AmmoWeaponHandler {
 
 
         Roll diceRoll2 = Compute.rollD6(2);
-        int rollValue2 = diceRoll2.getIntValue();
-        String rollReport2 = diceRoll2.getReport();
         r = new Report(3715);
         r.addDesc(ae);
-        r.addDataWithTooltip(rollValue2, rollReport2);
+        r.add(diceRoll2);
         r.newlines = 0;
         r.indent(2);
         vPhaseReport.add(r);
-        if (rollValue2 >= 7) {
+        if (diceRoll2.getIntValue() >= 7) {
             r = new Report(3720);
             vPhaseReport.add(r);
             // +1 to-hit for 3 turns

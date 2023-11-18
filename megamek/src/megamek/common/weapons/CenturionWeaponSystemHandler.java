@@ -108,15 +108,13 @@ public class CenturionWeaponSystemHandler extends EnergyWeaponHandler {
                 }
             }
             Roll diceRoll = entityTarget.getCrew().rollPilotingSkill();
-            int rollValue = diceRoll.getIntValue();
-            String rollReport = diceRoll.getReport();
             r = new Report(5060);
             r.subject = entityTarget.getId();
             r.indent(3);
             r.addDesc(entityTarget);
             r.add(shutdown);
-            r.addDataWithTooltip(rollValue, rollReport);
-            if (rollValue >= shutdown) {
+            r.add(diceRoll);
+            if (diceRoll.getIntValue() >= shutdown) {
                 // avoided
                 r.choose(true);
                 vPhaseReport.add(r);

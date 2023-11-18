@@ -409,6 +409,10 @@ public class Report implements Serializable {
         return this;
     }
 
+    public Report add(Roll diceRoll) {
+        return addDataWithTooltip(String.valueOf(diceRoll.getReport()), diceRoll.getReport());
+    }
+
     public Report addDataWithTooltip(Integer data, String tooltip) {
         return addDataWithTooltip(String.valueOf(data), tooltip);
     }

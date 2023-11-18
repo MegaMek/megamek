@@ -59,10 +59,9 @@ public class FluidGunCoolHandler extends AmmoWeaponHandler {
             r.addDesc(entityTarget);
             r.indent(3);
             Roll diceRoll = Compute.rollD6(2);
-            int rollValue = diceRoll.getIntValue();
-            String rollReport = diceRoll.getReport();
-            r.addDataWithTooltip(rollValue, rollReport);
-            if (rollValue == 12) {
+            r.add(diceRoll);
+
+            if (diceRoll.getIntValue() == 12) {
                 r.choose(true);
                 entityTarget.infernos.clear();
             } else {
@@ -75,10 +74,9 @@ public class FluidGunCoolHandler extends AmmoWeaponHandler {
             r.addDesc(entityTarget);
             r.indent(3);
             Roll diceRoll = Compute.rollD6(2);
-            int rollValue = diceRoll.getIntValue();
-            String rollReport = diceRoll.getReport();
-            r.addDataWithTooltip(rollValue, rollReport);
-            if (rollValue >= 4) {
+            r.add(diceRoll);
+
+            if (diceRoll.getIntValue() >= 4) {
                 r.choose(true);
                 for (int i = 0; i < entityTarget.locations(); i++) {
                     ((Tank) target).extinguishAll();

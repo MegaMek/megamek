@@ -102,7 +102,7 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
         missed = false;
 
         hit.setGeneralDamageType(generalDamageType);
-        hit.setBoxCars(roll == 12);
+        hit.setBoxCars(roll.getIntValue() == 12);
 
         if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
                 .getCover(), Compute.targetSideTable(ae, entityTarget, weapon

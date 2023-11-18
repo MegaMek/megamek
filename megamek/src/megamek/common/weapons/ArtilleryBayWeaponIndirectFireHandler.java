@@ -211,7 +211,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
         if (!isFlak) {
             // If the shot hit the target hex, then all subsequent
             // fire will hit the hex automatically.
-            if (roll >= toHit.getValue()) {
+            if (roll.getIntValue() >= toHit.getValue()) {
                 ae.aTracker.setModifier(TargetRoll.AUTOMATIC_SUCCESS, targetPos);
             } else if (null != bestSpotter) {
                 // If the shot missed, but was adjusted by a spotter, future shots are more likely
@@ -276,13 +276,13 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
         r = new Report(3155);
         r.newlines = 0;
         r.subject = subjectId;
-        r.addDataWithTooltip(roll, rollReport);
+        r.add(roll);
         vPhaseReport.addElement(r);
 
         // do we hit?
-        bMissed = roll < toHit.getValue();
+        bMissed = roll.getIntValue() < toHit.getValue();
         // Set Margin of Success/Failure.
-        toHit.setMoS(roll - Math.max(2, toHit.getValue()));
+        toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
 
         // Do this stuff first, because some weapon's miss report reference the
         // amount of shots fired and stuff.

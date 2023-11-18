@@ -60,7 +60,7 @@ public class TSEMPHandler extends EnergyWeaponHandler {
     */
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
-        if (roll == 2) {
+        if (roll.getIntValue() == 2) {
             Report r = new Report(3162);
             r.subject = subjectId;
             weapon.setHit(true);
@@ -154,10 +154,8 @@ public class TSEMPHandler extends EnergyWeaponHandler {
         //  up to a max of 4
         Roll diceRoll = Compute.rollD6(2);
         int rollValue = diceRoll.getIntValue();
-        String rollReport = diceRoll.getReport();
-        String rollCalc = rollValue + " + " + tsempModifiers +  "] max 2";
         rollValue = Math.max(2, rollValue + tsempModifiers);
-        rollCalc = rollValue + " [" + rollCalc;
+        String rollCalc = rollValue + " [" + diceRoll.getIntValue() + " + " + tsempModifiers +  "] max 2";
         
         // Ugly code to set the target rolls
         int shutdownTarget = 13;
@@ -202,7 +200,7 @@ public class TSEMPHandler extends EnergyWeaponHandler {
             }
         }
         r.indent(3);
-        r.addDataWithTooltip(rollCalc, rollReport);
+        r.addDataWithTooltip(rollCalc, diceRoll.getReport());
         r.subject = entityTarget.getId();
         String tsempEffect;
 

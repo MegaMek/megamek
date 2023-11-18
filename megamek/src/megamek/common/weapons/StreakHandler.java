@@ -134,7 +134,7 @@ public class StreakHandler extends MissileWeaponHandler {
             ammo = weapon.getLinked();
         }
 
-        if (roll >= toHit.getValue()) {
+        if (roll.getIntValue() >= toHit.getValue()) {
             ammo.setShotsLeft(ammo.getBaseShotsLeft() - 1);
             if (wtype.hasFlag(WeaponType.F_ONESHOT)) {
                 weapon.setFired(true);
@@ -152,7 +152,7 @@ public class StreakHandler extends MissileWeaponHandler {
 
     @Override
     protected void addHeat() {
-        if ((toHit.getValue() != TargetRoll.IMPOSSIBLE) && (roll >= toHit.getValue())) {
+        if ((toHit.getValue() != TargetRoll.IMPOSSIBLE) && (roll.getIntValue() >= toHit.getValue())) {
             super.addHeat();
         }
     }

@@ -248,14 +248,13 @@ public class ServerHelper {
                             }
                         }
                         Roll diceRoll = entity.getCrew().rollPilotingSkill();
-                        int rollValue = diceRoll.getIntValue();
-                        String rollReport = diceRoll.getReport();
                         r = new Report(5050);
                         r.subject = entity.getId();
                         r.addDesc(entity);
                         r.add(startup);
-                        r.addDataWithTooltip(rollValue, rollReport);
-                        if (rollValue >= startup) {
+                        r.add(diceRoll);
+
+                        if (diceRoll.getIntValue() >= startup) {
                             // start 'er back up
                             entity.setShutDown(false);
                             r.choose(true);
@@ -319,14 +318,13 @@ public class ServerHelper {
                         }
                     }
                     Roll diceRoll = Compute.rollD6(2);
-                    int rollValue = diceRoll.getIntValue();
-                    String rollReport = diceRoll.getReport();
                     r = new Report(5060);
                     r.subject = entity.getId();
                     r.addDesc(entity);
                     r.add(shutdown);
-                    r.addDataWithTooltip(rollValue, rollReport);
-                    if (rollValue >= shutdown) {
+                    r.add(diceRoll);
+
+                    if (diceRoll.getIntValue() >= shutdown) {
                         // avoided
                         r.choose(true);
                         vPhaseReport.add(r);
@@ -360,11 +358,9 @@ public class ServerHelper {
             r.add(boom);
 
             Roll diceRoll = Compute.rollD6(2);
-            int rollValue = diceRoll.getIntValue();
-            String rollReport = diceRoll.getReport();
-            r.addDataWithTooltip(rollValue, rollReport);
+            r.add(diceRoll);
             
-            if (rollValue >= boom) {
+            if (diceRoll.getIntValue() >= boom) {
                 // no ammo explosion
                 r.choose(true);
                 vPhaseReport.add(r);
@@ -380,14 +376,13 @@ public class ServerHelper {
         if (entity.heat >= 21) {
             int ouch = (6 + (entity.heat >= 27 ? 3 : 0)) - hotDogMod;
             Roll diceRoll = Compute.rollD6(2);
-            int rollValue = diceRoll.getIntValue();
-            String rollReport = diceRoll.getReport();
             r = new Report(5075);
             r.subject = entity.getId();
             r.addDesc(entity);
             r.add(ouch);
-            r.addDataWithTooltip(rollValue, rollReport);
-            if (rollValue >= ouch) {
+            r.add(diceRoll);
+
+            if (diceRoll.getIntValue() >= ouch) {
                 // pilot is ok
                 r.choose(true);
                 vPhaseReport.add(r);
@@ -482,17 +477,15 @@ public class ServerHelper {
 
 
             Roll diceRoll = Compute.rollD6(1);
-            int rollValue = diceRoll.getIntValue();
-            String rollReport = diceRoll.getReport();
             Report r = new Report(reportID);
             r.addDesc(entity);
-            r.addDataWithTooltip(rollValue, rollReport);
+            r.add(diceRoll);
             r.subject = entity.getId();
             vPhaseReport.add(r);
             
             int rollTarget = jumpLanding ? 4 : 6;
             
-            if (rollValue >= rollTarget) {
+            if (diceRoll.getIntValue() >= rollTarget) {
                 hex.removeTerrain(Terrains.MAGMA);
                 hex.addTerrain(new Terrain(Terrains.MAGMA, 2));
                 gameManager.sendChangedHex(curPos);

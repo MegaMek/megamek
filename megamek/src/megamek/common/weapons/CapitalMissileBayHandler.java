@@ -95,7 +95,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             setGlancingBlowFlags(entityTarget);
 
         // Set Margin of Success/Failure and check for Direct Blows
-        toHit.setMoS(roll - Math.max(2, toHit.getValue()));
+        toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
         bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                 && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
 
@@ -108,7 +108,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         //Only do this if the missile wasn't destroyed
         if (CapMissileAMSMod > 0 && CapMissileArmor > 0) {
             toHit.addModifier(CapMissileAMSMod, "Damage from Point Defenses");
-            if (roll < toHit.getValue()) {
+            if (roll.getIntValue() < toHit.getValue()) {
                 CapMissileMissed = true;
             }
         }
@@ -159,11 +159,11 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         r = new Report(3155);
         r.newlines = 0;
         r.subject = subjectId;
-        r.addDataWithTooltip(roll, rollReport);
+        r.add(roll);
         vPhaseReport.addElement(r);
 
         // do we hit?
-        bMissed = roll < toHit.getValue();
+        bMissed = roll.getIntValue() < toHit.getValue();
 
         //Report Glancing/Direct Blow here because of Capital Missile weirdness
         if (!(amsBayEngagedCap || pdBayEngagedCap)) {
@@ -571,7 +571,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         setGlancingBlowFlags(entityTarget);
 
         // Set Margin of Success/Failure and check for Direct Blows
-        toHit.setMoS(roll - Math.max(2, toHit.getValue()));
+        toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
         bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                 && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
 
@@ -590,7 +590,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         // Only do this if the missile wasn't destroyed
         if (CapMissileAMSMod > 0 && CapMissileArmor > 0) {
             toHit.addModifier(CapMissileAMSMod, "Damage from Point Defenses");
-            if (roll < toHit.getValue()) {
+            if (roll.getIntValue() < toHit.getValue()) {
                 CapMissileMissed = true;
             }
         }
@@ -641,11 +641,11 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         r = new Report(3155);
         r.newlines = 0;
         r.subject = subjectId;
-        r.addDataWithTooltip(roll, rollReport);
+        r.add(roll);
         vPhaseReport.addElement(r);
 
         // do we hit?
-        bMissed = roll < toHit.getValue();
+        bMissed = roll.getIntValue() < toHit.getValue();
 
         // Report Glancing/Direct Blow here because of Capital Missile weirdness
         if (!(amsBayEngagedCap || pdBayEngagedCap)) {

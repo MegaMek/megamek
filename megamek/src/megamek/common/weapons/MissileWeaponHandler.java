@@ -689,7 +689,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         // Only do this if a flight of large missiles wasn't destroyed
         if ((CapMissileAMSMod > 0) && (CapMissileArmor > 0)) {
             toHit.addModifier(CapMissileAMSMod, "Damage from Point Defenses");
-            if (roll < toHit.getValue()) {
+            if (roll.getIntValue() < toHit.getValue()) {
                 CapMissileMissed = true;
             }
         }
@@ -739,18 +739,18 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         r = new Report(3155);
         r.newlines = 0;
         r.subject = subjectId;
-        r.addDataWithTooltip(roll, rollReport);
+        r.add(roll);
         vPhaseReport.addElement(r);
 
         // do we hit?
-        bMissed = roll < toHit.getValue();
+        bMissed = roll.getIntValue() < toHit.getValue();
 
         // are we a glancing hit?
         setGlancingBlowFlags(entityTarget);
         addGlancingBlowReports(vPhaseReport);
 
         // Set Margin of Success/Failure.
-        toHit.setMoS(roll - Math.max(2, toHit.getValue()));
+        toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
         bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                 && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
         if (bDirect) {
@@ -844,13 +844,11 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 if (!bMissed && amsEngaged && !isTbolt() && !ae.isCapitalFighter()) {
                     // handle single AMS action against standard missiles
                     Roll diceRoll = Compute.rollD6(1);
-                    int rollValue = diceRoll.getIntValue();
-                    String rollReport = diceRoll.getReport();
                     r = new Report(3352);
                     r.subject = subjectId;
-                    r.addDataWithTooltip(rollValue, rollReport);
+                    r.add(diceRoll);
                     vPhaseReport.add(r);
-                    hits = Math.max(0, hits - rollValue);
+                    hits = Math.max(0, hits - diceRoll.getIntValue());
                 }
                 // Report any AMS bay action against standard missiles.
                 if (amsBayEngaged && (originalAV <= 0)) {

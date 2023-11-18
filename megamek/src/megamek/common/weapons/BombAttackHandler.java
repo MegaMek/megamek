@@ -157,14 +157,13 @@ public class BombAttackHandler extends WeaponHandler {
                 r = new Report(3155);
                 r.newlines = 0;
                 r.subject = subjectId;
-                r.addDataWithTooltip(roll, rollReport);
+                r.add(roll);
                 vPhaseReport.addElement(r);
 
                 // do we hit?
-                bMissed = roll < typeModifiedToHit.getValue();
+                bMissed = roll.getIntValue() < typeModifiedToHit.getValue();
                 // Set Margin of Success/Failure.
-                typeModifiedToHit.setMoS(
-                        roll - Math.max(2, typeModifiedToHit.getValue()));
+                typeModifiedToHit.setMoS(roll.getIntValue() - Math.max(2, typeModifiedToHit.getValue()));
 
                 if (!bMissed) {
                     r = new Report(3190);
@@ -246,7 +245,7 @@ public class BombAttackHandler extends WeaponHandler {
                     gameManager.deliverBombDamage(drop, type, subjectId, ae, vPhaseReport);
                 }
                 // Finally, we need a new attack roll for the next bomb, if any.
-                roll = Compute.d6(2);
+                roll = Compute.rollD6(2);
             }
         }
 

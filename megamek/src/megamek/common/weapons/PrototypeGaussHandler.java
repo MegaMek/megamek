@@ -54,7 +54,7 @@ public class PrototypeGaussHandler extends GRHandler {
             return true;
         }
         
-        if (roll == 2) {
+        if (roll.getIntValue() == 2) {
             Report r = new Report(3165);
             r.subject = subjectId;
             weapon.setJammed(true);

@@ -73,20 +73,18 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
             r.subject = subjectId;
             vPhaseReport.add(r);
             Roll diceRoll = Compute.rollD6(1);
-            int rollValue = diceRoll.getIntValue();
-            String rollReport = diceRoll.getReport();
 
-            if (rollValue <= 3) {
+            if (diceRoll.getIntValue() <= 3) {
                 r = new Report(3240);
                 r.subject = subjectId;
                 r.add("pod");
-                r.addDataWithTooltip(rollValue, rollReport);
+                r.add(diceRoll);
                 vPhaseReport.add(r);
                 return 0;
             }
             r = new Report(3241);
             r.add("pod");
-            r.addDataWithTooltip(rollValue, rollReport);
+            r.add(diceRoll);
             r.subject = subjectId;
             vPhaseReport.add(r);
         }

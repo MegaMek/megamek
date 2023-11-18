@@ -130,8 +130,6 @@ public class PPCHandler extends EnergyWeaponHandler {
                 && weapon.curMode().equals("Field Inhibitor OFF")) {
             int rollTarget = 0;
             Roll diceRoll = Compute.rollD6(2);
-            int rollValue = diceRoll.getIntValue();
-            String rollReport = diceRoll.getReport();
             int distance = Compute.effectiveDistance(game, ae, target);
 
             if (distance >= 3) {
@@ -151,8 +149,9 @@ public class PPCHandler extends EnergyWeaponHandler {
             r.subject = subjectId;
             r.indent();
             r.add(rollTarget);
-            r.addDataWithTooltip(rollValue, rollReport);
-            if (rollValue < rollTarget) {
+            r.add(diceRoll);
+
+            if (diceRoll.getIntValue() < rollTarget) {
                 // Oops, we ruined our day...
                 int wlocation = weapon.getLocation();
                 weapon.setHit(true);
@@ -194,7 +193,7 @@ public class PPCHandler extends EnergyWeaponHandler {
         }
         // resolve roll for charged capacitor
         if (chargedCapacitor != 0) {
-            if (roll == 2) {
+            if (roll.getIntValue() == 2) {
                 Report r = new Report(3178);
                 r.subject = ae.getId();
                 r.indent();

@@ -150,18 +150,18 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
         r = new Report(3155);
         r.newlines = 0;
         r.subject = subjectId;
-        r.addDataWithTooltip(roll, rollReport);
+        r.add(roll);
         vPhaseReport.addElement(r);
 
         // do we hit?
-        bMissed = roll < toHit.getValue();
+        bMissed = roll.getIntValue() < toHit.getValue();
 
         // are we a glancing hit?
         setGlancingBlowFlags(entityTarget);
         addGlancingBlowReports(vPhaseReport);
 
         // Set Margin of Success/Failure.
-        toHit.setMoS(roll - Math.max(2, toHit.getValue()));
+        toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
         bDirect = game.getOptions().booleanOption("tacops_direct_blow")
                 && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
         if (bDirect) {
@@ -481,7 +481,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
                     vPhaseReport.add(r);
                     toHit.addModifier(CapMissileAMSMod, "damage from AMS");
                     // If the damage was enough to make us miss, record it for reporting and set 0 hits
-                    if (roll < toHit.getValue()) {
+                    if (roll.getIntValue() < toHit.getValue()) {
                         bMissed = true;
                         nDamPerHit = 0;
                         hits = 0;
@@ -498,14 +498,12 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
                 r.subject = subjectId;
                 vPhaseReport.add(r);
                 Roll diceRoll = Compute.rollD6(1);
-                int rollValue = diceRoll.getIntValue();
-                String rollReport = diceRoll.getReport();
 
-                if (rollValue <= 3) {
+                if (diceRoll.getIntValue() <= 3) {
                     r = new Report(3240);
                     r.subject = subjectId;
                     r.add("missile");
-                    r.addDataWithTooltip(rollValue, rollReport);
+                    r.add(diceRoll);
                     vPhaseReport.add(r);
                     nDamPerHit = 0;
                     hits = 0;
@@ -513,7 +511,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
                 } else {
                     r = new Report(3241);
                     r.add("missile");
-                    r.addDataWithTooltip(rollValue, rollReport);
+                    r.add(diceRoll);
                     r.subject = subjectId;
                     vPhaseReport.add(r);
                     hits = 1;

@@ -29,10 +29,8 @@ public class PhysicalResult implements Serializable {
     public AbstractAttackAction aaa = null;
     public ToHitData toHit = null;
     public ToHitData toHitRight = null;
-    public int roll = -1;
-    public int rollRight = -1;
-    public String rollReport = "";
-    public String rollRightReport = "";
+    public Roll roll;
+    public Roll rollRight;
     public int damage = 0;
     public int damageRight = 0;
     public boolean pushBackResolved = false;

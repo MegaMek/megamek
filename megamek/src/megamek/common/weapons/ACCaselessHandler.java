@@ -48,16 +48,14 @@ public class ACCaselessHandler extends ACWeaponHandler {
             return true;
         }
         
-        if ((roll <= 2) && !(ae instanceof Infantry)) {
+        if ((roll.getIntValue() <= 2) && !(ae instanceof Infantry)) {
             Roll diceRoll = Compute.rollD6(2);
-            int rollValue = diceRoll.getIntValue();
-            String rollReport = diceRoll.getReport();
 
             Report r = new Report(3164);
             r.subject = subjectId;
-            r.addDataWithTooltip(rollValue, rollReport);
+            r.add(diceRoll);
 
-            if (rollValue >= 8) {
+            if (diceRoll.getIntValue() >= 8) {
                 // Round explodes destroying weapon
                 weapon.setDestroyed(true);
                 r.choose(false);

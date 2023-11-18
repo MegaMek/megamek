@@ -4209,16 +4209,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
             // first make a control roll
             PilotingRollData psr = ce().getBasePilotingRoll(overallMoveType);
             Roll diceRoll = Compute.rollD6(2);
-            int rollValue = diceRoll.getIntValue();
-            String rollReport = diceRoll.getReport();
             Report r = new Report(9500);
             r.subject = ce().getId();
             r.add(ce().getDisplayName());
             r.add(psr);
-            r.addDataWithTooltip(rollValue, rollReport);
+            r.add(diceRoll);
             r.newlines = 0;
             r.indent(1);
-            if (rollValue < psr.getValue()) {
+            if (diceRoll.getIntValue() < psr.getValue()) {
                 r.choose(false);
                 String title = Messages.getString("MovementDisplay.DumpingBombs.title");
                 String body = Messages.getString("MovementDisplay.DumpFailure.message");

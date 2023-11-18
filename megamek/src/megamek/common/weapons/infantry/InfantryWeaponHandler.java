@@ -215,7 +215,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
                     waa.getAimedLocation(), waa.getAimingMode(), true);
             hit.setGeneralDamageType(generalDamageType);
             hit.setCapital(wtype.isCapital());
-            hit.setBoxCars(roll == 12);
+            hit.setBoxCars(roll.getIntValue() == 12);
             hit.setCapMisCritMod(getCapMisMod());
             hit.setFirstHit(firstHit);
             hit.setAttackerId(getAttackerId());

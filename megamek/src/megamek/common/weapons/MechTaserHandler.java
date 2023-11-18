@@ -53,9 +53,7 @@ public class MechTaserHandler extends AmmoWeaponHandler {
         }
         Report r = new Report(3700);
         Roll diceRoll = Compute.rollD6(2);
-        int rollValue = diceRoll.getIntValue();
-        String rollReport = diceRoll.getReport();
-        r.addDataWithTooltip(rollValue, rollReport);
+        r.add(diceRoll);
         r.newlines = 0;
         vPhaseReport.add(r);
         if (entityTarget.getWeight() > 100) {
@@ -77,7 +75,7 @@ public class MechTaserHandler extends AmmoWeaponHandler {
             done = true;
         } else if (entityTarget instanceof Mech) {
             if (((Mech) entityTarget).isIndustrial()) {
-                if (rollValue >= 8) {
+                if (diceRoll.getIntValue() >= 8) {
                     r = new Report(3705);
                     r.addDesc(entityTarget);
                     r.add(4);
@@ -91,7 +89,7 @@ public class MechTaserHandler extends AmmoWeaponHandler {
                     entityTarget.setTaserInterference(2, 4, true);
                 }
             } else {
-                if (rollValue >= 11) {
+                if (diceRoll.getIntValue() >= 11) {
                     r = new Report(3705);
                     r.addDesc(entityTarget);
                     r.add(3);
@@ -109,7 +107,7 @@ public class MechTaserHandler extends AmmoWeaponHandler {
         } else if ((entityTarget instanceof Protomech)
                 || (entityTarget instanceof Tank)
                 || (entityTarget instanceof Aero)) {
-            if (rollValue >= 8) {
+            if (diceRoll.getIntValue() >= 8) {
                 r = new Report(3705);
                 r.addDesc(entityTarget);
                 r.add(4);

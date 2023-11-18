@@ -135,12 +135,11 @@ public class FixedWingSupport extends ConvFighter {
      * @return The mass of each point of fuel in kg.
      */
     public int kgPerFuelPoint() {
+        if (!requiresFuel()) {
+            return 0;
+        }
         int kg = KG_PER_FUEL_POINT[getWeightClass() - EntityWeightClass.WEIGHT_SMALL_SUPPORT][getEngineTechRating()];
         if (hasPropChassisMod() || getMovementMode().equals(EntityMovementMode.AIRSHIP)) {
-            if (getEngine().isFusion() || (getEngine().getEngineType() == Engine.FISSION)
-                    || (getEngine().getEngineType() == Engine.SOLAR)) {
-                return 0;
-            }
             kg = (int) Math.ceil(kg * 0.75);
         }
         return kg;
@@ -155,6 +154,13 @@ public class FixedWingSupport extends ConvFighter {
     @Override
     public double getFuelPointsPerTon() {
         return 1000.0 / kgPerFuelPoint();
+    }
+
+    @Override
+    public boolean requiresFuel() {
+        return !(((hasPropChassisMod() || getMovementMode().isAirship()))
+                && hasEngine() && (getEngine().isFusion() || (getEngine().getEngineType() == Engine.FISSION)
+                || (getEngine().getEngineType() == Engine.SOLAR)));
     }
 
     private static final TechAdvancement TA_FIXED_WING_SUPPORT = new TechAdvancement(TECH_BASE_ALL)

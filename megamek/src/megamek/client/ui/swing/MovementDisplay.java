@@ -4110,7 +4110,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         IAero aero = (IAero) ce;
-        if ((aero.getCurrentFuel() < 1) && !(ce.hasEngine() && ce.getEngine().isSolar())) {
+        if ((aero.getCurrentFuel() < 1) && aero.requiresFuel()) {
             disableButtons();
             butDone.setEnabled(true);
             getBtn(MoveCommand.MOVE_NEXT).setEnabled(true);

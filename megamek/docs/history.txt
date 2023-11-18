@@ -17,6 +17,7 @@ VERSION HISTORY:
 + PR #4872: Improvements to CSV tool.
 + PR #4883:Beast mounted infantry
 + Fix #4806: IllegalArgumentException when attempting to launch and recover fighters in the same turn
++ Fix #3861:Militarized Space Stations turning
 
 0.49.15 (2023-10-21 1530 UTC)
 + PR #4688: Round reports should no longer take increasingly long to load

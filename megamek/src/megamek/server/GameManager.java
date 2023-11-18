@@ -16318,9 +16318,12 @@ public class GameManager implements IGameManager {
         if ((caa.getClub().getType().hasSubType(MiscType.S_FLAIL)
                 || caa.getClub().getType().hasSubType(MiscType.S_WRECKING_BALL)) && (rollValue == 2)) {
             // miss
-            r = new Report(4035);
+            r = new Report(4025);
             r.subject = ae.getId();
+            r.add(toHit);
+            r.add(pr.roll);
             addReport(r);
+            // setup miss
             ToHitData newToHit = new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "hit with own flail/wrecking ball");
             pr.damage = ClubAttackAction.getDamageFor(ae, caa.getClub(), false, caa.isZweihandering());
             pr.damage = (pr.damage / 2) + (pr.damage % 2);

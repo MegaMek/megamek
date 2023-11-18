@@ -4176,10 +4176,8 @@ public class GameManager implements IGameManager {
                 || ((((Aero) unloader).getCurrentVelocity() > 2) && !game
                 .getBoard().inSpace())) {
             Roll diceRoll = Compute.rollD6(2);
-            int rollValue = diceRoll.getIntValue();
-            String rollCalc = rollValue + " * 10]";
-            int damage = rollValue * 10;
-            rollCalc = damage + "[" + rollCalc;
+            int damage = diceRoll.getIntValue() * 10;
+            String rollCalc = damage + "[" + diceRoll.getIntValue() + " * 10]";
             r = new Report(9385);
             r.subject = unit.getId();
             r.add(unit.getDisplayName());
@@ -5400,7 +5398,7 @@ public class GameManager implements IGameManager {
                 || (entity.getMovementMode() == EntityMovementMode.WHEELED)));
 
         Roll diceRoll = Compute.rollD6(2);
-        int rollValue = diceRoll.getIntValue();
+        int rollValue = diceRoll.getIntValue() + modifier;
         Report r = new Report(2505);
         r.subject = entity.getId();
         r.newlines = 0;
@@ -5408,8 +5406,6 @@ public class GameManager implements IGameManager {
         addReport(r);
         r = new Report(6310);
         r.subject = entity.getId();
-
-        rollValue += modifier;
         String rollCalc = rollValue + " [" + diceRoll.getIntValue() + " + " + modifier + "]";
         r.addDataWithTooltip(rollCalc, diceRoll.getReport());
         r.newlines = 0;
@@ -15790,8 +15786,7 @@ public class GameManager implements IGameManager {
             if (((Protomech) ae).isEDPCharged()) {
                 r = new Report(3701);
                 Roll diceRoll2 = Compute.rollD6(2);
-                int rollValue2 = diceRoll2.getIntValue();
-                rollValue2 -= 2;
+                int rollValue2 = diceRoll2.getIntValue() - 2;
                 String rollCalc2 = rollValue2 + " [" + diceRoll2.getIntValue() + " - 2]";
                 r.addDataWithTooltip(rollCalc2, diceRoll2.getReport());
                 r.newlines = 0;
@@ -33722,8 +33717,7 @@ public class GameManager implements IGameManager {
         }
 
         Roll diceRoll = Compute.rollD6(2);
-        int rollValue = diceRoll.getIntValue();
-        rollValue += modifier;
+        int rollValue = diceRoll.getIntValue() + modifier;
         String rollCalc = rollValue + " [" + diceRoll.getIntValue() + " + " + modifier + "]";
         r = new Report(6306);
         r.subject = te.getId();

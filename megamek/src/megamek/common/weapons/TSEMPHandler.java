@@ -153,8 +153,7 @@ public class TSEMPHandler extends EnergyWeaponHandler {
         // Multiple hits add a +1 for each hit after the first, 
         //  up to a max of 4
         Roll diceRoll = Compute.rollD6(2);
-        int rollValue = diceRoll.getIntValue();
-        rollValue = Math.max(2, rollValue + tsempModifiers);
+        int rollValue = Math.max(2, diceRoll.getIntValue() + tsempModifiers);
         String rollCalc = rollValue + " [" + diceRoll.getIntValue() + " + " + tsempModifiers +  "] max 2";
         
         // Ugly code to set the target rolls

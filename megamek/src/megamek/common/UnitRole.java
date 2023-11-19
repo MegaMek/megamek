@@ -39,6 +39,9 @@ public enum UnitRole {
     /** This is the default role; given to units where the role definition is missing. */
     UNDETERMINED (ALL),
 
+    /** Shows that this unit intentionally has no combat role. */
+	NONE (ALL),
+
     AMBUSHER (GROUND),
     BRAWLER (GROUND),
     JUGGERNAUT (GROUND),
@@ -53,10 +56,8 @@ public enum UnitRole {
     FAST_DOGFIGHTER (AERO),
     FIRE_SUPPORT (AERO),
     INTERCEPTOR (AERO),
-    TRANSPORT (AERO),
+    TRANSPORT (AERO);
 
-    /** This role is used for some large aerospace units that intentionally have none of the combat roles. */
-	NONE (AERO);
 
     /** @return True when the given unit may use this role. Used in MML. */
     @SuppressWarnings("unused")

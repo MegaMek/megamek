@@ -7,6 +7,7 @@ techbase:Mixed (IS Chassis)
 era:3134
 source:Record Sheets: 3145 New Tech New Upgrades
 rules level:3
+role:Sniper
 
 mass:85
 engine:340 XL Engine(IS)

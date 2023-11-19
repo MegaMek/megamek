@@ -18,6 +18,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static megamek.common.UnitRole.*;
+
 /**
  * Campaign Operations rules for force generation.
  * 
@@ -738,8 +740,7 @@ public class FormationType {
         List<MechSummary> retVal = new ArrayList<>();
         for (int i = 0; i < tmpParams.size(); i++) {
             UnitTable t = UnitTable.findTable(tmpParams.get(i));
-            List<MechSummary> units = t.generateUnits(numUnits.get(i),
-                    ms -> UnitRoleHandler.getRoleFor(ms).equals(idealRole));
+            List<MechSummary> units = t.generateUnits(numUnits.get(i), ms -> ms.getRole() == idealRole);
             if (units.size() < numUnits.get(i)) {
                 return null;
             }
@@ -1064,7 +1065,7 @@ public class FormationType {
             return false;
         }
         if (!idealRole.equals(UnitRole.UNDETERMINED)) {
-            if (units.stream().allMatch(ms -> idealRole.equals(UnitRoleHandler.getRoleFor(ms)))) {
+            if (units.stream().allMatch(ms -> ms.getRole() == idealRole)) {
                 return true;
             }
         }
@@ -1164,7 +1165,7 @@ public class FormationType {
                 .append("<br/><br/>\n");
         }
         sb.append("Unit Roles:<br/>\n&nbsp;&nbsp;&nbsp;");
-        sb.append(units.stream().map(ms -> ms.getName() + ": " + UnitRoleHandler.getRoleFor(ms))
+        sb.append(units.stream().map(ms -> ms.getName() + ": " + ms.getRole())
             .collect(Collectors.joining("<br/>\n&nbsp;&nbsp;&nbsp;"))).append("<br/><br/>\n");
         if (!idealRole.equals(UnitRole.UNDETERMINED)) {
             sb.append("Ideal role: ").append(idealRole).append("<br/><br/>\n");
@@ -1357,12 +1358,10 @@ public class FormationType {
         ft.otherCriteria.add(new CountConstraint(3,
                 ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY,
                 "Heavy+"));
-        Constraint c = new CountConstraint(1, ms -> UnitRoleHandler.getRoleFor(ms).equals(UnitRole.JUGGERNAUT),
-                "Juggernaut");
+        Constraint c = new CountConstraint(1, ms -> ms.getRole() == JUGGERNAUT, "Juggernaut");
         c.setPairedWithNext(true);
         ft.otherCriteria.add(c);
-        c = new CountConstraint(2, ms -> UnitRoleHandler.getRoleFor(ms).equals(UnitRole.SNIPER),
-                "Sniper");
+        c = new CountConstraint(2, ms -> ms.getRole() == SNIPER, "Sniper");
         c.setPairedWithPrevious(true);
         ft.otherCriteria.add(c);
         ft.reportMetrics.put("Armor", MechSummary::getTotalArmor);
@@ -1405,7 +1404,7 @@ public class FormationType {
         //FIXME: The actual requirement is one juggernaut or two snipers; there needs to be
         // a way to combine constraints with ||.
         ft.otherCriteria.add(new CountConstraint(2,
-                ms -> EnumSet.of(UnitRole.JUGGERNAUT, UnitRole.SNIPER).contains(UnitRoleHandler.getRoleFor(ms)),
+                ms -> ms.getRole().isAnyOf(JUGGERNAUT, SNIPER),
                 "Juggernaut or Sniper"));
         ft.reportMetrics.put("Damage @ 7", ms -> getDamageAtRange(ms, 7));
         allFormationTypes.put(ft.name, ft);
@@ -1416,7 +1415,7 @@ public class FormationType {
         ft.allowedUnitTypes = FLAG_GROUND;
         ft.idealRole = UnitRole.AMBUSHER;
         ft.otherCriteria.add(new PercentConstraint(0.5,
-                ms -> EnumSet.of(UnitRole.JUGGERNAUT, UnitRole.AMBUSHER).contains(UnitRoleHandler.getRoleFor(ms)),
+                ms -> ms.getRole().isAnyOf(JUGGERNAUT, AMBUSHER),
                 "Juggernaut or Ambusher"));
         allFormationTypes.put(ft.name, ft);
     }
@@ -1429,8 +1428,7 @@ public class FormationType {
                 ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY,
                 "Heavy+"));
         ft.otherCriteria.add(new CountConstraint(3,
-                ms -> EnumSet.of(UnitRole.BRAWLER, UnitRole.SNIPER, UnitRole.SKIRMISHER)
-                    .contains(UnitRoleHandler.getRoleFor(ms)),
+                ms -> ms.getRole().isAnyOf(BRAWLER, SNIPER, SKIRMISHER),
                     "Brawler, Sniper, Skirmisher"));
         ft.groupingCriteria = new GroupingConstraint(FLAG_VEHICLE, 2, 2,
                 ms -> ms.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY,
@@ -1447,7 +1445,7 @@ public class FormationType {
                 ms -> ms.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT,
                 "Light"));
         ft.otherCriteria.add(new CountConstraint(1,
-                ms -> UnitRoleHandler.getRoleFor(ms).equals(UnitRole.SCOUT),
+                ms -> ms.getRole() == SCOUT,
                 "Scout"));
         ft.groupingCriteria = new GroupingConstraint(FLAG_VEHICLE, 2, 2,
                 ms -> ms.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT,
@@ -1504,13 +1502,12 @@ public class FormationType {
     private static void createBerserkerLance() {
         FormationType ft = new FormationType("Berserker/Close", "Battle");
         ft.allowedUnitTypes = FLAG_MEK | FLAG_PROTOMEK;
-        ft.idealRole = UnitRole.BRAWLER;
+        ft.idealRole = BRAWLER;
         ft.otherCriteria.add(new PercentConstraint(0.5,
                 ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY,
                 "Heavy+"));
         ft.otherCriteria.add(new CountConstraint(3,
-                ms -> EnumSet.of(UnitRole.BRAWLER, UnitRole.SNIPER, UnitRole.SKIRMISHER)
-                    .contains(UnitRoleHandler.getRoleFor(ms)),
+                ms -> ms.getRole().isAnyOf(BRAWLER, SNIPER, SKIRMISHER),
                 "Brawler, Sniper, Skirmisher"));
         allFormationTypes.put(ft.name, ft);
     }
@@ -1519,13 +1516,10 @@ public class FormationType {
         FormationType ft = new FormationType("Command", "Command");
         ft.allowedUnitTypes = FLAG_MEK | FLAG_PROTOMEK;
         ft.otherCriteria.add(new PercentConstraint(0.5,
-                ms -> EnumSet.of(UnitRole.SNIPER, UnitRole.MISSILE_BOAT, UnitRole.SKIRMISHER,
-                        UnitRole.JUGGERNAUT)
-                    .contains(UnitRoleHandler.getRoleFor(ms)),
+                ms -> ms.getRole().isAnyOf(SNIPER, MISSILE_BOAT, SKIRMISHER, JUGGERNAUT),
                 "Sniper, Missile Boat, Skirmisher, Juggernaught"));
         ft.otherCriteria.add(new CountConstraint(1,
-                ms -> EnumSet.of(UnitRole.BRAWLER, UnitRole.STRIKER, UnitRole.SCOUT)
-                    .contains(UnitRoleHandler.getRoleFor(ms)),
+                ms -> ms.getRole().isAnyOf(BRAWLER, STRIKER, SCOUT),
                 "Brawler, Striker, Scout"));
         allFormationTypes.put(ft.name, ft);
     }
@@ -1543,16 +1537,13 @@ public class FormationType {
         FormationType ft = new FormationType("Vehicle Command", "Command");
         ft.allowedUnitTypes = FLAG_TANK | FLAG_VTOL | FLAG_NAVAL;
         ft.otherCriteria.add(new CountConstraint(1,
-                ms -> EnumSet.of(UnitRole.BRAWLER, UnitRole.STRIKER, UnitRole.SCOUT)
-                    .contains(UnitRoleHandler.getRoleFor(ms)),
+                ms -> ms.getRole().isAnyOf(BRAWLER, STRIKER, SCOUT),
                 "Brawler, Striker, Scout"));
         /* The description does not state how many pairs there need to be, but the reference to
          * "one of the pairs" implies there need to be at least two.
          */
         ft.groupingCriteria = new GroupingConstraint(FLAG_VEHICLE, 2, 2,
-                ms -> EnumSet.of(UnitRole.SNIPER, UnitRole.MISSILE_BOAT, UnitRole.SKIRMISHER,
-                        UnitRole.JUGGERNAUT)
-                    .contains(UnitRoleHandler.getRoleFor(ms)),
+                ms -> ms.getRole().isAnyOf(SNIPER, MISSILE_BOAT, SKIRMISHER, JUGGERNAUT),
                     (ms0, ms1) -> ms0.getName().equals(ms1.getName()),
                 "Same model");
         allFormationTypes.put(ft.name, ft);
@@ -1563,7 +1554,7 @@ public class FormationType {
         ft.allowedUnitTypes = FLAG_GROUND;
         ft.idealRole = UnitRole.MISSILE_BOAT;
         ft.otherCriteria.add(new PercentConstraint(0.75,
-                ms -> EnumSet.of(UnitRole.SNIPER, UnitRole.MISSILE_BOAT).contains(UnitRoleHandler.getRoleFor(ms)),
+                ms -> ms.getRole().isAnyOf(SNIPER, MISSILE_BOAT),
                 "Sniper, Missile Boat"));
         allFormationTypes.put(ft.name, ft);
     }
@@ -1573,7 +1564,7 @@ public class FormationType {
         ft.allowedUnitTypes = FLAG_GROUND;
         ft.missionRoles.add(MissionRole.MIXED_ARTILLERY);
         ft.otherCriteria.add(new PercentConstraint(0.75,
-                ms -> EnumSet.of(UnitRole.SNIPER, UnitRole.MISSILE_BOAT).contains(UnitRoleHandler.getRoleFor(ms)),
+                ms -> ms.getRole().isAnyOf(SNIPER, MISSILE_BOAT),
                 "Sniper, Missile Boat"));
         ft.otherCriteria.add(new CountConstraint(2,
                 // should indicate it has anti-aircraft targeting quirk without having to load all entities
@@ -1674,7 +1665,7 @@ public class FormationType {
         ft.mainCriteria = ms -> ms.getWalkMp() >= 5;        
         ft.mainDescription = "Walk/Cruise 5+";
         ft.otherCriteria.add(new CountConstraint(2,
-                ms -> EnumSet.of(UnitRole.SCOUT, UnitRole.STRIKER).contains(UnitRoleHandler.getRoleFor(ms)),
+                ms -> ms.getRole().isAnyOf(SCOUT, STRIKER),
                 "Scout, Striker"));
         allFormationTypes.put(ft.name, ft);
     }
@@ -1688,7 +1679,7 @@ public class FormationType {
                 ms -> ms.getWalkMp() >= 5,
                 "Walk/Cruise 5+"));
         ft.otherCriteria.add(new CountConstraint(2,
-                ms -> UnitRoleHandler.getRoleFor(ms).equals(UnitRole.SCOUT),
+                ms -> ms.getRole() == SCOUT,
                 "Scout"));
         ft.otherCriteria.add(new CountConstraint(1,
                 ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY,
@@ -1700,8 +1691,7 @@ public class FormationType {
         FormationType ft = new FormationType("Light Recon", "Recon");
         ft.allowedUnitTypes = FLAG_GROUND;
         ft.maxWeightClass = EntityWeightClass.WEIGHT_LIGHT;
-        ft.mainCriteria = ms -> ms.getWalkMp() >= 6
-                && UnitRoleHandler.getRoleFor(ms).equals(UnitRole.SCOUT);
+        ft.mainCriteria = ms -> ms.getWalkMp() >= 6 && ms.getRole() == SCOUT;
         ft.mainDescription = "Walk/Cruise 6+, Scout";
         allFormationTypes.put(ft.name, ft);        
     }
@@ -1710,10 +1700,10 @@ public class FormationType {
         FormationType ft = new FormationType("Security");
         ft.allowedUnitTypes = FLAG_GROUND;
         ft.otherCriteria.add(new CountConstraint(1,
-                ms -> EnumSet.of(UnitRole.SCOUT, UnitRole.STRIKER).contains(UnitRoleHandler.getRoleFor(ms)),
+                ms -> ms.getRole().isAnyOf(SCOUT, STRIKER),
                 "Scout, Striker"));
         ft.otherCriteria.add(new CountConstraint(1,
-                ms -> EnumSet.of(UnitRole.SNIPER, UnitRole.MISSILE_BOAT).contains(UnitRoleHandler.getRoleFor(ms)),
+                ms -> ms.getRole().isAnyOf(SNIPER, MISSILE_BOAT),
                 "Sniper, Missile Boat"));
         ft.otherCriteria.add(new MaxCountConstraint(1,
                 ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_ASSAULT,
@@ -1729,7 +1719,7 @@ public class FormationType {
         ft.mainCriteria = ms -> ms.getWalkMp() >= 5 || ms.getJumpMp() >= 4;
         ft.mainDescription = "Walk/Cruise 5+ or Jump 4+";
         ft.otherCriteria.add(new PercentConstraint(0.5,
-                ms -> EnumSet.of(UnitRole.STRIKER, UnitRole.SKIRMISHER).contains(UnitRoleHandler.getRoleFor(ms)),
+                ms -> ms.getRole().isAnyOf(STRIKER, SKIRMISHER),
                 "Striker, Skirmisher"));
         allFormationTypes.put(ft.name, ft);        
     }
@@ -1754,7 +1744,7 @@ public class FormationType {
                 ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY,
                 "Heavy+"));
         ft.otherCriteria.add(new CountConstraint(2,
-                ms -> EnumSet.of(UnitRole.STRIKER, UnitRole.SKIRMISHER).contains(UnitRoleHandler.getRoleFor(ms)),
+                ms -> ms.getRole().isAnyOf(STRIKER, SKIRMISHER),
                 "Striker, Skirmisher"));
         ft.otherCriteria.add(new CountConstraint(1,
                 ms -> getSingleWeaponDamageAtRange(ms, 18) >= 5,
@@ -1783,7 +1773,7 @@ public class FormationType {
                 ms -> getSingleWeaponDamageAtRange(ms, 18) >= 5,
                 "Weapon with damage 5+ at range 18"));
         ft.otherCriteria.add(new CountConstraint(2,
-                ms -> EnumSet.of(UnitRole.STRIKER, UnitRole.SKIRMISHER).contains(UnitRoleHandler.getRoleFor(ms)),
+                ms -> ms.getRole().isAnyOf(STRIKER, SKIRMISHER),
                 "Striker, Skirmisher"));
         ft.reportMetrics.put("Damage @ 18", ms -> getSingleWeaponDamageAtRange(ms, 18));
         allFormationTypes.put(ft.name, ft);        
@@ -1815,7 +1805,7 @@ public class FormationType {
         FormationType ft = new FormationType("Aerospace Superiority Squadron");
         ft.allowedUnitTypes = FLAG_FIGHTER;
         ft.otherCriteria.add(new PercentConstraint(0.51,
-                ms -> EnumSet.of(UnitRole.INTERCEPTOR, UnitRole.FAST_DOGFIGHTER).contains(UnitRoleHandler.getRoleFor(ms)),
+                ms -> ms.getRole().isAnyOf(INTERCEPTOR, FAST_DOGFIGHTER),
                 "Interceptor/Fast Dogfighter"));
         ft.groupingCriteria = new GroupingConstraint(FLAG_FIGHTER, 2, 0,
                 ms -> true,
@@ -1844,11 +1834,10 @@ public class FormationType {
     private static void createFireSupportSquadron() {
         FormationType ft = new FormationType("Fire Support Squadron");
         ft.allowedUnitTypes = FLAG_FIGHTER;
-        ft.mainCriteria = ms -> EnumSet.of(UnitRole.FIRE_SUPPORT,
-                UnitRole.DOGFIGHTER).contains(UnitRoleHandler.getRoleFor(ms));
+        ft.mainCriteria = ms -> ms.getRole().isAnyOf(FIRE_SUPPORT, DOGFIGHTER);
         ft.mainDescription = "Fire Support, Dogfighter";
         ft.otherCriteria.add(new PercentConstraint(0.5,
-                ms -> UnitRoleHandler.getRoleFor(ms).equals(UnitRole.FIRE_SUPPORT),
+                ms -> ms.getRole() == FIRE_SUPPORT,
                 "Fire Support"));
         ft.groupingCriteria = new GroupingConstraint(FLAG_FIGHTER, 2, 0,
                 ms -> true,
@@ -1860,9 +1849,7 @@ public class FormationType {
     private static void createInterceptorSquadron() {
         FormationType ft = new FormationType("Interceptor Squadron");
         ft.allowedUnitTypes = FLAG_FIGHTER;
-        ft.otherCriteria.add(new PercentConstraint(0.51,
-                ms -> UnitRoleHandler.getRoleFor(ms).equals(UnitRole.INTERCEPTOR),
-                "Interceptor"));
+        ft.otherCriteria.add(new PercentConstraint(0.51, ms -> ms.getRole() == INTERCEPTOR, "Interceptor"));
         ft.groupingCriteria = new GroupingConstraint(FLAG_FIGHTER, 2, 0,
                 ms -> true,
                 (ms0, ms1) -> ms0.getChassis().equals(ms1.getChassis()),
@@ -1874,8 +1861,7 @@ public class FormationType {
         FormationType ft = new FormationType("Strike Squadron");
         ft.allowedUnitTypes = FLAG_FIGHTER;
         ft.otherCriteria.add(new PercentConstraint(0.51,
-                ms -> EnumSet.of(UnitRole.ATTACK_FIGHTER,
-                        UnitRole.DOGFIGHTER).contains(UnitRoleHandler.getRoleFor(ms)), "Attack, Dogfighter"));
+                ms -> ms.getRole().isAnyOf(ATTACK_FIGHTER, DOGFIGHTER), "Attack, Dogfighter"));
         ft.groupingCriteria = new GroupingConstraint(FLAG_FIGHTER, 2, 0,
                 ms -> true,
                 (ms0, ms1) -> ms0.getChassis().equals(ms1.getChassis()),
@@ -1887,7 +1873,7 @@ public class FormationType {
         FormationType ft = new FormationType("Transport Squadron");
         ft.allowedUnitTypes = FLAG_FIGHTER | FLAG_SMALL_CRAFT | FLAG_DROPSHIP;
         ft.otherCriteria.add(new PercentConstraint(0.5,
-                ms -> UnitRoleHandler.getRoleFor(ms).equals(UnitRole.TRANSPORT), "Transport"));
+                ms -> ms.getRole() == TRANSPORT, "Transport"));
         ft.groupingCriteria = new GroupingConstraint(FLAG_FIGHTER, 2, Integer.MAX_VALUE,
                 ms -> true,
                 (ms0, ms1) -> ms0.getChassis().equals(ms1.getChassis()),

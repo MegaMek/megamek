@@ -76,7 +76,7 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
     private int tmm;
     private Map<String,Integer> movement = new LinkedHashMap<>();
     private String primaryMovementMode = "";
-    private UnitRole role;
+    private UnitRole role = UnitRole.UNDETERMINED;
     private int skill = 4;
 
     /**
@@ -136,7 +136,7 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
 
     @Override
     public UnitRole getRole() {
-        return role;
+        return (role == null) ? UnitRole.UNDETERMINED : role;
     }
 
     /** @return The AS element's display name, including duplicate markers such as "#2". */

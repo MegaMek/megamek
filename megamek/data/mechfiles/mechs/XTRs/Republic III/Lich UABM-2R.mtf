@@ -8,6 +8,7 @@ TechBase:Mixed (IS Chassis)
 Era:3140
 Source:XTR: Republic III
 Rules Level:3
+role:Sniper
 
 Mass:90
 Engine:270 XL Engine(IS)

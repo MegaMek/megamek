@@ -36,6 +36,10 @@ Saturn Patrol Ship
 IS Level 4
 </type>
 
+<role>
+Transport
+</role>
+
 <motion_type>
 Spheroid
 </motion_type>

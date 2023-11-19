@@ -8,6 +8,7 @@ techbase:Mixed (IS Chassis)
 era:2824
 source:TRO: Golden Century
 rules level:4
+role:Brawler
 
 mass:55
 engine:275 XL Engine(IS)

@@ -7,6 +7,7 @@ Config:Biped Omnimech
 techbase:Clan
 era:3120
 rules level:4
+role:Striker
 source:Rec Guide:ilClan #4 
 
 mass:45

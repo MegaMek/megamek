@@ -7,6 +7,7 @@ Config:Biped
 techbase:Inner Sphere
 era:3050
 rules level:2
+role:Missile Boat
 source:Rec Guide:ilClan #10
 
 mass:70

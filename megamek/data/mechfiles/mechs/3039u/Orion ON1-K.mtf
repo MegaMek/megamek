@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:2525
 source:TRO: 3039
 rules level:1
+role:Brawler
 
 mass:75
 engine:300 Fusion Engine(IS)

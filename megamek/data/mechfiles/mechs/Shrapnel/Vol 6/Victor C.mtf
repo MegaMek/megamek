@@ -8,6 +8,7 @@ techbase:Mixed (IS Chassis)
 era:2835
 source:Shrapnel #6
 rules level:4
+role:Skirmisher
 
 mass:80
 engine:320 Fusion (Clan) Engine

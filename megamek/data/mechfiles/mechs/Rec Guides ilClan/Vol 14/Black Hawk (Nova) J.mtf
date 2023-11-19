@@ -8,6 +8,7 @@ techbase:Clan
 era:3128
 source:Rec Guide:ilClan #14
 rules level:2
+role:Skirmisher
 
 mass:50
 engine:250 XL (Clan) Engine(IS)

@@ -7,6 +7,7 @@ techbase:Clan
 era:3133
 source:Rec Guide:ilClan #30
 rules level:3
+role:Skirmisher
 
 mass:50
 engine:300 XXL (Clan) Engine(IS)

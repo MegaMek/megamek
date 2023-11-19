@@ -8,6 +8,7 @@ techbase:Clan
 era:2840
 source:Rec Guide:ilClan #24
 rules level:2
+role:Juggernaut
 
 mass:100
 engine:300 Fusion (Clan) Engine(IS)

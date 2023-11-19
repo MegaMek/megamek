@@ -32,6 +32,10 @@ PKR-T5 (SRM2)
 IS Level 1
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>

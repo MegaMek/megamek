@@ -8,6 +8,7 @@ techbase:Mixed (IS Chassis)
 era:3127
 source:Rec Guide:ilClan #15
 rules level:3
+role:Juggernaut
 
 mass:65
 engine:195 Fusion Engine(IS)

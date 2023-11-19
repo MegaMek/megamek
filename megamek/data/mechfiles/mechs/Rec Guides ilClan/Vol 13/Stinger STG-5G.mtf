@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3076
 source:Rec Guide:ilClan #13
 rules level:3
+role:Scout
 
 mass:20
 engine:140 XL Engine(IS)

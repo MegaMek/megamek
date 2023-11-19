@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3049
 source:TRO: 3050
 rules level:2
+role:Skirmisher
 
 mass:65
 engine:260 XL Engine(IS)

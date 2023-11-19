@@ -8,6 +8,7 @@ techbase:Mixed (IS Chassis)
 era:3136
 source:TRO: 3145 Republic of the Sphere
 rules level:3
+role:Juggernaut
 
 mass:135
 engine:270 Fusion Engine(IS)

@@ -36,6 +36,10 @@ SYD-21
 IS Level 2
 </type>
 
+<role>
+Interceptor
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>

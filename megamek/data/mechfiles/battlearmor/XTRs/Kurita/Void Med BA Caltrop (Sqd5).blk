@@ -32,6 +32,10 @@ Caltrop(Sqd5)
 Mixed (IS Chassis)
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Jump
 </motion_type>

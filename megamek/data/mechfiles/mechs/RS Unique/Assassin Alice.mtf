@@ -8,6 +8,7 @@ Config:Biped
 TechBase:Inner Sphere
 Era:3066
 Rules Level:2
+role:Striker
 
 Mass:40
 Engine:280 Light Fusion Engine

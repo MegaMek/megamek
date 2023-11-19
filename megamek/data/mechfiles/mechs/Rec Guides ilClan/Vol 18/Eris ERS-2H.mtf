@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3087
 source:Rec Guide:ilClan #18
 rules level:2
+role:Skirmisher
 
 mass:50
 engine:250 XL Engine(IS)

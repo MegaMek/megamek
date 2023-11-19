@@ -36,6 +36,10 @@ Clan Interface Armor
 Mixed (Clan Chassis) Experimental
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Leg
 </motion_type>

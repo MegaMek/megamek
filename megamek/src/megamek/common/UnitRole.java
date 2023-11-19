@@ -1,9 +1,32 @@
+/*
+ * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.common;
 
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.BattleForceSUA;
 import org.apache.logging.log4j.LogManager;
+
+import java.util.Arrays;
+import java.util.function.Predicate;
+
+import static megamek.common.UnitRole.Availability.*;
 
 /**
  * Unit roles as defined by Alpha Strike Companion, used in formation building rules
@@ -12,37 +35,51 @@ import org.apache.logging.log4j.LogManager;
  * @author Neoancient
  */
 public enum UnitRole {
-    UNDETERMINED (false),
-    AMBUSHER (true),
-    BRAWLER (true),
-    JUGGERNAUT (true),
-    MISSILE_BOAT (true),
-    SCOUT (true),
-    SKIRMISHER (true),
-    SNIPER (true),
-    STRIKER (true),
-    ATTACK_FIGHTER (false),
-    DOGFIGHTER (false),
-    FAST_DOGFIGHTER (false),
-    FIRE_SUPPORT (false),
-    INTERCEPTOR (false),
-    TRANSPORT (false),
-	NONE (false);
 
-    private boolean ground;
+    /** This is the default role; given to units where the role definition is missing. */
+    UNDETERMINED (ALL),
 
-    UnitRole(boolean ground) {
-        this.ground = ground;
+    /** Shows that this unit intentionally has no combat role. */
+	NONE (ALL),
+
+    AMBUSHER (GROUND),
+    BRAWLER (GROUND),
+    JUGGERNAUT (GROUND),
+    MISSILE_BOAT (GROUND),
+    SCOUT (GROUND),
+    SKIRMISHER (GROUND),
+    SNIPER (GROUND),
+    STRIKER (GROUND),
+
+    ATTACK_FIGHTER (AERO),
+    DOGFIGHTER (AERO),
+    FAST_DOGFIGHTER (AERO),
+    FIRE_SUPPORT (AERO),
+    INTERCEPTOR (AERO),
+    TRANSPORT (AERO);
+
+
+    /** @return True when the given unit may use this role. Used in MML. */
+    @SuppressWarnings("unused")
+    public boolean isAvailableTo(BTObject unit) {
+        return availableTo.fits(unit) && !unit.isUnitGroup();
     }
 
-    public boolean isGroundRole() {
-        return ground;
+    public boolean isAnyOf(UnitRole role, UnitRole... otherRoles) {
+        return (this == role) || Arrays.stream(otherRoles).anyMatch(otherRole -> this == otherRole);
     }
 
+    /** @return True when this role is not UNDETERMINED. (Returns true for NONE.) */
     public boolean hasRole() {
-        return (this != UNDETERMINED) && (this != NONE);
+        return this != UNDETERMINED;
     }
 
+    /**
+     * Parses the given string into the UnitRole if possible and returns it. If it can't parse the string,
+     * logs an error and returns UNDETERMINED. Does not return null.
+     *
+     * @return The UnitRole given as a string or UNDETERMINED.
+     */
     public static UnitRole parseRole(String role) {
         switch (role.toLowerCase()) {
             case "ambusher":
@@ -63,7 +100,7 @@ public enum UnitRole {
             case "striker":
                 return STRIKER;
             case "attack_fighter":
-            case "attack figher":
+            case "attack fighter":
             case "attack":
                 return ATTACK_FIGHTER;
             case "dogfighter":
@@ -82,7 +119,7 @@ public enum UnitRole {
             case "none":
             	return NONE;
             default:
-                LogManager.getLogger().error("Could not parse AS Role " + role);
+                LogManager.getLogger().error("Could not parse role " + role);
                 return UNDETERMINED;
         }
     }
@@ -114,7 +151,7 @@ public enum UnitRole {
      *
      * @param entity      The unit to be checked for role qualification
      * @param tolerance A measure of how strictly to apply the qualifications. A value of zero is
-     *                  more or less by the book, while values &lt; 0 are more liberal and &gt; 0 are
+     *                  more or less by the book, while values below 0 are more liberal and above 0 are
      *                  more strict.
      * @return          Boolean value indicating whether the unit meets the qualifications for this role.
      */
@@ -150,6 +187,9 @@ public enum UnitRole {
      * @return			Boolean value indicating whether the unit meets the qualifications for this role.
      */
     public boolean qualifiesForRole(AlphaStrikeElement unit, double tolerance) {
+        if (!isAvailableTo(unit)) {
+            return false;
+        }
         double score = 0;
         int speed = unit.getPrimaryMovementValue();
         switch (this) {
@@ -375,5 +415,29 @@ public enum UnitRole {
                     .append(word.substring(1).toLowerCase()).append(" ");
         }
         return sb.toString().trim();
+    }
+
+    // PRIVATE
+
+    private final Availability availableTo;
+
+    UnitRole(Availability availableTo) {
+        this.availableTo = availableTo;
+    }
+
+    enum Availability {
+        GROUND(BTObject::isGround),
+        AERO(BTObject::isAerospace),
+        ALL(unit -> true);
+
+        private final Predicate<BTObject> fits;
+
+        Availability(Predicate<BTObject> fits) {
+            this.fits = fits;
+        }
+
+        boolean fits(BTObject unit) {
+            return fits.test(unit);
+        }
     }
 }

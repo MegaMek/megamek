@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:2701
 source:TRO: 3085
 rules level:3
+role:Scout
 
 mass:30
 engine:180 Fusion Engine(IS)

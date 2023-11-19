@@ -44,27 +44,7 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
     public Entity getEntity() throws EntityLoadingException {
 
         FixedWingSupport a = new FixedWingSupport();
-
-        if (!dataFile.exists("Name")) {
-            throw new EntityLoadingException("Could not find name block.");
-        }
-        a.setChassis(dataFile.getDataAsString("Name")[0]);
-        if (dataFile.exists("Model") && (dataFile.getDataAsString("Model")[0] != null)) {
-            a.setModel(dataFile.getDataAsString("Model")[0]);
-        } else {
-            a.setModel("");
-        }
-        if (dataFile.exists(MtfFile.MUL_ID)) {
-            a.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);
-        }
-
-        setTechLevel(a);
-        setFluff(a);
-        checkManualBV(a);
-
-        if (dataFile.exists("source")) {
-            a.setSource(dataFile.getDataAsString("source")[0]);
-        }
+        setBasicEntityData(a);
 
         if (!dataFile.exists("tonnage")) {
             throw new EntityLoadingException("Could not find weight block.");

@@ -8,6 +8,7 @@ Config:Biped
 TechBase:Clan
 Era:3062
 Rules Level:2
+role:Skirmisher
 
 Mass:45
 Engine:225 Fusion Engine

@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3062
 source:TRO: 3067
 rules level:2
+role:Sniper
 
 mass:45
 engine:225 Light Engine(IS)

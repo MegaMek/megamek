@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:2898
 source:TRO: 3039
 rules level:1
+role:Sniper
 
 mass:80
 engine:320 Fusion Engine(IS)

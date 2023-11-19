@@ -32,6 +32,10 @@ Sea Hunter Maritime Tank
 IS Level 4
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Tracked
 </motion_type>

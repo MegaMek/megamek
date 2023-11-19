@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3070
 source:TRO: 3050
 rules level:2
+role:Scout
 
 mass:35
 engine:210 Light Engine(IS)

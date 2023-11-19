@@ -6,6 +6,7 @@ Config:Biped
 techbase:Mixed (IS Chassis)
 era:3130
 rules level:2
+role:Brawler
 mul id:9490
 Source:Rec Guide:ilClan #32 
 

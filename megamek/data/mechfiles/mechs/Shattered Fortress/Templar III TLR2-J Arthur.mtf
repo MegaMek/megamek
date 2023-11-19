@@ -8,6 +8,7 @@ techbase:Mixed (IS Chassis)
 era:3120
 source:Shattered Fortresss
 rules level:3
+role:Skirmisher
 
 mass:85
 engine:340 Light Engine(IS)

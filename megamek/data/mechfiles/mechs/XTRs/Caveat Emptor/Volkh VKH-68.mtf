@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3133
 source:XTR: Caveat Emptor
 rules level:3
+role:Striker
 
 mass:45
 engine:225 XXL Engine(IS)

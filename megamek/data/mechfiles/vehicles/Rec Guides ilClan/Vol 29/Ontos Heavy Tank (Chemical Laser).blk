@@ -36,6 +36,10 @@ Ontos Heavy Tank
 Mixed (IS Chassis)
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Tracked
 </motion_type>

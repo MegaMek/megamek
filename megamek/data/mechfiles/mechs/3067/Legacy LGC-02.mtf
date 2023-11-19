@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3064
 source:TRO: 3067
 rules level:2
+role:Missile Boat
 
 mass:80
 engine:240 Fusion Engine(IS)

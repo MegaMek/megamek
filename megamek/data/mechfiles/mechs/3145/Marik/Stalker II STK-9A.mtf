@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3137
 source:TRO: 3145 Free Worlds League
 rules level:4
+role:Juggernaut
 
 mass:85
 engine:255 Fusion Engine(IS)

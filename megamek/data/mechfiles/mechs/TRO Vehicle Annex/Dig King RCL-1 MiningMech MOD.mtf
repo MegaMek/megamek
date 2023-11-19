@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:2802
 source:Record Sheets: Vehicle Annex - IndustrialMechs & Exoskeletons
 rules level:3
+role:Brawler
 
 mass:35
 engine:105 Fuel Cell Engine(IS)

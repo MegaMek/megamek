@@ -8,6 +8,7 @@ techbase:Mixed (IS Chassis)
 era:3132
 source:XTR: Caveat Emptor
 rules level:4
+role:Skirmisher
 
 mass:65
 engine:325 XL Engine(IS)

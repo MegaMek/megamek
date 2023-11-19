@@ -8,6 +8,7 @@ techbase:Mixed (IS Chassis)
 era:3101
 source:TRO: 3145 Draconis Combine
 rules level:4
+role:Missile Boat
 
 mass:95
 engine:285 Light Engine(IS)

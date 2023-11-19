@@ -37,6 +37,10 @@ InfantrySupportMachineGun
 <type>
 IS Level 2
 </type>
+
+<role>
+Ambusher
+</role>
 <year>
 2500
 </year>

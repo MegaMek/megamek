@@ -8,6 +8,7 @@ TechBase:Mixed (IS Chassis)
 Era:3054
 Source:TRO: 3050
 Rules Level:4
+role:Missile Boat
 
 Mass:85
 Engine:255 Fusion Engine(IS)

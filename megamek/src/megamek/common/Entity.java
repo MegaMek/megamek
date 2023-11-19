@@ -51,7 +51,7 @@ import java.util.stream.IntStream;
  * Entity is a master class for basically anything on the board except terrain.
  */
 public abstract class Entity extends TurnOrdered implements Transporter, Targetable, RoundUpdated,
-        PhaseUpdated, ITechnology, ForceAssignable {
+        PhaseUpdated, ITechnology, ForceAssignable, CombatRole {
     private static final long serialVersionUID = 1430806396279853295L;
 
     public static final int DOES_NOT_TRACK_HEAT = 999;
@@ -804,6 +804,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * The persistent (except for client/server-transmission and saving) battle value calculator for this entity.
      */
     private transient BVCalculator bvCalculator = BVCalculator.getBVCalculator(this);
+
+    private UnitRole role = UnitRole.UNDETERMINED;
 
     /**
      * Generates a new, blank, entity.
@@ -15457,5 +15459,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * */
     protected final GameOptions gameOptions() {
         return game != null ? game.getOptions() : new GameOptions();
+    }
+
+    public void setUnitRole(UnitRole role) {
+        this.role = role;
+    }
+
+    @Override
+    public UnitRole getRole() {
+        return (role == null) ? UnitRole.UNDETERMINED : role;
     }
 }

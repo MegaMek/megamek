@@ -8,6 +8,7 @@ TechBase:Inner Sphere
 Era:3082
 source:TRO: 3085
 Rules Level:2
+role:Scout
 
 Mass:20
 Engine:100 XL Engine(IS)

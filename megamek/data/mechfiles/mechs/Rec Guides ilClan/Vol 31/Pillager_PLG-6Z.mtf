@@ -6,6 +6,7 @@ Config:Biped
 techbase:Mixed (IS Chassis)
 era:3142
 rules level:2
+role:Juggernaut
 Source:Rec Guide:ilClan #31
 mul id:9464
 

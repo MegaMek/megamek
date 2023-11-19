@@ -40,6 +40,10 @@ Infantry David Light Gauss Rifle
 <type>
 IS Level 3
 </type>
+
+<role>
+Ambusher
+</role>
 <year>
 3063
 </year>

@@ -7,6 +7,7 @@ techbase:Inner Sphere
 era:2597
 source:Rec Guide:ilClan #1
 rules level:1
+role:Skirmisher
 
 mass:55
 engine:275 Fusion Engine(IS)

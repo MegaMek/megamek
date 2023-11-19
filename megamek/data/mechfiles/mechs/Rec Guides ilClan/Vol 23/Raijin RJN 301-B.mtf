@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3122
 source:Rec Guide:ilClan #23
 rules level:2
+role:Striker
 
 mass:50
 engine:300 XL Engine(IS)

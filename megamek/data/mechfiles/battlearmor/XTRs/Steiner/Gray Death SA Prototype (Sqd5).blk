@@ -57,6 +57,10 @@ InfantryAssaultRifle:LA:APM
 Mixed (IS Chassis) Advanced
 </type>
 
+<role>
+Ambusher
+</role>
+
 <year>
 3073
 </year>

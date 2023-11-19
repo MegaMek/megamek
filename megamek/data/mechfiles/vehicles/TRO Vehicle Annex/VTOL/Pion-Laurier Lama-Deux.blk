@@ -36,6 +36,10 @@ Lama-Deux Firefighting VTOL
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 VTOL
 </motion_type>

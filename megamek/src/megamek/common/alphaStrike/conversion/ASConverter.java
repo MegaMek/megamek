@@ -103,7 +103,7 @@ public final class ASConverter {
         element.setModel(entity.getModel());
         element.setChassis(entity.getChassis());
         element.setMulId(entity.getMulId());
-        element.setRole(UnitRoleHandler.getRoleFor(entity));
+        element.setRole(entity.getRole());
 
         if (entity.getShortName().length() < 15) {
             conversionReport.addHeader("Alpha Strike Conversion for " + entity.getShortName());

@@ -7,6 +7,7 @@ techbase:Inner Sphere
 era:3055
 source:TRO: 3055
 rules level:2
+role:Skirmisher
 
 mass:60
 engine:300 Fusion Engine(IS)
@@ -152,7 +153,7 @@ overview:<p>The Anvil, initially conceived as an independent brawler Mech, evolv
 
 capabilities:<p>The Anvil was at the forefront of FWLM's advanced technologies when first fielded, including an endo steel internal structure and double heat sinks. Its standout features are the large pulse lasers, supplemented by standard medium lasers, providing a robust close-combat arsenal. Despite its limited jump capability, the Anvil's maneuverability complements its combat role effectively. While its armor and power plant technologies were relatively standard for the time, the inclusion of Guardian ECM enhances its defensive capabilities. The Anvil, though not agile, plays a crucial role in the FWLM's strategy, especially in tandem with the Hammer.</p>
 
-deployment:Equipped with Sutel Precision Line Large Pulse Lasers for medium to long-range attacks and Martell medium lasers for short-range combat.	
+deployment:Equipped with Sutel Precision Line Large Pulse Lasers for medium to long-range attacks and Martell medium lasers for short-range combat.
 
 history:<p>The Anvil BattleMech's development journey and deployment history in the Free Worlds League Military (FWLM) reflect a tale of adaptability and strategic innovation. Originally conceptualized as a standalone brawler, the Anvil's mission underwent a substantial transformation during its development phase. An insightful engineer's proposal to match it with the Stingray design, later renamed the Hammer, led to the creation of a formidable Mech duo, optimizing the Anvil for close combat engagements complemented by the Hammer's long-range capabilities.<p>This effective pairing of the Hammer and Anvil has been a staple strategy within the FWLM, making solo deployments of the Anvil a rarity. The duo has seen action in various significant military operations, including Operation Guerrero and clashes against the Clans. The Anvil, equipped with its advanced technologies like Guardian ECM and large pulse lasers, played a crucial role in these encounters, especially in urban combat scenarios where indirect fire and maneuverability were key. The synergy between the Anvil and Hammer units, capitalizing on the Anvil's close-combat prowess and the Hammer's long-range fire support, has been a hallmark of their operational success.<p>Despite facing challenges in keeping up with rapid technological advancements in mech warfare, the Anvil has remained a reliable asset in the FWLM's arsenal. Various proposed upgrades and field modifications, such as enhancing armor or adjusting weapon systems, demonstrate the ongoing efforts to maintain the Anvil's relevance on the battlefield. The Anvil's enduring service, marked by both successes and adaptations, showcases the dynamic nature of Mech warfare and the strategic flexibility of FWLM's military doctrine.</p>
 

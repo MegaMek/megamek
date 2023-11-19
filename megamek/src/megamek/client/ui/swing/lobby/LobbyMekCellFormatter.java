@@ -164,9 +164,8 @@ class LobbyMekCellFormatter {
 
         // Alpha Strike Unit Role
         if (!entity.isUnitGroup()) {
-            String unitRole = UnitRoleHandler.getRoleFor(entity).toString();
             result.append(DOT_SPACER);
-            result.append(unitRole);
+            result.append(entity.getRole().toString());
         }
         
         // Invalid Design

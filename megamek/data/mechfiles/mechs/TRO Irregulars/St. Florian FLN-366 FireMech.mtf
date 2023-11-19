@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3100
 source:TRO: 3085u
 rules level:3
+role:None
 
 mass:90
 engine:270 Fusion Engine(IS)

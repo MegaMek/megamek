@@ -32,6 +32,10 @@ Demon Medium Tank
 IS Level 2
 </type>
 
+<role>
+Striker
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>

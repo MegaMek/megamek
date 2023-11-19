@@ -7,6 +7,7 @@ techbase:Inner Sphere
 era:3070
 source:TRO: 3075
 rules level:2
+role:Juggernaut
 
 mass:50
 engine:200 Fusion Engine(IS)
@@ -157,7 +158,7 @@ deployment:<p>Tailored for construction projects, the 66D variant features a pai
 history:<p>The Jabberwocky IndustrialMech, originally developed in 2549, has undergone a remarkable transformation from an underperforming military support unit to a critical asset in engineering and battlefield operations. Its journey from obscurity to prominence is closely intertwined with the shifting demands and challenges faced by the Federated Suns during periods of intense conflict.<p>Initially intended for general military support, the JAW-66A Jabberwocky's limitations led to its relegation to secondary roles. However, the widespread devastation of the Jihad in 3069 compelled the Federated Suns to mobilize all available resources, resurrecting the Jabberwocky from storage and support units for frontline deployment. This move stripped many engineering units of their equipment, leaving them struggling with massive fortification and reconstruction efforts.<p>In 3070, amidst these challenges, Jalastar Aerospace recognized an opportunity to expand its market and introduced a completely reworked Jabberwocky, tailored for versatility in battlefield salvage and engineering tasks. The redesign, featuring components produced on Panpour and a track propulsion system for enhanced mobility, quickly garnered attention. Orders for the new Jabberwocky surged, with both Federated Suns support units and mercenary groups seeking to replenish their ranks with this adaptable machine.<p>Today, the Jabberwocky IndustrialMech stands as a testament to innovative engineering and adaptability in the face of adversity. Its various configurations, from the initial JAW-65A to the more versatile JAW-66B and specialized variants like the "Demolition" and "Construction" models, highlight the Mech's journey from an overlooked unit to an indispensable tool in both military and civilian engineering operations. The Jabberwocky's evolution not only reflects the changing landscape of Mech technology but also exemplifies the resilience and ingenuity of those who operate and maintain these machines in the ever-evolving theater of war.</p>
 
 manufacturer:Jalastar Aerospace
-primaryfactory:Panpour 
+primaryfactory:Panpour
 systemmanufacturer:CHASSIS:Corean Model KL80 Industrial
 systemmanufacturer:ENGINE:GM 200
 systemmanufacturer:ARMOR:ArcShield Maxi Special (Industrial Heavy)

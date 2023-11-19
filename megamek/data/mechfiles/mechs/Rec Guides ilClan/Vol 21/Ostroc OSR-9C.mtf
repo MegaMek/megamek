@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:2905
 source:Rec Guide:ilClan #21
 rules level:1
+role:Juggernaut
 
 mass:60
 engine:240 Fusion Engine(IS)

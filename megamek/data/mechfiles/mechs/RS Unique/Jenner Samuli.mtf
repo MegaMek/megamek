@@ -8,6 +8,7 @@ Config:Biped
 TechBase:Inner Sphere
 Era:3060
 Rules Level:2
+role:Missile Boat
 
 Mass:35
 Engine:245 XL Engine

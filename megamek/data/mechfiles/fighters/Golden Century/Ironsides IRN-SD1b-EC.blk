@@ -36,6 +36,10 @@ IRN-SD1b-EC
 Mixed (IS Chassis) Experimental
 </type>
 
+<role>
+Dogfighter
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>

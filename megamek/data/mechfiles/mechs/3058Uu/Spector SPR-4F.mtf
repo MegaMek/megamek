@@ -7,6 +7,7 @@ techbase:Inner Sphere
 era:2640
 source:TRO: 3058
 rules level:4
+role:Striker
 
 mass:35
 engine:245 XL Engine(IS)

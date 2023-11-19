@@ -8,6 +8,7 @@ techbase:Clan
 era:3130
 source:Rec Guide:ilClan #13
 rules level:2
+role:Ambusher
 
 mass:50
 engine:200 XL (Clan) Engine(IS)

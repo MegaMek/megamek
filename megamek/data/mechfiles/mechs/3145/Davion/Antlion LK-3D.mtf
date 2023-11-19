@@ -7,6 +7,7 @@ techbase:Mixed (IS Chassis)
 era:3117
 source:TRO: 3145 Federated Suns
 rules level:4
+role:Missile Boat
 
 mass:45
 engine:225 XL Engine(IS)
@@ -152,7 +153,7 @@ IS Light Ferro-Fibrous
 
 overview:<p>The Antlion, a unique quad BattleMech developed by StarCorps, is a specialized unit in the Armed Forces of the Federated Suns, purpose-built for indirect fire support. Designed to address the diminishing efficiency of LRMs due to the rise of anti-missile systems, the Antlion stands out for its specific role in warfare. Despite limited adoption beyond the AFFS and select mercenary units, its production continues, underscoring its niche yet vital function on the battlefield. The Antlion represents a tactical shift in mech warfare, focusing on bombardment from cover rather than direct engagement.</p>
 capabilities:<p>The Antlion is characterized by its light frame and slow speed, making it unsuitable for direct combat. Its primary strength lies in its exceptional sensor capabilities, with an active probe that ensures nothing can approach undetected within a 240-meter radius. However, its armament, limited to a pair of light machine guns, offers minimal offensive capability, barely posing a threat even to unarmored infantry. The Antlion's real value is in its specialized role, utilizing its advanced sensor systems for indirect fire missions and tactical positioning rather than frontline engagement.</p>
-deployment:This is the only known variant	
+deployment:This is the only known variant
 history:<p>
 The Antlion's inception by StarCorps marks a strategic evolution in BattleMech design, focusing on indirect fire support to counteract the growing efficiency of anti-missile systems. Initially designed to complement the Osiris and intended for the Federated Suns' military, the Antlion found its place after Gittleman and Abzug moved to the New Colony Region and collaborated with Detroit Consolidated MechWorks. This transition facilitated the Antlion's integration into the AFFS and highlighted its unique role in modern warfare.
 

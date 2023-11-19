@@ -456,7 +456,6 @@ public class Client implements IClientCommandHandler {
                 } catch (Exception e) {
                     LogManager.getLogger().error("Error initializing quirks", e);
                 }
-                UnitRoleHandler.initialize();
                 MechSummaryCache.getInstance().addListener(RandomUnitGenerator::getInstance);
                 if (MechSummaryCache.getInstance().isInitialized()) {
                     RandomUnitGenerator.getInstance();

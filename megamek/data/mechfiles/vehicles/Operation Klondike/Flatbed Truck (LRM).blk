@@ -40,6 +40,10 @@ IS LRM 10 Ammo
 <type>
 IS Level 1
 </type>
+
+<role>
+Missile Boat
+</role>
 <year>
 2801
 </year>

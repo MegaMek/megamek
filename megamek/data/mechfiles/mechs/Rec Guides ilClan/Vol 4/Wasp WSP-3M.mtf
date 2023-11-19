@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3051
 source:Rec Guide:ilClan #4
 rules level:2
+role:Scout
 
 mass:20
 engine:120 Fusion Engine(IS)

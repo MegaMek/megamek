@@ -7,6 +7,7 @@ techbase:Inner Sphere
 era:3081
 source:XTR: Periphery
 rules level:4
+role:Missile Boat
 
 mass:30
 engine:240 XL Engine(IS)

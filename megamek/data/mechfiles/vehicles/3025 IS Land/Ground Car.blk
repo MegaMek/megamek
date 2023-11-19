@@ -32,6 +32,10 @@ Ground Car
 IS Level 1
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>

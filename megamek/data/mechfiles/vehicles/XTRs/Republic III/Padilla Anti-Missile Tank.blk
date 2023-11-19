@@ -32,6 +32,10 @@ Padilla Anti-Missile Tank
 IS Level 3
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>

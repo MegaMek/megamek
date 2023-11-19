@@ -8,6 +8,7 @@ TechBase:Inner Sphere
 Era:2475
 Source:XTR: Primitives V
 Rules Level:4
+role:Scout
 
 Mass:20
 Engine:145 Fusion Engine(IS)

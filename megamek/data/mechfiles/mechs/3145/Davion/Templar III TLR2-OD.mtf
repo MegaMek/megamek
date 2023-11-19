@@ -7,6 +7,7 @@ techbase:Mixed (IS Chassis)
 era:3120
 source:TRO: 3145 Federated Suns
 rules level:4
+role:Brawler
 
 mass:85
 engine:340 Light Engine(IS)

@@ -32,6 +32,10 @@ Iveco Burro II Super Heavy Cargo Truck
 IS Level 3
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>

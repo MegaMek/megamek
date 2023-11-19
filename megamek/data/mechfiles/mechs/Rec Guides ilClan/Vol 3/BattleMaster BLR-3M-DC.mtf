@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3053
 source:Rec Guide:ilClan #3
 rules level:3
+role:Brawler
 
 mass:85
 engine:340 Fusion Engine(IS)

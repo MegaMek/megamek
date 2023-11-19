@@ -36,6 +36,10 @@ PAT-005b
 IS Level 2
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Tracked
 </motion_type>

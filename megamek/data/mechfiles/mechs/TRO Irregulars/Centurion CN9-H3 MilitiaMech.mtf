@@ -8,6 +8,7 @@ techbase:Mixed (IS Chassis)
 era:3100
 source:TRO: Irregulars
 rules level:3
+role:Brawler
 
 mass:50
 engine:200 Fusion Engine(IS)

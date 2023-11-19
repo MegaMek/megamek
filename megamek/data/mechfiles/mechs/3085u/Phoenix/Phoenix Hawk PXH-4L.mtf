@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3066
 source:TRO: Project Pheonix
 rules level:2
+role:Striker
 
 mass:45
 engine:270 Fusion Engine(IS)

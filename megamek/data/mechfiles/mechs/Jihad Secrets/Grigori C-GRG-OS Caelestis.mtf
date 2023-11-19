@@ -8,6 +8,7 @@ Config:Biped Omnimech
 TechBase:Mixed (IS Chassis)
 Era:3075
 Rules Level:4
+role:Brawler
 
 Mass:60
 Engine:240 Light Engine(IS)

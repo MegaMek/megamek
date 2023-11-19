@@ -32,6 +32,10 @@ SM2 Heavy Artillery Vehicle
 Clan Level 3
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>

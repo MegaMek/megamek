@@ -7,6 +7,7 @@ techbase:Mixed (IS Chassis)
 era:3088
 source:Record Sheets: 3145 New Tech New Upgrades
 rules level:3
+role:Brawler
 
 mass:70
 engine:350 Light Engine(IS)

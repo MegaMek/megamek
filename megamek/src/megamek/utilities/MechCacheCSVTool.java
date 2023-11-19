@@ -100,7 +100,7 @@ public final class MechCacheCSVTool {
                 // Unit Type.
                 csvLine.append(unit.getFullAccurateUnitType()).append(DELIM);
                 // Unit Role
-                csvLine.append(UnitRoleHandler.getRoleFor(unit)).append(DELIM);
+                csvLine.append(unit.getRole()).append(DELIM);
                 // Unit BV
                 csvLine.append(unit.getBV()).append(DELIM);
                 // Unit Dry Cost

@@ -7,6 +7,7 @@ Config:Biped
 techbase:Mixed (IS Chassis)
 era:3138
 rules level:2
+role:Sniper
 source:Rec Guide:ilClan #6
 
 mass:75

@@ -32,6 +32,10 @@ Coolant Truck
 IS Level 1
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Tracked
 </motion_type>

@@ -36,6 +36,10 @@ Lexan Surveillance VTOL
 IS Level 3
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 VTOL
 </motion_type>

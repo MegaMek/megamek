@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3020
 source:XTR: Succession Wars
 rules level:4
+role:Missile Boat
 
 mass:60
 engine:240 Fusion Engine(IS)

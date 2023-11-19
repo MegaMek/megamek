@@ -32,6 +32,10 @@ Magi Infantry Support Vehicle
 IS Level 2
 </type>
 
+<role>
+Skirmisher
+</role>
+
 <motion_type>
 Tracked
 </motion_type>

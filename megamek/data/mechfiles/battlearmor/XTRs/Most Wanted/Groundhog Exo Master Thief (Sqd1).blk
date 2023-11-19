@@ -36,6 +36,10 @@ Groundhog Exoskeleton
 Mixed (IS Chassis) Advanced
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Leg
 </motion_type>

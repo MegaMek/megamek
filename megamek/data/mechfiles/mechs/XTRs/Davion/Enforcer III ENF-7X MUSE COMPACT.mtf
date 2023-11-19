@@ -7,6 +7,7 @@ techbase:Mixed (IS Chassis)
 era:3074
 source:XTR: Davion
 rules level:3
+role:Striker
 
 mass:50
 engine:250 XL (Clan) Engine

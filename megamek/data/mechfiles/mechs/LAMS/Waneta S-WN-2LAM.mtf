@@ -8,6 +8,7 @@ techbase:Mixed (IS Chassis)
 era:3078
 source:Jihad: Final Reckoning
 rules level:4
+role:Skirmisher
 
 mass:55
 engine:220 Fusion Engine(IS)

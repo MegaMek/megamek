@@ -14040,10 +14040,9 @@ public class GameManager implements IGameManager {
                 if (ent.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
                     target = ent.getCrew().getGunnery() + 3;
                 }
-                int roll = ent.getGhostTargetRoll();
                 r.add(target);
-                r.add(roll);
-                if (roll >= target) {
+                r.add(ent.getGhostTargetRoll());
+                if (ent.getGhostTargetRoll().getIntValue() >= target) {
                     r.choose(true);
                 } else {
                     r.choose(false);

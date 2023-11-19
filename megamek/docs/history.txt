@@ -19,7 +19,8 @@ VERSION HISTORY:
 + Fix #4806: IllegalArgumentException when attempting to launch and recover fighters in the same turn
 + Fix #3861:Militarized Space Stations turning
 + PR #4899: add report heading for piloting rolls
-+ PR #4900:advanced search for mounted infantry
++ PR #4900: advanced search for mounted infantry
++ PR #4903: Move Unit Roles to Unit Files
 
 0.49.15 (2023-10-21 1530 UTC)
 + PR #4688: Round reports should no longer take increasingly long to load

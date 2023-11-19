@@ -20198,7 +20198,7 @@ public class GameManager implements IGameManager {
         }
         game.resetPSRs();
 
-        if (vPhaseReport.stream().count() > 0) {
+        if (vPhaseReport.size() > 0) {
             vPhaseReport.insertElementAt(new Report(3900, Report.PUBLIC), 0);
         }
 

@@ -813,7 +813,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         setWalkEnabled(!ce.isImmobile() && ((ce.getWalkMP() > 0) || (ce.getRunMP() > 0))
                 && !ce.isStuck());
-        setJumpEnabled(!isAero && !ce.isImmobile() && !ce.isProne() && (ce.getJumpMP() > 0)
+        setJumpEnabled(!isAero && !ce.isImmobile() && !ce.isProne()
+                // Conventional infantry also uses jump MP for VTOL and UMU MP
+                && ((ce.getJumpMP() > 0) && (!ce.isConventionalInfantry() || ce.getMovementMode().isJumpInfantry()))
                 && !(ce.isStuck() && !ce.canUnstickByJumping()));
         setSwimEnabled(!isAero && !ce.isImmobile() && (ce.getActiveUMUCount() > 0)
                 && ce.isUnderwater());

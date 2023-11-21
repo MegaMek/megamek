@@ -7,6 +7,7 @@ techbase:Inner Sphere
 era:3134
 source:Era Digest: Dark Age
 rules level:2
+role:Juggernaut
 
 mass:50
 engine:200 ICE Engine(IS)

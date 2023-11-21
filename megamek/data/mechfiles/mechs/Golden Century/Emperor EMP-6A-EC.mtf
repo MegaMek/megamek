@@ -8,6 +8,7 @@ techbase:Mixed (IS Chassis)
 era:2826
 source:TRO: Golden Century
 rules level:4
+role:Sniper
 
 mass:90
 engine:270 XL Engine(IS)

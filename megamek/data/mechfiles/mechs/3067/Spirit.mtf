@@ -8,6 +8,7 @@ Config:Biped
 TechBase:Clan
 Era:3063
 Rules Level:2
+role:Striker
 source:TRO: 3067
 
 Mass:35

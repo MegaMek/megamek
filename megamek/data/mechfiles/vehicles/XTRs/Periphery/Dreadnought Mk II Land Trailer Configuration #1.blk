@@ -32,6 +32,10 @@ Configuration #1
 IS Level 4
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>

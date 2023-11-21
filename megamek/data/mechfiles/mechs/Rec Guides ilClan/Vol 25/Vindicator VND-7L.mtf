@@ -7,6 +7,7 @@ techbase:Mixed (IS Chassis)
 era:3147
 source:Rec Guide:ilClan #25
 rules level:2
+role:Brawler
 
 mass:45
 engine:180 Fusion Engine(IS)

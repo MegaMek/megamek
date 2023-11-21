@@ -8,6 +8,7 @@ techbase:Mixed (IS Chassis)
 era:3074
 source:XTR: Phantoms
 rules level:4
+role:Striker
 
 mass:35
 engine:280 XL Engine(IS)

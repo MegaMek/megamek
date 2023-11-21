@@ -7,6 +7,7 @@ Config:Biped
 TechBase:Inner Sphere
 Era:3071
 Rules Level:2
+role:Juggernaut
 Source:BattleCorps
 
 Mass:95

@@ -32,6 +32,10 @@ Mechanized Tracked Platoon
 IS Level 3
 </type>
 
+<role>
+Ambusher
+</role>
+
 <motion_type>
 Tracked
 </motion_type>

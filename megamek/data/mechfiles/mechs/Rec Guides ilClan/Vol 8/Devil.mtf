@@ -7,6 +7,7 @@ Config:Biped
 techbase:Clan
 era:2911
 rules level:2
+role:Sniper
 source:Rec Guide:ilClan #8
 
 mass:30

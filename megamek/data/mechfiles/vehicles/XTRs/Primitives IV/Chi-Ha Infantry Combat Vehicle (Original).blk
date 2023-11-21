@@ -32,6 +32,10 @@ Chi-Ha Infantry Combat Vehicle
 IS Level 4
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Tracked
 </motion_type>

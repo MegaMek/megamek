@@ -8,6 +8,7 @@ techbase:Clan
 era:3112
 source:Rec Guide:ilClan #7
 rules level:4
+role:Scout
 
 mass:25
 engine:175 XL (Clan) Engine(IS)

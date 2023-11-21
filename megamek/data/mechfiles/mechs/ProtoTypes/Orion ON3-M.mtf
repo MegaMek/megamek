@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3083
 source:TRO: Prototypes
 rules level:3
+role:Sniper
 
 mass:75
 engine:300 XL Engine(IS)

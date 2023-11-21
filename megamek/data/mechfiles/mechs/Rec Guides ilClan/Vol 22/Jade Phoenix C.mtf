@@ -8,6 +8,7 @@ techbase:Clan
 era:3148
 source:Rec Guide:ilClan #22
 rules level:3
+role:Skirmisher
 
 mass:85
 engine:340 XL (Clan) Engine(IS)
@@ -71,9 +72,9 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLPartialWing (OMNIPOD)
-CLPartialWing (OMNIPOD)
-CLPartialWing (OMNIPOD)
+CLPartialWing
+CLPartialWing
+CLPartialWing
 Jump Jet (OMNIPOD)
 Jump Jet (OMNIPOD)
 CLSRM6 (OMNIPOD)
@@ -85,9 +86,9 @@ Clan Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLPartialWing (OMNIPOD)
-CLPartialWing (OMNIPOD)
-CLPartialWing (OMNIPOD)
+CLPartialWing
+CLPartialWing
+CLPartialWing
 Jump Jet (OMNIPOD)
 Jump Jet (OMNIPOD)
 CLSRM6 (OMNIPOD)

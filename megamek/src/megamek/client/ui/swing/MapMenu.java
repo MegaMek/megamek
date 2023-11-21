@@ -1405,8 +1405,8 @@ public class MapMenu extends JPopupMenu {
         int weaponNum = gui.getUnitDisplay().wPan.getSelectedWeaponNum();
         Mounted mounted = myEntity.getEquipment(weaponNum);
 
-        if ((mounted != null) && mounted.getType().hasModes()) {
-            for (int pos = 0; pos < mounted.getType().getModesCount(); pos++) {
+        if ((mounted != null) && mounted.hasModes()) {
+            for (int pos = 0; pos < mounted.getModesCount(); pos++) {
                 menu.add(createModeJMenuItem(mounted, pos));
             }
         }

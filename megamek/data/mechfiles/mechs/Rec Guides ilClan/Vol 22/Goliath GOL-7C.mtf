@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3133
 source:Rec Guide:ilClan #22
 rules level:2
+role:Juggernaut
 
 mass:80
 engine:320 Light Engine(IS)

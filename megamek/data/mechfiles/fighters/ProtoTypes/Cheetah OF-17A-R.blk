@@ -36,6 +36,10 @@ OF-17A-R
 IS Level 4
 </type>
 
+<role>
+Interceptor
+</role>
+
 <motion_type>
 Aerodyne
 </motion_type>

@@ -32,6 +32,10 @@ Karnov UR Transport
 IS Level 3
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 VTOL
 </motion_type>

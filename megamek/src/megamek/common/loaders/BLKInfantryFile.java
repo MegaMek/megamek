@@ -13,13 +13,7 @@
  */
 package megamek.common.loaders;
 
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.Infantry;
-import megamek.common.LocationFullException;
-import megamek.common.MiscType;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.util.BuildingBlock;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
@@ -39,27 +33,7 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
     public Entity getEntity() throws EntityLoadingException {
 
         Infantry t = new Infantry();
-
-        if (!dataFile.exists("name")) {
-            throw new EntityLoadingException("Could not find name block.");
-        }
-        t.setChassis(dataFile.getDataAsString("Name")[0]);
-
-        if (!dataFile.exists("model")) {
-            throw new EntityLoadingException("Could not find model block.");
-        }
-        t.setModel(dataFile.getDataAsString("Model")[0]);
-        if (dataFile.exists(MtfFile.MUL_ID)) {
-            t.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);
-        }
-
-        setTechLevel(t);
-        setFluff(t);
-        checkManualBV(t);
-
-        if (dataFile.exists("source")) {
-            t.setSource(dataFile.getDataAsString("source")[0]);
-        }
+        setBasicEntityData(t);
 
         if (!dataFile.exists("squad_size")) {
             throw new EntityLoadingException("Could not find squad size.");
@@ -81,15 +55,19 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
         }
         String sMotion = dataFile.getDataAsString("motion_type")[0];
         t.setMicrolite(sMotion.equalsIgnoreCase("microlite"));
-        EntityMovementMode nMotion = EntityMovementMode.parseFromString(sMotion);
-        if (nMotion.isNone()) {
-            throw new EntityLoadingException("Invalid movement type: " + sMotion);
-        }
-        if (nMotion == EntityMovementMode.INF_UMU
-                && sMotion.toLowerCase().contains("motorized")) {
-            t.setMotorizedScuba();
+        if (sMotion.startsWith("Beast:")) {
+            t.setMount(InfantryMount.parse(sMotion));
         } else {
-            t.setMovementMode(nMotion);
+            EntityMovementMode nMotion = EntityMovementMode.parseFromString(sMotion);
+            if (nMotion.isNone()) {
+                throw new EntityLoadingException("Invalid movement type: " + sMotion);
+            }
+            if (nMotion == EntityMovementMode.INF_UMU
+                    && sMotion.toLowerCase().contains("motorized")) {
+                t.setMotorizedScuba();
+            } else {
+                t.setMovementMode(nMotion);
+            }
         }
 
         // get primary and secondary weapons
@@ -102,7 +80,7 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
         }
         String primaryName = dataFile.getDataAsString("Primary")[0];
         EquipmentType ptype = EquipmentType.get(primaryName);
-        if ((null == ptype) || !(ptype instanceof InfantryWeapon)) {
+        if (!(ptype instanceof InfantryWeapon)) {
             throw new EntityLoadingException("primary weapon is not an infantry weapon");
         }
         t.setPrimaryWeapon((InfantryWeapon) ptype);
@@ -120,18 +98,22 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
         // if there is more than one secondary weapon per squad, then add that
         // to the unit
         // otherwise add the primary weapon
-        if ((t.getSecondaryWeaponsPerSquad() > 1) && (null != stype)) {
-            try {
-                t.addEquipment(stype, Infantry.LOC_INFANTRY);
-            } catch (LocationFullException ex) {
-                throw new EntityLoadingException(ex.getMessage());
+        Mounted m;
+        try {
+            if ((t.getSecondaryWeaponsPerSquad() > 1)) {
+                m = new InfantryWeaponMounted(t, stype, (InfantryWeapon) ptype);
+            } else if (stype != null) {
+                m = new InfantryWeaponMounted(t, ptype, (InfantryWeapon) stype);
+            } else {
+                m = new Mounted(t, ptype);
             }
-        } else {
-            try {
-                t.addEquipment(ptype, Infantry.LOC_INFANTRY);
-            } catch (LocationFullException ex) {
-                throw new EntityLoadingException(ex.getMessage());
-            }
+        } catch (ClassCastException ex) {
+            throw new EntityLoadingException(ex.getMessage());
+        }
+        try {
+            t.addEquipment(m, Infantry.LOC_INFANTRY, false);
+        } catch (LocationFullException ex) {
+            throw new EntityLoadingException(ex.getMessage());
         }
         //TAG infantry have separate attacks for primary and secondary weapons.
         if (null != stype && stype.hasFlag(WeaponType.F_TAG)) {

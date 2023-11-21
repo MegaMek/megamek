@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3052
 source:Battle of Tukayyid
 rules level:2
+role:Sniper
 
 mass:75
 engine:300 XL Engine(IS)

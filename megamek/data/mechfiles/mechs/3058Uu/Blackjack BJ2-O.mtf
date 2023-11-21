@@ -7,6 +7,7 @@ techbase:Inner Sphere
 era:3057
 source:TRO: 3058
 rules level:2
+role:Brawler
 
 mass:50
 engine:200 XL Engine(IS)

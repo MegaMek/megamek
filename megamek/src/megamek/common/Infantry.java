@@ -21,6 +21,7 @@ package megamek.common;
 
 import megamek.MMConstants;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.common.annotations.Nullable;
 import megamek.common.cost.InfantryCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
@@ -119,6 +120,7 @@ public class Infantry extends Entity {
     private boolean isTakingCover = false;
     private boolean canCallSupport = true;
     private boolean isCallingSupport = false;
+    private InfantryMount mount = null;
 
     /** The maximum number of troopers in an infantry platoon. */
     public static final int INF_PLT_MAX_MEN = 30;
@@ -169,6 +171,17 @@ public class Infantry extends Entity {
         return CrewType.INFANTRY_CREW;
     }
 
+    public TechAdvancement getMotiveTechAdvancement() {
+        return getMotiveTechAdvancement(mount == null ? getMovementMode() : EntityMovementMode.NONE);
+    }
+
+    /**
+     * Generates the {@link TechAdvancement} for the unit's motive type. A value of EntityMovementMode.NONE indicates
+     * Beast-mounted infantry.
+     *
+     * @param movementMode An infantry movement mode.
+     * @return The Tech Advancement data for the movement mode.
+     */
     public static TechAdvancement getMotiveTechAdvancement(EntityMovementMode movementMode) {
         TechAdvancement techAdvancement = new TechAdvancement(TECH_BASE_ALL)
                 .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
@@ -213,6 +226,12 @@ public class Infantry extends Entity {
                 techAdvancement.setAdvancement(DATE_PS, DATE_PS).setTechRating(RATING_C)
                     .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
                     .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+                break;
+            case NONE:
+                // Beast-mounted
+                techAdvancement.setAdvancement(DATE_PS, DATE_PS).setTechRating(RATING_A)
+                        .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+                        .setStaticTechLevel(SimpleTechLevel.ADVANCED);
                 break;
             case INF_LEG:
             default:
@@ -288,7 +307,7 @@ public class Infantry extends Entity {
     @Override
     protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
         super.addSystemTechAdvancement(ctl);
-        ctl.addComponent(Infantry.getMotiveTechAdvancement(movementMode));
+        ctl.addComponent(getMotiveTechAdvancement());
         if (hasSpecialization(COMBAT_ENGINEERS)) {
             ctl.addComponent(Infantry.getCombatEngineerTA());
         }
@@ -346,33 +365,36 @@ public class Infantry extends Entity {
     @Override
     public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
         int mp = getOriginalWalkMP();
-        // Encumbering armor (TacOps, pg. 318)
-        if (encumbering) {
-            mp = Math.max(mp - 1, 1);
-        }
-        if ((getSecondaryWeaponsPerSquad() > 1)
-                && !hasAbility(OptionsConstants.MD_TSM_IMPLANT)
-                && !hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
-                && (null != secondaryWeapon) && secondaryWeapon.hasFlag(WeaponType.F_INF_SUPPORT)
-                && !getMovementMode().isTracked()
-                && !getMovementMode().isJumpInfantry()) {
-            mp = Math.max(mp - 1, 0);
-        }
-        //  PL-MASC IntOps p.84
-        if ((null != getCrew())
-                && hasAbility(OptionsConstants.MD_PL_MASC)
-                && getMovementMode().isLegInfantry()
-                && isConventionalInfantry()) {
-            mp += 1;
-        }
+        // Beast mounted infantry depends entirely on the creature
+        if (mount == null) {
+            // Encumbering armor (TacOps, pg. 318)
+            if (encumbering) {
+                mp = Math.max(mp - 1, 1);
+            }
+            if ((getSecondaryWeaponsPerSquad() > 1)
+                    && !hasAbility(OptionsConstants.MD_TSM_IMPLANT)
+                    && !hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
+                    && (null != secondaryWeapon) && secondaryWeapon.hasFlag(WeaponType.F_INF_SUPPORT)
+                    && !getMovementMode().isTracked()
+                    && !getMovementMode().isJumpInfantry()) {
+                mp = Math.max(mp - 1, 0);
+            }
+            //  PL-MASC IntOps p.84
+            if ((null != getCrew())
+                    && hasAbility(OptionsConstants.MD_PL_MASC)
+                    && getMovementMode().isLegInfantry()
+                    && isConventionalInfantry()) {
+                mp += 1;
+            }
 
-        if ((null != getCrew()) && hasAbility(OptionsConstants.INFANTRY_FOOT_CAV)
-                && ((getMovementMode().isLegInfantry()) || (getMovementMode().isJumpInfantry()))) {
-            mp += 1;
-        }
+            if ((null != getCrew()) && hasAbility(OptionsConstants.INFANTRY_FOOT_CAV)
+                    && ((getMovementMode().isLegInfantry()) || (getMovementMode().isJumpInfantry()))) {
+                mp += 1;
+            }
 
-        if (hasActiveFieldArtillery()) {
-            mp = Math.min(mp, 1);
+            if (hasActiveFieldArtillery()) {
+                mp = Math.min(mp, 1);
+            }
         }
 
         if (!mpCalculationSetting.ignoreWeather && (null != game)) {
@@ -428,14 +450,16 @@ public class Infantry extends Entity {
     @Override
     public int getJumpMP(MPCalculationSetting mpCalculationSetting) {
         int mp = hasUMU() ? 0 : getOriginalJumpMP();
-        if ((getSecondaryWeaponsPerSquad() > 1)
-                && !hasAbility(OptionsConstants.MD_TSM_IMPLANT)
-                && !hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
-                && !getMovementMode().isSubmarine()
-                && (null != secondaryWeapon) && secondaryWeapon.hasFlag(WeaponType.F_INF_SUPPORT)) {
-            mp = Math.max(mp - 1, 0);
-        } else if (movementMode.isVTOL() && getSecondaryWeaponsPerSquad() > 0) {
-            mp = Math.max(mp - 1, 0);
+        if (mount == null) {
+            if ((getSecondaryWeaponsPerSquad() > 1)
+                    && !hasAbility(OptionsConstants.MD_TSM_IMPLANT)
+                    && !hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
+                    && !getMovementMode().isSubmarine()
+                    && (null != secondaryWeapon) && secondaryWeapon.hasFlag(WeaponType.F_INF_SUPPORT)) {
+                mp = Math.max(mp - 1, 0);
+            } else if (movementMode.isVTOL() && getSecondaryWeaponsPerSquad() > 0) {
+                mp = Math.max(mp - 1, 0);
+            }
         }
 
         if (!mpCalculationSetting.ignoreGravity) {
@@ -474,6 +498,11 @@ public class Infantry extends Entity {
     @Override
     public int getAllUMUCount() {
         return hasUMU() ? jumpMP : 0;
+    }
+
+    @Override
+    public int height() {
+        return mount == null ? 0 : mount.getSize().height;
     }
 
     @Override
@@ -558,17 +587,36 @@ public class Infantry extends Entity {
         }
 
         if ((hex.terrainLevel(Terrains.WATER) <= 0) && getMovementMode().isSubmarine()) {
-            return true;
+            return (mount == null) || (mount.getSecondaryGroundMP() == 0);
         }
 
         if ((hex.terrainLevel(Terrains.WATER) > 0) && !hex.containsTerrain(Terrains.ICE)) {
-            return !getMovementMode().isHover() && !getMovementMode().isUMUInfantry()
-                    && !getMovementMode().isSubmarine() && !getMovementMode().isVTOL();
+            if (mount == null) {
+                return !getMovementMode().isHover() && !getMovementMode().isUMUInfantry()
+                        && !getMovementMode().isSubmarine() && !getMovementMode().isVTOL();
+            } else {
+                return hex.terrainLevel(Terrains.WATER) > mount.getMaxWaterDepth();
+            }
         }
         return false;
     }
 
     @Override
+    public boolean isElevationValid(int assumedElevation, Hex hex) {
+        if (mount != null) {
+            // Mounted infantry can enter water hexes if the mount allows it
+            if (hex.containsTerrain(Terrains.WATER) && (hex.terrainLevel(Terrains.WATER) <= mount.getMaxWaterDepth())) {
+                return true;
+            }
+            // Aquatic mounts may be able to move onto land
+            if (!hex.containsTerrain(Terrains.WATER) && movementMode.isSubmarine()) {
+                return mount.getSecondaryGroundMP() > 0;
+            }
+        }
+        return super.isElevationValid(assumedElevation, hex);
+    }
+
+        @Override
     public String getMovementString(EntityMovementType mtype) {
         switch (mtype) {
             case MOVE_NONE:
@@ -577,7 +625,7 @@ public class Infantry extends Entity {
             case MOVE_RUN:
                 switch (getMovementMode()) {
                     case INF_LEG:
-                        return "Walked";
+                        return mount == null ? "Walked" : "Rode";
                     case INF_MOTORIZED:
                         return "Biked";
                     case HOVER:
@@ -1215,7 +1263,6 @@ public class Infantry extends Entity {
             } catch (LocationFullException ex) {
                 LogManager.getLogger().error("", ex);
             }
-            damageDivisor = ((MiscType) armorKit).getDamageDivisor();
             encumbering = (armorKit.getSubType() & MiscType.S_ENCUMBERING) != 0;
             spaceSuit = (armorKit.getSubType() & MiscType.S_SPACE_SUIT) != 0;
             dest = (armorKit.getSubType() & MiscType.S_DEST) != 0;
@@ -1223,10 +1270,15 @@ public class Infantry extends Entity {
             sneak_ir = (armorKit.getSubType() & MiscType.S_SNEAK_IR) != 0;
             sneak_ecm = (armorKit.getSubType() & MiscType.S_SNEAK_ECM) != 0;
         }
+        calcDamageDivisor();
     }
 
     public double calcDamageDivisor() {
-        double divisor = damageDivisor;
+        double divisor = 1.0;
+        EquipmentType armorKit = getArmorKit();
+        if (armorKit != null) {
+            divisor = ((MiscType) armorKit).getDamageDivisor();
+        }
         // TSM implant reduces divisor to 0.5 if no other armor is worn
         if ((divisor == 1.0) && hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
             divisor = 0.5;
@@ -1234,6 +1286,9 @@ public class Infantry extends Entity {
         // Dermal armor adds one to the divisor, cumulative with armor kit and TSM implant
         if (hasAbility(OptionsConstants.MD_DERMAL_ARMOR)) {
             divisor += 1.0;
+        }
+        if (mount != null) {
+            divisor *= mount.getDamageDivisor();
         }
         return divisor;
     }
@@ -1447,6 +1502,25 @@ public class Infantry extends Entity {
         this.isMicrolite = microlite;
     }
 
+    public void setMount(InfantryMount mount) {
+        this.mount = mount;
+        if (mount != null) {
+            setMovementMode(mount.getMovementMode());
+            if (mount.getMovementMode().isLegInfantry()) {
+                setOriginalWalkMP(mount.getMP());
+            } else {
+                setOriginalWalkMP(mount.getSecondaryGroundMP());
+                setOriginalJumpMP(mount.getMP());
+            }
+            setArmorDamageDivisor(mount.getDamageDivisor());
+        }
+        calcDamageDivisor();
+    }
+
+    public @Nullable InfantryMount getMount() {
+        return mount;
+    }
+
     /**
      * Used to check for standard or motorized SCUBA infantry, which have a maximum depth of 2.
      * @return true if this is a conventional infantry unit with non-mechanized SCUBA specialization
@@ -1581,7 +1655,7 @@ public class Infantry extends Entity {
                 default:
                     setOriginalWalkMP(1);
             }
-            addTechComponent(Infantry.getMotiveTechAdvancement(movementMode));
+            addTechComponent(getMotiveTechAdvancement());
         }
     }
 
@@ -1619,6 +1693,13 @@ public class Infantry extends Entity {
 
     @Override
     public double getWeight() {
+        if (mount != null) {
+            if (mount.getSize().troopsPerCreature > 1) {
+                return (mount.getWeight() + 0.2 * getSquadSize()) * getSquadCount();
+            } else {
+                return (mount.getWeight() + 0.2) * activeTroopers;
+            }
+        }
         double mult;
         switch (getMovementMode()) {
             case INF_MOTORIZED:

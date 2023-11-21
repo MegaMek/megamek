@@ -118,6 +118,11 @@ public class SpaceStation extends Jumpship {
     }
 
     @Override
+    public boolean isBattleStation() {
+        return designType == MILITARY;
+    }
+
+    @Override
     public double getBVTypeModifier() {
         return 0.7;
     }

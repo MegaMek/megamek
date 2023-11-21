@@ -7,6 +7,7 @@ techbase:Inner Sphere
 era:3089
 source:TRO: 3145 Lyran Commonwealth
 rules level:4
+role:Skirmisher
 
 mass:80
 engine:400 XXL Engine(IS)

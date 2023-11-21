@@ -8,6 +8,7 @@ techbase:Clan
 era:3149
 source:TRO: Golden Century
 rules level:3
+role:Missile Boat
 
 mass:75
 engine:300 Fusion (Clan) Engine(IS)

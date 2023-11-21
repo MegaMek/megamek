@@ -32,6 +32,10 @@ Ferret Light Scout VTOL
 IS Level 1
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 VTOL
 </motion_type>

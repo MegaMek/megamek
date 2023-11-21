@@ -32,6 +32,10 @@ Heavy LRM Carrier
 IS Level 4
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <tonnage>
 80.0
 </tonnage>

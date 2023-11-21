@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3071
 source:Starterbook: Wolf & Blake
 rules level:2
+role:Sniper
 
 mass:35
 engine:210 Fusion Engine(IS)

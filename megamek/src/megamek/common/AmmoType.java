@@ -640,6 +640,7 @@ public class AmmoType extends EquipmentType {
         ArrayList<AmmoType> sniperCannonAmmos = new ArrayList<>(3);
         ArrayList<AmmoType> longTomAmmos = new ArrayList<>(4);
         ArrayList<AmmoType> longTomCannonAmmos = new ArrayList<>(4);
+        ArrayList<AmmoType> baTubeAmmos = new ArrayList<>(2);
         ArrayList<AmmoType> mortarAmmos = new ArrayList<>(4);
         ArrayList<AmmoType> clanMortarAmmos = new ArrayList<>(4);
         ArrayList<AmmoType> lrtAmmos = new ArrayList<>(26);
@@ -1203,7 +1204,9 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createISMRM4Ammo());
         EquipmentType.addType(AmmoType.createISMRM5Ammo());
         EquipmentType.addType(AmmoType.createISBATaserAmmo());
-        EquipmentType.addType(AmmoType.createBATubeArtyAmmo());
+        base = AmmoType.createBATubeArtyAmmo();
+        EquipmentType.addType(base);
+        baTubeAmmos.add(base);
         base = AmmoType.createBAISLRM1Ammo();
         isBaLrmAmmos.add(base);
         EquipmentType.addType(base);
@@ -2656,6 +2659,17 @@ public class AmmoType extends EquipmentType {
         AmmoType.createMunitions(thumperCannonAmmos, munitions);
         AmmoType.createMunitions(longTomCannonAmmos, munitions);
 
+        munitions.clear();
+        munitions.add(new MunitionMutator("Smoke", 1, Munitions.M_SMOKE,
+                new TechAdvancement(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
+                        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                        .setISAdvancement(3070, 3075, DATE_NONE, DATE_NONE, DATE_NONE)
+                        .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_CS)
+                        .setProductionFactions(F_CS),
+                "375, TO"));
+        AmmoType.createMunitions(baTubeAmmos, munitions);
+
+
         // Create the munition types for SRT launchers.
         munitions.clear();
         munitions.add(new MunitionMutator("Artemis-capable", 1, Munitions.M_ARTEMIS_CAPABLE,
@@ -3235,7 +3249,6 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "BA Tube Artillery Ammo";
-        // TODO need mutator for Smoke Artillery
         ammo.shortName = "Tube Artillery";
         ammo.setInternalName("ISBATubeArtilleryAmmo");
         ammo.damagePerShot = 1;
@@ -13238,6 +13251,7 @@ public class AmmoType extends EquipmentType {
                 case AmmoType.T_VEHICLE_FLAMER:
                 case AmmoType.T_HEAVY_FLAMER:
                 case AmmoType.T_FLUID_GUN:
+                case AmmoType.T_BA_TUBE:
                     // Add the munition name to the beginning of the display name.
                     nameBuf = new StringBuilder(name);
                     nameBuf.append(" ");

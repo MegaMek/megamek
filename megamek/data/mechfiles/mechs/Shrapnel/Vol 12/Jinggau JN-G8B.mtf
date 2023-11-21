@@ -8,6 +8,7 @@ techbase:Mixed (IS Chassis)
 era:3149
 source:Shrapnel #12
 rules level:3
+role:Skirmisher
 
 mass:65
 engine:325 XL Engine(IS)

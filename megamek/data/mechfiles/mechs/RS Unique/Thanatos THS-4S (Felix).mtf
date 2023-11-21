@@ -8,6 +8,7 @@ Config:Biped
 TechBase:Inner Sphere
 Era:3063
 Rules Level:2
+role:Skirmisher
 
 Mass:75
 Engine:375 XL Engine

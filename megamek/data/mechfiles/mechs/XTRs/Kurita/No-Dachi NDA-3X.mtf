@@ -8,6 +8,7 @@ techbase:Mixed (IS Chassis)
 era:3075
 source:XTR: Kurita
 rules level:4
+role:Missile Boat
 
 mass:70
 engine:350 XL Engine(IS)

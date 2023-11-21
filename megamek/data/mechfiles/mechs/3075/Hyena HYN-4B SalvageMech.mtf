@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3072
 source:TRO: 3075
 rules level:2
+role:Scout
 
 mass:55
 engine:220 ICE Engine(IS)

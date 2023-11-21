@@ -7,6 +7,7 @@ techbase:Inner Sphere
 era:2445
 source:XTR: Primitives II
 rules level:4
+role:Sniper
 
 mass:95
 engine:345 Fusion Engine(IS)

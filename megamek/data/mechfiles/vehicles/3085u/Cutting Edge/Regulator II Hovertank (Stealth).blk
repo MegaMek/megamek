@@ -32,6 +32,10 @@ Regulator II Hovertank
 IS Level 4
 </type>
 
+<role>
+Scout
+</role>
+
 <tonnage>
 50.0
 </tonnage>

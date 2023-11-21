@@ -5,6 +5,7 @@ Config:Biped
 TechBase:Inner Sphere
 Era:2764
 Rules Level:2
+role:Ambusher
 source:Historical: Operation Klondike
 mul id:2564
 

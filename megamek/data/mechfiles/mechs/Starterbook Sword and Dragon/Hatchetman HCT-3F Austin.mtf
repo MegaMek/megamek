@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3039
 source:Starterbook: Sword and Dragon
 rules level:4
+role:Brawler
 
 mass:45
 engine:180 Fusion Engine(IS)

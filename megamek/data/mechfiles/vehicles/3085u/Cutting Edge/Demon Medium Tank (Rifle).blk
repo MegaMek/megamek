@@ -42,6 +42,10 @@ IS Ammo Medium Rifle
 <type>
 IS Level 4
 </type>
+
+<role>
+Scout
+</role>
 <year>
 3084
 </year>

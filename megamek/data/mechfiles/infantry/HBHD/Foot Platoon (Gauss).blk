@@ -37,6 +37,10 @@ InfantryGrandMauler
 <type>
 IS Level 2
 </type>
+
+<role>
+None
+</role>
 <year>
 3062
 </year>

@@ -15,10 +15,12 @@
 package megamek.common;
 
 import megamek.common.alphaStrike.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.Quirks;
 import megamek.common.options.WeaponQuirks;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.File;
 import java.io.Serializable;
@@ -39,6 +41,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     private Long entityType;
     private boolean omni;
     private boolean military;
+    private boolean mountedInfantry;
     private int tankTurrets;
     private File sourceFile;
     private String source;
@@ -168,7 +171,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     private int fullStructure;
     private int squadSize;
     private ASSpecialAbilityCollection specialAbilities = new ASSpecialAbilityCollection();
-    private UnitRole role;
+    private UnitRole role = UnitRole.UNDETERMINED;
 
     public MechSummary() {
         armorTypeSet = new HashSet<>();
@@ -335,6 +338,10 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public boolean getMilitary() {
         return military;
+    }
+
+    public boolean getMountedInfantry() {
+        return mountedInfantry;
     }
 
     public int getTankTurrets() {
@@ -637,7 +644,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     @Override
     public UnitRole getRole() {
-        return role;
+        return (role == null) ? UnitRole.UNDETERMINED : role;
     }
 
     public void setFullAccurateUnitType(String type) {
@@ -654,6 +661,10 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public void setMilitary(boolean b) {
         military = b;
+    }
+
+    public void setMountedInfantry(boolean b) {
+        mountedInfantry = b;
     }
 
     public void setTankTurrets(int i) {
@@ -1276,5 +1287,20 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     @Override
     public String formatSUA(BattleForceSUA sua, String delimiter, ASSpecialAbilityCollector collection) {
         return AlphaStrikeHelper.formatAbility(sua, collection, this, delimiter);
+    }
+
+    /**
+     * Loads and returns the entity for this MechSummary. If the entity cannot be loaded, the error is logged
+     * and null is returned.
+     *
+     * @return The loaded entity or null in case of an error
+     */
+    public @Nullable Entity loadEntity() {
+        try {
+            return new MechFileParser(sourceFile, entryName).getEntity();
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
+            return null;
+        }
     }
 }

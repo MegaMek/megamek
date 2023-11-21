@@ -13,7 +13,6 @@
  */
 package megamek.utilities;
 
-import megamek.MMConstants;
 import megamek.client.ratgenerator.*;
 import megamek.client.ratgenerator.FactionRecord.TechCategory;
 import megamek.client.ui.swing.util.UIUtil;
@@ -21,7 +20,6 @@ import megamek.client.ui.swing.util.UIUtil.FixedXPanel;
 import megamek.client.ui.swing.util.UIUtil.FixedYPanel;
 import megamek.common.Configuration;
 import megamek.common.EntityMovementMode;
-import megamek.common.UnitRoleHandler;
 import megamek.common.UnitType;
 import megamek.common.eras.Eras;
 import org.apache.logging.log4j.LogManager;
@@ -36,7 +34,6 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.io.File;
-import java.net.URL;
 import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -726,7 +723,7 @@ public class RATGeneratorEditor extends JFrame {
                 case COL_ROLE:
                     return data.get(row).getRoles().stream().map(Object::toString).collect(Collectors.joining(","));
                 case COL_CANON_ROLE:
-                    return UnitRoleHandler.getRoleFor(data.get(row).getChassis() + " " + data.get(row).getModel()).toString();
+                    return data.get(row).getMechSummary().getRole().toString();
                 case COL_DEPLOYED_WITH:
                     StringJoiner sj = new StringJoiner(",");
                     data.get(row).getDeployedWith().forEach(sj::add);

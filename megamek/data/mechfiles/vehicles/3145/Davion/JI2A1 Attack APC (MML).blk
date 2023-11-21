@@ -32,6 +32,10 @@ JI2A1 Attack APC
 IS Level 3
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Hover
 </motion_type>

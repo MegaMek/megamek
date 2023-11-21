@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:2481
 source:XTR: Primitives IV
 rules level:4
+role:Brawler
 
 mass:35
 engine:170 Fusion Engine(IS)

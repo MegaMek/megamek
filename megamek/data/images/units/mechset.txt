@@ -4894,9 +4894,10 @@ chassis "Shadow Hawk" "mechs/Shadowhawk.png"
 exact "Shadow Hawk SHD-1R" "mechs/Shadowhawk_1R.png"
 exact "Shadow Hawk SHD-2D" "mechs/Shadowhawk_2D.png"
 exact "Shadow Hawk SHD-2D2" "mechs/Shadowhawk_2D.png"
-exact "Shadow Hawk SHD-2Hb" "mechs/Shadowhawk_2HB.png"
+exact "Shadow Hawk SHD-2Hb" "mechs/Shadowhawk_2Hb.png"
 exact "Shadow Hawk SHD-2Ht" "mechs/Shadowhawk_2HT.png"
 exact "Shadow Hawk SHD-2K" "mechs/Shadowhawk_2K.png"
+exact "Shadow Hawk SHD-3H2" "mechs/Shadowhawk_3H2.png"
 exact "Shadow Hawk SHD-3K" "mechs/Shadowhawk_3K.png"
 exact "Shadow Hawk SHD-4H" "mechs/Shadowhawk_4H.png"
 exact "Shadow Hawk SHD-5D" "mechs/Shadowhawk_5D.png"
@@ -7117,6 +7118,13 @@ exact "Foot Stealth Platoon (Rifle Paratrooper)" "defaults/default_infantry_plat
 exact "Foot Platoon (Laser TAG)" "Infantry/laser_infantry_platoon.png"
 exact "Foot Platoon (Laser XCT)" "Infantry/laser_infantry_platoon.png"
 exact "Foot Platoon (Laser Heavy XCT)" "Infantry/xenoplanetary_infantry.png"
+
+#Beast Infantry
+chassis "Beast Infantry (Branth)" "Infantry/Branth.png"
+chassis "Beast Infantry (Camel)" "Infantry/Camel.png"
+chassis "Beast Infantry (Donkey)" "Infantry/Donkey.png"
+chassis "Beast Infantry (Horse)" "Infantry/Horse.png"
+chassis "Beast Infantry (Elephant)" "Infantry/Elephant.png"
 
 #Jumpships
 chassis "Invader Jumpship" "jumpships/invader.png"

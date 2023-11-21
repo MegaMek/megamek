@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3050
 source:Rec Guide:ilClan #14
 rules level:2
+role:Skirmisher
 
 mass:60
 engine:300 XL Engine(IS)

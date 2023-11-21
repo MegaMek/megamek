@@ -32,6 +32,10 @@ Type 2
 IS Level 3
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Tracked
 </motion_type>

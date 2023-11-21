@@ -3680,8 +3680,13 @@ public class GameManager implements IGameManager {
         // Load the unit. Do not check for elevation during deployment
         boolean checkElevation = !getGame().getPhase().isLounge()
                 && !getGame().getPhase().isDeployment();
-        loader.load(unit, checkElevation, bayNumber);
-
+        try {
+            loader.load(unit, checkElevation, bayNumber);
+        } catch (IllegalArgumentException e) {
+            LogManager.getLogger().info(e.getMessage());
+            sendServerChat(e.getMessage());
+            return;
+        }
         // The loaded unit is being carried by the loader.
         unit.setTransportId(loader.getId());
 
@@ -8419,6 +8424,19 @@ public class GameManager implements IGameManager {
         entity.delta_distance = distance;
         entity.moved = moveType;
         entity.mpUsed = mpUsed;
+        if (md.isAllUnderwater(game)) {
+            entity.underwaterRounds++;
+            if ((entity instanceof Infantry) && (((Infantry) entity).getMount() != null)
+                    && entity.getMovementMode().isSubmarine()
+                    && entity.underwaterRounds > ((Infantry) entity).getMount().getUWEndurance()) {
+                r = new Report(2412);
+                r.addDesc(entity);
+                addReport(r);
+                destroyEntity(entity, "mount drowned");
+            }
+        } else {
+            entity.underwaterRounds = 0;
+        }
         entity.setClimbMode(curClimbMode);
         if (!sideslipped && !fellDuringMovement && !crashedDuringMovement
                 && (entity.getMovementMode() == EntityMovementMode.VTOL)) {
@@ -11631,9 +11649,16 @@ public class GameManager implements IGameManager {
                     vPhaseReport.addAll(breachCheck(entity, Mech.LOC_CLEG, hex));
                 }
             } else {
+                int status = ILocationExposureStatus.WET;
+                if (entity.relHeight() >= 0) {
+                    status = game.getPlanetaryConditions().isVacuum() ?
+                            ILocationExposureStatus.VACUUM : ILocationExposureStatus.NORMAL;
+                }
                 for (int loop = 0; loop < entity.locations(); loop++) {
-                    entity.setLocationStatus(loop, ILocationExposureStatus.WET);
-                    vPhaseReport.addAll(breachCheck(entity, loop, hex));
+                    entity.setLocationStatus(loop, status);
+                    if (status == ILocationExposureStatus.WET) {
+                        vPhaseReport.addAll(breachCheck(entity, loop, hex));
+                    }
                 }
             }
         } else {
@@ -20167,6 +20192,8 @@ public class GameManager implements IGameManager {
      */
     private Vector<Report> resolvePilotingRolls() {
         Vector<Report> vPhaseReport = new Vector<>();
+        vPhaseReport.add(new Report(3900, Report.PUBLIC));
+
         for (Iterator<Entity> i = game.getEntities(); i.hasNext(); ) {
             vPhaseReport.addAll(resolvePilotingRolls(i.next()));
         }
@@ -30777,13 +30804,20 @@ public class GameManager implements IGameManager {
                 }
             }
 
-            // Infantry and BA are damaged by buildings but do not damage them
-            if (entity instanceof Infantry) {
-                return;
-            }
             // Damage the building. The CF can never drop below 0.
-            int toBldg = (int) Math.floor(bldg.getDamageToScale()
-                    * Math.ceil(entity.getWeight() / 10.0));
+            int toBldg;
+            // Infantry and BA are damaged by buildings but do not damage them, except large beast-mounted infantry
+            if (entity instanceof Infantry) {
+                InfantryMount mount = ((Infantry) entity).getMount();
+                if ((mount != null) && (mount.getSize().buildingDamage() > 0)) {
+                    toBldg = mount.getSize().buildingDamage();
+                } else {
+                    return;
+                }
+            } else {
+                toBldg = (int) Math.floor(bldg.getDamageToScale()
+                        * Math.ceil(entity.getWeight() / 10.0));
+            }
             int curCF = bldg.getCurrentCF(entering ? curPos : lastPos);
             curCF -= Math.min(curCF, toBldg);
             bldg.setCurrentCF(curCF, entering ? curPos : lastPos);
@@ -32047,7 +32081,11 @@ public class GameManager implements IGameManager {
         int damage = 0;
         PhysicalResult pr = new PhysicalResult();
         ToHitData toHit = new ToHitData();
-        pr.roll = Compute.d6(2);
+        if (aaa instanceof PhysicalAttackAction && ae.getCrew() != null) {
+            pr.roll = ae.getCrew().rollPilotingSkill();
+        } else {
+            pr.roll = Compute.d6(2);
+        }
         pr.aaa = aaa;
         if (aaa instanceof BrushOffAttackAction) {
             BrushOffAttackAction baa = (BrushOffAttackAction) aaa;
@@ -32061,7 +32099,11 @@ public class GameManager implements IGameManager {
             damage = BrushOffAttackAction.getDamageFor(ae, BrushOffAttackAction.LEFT);
             pr.damageRight = BrushOffAttackAction.getDamageFor(ae, BrushOffAttackAction.RIGHT);
             baa.setArm(arm);
-            pr.rollRight = Compute.d6(2);
+            if (ae.getCrew() != null) {
+                pr.rollRight = ae.getCrew().rollPilotingSkill();
+            } else {
+                pr.rollRight = Compute.d6(2);
+            }
         } else if (aaa instanceof ChargeAttackAction) {
             ChargeAttackAction caa = (ChargeAttackAction) aaa;
             toHit = caa.toHit(game);
@@ -32151,7 +32193,11 @@ public class GameManager implements IGameManager {
             }
             pr.damageRight = damageRight;
             pr.toHitRight = toHitRight;
-            pr.rollRight = Compute.d6(2);
+            if (ae.getCrew() != null) {
+                pr.rollRight = ae.getCrew().rollPilotingSkill();
+            } else {
+                pr.rollRight = Compute.d6(2);
+            }
         } else if (aaa instanceof PushAttackAction) {
             PushAttackAction paa = (PushAttackAction) aaa;
             toHit = paa.toHit(game);

@@ -8,6 +8,7 @@ Config:Biped Omnimech
 TechBase:Mixed (IS Chassis)
 Era:3075
 Rules Level:4
+role:Sniper
 
 Mass:85
 Engine:255 Light Engine(IS)

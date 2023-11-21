@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
@@ -87,6 +89,8 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     private JLabel labStatus;
     protected JPanel panStatus = new JPanel();
     protected JPanel panButtons = new JPanel();
+
+    private UIUtil.FixedXPanel donePanel;
 
     /** The button group that is currently displayed */
     protected int currentButtonGroup = 0;
@@ -227,18 +231,18 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
 
     protected UIUtil.FixedXPanel setupDonePanel()
     {
-        var donePanel = new UIUtil.FixedXPanel();
-        donePanel.setPreferredSize(new Dimension(DONE_BUTTON_WIDTH+5, MIN_BUTTON_SIZE.height*2+5));
+        donePanel = new UIUtil.FixedXPanel();
+        donePanel.setPreferredSize(new Dimension(UIUtil.scaleForGUI(DONE_BUTTON_WIDTH+5), MIN_BUTTON_SIZE.height*2+5));
         donePanel.setOpaque(false);
         donePanel.setBackground(Color.darkGray);
-        donePanel.setBorder( BorderFactory.createLoweredBevelBorder() );
+        donePanel.setBorder( new EmptyBorder(0, 10, 0, 0));
         donePanel.setLayout(new GridBagLayout());
         addToDonePanel(donePanel, butDone);
         return donePanel;
     }
 
     protected void addToDonePanel(JPanel donePanel, JComponent item) {
-        item.setPreferredSize(new Dimension(DONE_BUTTON_WIDTH, MIN_BUTTON_SIZE.height));
+        item.setPreferredSize(new Dimension(UIUtil.scaleForGUI(DONE_BUTTON_WIDTH), MIN_BUTTON_SIZE.height));
         butDone.setAlignmentX(LEFT_ALIGNMENT);
         donePanel.add(item, GBC.eol().fill(GridBagConstraints.BOTH).weighty(1));
     }
@@ -261,6 +265,8 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     private void adaptToGUIScale() {
         UIUtil.adjustContainer(panButtons, UIUtil.FONT_SCALE1);
         UIUtil.adjustContainer(panStatus, UIUtil.FONT_SCALE2);
+
+        donePanel.setPreferredSize(new Dimension(UIUtil.scaleForGUI(DONE_BUTTON_WIDTH), MIN_BUTTON_SIZE.height * 1));
     }
 
     @Override
@@ -274,6 +280,8 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         } else if (e.getName().equals(KeyBindParser.KEYBINDS_CHANGED)) {
             setButtonsTooltips();
         }
+
+        adaptToGUIScale();
     }
 
     @Override
@@ -394,4 +402,5 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
 
         clientgui.getBoardView().setWeaponFieldOfFire(unit, cmd);
     }
+
 }

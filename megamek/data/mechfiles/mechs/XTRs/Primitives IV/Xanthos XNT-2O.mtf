@@ -1,37 +1,37 @@
-Version:1.1
+Version:1.3
 Xanthos
 XNT-2O
 mul id:3603
-
 Config:Quad
-TechBase:Inner Sphere
-Era:2564
-Source:XTR: Primitives IV
-Rules Level:4
+techbase:Inner Sphere
+era:2564
+source:XTR: Primitives IV
+rules level:4
+role:Juggernaut
 
-Mass:100
-Engine:360 Fusion Engine(IS)
-Structure:IS Standard
-Myomer:Standard
-Cockpit:Primitive Cockpit
-Gyro:Standard Gyro
+mass:100
+engine:360 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+cockpit:Primitive Cockpit
+gyro:Standard Gyro
 
-Heat Sinks:18 Single
-Walk MP:3
-Jump MP:0
+heat sinks:18 Single
+walk mp:3
+jump mp:0
 
-Armor:Primitive(Inner Sphere)
-FLL Armor:16
-FRL Armor:16
-LT Armor:19
-RT Armor:19
-CT Armor:31
-HD Armor:9
-RLL Armor:16
-RRL Armor:16
-RTL Armor:5
-RTR Armor:5
-RTC Armor:8
+armor:Primitive(Inner Sphere)
+FLL armor:16
+FRL armor:16
+LT armor:19
+RT armor:19
+CT armor:31
+HD armor:9
+RLL armor:16
+RRL armor:16
+RTL armor:5
+RTR armor:5
+RTC armor:8
 
 Weapons:7
 Large Laser, Left Torso
@@ -154,4 +154,19 @@ Heat Sink
 -Empty-
 -Empty-
 
+overview:<p>The Xanthos, a trailblazing four-legged BattleMech, represents a significant leap in Mech engineering. Developed by Hollis Inc. under the guidance of Dr. David Harrison, it was a pioneering attempt to create a stable and robust firing platform. Introduced in 2564, the Xanthos combined the vision of advanced Mech technology with practical battlefield application. Despite its challenging debut and initial design hurdles, the Xanthos was a harbinger of the technological advancements to come, influencing subsequent Mech designs like the Scorpion and Goliath. Its unique quad-legged structure set it apart in the realm of BattleMechs, making it a notable addition to the arsenals of House Liao and, later, various elite units across the Inner Sphere.</p>
+
+capabilities:<p>The refined Xanthos emerged as a formidable assault Mech, well-equipped for enduring combat. Boasting over twenty tons of armor and twenty-three heat sinks, it was designed for sustained battlefield presence. Its armament included a long-range PPC and a powerful GE autocannon, complemented by a trio of lasers and an SRM-6 for close-quarters engagement. Despite limited ammunition for the autocannon and missile rack, the Xanthos’s energy weapons provided ample firepower for cleanup operations, making it a reliable asset in prolonged engagements. The Mech's design evolution overcame initial hurdles, cementing its status as a solid assault platform.</p>
+
+deployment:An early prototype, now mostly found in museums or landfills, used heavier and outdated components, lighter weaponry, and fewer heat sinks compared to the 3O.
+
+history:<p>The Xanthos's history is marked by both innovation and adversity. Born from Hollis Inc.'s foray into BattleMech construction, the Xanthos was a bold step into uncharted design territory. Dr. Harrison's vision of a stable, four-legged Mech was ahead of its time but faced challenges due to Hollis's inexperience and secretive development approach. The early versions of the Xanthos, particularly the 2O prototype, were plagued by mechanical and design inefficiencies, resulting in poor performance during Star League trials.</p><p>Despite these initial failures, the Xanthos eventually found a degree of success with House Liao, though issues with delivery and changing military needs led to its decline by the Second Succession War. Hollis Inc.'s financial struggles and the eventual success with the BattleMaster marked a turning point for the company, but the Xanthos remained a symbol of early technological ambition.</p><p>The rediscovery of the Hegemony Memory Core in the 3070s led to a resurgence of interest in the Xanthos design. Newer variants, incorporating modern technologies and refinements, were developed and deployed by various factions, including the Capellan Confederation, Lyran Commonwealth, and mercenary units. These modern iterations of the Xanthos demonstrated the enduring potential of Dr. Harrison's original concept, adapted to the evolving demands of futuristic warfare.</p>
+
+manufacturer:Hollis Incorporated,Taurus Territorial Industries,Osaka Heavy Metrics,Hollis Incorporated
+primaryfactory:Corey,Illiushin,Togura,Tsinghai
+systemmanufacturer:CHASSIS:Unknown
+systemmanufacturer:ENGINE:Unknown
+systemmanufacturer:ARMOR:Unknown
+systemmanufacturer:COMMUNICATIONS:Unknown
+systemmanufacturer:TARGETING:Unknown
 

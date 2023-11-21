@@ -15,17 +15,7 @@
 
 package megamek.common.loaders;
 
-import megamek.common.Aero;
-import megamek.common.Engine;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EquipmentType;
-import megamek.common.IArmorState;
-import megamek.common.LocationFullException;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.TechConstants;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.util.BuildingBlock;
 import megamek.common.verifier.TestEntity;
 
@@ -53,22 +43,7 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
 
         Aero a = new Aero();
 
-        if (!dataFile.exists("Name")) {
-            throw new EntityLoadingException("Could not find name block.");
-        }
-        a.setChassis(dataFile.getDataAsString("Name")[0]);
-        if (dataFile.exists("Model") && (dataFile.getDataAsString("Model")[0] != null)) {
-            a.setModel(dataFile.getDataAsString("Model")[0]);
-        } else {
-            a.setModel("");
-        }
-
-        if (dataFile.exists(MtfFile.MUL_ID)) {
-            a.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);
-        }
-
-        setTechLevel(a);
-        setFluff(a);
+        setBasicEntityData(a);
 
         if (!dataFile.exists("tonnage")) {
             throw new EntityLoadingException("Could not find weight block.");
@@ -172,12 +147,6 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
         if (armor.length != 4) {
             throw new EntityLoadingException("Incorrect armor array length");
         }
-
-        if (dataFile.exists("source")) {
-            a.setSource(dataFile.getDataAsString("source")[0]);
-        }
-
-        checkManualBV(a);
 
         a.initializeArmor(armor[BLKAeroFile.NOSE], Aero.LOC_NOSE);
         a.initializeArmor(armor[BLKAeroFile.RW], Aero.LOC_RWING);

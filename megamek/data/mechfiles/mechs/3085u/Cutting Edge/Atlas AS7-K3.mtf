@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3083
 source:TRO: 3085
 rules level:2
+role:Sniper
 
 mass:100
 engine:400 XL Engine(IS)

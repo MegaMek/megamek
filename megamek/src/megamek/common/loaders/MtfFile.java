@@ -19,6 +19,10 @@
  */
 package megamek.common.loaders;
 
+import java.io.*;
+import java.util.*;
+
+import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
@@ -76,6 +80,7 @@ public class MtfFile implements IMechLoader {
     private String imagePath = "";
 
     private int bv = 0;
+    private String role;
 
     private final Map<EquipmentType, Mounted> hSharedEquip = new HashMap<>();
     private final List<Mounted> vSplitWeapons = new ArrayList<>();
@@ -136,6 +141,7 @@ public class MtfFile implements IMechLoader {
     public static final String WEAPON_QUIRK = "weaponquirk:";
     public static final String NOT_QUIRK = "notquirk:";
     public static final String NOT_WEAPON_QUIRK = "notweaponquirk:";
+    public static final String ROLE = "role:";
 
     /**
      * Creates new MtfFile
@@ -300,6 +306,11 @@ public class MtfFile implements IMechLoader {
             mech.setMulId(mulId);
             mech.setYear(Integer.parseInt(techYear.substring(4).trim()));
             mech.setSource(source.substring("Source:".length()).trim());
+            if (StringUtility.isNullOrBlank(role)) {
+                mech.setUnitRole(UnitRole.UNDETERMINED);
+            } else {
+                mech.setUnitRole(UnitRole.parseRole(role));
+            }
 
             if (chassisConfig.contains("Omni")) {
                 mech.setOmni(true);
@@ -1284,6 +1295,11 @@ public class MtfFile implements IMechLoader {
         if (lineLower.startsWith(QUIRK) || lineLower.startsWith(NOT_QUIRK) || lineLower.startsWith(WEAPON_QUIRK)
                 || lineLower.startsWith(NOT_WEAPON_QUIRK)) {
             quirkLines.add(line);
+            return true;
+        }
+
+        if (lineLower.startsWith(ROLE)) {
+            role = line.substring(ROLE.length());
             return true;
         }
 

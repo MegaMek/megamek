@@ -32,6 +32,10 @@ Chaparral Missile Artillery Tank
 IS Level 3
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Tracked
 </motion_type>

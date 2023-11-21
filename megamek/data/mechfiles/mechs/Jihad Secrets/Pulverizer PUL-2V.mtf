@@ -8,6 +8,7 @@ Config:Biped
 TechBase:Inner Sphere
 Era:2823
 Rules Level:4
+role:Brawler
 
 Mass:90
 Engine:360 Fusion Engine

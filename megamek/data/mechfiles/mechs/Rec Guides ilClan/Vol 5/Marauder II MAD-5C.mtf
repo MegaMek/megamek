@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3052
 source:Rec Guide:ilClan #5
 rules level:2
+role:Sniper
 
 mass:100
 engine:300 XL Engine(IS)

@@ -8,6 +8,7 @@ techbase:Mixed (IS Chassis)
 era:2819
 source:TRO: Golden Century
 rules level:4
+role:Striker
 
 mass:35
 engine:210 XL Engine(IS)

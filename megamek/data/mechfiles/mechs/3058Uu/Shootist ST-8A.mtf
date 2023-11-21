@@ -1,42 +1,42 @@
-Version:1.0
+Version:1.3
 Shootist
 ST-8A
 mul id:2939
-
 Config:Biped
-TechBase:Inner Sphere
-Era:2621
-Source:TRO: 3058
-Rules Level:2
+techbase:Inner Sphere
+era:2621
+source:TRO: 3058
+rules level:2
+role:Brawler
 
-Mass:70
-Engine:280 Fusion Engine
-Structure:Standard
-Myomer:Standard
+mass:70
+engine:280 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:13 Double
-Walk MP:4
-Jump MP:0
+heat sinks:13 IS Double
+walk mp:4
+jump mp:0
 
-Armor:Ferro-Fibrous(Inner Sphere)
-LA Armor:22
-RA Armor:22
-LT Armor:24
-RT Armor:24
-CT Armor:34
-HD Armor:9
-LL Armor:30
-RL Armor:30
-RTL Armor:5
-RTR Armor:5
-RTC Armor:10
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:22
+RA armor:22
+LT armor:24
+RT armor:24
+CT armor:34
+HD armor:9
+LL armor:30
+RL armor:30
+RTL armor:5
+RTR armor:5
+RTC armor:10
 
 Weapons:5
-Small Laser, Head
-Medium Pulse Laser, Center Torso
+AC/20, Left Arm
 Medium Pulse Laser, Right Arm
 ER Large Laser, Right Torso
-Autocannon/20, Left Arm
+Medium Pulse Laser, Center Torso
+Small Laser, Head
 
 Left Arm:
 Shoulder
@@ -58,9 +58,9 @@ Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
 ISMediumPulseLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -76,17 +76,17 @@ ISDoubleHeatSink
 IS Ammo AC/20
 IS Ammo AC/20
 ISCASE
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 
 Right Torso:
 ISERLargeLaser
 ISERLargeLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -106,7 +106,7 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 ISMediumPulseLaser
-Ferro-Fibrous
+IS Ferro-Fibrous
 
 Head:
 Life Support
@@ -127,8 +127,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -141,8 +141,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -150,4 +150,19 @@ Ferro-Fibrous
 -Empty-
 -Empty-
 
+overview:Introduced in 2621, the Shootist emerged as a command 'Mech for the Royal BattleMech regiments of the Star League Defense Force (SLDF) within the Terran Hegemony. Initially envisioned as a leadership platform, it maintained its relevance due to its balanced blend of speed and firepower, despite being outpaced by the BattleMaster a decade later. Its prowess in delivering substantial firepower for heavy lances in close combat ensured its continued service within many Royal formations, embodying a tradition where pilots challenge the largest adversary on the battlefield.
+
+capabilities:Prioritizing armor protection over firepower due to its original designation as a battlefield command platform, the Shootist boasts twelve tons of ferro-fibrous armor on a standard frame, ensuring well-armored protection across all locations, although vulnerable to concentrated salvos at the rear torso. Despite the armor-centric design, the Shootist’s arsenal is noteworthy. It houses a potent Deathgiver autocannon effective at close range, but the true hallmark is the Blankenburg extended-range large laser, revered for its accuracy and damage output across varying distances. Additionally, the arsenal is complemented by two medium pulse lasers and a head-mounted small laser, showcasing early adoption of the then-newly perfected pulse technology. The Shootist's resilience is further bolstered by a standard engine and CASE (Cellular Ammunition Storage Equipment), allowing it to withstand catastrophic ammunition explosions that would incapacitate most other Star League 'Mech designs.
+
+deployment:The ST-8A variant embodies the original design of the Shootist, adhering to the primary principles of achieving a balance between speed, armor, and firepower. This version lays the foundation for the subsequent iterations, setting the baseline for the capabilities that the Shootist is known for.
+
+history:The Shootist's narrative is a long, unfolding saga that transcends centuries, albeit in limited numbers. Even during peak production, construction rates barely offset combat attritions, and the tumultuous periods of the Succession Wars left few Shootists intact, except those secured within ComStar's repositories or Clan Brian Caches. Deployment majorly occurred within heavy and command Level IIs by ComStar and later, the Word of Blake, with some commanders employing it for personal battlefield protection. Its effectiveness when deployed in unison was acknowledged by the SLDF, but limited availability restricted such formations. Significant attrition occurred during the harsh confrontations on Tukayyid and the ensuing schism forming the Word of Blake, with violent engagements in the Chaos March further dwindling their numbers. The ongoing conflict threatens the legacy of the Shootist, with less than fifty of these formidable 'Mechs remaining in the Inner Sphere. Adaptations over time led to variant Shootists housing a C3i unit, achieved by altering the laser and heat sink configurations, while retaining or replacing the autocannon with a Gauss rifle. Notably, identical twins Adept Mathew and Simon Kincade, serving with the Fourth Division, utilized their distinctive Shootists in a masterful deception strategy, impressing Precentor Martial Cameron St. Jamais and contributing to the Word of Blake Militia’s covert expansion, showcasing the Shootist’s enduring strategic utility amidst evolving military theatrics.
+
+manufacturer:Mitchell Vehicles, Mitchell Vehicles
+primaryfactory:Terra, New Earth
+systemmanufacturer:CHASSIS:Dennenbach-Mitchell Mark IV
+systemmanufacturer:ENGINE:VOX 280
+systemmanufacturer:ARMOR:MV Ferro-Fibrous with CASE
+systemmanufacturer:COMMUNICATIONS:Domman Echo II
+systemmanufacturer:TARGETING:Wayne Marksman
 

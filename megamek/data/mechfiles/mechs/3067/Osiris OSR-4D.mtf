@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3067
 source:TRO: 3067
 rules level:2
+role:Striker
 
 mass:30
 engine:240 XL Engine(IS)

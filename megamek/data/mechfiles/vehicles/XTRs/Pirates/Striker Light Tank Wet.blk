@@ -32,6 +32,10 @@ Striker Light Tank
 IS Level 4
 </type>
 
+<role>
+Scout
+</role>
+
 <tonnage>
 35.0
 </tonnage>

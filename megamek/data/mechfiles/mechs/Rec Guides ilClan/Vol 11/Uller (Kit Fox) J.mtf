@@ -7,6 +7,7 @@ techbase:Clan
 era:3060
 source:Rec Guide:ilClan #11
 rules level:2
+role:Striker
 
 mass:30
 engine:180 XL (Clan) Engine(IS)

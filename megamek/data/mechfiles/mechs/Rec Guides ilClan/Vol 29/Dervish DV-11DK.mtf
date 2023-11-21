@@ -7,6 +7,7 @@ techbase:Mixed (IS Chassis)
 era:3149
 source:Rec Guide:ilClan #29
 rules level:3
+role:Missile Boat
 
 mass:55
 engine:275 XL Engine(IS)

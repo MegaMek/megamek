@@ -41,6 +41,7 @@ public class MechSearchFilter {
     public int iOmni;
     public int iMilitary;
     public int iIndustrial;
+    public int iMountedInfantry;
     public int iWaterOnly;
     public int iDoomedOnGround;
     public int iDoomedInAtmosphere;
@@ -467,6 +468,10 @@ public class MechSearchFilter {
         }
 
         if (!isMatch(f.iIndustrial, mech.isIndustrialMek())) {
+            return false;
+        }
+
+        if (!isMatch(f.iMountedInfantry, mech.getMountedInfantry())) {
             return false;
         }
 

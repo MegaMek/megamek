@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3066
 source:Record Sheets: Vehicle Annex - IndustrialMechs & Exoskeletons
 rules level:2
+role:Ambusher
 
 mass:60
 engine:240 Fusion Engine(IS)

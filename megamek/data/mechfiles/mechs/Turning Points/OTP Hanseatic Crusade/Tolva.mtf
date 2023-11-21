@@ -8,6 +8,7 @@ techbase:Clan
 era:3145
 source:Operational Turning Points: Hanseatic CrusaDe
 rules level:3
+role:Skirmisher
 
 mass:40
 engine:200 Fusion (Clan) Engine(IS)

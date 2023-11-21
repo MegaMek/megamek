@@ -8,6 +8,7 @@ techbase:Clan
 era:3147
 source:Rec Guide:ilClan #11
 rules level:2
+role:Scout
 
 mass:20
 engine:160 XL (Clan) Engine(IS)
@@ -71,9 +72,9 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLPartialWing (OMNIPOD)
-CLPartialWing (OMNIPOD)
-CLPartialWing (OMNIPOD)
+CLPartialWing
+CLPartialWing
+CLPartialWing
 CLDoubleHeatSink
 CLDoubleHeatSink
 Jump Jet (OMNIPOD)
@@ -85,9 +86,9 @@ Jump Jet (OMNIPOD)
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLPartialWing (OMNIPOD)
-CLPartialWing (OMNIPOD)
-CLPartialWing (OMNIPOD)
+CLPartialWing
+CLPartialWing
+CLPartialWing
 CLDoubleHeatSink
 CLDoubleHeatSink
 Jump Jet (OMNIPOD)

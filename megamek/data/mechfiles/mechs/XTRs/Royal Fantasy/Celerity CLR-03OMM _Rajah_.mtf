@@ -8,6 +8,7 @@ techbase:Mixed (IS Chassis)
 era:3138
 source:XTR: Royal Fantasy
 rules level:3
+role:Scout
 
 mass:15
 engine:120 Fusion Engine(IS)

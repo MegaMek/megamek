@@ -45,6 +45,10 @@ IS Machine Gun Ammo
 <type>
 IS
 </type>
+
+<role>
+Scout
+</role>
 <year>
 2835
 </year>

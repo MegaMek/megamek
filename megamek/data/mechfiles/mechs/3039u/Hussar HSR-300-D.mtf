@@ -8,6 +8,7 @@ TechBase:Inner Sphere
 Era:3035
 Source:TRO: 3039
 Rules Level:1
+role:Scout
 
 Mass:30
 Engine:270 Fusion Engine
@@ -146,20 +147,19 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:The Hussar stands as a hallmark reconnaissance platform within the realms of the Star League Defense Force (SLDF), with its ability to achieve top speeds surpassing 150 kph. This speed advantage rendered the Hussar a challenging target in direct confrontations on the battlefield. Although modern designs have surfaced over time, the Hussar continues to embody the quintessence of a light recon BattleMech. The initial utilization of Hussar by the original SLDF in light 'Mech formations led to its scarce presence among the Great Houses, a scenario exacerbated post the historical Exodus led by General Kerensky.
 
-Overview: The Hussar was originally one of the most widely used light Mechs of the SLDF.  It gained its popularity through its successful combination of heavy firepower and unmatched ground mobility, making it one of the most elusive 'Mechs in the SLDF's arsenal despite its lack of jump jets.  Though first assigned to support infantry units, this was quickly set aside once the Hussar proved that it was more than able to act as a highly mobile raider. Here the Hussar's above-average Ranger communications system shines the most; able to jam most communications channels, it also has extended range to assist Hussars in their raiding.
+capabilities:<P>The Hussar, though notably under-armored when juxtaposed against other recon designs, wasn’t crafted to thrive in one-on-one combat scenarios. Its principal design featured an extended-range large laser, a component allowing it to engage adversaries from a long-range distance. The essence of the Hussar’s advantage is rooted in its speed, a fact often overlooked by Lyran pilots, particularly the inexperienced ones accustomed to heavier designs, leading to a significant pilot mortality rate.</P>
+<P>Enhanced communication and surveillance apparatus form a part of the Hussar's core capabilities, with the original Field Ranger Sightseer schematics being replicated in 3055, thus bolstering its reconnaissance prowess. This technological integration rendered the Hussar invaluable during the FedCom Civil War, with its deployment often aimed at disrupting enemy supply lines, embodying a strategy not alien to several hard-line Lyran commanders of the era.</P>
 
-Capabilities: The Hussar's ability to redirect to wherever needed and outrun any of its contemporaries earned it a largely positive reputation. Where it best performed was not in direct 'Mech on 'Mech combat, but instead in raiding and harassment roles. Experienced commanders use Hussars to target supply depots and other logistical targets, only bringing them into direct combat when able to remain untouched at long ranges. Here inexperienced MechWarriors tend to faulter; many pilots are accustomed to designs where they can directly combat other 'Mechs, and so pilot mortality rates remain excessively high.
+deployment:The 300-D variant emerged as a result of a clandestine re-arming agreement with the Draconis Combine, featuring a GM-240 XL engine and an LB 10-X autocannon for closer combat engagements, alongside a significant armor enhancement.
 
-Deployment: The Hussar was near-exclusively fielded by SLDF forces. The Exodus saw most leave with Kerensky's forces, with nearly all other examples hidden away by a fledgling ComStar. As a result, the Hussar would vanish from most TO&Es for centuries. Operation:ROSEBUD would bring the long-thought extinct 'Mech back onto modern battlefields, the stripped-down HSR-300-D being one of many 'Mech designs gifted to the Draconis Combine by ComStar. These few 'Mechs, though effective, were limited in number, and the rapid appearance and manufacturing of more advanced variants would eventually lead to the extinction of the -300-D.
+history:The legacy of the Hussar traces back to its pivotal role within the SLDF as a reconnaissance stalwart. The scarcity of this design among the Great Houses became more pronounced post General Kerensky’s Exodus, leading to its classification as a lost design until its revival by the Com Guards in 3051. The subsequent acquisition of the Hussar design by Coventry Metal Works from Bonn Mekarmorwerks marked a new chapter, leading to the development of new variants between 3055 and 3068. The narrative of the Hussar took a dire turn with the onset of the Jihad, as the Word of Blake’s assault on Coventry halted further advancements and shipments of this iconic design.
 
-systemmanufacturer:CHASSIS:Benztrov
-systemmode:CHASSIS:40
-systemmanufacturer:ENGINE:GM
-systemmode:ENGINE:270
-systemmanufacturer:ARMOR:Riese
-systemmode:ARMOR:Reliable
-systemmanufacturer:COMMUNICATIONS:Garret
-systemmode:COMMUNICATIONS:T10B
-systemmanufacturer:TARGETING:Dynatec
-systemmode:TARGETING:990
+manufacturer:Refit 
+primaryfactory:Terra
+systemmanufacturer:CHASSIS:Benztrov 40
+systemmanufacturer:ENGINE:GM 240 XL
+systemmanufacturer:ARMOR:Lexington Standard
+systemmanufacturer:COMMUNICATIONS:Field Ranger Sightseer
+systemmanufacturer:TARGETING:Ranger LAF Model 2

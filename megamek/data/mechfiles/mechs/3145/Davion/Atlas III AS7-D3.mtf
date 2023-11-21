@@ -9,6 +9,7 @@ techbase:Mixed (IS Chassis)
 era:3137
 source:TRO: 3145 Federated Suns
 rules level:4
+role:Juggernaut
 
 mass:100
 engine:300 Fusion Engine(IS)

@@ -82,9 +82,6 @@ public class Jumpship extends Aero {
     private int escapePodsLaunched = 0;
     private int lifeBoatsLaunched = 0;
 
-    // Battlestation
-    private boolean isBattleStation = false;
-
     // HPG
     private boolean hasHPG = false;
 
@@ -482,13 +479,8 @@ public class Jumpship extends Aero {
         return hasHPG;
     }
 
-    public void setBattleStation(boolean b) {
-        isBattleStation = b;
-
-    }
-
     public boolean isBattleStation() {
-        return isBattleStation;
+        return false;
     }
 
     public void setLF(boolean b) {
@@ -652,10 +644,6 @@ public class Jumpship extends Aero {
         if (isPrimitive()) {
             return fuelUse * primitiveFuelFactor();
         }
-        // JS and SS (and WS without transit drives) use fuel at 10% the rate.
-        if (hasStationKeepingDrive()) {
-            fuelUse *= 0.1;
-        }
         return fuelUse;
     }
 
@@ -714,10 +702,10 @@ public class Jumpship extends Aero {
     
     //Is any part of the KF Drive damaged?  Used by MHQ for repairs.
     public boolean isKFDriveDamaged() {
-        return (getKFHeliumTankHit() 
-                || getKFDriveCoilHit() 
-                || getKFDriveControllerHit() 
-                || getLFBatteryHit() 
+        return (getKFHeliumTankHit()
+                || getKFDriveCoilHit()
+                || getKFDriveControllerHit()
+                || getLFBatteryHit()
                 || getKFChargingSystemHit()
                 || getKFFieldInitiatorHit());
     }
@@ -841,7 +829,7 @@ public class Jumpship extends Aero {
         int integrity = (int) Math.ceil(1.2 + (getJumpDriveWeight() / 60000.0));
         setOKFIntegrity(integrity);
         setKFIntegrity(integrity);
-        //Helium Tanks make up about 2/3 of the drive core. 
+        //Helium Tanks make up about 2/3 of the drive core.
         setKFHeliumTankIntegrity((int) (integrity * 0.67));
     }
 
@@ -879,7 +867,7 @@ public class Jumpship extends Aero {
         if (driveCoreType == DRIVE_CORE_PRIMITIVE) {
             pct = 0.05 + 0.03 * jumpRange;
         }
-        return Math.ceil(getWeight() * pct); 
+        return Math.ceil(getWeight() * pct);
     }
 
     // different firing arcs
@@ -1325,7 +1313,7 @@ public class Jumpship extends Aero {
     public void newRound(int roundNumber) {
         super.newRound(roundNumber);
 
-        // accumulate some more 
+        // accumulate some more
         // We assume that  will be accumulated. If this is proven wrong by
         // the movement
         // then we make the proper adjustments in server#processMovement
@@ -1403,7 +1391,7 @@ public class Jumpship extends Aero {
 
     /**
      * Finds the arc on the opposite side of the ship. Used in BV calculations.
-     * 
+     *
      * @param arc A firing arc constant from <code>Compute</code>
      * @return    The arc on the opposite side of the ship.
      */

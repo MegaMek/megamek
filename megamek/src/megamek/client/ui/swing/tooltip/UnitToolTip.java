@@ -1316,6 +1316,17 @@ public final class UnitToolTip {
             }
         }
 
+        if (entity instanceof Infantry) {
+            InfantryMount mount = ((Infantry) entity).getMount();
+            if ((mount != null) && entity.getMovementMode().isSubmarine() && (entity.underwaterRounds > 0)) {
+                String uw = "<br/>" + addToTT("InfUWDuration", NOBR, mount.getUWEndurance() - entity.underwaterRounds).toString();
+                if (entity.underwaterRounds >=mount.getUWEndurance()) {
+                    uw = guiScaledFontHTML(GUIP.getWarningColor()) + uw + "</font>";
+                }
+                result += uw;
+            }
+        }
+
         String sAeroInfo = "";
 
         if (entity.isAero()) {
@@ -1600,6 +1611,8 @@ public final class UnitToolTip {
                 if (jumpMPModified > 0) {
                     sMove += "/" + jumpMPModified;
                 }
+            } else if ((entity instanceof Jumpship) && ((Jumpship) entity).hasStationKeepingDrive()) {
+                sMove += String.format("%s%1.1f", DOT_SPACER, ((Jumpship) entity).getAccumulatedThrust());
             }
 
             sMove += DOT_SPACER;

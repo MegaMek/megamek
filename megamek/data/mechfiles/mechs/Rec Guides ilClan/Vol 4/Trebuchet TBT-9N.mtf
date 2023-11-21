@@ -7,6 +7,7 @@ Config:Biped
 techbase:Mixed (IS Chassis)
 era:3136
 rules level:4
+role:Missile Boat
 source:Rec Guide:ilClan #4
 
 

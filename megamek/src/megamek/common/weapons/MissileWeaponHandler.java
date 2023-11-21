@@ -1005,7 +1005,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                         MiscType.F_ARTEMIS) || mLinker.getType().hasFlag(
                         MiscType.F_ARTEMIS_V) || mLinker.getType().hasFlag(
                                 MiscType.F_ARTEMIS_PROTO)))) {
-            if ((!weapon.getType().hasModes() || !weapon.curMode().equals("Indirect"))
+            if ((!weapon.hasModes() || !weapon.curMode().equals("Indirect"))
                     && (((atype.getAmmoType() == AmmoType.T_ATM) &&
                             ((atype.getMunitionType().contains(AmmoType.Munitions.M_STANDARD))
                             || (atype.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE))

@@ -7,6 +7,7 @@ techbase:Mixed (IS Chassis)
 era:3057
 source:TRO: 3050
 rules level:3
+role:Brawler
 
 mass:70
 engine:280 XL Engine(IS)

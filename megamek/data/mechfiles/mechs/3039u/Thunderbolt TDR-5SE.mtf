@@ -7,6 +7,7 @@ techbase:Inner Sphere
 era:3000
 source:TRO: 3039
 rules level:1
+role:Skirmisher
 
 mass:65
 engine:260 Fusion Engine(IS)

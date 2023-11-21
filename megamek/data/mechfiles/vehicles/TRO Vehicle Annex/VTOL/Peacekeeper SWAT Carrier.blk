@@ -32,6 +32,10 @@ Peacekeeper SWAT Carrier
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 VTOL
 </motion_type>

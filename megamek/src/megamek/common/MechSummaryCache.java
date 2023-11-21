@@ -390,6 +390,8 @@ public class MechSummaryCache {
         ms.setEntityType(e.getEntityType());
         ms.setOmni(e.isOmni());
         ms.setMilitary(e.isMilitary());
+        ms.setMountedInfantry((e instanceof Infantry) && ((Infantry) e).getMount() != null);
+
         int tankTurrets = 0;
         if (e instanceof Tank) {
             tankTurrets = ((Tank) e).getTurretCount();

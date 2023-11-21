@@ -2,8 +2,8 @@ size 30 15
 option exit_roads_to_pavement false
 tag "GrassTheme (Auto)"
 tag "Roads (Auto)"
-tag "LightForest (Auto)"
 tag "Woods (Auto)"
+tag "LightForest (Auto)"
 tag "MediumUrban (Auto)"
 hex 0101 3 "" "grass"
 hex 0201 3 "woods:1;foliage_elev:2" "grass"

@@ -7,6 +7,7 @@ Config:Biped Omnimech
 techbase:Clan
 era:3098
 rules level:3
+role:Missile Boat
 source:Rec Guide:ilClan #10
 
 mass:60

@@ -8,6 +8,7 @@ techbase:Mixed (IS Chassis)
 era:3133
 source:XTR: Caveat Emptor
 rules level:5
+role:Ambusher
 
 mass:30
 engine:90 ICE Engine(IS)

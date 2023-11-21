@@ -291,9 +291,8 @@ public class MechView {
                     Messages.getString("MechView.Unknown")));
         }
 
-        UnitRole role = UnitRoleHandler.getRoleFor(entity);
-        if (role != UnitRole.UNDETERMINED) {
-            sHead.add(new LabeledElement("Role", role.toString()));
+        if (entity.hasRole()) {
+            sHead.add(new LabeledElement("Role", entity.getRole().toString()));
         }
 
         //We may have altered the starting mode during configuration, so we save the current one here to restore it
@@ -339,6 +338,9 @@ public class MechView {
                         .append(" piloting)")
                         .append(warningEnd());
                 }
+            }
+            if (entity.isConventionalInfantry() && ((Infantry) entity).getMount() != null) {
+                moveString.append(" (").append(((Infantry) entity).getMount().getName()).append(")");
             }
 
             // TODO : Add STOL message as part of the movement line

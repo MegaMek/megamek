@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -36,20 +36,24 @@ Mammoth
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Spheroid
 </motion_type>
 
 <transporters>
-smallcraftbay:4.0:4:1
-2ndclassquarters:0.0:0
-1stclassquarters:60.0:0
-crewquarters:203.0:0
-cargobay:7563.0:1:5
-cargobay:7563.0:1:6
-cargobay:7563.0:1:7
-cargobay:7563.0:1:8
-cargobay:7563.0:1:9
+smallcraftbay:4.0:4:1::-1:0
+2ndclassquarters:0.0:0:-1::-1:0
+1stclassquarters:60.0:0:-1::-1:0
+crewquarters:203.0:0:-1::-1:0
+cargobay:7563.0:1:5::-1:0
+cargobay:7563.0:1:6::-1:0
+cargobay:7563.0:1:7::-1:0
+cargobay:7563.0:1:8::-1:0
+cargobay:7563.0:1:9::-1:0
 </transporters>
 
 <SafeThrust>
@@ -115,6 +119,54 @@ Small Laser
 20
 </structural_integrity>
 
+<capabilities>
+The Mammoth-Class DropShip's design focuses on maximizing cargo capacity while ensuring operational safety. Each of its five cargo decks can hold over 8,000 tons, serviced by two 400-ton cargo lifts. The lowest deck boasts massive doors for ground loading/unloading, while the second deck has airlocks for space transfers. The DropShip's distinct feature is its external drive system, consisting of four separate units that can be jettisoned in emergencies, a design choice that significantly increases cargo space. For defense, the Mammoth is modestly armed with a nose-mounted large laser, additional lasers on the lower angles, and two small lasers aft, reflecting its role as a non-combative, high-value transport vessel.
+</capabilities>
+
+<overview>
+The Mammoth-class DropShip, renowned as the largest planetary-landing bulk transport in the Inner Sphere, epitomizes the pinnacle of cargo transportation technology. Originally conceived by Krester's Ship Construction and continued by various manufacturers, the Mammoth is a marvel in space engineering, primarily serving the largest megacorporations and Successor State militaries. Its design prioritizes cargo capacity, featuring an innovative drive system with four detachable units, enhancing both safety and space efficiency. Despite its immense size and value, the Mammoth remains a rare sight due to its high operational and maintenance costs, making it a unique and prestigious asset in interstellar commerce and military logistics.
+</overview>
+
+<deployment>
+<p>The deployment of the Mammoth-class DropShips is primarily under the auspices of major corporations and Successor State militaries, with some modified for specific roles like diatomic-hydrogen fuel transport. Their high operating costs limit widespread use, rendering them a rare yet critical component in the logistical operations of major trade routes and extended military campaigns. These DropShips are essential for transporting bulk goods between major trade worlds, and their presence often signifies the strategic importance of their cargo and routes.</p><p>This version represents the version of the height of the Star League and features more advanced weaponary and a revised cargo bay configuration</p>
+</deployment>
+
+<history>
+<p>The Mammoth-class DropShip's history is interwoven with the evolution of space transport technology. Devised by Krester's Ship Construction, the design outlived the company itself, testament to its enduring relevance. Its unique external drive system, allowing for emergency jettisoning, marked a significant advancement in DropShip design, emphasizing cargo space optimization at the cost of crew accommodations.</p><p>Throughout its service, the Mammoth has been a symbol of logistical prowess, entrusted only to the largest entities capable of affording its upkeep. Its modifications over time, including its adaptation as a hydrogen fuel tanker, demonstrate its versatility. The design's rarity, coupled with its impressive capabilities, has made the Mammoth a valued asset in the annals of spacefaring history, playing a pivotal role in the economic and military endeavors across the Inner Sphere.
+</history>
+
+<manufacturer>
+Deller, Bingham, and Fouts,Tengo Aerospace,Krester Ship Construction,Krester Ship Construction,Krester Ship Construction,Krester Ship Construction
+</manufacturer>
+
+<primaryFactory>
+Atreus (FWL),Sarna,Terra,Terra Firma,Thorin,Yorii
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Cargo Carrier
+</use>
+
+<length>
+277 m
+</length>
+
+<width>
+277 m
+</width>
+
+<height>
+170.6 m
+</height>
+
 <source>
 TRO: 3057 Revised
 </source>
@@ -162,3 +214,4 @@ TRO: 3057 Revised
 <escape_pod>
 6
 </escape_pod>
+

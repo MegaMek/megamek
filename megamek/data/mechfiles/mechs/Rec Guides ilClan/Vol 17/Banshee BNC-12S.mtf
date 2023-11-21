@@ -8,6 +8,7 @@ techbase:Mixed (IS Chassis)
 era:3138
 source:Rec Guide:ilClan #17
 rules level:2
+role:Brawler
 
 mass:95
 engine:380 XL (Clan) Engine

@@ -7,6 +7,7 @@ Config:Biped Omnimech
 techbase:Clan
 era:3147
 rules level:3
+role:Scout
 source:Rec Guide:ilClan #11
 
 mass:20
@@ -77,9 +78,9 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLPartialWing (omnipod)
-CLPartialWing (omnipod)
-CLPartialWing (omnipod)
+CLPartialWing
+CLPartialWing
+CLPartialWing
 CLDoubleHeatSink
 CLDoubleHeatSink
 Jump Jet (omnipod)
@@ -91,9 +92,9 @@ CLActiveProbe (omnipod)
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLPartialWing (omnipod)
-CLPartialWing (omnipod)
-CLPartialWing (omnipod)
+CLPartialWing
+CLPartialWing
+CLPartialWing
 CLDoubleHeatSink
 CLDoubleHeatSink
 Jump Jet (omnipod)

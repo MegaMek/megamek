@@ -7,6 +7,7 @@ Config:Biped
 techbase:Clan
 era:2827
 rules level:2
+role:Scout
 source:TRO: Golden Century
 
 mass:30

@@ -335,6 +335,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JButton btnFilterMilitary = new JButton("\u2610");
     private JLabel lblFilterIndustrial = new JLabel(Messages.getString("MechSelectorDialog.Search.Industrial"));
     private JButton btnFilterIndustrial = new JButton("\u2610");
+    private JLabel lblFilterMountedInfantry = new JLabel(Messages.getString("MechSelectorDialog.Search.MountedInfantry"));
+    private JButton btnFilterMountedInfantry = new JButton("\u2610");
     private JLabel lblFilterWaterOnly = new JLabel(Messages.getString("MechSelectorDialog.Search.WaterOnly"));
     private JButton btnFilterWaterOnly = new JButton("\u2610");
     private JLabel lblFilterSupportVehicle = new JLabel(Messages.getString("MechSelectorDialog.Search.SupportVehicle"));
@@ -989,6 +991,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         btnFilterMilitary.addActionListener(this);
         btnFilterIndustrial.setBorder(emptyBorder);
         btnFilterIndustrial.addActionListener(this);
+        btnFilterMountedInfantry.setBorder(emptyBorder);
+        btnFilterMountedInfantry.addActionListener(this);
         btnFilterWaterOnly.setBorder(emptyBorder);
         btnFilterWaterOnly.addActionListener(this);
         btnFilterSupportVehicle.setBorder(emptyBorder);
@@ -1182,6 +1186,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         filter1Panel.add(lblFilterMilitary);
         filter1Panel.add(btnFilterIndustrial);
         filter1Panel.add(lblFilterIndustrial);
+        filter1Panel.add(btnFilterMountedInfantry);
+        filter1Panel.add(lblFilterMountedInfantry);
         filter1Panel.add(btnFilterSupportVehicle);
         filter1Panel.add(lblFilterSupportVehicle);
         unitTypePanel.add(filter1Panel, c);
@@ -1694,6 +1700,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
             toggleText(btnFilterMilitary);
         } else if (ev.getSource().equals(btnFilterIndustrial)) {
             toggleText(btnFilterIndustrial);
+        } else if (ev.getSource().equals(btnFilterMountedInfantry)) {
+            toggleText(btnFilterMountedInfantry);
         } else if (ev.getSource().equals(btnFilterWaterOnly)) {
             toggleText(btnFilterWaterOnly);
         } else if (ev.getSource().equals(btnFilterSupportVehicle)) {
@@ -2052,6 +2060,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         btnFilterOmni.setText("\u2610");
         btnFilterMilitary.setText("\u2610");
         btnFilterIndustrial.setText("\u2610");
+        btnFilterMountedInfantry.setText("\u2610");
         btnFilterWaterOnly.setText("\u2610");
         btnFilterSupportVehicle.setText("\u2610");
         btnFilterAerospaceFighter.setText("\u2610");
@@ -2319,6 +2328,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         mechFilter.iOmni = getValue(btnFilterOmni);
         mechFilter.iMilitary = getValue(btnFilterMilitary);
         mechFilter.iIndustrial = getValue(btnFilterIndustrial);
+        mechFilter.iMountedInfantry = getValue(btnFilterMountedInfantry);
         mechFilter.iWaterOnly = getValue(btnFilterWaterOnly);
         mechFilter.iSupportVehicle = getValue(btnFilterSupportVehicle);
         mechFilter.iAerospaceFighter = getValue(btnFilterAerospaceFighter);

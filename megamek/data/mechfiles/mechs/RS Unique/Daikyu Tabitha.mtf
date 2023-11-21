@@ -6,6 +6,7 @@ Config:Biped
 techbase:Mixed (IS Chassis)
 era:3064
 rules level:3
+role:Sniper
 source:Record Sheets: Unique Mechs
 
 mass:70

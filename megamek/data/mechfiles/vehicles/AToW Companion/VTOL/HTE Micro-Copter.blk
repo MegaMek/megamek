@@ -36,6 +36,10 @@ HTE Micro-Copter
 IS Level 4
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 VTOL
 </motion_type>

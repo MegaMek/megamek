@@ -32,6 +32,10 @@ Winston Combat Vehicle
 Mixed (IS Chassis) Advanced
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>

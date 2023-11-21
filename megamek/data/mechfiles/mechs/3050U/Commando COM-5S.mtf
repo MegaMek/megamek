@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3050
 source:TRO: 3050
 rules level:2
+role:Striker
 
 mass:25
 engine:150 Fusion Engine(IS)

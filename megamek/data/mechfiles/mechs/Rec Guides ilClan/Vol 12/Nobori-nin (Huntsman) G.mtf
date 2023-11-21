@@ -7,6 +7,7 @@ Config:Biped Omnimech
 techbase:Mixed (Clan Chassis)
 era:3139
 rules level:2
+role:Skirmisher
 source:Rec Guide:ilClan #12
 
 mass:50

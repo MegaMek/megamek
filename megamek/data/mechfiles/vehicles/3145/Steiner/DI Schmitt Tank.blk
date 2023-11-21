@@ -32,6 +32,10 @@ DI Schmitt Tank
 IS Level 2
 </type>
 
+<role>
+Juggernaut
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>

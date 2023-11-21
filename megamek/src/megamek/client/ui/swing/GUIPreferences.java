@@ -118,6 +118,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String FLOATINGISO = "FloatingIsometric";
     public static final String MMSYMBOL = "MmSymbol";
     public static final String SOFTCENTER = "SoftCenter";
+    public static final String AUTOCENTER = "AutoCenter";
     public static final String AUTO_END_FIRING = "AutoEndFiring";
     public static final String AUTO_DECLARE_SEARCHLIGHT = "AutoDeclareSearchlight";
 
@@ -694,6 +695,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(SHOW_DAMAGE_DECAL, true);
         store.setDefault(SKIN_FILE, "BW - Default.xml");
         store.setDefault(SOFTCENTER, false);
+        store.setDefault(AUTOCENTER, true);
         store.setDefault(UI_THEME, UIManager.getSystemLookAndFeelClassName());
 
         store.setDefault(RAT_TECH_LEVEL, 0);
@@ -1469,6 +1471,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(SOFTCENTER);
     }
 
+    public boolean getAutoCenter() {
+        return store.getBoolean(AUTOCENTER);
+    }
+
     public boolean getNoSaveNag() {
         return store.getBoolean(ADVANCED_NO_SAVE_NAG);
     }
@@ -2212,6 +2218,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setSoftcenter(boolean b) {
         store.setValue(SOFTCENTER, b);
+    }
+
+    public void setAutocenter(boolean b) {
+        store.setValue(AUTOCENTER, b);
     }
 
     public void setAsCardFont(String asCardFont) {

@@ -1669,6 +1669,21 @@ public class MovePath implements Cloneable, Serializable {
         }
     }
 
+    /**
+     * @return Whether the entire path is submerged. A unit is only considered submerged when entirely undewater.
+     */
+    public boolean isAllUnderwater(Game game) {
+        for (MoveStep step : steps) {
+            Hex hex = game.getBoard().getHex(step.getPosition());
+            if (!hex.containsTerrain(Terrains.WATER)
+                    || (step.getElevation() >= -entity.height())) {
+                return false;
+            }
+        }
+        return game.getBoard().getHex(entity.getPosition()).containsTerrain(Terrains.WATER)
+                && entity.relHeight() < 0;
+    }
+
     protected static class MovePathComparator implements Comparator<MovePath> {
         private final Coords destination;
         boolean backward;

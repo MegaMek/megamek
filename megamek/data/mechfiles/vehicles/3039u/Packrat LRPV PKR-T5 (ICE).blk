@@ -32,6 +32,10 @@ PKR-T5 (ICE)
 IS Level 1
 </type>
 
+<role>
+Scout
+</role>
+
 <motion_type>
 Wheeled
 </motion_type>

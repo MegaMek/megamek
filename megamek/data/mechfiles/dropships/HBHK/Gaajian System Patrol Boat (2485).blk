@@ -36,6 +36,10 @@ Gaajian System Patrol Boat
 IS Level 2
 </type>
 
+<role>
+None
+</role>
+
 <motion_type>
 Spheroid
 </motion_type>

@@ -6,6 +6,7 @@ Config:Biped
 techbase:Clan
 era:3139
 rules level:2
+role:Sniper
 Source:Rec Guide:ilClan #31
 mul id:9463
 

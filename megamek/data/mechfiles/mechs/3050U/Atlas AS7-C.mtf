@@ -8,6 +8,7 @@ TechBase:Mixed (IS Chassis)
 Era:3050
 Source:TRO: 3050
 Rules Level:2
+role:Sniper
 
 Mass:100
 Engine:300 XL Engine

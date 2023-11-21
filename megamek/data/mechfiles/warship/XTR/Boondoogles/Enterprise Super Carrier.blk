@@ -41,15 +41,15 @@ Aerodyne
 </motion_type>
 
 <transporters>
-asfbay:648.0:11:1
+asfbay:648.0:11:1::-1:0
 dockingcollar
 dockingcollar
 dockingcollar
 dockingcollar
-asfbay:324.0:11:7
-crewquarters:805.0:0
-2ndclassquarters:2660.0:0
-cargobay:288104.5:2:2
+asfbay:324.0:11:7::-1:0
+crewquarters:805.0:0:-1::-1:0
+2ndclassquarters:2660.0:0:-1::-1:0
+cargobay:288117.5:2:9::-1:0
 </transporters>
 
 <SafeThrust>
@@ -134,7 +134,7 @@ ISAntiMissileSystem
 ISAntiMissileSystem
 ISAntiMissileSystem
 ISAntiMissileSystem
-ISAMS Ammo:108
+ISAMS Ammo:120
 </Nose Equipment>
 
 <Left Front Side Equipment>
@@ -168,17 +168,7 @@ ISAntiMissileSystem
 ISAntiMissileSystem
 ISAntiMissileSystem
 ISAntiMissileSystem
-ISAntiMissileSystem
-ISAntiMissileSystem
-ISAntiMissileSystem
-ISAntiMissileSystem
-ISAntiMissileSystem
-ISAntiMissileSystem
-ISAntiMissileSystem
-ISAntiMissileSystem
-ISAntiMissileSystem
-ISAntiMissileSystem
-ISAMS Ammo:108
+ISAMS Ammo:120
 </Left Front Side Equipment>
 
 <Right Front Side Equipment>
@@ -212,17 +202,7 @@ ISAntiMissileSystem
 ISAntiMissileSystem
 ISAntiMissileSystem
 ISAntiMissileSystem
-ISAntiMissileSystem
-ISAntiMissileSystem
-ISAntiMissileSystem
-ISAntiMissileSystem
-ISAntiMissileSystem
-ISAntiMissileSystem
-ISAntiMissileSystem
-ISAntiMissileSystem
-ISAntiMissileSystem
-ISAntiMissileSystem
-ISAMS Ammo:108
+ISAMS Ammo:120
 </Right Front Side Equipment>
 
 <Aft Equipment>
@@ -257,7 +237,7 @@ ISAntiMissileSystem
 ISAntiMissileSystem
 ISAntiMissileSystem
 ISAntiMissileSystem
-ISAMS Ammo:108
+ISAMS Ammo:120
 </Aft Equipment>
 
 <Aft Left Side Equipment>
@@ -290,7 +270,7 @@ ISAntiMissileSystem
 ISAntiMissileSystem
 ISAntiMissileSystem
 ISAntiMissileSystem
-ISAMS Ammo:108
+ISAMS Ammo:120
 </Aft Left Side Equipment>
 
 <Aft Right Side Equipment>
@@ -323,7 +303,7 @@ ISAntiMissileSystem
 ISAntiMissileSystem
 ISAntiMissileSystem
 ISAntiMissileSystem
-ISAMS Ammo:108
+ISAMS Ammo:120
 </Aft Right Side Equipment>
 
 <Hull Equipment>
@@ -367,7 +347,7 @@ ISAntiMissileSystem
 ISAntiMissileSystem
 ISAntiMissileSystem
 ISAntiMissileSystem
-ISAMS Ammo:108
+ISAMS Ammo:120
 </Left Broadsides Equipment>
 
 <Right Broadsides Equipment>
@@ -408,7 +388,7 @@ ISAntiMissileSystem
 ISAntiMissileSystem
 ISAntiMissileSystem
 ISAntiMissileSystem
-ISAMS Ammo:108
+ISAMS Ammo:120
 </Right Broadsides Equipment>
 
 <structural_integrity>

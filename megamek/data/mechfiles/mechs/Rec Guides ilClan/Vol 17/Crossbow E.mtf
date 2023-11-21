@@ -8,6 +8,7 @@ techbase:Clan
 era:3072
 source:Rec Guide:ilClan #17
 rules level:2
+role:Skirmisher
 
 mass:65
 engine:325 Fusion (Clan) Engine(IS)

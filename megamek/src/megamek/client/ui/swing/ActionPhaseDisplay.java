@@ -23,6 +23,7 @@ import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
+import megamek.common.Report;
 import megamek.common.annotations.Nullable;
 import megamek.common.preference.PreferenceChangeEvent;
 
@@ -46,7 +47,7 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
     protected UIUtil.FixedXPanel setupDonePanel() {
         var donePanel = super.setupDonePanel();
         butSkipTurn = new MegamekButton("SKIP", SkinSpecification.UIComponents.PhaseDisplayDoneButton.getComp());
-        butSkipTurn.setPreferredSize(new Dimension(DONE_BUTTON_WIDTH, MIN_BUTTON_SIZE.height * 1));
+        butSkipTurn.setPreferredSize(new Dimension(UIUtil.scaleForGUI(DONE_BUTTON_WIDTH), MIN_BUTTON_SIZE.height * 1));
         String f = guiScaledFontHTML(UIUtil.uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE_NO_ACTION)+ "</FONT>";
         butSkipTurn.setToolTipText("<html><body>" + f + "</body></html>");
         addToDonePanel(donePanel, butSkipTurn);
@@ -109,6 +110,7 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
     public void preferenceChange(PreferenceChangeEvent e) {
         super.preferenceChange(e);
         updateDonePanel();
+        adaptToGUIScale();
     }
 
     protected void initDonePanelForNewTurn()
@@ -173,5 +175,9 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
         if (clientgui.getBoardView().turnDetailsOverlay != null) {
             clientgui.getBoardView().turnDetailsOverlay.setLines(turnDetails);
         }
+    }
+
+    private void adaptToGUIScale() {
+        butSkipTurn.setPreferredSize(new Dimension(UIUtil.scaleForGUI(DONE_BUTTON_WIDTH), MIN_BUTTON_SIZE.height * 1));
     }
 }

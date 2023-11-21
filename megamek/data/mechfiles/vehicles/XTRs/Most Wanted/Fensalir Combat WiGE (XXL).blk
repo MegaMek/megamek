@@ -36,6 +36,10 @@ Fensalir Combat WiGE
 IS Level 4
 </type>
 
+<role>
+Skirmisher
+</role>
+
 <motion_type>
 WiGE
 </motion_type>

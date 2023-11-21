@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3075
 source:XTR: Boondocks
 rules level:4
+role:Juggernaut
 
 mass:60
 engine:240 Light Engine(IS)

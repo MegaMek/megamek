@@ -32,6 +32,10 @@ Goblin Medium Tank
 IS Level 1
 </type>
 
+<role>
+Missile Boat
+</role>
+
 <motion_type>
 Tracked
 </motion_type>

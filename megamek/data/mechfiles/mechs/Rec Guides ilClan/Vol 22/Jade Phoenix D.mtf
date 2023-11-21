@@ -8,6 +8,7 @@ techbase:Clan
 era:3148
 source:Rec Guide:ilClan #22
 rules level:3
+role:Sniper
 
 mass:85
 engine:340 XL (Clan) Engine(IS)
@@ -69,9 +70,9 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLPartialWing (OMNIPOD)
-CLPartialWing (OMNIPOD)
-CLPartialWing (OMNIPOD)
+CLPartialWing
+CLPartialWing
+CLPartialWing
 CLTargeting Computer (OMNIPOD)
 CLTargeting Computer (OMNIPOD)
 CLTargeting Computer (OMNIPOD)
@@ -83,9 +84,9 @@ Clan Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLPartialWing (OMNIPOD)
-CLPartialWing (OMNIPOD)
-CLPartialWing (OMNIPOD)
+CLPartialWing
+CLPartialWing
+CLPartialWing
 Clan Gauss Ammo (OMNIPOD)
 Clan Gauss Ammo (OMNIPOD)
 Clan Gauss Ammo (OMNIPOD)

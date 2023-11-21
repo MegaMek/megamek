@@ -7,6 +7,7 @@ Config:Biped
 TechBase:Inner Sphere
 Era:3066
 Rules Level:4
+role:Brawler
 Source:XTR: Pirates
 
 Mass:40

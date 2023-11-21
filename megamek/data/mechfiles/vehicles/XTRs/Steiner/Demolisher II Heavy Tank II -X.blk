@@ -32,6 +32,10 @@ II-X
 Mixed (IS Chassis) Experimental
 </type>
 
+<role>
+Sniper
+</role>
+
 <motion_type>
 Tracked
 </motion_type>

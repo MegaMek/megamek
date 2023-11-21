@@ -8,6 +8,7 @@ techbase:Inner Sphere
 era:3132
 source:TRO: Irregulars
 rules level:2
+role:Ambusher
 
 mass:35
 engine:140 ICE Engine(IS)

@@ -1,0 +1,61 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Beast Infantry (Tariq)
+</Name>
+
+<Model>
+(SMG)
+</Model>
+
+<year>
+2750
+</year>
+
+<originalBuildYear>
+2750
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Beast:Tariq
+</motion_type>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<squad_size>
+7
+</squad_size>
+
+<squadn>
+3
+</squadn>
+
+<Primary>
+Submachine Gun
+</Primary>
+
+<antimek>
+5
+</antimek>
+
+<armorKit>
+Generic Infantry Kit
+</armorKit>
+

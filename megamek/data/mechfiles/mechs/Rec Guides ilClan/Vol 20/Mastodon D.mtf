@@ -8,6 +8,7 @@ techbase:Clan
 era:3148
 source:Rec Guide:ilClan #20
 rules level:2
+role:Missile Boat
 
 mass:95
 engine:285 XL (Clan) Engine(IS)

@@ -8,6 +8,7 @@ techbase:Mixed (IS Chassis)
 era:3130
 source:Rec Guide:ilClan #2
 rules level:2
+role:Sniper
 
 mass:80
 engine:320 XL (Clan) Engine

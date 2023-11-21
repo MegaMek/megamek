@@ -68,7 +68,8 @@ public class GameOptions extends AbstractOptions {
         addOption(base, OptionsConstants.BASE_SHOW_BAY_DETAIL, false); 
         addOption(base, OptionsConstants.BASE_RNG_TYPE, 1); 
         addOption(base, OptionsConstants.BASE_RNG_LOG, false); 
-        addOption(base, OptionsConstants.BASE_FLAMER_HEAT, false); 
+        addOption(base, OptionsConstants.BASE_FLAMER_HEAT, false);
+        addOption(base, OptionsConstants.BASE_INFANTRY_DAMAGE_HEAT, false);
         addOption(base, OptionsConstants.BASE_INDIRECT_FIRE, true); 
         addOption(base, OptionsConstants.BASE_BREEZE, false); 
         addOption(base, OptionsConstants.BASE_RANDOM_BASEMENTS, true); 

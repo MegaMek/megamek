@@ -811,6 +811,9 @@ public class MechSearchFilter {
         if (f.filterQuad == 1) {
             entityTypes = entityTypes | Entity.ETYPE_QUAD_MECH;
         }
+        if (f.filterQuadVee == 1) {
+            entityTypes = entityTypes | Entity.ETYPE_QUADVEE;
+        }
         if (f.filterAero == 1) {
             entityTypes = entityTypes | Entity.ETYPE_AERO;
         }
@@ -889,6 +892,9 @@ public class MechSearchFilter {
         }
         if (f.filterQuad == 2) {
             entityTypes = entityTypes | Entity.ETYPE_QUAD_MECH;
+        }
+        if (f.filterQuadVee == 2) {
+            entityTypes = entityTypes | Entity.ETYPE_QUADVEE;
         }
         if (f.filterAero == 2) {
             entityTypes = entityTypes | Entity.ETYPE_AERO;

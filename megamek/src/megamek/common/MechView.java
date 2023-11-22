@@ -418,10 +418,8 @@ public class MechView {
             }
             sBasic.add(new LabeledElement(Messages.getString("MechView.HeatSinks"), hsString.toString()));
             
-            if (a.getCockpitType() != Mech.COCKPIT_STANDARD) {
-                sBasic.add(new LabeledElement(Messages.getString("MechView.Cockpit"),
-                        a.getCockpitTypeString()));
-            }
+            sBasic.add(new LabeledElement(Messages.getString("MechView.Cockpit"),
+                    a.getCockpitTypeString()));
         }
 
         if (isMech) {
@@ -437,13 +435,10 @@ public class MechView {
                         .append(" damaged)").append(warningEnd());
             }
             sBasic.add(new LabeledElement(aMech.getHeatSinkTypeName() + "s", hsString.toString()));
-            if ((aMech.getCockpitType() != Mech.COCKPIT_STANDARD)
-                    || aMech.hasArmoredCockpit()) {
-                sBasic.add(new LabeledElement(Messages.getString("MechView.Cockpit"),
-                        aMech.getCockpitTypeString()
-                                + (aMech.hasArmoredCockpit() ? " (armored)" : "")));
-                                
-            }
+            sBasic.add(new LabeledElement(Messages.getString("MechView.Cockpit"),
+                    aMech.getCockpitTypeString()
+                            + (aMech.hasArmoredCockpit() ? " (armored)" : "")));
+
             String gyroString = aMech.getGyroTypeString();
             if (aMech.getGyroHits() > 0) {
                 gyroString += " " + warningStart() + "(" + aMech.getGyroHits()

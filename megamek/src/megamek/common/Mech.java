@@ -3902,6 +3902,16 @@ public abstract class Mech extends Entity {
     }
 
     public String getCockpitTypeString() {
+        if (isIndustrial()) {
+            switch (getCockpitType()) {
+                case COCKPIT_STANDARD:
+                    return Mech.getCockpitTypeString(COCKPIT_INDUSTRIAL) + " (Adv. FCS)";
+                case COCKPIT_PRIMITIVE:
+                    return Mech.getCockpitTypeString(COCKPIT_PRIMITIVE_INDUSTRIAL) + " (Adv. FCS)";
+                case COCKPIT_SUPERHEAVY:
+                    return Mech.getCockpitTypeString(COCKPIT_SUPERHEAVY_INDUSTRIAL) + " (Adv. FCS)";
+            }
+        }
         return Mech.getCockpitTypeString(getCockpitType());
     }
 

@@ -12488,6 +12488,7 @@ public class GameManager implements IGameManager {
                 && (entity.getMovementMode() != EntityMovementMode.HYDROFOIL)
                 && (entity.getMovementMode() != EntityMovementMode.NAVAL)
                 && (entity.getMovementMode() != EntityMovementMode.SUBMARINE)
+                && (entity.getMovementMode() != EntityMovementMode.WIGE)
                 && (entity.getMovementMode() != EntityMovementMode.INF_UMU)) {
             vPhaseReport.addAll(destroyEntity(entity, "a watery grave", false));
         } else if ((waterDepth > 0)
@@ -27870,6 +27871,7 @@ public class GameManager implements IGameManager {
                 && (entity.getMovementMode() != EntityMovementMode.HYDROFOIL)
                 && (entity.getMovementMode() != EntityMovementMode.NAVAL)
                 && (entity.getMovementMode() != EntityMovementMode.SUBMARINE)
+                && (entity.getMovementMode() != EntityMovementMode.WIGE)
                 && (entity.getMovementMode() != EntityMovementMode.INF_UMU)) {
             vPhaseReport.addAll(destroyEntity(entity, "a watery grave", false));
             return vPhaseReport;
@@ -33722,8 +33724,7 @@ public class GameManager implements IGameManager {
         // which for these particular purposes may or may not be the intent of
         // the rules in all cases.
         // Immobile hovercraft on water sink...
-        if (!te.isOffBoard() && (((te.getMovementMode() == EntityMovementMode.HOVER)
-                || ((te.getMovementMode() == EntityMovementMode.WIGE) && (te.getElevation() == 0)))
+        if (!te.isOffBoard() && (te.getMovementMode() == EntityMovementMode.HOVER
                 && (te.isMovementHitPending() || (te.getWalkMP() <= 0))
                 // HACK: Have to check for *pending* hit here and below.
                 && (game.getBoard().getHex(te.getPosition()).terrainLevel(Terrains.WATER) > 0)

@@ -20192,12 +20192,16 @@ public class GameManager implements IGameManager {
      */
     private Vector<Report> resolvePilotingRolls() {
         Vector<Report> vPhaseReport = new Vector<>();
-        vPhaseReport.add(new Report(3900, Report.PUBLIC));
 
         for (Iterator<Entity> i = game.getEntities(); i.hasNext(); ) {
             vPhaseReport.addAll(resolvePilotingRolls(i.next()));
         }
         game.resetPSRs();
+
+        if (vPhaseReport.size() > 0) {
+            vPhaseReport.insertElementAt(new Report(3900, Report.PUBLIC), 0);
+        }
+
         return vPhaseReport;
     }
 

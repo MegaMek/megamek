@@ -21,6 +21,9 @@ VERSION HISTORY:
 + PR #4899: add report heading for piloting rolls
 + PR #4900: advanced search for mounted infantry
 + PR #4903: Move Unit Roles to Unit Files
++ Fix #4821: Fixed-Wing Support Vehicles with propellers and fusion engines should not require fuel
++ PR #4914: add missing filter for QuadVee
++ Fix #3095: Jumped WIGE does not get to-hit modifier
 
 0.49.15 (2023-10-21 1530 UTC)
 + PR #4688: Round reports should no longer take increasingly long to load

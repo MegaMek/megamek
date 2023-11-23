@@ -252,7 +252,7 @@ class AttackSprite extends Sprite {
             for (String wpD : attacks.getDescriptions()) {
                 sAttacks += "<BR>" + wpD;
             }
-            result += guiScaledFontHTML(uiBlack()) + sAttacks + "</FONT>";
+            result += sAttacks;
         }
         return new StringBuffer().append(result);
     }

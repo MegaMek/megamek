@@ -150,7 +150,7 @@ public class SummaryPanel extends PicMap {
             Hex mhex = entity.getGame().getBoard().getHex(entity.getPosition());
             if (bv != null && mhex != null) {
                 StringBuffer sb = new StringBuffer();
-                bv.appendTerrainTooltip(sb, mhex);
+                bv.appendTerrainTooltip(sb, mhex, GUIP);
                 col = "<TD>" + sb + "</TD>";
                 row = "<TR>" + col + "</TR>";
                 hexTxt.append("<TABLE BORDER=0 BGCOLOR=" + GUIP.hexColor(GUIP.getUnitToolTipTerrainBGColor()) + " width=100%>" + row + "</TABLE>");

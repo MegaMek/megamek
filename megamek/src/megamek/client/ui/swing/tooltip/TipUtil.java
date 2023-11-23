@@ -30,12 +30,7 @@ public final class TipUtil {
     final static boolean BR = true;
     final static boolean NOBR = false;
 
-    // HTML block begins and ends
-    public final static String TABLE_BEGIN = "<TABLE CELLSPACING=0 CELLPADDING=0><TBODY><TR><TD VALIGN=TOP>";
-    public final static String TABLE_END = "</TR></TBODY></TABLE>";
-    public static final String HTML_END = "</BODY></HTML>";
-
-    /** 
+    /**
      * Returns a List wherein each element consists of an option group of the given 
      * optGroups, which is e.g. crew.getOptions().getGroups() or entity.getQuirks().getGroups()
      * as well as the count of active options within that group, e.g. "Manei Domini (2)".

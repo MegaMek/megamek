@@ -15,7 +15,6 @@ package megamek.client.ui.swing.tooltip;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
@@ -25,7 +24,6 @@ import megamek.common.enums.BasementType;
 import java.util.Vector;
 
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
-import static megamek.client.ui.swing.util.UIUtil.uiBlack;
 
 public final class HexTooltip {
 

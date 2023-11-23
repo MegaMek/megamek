@@ -15,7 +15,6 @@ import megamek.common.actions.*;
 import megamek.common.enums.GamePhase;
 
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
-import static megamek.client.ui.swing.util.UIUtil.uiBlack;
 
 /**
  * Sprite and info for an attack. Does not actually use the image buffer as

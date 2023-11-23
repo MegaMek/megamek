@@ -41,7 +41,6 @@ import java.awt.*;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 
-import static megamek.client.ui.swing.tooltip.TipUtil.*;
 import static megamek.client.ui.swing.util.UIUtil.alternateTableBGColor;
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 import static megamek.client.ui.swing.util.UIUtil.uiGreen;

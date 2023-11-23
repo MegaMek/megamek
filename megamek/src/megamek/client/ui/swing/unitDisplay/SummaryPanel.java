@@ -30,8 +30,6 @@ import megamek.common.util.fileUtils.MegaMekFile;
 import javax.swing.*;
 import java.awt.*;
 
-import static megamek.client.ui.swing.tooltip.TipUtil.*;
-
 /**
  * Displays a summary info for a unit, using the same html formatting as use by the board view map tooltips.
  * It is intended to be a tab in the UnitDisplay panel.

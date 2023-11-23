@@ -20,7 +20,6 @@ import megamek.common.*;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.CrewSkillSummaryUtil;
-import megamek.common.util.ImageUtil;
 import org.apache.logging.log4j.LogManager;
 
 import javax.imageio.ImageIO;

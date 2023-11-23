@@ -238,7 +238,7 @@ public class MtfFile implements IMechLoader {
             Mech baseUnit = null;
             if (!baseUnitName.isBlank()) {
                 try {
-                    File baseFile = new File(Configuration.unitsDir() + "/" + baseUnitName);
+                    File baseFile = new File(baseUnitName);
                     baseUnit = (Mech) new MechFileParser(baseFile).getEntity();
                 } catch (Exception ex) {
                     LogManager.getLogger().error("Could not load the base unit (" + baseUnitName + ") for " + name + model);

@@ -581,13 +581,13 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(UNIT_TOOLTIP_FGCOLOR, new Color(0xEEE6D9));
         setDefault(UNIT_TOOLTIP_LIGHT_FGCOLOR, new Color(0x000000));
         setDefault(UNIT_TOOLTIP_BUILDING_FGCOLOR, new Color(0x000000));
-        setDefault(UNIT_TOOLTIP_ALT_FGCOLOR, new Color(0x000000));
+        setDefault(UNIT_TOOLTIP_ALT_FGCOLOR, new Color(0xEEE6D9));
         setDefault(UNIT_TOOLTIP_BLOCK_FGCOLOR, new Color(0xEEE6D9));
         setDefault(UNIT_TOOLTIP_TERRAIN_FGCOLOR, new Color(0x000000));
         setDefault(UNIT_TOOLTIP_BGCOLOR, new Color(0x313131));
         setDefault(UNIT_TOOLTIP_LIGHT_BGCOLOR, new Color(0x999999));
         setDefault(UNIT_TOOLTIP_BUILDING_BGCOLOR, new Color(0xCCCC99));
-        setDefault(UNIT_TOOLTIP_ALT_BGCOLOR, new Color(0xFFDDDD));
+        setDefault(UNIT_TOOLTIP_ALT_BGCOLOR, new Color(0x003333));
         setDefault(UNIT_TOOLTIP_BLOCK_BGCOLOR, new Color(0x000060));
         setDefault(UNIT_TOOLTIP_TERRAIN_BGCOLOR, new Color(0x8DAF8D));
 

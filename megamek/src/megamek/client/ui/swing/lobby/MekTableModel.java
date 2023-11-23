@@ -187,12 +187,14 @@ public class MekTableModel extends AbstractTableModel {
             MapSettings mset = chatLounge.mapSettings;
             Player lPlayer = clientGui.getClient().getLocalPlayer();
             String s = UnitToolTip.lobbyTip(entity, lPlayer, mset).toString();
-            unitTooltips.add("<HTML><BODY style=\"color:" + GUIP.hexColor(GUIP.getUnitToolTipFGColor()) + "; background-color:" + GUIP.hexColor(GUIP.getUnitToolTipBGColor()) + ";\">" + s + HTML_END);
+            String htmlStyle = "style=\"color:" + GUIP.hexColor(GUIP.getUnitToolTipFGColor()) + "; ";
+            htmlStyle += "background-color:" + GUIP.hexColor(GUIP.getUnitToolTipBGColor()) + ";\">";
+            unitTooltips.add("<HTML><BODY " + htmlStyle + s + HTML_END);
             s = PilotToolTip.lobbyTip(entity).toString();
             if (entity instanceof Entity) {
                 s += PilotToolTip.getCrewAdvs((Entity) entity, true).toString();
             }
-            pilotTooltips.add("<HTML><BODY style=\"color:" + GUIP.hexColor(GUIP.getUnitToolTipFGColor()) + "; background-color:" + GUIP.hexColor(GUIP.getUnitToolTipBGColor()) + ";\">" + s + HTML_END);
+            pilotTooltips.add("<HTML><BODY " + htmlStyle + s + HTML_END);
         }
         final boolean rpgSkills = clientGui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
         unitCells.add(LobbyMekCellFormatter.unitTableEntry(entity, chatLounge, false, chatLounge.isCompact()));

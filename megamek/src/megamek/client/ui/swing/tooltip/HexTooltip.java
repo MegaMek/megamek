@@ -16,6 +16,7 @@ package megamek.client.ui.swing.tooltip;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
@@ -23,12 +24,11 @@ import megamek.common.enums.BasementType;
 
 import java.util.Vector;
 
-import static megamek.client.ui.swing.tooltip.TipUtil.BUILDING_BGCOLOR;
-import static megamek.client.ui.swing.tooltip.TipUtil.LIGHT_BGCOLOR;
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 import static megamek.client.ui.swing.util.UIUtil.uiBlack;
 
 public final class HexTooltip {
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     public static String getHexTip(Hex mhex, @Nullable Client client) {
         StringBuilder result = new StringBuilder();
@@ -60,7 +60,7 @@ public final class HexTooltip {
             sFuelTank = guiScaledFontHTML(uiBlack()) + sFuelTank + "</FONT>";
             String col = "<TD>" + sFuelTank + "</TD>";
             String row = "<TR>" + col + "</TR>";
-            String table = "<TABLE BORDER=0 BGCOLOR=" + LIGHT_BGCOLOR + " width=100%>" + row + "</TABLE>";
+            String table = "<TABLE BORDER=0 BGCOLOR=" + GUIP.hexColor(GUIP.getUnitToolTipLightBGColor()) + " width=100%>" + row + "</TABLE>";
             result.append(table);
         }
 
@@ -79,7 +79,7 @@ public final class HexTooltip {
                 sBuilding = guiScaledFontHTML(uiBlack()) + sBuilding + "</FONT>";
                 String col = "<TD>" + sBuilding + "</TD>";
                 String row = "<TR>" + col + "</TR>";
-                String table = "<TABLE BORDER=0 BGCOLOR=" + LIGHT_BGCOLOR + " width=100%>" + row + "</TABLE>";
+                String table = "<TABLE BORDER=0 BGCOLOR=" + GUIP.hexColor(GUIP.getUnitToolTipLightBGColor()) + " width=100%>" + row + "</TABLE>";
                 result.append(table);
             } else {
                 Building bldg = game.getBoard().getBuildingAt(mcoords);
@@ -96,7 +96,7 @@ public final class HexTooltip {
                 sBuilding = guiScaledFontHTML(uiBlack()) + sBuilding + "</FONT>";
                 String col = "<TD>" + sBuilding + "</TD>";
                 String row = "<TR>" + col + "</TR>";
-                String table = "<TABLE BORDER=0 BGCOLOR=" + BUILDING_BGCOLOR + " width=100%>" + row + "</TABLE>";
+                String table = "<TABLE BORDER=0 BGCOLOR=" + GUIP.hexColor(GUIP.getUnitToolTipBuildingBGColor()) + " width=100%>" + row + "</TABLE>";
                 result.append(table);
             }
         }
@@ -121,7 +121,7 @@ public final class HexTooltip {
             sBridge = guiScaledFontHTML(uiBlack()) + sBridge + "</FONT>";
             String col = "<TD>" + sBridge + "</TD>";
             String row = "<TR>" + col + "</TR>";
-            String table = "<TABLE BORDER=0 BGCOLOR=" + LIGHT_BGCOLOR + " width=100%>" + row + "</TABLE>";
+            String table = "<TABLE BORDER=0 BGCOLOR=" + GUIP.hexColor(GUIP.getUnitToolTipLightBGColor()) + " width=100%>" + row + "</TABLE>";
             result.append(table);
         }
 
@@ -173,7 +173,7 @@ public final class HexTooltip {
         sBuilding = guiScaledFontHTML(uiBlack()) + sBuilding + "</FONT>";
         String col = "<TD>" + sBuilding + "</TD>";
         String row = "<TR>" + col + "</TR>";
-        String table = "<TABLE BORDER=0 BGCOLOR=" + BUILDING_BGCOLOR + " width=100%>" + row + "</TABLE>";
+        String table = "<TABLE BORDER=0 BGCOLOR=" + GUIP.hexColor(GUIP.getUnitToolTipBuildingBGColor()) + " width=100%>" + row + "</TABLE>";
         result += table;
         return result;
     }

@@ -41,8 +41,6 @@ public final class PilotToolTip {
 
     /** the portrait base size */
     public final static int PORTRAIT_BASESIZE = 72;
-    final static String BG_COLOR = "#313131";
-
     final static String TEMP_DIR = "/temp/";
     final static String PORTRAIT_PREFIX = "TT_Portrait_";
     final static String PNG_EXT = ".png";
@@ -95,8 +93,8 @@ public final class PilotToolTip {
         cols += crewPickedUpCell(entity);
         row = "<TR>" + cols + "</TR>";
         rows += row;
-        String table = "<TABLE BORDER=0 BGCOLOR=" + BG_COLOR + " >" + rows + "</TABLE>";
-        result += "<DIV BGCOLOR=" + BG_COLOR + "  width=100% >" + table + "</DIV>";
+        String table = "<TABLE BORDER=0>" + rows + "</TABLE>";
+        result += "<DIV width=100% >" + table + "</DIV>";
 
         if (!detailed) {
             result += "<HR STYLE=WIDTH:90% />";

@@ -179,6 +179,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String UNIT_TOOLTIP_ARMORMINI_COLOR_DAMAGED = "UnitToolTipArmorMiniColorDamaged";
     public static final String UNIT_TOOLTIP_ARMORMINI_FONT_SIZE_MOD = "UnitToolTipArmorMiniFrontSizeMod";
 
+    public static final String UNIT_TOOLTIP_BGCOLOR = "UnitToolTipBGColor";
+    public static final String UNIT_TOOLTIP_FGCOLOR = "UnitToolTipFGColor";
+    public static final String UNIT_TOOLTIP_LIGHT_BGCOLOR = "UnitToolTipLightBGColor";
+    public static final String UNIT_TOOLTIP_BUILDING_BGCOLOR = "UnitToolTipBuildingBGColor";
+    public static final String UNIT_TOOLTIP_ALT_BGCOLOR = "UnitToolTipAltBGColor";
+    public static final String UNIT_TOOLTIP_BLOCK_BGCOLOR = "UnitToolTipBlockBGColor";
+    public static final String UNIT_TOOLTIP_TERRAIN_BGCOLOR = "UnitToolTipTerainBGColor";
+
     public static final String SPLIT_PANE_A_DIVIDER_LOCATION = "SplitPaneADividerLocation";
     public static final String GAME_SUMMARY_BOARD_VIEW = "GameSummaryBoardView";
     public static final String GAME_SUMMARY_MINIMAP = "GameSummaryMinimap";
@@ -552,6 +560,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(UNIT_DISPLAY_MECH_ARMOR_SMALL_FONT_SIZE, 9);
         store.setDefault(UNIT_DISPLAY_MECH_LARGE_FONT_SIZE, 12);
         store.setDefault(UNIT_DISPLAY_MECH_MEDIUM_FONT_SIZE, 10);
+        setDefault(UNIT_DISPLAY_WEAPON_LIST_HEIGHT, 200);
 
         store.setDefault(UNIT_TOOLTIP_SEENBYRESOLUTION, 3);
         store.setDefault(UNIT_TOOLTIP_ARMORMINI_UNITS_PER_BLOCK, 10);
@@ -564,7 +573,13 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(UNIT_TOOLTIP_ARMORMINI_COLOR_PARTIAL_DMG, DEFAULT_MEDIUM_YELLOW);
         setDefault(UNIT_TOOLTIP_ARMORMINI_COLOR_DAMAGED, DEFAULT_MEDIUM_DARK_RED);
         store.setDefault(UNIT_TOOLTIP_ARMORMINI_FONT_SIZE_MOD, -2);
-        setDefault(UNIT_DISPLAY_WEAPON_LIST_HEIGHT, 200);
+        setDefault(UNIT_TOOLTIP_BGCOLOR, new Color(0x313131));
+        setDefault(UNIT_TOOLTIP_FGCOLOR, new Color(0xEEE6D9));
+        setDefault(UNIT_TOOLTIP_LIGHT_BGCOLOR, new Color(0x999999));
+        setDefault(UNIT_TOOLTIP_BUILDING_BGCOLOR, new Color(0xCCCC99));
+        setDefault(UNIT_TOOLTIP_ALT_BGCOLOR, new Color(0xFFDDDD));
+        setDefault(UNIT_TOOLTIP_BLOCK_BGCOLOR, new Color(0x000060));
+        setDefault(UNIT_TOOLTIP_TERRAIN_BGCOLOR, new Color(0x8DAF8D));
 
         store.setDefault(GAME_SUMMARY_BOARD_VIEW, false);
         store.setDefault(ENTITY_OWNER_LABEL_COLOR, true);
@@ -2709,6 +2724,34 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return getInt(UNIT_TOOLTIP_ARMORMINI_FONT_SIZE_MOD);
     }
 
+    public Color getUnitToolTipBGColor() {
+        return getColor(UNIT_TOOLTIP_BGCOLOR);
+    }
+
+    public Color getUnitToolTipFGColor() {
+        return getColor(UNIT_TOOLTIP_FGCOLOR);
+    }
+
+    public Color getUnitToolTipLightBGColor() {
+        return getColor(UNIT_TOOLTIP_LIGHT_BGCOLOR);
+    }
+
+    public Color getUnitToolTipBuildingBGColor() {
+        return getColor(UNIT_TOOLTIP_BUILDING_BGCOLOR);
+    }
+
+    public Color getUnitToolTipAltBGColor() {
+        return getColor(UNIT_TOOLTIP_ALT_BGCOLOR);
+    }
+
+    public Color getUnitToolTipBlockBGColor() {
+        return getColor(UNIT_TOOLTIP_BLOCK_BGCOLOR);
+    }
+
+    public Color getUnitToolTipTerrainBGColor() {
+        return getColor(UNIT_TOOLTIP_TERRAIN_BGCOLOR);
+    }
+
     public boolean getDockOnLeft() {
         return getBoolean(DOCK_ON_LEFT);
     }
@@ -2849,6 +2892,34 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(UNIT_TOOLTIP_ARMORMINI_FONT_SIZE_MOD, i);
     }
 
+    public void setUnitToolTipBGColor(Color c) {
+        store.setValue(UNIT_TOOLTIP_BGCOLOR, getColorString(c));
+    }
+
+    public void setUnitToolTipFGColor(Color c) {
+        store.setValue(UNIT_TOOLTIP_FGCOLOR, getColorString(c));
+    }
+
+    public void setUnitTooltipLightBgcolor(Color c) {
+        store.setValue(UNIT_TOOLTIP_LIGHT_BGCOLOR, getColorString(c));
+    }
+
+    public void setUnitTooltipBuildingBgcolor(Color c) {
+        store.setValue(UNIT_TOOLTIP_BUILDING_BGCOLOR, getColorString(c));
+    }
+
+    public void setUnitTooltipAltBgcolor(Color c) {
+        store.setValue(UNIT_TOOLTIP_ALT_BGCOLOR, getColorString(c));
+    }
+
+    public void setUnitTooltipBlockBgcolor(Color c) {
+        store.setValue(UNIT_TOOLTIP_BLOCK_BGCOLOR, getColorString(c));
+    }
+
+    public void setUnitTooltipTerrainBgcolor(Color c) {
+        store.setValue(UNIT_TOOLTIP_TERRAIN_BGCOLOR, getColorString(c));
+    }
+
     public void setDockOnLeft(Boolean state) {
         store.setValue(DOCK_ON_LEFT, state);
     }
@@ -2968,6 +3039,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         final String text = store.getString(name);
         final Color colour = parseRGB(text);
         return (colour == null) ? PlayerColour.parseFromString(text).getColour() : colour;
+    }
+
+    public static String hexColor(Color color) {
+        return String.format("#%06x", Integer.valueOf(color.getRGB() & 0x00FFFFFF));
     }
 
     public void setColor(String name, Color c) {

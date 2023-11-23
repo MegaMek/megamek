@@ -5499,7 +5499,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             sTrerain = guiScaledFontHTML(uiBlack()) + sTrerain + "</FONT>";
             String col = "<TD>" + sTrerain + "</TD>";
             String row = "<TR>" + col + "</TR>";
-            String table = "<TABLE BORDER=0 BGCOLOR=" + TERRAIN_BGCOLOR + " width=100%>" + row + "</TABLE>";
+            String table = "<TABLE BORDER=0 BGCOLOR=" + GUIP.hexColor(GUIP.getUnitToolTipTerrainBGColor()) + " width=100%>" + row + "</TABLE>";
             result += table;
 
             StringBuffer sbBuildings = new StringBuffer();
@@ -5584,7 +5584,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                     rows += row;
                 }
 
-                String table = "<TABLE BORDER=0 BGCOLOR=" + ALT_BGCOLOR + " width=100%>" + rows + "</TABLE>";
+                String table = "<TABLE BORDER=0 BGCOLOR=" + GUIP.hexColor(GUIP.getUnitToolTipAltBGColor()) + " width=100%>" + rows + "</TABLE>";
                 result += table;
             }
         }
@@ -5618,7 +5618,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             sUnitsInfo = guiScaledFontHTML(UIUtil.uiWhite()) + sUnitsInfo + "</FONT>";
             String col = "<TD>" + sUnitsInfo + "</TD>";
             String row = "<TR>" + col + "</TR>";
-            String table = "<TABLE BORDER=0 BGCOLOR=" + BLOCK_BGCOLOR + " width=100%>" + row + "</TABLE>";
+            String table = "<TABLE BORDER=0 BGCOLOR=" + GUIP.hexColor(GUIP.getUnitToolTipBGColor()) + " width=100%>" + row + "</TABLE>";
             result += table;
         }
 
@@ -5629,7 +5629,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 sAttackSprite = guiScaledFontHTML(uiBlack()) + sAttackSprite + "</FONT>";
                 String col = "<TD>" + sAttackSprite + "</TD>";
                 String row = "<TR>" + col + "</TR>";
-                String table = "<TABLE BORDER=0 BGCOLOR=" + ALT_BGCOLOR + " width=100%>" + row + "</TABLE>";
+                String table = "<TABLE BORDER=0 BGCOLOR=" + GUIP.hexColor(GUIP.getUnitToolTipAltBGColor()) + " width=100%>" + row + "</TABLE>";
                 result += table;
             }
         }
@@ -5666,7 +5666,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             msg_artilleryatack = guiScaledFontHTML(UIUtil.uiWhite()) + msg_artilleryatack + "</FONT>";
             String col = "<TD>" + msg_artilleryatack + "</TD>";
             String row = "<TR>" + col + "</TR>";
-            String table = "<TABLE BORDER=0 BGCOLOR=" + BLOCK_BGCOLOR + " width=100%>" + row + "</TABLE>";
+            String table = "<TABLE BORDER=0 BGCOLOR=" + GUIP.hexColor(GUIP.getUnitToolTipBlockBGColor()) + " width=100%>" + row + "</TABLE>";
             result += table;
         }
 
@@ -5728,10 +5728,10 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
         String div = "<DIV WIDTH=" + UIUtil.scaleForGUI(500) + ">" + result + "</DIV>";
         StringBuffer txt = new StringBuffer();
-        txt.append(HTML_BEGIN + div + HTML_END);
+        txt.append("<HTML><BODY style=\"color:" + GUIP.hexColor(GUIP.getUnitToolTipFGColor()) + "; background-color:" + GUIP.hexColor(GUIP.getUnitToolTipBGColor()) + ";\">" + div + HTML_END);
 
         // Check to see if the tool tip is completely empty
-        if (txt.toString().equals(HTML_BEGIN +HTML_END)) {
+        if (txt.toString().equals("<HTML><BODY style=\"color:" + GUIP.hexColor(GUIP.getUnitToolTipFGColor()) + "; background-color:" + GUIP.hexColor(GUIP.getUnitToolTipBGColor()) + ";\">" + HTML_END)) {
             return "";
         }
 
@@ -5788,7 +5788,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         // Entity tooltip
         String col2 = "<TD>" + UnitToolTip.getEntityTipGame(entity, getLocalPlayer()) + "</TD>";
         String row = "<TR>" + col1 + col2 +  "</TR>";
-        String table = "<TABLE WIDTH=100% BGCOLOR=" + BGCOLOR + ">" + row + "</TABLE>";
+        String table = "<TABLE WIDTH=100% BGCOLOR=" + GUIP.hexColor(GUIP.getUnitToolTipBGColor()) + ">" + row + "</TABLE>";
         result += table;
 
         txt.append(result);

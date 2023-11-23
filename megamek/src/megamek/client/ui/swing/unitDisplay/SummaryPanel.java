@@ -41,6 +41,8 @@ public class SummaryPanel extends PicMap {
     private UnitDisplay unitDisplay;
     private JLabel unitInfo;
 
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
     /**
      * @param unitDisplay the UnitDisplay UI to attach to
      */
@@ -126,12 +128,12 @@ public class SummaryPanel extends PicMap {
         Player localPlayer = unitDisplay.getClientGUI().getClient().getLocalPlayer();
 
         if (entity == null) {
-            unitInfo.setText(HTML_BEGIN + padLeft("No Unit") +HTML_END);
+            unitInfo.setText("<HTML><BODY style=\"color:" + GUIP.hexColor(GUIP.getUnitToolTipFGColor()) + "; background-color:" + GUIP.hexColor(GUIP.getUnitToolTipBGColor()) + ";\">" + padLeft("No Unit") +HTML_END);
             return;
         }
 
         if (EntityVisibilityUtils.onlyDetectedBySensors(localPlayer, entity)) {
-            unitInfo.setText( HTML_BEGIN + padLeft( Messages.getString("BoardView1.sensorReturn")) +HTML_END);
+            unitInfo.setText("<HTML><BODY style=\"color:" + GUIP.hexColor(GUIP.getUnitToolTipFGColor()) + "; background-color:" + GUIP.hexColor(GUIP.getUnitToolTipBGColor()) + ";\">" + padLeft( Messages.getString("BoardView1.sensorReturn")) +HTML_END);
         } else {
             // This is html tables inside tables to maintain transparency to the bg image but
             // also allow cells do have bg colors
@@ -149,16 +151,16 @@ public class SummaryPanel extends PicMap {
                 bv.appendTerrainTooltip(sb, mhex);
                 col = "<TD>" + sb + "</TD>";
                 row = "<TR>" + col + "</TR>";
-                hexTxt.append("<TABLE BORDER=0 BGCOLOR=" + TERRAIN_BGCOLOR + " width=100%>" + row + "</TABLE>");
+                hexTxt.append("<TABLE BORDER=0 BGCOLOR=" + GUIP.hexColor(GUIP.getUnitToolTipTerrainBGColor()) + " width=100%>" + row + "</TABLE>");
                 bv.appendBuildingsTooltip(hexTxt, mhex);
             }
 
             String t = PilotToolTip.getCrewAdvs(entity, true).toString();
             col = "<TD>" + t + "</TD>";
             row = "<TR>" + col + "</TR>";
-            hexTxt.append("<TABLE BGCOLOR=#313131 width=100%>" + row + "</TABLE>");
+            hexTxt.append("<TABLE width=100%>" + row + "</TABLE>");
 
-            unitInfo.setText(HTML_BEGIN + padLeft(hexTxt.toString()) + HTML_END);
+            unitInfo.setText("<HTML><BODY style=\"color:" + GUIP.hexColor(GUIP.getUnitToolTipFGColor()) + "; background-color:" + GUIP.hexColor(GUIP.getUnitToolTipBGColor()) + ";\">" + padLeft(hexTxt.toString()) + HTML_END);
         }
         unitInfo.setOpaque(false);
     }

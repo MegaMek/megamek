@@ -151,6 +151,11 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private JTextField maxPathfinderTime;
     private final JCheckBox getFocus = new JCheckBox(Messages.getString("CommonSettingsDialog.getFocus"));
     private JSlider guiScale;
+    private ColourSelectorButton csbWarningColor;
+    private ColourSelectorButton csbCautionColor;
+    private ColourSelectorButton csbPrecautionColor;
+
+    ArrayList<PlayerColourHelper> playerColours;
 
     // Audio Tab
     private final JLabel masterVolumeLabel = new JLabel(Messages.getString("CommonSettingsDialog.masterVolume"));
@@ -278,20 +283,15 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private List<String> tileSets;
     private final MMToggleButton choiceToggle = new MMToggleButton(Messages.getString("CommonSettingsDialog.keyBinds.buttoneTabbing"));
     private final MMButton defaultKeyBindButton = new MMButton("default", Messages.getString("CommonSettingsDialog.keyBinds.buttonDefault"));
-    private ColourSelectorButton csbWarningColor;
-    private ColourSelectorButton csbCautionColor;
-    private ColourSelectorButton csbPrecautionColor;
 
-    ArrayList<PlayerColourHelper> playerColours;
 
-    private JComboBox unitDisplayAutoDisplayReportCombo;
-    private JComboBox unitDisplayAutoDisplayNonReportCombo;
-    private JComboBox miniMapAutoDisplayReportCombo;
-    private JComboBox miniMapAutoDisplayNonReportCombo;
-    private JComboBox miniReportAutoDisplayReportCombo;
-    private JComboBox miniReportAutoDisplayNonReportCombo;
-    private JComboBox playerListAutoDisplayReportCombo;
-    private JComboBox playerListAutoDisplayNonReportCombo;
+    private ColourSelectorButton csbUnitTooltipBGColor;
+    private ColourSelectorButton csbUnitTooltipFGColor;
+    private ColourSelectorButton csbUnitTooltipLightBGColor;
+    private ColourSelectorButton csbUnitTooltipBuildingBGColor;
+    private ColourSelectorButton csbUnitTooltipAltBGColor;
+    private ColourSelectorButton csbUnitTooltipBlockBGColor;
+    private ColourSelectorButton csbUnitTooltipTerrainBGColor;
 
     private ColourSelectorButton csbUnitDisplayHeatLevel1;
     private ColourSelectorButton csbUnitDisplayHeatLevel2;
@@ -325,6 +325,16 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private JTextField unitDisplayMechArmorSmallFontSizeText;
     private JTextField unitDisplayMechLargeFontSizeText;
     private JTextField unitDisplayMechMeduimFontSizeText;
+
+    // Auto Display
+    private JComboBox unitDisplayAutoDisplayReportCombo;
+    private JComboBox unitDisplayAutoDisplayNonReportCombo;
+    private JComboBox miniMapAutoDisplayReportCombo;
+    private JComboBox miniMapAutoDisplayNonReportCombo;
+    private JComboBox miniReportAutoDisplayReportCombo;
+    private JComboBox miniReportAutoDisplayNonReportCombo;
+    private JComboBox playerListAutoDisplayReportCombo;
+    private JComboBox playerListAutoDisplayNonReportCombo;
 
     // Report
     private JTextPane reportKeywordsTextPane;
@@ -951,6 +961,30 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         comps.add(checkboxEntry(showWpsinTT, null));
         comps.add(checkboxEntry(showWpsLocinTT, null));
         comps.add(checkboxEntry(showPilotPortraitTT, null));
+
+        row = new ArrayList<>();
+        csbUnitTooltipFGColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitTooltipFGColor"));
+        csbUnitTooltipFGColor.setColour(GUIP.getUnitToolTipFGColor());
+        row.add(csbUnitTooltipFGColor);
+        csbUnitTooltipBGColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitTooltipBGColor"));
+        csbUnitTooltipBGColor.setColour(GUIP.getUnitToolTipBGColor());
+        row.add(csbUnitTooltipBGColor);
+        csbUnitTooltipLightBGColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitTooltipLightBGColor"));
+        csbUnitTooltipLightBGColor.setColour(GUIP.getUnitToolTipLightBGColor());
+        row.add(csbUnitTooltipLightBGColor);
+        csbUnitTooltipBuildingBGColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitTooltipBuildingBGColor"));
+        csbUnitTooltipBuildingBGColor.setColour(GUIP.getUnitToolTipBuildingBGColor());
+        row.add(csbUnitTooltipBuildingBGColor);
+        csbUnitTooltipAltBGColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitTooltipAltBGColor"));
+        csbUnitTooltipAltBGColor.setColour(GUIP.getUnitToolTipAltBGColor());
+        row.add(csbUnitTooltipAltBGColor);
+        csbUnitTooltipBlockBGColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitTooltipBlockBGColor"));
+        csbUnitTooltipBlockBGColor.setColour(GUIP.getUnitToolTipBlockBGColor());
+        row.add(csbUnitTooltipBlockBGColor);
+        csbUnitTooltipTerrainBGColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitTooltipTerrainBGColor"));
+        csbUnitTooltipTerrainBGColor.setColour(GUIP.getUnitToolTipTerrainBGColor());
+        row.add(csbUnitTooltipTerrainBGColor);
+        comps.add(row);
 
         addLineSpacer(comps);
 
@@ -1830,6 +1864,14 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         unitDisplayMechLargeFontSizeText.setText(String.format("%d", GUIP.getUnitDisplayMechLargeFontSize()));
         unitDisplayMechMeduimFontSizeText.setText(String.format("%d", GUIP.getUnitDisplayMechMediumFontSize()));
 
+        csbUnitTooltipBGColor.setColour(GUIP.getUnitToolTipBGColor());
+        csbUnitTooltipFGColor.setColour(GUIP.getUnitToolTipFGColor());
+        csbUnitTooltipLightBGColor.setColour(GUIP.getUnitToolTipLightBGColor());
+        csbUnitTooltipBuildingBGColor.setColour(GUIP.getUnitToolTipBuildingBGColor());
+        csbUnitTooltipAltBGColor.setColour(GUIP.getUnitToolTipAltBGColor());
+        csbUnitTooltipBlockBGColor.setColour(GUIP.getUnitToolTipBlockBGColor());
+        csbUnitTooltipTerrainBGColor.setColour(GUIP.getUnitToolTipTerrainBGColor());
+
         csbUnitTooltipArmorMiniIntact.setColour(GUIP.getUnitTooltipArmorMiniColorIntact());
         csbUnitTooltipArmorMiniPartial.setColour(GUIP.getUnitTooltipArmorMiniColorPartialDamage());
         csbUnitTooltipArmorMiniDamaged.setColour(GUIP.getUnitTooltipArmorMiniColorDamaged());
@@ -2264,6 +2306,14 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         } catch (Exception ex) {
             LogManager.getLogger().error("", ex);
         }
+
+        GUIP.setUnitToolTipBGColor(csbUnitTooltipBGColor.getColour());
+        GUIP.setUnitToolTipFGColor(csbUnitTooltipFGColor.getColour());
+        GUIP.setUnitTooltipLightBgcolor(csbUnitTooltipLightBGColor.getColour());
+        GUIP.setUnitTooltipBuildingBgcolor(csbUnitTooltipBuildingBGColor.getColour());
+        GUIP.setUnitTooltipAltBgcolor(csbUnitTooltipAltBGColor.getColour());
+        GUIP.setUnitTooltipBlockBgcolor(csbUnitTooltipBlockBGColor.getColour());
+        GUIP.setUnitTooltipTerrainBgcolor(csbUnitTooltipTerrainBGColor.getColour());
 
         GUIP.setUnitTooltipArmorminiColorIntact(csbUnitTooltipArmorMiniIntact.getColour());
         GUIP.setUnitTooltipArmorminiColorPartialDamage(csbUnitTooltipArmorMiniPartial.getColour());

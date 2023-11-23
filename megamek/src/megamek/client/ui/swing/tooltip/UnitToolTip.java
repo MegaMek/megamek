@@ -125,7 +125,7 @@ public final class UnitToolTip {
         if (entity instanceof FighterSquadron && entity.getLoadedUnits().isEmpty()) {
             String col = "<TD>" + result + "</TD>";
             String row = "<TR>" + col + "</TR>";
-            String table = "<TABLE BGCOLOR=#313131 width=100%>" + row + "</TABLE>";
+            String table = "<TABLE width=100%>" + row + "</TABLE>";
             return new StringBuilder().append(table);
         }
 
@@ -161,7 +161,7 @@ public final class UnitToolTip {
 
         String col = "<TD>" + result + "</TD>";
         String row = "<TR>" + col + "</TR>";
-        String table = "<TABLE BGCOLOR=#313131 width=100%>" + row + "</TABLE>";
+        String table = "<TABLE width=100%>" + row + "</TABLE>";
 
         return new StringBuilder().append(table);
     }

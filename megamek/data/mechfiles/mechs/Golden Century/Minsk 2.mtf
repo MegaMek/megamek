@@ -2,6 +2,7 @@ Version:1.1
 Minsk
 2
 mul id:7641
+base unit:data/mechfiles/mechs/Golden Century/Minsk.mtf
 
 Config:Biped
 techbase:Mixed (Clan Chassis)

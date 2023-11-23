@@ -2,6 +2,7 @@ Version:1.0
 Ryoken II
 2
 mul id:2759
+base unit:data/mechfiles/mechs/3075/Ryoken II.mtf
 
 Config:Biped
 techbase:Clan

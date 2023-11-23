@@ -2,6 +2,7 @@ Version:1.0
 Hellion
 G
 mul id:6939
+base unit:data/mechfiles/mechs/3067/Hellion Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Mixed (Clan Chassis)

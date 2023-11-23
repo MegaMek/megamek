@@ -2,6 +2,7 @@ Version:1.0
 Morrigan
 2
 mul id:2229
+base unit:data/mechfiles/mechs/3085u/Cutting Edge/Morrigan.mtf
 
 Config:Biped
 TechBase:Clan

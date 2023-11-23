@@ -2,6 +2,7 @@ Version:1.2
 Pack Hunter II
 3
 mul id:2398
+base unit:data/mechfiles/mechs/3085u/Cutting Edge/Pack Hunter II.mtf
 
 Config:Biped
 TechBase:Mixed (Clan Chassis)

@@ -2,6 +2,7 @@ Version:1.0
 Battle Cobra
 G
 mul id:8390
+base unit:data/mechfiles/mechs/3058Uu/Battle Cobra Prime.mtf
 
 Config:Biped Omnimech
 techbase:Clan

@@ -2,6 +2,7 @@ Version:1.0
 Corvis
 2
 mul id:701
+base unit:data/mechfiles/mechs/3060u/Corvis.mtf
 
 Config:Biped
 TechBase:Clan

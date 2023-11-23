@@ -10,6 +10,9 @@ source:Rec Guide:ilClan #14
 rules level:2
 role:Missile Boat
 
+quirk:battle_fists_la
+quirk:battle_fists_ra
+
 mass:40
 engine:240 Fusion (Clan) Engine(IS)
 structure:Clan Endo Steel

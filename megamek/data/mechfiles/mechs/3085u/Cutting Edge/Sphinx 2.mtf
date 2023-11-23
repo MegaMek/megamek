@@ -2,6 +2,7 @@ Version:1.0
 Sphinx
 2
 mul id:3006
+base unit:data/mechfiles/mechs/3085u/Cutting Edge/Sphinx.mtf
 
 Config:Biped
 TechBase:Clan

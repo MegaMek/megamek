@@ -2,6 +2,7 @@ Version:1.1
 Grendel (Mongrel)
 D
 mul id:1289
+base unit:data/mechfiles/mechs/3058Uu/Grendel (Mongrel) Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

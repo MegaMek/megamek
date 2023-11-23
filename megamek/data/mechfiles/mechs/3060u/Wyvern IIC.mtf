@@ -10,6 +10,8 @@ Source:TRO: 3060
 Rules Level:2
 role:Skirmisher
 
+quirk:pro_actuator
+
 Mass:45
 Engine:180 Fusion (Clan) Engine
 Structure:Endo Steel

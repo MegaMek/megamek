@@ -2,6 +2,7 @@ Version:1.1
 Woodsman
 C
 mul id:7644
+base unit:data/mechfiles/mechs/Golden Century/Woodsman Prime.mtf
 
 Config:Biped Omnimech
 techbase:Clan

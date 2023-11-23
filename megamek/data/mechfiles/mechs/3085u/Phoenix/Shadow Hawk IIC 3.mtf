@@ -2,6 +2,7 @@ Version:1.0
 Shadow Hawk IIC
 3
 mul id:2913
+base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 20/Shadow Hawk IIC.mtf
 
 Config:Biped
 TechBase:Clan

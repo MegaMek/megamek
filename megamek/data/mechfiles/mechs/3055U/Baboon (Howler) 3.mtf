@@ -2,6 +2,7 @@ Version:1.0
 Baboon (Howler)
 3 'Devil'
 mul id:191
+base unit:data/mechfiles/mechs/3055U/Baboon (Howler).mtf
 
 Config:Biped
 TechBase:Clan

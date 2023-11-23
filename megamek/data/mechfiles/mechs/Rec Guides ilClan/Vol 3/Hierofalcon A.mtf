@@ -2,6 +2,7 @@ Version:1.0
 Hierofalcon
 A
 mul id:7485
+base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 3/Hierofalcon Prime.mtf
 
 Config:Biped Omnimech
 techbase:Clan

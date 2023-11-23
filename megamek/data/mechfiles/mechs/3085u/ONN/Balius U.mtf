@@ -2,6 +2,7 @@ Version:1.0
 Balius
 U
 mul id:216
+base unit:data/mechfiles/mechs/3075/Balius Prime.mtf
 
 Config:Quad Omnimech
 TechBase:Clan

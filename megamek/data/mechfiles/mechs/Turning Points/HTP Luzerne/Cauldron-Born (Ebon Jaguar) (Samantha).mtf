@@ -2,6 +2,7 @@ Version:1.1
 Cauldron-Born (Ebon Jaguar)
 (Samantha)
 mul id:5862
+base unit:data/mechfiles/mechs/3058Uu/Cauldron-Born (Ebon Jaguar) Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

@@ -2,6 +2,7 @@ Version:1.0
 Grizzly
 2
 mul id:1333
+base unit:data/mechfiles/mechs/3058Uu/Grizzly.mtf
 
 Config:Biped
 TechBase:Clan

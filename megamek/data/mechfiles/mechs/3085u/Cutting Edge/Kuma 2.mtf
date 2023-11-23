@@ -2,6 +2,7 @@ Version:1.0
 Kuma
 2
 mul id:1847
+base unit:data/mechfiles/mechs/3085u/Cutting Edge/Kuma.mtf
 
 Config:Biped
 TechBase:Clan

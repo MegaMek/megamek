@@ -2,6 +2,7 @@ Version:1.0
 Thresher
 (Edward)
 mul id:3197
+base unit:data/mechfiles/mechs/3058Uu/Thresher.mtf
 
 Config:Biped
 techbase:Mixed (Clan Chassis)

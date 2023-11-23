@@ -2,6 +2,8 @@ Version:1.0
 Arctic Wolf
 A
 mul id:101
+base unit:data/mechfiles/mechs/3060u/Arctic Wolf Prime.mtf
+base unit:data/mechfiles/mechs/3060u/Arctic Wolf.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

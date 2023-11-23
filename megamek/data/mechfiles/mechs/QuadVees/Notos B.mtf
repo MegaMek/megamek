@@ -2,6 +2,7 @@ Version:1.1
 Notos
 B
 mul id:7372
+base unit:data/mechfiles/mechs/QuadVees/Notos Prime.mtf
 
 Config:QuadVee Omnimech
 TechBase:Clan

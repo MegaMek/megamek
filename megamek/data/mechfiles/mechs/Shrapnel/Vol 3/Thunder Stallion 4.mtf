@@ -2,6 +2,7 @@ Version:1.0
 Thunder Stallion
 4
 mul id:7720
+base unit:data/mechfiles/mechs/3060u/Thunder Stallion.mtf
 
 Config:Quad
 techbase:Clan

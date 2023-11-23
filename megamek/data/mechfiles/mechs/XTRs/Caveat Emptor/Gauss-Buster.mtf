@@ -10,6 +10,10 @@ source:XTR: Caveat Emptor
 rules level:5
 role:Sniper
 
+quirk:easy_maintain
+quirk:stable
+quirk:illegal_design
+
 mass:50
 engine:150 ICE Engine(IS)
 structure:IS Industrial

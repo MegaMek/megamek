@@ -3,6 +3,7 @@ Great Wyrm
 (Aemelia)
 mul id:1283
 source:Record Sheets: Unique Mechs
+base unit:data/mechfiles/mechs/3060u/Great Wyrm.mtf
 
 Config:Biped
 TechBase:Clan

@@ -2,6 +2,7 @@ Version:1.0
 Atlas II
 AS7-DK-H
 mul id:8459
+base unit:data/mechfiles/mechs/3075/Atlas II AS7-D-H.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

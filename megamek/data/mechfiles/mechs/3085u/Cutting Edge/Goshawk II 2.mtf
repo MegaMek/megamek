@@ -2,6 +2,7 @@ Version:1.0
 Goshawk II
 2
 mul id:1247
+base unit:data/mechfiles/mechs/3085u/Cutting Edge/Goshawk II.mtf
 
 Config:Biped
 TechBase:Clan

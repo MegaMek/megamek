@@ -2,6 +2,7 @@ Version:1.0
 Gladiator (Executioner)
 H
 mul id:1208
+base unit:data/mechfiles/mechs/3050U/Gladiator (Executioner) Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

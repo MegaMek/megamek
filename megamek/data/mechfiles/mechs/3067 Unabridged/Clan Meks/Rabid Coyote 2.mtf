@@ -2,6 +2,7 @@ Version:1.1
 Rabid Coyote
 2
 mul id:5682
+base unit:data/mechfiles/mechs/3067/Rabid Coyote.mtf
 
 Config:Biped
 TechBase:Clan

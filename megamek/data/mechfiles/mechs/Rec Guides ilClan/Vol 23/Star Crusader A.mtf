@@ -2,6 +2,7 @@ Version:1.0
 Star Crusader
 A
 mul id:8426
+base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 23/Star Crusader Prime.mtf
 
 Config:Biped Omnimech
 techbase:Clan

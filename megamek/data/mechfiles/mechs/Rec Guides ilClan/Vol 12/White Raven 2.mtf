@@ -2,6 +2,7 @@ Version:1.0
 White Raven
 2
 mul id:7795
+base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 12/White Raven.mtf
 
 Config:Biped
 techbase:Clan

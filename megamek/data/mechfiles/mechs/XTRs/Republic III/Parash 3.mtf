@@ -2,6 +2,7 @@ Version:1.1
 Parash
 3
 mul id:7375
+base unit:data/mechfiles/mechs/3085u/Cutting Edge/Parash.mtf
 
 Config:Biped
 TechBase:Mixed (Clan Chassis)

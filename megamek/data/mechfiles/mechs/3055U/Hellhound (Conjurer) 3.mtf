@@ -2,6 +2,7 @@ Version:1.0
 Hellhound (Conjurer)
 3
 mul id:1475
+base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 5/Hellhound (Conjurer).mtf
 
 Config:Biped
 TechBase:Clan

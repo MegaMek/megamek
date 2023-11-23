@@ -2,6 +2,7 @@ Version:1.0
 Karhu
 B
 mul id:1749
+base unit:data/mechfiles/mechs/3085u/Cutting Edge/Karhu Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

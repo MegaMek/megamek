@@ -2,6 +2,7 @@ Version:1.1
 Vulture (Mad Dog)
 A
 mul id:3466
+base unit:data/mechfiles/mechs/3050U/Vulture (Mad Dog) Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

@@ -2,6 +2,7 @@ Version:1.0
 Dark Crow
 3
 mul id:825
+base unit:data/mechfiles/mechs/3085u/Cutting Edge/Dark Crow.mtf
 
 Config:Biped
 TechBase:Clan

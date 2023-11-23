@@ -11,6 +11,9 @@ Rules Level:4
 role:Striker
 History:Handheld weapons NOT available in MegaMek so none are included.
 
+quirk:cramped_cockpit
+quirk:reinforced_legs
+
 Mass:30
 Engine:240 XL (Clan) Engine(IS)
 Structure:Endo Steel

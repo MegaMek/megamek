@@ -2,6 +2,7 @@ Version:1.0
 Orion IIC
 'Burton'
 mul id:7403
+base unit:data/mechfiles/mechs/3060u/Orion IIC.mtf
 
 Config:Biped
 TechBase:Clan

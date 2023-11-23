@@ -2,6 +2,7 @@ Version:1.0
 Blood Kite
 2
 mul id:3837
+base unit:data/mechfiles/mechs/3067/Blood Kite.mtf
 
 Config:Biped
 TechBase:Clan

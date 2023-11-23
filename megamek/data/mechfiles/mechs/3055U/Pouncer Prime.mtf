@@ -10,6 +10,8 @@ Source:TRO: 3055
 Rules Level:2
 role:Sniper
 
+quirk:weak_head_2
+
 Mass:40
 Engine:240 XL (Clan) Engine(IS)
 Structure:Clan Endo Steel

@@ -2,6 +2,7 @@ Version:1.1
 Butcherbird (Ion Sparrow)
 D
 mul id:7742
+base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 11/Butcherbird (Ion Sparrow) Prime.mtf
 
 Config:Biped Omnimech
 techbase:Clan

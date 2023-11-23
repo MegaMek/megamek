@@ -1,6 +1,7 @@
 Version:1.3
 Vixen (Incubus)
 9
+base unit:data/mechfiles/mechs/3055U/Vixen (Incubus).mtf
 mul id:7544
 Config:Biped
 techbase:Mixed (Clan Chassis)

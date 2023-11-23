@@ -2,6 +2,7 @@ Version:1.1
 Man O' War (Gargoyle)
 E
 mul id:2006
+base unit:data/mechfiles/mechs/3050U/Man O' War (Gargoyle) Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

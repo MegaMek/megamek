@@ -2,6 +2,7 @@ Version:1.0
 Black Lanner
 G
 mul id:8186
+base unit:data/mechfiles/mechs/3058Uu/Black Lanner Prime.mtf
 
 Config:Biped Omnimech
 techbase:Clan

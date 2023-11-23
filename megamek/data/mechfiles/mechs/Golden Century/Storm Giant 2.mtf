@@ -2,6 +2,7 @@ Version:1.1
 Storm Giant
 2
 mul id:5145
+base unit:data/mechfiles/mechs/Golden Century/Storm Giant.mtf
 
 Config:Biped
 techbase:Clan

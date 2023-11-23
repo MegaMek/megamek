@@ -2,6 +2,7 @@ Version:1.0
 Beowulf IIC
 PR
 mul id:7294
+base unit:data/mechfiles/mechs/ProtoTypes/Beowulf IIC.mtf
 
 Config:Biped
 TechBase:Mixed (Clan Chassis)

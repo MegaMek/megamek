@@ -2,6 +2,7 @@ Version:1.0
 Sojourner
 C
 mul id:7446
+base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 2/Sojourner Prime.mtf
 
 Config:Biped Omnimech
 techbase:Clan

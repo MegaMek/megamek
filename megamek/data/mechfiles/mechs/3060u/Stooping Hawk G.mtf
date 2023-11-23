@@ -2,6 +2,7 @@ Version:1.0
 Stooping Hawk
 G
 mul id:3082
+base unit:data/mechfiles/mechs/3060u/Stooping Hawk Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

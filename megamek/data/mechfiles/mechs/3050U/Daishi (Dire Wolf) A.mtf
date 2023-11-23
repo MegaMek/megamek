@@ -2,6 +2,7 @@ Version:1.0
 Daishi (Dire Wolf)
 A
 mul id:813
+base unit:data/mechfiles/mechs/3050U/Daishi (Dire Wolf) Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

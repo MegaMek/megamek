@@ -2,6 +2,7 @@ Version:1.0
 Cygnus
 3
 mul id:783
+base unit:data/mechfiles/mechs/3075/Cygnus.mtf
 
 Config:Biped
 TechBase:Clan

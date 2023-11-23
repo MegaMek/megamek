@@ -2,6 +2,7 @@ Version:1.0
 Uller (Kit Fox)
 V
 mul id:7746
+base unit:data/mechfiles/mechs/3050U/Uller (Kit Fox) Prime.mtf
 
 Config:Biped Omnimech
 techbase:Clan

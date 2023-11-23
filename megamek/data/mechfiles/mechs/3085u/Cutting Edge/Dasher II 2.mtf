@@ -2,6 +2,7 @@ Version:1.0
 Dasher II
 2
 mul id:847
+base unit:data/mechfiles/mechs/3085u/Cutting Edge/Dasher II.mtf
 
 Config:Biped
 TechBase:Clan

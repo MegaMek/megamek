@@ -2,6 +2,7 @@ Version:1.2
 Dominator
 2
 mul id:7435
+base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 1/Dominator.mtf
 
 Config:Biped
 techbase:Clan

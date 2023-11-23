@@ -2,6 +2,7 @@ Version:1.0
 Battle Cobra
 F
 mul id:271
+base unit:data/mechfiles/mechs/3058Uu/Battle Cobra Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

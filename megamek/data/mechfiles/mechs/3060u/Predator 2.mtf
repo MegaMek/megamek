@@ -2,6 +2,7 @@ Version:1.0
 Predator
 2
 mul id:2568
+base unit:data/mechfiles/mechs/3060u/Predator.mtf
 
 Config:Biped
 TechBase:Clan

@@ -2,6 +2,7 @@ Version:1.1
 Lobo
 2
 mul id:5668
+base unit:data/mechfiles/mechs/3067/Lobo.mtf
 
 Config:Biped
 TechBase:Clan

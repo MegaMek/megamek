@@ -2,6 +2,7 @@ Version:1.0
 Piranha
 2
 mul id:2536
+base unit:data/mechfiles/mechs/3058Uu/Piranha.mtf
 
 Config:Biped
 TechBase:Clan

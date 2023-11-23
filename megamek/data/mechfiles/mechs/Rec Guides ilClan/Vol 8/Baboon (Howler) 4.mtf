@@ -2,6 +2,7 @@ Version:1.0
 Baboon (Howler)
 4
 mul id:7568
+base unit:data/mechfiles/mechs/3055U/Baboon (Howler).mtf
 
 Config:Biped
 techbase:Clan

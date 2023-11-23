@@ -2,6 +2,7 @@ Version:1.0
 Black Hawk (Nova)
 E
 mul id:339
+base unit:data/mechfiles/mechs/3050U/Black Hawk (Nova) Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

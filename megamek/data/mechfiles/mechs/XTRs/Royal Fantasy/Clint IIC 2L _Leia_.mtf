@@ -2,6 +2,7 @@ Version:1.0
 Clint IIC
 2L 'Leia'
 mul id:8369
+base unit:data/mechfiles/mechs/3060u/Clint IIC.mtf
 
 Config:Biped
 techbase:Mixed (Clan Chassis)

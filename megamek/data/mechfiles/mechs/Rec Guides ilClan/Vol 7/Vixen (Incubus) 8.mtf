@@ -2,6 +2,7 @@ Version:1.0
 Vixen (Incubus)
 8
 mul id:7543
+base unit:data/mechfiles/mechs/3055U/Vixen (Incubus).mtf
 
 Config:Biped
 techbase:Clan

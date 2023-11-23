@@ -2,6 +2,7 @@ Version:1.0
 Stalking Spider
 2
 mul id:3046
+base unit:data/mechfiles/mechs/3060u/Stalking Spider.mtf
 
 Config:Quad
 TechBase:Clan

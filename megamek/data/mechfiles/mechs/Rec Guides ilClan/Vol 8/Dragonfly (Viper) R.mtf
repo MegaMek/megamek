@@ -2,6 +2,7 @@ Version:1.0
 Dragonfly (Viper)
 R
 mul id:7588
+base unit:data/mechfiles/mechs/3050U/Dragonfly (Viper) Prime.mtf
 
 Config:Biped Omnimech
 techbase:Mixed (Clan Chassis)

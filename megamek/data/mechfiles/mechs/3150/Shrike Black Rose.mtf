@@ -1,6 +1,7 @@
 Version:1.3
 Shrike
 'Black Rose'
+base unit:data/mechfiles/mechs/3145/Clans/Shrike.mtf
 mul id:9215
 Config:Biped
 techbase:Clan

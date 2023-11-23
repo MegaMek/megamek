@@ -2,6 +2,7 @@ Version:1.0
 Star Adder (Blood Asp)
 C
 mul id:401
+base unit:data/mechfiles/mechs/3060u/Star Adder (Blood Asp) Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

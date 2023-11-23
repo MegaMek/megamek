@@ -2,6 +2,7 @@ Version:1.0
 Shadow Cat II
 2
 mul id:2893
+base unit:data/mechfiles/mechs/3085u/Cutting Edge/Shadow Cat II.mtf
 
 Config:Biped
 TechBase:Clan

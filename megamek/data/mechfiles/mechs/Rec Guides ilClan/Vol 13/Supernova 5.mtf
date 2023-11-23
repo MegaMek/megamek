@@ -2,6 +2,7 @@ Version:1.0
 Supernova
 5
 mul id:8132
+base unit:data/mechfiles/mechs/3058Uu/Supernova.mtf
 
 Config:Biped
 techbase:Clan

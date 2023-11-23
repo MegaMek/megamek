@@ -2,6 +2,7 @@ Version:1.0
 Deimos
 B
 mul id:854
+base unit:data/mechfiles/mechs/3085u/Cutting Edge/Deimos Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

@@ -2,6 +2,7 @@ Version:1.1
 Sun Bear
 B
 mul id:7625
+base unit:data/mechfiles/mechs/Golden Century/Sun Bear Prime.mtf
 
 Config:Biped Omnimech
 techbase:Clan

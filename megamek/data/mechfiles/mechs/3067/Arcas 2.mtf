@@ -2,6 +2,7 @@ Version:1.0
 Arcas
 2
 mul id:3718
+base unit:data/mechfiles/mechs/3067/Arcas.mtf
 
 Config:Biped
 TechBase:Clan

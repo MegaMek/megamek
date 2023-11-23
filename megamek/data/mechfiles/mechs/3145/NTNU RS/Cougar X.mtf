@@ -2,6 +2,7 @@ Version:1.0
 Cougar
 X
 mul id:6951
+base unit:data/mechfiles/mechs/3060u/Cougar Prime.mtf
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

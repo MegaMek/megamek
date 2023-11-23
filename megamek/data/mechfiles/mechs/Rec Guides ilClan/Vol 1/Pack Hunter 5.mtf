@@ -2,6 +2,7 @@ Version:1.0
 Pack Hunter
 5
 mul id:7440
+base unit:data/mechfiles/mechs/3060u/Pack Hunter.mtf
 
 Config:Biped
 techbase:Mixed (Clan Chassis)

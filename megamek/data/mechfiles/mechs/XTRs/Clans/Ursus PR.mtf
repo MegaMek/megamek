@@ -2,6 +2,7 @@ Version:1.0
 Ursus
 PR
 mul id:5330
+base unit:data/mechfiles/mechs/3060u/Ursus.mtf
 
 Config:Biped
 TechBase:Mixed (Clan Chassis)

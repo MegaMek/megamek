@@ -2,6 +2,7 @@ Version:1.0
 Stormwolf
 B
 mul id:8206
+base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 16/Stormwolf Prime.mtf
 
 Config:Biped Omnimech
 techbase:Clan

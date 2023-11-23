@@ -5618,7 +5618,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             sUnitsInfo = guiScaledFontHTML(UIUtil.uiWhite()) + sUnitsInfo + "</FONT>";
             String col = "<TD>" + sUnitsInfo + "</TD>";
             String row = "<TR>" + col + "</TR>";
-            String table = "<TABLE BORDER=0 BGCOLOR=" + GUIP.hexColor(GUIP.getUnitToolTipBGColor()) + " width=100%>" + row + "</TABLE>";
+            String table = "<TABLE BORDER=0 BGCOLOR=" + GUIP.hexColor(GUIP.getUnitToolTipBlockBGColor()) + " width=100%>" + row + "</TABLE>";
             result += table;
         }
 

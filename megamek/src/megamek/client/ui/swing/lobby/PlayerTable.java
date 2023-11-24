@@ -208,7 +208,7 @@ class PlayerTable extends JTable {
                     int SEx = player.getStartingAnySEx() + 1;
                     int SEy = player.getStartingAnySEy() + 1;
                     if ((NWx + NWy + SEx + SEy) > 0) {
-                        result.append("(" + NWx + ", " + NWy + ")-(" + SEx + ", " + SEy + ")");
+                        result.append(" (" + NWx + ", " + NWy + ")-(" + SEx + ", " + SEy + ")");
                     }
                 }
                 int so = player.getStartOffset();

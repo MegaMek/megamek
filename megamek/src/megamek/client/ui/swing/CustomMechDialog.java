@@ -1226,7 +1226,7 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
         int bh = clientgui.getClient().getMapSettings().getBoardHeight();
         int bw = clientgui.getClient().getMapSettings().getBoardWidth();
 
-        panDeploy.add(new JLabel("Deployment Any NW corner:"), GBC.std());
+        panDeploy.add(new JLabel(Messages.getString("CustomMechDialog.labDeploymentAnyNW")), GBC.std());
         int x = entity.getStartingAnyNWx() + 1 >= bw ? bw : entity.getStartingAnyNWx() + 1;
         SpinnerNumberModel mStartingAnyNWx = new SpinnerNumberModel(x, 0,bw, 1);
         spinStartingAnyNWx = new JSpinner(mStartingAnyNWx);
@@ -1237,7 +1237,7 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
         spinStartingAnyNWy = new JSpinner(mStartingAnyNWy);
         spinStartingAnyNWy.setValue(y);
         panDeploy.add(spinStartingAnyNWy, GBC.eol());
-        panDeploy.add(new JLabel("Deployment Any SE corner:"), GBC.std());
+        panDeploy.add(new JLabel(Messages.getString("CustomMechDialog.labDeploymentAnySE")), GBC.std());
         x = entity.getStartingAnySEx() + 1 >= bw ? bw : entity.getStartingAnySEx() + 1;
         SpinnerNumberModel mStartingAnySEx = new SpinnerNumberModel(x, 0, bw, 1);
         spinStartingAnySEx = new JSpinner(mStartingAnySEx);

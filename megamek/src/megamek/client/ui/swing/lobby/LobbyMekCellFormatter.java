@@ -267,8 +267,9 @@ class LobbyMekCellFormatter {
                 int NWy = entity.getStartingAnyNWy() + 1;
                 int SEx = entity.getStartingAnySEx() + 1;
                 int SEy = entity.getStartingAnySEy() + 1;
+                int hexes = (1 + SEx - NWx) * (1 + SEy - NWy);
                 if ((NWx + NWy + SEx + SEy) > 0) {
-                    result.append("(" + NWx + ", " + NWy + ")-(" + SEx + ", " + SEy + ")");
+                    result.append(" (" + NWx + ", " + NWy + ")-(" + SEx + ", " + SEy + ") (" + hexes + ")");
                 }
             }
             int so = entity.getStartingOffset(true);

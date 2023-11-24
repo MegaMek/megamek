@@ -15439,8 +15439,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return bloodStalkerTarget;
     }
 
-
-
     /**
      * Whether this entity can activate the "blood stalker" ability
      */

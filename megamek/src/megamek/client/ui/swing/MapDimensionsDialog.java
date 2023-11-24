@@ -15,7 +15,6 @@ package megamek.client.ui.swing;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.Entity;
 import megamek.common.MapSettings;
 
 import javax.swing.*;
@@ -282,21 +281,6 @@ public class MapDimensionsDialog extends JDialog implements ActionListener {
         mapSettings.setBoardSize(boardWidth, boardHeight);
         mapSettings.setMapSize(mapWidth, mapHeight);
         clientGUI.getClient().sendMapDimensions(mapSettings);
-
-        for (Entity entity : clientGUI.getClient().getGame().getEntitiesVector()) {
-            if (entity.getStartingAnyNWx() >= boardWidth) {
-                entity.setStartingAnyNWx(boardWidth - 1);
-            }
-            if (entity.getStartingAnyNWy() >= boardHeight) {
-                entity.setStartingAnyNWy(boardHeight - 1);
-            }
-            if (entity.getStartingAnySEx() >= boardWidth) {
-                entity.setStartingAnySEx(boardWidth - 1);
-            }
-            if (entity.getStartingAnySEy() >= boardHeight) {
-                entity.setStartingAnySEy(boardHeight - 1);
-            }
-        }
     }
     
     

@@ -2,6 +2,7 @@ Version:1.0
 Vulture Mk IV (Mad Dog Mk IV)
 D
 mul id:6562
+base unit:data/mechfiles/mechs/3145/Merc/Vulture Mk IV Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

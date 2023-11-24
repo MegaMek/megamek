@@ -2,6 +2,7 @@ Version:1.0
 Crimson Langur
 D
 mul id:5676
+base unit:data/mechfiles/mechs/3067/Crimson Langur Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

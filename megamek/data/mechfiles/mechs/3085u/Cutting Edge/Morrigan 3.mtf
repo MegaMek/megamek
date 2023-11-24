@@ -2,6 +2,7 @@ Version:1.0
 Morrigan
 3
 mul id:2230
+base unit:data/mechfiles/mechs/3085u/Cutting Edge/Morrigan.mtf
 
 Config:Biped
 TechBase:Mixed (Clan Chassis)

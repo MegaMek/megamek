@@ -2,6 +2,7 @@ Version:1.1
 Coyotl
 C
 mul id:7607
+base unit:data/mechfiles/mechs/Golden Century/Coyotl Prime.mtf
 
 Config:Biped Omnimech
 techbase:Clan

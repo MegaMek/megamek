@@ -2,6 +2,7 @@ Version:1.0
 Phantom
 C
 mul id:2483
+base unit:data/mechfiles/mechs/3055U/Phantom Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

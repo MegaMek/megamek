@@ -2,6 +2,7 @@ Version:1.0
 Puma (Adder)
 K
 mul id:7481
+base unit:data/mechfiles/mechs/3050U/Puma (Adder) Prime.mtf
 
 Config:Biped Omnimech
 techbase:Clan

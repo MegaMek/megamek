@@ -2,6 +2,7 @@ Version:1.0
 Ocelot
 4
 mul id:6925
+base unit:data/mechfiles/mechs/3075/Ocelot.mtf
 
 Config:Biped
 TechBase:Clan

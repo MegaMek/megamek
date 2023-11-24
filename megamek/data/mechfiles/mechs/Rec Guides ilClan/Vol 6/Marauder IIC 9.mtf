@@ -2,6 +2,7 @@ Version:1.0
 Marauder IIC
 9
 mul id:7537
+base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 6/Marauder IIC.mtf
 
 Config:Biped
 techbase:Clan

@@ -10,6 +10,8 @@ Source:TRO: 3058
 Rules Level:2
 role:Sniper
 
+quirk:imp_target_long
+
 Mass:90
 Engine:270 Fusion (Clan) Engine
 Structure:Standard

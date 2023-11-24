@@ -2,6 +2,7 @@ Version:1.0
 Shadow Cat III
 B
 mul id:7493
+base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 3/Shadow Cat III Prime.mtf
 
 Config:Biped Omnimech
 techbase:Clan

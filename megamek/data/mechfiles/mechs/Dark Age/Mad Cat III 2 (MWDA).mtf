@@ -2,6 +2,7 @@ Version:1.0
 Mad Cat III
 2 (MWDA)
 mul id:6896
+base unit:data/mechfiles/mechs/ProtoTypes/Mad Cat III.mtf
 
 Config:Biped
 TechBase:Clan

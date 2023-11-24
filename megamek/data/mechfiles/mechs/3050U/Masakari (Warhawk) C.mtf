@@ -2,6 +2,7 @@ Version:1.1
 Masakari (Warhawk)
 C
 mul id:2093
+base unit:data/mechfiles/mechs/3050U/Masakari (Warhawk) Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

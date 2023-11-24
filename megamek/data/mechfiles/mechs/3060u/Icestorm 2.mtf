@@ -2,6 +2,7 @@ Version:1.0
 Icestorm
 2
 mul id:1603
+base unit:data/mechfiles/mechs/3060u/Icestorm.mtf
 
 Config:Biped
 TechBase:Clan

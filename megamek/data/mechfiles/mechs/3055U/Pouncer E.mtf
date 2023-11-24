@@ -2,6 +2,7 @@ Version:1.0
 Pouncer
 E
 mul id:2561
+base unit:data/mechfiles/mechs/3055U/Pouncer Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

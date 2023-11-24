@@ -2,6 +2,7 @@ Version:1.0
 Bowman
 4
 mul id:5691
+base unit:data/mechfiles/mechs/3067 Unabridged/Clan Meks/Bowman.mtf
 
 Config:Biped
 TechBase:Clan

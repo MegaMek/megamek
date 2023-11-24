@@ -3,6 +3,7 @@ Pulverizer
 PUL-2V
 mul id:2590
 source:Jihad Secrets: The Blake Documents
+base unit:data/mechfiles/mechs/Golden Century/Pulverizer.mtf
 
 Config:Biped
 TechBase:Inner Sphere

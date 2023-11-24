@@ -1,6 +1,7 @@
 Version:1.3
 Burrock
 2
+base unit:data/mechfiles/mechs/3067/Burrock.mtf
 mul id:5694
 Config:Biped
 techbase:Clan

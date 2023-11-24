@@ -2,6 +2,7 @@ Version:1.0
 Phoenix Hawk IIC
 3
 mul id:2513
+base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 15/Phoenix Hawk IIC.mtf
 
 Config:Biped
 TechBase:Clan

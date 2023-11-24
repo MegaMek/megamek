@@ -2,6 +2,7 @@ Version:1.1
 Hankyu (Arctic Cheetah)
 H
 mul id:1383
+base unit:data/mechfiles/mechs/3058Uu/Hankyu (Arctic Cheetah) Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

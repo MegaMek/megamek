@@ -2,6 +2,7 @@ Version:1.1
 Ryoken III-XP (Skinwalker)
 B
 mul id:7380
+base unit:data/mechfiles/mechs/XTRs/Republic III/Ryoken III-XP Prime.mtf
 
 Config:Biped Omnimech
 techbase:Mixed (Clan Chassis)

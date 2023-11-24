@@ -2,6 +2,7 @@ Version:1.0
 Behemoth (Stone Rhino)
 2
 mul id:319
+base unit:data/mechfiles/mechs/3055U/Behemoth (Stone Rhino).mtf
 
 Config:Biped
 TechBase:Clan

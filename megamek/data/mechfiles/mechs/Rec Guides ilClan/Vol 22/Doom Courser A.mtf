@@ -2,6 +2,7 @@ Version:1.0
 Doom Courser
 A
 mul id:8394
+base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 22/Doom Courser Prime.mtf
 
 Config:Quad Omnimech
 techbase:Clan

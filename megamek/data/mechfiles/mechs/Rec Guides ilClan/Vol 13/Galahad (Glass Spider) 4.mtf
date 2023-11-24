@@ -2,6 +2,7 @@ Version:1.0
 Galahad (Glass Spider)
 4
 mul id:8131
+base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 13/Galahad (Glass Spider).mtf
 
 Config:Biped
 techbase:Clan

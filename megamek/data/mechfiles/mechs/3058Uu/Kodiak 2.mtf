@@ -2,6 +2,7 @@ Version:1.1
 Kodiak
 2
 mul id:1806
+base unit:data/mechfiles/mechs/3058Uu/Kodiak.mtf
 
 Config:Biped
 TechBase:Clan

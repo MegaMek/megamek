@@ -2,6 +2,7 @@ Version:1.0
 Goshawk II
 RISC
 mul id:7376
+base unit:data/mechfiles/mechs/3085u/Cutting Edge/Goshawk II.mtf
 
 Config:Biped
 TechBase:Mixed (Clan Chassis)

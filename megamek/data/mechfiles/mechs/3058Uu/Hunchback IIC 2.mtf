@@ -2,6 +2,7 @@ Version:1.0
 Hunchback IIC
 2
 mul id:1569
+base unit:data/mechfiles/mechs/3058Uu/Hunchback IIC.mtf
 
 Config:Biped
 TechBase:Clan

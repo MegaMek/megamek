@@ -10,6 +10,10 @@ source:Rec Guide:ilClan #20
 rules level:2
 role:Striker
 
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:imp_life_support
+
 mass:45
 engine:270 Fusion (Clan) Engine(IS)
 structure:Clan Endo Steel

@@ -9,6 +9,10 @@ source:TRO: 3067
 rules level:2
 role:Striker
 
+quirk:easy_maintain
+quirk:imp_com
+quirk:pro_actuator
+
 mass:50
 engine:350 XL (Clan) Engine(IS)
 structure:Clan Endo Steel

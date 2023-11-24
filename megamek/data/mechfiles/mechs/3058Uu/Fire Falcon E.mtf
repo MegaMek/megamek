@@ -2,6 +2,7 @@ Version:1.0
 Fire Falcon
 E
 mul id:1067
+base unit:data/mechfiles/mechs/3058Uu/Fire Falcon Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

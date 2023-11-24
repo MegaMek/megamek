@@ -2,6 +2,7 @@ Version:1.0
 Boreas
 D
 mul id:7355
+base unit:data/mechfiles/mechs/QuadVees/Boreas Prime.mtf
 
 Config:QuadVee Omnimech
 TechBase:Clan

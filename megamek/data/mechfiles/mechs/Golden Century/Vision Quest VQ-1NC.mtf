@@ -2,6 +2,7 @@ Version:1.1
 Vision Quest
 VQ-1NC
 mul id:5355
+base unit:data/mechfiles/mechs/Golden Century/Vision Quest.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

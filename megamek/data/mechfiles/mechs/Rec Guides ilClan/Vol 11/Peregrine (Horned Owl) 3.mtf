@@ -2,6 +2,7 @@ Version:1.0
 Peregrine (Horned Owl)
 3
 mul id:2474
+base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 11/Peregrine (Horned Owl).mtf
 
 Config:Biped
 techbase:Clan

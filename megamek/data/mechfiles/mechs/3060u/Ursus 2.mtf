@@ -2,6 +2,7 @@ Version:1.0
 Ursus
 2
 mul id:3364
+base unit:data/mechfiles/mechs/3060u/Ursus.mtf
 
 Config:Biped
 TechBase:Clan

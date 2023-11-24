@@ -2,6 +2,7 @@ Version:1.0
 Ha Otoko
 HKO-1C
 mul id:1357
+base unit:data/mechfiles/mechs/3060u/Ha Otoko.mtf
 
 Config:Biped
 TechBase:Inner Sphere

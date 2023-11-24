@@ -2,6 +2,7 @@ Version:1.0
 Onager
 2
 mul id:6847
+base unit:data/mechfiles/mechs/3085u/Cutting Edge/Onager.mtf
 
 Config:Biped
 TechBase:Clan

@@ -2,6 +2,7 @@ Version:1.0
 Shrike
 3
 mul id:6294
+base unit:data/mechfiles/mechs/3145/Clans/Shrike.mtf
 
 Config:Biped
 TechBase:Clan

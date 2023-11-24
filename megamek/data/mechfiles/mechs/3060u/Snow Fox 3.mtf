@@ -2,6 +2,7 @@ Version:1.0
 Snow Fox
 3
 mul id:2981
+base unit:data/mechfiles/mechs/3060u/Snow Fox.mtf
 
 Config:Quad
 TechBase:Clan

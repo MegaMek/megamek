@@ -2,6 +2,7 @@ Version:1.0
 Warhammer IIC
 9
 mul id:3508
+base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 4/Warhammer IIC.mtf
 
 Config:Biped
 TechBase:Clan

@@ -10,6 +10,8 @@ Source:TRO: 3060
 Rules Level:2
 role:Sniper
 
+quirk:fast_reload
+
 Mass:80
 Engine:240 XL (Clan) Engine
 Structure:Endo Steel

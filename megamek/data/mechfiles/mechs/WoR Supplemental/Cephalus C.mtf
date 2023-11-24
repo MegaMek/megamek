@@ -2,6 +2,7 @@ Version:1.0
 Cephalus
 C
 mul id:5639
+base unit:data/mechfiles/mechs/WoR Supplemental/Cephalus Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Mixed (Clan Chassis)

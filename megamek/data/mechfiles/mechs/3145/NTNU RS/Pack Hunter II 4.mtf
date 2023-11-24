@@ -2,6 +2,7 @@ Version:1.2
 Pack Hunter II
 4
 mul id:6935
+base unit:data/mechfiles/mechs/3085u/Cutting Edge/Pack Hunter II.mtf
 
 Config:Biped
 techbase:Clan

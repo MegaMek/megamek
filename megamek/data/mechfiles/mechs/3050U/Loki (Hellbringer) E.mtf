@@ -2,6 +2,7 @@ Version:1.1
 Loki (Hellbringer)
 E
 mul id:1927
+base unit:data/mechfiles/mechs/3050U/Loki (Hellbringer) Prime.mtf
 
 Config:Biped Omnimech
 techbase:Clan

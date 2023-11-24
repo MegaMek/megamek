@@ -2,6 +2,7 @@ Version:1.0
 Crossbow
 D
 mul id:736
+base unit:data/mechfiles/mechs/3058Uu/Crossbow Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

@@ -2,6 +2,7 @@ Version:1.0
 Mad Cat Mk II
 5
 mul id:6849
+base unit:data/mechfiles/mechs/3067/Mad Cat Mk II.mtf
 
 Config:Biped
 TechBase:Clan

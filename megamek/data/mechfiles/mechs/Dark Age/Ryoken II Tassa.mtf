@@ -2,6 +2,7 @@ Version:1.0
 Ryoken II
 (Tassa)
 mul id:8219
+base unit:data/mechfiles/mechs/3075/Ryoken II.mtf
 
 Config:Biped
 TechBase:Clan

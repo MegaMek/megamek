@@ -2,6 +2,7 @@ Version:1.0
 Tundra Wolf
 4
 mul id:3318
+base unit:data/mechfiles/mechs/3085u/Cutting Edge/Tundra Wolf.mtf
 
 Config:Biped
 TechBase:Clan

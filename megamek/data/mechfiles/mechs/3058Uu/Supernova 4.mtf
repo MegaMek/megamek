@@ -2,6 +2,7 @@ Version:1.0
 Supernova
 4
 mul id:3135
+base unit:data/mechfiles/mechs/3058Uu/Supernova.mtf
 
 Config:Biped
 TechBase:Clan

@@ -2,6 +2,7 @@ Version:1.2
 Pack Hunter II
 (Isis)
 mul id:5540
+base unit:data/mechfiles/mechs/3085u/Cutting Edge/Pack Hunter II.mtf
 
 Config:Biped
 TechBase:Clan

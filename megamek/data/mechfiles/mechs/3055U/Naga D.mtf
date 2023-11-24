@@ -2,6 +2,7 @@ Version:1.0
 Naga
 D
 mul id:2250
+base unit:data/mechfiles/mechs/3055U/Naga Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

@@ -10,6 +10,8 @@ Rules Level:2
 role:Missile Boat
 source:TRO: 3067
 
+quirk:oversized
+
 Mass:100
 Engine:400 XL Engine
 Structure:Endo Steel

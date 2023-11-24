@@ -10,6 +10,8 @@ source:TRO: Clan Invasion
 rules level:2
 role:Striker
 
+quirk:searchlight
+
 mass:65
 engine:325 XL (Clan) Engine(IS)
 structure:IS Standard

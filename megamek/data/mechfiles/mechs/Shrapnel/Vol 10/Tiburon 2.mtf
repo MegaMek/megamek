@@ -1,6 +1,7 @@
 Version:1.3
 Tiburon
 2
+base unit:data/mechfiles/mechs/3145/Merc/Tiburon.mtf
 mul id:9252
 Config:Biped
 techbase:Clan

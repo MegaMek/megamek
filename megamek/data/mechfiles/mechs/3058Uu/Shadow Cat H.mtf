@@ -2,6 +2,7 @@ Version:1.0
 Shadow Cat
 H
 mul id:2890
+base unit:data/mechfiles/mechs/3058Uu/Shadow Cat Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

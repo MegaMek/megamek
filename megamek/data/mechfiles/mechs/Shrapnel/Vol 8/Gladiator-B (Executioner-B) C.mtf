@@ -1,6 +1,7 @@
 Version:1.3
 Gladiator-B (Executioner-B)
 C
+base unit:data/mechfiles/mechs/Shrapnel/Vol 8/Gladiator-B (Executioner-B) Prime.mtf
 mul id:8466
 Config:Biped Omnimech
 techbase:Clan

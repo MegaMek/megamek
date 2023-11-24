@@ -2,6 +2,7 @@ Version:1.0
 Flamberge
 D
 mul id:6873
+base unit:data/mechfiles/mechs/3085u/Cutting Edge/Flamberge Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Mixed (Clan Chassis)

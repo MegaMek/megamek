@@ -2,6 +2,7 @@ Version:1.0
 Koshi (Mist Lynx)
 D
 mul id:1830
+base unit:data/mechfiles/mechs/3050U/Koshi (Mist Lynx) Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

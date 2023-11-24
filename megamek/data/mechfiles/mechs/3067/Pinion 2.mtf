@@ -2,6 +2,7 @@ Version:1.0
 Pinion
 2
 mul id:4830
+base unit:data/mechfiles/mechs/3067/Pinion.mtf
 
 Config:Biped
 TechBase:Clan

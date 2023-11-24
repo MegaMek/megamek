@@ -2,6 +2,7 @@ Version:1.0
 Arbalest
 2
 mul id:60
+base unit:data/mechfiles/mechs/3085u/Cutting Edge/Arbalest.mtf
 
 Config:Biped
 TechBase:Clan

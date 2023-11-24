@@ -2,6 +2,7 @@ Version:1.1
 Thunderbolt IIC
 2
 mul id:5240
+base unit:data/mechfiles/mechs/ProtoTypes/Thunderbolt IIC.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

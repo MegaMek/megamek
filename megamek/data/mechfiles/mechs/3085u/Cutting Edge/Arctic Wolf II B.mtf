@@ -2,6 +2,7 @@ Version:1.0
 Arctic Wolf II
 B
 mul id:105
+base unit:data/mechfiles/mechs/3085u/Cutting Edge/Arctic Wolf II Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

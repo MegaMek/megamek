@@ -2,6 +2,7 @@ Version:1.1
 Vision Quest
 2
 mul id:7639
+base unit:data/mechfiles/mechs/Golden Century/Vision Quest.mtf
 
 Config:Biped
 techbase:Clan

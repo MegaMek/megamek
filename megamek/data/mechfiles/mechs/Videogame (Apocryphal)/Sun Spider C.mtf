@@ -1,6 +1,7 @@
 Version:1.0
 Sun Spider
 C
+base unit:data/mechfiles/mechs/Videogame (Apocryphal)/Sun Spider Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

@@ -2,6 +2,7 @@ Version:1.0
 UrbanMech IIC
 2
 mul id:3362
+base unit:data/mechfiles/mechs/3060u/UrbanMech IIC.mtf
 
 Config:Biped
 TechBase:Clan

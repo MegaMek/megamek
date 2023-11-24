@@ -2,6 +2,7 @@ Version:1.1
 Scylla
 3
 mul id:5724
+base unit:data/mechfiles/mechs/3067/Scylla.mtf
 
 Config:Biped
 TechBase:Clan

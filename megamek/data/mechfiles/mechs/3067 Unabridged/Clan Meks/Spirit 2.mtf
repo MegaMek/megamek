@@ -2,6 +2,7 @@ Version:1.1
 Spirit
 2
 mul id:5665
+base unit:data/mechfiles/mechs/3067/Spirit.mtf
 
 Config:Biped
 TechBase:Clan

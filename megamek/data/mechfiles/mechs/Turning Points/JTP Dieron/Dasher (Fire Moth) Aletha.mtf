@@ -2,6 +2,7 @@ Version:1.0
 Dasher (Fire Moth)
 (Aletha)
 mul id:837
+base unit:data/mechfiles/mechs/3050U/Dasher (Fire Moth) Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

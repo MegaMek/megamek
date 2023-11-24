@@ -61,7 +61,9 @@ public class GameOptions extends AbstractOptions {
         addOption(base, OptionsConstants.BASE_REAL_BLIND_DROP, false); 
         addOption(base, OptionsConstants.BASE_LOBBY_AMMO_DUMP, false); 
         addOption(base, OptionsConstants.BASE_DUMPING_FROM_ROUND, 1); 
-        addOption(base, OptionsConstants.BASE_SET_ARTY_PLAYER_HOMEEDGE, false); 
+        addOption(base, OptionsConstants.BASE_SET_ARTY_PLAYER_HOMEEDGE, false);
+        addOption(base, OptionsConstants.BASE_SET_DEFAULT_TEAM_1, false);
+        addOption(base, OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER0, false);
         addOption(base, OptionsConstants.BASE_RESTRICT_GAME_COMMANDS, false); 
         addOption(base, OptionsConstants.BASE_DISABLE_LOCAL_SAVE, false); 
         addOption(base, OptionsConstants.BASE_BRIDGECF, 0); 

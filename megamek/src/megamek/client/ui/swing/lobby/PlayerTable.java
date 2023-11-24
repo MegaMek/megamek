@@ -25,6 +25,7 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.IStartingPositions;
 import megamek.common.Player;
+import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 
 import javax.swing.*;
@@ -195,7 +196,11 @@ class PlayerTable extends JTable {
             result.append(guiScaledFontHTML());
 
             String msg_start = Messages.getString("ChatLounge.Start");
-            if ((player.getStartingPos() >= 0) && (player.getStartingPos() <= IStartingPositions.START_LOCATION_NAMES.length)) {
+
+            final GameOptions gOpts = lobby.game().getOptions();
+            if (gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER0) && !player.isBot() && player.getId() != 0) {
+                result.append(msg_start + ": " + Messages.getString("ChatLounge.Player0"));
+            } else if ((player.getStartingPos() >= 0) && (player.getStartingPos() <= IStartingPositions.START_LOCATION_NAMES.length)) {
                 result.append(msg_start + ": " + IStartingPositions.START_LOCATION_NAMES[player.getStartingPos()]);
                 int so = player.getStartOffset();
                 int sw = player.getStartWidth();

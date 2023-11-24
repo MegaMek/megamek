@@ -448,7 +448,7 @@ public class QuirksHandler {
      * @return A {@code List} of the quirks ({@code QuirkEntry}) for the given
      *         unit. If the unit is not in the list, a NULL value is returned.
      */
-    static @Nullable List<QuirkEntry> getQuirks(final Entity entity) throws Exception {
+    public static @Nullable List<QuirkEntry> getQuirks(final Entity entity) throws Exception {
         if (!initialized.get() || (null == canonQuirkMap)) {
             return null;
         }
@@ -489,9 +489,9 @@ public class QuirksHandler {
             }
 
             // Check the canonical list for a general entry for this chassis.
-            if (canonQuirkMap.containsKey(generalId)) {
-                quirks.addAll(canonQuirkMap.get(generalId));
-            }
+//            if (canonQuirkMap.containsKey(generalId)) {
+//                quirks.addAll(canonQuirkMap.get(generalId));
+//            }
 
             // Check for a model-specific entry.
             if (canonQuirkMap.containsKey(unitId) && !canonQuirkMap.get(unitId).isEmpty()) {
@@ -502,6 +502,8 @@ public class QuirksHandler {
 
                 // Add the model-specific quirks.
                 quirks.addAll(canonQuirkMap.get(unitId));
+            } else if (canonQuirkMap.containsKey(generalId)) {
+                quirks.addAll(canonQuirkMap.get(generalId));
             }
 
             return quirks.isEmpty() ? null : quirks;

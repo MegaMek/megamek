@@ -489,12 +489,14 @@ public class QuirksHandler {
             }
 
             // Check the canonical list for a general entry for this chassis.
-//            if (canonQuirkMap.containsKey(generalId)) {
-//                quirks.addAll(canonQuirkMap.get(generalId));
-//            }
+            if (canonQuirkMap.containsKey(generalId)) {
+                quirks.addAll(canonQuirkMap.get(generalId));
+            }
 
-            // Check for a model-specific entry.
-            if (canonQuirkMap.containsKey(unitId) && !canonQuirkMap.get(unitId).isEmpty()) {
+            // Check for a model-specific entry but not when it would be the same as above.
+            if (canonQuirkMap.containsKey(unitId) && !canonQuirkMap.get(unitId).isEmpty()
+                    && !generalId.equals(unitId)) {
+
                 // If this specific model, has no quirks, return null.
                 if (NO_QUIRKS.equalsIgnoreCase(canonQuirkMap.get(unitId).get(0).getQuirk())) {
                     return null;
@@ -502,8 +504,6 @@ public class QuirksHandler {
 
                 // Add the model-specific quirks.
                 quirks.addAll(canonQuirkMap.get(unitId));
-            } else if (canonQuirkMap.containsKey(generalId)) {
-                quirks.addAll(canonQuirkMap.get(generalId));
             }
 
             return quirks.isEmpty() ? null : quirks;

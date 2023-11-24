@@ -85,6 +85,11 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
     private final JFormattedTextField txtDeploymentOffset = new JFormattedTextField(formatterFactory);
     private final JFormattedTextField txtDeploymentWidth = new JFormattedTextField(formatterFactory);
 
+    private JSpinner spinStartingAnyNWx;
+    private JSpinner spinStartingAnyNWy;
+    private JSpinner spinStartingAnySEx;
+    private JSpinner spinStartingAnySEy;
+
     private final JLabel labDeployShutdown = new JLabel(
             Messages.getString("CustomMechDialog.labDeployShutdown"), SwingConstants.RIGHT);
     private final JCheckBox chDeployShutdown = new JCheckBox();
@@ -472,6 +477,17 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
 
         txtDeploymentOffset.setText(Integer.toString(entity.getStartingOffset(false)));
         txtDeploymentWidth.setText(Integer.toString(entity.getStartingWidth(false)));
+
+        int bh = clientgui.getClient().getMapSettings().getBoardHeight();
+        int bw = clientgui.getClient().getMapSettings().getBoardWidth();
+        int x = entity.getStartingAnyNWx() + 1 >= bw ? bw : entity.getStartingAnyNWx() + 1;
+        spinStartingAnyNWx.setValue(x);
+        int y = entity.getStartingAnyNWy() + 1 >= bh ? bh : entity.getStartingAnyNWy() + 1;
+        spinStartingAnyNWy.setValue(y);
+        x = entity.getStartingAnySEx() + 1 >= bw ? bw : entity.getStartingAnySEx() + 1;
+        spinStartingAnySEy.setValue(x);
+        y = entity.getStartingAnySEy() + 1 >= bh ? bh : entity.getStartingAnySEy() + 1;
+        spinStartingAnySEy.setValue(y);
 
         boolean enableDeploymentZoneControls = choDeploymentZone.isEnabled() && (choDeploymentZone.getSelectedIndex() > 0);
         txtDeploymentOffset.setEnabled(enableDeploymentZoneControls);
@@ -881,6 +897,13 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
             entity.setStartingOffset(Integer.parseInt(txtDeploymentOffset.getText()));
             entity.setStartingWidth(Integer.parseInt(txtDeploymentWidth.getText()));
 
+            int x = (Integer) spinStartingAnyNWx.getValue() > (Integer) spinStartingAnySEx.getValue() ? (Integer) spinStartingAnySEx.getValue() : (Integer) spinStartingAnyNWx.getValue();
+            int y = (Integer) spinStartingAnyNWy.getValue() > (Integer) spinStartingAnySEy.getValue() ? (Integer) spinStartingAnySEy.getValue() : (Integer) spinStartingAnyNWy.getValue();
+            entity.setStartingAnyNWx(x - 1);
+            entity.setStartingAnyNWy(y - 1);
+            entity.setStartingAnySEx((Integer) spinStartingAnySEx.getValue() - 1);
+            entity.setStartingAnySEy((Integer) spinStartingAnySEy.getValue() - 1);
+
             // Should the entity begin the game shutdown?
             if (chDeployShutdown.isSelected() && gameOptions().booleanOption(OptionsConstants.RPG_BEGIN_SHUTDOWN)) {
                 entity.performManualShutdown();
@@ -1199,6 +1222,32 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
         panDeploy.add(txtDeploymentOffset, GBC.eol());
         panDeploy.add(labDeploymentWidth, GBC.std());
         panDeploy.add(txtDeploymentWidth, GBC.eol());
+
+        int bh = clientgui.getClient().getMapSettings().getBoardHeight();
+        int bw = clientgui.getClient().getMapSettings().getBoardWidth();
+
+        panDeploy.add(new JLabel("Deployment Any NW corner:"), GBC.std());
+        int x = entity.getStartingAnyNWx() + 1 >= bw ? bw : entity.getStartingAnyNWx() + 1;
+        SpinnerNumberModel mStartingAnyNWx = new SpinnerNumberModel(x, 0,bw, 1);
+        spinStartingAnyNWx = new JSpinner(mStartingAnyNWx);
+        spinStartingAnyNWx.setValue(x);
+        panDeploy.add(spinStartingAnyNWx, GBC.std());
+        int y = entity.getStartingAnyNWy() + 1 >= bh ? bh : entity.getStartingAnyNWy() + 1;
+        SpinnerNumberModel mStartingAnyNWy = new SpinnerNumberModel(y, 0, bh, 1);
+        spinStartingAnyNWy = new JSpinner(mStartingAnyNWy);
+        spinStartingAnyNWy.setValue(y);
+        panDeploy.add(spinStartingAnyNWy, GBC.eol());
+        panDeploy.add(new JLabel("Deployment Any SE corner:"), GBC.std());
+        x = entity.getStartingAnySEx() + 1 >= bw ? bw : entity.getStartingAnySEx() + 1;
+        SpinnerNumberModel mStartingAnySEx = new SpinnerNumberModel(x, 0, bw, 1);
+        spinStartingAnySEx = new JSpinner(mStartingAnySEx);
+        spinStartingAnySEx.setValue(x);
+        panDeploy.add(spinStartingAnySEx, GBC.std());
+        y = entity.getStartingAnySEy() + 1 >= bh ? bh : entity.getStartingAnySEy() + 1;
+        SpinnerNumberModel mStartingAnySEy = new SpinnerNumberModel(y, -0, bh, 1);
+        spinStartingAnySEy = new JSpinner(mStartingAnySEy);
+        spinStartingAnySEy.setValue(y);
+        panDeploy.add(spinStartingAnySEy, GBC.eol());
 
         numFormatter.setMinimum(0);
         numFormatter.setCommitsOnValidEdit(true);

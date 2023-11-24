@@ -120,6 +120,22 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         return currentPlayerStartPos;
     }
 
+    public int getStartingAnyNWx() {
+        return (Integer) spinStartingAnyNWx.getValue() - 1;
+    }
+
+    public int getStartingAnyNWy() {
+        return (Integer) spinStartingAnyNWy.getValue() - 1;
+    }
+
+    public int getStartingAnySEx() {
+        return (Integer) spinStartingAnySEx.getValue() - 1;
+    }
+
+    public int getStartingAnySEy() {
+        return (Integer) spinStartingAnySEy.getValue() - 1;
+    }
+
     /**
      * @return the current {@link SkillGenerationOptionsPanel}
      */
@@ -167,6 +183,10 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     private final DefaultFormatterFactory formatterFactory = new DefaultFormatterFactory(numFormatter);
     private final JFormattedTextField txtOffset = new JFormattedTextField(formatterFactory, 0);
     private final JFormattedTextField txtWidth = new JFormattedTextField(formatterFactory, 3);
+    private JSpinner spinStartingAnyNWx;
+    private JSpinner spinStartingAnyNWy;
+    private JSpinner spinStartingAnySEx;
+    private JSpinner spinStartingAnySEy;
 
     // Bot Settings Section
     private final JButton butBotSettings = new JButton(Messages.getString("PlayerSettingsDialog.botSettings"));
@@ -248,7 +268,17 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         result.add(txtOffset, GBC.eol());
         result.add(lblWidth, GBC.std());
         result.add(txtWidth, GBC.eol());
-        
+
+        int bh = clientgui.getClient().getMapSettings().getBoardHeight();
+        int bw = clientgui.getClient().getMapSettings().getBoardWidth();
+
+        result.add(new JLabel("Deployment Any NW corner:"), GBC.std());
+        result.add(spinStartingAnyNWx, GBC.std());
+        result.add(spinStartingAnyNWy, GBC.eol());
+        result.add(new JLabel("Deployment Any SE corner:"), GBC.std());
+        result.add(spinStartingAnySEx, GBC.std());
+        result.add(spinStartingAnySEy, GBC.eol());
+
         return result;
     }
     
@@ -309,7 +339,27 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         fldEmail.setText(player.getEmail());
         txtWidth.setText(Integer.toString(player.getStartWidth()));
         txtOffset.setText(Integer.toString(player.getStartOffset()));
-        
+
+        int bh = clientgui.getClient().getMapSettings().getBoardHeight();
+        int bw = clientgui.getClient().getMapSettings().getBoardWidth();
+
+        SpinnerNumberModel mStartingAnyNWx = new SpinnerNumberModel(0, 0,bw, 1);
+        spinStartingAnyNWx = new JSpinner(mStartingAnyNWx);
+        SpinnerNumberModel mStartingAnyNWy = new SpinnerNumberModel(0, 0, bh, 1);
+        spinStartingAnyNWy = new JSpinner(mStartingAnyNWy);
+        SpinnerNumberModel mStartingAnySEx = new SpinnerNumberModel(0, 0, bw, 1);
+        spinStartingAnySEx = new JSpinner(mStartingAnySEx);
+        SpinnerNumberModel mStartingAnySEy = new SpinnerNumberModel(0, -0, bh, 1);
+        spinStartingAnySEy = new JSpinner(mStartingAnySEy);
+
+        int x = player.getStartingAnyNWx() + 1 >= bw ? bw : player.getStartingAnyNWx() + 1;
+        spinStartingAnyNWx.setValue(x);
+        int y = player.getStartingAnyNWy() + 1 >= bh ? bh : player.getStartingAnyNWy() + 1;
+        spinStartingAnyNWy.setValue(y);
+        x = player.getStartingAnySEx() + 1 >= bw ? bw : player.getStartingAnySEx() + 1;
+        spinStartingAnySEx.setValue(x);
+        y = player.getStartingAnySEy() + 1 >= bh ? bh : player.getStartingAnySEy() + 1;
+        spinStartingAnySEy.setValue(y);
     }
 
     private void setupStartGrid() {

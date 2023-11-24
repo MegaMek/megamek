@@ -1546,6 +1546,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             player.setStartingPos(startPos);
             player.setStartOffset(psd.getStartOffset());
             player.setStartWidth(psd.getStartWidth());
+            player.setStartingAnyNWx(psd.getStartingAnyNWx());
+            player.setStartingAnyNWy(psd.getStartingAnyNWy());
+            player.setStartingAnySEx(psd.getStartingAnySEx());
+            player.setStartingAnySEy(psd.getStartingAnySEy());
             c.sendPlayerInfo();
 
             // If the gameoption set_arty_player_homeedge is set, adjust the player's offboard

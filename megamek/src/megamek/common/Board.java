@@ -846,7 +846,7 @@ public class Board implements Serializable {
      * Can the given player deploy at these coordinates?
      */
     public boolean isLegalDeployment(Coords c, Player p) {
-        return isLegalDeployment(c, p.getStartingPos(), p.getStartWidth(), p.getStartOffset());
+        return isLegalDeployment(c, p.getStartingPos(), p.getStartWidth(), p.getStartOffset(), p.getStartingAnyNWx(), p.getStartingAnyNWy(), p.getStartingAnySEx(), p.getStartingAnySEy());
     }
 
     /**
@@ -857,13 +857,13 @@ public class Board implements Serializable {
             return false;
         }
 
-        return isLegalDeployment(c, e.getStartingPos(), e.getStartingWidth(), e.getStartingOffset());
+        return isLegalDeployment(c, e.getStartingPos(), e.getStartingWidth(), e.getStartingOffset(), e.getStartingAnyNWx(), e.getStartingAnyNWy(), e.getStartingAnySEx(), e.getStartingAnySEy());
     }
 
     /**
      * Can an object be deployed at these coordinates, given a starting zone, width of starting zone and offset from edge of board?
      */
-    public boolean isLegalDeployment(Coords c, int zoneType, int startingWidth, int startingOffset) {
+    public boolean isLegalDeployment(Coords c, int zoneType, int startingWidth, int startingOffset, int startingAnyNWx, int startingAnyNWy, int startingAnySEx, int startingAnySEy) {
         if ((c == null) || !contains(c)) {
             return false;
         }
@@ -876,7 +876,10 @@ public class Board implements Serializable {
 
         switch (zoneType) {
             case START_ANY:
-                return true;
+                return (((startingAnyNWx == -1) || (c.getX() >= startingAnyNWx))
+                        && ((startingAnySEx == -1) || (c.getX() <= startingAnySEx))
+                        && ((startingAnyNWy == -1) || (c.getY() >= startingAnyNWy))
+                        && ((startingAnySEy == -1) || (c.getY() <= startingAnySEy)));
             case START_NW:
                 return ((c.getX() < (minx + nLimit)) && (c.getX() >= minx) && (c.getY() >= miny) && (c.getY() < (height / 2)))
                         || ((c.getY() < (miny + nLimit)) && (c.getY() >= miny) && (c.getX() >= minx) && (c.getX() < (width / 2)));

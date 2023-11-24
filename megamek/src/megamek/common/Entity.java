@@ -210,6 +210,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private int startingOffset = 0;
     private int startingWidth = 3;
 
+    private int startingAnyNWx = -1;
+    private int startingAnyNWy = -1;
+    private int startingAnySEx = -1;
+    private int startingAnySEy = -1;
+
     /**
      * The pilot of the entity. Even infantry has a 'pilot'.
      */
@@ -15334,9 +15339,107 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         this.startingWidth = startingWidth;
     }
 
+    public int getStartingAnyNWx() {
+        return getStartingAnyNWx(true);
+    }
+
+    public int getStartingAnyNWx(boolean inheritFromOwner) {
+        // if we are given permission to use the owner's settings
+        // and have specified entity-specific settings, use the owner's settings
+        if (inheritFromOwner && (startingPos == Board.START_NONE)) {
+            final GameOptions gOpts = getGame().getOptions();
+            if (!getOwner().isBot() && gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER0)) {
+                return game.getPlayer(0).getStartingAnyNWx();
+            }
+            else {
+                return getOwner().getStartingAnyNWx();
+            }
+        }
+
+        return startingAnyNWx;
+    }
+
+    public void setStartingAnyNWx(int i) {
+        this.startingAnyNWx = i;
+    }
+
+    public int getStartingAnyNWy() {
+        return getStartingAnyNWy(true);
+    }
+
+    public int getStartingAnyNWy(boolean inheritFromOwner) {
+        // if we are given permission to use the owner's settings
+        // and have specified entity-specific settings, use the owner's settings
+        if (inheritFromOwner && (startingPos == Board.START_NONE)) {
+            final GameOptions gOpts = getGame().getOptions();
+            if (!getOwner().isBot() && gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER0)) {
+                return game.getPlayer(0).getStartingAnyNWy();
+            }
+            else {
+                return getOwner().getStartingAnyNWy();
+            }
+        }
+
+        return startingAnyNWy;
+    }
+
+    public void setStartingAnyNWy(int i) {
+        this.startingAnyNWy = i;
+    }
+
+    public int getStartingAnySEx() {
+        return getStartingAnySEx(true);
+    }
+
+    public int getStartingAnySEx(boolean inheritFromOwner) {
+        // if we are given permission to use the owner's settings
+        // and have specified entity-specific settings, use the owner's settings
+        if (inheritFromOwner && (startingPos == Board.START_NONE)) {
+            final GameOptions gOpts = getGame().getOptions();
+            if (!getOwner().isBot() && gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER0)) {
+                return game.getPlayer(0).getStartingAnySEx();
+            }
+            else {
+                return getOwner().getStartingAnySEx();
+            }
+        }
+
+        return startingAnySEx;
+    }
+
+    public void setStartingAnySEx(int i) {
+        this.startingAnySEx = i;
+    }
+
+    public int getStartingAnySEy() {
+        return getStartingAnySEy(true);
+    }
+
+    public int getStartingAnySEy(boolean inheritFromOwner) {
+        // if we are given permission to use the owner's settings
+        // and have specified entity-specific settings, use the owner's settings
+        if (inheritFromOwner && (startingPos == Board.START_NONE)) {
+            final GameOptions gOpts = getGame().getOptions();
+            if (!getOwner().isBot() && gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER0)) {
+                return game.getPlayer(0).getStartingAnySEy();
+            }
+            else {
+                return getOwner().getStartingAnySEy();
+            }
+        }
+
+        return startingAnySEy;
+    }
+
+    public void setStartingAnySEy(int i) {
+        this.startingAnySEy = i;
+    }
+
     public int getBloodStalkerTarget() {
         return bloodStalkerTarget;
     }
+
+
 
     /**
      * Whether this entity can activate the "blood stalker" ability

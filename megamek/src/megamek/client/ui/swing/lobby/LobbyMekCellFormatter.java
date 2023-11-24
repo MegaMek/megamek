@@ -262,6 +262,15 @@ class LobbyMekCellFormatter {
             }
             String msg_start = Messages.getString("ChatLounge.Start");
             result.append(" " + msg_start + ":" + IStartingPositions.START_LOCATION_NAMES[sp]);
+            if (sp == 0) {
+                int NWx = entity.getStartingAnyNWx() + 1;
+                int NWy = entity.getStartingAnyNWy() + 1;
+                int SEx = entity.getStartingAnySEx() + 1;
+                int SEy = entity.getStartingAnySEy() + 1;
+                if ((NWx + NWy + SEx + SEy) > 0) {
+                    result.append("(" + NWx + ", " + NWy + ")-(" + SEx + ", " + SEy + ")");
+                }
+            }
             int so = entity.getStartingOffset(true);
             int sw = entity.getStartingWidth(true);
             if ((so != 0) || (sw != 3)) {

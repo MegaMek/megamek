@@ -10,6 +10,8 @@ source:TRO: 3085
 Rules Level:2
 role:Brawler
 
+quirk:weak_head_1
+
 Mass:65
 Engine:260 XL Engine
 Structure:Standard

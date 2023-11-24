@@ -10,6 +10,11 @@ Source:TRO: 3060
 Rules Level:2
 role:Sniper
 
+quirk:easy_maintain
+quirk:easy_pilot
+quirk:rugged_1
+quirk:ubiquitous_is
+
 Mass:40
 Engine:200 Fusion Engine
 Structure:Endo Steel

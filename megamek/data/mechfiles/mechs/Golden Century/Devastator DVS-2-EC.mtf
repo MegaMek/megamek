@@ -9,6 +9,9 @@ source:TRO: Golden Century
 rules level:3
 role:Sniper
 
+quirk:hyper_actuator
+quirk:searchlight
+
 mass:100
 engine:300 XL Engine(IS)
 structure:IS Standard

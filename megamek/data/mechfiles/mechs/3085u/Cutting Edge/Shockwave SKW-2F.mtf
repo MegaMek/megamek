@@ -10,6 +10,11 @@ source:TRO: 3085
 Rules Level:2
 role:Skirmisher
 
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:easy_maintain
+weaponquirk:exposed_linkage:RT:3:ISRotaryAC5
+
 Mass:50
 Engine:250 XL Engine
 Structure:Endo Steel

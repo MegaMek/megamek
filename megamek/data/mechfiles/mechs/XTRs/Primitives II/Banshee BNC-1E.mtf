@@ -9,6 +9,11 @@ source:XTR: Primitives II
 rules level:4
 role:Sniper
 
+quirk:distracting
+quirk:easy_maintain
+quirk:rugged_1
+quirk:bad_rep_is
+
 mass:95
 engine:345 Fusion Engine(IS)
 structure:IS Standard

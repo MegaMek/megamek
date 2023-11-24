@@ -10,6 +10,8 @@ Source:TRO: 3075
 Rules Level:2
 role:Juggernaut
 
+quirk:pro_actuator
+
 Mass:100
 Engine:300 Fusion Engine(IS)
 Structure:IS Standard

@@ -9,6 +9,11 @@ source:TRO: 3075
 rules level:4
 role:Juggernaut
 
+quirk:easy_maintain
+quirk:pro_actuator
+quirk:rugged_1
+quirk:oversized
+
 mass:100
 engine:360 Fusion Engine(IS)
 structure:IS Standard

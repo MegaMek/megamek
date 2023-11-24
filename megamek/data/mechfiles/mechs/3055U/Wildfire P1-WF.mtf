@@ -10,6 +10,9 @@ Source:Unbound
 Rules Level:4
 role:Skirmisher
 
+quirk:non_standard
+quirk:prototype
+
 Mass:65
 Engine:390 XL Fusion Engine
 Structure:Endo-Steel

@@ -10,6 +10,8 @@ source:TRO: 3085
 Rules Level:4
 role:Juggernaut
 
+quirk:rugged_1
+
 Mass:55
 Engine:200 Fusion Engine(IS)
 Structure:Standard

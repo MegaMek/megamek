@@ -10,6 +10,9 @@ Source:TRO: 3055
 Rules Level:2
 role:Skirmisher
 
+quirk:easy_maintain
+quirk:weak_head_1
+
 Mass:75
 Engine:375 XL Engine
 Structure:Endo Steel

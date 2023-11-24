@@ -10,6 +10,9 @@ Rules Level:2
 role:Striker
 source:TRO: 3067
 
+quirk:low_profile
+quirk:no_arms
+
 Mass:30
 Engine:180 Light Engine
 Structure:Endo Steel

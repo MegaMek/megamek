@@ -10,6 +10,9 @@ Source:TRO: 3039
 Rules Level:1
 role:Skirmisher
 
+quirk:hyper_actuator
+quirk:exp_actuator
+
 Mass:60
 Engine:300 Fusion Engine
 Structure:Standard

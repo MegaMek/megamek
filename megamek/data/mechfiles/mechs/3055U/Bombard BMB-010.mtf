@@ -10,6 +10,9 @@ Source:TRO: 3055
 Rules Level:2
 role:Juggernaut
 
+quirk:bad_rep_is
+quirk:non_standard
+
 Mass:50
 Engine:100 XL Engine
 Structure:Endo Steel

@@ -10,6 +10,8 @@ Source:TRO: 3145 Capellan Confederation
 Rules Level:3
 role:Skirmisher
 
+quirk:distracting
+
 Mass:75
 Engine:375 XL Engine(IS)
 Structure:IS Endo-Steel

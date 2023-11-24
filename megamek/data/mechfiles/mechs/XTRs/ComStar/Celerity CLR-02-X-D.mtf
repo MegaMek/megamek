@@ -9,6 +9,9 @@ source:XTR: ComStar
 rules level:4
 role:Scout
 
+quirk:prototype
+quirk:exp_actuator
+
 mass:15
 engine:240 XXL Engine(IS)
 structure:IS Endo Steel

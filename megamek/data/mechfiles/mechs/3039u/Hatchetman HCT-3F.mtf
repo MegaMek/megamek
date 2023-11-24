@@ -10,6 +10,9 @@ source:TRO: 3039
 rules level:1	
 role:Brawler
 
+quirk:anti_air
+weaponquirk:fast_reload:RT:2:Autocannon/10
+
 mass:45
 engine:180 Fusion Engine(IS)
 structure:IS Standard

@@ -10,6 +10,9 @@ source:Rec Guide:ilClan #15
 rules level:3
 role:Skirmisher
 
+quirk:reinforced_legs
+quirk:rugged_1
+
 mass:55
 engine:275 XL Engine(IS)
 structure:IS Standard

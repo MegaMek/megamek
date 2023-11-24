@@ -10,6 +10,8 @@ Source:TRO: 3055
 Rules Level:2
 role:Striker
 
+quirk:bad_rep_is
+
 Mass:25
 Engine:175 Fusion Engine
 Structure:Endo Steel

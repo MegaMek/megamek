@@ -11,6 +11,8 @@ Rules Level:3
 role:Striker
 
 
+quirk:no_arms
+
 Mass:30
 Engine:150 XL Engine(IS)
 Structure:IS Standard

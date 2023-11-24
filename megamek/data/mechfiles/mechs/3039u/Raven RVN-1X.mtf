@@ -10,6 +10,8 @@ Source:TRO: 3039
 Rules Level:4
 role:Scout
 
+quirk:no_arms
+
 Mass:35
 Engine:175 Fusion Engine
 Structure:Standard

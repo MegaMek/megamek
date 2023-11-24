@@ -10,6 +10,8 @@ Source:XTR: Primitives I
 Rules Level:4
 role:Juggernaut
 
+quirk:easy_maintain
+
 Mass:65
 Engine:235 Fusion Engine
 Structure:Standard

@@ -10,6 +10,8 @@ source:Historical: Operation Klondike
 rules level:2
 role:Ambusher
 
+quirk:difficult_maintain
+
 mass:60
 engine:240 Fusion Engine(IS)
 structure:IS Industrial

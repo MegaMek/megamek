@@ -10,6 +10,9 @@ Source:XTR: Primitives I
 Rules Level:4
 role:Scout
 
+quirk:low_profile
+quirk:exp_actuator
+
 Mass:25
 Engine:150 Primitive Fusion Engine
 Structure:Standard

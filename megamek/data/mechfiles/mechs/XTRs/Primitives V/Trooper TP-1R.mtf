@@ -10,6 +10,18 @@ Source:XTR: Primitives V
 Rules Level:4
 role:Scout
 
+quirk:easy_maintain
+quirk:imp_life_support
+quirk:bad_rep_is
+quirk:exp_actuator
+quirk:no_arms
+quirk:no_eject
+quirk:weak_legs
+weaponquirk:mod_weapons:CT:10:Flamer
+weaponquirk:mod_weapons:RA:2:Machine Gun
+weaponquirk:mod_weapons:LA:2:Small Laser
+weaponquirk:mod_weapons:LA:3:Small Laser
+
 Mass:20
 Engine:145 Fusion Engine(IS)
 Structure:IS Standard

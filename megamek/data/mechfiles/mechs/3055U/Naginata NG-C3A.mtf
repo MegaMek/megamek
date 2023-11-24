@@ -10,6 +10,9 @@ Source:TRO: 3055
 Rules Level:2
 role:Missile Boat
 
+quirk:cowl
+quirk:stable
+
 Mass:95
 Engine:285 Fusion Engine
 Structure:Standard

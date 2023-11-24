@@ -9,6 +9,11 @@ rules level:2
 role:Missile Boat
 source:Historical: Operation Klondike
 
+quirk:barrel_fists_la
+quirk:barrel_fists_ra
+quirk:difficult_maintain
+quirk:non_standard
+
 mass:85
 engine:255 Fusion Engine(IS)
 structure:IS Standard

@@ -9,6 +9,8 @@ source:TRO: 3145 Draconis Combine
 rules level:2
 role:Missile Boat
 
+quirk:bad_rep_is
+
 mass:50
 engine:250 Fusion Engine(IS)
 structure:IS Endo Steel

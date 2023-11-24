@@ -9,6 +9,12 @@ source:TRO: 3039
 rules level:1
 role:Striker
 
+quirk:imp_target_long
+quirk:imp_target_med
+quirk:difficult_maintain
+quirk:exp_actuator
+quirk:non_standard
+
 mass:40
 engine:240 Fusion Engine(IS)
 structure:IS Standard

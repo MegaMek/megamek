@@ -10,6 +10,8 @@ Rules Level:2
 role:Skirmisher
 source:TRO: 3067
 
+quirk:bad_rep_is
+
 Mass:50
 Engine:300 XL Engine
 Structure:Endo Steel

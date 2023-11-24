@@ -755,7 +755,7 @@ public class Server implements Runnable {
             team = Player.TEAM_NONE;
             final GameOptions gOpts = getGame().getOptions();
             if (isBot || !gOpts.booleanOption(OptionsConstants.BASE_SET_DEFAULT_TEAM_1)) {
-                for (Player p : getGame().getPlayersVector()) {
+                for (Player p : getGame().getPlayersList()) {
                     if (p.getTeam() > team) {
                         team = p.getTeam();
                     }

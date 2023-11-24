@@ -10,8 +10,6 @@ Source:TRO: 3075
 Rules Level:3
 role:Missile Boat
 
-quirk:pro_actuator
-quirk:stable
 
 Mass:65
 Engine:260 XL Engine(IS)

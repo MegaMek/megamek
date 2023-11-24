@@ -10,8 +10,6 @@ Source:TRO: 3085
 Rules Level:2
 role:Sniper
 
-quirk:no_arms
-weaponquirk:direct_torso_mount:RT:4:ISGaussRifle
 
 Mass:55
 Engine:220 XL Engine(IS)

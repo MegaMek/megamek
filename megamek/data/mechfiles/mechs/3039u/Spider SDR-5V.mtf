@@ -10,7 +10,6 @@ Source:TRO: 3039
 Rules Level:1
 role:Scout
 
-quirk:no_eject
 
 Mass:30
 Engine:240 Fusion Engine

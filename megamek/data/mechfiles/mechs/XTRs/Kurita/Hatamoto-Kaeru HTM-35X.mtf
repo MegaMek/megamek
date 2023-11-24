@@ -10,9 +10,6 @@ Source:XTR: Kurita
 Rules Level:4
 role:Brawler
 
-quirk:multi_trac
-quirk:difficult_maintain
-quirk:non_standard
 
 Mass:80
 Engine:320 XL Fusion Engine

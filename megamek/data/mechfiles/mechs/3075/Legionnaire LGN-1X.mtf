@@ -10,9 +10,6 @@ Source:TRO: 3075
 Rules Level:2
 role:Striker
 
-quirk:easy_maintain
-quirk:imp_target_med
-weaponquirk:exposed_linkage:RT:3:ISRotaryAC2
 
 Mass:50
 Engine:350 XL Engine

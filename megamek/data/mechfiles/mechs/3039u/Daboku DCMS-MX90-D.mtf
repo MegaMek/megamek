@@ -10,11 +10,6 @@ Source:TRO: 3039
 Rules Level:2
 role:Sniper
 
-quirk:prototype
-weaponquirk:stable_weapon:RT:3:Autocannon/2
-weaponquirk:stable_weapon:RT:4:Autocannon/2
-weaponquirk:stable_weapon:LT:3:Autocannon/2
-weaponquirk:stable_weapon:LT:4:Autocannon/2
 
 Mass:90
 Engine:270 Fusion Engine

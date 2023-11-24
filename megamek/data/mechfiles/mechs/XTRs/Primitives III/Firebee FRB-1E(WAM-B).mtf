@@ -10,11 +10,6 @@ Source:XTR: Primitives III
 Rules Level:4
 role:Brawler
 
-quirk:ext_twist
-quirk:difficult_maintain
-quirk:non_standard
-quirk:obsolete
-quirk:poor_work
 
 Mass:35
 Engine:210 Fusion Engine(IS)

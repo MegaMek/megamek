@@ -10,14 +10,6 @@ source:TRO: 3067
 rules level:2
 role:Juggernaut
 
-quirk:directional_torso_mount
-quirk:bad_rep_is
-weaponquirk:direct_torso_mount:RT:0:ISUltraAC10
-weaponquirk:direct_torso_mount:RT:7:ISStreakSRM4
-weaponquirk:direct_torso_mount:LT:0:ISUltraAC10
-weaponquirk:direct_torso_mount:RA:4:ISERMediumLaser
-weaponquirk:direct_torso_mount:RA:5:ISERMediumLaser
-weaponquirk:direct_torso_mount:LA:7:ISERSmallLaser
 
 mass:80
 engine:240 Fusion Engine(IS)

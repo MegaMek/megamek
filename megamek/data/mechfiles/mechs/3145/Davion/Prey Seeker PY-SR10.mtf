@@ -9,8 +9,6 @@ source:TRO: 3145 Federated Suns
 rules level:3
 role:Striker
 
-quirk:overhead_arms
-quirk:exp_actuator
 
 mass:15
 engine:180 XXL Engine(IS)

@@ -10,11 +10,6 @@ Source:TRO: 3075
 Rules Level:4
 role:Brawler
 
-quirk:barrel_fists_la
-quirk:barrel_fists_ra
-quirk:hyper_actuator
-quirk:searchlight
-quirk:stable
 
 Mass:75
 Engine:300 XL Engine

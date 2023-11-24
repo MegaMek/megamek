@@ -10,9 +10,6 @@ source:TRO: 3085
 Rules Level:2
 role:Sniper
 
-quirk:ext_twist
-quirk:imp_com
-quirk:imp_sensors
 
 Mass:50
 Engine:300 XL Engine

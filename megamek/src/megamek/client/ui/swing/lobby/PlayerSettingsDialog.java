@@ -121,11 +121,11 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     }
 
     public int getStartingAnyNWx() {
-        return (Integer) spinStartingAnyNWx.getValue() - 1;
+        return Math.min((Integer) spinStartingAnyNWx.getValue(), (Integer) spinStartingAnySEx.getValue()) - 1;
     }
 
     public int getStartingAnyNWy() {
-        return (Integer) spinStartingAnyNWy.getValue() - 1;
+        return Math.min((Integer) spinStartingAnyNWy.getValue(), (Integer) spinStartingAnySEy.getValue()) - 1;
     }
 
     public int getStartingAnySEx() {

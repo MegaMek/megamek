@@ -897,8 +897,8 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
             entity.setStartingOffset(Integer.parseInt(txtDeploymentOffset.getText()));
             entity.setStartingWidth(Integer.parseInt(txtDeploymentWidth.getText()));
 
-            int x = (Integer) spinStartingAnyNWx.getValue() > (Integer) spinStartingAnySEx.getValue() ? (Integer) spinStartingAnySEx.getValue() : (Integer) spinStartingAnyNWx.getValue();
-            int y = (Integer) spinStartingAnyNWy.getValue() > (Integer) spinStartingAnySEy.getValue() ? (Integer) spinStartingAnySEy.getValue() : (Integer) spinStartingAnyNWy.getValue();
+            int x = Math.min((Integer) spinStartingAnyNWx.getValue(), (Integer) spinStartingAnySEx.getValue());
+            int y = Math.min((Integer) spinStartingAnyNWy.getValue(), (Integer) spinStartingAnySEy.getValue());
             entity.setStartingAnyNWx(x - 1);
             entity.setStartingAnyNWy(y - 1);
             entity.setStartingAnySEx((Integer) spinStartingAnySEx.getValue() - 1);

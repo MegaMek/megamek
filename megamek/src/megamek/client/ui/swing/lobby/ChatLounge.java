@@ -1506,7 +1506,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      */
     boolean isEditable(Entity entity) {
         boolean localGM = clientgui.getClient().getLocalPlayer().isGameMaster();
-        return !localGM && (clientgui.getLocalBots().containsKey(entity.getOwner().getName())
+        return localGM || (clientgui.getLocalBots().containsKey(entity.getOwner().getName())
                 || (entity.getOwnerId() == localPlayer().getId()));
     }
 

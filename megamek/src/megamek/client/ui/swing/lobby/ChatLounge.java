@@ -1269,7 +1269,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             boolean localUnit = entity.getOwner().equals(localPlayer());
             boolean teamUnit = !entity.getOwner().isEnemyOf(localPlayer());
             boolean realBlindDrop = opts.booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
-            if (localUnit || teamUnit || !realBlindDrop) {
+            boolean localGM = localPlayer().isGameMaster();
+            if (localUnit || teamUnit || !realBlindDrop || localGM) {
                 mekModel.addUnit(entity);
             }
         }
@@ -1504,8 +1505,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      * own units (and bots) though.
      */
     boolean isEditable(Entity entity) {
-        return clientgui.getLocalBots().containsKey(entity.getOwner().getName())
-                || (entity.getOwnerId() == localPlayer().getId());
+        boolean localGM = clientgui.getClient().getLocalPlayer().isGameMaster();
+        return !localGM && (clientgui.getLocalBots().containsKey(entity.getOwner().getName())
+                || (entity.getOwnerId() == localPlayer().getId()));
     }
 
     /**

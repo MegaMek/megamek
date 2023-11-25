@@ -1192,7 +1192,9 @@ public class LobbyActions {
      * player is allowed to change everything.
      */
     boolean isEditable(Entity entity) {
-        return client().localBots.containsKey(entity.getOwner().getName())
+        boolean localGM = client().getLocalPlayer().isGameMaster();
+        return localGM
+                || client().localBots.containsKey(entity.getOwner().getName())
                 || (entity.getOwnerId() == localPlayer().getId())
                 || (entity.partOfForce() && isSelfOrLocalBot(game().getForces().getOwner(entity.getForceId())))
                 || (entity.partOfForce() && isEditable(game().getForces().getForce(entity)));
@@ -1222,7 +1224,8 @@ public class LobbyActions {
      * of the entities are not on his team.
      */
     boolean canSeeAll(Collection<Entity> entities) {
-        if (!isBlindDrop(game()) && !isRealBlindDrop(game())) {
+        boolean localGM = client().getLocalPlayer().isGameMaster();
+        if (localGM || (!isBlindDrop(game()) && !isRealBlindDrop(game()))) {
             return true;
         }
         return entities.stream().noneMatch(this::isLocalEnemy);

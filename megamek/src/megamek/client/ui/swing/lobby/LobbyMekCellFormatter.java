@@ -85,7 +85,8 @@ class LobbyMekCellFormatter {
         GameOptions options = game.getOptions();
         Player localPlayer = client.getLocalPlayer();
         Player owner = entity.getOwner();
-        boolean hideEntity = owner.isEnemyOf(localPlayer)
+        boolean localGM = localPlayer.isGameMaster();
+        boolean hideEntity = !localGM && owner.isEnemyOf(localPlayer)
                 && options.booleanOption(OptionsConstants.BASE_BLIND_DROP);
         if (hideEntity) {
             result.append(DOT_SPACER);
@@ -493,7 +494,8 @@ class LobbyMekCellFormatter {
         GameOptions options = game.getOptions();
         Player localPlayer = client.getLocalPlayer();
         Player owner = entity.getOwner();
-        boolean hideEntity = owner.isEnemyOf(localPlayer)
+        boolean localGM = localPlayer.isGameMaster();
+        boolean hideEntity = !localGM && owner.isEnemyOf(localPlayer)
                 && options.booleanOption(OptionsConstants.BASE_BLIND_DROP);
         if (hideEntity) {
             String value = "<HTML><NOBR>&nbsp;&nbsp;";

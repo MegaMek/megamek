@@ -1,6 +1,7 @@
 Version:1.0
 Roughneck
 RGH-BLT Bolt
+base unit:data/mechfiles/mechs/Videogame (Apocryphal)/Roughneck RGH-1A.mtf
 
 Config:Biped
 techbase:Inner Sphere

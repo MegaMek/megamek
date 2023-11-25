@@ -2,6 +2,7 @@ Version:1.0
 Raven
 RVN-3M
 mul id:5444
+base unit:data/mechfiles/mechs/3039u/Raven RVN-1X.mtf
 
 Config:Biped
 TechBase:Inner Sphere

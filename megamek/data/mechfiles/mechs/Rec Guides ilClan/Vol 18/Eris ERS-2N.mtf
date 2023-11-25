@@ -2,6 +2,7 @@ Version:1.0
 Eris
 ERS-2N
 mul id:8251
+base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 18/Eris ERS-2H.mtf
 
 Config:Biped
 techbase:Inner Sphere

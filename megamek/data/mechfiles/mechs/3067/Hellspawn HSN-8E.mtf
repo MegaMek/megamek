@@ -2,6 +2,7 @@ Version:1.0
 Hellspawn
 HSN-8E
 mul id:4308
+base unit:data/mechfiles/mechs/3067/Hellspawn HSN-7D.mtf
 
 Config:Biped
 techbase:Inner Sphere

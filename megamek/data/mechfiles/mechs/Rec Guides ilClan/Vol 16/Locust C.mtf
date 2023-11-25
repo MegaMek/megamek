@@ -2,6 +2,7 @@ Version:1.0
 Locust
 C
 mul id:7601
+base unit:data/mechfiles/mechs/3039u/Locust LCT-1V.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

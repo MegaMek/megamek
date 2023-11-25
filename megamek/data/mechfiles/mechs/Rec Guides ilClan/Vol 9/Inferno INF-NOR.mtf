@@ -2,6 +2,7 @@ Version:1.1
 Inferno
 INF-NOR
 mul id:7719
+base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 9/Inferno INF-NO.mtf
 
 Config:Biped Omnimech
 techbase:Mixed (IS Chassis)

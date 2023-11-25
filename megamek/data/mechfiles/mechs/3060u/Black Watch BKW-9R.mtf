@@ -2,6 +2,7 @@ Version:1.0
 Black Watch
 BKW-9R
 mul id:372
+base unit:data/mechfiles/mechs/3060u/Black Watch BKW-7R.mtf
 
 Config:Biped
 TechBase:Inner Sphere

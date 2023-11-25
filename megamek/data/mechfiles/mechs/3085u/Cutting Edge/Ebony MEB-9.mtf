@@ -2,6 +2,7 @@ Version:1.1
 Ebony
 MEB-9
 mul id:942
+base unit:data/mechfiles/mechs/3085u/Cutting Edge/Ebony MEB-10.mtf
 
 Config:Biped
 TechBase:Inner Sphere

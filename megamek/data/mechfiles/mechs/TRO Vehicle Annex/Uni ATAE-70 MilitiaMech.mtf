@@ -2,6 +2,7 @@ Version:1.0
 Uni
 ATAE-70 MilitiaMech
 mul id:6977
+base unit:data/mechfiles/mechs/TRO Vehicle Annex/Uni ATAE-70 CargoMech.mtf
 
 Config:Quad
 TechBase:Inner Sphere

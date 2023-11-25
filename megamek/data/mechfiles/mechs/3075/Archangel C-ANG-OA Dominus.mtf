@@ -2,6 +2,7 @@ Version:1.1
 Archangel
 C-ANG-OA Dominus
 mul id:66
+base unit:data/mechfiles/mechs/3075/Archangel C-ANG-O Invictus.mtf
 
 Config:Biped Omnimech
 TechBase:Inner Sphere

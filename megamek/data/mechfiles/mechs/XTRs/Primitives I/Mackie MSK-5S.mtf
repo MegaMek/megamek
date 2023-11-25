@@ -1,6 +1,7 @@
 Version:1.3
 Mackie
 MSK-5S
+base unit:data/mechfiles/mechs/3075/Mackie MSK-6S.mtf
 mul id:1972
 Config:Biped
 techbase:Inner Sphere

@@ -2,6 +2,7 @@ Version:1.1
 Grigori
 C-GRG-OA Dominus
 mul id:1321
+base unit:data/mechfiles/mechs/3075/Grigori C-GRG-O Invictus.mtf
 
 Config:Biped Omnimech
 techbase:Inner Sphere

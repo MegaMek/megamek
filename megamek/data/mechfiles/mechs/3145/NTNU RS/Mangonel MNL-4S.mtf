@@ -1,6 +1,7 @@
 Version:1.3
 Mangonel
 MNL-4S
+base unit:data/mechfiles/mechs/3085u/Cutting Edge/Mangonel MNL-3L.mtf
 mul id:6871
 Config:Biped
 techbase:Mixed (IS Chassis)

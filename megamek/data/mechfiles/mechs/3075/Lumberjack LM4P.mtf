@@ -2,6 +2,7 @@ Version:1.0
 Lumberjack
 LM4/P
 mul id:1961
+base unit:data/mechfiles/mechs/3075/Lumberjack LM1A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,6 +2,7 @@ Version:1.1
 Targe
 TRG-3M
 mul id:6915
+base unit:data/mechfiles/mechs/3085u/Cutting Edge/Targe TRG-1N.mtf
 
 Config:Biped
 TechBase:Inner Sphere

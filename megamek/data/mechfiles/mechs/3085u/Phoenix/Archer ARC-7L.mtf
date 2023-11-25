@@ -1,6 +1,7 @@
 Version:1.3
 Archer
 ARC-7L
+base unit:data/mechfiles/mechs/XTRs/Primitives V/Archer ARC-1A.mtf
 mul id:84
 Config:Biped
 techbase:Inner Sphere

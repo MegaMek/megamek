@@ -2,6 +2,7 @@ Version:1.1
 Cronus
 CNS-TD9
 mul id:5680
+base unit:data/mechfiles/mechs/3067/Cronus CNS-3M.mtf
 
 Config:Biped
 TechBase:Inner Sphere

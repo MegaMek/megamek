@@ -2,6 +2,7 @@ Version:1.0
 Panther
 PNT-C
 mul id:2426
+base unit:data/mechfiles/mechs/3039u/Panther PNT-8Z.mtf
 
 Config:Biped
 TechBase:Inner Sphere

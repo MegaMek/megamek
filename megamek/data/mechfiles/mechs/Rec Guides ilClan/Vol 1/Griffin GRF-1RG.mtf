@@ -1,6 +1,7 @@
 Version:1.3
 Griffin
 GRF-1RG
+base unit:data/mechfiles/mechs/XTRs/Primitives IV/Griffin GRF-1A.mtf
 mul id:9402
 Config:Biped
 techbase:Inner Sphere

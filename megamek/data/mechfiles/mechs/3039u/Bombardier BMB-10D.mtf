@@ -2,6 +2,7 @@ Version:1.0
 Bombardier
 BMB-10D
 mul id:422
+base unit:data/mechfiles/mechs/3050U/Bombardier BMB-12D.mtf
 
 Config:Biped
 TechBase:Inner Sphere

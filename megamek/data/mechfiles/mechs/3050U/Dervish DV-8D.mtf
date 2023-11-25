@@ -2,6 +2,7 @@ Version:1.1
 Dervish
 DV-8D
 mul id:881
+base unit:data/mechfiles/mechs/XTRs/Primitives III/Dervish DV-1S.mtf
 
 Config:Biped
 TechBase:Inner Sphere

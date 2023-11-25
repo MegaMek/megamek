@@ -2,6 +2,7 @@ Version:1.1
 Vanquisher
 VQR-7V
 mul id:5722
+base unit:data/mechfiles/mechs/3067/Vanquisher VQR-2A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

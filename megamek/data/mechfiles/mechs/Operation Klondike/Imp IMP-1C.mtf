@@ -2,6 +2,7 @@ Version:1.0
 Imp
 IMP-1C
 mul id:1609
+base unit:data/mechfiles/mechs/Operation Klondike/Imp IMP-1A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

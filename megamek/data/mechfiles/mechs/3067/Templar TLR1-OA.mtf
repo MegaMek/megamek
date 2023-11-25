@@ -2,6 +2,7 @@ Version:1.0
 Templar
 TLR1-OA
 mul id:5195
+base unit:data/mechfiles/mechs/3067/Templar TLR1-O.mtf
 
 Config:Biped Omnimech
 TechBase:Inner Sphere

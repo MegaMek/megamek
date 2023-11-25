@@ -2,6 +2,7 @@ Version:1.0
 Mongoose
 MON-68
 mul id:4655
+base unit:data/mechfiles/mechs/3050U/Mongoose MON-66.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -3,6 +3,7 @@ Gunslinger
 GUN-1ERD (Jared)
 mul id:1348
 source:Record Sheets: Unique Mechs
+base unit:data/mechfiles/mechs/3055U/Gunslinger GUN-1ERD.mtf
 
 Config:Biped
 TechBase:Inner Sphere

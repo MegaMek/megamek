@@ -2,6 +2,7 @@ Version:1.0
 Hauptmann
 HA1-OM
 mul id:6838
+base unit:data/mechfiles/mechs/3060u/Hauptmann HA1-O.mtf
 
 Config:Biped Omnimech
 TechBase:Mixed (IS Chassis)

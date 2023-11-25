@@ -2,6 +2,7 @@ Version:1.0
 Cataphract
 CTF-3X (Sara)
 mul id:472
+base unit:data/mechfiles/mechs/3039u/Cataphract CTF-1X.mtf
 
 Config:Biped
 TechBase:Inner Sphere

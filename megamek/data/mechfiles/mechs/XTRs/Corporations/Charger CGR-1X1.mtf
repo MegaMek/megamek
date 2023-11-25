@@ -2,6 +2,7 @@ Version:1.1
 Charger
 CGR-1X1
 mul id:563
+base unit:data/mechfiles/mechs/3039u/Charger CGR-1A1.mtf
 
 Config:Biped
 TechBase:Inner Sphere

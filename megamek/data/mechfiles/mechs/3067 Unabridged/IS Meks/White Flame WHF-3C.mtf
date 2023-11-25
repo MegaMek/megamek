@@ -2,6 +2,7 @@ Version:1.1
 White Flame
 WHF-3C
 mul id:5405
+base unit:data/mechfiles/mechs/3067/White Flame WHF-3B.mtf
 
 Config:Quad
 TechBase:Inner Sphere

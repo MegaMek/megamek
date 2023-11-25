@@ -2,6 +2,7 @@ Version:1.1
 Tessen
 TSN-X-4
 mul id:5549
+base unit:data/mechfiles/mechs/3067/Tessen TSN-1C.mtf
 
 Config:Biped
 TechBase:Inner Sphere

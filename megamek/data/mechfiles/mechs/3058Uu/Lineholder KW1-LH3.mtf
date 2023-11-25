@@ -2,6 +2,7 @@ Version:1.0
 Lineholder
 KW1-LH3
 mul id:1894
+base unit:data/mechfiles/mechs/3058Uu/Lineholder KW1-LH2.mtf
 
 Config:Biped
 TechBase:Inner Sphere

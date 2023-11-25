@@ -2,6 +2,7 @@ Version:1.0
 Flea
 FLE-15
 mul id:1136
+base unit:data/mechfiles/mechs/3039u/Flea FLE-4.mtf
 
 Config:Biped
 TechBase:Inner Sphere

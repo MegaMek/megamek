@@ -2,6 +2,7 @@ Version:1.0
 Pandarus
 LFA-1A
 mul id:4783
+base unit:data/mechfiles/mechs/XTRs/Marik/Pandarus LFA-1X.mtf
 
 Config:Biped
 TechBase:Inner Sphere

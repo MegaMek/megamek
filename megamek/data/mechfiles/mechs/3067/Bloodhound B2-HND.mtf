@@ -2,6 +2,7 @@ Version:1.0
 Bloodhound
 B2-HND
 mul id:3839
+base unit:data/mechfiles/mechs/3067/Bloodhound B1-HND.mtf
 
 Config:Biped
 TechBase:Inner Sphere

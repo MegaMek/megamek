@@ -2,6 +2,7 @@ Version:1.1
 Thug
 THG-11ECX (Jose)
 mul id:7322
+base unit:data/mechfiles/mechs/3050U/Thug THG-11E.mtf
 
 Config:Biped
 TechBase:Inner Sphere

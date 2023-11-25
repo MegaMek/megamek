@@ -2,6 +2,7 @@ Version:1.0
 Grim Reaper
 GRM-R (Einar)
 mul id:5550
+base unit:data/mechfiles/mechs/3055U/Grim Reaper GRM-R-PR29.mtf
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

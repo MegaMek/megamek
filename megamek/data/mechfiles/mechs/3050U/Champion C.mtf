@@ -2,6 +2,7 @@ Version:1.0
 Champion
 C
 mul id:547
+base unit:data/mechfiles/mechs/3050U/Champion CHP-1N.mtf
 
 Config:Biped
 TechBase:Clan

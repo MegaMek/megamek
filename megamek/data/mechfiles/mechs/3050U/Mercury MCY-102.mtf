@@ -2,6 +2,7 @@ Version:1.0
 Mercury
 MCY-102
 mul id:2169
+base unit:data/mechfiles/mechs/3050U/Mercury MCY-99.mtf
 
 Config:Biped
 TechBase:Inner Sphere

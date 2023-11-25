@@ -2,6 +2,7 @@ Version:1.0
 Wasp LAM Mk I
 WSP-100A
 mul id:5393
+base unit:data/mechfiles/mechs/LAMS/Wasp LAM Mk I WSP-100.mtf
 
 Config:LAM
 TechBase:Inner Sphere

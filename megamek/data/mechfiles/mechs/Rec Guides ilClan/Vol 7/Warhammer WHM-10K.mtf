@@ -2,6 +2,7 @@ Version:1.0
 Warhammer
 WHM-10K
 mul id:7564
+base unit:data/mechfiles/mechs/3039u/Warhammer WHM-6R.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

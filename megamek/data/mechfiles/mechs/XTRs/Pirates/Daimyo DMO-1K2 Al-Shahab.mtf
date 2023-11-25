@@ -2,6 +2,7 @@ Version:1.1
 Daimyo
 DMO-1K2 (Al-Shahab)
 mul id:803
+base unit:data/mechfiles/mechs/3055U/Daimyo DMO-1K.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,6 +2,7 @@ Version:1.1
 Gurkha
 GUR-6G
 mul id:5663
+base unit:data/mechfiles/mechs/3067/Gurkha GUR-2G.mtf
 
 Config:Biped
 TechBase:Inner Sphere

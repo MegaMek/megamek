@@ -2,6 +2,7 @@ Version:1.0
 Opossum SalvageMech
 OPO-3 MOD
 mul id:7848
+base unit:data/mechfiles/mechs/TRO Irregulars/Opossum OPO-2 SalvageMech.mtf
 
 Config:Biped
 techbase:Inner Sphere

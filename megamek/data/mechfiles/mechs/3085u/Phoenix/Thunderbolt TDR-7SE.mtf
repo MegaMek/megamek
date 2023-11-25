@@ -2,6 +2,7 @@ Version:1.0
 Thunderbolt
 TDR-7SE
 mul id:3245
+base unit:data/mechfiles/mechs/XTRs/Primitives III/Thunderbolt TDR-1C.mtf
 
 Config:Biped
 TechBase:Inner Sphere

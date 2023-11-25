@@ -2,6 +2,7 @@ Version:1.1
 Celerity
 CLR-03-OB
 mul id:6705
+base unit:data/mechfiles/mechs/XTRs/ComStar/Celerity CLR-02-X-D.mtf
 
 Config:Quad Omnimech
 TechBase:Inner Sphere

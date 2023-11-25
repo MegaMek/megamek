@@ -2,6 +2,7 @@ Version:1.0
 Toro
 TR-A-6
 mul id:3277
+base unit:data/mechfiles/mechs/XTRs/Primitives IV/Toro TR-A-1.mtf
 
 Config:Biped
 TechBase:Inner Sphere

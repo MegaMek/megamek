@@ -2,6 +2,7 @@ Version:1.1
 JagerMech
 JM7-G
 mul id:4392
+base unit:data/mechfiles/mechs/3039u/JagerMech JM6-S.mtf
 
 Config:Biped
 TechBase:Inner Sphere

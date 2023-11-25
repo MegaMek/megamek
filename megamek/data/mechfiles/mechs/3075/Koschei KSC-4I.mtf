@@ -2,6 +2,7 @@ Version:1.0
 Koschei
 KSC-4I
 mul id:1822
+base unit:data/mechfiles/mechs/3075/Koschei KSC-3I.mtf
 
 Config:Biped
 TechBase:Inner Sphere

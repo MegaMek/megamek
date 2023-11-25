@@ -2,6 +2,7 @@ Version:1.0
 Ostroc
 OSR-6R
 mul id:8355
+base unit:data/mechfiles/mechs/3039u/Ostroc OSR-2C.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

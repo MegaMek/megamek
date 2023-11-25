@@ -2,6 +2,7 @@ Version:1.1
 Quasit MilitiaMech
 QUA-51M
 mul id:2607
+base unit:data/mechfiles/mechs/3075/Quasit Militiamech QUA-51T.mtf
 
 Config:Biped
 TechBase:Inner Sphere

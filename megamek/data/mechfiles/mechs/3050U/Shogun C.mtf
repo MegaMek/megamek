@@ -1,6 +1,7 @@
 Version:1.3
 Shogun
 C
+base unit:data/mechfiles/mechs/Operation Klondike/Shogun SHG-2H.mtf
 mul id:2931
 Config:Biped
 techbase:Clan

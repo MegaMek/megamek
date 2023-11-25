@@ -2,6 +2,7 @@ Version:1.0
 Lancelot
 LNC25-01X
 mul id:1854
+base unit:data/mechfiles/mechs/3050U/Lancelot LNC25-01.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,6 +2,7 @@ Version:1.0
 Ostroc
 OSR-4L
 mul id:2357
+base unit:data/mechfiles/mechs/3039u/Ostroc OSR-2C.mtf
 
 Config:Biped
 techbase:Inner Sphere

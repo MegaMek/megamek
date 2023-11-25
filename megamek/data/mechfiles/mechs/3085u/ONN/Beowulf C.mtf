@@ -2,6 +2,7 @@ Version:1.0
 Beowulf
 C
 mul id:8073
+base unit:data/mechfiles/mechs/3060u/Beowulf BEO-12.mtf
 
 Config:Biped
 TechBase:Clan

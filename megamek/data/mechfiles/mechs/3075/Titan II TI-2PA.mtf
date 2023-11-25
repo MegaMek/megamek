@@ -2,6 +2,7 @@ Version:1.0
 Titan II
 TI-2PA
 mul id:3259
+base unit:data/mechfiles/mechs/3075/Titan II TI-2P.mtf
 
 Config:Biped
 techbase:Inner Sphere

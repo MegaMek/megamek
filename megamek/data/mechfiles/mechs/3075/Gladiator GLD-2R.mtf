@@ -2,6 +2,7 @@ Version:1.0
 Gladiator
 GLD-2R
 mul id:1199
+base unit:data/mechfiles/mechs/XTRs/Primitives II/Gladiator GLD-1R.mtf
 
 Config:Biped
 techbase:Inner Sphere

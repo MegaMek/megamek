@@ -2,6 +2,7 @@ Version:1.1
 Copperhead
 CPR-HD-003
 mul id:691
+base unit:data/mechfiles/mechs/3055U/Copperhead CPR-HD-002.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,6 +2,7 @@ Version:1.1
 Shugosha
 LAW-QM2 Q-Mech
 mul id:7155
+base unit:data/mechfiles/mechs/TRO Vehicle Annex/Shugosha PTN-LAW LoaderMech.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,6 +2,7 @@ Version:1.1
 Phoenix Hawk
 PXH-1-EC
 mul id:7678
+base unit:data/mechfiles/mechs/3039u/Phoenix Hawk PXH-1.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

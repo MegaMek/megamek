@@ -2,6 +2,7 @@ Version:1.0
 Ostwar
 OWR-3M
 mul id:2383
+base unit:data/mechfiles/mechs/3085u/Cutting Edge/Ostwar OWR-2M.mtf
 
 Config:Biped
 TechBase:Inner Sphere

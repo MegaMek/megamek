@@ -2,6 +2,7 @@ Version:1.1
 Night Hawk
 NTK-2Q-EC
 mul id:7676
+base unit:data/mechfiles/mechs/3058Uu/Night Hawk NTK-2Q.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

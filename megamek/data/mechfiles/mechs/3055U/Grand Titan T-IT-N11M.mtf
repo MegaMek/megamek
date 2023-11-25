@@ -2,6 +2,7 @@ Version:1.0
 Grand Titan
 T-IT-N11M
 mul id:1266
+base unit:data/mechfiles/mechs/3055U/Grand Titan T-IT-N10M.mtf
 
 Config:Biped
 techbase:Inner Sphere

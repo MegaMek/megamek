@@ -2,6 +2,7 @@ Version:1.0
 Fafnir
 FNR-4A (Peter)
 mul id:1020
+base unit:data/mechfiles/mechs/3067/Fafnir FNR-5.mtf
 
 Config:Biped
 TechBase:Inner Sphere

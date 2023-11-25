@@ -2,6 +2,7 @@ Version:1.1
 Uziel
 UZL-2S (Jacob)
 mul id:3367
+base unit:data/mechfiles/mechs/3067/Uziel UZL-2S.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,6 +2,7 @@ Version:1.1
 BattleMaster
 BLR-1Gc
 mul id:287
+base unit:data/mechfiles/mechs/3039u/BattleMaster BLR-1G-DC.mtf
 
 Config:Biped
 TechBase:Inner Sphere

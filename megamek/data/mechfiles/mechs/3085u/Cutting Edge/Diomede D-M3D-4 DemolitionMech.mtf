@@ -2,6 +2,7 @@ Version:1.0
 Diomede
 D-M3D-4 DemolitionMech
 mul id:902
+base unit:data/mechfiles/mechs/3085u/Cutting Edge/Diomede D-M3D-3 ConstructionMech.mtf
 
 Config:Biped
 TechBase:Inner Sphere

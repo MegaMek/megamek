@@ -2,6 +2,7 @@ Version:1.2
 Valkyrie
 VLK-QD5
 mul id:8104
+base unit:data/mechfiles/mechs/3039u/Valkyrie VLK-QA.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

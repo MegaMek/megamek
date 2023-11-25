@@ -2,6 +2,7 @@ Version:1.1
 Devastator
 DVS-X10 MUSE EARTH
 mul id:896
+base unit:data/mechfiles/mechs/Golden Century/Devastator DVS-2-EC.mtf
 
 Config:Biped
 TechBase:Inner Sphere

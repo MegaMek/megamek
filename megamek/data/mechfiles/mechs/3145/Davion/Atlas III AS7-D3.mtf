@@ -2,6 +2,7 @@ Version:1.0
 Atlas III
 AS7-D3
 mul id:6358
+base unit:data/mechfiles/mechs/3145/Davion/Atlas III AS7-D2.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

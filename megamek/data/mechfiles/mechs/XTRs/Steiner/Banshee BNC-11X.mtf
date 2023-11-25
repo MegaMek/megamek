@@ -1,6 +1,7 @@
 Version:1.3
 Banshee
 BNC-11X
+base unit:data/mechfiles/mechs/XTRs/Primitives II/Banshee BNC-1E.mtf
 mul id:3784
 Config:Biped
 techbase:Mixed (IS Chassis)

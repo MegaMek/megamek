@@ -2,6 +2,7 @@ Version:1.1
 Shiro
 SH-2P
 mul id:6417
+base unit:data/mechfiles/mechs/3145/Kurita/Shiro SH-1V.mtf
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

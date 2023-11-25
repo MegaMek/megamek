@@ -2,6 +2,7 @@ Version:1.1
 Falcon
 FLC-4Nb-PP2
 mul id:1026
+base unit:data/mechfiles/mechs/3039u/Falcon FLC-4N.mtf
 
 Config:Biped
 TechBase:Inner Sphere

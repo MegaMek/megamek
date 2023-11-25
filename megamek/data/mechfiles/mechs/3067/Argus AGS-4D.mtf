@@ -2,6 +2,7 @@ Version:1.0
 Argus
 AGS-4D
 mul id:3730
+base unit:data/mechfiles/mechs/3067/Argus AGS-2D.mtf
 
 Config:Biped
 TechBase:Inner Sphere

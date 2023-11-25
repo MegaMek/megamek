@@ -2,6 +2,7 @@ Version:1.1
 Exo HaulerMech
 HMX-2
 mul id:7841
+base unit:data/mechfiles/mechs/TRO Irregulars/Exo Haulermech HMX-1.mtf
 
 Config:Biped
 techbase:Inner Sphere

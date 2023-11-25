@@ -2,6 +2,7 @@ Version:1.0
 Thunderbolt
 TDR-8M
 mul id:8191
+base unit:data/mechfiles/mechs/XTRs/Primitives III/Thunderbolt TDR-1C.mtf
 
 Config:Biped
 techbase:Inner Sphere

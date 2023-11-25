@@ -2,6 +2,7 @@ Version:1.0
 Phoenix Hawk LAM Mk I
 PHX-HK1R
 mul id:4825
+base unit:data/mechfiles/mechs/LAMS/Phoenix Hawk LAM Mk I PHX-HK1.mtf
 
 Config:LAM
 TechBase:Inner Sphere

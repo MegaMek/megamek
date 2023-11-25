@@ -2,6 +2,7 @@ Version:1.1
 Cuirass
 CDR-2BC
 mul id:6922
+base unit:data/mechfiles/mechs/3085u/Cutting Edge/Cuirass CDR-1X.mtf
 
 Config:Biped
 TechBase:Inner Sphere

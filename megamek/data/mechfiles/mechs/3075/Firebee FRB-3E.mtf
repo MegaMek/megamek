@@ -2,6 +2,7 @@ Version:1.1
 Firebee
 FRB-3E
 mul id:1080
+base unit:data/mechfiles/mechs/XTRs/Primitives III/Firebee FRB-1E(WAM-B).mtf
 
 Config:Biped
 TechBase:Inner Sphere

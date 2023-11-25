@@ -2,6 +2,7 @@ Version:1.0
 Wolf Trap (Tora)
 WFT-C
 mul id:3559
+base unit:data/mechfiles/mechs/3050U/Wolf Trap (Tora) WFT-1.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,6 +2,7 @@ Version:1.1
 Eyleuka
 EYL-35A
 mul id:1008
+base unit:data/mechfiles/mechs/3075/Eyleuka EYL-4A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

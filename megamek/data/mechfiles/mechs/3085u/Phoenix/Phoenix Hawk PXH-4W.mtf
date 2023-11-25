@@ -2,6 +2,7 @@ Version:1.2
 Phoenix Hawk
 PXH-4W
 mul id:2504
+base unit:data/mechfiles/mechs/3039u/Phoenix Hawk PXH-1.mtf
 
 Config:Biped
 TechBase:Inner Sphere

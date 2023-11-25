@@ -2,6 +2,7 @@ Version:1.0
 Penetrator
 PTR-4F
 mul id:2466
+base unit:data/mechfiles/mechs/3055U/Penetrator PTR-4D.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,6 +2,7 @@ Version:1.0
 Atlas
 C 2
 mul id:8431
+base unit:data/mechfiles/mechs/3039u/Atlas AS7-D.mtf
 
 Config:Biped
 techbase:Clan

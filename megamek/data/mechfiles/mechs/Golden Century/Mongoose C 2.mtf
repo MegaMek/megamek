@@ -2,6 +2,7 @@ Version:1.1
 Mongoose
 C 2
 mul id:7604
+base unit:data/mechfiles/mechs/3050U/Mongoose MON-66.mtf
 
 Config:Biped
 techbase:Clan

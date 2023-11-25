@@ -2,6 +2,7 @@ Version:1.0
 Dola
 DOL-1A1
 mul id:4086
+base unit:data/mechfiles/mechs/XTRs/Liao/Dola DOL-1A.mtf
 
 Config:Biped
 techbase:Inner Sphere

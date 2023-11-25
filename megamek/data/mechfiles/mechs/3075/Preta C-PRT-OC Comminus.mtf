@@ -2,6 +2,7 @@ Version:1.1
 Preta
 C-PRT-OC Comminus
 mul id:2576
+base unit:data/mechfiles/mechs/3075/Preta C-PRT-O Invictus.mtf
 
 Config:Biped Omnimech
 TechBase:Inner Sphere

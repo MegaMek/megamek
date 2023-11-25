@@ -1,6 +1,7 @@
 Version:1.3
 Caesar
 CES-3S
+base unit:data/mechfiles/mechs/3050U/Caesar CES-3R.mtf
 mul id:456
 Config:Biped
 techbase:Inner Sphere

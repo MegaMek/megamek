@@ -2,6 +2,7 @@ Version:1.1
 Xanthos
 XNT-6O
 mul id:6825
+base unit:data/mechfiles/mechs/XTRs/Primitives IV/Xanthos XNT-2O.mtf
 
 Config:Quad
 TechBase:Inner Sphere

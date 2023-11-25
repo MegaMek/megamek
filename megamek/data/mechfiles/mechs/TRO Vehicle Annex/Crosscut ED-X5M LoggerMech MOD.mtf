@@ -2,6 +2,7 @@ Version:1.0
 Crosscut
 ED-X5M LoggerMech MOD
 mul id:7170
+base unit:data/mechfiles/mechs/TRO Vehicle Annex/Crosscut ED-X1 LoggerMech.mtf
 
 Config:Biped
 TechBase:Inner Sphere

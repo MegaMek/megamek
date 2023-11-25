@@ -2,6 +2,7 @@ Version:1.0
 Talon
 TLN-5W
 mul id:3153
+base unit:data/mechfiles/mechs/3058Uu/Talon TLN-5V.mtf
 
 Config:Biped
 TechBase:Inner Sphere

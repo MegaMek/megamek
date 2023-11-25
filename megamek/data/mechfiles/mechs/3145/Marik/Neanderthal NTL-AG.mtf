@@ -2,6 +2,7 @@ Version:1.0
 Neanderthal
 NTL-AG
 mul id:6513
+base unit:data/mechfiles/mechs/3145/Marik/Neanderthal NTL-UG.mtf
 
 Config:Biped
 TechBase:Inner Sphere

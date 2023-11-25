@@ -2,6 +2,7 @@ Version:1.0
 Wight
 WGT-4NC 'Dezgra'
 mul id:5600
+base unit:data/mechfiles/mechs/3075/Wight WGT-1LAWSC.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

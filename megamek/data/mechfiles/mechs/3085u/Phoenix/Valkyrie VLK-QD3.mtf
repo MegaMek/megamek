@@ -2,6 +2,7 @@ Version:1.2
 Valkyrie
 VLK-QD3
 mul id:3376
+base unit:data/mechfiles/mechs/3039u/Valkyrie VLK-QA.mtf
 
 Config:Biped
 techbase:Inner Sphere

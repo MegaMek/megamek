@@ -2,6 +2,7 @@ Version:1.0
 Shogun
 SHG-2F (Trisha)
 mul id:5058
+base unit:data/mechfiles/mechs/Operation Klondike/Shogun SHG-2H.mtf
 
 Config:Biped
 TechBase:Inner Sphere

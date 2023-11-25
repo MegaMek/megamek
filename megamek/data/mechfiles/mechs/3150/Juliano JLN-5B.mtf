@@ -1,6 +1,7 @@
 Version:1.3
 Juliano
 JLN-5B
+base unit:data/mechfiles/mechs/3145/Marik/Juliano JLN-5A.mtf
 mul id:8064
 Config:Biped
 techbase:Inner Sphere

@@ -2,6 +2,7 @@ Version:1.1
 Dragon II
 DRG-11R
 mul id:6415
+base unit:data/mechfiles/mechs/3145/Kurita/Dragon II DRG-11K.mtf
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

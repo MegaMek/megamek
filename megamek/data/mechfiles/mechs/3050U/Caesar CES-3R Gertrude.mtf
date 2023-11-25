@@ -2,6 +2,7 @@ Version:1.0
 Caesar
 CES-3R (Gertrude)
 mul id:3884
+base unit:data/mechfiles/mechs/3050U/Caesar CES-3R.mtf
 
 Config:Biped
 TechBase:Inner Sphere

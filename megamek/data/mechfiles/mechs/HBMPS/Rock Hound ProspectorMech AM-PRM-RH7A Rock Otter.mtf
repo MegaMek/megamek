@@ -2,6 +2,7 @@ Version:1.0
 Rock Hound ProspectorMech
 AM-PRM-RH7A 'Rock Otter'
 mul id:4927
+base unit:data/mechfiles/mechs/HBMPS/Rock Hound ProspectorMech AM-PRM-RH7.mtf
 
 Config:Biped
 TechBase:Inner Sphere

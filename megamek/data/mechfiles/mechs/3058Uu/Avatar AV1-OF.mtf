@@ -2,6 +2,7 @@ Version:1.0
 Avatar
 AV1-OF
 mul id:166
+base unit:data/mechfiles/mechs/3058Uu/Avatar AV1-O.mtf
 
 Config:Biped Omnimech
 TechBase:Inner Sphere

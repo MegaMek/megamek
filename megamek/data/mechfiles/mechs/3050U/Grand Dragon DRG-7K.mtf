@@ -2,6 +2,7 @@ Version:1.1
 Grand Dragon
 DRG-7K
 mul id:1260
+base unit:data/mechfiles/mechs/3039u/Grand Dragon DRG-1G.mtf
 
 Config:Biped
 TechBase:Inner Sphere

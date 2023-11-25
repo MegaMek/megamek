@@ -1,6 +1,7 @@
 Version:1.3
 Celerity
 CLR-04-R
+base unit:data/mechfiles/mechs/XTRs/ComStar/Celerity CLR-02-X-D.mtf
 mul id:6709
 Config:Quad
 techbase:Inner Sphere

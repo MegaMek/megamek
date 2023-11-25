@@ -2,6 +2,7 @@ Version:1.1
 Wendigo
 B
 mul id:6405
+base unit:data/mechfiles/mechs/3145/Kurita/Wendigo (Prime).mtf
 
 Config:Biped Omnimech
 techbase:Clan

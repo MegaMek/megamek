@@ -1,6 +1,7 @@
 Version:1.3
 Raider
 JL-3A
+base unit:data/mechfiles/mechs/Era Digests/Dark Age/Raider JL-1.mtf
 mul id:8070
 Config:Biped
 techbase:Inner Sphere

@@ -3,6 +3,7 @@ Sentinel
 STN-3Lb
 mul id:2861
 source:Historical: Operation Klondike
+base unit:data/mechfiles/mechs/3039u/Sentinel STN-1S.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,6 +2,7 @@ Version:1.0
 Katana (Crockett)
 CRK-5003-CM
 mul id:1763
+base unit:data/mechfiles/mechs/3050U/Katana (Crockett) CRK-5003-2.mtf
 
 Config:Biped
 TechBase:Inner Sphere

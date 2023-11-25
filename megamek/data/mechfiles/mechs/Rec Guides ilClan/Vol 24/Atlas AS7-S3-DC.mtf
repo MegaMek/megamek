@@ -2,6 +2,7 @@ Version:1.1
 Atlas
 AS7-S3-DC
 mul id:8437
+base unit:data/mechfiles/mechs/3039u/Atlas AS7-D.mtf
 
 Config:Biped
 techbase:Inner Sphere

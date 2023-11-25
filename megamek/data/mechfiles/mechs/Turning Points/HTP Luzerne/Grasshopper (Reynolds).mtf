@@ -2,6 +2,7 @@ Version:1.0
 Grasshopper
 (Reynolds)
 mul id:5861
+base unit:data/mechfiles/mechs/3039u/Grasshopper GHR-5H.mtf
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

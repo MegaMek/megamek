@@ -2,6 +2,7 @@ Version:1.0
 Tempest
 TMP-3G
 mul id:5188
+base unit:data/mechfiles/mechs/3055U/Tempest TMP-3M.mtf
 
 Config:Biped
 TechBase:Inner Sphere

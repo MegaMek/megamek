@@ -2,6 +2,7 @@ Version:1.1
 Thunder Fox
 TFT-L8
 mul id:3219
+base unit:data/mechfiles/mechs/3085u/Cutting Edge/Thunder Fox TFT-A9.mtf
 
 Config:Quad
 TechBase:Inner Sphere

@@ -2,6 +2,7 @@ Version:1.0
 Vanquisher
 VQR-2B
 mul id:5339
+base unit:data/mechfiles/mechs/3067/Vanquisher VQR-2A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

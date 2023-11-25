@@ -3,6 +3,7 @@ Malak
 C-MK-OS Caelestis
 mul id:2000
 source:Jihad Secrets: The Blake Documents
+base unit:data/mechfiles/mechs/3075/Malak C-MK-O Invictus.mtf
 
 Config:Biped Omnimech
 TechBase:Inner Sphere

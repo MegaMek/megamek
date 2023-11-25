@@ -2,6 +2,7 @@ Version:1.1
 Seraph
 C-SRP-OR (Ravana)
 mul id:2875
+base unit:data/mechfiles/mechs/3075/Seraph C-SRP-O Invictus.mtf
 
 Config:Biped
 TechBase:Inner Sphere

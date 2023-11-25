@@ -2,6 +2,7 @@ Version:1.1
 Vindicator
 VND-5L
 mul id:3430
+base unit:data/mechfiles/mechs/3039u/Vindicator VND-1R.mtf
 
 Config:Biped
 TechBase:Inner Sphere

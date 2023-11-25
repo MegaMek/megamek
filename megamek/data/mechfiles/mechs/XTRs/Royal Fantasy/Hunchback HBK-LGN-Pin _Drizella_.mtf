@@ -2,6 +2,7 @@ Version:1.0
 Hunchback
 HBK-LGN-Pin 'Drizella'
 mul id:8375
+base unit:data/mechfiles/mechs/3039u/Hunchback HBK-4G.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

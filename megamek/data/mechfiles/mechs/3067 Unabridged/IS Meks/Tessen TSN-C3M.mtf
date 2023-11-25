@@ -2,6 +2,7 @@ Version:1.1
 Tessen
 TSN-C3M
 mul id:5678
+base unit:data/mechfiles/mechs/3067/Tessen TSN-1C.mtf
 
 Config:Biped
 TechBase:Inner Sphere

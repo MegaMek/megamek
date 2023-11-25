@@ -9,9 +9,6 @@ source:TRO: 3055
 rules level:2
 role:Scout
 
-quirk:easy_pilot
-quirk:ext_twist
-quirk:exp_actuator
 
 mass:25
 engine:200 XL Engine(IS)

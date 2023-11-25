@@ -2,6 +2,7 @@ Version:1.0
 Phoenix
 PX-4R
 mul id:2490
+base unit:data/mechfiles/mechs/XTRs/Primitives V/Phoenix PX-1R.mtf
 
 Config:Biped
 TechBase:Inner Sphere

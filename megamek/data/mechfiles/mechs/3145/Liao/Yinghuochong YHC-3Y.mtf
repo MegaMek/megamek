@@ -2,6 +2,7 @@ Version:1.1
 Yinghuochong
 YHC-3Y
 mul id:6456
+base unit:data/mechfiles/mechs/3145/Liao/Yinghuochong YHC-3E.mtf
 
 Config:Biped
 TechBase:Inner Sphere

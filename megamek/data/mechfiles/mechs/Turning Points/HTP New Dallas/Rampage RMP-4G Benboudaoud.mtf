@@ -2,6 +2,7 @@ Version:1.0
 Rampage
 RMP-4G (Benboudaoud)
 mul id:6974
+base unit:data/mechfiles/mechs/ISP2/Rampage RMP-2G.mtf
 
 Config:Biped
 TechBase:Inner Sphere

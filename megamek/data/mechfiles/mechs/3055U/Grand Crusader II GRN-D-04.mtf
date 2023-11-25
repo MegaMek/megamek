@@ -2,6 +2,7 @@ Version:1.0
 Grand Crusader II
 GRN-D-04
 mul id:1255
+base unit:data/mechfiles/mechs/3055U/Grand Crusader II GRN-D-03.mtf
 
 Config:Biped
 TechBase:Inner Sphere

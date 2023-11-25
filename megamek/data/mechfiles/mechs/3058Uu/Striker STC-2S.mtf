@@ -2,6 +2,7 @@ Version:1.0
 Striker
 STC-2S
 mul id:3096
+base unit:data/mechfiles/mechs/3058Uu/Striker STC-2C.mtf
 
 Config:Biped
 TechBase:Inner Sphere

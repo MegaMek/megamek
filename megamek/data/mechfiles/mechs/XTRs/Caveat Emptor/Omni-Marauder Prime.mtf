@@ -2,6 +2,7 @@ Version:1.1
 OmniMarauder
 MAD-BR-O
 mul id:8110
+base unit:data/mechfiles/mechs/XTRs/Caveat Emptor/Omni-Marauder A.mtf
 
 Config:Biped Omnimech
 techbase:Mixed (IS Chassis)

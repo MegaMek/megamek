@@ -1,6 +1,7 @@
 Version:1.3
 Cataphract
 CTF-3LL
+base unit:data/mechfiles/mechs/3039u/Cataphract CTF-1X.mtf
 mul id:471
 Config:Biped
 techbase:Inner Sphere

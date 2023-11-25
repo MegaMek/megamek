@@ -2,6 +2,7 @@ Version:1.0
 Trebuchet
 TBT-9R
 mul id:6901
+base unit:data/mechfiles/mechs/3050U/Trebuchet TBT-3C.mtf
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

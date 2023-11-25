@@ -2,6 +2,7 @@ Version:1.0
 Cyclops
 C
 mul id:8357
+base unit:data/mechfiles/mechs/3039u/Cyclops CP-10-Z.mtf
 
 Config:Biped
 techbase:Clan

@@ -2,6 +2,7 @@ Version:1.0
 BattleAxe
 BKX-7K
 mul id:277
+base unit:data/mechfiles/mechs/XTRs/Primitives II/BattleAxe BKX-1X.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,6 +2,7 @@ Version:1.0
 Ghost
 GST-10A 'Aurora'
 mul id:8373
+base unit:data/mechfiles/mechs/3085u/Cutting Edge/Ghost GST-10.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

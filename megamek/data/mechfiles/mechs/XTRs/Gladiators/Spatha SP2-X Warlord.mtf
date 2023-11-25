@@ -2,6 +2,7 @@ Version:1.1
 Spatha
 SP2-X 'Warlord'
 mul id:2999
+base unit:data/mechfiles/mechs/3055U/Spatha SP1-X.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -1,6 +1,7 @@
 Version:1.3
 Starslayer
 STY-4C
+base unit:data/mechfiles/mechs/3058Uu/Starslayer STY-2C.mtf
 mul id:9315
 Config:Biped
 techbase:Mixed (IS Chassis)

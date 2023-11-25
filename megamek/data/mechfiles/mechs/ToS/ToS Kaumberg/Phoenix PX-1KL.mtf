@@ -2,6 +2,7 @@ Version:1.1
 Phoenix
 PX-1KL
 mul id:7468
+base unit:data/mechfiles/mechs/XTRs/Primitives V/Phoenix PX-1R.mtf
 
 Config:Biped
 techbase:Inner Sphere

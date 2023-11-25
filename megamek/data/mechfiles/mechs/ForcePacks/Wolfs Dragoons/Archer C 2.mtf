@@ -1,6 +1,7 @@
 Version:1.3
 Archer
 C 2
+base unit:data/mechfiles/mechs/XTRs/Primitives V/Archer ARC-1A.mtf
 mul id:8387
 Config:Biped
 techbase:Clan

@@ -2,6 +2,7 @@ Version:1.0
 Brigand
 LDT-X4
 mul id:5654
+base unit:data/mechfiles/mechs/3067/Brigand LDT-1.mtf
 
 Config:Biped
 TechBase:Inner Sphere

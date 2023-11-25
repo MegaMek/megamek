@@ -2,6 +2,7 @@ Version:1.0
 HawkWolf
 HWK-4F
 mul id:6576
+base unit:data/mechfiles/mechs/XTRs/RetroTech/HawkWolf HWK-3F.mtf
 
 Config:Biped
 TechBase:Inner Sphere

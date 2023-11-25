@@ -2,6 +2,7 @@ Version:1.0
 Copper SecurityMech
 CPK-65
 mul id:3994
+base unit:data/mechfiles/mechs/TRO Vehicle Annex/Copper SecurityMech CPK-19.mtf
 
 Config:Biped
 TechBase:Inner Sphere

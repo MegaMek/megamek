@@ -1,6 +1,7 @@
 Version:1.3
 Gladiator
 GLD-1R (Keller)
+base unit:data/mechfiles/mechs/XTRs/Primitives II/Gladiator GLD-1R.mtf
 mul id:1197
 Config:Biped
 techbase:Inner Sphere

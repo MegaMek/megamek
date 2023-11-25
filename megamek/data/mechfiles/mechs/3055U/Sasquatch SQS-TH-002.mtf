@@ -2,6 +2,7 @@ Version:1.0
 Sasquatch
 SQS-TH-002
 mul id:2799
+base unit:data/mechfiles/mechs/3055U/Sasquatch SQS-TH-001.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,6 +2,7 @@ Version:1.0
 Commando
 COM-9S
 mul id:7439
+base unit:data/mechfiles/mechs/XTRs/Primitives I/Commando COM-1A.mtf
 
 Config:Biped
 techbase:Inner Sphere

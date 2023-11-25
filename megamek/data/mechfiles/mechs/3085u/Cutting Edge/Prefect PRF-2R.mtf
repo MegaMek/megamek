@@ -2,6 +2,7 @@ Version:1.1
 Prefect
 PRF-2R
 mul id:2571
+base unit:data/mechfiles/mechs/3085u/Cutting Edge/Prefect PRF-1R.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,6 +2,7 @@ Version:1.1
 Cestus
 CTS-6Y-EC
 mul id:7681
+base unit:data/mechfiles/mechs/3058Uu/Cestus CTS-6X.mtf
 
 Config:Biped
 techbase:Mixed (Clan Chassis)

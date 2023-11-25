@@ -2,6 +2,7 @@ Version:1.0
 Hornet
 HNT-161
 mul id:1547
+base unit:data/mechfiles/mechs/3039u/Hornet HNT-151.mtf
 
 Config:Biped
 TechBase:Inner Sphere

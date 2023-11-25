@@ -2,6 +2,7 @@ Version:1.0
 Thunder Hawk
 TDK-7S
 mul id:3221
+base unit:data/mechfiles/mechs/3058Uu/Thunder Hawk TDK-7X.mtf
 
 Config:Biped
 TechBase:Inner Sphere

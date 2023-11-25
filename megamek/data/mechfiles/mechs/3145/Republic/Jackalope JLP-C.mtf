@@ -2,6 +2,7 @@ Version:1.0
 Jackalope
 JLP-C
 mul id:6711
+base unit:data/mechfiles/mechs/3145/Republic/Jackalope JLP-BD.mtf
 
 Config:Biped
 TechBase:Mixed (Clan Chassis)

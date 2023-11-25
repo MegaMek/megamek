@@ -2,6 +2,7 @@ Version:1.1
 Preta
 C-PRT-OA Dominus
 mul id:2574
+base unit:data/mechfiles/mechs/3075/Preta C-PRT-O Invictus.mtf
 
 Config:Biped Omnimech
 TechBase:Inner Sphere

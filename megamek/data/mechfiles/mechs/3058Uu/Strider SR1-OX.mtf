@@ -2,6 +2,7 @@ Version:1.0
 Strider
 SR1-OX
 mul id:3093
+base unit:data/mechfiles/mechs/3058Uu/Strider SR1-O.mtf
 
 Config:Biped Omnimech
 TechBase:Inner Sphere

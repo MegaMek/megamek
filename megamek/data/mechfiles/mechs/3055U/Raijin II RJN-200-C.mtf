@@ -2,6 +2,7 @@ Version:1.0
 Raijin II
 RJN-200-C
 mul id:2630
+base unit:data/mechfiles/mechs/3055U/Raijin II RJN-200-A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

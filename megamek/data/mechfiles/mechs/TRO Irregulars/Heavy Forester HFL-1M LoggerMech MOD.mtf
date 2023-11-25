@@ -2,6 +2,7 @@ Version:1.1
 Heavy Forester
 HFL-1M LoggerMech MOD
 mul id:7871
+base unit:data/mechfiles/mechs/TRO Irregulars/Heavy Forester HFL-1 LoggerMech.mtf
 
 Config:Quad
 techbase:Inner Sphere

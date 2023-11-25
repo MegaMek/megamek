@@ -2,6 +2,7 @@ Version:1.0
 Exhumer
 EXR-3P
 mul id:6411
+base unit:data/mechfiles/mechs/3145/Kurita/Exhumer EXR-2X.mtf
 
 Config:Biped
 TechBase:Inner Sphere

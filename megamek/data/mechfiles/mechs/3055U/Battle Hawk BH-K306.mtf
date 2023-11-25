@@ -2,6 +2,7 @@ Version:1.0
 Battle Hawk
 BH-K306
 mul id:276
+base unit:data/mechfiles/mechs/3055U/Battle Hawk BH-K305.mtf
 
 Config:Biped
 TechBase:Inner Sphere

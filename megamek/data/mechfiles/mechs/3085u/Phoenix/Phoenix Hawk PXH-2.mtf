@@ -2,6 +2,7 @@ Version:1.0
 Phoenix Hawk
 PXH-2
 mul id:2496
+base unit:data/mechfiles/mechs/3039u/Phoenix Hawk PXH-1.mtf
 
 Config:Biped
 TechBase:Inner Sphere

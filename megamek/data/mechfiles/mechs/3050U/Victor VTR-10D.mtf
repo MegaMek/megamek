@@ -2,6 +2,7 @@ Version:1.1
 Victor
 VTR-10D
 mul id:3404
+base unit:data/mechfiles/mechs/3039u/Victor VTR-9A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

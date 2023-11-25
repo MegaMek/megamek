@@ -2,6 +2,7 @@ Version:1.0
 Trebaruna
 TR-XL
 mul id:3294
+base unit:data/mechfiles/mechs/3085u/Cutting Edge/Trebaruna TR-XB.mtf
 
 Config:Quad
 TechBase:Inner Sphere

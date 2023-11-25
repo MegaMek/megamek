@@ -2,6 +2,7 @@ Version:1.0
 Venom
 SDR-9KB
 mul id:3400
+base unit:data/mechfiles/mechs/3055U/Venom SDR-9K.mtf
 
 Config:Biped
 TechBase:Inner Sphere

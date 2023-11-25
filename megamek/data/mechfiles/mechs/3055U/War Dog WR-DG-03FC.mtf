@@ -2,6 +2,7 @@ Version:1.0
 War Dog
 WR-DG-03FC
 mul id:3477
+base unit:data/mechfiles/mechs/3055U/War Dog WR-DG-02FC.mtf
 
 Config:Biped
 TechBase:Inner Sphere

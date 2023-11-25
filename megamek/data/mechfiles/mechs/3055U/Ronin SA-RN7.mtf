@@ -2,6 +2,7 @@ Version:1.0
 Ronin
 SA-RN7
 mul id:2739
+base unit:data/mechfiles/mechs/3055U/Ronin SA-RN.mtf
 
 Config:Biped
 TechBase:Inner Sphere

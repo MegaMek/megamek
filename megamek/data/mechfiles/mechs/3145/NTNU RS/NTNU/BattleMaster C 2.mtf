@@ -1,6 +1,7 @@
 Version:1.3
 BattleMaster
 C 2
+base unit:data/mechfiles/mechs/3039u/BattleMaster BLR-1G-DC.mtf
 mul id:7979
 Config:Biped
 techbase:Mixed (IS Chassis)

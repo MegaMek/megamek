@@ -2,6 +2,7 @@ Version:1.1
 Patron MilitiaMech
 PTN-2M
 mul id:4795
+base unit:data/mechfiles/mechs/XTRs/RetroTech/Patron MilitiaMech PTN-2.mtf
 
 Config:Biped
 TechBase:Inner Sphere

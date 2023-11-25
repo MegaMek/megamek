@@ -2,6 +2,7 @@ Version:1.1
 Prey Seeker
 PY-SR20
 mul id:8068
+base unit:data/mechfiles/mechs/3145/Davion/Prey Seeker PY-SR10.mtf
 
 Config:Biped
 TechBase:Inner Sphere

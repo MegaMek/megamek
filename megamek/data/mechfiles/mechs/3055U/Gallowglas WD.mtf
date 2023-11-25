@@ -2,6 +2,7 @@ Version:1.0
 Gallowglas
 WD
 mul id:1188
+base unit:data/mechfiles/mechs/3055U/Gallowglas GAL-1GLS.mtf
 
 Config:Biped
 TechBase:Clan

@@ -2,6 +2,7 @@ Version:1.0
 Fireball
 ALM-8D
 mul id:1076
+base unit:data/mechfiles/mechs/3055U/Fireball ALM-7D.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,6 +2,7 @@ Version:1.0
 Trebuchet
 TBT-7MM 'Merida'
 mul id:8378
+base unit:data/mechfiles/mechs/3050U/Trebuchet TBT-3C.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

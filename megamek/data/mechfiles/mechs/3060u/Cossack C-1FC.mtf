@@ -2,6 +2,7 @@ Version:1.0
 Cossack
 C-1FC
 mul id:702
+base unit:data/mechfiles/mechs/3060u/Cossack C-SK1.mtf
 
 Config:Biped
 TechBase:Inner Sphere

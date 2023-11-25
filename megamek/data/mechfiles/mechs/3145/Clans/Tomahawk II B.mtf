@@ -2,6 +2,7 @@ Version:1.0
 Tomahawk II
 B
 mul id:6305
+base unit:data/mechfiles/mechs/3145/Clans/Tomahawk II (Prime).mtf
 
 Config:Biped Omnimech
 TechBase:Clan

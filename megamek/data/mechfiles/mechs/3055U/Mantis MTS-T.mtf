@@ -2,6 +2,7 @@ Version:1.1
 Mantis
 MTS-T
 mul id:2024
+base unit:data/mechfiles/mechs/3055U/Mantis SA-MN.mtf
 
 Config:Biped
 TechBase:Inner Sphere

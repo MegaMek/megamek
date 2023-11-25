@@ -2,6 +2,7 @@ Version:1.0
 Goliath
 GOL-3M2
 mul id:8405
+base unit:data/mechfiles/mechs/3039u/Goliath GOL-1H.mtf
 
 Config:Quad
 techbase:Inner Sphere

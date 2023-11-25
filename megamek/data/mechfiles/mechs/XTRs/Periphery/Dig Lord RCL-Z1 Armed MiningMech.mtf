@@ -2,6 +2,7 @@ Version:1.1
 Dig Lord
 RCL-Z1 Armed MiningMech
 mul id:5565
+base unit:data/mechfiles/mechs/TRO Vehicle Annex/Dig Lord RCL-4 MiningMech.mtf
 
 Config:Biped
 TechBase:Inner Sphere

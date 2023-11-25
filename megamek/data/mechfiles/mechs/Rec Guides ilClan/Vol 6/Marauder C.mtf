@@ -2,6 +2,7 @@ Version:1.0
 Marauder
 C
 mul id:2032
+base unit:data/mechfiles/mechs/3075/Marauder MAD-1R.mtf
 
 Config:Biped
 techbase:Mixed (Clan Chassis)

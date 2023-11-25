@@ -2,6 +2,7 @@ Version:1.1
 Lightray
 LGH-7W
 mul id:5681
+base unit:data/mechfiles/mechs/3067/Lightray LGH-4Y.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,6 +2,7 @@ Version:1.1
 Commando
 COM-1AK
 mul id:7461
+base unit:data/mechfiles/mechs/XTRs/Primitives I/Commando COM-1A.mtf
 
 Config:Biped
 techbase:Inner Sphere

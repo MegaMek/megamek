@@ -2,6 +2,7 @@ Version:1.1
 Fafnir
 FNR-5WB
 mul id:5719
+base unit:data/mechfiles/mechs/3067/Fafnir FNR-5.mtf
 
 Config:Biped
 TechBase:Inner Sphere

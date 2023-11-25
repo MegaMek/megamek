@@ -2,6 +2,7 @@ Version:1.0
 DemolitionMech
 WI-DM2
 mul id:869
+base unit:data/mechfiles/mechs/3075/DemolitionMech WI-DM.mtf
 
 Config:Biped
 TechBase:Inner Sphere

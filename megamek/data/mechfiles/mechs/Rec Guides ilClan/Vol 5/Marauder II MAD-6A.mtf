@@ -2,6 +2,7 @@ Version:1.1
 Marauder II
 MAD-6A
 mul id:7520
+base unit:data/mechfiles/mechs/3039u/Marauder II MAD-4A.mtf
 
 Config:Biped
 techbase:Inner Sphere

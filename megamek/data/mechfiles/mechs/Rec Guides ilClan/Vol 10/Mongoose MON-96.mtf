@@ -2,6 +2,7 @@ Version:1.0
 Mongoose
 MON-96
 mul id:7724
+base unit:data/mechfiles/mechs/3050U/Mongoose MON-66.mtf
 
 Config:Biped
 techbase:Inner Sphere

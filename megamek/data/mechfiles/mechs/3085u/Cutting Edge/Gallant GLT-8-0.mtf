@@ -2,6 +2,7 @@ Version:1.0
 Gallant
 GLT-8-0
 mul id:1174
+base unit:data/mechfiles/mechs/3085u/Cutting Edge/Gallant GLT-7-0.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,6 +2,7 @@ Version:1.0
 Black Knight
 BL-18-KNT
 mul id:7791
+base unit:data/mechfiles/mechs/3050U/Black Knight BL-6-KNT.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

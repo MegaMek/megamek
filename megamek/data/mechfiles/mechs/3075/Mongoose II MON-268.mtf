@@ -2,6 +2,7 @@ Version:1.0
 Mongoose II
 MON-268
 mul id:2218
+base unit:data/mechfiles/mechs/3075/Mongoose II MON-266.mtf
 
 Config:Biped
 TechBase:Inner Sphere

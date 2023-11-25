@@ -2,6 +2,7 @@ Version:1.0
 Kabuto
 KBO-7B
 mul id:1729
+base unit:data/mechfiles/mechs/3060u/Kabuto KBO-7A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

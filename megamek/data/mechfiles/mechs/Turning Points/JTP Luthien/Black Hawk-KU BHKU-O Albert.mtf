@@ -1,6 +1,7 @@
 Version:1.3
 Black Hawk-KU
 BHKU-O (Albert)
+base unit:data/mechfiles/mechs/3058Uu/Black Hawk-KU BHKU-O.mtf
 mul id:346
 Config:Biped Omnimech
 techbase:Mixed (IS Chassis)

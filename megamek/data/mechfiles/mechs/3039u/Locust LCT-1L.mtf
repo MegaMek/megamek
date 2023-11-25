@@ -2,6 +2,7 @@ Version:1.0
 Locust
 LCT-1L
 mul id:1898
+base unit:data/mechfiles/mechs/3039u/Locust LCT-1V.mtf
 
 Config:Biped
 TechBase:Inner Sphere

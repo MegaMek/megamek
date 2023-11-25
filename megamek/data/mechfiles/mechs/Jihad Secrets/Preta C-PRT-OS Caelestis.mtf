@@ -3,6 +3,7 @@ Preta
 C-PRT-OS Caelestis
 mul id:2579
 source:Jihad Secrets: The Blake Documents
+base unit:data/mechfiles/mechs/3075/Preta C-PRT-O Invictus.mtf
 
 Config:Biped Omnimech
 TechBase:Mixed (IS Chassis)

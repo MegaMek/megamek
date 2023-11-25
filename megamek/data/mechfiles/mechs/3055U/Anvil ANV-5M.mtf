@@ -2,6 +2,7 @@ Version:1.0
 Anvil
 ANV-5M
 mul id:50
+base unit:data/mechfiles/mechs/3055U/Anvil ANV-3M.mtf
 
 Config:Biped
 TechBase:Inner Sphere

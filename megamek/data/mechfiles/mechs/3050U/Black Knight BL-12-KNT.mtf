@@ -2,6 +2,7 @@ Version:1.0
 Black Knight
 BL-12-KNT
 mul id:356
+base unit:data/mechfiles/mechs/3050U/Black Knight BL-6-KNT.mtf
 
 Config:Biped
 TechBase:Inner Sphere

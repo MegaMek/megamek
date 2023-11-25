@@ -2,6 +2,7 @@ Version:1.0
 Shockwave
 SKW-4G
 mul id:2930
+base unit:data/mechfiles/mechs/3085u/Cutting Edge/Shockwave SKW-2F.mtf
 
 Config:Biped
 TechBase:Inner Sphere

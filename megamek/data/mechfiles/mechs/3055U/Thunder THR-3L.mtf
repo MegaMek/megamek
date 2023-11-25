@@ -2,6 +2,7 @@ Version:1.0
 Thunder
 THR-3L
 mul id:3216
+base unit:data/mechfiles/mechs/3055U/Thunder THR-1L.mtf
 
 Config:Biped
 techbase:Inner Sphere

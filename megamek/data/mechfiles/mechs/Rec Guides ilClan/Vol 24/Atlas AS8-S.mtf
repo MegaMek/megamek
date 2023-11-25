@@ -2,6 +2,7 @@ Version:1.1
 Atlas
 AS8-S
 mul id:8433
+base unit:data/mechfiles/mechs/3039u/Atlas AS7-D.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

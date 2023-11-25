@@ -2,6 +2,7 @@ Version:1.0
 Snake
 (Arthur)
 mul id:6982
+base unit:data/mechfiles/mechs/3055U/Snake SNK-1V.mtf
 
 Config:Biped
 TechBase:Inner Sphere

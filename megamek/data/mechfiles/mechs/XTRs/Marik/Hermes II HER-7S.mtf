@@ -2,6 +2,7 @@ Version:1.1
 Hermes II
 HER-7S
 mul id:1505
+base unit:data/mechfiles/mechs/3039u/Hermes II HER-2S.mtf
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

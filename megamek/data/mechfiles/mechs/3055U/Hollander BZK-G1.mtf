@@ -2,6 +2,7 @@ Version:1.0
 Hollander
 BZK-G1
 mul id:1537
+base unit:data/mechfiles/mechs/3055U/Hollander BZK-F3.mtf
 
 Config:Biped
 TechBase:Inner Sphere

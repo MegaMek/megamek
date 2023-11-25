@@ -2,6 +2,7 @@ Version:1.0
 Thunderbolt
 TDR-10M
 mul id:3232
+base unit:data/mechfiles/mechs/XTRs/Primitives III/Thunderbolt TDR-1C.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,6 +2,7 @@ Version:1.0
 Trebuchet
 TBT-K7R
 mul id:5275
+base unit:data/mechfiles/mechs/3050U/Trebuchet TBT-3C.mtf
 
 Config:Biped
 TechBase:Inner Sphere

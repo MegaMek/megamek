@@ -2,6 +2,7 @@ Version:1.0
 Spider
 SDR-9M
 mul id:8306
+base unit:data/mechfiles/mechs/3039u/Spider SDR-5V.mtf
 
 Config:Biped
 techbase:Inner Sphere

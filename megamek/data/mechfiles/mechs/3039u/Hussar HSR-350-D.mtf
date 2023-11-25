@@ -2,6 +2,7 @@ Version:1.0
 Hussar
 HSR-350-D
 mul id:1588
+base unit:data/mechfiles/mechs/3050U/Hussar HSR-200-D.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,6 +2,7 @@ Version:1.0
 Charger
 CGR-3K
 mul id:565
+base unit:data/mechfiles/mechs/3039u/Charger CGR-1A1.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,6 +2,7 @@ Version:1.0
 Shadow Hawk
 C
 mul id:2895
+base unit:data/mechfiles/mechs/XTRs/Primitives I/Shadow Hawk SHD-1R.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

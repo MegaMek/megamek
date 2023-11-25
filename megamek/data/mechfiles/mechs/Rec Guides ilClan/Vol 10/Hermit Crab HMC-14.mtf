@@ -2,6 +2,7 @@ Version:1.0
 Hermit Crab
 HMC-14
 mul id:7722
+base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 10/Hermit Crab HMC-13.mtf
 
 Config:Biped
 techbase:Inner Sphere

@@ -2,6 +2,7 @@ Version:1.1
 Zeus
 ZEU-11S
 mul id:7455
+base unit:data/mechfiles/mechs/3039u/Zeus ZEU-5T.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

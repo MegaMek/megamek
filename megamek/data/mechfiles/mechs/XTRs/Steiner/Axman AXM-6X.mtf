@@ -2,6 +2,7 @@ Version:1.2
 Axman
 AXM-6X
 mul id:3772
+base unit:data/mechfiles/mechs/3050U/Axman AXM-1N.mtf
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

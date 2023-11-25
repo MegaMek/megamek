@@ -2,6 +2,7 @@ Version:1.0
 Scorpion
 SCP-1N (Wendall)
 mul id:2838
+base unit:data/mechfiles/mechs/3039u/Scorpion SCP-1N.mtf
 
 Config:Quad
 TechBase:Inner Sphere

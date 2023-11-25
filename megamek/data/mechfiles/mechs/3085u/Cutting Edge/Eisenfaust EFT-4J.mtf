@@ -2,6 +2,7 @@ Version:1.0
 Eisenfaust
 EFT-4J
 mul id:944
+base unit:data/mechfiles/mechs/XTRs/Primitives III/Eisenfaust EFT-2.mtf
 
 Config:Biped
 TechBase:Inner Sphere

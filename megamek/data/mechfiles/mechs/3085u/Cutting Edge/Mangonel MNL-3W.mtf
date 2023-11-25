@@ -2,6 +2,7 @@ Version:1.0
 Mangonel
 MNL-3W
 mul id:2013
+base unit:data/mechfiles/mechs/3085u/Cutting Edge/Mangonel MNL-3L.mtf
 
 Config:Biped
 TechBase:Clan

@@ -2,6 +2,7 @@ Version:1.0
 Sha Yu
 SYU-4B
 mul id:5027
+base unit:data/mechfiles/mechs/3067/Sha Yu SYU-2B.mtf
 
 Config:Biped
 techbase:Inner Sphere

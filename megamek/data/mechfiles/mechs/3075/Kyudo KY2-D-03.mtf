@@ -2,6 +2,7 @@ Version:1.0
 Kyudo
 KY2-D-03
 mul id:1852
+base unit:data/mechfiles/mechs/XTRs/Primitives I/Kyudo KY2-D-01.mtf
 
 Config:Biped
 TechBase:Inner Sphere

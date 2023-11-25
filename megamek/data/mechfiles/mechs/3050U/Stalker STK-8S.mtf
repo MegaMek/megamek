@@ -2,6 +2,7 @@ Version:1.0
 Stalker
 STK-8S
 mul id:3044
+base unit:data/mechfiles/mechs/3039u/Stalker STK-3F.mtf
 
 Config:Biped
 TechBase:Inner Sphere

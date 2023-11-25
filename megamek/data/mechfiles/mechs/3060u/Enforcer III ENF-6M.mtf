@@ -10,9 +10,6 @@ Source:TRO: 3060
 Rules Level:2
 role:Sniper
 
-quirk:barrel_fists_la
-quirk:barrel_fists_ra
-weaponquirk:fast_reload:RA:3:ISUltraAC10
 
 Mass:50
 Engine:250 XL Engine

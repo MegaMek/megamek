@@ -2,6 +2,7 @@ Version:1.0
 Grim Reaper
 GRM-R-PR30
 mul id:1329
+base unit:data/mechfiles/mechs/3055U/Grim Reaper GRM-R-PR29.mtf
 
 Config:Biped
 TechBase:Inner Sphere

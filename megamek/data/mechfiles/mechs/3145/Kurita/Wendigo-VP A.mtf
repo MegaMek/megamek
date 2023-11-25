@@ -2,6 +2,7 @@ Version:1.1
 Wendigo-VP
 A
 mul id:6409
+base unit:data/mechfiles/mechs/3145/Kurita/Wendigo-VP (Prime).mtf
 
 Config:Biped Omnimech
 techbase:Clan

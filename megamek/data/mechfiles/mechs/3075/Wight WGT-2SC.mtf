@@ -2,6 +2,7 @@ Version:1.0
 Wight
 WGT-2SC
 mul id:3550
+base unit:data/mechfiles/mechs/3075/Wight WGT-1LAWSC.mtf
 
 Config:Biped
 TechBase:Inner Sphere

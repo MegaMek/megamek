@@ -2,6 +2,7 @@ Version:1.0
 Wolverine
 WVR-7D
 mul id:3574
+base unit:data/mechfiles/mechs/XTRs/Primitives V/Wolverine WVR-1R.mtf
 
 Config:Biped
 techbase:Inner Sphere

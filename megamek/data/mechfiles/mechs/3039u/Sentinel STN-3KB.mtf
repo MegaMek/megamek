@@ -2,6 +2,7 @@ Version:1.0
 Sentinel
 STN-3KB
 mul id:2859
+base unit:data/mechfiles/mechs/3039u/Sentinel STN-1S.mtf
 
 Config:Biped
 TechBase:Inner Sphere

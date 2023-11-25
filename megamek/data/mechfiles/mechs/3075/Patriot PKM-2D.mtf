@@ -2,6 +2,7 @@ Version:1.1
 Patriot
 PKM-2D
 mul id:2448
+base unit:data/mechfiles/mechs/3075/Patriot PKM-2C.mtf
 
 Config:Biped
 TechBase:Inner Sphere

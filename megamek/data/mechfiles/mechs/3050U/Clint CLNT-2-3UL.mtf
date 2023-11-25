@@ -2,6 +2,7 @@ Version:1.0
 Clint
 CLNT-2-3UL
 mul id:647
+base unit:data/mechfiles/mechs/3039u/Clint CLNT-1-2R.mtf
 
 Config:Biped
 TechBase:Inner Sphere

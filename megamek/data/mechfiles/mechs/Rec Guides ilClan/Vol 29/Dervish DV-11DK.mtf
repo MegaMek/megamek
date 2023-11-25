@@ -1,6 +1,7 @@
 Version:1.3
 Dervish
 DV-11DK
+base unit:data/mechfiles/mechs/XTRs/Primitives III/Dervish DV-1S.mtf
 mul id:9396
 Config:Biped
 techbase:Mixed (IS Chassis)

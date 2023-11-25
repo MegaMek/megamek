@@ -1,6 +1,7 @@
 Version:1.3
 Shogun
 SHG-2F
+base unit:data/mechfiles/mechs/Operation Klondike/Shogun SHG-2H.mtf
 mul id:2933
 Config:Biped
 techbase:Inner Sphere

@@ -2,6 +2,7 @@ Version:1.0
 Barghest
 BGS-7S
 mul id:255
+base unit:data/mechfiles/mechs/3060u/Barghest BGS-1T.mtf
 
 Config:Quad
 TechBase:Inner Sphere

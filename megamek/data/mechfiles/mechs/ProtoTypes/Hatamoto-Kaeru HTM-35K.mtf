@@ -2,6 +2,7 @@ Version:1.0
 Hatamoto-Kaeru
 HTM-35K
 mul id:4266
+base unit:data/mechfiles/mechs/XTRs/Kurita/Hatamoto-Kaeru HTM-35X.mtf
 
 Config:Biped
 TechBase:Inner Sphere

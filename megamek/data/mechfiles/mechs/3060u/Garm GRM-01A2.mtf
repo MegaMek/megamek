@@ -2,6 +2,7 @@ Version:1.1
 Garm
 GRM-01A2
 mul id:1190
+base unit:data/mechfiles/mechs/3060u/Garm GRM-01A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

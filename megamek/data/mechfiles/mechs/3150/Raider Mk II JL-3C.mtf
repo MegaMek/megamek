@@ -1,6 +1,7 @@
 Version:1.3
 Raider Mk II
 JL-3C
+base unit:data/mechfiles/mechs/Era Digests/Dark Age/Raider Mk II JL-2.mtf
 mul id:8072
 Config:Biped
 techbase:Inner Sphere

@@ -2,6 +2,7 @@ Version:1.0
 Whitworth
 WTH-1
 mul id:3538
+base unit:data/mechfiles/mechs/3039u/Whitworth WTH-1S.mtf
 
 Config:Biped
 TechBase:Inner Sphere

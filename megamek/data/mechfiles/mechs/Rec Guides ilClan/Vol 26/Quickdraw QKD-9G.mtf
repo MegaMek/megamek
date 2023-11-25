@@ -1,6 +1,7 @@
 Version:1.3
 Quickdraw
 QKD-9G
+base unit:data/mechfiles/mechs/3039u/Quickdraw QKD-4G.mtf
 mul id:9320
 Config:Biped
 techbase:Mixed (IS Chassis)

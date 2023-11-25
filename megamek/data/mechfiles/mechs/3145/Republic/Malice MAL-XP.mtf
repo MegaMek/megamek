@@ -2,6 +2,7 @@ Version:1.0
 Malice
 MAL-XP
 mul id:6725
+base unit:data/mechfiles/mechs/3145/Republic/Malice MAL-XT.mtf
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

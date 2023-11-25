@@ -2,6 +2,7 @@ Version:1.0
 Jenner
 JR7-F
 mul id:1693
+base unit:data/mechfiles/mechs/3039u/Jenner JR7-A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

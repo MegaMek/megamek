@@ -2,6 +2,7 @@ Version:1.3
 Ares
 ARS-V1E Apollo
 mul id:9500
+base unit:data/mechfiles/mechs/3145/Republic/Ares ARS-V1 Aphrodite.mtf
 
 Config:Tripod Omnimech
 techbase:Mixed (IS Chassis)

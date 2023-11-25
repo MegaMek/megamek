@@ -2,6 +2,7 @@ Version:1.0
 Bombardier
 BMB-14C
 mul id:424
+base unit:data/mechfiles/mechs/3050U/Bombardier BMB-12D.mtf
 
 Config:Biped
 TechBase:Inner Sphere

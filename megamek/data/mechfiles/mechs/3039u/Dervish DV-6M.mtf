@@ -1,6 +1,7 @@
 Version:1.3
 Dervish
 DV-6M
+base unit:data/mechfiles/mechs/XTRs/Primitives III/Dervish DV-1S.mtf
 mul id:878
 Config:Biped
 techbase:Inner Sphere

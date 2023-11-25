@@ -1,6 +1,7 @@
 Version:1.3
 Daikyu
 DAI-01 (Tabitha)
+base unit:data/mechfiles/mechs/3055U/Daikyu DAI-01.mtf
 mul id:798
 Config:Biped
 techbase:Mixed (IS Chassis)

@@ -2,6 +2,7 @@ Version:1.0
 Crusader
 CRD-10S
 mul id:8234
+base unit:data/mechfiles/mechs/3075/Crusader CRD-2R.mtf
 
 Config:Biped
 techbase:Clan

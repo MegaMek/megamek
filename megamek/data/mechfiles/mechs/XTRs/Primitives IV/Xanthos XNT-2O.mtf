@@ -9,12 +9,6 @@ source:XTR: Primitives IV
 rules level:4
 role:Juggernaut
 
-quirk:pro_actuator
-quirk:bad_rep_is
-quirk:obsolete
-quirk:poor_performance
-quirk:prototype
-quirk:unbalanced
 
 mass:100
 engine:360 Fusion Engine(IS)

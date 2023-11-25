@@ -2,6 +2,7 @@ Version:1.0
 Flashman
 FLS-C
 mul id:1128
+base unit:data/mechfiles/mechs/3050U/Flashman FLS-8K.mtf
 
 Config:Biped
 TechBase:Inner Sphere

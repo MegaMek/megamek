@@ -2,6 +2,7 @@ Version:1.0
 Spider
 SDR-10K
 mul id:6934
+base unit:data/mechfiles/mechs/3039u/Spider SDR-5V.mtf
 
 Config:Biped
 TechBase:Inner Sphere

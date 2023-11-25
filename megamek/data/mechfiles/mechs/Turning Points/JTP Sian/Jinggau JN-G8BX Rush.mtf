@@ -2,6 +2,7 @@ Version:1.1
 Jinggau
 JN-G8BX (Rush)
 mul id:1709
+base unit:data/mechfiles/mechs/3060u/Jinggau JN-G8A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

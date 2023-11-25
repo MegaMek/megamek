@@ -2,6 +2,7 @@ Version:1.2
 Griffin
 GRF-5K
 mul id:1303
+base unit:data/mechfiles/mechs/XTRs/Primitives IV/Griffin GRF-1A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

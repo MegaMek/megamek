@@ -2,6 +2,7 @@ Version:1.1
 Crosscut
 ED-X4B DemolitionMech
 mul id:7168
+base unit:data/mechfiles/mechs/TRO Vehicle Annex/Crosscut ED-X1 LoggerMech.mtf
 
 Config:Biped
 TechBase:Inner Sphere

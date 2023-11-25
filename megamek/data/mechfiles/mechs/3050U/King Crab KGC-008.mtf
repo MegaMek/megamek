@@ -2,6 +2,7 @@ Version:1.1
 King Crab
 KGC-008
 mul id:1777
+base unit:data/mechfiles/mechs/3039u/King Crab KGC-010.mtf
 
 Config:Biped
 TechBase:Inner Sphere

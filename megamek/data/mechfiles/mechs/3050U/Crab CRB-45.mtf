@@ -2,6 +2,7 @@ Version:1.0
 Crab
 CRB-45
 mul id:719
+base unit:data/mechfiles/mechs/3050U/Crab CRB-27.mtf
 
 Config:Biped
 TechBase:Inner Sphere

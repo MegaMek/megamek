@@ -2,6 +2,7 @@ Version:1.1
 Legionnaire
 LGN-2X1 MUSE FIRE
 mul id:1864
+base unit:data/mechfiles/mechs/3075/Legionnaire LGN-1X.mtf
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

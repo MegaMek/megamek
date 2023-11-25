@@ -2,6 +2,7 @@ Version:1.1
 Emperor
 EMP-6ME 'Mercury Elite'
 mul id:969
+base unit:data/mechfiles/mechs/XTRs/Primitives IV/Emperor EMP-1A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,6 +2,7 @@ Version:1.0
 Tessen
 TSN-X4R 'Rapunzel'
 mul id:8377
+base unit:data/mechfiles/mechs/3067/Tessen TSN-1C.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

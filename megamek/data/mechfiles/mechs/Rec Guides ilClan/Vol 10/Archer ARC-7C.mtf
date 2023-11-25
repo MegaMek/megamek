@@ -2,6 +2,7 @@ Version:1.0
 Archer
 ARC-7C
 mul id:7731
+base unit:data/mechfiles/mechs/XTRs/Primitives V/Archer ARC-1A.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

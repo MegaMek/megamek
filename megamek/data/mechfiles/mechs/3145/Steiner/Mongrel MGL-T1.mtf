@@ -10,8 +10,6 @@ Source:TRO: 3145 Lyran Commonwealth
 Rules Level:4
 role:Striker
 
-quirk:easy_pilot
-weaponquirk:no_cooling:LA:2:Autocannon/5
 
 Mass:50
 Engine:350 XL (Clan) Engine

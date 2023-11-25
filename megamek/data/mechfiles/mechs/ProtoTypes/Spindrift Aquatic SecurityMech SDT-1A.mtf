@@ -2,6 +2,7 @@ Version:1.1
 Spindrift Aquatic SecurityMech
 SDT-1A
 mul id:5106
+base unit:data/mechfiles/mechs/XTRs/Boondocks/Spindrift Aquatic SecurityMech SDT-1.mtf
 
 Config:Biped
 TechBase:Inner Sphere

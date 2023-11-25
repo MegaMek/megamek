@@ -2,6 +2,7 @@ Version:1.0
 Koto
 KTO-4A
 mul id:1839
+base unit:data/mechfiles/mechs/3055U/Koto KT-P2.mtf
 
 Config:Biped
 TechBase:Inner Sphere

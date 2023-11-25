@@ -2,6 +2,7 @@ Version:1.0
 Hermes II
 HER-5S
 mul id:1501
+base unit:data/mechfiles/mechs/3039u/Hermes II HER-2S.mtf
 
 Config:Biped
 TechBase:Inner Sphere

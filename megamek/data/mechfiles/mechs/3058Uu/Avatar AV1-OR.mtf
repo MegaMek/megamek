@@ -1,6 +1,7 @@
 Version:1.3
 Avatar
 AV1-OR
+base unit:data/mechfiles/mechs/3058Uu/Avatar AV1-O.mtf
 mul id:170
 Config:Biped Omnimech
 techbase:Mixed (IS Chassis)

@@ -2,6 +2,7 @@ Version:1.0
 Berserker
 BRZ-B3
 mul id:330
+base unit:data/mechfiles/mechs/3055U/Berserker BRZ-A3.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,6 +2,7 @@ Version:1.1
 Firefly
 FFL-3PP
 mul id:1083
+base unit:data/mechfiles/mechs/Operation Klondike/Firefly FFL-3A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

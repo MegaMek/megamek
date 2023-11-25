@@ -2,6 +2,7 @@ Version:1.1
 Griffin
 C
 mul id:7437
+base unit:data/mechfiles/mechs/XTRs/Primitives IV/Griffin GRF-1A.mtf
 
 Config:Biped
 techbase:Mixed (Clan Chassis)

@@ -2,6 +2,7 @@ Version:1.0
 Exterminator
 EXT-7X
 mul id:8161
+base unit:data/mechfiles/mechs/3050U/Exterminator EXT-4C.mtf
 
 Config:Biped
 techbase:Inner Sphere

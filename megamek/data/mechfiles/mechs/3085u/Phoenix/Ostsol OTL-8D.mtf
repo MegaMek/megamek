@@ -2,6 +2,7 @@ Version:1.1
 Ostsol
 OTL-8D
 mul id:2377
+base unit:data/mechfiles/mechs/3039u/Ostsol OTL-4D.mtf
 
 Config:Biped
 TechBase:Inner Sphere

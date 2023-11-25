@@ -1,6 +1,7 @@
 Version:1.3
 Hatamoto-Kaze
 HTM-27V2
+base unit:data/mechfiles/mechs/3050U/Hatamoto-Kaze HTM-27V.mtf
 mul id:7926
 Config:Biped
 techbase:Inner Sphere

@@ -2,6 +2,7 @@ Version:1.0
 Marauder II
 (Bounty Hunter)
 mul id:2053
+base unit:data/mechfiles/mechs/3039u/Marauder II MAD-4A.mtf
 
 Config:Biped
 TechBase:Clan

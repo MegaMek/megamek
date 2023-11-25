@@ -1,6 +1,7 @@
 Version:1.3
 Orion
 ON3-MX
+base unit:data/mechfiles/mechs/XTRs/Primitives V/Orion ON1-C.mtf
 mul id:2339
 Config:Biped
 techbase:Inner Sphere

@@ -2,6 +2,7 @@ Version:1.1
 Excalibur
 EXC-B2b-EC
 mul id:7683
+base unit:data/mechfiles/mechs/3058Uu/Excalibur EXC-B1.mtf
 
 Config:Biped
 techbase:Mixed (Clan Chassis)

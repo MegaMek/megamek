@@ -2,6 +2,7 @@ Version:1.0
 Sunder
 SD1-OG
 mul id:6845
+base unit:data/mechfiles/mechs/3058Uu/Sunder SD1-O.mtf
 
 Config:Biped Omnimech
 TechBase:Mixed (IS Chassis)

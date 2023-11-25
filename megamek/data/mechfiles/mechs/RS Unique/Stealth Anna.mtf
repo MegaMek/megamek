@@ -3,6 +3,7 @@ Stealth
 STH-1D (Anna)
 mul id:3053
 source:Record Sheets: Unique Mechs
+base unit:data/mechfiles/mechs/3055U/Stealth STH-1D.mtf
 
 Config:Biped
 TechBase:Inner Sphere

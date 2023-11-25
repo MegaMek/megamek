@@ -2,6 +2,7 @@ Version:1.0
 Swordsman
 SWD-2
 mul id:7182
+base unit:data/mechfiles/mechs/XTRs/Primitives IV/Swordsman SWD-1.mtf
 
 Config:Biped
 TechBase:Inner Sphere

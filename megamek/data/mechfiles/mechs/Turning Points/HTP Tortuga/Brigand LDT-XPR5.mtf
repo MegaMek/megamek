@@ -2,6 +2,7 @@ Version:1.1
 Brigand
 LDT-XPR5
 mul id:7317
+base unit:data/mechfiles/mechs/3067/Brigand LDT-1.mtf
 
 Config:Biped
 TechBase:Inner Sphere

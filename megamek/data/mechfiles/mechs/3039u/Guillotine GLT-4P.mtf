@@ -2,6 +2,7 @@ Version:1.0
 Guillotine
 GLT-4P
 mul id:1340
+base unit:data/mechfiles/mechs/3050U/Guillotine GLT-3N.mtf
 
 Config:Biped
 techbase:Inner Sphere

@@ -2,6 +2,7 @@ Version:1.0
 Huron Warrior
 HUR-WO-R4O
 mul id:1583
+base unit:data/mechfiles/mechs/3055U/Huron Warrior HUR-WO-R4L.mtf
 
 Config:Biped
 TechBase:Inner Sphere

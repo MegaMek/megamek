@@ -2,6 +2,7 @@ Version:1.0
 Hunchback
 HBK-4G (Hohiro)
 mul id:1553
+base unit:data/mechfiles/mechs/3039u/Hunchback HBK-4G.mtf
 
 Config:Biped
 TechBase:Inner Sphere

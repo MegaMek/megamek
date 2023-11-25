@@ -2,6 +2,7 @@ Version:1.1
 Tenshi
 TN-10-OR
 mul id:6424
+base unit:data/mechfiles/mechs/3145/Kurita/Tenshi TN-10-O.mtf
 
 Config:Biped Omnimech
 techbase:Mixed (IS Chassis)

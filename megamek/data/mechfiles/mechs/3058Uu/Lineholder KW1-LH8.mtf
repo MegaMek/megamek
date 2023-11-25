@@ -2,6 +2,7 @@ Version:1.0
 Lineholder
 KW1-LH8 'Linebreaker'
 mul id:1895
+base unit:data/mechfiles/mechs/3058Uu/Lineholder KW1-LH2.mtf
 
 Config:Biped
 TechBase:Inner Sphere

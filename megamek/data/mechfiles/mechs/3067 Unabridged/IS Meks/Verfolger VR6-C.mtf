@@ -2,6 +2,7 @@ Version:1.1
 Verfolger
 VR6-C
 mul id:5688
+base unit:data/mechfiles/mechs/3067/Verfolger VR5-R.mtf
 
 Config:Biped
 TechBase:Inner Sphere

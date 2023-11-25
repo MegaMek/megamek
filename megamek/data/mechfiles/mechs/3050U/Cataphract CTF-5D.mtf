@@ -2,6 +2,7 @@ Version:1.1
 Cataphract
 CTF-5D
 mul id:475
+base unit:data/mechfiles/mechs/3039u/Cataphract CTF-1X.mtf
 
 Config:Biped
 techbase:Inner Sphere

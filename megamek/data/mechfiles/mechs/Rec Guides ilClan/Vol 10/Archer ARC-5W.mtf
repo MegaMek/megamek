@@ -2,6 +2,7 @@ Version:1.0
 Archer
 ARC-5W
 mul id:81
+base unit:data/mechfiles/mechs/XTRs/Primitives V/Archer ARC-1A.mtf
 
 Config:Biped
 techbase:Inner Sphere

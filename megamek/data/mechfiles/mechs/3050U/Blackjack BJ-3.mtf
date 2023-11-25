@@ -2,6 +2,7 @@ Version:1.0
 Blackjack
 BJ-3
 mul id:388
+base unit:data/mechfiles/mechs/3039u/Blackjack BJ-1X.mtf
 
 Config:Biped
 TechBase:Inner Sphere

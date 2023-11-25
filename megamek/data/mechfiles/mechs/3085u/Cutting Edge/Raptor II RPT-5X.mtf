@@ -2,6 +2,7 @@ Version:1.1
 Raptor II
 RPT-5X
 mul id:2660
+base unit:data/mechfiles/mechs/3085u/Cutting Edge/Raptor II RPT-2X.mtf
 
 Config:Biped
 TechBase:Inner Sphere

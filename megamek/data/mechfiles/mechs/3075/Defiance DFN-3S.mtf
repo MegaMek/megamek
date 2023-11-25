@@ -2,6 +2,7 @@ Version:1.0
 Defiance
 DFN-3S
 mul id:850
+base unit:data/mechfiles/mechs/3075/Defiance DFN-3C.mtf
 
 Config:Biped
 TechBase:Inner Sphere

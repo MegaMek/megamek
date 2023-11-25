@@ -10,9 +10,6 @@ Source:TRO: 3055
 Rules Level:2
 role:Missile Boat
 
-quirk:bad_rep_is
-weaponquirk:direct_torso_mount:RT:3:LRM 20
-weaponquirk:direct_torso_mount:LT:3:LRM 20
 
 Mass:80
 Engine:240 XL Engine

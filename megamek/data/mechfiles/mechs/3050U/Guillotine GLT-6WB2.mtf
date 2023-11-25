@@ -2,6 +2,7 @@ Version:1.0
 Guillotine
 GLT-6WB2
 mul id:1343
+base unit:data/mechfiles/mechs/3050U/Guillotine GLT-3N.mtf
 
 Config:Biped
 TechBase:Inner Sphere

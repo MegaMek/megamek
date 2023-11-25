@@ -2,6 +2,7 @@ Version:1.0
 Tsunami
 TS-P1D
 mul id:3312
+base unit:data/mechfiles/mechs/3055U/Tsunami TS-P1.mtf
 
 Config:Biped
 TechBase:Inner Sphere

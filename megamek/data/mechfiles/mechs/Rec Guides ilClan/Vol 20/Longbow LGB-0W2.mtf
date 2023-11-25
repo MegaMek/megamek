@@ -2,6 +2,7 @@ Version:1.0
 Longbow
 LGB-0W2
 mul id:8331
+base unit:data/mechfiles/mechs/XTRs/Primitives III/Longbow LGB-0C.mtf
 
 Config:Biped
 techbase:Inner Sphere

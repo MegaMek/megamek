@@ -2,6 +2,7 @@ Version:1.0
 Werewolf
 WER-LF-005
 mul id:3536
+base unit:data/mechfiles/mechs/3055U/Werewolf WER-LF-004.mtf
 
 Config:Biped
 TechBase:Inner Sphere

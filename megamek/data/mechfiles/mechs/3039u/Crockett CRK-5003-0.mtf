@@ -2,6 +2,7 @@ Version:1.0
 Crockett
 CRK-5003-0
 mul id:724
+base unit:data/mechfiles/mechs/3050U/Crockett CRK-5003-1.mtf
 
 Config:Biped
 TechBase:Inner Sphere

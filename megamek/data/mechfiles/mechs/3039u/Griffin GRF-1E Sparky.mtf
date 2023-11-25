@@ -2,6 +2,7 @@ Version:1.0
 Griffin
 GRF-1E 'Sparky'
 mul id:1295
+base unit:data/mechfiles/mechs/XTRs/Primitives IV/Griffin GRF-1A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

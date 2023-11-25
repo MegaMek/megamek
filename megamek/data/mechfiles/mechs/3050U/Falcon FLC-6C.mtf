@@ -2,6 +2,7 @@ Version:1.0
 Falcon
 FLC-6C
 mul id:1029
+base unit:data/mechfiles/mechs/3039u/Falcon FLC-4N.mtf
 
 Config:Biped
 TechBase:Clan

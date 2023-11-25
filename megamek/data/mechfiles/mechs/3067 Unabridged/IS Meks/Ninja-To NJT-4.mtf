@@ -2,6 +2,7 @@ Version:1.1
 Ninja-To
 NJT-4
 mul id:5687
+base unit:data/mechfiles/mechs/3067/Ninja-To NJT-2.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,6 +2,7 @@ Version:1.0
 Hammerhands
 HMH-3D (Kessem)
 mul id:5863
+base unit:data/mechfiles/mechs/3075/Hammerhands HMH-3D.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,6 +2,7 @@ Version:1.0
 Blade
 BLD-7R
 mul id:6929
+base unit:data/mechfiles/mechs/3085u/Cutting Edge/Blade BLD-XL.mtf
 
 Config:Biped
 TechBase:Inner Sphere

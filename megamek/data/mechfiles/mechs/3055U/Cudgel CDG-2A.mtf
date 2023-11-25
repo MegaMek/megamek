@@ -2,6 +2,7 @@ Version:1.1
 Cudgel
 CDG-2A
 mul id:767
+base unit:data/mechfiles/mechs/3055U/Cudgel CDG-1B.mtf
 
 Config:Biped
 TechBase:Inner Sphere

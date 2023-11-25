@@ -2,6 +2,7 @@ Version:1.0
 Lao Hu
 LHU-3C
 mul id:4480
+base unit:data/mechfiles/mechs/3067/Lao Hu LHU-2B.mtf
 
 Config:Biped
 TechBase:Inner Sphere

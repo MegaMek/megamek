@@ -2,6 +2,7 @@ Version:1.0
 Carbine
 CON-9M-J ConstructionMech MOD
 mul id:7849
+base unit:data/mechfiles/mechs/Operation Klondike/Carbine CON-1 ConstructionMech.mtf
 
 Config:Biped
 techbase:Inner Sphere

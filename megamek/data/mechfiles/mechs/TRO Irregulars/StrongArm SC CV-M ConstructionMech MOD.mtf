@@ -2,6 +2,7 @@ Version:1.1
 StrongArm
 SC CV-M ConstructionMech MOD
 mul id:7858
+base unit:data/mechfiles/mechs/TRO Irregulars/StrongArm SC CV ConstructionMech.mtf
 
 Config:Biped
 techbase:Inner Sphere

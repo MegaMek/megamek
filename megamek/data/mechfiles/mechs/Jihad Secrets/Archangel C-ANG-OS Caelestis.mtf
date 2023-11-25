@@ -3,6 +3,7 @@ Archangel
 C-ANG-OS Caelestis
 mul id:71
 source:Jihad Secrets: The Blake Documents
+base unit:data/mechfiles/mechs/3075/Archangel C-ANG-O Invictus.mtf
 
 Config:Biped Omnimech
 TechBase:Mixed (IS Chassis)

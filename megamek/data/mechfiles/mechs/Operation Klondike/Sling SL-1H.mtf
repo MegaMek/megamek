@@ -3,6 +3,7 @@ Sling
 SL-1H
 mul id:2968
 source:Historical: Operation Klondike
+base unit:data/mechfiles/mechs/Operation Klondike/Sling SL-1G.mtf
 
 Config:Biped
 TechBase:Inner Sphere

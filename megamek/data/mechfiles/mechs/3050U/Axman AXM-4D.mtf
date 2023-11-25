@@ -2,6 +2,7 @@ Version:1.0
 Axman
 AXM-4D
 mul id:188
+base unit:data/mechfiles/mechs/3050U/Axman AXM-1N.mtf
 
 Config:Biped
 techbase:Inner Sphere

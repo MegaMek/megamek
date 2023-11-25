@@ -3,6 +3,7 @@ Emperor
 EMP-6A (Nerran)
 mul id:965
 source:Record Sheets: Unique Mechs
+base unit:data/mechfiles/mechs/XTRs/Primitives IV/Emperor EMP-1A.mtf
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

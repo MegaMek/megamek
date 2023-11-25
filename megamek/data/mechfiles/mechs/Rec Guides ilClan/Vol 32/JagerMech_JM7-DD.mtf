@@ -1,6 +1,7 @@
 Version:1.1
 JagerMech
 JM7-DD
+base unit:data/mechfiles/mechs/3039u/JagerMech JM6-S.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

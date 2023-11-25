@@ -2,6 +2,7 @@ Version:1.1
 Jinggau
 JN-G9CC
 mul id:1710
+base unit:data/mechfiles/mechs/3060u/Jinggau JN-G8A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

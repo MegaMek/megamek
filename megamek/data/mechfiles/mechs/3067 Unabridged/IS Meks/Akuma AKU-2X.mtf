@@ -2,6 +2,7 @@ Version:1.1
 Akuma
 AKU-2X
 mul id:5713
+base unit:data/mechfiles/mechs/3067/Akuma AKU-1X.mtf
 
 Config:Biped
 TechBase:Inner Sphere

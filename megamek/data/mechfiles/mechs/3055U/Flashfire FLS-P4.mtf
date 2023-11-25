@@ -2,6 +2,7 @@ Version:1.0
 Flashfire
 FLS-P4
 mul id:1121
+base unit:data/mechfiles/mechs/3055U/Flashfire FLS-P2.mtf
 
 Config:Biped
 TechBase:Inner Sphere

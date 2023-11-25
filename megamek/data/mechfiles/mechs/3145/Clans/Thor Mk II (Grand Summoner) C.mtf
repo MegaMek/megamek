@@ -2,6 +2,7 @@ Version:1.0
 Thor II (Grand Summoner)
 C
 mul id:6284
+base unit:data/mechfiles/mechs/3145/Clans/Thor Mk II (Grand Summoner) (Prime).mtf
 
 Config:Biped Omnimech
 TechBase:Clan

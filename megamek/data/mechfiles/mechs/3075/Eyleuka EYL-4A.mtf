@@ -10,7 +10,6 @@ Source:TRO: 3075
 Rules Level:2
 role:Striker
 
-quirk:exp_actuator
 
 Mass:55
 Engine:330 XL Engine

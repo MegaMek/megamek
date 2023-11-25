@@ -1,6 +1,7 @@
 Version:1.3
 Pillager
 PLG-4X 'Anvil'
+base unit:data/mechfiles/mechs/3058Uu/Pillager PLG-1N.mtf
 mul id:2526
 Config:Biped
 techbase:Inner Sphere

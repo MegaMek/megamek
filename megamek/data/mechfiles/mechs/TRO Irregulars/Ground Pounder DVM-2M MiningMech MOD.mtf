@@ -2,6 +2,7 @@ Version:1.0
 Ground Pounder
 DVM-2M MiningMech MOD
 mul id:7873
+base unit:data/mechfiles/mechs/TRO Irregulars/Ground Pounder DVM-2 MiningMech.mtf
 
 Config:Biped
 techbase:Inner Sphere

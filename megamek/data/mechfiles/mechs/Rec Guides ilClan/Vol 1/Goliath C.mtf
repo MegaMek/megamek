@@ -2,6 +2,7 @@ Version:1.1
 Goliath
 C
 mul id:7438
+base unit:data/mechfiles/mechs/3039u/Goliath GOL-1H.mtf
 
 Config:Quad
 techbase:Mixed (IS Chassis)

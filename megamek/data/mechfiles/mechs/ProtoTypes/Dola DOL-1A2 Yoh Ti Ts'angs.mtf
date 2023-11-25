@@ -2,6 +2,7 @@ Version:1.0
 Dola
 DOL-1A2 'Yoh Ti Ts'angs'
 mul id:4087
+base unit:data/mechfiles/mechs/XTRs/Liao/Dola DOL-1A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

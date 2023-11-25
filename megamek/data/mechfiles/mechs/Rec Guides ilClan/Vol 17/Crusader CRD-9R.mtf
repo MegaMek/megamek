@@ -2,6 +2,7 @@ Version:1.1
 Crusader
 CRD-9R
 mul id:8233
+base unit:data/mechfiles/mechs/3075/Crusader CRD-2R.mtf
 
 Config:Biped
 techbase:Inner Sphere

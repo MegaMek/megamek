@@ -2,6 +2,7 @@ Version:1.0
 Osiris
 OSR-4D
 mul id:4764
+base unit:data/mechfiles/mechs/3067/Osiris OSR-3D.mtf
 
 Config:Biped
 techbase:Inner Sphere

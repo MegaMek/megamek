@@ -10,10 +10,6 @@ Source:TRO: 3055
 Rules Level:2
 role:Striker
 
-quirk:ext_twist
-quirk:low_profile
-quirk:pro_actuator
-quirk:weak_head_2
 
 Mass:45
 Engine:225 XL Engine

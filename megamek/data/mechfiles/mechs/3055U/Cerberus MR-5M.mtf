@@ -2,6 +2,7 @@ Version:1.0
 Cerberus
 MR-5M
 mul id:526
+base unit:data/mechfiles/mechs/3055U/Cerberus MR-V2.mtf
 
 Config:Biped
 TechBase:Inner Sphere

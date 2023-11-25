@@ -2,6 +2,7 @@ Version:1.1
 Volkh
 VKH-68
 mul id:8107
+base unit:data/mechfiles/mechs/3055U/Volkh VKH-1.mtf
 
 Config:Biped
 techbase:Inner Sphere

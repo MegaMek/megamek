@@ -2,6 +2,7 @@ Version:1.1
 Hoplite
 HOP-4X
 mul id:1544
+base unit:data/mechfiles/mechs/3050U/Hoplite HOP-4A.mtf
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

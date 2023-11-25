@@ -1,6 +1,7 @@
 Version:1.3
 Sagittaire
 SGT-14R
+base unit:data/mechfiles/mechs/3067/Sagittaire SGT-8R.mtf
 mul id:9398
 Config:Biped
 techbase:Mixed (IS Chassis)

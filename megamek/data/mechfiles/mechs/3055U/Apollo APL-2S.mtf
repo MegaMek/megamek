@@ -2,6 +2,7 @@ Version:1.0
 Apollo
 APL-2S
 mul id:56
+base unit:data/mechfiles/mechs/3055U/Apollo APL-1M.mtf
 
 Config:Biped
 TechBase:Inner Sphere

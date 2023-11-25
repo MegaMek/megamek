@@ -2,6 +2,7 @@ Version:1.1
 Powerman
 SC XV HaulerMech
 mul id:4852
+base unit:data/mechfiles/mechs/Operation Klondike/Powerman SC XI LoaderMech.mtf
 
 Config:Biped
 techbase:Inner Sphere

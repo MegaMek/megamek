@@ -2,6 +2,7 @@ Version:1.0
 Hunchback
 HBK-6S
 mul id:5447
+base unit:data/mechfiles/mechs/3039u/Hunchback HBK-4G.mtf
 
 Config:Biped
 TechBase:Inner Sphere

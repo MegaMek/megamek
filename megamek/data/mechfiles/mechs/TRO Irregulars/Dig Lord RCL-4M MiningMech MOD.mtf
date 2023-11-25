@@ -2,6 +2,7 @@ Version:1.0
 Dig Lord
 RCL-4M MiningMech MOD
 mul id:5542
+base unit:data/mechfiles/mechs/TRO Vehicle Annex/Dig Lord RCL-4 MiningMech.mtf
 
 Config:Biped
 techbase:Inner Sphere

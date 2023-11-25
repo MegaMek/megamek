@@ -2,6 +2,7 @@ Version:1.0
 Red Shift
 RDS-2B
 mul id:4907
+base unit:data/mechfiles/mechs/3067/Red Shift RDS-2A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

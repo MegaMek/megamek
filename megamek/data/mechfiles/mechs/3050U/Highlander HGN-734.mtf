@@ -2,6 +2,7 @@ Version:1.1
 Highlander
 HGN-734
 mul id:1520
+base unit:data/mechfiles/mechs/3050U/Highlander HGN-732.mtf
 
 Config:Biped
 TechBase:Inner Sphere

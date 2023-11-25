@@ -2,6 +2,7 @@ Version:1.1
 Trebuchet
 TBT-9N
 mul id:7500
+base unit:data/mechfiles/mechs/3050U/Trebuchet TBT-3C.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

@@ -2,6 +2,7 @@ Version:1.0
 Catapult
 CPLT-A1
 mul id:477
+base unit:data/mechfiles/mechs/3039u/Catapult CPLT-C1.mtf
 
 Config:Biped
 TechBase:Inner Sphere

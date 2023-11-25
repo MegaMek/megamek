@@ -2,6 +2,7 @@ Version:1.0
 Ymir
 BWP-2E
 mul id:5429
+base unit:data/mechfiles/mechs/XTRs/Primitives V/Ymir BWP-X1.mtf
 
 Config:Biped
 TechBase:Inner Sphere

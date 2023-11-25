@@ -2,6 +2,7 @@ Version:1.0
 Quickdraw
 QKD-5A
 mul id:2612
+base unit:data/mechfiles/mechs/3039u/Quickdraw QKD-4G.mtf
 
 Config:Biped
 TechBase:Inner Sphere

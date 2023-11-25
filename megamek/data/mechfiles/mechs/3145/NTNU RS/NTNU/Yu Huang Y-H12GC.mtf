@@ -1,6 +1,7 @@
 Version:1.3
 Yu Huang
 Y-H12GC
+base unit:data/mechfiles/mechs/3060u/Yu Huang Y-H10G.mtf
 mul id:8010
 Config:Biped
 techbase:Mixed (IS Chassis)

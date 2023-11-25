@@ -2,6 +2,7 @@ Version:1.1
 Hellspawn
 HSN-10G
 mul id:5673
+base unit:data/mechfiles/mechs/3067/Hellspawn HSN-7D.mtf
 
 Config:Biped
 TechBase:Inner Sphere

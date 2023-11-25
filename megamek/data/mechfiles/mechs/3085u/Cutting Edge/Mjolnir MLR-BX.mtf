@@ -2,6 +2,7 @@ Version:1.1
 Mjolnir
 MLR-BX
 mul id:2195
+base unit:data/mechfiles/mechs/3085u/Cutting Edge/Mjolnir MLR-B2.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,6 +2,7 @@ Version:1.0
 Naginata
 NG-C3B
 mul id:2254
+base unit:data/mechfiles/mechs/3055U/Naginata NG-C3A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

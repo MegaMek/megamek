@@ -2,6 +2,7 @@ Version:1.0
 Wasp LAM
 WSP-105M
 mul id:5390
+base unit:data/mechfiles/mechs/LAMS/Wasp LAM WSP-105.mtf
 
 Config:LAM
 TechBase:Inner Sphere

@@ -2,6 +2,7 @@ Version:1.1
 Ares
 ARS-V1D Hephaestus
 mul id:6689
+base unit:data/mechfiles/mechs/3145/Republic/Ares ARS-V1 Aphrodite.mtf
 
 Config:Tripod Omnimech
 TechBase:Mixed (IS Chassis)

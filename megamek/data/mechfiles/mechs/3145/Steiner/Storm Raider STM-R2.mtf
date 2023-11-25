@@ -2,6 +2,7 @@ Version:1.0
 Storm Raider
 STM-R2
 mul id:6616
+base unit:data/mechfiles/mechs/3145/Steiner/Storm Raider STM-R1.mtf
 
 Config:Biped
 TechBase:Inner Sphere

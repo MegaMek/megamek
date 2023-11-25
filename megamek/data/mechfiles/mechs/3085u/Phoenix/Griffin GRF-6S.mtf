@@ -2,6 +2,7 @@ Version:1.2
 Griffin
 GRF-6S
 mul id:1307
+base unit:data/mechfiles/mechs/XTRs/Primitives IV/Griffin GRF-1A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

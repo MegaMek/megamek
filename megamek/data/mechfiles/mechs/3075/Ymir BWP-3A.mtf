@@ -2,6 +2,7 @@ Version:1.0
 Ymir
 BWP-3A
 mul id:3622
+base unit:data/mechfiles/mechs/XTRs/Primitives V/Ymir BWP-X1.mtf
 
 Config:Biped
 TechBase:Inner Sphere

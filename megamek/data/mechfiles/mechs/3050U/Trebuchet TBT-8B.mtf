@@ -2,6 +2,7 @@ Version:1.0
 Trebuchet
 TBT-8B
 mul id:3301
+base unit:data/mechfiles/mechs/3050U/Trebuchet TBT-3C.mtf
 
 Config:Biped
 techbase:Inner Sphere

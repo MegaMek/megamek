@@ -1,6 +1,7 @@
 Version:1.3
 Longshot
 LNG-2 (Reskov)
+base unit:data/mechfiles/mechs/3055U/Longshot LNG-1B.mtf
 mul id:9243
 Config:Biped
 techbase:Mixed (IS Chassis)

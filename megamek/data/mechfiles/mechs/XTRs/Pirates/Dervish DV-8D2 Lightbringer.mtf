@@ -2,6 +2,7 @@ Version:1.1
 Dervish
 DV-8D2 'Lightbringer'
 mul id:882
+base unit:data/mechfiles/mechs/XTRs/Primitives III/Dervish DV-1S.mtf
 
 Config:Biped
 TechBase:Inner Sphere

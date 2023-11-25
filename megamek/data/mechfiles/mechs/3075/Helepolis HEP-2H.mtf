@@ -1,6 +1,7 @@
 Version:1.3
 Helepolis
 HEP-2H
+base unit:data/mechfiles/mechs/XTRs/Primitives I/Helepolis HEP-1H.mtf
 mul id:1461
 Config:Biped
 techbase:Inner Sphere

@@ -2,6 +2,7 @@ Version:1.0
 Salamander
 PPR-6S
 mul id:2784
+base unit:data/mechfiles/mechs/3055U/Salamander PPR-5S.mtf
 
 Config:Biped
 TechBase:Inner Sphere

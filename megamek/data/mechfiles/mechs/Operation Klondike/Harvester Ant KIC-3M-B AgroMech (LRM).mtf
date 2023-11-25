@@ -2,6 +2,7 @@ Version:1.1
 Harvester Ant
 KIC-3M-B AgroMech (LRM)
 mul id:7153
+base unit:data/mechfiles/mechs/TRO Vehicle Annex/Harvester Ant KIC-3 Agromech.mtf
 
 Config:Quad
 TechBase:Inner Sphere

@@ -2,6 +2,7 @@ Version:1.1
 Hammer
 HMR-3P 'Pein-Hammer'
 mul id:1367
+base unit:data/mechfiles/mechs/3055U/Hammer HMR-3M.mtf
 
 Config:Biped
 TechBase:Inner Sphere

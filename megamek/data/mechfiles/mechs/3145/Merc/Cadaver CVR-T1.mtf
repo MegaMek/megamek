@@ -2,6 +2,7 @@ Version:1.2
 Cadaver
 CVR-T1
 mul id:6551
+base unit:data/mechfiles/mechs/3145/Merc/Cadaver CVR-A1.mtf
 
 Config:Biped
 TechBase:Inner Sphere

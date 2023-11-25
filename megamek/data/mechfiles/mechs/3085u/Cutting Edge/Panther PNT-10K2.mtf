@@ -2,6 +2,7 @@ Version:1.0
 Panther
 PNT-10K2
 mul id:2417
+base unit:data/mechfiles/mechs/3039u/Panther PNT-8Z.mtf
 
 Config:Biped
 TechBase:Inner Sphere

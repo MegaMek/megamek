@@ -1,6 +1,7 @@
 Version:1.3
 Warhammer
 C 3
+base unit:data/mechfiles/mechs/3039u/Warhammer WHM-6R.mtf
 mul id:7566
 Config:Biped
 techbase:Clan

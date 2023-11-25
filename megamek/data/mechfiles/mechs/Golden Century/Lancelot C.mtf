@@ -3,6 +3,7 @@ Lancelot
 C
 mul id:7626
 
+base unit:data/mechfiles/mechs/3050U/Lancelot LNC25-01.mtf
 
 Config:Biped
 techbase:Clan

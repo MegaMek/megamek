@@ -2,6 +2,7 @@ Version:1.1
 Marauder
 MAD-5D-DC
 mul id:7529
+base unit:data/mechfiles/mechs/3075/Marauder MAD-1R.mtf
 
 Config:Biped
 techbase:Inner Sphere

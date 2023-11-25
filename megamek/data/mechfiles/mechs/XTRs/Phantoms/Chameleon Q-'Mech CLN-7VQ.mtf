@@ -2,6 +2,7 @@ Version:1.0
 Chameleon
 CLN-7VQ 'Q-'Mech' 
 mul id:5601
+base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 25/Chameleon TRC-4B.mtf
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

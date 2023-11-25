@@ -2,6 +2,7 @@ Version:1.2
 Nightsky
 NGS-6T
 mul id:2284
+base unit:data/mechfiles/mechs/3055U/Nightsky NGS-4S.mtf
 
 Config:Biped
 TechBase:Inner Sphere

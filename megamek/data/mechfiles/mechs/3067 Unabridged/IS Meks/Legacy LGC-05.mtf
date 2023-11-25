@@ -2,6 +2,7 @@ Version:1.1
 Legacy
 LGC-05
 mul id:5703
+base unit:data/mechfiles/mechs/3067/Legacy LGC-01.mtf
 
 Config:Biped
 TechBase:Inner Sphere

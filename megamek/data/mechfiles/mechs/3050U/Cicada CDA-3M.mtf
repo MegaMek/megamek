@@ -2,6 +2,7 @@ Version:1.0
 Cicada
 CDA-3M
 mul id:596
+base unit:data/mechfiles/mechs/3039u/Cicada CDA-2A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -1,6 +1,7 @@
 Version:1.3
 King Crab
 KGC-009C
+base unit:data/mechfiles/mechs/3039u/King Crab KGC-010.mtf
 mul id:8066
 Config:Biped
 techbase:Mixed (IS Chassis)

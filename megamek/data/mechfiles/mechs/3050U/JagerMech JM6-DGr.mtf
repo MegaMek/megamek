@@ -1,6 +1,7 @@
 Version:1.3
 JagerMech
 JM6-DGr
+base unit:data/mechfiles/mechs/3039u/JagerMech JM6-S.mtf
 mul id:4389
 Config:Biped
 techbase:Inner Sphere

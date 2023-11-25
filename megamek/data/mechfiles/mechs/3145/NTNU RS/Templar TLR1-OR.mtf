@@ -1,6 +1,7 @@
 Version:1.3
 Templar
 TLR1-OR
+base unit:data/mechfiles/mechs/3067/Templar TLR1-O.mtf
 mul id:6852
 Config:Biped Omnimech
 techbase:Mixed (IS Chassis)

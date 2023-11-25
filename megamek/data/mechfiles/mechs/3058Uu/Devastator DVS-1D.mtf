@@ -2,6 +2,7 @@ Version:1.0
 Devastator
 DVS-1D
 mul id:893
+base unit:data/mechfiles/mechs/Golden Century/Devastator DVS-2-EC.mtf
 
 Config:Biped
 TechBase:Inner Sphere

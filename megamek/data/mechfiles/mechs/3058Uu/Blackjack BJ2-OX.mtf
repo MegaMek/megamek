@@ -2,6 +2,7 @@ Version:1.0
 Blackjack
 BJ2-OX
 mul id:387
+base unit:data/mechfiles/mechs/3039u/Blackjack BJ-1X.mtf
 
 Config:Biped Omnimech
 TechBase:Inner Sphere

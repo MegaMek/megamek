@@ -2,6 +2,7 @@ Version:1.1
 Wasp
 WSP-8T
 mul id:3532
+base unit:data/mechfiles/mechs/XTRs/Primitives II/Wasp WSP-1.mtf
 
 Config:Biped
 TechBase:Inner Sphere

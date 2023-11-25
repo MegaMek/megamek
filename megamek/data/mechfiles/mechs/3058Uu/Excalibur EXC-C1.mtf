@@ -2,6 +2,7 @@ Version:1.0
 Excalibur
 EXC-C1
 mul id:1000
+base unit:data/mechfiles/mechs/3058Uu/Excalibur EXC-B1.mtf
 
 Config:Biped
 TechBase:Inner Sphere

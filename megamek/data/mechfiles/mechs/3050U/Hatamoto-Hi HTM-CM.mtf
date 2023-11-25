@@ -2,6 +2,7 @@ Version:1.0
 Hatamoto-Hi
 HTM-CM
 mul id:1405
+base unit:data/mechfiles/mechs/3050U/Hatamoto-Hi HTM-27U.mtf
 
 Config:Biped
 TechBase:Inner Sphere

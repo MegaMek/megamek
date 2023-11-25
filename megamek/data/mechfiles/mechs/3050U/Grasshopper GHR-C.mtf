@@ -2,6 +2,7 @@ Version:1.0
 Grasshopper
 GHR-C
 mul id:1272
+base unit:data/mechfiles/mechs/3039u/Grasshopper GHR-5H.mtf
 
 Config:Biped
 TechBase:Inner Sphere

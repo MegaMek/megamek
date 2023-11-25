@@ -2,6 +2,7 @@ Version:1.0
 Javelin
 JVN-11F
 mul id:1680
+base unit:data/mechfiles/mechs/3039u/Javelin JVN-10N.mtf
 
 Config:Biped
 TechBase:Inner Sphere

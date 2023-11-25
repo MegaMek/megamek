@@ -3,6 +3,7 @@ Wolf Trap (Tora)
 WFT-1 (Daitama)
 mul id:3555
 source:Record Sheets: Unique Mechs
+base unit:data/mechfiles/mechs/3050U/Wolf Trap (Tora) WFT-1.mtf
 
 Config:Biped
 TechBase:Inner Sphere

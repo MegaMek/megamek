@@ -2,6 +2,7 @@ Version:1.1
 Firestarter
 FS9-X81
 mul id:1092
+base unit:data/mechfiles/mechs/3039u/Firestarter FS9-A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

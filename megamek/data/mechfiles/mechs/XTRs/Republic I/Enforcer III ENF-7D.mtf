@@ -1,6 +1,7 @@
 Version:1.3
 Enforcer III
 ENF-7D
+base unit:data/mechfiles/mechs/3060u/Enforcer III ENF-6M.mtf
 mul id:7296
 Config:Biped
 techbase:Inner Sphere

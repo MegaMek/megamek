@@ -2,6 +2,7 @@ Version:1.0
 Spector
 SPR-5F
 mul id:3003
+base unit:data/mechfiles/mechs/3058Uu/Spector SPR-4F.mtf
 
 Config:Biped
 TechBase:Inner Sphere

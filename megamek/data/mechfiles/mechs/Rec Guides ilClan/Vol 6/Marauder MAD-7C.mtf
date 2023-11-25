@@ -2,6 +2,7 @@ Version:1.0
 Marauder
 MAD-7C
 mul id:7530
+base unit:data/mechfiles/mechs/3075/Marauder MAD-1R.mtf
 
 Config:Biped
 techbase:Inner Sphere

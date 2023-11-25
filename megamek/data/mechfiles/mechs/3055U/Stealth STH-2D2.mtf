@@ -2,6 +2,7 @@ Version:1.0
 Stealth
 STH-2D2
 mul id:3056
+base unit:data/mechfiles/mechs/3055U/Stealth STH-1D.mtf
 
 Config:Biped
 techbase:Inner Sphere

@@ -2,6 +2,7 @@ Version:1.0
 Marauder
 (Bounty Hunter-3044)
 mul id:2031
+base unit:data/mechfiles/mechs/3075/Marauder MAD-1R.mtf
 
 Config:Biped
 techbase:Inner Sphere

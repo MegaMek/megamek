@@ -2,6 +2,7 @@ Version:1.0
 Gallowglas
 GAL-4GLSA
 mul id:1187
+base unit:data/mechfiles/mechs/3055U/Gallowglas GAL-1GLS.mtf
 
 Config:Biped
 TechBase:Inner Sphere

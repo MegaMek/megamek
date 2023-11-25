@@ -2,6 +2,7 @@ Version:1.0
 Kintaro
 KTO-19b
 mul id:1792
+base unit:data/mechfiles/mechs/3050U/Kintaro KTO-19.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,6 +2,7 @@ Version:1.0
 Firestarter
 FS9-O
 mul id:1099
+base unit:data/mechfiles/mechs/3039u/Firestarter FS9-A.mtf
 
 Config:Biped Omnimech
 TechBase:Inner Sphere

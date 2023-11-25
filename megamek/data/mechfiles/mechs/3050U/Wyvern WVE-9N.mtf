@@ -2,6 +2,7 @@ Version:1.0
 Wyvern
 WVE-9N
 mul id:3600
+base unit:data/mechfiles/mechs/3050U/Wyvern WVE-5N.mtf
 
 Config:Biped
 TechBase:Inner Sphere

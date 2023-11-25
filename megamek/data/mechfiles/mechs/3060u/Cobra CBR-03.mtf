@@ -2,6 +2,7 @@ Version:1.1
 Cobra
 CBR-03
 mul id:656
+base unit:data/mechfiles/mechs/3060u/Cobra CBR-02.mtf
 
 Config:Biped
 TechBase:Inner Sphere

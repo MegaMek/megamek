@@ -2,6 +2,7 @@ Version:1.1
 Quickdraw
 QKD-8P
 mul id:4887
+base unit:data/mechfiles/mechs/3039u/Quickdraw QKD-4G.mtf
 
 Config:Biped
 TechBase:Inner Sphere

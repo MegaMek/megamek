@@ -2,6 +2,7 @@ Version:1.0
 Assassin
 'Servitor'
 mul id:3737
+base unit:data/mechfiles/mechs/3039u/Assassin ASN-21.mtf
 
 Config:Biped
 TechBase:Inner Sphere

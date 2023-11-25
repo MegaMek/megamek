@@ -2,6 +2,7 @@ Version:1.0
 Enforcer III
 ENF-6T
 mul id:985
+base unit:data/mechfiles/mechs/3060u/Enforcer III ENF-6M.mtf
 
 Config:Biped
 TechBase:Inner Sphere

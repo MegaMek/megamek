@@ -2,6 +2,7 @@ Version:1.1
 Wulfen
 H
 mul id:6262
+base unit:data/mechfiles/mechs/3145/Clans/Wulfen (Prime).mtf
 
 Config:Biped Omnimech
 TechBase:Mixed (Clan Chassis)

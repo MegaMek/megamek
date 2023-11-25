@@ -2,6 +2,7 @@ Version:1.1
 Banshee
 BNC-9S
 mul id:3788
+base unit:data/mechfiles/mechs/XTRs/Primitives II/Banshee BNC-1E.mtf
 
 Config:Biped
 TechBase:Inner Sphere

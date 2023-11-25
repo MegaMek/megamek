@@ -2,6 +2,7 @@ Version:1.0
 Lightray
 LGH-5W
 mul id:4521
+base unit:data/mechfiles/mechs/3067/Lightray LGH-4Y.mtf
 
 Config:Biped
 TechBase:Inner Sphere

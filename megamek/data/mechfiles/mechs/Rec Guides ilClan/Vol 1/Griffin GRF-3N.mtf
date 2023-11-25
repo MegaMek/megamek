@@ -1,6 +1,7 @@
 Version:1.3
 Griffin
 GRF-3N
+base unit:data/mechfiles/mechs/XTRs/Primitives IV/Griffin GRF-1A.mtf
 mul id:7436
 Config:Biped
 techbase:Inner Sphere

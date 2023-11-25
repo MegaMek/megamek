@@ -2,6 +2,7 @@ Version:1.0
 Commando
 COM-1B
 mul id:667
+base unit:data/mechfiles/mechs/XTRs/Primitives I/Commando COM-1A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

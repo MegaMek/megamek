@@ -2,6 +2,7 @@ Version:1.0
 Thorn
 THE-N
 mul id:3191
+base unit:data/mechfiles/mechs/3039u/Thorn THE-F.mtf
 
 Config:Biped
 TechBase:Inner Sphere

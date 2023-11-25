@@ -2,6 +2,7 @@ Version:1.2
 Hatchetman
 HCT-5DD
 mul id:5446
+base unit:data/mechfiles/mechs/3039u/Hatchetman HCT-3F.mtf
 
 Config:Biped
 techbase:Inner Sphere

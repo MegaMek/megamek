@@ -2,6 +2,7 @@ Version:1.0
 Spider
 SDR-8R
 mul id:3018
+base unit:data/mechfiles/mechs/3039u/Spider SDR-5V.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -10,10 +10,6 @@ source:XTR: Primitives III
 rules level:4
 role:Missile Boat
 
-quirk:multi_trac
-quirk:difficult_maintain
-quirk:obsolete
-quirk:poor_work
 
 mass:65
 engine:235 Fusion Engine(IS)

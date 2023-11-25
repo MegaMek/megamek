@@ -2,6 +2,7 @@ Version:1.1
 Marco
 MR-8E
 mul id:2074
+base unit:data/mechfiles/mechs/TRO Vehicle Annex/Marco MR-6.mtf
 
 Config:Biped
 TechBase:Inner Sphere

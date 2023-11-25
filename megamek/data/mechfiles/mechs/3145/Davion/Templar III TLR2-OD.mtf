@@ -1,6 +1,7 @@
 Version:1.3
 Templar III
 TLR2-OD
+base unit:data/mechfiles/mechs/3145/Davion/Templar III TLR2-O.mtf
 mul id:6357
 Config:Biped Omnimech
 techbase:Mixed (IS Chassis)

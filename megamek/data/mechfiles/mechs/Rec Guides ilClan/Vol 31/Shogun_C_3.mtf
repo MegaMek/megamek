@@ -1,6 +1,7 @@
 Version:1.0
 Shogun
 C 3
+base unit:data/mechfiles/mechs/Operation Klondike/Shogun SHG-2H.mtf
 
 Config:Biped
 techbase:Clan

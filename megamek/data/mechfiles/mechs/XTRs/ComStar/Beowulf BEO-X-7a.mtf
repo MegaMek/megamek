@@ -2,6 +2,7 @@ Version:1.2
 Beowulf
 BEO-X-7a
 mul id:5548
+base unit:data/mechfiles/mechs/3060u/Beowulf BEO-12.mtf
 
 Config:Biped
 TechBase:Inner Sphere

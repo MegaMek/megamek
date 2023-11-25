@@ -2,6 +2,7 @@ Version:1.0
 Hitotsume Kozo
 HKZ-1FM 'Mulan'
 mul id:8380
+base unit:data/mechfiles/mechs/3145/Kurita/Hitotsume Kozo HKZ-1F.mtf
 
 Config:Biped
 techbase:Inner Sphere

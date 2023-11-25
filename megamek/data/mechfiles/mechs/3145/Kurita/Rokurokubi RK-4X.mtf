@@ -2,6 +2,7 @@ Version:1.1
 Rokurokubi
 RK-4X
 mul id:6394
+base unit:data/mechfiles/mechs/3145/Kurita/Rokurokubi RK-4K.mtf
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

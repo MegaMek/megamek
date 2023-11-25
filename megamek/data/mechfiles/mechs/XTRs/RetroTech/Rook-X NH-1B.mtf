@@ -2,6 +2,7 @@ Version:1.1
 Rook
 NH-1X 'Rook-X'
 mul id:4935
+base unit:data/mechfiles/mechs/3085u/Cutting Edge/Rook NH-1A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

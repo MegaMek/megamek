@@ -2,6 +2,7 @@ Version:1.1
 Prowler
 PWR-1X1
 mul id:2582
+base unit:data/mechfiles/mechs/3055U/Prowler PWR-1X.mtf
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

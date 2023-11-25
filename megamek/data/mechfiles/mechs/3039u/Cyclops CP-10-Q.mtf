@@ -2,6 +2,7 @@ Version:1.0
 Cyclops
 CP-10-Q
 mul id:771
+base unit:data/mechfiles/mechs/3039u/Cyclops CP-10-Z.mtf
 
 Config:Biped
 TechBase:Inner Sphere

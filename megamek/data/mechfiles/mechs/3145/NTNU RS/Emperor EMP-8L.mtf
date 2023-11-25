@@ -2,6 +2,7 @@ Version:1.0
 Emperor
 EMP-8L
 mul id:6851
+base unit:data/mechfiles/mechs/XTRs/Primitives IV/Emperor EMP-1A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

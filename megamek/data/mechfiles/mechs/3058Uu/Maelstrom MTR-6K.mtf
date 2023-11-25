@@ -2,6 +2,7 @@ Version:1.0
 Maelstrom
 MTR-6K
 mul id:1990
+base unit:data/mechfiles/mechs/3058Uu/Maelstrom MTR-5K.mtf
 
 Config:Biped
 TechBase:Inner Sphere

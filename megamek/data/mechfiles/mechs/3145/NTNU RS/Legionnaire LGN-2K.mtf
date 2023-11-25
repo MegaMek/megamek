@@ -2,6 +2,7 @@ Version:1.0
 Legionnaire
 LGN-2K
 mul id:6905
+base unit:data/mechfiles/mechs/3075/Legionnaire LGN-1X.mtf
 
 Config:Biped
 TechBase:Inner Sphere

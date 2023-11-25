@@ -2,6 +2,7 @@ Version:1.1
 Grigori
 C-GRG-OD Luminos
 mul id:1324
+base unit:data/mechfiles/mechs/3075/Grigori C-GRG-O Invictus.mtf
 
 Config:Biped Omnimech
 TechBase:Inner Sphere

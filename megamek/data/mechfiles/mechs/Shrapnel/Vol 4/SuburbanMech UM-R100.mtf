@@ -2,6 +2,7 @@ Version:1.0
 SuburbanMech
 UM-R100
 mul id:7929
+base unit:data/mechfiles/mechs/Shrapnel/Vol 4/SuburbanMech UM-R90.mtf
 
 Config:Biped
 techbase:Inner Sphere

@@ -2,6 +2,7 @@ Version:1.0
 Spartan
 SPT-NF
 mul id:2997
+base unit:data/mechfiles/mechs/3058Uu/Spartan SPT-N1.mtf
 
 Config:Biped
 TechBase:Inner Sphere

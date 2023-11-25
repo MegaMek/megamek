@@ -2,6 +2,7 @@ Version:1.1
 Shugenja
 SJA-8H
 mul id:2943
+base unit:data/mechfiles/mechs/3060u/Shugenja SJA-7D.mtf
 
 Config:Biped
 TechBase:Inner Sphere

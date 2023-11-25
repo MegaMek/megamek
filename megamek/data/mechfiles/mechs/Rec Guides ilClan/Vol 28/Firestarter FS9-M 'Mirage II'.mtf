@@ -1,6 +1,7 @@
 Version:1.3
 Firestarter
 FS9-M 'Mirage II'
+base unit:data/mechfiles/mechs/3039u/Firestarter FS9-A.mtf
 mul id:9374
 Config:Biped
 techbase:Mixed (IS Chassis)

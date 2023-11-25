@@ -2,6 +2,7 @@ Version:1.1
 Warhammer
 WHM-7M-DC
 mul id:5386
+base unit:data/mechfiles/mechs/3039u/Warhammer WHM-6R.mtf
 
 Config:Biped
 techbase:Inner Sphere

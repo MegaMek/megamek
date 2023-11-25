@@ -3,6 +3,7 @@ Jenner
 JR7-K (Samuli)
 mul id:1697
 source:Record Sheets: Unique Mechs
+base unit:data/mechfiles/mechs/3039u/Jenner JR7-A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

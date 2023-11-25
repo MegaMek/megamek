@@ -1,6 +1,7 @@
 Version:1.3
 Flea
 FLE-21
+base unit:data/mechfiles/mechs/3039u/Flea FLE-4.mtf
 mul id:9313
 Config:Biped
 techbase:Inner Sphere

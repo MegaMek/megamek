@@ -1151,6 +1151,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             currentHeatBuildup++;
         }
 
+        if (entity.hasQuirk(OptionsConstants.QUIRK_POS_COMBAT_COMPUTER)) {
+            currentHeatBuildup -= 4;
+        }
+
         // check for negative values due to extreme temp
         if (currentHeatBuildup < 0) {
             currentHeatBuildup = 0;

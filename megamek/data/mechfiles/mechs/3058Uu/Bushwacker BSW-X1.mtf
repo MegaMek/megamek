@@ -10,6 +10,8 @@ source:TRO: 3058
 rules level:2
 role:Skirmisher
 
+quirk:low_profile
+weaponquirk:stable_weapon:CT:10:ISERLargeLaser
 
 mass:55
 engine:275 XL Engine(IS)

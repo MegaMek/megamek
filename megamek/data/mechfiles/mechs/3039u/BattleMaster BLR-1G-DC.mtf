@@ -10,6 +10,8 @@ Source:TRO: 3039
 Rules Level:3
 role:Brawler
 
+quirk:command_mech
+quirk:weak_head_1
 
 Mass:85
 Engine:340 Fusion Engine(IS)

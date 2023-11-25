@@ -10,6 +10,8 @@ source:TRO: 3060
 rules level:2
 role:Brawler
 
+quirk:hyper_actuator
+quirk:bad_rep_is
 
 mass:40
 engine:160 Fusion Engine(IS)

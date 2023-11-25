@@ -10,6 +10,7 @@ Source:XTR: Liao
 Rules Level:4
 role:Scout
 
+quirk:imp_sensors
 
 Mass:35
 Engine:210 XL Engine(IS)

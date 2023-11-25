@@ -10,6 +10,9 @@ Source:XTR: Republic III
 Rules Level:3
 role:Brawler
 
+quirk:distracting
+quirk:difficult_eject
+quirk:prototype
 
 Mass:75
 Engine:375 XL (Clan) Engine

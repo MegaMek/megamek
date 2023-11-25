@@ -9,6 +9,8 @@ source:XTR: Primitives V
 rules level:3
 role:Brawler
 
+quirk:easy_maintain
+weaponquirk:ammo_feed_problems:RT:0:Autocannon/5
 
 mass:75
 engine:360 Fusion Engine(IS)

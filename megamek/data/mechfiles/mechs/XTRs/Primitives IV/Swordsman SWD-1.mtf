@@ -10,6 +10,11 @@ Source:XTR: Primitives IV
 Rules Level:4
 role:Sniper
 
+quirk:searchlight
+quirk:bad_rep_is
+quirk:obsolete
+quirk:poor_work
+weaponquirk:accurate:LT:1:Autocannon/5
 
 Mass:40
 Engine:145 Fusion Engine(IS)

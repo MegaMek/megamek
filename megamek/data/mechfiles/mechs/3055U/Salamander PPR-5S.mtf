@@ -10,6 +10,7 @@ Source:TRO: 3055
 Rules Level:2
 role:Missile Boat
 
+quirk:difficult_maintain
 
 Mass:80
 Engine:320 XL Engine

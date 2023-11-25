@@ -10,6 +10,10 @@ Source:TRO: 3055
 Rules Level:2
 role:Brawler
 
+quirk:multi_trac
+quirk:difficult_maintain
+quirk:multi_trac
+quirk:difficult_maintain
 
 Mass:100
 Engine:400 XL Engine

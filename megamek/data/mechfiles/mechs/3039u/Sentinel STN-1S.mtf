@@ -10,6 +10,7 @@ Source:TRO: 3039
 Rules Level:1
 role:Scout
 
+quirk:imp_com
 
 Mass:40
 Engine:240 Fusion Engine

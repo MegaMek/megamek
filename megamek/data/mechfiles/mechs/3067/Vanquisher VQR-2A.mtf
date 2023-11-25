@@ -10,6 +10,10 @@ source:TRO: 3067
 rules level:2
 role:Sniper
 
+quirk:stable
+quirk:bad_rep_clan
+quirk:bad_rep_is
+quirk:no_arms
 
 mass:100
 engine:300 Fusion Engine(IS)

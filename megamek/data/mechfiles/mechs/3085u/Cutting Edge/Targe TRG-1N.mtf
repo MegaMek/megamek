@@ -10,6 +10,9 @@ Source:TRO: 3085
 Rules Level:2
 role:Striker
 
+quirk:ext_twist
+quirk:bad_rep_is
+quirk:no_arms
 
 Mass:40
 Engine:320 Light Engine

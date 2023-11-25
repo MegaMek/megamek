@@ -10,6 +10,8 @@ Source:TRO: 3145 Lyran Commonwealth
 Rules Level:3
 role:Skirmisher
 
+quirk:stable
+weaponquirk:exposed_linkage:RT:3:ISRotaryAC2
 
 Mass:65
 Engine:325 XL Engine(IS)

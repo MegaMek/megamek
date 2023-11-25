@@ -10,6 +10,7 @@ source:TRO: 3085
 Rules Level:2
 role:Sniper
 
+quirk:easy_maintain
 
 Mass:55
 Engine:220 Fusion Engine

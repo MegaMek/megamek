@@ -10,6 +10,10 @@ source:TRO: 3050
 rules level:2
 role:Scout
 
+quirk:command_mech
+quirk:easy_pilot
+weaponquirk:stable_weapon:HD:3:Small Laser
+weaponquirk:stable_weapon:CT:10:Medium Laser
 
 mass:25
 engine:200 Fusion Engine(IS)

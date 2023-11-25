@@ -10,6 +10,7 @@ Source:TRO: 3055
 Rules Level:2
 role:Brawler
 
+weaponquirk:direct_torso_mount:HD:3:Medium Laser
 
 Mass:65
 Engine:260 XL Engine

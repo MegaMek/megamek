@@ -10,6 +10,9 @@ source:XTR: Gunslingers
 rules level:2
 role:Striker
 
+quirk:prototype
+quirk:obsolete
+weaponquirk:jettison_capable:RA:4:ISERPPC
 
 mass:55
 engine:275 Fusion Engine(IS)

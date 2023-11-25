@@ -44,6 +44,7 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.enums.GamePhase;
 import megamek.common.event.*;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
@@ -753,10 +754,17 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         boardPreviewW.setLocationRelativeTo(clientgui.frame);
 
         try {
+            boardPreviewGame.setPhase(GamePhase.LOUNGE);
             previewBV = new BoardView(boardPreviewGame, null, null);
             previewBV.setDisplayInvalidHexInfo(false);
             previewBV.setUseLOSTool(false);
-            boardPreviewW.add(previewBV.getComponent(true));
+            JButton bpButton = new JButton(Messages.getString("BoardSelectionDialog.ViewGameBoardButton"));
+            bpButton.addActionListener(e -> previewGameBoard());
+            JPanel bpPanel = new JPanel();
+            bpPanel.setLayout(new BoxLayout(bpPanel, BoxLayout.PAGE_AXIS));
+            bpPanel.add(bpButton);
+            bpPanel.add(previewBV.getComponent(true));
+            boardPreviewW.add(bpPanel);
             boardPreviewW.setSize(clientgui.frame.getWidth() / 2, clientgui.frame.getHeight() / 2);
             // Most boards will be far too large on the standard zoom
             previewBV.zoomOut();
@@ -1138,6 +1146,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     public void previewGameBoard() {
         Board newBoard = getPossibleGameBoard(false);
         boardPreviewGame.setBoard(newBoard);
+        final GameOptions gOpts = game().getOptions();
+        boardPreviewGame.setOptions(gOpts);
+
+        for (Player player : game().getPlayersList()) {
+            boardPreviewGame.removePlayer(player.getId());
+        }
+        for (Player player : game().getPlayersList()) {
+            boardPreviewGame.setPlayer(player.getId(), player);
+        }
         boardPreviewW.setVisible(true);
     }
 

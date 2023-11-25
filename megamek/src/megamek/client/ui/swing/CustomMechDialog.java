@@ -480,13 +480,13 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
 
         int bh = clientgui.getClient().getMapSettings().getBoardHeight();
         int bw = clientgui.getClient().getMapSettings().getBoardWidth();
-        int x = entity.getStartingAnyNWx() + 1 >= bw ? bw : entity.getStartingAnyNWx() + 1;
+        int x = Math.min(entity.getStartingAnyNWx(false) + 1, bw);
         spinStartingAnyNWx.setValue(x);
-        int y = entity.getStartingAnyNWy() + 1 >= bh ? bh : entity.getStartingAnyNWy() + 1;
+        int y = Math.min(entity.getStartingAnyNWy(false) + 1, bh);
         spinStartingAnyNWy.setValue(y);
-        x = entity.getStartingAnySEx() + 1 >= bw ? bw : entity.getStartingAnySEx() + 1;
+        x = Math.min(entity.getStartingAnySEx(false) + 1, bw);
         spinStartingAnySEy.setValue(x);
-        y = entity.getStartingAnySEy() + 1 >= bh ? bh : entity.getStartingAnySEy() + 1;
+        y = Math.min(entity.getStartingAnySEy(false) + 1, bh);
         spinStartingAnySEy.setValue(y);
 
         boolean enableDeploymentZoneControls = choDeploymentZone.isEnabled() && (choDeploymentZone.getSelectedIndex() > 0);
@@ -1227,23 +1227,23 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
         int bw = clientgui.getClient().getMapSettings().getBoardWidth();
 
         panDeploy.add(new JLabel(Messages.getString("CustomMechDialog.labDeploymentAnyNW")), GBC.std());
-        int x = entity.getStartingAnyNWx() + 1 >= bw ? bw : entity.getStartingAnyNWx() + 1;
+        int x = Math.min(entity.getStartingAnyNWx(false) + 1, bw);
         SpinnerNumberModel mStartingAnyNWx = new SpinnerNumberModel(x, 0,bw, 1);
         spinStartingAnyNWx = new JSpinner(mStartingAnyNWx);
         spinStartingAnyNWx.setValue(x);
         panDeploy.add(spinStartingAnyNWx, GBC.std());
-        int y = entity.getStartingAnyNWy() + 1 >= bh ? bh : entity.getStartingAnyNWy() + 1;
+        int y = Math.min(entity.getStartingAnyNWy(false) + 1, bh);
         SpinnerNumberModel mStartingAnyNWy = new SpinnerNumberModel(y, 0, bh, 1);
         spinStartingAnyNWy = new JSpinner(mStartingAnyNWy);
         spinStartingAnyNWy.setValue(y);
         panDeploy.add(spinStartingAnyNWy, GBC.eol());
         panDeploy.add(new JLabel(Messages.getString("CustomMechDialog.labDeploymentAnySE")), GBC.std());
-        x = entity.getStartingAnySEx() + 1 >= bw ? bw : entity.getStartingAnySEx() + 1;
+        x = Math.min(entity.getStartingAnySEx(false) + 1, bw);
         SpinnerNumberModel mStartingAnySEx = new SpinnerNumberModel(x, 0, bw, 1);
         spinStartingAnySEx = new JSpinner(mStartingAnySEx);
         spinStartingAnySEx.setValue(x);
         panDeploy.add(spinStartingAnySEx, GBC.std());
-        y = entity.getStartingAnySEy() + 1 >= bh ? bh : entity.getStartingAnySEy() + 1;
+        y = Math.min(entity.getStartingAnySEy(false) + 1, bh);
         SpinnerNumberModel mStartingAnySEy = new SpinnerNumberModel(y, -0, bh, 1);
         spinStartingAnySEy = new JSpinner(mStartingAnySEy);
         spinStartingAnySEy.setValue(y);

@@ -349,13 +349,13 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         SpinnerNumberModel mStartingAnySEy = new SpinnerNumberModel(0, -0, bh, 1);
         spinStartingAnySEy = new JSpinner(mStartingAnySEy);
 
-        int x = player.getStartingAnyNWx() + 1 >= bw ? bw : player.getStartingAnyNWx() + 1;
+        int x = Math.min(player.getStartingAnyNWx() + 1, bw);
         spinStartingAnyNWx.setValue(x);
-        int y = player.getStartingAnyNWy() + 1 >= bh ? bh : player.getStartingAnyNWy() + 1;
+        int y = Math.min(player.getStartingAnyNWy() + 1, bh);
         spinStartingAnyNWy.setValue(y);
-        x = player.getStartingAnySEx() + 1 >= bw ? bw : player.getStartingAnySEx() + 1;
+        x = Math.min(player.getStartingAnySEx() + 1, bw);
         spinStartingAnySEx.setValue(x);
-        y = player.getStartingAnySEy() + 1 >= bh ? bh : player.getStartingAnySEy() + 1;
+        y = Math.min(player.getStartingAnySEy() + 1, bh);
         spinStartingAnySEy.setValue(y);
     }
 

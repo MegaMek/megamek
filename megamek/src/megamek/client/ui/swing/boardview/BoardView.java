@@ -1858,6 +1858,12 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             players = players.stream().filter(p -> p.isBot() || p.getId() == 0).collect(Collectors.toList());
         }
 
+        if (game.getPhase().isLounge() && !localPlayer.isGameMaster()
+                && (gOpts.booleanOption(OptionsConstants.BASE_BLIND_DROP)
+                || gOpts.booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP)) ) {
+            players = players.stream().filter(p -> !p.isEnemyOf(localPlayer)).collect(Collectors.toList());
+        }
+
         Board board = game.getBoard();
         // loop through the hexes
         for (int i = 0; i < drawHeight; i++) {

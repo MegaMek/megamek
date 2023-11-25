@@ -200,8 +200,15 @@ class PlayerTable extends JTable {
             final GameOptions gOpts = lobby.game().getOptions();
             if (gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER0) && !player.isBot() && player.getId() != 0) {
                 result.append(msg_start + ": " + Messages.getString("ChatLounge.Player0"));
-            } else if ((player.getStartingPos() >= 0) && (player.getStartingPos() <= IStartingPositions.START_LOCATION_NAMES.length)) {
+            } else if ((!lobby.client().getLocalPlayer().isGameMaster()
+                    && (isEnemy)
+                    && (gOpts.booleanOption(OptionsConstants.BASE_BLIND_DROP)
+                    || gOpts.booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP)))) {
+                result.append(msg_start + ": " + Messages.getString("ChatLounge.Blind"));
+            } else if ((player.getStartingPos() >= 0)
+                    && (player.getStartingPos() <= IStartingPositions.START_LOCATION_NAMES.length)) {
                 result.append(msg_start + ": " + IStartingPositions.START_LOCATION_NAMES[player.getStartingPos()]);
+
                 if (player.getStartingPos() == 0) {
                     int NWx = player.getStartingAnyNWx() + 1;
                     int NWy = player.getStartingAnyNWy() + 1;

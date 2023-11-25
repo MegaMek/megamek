@@ -1146,6 +1146,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     public void previewGameBoard() {
         Board newBoard = getPossibleGameBoard(false);
         boardPreviewGame.setBoard(newBoard);
+        previewBV.setLocalPlayer(client().getLocalPlayer());
         final GameOptions gOpts = game().getOptions();
         boardPreviewGame.setOptions(gOpts);
 

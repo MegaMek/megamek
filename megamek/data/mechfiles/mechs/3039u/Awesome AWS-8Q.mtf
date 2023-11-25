@@ -9,6 +9,7 @@ source:TRO: 3039
 rules level:1
 role:Sniper
 
+quirk:battle_fists_la
 
 mass:80
 engine:240 Fusion Engine(IS)

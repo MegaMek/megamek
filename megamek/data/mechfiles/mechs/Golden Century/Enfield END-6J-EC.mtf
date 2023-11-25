@@ -10,6 +10,7 @@ source:TRO: Golden Century
 rules level:4
 role:Skirmisher
 
+quirk:ext_twist
 
 mass:50
 engine:250 XL Engine(IS)

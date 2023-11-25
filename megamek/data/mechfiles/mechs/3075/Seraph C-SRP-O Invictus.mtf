@@ -10,6 +10,11 @@ source:TRO: 3075
 rules level:2
 role:Juggernaut
 
+quirk:imp_com
+quirk:imp_sensors
+quirk:low_profile
+quirk:bad_rep_clan
+quirk:bad_rep_is
 
 mass:85
 engine:255 Light Engine(IS)

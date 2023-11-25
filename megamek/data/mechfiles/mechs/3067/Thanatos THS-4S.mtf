@@ -10,6 +10,7 @@ Rules Level:2
 role:Skirmisher
 source:TRO: 3067
 
+quirk:stable
 
 Mass:75
 Engine:375 XL Engine

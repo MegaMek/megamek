@@ -9,6 +9,7 @@ source:TRO: 3039
 rules level:1
 role:Scout
 
+quirk:no_arms
 
 mass:40
 engine:320 Fusion Engine(IS)

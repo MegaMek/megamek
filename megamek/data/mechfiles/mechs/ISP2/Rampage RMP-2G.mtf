@@ -10,6 +10,10 @@ Era:2735
 Rules Level:1
 role:Juggernaut
 
+quirk:vestigial_hands_ra
+quirk:bad_rep_clan
+quirk:bad_rep_is
+quirk:obsolete
 
 Mass:85
 Engine:255 Fusion Engine

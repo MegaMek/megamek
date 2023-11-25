@@ -10,6 +10,8 @@ Source:TRO: 3055
 Rules Level:2
 role:Striker
 
+quirk:nimble_jumper
+quirk:difficult_eject
 
 Mass:35
 Engine:280 XL Engine

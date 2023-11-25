@@ -10,6 +10,7 @@ source:TRO: 3085
 Rules Level:2
 role:Sniper
 
+quirk:command_mech
 
 Mass:95
 Engine:285 Fusion Engine

@@ -10,6 +10,7 @@ Source:Rhonda's Irregulars
 Rules Level:2
 role:Skirmisher
 
+quirk:imp_sensors
 
 Mass:80
 Engine:400 XL Engine

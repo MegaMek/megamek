@@ -9,6 +9,7 @@ source:TRO: 3060
 rules level:2
 role:Striker
 
+quirk:weak_head_1
 
 mass:30
 engine:180 XL Engine(IS)

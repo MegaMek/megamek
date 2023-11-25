@@ -10,6 +10,7 @@ Rules Level:2
 role:Juggernaut
 source:Historical: Operation Klondike
 
+quirk:easy_maintain
 
 Mass:100
 Engine:200 Fusion Engine

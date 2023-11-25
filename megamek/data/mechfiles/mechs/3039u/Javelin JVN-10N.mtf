@@ -9,6 +9,7 @@ source:TRO: 3039
 rules level:1
 role:Striker
 
+quirk:unbalanced
 
 mass:30
 engine:180 Fusion Engine(IS)

@@ -10,6 +10,8 @@ Rules Level:2
 role:Striker
 source:TRO: 3067
 
+quirk:imp_sensors
+quirk:pro_actuator
 
 Mass:45
 Engine:315 XL Engine

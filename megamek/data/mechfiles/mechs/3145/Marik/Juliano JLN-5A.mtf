@@ -9,6 +9,7 @@ source:TRO: 3145 Free Worlds League
 rules level:2
 role:Brawler
 
+quirk:combat_computer
 
 mass:90
 engine:360 XL Engine(IS)

@@ -9,6 +9,7 @@ source:TRO: 3058
 rules level:2
 role:Brawler
 
+quirk:ext_twist
 
 mass:90
 engine:360 XL Engine(IS)

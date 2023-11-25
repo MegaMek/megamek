@@ -10,6 +10,8 @@ Source:TRO: 3039
 Rules Level:1
 role:Brawler
 
+quirk:rugged_1
+quirk:difficult_eject
 
 Mass:45
 Engine:180 Fusion Engine

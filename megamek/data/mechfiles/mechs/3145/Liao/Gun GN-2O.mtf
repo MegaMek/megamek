@@ -10,6 +10,7 @@ Source:TRO: 3145 Capellan Confederation
 Rules Level:2
 role:Striker
 
+quirk:imp_target_short
 
 Mass:20
 Engine:100 Fusion Engine(IS)

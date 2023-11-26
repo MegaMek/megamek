@@ -279,7 +279,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         result.add(spinStartingAnySEx, GBC.std());
         result.add(spinStartingAnySEy, GBC.eol());
 
-        JButton btnApplyRuler = new JButton(Messages.getString("CustomMechDialog.BtnDeploymentAnyApplyRulerCoords"));
+        JButton btnApplyRuler = new JButton(Messages.getString("CustomMechDialog.BtnDeploymentApply"));
         btnApplyRuler.addActionListener(e -> previewGameApplyRuler());
         result.add(btnApplyRuler, GBC.eol());
 
@@ -304,6 +304,10 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
             spinStartingAnySEy.setValue(y + 1);
             client.sendPlayerInfo();
         }
+
+        player.setStartingPos(currentPlayerStartPos);
+        player.setStartOffset(getStartOffset());
+        player.setStartWidth(getStartWidth());
     }
 
     private JPanel initiativeSection() {

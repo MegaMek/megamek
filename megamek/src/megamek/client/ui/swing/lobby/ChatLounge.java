@@ -1557,7 +1557,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             return;
         }
 
-        PlayerSettingsDialog psd = new PlayerSettingsDialog(clientgui, c);
+        PlayerSettingsDialog psd = new PlayerSettingsDialog(clientgui, c, previewBV);
+        psd.setModal(false);
+        psd.setAlwaysOnTop(true);
         if (psd.showDialog().isConfirmed()) {
             Player player = c.getLocalPlayer();
             player.setConstantInitBonus(psd.getInit());

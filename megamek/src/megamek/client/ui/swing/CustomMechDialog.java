@@ -901,8 +901,10 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
             int y = Math.min((Integer) spinStartingAnyNWy.getValue(), (Integer) spinStartingAnySEy.getValue());
             entity.setStartingAnyNWx(x - 1);
             entity.setStartingAnyNWy(y - 1);
-            entity.setStartingAnySEx((Integer) spinStartingAnySEx.getValue() - 1);
-            entity.setStartingAnySEy((Integer) spinStartingAnySEy.getValue() - 1);
+            x = Math.max((Integer) spinStartingAnyNWx.getValue(), (Integer) spinStartingAnySEx.getValue());
+            y = Math.max((Integer) spinStartingAnyNWy.getValue(), (Integer) spinStartingAnySEy.getValue());
+            entity.setStartingAnySEx(x - 1);
+            entity.setStartingAnySEy(y - 1);
 
             // Should the entity begin the game shutdown?
             if (chDeployShutdown.isSelected() && gameOptions().booleanOption(OptionsConstants.RPG_BEGIN_SHUTDOWN)) {

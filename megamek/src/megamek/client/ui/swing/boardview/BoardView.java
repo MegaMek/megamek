@@ -3158,6 +3158,14 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         repaint();
     }
 
+    public Coords getRulerStart() {
+        return rulerStart;
+    }
+
+    public Coords getRulerEnd() {
+        return rulerEnd;
+    }
+
     /**
      * @return the coords at the specified point
      */

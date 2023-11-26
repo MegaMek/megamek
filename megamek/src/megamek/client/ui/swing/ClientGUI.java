@@ -680,7 +680,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     }
 
     public void customizePlayer() {
-        PlayerSettingsDialog psd = new PlayerSettingsDialog(this, client);
+        PlayerSettingsDialog psd = new PlayerSettingsDialog(this, client, bv);
         psd.setVisible(true);
     }
 

@@ -31,6 +31,7 @@ import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.panels.SkillGenerationOptionsPanel;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.IStartingPositions;
 import megamek.common.Player;
@@ -59,10 +60,11 @@ import static megamek.client.ui.swing.util.UIUtil.*;
  */
 public class PlayerSettingsDialog extends AbstractButtonDialog {
 
-    public PlayerSettingsDialog(ClientGUI cg, Client cl) {
+    public PlayerSettingsDialog(ClientGUI cg, Client cl, BoardView bv) {
         super(cg.frame, "PlayerSettingsDialog", "PlayerSettingsDialog.title");
         client = cl;
         clientgui = cg;
+        this.bv = bv;
         currentPlayerStartPos = cl.getLocalPlayer().getStartingPos();
         if (currentPlayerStartPos > 10) {
             currentPlayerStartPos -= 10;
@@ -129,11 +131,11 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     }
 
     public int getStartingAnySEx() {
-        return (Integer) spinStartingAnySEx.getValue() - 1;
+        return Math.max((Integer) spinStartingAnyNWx.getValue(), (Integer) spinStartingAnySEx.getValue()) - 1;
     }
 
     public int getStartingAnySEy() {
-        return (Integer) spinStartingAnySEy.getValue() - 1;
+        return Math.max((Integer) spinStartingAnyNWy.getValue(), (Integer) spinStartingAnySEy.getValue()) - 1;
     }
 
     /**
@@ -152,6 +154,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
 
     private final Client client;
     private final ClientGUI clientgui;
+    private final BoardView bv;
     
     // Initiative Section
     private final JLabel labInit = new TipLabel(Messages.getString("PlayerSettingsDialog.initMod"), SwingConstants.RIGHT);
@@ -276,9 +279,33 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         result.add(spinStartingAnySEx, GBC.std());
         result.add(spinStartingAnySEy, GBC.eol());
 
+        JButton btnApplyRuler = new JButton(Messages.getString("CustomMechDialog.BtnDeploymentAnyApplyRulerCoords"));
+        btnApplyRuler.addActionListener(e -> previewGameApplyRuler());
+        result.add(btnApplyRuler, GBC.eol());
+
         return result;
     }
-    
+
+    private void previewGameApplyRuler() {
+        Player player = client.getLocalPlayer();
+
+        if (bv.getRulerStart() != null && bv.getRulerEnd() != null) {
+            int x = Math.min(bv.getRulerStart().getX(), bv.getRulerEnd().getX());
+            player.setStartingAnyNWx(x);
+            spinStartingAnyNWx.setValue(x + 1);
+            int y = Math.min(bv.getRulerStart().getY(), bv.getRulerEnd().getY());
+            player.setStartingAnyNWy(y);
+            spinStartingAnyNWy.setValue(y + 1);
+            x = Math.max(bv.getRulerStart().getX(), bv.getRulerEnd().getX());
+            player.setStartingAnySEx(x);
+            spinStartingAnySEx.setValue(x + 1);
+            y = Math.max(bv.getRulerStart().getY(), bv.getRulerEnd().getY());
+            player.setStartingAnySEy(y);
+            spinStartingAnySEy.setValue(y + 1);
+            client.sendPlayerInfo();
+        }
+    }
+
     private JPanel initiativeSection() {
         JPanel result = new OptionPanel("PlayerSettingsDialog.header.initMod");
         Content panContent = new Content(new GridLayout(1, 2, 10, 5));

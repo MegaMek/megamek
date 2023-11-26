@@ -43,6 +43,7 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
     private int distance;
     private Client client;
     private BoardView bv;
+    private Game game;
     private boolean flip;
 
     private JPanel buttonPanel;
@@ -69,7 +70,7 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
     private JCheckBox cboIsMech2 = 
         new JCheckBox(Messages.getString("Ruler.isMech"));
 
-    public Ruler(JFrame f, Client c, BoardView b) {
+    public Ruler(JFrame f, Client c, BoardView b, Game g) {
         super(f, Messages.getString("Ruler.title"), false);
         enableEvents(AWTEvent.WINDOW_EVENT_MASK);
 
@@ -81,6 +82,7 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
 
         bv = b;
         client = c;
+        game = g;
         b.addBoardViewListener(this);
 
         try {
@@ -273,7 +275,7 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
         int absHeight = Integer.MIN_VALUE;
         boolean isMech = false;
         boolean entFound = false;
-        for (Entity ent : client.getGame().getEntitiesVector(c)) {
+        for (Entity ent : game.getEntitiesVector(c)) {
             int trAbsheight = ent.relHeight();
             if (trAbsheight > absHeight) {
                 absHeight = trAbsheight;
@@ -316,20 +318,20 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
             // leave at default value
         }
 
-        if (!client.getGame().getBoard().contains(start) || !client.getGame().getBoard().contains(end)) {
+        if (!game.getBoard().contains(start) || !game.getBoard().contains(end)) {
             return;
         }
         
         String toHit1 = "", toHit2 = "";
         ToHitData thd;
         if (flip) {
-            thd = LosEffects.calculateLos(client.getGame(),
+            thd = LosEffects.calculateLos(game,
                     buildAttackInfo(start, end, h1, h2, cboIsMech1.isSelected(),
-                            cboIsMech2.isSelected())).losModifiers(client.getGame());
+                            cboIsMech2.isSelected())).losModifiers(game);
         } else {
-            thd = LosEffects.calculateLos(client.getGame(),
+            thd = LosEffects.calculateLos(game,
                     buildAttackInfo(end, start, h2, h1, cboIsMech2.isSelected(),
-                            cboIsMech1.isSelected())).losModifiers(client.getGame());
+                            cboIsMech1.isSelected())).losModifiers(game);
         }
         if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
             toHit1 = thd.getValue() + " = ";
@@ -337,13 +339,13 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
         toHit1 += thd.getDesc();
 
         if (flip) {
-            thd = LosEffects.calculateLos(client.getGame(),
+            thd = LosEffects.calculateLos(game,
                     buildAttackInfo(end, start, h2, h1, cboIsMech2.isSelected(),
-                            cboIsMech1.isSelected())).losModifiers(client.getGame());
+                            cboIsMech1.isSelected())).losModifiers(game);
         } else {
-            thd = LosEffects.calculateLos(client.getGame(),
+            thd = LosEffects.calculateLos(game,
                     buildAttackInfo(start, end, h1, h2, cboIsMech1.isSelected(),
-                            cboIsMech2.isSelected())).losModifiers(client.getGame());
+                            cboIsMech2.isSelected())).losModifiers(game);
         }
         if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
             toHit2 = thd.getValue() + " = ";
@@ -377,8 +379,8 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
         ai.targetHeight = h2;
         ai.attackerIsMech = attackerIsMech;
         ai.targetIsMech = targetIsMech;
-        ai.attackAbsHeight = client.getGame().getBoard().getHex(c1).floor() + h1;
-        ai.targetAbsHeight = client.getGame().getBoard().getHex(c2).floor() + h2;
+        ai.attackAbsHeight =game.getBoard().getHex(c1).floor() + h1;
+        ai.targetAbsHeight = game.getBoard().getHex(c2).floor() + h2;
         return ai;
     }
 

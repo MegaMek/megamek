@@ -766,6 +766,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             bpPanel.add(previewBV.getComponent(true));
             boardPreviewW.add(bpPanel);
             boardPreviewW.setSize(clientgui.frame.getWidth() / 2, clientgui.frame.getHeight() / 2);
+
+            Ruler.color1 = GUIP.getRulerColor1();
+            Ruler.color2 = GUIP.getRulerColor2();
+            Ruler ruler = new Ruler(clientgui.frame, client(), previewBV, boardPreviewGame);
+            ruler.setLocation(GUIP.getRulerPosX(), GUIP.getRulerPosY());
+            ruler.setSize(GUIP.getRulerSizeHeight(), GUIP.getRulerSizeWidth());
+            UIUtil.updateWindowBounds(ruler);
+
             // Most boards will be far too large on the standard zoom
             previewBV.zoomOut();
             previewBV.zoomOut();

@@ -56,10 +56,10 @@ public final class Player extends TurnOrdered {
     private int startingPos = Board.START_ANY;
     private int startOffset = 0;
     private int startWidth = 3;
-    private int startingAnyNWx = -1;
-    private int startingAnyNWy = -1;
-    private int startingAnySEx = -1;
-    private int startingAnySEy = -1;
+    private int startingAnyNWx = Entity.STARTING_ANY_NONE;
+    private int startingAnyNWy = Entity.STARTING_ANY_NONE;
+    private int startingAnySEx = Entity.STARTING_ANY_NONE;
+    private int startingAnySEy = Entity.STARTING_ANY_NONE;
 
     // number of minefields
     private int numMfConv = 0;

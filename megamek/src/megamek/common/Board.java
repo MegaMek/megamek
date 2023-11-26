@@ -876,10 +876,10 @@ public class Board implements Serializable {
 
         switch (zoneType) {
             case START_ANY:
-                return (((startingAnyNWx == -1) || (c.getX() >= startingAnyNWx))
-                        && ((startingAnySEx == -1) || (c.getX() <= startingAnySEx))
-                        && ((startingAnyNWy == -1) || (c.getY() >= startingAnyNWy))
-                        && ((startingAnySEy == -1) || (c.getY() <= startingAnySEy)));
+                return (((startingAnyNWx == Entity.STARTING_ANY_NONE) || (c.getX() >= startingAnyNWx))
+                        && ((startingAnySEx == Entity.STARTING_ANY_NONE) || (c.getX() <= startingAnySEx))
+                        && ((startingAnyNWy == Entity.STARTING_ANY_NONE) || (c.getY() >= startingAnyNWy))
+                        && ((startingAnySEy == Entity.STARTING_ANY_NONE) || (c.getY() <= startingAnySEy)));
             case START_NW:
                 return ((c.getX() < (minx + nLimit)) && (c.getX() >= minx) && (c.getY() >= miny) && (c.getY() < (height / 2)))
                         || ((c.getY() < (miny + nLimit)) && (c.getY() >= miny) && (c.getX() >= minx) && (c.getX() < (width / 2)));

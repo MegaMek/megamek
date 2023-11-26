@@ -210,10 +210,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private int startingOffset = 0;
     private int startingWidth = 3;
 
-    private int startingAnyNWx = -1;
-    private int startingAnyNWy = -1;
-    private int startingAnySEx = -1;
-    private int startingAnySEy = -1;
+    public static final int STARTING_ANY_NONE = -1;
+    private int startingAnyNWx = STARTING_ANY_NONE;
+    private int startingAnyNWy = STARTING_ANY_NONE;
+    private int startingAnySEx = STARTING_ANY_NONE;
+    private int startingAnySEy = STARTING_ANY_NONE;
 
     /**
      * The pilot of the entity. Even infantry has a 'pilot'.

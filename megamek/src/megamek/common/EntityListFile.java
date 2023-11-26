@@ -719,6 +719,14 @@ public class EntityListFile {
             output.write(String.valueOf(entity.getStartingWidth(false)));
             output.write("\" deploymentZoneOffset=\"");
             output.write(String.valueOf(entity.getStartingOffset(false)));
+            output.write("\" " + MULParser.DEPLOYMENT_ZONE_ANY_NWX + "=\"");
+            output.write(String.valueOf(entity.getStartingAnyNWx(false)));
+            output.write("\" " + MULParser.DEPLOYMENT_ZONE_ANY_NWY + "=\"");
+            output.write(String.valueOf(entity.getStartingAnyNWy(false)));
+            output.write("\" " + MULParser.DEPLOYMENT_ZONE_ANY_SEX + "=\"");
+            output.write(String.valueOf(entity.getStartingAnySEx(false)));
+            output.write("\" " + MULParser.DEPLOYMENT_ZONE_ANY_SEY + "=\"");
+            output.write(String.valueOf(entity.getStartingAnySEy(false)));
             output.write("\" neverDeployed=\"");
             output.write(String.valueOf(entity.wasNeverDeployed()));
             if (entity.isAero()) {

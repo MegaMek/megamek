@@ -482,7 +482,19 @@ public class GameManager implements IGameManager {
     public void disconnect(Player player) {
         // in the lounge, just remove all entities for that player
         if (getGame().getPhase().isLounge()) {
-            removeAllEntitiesOwnedBy(player);
+            List<Player> gms = game.getPlayersList().stream().filter(p -> p.isGameMaster()).collect(Collectors.toList());
+
+            if (gms.size() > 0) {
+                for (Entity entity : game.getEntitiesVector().stream().filter(e -> e.getOwner().equals(player)).collect(Collectors.toList())) {
+                    entity.setOwner(gms.get(0));
+                }
+                game.getForces().correct();
+                ServerLobbyHelper.correctLoading(game);
+                ServerLobbyHelper.correctC3Connections(game);
+                send(createFullEntitiesPacket());
+            } else {
+                removeAllEntitiesOwnedBy(player);
+            }
         }
 
         // if a player has active entities, he becomes a ghost

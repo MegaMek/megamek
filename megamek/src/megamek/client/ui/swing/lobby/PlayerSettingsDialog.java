@@ -33,8 +33,11 @@ import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.Entity;
 import megamek.common.IStartingPositions;
+import megamek.common.OffBoardDirection;
 import megamek.common.Player;
+import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 
 import javax.swing.*;
@@ -80,6 +83,10 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     protected void finalizeInitialization() throws Exception {
         adaptToGUIScale();
         super.finalizeInitialization();
+    }
+    @Override
+    protected void okAction() {
+        apply();
     }
 
     /** Returns the chosen initiative modifier. */
@@ -280,34 +287,57 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         result.add(spinStartingAnySEy, GBC.eol());
 
         JButton btnApplyRuler = new JButton(Messages.getString("CustomMechDialog.BtnDeploymentApply"));
-        btnApplyRuler.addActionListener(e -> previewGameApplyRuler());
+        btnApplyRuler.addActionListener(e -> apply());
         result.add(btnApplyRuler, GBC.eol());
 
         return result;
     }
 
-    private void previewGameApplyRuler() {
+    private void apply() {
         Player player = client.getLocalPlayer();
+
+        player.setConstantInitBonus(getInit());
+        player.setNbrMFConventional(getCnvMines());
+        player.setNbrMFVibra(getVibMines());
+        player.setNbrMFActive(getActMines());
+        player.setNbrMFInferno(getInfMines());
+        getSkillGenerationOptionsPanel().updateClient();
+        player.setEmail(getEmail());
+
+        final GameOptions gOpts = clientgui.getClient().getGame().getOptions();
+
+        // If the gameoption set_arty_player_homeedge is set, adjust the player's offboard
+        // arty units to be behind the newly selected home edge.
+        OffBoardDirection direction = OffBoardDirection.translateStartPosition(getStartPos());
+        if (direction != OffBoardDirection.NONE &&
+                gOpts.booleanOption(OptionsConstants.BASE_SET_ARTY_PLAYER_HOMEEDGE)) {
+            for (Entity entity: client.getGame().getPlayerEntities(client.getLocalPlayer(), false)) {
+                if (entity.getOffBoardDirection() != OffBoardDirection.NONE) {
+                    entity.setOffBoard(entity.getOffBoardDistance(), direction);
+                }
+            }
+        }
 
         if (bv.getRulerStart() != null && bv.getRulerEnd() != null) {
             int x = Math.min(bv.getRulerStart().getX(), bv.getRulerEnd().getX());
-            player.setStartingAnyNWx(x);
             spinStartingAnyNWx.setValue(x + 1);
             int y = Math.min(bv.getRulerStart().getY(), bv.getRulerEnd().getY());
-            player.setStartingAnyNWy(y);
             spinStartingAnyNWy.setValue(y + 1);
             x = Math.max(bv.getRulerStart().getX(), bv.getRulerEnd().getX());
-            player.setStartingAnySEx(x);
             spinStartingAnySEx.setValue(x + 1);
             y = Math.max(bv.getRulerStart().getY(), bv.getRulerEnd().getY());
-            player.setStartingAnySEy(y);
             spinStartingAnySEy.setValue(y + 1);
-            client.sendPlayerInfo();
         }
 
-        player.setStartingPos(currentPlayerStartPos);
+        // The deployment position
+        player.setStartingPos(getStartPos());
         player.setStartOffset(getStartOffset());
         player.setStartWidth(getStartWidth());
+        player.setStartingAnyNWx(getStartingAnyNWx());
+        player.setStartingAnyNWy(getStartingAnyNWy());
+        player.setStartingAnySEx(getStartingAnySEx());
+        player.setStartingAnySEy(getStartingAnySEy());
+        client.sendPlayerInfo();
     }
 
     private JPanel initiativeSection() {

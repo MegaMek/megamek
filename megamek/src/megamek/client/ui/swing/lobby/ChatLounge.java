@@ -1560,41 +1560,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         PlayerSettingsDialog psd = new PlayerSettingsDialog(clientgui, c, previewBV);
         psd.setModal(false);
         psd.setAlwaysOnTop(true);
-        if (psd.showDialog().isConfirmed()) {
-            Player player = c.getLocalPlayer();
-            player.setConstantInitBonus(psd.getInit());
-            player.setNbrMFConventional(psd.getCnvMines());
-            player.setNbrMFVibra(psd.getVibMines());
-            player.setNbrMFActive(psd.getActMines());
-            player.setNbrMFInferno(psd.getInfMines());
-            psd.getSkillGenerationOptionsPanel().updateClient();
-            player.setEmail(psd.getEmail());
-
-            // The deployment position
-            int startPos = psd.getStartPos();
-            final GameOptions gOpts = clientgui.getClient().getGame().getOptions();
-
-            player.setStartingPos(startPos);
-            player.setStartOffset(psd.getStartOffset());
-            player.setStartWidth(psd.getStartWidth());
-            player.setStartingAnyNWx(psd.getStartingAnyNWx());
-            player.setStartingAnyNWy(psd.getStartingAnyNWy());
-            player.setStartingAnySEx(psd.getStartingAnySEx());
-            player.setStartingAnySEy(psd.getStartingAnySEy());
-            c.sendPlayerInfo();
-
-            // If the gameoption set_arty_player_homeedge is set, adjust the player's offboard
-            // arty units to be behind the newly selected home edge.
-            OffBoardDirection direction = OffBoardDirection.translateStartPosition(startPos);
-            if (direction != OffBoardDirection.NONE &&
-                    gOpts.booleanOption(OptionsConstants.BASE_SET_ARTY_PLAYER_HOMEEDGE)) {
-                for (Entity entity: c.getGame().getPlayerEntities(c.getLocalPlayer(), false)) {
-                    if (entity.getOffBoardDirection() != OffBoardDirection.NONE) {
-                        entity.setOffBoard(entity.getOffBoardDistance(), direction);
-                    }
-                }
-            }
-        }
+        psd.showDialog();
     }
 
     /**

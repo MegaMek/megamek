@@ -286,11 +286,30 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         result.add(spinStartingAnySEx, GBC.std());
         result.add(spinStartingAnySEy, GBC.eol());
 
-        JButton btnApplyRuler = new JButton(Messages.getString("CustomMechDialog.BtnDeploymentApply"));
-        btnApplyRuler.addActionListener(e -> apply());
-        result.add(btnApplyRuler, GBC.eol());
+        JButton btnUseRuler = new JButton(Messages.getString("CustomMechDialog.BtnDeploymentUseRuler"));
+        btnUseRuler.setToolTipText(Messages.getString("CustomMechDialog.BtnDeploymentUseRulerTip"));
+        btnUseRuler.addActionListener(e -> useRuler());
+        result.add(btnUseRuler, GBC.std());
+        JButton btnApply = new JButton(Messages.getString("CustomMechDialog.BtnDeploymentApply"));
+        btnApply.setToolTipText(Messages.getString("CustomMechDialog.BtnDeploymentApplyTip"));
+        btnApply.addActionListener(e -> apply());
+        result.add(btnApply, GBC.eol());
 
         return result;
+    }
+
+
+    private void useRuler() {
+        if (bv.getRulerStart() != null && bv.getRulerEnd() != null) {
+            int x = Math.min(bv.getRulerStart().getX(), bv.getRulerEnd().getX());
+            spinStartingAnyNWx.setValue(x + 1);
+            int y = Math.min(bv.getRulerStart().getY(), bv.getRulerEnd().getY());
+            spinStartingAnyNWy.setValue(y + 1);
+            x = Math.max(bv.getRulerStart().getX(), bv.getRulerEnd().getX());
+            spinStartingAnySEx.setValue(x + 1);
+            y = Math.max(bv.getRulerStart().getY(), bv.getRulerEnd().getY());
+            spinStartingAnySEy.setValue(y + 1);
+        }
     }
 
     private void apply() {
@@ -316,17 +335,6 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
                     entity.setOffBoard(entity.getOffBoardDistance(), direction);
                 }
             }
-        }
-
-        if (bv.getRulerStart() != null && bv.getRulerEnd() != null) {
-            int x = Math.min(bv.getRulerStart().getX(), bv.getRulerEnd().getX());
-            spinStartingAnyNWx.setValue(x + 1);
-            int y = Math.min(bv.getRulerStart().getY(), bv.getRulerEnd().getY());
-            spinStartingAnyNWy.setValue(y + 1);
-            x = Math.max(bv.getRulerStart().getX(), bv.getRulerEnd().getX());
-            spinStartingAnySEx.setValue(x + 1);
-            y = Math.max(bv.getRulerStart().getY(), bv.getRulerEnd().getY());
-            spinStartingAnySEy.setValue(y + 1);
         }
 
         // The deployment position

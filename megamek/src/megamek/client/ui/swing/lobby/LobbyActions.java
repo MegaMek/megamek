@@ -354,9 +354,11 @@ public class LobbyActions {
         if (editable) {
             c = client().localBots.get(entity.getOwner().getName());
         } else {
-            editable |= entity.getOwnerId() == localPlayer().getId();
+            boolean localGM = localPlayer().isGameMaster();
+            editable |= localGM || entity.getOwnerId() == localPlayer().getId();
             c = client();
         }
+
         // When we customize a single entity's C3 network setting,
         // **ALL** members of the network may get changed.
         Entity c3master = entity.getC3Master();

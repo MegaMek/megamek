@@ -7,6 +7,7 @@
   <font size="+1"><b>${fullName}</b></font>
 
 <#if includeFluff>
+	<#noautoesc>
 	<#if fluffOverview??>
 	<p>
 	<b>Overview</b><br/>
@@ -34,6 +35,7 @@
 	${fluffHistory}
 	</p>
 	</#if>
+	</#noautoesc>
 </#if>
 
 	<p>

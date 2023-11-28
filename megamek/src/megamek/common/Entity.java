@@ -2837,7 +2837,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Returns sprint MP without considering MASC
      */
     public int getSprintMPwithoutMASC() {
-        return getRunMPwithoutMASC();
+        return getSprintMP(MPCalculationSetting.NO_MASC);
     }
 
     /**

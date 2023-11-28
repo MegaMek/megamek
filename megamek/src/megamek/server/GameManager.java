@@ -485,13 +485,7 @@ public class GameManager implements IGameManager {
             List<Player> gms = game.getPlayersList().stream().filter(p -> p.isGameMaster()).collect(Collectors.toList());
 
             if (gms.size() > 0) {
-                for (Entity entity : game.getEntitiesVector().stream().filter(e -> e.getOwner().equals(player)).collect(Collectors.toList())) {
-                    entity.setOwner(gms.get(0));
-                }
-                game.getForces().correct();
-                ServerLobbyHelper.correctLoading(game);
-                ServerLobbyHelper.correctC3Connections(game);
-                send(createFullEntitiesPacket());
+                transferAllEnititiesOwnedBy(player, gms.get(0));
             } else {
                 removeAllEntitiesOwnedBy(player);
             }
@@ -550,6 +544,16 @@ public class GameManager implements IGameManager {
             Player p = e.nextElement();
             p.setObserver((getGame().getEntitiesOwnedBy(p) < 1) && !getGame().getPhase().isLounge());
         }
+    }
+
+    private void transferAllEnititiesOwnedBy(Player pFrom, Player pTo) {
+        for (Entity entity : game.getEntitiesVector().stream().filter(e -> e.getOwner().equals(pFrom)).collect(Collectors.toList())) {
+            entity.setOwner(pTo);
+        }
+        game.getForces().correct();
+        ServerLobbyHelper.correctLoading(game);
+        ServerLobbyHelper.correctC3Connections(game);
+        send(createFullEntitiesPacket());
     }
 
     @Override

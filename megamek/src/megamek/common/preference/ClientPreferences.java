@@ -59,8 +59,10 @@ public class ClientPreferences extends PreferenceStoreProxy {
     public static final String REPORT_KEYWORDS = "ReportKeywords";
     private static final String REPORTKEYWORDSDEFAULTS = "Needs\nRolls\nTakes\nHit\nFalls\nSkill Roll\nPilot Skill\nPhase\nDestroyed\nDamage";
     public static final String IP_ADDRESSES_IN_CHAT = "IPAddressesInChat";
+    public static final String START_SEARCHLIGHTS_ON = "StartSearchlightsOn";
+    public static final String TOGGLE_SEARCHLIGHTS = "ToggleSearchlights";
     //endregion Variable Declarations
-    
+
     //region Constructors
     public ClientPreferences(IPreferenceStore store) {
         this.store = store;
@@ -89,6 +91,8 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(MEMORY_DUMP_ON, false);
         store.setDefault(REPORT_KEYWORDS, REPORTKEYWORDSDEFAULTS);
         store.setDefault(IP_ADDRESSES_IN_CHAT, false);
+        store.setDefault(START_SEARCHLIGHTS_ON, true);
+        store.setDefault(TOGGLE_SEARCHLIGHTS, true);
         setLocale(store.getString(LOCALE));
         setMekHitLocLog();
     }
@@ -299,6 +303,22 @@ public class ClientPreferences extends PreferenceStoreProxy {
 
     public void setShowIPAddressesInChat(boolean value) {
         store.setValue(IP_ADDRESSES_IN_CHAT, value);
+    }
+
+    public boolean getStartSearchlightsOn() {
+        return store.getBoolean(START_SEARCHLIGHTS_ON);
+    }
+
+    public void setStartSearchlightsOn(boolean value) {
+        store.setValue(START_SEARCHLIGHTS_ON, value);
+    }
+
+    public boolean getToggleSearchlights() {
+        return store.getBoolean(TOGGLE_SEARCHLIGHTS);
+    }
+
+    public void setToggleSearchlights(boolean value) {
+        store.setValue(TOGGLE_SEARCHLIGHTS, value);
     }
 
     protected Locale locale = null;

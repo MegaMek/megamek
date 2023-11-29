@@ -1072,8 +1072,23 @@ public class GameManager implements IGameManager {
             }
 
             // reset spotlights
-            entity.setIlluminated(false);
-            entity.setUsedSearchlight(false);
+            // If deployment phase, set Searchlight state based on startSearchLightsOn;
+            // For all other phases, reset or maintain Searchlight state based on toggleSearchlights
+            if (phase.isDeployment()) {
+                boolean startSLOn = PreferenceManager.getClientPreferences().getStartSearchlightsOn();
+                entity.setSearchlightState(startSLOn);
+                entity.setIlluminated(startSLOn);
+                entity.setUsedSearchlight(startSLOn);
+            } else {
+                boolean maintainUsedSearchlight = (
+                    entity.isUsingSearchlight()
+                    && PreferenceManager.getClientPreferences().getToggleSearchlights()
+                );
+                entity.setSearchlightState(maintainUsedSearchlight);
+                entity.setIlluminated(maintainUsedSearchlight);
+                entity.setUsedSearchlight(maintainUsedSearchlight);
+            }
+
             entity.setCarefulStand(false);
             entity.setNetworkBAP(false);
 

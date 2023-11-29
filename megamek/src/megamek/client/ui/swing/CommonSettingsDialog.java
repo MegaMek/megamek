@@ -172,6 +172,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private final JCheckBox showUnitId = new JCheckBox(Messages.getString("CommonSettingsDialog.showUnitId"));
     private JComboBox<String> displayLocale;
     private final JCheckBox showIPAddressesInChat = new JCheckBox(Messages.getString("CommonSettingsDialog.showIPAddressesInChat"));
+    private final JCheckBox startSearchlightsOn = new JCheckBox(Messages.getString("CommonSettingsDialog.startSearchlightsOn"));
+    private final JCheckBox toggleSearchlights = new JCheckBox(Messages.getString("CommonSettingsDialog.toggleSearchlights"));
     private final JCheckBox showDamageLevel = new JCheckBox(Messages.getString("CommonSettingsDialog.showDamageLevel"));
     private final JCheckBox showDamageDecal = new JCheckBox(Messages.getString("CommonSettingsDialog.showDamageDecal"));
     private final JCheckBox showMapsheets = new JCheckBox(Messages.getString("CommonSettingsDialog.showMapsheets"));
@@ -1489,6 +1491,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         addLineSpacer(comps);
 
         comps.add(checkboxEntry(showIPAddressesInChat, Messages.getString("CommonSettingsDialog.showIPAddressesInChat.tooltip")));
+        comps.add(checkboxEntry(startSearchlightsOn, Messages.getString("CommonSettingsDialog.startSearchlightsOn.tooltip")));
+        comps.add(checkboxEntry(toggleSearchlights, Messages.getString("CommonSettingsDialog.toggleSearchlights.tooltip")));
         return createSettingsPanel(comps);
     }
 
@@ -1579,6 +1583,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             stampFormat.setText(CP.getStampFormat());
             reportKeywordsTextPane.setText(CP.getReportKeywords());
             showIPAddressesInChat.setSelected(CP.getShowIPAddressesInChat());
+            startSearchlightsOn.setSelected(CP.getStartSearchlightsOn());
+            toggleSearchlights.setSelected(CP.getToggleSearchlights());
 
             defaultAutoejectDisabled.setSelected(CP.defaultAutoejectDisabled());
             useAverageSkills.setSelected(CP.useAverageSkills());
@@ -1997,6 +2003,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         CP.setStampFormat(stampFormat.getText());
         CP.setReportKeywords(reportKeywordsTextPane.getText());
         CP.setShowIPAddressesInChat(showIPAddressesInChat.isSelected());
+        CP.setStartSearchlightsOn(startSearchlightsOn.isSelected());
+        CP.setToggleSearchlights(toggleSearchlights.isSelected());
 
         CP.setDefaultAutoejectDisabled(defaultAutoejectDisabled.isSelected());
         CP.setUseAverageSkills(useAverageSkills.isSelected());

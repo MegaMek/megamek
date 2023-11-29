@@ -1078,6 +1078,7 @@ public class GameManager implements IGameManager {
                 entity.setSearchlightState(startSLOn);
                 entity.setIlluminated(startSLOn);
             }
+            entity.setIlluminated(false);
             entity.setUsedSearchlight(false);
 
             entity.setCarefulStand(false);

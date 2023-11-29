@@ -60,7 +60,6 @@ public class ClientPreferences extends PreferenceStoreProxy {
     private static final String REPORTKEYWORDSDEFAULTS = "Needs\nRolls\nTakes\nHit\nFalls\nSkill Roll\nPilot Skill\nPhase\nDestroyed\nDamage";
     public static final String IP_ADDRESSES_IN_CHAT = "IPAddressesInChat";
     public static final String START_SEARCHLIGHTS_ON = "StartSearchlightsOn";
-    public static final String TOGGLE_SEARCHLIGHTS = "ToggleSearchlights";
     //endregion Variable Declarations
 
     //region Constructors
@@ -92,7 +91,6 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(REPORT_KEYWORDS, REPORTKEYWORDSDEFAULTS);
         store.setDefault(IP_ADDRESSES_IN_CHAT, false);
         store.setDefault(START_SEARCHLIGHTS_ON, true);
-        store.setDefault(TOGGLE_SEARCHLIGHTS, true);
         setLocale(store.getString(LOCALE));
         setMekHitLocLog();
     }

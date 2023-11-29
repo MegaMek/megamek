@@ -313,14 +313,6 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setValue(START_SEARCHLIGHTS_ON, value);
     }
 
-    public boolean getToggleSearchlights() {
-        return store.getBoolean(TOGGLE_SEARCHLIGHTS);
-    }
-
-    public void setToggleSearchlights(boolean value) {
-        store.setValue(TOGGLE_SEARCHLIGHTS, value);
-    }
-
     protected Locale locale = null;
 
     public void setLocale(String l) {

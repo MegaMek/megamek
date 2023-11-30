@@ -1370,9 +1370,16 @@ public final class UnitToolTip {
         }
 
         String illuminated = entity.isIlluminated() ?  DOT_SPACER +"\uD83D\uDCA1" : "";
-        String searchLight = entity.isUsingSearchlight() ? DOT_SPACER +"\uD83D\uDD26" : "";
-        searchLight += entity.usedSearchlight() ? " \u2580\u2580" : "";
-        result += guiScaledFontHTML(uiYellow()) + illuminated + searchLight + "</FONT>";
+        result += guiScaledFontHTML(uiYellow()) + illuminated + "</FONT>";
+
+        if (entity.hasSearchlight()) {
+            String searchLight = entity.isUsingSearchlight() ? DOT_SPACER + "\uD83D\uDD26" : "";
+            searchLight += entity.usedSearchlight() ? " \u2580\u2580" : "";
+            result += guiScaledFontHTML(uiYellow()) + searchLight + "</FONT>";
+        } else {
+            String searchLight = "\uD83D\uDD26";
+            result += guiScaledFontHTML(GUIP.getWarningColor()) + DOT_SPACER + searchLight + "</FONT>";
+        }
 
         // Gun Emplacement Status
         if (isGunEmplacement) {

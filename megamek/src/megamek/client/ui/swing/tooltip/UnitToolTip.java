@@ -1369,9 +1369,10 @@ public final class UnitToolTip {
             }
         }
 
+        String illuminated = entity.isIlluminated() ?  DOT_SPACER +"\uD83D\uDCA1" : "";
         String searchLight = entity.isUsingSearchlight() ? DOT_SPACER +"\uD83D\uDD26" : "";
         searchLight += entity.usedSearchlight() ? " \u2580\u2580" : "";
-        result += guiScaledFontHTML(uiYellow()) + searchLight + "</FONT>";
+        result += guiScaledFontHTML(uiYellow()) + illuminated + searchLight + "</FONT>";
 
         // Gun Emplacement Status
         if (isGunEmplacement) {
@@ -1505,9 +1506,8 @@ public final class UnitToolTip {
             }
         }
 
-        // Coloring and italic to make these transient entries stand out
+        // Coloring to make these transient entries stand out
         result = guiScaledFontHTML(uiLightViolet()) + result + "</FONT>";
-        result = "<I>" + result + "</I>";
 
         return new StringBuilder().append(result);
     }

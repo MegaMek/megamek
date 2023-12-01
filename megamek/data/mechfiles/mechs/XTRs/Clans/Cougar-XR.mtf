@@ -3,6 +3,11 @@ Cougar
 XR
 mul id:4013
 base unit:data/mechfiles/mechs/3060u/Cougar Prime.mtf
+quirk:unbalanced
+quirk:prototype
+weaponquirk:mod_weapons:RA:5:CLERMediumPulseLaser
+weaponquirk:mod_weapons:LT:2:CLLRM15
+weaponquirk:mod_weapons:RT:2:CLLRM15
 
 Config:Biped
 TechBase:Mixed (Clan Chassis)

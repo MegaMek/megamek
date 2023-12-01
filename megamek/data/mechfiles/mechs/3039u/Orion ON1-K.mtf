@@ -2,7 +2,10 @@ Version:1.0
 Orion
 ON1-K
 mul id:2332
-base unit:data/mechfiles/mechs/XTRs/Primitives V/Orion ON1-C.mtf
+base unit:data/mechfiles/mechs/3145/NTNU RS/NTNU/Orion C.mtf
+quirk:rugged_1
+quirk:easy_maintain
+quirk:anti_air
 
 Config:Biped
 techbase:Inner Sphere

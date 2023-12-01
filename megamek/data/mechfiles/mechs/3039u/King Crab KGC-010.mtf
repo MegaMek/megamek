@@ -2,6 +2,7 @@ Version:1.0
 King Crab
 KGC-010
 mul id:1778
+base unit:data/mechfiles/mechs/3150/King Crab KGC-009C.mtf
 
 Config:Biped
 TechBase:Inner Sphere
@@ -10,7 +11,6 @@ Source:TRO: 3039
 Rules Level:2
 role:Sniper
 
-quirk:command_mech
 
 Mass:100
 Engine:300 Fusion Engine

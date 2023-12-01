@@ -2,7 +2,6 @@ Version:1.0
 Thunderbolt
 C 2
 mul id:8195
-base unit:data/mechfiles/mechs/XTRs/Primitives III/Thunderbolt TDR-1C.mtf
 
 Config:Biped
 techbase:Clan

@@ -2,7 +2,9 @@ Version:1.1
 Orion
 ON1-H
 mul id:7405
-base unit:data/mechfiles/mechs/XTRs/Primitives V/Orion ON1-C.mtf
+base unit:data/mechfiles/mechs/3145/NTNU RS/NTNU/Orion C.mtf
+quirk:easy_maintain
+weaponquirk:ammo_feed_problems:RT:0:Autocannon/10 Primitive
 
 Config:Biped
 TechBase:Inner Sphere

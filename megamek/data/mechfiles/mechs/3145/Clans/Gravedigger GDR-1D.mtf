@@ -3,6 +3,7 @@ Gravedigger
 GDR-1D
 mul id:6264
 base unit:data/mechfiles/mechs/3145/Clans/Gravedigger GDR-1C.mtf
+weaponquirk:exposed_linkage:LA:5:CLERPPC
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

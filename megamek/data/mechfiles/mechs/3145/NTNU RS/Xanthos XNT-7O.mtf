@@ -2,7 +2,6 @@ Version:1.1
 Xanthos
 XNT-7O
 mul id:6824
-base unit:data/mechfiles/mechs/XTRs/Primitives IV/Xanthos XNT-2O.mtf
 
 Config:Quad
 TechBase:Mixed (IS Chassis)

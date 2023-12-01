@@ -2,7 +2,11 @@ Version:1.1
 Wasp
 WSP-8T
 mul id:3532
-base unit:data/mechfiles/mechs/XTRs/Primitives II/Wasp WSP-1.mtf
+base unit:data/mechfiles/mechs/3085u/Phoenix/Wasp WSP-7MAF.mtf
+quirk:ubiquitous_is
+quirk:ubiquitous_clan
+quirk:ext_twist
+quirk:easy_maintain
 
 Config:Biped
 TechBase:Inner Sphere

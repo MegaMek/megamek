@@ -2,6 +2,10 @@ Version:1.1
 Archer
 ARC-1A
 mul id:3721
+base unit:data/mechfiles/mechs/3039u/Archer ARC-2R.mtf
+quirk:ext_twist
+quirk:easy_maintain
+quirk:difficult_eject
 
 Config:Biped
 TechBase:Inner Sphere
@@ -10,11 +14,6 @@ Source:XTR: Primitives V
 Rules Level:4
 role:Missile Boat
 
-quirk:battle_fists_la
-quirk:battle_fists_ra
-quirk:command_mech
-quirk:stable
-quirk:ubiquitous_is
 
 Mass:70
 Engine:255 Fusion Engine(IS)

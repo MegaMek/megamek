@@ -2,7 +2,7 @@ Version:1.0
 Wasp
 C
 mul id:7496
-base unit:data/mechfiles/mechs/XTRs/Primitives II/Wasp WSP-1.mtf
+base unit:data/mechfiles/mechs/3085u/Phoenix/Wasp WSP-7MAF.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

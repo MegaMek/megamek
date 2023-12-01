@@ -3,6 +3,11 @@ Crossbow
 CRS-X
 mul id:5583
 base unit:data/mechfiles/mechs/3058Uu/Crossbow Prime.mtf
+notquirk:imp_target_short
+quirk:prototype
+quirk:poor_target_long
+weaponquirk:poor_cooling:RT:0:Large Laser
+quirk:obsolete
 
 Config:Biped
 techbase:Inner Sphere

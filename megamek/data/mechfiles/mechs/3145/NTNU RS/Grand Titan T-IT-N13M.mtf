@@ -2,7 +2,6 @@ Version:1.1
 Grand Titan
 T-IT-N13M
 mul id:6830
-base unit:data/mechfiles/mechs/3055U/Grand Titan T-IT-N10M.mtf
 
 Config:Biped
 TechBase:Inner Sphere

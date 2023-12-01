@@ -2,7 +2,7 @@ Version:1.0
 Black Knight
 BLK-NT-3A
 mul id:6348
-base unit:data/mechfiles/mechs/3050U/Black Knight BL-6-KNT.mtf
+base unit:data/mechfiles/mechs/3145/Davion/Black Knight BLK-NT-2Y.mtf
 
 Config:Biped
 TechBase:Inner Sphere

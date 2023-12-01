@@ -2,7 +2,8 @@ Version:1.0
 Cataphract
 CTF-3D
 mul id:469
-base unit:data/mechfiles/mechs/3039u/Cataphract CTF-1X.mtf
+base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 6/Cataphract CTF-5L.mtf
+quirk:pro_actuator
 
 Config:Biped
 TechBase:Inner Sphere

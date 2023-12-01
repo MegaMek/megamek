@@ -1,13 +1,13 @@
 Version:1.3
 King Crab
 KGC-009C
-base unit:data/mechfiles/mechs/3039u/King Crab KGC-010.mtf
 mul id:8066
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3143
 source:TRO: 3150
 rules level:2
+quirk:command_mech
 
 mass:100
 engine:300 Fusion Engine(IS)

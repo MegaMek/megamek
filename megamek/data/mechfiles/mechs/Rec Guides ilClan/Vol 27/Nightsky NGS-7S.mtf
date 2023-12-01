@@ -1,7 +1,6 @@
 Version:1.3
 Nightsky
 NGS-7S
-base unit:data/mechfiles/mechs/3055U/Nightsky NGS-4S.mtf
 mul id:9352
 Config:Biped
 techbase:Mixed (IS Chassis)

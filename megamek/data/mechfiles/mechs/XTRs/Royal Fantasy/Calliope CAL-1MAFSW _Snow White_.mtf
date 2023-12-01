@@ -2,7 +2,6 @@ Version:1.0
 Calliope
 CAL-1MAFSW 'Snow White'
 mul id:8368
-base unit:data/mechfiles/mechs/3145/Liao/Calliope CAL-1MAF.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

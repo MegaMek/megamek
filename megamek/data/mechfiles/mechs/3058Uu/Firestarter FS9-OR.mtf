@@ -2,7 +2,9 @@ Version:1.0
 Firestarter
 FS9-OR
 mul id:1108
-base unit:data/mechfiles/mechs/3039u/Firestarter FS9-A.mtf
+base unit:data/mechfiles/mechs/XTRs/Corporations/Firestarter FS9-X81.mtf
+quirk:difficult_maintain
+quirk:cowl
 
 Config:Biped Omnimech
 TechBase:Mixed (IS Chassis)

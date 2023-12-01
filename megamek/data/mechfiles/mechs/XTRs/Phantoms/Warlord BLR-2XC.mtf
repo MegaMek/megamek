@@ -3,6 +3,8 @@ Warlord
 BLR-2XC
 mul id:5602
 base unit:data/mechfiles/mechs/3075/Warlord BLR-2D.mtf
+quirk:imp_com
+quirk:battle_computer
 
 Config:Biped
 TechBase:Inner Sphere

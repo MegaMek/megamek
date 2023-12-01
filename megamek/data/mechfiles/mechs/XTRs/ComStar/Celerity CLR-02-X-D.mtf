@@ -1,6 +1,9 @@
 Version:1.3
 Celerity
 CLR-02-X-D
+base unit:data/mechfiles/mechs/XTRs/Royal Fantasy/Celerity CLR-03OMM _Rajah_.mtf
+quirk:prototype
+quirk:exp_actuator
 mul id:5553
 Config:Quad
 techbase:Inner Sphere

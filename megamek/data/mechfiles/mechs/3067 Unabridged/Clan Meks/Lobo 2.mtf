@@ -3,6 +3,7 @@ Lobo
 2
 mul id:5668
 base unit:data/mechfiles/mechs/3067/Lobo.mtf
+weaponquirk:direct_torso_mount:HD:3:CLAntiMissileSystem
 
 Config:Biped
 TechBase:Clan

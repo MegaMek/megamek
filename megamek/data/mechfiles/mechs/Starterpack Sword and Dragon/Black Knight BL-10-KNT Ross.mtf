@@ -2,7 +2,8 @@ Version:1.0
 Black Knight
 BL-10-KNT (Ross)
 mul id:355
-base unit:data/mechfiles/mechs/3050U/Black Knight BL-6-KNT.mtf
+base unit:data/mechfiles/mechs/3145/Davion/Black Knight BLK-NT-2Y.mtf
+quirk:command_mech
 
 Config:Biped
 TechBase:Inner Sphere

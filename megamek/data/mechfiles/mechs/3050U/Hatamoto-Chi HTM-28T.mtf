@@ -2,7 +2,6 @@ Version:1.1
 Hatamoto-Chi
 HTM-28T
 mul id:1401
-base unit:data/mechfiles/mechs/3039u/Hatamoto-Chi HTM-26T.mtf
 
 Config:Biped
 TechBase:Inner Sphere

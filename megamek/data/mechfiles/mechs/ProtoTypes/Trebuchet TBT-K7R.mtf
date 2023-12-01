@@ -2,7 +2,14 @@ Version:1.0
 Trebuchet
 TBT-K7R
 mul id:5275
-base unit:data/mechfiles/mechs/3050U/Trebuchet TBT-3C.mtf
+base unit:data/mechfiles/mechs/XTRs/Royal Fantasy/Trebuchet TBT-7MM _Merida_.mtf
+quirk:non_standard
+weaponquirk:jettison_capable:RA:4:Chain Whip
+weaponquirk:fast_reload:RT:2:ISStreakSRM6
+quirk:fast_reload
+weaponquirk:exposed_linkage:LA:5:Mek Taser
+quirk:easy_maintain
+quirk:bad_rep_is
 
 Config:Biped
 TechBase:Inner Sphere

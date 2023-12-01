@@ -3,6 +3,7 @@ Pack Hunter II
 2
 mul id:2397
 base unit:data/mechfiles/mechs/3085u/Cutting Edge/Pack Hunter II.mtf
+weaponquirk:stable_weapon:RT:7:CLERPPC
 
 Config:Biped
 TechBase:Mixed (Clan Chassis)

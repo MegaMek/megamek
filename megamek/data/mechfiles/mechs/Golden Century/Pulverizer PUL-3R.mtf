@@ -3,6 +3,8 @@ Pulverizer
 PUL-3R
 mul id:7647
 base unit:data/mechfiles/mechs/Golden Century/Pulverizer.mtf
+weaponquirk:accurate:RT:3:CLWERPPC
+weaponquirk:accurate:RT:2:CLERPPC
 
 Config:Biped
 techbase:Mixed (IS Chassis)

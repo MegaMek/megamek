@@ -2,7 +2,6 @@ Version:1.0
 Deep Lord MilitiaMech
 RCL-Z1M-B
 mul id:7830
-base unit:data/mechfiles/mechs/ProtoTypes/Deep Lord MilitiaMech RCL-Z1M.mtf
 
 Config:Biped
 techbase:Inner Sphere

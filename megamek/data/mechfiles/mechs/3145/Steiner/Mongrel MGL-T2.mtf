@@ -2,7 +2,6 @@ Version:1.0
 Mongrel
 MGL-T2
 mul id:6619
-base unit:data/mechfiles/mechs/3145/Steiner/Mongrel MGL-T1.mtf
 
 Config:Biped
 TechBase:Mixed (Clan Chassis)

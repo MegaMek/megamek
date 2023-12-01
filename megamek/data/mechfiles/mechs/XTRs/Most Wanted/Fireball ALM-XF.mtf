@@ -2,7 +2,6 @@ Version:1.1
 Fireball
 ALM-XF
 mul id:5781
-base unit:data/mechfiles/mechs/3055U/Fireball ALM-7D.mtf
 
 Config:Biped
 TechBase:Inner Sphere

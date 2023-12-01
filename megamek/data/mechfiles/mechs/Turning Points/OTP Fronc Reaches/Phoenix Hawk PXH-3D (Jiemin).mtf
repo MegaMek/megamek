@@ -2,7 +2,10 @@ Version:1.2
 Phoenix Hawk
 PXH-3D (Jiemin)
 mul id:7699
-base unit:data/mechfiles/mechs/3039u/Phoenix Hawk PXH-1.mtf
+base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 11/Phoenix Hawk C.mtf
+weaponquirk:jettison_capable:RA:4:ISLargeXPulseLaser
+quirk:imp_com
+quirk:command_mech
 
 Config:Biped
 TechBase:Inner Sphere

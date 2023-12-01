@@ -2,7 +2,6 @@ Version:1.0
 Fafnir
 FNR-6U
 mul id:5720
-base unit:data/mechfiles/mechs/3067/Fafnir FNR-5.mtf
 
 Config:Biped
 techbase:Inner Sphere

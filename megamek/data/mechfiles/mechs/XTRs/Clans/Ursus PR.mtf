@@ -3,6 +3,7 @@ Ursus
 PR
 mul id:5330
 base unit:data/mechfiles/mechs/3060u/Ursus.mtf
+quirk:prototype
 
 Config:Biped
 TechBase:Mixed (Clan Chassis)

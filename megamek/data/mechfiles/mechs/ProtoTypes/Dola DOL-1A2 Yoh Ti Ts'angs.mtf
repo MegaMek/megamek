@@ -3,6 +3,7 @@ Dola
 DOL-1A2 'Yoh Ti Ts'angs'
 mul id:4087
 base unit:data/mechfiles/mechs/XTRs/Liao/Dola DOL-1A.mtf
+weaponquirk:jettison_capable:RA:4:Small Vibroblade
 
 Config:Biped
 TechBase:Inner Sphere

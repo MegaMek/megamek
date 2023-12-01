@@ -3,6 +3,7 @@ Crossbow
 W
 mul id:8238
 base unit:data/mechfiles/mechs/3058Uu/Crossbow Prime.mtf
+notquirk:imp_target_short
 
 Config:Biped Omnimech
 techbase:Clan

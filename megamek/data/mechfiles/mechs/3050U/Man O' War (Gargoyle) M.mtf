@@ -3,6 +3,8 @@ Man O' War (Gargoyle)
 M
 mul id:2009
 base unit:data/mechfiles/mechs/3050U/Man O' War (Gargoyle) Prime.mtf
+weaponquirk:stable_weapon:LA:2:CLERPPC
+weaponquirk:stable_weapon:RA:2:CLHAG20
 
 Config:Biped Omnimech
 techbase:Clan

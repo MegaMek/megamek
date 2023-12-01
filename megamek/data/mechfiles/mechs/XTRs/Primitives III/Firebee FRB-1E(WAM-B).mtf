@@ -10,8 +10,6 @@ Source:XTR: Primitives III
 Rules Level:4
 role:Brawler
 
-quirk:poor_life_support
-quirk:weak_legs
 
 Mass:35
 Engine:210 Fusion Engine(IS)

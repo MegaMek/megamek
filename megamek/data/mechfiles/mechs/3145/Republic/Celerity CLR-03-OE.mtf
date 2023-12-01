@@ -2,7 +2,9 @@ Version:1.1
 Celerity
 CLR-03-OE
 mul id:6708
-base unit:data/mechfiles/mechs/XTRs/ComStar/Celerity CLR-02-X-D.mtf
+base unit:data/mechfiles/mechs/XTRs/Royal Fantasy/Celerity CLR-03OMM _Rajah_.mtf
+quirk:imp_com
+quirk:exp_actuator
 
 Config:Quad Omnimech
 TechBase:Mixed (IS Chassis)

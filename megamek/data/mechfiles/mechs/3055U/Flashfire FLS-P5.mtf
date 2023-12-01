@@ -3,6 +3,8 @@ Flashfire
 FLS-P5
 mul id:1122
 base unit:data/mechfiles/mechs/3055U/Flashfire FLS-P2.mtf
+weaponquirk:mod_weapons:LA:8:IS Fluid Gun
+weaponquirk:mod_weapons:RA:7:IS Fluid Gun
 
 Config:Biped
 TechBase:Inner Sphere

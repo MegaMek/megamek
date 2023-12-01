@@ -2,7 +2,13 @@ Version:1.2
 Griffin
 GRF-5K
 mul id:1303
-base unit:data/mechfiles/mechs/XTRs/Primitives IV/Griffin GRF-1A.mtf
+base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 1/Griffin C.mtf
+quirk:ubiquitous_is
+quirk:ubiquitous_clan
+quirk:rugged_1
+weaponquirk:jettison_capable:RT:8:LRM 10
+quirk:battle_fists_ra
+quirk:battle_fists_la
 
 Config:Biped
 TechBase:Inner Sphere

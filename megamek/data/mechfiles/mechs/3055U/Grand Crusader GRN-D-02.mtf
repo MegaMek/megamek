@@ -3,6 +3,8 @@ Grand Crusader
 GRN-D-02
 mul id:1253
 base unit:data/mechfiles/mechs/3055U/Grand Crusader GRN-D-01.mtf
+weaponquirk:direct_torso_mount:LT:3:LRM 20
+weaponquirk:direct_torso_mount:RT:3:LRM 20
 
 Config:Biped
 TechBase:Inner Sphere

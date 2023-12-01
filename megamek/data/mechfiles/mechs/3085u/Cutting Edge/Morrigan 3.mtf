@@ -3,6 +3,8 @@ Morrigan
 3
 mul id:2230
 base unit:data/mechfiles/mechs/3085u/Cutting Edge/Morrigan.mtf
+weaponquirk:stable_weapon:RA:3:Mek Taser
+weaponquirk:stable_weapon:RA:3:CLHeavyLargeLaser
 
 Config:Biped
 TechBase:Mixed (Clan Chassis)

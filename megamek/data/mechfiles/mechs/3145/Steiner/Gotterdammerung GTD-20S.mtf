@@ -1,6 +1,8 @@
 Version:1.3
 Gotterdammerung
 GTD-20S
+base unit:data/mechfiles/mechs/3150/Gotterdammerung GTD-20C.mtf
+quirk:difficult_eject
 mul id:6629
 Config:Biped
 techbase:Inner Sphere

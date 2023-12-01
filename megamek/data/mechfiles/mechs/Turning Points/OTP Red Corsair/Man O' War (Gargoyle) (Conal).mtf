@@ -3,6 +3,8 @@ Man O' War (Gargoyle)
 (Conal)
 mul id:2001
 base unit:data/mechfiles/mechs/3050U/Man O' War (Gargoyle) Prime.mtf
+weaponquirk:stable_weapon:RA:4:CLERPPC
+weaponquirk:stable_weapon:RA:2:CLERPPC
 
 Config:Biped Omnimech
 TechBase:Clan

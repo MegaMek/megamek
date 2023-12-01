@@ -3,6 +3,8 @@ Parash
 2
 mul id:2427
 base unit:data/mechfiles/mechs/3085u/Cutting Edge/Parash.mtf
+weaponquirk:jettison_capable:RA:4:CLERLargePulseLaser
+weaponquirk:jettison_capable:RA:4:CLLargePulseLaser
 
 Config:Biped
 TechBase:Clan

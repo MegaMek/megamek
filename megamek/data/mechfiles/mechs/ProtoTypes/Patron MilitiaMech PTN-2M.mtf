@@ -3,6 +3,11 @@ Patron MilitiaMech
 PTN-2M
 mul id:4795
 base unit:data/mechfiles/mechs/XTRs/RetroTech/Patron MilitiaMech PTN-2.mtf
+quirk:pro_actuator
+weaponquirk:ammo_feed_problems:LA:5:Light Machine Gun
+weaponquirk:ammo_feed_problems:LA:4:Light Machine Gun
+weaponquirk:ammo_feed_problems:RA:5:Light Machine Gun
+weaponquirk:ammo_feed_problems:RA:4:Light Machine Gun
 
 Config:Biped
 TechBase:Inner Sphere

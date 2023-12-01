@@ -3,6 +3,9 @@ Goshawk II
 RISC
 mul id:7376
 base unit:data/mechfiles/mechs/3085u/Cutting Edge/Goshawk II.mtf
+quirk:prototype
+quirk:flawed_cooling
+quirk:combat_computer
 
 Config:Biped
 TechBase:Mixed (Clan Chassis)

@@ -3,6 +3,8 @@ Brigand
 LDT-XPR2
 mul id:7314
 base unit:data/mechfiles/mechs/3067/Brigand LDT-1.mtf
+quirk:easy_pilot
+quirk:easy_maintain
 
 Config:Biped
 TechBase:Inner Sphere

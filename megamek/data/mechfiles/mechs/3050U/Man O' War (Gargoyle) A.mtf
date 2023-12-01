@@ -3,6 +3,12 @@ Man O' War (Gargoyle)
 A
 mul id:2002
 base unit:data/mechfiles/mechs/3050U/Man O' War (Gargoyle) Prime.mtf
+weaponquirk:stable_weapon:LA:8:CLERSmallLaser
+weaponquirk:stable_weapon:LA:7:CLERMediumLaser
+weaponquirk:stable_weapon:LA:6:CLMediumPulseLaser
+weaponquirk:stable_weapon:LA:4:CLLargePulseLaser
+weaponquirk:stable_weapon:RA:4:CLERPPC
+weaponquirk:stable_weapon:RA:2:CLERPPC
 
 Config:Biped Omnimech
 techbase:Clan

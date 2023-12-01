@@ -3,6 +3,8 @@ Exterminator
 EXT-6CS
 mul id:5551
 base unit:data/mechfiles/mechs/3050U/Exterminator EXT-4C.mtf
+quirk:sensor_ghosts
+quirk:non_standard
 
 Config:Biped
 TechBase:Inner Sphere

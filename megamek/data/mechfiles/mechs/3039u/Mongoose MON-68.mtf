@@ -2,7 +2,9 @@ Version:1.0
 Mongoose
 MON-68
 mul id:4655
-base unit:data/mechfiles/mechs/3050U/Mongoose MON-66.mtf
+base unit:data/mechfiles/mechs/XTRs/Gunslingers/Mongoose MON-66GX Gunslinger.mtf
+quirk:easy_pilot
+quirk:command_mech
 
 Config:Biped
 TechBase:Inner Sphere

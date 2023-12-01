@@ -3,6 +3,7 @@ Cestus
 CTS-6Y
 mul id:533
 base unit:data/mechfiles/mechs/3058Uu/Cestus CTS-6X.mtf
+weaponquirk:stable_weapon:RT:3:ISGaussRifle
 
 Config:Biped
 TechBase:Inner Sphere

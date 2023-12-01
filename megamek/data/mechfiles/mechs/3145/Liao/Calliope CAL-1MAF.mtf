@@ -2,6 +2,8 @@ Version:1.1
 Calliope
 CAL-1MAF
 mul id:6457
+base unit:data/mechfiles/mechs/XTRs/Royal Fantasy/Calliope CAL-1MAFSW _Snow White_.mtf
+quirk:easy_maintain
 
 Config:Biped
 TechBase:Inner Sphere

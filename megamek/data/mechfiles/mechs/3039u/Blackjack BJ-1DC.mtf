@@ -2,7 +2,8 @@ Version:1.0
 Blackjack
 BJ-1DC
 mul id:375
-base unit:data/mechfiles/mechs/3039u/Blackjack BJ-1X.mtf
+base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 4/Blackjack BJ-5.mtf
+quirk:bad_rep_is
 
 Config:Biped
 TechBase:Inner Sphere

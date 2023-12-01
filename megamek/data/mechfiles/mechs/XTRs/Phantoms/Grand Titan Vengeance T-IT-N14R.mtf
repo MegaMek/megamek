@@ -2,7 +2,6 @@ Version:1.1
 Grand Titan
 T-IT-N14R 'Vengeance'
 mul id:5604
-base unit:data/mechfiles/mechs/3055U/Grand Titan T-IT-N10M.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

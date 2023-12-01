@@ -2,6 +2,7 @@ Version:1.0
 Quickdraw
 QKD-4G
 mul id:2610
+base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 26/Quickdraw QKD-9G.mtf
 
 Config:Biped
 TechBase:Inner Sphere
@@ -10,8 +11,6 @@ Source:TRO: 3039
 Rules Level:1
 role:Skirmisher
 
-quirk:hyper_actuator
-quirk:exp_actuator
 
 Mass:60
 Engine:300 Fusion Engine

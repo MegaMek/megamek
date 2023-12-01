@@ -3,7 +3,6 @@ Thunderbolt
 TDR-5Sb
 mul id:3239
 source:Historical: Operation Klondike
-base unit:data/mechfiles/mechs/XTRs/Primitives III/Thunderbolt TDR-1C.mtf
 
 Config:Biped
 TechBase:Inner Sphere

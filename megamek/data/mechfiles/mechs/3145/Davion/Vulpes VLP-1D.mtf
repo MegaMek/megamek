@@ -2,6 +2,9 @@ Version:1.0
 Vulpes
 VLP-1D
 mul id:6346
+base unit:data/mechfiles/mechs/XTRs/Royal Fantasy/Vulpes VLP-1DX _Beast_.mtf
+quirk:distracting
+quirk:difficult_maintain
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

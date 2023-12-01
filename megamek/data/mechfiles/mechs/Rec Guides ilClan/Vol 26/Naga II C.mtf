@@ -2,6 +2,16 @@ Version:1.3
 Naga II
 C
 base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 26/Naga II Prime.mtf
+weaponquirk:stable_weapon:LA:6:CLMediumPulseLaser
+weaponquirk:stable_weapon:LA:4:CLLargePulseLaser
+weaponquirk:stable_weapon:LA:2:CLStreakSRM6
+weaponquirk:stable_weapon:RA:5:CLMediumPulseLaser
+weaponquirk:stable_weapon:RA:2:CLUltraAC5
+weaponquirk:stable_weapon:LT:5:CLMG
+weaponquirk:stable_weapon:LT:4:CLMG
+weaponquirk:stable_weapon:LT:2:CLLRM15
+weaponquirk:stable_weapon:RT:5:CLMG
+weaponquirk:stable_weapon:RT:4:CLMG
 mul id:9325
 Config:Biped Omnimech
 techbase:Clan

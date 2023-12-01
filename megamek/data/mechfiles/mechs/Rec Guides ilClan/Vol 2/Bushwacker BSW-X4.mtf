@@ -2,7 +2,6 @@ Version:1.0
 Bushwacker
 BSW-X4
 mul id:7454
-base unit:data/mechfiles/mechs/3058Uu/Bushwacker BSW-X1.mtf
 
 Config:Biped
 techbase:Inner Sphere

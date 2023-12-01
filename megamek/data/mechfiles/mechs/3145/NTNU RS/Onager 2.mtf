@@ -3,6 +3,8 @@ Onager
 2
 mul id:6847
 base unit:data/mechfiles/mechs/3085u/Cutting Edge/Onager.mtf
+weaponquirk:exposed_linkage:LA:7:CLHAG30
+weaponquirk:exposed_linkage:LA:2:CLHAG30
 
 Config:Biped
 TechBase:Clan

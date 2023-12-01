@@ -2,6 +2,7 @@ Version:1.0
 Grasshopper
 GHR-5H
 mul id:1267
+base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 1/Grasshopper GHR-8K.mtf
 
 Config:Biped
 techbase:Inner Sphere
@@ -10,7 +11,6 @@ source:TRO: 3039
 rules level:1
 role:Skirmisher
 
-quirk:rugged_1
 
 mass:70
 engine:280 Fusion Engine(IS)

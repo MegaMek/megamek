@@ -2,7 +2,10 @@ Version:1.0
 Trebuchet
 TBT-7M
 mul id:3300
-base unit:data/mechfiles/mechs/3050U/Trebuchet TBT-3C.mtf
+base unit:data/mechfiles/mechs/XTRs/Royal Fantasy/Trebuchet TBT-7MM _Merida_.mtf
+weaponquirk:fast_reload:LT:3:ISNarcBeacon
+weaponquirk:fast_reload:RT:3:LRM 15
+quirk:easy_maintain
 
 Config:Biped
 TechBase:Inner Sphere

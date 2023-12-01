@@ -2,7 +2,6 @@ Version:1.0
 Hitman
 HM-2
 mul id:1535
-base unit:data/mechfiles/mechs/3055U/Hitman HM-1.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -9,6 +9,8 @@ era:3130
 source:TRO: Irregulars
 rules level:2
 role:Missile Boat
+quirk:poor_life_support
+quirk:weak_legs
 
 mass:35
 engine:105 Fuel Cell Engine(IS)

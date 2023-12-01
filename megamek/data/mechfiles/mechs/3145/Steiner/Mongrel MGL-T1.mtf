@@ -2,6 +2,9 @@ Version:1.0
 Mongrel
 MGL-T1
 mul id:6618
+base unit:data/mechfiles/mechs/3145/Steiner/Mongrel MGL-T2.mtf
+weaponquirk:no_cooling:LA:2:Autocannon/5
+quirk:easy_pilot
 
 Config:Biped
 TechBase:Mixed (Clan Chassis)

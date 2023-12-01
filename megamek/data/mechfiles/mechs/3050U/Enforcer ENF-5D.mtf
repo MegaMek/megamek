@@ -2,7 +2,12 @@ Version:1.0
 Enforcer
 ENF-5D
 mul id:978
-base unit:data/mechfiles/mechs/3039u/Enforcer ENF-4R.mtf
+base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 18/Enforcer ENF-5R.mtf
+weaponquirk:imp_cooling:RA:3:ISLBXAC10
+weaponquirk:fast_reload:RA:3:ISLBXAC10
+quirk:barrel_fists_ra
+quirk:barrel_fists_la
+weaponquirk:ammo_feed_problems:RA:3:ISLBXAC10
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,7 +2,6 @@ Version:1.1
 Legacy
 LGC-04-WVR
 mul id:5702
-base unit:data/mechfiles/mechs/3067/Legacy LGC-01.mtf
 
 Config:Biped
 TechBase:Inner Sphere

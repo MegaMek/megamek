@@ -2,6 +2,10 @@ Version:1.0
 Hollander
 BZK-F3
 mul id:1536
+base unit:data/mechfiles/mechs/3145/NTNU RS/NTNU/Hollander BZK-G2.mtf
+quirk:unbalanced
+weaponquirk:stable_weapon:RT:2:ISGaussRifle
+quirk:reinforced_legs
 
 Config:Biped
 TechBase:Inner Sphere

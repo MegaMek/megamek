@@ -3,6 +3,7 @@ Malice
 MAL-XP
 mul id:6725
 base unit:data/mechfiles/mechs/3145/Republic/Malice MAL-XT.mtf
+quirk:pro_actuator
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

@@ -2,7 +2,7 @@ Version:1.0
 Orion
 C 2
 mul id:8317
-base unit:data/mechfiles/mechs/XTRs/Primitives V/Orion ON1-C.mtf
+base unit:data/mechfiles/mechs/3145/NTNU RS/NTNU/Orion C.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

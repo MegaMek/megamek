@@ -2,7 +2,6 @@ Version:1.1
 Tai-sho
 TSH-8S
 mul id:3151
-base unit:data/mechfiles/mechs/3060u/Tai-sho TSH-7S.mtf
 
 Config:Biped
 TechBase:Inner Sphere

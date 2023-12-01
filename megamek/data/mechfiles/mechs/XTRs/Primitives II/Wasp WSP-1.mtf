@@ -2,6 +2,9 @@ Version:1.1
 Wasp
 WSP-1
 mul id:3519
+base unit:data/mechfiles/mechs/3085u/Phoenix/Wasp WSP-7MAF.mtf
+quirk:weak_legs
+quirk:hard_pilot
 
 Config:Biped
 TechBase:Inner Sphere

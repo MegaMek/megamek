@@ -2,7 +2,10 @@ Version:1.0
 Enforcer III
 ENF-6G
 mul id:980
-base unit:data/mechfiles/mechs/3060u/Enforcer III ENF-6M.mtf
+base unit:data/mechfiles/mechs/3145/NTNU RS/NTNU/Enforcer III ENF-6R.mtf
+weaponquirk:fast_reload:RA:3:ISGaussRifle
+quirk:battle_fists_la
+quirk:barrel_fists_ra
 
 Config:Biped
 TechBase:Inner Sphere

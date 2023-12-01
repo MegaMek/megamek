@@ -2,7 +2,6 @@ Version:1.1
 Dragoon
 AEM-02
 mul id:6781
-base unit:data/mechfiles/mechs/Historicals/Hist LOT II/Dragoon AEM-01.mtf
 
 Config:Biped
 TechBase:Inner Sphere

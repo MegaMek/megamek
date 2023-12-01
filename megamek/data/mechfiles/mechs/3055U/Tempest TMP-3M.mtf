@@ -2,6 +2,8 @@ Version:1.0
 Tempest
 TMP-3M
 mul id:3169
+base unit:data/mechfiles/mechs/3145/NTNU RS/NTNU/Tempest TMP-4M.mtf
+weaponquirk:direct_torso_mount:HD:3:Medium Laser
 
 Config:Biped
 TechBase:Inner Sphere

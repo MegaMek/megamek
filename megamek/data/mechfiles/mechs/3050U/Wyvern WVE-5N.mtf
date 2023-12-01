@@ -2,6 +2,7 @@ Version:1.0
 Wyvern
 WVE-5N
 mul id:3597
+base unit:data/mechfiles/mechs/XTRs/Gunslingers/Wyvern WVE-5UX City.mtf
 
 Config:Biped
 TechBase:Inner Sphere
@@ -10,7 +11,6 @@ Source:TRO: 3050
 Rules Level:2
 role:Brawler
 
-quirk:rugged_1
 
 Mass:45
 Engine:180 Fusion Engine

@@ -2,7 +2,11 @@ Version:1.1
 Mongoose
 MON-69
 mul id:4656
-base unit:data/mechfiles/mechs/3050U/Mongoose MON-66.mtf
+base unit:data/mechfiles/mechs/XTRs/Gunslingers/Mongoose MON-66GX Gunslinger.mtf
+weaponquirk:stable_weapon:CT:10:Medium Laser
+weaponquirk:stable_weapon:HD:3:Small Laser
+quirk:easy_pilot
+quirk:command_mech
 
 Config:Biped
 TechBase:Inner Sphere

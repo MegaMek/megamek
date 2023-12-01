@@ -2,7 +2,6 @@ Version:1.1
 Sentinel
 STN-6S
 mul id:8160
-base unit:data/mechfiles/mechs/3039u/Sentinel STN-1S.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

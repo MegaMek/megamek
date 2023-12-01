@@ -2,7 +2,15 @@ Version:1.0
 Firestarter
 FS9-M2
 mul id:6609
-base unit:data/mechfiles/mechs/3039u/Firestarter FS9-A.mtf
+base unit:data/mechfiles/mechs/XTRs/Corporations/Firestarter FS9-X81.mtf
+quirk:ubiquitous_is
+quirk:ubiquitous_clan
+weaponquirk:exposed_linkage:LA:8:Flamer
+weaponquirk:exposed_linkage:LA:7:Flamer
+weaponquirk:exposed_linkage:LA:6:Flamer
+weaponquirk:exposed_linkage:RA:8:Flamer
+weaponquirk:exposed_linkage:RA:7:Flamer
+weaponquirk:exposed_linkage:RA:6:Flamer
 
 Config:Biped
 TechBase:Inner Sphere

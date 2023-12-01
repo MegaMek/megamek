@@ -2,6 +2,8 @@ Version:1.3
 Avatar
 AV1-OJ
 base unit:data/mechfiles/mechs/3058Uu/Avatar AV1-O.mtf
+weaponquirk:stable_weapon:CT:11:Medium Laser
+weaponquirk:stable_weapon:CT:10:Medium Laser
 mul id:6874
 Config:Biped Omnimech
 techbase:Mixed (IS Chassis)

@@ -2,7 +2,11 @@ Version:1.1
 Longbow
 LGB-14C2
 mul id:6854
-base unit:data/mechfiles/mechs/XTRs/Primitives III/Longbow LGB-0C.mtf
+base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 20/Longbow LGB-0W2.mtf
+quirk:ubiquitous_is
+quirk:searchlight
+quirk:no_arms
+quirk:anti_air
 
 Config:Biped
 techbase:Inner Sphere

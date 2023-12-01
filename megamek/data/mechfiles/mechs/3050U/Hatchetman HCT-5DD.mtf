@@ -2,7 +2,9 @@ Version:1.2
 Hatchetman
 HCT-5DD
 mul id:5446
-base unit:data/mechfiles/mechs/3039u/Hatchetman HCT-3F.mtf
+base unit:data/mechfiles/mechs/3145/NTNU RS/NTNU/Hatchetman HCT-7D.mtf
+weaponquirk:fast_reload:RT:3:ISRotaryAC2
+quirk:anti_air
 
 Config:Biped
 techbase:Inner Sphere

@@ -3,6 +3,8 @@ Dominator
 2
 mul id:7435
 base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 1/Dominator.mtf
+weaponquirk:exposed_linkage:RA:5:CLERLargeLaser
+weaponquirk:exposed_linkage:RT:6:CLERLargeLaser
 
 Config:Biped
 techbase:Clan

@@ -3,6 +3,7 @@ Stiletto
 STO-6S
 mul id:5133
 base unit:data/mechfiles/mechs/3067/Stiletto STO-4A.mtf
+quirk:bad_rep_is
 
 Config:Biped
 TechBase:Inner Sphere

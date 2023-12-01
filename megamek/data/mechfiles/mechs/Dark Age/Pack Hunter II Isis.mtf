@@ -3,6 +3,7 @@ Pack Hunter II
 (Isis)
 mul id:5540
 base unit:data/mechfiles/mechs/3085u/Cutting Edge/Pack Hunter II.mtf
+weaponquirk:stable_weapon:RT:7:CLERPPC
 
 Config:Biped
 TechBase:Clan
@@ -10,6 +11,7 @@ Era:3077
 Source:Dark Age Turning Points: Vega
 Rules Level:2
 role:Striker
+weaponquirk:stable_weapon:RT:7:CLERPPC
 
 Mass:30
 Engine:210 XL (Clan) Engine(IS)

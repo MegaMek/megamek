@@ -3,6 +3,12 @@ Corvis
 2
 mul id:701
 base unit:data/mechfiles/mechs/3060u/Corvis.mtf
+weaponquirk:mod_weapons:LA:6:CLHeavyMediumLaser
+weaponquirk:mod_weapons:LA:4:CLHeavyMediumLaser
+weaponquirk:mod_weapons:RA:3:CLHAG20
+weaponquirk:mod_weapons:LA:5:CLMediumPulseLaser
+weaponquirk:mod_weapons:LA:4:CLMediumPulseLaser
+weaponquirk:mod_weapons:RA:3:CLUltraAC10
 
 Config:Biped
 TechBase:Clan

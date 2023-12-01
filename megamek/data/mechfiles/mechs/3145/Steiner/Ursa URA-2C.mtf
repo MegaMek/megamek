@@ -2,7 +2,6 @@ Version:1.0
 Ursa
 URA-2C
 mul id:6628
-base unit:data/mechfiles/mechs/3145/Steiner/Ursa URA-2A.mtf
 
 Config:Quad
 TechBase:Clan

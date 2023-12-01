@@ -3,6 +3,7 @@ Zeus
 ZEU-6Y
 mul id:5772
 base unit:data/mechfiles/mechs/3039u/Zeus ZEU-5T.mtf
+weaponquirk:imp_cooling:RT:0:Blazer Cannon
 
 Config:Biped
 TechBase:Inner Sphere

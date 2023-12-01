@@ -2,7 +2,12 @@ Version:1.0
 Phoenix Hawk
 PXH-3D
 mul id:7760
-base unit:data/mechfiles/mechs/3039u/Phoenix Hawk PXH-1.mtf
+base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 11/Phoenix Hawk C.mtf
+quirk:ubiquitous_is
+quirk:ubiquitous_clan
+weaponquirk:jettison_capable:RA:4:ISERLargeLaser
+quirk:imp_com
+quirk:command_mech
 
 Config:Biped
 techbase:Inner Sphere

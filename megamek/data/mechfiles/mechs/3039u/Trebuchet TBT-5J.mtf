@@ -2,7 +2,9 @@ Version:1.0
 Trebuchet
 TBT-5J
 mul id:3296
-base unit:data/mechfiles/mechs/3050U/Trebuchet TBT-3C.mtf
+base unit:data/mechfiles/mechs/XTRs/Royal Fantasy/Trebuchet TBT-7MM _Merida_.mtf
+weaponquirk:fast_reload:RT:0:LRM 15
+quirk:easy_maintain
 
 Config:Biped
 TechBase:Inner Sphere

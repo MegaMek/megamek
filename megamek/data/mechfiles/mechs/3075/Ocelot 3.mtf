@@ -3,6 +3,10 @@ Ocelot
 3
 mul id:2315
 base unit:data/mechfiles/mechs/3075/Ocelot.mtf
+weaponquirk:mod_weapons:RA:6:CLHeavyMediumLaser
+weaponquirk:mod_weapons:RA:4:CLHeavyMediumLaser
+weaponquirk:jettison_capable:RA:5:CLERMediumLaser
+weaponquirk:jettison_capable:RA:4:CLERMediumLaser
 
 Config:Biped
 TechBase:Clan

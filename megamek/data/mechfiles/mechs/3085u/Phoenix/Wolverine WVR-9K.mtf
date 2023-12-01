@@ -2,7 +2,6 @@ Version:1.1
 Wolverine
 WVR-9K
 mul id:3581
-base unit:data/mechfiles/mechs/XTRs/Primitives V/Wolverine WVR-1R.mtf
 
 Config:Biped
 TechBase:Inner Sphere

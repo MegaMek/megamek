@@ -2,6 +2,11 @@ Version:1.1
 Toro
 TR-A-1
 mul id:3276
+base unit:data/mechfiles/mechs/Shrapnel/Vol 10/Toro TR-B-9.mtf
+weaponquirk:poor_cooling:LA:3:Large Laser
+quirk:obsolete
+quirk:low_profile
+quirk:cramped_cockpit
 
 Config:Biped
 techbase:Inner Sphere

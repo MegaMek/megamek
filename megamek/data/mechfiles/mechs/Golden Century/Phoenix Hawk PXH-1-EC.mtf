@@ -2,7 +2,11 @@ Version:1.1
 Phoenix Hawk
 PXH-1-EC
 mul id:7678
-base unit:data/mechfiles/mechs/3039u/Phoenix Hawk PXH-1.mtf
+base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 11/Phoenix Hawk C.mtf
+quirk:ubiquitous_clan
+weaponquirk:jettison_capable:RA:4:Improved Large Laser
+quirk:imp_com
+quirk:command_mech
 
 Config:Biped
 techbase:Mixed (IS Chassis)

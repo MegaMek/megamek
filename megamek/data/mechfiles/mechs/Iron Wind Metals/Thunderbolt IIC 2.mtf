@@ -3,6 +3,12 @@ Thunderbolt IIC
 2
 mul id:5240
 base unit:data/mechfiles/mechs/ProtoTypes/Thunderbolt IIC.mtf
+weaponquirk:mod_weapons:LA:4:CLImprovedHeavyLargeLaser
+weaponquirk:mod_weapons:RA:4:CLImprovedHeavyLargeLaser
+weaponquirk:mod_weapons:LT:6:CLERMediumLaser
+weaponquirk:mod_weapons:LT:5:CLERMediumLaser
+weaponquirk:mod_weapons:LT:4:CLERMediumLaser
+weaponquirk:mod_weapons:RT:4:CLStreakLRM15
 
 Config:Biped
 techbase:Mixed (IS Chassis)

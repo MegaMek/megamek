@@ -3,6 +3,11 @@ Crossbow
 CRS-6B
 mul id:733
 base unit:data/mechfiles/mechs/3058Uu/Crossbow Prime.mtf
+notquirk:imp_target_short
+quirk:poor_target_long
+quirk:obsolete
+weaponquirk:mod_weapons:LA:3:LRM 10
+weaponquirk:mod_weapons:RA:3:LRM 10
 
 Config:Biped
 techbase:Inner Sphere

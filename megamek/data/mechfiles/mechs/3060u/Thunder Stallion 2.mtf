@@ -10,6 +10,7 @@ Era:2877
 Source:TRO: 3060
 Rules Level:2
 role:Missile Boat
+quirk:cramped_cockpit
 
 Mass:85
 Engine:255 Fusion (Clan) Engine

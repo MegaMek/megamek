@@ -2,7 +2,9 @@ Version:1.0
 Flea
 FLE-14
 mul id:5769
-base unit:data/mechfiles/mechs/3039u/Flea FLE-4.mtf
+base unit:data/mechfiles/mechs/TRO SW/Flea FLE-16.mtf
+quirk:low_profile
+quirk:hard_pilot
 
 Config:Biped
 TechBase:Inner Sphere

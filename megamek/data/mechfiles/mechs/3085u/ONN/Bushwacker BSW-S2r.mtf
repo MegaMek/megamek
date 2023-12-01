@@ -2,7 +2,6 @@ Version:1.0
 Bushwacker
 BSW-S2r
 mul id:449
-base unit:data/mechfiles/mechs/3058Uu/Bushwacker BSW-X1.mtf
 
 Config:Biped
 TechBase:Inner Sphere

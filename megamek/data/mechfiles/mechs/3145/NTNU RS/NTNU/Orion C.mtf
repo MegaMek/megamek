@@ -1,7 +1,6 @@
 Version:1.3
 Orion
 C
-base unit:data/mechfiles/mechs/XTRs/Primitives V/Orion ON1-C.mtf
 mul id:7998
 Config:Biped
 techbase:Mixed (IS Chassis)

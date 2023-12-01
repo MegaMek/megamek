@@ -2,7 +2,10 @@ Version:1.1
 Emperor
 EMP-6ME 'Mercury Elite'
 mul id:969
-base unit:data/mechfiles/mechs/XTRs/Primitives IV/Emperor EMP-1A.mtf
+base unit:data/mechfiles/mechs/Golden Century/Emperor EMP-6A-EC.mtf
+weaponquirk:imp_cooling:LA:10:ISSNPPC
+weaponquirk:imp_cooling:RA:10:ISSNPPC
+quirk:command_mech
 
 Config:Biped
 TechBase:Inner Sphere

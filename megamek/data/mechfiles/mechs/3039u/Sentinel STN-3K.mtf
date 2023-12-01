@@ -2,7 +2,9 @@ Version:1.0
 Sentinel
 STN-3K
 mul id:2857
-base unit:data/mechfiles/mechs/3039u/Sentinel STN-1S.mtf
+base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 14/Sentinel STN-6S.mtf
+quirk:imp_com
+weaponquirk:ammo_feed_problems:RT:0:SRM 2
 
 Config:Biped
 TechBase:Inner Sphere

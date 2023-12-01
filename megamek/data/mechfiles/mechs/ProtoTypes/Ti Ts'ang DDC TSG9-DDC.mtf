@@ -3,6 +3,11 @@ Ti Ts'ang
 TSG-9DDC
 mul id:5242
 base unit:data/mechfiles/mechs/3060u/Ti Ts'ang TSG-9H.mtf
+quirk:pro_actuator
+quirk:non_standard
+weaponquirk:jettison_capable:RA:4:Lance
+quirk:imp_life_support
+quirk:difficult_maintain
 
 Config:Biped
 TechBase:Inner Sphere

@@ -3,6 +3,8 @@ Kuma
 2
 mul id:1847
 base unit:data/mechfiles/mechs/3085u/Cutting Edge/Kuma.mtf
+weaponquirk:accurate:LA:3:CLPlasmaCannon
+weaponquirk:accurate:LA:3:CLHeavyLargeLaser
 
 Config:Biped
 TechBase:Clan

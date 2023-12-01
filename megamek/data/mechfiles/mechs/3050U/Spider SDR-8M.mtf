@@ -2,7 +2,6 @@ Version:1.1
 Spider
 SDR-8M
 mul id:3017
-base unit:data/mechfiles/mechs/3039u/Spider SDR-5V.mtf
 
 Config:Biped
 TechBase:Inner Sphere
@@ -10,6 +9,9 @@ Era:3060
 Source:TRO: 3050
 Rules Level:2
 role:Striker
+quirk:easy_maintain
+quirk:nimble_jumper
+quirk:no_eject
 
 Mass:30
 Engine:240 Fusion Engine

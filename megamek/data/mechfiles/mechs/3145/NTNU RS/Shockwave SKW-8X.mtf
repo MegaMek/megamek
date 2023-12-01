@@ -2,7 +2,6 @@ Version:1.1
 Shockwave
 SKW-8X
 mul id:6902
-base unit:data/mechfiles/mechs/3085u/Cutting Edge/Shockwave SKW-2F.mtf
 
 Config:Biped
 TechBase:Inner Sphere

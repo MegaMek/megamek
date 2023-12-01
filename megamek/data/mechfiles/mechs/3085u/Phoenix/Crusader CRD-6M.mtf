@@ -2,7 +2,9 @@ Version:1.0
 Crusader
 CRD-6M
 mul id:761
-base unit:data/mechfiles/mechs/3075/Crusader CRD-2R.mtf
+base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 17/Crusader CRD-6T.mtf
+weaponquirk:stable_weapon:LL:4:ISStreakSRM4
+weaponquirk:stable_weapon:RL:4:ISStreakSRM4
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,7 +2,6 @@ Version:1.0
 Osprey
 OSP-36
 mul id:7377
-base unit:data/mechfiles/mechs/3085u/Cutting Edge/Osprey OSP-15.mtf
 
 Config:Biped
 TechBase:Inner Sphere

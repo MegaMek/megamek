@@ -2,7 +2,8 @@ Version:1.1
 Mongoose
 C 2
 mul id:7604
-base unit:data/mechfiles/mechs/3050U/Mongoose MON-66.mtf
+base unit:data/mechfiles/mechs/XTRs/Gunslingers/Mongoose MON-66GX Gunslinger.mtf
+quirk:easy_pilot
 
 Config:Biped
 techbase:Clan

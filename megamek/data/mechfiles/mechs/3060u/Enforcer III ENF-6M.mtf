@@ -2,6 +2,10 @@ Version:1.0
 Enforcer III
 ENF-6M
 mul id:982
+base unit:data/mechfiles/mechs/3145/NTNU RS/NTNU/Enforcer III ENF-6R.mtf
+weaponquirk:fast_reload:RA:3:ISUltraAC10
+quirk:barrel_fists_ra
+quirk:barrel_fists_la
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,7 +2,7 @@ Version:1.0
 Archer
 (Wolf)
 mul id:72
-base unit:data/mechfiles/mechs/XTRs/Primitives V/Archer ARC-1A.mtf
+base unit:data/mechfiles/mechs/3039u/Archer ARC-2R.mtf
 
 Config:Biped
 techbase:Clan

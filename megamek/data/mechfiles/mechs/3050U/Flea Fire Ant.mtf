@@ -2,7 +2,7 @@ Version:1.0
 Flea
 'Fire Ant'
 mul id:1135
-base unit:data/mechfiles/mechs/3039u/Flea FLE-4.mtf
+base unit:data/mechfiles/mechs/TRO SW/Flea FLE-16.mtf
 
 Config:Biped
 TechBase:Inner Sphere

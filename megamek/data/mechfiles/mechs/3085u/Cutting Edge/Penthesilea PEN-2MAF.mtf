@@ -2,7 +2,6 @@ Version:1.1
 Penthesilea
 PEN-2MAF
 mul id:2471
-base unit:data/mechfiles/mechs/3085u/Cutting Edge/Penthesilea PEN-2H.mtf
 
 Config:Biped
 TechBase:Inner Sphere

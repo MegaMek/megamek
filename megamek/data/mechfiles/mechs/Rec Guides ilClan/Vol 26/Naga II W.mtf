@@ -2,6 +2,11 @@ Version:1.3
 Naga II
 W
 base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 26/Naga II Prime.mtf
+weaponquirk:stable_weapon:LA:2:CLRotaryAC5
+weaponquirk:stable_weapon:RA:2:CLERPPC
+weaponquirk:stable_weapon:LT:4:CLERMediumLaser
+weaponquirk:stable_weapon:RT:2:CLStreakLRM15
+weaponquirk:stable_weapon:CT:10:CLERSmallLaser
 mul id:9327
 Config:Biped Omnimech
 techbase:Clan

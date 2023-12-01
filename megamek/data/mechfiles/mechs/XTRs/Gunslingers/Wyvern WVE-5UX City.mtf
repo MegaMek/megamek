@@ -2,7 +2,6 @@ Version:1.1
 Wyvern
 WVE-5UX
 mul id:7319
-base unit:data/mechfiles/mechs/3050U/Wyvern WVE-5N.mtf
 
 Config:Biped
 TechBase:Inner Sphere
@@ -10,6 +9,7 @@ Era:2686
 Source:XTR: Gunslingers
 Rules Level:4
 role:Brawler
+quirk:rugged_1
 
 Mass:45
 Engine:180 Fusion Engine(IS)

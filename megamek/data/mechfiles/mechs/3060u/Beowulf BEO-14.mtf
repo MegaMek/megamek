@@ -2,7 +2,6 @@ Version:1.0
 Beowulf
 BEO-14
 mul id:328
-base unit:data/mechfiles/mechs/3060u/Beowulf BEO-12.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -3,6 +3,7 @@ Fox
 CS-1
 mul id:4182
 base unit:data/mechfiles/mechs/Golden Century/Fox.mtf
+quirk:variable_range_long
 
 Config:Biped
 techbase:Mixed (IS Chassis)

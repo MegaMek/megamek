@@ -2,7 +2,12 @@ Version:1.2
 Phoenix Hawk
 PXH-6D
 mul id:2506
-base unit:data/mechfiles/mechs/3039u/Phoenix Hawk PXH-1.mtf
+base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 11/Phoenix Hawk C.mtf
+quirk:ubiquitous_is
+quirk:ubiquitous_clan
+weaponquirk:jettison_capable:RA:7:ISERPPC
+quirk:imp_com
+quirk:command_mech
 
 Config:Biped
 techbase:Inner Sphere

@@ -2,7 +2,8 @@ Version:1.0
 Sentinel
 STN-5WB
 mul id:2864
-base unit:data/mechfiles/mechs/3039u/Sentinel STN-1S.mtf
+base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 14/Sentinel STN-6S.mtf
+quirk:imp_com
 
 Config:Biped
 TechBase:Inner Sphere

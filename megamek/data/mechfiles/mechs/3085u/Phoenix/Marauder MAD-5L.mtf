@@ -3,6 +3,11 @@ Marauder
 MAD-5L
 mul id:2040
 base unit:data/mechfiles/mechs/3075/Marauder MAD-1R.mtf
+quirk:low_profile
+quirk:hyper_actuator
+weaponquirk:exposed_linkage:RT:6:ISERPPC
+weaponquirk:direct_torso_mount:RT:6:ISERPPC
+quirk:command_mech
 
 Config:Biped
 TechBase:Inner Sphere

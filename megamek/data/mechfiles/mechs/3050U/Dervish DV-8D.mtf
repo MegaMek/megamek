@@ -2,7 +2,9 @@ Version:1.1
 Dervish
 DV-8D
 mul id:881
-base unit:data/mechfiles/mechs/XTRs/Primitives III/Dervish DV-1S.mtf
+base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 29/Dervish DV-11DK.mtf
+quirk:hyper_actuator
+quirk:easy_maintain
 
 Config:Biped
 TechBase:Inner Sphere

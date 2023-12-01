@@ -2,7 +2,6 @@ Version:1.1
 Emperor
 EMP-6A-EC
 mul id:7685
-base unit:data/mechfiles/mechs/XTRs/Primitives IV/Emperor EMP-1A.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

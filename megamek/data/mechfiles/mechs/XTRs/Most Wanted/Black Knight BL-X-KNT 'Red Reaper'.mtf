@@ -2,7 +2,9 @@ Version:1.0
 Black Knight
 BL-X-KNT 'Red Reaper'
 mul id:5783
-base unit:data/mechfiles/mechs/3050U/Black Knight BL-6-KNT.mtf
+base unit:data/mechfiles/mechs/3145/Davion/Black Knight BLK-NT-2Y.mtf
+quirk:unbalanced
+quirk:distracting
 
 Config:Biped
 TechBase:Inner Sphere

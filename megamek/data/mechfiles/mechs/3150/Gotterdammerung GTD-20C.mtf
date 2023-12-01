@@ -1,7 +1,6 @@
 Version:1.3
 Gotterdammerung
 GTD-20C
-base unit:data/mechfiles/mechs/3145/Steiner/Gotterdammerung GTD-20S.mtf
 mul id:8061
 Config:Biped
 techbase:Mixed (IS Chassis)

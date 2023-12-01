@@ -3,6 +3,9 @@ Pandarus
 LFA-1A
 mul id:4783
 base unit:data/mechfiles/mechs/XTRs/Marik/Pandarus LFA-1X.mtf
+quirk:poor_target_short
+quirk:imp_target_long
+quirk:easy_maintain
 
 Config:Biped
 TechBase:Inner Sphere

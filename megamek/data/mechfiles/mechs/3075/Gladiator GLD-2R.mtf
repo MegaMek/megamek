@@ -2,7 +2,6 @@ Version:1.0
 Gladiator
 GLD-2R
 mul id:1199
-base unit:data/mechfiles/mechs/XTRs/Primitives II/Gladiator GLD-1R.mtf
 
 Config:Biped
 techbase:Inner Sphere
@@ -10,6 +9,8 @@ era:2487
 source:TRO: 3075
 rules level:1
 role:Skirmisher
+quirk:cowl
+quirk:bad_rep_is
 
 mass:55
 engine:275 Fusion Engine(IS)

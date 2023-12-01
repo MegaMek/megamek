@@ -1,7 +1,9 @@
 Version:1.3
 Cataphract
 CTF-0X
-base unit:data/mechfiles/mechs/3039u/Cataphract CTF-1X.mtf
+base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 6/Cataphract CTF-5L.mtf
+quirk:obsolete
+quirk:command_mech
 mul id:5795
 Config:Biped
 techbase:Inner Sphere

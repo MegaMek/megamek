@@ -2,7 +2,7 @@ Version:1.0
 Blackjack
 C
 mul id:8388
-base unit:data/mechfiles/mechs/3039u/Blackjack BJ-1X.mtf
+base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 4/Blackjack BJ-5.mtf
 
 Config:Biped
 techbase:Clan

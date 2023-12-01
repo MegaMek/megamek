@@ -2,7 +2,6 @@ Version:1.0
 Black Knight
 BLK-NT-2Y
 mul id:6347
-base unit:data/mechfiles/mechs/3050U/Black Knight BL-6-KNT.mtf
 
 Config:Biped
 TechBase:Inner Sphere

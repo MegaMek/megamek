@@ -2,7 +2,8 @@ Version:1.0
 Nightsky
 NGS-6S
 mul id:2283
-base unit:data/mechfiles/mechs/3055U/Nightsky NGS-4S.mtf
+base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 27/Nightsky NGS-7S.mtf
+weaponquirk:mod_weapons:RA:4:Hatchet
 
 Config:Biped
 TechBase:Inner Sphere

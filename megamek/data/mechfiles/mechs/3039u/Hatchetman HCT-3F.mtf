@@ -2,6 +2,9 @@ Version:1.2
 Hatchetman
 HCT-3F
 mul id:1410
+base unit:data/mechfiles/mechs/3145/NTNU RS/NTNU/Hatchetman HCT-7D.mtf
+weaponquirk:fast_reload:RT:2:Autocannon/10
+quirk:anti_air
 
 Config:Biped
 techbase:Inner Sphere

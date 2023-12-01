@@ -2,7 +2,6 @@ Version:1.0
 Eisenfaust
 EFT-7X
 mul id:945
-base unit:data/mechfiles/mechs/XTRs/Primitives III/Eisenfaust EFT-2.mtf
 
 Config:Biped
 TechBase:Inner Sphere

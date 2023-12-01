@@ -3,6 +3,9 @@ Thug
 THG-11ECX (Jose)
 mul id:7322
 base unit:data/mechfiles/mechs/3050U/Thug THG-11E.mtf
+quirk:obsolete
+quirk:non_standard
+quirk:bad_rep_is
 
 Config:Biped
 TechBase:Inner Sphere

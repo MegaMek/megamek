@@ -3,6 +3,17 @@ Cygnus
 3
 mul id:783
 base unit:data/mechfiles/mechs/3075/Cygnus.mtf
+weaponquirk:static_feed:LA:2:CLHAG20
+weaponquirk:static_feed:RA:2:CLHAG20
+weaponquirk:static_feed:LT:2:CLHAG20
+weaponquirk:static_feed:RT:2:CLHAG20
+weaponquirk:static_feed:LA:3:CLUltraAC10
+weaponquirk:static_feed:RA:3:CLUltraAC10
+weaponquirk:exposed_linkage:LA:2:CLHAG20
+weaponquirk:exposed_linkage:RA:2:CLHAG20
+weaponquirk:exposed_linkage:RT:2:CLHAG20
+weaponquirk:exposed_linkage:LA:3:CLUltraAC10
+weaponquirk:exposed_linkage:RA:3:CLUltraAC10
 
 Config:Biped
 TechBase:Clan

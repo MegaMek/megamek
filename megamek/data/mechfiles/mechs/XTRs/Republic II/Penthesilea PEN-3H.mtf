@@ -2,7 +2,6 @@ Version:1.1
 Penthesilea
 PEN-3H
 mul id:7347
-base unit:data/mechfiles/mechs/3085u/Cutting Edge/Penthesilea PEN-2H.mtf
 
 Config:Biped
 TechBase:Inner Sphere

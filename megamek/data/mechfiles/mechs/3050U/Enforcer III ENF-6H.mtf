@@ -2,7 +2,9 @@ Version:1.0
 Enforcer III
 ENF-6H
 mul id:981
-base unit:data/mechfiles/mechs/3060u/Enforcer III ENF-6M.mtf
+base unit:data/mechfiles/mechs/3145/NTNU RS/NTNU/Enforcer III ENF-6R.mtf
+weaponquirk:fast_reload:RA:2:ISUltraAC20
+quirk:battle_fists_la
 
 Config:Biped
 TechBase:Inner Sphere

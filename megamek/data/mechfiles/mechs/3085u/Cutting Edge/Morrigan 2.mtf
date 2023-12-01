@@ -3,6 +3,7 @@ Morrigan
 2
 mul id:2229
 base unit:data/mechfiles/mechs/3085u/Cutting Edge/Morrigan.mtf
+weaponquirk:stable_weapon:RA:3:CLHeavyLargeLaser
 
 Config:Biped
 TechBase:Clan

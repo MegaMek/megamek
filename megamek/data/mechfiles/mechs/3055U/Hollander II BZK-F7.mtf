@@ -2,7 +2,6 @@ Version:1.0
 Hollander II
 BZK-F7
 mul id:1539
-base unit:data/mechfiles/mechs/3055U/Hollander II BZK-F5.mtf
 
 Config:Biped
 TechBase:Inner Sphere

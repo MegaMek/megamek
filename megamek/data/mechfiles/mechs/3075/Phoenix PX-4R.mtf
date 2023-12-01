@@ -2,7 +2,8 @@ Version:1.0
 Phoenix
 PX-4R
 mul id:2490
-base unit:data/mechfiles/mechs/XTRs/Primitives V/Phoenix PX-1R.mtf
+base unit:data/mechfiles/mechs/ToS/ToS Kaumberg/Phoenix PX-1KC.mtf
+weaponquirk:direct_torso_mount:LT:1:SRM 2
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,7 +2,6 @@ Version:1.1
 Osprey
 OSP-26 (Lawrence)
 mul id:2347
-base unit:data/mechfiles/mechs/3085u/Cutting Edge/Osprey OSP-15.mtf
 
 Config:Biped
 TechBase:Inner Sphere

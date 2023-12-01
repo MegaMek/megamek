@@ -1,13 +1,13 @@
 Version:1.3
 Chameleon
 TRC-4C
-base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 25/Chameleon TRC-4B.mtf
 mul id:9405
 Config:Biped
 techbase:Inner Sphere
 era:2820
 source:Rec Guide:ilClan #25
 rules level:1
+quirk:easy_pilot
 
 mass:50
 engine:300 Fusion Engine(IS)

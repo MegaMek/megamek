@@ -3,6 +3,8 @@ Banshee
 BNC-3MC
 mul id:242
 base unit:data/mechfiles/mechs/XTRs/Primitives II/Banshee BNC-1E.mtf
+quirk:rugged_1
+quirk:bad_rep_is
 
 Config:Biped
 TechBase:Inner Sphere

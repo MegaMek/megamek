@@ -2,7 +2,6 @@ Version:1.0
 Enforcer
 ENF-5R
 mul id:8249
-base unit:data/mechfiles/mechs/3039u/Enforcer ENF-4R.mtf
 
 Config:Biped
 techbase:Inner Sphere

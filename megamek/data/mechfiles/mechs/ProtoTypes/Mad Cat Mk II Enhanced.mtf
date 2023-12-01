@@ -2,6 +2,7 @@ Version:1.3
 Mad Cat Mk II
 Enhanced
 base unit:data/mechfiles/mechs/3067/Mad Cat Mk II.mtf
+quirk:pro_actuator
 mul id:4564
 Config:Biped
 techbase:Clan

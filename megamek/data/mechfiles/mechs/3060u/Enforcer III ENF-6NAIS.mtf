@@ -2,7 +2,9 @@ Version:1.0
 Enforcer III
 ENF-6NAIS
 mul id:984
-base unit:data/mechfiles/mechs/3060u/Enforcer III ENF-6M.mtf
+base unit:data/mechfiles/mechs/3145/NTNU RS/NTNU/Enforcer III ENF-6R.mtf
+quirk:barrel_fists_ra
+quirk:barrel_fists_la
 
 Config:Biped
 TechBase:Inner Sphere

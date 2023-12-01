@@ -57,6 +57,9 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     private double tons;
     private int bv;
 
+    /** The file path of the base unit or an empty String if this unit has no base unit. */
+    private String baseUnit = "";
+
     /** The full cost of the unit (including ammo). */
     private long cost;
 
@@ -1260,6 +1263,18 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 		this.extinctRange = extinctRange;
 	}
 
+    public void setBaseUnit(String filePath) {
+        baseUnit = filePath;
+    }
+
+    public String getBaseUnit() {
+        return baseUnit;
+    }
+
+    public boolean hasBaseUnit() {
+        return !baseUnit.isBlank();
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -1302,5 +1317,10 @@ public class MechSummary implements Serializable, ASCardDisplayable {
             LogManager.getLogger().error("", ex);
             return null;
         }
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }

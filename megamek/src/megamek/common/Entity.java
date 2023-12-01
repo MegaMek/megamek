@@ -807,6 +807,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     private UnitRole role = UnitRole.UNDETERMINED;
 
+    /** The file path of the base unit or an empty String if this unit has no base unit. */
+    private String baseUnit = "";
+
     /**
      * Generates a new, blank, entity.
      */
@@ -15536,5 +15539,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     @Override
     public UnitRole getRole() {
         return (role == null) ? UnitRole.UNDETERMINED : role;
+    }
+
+    public void setBaseUnit(String filePath) {
+        baseUnit = filePath;
+    }
+
+    public String getBaseUnit() {
+        return baseUnit;
+    }
+
+    public boolean hasBaseUnit() {
+        return !baseUnit.isBlank();
     }
 }

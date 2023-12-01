@@ -551,6 +551,7 @@ public class MtfFile implements IMechLoader {
 
             List<QuirkEntry> quirks = new ArrayList<>();
             if (baseUnit != null) {
+                mech.setBaseUnit(baseUnitName);
                 quirks.addAll(baseUnit.getQuirks().getQuirkEntries());
                 for (Mounted m : baseUnit.getWeaponList()) {
                     WeaponQuirks wpnQuirks = m.getQuirks();

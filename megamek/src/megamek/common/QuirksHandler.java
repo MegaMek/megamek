@@ -133,7 +133,7 @@ public class QuirksHandler {
 
     private static final String NO_QUIRKS = "none";
 
-    private static Map<String, List<QuirkEntry>> canonQuirkMap;
+    public static Map<String, List<QuirkEntry>> canonQuirkMap;
     private static Map<String, List<QuirkEntry>> customQuirkMap;
     private static AtomicBoolean customQuirksDirty = new AtomicBoolean(false);
     private static AtomicBoolean initialized = new AtomicBoolean(false);
@@ -150,11 +150,18 @@ public class QuirksHandler {
      * @param useModel determines if the model should be used, or be 'all'
      * @return The ID for the unit.
      */
-    private static String getUnitId(final Entity entity, final boolean useModel) {
+    public static String getUnitId(final Entity entity, final boolean useModel) {
         final String typeText = Entity.getEntityMajorTypeName(entity.getEntityType());
         return useModel
                 ? entity.getChassis() + "~" + entity.getModel() + "~" + typeText
                 : entity.getChassis() + "~~" + typeText;
+    }
+
+    public static String getUnitId(MechSummary unit, final boolean useModel) {
+        final String typeText = Entity.getEntityMajorTypeName(unit.getEntityType());
+        return useModel
+                ? unit.getChassis() + "~" + unit.getModel() + "~" + typeText
+                : unit.getChassis() + "~~" + typeText;
     }
 
     public static String getUnitId(final String chassis, final String model, final String type) {
@@ -502,8 +509,13 @@ public class QuirksHandler {
                     return null;
                 }
 
+                for (QuirkEntry entry : canonQuirkMap.get(unitId)) {
+                    if (!quirks.contains(entry)) {
+                        quirks.add(entry);
+                    }
+                }
                 // Add the model-specific quirks.
-                quirks.addAll(canonQuirkMap.get(unitId));
+//                quirks.addAll(canonQuirkMap.get(unitId));
             }
 
             return quirks.isEmpty() ? null : quirks;

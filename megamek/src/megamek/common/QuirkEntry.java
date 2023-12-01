@@ -180,4 +180,9 @@ public class QuirkEntry {
     public boolean isWeaponQuirk() {
         return (weaponName != null);
     }
+
+    @Override
+    public String toString() {
+        return getQuirk() + (isWeaponQuirk() ? " [" + getLocation() + slot + "]" : "");
+    }
 }

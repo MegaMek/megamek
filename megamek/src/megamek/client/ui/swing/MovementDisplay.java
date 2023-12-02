@@ -751,15 +751,17 @@ public class MovementDisplay extends ActionPhaseDisplay {
         cen = en;
         clientgui.setSelectedEntityNum(en);
         gear = MovementDisplay.GEAR_LAND;
-        Color walkColor = GUIP.getMoveDefaultColor();
-        clientgui.getBoardView().setHighlightColor(walkColor);
+
+        // Issue:#4876 moving the call to 'displayEntity' before boardview calls that invoke 'repaint()'
+        // this seems to prevent blank general tab when switching units when the map is zoomed all the way out.
+        clientgui.getUnitDisplay().displayEntity(ce);
+        clientgui.getBoardView().setHighlightColor(GUIP.getMoveDefaultColor());
         clear();
 
         updateButtons();
         clientgui.getBoardView().highlight(ce.getPosition());
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().cursor(null);
-        clientgui.getUnitDisplay().displayEntity(ce);
         clientgui.getUnitDisplay().showPanel("movement");
         if (!clientgui.getBoardView().isMovingUnits()) {
             clientgui.getBoardView().centerOnHex(ce.getPosition());

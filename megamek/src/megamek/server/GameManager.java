@@ -33657,7 +33657,7 @@ public class GameManager implements IGameManager {
             default:
                 break;
         }
-        // Apply vehicle effectiveness...except for jumps.
+        // Apply vehicle effectiveness...except for hits from jumps.
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE)
                 && !jumpDamage) {
             modifier = Math.max(modifier - 1, 0);
@@ -33722,7 +33722,7 @@ public class GameManager implements IGameManager {
         // unsure how to *report* any outcomes from there. Note that these treat
         // being reduced to 0 MP and being actually immobilized as the same thing,
         // which for these particular purposes may or may not be the intent of
-        // the rules in all cases.
+        // the rules in all cases (for instance, motive-immobilized CVs can still jump).
         // Immobile hovercraft on water sink...
         if (!te.isOffBoard() && (te.getMovementMode() == EntityMovementMode.HOVER
                 && (te.isMovementHitPending() || (te.getWalkMP() <= 0))

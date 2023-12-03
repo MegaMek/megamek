@@ -3256,7 +3256,7 @@ public class MoveStep implements Serializable {
         }
 
         // super-easy, but not any more
-        if (entity.isImmobile() && !entity.isBracing()){
+        if (entity.isImmobile() && !entity.isBracing()) {
             return false;
         }
 

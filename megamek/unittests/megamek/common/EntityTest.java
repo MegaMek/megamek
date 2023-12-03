@@ -94,31 +94,6 @@ public class EntityTest {
     }
 
     /**
-     * Set destroyed state on a number of mounted items matching the specified type; if
-     * @param e
-     * @param etype
-     * @param state
-     * @param count
-     * @return
-     */
-    private int setDestroyedEquipment(Entity e, EquipmentType etype, boolean state, int count) {
-        if (count <= 0) {
-            count = Integer.MAX_VALUE;
-        }
-        int i = 0;
-        for(Mounted m: e.getMisc()) {
-            if (etype.equals(m.getType())) {
-                e.setDestroyed(state);
-                i++;
-                if (i == count) {
-                    break;
-                }
-            }
-        }
-        return i;
-    }
-
-    /**
      * Verify new Tank method .isImmobilizedForJump() returns correct values in
      * various states.  Note: vehicles cannot lose individual Jump Jets via crits,
      * so this is not tested.
@@ -128,7 +103,6 @@ public class EntityTest {
         File f;
         MechFileParser mfp;
         Entity e;
-        int expectedWeight, computedWeight;
 
         // Test 1/1
         try {

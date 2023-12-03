@@ -677,7 +677,7 @@ public class Quirks extends AbstractOptions {
                 for (final Enumeration<IOption> options = group.getOptions(); options.hasMoreElements();) {
                     final IOption option = options.nextElement();
                     if ((option != null) && option.booleanValue()) {
-                        quirkEntries.add(new QuirkEntry(option.getName(), ""));
+                        quirkEntries.add(new QuirkEntry(option.getName()));
                     }
                 }
             }

@@ -570,7 +570,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         final Entity ce = ce();
                         boolean isAero = ce.isAero();
                         // first check if jumping is available at all
-                        if (!isAero && !ce.isImmobile() && (ce.getJumpMP() > 0)
+                        if (!isAero && !ce.isImmobileForJump() && (ce.getJumpMP() > 0)
                                 && !(ce.isStuck() && !ce.canUnstickByJumping())) {
                             if (gear != MovementDisplay.GEAR_JUMP) {
                                 if (!((cmd.getLastStep() != null)

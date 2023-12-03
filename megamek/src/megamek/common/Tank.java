@@ -574,8 +574,14 @@ public class Tank extends Entity {
      */
     @Override
     public boolean isImmobileForJump() {
-        // *Can* jump unless 0 Jump MP, or 1+ Jump MP but engine is critted, or crew knocked out.
-        return super.isImmobile(true) || (getJumpMP() == 0 || isEngineHit());
+        // *Can* jump unless 0 Jump MP, or 1+ Jump MP but engine is critted, or crew unconscious/dead.
+        boolean jumpImmobile = (
+                super.isImmobile(true) ||
+                super.isPermanentlyImmobilized(true) ||
+                (getJumpMP() == 0) ||
+                (isEngineHit())
+        );
+        return jumpImmobile;
     }
 
     @Override

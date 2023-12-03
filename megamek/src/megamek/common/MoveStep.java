@@ -3250,8 +3250,13 @@ public class MoveStep implements Serializable {
             return true;
         }
 
+        // Motive hit has immobilized CV, but it still wants to (and can) jump: okay!
+        if (movementType == EntityMovementType.MOVE_JUMP && (entity instanceof Tank) && !entity.isImmobileForJump()) {
+            return true;
+        }
+
         // super-easy, but not any more
-        if (entity.isImmobile() && !entity.isBracing()) {
+        if (entity.isImmobile() && !entity.isBracing()){
             return false;
         }
 

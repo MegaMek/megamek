@@ -2,7 +2,6 @@ Version:1.0
 Jackalope
 JLP-KA
 mul id:6712
-base unit:data/mechfiles/mechs/3145/Republic/Jackalope JLP-BD.mtf
 
 Config:Biped
 TechBase:Mixed (Clan Chassis)

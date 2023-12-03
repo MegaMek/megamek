@@ -2,7 +2,6 @@ Version:1.0
 Viper
 VP-5
 mul id:9488
-base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 32/Viper_VP-1.mtf
 
 Config:Biped
 techbase:Inner Sphere

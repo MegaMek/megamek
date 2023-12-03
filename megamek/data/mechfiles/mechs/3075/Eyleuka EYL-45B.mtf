@@ -2,7 +2,6 @@ Version:1.1
 Eyleuka
 EYL-45B
 mul id:1010
-base unit:data/mechfiles/mechs/3075/Eyleuka EYL-4A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

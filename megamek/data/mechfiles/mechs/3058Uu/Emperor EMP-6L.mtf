@@ -2,9 +2,6 @@ Version:1.0
 Emperor
 EMP-6L
 mul id:967
-base unit:data/mechfiles/mechs/Golden Century/Emperor EMP-6A-EC.mtf
-weaponquirk:imp_cooling:LA:3:ISERPPC
-quirk:command_mech
 
 Config:Biped
 TechBase:Inner Sphere

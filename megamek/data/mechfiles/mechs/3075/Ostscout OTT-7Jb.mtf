@@ -2,7 +2,6 @@ Version:1.0
 Ostscout
 OTT-7Jb
 mul id:2367
-base unit:data/mechfiles/mechs/3039u/Ostscout OTT-7J.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,12 +2,6 @@ Version:1.0
 Marauder
 MAD-9M
 mul id:2047
-base unit:data/mechfiles/mechs/3075/Marauder MAD-1R.mtf
-quirk:low_profile
-quirk:hyper_actuator
-weaponquirk:exposed_linkage:RT:6:ISStreakSRM6
-weaponquirk:direct_torso_mount:RT:6:ISStreakSRM6
-quirk:command_mech
 
 Config:Biped
 TechBase:Inner Sphere

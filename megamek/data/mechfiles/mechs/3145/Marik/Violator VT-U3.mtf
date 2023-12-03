@@ -2,7 +2,6 @@ Version:1.0
 Violator
 VT-U3
 mul id:6504
-base unit:data/mechfiles/mechs/3145/Marik/Violator VT-U1.mtf
 
 Config:Biped
 TechBase:Inner Sphere

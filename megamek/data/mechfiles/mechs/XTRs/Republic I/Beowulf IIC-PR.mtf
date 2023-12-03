@@ -4,9 +4,7 @@ PR
 mul id:7294
 base unit:data/mechfiles/mechs/ProtoTypes/Beowulf IIC.mtf
 weaponquirk:em_interference:RA:4:CLERLargeLaser
-weaponquirk:em_interference:LA:6:CLERMediumPulseLaser
-weaponquirk:em_interference:LA:4:CLERMediumPulseLaser
-weaponquirk:em_interference:RA:4:CLERLargePulseLaser
+notweaponquirk:em_interference:RA:4:CLERLargePulseLaser
 quirk:bad_rep_is
 
 Config:Biped

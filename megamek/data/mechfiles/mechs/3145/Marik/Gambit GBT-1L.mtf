@@ -2,7 +2,6 @@ Version:1.1
 Gambit
 GBT-1L
 mul id:6501
-base unit:data/mechfiles/mechs/3145/Marik/Gambit GBT-1G.mtf
 
 Config:Biped
 TechBase:Inner Sphere

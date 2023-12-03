@@ -2,7 +2,6 @@ Version:1.0
 Viking
 VKG-3A
 mul id:3419
-base unit:data/mechfiles/mechs/3060u/Viking VKG-2F.mtf
 
 Config:Biped
 TechBase:Inner Sphere

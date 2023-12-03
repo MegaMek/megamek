@@ -2,7 +2,6 @@ Version:1.2
 Shadow Hawk
 SHD-11CS
 mul id:2896
-base unit:data/mechfiles/mechs/XTRs/Primitives I/Shadow Hawk SHD-1R.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,7 +2,6 @@ Version:1.0
 Snake
 SNK-2B
 mul id:2976
-base unit:data/mechfiles/mechs/3055U/Snake SNK-1V.mtf
 
 Config:Biped
 TechBase:Inner Sphere

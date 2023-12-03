@@ -2,7 +2,6 @@ Version:1.0
 Grand Dragon
 DRG-10K
 mul id:6889
-base unit:data/mechfiles/mechs/3039u/Grand Dragon DRG-1G.mtf
 
 Config:Biped
 TechBase:Inner Sphere

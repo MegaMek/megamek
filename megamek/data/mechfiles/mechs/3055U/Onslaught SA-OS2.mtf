@@ -2,7 +2,6 @@ Version:1.0
 Onslaught
 SA-OS2
 mul id:2322
-base unit:data/mechfiles/mechs/3055U/Onslaught SA-OS.mtf
 
 Config:Biped
 TechBase:Inner Sphere

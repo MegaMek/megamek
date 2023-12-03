@@ -2,8 +2,6 @@ Version:1.1
 Cataphract
 CTF-5D
 mul id:475
-base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 6/Cataphract CTF-5L.mtf
-quirk:pro_actuator
 
 Config:Biped
 techbase:Inner Sphere

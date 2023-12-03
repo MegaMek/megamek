@@ -2,7 +2,6 @@ Version:1.0
 Shootist
 ST-8C
 mul id:2940
-base unit:data/mechfiles/mechs/3058Uu/Shootist ST-8A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

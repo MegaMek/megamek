@@ -2,10 +2,6 @@ Version:1.1
 Griffin
 GRF-1A
 mul id:7185
-base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 1/Griffin C.mtf
-quirk:poor_sealing
-quirk:obsolete
-weaponquirk:imp_cooling:RA:3:Primitive Prototype PPC
 
 Config:Biped
 TechBase:Inner Sphere

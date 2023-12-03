@@ -2,12 +2,6 @@ Version:1.1
 Marauder
 MAD-9D
 mul id:6866
-base unit:data/mechfiles/mechs/3075/Marauder MAD-1R.mtf
-quirk:low_profile
-quirk:hyper_actuator
-weaponquirk:exposed_linkage:RT:3:ISSBGR
-weaponquirk:direct_torso_mount:RT:3:ISSBGR
-quirk:command_mech
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

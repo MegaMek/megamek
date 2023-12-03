@@ -2,7 +2,6 @@ Version:1.0
 Falconer
 FLC-9R
 mul id:1034
-base unit:data/mechfiles/mechs/3055U/Falconer FLC-8R.mtf
 
 Config:Biped
 TechBase:Inner Sphere

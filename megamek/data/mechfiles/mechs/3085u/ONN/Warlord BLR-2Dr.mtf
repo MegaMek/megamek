@@ -2,7 +2,6 @@ Version:1.0
 Warlord
 BLR-2Dr
 mul id:3510
-base unit:data/mechfiles/mechs/3075/Warlord BLR-2D.mtf
 
 Config:Biped
 TechBase:Inner Sphere

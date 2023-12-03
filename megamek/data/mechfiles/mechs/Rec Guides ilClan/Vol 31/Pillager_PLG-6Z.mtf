@@ -1,7 +1,6 @@
 Version:1.0
 Pillager
 PLG-6Z
-base unit:data/mechfiles/mechs/3058Uu/Pillager PLG-1N.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

@@ -2,8 +2,6 @@ Version:1.0
 Huron Warrior
 HUR-WO-R4L
 mul id:1580
-base unit:data/mechfiles/mechs/3145/NTNU RS/NTNU/Huron Warrior HUR-WO-R5L.mtf
-quirk:imp_sensors
 
 Config:Biped
 TechBase:Inner Sphere

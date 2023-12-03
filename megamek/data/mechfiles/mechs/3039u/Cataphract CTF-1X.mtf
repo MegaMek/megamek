@@ -1,8 +1,6 @@
 Version:1.3
 Cataphract
 CTF-1X
-base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 6/Cataphract CTF-5L.mtf
-quirk:pro_actuator
 mul id:466
 Config:Biped
 techbase:Inner Sphere

@@ -2,7 +2,6 @@ Version:1.1
 Pathfinder
 PFF-2T
 mul id:4791
-base unit:data/mechfiles/mechs/XTRs/RetroTech/Pathfinder PFF-2.mtf
 
 Config:Biped
 TechBase:Inner Sphere

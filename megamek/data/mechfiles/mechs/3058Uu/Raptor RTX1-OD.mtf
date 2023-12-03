@@ -2,7 +2,6 @@ Version:1.0
 Raptor
 RTX1-OD
 mul id:2651
-base unit:data/mechfiles/mechs/3058Uu/Raptor RTX1-O.mtf
 
 Config:Biped Omnimech
 TechBase:Inner Sphere

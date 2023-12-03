@@ -2,7 +2,6 @@ Version:1.0
 Wyvern
 WVE-5Nsl
 mul id:5875
-base unit:data/mechfiles/mechs/XTRs/Gunslingers/Wyvern WVE-5UX City.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,7 +2,6 @@ Version:1.1
 Hoplite
 HOP-4Bb
 mul id:1541
-base unit:data/mechfiles/mechs/3050U/Hoplite HOP-4A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

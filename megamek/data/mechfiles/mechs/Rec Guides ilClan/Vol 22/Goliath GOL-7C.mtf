@@ -2,7 +2,6 @@ Version:1.0
 Goliath
 GOL-7C
 mul id:8406
-base unit:data/mechfiles/mechs/3039u/Goliath GOL-1H.mtf
 
 Config:Quad
 techbase:Inner Sphere

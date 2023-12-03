@@ -2,7 +2,6 @@ Version:1.1
 Berserker
 BRZ-D4
 mul id:6831
-base unit:data/mechfiles/mechs/3055U/Berserker BRZ-A3.mtf
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

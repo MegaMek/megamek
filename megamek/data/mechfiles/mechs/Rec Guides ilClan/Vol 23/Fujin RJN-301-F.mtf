@@ -10,9 +10,6 @@ source:Rec Guide:ilClan #23
 rules level:3
 role:Striker
 
-quirk:ext_twist
-quirk:no_arms
-weaponquirk:direct_torso_mount:RT:3:ISERPPC
 
 mass:50
 engine:300 XL Engine(IS)

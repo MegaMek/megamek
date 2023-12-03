@@ -2,7 +2,6 @@ Version:1.0
 Uni
 ATAE-70 ArtilleryMech
 mul id:8101
-base unit:data/mechfiles/mechs/TRO Vehicle Annex/Uni ATAE-70 CargoMech.mtf
 
 Config:Quad
 techbase:Inner Sphere

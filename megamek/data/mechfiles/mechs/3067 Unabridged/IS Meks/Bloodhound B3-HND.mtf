@@ -2,7 +2,6 @@ Version:1.1
 Bloodhound
 B3-HND
 mul id:5671
-base unit:data/mechfiles/mechs/3067/Bloodhound B1-HND.mtf
 
 Config:Biped
 TechBase:Inner Sphere

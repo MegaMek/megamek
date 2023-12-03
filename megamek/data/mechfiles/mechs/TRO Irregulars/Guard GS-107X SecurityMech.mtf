@@ -2,7 +2,6 @@ Version:1.0
 Guard SecurityMech
 GS-107X 
 mul id:7823
-base unit:data/mechfiles/mechs/TRO Irregulars/Guard GS-54 SecurityMech.mtf
 
 Config:Quad
 techbase:Inner Sphere

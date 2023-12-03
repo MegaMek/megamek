@@ -2,7 +2,6 @@ Version:1.0
 Dragon Fire
 DGR-4F
 mul id:914
-base unit:data/mechfiles/mechs/3058Uu/Dragon Fire DGR-3F.mtf
 
 Config:Biped
 TechBase:Inner Sphere

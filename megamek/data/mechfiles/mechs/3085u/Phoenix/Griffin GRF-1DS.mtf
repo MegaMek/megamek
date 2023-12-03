@@ -2,13 +2,6 @@ Version:1.0
 Griffin
 GRF-1DS
 mul id:1294
-base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 1/Griffin C.mtf
-quirk:ubiquitous_is
-quirk:ubiquitous_clan
-quirk:rugged_1
-weaponquirk:jettison_capable:RA:7:ISLargePulseLaser
-quirk:battle_fists_ra
-quirk:battle_fists_la
 
 Config:Biped
 TechBase:Inner Sphere

@@ -10,8 +10,6 @@ source:TRO: 3039
 rules level:1
 role:Juggernaut
 
-quirk:battle_fists_la
-quirk:battle_fists_ra
 
 mass:50
 engine:200 Fusion Engine(IS)

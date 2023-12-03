@@ -2,7 +2,6 @@ Version:1.0
 Inquisitor
 ITW-85 SecurityMech
 mul id:7825
-base unit:data/mechfiles/mechs/TRO Irregulars/Inquisitor ITW-80 SecurityMech.mtf
 
 Config:Biped
 techbase:Inner Sphere

@@ -2,7 +2,6 @@ Version:1.1
 Seraph
 C-SRP-OD Luminos
 mul id:2873
-base unit:data/mechfiles/mechs/3075/Seraph C-SRP-O Invictus.mtf
 
 Config:Biped Omnimech
 TechBase:Inner Sphere

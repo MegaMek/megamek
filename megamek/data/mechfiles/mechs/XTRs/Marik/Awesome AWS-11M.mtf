@@ -2,7 +2,6 @@ Version:1.1
 Awesome
 AWS-11M
 mul id:173
-base unit:data/mechfiles/mechs/3039u/Awesome AWS-8Q.mtf
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

@@ -2,8 +2,6 @@ Version:1.0
 Brahma
 BRM-5A
 mul id:426
-base unit:data/mechfiles/mechs/3085u/Cutting Edge/Brahma BRM-5B.mtf
-weaponquirk:stable_weapon:RT:7:Light Auto Cannon/5
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,7 +2,6 @@ Version:1.1
 Carbine
 CON-8 ConstructionMech
 mul id:3895
-base unit:data/mechfiles/mechs/Operation Klondike/Carbine CON-1 ConstructionMech.mtf
 
 Config:Biped
 TechBase:Inner Sphere

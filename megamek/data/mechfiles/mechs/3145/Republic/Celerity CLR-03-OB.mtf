@@ -2,9 +2,6 @@ Version:1.1
 Celerity
 CLR-03-OB
 mul id:6705
-base unit:data/mechfiles/mechs/XTRs/Royal Fantasy/Celerity CLR-03OMM _Rajah_.mtf
-quirk:imp_com
-quirk:exp_actuator
 
 Config:Quad Omnimech
 TechBase:Inner Sphere

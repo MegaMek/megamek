@@ -2,7 +2,6 @@ Version:1.0
 Nightstar
 NSR-9J (Holt)
 mul id:7619
-base unit:data/mechfiles/mechs/3058Uu/Nightstar NSR-9J.mtf
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

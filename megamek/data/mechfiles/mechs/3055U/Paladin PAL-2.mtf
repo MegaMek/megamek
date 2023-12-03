@@ -2,7 +2,6 @@ Version:1.1
 Paladin
 PAL-2
 mul id:2409
-base unit:data/mechfiles/mechs/3055U/Paladin PAL-1.mtf
 
 Config:Biped
 TechBase:Inner Sphere

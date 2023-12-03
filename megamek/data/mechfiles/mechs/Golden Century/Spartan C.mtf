@@ -3,8 +3,6 @@ Spartan
 C
 mul id:7646
 
-base unit:data/mechfiles/mechs/3058Uu/Spartan SPT-N1.mtf
-quirk:imp_target_short
 
 Config:Biped
 techbase:Clan

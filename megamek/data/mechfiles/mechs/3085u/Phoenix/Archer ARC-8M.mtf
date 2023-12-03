@@ -2,7 +2,6 @@ Version:1.0
 Archer
 ARC-8M
 mul id:86
-base unit:data/mechfiles/mechs/3039u/Archer ARC-2R.mtf
 
 Config:Biped
 TechBase:Inner Sphere

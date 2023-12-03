@@ -2,7 +2,6 @@ Version:1.1
 Ostscout
 OTT-10CS
 mul id:2364
-base unit:data/mechfiles/mechs/3039u/Ostscout OTT-7J.mtf
 
 Config:Biped
 TechBase:Inner Sphere

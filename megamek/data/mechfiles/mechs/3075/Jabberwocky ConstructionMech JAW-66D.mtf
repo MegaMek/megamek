@@ -1,7 +1,6 @@
 Version:1.3
 Jabberwocky
 JAW-66D ConstructionMech
-base unit:data/mechfiles/mechs/3075/Jabberwocky EngineerMech JAW-65A.mtf
 mul id:1652
 Config:Biped
 techbase:Inner Sphere

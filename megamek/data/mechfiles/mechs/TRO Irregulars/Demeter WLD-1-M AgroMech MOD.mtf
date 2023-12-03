@@ -2,7 +2,6 @@ Version:1.0
 Demeter
 WLD-1-M AgroMech MOD
 mul id:7856
-base unit:data/mechfiles/mechs/TRO Irregulars/Demeter WLD-1 AgroMech.mtf
 
 Config:Biped
 techbase:Inner Sphere

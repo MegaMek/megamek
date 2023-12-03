@@ -2,7 +2,6 @@ Version:1.1
 Mackie
 MSK-7A
 mul id:4556
-base unit:data/mechfiles/mechs/3075/Mackie MSK-6S.mtf
 
 Config:Biped
 techbase:Inner Sphere

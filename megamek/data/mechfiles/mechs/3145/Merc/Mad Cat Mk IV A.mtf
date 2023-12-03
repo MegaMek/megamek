@@ -2,7 +2,6 @@ Version:1.0
 Mad Cat Mk IV (Savage Wolf)
 A
 mul id:6571
-base unit:data/mechfiles/mechs/3145/Merc/Mad Cat Mk IV PR.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

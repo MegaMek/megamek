@@ -2,7 +2,6 @@ Version:1.0
 Thug
 THG-13K
 mul id:3209
-base unit:data/mechfiles/mechs/3050U/Thug THG-11E.mtf
 
 Config:Biped
 TechBase:Inner Sphere

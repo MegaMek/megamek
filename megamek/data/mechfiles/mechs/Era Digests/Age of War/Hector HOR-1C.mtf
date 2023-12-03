@@ -2,7 +2,6 @@ Version:1.1
 Hector
 HOR-1C
 mul id:4284
-base unit:data/mechfiles/mechs/Era Digests/Age of War/Hector HOR-1B.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,7 +2,6 @@ Version:1.1
 Heavy Lifter
 HCL-1M CargoMech MOD
 mul id:7869
-base unit:data/mechfiles/mechs/TRO Irregulars/Heavy Lifter HCL-1MM MilitiaMech.mtf
 
 Config:Quad
 techbase:Inner Sphere

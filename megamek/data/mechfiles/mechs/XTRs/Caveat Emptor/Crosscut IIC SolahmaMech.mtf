@@ -2,7 +2,6 @@ Version:1.0
 Crosscut
 IIC SolahmaMech
 mul id:8099
-base unit:data/mechfiles/mechs/TRO Vehicle Annex/Crosscut ED-X1 LoggerMech.mtf
 
 Config:Biped
 techbase:Clan

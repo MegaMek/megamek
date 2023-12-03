@@ -2,7 +2,6 @@ Version:1.0
 Warhammer
 WHM-4L
 mul id:3483
-base unit:data/mechfiles/mechs/3039u/Warhammer WHM-6R.mtf
 
 Config:Biped
 TechBase:Inner Sphere

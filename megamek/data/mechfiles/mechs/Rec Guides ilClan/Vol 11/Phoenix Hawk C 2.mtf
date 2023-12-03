@@ -2,7 +2,6 @@ Version:1.0
 Phoenix Hawk
 C 2
 mul id:7753
-base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 11/Phoenix Hawk C.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

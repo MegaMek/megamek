@@ -2,7 +2,6 @@ Version:1.1
 Blue Flame
 BLF-40
 mul id:5672
-base unit:data/mechfiles/mechs/3067/Blue Flame BLF-21.mtf
 
 Config:Quad
 techbase:Inner Sphere

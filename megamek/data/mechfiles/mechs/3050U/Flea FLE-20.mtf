@@ -2,7 +2,6 @@ Version:1.0
 Flea
 FLE-20
 mul id:1139
-base unit:data/mechfiles/mechs/TRO SW/Flea FLE-16.mtf
 
 Config:Biped
 TechBase:Inner Sphere

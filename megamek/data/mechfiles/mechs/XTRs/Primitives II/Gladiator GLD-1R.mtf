@@ -1,11 +1,6 @@
 Version:1.3
 Gladiator
 GLD-1R
-base unit:data/mechfiles/mechs/3075/Gladiator GLD-2R.mtf
-quirk:unbalanced
-quirk:poor_work
-quirk:poor_sealing
-quirk:obsolete
 mul id:1198
 Config:Biped
 techbase:Inner Sphere

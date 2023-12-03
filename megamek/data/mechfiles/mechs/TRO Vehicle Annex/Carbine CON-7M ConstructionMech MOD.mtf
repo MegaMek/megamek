@@ -2,7 +2,6 @@ Version:1.1
 Carbine
 CON-7M ConstructionMech MOD
 mul id:7161
-base unit:data/mechfiles/mechs/Operation Klondike/Carbine CON-1 ConstructionMech.mtf
 
 Config:Biped
 TechBase:Inner Sphere

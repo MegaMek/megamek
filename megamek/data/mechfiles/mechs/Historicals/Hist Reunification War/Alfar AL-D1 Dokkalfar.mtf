@@ -2,7 +2,6 @@ Version:1.0
 Alfar
 AL-D1 'Dokkalfar'
 mul id:3693
-base unit:data/mechfiles/mechs/Historicals/Hist Reunification War/Alfar AL-A1.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,7 +2,6 @@ Version:1.0
 JagerMech III
 JM6-D4
 mul id:1673
-base unit:data/mechfiles/mechs/3060u/JagerMech III JM6-D3.mtf
 
 Config:Biped
 TechBase:Inner Sphere

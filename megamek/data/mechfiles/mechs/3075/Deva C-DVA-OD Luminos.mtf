@@ -2,7 +2,6 @@ Version:1.1
 Deva
 C-DVA-OD Luminos
 mul id:889
-base unit:data/mechfiles/mechs/3075/Deva C-DVA-O Invictus.mtf
 
 Config:Biped Omnimech
 TechBase:Inner Sphere

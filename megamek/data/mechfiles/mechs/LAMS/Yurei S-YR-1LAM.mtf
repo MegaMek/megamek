@@ -10,7 +10,6 @@ source:Jihad: Final Reckoning
 rules level:4
 role:Skirmisher
 
-quirk:non_standard
 
 mass:40
 engine:200 Fusion Engine(IS)

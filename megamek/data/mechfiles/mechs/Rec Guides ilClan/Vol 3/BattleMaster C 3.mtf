@@ -2,7 +2,6 @@ Version:1.0
 BattleMaster
 C 3
 mul id:7477
-base unit:data/mechfiles/mechs/3039u/BattleMaster BLR-1G-DC.mtf
 
 Config:Biped
 techbase:Clan

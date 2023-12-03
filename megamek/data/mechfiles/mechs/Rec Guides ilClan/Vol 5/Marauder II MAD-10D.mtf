@@ -2,7 +2,6 @@ Version:1.1
 Marauder II
 MAD-10D
 mul id:7519
-base unit:data/mechfiles/mechs/3039u/Marauder II MAD-4A.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

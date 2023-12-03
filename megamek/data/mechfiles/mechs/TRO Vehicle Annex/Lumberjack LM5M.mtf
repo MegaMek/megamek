@@ -2,7 +2,6 @@ Version:1.0
 Lumberjack
 LM5/M MilitiaMech
 mul id:7177
-base unit:data/mechfiles/mechs/3075/Lumberjack LM1A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

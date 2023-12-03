@@ -2,7 +2,6 @@ Version:1.0
 Hunchback
 C
 mul id:8353
-base unit:data/mechfiles/mechs/3039u/Hunchback HBK-4G.mtf
 
 Config:Biped
 techbase:Clan

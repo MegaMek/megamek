@@ -2,12 +2,6 @@ Version:1.0
 Marauder
 MAD-7R
 mul id:7532
-base unit:data/mechfiles/mechs/3075/Marauder MAD-1R.mtf
-quirk:low_profile
-quirk:hyper_actuator
-weaponquirk:exposed_linkage:RT:3:ISLightGaussRifle
-weaponquirk:direct_torso_mount:RT:3:ISLightGaussRifle
-quirk:command_mech
 
 Config:Biped
 techbase:Inner Sphere

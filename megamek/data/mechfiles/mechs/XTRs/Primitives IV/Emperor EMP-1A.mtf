@@ -2,10 +2,6 @@ Version:1.1
 Emperor
 EMP-1A
 mul id:7186
-base unit:data/mechfiles/mechs/Golden Century/Emperor EMP-6A-EC.mtf
-quirk:obsolete
-quirk:command_mech
-quirk:bad_rep_is
 
 Config:Biped
 TechBase:Inner Sphere

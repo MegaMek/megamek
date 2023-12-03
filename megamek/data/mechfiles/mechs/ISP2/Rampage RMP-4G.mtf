@@ -3,7 +3,6 @@ Rampage
 RMP-4G
 mul id:2636
 source:Jihad Conspiracies: Interstellar Players 2
-base unit:data/mechfiles/mechs/ISP2/Rampage RMP-2G.mtf
 
 Config:Biped
 TechBase:Inner Sphere

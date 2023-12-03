@@ -2,9 +2,6 @@ Version:1.0
 Dervish
 DV-6Md
 mul id:5869
-base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 29/Dervish DV-11DK.mtf
-quirk:hyper_actuator
-quirk:easy_maintain
 
 Config:Biped
 TechBase:Inner Sphere

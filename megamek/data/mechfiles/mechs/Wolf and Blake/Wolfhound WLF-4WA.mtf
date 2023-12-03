@@ -2,7 +2,6 @@ Version:1.2
 Wolfhound
 WLF-4WA
 mul id:3568
-base unit:data/mechfiles/mechs/3039u/Wolfhound WLF-1.mtf
 
 Config:Biped
 techbase:Inner Sphere

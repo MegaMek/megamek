@@ -2,7 +2,6 @@ Version:1.0
 Aquagladius
 AQS-4
 mul id:59
-base unit:data/mechfiles/mechs/3055U/Aquagladius AQS-3.mtf
 
 Config:Biped
 TechBase:Inner Sphere

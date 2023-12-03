@@ -2,7 +2,6 @@ Version:1.1
 Assassin
 ASN-99
 mul id:130
-base unit:data/mechfiles/mechs/3039u/Assassin ASN-21.mtf
 
 Config:Biped
 TechBase:Inner Sphere

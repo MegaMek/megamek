@@ -1,7 +1,6 @@
 Version:1.3
 Zeus
 ZEU-5S
-base unit:data/mechfiles/mechs/3039u/Zeus ZEU-5T.mtf
 mul id:3640
 Config:Biped
 techbase:Inner Sphere

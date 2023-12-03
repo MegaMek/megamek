@@ -2,7 +2,6 @@ Version:1.0
 Tarantula
 ZPH-4A
 mul id:3163
-base unit:data/mechfiles/mechs/3055U/Tarantula ZPH-1.mtf
 
 Config:Quad
 TechBase:Inner Sphere

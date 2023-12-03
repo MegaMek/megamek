@@ -2,7 +2,6 @@ Version:1.1
 Scarecrow
 UCU-F4r 'Hobbled Scarecrow'
 mul id:6337
-base unit:data/mechfiles/mechs/3145/Davion/Scarecrow UCU-F4.mtf
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

@@ -2,7 +2,6 @@ Version:1.1
 Rifleman
 RFL-7X
 mul id:2704
-base unit:data/mechfiles/mechs/XTRs/Primitives IV/Rifleman RFL-1N.mtf
 
 Config:Biped
 TechBase:Inner Sphere

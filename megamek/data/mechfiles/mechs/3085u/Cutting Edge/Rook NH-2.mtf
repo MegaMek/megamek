@@ -2,7 +2,6 @@ Version:1.1
 Rook
 NH-2
 mul id:2742
-base unit:data/mechfiles/mechs/3085u/Cutting Edge/Rook NH-1A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -1,9 +1,6 @@
 Version:1.3
 Orion
 ON1-C
-base unit:data/mechfiles/mechs/3145/NTNU RS/NTNU/Orion C.mtf
-quirk:easy_maintain
-weaponquirk:ammo_feed_problems:RT:0:Autocannon/5
 mul id:4755
 Config:Biped
 techbase:Inner Sphere

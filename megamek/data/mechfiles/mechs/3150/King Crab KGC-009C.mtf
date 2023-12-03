@@ -7,7 +7,6 @@ techbase:Mixed (IS Chassis)
 era:3143
 source:TRO: 3150
 rules level:2
-quirk:command_mech
 
 mass:100
 engine:300 Fusion Engine(IS)

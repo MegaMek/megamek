@@ -2,10 +2,6 @@ Version:1.1
 Deep Lord MilitiaMech
 RCL-Z1M
 mul id:4057
-base unit:data/mechfiles/mechs/TRO Irregulars/Deep Lord MilitiaMech RCL-Z1M-B.mtf
-quirk:pro_actuator
-weaponquirk:jettison_capable:RA:5:Mace
-quirk:imp_life_support
 
 Config:Biped
 TechBase:Inner Sphere

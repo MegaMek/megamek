@@ -2,7 +2,6 @@ Version:1.1
 Preta
 C-PRT-OB Infernus
 mul id:2575
-base unit:data/mechfiles/mechs/3075/Preta C-PRT-O Invictus.mtf
 
 Config:Biped Omnimech
 TechBase:Inner Sphere

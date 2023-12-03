@@ -2,7 +2,6 @@ Version:1.1
 Revenant
 UBM-2R7
 mul id:6717
-base unit:data/mechfiles/mechs/Jihad Final Reckoning/Revenant UBM-1A.mtf
 
 Config:Quad
 TechBase:Inner Sphere

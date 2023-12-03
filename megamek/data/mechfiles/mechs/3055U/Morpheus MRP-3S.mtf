@@ -2,7 +2,6 @@ Version:1.0
 Morpheus
 MRP-3S
 mul id:2226
-base unit:data/mechfiles/mechs/3055U/Morpheus MR-P1.mtf
 
 Config:Biped
 TechBase:Inner Sphere

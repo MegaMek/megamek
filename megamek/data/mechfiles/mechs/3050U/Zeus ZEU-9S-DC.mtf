@@ -2,7 +2,6 @@ Version:1.1
 Zeus
 ZEU-9S-DC
 mul id:5438
-base unit:data/mechfiles/mechs/3039u/Zeus ZEU-5T.mtf
 
 Config:Biped
 TechBase:Inner Sphere

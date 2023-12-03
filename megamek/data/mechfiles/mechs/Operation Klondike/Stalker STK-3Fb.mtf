@@ -3,7 +3,6 @@ Stalker
 STK-3Fb
 mul id:3037
 source:Historical: Operation Klondike
-base unit:data/mechfiles/mechs/3039u/Stalker STK-3F.mtf
 
 Config:Biped
 TechBase:Inner Sphere

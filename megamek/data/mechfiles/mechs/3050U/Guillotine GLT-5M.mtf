@@ -2,7 +2,6 @@ Version:1.0
 Guillotine
 GLT-5M
 mul id:1341
-base unit:data/mechfiles/mechs/3050U/Guillotine GLT-3N.mtf
 
 Config:Biped
 TechBase:Inner Sphere

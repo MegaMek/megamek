@@ -2,7 +2,6 @@ Version:1.0
 Helios
 HEL-C
 mul id:1467
-base unit:data/mechfiles/mechs/3060u/Helios HEL-3D.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,7 +2,6 @@ Version:1.0
 Longshot
 LNG-3C
 mul id:1949
-base unit:data/mechfiles/mechs/3055U/Longshot LNG-1B.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,7 +2,6 @@ Version:1.0
 Harvester
 HVR-199M-A AgroMech MOD
 mul id:7862
-base unit:data/mechfiles/mechs/TRO Vehicle Annex/Harvester HVR-99 Agromech .mtf
 
 Config:Biped
 techbase:Inner Sphere

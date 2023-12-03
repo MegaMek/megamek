@@ -2,15 +2,6 @@ Version:1.1
 Longbow
 LGB-0C
 mul id:5619
-base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 20/Longbow LGB-0W2.mtf
-quirk:weak_legs
-quirk:ubiquitous_is
-quirk:searchlight
-quirk:obsolete
-quirk:no_arms
-quirk:imp_com
-quirk:ext_twist
-quirk:cramped_cockpit
 
 Config:Biped
 TechBase:Inner Sphere

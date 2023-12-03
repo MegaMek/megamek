@@ -2,7 +2,6 @@ Version:1.0
 Pompier
 GM-4P PoliceMech 
 mul id:7837
-base unit:data/mechfiles/mechs/TRO Vehicle Annex/Pompier GM-3A Firemech.mtf
 
 Config:Biped
 techbase:Inner Sphere

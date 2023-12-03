@@ -2,13 +2,6 @@ Version:1.1
 Griffin
 GRF-4N
 mul id:1301
-base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 1/Griffin C.mtf
-quirk:ubiquitous_is
-quirk:ubiquitous_clan
-quirk:rugged_1
-weaponquirk:jettison_capable:RA:4:ISPlasmaRifle
-quirk:battle_fists_ra
-quirk:battle_fists_la
 
 Config:Biped
 TechBase:Inner Sphere

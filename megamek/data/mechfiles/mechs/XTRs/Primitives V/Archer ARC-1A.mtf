@@ -2,10 +2,6 @@ Version:1.1
 Archer
 ARC-1A
 mul id:3721
-base unit:data/mechfiles/mechs/3039u/Archer ARC-2R.mtf
-quirk:ext_twist
-quirk:easy_maintain
-quirk:difficult_eject
 
 Config:Biped
 TechBase:Inner Sphere

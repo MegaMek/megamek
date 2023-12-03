@@ -2,7 +2,6 @@ Version:1.1
 Atlas
 AS8-K
 mul id:8435
-base unit:data/mechfiles/mechs/3039u/Atlas AS7-D.mtf
 
 Config:Biped
 techbase:Inner Sphere

@@ -2,9 +2,6 @@ Version:1.2
 Hatchetman
 HCT-5S (Austin)
 mul id:1414
-base unit:data/mechfiles/mechs/3145/NTNU RS/NTNU/Hatchetman HCT-7D.mtf
-weaponquirk:fast_reload:RT:2:ISLBXAC10
-quirk:anti_air
 
 Config:Biped
 techbase:Inner Sphere

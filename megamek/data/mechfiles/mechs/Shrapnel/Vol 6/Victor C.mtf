@@ -2,7 +2,6 @@ Version:1.0
 Victor
 C
 mul id:3403
-base unit:data/mechfiles/mechs/3039u/Victor VTR-9A.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

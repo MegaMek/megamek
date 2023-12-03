@@ -2,7 +2,6 @@ Version:1.1
 Firefly
 FFL-3SLE
 mul id:1086
-base unit:data/mechfiles/mechs/Operation Klondike/Firefly FFL-3A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

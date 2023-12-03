@@ -2,7 +2,6 @@ Version:1.0
 UrbanMech
 UM-R63
 mul id:3356
-base unit:data/mechfiles/mechs/3039u/UrbanMech UM-R60.mtf
 
 Config:Biped
 TechBase:Inner Sphere

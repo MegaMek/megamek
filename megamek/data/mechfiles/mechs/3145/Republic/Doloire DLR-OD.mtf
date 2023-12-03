@@ -2,7 +2,6 @@ Version:1.0
 Doloire
 DLR-OD
 mul id:6682
-base unit:data/mechfiles/mechs/3145/Republic/Doloire DLR-O.mtf
 
 Config:Biped Omnimech
 TechBase:Mixed (IS Chassis)

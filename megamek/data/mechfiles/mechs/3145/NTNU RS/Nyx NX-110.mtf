@@ -2,7 +2,6 @@ Version:1.1
 Nyx
 NX-110
 mul id:6936
-base unit:data/mechfiles/mechs/3085u/Cutting Edge/Nyx NX-80.mtf
 
 Config:Biped
 TechBase:Inner Sphere

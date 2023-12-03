@@ -2,7 +2,6 @@ Version:1.1
 Lynx
 C
 mul id:7620
-base unit:data/mechfiles/mechs/3058Uu/Lynx LNX-9Q.mtf
 
 Config:Biped
 techbase:Clan

@@ -2,7 +2,6 @@ Version:1.0
 Dragon
 DRG-5Nr
 mul id:912
-base unit:data/mechfiles/mechs/3039u/Dragon DRG-1C.mtf
 
 Config:Biped
 TechBase:Inner Sphere

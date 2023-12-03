@@ -2,7 +2,6 @@ Version:1.1
 Nightstar
 NSR-9J (Brubaker)
 mul id:4723
-base unit:data/mechfiles/mechs/3058Uu/Nightstar NSR-9J.mtf
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

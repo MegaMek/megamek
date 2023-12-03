@@ -2,7 +2,6 @@ Version:1.0
 Sarath
 SRTH-1OB
 mul id:6508
-base unit:data/mechfiles/mechs/3145/Marik/Sarath SRTH-1O.mtf
 
 Config:Quad Omnimech
 TechBase:Mixed (IS Chassis)

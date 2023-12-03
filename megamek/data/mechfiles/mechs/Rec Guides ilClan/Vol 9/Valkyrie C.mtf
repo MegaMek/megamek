@@ -2,7 +2,6 @@ Version:1.1
 Valkyrie
 C
 mul id:7701
-base unit:data/mechfiles/mechs/3039u/Valkyrie VLK-QA.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

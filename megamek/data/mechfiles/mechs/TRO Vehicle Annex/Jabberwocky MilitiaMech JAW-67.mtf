@@ -2,7 +2,6 @@ Version:1.0
 Jabberwocky
 JAW-67 MilitiaMech
 mul id:7176
-base unit:data/mechfiles/mechs/3075/Jabberwocky EngineerMech JAW-65A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

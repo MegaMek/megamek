@@ -2,7 +2,6 @@ Version:1.0
 Grand Dragon
 DRG-12K
 mul id:8446
-base unit:data/mechfiles/mechs/3039u/Grand Dragon DRG-1G.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

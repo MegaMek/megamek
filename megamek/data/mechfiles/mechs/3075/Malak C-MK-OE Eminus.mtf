@@ -2,7 +2,6 @@ Version:1.1
 Malak
 C-MK-OE Eminus
 mul id:1999
-base unit:data/mechfiles/mechs/3075/Malak C-MK-O Invictus.mtf
 
 Config:Biped Omnimech
 TechBase:Inner Sphere

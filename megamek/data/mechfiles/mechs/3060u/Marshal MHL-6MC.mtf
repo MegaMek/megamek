@@ -1,7 +1,6 @@
 Version:1.3
 Marshal
 MHL-6MC
-base unit:data/mechfiles/mechs/3060u/Marshal MHL-X1.mtf
 mul id:2089
 Config:Biped
 techbase:Inner Sphere

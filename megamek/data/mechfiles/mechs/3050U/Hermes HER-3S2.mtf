@@ -2,7 +2,6 @@ Version:1.0
 Hermes
 HER-3S2
 mul id:1491
-base unit:data/mechfiles/mechs/3050U/Hermes HER-1S.mtf
 
 Config:Biped
 TechBase:Inner Sphere

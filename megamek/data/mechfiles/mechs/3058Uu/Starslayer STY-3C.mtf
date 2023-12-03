@@ -2,7 +2,6 @@ Version:1.0
 Starslayer
 STY-3C
 mul id:3049
-base unit:data/mechfiles/mechs/3058Uu/Starslayer STY-2C.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,7 +2,6 @@ Version:1.0
 Silver Fox
 SVR-5Y
 mul id:2945
-base unit:data/mechfiles/mechs/3055U/Silver Fox SVR-5X.mtf
 
 Config:Biped
 TechBase:Inner Sphere

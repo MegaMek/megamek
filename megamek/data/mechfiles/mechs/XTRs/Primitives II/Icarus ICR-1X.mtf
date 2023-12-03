@@ -9,11 +9,6 @@ source:XTR: Primitives II
 rules level:3
 role:Brawler
 
-quirk:difficult_maintain
-quirk:ext_twist
-quirk:poor_performance
-quirk:prototype
-quirk:obsolete
 
 mass:40
 engine:195 Fusion Engine(IS)

@@ -2,10 +2,6 @@ Version:1.0
 Emperor
 EMP-6A
 mul id:964
-base unit:data/mechfiles/mechs/Golden Century/Emperor EMP-6A-EC.mtf
-weaponquirk:imp_cooling:LA:9:Large Laser
-weaponquirk:imp_cooling:RA:9:Large Laser
-quirk:command_mech
 
 Config:Biped
 TechBase:Inner Sphere

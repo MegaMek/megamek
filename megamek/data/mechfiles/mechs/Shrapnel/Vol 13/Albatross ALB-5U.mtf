@@ -1,7 +1,6 @@
 Version:1.3
 Albatross
 ALB-5U
-base unit:data/mechfiles/mechs/3055U/Albatross ALB-3U.mtf
 mul id:9511
 Config:Biped
 techbase:Inner Sphere

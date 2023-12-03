@@ -1,7 +1,6 @@
 Version:1.3
 Caesar
 CES-5D
-base unit:data/mechfiles/mechs/3050U/Caesar CES-3R.mtf
 mul id:7982
 Config:Biped
 techbase:Mixed (IS Chassis)

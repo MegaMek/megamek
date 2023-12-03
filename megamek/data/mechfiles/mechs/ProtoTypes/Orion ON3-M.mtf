@@ -2,9 +2,6 @@ Version:1.0
 Orion
 ON3-M
 mul id:4761
-base unit:data/mechfiles/mechs/3145/NTNU RS/NTNU/Orion C.mtf
-quirk:easy_maintain
-quirk:difficult_eject
 
 Config:Biped
 techbase:Inner Sphere

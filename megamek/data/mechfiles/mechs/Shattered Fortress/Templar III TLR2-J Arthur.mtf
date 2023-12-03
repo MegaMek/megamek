@@ -2,7 +2,6 @@ Version:1.1
 Templar III
 TLR2-J 'Arthur'
 mul id:7955
-base unit:data/mechfiles/mechs/3145/Davion/Templar III TLR2-O.mtf
 
 Config:Biped Omnimech
 techbase:Mixed (IS Chassis)

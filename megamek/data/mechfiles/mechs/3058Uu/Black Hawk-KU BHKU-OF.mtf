@@ -2,7 +2,6 @@ Version:1.0
 Black Hawk-KU
 BHKU-OF
 mul id:352
-base unit:data/mechfiles/mechs/3058Uu/Black Hawk-KU BHKU-O.mtf
 
 Config:Biped Omnimech
 TechBase:Inner Sphere

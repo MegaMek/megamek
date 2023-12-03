@@ -2,7 +2,6 @@ Version:1.1
 Starslayer
 STY-2C-EC
 mul id:7680
-base unit:data/mechfiles/mechs/3058Uu/Starslayer STY-2C.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

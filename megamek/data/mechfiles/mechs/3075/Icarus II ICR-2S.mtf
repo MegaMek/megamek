@@ -2,7 +2,6 @@ Version:1.0
 Icarus II
 ICR-2S
 mul id:1601
-base unit:data/mechfiles/mechs/3075/Icarus II ICR-1S.mtf
 
 Config:Biped
 TechBase:Inner Sphere

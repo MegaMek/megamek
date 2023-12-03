@@ -2,7 +2,6 @@ Version:1.0
 Bandersnatch
 BNDR-01Ar
 mul id:218
-base unit:data/mechfiles/mechs/3055U/Bandersnatch BNDR-01A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

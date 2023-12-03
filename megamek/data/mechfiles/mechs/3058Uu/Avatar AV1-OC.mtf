@@ -2,9 +2,6 @@ Version:1.0
 Avatar
 AV1-OC
 mul id:163
-base unit:data/mechfiles/mechs/3058Uu/Avatar AV1-O.mtf
-weaponquirk:stable_weapon:CT:11:Medium Laser
-weaponquirk:stable_weapon:CT:10:Medium Laser
 
 Config:Biped Omnimech
 TechBase:Inner Sphere

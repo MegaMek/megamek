@@ -2,7 +2,6 @@ Version:1.0
 Crosscut
 ED-X4M-A LoggerMech MOD
 mul id:7852
-base unit:data/mechfiles/mechs/TRO Vehicle Annex/Crosscut ED-X1 LoggerMech.mtf
 
 Config:Biped
 techbase:Inner Sphere

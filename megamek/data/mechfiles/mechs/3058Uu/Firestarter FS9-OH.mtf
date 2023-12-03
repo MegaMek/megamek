@@ -2,9 +2,6 @@ Version:1.0
 Firestarter
 FS9-OH
 mul id:1107
-base unit:data/mechfiles/mechs/XTRs/Corporations/Firestarter FS9-X81.mtf
-quirk:difficult_maintain
-quirk:cowl
 
 Config:Biped Omnimech
 TechBase:Inner Sphere

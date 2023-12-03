@@ -2,7 +2,6 @@ Version:1.1
 No-Dachi
 NDA-2K
 mul id:4732
-base unit:data/mechfiles/mechs/3067/No-Dachi NDA-1K.mtf
 
 Config:Biped
 TechBase:Inner Sphere

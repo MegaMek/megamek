@@ -2,7 +2,6 @@ Version:1.0
 Longbow
 LGB-10C
 mul id:8333
-base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 20/Longbow LGB-0W2.mtf
 
 Config:Biped
 techbase:Inner Sphere

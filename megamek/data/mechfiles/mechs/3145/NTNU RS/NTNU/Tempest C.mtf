@@ -1,7 +1,6 @@
 Version:1.3
 Tempest
 C
-base unit:data/mechfiles/mechs/3145/NTNU RS/NTNU/Tempest TMP-4M.mtf
 mul id:8005
 Config:Biped
 techbase:Mixed (IS Chassis)

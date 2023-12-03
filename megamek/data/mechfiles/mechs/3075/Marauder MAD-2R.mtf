@@ -2,12 +2,6 @@ Version:1.0
 Marauder
 MAD-2R
 mul id:2034
-base unit:data/mechfiles/mechs/3075/Marauder MAD-1R.mtf
-quirk:low_profile
-quirk:hyper_actuator
-weaponquirk:exposed_linkage:RT:3:Autocannon/5
-weaponquirk:direct_torso_mount:RT:3:Autocannon/5
-quirk:command_mech
 
 Config:Biped
 TechBase:Inner Sphere

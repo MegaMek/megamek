@@ -2,7 +2,6 @@ Version:1.1
 Lament
 LMT-3R
 mul id:6723
-base unit:data/mechfiles/mechs/3145/Republic/Lament LMT-2R.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,7 +2,6 @@ Version:1.0
 Flashman
 FLS-9B
 mul id:1125
-base unit:data/mechfiles/mechs/3050U/Flashman FLS-8K.mtf
 
 Config:Biped
 TechBase:Inner Sphere

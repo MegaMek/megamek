@@ -2,7 +2,6 @@ Version:1.0
 Panther
 PNT-14R
 mul id:8222
-base unit:data/mechfiles/mechs/3039u/Panther PNT-8Z.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

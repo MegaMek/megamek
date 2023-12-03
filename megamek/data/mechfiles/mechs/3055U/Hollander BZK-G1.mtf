@@ -2,10 +2,6 @@ Version:1.0
 Hollander
 BZK-G1
 mul id:1537
-base unit:data/mechfiles/mechs/3145/NTNU RS/NTNU/Hollander BZK-G2.mtf
-quirk:unbalanced
-weaponquirk:stable_weapon:RT:2:ISLBXAC10
-quirk:reinforced_legs
 
 Config:Biped
 TechBase:Inner Sphere

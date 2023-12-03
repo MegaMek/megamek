@@ -2,7 +2,6 @@ Version:1.0
 Burrower
 DTM-1M MiningMech MOD
 mul id:7875
-base unit:data/mechfiles/mechs/TRO Irregulars/Burrower DTM-1 MiningMech.mtf
 
 Config:Biped
 techbase:Inner Sphere

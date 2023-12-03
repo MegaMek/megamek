@@ -2,8 +2,6 @@ Version:1.1
 Grasshopper
 GHR-7P
 mul id:4234
-base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 1/Grasshopper GHR-8K.mtf
-quirk:non_standard
 
 Config:Biped
 TechBase:Inner Sphere

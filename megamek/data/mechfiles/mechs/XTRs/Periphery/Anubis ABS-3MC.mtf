@@ -1,8 +1,6 @@
 Version:1.3
 Anubis
 ABS-3MC
-base unit:data/mechfiles/mechs/3067/Anubis ABS-3L.mtf
-quirk:prototype
 mul id:5562
 Config:Biped
 techbase:Inner Sphere

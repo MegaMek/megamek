@@ -2,7 +2,6 @@ Version:1.0
 Scorpion
 SCP-12K
 mul id:2835
-base unit:data/mechfiles/mechs/3039u/Scorpion SCP-1N.mtf
 
 Config:Quad
 TechBase:Inner Sphere

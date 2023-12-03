@@ -2,7 +2,6 @@ Version:1.0
 MuckRaker
 GMMM-2M-B MiningMech MOD
 mul id:7828
-base unit:data/mechfiles/mechs/TRO Irregulars/MuckRaker GMMM-2 MiningMech.mtf
 
 Config:Biped
 techbase:Inner Sphere

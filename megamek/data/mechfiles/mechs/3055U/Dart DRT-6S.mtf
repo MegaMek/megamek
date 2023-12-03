@@ -2,7 +2,6 @@ Version:1.0
 Dart
 DRT-6S
 mul id:830
-base unit:data/mechfiles/mechs/3055U/Dart DRT-3S.mtf
 
 Config:Biped
 TechBase:Inner Sphere

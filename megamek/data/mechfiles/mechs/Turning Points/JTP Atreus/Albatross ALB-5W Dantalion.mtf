@@ -2,7 +2,6 @@ Version:1.1
 Albatross
 ALB-5W (Dantalion)
 mul id:30
-base unit:data/mechfiles/mechs/3055U/Albatross ALB-3U.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,7 +2,6 @@ Version:1.1
 Marco
 MR-7 ExplorerMech
 mul id:4595
-base unit:data/mechfiles/mechs/TRO Vehicle Annex/Marco MR-6.mtf
 
 Config:Biped
 TechBase:Inner Sphere

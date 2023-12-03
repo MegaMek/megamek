@@ -2,10 +2,6 @@ Version:1.0
 Mongoose
 MON-70
 mul id:2213
-base unit:data/mechfiles/mechs/XTRs/Gunslingers/Mongoose MON-66GX Gunslinger.mtf
-weaponquirk:stable_weapon:CT:10:Medium Laser
-quirk:easy_pilot
-quirk:command_mech
 
 Config:Biped
 TechBase:Inner Sphere

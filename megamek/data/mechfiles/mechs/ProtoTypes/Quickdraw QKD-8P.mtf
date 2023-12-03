@@ -2,7 +2,6 @@ Version:1.1
 Quickdraw
 QKD-8P
 mul id:4887
-base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 26/Quickdraw QKD-9G.mtf
 
 Config:Biped
 TechBase:Inner Sphere

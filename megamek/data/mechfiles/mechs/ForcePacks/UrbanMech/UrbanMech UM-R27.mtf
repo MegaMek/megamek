@@ -2,7 +2,6 @@ Version:1.0
 UrbanMech
 UM-R27
 mul id:9498
-base unit:data/mechfiles/mechs/3039u/UrbanMech UM-R60.mtf
 
 Config:Biped
 techbase:Inner Sphere

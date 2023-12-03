@@ -2,8 +2,6 @@ Version:1.0
 Emperor
 EMP-6D
 mul id:966
-base unit:data/mechfiles/mechs/Golden Century/Emperor EMP-6A-EC.mtf
-quirk:command_mech
 
 Config:Biped
 TechBase:Inner Sphere

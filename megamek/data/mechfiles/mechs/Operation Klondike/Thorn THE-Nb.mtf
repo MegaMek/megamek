@@ -3,7 +3,6 @@ Thorn
 THE-Nb
 mul id:3194
 source:Historical: Operation Klondike
-base unit:data/mechfiles/mechs/3039u/Thorn THE-F.mtf
 
 Config:Biped
 TechBase:Inner Sphere

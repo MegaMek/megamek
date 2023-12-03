@@ -1,7 +1,6 @@
 Version:1.3
 Warhammer
 C
-base unit:data/mechfiles/mechs/3039u/Warhammer WHM-6R.mtf
 mul id:3479
 Config:Biped
 techbase:Mixed (IS Chassis)

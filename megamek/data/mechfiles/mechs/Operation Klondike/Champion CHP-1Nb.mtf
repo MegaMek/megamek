@@ -2,7 +2,6 @@ Version:1.1
 Champion
 CHP-1Nb
 mul id:550
-base unit:data/mechfiles/mechs/3050U/Champion CHP-1N.mtf
 
 Config:Biped
 TechBase:Inner Sphere

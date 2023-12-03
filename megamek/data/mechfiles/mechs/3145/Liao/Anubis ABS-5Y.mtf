@@ -2,7 +2,6 @@ Version:1.0
 Anubis
 ABS-5Y
 mul id:6453
-base unit:data/mechfiles/mechs/3067/Anubis ABS-3L.mtf
 
 Config:Biped
 TechBase:Inner Sphere

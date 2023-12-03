@@ -2,7 +2,6 @@ Version:1.0
 Fennec
 FEC-5CM
 mul id:6900
-base unit:data/mechfiles/mechs/3085u/Cutting Edge/Fennec FEC-1CM.mtf
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

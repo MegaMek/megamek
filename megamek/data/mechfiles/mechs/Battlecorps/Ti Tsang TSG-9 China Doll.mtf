@@ -2,7 +2,6 @@ Version:1.1
 Ti Ts'ang
 TSG-9 'China Doll'
 mul id:5241
-base unit:data/mechfiles/mechs/3060u/Ti Ts'ang TSG-9H.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,7 +2,6 @@ Version:1.0
 Stealth
 STH-5X
 mul id:5130
-base unit:data/mechfiles/mechs/3055U/Stealth STH-1D.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

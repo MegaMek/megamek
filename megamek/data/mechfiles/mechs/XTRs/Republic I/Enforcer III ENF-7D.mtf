@@ -1,13 +1,6 @@
 Version:1.3
 Enforcer III
 ENF-7D
-base unit:data/mechfiles/mechs/3145/NTNU RS/NTNU/Enforcer III ENF-6R.mtf
-quirk:non_standard
-quirk:hyper_actuator
-weaponquirk:fast_reload:RA:3:ISLBXAC10
-quirk:command_mech
-quirk:battle_fists_la
-quirk:barrel_fists_ra
 mul id:7296
 Config:Biped
 techbase:Inner Sphere

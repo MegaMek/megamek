@@ -2,7 +2,6 @@ Version:1.1
 Valkyrie
 VLK-QDD
 mul id:7702
-base unit:data/mechfiles/mechs/3039u/Valkyrie VLK-QA.mtf
 
 Config:Biped
 techbase:Inner Sphere

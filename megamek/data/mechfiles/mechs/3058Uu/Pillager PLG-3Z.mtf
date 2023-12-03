@@ -1,7 +1,6 @@
 Version:1.3
 Pillager
 PLG-3Z
-base unit:data/mechfiles/mechs/3058Uu/Pillager PLG-1N.mtf
 mul id:2525
 Config:Biped
 techbase:Inner Sphere

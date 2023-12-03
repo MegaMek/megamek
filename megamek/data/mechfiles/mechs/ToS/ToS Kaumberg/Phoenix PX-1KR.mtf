@@ -2,7 +2,6 @@ Version:1.1
 Phoenix
 PX-1KR
 mul id:7469
-base unit:data/mechfiles/mechs/ToS/ToS Kaumberg/Phoenix PX-1KC.mtf
 
 Config:Biped
 techbase:Inner Sphere

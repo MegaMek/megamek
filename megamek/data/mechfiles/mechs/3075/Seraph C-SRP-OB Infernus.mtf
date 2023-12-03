@@ -2,7 +2,6 @@ Version:1.1
 Seraph
 C-SRP-OB Infernus
 mul id:2871
-base unit:data/mechfiles/mechs/3075/Seraph C-SRP-O Invictus.mtf
 
 Config:Biped Omnimech
 TechBase:Inner Sphere

@@ -2,7 +2,6 @@ Version:1.1
 Exterminator
 EXT-5E
 mul id:1006
-base unit:data/mechfiles/mechs/3050U/Exterminator EXT-4C.mtf
 
 Config:Biped
 TechBase:Inner Sphere

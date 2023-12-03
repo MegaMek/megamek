@@ -2,7 +2,6 @@ Version:1.1
 Valiant
 VAL-NT-JX 'Hot Knife'
 mul id:3370
-base unit:data/mechfiles/mechs/3075/Valiant V4-LNT-K7.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -9,10 +9,6 @@ era:3053
 source:Rec Guide:ilClan #17
 rules level:2
 role:Skirmisher
-quirk:easy_maintain
-quirk:rugged_1
-quirk:ubiquitous_clan
-quirk:ubiquitous_is
 
 mass:65
 engine:325 XL Engine(IS)

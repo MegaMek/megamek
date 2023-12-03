@@ -2,7 +2,6 @@ Version:1.0
 Gauntlet
 GTL-1OC
 mul id:6624
-base unit:data/mechfiles/mechs/3145/Steiner/Gauntlet GTL-1O.mtf
 
 Config:Biped Omnimech
 TechBase:Inner Sphere

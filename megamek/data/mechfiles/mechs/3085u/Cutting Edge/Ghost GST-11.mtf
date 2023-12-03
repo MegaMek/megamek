@@ -2,7 +2,6 @@ Version:1.0
 Ghost
 GST-11
 mul id:1194
-base unit:data/mechfiles/mechs/3085u/Cutting Edge/Ghost GST-10.mtf
 
 Config:Biped
 TechBase:Inner Sphere

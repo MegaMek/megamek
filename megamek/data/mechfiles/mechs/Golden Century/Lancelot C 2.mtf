@@ -2,7 +2,6 @@ Version:1.1
 Lancelot
 C 2
 mul id:7627
-base unit:data/mechfiles/mechs/3050U/Lancelot LNC25-01.mtf
 
 Config:Biped
 techbase:Clan

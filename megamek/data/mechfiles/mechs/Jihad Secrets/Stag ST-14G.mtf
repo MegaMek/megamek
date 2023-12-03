@@ -10,10 +10,6 @@ Era:2823
 Rules Level:2
 role:Striker
 
-quirk:imp_com
-quirk:imp_sensors
-quirk:bad_rep_clan
-weaponquirk:stable_weapon:RA:3:ISERLargeLaser
 
 Mass:45
 Engine:270 XL Engine

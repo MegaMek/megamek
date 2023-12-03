@@ -2,7 +2,6 @@ Version:1.0
 Rifleman
 RFL-5CS
 mul id:7597
-base unit:data/mechfiles/mechs/XTRs/Primitives IV/Rifleman RFL-1N.mtf
 
 Config:Biped
 TechBase:Inner Sphere

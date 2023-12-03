@@ -2,7 +2,6 @@ Version:1.0
 Men Shen
 MS1-OU
 mul id:2167
-base unit:data/mechfiles/mechs/3060u/Men Shen MS1-O.mtf
 
 Config:Biped Omnimech
 TechBase:Inner Sphere

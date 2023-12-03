@@ -2,7 +2,6 @@ Version:1.1
 Hunchback
 HBK-7X-4
 mul id:1567
-base unit:data/mechfiles/mechs/3039u/Hunchback HBK-4G.mtf
 
 Config:Biped
 TechBase:Inner Sphere

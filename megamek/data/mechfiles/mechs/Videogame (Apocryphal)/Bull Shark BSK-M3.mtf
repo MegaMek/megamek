@@ -1,7 +1,6 @@
 Version:1.0
 Bull Shark
 BSK-M3
-base unit:data/mechfiles/mechs/Videogame (Apocryphal)/Bull Shark BSK-MAZ.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

@@ -1,7 +1,6 @@
 Version:1.3
 Scorpion
 SCP-2N
-base unit:data/mechfiles/mechs/3039u/Scorpion SCP-1N.mtf
 mul id:8315
 Config:Quad
 techbase:Inner Sphere

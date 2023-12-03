@@ -1,8 +1,6 @@
 Version:1.3
 Black Knight
 BL-6-KNT
-base unit:data/mechfiles/mechs/3145/Davion/Black Knight BLK-NT-2Y.mtf
-quirk:command_mech
 mul id:358
 Config:Biped
 techbase:Inner Sphere

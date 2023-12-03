@@ -2,8 +2,6 @@ Version:1.0
 Black Knight
 BLK-NT-4D
 mul id:6350
-base unit:data/mechfiles/mechs/3145/Davion/Black Knight BLK-NT-2Y.mtf
-weaponquirk:accurate:LA:3:CLERPPC
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

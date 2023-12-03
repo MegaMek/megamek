@@ -2,7 +2,6 @@ Version:1.1
 Pompier
 GM-3HT Firemech
 mul id:4844
-base unit:data/mechfiles/mechs/TRO Vehicle Annex/Pompier GM-3A Firemech.mtf
 
 Config:Biped
 TechBase:Inner Sphere

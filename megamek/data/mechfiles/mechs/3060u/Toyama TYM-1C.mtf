@@ -2,7 +2,6 @@ Version:1.1
 Toyama
 TYM-1C
 mul id:3280
-base unit:data/mechfiles/mechs/3060u/Toyama TYM-1A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

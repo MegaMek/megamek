@@ -2,7 +2,6 @@ Version:1.0
 Avalanche
 AVL-1ON
 mul id:6400
-base unit:data/mechfiles/mechs/3145/Kurita/Avalanche AVL-1O.mtf
 
 Config:Biped Omnimech
 TechBase:Mixed (IS Chassis)

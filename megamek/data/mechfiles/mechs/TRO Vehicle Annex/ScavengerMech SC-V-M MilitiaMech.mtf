@@ -3,7 +3,6 @@ Scavenger
 SC-V-M MilitiaMech
 
 mul id:7174
-base unit:data/mechfiles/mechs/TRO Vehicle Annex/ScavengerMech SC-V SalvageMech.mtf
 
 Config:Quad
 techbase:Inner Sphere

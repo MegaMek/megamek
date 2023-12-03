@@ -2,7 +2,6 @@ Version:1.0
 JagerMech
 JM7-C3BS
 mul id:1671
-base unit:data/mechfiles/mechs/3039u/JagerMech JM6-S.mtf
 
 Config:Biped
 TechBase:Inner Sphere

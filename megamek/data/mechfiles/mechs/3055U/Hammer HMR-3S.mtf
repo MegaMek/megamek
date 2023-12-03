@@ -2,7 +2,6 @@ Version:1.0
 Hammer
 HMR-3S 'Slammer'
 mul id:1368
-base unit:data/mechfiles/mechs/3055U/Hammer HMR-3M.mtf
 
 Config:Biped
 TechBase:Inner Sphere

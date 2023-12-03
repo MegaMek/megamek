@@ -2,7 +2,6 @@ Version:1.0
 Arctic Fox
 AF1F
 mul id:97
-base unit:data/mechfiles/mechs/3060u/Arctic Fox AF1.mtf
 
 Config:Biped Omnimech
 TechBase:Inner Sphere

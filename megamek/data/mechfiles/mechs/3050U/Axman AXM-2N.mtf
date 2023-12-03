@@ -2,7 +2,6 @@ Version:1.0
 Axman
 AXM-2N
 mul id:185
-base unit:data/mechfiles/mechs/3050U/Axman AXM-1N.mtf
 
 Config:Biped
 techbase:Inner Sphere

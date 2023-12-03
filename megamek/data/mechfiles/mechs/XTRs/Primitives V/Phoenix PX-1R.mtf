@@ -2,13 +2,6 @@ Version:1.1
 Phoenix
 PX-1R
 mul id:2488
-base unit:data/mechfiles/mechs/ToS/ToS Kaumberg/Phoenix PX-1KC.mtf
-quirk:weak_legs
-quirk:poor_work
-weaponquirk:em_interference:RA:2:PPC
-quirk:em_inter_whole
-weaponquirk:direct_torso_mount:LT:2:SRM 2
-weaponquirk:direct_torso_mount:LT:1:SRM 2
 
 Config:Biped
 TechBase:Inner Sphere

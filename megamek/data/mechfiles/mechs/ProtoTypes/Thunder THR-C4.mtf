@@ -2,10 +2,6 @@ Version:1.1
 Thunder
 THR-C4
 mul id:5230
-base unit:data/mechfiles/mechs/3055U/Thunder THR-1L.mtf
-quirk:reinforced_legs
-quirk:hard_pilot
-quirk:easy_maintain
 
 Config:Biped
 TechBase:Inner Sphere

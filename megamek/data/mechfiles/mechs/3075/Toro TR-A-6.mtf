@@ -2,8 +2,6 @@ Version:1.0
 Toro
 TR-A-6
 mul id:3277
-base unit:data/mechfiles/mechs/Shrapnel/Vol 10/Toro TR-B-9.mtf
-quirk:cramped_cockpit
 
 Config:Biped
 TechBase:Inner Sphere

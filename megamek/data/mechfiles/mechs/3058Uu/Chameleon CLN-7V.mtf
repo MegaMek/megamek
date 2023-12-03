@@ -2,7 +2,6 @@ Version:1.0
 Chameleon
 CLN-7V
 mul id:543
-base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 25/Chameleon TRC-4C.mtf
 
 Config:Biped
 TechBase:Inner Sphere

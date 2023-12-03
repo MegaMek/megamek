@@ -2,9 +2,6 @@ Version:1.0
 Crusader
 CRD-3D
 mul id:749
-base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 17/Crusader CRD-6T.mtf
-weaponquirk:stable_weapon:LL:4:SRM 4
-weaponquirk:stable_weapon:RL:4:SRM 4
 
 Config:Biped
 TechBase:Inner Sphere

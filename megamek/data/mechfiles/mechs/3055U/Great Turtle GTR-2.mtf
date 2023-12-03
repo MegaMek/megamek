@@ -2,7 +2,6 @@ Version:1.1
 Great Turtle
 GTR-2
 mul id:1282
-base unit:data/mechfiles/mechs/3055U/Great Turtle GTR-1.mtf
 
 Config:Quad
 TechBase:Inner Sphere

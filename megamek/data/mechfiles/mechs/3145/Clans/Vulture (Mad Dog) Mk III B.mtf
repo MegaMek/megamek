@@ -2,7 +2,6 @@ Version:1.0
 Vulture Mk III (Mad Dog Mk III)
 B
 mul id:6273
-base unit:data/mechfiles/mechs/3145/Clans/Vulture (Mad Dog) Mk III (Prime).mtf
 
 Config:Biped Omnimech
 TechBase:Clan

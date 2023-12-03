@@ -2,7 +2,6 @@ Version:1.0
 Stinger
 C 2
 mul id:8128
-base unit:data/mechfiles/mechs/3039u/Stinger STG-3R.mtf
 
 Config:Biped
 techbase:Clan

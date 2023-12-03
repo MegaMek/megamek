@@ -2,9 +2,6 @@ Version:1.1
 Hitman
 HM-1r
 mul id:1534
-base unit:data/mechfiles/mechs/3055U/Hitman HM-2.mtf
-weaponquirk:stable_weapon:HD:3:ISTAG
-weaponquirk:accurate:HD:3:ISTAG
 
 Config:Biped
 TechBase:Inner Sphere

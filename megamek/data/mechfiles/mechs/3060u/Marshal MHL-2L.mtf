@@ -2,7 +2,6 @@ Version:1.0
 Marshal
 MHL-2L
 mul id:2088
-base unit:data/mechfiles/mechs/3060u/Marshal MHL-X1.mtf
 
 Config:Biped
 TechBase:Inner Sphere

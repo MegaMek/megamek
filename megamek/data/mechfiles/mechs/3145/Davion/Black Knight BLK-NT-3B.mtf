@@ -2,8 +2,6 @@ Version:1.0
 Black Knight
 BLK-NT-3B
 mul id:6349
-base unit:data/mechfiles/mechs/3145/Davion/Black Knight BLK-NT-2Y.mtf
-weaponquirk:accurate:LA:3:ISERPPC
 
 Config:Biped
 TechBase:Inner Sphere

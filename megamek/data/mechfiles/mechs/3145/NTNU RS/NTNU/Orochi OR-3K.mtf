@@ -1,7 +1,6 @@
 Version:1.3
 Orochi
 OR-3K
-base unit:data/mechfiles/mechs/3085u/Cutting Edge/Orochi OR-2I.mtf
 mul id:7999
 Config:Biped
 techbase:Inner Sphere

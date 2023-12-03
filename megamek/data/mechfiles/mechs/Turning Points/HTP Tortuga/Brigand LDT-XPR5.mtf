@@ -2,9 +2,6 @@ Version:1.1
 Brigand
 LDT-XPR5
 mul id:7317
-base unit:data/mechfiles/mechs/3067/Brigand LDT-1.mtf
-quirk:easy_pilot
-quirk:easy_maintain
 
 Config:Biped
 TechBase:Inner Sphere

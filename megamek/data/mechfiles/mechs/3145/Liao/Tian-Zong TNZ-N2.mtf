@@ -2,7 +2,6 @@ Version:1.0
 Tian-Zong
 TNZ-N2
 mul id:6470
-base unit:data/mechfiles/mechs/3145/Liao/Tian-Zong TNZ-N1.mtf
 
 Config:Biped
 TechBase:Inner Sphere

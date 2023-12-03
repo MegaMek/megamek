@@ -2,7 +2,6 @@ Version:1.0
 Nyx
 NX-90
 mul id:2309
-base unit:data/mechfiles/mechs/3085u/Cutting Edge/Nyx NX-80.mtf
 
 Config:Biped
 TechBase:Inner Sphere

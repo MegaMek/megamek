@@ -1,7 +1,6 @@
 Version:1.3
 Venom
 SDR-9KE
-base unit:data/mechfiles/mechs/3055U/Venom SDR-9K.mtf
 mul id:8007
 Config:Biped
 techbase:Inner Sphere

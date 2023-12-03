@@ -2,7 +2,6 @@ Version:1.0
 Stinger
 STG-5M
 mul id:3063
-base unit:data/mechfiles/mechs/3039u/Stinger STG-3R.mtf
 
 Config:Biped
 techbase:Inner Sphere

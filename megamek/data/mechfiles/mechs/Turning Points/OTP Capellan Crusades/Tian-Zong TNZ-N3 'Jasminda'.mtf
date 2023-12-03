@@ -2,7 +2,6 @@ Version:1.1
 Tian-Zong
 TNZ-N3 'Jasminda'
 mul id:7402
-base unit:data/mechfiles/mechs/3145/Liao/Tian-Zong TNZ-N1.mtf
 
 Config:Biped
 TechBase:Inner Sphere

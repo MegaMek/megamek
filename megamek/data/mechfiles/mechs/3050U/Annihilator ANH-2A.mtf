@@ -2,7 +2,6 @@ Version:1.0
 Annihilator
 ANH-2A
 mul id:39
-base unit:data/mechfiles/mechs/Operation Klondike/Annihilator ANH-1X.mtf
 
 Config:Biped
 techbase:Inner Sphere

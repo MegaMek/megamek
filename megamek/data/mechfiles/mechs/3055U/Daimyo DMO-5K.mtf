@@ -2,7 +2,6 @@ Version:1.0
 Daimyo
 DMO-5K
 mul id:806
-base unit:data/mechfiles/mechs/3055U/Daimyo DMO-1K.mtf
 
 Config:Biped
 TechBase:Inner Sphere

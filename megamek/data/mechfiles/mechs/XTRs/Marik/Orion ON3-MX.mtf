@@ -1,10 +1,6 @@
 Version:1.3
 Orion
 ON3-MX
-base unit:data/mechfiles/mechs/3145/NTNU RS/NTNU/Orion C.mtf
-quirk:rugged_1
-quirk:easy_maintain
-quirk:anti_air
 mul id:2339
 Config:Biped
 techbase:Inner Sphere

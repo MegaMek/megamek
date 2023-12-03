@@ -1,7 +1,6 @@
 Version:1.3
 Charger
 CGR-1A9
-base unit:data/mechfiles/mechs/3039u/Charger CGR-1A1.mtf
 mul id:561
 Config:Biped
 techbase:Inner Sphere

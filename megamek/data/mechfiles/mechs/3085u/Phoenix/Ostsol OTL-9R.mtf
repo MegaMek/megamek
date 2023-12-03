@@ -2,7 +2,6 @@ Version:1.1
 Ostsol
 OTL-9R
 mul id:2380
-base unit:data/mechfiles/mechs/3039u/Ostsol OTL-4D.mtf
 
 Config:Biped
 TechBase:Inner Sphere

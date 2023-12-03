@@ -2,7 +2,6 @@ Version:1.0
 Scorpion
 SCP-1TB
 mul id:2840
-base unit:data/mechfiles/mechs/3039u/Scorpion SCP-1N.mtf
 
 Config:Quad
 techbase:Inner Sphere

@@ -2,7 +2,6 @@ Version:1.0
 Wraith
 TR3
 mul id:3591
-base unit:data/mechfiles/mechs/3055U/Wraith TR1.mtf
 
 Config:Biped
 TechBase:Inner Sphere

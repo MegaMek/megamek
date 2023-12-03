@@ -1,7 +1,6 @@
 Version:1.3
 Omega
 SHP-5R
-base unit:data/mechfiles/mechs/Jihad Final Reckoning/OMEGA SHP-4X.mtf
 mul id:7997
 Config:Biped
 techbase:Inner Sphere

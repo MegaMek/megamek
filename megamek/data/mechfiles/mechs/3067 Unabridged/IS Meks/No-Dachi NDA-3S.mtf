@@ -2,7 +2,6 @@ Version:1.1
 No-Dachi
 NDA-3S
 mul id:5692
-base unit:data/mechfiles/mechs/3067/No-Dachi NDA-1K.mtf
 
 Config:Biped
 TechBase:Inner Sphere

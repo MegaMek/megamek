@@ -2,7 +2,6 @@ Version:1.0
 Sokuryou
 SKU-198 SurveyMech
 mul id:2984
-base unit:data/mechfiles/mechs/3085u/Cutting Edge/Sokuryou SKU-181 SurveyMech.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,7 +2,6 @@ Version:1.0
 Jackrabbit
 JKR-9R 'Joker'
 mul id:1657
-base unit:data/mechfiles/mechs/3075/Jackrabbit JKR-8T.mtf
 
 Config:Biped
 TechBase:Inner Sphere

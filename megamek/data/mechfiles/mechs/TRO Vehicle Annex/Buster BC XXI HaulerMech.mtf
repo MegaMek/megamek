@@ -2,7 +2,6 @@ Version:1.1
 Buster
 BC XXI HaulerMech
 mul id:7220
-base unit:data/mechfiles/mechs/TRO Vehicle Annex/Buster BC XV HaulerMech.mtf
 
 Config:Biped
 TechBase:Inner Sphere

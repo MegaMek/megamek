@@ -2,7 +2,6 @@ Version:1.1
 Sentry
 SNT-W5
 mul id:2867
-base unit:data/mechfiles/mechs/3060u/Sentry SNT-04.mtf
 
 Config:Biped
 TechBase:Inner Sphere

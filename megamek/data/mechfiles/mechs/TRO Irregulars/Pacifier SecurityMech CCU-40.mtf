@@ -2,7 +2,6 @@ Version:1.0
 Pacifier SecurityMech
 CCU-40
 mul id:7824
-base unit:data/mechfiles/mechs/TRO Irregulars/Pacifier SecurityMech CCU-36.mtf
 
 Config:Biped
 techbase:Inner Sphere

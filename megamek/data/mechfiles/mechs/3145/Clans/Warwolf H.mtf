@@ -2,7 +2,6 @@ Version:1.0
 Warwolf
 H
 mul id:6291
-base unit:data/mechfiles/mechs/3145/Clans/Warwolf (Prime).mtf
 
 Config:Biped Omnimech
 TechBase:Clan

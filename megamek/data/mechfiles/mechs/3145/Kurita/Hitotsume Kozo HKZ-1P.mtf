@@ -2,7 +2,6 @@ Version:1.1
 Hitotsume Kozo
 HKZ-1P
 mul id:6413
-base unit:data/mechfiles/mechs/3145/Kurita/Hitotsume Kozo HKZ-1F.mtf
 
 Config:Biped
 TechBase:Inner Sphere

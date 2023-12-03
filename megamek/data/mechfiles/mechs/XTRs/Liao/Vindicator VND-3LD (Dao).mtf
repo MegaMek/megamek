@@ -1,7 +1,6 @@
 Version:1.3
 Vindicator
 VND-3LD (Dao)
-base unit:data/mechfiles/mechs/3039u/Vindicator VND-1R.mtf
 mul id:3427
 Config:Biped
 techbase:Mixed (IS Chassis)

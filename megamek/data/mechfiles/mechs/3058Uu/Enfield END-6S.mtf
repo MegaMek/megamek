@@ -2,7 +2,6 @@ Version:1.0
 Enfield
 END-6S
 mul id:974
-base unit:data/mechfiles/mechs/Golden Century/Enfield END-6J-EC.mtf
 
 Config:Biped
 TechBase:Inner Sphere

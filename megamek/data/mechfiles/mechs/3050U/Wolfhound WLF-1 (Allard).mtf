@@ -2,7 +2,6 @@ Version:1.2
 Wolfhound
 WLF-1 (Allard)
 mul id:5416
-base unit:data/mechfiles/mechs/3039u/Wolfhound WLF-1.mtf
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

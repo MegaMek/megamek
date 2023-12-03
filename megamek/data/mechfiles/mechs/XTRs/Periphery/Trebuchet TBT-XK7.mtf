@@ -2,13 +2,6 @@ Version:1.0
 Trebuchet
 TBT-XK7
 mul id:5563
-base unit:data/mechfiles/mechs/XTRs/Royal Fantasy/Trebuchet TBT-7MM _Merida_.mtf
-quirk:prototype
-quirk:non_standard
-weaponquirk:jettison_capable:RA:4:Chain Whip
-weaponquirk:fast_reload:RT:3:ISStreakSRM6
-quirk:fast_reload
-quirk:easy_maintain
 
 Config:Biped
 TechBase:Inner Sphere

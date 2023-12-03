@@ -2,7 +2,6 @@ Version:1.0
 Bombard
 BMB-1X
 mul id:420
-base unit:data/mechfiles/mechs/3055U/Bombard BMB-010.mtf
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

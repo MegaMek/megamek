@@ -2,7 +2,6 @@ Version:1.1
 Kiso
 K-3N-KR5 ConstructionMech
 mul id:1803
-base unit:data/mechfiles/mechs/3075/Kiso K-3N-KR4 ConstructionMech.mtf
 
 Config:Quad
 TechBase:Inner Sphere

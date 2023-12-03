@@ -2,7 +2,6 @@ Version:1.0
 Imp
 IMP-2E
 mul id:4358
-base unit:data/mechfiles/mechs/Operation Klondike/Imp IMP-1A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

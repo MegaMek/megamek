@@ -2,7 +2,6 @@ Version:1.0
 Mortis
 MS-1P
 mul id:6467
-base unit:data/mechfiles/mechs/3145/Liao/Mortis MS-1A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

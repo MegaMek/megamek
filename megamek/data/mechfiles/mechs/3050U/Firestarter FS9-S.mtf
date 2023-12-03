@@ -2,11 +2,6 @@ Version:1.0
 Firestarter
 FS9-S
 mul id:1112
-base unit:data/mechfiles/mechs/XTRs/Corporations/Firestarter FS9-X81.mtf
-quirk:ubiquitous_is
-quirk:ubiquitous_clan
-weaponquirk:exposed_linkage:LA:3:Flamer
-weaponquirk:exposed_linkage:RA:3:Flamer
 
 Config:Biped
 TechBase:Inner Sphere

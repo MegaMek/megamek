@@ -2,7 +2,6 @@ Version:1.1
 Stiletto
 STO-4C
 mul id:5666
-base unit:data/mechfiles/mechs/3067/Stiletto STO-4A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

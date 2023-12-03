@@ -2,7 +2,6 @@ Version:1.0
 Awesome
 AWS-8V
 mul id:177
-base unit:data/mechfiles/mechs/3039u/Awesome AWS-8Q.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,7 +2,6 @@ Version:1.0
 Tessen
 TSN-1Cr
 mul id:3172
-base unit:data/mechfiles/mechs/3067/Tessen TSN-1C.mtf
 
 Config:Biped
 TechBase:Inner Sphere

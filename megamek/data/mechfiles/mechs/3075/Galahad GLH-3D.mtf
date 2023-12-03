@@ -2,7 +2,6 @@ Version:1.1
 Galahad
 GLH-3D
 mul id:1169
-base unit:data/mechfiles/mechs/3075/Galahad GLH-1D.mtf
 
 Config:Biped
 TechBase:Inner Sphere

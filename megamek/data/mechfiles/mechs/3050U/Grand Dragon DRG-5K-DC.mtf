@@ -2,7 +2,6 @@ Version:1.1
 Grand Dragon
 DRG-5K-DC
 mul id:4230
-base unit:data/mechfiles/mechs/3039u/Grand Dragon DRG-1G.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,7 +2,6 @@ Version:1.0
 Archer
 C
 mul id:90
-base unit:data/mechfiles/mechs/3039u/Archer ARC-2R.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

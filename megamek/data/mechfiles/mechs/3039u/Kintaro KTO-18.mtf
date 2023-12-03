@@ -2,7 +2,6 @@ Version:1.0
 Kintaro
 KTO-18
 mul id:1790
-base unit:data/mechfiles/mechs/3050U/Kintaro KTO-19.mtf
 
 Config:Biped
 TechBase:Inner Sphere

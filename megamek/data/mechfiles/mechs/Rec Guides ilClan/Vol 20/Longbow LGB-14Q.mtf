@@ -1,7 +1,6 @@
 Version:1.3
 Longbow
 LGB-14Q
-base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 20/Longbow LGB-0W2.mtf
 mul id:8335
 Config:Biped
 techbase:Inner Sphere

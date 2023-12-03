@@ -2,7 +2,6 @@ Version:1.0
 Diomede
 D-M3D-M
 mul id:6823
-base unit:data/mechfiles/mechs/3085u/Cutting Edge/Diomede D-M3D-3 ConstructionMech.mtf
 
 Config:Biped
 TechBase:Inner Sphere

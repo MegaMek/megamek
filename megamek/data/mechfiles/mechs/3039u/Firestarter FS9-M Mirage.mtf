@@ -2,9 +2,6 @@ Version:1.0
 Firestarter
 FS9-M 'Mirage'
 mul id:1098
-base unit:data/mechfiles/mechs/XTRs/Corporations/Firestarter FS9-X81.mtf
-quirk:ubiquitous_is
-quirk:ubiquitous_clan
 
 Config:Biped
 TechBase:Inner Sphere

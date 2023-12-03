@@ -2,7 +2,6 @@ Version:1.1
 Prey Seeker
 PY-SR30
 mul id:8068
-base unit:data/mechfiles/mechs/3150/Prey Seeker PY-SR20.mtf
 
 Config:Biped
 TechBase:Inner Sphere

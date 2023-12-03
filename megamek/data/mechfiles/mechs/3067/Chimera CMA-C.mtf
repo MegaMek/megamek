@@ -2,7 +2,6 @@ Version:1.0
 Chimera
 CMA-C
 mul id:3951
-base unit:data/mechfiles/mechs/3067/Chimera CMA-1S.mtf
 
 Config:Biped
 TechBase:Inner Sphere

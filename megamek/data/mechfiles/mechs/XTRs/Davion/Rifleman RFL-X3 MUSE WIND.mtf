@@ -2,7 +2,6 @@ Version:1.1
 Rifleman
 RFL-X3 MUSE WIND
 mul id:2708
-base unit:data/mechfiles/mechs/XTRs/Primitives IV/Rifleman RFL-1N.mtf
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

@@ -2,7 +2,6 @@ Version:1.1
 Fwltur
 FWL-3V SalvageMech
 mul id:1163
-base unit:data/mechfiles/mechs/3085u/Cutting Edge/Fwltur FWL-3R SalvageMech.mtf
 
 Config:Biped
 techbase:Inner Sphere

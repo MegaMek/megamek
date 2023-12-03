@@ -10,8 +10,6 @@ Source:TRO: 3055
 Rules Level:2
 role:Skirmisher
 
-quirk:ext_twist
-quirk:bad_rep_is
 
 Mass:50
 Engine:300 XL Engine

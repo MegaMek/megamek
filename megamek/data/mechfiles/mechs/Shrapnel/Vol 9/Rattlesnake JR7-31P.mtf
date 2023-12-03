@@ -1,7 +1,6 @@
 Version:1.0
 Rattlesnake
 JR7-31P
-base unit:data/mechfiles/mechs/Shrapnel/Vol 9/Rattlesnake JR7-31.mtf
 
 Config:Biped
 techbase:Inner Sphere

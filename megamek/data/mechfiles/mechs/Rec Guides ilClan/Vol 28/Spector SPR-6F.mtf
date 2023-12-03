@@ -1,7 +1,6 @@
 Version:1.3
 Spector
 SPR-6F
-base unit:data/mechfiles/mechs/3058Uu/Spector SPR-4F.mtf
 mul id:9375
 Config:Biped
 techbase:Mixed (IS Chassis)

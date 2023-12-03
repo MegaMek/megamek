@@ -2,7 +2,6 @@ Version:1.0
 Nightstar
 NSR-9FC
 mul id:2285
-base unit:data/mechfiles/mechs/3058Uu/Nightstar NSR-9J.mtf
 
 Config:Biped
 TechBase:Inner Sphere

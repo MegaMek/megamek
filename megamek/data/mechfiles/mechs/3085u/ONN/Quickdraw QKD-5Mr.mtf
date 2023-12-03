@@ -2,7 +2,6 @@ Version:1.0
 Quickdraw
 QKD-5Mr
 mul id:2615
-base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 26/Quickdraw QKD-9G.mtf
 
 Config:Biped
 TechBase:Inner Sphere

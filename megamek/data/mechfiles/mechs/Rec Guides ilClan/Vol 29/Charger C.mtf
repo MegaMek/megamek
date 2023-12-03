@@ -1,7 +1,6 @@
 Version:1.3
 Charger
 C
-base unit:data/mechfiles/mechs/3039u/Charger CGR-1A1.mtf
 mul id:9397
 Config:Biped
 techbase:Mixed (Clan Chassis)

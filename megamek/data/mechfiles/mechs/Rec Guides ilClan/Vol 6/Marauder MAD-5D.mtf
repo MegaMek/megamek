@@ -2,12 +2,6 @@ Version:1.0
 Marauder
 MAD-5D
 mul id:2039
-base unit:data/mechfiles/mechs/3075/Marauder MAD-1R.mtf
-quirk:low_profile
-quirk:hyper_actuator
-weaponquirk:exposed_linkage:RT:9:ISLargePulseLaser
-weaponquirk:direct_torso_mount:RT:9:ISLargePulseLaser
-quirk:command_mech
 
 Config:Biped
 techbase:Inner Sphere

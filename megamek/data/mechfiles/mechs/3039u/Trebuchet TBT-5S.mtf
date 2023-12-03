@@ -2,9 +2,6 @@ Version:1.0
 Trebuchet
 TBT-5S
 mul id:3298
-base unit:data/mechfiles/mechs/XTRs/Royal Fantasy/Trebuchet TBT-7MM _Merida_.mtf
-weaponquirk:fast_reload:RT:2:SRM 6
-quirk:easy_maintain
 
 Config:Biped
 TechBase:Inner Sphere

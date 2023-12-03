@@ -2,9 +2,6 @@ Version:1.1
 Trebuchet
 TBT-9N
 mul id:7500
-base unit:data/mechfiles/mechs/XTRs/Royal Fantasy/Trebuchet TBT-7MM _Merida_.mtf
-weaponquirk:fast_reload:RT:3:CLLRM15
-quirk:easy_maintain
 
 Config:Biped
 techbase:Mixed (IS Chassis)

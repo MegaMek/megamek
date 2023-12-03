@@ -2,7 +2,6 @@ Version:1.0
 CattleMaster
 CTL-3R3 SecurityMech
 mul id:7158
-base unit:data/mechfiles/mechs/TRO Vehicle Annex/CattleMaster CTL-3R 'Herder' IndustrialMech.mtf
 
 Config:Biped
 TechBase:Inner Sphere

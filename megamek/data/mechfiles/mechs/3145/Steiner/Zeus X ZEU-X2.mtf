@@ -2,7 +2,6 @@ Version:1.0
 Zeus-X
 ZEU-X2
 mul id:6632
-base unit:data/mechfiles/mechs/3145/Steiner/Zeus X ZEU-X.mtf
 
 Config:Biped
 TechBase:Inner Sphere

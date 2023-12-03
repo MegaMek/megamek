@@ -2,7 +2,6 @@ Version:1.0
 Owens
 OW-1G
 mul id:6924
-base unit:data/mechfiles/mechs/3058Uu/Owens OW-1.mtf
 
 Config:Biped Omnimech
 TechBase:Inner Sphere

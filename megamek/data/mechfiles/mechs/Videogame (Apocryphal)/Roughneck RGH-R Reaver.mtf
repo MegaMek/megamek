@@ -1,7 +1,6 @@
 Version:1.0
 Roughneck
 RGH-R Reaver
-base unit:data/mechfiles/mechs/Videogame (Apocryphal)/Roughneck RGH-1A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

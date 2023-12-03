@@ -2,7 +2,6 @@ Version:1.1
 Hachiwara
 HCA-4T
 mul id:1361
-base unit:data/mechfiles/mechs/3055U/Hachiwara HCA-3T.mtf
 
 Config:Biped
 TechBase:Inner Sphere

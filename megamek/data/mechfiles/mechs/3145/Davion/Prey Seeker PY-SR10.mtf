@@ -1,9 +1,6 @@
 Version:1.3
 Prey Seeker
 PY-SR10
-base unit:data/mechfiles/mechs/3150/Prey Seeker PY-SR20.mtf
-quirk:overhead_arms
-quirk:exp_actuator
 mul id:6331
 Config:Biped
 techbase:Inner Sphere

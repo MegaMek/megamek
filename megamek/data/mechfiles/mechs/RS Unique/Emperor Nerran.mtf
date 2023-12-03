@@ -3,9 +3,6 @@ Emperor
 EMP-6A (Nerran)
 mul id:965
 source:Record Sheets: Unique Mechs
-base unit:data/mechfiles/mechs/Golden Century/Emperor EMP-6A-EC.mtf
-weaponquirk:imp_cooling:LA:3:Large Laser
-quirk:command_mech
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

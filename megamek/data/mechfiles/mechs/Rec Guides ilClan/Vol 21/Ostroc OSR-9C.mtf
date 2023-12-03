@@ -2,7 +2,6 @@ Version:1.0
 Ostroc
 OSR-9C
 mul id:8356
-base unit:data/mechfiles/mechs/3039u/Ostroc OSR-2C.mtf
 
 Config:Biped
 techbase:Inner Sphere

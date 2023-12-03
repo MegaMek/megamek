@@ -1,7 +1,6 @@
 Version:1.3
 Helios
 HEL-7L
-base unit:data/mechfiles/mechs/3060u/Helios HEL-3D.mtf
 mul id:7989
 Config:Biped
 techbase:Inner Sphere

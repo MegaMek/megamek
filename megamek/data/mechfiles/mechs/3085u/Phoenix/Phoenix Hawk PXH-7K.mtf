@@ -2,12 +2,6 @@ Version:1.2
 Phoenix Hawk
 PXH-7K
 mul id:2508
-base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 11/Phoenix Hawk C.mtf
-quirk:ubiquitous_is
-quirk:ubiquitous_clan
-weaponquirk:jettison_capable:RA:4:ISSNPPC
-quirk:imp_com
-quirk:command_mech
 
 Config:Biped
 TechBase:Inner Sphere

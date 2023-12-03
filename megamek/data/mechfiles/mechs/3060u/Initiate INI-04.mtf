@@ -2,7 +2,6 @@ Version:1.1
 Initiate
 INI-04
 mul id:1621
-base unit:data/mechfiles/mechs/3060u/Initiate INI-02.mtf
 
 Config:Biped
 TechBase:Inner Sphere

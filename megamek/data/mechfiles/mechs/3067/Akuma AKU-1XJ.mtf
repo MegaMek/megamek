@@ -1,7 +1,6 @@
 Version:1.3
 Akuma
 AKU-1XJ
-base unit:data/mechfiles/mechs/3067/Akuma AKU-1X.mtf
 mul id:3692
 Config:Biped
 techbase:Inner Sphere

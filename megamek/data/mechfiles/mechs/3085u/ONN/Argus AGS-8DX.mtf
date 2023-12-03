@@ -2,7 +2,6 @@ Version:1.0
 Argus
 AGS-8DX
 mul id:110
-base unit:data/mechfiles/mechs/3067/Argus AGS-2D.mtf
 
 Config:Biped
 TechBase:Inner Sphere

@@ -2,7 +2,6 @@ Version:1.0
 Black Knight
 BL-18-KNT
 mul id:7791
-base unit:data/mechfiles/mechs/3145/Davion/Black Knight BLK-NT-2Y.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

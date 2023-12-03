@@ -1,7 +1,6 @@
 Version:1.3
 Watchman
 WTC-4MB 'Belle'
-base unit:data/mechfiles/mechs/3055U/Watchman WTC-4M.mtf
 mul id:8371
 Config:Biped
 techbase:Mixed (IS Chassis)

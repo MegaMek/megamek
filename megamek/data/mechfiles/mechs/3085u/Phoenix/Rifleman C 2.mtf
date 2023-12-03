@@ -2,7 +2,6 @@ Version:1.0
 Rifleman
 C 2
 mul id:2694
-base unit:data/mechfiles/mechs/XTRs/Primitives IV/Rifleman RFL-1N.mtf
 
 Config:Biped
 TechBase:Clan

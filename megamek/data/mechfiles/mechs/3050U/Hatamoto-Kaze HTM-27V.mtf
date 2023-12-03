@@ -2,9 +2,6 @@ Version:1.0
 Hatamoto-Kaze
 HTM-27V
 mul id:1407
-base unit:data/mechfiles/mechs/3145/NTNU RS/NTNU/Hatamoto-Kaze HTM-27V2.mtf
-quirk:easy_maintain
-quirk:barrel_fists_la
 
 Config:Biped
 TechBase:Inner Sphere

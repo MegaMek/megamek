@@ -2,7 +2,6 @@ Version:1.0
 Lynx
 LNX-9R
 mul id:1969
-base unit:data/mechfiles/mechs/3058Uu/Lynx LNX-9Q.mtf
 
 Config:Biped
 TechBase:Inner Sphere

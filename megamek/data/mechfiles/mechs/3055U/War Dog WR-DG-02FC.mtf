@@ -2,11 +2,6 @@ Version:1.0
 War Dog
 WR-DG-02FC
 mul id:3476
-base unit:data/mechfiles/mechs/3055U/War Dog WR-DG-03FC.mtf
-weaponquirk:fast_reload:LL:4:ISStreakSRM2OS
-weaponquirk:fast_reload:RL:4:ISStreakSRM2OS
-weaponquirk:accurate:LL:4:ISStreakSRM2OS
-weaponquirk:accurate:RL:4:ISStreakSRM2OS
 
 Config:Biped
 TechBase:Inner Sphere

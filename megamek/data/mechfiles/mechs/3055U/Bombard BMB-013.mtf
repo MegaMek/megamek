@@ -2,7 +2,6 @@ Version:1.0
 Bombard
 BMB-013
 mul id:419
-base unit:data/mechfiles/mechs/3055U/Bombard BMB-010.mtf
 
 Config:Biped
 TechBase:Inner Sphere

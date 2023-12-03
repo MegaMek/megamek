@@ -2,7 +2,6 @@ Version:1.1
 Nightstar
 NSR-10D
 mul id:7539
-base unit:data/mechfiles/mechs/3058Uu/Nightstar NSR-9J.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

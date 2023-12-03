@@ -2,7 +2,6 @@ Version:1.0
 Bishamon
 BSN-5KC
 mul id:334
-base unit:data/mechfiles/mechs/3060u/Bishamon BSN-3K.mtf
 
 Config:Quad
 TechBase:Inner Sphere

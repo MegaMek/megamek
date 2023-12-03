@@ -2,10 +2,6 @@ Version:1.0
 Trebuchet
 TBT-8B
 mul id:3301
-base unit:data/mechfiles/mechs/XTRs/Royal Fantasy/Trebuchet TBT-7MM _Merida_.mtf
-weaponquirk:fast_reload:RT:9:ISMML5
-weaponquirk:fast_reload:RT:6:ISMML5
-quirk:easy_maintain
 
 Config:Biped
 techbase:Inner Sphere

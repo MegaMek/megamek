@@ -2,7 +2,6 @@ Version:1.1
 Waneta
 S-WN-2LAM
 mul id:5380
-base unit:data/mechfiles/mechs/LAMS/Waneta S-WN-1LAM.mtf
 
 Config:LAM
 techbase:Mixed (IS Chassis)

@@ -2,8 +2,6 @@ Version:1.1
 Yinghuochong
 YHC-3E
 mul id:6455
-base unit:data/mechfiles/mechs/3145/Liao/Yinghuochong YHC-3Y.mtf
-weaponquirk:imp_cooling:LA:4:CLERPPC
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

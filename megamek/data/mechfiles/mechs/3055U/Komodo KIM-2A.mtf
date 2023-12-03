@@ -2,7 +2,6 @@ Version:1.0
 Komodo
 KIM-2A
 mul id:1811
-base unit:data/mechfiles/mechs/3055U/Komodo KIM-2.mtf
 
 Config:Biped
 TechBase:Inner Sphere

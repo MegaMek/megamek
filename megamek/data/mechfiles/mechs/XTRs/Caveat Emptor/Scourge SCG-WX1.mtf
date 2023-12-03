@@ -2,9 +2,6 @@ Version:1.1
 Scourge
 SCG-WX1
 mul id:8109
-base unit:data/mechfiles/mechs/3145/Steiner/Scourge SCG-WD1.mtf
-quirk:exp_actuator
-quirk:difficult_maintain
 
 Config:Biped
 techbase:Mixed (IS Chassis)

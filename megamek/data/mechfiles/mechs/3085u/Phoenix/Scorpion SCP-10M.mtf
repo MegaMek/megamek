@@ -2,7 +2,6 @@ Version:1.1
 Scorpion
 SCP-10M
 mul id:2833
-base unit:data/mechfiles/mechs/3039u/Scorpion SCP-1N.mtf
 
 Config:Quad
 TechBase:Inner Sphere

@@ -2,8 +2,6 @@ Version:1.2
 Hatchetman
 HCT-7S
 mul id:1418
-base unit:data/mechfiles/mechs/3145/NTNU RS/NTNU/Hatchetman HCT-7D.mtf
-quirk:anti_air
 
 Config:Biped
 TechBase:Inner Sphere

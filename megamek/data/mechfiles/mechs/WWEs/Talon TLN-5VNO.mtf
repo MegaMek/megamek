@@ -1,7 +1,6 @@
 Version:1.0
 Talon
 TLN-5VNO
-base unit:data/mechfiles/mechs/3058Uu/Talon TLN-5V.mtf
 
 Config:Biped
 techbase:Inner Sphere

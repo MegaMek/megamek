@@ -2,7 +2,6 @@ Version:1.0
 Archer
 ARC-9R
 mul id:7732
-base unit:data/mechfiles/mechs/3039u/Archer ARC-2R.mtf
 
 Config:Biped
 techbase:Inner Sphere

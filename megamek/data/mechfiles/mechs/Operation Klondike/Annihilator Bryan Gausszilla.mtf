@@ -2,7 +2,6 @@ Version:1.1
 Annihilator
 C 'Gausszilla'
 mul id:44
-base unit:data/mechfiles/mechs/Operation Klondike/Annihilator ANH-1X.mtf
 
 Config:Biped
 TechBase:Clan

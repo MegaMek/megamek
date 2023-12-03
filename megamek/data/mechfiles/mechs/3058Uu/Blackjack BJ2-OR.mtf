@@ -2,8 +2,6 @@ Version:1.0
 Blackjack
 BJ2-OR
 mul id:385
-base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 4/Blackjack BJ-5.mtf
-quirk:non_standard
 
 Config:Biped Omnimech
 TechBase:Mixed (IS Chassis)

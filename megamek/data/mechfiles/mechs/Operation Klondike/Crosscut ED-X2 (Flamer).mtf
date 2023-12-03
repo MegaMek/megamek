@@ -2,7 +2,6 @@ Version:1.0
 Crosscut
 ED-X2 (Flamer)
 mul id:7167
-base unit:data/mechfiles/mechs/TRO Vehicle Annex/Crosscut ED-X1 LoggerMech.mtf
 
 Config:Biped
 TechBase:Inner Sphere

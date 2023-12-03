@@ -2,7 +2,6 @@ Version:1.1
 Daedalus
 GTX2 (Militarized)
 mul id:793
-base unit:data/mechfiles/mechs/Operation Klondike/Daedalus GTX2A Stevedore.mtf
 
 Config:Quad
 techbase:Inner Sphere

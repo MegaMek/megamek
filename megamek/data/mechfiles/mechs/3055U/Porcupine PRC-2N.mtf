@@ -2,7 +2,6 @@ Version:1.1
 Porcupine
 PRC-2N
 mul id:2556
-base unit:data/mechfiles/mechs/3055U/Porcupine PRC-1N.mtf
 
 Config:Biped
 TechBase:Inner Sphere

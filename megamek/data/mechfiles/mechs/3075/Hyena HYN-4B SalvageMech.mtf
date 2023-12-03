@@ -2,7 +2,6 @@ Version:1.0
 Hyena
 HYN-4B SalvageMech
 mul id:4354
-base unit:data/mechfiles/mechs/3075/Hyena HYN-4A SalvageMech .mtf
 
 Config:Biped
 techbase:Inner Sphere

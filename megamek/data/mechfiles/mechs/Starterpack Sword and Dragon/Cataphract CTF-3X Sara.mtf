@@ -2,8 +2,6 @@ Version:1.0
 Cataphract
 CTF-3X (Sara)
 mul id:472
-base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 6/Cataphract CTF-5L.mtf
-quirk:pro_actuator
 
 Config:Biped
 TechBase:Inner Sphere

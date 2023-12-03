@@ -2,7 +2,6 @@ Version:1.0
 Shen Yi
 SHY-5B
 mul id:6878
-base unit:data/mechfiles/mechs/3085u/Cutting Edge/Shen Yi SHY-3B.mtf
 
 Config:Biped
 TechBase:Inner Sphere

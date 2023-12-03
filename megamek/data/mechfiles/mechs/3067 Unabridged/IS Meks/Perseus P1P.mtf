@@ -2,7 +2,6 @@ Version:1.0
 Perseus
 P1P
 mul id:5698
-base unit:data/mechfiles/mechs/3067/Perseus P1 A.mtf
 
 Config:Biped Omnimech
 TechBase:Inner Sphere

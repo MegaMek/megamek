@@ -2,11 +2,6 @@ Version:1.2
 Wasp
 WSP-3L
 mul id:3527
-base unit:data/mechfiles/mechs/3085u/Phoenix/Wasp WSP-7MAF.mtf
-quirk:ubiquitous_is
-quirk:ubiquitous_clan
-quirk:ext_twist
-quirk:easy_maintain
 
 Config:Biped
 techbase:Inner Sphere

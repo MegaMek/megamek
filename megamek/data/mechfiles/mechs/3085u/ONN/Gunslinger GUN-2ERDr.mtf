@@ -2,7 +2,6 @@ Version:1.0
 Gunslinger
 GUN-2ERDr
 mul id:1350
-base unit:data/mechfiles/mechs/3055U/Gunslinger GUN-1ERD.mtf
 
 Config:Biped
 TechBase:Inner Sphere

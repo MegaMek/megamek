@@ -2,8 +2,6 @@ Version:1.0
 Blackjack
 BJ2-OA
 mul id:379
-base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 4/Blackjack BJ-5.mtf
-quirk:non_standard
 
 Config:Biped Omnimech
 TechBase:Inner Sphere

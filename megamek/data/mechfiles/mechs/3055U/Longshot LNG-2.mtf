@@ -2,7 +2,6 @@ Version:1.0
 Longshot
 LNG-2
 mul id:1947
-base unit:data/mechfiles/mechs/3055U/Longshot LNG-1B.mtf
 
 Config:Biped
 TechBase:Inner Sphere

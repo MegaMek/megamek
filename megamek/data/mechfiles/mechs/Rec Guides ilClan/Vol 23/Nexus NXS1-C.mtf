@@ -2,7 +2,6 @@ Version:1.1
 Nexus
 NXS1-C
 mul id:8412
-base unit:data/mechfiles/mechs/3055U/Nexus NXS1-A.mtf
 
 Config:Biped
 techbase:Inner Sphere

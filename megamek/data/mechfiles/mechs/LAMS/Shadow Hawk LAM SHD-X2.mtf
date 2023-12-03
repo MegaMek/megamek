@@ -2,7 +2,6 @@ Version:1.0
 Shadow Hawk LAM
 SHD-X2
 mul id:5040
-base unit:data/mechfiles/mechs/LAMS/Shadow Hawk LAM SHD-X1.mtf
 
 Config:LAM
 TechBase:Inner Sphere

@@ -2,7 +2,6 @@ Version:1.0
 Dragon
 DRG-7N
 mul id:5450
-base unit:data/mechfiles/mechs/3039u/Dragon DRG-1C.mtf
 
 Config:Biped
 TechBase:Inner Sphere

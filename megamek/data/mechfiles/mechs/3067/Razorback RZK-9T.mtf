@@ -2,7 +2,6 @@ Version:1.0
 Razorback
 RZK-9T
 mul id:4905
-base unit:data/mechfiles/mechs/3067/Razorback RZK-9S.mtf
 
 Config:Biped
 TechBase:Inner Sphere

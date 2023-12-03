@@ -2,7 +2,6 @@ Version:1.0
 Rakshasa
 MDG-2A
 mul id:2634
-base unit:data/mechfiles/mechs/3055U/Rakshasa MDG-1A.mtf
 
 Config:Biped
 TechBase:Inner Sphere

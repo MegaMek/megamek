@@ -2,7 +2,6 @@ Version:1.0
 Marauder
 Red Hunter
 mul id:7536
-base unit:data/mechfiles/mechs/3075/Marauder MAD-1R.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

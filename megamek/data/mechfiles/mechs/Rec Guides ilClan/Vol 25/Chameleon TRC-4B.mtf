@@ -1,7 +1,6 @@
 Version:1.3
 Chameleon
 TRC-4B
-base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 25/Chameleon TRC-4C.mtf
 mul id:546
 Config:Biped
 techbase:Inner Sphere

@@ -2,7 +2,6 @@ Version:1.1
 Night Stalker
 NSR-K4
 mul id:6719
-base unit:data/mechfiles/mechs/3145/Republic/Night Stalker NSR-K1.mtf
 
 Config:Biped
 TechBase:Inner Sphere

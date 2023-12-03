@@ -1,7 +1,6 @@
 Version:1.1
 Rattlesnake
 JR7-31R (Gideon)
-base unit:data/mechfiles/mechs/Shrapnel/Vol 9/Rattlesnake JR7-31.mtf
 
 Config:Biped
 techbase:Mixed (IS Chassis)

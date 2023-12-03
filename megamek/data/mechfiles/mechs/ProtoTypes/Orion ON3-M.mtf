@@ -12,6 +12,10 @@ role:Sniper
 
 
 
+quirk:easy_maintain
+quirk:difficult_eject
+
+
 mass:75
 engine:300 XL Engine(IS)
 structure:IS Standard

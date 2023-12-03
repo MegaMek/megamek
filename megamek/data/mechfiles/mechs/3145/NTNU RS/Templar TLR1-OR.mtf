@@ -11,6 +11,9 @@ role:Sniper
 
 
 
+quirk:easy_maintain
+
+
 mass:85
 engine:340 XL Engine(IS)
 structure:IS Endo Steel

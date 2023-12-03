@@ -13,6 +13,10 @@ role:Scout
 
 
 
+quirk:ext_twist
+quirk:bad_rep_is
+
+
 Mass:25
 Engine:200 Light Engine
 Structure:Endo Steel

@@ -13,6 +13,9 @@ role:Sniper
 
 
 
+quirk:command_mech
+
+
 Mass:100
 Engine:300 Fusion Engine
 Structure:Endo Steel

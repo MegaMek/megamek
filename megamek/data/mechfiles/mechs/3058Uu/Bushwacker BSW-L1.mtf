@@ -12,6 +12,10 @@ role:Skirmisher
 
 
 
+quirk:low_profile
+weaponquirk:stable_weapon:CT:10:ISERLargeLaser
+
+
 Mass:55
 Engine:275 Light Engine
 Structure:Endo Steel

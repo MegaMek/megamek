@@ -12,6 +12,13 @@ role:Juggernaut
 
 
 
+quirk:imp_com
+quirk:imp_sensors
+quirk:low_profile
+quirk:bad_rep_clan
+quirk:bad_rep_is
+
+
 Mass:85
 Engine:255 Light Engine(IS)
 Structure:IS Standard

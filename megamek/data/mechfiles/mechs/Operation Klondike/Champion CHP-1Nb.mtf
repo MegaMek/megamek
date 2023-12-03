@@ -12,6 +12,9 @@ source:Historical: Operation Klondike
 
 
 
+quirk:no_arms
+
+
 Mass:60
 Engine:300 Fusion Engine
 Structure:Endo-Steel

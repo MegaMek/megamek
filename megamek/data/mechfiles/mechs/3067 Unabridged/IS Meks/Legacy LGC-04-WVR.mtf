@@ -12,6 +12,12 @@ role:Brawler
 
 
 
+quirk:directional_torso_mount
+quirk:bad_rep_is
+weaponquirk:direct_torso_mount:RT:2:ISSNPPC
+weaponquirk:direct_torso_mount:LT:2:ISSNPPC
+
+
 Mass:80
 Engine:320 Light Engine(IS)
 Structure:IS Endo Steel

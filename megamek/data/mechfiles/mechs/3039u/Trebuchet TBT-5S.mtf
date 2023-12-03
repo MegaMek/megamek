@@ -12,6 +12,10 @@ role:Skirmisher
 
 
 
+quirk:easy_maintain
+weaponquirk:fast_reload:RT:2:SRM 6
+
+
 Mass:50
 Engine:250 Fusion Engine
 Structure:Standard

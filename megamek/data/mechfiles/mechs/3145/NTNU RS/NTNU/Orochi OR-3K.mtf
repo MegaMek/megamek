@@ -10,6 +10,9 @@ rules level:2
 
 
 
+quirk:no_arms
+
+
 mass:90
 engine:360 XL Engine(IS)
 structure:IS Endo Steel

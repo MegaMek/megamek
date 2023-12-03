@@ -12,6 +12,11 @@ role:Striker
 
 
 
+quirk:command_mech
+quirk:imp_com
+weaponquirk:jettison_capable:RA:4:ISLargeXPulseLaser
+
+
 Mass:45
 Engine:315 XL Engine(IS)
 Structure:IS Endo Steel

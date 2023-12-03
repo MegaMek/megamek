@@ -12,6 +12,10 @@ role:Brawler
 
 
 
+quirk:anti_air
+weaponquirk:fast_reload:RT:2:ISLBXAC10Prototype
+
+
 mass:45
 engine:180 Fusion Engine(IS)
 structure:IS Standard

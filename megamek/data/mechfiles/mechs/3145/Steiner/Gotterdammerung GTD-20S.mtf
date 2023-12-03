@@ -12,6 +12,9 @@ role:Brawler
 
 
 
+quirk:difficult_eject
+
+
 mass:75
 engine:300 Compact Engine(IS)
 structure:IS Endo Steel

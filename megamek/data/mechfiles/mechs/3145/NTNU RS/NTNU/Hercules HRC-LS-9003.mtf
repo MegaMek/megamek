@@ -8,6 +8,9 @@ era:3088
 source:Record Sheets: 3150
 rules level:2
 
+quirk:difficult_maintain
+
+
 mass:70
 engine:350 XL Engine(IS)
 structure:IS Composite

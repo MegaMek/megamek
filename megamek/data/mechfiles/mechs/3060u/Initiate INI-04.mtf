@@ -12,6 +12,10 @@ role:Sniper
 
 
 
+quirk:hyper_actuator
+quirk:bad_rep_is
+
+
 Mass:40
 Engine:160 Light Engine
 Structure:Endo Steel

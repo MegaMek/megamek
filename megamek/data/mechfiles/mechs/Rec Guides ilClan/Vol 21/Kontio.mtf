@@ -11,6 +11,11 @@ rules level:2
 role:Striker
 
 
+quirk:distracting
+quirk:bad_rep_clan
+quirk:bad_rep_is
+
+
 mass:40
 engine:280 XL (Clan) Engine
 structure:Clan Endo Steel

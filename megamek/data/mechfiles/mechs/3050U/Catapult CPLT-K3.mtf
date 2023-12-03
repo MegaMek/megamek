@@ -12,6 +12,10 @@ role:Sniper
 
 
 
+quirk:no_arms
+quirk:weak_head_1
+
+
 Mass:65
 Engine:260 Fusion Engine(IS)
 Structure:IS Standard

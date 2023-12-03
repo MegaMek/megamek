@@ -12,6 +12,9 @@ role:Sniper
 
 
 
+quirk:easy_maintain
+
+
 mass:55
 engine:275 XXL Engine(IS)
 structure:IS Endo Steel

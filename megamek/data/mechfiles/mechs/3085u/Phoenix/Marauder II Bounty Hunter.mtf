@@ -12,6 +12,11 @@ role:Sniper
 
 
 
+quirk:command_mech
+quirk:hyper_actuator
+quirk:low_profile
+
+
 Mass:100
 Engine:300 Fusion (Clan) Engine(IS)
 Structure:Endo Steel

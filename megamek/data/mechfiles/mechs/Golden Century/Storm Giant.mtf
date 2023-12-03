@@ -11,6 +11,10 @@ rules level:2
 role:Missile Boat
 
 
+quirk:rugged_1
+quirk:oversized
+
+
 mass:100
 engine:400 XL (Clan) Engine(IS)
 structure:Clan Endo Steel

@@ -12,6 +12,11 @@ source:Record Sheets: 3067 Unabridged
 
 
 
+quirk:imp_com
+quirk:low_profile
+quirk:bad_rep_is
+
+
 Mass:20
 Engine:180 XL Fusion Engine
 Structure:Endo-Steel

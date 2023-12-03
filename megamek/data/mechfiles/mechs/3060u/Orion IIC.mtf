@@ -11,6 +11,11 @@ Rules Level:2
 role:Sniper
 
 
+quirk:anti_air
+quirk:easy_maintain
+quirk:rugged_1
+
+
 Mass:75
 Engine:300 Fusion (Clan) Engine
 Structure:Endo Steel

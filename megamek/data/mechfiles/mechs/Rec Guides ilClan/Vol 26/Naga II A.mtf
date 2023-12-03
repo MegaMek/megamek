@@ -9,6 +9,15 @@ source:Rec Guide:ilClan #26
 rules level:2
 role:Brawler
 
+quirk:ext_twist
+quirk:bad_rep_clan
+weaponquirk:stable_weapon:CT:10:CLERSmallLaser
+weaponquirk:stable_weapon:LT:2:CLStreakSRM6
+weaponquirk:stable_weapon:RA:10:CLERLargeLaser
+weaponquirk:stable_weapon:RA:11:CLERLargeLaser
+weaponquirk:stable_weapon:LA:2:CLLBXAC20
+
+
 mass:80
 engine:400 XL (Clan) Engine(IS)
 structure:Clan Endo Steel

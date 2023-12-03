@@ -10,6 +10,9 @@ rules level:1
 
 
 
+quirk:easy_pilot
+
+
 mass:50
 engine:300 Fusion Engine(IS)
 structure:IS Standard

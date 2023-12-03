@@ -12,6 +12,12 @@ role:Scout
 
 
 
+quirk:imp_com
+quirk:low_profile
+quirk:hard_pilot
+quirk:non_standard
+
+
 Mass:20
 Engine:320 XXL Engine(IS)
 Structure:IS Endo Steel

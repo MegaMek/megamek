@@ -11,6 +11,9 @@ rules level:2
 role:Sniper
 
 
+quirk:ext_twist
+
+
 mass:40
 engine:240 Fusion (Clan) Engine(IS)
 structure:Clan Endo Steel

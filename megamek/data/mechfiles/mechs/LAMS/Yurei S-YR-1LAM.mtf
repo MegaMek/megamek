@@ -13,6 +13,9 @@ role:Skirmisher
 
 
 
+quirk:non_standard
+
+
 mass:40
 engine:200 Fusion Engine(IS)
 structure:IS Standard

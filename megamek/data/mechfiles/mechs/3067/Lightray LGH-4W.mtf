@@ -12,6 +12,11 @@ role:Skirmisher
 
 
 
+quirk:hyper_actuator
+quirk:bad_rep_is
+quirk:exp_actuator
+
+
 mass:55
 engine:385 XL Engine(IS)
 structure:IS Endo Steel

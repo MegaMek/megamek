@@ -12,6 +12,10 @@ role:Sniper
 
 
 
+quirk:easy_maintain
+quirk:good_rep_1
+
+
 mass:35
 engine:210 Fusion Engine(IS)
 structure:IS Endo Steel

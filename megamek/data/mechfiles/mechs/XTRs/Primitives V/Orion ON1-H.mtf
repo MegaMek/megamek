@@ -12,6 +12,10 @@ role:Brawler
 
 
 
+quirk:easy_maintain
+weaponquirk:ammo_feed_problems:RT:0:Autocannon/10 Primitive
+
+
 Mass:75
 Engine:270 Fusion Engine(IS)
 Structure:IS Standard

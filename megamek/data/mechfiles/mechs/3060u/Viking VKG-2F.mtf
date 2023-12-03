@@ -13,6 +13,11 @@ role:Missile Boat
 
 
 
+quirk:easy_maintain
+quirk:multi_trac
+quirk:no_arms
+
+
 Mass:90
 Engine:270 Fusion Engine
 Structure:Endo Steel

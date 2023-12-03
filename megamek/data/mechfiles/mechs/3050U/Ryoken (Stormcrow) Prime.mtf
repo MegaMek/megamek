@@ -11,6 +11,9 @@ rules level:2
 role:Striker
 
 
+quirk:stable
+
+
 mass:55
 engine:330 XL (Clan) Engine(IS)
 structure:Clan Endo Steel

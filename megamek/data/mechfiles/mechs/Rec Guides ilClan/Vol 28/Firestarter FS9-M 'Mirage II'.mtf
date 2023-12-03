@@ -11,6 +11,12 @@ role:Striker
 
 
 
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:exposed_linkage:RA:4:Flamer
+weaponquirk:exposed_linkage:LA:4:Flamer
+
+
 mass:35
 engine:210 XL (Clan) Engine
 structure:IS Endo-Composite

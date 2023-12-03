@@ -12,6 +12,9 @@ role:Striker
 
 
 
+quirk:difficult_maintain
+
+
 mass:45
 engine:270 XXL Engine(IS)
 structure:IS Endo-Composite

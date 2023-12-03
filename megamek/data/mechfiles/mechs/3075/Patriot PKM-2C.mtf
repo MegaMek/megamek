@@ -13,6 +13,10 @@ role:Missile Boat
 
 
 
+quirk:pro_actuator
+quirk:stable
+
+
 Mass:65
 Engine:260 XL Engine(IS)
 Structure:IS Endo Steel

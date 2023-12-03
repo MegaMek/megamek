@@ -12,6 +12,10 @@ role:Striker
 
 
 
+quirk:rugged_1
+quirk:no_arms
+
+
 mass:35
 engine:280 XL Engine(IS)
 structure:IS Standard

@@ -12,6 +12,10 @@ Source:Jihad Turning Points: Tharkad
 
 
 
+quirk:no_arms
+weaponquirk:stable_weapon:RT:1:ISHeavyGaussRifle
+
+
 Mass:100
 Engine:300 Fusion Engine
 Structure:Endo Steel

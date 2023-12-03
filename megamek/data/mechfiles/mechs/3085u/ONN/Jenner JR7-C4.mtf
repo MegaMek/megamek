@@ -12,6 +12,9 @@ role:Missile Boat
 
 
 
+quirk:no_arms
+
+
 Mass:35
 Engine:245 XL Engine(IS)
 Structure:Standard

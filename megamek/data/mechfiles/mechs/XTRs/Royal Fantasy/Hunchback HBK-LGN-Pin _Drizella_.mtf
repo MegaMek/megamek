@@ -12,6 +12,10 @@ role:Striker
 
 
 
+quirk:battle_fists_la
+quirk:battle_fists_ra
+
+
 mass:50
 engine:350 XL Engine(IS)
 structure:Clan Endo Steel

@@ -12,6 +12,10 @@ role:Striker
 
 
 
+quirk:difficult_eject
+quirk:difficult_maintain
+
+
 Mass:50
 Engine:300 Light Engine
 Structure:Endo Steel

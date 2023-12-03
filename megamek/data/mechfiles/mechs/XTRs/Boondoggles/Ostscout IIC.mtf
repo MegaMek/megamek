@@ -10,6 +10,13 @@ rules level:4
 role:None
 
 
+quirk:bad_rep_clan
+quirk:bad_rep_is
+quirk:no_eject
+quirk:prototype
+quirk:unbalanced
+
+
 mass:35
 engine:385 XXL (Clan) Engine
 structure:Clan Endo Steel

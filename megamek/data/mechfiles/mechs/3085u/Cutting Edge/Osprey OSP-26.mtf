@@ -12,6 +12,10 @@ role:Skirmisher
 
 
 
+quirk:no_arms
+weaponquirk:direct_torso_mount:RT:4:ISGaussRifle
+
+
 mass:55
 engine:220 XL Engine(IS)
 structure:IS Endo Steel

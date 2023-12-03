@@ -12,6 +12,10 @@ Source:XTR: Boondocks
 
 
 
+quirk:rugged_1
+quirk:weak_legs
+
+
 Mass:40
 Engine:160 XL Fusion Engine
 Structure:Composite

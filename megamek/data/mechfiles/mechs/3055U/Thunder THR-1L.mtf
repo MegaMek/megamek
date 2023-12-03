@@ -13,6 +13,9 @@ role:Skirmisher
 
 
 
+quirk:cowl
+
+
 mass:70
 engine:350 XL Engine(IS)
 structure:IS Standard

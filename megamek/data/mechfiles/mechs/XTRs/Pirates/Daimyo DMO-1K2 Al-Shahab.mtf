@@ -12,6 +12,11 @@ Source:XTR: Pirates
 
 
 
+quirk:ext_twist
+quirk:low_profile
+quirk:difficult_maintain
+
+
 Mass:40
 Engine:200 Light Fusion Engine
 Structure:Standard

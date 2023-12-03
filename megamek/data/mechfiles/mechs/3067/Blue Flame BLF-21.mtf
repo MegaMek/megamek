@@ -13,6 +13,10 @@ role:Sniper
 
 
 
+quirk:directional_torso_mount
+quirk:bad_rep_is
+
+
 mass:45
 engine:225 Light Engine(IS)
 structure:IS Endo Steel

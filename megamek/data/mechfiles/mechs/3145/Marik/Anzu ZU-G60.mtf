@@ -13,6 +13,10 @@ role:Sniper
 
 
 
+quirk:multi_trac
+quirk:imp_life_support
+
+
 Mass:60
 Engine:240 XL Engine(IS)
 Structure:IS Endo Steel

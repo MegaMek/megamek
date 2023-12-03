@@ -11,6 +11,12 @@ Rules Level:3
 role:Missile Boat
 
 
+quirk:difficult_maintain
+quirk:imp_target_long
+quirk:no_arms
+quirk:poor_target_short
+
+
 Mass:90
 Engine:270 Fusion (Clan) Engine(IS)
 Structure:Clan Endo Steel

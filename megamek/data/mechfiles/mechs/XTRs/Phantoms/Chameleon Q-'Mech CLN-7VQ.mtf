@@ -12,6 +12,10 @@ role:Striker
 
 
 
+quirk:easy_pilot
+quirk:non_standard
+
+
 Mass:50
 Engine:300 XL Engine(IS)
 Structure:Endo Steel

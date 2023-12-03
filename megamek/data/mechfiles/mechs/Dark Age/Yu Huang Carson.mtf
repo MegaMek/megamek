@@ -12,6 +12,10 @@ role:Sniper
 
 
 
+quirk:command_mech
+quirk:good_rep_1
+
+
 Mass:90
 Engine:360 XL Engine(IS)
 Structure:Endo Steel

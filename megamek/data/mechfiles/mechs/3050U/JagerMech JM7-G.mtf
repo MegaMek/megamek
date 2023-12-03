@@ -12,6 +12,9 @@ role:Sniper
 
 
 
+quirk:anti_air
+
+
 Mass:70
 Engine:280 XL Fusion Engine
 Structure:Standard

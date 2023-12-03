@@ -10,6 +10,14 @@ Source:TRO: 3060
 Rules Level:2
 role:Brawler
 
+weaponquirk:mod_weapons:RA:3:CLUltraAC10
+weaponquirk:mod_weapons:LA:4:CLMediumPulseLaser
+weaponquirk:mod_weapons:LA:5:CLMediumPulseLaser
+weaponquirk:mod_weapons:RA:3:CLHAG20
+weaponquirk:mod_weapons:LA:4:CLHeavyMediumLaser
+weaponquirk:mod_weapons:LA:6:CLHeavyMediumLaser
+
+
 Mass:40
 Engine:160 Fusion (Clan) Engine
 Structure:Endo Steel

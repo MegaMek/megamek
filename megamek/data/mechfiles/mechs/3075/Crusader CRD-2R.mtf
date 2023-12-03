@@ -13,6 +13,16 @@ role:Missile Boat
 
 
 
+quirk:easy_maintain
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:stable_weapon:RL:4:ISStreakSRM2
+weaponquirk:stable_weapon:RL:5:ISStreakSRM2
+weaponquirk:stable_weapon:LL:4:ISStreakSRM2
+weaponquirk:stable_weapon:LL:5:ISStreakSRM2
+
+
 mass:65
 engine:260 Fusion Engine(IS)
 structure:IS Endo Steel

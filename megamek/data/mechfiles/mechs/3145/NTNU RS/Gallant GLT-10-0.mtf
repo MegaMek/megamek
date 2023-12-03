@@ -12,6 +12,10 @@ role:Skirmisher
 
 
 
+weaponquirk:stable_weapon:RA:2:Large Re-engineered Laser
+weaponquirk:stable_weapon:RA:7:Large Re-engineered Laser
+
+
 Mass:70
 Engine:210 Light Engine(IS)
 Structure:IS Standard

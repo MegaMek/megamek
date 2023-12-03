@@ -12,6 +12,10 @@ role:Juggernaut
 
 
 
+quirk:command_mech
+quirk:weak_head_1
+
+
 Mass:85
 Engine:255 Compact Engine(IS)
 Structure:Standard

@@ -12,6 +12,9 @@ role:Skirmisher
 
 
 
+quirk:difficult_maintain
+
+
 mass:65
 engine:390 XL Engine(IS)
 structure:IS Endo Steel

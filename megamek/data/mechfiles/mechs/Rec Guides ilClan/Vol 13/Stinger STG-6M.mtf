@@ -12,6 +12,12 @@ role:Scout
 
 
 
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+quirk:cramped_cockpit
+
+
 mass:20
 engine:120 Fusion Engine(IS)
 structure:IS Endo Steel

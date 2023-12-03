@@ -11,6 +11,10 @@ rules level:2
 role:Missile Boat
 
 
+quirk:command_mech
+quirk:distracting
+
+
 mass:100
 engine:400 XL (Clan) Engine(IS)
 structure:Clan Endo Steel

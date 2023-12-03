@@ -11,6 +11,11 @@ Rules Level:2
 role:Sniper
 
 
+quirk:fine_manipulators
+quirk:imp_sensors
+quirk:imp_target_long
+
+
 Mass:100
 Engine:300 XL (Clan) Engine
 Structure:Endo Steel

@@ -11,6 +11,10 @@ role:Brawler
 
 
 
+quirk:rugged_1
+quirk:difficult_eject
+
+
 mass:45
 engine:180 Fusion Engine(IS)
 structure:IS Reinforced

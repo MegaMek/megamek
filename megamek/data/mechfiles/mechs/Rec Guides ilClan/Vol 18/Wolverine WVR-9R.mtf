@@ -12,6 +12,16 @@ role:Skirmisher
 
 
 
+quirk:command_mech
+quirk:ext_twist
+quirk:imp_com
+quirk:pro_actuator
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+quirk:cramped_cockpit
+weaponquirk:jettison_capable:RA:4:ISUltraAC10
+
+
 mass:55
 engine:275 XL Engine(IS)
 structure:IS Standard

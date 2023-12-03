@@ -12,6 +12,14 @@ role:Sniper
 
 
 
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:jettison_capable:RA:4:ISERPPC
+
+
 Mass:55
 Engine:275 XL Engine(IS)
 Structure:Endo Steel

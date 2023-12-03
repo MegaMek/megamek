@@ -11,6 +11,10 @@ Rules Level:2
 role:Striker
 
 
+quirk:low_profile
+weaponquirk:jettison_capable:RA:4:CLLargePulseLaser
+
+
 Mass:35
 Engine:245 XL (Clan) Engine
 Structure:Standard

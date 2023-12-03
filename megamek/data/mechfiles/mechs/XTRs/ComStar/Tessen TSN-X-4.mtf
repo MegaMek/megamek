@@ -12,6 +12,10 @@ role:Skirmisher
 
 
 
+quirk:bad_rep_is
+quirk:prototype
+
+
 Mass:50
 Engine:300 XL Fusion Engine
 Structure:Endo-Steel

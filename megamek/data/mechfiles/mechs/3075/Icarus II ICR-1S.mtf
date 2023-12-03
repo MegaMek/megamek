@@ -13,6 +13,9 @@ role:Brawler
 
 
 
+quirk:imp_target_short
+
+
 Mass:40
 Engine:160 Fusion Engine
 Structure:Standard

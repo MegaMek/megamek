@@ -13,6 +13,10 @@ role:Skirmisher
 
 
 
+quirk:distracting
+quirk:difficult_maintain
+
+
 Mass:60
 Engine:300 XXL (Clan) Engine
 Structure:IS Standard

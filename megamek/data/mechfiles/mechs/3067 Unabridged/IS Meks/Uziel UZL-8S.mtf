@@ -12,6 +12,11 @@ source:Record Sheets: 3067 Unabridged
 
 
 
+quirk:cowl
+quirk:bad_rep_is
+quirk:exp_actuator
+
+
 Mass:50
 Engine:250 XL Fusion Engine
 Structure:Endo-Steel

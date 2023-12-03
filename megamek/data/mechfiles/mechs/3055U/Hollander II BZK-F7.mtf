@@ -12,6 +12,10 @@ role:Sniper
 
 
 
+quirk:reinforced_legs
+weaponquirk:stable_weapon:RT:0:ISHeavyGaussRifle
+
+
 Mass:45
 Engine:225 Fusion Engine
 Structure:Endo Steel

@@ -13,6 +13,9 @@ role:Skirmisher
 
 
 
+quirk:non_standard
+
+
 Mass:55
 Engine:275 Fusion Engine(IS)
 Structure:Endo Steel

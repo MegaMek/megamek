@@ -12,6 +12,12 @@ source:Rec Guide:ilClan #6
 
 
 
+quirk:command_mech
+quirk:good_rep_1
+quirk:variable_range_long
+quirk:difficult_maintain
+
+
 mass:95
 engine:285 XL Engine(IS)
 structure:IS Standard

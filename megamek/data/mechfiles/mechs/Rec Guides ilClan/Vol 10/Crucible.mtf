@@ -11,6 +11,10 @@ rules level:2
 role:Sniper
 
 
+quirk:pro_actuator
+quirk:oversized
+
+
 mass:100
 engine:300 XL (Clan) Engine(IS)
 structure:Clan Endo Steel

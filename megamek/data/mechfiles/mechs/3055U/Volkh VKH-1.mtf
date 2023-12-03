@@ -13,6 +13,9 @@ role:Skirmisher
 
 
 
+quirk:non_standard
+
+
 Mass:45
 Engine:225 XXL Engine
 Structure:Endo Steel

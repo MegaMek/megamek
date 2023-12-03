@@ -12,6 +12,9 @@ role:Skirmisher
 
 
 
+weaponquirk:direct_torso_mount:LT:1:SRM 2
+
+
 Mass:50
 Engine:250 Fusion Engine
 Structure:Standard

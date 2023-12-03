@@ -12,6 +12,11 @@ role:Missile Boat
 
 
 
+quirk:ext_twist
+quirk:low_profile
+quirk:no_arms
+
+
 Mass:30
 Engine:60 XL Engine(IS)
 Structure:Endo Steel

@@ -12,6 +12,11 @@ role:Juggernaut
 
 
 
+quirk:combat_computer
+quirk:ubiquitous_is
+quirk:no_arms
+
+
 Mass:85
 Engine:255 Light Engine
 Structure:Standard

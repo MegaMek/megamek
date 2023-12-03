@@ -13,6 +13,11 @@ role:Striker
 
 
 
+quirk:ext_twist
+quirk:bad_rep_is
+quirk:no_arms
+
+
 Mass:40
 Engine:320 Light Engine
 Structure:Standard

@@ -11,6 +11,10 @@ role:Skirmisher
 
 
 
+quirk:easy_maintain
+quirk:rugged_2
+
+
 mass:55
 engine:220 Light Engine(IS)
 structure:IS Standard

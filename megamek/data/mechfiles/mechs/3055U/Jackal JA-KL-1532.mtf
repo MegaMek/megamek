@@ -13,6 +13,10 @@ role:Striker
 
 
 
+quirk:weak_legs
+weaponquirk:imp_cooling:RT:3:ISERPPC
+
+
 Mass:30
 Engine:210 XL Engine
 Structure:Endo Steel

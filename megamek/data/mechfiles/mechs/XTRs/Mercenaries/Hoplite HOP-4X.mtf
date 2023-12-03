@@ -12,6 +12,9 @@ source:XTR: Mercenaries
 
 
 
+quirk:no_arms
+
+
 Mass:55
 Engine:275 Light Engine
 Structure:Composite

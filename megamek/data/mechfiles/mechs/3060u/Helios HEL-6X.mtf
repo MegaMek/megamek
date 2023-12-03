@@ -12,6 +12,9 @@ role:Skirmisher
 
 
 
+quirk:easy_maintain
+
+
 Mass:60
 Engine:300 Light Engine
 Structure:Endo Steel

@@ -12,6 +12,15 @@ Source:TRO: Prototypes
 
 
 
+quirk:easy_maintain
+quirk:fast_reload
+quirk:bad_rep_is
+quirk:non_standard
+weaponquirk:fast_reload:RT:2:ISStreakSRM6
+weaponquirk:jettison_capable:RA:4:Chain Whip
+weaponquirk:exposed_linkage:LA:5:Mek Taser
+
+
 Mass:50
 Engine:250 Light Engine(IS)
 Structure:Endo Steel

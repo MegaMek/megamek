@@ -10,6 +10,10 @@ rules level:3
 
 
 
+quirk:hyper_actuator
+quirk:searchlight
+
+
 mass:100
 engine:400 XL Engine(IS)
 structure:IS Endo-Composite

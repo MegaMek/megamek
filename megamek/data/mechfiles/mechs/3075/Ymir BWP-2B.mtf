@@ -12,6 +12,9 @@ role:Missile Boat
 
 
 
+quirk:stable
+
+
 Mass:90
 Engine:360 Fusion Engine
 Structure:Standard

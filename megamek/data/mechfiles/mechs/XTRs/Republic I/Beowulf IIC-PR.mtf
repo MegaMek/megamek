@@ -10,6 +10,16 @@ Source:XTR: Republic I
 Rules Level:3
 role:Striker
 
+quirk:ext_twist
+quirk:bad_rep_clan
+quirk:exp_actuator
+weaponquirk:em_interference:RA:4:CLERLargePulseLaser
+weaponquirk:em_interference:LA:4:CLERMediumPulseLaser
+weaponquirk:em_interference:LA:6:CLERMediumPulseLaser
+quirk:bad_rep_is
+weaponquirk:em_interference:RA:4:CLERLargeLaser
+
+
 Mass:45
 Engine:270 XL (Clan) Engine
 Structure:IS Standard

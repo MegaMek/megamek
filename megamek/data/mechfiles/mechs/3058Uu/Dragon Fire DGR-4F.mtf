@@ -12,6 +12,10 @@ role:Brawler
 
 
 
+quirk:good_rep_1
+quirk:no_arms
+
+
 Mass:75
 Engine:300 XL Engine
 Structure:Endo Steel

@@ -10,6 +10,11 @@ Source:Record Sheets: 3067 Unabridged
 Rules Level:2
 role:Striker
 
+quirk:easy_maintain
+quirk:imp_com
+quirk:pro_actuator
+
+
 Mass:50
 Engine:350 XL (Clan) Engine(IS)
 Structure:Clan Endo Steel

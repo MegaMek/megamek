@@ -12,6 +12,12 @@ role:Scout
 
 
 
+quirk:easy_maintain
+quirk:ext_twist
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
+
 mass:20
 engine:120 Fusion Engine(IS)
 structure:IS Endo Steel

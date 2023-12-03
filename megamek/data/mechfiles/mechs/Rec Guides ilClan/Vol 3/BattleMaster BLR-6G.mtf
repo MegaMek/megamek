@@ -12,6 +12,10 @@ role:Brawler
 
 
 
+quirk:command_mech
+quirk:weak_head_1
+
+
 mass:85
 engine:340 Light Engine(IS)
 structure:IS Endo Steel

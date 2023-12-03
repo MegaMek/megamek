@@ -12,6 +12,9 @@ role:Skirmisher
 
 
 
+quirk:no_arms
+
+
 Mass:55
 Engine:275 XXL (Clan) Engine
 Structure:IS Endo-Composite

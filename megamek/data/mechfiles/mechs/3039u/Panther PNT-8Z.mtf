@@ -13,6 +13,10 @@ role:Brawler
 
 
 
+quirk:imp_target_short
+quirk:nimble_jumper
+
+
 mass:35
 engine:140 Fusion Engine(IS)
 structure:IS Standard

@@ -12,6 +12,9 @@ role:Juggernaut
 
 
 
+quirk:low_profile
+
+
 mass:60
 engine:240 Fusion Engine(IS)
 structure:IS Standard

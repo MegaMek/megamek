@@ -12,6 +12,13 @@ role:Brawler
 
 
 
+quirk:command_mech
+quirk:hyper_actuator
+quirk:low_profile
+weaponquirk:direct_torso_mount:RT:0:Autocannon/5
+weaponquirk:exposed_linkage:RT:0:Autocannon/5
+
+
 Mass:75
 Engine:300 Fusion Engine
 Structure:Standard

@@ -12,6 +12,10 @@ role:Brawler
 
 
 
+quirk:anti_air
+weaponquirk:fast_reload:RT:3:ISUltraAC10
+
+
 mass:45
 engine:180 XL Engine(IS)
 structure:IS Standard

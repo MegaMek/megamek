@@ -12,6 +12,10 @@ role:Missile Boat
 
 
 
+quirk:easy_maintain
+quirk:ext_twist
+
+
 Mass:95
 Engine:285 Fusion Engine(IS)
 Structure:IS Standard

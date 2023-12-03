@@ -12,6 +12,12 @@ role:Sniper
 
 
 
+weaponquirk:stable_weapon:RT:6:Autocannon/2
+weaponquirk:stable_weapon:RT:7:Autocannon/2
+weaponquirk:stable_weapon:LT:6:Autocannon/2
+weaponquirk:stable_weapon:LT:7:Autocannon/2
+
+
 Mass:90
 Engine:270 XL Engine
 Structure:Standard

@@ -12,6 +12,10 @@ role:Brawler
 
 
 
+quirk:exp_actuator
+quirk:weak_legs
+
+
 Mass:35
 Engine:175 Compact Engine
 Structure:Endo Steel

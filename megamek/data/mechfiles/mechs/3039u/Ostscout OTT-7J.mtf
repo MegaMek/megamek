@@ -13,6 +13,12 @@ role:Scout
 
 
 
+quirk:imp_com
+quirk:imp_sensors
+quirk:low_profile
+quirk:rugged_1
+
+
 mass:35
 engine:280 Fusion Engine(IS)
 structure:IS Standard

@@ -12,6 +12,12 @@ role:Sniper
 
 
 
+quirk:command_mech
+quirk:good_rep_1
+quirk:variable_range_long
+quirk:difficult_maintain
+
+
 Mass:95
 Engine:285 XL Engine(IS)
 Structure:IS Standard

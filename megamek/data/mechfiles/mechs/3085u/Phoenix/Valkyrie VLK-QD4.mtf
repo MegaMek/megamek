@@ -12,6 +12,10 @@ role:Striker
 
 
 
+quirk:easy_maintain
+quirk:imp_com
+
+
 Mass:30
 Engine:150 XL Engine(IS)
 Structure:Standard

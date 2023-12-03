@@ -12,6 +12,12 @@ role:Missile Boat
 
 
 
+quirk:easy_maintain
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
+
 Mass:65
 Engine:195 Fusion Engine
 Structure:Standard

@@ -12,6 +12,13 @@ role:Brawler
 
 
 
+quirk:anti_air
+quirk:imp_com
+quirk:searchlight
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
+
 mass:60
 engine:240 XL Engine(IS)
 structure:IS Standard

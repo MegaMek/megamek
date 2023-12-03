@@ -13,6 +13,11 @@ role:Sniper
 
 
 
+quirk:distracting
+quirk:searchlight
+quirk:difficult_eject
+
+
 mass:95
 engine:285 Light Engine(IS)
 structure:IS Endo-Composite

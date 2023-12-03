@@ -12,6 +12,10 @@ role:Sniper
 
 
 
+quirk:rugged_1
+quirk:no_arms
+
+
 Mass:35
 Engine:245 Light Engine
 Structure:Endo Steel

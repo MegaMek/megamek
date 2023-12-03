@@ -12,6 +12,11 @@ role:Juggernaut
 
 
 
+quirk:stable
+quirk:distracting
+quirk:non_standard
+
+
 Mass:80
 Engine:400 XL Engine(IS)
 Structure:IS Standard

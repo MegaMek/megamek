@@ -11,6 +11,9 @@ role:Skirmisher
 
 
 
+quirk:difficult_maintain
+
+
 mass:65
 engine:325 Fusion Engine(IS)
 structure:IS Standard

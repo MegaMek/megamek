@@ -12,6 +12,11 @@ role:Brawler
 
 
 
+quirk:command_mech
+quirk:hyper_actuator
+quirk:low_profile
+
+
 Mass:75
 Engine:300 Fusion Engine(IS)
 Structure:Standard

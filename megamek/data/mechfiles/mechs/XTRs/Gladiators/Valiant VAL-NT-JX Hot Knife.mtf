@@ -12,6 +12,11 @@ Source:XTR: Gladiators
 
 
 
+quirk:imp_target_short
+quirk:pro_actuator
+quirk:weak_head_1
+
+
 Mass:30
 Engine:210 Light Fusion Engine
 Structure:Endo-Steel

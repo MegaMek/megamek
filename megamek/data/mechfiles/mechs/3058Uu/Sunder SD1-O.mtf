@@ -12,6 +12,9 @@ role:Brawler
 
 
 
+quirk:ext_twist
+
+
 mass:90
 engine:360 XL Engine(IS)
 structure:IS Standard

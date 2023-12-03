@@ -12,6 +12,10 @@ role:Striker
 
 
 
+quirk:cowl
+quirk:difficult_maintain
+
+
 Mass:45
 Engine:270 XL Engine(IS)
 Structure:IS Endo Steel

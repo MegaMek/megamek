@@ -12,6 +12,10 @@ role:Missile Boat
 
 
 
+quirk:rugged_1
+quirk:weak_legs
+
+
 Mass:40
 Engine:160 Fusion Engine
 Structure:Standard

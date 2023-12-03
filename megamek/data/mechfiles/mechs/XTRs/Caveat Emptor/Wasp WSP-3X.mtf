@@ -12,6 +12,12 @@ role:Missile Boat
 
 
 
+quirk:easy_maintain
+quirk:ext_twist
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
+
 mass:20
 engine:120 XL Engine(IS)
 structure:IS Endo Steel

@@ -13,6 +13,11 @@ role:Brawler
 
 
 
+quirk:anti_air
+quirk:imp_com
+quirk:searchlight
+
+
 Mass:80
 Engine:320 XL Engine
 Structure:Endo Steel

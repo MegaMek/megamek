@@ -13,6 +13,10 @@ role:Scout
 
 
 
+quirk:poor_sealing
+weaponquirk:accurate:RA:4:TSEMP Cannon
+
+
 Mass:35
 Engine:210 XL Engine(IS)
 Structure:IS Endo Steel

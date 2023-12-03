@@ -13,6 +13,9 @@ role:Skirmisher
 
 
 
+quirk:rugged_1
+
+
 Mass:50
 Engine:250 Fusion Engine
 Structure:Standard

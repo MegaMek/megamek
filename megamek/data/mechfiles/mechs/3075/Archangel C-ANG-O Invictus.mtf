@@ -13,6 +13,13 @@ role:Sniper
 
 
 
+quirk:command_mech
+quirk:imp_com
+quirk:imp_sensors
+quirk:bad_rep_clan
+quirk:bad_rep_is
+
+
 mass:100
 engine:300 Compact Engine(IS)
 structure:IS Endo Steel

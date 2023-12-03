@@ -12,6 +12,9 @@ role:Skirmisher
 
 
 
+quirk:no_arms
+
+
 Mass:60
 Engine:300 XL Engine
 Structure:Standard

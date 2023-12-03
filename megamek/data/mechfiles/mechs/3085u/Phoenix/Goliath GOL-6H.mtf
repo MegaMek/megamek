@@ -12,6 +12,10 @@ role:Sniper
 
 
 
+quirk:multi_trac
+quirk:exp_actuator
+
+
 Mass:80
 Engine:320 Light Engine(IS)
 Structure:Standard

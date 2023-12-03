@@ -12,6 +12,12 @@ role:Missile Boat
 
 
 
+quirk:multi_trac
+quirk:difficult_maintain
+quirk:cowl
+quirk:imp_life_support
+
+
 mass:100
 engine:300 Fusion Engine(IS)
 structure:IS Standard

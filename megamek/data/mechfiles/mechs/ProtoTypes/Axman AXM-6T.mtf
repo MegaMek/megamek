@@ -12,6 +12,9 @@ Source:TRO: Prototypes
 
 
 
+quirk:pro_actuator
+
+
 Mass:65
 Engine:325 XL Fusion Engine
 Structure:Endo-Steel

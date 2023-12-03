@@ -12,6 +12,9 @@ role:Missile Boat
 
 
 
+quirk:ext_twist
+
+
 Mass:35
 Engine:210 Light Engine
 Structure:Endo Steel

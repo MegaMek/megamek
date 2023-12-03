@@ -11,6 +11,9 @@ rules level:2
 role:Striker
 
 
+quirk:pro_actuator
+
+
 mass:30
 engine:240 XL (Clan) Engine(IS)
 structure:Clan Endo Steel

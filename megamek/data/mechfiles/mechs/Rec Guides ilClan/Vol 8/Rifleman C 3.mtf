@@ -12,6 +12,13 @@ role:Sniper
 
 
 
+quirk:anti_air
+quirk:imp_com
+quirk:searchlight
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
+
 mass:60
 engine:240 Fusion (Clan) Engine(IS)
 structure:Clan Endo Steel

@@ -12,6 +12,10 @@ role:Striker
 
 
 
+quirk:non_standard
+quirk:pro_actuator
+
+
 mass:45
 engine:225 XXL Engine(IS)
 structure:IS Endo Steel

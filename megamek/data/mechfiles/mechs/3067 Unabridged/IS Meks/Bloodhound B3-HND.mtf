@@ -12,6 +12,10 @@ source:Record Sheets: 3067 Unabridged
 
 
 
+quirk:imp_sensors
+quirk:pro_actuator
+
+
 Mass:45
 Engine:315 XL Fusion Engine
 Structure:Endo-Steel

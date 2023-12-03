@@ -11,6 +11,9 @@ role:Brawler
 
 
 
+quirk:no_arms
+
+
 mass:55
 engine:220 Light Engine(IS)
 structure:IS Endo Steel

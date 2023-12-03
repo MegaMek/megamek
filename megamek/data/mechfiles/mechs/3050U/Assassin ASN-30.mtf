@@ -12,6 +12,12 @@ role:Scout
 
 
 
+quirk:easy_maintain
+quirk:cramped_cockpit
+quirk:non_standard
+quirk:poor_life_support
+
+
 Mass:40
 Engine:280 Light Engine
 Structure:Endo Steel

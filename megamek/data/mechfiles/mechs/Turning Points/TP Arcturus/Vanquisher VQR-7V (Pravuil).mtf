@@ -11,6 +11,12 @@ role:Juggernaut
 
 
 
+quirk:stable
+quirk:bad_rep_clan
+quirk:bad_rep_is
+quirk:no_arms
+
+
 mass:100
 engine:300 Fusion Engine(IS)
 structure:IS Endo Steel

@@ -12,6 +12,11 @@ role:Striker
 
 
 
+quirk:cowl
+quirk:bad_rep_is
+quirk:exp_actuator
+
+
 Mass:50
 Engine:250 XL Engine
 Structure:Endo-Steel

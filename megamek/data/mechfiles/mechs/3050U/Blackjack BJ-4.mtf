@@ -12,6 +12,9 @@ role:Brawler
 
 
 
+quirk:bad_rep_is
+
+
 Mass:45
 Engine:180 Light Engine
 Structure:Standard

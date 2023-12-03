@@ -12,6 +12,10 @@ role:Skirmisher
 
 
 
+quirk:cowl
+quirk:bad_rep_is
+
+
 Mass:55
 Engine:275 Fusion Engine
 Structure:Standard

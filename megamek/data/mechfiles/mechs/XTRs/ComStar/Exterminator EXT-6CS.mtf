@@ -12,6 +12,11 @@ role:Skirmisher
 
 
 
+quirk:difficult_maintain
+quirk:non_standard
+quirk:sensor_ghosts
+
+
 Mass:65
 Engine:390 XL Fusion Engine
 Structure:Endo-Steel

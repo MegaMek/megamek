@@ -11,6 +11,9 @@ rules level:2
 role:Striker
 
 
+quirk:low_profile
+
+
 mass:45
 engine:270 XL (Clan) Engine(IS)
 structure:Clan Endo Steel

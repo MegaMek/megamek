@@ -11,6 +11,10 @@ role:Missile Boat
 
 
 
+quirk:easy_maintain
+quirk:hyper_actuator
+
+
 mass:55
 engine:275 Fusion Engine(IS)
 structure:IS Standard

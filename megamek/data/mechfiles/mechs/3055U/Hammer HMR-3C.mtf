@@ -12,6 +12,10 @@ role:Striker
 
 
 
+quirk:ext_twist
+quirk:imp_target_long
+
+
 Mass:30
 Engine:150 Fusion Engine
 Structure:Endo Steel

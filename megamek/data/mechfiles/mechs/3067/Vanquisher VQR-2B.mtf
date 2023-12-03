@@ -12,6 +12,12 @@ source:TRO: 3067
 
 
 
+quirk:stable
+quirk:bad_rep_clan
+quirk:bad_rep_is
+quirk:no_arms
+
+
 Mass:100
 Engine:300 Fusion Engine
 Structure:Endo Steel

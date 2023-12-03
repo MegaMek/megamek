@@ -13,6 +13,12 @@ role:Striker
 
 
 
+quirk:easy_maintain
+weaponquirk:exposed_linkage:RA:2:ISRotaryAC5
+weaponquirk:mod_weapons:RA:2:ISRotaryAC5
+weaponquirk:static_feed:RA:2:ISRotaryAC5
+
+
 Mass:35
 Engine:245 XL Engine(IS)
 Structure:Endo Steel

@@ -10,6 +10,12 @@ rules level:4
 role:Sniper
 
 
+quirk:rugged_1
+quirk:bad_rep_is
+quirk:distracting
+quirk:easy_maintain
+
+
 mass:95
 engine:345 Fusion Engine(IS)
 structure:IS Standard

@@ -12,6 +12,11 @@ role:Sniper
 
 
 
+quirk:command_mech
+quirk:hyper_actuator
+quirk:low_profile
+
+
 mass:100
 engine:300 XL Engine(IS)
 structure:IS Standard

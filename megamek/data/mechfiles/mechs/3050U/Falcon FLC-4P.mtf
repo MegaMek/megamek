@@ -12,6 +12,9 @@ role:Scout
 
 
 
+quirk:low_profile
+
+
 Mass:30
 Engine:180 Fusion Engine
 Structure:Standard

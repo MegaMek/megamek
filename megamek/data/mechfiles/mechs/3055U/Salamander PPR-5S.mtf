@@ -13,6 +13,9 @@ role:Missile Boat
 
 
 
+quirk:difficult_maintain
+
+
 Mass:80
 Engine:320 XL Engine
 Structure:Endo Steel

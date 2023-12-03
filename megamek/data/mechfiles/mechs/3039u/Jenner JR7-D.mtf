@@ -12,6 +12,9 @@ role:Striker
 
 
 
+quirk:no_arms
+
+
 mass:35
 engine:245 Fusion Engine(IS)
 structure:IS Standard

@@ -13,6 +13,10 @@ source:Rec Guide:ilClan #4
 
 
 
+quirk:easy_maintain
+weaponquirk:fast_reload:RT:3:CLLRM15
+
+
 mass:50
 engine:300 XL Engine(IS)
 structure:IS Endo Steel

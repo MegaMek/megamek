@@ -12,6 +12,10 @@ role:Striker
 
 
 
+quirk:battle_fists_la
+quirk:battle_fists_ra
+
+
 Mass:50
 Engine:300 XL Engine(IS)
 Structure:IS Endo-Steel

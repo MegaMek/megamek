@@ -12,6 +12,10 @@ role:Sniper
 
 
 
+quirk:pro_actuator
+weaponquirk:exposed_linkage:LA:5:CLERPPC
+
+
 Mass:50
 Engine:200 XL Engine(IS)
 Structure:IS Endo Steel

@@ -12,6 +12,16 @@ role:Scout
 
 
 
+quirk:ext_twist
+quirk:bad_rep_is
+weaponquirk:direct_torso_mount:RT:3:ISERPPC
+weaponquirk:direct_torso_mount:RT:6:Medium Laser
+weaponquirk:direct_torso_mount:RT:7:Flamer
+weaponquirk:direct_torso_mount:LT:3:Medium Laser
+weaponquirk:direct_torso_mount:LT:4:Flamer
+weaponquirk:direct_torso_mount:LA:2:ISLargePulseLaser
+
+
 mass:50
 engine:300 XL Engine(IS)
 structure:IS Standard

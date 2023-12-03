@@ -12,6 +12,9 @@ role:Missile Boat
 
 
 
+quirk:rugged_1
+
+
 Mass:45
 Engine:180 XL Engine
 Structure:Endo Steel

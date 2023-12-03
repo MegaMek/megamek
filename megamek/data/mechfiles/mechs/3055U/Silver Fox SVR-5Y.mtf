@@ -12,6 +12,10 @@ role:Striker
 
 
 
+quirk:non_standard
+quirk:weak_head_1
+
+
 Mass:35
 Engine:245 Light Engine
 Structure:Standard

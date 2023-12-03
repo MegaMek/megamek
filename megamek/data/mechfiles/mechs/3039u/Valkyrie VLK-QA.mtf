@@ -13,6 +13,10 @@ role:Missile Boat
 
 
 
+quirk:easy_maintain
+quirk:imp_com
+
+
 Mass:30
 Engine:150 Fusion Engine
 Structure:Standard

@@ -11,6 +11,14 @@ role:Sniper
 
 
 
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:jettison_capable:RA:4:ISRotaryAC2
+
+
 mass:55
 engine:275 XL Engine(IS)
 structure:IS Endo-Composite

@@ -12,6 +12,9 @@ role:Skirmisher
 
 
 
+quirk:anti_air
+
+
 Mass:45
 Engine:225 Light Engine
 Structure:Standard

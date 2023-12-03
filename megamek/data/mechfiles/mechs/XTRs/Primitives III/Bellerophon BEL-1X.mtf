@@ -13,6 +13,14 @@ role:Brawler
 
 
 
+quirk:cowl
+quirk:prototype
+quirk:unbalanced
+quirk:obsolete
+weaponquirk:em_interference:RA:3:ISLargeLaser
+weaponquirk:em_interference:RA:5:ISLargeLaser
+
+
 Mass:60
 Engine:290 Fusion Engine(IS)
 Structure:Standard

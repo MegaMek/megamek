@@ -12,6 +12,12 @@ role:Juggernaut
 
 
 
+quirk:easy_maintain
+quirk:pro_actuator
+quirk:rugged_1
+quirk:oversized
+
+
 Mass:100
 Engine:300 Fusion Engine
 Structure:Standard

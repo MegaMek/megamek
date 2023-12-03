@@ -12,6 +12,10 @@ role:Striker
 
 
 
+quirk:low_profile
+quirk:difficult_maintain
+
+
 Mass:30
 Engine:300 XL Engine
 Structure:Endo Steel

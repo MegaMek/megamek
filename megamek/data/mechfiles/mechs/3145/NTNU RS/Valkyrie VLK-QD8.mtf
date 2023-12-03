@@ -12,6 +12,10 @@ role:Missile Boat
 
 
 
+quirk:easy_maintain
+quirk:imp_com
+
+
 Mass:30
 Engine:180 XL Engine(IS)
 Structure:IS Endo Steel

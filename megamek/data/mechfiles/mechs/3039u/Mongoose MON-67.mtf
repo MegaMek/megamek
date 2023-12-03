@@ -12,6 +12,12 @@ role:Striker
 
 
 
+quirk:command_mech
+quirk:easy_pilot
+weaponquirk:stable_weapon:HD:3:Small Laser
+weaponquirk:stable_weapon:CT:10:Medium Laser
+
+
 Mass:25
 Engine:200 Fusion Engine
 Structure:Standard

@@ -12,6 +12,11 @@ role:Juggernaut
 
 
 
+quirk:command_mech
+quirk:hyper_actuator
+quirk:low_profile
+
+
 Mass:100
 Engine:300 Light Engine
 Structure:Standard

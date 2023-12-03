@@ -11,6 +11,12 @@ role:Missile Boat
 
 
 
+quirk:ext_twist
+quirk:difficult_maintain
+quirk:exp_actuator
+quirk:prototype
+
+
 mass:30
 engine:240 XL Engine(IS)
 structure:IS Endo Steel

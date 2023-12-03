@@ -13,6 +13,9 @@ role:Missile Boat
 
 
 
+quirk:bad_rep_is
+
+
 Mass:65
 Engine:325 XL Engine
 Structure:Standard

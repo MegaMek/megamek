@@ -12,6 +12,10 @@ role:Striker
 
 
 
+quirk:overhead_arms
+quirk:exp_actuator
+
+
 mass:15
 engine:180 XXL Engine(IS)
 structure:IS Endo Steel

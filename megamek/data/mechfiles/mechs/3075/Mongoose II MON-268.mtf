@@ -12,6 +12,10 @@ role:Striker
 
 
 
+quirk:command_mech
+quirk:imp_com
+
+
 Mass:40
 Engine:320 XL Engine
 Structure:Endo Steel

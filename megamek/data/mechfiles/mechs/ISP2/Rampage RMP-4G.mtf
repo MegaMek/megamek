@@ -12,6 +12,12 @@ role:Sniper
 
 
 
+quirk:vestigial_hands_ra
+quirk:bad_rep_clan
+quirk:bad_rep_is
+quirk:obsolete
+
+
 Mass:85
 Engine:340 XL Engine
 Structure:Endo Steel

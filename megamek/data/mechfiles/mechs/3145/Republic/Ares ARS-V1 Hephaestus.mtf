@@ -12,6 +12,11 @@ role:Juggernaut
 
 
 
+quirk:command_mech
+quirk:distracting
+quirk:searchlight
+
+
 Mass:135
 Engine:270 Fusion Engine(IS)
 Structure:IS Endo-Composite

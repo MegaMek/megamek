@@ -12,6 +12,10 @@ role:Sniper
 
 
 
+quirk:command_mech
+quirk:difficult_maintain
+
+
 Mass:80
 Engine:320 Light Engine(IS)
 Structure:Standard

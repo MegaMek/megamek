@@ -13,6 +13,10 @@ role:Sniper
 
 
 
+quirk:anti_air
+quirk:overhead_arms
+
+
 Mass:65
 Engine:325 XL Engine
 Structure:Endo Steel

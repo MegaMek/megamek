@@ -12,6 +12,11 @@ role:Skirmisher
 
 
 
+quirk:stable
+quirk:pro_actuator
+quirk:non_standard
+
+
 Mass:75
 Engine:375 XL (Clan) Engine(IS)
 Structure:Clan Endo Steel

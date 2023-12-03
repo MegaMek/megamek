@@ -12,6 +12,14 @@ role:Striker
 
 
 
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:jettison_capable:RA:4:ISPlasmaRifle
+
+
 Mass:55
 Engine:330 Light Engine(IS)
 Structure:Endo Steel

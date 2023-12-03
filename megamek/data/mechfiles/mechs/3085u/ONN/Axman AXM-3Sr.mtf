@@ -12,6 +12,9 @@ role:Skirmisher
 
 
 
+quirk:pro_actuator
+
+
 mass:65
 engine:260 Light Engine(IS)
 structure:IS Standard

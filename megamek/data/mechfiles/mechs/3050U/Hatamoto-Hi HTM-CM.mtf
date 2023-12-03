@@ -12,6 +12,10 @@ role:Brawler
 
 
 
+quirk:barrel_fists_la
+quirk:easy_maintain
+
+
 Mass:80
 Engine:320 Fusion Engine
 Structure:Endo Steel

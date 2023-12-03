@@ -12,6 +12,9 @@ role:Missile Boat
 
 
 
+quirk:anti_air
+
+
 Mass:65
 Engine:260 Fusion Engine
 Structure:Standard

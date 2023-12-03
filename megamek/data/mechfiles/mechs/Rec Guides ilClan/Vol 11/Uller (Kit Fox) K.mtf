@@ -10,6 +10,9 @@ rules level:2
 role:Striker
 source:Rec Guide:ilClan #11
 
+quirk:low_profile
+
+
 mass:30
 engine:180 XL (Clan) Engine(IS)
 structure:Clan Endo Steel

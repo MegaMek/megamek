@@ -12,6 +12,10 @@ role:Skirmisher
 
 
 
+quirk:good_rep_1
+quirk:stable
+
+
 mass:75
 engine:300 Fusion Engine(IS)
 structure:IS Standard

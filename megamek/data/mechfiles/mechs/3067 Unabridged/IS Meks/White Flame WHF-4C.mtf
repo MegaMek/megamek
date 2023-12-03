@@ -12,6 +12,14 @@ role:Skirmisher
 
 
 
+quirk:bad_rep_is
+quirk:exp_actuator
+weaponquirk:direct_torso_mount:RT:2:ISSNPPC
+weaponquirk:direct_torso_mount:RT:4:ISERMediumLaser
+weaponquirk:direct_torso_mount:LT:2:ISMediumPulseLaser
+weaponquirk:direct_torso_mount:LT:3:ISMediumPulseLaser
+
+
 mass:70
 engine:350 Light Engine(IS)
 structure:IS Endo Steel

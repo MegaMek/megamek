@@ -10,6 +10,9 @@ source:Rec Guide:ilClan #2
 rules level:2
 role:Striker
 
+quirk:rugged_1
+
+
 mass:45
 engine:315 XL (Clan) Engine
 structure:Clan Endo Steel

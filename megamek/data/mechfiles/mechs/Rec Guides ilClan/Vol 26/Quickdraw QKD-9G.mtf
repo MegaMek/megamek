@@ -11,6 +11,10 @@ role:Skirmisher
 
 
 
+quirk:hyper_actuator
+quirk:exp_actuator
+
+
 mass:60
 engine:300 Light Engine(IS)
 structure:Clan Endo Steel

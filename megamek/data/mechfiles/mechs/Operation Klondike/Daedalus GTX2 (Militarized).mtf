@@ -12,6 +12,9 @@ role:Brawler
 
 
 
+quirk:difficult_maintain
+
+
 mass:60
 engine:240 Fusion Engine(IS)
 structure:IS Industrial

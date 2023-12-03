@@ -12,6 +12,9 @@ role:Sniper
 
 
 
+quirk:low_profile
+
+
 mass:60
 engine:300 Fusion Engine(IS)
 structure:IS Endo Steel

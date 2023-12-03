@@ -12,6 +12,11 @@ role:Skirmisher
 
 
 
+quirk:barrel_fists_ra
+quirk:battle_fists_la
+weaponquirk:fast_reload:RA:3:ISGaussRifle
+
+
 Mass:50
 Engine:250 XL Engine
 Structure:Endo Steel

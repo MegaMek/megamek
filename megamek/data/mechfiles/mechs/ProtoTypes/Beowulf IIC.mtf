@@ -11,6 +11,14 @@ Rules Level:4
 role:Scout
 
 
+quirk:ext_twist
+quirk:bad_rep_clan
+quirk:exp_actuator
+weaponquirk:em_interference:RA:4:CLERLargePulseLaser
+weaponquirk:em_interference:LA:4:CLERMediumPulseLaser
+weaponquirk:em_interference:LA:6:CLERMediumPulseLaser
+
+
 Mass:45
 Engine:270 XL (Clan) Engine(IS)
 Structure:IS Standard

@@ -13,6 +13,11 @@ role:Ambusher
 
 
 
+quirk:ext_twist
+quirk:low_profile
+quirk:no_arms
+
+
 mass:30
 engine:90 Fusion Engine(IS)
 structure:IS Standard

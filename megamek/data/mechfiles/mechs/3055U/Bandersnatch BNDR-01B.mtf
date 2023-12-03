@@ -12,6 +12,10 @@ role:Brawler
 
 
 
+quirk:stable
+quirk:ubiquitous_is
+
+
 mass:75
 engine:300 Light Engine(IS)
 structure:IS Standard

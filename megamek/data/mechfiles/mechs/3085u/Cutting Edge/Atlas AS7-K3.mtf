@@ -12,6 +12,13 @@ role:Sniper
 
 
 
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:command_mech
+quirk:distracting
+quirk:imp_com
+
+
 mass:100
 engine:400 XL Engine(IS)
 structure:IS Standard

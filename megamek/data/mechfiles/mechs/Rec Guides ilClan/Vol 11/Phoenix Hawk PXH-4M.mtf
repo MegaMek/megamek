@@ -12,6 +12,11 @@ source:Rec Guide:ilClan #11
 
 
 
+quirk:command_mech
+quirk:imp_com
+weaponquirk:jettison_capable:RA:4:Light PPC
+
+
 mass:45
 engine:270 Light Engine(IS)
 structure:IS Endo Steel

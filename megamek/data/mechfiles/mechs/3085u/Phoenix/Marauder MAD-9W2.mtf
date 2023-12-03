@@ -12,6 +12,13 @@ role:Skirmisher
 
 
 
+quirk:command_mech
+quirk:hyper_actuator
+quirk:low_profile
+weaponquirk:direct_torso_mount:RT:7:ISSNPPC
+weaponquirk:exposed_linkage:RT:7:ISSNPPC
+
+
 Mass:75
 Engine:225 Light Engine(IS)
 Structure:Standard

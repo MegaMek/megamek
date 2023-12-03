@@ -12,6 +12,13 @@ role:Scout
 
 
 
+quirk:compact_mech
+quirk:low_profile
+quirk:cramped_cockpit
+quirk:no_arms
+quirk:weak_legs
+
+
 Mass:20
 Engine:180 XL Engine(IS)
 Structure:IS Endo Steel

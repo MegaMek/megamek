@@ -12,6 +12,10 @@ role:Brawler
 
 
 
+quirk:barrel_fists_ra
+quirk:easy_maintain
+
+
 Mass:80
 Engine:320 Light Engine
 Structure:Standard

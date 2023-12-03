@@ -12,6 +12,11 @@ role:Skirmisher
 
 
 
+quirk:reinforced_legs
+quirk:difficult_maintain
+quirk:exp_actuator
+
+
 mass:65
 engine:325 XL Engine(IS)
 structure:IS Endo Steel

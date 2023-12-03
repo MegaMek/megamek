@@ -13,6 +13,10 @@ role:Juggernaut
 
 
 
+quirk:fast_reload
+quirk:poor_work
+
+
 Mass:80
 Engine:240 Fusion Engine(IS)
 Structure:IS Standard

@@ -12,6 +12,12 @@ role:Missile Boat
 
 
 
+quirk:easy_maintain
+quirk:fast_reload
+quirk:no_arms
+quirk:pro_actuator
+
+
 Mass:80
 Engine:320 Fusion Engine(IS)
 Structure:IS Standard

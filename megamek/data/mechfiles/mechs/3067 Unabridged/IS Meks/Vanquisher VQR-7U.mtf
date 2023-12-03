@@ -12,6 +12,12 @@ source:Record Sheets: 3067 Unabridged
 
 
 
+quirk:stable
+quirk:bad_rep_clan
+quirk:bad_rep_is
+quirk:no_arms
+
+
 Mass:100
 Engine:300 Compact Fusion Engine
 Structure:Endo-Steel

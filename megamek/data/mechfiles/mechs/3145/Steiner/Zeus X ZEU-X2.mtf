@@ -12,6 +12,10 @@ role:Skirmisher
 
 
 
+quirk:command_mech
+quirk:difficult_maintain
+
+
 Mass:80
 Engine:400 XXL Engine(IS)
 Structure:IS Composite

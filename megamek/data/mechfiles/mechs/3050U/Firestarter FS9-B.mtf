@@ -12,6 +12,11 @@ role:Scout
 
 
 
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:exposed_linkage:LA:4:Flamer
+
+
 mass:35
 engine:210 Light Engine(IS)
 structure:IS Endo Steel

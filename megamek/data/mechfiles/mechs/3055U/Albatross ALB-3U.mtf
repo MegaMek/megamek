@@ -13,6 +13,10 @@ role:Brawler
 
 
 
+quirk:easy_maintain
+quirk:imp_target_long
+
+
 Mass:95
 Engine:380 XL Engine
 Structure:Standard

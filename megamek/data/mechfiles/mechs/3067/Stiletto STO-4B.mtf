@@ -12,6 +12,10 @@ role:Striker
 
 
 
+quirk:multi_trac
+quirk:difficult_eject
+
+
 mass:35
 engine:280 Light Engine(IS)
 structure:IS Endo Steel

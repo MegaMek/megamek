@@ -12,6 +12,9 @@ role:Sniper
 
 
 
+quirk:imp_target_short
+
+
 Mass:20
 Engine:100 Fusion Engine(IS)
 Structure:IS Endo Steel

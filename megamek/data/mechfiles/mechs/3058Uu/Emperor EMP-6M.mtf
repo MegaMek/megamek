@@ -12,6 +12,11 @@ role:Sniper
 
 
 
+quirk:command_mech
+weaponquirk:imp_cooling:RA:8:ISERLargeLaser
+weaponquirk:imp_cooling:LA:8:ISERLargeLaser
+
+
 Mass:90
 Engine:270 Light Engine
 Structure:Endo Steel

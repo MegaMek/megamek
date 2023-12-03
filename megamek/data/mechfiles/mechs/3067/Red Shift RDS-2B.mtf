@@ -12,6 +12,12 @@ source:TRO: 3067
 
 
 
+quirk:imp_com
+quirk:low_profile
+quirk:bad_rep_is
+weaponquirk:accurate:HD:3:ISTAG
+
+
 Mass:20
 Engine:180 XL Engine
 Structure:Endo Steel

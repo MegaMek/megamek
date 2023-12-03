@@ -9,6 +9,15 @@ source:Rec Guide:ilClan #26
 rules level:2
 role:Sniper
 
+quirk:ext_twist
+quirk:bad_rep_clan
+weaponquirk:stable_weapon:CT:10:CLERSmallLaser
+weaponquirk:stable_weapon:RT:2:CLStreakLRM15
+weaponquirk:stable_weapon:LT:4:CLERMediumLaser
+weaponquirk:stable_weapon:RA:2:CLERPPC
+weaponquirk:stable_weapon:LA:2:CLRotaryAC5
+
+
 mass:80
 engine:400 XL (Clan) Engine(IS)
 structure:Clan Endo Steel

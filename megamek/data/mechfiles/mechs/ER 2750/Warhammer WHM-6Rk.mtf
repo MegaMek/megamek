@@ -12,6 +12,13 @@ role:Skirmisher
 
 
 
+quirk:rugged_2
+quirk:searchlight
+quirk:stable
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
+
 Mass:70
 Engine:350 XL Engine(IS)
 Structure:IS Standard

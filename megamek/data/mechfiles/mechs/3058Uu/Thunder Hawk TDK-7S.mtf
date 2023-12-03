@@ -12,6 +12,12 @@ role:Sniper
 
 
 
+quirk:command_mech
+quirk:good_rep_1
+quirk:variable_range_long
+quirk:difficult_maintain
+
+
 Mass:100
 Engine:300 Light Engine
 Structure:Standard

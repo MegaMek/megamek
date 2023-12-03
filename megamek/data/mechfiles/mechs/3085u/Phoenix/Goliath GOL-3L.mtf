@@ -12,6 +12,10 @@ role:Missile Boat
 
 
 
+quirk:multi_trac
+quirk:exp_actuator
+
+
 Mass:80
 Engine:400 XL Engine(IS)
 Structure:Standard

@@ -12,6 +12,9 @@ role:Brawler
 
 
 
+quirk:command_mech
+
+
 Mass:70
 Engine:280 Fusion Engine
 Structure:Standard

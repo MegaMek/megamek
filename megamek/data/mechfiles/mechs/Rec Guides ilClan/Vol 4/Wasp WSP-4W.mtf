@@ -12,6 +12,12 @@ source:Rec Guide:ilClan #4
 
 
 
+quirk:easy_maintain
+quirk:ext_twist
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
+
 mass:20
 engine:120 Light Engine(IS)
 structure:IS Standard

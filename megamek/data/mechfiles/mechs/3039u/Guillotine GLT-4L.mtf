@@ -12,6 +12,9 @@ role:Skirmisher
 
 
 
+quirk:searchlight
+
+
 Mass:70
 Engine:280 Fusion Engine
 Structure:Standard

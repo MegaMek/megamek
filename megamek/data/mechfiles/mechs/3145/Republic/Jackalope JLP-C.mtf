@@ -12,6 +12,10 @@ role:Striker
 
 
 
+quirk:compact_mech
+quirk:low_profile
+
+
 Mass:30
 Engine:240 XL (Clan) Engine
 Structure:Clan Endo Steel

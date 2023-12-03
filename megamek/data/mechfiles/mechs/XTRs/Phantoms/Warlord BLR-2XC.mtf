@@ -12,6 +12,11 @@ role:Brawler
 
 
 
+quirk:easy_maintain
+quirk:battle_computer
+quirk:imp_com
+
+
 Mass:75
 Engine:300 XL Engine(IS)
 Structure:IS Standard

@@ -13,6 +13,10 @@ role:Striker
 
 
 
+quirk:low_profile
+quirk:no_arms
+
+
 Mass:20
 Engine:100 Fusion Engine
 Structure:Standard

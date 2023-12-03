@@ -10,6 +10,10 @@ Source:TRO: 3055
 Rules Level:2
 role:Juggernaut
 
+quirk:ext_twist
+quirk:pro_actuator
+
+
 Mass:100
 Engine:300 XL (Clan) Engine
 Structure:Standard

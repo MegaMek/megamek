@@ -13,6 +13,10 @@ role:Scout
 
 
 
+quirk:pro_actuator
+quirk:difficult_maintain
+
+
 Mass:65
 Engine:390 XL Engine
 Structure:Standard

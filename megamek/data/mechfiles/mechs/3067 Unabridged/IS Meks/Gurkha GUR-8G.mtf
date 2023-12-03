@@ -12,6 +12,11 @@ source:Record Sheets: 3067 Unabridged
 
 
 
+quirk:bad_rep_clan
+quirk:bad_rep_is
+quirk:exp_actuator
+
+
 Mass:35
 Engine:245 XL Fusion Engine
 Structure:Endo-Steel

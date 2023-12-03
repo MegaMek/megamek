@@ -12,6 +12,11 @@ role:Missile Boat
 
 
 
+quirk:bad_rep_clan
+quirk:bad_rep_is
+quirk:hard_pilot
+
+
 mass:55
 engine:330 Light Engine(IS)
 structure:IS Standard

@@ -13,6 +13,10 @@ role:Scout
 
 
 
+weaponquirk:jettison_capable:RA:4:Mace
+weaponquirk:jettison_capable:LA:4:Autocannon/10
+
+
 Mass:35
 Engine:210 XL Engine(IS)
 Structure:IS Endo Steel

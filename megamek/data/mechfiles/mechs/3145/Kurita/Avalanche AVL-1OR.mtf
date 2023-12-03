@@ -12,6 +12,9 @@ role:Missile Boat
 
 
 
+quirk:bad_rep_is
+
+
 Mass:50
 Engine:250 Fusion Engine(IS)
 Structure:IS Endo Steel

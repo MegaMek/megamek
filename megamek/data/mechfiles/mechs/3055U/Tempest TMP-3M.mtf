@@ -13,6 +13,9 @@ role:Brawler
 
 
 
+weaponquirk:direct_torso_mount:HD:3:Medium Laser
+
+
 Mass:65
 Engine:260 XL Engine
 Structure:Endo Steel

@@ -12,6 +12,11 @@ role:Striker
 
 
 
+quirk:imp_com
+quirk:rugged_1
+weaponquirk:direct_torso_mount:CT:10:Large Laser
+
+
 Mass:30
 Engine:240 Fusion Engine
 Structure:Standard

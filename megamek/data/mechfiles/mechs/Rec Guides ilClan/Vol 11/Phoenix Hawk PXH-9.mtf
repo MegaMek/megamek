@@ -12,6 +12,11 @@ source:Rec Guide:ilClan #11
 
 
 
+quirk:combat_computer
+quirk:imp_com
+weaponquirk:jettison_capable:RA:7:ISLargeXPulseLaser
+
+
 mass:45
 engine:270 XL Engine(IS)
 structure:IS Endo Steel

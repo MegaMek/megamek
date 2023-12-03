@@ -12,6 +12,9 @@ role:Skirmisher
 
 
 
+quirk:easy_maintain
+
+
 mass:50
 engine:250 XL Engine(IS)
 structure:IS Standard

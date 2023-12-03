@@ -12,6 +12,11 @@ role:Juggernaut
 
 
 
+quirk:combat_computer
+quirk:ubiquitous_is
+quirk:no_arms
+
+
 Mass:75
 Engine:225 Fusion Engine(IS)
 Structure:IS Standard

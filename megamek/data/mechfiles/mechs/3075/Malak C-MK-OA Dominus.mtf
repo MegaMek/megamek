@@ -12,6 +12,11 @@ role:Striker
 
 
 
+quirk:imp_com
+quirk:imp_sensors
+quirk:bad_rep_is
+
+
 Mass:30
 Engine:210 Light Engine(IS)
 Structure:IS Endo Steel

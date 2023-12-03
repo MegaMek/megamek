@@ -12,6 +12,13 @@ role:Juggernaut
 
 
 
+quirk:command_mech
+quirk:cowl
+quirk:reinforced_legs
+quirk:difficult_eject
+quirk:prototype
+
+
 Mass:90
 Engine:270 XL Fusion Engine
 Structure:IS Reinforced

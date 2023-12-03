@@ -13,6 +13,9 @@ role:Scout
 
 
 
+quirk:no_arms
+
+
 Mass:35
 Engine:175 Fusion Engine
 Structure:Standard

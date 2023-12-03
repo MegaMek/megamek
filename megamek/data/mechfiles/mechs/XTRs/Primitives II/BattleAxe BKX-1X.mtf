@@ -13,6 +13,11 @@ role:Juggernaut
 
 
 
+quirk:hard_pilot
+quirk:poor_performance
+quirk:prototype
+
+
 Mass:70
 Engine:255 Primitive Fusion Engine
 Structure:Standard

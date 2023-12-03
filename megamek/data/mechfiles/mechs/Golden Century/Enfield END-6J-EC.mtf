@@ -13,6 +13,9 @@ role:Skirmisher
 
 
 
+quirk:ext_twist
+
+
 mass:50
 engine:250 XL Engine(IS)
 structure:IS Endo Steel

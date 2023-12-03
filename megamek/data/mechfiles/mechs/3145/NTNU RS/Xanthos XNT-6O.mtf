@@ -12,6 +12,9 @@ role:Juggernaut
 
 
 
+quirk:imp_life_support
+
+
 Mass:100
 Engine:300 Compact Engine(IS)
 Structure:IS Standard

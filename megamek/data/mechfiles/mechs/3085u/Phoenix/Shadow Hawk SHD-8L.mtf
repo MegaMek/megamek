@@ -12,6 +12,14 @@ role:Striker
 
 
 
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:imp_life_support
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+quirk:rugged_1
+
+
 Mass:55
 Engine:275 XL Engine(IS)
 Structure:Endo Steel

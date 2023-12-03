@@ -12,6 +12,10 @@ role:Skirmisher
 
 
 
+quirk:command_mech
+quirk:weak_head_1
+
+
 mass:85
 engine:255 XL Engine(IS)
 structure:IS Standard

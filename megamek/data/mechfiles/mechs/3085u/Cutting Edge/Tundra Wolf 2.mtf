@@ -10,6 +10,10 @@ source:TRO: 3085
 Rules Level:2
 role:Brawler
 
+quirk:easy_maintain
+quirk:weak_head_1
+
+
 Mass:75
 Engine:300 XL (Clan) Engine(IS)
 Structure:Endo Steel

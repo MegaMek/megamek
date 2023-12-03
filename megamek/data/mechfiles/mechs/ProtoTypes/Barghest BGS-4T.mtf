@@ -12,6 +12,9 @@ role:Brawler
 
 
 
+quirk:directional_torso_mount
+
+
 Mass:70
 Engine:280 Fusion Engine(IS)
 Structure:Endo Steel

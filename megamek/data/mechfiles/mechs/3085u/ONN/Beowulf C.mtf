@@ -12,6 +12,11 @@ role:None
 
 
 
+quirk:command_mech
+quirk:ext_twist
+quirk:exp_actuator
+
+
 Mass:45
 Engine:270 XL (Clan) Engine(IS)
 Structure:Endo Steel

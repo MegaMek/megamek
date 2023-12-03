@@ -12,6 +12,16 @@ role:Skirmisher
 
 
 
+quirk:command_mech
+quirk:ext_twist
+quirk:imp_com
+quirk:pro_actuator
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+quirk:cramped_cockpit
+weaponquirk:jettison_capable:RA:3:Autocannon/5
+
+
 mass:55
 engine:265 Fusion Engine(IS)
 structure:IS Standard

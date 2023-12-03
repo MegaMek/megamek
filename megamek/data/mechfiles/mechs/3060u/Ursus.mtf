@@ -11,6 +11,11 @@ Rules Level:2
 role:Brawler
 
 
+quirk:distracting
+quirk:pro_actuator
+quirk:cramped_cockpit
+
+
 Mass:50
 Engine:200 Fusion (Clan) Engine
 Structure:Standard

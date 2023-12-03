@@ -12,6 +12,11 @@ role:Juggernaut
 
 
 
+quirk:hyper_actuator
+weaponquirk:stable_weapon:RA:3:Hyper Velocity Auto Cannon/10
+weaponquirk:stable_weapon:LA:3:Hyper Velocity Auto Cannon/10
+
+
 Mass:90
 Engine:270 XL Engine(IS)
 Structure:IS Endo Steel

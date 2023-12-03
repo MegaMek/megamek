@@ -11,6 +11,10 @@ role:Brawler
 
 
 
+quirk:rugged_1
+quirk:weak_legs
+
+
 mass:40
 engine:200 Fusion Engine(IS)
 structure:IS Standard

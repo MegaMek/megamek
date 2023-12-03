@@ -11,6 +11,10 @@ rules level:2
 role:Brawler
 
 
+quirk:imp_target_med
+quirk:weak_head_1
+
+
 mass:75
 engine:375 XL (Clan) Engine(IS)
 structure:Clan Endo Steel

@@ -11,6 +11,11 @@ role:Striker
 source:TRO: 3067
 
 
+quirk:exp_actuator
+weaponquirk:imp_cooling:RT:2:CLHeavyLargeLaser
+weaponquirk:stable_weapon:RT:2:CLHeavyLargeLaser
+
+
 Mass:25
 Engine:250 XL Engine
 Structure:Endo Steel

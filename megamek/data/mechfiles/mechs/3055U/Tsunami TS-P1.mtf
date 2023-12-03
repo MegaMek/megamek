@@ -13,6 +13,9 @@ role:Scout
 
 
 
+quirk:difficult_maintain
+
+
 Mass:40
 Engine:240 Fusion Engine
 Structure:Standard

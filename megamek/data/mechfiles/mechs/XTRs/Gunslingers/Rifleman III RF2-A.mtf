@@ -13,6 +13,13 @@ role:Brawler
 
 
 
+quirk:prototype
+quirk:fast_reload
+quirk:multi_trac
+quirk:searchlight
+quirk:obsolete
+
+
 Mass:90
 Engine:180 XL Engine(IS)
 Structure:IS Standard

@@ -12,6 +12,11 @@ role:Sniper
 
 
 
+quirk:no_arms
+weaponquirk:stable_weapon:RT:0:ISImprovedHeavyGaussRifle
+weaponquirk:stable_weapon:LT:0:ISImprovedHeavyGaussRifle
+
+
 Mass:100
 Engine:300 Fusion Engine(IS)
 Structure:Endo Steel

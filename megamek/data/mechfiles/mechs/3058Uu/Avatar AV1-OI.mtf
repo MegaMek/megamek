@@ -12,6 +12,10 @@ role:Missile Boat
 
 
 
+weaponquirk:stable_weapon:CT:10:Medium Laser
+weaponquirk:stable_weapon:CT:11:Medium Laser
+
+
 Mass:70
 Engine:280 XL Engine(IS)
 Structure:IS Standard

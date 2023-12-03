@@ -13,6 +13,10 @@ role:Striker
 
 
 
+weaponquirk:accurate:HD:3:ISTAG
+weaponquirk:stable_weapon:HD:3:ISTAG
+
+
 Mass:30
 Engine:210 XL Engine
 Structure:Endo Steel

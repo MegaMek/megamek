@@ -11,6 +11,10 @@ rules level:2
 role:Sniper
 
 
+quirk:ext_twist
+quirk:pro_actuator
+
+
 mass:100
 engine:300 XL (Clan) Engine(IS)
 structure:IS Standard

@@ -12,6 +12,10 @@ role:Skirmisher
 
 
 
+quirk:no_arms
+quirk:weak_head_1
+
+
 Mass:65
 Engine:260 XL Fusion Engine
 Structure:Endo-Steel

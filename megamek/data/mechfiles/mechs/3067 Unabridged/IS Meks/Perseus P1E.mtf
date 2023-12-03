@@ -12,6 +12,10 @@ source:Record Sheets: 3067 Unabridged
 
 
 
+quirk:anti_air
+quirk:easy_maintain
+
+
 Mass:75
 Engine:300 XL Engine(IS)
 Structure:IS Endo Steel

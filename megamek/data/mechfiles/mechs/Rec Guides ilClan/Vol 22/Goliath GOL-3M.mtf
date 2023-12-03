@@ -12,6 +12,10 @@ role:Sniper
 
 
 
+quirk:multi_trac
+quirk:exp_actuator
+
+
 mass:80
 engine:320 XL Engine(IS)
 structure:IS Standard

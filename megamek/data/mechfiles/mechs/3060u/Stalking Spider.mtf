@@ -11,6 +11,9 @@ Rules Level:2
 role:Skirmisher
 
 
+quirk:stable
+
+
 Mass:50
 Engine:250 Fusion (Clan) Engine
 Structure:Standard

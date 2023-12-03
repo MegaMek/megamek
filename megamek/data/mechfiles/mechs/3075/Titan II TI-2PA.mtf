@@ -12,6 +12,9 @@ role:Juggernaut
 
 
 
+quirk:pro_actuator
+
+
 mass:100
 engine:300 Fusion Engine(IS)
 structure:IS Standard

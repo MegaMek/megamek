@@ -12,6 +12,10 @@ role:Missile Boat
 
 
 
+quirk:reinforced_legs
+quirk:stable
+
+
 Mass:75
 Engine:225 Fusion Engine
 Structure:Standard

@@ -13,6 +13,12 @@ role:Skirmisher
 
 
 
+quirk:pro_actuator
+quirk:stable
+quirk:obsolete
+weaponquirk:jettison_capable:RA:3:Autocannon/5
+
+
 Mass:55
 Engine:265 Fusion Engine(IS)
 Structure:IS Standard

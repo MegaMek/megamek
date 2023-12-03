@@ -12,6 +12,10 @@ role:Striker
 
 
 
+quirk:easy_maintain
+weaponquirk:accurate:LA:4:Mace
+
+
 Mass:25
 Engine:150 XL Engine(IS)
 Structure:Standard

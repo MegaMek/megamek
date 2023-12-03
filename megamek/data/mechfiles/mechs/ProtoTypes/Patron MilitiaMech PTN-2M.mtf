@@ -12,6 +12,13 @@ role:Ambusher
 
 
 
+quirk:pro_actuator
+weaponquirk:ammo_feed_problems:RA:4:Light Machine Gun
+weaponquirk:ammo_feed_problems:RA:5:Light Machine Gun
+weaponquirk:ammo_feed_problems:LA:4:Light Machine Gun
+weaponquirk:ammo_feed_problems:LA:5:Light Machine Gun
+
+
 Mass:15
 Engine:30 Fuel Cell Engine(IS)
 Structure:Industrial

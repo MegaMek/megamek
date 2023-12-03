@@ -12,6 +12,10 @@ role:Sniper
 
 
 
+quirk:command_mech
+weaponquirk:imp_cooling:LA:3:Large Laser
+
+
 Mass:90
 Engine:270 XL Engine (Inner Sphere)
 Structure:Standard

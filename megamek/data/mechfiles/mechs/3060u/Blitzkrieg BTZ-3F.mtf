@@ -13,6 +13,10 @@ role:Striker
 
 
 
+quirk:directional_torso_mount
+quirk:no_arms
+
+
 Mass:50
 Engine:350 XL Engine
 Structure:Endo Steel

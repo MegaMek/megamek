@@ -11,6 +11,9 @@ Rules Level:2
 role:Missile Boat
 
 
+quirk:cramped_cockpit
+
+
 Mass:85
 Engine:255 Fusion (Clan) Engine
 Structure:Standard

@@ -13,6 +13,16 @@ role:Missile Boat
 
 
 
+quirk:no_arms
+weaponquirk:mod_weapons:HD:3:Small Laser
+weaponquirk:mod_weapons:CT:10:Medium Laser
+weaponquirk:mod_weapons:CT:11:Medium Laser
+weaponquirk:mod_weapons:RT:3:ISArrowIV
+weaponquirk:mod_weapons:LT:3:ISArrowIV
+weaponquirk:mod_weapons:RA:2:ISArrowIV
+weaponquirk:mod_weapons:LA:2:ISArrowIV
+
+
 Mass:80
 Engine:320 XL Engine
 Structure:Standard

@@ -13,6 +13,9 @@ role:Skirmisher
 
 
 
+quirk:poor_life_support
+
+
 Mass:55
 Engine:385 XXL Engine
 Structure:Composite

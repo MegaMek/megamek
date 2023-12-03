@@ -12,6 +12,12 @@ Source:TRO: Prototypes
 
 
 
+quirk:cowl
+quirk:hard_pilot
+quirk:easy_maintain
+quirk:reinforced_legs
+
+
 Mass:70
 Engine:280 XL Fusion Engine
 Structure:Endo-Steel

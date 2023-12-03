@@ -12,6 +12,10 @@ role:Juggernaut
 
 
 
+quirk:hyper_actuator
+quirk:searchlight
+
+
 Mass:100
 Engine:300 Fusion Engine
 Structure:Standard

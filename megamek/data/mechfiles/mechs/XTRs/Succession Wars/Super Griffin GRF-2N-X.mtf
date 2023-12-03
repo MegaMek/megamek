@@ -13,6 +13,9 @@ role:Missile Boat
 
 
 
+quirk:prototype
+
+
 mass:60
 engine:240 Fusion Engine(IS)
 structure:IS Standard

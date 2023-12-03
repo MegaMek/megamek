@@ -12,6 +12,10 @@ source:Record Sheets: 3067 Unabridged
 
 
 
+quirk:multi_trac
+quirk:difficult_eject
+
+
 Mass:35
 Engine:280 Light Fusion Engine
 Structure:Endo-Steel

@@ -12,6 +12,10 @@ role:Skirmisher
 
 
 
+quirk:barrel_fists_la
+quirk:barrel_fists_ra
+
+
 Mass:50
 Engine:250 XL Engine
 Structure:Endo Steel

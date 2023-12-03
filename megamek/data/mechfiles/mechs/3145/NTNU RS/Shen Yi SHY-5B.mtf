@@ -12,6 +12,9 @@ role:Missile Boat
 
 
 
+quirk:weak_head_1
+
+
 Mass:65
 Engine:260 XL Engine(IS)
 Structure:IS Standard

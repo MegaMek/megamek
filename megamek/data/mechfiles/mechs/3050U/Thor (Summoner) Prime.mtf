@@ -11,6 +11,10 @@ rules level:2
 role:Sniper
 
 
+quirk:imp_com
+quirk:ubiquitous_clan
+
+
 mass:70
 engine:350 XL (Clan) Engine(IS)
 structure:IS Standard

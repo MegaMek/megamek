@@ -13,6 +13,10 @@ role:Scout
 
 
 
+quirk:hard_pilot
+quirk:weak_legs
+
+
 Mass:20
 Engine:120 Fusion Engine(IS)
 Structure:Standard

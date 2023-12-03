@@ -13,6 +13,11 @@ Source:TRO: Prototypes
 
 
 
+quirk:pro_actuator
+quirk:imp_life_support
+weaponquirk:jettison_capable:RA:5:Mace
+
+
 Mass:65
 Engine:195 Fuel Cell Engine(IS)
 Structure:Industrial

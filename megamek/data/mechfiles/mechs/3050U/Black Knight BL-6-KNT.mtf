@@ -12,6 +12,9 @@ role:Brawler
 
 
 
+quirk:command_mech
+
+
 mass:75
 engine:300 Fusion Engine(IS)
 structure:IS Endo Steel

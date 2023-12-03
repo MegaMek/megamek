@@ -13,6 +13,9 @@ role:Skirmisher
 
 
 
+quirk:difficult_maintain
+
+
 Mass:85
 Engine:340 XL Engine
 Structure:Standard

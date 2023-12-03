@@ -12,6 +12,12 @@ role:Scout
 
 
 
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+quirk:cramped_cockpit
+
+
 Mass:20
 Engine:140 Light Engine(IS)
 Structure:Standard

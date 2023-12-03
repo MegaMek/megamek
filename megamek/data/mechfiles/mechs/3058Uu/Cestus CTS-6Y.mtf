@@ -12,6 +12,9 @@ role:Brawler
 
 
 
+weaponquirk:stable_weapon:RT:3:ISGaussRifle
+
+
 Mass:65
 Engine:260 XL Engine
 Structure:Standard

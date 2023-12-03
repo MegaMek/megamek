@@ -13,6 +13,9 @@ role:Sniper
 
 
 
+quirk:fast_reload
+
+
 Mass:70
 Engine:280 XL Engine(IS)
 Structure:IS Endo Steel

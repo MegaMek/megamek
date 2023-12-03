@@ -11,6 +11,10 @@ role:Juggernaut
 
 
 
+quirk:hyper_actuator
+quirk:searchlight
+
+
 mass:100
 engine:300 XL Engine(IS)
 structure:IS Endo-Composite

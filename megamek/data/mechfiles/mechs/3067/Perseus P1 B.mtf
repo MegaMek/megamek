@@ -12,6 +12,10 @@ role:Brawler
 
 
 
+quirk:anti_air
+quirk:easy_maintain
+
+
 mass:75
 engine:300 XL Engine(IS)
 structure:IS Endo Steel

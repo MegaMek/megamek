@@ -11,6 +11,10 @@ role:Sniper
 
 
 
+quirk:command_mech
+quirk:obsolete
+
+
 mass:70
 engine:280 Fusion Engine(IS)
 structure:IS Standard

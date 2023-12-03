@@ -12,6 +12,9 @@ role:Juggernaut
 
 
 
+quirk:no_arms
+
+
 mass:100
 engine:300 Light Engine(IS)
 structure:IS Standard

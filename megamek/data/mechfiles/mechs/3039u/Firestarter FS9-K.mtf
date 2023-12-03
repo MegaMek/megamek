@@ -12,6 +12,10 @@ role:Scout
 
 
 
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
+
 Mass:35
 Engine:210 Fusion Engine
 Structure:Standard

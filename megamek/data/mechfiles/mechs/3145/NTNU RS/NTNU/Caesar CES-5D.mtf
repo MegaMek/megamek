@@ -10,6 +10,9 @@ rules level:3
 
 
 
+quirk:hyper_actuator
+
+
 mass:70
 engine:280 XL Engine(IS)
 structure:IS Endo Steel

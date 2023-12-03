@@ -12,6 +12,11 @@ role:Scout
 
 
 
+quirk:imp_com
+quirk:rugged_1
+weaponquirk:direct_torso_mount:CT:10:ISERLargeLaser
+
+
 Mass:30
 Engine:270 XL Engine
 Structure:Standard

@@ -12,6 +12,9 @@ role:Missile Boat
 
 
 
+quirk:no_arms
+
+
 Mass:60
 Engine:240 Light Engine
 Structure:Endo Steel

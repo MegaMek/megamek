@@ -10,6 +10,9 @@ source:XTR: Royal Fantasy
 rules level:2
 role:Sniper
 
+quirk:low_profile
+
+
 mass:40
 engine:240 Fusion Engine(IS)
 structure:IS Endo Steel

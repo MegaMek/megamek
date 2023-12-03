@@ -13,6 +13,9 @@ role:Missile Boat
 
 
 
+quirk:pro_actuator
+
+
 Mass:45
 Engine:225 Fusion Engine
 Structure:Endo Steel

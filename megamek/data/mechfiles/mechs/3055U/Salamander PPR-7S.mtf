@@ -12,6 +12,9 @@ role:Missile Boat
 
 
 
+quirk:difficult_maintain
+
+
 Mass:80
 Engine:320 Light Engine(IS)
 Structure:IS Endo-Steel

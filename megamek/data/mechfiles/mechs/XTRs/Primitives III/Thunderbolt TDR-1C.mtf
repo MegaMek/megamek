@@ -13,6 +13,12 @@ role:Missile Boat
 
 
 
+quirk:multi_trac
+quirk:difficult_maintain
+quirk:obsolete
+quirk:poor_work
+
+
 mass:65
 engine:235 Fusion Engine(IS)
 structure:IS Standard

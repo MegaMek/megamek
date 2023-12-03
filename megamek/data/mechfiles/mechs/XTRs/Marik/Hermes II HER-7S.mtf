@@ -12,6 +12,10 @@ role:Sniper
 
 
 
+quirk:easy_maintain
+quirk:imp_com
+
+
 Mass:40
 Engine:320 XXL Fusion Engine (Inner Sphere)
 Structure:Composite

@@ -12,6 +12,10 @@ role:Striker
 
 
 
+quirk:poor_sealing
+weaponquirk:accurate:RA:4:ISSNPPC
+
+
 Mass:35
 Engine:210 XL Engine(IS)
 Structure:IS Endo-Steel

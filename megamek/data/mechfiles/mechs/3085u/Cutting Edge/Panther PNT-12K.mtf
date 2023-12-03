@@ -12,6 +12,10 @@ source:TRO: 3085
 
 
 
+quirk:imp_target_short
+quirk:nimble_jumper
+
+
 Mass:35
 Engine:140 Fusion Engine
 Structure:Endo Steel

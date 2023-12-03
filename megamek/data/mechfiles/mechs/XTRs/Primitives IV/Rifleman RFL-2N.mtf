@@ -12,6 +12,13 @@ role:Sniper
 
 
 
+quirk:anti_air
+quirk:imp_com
+quirk:searchlight
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
+
 Mass:50
 Engine:200 Fusion Engine
 Structure:Standard

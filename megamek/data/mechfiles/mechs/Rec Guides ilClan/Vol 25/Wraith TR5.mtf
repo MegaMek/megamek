@@ -11,6 +11,10 @@ role:Skirmisher
 
 
 
+quirk:ubiquitous_is
+quirk:difficult_maintain
+
+
 mass:55
 engine:330 XL Engine(IS)
 structure:IS Endo-Composite

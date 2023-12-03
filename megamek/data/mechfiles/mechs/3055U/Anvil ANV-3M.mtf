@@ -12,6 +12,10 @@ role:Skirmisher
 
 
 
+quirk:ext_twist
+quirk:imp_target_med
+
+
 mass:60
 engine:300 Fusion Engine(IS)
 structure:IS Endo Steel

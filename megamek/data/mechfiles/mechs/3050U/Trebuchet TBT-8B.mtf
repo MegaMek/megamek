@@ -12,6 +12,11 @@ role:Missile Boat
 
 
 
+quirk:easy_maintain
+weaponquirk:fast_reload:RT:6:ISMML5
+weaponquirk:fast_reload:RT:9:ISMML5
+
+
 mass:50
 engine:300 XL Engine(IS)
 structure:IS Endo Steel

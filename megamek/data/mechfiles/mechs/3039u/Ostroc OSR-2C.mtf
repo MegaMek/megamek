@@ -13,6 +13,9 @@ role:Skirmisher
 
 
 
+quirk:low_profile
+
+
 mass:60
 engine:300 Fusion Engine(IS)
 structure:IS Standard

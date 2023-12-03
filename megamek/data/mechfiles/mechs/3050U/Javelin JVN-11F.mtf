@@ -12,6 +12,9 @@ role:Scout
 
 
 
+quirk:unbalanced
+
+
 Mass:30
 Engine:180 XL Engine
 Structure:Endo Steel

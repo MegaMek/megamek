@@ -11,6 +11,9 @@ role:Sniper
 
 
 
+quirk:no_arms
+
+
 mass:55
 engine:220 Fusion Engine(IS)
 structure:IS Standard

@@ -13,6 +13,11 @@ source:TRO: 3067
 
 
 
+quirk:no_arms
+weaponquirk:stable_weapon:RT:0:ISHeavyGaussRifle
+weaponquirk:stable_weapon:LT:0:ISHeavyGaussRifle
+
+
 Mass:100
 Engine:300 Fusion Engine
 Structure:Endo Steel

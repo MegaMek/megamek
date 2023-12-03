@@ -12,6 +12,11 @@ role:Sniper
 
 
 
+quirk:ext_twist
+quirk:low_profile
+quirk:stable
+
+
 mass:60
 engine:300 Light Engine(IS)
 structure:IS Endo Steel

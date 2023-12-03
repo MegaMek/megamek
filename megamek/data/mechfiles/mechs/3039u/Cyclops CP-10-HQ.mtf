@@ -11,6 +11,12 @@ role:Juggernaut
 
 
 
+quirk:battle_computer
+quirk:cowl
+quirk:difficult_eject
+quirk:weak_head_2
+
+
 mass:90
 engine:360 Fusion Engine(IS)
 structure:IS Standard

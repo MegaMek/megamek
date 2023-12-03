@@ -13,6 +13,10 @@ role:Sniper
 
 
 
+quirk:multi_trac
+quirk:exp_actuator
+
+
 mass:80
 engine:320 Fusion Engine(IS)
 structure:IS Standard

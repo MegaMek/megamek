@@ -12,6 +12,10 @@ role:Skirmisher
 
 
 
+quirk:stable
+weaponquirk:exposed_linkage:RT:2:CLRotaryAC2
+
+
 Mass:65
 Engine:325 XL (Clan) Engine(IS)
 Structure:Clan Endo Steel

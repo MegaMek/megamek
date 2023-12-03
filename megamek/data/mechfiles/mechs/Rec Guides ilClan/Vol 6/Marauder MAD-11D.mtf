@@ -12,6 +12,13 @@ role:Sniper
 
 
 
+quirk:command_mech
+quirk:hyper_actuator
+quirk:low_profile
+weaponquirk:direct_torso_mount:RT:3:ISSBGR
+weaponquirk:exposed_linkage:RT:3:ISSBGR
+
+
 mass:75
 engine:300 XL Engine(IS)
 structure:IS Endo-Composite

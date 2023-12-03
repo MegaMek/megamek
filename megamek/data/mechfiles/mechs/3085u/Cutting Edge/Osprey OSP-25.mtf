@@ -12,6 +12,10 @@ role:Sniper
 
 
 
+quirk:no_arms
+weaponquirk:direct_torso_mount:RT:4:ISGaussRifle
+
+
 Mass:55
 Engine:220 XL Engine
 Structure:Endo Steel

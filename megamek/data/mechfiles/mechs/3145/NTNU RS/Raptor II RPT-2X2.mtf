@@ -12,6 +12,10 @@ role:Striker
 
 
 
+quirk:no_arms
+quirk:no_eject
+
+
 Mass:40
 Engine:280 XL Engine(IS)
 Structure:IS Endo Steel

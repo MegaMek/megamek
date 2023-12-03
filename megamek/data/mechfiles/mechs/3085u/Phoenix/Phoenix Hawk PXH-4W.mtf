@@ -12,6 +12,13 @@ role:Striker
 
 
 
+quirk:command_mech
+quirk:imp_com
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:jettison_capable:RA:4:Light PPC
+
+
 Mass:45
 Engine:225 Light Engine(IS)
 Structure:Endo Steel

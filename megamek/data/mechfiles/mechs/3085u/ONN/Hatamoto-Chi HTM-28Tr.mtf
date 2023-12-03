@@ -12,6 +12,11 @@ role:Juggernaut
 
 
 
+quirk:easy_maintain
+weaponquirk:mod_weapons:RT:7:ISStreakSRM6
+weaponquirk:mod_weapons:LT:7:ISStreakSRM4
+
+
 Mass:80
 Engine:240 Fusion Engine(IS)
 Structure:Standard

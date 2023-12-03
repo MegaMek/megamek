@@ -12,6 +12,12 @@ role:None
 
 
 
+quirk:bad_rep_clan
+quirk:bad_rep_is
+quirk:poor_work
+quirk:prototype
+
+
 mass:40
 engine:240 Fusion Engine(IS)
 structure:IS Standard

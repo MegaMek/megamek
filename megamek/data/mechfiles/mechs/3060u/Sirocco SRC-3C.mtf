@@ -13,6 +13,15 @@ role:Juggernaut
 
 
 
+quirk:difficult_maintain
+weaponquirk:direct_torso_mount:RT:3:ISUltraAC10
+weaponquirk:direct_torso_mount:RT:10:ISERMediumLaser
+weaponquirk:direct_torso_mount:RT:11:ISERMediumLaser
+weaponquirk:direct_torso_mount:LT:3:ISUltraAC10
+weaponquirk:direct_torso_mount:LT:10:ISERMediumLaser
+weaponquirk:direct_torso_mount:LT:11:ISERMediumLaser
+
+
 Mass:95
 Engine:285 Fusion Engine
 Structure:Standard

@@ -12,6 +12,9 @@ role:Striker
 
 
 
+quirk:imp_sensors
+
+
 mass:45
 engine:315 XL Engine(IS)
 structure:IS Composite

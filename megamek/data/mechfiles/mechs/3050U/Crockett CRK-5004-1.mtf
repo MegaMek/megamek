@@ -12,6 +12,10 @@ role:Juggernaut
 
 
 
+quirk:easy_pilot
+quirk:poor_life_support
+
+
 Mass:85
 Engine:255 Fusion Engine(IS)
 Structure:IS Standard

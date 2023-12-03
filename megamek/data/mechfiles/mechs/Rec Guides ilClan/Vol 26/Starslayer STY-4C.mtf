@@ -11,6 +11,9 @@ role:Skirmisher
 
 
 
+quirk:rugged_1
+
+
 mass:50
 engine:250 Fusion Engine(IS)
 structure:IS Endo Steel

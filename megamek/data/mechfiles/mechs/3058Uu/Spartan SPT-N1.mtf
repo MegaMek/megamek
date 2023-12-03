@@ -13,6 +13,9 @@ role:Skirmisher
 
 
 
+quirk:imp_sensors
+
+
 Mass:80
 Engine:400 XL Engine
 Structure:Standard

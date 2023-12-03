@@ -11,6 +11,10 @@ role:Sniper
 
 
 
+quirk:rugged_1
+quirk:difficult_eject
+
+
 mass:45
 engine:180 Compact Engine(IS)
 structure:Clan Endo Steel

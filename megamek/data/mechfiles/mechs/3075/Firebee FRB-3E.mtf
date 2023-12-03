@@ -12,6 +12,10 @@ role:Brawler
 
 
 
+quirk:poor_life_support
+quirk:weak_legs
+
+
 Mass:35
 Engine:175 Fusion Engine
 Structure:Standard

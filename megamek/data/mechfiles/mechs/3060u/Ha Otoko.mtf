@@ -11,6 +11,9 @@ Rules Level:2
 role:Missile Boat
 
 
+quirk:bad_rep_clan
+
+
 Mass:65
 Engine:260 Fusion (Clan) Engine
 Structure:Standard

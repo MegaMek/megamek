@@ -11,6 +11,10 @@ role:Skirmisher
 source:Rec Guide:ilClan #4
 
 
+quirk:imp_target_med
+quirk:ramshackle
+
+
 mass:60
 engine:300 XL (Clan) Engine(IS)
 structure:Clan Endo Steel

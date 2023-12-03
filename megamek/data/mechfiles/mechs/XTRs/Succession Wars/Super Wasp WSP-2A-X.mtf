@@ -13,6 +13,9 @@ role:Striker
 
 
 
+quirk:prototype
+
+
 mass:25
 engine:150 Fusion Engine(IS)
 structure:IS Standard

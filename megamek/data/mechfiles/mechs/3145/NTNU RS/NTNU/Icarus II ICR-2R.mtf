@@ -10,6 +10,9 @@ rules level:3
 
 
 
+quirk:imp_target_short
+
+
 mass:40
 engine:200 XL Engine(IS)
 structure:IS Standard

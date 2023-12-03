@@ -12,6 +12,10 @@ role:Juggernaut
 
 
 
+quirk:imp_target_short
+quirk:poor_performance
+
+
 Mass:100
 Engine:300 Compact Engine
 Structure:Endo Steel

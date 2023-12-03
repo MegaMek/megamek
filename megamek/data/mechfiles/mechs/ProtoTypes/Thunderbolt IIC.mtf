@@ -11,6 +11,16 @@ role:Brawler
 Source:TRO: Prototypes 
 
 
+quirk:pro_actuator
+quirk:difficult_maintain
+weaponquirk:mod_weapons:RT:4:CLStreakLRM15
+weaponquirk:mod_weapons:LT:4:CLERMediumLaser
+weaponquirk:mod_weapons:LT:5:CLERMediumLaser
+weaponquirk:mod_weapons:LT:6:CLERMediumLaser
+weaponquirk:mod_weapons:RA:4:CLImprovedHeavyLargeLaser
+weaponquirk:mod_weapons:LA:4:CLImprovedHeavyLargeLaser
+
+
 Mass:70
 Engine:350 XL (Clan) Engine(IS)
 Structure:IS Standard

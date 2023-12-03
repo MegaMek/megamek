@@ -10,6 +10,10 @@ rules level:3
 
 
 
+quirk:battle_fists_la
+quirk:battle_fists_ra
+
+
 mass:50
 engine:200 Light Engine(IS)
 structure:IS Endo Steel

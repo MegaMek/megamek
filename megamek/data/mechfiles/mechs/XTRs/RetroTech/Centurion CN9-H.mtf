@@ -10,6 +10,10 @@ Source:XTR: RetroTech
 Rules Level:4
 role:Brawler
 
+quirk:imp_target_short
+quirk:non_standard
+
+
 Mass:50
 Engine:240 Primitive Fusion Engine
 Structure:Standard

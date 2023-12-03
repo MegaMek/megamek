@@ -12,6 +12,11 @@ role:Juggernaut
 
 
 
+quirk:imp_target_short
+quirk:difficult_maintain
+quirk:weak_head_1
+
+
 Mass:95
 Engine:285 Light Engine(IS)
 Structure:IS Endo-Composite

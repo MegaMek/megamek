@@ -12,6 +12,12 @@ role:Scout
 
 
 
+quirk:imp_com
+quirk:imp_sensors
+quirk:low_profile
+quirk:rugged_1
+
+
 Mass:35
 Engine:280 Fusion Engine
 Structure:Endo Steel

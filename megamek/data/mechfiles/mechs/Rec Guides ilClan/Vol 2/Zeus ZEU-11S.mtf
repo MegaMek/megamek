@@ -12,6 +12,10 @@ role:Sniper
 
 
 
+quirk:barrel_fists_ra
+quirk:easy_maintain
+
+
 mass:80
 engine:320 XL (Clan) Engine
 structure:IS Standard

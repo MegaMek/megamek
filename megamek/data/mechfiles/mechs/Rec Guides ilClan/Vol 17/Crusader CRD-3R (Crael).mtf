@@ -12,6 +12,14 @@ role:Brawler
 
 
 
+quirk:easy_maintain
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:stable_weapon:RL:4:SRM 6
+weaponquirk:stable_weapon:LL:4:SRM 6
+
+
 mass:65
 engine:260 Fusion Engine(IS)
 structure:IS Standard

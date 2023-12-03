@@ -12,6 +12,10 @@ role:Missile Boat
 
 
 
+quirk:good_rep_1
+quirk:stable
+
+
 Mass:75
 Engine:300 Fusion Engine
 Structure:Standard

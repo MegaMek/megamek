@@ -12,6 +12,10 @@ role:Sniper
 
 
 
+quirk:imp_com
+weaponquirk:stable_weapon:RT:0:ISUltraAC10
+
+
 Mass:85
 Engine:255 Fusion Engine
 Structure:Standard

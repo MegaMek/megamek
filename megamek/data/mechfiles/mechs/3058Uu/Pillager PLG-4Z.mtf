@@ -12,6 +12,10 @@ role:Sniper
 
 
 
+quirk:battle_fists_la
+quirk:battle_fists_ra
+
+
 Mass:100
 Engine:300 Fusion Engine
 Structure:Standard

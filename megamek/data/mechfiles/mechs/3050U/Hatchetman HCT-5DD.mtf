@@ -12,6 +12,10 @@ role:Skirmisher
 
 
 
+quirk:anti_air
+weaponquirk:fast_reload:RT:3:ISRotaryAC2
+
+
 mass:45
 engine:225 XL Engine(IS)
 structure:IS Standard

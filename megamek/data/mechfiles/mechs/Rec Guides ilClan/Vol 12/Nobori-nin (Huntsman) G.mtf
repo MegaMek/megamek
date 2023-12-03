@@ -10,6 +10,9 @@ rules level:2
 role:Skirmisher
 source:Rec Guide:ilClan #12
 
+quirk:stable
+
+
 mass:50
 engine:250 XL (Clan) Engine
 structure:Clan Endo Steel

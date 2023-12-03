@@ -13,6 +13,10 @@ role:Scout
 
 
 
+quirk:command_mech
+quirk:imp_com
+
+
 mass:40
 engine:320 XL Engine(IS)
 structure:IS Endo Steel

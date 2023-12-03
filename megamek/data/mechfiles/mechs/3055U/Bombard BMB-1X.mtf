@@ -12,6 +12,10 @@ role:Sniper
 
 
 
+quirk:bad_rep_is
+quirk:non_standard
+
+
 Mass:50
 Engine:200 XXL Engine
 Structure:Endo Steel

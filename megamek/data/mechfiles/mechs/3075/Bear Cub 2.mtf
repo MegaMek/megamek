@@ -2,7 +2,6 @@ Version:1.0
 Bear Cub
 2
 mul id:315
-base unit:data/mechfiles/mechs/3075/Bear Cub.mtf
 
 Config:Biped
 TechBase:Clan
@@ -10,9 +9,6 @@ Era:3070
 Source:TRO: 3075
 Rules Level:2
 role:Striker
-quirk:easy_pilot
-quirk:ext_twist
-quirk:cramped_cockpit
 
 Mass:25
 Engine:200 XL (Clan) Engine

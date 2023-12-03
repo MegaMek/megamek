@@ -2,9 +2,6 @@ Version:1.1
 Parash
 3
 mul id:7375
-base unit:data/mechfiles/mechs/3085u/Cutting Edge/Parash.mtf
-quirk:non_standard
-weaponquirk:jettison_capable:RA:4:CLLargePulseLaser
 
 Config:Biped
 TechBase:Mixed (Clan Chassis)

@@ -10,6 +10,8 @@ source:Historical: Operation Klondike
 rules level:4
 role:Juggernaut
 
+
+
 mass:90
 engine:270 Fusion Engine(IS)
 structure:IS Standard

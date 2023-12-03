@@ -2,7 +2,6 @@ Version:1.0
 Jupiter
 3
 mul id:1727
-base unit:data/mechfiles/mechs/3075/Jupiter.mtf
 
 Config:Biped
 TechBase:Clan

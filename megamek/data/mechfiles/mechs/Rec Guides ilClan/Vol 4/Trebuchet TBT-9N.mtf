@@ -11,6 +11,8 @@ role:Missile Boat
 source:Rec Guide:ilClan #4
 
 
+
+
 mass:50
 engine:300 XL Engine(IS)
 structure:IS Endo Steel

@@ -2,7 +2,6 @@ Version:1.0
 Gyrfalcon
 5
 mul id:7694
-base unit:data/mechfiles/mechs/3145/Clans/Gyrfalcon.mtf
 
 Config:Biped
 techbase:Clan

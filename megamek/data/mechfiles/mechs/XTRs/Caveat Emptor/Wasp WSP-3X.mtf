@@ -10,6 +10,8 @@ source:XTR: Caveat Emptor
 rules level:4
 role:Missile Boat
 
+
+
 mass:20
 engine:120 XL Engine(IS)
 structure:IS Endo Steel

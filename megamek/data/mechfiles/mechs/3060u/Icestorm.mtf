@@ -10,8 +10,6 @@ Source:TRO: 3060
 Rules Level:2
 role:Scout
 
-quirk:imp_sensors
-quirk:rugged_1
 
 Mass:25
 Engine:300 XL (Clan) Engine

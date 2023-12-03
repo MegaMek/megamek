@@ -10,8 +10,6 @@ Source:TRO: 3085
 rules level:2
 role:Sniper
 
-quirk:anti_air
-quirk:imp_com
 
 mass:65
 engine:195 Fusion (Clan) Engine(IS)

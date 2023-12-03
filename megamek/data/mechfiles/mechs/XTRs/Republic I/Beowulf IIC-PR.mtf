@@ -2,10 +2,6 @@ Version:1.0
 Beowulf IIC
 PR
 mul id:7294
-base unit:data/mechfiles/mechs/ProtoTypes/Beowulf IIC.mtf
-weaponquirk:em_interference:RA:4:CLERLargeLaser
-notweaponquirk:em_interference:RA:4:CLERLargePulseLaser
-quirk:bad_rep_is
 
 Config:Biped
 TechBase:Mixed (Clan Chassis)

@@ -2,7 +2,6 @@ Version:1.0
 Linebacker
 F
 mul id:4523
-base unit:data/mechfiles/mechs/3055U/Linebacker Prime.mtf
 
 Config:Biped Omnimech
 techbase:Clan

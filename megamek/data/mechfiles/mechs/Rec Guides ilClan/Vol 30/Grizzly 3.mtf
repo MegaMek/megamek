@@ -1,7 +1,6 @@
 Version:1.3
 Grizzly
 3
-base unit:data/mechfiles/mechs/3058Uu/Grizzly.mtf
 mul id:9432
 Config:Biped
 techbase:Mixed (Clan Chassis)

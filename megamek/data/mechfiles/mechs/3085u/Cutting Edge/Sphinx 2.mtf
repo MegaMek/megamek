@@ -2,7 +2,6 @@ Version:1.0
 Sphinx
 2
 mul id:3006
-base unit:data/mechfiles/mechs/3085u/Cutting Edge/Sphinx.mtf
 
 Config:Biped
 TechBase:Clan
@@ -10,8 +9,6 @@ Era:3080
 source:TRO: 3085
 Rules Level:2
 role:Skirmisher
-quirk:easy_maintain
-quirk:rugged_1
 
 Mass:75
 Engine:375 XL (Clan) Engine

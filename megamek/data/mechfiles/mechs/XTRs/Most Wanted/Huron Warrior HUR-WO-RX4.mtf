@@ -9,6 +9,8 @@ source:XTR: Most Wanted
 rules level:3
 role:Skirmisher
 
+
+
 mass:50
 engine:250 XL Engine(IS)
 structure:IS Endo Steel

@@ -2,7 +2,6 @@ Version:1.0
 Bruin
 2
 mul id:429
-base unit:data/mechfiles/mechs/3085u/Cutting Edge/Bruin.mtf
 
 Config:Biped
 TechBase:Clan
@@ -10,8 +9,6 @@ Era:3083
 source:TRO: 3085
 Rules Level:2
 role:Sniper
-quirk:rugged_1
-quirk:exp_actuator
 
 Mass:80
 Engine:320 XL (Clan) Engine

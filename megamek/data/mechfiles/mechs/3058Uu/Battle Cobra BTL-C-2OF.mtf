@@ -2,7 +2,6 @@ Version:1.0
 Battle Cobra
 BTL-C-2OF
 mul id:269
-base unit:data/mechfiles/mechs/3058Uu/Battle Cobra Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Inner Sphere

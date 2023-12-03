@@ -9,8 +9,6 @@ source:TRO: 3050
 rules level:2
 role:Striker
 
-quirk:low_profile
-quirk:overhead_arms
 
 mass:20
 engine:200 XL (Clan) Engine(IS)

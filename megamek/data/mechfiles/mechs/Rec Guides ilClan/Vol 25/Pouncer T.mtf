@@ -1,7 +1,6 @@
 Version:1.3
 Pouncer
 T
-base unit:data/mechfiles/mechs/3055U/Pouncer Prime.mtf
 mul id:9262
 Config:Biped Omnimech
 techbase:Mixed (Clan Chassis)

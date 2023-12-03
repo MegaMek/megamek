@@ -2,7 +2,6 @@ Version:1.0
 Masakari (Warhawk)
 G
 mul id:8338
-base unit:data/mechfiles/mechs/3050U/Masakari (Warhawk) Prime.mtf
 
 Config:Biped Omnimech
 techbase:Clan

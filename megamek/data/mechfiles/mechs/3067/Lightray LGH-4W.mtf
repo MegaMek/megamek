@@ -10,6 +10,8 @@ source:TRO: 3067
 rules level:2
 role:Skirmisher
 
+
+
 mass:55
 engine:385 XL Engine(IS)
 structure:IS Endo Steel

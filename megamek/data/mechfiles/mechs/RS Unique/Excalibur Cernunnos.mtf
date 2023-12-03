@@ -3,7 +3,6 @@ Excalibur
 EXC-C1 (Cernunnos)
 mul id:1001
 source:Record Sheets: Unique Mechs
-base unit:data/mechfiles/mechs/3058Uu/Excalibur EXC-B1.mtf
 
 Config:Biped
 TechBase:Inner Sphere

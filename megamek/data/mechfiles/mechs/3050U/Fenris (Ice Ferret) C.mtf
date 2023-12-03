@@ -2,7 +2,6 @@ Version:1.1
 Fenris (Ice Ferret)
 C
 mul id:1048
-base unit:data/mechfiles/mechs/3050U/Fenris (Ice Ferret) Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

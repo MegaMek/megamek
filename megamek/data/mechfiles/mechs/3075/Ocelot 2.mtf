@@ -2,9 +2,6 @@ Version:1.0
 Ocelot
 2
 mul id:2314
-base unit:data/mechfiles/mechs/3075/Ocelot.mtf
-weaponquirk:jettison_capable:RA:5:CLERMediumLaser
-weaponquirk:jettison_capable:RA:4:CLERMediumLaser
 
 Config:Biped
 TechBase:Clan

@@ -11,6 +11,8 @@ rules level:4
 role:Missile Boat
 
 
+
+
 mass:60
 engine:240 Fusion Engine(IS)
 structure:IS Standard

@@ -9,6 +9,8 @@ source:TRO: 3055
 rules level:2
 role:Striker
 
+
+
 mass:35
 engine:245 XL Engine(IS)
 structure:IS Endo Steel

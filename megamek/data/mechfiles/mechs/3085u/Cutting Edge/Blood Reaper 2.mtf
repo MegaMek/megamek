@@ -2,7 +2,6 @@ Version:1.0
 Blood Reaper
 2
 mul id:407
-base unit:data/mechfiles/mechs/3085u/Cutting Edge/Blood Reaper.mtf
 
 Config:Biped
 TechBase:Clan
@@ -10,8 +9,6 @@ Era:3080
 source:TRO: 3085
 Rules Level:2
 role:Brawler
-quirk:hyper_actuator
-quirk:rugged_1
 
 Mass:70
 Engine:280 XL (Clan) Engine

@@ -2,7 +2,6 @@ Version:1.1
 Osteon
 C
 mul id:5824
-base unit:data/mechfiles/mechs/WoR Supplemental/Osteon Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

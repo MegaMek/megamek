@@ -2,7 +2,6 @@ Version:1.0
 War Crow
 A
 mul id:7546
-base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 7/War Crow Prime.mtf
 
 Config:Biped Omnimech
 techbase:Clan

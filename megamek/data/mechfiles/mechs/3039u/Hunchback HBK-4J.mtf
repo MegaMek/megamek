@@ -10,6 +10,8 @@ Source:TRO: 3039
 Rules Level:1
 role:Missile Boat
 
+
+
 Mass:50
 Engine:200 Fusion Engine
 Structure:Standard

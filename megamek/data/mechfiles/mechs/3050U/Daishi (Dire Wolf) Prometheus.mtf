@@ -2,7 +2,6 @@ Version:1.0
 Daishi (Dire Wolf)
 'Prometheus'
 mul id:810
-base unit:data/mechfiles/mechs/3050U/Daishi (Dire Wolf) Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

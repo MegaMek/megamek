@@ -9,6 +9,8 @@ source:TRO: 3050
 rules level:2
 role:Scout
 
+
+
 mass:35
 engine:210 Fusion Engine(IS)
 structure:IS Endo Steel

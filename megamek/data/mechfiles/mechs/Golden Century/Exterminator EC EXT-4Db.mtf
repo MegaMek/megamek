@@ -10,6 +10,8 @@ source:TRO: Golden Century
 rules level:4
 role:Skirmisher
 
+
+
 mass:65
 engine:390 XL Engine(IS)
 structure:IS Endo Steel

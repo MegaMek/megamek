@@ -9,6 +9,8 @@ source:XTR: Republic II
 rules level:2
 role:Striker
 
+
+
 mass:50
 engine:300 XL Engine(IS)
 structure:IS Endo Steel

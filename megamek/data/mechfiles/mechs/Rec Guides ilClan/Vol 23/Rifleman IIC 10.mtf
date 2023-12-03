@@ -2,7 +2,6 @@ Version:1.0
 Rifleman IIC
 10
 mul id:8419
-base unit:data/mechfiles/mechs/3085u/Phoenix/Rifleman IIC.mtf
 
 Config:Biped
 techbase:Clan

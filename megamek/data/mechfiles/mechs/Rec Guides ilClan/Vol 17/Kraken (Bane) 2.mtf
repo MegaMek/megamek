@@ -2,7 +2,6 @@ Version:1.0
 Kraken (Bane)
 2
 mul id:1842
-base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 17/Kraken (Bane).mtf
 
 Config:Biped
 techbase:Clan
@@ -10,8 +9,6 @@ era:3053
 source:Rec Guide:ilClan #17
 rules level:2
 role:Sniper
-quirk:ext_twist
-quirk:pro_actuator
 
 mass:100
 engine:300 XL (Clan) Engine(IS)

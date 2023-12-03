@@ -2,7 +2,6 @@ Version:1.0
 Karhu
 (Syngman)
 mul id:1747
-base unit:data/mechfiles/mechs/3085u/Cutting Edge/Karhu Prime.mtf
 
 Config:Biped Omnimech
 techbase:Mixed (Clan Chassis)

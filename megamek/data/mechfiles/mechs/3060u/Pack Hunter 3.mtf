@@ -2,7 +2,6 @@ Version:1.0
 Pack Hunter
 3
 mul id:2394
-base unit:data/mechfiles/mechs/3060u/Pack Hunter.mtf
 
 Config:Biped
 TechBase:Clan

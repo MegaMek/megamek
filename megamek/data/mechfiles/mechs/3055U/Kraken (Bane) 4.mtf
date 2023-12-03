@@ -2,7 +2,6 @@ Version:1.0
 Kraken (Bane)
 4
 mul id:1844
-base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 17/Kraken (Bane).mtf
 
 Config:Biped
 TechBase:Clan

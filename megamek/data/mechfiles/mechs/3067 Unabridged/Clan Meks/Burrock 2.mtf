@@ -1,7 +1,6 @@
 Version:1.3
 Burrock
 2
-base unit:data/mechfiles/mechs/3067/Burrock.mtf
 mul id:5694
 Config:Biped
 techbase:Clan
@@ -9,7 +8,6 @@ era:3071
 source:Record Sheets: 3067 Unabridged
 rules level:2
 role:Brawler
-quirk:stable
 
 mass:75
 engine:375 XL (Clan) Engine(IS)

@@ -10,6 +10,8 @@ source:Rec Guide:ilClan #15
 rules level:3
 role:Juggernaut
 
+
+
 mass:65
 engine:195 Fusion Engine(IS)
 structure:IS Standard

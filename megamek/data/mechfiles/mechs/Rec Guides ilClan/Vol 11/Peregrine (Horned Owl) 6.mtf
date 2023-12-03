@@ -1,8 +1,6 @@
 Version:1.3
 Peregrine (Horned Owl)
 6
-base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 11/Peregrine (Horned Owl).mtf
-weaponquirk:stable_weapon:CT:10:CLLargePulseLaser
 mul id:7748
 Config:Biped
 techbase:Clan

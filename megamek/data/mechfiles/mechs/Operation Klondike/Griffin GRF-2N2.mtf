@@ -10,6 +10,8 @@ rules level:3
 role:Skirmisher
 source:Historical: Operation Klondike
 
+
+
 mass:55
 engine:275 Fusion Engine(IS)
 structure:IS Endo Steel

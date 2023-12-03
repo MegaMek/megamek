@@ -2,7 +2,6 @@ Version:1.0
 Linebacker
 B
 mul id:1887
-base unit:data/mechfiles/mechs/3055U/Linebacker Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

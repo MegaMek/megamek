@@ -9,6 +9,8 @@ source:XTR: Periphery
 rules level:4
 role:Missile Boat
 
+
+
 mass:30
 engine:240 XL Engine(IS)
 structure:IS Endo Steel

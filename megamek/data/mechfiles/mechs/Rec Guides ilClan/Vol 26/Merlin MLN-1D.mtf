@@ -1,7 +1,6 @@
 Version:1.3
 Merlin
 MLN-1D
-base unit:data/mechfiles/mechs/3058Uu/Merlin MLN-1A.mtf
 mul id:9316
 Config:Biped
 techbase:Inner Sphere

@@ -2,7 +2,6 @@ Version:1.0
 Hellhound (Conjurer)
 7
 mul id:7512
-base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 5/Hellhound (Conjurer).mtf
 
 Config:Biped
 techbase:Clan
@@ -10,7 +9,6 @@ era:2836
 source:Rec Guide:ilClan #5
 rules level:2
 role:Skirmisher
-quirk:ext_twist
 
 mass:50
 engine:300 Fusion (Clan) Engine(IS)

@@ -2,7 +2,6 @@ Version:1.0
 Fire Scorpion
 3
 mul id:1073
-base unit:data/mechfiles/mechs/3060u/Fire Scorpion.mtf
 
 Config:Quad
 techbase:Clan

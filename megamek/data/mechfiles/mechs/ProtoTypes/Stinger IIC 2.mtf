@@ -2,7 +2,6 @@ Version:1.0
 Stinger IIC
 2
 mul id:5136
-base unit:data/mechfiles/mechs/ProtoTypes/Stinger IIC.mtf
 
 Config:Biped
 TechBase:Clan
@@ -11,9 +10,6 @@ Rules Level:4
 role:Scout
 History:Based off the Fluff, crit placement is likely wrong.
 Source:TRO: Prototypes 
-quirk:cramped_cockpit
-quirk:difficult_eject
-quirk:combat_computer
 
 Mass:20
 Engine:100 Fusion (Clan) Engine(IS)

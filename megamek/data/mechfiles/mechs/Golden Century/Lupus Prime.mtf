@@ -10,7 +10,6 @@ Rules Level:2
 role:Missile Boat
 source:TRO: Golden Century
 
-quirk:exp_actuator
 
 Mass:60
 Engine:300 Fusion (Clan) Engine(IS)

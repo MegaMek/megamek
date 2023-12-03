@@ -2,7 +2,6 @@ Version:1.0
 Crucible
 2
 mul id:7735
-base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 10/Crucible.mtf
 
 Config:Biped
 techbase:Clan
@@ -10,8 +9,6 @@ era:3149
 source:Rec Guide:ilClan #10
 rules level:2
 role:Sniper
-quirk:pro_actuator
-quirk:oversized
 
 mass:100
 engine:300 XL (Clan) Engine(IS)

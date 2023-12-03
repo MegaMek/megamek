@@ -10,6 +10,8 @@ rules level:2
 role:Striker
 source:Rec Guide:ilClan #13
 
+
+
 mass:20
 engine:140 XL Engine(IS)
 structure:IS Endo Steel

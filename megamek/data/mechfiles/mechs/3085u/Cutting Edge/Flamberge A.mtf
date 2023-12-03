@@ -2,7 +2,6 @@ Version:1.0
 Flamberge
 A
 mul id:1116
-base unit:data/mechfiles/mechs/3085u/Cutting Edge/Flamberge Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

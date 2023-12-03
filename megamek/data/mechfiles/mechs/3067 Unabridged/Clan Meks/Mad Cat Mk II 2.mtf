@@ -2,7 +2,6 @@ Version:1.1
 Mad Cat Mk II
 2
 mul id:5715
-base unit:data/mechfiles/mechs/3067/Mad Cat Mk II.mtf
 
 Config:Biped
 TechBase:Clan
@@ -10,7 +9,6 @@ Era:3069
 Rules Level:2
 role:Brawler
 source:Record Sheets: 3067 Unabridged
-quirk:imp_target_med
 
 Mass:90
 Engine:360 XL Fusion Engine

@@ -2,7 +2,6 @@ Version:1.0
 Dasher II
 2
 mul id:847
-base unit:data/mechfiles/mechs/3085u/Cutting Edge/Dasher II.mtf
 
 Config:Biped
 TechBase:Clan
@@ -10,8 +9,6 @@ Era:3084
 source:TRO: 3085
 Rules Level:4
 role:Striker
-quirk:poor_performance
-quirk:poor_performance
 
 Mass:40
 Engine:400 XXL (Clan) Engine

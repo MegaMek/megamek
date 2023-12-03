@@ -1,9 +1,6 @@
 Version:1.3
 Banshee
 BNC-5S (Sawyer)
-base unit:data/mechfiles/mechs/XTRs/Primitives II/Banshee BNC-1E.mtf
-quirk:rugged_1
-quirk:bad_rep_is
 mul id:3786
 Config:Biped
 techbase:Inner Sphere

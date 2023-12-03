@@ -2,7 +2,6 @@ Version:1.0
 Pack Hunter
 2
 mul id:2393
-base unit:data/mechfiles/mechs/3060u/Pack Hunter.mtf
 
 Config:Biped
 TechBase:Clan
@@ -10,7 +9,6 @@ Era:3065
 Source:TRO: 3060
 Rules Level:2
 role:Striker
-quirk:reinforced_legs
 
 Mass:30
 Engine:210 XL (Clan) Engine

@@ -10,6 +10,8 @@ source:TRO: 3050
 rules level:2
 role:Striker
 
+
+
 mass:35
 engine:210 Fusion Engine(IS)
 structure:IS Standard

@@ -10,6 +10,8 @@ role:Missile Boat
 source:Historical: Operation Klondike
 
 
+
+
 mass:85
 engine:255 Fusion Engine(IS)
 structure:IS Standard

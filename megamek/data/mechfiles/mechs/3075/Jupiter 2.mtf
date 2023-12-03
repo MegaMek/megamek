@@ -2,7 +2,6 @@ Version:1.0
 Jupiter
 2
 mul id:1726
-base unit:data/mechfiles/mechs/3075/Jupiter.mtf
 
 Config:Biped
 techbase:Clan
@@ -10,9 +9,6 @@ era:3070
 source:TRO: 3075
 rules level:2
 role:Sniper
-quirk:fine_manipulators
-quirk:imp_sensors
-quirk:imp_target_long
 
 mass:100
 engine:300 XL (Clan) Engine(IS)

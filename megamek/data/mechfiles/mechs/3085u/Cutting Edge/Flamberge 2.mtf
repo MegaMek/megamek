@@ -2,7 +2,6 @@ Version:1.0
 Flamberge
 2
 mul id:1114
-base unit:data/mechfiles/mechs/3085u/Cutting Edge/Flamberge Prime.mtf
 
 Config:Biped
 TechBase:Clan

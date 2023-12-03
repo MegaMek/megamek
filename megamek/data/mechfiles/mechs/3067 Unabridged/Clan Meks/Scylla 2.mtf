@@ -2,7 +2,6 @@ Version:1.1
 Scylla
 2
 mul id:5723
-base unit:data/mechfiles/mechs/3067/Scylla.mtf
 
 Config:Biped
 TechBase:Clan
@@ -10,7 +9,6 @@ Era:3079
 Rules Level:2
 role:Brawler
 source:Record Sheets: 3067 Unabridged
-quirk:oversized
 
 Mass:100
 Engine:400 XL Fusion Engine

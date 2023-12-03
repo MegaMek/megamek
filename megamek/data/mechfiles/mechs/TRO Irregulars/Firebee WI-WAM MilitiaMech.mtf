@@ -10,6 +10,8 @@ source:TRO: Irregulars
 rules level:2
 role:Missile Boat
 
+
+
 mass:35
 engine:105 Fuel Cell Engine(IS)
 structure:IS Industrial

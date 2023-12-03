@@ -2,7 +2,6 @@ Version:1.0
 Puma (Adder)
 J
 mul id:2597
-base unit:data/mechfiles/mechs/3050U/Puma (Adder) Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

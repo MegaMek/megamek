@@ -2,11 +2,6 @@ Version:1.0
 Shrike
 3
 mul id:6294
-base unit:data/mechfiles/mechs/3145/Clans/Shrike.mtf
-weaponquirk:exposed_linkage:LA:9:CLERPPC
-weaponquirk:exposed_linkage:LA:7:CLERPPC
-weaponquirk:exposed_linkage:LA:6:CLUltraAC5
-weaponquirk:exposed_linkage:LA:3:CLUltraAC5
 
 Config:Biped
 TechBase:Clan

@@ -2,21 +2,6 @@ Version:1.0
 Vixen (Incubus)
 5
 mul id:3445
-base unit:data/mechfiles/mechs/3055U/Vixen (Incubus).mtf
-weaponquirk:mod_weapons:RA:4:CLATM6
-weaponquirk:mod_weapons:LT:4:CLLightMG
-weaponquirk:mod_weapons:LT:3:CLLightMG
-weaponquirk:mod_weapons:RT:4:CLLightMG
-weaponquirk:mod_weapons:RT:3:CLLightMG
-weaponquirk:mod_weapons:RA:4:CLLargePulseLaser
-weaponquirk:mod_weapons:LT:4:CLMG
-weaponquirk:mod_weapons:LT:3:CLMG
-weaponquirk:mod_weapons:LT:2:CLERMediumLaser
-weaponquirk:mod_weapons:RT:4:CLMG
-weaponquirk:mod_weapons:RT:3:CLMG
-weaponquirk:mod_weapons:RT:2:CLERMediumLaser
-weaponquirk:jettison_capable:RA:4:CLATM6
-weaponquirk:jettison_capable:RA:4:CLLargePulseLaser
 
 Config:Biped
 TechBase:Clan

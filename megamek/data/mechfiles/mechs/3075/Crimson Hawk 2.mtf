@@ -2,7 +2,6 @@ Version:1.0
 Crimson Hawk
 2
 mul id:722
-base unit:data/mechfiles/mechs/3075/Crimson Hawk.mtf
 
 Config:Biped
 TechBase:Clan
@@ -10,7 +9,6 @@ Era:3073
 Source:TRO: 3075
 Rules Level:2
 role:Brawler
-quirk:pro_actuator
 
 Mass:25
 Engine:125 XL (Clan) Engine

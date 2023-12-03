@@ -1,22 +1,6 @@
 Version:1.3
 Vixen (Incubus)
 9
-base unit:data/mechfiles/mechs/3055U/Vixen (Incubus).mtf
-weaponquirk:mod_weapons:RA:4:CLERLargePulseLaser
-weaponquirk:mod_weapons:LT:7:CLAPGaussRifle
-weaponquirk:mod_weapons:LT:6:CLAPGaussRifle
-weaponquirk:mod_weapons:LT:4:CLERMediumPulseLaser
-weaponquirk:mod_weapons:RT:6:CLAPGaussRifle
-weaponquirk:mod_weapons:RT:4:CLERMediumPulseLaser
-weaponquirk:mod_weapons:RA:4:CLLargePulseLaser
-weaponquirk:mod_weapons:LT:4:CLMG
-weaponquirk:mod_weapons:LT:3:CLMG
-weaponquirk:mod_weapons:LT:2:CLERMediumLaser
-weaponquirk:mod_weapons:RT:4:CLMG
-weaponquirk:mod_weapons:RT:3:CLMG
-weaponquirk:mod_weapons:RT:2:CLERMediumLaser
-weaponquirk:jettison_capable:RA:4:CLERLargePulseLaser
-weaponquirk:jettison_capable:RA:4:CLLargePulseLaser
 mul id:7544
 Config:Biped
 techbase:Mixed (Clan Chassis)

@@ -2,8 +2,6 @@ Version:1.1
 Spirit
 2
 mul id:5665
-base unit:data/mechfiles/mechs/3067/Spirit.mtf
-weaponquirk:jettison_capable:RA:4:CLStreakSRM4
 
 Config:Biped
 TechBase:Clan
@@ -11,7 +9,6 @@ Era:3068
 Rules Level:2
 role:Striker
 source:Record Sheets: 3067 Unabridged
-weaponquirk:jettison_capable:RA:4:CLStreakSRM4
 
 Mass:35
 Engine:245 XL Fusion Engine

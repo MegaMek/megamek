@@ -2,7 +2,6 @@ Version:1.0
 Cougar
 I
 mul id:6928
-base unit:data/mechfiles/mechs/3060u/Cougar Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

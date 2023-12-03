@@ -10,6 +10,8 @@ rules level:2
 role:Striker
 source:Rec Guide:ilClan #11
 
+
+
 mass:45
 engine:270 Fusion Engine(IS)
 structure:IS Standard

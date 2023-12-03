@@ -2,7 +2,6 @@ Version:1.0
 Thresher
 2
 mul id:3199
-base unit:data/mechfiles/mechs/3058Uu/Thresher.mtf
 
 Config:Biped
 TechBase:Clan
@@ -10,7 +9,6 @@ Era:2858
 Source:TRO: 3058
 Rules Level:2
 role:Skirmisher
-quirk:imp_target_med
 
 Mass:60
 Engine:300 XL (Clan) Engine

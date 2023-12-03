@@ -2,9 +2,6 @@ Version:1.1
 Solitaire
 2
 mul id:5655
-base unit:data/mechfiles/mechs/3067/Solitaire.mtf
-weaponquirk:stable_weapon:RT:2:CLHeavyLargeLaser
-weaponquirk:imp_cooling:RT:2:CLHeavyLargeLaser
 
 Config:Biped
 TechBase:Clan

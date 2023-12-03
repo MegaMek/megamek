@@ -2,7 +2,6 @@ Version:1.0
 Arctic Wolf
 2
 mul id:100
-base unit:data/mechfiles/mechs/3060u/Arctic Wolf.mtf
 
 Config:Biped
 TechBase:Clan

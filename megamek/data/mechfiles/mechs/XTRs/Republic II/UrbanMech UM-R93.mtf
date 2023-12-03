@@ -9,6 +9,8 @@ source:XTR: Republic II
 rules level:3
 role:Ambusher
 
+
+
 mass:30
 engine:60 Fusion Engine(IS)
 structure:IS Standard

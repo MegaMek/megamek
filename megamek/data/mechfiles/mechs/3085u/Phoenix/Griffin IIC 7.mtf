@@ -2,7 +2,6 @@ Version:1.0
 Griffin IIC
 7
 mul id:1316
-base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 14/Griffin IIC.mtf
 
 Config:Biped
 TechBase:Clan

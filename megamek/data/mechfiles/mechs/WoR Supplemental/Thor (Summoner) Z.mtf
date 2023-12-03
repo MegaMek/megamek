@@ -2,7 +2,6 @@ Version:1.1
 Thor (Summoner)
 Z
 mul id:5821
-base unit:data/mechfiles/mechs/3050U/Thor (Summoner) Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

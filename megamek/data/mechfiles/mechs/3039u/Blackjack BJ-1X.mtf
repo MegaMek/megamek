@@ -10,6 +10,8 @@ rules level:1
 role:Skirmisher
 
 
+
+
 mass:45
 engine:225 Fusion Engine(IS)
 structure:IS Standard

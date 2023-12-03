@@ -10,6 +10,8 @@ source:TRO: 3039
 rules level:1
 role:Brawler
 
+
+
 mass:85
 engine:340 Fusion Engine(IS)
 structure:IS Standard

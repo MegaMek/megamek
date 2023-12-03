@@ -9,6 +9,8 @@ source:XTR: Marik
 rules level:3
 role:Sniper
 
+
+
 mass:75
 engine:300 XL Engine(IS)
 structure:IS Standard

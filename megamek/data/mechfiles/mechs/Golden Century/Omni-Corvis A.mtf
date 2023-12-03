@@ -2,7 +2,6 @@ Version:1.1
 Omni-Corvis
 A
 mul id:7611
-base unit:data/mechfiles/mechs/Golden Century/Omni-Corvis Prime.mtf
 
 Config:Biped Omnimech
 techbase:Clan

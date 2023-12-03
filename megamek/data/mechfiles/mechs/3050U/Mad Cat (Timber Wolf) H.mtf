@@ -2,7 +2,6 @@ Version:1.0
 Mad Cat (Timber Wolf)
 H
 mul id:1984
-base unit:data/mechfiles/mechs/3050U/Mad Cat (Timber Wolf) Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

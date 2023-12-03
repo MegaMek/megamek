@@ -10,6 +10,8 @@ rules level:3
 role:Scout
 
 
+
+
 mass:30
 engine:210 XXL Engine(IS)
 structure:IS Composite

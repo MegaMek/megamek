@@ -2,7 +2,6 @@ Version:1.0
 Locust IIC
 7
 mul id:1920
-base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 16/Locust IIC.mtf
 
 Config:Biped
 TechBase:Clan

@@ -2,8 +2,6 @@ Version:1.0
 Peregrine (Horned Owl)
 2
 mul id:2473
-base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 11/Peregrine (Horned Owl).mtf
-weaponquirk:stable_weapon:CT:10:CLLargePulseLaser
 
 Config:Biped
 techbase:Clan
@@ -11,7 +9,6 @@ era:2856
 source:Rec Guide:ilClan #11
 rules level:2
 role:Missile Boat
-weaponquirk:stable_weapon:CT:10:CLLargePulseLaser
 
 mass:35
 engine:210 Fusion (Clan) Engine(IS)

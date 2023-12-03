@@ -2,7 +2,6 @@ Version:1.0
 Black Hawk (Standard)
 2
 mul id:6555
-base unit:data/mechfiles/mechs/3145/Merc/Black Hawk (Standard).mtf
 
 Config:Biped
 TechBase:Clan

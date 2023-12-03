@@ -10,6 +10,8 @@ source:XTR: Caveat Emptor
 rules level:3
 role:Striker
 
+
+
 mass:45
 engine:225 XXL Engine(IS)
 structure:IS Endo Steel

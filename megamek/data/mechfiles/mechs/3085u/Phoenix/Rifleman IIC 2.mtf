@@ -2,7 +2,6 @@ Version:1.0
 Rifleman IIC
 2
 mul id:2711
-base unit:data/mechfiles/mechs/3085u/Phoenix/Rifleman IIC.mtf
 
 Config:Biped
 TechBase:Clan
@@ -10,8 +9,6 @@ Era:2997
 Source:TRO: 3085
 Rules Level:2
 role:Sniper
-quirk:anti_air
-quirk:imp_com
 
 Mass:65
 Engine:260 Fusion (Clan) Engine

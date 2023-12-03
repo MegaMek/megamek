@@ -1,7 +1,6 @@
 Version:1.3
 Night Gyr
 X
-base unit:data/mechfiles/mechs/3058Uu/Night Gyr Prime.mtf
 mul id:8400
 Config:Biped Omnimech
 techbase:Clan

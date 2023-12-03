@@ -1,7 +1,6 @@
 Version:1.3
 Highlander IIC
 4
-base unit:data/mechfiles/mechs/3060u/Highlander IIC.mtf
 mul id:9433
 Config:Biped
 techbase:Clan

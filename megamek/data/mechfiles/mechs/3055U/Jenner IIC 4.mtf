@@ -2,7 +2,6 @@ Version:1.0
 Jenner IIC
 4
 mul id:1701
-base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 18/Jenner IIC.mtf
 
 Config:Biped
 TechBase:Clan

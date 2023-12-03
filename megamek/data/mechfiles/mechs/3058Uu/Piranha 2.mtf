@@ -2,7 +2,6 @@ Version:1.0
 Piranha
 2
 mul id:2536
-base unit:data/mechfiles/mechs/3058Uu/Piranha.mtf
 
 Config:Biped
 TechBase:Clan
@@ -10,7 +9,6 @@ Era:3067
 Source:TRO: 3058
 Rules Level:2
 role:Striker
-quirk:imp_target_short
 
 Mass:20
 Engine:180 XL (Clan) Engine

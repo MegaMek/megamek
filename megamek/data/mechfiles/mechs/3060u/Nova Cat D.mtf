@@ -2,7 +2,6 @@ Version:1.0
 Nova Cat
 D
 mul id:2302
-base unit:data/mechfiles/mechs/3060u/Nova Cat Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

@@ -10,6 +10,8 @@ rules level:3
 role:Sniper
 source:Rec Guide:ilClan #5
 
+
+
 mass:100
 engine:300 Fusion Engine(IS)
 structure:IS Standard

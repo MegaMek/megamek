@@ -2,7 +2,6 @@ Version:1.0
 Gyrfalcon
 2
 mul id:6267
-base unit:data/mechfiles/mechs/3145/Clans/Gyrfalcon.mtf
 
 Config:Biped
 TechBase:Clan
@@ -10,8 +9,6 @@ Era:3112
 Source:TRO: 3145 The Clans
 Rules Level:3
 role:Skirmisher
-quirk:distracting
-quirk:reinforced_legs
 
 Mass:55
 Engine:275 XL (Clan) Engine(IS)

@@ -2,7 +2,6 @@ Version:1.0
 Wyvern IIC
 2
 mul id:3602
-base unit:data/mechfiles/mechs/3060u/Wyvern IIC.mtf
 
 Config:Biped
 TechBase:Clan
@@ -10,7 +9,6 @@ Era:3071
 Source:TRO: 3060
 Rules Level:3
 role:Skirmisher
-quirk:pro_actuator
 
 Mass:45
 Engine:180 Fusion (Clan) Engine

@@ -2,7 +2,6 @@ Version:1.1
 Locust IIC
 9
 mul id:1922
-base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 16/Locust IIC.mtf
 
 Config:Biped
 TechBase:Mixed (Clan Chassis)

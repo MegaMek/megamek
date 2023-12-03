@@ -2,7 +2,6 @@ Version:1.0
 Fire Falcon
 R
 mul id:8183
-base unit:data/mechfiles/mechs/3058Uu/Fire Falcon Prime.mtf
 
 Config:Biped Omnimech
 techbase:Mixed (Clan Chassis)

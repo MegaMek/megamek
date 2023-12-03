@@ -2,7 +2,6 @@ Version:1.0
 Icestorm
 2
 mul id:1603
-base unit:data/mechfiles/mechs/3060u/Icestorm.mtf
 
 Config:Biped
 TechBase:Clan
@@ -10,8 +9,6 @@ Era:3068
 Source:TRO: 3060
 Rules Level:3
 role:Striker
-quirk:imp_sensors
-quirk:rugged_1
 
 Mass:25
 Engine:300 XL (Clan) Engine

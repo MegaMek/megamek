@@ -10,6 +10,8 @@ source:Rec Guide:ilClan #19
 rules level:2
 role:Scout
 
+
+
 mass:20
 engine:240 XL Engine(IS)
 structure:IS Endo Steel

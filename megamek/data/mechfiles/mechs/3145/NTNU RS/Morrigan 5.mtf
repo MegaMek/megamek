@@ -2,9 +2,6 @@ Version:1.0
 Morrigan
 5
 mul id:6926
-base unit:data/mechfiles/mechs/3085u/Cutting Edge/Morrigan.mtf
-weaponquirk:stable_weapon:RA:3:CLERPPC
-weaponquirk:stable_weapon:RA:3:CLHeavyLargeLaser
 
 Config:Biped
 TechBase:Clan

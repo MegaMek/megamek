@@ -2,7 +2,6 @@ Version:1.2
 Dasher (Fire Moth)
 D
 mul id:841
-base unit:data/mechfiles/mechs/3050U/Dasher (Fire Moth) Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

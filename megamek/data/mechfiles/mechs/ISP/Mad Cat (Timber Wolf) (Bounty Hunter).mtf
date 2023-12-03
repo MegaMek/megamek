@@ -2,7 +2,6 @@ Version:1.0
 Mad Cat (Timber Wolf)
 (Bounty Hunter)
 mul id:1976
-base unit:data/mechfiles/mechs/3050U/Mad Cat (Timber Wolf) Prime.mtf
 
 Config:Biped Omnimech
 techbase:Clan

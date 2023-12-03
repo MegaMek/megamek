@@ -2,7 +2,6 @@ Version:1.1
 Jade Hawk
 JHK-04
 mul id:6565
-base unit:data/mechfiles/mechs/3145/Merc/Jade Hawk.mtf
 
 Config:Biped
 TechBase:Mixed (Clan Chassis)

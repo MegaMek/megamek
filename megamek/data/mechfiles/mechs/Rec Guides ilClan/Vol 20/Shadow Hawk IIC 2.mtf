@@ -2,7 +2,6 @@ Version:1.0
 Shadow Hawk IIC
 2
 mul id:2912
-base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 20/Shadow Hawk IIC.mtf
 
 Config:Biped
 TechBase:Clan
@@ -10,9 +9,6 @@ Era:2835
 source:Rec Guide:ilClan #20 
 Rules Level:2
 role:Striker
-quirk:battle_fists_la
-quirk:battle_fists_ra
-quirk:imp_life_support
 
 Mass:45
 Engine:270 Fusion (Clan) Engine

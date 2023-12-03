@@ -2,10 +2,6 @@ Version:1.0
 Crossbow
 CRS-6C
 mul id:734
-base unit:data/mechfiles/mechs/3058Uu/Crossbow Prime.mtf
-notquirk:imp_target_short
-quirk:poor_target_long
-quirk:obsolete
 
 Config:Biped
 TechBase:Inner Sphere

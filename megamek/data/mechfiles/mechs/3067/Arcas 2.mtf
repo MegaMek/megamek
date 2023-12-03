@@ -2,7 +2,6 @@ Version:1.0
 Arcas
 2
 mul id:3718
-base unit:data/mechfiles/mechs/3067/Arcas.mtf
 
 Config:Biped
 TechBase:Clan
@@ -10,7 +9,6 @@ Era:3061
 Rules Level:2
 role:Skirmisher
 source:TRO: 3067
-quirk:pro_actuator
 
 Mass:65
 Engine:325 XL Engine

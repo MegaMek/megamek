@@ -10,6 +10,8 @@ rules level:3
 role:Skirmisher
 source:Rec Guide:ilClan #5
 
+
+
 mass:100
 engine:400 XL Engine(IS)
 structure:IS Endo-Composite

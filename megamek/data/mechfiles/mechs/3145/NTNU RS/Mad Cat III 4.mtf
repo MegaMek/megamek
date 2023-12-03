@@ -2,7 +2,6 @@ Version:1.0
 Mad Cat III
 4
 mul id:6897
-base unit:data/mechfiles/mechs/ProtoTypes/Mad Cat III.mtf
 
 Config:Biped
 TechBase:Clan

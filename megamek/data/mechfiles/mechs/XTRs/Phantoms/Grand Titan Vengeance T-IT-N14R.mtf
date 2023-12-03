@@ -10,6 +10,8 @@ source:XTR: Phantoms
 rules level:4
 role:Missile Boat
 
+
+
 mass:100
 engine:300 Fusion Engine(IS)
 structure:IS Standard

@@ -2,7 +2,6 @@ Version:1.0
 Shadow Cat
 F
 mul id:6912
-base unit:data/mechfiles/mechs/3058Uu/Shadow Cat Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Mixed (Clan Chassis)

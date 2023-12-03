@@ -2,7 +2,6 @@ Version:1.1
 Pariah (Septicemia)
 D-Z
 mul id:5815
-base unit:data/mechfiles/mechs/3075/Pariah Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

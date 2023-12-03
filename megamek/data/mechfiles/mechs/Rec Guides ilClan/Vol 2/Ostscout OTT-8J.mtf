@@ -10,6 +10,8 @@ source:Rec Guide:ilClan #2
 rules level:2
 role:Scout
 
+
+
 mass:35
 engine:280 XL Engine(IS)
 structure:IS Standard

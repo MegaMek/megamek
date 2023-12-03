@@ -2,7 +2,6 @@ Version:1.0
 Linebacker
 G
 mul id:6880
-base unit:data/mechfiles/mechs/3055U/Linebacker Prime.mtf
 
 Config:Biped Omnimech
 techbase:Clan

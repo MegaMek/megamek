@@ -10,8 +10,6 @@ Source:TRO: 3058
 Rules Level:2
 role:Skirmisher
 
-quirk:vestigial_hands_la
-quirk:vestigial_hands_ra
 
 Mass:70
 Engine:350 XL Engine

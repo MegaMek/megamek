@@ -2,7 +2,6 @@ Version:1.2
 Ryoken (Stormcrow)
 C
 mul id:2751
-base unit:data/mechfiles/mechs/3050U/Ryoken (Stormcrow) Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

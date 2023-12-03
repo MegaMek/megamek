@@ -2,7 +2,6 @@ Version:1.0
 Baboon (Howler)
 4
 mul id:7568
-base unit:data/mechfiles/mechs/3055U/Baboon (Howler).mtf
 
 Config:Biped
 techbase:Clan
@@ -10,9 +9,6 @@ era:2877
 source:Rec Guide:ilClan #8
 rules level:2
 role:Scout
-quirk:ext_twist
-quirk:low_profile
-quirk:searchlight
 
 mass:20
 engine:140 Fusion (Clan) Engine(IS)

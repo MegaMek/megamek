@@ -10,6 +10,8 @@ rules level:4
 role:Missile Boat
 source:Rec Guide:ilClan #5
 
+
+
 mass:65
 engine:195 XL Engine(IS)
 structure:IS Standard

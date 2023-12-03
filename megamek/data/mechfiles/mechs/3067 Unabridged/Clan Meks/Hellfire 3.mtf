@@ -2,7 +2,6 @@ Version:1.1
 Hellfire
 3
 mul id:5685
-base unit:data/mechfiles/mechs/3067/Hellfire.mtf
 
 Config:Biped
 TechBase:Clan

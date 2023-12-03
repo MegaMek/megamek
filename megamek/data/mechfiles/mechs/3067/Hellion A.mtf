@@ -2,7 +2,6 @@ Version:1.0
 Hellion
 A
 mul id:4303
-base unit:data/mechfiles/mechs/3067/Hellion Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Clan

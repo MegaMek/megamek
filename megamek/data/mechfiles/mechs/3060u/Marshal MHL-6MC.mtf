@@ -9,6 +9,8 @@ source:TRO 3060
 rules level:2
 role:Skirmisher
 
+
+
 mass:55
 engine:220 Light Engine(IS)
 structure:IS Standard

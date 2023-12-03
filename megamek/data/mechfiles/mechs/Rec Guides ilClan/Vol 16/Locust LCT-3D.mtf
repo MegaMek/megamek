@@ -10,6 +10,8 @@ source:Rec Guide:ilClan #16
 rules level:2
 role:Missile Boat
 
+
+
 mass:20
 engine:160 Fusion Engine(IS)
 structure:IS Endo Steel

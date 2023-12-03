@@ -1,7 +1,6 @@
 Version:1.3
 Phantom
 J
-base unit:data/mechfiles/mechs/3055U/Phantom Prime.mtf
 mul id:9348
 Config:Biped Omnimech
 techbase:Clan

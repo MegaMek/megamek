@@ -2,7 +2,6 @@ Version:1.0
 Warhammer IIC
 2
 mul id:3501
-base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 4/Warhammer IIC.mtf
 
 Config:Biped
 techbase:Clan
@@ -10,8 +9,6 @@ era:2920
 source:Rec Guide:ilClan #4
 rules level:2
 role:Missile Boat
-quirk:searchlight
-quirk:stable
 
 mass:80
 engine:320 Fusion (Clan) Engine(IS)

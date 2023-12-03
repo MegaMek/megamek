@@ -2,7 +2,6 @@ Version:1.0
 Uller (Kit Fox)
 BLO
 mul id:7632
-base unit:data/mechfiles/mechs/3050U/Uller (Kit Fox) Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Mixed (Clan Chassis)

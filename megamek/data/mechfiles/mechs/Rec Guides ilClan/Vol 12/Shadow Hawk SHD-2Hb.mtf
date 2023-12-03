@@ -10,6 +10,8 @@ rules level:2
 role:Skirmisher
 source:Rec Guide:ilClan #12
 
+
+
 mass:55
 engine:275 Fusion Engine(IS)
 structure:IS Endo Steel

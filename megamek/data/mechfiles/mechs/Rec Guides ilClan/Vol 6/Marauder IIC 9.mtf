@@ -2,7 +2,6 @@ Version:1.0
 Marauder IIC
 9
 mul id:7537
-base unit:data/mechfiles/mechs/Rec Guides ilClan/Vol 6/Marauder IIC.mtf
 
 Config:Biped
 techbase:Clan
@@ -10,12 +9,6 @@ era:2831
 rules level:2
 role:Sniper
 source:Rec Guide:ilClan #6
-quirk:command_mech
-quirk:hyper_actuator
-quirk:exp_actuator
-quirk:command_mech
-quirk:hyper_actuator
-quirk:exp_actuator
 
 mass:85
 engine:340 Fusion (Clan) Engine(IS)

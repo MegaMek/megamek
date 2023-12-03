@@ -2,7 +2,6 @@ Version:1.1
 Minsk
 MNK-101
 mul id:4645
-base unit:data/mechfiles/mechs/Golden Century/Minsk.mtf
 
 Config:Biped
 techbase:Mixed (Clan Chassis)

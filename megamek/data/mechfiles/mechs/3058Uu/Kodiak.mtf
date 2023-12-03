@@ -10,9 +10,6 @@ source:TRO: 3058
 rules level:2
 role:Brawler
 
-quirk:battle_fists_la
-quirk:battle_fists_ra
-quirk:distracting
 
 mass:100
 engine:400 XL (Clan) Engine(IS)

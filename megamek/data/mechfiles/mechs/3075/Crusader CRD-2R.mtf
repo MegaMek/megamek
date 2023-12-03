@@ -11,6 +11,8 @@ rules level:2
 role:Missile Boat
 
 
+
+
 mass:65
 engine:260 Fusion Engine(IS)
 structure:IS Endo Steel

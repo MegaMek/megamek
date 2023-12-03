@@ -2,7 +2,6 @@ Version:1.0
 Deimos
 E
 mul id:6855
-base unit:data/mechfiles/mechs/3085u/Cutting Edge/Deimos Prime.mtf
 
 Config:Biped Omnimech
 TechBase:Mixed (Clan Chassis)

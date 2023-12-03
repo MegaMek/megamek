@@ -10,6 +10,8 @@ source:Rec Guide:ilClan #12
 rules level:2
 role:Missile Boat
 
+
+
 mass:55
 engine:220 XL Engine(IS)
 structure:IS Endo Steel

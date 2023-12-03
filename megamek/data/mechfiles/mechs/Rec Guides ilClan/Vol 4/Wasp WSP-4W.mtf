@@ -10,6 +10,8 @@ rules level:2
 role:Scout
 source:Rec Guide:ilClan #4
 
+
+
 mass:20
 engine:120 Light Engine(IS)
 structure:IS Standard

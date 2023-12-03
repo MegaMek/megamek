@@ -9,6 +9,8 @@ source:TRO: 3039
 rules level:1
 role:Skirmisher
 
+
+
 mass:65
 engine:260 Fusion Engine(IS)
 structure:IS Standard

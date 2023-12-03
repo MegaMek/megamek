@@ -10,6 +10,8 @@ source:Rec Guide:ilClan #19
 rules level:2
 role:Skirmisher
 
+
+
 mass:55
 engine:330 Light Engine(IS)
 structure:IS Standard

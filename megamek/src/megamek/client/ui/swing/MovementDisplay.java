@@ -792,12 +792,15 @@ public class MovementDisplay extends ActionPhaseDisplay {
         return buttons.get(c).isEnabled();
     }
 
+    /**
+     * Signals Unit Display to update later on the AWT event stack.
+     * See Issue:#4876 and #4444.  This is done to prevent blank general tab when switching 
+     * units when the map is zoomed all the way out.
+     */
     private void updateUnitDisplayLater(Entity ce) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                // Issue:#4876 moving the call to 'displayEntity' before boardview calls that invoke 'repaint()'
-                // this seems to prevent blank general tab when switching units when the map is zoomed all the way out.
                clientgui.getUnitDisplay().displayEntity(ce);
                clientgui.getUnitDisplay().showPanel("movement");
             }

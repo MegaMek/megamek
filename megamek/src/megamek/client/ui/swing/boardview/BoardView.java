@@ -5449,7 +5449,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         // Hex Terrain
         if (GUIP.getShowMapHexPopup() && (mhex != null)) {
             StringBuffer sbTerrain = new StringBuffer();
-            appendTerrainTooltip(sbTerrain, mhex, game);
+            appendTerrainTooltip(sbTerrain, mhex);
             String sTrerain = sbTerrain.toString();
 
             // Distance from the selected unit and a planned movement end point
@@ -5750,7 +5750,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     /**
      * Appends HTML describing the terrain of a given hex
      */
-    public void appendTerrainTooltip(StringBuffer txt, @Nullable Hex mhex, Game game) {
+    public void appendTerrainTooltip(StringBuffer txt, @Nullable Hex mhex) {
         if (mhex == null) {
             return;
         }

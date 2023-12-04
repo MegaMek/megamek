@@ -379,7 +379,7 @@ public class Ruler extends JDialog implements BoardViewListener, IPreferenceChan
         ai.targetHeight = h2;
         ai.attackerIsMech = attackerIsMech;
         ai.targetIsMech = targetIsMech;
-        ai.attackAbsHeight =game.getBoard().getHex(c1).floor() + h1;
+        ai.attackAbsHeight = game.getBoard().getHex(c1).floor() + h1;
         ai.targetAbsHeight = game.getBoard().getHex(c2).floor() + h2;
         return ai;
     }

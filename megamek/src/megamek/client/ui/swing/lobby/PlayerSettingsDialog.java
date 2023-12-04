@@ -84,6 +84,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         adaptToGUIScale();
         super.finalizeInitialization();
     }
+
     @Override
     protected void okAction() {
         apply();

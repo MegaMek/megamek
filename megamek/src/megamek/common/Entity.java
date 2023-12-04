@@ -12899,8 +12899,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             final GameOptions gOpts = getGame().getOptions();
             if (!getOwner().isBot() && gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER0)) {
                 return game.getPlayer(0).getStartingPos();
-            }
-            else {
+            } else {
                 return getOwner().getStartingPos();
             }
         }
@@ -15303,8 +15302,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             final GameOptions gOpts = getGame().getOptions();
             if (!getOwner().isBot() && gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER0)) {
                 return game.getPlayer(0).getStartOffset();
-            }
-            else {
+            } else {
                 return getOwner().getStartOffset();
             }
         }
@@ -15327,8 +15325,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             final GameOptions gOpts = getGame().getOptions();
             if (!getOwner().isBot() && gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER0)) {
                 return game.getPlayer(0).getStartWidth();
-            }
-            else {
+            } else {
                 return getOwner().getStartWidth();
             }
         }
@@ -15351,8 +15348,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             final GameOptions gOpts = getGame().getOptions();
             if (!getOwner().isBot() && gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER0)) {
                 return game.getPlayer(0).getStartingAnyNWx();
-            }
-            else {
+            } else {
                 return getOwner().getStartingAnyNWx();
             }
         }
@@ -15375,8 +15371,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             final GameOptions gOpts = getGame().getOptions();
             if (!getOwner().isBot() && gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER0)) {
                 return game.getPlayer(0).getStartingAnyNWy();
-            }
-            else {
+            } else {
                 return getOwner().getStartingAnyNWy();
             }
         }
@@ -15399,8 +15394,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             final GameOptions gOpts = getGame().getOptions();
             if (!getOwner().isBot() && gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER0)) {
                 return game.getPlayer(0).getStartingAnySEx();
-            }
-            else {
+            } else {
                 return getOwner().getStartingAnySEx();
             }
         }
@@ -15423,8 +15417,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             final GameOptions gOpts = getGame().getOptions();
             if (!getOwner().isBot() && gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER0)) {
                 return game.getPlayer(0).getStartingAnySEy();
-            }
-            else {
+            } else {
                 return getOwner().getStartingAnySEy();
             }
         }

@@ -234,3 +234,8 @@ TRO: 3145 Lyran Commonwealth
 <escape_pod>
 5
 </escape_pod>
+
+<quirks>
+difficult_maintain
+</quirks>
+

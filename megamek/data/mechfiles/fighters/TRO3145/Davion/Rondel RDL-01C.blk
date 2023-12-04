@@ -122,3 +122,8 @@ TRO: 3145 Federated Suns
 55.0
 </tonnage>
 
+
+<quirks>
+easy_maintain
+</quirks>
+

@@ -107,3 +107,9 @@ XTR: Most Wanted
 <tonnage>
 45.0
 </tonnage>
+
+<quirks>
+vtol_rotor_dual
+non_standard
+</quirks>
+

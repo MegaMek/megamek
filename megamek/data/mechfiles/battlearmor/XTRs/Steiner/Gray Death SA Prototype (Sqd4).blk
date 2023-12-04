@@ -142,3 +142,8 @@ biped
 2
 </weightclass>
 
+
+<quirks>
+distracting
+</quirks>
+

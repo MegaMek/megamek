@@ -81,3 +81,13 @@ TRO: 3145 Republic of the Sphere
 <tonnage>
 25.0
 </tonnage>
+
+<quirks>
+poor_sealing
+power_reverse
+</quirks>
+
+<weaponQuirks>
+exposed_linkage:RR:0:Machine Gun
+exposed_linkage:RR:1:Machine Gun
+</weaponQuirks>

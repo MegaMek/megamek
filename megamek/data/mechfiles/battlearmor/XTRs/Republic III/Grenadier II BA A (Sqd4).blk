@@ -140,3 +140,8 @@ biped
 3
 </weightclass>
 
+
+<quirks>
+difficult_maintain
+</quirks>
+

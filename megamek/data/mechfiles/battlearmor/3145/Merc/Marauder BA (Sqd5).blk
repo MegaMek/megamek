@@ -122,3 +122,11 @@ TARGETING:Unknown
 
 <notes>
 </notes>
+
+<quirks>
+easy_maintain
+</quirks>
+
+<weaponQuirks>
+accurate:Squad:2:ISLight Recoilless Rifle
+</weaponQuirks>

@@ -80,3 +80,10 @@ XTR: Primitives II
 <tonnage>
 50.0
 </tonnage>
+
+<quirks>
+easy_maintain
+low_profile
+obsolete
+</quirks>
+

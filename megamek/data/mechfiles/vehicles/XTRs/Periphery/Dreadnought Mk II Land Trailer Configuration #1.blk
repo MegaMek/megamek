@@ -102,3 +102,8 @@ cargobay:20:1
 <tonnage>
 50.0
 </tonnage>
+
+<quirks>
+non_standard
+</quirks>
+

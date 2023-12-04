@@ -233,3 +233,8 @@ TRO: Prototypes
 <escape_pod>
 33
 </escape_pod>
+
+<quirks>
+unstreamlined
+</quirks>
+

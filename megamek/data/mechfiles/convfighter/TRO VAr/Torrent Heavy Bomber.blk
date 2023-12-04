@@ -174,3 +174,10 @@ TRO: Vehicle Annex Revised
 200.0
 </tonnage>
 
+
+<quirks>
+atmo_flyer
+internal_bomb
+poor_performance
+</quirks>
+

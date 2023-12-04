@@ -118,3 +118,9 @@ TRO: 3145 Free Worlds League
 70.0
 </tonnage>
 
+
+<quirks>
+power_reverse
+poor_sealing
+</quirks>
+

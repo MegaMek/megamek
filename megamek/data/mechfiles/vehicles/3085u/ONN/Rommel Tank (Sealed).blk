@@ -115,3 +115,9 @@ TRO: 3085
 <tonnage>
 65.0
 </tonnage>
+
+<quirks>
+low_profile
+poor_target_short
+</quirks>
+

@@ -121,3 +121,11 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<quirks>
+hard_pilot
+</quirks>
+
+<weaponQuirks>
+accurate:Point:3:CLBAERMicroLaser
+</weaponQuirks>

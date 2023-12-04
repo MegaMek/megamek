@@ -133,3 +133,8 @@ ARMOR:ArcShield Max III Advanced Ferro-Fibrous
 COMMUNICATIONS:Olmstead 44
 TARGETING:Omicron VIII
 </systemManufacturers>
+
+<quirks>
+imp_target_long
+</quirks>
+

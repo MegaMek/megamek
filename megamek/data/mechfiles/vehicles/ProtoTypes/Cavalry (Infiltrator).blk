@@ -108,3 +108,9 @@ TRO: Prototypes
 25.0
 </tonnage>
 
+
+<quirks>
+hard_pilot
+easy_maintain
+</quirks>
+

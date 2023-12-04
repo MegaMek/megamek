@@ -132,3 +132,11 @@ TRO: Golden Century
 <tonnage>
 60.0
 </tonnage>
+
+<quirks>
+combat_computer
+easy_maintain
+atmo_instability
+obsolete
+</quirks>
+

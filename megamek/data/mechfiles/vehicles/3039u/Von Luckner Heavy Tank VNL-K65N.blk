@@ -134,3 +134,8 @@ TRO: 3039
 75.0
 </tonnage>
 
+
+<quirks>
+difficult_maintain
+</quirks>
+

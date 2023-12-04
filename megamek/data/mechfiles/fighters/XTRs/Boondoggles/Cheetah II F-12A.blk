@@ -112,3 +112,10 @@ XTR: Boondoggles
 25.0
 </tonnage>
 
+
+<quirks>
+atmo_flyer
+bad_rep_is
+difficult_maintain
+</quirks>
+

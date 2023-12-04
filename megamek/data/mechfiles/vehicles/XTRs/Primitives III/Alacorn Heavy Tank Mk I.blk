@@ -97,3 +97,12 @@ XTR: Primitives III
 <tonnage>
 95.0
 </tonnage>
+
+<quirks>
+difficult_maintain
+imp_com
+poor_performance
+trailer_hitch
+obsolete
+</quirks>
+

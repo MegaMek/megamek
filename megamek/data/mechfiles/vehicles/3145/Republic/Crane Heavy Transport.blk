@@ -91,3 +91,8 @@ TRO: 3145 Republic of the Sphere
 <tonnage>
 30.0
 </tonnage>
+
+<quirks>
+vtol_rotor_dual
+</quirks>
+

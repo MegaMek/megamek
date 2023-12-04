@@ -95,3 +95,9 @@ TRO: 3145 Mercenaries
 <tonnage>
 45.0
 </tonnage>
+
+<quirks>
+easy_pilot
+vtol_rotor_dual
+</quirks>
+

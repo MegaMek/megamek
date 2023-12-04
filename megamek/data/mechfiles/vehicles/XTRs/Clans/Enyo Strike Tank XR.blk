@@ -92,3 +92,10 @@ XTR: Clans
 <tonnage>
 55.0
 </tonnage>
+
+<quirks>
+difficult_maintain
+prototype
+trailer_hitch
+</quirks>
+

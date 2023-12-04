@@ -91,3 +91,8 @@ TRO: 3145 The Clans
 <tonnage>
 35.0
 </tonnage>
+
+<quirks>
+imp_target_long
+</quirks>
+

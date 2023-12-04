@@ -128,3 +128,8 @@ Rec Guide:ilClan #28
 21.0
 </tonnage>
 
+
+<quirks>
+vtol_rotor_coaxial
+</quirks>
+

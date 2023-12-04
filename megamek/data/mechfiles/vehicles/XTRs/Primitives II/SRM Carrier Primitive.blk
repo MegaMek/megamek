@@ -138,3 +138,12 @@ ARMOR:Simple Armor Plate 6
 COMMUNICATIONS:Communicator
 TARGETING:FireScan with IndirecTrack
 </systemManufacturers>
+
+<quirks>
+easy_maintain
+low_profile
+fast_reload
+poor_performance
+obsolete
+</quirks>
+

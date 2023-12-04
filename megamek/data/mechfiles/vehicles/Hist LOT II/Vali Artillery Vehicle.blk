@@ -127,3 +127,10 @@ Historical: Liberation of Terra II
 PETROCHEMICALS
 </fuelType>
 
+
+<quirks>
+easy_maintain
+fast_reload
+trailer_hitch
+</quirks>
+

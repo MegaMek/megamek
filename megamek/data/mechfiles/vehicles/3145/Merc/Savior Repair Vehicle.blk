@@ -98,3 +98,8 @@ TRO: 3145 Mercenaries
 <tonnage>
 60.0
 </tonnage>
+
+<quirks>
+easy_maintain
+</quirks>
+

@@ -121,3 +121,8 @@ XTR: Phantoms
 <tonnage>
 80.0
 </tonnage>
+
+<quirks>
+atmo_flyer
+</quirks>
+

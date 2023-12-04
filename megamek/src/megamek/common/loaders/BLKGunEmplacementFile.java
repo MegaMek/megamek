@@ -45,6 +45,7 @@ public class BLKGunEmplacementFile extends BLKFile implements IMechLoader {
 
         loadEquipment(e, "Guns", GunEmplacement.LOC_GUNS);
         e.setArmorTonnage(e.getArmorWeight());
+        loadQuirks(e);
         return e;
     }
 }

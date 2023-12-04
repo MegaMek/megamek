@@ -211,6 +211,7 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
         addTransports(a);
 
         a.setArmorTonnage(a.getArmorWeight());
+        loadQuirks(a);
         return a;
     }
 

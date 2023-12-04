@@ -25,6 +25,8 @@ import megamek.common.options.PilotOptions;
 import megamek.common.util.BuildingBlock;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 public class BLKFile {
 
@@ -103,6 +105,29 @@ public class BLKFile {
         setTechLevel(entity);
         setFluff(entity);
         checkManualBV(entity);
+    }
+
+    protected void loadQuirks(Entity entity) throws EntityLoadingException {
+        try {
+            List<QuirkEntry> quirks = new ArrayList<>();
+            if (dataFile.exists("quirks")) {
+                for (String unitQuirk : dataFile.getDataAsVector("quirks")) {
+                    QuirkEntry quirkEntry = new QuirkEntry(unitQuirk);
+                    quirks.add(quirkEntry);
+                }
+            }
+            if (dataFile.exists("weaponQuirks")) {
+                for (String weaponQuirk : dataFile.getDataAsVector("weaponQuirks")) {
+                    String[] fields = weaponQuirk.split(":");
+                    int slot = Integer.parseInt(fields[2]);
+                    QuirkEntry quirkEntry = new QuirkEntry(fields[0], fields[1], slot, fields[3]);
+                    quirks.add(quirkEntry);
+                }
+            }
+            entity.loadQuirks(quirks);
+        } catch (Exception e) {
+            throw new EntityLoadingException("Error loading unit quirks!", e);
+        }
     }
 
     public int defaultAeroVGLFacing(int location, boolean rearFacing) {

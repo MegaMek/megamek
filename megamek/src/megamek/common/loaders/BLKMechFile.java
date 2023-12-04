@@ -298,6 +298,7 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
 
         mech.setArmorTonnage(mech.getArmorWeight());
 
+        loadQuirks(mech);
         return mech;
 
     }

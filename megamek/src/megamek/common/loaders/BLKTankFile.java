@@ -277,7 +277,7 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("trailer")) {
             t.setTrailer(true);
         }
-
+        loadQuirks(t);
         return t;
     }
 }

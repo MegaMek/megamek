@@ -752,9 +752,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
         clientgui.setSelectedEntityNum(en);
         gear = MovementDisplay.GEAR_LAND;
 
-        // Issue:#4876 moving the call to 'displayEntity' before boardview calls that invoke 'repaint()'
-        // this seems to prevent blank general tab when switching units when the map is zoomed all the way out.
-        clientgui.getUnitDisplay().displayEntity(ce);
         clientgui.getBoardView().setHighlightColor(GUIP.getMoveDefaultColor());
         clear();
 
@@ -763,7 +760,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         clientgui.getBoardView().highlight(ce.getPosition());
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().cursor(null);
-        clientgui.getUnitDisplay().showPanel("movement");
+        updateUnitDisplayLater(ce);
         if (!clientgui.getBoardView().isMovingUnits()) {
             clientgui.getBoardView().centerOnHex(ce.getPosition());
         }
@@ -793,6 +790,18 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
     private boolean isEnabled(MoveCommand c) {
         return buttons.get(c).isEnabled();
+    }
+
+    private void updateUnitDisplayLater(Entity ce) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                // Issue:#4876 moving the call to 'displayEntity' before boardview calls that invoke 'repaint()'
+                // this seems to prevent blank general tab when switching units when the map is zoomed all the way out.
+               clientgui.getUnitDisplay().displayEntity(ce);
+               clientgui.getUnitDisplay().showPanel("movement");
+            }
+        });
     }
 
     /**

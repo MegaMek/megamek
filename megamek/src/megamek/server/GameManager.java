@@ -536,7 +536,7 @@ public class GameManager implements IGameManager {
     public void checkForObservers() {
         for (Enumeration<Player> e = getGame().getPlayers(); e.hasMoreElements(); ) {
             Player p = e.nextElement();
-            p.setObserver((getGame().getEntitiesOwnedBy(p) < 1) && !getGame().getPhase().isLounge());
+            p.setObserver((!p.isGameMaster()) && (getGame().getEntitiesOwnedBy(p) < 1) && !getGame().getPhase().isLounge());
         }
     }
 

@@ -2998,9 +2998,15 @@ public class Aero extends Entity implements IAero, IBomber {
         return true;
     }
 
+    /**
+     * Fighters may carry external ordnance;
+     * Other Aerospace units with cargo bays and the Internal Bomb Bay quirk may carry bombs internally.
+     * @return boolean
+     */
     @Override
     public boolean isBomber() {
-        return isFighter();
+        return (isFighter() ||
+                (hasQuirk(OptionsConstants.QUIRK_POS_INTERNAL_BOMB)));
     }
 
     @Override

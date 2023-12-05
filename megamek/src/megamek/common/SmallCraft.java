@@ -924,7 +924,7 @@ public class SmallCraft extends Aero {
     public void autoSetMaxBombPoints() {
         // Only count free whole tons per bay
         maxBombPoints = getTransportBays().stream().mapToInt(
-                    tb -> (tb instanceof CargoBay) ? (int) Math.floor(tb.getUnused()) : 0
+                    tb -> (tb instanceof CargoBay) ? (int) Math.floor(tb.getUnused() / 5) : 0
                 ).sum();
     }
 }

@@ -25,199 +25,9 @@ import java.util.*;
 /**
  * Taharqa's attempt at creating an Aerospace entity
  */
-public class Aero extends Entity implements IAero, IBomber {
-    private static final long serialVersionUID = 7196307097459255187L;
-
-    // locations
-    public static final int LOC_NOSE = 0;
-    public static final int LOC_LWING = 1;
-    public static final int LOC_RWING = 2;
-    public static final int LOC_AFT = 3;
-    /** Location used for capital fighters and squadrons **/
-    public static final int LOC_WINGS = 4;
-    /** Location used for equipment not allocated to a firing arc **/
-    public static final int LOC_FUSELAGE = 5;
-
-    // ramming angles
-    public static final int RAM_TOWARD_DIR = 0;
-    public static final int RAM_TOWARD_OBL = 1;
-    public static final int RAM_AWAY_OBL = 2;
-    public static final int RAM_AWAY_DIR = 3;
-
-    // heat type
-    public static final int HEAT_SINGLE = 0;
-    public static final int HEAT_DOUBLE = 1;
-
-    // cockpit types
-    public static final int COCKPIT_STANDARD = 0;
-    public static final int COCKPIT_SMALL = 1;
-    public static final int COCKPIT_COMMAND_CONSOLE = 2;
-    public static final int COCKPIT_PRIMITIVE = 3;
-    public static final String[] COCKPIT_STRING = {"Standard Cockpit", "Small Cockpit", "Command Console",
-            "Primitive Cockpit"};
-    public static final String[] COCKPIT_SHORT_STRING = {"Standard", "Small", "Command Console", "Primitive"};
-
-    // critical hits
-    public static final int CRIT_NONE = -1;
-    public static final int CRIT_CREW = 0;
-    public static final int CRIT_FCS = 1;
-    public static final int CRIT_WEAPON = 2;
-    public static final int CRIT_CONTROL = 3;
-    public static final int CRIT_SENSOR = 4;
-    public static final int CRIT_BOMB = 5;
-    public static final int CRIT_ENGINE = 6;
-    public static final int CRIT_FUEL_TANK = 7;
-    public static final int CRIT_AVIONICS = 8;
-    public static final int CRIT_GEAR = 9;
-    public static final int CRIT_HEATSINK = 10;
-    public static final int CRIT_CARGO = 11;
-    public static final int CRIT_DOCK_COLLAR = 12;
-    public static final int CRIT_DOOR = 13;
-    public static final int CRIT_KF_BOOM = 14;
-    public static final int CRIT_LIFE_SUPPORT = 15;
-    public static final int CRIT_LEFT_THRUSTER = 16;
-    public static final int CRIT_RIGHT_THRUSTER = 17;
-    public static final int CRIT_CIC = 18;
-    public static final int CRIT_KF_DRIVE = 19;
-    public static final int CRIT_GRAV_DECK = 20;
-    public static final int CRIT_WEAPON_BROAD = 21;
-
-    // aeros have no critical slot limitations
-    // this needs to be larger, it is too easy to go over when you get to
-    // warships
-    // and bombs and such
-    private static final int[] NUM_OF_SLOTS = {100, 100, 100, 100, 100, 100, 100};
-
-    private static String[] LOCATION_ABBRS = {"NOS", "LWG", "RWG", "AFT", "WNG", "FSLG"};
-    private static String[] LOCATION_NAMES = {"Nose", "Left Wing", "Right Wing", "Aft", "Wings", "Fuselage"};
-
-    @Override
-    public String[] getLocationAbbrs() {
-        return LOCATION_ABBRS;
-    }
-
-    @Override
-    public String[] getLocationNames() {
-        return LOCATION_NAMES;
-    }
-
-    private int sensorHits = 0;
-    private int fcsHits = 0;
-    private int engineHits = 0;
-    private int avionicsHits = 0;
-    private int cicHits = 0;
-    private boolean fuelTankHit = false;
-    private boolean gearHit = false;
-    private int structIntegrity;
-    private int orig_structIntegrity;
-    // set up damage threshold
-    protected int[] damThresh = {0, 0, 0, 0, 0, 0};
-    // set up an int for what the critical effect would be
-    private int potCrit = CRIT_NONE;
-
-    // ignored crew hit for harjel
-    private int ignoredCrewHits = 0;
-    private int cockpitType = COCKPIT_STANDARD;
-
-    //Autoejection
-    private boolean autoEject = true;
-    private boolean condEjectAmmo = true;
-    private boolean condEjectFuel = true;
-    private boolean condEjectSIDest = true;
-
-    private boolean ejecting = false;
-
-    // track straight movement from last turn
-    private int straightMoves = 0;
-
-    // are we tracking any altitude loss due to air-to-ground assaults
-    private int altLoss = 0;
-
-    /**
-     * Track how much altitude has been lost this turn. This is important for
-     * properly making weapon attacks, so WeaponAttackActions knows what the
-     * altitude was before the attack happened, since the altitude lose is
-     * applied before the attack resolves.
-     */
-    private int altLossThisRound = 0;
-
-    private boolean spheroid = false;
-
-    // deal with heat
-    private int heatSinksOriginal;
-    private int heatSinks;
-    private int heatType = HEAT_SINGLE;
-
-    // Track how many heat sinks are pod-mounted for omnifighters; these are
-    // included in the total
-    // This is provided for campaign use; MM does not distribute damage between
-    // fixed and pod-mounted.
-    private int podHeatSinks;
-
-    protected int maxBombPoints = 0;
-    protected int[] bombChoices = new int[BombType.B_NUM];
-
-    // fuel - number of fuel points
-    private int fuel = 0;
-    private int currentfuel = 0;
-
-    // these are used by more advanced aeros
-    private boolean lifeSupport = true;
-    private int leftThrustHits = 0;
-    private int rightThrustHits = 0;
-
-    // out of control
-    private boolean outControl = false;
-    private boolean outCtrlHeat = false;
-    private boolean randomMove = false;
-
-    // set up movement
-    private int currentVelocity = 0;
-    private int nextVelocity = currentVelocity;
-    private boolean accLast = false;
-    private boolean rolled = false;
-    private boolean failedManeuver = false;
-    private boolean accDecNow = false;
-
-    // was the damage threshold exceeded this turn
-    boolean critThresh = false;
-
-    // vstol status
-    boolean vstol = false;
-
-    // Capital Fighter stuff
-    private int capitalArmor = 0;
-    private int capitalArmor_orig = 0;
-    private int fatalThresh = 2;
-    private int currentDamage = 0;
-    private boolean wingsHit = false;
-    // a hash map of the current weapon groups - the key is the
-    // location:internal name, and the value is the weapon id
-    Map<String, Integer> weaponGroups = new HashMap<>();
-
-    /*
-     * According to the rules if two units of the same type and with the same
-     * velocity are in the same hex, you roll 2d6 randomly to see who is
-     * considered back one step for purposes of targeting. THis is a bitch to
-     * do, so instead we assign a large random variable to each aero unit at the
-     * start of the round and we use that. It works out similarly except that
-     * you don't roll separately for each pair of possibilities. That should
-     * work well enough for our purposes.
-     */
-    private int whoFirst = 0;
-
-    private int eccmRoll = 0;
-
-    //List of escape craft used by this ship
-    private Set<String> escapeCraftList = new HashSet<>();
-
-    //Maps unique id of each assigned marine to marine point value
-    private Map<UUID, Integer> marines;
-
-    public Aero() {
+public class AeroSpaceFighter extends Aero {
+    public AeroSpaceFighter() {
         super();
-        // need to set altitude to something different than entity
-        altitude = 5;
     }
 
     @Override
@@ -1410,7 +1220,7 @@ public class Aero extends Entity implements IAero, IBomber {
         }
 
         // Small/torso-mounted cockpit penalty?
-        if ((getCockpitType() == Aero.COCKPIT_SMALL)
+        if ((getCockpitType() == AeroSpaceFighter.COCKPIT_SMALL)
                 && !hasAbility(OptionsConstants.MD_BVDNI)
                 && !hasAbility(OptionsConstants.UNOFF_SMALL_PILOT)) {
             prd.addModifier(1, "Small Cockpit");
@@ -2128,7 +1938,7 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     public String getCockpitTypeString() {
-        return Aero.getCockpitTypeString(getCockpitType());
+        return AeroSpaceFighter.getCockpitTypeString(getCockpitType());
     }
 
     public static String getCockpitTypeString(int inCockpitType) {
@@ -2174,16 +1984,16 @@ public class Aero extends Entity implements IAero, IBomber {
      */
     public int getOppositeLocation(int loc) {
         switch (loc) {
-            case Aero.LOC_NOSE:
-                return Aero.LOC_AFT;
-            case Aero.LOC_LWING:
-                return Aero.LOC_RWING;
-            case Aero.LOC_RWING:
-                return Aero.LOC_LWING;
-            case Aero.LOC_AFT:
-                return Aero.LOC_NOSE;
+            case AeroSpaceFighter.LOC_NOSE:
+                return AeroSpaceFighter.LOC_AFT;
+            case AeroSpaceFighter.LOC_LWING:
+                return AeroSpaceFighter.LOC_RWING;
+            case AeroSpaceFighter.LOC_RWING:
+                return AeroSpaceFighter.LOC_LWING;
+            case AeroSpaceFighter.LOC_AFT:
+                return AeroSpaceFighter.LOC_NOSE;
             default:
-                return Aero.LOC_NOSE;
+                return AeroSpaceFighter.LOC_NOSE;
         }
     }
 
@@ -2305,11 +2115,11 @@ public class Aero extends Entity implements IAero, IBomber {
         Map<String, Integer> groups = new HashMap<>();
         for (Mounted mounted : getTotalWeaponList()) {
             int loc = mounted.getLocation();
-            if (isFighter() && ((loc == Aero.LOC_RWING) || (loc == Aero.LOC_LWING))) {
-                loc = Aero.LOC_WINGS;
+            if (isFighter() && ((loc == AeroSpaceFighter.LOC_RWING) || (loc == AeroSpaceFighter.LOC_LWING))) {
+                loc = AeroSpaceFighter.LOC_WINGS;
             }
             if (mounted.isRearMounted()) {
-                loc = Aero.LOC_AFT;
+                loc = AeroSpaceFighter.LOC_AFT;
             }
             String key = mounted.getType().getInternalName() + ":" + loc;
             if (null == groups.get(key)) {
@@ -2328,7 +2138,7 @@ public class Aero extends Entity implements IAero, IBomber {
      * @param other
      * @return
      */
-    public boolean shouldMoveBackHex(Aero other) {
+    public boolean shouldMoveBackHex(AeroSpaceFighter other) {
         if (null == getPosition()) {
             return false;
         }
@@ -2435,7 +2245,7 @@ public class Aero extends Entity implements IAero, IBomber {
 
     @Override
     public boolean isPrimitive() {
-        return (getCockpitType() == Aero.COCKPIT_PRIMITIVE);
+        return (getCockpitType() == AeroSpaceFighter.COCKPIT_PRIMITIVE);
     }
 
     @Override
@@ -3165,7 +2975,7 @@ public class Aero extends Entity implements IAero, IBomber {
                     hasSpacecraftThermal = true;
                 }
                 //Only military craft get ESM, which detects active radar
-                if (getDesignType() == Aero.MILITARY) {
+                if (getDesignType() == AeroSpaceFighter.MILITARY) {
                     if (!hasESM) {
                         getSensors().add(new Sensor(Sensor.TYPE_SPACECRAFT_ESM));
                         hasESM = true;

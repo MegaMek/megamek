@@ -751,16 +751,16 @@ public class MovementDisplay extends ActionPhaseDisplay {
         cen = en;
         clientgui.setSelectedEntityNum(en);
         gear = MovementDisplay.GEAR_LAND;
-        Color walkColor = GUIP.getMoveDefaultColor();
-        clientgui.getBoardView().setHighlightColor(walkColor);
+
+        clientgui.getBoardView().setHighlightColor(GUIP.getMoveDefaultColor());
         clear();
 
-        updateButtons();
+        updateButtonsLater();
+
         clientgui.getBoardView().highlight(ce.getPosition());
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().cursor(null);
-        clientgui.getUnitDisplay().displayEntity(ce);
-        clientgui.getUnitDisplay().showPanel("movement");
+        updateUnitDisplayLater(ce);
         if (!clientgui.getBoardView().isMovingUnits()) {
             clientgui.getBoardView().centerOnHex(ce.getPosition());
         }
@@ -790,6 +790,36 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
     private boolean isEnabled(MoveCommand c) {
         return buttons.get(c).isEnabled();
+    }
+
+    /**
+     * Signals Unit Display to update later on the AWT event stack.
+     * See Issue:#4876 and #4444.  This is done to prevent blank general tab when switching 
+     * units when the map is zoomed all the way out.
+     */
+    private void updateUnitDisplayLater(Entity ce) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+               clientgui.getUnitDisplay().displayEntity(ce);
+               clientgui.getUnitDisplay().showPanel("movement");
+            }
+        });
+    }
+
+    /**
+     * Sets buttons to their proper state, but lets Swing do this later after all the 
+     * current BoardView repaints and updates are complete.  This is done to prevent some
+     * buttons from painting correctly when the maps is zoomed way out. See Issue: #4444
+     */
+    private void updateButtonsLater() {
+        SwingUtilities.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				updateButtons();
+			 };
+        });
     }
 
     /**

@@ -5754,7 +5754,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         if (mhex == null) {
             return;
         }
-        txt.append(HexTooltip.getTerrainTip(mhex));
+        txt.append(HexTooltip.getTerrainTip(mhex, game));
     }
 
     /**

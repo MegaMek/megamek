@@ -165,6 +165,10 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
         }
 
         addTransports(a);
+
+        // how many bombs can it carry; depends on transport bays
+        a.autoSetMaxBombPoints();
+
         a.setArmorTonnage(a.getArmorWeight());
         loadQuirks(a);
         return a;
@@ -222,7 +226,7 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
                     facing = 2;
                     equipName = equipName.substring(0, equipName.length() - 4)
                             .trim();
-                }                 
+                }
 
                 EquipmentType etype = EquipmentType.get(equipName);
 
@@ -239,7 +243,7 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
                         int useLoc = TestEntity.eqRequiresLocation(t, etype) ? nLoc : SmallCraft.LOC_HULL;
                         Mounted mount = t.addEquipment(etype, useLoc, rearMount);
                         // Need to set facing for VGLs
-                        if ((etype instanceof WeaponType) 
+                        if ((etype instanceof WeaponType)
                                 && etype.hasFlag(WeaponType.F_VGL)) {
                             if (facing == -1) {
                                 mount.setFacing(defaultAeroVGLFacing(useLoc, rearMount));

@@ -26,7 +26,7 @@ import megamek.common.verifier.TestEntity;
  *
  * @author taharqa
  */
-public class BLKAeroFile extends BLKFile implements IMechLoader {
+public class BLKAeroSpaceFighterFile extends BLKFile implements IMechLoader {
 
     // armor locatioms
     public static final int NOSE = 0;
@@ -34,14 +34,14 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
     public static final int LW = 2;
     public static final int AFT = 3;
 
-    public BLKAeroFile(BuildingBlock bb) {
+    public BLKAeroSpaceFighterFile(BuildingBlock bb) {
         dataFile = bb;
     }
 
     @Override
     public Entity getEntity() throws EntityLoadingException {
 
-        Aero a = new Aero();
+        AeroSpaceFighter a = new AeroSpaceFighter();
 
         setBasicEntityData(a);
 
@@ -49,9 +49,6 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Could not find weight block.");
         }
         a.setWeight(dataFile.getDataAsDouble("tonnage")[0]);
-
-        // how many bombs can it carry
-        a.autoSetMaxBombPoints();
 
         // get a movement mode - lets try Aerodyne
         EntityMovementMode nMotion = EntityMovementMode.AERODYNE;
@@ -148,10 +145,10 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Incorrect armor array length");
         }
 
-        a.initializeArmor(armor[BLKAeroFile.NOSE], Aero.LOC_NOSE);
-        a.initializeArmor(armor[BLKAeroFile.RW], Aero.LOC_RWING);
-        a.initializeArmor(armor[BLKAeroFile.LW], Aero.LOC_LWING);
-        a.initializeArmor(armor[BLKAeroFile.AFT], Aero.LOC_AFT);
+        a.initializeArmor(armor[BLKAeroSpaceFighterFile.NOSE], Aero.LOC_NOSE);
+        a.initializeArmor(armor[BLKAeroSpaceFighterFile.RW], Aero.LOC_RWING);
+        a.initializeArmor(armor[BLKAeroSpaceFighterFile.LW], Aero.LOC_LWING);
+        a.initializeArmor(armor[BLKAeroSpaceFighterFile.AFT], Aero.LOC_AFT);
         a.initializeArmor(0, Aero.LOC_WINGS);
         a.initializeArmor(IArmorState.ARMOR_NA, Aero.LOC_FUSELAGE);
 
@@ -176,6 +173,10 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
         }
 
         addTransports(a);
+
+        // how many bombs can it carry; dependent on transport bays as well as total mass.
+        a.autoSetMaxBombPoints();
+
         a.setArmorTonnage(a.getArmorWeight());
         loadQuirks(a);
         return a;
@@ -237,10 +238,10 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
                     facing = 2;
                     equipName = equipName.substring(0, equipName.length() - 4)
                             .trim();
-                }                 
+                }
 
                 EquipmentType etype = EquipmentType.get(equipName);
-                
+
                 if ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_CASE)) {
                     if (etype.isClan() || addedCase) {
                         continue;
@@ -267,7 +268,7 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
                         Mounted mount = t.addEquipment(etype, useLoc, rearMount);
                         mount.setOmniPodMounted(omniMounted);
                         // Need to set facing for VGLs
-                        if ((etype instanceof WeaponType) 
+                        if ((etype instanceof WeaponType)
                                 && etype.hasFlag(WeaponType.F_VGL)) {
                             if (facing == -1) {
                                 mount.setFacing(defaultAeroVGLFacing(useLoc, rearMount));

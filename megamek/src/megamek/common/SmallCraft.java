@@ -897,6 +897,17 @@ public class SmallCraft extends Aero {
         return false;
     }
 
+    /**
+     * Fighters may carry external ordnance;
+     * Other Aerospace units with cargo bays and the Internal Bomb Bay quirk may carry bombs internally.
+     * @return boolean
+     */
+    @Override
+    public boolean isBomber() {
+        return (hasQuirk(OptionsConstants.QUIRK_POS_INTERNAL_BOMB));
+    }
+
+
     @Override
     public boolean isAerospaceFighter() {
         return false;
@@ -924,7 +935,7 @@ public class SmallCraft extends Aero {
     public void autoSetMaxBombPoints() {
         // Only count free whole tons per bay
         maxBombPoints = getTransportBays().stream().mapToInt(
-                    tb -> (tb instanceof CargoBay) ? (int) Math.floor(tb.getUnused() / 5) : 0
+                    tb -> (tb instanceof CargoBay) ? (int) Math.floor(tb.getUnused()) : 0
                 ).sum();
     }
 }

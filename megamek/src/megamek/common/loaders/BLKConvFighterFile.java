@@ -116,10 +116,10 @@ public class BLKConvFighterFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Incorrect armor array length");
         }
 
-        a.initializeArmor(armor[BLKAeroFile.NOSE], Aero.LOC_NOSE);
-        a.initializeArmor(armor[BLKAeroFile.RW], Aero.LOC_RWING);
-        a.initializeArmor(armor[BLKAeroFile.LW], Aero.LOC_LWING);
-        a.initializeArmor(armor[BLKAeroFile.AFT], Aero.LOC_AFT);
+        a.initializeArmor(armor[BLKAeroSpaceFighterFile.NOSE], Aero.LOC_NOSE);
+        a.initializeArmor(armor[BLKAeroSpaceFighterFile.RW], Aero.LOC_RWING);
+        a.initializeArmor(armor[BLKAeroSpaceFighterFile.LW], Aero.LOC_LWING);
+        a.initializeArmor(armor[BLKAeroSpaceFighterFile.AFT], Aero.LOC_AFT);
 
         a.autoSetInternal();
         a.recalculateTechAdvancement();
@@ -197,7 +197,7 @@ public class BLKConvFighterFile extends BLKFile implements IMechLoader {
                     facing = 2;
                     equipName = equipName.substring(0, equipName.length() - 4)
                             .trim();
-                }             
+                }
 
                 EquipmentType etype = EquipmentType.get(equipName);
 
@@ -214,7 +214,7 @@ public class BLKConvFighterFile extends BLKFile implements IMechLoader {
                         int useLoc = TestEntity.eqRequiresLocation(t, etype) ? nLoc : Aero.LOC_FUSELAGE;
                         Mounted mount = t.addEquipment(etype, useLoc, rearMount);
                         // Need to set facing for VGLs
-                        if ((etype instanceof WeaponType) 
+                        if ((etype instanceof WeaponType)
                                 && etype.hasFlag(WeaponType.F_VGL)) {
                             // If no facing specified, assume front
                             if (facing == -1) {

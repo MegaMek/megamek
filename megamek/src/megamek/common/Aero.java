@@ -481,14 +481,8 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     public void autoSetMaxBombPoints() {
-        // Aerospace fighters can carry both external and internal ordnances, if configured and quirked
-        // appropriately
-        maxBombPoints = (int) Math.round(getWeight() / 5);
-        if (hasQuirk(OptionsConstants.QUIRK_POS_INTERNAL_BOMB)) {
-            maxBombPoints += getTransportBays().stream().mapToInt(
-                    tb -> (tb instanceof CargoBay) ? (int) Math.floor(tb.getUnused() / 5) : 0
-            ).sum();
-        }
+        // Stock Aerospace units cannot carry bombs
+        maxBombPoints = 0;
     }
 
     @Override
@@ -510,7 +504,8 @@ public class Aero extends Entity implements IAero, IBomber {
 
     @Override
     public int reduceMPByBombLoad(int t) {
-        return Math.max(0, t - (int) Math.ceil(getBombPoints() / 5.0));
+        // The base Aero cannot carry bombs so no MP reduction
+        return 0;
     }
 
     public void setWhoFirst() {
@@ -2997,7 +2992,7 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     public boolean isInASquadron() {
-        return game.getEntity(getTransportId()) instanceof FighterSquadron;
+        return false;
     }
 
     @Override
@@ -3012,8 +3007,7 @@ public class Aero extends Entity implements IAero, IBomber {
      */
     @Override
     public boolean isBomber() {
-        return (isFighter() ||
-                (hasQuirk(OptionsConstants.QUIRK_POS_INTERNAL_BOMB)));
+        return false;
     }
 
     @Override
@@ -3022,7 +3016,7 @@ public class Aero extends Entity implements IAero, IBomber {
      * but not a larger craft (i.e. "SmallCraft" or "Dropship" and bigger
      */
     public boolean isFighter() {
-        return true;
+        return false;
     }
 
     @Override
@@ -3030,7 +3024,7 @@ public class Aero extends Entity implements IAero, IBomber {
      * Returns true if and only if this is an aerospace fighter.
      */
     public boolean isAerospaceFighter() {
-        return true;
+        return false;
     }
 
     @Override

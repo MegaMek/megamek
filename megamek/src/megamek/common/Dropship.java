@@ -752,12 +752,4 @@ public class Dropship extends SmallCraft {
     public boolean canTakeOffVertically() {
         return (isSpheroid() || game.getPlanetaryConditions().isVacuum()) && (getCurrentThrust() > 2);
     }
-
-    @Override
-    public void autoSetMaxBombPoints() {
-        // Only count free whole tons per bay
-        maxBombPoints = getTransportBays().stream().mapToInt(
-                tb -> (tb instanceof CargoBay) ? (int) Math.floor(tb.getUnused() / 5) : 0
-        ).sum();
-    }
 }

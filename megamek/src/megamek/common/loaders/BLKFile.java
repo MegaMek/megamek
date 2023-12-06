@@ -587,8 +587,8 @@ public class BLKFile {
             blk.writeBlockData("UnitType", "Tank");
         } else if (t instanceof Infantry) {
             blk.writeBlockData("UnitType", "Infantry");
-        } else if (t instanceof Aero) {
-            blk.writeBlockData("UnitType", "Aero");
+        } else if (t instanceof AeroSpaceFighter) {
+            blk.writeBlockData("UnitType", "AeroSpaceFighter");
         }
 
         blk.writeBlockData("Name", t.getChassis());

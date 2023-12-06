@@ -123,7 +123,9 @@ public class MechFileParser {
                 } else if (sType.equals("SupportVTOL")) {
                     loader = new BLKSupportVTOLFile(bb);
                 } else if (sType.equals("Aero")) {
-                    loader = new BLKAeroFile(bb);
+                    loader = new BLKAeroSpaceFighterFile(bb);
+                } else if (sType.equals("AeroSpaceFighter")) {
+                    loader = new BLKAeroSpaceFighterFile(bb);
                 } else if (sType.equals("FixedWingSupport")) {
                     loader = new BLKFixedWingSupportFile(bb);
                 } else if (sType.equals("ConvFighter")) {
@@ -191,7 +193,7 @@ public class MechFileParser {
             // Conventional Fighters get a combined sensor suite
             ent.getSensors().add(new Sensor(Sensor.TYPE_AERO_SENSOR));
             ent.setNextSensor(ent.getSensors().firstElement());
-        } else if (ent.hasETypeFlag(Entity.ETYPE_DROPSHIP) 
+        } else if (ent.hasETypeFlag(Entity.ETYPE_DROPSHIP)
                 || ent.hasETypeFlag(Entity.ETYPE_SPACE_STATION)
                 || ent.hasETypeFlag(Entity.ETYPE_JUMPSHIP)
                 || ent.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
@@ -414,7 +416,7 @@ public class MechFileParser {
                     ent.setNextSensor(ent.getSensors().lastElement());
                } else if (m.getType().getInternalName().equals(Sensor.BAPP)) {
                     ent.getSensors().add(new Sensor(Sensor.TYPE_BAPP));
-                    ent.setNextSensor(ent.getSensors().lastElement());      
+                    ent.setNextSensor(ent.getSensors().lastElement());
                } else if (m.getType().getInternalName().equals(Sensor.BLOODHOUND)) {
                     ent.getSensors().add(new Sensor(Sensor.TYPE_BLOODHOUND));
                     ent.setNextSensor(ent.getSensors().lastElement());
@@ -568,7 +570,7 @@ public class MechFileParser {
                                 || (mWeapon.getType() instanceof ISSnubNosePPC)
                                 || (mWeapon.getType() instanceof CLEnhancedPPC)
                                 || (mWeapon.getType() instanceof CLImprovedPPC)
-                                || (mWeapon.getType() instanceof ISKinsSlaughterPPC)                             
+                                || (mWeapon.getType() instanceof ISKinsSlaughterPPC)
                                 || (mWeapon.getType() instanceof CLERPPC && ent.getYear() >= 3101)) {
 
                             m.setCrossLinked(mWeapon);
@@ -751,7 +753,7 @@ public class MechFileParser {
                 throw new EntityLoadingException(ex.getMessage());
             }
         }
-        
+
         // Check if it's canon; if it is, mark it as such.
         ent.setCanon(false);// Guilty until proven innocent
         try {
@@ -782,7 +784,7 @@ public class MechFileParser {
         int index = Collections.binarySearch(canonUnitNames, ent.getShortNameRaw());
         if (index >= 0) {
             ent.setCanon(true);
-        }        
+        }
         ent.initMilitary();
         linkDumpers(ent);
     }

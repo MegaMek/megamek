@@ -26,11 +26,11 @@ import megamek.common.options.OptionsConstants;
 /**
  * Common interface for all entities capable of carrying bombs and making bomb attacks, includig Aero,
  * LandAirMech, and VTOL.
- * 
+ *
  * @author Neoancient
  */
 public interface IBomber {
-    
+
     String SPACE_BOMB_ATTACK = "SpaceBombAttack";
     String DIVE_BOMB_ATTACK = "DiveBombAttack";
     String ALT_BOMB_ATTACK = "AltBombAttack";
@@ -39,29 +39,29 @@ public interface IBomber {
      * @return The total number of bomb points that the bomber can carry.
      */
     int getMaxBombPoints();
-    
+
     /**
      * Fighters and VTOLs can carry any size bomb up to the maximum number of points, but LAMs are limited
      * to the number of bays in a single location.
-     * 
+     *
      * @return The largest single bomb that can be carried
      */
     default int getMaxBombSize() {
         return getMaxBombPoints();
     }
-    
+
     /**
      * @return The number of each bomb type that was selected prior to deployment
      */
     int[] getBombChoices();
-    
+
     /**
      * Sets the bomb type selections prior to deployment.
-     * 
+     *
      * @param bc An array with the count of each bomb type as the value of the bomb type's index
      */
     void setBombChoices(int[] bc);
-    
+
     /**
      * Sets the count of each bomb to zero
      */
@@ -71,7 +71,7 @@ public interface IBomber {
      * @return The calculates movement factoring in the load of bombs currently on unit, t is current movement
      */
     int reduceMPByBombLoad(int t);
-    
+
     /**
      * @param cost The cost of the bomb to be mounted
      * @return A location with sufficient space to mount the bomb, or Entity.LOC_NONE if the unit does not have the space.
@@ -96,17 +96,36 @@ public interface IBomber {
     List<Mounted> getBombs();
 
     /**
-     * @return The number of points taken up by all mounted bombs or other external stores.
+     *
+     * @return the number of total bomb points for this unit
      */
     default int getBombPoints() {
+        return getBombPoints(false);
+    }
+
+    /**
+     *
+     * @return the number of externally-mounted ordnance points (useful for MP calculations)
+     */
+    default int getExternalBombPoints() {
+        return getBombPoints(true);
+    }
+
+    /**
+     * @return The number of points taken up by all mounted bombs, or just external
+     */
+    default int getBombPoints(boolean externalOnly) {
         int points = 0;
         for (Mounted bomb : getBombs()) {
             if (bomb.getUsableShotsLeft() > 0) {
-                points += BombType.getBombCost(((BombType) bomb.getType()).getBombType());
+                // Add points if A) not external only, and any kind of bomb, or B) external only, and not internal bomb
+                points += !(externalOnly && bomb.isInternalBomb()) ?
+                        BombType.getBombCost(((BombType) bomb.getType()).getBombType()) : 0;
             }
         }
         return points;
     }
+
 
     /**
      * Iterate through the bomb choices that were configured prior to deployment and add the corresponding
@@ -148,7 +167,7 @@ public interface IBomber {
                             ammo.setShotsLeft(1);
                             m.setLinked(ammo);
                             ((Entity) this).addEquipment(ammo, loc, false);
-                                                        
+
                         }
                     } catch (LocationFullException ignored) {
 

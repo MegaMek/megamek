@@ -1631,6 +1631,15 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                 getType().hasFlag(AmmoType.F_GROUND_BOMB);
     }
 
+    /**
+     * Convenience method to determine if a bomb munition is mounted EXternally (reduces MP) or INternally (no
+     * MP reduction).
+     * @return True if
+     */
+    public boolean isInternalBomb() {
+        return getType().hasFlag(AmmoType.F_INTERNAL_BOMB);
+    }
+
     // is ammo in the same bay as the weapon
     public boolean ammoInBay(int mAmmoId) {
         for (int nextAmmoId : bayAmmo) {

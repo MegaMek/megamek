@@ -21,7 +21,7 @@ import megamek.common.options.OptionsConstants;
  * @author Jay Lawson
  * @since Jun 12, 2008
  */
-public class ConvFighter extends Aero {
+public class ConvFighter extends AeroSpaceFighter {
     private static final long serialVersionUID = 6297668284292929409L;
 
     @Override
@@ -53,7 +53,7 @@ public class ConvFighter extends Aero {
     public int getHeatCapacity() {
         return DOES_NOT_TRACK_HEAT;
     }
-    
+
     @Override
     public boolean tracksHeat() {
         return false;
@@ -84,12 +84,12 @@ public class ConvFighter extends Aero {
                 .setAdvancement(DATE_NONE, 2470, 2490).setProductionFactions(F_TH)
                 .setTechRating(RATING_D).setAvailability(RATING_C, RATING_D, RATING_C, RATING_B)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    
+
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
         return TA_CONV_FIGHTER;
     }
-    
+
     @Override
     public double getBVTypeModifier() {
         return 1.1;

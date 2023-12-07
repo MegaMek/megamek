@@ -43,7 +43,7 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
     private int maxPoints = 0;
     private int maxSize = 0;
     private int maxRows = (int) Math.ceil(BombType.B_NUM / 2.0);
-    
+
     //Variable for MekHQ functionality
     private int[] typeMax = null;
 
@@ -64,10 +64,11 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
         this.typeMax = typeMax;
         initPanel();
     }
-    
+
     @SuppressWarnings("unchecked")
     private void initPanel() {
         maxPoints = bomber.getMaxBombPoints();
+
         maxSize = bomber.getMaxBombSize();
         int[] bombChoices = bomber.getBombChoices();
 
@@ -98,7 +99,7 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
             if ((bombChoices[type] * BombType.getBombCost(type))  > maxSize) {
                 bombChoices[type] = maxSize / BombType.getBombCost(type);
             }
-            
+
             if (typeMax != null) {
                 if ((maxNumBombs > 0) && (maxNumBombs > typeMax[type])) {
                     maxNumBombs = typeMax[type];
@@ -150,6 +151,12 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
             add(b_choices[type]);
             row++;
         }
+    }
+
+    private void initIntFrame(int intBombPoints) {
+    }
+
+    private void initExtFrame(int extBombPoints) {
     }
 
     @Override

@@ -81,7 +81,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
 
     private static final int[] UNIT_TYPES = {
         UnitType.MEK, UnitType.TANK, UnitType.BATTLE_ARMOR, UnitType.INFANTRY, UnitType.PROTOMEK,
-        UnitType.VTOL, UnitType.NAVAL, UnitType.CONV_FIGHTER, UnitType.AERO, UnitType.SMALL_CRAFT,
+        UnitType.VTOL, UnitType.NAVAL, UnitType.CONV_FIGHTER, UnitType.AEROSPACEFIGHTER, UnitType.AERO, UnitType.SMALL_CRAFT,
         UnitType.DROPSHIP, UnitType.JUMPSHIP, UnitType.WARSHIP, UnitType.SPACE_STATION
     };
     private static final int EARLIEST_YEAR = 2398;
@@ -91,7 +91,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
     //region Constructors
     public ForceGenerationOptionsPanel(Use use) {
         setLayout(new GridBagLayout());
-        
+
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 0;
@@ -445,7 +445,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             RATGenerator.getInstance().loadYear(ratGenYear);
         }
     }
-    
+
     public void updateGeneratedUnits(List<MechSummary> list) {
         panUnitTypeOptions.updateGeneratedUnits(list);
     }
@@ -464,7 +464,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             return this;
         }
     };
-    
+
     private Comparator<FactionRecord> factionSorter = new Comparator<>() {
         @Override
         public int compare(FactionRecord o1, FactionRecord o2) {
@@ -479,31 +479,31 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         private static final long serialVersionUID = -7141802206126462796L;
 
         abstract public void optionsChanged();
-        
+
         public Integer getIntegerVal(String key) {
             return null;
         }
-        
+
         public Boolean getBooleanVal(String key) {
             return null;
         }
-        
+
         public String getStringVal(String key) {
             return null;
         }
-        
+
         public List<?> getListVal(String key) {
             return new ArrayList<>();
         }
-        
+
         public abstract void updateGeneratedUnits(List<MechSummary> list);
     }
-    
+
     public class RATGenUnitTypeOptions extends UnitTypeOptions {
         private static final long serialVersionUID = 6536972747395725718L;
 
         private Map<String, RATGenUnitTypeCard> cardMap = new HashMap<>();
-        
+
         public RATGenUnitTypeOptions() {
             setLayout(new CardLayout());
             for (int i = 0; i < cbUnitType.getItemCount(); i++) {
@@ -513,17 +513,17 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                 add(card, cbUnitType.getItemAt(i));
             }
         }
-        
+
         @Override
         public void optionsChanged() {
             ((CardLayout) getLayout()).show(this, (String) cbUnitType.getSelectedItem());
         }
-        
+
         private RATGenUnitTypeCard currentCard() {
             String selectedCard = (String) cbUnitType.getSelectedItem();
             return cardMap.get(selectedCard);
         }
-        
+
         @Override
         public Integer getIntegerVal(String key) {
             switch (key) {
@@ -535,7 +535,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                     return null;
             }
         }
-        
+
         @Override
         public List<?> getListVal(String key) {
             switch (key) {
@@ -568,7 +568,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         private List<JCheckBox> roleChecks = new ArrayList<>();
         private ButtonGroup networkButtons = new ButtonGroup();
         private List<JCheckBox> subtypeChecks = new ArrayList<>();
-        
+
         public RATGenUnitTypeCard(int unitType) {
             setLayout(new BorderLayout());
 
@@ -576,11 +576,11 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             panWeightClass.setBorder(BorderFactory.createTitledBorder(Messages
                     .getString("RandomArmyDialog.WeightClass")));
             add(panWeightClass, BorderLayout.WEST);
-            
+
             JPanel panRoles = new JPanel(new GridBagLayout());
             panRoles.setBorder(BorderFactory.createTitledBorder(Messages
                     .getString("RandomArmyDialog.MissionRole")));
-            
+
             JPanel panStrictness = new JPanel();
             panStrictness.add(new JLabel(Messages.getString("RandomArmyDialog.Strictness")));
             cbRoleStrictness.setToolTipText(Messages.getString("RandomArmyDialog.Strictness.tooltip"));
@@ -589,7 +589,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             cbRoleStrictness.addItem(Messages.getString("RandomArmyDialog.High"));
             cbRoleStrictness.setSelectedIndex(1);
             panStrictness.add(cbRoleStrictness);
-            
+
             GridBagConstraints c = new GridBagConstraints();
             c.gridx = 0;
             c.gridy = 0;
@@ -599,17 +599,17 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             c.weightx = 0.0;
             c.weighty = 0.0;
             panRoles.add(panStrictness, c);
-            
+
             add(panRoles, BorderLayout.CENTER);
 
             JPanel panNetwork = new JPanel(new GridBagLayout());
             panNetwork.setBorder(BorderFactory.createTitledBorder(Messages
                     .getString("RandomArmyDialog.Network")));
             add(panNetwork, BorderLayout.EAST);
-            
+
             JPanel panMotive = new JPanel();
             add(panMotive, BorderLayout.NORTH);
-            
+
             switch (unitType) {
                 case UnitType.MEK:
                     addWeightClasses(panWeightClass, EntityWeightClass.WEIGHT_ULTRA_LIGHT,
@@ -631,6 +631,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                     addWeightClasses(panWeightClass, EntityWeightClass.WEIGHT_ULTRA_LIGHT,
                             EntityWeightClass.WEIGHT_ASSAULT, true);
                     break;
+                case UnitType.AEROSPACEFIGHTER:
                 case UnitType.AERO:
                     addWeightClasses(panWeightClass, EntityWeightClass.WEIGHT_LIGHT,
                             EntityWeightClass.WEIGHT_HEAVY, false);
@@ -646,7 +647,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                 default:
                     panWeightClass.setVisible(false);
             }
-            
+
             for (MissionRole role : MissionRole.values()) {
                 if (role.fitsUnitType(unitType)) {
                     JCheckBox chk = new JCheckBox(Messages.getString("MissionRole." + role));
@@ -674,7 +675,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                 }
                 panRoles.add(roleChecks.get(i), c);
             }
-            
+
             c = new GridBagConstraints();
             c.gridx = 0;
             c.gridy = 0;
@@ -690,6 +691,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                 case UnitType.VTOL:
                 case UnitType.NAVAL:
                 case UnitType.CONV_FIGHTER:
+                case UnitType.AEROSPACEFIGHTER:
                 case UnitType.AERO:
                     addNetworkButton(panNetwork, c, networkButtons, Messages.getString("RandomArmyDialog.NoNetwork"),
                             ModelRecord.NETWORK_NONE);
@@ -733,7 +735,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                             ModelRecord.NETWORK_NAVAL_C3);
                     break;
             }
-            
+
             switch (unitType) {
                 case UnitType.TANK:
                     panMotive.add(createSubtypeCheck("hover", true));
@@ -782,7 +784,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             c.weightx = 0.0;
             c.weighty = 0.0;
             panel.add(cbWeightClass);
-            
+
             c.gridx = 0;
             c.gridwidth = 2;
             for (int i = start; i <= end; i++) {
@@ -869,22 +871,22 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                     .map(chk -> EntityMovementMode.parseFromString(chk.getName())).collect(Collectors.toList());
         }
     }
-    
+
     private class FormationUnitTypeOptions extends UnitTypeOptions {
         private static final long serialVersionUID = -6448946137013919069L;
 
         FormationTypesCard groundCard;
         FormationTypesCard airCard;
-        
+
         public FormationUnitTypeOptions() {
             setLayout(new CardLayout());
-            
+
             groundCard = new FormationTypesCard(true);
             airCard = new FormationTypesCard(false);
             add(groundCard, "Ground");
             add(airCard, "Air");
         }
-        
+
         @Override
         public void optionsChanged() {
             if (getUnitType() != null) {
@@ -893,7 +895,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             }
             currentCard().updateUnitType(getUnitType());
         }
-        
+
         private FormationTypesCard currentCard() {
             if ((getUnitType() != null) && (getUnitType() >= UnitType.CONV_FIGHTER)) {
                 return airCard;
@@ -901,7 +903,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                 return groundCard;
             }
         }
-        
+
         @Override
         public Integer getIntegerVal(String key) {
             switch (key) {
@@ -915,7 +917,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                     return null;
             }
         }
-        
+
         @Override
         public Boolean getBooleanVal(String key) {
             switch (key) {
@@ -927,7 +929,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                     return null;
             }
         }
-        
+
         @Override
         public String getStringVal(String key) {
             if ("formationType".equals(key)) {
@@ -936,7 +938,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                 return null;
             }
         }
-        
+
         @Override
         public void updateGeneratedUnits(List<MechSummary> list) {
             currentCard().setGeneratedUnits(list);
@@ -958,13 +960,13 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         private Map<String, Integer> networkOptions = new LinkedHashMap<>();
         private JTextArea txtNoFormation = new JTextArea();
         private List<MechSummary> generatedUnits = null;
-        
+
         public FormationTypesCard(boolean groundUnit) {
             setLayout(new GridBagLayout());
-            
+
             JPanel panFormations = new JPanel(new GridBagLayout());
             JPanel panOtherOptions = new JPanel(new GridBagLayout());
-            
+
             GridBagConstraints c = new GridBagConstraints();
             c.gridx = 0;
             c.gridy = 0;
@@ -972,14 +974,14 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             c.weightx = 0.5;
             c.weighty = 1.0;
             add(panFormations, c);
-            
+
             c.gridx = 1;
             c.gridy = 0;
             c.anchor = GridBagConstraints.NORTHWEST;
             c.weightx = 0.5;
             c.weighty = 0.0;
             add(panOtherOptions, c);
-            
+
             // Sort main types alphabetically, and subtypes alphabetically within the main.
             List<FormationType> formations = FormationType.getAllFormations().stream()
                     .filter(ft -> ft.isGround() == groundUnit).collect(Collectors.toList());
@@ -987,7 +989,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                     .collect(Collectors.groupingBy(FormationType::getCategory, TreeMap::new,
                             Collectors.mapping(FormationType::getName,
                                     Collectors.toCollection(TreeSet::new))));
-                
+
             int rows = (formations.size() + 1) / 2;
 
             c = new GridBagConstraints();
@@ -998,7 +1000,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             c.fill = GridBagConstraints.NONE;
             c.weightx = 0.0;
             c.weighty = 1.0;
-            
+
             Insets mainInsets = new Insets(0, 10, 0, 10);
             Insets subInsets = new Insets(0, 30, 0, 10);
             for (String group : formationGroups.keySet()) {
@@ -1034,8 +1036,8 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                     c.gridy = 0;
                 }
             }
-            
-            ButtonGroup btnGroup = new ButtonGroup();            
+
+            ButtonGroup btnGroup = new ButtonGroup();
             c.gridx = 0;
             c.gridy = 0;
             c.anchor = GridBagConstraints.NORTHWEST;
@@ -1046,7 +1048,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             panOtherOptions.add(bSimpleFormation, c);
             bSimpleFormation.addItemListener(ev -> tNumUnits.setEnabled(!bSimpleFormation.isSelected()));
             btnGroup.add(bSimpleFormation);
-            
+
             c.gridx = 0;
             c.gridy++;
             c.anchor = GridBagConstraints.NORTHWEST;
@@ -1154,7 +1156,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                 return 0;
             }
         }
-        
+
         public int getOtherUnitType() {
             String otherUnitType = (String) cbOtherUnitType.getSelectedItem();
             if (!bOtherUnitType.isSelected() || (otherUnitType == null)) {
@@ -1162,7 +1164,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             }
             return ModelRecord.parseUnitType(otherUnitType);
         }
-        
+
         public void updateUnitType(int ut) {
             boolean selectionDisabled = false;
             for (Enumeration<AbstractButton> e = formationBtnGroup.getElements(); e.hasMoreElements();) {
@@ -1186,13 +1188,13 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                 //We shouldn't reach this point, but if we do the previous selection doesn't change.
             }
         }
-        
+
         public int getNetwork() {
             String networkOption = (String) cbNetwork.getSelectedItem();
             return (networkOptions.get(networkOption) != null) ? networkOptions.get((networkOption))
                     : ModelRecord.NETWORK_NONE;
         }
-        
+
         private void showAnalysis() {
             List<UnitTable.Parameters> params = new ArrayList<>();
             FormationType ft = FormationType.getFormationType(getFormation());
@@ -1217,7 +1219,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                     params, numUnits, getNetwork());
             afd.setVisible(true);
         }
-        
+
         public void setGeneratedUnits(List<MechSummary> list) {
             generatedUnits = list;
             txtNoFormation.setVisible(list == null || list.isEmpty());

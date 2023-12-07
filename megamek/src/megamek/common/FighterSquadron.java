@@ -440,18 +440,24 @@ public class FighterSquadron extends AeroSpaceFighter {
 
     @Override
     public void autoSetMaxBombPoints() {
-        maxBombPoints = Integer.MAX_VALUE;
+        maxExtBombPoints = maxIntBombPoints = Integer.MAX_VALUE;
         for (Entity fighter : getSubEntities()) {
+            // External bomb points
             int currBombPoints = (int) Math.round(fighter.getWeight() / 5);
-            maxBombPoints = Math.min(maxBombPoints, currBombPoints);
+            maxExtBombPoints = Math.min(maxExtBombPoints, currBombPoints);
+            // Internal (cargo bay) bomb points; requires IBB to utilize
+            currBombPoints  = getTransportBays().stream().mapToInt(
+                tb -> (tb instanceof CargoBay) ? (int) Math.floor(tb.getUnused()) : 0
+            ).sum();
+            maxIntBombPoints = Math.min(maxIntBombPoints, currBombPoints);
         }
     }
 
     @Override
     public void setBombChoices(int... bc) {
         // Set the bombs for the squadron
-        if (bc.length == bombChoices.length) {
-            bombChoices = bc;
+        if (bc.length == extBombChoices.length) {
+            extBombChoices = bc;
         }
         // Update each fighter in the squadron
         for (Entity bomber : getSubEntities()) {
@@ -515,13 +521,13 @@ public class FighterSquadron extends AeroSpaceFighter {
                 }
                 maxBombCount = Math.max(bombCount, maxBombCount);
             }
-            bombChoices[btype] = maxBombCount;
+            extBombChoices[btype] = maxBombCount;
         }
 
         // Now that we know our bomb choices, load 'em
         int gameTL = TechConstants.getSimpleLevel(game.getOptions().stringOption("techlevel"));
         for (int type = 0; type < BombType.B_NUM; type++) {
-            for (int i = 0; i < bombChoices[type]; i++) {
+            for (int i = 0; i < extBombChoices[type]; i++) {
                 if ((type == BombType.B_ALAMO)
                         && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES)) {
                     continue;
@@ -551,7 +557,7 @@ public class FighterSquadron extends AeroSpaceFighter {
                 }
             }
             // Clear out the bomb choice once the bombs are loaded
-            bombChoices[type] = 0;
+            extBombChoices[type] = 0;
         }
         // add the space bomb attack
         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SPACE_BOMB)

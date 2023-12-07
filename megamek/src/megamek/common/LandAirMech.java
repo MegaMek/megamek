@@ -125,7 +125,11 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     //Autoejection
     private boolean critThresh = false;
 
-    private int[] bombChoices = new int[BombType.B_NUM];
+    // Bomb choices
+
+    protected int[] intBombChoices = new int[BombType.B_NUM];
+    protected int[] extBombChoices = new int[BombType.B_NUM];
+
     private Targetable airmechBombTarget = null;
 
     private int fuel;
@@ -1083,8 +1087,16 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         return whoFirst;
     }
 
-    @Override
     public int getMaxBombPoints() {
+        return getMaxExtBombPoints() + getMaxIntBombPoints();
+    }
+
+    @Override
+    public int getMaxExtBombPoints() {
+        return 0;
+    }
+    @Override
+    public int getMaxIntBombPoints() {
         return countWorkingMisc(MiscType.F_BOMB_BAY);
     }
 
@@ -1094,20 +1106,29 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     }
 
     @Override
-    public int[] getBombChoices() {
-        return bombChoices.clone();
+    public int[] getIntBombChoices() {
+        return intBombChoices.clone();
     }
 
     @Override
-    public void setBombChoices(int[] bc) {
-        if (bc.length == bombChoices.length) {
-            bombChoices = bc;
+    public void setIntBombChoices(int[] bc) {
+        if (bc.length == intBombChoices.length) {
+            intBombChoices = bc;
         }
     }
 
     @Override
+    public int[] getExtBombChoices() {
+        return extBombChoices;
+    }
+
+    @Override
+    public void setExtBombChoices(int[] bc) {
+    }
+
+    @Override
     public void clearBombChoices() {
-        Arrays.fill(bombChoices, 0);
+        Arrays.fill(intBombChoices, 0);
     }
 
     @Override

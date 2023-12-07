@@ -20,6 +20,7 @@ package megamek.common;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import megamek.common.options.OptionsConstants;
 
@@ -53,14 +54,31 @@ public interface IBomber {
     /**
      * @return The number of each bomb type that was selected prior to deployment
      */
-    int[] getBombChoices();
+    int[] getIntBombChoices();
+    int[] getExtBombChoices();
 
     /**
      * Sets the bomb type selections prior to deployment.
      *
      * @param bc An array with the count of each bomb type as the value of the bomb type's index
      */
-    void setBombChoices(int[] bc);
+    void setIntBombChoices(int[] bc);
+    void setExtBombChoices(int[] bc);
+
+    /**
+     * @return summed combination of internal and external choices
+     */
+    default int[] getBombChoices(){
+        int[] intArr = getIntBombChoices();
+        int[] extArr = getExtBombChoices();
+        IntStream range = IntStream.range(0, Math.min(intArr.length, extArr.length));
+        IntStream stream3 = range.map(i -> intArr[i] + extArr[i]);
+        return stream3.toArray();
+    }
+
+    default void setBombChoices(int[] ebc) {
+        setExtBombChoices(ebc);
+    }
 
     /**
      * Sets the count of each bomb to zero
@@ -134,15 +152,20 @@ public interface IBomber {
     default void applyBombs() {
         Game game = ((Entity) this).getGame();
         int gameTL = TechConstants.getSimpleLevel(game.getOptions().stringOption("techlevel"));
-        Integer[] sorted = new Integer[BombType.B_NUM];
+        Integer[] iSorted = new Integer[BombType.B_NUM];
         // Apply the largest bombs first because we need to fit larger bombs into a single location
         // in LAMs.
-        for (int i = 0; i < sorted.length; i++) {
-            sorted[i] = i;
+        for (int i = 0; i < iSorted.length; i++) {
+            iSorted[i] = i;
         }
-        Arrays.sort(sorted, (a, b) -> BombType.bombCosts[b] - BombType.bombCosts[a]);
-        for (int type : sorted) {
-            for (int i = 0; i < getBombChoices()[type]; i++) {
+        Integer[] eSorted = iSorted.clone();
+
+        Arrays.sort(iSorted, (a, b) -> BombType.bombCosts[b] - BombType.bombCosts[a]);
+        Arrays.sort(eSorted, (a, b) -> BombType.bombCosts[b] - BombType.bombCosts[a]);
+
+        // First, internal bombs
+        for (int type : iSorted) {
+            for (int i = 0; i < getIntBombChoices()[type]; i++) {
                 int loc = availableBombLocation(BombType.bombCosts[type]);
                 if ((type == BombType.B_ALAMO)
                         && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES)) {
@@ -156,34 +179,75 @@ public interface IBomber {
                 // some bombs need an associated weapon and if so
                 // they need a weapon for each bomb
                 if (null != BombType.getBombWeaponName(type)) {
-                    Mounted m;
-                    try {
-                        m = ((Entity) this).addBomb(EquipmentType.get(BombType
-                                .getBombWeaponName(type)), loc);
-                        // Add bomb itself as single-shot ammo.
-                        if (type != BombType.B_TAG) {
-                            Mounted ammo = new Mounted((Entity) this,
-                                    EquipmentType.get(BombType.getBombInternalName(type)));
-                            ammo.setShotsLeft(1);
-                            m.setLinked(ammo);
-                            ((Entity) this).addEquipment(ammo, loc, false);
-
-                        }
-                    } catch (LocationFullException ignored) {
-
-                    }
+                    applyBombWeapons(type, loc, true);
                 } else {
-                    try {
-                        ((Entity) this).addEquipment(EquipmentType.get(BombType.getBombInternalName(type)),
-                                loc, false);
-                    } catch (LocationFullException ignored) {
+                    applyBombEquipment(type, loc, true);
+                }
+            }
+        }
+        // Now external bombs
+        for (int type : eSorted) {
+            for (int i = 0; i < getIntBombChoices()[type]; i++) {
+                int loc = availableBombLocation(BombType.bombCosts[type]);
+                if ((type == BombType.B_ALAMO)
+                        && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES)) {
+                    continue;
+                }
+                if ((type > BombType.B_TAG)
+                        && (gameTL < TechConstants.T_SIMPLE_ADVANCED)) {
+                    continue;
+                }
 
-                    }
+                // some bombs need an associated weapon and if so
+                // they need a weapon for each bomb
+                if (null != BombType.getBombWeaponName(type)) {
+                    applyBombWeapons(type, loc, false);
+                } else {
+                    applyBombEquipment(type, loc, false);
                 }
             }
         }
         clearBombChoices();
     }
 
+    private void applyBombEquipment(int type, int loc, boolean internal){
+        try {
+            EquipmentType et = EquipmentType.get(BombType.getBombInternalName(type));
+            if (internal) {
+                et.setFlags(BombType.F_INTERNAL_BOMB);
+            }
+            ((Entity) this).addEquipment(et, loc, false);
+        } catch (LocationFullException ignored) {
+
+        }
+
+    }
+
+    private void applyBombWeapons(int type, int loc, boolean internal){
+        Mounted m;
+        try {
+            EquipmentType et = EquipmentType.get(BombType.getBombWeaponName(type));
+            if (internal) {
+                et.setFlags(BombType.F_INTERNAL_BOMB);
+            }
+            m = ((Entity) this).addBomb(et, loc);
+            // Add bomb itself as single-shot ammo.
+            if (type != BombType.B_TAG) {
+                Mounted ammo = new Mounted((Entity) this,
+                        EquipmentType.get(BombType.getBombInternalName(type)));
+                ammo.setShotsLeft(1);
+                m.setLinked(ammo);
+                ((Entity) this).addEquipment(ammo, loc, false);
+
+            }
+        } catch (LocationFullException ignored) {
+
+        }
+    }
+
     void clearBombs();
+
+    int getMaxExtBombPoints();
+
+    int getMaxIntBombPoints();
 }

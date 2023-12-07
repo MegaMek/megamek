@@ -1751,6 +1751,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return isImmobile(true);
     }
 
+    public boolean isImmobileForJump() {
+        return isImmobile();
+    }
+
     /**
      * Is this entity shut down, or if applicable is the crew unconscious?
      * @param checkCrew If true, consider the fitness of the crew when determining
@@ -2837,7 +2841,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Returns sprint MP without considering MASC
      */
     public int getSprintMPwithoutMASC() {
-        return getRunMPwithoutMASC();
+        return getSprintMP(MPCalculationSetting.NO_MASC);
     }
 
     /**

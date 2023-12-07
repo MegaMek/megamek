@@ -82,6 +82,16 @@ public abstract class AbstractValidationButtonDialog extends AbstractButtonDialo
         super(frame, modal, resources, name, title);
         setState(ValidationState.PENDING);
     }
+
+    /**
+     * Allows a dialog to be passed in as the owner
+     */
+    protected AbstractValidationButtonDialog(final JDialog owner, final JFrame frame, final boolean modal,
+                                             final ResourceBundle resources, final String name,
+                                             final String title) {
+        super(owner, frame, modal, resources, name, title);
+        setState(ValidationState.PENDING);
+    }
     //endregion Constructors
 
     //region Getters/Setters

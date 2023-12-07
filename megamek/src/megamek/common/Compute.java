@@ -1072,7 +1072,13 @@ public class Compute {
             if ((target instanceof Mech) && (aimingAt == Mech.LOC_HEAD) && aimingMode.isImmobile()) {
                 return new ToHitData(3, "aiming at head");
             }
-            return new ToHitData(-4, "target immobile");
+            ToHitData immobileTHD = new ToHitData(-4, "target immobile");
+            if(target instanceof Tank) {
+                // An "immobilized" but jumping CV is not actually immobile for targeting purposes
+                // (See issue #3917)
+                return ((Tank)target).moved == EntityMovementType.MOVE_JUMP ? null : immobileTHD;
+            }
+            return immobileTHD;
         }
         return null;
     }

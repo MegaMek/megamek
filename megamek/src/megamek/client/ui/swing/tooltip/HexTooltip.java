@@ -20,10 +20,12 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.BasementType;
+import megamek.common.enums.IlluminationLevel;
 
 import java.util.Vector;
 
-import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.util.UIUtil.*;
+
 
 public final class HexTooltip {
 
@@ -152,6 +154,7 @@ public final class HexTooltip {
                 result.append("<BR>");
             }
         }
+
         return result.toString();
     }
 
@@ -184,17 +187,19 @@ public final class HexTooltip {
         return result;
     }
 
-    public static String getTerrainTip(Hex mhex, GUIPreferences GUIP)
+    public static String getTerrainTip(Hex mhex, GUIPreferences GUIP, Game game)
     {
         Coords mcoords = mhex.getCoords();
+        String illuminated = IlluminationLevel.getIlluminationLevelIndicator(game, mcoords);
         String result = "";
-        StringBuilder sTerrain = new StringBuilder(Messages.getString("BoardView1.Tooltip.Hex", mcoords.getBoardNum(), mhex.getLevel()) + "<BR>");
+        StringBuilder sTerrain = new StringBuilder(Messages.getString("BoardView1.Tooltip.Hex", mcoords.getBoardNum(), mhex.getLevel()) + illuminated + "<BR>");
 
         // cycle through the terrains and report types found
         for (int terType: mhex.getTerrainTypes()) {
             int tf = mhex.getTerrain(terType).getTerrainFactor();
             int ttl = mhex.getTerrain(terType).getLevel();
             String name = Terrains.getDisplayName(terType, ttl);
+
             if (name != null) {
                 String msg_tf =  Messages.getString("BoardView1.Tooltip.TF");
                 name += (tf > 0) ? " (" + msg_tf + ": " + tf + ')' : "";

@@ -497,7 +497,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(BOARD_MOVE_FONT_STYLE, Font.BOLD);
         store.setDefault(BOARD_ATTACK_ARROW_TRANSPARENCY, 0x80);
         store.setDefault(BOARD_ECM_TRANSPARENCY, 0x80);
-        store.setDefault(BOARD_DARKEN_MAP_AT_NIGHT, false);
+        store.setDefault(BOARD_DARKEN_MAP_AT_NIGHT, true);
         store.setDefault(BOARD_TRANSLUCENT_HIDDEN_UNITS, true);
         setDefault(BOARD_TMM_PIP_MODE, 2); // show pips with colors based on move type
 

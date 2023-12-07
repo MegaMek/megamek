@@ -106,9 +106,15 @@ public class InfantryPathFinder {
         // we've visited this hex already
         // we are walking and at or past our movement mp
         // we are jumping and at or past our jump mp
-        if (visitedCoords.contains(startingPath.getFinalCoords()) ||
-                (!startingPath.isJumping() && (startingPath.getMpUsed() >= startingPath.getEntity().getRunMP()))||
-                (startingPath.isJumping() && (startingPath.getMpUsed() >= startingPath.getEntity().getJumpMP()))) {
+        int mp;
+        if (startingPath.isJumping() || startingPath.getEntity().getMovementMode().isVTOL()) {
+            mp = startingPath.getEntity().getJumpMP();
+        } else if (startingPath.getEntity().hasUMU()) {
+            mp = startingPath.getEntity().getActiveUMUCount();
+        } else {
+            mp = startingPath.getEntity().getRunMP();
+        }
+        if (visitedCoords.contains(startingPath.getFinalCoords()) || (startingPath.getMpUsed() >= mp)) {
             return retval;
         }
         

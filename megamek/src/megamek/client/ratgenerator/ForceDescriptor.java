@@ -946,7 +946,7 @@ public class ForceDescriptor {
             getXo().setRank(xoNode.getRank());
             getXo().setTitle(xoNode.getTitle());
         }
-        if (!element) {
+        if (!element && !subforces.isEmpty()) {
             movementModes.clear();
             boolean isOmni = true;
             boolean isArtillery = true;

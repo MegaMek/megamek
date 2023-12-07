@@ -7643,7 +7643,7 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Fredasa Corvette Raider' unitType='Warship'>
+	<chassis name='Fredasa (Corvette-Raider)' unitType='Warship'>
 		<availability>CDS:1,CNC:1,CP:1,CJF:1,RA:1</availability>
 		<model name='(2962)'>
 			<roles>corvette</roles>

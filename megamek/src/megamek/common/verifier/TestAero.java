@@ -246,7 +246,7 @@ public class TestAero extends TestEntity {
             return TestSmallCraft.maxArmorPoints((SmallCraft) aero);
         } else if (aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
                 return (int) (tonnage * 1);
-        } else if (eType == Entity.ETYPE_AERO) {
+        } else if (aero.hasETypeFlag(Entity.ETYPE_AERO)) {
             return (int) (tonnage * 8);
         } else {
             return 0;

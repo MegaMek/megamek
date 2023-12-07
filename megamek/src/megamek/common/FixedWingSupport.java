@@ -243,16 +243,12 @@ public class FixedWingSupport extends ConvFighter {
                 bombpoints++;
             }
         }
+        maxExtBombPoints = bombpoints;
 
         // fixed-wing support craft may also use internal transport bays as bomb bays with Internal Bomb Bay quirk.
-        // Only count free whole tons per bay
-        if (hasQuirk(OptionsConstants.QUIRK_POS_INTERNAL_BOMB)) {
-            bombpoints += getTransportBays().stream().mapToInt(
-                    tb -> (tb instanceof CargoBay) ? (int) Math.floor(tb.getUnused()) : 0
-            ).sum();
-        }
-
-        maxBombPoints = bombpoints;
+        maxIntBombPoints = getTransportBays().stream().mapToInt(
+                tb -> (tb instanceof CargoBay) ? (int) Math.floor(tb.getUnused()) : 0
+        ).sum();
     }
 
     @Override

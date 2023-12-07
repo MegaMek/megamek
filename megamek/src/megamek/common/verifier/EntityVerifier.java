@@ -34,10 +34,10 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * Performs verification of the validity of different types of 
+ * Performs verification of the validity of different types of
  * <code>Entity</code> subclasses. Most of the actual validation is performed
- * by <code>TestEntity</code> and its subclasses. 
- * 
+ * by <code>TestEntity</code> and its subclasses.
+ *
  * @author Reinhard Vicinus
  */
 @XmlRootElement(name = "entityverifier")
@@ -59,7 +59,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
     public TestXMLOption baOption = new TestXMLOption();
     @XmlElement(name = "infantry")
     public TestXMLOption infOption = new TestXMLOption();
-    
+
     private boolean loadingVerbosity = false;
     private boolean failsOnly = false;
 
@@ -68,16 +68,16 @@ public class EntityVerifier implements MechSummaryCache.Listener {
      */
     private EntityVerifier() {
     }
-    
+
     /**
      * Creates and return a new instance of EntityVerifier.
-     * 
+     *
      * @param config a File that contains an XML representation of the configuration settings
      * @return an EntityVerifier with the configuration loaded from XML
      */
     public static EntityVerifier getInstance(final File config) {
         EntityVerifier ev;
-        
+
         try {
             JAXBContext jc = JAXBContext.newInstance(EntityVerifier.class);
 
@@ -89,7 +89,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
 
             ev = new EntityVerifier();
         }
-        
+
         return ev;
     }
 
@@ -101,7 +101,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
             boolean verbose, int ammoTechLvl) {
         return checkEntity(entity, fileString, verbose, ammoTechLvl, false);
     }
-    
+
     public boolean checkEntity(Entity entity, String fileString,
             boolean verbose, int ammoTechLvl, boolean failsOnly) {
         final NumberFormat FMT = NumberFormat.getNumberInstance(Locale.getDefault());
@@ -113,7 +113,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
             testEntity = new TestProtomech((Protomech) entity, protomechOption, fileString);
         } else if (entity.isSupportVehicle()) {
             testEntity = new TestSupportVehicle(entity, tankOption, null);
-        } else if ((entity instanceof Tank) && 
+        } else if ((entity instanceof Tank) &&
                 !(entity instanceof GunEmplacement)) {
             testEntity = new TestTank((Tank) entity, tankOption, null);
         } else if (entity.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
@@ -144,7 +144,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
                 } else {
                     System.out.println("---Entity INVALID---");
                 }
-                System.out.print(testEntity.printEntity());                        
+                System.out.print(testEntity.printEntity());
                 System.out.println("BV: " + entity.calculateBattleValue()
                         + "    Cost: " + FMT.format(entity.getCost(false)));
             }
@@ -221,7 +221,8 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         System.out.println("\t Failed Tanks: " + failedByType.getOrDefault(UnitType.TANK, 0));
         System.out.println("\t Failed VTOLs: " + failedByType.getOrDefault(UnitType.VTOL, 0));
         System.out.println("\t Failed Naval: " + failedByType.getOrDefault(UnitType.NAVAL, 0));
-        System.out.println("\t Failed ASFs: " + failedByType.getOrDefault(UnitType.AERO, 0));
+        System.out.println("\t Failed ASFs: " + failedByType.getOrDefault(UnitType.AEROSPACEFIGHTER, 0));
+        System.out.println("\t Failed Aerospaces: " + failedByType.getOrDefault(UnitType.AERO, 0));
         System.out.println("\t Failed CFs: " + failedByType.getOrDefault(UnitType.CONV_FIGHTER, 0));
         System.out.println("\t Failed Small Craft: " + failedByType.getOrDefault(UnitType.SMALL_CRAFT, 0));
         System.out.println("\t Failed DropShips: " + failedByType.getOrDefault(UnitType.DROPSHIP, 0));
@@ -272,7 +273,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
                 "-file <FILENAME> \t Specify a file to validate,\n"+
                 "                 \t   else the data directory is checked\n" +
                 "-v               \t Verbose -- print detailed report\n" +
-                "-unofficial      \t Consider unofficial units in data dir\n"+ 
+                "-unofficial      \t Consider unofficial units in data dir\n"+
                 "-valid           \t Print verbose reports for valid units\n");
                 return;
             }

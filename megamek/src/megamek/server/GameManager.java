@@ -3695,7 +3695,7 @@ public class GameManager implements IGameManager {
         // is loaded into the squadron, the squadrons bombing attacks are
         // adjusted based on the bomb loadout on the fighter.
         if (getGame().getPhase().isLounge() && (loader instanceof FighterSquadron)) {
-            ((IBomber) unit).setBombChoices(((FighterSquadron) loader).getBombChoices());
+            ((IBomber) unit).setBombChoices(((FighterSquadron) loader).getExtBombChoices());
             ((FighterSquadron) loader).updateSkills();
             ((FighterSquadron) loader).updateWeaponGroups();
         }
@@ -29635,7 +29635,7 @@ public class GameManager implements IGameManager {
                 fighter.setTransportId(fs.getId());
                 // If this is the lounge, we want to configure bombs
                 if (getGame().getPhase().isLounge()) {
-                    ((IBomber) fighter).setBombChoices(fs.getBombChoices());
+                    ((IBomber) fighter).setBombChoices(fs.getExtBombChoices());
                 }
                 entityUpdate(fighter.getId());
             }

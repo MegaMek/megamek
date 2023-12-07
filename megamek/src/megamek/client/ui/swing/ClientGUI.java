@@ -1880,7 +1880,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      * Allow the player to select a MegaMek Unit List file to load. The
      * <code>Entity</code>s in the file will replace any that the player has
      * already selected. As such, this method should only be called in the chat
-     * lounge. The file can record damage sustained, non- standard munitions
+     * lounge. The file can record damage sustained, non-standard munitions
      * selected, and ammunition expended in a prior engagement.
      *
      * @param player

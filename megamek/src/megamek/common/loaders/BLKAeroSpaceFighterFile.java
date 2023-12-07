@@ -161,6 +161,9 @@ public class BLKAeroSpaceFighterFile extends BLKFile implements IMechLoader {
         // This is not working right for arrays for some reason
         a.autoSetThresh();
 
+        // add Transporters prior to equipment to simplify F_CARGO bay assignment
+        addTransports(a);
+
         for (int loc = 0; loc < a.locations(); loc++) {
             loadEquipment(a, a.getLocationName(loc), loc);
         }
@@ -171,8 +174,6 @@ public class BLKAeroSpaceFighterFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("omni")) {
             a.setOmni(true);
         }
-
-        addTransports(a);
 
         // how many bombs can it carry; dependent on transport bays as well as total mass.
         a.autoSetMaxBombPoints();
@@ -281,6 +282,11 @@ public class BLKAeroSpaceFighterFile extends BLKFile implements IMechLoader {
                                 size = getLegacyVariableSize(equipName);
                             }
                             mount.setSize(size);
+                        }
+                        if (etype.hasFlag(MiscType.F_CARGO)) {
+                            // Treat F_CARGO equipment as cargo bays with 1 door, e.g. for ASF with IBB.
+                            int idx = t.getTransportBays().size();
+                            t.addTransporter(new CargoBay(mount.getSize(), 1, idx), omniMounted);
                         }
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());

@@ -30,37 +30,24 @@ public class AeroSpaceFighter extends Aero {
         super();
     }
 
+    @Override
+    public int getUnitType() {
+        return UnitType.AEROSPACEFIGHTER;
+    }
+
     public void autoSetMaxBombPoints() {
         // Aerospace fighters can carry both external and internal ordnances, if configured and quirked
         // appropriately
-        maxBombPoints = (int) Math.round(getWeight() / 5);
-        if (hasQuirk(OptionsConstants.QUIRK_POS_INTERNAL_BOMB)) {
-            maxBombPoints += getTransportBays().stream().mapToInt(
-                    tb -> (tb instanceof CargoBay) ? (int) Math.floor(tb.getUnused()) : 0
-            ).sum();
-        }
+        maxExtBombPoints = (int) Math.round(getWeight() / 5);
+        // Can't check quirk here, as they don't exist in unit files yet.
+        maxIntBombPoints = getTransportBays().stream().mapToInt(
+                tb -> (tb instanceof CargoBay) ? (int) Math.floor(tb.getUnused()) : 0
+        ).sum();
     }
 
     @Override
     public boolean isInASquadron() {
         return game.getEntity(getTransportId()) instanceof FighterSquadron;
-    }
-
-    @Override
-    public int[] getBombChoices() {
-        return bombChoices.clone();
-    }
-
-    @Override
-    public void setBombChoices(int[] bc) {
-        if (bc.length == bombChoices.length) {
-            bombChoices = bc;
-        }
-    }
-
-    @Override
-    public void clearBombChoices() {
-        Arrays.fill(bombChoices, 0);
     }
 
     @Override

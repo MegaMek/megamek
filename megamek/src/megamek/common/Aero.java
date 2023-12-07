@@ -154,8 +154,10 @@ public class Aero extends Entity implements IAero, IBomber {
     // fixed and pod-mounted.
     private int podHeatSinks;
 
-    protected int maxBombPoints = 0;
-    protected int[] bombChoices = new int[BombType.B_NUM];
+    protected int maxIntBombPoints = 0;
+    protected int maxExtBombPoints = 0;
+    protected int[] intBombChoices = new int[BombType.B_NUM];
+    protected int[] extBombChoices = new int[BombType.B_NUM];
 
     // fuel - number of fuel points
     private int fuel = 0;
@@ -477,35 +479,56 @@ public class Aero extends Entity implements IAero, IBomber {
 
     @Override
     public int getMaxBombPoints() {
-        return maxBombPoints;
+        return maxExtBombPoints + maxIntBombPoints;
+    }
+
+    public int getMaxIntBombPoints() {
+        return (hasQuirk(OptionsConstants.QUIRK_POS_INTERNAL_BOMB)) ? maxIntBombPoints : 0;
+    }
+
+    public int getMaxExtBombPoints() {
+        return maxExtBombPoints;
     }
 
     public void autoSetMaxBombPoints() {
         // Stock Aerospace units cannot carry bombs
-        maxBombPoints = 0;
+        maxExtBombPoints = maxIntBombPoints = 0;
     }
 
     @Override
-    public int[] getBombChoices() {
-        return bombChoices.clone();
+    public int[] getIntBombChoices() {
+        return intBombChoices.clone();
     }
 
     @Override
-    public void setBombChoices(int[] bc) {
-        if (bc.length == bombChoices.length) {
-            bombChoices = bc;
+    public void setIntBombChoices(int[] bc) {
+        if (bc.length == intBombChoices.length) {
+            intBombChoices = bc;
+        }
+    }
+
+    @Override
+    public int[] getExtBombChoices() {
+        return extBombChoices.clone();
+    }
+
+    @Override
+    public void setExtBombChoices(int[] bc) {
+        if (bc.length == extBombChoices.length) {
+            extBombChoices = bc;
         }
     }
 
     @Override
     public void clearBombChoices() {
-        Arrays.fill(bombChoices, 0);
+        Arrays.fill(intBombChoices, 0);
+        Arrays.fill(extBombChoices, 0);
     }
 
     @Override
     public int reduceMPByBombLoad(int t) {
         // The base Aero cannot carry bombs so no MP reduction
-        return 0;
+        return t;
     }
 
     public void setWhoFirst() {

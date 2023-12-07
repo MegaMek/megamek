@@ -34,11 +34,12 @@ public class UnitType {
     public static final int JUMPSHIP = 12;
     public static final int WARSHIP = 13;
     public static final int SPACE_STATION = 14;
+    public static final int AEROSPACEFIGHTER = 15;
 
     private static String[] names = { "Mek", "Tank", "BattleArmor", "Infantry",
             "ProtoMek", "VTOL", "Naval", "Gun Emplacement", "Conventional Fighter",
-            "Aero", "Small Craft", "Dropship",
-            "Jumpship", "Warship", "Space Station" };
+             "Aero", "Small Craft", "Dropship",
+            "Jumpship", "Warship", "Space Station", "AeroSpaceFighter" };
 
     public static final int SIZE = names.length;
 
@@ -50,7 +51,7 @@ public class UnitType {
 
     /**
      * Reverse lookup for type integer constant from name
-     * 
+     *
      * @param name  Unit type name
      * @return      The unit type constant. If no match can be found, returns -1.
      */
@@ -82,9 +83,9 @@ public class UnitType {
         }
         throw new IllegalArgumentException("Unknown unit type");
     }
-    
+
     // series of convenience methods to shorten unit type determination
-    
+
     /**
      * Whether the given entity is a VTOL
      * @param e the entity to examine
@@ -93,7 +94,7 @@ public class UnitType {
     public static boolean isVTOL(Entity e) {
         return e.getEntityType() == Entity.ETYPE_VTOL;
     }
-    
+
     /**
      * Whether the given entity is a Spheroid dropship
      * @param e the entity to examine

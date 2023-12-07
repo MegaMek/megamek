@@ -4200,7 +4200,7 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Fredasa Corvette Raider' unitType='Warship'>
+	<chassis name='Fredasa (Corvette-Raider)' unitType='Warship'>
 		<availability>CSA:1,CCC:2,CIH:3,CSR:1,CDS:1,CSV:1,CNC:1,CSJ:2,CJF:1,CGB:1,CB:1</availability>
 		<model name='(2962)'>
 			<roles>corvette</roles>

@@ -113,11 +113,11 @@
 			<subforce fluffName="CJF Falcon's Nest" ifDateBetween=",3073"
 				chassis="Texas Battleship">%ELEMENT%</subforce>
 			<subforce fluffName="CJF Jade Aerie"
-				chassis="Black Lion Battlecruiser">%ELEMENT%</subforce>
+				chassis="Black Lion II Battlecruiser">%ELEMENT%</subforce>
 			<subforce fluffName="CJF Blue Aerie" ifDateBetween=",3073"
-				chassis="Black Lion Battlecruiser">%ELEMENT%</subforce>
+				chassis="Black Lion II Battlecruiser">%ELEMENT%</subforce>
 			<subforce fluffName="CJF White Aerie"
-				chassis="Black Lion Battlecruiser">%ELEMENT%</subforce>
+				chassis="Black Lion II Battlecruiser">%ELEMENT%</subforce>
 			<subforce fluffName="CJF Hawker" ifDateBetween=",3078"
 				chassis="Sovetskii Soyuz Heavy Cruiser">%ELEMENT%</subforce>
 			<subforce fluffName="CJF Jade Talon"
@@ -148,7 +148,7 @@
 				chassis="Whirlwind Destroyer">%ELEMENT%</subforce>
 			<subforce fluffName="CJF Kerensky&apos;s Blues"
 				ifDateBetween="2965,"
-				chassis="Fredasa Corvette Raider">%ELEMENT%</subforce>
+				chassis="Fredasa (Corvette-Raider)">%ELEMENT%</subforce>
 			<subforce fluffName="CJF Lightning Strike" ifDateBetween=",3072"
 				chassis="Vincent Corvette">%ELEMENT%</subforce>
 			<subforce fluffName="CJF Ironhold Provider" 

@@ -123,7 +123,7 @@
 			<subforce fluffName="CSV Snake in the Grass" ifDateBetween=",3072"
 				chassis="Whirlwind Destroyer">%ELEMENT%</subforce>
 			<subforce fluffName="CSV Martial Legacy"
-				chassis="Essex Destroyer">%ELEMENT%</subforce>
+				chassis="Essex II Destroyer">%ELEMENT%</subforce>
 			<subforce fluffName="CSV Snake Pit"
 				chassis="Lola III Destroyer">%ELEMENT%</subforce>
 			<subforce fluffName="CSV Anaconda"

@@ -135,7 +135,7 @@
 				fluffName="CSA Stellar Serpent">%ELEMENT%</subforce>
 			<subforce chassis="McKenna Battleship"
 				fluffName="CSA Sovereign Right">%ELEMENT%</subforce>
-			<subforce chassis="Black Lion Battlecruiser"
+			<subforce chassis="Black Lion II Battlecruiser"
 				fluffName="CSA Admiral William S. Preston"
 				ifDateBetween=",3072">%ELEMENT%</subforce>
 			<subforce chassis="Liberator Cruiser" ifDateBetween="3059,3068"
@@ -146,7 +146,7 @@
 				chassis="Nightlord Battleship">%ELEMENT%</subforce>
 			<subforce fluffName="CSA Exodus Ranger" 
 				ifDateBetween="2950,3075"
-				chassis="York Destroyer Carrier">%ELEMENT%</subforce>
+				chassis="York Destroyer-Carrier">%ELEMENT%</subforce>
 			<subforce fluffName="CSA Hagar"
 				chassis="Lola III Destroyer">%ELEMENT%</subforce>
 			<subforce fluffName="CSA Vritra" ifDateBetween=",3067"
@@ -156,27 +156,27 @@
 			<subforce fluffName="CSA Divine Conquest" ifDateBetween=",3075"
 				chassis="Sovetskii Soyuz Heavy Cruiser">%ELEMENT%</subforce>
 			<subforce fluffName="CSA Star Fire" ifDateBetween="2950,3060"
-				chassis="York Destroyer Carrier">%ELEMENT%</subforce>
+				chassis="York Destroyer-Carrier">%ELEMENT%</subforce>
 			<subforce fluffName="CSA Eagle" ifDateBetween=",3072"
-				chassis="Essex Destroyer">%ELEMENT%</subforce>
+				chassis="Essex II Destroyer">%ELEMENT%</subforce>
 			<subforce fluffName="CSA Vicious Fang" ifDateBetween="2962,"
-				chassis="Fredasa Corvette Raider">%ELEMENT%</subforce>
+				chassis="Fredasa (Corvette-Raider)">%ELEMENT%</subforce>
 			<subforce fluffName="CSA Black Adder" ifDateBetween="2962,3072"
 				chassis="Carrack Transport">%ELEMENT%</subforce>
 			<subforce fluffName="CSA Exodus Sentinel" ifDateBetween="2950,"
-				chassis="York Destroyer Carrier">%ELEMENT%</subforce>
+				chassis="York Destroyer-Carrier">%ELEMENT%</subforce>
 			<subforce fluffName="CSA Warlock"
 				chassis="Lola III Destroyer">%ELEMENT%</subforce>
 			<subforce fluffName="CSA Yodan" ifDateBetween=",3072"
 				chassis="Lola III Destroyer">%ELEMENT%</subforce>
 			<subforce fluffName="CSA Tehuantepec" ifDateBetween=",3072"
-				chassis="Essex Destroyer">%ELEMENT%</subforce>
+				chassis="Essex II Destroyer">%ELEMENT%</subforce>
 			<subforce fluffName="CSA Arcadian Asp" ifDateBetween="2962,"
-				chassis="Fredasa Corvette Raider">%ELEMENT%</subforce>
+				chassis="Fredasa (Corvette-Raider)">%ELEMENT%</subforce>
 			<subforce fluffName="CSA Exodus Crusader" ifDateBetween="2950,"
-				chassis="York Destroyer Carrier">%ELEMENT%</subforce>
+				chassis="York Destroyer-Carrier">%ELEMENT%</subforce>
 			<subforce fluffName="CSA Exodus Avenger" ifDateBetween="2950,"
-				chassis="York Destroyer Carrier">%ELEMENT%</subforce>
+				chassis="York Destroyer-Carrier">%ELEMENT%</subforce>
 			<subforce fluffName="CSA Pegasus" ifDateBetween=",3088"
 				chassis="Vincent Corvette">%ELEMENT%</subforce>
 			<subforce fluffName="CSA Cho Polu" ifDateBetween=",3068"

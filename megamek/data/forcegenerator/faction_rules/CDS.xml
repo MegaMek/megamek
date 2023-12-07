@@ -875,7 +875,7 @@ but with more independence.-->
 
 		<subforces ifName="Black Diamond Naval Star">
 			<subforce fluffName="CDS Swift Strike" ifDateBetween="2962,"
-				chassis="Fredasa Corvette Raider">%ELEMENT%</subforce>
+				chassis="Fredasa (Corvette-Raider)">%ELEMENT%</subforce>
 			<subforce fluffName="CDS Star Swimmer" ifDateBetween="2950,3072"
 				chassis="Carrack Transport">%ELEMENT%</subforce>
 			<subforce fluffName="CDS Bloodletter" ifDateBetween="2950,3070"
@@ -883,7 +883,7 @@ but with more independence.-->
 			<subforce fluffName="CDS Devourer" ifDateBetween="2950,3084"
 				chassis="Carrack Transport">%ELEMENT%</subforce>
 			<subforce fluffName="CDS Sharon" ifDateBetween=",3078"
-				chassis="Essex Destroyer">%ELEMENT%</subforce>
+				chassis=" Essex II Destroyer">%ELEMENT%</subforce>
 			<subforce fluffName="CDS Predator" ifDateBetween=",3070"
 				chassis="Lola III Destroyer">%ELEMENT%</subforce>
 			<subforce fluffName="CDS Bloodlust" ifDateBetween=",3078"
@@ -894,7 +894,7 @@ but with more independence.-->
 
 		<subforces ifName="Blue Diamond Naval Star">
 			<subforce fluffName="CDS Tracy" ifDateBetween=",3072"
-				chassis="Essex Destroyer">%ELEMENT%</subforce>		    
+				chassis="Essex II Destroyer">%ELEMENT%</subforce>
 			<subforce fluffName="CDS Space Hunter" ifDateBetween=",3072"
 				chassis="Lola III Destroyer">%ELEMENT%</subforce>		    
 			<subforce fluffName="CDS Speculator" ifDateBetween=",3072"
@@ -926,7 +926,7 @@ but with more independence.-->
 
 		<subforces ifName="Black Diamond Naval Star">
 			<subforce fluffName="CSF Swift Strike" ifDateBetween="2962,"
-				chassis="Fredasa Corvette Raider">%ELEMENT%</subforce>
+				chassis="Fredasa (Corvette-Raider)">%ELEMENT%</subforce>
 			<subforce fluffName="CSF Star Swimmer" ifDateBetween="2950,"
 				chassis="Carrack Transport">%ELEMENT%</subforce>
 			<subforce fluffName="CSF Bloodletter" ifDateBetween="2950,"
@@ -934,7 +934,7 @@ but with more independence.-->
 			<subforce fluffName="CSF Devourer" ifDateBetween="2950,"
 				chassis="Carrack Transport">%ELEMENT%</subforce>
 			<subforce fluffName="CSF Sharon"
-				chassis="Essex Destroyer">%ELEMENT%</subforce>
+				chassis="Essex II Destroyer">%ELEMENT%</subforce>
 			<subforce fluffName="CSF Predator"
 				chassis="Lola III Destroyer">%ELEMENT%</subforce>
 			<subforce fluffName="CSF Bloodlust"
@@ -945,7 +945,7 @@ but with more independence.-->
 
 		<subforces ifName="Blue Diamond Naval Star">
 			<subforce fluffName="CSF Tracy"
-				chassis="Essex Destroyer">%ELEMENT%</subforce>		    
+				chassis="Essex II Destroyer">%ELEMENT%</subforce>
 			<subforce fluffName="CSF Space Hunter"
 				chassis="Lola III Destroyer">%ELEMENT%</subforce>		    
 			<subforce fluffName="CSF Speculator"

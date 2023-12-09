@@ -4223,14 +4223,14 @@ public abstract class Mech extends Entity {
         sb.append(newLine);
 
         for (QuirkEntry quirkEntry : getQuirks().getQuirkEntries()) {
-            sb.append(MtfFile.QUIRK).append(quirkEntry.getQuirk());
+            sb.append(MtfFile.QUIRK).append(quirkEntry.getQuirk()).append(newLine);
         }
         for (Mounted weapon: getWeaponList()) {
             for (IOption weaponQuirk : weapon.getQuirks().activeQuirks()) {
                 sb.append(MtfFile.WEAPON_QUIRK).append(weaponQuirk.getName()).append(":")
                         .append(getLocationAbbr(weapon.getLocation())).append(":")
                         .append(slotNumber(weapon)).append(":")
-                        .append(weapon.getName());
+                        .append(weapon.getName()).append(newLine);
             }
         }
         sb.append(newLine);

@@ -656,7 +656,9 @@ public class BLKFile {
         }
 
         List<String> quirkList = t.getQuirks().getQuirkEntries().stream().map(QuirkEntry::getQuirk).collect(Collectors.toList());
-        blk.writeBlockData("quirks", String.join("\n", quirkList));
+        if (!quirkList.isEmpty()) {
+            blk.writeBlockData("quirks", String.join("\n", quirkList));
+        }
 
         List<String> weaponQuirkList = new ArrayList<>();
         for (Mounted weapon: t.getWeaponList()) {
@@ -665,7 +667,9 @@ public class BLKFile {
                         + t.slotNumber(weapon) + ":" + weapon.getName());
             }
         }
-        blk.writeBlockData("weaponQuirks", String.join("\n", weaponQuirkList));
+        if (!weaponQuirkList.isEmpty()) {
+            blk.writeBlockData("weaponQuirks", String.join("\n", weaponQuirkList));
+        }
 
         if ((t instanceof Infantry) && ((Infantry) t).getMount() != null) {
             blk.writeBlockData("motion_type", ((Infantry) t).getMount().toString());

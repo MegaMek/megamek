@@ -20,6 +20,7 @@ import megamek.common.cost.MekCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.MPBoosters;
 import megamek.common.loaders.MtfFile;
+import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.weapons.autocannons.ACWeapon;
@@ -4218,6 +4219,19 @@ public abstract class Mech extends Entity {
         if (hasRole()) {
             sb.append(MtfFile.ROLE).append(getRole().toString());
             sb.append(newLine);
+        }
+        sb.append(newLine);
+
+        for (QuirkEntry quirkEntry : getQuirks().getQuirkEntries()) {
+            sb.append(MtfFile.QUIRK).append(quirkEntry.getQuirk());
+        }
+        for (Mounted weapon: getWeaponList()) {
+            for (IOption weaponQuirk : weapon.getQuirks().activeQuirks()) {
+                sb.append(MtfFile.WEAPON_QUIRK).append(weaponQuirk.getName()).append(":")
+                        .append(getLocationAbbr(weapon.getLocation())).append(":")
+                        .append(slotNumber(weapon)).append(":")
+                        .append(weapon.getName());
+            }
         }
         sb.append(newLine);
 

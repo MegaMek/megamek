@@ -17,6 +17,10 @@ import megamek.common.*;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.lasers.EnergyWeapon;
 
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
+
 /**
  * Contains the options determining quirks of the unit
  *
@@ -71,6 +75,11 @@ public class WeaponQuirks extends AbstractOptions {
     @Override
     protected AbstractOptionsInfo getOptionsInfoImp() {
         return WeaponQuirksInfo.getInstance();
+    }
+
+    /** @return A list of weapon quirks that are active in this Quirks object. */
+    public List<IOption> activeQuirks() {
+        return getOptionsList().stream().filter(IOption::booleanValue).collect(toList());
     }
 
     public static boolean isQuirkLegalFor(IOption quirk, Entity en,

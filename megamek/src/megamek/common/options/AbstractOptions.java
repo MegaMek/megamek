@@ -16,11 +16,7 @@ package megamek.common.options;
 import megamek.common.annotations.Nullable;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * Parent class for options settings
@@ -134,6 +130,17 @@ public abstract class AbstractOptions implements Serializable {
      */
     public Enumeration<IOption> getOptions() {
         return optionsHash.elements();
+    }
+
+    /**
+     * Returns a collection of all of the options in this options container, regardless of whether they're
+     * active/selected or not. Note that this Collection is unmodifiable, but the contained IOptions are not
+     * copied, so changing their state will affect this options object.
+     *
+     * @return A collection containing all IOptions of this options object
+     */
+    public Collection<IOption> getOptionsList() {
+        return Collections.unmodifiableCollection(optionsHash.values());
     }
 
     /**

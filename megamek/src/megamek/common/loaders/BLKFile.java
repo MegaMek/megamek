@@ -655,6 +655,18 @@ public class BLKFile {
             blk.writeBlockData("role", t.getRole().toString());
         }
 
+        List<String> quirkList = t.getQuirks().getQuirkEntries().stream().map(QuirkEntry::getQuirk).collect(Collectors.toList());
+        blk.writeBlockData("quirks", String.join("\n", quirkList));
+
+        List<String> weaponQuirkList = new ArrayList<>();
+        for (Mounted weapon: t.getWeaponList()) {
+            for (IOption weaponQuirk : weapon.getQuirks().activeQuirks()) {
+                weaponQuirkList.add(weaponQuirk.getName() + ":" + t.getLocationAbbr(weapon.getLocation()) + ":"
+                        + t.slotNumber(weapon) + ":" + weapon.getName());
+            }
+        }
+        blk.writeBlockData("weaponQuirks", String.join("\n", weaponQuirkList));
+
         if ((t instanceof Infantry) && ((Infantry) t).getMount() != null) {
             blk.writeBlockData("motion_type", ((Infantry) t).getMount().toString());
         } else {

@@ -664,7 +664,7 @@ public class BLKFile {
         for (Mounted weapon: t.getWeaponList()) {
             for (IOption weaponQuirk : weapon.getQuirks().activeQuirks()) {
                 weaponQuirkList.add(weaponQuirk.getName() + ":" + t.getLocationAbbr(weapon.getLocation()) + ":"
-                        + t.slotNumber(weapon) + ":" + weapon.getName());
+                        + t.slotNumber(weapon) + ":" + weapon.getType().getInternalName());
             }
         }
         if (!weaponQuirkList.isEmpty()) {

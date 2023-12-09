@@ -4230,7 +4230,7 @@ public abstract class Mech extends Entity {
                 sb.append(MtfFile.WEAPON_QUIRK).append(weaponQuirk.getName()).append(":")
                         .append(getLocationAbbr(weapon.getLocation())).append(":")
                         .append(slotNumber(weapon)).append(":")
-                        .append(weapon.getName()).append(newLine);
+                        .append(weapon.getType().getInternalName()).append(newLine);
             }
         }
         sb.append(newLine);

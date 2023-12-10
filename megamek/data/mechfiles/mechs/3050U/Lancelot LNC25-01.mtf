@@ -10,14 +10,6 @@ source:TRO: 3050
 rules level:2
 role:Skirmisher
 
-
-
-
-quirk:anti_air
-quirk:low_profile
-quirk:bad_rep_is
-
-
 mass:60
 engine:360 XL Engine(IS)
 structure:IS Standard

@@ -10,14 +10,6 @@ source:TRO: 3085
 Rules Level:4
 role:Brawler
 
-
-
-quirk:battle_computer
-quirk:cowl
-quirk:difficult_eject
-quirk:weak_head_2
-
-
 Mass:90
 Engine:360 Fusion Engine(IS)
 Structure:Standard

@@ -9,13 +9,6 @@ source:TRO: 3058
 rules level:4
 role:Striker
 
-
-
-
-quirk:rugged_1
-quirk:difficult_maintain
-
-
 mass:35
 engine:245 XL Engine(IS)
 structure:IS Standard

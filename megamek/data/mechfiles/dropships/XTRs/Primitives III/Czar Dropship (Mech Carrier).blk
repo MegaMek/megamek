@@ -235,13 +235,3 @@ XTR: Primitives III
 4
 </escape_pod>
 
-
-<quirks>
-atmo_instability
-difficult_maintain
-docking_arms
-imp_target_short
-sensor_ghosts
-obsolete
-</quirks>
-

@@ -144,9 +144,3 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
-
-<quirks>
-fast_reload
-non_standard
-</quirks>
-

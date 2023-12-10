@@ -10,13 +10,6 @@ source:TRO: 3075
 Rules Level:2
 role:Striker
 
-
-
-quirk:command_mech
-quirk:easy_pilot
-weaponquirk:stable_weapon:HD:3:Small Laser
-
-
 Mass:25
 Engine:200 XL Engine
 Structure:Endo Steel

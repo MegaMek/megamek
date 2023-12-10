@@ -10,11 +10,6 @@ Source:Operational Turning Points: Capellan Crusades
 Rules Level:3
 role:Sniper
 
-
-
-quirk:command_mech
-
-
 Mass:75
 Engine:300 XL Engine(IS)
 Structure:IS Endo-Composite

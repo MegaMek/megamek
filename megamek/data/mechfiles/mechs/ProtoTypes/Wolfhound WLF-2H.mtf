@@ -10,12 +10,6 @@ rules level:2
 role:Striker
 Source:TRO: Prototypes 
 
-
-
-quirk:easy_maintain
-quirk:good_rep_1
-
-
 mass:35
 engine:210 XL Engine(IS)
 structure:IS Endo Steel

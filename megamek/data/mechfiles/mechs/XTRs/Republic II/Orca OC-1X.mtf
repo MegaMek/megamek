@@ -10,16 +10,6 @@ Source:XTR: Republic II
 Rules Level:4
 role:Sniper
 
-
-
-
-quirk:distracting
-quirk:hard_pilot
-quirk:obsolete
-quirk:poor_performance
-quirk:prototype
-
-
 Mass:200
 Engine:400 XL Engine(IS)
 Structure:IS Standard

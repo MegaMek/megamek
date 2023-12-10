@@ -10,15 +10,6 @@ source:TRO: 3085
 Rules Level:2
 role:Brawler
 
-
-
-quirk:command_mech
-quirk:hyper_actuator
-quirk:low_profile
-weaponquirk:direct_torso_mount:RT:6:ISStreakSRM6
-weaponquirk:exposed_linkage:RT:6:ISStreakSRM6
-
-
 Mass:75
 Engine:300 XL Engine(IS)
 Structure:Standard

@@ -10,12 +10,6 @@ Source:TRO: 3050
 Rules Level:2
 role:Striker
 
-
-
-quirk:imp_com
-weaponquirk:ammo_feed_problems:RT:0:ISStreakSRM2
-
-
 Mass:40
 Engine:240 Fusion Engine
 Structure:Standard

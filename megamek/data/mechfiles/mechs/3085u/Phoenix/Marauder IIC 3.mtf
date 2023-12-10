@@ -10,11 +10,6 @@ Source:TRO: Clan Invasion
 Rules Level:2
 role:Brawler
 
-quirk:command_mech
-quirk:hyper_actuator
-quirk:exp_actuator
-
-
 Mass:85
 Engine:340 Fusion (Clan) Engine
 Structure:Endo Steel

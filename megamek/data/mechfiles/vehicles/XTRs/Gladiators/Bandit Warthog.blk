@@ -93,8 +93,3 @@ XTR: Gladiators
 <tonnage>
 50.0
 </tonnage>
-
-<weaponQuirks>
-mod_weapons:TU:0:ISLargeVSPLaser
-mod_weapons:TU:1:Machine Gun
-</weaponQuirks>

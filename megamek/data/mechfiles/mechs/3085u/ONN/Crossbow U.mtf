@@ -10,9 +10,6 @@ source:TRO: 3085
 Rules Level:4
 role:Skirmisher
 
-quirk:imp_target_short
-
-
 Mass:65
 Engine:325 Fusion (Clan) Engine(IS)
 Structure:IS Standard

@@ -10,13 +10,6 @@ source:XTR: Primitives I
 rules level:3
 role:Missile Boat
 
-
-
-
-quirk:reinforced_legs
-quirk:stable
-
-
 mass:75
 engine:180 Fusion Engine(IS)
 structure:IS Standard

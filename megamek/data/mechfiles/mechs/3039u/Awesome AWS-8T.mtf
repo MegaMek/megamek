@@ -10,11 +10,6 @@ Source:TRO: 3039
 Rules Level:1
 role:Missile Boat
 
-
-
-quirk:battle_fists_la
-
-
 Mass:80
 Engine:240 Fusion Engine
 Structure:Standard

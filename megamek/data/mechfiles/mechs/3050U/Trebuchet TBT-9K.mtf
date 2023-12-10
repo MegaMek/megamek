@@ -10,12 +10,6 @@ Source:TRO: 3050
 Rules Level:2
 role:Striker
 
-
-
-quirk:easy_maintain
-weaponquirk:fast_reload:RT:3:MRM 20
-
-
 Mass:50
 Engine:250 XL Fusion Engine
 Structure:Endo-Steel

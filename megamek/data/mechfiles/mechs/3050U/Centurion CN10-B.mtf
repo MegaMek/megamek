@@ -10,10 +10,6 @@ Source:TRO: 3050
 Rules Level:2
 role:Brawler
 
-quirk:imp_target_short
-quirk:non_standard
-
-
 Mass:55
 Engine:220 Fusion Engine(IS)
 Structure:IS Endo Steel

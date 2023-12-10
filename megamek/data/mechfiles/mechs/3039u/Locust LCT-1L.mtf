@@ -10,15 +10,6 @@ Source:TRO: 3039
 Rules Level:2
 role:Scout
 
-
-
-quirk:compact_mech
-quirk:low_profile
-quirk:cramped_cockpit
-quirk:no_arms
-quirk:weak_legs
-
-
 Mass:20
 Engine:160 Fusion Engine
 Structure:Standard

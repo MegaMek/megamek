@@ -113,10 +113,3 @@ ARMOR:StarSlab/6
 COMMUNICATIONS:Johnston Q-Band
 TARGETING:Scantrex Dual Tac
 </systemManufacturers>
-
-<quirks>
-low_profile
-bad_rep_is
-poor_work
-</quirks>
-

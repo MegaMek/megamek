@@ -10,11 +10,6 @@ Source:TRO: 3055
 Rules Level:3
 role:Skirmisher
 
-
-
-quirk:non_standard
-
-
 Mass:50
 Engine:250 XL Engine
 Structure:Endo Steel

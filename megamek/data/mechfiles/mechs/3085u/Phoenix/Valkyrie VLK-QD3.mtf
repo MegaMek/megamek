@@ -10,12 +10,6 @@ source:TRO: Project Pheonix
 rules level:2
 role:Striker
 
-
-
-quirk:easy_maintain
-quirk:imp_com
-
-
 mass:30
 engine:210 Fusion Engine(IS)
 structure:IS Endo Steel

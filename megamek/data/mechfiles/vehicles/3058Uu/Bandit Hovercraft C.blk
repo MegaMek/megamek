@@ -97,8 +97,3 @@ TRO: 3058
 <baseChassisTurretWeight>
 1.0
 </baseChassisTurretWeight>
-
-<weaponQuirks>
-mod_weapons:TU:0:SRM 6
-mod_weapons:TU:1:SRM 6
-</weaponQuirks>

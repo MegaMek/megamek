@@ -10,11 +10,6 @@ rules level:3
 role:None
 source:Historical: Operation Klondike
 
-
-
-quirk:no_arms
-
-
 mass:60
 engine:300 Fusion Engine(IS)
 structure:IS Endo Steel

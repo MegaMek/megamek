@@ -10,11 +10,6 @@ source:TRO: Golden Century
 rules level:4
 role:Skirmisher
 
-
-
-quirk:rugged_1
-
-
 mass:50
 engine:250 Fusion (Clan) Engine
 structure:IS Standard

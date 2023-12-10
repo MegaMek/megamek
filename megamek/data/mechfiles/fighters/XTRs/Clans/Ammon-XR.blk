@@ -113,9 +113,3 @@ XTR: Clans
 <tonnage>
 65.0
 </tonnage>
-
-<quirks>
-prototype
-atmo_flyer
-</quirks>
-

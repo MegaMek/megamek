@@ -10,15 +10,6 @@ Source:Record Sheets: 3067 Unabridged
 Rules Level:3
 role:Skirmisher
 
-
-
-quirk:bad_rep_is
-quirk:exp_actuator
-weaponquirk:direct_torso_mount:RT:2:ISPlasmaRifle
-weaponquirk:direct_torso_mount:LT:2:ISERMediumLaser
-weaponquirk:direct_torso_mount:LT:3:ISERMediumLaser
-
-
 Mass:70
 Engine:350 Light Engine(IS)
 Structure:Endo Steel

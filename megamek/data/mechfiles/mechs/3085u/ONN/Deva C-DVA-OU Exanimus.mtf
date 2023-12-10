@@ -10,14 +10,6 @@ source:TRO: 3085
 Rules Level:4
 role:Brawler
 
-
-
-quirk:imp_com
-quirk:imp_sensors
-quirk:bad_rep_clan
-quirk:bad_rep_is
-
-
 Mass:70
 Engine:280 Light Engine(IS)
 Structure:IS Endo Steel

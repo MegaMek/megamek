@@ -10,14 +10,6 @@ source:Rec Guide:ilClan #21
 rules level:3
 role:Brawler
 
-
-
-quirk:battle_computer
-quirk:cowl
-quirk:difficult_eject
-quirk:weak_head_2
-
-
 mass:90
 engine:360 Fusion (Clan) Engine(IS)
 structure:Clan Endo Steel

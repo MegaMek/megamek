@@ -10,12 +10,6 @@ rules level:3
 role:Sniper
 source:Record Sheets: 3067 Unabridged
 
-
-
-quirk:directional_torso_mount
-quirk:bad_rep_is
-
-
 mass:45
 engine:225 Light Engine(IS)
 structure:IS Endo Steel

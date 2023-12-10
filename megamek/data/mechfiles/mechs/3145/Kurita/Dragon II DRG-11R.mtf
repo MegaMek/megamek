@@ -10,12 +10,6 @@ Source:TRO: 3145 Draconis Combine
 Rules Level:4
 role:Missile Boat
 
-
-
-quirk:stable
-weaponquirk:poor_cooling:RA:3:CLERPPC
-
-
 Mass:65
 Engine:325 XL Engine(IS)
 Structure:IS Endo Steel

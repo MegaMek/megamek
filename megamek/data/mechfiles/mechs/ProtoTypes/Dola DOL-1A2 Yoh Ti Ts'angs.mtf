@@ -10,11 +10,6 @@ Source:TRO: Prototypes
 Rules Level:4
 role:Scout
 
-
-
-weaponquirk:jettison_capable:RA:4:Small Vibroblade
-
-
 Mass:30
 Engine:240 XL Engine(IS)
 Structure:Standard

@@ -10,9 +10,6 @@ Source:TRO: 3055
 Rules Level:2
 role:Skirmisher
 
-quirk:nimble_jumper
-
-
 Mass:55
 Engine:330 XL (Clan) Engine
 Structure:Endo Steel

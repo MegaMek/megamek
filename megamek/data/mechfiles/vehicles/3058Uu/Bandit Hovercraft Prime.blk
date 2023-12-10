@@ -102,12 +102,3 @@ TRO: 3058
 <baseChassisTurretWeight>
 1.0
 </baseChassisTurretWeight>
-
-<weaponQuirks>
-mod_weapons:FR:0:SRM 2
-mod_weapons:FR:1:SRM 2
-mod_weapons:FR:2:Machine Gun
-mod_weapons:TU:0:Medium Laser
-mod_weapons:TU:1:Medium Laser
-mod_weapons:TU:2:Medium Laser
-</weaponQuirks>

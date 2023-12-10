@@ -122,9 +122,3 @@ XTR: Primitives V
 <fuelType>
 PETROCHEMICALS
 </fuelType>
-
-<quirks>
-hard_pilot
-non_standard
-</quirks>
-

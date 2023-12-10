@@ -10,13 +10,6 @@ source:TRO: Golden Century
 rules level:2
 role:Sniper
 
-
-quirk:easy_maintain
-quirk:pro_actuator
-quirk:bad_rep_clan
-weaponquirk:accurate:RT:2:CLERPPC
-
-
 mass:90
 engine:360 Fusion (Clan) Engine(IS)
 structure:Clan Endo Steel

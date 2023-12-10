@@ -10,12 +10,6 @@ Source:TRO: 3050
 Rules Level:2
 role:Sniper
 
-
-
-quirk:easy_pilot
-quirk:poor_life_support
-
-
 Mass:85
 Engine:255 Fusion Engine
 Structure:Standard

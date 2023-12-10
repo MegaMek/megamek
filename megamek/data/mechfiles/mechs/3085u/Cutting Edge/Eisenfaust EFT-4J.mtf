@@ -10,14 +10,6 @@ source:TRO: 3085
 Rules Level:1
 role:Juggernaut
 
-
-
-quirk:battle_fists_la
-quirk:battle_fists_ra
-quirk:easy_maintain
-quirk:pro_actuator
-
-
 Mass:45
 Engine:135 Fusion Engine
 Structure:Standard

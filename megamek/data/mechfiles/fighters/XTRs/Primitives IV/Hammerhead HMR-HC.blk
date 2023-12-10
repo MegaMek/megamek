@@ -134,11 +134,3 @@ COMMUNICATIONS:Lassitor FibroLink
 TARGETING:BANDAR 9
 </systemManufacturers>
 
-
-<quirks>
-atmo_flyer
-obsolete
-poor_life_support
-weak_undercarriage
-</quirks>
-

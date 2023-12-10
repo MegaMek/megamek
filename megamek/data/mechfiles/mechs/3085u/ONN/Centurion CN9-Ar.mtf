@@ -10,10 +10,6 @@ source:TRO: 3085
 Rules Level:2
 role:Sniper
 
-quirk:imp_target_short
-quirk:non_standard
-
-
 Mass:50
 Engine:200 Fusion Engine(IS)
 Structure:Standard

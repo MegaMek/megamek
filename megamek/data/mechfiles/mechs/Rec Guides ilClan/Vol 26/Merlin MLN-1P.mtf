@@ -9,10 +9,6 @@ source:Rec Guide:ilClan #26
 rules level:2
 role:Juggernaut
 
-quirk:easy_maintain
-quirk:rugged_1
-
-
 mass:60
 engine:240 Fusion Engine(IS)
 structure:IS Standard

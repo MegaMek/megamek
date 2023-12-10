@@ -10,13 +10,6 @@ Source:TRO: 3050
 Rules Level:2
 role:Juggernaut
 
-
-
-quirk:combat_computer
-quirk:ubiquitous_is
-quirk:no_arms
-
-
 Mass:85
 Engine:255 XL Engine
 Structure:Standard

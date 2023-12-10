@@ -10,11 +10,6 @@ source:Record Sheets: 3067 Unabridged
 rules level:2
 role:Juggernaut
 
-
-
-quirk:no_arms
-
-
 mass:100
 engine:300 Light Engine(IS)
 structure:IS Standard

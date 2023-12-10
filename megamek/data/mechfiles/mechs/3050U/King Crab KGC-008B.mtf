@@ -10,11 +10,6 @@ Source:TRO: 3050
 Rules Level:2
 role:Sniper
 
-
-
-quirk:command_mech
-
-
 Mass:100
 Engine:300 Fusion Engine(IS)
 Structure:IS Endo-Steel

@@ -10,14 +10,6 @@ Source:TRO: 3050
 Rules Level:2
 role:Juggernaut
 
-
-
-weaponquirk:stable_weapon:RT:6:Light Auto Cannon/5
-weaponquirk:stable_weapon:RT:8:Light Auto Cannon/5
-weaponquirk:stable_weapon:LT:6:Light Auto Cannon/5
-weaponquirk:stable_weapon:LT:8:Light Auto Cannon/5
-
-
 Mass:90
 Engine:270 XL Engine(IS)
 Structure:IS Standard

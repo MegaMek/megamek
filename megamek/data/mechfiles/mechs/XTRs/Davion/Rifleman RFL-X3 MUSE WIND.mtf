@@ -10,15 +10,6 @@ source:XTR: Davion
 Rules Level:4
 role:Sniper
 
-
-
-quirk:anti_air
-quirk:imp_com
-quirk:searchlight
-quirk:ubiquitous_clan
-quirk:ubiquitous_is
-
-
 Mass:60
 Engine:240 XL Engine(IS)
 Structure:Standard

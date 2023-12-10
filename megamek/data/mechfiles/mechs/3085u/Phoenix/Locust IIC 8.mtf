@@ -10,12 +10,6 @@ source:TRO: 3085
 Rules Level:2
 role:Scout
 
-quirk:easy_maintain
-quirk:low_profile
-quirk:no_arms
-quirk:weak_legs
-
-
 Mass:25
 Engine:300 XL (Clan) Engine(IS)
 Structure:Endo Steel

@@ -10,13 +10,6 @@ source:TRO: 3085
 Rules Level:2
 role:Skirmisher
 
-
-
-
-weaponquirk:stable_weapon:RA:8:ISLargePulseLaser
-weaponquirk:stable_weapon:RA:10:ISLargePulseLaser
-
-
 Mass:70
 Engine:210 XL Engine
 Structure:Standard

@@ -10,11 +10,6 @@ Source:TRO: 3055
 Rules Level:2
 role:Skirmisher
 
-
-
-quirk:ext_twist
-
-
 Mass:70
 Engine:350 Light Engine
 Structure:Endo Steel

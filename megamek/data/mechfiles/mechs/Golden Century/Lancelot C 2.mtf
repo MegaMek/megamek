@@ -10,13 +10,6 @@ source:TRO: Golden Century
 rules level:2
 role:Skirmisher
 
-
-
-quirk:anti_air
-quirk:low_profile
-quirk:bad_rep_is
-
-
 mass:60
 engine:360 XL (Clan) Engine(IS)
 structure:Clan Endo Steel

@@ -10,15 +10,6 @@ source:TRO: Project Pheonix
 rules level:2
 role:Striker
 
-
-
-quirk:command_mech
-quirk:imp_com
-quirk:ubiquitous_clan
-quirk:ubiquitous_is
-weaponquirk:jettison_capable:RA:7:ISERPPC
-
-
 mass:45
 engine:270 XL Engine(IS)
 structure:IS Endo Steel

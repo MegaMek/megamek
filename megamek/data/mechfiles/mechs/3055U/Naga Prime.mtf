@@ -10,12 +10,6 @@ Source:TRO: 3055
 Rules Level:3
 role:Missile Boat
 
-
-quirk:ext_twist
-quirk:bad_rep_clan
-quirk:no_arms
-
-
 Mass:80
 Engine:400 XL (Clan) Engine(IS)
 Structure:Clan Endo Steel

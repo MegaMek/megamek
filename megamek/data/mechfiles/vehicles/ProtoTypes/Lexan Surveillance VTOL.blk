@@ -117,10 +117,3 @@ TRO: Prototypes
 <fuel>
 0.0
 </fuel>
-
-<quirks>
-bad_rep_is
-vtol_rotor_dual
-imp_sensors
-</quirks>
-

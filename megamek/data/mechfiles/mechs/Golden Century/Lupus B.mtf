@@ -10,9 +10,6 @@ Rules Level:2
 role:Skirmisher
 source:TRO: Golden Century
 
-quirk:exp_actuator
-
-
 Mass:60
 Engine:300 Fusion (Clan) Engine(IS)
 Structure:Clan Endo Steel

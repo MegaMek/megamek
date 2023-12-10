@@ -9,13 +9,6 @@ source:TRO: 3145 Draconis Combine
 rules level:3
 role:Juggernaut
 
-
-
-
-quirk:fast_reload
-quirk:poor_work
-
-
 mass:80
 engine:240 Fusion Engine(IS)
 structure:IS Standard

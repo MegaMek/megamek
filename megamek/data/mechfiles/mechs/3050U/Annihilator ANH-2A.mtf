@@ -10,11 +10,6 @@ source:TRO: 3050
 rules level:2
 role:Juggernaut
 
-
-
-quirk:easy_maintain
-
-
 mass:100
 engine:200 Fusion Engine(IS)
 structure:IS Standard

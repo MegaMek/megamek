@@ -10,13 +10,6 @@ rules level:3
 role:Sniper
 source:Rec Guide:ilClan #5
 
-
-
-quirk:command_mech
-quirk:hyper_actuator
-quirk:low_profile
-
-
 mass:100
 engine:300 XL Engine(IS)
 structure:IS Standard

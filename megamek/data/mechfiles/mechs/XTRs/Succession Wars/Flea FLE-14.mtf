@@ -10,15 +10,6 @@ Source:XTR: Succession Wars
 Rules Level:4
 role:Scout
 
-
-
-quirk:easy_maintain
-quirk:imp_life_support
-quirk:no_arms
-quirk:low_profile
-quirk:hard_pilot
-
-
 Mass:15
 Engine:135 Fusion Engine(IS)
 Structure:Standard

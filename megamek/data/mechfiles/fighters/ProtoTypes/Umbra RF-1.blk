@@ -115,13 +115,3 @@ TRO: Prototypes
 <tonnage>
 30.0
 </tonnage>
-
-<quirks>
-easy_maintain
-</quirks>
-
-<weaponQuirks>
-mod_weapons:NOS:0:ISSNPPC
-mod_weapons:NOS:2:ISERMediumLaser
-mod_weapons:NOS:3:ISERMediumLaser
-</weaponQuirks>

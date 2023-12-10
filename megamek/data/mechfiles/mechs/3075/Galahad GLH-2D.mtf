@@ -10,11 +10,6 @@ source:TRO: 3075
 rules level:2
 role:Sniper
 
-
-
-quirk:difficult_maintain
-
-
 mass:60
 engine:180 Fusion Engine(IS)
 structure:IS Endo Steel

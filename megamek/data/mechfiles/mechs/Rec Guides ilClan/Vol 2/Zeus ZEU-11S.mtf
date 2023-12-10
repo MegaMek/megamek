@@ -10,12 +10,6 @@ source:Rec Guide:ilClan #2
 rules level:2
 role:Sniper
 
-
-
-quirk:barrel_fists_ra
-quirk:easy_maintain
-
-
 mass:80
 engine:320 XL (Clan) Engine
 structure:IS Standard
@@ -67,7 +61,7 @@ Upper Arm Actuator
 Lower Arm Actuator
 CLLRM15
 CLLRM15
-ISArtemisIV
+CLArtemisIV
 IS Ferro-Fibrous
 IS Ferro-Fibrous
 IS Ferro-Fibrous

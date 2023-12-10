@@ -10,10 +10,6 @@ source:TRO: 3085
 rules level:2
 role:Striker
 
-
-weaponquirk:stable_weapon:RT:7:CLERPPC
-
-
 mass:30
 engine:210 XL (Clan) Engine(IS)
 structure:Clan Endo Steel

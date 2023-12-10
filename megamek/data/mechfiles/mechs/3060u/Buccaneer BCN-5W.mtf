@@ -10,10 +10,6 @@ Source:TRO: 3060
 Rules Level:2
 role:Scout
 
-quirk:imp_target_short
-quirk:bad_rep_is
-
-
 Mass:55
 Engine:275 XL Engine
 Structure:Standard

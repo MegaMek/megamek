@@ -10,16 +10,6 @@ source:Rec Guide:ilClan #17
 rules level:2
 role:Skirmisher
 
-
-
-quirk:easy_maintain
-quirk:rugged_1
-quirk:ubiquitous_clan
-quirk:ubiquitous_is
-weaponquirk:stable_weapon:RL:4:ISStreakSRM2
-weaponquirk:stable_weapon:LL:4:ISStreakSRM2
-
-
 mass:65
 engine:260 XL Engine(IS)
 structure:IS Standard

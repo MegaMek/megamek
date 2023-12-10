@@ -10,11 +10,6 @@ source:Rec Guide:ilClan #20
 rules level:2
 role:Juggernaut
 
-quirk:imp_target_long
-quirk:rugged_1
-quirk:difficult_maintain
-
-
 mass:95
 engine:285 XL (Clan) Engine(IS)
 structure:IS Reinforced

@@ -142,9 +142,3 @@ JUMPJET:Unspecified
 COMMUNICATIONS:Build 2083 Micro
 TARGETING:Proto-Enhanced, Model 4
 </systemManufacturers>
-
-<quirks>
-hard_pilot
-distracting
-</quirks>
-

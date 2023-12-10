@@ -95,7 +95,3 @@ TRO: 3058
 <baseChassisTurretWeight>
 1.0
 </baseChassisTurretWeight>
-
-<weaponQuirks>
-mod_weapons:TU:0:PPC
-</weaponQuirks>

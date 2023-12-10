@@ -10,13 +10,6 @@ Source:TRO: 3055
 Rules Level:2
 role:Sniper
 
-
-
-
-quirk:reinforced_legs
-weaponquirk:stable_weapon:RT:0:ISGaussRifle
-
-
 Mass:45
 Engine:225 Fusion Engine
 Structure:Endo Steel

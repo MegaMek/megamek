@@ -9,9 +9,6 @@ source:Rec Guide:ilClan #25
 rules level:2
 role:Missile Boat
 
-quirk:weak_head_2
-
-
 mass:40
 engine:240 XL (Clan) Engine(IS)
 structure:Clan Endo Steel
@@ -88,9 +85,9 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 Jump Jet
 Jump Jet
-Clan Ammo LRM-20 (Clan) Artemis-capable (OMNIPOD)
-Clan Ammo LRM-20 (Clan) Artemis-capable (OMNIPOD)
-Clan Ammo LRM-20 (Clan) Artemis-capable (OMNIPOD)
+Clan Ammo LRM-20 (Clan) Artemis V-capable (OMNIPOD)
+Clan Ammo LRM-20 (Clan) Artemis V-capable (OMNIPOD)
+Clan Ammo LRM-20 (Clan) Artemis V-capable (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous

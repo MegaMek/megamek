@@ -10,11 +10,6 @@ Source:TRO: 3050
 Rules Level:2
 role:Sniper
 
-
-
-quirk:easy_maintain
-
-
 Mass:50
 Engine:250 XL Engine
 Structure:Standard

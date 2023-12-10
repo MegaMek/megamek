@@ -8,12 +8,6 @@ era:3070
 source:Shrapnel #13
 rules level:3
 
-
-
-quirk:easy_maintain
-quirk:imp_target_long
-
-
 mass:95
 engine:380 Light Engine(IS)
 structure:IS Standard

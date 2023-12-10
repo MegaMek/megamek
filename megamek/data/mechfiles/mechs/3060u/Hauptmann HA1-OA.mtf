@@ -10,12 +10,6 @@ source:TRO: 3060
 rules level:2
 role:Juggernaut
 
-
-
-quirk:easy_maintain
-quirk:ext_twist
-
-
 mass:95
 engine:285 Fusion Engine(IS)
 structure:IS Standard

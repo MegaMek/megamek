@@ -10,10 +10,6 @@ source:Rec Guide:ilClan #13
 rules level:2
 role:Juggernaut
 
-quirk:imp_target_long
-quirk:difficult_eject
-
-
 mass:100
 engine:300 XL (Clan) Engine(IS)
 structure:IS Standard

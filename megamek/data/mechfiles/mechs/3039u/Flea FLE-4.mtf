@@ -10,14 +10,6 @@ Source:TRO: 3039
 Rules Level:1
 role:Scout
 
-
-
-
-quirk:easy_maintain
-quirk:imp_life_support
-quirk:no_arms
-
-
 Mass:20
 Engine:120 Fusion Engine
 Structure:Standard

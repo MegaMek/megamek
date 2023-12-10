@@ -10,12 +10,6 @@ source:TRO: 3085
 Rules Level:2
 role:Striker
 
-
-
-quirk:imp_target_short
-quirk:nimble_jumper
-
-
 Mass:35
 Engine:175 XL Engine
 Structure:Standard

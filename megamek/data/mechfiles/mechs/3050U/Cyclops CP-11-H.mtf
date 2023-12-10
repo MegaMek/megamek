@@ -10,14 +10,6 @@ Source:TRO: 3050
 Rules Level:2
 role:Juggernaut
 
-
-
-quirk:battle_computer
-quirk:cowl
-quirk:difficult_eject
-quirk:weak_head_2
-
-
 Mass:90
 Engine:360 Fusion Engine
 Structure:Standard

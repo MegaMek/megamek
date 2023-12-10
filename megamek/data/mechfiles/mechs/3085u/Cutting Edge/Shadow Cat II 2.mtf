@@ -10,10 +10,6 @@ source:TRO: 3085
 Rules Level:4
 role:Skirmisher
 
-quirk:easy_maintain
-quirk:low_profile
-
-
 Mass:60
 Engine:360 XL (Clan) Engine
 Structure:Endo Steel

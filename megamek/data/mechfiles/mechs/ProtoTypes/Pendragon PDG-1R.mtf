@@ -9,13 +9,6 @@ source:TRO: Prototypes
 rules level:3
 role:Missile Boat
 
-
-
-quirk:no_arms
-quirk:difficult_maintain
-quirk:imp_target_long
-
-
 mass:95
 engine:380 XL Engine(IS)
 structure:IS Composite

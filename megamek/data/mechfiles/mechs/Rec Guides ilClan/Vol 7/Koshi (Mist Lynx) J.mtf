@@ -10,10 +10,6 @@ source:Rec Guide:ilClan #7
 rules level:4
 role:Sniper
 
-quirk:imp_sensors
-quirk:low_profile
-
-
 mass:25
 engine:175 XL (Clan) Engine(IS)
 structure:Clan Endo Steel

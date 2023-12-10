@@ -10,11 +10,6 @@ Source:TRO: 3145 Federated Suns
 Rules Level:3
 role:Brawler
 
-
-
-weaponquirk:accurate:LA:3:ISERPPC
-
-
 Mass:75
 Engine:375 XL Engine(IS)
 Structure:IS Endo-Composite

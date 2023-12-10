@@ -10,11 +10,6 @@ Source:XTR: Gunslingers
 Rules Level:4
 role:Skirmisher
 
-
-
-quirk:difficult_maintain
-
-
 Mass:65
 Engine:325 XL Engine(IS)
 Structure:IS Standard

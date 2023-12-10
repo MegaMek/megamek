@@ -207,22 +207,3 @@ TRO: 3145 Mercenaries
 <escape_pod>
 4
 </escape_pod>
-
-<quirks>
-easy_maintain
-unstreamlined
-</quirks>
-
-<weaponQuirks>
-mod_weapons:NOS:1:PPC Bay
-mod_weapons:NOS:7:AC Bay
-mod_weapons:LS:1:Laser Bay
-mod_weapons:LS:6:LRM Bay
-mod_weapons:LS:11:AMS Bay
-mod_weapons:RS:1:Laser Bay
-mod_weapons:RS:6:LRM Bay
-mod_weapons:RS:11:AMS Bay
-mod_weapons:AFT:1:Laser Bay
-mod_weapons:AFT:5:Pulse Laser Bay
-mod_weapons:AFT:9:AMS Bay
-</weaponQuirks>

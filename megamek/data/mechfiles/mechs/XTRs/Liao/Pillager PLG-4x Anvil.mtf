@@ -9,12 +9,6 @@ source:XTR: Liao
 rules level:3
 role:Missile Boat
 
-
-
-quirk:battle_fists_la
-quirk:battle_fists_ra
-
-
 mass:100
 engine:300 Light Engine(IS)
 structure:IS Standard

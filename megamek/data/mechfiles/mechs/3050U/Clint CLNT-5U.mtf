@@ -10,15 +10,6 @@ Source:TRO: 3050
 Rules Level:2
 role:Striker
 
-
-
-quirk:imp_target_long
-quirk:imp_target_med
-quirk:difficult_maintain
-quirk:exp_actuator
-quirk:non_standard
-
-
 Mass:40
 Engine:240 Light Engine
 Structure:Endo Steel

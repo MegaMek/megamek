@@ -10,16 +10,6 @@ source:Rec Guide:ilClan #17
 rules level:2
 role:Missile Boat
 
-
-
-quirk:easy_maintain
-quirk:rugged_1
-quirk:ubiquitous_clan
-quirk:ubiquitous_is
-weaponquirk:stable_weapon:RL:5:ISStreakSRM2
-weaponquirk:stable_weapon:LL:5:ISStreakSRM2
-
-
 mass:65
 engine:260 Fusion Engine(IS)
 structure:IS Standard

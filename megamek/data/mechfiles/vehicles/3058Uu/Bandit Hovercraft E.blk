@@ -97,8 +97,3 @@ TRO: 3058
 <baseChassisTurretWeight>
 1.0
 </baseChassisTurretWeight>
-
-<weaponQuirks>
-mod_weapons:FR:0:Medium Laser
-mod_weapons:TU:0:LRM 10
-</weaponQuirks>

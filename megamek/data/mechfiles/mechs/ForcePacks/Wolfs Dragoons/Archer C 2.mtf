@@ -9,15 +9,6 @@ source:ForcePack Wolfs Dragoons
 rules level:2
 role:Brawler
 
-
-
-quirk:battle_fists_la
-quirk:battle_fists_ra
-quirk:command_mech
-quirk:stable
-quirk:ubiquitous_is
-
-
 mass:70
 engine:280 Fusion (Clan) Engine(IS)
 structure:IS Standard

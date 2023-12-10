@@ -10,12 +10,6 @@ Source:XTR: RetroTech
 Rules Level:4
 role:Scout
 
-
-
-
-quirk:imp_sensors
-
-
 Mass:25
 Engine:180 Primitive Fusion Engine
 Structure:Standard

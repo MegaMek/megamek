@@ -8,13 +8,6 @@ era:3145
 source:Record Sheets: 3150
 rules level:3
 
-
-
-quirk:easy_maintain
-quirk:easy_pilot
-quirk:rugged_1
-
-
 mass:40
 engine:200 Fusion Engine(IS)
 structure:IS Standard

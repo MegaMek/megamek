@@ -10,9 +10,6 @@ source:Rec Guide:ilClan #20
 rules level:2
 role:Brawler
 
-quirk:imp_target_long
-
-
 mass:85
 engine:340 XL (Clan) Engine
 structure:IS Standard

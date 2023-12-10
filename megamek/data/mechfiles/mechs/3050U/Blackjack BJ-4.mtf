@@ -10,11 +10,6 @@ Source:TRO: 3050
 Rules Level:2
 role:Brawler
 
-
-
-quirk:bad_rep_is
-
-
 Mass:45
 Engine:180 Light Engine
 Structure:Standard

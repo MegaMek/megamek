@@ -10,14 +10,6 @@ Source:TRO: 3075
 Rules Level:2
 role:Striker
 
-
-
-
-quirk:imp_target_short
-quirk:pro_actuator
-quirk:weak_head_1
-
-
 Mass:30
 Engine:210 Fusion Engine
 Structure:Standard

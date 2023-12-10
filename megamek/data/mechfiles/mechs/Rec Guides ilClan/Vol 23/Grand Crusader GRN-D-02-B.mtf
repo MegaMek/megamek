@@ -10,13 +10,6 @@ source:Rec Guide:ilClan #23
 rules level:2
 role:Sniper
 
-
-
-quirk:bad_rep_is
-weaponquirk:direct_torso_mount:RT:3:LRM 20
-weaponquirk:direct_torso_mount:LT:3:LRM 20
-
-
 mass:80
 engine:320 XL Engine(IS)
 structure:IS Endo Steel

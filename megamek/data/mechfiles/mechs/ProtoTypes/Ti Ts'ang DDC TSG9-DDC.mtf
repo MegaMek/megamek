@@ -10,16 +10,6 @@ Rules Level:4
 role:Skirmisher
 Source:TRO: Prototypes 
 
-
-
-quirk:hyper_actuator
-quirk:difficult_maintain
-quirk:non_standard
-quirk:imp_life_support
-quirk:pro_actuator
-weaponquirk:jettison_capable:RA:4:Lance
-
-
 Mass:60
 Engine:360 XL Engine(IS)
 Structure:Endo Steel

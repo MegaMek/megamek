@@ -10,18 +10,6 @@ Source:TRO: Jihad
 Rules Level:2
 role:Brawler
 
-
-
-quirk:directional_torso_mount
-quirk:bad_rep_is
-weaponquirk:direct_torso_mount:RT:5:Heavy PPC
-weaponquirk:direct_torso_mount:RT:9:ISStreakSRM4
-weaponquirk:direct_torso_mount:LT:5:Heavy PPC
-weaponquirk:direct_torso_mount:RA:4:ISERMediumLaser
-weaponquirk:direct_torso_mount:RA:5:ISERMediumLaser
-weaponquirk:direct_torso_mount:LA:4:ISERSmallLaser
-
-
 Mass:80
 Engine:320 Light Engine(IS)
 Structure:Endo Steel

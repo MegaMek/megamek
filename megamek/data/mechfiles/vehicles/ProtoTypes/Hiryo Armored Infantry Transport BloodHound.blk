@@ -83,10 +83,3 @@ WIGE
 <transporters>
 TroopSpace:4
 </transporters>
-
-<quirks>
-difficult_maintain
-non_standard
-easy_pilot
-</quirks>
-

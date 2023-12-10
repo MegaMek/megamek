@@ -95,9 +95,3 @@ XTR: Phantoms
 <tonnage>
 5.0
 </tonnage>
-
-<quirks>
-imp_sensors
-low_profile
-</quirks>
-

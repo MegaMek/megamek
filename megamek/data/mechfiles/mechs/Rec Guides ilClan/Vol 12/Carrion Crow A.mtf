@@ -10,10 +10,6 @@ source:Rec Guide:ilClan #12
 rules level:2
 role:Striker
 
-quirk:imp_target_short
-quirk:unbalanced
-
-
 mass:40
 engine:280 XL (Clan) Engine(IS)
 structure:Clan Endo Steel

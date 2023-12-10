@@ -10,11 +10,6 @@ source:TRO: 3085u
 Rules Level:2
 role:Skirmisher
 
-
-
-quirk:low_profile
-
-
 Mass:60
 Engine:300 Fusion Engine(IS)
 Structure:Standard

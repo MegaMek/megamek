@@ -10,13 +10,6 @@ Source:Turning Points: Irian
 Rules Level:2
 role:Juggernaut
 
-
-
-quirk:command_mech
-quirk:hyper_actuator
-quirk:low_profile
-
-
 Mass:100
 Engine:300 Light Engine(IS)
 Structure:IS Standard

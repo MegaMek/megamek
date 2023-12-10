@@ -10,12 +10,6 @@ Source:XTR: Republic II
 Rules Level:4
 role:Striker
 
-
-
-quirk:low_profile
-quirk:no_arms
-
-
 Mass:20
 Engine:100 XL Engine(IS)
 Structure:IS Endo Steel

@@ -9,10 +9,6 @@ source:TRO: 3145 Mercenaries
 rules level:2
 role:Striker
 
-
-quirk:multi_trac
-
-
 mass:35
 engine:245 XL (Clan) Engine(IS)
 structure:Clan Endo Steel

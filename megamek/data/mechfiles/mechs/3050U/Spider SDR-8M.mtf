@@ -10,13 +10,6 @@ Source:TRO: 3050
 Rules Level:2
 role:Striker
 
-
-
-quirk:easy_maintain
-quirk:nimble_jumper
-quirk:no_eject
-
-
 Mass:30
 Engine:240 Fusion Engine
 Structure:Endo-Steel

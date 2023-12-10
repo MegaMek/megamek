@@ -10,12 +10,6 @@ source:TRO: 3060
 rules level:2
 role:Sniper
 
-
-quirk:ext_twist
-quirk:low_profile
-quirk:no_arms
-
-
 mass:30
 engine:90 Fusion (Clan) Engine(IS)
 structure:IS Standard

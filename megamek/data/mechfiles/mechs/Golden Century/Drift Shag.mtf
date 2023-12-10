@@ -10,11 +10,6 @@ rules level:2
 role:Scout
 source:TRO: Golden Century
 
-
-quirk:low_profile
-quirk:bad_rep_clan
-
-
 mass:30
 engine:210 XL (Clan) Engine(IS)
 structure:Clan Endo Steel

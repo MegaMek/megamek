@@ -118,9 +118,3 @@ TRO: 3145 Draconis Combine
 <tonnage>
 95.0
 </tonnage>
-
-<quirks>
-fast_reload
-weak_undercarriage
-</quirks>
-

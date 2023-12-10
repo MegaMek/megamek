@@ -9,13 +9,6 @@ source:TRO: 3055
 rules level:2
 role:Skirmisher
 
-
-
-
-quirk:ubiquitous_is
-quirk:difficult_maintain
-
-
 mass:55
 engine:385 XL Engine(IS)
 structure:IS Endo Steel

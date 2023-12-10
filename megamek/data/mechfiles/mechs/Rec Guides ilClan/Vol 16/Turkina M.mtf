@@ -10,9 +10,6 @@ source:Rec Guide:ilClan #16
 rules level:2
 role:Sniper
 
-quirk:easy_pilot
-
-
 mass:95
 engine:285 XL (Clan) Engine(IS)
 structure:IS Standard

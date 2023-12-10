@@ -90,12 +90,3 @@ TRO: Prototypes
 <tonnage>
 40.0
 </tonnage>
-
-<quirks>
-poor_work
-trailer_hitch
-</quirks>
-
-<weaponQuirks>
-accurate:TU:0:ISERLargeLaser
-</weaponQuirks>

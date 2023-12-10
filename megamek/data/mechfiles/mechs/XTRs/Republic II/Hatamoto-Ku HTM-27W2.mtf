@@ -9,11 +9,6 @@ source:XTR: Republic II
 rules level:3
 role:Brawler
 
-
-
-quirk:multi_trac
-
-
 mass:80
 engine:320 Fusion Engine(IS)
 structure:IS Endo Steel

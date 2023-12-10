@@ -10,15 +10,6 @@ source:XTR: Caveat Emptor
 rules level:3
 role:Juggernaut
 
-
-
-
-quirk:command_mech
-quirk:directional_torso_mount
-quirk:hyper_actuator
-quirk:low_profile
-
-
 mass:75
 engine:300 XL (Clan) Engine
 structure:Clan Endo Steel

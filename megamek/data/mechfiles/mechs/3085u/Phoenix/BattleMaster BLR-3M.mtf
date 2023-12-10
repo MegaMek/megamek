@@ -10,12 +10,6 @@ source:TRO: 3085
 rules level:2
 role:Brawler
 
-
-
-quirk:command_mech
-quirk:weak_head_1
-
-
 mass:85
 engine:340 Fusion Engine(IS)
 structure:IS Standard

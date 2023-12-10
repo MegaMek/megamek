@@ -10,10 +10,6 @@ source:Rec Guide:ilClan #14
 rules level:3
 role:Skirmisher
 
-quirk:combat_computer
-quirk:low_profile
-
-
 mass:50
 engine:250 XL (Clan) Engine
 structure:IS Standard

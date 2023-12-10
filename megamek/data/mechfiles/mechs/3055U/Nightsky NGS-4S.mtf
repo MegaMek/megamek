@@ -9,12 +9,6 @@ source:TRO: 3055
 rules level:2
 role:Striker
 
-
-
-
-weaponquirk:mod_weapons:RA:4:Hatchet
-
-
 mass:50
 engine:300 XL Engine(IS)
 structure:IS Standard

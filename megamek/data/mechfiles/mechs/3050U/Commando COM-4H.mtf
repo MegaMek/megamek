@@ -10,10 +10,6 @@ Source:TRO: 3050
 Rules Level:2
 role:Striker
 
-quirk:low_profile
-quirk:exp_actuator
-
-
 Mass:25
 Engine:150 Fusion Engine
 Structure:Standard

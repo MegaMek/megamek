@@ -9,16 +9,6 @@ source:Rec Guide:ilClan #26
 rules level:2
 role:Missile Boat
 
-quirk:ext_twist
-quirk:bad_rep_clan
-weaponquirk:stable_weapon:RT:2:CLNarcBeacon
-weaponquirk:stable_weapon:LT:2:CLAntiMissileSystem
-weaponquirk:stable_weapon:RA:2:CLLRM20
-weaponquirk:stable_weapon:RA:6:CLLRM20
-weaponquirk:stable_weapon:LA:2:CLLRM20
-weaponquirk:stable_weapon:LA:6:CLLRM20
-
-
 mass:80
 engine:400 XL (Clan) Engine(IS)
 structure:Clan Endo Steel

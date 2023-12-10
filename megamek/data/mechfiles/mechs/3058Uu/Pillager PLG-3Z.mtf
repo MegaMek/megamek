@@ -9,12 +9,6 @@ source:TRO: 3058
 rules level:2
 role:Juggernaut
 
-
-
-quirk:battle_fists_la
-quirk:battle_fists_ra
-
-
 mass:100
 engine:300 XL Engine(IS)
 structure:IS Standard

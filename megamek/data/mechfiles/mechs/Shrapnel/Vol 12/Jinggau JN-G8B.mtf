@@ -10,12 +10,6 @@ source:Shrapnel #12
 rules level:3
 role:Skirmisher
 
-
-
-quirk:low_profile
-quirk:weak_head_2
-
-
 mass:65
 engine:325 XL Engine(IS)
 structure:IS Endo Steel

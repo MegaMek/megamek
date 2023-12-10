@@ -10,11 +10,6 @@ source:TRO: 3067
 Rules Level:2
 role:Missile Boat
 
-quirk:easy_maintain
-quirk:imp_com
-quirk:pro_actuator
-
-
 Mass:50
 Engine:350 XL (Clan) Engine(IS)
 Structure:Clan Endo Steel

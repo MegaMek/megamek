@@ -10,14 +10,6 @@ source:TRO: Golden Century
 rules level:4
 role:Skirmisher
 
-
-
-quirk:command_mech
-quirk:imp_com
-quirk:ubiquitous_clan
-weaponquirk:jettison_capable:RA:4:Improved Large Laser
-
-
 mass:45
 engine:270 Fusion Engine(IS)
 structure:IS Standard

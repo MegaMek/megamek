@@ -10,12 +10,6 @@ source:Rec Guide:ilClan #17
 rules level:3
 role:Brawler
 
-
-
-quirk:imp_target_short
-quirk:nimble_jumper
-
-
 mass:35
 engine:140 Fusion Engine(IS)
 structure:IS Endo Steel

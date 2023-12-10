@@ -137,12 +137,3 @@ TRO: 3145 Lyran Commonwealth
 3.0
 </baseChassisTurret2Weight>
 
-
-<quirks>
-battle_computer
-difficult_maintain
-non_standard
-oversized
-poor_performance
-</quirks>
-

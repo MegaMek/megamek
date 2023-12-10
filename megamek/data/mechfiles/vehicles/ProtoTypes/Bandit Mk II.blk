@@ -95,13 +95,3 @@ TRO: Prototypes
 <tonnage>
 50.0
 </tonnage>
-
-<quirks>
-bad_rep_is
-</quirks>
-
-<weaponQuirks>
-mod_weapons:TU:0:ISMediumVSPLaser
-mod_weapons:TU:1:Machine Gun
-mod_weapons:TU:2:Machine Gun
-</weaponQuirks>

@@ -9,11 +9,6 @@ rules level:3
 role:Sniper
 source:Record Sheets: Unique Mechs
 
-
-
-quirk:ext_twist
-
-
 mass:70
 engine:350 XL Engine(IS)
 structure:IS Endo Steel

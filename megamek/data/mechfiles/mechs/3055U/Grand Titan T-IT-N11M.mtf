@@ -10,12 +10,6 @@ source:TRO: 3055
 rules level:2
 role:Brawler
 
-
-
-quirk:multi_trac
-quirk:difficult_maintain
-
-
 mass:100
 engine:400 XL Engine(IS)
 structure:IS Endo Steel

@@ -118,8 +118,3 @@ TRO: Prototypes
 <tonnage>
 25.0
 </tonnage>
-
-<weaponQuirks>
-mod_weapons:AFT:1:Small Laser
-mod_weapons:AFT:2:Small Laser
-</weaponQuirks>

@@ -10,13 +10,6 @@ Source:TRO: 3055
 Rules Level:2
 role:Brawler
 
-
-
-quirk:ext_twist
-quirk:low_profile
-quirk:difficult_maintain
-
-
 Mass:40
 Engine:200 Fusion Engine
 Structure:Standard

@@ -10,16 +10,6 @@ source:Iron Wind Metals
 rules level:4
 role:Skirmisher
 
-quirk:pro_actuator
-quirk:difficult_maintain
-weaponquirk:mod_weapons:RT:4:CLStreakLRM15
-weaponquirk:mod_weapons:LT:4:CLERMediumLaser
-weaponquirk:mod_weapons:LT:5:CLERMediumLaser
-weaponquirk:mod_weapons:LT:6:CLERMediumLaser
-weaponquirk:mod_weapons:RA:4:CLImprovedHeavyLargeLaser
-weaponquirk:mod_weapons:LA:4:CLImprovedHeavyLargeLaser
-
-
 mass:70
 engine:280 Fusion Engine(IS)
 structure:IS Standard

@@ -10,13 +10,6 @@ source:Shrapnel #4
 rules level:2
 role:Sniper
 
-
-
-quirk:ext_twist
-quirk:low_profile
-quirk:no_arms
-
-
 mass:30
 engine:120 Fusion Engine(IS)
 structure:IS Standard

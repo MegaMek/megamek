@@ -10,12 +10,6 @@ rules level:4
 role:Missile Boat
 source:Rec Guide:ilClan #5
 
-
-
-quirk:no_arms
-quirk:weak_head_1
-
-
 mass:65
 engine:195 XL Engine(IS)
 structure:IS Standard

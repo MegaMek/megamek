@@ -10,13 +10,6 @@ Source:TRO: 3039
 Rules Level:1
 role:Juggernaut
 
-
-
-quirk:barrel_fists_la
-quirk:easy_maintain
-quirk:bad_rep_is
-
-
 Mass:80
 Engine:320 Fusion Engine
 Structure:Standard

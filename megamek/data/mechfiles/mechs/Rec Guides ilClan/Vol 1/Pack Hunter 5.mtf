@@ -10,9 +10,6 @@ source:Rec Guide:ilClan #1
 rules level:2
 role:Sniper
 
-quirk:reinforced_legs
-
-
 mass:30
 engine:270 XL Engine(IS)
 structure:IS Endo Steel

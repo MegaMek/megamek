@@ -10,11 +10,6 @@ source:TRO: Golden Century
 rules level:4
 role:Striker
 
-
-
-quirk:easy_maintain
-
-
 mass:35
 engine:210 XL Engine(IS)
 structure:IS Standard

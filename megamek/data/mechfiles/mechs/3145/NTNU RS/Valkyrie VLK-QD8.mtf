@@ -10,12 +10,6 @@ Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:2
 role:Missile Boat
 
-
-
-quirk:easy_maintain
-quirk:imp_com
-
-
 Mass:30
 Engine:180 XL Engine(IS)
 Structure:IS Endo Steel

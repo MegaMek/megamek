@@ -8,10 +8,6 @@ era:3146
 source:TRO: 3150
 rules level:3
 
-quirk:command_mech
-quirk:distracting
-
-
 mass:100
 engine:400 XXL (Clan) Engine
 structure:Clan Endo Steel

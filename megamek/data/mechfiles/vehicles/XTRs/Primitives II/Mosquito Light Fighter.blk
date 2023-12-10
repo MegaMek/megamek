@@ -131,10 +131,3 @@ XTR: Primitives II
 <tonnage>
 20.0
 </tonnage>
-
-<quirks>
-atmo_flyer
-easy_maintain
-obsolete
-</quirks>
-

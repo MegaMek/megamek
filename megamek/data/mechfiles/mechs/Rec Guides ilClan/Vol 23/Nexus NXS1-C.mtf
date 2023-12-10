@@ -10,11 +10,6 @@ source:Rec Guide:ilClan #23
 rules level:3
 role:Striker
 
-
-
-quirk:bad_rep_is
-
-
 mass:25
 engine:175 Light Engine(IS)
 structure:IS Endo Steel

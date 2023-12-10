@@ -136,13 +136,3 @@ XTR: Primitives III
 <tonnage>
 60.0
 </tonnage>
-
-<quirks>
-atmo_flyer
-cramped_cockpit
-difficult_eject
-variable_range_short
-weak_undercarriage
-obsolete
-</quirks>
-

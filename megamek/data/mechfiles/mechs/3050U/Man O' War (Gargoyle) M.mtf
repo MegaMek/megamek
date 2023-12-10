@@ -10,10 +10,6 @@ source:TRO: Clan Invasion
 rules level:2
 role:Sniper
 
-weaponquirk:stable_weapon:RA:2:CLHAG20
-weaponquirk:stable_weapon:LA:2:CLERPPC
-
-
 mass:80
 engine:400 XL (Clan) Engine(IS)
 structure:IS Standard

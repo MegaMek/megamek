@@ -10,14 +10,6 @@ source:TRO: 3145 Republic of the Sphere
 rules level:3
 role:Juggernaut
 
-
-
-
-quirk:command_mech
-quirk:distracting
-quirk:searchlight
-
-
 mass:125
 engine:375 XL Engine(IS)
 structure:IS Endo Steel

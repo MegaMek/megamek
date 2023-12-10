@@ -9,14 +9,6 @@ source:XTR: Primitives I
 rules level:4
 role:Sniper
 
-
-
-quirk:easy_maintain
-quirk:pro_actuator
-quirk:rugged_1
-quirk:oversized
-
-
 mass:100
 engine:360 Fusion Engine(IS)
 structure:IS Standard

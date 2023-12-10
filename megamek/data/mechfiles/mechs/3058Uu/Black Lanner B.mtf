@@ -10,9 +10,6 @@ Source:TRO: 3058
 Rules Level:2
 role:Missile Boat
 
-quirk:stable
-
-
 Mass:55
 Engine:385 XL (Clan) Engine(IS)
 Structure:Clan Endo Steel

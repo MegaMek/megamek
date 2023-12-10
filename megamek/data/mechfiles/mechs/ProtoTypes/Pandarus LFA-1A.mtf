@@ -10,13 +10,6 @@ Rules Level:4
 role:Missile Boat
 Source:TRO: Prototypes 
 
-
-
-quirk:poor_target_short
-quirk:imp_target_long
-quirk:easy_maintain
-
-
 Mass:75
 Engine:300 Fusion Engine(IS)
 Structure:Endo Steel

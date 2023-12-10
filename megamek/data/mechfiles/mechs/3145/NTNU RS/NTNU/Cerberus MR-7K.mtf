@@ -8,15 +8,6 @@ era:3121
 source:Record Sheets: 3150
 rules level:3
 
-
-
-quirk:barrel_fists_la
-quirk:barrel_fists_ra
-quirk:imp_target_long
-quirk:vestigial_hands_la
-quirk:vestigial_hands_ra
-
-
 mass:95
 engine:380 XL Engine(IS)
 structure:IS Endo Steel

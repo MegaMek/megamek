@@ -9,15 +9,6 @@ source:XTR: Kurita
 rules level:4
 role:Skirmisher
 
-
-
-
-quirk:difficult_maintain
-quirk:non_standard
-quirk:prototype
-weaponquirk:stable_weapon:RA:4:CLLargePulseLaser
-
-
 mass:90
 engine:360 XL Engine(IS)
 structure:IS Endo Steel

@@ -10,11 +10,6 @@ Source:XTR: RetroTech
 Rules Level:4
 role:Juggernaut
 
-
-
-quirk:rugged_1
-
-
 Mass:55
 Engine:200 Primitive Fusion Engine
 Structure:Standard

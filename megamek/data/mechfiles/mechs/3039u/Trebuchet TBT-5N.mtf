@@ -10,12 +10,6 @@ Source:TRO: 3039
 Rules Level:1
 role:Missile Boat
 
-
-
-quirk:easy_maintain
-weaponquirk:fast_reload:RT:0:LRM 15
-
-
 Mass:50
 Engine:250 Fusion Engine
 Structure:Standard

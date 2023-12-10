@@ -8,12 +8,6 @@ era:3146
 source:Record Sheets: 3150
 rules level:3
 
-
-
-quirk:command_mech
-quirk:good_rep_1
-
-
 mass:90
 engine:360 XL Engine(IS)
 structure:IS Endo Steel

@@ -10,9 +10,6 @@ rules level:3
 role:Skirmisher
 source:Rec Guide:ilClan #5
 
-quirk:ext_twist
-
-
 mass:50
 engine:250 XL Engine(IS)
 structure:Clan Endo Steel

@@ -166,11 +166,3 @@ ISLaserAntiMissileSystem
 <source>
 TRO: Prototypes
 </source>
-
-<quirks>
-difficult_maintain
-hard_pilot
-non_standard
-imp_target_long
-</quirks>
-

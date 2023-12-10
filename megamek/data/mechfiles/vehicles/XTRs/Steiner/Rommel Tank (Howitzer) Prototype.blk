@@ -129,9 +129,3 @@ TARGETING:TharHes Mars5
 <source>
 XTR: Steiner
 </source>
-
-<quirks>
-low_profile
-poor_target_short
-</quirks>
-

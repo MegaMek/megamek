@@ -10,10 +10,6 @@ Source:TRO: 3039
 Rules Level:1
 role:Juggernaut
 
-quirk:rugged_1
-quirk:bad_rep_is
-
-
 Mass:95
 Engine:285 Fusion Engine
 Structure:Standard

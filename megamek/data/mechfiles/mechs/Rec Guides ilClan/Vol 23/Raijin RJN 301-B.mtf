@@ -10,18 +10,6 @@ source:Rec Guide:ilClan #23
 rules level:2
 role:Striker
 
-
-
-quirk:ext_twist
-quirk:bad_rep_is
-weaponquirk:direct_torso_mount:RT:3:ISImprovedNarc
-weaponquirk:direct_torso_mount:RT:6:SRM 2
-weaponquirk:direct_torso_mount:LT:3:SRM 6
-weaponquirk:direct_torso_mount:LA:2:ISERMediumLaser
-weaponquirk:direct_torso_mount:LA:3:ISERMediumLaser
-weaponquirk:direct_torso_mount:LA:4:ISERMediumLaser
-
-
 mass:50
 engine:300 XL Engine(IS)
 structure:IS Endo Steel

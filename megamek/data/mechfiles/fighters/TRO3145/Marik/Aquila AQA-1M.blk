@@ -118,8 +118,3 @@ TRO: 3145 Free Worlds League
 <tonnage>
 55.0
 </tonnage>
-
-<weaponQuirks>
-accurate:NOS:0:ISLightGaussRifle
-accurate:NOS:1:ISLightGaussRifle
-</weaponQuirks>

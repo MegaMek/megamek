@@ -10,11 +10,6 @@ Source:Record Sheets: 3085 Unabridged - Project Phoenix
 rules level:2
 role:Sniper
 
-quirk:command_mech
-quirk:hyper_actuator
-quirk:exp_actuator
-
-
 mass:85
 engine:340 Fusion (Clan) Engine(IS)
 structure:Clan Endo Steel

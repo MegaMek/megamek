@@ -10,15 +10,6 @@ rules level:2
 role:Striker
 source:Rec Guide:ilClan #11
 
-
-
-quirk:command_mech
-quirk:imp_com
-quirk:ubiquitous_clan
-quirk:ubiquitous_is
-weaponquirk:jettison_capable:RA:6:Medium Laser
-
-
 mass:45
 engine:270 Fusion Engine(IS)
 structure:IS Standard

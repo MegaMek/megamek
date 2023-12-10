@@ -94,15 +94,3 @@ TRO: 3145 Capellan Confederation
 <tonnage>
 35.0
 </tonnage>
-
-<quirks>
-easy_maintain
-</quirks>
-
-<weaponQuirks>
-mod_weapons:TU:0:ISPlasmaRifle
-mod_weapons:TU:1:SRM 6
-mod_weapons:TU:0:ISERMediumLaser
-mod_weapons:TU:1:ISERMediumLaser
-mod_weapons:TU:2:Extended LRM 10
-</weaponQuirks>

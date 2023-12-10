@@ -10,12 +10,6 @@ Source:TRO: 3075
 Rules Level:1
 role:Brawler
 
-
-
-
-quirk:imp_target_short
-
-
 Mass:40
 Engine:160 Fusion Engine
 Structure:Standard

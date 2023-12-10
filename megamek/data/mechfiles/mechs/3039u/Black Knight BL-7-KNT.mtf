@@ -10,11 +10,6 @@ Source:TRO: 3039
 Rules Level:1
 role:Brawler
 
-
-
-quirk:command_mech
-
-
 Mass:75
 Engine:300 Fusion Engine
 Structure:Standard

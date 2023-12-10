@@ -10,13 +10,6 @@ source:XTR: Royal Fantasy
 rules level:3
 role:Striker
 
-
-
-quirk:ext_twist
-quirk:imp_com
-quirk:imp_sensors
-
-
 mass:50
 engine:300 XL Engine(IS)
 structure:IS Standard

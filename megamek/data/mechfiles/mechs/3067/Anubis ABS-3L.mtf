@@ -10,14 +10,6 @@ Rules Level:2
 role:Missile Boat
 source:TRO: 3067
 
-
-
-
-quirk:ext_twist
-quirk:difficult_maintain
-quirk:exp_actuator
-
-
 Mass:30
 Engine:240 XL Engine
 Structure:Endo Steel

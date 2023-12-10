@@ -121,10 +121,3 @@ XTR: Primitives IV
 <tonnage>
 80.0
 </tonnage>
-
-<quirks>
-atmo_flyer
-easy_maintain
-obsolete
-</quirks>
-

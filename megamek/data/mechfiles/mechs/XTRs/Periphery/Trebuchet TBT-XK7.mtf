@@ -10,16 +10,6 @@ Source:XTR: Periphery
 Rules Level:4
 role:Skirmisher
 
-
-
-quirk:easy_maintain
-quirk:fast_reload
-quirk:non_standard
-quirk:prototype
-weaponquirk:fast_reload:RT:3:ISStreakSRM6
-weaponquirk:jettison_capable:RA:4:Chain Whip
-
-
 Mass:50
 Engine:250 XL Engine(IS)
 Structure:Endo Steel

@@ -97,8 +97,3 @@ TRO: 3085
 <tonnage>
 25.0
 </tonnage>
-
-<quirks>
-vtol_rotor_coaxial
-</quirks>
-

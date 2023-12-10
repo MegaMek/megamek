@@ -104,10 +104,3 @@ XTR: Primitives IV
 <tonnage>
 30.0
 </tonnage>
-
-<quirks>
-non_standard
-obsolete
-vtol_rotor_dual
-</quirks>
-

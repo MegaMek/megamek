@@ -10,12 +10,6 @@ Source:TRO: 3058
 Rules Level:2
 role:Juggernaut
 
-
-
-quirk:command_mech
-weaponquirk:imp_cooling:LA:3:ISERPPC
-
-
 Mass:90
 Engine:270 Fusion Engine
 Structure:Standard

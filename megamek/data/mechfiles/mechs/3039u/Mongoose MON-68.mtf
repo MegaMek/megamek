@@ -10,12 +10,6 @@ Source:TRO: 3039
 Rules Level:1
 role:Scout
 
-
-
-quirk:command_mech
-quirk:easy_pilot
-
-
 Mass:25
 Engine:175 Fusion Engine
 Structure:Standard

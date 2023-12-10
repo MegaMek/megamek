@@ -9,12 +9,6 @@ source:Rec Guide:ilClan #17
 rules level:3
 role:Juggernaut
 
-
-quirk:battle_fists_la
-quirk:battle_fists_ra
-quirk:stable
-
-
 mass:100
 engine:400 XL (Clan) Engine(IS)
 structure:Clan Endo Steel

@@ -10,12 +10,6 @@ Source:TRO: Prototypes
 Rules Level:4
 role:Scout
 
-
-
-quirk:no_eject
-quirk:multi_trac
-
-
 Mass:30
 Engine:120 Fusion Engine
 Structure:Industrial

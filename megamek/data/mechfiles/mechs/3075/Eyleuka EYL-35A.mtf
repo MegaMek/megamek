@@ -10,11 +10,6 @@ Source:TRO: 3075
 Rules Level:2
 role:Missile Boat
 
-
-
-quirk:exp_actuator
-
-
 Mass:55
 Engine:275 XL Engine
 Structure:Standard

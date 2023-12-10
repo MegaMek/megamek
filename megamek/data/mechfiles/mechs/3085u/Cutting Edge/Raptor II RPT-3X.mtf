@@ -10,12 +10,6 @@ source:TRO: 3085
 Rules Level:4
 role:Striker
 
-
-
-quirk:no_arms
-quirk:no_eject
-
-
 Mass:40
 Engine:280 XL Engine
 Structure:Endo Steel

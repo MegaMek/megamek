@@ -10,13 +10,6 @@ source:Rec Guide:ilClan #24
 rules level:3
 role:Juggernaut
 
-
-
-quirk:combat_computer
-quirk:ubiquitous_is
-quirk:no_arms
-
-
 mass:85
 engine:255 Light Engine(IS)
 structure:IS Endo Steel

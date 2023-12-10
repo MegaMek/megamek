@@ -130,9 +130,3 @@ TARGETING:TharHes Mars5
 <source>
 TRO: Prototypes
 </source>
-
-<quirks>
-low_profile
-poor_target_short
-</quirks>
-

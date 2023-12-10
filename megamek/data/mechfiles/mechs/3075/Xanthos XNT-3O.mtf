@@ -10,11 +10,6 @@ source:TRO: 3075
 Rules Level:1
 role:Juggernaut
 
-
-
-quirk:imp_life_support
-
-
 Mass:100
 Engine:300 Fusion Engine
 Structure:Standard

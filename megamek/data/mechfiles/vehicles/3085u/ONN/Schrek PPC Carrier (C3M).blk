@@ -120,8 +120,3 @@ ARMOR:ArcShield VII Mk 5
 COMMUNICATIONS:Olmstead 3000 with ECM
 TARGETING:Omicron IX
 </systemManufacturers>
-
-<quirks>
-low_profile
-</quirks>
-

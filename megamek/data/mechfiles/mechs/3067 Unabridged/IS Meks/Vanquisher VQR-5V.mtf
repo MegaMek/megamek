@@ -10,14 +10,6 @@ Source:TRO: Jihad
 Rules Level:2
 role:Juggernaut
 
-
-
-quirk:stable
-quirk:bad_rep_clan
-quirk:bad_rep_is
-quirk:no_arms
-
-
 Mass:100
 Engine:300 Compact Engine(IS)
 Structure:Endo Steel

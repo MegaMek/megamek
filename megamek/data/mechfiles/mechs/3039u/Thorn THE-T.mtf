@@ -10,11 +10,6 @@ Source:TRO: 3039
 Rules Level:1
 role:Striker
 
-
-
-quirk:easy_maintain
-
-
 Mass:20
 Engine:120 Fusion Engine
 Structure:Standard

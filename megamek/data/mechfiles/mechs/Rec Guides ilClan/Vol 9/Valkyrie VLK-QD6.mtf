@@ -10,12 +10,6 @@ source:Rec Guide:ilClan #9
 rules level:2
 role:Missile Boat
 
-
-
-quirk:easy_maintain
-quirk:imp_com
-
-
 mass:30
 engine:150 XL Engine(IS)
 structure:IS Standard

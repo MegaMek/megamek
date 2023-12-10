@@ -10,12 +10,6 @@ source:Rec Guide:ilClan #14
 rules level:3
 role:Skirmisher
 
-
-
-quirk:imp_sensors
-quirk:low_profile
-
-
 mass:60
 engine:300 Fusion (Clan) Engine(IS)
 structure:IS Standard

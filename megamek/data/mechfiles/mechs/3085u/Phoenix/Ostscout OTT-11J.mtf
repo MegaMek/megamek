@@ -10,14 +10,6 @@ source:TRO: 3085
 Rules Level:2
 role:Scout
 
-
-
-quirk:imp_com
-quirk:imp_sensors
-quirk:low_profile
-quirk:rugged_1
-
-
 Mass:35
 Engine:315 XL Engine(IS)
 Structure:Endo Steel

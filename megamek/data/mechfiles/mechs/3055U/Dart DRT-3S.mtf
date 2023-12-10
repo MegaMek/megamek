@@ -10,12 +10,6 @@ Source:TRO: 3055
 Rules Level:2
 role:Scout
 
-
-
-
-quirk:ext_twist
-
-
 Mass:25
 Engine:225 Fusion Engine
 Structure:Standard

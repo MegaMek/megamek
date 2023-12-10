@@ -10,14 +10,6 @@ Source:TRO: 3050
 Rules Level:2
 role:Juggernaut
 
-
-
-quirk:barrel_fists_la
-quirk:barrel_fists_ra
-quirk:difficult_maintain
-quirk:non_standard
-
-
 Mass:85
 Engine:255 Fusion Engine(IS)
 Structure:IS Standard

@@ -10,11 +10,6 @@ rules level:2
 role:Sniper
 source:Rec Guide:ilClan #8
 
-
-quirk:ext_twist
-quirk:low_profile
-
-
 mass:30
 engine:300 XL (Clan) Engine(IS)
 structure:Clan Endo Steel

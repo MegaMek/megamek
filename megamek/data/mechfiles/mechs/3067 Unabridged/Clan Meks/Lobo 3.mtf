@@ -10,11 +10,6 @@ source:Record Sheets: 3067 Unabridged
 rules level:2
 role:Striker
 
-quirk:ext_twist
-quirk:difficult_maintain
-weaponquirk:direct_torso_mount:HD:3:CLAntiMissileSystem
-
-
 mass:40
 engine:240 XL (Clan) Engine(IS)
 structure:Clan Endo Steel

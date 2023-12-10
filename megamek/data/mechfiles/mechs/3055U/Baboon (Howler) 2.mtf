@@ -10,11 +10,6 @@ Source:TRO: 3055
 Rules Level:2
 role:Striker
 
-quirk:ext_twist
-quirk:low_profile
-quirk:searchlight
-
-
 Mass:20
 Engine:120 XL (Clan) Engine
 Structure:Endo Steel

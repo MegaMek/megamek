@@ -10,12 +10,6 @@ source:XTR: Davion
 Rules Level:4
 role:Skirmisher
 
-
-
-quirk:hyper_actuator
-quirk:searchlight
-
-
 Mass:100
 Engine:400 XXL Engine(IS)
 Structure:Endo-Composite

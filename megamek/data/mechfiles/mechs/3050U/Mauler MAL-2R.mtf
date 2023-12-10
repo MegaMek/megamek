@@ -10,14 +10,6 @@ Source:TRO: 3050
 Rules Level:2
 role:Juggernaut
 
-
-
-weaponquirk:stable_weapon:RT:2:ISUltraAC2
-weaponquirk:stable_weapon:RT:5:ISUltraAC2
-weaponquirk:stable_weapon:LT:2:ISUltraAC2
-weaponquirk:stable_weapon:LT:5:ISUltraAC2
-
-
 Mass:90
 Engine:270 Fusion Engine(IS)
 Structure:IS Standard

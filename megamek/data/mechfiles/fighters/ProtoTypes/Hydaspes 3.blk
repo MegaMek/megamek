@@ -131,10 +131,3 @@ TRO: Prototypes
 <tonnage>
 95.0
 </tonnage>
-
-<quirks>
-difficult_eject
-imp_life_support
-multi_trac
-</quirks>
-

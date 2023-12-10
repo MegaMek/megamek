@@ -10,12 +10,6 @@ role:Juggernaut
 Source:Rec Guide:ilClan #31
 mul id:9464
 
-
-
-quirk:battle_fists_la
-quirk:battle_fists_ra
-
-
 mass:100
 engine:300 Light Engine(IS)
 structure:IS Standard

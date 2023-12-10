@@ -10,9 +10,6 @@ rules level:3
 role:Striker
 source:Rec Guide:ilClan #11
 
-weaponquirk:stable_weapon:CT:10:CLLargePulseLaser
-
-
 mass:35
 engine:175 Fusion (Clan) Engine(IS)
 structure:Clan Endo Steel

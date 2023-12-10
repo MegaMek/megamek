@@ -10,9 +10,6 @@ source:TRO: 3050
 rules level:2
 role:Missile Boat
 
-quirk:low_profile
-
-
 mass:35
 engine:210 XL (Clan) Engine(IS)
 structure:Clan Endo Steel

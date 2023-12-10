@@ -10,19 +10,6 @@ Source:TRO: 3075
 Rules Level:2
 role:Sniper
 
-weaponquirk:exposed_linkage:RA:3:CLUltraAC10
-weaponquirk:static_feed:RA:3:CLUltraAC10
-weaponquirk:exposed_linkage:LA:3:CLUltraAC10
-weaponquirk:static_feed:LA:3:CLUltraAC10
-weaponquirk:exposed_linkage:RT:2:CLHAG20
-weaponquirk:static_feed:RT:2:CLHAG20
-weaponquirk:static_feed:LT:2:CLHAG20
-weaponquirk:exposed_linkage:RA:2:CLHAG20
-weaponquirk:static_feed:RA:2:CLHAG20
-weaponquirk:exposed_linkage:LA:2:CLHAG20
-weaponquirk:static_feed:LA:2:CLHAG20
-
-
 Mass:95
 Engine:380 XL (Clan) Engine
 Structure:Endo Steel

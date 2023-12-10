@@ -149,12 +149,3 @@ XTR: Primitives II
 PETROCHEMICALS
 </fuelType>
 
-
-<quirks>
-easy_maintain
-low_profile
-fast_reload
-poor_performance
-obsolete
-</quirks>
-

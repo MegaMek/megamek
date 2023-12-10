@@ -10,11 +10,6 @@ source:Wars of Reaving
 rules level:4
 role:Skirmisher
 
-quirk:ext_twist
-quirk:multi_trac
-quirk:bad_rep_clan
-
-
 mass:55
 engine:275 XL (Clan) Engine(IS)
 structure:Clan Endo Steel

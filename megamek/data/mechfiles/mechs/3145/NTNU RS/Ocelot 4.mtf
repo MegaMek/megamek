@@ -10,12 +10,6 @@ Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:2
 role:Striker
 
-weaponquirk:jettison_capable:RA:4:CLERMediumLaser
-weaponquirk:jettison_capable:RA:5:CLERMediumLaser
-weaponquirk:mod_weapons:RA:4:CLMediumPulseLaser
-weaponquirk:mod_weapons:RA:5:CLMediumPulseLaser
-
-
 Mass:35
 Engine:210 XL (Clan) Engine(IS)
 Structure:IS Standard

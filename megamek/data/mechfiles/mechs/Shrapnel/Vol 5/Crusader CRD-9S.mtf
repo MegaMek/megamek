@@ -10,14 +10,6 @@ source:Shrapnel #5
 rules level:3
 role:Sniper
 
-
-
-quirk:easy_maintain
-quirk:rugged_1
-quirk:ubiquitous_clan
-quirk:ubiquitous_is
-
-
 mass:65
 engine:260 XL Engine(IS)
 structure:IS Endo Steel

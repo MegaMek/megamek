@@ -10,10 +10,6 @@ Source:TRO: 3050
 Rules Level:2
 role:Scout
 
-quirk:low_profile
-quirk:overhead_arms
-
-
 Mass:20
 Engine:200 XL (Clan) Engine(IS)
 Structure:Clan Endo Steel

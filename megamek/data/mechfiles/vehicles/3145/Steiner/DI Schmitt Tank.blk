@@ -107,9 +107,3 @@ TRO: 3145 Lyran Commonwealth
 <tonnage>
 80.0
 </tonnage>
-
-<quirks>
-anti_air
-trailer_hitch
-</quirks>
-

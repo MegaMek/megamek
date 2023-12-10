@@ -10,10 +10,6 @@ source:TRO: 3060
 rules level:2
 role:Striker
 
-
-quirk:reinforced_legs
-
-
 mass:30
 engine:210 Fusion (Clan) Engine(IS)
 structure:Clan Endo Steel

@@ -10,11 +10,6 @@ source:TRO: 3050
 rules level:3
 role:Juggernaut
 
-
-
-quirk:battle_fists_la
-
-
 mass:80
 engine:240 Fusion Engine(IS)
 structure:IS Endo Steel

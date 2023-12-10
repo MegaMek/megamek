@@ -10,13 +10,6 @@ Source:XTR: Periphery
 Rules Level:4
 role:Ambusher
 
-
-
-quirk:pro_actuator
-quirk:prototype
-weaponquirk:jettison_capable:RA:7:Medium Vibroblade
-
-
 Mass:65
 Engine:195 Fuel-Cell Engine
 Structure:Industrial

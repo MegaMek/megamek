@@ -111,9 +111,3 @@ TRO: 3145 Free Worlds League
 <baseChassisTurretWeight>
 1.5
 </baseChassisTurretWeight>
-
-<quirks>
-easy_maintain
-poor_target_long
-</quirks>
-

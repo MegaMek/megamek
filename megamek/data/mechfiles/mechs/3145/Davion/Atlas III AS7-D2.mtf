@@ -10,15 +10,6 @@ source:TRO: 3145 Federated Suns
 rules level:4
 role:Juggernaut
 
-
-
-
-quirk:command_mech
-quirk:distracting
-quirk:pro_actuator
-weaponquirk:jettison_capable:RA:4:CLHAG30
-
-
 mass:100
 engine:300 Fusion Engine(IS)
 structure:IS Endo Steel

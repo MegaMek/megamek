@@ -10,11 +10,6 @@ source:Rec Guide:ilClan #2
 rules level:3
 role:Sniper
 
-quirk:easy_maintain
-quirk:easy_pilot
-quirk:rugged_1
-
-
 mass:60
 engine:240 Fusion (Clan) Engine(IS)
 structure:Clan Endo Steel

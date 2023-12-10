@@ -10,11 +10,6 @@ rules level:2
 role:Scout
 Source:Rec Guide:ilClan #31
 
-
-
-quirk:unbalanced
-
-
 mass:30
 engine:240 XL Engine(IS)
 structure:IS Endo Steel

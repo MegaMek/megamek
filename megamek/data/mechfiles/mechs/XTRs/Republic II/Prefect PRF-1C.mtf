@@ -10,11 +10,6 @@ Source:XTR: Republic II
 Rules Level:4
 role:Skirmisher
 
-
-
-quirk:ext_twist
-
-
 Mass:75
 Engine:375 Light Engine(IS)
 Structure:IS Endo Steel

@@ -10,12 +10,6 @@ Source:TRO: 3050
 Rules Level:2
 role:Brawler
 
-
-
-quirk:battle_fists_la
-quirk:battle_fists_ra
-
-
 Mass:50
 Engine:200 Light Engine
 Structure:Endo Steel

@@ -148,9 +148,3 @@ XTR: Periphery
 <fuel>
 0.0
 </fuel>
-
-<quirks>
-prototype
-non_standard
-</quirks>
-

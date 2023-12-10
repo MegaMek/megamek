@@ -210,10 +210,3 @@ TRO: 3145 Free Worlds League
 <escape_pod>
 4
 </escape_pod>
-
-<quirks>
-atmo_flyer
-difficult_maintain
-non_standard
-</quirks>
-

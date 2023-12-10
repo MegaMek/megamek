@@ -10,14 +10,6 @@ Source:Operational Turning Points: Widowmaker
 Rules Level:4
 role:Sniper
 
-
-
-quirk:command_mech
-quirk:cowl
-quirk:reinforced_legs
-quirk:difficult_eject
-
-
 Mass:90
 Engine:270 Fusion Engine(IS)
 Structure:IS Standard

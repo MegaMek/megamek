@@ -10,13 +10,6 @@ Rules Level:2
 role:Missile Boat
 source:Record Sheets: 3067 Unabridged
 
-
-
-quirk:ext_twist
-quirk:difficult_maintain
-quirk:exp_actuator
-
-
 Mass:30
 Engine:240 XL Fusion Engine
 Structure:Endo-Steel

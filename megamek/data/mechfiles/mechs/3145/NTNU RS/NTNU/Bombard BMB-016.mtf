@@ -8,12 +8,6 @@ era:3138
 source:Record Sheets: 3150
 rules level:4
 
-
-
-quirk:bad_rep_is
-quirk:non_standard
-
-
 mass:50
 engine:100 XL Engine(IS)
 structure:IS Endo Steel

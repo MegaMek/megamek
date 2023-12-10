@@ -125,10 +125,3 @@ XTR: ComStar
 <tonnage>
 65.0
 </tonnage>
-
-<quirks>
-prototype
-bad_rep_is
-non_standard
-</quirks>
-

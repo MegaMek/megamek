@@ -10,11 +10,6 @@ source:Shrapnel #6
 rules level:4
 role:Skirmisher
 
-
-
-quirk:rugged_1
-
-
 mass:80
 engine:320 Fusion (Clan) Engine
 structure:IS Standard

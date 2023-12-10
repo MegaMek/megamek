@@ -10,12 +10,6 @@ source:TRO: 3085u
 Rules Level:2
 role:Brawler
 
-
-
-quirk:command_mech
-quirk:weak_head_1
-
-
 Mass:85
 Engine:340 Light Engine
 Structure:Standard

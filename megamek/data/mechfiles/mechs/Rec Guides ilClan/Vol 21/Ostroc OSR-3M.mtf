@@ -10,11 +10,6 @@ source:Rec Guide:ilClan #21
 rules level:2
 role:Skirmisher
 
-
-
-quirk:low_profile
-
-
 mass:60
 engine:300 Fusion Engine(IS)
 structure:IS Standard

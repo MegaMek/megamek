@@ -9,13 +9,6 @@ source:TRO: 3039
 rules level:1
 role:Skirmisher
 
-
-
-
-quirk:rugged_1
-quirk:weak_legs
-
-
 mass:40
 engine:160 Fusion Engine(IS)
 structure:IS Standard

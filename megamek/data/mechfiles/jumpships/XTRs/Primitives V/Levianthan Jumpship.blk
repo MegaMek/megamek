@@ -170,9 +170,3 @@ XTR: Primitives III
 <escape_pod>
 5
 </escape_pod>
-
-<quirks>
-easy_maintain
-bad_rep_is
-</quirks>
-

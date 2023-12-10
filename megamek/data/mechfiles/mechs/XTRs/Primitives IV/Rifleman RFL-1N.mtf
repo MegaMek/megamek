@@ -10,16 +10,6 @@ Source:XTR: Primitives IV
 Rules Level:4
 role:Brawler
 
-
-
-
-quirk:anti_air
-quirk:imp_com
-quirk:searchlight
-quirk:ubiquitous_clan
-quirk:ubiquitous_is
-
-
 Mass:50
 Engine:240 Fusion Engine(IS)
 Structure:IS Standard

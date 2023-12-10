@@ -10,12 +10,6 @@ Source:XTR: Steiner
 Rules Level:4
 role:Striker
 
-
-
-quirk:multi_trac
-quirk:difficult_eject
-
-
 Mass:35
 Engine:245 Fusion Engine(IS)
 Structure:Endo Steel

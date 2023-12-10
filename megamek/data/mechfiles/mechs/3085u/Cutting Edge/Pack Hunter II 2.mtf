@@ -10,9 +10,6 @@ source:TRO: 3085
 Rules Level:4
 role:Striker
 
-weaponquirk:stable_weapon:RT:7:CLERPPC
-
-
 Mass:30
 Engine:210 Light Engine(IS)
 Structure:Endo Steel

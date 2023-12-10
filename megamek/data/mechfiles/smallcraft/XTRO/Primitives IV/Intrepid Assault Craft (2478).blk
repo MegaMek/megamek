@@ -195,13 +195,3 @@ XTR: Primitives IV
 0
 </escape_pod>
 
-
-<quirks>
-atmo_instability
-obsolete
-</quirks>
-
-<weaponQuirks>
-imp_cooling:RS:0:ISLargeLaser
-imp_cooling:LS:0:ISLargeLaser
-</weaponQuirks>

@@ -97,10 +97,3 @@ TRO: 3145 Free Worlds League
 <tonnage>
 85.0
 </tonnage>
-
-<weaponQuirks>
-accurate:FR:0:ISImprovedHeavyGaussRifle
-exposed_linkage:FR:0:ISImprovedHeavyGaussRifle
-accurate:FR:0:ISHeavyGaussRifle
-exposed_linkage:FR:0:ISHeavyGaussRifle
-</weaponQuirks>

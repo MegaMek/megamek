@@ -10,11 +10,6 @@ Source:TRO: 3075
 Rules Level:2
 role:Striker
 
-
-weaponquirk:jettison_capable:RA:4:CLERMediumLaser
-weaponquirk:jettison_capable:RA:5:CLERMediumLaser
-
-
 Mass:35
 Engine:210 XL (Clan) Engine
 Structure:Standard

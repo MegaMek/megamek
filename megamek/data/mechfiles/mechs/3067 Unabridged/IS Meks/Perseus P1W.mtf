@@ -10,12 +10,6 @@ Source:TRO: Jihad
 Rules Level:2
 role:Brawler
 
-
-
-quirk:anti_air
-quirk:easy_maintain
-
-
 Mass:75
 Engine:300 XL Engine(IS)
 Structure:IS Endo Steel

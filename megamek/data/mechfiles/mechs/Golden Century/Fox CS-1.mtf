@@ -10,9 +10,6 @@ source:TRO: Golden Century
 rules level:4
 role:Missile Boat
 
-quirk:variable_range_long
-
-
 mass:50
 engine:300 XL (Clan) Engine
 structure:Clan Endo Steel

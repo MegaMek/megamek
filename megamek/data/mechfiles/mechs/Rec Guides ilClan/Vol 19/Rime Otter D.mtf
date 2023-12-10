@@ -10,11 +10,6 @@ source:Rec Guide:ilClan #19
 rules level:2
 role:Scout
 
-quirk:imp_sensors
-quirk:rugged_1
-quirk:difficult_maintain
-
-
 mass:55
 engine:275 XL (Clan) Engine(IS)
 structure:IS Reinforced

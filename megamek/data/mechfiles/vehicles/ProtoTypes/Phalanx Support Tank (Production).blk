@@ -88,12 +88,3 @@ TRO: Prototypes
 <tonnage>
 40.0
 </tonnage>
-
-<quirks>
-difficult_maintain
-trailer_hitch
-</quirks>
-
-<weaponQuirks>
-inaccurate:FR:0:ISMG
-</weaponQuirks>

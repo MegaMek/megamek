@@ -10,15 +10,6 @@ rules level:3
 role:Striker
 Source:Rec Guide:ilClan #31
 
-
-
-quirk:imp_target_long
-quirk:imp_target_med
-quirk:difficult_maintain
-quirk:exp_actuator
-quirk:non_standard
-
-
 mass:40
 engine:240 XL Engine(IS)
 structure:IS Standard

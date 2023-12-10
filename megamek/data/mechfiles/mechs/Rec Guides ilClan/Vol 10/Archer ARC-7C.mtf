@@ -10,15 +10,6 @@ rules level:2
 role:Missile Boat
 source:Rec Guide:ilClan #10
 
-
-
-quirk:battle_fists_la
-quirk:battle_fists_ra
-quirk:command_mech
-quirk:stable
-quirk:ubiquitous_is
-
-
 mass:70
 engine:350 XL Engine(IS)
 structure:IS Standard

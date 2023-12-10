@@ -10,11 +10,6 @@ source:TRO: 3085
 Rules Level:4
 role:Striker
 
-quirk:low_profile
-weaponquirk:jettison_capable:RA:4:CLLargePulseLaser
-weaponquirk:jettison_capable:RA:4:CLERLargePulseLaser
-
-
 Mass:35
 Engine:245 XL (Clan) Engine
 Structure:Standard

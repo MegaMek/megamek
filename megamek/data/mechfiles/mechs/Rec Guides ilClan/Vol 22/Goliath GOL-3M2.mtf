@@ -10,12 +10,6 @@ source:Rec Guide:ilClan #22
 rules level:2
 role:Sniper
 
-
-
-quirk:multi_trac
-quirk:exp_actuator
-
-
 mass:80
 engine:320 XL Engine(IS)
 structure:IS Standard

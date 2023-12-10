@@ -10,12 +10,6 @@ source:Rec Guide:ilClan #1
 rules level:3
 role:Sniper
 
-
-
-quirk:multi_trac
-quirk:exp_actuator
-
-
 mass:80
 engine:240 Fusion Engine(IS)
 structure:IS Standard

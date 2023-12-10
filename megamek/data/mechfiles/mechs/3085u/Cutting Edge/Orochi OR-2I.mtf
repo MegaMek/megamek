@@ -9,12 +9,6 @@ source:TRO: Dark Age
 rules level:2
 role:Missile Boat
 
-
-
-
-quirk:no_arms
-
-
 mass:90
 engine:360 XL Engine(IS)
 structure:IS Endo Steel

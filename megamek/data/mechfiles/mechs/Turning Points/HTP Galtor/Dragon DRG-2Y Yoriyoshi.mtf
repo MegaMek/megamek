@@ -10,12 +10,6 @@ Rules Level:1
 role:Skirmisher
 source:Historical Turning Points: Galtor
 
-
-
-quirk:low_profile
-quirk:stable
-
-
 Mass:60
 Engine:300 Fusion Engine
 Structure:Standard

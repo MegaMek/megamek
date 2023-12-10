@@ -103,8 +103,3 @@ TRO: 3058
 1.0
 </baseChassisTurretWeight>
 
-
-<weaponQuirks>
-mod_weapons:TU:0:ISERMediumLaser
-mod_weapons:TU:1:SRM 2
-</weaponQuirks>

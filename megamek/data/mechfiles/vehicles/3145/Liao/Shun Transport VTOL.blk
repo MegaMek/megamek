@@ -99,8 +99,3 @@ TRO: 3145 Capellan Confederation
 <tonnage>
 40.0
 </tonnage>
-
-<quirks>
-variable_range_long
-</quirks>
-

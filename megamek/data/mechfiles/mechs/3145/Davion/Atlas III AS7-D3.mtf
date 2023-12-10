@@ -10,14 +10,6 @@ source:TRO: 3145 Federated Suns
 rules level:4
 role:Juggernaut
 
-
-
-quirk:command_mech
-quirk:distracting
-quirk:pro_actuator
-weaponquirk:jettison_capable:RA:4:ISRotaryAC2
-
-
 mass:100
 engine:300 Fusion Engine(IS)
 structure:IS Endo Steel
@@ -160,7 +152,6 @@ IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
-
 
 overview:A Dark Age-era evolution of the original Atlas, featuring a mix between advanced Clan and Inner Sphere technologies. The Atlas III is usually used as a Command 'Mech among the ranks of the AFFS and the Republic of the Sphere Armed Forces.
 capabilities:The D3's construction reflects its intended role as (almost) a custom design for Commanders. The 'Mech is designed for dealing punishing attacks, while retaining the survivability and speed of the original Atlas. Engineers used 19.5 ton of Standard Armor fitted to an Endo Steel skeleton, and for the MechWarrior's protection the Atlas III employs an Armored Cockpit and a pair of Small Shields, with the latter split between both arms.

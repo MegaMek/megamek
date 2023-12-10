@@ -10,11 +10,6 @@ Source:TRO: 3075
 Rules Level:2
 role:Juggernaut
 
-
-
-quirk:command_mech
-
-
 Mass:100
 Engine:300 Fusion Engine
 Structure:Standard

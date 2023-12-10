@@ -9,11 +9,6 @@ source:Rec Guide:ilClan #30
 rules level:3
 role:Skirmisher
 
-
-quirk:ext_twist
-quirk:difficult_maintain
-
-
 mass:50
 engine:300 XXL (Clan) Engine(IS)
 structure:Clan Endo Steel

@@ -99,10 +99,3 @@ TRO: Prototypes
 <tonnage>
 60.0
 </tonnage>
-
-<quirks>
-gas_hog
-anti_air
-trailer_hitch
-</quirks>
-

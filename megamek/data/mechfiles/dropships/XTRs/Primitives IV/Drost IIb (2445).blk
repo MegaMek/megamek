@@ -253,11 +253,3 @@ XTR: Primitives IV
 1
 </escape_pod>
 
-
-<quirks>
-atmo_instability
-docking_arms
-easy_maintain
-obsolete
-</quirks>
-

@@ -10,10 +10,6 @@ Source:TRO: 3058
 Rules Level:2
 role:Skirmisher
 
-
-quirk:imp_target_med
-
-
 Mass:60
 Engine:300 XL (Clan) Engine
 Structure:Endo Steel

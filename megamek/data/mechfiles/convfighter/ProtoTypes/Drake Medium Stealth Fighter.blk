@@ -121,10 +121,3 @@ TRO: Prototypes
 <tonnage>
 35.0
 </tonnage>
-
-<quirks>
-atmo_flyer
-non_standard
-difficult_maintain
-</quirks>
-

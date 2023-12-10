@@ -10,14 +10,6 @@ source:TRO: 3145 Free Worlds League
 rules level:4
 role:Juggernaut
 
-
-
-
-quirk:combat_computer
-quirk:pro_actuator
-quirk:no_arms
-
-
 mass:85
 engine:255 Fusion Engine(IS)
 structure:IS Endo Steel

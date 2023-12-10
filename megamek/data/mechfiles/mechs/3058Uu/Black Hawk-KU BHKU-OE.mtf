@@ -10,11 +10,6 @@ Source:TRO: 3058
 Rules Level:2
 role:Skirmisher
 
-
-
-quirk:easy_maintain
-
-
 Mass:60
 Engine:300 XL Engine(IS)
 Structure:IS Standard

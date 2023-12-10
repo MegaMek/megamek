@@ -10,16 +10,6 @@ source:Rec Guide:ilClan #12
 rules level:2
 role:Skirmisher
 
-
-
-quirk:battle_fists_la
-quirk:battle_fists_ra
-quirk:imp_life_support
-quirk:ubiquitous_clan
-quirk:ubiquitous_is
-quirk:rugged_1
-
-
 mass:55
 engine:275 Light Engine(IS)
 structure:IS Endo Steel

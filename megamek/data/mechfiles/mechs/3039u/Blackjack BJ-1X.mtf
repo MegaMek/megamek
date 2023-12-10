@@ -9,12 +9,6 @@ source:TRO: 3039
 rules level:1
 role:Skirmisher
 
-
-
-
-quirk:bad_rep_is
-
-
 mass:45
 engine:225 Fusion Engine(IS)
 structure:IS Standard

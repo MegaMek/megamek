@@ -9,11 +9,6 @@ source:TRO: 3085
 rules level:2
 role:Juggernaut
 
-
-
-quirk:command_mech
-
-
 mass:100
 engine:300 Fusion Engine(IS)
 structure:IS Endo Steel

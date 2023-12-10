@@ -10,13 +10,6 @@ Source:TRO: 3055
 Rules Level:2
 role:Skirmisher
 
-
-
-quirk:easy_maintain
-quirk:easy_pilot
-quirk:rugged_1
-
-
 Mass:40
 Engine:200 Fusion Engine
 Structure:Standard

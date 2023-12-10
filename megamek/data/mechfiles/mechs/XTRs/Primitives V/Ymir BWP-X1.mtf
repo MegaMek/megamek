@@ -10,12 +10,6 @@ Source:XTR: Primitives V
 Rules Level:4
 role:Missile Boat
 
-
-
-
-quirk:stable
-
-
 Mass:90
 Engine:325 Fusion Engine(IS)
 Structure:IS Standard

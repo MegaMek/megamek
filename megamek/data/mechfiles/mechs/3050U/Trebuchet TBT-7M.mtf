@@ -10,13 +10,6 @@ Source:TRO: 3050
 Rules Level:2
 role:Missile Boat
 
-
-
-quirk:easy_maintain
-weaponquirk:fast_reload:RT:3:LRM 15
-weaponquirk:fast_reload:LT:3:ISNarcBeacon
-
-
 Mass:50
 Engine:250 XL Engine
 Structure:Endo Steel

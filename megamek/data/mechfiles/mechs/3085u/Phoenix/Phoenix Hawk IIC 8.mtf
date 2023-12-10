@@ -10,12 +10,6 @@ source:TRO: 3085
 Rules Level:4
 role:Skirmisher
 
-quirk:easy_maintain
-weaponquirk:fast_reload:CT:11:CLMG
-weaponquirk:fast_reload:RT:4:CLUltraAC10
-weaponquirk:fast_reload:LT:4:CLUltraAC10
-
-
 Mass:80
 Engine:400 XXL (Clan) Engine(IS)
 Structure:Endo Steel

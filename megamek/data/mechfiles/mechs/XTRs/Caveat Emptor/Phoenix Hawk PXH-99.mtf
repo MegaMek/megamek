@@ -10,13 +10,6 @@ source:XTR: Caveat Emptor
 rules level:3
 role:Juggernaut
 
-
-
-quirk:command_mech
-quirk:imp_com
-weaponquirk:jettison_capable:RA:7:ISLargeXPulseLaser
-
-
 mass:45
 engine:45 Fusion Engine(IS)
 structure:IS Standard

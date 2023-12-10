@@ -10,10 +10,6 @@ source:TRO: 3085
 Rules Level:2
 role:Striker
 
-quirk:weak_legs
-weaponquirk:stable_weapon:RA:3:CLHeavyLargeLaser
-
-
 Mass:35
 Engine:280 XL (Clan) Engine
 Structure:Endo Steel

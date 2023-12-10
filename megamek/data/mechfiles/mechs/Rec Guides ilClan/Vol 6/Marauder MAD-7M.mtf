@@ -10,15 +10,6 @@ rules level:2
 role:Brawler
 source:Rec Guide:ilClan #6
 
-
-
-quirk:command_mech
-quirk:hyper_actuator
-quirk:low_profile
-weaponquirk:direct_torso_mount:RT:6:ISLBXAC5
-weaponquirk:exposed_linkage:RT:6:ISLBXAC5
-
-
 mass:75
 engine:300 XL Engine(IS)
 structure:IS Standard

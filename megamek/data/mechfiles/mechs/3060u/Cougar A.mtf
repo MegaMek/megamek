@@ -10,9 +10,6 @@ Source:TRO: 3060
 Rules Level:2
 role:Missile Boat
 
-quirk:ubiquitous_clan
-
-
 Mass:35
 Engine:175 XL (Clan) Engine(IS)
 Structure:Clan Endo Steel

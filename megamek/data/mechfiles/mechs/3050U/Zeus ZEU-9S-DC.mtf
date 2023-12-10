@@ -10,12 +10,6 @@ Source:TRO: 3050
 Rules Level:3
 role:Sniper
 
-
-
-quirk:barrel_fists_ra
-quirk:easy_maintain
-
-
 Mass:80
 Engine:320 Fusion Engine(IS)
 Structure:IS Standard

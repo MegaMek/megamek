@@ -10,10 +10,6 @@ source:TRO: 3085u
 Rules Level:2
 role:Juggernaut
 
-quirk:anti_air
-quirk:imp_com
-
-
 Mass:65
 Engine:195 Fusion (Clan) Engine
 Structure:Endo Steel

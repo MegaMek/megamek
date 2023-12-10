@@ -10,9 +10,6 @@ source:Shrapnel #3
 rules level:2
 role:Juggernaut
 
-quirk:cramped_cockpit
-
-
 mass:85
 engine:255 XL (Clan) Engine(IS)
 structure:IS Standard

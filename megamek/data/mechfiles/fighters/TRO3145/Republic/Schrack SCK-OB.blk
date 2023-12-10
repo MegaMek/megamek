@@ -125,10 +125,3 @@ TRO: 3145 Republic of the Sphere
 <tonnage>
 60.0
 </tonnage>
-
-<quirks>
-easy_pilot
-non_standard
-difficult_maintain
-</quirks>
-

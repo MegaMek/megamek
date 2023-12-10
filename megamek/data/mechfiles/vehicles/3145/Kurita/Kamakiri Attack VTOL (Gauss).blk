@@ -133,9 +133,3 @@ TRO: 3145 Draconis Combine
 55.0
 </tonnage>
 
-
-<quirks>
-vtol_rotor_dual
-hard_pilot
-</quirks>
-

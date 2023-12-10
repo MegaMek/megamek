@@ -10,13 +10,6 @@ source:TRO: 3067
 rules level:2
 role:Striker
 
-
-
-quirk:cowl
-quirk:bad_rep_is
-quirk:exp_actuator
-
-
 mass:50
 engine:300 XL Engine(IS)
 structure:IS Endo Steel

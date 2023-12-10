@@ -8,12 +8,6 @@ era:3108
 source:Record Sheets: 3150
 rules level:3
 
-
-
-quirk:nimble_jumper
-quirk:difficult_eject
-
-
 mass:35
 engine:280 XL Engine(IS)
 structure:IS Endo Steel

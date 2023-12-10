@@ -10,15 +10,6 @@ source:Rec Guide:ilClan #24
 rules level:2
 role:Juggernaut
 
-
-
-quirk:battle_fists_la
-quirk:battle_fists_ra
-quirk:command_mech
-quirk:distracting
-quirk:imp_com
-
-
 mass:100
 engine:300 Fusion (Clan) Engine(IS)
 structure:IS Standard

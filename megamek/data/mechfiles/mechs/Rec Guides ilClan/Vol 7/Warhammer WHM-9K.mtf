@@ -10,15 +10,6 @@ source:Rec Guide:ilClan #7
 rules level:2
 role:Brawler
 
-
-
-quirk:rugged_2
-quirk:searchlight
-quirk:stable
-quirk:ubiquitous_clan
-quirk:ubiquitous_is
-
-
 mass:70
 engine:280 Light Engine(IS)
 structure:IS Endo Steel

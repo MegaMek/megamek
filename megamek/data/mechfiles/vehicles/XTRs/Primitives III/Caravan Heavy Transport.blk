@@ -112,13 +112,3 @@ XTR: Primitives III
 <tonnage>
 200.0
 </tonnage>
-
-<quirks>
-atmo_flyer
-easy_maintain
-fragile_fuel
-gas_hog
-no_eject
-obsolete
-</quirks>
-

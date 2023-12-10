@@ -10,12 +10,6 @@ Source:TRO: 3075
 Rules Level:2
 role:Striker
 
-
-
-quirk:command_mech
-quirk:imp_com
-
-
 Mass:40
 Engine:320 XL Engine
 Structure:Endo Steel

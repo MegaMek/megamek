@@ -10,14 +10,6 @@ Source:TRO: 3055
 Rules Level:2
 role:Sniper
 
-quirk:barrel_fists_la
-quirk:barrel_fists_ra
-quirk:pro_actuator
-quirk:oversized
-quirk:poor_performance
-quirk:weak_head_1
-
-
 Mass:100
 Engine:300 XL (Clan) Engine
 Structure:Standard

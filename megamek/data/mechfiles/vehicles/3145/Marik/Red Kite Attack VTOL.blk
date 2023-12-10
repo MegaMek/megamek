@@ -110,16 +110,3 @@ TRO: 3145 Free Worlds League
 25.0
 </tonnage>
 
-
-<quirks>
-vtol_rotor_dual
-</quirks>
-
-<weaponQuirks>
-ammo_feed_problems:TU:0:CLMediumChemLaser
-ammo_feed_problems:TU:1:CLMediumChemLaser
-ammo_feed_problems:TU:2:CLMediumChemLaser
-ammo_feed_problems:TU:3:CLMediumChemLaser
-ammo_feed_problems:FR:0:CLMediumChemLaser
-ammo_feed_problems:FR:1:CLMediumChemLaser
-</weaponQuirks>

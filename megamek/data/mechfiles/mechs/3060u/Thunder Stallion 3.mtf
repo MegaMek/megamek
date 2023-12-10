@@ -10,9 +10,6 @@ Source:TRO: 3060
 Rules Level:2
 role:Juggernaut
 
-quirk:cramped_cockpit
-
-
 Mass:85
 Engine:255 Fusion (Clan) Engine
 Structure:Standard

@@ -10,9 +10,6 @@ rules level:4
 role:Scout
 source:Rec Guide:ilClan #4
 
-quirk:imp_sensors
-
-
 mass:45
 engine:360 XL (Clan) Engine
 structure:Clan Endo Steel

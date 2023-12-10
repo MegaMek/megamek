@@ -451,11 +451,6 @@ public class Client implements IClientCommandHandler {
                 memDump("entering physical phase");
                 break;
             case LOUNGE:
-                try {
-                    QuirksHandler.initQuirksList();
-                } catch (Exception e) {
-                    LogManager.getLogger().error("Error initializing quirks", e);
-                }
                 MechSummaryCache.getInstance().addListener(RandomUnitGenerator::getInstance);
                 if (MechSummaryCache.getInstance().isInitialized()) {
                     RandomUnitGenerator.getInstance();

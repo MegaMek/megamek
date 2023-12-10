@@ -392,7 +392,6 @@ public class MechSummaryCache {
         }
         ms.setTankTurrets(tankTurrets);
         ms.setSourceFile(f);
-        ms.setBaseUnit(e.getBaseUnit());
         ms.setSource(e.getSource());
         ms.setEntryName(entry);
         ms.setYear(e.getYear());

@@ -16,15 +16,13 @@ package megamek.common;
 
 import megamek.common.alphaStrike.*;
 import megamek.common.annotations.Nullable;
-import megamek.common.options.IOption;
-import megamek.common.options.IOptionGroup;
-import megamek.common.options.Quirks;
-import megamek.common.options.WeaponQuirks;
+import megamek.common.options.*;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.File;
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * The MechSummary of a unit offers compiled information about the unit without having to load the file.
@@ -56,9 +54,6 @@ public class MechSummary implements Serializable, ASCardDisplayable {
             TechConstants.T_IS_EXPERIMENTAL }; // tech level constant at standard, advanced, and experimental rules levels
     private double tons;
     private int bv;
-
-    /** The file path of the base unit or an empty String if this unit has no base unit. */
-    private String baseUnit = "";
 
     /** The full cost of the unit (including ammo). */
     private long cost;
@@ -1038,18 +1033,11 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     }
 
     public void setQuirkNames(Quirks quirks) {
-        quirkNames = "";
-        for (final Enumeration<IOptionGroup> optionGroups = quirks.getGroups(); optionGroups.hasMoreElements();) {
-            final IOptionGroup group = optionGroups.nextElement();
-            for (final Enumeration<IOption> options = group.getOptions(); options.hasMoreElements(); ) {
-                final IOption option = options.nextElement();
-                if ((option != null) && option.booleanValue()) {
-                    if (!quirkNames.contains(option.getDisplayableNameWithValue())) {
-                        quirkNames += option.getDisplayableNameWithValue() + ";";
-                    }
-                }
-            }
-        }
+        Set<String> quirkNameList = quirks.getOptionsList().stream()
+                .filter(IOption::booleanValue)
+                .map(IOptionInfo::getDisplayableNameWithValue)
+                .collect(Collectors.toSet());
+        quirkNames = String.join(";", quirkNameList);
     }
 
     public String getQuirkNames() {
@@ -1057,29 +1045,14 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     }
 
     public void setWeaponQuirkNames(Entity entity) {
-        HashMap<Integer, WeaponQuirks> wpnQks = new HashMap<>();
-        weaponQuirkNames = "";
-        for (Mounted m : entity.getWeaponList()) {
-            wpnQks.put(entity.getEquipmentNum(m), m.getQuirks());
+        Set<String> weaponQuirkNameList = new HashSet<>();
+        for (Mounted mounted : entity.getEquipment()) {
+            weaponQuirkNameList.addAll(mounted.getQuirks().getOptionsList().stream()
+                    .filter(IOption::booleanValue)
+                    .map(IOptionInfo::getDisplayableNameWithValue)
+                    .collect(Collectors.toSet()));
         }
-        Set<Integer> set = wpnQks.keySet();
-
-        Iterator<Integer> iter = set.iterator();
-        while (iter.hasNext()) {
-            int key = iter.next();
-            WeaponQuirks wpnQuirks = wpnQks.get(key);
-            for (Enumeration<IOptionGroup> i = wpnQuirks.getGroups(); i.hasMoreElements(); ) {
-                IOptionGroup group = i.nextElement();
-                for (Enumeration<IOption> j = group.getSortedOptions(); j.hasMoreElements(); ) {
-                    IOption option = j.nextElement();
-                    if ((option != null) && option.booleanValue()) {
-                        if (!weaponQuirkNames.contains(option.getDisplayableNameWithValue())) {
-                            weaponQuirkNames += option.getDisplayableNameWithValue() + ";";
-                        }
-                    }
-                }
-            }
-        }
+        weaponQuirkNames = String.join(";", weaponQuirkNameList);
     }
 
     public String getWeaponQuirkNames() {
@@ -1262,18 +1235,6 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 	public void setExtinctRange(String extinctRange) {
 		this.extinctRange = extinctRange;
 	}
-
-    public void setBaseUnit(String filePath) {
-        baseUnit = filePath;
-    }
-
-    public String getBaseUnit() {
-        return baseUnit;
-    }
-
-    public boolean hasBaseUnit() {
-        return !baseUnit.isBlank();
-    }
 
     @Override
     public boolean equals(Object obj) {

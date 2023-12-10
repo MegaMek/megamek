@@ -221,7 +221,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     protected int nMarines;
 
     private Quirks quirks = new Quirks();
-    private List<QuirkEntry> quirkEntries = new ArrayList<>();
     private PartialRepairs partReps = new PartialRepairs();
 
     // Variable for manually shutdown mechs.
@@ -807,9 +806,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private transient BVCalculator bvCalculator = BVCalculator.getBVCalculator(this);
 
     private UnitRole role = UnitRole.UNDETERMINED;
-
-    /** The file path of the base unit or an empty String if this unit has no base unit. */
-    private String baseUnit = "";
 
     /**
      * Generates a new, blank, entity.
@@ -14028,14 +14024,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public void loadQuirks(List<QuirkEntry> quirks) {
-
-        quirkEntries = new ArrayList<>(quirks);
-
-        // If this unit has no quirks, we do not need to proceed further.
-        if ((quirks == null) || quirks.isEmpty()) {
-            return;
-        }
-
         // Load all the unit's quirks.
         for (QuirkEntry q : quirks) {
             // If the quirk doesn't have a location, then it is a unit quirk, not a weapon quirk.
@@ -14046,7 +14034,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                             q, getChassis(), getModel()));
                     continue;
                 }
-                getQuirks().getOption(q.getQuirk()).setValue(true);continue;
+                getQuirks().getOption(q.getQuirk()).setValue(true);
+                continue;
             }
 
             // Get the weapon in the indicated location and slot.
@@ -15467,24 +15456,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public UnitRole getRole() {
         return (role == null) ? UnitRole.UNDETERMINED : role;
     }
-
-    public void setBaseUnit(String filePath) {
-        baseUnit = filePath;
-    }
-
-    public String getBaseUnit() {
-        return baseUnit;
-    }
-
-    public boolean hasBaseUnit() {
-        return !baseUnit.isBlank();
-    }
-
-    // TODO: return a copy. But must also facilitate working with it in MML
-    public List<QuirkEntry> getQuirkEntries() {
-        return quirkEntries;
-    }
-
 
     /**
      * Returns the slot in which the given mounted equipment is in its main location. Returns -1 when

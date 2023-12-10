@@ -780,7 +780,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
             setStatusBarText(yourTurnMsg);
         }
         clientgui.getBoardView().clearFieldOfFire();
-        clientgui.getBoardView().clearSensorsRanges();
         computeMovementEnvelope(ce);
     }
 

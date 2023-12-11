@@ -146,6 +146,10 @@ public interface IAero {
 
     double getFuelPointsPerTon();
 
+    default boolean requiresFuel() {
+        return true;
+    }
+
     // Capital fighters
     int getCapArmor();
 

@@ -570,7 +570,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         final Entity ce = ce();
                         boolean isAero = ce.isAero();
                         // first check if jumping is available at all
-                        if (!isAero && !ce.isImmobile() && (ce.getJumpMP() > 0)
+                        if (!isAero && !ce.isImmobileForJump() && (ce.getJumpMP() > 0)
                                 && !(ce.isStuck() && !ce.canUnstickByJumping())) {
                             if (gear != MovementDisplay.GEAR_JUMP) {
                                 if (!((cmd.getLastStep() != null)
@@ -751,16 +751,16 @@ public class MovementDisplay extends ActionPhaseDisplay {
         cen = en;
         clientgui.setSelectedEntityNum(en);
         gear = MovementDisplay.GEAR_LAND;
-        Color walkColor = GUIP.getMoveDefaultColor();
-        clientgui.getBoardView().setHighlightColor(walkColor);
+
+        clientgui.getBoardView().setHighlightColor(GUIP.getMoveDefaultColor());
         clear();
 
-        updateButtons();
+        updateButtonsLater();
+
         clientgui.getBoardView().highlight(ce.getPosition());
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().cursor(null);
-        clientgui.getUnitDisplay().displayEntity(ce);
-        clientgui.getUnitDisplay().showPanel("movement");
+        updateUnitDisplayLater(ce);
         if (!clientgui.getBoardView().isMovingUnits()) {
             clientgui.getBoardView().centerOnHex(ce.getPosition());
         }
@@ -793,6 +793,36 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     /**
+     * Signals Unit Display to update later on the AWT event stack.
+     * See Issue:#4876 and #4444.  This is done to prevent blank general tab when switching 
+     * units when the map is zoomed all the way out.
+     */
+    private void updateUnitDisplayLater(Entity ce) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+               clientgui.getUnitDisplay().displayEntity(ce);
+               clientgui.getUnitDisplay().showPanel("movement");
+            }
+        });
+    }
+
+    /**
+     * Sets buttons to their proper state, but lets Swing do this later after all the 
+     * current BoardView repaints and updates are complete.  This is done to prevent some
+     * buttons from painting correctly when the maps is zoomed way out. See Issue: #4444
+     */
+    private void updateButtonsLater() {
+        SwingUtilities.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				updateButtons();
+			 };
+        });
+    }
+
+    /**
      * Sets the buttons to their proper states
      */
     private void updateButtons() {
@@ -813,7 +843,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         setWalkEnabled(!ce.isImmobile() && ((ce.getWalkMP() > 0) || (ce.getRunMP() > 0))
                 && !ce.isStuck());
-        setJumpEnabled(!isAero && !ce.isImmobile() && !ce.isProne() && (ce.getJumpMP() > 0)
+        setJumpEnabled(!isAero && !ce.isImmobileForJump() && !ce.isProne()
+                // Conventional infantry also uses jump MP for VTOL and UMU MP
+                && ((ce.getJumpMP() > 0) && (!ce.isConventionalInfantry() || ce.getMovementMode().isJumpInfantry()))
                 && !(ce.isStuck() && !ce.canUnstickByJumping()));
         setSwimEnabled(!isAero && !ce.isImmobile() && (ce.getActiveUMUCount() > 0)
                 && ce.isUnderwater());
@@ -4117,7 +4149,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         IAero aero = (IAero) ce;
-        if ((aero.getCurrentFuel() < 1) && !(ce.hasEngine() && ce.getEngine().isSolar())) {
+        if ((aero.getCurrentFuel() < 1) && aero.requiresFuel()) {
             disableButtons();
             butDone.setEnabled(true);
             getBtn(MoveCommand.MOVE_NEXT).setEnabled(true);

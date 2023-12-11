@@ -536,7 +536,7 @@ public class GameManager implements IGameManager {
     public void checkForObservers() {
         for (Enumeration<Player> e = getGame().getPlayers(); e.hasMoreElements(); ) {
             Player p = e.nextElement();
-            p.setObserver((getGame().getEntitiesOwnedBy(p) < 1) && !getGame().getPhase().isLounge());
+            p.setObserver((!p.isGameMaster()) && (getGame().getEntitiesOwnedBy(p) < 1) && !getGame().getPhase().isLounge());
         }
     }
 
@@ -1072,8 +1072,15 @@ public class GameManager implements IGameManager {
             }
 
             // reset spotlights
+            // If deployment phase, set Searchlight state based on startSearchLightsOn;
+            if (phase.isDeployment()) {
+                boolean startSLOn = PreferenceManager.getClientPreferences().getStartSearchlightsOn();
+                entity.setSearchlightState(startSLOn);
+                entity.setIlluminated(startSLOn);
+            }
             entity.setIlluminated(false);
             entity.setUsedSearchlight(false);
+
             entity.setCarefulStand(false);
             entity.setNetworkBAP(false);
 
@@ -12488,6 +12495,7 @@ public class GameManager implements IGameManager {
                 && (entity.getMovementMode() != EntityMovementMode.HYDROFOIL)
                 && (entity.getMovementMode() != EntityMovementMode.NAVAL)
                 && (entity.getMovementMode() != EntityMovementMode.SUBMARINE)
+                && (entity.getMovementMode() != EntityMovementMode.WIGE)
                 && (entity.getMovementMode() != EntityMovementMode.INF_UMU)) {
             vPhaseReport.addAll(destroyEntity(entity, "a watery grave", false));
         } else if ((waterDepth > 0)
@@ -20192,12 +20200,16 @@ public class GameManager implements IGameManager {
      */
     private Vector<Report> resolvePilotingRolls() {
         Vector<Report> vPhaseReport = new Vector<>();
-        vPhaseReport.add(new Report(3900, Report.PUBLIC));
 
         for (Iterator<Entity> i = game.getEntities(); i.hasNext(); ) {
             vPhaseReport.addAll(resolvePilotingRolls(i.next()));
         }
         game.resetPSRs();
+
+        if (vPhaseReport.size() > 0) {
+            vPhaseReport.insertElementAt(new Report(3900, Report.PUBLIC), 0);
+        }
+
         return vPhaseReport;
     }
 
@@ -27866,6 +27878,7 @@ public class GameManager implements IGameManager {
                 && (entity.getMovementMode() != EntityMovementMode.HYDROFOIL)
                 && (entity.getMovementMode() != EntityMovementMode.NAVAL)
                 && (entity.getMovementMode() != EntityMovementMode.SUBMARINE)
+                && (entity.getMovementMode() != EntityMovementMode.WIGE)
                 && (entity.getMovementMode() != EntityMovementMode.INF_UMU)) {
             vPhaseReport.addAll(destroyEntity(entity, "a watery grave", false));
             return vPhaseReport;
@@ -33651,7 +33664,7 @@ public class GameManager implements IGameManager {
             default:
                 break;
         }
-        // Apply vehicle effectiveness...except for jumps.
+        // Apply vehicle effectiveness...except for hits from jumps.
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE)
                 && !jumpDamage) {
             modifier = Math.max(modifier - 1, 0);
@@ -33716,10 +33729,9 @@ public class GameManager implements IGameManager {
         // unsure how to *report* any outcomes from there. Note that these treat
         // being reduced to 0 MP and being actually immobilized as the same thing,
         // which for these particular purposes may or may not be the intent of
-        // the rules in all cases.
+        // the rules in all cases (for instance, motive-immobilized CVs can still jump).
         // Immobile hovercraft on water sink...
-        if (!te.isOffBoard() && (((te.getMovementMode() == EntityMovementMode.HOVER)
-                || ((te.getMovementMode() == EntityMovementMode.WIGE) && (te.getElevation() == 0)))
+        if (!te.isOffBoard() && (te.getMovementMode() == EntityMovementMode.HOVER
                 && (te.isMovementHitPending() || (te.getWalkMP() <= 0))
                 // HACK: Have to check for *pending* hit here and below.
                 && (game.getBoard().getHex(te.getPosition()).terrainLevel(Terrains.WATER) > 0)

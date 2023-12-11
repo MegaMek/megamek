@@ -21,6 +21,20 @@ VERSION HISTORY:
 + PR #4899: add report heading for piloting rolls
 + PR #4900: advanced search for mounted infantry
 + PR #4903: Move Unit Roles to Unit Files
++ Fix #4821: Fixed-Wing Support Vehicles with propellers and fusion engines should not require fuel
++ PR #4914: add missing filter for QuadVee
++ Fix #3095: Jumped WIGE does not get to-hit modifier
++ Fix #4901: 49.16 - Beast Infantry - Princess Cannot Move Branth Flying infantry
++ Issue #4907: RFE: Display Cockpit type in Unit Viewer
++ Fix #4857: Sprinting units are considered to be using supercharger
++ PR #4924: weapon panel factor in combat computer with displaying heat buildup
++ Issue #3917: Vehicles with jump MP no longer incorrectly count as immobilized
++ Issue #4876: Unit display tab renders properly when switching units
++ PR #4932: Illumination indicators added to hex/unit tooltips
++ Issue #4930: Added option to start with search lights on at deployment
++ Issue #4866: Correct roll reporting for fumbled PSRs
++ PR #4928: Don't set GM to observer when GM player has no units to avoid auto-skip of report phases
++ Issue #4925: Mobile artillery points being generated with black navy force generation 0.49.15
 
 0.49.15 (2023-10-21 1530 UTC)
 + PR #4688: Round reports should no longer take increasingly long to load

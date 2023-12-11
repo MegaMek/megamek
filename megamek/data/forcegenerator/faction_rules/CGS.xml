@@ -1027,7 +1027,7 @@
 			<subforce fluffName="CGS Átropos" ifDateBetween="2932,3072"
 				chassis="Nightlord Battleship">%ELEMENT%</subforce>
 			<subforce fluffName="CGS Orpheus" ifDateBetween=",3072"
-				chassis="Essex Destroyer">%ELEMENT%</subforce>
+				chassis="Essex II Destroyer">%ELEMENT%</subforce>
 			<subforce fluffName="CGS Serket" ifDateBetween=",3072"
 				chassis="Sovetskii Soyuz Heavy Cruiser">%ELEMENT%</subforce>
 			<subforce fluffName="CGS Collerane" ifDateBetween=",3075"

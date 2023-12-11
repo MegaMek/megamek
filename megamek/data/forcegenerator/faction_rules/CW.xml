@@ -94,12 +94,12 @@
 				chassis="Cameron Battlecruiser">%ELEMENT%</subforce>
 			<subforce fluffName="CWS Stealthy Kill"
 				ifDateBetween=",3073"
-				chassis="Black Lion Battlecruiser">%ELEMENT%</subforce>
+				chassis="Black Lion II Battlecruiser">%ELEMENT%</subforce>
 			<subforce fluffName="CWS Blood Drinker"
-				chassis="Black Lion Battlecruiser">%ELEMENT%</subforce>
+				chassis="Black Lion II Battlecruiser">%ELEMENT%</subforce>
 			<subforce fluffName="CWS Implacable"
 				ifDateBetween=",3057"
-				chassis="Black Lion Battlecruiser">%ELEMENT%</subforce>
+				chassis="Black Lion II Battlecruiser">%ELEMENT%</subforce>
 			<subforce fluffName="CWS Jerome Winson"
 				ifDateBetween="3025,"
 				chassis="Liberator Cruiser">%ELEMENT%</subforce>

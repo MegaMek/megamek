@@ -166,7 +166,7 @@
 		
 		<attachedForces>
 			<subforce fluffName="NCS Thunderbolt"
-				chassis="Black Lion Battlecruiser" unitType="Warship">%ELEMENT%</subforce>
+				chassis="Black Lion II Battlecruiser" unitType="Warship">%ELEMENT%</subforce>
 		</attachedForces>
 	</force>
 	
@@ -793,7 +793,7 @@
 			<subforce fluffName="CNC Faithful" ifDateBetween=",3067"
 				chassis="Lola III Destroyer">%ELEMENT%</subforce>
 			<subforce fluffName="CNC Spirit Sight" ifDateBetween="2962,3067"
-				chassis="Fredasa Corvette Raider">%ELEMENT%</subforce>
+				chassis="Fredasa (Corvette-Raider)">%ELEMENT%</subforce>
 			<subforce fluffName="CNC True Path" ifDateBetween=",3078"
 				chassis="Carrack Transport">%ELEMENT%</subforce>
 			<subforce fluffName="CNC Blood Oath" ifDateBetween=",3067"
@@ -808,9 +808,9 @@
 			<subforce fluffName="CNC Anna Rosse" ifDateBetween=",2946"
 				chassis="Riga Frigate">%ELEMENT%</subforce>
 			<subforce fluffName="CNC Anna Rosse" ifDateBetween="2947,3067"
-				chassis="York Destroyer Carrier">%ELEMENT%</subforce>
+				chassis="York Destroyer-Carrier">%ELEMENT%</subforce>
 			<subforce fluffName="CNC Future Triumph" ifDateBetween="2962,3078"
-				chassis="Fredasa Corvette Raider">%ELEMENT%</subforce>
+				chassis="Fredasa (Corvette-Raider)">%ELEMENT%</subforce>
 			<subforce fluffName="CNC Perilous Vision" ifDateBetween=",3078"
 				chassis="Carrack Transport">%ELEMENT%</subforce>
 			<subforce fluffName="CNC Righteous Return" ifDateBetween=",3067"
@@ -825,7 +825,7 @@
 		
 		<subforces ifName="Mystic Naval Star">
 			<subforce fluffName="NCS Severen Leroux" ifDateBetween="3067,3078"
-				role="command" chassis="Black Lion Battlecruiser">%ELEMENT%</subforce>
+				role="command" chassis="Black Lion II Battlecruiser">%ELEMENT%</subforce>
 			<subforce fluffName="CNC Spirit Vision" ifDateBetween=",3078"
 				chassis="Vincent Corvette">%ELEMENT%</subforce>
 			<subforce fluffName="CNC Far Vision" ifDateBetween=",3078"

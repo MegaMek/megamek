@@ -1072,7 +1072,13 @@ public class Compute {
             if ((target instanceof Mech) && (aimingAt == Mech.LOC_HEAD) && aimingMode.isImmobile()) {
                 return new ToHitData(3, "aiming at head");
             }
-            return new ToHitData(-4, "target immobile");
+            ToHitData immobileTHD = new ToHitData(-4, "target immobile");
+            if(target instanceof Tank) {
+                // An "immobilized" but jumping CV is not actually immobile for targeting purposes
+                // (See issue #3917)
+                return ((Tank)target).moved == EntityMovementType.MOVE_JUMP ? null : immobileTHD;
+            }
+            return immobileTHD;
         }
         return null;
     }
@@ -2534,20 +2540,30 @@ public class Compute {
             return toHit;
         }
 
+        // Compile various state information to determine if the entity jumped, "jumped", or is VTOL
+        // Airborne non-ASF vehicles like WiGE can get +1 TMM for jumping _or_ being airborne, but not both.
+        // Non-flying WiGE _can_ get +1 TMM for jumping.
+        // See TW: pg. 307, "Attack Modifiers Table"
+        boolean jumped = !entity.isAirborneVTOLorWIGE()
+                        && (
+                            (entity.moved == EntityMovementType.MOVE_JUMP)
+                            || (entity.moved == EntityMovementType.MOVE_VTOL_RUN)
+                            || (entity.moved == EntityMovementType.MOVE_VTOL_WALK)
+                            || (entity.moved == EntityMovementType.MOVE_VTOL_SPRINT)
+                        );
+
+        boolean isVTOL = (entity.moved == EntityMovementType.MOVE_VTOL_RUN)
+                        || (entity.moved == EntityMovementType.MOVE_VTOL_WALK)
+                        || (entity.getMovementMode() == EntityMovementMode.VTOL)
+                        || (entity.moved == EntityMovementType.MOVE_VTOL_SPRINT);
+
         ToHitData toHit = Compute
                 .getTargetMovementModifier(
                         entity.delta_distance,
-                        (entity.getMovementMode() != EntityMovementMode.WIGE)
-                        && ((entity.moved == EntityMovementType.MOVE_JUMP)
-                                || (entity.moved == EntityMovementType.MOVE_VTOL_RUN)
-                                || (entity.moved == EntityMovementType.MOVE_VTOL_WALK)
-                                || (entity.moved == EntityMovementType.MOVE_VTOL_SPRINT)),
-
-                        (entity.moved == EntityMovementType.MOVE_VTOL_RUN)
-                        || (entity.moved == EntityMovementType.MOVE_VTOL_WALK)
-                        || (entity.getMovementMode() == EntityMovementMode.VTOL)
-                        || (entity.moved == EntityMovementType.MOVE_VTOL_SPRINT),
+                        jumped,
+                        isVTOL,
                         game);
+
         if (entity.moved != EntityMovementType.MOVE_JUMP
                 && entity.delta_distance > 0
                 && entity instanceof Mech && ((Mech) entity).getCockpitType() == Mech.COCKPIT_DUAL

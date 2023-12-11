@@ -7123,8 +7123,15 @@ exact "Foot Platoon (Laser Heavy XCT)" "Infantry/xenoplanetary_infantry.png"
 chassis "Beast Infantry (Branth)" "Infantry/Branth.png"
 chassis "Beast Infantry (Camel)" "Infantry/Camel.png"
 chassis "Beast Infantry (Donkey)" "Infantry/Donkey.png"
-chassis "Beast Infantry (Horse)" "Infantry/Horse.png"
 chassis "Beast Infantry (Elephant)" "Infantry/Elephant.png"
+chassis "Beast Infantry (Hipposaur)" "Infantry/Hipposaur.png"
+chassis "Beast Infantry (Horse)" "Infantry/Horse.png"
+chassis "Beast Infantry (Kangaroo)" "Infantry/Kangaroo.png"
+chassis "Beast Infantry (Odessan Raxx)" "Infantry/Raxx.png"
+chassis "Beast Infantry (Orca)" "Infantry/Orcainfy.png"
+chassis "Beast Infantry (Tabiranth)" "Infantry/Tabiranth.png"
+chassis "Beast Infantry (Tariq)" "Infantry/Tariq.png"
+
 
 #Jumpships
 chassis "Invader Jumpship" "jumpships/invader.png"

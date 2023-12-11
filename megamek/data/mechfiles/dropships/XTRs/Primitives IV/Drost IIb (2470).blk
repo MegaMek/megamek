@@ -253,3 +253,10 @@ Cargo Transport
 <height>
 31 meters
 </height>
+
+<quirks>
+atmo_instability
+easy_maintain
+obsolete
+</quirks>
+

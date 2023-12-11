@@ -9,6 +9,13 @@ source:XTR: Marik
 rules level:3
 role:Sniper
 
+
+
+quirk:anti_air
+quirk:easy_maintain
+quirk:rugged_1
+
+
 mass:75
 engine:300 XL Engine(IS)
 structure:IS Standard

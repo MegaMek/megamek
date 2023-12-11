@@ -125,3 +125,12 @@ Historical: Liberation of Terra II
 PETROCHEMICALS
 </fuelType>
 
+
+<quirks>
+easy_maintain
+trailer_hitch
+</quirks>
+
+<weaponQuirks>
+accurate:TU:0:ISSniper
+</weaponQuirks>

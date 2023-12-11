@@ -10,6 +10,12 @@ Source:TRO: 3060
 Rules Level:3
 role:Missile Boat
 
+
+
+quirk:bad_rep_clan
+quirk:bad_rep_is
+
+
 Mass:75
 Engine:300 XL Engine
 Structure:Endo Steel

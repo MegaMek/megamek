@@ -10,6 +10,11 @@ Source:Starterbook: Wolf & Blake
 Rules Level:2
 role:Striker
 
+
+
+quirk:no_arms
+
+
 Mass:30
 Engine:150 Light Engine
 Structure:Endo Steel

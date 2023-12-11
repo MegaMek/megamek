@@ -10,6 +10,11 @@ Source:TRO: 3145 Draconis Combine
 Rules Level:4
 role:Sniper
 
+
+
+quirk:bad_rep_is
+
+
 Mass:50
 Engine:250 Fusion Engine(IS)
 Structure:IS Endo Steel

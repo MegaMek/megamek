@@ -9,6 +9,23 @@ source:Rec Guide:ilClan #7
 rules level:3
 role:Striker
 
+weaponquirk:mod_weapons:RT:2:CLERMediumLaser
+weaponquirk:mod_weapons:RT:3:CLMG
+weaponquirk:mod_weapons:RT:4:CLMG
+weaponquirk:mod_weapons:LT:2:CLERMediumLaser
+weaponquirk:mod_weapons:LT:3:CLMG
+weaponquirk:mod_weapons:LT:4:CLMG
+weaponquirk:jettison_capable:RA:4:CLLargePulseLaser
+weaponquirk:mod_weapons:RA:4:CLLargePulseLaser
+weaponquirk:mod_weapons:RT:4:CLERMediumPulseLaser
+weaponquirk:mod_weapons:RT:6:CLAPGaussRifle
+weaponquirk:mod_weapons:LT:4:CLERMediumPulseLaser
+weaponquirk:mod_weapons:LT:6:CLAPGaussRifle
+weaponquirk:mod_weapons:LT:7:CLAPGaussRifle
+weaponquirk:jettison_capable:RA:4:CLERLargePulseLaser
+weaponquirk:mod_weapons:RA:4:CLERLargePulseLaser
+
+
 mass:30
 engine:270 XXL (Clan) Engine
 structure:Clan Endo Steel

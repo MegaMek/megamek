@@ -8,6 +8,13 @@ era:3134
 source:TRO: Dark Age
 rules level:3
 
+quirk:command_mech
+quirk:distracting
+quirk:reinforced_legs
+weaponquirk:exposed_linkage:LA:3:CLUltraAC5
+weaponquirk:exposed_linkage:LA:6:CLUltraAC5
+
+
 mass:95
 engine:380 XL (Clan) Engine(IS)
 structure:Clan Endo Steel

@@ -9,6 +9,13 @@ source:XTR: Most Wanted
 rules level:3
 role:Skirmisher
 
+
+
+quirk:command_mech
+quirk:hard_pilot
+weaponquirk:imp_cooling:LA:2:ISLargeXPulseLaser
+
+
 mass:50
 engine:250 XL Engine(IS)
 structure:IS Endo Steel

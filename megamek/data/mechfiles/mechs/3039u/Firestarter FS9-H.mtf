@@ -10,6 +10,14 @@ Source:TRO: 3039
 Rules Level:1
 role:Scout
 
+
+
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:exposed_linkage:RA:4:Flamer
+weaponquirk:exposed_linkage:LA:4:Flamer
+
+
 Mass:35
 Engine:210 Fusion Engine
 Structure:Standard

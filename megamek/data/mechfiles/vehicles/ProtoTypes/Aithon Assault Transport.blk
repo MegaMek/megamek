@@ -103,3 +103,9 @@ TRO: Prototypes
 <tonnage>
 100.0
 </tonnage>
+
+<quirks>
+distracting
+trailer_hitch
+</quirks>
+

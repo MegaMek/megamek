@@ -10,6 +10,12 @@ Rules Level:4
 role:Skirmisher
 Source:TRO: Prototypes 
 
+
+
+quirk:rugged_1
+quirk:non_standard
+
+
 Mass:70
 Engine:280 Light Engine(IS)
 Structure:Endo Steel

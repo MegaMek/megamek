@@ -10,6 +10,10 @@ source:TRO: 3039
 rules level:1
 role:Striker
 
+quirk:low_profile
+quirk:exp_actuator
+
+
 mass:25
 engine:150 Fusion Engine(IS)
 structure:IS Standard

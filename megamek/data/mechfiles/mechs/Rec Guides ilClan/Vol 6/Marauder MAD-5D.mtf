@@ -10,6 +10,15 @@ source:Rec Guide:ilClan #6
 rules level:2
 role:Skirmisher
 
+
+
+quirk:command_mech
+quirk:hyper_actuator
+quirk:low_profile
+weaponquirk:direct_torso_mount:RT:9:ISLargePulseLaser
+weaponquirk:exposed_linkage:RT:9:ISLargePulseLaser
+
+
 mass:75
 engine:300 XL Engine(IS)
 structure:IS Standard

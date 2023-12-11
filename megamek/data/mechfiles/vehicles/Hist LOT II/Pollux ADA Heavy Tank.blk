@@ -127,3 +127,10 @@ Historical: Liberation of Terra II
 75.0
 </tonnage>
 
+
+<quirks>
+anti_air
+imp_sensors
+trailer_hitch
+</quirks>
+

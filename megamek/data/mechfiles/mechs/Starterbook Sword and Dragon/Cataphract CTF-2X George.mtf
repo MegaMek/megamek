@@ -10,6 +10,11 @@ Source:Starterbook: Sword and Dragon
 Rules Level:4
 role:Brawler
 
+
+
+quirk:pro_actuator
+
+
 Mass:70
 Engine:280 Fusion Engine(IS)
 Structure:Standard

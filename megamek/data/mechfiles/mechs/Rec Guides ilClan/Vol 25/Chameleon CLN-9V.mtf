@@ -9,6 +9,12 @@ source:Rec Guide:ilClan #25
 rules level:2
 role:Striker
 
+
+
+quirk:easy_pilot
+quirk:distracting
+
+
 mass:50
 engine:300 Light Engine(IS)
 structure:IS Reinforced

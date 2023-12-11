@@ -120,3 +120,9 @@ TARGETING:TharHes Mars5
 <source>
 TRO: 3039
 </source>
+
+<quirks>
+low_profile
+poor_target_short
+</quirks>
+

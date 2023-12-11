@@ -10,6 +10,12 @@ Source:TRO: 3060
 Rules Level:2
 role:Juggernaut
 
+
+
+
+quirk:easy_pilot
+
+
 Mass:85
 Engine:255 Fusion Engine
 Structure:Endo Steel

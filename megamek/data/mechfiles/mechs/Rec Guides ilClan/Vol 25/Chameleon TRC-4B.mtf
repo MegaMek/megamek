@@ -9,6 +9,12 @@ source:Rec Guide:ilClan #25
 rules level:1
 role:Scout
 
+
+
+
+quirk:easy_pilot
+
+
 mass:50
 engine:300 Fusion Engine(IS)
 structure:IS Standard

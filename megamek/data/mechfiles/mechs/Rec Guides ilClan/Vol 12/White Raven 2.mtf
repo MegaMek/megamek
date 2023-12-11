@@ -10,6 +10,9 @@ source:Rec Guide:ilClan #12
 rules level:3
 role:Skirmisher
 
+quirk:imp_target_short
+
+
 mass:75
 engine:375 XXL (Clan) Engine(IS)
 structure:Clan Endo Steel

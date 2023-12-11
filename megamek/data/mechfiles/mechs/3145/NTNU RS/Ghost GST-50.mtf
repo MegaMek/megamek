@@ -10,6 +10,13 @@ Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:2
 role:Striker
 
+
+
+quirk:ext_twist
+quirk:imp_com
+quirk:imp_sensors
+
+
 Mass:50
 Engine:300 Light Engine(IS)
 Structure:IS Endo Steel

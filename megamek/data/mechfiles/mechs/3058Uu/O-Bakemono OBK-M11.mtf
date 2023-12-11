@@ -10,6 +10,16 @@ Source:TRO: 3058
 Rules Level:2
 role:Juggernaut
 
+
+
+quirk:no_arms
+weaponquirk:mod_weapons:HD:3:Small Laser
+weaponquirk:mod_weapons:CT:10:Medium Laser
+weaponquirk:mod_weapons:CT:11:Medium Laser
+weaponquirk:mod_weapons:RA:5:MRM 40
+weaponquirk:mod_weapons:LA:5:MRM 40
+
+
 Mass:80
 Engine:240 Fusion Engine
 Structure:Standard

@@ -10,6 +10,13 @@ Source:TRO: 3055
 Rules Level:2
 role:Striker
 
+
+
+
+quirk:imp_target_short
+quirk:pro_actuator
+
+
 Mass:45
 Engine:225 XL Engine
 Structure:Standard

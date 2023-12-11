@@ -10,6 +10,12 @@ Source:TRO: 3050
 Rules Level:2
 role:Juggernaut
 
+
+
+quirk:rugged_1
+quirk:weak_legs
+
+
 Mass:40
 Engine:160 Fusion Engine
 Structure:Standard

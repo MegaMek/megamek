@@ -10,6 +10,13 @@ Source:TRO: 3060
 Rules Level:3
 role:Missile Boat
 
+
+
+quirk:easy_maintain
+quirk:multi_trac
+quirk:no_arms
+
+
 Mass:90
 Engine:270 Compact Engine
 Structure:Endo Steel

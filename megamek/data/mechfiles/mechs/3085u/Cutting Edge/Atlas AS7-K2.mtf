@@ -10,6 +10,15 @@ source:TRO: 3085
 Rules Level:2
 role:Sniper
 
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:command_mech
+quirk:distracting
+quirk:imp_com
+
+
 Mass:100
 Engine:400 XL Engine(IS)
 Structure:Standard

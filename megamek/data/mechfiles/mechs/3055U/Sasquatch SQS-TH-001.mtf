@@ -10,6 +10,12 @@ Source:TRO: 3055
 Rules Level:2
 role:Skirmisher
 
+
+
+
+quirk:difficult_maintain
+
+
 Mass:85
 Engine:340 XL Engine
 Structure:Standard

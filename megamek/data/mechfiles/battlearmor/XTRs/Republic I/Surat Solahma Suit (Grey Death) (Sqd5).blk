@@ -142,3 +142,10 @@ biped
 2
 </weightclass>
 
+
+<quirks>
+easy_maintain
+bad_rep_is
+poor_work
+</quirks>
+

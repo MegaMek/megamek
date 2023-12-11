@@ -96,3 +96,10 @@ XTR: Periphery
 <tonnage>
 35.0
 </tonnage>
+
+<quirks>
+prototype
+hard_pilot
+non_standard
+</quirks>
+

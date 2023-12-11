@@ -10,6 +10,9 @@ role:Brawler
 Source:Rec Guide:ilClan #32 
 mul id:9485
 
+quirk:rugged_1
+
+
 mass:90
 engine:360 XL (Clan) Engine
 structure:Clan Endo Steel

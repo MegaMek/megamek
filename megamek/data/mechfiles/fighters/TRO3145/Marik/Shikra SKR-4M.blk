@@ -126,3 +126,9 @@ TRO: 3145 Free Worlds League
 <tonnage>
 90.0
 </tonnage>
+
+<quirks>
+difficult_maintain
+non_standard
+</quirks>
+

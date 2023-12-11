@@ -10,6 +10,13 @@ Source:TRO: 3055
 Rules Level:4
 role:Striker
 
+
+
+
+quirk:non_standard
+quirk:weak_head_1
+
+
 Mass:35
 Engine:315 XXL Engine
 Structure:Standard

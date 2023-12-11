@@ -10,6 +10,11 @@ Rules Level:2
 role:Striker
 source:Record Sheets: 3067 Unabridged
 
+quirk:ext_twist
+quirk:difficult_maintain
+weaponquirk:direct_torso_mount:HD:3:CLAntiMissileSystem
+
+
 Mass:40
 Engine:240 XL Fusion Engine
 Structure:Endo-Steel

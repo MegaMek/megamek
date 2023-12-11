@@ -10,6 +10,11 @@ Source:TRO: 3050
 Rules Level:1
 role:Sniper
 
+
+
+quirk:pro_actuator
+
+
 Mass:70
 Engine:210 Fusion Engine
 Structure:Standard

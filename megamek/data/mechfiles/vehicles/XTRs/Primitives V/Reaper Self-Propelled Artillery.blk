@@ -114,3 +114,9 @@ XTR: Primitives V
 <fuelType>
 PETROCHEMICALS
 </fuelType>
+
+<quirks>
+anti_air
+poor_sealing
+</quirks>
+

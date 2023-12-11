@@ -10,6 +10,11 @@ Rules Level:2
 role:Skirmisher
 source:TRO: 3067
 
+
+
+quirk:pro_actuator
+
+
 Mass:65
 Engine:260 Light Engine
 Structure:Standard

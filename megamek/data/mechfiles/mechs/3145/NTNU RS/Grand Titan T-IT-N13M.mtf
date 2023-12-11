@@ -10,6 +10,12 @@ Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:4
 role:Sniper
 
+
+
+quirk:multi_trac
+quirk:difficult_maintain
+
+
 Mass:100
 Engine:300 Fusion Engine(IS)
 Structure:IS Endo Steel

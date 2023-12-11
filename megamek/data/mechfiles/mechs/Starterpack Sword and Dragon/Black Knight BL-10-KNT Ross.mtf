@@ -10,6 +10,11 @@ Source:Starterbook: Sword and Dragon
 Rules Level:2
 role:Brawler
 
+
+
+quirk:command_mech
+
+
 Mass:75
 Engine:300 Fusion Engine
 Structure:Standard

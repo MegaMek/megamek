@@ -120,3 +120,8 @@ TRO: 3145 Capellan Confederation
 <tonnage>
 40.0
 </tonnage>
+
+<quirks>
+easy_pilot
+</quirks>
+

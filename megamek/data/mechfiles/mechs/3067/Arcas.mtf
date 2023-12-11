@@ -10,6 +10,10 @@ Rules Level:2
 role:Skirmisher
 source:TRO: 3067
 
+
+quirk:pro_actuator
+
+
 Mass:65
 Engine:325 XL Engine
 Structure:Endo Steel

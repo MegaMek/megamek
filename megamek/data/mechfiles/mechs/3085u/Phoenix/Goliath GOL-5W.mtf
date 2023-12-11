@@ -10,6 +10,12 @@ source:TRO: 3085
 Rules Level:2
 role:Brawler
 
+
+
+quirk:multi_trac
+quirk:exp_actuator
+
+
 Mass:80
 Engine:320 Fusion Engine(IS)
 Structure:Standard

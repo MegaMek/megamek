@@ -10,6 +10,13 @@ Source:TRO: 3050
 Rules Level:2
 role:Scout
 
+
+
+quirk:easy_maintain
+weaponquirk:mod_weapons:CT:10:Small Laser
+weaponquirk:mod_weapons:RA:4:Medium Laser
+
+
 Mass:20
 Engine:160 Fusion Engine(IS)
 Structure:Standard

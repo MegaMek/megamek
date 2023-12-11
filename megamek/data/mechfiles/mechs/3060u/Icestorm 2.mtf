@@ -10,6 +10,10 @@ Source:TRO: 3060
 Rules Level:3
 role:Striker
 
+quirk:imp_sensors
+quirk:rugged_1
+
+
 Mass:25
 Engine:300 XL (Clan) Engine
 Structure:Standard

@@ -10,6 +10,10 @@ Source:TRO: 3060
 Rules Level:2
 role:Brawler
 
+quirk:ext_twist
+quirk:weak_head_1
+
+
 Mass:25
 Engine:125 Fusion Engine
 Structure:Endo Steel

@@ -10,6 +10,11 @@ Rules Level:4
 role:Skirmisher
 source:XTR: Mercenaries
 
+
+
+quirk:rugged_1
+
+
 Mass:70
 Engine:280 Light Fusion Engine
 Structure:Endo-Steel

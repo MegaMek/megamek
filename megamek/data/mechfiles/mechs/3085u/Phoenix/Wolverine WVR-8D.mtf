@@ -10,6 +10,18 @@ source:TRO: 3085u
 Rules Level:2
 role:Skirmisher
 
+
+
+quirk:command_mech
+quirk:ext_twist
+quirk:imp_com
+quirk:pro_actuator
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+quirk:cramped_cockpit
+weaponquirk:jettison_capable:RA:4:ISRotaryAC2
+
+
 Mass:55
 Engine:275 XL Engine(IS)
 Structure:Endo Steel

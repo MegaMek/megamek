@@ -97,3 +97,12 @@ TRO: 3145 Draconis Combine
 <tonnage>
 45.0
 </tonnage>
+
+<quirks>
+battle_computer
+fast_reload
+bad_rep_is
+poor_performance
+non_standard
+</quirks>
+

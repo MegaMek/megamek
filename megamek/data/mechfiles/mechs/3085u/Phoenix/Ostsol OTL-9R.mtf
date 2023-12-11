@@ -10,6 +10,12 @@ source:TRO: 3085
 Rules Level:2
 role:Juggernaut
 
+
+
+quirk:imp_sensors
+quirk:low_profile
+
+
 Mass:60
 Engine:180 Fusion Engine(IS)
 Structure:Standard

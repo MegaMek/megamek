@@ -10,6 +10,12 @@ source:TRO: 3039
 rules level:1
 role:Skirmisher
 
+
+
+quirk:low_profile
+quirk:stable
+
+
 mass:60
 engine:300 Fusion Engine(IS)
 structure:IS Standard

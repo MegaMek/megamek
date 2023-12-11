@@ -10,6 +10,10 @@ source:TRO: 3085
 Rules Level:2
 role:Scout
 
+
+quirk:poor_performance
+
+
 Mass:40
 Engine:400 XL (Clan) Engine
 Structure:Endo Steel

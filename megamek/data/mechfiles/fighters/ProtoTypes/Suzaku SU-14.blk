@@ -152,3 +152,11 @@ TRO: Prototypes
 75.0
 </tonnage>
 
+
+<quirks>
+atmo_flyer
+</quirks>
+
+<weaponQuirks>
+no_cooling:Aft:0:ISLaserAMS
+</weaponQuirks>

@@ -125,3 +125,9 @@ TRO: 3039
 <fuelType>
 PETROCHEMICALS
 </fuelType>
+
+<quirks>
+low_profile
+poor_target_short
+</quirks>
+

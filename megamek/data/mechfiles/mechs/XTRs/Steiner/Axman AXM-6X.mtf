@@ -10,6 +10,11 @@ Source:XTR: Steiner
 Rules Level:3
 role:Missile Boat
 
+
+
+quirk:pro_actuator
+
+
 Mass:65
 Engine:325 XL (Clan) Engine
 Structure:Endo Steel

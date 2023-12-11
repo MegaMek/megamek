@@ -10,6 +10,10 @@ Source:TRO: 3055
 Rules Level:2
 role:Sniper
 
+weaponquirk:stable_weapon:CT:10:CLLargePulseLaser
+weaponquirk:stable_weapon:CT:10:CLHeavyMediumLaser
+
+
 Mass:35
 Engine:210 Fusion (Clan) Engine
 Structure:Endo Steel

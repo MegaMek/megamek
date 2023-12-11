@@ -11,6 +11,12 @@ rules level:3
 role:Striker
 Ejection:Full Head Ejection System
 
+
+
+quirk:easy_maintain
+quirk:good_rep_1
+
+
 mass:35
 engine:210 XL Engine(IS)
 structure:IS Endo Steel

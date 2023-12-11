@@ -10,6 +10,11 @@ Era:3063
 Rules Level:2
 role:Skirmisher
 
+
+
+quirk:stable
+
+
 Mass:75
 Engine:375 XL Engine
 Structure:Endo-Steel

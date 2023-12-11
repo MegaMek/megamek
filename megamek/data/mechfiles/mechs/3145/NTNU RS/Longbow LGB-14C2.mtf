@@ -10,6 +10,14 @@ source:Record Sheets: 3145 New Tech New Upgrades
 rules level:3
 role:Missile Boat
 
+
+
+quirk:anti_air
+quirk:searchlight
+quirk:ubiquitous_is
+quirk:no_arms
+
+
 mass:85
 engine:255 XL Engine(IS)
 structure:IS Standard

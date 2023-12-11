@@ -9,6 +9,9 @@ source:TRO: 3055
 rules level:2
 role:Scout
 
+quirk:weak_head_2
+
+
 mass:40
 engine:240 XL (Clan) Engine
 structure:Clan Endo Steel

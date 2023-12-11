@@ -9,6 +9,9 @@ source:Rec Guide:ilClan #27
 rules level:2
 role:Striker
 
+quirk:imp_sensors
+
+
 mass:40
 engine:360 XL (Clan) Engine
 structure:Clan Endo Steel

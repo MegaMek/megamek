@@ -10,6 +10,14 @@ source:TRO: 3085
 Rules Level:2
 role:Skirmisher
 
+
+
+quirk:easy_maintain
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
+
 Mass:65
 Engine:325 XL Engine(IS)
 Structure:Endo Steel

@@ -10,6 +10,11 @@ Source:BattleTech Dossiers: Jason Zaklan
 Rules Level:2
 role:Brawler
 
+
+
+quirk:hyper_actuator
+
+
 Mass:60
 Engine:360 XL Engine(IS)
 Structure:IS Endo Steel

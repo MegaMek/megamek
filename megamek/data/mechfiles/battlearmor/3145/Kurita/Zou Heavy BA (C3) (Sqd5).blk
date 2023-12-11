@@ -121,3 +121,9 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<quirks>
+easy_pilot
+sensor_ghosts
+</quirks>
+

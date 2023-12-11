@@ -10,6 +10,12 @@ Source:XTR: Republic II
 Rules Level:4
 role:Juggernaut
 
+
+
+quirk:rugged_1
+weaponquirk:em_interference:RA:3:Bombast Laser
+
+
 Mass:75
 Engine:225 Compact Engine(IS)
 Structure:IS Endo Steel

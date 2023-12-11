@@ -9,6 +9,9 @@ source:TRO: 3039
 rules level:1
 role:Scout
 
+quirk:low_profile
+
+
 mass:40
 engine:240 Fusion Engine(IS)
 structure:IS Standard

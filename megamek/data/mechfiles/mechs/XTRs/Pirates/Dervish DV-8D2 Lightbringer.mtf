@@ -10,6 +10,12 @@ Rules Level:4
 role:Striker
 Source:XTR: Pirates
 
+
+
+quirk:easy_maintain
+quirk:hyper_actuator
+
+
 Mass:55
 Engine:275 XL Engine
 Structure:Standard

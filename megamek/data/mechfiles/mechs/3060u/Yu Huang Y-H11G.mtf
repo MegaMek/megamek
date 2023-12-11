@@ -10,6 +10,12 @@ Source:TRO: 3060
 Rules Level:2
 role:Skirmisher
 
+
+
+quirk:command_mech
+quirk:good_rep_1
+
+
 Mass:90
 Engine:360 XL Engine
 Structure:Endo Steel

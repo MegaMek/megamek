@@ -10,6 +10,14 @@ source:TRO: 3085
 Rules Level:2
 role:Missile Boat
 
+
+
+quirk:anti_air
+quirk:searchlight
+quirk:ubiquitous_is
+quirk:no_arms
+
+
 Mass:85
 Engine:340 XL Engine(IS)
 Structure:Standard

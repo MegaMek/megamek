@@ -133,3 +133,10 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<quirks>
+prototype
+bad_rep_is
+imp_com
+</quirks>
+

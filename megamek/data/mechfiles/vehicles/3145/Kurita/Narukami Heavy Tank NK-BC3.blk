@@ -103,3 +103,10 @@ TRO: 3145 Draconis Combine
 <tonnage>
 90.0
 </tonnage>
+
+<quirks>
+low_profile
+hard_pilot
+fast_reload
+</quirks>
+

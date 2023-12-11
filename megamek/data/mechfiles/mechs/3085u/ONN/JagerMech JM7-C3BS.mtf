@@ -10,6 +10,11 @@ source:TRO: 3085
 Rules Level:4
 role:Brawler
 
+
+
+quirk:anti_air
+
+
 Mass:70
 Engine:280 XL Engine(IS)
 Structure:Standard

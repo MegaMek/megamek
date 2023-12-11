@@ -10,6 +10,13 @@ source:XTR: Corporations
 Rules Level:4
 role:Scout
 
+
+
+quirk:barrel_fists_la
+quirk:easy_maintain
+quirk:bad_rep_is
+
+
 Mass:80
 Engine:400 XL Fusion Engine
 Structure:Standard

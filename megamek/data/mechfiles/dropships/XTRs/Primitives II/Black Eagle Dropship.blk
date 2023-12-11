@@ -223,3 +223,9 @@ TRO: Primitives II
 <escape_pod>
 8
 </escape_pod>
+
+<quirks>
+easy_maintain
+obsolete
+</quirks>
+

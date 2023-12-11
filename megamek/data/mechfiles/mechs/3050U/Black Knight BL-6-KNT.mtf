@@ -9,6 +9,12 @@ source:TRO: 3050
 rules level:2
 role:Brawler
 
+
+
+
+quirk:command_mech
+
+
 mass:75
 engine:300 Fusion Engine(IS)
 structure:IS Endo Steel

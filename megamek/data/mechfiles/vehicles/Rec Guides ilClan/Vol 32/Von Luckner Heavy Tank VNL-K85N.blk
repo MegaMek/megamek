@@ -141,3 +141,8 @@ ARMOR:New Samarkand Teppeki Hardened
 COMMUNICATIONS:O/P 300
 TARGETING:O/P GRNDSTAT 50A
 </systemManufacturers>
+
+<quirks>
+difficult_maintain
+</quirks>
+

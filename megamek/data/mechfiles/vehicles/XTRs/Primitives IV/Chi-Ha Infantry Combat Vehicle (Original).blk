@@ -103,3 +103,9 @@ XTR: Primitives IV
 <tonnage>
 22.0
 </tonnage>
+
+<quirks>
+low_profile
+obsolete
+</quirks>
+

@@ -115,3 +115,10 @@ XTR: Gunslingers
 <tonnage>
 50.0
 </tonnage>
+
+<quirks>
+easy_maintain
+imp_com
+obsolete
+</quirks>
+

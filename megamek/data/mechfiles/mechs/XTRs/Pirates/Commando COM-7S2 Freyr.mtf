@@ -10,6 +10,10 @@ Rules Level:4
 role:Striker
 Source:XTR: Pirates
 
+quirk:low_profile
+quirk:exp_actuator
+
+
 Mass:25
 Engine:150 XL Engine (Clan)
 Structure:Endo-Steel

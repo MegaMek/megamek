@@ -8,6 +8,12 @@ era:3145
 source:Record Sheets: 3150
 rules level:3
 
+
+
+quirk:command_mech
+quirk:weak_head_1
+
+
 mass:85
 engine:340 Fusion Engine(IS)
 structure:IS Endo Steel

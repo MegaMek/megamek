@@ -10,6 +10,11 @@ source:XTR: Caveat Emptor
 rules level:4
 role:Striker
 
+
+
+quirk:distracting
+
+
 mass:20
 engine:180 XXL Engine(IS)
 structure:IS Standard

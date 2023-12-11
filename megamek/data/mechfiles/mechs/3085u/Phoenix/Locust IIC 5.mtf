@@ -10,6 +10,12 @@ source:TRO: 3085
 Rules Level:2
 role:Striker
 
+quirk:easy_maintain
+quirk:low_profile
+quirk:no_arms
+quirk:weak_legs
+
+
 Mass:25
 Engine:200 Fusion (Clan) Engine
 Structure:Endo Steel

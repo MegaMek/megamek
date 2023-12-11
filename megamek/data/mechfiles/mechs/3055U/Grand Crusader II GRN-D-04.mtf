@@ -10,6 +10,13 @@ Source:TRO: 3055
 Rules Level:2
 role:Brawler
 
+
+
+quirk:easy_maintain
+quirk:stable
+quirk:bad_rep_is
+
+
 Mass:80
 Engine:320 Light Engine
 Structure:Endo Steel

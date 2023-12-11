@@ -10,6 +10,14 @@ Rules Level:2
 role:Striker
 source:TRO: 3067
 
+
+
+
+quirk:bad_rep_clan
+quirk:bad_rep_is
+quirk:exp_actuator
+
+
 Mass:35
 Engine:245 XL Engine
 Structure:Endo Steel

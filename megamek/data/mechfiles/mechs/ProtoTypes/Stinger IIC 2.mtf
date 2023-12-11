@@ -11,6 +11,11 @@ role:Scout
 History:Based off the Fluff, crit placement is likely wrong.
 Source:TRO: Prototypes 
 
+quirk:cramped_cockpit
+quirk:difficult_eject
+quirk:combat_computer
+
+
 Mass:20
 Engine:100 Fusion (Clan) Engine(IS)
 Structure:Clan Endo Steel

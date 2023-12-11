@@ -10,6 +10,11 @@ source:Rec Guide:ilClan #18
 rules level:3
 role:Skirmisher
 
+
+
+quirk:rugged_1
+
+
 mass:80
 engine:320 Light Engine(IS)
 structure:IS Endo Steel

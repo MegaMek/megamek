@@ -10,6 +10,13 @@ Source:TRO: 3145 Draconis Combine
 Rules Level:4
 role:Juggernaut
 
+
+
+quirk:distracting
+quirk:searchlight
+quirk:difficult_eject
+
+
 Mass:95
 Engine:285 Light Engine(IS)
 Structure:IS Endo-Composite

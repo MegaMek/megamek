@@ -125,3 +125,9 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<weaponQuirks>
+mod_weapons:Squad:0:CLBAHeavyGrenadeLauncher
+mod_weapons:Squad:1:CLBAHeavyGrenadeLauncher
+mod_weapons:Squad:2:BAMineLauncher
+</weaponQuirks>

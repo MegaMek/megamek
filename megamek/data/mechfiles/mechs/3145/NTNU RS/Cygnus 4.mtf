@@ -10,6 +10,16 @@ Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:2
 role:Juggernaut
 
+weaponquirk:exposed_linkage:RA:3:CLUltraAC10
+weaponquirk:static_feed:RA:3:CLUltraAC10
+weaponquirk:exposed_linkage:LA:3:CLUltraAC10
+weaponquirk:static_feed:LA:3:CLUltraAC10
+weaponquirk:exposed_linkage:RA:3:CLLBXAC20
+weaponquirk:static_feed:RA:3:CLLBXAC20
+weaponquirk:exposed_linkage:LA:3:CLLBXAC20
+weaponquirk:static_feed:LA:3:CLLBXAC20
+
+
 Mass:95
 Engine:380 XL (Clan) Engine(IS)
 Structure:Clan Endo Steel

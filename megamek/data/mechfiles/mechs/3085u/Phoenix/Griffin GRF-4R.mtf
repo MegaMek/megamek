@@ -10,6 +10,16 @@ source:TRO: 3085
 Rules Level:2
 role:Striker
 
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:jettison_capable:RA:4:ISSNPPC
+
+
 Mass:55
 Engine:330 XL Engine(IS)
 Structure:Endo Steel

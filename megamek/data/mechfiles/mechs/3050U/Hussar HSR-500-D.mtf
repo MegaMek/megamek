@@ -10,6 +10,13 @@ Source:TRO: 3050
 Rules Level:2
 role:Scout
 
+
+
+quirk:imp_com
+quirk:rugged_1
+weaponquirk:direct_torso_mount:LT:3:ISERPPC
+
+
 Mass:30
 Engine:270 XL Fusion Engine
 Structure:Endo-Steel

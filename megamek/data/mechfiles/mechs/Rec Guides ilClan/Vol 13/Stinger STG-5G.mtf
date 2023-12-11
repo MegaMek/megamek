@@ -10,6 +10,14 @@ source:Rec Guide:ilClan #13
 rules level:3
 role:Scout
 
+
+
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+quirk:cramped_cockpit
+
+
 mass:20
 engine:140 XL Engine(IS)
 structure:IS Endo Steel

@@ -10,6 +10,17 @@ Source:XTR: Primitives V
 Rules Level:4
 role:Brawler
 
+
+
+
+quirk:poor_work
+quirk:weak_legs
+quirk:em_inter_whole
+weaponquirk:direct_torso_mount:LT:1:SRM 2
+weaponquirk:direct_torso_mount:LT:2:SRM 2
+weaponquirk:em_interference:RA:2:PPC
+
+
 Mass:50
 Engine:240 Fusion Engine(IS)
 Structure:IS Standard

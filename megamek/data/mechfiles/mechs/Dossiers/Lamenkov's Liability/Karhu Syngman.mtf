@@ -10,6 +10,9 @@ source:BattleTech Dossiers: Lamenkov's Liability
 rules level:4
 role:Skirmisher
 
+quirk:em_inter_whole
+
+
 mass:65
 engine:325 XL (Clan) Engine
 structure:Clan Endo Steel

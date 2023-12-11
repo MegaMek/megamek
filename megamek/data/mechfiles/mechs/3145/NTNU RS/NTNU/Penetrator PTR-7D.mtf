@@ -8,6 +8,12 @@ era:3133
 source:Record Sheets: 3150
 rules level:3
 
+
+
+quirk:good_rep_1
+quirk:stable
+
+
 mass:75
 engine:300 Fusion Engine(IS)
 structure:IS Endo Steel

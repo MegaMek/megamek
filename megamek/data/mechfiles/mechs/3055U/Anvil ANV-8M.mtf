@@ -10,6 +10,12 @@ Source:TRO: 3055
 Rules Level:3
 role:Missile Boat
 
+
+
+quirk:ext_twist
+quirk:imp_target_med
+
+
 Mass:60
 Engine:240 Fusion Engine
 Structure:Endo Steel

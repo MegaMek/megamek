@@ -10,6 +10,14 @@ Source:XTR: Republic III
 Rules Level:3
 role:Brawler
 
+
+
+quirk:multi_trac
+quirk:pro_actuator
+quirk:difficult_maintain
+quirk:non_standard
+
+
 Mass:65
 Engine:325 XL Engine(IS)
 Structure:IS Endo Steel

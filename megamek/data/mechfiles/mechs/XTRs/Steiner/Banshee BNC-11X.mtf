@@ -9,6 +9,10 @@ source:XTR: Steiner
 rules level:4
 role:Juggernaut
 
+quirk:rugged_1
+quirk:bad_rep_is
+
+
 mass:95
 engine:380 XL (Clan) Engine
 structure:IS Endo Steel

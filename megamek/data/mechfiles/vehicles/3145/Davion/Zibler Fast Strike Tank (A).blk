@@ -108,3 +108,8 @@ TRO: 3145 Federated Suns
 <baseChassisTurretWeight>
 2.0
 </baseChassisTurretWeight>
+
+<quirks>
+fast_reload
+</quirks>
+

@@ -9,6 +9,16 @@ source:XTR: Republic I
 rules level:2
 role:Sniper
 
+
+
+quirk:barrel_fists_ra
+quirk:battle_fists_la
+quirk:command_mech
+quirk:hyper_actuator
+quirk:non_standard
+weaponquirk:fast_reload:RA:3:ISLBXAC10
+
+
 mass:50
 engine:250 XL Engine(IS)
 structure:IS Endo Steel

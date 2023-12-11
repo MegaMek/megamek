@@ -10,6 +10,11 @@ Source:TRO: 3145 The Clans
 Rules Level:4
 role:Sniper
 
+
+
+quirk:difficult_eject
+
+
 Mass:100
 Engine:300 XL (Clan) Engine(IS)
 Structure:Clan Endo-Composite

@@ -10,6 +10,11 @@ Rules Level:1
 role:Juggernaut
 source:Historical Turning Points: Death to Mercenaries
 
+
+
+quirk:easy_maintain
+
+
 Mass:100
 Engine:200 Fusion Engine(IS)
 Structure:Standard

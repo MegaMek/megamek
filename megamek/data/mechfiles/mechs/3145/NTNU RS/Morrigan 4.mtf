@@ -10,6 +10,11 @@ Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:3
 role:Striker
 
+quirk:weak_legs
+weaponquirk:stable_weapon:RA:3:CLHeavyLargeLaser
+weaponquirk:stable_weapon:RA:3:TSEMP Cannon
+
+
 Mass:35
 Engine:280 XL (Clan) Engine
 Structure:Clan Endo Steel

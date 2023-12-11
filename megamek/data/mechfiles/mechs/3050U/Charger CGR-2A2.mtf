@@ -10,6 +10,13 @@ Source:TRO: 3050
 Rules Level:2
 role:Scout
 
+
+
+quirk:barrel_fists_la
+quirk:easy_maintain
+quirk:bad_rep_is
+
+
 Mass:80
 Engine:400 Fusion Engine
 Structure:Standard

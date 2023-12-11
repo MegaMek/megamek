@@ -10,6 +10,9 @@ source:Rec Guide:ilClan #10
 rules level:2
 role:Sniper
 
+quirk:imp_target_med
+
+
 mass:60
 engine:300 XL (Clan) Engine(IS)
 structure:IS Standard

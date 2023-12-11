@@ -122,3 +122,10 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<quirks>
+prototype
+difficult_maintain
+non_standard
+</quirks>
+

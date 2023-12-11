@@ -15,11 +15,19 @@
 package megamek.common.options;
 
 
-import megamek.common.*;
-
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
+import megamek.common.Aero;
+import megamek.common.BattleArmor;
+import megamek.common.Dropship;
+import megamek.common.Engine;
+import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
+import megamek.common.GunEmplacement;
+import megamek.common.Jumpship;
+import megamek.common.Mech;
+import megamek.common.Protomech;
+import megamek.common.SupportTank;
+import megamek.common.SupportVTOL;
+import megamek.common.Tank;
 
 /**
  * Contains the options determining quirks of the unit
@@ -88,7 +96,7 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, OptionsConstants.QUIRK_POS_VTOL_ROTOR_COAXIAL, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_VTOL_ROTOR_DUAL, false);
 
-        
+
         //not yet implemented
         //Docking Arms (docking unimplemented)
         //Fast Reload (no game effect at present)
@@ -105,7 +113,7 @@ public class Quirks extends AbstractOptions {
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_DIFFICULT_EJECT, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_DIFFICULT_MAINTAIN, false);
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_EM_INTERFERENCE_WHOLE, false);        
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_EM_INTERFERENCE_WHOLE, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_EXP_ACTUATOR, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_FLAWED_COOLING, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_FRAGILE_FUEL, false);
@@ -141,7 +149,7 @@ public class Quirks extends AbstractOptions {
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_WEAK_UNDERCARRIAGE, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_ATMO_INSTABILITY, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_OVERSIZED, false);
-        
+
         //quirks not implemented yet
         //Exposed Weapon Linkage (weapon-specific, sort of)
         //Gas Hog
@@ -164,10 +172,10 @@ public class Quirks extends AbstractOptions {
 
     public static boolean isQuirkLegalFor(IOption quirk, Entity en) {
         String qName = quirk.getName();
-        
+
         if (en.hasEngine() &&
                 ((en.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE) ||
-                (en.getEngine().getEngineType() == Engine.FUEL_CELL)) &&
+                        (en.getEngine().getEngineType() == Engine.FUEL_CELL)) &&
                 qName.equals(OptionsConstants.QUIRK_NEG_GAS_HOG)) {
             return true;
         }
@@ -181,14 +189,14 @@ public class Quirks extends AbstractOptions {
                     return false;
                 }
             }
-             if (qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST_RA)) {
-                    // Mechs with a hand actuator can have battlefists
-                    if (en.hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM)) {
-                        return true;
-                    } else {
-                        return false;
-                    }
+            if (qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST_RA)) {
+                // Mechs with a hand actuator can have battlefists
+                if (en.hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM)) {
+                    return true;
+                } else {
+                    return false;
                 }
+            }
             if (qName.equals(OptionsConstants.QUIRK_POS_BARREL_FIST_RA)) {
                 if (en.hasSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_RARM)
                         && !en.hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM)) {
@@ -205,7 +213,7 @@ public class Quirks extends AbstractOptions {
                     return false;
                 }
             }
-            
+
             if (qName.equals(OptionsConstants.QUIRK_POS_ATMO_FLYER)
                     || qName.equals(OptionsConstants.QUIRK_NEG_ATMO_INSTABILITY)
                     || qName.equals(OptionsConstants.QUIRK_POS_DOCKING_ARMS)
@@ -221,7 +229,7 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_NEG_UNSTREAMLINED)) {
                 return false;
             }
-            
+
             if ((en.getWeight()<60) && (qName.equals(OptionsConstants.QUIRK_NEG_OVERSIZED))) {
                 return false;
             }
@@ -229,7 +237,7 @@ public class Quirks extends AbstractOptions {
             if ((en.getWeight()>55) && (qName.equals(OptionsConstants.QUIRK_POS_COMPACT))) {
                 return false;
             }
-            
+
             return true;
         }
 
@@ -316,7 +324,7 @@ public class Quirks extends AbstractOptions {
                 if ((en.getMovementMode() == EntityMovementMode.WHEELED
                         || en.getMovementMode() == EntityMovementMode.TRACKED)
                         && !((en instanceof SupportTank)
-                                || (en instanceof SupportVTOL))) {
+                        || (en instanceof SupportVTOL))) {
                     return true;
                 } else {
                     return false;
@@ -350,7 +358,7 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_NEG_ATMO_INSTABILITY)
                     || qName.equals(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)
                     || qName.equals(OptionsConstants.QUIRK_NEG_DIFFICULT_EJECT)
-                    || qName.equals(OptionsConstants.QUIRK_NEG_EXP_ACTUATOR)                  
+                    || qName.equals(OptionsConstants.QUIRK_NEG_EXP_ACTUATOR)
                     || qName.equals(OptionsConstants.QUIRK_NEG_NO_ARMS)
                     || qName.equals(OptionsConstants.QUIRK_NEG_NO_EJECT)
                     || qName.equals(OptionsConstants.QUIRK_NEG_NO_TWIST)
@@ -374,26 +382,26 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_RA)) {
                 return false;
             }
-            
+
             if (qName.equals(OptionsConstants.QUIRK_POS_TRAILER_HITCH)
                     && (en.getMovementMode() == EntityMovementMode.HOVER)) {
                 return false;
             }
-            
+
             if (qName.equals(OptionsConstants.QUIRK_POS_TRAILER_HITCH)
                     && (en.getMovementMode() == EntityMovementMode.VTOL)) {
                 return false;
             }
-            
+
             if (qName.equals(OptionsConstants.QUIRK_POS_SCOUT_BIKE)) {
                 return (en.getMovementMode().isHover() ||
                         en.getMovementMode().isWheeled()) &&
                         (en.getWeight() <= 10.0);
             }
-                        
+
             return true;
         }
-              
+
         if (en instanceof BattleArmor) {
             if (qName.equals(OptionsConstants.QUIRK_POS_ATMO_FLYER)
                     || qName.equals(OptionsConstants.QUIRK_POS_ANIMALISTIC)
@@ -450,7 +458,7 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_NEG_POOR_PERFORMANCE)
                     || qName.equals(OptionsConstants.QUIRK_POS_POWER_REVERSE)
                     || qName.equals(OptionsConstants.QUIRK_POS_COMPACT)
-                    || qName.equals(OptionsConstants.QUIRK_POS_OVERHEAD_ARMS)   
+                    || qName.equals(OptionsConstants.QUIRK_POS_OVERHEAD_ARMS)
                     || qName.equals(OptionsConstants.QUIRK_POS_PRO_ACTUATOR)
                     || qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST_LA)
                     || qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST_RA)
@@ -658,7 +666,7 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_NEG_PROTOTYPE)
                     || qName.equals(OptionsConstants.QUIRK_POS_PRO_ACTUATOR)
                     || qName.equals(OptionsConstants.QUIRK_NEG_SENSOR_GHOSTS))
-                    {
+            {
                 return true;
             }
             return false;

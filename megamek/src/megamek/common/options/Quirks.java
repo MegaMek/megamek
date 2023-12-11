@@ -669,22 +669,6 @@ public class Quirks extends AbstractOptions {
 
     }
 
-    public List<QuirkEntry> getQuirkEntries() {
-        List<QuirkEntry> quirkEntries = new ArrayList<>();
-        for (final Enumeration<IOptionGroup> optionGroups = getGroups(); optionGroups.hasMoreElements();) {
-            final IOptionGroup group = optionGroups.nextElement();
-            if (count(group.getKey()) > 0) {
-                for (final Enumeration<IOption> options = group.getOptions(); options.hasMoreElements();) {
-                    final IOption option = options.nextElement();
-                    if ((option != null) && option.booleanValue()) {
-                        quirkEntries.add(new QuirkEntry(option.getName()));
-                    }
-                }
-            }
-        }
-        return quirkEntries;
-    }
-
     private static class QuirksInfo extends AbstractOptionsInfo {
         private static boolean initliazed = false;
         private static AbstractOptionsInfo instance = new QuirksInfo();

@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import com.sun.mail.util.DecodingException;
 import megamek.common.*;
 import megamek.common.InfantryBay.PlatoonType;
+import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.PilotOptions;
 import megamek.common.util.BuildingBlock;
@@ -655,16 +656,20 @@ public class BLKFile {
             blk.writeBlockData("role", t.getRole().toString());
         }
 
-        List<String> quirkList = t.getQuirks().getQuirkEntries().stream().map(QuirkEntry::getQuirk).collect(Collectors.toList());
+        List<String> quirkList = t.getQuirks().getOptionsList().stream()
+                .filter(IOption::booleanValue)
+                .map(IBasicOption::getName)
+                .collect(Collectors.toList());
+
         if (!quirkList.isEmpty()) {
             blk.writeBlockData("quirks", String.join("\n", quirkList));
         }
 
         List<String> weaponQuirkList = new ArrayList<>();
-        for (Mounted weapon: t.getWeaponList()) {
-            for (IOption weaponQuirk : weapon.getQuirks().activeQuirks()) {
-                weaponQuirkList.add(weaponQuirk.getName() + ":" + t.getLocationAbbr(weapon.getLocation()) + ":"
-                        + t.slotNumber(weapon) + ":" + weapon.getType().getInternalName());
+        for (Mounted equipment : t.getEquipment()) {
+            for (IOption weaponQuirk : equipment.getQuirks().activeQuirks()) {
+                weaponQuirkList.add(weaponQuirk.getName() + ":" + t.getLocationAbbr(equipment.getLocation()) + ":"
+                        + t.slotNumber(equipment) + ":" + equipment.getType().getInternalName());
             }
         }
         if (!weaponQuirkList.isEmpty()) {

@@ -146,12 +146,6 @@ public class MechSummaryCache {
     private MechSummaryCache() {
         nameMap = new HashMap<>();
         fileNameMap = new HashMap<>();
-
-        try {
-            QuirksHandler.initQuirksList();
-        } catch (Exception e) {
-            LogManager.getLogger().error("Error initializing quirks", e);
-        }
     }
 
     public MechSummary[] getAllMechs() {

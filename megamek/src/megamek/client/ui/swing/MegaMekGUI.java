@@ -944,7 +944,6 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         } catch (IOException e) {
             LogManager.getLogger().error("Error saving custom weapon orders!", e);
         }
-        QuirksHandler.saveCustomQuirksList();
         System.exit(0);
     }
 

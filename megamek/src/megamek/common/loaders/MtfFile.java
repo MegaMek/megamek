@@ -19,12 +19,15 @@
  */
 package megamek.common.loaders;
 
-import java.io.*;
-import java.util.*;
-
 import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import org.apache.logging.log4j.LogManager;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.*;
 
 /**
  * @author Ben
@@ -78,11 +81,14 @@ public class MtfFile implements IMechLoader {
     private final Map<EquipmentType, Mounted> hSharedEquip = new HashMap<>();
     private final List<Mounted> vSplitWeapons = new ArrayList<>();
 
+    private final List<String> quirkLines = new ArrayList<>();
+
     public static final int[] locationOrder =
             {Mech.LOC_LARM, Mech.LOC_RARM, Mech.LOC_LT, Mech.LOC_RT, Mech.LOC_CT, Mech.LOC_HEAD, Mech.LOC_LLEG, Mech.LOC_RLEG, Mech.LOC_CLEG};
     public static final int[] rearLocationOrder =
             {Mech.LOC_LT, Mech.LOC_RT, Mech.LOC_CT};
 
+    public static final String COMMENT = "#";
     public static final String COCKPIT = "cockpit:";
     public static final String GYRO = "gyro:";
     public static final String MOTIVE = "motive:";
@@ -126,6 +132,9 @@ public class MtfFile implements IMechLoader {
     public static final String NO_CRIT = "nocrit:";
     public static final String SIZE = ":SIZE:";
     public static final String MUL_ID = "mul id:";
+    public static final String BASE_UNIT = "base unit:";
+    public static final String QUIRK = "quirk:";
+    public static final String WEAPON_QUIRK = "weaponquirk:";
     public static final String ROLE = "role:";
 
     /**
@@ -138,6 +147,7 @@ public class MtfFile implements IMechLoader {
             if (version == null) {
                 throw new EntityLoadingException("MTF File empty!");
             }
+
             // Version 1.0: Initial version.
             // Version 1.1: Added level 3 cockpit and gyro options.
             // version 1.2: added full head ejection
@@ -175,7 +185,7 @@ public class MtfFile implements IMechLoader {
         int armorLocation;
         while (r.ready()) {
             crit = r.readLine().trim();
-            if (crit.isEmpty()) {
+            if (crit.isEmpty() || crit.startsWith(COMMENT)) {
                 continue;
             }
 
@@ -521,6 +531,21 @@ public class MtfFile implements IMechLoader {
                 mech.setUseManualBV(true);
                 mech.setManualBV(bv);
             }
+
+            List<QuirkEntry> quirks = new ArrayList<>();
+            for (String quirkLine : quirkLines) {
+                if (quirkLine.startsWith(QUIRK)) {
+                    QuirkEntry quirkEntry = new QuirkEntry(quirkLine.substring(QUIRK.length()));
+                    quirks.add(quirkEntry);
+                } else if (quirkLine.startsWith(WEAPON_QUIRK)) {
+                    String[] fields = quirkLine.substring(WEAPON_QUIRK.length()).split(":");
+                    int slot = Integer.parseInt(fields[2]);
+                    QuirkEntry quirkEntry = new QuirkEntry(fields[0], fields[1], slot, fields[3]);
+                    quirks.add(quirkEntry);
+                }
+            }
+            mech.loadQuirks(quirks);
+
             return mech;
         } catch (Exception ex) {
             LogManager.getLogger().error("", ex);
@@ -1196,6 +1221,11 @@ public class MtfFile implements IMechLoader {
 
         if (lineLower.startsWith(MUL_ID)) {
             mulId = Integer.parseInt(line.substring(MUL_ID.length()));
+            return true;
+        }
+
+        if (lineLower.startsWith(QUIRK) || lineLower.startsWith(WEAPON_QUIRK)) {
+            quirkLines.add(line);
             return true;
         }
 

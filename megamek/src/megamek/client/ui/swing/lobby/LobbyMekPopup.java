@@ -67,8 +67,6 @@ class LobbyMekPopup {
     static final String LMP_HIDDEN = "HIDDEN";
     static final String LMP_FASSIGNONLY = "FASSIGNONLY";
     static final String LMP_FASSIGN = "FASSIGN";
-    static final String LMP_SAVE_QUIRKS_MODEL = "SAVE_QUIRKS_MODEL";
-    static final String LMP_SAVE_QUIRKS_ALL = "SAVE_QUIRKS_ALL";
     static final String LMP_RAPIDFIREMG_OFF = "RAPIDFIREMG_OFF";
     static final String LMP_RAPIDFIREMG_ON = "RAPIDFIREMG_ON";
     static final String LMP_HOTLOAD_OFF = "HOTLOAD_OFF";
@@ -116,7 +114,6 @@ class LobbyMekPopup {
         Game game = lobby.game();
         GameOptions opts = game.getOptions();
 
-        boolean optQuirks = opts.booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS);
         boolean optBurstMG = opts.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_BURST);
         boolean optLRMHotLoad = opts.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD);
         boolean optCapFighters = opts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_CAPITAL_FIGHTER);
@@ -186,10 +183,6 @@ class LobbyMekPopup {
 
         if (optBurstMG || optLRMHotLoad) {
             popup.add(equipMenu(anyRFMGOn, anyRFMGOff, anyHLOn, anyHLOff, optLRMHotLoad, optBurstMG, listener, seIds));
-        }
-
-        if (optQuirks) {
-            popup.add(quirksMenu(!entities.isEmpty() && canSeeAll, listener, eIds));
         }
 
         popup.add(ScalingPopup.spacer());
@@ -633,17 +626,6 @@ class LobbyMekPopup {
             menu.add(assignMenu);
         }
 
-        return menu;
-    }
-
-    /**
-     * @return the "Quirks" submenu, allowing to save the quirks to the quirks config file.
-     */
-    private static JMenu quirksMenu(boolean enabled, ActionListener listener, String eIds) {
-        JMenu menu = new JMenu(Messages.getString("ChatLounge.popup.quirks"));
-        menu.setEnabled(enabled);
-        menu.add(menuItem("Save Quirks for Chassis", LMP_SAVE_QUIRKS_ALL + NOINFO + eIds, enabled, listener));
-        menu.add(menuItem("Save Quirks for Chassis/Model", LMP_SAVE_QUIRKS_MODEL + NOINFO + eIds, enabled, listener));
         return menu;
     }
 

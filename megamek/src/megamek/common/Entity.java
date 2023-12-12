@@ -14030,21 +14030,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
     }
 
-    public void loadDefaultQuirks() {
-        // Get a list of quirks for this entity.
-        List<QuirkEntry> quirks;
-        try {
-            quirks = QuirksHandler.getQuirks(this);
-        } catch (Exception e) {
-            LogManager.getLogger().error("", e);
-            return;
-        }
-
-        // If this unit has no quirks, we do not need to proceed further.
-        if ((quirks == null) || quirks.isEmpty()) {
-            return;
-        }
-
+    public void loadQuirks(List<QuirkEntry> quirks) {
         // Load all the unit's quirks.
         for (QuirkEntry q : quirks) {
             // If the quirk doesn't have a location, then it is a unit quirk, not a weapon quirk.
@@ -14052,30 +14038,31 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 // Activate the unit quirk.
                 if (getQuirks().getOption(q.getQuirk()) == null) {
                     LogManager.getLogger().warn(String.format("%s failed for %s %s - Invalid quirk!",
-                            q.toLog(), getChassis(), getModel()));
+                            q, getChassis(), getModel()));
                     continue;
                 }
-                getQuirks().getOption(q.getQuirk()).setValue(true);continue;
+                getQuirks().getOption(q.getQuirk()).setValue(true);
+                continue;
             }
 
             // Get the weapon in the indicated location and slot.
             CriticalSlot cs = getCritical(getLocationFromAbbr(q.getLocation()), q.getSlot());
             if (cs == null) {
                 LogManager.getLogger().warn(String.format("%s failed for %s %s - Critical slot (%s-%s) did not load!",
-                        q.toLog(), getChassis(), getModel(), q.getLocation(), q.getSlot()));
+                        q, getChassis(), getModel(), q.getLocation(), q.getSlot()));
                 continue;
             }
             Mounted m = cs.getMount();
             if (m == null) {
                 LogManager.getLogger().warn(String.format("%s failed for %s %s - Critical slot (%s-%s) is empty!",
-                        q.toLog(), getChassis(), getModel(), q.getLocation(), q.getSlot()));
+                        q, getChassis(), getModel(), q.getLocation(), q.getSlot()));
                 continue;
             }
 
             // Make sure this is a weapon.
             if (!(m.getType() instanceof WeaponType) && !(m.getType().hasFlag(MiscType.F_CLUB))) {
                 LogManager.getLogger().warn(String.format("%s failed for %s %s - %s is not a weapon!",
-                        q.toLog(), getChassis(), getModel(), m.getName()));
+                        q, getChassis(), getModel(), m.getName()));
                 continue;
             }
 
@@ -14092,14 +14079,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
             if (!matchFound) {
                 LogManager.getLogger().warn(String.format("%s failed for %s %s - %s != %s",
-                        q.toLog(), getChassis(), getModel(), m.getType().getName(), q.getWeaponName()));
+                        q, getChassis(), getModel(), m.getType().getName(), q.getWeaponName()));
                 continue;
             }
 
             // Activate the weapon quirk.
             if (m.getQuirks().getOption(q.getQuirk()) == null) {
                 LogManager.getLogger().warn(String.format("%s failed for %s %s - Invalid quirk!",
-                        q.toLog(), getChassis(), getModel()));
+                        q, getChassis(), getModel()));
                 continue;
             }
             m.getQuirks().getOption(q.getQuirk()).setValue(true);
@@ -15475,5 +15462,29 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     @Override
     public UnitRole getRole() {
         return (role == null) ? UnitRole.UNDETERMINED : role;
+    }
+
+    /**
+     * Returns the slot in which the given mounted equipment is in its main location. Returns -1 when
+     * the mounted is not in a valid location or cannot be found.
+     *
+     * @param mounted the equipment to look for
+     * @return the (first) slot number that holds the mounted or -1 if none can be found
+     */
+    public int slotNumber(Mounted mounted) {
+        int location = mounted.getLocation();
+        if (location == Entity.LOC_NONE) {
+            return -1;
+        }
+        for (int slot = 0; slot < getNumberOfCriticals(location); slot++) {
+            CriticalSlot cs = getCritical(location, slot);
+            if ((cs != null) && (cs.getType() == CriticalSlot.TYPE_EQUIPMENT)) {
+                if ((cs.getMount() == mounted) ||
+                        ((cs.getMount2() != null) && (cs.getMount2() == mounted))) {
+                    return slot;
+                }
+            }
+        }
+        return -1;
     }
 }

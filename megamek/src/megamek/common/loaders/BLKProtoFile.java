@@ -115,7 +115,7 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
             loadEquipment(t, abbrs[loop], loop);
         }
         t.setArmorTonnage(t.getArmorWeight());
-
+        loadQuirks(t);
         return t;
     }
 

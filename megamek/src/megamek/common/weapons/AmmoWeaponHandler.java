@@ -15,17 +15,10 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.Compute;
-import megamek.common.CriticalSlot;
-import megamek.common.HitData;
-import megamek.common.Game;
-import megamek.common.Mounted;
-import megamek.common.Report;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.server.GameManager;
-import megamek.server.Server;
 import org.apache.logging.log4j.LogManager;
 
 /**
@@ -104,23 +97,23 @@ public class AmmoWeaponHandler extends WeaponHandler {
         if (!weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS)) {
             return false;
         // attack roll was a 2, may explode
-        } else if (roll <= 2) {
-            int jamRoll = Compute.d6(2);
+        } else if (roll.getIntValue() <= 2) {
+            Roll diceRoll = Compute.rollD6(2);
             
             Report r = new Report(3173);
             r.subject = subjectId;
             r.newlines = 0;
-            r.add(jamRoll);
+            r.add(diceRoll);
             vPhaseReport.addElement(r);                
             
-            if (jamRoll == 12) {
+            if (diceRoll.getIntValue() == 12) {
                 // round explodes in weapon
                 r = new Report(3163);
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);
                 
                 explodeRoundInBarrel(vPhaseReport);
-            } else if (jamRoll >= 10) {
+            } else if (diceRoll.getIntValue() >= 10) {
                 // plain old weapon jam
                 r = new Report(3161);
                 r.subject = subjectId;

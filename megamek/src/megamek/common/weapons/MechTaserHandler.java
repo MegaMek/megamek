@@ -15,17 +15,7 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.Aero;
-import megamek.common.BattleArmor;
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.HitData;
-import megamek.common.Game;
-import megamek.common.Mech;
-import megamek.common.Protomech;
-import megamek.common.Report;
-import megamek.common.Tank;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.GameManager;
 import megamek.server.Server;
@@ -62,8 +52,8 @@ public class MechTaserHandler extends AmmoWeaponHandler {
             return done;
         }
         Report r = new Report(3700);
-        int taserRoll = Compute.d6(2);
-        r.add(taserRoll);
+        Roll diceRoll = Compute.rollD6(2);
+        r.add(diceRoll);
         r.newlines = 0;
         vPhaseReport.add(r);
         if (entityTarget.getWeight() > 100) {
@@ -85,7 +75,7 @@ public class MechTaserHandler extends AmmoWeaponHandler {
             done = true;
         } else if (entityTarget instanceof Mech) {
             if (((Mech) entityTarget).isIndustrial()) {
-                if (taserRoll >= 8) {
+                if (diceRoll.getIntValue() >= 8) {
                     r = new Report(3705);
                     r.addDesc(entityTarget);
                     r.add(4);
@@ -99,7 +89,7 @@ public class MechTaserHandler extends AmmoWeaponHandler {
                     entityTarget.setTaserInterference(2, 4, true);
                 }
             } else {
-                if (taserRoll >= 11) {
+                if (diceRoll.getIntValue() >= 11) {
                     r = new Report(3705);
                     r.addDesc(entityTarget);
                     r.add(3);
@@ -117,7 +107,7 @@ public class MechTaserHandler extends AmmoWeaponHandler {
         } else if ((entityTarget instanceof Protomech)
                 || (entityTarget instanceof Tank)
                 || (entityTarget instanceof Aero)) {
-            if (taserRoll >= 8) {
+            if (diceRoll.getIntValue() >= 8) {
                 r = new Report(3705);
                 r.addDesc(entityTarget);
                 r.add(4);

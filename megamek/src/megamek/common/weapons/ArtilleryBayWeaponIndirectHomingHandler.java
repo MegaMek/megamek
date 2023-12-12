@@ -24,23 +24,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Vector;
 
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.BombType;
-import megamek.common.Building;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.HitData;
-import megamek.common.Game;
-import megamek.common.Infantry;
-import megamek.common.Mounted;
-import megamek.common.Report;
-import megamek.common.TagInfo;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
@@ -170,14 +154,14 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
         vPhaseReport.addElement(r);
 
         // do we hit?
-        bMissed = roll < toHit.getValue();
+        bMissed = roll.getIntValue() < toHit.getValue();
 
         // are we a glancing hit?
         setGlancingBlowFlags(entityTarget);
         addGlancingBlowReports(vPhaseReport);
 
         // Set Margin of Success/Failure.
-        toHit.setMoS(roll - Math.max(2, toHit.getValue()));
+        toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
         bDirect = game.getOptions().booleanOption("tacops_direct_blow")
                 && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
         if (bDirect) {
@@ -497,7 +481,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
                     vPhaseReport.add(r);
                     toHit.addModifier(CapMissileAMSMod, "damage from AMS");
                     // If the damage was enough to make us miss, record it for reporting and set 0 hits
-                    if (roll < toHit.getValue()) {
+                    if (roll.getIntValue() < toHit.getValue()) {
                         bMissed = true;
                         nDamPerHit = 0;
                         hits = 0;
@@ -513,12 +497,13 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
                 r.indent(1);
                 r.subject = subjectId;
                 vPhaseReport.add(r);
-                int destroyRoll = Compute.d6();
-                if (destroyRoll <= 3) {
+                Roll diceRoll = Compute.rollD6(1);
+
+                if (diceRoll.getIntValue() <= 3) {
                     r = new Report(3240);
                     r.subject = subjectId;
                     r.add("missile");
-                    r.add(destroyRoll);
+                    r.add(diceRoll);
                     vPhaseReport.add(r);
                     nDamPerHit = 0;
                     hits = 0;
@@ -526,7 +511,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
                 } else {
                     r = new Report(3241);
                     r.add("missile");
-                    r.add(destroyRoll);
+                    r.add(diceRoll);
                     r.subject = subjectId;
                     vPhaseReport.add(r);
                     hits = 1;

@@ -74,6 +74,7 @@ public class SerializationHelper {
         xStream.allowTypeHierarchy(megamek.common.Crew.class);
         xStream.allowTypeHierarchy(megamek.common.GameTurn.class);
         xStream.allowTypeHierarchy(megamek.common.ITechnology.class);
+        xStream.allowTypeHierarchy(megamek.common.Roll.class);
         xStream.allowTypeHierarchy(megamek.common.Transporter.class);
         xStream.allowTypeHierarchy(megamek.common.Mounted.class);
         xStream.allowTypeHierarchy(megamek.common.actions.EntityAction.class);

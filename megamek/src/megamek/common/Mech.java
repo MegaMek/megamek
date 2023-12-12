@@ -5476,9 +5476,9 @@ public abstract class Mech extends Entity {
             vPhaseReport.add(Report.subjectReport(2285, getId()).add(psr.getValueAsString()).add(psr.getDesc()));
             vPhaseReport.add(Report.subjectReport(2290, getId()).indent().noNL().add(1).add(psr.getPlainDesc()));
 
-            int diceRoll = getCrew().rollPilotingSkill();
+            Roll diceRoll = getCrew().rollPilotingSkill();
             Report r = Report.subjectReport(2300, getId()).add(psr).add(diceRoll);
-            if (diceRoll < psr.getValue()) {
+            if (diceRoll.getIntValue() < psr.getValue()) {
                 setStalled(true);
                 vPhaseReport.add(r.noNL().choose(false));
                 vPhaseReport.add(Report.subjectReport(2303, getId()));
@@ -5506,9 +5506,9 @@ public abstract class Mech extends Entity {
             vPhaseReport.add(Report.subjectReport(2285, getId()).add(psr.getValueAsString()).add(psr.getDesc()));
             vPhaseReport.add(Report.subjectReport(2290, getId()).indent().noNL().add(1).add(psr.getPlainDesc()));
 
-            int diceRoll = getCrew().rollPilotingSkill();
+            Roll diceRoll = getCrew().rollPilotingSkill();
             Report r = Report.subjectReport(2300, getId()).add(psr).add(diceRoll);
-            if (diceRoll < psr.getValue()) {
+            if (diceRoll.getIntValue() < psr.getValue()) {
                 vPhaseReport.add(r.choose(false));
             } else {
                 setStalled(false);
@@ -6262,13 +6262,13 @@ public abstract class Mech extends Entity {
         }
         if (coolantSystem != null) {
             boolean bFailure = false;
-            int nRoll = Compute.d6(2);
+            Roll diceRoll = Compute.rollD6(2);
             bUsedCoolantSystem = true;
             vDesc.addElement(Report.subjectReport(2365, getId()).addDesc(this).add(coolantSystem.getName()));
             int requiredRoll = EMERGENCY_COOLANT_SYSTEM_FAILURE[nCoolantSystemLevel];
-            Report r = Report.subjectReport(2370, getId()).indent().add(requiredRoll).add(nRoll);
+            Report r = Report.subjectReport(2370, getId()).indent().add(requiredRoll).add(diceRoll);
 
-            if (nRoll < requiredRoll) {
+            if (diceRoll.getIntValue() < requiredRoll) {
                 // uh oh
                 bFailure = true;
                 r.choose(false);
@@ -6308,7 +6308,7 @@ public abstract class Mech extends Entity {
             } else {
                 r.choose(true);
                 vDesc.addElement(r);
-                nCoolantSystemMOS = nRoll - EMERGENCY_COOLANT_SYSTEM_FAILURE[nCoolantSystemLevel];
+                nCoolantSystemMOS = diceRoll.getIntValue() - EMERGENCY_COOLANT_SYSTEM_FAILURE[nCoolantSystemLevel];
             }
             return bFailure;
         }

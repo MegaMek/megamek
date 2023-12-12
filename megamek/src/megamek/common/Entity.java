@@ -684,7 +684,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private int sensorCheck;
 
     // the roll for ghost targets
-    private int ghostTargetRoll;
+    private Roll ghostTargetRoll;
     // the roll to override ghost targets
     private int ghostTargetOverride;
 
@@ -6335,7 +6335,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         // ghost target roll
-        ghostTargetRoll = Compute.d6(2);
+        ghostTargetRoll = Compute.rollD6(2);
         ghostTargetOverride = Compute.d6(2);
 
         // update fatigue count
@@ -12126,12 +12126,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return damage;
     }
 
-    public int getGhostTargetRoll() {
+    public Roll getGhostTargetRoll() {
         return ghostTargetRoll;
     }
 
     public int getGhostTargetRollMoS() {
-        return ghostTargetRoll - (getCrew().getSensorOps() + 2);
+        return ghostTargetRoll.getIntValue() - (getCrew().getSensorOps() + 2);
     }
 
     public int getGhostTargetOverride() {
@@ -13413,13 +13413,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                                                         HashMap<Integer, List<CriticalSlot>> vCriticals) {
         if ((masc != null) && masc.curMode().equals("Armed")) {
             boolean bFailure = false;
-            int nRoll = Compute.d6(2);
+            Roll diceRoll = Compute.rollD6(2);
+            int rollValue = diceRoll.getIntValue();
+            String rollCalc = String.valueOf(rollValue);
             boolean isSupercharger = masc.getType().hasSubType(MiscType.S_SUPERCHARGER);
             //WHY is this -1 here?
             if (isSupercharger
                 && (((this instanceof Mech) && ((Mech) this).isIndustrial())
                     || (this instanceof SupportTank) || (this instanceof SupportVTOL))) {
-                nRoll -= 1;
+                rollValue -= 1;
+                rollCalc = rollValue + " [" + diceRoll.getIntValue() + " - 1]";
             }
 
             if (isSupercharger) {
@@ -13436,10 +13439,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             r.subject = getId();
             r.indent();
             r.add(isSupercharger ? getSuperchargerTarget() : getMASCTarget());
-            r.add(nRoll);
+            r.addDataWithTooltip(rollCalc, diceRoll.getReport());
 
-            if ((!isSupercharger && (nRoll < getMASCTarget()))
-                    || (isSupercharger && (nRoll < getSuperchargerTarget()))) {
+            if ((!isSupercharger && (rollValue < getMASCTarget()))
+                    || (isSupercharger && (rollValue < getSuperchargerTarget()))) {
                 // uh oh
                 bFailure = true;
                 r.choose(false);
@@ -13448,31 +13451,31 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 if (isSupercharger) {
                     // do the damage - engine crits
                     int hits = 0;
-                    int roll = Compute.d6(2);
+                    Roll diceRoll2 = Compute.rollD6(2);
                     r = new Report(6310);
                     r.subject = getId();
-                    r.add(roll);
+                    r.add(diceRoll2);
                     r.newlines = 0;
                     vDesc.addElement(r);
-                    if (roll <= 7) {
+                    if (diceRoll2.getIntValue() <= 7) {
                         // no effect
                         r = new Report(6005);
                         r.subject = getId();
                         r.newlines = 0;
                         vDesc.addElement(r);
-                    } else if ((roll >= 8) && (roll <= 9)) {
+                    } else if ((diceRoll2.getIntValue() == 8) || (diceRoll2.getIntValue() == 9)) {
                         hits = 1;
                         r = new Report(6315);
                         r.subject = getId();
                         r.newlines = 0;
                         vDesc.addElement(r);
-                    } else if ((roll >= 10) && (roll <= 11)) {
+                    } else if ((diceRoll2.getIntValue() ==10) || (diceRoll2.getIntValue() == 11)) {
                         hits = 2;
                         r = new Report(6320);
                         r.subject = getId();
                         r.newlines = 0;
                         vDesc.addElement(r);
-                    } else if (roll == 12) {
+                    } else if (diceRoll2.getIntValue() == 12) {
                         hits = 3;
                         r = new Report(6325);
                         r.subject = getId();

@@ -22,7 +22,6 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.GameManager;
-import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
@@ -58,19 +57,19 @@ public class RACHandler extends UltraWeaponHandler {
         boolean jams = false;
         switch (howManyShots) {
             case 6:
-                if (roll <= 4) {
+                if (roll.getIntValue() <= 4) {
                     jams = true;
                 }
                 break;
             case 5:
             case 4:
-                if (roll <= 3) {
+                if (roll.getIntValue() <= 3) {
                     jams = true;
                 }
                 break;
             case 3:
             case 2:
-                if (roll <= 2) {
+                if (roll.getIntValue() <= 2) {
                     jams = true;
                 }
                 break;

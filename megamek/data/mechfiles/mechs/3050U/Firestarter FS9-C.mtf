@@ -10,6 +10,14 @@ Source:TRO: 3050
 Rules Level:2
 role:Striker
 
+
+
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:exposed_linkage:RA:3:Flamer
+weaponquirk:exposed_linkage:LA:3:Flamer
+
+
 Mass:35
 Engine:210 Fusion Engine(IS)
 Structure:Standard

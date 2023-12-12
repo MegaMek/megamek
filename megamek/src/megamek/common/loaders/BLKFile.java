@@ -20,11 +20,14 @@ import java.util.stream.Collectors;
 import com.sun.mail.util.DecodingException;
 import megamek.common.*;
 import megamek.common.InfantryBay.PlatoonType;
+import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.PilotOptions;
 import megamek.common.util.BuildingBlock;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 public class BLKFile {
 
@@ -103,6 +106,29 @@ public class BLKFile {
         setTechLevel(entity);
         setFluff(entity);
         checkManualBV(entity);
+    }
+
+    protected void loadQuirks(Entity entity) throws EntityLoadingException {
+        try {
+            List<QuirkEntry> quirks = new ArrayList<>();
+            if (dataFile.exists("quirks")) {
+                for (String unitQuirk : dataFile.getDataAsVector("quirks")) {
+                    QuirkEntry quirkEntry = new QuirkEntry(unitQuirk);
+                    quirks.add(quirkEntry);
+                }
+            }
+            if (dataFile.exists("weaponQuirks")) {
+                for (String weaponQuirk : dataFile.getDataAsVector("weaponQuirks")) {
+                    String[] fields = weaponQuirk.split(":");
+                    int slot = Integer.parseInt(fields[2]);
+                    QuirkEntry quirkEntry = new QuirkEntry(fields[0], fields[1], slot, fields[3]);
+                    quirks.add(quirkEntry);
+                }
+            }
+            entity.loadQuirks(quirks);
+        } catch (Exception e) {
+            throw new EntityLoadingException("Error loading unit quirks!", e);
+        }
     }
 
     public int defaultAeroVGLFacing(int location, boolean rearFacing) {
@@ -628,6 +654,26 @@ public class BLKFile {
 
         if (t.hasRole()) {
             blk.writeBlockData("role", t.getRole().toString());
+        }
+
+        List<String> quirkList = t.getQuirks().getOptionsList().stream()
+                .filter(IOption::booleanValue)
+                .map(IBasicOption::getName)
+                .collect(Collectors.toList());
+
+        if (!quirkList.isEmpty()) {
+            blk.writeBlockData("quirks", String.join("\n", quirkList));
+        }
+
+        List<String> weaponQuirkList = new ArrayList<>();
+        for (Mounted equipment : t.getEquipment()) {
+            for (IOption weaponQuirk : equipment.getQuirks().activeQuirks()) {
+                weaponQuirkList.add(weaponQuirk.getName() + ":" + t.getLocationAbbr(equipment.getLocation()) + ":"
+                        + t.slotNumber(equipment) + ":" + equipment.getType().getInternalName());
+            }
+        }
+        if (!weaponQuirkList.isEmpty()) {
+            blk.writeBlockData("weaponQuirks", String.join("\n", weaponQuirkList));
         }
 
         if ((t instanceof Infantry) && ((Infantry) t).getMount() != null) {

@@ -10,6 +10,11 @@ source:TRO: Clan Invasion
 Rules Level:2
 role:Skirmisher
 
+weaponquirk:stable_weapon:RA:3:CLATM12
+weaponquirk:stable_weapon:LA:4:CLHeavyMediumLaser
+weaponquirk:stable_weapon:LA:6:CLHeavyMediumLaser
+
+
 Mass:80
 Engine:400 XL (Clan) Engine(IS)
 Structure:IS Standard

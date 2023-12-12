@@ -166,3 +166,10 @@ XTR: Primitives III
 <escape_pod>
 4
 </escape_pod>
+
+<quirks>
+difficult_maintain
+docking_arms
+obsolete
+</quirks>
+

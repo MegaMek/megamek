@@ -10,6 +10,11 @@ source:Rec Guide:ilClan #14
 rules level:2
 role:Skirmisher
 
+
+
+quirk:difficult_maintain
+
+
 mass:65
 engine:325 XXL Engine(IS)
 structure:IS Composite

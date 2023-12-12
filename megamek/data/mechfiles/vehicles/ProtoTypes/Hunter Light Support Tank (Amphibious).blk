@@ -96,3 +96,12 @@ TRO: Prototypes
 <tonnage>
 35.0
 </tonnage>
+
+<quirks>
+gas_hog
+</quirks>
+
+<weaponQuirks>
+accurate:FR:0:ISLRT10
+accurate:TU:0:ISEnhancedLRM10
+</weaponQuirks>

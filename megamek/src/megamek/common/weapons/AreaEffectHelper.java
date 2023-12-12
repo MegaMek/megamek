@@ -258,16 +258,17 @@ public class AreaEffectHelper {
             return;
         }
 
-        int roll = Compute.d6(2);
-        int result = roll + distFromCenter;
-        boolean destroyed = result <= rollTarget;
+        Roll diceRoll = Compute.rollD6(2);
+        int rollValue = diceRoll.getIntValue() + distFromCenter;
+        String rollCalc = rollValue + " [" + diceRoll.getIntValue() + " + " + distFromCenter + "]";
+        boolean destroyed = rollValue <= rollTarget;
 
         Report r = new Report(9987);
         r.indent(1);
         r.subject = attacker.getId();
         r.newlines = 1;
         r.add(rollTarget);
-        r.add(roll);
+        r.addDataWithTooltip(rollCalc, diceRoll.getReport());
         r.add(distFromCenter);
         r.choose(destroyed);
         vPhaseReport.addElement(r);

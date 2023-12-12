@@ -9,6 +9,12 @@ source:XTR: Republic II
 rules level:2
 role:Striker
 
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+
+
 mass:50
 engine:300 XL Engine(IS)
 structure:IS Endo Steel

@@ -10,6 +10,11 @@ source:TRO: 3050
 rules level:2
 role:Skirmisher
 
+
+
+quirk:pro_actuator
+
+
 mass:65
 engine:260 XL Engine(IS)
 structure:IS Standard

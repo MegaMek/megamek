@@ -10,6 +10,13 @@ Source:TRO: 3145 Capellan Confederation
 Rules Level:2
 role:Missile Boat
 
+
+
+quirk:ext_twist
+quirk:difficult_maintain
+quirk:exp_actuator
+
+
 Mass:30
 Engine:210 XL Engine(IS)
 Structure:IS Endo-Steel

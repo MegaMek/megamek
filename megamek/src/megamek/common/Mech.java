@@ -20,6 +20,8 @@ import megamek.common.cost.MekCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.MPBoosters;
 import megamek.common.loaders.MtfFile;
+import megamek.common.options.IBasicOption;
+import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.weapons.autocannons.ACWeapon;
@@ -3902,6 +3904,16 @@ public abstract class Mech extends Entity {
     }
 
     public String getCockpitTypeString() {
+        if (isIndustrial()) {
+            switch (getCockpitType()) {
+                case COCKPIT_STANDARD:
+                    return Mech.getCockpitTypeString(COCKPIT_INDUSTRIAL) + " (Adv. FCS)";
+                case COCKPIT_PRIMITIVE:
+                    return Mech.getCockpitTypeString(COCKPIT_PRIMITIVE_INDUSTRIAL) + " (Adv. FCS)";
+                case COCKPIT_SUPERHEAVY:
+                    return Mech.getCockpitTypeString(COCKPIT_SUPERHEAVY_INDUSTRIAL) + " (Adv. FCS)";
+            }
+        }
         return Mech.getCockpitTypeString(getCockpitType());
     }
 
@@ -4218,6 +4230,21 @@ public abstract class Mech extends Entity {
         if (hasRole()) {
             sb.append(MtfFile.ROLE).append(getRole().toString());
             sb.append(newLine);
+        }
+        sb.append(newLine);
+
+        getQuirks().getOptionsList().stream()
+                .filter(IOption::booleanValue)
+                .map(IBasicOption::getName)
+                .forEach(quirk -> sb.append(MtfFile.QUIRK).append(quirk).append(newLine));
+
+        for (Mounted equipment : getEquipment()) {
+            for (IOption weaponQuirk : equipment.getQuirks().activeQuirks()) {
+                sb.append(MtfFile.WEAPON_QUIRK).append(weaponQuirk.getName()).append(":")
+                        .append(getLocationAbbr(equipment.getLocation())).append(":")
+                        .append(slotNumber(equipment)).append(":")
+                        .append(equipment.getType().getInternalName()).append(newLine);
+            }
         }
         sb.append(newLine);
 
@@ -5466,9 +5493,9 @@ public abstract class Mech extends Entity {
             vPhaseReport.add(Report.subjectReport(2285, getId()).add(psr.getValueAsString()).add(psr.getDesc()));
             vPhaseReport.add(Report.subjectReport(2290, getId()).indent().noNL().add(1).add(psr.getPlainDesc()));
 
-            int diceRoll = getCrew().rollPilotingSkill();
+            Roll diceRoll = getCrew().rollPilotingSkill();
             Report r = Report.subjectReport(2300, getId()).add(psr).add(diceRoll);
-            if (diceRoll < psr.getValue()) {
+            if (diceRoll.getIntValue() < psr.getValue()) {
                 setStalled(true);
                 vPhaseReport.add(r.noNL().choose(false));
                 vPhaseReport.add(Report.subjectReport(2303, getId()));
@@ -5496,9 +5523,9 @@ public abstract class Mech extends Entity {
             vPhaseReport.add(Report.subjectReport(2285, getId()).add(psr.getValueAsString()).add(psr.getDesc()));
             vPhaseReport.add(Report.subjectReport(2290, getId()).indent().noNL().add(1).add(psr.getPlainDesc()));
 
-            int diceRoll = getCrew().rollPilotingSkill();
+            Roll diceRoll = getCrew().rollPilotingSkill();
             Report r = Report.subjectReport(2300, getId()).add(psr).add(diceRoll);
-            if (diceRoll < psr.getValue()) {
+            if (diceRoll.getIntValue() < psr.getValue()) {
                 vPhaseReport.add(r.choose(false));
             } else {
                 setStalled(false);
@@ -6252,13 +6279,13 @@ public abstract class Mech extends Entity {
         }
         if (coolantSystem != null) {
             boolean bFailure = false;
-            int nRoll = Compute.d6(2);
+            Roll diceRoll = Compute.rollD6(2);
             bUsedCoolantSystem = true;
             vDesc.addElement(Report.subjectReport(2365, getId()).addDesc(this).add(coolantSystem.getName()));
             int requiredRoll = EMERGENCY_COOLANT_SYSTEM_FAILURE[nCoolantSystemLevel];
-            Report r = Report.subjectReport(2370, getId()).indent().add(requiredRoll).add(nRoll);
+            Report r = Report.subjectReport(2370, getId()).indent().add(requiredRoll).add(diceRoll);
 
-            if (nRoll < requiredRoll) {
+            if (diceRoll.getIntValue() < requiredRoll) {
                 // uh oh
                 bFailure = true;
                 r.choose(false);
@@ -6298,7 +6325,7 @@ public abstract class Mech extends Entity {
             } else {
                 r.choose(true);
                 vDesc.addElement(r);
-                nCoolantSystemMOS = nRoll - EMERGENCY_COOLANT_SYSTEM_FAILURE[nCoolantSystemLevel];
+                nCoolantSystemMOS = diceRoll.getIntValue() - EMERGENCY_COOLANT_SYSTEM_FAILURE[nCoolantSystemLevel];
             }
             return bFailure;
         }

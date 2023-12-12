@@ -10,6 +10,16 @@ source:TRO: 3085
 Rules Level:2
 role:Missile Boat
 
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:jettison_capable:RT:8:LRM 10
+
+
 Mass:55
 Engine:275 Light Engine(IS)
 Structure:Standard

@@ -10,6 +10,10 @@ Source:TRO: 3058
 Rules Level:2
 role:Brawler
 
+quirk:easy_maintain
+quirk:rugged_1
+
+
 Mass:60
 Engine:240 Fusion Engine
 Structure:Standard

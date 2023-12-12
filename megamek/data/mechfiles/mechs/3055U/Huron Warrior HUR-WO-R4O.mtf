@@ -10,6 +10,11 @@ Source:TRO: 3055
 Rules Level:2
 role:Skirmisher
 
+
+
+quirk:imp_sensors
+
+
 Mass:50
 Engine:250 XL Engine
 Structure:Endo Steel

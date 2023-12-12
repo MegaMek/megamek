@@ -10,6 +10,10 @@ source:TRO: 3058
 rules level:2
 role:Missile Boat
 
+
+quirk:imp_target_short
+
+
 mass:65
 engine:325 Fusion (Clan) Engine(IS)
 structure:IS Standard

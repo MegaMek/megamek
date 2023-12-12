@@ -10,6 +10,15 @@ source:TRO: 3085
 Rules Level:4
 role:Scout
 
+
+
+quirk:imp_com
+quirk:imp_sensors
+quirk:bad_rep_clan
+quirk:bad_rep_is
+quirk:exp_actuator
+
+
 Mass:45
 Engine:270 Light Engine(IS)
 Structure:IS Endo Steel

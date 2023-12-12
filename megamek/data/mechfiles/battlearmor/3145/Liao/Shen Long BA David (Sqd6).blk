@@ -119,3 +119,10 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<weaponQuirks>
+mod_weapons:Squad:0:BADavidLightGaussRifle
+mod_weapons:Squad:1:BADavidLightGaussRifle
+mod_weapons:Squad:2:BADavidLightGaussRifle
+mod_weapons:Squad:3:BADavidLightGaussRifle
+</weaponQuirks>

@@ -9,6 +9,11 @@ source:Historical Turning Points: New Dallas
 rules level:2
 role:Brawler
 
+
+
+quirk:rugged_1
+
+
 mass:80
 engine:320 XL Engine(IS)
 structure:IS Endo Steel

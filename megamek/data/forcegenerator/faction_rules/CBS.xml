@@ -76,7 +76,7 @@
 		
 		<subforces>
 			<subforce ifDateBetween=",3059" num="2">%ELEMENT%</subforce>
-			<subforce chassis="Black Lion Battlecruiser"
+			<subforce chassis="Black Lion II Battlecruiser"
 				fluffName="CBS Rocinante"
 				ifDateBetween=",3072">%ELEMENT%</subforce>
 			<subforce chassis="Aegis Heavy Cruiser"
@@ -85,7 +85,7 @@
 			<subforce chassis="Lola III Destroyer"
 				fluffName="CBS Blood Fury"
 				ifDateBetween=",3064">%ELEMENT%</subforce>
-			<subforce chassis="York Destroyer Carrier"
+			<subforce chassis="York Destroyer-Carrier"
 				fluffName="CBS Stooping Kite"
 				ifDateBetween="2950,3084">%ELEMENT%</subforce>
 			<subforce chassis="Carrack Transport"

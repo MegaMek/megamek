@@ -10,6 +10,17 @@ source:Rec Guide:ilClan #23
 rules level:2
 role:Striker
 
+
+
+quirk:ext_twist
+quirk:bad_rep_is
+weaponquirk:direct_torso_mount:RT:3:ISLargePulseLaser
+weaponquirk:direct_torso_mount:LT:3:ISStreakSRM6
+weaponquirk:direct_torso_mount:LA:2:ISERMediumLaser
+weaponquirk:direct_torso_mount:LA:3:ISERMediumLaser
+weaponquirk:direct_torso_mount:LA:4:ISERMediumLaser
+
+
 mass:50
 engine:300 XL Engine(IS)
 structure:IS Standard

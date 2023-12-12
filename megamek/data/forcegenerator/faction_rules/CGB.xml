@@ -157,17 +157,17 @@ but have a smaller aerospace arm than most other Clans. -->
 			<subforce fluffName="CGB Ursa Major" ifDateBetween="2932,3100"
 				chassis="Nightlord Battleship">%ELEMENT%</subforce>
 			<subforce fluffName="CGB Bear&apos;s Den" ifDateBetween=",3066"
-				chassis="Black Lion Battlecruiser">%ELEMENT%</subforce>
+				chassis="Black Lion II Battlecruiser">%ELEMENT%</subforce>
 			<subforce fluffName="CGB Shining Claw" ifDateBetween=",3059"
 				chassis="Congress Frigate">%ELEMENT%</subforce>
 			<subforce fluffName="CGB Ursa Minor" ifDateBetween=",2946"
 				chassis="Riga Frigate">%ELEMENT%</subforce>
 			<subforce fluffName="CGB Ursa Minor" ifDateBetween="2947,3066"
-				chassis="York Destroyer Carrier">%ELEMENT%</subforce>
+				chassis="York Destroyer-Carrier">%ELEMENT%</subforce>
 			<subforce fluffName="CGB White Claw" ifDateBetween=",3066"
-				chassis="Essex Destroyer">%ELEMENT%</subforce>
+				chassis="Essex II Destroyer">%ELEMENT%</subforce>
 			<subforce fluffName="CGB White Fang" ifDateBetween=",3066"
-				chassis="Essex Destroyer">%ELEMENT%</subforce>
+				chassis="Essex II Destroyer">%ELEMENT%</subforce>
 			<subforce fluffName="CGB Fire Fang" ifDateBetween=",3059"
 				chassis="Whirlwind Destroyer">%ELEMENT%</subforce>
 			<subforce fluffName="CGB Ursus" ifDateBetween=",3059"
@@ -177,7 +177,7 @@ but have a smaller aerospace arm than most other Clans. -->
 			<subforce fluffName="CGB Icepick" ifDateBetween=",3066"
 				chassis="Lola III Destroyer">%ELEMENT%</subforce>
 			<subforce fluffName="CGB Black Ghost" ifDateBetween=",3066"
-				chassis="Fredasa Corvette Raider">%ELEMENT%</subforce>
+				chassis="Fredasa (Corvette-Raider)">%ELEMENT%</subforce>
 			<subforce fluffName="CGB Great Bear" ifDateBetween="3055,3078"
 				chassis="Leviathan Heavy Transport">%ELEMENT%</subforce>
 			<subforce fluffName="CGB Ursine Boatman" ifDateBetween=",3078"

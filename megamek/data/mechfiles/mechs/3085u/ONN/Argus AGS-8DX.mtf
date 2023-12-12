@@ -10,6 +10,12 @@ source:TRO: 3085
 Rules Level:4
 role:Skirmisher
 
+
+
+quirk:easy_maintain
+quirk:no_arms
+
+
 Mass:60
 Engine:300 XL Engine(IS)
 Structure:Endo Steel

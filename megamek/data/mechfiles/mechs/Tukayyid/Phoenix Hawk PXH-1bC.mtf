@@ -10,6 +10,13 @@ source:Battle of Tukayyid
 Rules Level:2
 role:Skirmisher
 
+
+
+quirk:command_mech
+quirk:imp_com
+weaponquirk:jettison_capable:RA:7:ISERLargeLaser
+
+
 Mass:45
 Engine:270 XL Engine(IS)
 Structure:IS Endo Steel

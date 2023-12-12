@@ -119,3 +119,12 @@ TRO: Prototypes
 20.0
 </tonnage>
 
+
+<quirks>
+poor_performance
+trailer_hitch
+</quirks>
+
+<weaponQuirks>
+accurate:FR:0:ISMediumLaser
+</weaponQuirks>

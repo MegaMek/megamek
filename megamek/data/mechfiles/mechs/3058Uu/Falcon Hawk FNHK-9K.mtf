@@ -10,6 +10,12 @@ Source:TRO: 3058
 Rules Level:2
 role:Brawler
 
+
+
+
+quirk:good_rep_1
+
+
 Mass:35
 Engine:175 XL Engine
 Structure:Standard

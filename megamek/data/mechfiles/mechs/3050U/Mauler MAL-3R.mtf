@@ -10,6 +10,12 @@ Source:TRO: 3050
 Rules Level:2
 role:Sniper
 
+
+
+weaponquirk:stable_weapon:RA:2:ISLBXAC10
+weaponquirk:stable_weapon:LA:2:ISLBXAC10
+
+
 Mass:90
 Engine:270 XL Fusion Engine
 Structure:Standard

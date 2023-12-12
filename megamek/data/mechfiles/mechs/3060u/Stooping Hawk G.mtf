@@ -10,6 +10,9 @@ Source:TRO: 3060
 Rules Level:3
 role:Skirmisher
 
+quirk:rugged_2
+
+
 Mass:55
 Engine:275 Fusion (Clan) Engine(IS)
 Structure:Clan Endo Steel

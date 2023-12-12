@@ -10,6 +10,12 @@ Source:XTR: Clans
 Rules Level:4
 role:Brawler
 
+quirk:distracting
+quirk:pro_actuator
+quirk:cramped_cockpit
+quirk:prototype
+
+
 Mass:50
 Engine:200 Fusion Engine(IS)
 Structure:IS Standard

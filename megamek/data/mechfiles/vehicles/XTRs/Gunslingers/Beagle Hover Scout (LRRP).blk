@@ -91,3 +91,9 @@ XTR: Gunslingers
 <tonnage>
 15.0
 </tonnage>
+
+<quirks>
+imp_com
+obsolete
+</quirks>
+

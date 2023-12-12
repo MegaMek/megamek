@@ -10,6 +10,12 @@ Source:TRO: 3058
 Rules Level:4
 role:Sniper
 
+
+
+quirk:cowl
+quirk:difficult_maintain
+
+
 Mass:45
 Engine:270 XL Engine(IS)
 Structure:IS Endo Steel

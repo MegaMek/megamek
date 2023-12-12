@@ -10,6 +10,13 @@ source:ForcePack UrbanMech
 rules level:3
 role:Ambusher
 
+
+
+quirk:ext_twist
+quirk:low_profile
+quirk:no_arms
+
+
 mass:30
 engine:60 Fusion Engine(IS)
 structure:IS Standard

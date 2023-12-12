@@ -10,6 +10,11 @@ source:TRO: 3085
 Rules Level:2
 role:Striker
 
+
+quirk:imp_life_support
+quirk:nimble_jumper
+
+
 Mass:45
 Engine:315 XL (Clan) Engine
 Structure:Endo Steel

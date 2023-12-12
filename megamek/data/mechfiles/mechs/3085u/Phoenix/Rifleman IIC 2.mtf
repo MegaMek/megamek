@@ -10,6 +10,10 @@ Source:TRO: 3085
 Rules Level:2
 role:Sniper
 
+quirk:anti_air
+quirk:imp_com
+
+
 Mass:65
 Engine:260 Fusion (Clan) Engine
 Structure:Endo Steel

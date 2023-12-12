@@ -10,6 +10,14 @@ source:Rec Guide:ilClan #2
 rules level:2
 role:Sniper
 
+quirk:barrel_fists_la
+quirk:barrel_fists_ra
+quirk:pro_actuator
+quirk:oversized
+quirk:poor_performance
+quirk:weak_head_1
+
+
 mass:100
 engine:300 Fusion (Clan) Engine(IS)
 structure:IS Standard

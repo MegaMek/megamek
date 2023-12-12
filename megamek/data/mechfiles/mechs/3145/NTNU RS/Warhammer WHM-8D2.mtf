@@ -10,6 +10,15 @@ Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:3
 role:Brawler
 
+
+
+quirk:rugged_2
+quirk:searchlight
+quirk:stable
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
+
 Mass:70
 Engine:280 Fusion Engine(IS)
 Structure:IS Endo Steel

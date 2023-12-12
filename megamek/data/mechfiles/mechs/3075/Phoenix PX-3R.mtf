@@ -10,6 +10,12 @@ Source:TRO: 3075
 Rules Level:1
 role:Skirmisher
 
+
+
+weaponquirk:direct_torso_mount:LT:1:SRM 2
+weaponquirk:direct_torso_mount:LT:2:SRM 2
+
+
 Mass:50
 Engine:250 Fusion Engine
 Structure:Standard

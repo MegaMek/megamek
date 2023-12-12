@@ -167,6 +167,7 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
             a.setBaseChassisFireConWeight((dataFile.getDataAsDouble("baseChassisFireConWeight")[0]));
         }
 
+        loadQuirks(a);
         return a;
     }
 

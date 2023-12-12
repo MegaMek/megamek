@@ -146,3 +146,8 @@ ARMOR:StarSlab/4
 COMMUNICATIONS:O/P 300
 TARGETING:O/P GRNDSTAT 50A
 </systemManufacturers>
+
+<quirks>
+difficult_maintain
+</quirks>
+

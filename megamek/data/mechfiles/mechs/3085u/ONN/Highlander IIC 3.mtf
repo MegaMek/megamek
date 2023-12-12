@@ -10,6 +10,12 @@ Source:Record Sheets: 3085 Unabridged - Old is the New New
 Rules Level:2
 role:Missile Boat
 
+quirk:command_mech
+quirk:cowl
+quirk:reinforced_legs
+quirk:difficult_eject
+
+
 Mass:90
 Engine:270 Fusion (Clan) Engine
 Structure:Standard

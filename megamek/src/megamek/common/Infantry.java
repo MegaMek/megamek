@@ -1670,7 +1670,7 @@ public class Infantry extends Entity {
 
     @Override
     public String getMovementModeAsString() {
-        if (!hasETypeFlag(Entity.ETYPE_BATTLEARMOR)) {
+        if (isConventionalInfantry() && (mount == null)) {
             if (getMovementMode().isVTOL()) {
                 return hasMicrolite() ? "Microlite" : "Microcopter";
             }

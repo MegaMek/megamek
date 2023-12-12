@@ -181,9 +181,9 @@
 			<subforce name="CIH Chaos Sailor"
 				chassis="Aegis Heavy Cruiser">%ELEMENT%</subforce>
 			<subforce name="CIH Pack Leader" ifDateBetween="2950,"
-				chassis="York Destroyer Carrier">%ELEMENT%</subforce>
+				chassis="York Destroyer-Carrier">%ELEMENT%</subforce>
 			<subforce name="CIH Moore&apos;s Honor"
-				chassis="Essex Destroyer">%ELEMENT%</subforce>
+				chassis="Essex II Destroyer">%ELEMENT%</subforce>
 			<subforce name="CIH Cold Hunter"
 				chassis="Lola III Destroyer">%ELEMENT%</subforce>
 			<subforce name="CIH Impaler"
@@ -191,11 +191,11 @@
 			<subforce name="CIH Radiant"
 				chassis="Lola III Destroyer">%ELEMENT%</subforce>
 			<subforce name="CIH Swift Bait" ifDateBetween="2965,"
-				chassis="Fredasa Corvette Raider">%ELEMENT%</subforce>
+				chassis="Fredasa (Corvette-Raider)">%ELEMENT%</subforce>
 			<subforce name="CIH Hellion&apos;s Pride" ifDateBetween="2965,"
-				chassis="Fredasa Corvette Raider">%ELEMENT%</subforce>
+				chassis="Fredasa (Corvette-Raider)">%ELEMENT%</subforce>
 			<subforce name="CIH Whelp" ifDateBetween="2965,"
-				chassis="Fredasa Corvette Raider">%ELEMENT%</subforce>
+				chassis="Fredasa (Corvette-Raider)">%ELEMENT%</subforce>
 			<subforce name="CIH Maker" ifDateBetween="2950,"
 				chassis="Carrack Transport">%ELEMENT%</subforce>
 		</subforces>

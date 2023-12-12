@@ -10,6 +10,14 @@ Source:TRO: 3145 Free Worlds League
 Rules Level:4
 role:Skirmisher
 
+
+
+quirk:distracting
+quirk:compact_mech
+quirk:low_profile
+quirk:bad_rep_is
+
+
 Mass:50
 Engine:250 XL Engine(IS)
 Structure:IS Standard

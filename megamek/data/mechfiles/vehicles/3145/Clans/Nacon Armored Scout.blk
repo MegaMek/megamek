@@ -91,3 +91,8 @@ TRO: 3145 The Clans
 <tonnage>
 20.0
 </tonnage>
+
+<quirks>
+easy_maintain
+</quirks>
+

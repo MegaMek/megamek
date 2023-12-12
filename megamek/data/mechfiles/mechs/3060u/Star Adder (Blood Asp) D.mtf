@@ -10,6 +10,9 @@ Source:TRO: 3060
 Rules Level:2
 role:Brawler
 
+quirk:rugged_1
+
+
 Mass:90
 Engine:360 XL (Clan) Engine(IS)
 Structure:Clan Endo Steel

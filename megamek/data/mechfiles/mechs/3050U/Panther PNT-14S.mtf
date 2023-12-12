@@ -10,6 +10,12 @@ Source:TRO: 3050
 Rules Level:2
 role:Scout
 
+
+
+quirk:imp_target_short
+quirk:nimble_jumper
+
+
 Mass:35
 Engine:140 Fusion Engine
 Structure:Endo Steel

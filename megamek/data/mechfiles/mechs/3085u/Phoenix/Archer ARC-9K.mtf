@@ -10,6 +10,15 @@ source:TRO: 3085
 Rules Level:2
 role:Sniper
 
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:command_mech
+quirk:stable
+quirk:ubiquitous_is
+
+
 Mass:70
 Engine:280 Fusion Engine(IS)
 Structure:Endo Steel

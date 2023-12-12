@@ -22,7 +22,6 @@ import megamek.common.enums.AimingMode;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.IlluminationLevel;
 import megamek.common.options.OptionsConstants;
-import megamek.common.verifier.TestEntity;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
@@ -30,7 +29,6 @@ import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.gaussrifles.HAGWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.mgs.MGWeapon;
-import megamek.common.weapons.mortars.MekMortarWeapon;
 import megamek.server.Server;
 import megamek.server.SmokeCloud;
 import org.apache.logging.log4j.LogManager;
@@ -138,45 +136,52 @@ public class Compute {
             { 40, 12, 12, 18, 24, 24, 24, 24, 32, 32, 40, 40 } };
 
     /**
+     * Wrapper to random#d6()
+     */
+    public static int d6() {
+        return d6( 1);
+    }
+
+    /**
      * Wrapper to random#d6(n)
      */
     public static int d6(int dice) {
-        Roll roll = random.d6(dice);
-        if (Server.getServerInstance() != null) {
-            if (Server.getServerInstance().getGame().getOptions()
-                      .booleanOption(OptionsConstants.BASE_RNG_LOG)) {
-                Server.getServerInstance().reportRoll(roll);
-            }
-        }
-        return roll.getIntValue();
+        return rollD6(dice).getIntValue();
     }
 
     /**
      * Wrapper to random#d6(n)
      */
     public static int d6(int dice, int keep) {
-        Roll roll = random.d6(dice, keep);
-        if (Server.getServerInstance() != null) {
-            if (Server.getServerInstance().getGame().getOptions()
-                      .booleanOption(OptionsConstants.BASE_RNG_LOG)) {
-                Server.getServerInstance().reportRoll(roll);
-            }
-        }
-        return roll.getIntValue();
+        return rollD6(dice, keep).getIntValue();
     }
 
     /**
-     * Wrapper to random#d6()
+     * Wrapper to random#d6(n)
      */
-    public static int d6() {
-        Roll roll = random.d6();
+    public static Roll rollD6(int dice) {
+        Roll roll = random.d6(dice);
         if (Server.getServerInstance() != null) {
             if (Server.getServerInstance().getGame().getOptions()
-                      .booleanOption(OptionsConstants.BASE_RNG_LOG)) {
+                    .booleanOption(OptionsConstants.BASE_RNG_LOG)) {
                 Server.getServerInstance().reportRoll(roll);
             }
         }
-        return roll.getIntValue();
+        return roll;
+    }
+
+    /**
+     * Wrapper to random#d6(n)
+     */
+    public static Roll rollD6(int dice, int keep) {
+        Roll roll = random.d6(dice, keep);
+        if (Server.getServerInstance() != null) {
+            if (Server.getServerInstance().getGame().getOptions()
+                    .booleanOption(OptionsConstants.BASE_RNG_LOG)) {
+                Server.getServerInstance().reportRoll(roll);
+            }
+        }
+        return roll;
     }
 
     /**
@@ -1072,7 +1077,13 @@ public class Compute {
             if ((target instanceof Mech) && (aimingAt == Mech.LOC_HEAD) && aimingMode.isImmobile()) {
                 return new ToHitData(3, "aiming at head");
             }
-            return new ToHitData(-4, "target immobile");
+            ToHitData immobileTHD = new ToHitData(-4, "target immobile");
+            if(target instanceof Tank) {
+                // An "immobilized" but jumping CV is not actually immobile for targeting purposes
+                // (See issue #3917)
+                return ((Tank)target).moved == EntityMovementType.MOVE_JUMP ? null : immobileTHD;
+            }
+            return immobileTHD;
         }
         return null;
     }

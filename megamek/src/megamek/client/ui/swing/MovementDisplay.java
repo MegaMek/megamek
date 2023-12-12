@@ -570,7 +570,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         final Entity ce = ce();
                         boolean isAero = ce.isAero();
                         // first check if jumping is available at all
-                        if (!isAero && !ce.isImmobile() && (ce.getJumpMP() > 0)
+                        if (!isAero && !ce.isImmobileForJump() && (ce.getJumpMP() > 0)
                                 && !(ce.isStuck() && !ce.canUnstickByJumping())) {
                             if (gear != MovementDisplay.GEAR_JUMP) {
                                 if (!((cmd.getLastStep() != null)
@@ -751,16 +751,16 @@ public class MovementDisplay extends ActionPhaseDisplay {
         cen = en;
         clientgui.setSelectedEntityNum(en);
         gear = MovementDisplay.GEAR_LAND;
-        Color walkColor = GUIP.getMoveDefaultColor();
-        clientgui.getBoardView().setHighlightColor(walkColor);
+
+        clientgui.getBoardView().setHighlightColor(GUIP.getMoveDefaultColor());
         clear();
 
-        updateButtons();
+        updateButtonsLater();
+
         clientgui.getBoardView().highlight(ce.getPosition());
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().cursor(null);
-        clientgui.getUnitDisplay().displayEntity(ce);
-        clientgui.getUnitDisplay().showPanel("movement");
+        updateUnitDisplayLater(ce);
         if (!clientgui.getBoardView().isMovingUnits()) {
             clientgui.getBoardView().centerOnHex(ce.getPosition());
         }
@@ -780,7 +780,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
             setStatusBarText(yourTurnMsg);
         }
         clientgui.getBoardView().clearFieldOfFire();
-        clientgui.getBoardView().clearSensorsRanges();
         computeMovementEnvelope(ce);
     }
 
@@ -790,6 +789,36 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
     private boolean isEnabled(MoveCommand c) {
         return buttons.get(c).isEnabled();
+    }
+
+    /**
+     * Signals Unit Display to update later on the AWT event stack.
+     * See Issue:#4876 and #4444.  This is done to prevent blank general tab when switching 
+     * units when the map is zoomed all the way out.
+     */
+    private void updateUnitDisplayLater(Entity ce) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+               clientgui.getUnitDisplay().displayEntity(ce);
+               clientgui.getUnitDisplay().showPanel("movement");
+            }
+        });
+    }
+
+    /**
+     * Sets buttons to their proper state, but lets Swing do this later after all the 
+     * current BoardView repaints and updates are complete.  This is done to prevent some
+     * buttons from painting correctly when the maps is zoomed way out. See Issue: #4444
+     */
+    private void updateButtonsLater() {
+        SwingUtilities.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				updateButtons();
+			 };
+        });
     }
 
     /**
@@ -813,7 +842,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         setWalkEnabled(!ce.isImmobile() && ((ce.getWalkMP() > 0) || (ce.getRunMP() > 0))
                 && !ce.isStuck());
-        setJumpEnabled(!isAero && !ce.isImmobile() && !ce.isProne() && (ce.getJumpMP() > 0)
+        setJumpEnabled(!isAero && !ce.isImmobileForJump() && !ce.isProne()
+                // Conventional infantry also uses jump MP for VTOL and UMU MP
+                && ((ce.getJumpMP() > 0) && (!ce.isConventionalInfantry() || ce.getMovementMode().isJumpInfantry()))
                 && !(ce.isStuck() && !ce.canUnstickByJumping()));
         setSwimEnabled(!isAero && !ce.isImmobile() && (ce.getActiveUMUCount() > 0)
                 && ce.isUnderwater());
@@ -4230,15 +4261,15 @@ public class MovementDisplay extends ActionPhaseDisplay {
             dumpBombsDialog.getChoices();
             // first make a control roll
             PilotingRollData psr = ce().getBasePilotingRoll(overallMoveType);
-            int ctrlroll = Compute.d6(2);
+            Roll diceRoll = Compute.rollD6(2);
             Report r = new Report(9500);
             r.subject = ce().getId();
             r.add(ce().getDisplayName());
             r.add(psr);
-            r.add(ctrlroll);
+            r.add(diceRoll);
             r.newlines = 0;
             r.indent(1);
-            if (ctrlroll < psr.getValue()) {
+            if (diceRoll.getIntValue() < psr.getValue()) {
                 r.choose(false);
                 String title = Messages.getString("MovementDisplay.DumpingBombs.title");
                 String body = Messages.getString("MovementDisplay.DumpFailure.message");

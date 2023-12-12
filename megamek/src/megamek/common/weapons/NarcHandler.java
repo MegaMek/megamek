@@ -21,19 +21,7 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.AmmoType;
-import megamek.common.Building;
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.HitData;
-import megamek.common.Game;
-import megamek.common.INarcPod;
-import megamek.common.Mech;
-import megamek.common.NarcPod;
-import megamek.common.Protomech;
-import megamek.common.Report;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.server.GameManager;
@@ -92,18 +80,19 @@ public class NarcHandler extends MissileWeaponHandler {
             r.indent(1);
             r.subject = subjectId;
             vPhaseReport.add(r);
-            int destroyRoll = Compute.d6();
-            if (destroyRoll <= 3) {
+            Roll diceRoll = Compute.rollD6(1);
+
+            if (diceRoll.getIntValue() <= 3) {
                 r = new Report(3240);
                 r.subject = subjectId;
                 r.add("pod");
-                r.add(destroyRoll);
+                r.add(diceRoll);
                 vPhaseReport.add(r);
                 return 0;
             }
             r = new Report(3241);
             r.add("pod");
-            r.add(destroyRoll);
+            r.add(diceRoll);
             r.subject = subjectId;
             vPhaseReport.add(r);
         }

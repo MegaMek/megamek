@@ -10,6 +10,13 @@ Source:TRO: 3145 The Clans
 Rules Level:2
 role:Missile Boat
 
+
+
+
+quirk:stable
+quirk:variable_range_long
+
+
 Mass:60
 Engine:300 XL (Clan) Engine(IS)
 Structure:Clan Endo Steel

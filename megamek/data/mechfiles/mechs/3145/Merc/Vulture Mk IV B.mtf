@@ -10,6 +10,11 @@ source:TRO: 3145 Mercenaries
 rules level:3
 role:Brawler
 
+quirk:stable
+quirk:pro_actuator
+quirk:non_standard
+
+
 mass:60
 engine:300 XL (Clan) Engine(IS)
 structure:Clan Endo Steel

@@ -98,3 +98,9 @@ TRO: Prototypes
 <tonnage>
 50.0
 </tonnage>
+
+<quirks>
+non_standard
+easy_maintain
+</quirks>
+

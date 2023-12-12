@@ -10,6 +10,12 @@ Rules Level:2
 role:Brawler
 source:TRO: 3067
 
+
+
+
+quirk:hyper_actuator
+
+
 Mass:70
 Engine:350 XL Fusion Engine
 Structure:Endo-Steel

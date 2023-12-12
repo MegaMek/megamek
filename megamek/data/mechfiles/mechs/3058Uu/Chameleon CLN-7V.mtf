@@ -10,6 +10,11 @@ Source:TRO: 3058
 Rules Level:1
 role:Scout
 
+
+
+quirk:easy_pilot
+
+
 Mass:50
 Engine:300 Fusion Engine
 Structure:Standard

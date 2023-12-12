@@ -10,6 +10,14 @@ Source:XTR: Steiner
 Rules Level:4
 role:Skirmisher
 
+
+
+
+quirk:exp_actuator
+weaponquirk:stable_weapon:RA:3:CLHeavyLargeLaser
+weaponquirk:jettison_capable:LA:4:ISLargeShield
+
+
 Mass:55
 Engine:330 XL Engine(IS)
 Structure:IS Composite

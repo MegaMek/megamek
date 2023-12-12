@@ -113,3 +113,10 @@ TRO: Golden Century
 <tonnage>
 30.0
 </tonnage>
+
+<quirks>
+easy_maintain
+rugged_2
+obsolete
+</quirks>
+

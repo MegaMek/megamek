@@ -83,3 +83,8 @@ TRO: 3039
 <tonnage>
 30.0
 </tonnage>
+
+<quirks>
+vtol_rotor_dual
+</quirks>
+

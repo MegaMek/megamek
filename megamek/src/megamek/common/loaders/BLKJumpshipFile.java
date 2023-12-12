@@ -219,7 +219,7 @@ public class BLKJumpshipFile extends BLKFile implements IMechLoader {
             docks--;
         }
         a.setArmorTonnage(a.getArmorWeight());
-
+        loadQuirks(a);
         return a;
     }
 

@@ -9,6 +9,25 @@ source:Record Sheets: 3150
 rules level:3
 role:Brawler
 
+weaponquirk:mod_weapons:RT:2:CLERMediumLaser
+weaponquirk:mod_weapons:RT:3:CLMG
+weaponquirk:mod_weapons:RT:4:CLMG
+weaponquirk:mod_weapons:LT:2:CLERMediumLaser
+weaponquirk:mod_weapons:LT:3:CLMG
+weaponquirk:mod_weapons:LT:4:CLMG
+weaponquirk:jettison_capable:RA:4:CLLargePulseLaser
+weaponquirk:mod_weapons:RA:4:CLLargePulseLaser
+weaponquirk:mod_weapons:RT:4:CLERMicroLaser
+weaponquirk:mod_weapons:RT:5:CLERMicroLaser
+weaponquirk:mod_weapons:RT:6:CLERMicroLaser
+weaponquirk:mod_weapons:LT:4:CLERMicroLaser
+weaponquirk:mod_weapons:LT:5:CLERMicroLaser
+weaponquirk:mod_weapons:LT:6:CLERMicroLaser
+weaponquirk:mod_weapons:RA:3:CLERPPC
+weaponquirk:jettison_capable:LA:4:CLSRM6
+weaponquirk:mod_weapons:LA:4:CLSRM6
+
+
 mass:30
 engine:270 XXL (Clan) Engine(IS)
 structure:Clan Endo Steel

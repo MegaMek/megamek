@@ -10,6 +10,11 @@ source:TRO: 3058
 rules level:4
 role:Brawler
 
+
+
+quirk:non_standard
+
+
 mass:50
 engine:200 XL Engine(IS)
 structure:IS Endo Steel

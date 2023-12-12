@@ -169,7 +169,7 @@ public class BLKVTOLFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("baseChassisSponsonPintleWeight")) {
             t.setBaseChassisSponsonPintleWeight(dataFile.getDataAsDouble("baseChassisSponsonPintleWeight")[0]);
         }
-
+        loadQuirks(t);
         return t;
     }
 }

@@ -10,6 +10,12 @@ Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:3
 role:Missile Boat
 
+
+
+quirk:easy_maintain
+weaponquirk:fast_reload:RT:6:CLLRM15
+
+
 Mass:50
 Engine:350 XXL Engine(IS)
 Structure:IS Endo Steel

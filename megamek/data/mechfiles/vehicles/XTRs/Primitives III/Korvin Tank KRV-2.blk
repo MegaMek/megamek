@@ -119,3 +119,10 @@ XTR: Primitives III
 0.0
 </fuel>
 
+
+<quirks>
+easy_maintain
+hard_pilot
+obsolete
+</quirks>
+

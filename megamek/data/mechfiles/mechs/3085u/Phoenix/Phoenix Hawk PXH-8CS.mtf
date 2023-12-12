@@ -10,6 +10,15 @@ source:TRO: 3085
 Rules Level:4
 role:Striker
 
+
+
+quirk:command_mech
+quirk:imp_com
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:jettison_capable:RA:7:ISSNPPC
+
+
 Mass:45
 Engine:315 XXL Engine(IS)
 Structure:Endo Steel

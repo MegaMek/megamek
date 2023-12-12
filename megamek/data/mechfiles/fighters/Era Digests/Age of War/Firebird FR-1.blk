@@ -117,3 +117,9 @@ Era Digest: Age of War
 <tonnage>
 45.0
 </tonnage>
+
+<quirks>
+atmo_instability
+obsolete
+</quirks>
+

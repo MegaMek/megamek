@@ -10,6 +10,14 @@ Source:XTR: Gunslingers
 Rules Level:4
 role:Brawler
 
+
+
+quirk:rugged_1
+quirk:bad_rep_is
+quirk:non_standard
+quirk:obsolete
+
+
 Mass:80
 Engine:320 XL Engine(IS)
 Structure:IS Standard

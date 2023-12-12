@@ -10,6 +10,16 @@ Source:Starterbook: Wolf & Blake
 Rules Level:4
 role:Skirmisher
 
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:jettison_capable:RA:4:ISSNPPC
+
+
 Mass:55
 Engine:275 Light Engine
 Structure:Endo Steel

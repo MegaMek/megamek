@@ -25,6 +25,8 @@ import megamek.common.Terrains;
 
 import java.util.Objects;
 
+import static megamek.client.ui.swing.util.UIUtil.*;
+
 public enum IlluminationLevel {
     //region Enum Declarations
     NONE,
@@ -87,5 +89,18 @@ public enum IlluminationLevel {
                 .anyMatch(adjacent -> adjacent.containsTerrain(Terrains.FIRE));
 
         return neighbouringFire ? IlluminationLevel.FIRE : IlluminationLevel.NONE;
+    }
+
+    public static  String getIlluminationLevelIndicator(final Game game, final Coords coords) {
+        switch (IlluminationLevel.determineIlluminationLevel(game, coords)) {
+            case FIRE:
+                return DOT_SPACER + guiScaledFontHTML(uiYellow()) + " \uD83D\uDD25" + "</FONT>";
+            case FLARE:
+                return DOT_SPACER + guiScaledFontHTML(uiYellow()) + " \uD83C\uDF86" + "</FONT>";
+            case SEARCHLIGHT:
+                return DOT_SPACER + guiScaledFontHTML(uiYellow()) + " \uD83D\uDD26" + "</FONT>";
+            default:
+                return "";
+        }
     }
 }

@@ -10,6 +10,10 @@ source:TRO: 3085
 Rules Level:2
 role:Brawler
 
+quirk:hyper_actuator
+quirk:rugged_1
+
+
 Mass:70
 Engine:280 XL (Clan) Engine
 Structure:Endo Steel

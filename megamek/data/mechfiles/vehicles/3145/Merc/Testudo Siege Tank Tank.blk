@@ -101,3 +101,8 @@ TRO: 3145 Mercenaries
 <tonnage>
 75.0
 </tonnage>
+
+<quirks>
+distracting
+</quirks>
+

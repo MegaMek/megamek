@@ -110,3 +110,9 @@ Era Digest: Age of War
 <motion_type>
 Tracked
 </motion_type>
+
+<quirks>
+gas_hog
+obsolete
+</quirks>
+

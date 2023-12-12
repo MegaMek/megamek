@@ -2970,7 +2970,8 @@ public class MoveStep implements Serializable {
         // 0 MP infantry units can move 1 hex
         if (isInfantry
                 && (cachedEntityState.getWalkMP() == 0)
-                && (moveMode != EntityMovementMode.SUBMARINE)
+                && !moveMode.isSubmarine()
+                && !moveMode.isVTOL()
                 && getEntity().getPosition().equals(prev)
                 && (getEntity().getPosition().distance(getPosition()) == 1)
                 && (!isJumping())) {
@@ -3246,6 +3247,11 @@ public class MoveStep implements Serializable {
 
         // If you want to flee, and you can flee, flee.
         if ((type == MoveStepType.FLEE) && entity.canFlee()) {
+            return true;
+        }
+
+        // Motive hit has immobilized CV, but it still wants to (and can) jump: okay!
+        if (movementType == EntityMovementType.MOVE_JUMP && (entity instanceof Tank) && !entity.isImmobileForJump()) {
             return true;
         }
 

@@ -10,6 +10,13 @@ source:TRO: 3067
 rules level:2
 role:Striker
 
+
+
+
+quirk:ext_twist
+weaponquirk:direct_torso_mount:CT:10:ISERMediumLaser
+
+
 mass:30
 engine:240 XL Engine(IS)
 structure:IS Endo Steel

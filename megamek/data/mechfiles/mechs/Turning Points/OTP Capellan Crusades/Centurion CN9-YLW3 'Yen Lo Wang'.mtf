@@ -10,6 +10,10 @@ Source:Operational Turning Points: Capellan Crusades
 Rules Level:4
 role:Brawler
 
+quirk:imp_target_short
+quirk:non_standard
+
+
 Mass:50
 Engine:200 XL Engine(IS)
 Structure:IS Standard

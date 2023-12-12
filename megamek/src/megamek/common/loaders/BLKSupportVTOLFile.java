@@ -197,7 +197,7 @@ public class BLKSupportVTOLFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("baseChassisFireConWeight")) {
             t.setBaseChassisFireConWeight((dataFile.getDataAsDouble("baseChassisFireConWeight")[0]));
         }
-
+        loadQuirks(t);
         return t;
     }
 

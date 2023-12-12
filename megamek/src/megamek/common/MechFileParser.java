@@ -162,7 +162,6 @@ public class MechFileParser {
      */
     public static void postLoadInit(Entity ent) throws EntityLoadingException {
         try {
-            ent.loadDefaultQuirks();
             ent.loadDefaultCustomWeaponOrder();
         } catch (Exception ex) {
             LogManager.getLogger().error("Error in postLoadInit for " + ent.getDisplayName(), ex);

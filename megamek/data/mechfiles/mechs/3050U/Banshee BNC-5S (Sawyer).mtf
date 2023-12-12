@@ -9,6 +9,10 @@ source:TRO: 3050
 rules level:2
 role:Sniper
 
+quirk:rugged_1
+quirk:bad_rep_is
+
+
 mass:95
 engine:380 XL Engine(IS)
 structure:IS Standard

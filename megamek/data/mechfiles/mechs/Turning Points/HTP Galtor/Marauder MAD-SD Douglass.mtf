@@ -10,6 +10,17 @@ Rules Level:1
 role:Brawler
 source:Historical Turning Points: Galtor
 
+
+
+quirk:command_mech
+quirk:hyper_actuator
+quirk:low_profile
+weaponquirk:direct_torso_mount:RT:0:SRM 4
+weaponquirk:exposed_linkage:RT:0:SRM 4
+weaponquirk:direct_torso_mount:RT:1:SRM 4
+weaponquirk:exposed_linkage:RT:1:SRM 4
+
+
 Mass:75
 Engine:300 Fusion Engine
 Structure:Standard

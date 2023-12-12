@@ -60,7 +60,7 @@ public class TSEMPHandler extends EnergyWeaponHandler {
     */
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
-        if (roll == 2) {
+        if (roll.getIntValue() == 2) {
             Report r = new Report(3162);
             r.subject = subjectId;
             weapon.setHit(true);
@@ -151,8 +151,10 @@ public class TSEMPHandler extends EnergyWeaponHandler {
         
         tsempModifiers += Math.min(4, entityTarget.getTsempHitsThisTurn() - 1);
         // Multiple hits add a +1 for each hit after the first, 
-        //  up to a max of 4                   
-        int tsempRoll = Math.max(2, Compute.d6(2) + tsempModifiers);
+        //  up to a max of 4
+        Roll diceRoll = Compute.rollD6(2);
+        int rollValue = Math.max(2, diceRoll.getIntValue() + tsempModifiers);
+        String rollCalc = rollValue + " [" + diceRoll.getIntValue() + " + " + tsempModifiers +  "] max 2";
         
         // Ugly code to set the target rolls
         int shutdownTarget = 13;
@@ -197,13 +199,13 @@ public class TSEMPHandler extends EnergyWeaponHandler {
             }
         }
         r.indent(3);
-        r.add(tsempRoll);
+        r.addDataWithTooltip(rollCalc, diceRoll.getReport());
         r.subject = entityTarget.getId();
         String tsempEffect;
 
         // Determine the effect
         Report baShutdownReport = null;
-        if (tsempRoll >= shutdownTarget) {
+        if (rollValue >= shutdownTarget) {
             entityTarget.setTsempEffect(MMConstants.TSEMP_EFFECT_SHUTDOWN);
             tsempEffect = "<font color='C00000'><b>Shutdown!</b></font>";
             if (entityTarget instanceof BattleArmor) {
@@ -221,7 +223,7 @@ public class TSEMPHandler extends EnergyWeaponHandler {
             } else {
                 entityTarget.setShutDown(true);
             }
-        } else if (tsempRoll >= interferenceTarget) {
+        } else if (rollValue >= interferenceTarget) {
             int targetEffect = entityTarget.getTsempEffect();
             if (targetEffect != MMConstants.TSEMP_EFFECT_SHUTDOWN) {
                 entityTarget.setTsempEffect(MMConstants.TSEMP_EFFECT_INTERFERENCE);

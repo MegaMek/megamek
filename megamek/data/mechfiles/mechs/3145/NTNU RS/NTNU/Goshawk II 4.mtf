@@ -8,6 +8,10 @@ era:3130
 source:Record Sheets: 3150
 rules level:3
 
+quirk:imp_life_support
+quirk:nimble_jumper
+
+
 mass:45
 engine:315 XXL (Clan) Engine(IS)
 structure:Clan Endo Steel

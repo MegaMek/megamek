@@ -114,3 +114,8 @@ XTR: Republic I
 <tonnage>
 90.0
 </tonnage>
+
+<quirks>
+poor_performance
+</quirks>
+

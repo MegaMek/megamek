@@ -10,6 +10,12 @@ Source:TRO: 3055
 Rules Level:4
 role:Sniper
 
+
+
+quirk:bad_rep_is
+quirk:non_standard
+
+
 Mass:50
 Engine:200 XXL Engine
 Structure:Endo Steel

@@ -10,6 +10,10 @@ source:XTR: Royal Fantasy
 rules level:3
 role:Striker
 
+quirk:imp_target_long
+quirk:imp_target_med
+
+
 mass:40
 engine:240 XL (Clan) Engine
 structure:Clan Endo Steel

@@ -10,6 +10,14 @@ source:TRO: 3039
 rules level:1
 role:Juggernaut
 
+
+
+
+quirk:combat_computer
+quirk:ubiquitous_is
+quirk:no_arms
+
+
 mass:85
 engine:255 Fusion Engine(IS)
 structure:IS Standard

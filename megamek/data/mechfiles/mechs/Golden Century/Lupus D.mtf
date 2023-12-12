@@ -10,6 +10,9 @@ source:TRO: Golden Century
 rules level:2
 role:Brawler
 
+quirk:exp_actuator
+
+
 mass:60
 engine:300 Fusion (Clan) Engine(IS)
 structure:Clan Endo Steel

@@ -144,7 +144,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
             t.setCost(dataFile.getDataAsInt("cost")[0]);
         }
         t.setArmorTonnage(t.getArmorWeight());
-
+        loadQuirks(t);
         return t;
     }
 

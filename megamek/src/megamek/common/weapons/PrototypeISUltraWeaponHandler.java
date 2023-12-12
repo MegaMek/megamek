@@ -50,8 +50,8 @@ public class PrototypeISUltraWeaponHandler extends UltraWeaponHandler {
             return true;
         }
         
-        if (((roll <= 4) && (howManyShots == 2))
-                || ((roll == 2) && (howManyShots == 1))) {
+        if (((roll.getIntValue() <= 4) && (howManyShots == 2))
+                || ((roll.getIntValue() == 2) && (howManyShots == 1))) {
             Report r = new Report();
             r.subject = subjectId;
             weapon.setJammed(true);

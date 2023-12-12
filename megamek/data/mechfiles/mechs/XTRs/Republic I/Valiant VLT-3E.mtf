@@ -10,6 +10,13 @@ Source:XTR: Republic I
 Rules Level:3
 role:Striker
 
+
+
+quirk:imp_target_short
+quirk:pro_actuator
+quirk:weak_head_1
+
+
 Mass:30
 Engine:210 XL Engine(IS)
 Structure:IS Composite

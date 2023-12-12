@@ -10,6 +10,14 @@ Source:Era Report 2750
 Rules Level:4
 role:Sniper
 
+
+
+quirk:easy_maintain
+quirk:pro_actuator
+quirk:rugged_1
+quirk:oversized
+
+
 Mass:100
 Engine:300 Fusion Engine(IS)
 Structure:IS Standard

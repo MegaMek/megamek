@@ -10,6 +10,11 @@ Source:TRO: 3039
 Rules Level:1
 role:Brawler
 
+
+
+quirk:bad_rep_is
+
+
 Mass:45
 Engine:180 Fusion Engine
 Structure:Standard

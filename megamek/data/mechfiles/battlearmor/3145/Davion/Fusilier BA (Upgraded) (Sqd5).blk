@@ -122,3 +122,7 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<weaponQuirks>
+accurate:Squad:1:ISBALightMachineGun
+</weaponQuirks>

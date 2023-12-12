@@ -109,7 +109,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
                 if (getParentBayHandler() != null) {
                     //Use the to-hit value for the bay handler, otherwise toHit is set to Automatic Success
                     WeaponHandler bayHandler = getParentBayHandler();
-                    bGlancing = (roll == bayHandler.toHit.getValue());
+                    bGlancing = (roll.getIntValue() == bayHandler.toHit.getValue());
                     bLowProfileGlancing = isLowProfileGlancingBlow(entityTarget, bayHandler.toHit);
                 }
             } else {
@@ -122,9 +122,9 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
                 && getParentBayHandler() != null) {
             //Use the to-hit value for the bay handler, otherwise toHit is set to Automatic Success
             WeaponHandler bayHandler = getParentBayHandler();
-            toHit.setMoS(roll - Math.max(2, bayHandler.toHit.getValue()));
+            toHit.setMoS(roll.getIntValue() - Math.max(2, bayHandler.toHit.getValue()));
         } else {
-            toHit.setMoS(roll - Math.max(2, toHit.getValue()));
+            toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
         }
         bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                 && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
@@ -148,7 +148,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
         // Only do this if the missile wasn't destroyed
         if (CapMissileAMSMod > 0 && CapMissileArmor > 0) {
             toHit.addModifier(CapMissileAMSMod, "Damage from Point Defenses");
-            if (roll < toHit.getValue()) {
+            if (roll.getIntValue() < toHit.getValue()) {
                 CapMissileMissed = true;
             }
         }
@@ -203,7 +203,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
         vPhaseReport.addElement(r);
 
         // do we hit?
-        bMissed = roll < toHit.getValue();
+        bMissed = roll.getIntValue() < toHit.getValue();
 
         //Report Glancing/Direct Blow here because of Capital Missile weirdness
         if (!(amsBayEngagedCap || pdBayEngagedCap)) {

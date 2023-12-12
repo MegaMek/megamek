@@ -181,3 +181,8 @@ TRO: Prototypes
 <escape_pod>
 2
 </escape_pod>
+
+<quirks>
+non_standard
+</quirks>
+

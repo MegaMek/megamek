@@ -10,6 +10,11 @@ Rules Level:2
 role:Missile Boat
 source:Record Sheets: 3067 Unabridged
 
+
+
+quirk:bad_rep_is
+
+
 Mass:45
 Engine:270 XL Fusion Engine
 Structure:Endo-Steel

@@ -10,6 +10,13 @@ Source:TRO: 3145 Lyran Commonwealth
 Rules Level:2
 role:Scout
 
+
+
+weaponquirk:exposed_linkage:RA:6:Flamer
+weaponquirk:exposed_linkage:RA:7:Flamer
+weaponquirk:exposed_linkage:RA:8:Flamer
+
+
 Mass:35
 Engine:210 Fusion Engine(IS)
 Structure:IS Endo Steel

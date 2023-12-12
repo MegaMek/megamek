@@ -684,7 +684,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private int sensorCheck;
 
     // the roll for ghost targets
-    private int ghostTargetRoll;
+    private Roll ghostTargetRoll;
     // the roll to override ghost targets
     private int ghostTargetOverride;
 
@@ -1749,6 +1749,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     @Override
     public boolean isImmobile() {
         return isImmobile(true);
+    }
+
+    public boolean isImmobileForJump() {
+        return isImmobile();
     }
 
     /**
@@ -2837,7 +2841,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Returns sprint MP without considering MASC
      */
     public int getSprintMPwithoutMASC() {
-        return getRunMPwithoutMASC();
+        return getSprintMP(MPCalculationSetting.NO_MASC);
     }
 
     /**
@@ -6331,7 +6335,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         // ghost target roll
-        ghostTargetRoll = Compute.d6(2);
+        ghostTargetRoll = Compute.rollD6(2);
         ghostTargetOverride = Compute.d6(2);
 
         // update fatigue count
@@ -12122,12 +12126,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return damage;
     }
 
-    public int getGhostTargetRoll() {
+    public Roll getGhostTargetRoll() {
         return ghostTargetRoll;
     }
 
     public int getGhostTargetRollMoS() {
-        return ghostTargetRoll - (getCrew().getSensorOps() + 2);
+        return ghostTargetRoll.getIntValue() - (getCrew().getSensorOps() + 2);
     }
 
     public int getGhostTargetOverride() {
@@ -13408,13 +13412,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                                                         HashMap<Integer, List<CriticalSlot>> vCriticals) {
         if ((masc != null) && masc.curMode().equals("Armed")) {
             boolean bFailure = false;
-            int nRoll = Compute.d6(2);
+            Roll diceRoll = Compute.rollD6(2);
+            int rollValue = diceRoll.getIntValue();
+            String rollCalc = String.valueOf(rollValue);
             boolean isSupercharger = masc.getType().hasSubType(MiscType.S_SUPERCHARGER);
             //WHY is this -1 here?
             if (isSupercharger
                 && (((this instanceof Mech) && ((Mech) this).isIndustrial())
                     || (this instanceof SupportTank) || (this instanceof SupportVTOL))) {
-                nRoll -= 1;
+                rollValue -= 1;
+                rollCalc = rollValue + " [" + diceRoll.getIntValue() + " - 1]";
             }
 
             if (isSupercharger) {
@@ -13431,10 +13438,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             r.subject = getId();
             r.indent();
             r.add(isSupercharger ? getSuperchargerTarget() : getMASCTarget());
-            r.add(nRoll);
+            r.addDataWithTooltip(rollCalc, diceRoll.getReport());
 
-            if ((!isSupercharger && (nRoll < getMASCTarget()))
-                    || (isSupercharger && (nRoll < getSuperchargerTarget()))) {
+            if ((!isSupercharger && (rollValue < getMASCTarget()))
+                    || (isSupercharger && (rollValue < getSuperchargerTarget()))) {
                 // uh oh
                 bFailure = true;
                 r.choose(false);
@@ -13443,31 +13450,31 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 if (isSupercharger) {
                     // do the damage - engine crits
                     int hits = 0;
-                    int roll = Compute.d6(2);
+                    Roll diceRoll2 = Compute.rollD6(2);
                     r = new Report(6310);
                     r.subject = getId();
-                    r.add(roll);
+                    r.add(diceRoll2);
                     r.newlines = 0;
                     vDesc.addElement(r);
-                    if (roll <= 7) {
+                    if (diceRoll2.getIntValue() <= 7) {
                         // no effect
                         r = new Report(6005);
                         r.subject = getId();
                         r.newlines = 0;
                         vDesc.addElement(r);
-                    } else if ((roll >= 8) && (roll <= 9)) {
+                    } else if ((diceRoll2.getIntValue() == 8) || (diceRoll2.getIntValue() == 9)) {
                         hits = 1;
                         r = new Report(6315);
                         r.subject = getId();
                         r.newlines = 0;
                         vDesc.addElement(r);
-                    } else if ((roll >= 10) && (roll <= 11)) {
+                    } else if ((diceRoll2.getIntValue() ==10) || (diceRoll2.getIntValue() == 11)) {
                         hits = 2;
                         r = new Report(6320);
                         r.subject = getId();
                         r.newlines = 0;
                         vDesc.addElement(r);
-                    } else if (roll == 12) {
+                    } else if (diceRoll2.getIntValue() == 12) {
                         hits = 3;
                         r = new Report(6325);
                         r.subject = getId();
@@ -14022,21 +14029,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
     }
 
-    public void loadDefaultQuirks() {
-        // Get a list of quirks for this entity.
-        List<QuirkEntry> quirks;
-        try {
-            quirks = QuirksHandler.getQuirks(this);
-        } catch (Exception e) {
-            LogManager.getLogger().error("", e);
-            return;
-        }
-
-        // If this unit has no quirks, we do not need to proceed further.
-        if ((quirks == null) || quirks.isEmpty()) {
-            return;
-        }
-
+    public void loadQuirks(List<QuirkEntry> quirks) {
         // Load all the unit's quirks.
         for (QuirkEntry q : quirks) {
             // If the quirk doesn't have a location, then it is a unit quirk, not a weapon quirk.
@@ -14044,30 +14037,31 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 // Activate the unit quirk.
                 if (getQuirks().getOption(q.getQuirk()) == null) {
                     LogManager.getLogger().warn(String.format("%s failed for %s %s - Invalid quirk!",
-                            q.toLog(), getChassis(), getModel()));
+                            q, getChassis(), getModel()));
                     continue;
                 }
-                getQuirks().getOption(q.getQuirk()).setValue(true);continue;
+                getQuirks().getOption(q.getQuirk()).setValue(true);
+                continue;
             }
 
             // Get the weapon in the indicated location and slot.
             CriticalSlot cs = getCritical(getLocationFromAbbr(q.getLocation()), q.getSlot());
             if (cs == null) {
                 LogManager.getLogger().warn(String.format("%s failed for %s %s - Critical slot (%s-%s) did not load!",
-                        q.toLog(), getChassis(), getModel(), q.getLocation(), q.getSlot()));
+                        q, getChassis(), getModel(), q.getLocation(), q.getSlot()));
                 continue;
             }
             Mounted m = cs.getMount();
             if (m == null) {
                 LogManager.getLogger().warn(String.format("%s failed for %s %s - Critical slot (%s-%s) is empty!",
-                        q.toLog(), getChassis(), getModel(), q.getLocation(), q.getSlot()));
+                        q, getChassis(), getModel(), q.getLocation(), q.getSlot()));
                 continue;
             }
 
             // Make sure this is a weapon.
             if (!(m.getType() instanceof WeaponType) && !(m.getType().hasFlag(MiscType.F_CLUB))) {
                 LogManager.getLogger().warn(String.format("%s failed for %s %s - %s is not a weapon!",
-                        q.toLog(), getChassis(), getModel(), m.getName()));
+                        q, getChassis(), getModel(), m.getName()));
                 continue;
             }
 
@@ -14084,14 +14078,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
             if (!matchFound) {
                 LogManager.getLogger().warn(String.format("%s failed for %s %s - %s != %s",
-                        q.toLog(), getChassis(), getModel(), m.getType().getName(), q.getWeaponName()));
+                        q, getChassis(), getModel(), m.getType().getName(), q.getWeaponName()));
                 continue;
             }
 
             // Activate the weapon quirk.
             if (m.getQuirks().getOption(q.getQuirk()) == null) {
                 LogManager.getLogger().warn(String.format("%s failed for %s %s - Invalid quirk!",
-                        q.toLog(), getChassis(), getModel()));
+                        q, getChassis(), getModel()));
                 continue;
             }
             m.getQuirks().getOption(q.getQuirk()).setValue(true);
@@ -15467,5 +15461,29 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     @Override
     public UnitRole getRole() {
         return (role == null) ? UnitRole.UNDETERMINED : role;
+    }
+
+    /**
+     * Returns the slot in which the given mounted equipment is in its main location. Returns -1 when
+     * the mounted is not in a valid location or cannot be found.
+     *
+     * @param mounted the equipment to look for
+     * @return the (first) slot number that holds the mounted or -1 if none can be found
+     */
+    public int slotNumber(Mounted mounted) {
+        int location = mounted.getLocation();
+        if (location == Entity.LOC_NONE) {
+            return -1;
+        }
+        for (int slot = 0; slot < getNumberOfCriticals(location); slot++) {
+            CriticalSlot cs = getCritical(location, slot);
+            if ((cs != null) && (cs.getType() == CriticalSlot.TYPE_EQUIPMENT)) {
+                if ((cs.getMount() == mounted) ||
+                        ((cs.getMount2() != null) && (cs.getMount2() == mounted))) {
+                    return slot;
+                }
+            }
+        }
+        return -1;
     }
 }

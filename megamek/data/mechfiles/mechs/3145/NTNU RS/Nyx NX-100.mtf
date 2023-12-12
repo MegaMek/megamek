@@ -10,6 +10,12 @@ Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:2
 role:Scout
 
+
+
+quirk:low_profile
+quirk:difficult_maintain
+
+
 Mass:30
 Engine:300 XL Engine(IS)
 Structure:IS Endo Steel

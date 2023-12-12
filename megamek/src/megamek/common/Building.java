@@ -432,24 +432,25 @@ public class Building implements Serializable {
             Report r = new Report(2111, Report.PUBLIC);
             r.add(getName());
             r.add(coords.getBoardNum());
-            int basementRoll = Compute.d6(2);
-            r.add(basementRoll);
-            if (basementRoll == 2) {
+            Roll diceRoll = Compute.rollD6(2);
+            r.add(diceRoll);
+
+            if (diceRoll.getIntValue() == 2) {
                 basement.put(coords, BasementType.TWO_DEEP_FEET);
                 hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).ordinal()));
-            } else if (basementRoll == 3) {
+            } else if (diceRoll.getIntValue() == 3) {
                 basement.put(coords, BasementType.ONE_DEEP_FEET);
                 hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).ordinal()));
-            } else if (basementRoll == 4) {
+            } else if (diceRoll.getIntValue() == 4) {
                 basement.put(coords, BasementType.ONE_DEEP_NORMAL);
                 hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).ordinal()));
-            } else if (basementRoll == 10) {
+            } else if (diceRoll.getIntValue() == 10) {
                 basement.put(coords, BasementType.ONE_DEEP_NORMAL);
                 hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).ordinal()));
-            } else if (basementRoll == 11) {
+            } else if (diceRoll.getIntValue() == 11) {
                 basement.put(coords, BasementType.ONE_DEEP_HEAD);
                 hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).ordinal()));
-            } else if (basementRoll == 12) {
+            } else if (diceRoll.getIntValue() == 12) {
                 basement.put(coords, BasementType.TWO_DEEP_HEAD);
                 hex.addTerrain(new Terrain(Terrains.BLDG_BASEMENT_TYPE, basement.get(coords).ordinal()));
             } else {

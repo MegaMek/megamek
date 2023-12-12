@@ -9,6 +9,12 @@ source:Record Sheets: 3145 New Tech New Upgrades
 rules level:3
 role:Brawler
 
+
+
+quirk:difficult_maintain
+quirk:no_arms
+
+
 mass:70
 engine:350 Light Engine(IS)
 structure:IS Endo Steel

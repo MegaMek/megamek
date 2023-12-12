@@ -149,3 +149,9 @@ TRO: Prototypes
 50.0
 </tonnage>
 
+
+<quirks>
+weak_undercarriage
+easy_maintain
+</quirks>
+

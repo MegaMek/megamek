@@ -10,6 +10,11 @@ source:TRO: Prototypes
 rules level:4
 role:Scout
 
+
+
+weaponquirk:jettison_capable:RA:5:Sword
+
+
 mass:30
 engine:240 XL Engine(IS)
 structure:IS Standard

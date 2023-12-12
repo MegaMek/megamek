@@ -10,6 +10,11 @@ source:XTR: Caveat Emptor
 rules level:4
 role:Striker
 
+
+
+quirk:difficult_maintain
+
+
 mass:45
 engine:270 XXL Engine(IS)
 structure:IS Endo-Composite

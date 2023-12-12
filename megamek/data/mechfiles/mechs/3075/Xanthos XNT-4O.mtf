@@ -10,6 +10,11 @@ Source:TRO: 3075
 Rules Level:2
 role:Sniper
 
+
+
+quirk:imp_life_support
+
+
 Mass:100
 Engine:300 Compact Engine
 Structure:Standard

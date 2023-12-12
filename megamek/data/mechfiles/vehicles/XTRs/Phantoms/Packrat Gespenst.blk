@@ -93,3 +93,9 @@ XTR: Phantoms
 <tonnage>
 20.0
 </tonnage>
+
+<quirks>
+difficult_maintain
+imp_com
+</quirks>
+

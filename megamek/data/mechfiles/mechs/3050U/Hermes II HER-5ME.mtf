@@ -10,6 +10,12 @@ Source:TRO: 3050
 Rules Level:2
 role:Sniper
 
+
+
+quirk:easy_maintain
+quirk:imp_com
+
+
 Mass:40
 Engine:240 Fusion Engine
 Structure:Endo Steel

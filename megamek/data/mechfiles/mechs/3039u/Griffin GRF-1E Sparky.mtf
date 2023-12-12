@@ -10,6 +10,16 @@ Source:TRO: 3039
 Rules Level:1
 role:Skirmisher
 
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:jettison_capable:RA:4:PPC
+
+
 Mass:55
 Engine:275 Fusion Engine
 Structure:Standard

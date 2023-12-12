@@ -44,7 +44,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     public ToHitData toHit;
     protected HitData hit;
     public WeaponAttackAction waa;
-    public int roll;
+    public Roll roll;
     protected boolean isJammed = false;
 
     protected Game game;
@@ -593,18 +593,19 @@ public class WeaponHandler implements AttackHandler, Serializable {
                             r.subject = subjectId;
                             vPhaseReport.add(r);
                             for (int i = 0; i < nweaponsHit; i++) {
-                                int destroyRoll = Compute.d6();
-                                if (destroyRoll <= 3) {
+                                Roll diceRoll = Compute.rollD6(1);
+
+                                if (diceRoll.getIntValue() <= 3) {
                                     r = new Report(3240);
                                     r.subject = subjectId;
                                     r.add("missile");
-                                    r.add(destroyRoll);
+                                    r.add(diceRoll);
                                     vPhaseReport.add(r);
                                     AMSHits += 1;
                                 } else {
                                     r = new Report(3241);
                                     r.add("missile");
-                                    r.add(destroyRoll);
+                                    r.add(diceRoll);
                                     r.subject = subjectId;
                                     vPhaseReport.add(r);
                                 }
@@ -636,18 +637,19 @@ public class WeaponHandler implements AttackHandler, Serializable {
                                 r.subject = subjectId;
                                 vPhaseReport.add(r);
                             }
-                            int destroyRoll = Compute.d6();
-                            if (destroyRoll <= 3) {
+                            Roll diceRoll = Compute.rollD6(1);
+
+                            if (diceRoll.getIntValue() <= 3) {
                                 r = new Report(3240);
                                 r.subject = subjectId;
                                 r.add("missile");
-                                r.add(destroyRoll);
+                                r.add(diceRoll);
                                 vPhaseReport.add(r);
                                 AMSHits = 1;
                             } else {
                                 r = new Report(3241);
                                 r.add("missile");
-                                r.add(destroyRoll);
+                                r.add(diceRoll);
                                 r.subject = subjectId;
                                 vPhaseReport.add(r);
                             }
@@ -718,18 +720,19 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     r.subject = subjectId;
                     vPhaseReport.add(r);
                     for (int i = 0; i < nweaponsHit; i++) {
-                        int destroyRoll = Compute.d6();
-                        if (destroyRoll <= 3) {
+                        Roll diceRoll = Compute.rollD6(1);
+
+                        if (diceRoll.getIntValue() <= 3) {
                             r = new Report(3240);
                             r.subject = subjectId;
                             r.add("missile");
-                            r.add(destroyRoll);
+                            r.add(diceRoll);
                             vPhaseReport.add(r);
                             hits = 0;
                         } else {
                             r = new Report(3241);
                             r.add("missile");
-                            r.add(destroyRoll);
+                            r.add(diceRoll);
                             r.subject = subjectId;
                             vPhaseReport.add(r);
                             hits = 1;
@@ -817,7 +820,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             setGlancingBlowFlags(entityTarget);
 
             // Set Margin of Success/Failure and check for Direct Blows
-            toHit.setMoS(roll - Math.max(2, toHit.getValue()));
+            toHit.setMoS(roll.getIntValue() - Math.max(2, toHit.getValue()));
             bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                     && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
 
@@ -830,7 +833,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             //Only do this if the missile wasn't destroyed
             if (CapMissileAMSMod > 0 && CapMissileArmor > 0) {
                 toHit.addModifier(CapMissileAMSMod, "Damage from Point Defenses");
-                if (roll < toHit.getValue()) {
+                if (roll.getIntValue() < toHit.getValue()) {
                     CapMissileMissed = true;
                 }
             }
@@ -906,7 +909,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             vPhaseReport.addElement(r);
 
             // do we hit?
-            bMissed = roll < toHit.getValue();
+            bMissed = roll.getIntValue() < toHit.getValue();
 
 
             //Report Glancing/Direct Blow here because of Capital Missile weirdness
@@ -1167,7 +1170,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     if (null != ae.getCrew()) {
                         roll = ae.getCrew().rollGunnerySkill();
                     } else {
-                        roll = Compute.d6(2);
+                        roll = Compute.rollD6(2);
                     }
                 }
             }
@@ -1763,7 +1766,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if (null != ae.getCrew()) {
             roll = ae.getCrew().rollGunnerySkill();
         } else {
-            roll = Compute.d6(2);
+            roll = Compute.rollD6(2);
         }
 
         nweapons = getNumberWeapons();
@@ -1790,7 +1793,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 waa.getAimingMode(), toHit.getCover());
         hit.setGeneralDamageType(generalDamageType);
         hit.setCapital(wtype.isCapital());
-        hit.setBoxCars(roll == 12);
+        hit.setBoxCars(roll.getIntValue() == 12);
         hit.setCapMisCritMod(getCapMisMod());
         hit.setFirstHit(firstHit);
         hit.setAttackerId(getAttackerId());
@@ -2145,7 +2148,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected void setGlancingBlowFlags(Entity entityTarget) {
         // are we a glancing hit?  Check for this here, report it later
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
-            if (roll == toHit.getValue()) {
+            if (roll.getIntValue() == toHit.getValue()) {
                 bGlancing = true;
             } else {
                 bGlancing = false;
@@ -2163,7 +2166,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected boolean isLowProfileGlancingBlow(Entity entityTarget, ToHitData hitData) {
         return (entityTarget != null) &&
                 entityTarget.hasQuirk(OptionsConstants.QUIRK_POS_LOW_PROFILE) &&
-                ((roll == hitData.getValue()) || (roll == hitData.getValue() + 1));
+                ((roll.getIntValue() == hitData.getValue()) || (roll.getIntValue() == hitData.getValue() + 1));
     }
 
     /**

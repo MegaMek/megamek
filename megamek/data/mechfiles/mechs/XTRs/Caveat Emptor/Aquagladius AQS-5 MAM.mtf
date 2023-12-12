@@ -10,6 +10,12 @@ source:XTR: Caveat Emptor
 rules level:4
 role:Skirmisher
 
+
+
+quirk:difficult_eject
+quirk:difficult_maintain
+
+
 mass:50
 engine:300 XXL Engine(IS)
 structure:IS Composite

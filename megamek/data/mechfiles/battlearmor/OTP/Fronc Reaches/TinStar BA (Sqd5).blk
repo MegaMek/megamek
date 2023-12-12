@@ -120,3 +120,11 @@ biped
 2
 </weightclass>
 
+
+<quirks>
+easy_maintain
+</quirks>
+
+<weaponQuirks>
+accurate:Squad:2:ISBASupportPPC
+</weaponQuirks>

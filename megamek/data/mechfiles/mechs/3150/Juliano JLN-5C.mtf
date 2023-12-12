@@ -8,6 +8,11 @@ era:3146
 source:TRO: Dark Age
 rules level:2
 
+
+
+quirk:combat_computer
+
+
 mass:90
 engine:360 XL Engine(IS)
 structure:IS Endo-Composite

@@ -10,6 +10,13 @@ Source:XTR: Clans
 Rules Level:4
 role:Missile Boat
 
+
+quirk:pro_actuator
+quirk:bad_rep_clan
+quirk:non_standard
+quirk:prototype
+
+
 Mass:65
 Engine:260 Light Engine(IS)
 Structure:IS Standard

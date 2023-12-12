@@ -10,6 +10,12 @@ Source:TRO: 3055
 Rules Level:2
 role:Scout
 
+
+
+
+quirk:em_inter_whole
+
+
 Mass:25
 Engine:200 XL Engine
 Structure:Endo Steel

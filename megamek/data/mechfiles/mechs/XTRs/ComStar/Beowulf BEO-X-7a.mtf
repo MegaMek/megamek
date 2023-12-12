@@ -10,6 +10,13 @@ Source:XTR: ComStar
 Rules Level:4
 role:Skirmisher
 
+
+
+quirk:ext_twist
+quirk:exp_actuator
+quirk:prototype
+
+
 Mass:45
 Engine:270 XL Engine(IS)
 Structure:Composite

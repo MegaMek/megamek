@@ -10,6 +10,11 @@ source:TRO: 3085
 Rules Level:2
 role:Brawler
 
+
+
+quirk:command_mech
+
+
 Mass:95
 Engine:285 Light Engine
 Structure:Standard

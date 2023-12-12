@@ -10,6 +10,12 @@ Era:3061
 Rules Level:2
 role:Brawler
 
+
+
+quirk:stable
+quirk:ubiquitous_is
+
+
 Mass:75
 Engine:300 XL Engine
 Structure:Endo-Steel

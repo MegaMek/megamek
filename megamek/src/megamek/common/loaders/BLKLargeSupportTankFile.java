@@ -212,7 +212,7 @@ public class BLKLargeSupportTankFile extends BLKFile implements IMechLoader {
                 t.setICEFuelType(FuelType.PETROCHEMICALS);
             }
         }
-
+        loadQuirks(t);
         return t;
     }
 }

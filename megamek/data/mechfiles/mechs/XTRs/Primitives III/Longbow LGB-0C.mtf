@@ -10,6 +10,19 @@ Source:XTR: Primitives III
 Rules Level:4
 role:Missile Boat
 
+
+
+
+quirk:ext_twist
+quirk:imp_com
+quirk:searchlight
+quirk:ubiquitous_is
+quirk:cramped_cockpit
+quirk:no_arms
+quirk:obsolete
+quirk:weak_legs
+
+
 Mass:85
 Engine:310 Fusion Engine(IS)
 Structure:Standard

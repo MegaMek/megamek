@@ -85,9 +85,9 @@
 			<subforce fluffName="CCS Cataclysm"
 				chassis="Lola III Destroyer">%ELEMENT%</subforce>
 			<subforce fluffName="CCS Brimstone" ifDateBetween="2950,3088"
-				chassis="York Destroyer Carrier">%ELEMENT%</subforce>
+				chassis="York Destroyer-Carrier">%ELEMENT%</subforce>
 			<subforce fluffName="CCS The Protector" ifDateBetween="2950,"
-				chassis="York Destroyer Carrier">%ELEMENT%</subforce>
+				chassis="York Destroyer-Carrier">%ELEMENT%</subforce>
 			<subforce fluffName="CCS Blind Faith" ifDateBetween="2950,3072"
 				chassis="Carrack Transport">%ELEMENT%</subforce>
 			<subforce fluffName="CCS Wisdom of the Ages"
@@ -95,14 +95,14 @@
 			<subforce fluffName="CCS True Sight" ifDateBetween=",3075"
 				chassis="Potemkin Troop Cruiser">%ELEMENT%</subforce>
 			<subforce fluffName="CCS Hell Fury" ifDateBetween="3053,3081"
-				chassis="Fredasa Corvette Raider">%ELEMENT%</subforce>
+				chassis="Fredasa (Corvette-Raider)">%ELEMENT%</subforce>
 			<subforce fluffName="CCS Nebulous"
-				chassis="York Destroyer Carrier">%ELEMENT%</subforce>
+				chassis="York Destroyer-Carrier">%ELEMENT%</subforce>
 			<subforce fluffName="CCS Consequence" ifDateBetween=",3075"
 				chassis="Aegis Heavy Cruiser">%ELEMENT%</subforce>
 			<subforce fluffName="CCS Perdition&apos;s Flame"
 				ifDateBetween="2962,3075"
-				chassis="Fredasa Corvette Raider">%ELEMENT%</subforce>
+				chassis="Fredasa (Corvette-Raider)">%ELEMENT%</subforce>
 			<subforce fluffName="CCS Trump" ifDateBetween=",3070"
 				chassis="Vincent Corvette">%ELEMENT%</subforce>
 			<subforce fluffName="CCS Hertzog&apos;s Staff"

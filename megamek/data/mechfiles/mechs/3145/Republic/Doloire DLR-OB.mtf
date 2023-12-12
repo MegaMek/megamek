@@ -10,6 +10,12 @@ source:TRO: 3145 Republic of the Sphere
 Rules Level:3
 role:Brawler
 
+
+
+quirk:multi_trac
+quirk:command_mech
+
+
 Mass:80
 Engine:320 XL (Clan) Engine
 Structure:IS Endo-Composite

@@ -10,6 +10,22 @@ source:Historical: Liberation of Terra II
 Rules Level:2
 role:None
 
+
+
+quirk:easy_maintain
+quirk:bad_rep_clan
+quirk:bad_rep_is
+quirk:obsolete
+weaponquirk:mod_weapons:HD:3:ISSmallPulseLaser
+weaponquirk:mod_weapons:CT:10:Medium Laser
+weaponquirk:mod_weapons:CT:11:ISSmallPulseLaser
+weaponquirk:mod_weapons:RT:3:LRM 15
+weaponquirk:mod_weapons:RA:2:ISMediumPulseLaser
+weaponquirk:mod_weapons:RA:3:LRM 15
+weaponquirk:mod_weapons:LA:2:ISMediumPulseLaser
+weaponquirk:mod_weapons:LA:3:LRM 15
+
+
 Mass:70
 Engine:280 XL Fusion Engine
 Structure:Standard

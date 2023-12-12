@@ -10,6 +10,13 @@ source:TRO: 3085u
 Rules Level:2
 role:Skirmisher
 
+
+
+quirk:bad_rep_clan
+quirk:bad_rep_is
+quirk:hard_pilot
+
+
 Mass:55
 Engine:330 Light Engine(IS)
 Structure:Endo Steel

@@ -13,14 +13,14 @@
  */
 package megamek.client.ui.swing.lobby;
 
+import megamek.common.Entity;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import megamek.common.Entity;
-import megamek.common.QuirksHandler;
 import static megamek.client.ui.swing.lobby.LobbyMekPopup.*;
 
 /** The ActionListener for the lobby popup menu for both the MekTable and MekTrees. */
@@ -77,8 +77,6 @@ public class LobbyMekPopupActions implements ActionListener {
             case LMP_HOTLOAD_ON:
             case LMP_HOTLOAD_OFF:
             case LMP_SQUADRON:
-            case LMP_SAVE_QUIRKS_ALL:
-            case LMP_SAVE_QUIRKS_MODEL:
             case LMP_LOAD:
             case LMP_UNLOAD:
             case LMP_UNLOADALL:
@@ -210,18 +208,6 @@ public class LobbyMekPopupActions implements ActionListener {
 
             case LMP_SQUADRON:
                 lobby.lobbyActions.createSquadron(entities);
-                break;
-
-            case LMP_SAVE_QUIRKS_ALL:
-                for (Entity e : entities) {
-                    QuirksHandler.addCustomQuirk(e, false);
-                }
-                break;
-
-            case LMP_SAVE_QUIRKS_MODEL:
-                for (Entity e : entities) {
-                    QuirksHandler.addCustomQuirk(e, true);
-                }
                 break;
 
             case LMP_LOAD:

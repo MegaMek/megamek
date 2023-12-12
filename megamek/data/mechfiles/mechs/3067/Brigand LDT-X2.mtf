@@ -10,6 +10,11 @@ Rules Level:2
 role:Striker
 source:TRO: 3067
 
+
+
+quirk:nimble_jumper
+
+
 Mass:25
 Engine:150 Fusion Engine
 Structure:Endo Steel

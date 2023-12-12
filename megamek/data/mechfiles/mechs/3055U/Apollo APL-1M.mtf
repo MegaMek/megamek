@@ -10,6 +10,13 @@ Source:TRO: 3055
 Rules Level:2
 role:Missile Boat
 
+
+
+
+quirk:fast_reload
+quirk:rugged_1
+
+
 Mass:55
 Engine:220 Fusion Engine
 Structure:Standard

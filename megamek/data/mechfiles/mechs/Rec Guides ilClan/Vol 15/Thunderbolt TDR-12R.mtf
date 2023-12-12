@@ -10,6 +10,13 @@ source:Rec Guide:ilClan #15
 rules level:3
 role:Juggernaut
 
+
+
+quirk:multi_trac
+quirk:rugged_2
+quirk:ubiquitous_is
+
+
 mass:65
 engine:195 Fusion Engine(IS)
 structure:IS Standard

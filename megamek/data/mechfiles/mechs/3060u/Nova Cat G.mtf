@@ -10,6 +10,10 @@ Source:TRO: 3060
 Rules Level:2
 role:Missile Boat
 
+quirk:ext_twist
+quirk:exp_actuator
+
+
 Mass:70
 Engine:280 XL (Clan) Engine(IS)
 Structure:Clan Endo Steel

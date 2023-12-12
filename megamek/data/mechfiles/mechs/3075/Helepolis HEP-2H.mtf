@@ -9,6 +9,12 @@ source:TRO: 3075
 rules level:3
 role:Missile Boat
 
+
+
+quirk:reinforced_legs
+quirk:stable
+
+
 mass:75
 engine:225 Fusion Engine(IS)
 structure:IS Standard

@@ -85,17 +85,17 @@
 			<subforce chassis="Vincent Corvette">%ELEMENT%</subforce>
 			<subforce chassis="Vincent Corvette">%ELEMENT%</subforce>
 			<subforce fluffName="CSJ Queen Lynx" ifDateBetween="2950,3059"
-				chassis="York Destroyer Carrier">%ELEMENT%</subforce>
+				chassis="York Destroyer-Carrier">%ELEMENT%</subforce>
 			<subforce chassis="Congress Frigate">%ELEMENT%</subforce>
 			<subforce ifDateBetween="2965,"
-				chassis="Fredasa Corvette Raider">%ELEMENT%</subforce>
+				chassis="Fredasa (Corvette-Raider)">%ELEMENT%</subforce>
 			<subforce ifDateBetween="2965,"
-				chassis="Fredasa Corvette Raider">%ELEMENT%</subforce>
+				chassis="Fredasa (Corvette-Raider)">%ELEMENT%</subforce>
 
 			<subforce fluffName="CSJ Veiled Huntress" ifDateBetween=",3059"
 				chassis="Texas Battleship">%ELEMENT%</subforce>
 			<subforce fluffName="CSJ Sabre Cat"
-				chassis="Essex Destroyer">%ELEMENT%</subforce>
+				chassis="Essex II Destroyer">%ELEMENT%</subforce>
 			<subforce fluffName="CSJ Korat"
 				ifDateBetween=",3024"
 				chassis="Avatar Heavy Cruiser">%ELEMENT%</subforce>
@@ -109,13 +109,13 @@
 			<subforce fluffName="CSJ Storm Cat" ifDateBetween=",3059"
 				chassis="Lola III Destroyer">%ELEMENT%</subforce>
 			<subforce fluffName="CSJ Dark Claw" ifDateBetween=",3058"
-				chassis="Essex Destroyer">%ELEMENT%</subforce>
+				chassis="Essex II Destroyer">%ELEMENT%</subforce>
 			<subforce fluffName="CSJ Streaking Mist"
-				chassis="Black Lion Battlecruiser">%ELEMENT%</subforce>
+				chassis="Black Lion II Battlecruiser">%ELEMENT%</subforce>
 			<subforce fluffName="CSJ Firecrest" ifDateBetween=",3059"
 				chassis="Congress Frigate">%ELEMENT%</subforce>
 			<subforce fluffName="CSJ The Iowa" ifDateBetween=",3059"
-				chassis="Essex Destroyer">%ELEMENT%</subforce>
+				chassis="Essex II Destroyer">%ELEMENT%</subforce>
 			<subforce fluffName="CSJ Ripper" ifDateBetween=",3059"
 				chassis="Vincent Corvette">%ELEMENT%</subforce>
 			<subforce fluffName="CSJ Azov"
@@ -125,12 +125,12 @@
 			<subforce fluffName="CSJ Osis&apos; Pride"
 				chassis="Potemkin Troop Cruiser">%ELEMENT%</subforce>
 			<subforce fluffName="CSJ Lioness" ifDateBetween=",3059"
-				chassis="York Destroyer Carrier">%ELEMENT%</subforce>
+				chassis="York Destroyer-Carrier">%ELEMENT%</subforce>
 			<subforce fluffName="CSJ Hunter&apos;s Pride"
 				ifDateBetween="2950,3055"
 				chassis="Congress Frigate">%ELEMENT%</subforce>
 			<subforce fluffName="CSJ Hell Fury" ifDateBetween="2965,3053"
-				chassis="Fredasa Corvette Raider">%ELEMENT%</subforce>
+				chassis="Fredasa (Corvette-Raider)">%ELEMENT%</subforce>
 			<subforce chassis="Whirlwind Destroyer">%ELEMENT%</subforce>
 		</subforces>
 	</force>

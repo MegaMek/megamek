@@ -10,6 +10,12 @@ source:TRO: 3085
 Rules Level:4
 role:Missile Boat
 
+
+
+weaponquirk:stable_weapon:RA:10:ISMediumXPulseLaser
+weaponquirk:stable_weapon:RA:11:ISMediumXPulseLaser
+
+
 Mass:70
 Engine:210 XL Engine
 Structure:Standard

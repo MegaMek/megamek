@@ -10,6 +10,13 @@ Source:XTR: Republic II
 Rules Level:2
 role:Sniper
 
+
+
+quirk:battle_fists_la
+quirk:distracting
+quirk:poor_performance
+
+
 Mass:80
 Engine:240 XL Engine(IS)
 Structure:IS Standard

@@ -10,6 +10,15 @@ Source:XTR: Primitives III
 Rules Level:4
 role:Juggernaut
 
+
+
+
+quirk:obsolete
+quirk:poor_performance
+quirk:prototype
+weaponquirk:poor_cooling:LA:4:Large Laser
+
+
 Mass:45
 Engine:110 Fusion Engine(IS)
 Structure:Standard

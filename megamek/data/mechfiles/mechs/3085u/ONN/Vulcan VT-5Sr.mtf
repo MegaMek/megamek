@@ -10,6 +10,9 @@ source:TRO: 3085
 Rules Level:2
 role:Scout
 
+quirk:low_profile
+
+
 Mass:40
 Engine:240 XL Engine
 Structure:Standard

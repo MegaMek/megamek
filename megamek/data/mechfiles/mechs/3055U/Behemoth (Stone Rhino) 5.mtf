@@ -9,6 +9,14 @@ source:TRO: 3055
 rules level:2
 role:Juggernaut
 
+quirk:barrel_fists_la
+quirk:barrel_fists_ra
+quirk:pro_actuator
+quirk:oversized
+quirk:poor_performance
+quirk:weak_head_1
+
+
 mass:100
 engine:400 XL (Clan) Engine(IS)
 structure:IS Standard

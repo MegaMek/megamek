@@ -10,6 +10,13 @@ source:TRO: Golden Century
 rules level:4
 role:Brawler
 
+quirk:easy_maintain
+quirk:pro_actuator
+quirk:bad_rep_clan
+weaponquirk:accurate:RT:2:CLERPPC
+weaponquirk:accurate:RT:3:CLWERPPC
+
+
 mass:90
 engine:360 Fusion Engine(IS)
 structure:IS Endo Steel

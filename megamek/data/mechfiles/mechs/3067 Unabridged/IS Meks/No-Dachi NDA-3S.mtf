@@ -10,6 +10,11 @@ Rules Level:3
 role:Brawler
 source:Record Sheets: 3067 Unabridged
 
+
+
+quirk:hyper_actuator
+
+
 Mass:70
 Engine:350 XL Fusion Engine
 Structure:Endo-Steel

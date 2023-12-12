@@ -10,6 +10,12 @@ source:Wars of Reaving
 Rules Level:4
 role:Sniper
 
+quirk:imp_life_support
+quirk:bad_rep_clan
+quirk:difficult_maintain
+quirk:no_arms
+
+
 Mass:25
 Engine:250 XXL (Clan) Engine
 Structure:Clan Endo Steel

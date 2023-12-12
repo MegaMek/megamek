@@ -10,6 +10,9 @@ Source:TRO: 3145 Federated Suns
 Rules Level:2
 role:Brawler
 
+quirk:easy_pilot
+
+
 Mass:50
 Engine:250 XL Engine(IS)
 Structure:IS Endo Steel

@@ -116,3 +116,10 @@ XTR: ComStar
 <tonnage>
 45.0
 </tonnage>
+
+<quirks>
+prototype
+bad_rep_is
+easy_pilot
+</quirks>
+

@@ -10,6 +10,11 @@ rules level:3
 role:Juggernaut
 source:Rec Guide:ilClan #5
 
+
+
+quirk:command_mech
+
+
 mass:100
 engine:400 XXL Engine(IS)
 structure:IS Composite

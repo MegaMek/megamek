@@ -10,6 +10,12 @@ Rules Level:4
 role:Skirmisher
 Source:XTR: Gladiators
 
+
+
+quirk:ubiquitous_is
+quirk:difficult_maintain
+
+
 Mass:55
 Engine:385 XL Fusion Engine (Clan)
 Structure:Endo-Steel

@@ -10,6 +10,9 @@ source:Rec Guide:ilClan #13
 rules level:2
 role:Striker
 
+quirk:imp_target_short
+
+
 mass:20
 engine:180 XL (Clan) Engine(IS)
 structure:Clan Endo Steel

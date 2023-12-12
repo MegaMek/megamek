@@ -10,6 +10,14 @@ Source:XTR: Primitives IV
 Rules Level:4
 role:Juggernaut
 
+
+
+
+quirk:command_mech
+quirk:bad_rep_is
+quirk:obsolete
+
+
 Mass:90
 Engine:325 Fusion Engine(IS)
 Structure:IS Standard

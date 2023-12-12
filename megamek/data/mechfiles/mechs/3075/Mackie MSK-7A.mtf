@@ -10,6 +10,14 @@ source:Record Sheets: 3075
 rules level:1
 role:Juggernaut
 
+
+
+quirk:easy_maintain
+quirk:pro_actuator
+quirk:rugged_1
+quirk:oversized
+
+
 mass:100
 engine:300 Fusion Engine(IS)
 structure:IS Standard

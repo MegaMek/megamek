@@ -10,6 +10,10 @@ source:XTR: Boondocks
 rules level:4
 role:Juggernaut
 
+quirk:easy_maintain
+quirk:rugged_1
+
+
 mass:60
 engine:240 Light Engine(IS)
 structure:IS Endo-Composite

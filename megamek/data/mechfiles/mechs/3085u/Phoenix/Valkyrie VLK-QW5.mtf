@@ -10,6 +10,12 @@ source:TRO: 3085
 Rules Level:2
 role:Missile Boat
 
+
+
+quirk:easy_maintain
+quirk:imp_com
+
+
 Mass:30
 Engine:150 Light Engine(IS)
 Structure:Endo Steel

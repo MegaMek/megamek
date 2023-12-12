@@ -10,6 +10,13 @@ source:Era Report 2750
 rules level:4
 role:Juggernaut
 
+
+
+quirk:combat_computer
+quirk:ubiquitous_is
+quirk:no_arms
+
+
 mass:85
 engine:255 Fusion Engine(IS)
 structure:IS Standard

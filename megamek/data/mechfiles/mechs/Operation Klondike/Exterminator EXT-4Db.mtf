@@ -10,6 +10,11 @@ Rules Level:2
 role:Skirmisher
 source:Historical: Operation Klondike
 
+
+
+quirk:difficult_maintain
+
+
 Mass:65
 Engine:390 XL Engine
 Structure:Endo-Steel

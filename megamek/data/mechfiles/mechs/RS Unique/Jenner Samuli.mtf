@@ -10,6 +10,11 @@ Era:3060
 Rules Level:2
 role:Missile Boat
 
+
+
+quirk:no_arms
+
+
 Mass:35
 Engine:245 XL Engine
 Structure:Standard

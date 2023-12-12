@@ -10,6 +10,9 @@ Source:TRO: 3055
 Rules Level:2
 role:Striker
 
+quirk:no_arms
+
+
 Mass:35
 Engine:315 XL (Clan) Engine
 Structure:Endo Steel

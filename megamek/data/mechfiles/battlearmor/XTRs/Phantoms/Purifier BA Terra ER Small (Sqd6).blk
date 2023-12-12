@@ -135,3 +135,9 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<quirks>
+bad_rep_is
+difficult_maintain
+</quirks>
+

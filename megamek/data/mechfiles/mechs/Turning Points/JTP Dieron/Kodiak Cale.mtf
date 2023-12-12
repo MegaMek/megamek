@@ -10,6 +10,11 @@ source:Jihad Turning Points: Dieron
 Rules Level:4
 role:Juggernaut
 
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:distracting
+
+
 Mass:100
 Engine:300 Fusion Engine (Clan)
 Structure:Endo-Steel

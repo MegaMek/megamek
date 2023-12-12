@@ -9,6 +9,12 @@ source:TRO: 3067
 rules level:2
 role:Juggernaut
 
+
+
+
+quirk:easy_maintain
+
+
 mass:90
 engine:270 Fusion Engine(IS)
 structure:IS Endo Steel

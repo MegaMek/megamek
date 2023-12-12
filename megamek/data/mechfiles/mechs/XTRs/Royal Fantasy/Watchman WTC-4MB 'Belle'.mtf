@@ -9,6 +9,13 @@ source:XTR: Royal Fantasy
 rules level:3
 role:Scout
 
+
+
+quirk:easy_maintain
+quirk:easy_pilot
+quirk:rugged_1
+
+
 mass:40
 engine:200 Light Engine(IS)
 structure:IS Standard

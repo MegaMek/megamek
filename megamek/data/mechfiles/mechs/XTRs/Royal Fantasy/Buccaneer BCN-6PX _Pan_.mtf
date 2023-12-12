@@ -10,6 +10,10 @@ source:XTR: Royal Fantasy
 rules level:3
 role:Skirmisher
 
+quirk:imp_target_short
+quirk:bad_rep_is
+
+
 mass:55
 engine:330 XL Engine(IS)
 structure:IS Standard

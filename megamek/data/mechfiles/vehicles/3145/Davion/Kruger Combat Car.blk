@@ -91,3 +91,9 @@ TRO: 3145 Federated Suns
 <tonnage>
 10.0
 </tonnage>
+
+<quirks>
+imp_com
+power_reverse
+</quirks>
+

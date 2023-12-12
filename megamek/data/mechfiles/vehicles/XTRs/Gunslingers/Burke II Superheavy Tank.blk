@@ -112,3 +112,11 @@ XTR: Gunslingers
 <tonnage>
 140.0
 </tonnage>
+
+<quirks>
+distracting
+prototype
+trailer_hitch
+obsolete
+</quirks>
+

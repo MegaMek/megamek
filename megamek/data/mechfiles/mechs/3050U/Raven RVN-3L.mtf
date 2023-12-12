@@ -10,6 +10,11 @@ Source:TRO: 3050
 Rules Level:2
 role:Scout
 
+
+
+quirk:no_arms
+
+
 Mass:35
 Engine:210 XL Engine(IS)
 Structure:Standard

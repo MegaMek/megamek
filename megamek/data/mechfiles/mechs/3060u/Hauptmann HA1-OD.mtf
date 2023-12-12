@@ -10,6 +10,12 @@ Source:TRO: 3060
 Rules Level:2
 role:Sniper
 
+
+
+quirk:easy_maintain
+quirk:ext_twist
+
+
 Mass:95
 Engine:285 Fusion Engine(IS)
 Structure:IS Standard

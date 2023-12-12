@@ -10,6 +10,13 @@ Source:TRO: 3055
 Rules Level:2
 role:Striker
 
+
+
+quirk:reinforced_legs
+quirk:unbalanced
+weaponquirk:stable_weapon:RT:2:ISLBXAC10
+
+
 Mass:35
 Engine:175 Fusion Engine
 Structure:Endo Steel

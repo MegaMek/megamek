@@ -10,6 +10,13 @@ rules level:3
 role:Skirmisher
 source:Rec Guide:ilClan #5
 
+
+
+quirk:command_mech
+quirk:hyper_actuator
+quirk:low_profile
+
+
 mass:100
 engine:400 XL Engine(IS)
 structure:IS Endo-Composite

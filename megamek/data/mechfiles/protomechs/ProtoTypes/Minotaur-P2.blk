@@ -138,3 +138,8 @@ JUMPJET:Unspecified
 COMMUNICATIONS:Unspecified
 TARGETING:Unspecified
 </systemManufacturers>
+
+<quirks>
+ext_twist
+</quirks>
+

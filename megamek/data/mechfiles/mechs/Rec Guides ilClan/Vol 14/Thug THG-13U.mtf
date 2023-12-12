@@ -10,6 +10,11 @@ source:Rec Guide:ilClan #14
 rules level:3
 role:Juggernaut
 
+
+
+quirk:rugged_1
+
+
 mass:80
 engine:320 Fusion Engine(IS)
 structure:IS Endo Steel

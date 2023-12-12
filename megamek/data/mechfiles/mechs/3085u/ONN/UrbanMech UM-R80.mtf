@@ -10,6 +10,13 @@ source:TRO: 3085
 Rules Level:2
 role:Ambusher
 
+
+
+quirk:ext_twist
+quirk:low_profile
+quirk:no_arms
+
+
 Mass:30
 Engine:60 Fusion Engine
 Structure:Standard

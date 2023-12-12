@@ -10,6 +10,14 @@ Source:Starterbook: Sword and Dragon
 Rules Level:2
 role:Juggernaut
 
+
+
+quirk:barrel_fists_la
+quirk:easy_maintain
+weaponquirk:mod_weapons:RT:5:ISStreakSRM6
+weaponquirk:mod_weapons:LT:0:ISStreakSRM6
+
+
 Mass:80
 Engine:240 Fusion Engine
 Structure:Endo Steel

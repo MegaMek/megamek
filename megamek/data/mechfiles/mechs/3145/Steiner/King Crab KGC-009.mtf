@@ -10,6 +10,12 @@ Source:TRO: 3145 Lyran Commonwealth
 Rules Level:2
 role:Juggernaut
 
+
+
+quirk:command_mech
+quirk:difficult_maintain
+
+
 Mass:100
 Engine:300 Fusion Engine(IS)
 Structure:IS Endo Steel

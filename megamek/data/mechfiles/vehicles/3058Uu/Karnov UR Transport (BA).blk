@@ -65,3 +65,8 @@ VTOL
 <source>
 TRO: 3058
 </source>
+
+<quirks>
+vtol_rotor_dual
+</quirks>
+

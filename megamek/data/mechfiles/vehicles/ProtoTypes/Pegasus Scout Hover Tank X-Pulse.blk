@@ -131,3 +131,9 @@ TARGETING:Exeter LongScan with ReconLock
 <source>
 TRO: Prototypes
 </source>
+
+<quirks>
+hard_pilot
+imp_com
+</quirks>
+

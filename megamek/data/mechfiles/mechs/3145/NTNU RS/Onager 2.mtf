@@ -10,6 +10,12 @@ Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:3
 role:Sniper
 
+quirk:battle_fists_ra
+quirk:exp_actuator
+weaponquirk:exposed_linkage:LA:2:CLHAG30
+weaponquirk:exposed_linkage:LA:7:CLHAG30
+
+
 Mass:90
 Engine:270 Fusion (Clan) Engine(IS)
 Structure:Clan Endo Steel

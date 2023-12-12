@@ -10,6 +10,16 @@ source:TRO: 3085
 Rules Level:2
 role:Skirmisher
 
+
+
+quirk:easy_maintain
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:stable_weapon:RL:4:ISStreakSRM4
+weaponquirk:stable_weapon:LL:4:ISStreakSRM4
+
+
 Mass:65
 Engine:195 XL Engine(IS)
 Structure:Standard

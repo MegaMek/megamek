@@ -10,6 +10,11 @@ Source:Historical Turning Points: Tortuga
 Rules Level:4
 role:Striker
 
+
+
+quirk:nimble_jumper
+
+
 Mass:25
 Engine:150 XL Engine(IS)
 Structure:IS Endo Steel

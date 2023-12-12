@@ -10,6 +10,12 @@ Source:TRO: 3058
 Rules Level:2
 role:Missile Boat
 
+
+
+
+quirk:easy_maintain
+
+
 Mass:25
 Engine:175 XL Engine(IS)
 Structure:IS Endo Steel

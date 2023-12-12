@@ -184,3 +184,9 @@ TRO: Prototypes
 <escape_pod>
 0
 </escape_pod>
+
+<quirks>
+bad_rep_is
+atmo_flyer
+</quirks>
+

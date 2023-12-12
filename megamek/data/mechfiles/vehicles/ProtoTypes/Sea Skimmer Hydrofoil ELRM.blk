@@ -94,3 +94,12 @@ ISExtendedLRM10
 </Rear Equipment>
 
 
+
+<quirks>
+poor_performance
+searchlight
+</quirks>
+
+<weaponQuirks>
+accurate:TU:0:ISExtendedLRM10
+</weaponQuirks>

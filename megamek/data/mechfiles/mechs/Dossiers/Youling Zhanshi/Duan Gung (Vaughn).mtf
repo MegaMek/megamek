@@ -10,6 +10,12 @@ Source:BattleTech Dossiers: Youling Zhanshi
 Rules Level:2
 role:Missile Boat
 
+
+
+quirk:pro_actuator
+quirk:non_standard
+
+
 Mass:25
 Engine:175 XL Engine(IS)
 Structure:IS Endo Steel

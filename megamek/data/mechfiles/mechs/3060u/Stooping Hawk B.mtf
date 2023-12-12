@@ -10,6 +10,9 @@ Source:TRO: 3060
 Rules Level:2
 role:Missile Boat
 
+quirk:rugged_2
+
+
 Mass:55
 Engine:275 Fusion (Clan) Engine(IS)
 Structure:Clan Endo Steel

@@ -108,3 +108,9 @@ Rec Guide:ilClan #29
 <mul id:>
 9399
 </mul id:>
+
+<quirks>
+imp_com
+difficult_maintain
+</quirks>
+

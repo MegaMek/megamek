@@ -10,6 +10,11 @@ Source:TRO: 3075
 Rules Level:2
 role:Brawler
 
+
+
+quirk:imp_target_short
+
+
 Mass:40
 Engine:200 XL Engine
 Structure:Standard

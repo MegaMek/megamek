@@ -10,6 +10,16 @@ source:TRO: 3039
 rules level:1
 role:Juggernaut
 
+
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:command_mech
+quirk:distracting
+quirk:imp_com
+
+
 mass:100
 engine:300 Fusion Engine(IS)
 structure:IS Standard

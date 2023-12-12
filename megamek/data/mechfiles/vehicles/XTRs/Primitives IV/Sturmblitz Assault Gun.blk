@@ -96,3 +96,11 @@ XTR: Primitives IV
 <tonnage>
 75.0
 </tonnage>
+
+<quirks>
+distracting
+easy_maintain
+obsolete
+variable_range_long
+</quirks>
+

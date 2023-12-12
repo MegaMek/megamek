@@ -10,6 +10,15 @@ Source:TRO: 3085
 Rules Level:2
 role:Striker
 
+
+
+quirk:command_mech
+quirk:imp_com
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:jettison_capable:RA:4:Large Laser
+
+
 Mass:45
 Engine:270 Fusion Engine(IS)
 Structure:Standard

@@ -9,6 +9,12 @@ source:TRO: 3055
 rules level:2
 role:Juggernaut
 
+
+
+
+quirk:cowl
+
+
 mass:85
 engine:255 XL Engine(IS)
 structure:IS Standard

@@ -9,6 +9,12 @@ source:Rec Guide:ilClan #26
 rules level:2
 role:Sniper
 
+
+
+quirk:easy_maintain
+quirk:imp_com
+
+
 mass:40
 engine:240 Light Engine(IS)
 structure:IS Endo Steel

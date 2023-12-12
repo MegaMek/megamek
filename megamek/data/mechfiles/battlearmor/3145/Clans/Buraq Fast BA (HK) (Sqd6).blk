@@ -106,3 +106,8 @@ Csesztreg Industriplex Gamma
 <primaryFactory>
 Csesztreg
 </primaryFactory>
+
+<quirks>
+imp_com
+</quirks>
+

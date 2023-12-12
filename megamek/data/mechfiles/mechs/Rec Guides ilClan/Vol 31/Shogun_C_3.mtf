@@ -10,6 +10,14 @@ role:Sniper
 Source:Rec Guide:ilClan #31
 mul id:9463
 
+
+
+quirk:barrel_fists_la
+quirk:barrel_fists_ra
+quirk:difficult_maintain
+quirk:non_standard
+
+
 mass:85
 engine:340 XL (Clan) Engine(IS)
 structure:IS Standard

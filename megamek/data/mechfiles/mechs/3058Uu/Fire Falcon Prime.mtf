@@ -10,6 +10,10 @@ source:TRO: 3058
 rules level:2
 role:Striker
 
+
+quirk:imp_sensors
+
+
 mass:25
 engine:200 XL (Clan) Engine(IS)
 structure:Clan Endo Steel

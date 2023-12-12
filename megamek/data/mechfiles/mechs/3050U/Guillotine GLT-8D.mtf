@@ -10,6 +10,11 @@ Source:TRO: 3050
 Rules Level:2
 role:Skirmisher
 
+
+
+quirk:searchlight
+
+
 Mass:70
 Engine:280 Fusion Engine
 Structure:Endo Steel

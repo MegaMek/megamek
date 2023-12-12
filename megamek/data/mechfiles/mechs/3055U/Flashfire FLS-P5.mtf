@@ -10,6 +10,12 @@ Source:TRO: 3055
 Rules Level:4
 role:Striker
 
+
+
+weaponquirk:mod_weapons:RA:7:IS Fluid Gun
+weaponquirk:mod_weapons:LA:8:IS Fluid Gun
+
+
 Mass:30
 Engine:180 XL Engine
 Structure:Endo Steel

@@ -10,6 +10,12 @@ source:Rec Guide:ilClan #15
 rules level:2
 role:Sniper
 
+quirk:easy_maintain
+weaponquirk:fast_reload:CT:11:CLMG
+weaponquirk:fast_reload:RT:4:CLUltraAC10
+weaponquirk:fast_reload:LT:4:CLUltraAC10
+
+
 mass:80
 engine:400 XL (Clan) Engine(IS)
 structure:Clan Endo Steel

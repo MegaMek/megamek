@@ -42,7 +42,11 @@ IS Machine Gun
 ISAC10
 ISLRM10
 </Front Equipment>
-
+<Turret Equipment>
+CLLargeChemLaser
+CLStreakLRM10
+CLStreakSRM4
+</Turret Equipment>
 <Body Equipment>
 ISLRM10 Ammo
 ISAC10 Ammo

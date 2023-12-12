@@ -10,6 +10,13 @@ Source:XTR: Republic III
 Rules Level:4
 role:Striker
 
+quirk:imp_life_support
+quirk:nimble_jumper
+quirk:combat_computer
+quirk:flawed_cooling
+quirk:prototype
+
+
 Mass:45
 Engine:315 XXL (Clan) Engine
 Structure:Clan Endo Steel

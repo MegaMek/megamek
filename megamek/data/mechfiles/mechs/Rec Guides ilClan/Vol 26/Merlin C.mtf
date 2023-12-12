@@ -9,6 +9,10 @@ source:Rec Guide:ilClan #26
 rules level:3
 role:Brawler
 
+quirk:easy_maintain
+quirk:rugged_1
+
+
 mass:60
 engine:240 Fusion (Clan) Engine(IS)
 structure:IS Standard

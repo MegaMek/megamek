@@ -10,6 +10,12 @@ Rules Level:2
 role:Juggernaut
 source:Historical: Operation Klondike
 
+
+
+quirk:easy_pilot
+quirk:poor_life_support
+
+
 Mass:85
 Engine:255 Fusion Engine
 Structure:Endo-Steel

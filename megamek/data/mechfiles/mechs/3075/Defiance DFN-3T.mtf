@@ -10,6 +10,13 @@ Source:TRO: 3075
 Rules Level:2
 role:Brawler
 
+quirk:barrel_fists_la
+quirk:barrel_fists_ra
+quirk:hyper_actuator
+quirk:searchlight
+quirk:stable
+
+
 Mass:75
 Engine:300 Light Engine
 Structure:Endo Steel

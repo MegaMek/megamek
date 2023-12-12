@@ -10,6 +10,13 @@ Source:TRO: 3050
 Rules Level:2
 role:Sniper
 
+
+
+quirk:anti_air
+quirk:low_profile
+quirk:bad_rep_is
+
+
 Mass:60
 Engine:360 XL Engine
 Structure:Endo Steel

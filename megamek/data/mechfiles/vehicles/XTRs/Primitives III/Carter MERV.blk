@@ -108,3 +108,10 @@ XTR: Primitives III
 <fuelType>
 PETROCHEMICALS
 </fuelType>
+
+<quirks>
+easy_maintain
+gas_hog
+obsolete
+</quirks>
+

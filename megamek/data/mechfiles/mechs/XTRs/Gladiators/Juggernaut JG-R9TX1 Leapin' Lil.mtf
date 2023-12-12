@@ -10,6 +10,12 @@ Rules Level:4
 role:Juggernaut
 Source:XTR: Gladiators
 
+
+
+quirk:imp_life_support
+quirk:difficult_maintain
+
+
 Mass:90
 Engine:270 Light Fusion Engine
 Structure:Standard

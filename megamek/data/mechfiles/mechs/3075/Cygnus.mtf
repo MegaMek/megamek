@@ -10,6 +10,13 @@ Source:TRO: 3075
 Rules Level:2
 role:Brawler
 
+
+weaponquirk:exposed_linkage:RA:3:CLUltraAC10
+weaponquirk:static_feed:RA:3:CLUltraAC10
+weaponquirk:exposed_linkage:LA:3:CLUltraAC10
+weaponquirk:static_feed:LA:3:CLUltraAC10
+
+
 Mass:95
 Engine:380 XL (Clan) Engine
 Structure:Endo Steel

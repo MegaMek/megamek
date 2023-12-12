@@ -10,6 +10,14 @@ Source:TRO: 3050
 Rules Level:2
 role:Brawler
 
+
+
+quirk:barrel_fists_la
+quirk:easy_maintain
+weaponquirk:mod_weapons:RT:1:SRM 6
+weaponquirk:mod_weapons:LT:1:SRM 6
+
+
 Mass:80
 Engine:320 Fusion Engine
 Structure:Endo Steel

@@ -9,6 +9,11 @@ source:TRO: 3145 Republic of the Sphere
 rules level:4
 role:Scout
 
+
+
+quirk:exp_actuator
+
+
 mass:15
 engine:225 XXL Engine(IS)
 structure:IS Endo Steel

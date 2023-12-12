@@ -10,6 +10,9 @@ source:Rec Guide:ilClan #17
 rules level:2
 role:Skirmisher
 
+quirk:imp_target_short
+
+
 mass:65
 engine:325 Fusion (Clan) Engine(IS)
 structure:IS Standard

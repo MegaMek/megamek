@@ -10,6 +10,11 @@ source:TRO: 3085
 Rules Level:4
 role:Sniper
 
+
+
+quirk:weak_head_1
+
+
 Mass:30
 Engine:180 XL Engine(IS)
 Structure:IS Endo Steel

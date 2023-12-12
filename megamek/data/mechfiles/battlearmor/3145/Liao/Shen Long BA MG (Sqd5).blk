@@ -119,3 +119,10 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<weaponQuirks>
+mod_weapons:Squad:0:CLBAMG
+mod_weapons:Squad:1:CLBAMG
+mod_weapons:Squad:2:CLBAMG
+mod_weapons:Squad:3:CLBAMG
+</weaponQuirks>

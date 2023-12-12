@@ -10,6 +10,10 @@ Source:TRO: 3055
 Rules Level:4
 role:Sniper
 
+quirk:stable
+quirk:low_arms
+
+
 Mass:95
 Engine:285 Fusion Engine
 Structure:Endo Steel

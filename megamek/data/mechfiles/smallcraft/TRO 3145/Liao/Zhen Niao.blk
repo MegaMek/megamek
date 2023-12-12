@@ -159,3 +159,8 @@ TRO: 3145 Capellan Confederation
 <escape_pod>
 0
 </escape_pod>
+
+<quirks>
+imp_com
+</quirks>
+

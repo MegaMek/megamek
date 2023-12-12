@@ -9,6 +9,11 @@ Era:3076
 Source:XTR: Liao
 Rules Level:4
 
+
+
+quirk:hyper_actuator
+
+
 Mass:60
 Engine:360 XL Engine(IS)
 Structure:Endo Steel

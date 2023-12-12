@@ -10,6 +10,13 @@ Source:TRO: 3055
 Rules Level:2
 role:Striker
 
+
+
+
+quirk:ext_twist
+quirk:imp_target_long
+
+
 Mass:30
 Engine:150 Fusion Engine
 Structure:Endo Steel

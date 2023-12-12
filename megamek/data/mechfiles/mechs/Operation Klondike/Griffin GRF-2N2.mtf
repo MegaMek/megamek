@@ -10,6 +10,16 @@ rules level:3
 role:Skirmisher
 source:Historical: Operation Klondike
 
+
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:rugged_1
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+weaponquirk:jettison_capable:RA:4:PPC
+
+
 mass:55
 engine:275 Fusion Engine(IS)
 structure:IS Endo Steel

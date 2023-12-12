@@ -9,6 +9,12 @@ source:Rec Guide:ilClan #30
 rules level:2
 role:Missile Boat
 
+quirk:command_mech
+quirk:cowl
+quirk:reinforced_legs
+quirk:difficult_eject
+
+
 mass:90
 engine:270 Fusion (Clan) Engine(IS)
 structure:IS Standard
@@ -90,9 +96,9 @@ CLLRM20
 CLLRM20
 CLArtemisV
 CLArtemisV
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-Clan Ammo LRM-20 (Clan) Artemis V-capable
+Clan Ammo LRM-20
+Clan Ammo LRM-20
+Clan Ammo LRM-20
 CLCASEII
 -Empty-
 

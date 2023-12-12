@@ -10,6 +10,11 @@ source:TRO: 3085
 Rules Level:1
 role:Brawler
 
+
+
+quirk:rugged_1
+
+
 Mass:55
 Engine:220 Fusion Engine(IS)
 Structure:Standard

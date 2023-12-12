@@ -10,6 +10,9 @@ source:Rec Guide:ilClan #13
 rules level:2
 role:Sniper
 
+quirk:imp_target_long
+
+
 mass:90
 engine:270 Fusion (Clan) Engine(IS)
 structure:Clan Endo Steel

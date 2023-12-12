@@ -10,6 +10,11 @@ Source:TRO: 3055
 Rules Level:4
 role:Juggernaut
 
+
+
+quirk:difficult_maintain
+
+
 Mass:70
 Engine:350 XL Engine
 Structure:Endo Steel

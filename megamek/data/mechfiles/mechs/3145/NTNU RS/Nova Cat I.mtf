@@ -10,6 +10,10 @@ Source:Record Sheets: 3145 New Tech New Upgrades
 Rules Level:3
 role:Juggernaut
 
+quirk:ext_twist
+quirk:exp_actuator
+
+
 Mass:70
 Engine:280 XL (Clan) Engine
 Structure:Clan Endo Steel

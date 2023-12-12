@@ -151,3 +151,8 @@ ARMOR:L/CBM AeroSteel
 COMMUNICATIONS:Neil 6000-a
 TARGETING:N&D Longreach
 </systemManufacturers>
+
+<quirks>
+prototype
+</quirks>
+

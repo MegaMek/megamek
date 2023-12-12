@@ -10,6 +10,11 @@ Source:TRO: 3075
 Rules Level:2
 role:Brawler
 
+
+
+quirk:easy_maintain
+
+
 Mass:80
 Engine:320 XL Engine
 Structure:Standard

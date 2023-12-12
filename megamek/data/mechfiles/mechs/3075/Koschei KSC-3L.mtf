@@ -10,6 +10,12 @@ source:TRO: 3075
 Rules Level:1
 role:Missile Boat
 
+
+
+quirk:imp_life_support
+quirk:weak_head_1
+
+
 Mass:65
 Engine:325 Fusion Engine
 Structure:Standard

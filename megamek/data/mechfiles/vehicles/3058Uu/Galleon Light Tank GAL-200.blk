@@ -108,3 +108,8 @@ TARGETING:Maxell TA50
 <fuelType>
 PETROCHEMICALS
 </fuelType>
+
+<quirks>
+ubiquitous_is
+</quirks>
+

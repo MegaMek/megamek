@@ -10,6 +10,12 @@ Source:TRO: 3075
 Rules Level:2
 role:Striker
 
+
+quirk:easy_pilot
+quirk:ext_twist
+quirk:cramped_cockpit
+
+
 Mass:25
 Engine:200 XL (Clan) Engine
 Structure:Standard

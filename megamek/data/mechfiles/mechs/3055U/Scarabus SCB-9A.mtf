@@ -10,6 +10,12 @@ Source:TRO: 3055
 Rules Level:2
 role:Scout
 
+
+
+
+quirk:rugged_1
+
+
 Mass:30
 Engine:300 XL Engine
 Structure:Endo Steel

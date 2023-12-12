@@ -10,6 +10,11 @@ Source:TRO: 3055
 Rules Level:4
 role:Striker
 
+
+
+quirk:difficult_maintain
+
+
 Mass:35
 Engine:245 XXL Engine
 Structure:Endo Steel

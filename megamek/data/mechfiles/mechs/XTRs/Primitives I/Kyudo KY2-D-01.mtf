@@ -10,6 +10,13 @@ Source:XTR: Primitives I
 Rules Level:4
 role:Missile Boat
 
+
+
+
+quirk:easy_pilot
+quirk:exp_actuator
+
+
 Mass:45
 Engine:220 Primitive Fusion Engine
 Structure:Standard

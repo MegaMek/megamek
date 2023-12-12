@@ -10,6 +10,14 @@ source:TRO: 3075
 rules level:2
 role:Striker
 
+
+
+
+quirk:imp_com
+quirk:imp_sensors
+quirk:bad_rep_is
+
+
 mass:30
 engine:210 Light Engine(IS)
 structure:IS Endo Steel

@@ -10,6 +10,15 @@ Rules Level:2
 role:Skirmisher
 Source:Record Sheets: 3085 Unabridged - Project Phoenix
 
+
+
+quirk:rugged_2
+quirk:searchlight
+quirk:stable
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
+
 Mass:70
 Engine:350 XL Fusion Engine
 Structure:Endo-Steel

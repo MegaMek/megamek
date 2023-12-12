@@ -152,3 +152,8 @@ ARMOR:Imstar V-Stealth
 COMMUNICATIONS:IMB Hi-Def ComCon with Angel ECM Suite
 TARGETING:Imstar SkyWatch with LDR Array
 </systemManufacturers>
+
+<quirks>
+imp_com
+</quirks>
+

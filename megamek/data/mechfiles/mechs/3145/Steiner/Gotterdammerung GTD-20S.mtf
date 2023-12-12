@@ -9,6 +9,12 @@ source:TRO: 3145 Lyran Commonwealth
 rules level:2
 role:Brawler
 
+
+
+
+quirk:difficult_eject
+
+
 mass:75
 engine:300 Compact Engine(IS)
 structure:IS Endo Steel

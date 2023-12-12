@@ -10,6 +10,12 @@ Source:TRO: 3050
 Rules Level:2
 role:Skirmisher
 
+
+
+quirk:no_arms
+quirk:weak_head_1
+
+
 Mass:65
 Engine:260 Fusion Engine
 Structure:Endo Steel

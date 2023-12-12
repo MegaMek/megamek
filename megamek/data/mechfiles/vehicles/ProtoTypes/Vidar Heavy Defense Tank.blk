@@ -115,3 +115,10 @@ TRO: Prototypes
 <tonnage>
 75.0
 </tonnage>
+
+<quirks>
+bad_rep_clan
+poor_performance
+trailer_hitch
+</quirks>
+

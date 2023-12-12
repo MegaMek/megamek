@@ -9,6 +9,12 @@ source:TRO: 3050
 rules level:2
 role:Brawler
 
+
+
+
+quirk:hyper_actuator
+
+
 mass:70
 engine:280 XL Engine(IS)
 structure:IS Standard

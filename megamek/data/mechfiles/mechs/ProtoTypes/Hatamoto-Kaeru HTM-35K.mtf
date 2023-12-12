@@ -10,6 +10,13 @@ Rules Level:4
 role:Brawler
 Source:TRO: Prototypes 
 
+
+
+quirk:multi_trac
+quirk:difficult_maintain
+quirk:non_standard
+
+
 Mass:80
 Engine:320 XL Engine(IS)
 Structure:IS Composite

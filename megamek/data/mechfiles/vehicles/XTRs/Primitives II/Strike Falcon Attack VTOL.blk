@@ -106,3 +106,9 @@ XTR: Primitives II
 <tonnage>
 30.0
 </tonnage>
+
+<quirks>
+easy_pilot
+obsolete
+</quirks>
+

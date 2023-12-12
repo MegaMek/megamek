@@ -10,6 +10,10 @@ source:Rec Guide:ilClan #11
 rules level:2
 role:Sniper
 
+weaponquirk:stable_weapon:CT:10:CLLargePulseLaser
+weaponquirk:stable_weapon:CT:10:CLERPPC
+
+
 mass:35
 engine:210 Fusion (Clan) Engine(IS)
 structure:Clan Endo Steel

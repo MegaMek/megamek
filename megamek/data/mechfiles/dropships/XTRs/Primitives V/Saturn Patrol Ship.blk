@@ -198,3 +198,9 @@ XTR: Primitives V
 2
 </escape_pod>
 
+
+<quirks>
+imp_com
+atmo_instability
+</quirks>
+

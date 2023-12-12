@@ -10,6 +10,19 @@ Rules Level:3
 role:Juggernaut
 source:Record Sheets: 3067 Unabridged
 
+
+
+quirk:directional_torso_mount
+quirk:bad_rep_is
+weaponquirk:direct_torso_mount:HD:3:ISERSmallLaser
+weaponquirk:direct_torso_mount:RT:3:ISMML7
+weaponquirk:direct_torso_mount:LT:3:ISMML7
+weaponquirk:direct_torso_mount:RA:4:ISMediumVSPLaser
+weaponquirk:direct_torso_mount:RA:6:Light PPC
+weaponquirk:direct_torso_mount:LA:4:ISMediumVSPLaser
+weaponquirk:direct_torso_mount:LA:6:Light PPC
+
+
 Mass:80
 Engine:240 Compact Fusion Engine
 Structure:Endo-Steel

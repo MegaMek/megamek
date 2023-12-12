@@ -97,3 +97,9 @@ TRO: 3145 Lyran Commonwealth
 <tonnage>
 25.0
 </tonnage>
+
+<quirks>
+imp_com
+vtol_rotor_coaxial
+</quirks>
+

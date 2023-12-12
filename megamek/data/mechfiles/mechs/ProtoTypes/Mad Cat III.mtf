@@ -10,6 +10,12 @@ Source:TRO: Prototypes
 Rules Level:4
 role:Missile Boat
 
+
+quirk:bad_rep_clan
+quirk:difficult_maintain
+quirk:imp_com
+
+
 Mass:55
 Engine:330 XL (Clan) Engine(IS)
 Structure:Endo-Composite

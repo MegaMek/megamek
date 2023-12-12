@@ -117,3 +117,13 @@ TRO: Prototypes
 <tonnage>
 30.0
 </tonnage>
+
+<quirks>
+bad_rep_clan
+</quirks>
+
+<weaponQuirks>
+mod_weapons:NOS:0:CLStreakLRM15
+mod_weapons:LWG:0:CLERMediumLaser
+mod_weapons:RWG:0:CLERMediumLaser
+</weaponQuirks>

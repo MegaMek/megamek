@@ -10,6 +10,12 @@ Source:TRO: 3039
 Rules Level:1
 role:Juggernaut
 
+
+
+quirk:easy_pilot
+quirk:poor_life_support
+
+
 Mass:85
 Engine:255 Fusion Engine
 Structure:Standard

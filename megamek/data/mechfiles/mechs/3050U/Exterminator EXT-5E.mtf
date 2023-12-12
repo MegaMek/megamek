@@ -10,6 +10,11 @@ Source:TRO: 3050
 Rules Level:4
 role:Skirmisher
 
+
+
+quirk:difficult_maintain
+
+
 Mass:65
 Engine:390 XL Fusion Engine
 Structure:Endo-Steel

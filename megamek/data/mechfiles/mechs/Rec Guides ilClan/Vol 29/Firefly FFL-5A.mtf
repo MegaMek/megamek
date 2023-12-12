@@ -9,6 +9,11 @@ source:Rec Guide:ilClan #29
 rules level:3
 role:Striker
 
+
+
+quirk:no_arms
+
+
 mass:30
 engine:180 XL Engine(IS)
 structure:IS Endo Steel

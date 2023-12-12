@@ -10,6 +10,9 @@ source:TRO: Golden Century
 rules level:3
 role:Missile Boat
 
+quirk:easy_maintain
+
+
 mass:75
 engine:300 Fusion (Clan) Engine(IS)
 structure:Clan Endo Steel

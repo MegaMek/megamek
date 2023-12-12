@@ -10,6 +10,11 @@ source:TRO: 3050
 rules level:2
 role:Brawler
 
+
+
+quirk:anti_air
+
+
 mass:45
 engine:180 XL Engine(IS)
 structure:IS Standard

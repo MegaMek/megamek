@@ -10,6 +10,12 @@ source:TRO: 3067
 rules level:2
 role:Skirmisher
 
+
+
+
+quirk:good_rep_1
+
+
 mass:75
 engine:375 XL Engine(IS)
 structure:IS Endo Steel

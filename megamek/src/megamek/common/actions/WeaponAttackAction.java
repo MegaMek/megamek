@@ -1291,15 +1291,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         //Torpedos must remain in the water over their whole path to the target
         if ((atype != null)
-                && (((atype.getAmmoType() == AmmoType.T_LRM_TORPEDO))
+                && ((atype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
                         || (atype.getAmmoType() == AmmoType.T_SRM_TORPEDO)
                         || (((atype.getAmmoType() == AmmoType.T_SRM)
                                 || (atype.getAmmoType() == AmmoType.T_SRM_IMP)
                                 || (atype.getAmmoType() == AmmoType.T_MRM)
                                 || (atype.getAmmoType() == AmmoType.T_LRM)
                                 || (atype.getAmmoType() == AmmoType.T_LRM_IMP)
-                                || (atype.getAmmoType() == AmmoType.T_MML)) && (atype.getMunitionType().contains(AmmoType.Munitions.M_TORPEDO)))
-                && (los.getMinimumWaterDepth() < 1))) {
+                                || (atype.getAmmoType() == AmmoType.T_MML)) && (atype.getMunitionType().contains(AmmoType.Munitions.M_TORPEDO))))
+                && (los.getMinimumWaterDepth() < 1)) {
             return Messages.getString("WeaponAttackAction.TorpOutOfWater");
         }
 

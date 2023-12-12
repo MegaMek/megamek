@@ -108,11 +108,11 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             return 1;
         }
 
-        bSalvo = true;
-
         if (howManyShots == 1 || twoRollsUltra) {
             return 1;
         }
+
+        bSalvo = true;
 
         int nMod = getClusterModifiers(true);
 

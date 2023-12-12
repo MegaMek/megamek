@@ -6424,13 +6424,8 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
     // prepares the sprites for visual and sensor ranges
     public void setSensorRange(Entity entity, Coords c) {
-        if (entity == null || c == null || !GUIP.getShowSensorRange()) {
-            clearSensorsRanges();
-            return;
-        }
-
-        // Do not display anything for offboard units
-        if (entity.isOffBoard()) {
+        // Do not calculate anything for offboard units
+        if (entity == null || c == null || entity.isOffBoard()) {
             clearSensorsRanges();
             return;
         }

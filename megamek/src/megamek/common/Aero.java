@@ -159,6 +159,8 @@ public class Aero extends Entity implements IAero, IBomber {
     protected int[] intBombChoices = new int[BombType.B_NUM];
     protected int[] extBombChoices = new int[BombType.B_NUM];
 
+    protected boolean usedInternalBombs = false;
+
     // fuel - number of fuel points
     private int fuel = 0;
     private int currentfuel = 0;
@@ -503,7 +505,7 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public void setIntBombChoices(int[] bc) {
         if (bc.length == intBombChoices.length) {
-            intBombChoices = bc;
+            intBombChoices = bc.clone();
         }
     }
 
@@ -515,7 +517,7 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public void setExtBombChoices(int[] bc) {
         if (bc.length == extBombChoices.length) {
-            extBombChoices = bc;
+            extBombChoices = bc.clone();
         }
     }
 
@@ -529,6 +531,14 @@ public class Aero extends Entity implements IAero, IBomber {
     public int reduceMPByBombLoad(int t) {
         // The base Aero cannot carry bombs so no MP reduction
         return t;
+    }
+
+    public void setUsedInternalBombs(boolean b){
+        usedInternalBombs = b;
+    }
+
+    public boolean getUsedInternalBombs() {
+        return usedInternalBombs;
     }
 
     public void setWhoFirst() {
@@ -1010,6 +1020,9 @@ public class Aero extends Entity implements IAero, IBomber {
         setWhoFirst();
 
         resetAltLossThisRound();
+
+        // Reset usedInternalBombs
+        setUsedInternalBombs(false);
     }
 
     /**

@@ -1100,8 +1100,12 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         return countWorkingMisc(MiscType.F_BOMB_BAY);
     }
 
+    /**
+     *
+     * @return Largest empty bay size
+     */
     @Override
-    public int getMaxBombSize() {
+    public int getMaxIntBombSize() {
         return Math.max(emptyBaysInLoc(LOC_CT), Math.max(emptyBaysInLoc(LOC_RT), emptyBaysInLoc(LOC_LT)));
     }
 
@@ -1116,6 +1120,17 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             intBombChoices = bc;
         }
     }
+
+    public void setUsedInternalBombs(boolean b){
+        // Do nothing
+    }
+
+    public boolean getUsedInternalBombs() {
+        // Currently not possible
+        return false;
+    }
+
+
 
     @Override
     public int[] getExtBombChoices() {

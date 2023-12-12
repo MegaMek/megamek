@@ -4433,10 +4433,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BAP) && !isIndirect && (te != null)
                 && ae.hasBAP() && (ae.getBAPRange() >= Compute.effectiveDistance(game, ae, te))
                 && !ComputeECM.isAffectedByECM(ae, ae.getPosition(), te.getPosition())
-                && (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.WOODS)
-                        || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.JUNGLE)
-                        || (los.getLightWoods() > 0) || (los.getHeavyWoods() > 0) || (los.getUltraWoods() > 0))
-                || ae.hasNetworkBAP()) {
+                && (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_WOODS_COVER) &&
+                        (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.WOODS)
+                        || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.JUNGLE)))
+                    || (los.getLightWoods() > 0) || (los.getHeavyWoods() > 0) || (los.getUltraWoods() > 0)
+                    || ae.hasNetworkBAP()) {
             if (ae.hasBAP()) {
                 // If you want the bonus, the entity with the BAP should fire first.
                 // Not sure how to get around this

@@ -1615,7 +1615,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 if ((ae.getAltitude() > 3) && isStrafing) {
                     return Messages.getString("WeaponAttackAction.AttackerTooHigh");
                 }
-                // Additional Nape-of-Earth restrictions for strafing
+                // Additional Nap-of-Earth restrictions for strafing
                 if ((ae.getAltitude() == 1) && isStrafing) {
                     Vector<Coords> passedThrough = ae.getPassedThrough();
                     if (passedThrough.isEmpty() || passedThrough.get(0).equals(target.getPosition())) {
@@ -3593,7 +3593,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // So it's here instead of with other weapon mods that apply across the board
             if ((wtype != null) &&
                     ((wtype.ammoType == AmmoType.T_GAUSS_HEAVY) ||
-                    (wtype.ammoType == AmmoType.T_IGAUSS_HEAVY)) && 
+                    (wtype.ammoType == AmmoType.T_IGAUSS_HEAVY)) &&
                     !(ae instanceof Dropship)
                     && !(ae instanceof Jumpship)) {
                 toHit.addModifier(+1, Messages.getString("WeaponAttackAction.FighterHeavyGauss"));

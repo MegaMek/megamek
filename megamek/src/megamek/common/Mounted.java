@@ -109,6 +109,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
     // bomb stuff
     private boolean bombMounted = false;
+    private boolean isInternalBomb = false;
 
     // mine type
     private int mineType = MINE_NONE;
@@ -1635,13 +1636,17 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                 getType().hasFlag(AmmoType.F_GROUND_BOMB);
     }
 
+    public void setInternalBomb(boolean internal) {
+        isInternalBomb = internal;
+    }
+
     /**
      * Convenience method to determine if a bomb munition is mounted EXternally (reduces MP) or INternally (no
      * MP reduction).
      * @return True if
      */
     public boolean isInternalBomb() {
-        return getType().hasFlag(AmmoType.F_INTERNAL_BOMB);
+        return isInternalBomb;
     }
 
     // is ammo in the same bay as the weapon

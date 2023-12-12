@@ -26,12 +26,12 @@ import java.util.*;
 
 /**
  * This class contains computations carried out by the Server class.
- * Methods put in here should be static and self-contained. 
+ * Methods put in here should be static and self-contained.
  * @author NickAragua
  */
 public class ServerHelper {
     /**
-     * Determines if the given entity is an infantry unit in the given hex is "in the open" 
+     * Determines if the given entity is an infantry unit in the given hex is "in the open"
      * (and thus subject to double damage from attacks)
      * @param te Target entity.
      * @param te_hex Hex where target entity is located.
@@ -41,9 +41,9 @@ public class ServerHelper {
      * @param ignoreInfantryDoubleDamage Whether we should ignore double damage to infantry.
      * @return Whether the infantry unit can be considered to be "in the open"
      */
-    public static boolean infantryInOpen(Entity te, Hex te_hex, Game game, 
-            boolean isPlatoon, boolean ammoExplosion, boolean ignoreInfantryDoubleDamage) {
-        
+    public static boolean infantryInOpen(Entity te, Hex te_hex, Game game,
+                                         boolean isPlatoon, boolean ammoExplosion, boolean ignoreInfantryDoubleDamage) {
+
         if (isPlatoon && !te.isDestroyed() && !te.isDoomed() && !ignoreInfantryDoubleDamage
                 && (((Infantry) te).getDugIn() != Infantry.DUG_IN_COMPLETE)) {
 
@@ -61,17 +61,17 @@ public class ServerHelper {
                 return true;
             }
         }
-        
+
         return false;
     }
-    
+
     /**
      * Worker function that handles heat as applied to aerospace fighter
      */
-    public static void resolveAeroHeat(Game game, Entity entity, Vector<Report> vPhaseReport, Vector<Report> rhsReports, 
-            int radicalHSBonus, int hotDogMod, GameManager s) {
+    public static void resolveAeroHeat(Game game, Entity entity, Vector<Report> vPhaseReport, Vector<Report> rhsReports,
+                                       int radicalHSBonus, int hotDogMod, GameManager s) {
         Report r;
-        
+
         // If this aero is part of a squadron, we will deal with its
         // heat with the fighter squadron
         if (game.getEntity(entity.getTransportId()) instanceof FighterSquadron) {
@@ -80,8 +80,8 @@ public class ServerHelper {
 
         // should we even bother?
         if (entity.isDestroyed() || entity.isDoomed()
-            || entity.getCrew().isDoomed()
-            || entity.getCrew().isDead()) {
+                || entity.getCrew().isDoomed()
+                || entity.getCrew().isDead()) {
             return;
         }
 
@@ -405,7 +405,7 @@ public class ServerHelper {
         }
     }
 
-	public static void adjustHeatExtremeTemp(Game game, Entity entity, Vector<Report> vPhaseReport) {
+    public static void adjustHeatExtremeTemp(Game game, Entity entity, Vector<Report> vPhaseReport) {
         Report r;
         int tempDiff = game.getPlanetaryConditions().getTemperatureDifference(50, -30);
         boolean heatArmor = false;
@@ -451,15 +451,15 @@ public class ServerHelper {
         if ((entity == null) || !entity.getGame().getBoard().contains(entity.getPosition())) {
             return;
         }
-        
+
         Hex fallHex = entity.getGame().getBoard().getHex(entity.getPosition());
         int waterDepth = 0;
-        
+
         // we're going hull down, we still sink to the bottom if appropriate
         if (fallHex.containsTerrain(Terrains.WATER)) {
             boolean hexHasBridge = fallHex.containsTerrain(Terrains.BRIDGE_CF);
             boolean entityOnTopOfBridge = hexHasBridge && (entity.getElevation() == fallHex.ceiling());
-            
+
             if (!entityOnTopOfBridge) {
                 // *Only* use this if there actually is water in the hex, otherwise
                 // we get Terrain.LEVEL_NONE, i.e. Integer.minValue...
@@ -468,13 +468,12 @@ public class ServerHelper {
             }
         }
     }
-    
+
     public static void checkAndApplyMagmaCrust(Hex hex, int elevation, Entity entity, Coords curPos,
-            boolean jumpLanding, Vector<Report> vPhaseReport, GameManager gameManager) {
-        
+                                               boolean jumpLanding, Vector<Report> vPhaseReport, GameManager gameManager) {
+
         if ((hex.terrainLevel(Terrains.MAGMA) == 1) && (elevation == 0) && (entity.getMovementMode() != EntityMovementMode.HOVER)) {
             int reportID = jumpLanding ? 2396 : 2395;
-
 
             Roll diceRoll = Compute.rollD6(1);
             Report r = new Report(reportID);
@@ -482,7 +481,7 @@ public class ServerHelper {
             r.add(diceRoll);
             r.subject = entity.getId();
             vPhaseReport.add(r);
-            
+
             int rollTarget = jumpLanding ? 4 : 6;
             
             if (diceRoll.getIntValue() >= rollTarget) {
@@ -513,7 +512,7 @@ public class ServerHelper {
      */
     public static void detectMinefields(Game game, Vector<Report> vPhaseReport, GameManager gameManager) {
         boolean tacOpsBap = game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BAP);
-        
+
         // if the entity is on the board
         // and it either a) hasn't moved or b) we're not using TacOps BAP rules
         // if we are not using the TacOps BAP rules, that means we only check the entity's final hex
@@ -526,90 +525,90 @@ public class ServerHelper {
             }
         }
     }
-    
+
     /**
      * Checks for minefields within the entity's active probe range.
      * @return True if any minefields have been detected.
      */
-    public static boolean detectMinefields(Game game, Entity entity, Coords coords, 
-            Vector<Report> vPhaseReport, GameManager gameManager) {
+    public static boolean detectMinefields(Game game, Entity entity, Coords coords,
+                                           Vector<Report> vPhaseReport, GameManager gameManager) {
         if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) {
             return false;
         }
-        
+
         // can't detect minefields if the coordinates are invalid
         if (coords == null) {
             return false;
         }
-        
+
         // can't detect minefields if there aren't any to detect
         if (!game.getMinedCoords().hasMoreElements()) {
             return false;
         }
-        
+
         // can't detect minefields if we have no probe
         int probeRange = entity.getBAPRange();
         if (probeRange <= 0) {
             return false;
         }
-        
+
         boolean minefieldDetected = false;
-        
+
         for (int distance = 1; distance <= probeRange; distance++) {
             for (Coords potentialMineCoords : coords.allAtDistance(distance)) {
                 if (!game.getBoard().contains(potentialMineCoords)) {
                     continue;
                 }
-                
+
                 for (Minefield minefield : game.getMinefields(potentialMineCoords)) {
                     // no need to roll for already revealed minefields
                     if (entity.getOwner().containsMinefield(minefield)) {
                         continue;
                     }
-                    
+
                     int roll = Compute.d6(2);
-                    
+
                     if (roll >= minefield.getBAPDetectionTarget()) {
                         minefieldDetected = true;
-                        
+
                         Report r = new Report(2163);
                         r.subject = entity.getId();
                         r.add(entity.getShortName(), true);
                         r.add(potentialMineCoords.toFriendlyString());
                         vPhaseReport.add(r);
-                        
+
                         gameManager.revealMinefield(entity.getOwner(), minefield);
                     }
                 }
             }
         }
-        
+
         return minefieldDetected;
     }
-    
+
     /**
      * Checks to see if any units can detected hidden units.
      */
     public static boolean detectHiddenUnits(Game game, Entity detector, Coords detectorCoords,
-            Vector<Report> vPhaseReport, GameManager gameManager) {
+                                            Vector<Report> vPhaseReport, GameManager gameManager) {
         // If hidden units aren't on, nothing to do
         if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
             return false;
         }
-        
+
         // Units without a position won't be able to detect
         // check for this before calculating BAP range, as that's expensive
         if ((detector.getPosition() == null) || (detectorCoords == null)) {
             return false;
         }
-       
+
         int probeRange = detector.getBAPRange();
-        
+
         // if no probe, save ourselves a few loops
         if (probeRange <= 0) {
             return false;
         }
-                
+
         // Get all hidden units in probe range
         List<Entity> hiddenUnits = new ArrayList<>();
         for (Coords coords : detectorCoords.allAtDistanceOrLess(probeRange)) {
@@ -629,8 +628,8 @@ public class ServerHelper {
 
         boolean detectorHasBloodhound = detector.hasWorkingMisc(MiscType.F_BLOODHOUND);
         boolean hiddenUnitFound = false;
-        
-        for (Entity detected : hiddenUnits) {            
+
+        for (Entity detected : hiddenUnits) {
             // Can only detect units within the probes range
             int dist = detector.getPosition().distance(detected.getPosition());
             boolean beyondPointBlankRange = dist > 1;
@@ -674,7 +673,7 @@ public class ServerHelper {
                 Report.addNewline(vPhaseReport);
                 reportPlayers.add(detector.getOwnerId());
                 reportPlayers.add(detected.getOwnerId());
-                
+
                 hiddenUnitFound = true;
             }
         }
@@ -685,10 +684,10 @@ public class ServerHelper {
                 gameManager.send(playerId, gameManager.createSpecialReportPacket());
             }
         }
-        
+
         return hiddenUnitFound;
     }
-    
+
     /**
      * Loop through the game and clear 'blood stalker' flag for
      * any entities that have the given unit as the blood stalker target.

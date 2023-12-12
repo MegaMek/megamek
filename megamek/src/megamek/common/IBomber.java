@@ -36,19 +36,30 @@ public interface IBomber {
     String DIVE_BOMB_ATTACK = "DiveBombAttack";
     String ALT_BOMB_ATTACK = "AltBombAttack";
 
+    void setUsedInternalBombs(boolean b);
+    boolean getUsedInternalBombs();
+
     /**
      * @return The total number of bomb points that the bomber can carry.
      */
     int getMaxBombPoints();
 
     /**
-     * Fighters and VTOLs can carry any size bomb up to the maximum number of points, but LAMs are limited
-     * to the number of bays in a single location.
+     * Fighters and VTOLs can carry any size bomb up to the maximum number of points per location (internal/external),
+     * but LAMs are limited to the number of bays in a single location.
      *
-     * @return The largest single bomb that can be carried
+     * @return The largest single bomb that can be carried internally.
      */
-    default int getMaxBombSize() {
-        return getMaxBombPoints();
+    default int getMaxIntBombSize() {
+        return getMaxIntBombPoints();
+    }
+
+    /**
+     *
+     * @return The largest single bomb that can be carried externally.
+     */
+    default int getMaxExtBombSize() {
+        return getMaxExtBombPoints();
     }
 
     /**
@@ -130,6 +141,17 @@ public interface IBomber {
     }
 
     /**
+     *
+     * @return total damage from remaining bombs
+     */
+    default int getInternalBombsDamageTotal() {
+        int total = getBombs().stream().filter(
+                b -> b.isInternalBomb()
+        ).mapToInt(b -> b.getExplosionDamage() * b.getUsableShotsLeft()).sum();
+        return total;
+    }
+
+    /**
      * @return The number of points taken up by all mounted bombs, or just external
      */
     default int getBombPoints(boolean externalOnly) {
@@ -185,9 +207,10 @@ public interface IBomber {
                 }
             }
         }
+
         // Now external bombs
         for (int type : eSorted) {
-            for (int i = 0; i < getIntBombChoices()[type]; i++) {
+            for (int i = 0; i < getExtBombChoices()[type]; i++) {
                 int loc = availableBombLocation(BombType.bombCosts[type]);
                 if ((type == BombType.B_ALAMO)
                         && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES)) {
@@ -213,10 +236,8 @@ public interface IBomber {
     private void applyBombEquipment(int type, int loc, boolean internal){
         try {
             EquipmentType et = EquipmentType.get(BombType.getBombInternalName(type));
-            if (internal) {
-                et.setFlags(BombType.F_INTERNAL_BOMB);
-            }
-            ((Entity) this).addEquipment(et, loc, false);
+            Mounted m = ((Entity) this).addEquipment(et, loc, false);
+            m.setInternalBomb(internal);
         } catch (LocationFullException ignored) {
 
         }
@@ -227,15 +248,14 @@ public interface IBomber {
         Mounted m;
         try {
             EquipmentType et = EquipmentType.get(BombType.getBombWeaponName(type));
-            if (internal) {
-                et.setFlags(BombType.F_INTERNAL_BOMB);
-            }
             m = ((Entity) this).addBomb(et, loc);
+            m.setInternalBomb(internal);
             // Add bomb itself as single-shot ammo.
             if (type != BombType.B_TAG) {
                 Mounted ammo = new Mounted((Entity) this,
                         EquipmentType.get(BombType.getBombInternalName(type)));
                 ammo.setShotsLeft(1);
+                ammo.setInternalBomb(internal);
                 m.setLinked(ammo);
                 ((Entity) this).addEquipment(ammo, loc, false);
 

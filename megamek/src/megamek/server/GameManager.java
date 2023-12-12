@@ -2011,6 +2011,7 @@ public class GameManager implements IGameManager {
                 addReport(checkForTraitors());
                 // write End Phase header
                 addReport(new Report(5005, Report.PUBLIC));
+                addReport(resolveInternalBombHits());
                 checkLayExplosives();
                 resolveHarJelRepairs();
                 resolveEmergencyCoolantSystem();
@@ -20866,6 +20867,77 @@ public class GameManager implements IGameManager {
                 a.setOutControl(false);
                 a.setOutCtrlHeat(false);
                 a.setRandomMove(false);
+            }
+        }
+        return vReport;
+    }
+
+    /**
+     * Check all
+     * @return
+     */
+    private Vector<Report> resolveInternalBombHits() {
+        Vector<Report> vFullReport = new Vector<>();
+        vFullReport.add(new Report(5600, Report.PUBLIC));
+        for (Iterator<Entity> i = game.getEntities(); i.hasNext(); ) {
+            vFullReport.addAll(resolveInternalBombHit(i.next()));
+        }
+        return vFullReport;
+    }
+
+    /**
+     * Resolves and reports all control skill rolls for a single aero or airborne LAM in airmech mode.
+     */
+    private Vector<Report> resolveInternalBombHit(Entity e) {
+        Vector<Report> vReport = new Vector<>();
+        if (e.isDoomed() || e.isDestroyed() || !e.isDeployed()) {
+            return vReport;
+        }
+
+        Report r;
+        Aero b = null;
+
+        if (e.isAero() && (e.isAirborne() || e.isSpaceborne())) {
+            b = (Aero) e;
+
+            if (b.getUsedInternalBombs()) {
+                int id = e.getId();
+                Vector<TargetRoll> rolls = new Vector<>();
+
+                // Header
+                r = new Report(5601);
+                r.subject = id;
+                r.addDesc(e);
+                vReport.add(r);
+
+                // Roll
+                int rollTarget = 10;
+                int roll = Compute.d6(2);
+                boolean explosion = roll >= rollTarget;
+                r = new Report(5602);
+                r.indent();
+                r.subject = id;
+                r.addDesc(e);
+                r.add(roll);
+                vReport.add(r);
+
+                // Outcome
+                r = (explosion) ? new Report(5603) : new Report(5604);
+                r.indent();
+                r.subject = id;
+                r.addDesc(e);
+                int bombsLeft = b.getBombs().stream().mapToInt(Mounted::getUsableShotsLeft).sum();
+                int bombDamage = b.getInternalBombsDamageTotal();
+                if (explosion) {
+                    r.add(bombDamage);
+                }
+                r.add(bombsLeft);
+                vReport.add(r);
+                // Deal damage
+                if (explosion) {
+                    HitData ht = null;
+                    vReport.addAll(damageEntity(e, ht, bombDamage, true, DamageType.NONE,true));
+                }
             }
         }
         return vReport;

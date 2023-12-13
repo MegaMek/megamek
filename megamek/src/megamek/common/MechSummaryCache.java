@@ -416,7 +416,7 @@ public class MechSummaryCache {
             ms.setTWweight(e.getWeight());
             ms.setSuitWeight(((BattleArmor) e).getTrooperWeight());
         }
-        ms.setBV(e.calculateBattleValue());
+        ms.setBV(e.calculateBattleValue(true, true));
         ms.setLevel(TechConstants.T_SIMPLE_LEVEL[e.getTechLevel()]);
         ms.setAdvancedYear(e.getProductionDate(e.isClan()));
         ms.setStandardYear(e.getCommonDate(e.isClan()));

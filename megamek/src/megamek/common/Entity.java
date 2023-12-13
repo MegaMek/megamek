@@ -5187,7 +5187,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         // if you failed your ghost target PSR, then it doesn't matter
-        if ((active && (getGhostTargetRollMoS() < 0)) || isShutDown()) {
+        if ((ghostTargetRoll == null) || (active && (getGhostTargetRollMoS() < 0)) || isShutDown()) {
             return false;
         }
         boolean hasGhost = false;

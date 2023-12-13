@@ -20,6 +20,7 @@ package megamek.client.ui.swing.lobby;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.tooltip.PilotToolTip;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.util.UIUtil;
@@ -40,7 +41,6 @@ import java.awt.*;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 
-import static megamek.client.ui.swing.tooltip.TipUtil.*;
 import static megamek.client.ui.swing.util.UIUtil.alternateTableBGColor;
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 import static megamek.client.ui.swing.util.UIUtil.uiGreen;
@@ -85,6 +85,7 @@ public class MekTableModel extends AbstractTableModel {
     private final ArrayList<String> pilotTooltips = new ArrayList<>();
     /** The displayed contents of the Player column. */
     private final ArrayList<String> playerCells = new ArrayList<>();
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     //endregion Variable Declarations
 
     //region Constructors
@@ -185,12 +186,14 @@ public class MekTableModel extends AbstractTableModel {
             MapSettings mset = chatLounge.mapSettings;
             Player lPlayer = clientGui.getClient().getLocalPlayer();
             String s = UnitToolTip.lobbyTip(entity, lPlayer, mset).toString();
-            unitTooltips.add( HTML_BEGIN + s + HTML_END);
+            String htmlStyle = "style=\"color:" + GUIP.hexColor(GUIP.getUnitToolTipFGColor()) + "; ";
+            htmlStyle += "background-color:" + GUIP.hexColor(GUIP.getUnitToolTipBGColor()) + ";\"";
+            unitTooltips.add("<HTML><BODY " + htmlStyle + ">" + s + "</BODY></HTML>");
             s = PilotToolTip.lobbyTip(entity).toString();
             if (entity instanceof Entity) {
                 s += PilotToolTip.getCrewAdvs((Entity) entity, true).toString();
             }
-            pilotTooltips.add(HTML_BEGIN + s + HTML_END);
+            pilotTooltips.add("<HTML><BODY " + htmlStyle + ">" + s + "</BODY></HTML>");
         }
         final boolean rpgSkills = clientGui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
         unitCells.add(LobbyMekCellFormatter.unitTableEntry(entity, chatLounge, false, chatLounge.isCompact()));

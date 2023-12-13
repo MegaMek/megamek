@@ -15,7 +15,7 @@ package megamek.client.ui.swing.tooltip;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
@@ -24,13 +24,12 @@ import megamek.common.enums.IlluminationLevel;
 
 import java.util.Vector;
 
-import static megamek.client.ui.swing.tooltip.TipUtil.BUILDING_BGCOLOR;
-import static megamek.client.ui.swing.tooltip.TipUtil.LIGHT_BGCOLOR;
 import static megamek.client.ui.swing.util.UIUtil.*;
+
 
 public final class HexTooltip {
 
-    public static String getHexTip(Hex mhex, @Nullable Client client) {
+    public static String getHexTip(Hex mhex, @Nullable Client client, GUIPreferences GUIP) {
         StringBuilder result = new StringBuilder();
         Coords mcoords = mhex.getCoords();
         // All of the following can be null even if there's a ClientGUI!
@@ -57,10 +56,10 @@ public final class HexTooltip {
                         bldg.getMagnitude());
             }
 
-            sFuelTank = guiScaledFontHTML(uiBlack()) + sFuelTank + "</FONT>";
+            sFuelTank = guiScaledFontHTML(GUIP.getUnitToolTipLightFGColor()) + sFuelTank + "</FONT>";
             String col = "<TD>" + sFuelTank + "</TD>";
             String row = "<TR>" + col + "</TR>";
-            String table = "<TABLE BORDER=0 BGCOLOR=" + LIGHT_BGCOLOR + " width=100%>" + row + "</TABLE>";
+            String table = "<TABLE BORDER=0 BGCOLOR=" + GUIP.hexColor(GUIP.getUnitToolTipLightBGColor()) + " width=100%>" + row + "</TABLE>";
             result.append(table);
         }
 
@@ -76,10 +75,10 @@ public final class HexTooltip {
                         mhex.terrainLevel(Terrains.BLDG_CF),
                         Math.max(mhex.terrainLevel(Terrains.BLDG_ARMOR), 0),
                         BasementType.getType(mhex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).toString());
-                sBuilding = guiScaledFontHTML(uiBlack()) + sBuilding + "</FONT>";
+                sBuilding = guiScaledFontHTML(GUIP.getUnitToolTipLightFGColor()) + sBuilding + "</FONT>";
                 String col = "<TD>" + sBuilding + "</TD>";
                 String row = "<TR>" + col + "</TR>";
-                String table = "<TABLE BORDER=0 BGCOLOR=" + LIGHT_BGCOLOR + " width=100%>" + row + "</TABLE>";
+                String table = "<TABLE BORDER=0 BGCOLOR=" + GUIP.hexColor(GUIP.getUnitToolTipLightBGColor()) + " width=100%>" + row + "</TABLE>";
                 result.append(table);
             } else {
                 Building bldg = game.getBoard().getBuildingAt(mcoords);
@@ -93,10 +92,10 @@ public final class HexTooltip {
                 if (bldg.getBasementCollapsed(mcoords)) {
                     sBuilding += Messages.getString("BoardView1.Tooltip.BldgBasementCollapsed");
                 }
-                sBuilding = guiScaledFontHTML(uiBlack()) + sBuilding + "</FONT>";
+                sBuilding = guiScaledFontHTML(GUIP.getUnitToolTipBuildingFGColor()) + sBuilding + "</FONT>";
                 String col = "<TD>" + sBuilding + "</TD>";
                 String row = "<TR>" + col + "</TR>";
-                String table = "<TABLE BORDER=0 BGCOLOR=" + BUILDING_BGCOLOR + " width=100%>" + row + "</TABLE>";
+                String table = "<TABLE BORDER=0 BGCOLOR=" + GUIP.hexColor(GUIP.getUnitToolTipBuildingBGColor()) + " width=100%>" + row + "</TABLE>";
                 result.append(table);
             }
         }
@@ -118,10 +117,10 @@ public final class HexTooltip {
                         bldg.toString(),
                         bldg.getCurrentCF(mcoords));
             }
-            sBridge = guiScaledFontHTML(uiBlack()) + sBridge + "</FONT>";
+            sBridge = guiScaledFontHTML(GUIP.getUnitToolTipLightFGColor()) + sBridge + "</FONT>";
             String col = "<TD>" + sBridge + "</TD>";
             String row = "<TR>" + col + "</TR>";
-            String table = "<TABLE BORDER=0 BGCOLOR=" + LIGHT_BGCOLOR + " width=100%>" + row + "</TABLE>";
+            String table = "<TABLE BORDER=0 BGCOLOR=" + GUIP.hexColor(GUIP.getUnitToolTipLightBGColor()) + " width=100%>" + row + "</TABLE>";
             result.append(table);
         }
 
@@ -159,7 +158,7 @@ public final class HexTooltip {
         return result.toString();
     }
 
-    public static String getBuildingTargetTip(BuildingTarget target, Board board) {
+    public static String getBuildingTargetTip(BuildingTarget target, Board board, GUIPreferences GUIP) {
         String result = "";
         Coords mcoords = target.getPosition();
         Building bldg = board.getBuildingAt(mcoords);
@@ -171,10 +170,10 @@ public final class HexTooltip {
         if (bldg.getBasementCollapsed(mcoords)) {
             sBuilding += Messages.getString("BoardView1.Tooltip.BldgBasementCollapsed");
         }
-        sBuilding = guiScaledFontHTML(uiBlack()) + sBuilding + "</FONT>";
+        sBuilding = guiScaledFontHTML(GUIP.getUnitToolTipBuildingFGColor()) + sBuilding + "</FONT>";
         String col = "<TD>" + sBuilding + "</TD>";
         String row = "<TR>" + col + "</TR>";
-        String table = "<TABLE BORDER=0 BGCOLOR=" + BUILDING_BGCOLOR + " width=100%>" + row + "</TABLE>";
+        String table = "<TABLE BORDER=0 BGCOLOR=" + GUIP.hexColor(GUIP.getUnitToolTipBuildingBGColor()) + " width=100%>" + row + "</TABLE>";
         result += table;
         return result;
     }
@@ -188,7 +187,7 @@ public final class HexTooltip {
         return result;
     }
 
-    public static String getTerrainTip(Hex mhex, Game game)
+    public static String getTerrainTip(Hex mhex, GUIPreferences GUIP, Game game)
     {
         Coords mcoords = mhex.getCoords();
         String illuminated = IlluminationLevel.getIlluminationLevelIndicator(game, mcoords);
@@ -208,7 +207,7 @@ public final class HexTooltip {
             }
         }
 
-        result += guiScaledFontHTML(UIUtil.uiBlack()) + sTerrain + "</FONT>";
+        result += guiScaledFontHTML(GUIP.getUnitToolTipTerrainFGColor()) + sTerrain + "</FONT>";
         return result;
     }
 

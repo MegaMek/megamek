@@ -72,9 +72,7 @@ import java.util.Queue;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static megamek.client.ui.swing.tooltip.TipUtil.*;
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
-import static megamek.client.ui.swing.util.UIUtil.uiBlack;
 import static megamek.client.ui.swing.util.UIUtil.uiWhite;
 
 /**
@@ -5449,7 +5447,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         // Hex Terrain
         if (GUIP.getShowMapHexPopup() && (mhex != null)) {
             StringBuffer sbTerrain = new StringBuffer();
-            appendTerrainTooltip(sbTerrain, mhex);
+            appendTerrainTooltip(sbTerrain, mhex, GUIP);
             String sTrerain = sbTerrain.toString();
 
             // Distance from the selected unit and a planned movement end point
@@ -5496,10 +5494,10 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 }
             }
 
-            sTrerain = guiScaledFontHTML(uiBlack()) + sTrerain + "</FONT>";
+            sTrerain = guiScaledFontHTML(GUIP.getUnitToolTipTerrainFGColor()) + sTrerain + "</FONT>";
             String col = "<TD>" + sTrerain + "</TD>";
             String row = "<TR>" + col + "</TR>";
-            String table = "<TABLE BORDER=0 BGCOLOR=" + TERRAIN_BGCOLOR + " width=100%>" + row + "</TABLE>";
+            String table = "<TABLE BORDER=0 BGCOLOR=" + GUIP.hexColor(GUIP.getUnitToolTipTerrainBGColor()) + " width=100%>" + row + "</TABLE>";
             result += table;
 
             StringBuffer sbBuildings = new StringBuffer();
@@ -5514,7 +5512,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                     String errors = errBuff.toString();
                     errors = errors.replace("\n", "<BR>");
                     sInvalidHex += errors;
-                    sInvalidHex = guiScaledFontHTML(uiWhite()) + sInvalidHex + "</FONT>";
+                    sInvalidHex = guiScaledFontHTML(GUIP.getUnitToolTipFGColor()) + sInvalidHex + "</FONT>";
                     result += "<BR>" + sInvalidHex;
                 }
             }
@@ -5572,7 +5570,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         for (var wSprite : wreckList) {
             if (wSprite.getPosition().equals(mcoords)) {
                 String sWreck = wSprite.getTooltip().toString();
-                sWreck = guiScaledFontHTML(uiBlack()) + sWreck + "</FONT>";
+                sWreck = guiScaledFontHTML(GUIP.getUnitToolTipAltFGColor()) + sWreck + "</FONT>";
                 String col = "<TD>" + sWreck + "</TD>";
                 String row = "<TR>" + col + "</TR>";
                 String rows = row;
@@ -5584,7 +5582,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                     rows += row;
                 }
 
-                String table = "<TABLE BORDER=0 BGCOLOR=" + ALT_BGCOLOR + " width=100%>" + rows + "</TABLE>";
+                String table = "<TABLE BORDER=0 BGCOLOR=" + GUIP.hexColor(GUIP.getUnitToolTipAltBGColor()) + " width=100%>" + rows + "</TABLE>";
                 result += table;
             }
         }
@@ -5615,10 +5613,10 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             }
             sUnitsInfo += " in this hex...";
 
-            sUnitsInfo = guiScaledFontHTML(UIUtil.uiWhite()) + sUnitsInfo + "</FONT>";
+            sUnitsInfo = guiScaledFontHTML(GUIP.getUnitToolTipBlockFGColor()) + sUnitsInfo + "</FONT>";
             String col = "<TD>" + sUnitsInfo + "</TD>";
             String row = "<TR>" + col + "</TR>";
-            String table = "<TABLE BORDER=0 BGCOLOR=" + BLOCK_BGCOLOR + " width=100%>" + row + "</TABLE>";
+            String table = "<TABLE BORDER=0 BGCOLOR=" + GUIP.hexColor(GUIP.getUnitToolTipBlockBGColor()) + " width=100%>" + row + "</TABLE>";
             result += table;
         }
 
@@ -5626,10 +5624,10 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         for (AttackSprite aSprite : attackSprites) {
             if (aSprite.isInside(mcoords)) {
                 String sAttackSprite = aSprite.getTooltip().toString();
-                sAttackSprite = guiScaledFontHTML(uiBlack()) + sAttackSprite + "</FONT>";
+                sAttackSprite = guiScaledFontHTML(GUIP.getUnitToolTipAltFGColor()) + sAttackSprite + "</FONT>";
                 String col = "<TD>" + sAttackSprite + "</TD>";
                 String row = "<TR>" + col + "</TR>";
-                String table = "<TABLE BORDER=0 BGCOLOR=" + ALT_BGCOLOR + " width=100%>" + row + "</TABLE>";
+                String table = "<TABLE BORDER=0 BGCOLOR=" + GUIP.hexColor(GUIP.getUnitToolTipAltBGColor()) + " width=100%>" + row + "</TABLE>";
                 result += table;
             }
         }
@@ -5663,10 +5661,10 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 msg_artilleryatack += Messages.getString("BoardView1.Tooltip.ArtilleryAttackN2", ammoName);
             }
 
-            msg_artilleryatack = guiScaledFontHTML(UIUtil.uiWhite()) + msg_artilleryatack + "</FONT>";
+            msg_artilleryatack = guiScaledFontHTML(GUIP.getUnitToolTipBlockFGColor()) + msg_artilleryatack + "</FONT>";
             String col = "<TD>" + msg_artilleryatack + "</TD>";
             String row = "<TR>" + col + "</TR>";
-            String table = "<TABLE BORDER=0 BGCOLOR=" + BLOCK_BGCOLOR + " width=100%>" + row + "</TABLE>";
+            String table = "<TABLE BORDER=0 BGCOLOR=" + GUIP.hexColor(GUIP.getUnitToolTipBlockBGColor()) + " width=100%>" + row + "</TABLE>";
             result += table;
         }
 
@@ -5728,10 +5726,12 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
         String div = "<DIV WIDTH=" + UIUtil.scaleForGUI(500) + ">" + result + "</DIV>";
         StringBuffer txt = new StringBuffer();
-        txt.append(HTML_BEGIN + div + HTML_END);
+        String htmlStyle = "style=\"color:" + GUIP.hexColor(GUIP.getUnitToolTipFGColor()) + "; ";
+        htmlStyle += "background-color:" + GUIP.hexColor(GUIP.getUnitToolTipBGColor()) + ";\"";
+        txt.append("<HTML><BODY " + htmlStyle + ">" + div + "</BODY></HTML>");
 
         // Check to see if the tool tip is completely empty
-        if (txt.toString().equals(HTML_BEGIN +HTML_END)) {
+        if (txt.toString().equals("<HTML><BODY " + htmlStyle + ">" + "</BODY></HTML>")) {
             return "";
         }
 
@@ -5750,11 +5750,12 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     /**
      * Appends HTML describing the terrain of a given hex
      */
-    public void appendTerrainTooltip(StringBuffer txt, @Nullable Hex mhex) {
+    public void appendTerrainTooltip(StringBuffer txt, @Nullable Hex mhex, GUIPreferences GUIP) {
         if (mhex == null) {
             return;
         }
-        txt.append(HexTooltip.getTerrainTip(mhex, game));
+
+        txt.append(HexTooltip.getTerrainTip(mhex, GUIP, game));
     }
 
     /**
@@ -5762,7 +5763,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
      */
     public void appendBuildingsTooltip(StringBuffer txt, @Nullable Hex mhex) {
         if ((mhex != null) && (clientgui != null)) {
-            String result = HexTooltip.getHexTip(mhex, clientgui.getClient());
+            String result = HexTooltip.getHexTip(mhex, clientgui.getClient(), GUIP);
             txt.append(result);
         }
     }
@@ -5780,7 +5781,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         result += "<HR STYLE=WIDTH:90% />";
         // Table to add a bar to the left of an entity in
         // the player's color
-        String color = "C0C0C0";
+        String color = GUIP.hexColor(GUIP.getUnitToolTipFGColor());
         if (!EntityVisibilityUtils.onlyDetectedBySensors(localPlayer, entity)) {
             color = entity.getOwner().getColour().getHexString();
         }
@@ -5788,7 +5789,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         // Entity tooltip
         String col2 = "<TD>" + UnitToolTip.getEntityTipGame(entity, getLocalPlayer()) + "</TD>";
         String row = "<TR>" + col1 + col2 +  "</TR>";
-        String table = "<TABLE WIDTH=100% BGCOLOR=" + BGCOLOR + ">" + row + "</TABLE>";
+        String table = "<TABLE WIDTH=100% BGCOLOR=" + GUIP.hexColor(GUIP.getUnitToolTipBGColor()) + ">" + row + "</TABLE>";
         result += table;
 
         txt.append(result);

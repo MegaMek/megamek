@@ -15,7 +15,6 @@ import megamek.common.actions.*;
 import megamek.common.enums.GamePhase;
 
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
-import static megamek.client.ui.swing.util.UIUtil.uiBlack;
 
 /**
  * Sprite and info for an attack. Does not actually use the image buffer as
@@ -252,7 +251,7 @@ class AttackSprite extends Sprite {
             for (String wpD : attacks.getDescriptions()) {
                 sAttacks += "<BR>" + wpD;
             }
-            result += guiScaledFontHTML(uiBlack()) + sAttacks + "</FONT>";
+            result += sAttacks;
         }
         return new StringBuffer().append(result);
     }

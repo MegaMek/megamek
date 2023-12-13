@@ -125,7 +125,7 @@ public final class UnitToolTip {
         if (entity instanceof FighterSquadron && entity.getLoadedUnits().isEmpty()) {
             String col = "<TD>" + result + "</TD>";
             String row = "<TR>" + col + "</TR>";
-            String table = "<TABLE BGCOLOR=#313131 width=100%>" + row + "</TABLE>";
+            String table = "<TABLE width=100%>" + row + "</TABLE>";
             return new StringBuilder().append(table);
         }
 
@@ -161,7 +161,7 @@ public final class UnitToolTip {
 
         String col = "<TD>" + result + "</TD>";
         String row = "<TR>" + col + "</TR>";
-        String table = "<TABLE BGCOLOR=#313131 width=100%>" + row + "</TABLE>";
+        String table = "<TABLE width=100%>" + row + "</TABLE>";
 
         return new StringBuilder().append(table);
     }
@@ -170,9 +170,9 @@ public final class UnitToolTip {
         if (target instanceof Entity) {
             return UnitToolTip.getEntityTipAsTarget((Entity) target, (client != null) ? client.getLocalPlayer() : null).toString();
         } else if (target instanceof BuildingTarget) {
-            return HexTooltip.getBuildingTargetTip((BuildingTarget) target, (client != null) ? client.getBoard() : null);
+            return HexTooltip.getBuildingTargetTip((BuildingTarget) target, (client != null) ? client.getBoard() : null, GUIP);
         } else if (target instanceof Hex) {
-            return HexTooltip.getHexTip((Hex) target, client);
+            return HexTooltip.getHexTip((Hex) target, client, GUIP);
         } else {
             return getTargetTipSummary(target, client);
         }

@@ -15,6 +15,9 @@
 */
 package megamek.common;
 
+import megamek.MegaMek;
+import megamek.SuiteConstants;
+import megamek.Version;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.MekCostCalculator;
 import megamek.common.enums.AimingMode;
@@ -33,6 +36,7 @@ import org.apache.logging.log4j.LogManager;
 
 import java.io.PrintWriter;
 import java.math.BigInteger;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -4171,6 +4175,9 @@ public abstract class Mech extends Entity {
     public String getMtf() {
         StringBuilder sb = new StringBuilder();
         String newLine = "\n";
+
+        sb.append(MtfFile.COMMENT).append("Saved from version ").append(SuiteConstants.VERSION);
+        sb.append(" on ").append(LocalDate.now()).append(newLine);
 
         boolean standard = (getCockpitType() == Mech.COCKPIT_STANDARD)
                 && (getGyroType() == Mech.GYRO_STANDARD);

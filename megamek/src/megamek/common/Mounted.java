@@ -1804,15 +1804,19 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     }
 
     /**
-     * Count all the quirks for this "mounted" object, positive and negative
+     * Count all the weapon quirks for this Mounted. Returns 0 when this Mounted is tied to an Entity and
+     * this Entity's game does not use quirks! In all other cases (e.g. outside of games), returns the quirk
+     * count of this Mounted.
+     *
+     * @return The number of active weapon quirks for this Mounted unless the game does not use quirks
      */
     public int countQuirks() {
-        if ((null == entity) || (null == entity.game)
-                || !entity.game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
+        if ((entity != null) && (entity.getGame() != null) &&
+                !entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return 0;
+        } else {
+            return quirks.count();
         }
-
-        return quirks.count();
     }
 
     /**

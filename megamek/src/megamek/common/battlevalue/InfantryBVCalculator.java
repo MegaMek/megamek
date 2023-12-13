@@ -137,21 +137,23 @@ public class InfantryBVCalculator extends BVCalculator {
 
         List<String> modifierList = new ArrayList<>();
         double typeModifier = 1;
-        switch (infantry.getMovementMode()) {
-            case INF_MOTORIZED:
-            case WHEELED:
-                typeModifier = 0.8;
-                break;
-            case TRACKED:
-                typeModifier = 0.9;
-                break;
-            case HOVER:
-            case VTOL:
-                typeModifier = 0.7;
-                break;
-            case SUBMARINE:
-                typeModifier = 0.6;
-                break;
+        if (infantry.getMount() == null) {
+            switch (infantry.getMovementMode()) {
+                case INF_MOTORIZED:
+                case WHEELED:
+                    typeModifier = 0.8;
+                    break;
+                case TRACKED:
+                    typeModifier = 0.9;
+                    break;
+                case HOVER:
+                case VTOL:
+                    typeModifier = 0.7;
+                    break;
+                case SUBMARINE:
+                    typeModifier = 0.6;
+                    break;
+            }
         }
 
         if (infantry.hasSpecialization(Infantry.COMBAT_ENGINEERS)) {

@@ -137,16 +137,10 @@ public class MtfFile implements IMechLoader {
     public static final String WEAPON_QUIRK = "weaponquirk:";
     public static final String ROLE = "role:";
 
-    /**
-     * Creates new MtfFile
-     */
     public MtfFile(InputStream is) throws EntityLoadingException {
         try (InputStreamReader isr = new InputStreamReader(is);
              BufferedReader r = new BufferedReader(isr)) {
-            String version = r.readLine();
-            if (version == null) {
-                throw new EntityLoadingException("MTF File empty!");
-            }
+            String version = readLineIgnoringComments(r);
 
             // Version 1.0: Initial version.
             // Version 1.1: Added level 3 cockpit and gyro options.
@@ -159,8 +153,8 @@ public class MtfFile implements IMechLoader {
                 throw new EntityLoadingException("Wrong MTF file version.");
             }
 
-            name = r.readLine();
-            model = r.readLine();
+            name = readLineIgnoringComments(r);
+            model = readLineIgnoringComments(r);
 
             critData = new String[9][12];
 
@@ -174,6 +168,17 @@ public class MtfFile implements IMechLoader {
         } catch (NumberFormatException ex) {
             LogManager.getLogger().error("", ex);
             throw new EntityLoadingException("NumberFormatException reading file (format error)");
+        }
+    }
+
+    private String readLineIgnoringComments(BufferedReader reader) throws IOException {
+        while (true) {
+            String line = reader.readLine();
+            if (line == null) {
+                return "";
+            } else if (!line.startsWith(COMMENT)) {
+                return line;
+            }
         }
     }
 

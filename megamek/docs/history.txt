@@ -42,6 +42,8 @@ VERSION HISTORY:
 + PR #4948, 4950: Quirks are now part of the unit files (.mtf and .blk). They can still be configured in the lobby; any changes made there only apply to the present unit. Saving custom quirks from the lobby has been removed. An accompanying change adds quirk editing to MegaMekLab.
 + Fix #4935: Torpedoes no longer think they're crossing dry land when in fact they are fired through open water
 + PR #4921: Background colors for the unit tooltip can now be configured in the client settings
++ PR #4954: Add the MM version and date when saving unit files
++ PR #4955: MechSummaryCache BV calculation: ignore pilot skill
 
 0.49.15 (2023-10-21 1530 UTC)
 + PR #4688: Round reports should no longer take increasingly long to load

@@ -11,13 +11,13 @@ VERSION HISTORY:
 + PR #4877: Add client setting for auto centering
 + PR #4875: Done and skip buttons handle changes in GUI Scale better
 + Issue #4861: Fix for RAC and UAC ammo bingo state hanging game
-+ PR #4853: Fixes MekHQ #3594, MekHQ #3773
++ PR #4853: Fixes bugs with loading infantry into transports and JumpShip fuel consumption
 + Data: Correcting various Prototype weapon BVs.
 + Issue #4794: Game hangs on 'firing phase'
 + PR #4872: Improvements to CSV tool.
-+ PR #4883:Beast mounted infantry
++ PR #4883: Beast mounted infantry implemented! Swoop down on unsuspecting Meks with your Branth fliers!
 + Fix #4806: IllegalArgumentException when attempting to launch and recover fighters in the same turn
-+ Fix #3861:Militarized Space Stations turning
++ Fix #3861: Militarized Space Stations turning corrected
 + PR #4899: add report heading for piloting rolls
 + PR #4900: advanced search for mounted infantry
 + PR #4903: Move Unit Roles to Unit Files
@@ -25,7 +25,7 @@ VERSION HISTORY:
 + PR #4914: add missing filter for QuadVee
 + Fix #3095: Jumped WIGE does not get to-hit modifier
 + Fix #4901: 49.16 - Beast Infantry - Princess Cannot Move Branth Flying infantry
-+ Issue #4907: RFE: Display Cockpit type in Unit Viewer
++ Issue #4907: Display Cockpit type in Unit Viewer
 + Fix #4857: Sprinting units are considered to be using supercharger
 + PR #4924: weapon panel factor in combat computer with displaying heat buildup
 + Issue #3917: Vehicles with jump MP no longer incorrectly count as immobilized

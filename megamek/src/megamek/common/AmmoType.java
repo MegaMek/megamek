@@ -13316,14 +13316,14 @@ public class AmmoType extends EquipmentType {
                     cost *= 1.5;
                 } else if (munition.getMunitionType().contains(Munitions.M_TRACER)) {
                     cost *= 1.5;
-                    bv *= 0.25;
+                    bv *= 1.25;
                 } else if (munition.getMunitionType().contains(Munitions.M_INCENDIARY_AC)) {
                     cost *= 2;
                 } else if (munition.getMunitionType().contains(Munitions.M_PRECISION)) {
                     cost *= 6;
                 } else if (munition.getMunitionType().contains(Munitions.M_CASELESS)) {
                     cost *= 1.5;
-                    bv *= 1.0;
+                    bv *= 2.0;
                 }
             }
 
@@ -13332,7 +13332,7 @@ public class AmmoType extends EquipmentType {
                     || (munition.getAmmoType() == AmmoType.T_NLRM))
                     && (munition.getMunitionType().contains(Munitions.M_AX_HEAD))) {
                 cost *= 0.5;
-                bv *= 1;
+                bv *= 2;
             }
 
             if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRM_IMP)
@@ -13373,7 +13373,7 @@ public class AmmoType extends EquipmentType {
                     || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_NLRM))
                     && (munition.getMunitionType().contains(Munitions.M_SWARM_I))) {
                 cost *= 3;
-                bv *= 0.2;
+                bv *= 1.2;
             }
 
             if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRM_IMP)
@@ -13490,6 +13490,7 @@ public class AmmoType extends EquipmentType {
                     && ((munition.getMunitionType().contains(Munitions.M_TANDEM_CHARGE))
                             || (munition.getMunitionType().contains(Munitions.M_ARTEMIS_V_CAPABLE)))) {
                 cost *= 5;
+                bv *= 2;
             }
 
             if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRM_IMP)
@@ -13498,7 +13499,7 @@ public class AmmoType extends EquipmentType {
                     && ((munition.getMunitionType().contains(Munitions.M_HEAT_SEEKING))
                             || (munition.getMunitionType().contains(Munitions.M_FOLLOW_THE_LEADER)))) {
                 cost *= 2;
-                bv *= 0.5;
+                bv *= 1.5;
             }
             if (((munition.getAmmoType() == AmmoType.T_VEHICLE_FLAMER)
                     || (munition.getAmmoType() == AmmoType.T_HEAVY_FLAMER)

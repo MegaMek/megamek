@@ -44,6 +44,7 @@ VERSION HISTORY:
 + PR #4921: Background colors for the unit tooltip can now be configured in the client settings
 + PR #4954: Add the MM version and date when saving unit files
 + PR #4955: MechSummaryCache BV calculation: ignore pilot skill
++ Data #4933: Megamek tacops ammo BV error (Partial Fix - work still needed on Dead Fire and LK)
 
 0.49.15 (2023-10-21 1530 UTC)
 + PR #4688: Round reports should no longer take increasingly long to load

@@ -162,6 +162,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private final JCheckBox soundMuteOthersTurn = new JCheckBox(Messages.getString("CommonSettingsDialog.soundMuteOthersTurn"));
     private JTextField tfSoundMuteOthersFileName;
 
+    private JTextField userDir;
     private final JCheckBox keepGameLog = new JCheckBox(Messages.getString("CommonSettingsDialog.keepGameLog"));
     private JTextField gameLogFilename;
     private final JCheckBox stampFilenames = new JCheckBox(Messages.getString("CommonSettingsDialog.stampFilenames"));
@@ -1475,6 +1476,15 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         row.add(gameLogFilename);
         comps.add(row);
 
+        JLabel userDirLabel = new JLabel(Messages.getString("CommonSettingsDialog.logFileName"));
+        userDir = new JTextField(15);
+        userDir.setMaximumSize(new Dimension(250, 40));
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(DEPENDENT_INSET));
+        row.add(userDirLabel);
+        row.add(userDir);
+        comps.add(row);
+
         addSpacer(comps, 5);
         comps.add(checkboxEntry(stampFilenames, null));
 
@@ -1576,6 +1586,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             keepGameLog.setSelected(CP.keepGameLog());
             gameLogFilename.setEnabled(keepGameLog.isSelected());
             gameLogFilename.setText(CP.getGameLogFilename());
+            userDir.setText(GUIP.getUserDir());
             stampFilenames.setSelected(CP.stampFilenames());
             stampFormat.setEnabled(stampFilenames.isSelected());
             stampFormat.setText(CP.getStampFormat());
@@ -1996,6 +2007,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         CP.setKeepGameLog(keepGameLog.isSelected());
         CP.setGameLogFilename(gameLogFilename.getText());
+        GUIP.setUserDir(userDir.getText());
         CP.setStampFilenames(stampFilenames.isSelected());
         CP.setStampFormat(stampFormat.getText());
         CP.setReportKeywords(reportKeywordsTextPane.getText());

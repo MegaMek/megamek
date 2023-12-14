@@ -61,7 +61,8 @@ public class BombAttackHandler extends WeaponHandler {
                 for (Mounted bomb : ae.getBombs()) {
                     if (!bomb.isDestroyed()
                             && (bomb.getUsableShotsLeft() > 0)
-                            && (((BombType) bomb.getType()).getBombType() == type)) {
+                            && (((BombType) bomb.getType()).getBombType() == type)
+                    ) {
                         bomb.setShotsLeft(0);
                         if (bomb.isInternalBomb()) {
                             ((IBomber) ae).setUsedInternalBombs(true);

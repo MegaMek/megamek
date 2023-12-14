@@ -1501,31 +1501,53 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         if (!ce().isBomber()) {
             return payload;
         }
-        int[] loadout = ce().getBombLoadout();
-        // this part is ugly, but we need to find any other bombing attacks by
-        // this
-        // entity in the attack list and subtract those payloads from the
-        // loadout
-        for (EntityAction o : attacks) {
-            if (o instanceof WeaponAttackAction) {
-                WeaponAttackAction waa = (WeaponAttackAction) o;
-                if (waa.getEntityId() == ce().getId()) {
-                    int[] priorLoad = waa.getBombPayload();
-                    for (int i = 0; i < priorLoad.length; i++) {
-                        loadout[i] = loadout[i] - priorLoad[i];
+
+        HashMap<String, int[]> loadouts = new HashMap<String, int[]>();
+        loadouts.put("external", ce().getExternalBombLoadout());
+        loadouts.put("internal", ce().getInternalBombLoadout());
+        String[] titles = new String[] {"internal", "external"};
+
+        for (String title: titles){
+            int[] loadout = loadouts.get(title);
+
+            // this part is ugly, but we need to find any other bombing attacks by
+            // this
+            // entity in the attack list and subtract those payloads from the
+            // loadout
+            for (EntityAction o : attacks) {
+                if (o instanceof WeaponAttackAction) {
+                    WeaponAttackAction waa = (WeaponAttackAction) o;
+                    if (waa.getEntityId() == ce().getId()) {
+                        int[] priorLoad = waa.getBombPayload();
+                        for (int i = 0; i < priorLoad.length; i++) {
+                            loadout[i] = loadout[i] - priorLoad[i];
+                        }
                     }
                 }
             }
-        }
 
-        int numFighters = ce().getActiveSubEntities().size();
-        BombPayloadDialog bombsDialog = new BombPayloadDialog(
-                clientgui.frame,
-                Messages.getString("FiringDisplay.BombNumberDialog" + ".title"),
-                loadout, isSpace, false, limit, numFighters);
-        bombsDialog.setVisible(true);
-        if (bombsDialog.getAnswer()) {
-            payload = bombsDialog.getChoices();
+            // Don't bother preparing a dialog for bombs that don't exist.
+            if (Arrays.stream(loadout).sum() == 0){
+                continue;
+            }
+
+            // Internal bay dive bombing is limited to 6 bombs at a time, but other limits may apply
+            if ("internal".equals(title)) {
+                limit = (limit <= -1) ? 6 : Math.min(6, limit);
+            }
+
+            int numFighters = ce().getActiveSubEntities().size();
+            BombPayloadDialog bombsDialog = new BombPayloadDialog(
+                    clientgui.frame,
+                    Messages.getString("FiringDisplay.BombNumberDialog" + ".title") + ", " + title,
+                    loadout, isSpace, false, limit, numFighters);
+            bombsDialog.setVisible(true);
+            if (bombsDialog.getAnswer()) {
+                int[] choices = bombsDialog.getChoices();
+                for (int i = 0; i < choices.length; i++) {
+                    payload[i] += choices[i];
+                }
+            }
         }
         return payload;
     }

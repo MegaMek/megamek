@@ -53,6 +53,11 @@ public class AmmoWeaponHandler extends WeaponHandler {
             ammo = weapon.getLinked();
         }
         ammo.setShotsLeft(ammo.getBaseShotsLeft() - 1);
+
+        if (weapon.isInternalBomb()) {
+            ((IBomber) ae).setUsedInternalBombs(true);
+        }
+
         super.useAmmo();
     }
 
@@ -63,11 +68,11 @@ public class AmmoWeaponHandler extends WeaponHandler {
             ammo = weapon.getLinked();
         }
     }
-    
+
     /**
      * For ammo weapons, this number can be less than the full number if the
      * amount of ammo is not high enough
-     * 
+     *
      * @return the number of weapons of this type firing (for squadron weapon groups)
      */
     @Override
@@ -82,12 +87,12 @@ public class AmmoWeaponHandler extends WeaponHandler {
                 (int) Math.floor((double) totalShots
                         / (double) weapon.getCurrentShots()));
     }
-    
+
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         return doAmmoFeedProblemCheck(vPhaseReport);
     }
-    
+
     /**
      * Carry out an 'ammo feed problems' check on the weapon. Return true if it blew up.
      */
@@ -111,7 +116,7 @@ public class AmmoWeaponHandler extends WeaponHandler {
                 r = new Report(3163);
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);
-                
+
                 explodeRoundInBarrel(vPhaseReport);
             } else if (diceRoll.getIntValue() >= 10) {
                 // plain old weapon jam
@@ -130,17 +135,17 @@ public class AmmoWeaponHandler extends WeaponHandler {
         } else {
             return false;
         }
-        
+
         return true;
     }
-    
+
     /**
      * Worker function that explodes a round in the barrel of the attack's weapon
      */
     protected void explodeRoundInBarrel(Vector<Report> vPhaseReport) {
         weapon.setJammed(true);
         weapon.setHit(true);
-        
+
         int wloc = weapon.getLocation();
         for (int i = 0; i < ae.getNumberOfCriticals(wloc); i++) {
             CriticalSlot slot1 = ae.getCritical(wloc, i);
@@ -153,8 +158,8 @@ public class AmmoWeaponHandler extends WeaponHandler {
                 break;
             }
         }
-        
-        // if we're here, the weapon is going to explode whether it's flagged as explosive or not 
+
+        // if we're here, the weapon is going to explode whether it's flagged as explosive or not
         vPhaseReport.addAll(gameManager.explodeEquipment(ae, wloc, weapon, true));
     }
 }

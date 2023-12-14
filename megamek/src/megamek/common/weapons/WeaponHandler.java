@@ -1824,6 +1824,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         } else if (wtype.hasFlag(WeaponType.F_ONESHOT)) {
             weapon.setFired(true);
         }
+
         setDone();
     }
 

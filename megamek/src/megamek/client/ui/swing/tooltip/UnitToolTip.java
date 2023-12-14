@@ -94,7 +94,8 @@ public final class UnitToolTip {
     public static String wrapWithHTML(String text) {
         String fgColor = GUIP.hexColor(GUIP.getUnitToolTipFGColor());
         String bgColor = GUIP.hexColor(GUIP.getUnitToolTipBGColor());
-        return String.format("<html><body style=\"color:%s; background-color:%s;\" >%s</body></html>", fgColor, bgColor, text);
+        String format = "<html><body style=\"color:%s; background-color:%s;\" >%s</body></html>";
+        return String.format(format, fgColor, bgColor, text);
     }
 
     // PRIVATE

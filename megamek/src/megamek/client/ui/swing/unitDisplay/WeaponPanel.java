@@ -880,7 +880,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 break;
             default:
                 txt = String.format("<font color=\"%s\">To Hit: <b>%2d (%2.0f%%)</b></font> = %s",
-                        GUIP.hexColor(GUIP.getUnitToolTipHighlightColor()), toHit.getValue(), Compute.oddsAbove(toHit.getValue(), natAptGunnery), toHit.getDesc());
+                        GUIP.hexColor(GUIP.getUnitToolTipHighlightColor()),
+                        toHit.getValue(),
+                        Compute.oddsAbove(toHit.getValue(), natAptGunnery),
+                        toHit.getDesc());
                 break;
         }
 

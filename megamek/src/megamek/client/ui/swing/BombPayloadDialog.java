@@ -47,6 +47,8 @@ public class BombPayloadDialog extends JDialog implements ActionListener, ItemLi
 
     private boolean confirm = false;
     private int limit;
+    private int internalBombLimit=6;
+    private int internalBombCount=0;
     private int[] bombs;
 
     private JPanel panButtons = new JPanel();

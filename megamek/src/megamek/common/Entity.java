@@ -12960,15 +12960,37 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return
      */
     public int[] getBombLoadout() {
+        return getBombLoadout(false);
+    }
+
+    public int[] getBombLoadout(boolean internalOnly) {
         int[] loadout = new int[BombType.B_NUM];
         for (Mounted bomb : getBombs()) {
             if ((bomb.getUsableShotsLeft() > 0)
                 && (bomb.getType() instanceof BombType)) {
-                int type = ((BombType) bomb.getType()).getBombType();
-                loadout[type] = loadout[type] + 1;
+                // Either count all bombs, or just internal bombs
+                if (internalOnly && !bomb.isInternalBomb()) {
+                    continue;
+                } else {
+                    int type = ((BombType) bomb.getType()).getBombType();
+                    loadout[type] = loadout[type] + 1;
+                }
             }
         }
         return loadout;
+    }
+
+    public int[] getInternalBombLoadout() {
+        return getBombLoadout(true);
+    }
+
+    public int[] getExternalBombLoadout() {
+        int[] allBombs = getBombLoadout();
+        int[] intBombs = getBombLoadout(true);
+        for (int i = 0; i < allBombs.length; i++) {
+            allBombs[i] -= intBombs[i];
+        }
+        return allBombs;
     }
 
     @Override

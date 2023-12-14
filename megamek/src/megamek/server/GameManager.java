@@ -20873,7 +20873,8 @@ public class GameManager implements IGameManager {
     }
 
     /**
-     * Check all
+     * Check all aircraft that may have used internal bomb bays for incidental explosions
+     * caused by ground fire.
      * @return
      */
     private Vector<Report> resolveInternalBombHits() {
@@ -20882,7 +20883,8 @@ public class GameManager implements IGameManager {
         for (Iterator<Entity> i = game.getEntities(); i.hasNext(); ) {
             vFullReport.addAll(resolveInternalBombHit(i.next()));
         }
-        return vFullReport;
+        // Return empty Vector if no reports are added.
+        return (vFullReport.isEmpty()) ? new Vector<>() : vFullReport;
     }
 
     /**
@@ -20890,15 +20892,15 @@ public class GameManager implements IGameManager {
      */
     private Vector<Report> resolveInternalBombHit(Entity e) {
         Vector<Report> vReport = new Vector<>();
-        if (e.isDoomed() || e.isDestroyed() || !e.isDeployed()) {
+        // Only applies to surviving bombing craft that took damage this last round
+        if (!e.isBomber() || e.damageThisRound <= 0 || e.isDoomed() || e.isDestroyed() || !e.isDeployed()) {
             return vReport;
         }
 
         Report r;
-        Aero b = null;
 
-        if (e.isAero() && (e.isAirborne() || e.isSpaceborne())) {
-            b = (Aero) e;
+        if (e.isAero()) {
+            Aero b = (Aero) e;
 
             if (b.getUsedInternalBombs()) {
                 int id = e.getId();
@@ -20911,14 +20913,15 @@ public class GameManager implements IGameManager {
                 vReport.add(r);
 
                 // Roll
-                int rollTarget = 10;
+                int rollTarget = 10; //Testing purposes
                 int roll = Compute.d6(2);
                 boolean explosion = roll >= rollTarget;
                 r = new Report(5602);
                 r.indent();
                 r.subject = id;
                 r.addDesc(e);
-                r.add(roll);
+                r.add(rollTarget);
+                r.add(roll, false);
                 vReport.add(r);
 
                 // Outcome
@@ -20935,8 +20938,9 @@ public class GameManager implements IGameManager {
                 vReport.add(r);
                 // Deal damage
                 if (explosion) {
-                    HitData ht = null;
-                    vReport.addAll(damageEntity(e, ht, bombDamage, true, DamageType.NONE,true));
+                    HitData hd = new HitData(b.getBodyLocation(), false, HitData.EFFECT_NONE);
+                    vReport.addAll(damageEntity(e, hd, bombDamage, true, DamageType.NONE,true));
+                    e.applyDamage();
                 }
             }
         }

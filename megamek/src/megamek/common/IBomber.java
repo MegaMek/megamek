@@ -145,9 +145,16 @@ public interface IBomber {
      * @return total damage from remaining bombs
      */
     default int getInternalBombsDamageTotal() {
-        int total = getBombs().stream().filter(
-                b -> b.isInternalBomb()
-        ).mapToInt(b -> b.getExplosionDamage() * b.getUsableShotsLeft()).sum();
+        int total = 0;
+        for (Mounted bomb: getBombs()) {
+            if (bomb.isInternalBomb()) {
+                total += bomb.getExplosionDamage();
+            }
+        }
+
+        // int total = getBombs().stream().filter(
+        //         b -> b.isInternalBomb()
+        // ).mapToInt(b -> b.getExplosionDamage()).sum();
         return total;
     }
 

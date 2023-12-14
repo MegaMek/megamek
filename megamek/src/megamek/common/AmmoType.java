@@ -13500,6 +13500,65 @@ public class AmmoType extends EquipmentType {
                 cost *= 2;
                 bv *= 0.5;
             }
+
+            if (munition.getMunitionType().contains(Munitions.M_DEAD_FIRE)) {
+                if (munition.getAmmoType() == AmmoType.T_MML) {
+                    if (base.rackSize == 3) {
+                        bv = base.hasFlag(F_MML_LRM) ? 3 : 4;
+                    } else if (base.rackSize == 5) {
+                        bv = base.hasFlag(F_MML_LRM) ? 4 : 6;
+                    } else if (base.rackSize == 7) {
+                        bv = base.hasFlag(F_MML_LRM) ? 6 : 10;
+                    } else if (base.rackSize == 9) {
+                        bv = base.hasFlag(F_MML_LRM) ? 8 : 14;
+                    }
+                } else {
+                    if (base.rackSize == 2) {
+                        bv = 2;
+                    } else if (base.rackSize == 4) {
+                        bv = 4;
+                    } else if (base.rackSize == 6) {
+                        bv = 5;
+                    } else if (base.rackSize == 10) {
+                        bv = 16;
+                    } else if (base.rackSize == 15) {
+                        bv = 27;
+                    } else if (base.rackSize == 20) {
+                        bv = 36;
+                    }
+                }
+            }
+
+            if (munition.getMunitionType().contains(Munitions.M_LISTEN_KILL)) {
+                if (munition.getAmmoType() == AmmoType.T_MML) {
+                    if (base.rackSize == 3) {
+                        bv = base.hasFlag(F_MML_LRM) ? 9 : 4;
+                    } else if (base.rackSize == 5) {
+                        bv = base.hasFlag(F_MML_LRM) ? 15 : 7;
+                    } else if (base.rackSize == 7) {
+                        bv = base.hasFlag(F_MML_LRM) ? 21 : 10;
+                    } else if (base.rackSize == 9) {
+                        bv = base.hasFlag(F_MML_LRM) ? 27 : 13;
+                    }
+                } else {
+                    if (base.rackSize == 2) {
+                        bv = 6;
+                    } else if (base.rackSize == 4) {
+                        bv = 12;
+                    } else if (base.rackSize == 6) {
+                        bv = 18;
+                    } else if (base.rackSize == 5) {
+                        bv = 7;
+                    } else if (base.rackSize == 10) {
+                        bv = 14;
+                    } else if (base.rackSize == 15) {
+                        bv = 21;
+                    } else if (base.rackSize == 20) {
+                        bv = 28;
+                    }
+                }
+            }
+
             if (((munition.getAmmoType() == AmmoType.T_VEHICLE_FLAMER)
                     || (munition.getAmmoType() == AmmoType.T_HEAVY_FLAMER)
                     || (munition.getAmmoType() == AmmoType.T_FLUID_GUN))

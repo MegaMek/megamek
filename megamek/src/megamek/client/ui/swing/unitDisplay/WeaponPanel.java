@@ -868,7 +868,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     }
 
     public void setToHit(ToHitData toHit, boolean natAptGunnery) {
-        String htmlStyle = "style=\"color:" + GUIP.hexColor(GUIP.getUnitToolTipFGColor()) + "; ";
+        String htmlStyle = "style=\"color:" + GUIP.hexColor(GUIP.getUnitToolTipHighlightColor()) + "; ";
         htmlStyle += "background-color:" + GUIP.hexColor(GUIP.getUnitToolTipBGColor()) + ";\"";
 
         switch (toHit.getValue()) {
@@ -880,8 +880,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 toHitText.setText(String.format("<html><body %s>To Hit: (100%%) %s</body></html>", htmlStyle, toHit.getDesc()));
                 break;
             default:
-                toHitText.setText(String.format("<html><body %s>To Hit: <b>%2d (%2.0f%%)</b><font color=\"#D3D3D3\"> = %s</font></body></html>",
-                        htmlStyle, toHit.getValue(), Compute.oddsAbove(toHit.getValue(), natAptGunnery),  toHit.getDesc()));
+                toHitText.setText(String.format("<html><body %s>To Hit: <b>%2d (%2.0f%%)</b><font color=\"%s\"> = %s</font></body></html>",
+                        htmlStyle, toHit.getValue(), Compute.oddsAbove(toHit.getValue(), natAptGunnery), GUIP.hexColor(GUIP.getUnitToolTipFGColor()), toHit.getDesc()));
                 break;
         }
         toHitText.setCaretPosition(0);

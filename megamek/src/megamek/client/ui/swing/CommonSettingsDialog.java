@@ -298,6 +298,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private ColourSelectorButton csbUnitTooltipAltBGColor;
     private ColourSelectorButton csbUnitTooltipBlockBGColor;
     private ColourSelectorButton csbUnitTooltipTerrainBGColor;
+    private ColourSelectorButton csbUnitTooltipHighlightColor;
+    private ColourSelectorButton csbUnitTooltipWeaponColor;
+    private ColourSelectorButton csbUnitTooltipQuirkColor;
 
     private ColourSelectorButton csbUnitDisplayHeatLevel1;
     private ColourSelectorButton csbUnitDisplayHeatLevel2;
@@ -1008,6 +1011,18 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         csbUnitTooltipTerrainBGColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitTooltipTerrainBGColor"));
         csbUnitTooltipTerrainBGColor.setColour(GUIP.getUnitToolTipTerrainBGColor());
         row.add(csbUnitTooltipTerrainBGColor);
+        comps.add(row);
+
+        row = new ArrayList<>();
+        csbUnitTooltipHighlightColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitTooltipHighlightColor"));
+        csbUnitTooltipHighlightColor.setColour(GUIP.getUnitToolTipHighlightColor());
+        row.add(csbUnitTooltipHighlightColor);
+        csbUnitTooltipWeaponColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitTooltipWeaponColor"));
+        csbUnitTooltipWeaponColor.setColour(GUIP.getUnitToolTipWeaponColor());
+        row.add(csbUnitTooltipWeaponColor);
+        csbUnitTooltipQuirkColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.UnitTooltipQuirkColor"));
+        csbUnitTooltipQuirkColor.setColour(GUIP.getUnitToolTipQuirkColor());
+        row.add(csbUnitTooltipQuirkColor);
         comps.add(row);
 
         addLineSpacer(comps);
@@ -1904,6 +1919,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         csbUnitTooltipBlockBGColor.setColour(GUIP.getUnitToolTipBlockBGColor());
         csbUnitTooltipTerrainBGColor.setColour(GUIP.getUnitToolTipTerrainBGColor());
 
+        csbUnitTooltipHighlightColor.setColour(GUIP.getUnitToolTipHighlightColor());
+        csbUnitTooltipWeaponColor.setColour(GUIP.getUnitToolTipWeaponColor());
+        csbUnitTooltipQuirkColor.setColour(GUIP.getUnitToolTipQuirkColor());
+
         csbUnitTooltipArmorMiniIntact.setColour(GUIP.getUnitTooltipArmorMiniColorIntact());
         csbUnitTooltipArmorMiniPartial.setColour(GUIP.getUnitTooltipArmorMiniColorPartialDamage());
         csbUnitTooltipArmorMiniDamaged.setColour(GUIP.getUnitTooltipArmorMiniColorDamaged());
@@ -2352,6 +2371,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setUnitTooltipAltBGColor(csbUnitTooltipAltBGColor.getColour());
         GUIP.setUnitTooltipBlockBGColor(csbUnitTooltipBlockBGColor.getColour());
         GUIP.setUnitTooltipTerrainBGColor(csbUnitTooltipTerrainBGColor.getColour());
+
+        GUIP.setUnitTooltipHightlightColor(csbUnitTooltipHighlightColor.getColour());
+        GUIP.setUnitTooltipWeaponColor(csbUnitTooltipQuirkColor.getColour());
+        GUIP.setUnitTooltipQuirkColor(csbUnitTooltipWeaponColor.getColour());
 
         GUIP.setUnitTooltipArmorminiColorIntact(csbUnitTooltipArmorMiniIntact.getColour());
         GUIP.setUnitTooltipArmorminiColorPartialDamage(csbUnitTooltipArmorMiniPartial.getColour());

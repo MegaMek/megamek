@@ -191,6 +191,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String UNIT_TOOLTIP_ALT_BGCOLOR = "UnitToolTipAltBGColor";
     public static final String UNIT_TOOLTIP_BLOCK_BGCOLOR = "UnitToolTipBlockBGColor";
     public static final String UNIT_TOOLTIP_TERRAIN_BGCOLOR = "UnitToolTipTerainBGColor";
+    public static final String UNIT_TOOLTIP_HIGHTLIGHT_COLOR = "UnitToolTipHighlightColor";
+    public static final String UNIT_TOOLTIP_WEAPON_COLOR = "UnitToolTipWeaponColor";
+    public static final String UNIT_TOOLTIP_QUIRK_COLOR = "UnitToolTipQuirkColor";
 
     public static final String SPLIT_PANE_A_DIVIDER_LOCATION = "SplitPaneADividerLocation";
     public static final String GAME_SUMMARY_BOARD_VIEW = "GameSummaryBoardView";
@@ -590,6 +593,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(UNIT_TOOLTIP_ALT_BGCOLOR, new Color(0x003333));
         setDefault(UNIT_TOOLTIP_BLOCK_BGCOLOR, new Color(0x000060));
         setDefault(UNIT_TOOLTIP_TERRAIN_BGCOLOR, new Color(0x8DAF8D));
+        setDefault(UNIT_TOOLTIP_HIGHTLIGHT_COLOR, new Color(0xB496DC));
+        setDefault(UNIT_TOOLTIP_WEAPON_COLOR, new Color(0x9696D2));
+        setDefault(UNIT_TOOLTIP_QUIRK_COLOR, new Color(0x64B4B4));
 
         store.setDefault(GAME_SUMMARY_BOARD_VIEW, false);
         store.setDefault(ENTITY_OWNER_LABEL_COLOR, true);
@@ -2779,6 +2785,18 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return getColor(UNIT_TOOLTIP_TERRAIN_BGCOLOR);
     }
 
+    public Color getUnitToolTipHighlightColor() {
+        return getColor(UNIT_TOOLTIP_HIGHTLIGHT_COLOR);
+    }
+
+    public Color getUnitToolTipWeaponColor() {
+        return getColor(UNIT_TOOLTIP_WEAPON_COLOR);
+    }
+
+    public Color getUnitToolTipQuirkColor() {
+        return getColor(UNIT_TOOLTIP_QUIRK_COLOR);
+    }
+
     public boolean getDockOnLeft() {
         return getBoolean(DOCK_ON_LEFT);
     }
@@ -2964,6 +2982,18 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setUnitTooltipTerrainBGColor(Color c) {
         store.setValue(UNIT_TOOLTIP_TERRAIN_BGCOLOR, getColorString(c));
+    }
+
+    public void setUnitTooltipHightlightColor(Color c) {
+        store.setValue(UNIT_TOOLTIP_HIGHTLIGHT_COLOR, getColorString(c));
+    }
+
+    public void setUnitTooltipWeaponColor(Color c) {
+        store.setValue(UNIT_TOOLTIP_WEAPON_COLOR, getColorString(c));
+    }
+
+    public void setUnitTooltipQuirkColor(Color c) {
+        store.setValue(UNIT_TOOLTIP_QUIRK_COLOR, getColorString(c));
     }
 
     public void setDockOnLeft(Boolean state) {

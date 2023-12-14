@@ -366,9 +366,6 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     public static  final int LINE_HEIGHT = 25;
     public static final Color COLOR_FG = Color.WHITE;
     public static final Color TEXT_BG = Color.DARK_GRAY;
-    public static final String BODY = "<body style=\"color:white; background-color:SlateGray;\">";
-    public static final String LOW_CONTRAST_FONT = "<font color=\"#D3D3D3\">";
-    public  static final String HTML_BODY = "<html>"+BODY+"%s<html>";
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
@@ -871,24 +868,29 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     }
 
     public void setToHit(ToHitData toHit, boolean natAptGunnery) {
+        String htmlStyle = "style=\"color:" + GUIP.hexColor(GUIP.getUnitToolTipFGColor()) + "; ";
+        htmlStyle += "background-color:" + GUIP.hexColor(GUIP.getUnitToolTipBGColor()) + ";\"";
+
         switch (toHit.getValue()) {
             case TargetRoll.IMPOSSIBLE:
             case TargetRoll.AUTOMATIC_FAIL:
-                toHitText.setText(String.format("<html>%sTo Hit: (0%%) %s</body></html>", BODY, toHit.getDesc()));
+                toHitText.setText(String.format("<html><body %s>To Hit: (0%%) %s</body></html>", htmlStyle, toHit.getDesc()));
                 break;
             case TargetRoll.AUTOMATIC_SUCCESS:
-                toHitText.setText(String.format("<html>%sTo Hit: (100%%) %s</body></html>", BODY, toHit.getDesc()));
+                toHitText.setText(String.format("<html><body %s>To Hit: (100%%) %s</body></html>", htmlStyle, toHit.getDesc()));
                 break;
             default:
-                toHitText.setText(String.format("<html>%sTo Hit: <b>%2d (%2.0f%%)</b>%s = %s</font></body></html>", BODY,
-                        toHit.getValue(), Compute.oddsAbove(toHit.getValue(), natAptGunnery), LOW_CONTRAST_FONT, toHit.getDesc()));
+                toHitText.setText(String.format("<html><body %s>To Hit: <b>%2d (%2.0f%%)</b><font color=\"#D3D3D3\"> = %s</font></body></html>",
+                        htmlStyle, toHit.getValue(), Compute.oddsAbove(toHit.getValue(), natAptGunnery),  toHit.getDesc()));
                 break;
         }
         toHitText.setCaretPosition(0);
     }
 
     public void setToHit(String message) {
-        toHitText.setText(String.format(HTML_BODY,message));
+        String htmlStyle = "style=\"color:" + GUIP.hexColor(GUIP.getUnitToolTipFGColor()) + "; ";
+        htmlStyle += "background-color:" + GUIP.hexColor(GUIP.getUnitToolTipBGColor()) + ";\"";
+        toHitText.setText(String.format("<html><body %s>%s</body></html>", htmlStyle, message));
     }
 
     public void setTarget(@Nullable Targetable target, @Nullable String extraInfo) {
@@ -898,16 +900,20 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             wTargetExtraInfo.setText("");
             wTargetExtraInfo.setOpaque(false);
         } else {
-            wTargetExtraInfo.setText(String.format(HTML_BODY, extraInfo));
+            String htmlStyle = "style=\"color:" + GUIP.hexColor(GUIP.getUnitToolTipFGColor()) + "; ";
+            htmlStyle += "background-color:" + GUIP.hexColor(GUIP.getUnitToolTipBGColor()) + ";\"";
+            wTargetExtraInfo.setText(String.format("<html><body %s>%s</body></html>", htmlStyle, extraInfo));
             wTargetExtraInfo.setOpaque(true);
         }
     }
 
     private void updateTargetInfo() {;
+        String htmlStyle = "style=\"color:" + GUIP.hexColor(GUIP.getUnitToolTipFGColor()) + "; ";
+        htmlStyle += "background-color:" + GUIP.hexColor(GUIP.getUnitToolTipBGColor()) + ";\"";
         if (target == null) {
-            wTargetInfo.setText(String.format(HTML_BODY, Messages.getString("MechDisplay.NoTarget")));
+            wTargetInfo.setText(String.format("<html><body %s>%s</body></html>", htmlStyle, Messages.getString("MechDisplay.NoTarget")));
         } else {
-            wTargetInfo.setText(String.format(HTML_BODY, UnitToolTip.getTargetTipDetail(target, client)));
+            wTargetInfo.setText(String.format("<html><body %s>%s</body></html>", htmlStyle, UnitToolTip.getTargetTipDetail(target, client)));
         }
     }
 

@@ -128,12 +128,12 @@ public class SummaryPanel extends PicMap {
         htmlStyle += "background-color:" + GUIP.hexColor(GUIP.getUnitToolTipBGColor()) + ";\"";
 
         if (entity == null) {
-            unitInfo.setText("<HTML><BODY " + htmlStyle + ">" + padLeft("No Unit") + "</BODY></HTML>");
+            unitInfo.setText(String.format("<html><body %s>%s</body></html>", htmlStyle, padLeft("No Unit")));
             return;
         }
 
         if (EntityVisibilityUtils.onlyDetectedBySensors(localPlayer, entity)) {
-            unitInfo.setText("<HTML><BODY " + htmlStyle + ">" + padLeft( Messages.getString("BoardView1.sensorReturn")) + "</BODY></HTML>");
+            unitInfo.setText(String.format("<html><body %s>%s</body></html>", htmlStyle, padLeft( Messages.getString("BoardView1.sensorReturn"))));
         } else {
             // This is html tables inside tables to maintain transparency to the bg image but
             // also allow cells do have bg colors
@@ -160,7 +160,7 @@ public class SummaryPanel extends PicMap {
             row = "<TR>" + col + "</TR>";
             hexTxt.append("<TABLE width=100%>" + row + "</TABLE>");
 
-            unitInfo.setText("<HTML><BODY " + htmlStyle + ">" + padLeft(hexTxt.toString()) + "</BODY></HTML>");
+            unitInfo.setText(String.format("<html><body %s>%s</body></html>", htmlStyle, padLeft(hexTxt.toString())));
         }
         unitInfo.setOpaque(false);
     }

@@ -48,12 +48,16 @@ public class EntityChoiceDialog extends AbstractChoiceDialog<Entity> {
     @Override
     protected void detailLabel(JToggleButton button, Entity target) {
         String div = "<DIV WIDTH=" + UIUtil.scaleForGUI(500) + ">" + UnitToolTip.getEntityTipAsTarget(target, null) + "</DIV>";
-        button.setText("<html>" + div + "</html>");
+        String htmlStyle = "style=\"color:" + GUIP.hexColor(GUIP.getUnitToolTipFGColor()) + "; ";
+        htmlStyle += "background-color:" + GUIP.hexColor(GUIP.getUnitToolTipBGColor()) + ";\"";
+        button.setText(String.format("<html><body %s>%s</body></html>", htmlStyle, div));
     }
 
     @Override
     protected void summaryLabel(JToggleButton button, Entity target) {
-        button.setText("<html><b>" +UnitToolTip.getTargetTipSummaryEntity(target, null) + "</b></html>");
+        String htmlStyle = "style=\"color:" + GUIP.hexColor(GUIP.getUnitToolTipFGColor()) + "; ";
+        htmlStyle += "background-color:" + GUIP.hexColor(GUIP.getUnitToolTipBGColor()) + ";\"";
+        button.setText(String.format("<html><body %s>%s</body></html>", htmlStyle, UnitToolTip.getTargetTipSummaryEntity(target, null)));
     }
 
     /**

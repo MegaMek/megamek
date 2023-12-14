@@ -5724,14 +5724,12 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             result += sSpecialHex;
         }
 
-        String div = "<DIV WIDTH=" + UIUtil.scaleForGUI(500) + ">" + result + "</DIV>";
         StringBuffer txt = new StringBuffer();
-        String htmlStyle = "style=\"color:" + GUIP.hexColor(GUIP.getUnitToolTipFGColor()) + "; ";
-        htmlStyle += "background-color:" + GUIP.hexColor(GUIP.getUnitToolTipBGColor()) + ";\"";
-        txt.append((String.format("<html><body %s>%s</body></html>", htmlStyle, div)));
+        String div = "<DIV WIDTH=" + UIUtil.scaleForGUI(500) + ">" + result + "</DIV>";
+        txt.append(UnitToolTip.wrapWithHTML(div));
 
         // Check to see if the tool tip is completely empty
-        if (txt.toString().equals((String.format("<html><body %s></body></html>", htmlStyle)))) {
+        if (result.isEmpty()) {
             return "";
         }
 

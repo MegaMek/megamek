@@ -75,19 +75,15 @@ public class TargetChoiceDialog extends AbstractChoiceDialog<Targetable> {
 
     @Override
     protected void detailLabel(JToggleButton button, Targetable target) {
-        String div = "<DIV WIDTH=" + UIUtil.scaleForGUI(500) + ">" +  infoText(target) + " ";
-        div += UnitToolTip.getTargetTipDetail(target, clientGUI.getClient()) + "</DIV>";
-        String htmlStyle = "style=\"color:" + GUIP.hexColor(GUIP.getUnitToolTipFGColor()) + "; ";
-        htmlStyle += "background-color:" + GUIP.hexColor(GUIP.getUnitToolTipBGColor()) + ";\"";
-        button.setText(String.format("<html><body %s>%s</body></html>", htmlStyle, div));
+        String div = infoText(target) + " " + UnitToolTip.getTargetTipDetail(target, clientGUI.getClient());
+        div = "<DIV WIDTH=" + UIUtil.scaleForGUI(500) + ">" + div  + "</DIV>";
+        button.setText(UnitToolTip.wrapWithHTML(div));
     }
 
     @Override
     protected void summaryLabel(JToggleButton button, Targetable target) {
-        String htmlStyle = "style=\"color:" + GUIP.hexColor(GUIP.getUnitToolTipFGColor()) + "; ";
-        htmlStyle += "background-color:" + GUIP.hexColor(GUIP.getUnitToolTipBGColor()) + ";\"";
-        button.setText(String.format("<html><body %s>%s</body></html>", htmlStyle, infoText(target) + "<BR>" +
-                UnitToolTip.getTargetTipSummary(target, clientGUI.getClient())));
+        String txt = infoText(target) + "<BR>" + UnitToolTip.getTargetTipSummary(target, clientGUI.getClient());
+        button.setText(UnitToolTip.wrapWithHTML(txt));
     }
 
     protected String infoText(Targetable target) {

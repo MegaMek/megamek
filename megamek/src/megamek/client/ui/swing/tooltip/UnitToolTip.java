@@ -91,6 +91,12 @@ public final class UnitToolTip {
                 false, true, false, false, false, true);
     }
 
+    public static String wrapWithHTML(String text) {
+        String fgColor = GUIP.hexColor(GUIP.getUnitToolTipFGColor());
+        String bgColor = GUIP.hexColor(GUIP.getUnitToolTipBGColor());
+        return String.format("<html><body style=\"color:%s; background-color:%s;\" >%s</body></html>", fgColor, bgColor, text);
+    }
+
     // PRIVATE
 
     /** Assembles the whole unit tooltip. */

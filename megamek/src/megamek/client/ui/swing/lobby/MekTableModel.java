@@ -186,14 +186,12 @@ public class MekTableModel extends AbstractTableModel {
             MapSettings mset = chatLounge.mapSettings;
             Player lPlayer = clientGui.getClient().getLocalPlayer();
             String s = UnitToolTip.lobbyTip(entity, lPlayer, mset).toString();
-            String htmlStyle = "style=\"color:" + GUIP.hexColor(GUIP.getUnitToolTipFGColor()) + "; ";
-            htmlStyle += "background-color:" + GUIP.hexColor(GUIP.getUnitToolTipBGColor()) + ";\"";
-            unitTooltips.add((String.format("<html><body %s>%s</body></html>", htmlStyle, s)));
+            unitTooltips.add(UnitToolTip.wrapWithHTML(s));
             s = PilotToolTip.lobbyTip(entity).toString();
             if (entity instanceof Entity) {
                 s += PilotToolTip.getCrewAdvs((Entity) entity, true).toString();
             }
-            pilotTooltips.add((String.format("<html><body %s>%s</body></html>", htmlStyle, s)));
+            pilotTooltips.add(UnitToolTip.wrapWithHTML(s));
         }
         final boolean rpgSkills = clientGui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
         unitCells.add(LobbyMekCellFormatter.unitTableEntry(entity, chatLounge, false, chatLounge.isCompact()));

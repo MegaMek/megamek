@@ -868,53 +868,55 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     }
 
     public void setToHit(ToHitData toHit, boolean natAptGunnery) {
-        String htmlStyle = "style=\"color:" + GUIP.hexColor(GUIP.getUnitToolTipHighlightColor()) + "; ";
-        htmlStyle += "background-color:" + GUIP.hexColor(GUIP.getUnitToolTipBGColor()) + ";\"";
+        String txt = "";
 
         switch (toHit.getValue()) {
             case TargetRoll.IMPOSSIBLE:
             case TargetRoll.AUTOMATIC_FAIL:
-                toHitText.setText(String.format("<html><body %s>To Hit: (0%%) %s</body></html>", htmlStyle, toHit.getDesc()));
+                txt = String.format("To Hit: (0%%) %s", toHit.getDesc());
                 break;
             case TargetRoll.AUTOMATIC_SUCCESS:
-                toHitText.setText(String.format("<html><body %s>To Hit: (100%%) %s</body></html>", htmlStyle, toHit.getDesc()));
+                txt = String.format("To Hit: (100%%) %s", toHit.getDesc());
                 break;
             default:
-                toHitText.setText(String.format("<html><body %s>To Hit: <b>%2d (%2.0f%%)</b><font color=\"%s\"> = %s</font></body></html>",
-                        htmlStyle, toHit.getValue(), Compute.oddsAbove(toHit.getValue(), natAptGunnery), GUIP.hexColor(GUIP.getUnitToolTipFGColor()), toHit.getDesc()));
+                txt = String.format("<font color=\"%s\">To Hit: <b>%2d (%2.0f%%)</b></font> = %s",
+                        GUIP.hexColor(GUIP.getUnitToolTipHighlightColor()), toHit.getValue(), Compute.oddsAbove(toHit.getValue(), natAptGunnery), toHit.getDesc());
                 break;
         }
+
+        toHitText.setText(UnitToolTip.wrapWithHTML(txt));
         toHitText.setCaretPosition(0);
     }
 
     public void setToHit(String message) {
-        String htmlStyle = "style=\"color:" + GUIP.hexColor(GUIP.getUnitToolTipFGColor()) + "; ";
-        htmlStyle += "background-color:" + GUIP.hexColor(GUIP.getUnitToolTipBGColor()) + ";\"";
-        toHitText.setText(String.format("<html><body %s>%s</body></html>", htmlStyle, message));
+        toHitText.setText(UnitToolTip.wrapWithHTML(message));
     }
 
     public void setTarget(@Nullable Targetable target, @Nullable String extraInfo) {
         this.target = target;
         updateTargetInfo();
+        String txt = "";
+
         if (extraInfo == null || extraInfo.isEmpty()) {
-            wTargetExtraInfo.setText("");
             wTargetExtraInfo.setOpaque(false);
         } else {
-            String htmlStyle = "style=\"color:" + GUIP.hexColor(GUIP.getUnitToolTipFGColor()) + "; ";
-            htmlStyle += "background-color:" + GUIP.hexColor(GUIP.getUnitToolTipBGColor()) + ";\"";
-            wTargetExtraInfo.setText(String.format("<html><body %s>%s</body></html>", htmlStyle, extraInfo));
+            txt = extraInfo;
             wTargetExtraInfo.setOpaque(true);
         }
+
+        wTargetExtraInfo.setText(UnitToolTip.wrapWithHTML(txt));
     }
 
     private void updateTargetInfo() {;
-        String htmlStyle = "style=\"color:" + GUIP.hexColor(GUIP.getUnitToolTipFGColor()) + "; ";
-        htmlStyle += "background-color:" + GUIP.hexColor(GUIP.getUnitToolTipBGColor()) + ";\"";
+        String txt = "";
+
         if (target == null) {
-            wTargetInfo.setText(String.format("<html><body %s>%s</body></html>", htmlStyle, Messages.getString("MechDisplay.NoTarget")));
+            txt = Messages.getString("MechDisplay.NoTarget");
         } else {
-            wTargetInfo.setText(String.format("<html><body %s>%s</body></html>", htmlStyle, UnitToolTip.getTargetTipDetail(target, client)));
+            txt = UnitToolTip.getTargetTipDetail(target, client);
         }
+
+        wTargetInfo.setText(UnitToolTip.wrapWithHTML(txt));
     }
 
     @Override

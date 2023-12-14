@@ -124,28 +124,23 @@ public class SummaryPanel extends PicMap {
      */
     public void displayMech(Entity entity) {
         Player localPlayer = unitDisplay.getClientGUI().getClient().getLocalPlayer();
-        String htmlStyle = "style=\"color:" + GUIP.hexColor(GUIP.getUnitToolTipFGColor()) + "; ";
-        htmlStyle += "background-color:" + GUIP.hexColor(GUIP.getUnitToolTipBGColor()) + ";\"";
+        String txt = "";
 
         if (entity == null) {
-            unitInfo.setText(String.format("<html><body %s>%s</body></html>", htmlStyle, padLeft("No Unit")));
-            return;
-        }
-
-        if (EntityVisibilityUtils.onlyDetectedBySensors(localPlayer, entity)) {
-            unitInfo.setText(String.format("<html><body %s>%s</body></html>", htmlStyle, padLeft( Messages.getString("BoardView1.sensorReturn"))));
+            txt = padLeft("No Unit");
+        } else if (EntityVisibilityUtils.onlyDetectedBySensors(localPlayer, entity)) {
+            txt = padLeft(Messages.getString("BoardView1.sensorReturn"));
         } else {
             // This is html tables inside tables to maintain transparency to the bg image but
             // also allow cells do have bg colors
             StringBuffer hexTxt = new StringBuffer("");
             hexTxt.append(PilotToolTip.getPilotTipDetailed(entity, true));
             hexTxt.append(UnitToolTip.getEntityTipUnitDisplay(entity, localPlayer));
-
             String col = "";
             String row = "";
-
             BoardView bv = unitDisplay.getClientGUI().getBoardView();
             Hex mhex = entity.getGame().getBoard().getHex(entity.getPosition());
+
             if (bv != null && mhex != null) {
                 StringBuffer sb = new StringBuffer();
                 bv.appendTerrainTooltip(sb, mhex, GUIP);
@@ -159,9 +154,10 @@ public class SummaryPanel extends PicMap {
             col = "<TD>" + t + "</TD>";
             row = "<TR>" + col + "</TR>";
             hexTxt.append("<TABLE width=100%>" + row + "</TABLE>");
-
-            unitInfo.setText(String.format("<html><body %s>%s</body></html>", htmlStyle, padLeft(hexTxt.toString())));
+            txt = padLeft(hexTxt.toString());
         }
+
+        unitInfo.setText(UnitToolTip.wrapWithHTML(txt));
         unitInfo.setOpaque(false);
     }
 

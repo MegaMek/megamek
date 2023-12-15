@@ -331,10 +331,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SBFSHEET_VALUEFONT = "SBFSheetValueFont";
     public static final String SUMMARY_FONT = "SummaryCardFont";
 
-    /** A user-specified directory, typically outside the MM directory, where content may be loaded from. */
-    public static final String USER_DIR = "UserDir";
-
-
     // RAT dialog preferences
     public static String RAT_TECH_LEVEL = "RATTechLevel";
     public static String RAT_BV_MIN = "RATBVMin";
@@ -726,8 +722,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(SBFSHEET_HEADERFONT, "");
         setDefault(SBFSHEET_VALUEFONT, "");
         setDefault(SUMMARY_FONT, "");
-
-        setDefault(USER_DIR, "");
     }
 
     public void setDefault(String name, Color color) {
@@ -1504,13 +1498,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(BOARDEDIT_RNDDIALOG_START);
     }
 
-    public String getUserDir() {
-        return store.getString(USER_DIR);
-    }
 
-    public void setUserDir(String userDir) {
-        store.setValue(USER_DIR, userDir);
-    }
 
     public void setShadowMap(boolean state) {
         store.setValue(SHADOWMAP, state);

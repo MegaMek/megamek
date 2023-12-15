@@ -1395,6 +1395,16 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         addLineSpacer(comps);
 
+        JLabel userDirLabel = new JLabel(Messages.getString("CommonSettingsDialog.userDir"));
+        userDir = new JTextField(15);
+        userDir.setMaximumSize(new Dimension(250, 40));
+        row = new ArrayList<>();
+        row.add(userDirLabel);
+        row.add(userDir);
+        comps.add(row);
+
+        addLineSpacer(comps);
+
         // UI Theme
         uiThemes = new JComboBox<>();
         uiThemes.setMaximumSize(new Dimension(400, uiThemes.getMaximumSize().height));
@@ -1474,15 +1484,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         row.add(Box.createRigidArea(DEPENDENT_INSET));
         row.add(gameLogFilenameLabel);
         row.add(gameLogFilename);
-        comps.add(row);
-
-        JLabel userDirLabel = new JLabel(Messages.getString("CommonSettingsDialog.logFileName"));
-        userDir = new JTextField(15);
-        userDir.setMaximumSize(new Dimension(250, 40));
-        row = new ArrayList<>();
-        row.add(Box.createRigidArea(DEPENDENT_INSET));
-        row.add(userDirLabel);
-        row.add(userDir);
         comps.add(row);
 
         addSpacer(comps, 5);
@@ -1586,7 +1587,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             keepGameLog.setSelected(CP.keepGameLog());
             gameLogFilename.setEnabled(keepGameLog.isSelected());
             gameLogFilename.setText(CP.getGameLogFilename());
-            userDir.setText(GUIP.getUserDir());
+            userDir.setText(CP.getUserDir());
             stampFilenames.setSelected(CP.stampFilenames());
             stampFormat.setEnabled(stampFilenames.isSelected());
             stampFormat.setText(CP.getStampFormat());
@@ -2007,7 +2008,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         CP.setKeepGameLog(keepGameLog.isSelected());
         CP.setGameLogFilename(gameLogFilename.getText());
-        GUIP.setUserDir(userDir.getText());
+        CP.setUserDir(userDir.getText());
         CP.setStampFilenames(stampFilenames.isSelected());
         CP.setStampFormat(stampFormat.getText());
         CP.setReportKeywords(reportKeywordsTextPane.getText());

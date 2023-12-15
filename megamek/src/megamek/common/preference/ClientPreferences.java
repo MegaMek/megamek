@@ -60,6 +60,10 @@ public class ClientPreferences extends PreferenceStoreProxy {
     private static final String REPORTKEYWORDSDEFAULTS = "Needs\nRolls\nTakes\nHit\nFalls\nSkill Roll\nPilot Skill\nPhase\nDestroyed\nDamage";
     public static final String IP_ADDRESSES_IN_CHAT = "IPAddressesInChat";
     public static final String START_SEARCHLIGHTS_ON = "StartSearchlightsOn";
+
+    /** A user-specified directory, typically outside the MM directory, where content may be loaded from. */
+    public static final String USER_DIR = "UserDir";
+
     //endregion Variable Declarations
 
     //region Constructors
@@ -91,6 +95,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(REPORT_KEYWORDS, REPORTKEYWORDSDEFAULTS);
         store.setDefault(IP_ADDRESSES_IN_CHAT, false);
         store.setDefault(START_SEARCHLIGHTS_ON, true);
+        store.setDefault(USER_DIR, "");
         setLocale(store.getString(LOCALE));
         setMekHitLocLog();
     }
@@ -369,5 +374,18 @@ public class ClientPreferences extends PreferenceStoreProxy {
 
     public int getMapHeight() {
         return store.getInt(MAP_HEIGHT);
+    }
+
+    /** @return The absolute user directory path (usually outside of MM). Does not end in a slash or backslash. */
+    public String getUserDir() {
+        return store.getString(USER_DIR);
+    }
+
+    public void setUserDir(String userDir) {
+        // remove directory separators at the end
+        while (!userDir.isBlank() && (userDir.endsWith("/") || userDir.endsWith("\\"))) {
+            userDir = userDir.substring(0, userDir.length() - 1);
+        }
+        store.setValue(USER_DIR, userDir);
     }
 }

@@ -54,8 +54,6 @@ public enum IlluminationLevel {
     }
     //endregion Boolean Comparison Methods
 
-    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
-
     /**
      * @return the level of illumination for a given coords. Different light sources affect how much
      * the nighttime penalties are reduced.
@@ -94,7 +92,7 @@ public enum IlluminationLevel {
         return neighbouringFire ? IlluminationLevel.FIRE : IlluminationLevel.NONE;
     }
 
-    public static  String getIlluminationLevelIndicator(final Game game, final Coords coords) {
+    public static  String getIlluminationLevelIndicator(final Game game, final Coords coords, final GUIPreferences GUIP) {
         switch (IlluminationLevel.determineIlluminationLevel(game, coords)) {
             case FIRE:
                 return DOT_SPACER + guiScaledFontHTML(GUIP.getCautionColor()) + " \uD83D\uDD25" + "</FONT>";

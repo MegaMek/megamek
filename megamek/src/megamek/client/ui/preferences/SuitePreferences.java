@@ -135,7 +135,6 @@ public class SuitePreferences {
                     LogManager.getLogger().error("Error reading node. " + getParserInformation(parser), e);
                 }
             }
-            LogManager.getLogger().info("Finished loading user preferences");
         } catch (FileNotFoundException ignored) {
 
         } catch (Exception e) {

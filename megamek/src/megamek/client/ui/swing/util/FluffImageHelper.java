@@ -82,11 +82,13 @@ public class FluffImageHelper {
      * @return An image or {@code null}.
      */
     public static @Nullable Image loadFluffImageHeuristic(final Entity entity) {
-        var userDirPath = new File(PreferenceManager.getClientPreferences().getUserDir() + "/"
-                + Configuration.fluffImagesDir(), getImagePath(entity));
-        Image image = loadFluffImageHeuristic(userDirPath, entity.getModel(), entity.getChassis());
-        if (image != null) {
-            return image;
+        String userDir = PreferenceManager.getClientPreferences().getUserDir();
+        if (!userDir.isBlank()) {
+            var userDirPath = new File(userDir + "/" + Configuration.fluffImagesDir(), getImagePath(entity));
+            Image image = loadFluffImageHeuristic(userDirPath, entity.getModel(), entity.getChassis());
+            if (image != null) {
+                return image;
+            }
         }
 
         var path = new MegaMekFile(Configuration.fluffImagesDir(), getImagePath(entity));
@@ -99,11 +101,13 @@ public class FluffImageHelper {
      * @return An image or null
      */
     public static @Nullable Image loadFluffImageHeuristic(final ASCardDisplayable element) {
-        var userDirPath = new File(PreferenceManager.getClientPreferences().getUserDir() + "/"
-                + Configuration.fluffImagesDir(), getImagePath(element));
-        Image image = loadFluffImageHeuristic(userDirPath, element.getModel(), element.getChassis());
-        if (image != null) {
-            return image;
+        String userDir = PreferenceManager.getClientPreferences().getUserDir();
+        if (!userDir.isBlank()) {
+            var userDirPath = new File(userDir + "/" + Configuration.fluffImagesDir(), getImagePath(element));
+            Image image = loadFluffImageHeuristic(userDirPath, element.getModel(), element.getChassis());
+            if (image != null) {
+                return image;
+            }
         }
 
         var path = new MegaMekFile(Configuration.fluffImagesDir(), getImagePath(element));

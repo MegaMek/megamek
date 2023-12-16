@@ -261,9 +261,9 @@ public class MechSummaryCache {
         }
 
         // load units from the external user data dir
-        File userDataUnits2 = new File(PreferenceManager.getClientPreferences().getUserDir(),
-                "");
-        if (userDataUnits2.isDirectory()) {
+        String userDir = PreferenceManager.getClientPreferences().getUserDir();
+        File userDataUnits2 = new File(userDir, "");
+        if (!userDir.isBlank() && userDataUnits2.isDirectory()) {
             bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, userDataUnits2, ignoreUnofficial);
         }
 

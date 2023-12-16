@@ -83,8 +83,10 @@ public final class FontHandler {
         parseFontsInDirectory(new File(MMConstants.FONT_DIRECTORY));
 
         String userDir = PreferenceManager.getClientPreferences().getUserDir();
-        LogManager.getLogger().info("Loading fonts from " + userDir);
-        parseFontsInDirectory(userDir);
+        if (!userDir.isBlank()) {
+            LogManager.getLogger().info("Loading fonts from " + userDir);
+            parseFontsInDirectory(userDir);
+        }
 
         LogManager.getLogger().info("Loading fonts from Java's GraphicsEnvironment");
         for (String fontName : GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()) {

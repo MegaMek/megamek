@@ -75,9 +75,9 @@ public class MMStaticDirectoryManager {
                 portraitDirectory = new DirectoryItems(Configuration.portraitImagesDir(),
                         new ImageFileFactory());
 
-                File portraitUserDir = new File(PreferenceManager.getClientPreferences().getUserDir()
-                        + "/" + Configuration.portraitImagesDir());
-                if (portraitUserDir.isDirectory()) {
+                String userDir = PreferenceManager.getClientPreferences().getUserDir();
+                File portraitUserDir = new File(userDir + "/" + Configuration.portraitImagesDir());
+                if (!userDir.isBlank() && portraitUserDir.isDirectory()) {
                     DirectoryItems userDirPortraits = new DirectoryItems(portraitUserDir, new ImageFileFactory());
                     portraitDirectory.merge(userDirPortraits);
                 }
@@ -101,9 +101,9 @@ public class MMStaticDirectoryManager {
                 camouflageDirectory = new DirectoryItems(Configuration.camoDir(),
                         new ScaledImageFileFactory());
 
-                File camoUserDir = new File(PreferenceManager.getClientPreferences().getUserDir()
-                        + "/" + Configuration.camoDir());
-                if (camoUserDir.isDirectory()) {
+                String userDir = PreferenceManager.getClientPreferences().getUserDir();
+                File camoUserDir = new File(userDir + "/" + Configuration.camoDir());
+                if (!userDir.isBlank() && camoUserDir.isDirectory()) {
                     DirectoryItems userDirCamo = new DirectoryItems(camoUserDir, new ScaledImageFileFactory());
                     camouflageDirectory.merge(userDirCamo);
                 }

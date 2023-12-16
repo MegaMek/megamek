@@ -81,7 +81,7 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
         Entity te = null;
         // arguments legal?
         if ((ae == null) || (target == null)) {
-            throw new IllegalArgumentException("Attacker or target not valid");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker or target not valid");
         }
 
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {

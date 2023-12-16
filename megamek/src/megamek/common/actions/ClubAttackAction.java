@@ -257,7 +257,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
         MiscType clubType;
         // arguments legal?
         if ((ae == null) || (target == null)) {
-            throw new IllegalArgumentException("Attacker or target not valid");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker or target not valid");
         }
         if (club == null) {
             throw new IllegalArgumentException("Club is null");

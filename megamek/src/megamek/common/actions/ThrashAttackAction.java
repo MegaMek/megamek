@@ -48,7 +48,7 @@ public class ThrashAttackAction extends AbstractAttackAction {
         final Targetable target = getTarget(game);
         // arguments legal?
         if (ae == null || target == null) {
-            throw new IllegalArgumentException("Attacker or target not valid");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker or target not valid");
         }
 
         Entity te = null;

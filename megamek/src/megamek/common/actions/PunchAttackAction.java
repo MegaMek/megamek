@@ -186,7 +186,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
         final Entity ae = game.getEntity(attackerId);
 
         if ((ae == null) || (target == null)) {
-            throw new IllegalArgumentException("Attacker or target not valid");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker or target not valid");
         }
         String impossible = PunchAttackAction.toHitIsImpossible(game, ae, target, arm);
         if (impossible != null) {

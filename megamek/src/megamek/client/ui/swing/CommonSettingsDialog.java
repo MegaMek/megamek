@@ -2953,7 +2953,13 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
     }
 
-    /** Shows a file chooser for selecting a user directory and sets the user dir if one was chosen. */
+    /**
+     * Shows a file chooser for selecting a user directory and sets the given text field to the
+     * result if one was chosen. This is for use with settings dialogs (also used in MML and MHQ)
+     *
+     * @param userDirTextField The textfield showing the user dir for manual change
+     * @param parent The parent JFrame of the settings dialog
+     */
     public static void fileChooseUserDir(JTextField userDirTextField, JFrame parent) {
         JFileChooser userDirChooser = new JFileChooser(userDirTextField.getText());
         userDirChooser.setDialogTitle(Messages.getString("CommonSettingsDialog.userDir.chooser.title"));

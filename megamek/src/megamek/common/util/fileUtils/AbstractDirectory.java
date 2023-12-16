@@ -150,8 +150,9 @@ public abstract class AbstractDirectory {
     //endregion Getters/Setters
 
     /**
-     * Adds the given directory's contents to this one's. Note: equally named items and categories oth
-     * other will replace those of this directory.
+     * Adds the given AbstractDirectory's contents to this one's. Note: equally named categories are integrated
+     * into one another, but for items in the exact same category (file path) and with the same name the
+     * item of other will replace the item in this AbstractDirectory.
      *
      * @param other The AbstractDirectory to merge into this one
      */

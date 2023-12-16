@@ -44,6 +44,7 @@ import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
+import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -1400,9 +1401,14 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         userDir = new JTextField(20);
         userDir.setMaximumSize(new Dimension(250, 40));
         userDir.setToolTipText(Messages.getString("CommonSettingsDialog.userDir.tooltip"));
+        JButton userDirChooser = new JButton("...");
+        userDirChooser.addActionListener(e -> fileChooseUserDir(userDir, getFrame()));
+        userDirChooser.setToolTipText(Messages.getString("CommonSettingsDialog.userDir.chooser.title"));
         row = new ArrayList<>();
         row.add(userDirLabel);
         row.add(userDir);
+        row.add(Box.createHorizontalStrut(10));
+        row.add(userDirChooser);
         comps.add(row);
 
         addLineSpacer(comps);
@@ -2945,5 +2951,17 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
     private void adaptToGUIScale() {
         UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
+    }
+
+    /** Shows a file chooser for selecting a user directory and sets the user dir if one was chosen. */
+    public static void fileChooseUserDir(JTextField userDirTextField, JFrame parent) {
+        JFileChooser userDirChooser = new JFileChooser(userDirTextField.getText());
+        userDirChooser.setDialogTitle(Messages.getString("CommonSettingsDialog.userDir.chooser.title"));
+        userDirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        int returnVal = userDirChooser.showOpenDialog(parent);
+        if ((returnVal == JFileChooser.APPROVE_OPTION) && (userDirChooser.getSelectedFile() != null)
+                && userDirChooser.getSelectedFile().isDirectory()) {
+            userDirTextField.setText(userDirChooser.getSelectedFile().toString());
+        }
     }
 }

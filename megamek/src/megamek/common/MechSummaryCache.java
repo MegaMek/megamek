@@ -262,7 +262,7 @@ public class MechSummaryCache {
 
         // load units from the external user data dir
         File userDataUnits2 = new File(PreferenceManager.getClientPreferences().getUserDir(),
-                Configuration.unitsDir().toString());
+                "");
         if (userDataUnits2.isDirectory()) {
             bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, userDataUnits2, ignoreUnofficial);
         }
@@ -766,6 +766,11 @@ public class MechSummaryCache {
                     // recursion is fun
                     bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles,
                             lLastCheck, f, ignoreUnofficial);
+                    continue;
+                }
+                if (!f.getName().toLowerCase().endsWith(".mtf") && !f.getName().toLowerCase().endsWith(".blk")
+                        && !f.getName().toLowerCase().endsWith(".hmp") && !f.getName().toLowerCase().endsWith(".hmv")
+                        && !f.getName().toLowerCase().endsWith(".mep") && !f.getName().toLowerCase().endsWith(".tdb")) {
                     continue;
                 }
                 if (f.getName().indexOf('.') == -1) {

@@ -1396,8 +1396,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         addLineSpacer(comps);
 
         JLabel userDirLabel = new JLabel(Messages.getString("CommonSettingsDialog.userDir"));
-        userDir = new JTextField(15);
+        userDirLabel.setToolTipText(Messages.getString("CommonSettingsDialog.userDir.tooltip"));
+        userDir = new JTextField(20);
         userDir.setMaximumSize(new Dimension(250, 40));
+        userDir.setToolTipText(Messages.getString("CommonSettingsDialog.userDir.tooltip"));
         row = new ArrayList<>();
         row.add(userDirLabel);
         row.add(userDir);

@@ -26,6 +26,7 @@ import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.options.OptionsConstants;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * The attacker brushes the target off.
@@ -97,8 +98,13 @@ public class BrushOffAttackAction extends AbstractAttackAction {
         final Entity ae = game.getEntity(attackerId);
         int targetId = Entity.NONE;
         Entity te = null;
-        if ((ae == null) || (target == null)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker or target not valid");
+        if (ae == null) {
+            LogManager.getLogger().error("Attacker not valid");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker not valid");
+        }
+        if (target == null) {
+            LogManager.getLogger().error("target not valid");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "target not valid");
         }
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity) target;

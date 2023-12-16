@@ -15,6 +15,7 @@ package megamek.common.actions;
 
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * The prone attacker thrashes at the target.
@@ -47,8 +48,13 @@ public class ThrashAttackAction extends AbstractAttackAction {
         final Entity ae = getEntity(game);
         final Targetable target = getTarget(game);
         // arguments legal?
-        if (ae == null || target == null) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker or target not valid");
+        if (ae == null) {
+            LogManager.getLogger().error("Attacker not valid");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker not valid");
+        }
+        if (target == null) {
+            LogManager.getLogger().error("target not valid");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "target not valid");
         }
 
         Entity te = null;

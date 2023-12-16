@@ -17,6 +17,7 @@ package megamek.common.actions;
 import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * The attacking ProtoMech makes its combo physical attack action.
@@ -80,8 +81,13 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
         int targetId = Entity.NONE;
         Entity te = null;
         // arguments legal?
-        if ((ae == null) || (target == null)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker or target not valid");
+        if (ae == null) {
+            LogManager.getLogger().error("Attacker not valid");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker not valid");
+        }
+        if (target == null) {
+            LogManager.getLogger().error("target not valid");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "target not valid");
         }
 
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {

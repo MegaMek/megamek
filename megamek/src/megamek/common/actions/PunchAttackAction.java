@@ -27,6 +27,7 @@ import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.options.OptionsConstants;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * The attacker punches the target.
@@ -184,9 +185,13 @@ public class PunchAttackAction extends PhysicalAttackAction {
     public static ToHitData toHit(Game game, int attackerId,
                                   Targetable target, int arm, boolean zweihandering) {
         final Entity ae = game.getEntity(attackerId);
-
-        if ((ae == null) || (target == null)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker or target not valid");
+        if (ae == null) {
+            LogManager.getLogger().error("Attacker not valid");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker not valid");
+        }
+        if (target == null) {
+            LogManager.getLogger().error("target not valid");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "target not valid");
         }
         String impossible = PunchAttackAction.toHitIsImpossible(game, ae, target, arm);
         if (impossible != null) {

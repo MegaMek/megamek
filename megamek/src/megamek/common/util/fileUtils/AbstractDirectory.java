@@ -148,4 +148,21 @@ public abstract class AbstractDirectory {
         return (entry == null) ? null : entry.getItem();
     }
     //endregion Getters/Setters
+
+    /**
+     * Adds the given directory's contents to this one's. Note: equally named items and categories oth
+     * other will replace those of this directory.
+     *
+     * @param other The AbstractDirectory to merge into this one
+     */
+    public void merge(AbstractDirectory other) {
+        getItems().putAll(other.getItems());
+        for (Map.Entry<String, AbstractDirectory> categoryEntry : other.getCategories().entrySet()) {
+            if (categories.containsKey(categoryEntry.getKey())) {
+                categories.get(categoryEntry.getKey()).merge(categoryEntry.getValue());
+            } else {
+                categories.put(categoryEntry.getKey(), categoryEntry.getValue());
+            }
+        }
+    }
 }

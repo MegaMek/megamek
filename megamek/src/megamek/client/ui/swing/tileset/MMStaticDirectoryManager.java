@@ -20,17 +20,21 @@ package megamek.client.ui.swing.tileset;
 
 import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.util.fileUtils.AbstractDirectory;
 import megamek.common.util.fileUtils.DirectoryItems;
 import megamek.common.util.fileUtils.ImageFileFactory;
 import megamek.common.util.fileUtils.ScaledImageFileFactory;
 import org.apache.logging.log4j.LogManager;
 
+import java.io.File;
+import java.util.Map;
+
 public class MMStaticDirectoryManager {
     //region Variable Declarations
     // Directories
-    private static AbstractDirectory portraitDirectory;
-    private static AbstractDirectory camouflageDirectory;
+    private static DirectoryItems portraitDirectory;
+    private static DirectoryItems camouflageDirectory;
     private static MechTileset mechTileset;
 
     // Re-parsing Prevention Variables: They are True at startup and when the specified directory
@@ -70,6 +74,13 @@ public class MMStaticDirectoryManager {
             try {
                 portraitDirectory = new DirectoryItems(Configuration.portraitImagesDir(),
                         new ImageFileFactory());
+
+                File portraitUserDir = new File(PreferenceManager.getClientPreferences().getUserDir()
+                        + "/" + Configuration.portraitImagesDir());
+                if (portraitUserDir.isDirectory()) {
+                    DirectoryItems userDirPortraits = new DirectoryItems(portraitUserDir, new ImageFileFactory());
+                    portraitDirectory.merge(userDirPortraits);
+                }
             } catch (Exception e) {
                 LogManager.getLogger().error("Could not parse the portraits directory!", e);
             }
@@ -89,6 +100,13 @@ public class MMStaticDirectoryManager {
             try {
                 camouflageDirectory = new DirectoryItems(Configuration.camoDir(),
                         new ScaledImageFileFactory());
+
+                File camoUserDir = new File(PreferenceManager.getClientPreferences().getUserDir()
+                        + "/" + Configuration.camoDir());
+                if (camoUserDir.isDirectory()) {
+                    DirectoryItems userDirCamo = new DirectoryItems(camoUserDir, new ScaledImageFileFactory());
+                    camouflageDirectory.merge(userDirCamo);
+                }
             } catch (Exception e) {
                 LogManager.getLogger().error("Could not parse the camo directory!", e);
             }

@@ -18,6 +18,7 @@ import megamek.common.*;
 import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.alphaStrike.ASUnitType;
 import megamek.common.annotations.Nullable;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 import javax.swing.*;
@@ -81,8 +82,15 @@ public class FluffImageHelper {
      * @return An image or {@code null}.
      */
     public static @Nullable Image loadFluffImageHeuristic(final Entity entity) {
+        var userDirPath = new File(PreferenceManager.getClientPreferences().getUserDir() + "/"
+                + Configuration.fluffImagesDir(), getImagePath(entity));
+        Image image = loadFluffImageHeuristic(userDirPath, entity.getModel(), entity.getChassis());
+        if (image != null) {
+            return image;
+        }
+
         var path = new MegaMekFile(Configuration.fluffImagesDir(), getImagePath(entity));
-        return loadFluffImageHeuristic(path, entity.getModel(), entity.getChassis());
+        return loadFluffImageHeuristic(path.getFile(), entity.getModel(), entity.getChassis());
     }
 
     /**
@@ -91,12 +99,19 @@ public class FluffImageHelper {
      * @return An image or null
      */
     public static @Nullable Image loadFluffImageHeuristic(final ASCardDisplayable element) {
+        var userDirPath = new File(PreferenceManager.getClientPreferences().getUserDir() + "/"
+                + Configuration.fluffImagesDir(), getImagePath(element));
+        Image image = loadFluffImageHeuristic(userDirPath, element.getModel(), element.getChassis());
+        if (image != null) {
+            return image;
+        }
+
         var path = new MegaMekFile(Configuration.fluffImagesDir(), getImagePath(element));
-        return loadFluffImageHeuristic(path, element.getModel(), element.getChassis());
+        return loadFluffImageHeuristic(path.getFile(), element.getModel(), element.getChassis());
     }
 
-    private static @Nullable Image loadFluffImageHeuristic(MegaMekFile path, String model, String chassis) {
-        File fluff_image_file = findFluffImage(path.getFile(), model, chassis);
+    private static @Nullable Image loadFluffImageHeuristic(File path, String model, String chassis) {
+        File fluff_image_file = findFluffImage(path, model, chassis);
         if (fluff_image_file != null) {
             return new ImageIcon(fluff_image_file.toString()).getImage();
         } else {

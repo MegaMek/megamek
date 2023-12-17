@@ -48,6 +48,8 @@ import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.*;
 
@@ -1404,11 +1406,22 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         JButton userDirChooser = new JButton("...");
         userDirChooser.addActionListener(e -> fileChooseUserDir(userDir, getFrame()));
         userDirChooser.setToolTipText(Messages.getString("CommonSettingsDialog.userDir.chooser.title"));
+        JButton userDirHelp = new JButton("Help");
+        try {
+            String helpTitle = Messages.getString("UserDirHelpDialog.title");
+            URL helpFile = new File(MMConstants.USER_DIR_README_FILE).toURI().toURL();
+            userDirHelp.addActionListener(e -> new HelpDialog(helpTitle, helpFile, getFrame()).setVisible(true));
+        } catch (MalformedURLException e) {
+            LogManager.getLogger().error("Could not find the user data directory readme file at "
+                    + MMConstants.USER_DIR_README_FILE);
+        }
         row = new ArrayList<>();
         row.add(userDirLabel);
         row.add(userDir);
         row.add(Box.createHorizontalStrut(10));
         row.add(userDirChooser);
+        row.add(Box.createHorizontalStrut(10));
+        row.add(userDirHelp);
         comps.add(row);
 
         addLineSpacer(comps);

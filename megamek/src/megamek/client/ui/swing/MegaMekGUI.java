@@ -912,7 +912,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             // Launch the help dialog.
             HelpDialog helpDialog = new HelpDialog(
                     Messages.getString("ClientGUI.skinningHelpPath.title"),
-                    helpUrl);
+                    helpUrl, frame);
             helpDialog.setVisible(true);
         } catch (MalformedURLException e) {
             LogManager.getLogger().error("", e);

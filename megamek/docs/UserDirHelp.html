@@ -1,0 +1,39 @@
+<HTML><H2>How to Use the User Data Directory</H2>
+
+<P>Use this directory for resources you want to share between different installs or versions of MegaMek, MegaMekLab and MekHQ. Fonts, units, camos, portraits and unit fluff images will also be loaded from this directory (in addition to what is loaded from MegaMek's own data). The directory should be an absolute path such as D:/MyBTStuff (in other words, not relative to your MegaMek directory).</P>
+
+<P>How to place files within the user data directory:
+<UL>
+    <LI><B>Fonts</B> can be placed anywhere in the user data directory (i.e., in the directory itself or in any subfolder)
+
+    <LI><B>Units</B> (.mtf and .blk files) can be placed anywhere in the user data directory
+
+    <LI><B>Camo</B> images must be placed in &lt;user data directory&gt;/data/images/camo/. In this subfolder, further subfolders can be used (optional).
+
+    <LI><B>Portrait</B> images must be placed in &lt;user data directory&gt;/data/images/portraits/. In this subfolder, further subfolders can be used (optional).
+
+    <LI><B>Unit fluff</B> images must be placed in &lt;user data directory&gt;/data/images/fluff/&lt;unit type&gt;/. To find the exact subfolders to use, go to your megamek folder and open /data/images/fluff/.
+</UL>
+
+<P>This is an example of a suitable directory structure with a few example files:
+<BR><BR>
+D:/myBTStuff<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;Oxanium.ttf<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;Exo.ttf<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;/campaign_units<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Atlas AS8-XT.mtf<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;/data<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Jura.ttf<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/images<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/camo<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;myForceCamo.png<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/oldcamo<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;camo1.png<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;camo2.png<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/portraits<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;myPortrait1.png<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/fluff<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/Mech<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Atlas.png<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/DropShip<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Colossus.png<BR>

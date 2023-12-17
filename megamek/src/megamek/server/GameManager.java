@@ -20499,8 +20499,7 @@ public class GameManager implements IGameManager {
         vPhaseReport.add(r);
         r = new Report(2285);
         r.subject = entity.getId();
-        r.add(base.getValueAsString());
-        r.add(base.getDesc());
+        r.add(base);
         vPhaseReport.add(r);
         for (int i = 0; i < rolls.size(); i++) {
             PilotingRollData roll = rolls.elementAt(i);
@@ -20718,8 +20717,7 @@ public class GameManager implements IGameManager {
                 vReport.add(r);
                 r = new Report(2285);
                 r.subject = e.getId();
-                r.add(target.getValueAsString());
-                r.add(target.getDesc());
+                r.add(target);
                 vReport.add(r);
                 for (int j = 0; j < rolls.size(); j++) {
                     PilotingRollData modifier = rolls.elementAt(j);

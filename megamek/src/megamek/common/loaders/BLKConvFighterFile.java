@@ -49,9 +49,6 @@ public class BLKConvFighterFile extends BLKFile implements IMechLoader {
         }
         a.setWeight(dataFile.getDataAsDouble("tonnage")[0]);
 
-        // how many bombs can it carry
-        a.autoSetMaxBombPoints();
-
         // get a movement mode - lets try Aerodyne
         EntityMovementMode nMotion = EntityMovementMode.AERODYNE;
         a.setMovementMode(nMotion);
@@ -140,6 +137,10 @@ public class BLKConvFighterFile extends BLKFile implements IMechLoader {
         }
 
         addTransports(a);
+
+        // how many bombs can it carry; depends on transport space as well.
+        a.autoSetMaxBombPoints();
+
         a.setArmorTonnage(a.getArmorWeight());
         loadQuirks(a);
         return a;

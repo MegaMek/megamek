@@ -20897,10 +20897,13 @@ public class GameManager implements IGameManager {
         Vector<Report> vFullReport = new Vector<>();
         vFullReport.add(new Report(5600, Report.PUBLIC));
         for (Iterator<Entity> i = game.getEntities(); i.hasNext(); ) {
-            vFullReport.addAll(resolveInternalBombHit(i.next()));
+            Vector<Report> interim = resolveInternalBombHit(i.next());
+            if (!interim.isEmpty()) {
+                vFullReport.addAll(interim);
+            }
         }
-        // Return empty Vector if no reports are added.
-        return (vFullReport.isEmpty()) ? new Vector<>() : vFullReport;
+        // Return empty Vector if no reports (besides the header) are added.
+        return (vFullReport.size() == 1) ? new Vector<>() : vFullReport;
     }
 
     /**
@@ -20918,7 +20921,7 @@ public class GameManager implements IGameManager {
         if (e.isAero()) {
             Aero b = (Aero) e;
 
-            if (b.getUsedInternalBombs()) {
+            if (b.getUsedInternalBombs() > 0) {
                 int id = e.getId();
                 Vector<TargetRoll> rolls = new Vector<>();
 

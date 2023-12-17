@@ -35,6 +35,7 @@ public class AeroSpaceFighter extends Aero {
         return UnitType.AEROSPACEFIGHTER;
     }
 
+    @Override
     public void autoSetMaxBombPoints() {
         // Aerospace fighters can carry both external and internal ordnances, if configured and quirked
         // appropriately

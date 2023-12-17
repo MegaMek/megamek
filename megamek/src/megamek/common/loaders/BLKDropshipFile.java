@@ -187,6 +187,9 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
 
         addTransports(a);
 
+        // how many bombs can it carry; depends on transport bays
+        a.autoSetMaxBombPoints();
+
         a.setArmorTonnage(a.getArmorWeight());
         loadQuirks(a);
         return a;

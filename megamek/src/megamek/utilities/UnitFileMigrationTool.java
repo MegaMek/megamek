@@ -19,6 +19,7 @@
 package megamek.utilities;
 
 import megamek.common.*;
+import megamek.common.loaders.MtfFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,36 +38,32 @@ public class UnitFileMigrationTool {
         MechSummaryCache cache = MechSummaryCache.getInstance(true);
         MechSummary[] units = cache.getAllMechs();
         for (MechSummary unit : units) {
-
-            /*
             File file = unit.getSourceFile();
-            if (UnitRoleHandler.getRoleFor(unit) == UnitRole.UNDETERMINED) {
-                continue;
-            }
-            if (file.toString().toLowerCase().endsWith(".blk")) {
+            if (file.toString().toLowerCase().endsWith(".mtf")) {
                 List<String> lines = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
-                int line = 0;
-                boolean found = false;
-                for (; line < lines.size(); line++) {
-                    if (lines.get(line).toLowerCase().startsWith("</type>")) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (found) {
-                    lines.add(line + 1, "");
-                    lines.add(line + 2, "<role>");
-                    lines.add(line + 3, UnitRoleHandler.getRoleFor(unit).toString());
-                    lines.add(line + 4, "</role>");
-//                    Files.write(file.toPath(), lines, StandardCharsets.UTF_8);
-//                    System.out.println(lines);
+                if (lines.get(0).startsWith("Version:")) {
+                    lines.remove(0);
                 } else {
-                    System.out.println("type line not found for: " + unit.getName());
+                    System.out.println(unit + " doesnt have Version");
+                    continue;
                 }
+                if (!lines.get(0).contains(":")) {
+                    String chassis = lines.remove(0);
+                    lines.add(0, MtfFile.CHASSIS + chassis);
+                } else {
+                    System.out.println(unit + " doesnt have chassis without :");
+                    continue;
+                }
+                if (!lines.get(1).contains(":")) {
+                    String model = lines.remove(1);
+                    lines.add(1, MtfFile.MODEL + model);
+                } else {
+                    System.out.println(unit + " doesnt have model without :");
+                    continue;
+                }
+                    Files.write(file.toPath(), lines, StandardCharsets.UTF_8);
+//                System.out.println(lines);
             }
-*/
-
-
         }
     }
 }

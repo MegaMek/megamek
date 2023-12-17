@@ -35,8 +35,8 @@ import java.util.*;
  */
 public class MtfFile implements IMechLoader {
 
-    private final String name;
-    private final String model;
+    private String chassis;
+    private String model;
     private int mulId = -1;
 
     private String chassisConfig;
@@ -89,6 +89,8 @@ public class MtfFile implements IMechLoader {
             {Mech.LOC_LT, Mech.LOC_RT, Mech.LOC_CT};
 
     public static final String COMMENT = "#";
+    public static final String CHASSIS = "chassis:";
+    public static final String MODEL = "model:";
     public static final String COCKPIT = "cockpit:";
     public static final String GYRO = "gyro:";
     public static final String MOTIVE = "motive:";
@@ -132,7 +134,6 @@ public class MtfFile implements IMechLoader {
     public static final String NO_CRIT = "nocrit:";
     public static final String SIZE = ":SIZE:";
     public static final String MUL_ID = "mul id:";
-    public static final String BASE_UNIT = "base unit:";
     public static final String QUIRK = "quirk:";
     public static final String WEAPON_QUIRK = "weaponquirk:";
     public static final String ROLE = "role:";
@@ -140,24 +141,7 @@ public class MtfFile implements IMechLoader {
     public MtfFile(InputStream is) throws EntityLoadingException {
         try (InputStreamReader isr = new InputStreamReader(is);
              BufferedReader r = new BufferedReader(isr)) {
-            String version = readLineIgnoringComments(r);
-
-            // Version 1.0: Initial version.
-            // Version 1.1: Added level 3 cockpit and gyro options.
-            // version 1.2: added full head ejection
-            // Version 1.3: Added MUL ID
-            if (!version.trim().equalsIgnoreCase("Version:1.0")
-                    && !version.trim().equalsIgnoreCase("Version:1.1")
-                    && !version.trim().equalsIgnoreCase("Version:1.2")
-                    && !version.trim().equalsIgnoreCase("Version:1.3")) {
-                throw new EntityLoadingException("Wrong MTF file version.");
-            }
-
-            name = readLineIgnoringComments(r);
-            model = readLineIgnoringComments(r);
-
             critData = new String[9][12];
-
             readCrits(r);
         } catch (IOException ex) {
             LogManager.getLogger().error("", ex);
@@ -171,40 +155,33 @@ public class MtfFile implements IMechLoader {
         }
     }
 
-    private String readLineIgnoringComments(BufferedReader reader) throws IOException {
-        while (true) {
-            String line = reader.readLine();
-            if (line == null) {
-                return "";
-            } else if (!line.startsWith(COMMENT)) {
-                return line;
-            }
-        }
-    }
-
     private void readCrits(BufferedReader r) throws IOException {
         int slot = 0;
         int loc = 0;
-        String crit;
         int weaponsCount;
         int armorLocation;
         while (r.ready()) {
-            crit = r.readLine().trim();
-            if (crit.isEmpty() || crit.startsWith(COMMENT)) {
+            String line = r.readLine().trim();
+
+            if (line.isBlank() || line.startsWith(COMMENT)) {
                 continue;
             }
 
-            if (isValidLocation(crit)) {
-                loc = getLocation(crit);
+            if (isTitleLine(line)) {
+                continue;
+            }
+
+            if (isValidLocation(line)) {
+                loc = getLocation(line);
                 slot = 0;
                 continue;
             }
 
-            if (isProcessedComponent(crit)) {
+            if (isProcessedComponent(line)) {
                 continue;
             }
 
-            weaponsCount = weaponsList(crit);
+            weaponsCount = weaponsList(line);
 
             if (weaponsCount > 0) {
                 for (int count = 0; count < weaponsCount; count++) {
@@ -213,10 +190,10 @@ public class MtfFile implements IMechLoader {
                 continue;
             }
 
-            armorLocation = getArmorLocation(crit);
+            armorLocation = getArmorLocation(line);
 
             if (armorLocation >= 0) {
-                armorValues[armorLocation] = crit;
+                armorValues[armorLocation] = line;
                 continue;
             }
             if (critData.length <= loc) {
@@ -225,7 +202,7 @@ public class MtfFile implements IMechLoader {
             if (critData[loc].length <= slot) {
                 continue;
             }
-            critData[loc][slot++] = crit.trim();
+            critData[loc][slot++] = line.trim();
         }
     }
 
@@ -289,7 +266,7 @@ public class MtfFile implements IMechLoader {
                 mech = new BipedMech(iGyroType, iCockpitType);
             }
             mech.setFullHeadEject(fullHead);
-            mech.setChassis(name.trim());
+            mech.setChassis(chassis.trim());
             mech.setModel(model.trim());
             mech.setMulId(mulId);
             mech.setYear(Integer.parseInt(techYear.substring(4).trim()));
@@ -1240,6 +1217,19 @@ public class MtfFile implements IMechLoader {
         }
 
         return false;
+    }
+
+    private boolean isTitleLine(String line) {
+        String lineLower = line.toLowerCase();
+        if (lineLower.startsWith(CHASSIS)) {
+            chassis = line.substring(CHASSIS.length());
+            return true;
+        } else if (lineLower.startsWith(MODEL)) {
+            model = line.substring(MODEL.length());
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private int weaponsList(String line) {

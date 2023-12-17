@@ -4181,18 +4181,8 @@ public abstract class Mech extends Entity {
 
         boolean standard = (getCockpitType() == Mech.COCKPIT_STANDARD)
                 && (getGyroType() == Mech.GYRO_STANDARD);
-        boolean fullHead = hasFullHeadEject();
-        if (hasMulId()) {
-            sb.append("Version:1.3").append(newLine);
-        } else if (standard && !fullHead) {
-            sb.append("Version:1.0").append(newLine);
-        } else if (!fullHead) {
-            sb.append("Version:1.1").append(newLine);
-        } else {
-            sb.append("Version:1.2").append(newLine);
-        }
-        sb.append(chassis).append(newLine);
-        sb.append(model).append(newLine);
+        sb.append(MtfFile.CHASSIS).append(chassis).append(newLine);
+        sb.append(MtfFile.MODEL).append(model).append(newLine);
         if (hasMulId()) {
             sb.append(MtfFile.MUL_ID).append(mulId);
         }

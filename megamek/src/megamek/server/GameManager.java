@@ -20504,16 +20504,15 @@ public class GameManager implements IGameManager {
         vPhaseReport.add(r);
         for (int i = 0; i < rolls.size(); i++) {
             PilotingRollData roll = rolls.elementAt(i);
-            r = new Report(2290);
+            r = new Report(2291);
             r.subject = entity.getId();
             r.indent();
             r.newlines = 0;
             r.add(i + 1);
-            r.add(roll.getDesc());
             vPhaseReport.add(r);
             if ((roll.getValue() == TargetRoll.AUTOMATIC_FAIL)
                     || (roll.getValue() == TargetRoll.IMPOSSIBLE)) {
-                r = new Report(2295);
+                r = new Report(2296);
                 r.subject = entity.getId();
                 vPhaseReport.add(r);
                 if (moving) {
@@ -20542,7 +20541,7 @@ public class GameManager implements IGameManager {
             }
 
             Roll diceRoll = entity.getCrew().rollPilotingSkill();
-            r = new Report(2300);
+            r = new Report(2299);
             r.add(roll);
             r.add(diceRoll);
             r.subject = entity.getId();

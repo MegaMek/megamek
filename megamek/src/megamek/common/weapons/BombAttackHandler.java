@@ -65,7 +65,7 @@ public class BombAttackHandler extends WeaponHandler {
                     ) {
                         bomb.setShotsLeft(0);
                         if (bomb.isInternalBomb()) {
-                            ((IBomber) ae).setUsedInternalBombs(true);
+                            ((IBomber) ae).increaseUsedInternalBombs(1);
                         }
                         break;
                     }

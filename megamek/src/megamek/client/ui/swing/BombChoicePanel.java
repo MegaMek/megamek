@@ -40,6 +40,8 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
     private final boolean at2Nukes;
     private final boolean allowAdvancedAmmo;
 
+    private boolean empty = false;
+
     private static final long serialVersionUID = 483782753790544050L;
 
     @SuppressWarnings("rawtypes")
@@ -109,8 +111,15 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
         int[] intBombChoices = bomber.getIntBombChoices();
         int[] extBombChoices = bomber.getExtBombChoices();
 
+        int columns = (maxPoints.get(INTNAME) > 0 ? 1 : 0) + (maxPoints.get(EXTNAME) > 0 ? 1 : 0);
+        // Should not occur!
+        if (columns == 0){
+            empty = true;
+            return;
+        }
+
         JPanel outer = new JPanel();
-        outer.setLayout(new GridLayout(0, 2));
+        outer.setLayout(new GridLayout(0, columns));
         TitledBorder titledBorder = new TitledBorder(new LineBorder(Color.blue), "Bombs");
         Font font2 = new Font("Verdana", Font.BOLD + Font.ITALIC, 12);
         titledBorder.setTitleFont(font2);
@@ -118,11 +127,15 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
         CompoundBorder compoundBorder = new CompoundBorder(titledBorder, emptyBorder);
         outer.setBorder(compoundBorder);
 
-        interiorPanel = initSubPanel(compileBombPoints(intBombChoices), intBombChoices, INTNAME);
-        exteriorPanel = initSubPanel(compileBombPoints(extBombChoices), extBombChoices, EXTNAME);
+        interiorPanel = initSubPanel(maxPoints.get(INTNAME) - compileBombPoints(intBombChoices), intBombChoices, INTNAME);
+        exteriorPanel = initSubPanel(maxPoints.get(EXTNAME) - compileBombPoints(extBombChoices), extBombChoices, EXTNAME);
 
-        outer.add(interiorPanel);
-        outer.add(exteriorPanel);
+        if (maxPoints.get(INTNAME) != 0) {
+            outer.add(interiorPanel);
+        }
+        if (maxPoints.get(EXTNAME) != 0) {
+            outer.add(exteriorPanel);
+        }
         add(outer);
     }
 
@@ -261,6 +274,11 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
     }
 
     public void applyChoice() {
+        // Return cleanly if bomber never had any capacity but e.g. Internal Bomb Bay tried add bomb capacity.
+        if (empty) {
+            return;
+        }
+
         int[] choices = new int[BombType.B_NUM];
         // Internal bombs
         for (int type = 0; type < BombType.B_NUM; type++) {
@@ -276,6 +294,9 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
     public int[] getChoice() {
         int[] choices = new int[BombType.B_NUM];
         Arrays.fill(choices, 0);
+        if (empty) {
+            return choices;
+        }
 
         for (int type = 0; type < BombType.B_NUM; type++) {
             choices[type] += b_choices.get(INTNAME)[type].getSelectedIndex() + b_choices.get(EXTNAME)[type].getSelectedIndex();

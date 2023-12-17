@@ -55,7 +55,7 @@ public class AmmoWeaponHandler extends WeaponHandler {
         ammo.setShotsLeft(ammo.getBaseShotsLeft() - 1);
 
         if (weapon.isInternalBomb()) {
-            ((IBomber) ae).setUsedInternalBombs(true);
+            ((IBomber) ae).increaseUsedInternalBombs(1);
         }
 
         super.useAmmo();
@@ -104,13 +104,13 @@ public class AmmoWeaponHandler extends WeaponHandler {
         // attack roll was a 2, may explode
         } else if (roll.getIntValue() <= 2) {
             Roll diceRoll = Compute.rollD6(2);
-            
+
             Report r = new Report(3173);
             r.subject = subjectId;
             r.newlines = 0;
             r.add(diceRoll);
-            vPhaseReport.addElement(r);                
-            
+            vPhaseReport.addElement(r);
+
             if (diceRoll.getIntValue() == 12) {
                 // round explodes in weapon
                 r = new Report(3163);

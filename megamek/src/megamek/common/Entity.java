@@ -4183,6 +4183,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if (eq.getType().equals(spaceBomb) || eq.getType().equals(altBomb)
                     || eq.getType().equals(diveBomb)) {
                 bombAttacksToRemove.add(eq);
+            } else if (eq.getLinked() != null && eq.getLinked().isInternalBomb()){ // Does not do what's intended!
+                // Remove any used internal bombs
+                if (eq.getLinked().getUsableShotsLeft() <= 0) {
+                    bombAttacksToRemove.add(eq);
+                }
             }
         }
         equipmentList.removeAll(bombAttacksToRemove);

@@ -159,7 +159,7 @@ public class Aero extends Entity implements IAero, IBomber {
     protected int[] intBombChoices = new int[BombType.B_NUM];
     protected int[] extBombChoices = new int[BombType.B_NUM];
 
-    protected boolean usedInternalBombs = false;
+    protected int usedInternalBombs = 0;
 
     // fuel - number of fuel points
     private int fuel = 0;
@@ -533,11 +533,15 @@ public class Aero extends Entity implements IAero, IBomber {
         return t;
     }
 
-    public void setUsedInternalBombs(boolean b){
+    public void setUsedInternalBombs(int b){
         usedInternalBombs = b;
     }
 
-    public boolean getUsedInternalBombs() {
+    public void increaseUsedInternalBombs(int b){
+        usedInternalBombs += b;
+    }
+
+    public int getUsedInternalBombs() {
         return usedInternalBombs;
     }
 
@@ -1022,7 +1026,7 @@ public class Aero extends Entity implements IAero, IBomber {
         resetAltLossThisRound();
 
         // Reset usedInternalBombs
-        setUsedInternalBombs(false);
+        setUsedInternalBombs(0);
     }
 
     /**

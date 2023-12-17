@@ -36,8 +36,10 @@ public interface IBomber {
     String DIVE_BOMB_ATTACK = "DiveBombAttack";
     String ALT_BOMB_ATTACK = "AltBombAttack";
 
-    void setUsedInternalBombs(boolean b);
-    boolean getUsedInternalBombs();
+    void setUsedInternalBombs(int b);
+    void increaseUsedInternalBombs(int b);
+    int getUsedInternalBombs();
+
 
     /**
      * @return The total number of bomb points that the bomber can carry.

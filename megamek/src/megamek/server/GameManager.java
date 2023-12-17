@@ -18704,6 +18704,7 @@ public class GameManager implements IGameManager {
 
             int radicalHSBonus = 0;
             Vector<Report> rhsReports = new Vector<>();
+            Vector<Report> heatEffectsReports = new Vector<>();
             if (entity.hasActivatedRadicalHS()) {
                 if (entity instanceof Mech) {
                     radicalHSBonus = ((Mech) entity).getActiveSinks();
@@ -18770,10 +18771,10 @@ public class GameManager implements IGameManager {
                 r = new Report(5030);
                 r.add(heatToAdd);
                 r.subject = entity.getId();
-                addReport(r);
+                heatEffectsReports.add(r);
                 if (isMekWithHeatDissipatingArmor) {
                     r = new Report(5550);
-                    addReport(r);
+                    heatEffectsReports.add(r);
                 }
             }
 
@@ -18801,7 +18802,7 @@ public class GameManager implements IGameManager {
                         r = new Report(5045);
                         r.subject = entity.getId();
                         r.addDesc(entity);
-                        addReport(r);
+                        heatEffectsReports.add(r);
                     }
                 } else if (entity.isBATaserShutdown()) {
                     // if we're shutdown by a BA taser, we might activate again
@@ -18827,7 +18828,7 @@ public class GameManager implements IGameManager {
                 r = new Report(5010);
                 r.subject = entity.getId();
                 r.add(infernoHeat);
-                addReport(r);
+                heatEffectsReports.add(r);
             }
 
             // should we even bother for this mech?
@@ -18844,7 +18845,7 @@ public class GameManager implements IGameManager {
                 entity.heatBuildup += 10;
                 r = new Report(5015);
                 r.subject = entity.getId();
-                addReport(r);
+                heatEffectsReports.add(r);
             }
 
             // Greg: Nova CEWS If a Mek had an active Nova suite, add 2 heat.
@@ -18852,7 +18853,7 @@ public class GameManager implements IGameManager {
                 entity.heatBuildup += 2;
                 r = new Report(5013);
                 r.subject = entity.getId();
-                addReport(r);
+                heatEffectsReports.add(r);
             }
 
             // void sig adds 10 heat
@@ -18860,7 +18861,7 @@ public class GameManager implements IGameManager {
                 entity.heatBuildup += 10;
                 r = new Report(5016);
                 r.subject = entity.getId();
-                addReport(r);
+                heatEffectsReports.add(r);
             }
 
             // null sig adds 10 heat
@@ -18868,7 +18869,7 @@ public class GameManager implements IGameManager {
                 entity.heatBuildup += 10;
                 r = new Report(5017);
                 r.subject = entity.getId();
-                addReport(r);
+                heatEffectsReports.add(r);
             }
 
             // chameleon polarization field adds 6
@@ -18876,7 +18877,7 @@ public class GameManager implements IGameManager {
                 entity.heatBuildup += 6;
                 r = new Report(5014);
                 r.subject = entity.getId();
-                addReport(r);
+                heatEffectsReports.add(r);
             }
 
             // If a Mek is in extreme Temperatures, add or subtract one
@@ -18897,10 +18898,10 @@ public class GameManager implements IGameManager {
                     r = new Report(5032);
                     r.subject = entity.getId();
                     r.add(heatToAdd);
-                    addReport(r);
+                    heatEffectsReports.add(r);
                     if (((Mech) entity).hasIntactHeatDissipatingArmor()) {
                         r = new Report(5550);
-                        addReport(r);
+                        heatEffectsReports.add(r);
                     }
                 }
             }
@@ -18917,7 +18918,7 @@ public class GameManager implements IGameManager {
                     r = new Report(5018);
                     r.subject = entity.getId();
                     r.add(vibroHeat);
-                    addReport(r);
+                    heatEffectsReports.add(r);
                     entity.heatBuildup += vibroHeat;
                 }
             }
@@ -18935,7 +18936,7 @@ public class GameManager implements IGameManager {
                 r = new Report(5019);
                 r.subject = entity.getId();
                 r.add(capHeat);
-                addReport(r);
+                heatEffectsReports.add(r);
                 entity.heatBuildup += capHeat;
             }
 
@@ -18957,7 +18958,7 @@ public class GameManager implements IGameManager {
                 r = new Report(5026);
                 r.subject = entity.getId();
                 r.add(reduce);
-                addReport(r);
+                heatEffectsReports.add(r);
                 entity.heatBuildup -= reduce;
             }
 
@@ -18967,7 +18968,7 @@ public class GameManager implements IGameManager {
                 r = new Report(5021);
                 r.subject = entity.getId();
                 r.add(flaw);
-                addReport(r);
+                heatEffectsReports.add(r);
                 entity.heatBuildup += flaw;
             }
             // if heat build up is negative due to temperature, set it to 0
@@ -18987,6 +18988,7 @@ public class GameManager implements IGameManager {
                 r = new Report(5520);
                 r.subject = entity.getId();
                 r.add(failureAmount);
+                heatEffectsReports.add(r);
                 toSink -= failureAmount;
             }
 
@@ -19001,7 +19003,7 @@ public class GameManager implements IGameManager {
                         if (mode.equals("dump")) {
                             r = new Report(5260);
                             r.subject = entity.getId();
-                            addReport(r);
+                            heatEffectsReports.add(r);
                             m.setShotsLeft(0);
                             toSink += possibleSinkage;
                             break;
@@ -19009,7 +19011,7 @@ public class GameManager implements IGameManager {
                         if (mode.equals("safe") && ((entity.heat - toSink) > safeHeat)) {
                             r = new Report(5265);
                             r.subject = entity.getId();
-                            addReport(r);
+                            heatEffectsReports.add(r);
                             m.setShotsLeft(0);
                             toSink += possibleSinkage;
                             break;
@@ -19017,7 +19019,7 @@ public class GameManager implements IGameManager {
                         if (mode.equals("efficient") && ((entity.heat - toSink) >= possibleSinkage)) {
                             r = new Report(5270);
                             r.subject = entity.getId();
-                            addReport(r);
+                            heatEffectsReports.add(r);
                             m.setShotsLeft(0);
                             toSink += possibleSinkage;
                             break;
@@ -19038,6 +19040,7 @@ public class GameManager implements IGameManager {
             addReport(r);
             entity.heatBuildup = 0;
             vPhaseReport.addAll(rhsReports);
+            vPhaseReport.addAll(heatEffectsReports);
 
             // Does the unit have inferno ammo?
             if (entity.hasInfernoAmmo()) {

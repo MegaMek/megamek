@@ -28,18 +28,18 @@ public class UnitType {
     public static final int NAVAL = 6;
     public static final int GUN_EMPLACEMENT = 7;
     public static final int CONV_FIGHTER = 8;
-    public static final int AERO = 9;
+    public static final int AEROSPACEFIGHTER = 9;
     public static final int SMALL_CRAFT = 10;
     public static final int DROPSHIP = 11;
     public static final int JUMPSHIP = 12;
     public static final int WARSHIP = 13;
     public static final int SPACE_STATION = 14;
-    public static final int AEROSPACEFIGHTER = 15;
+    public static final int AERO = 15; // Non-differentiated Aerospace, like Escape Pods / Life Boats
 
     private static String[] names = { "Mek", "Tank", "BattleArmor", "Infantry",
             "ProtoMek", "VTOL", "Naval", "Gun Emplacement", "Conventional Fighter",
-             "Aero", "Small Craft", "Dropship",
-            "Jumpship", "Warship", "Space Station", "AeroSpaceFighter" };
+             "AeroSpaceFighter", "Small Craft", "Dropship",
+            "Jumpship", "Warship", "Space Station", "Aero"};
 
     public static final int SIZE = names.length;
 

@@ -1,6 +1,6 @@
 <HTML><H2>How to Use the User Data Directory</H2>
 
-<P>Use this directory for resources you want to share between different installs or versions of MegaMek, MegaMekLab and MekHQ. Fonts, units, camos, portraits and unit fluff images will also be loaded from this directory (in addition to what is loaded from MegaMek's own data). The directory should be an absolute path such as D:/MyBTStuff (in other words, not relative to your MegaMek directory).</P>
+<P>Use this directory for resources you want to share between different installs or versions of MegaMek, MegaMekLab and MekHQ. The files listed below will also be loaded from this directory (in addition to what is loaded from MegaMek's own data). The directory should be an absolute path such as D:/MyBTStuff (in other words, not relative to your MegaMek directory).</P>
 
 <P>How to place files within the user data directory:
 <UL>
@@ -13,6 +13,8 @@
     <LI><B>Portrait</B> images must be placed in &lt;user data directory&gt;/data/images/portraits/. In this subfolder, further subfolders can be used (optional).
 
     <LI><B>Unit fluff</B> images must be placed in &lt;user data directory&gt;/data/images/fluff/&lt;unit type&gt;/. To find the exact subfolders to use, go to your megamek folder and open /data/images/fluff/.
+
+    <LI><B>Skin</B> definition files (.xml) can be placed anywhere in the user data directory
 </UL>
 
 <P>This is an example of a suitable directory structure with a few example files:
@@ -24,6 +26,7 @@ D:/myBTStuff<BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Atlas AS8-XT.mtf<BR>
 &nbsp;&nbsp;&nbsp;&nbsp;/data<BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Jura.ttf<BR>
+        MyMMSkin.xml
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/images<BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/camo<BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;myForceCamo.png<BR>

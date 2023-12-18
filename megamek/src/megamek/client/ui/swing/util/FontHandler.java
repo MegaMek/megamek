@@ -19,6 +19,7 @@
 package megamek.client.ui.swing.util;
 
 import megamek.MMConstants;
+import megamek.client.ui.swing.CommonSettingsDialog;
 import megamek.common.preference.PreferenceManager;
 import org.apache.logging.log4j.LogManager;
 
@@ -116,25 +117,11 @@ public final class FontHandler {
      * @param directory the directory to parse
      */
     public static void parseFontsInDirectory(final File directory) {
-        final String[] filenames = directory.list();
-        if (filenames == null) {
-            LogManager.getLogger().warn(directory + " is not a directory!");
-            return;
-        }
-
-        for (final String filename : filenames) {
-            if (filename.toLowerCase().endsWith(MMConstants.TRUETYPE_FONT)) {
-                try (InputStream fis = new FileInputStream(directory.getPath() + '/' + filename)) {
-                    GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(
-                            Font.createFont(Font.TRUETYPE_FONT, fis));
-                } catch (Exception ex) {
-                    LogManager.getLogger().error("Failed to parse font", ex);
-                }
-            } else {
-                final File file = new File(directory, filename);
-                if (file.isDirectory()) {
-                    parseFontsInDirectory(file);
-                }
+        for (String fontFile : CommonSettingsDialog.filteredFilesWithSubDirs(directory, MMConstants.TRUETYPE_FONT)) {
+            try (InputStream fis = new FileInputStream(fontFile)) {
+                GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(Font.createFont(Font.TRUETYPE_FONT, fis));
+            } catch (Exception ex) {
+                LogManager.getLogger().error("Failed to parse font", ex);
             }
         }
     }

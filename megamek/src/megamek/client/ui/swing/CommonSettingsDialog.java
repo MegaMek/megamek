@@ -44,14 +44,20 @@ import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
-import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 /** The Client Settings Dialog offering GUI options concerning tooltips, map display, keybinds etc. */
 public class CommonSettingsDialog extends AbstractButtonDialog implements ItemListener,
@@ -1439,6 +1445,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         // Skin
         skinFiles = new JComboBox<>();
+        skinFiles.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                return super.getListCellRendererComponent(list, new File((String) value).getName(), index, isSelected, cellHasFocus);
+            }
+        });
         skinFiles.setMaximumSize(new Dimension(400, skinFiles.getMaximumSize().height));
         JLabel skinFileLabel = new JLabel(Messages.getString("CommonSettingsDialog.skinFile"));
         row = new ArrayList<>();
@@ -1661,15 +1673,20 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             gameSummaryMM.setSelected(GUIP.getGameSummaryMinimap());
 
             skinFiles.removeAllItems();
-            List<String> xmlFiles = new ArrayList<>(Arrays
-                    .asList(Configuration.skinsDir().list((directory, fileName) -> fileName.endsWith(".xml"))));
-            xmlFiles.addAll(userDataFiles(Configuration.skinsDir(), ".xml"));
-            Collections.sort(xmlFiles);
-            for (String file : xmlFiles) {
-                if (SkinXMLHandler.validSkinSpecFile(file)) {
-                    skinFiles.addItem(file);
-                }
+            ArrayList<String> xmlFiles = new ArrayList<>(filteredFiles(Configuration.skinsDir(), ".xml"));
+
+            String userDirName = PreferenceManager.getClientPreferences().getUserDir();
+            File userDir = new File(userDirName);
+            if (!userDirName.isBlank() && userDir.isDirectory()) {
+                xmlFiles.addAll(filteredFilesWithSubDirs(userDir, ".xml"));
             }
+
+            File internalUserDataDir = new File(Configuration.userdataDir(), Configuration.skinsDir().toString());
+            xmlFiles.addAll(filteredFiles(internalUserDataDir, ".xml"));
+            xmlFiles.removeIf(file -> !SkinXMLHandler.validSkinSpecFile(file));
+            Collections.sort(xmlFiles);
+            var model = new DefaultComboBoxModel<>(xmlFiles.toArray(new String[0]));
+            skinFiles.setModel(model);
             // Select the default file first
             skinFiles.setSelectedItem(SkinXMLHandler.defaultSkinXML);
             // If this select fails, the default skin will be selected
@@ -2960,6 +2977,24 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             result.addAll(Arrays.asList(userDataFiles));
         }
         return result;
+    }
+
+    public static List<String> filteredFiles(File path, String fileEnding) {
+        List<String> result = new ArrayList<>();
+        String[] userDataFiles = path.list((direc, name) -> name.endsWith(fileEnding));
+        if (userDataFiles != null) {
+            Arrays.stream(userDataFiles).map(file -> path + "/" + file).forEach(result::add);
+        }
+        return result;
+    }
+
+    public static List<String> filteredFilesWithSubDirs(File path, String fileEnding) {
+        try (Stream<Path> entries = Files.walk(path.toPath())) {
+            return entries.map(Objects::toString).filter(name -> name.endsWith(fileEnding)).collect(toList());
+        } catch (IOException e) {
+            LogManager.getLogger().warn("Error while reading " + fileEnding + " files from " + path, e);
+            return new ArrayList<>();
+        }
     }
 
     private void adaptToGUIScale() {

@@ -1,6 +1,5 @@
-Version:1.0
-Falcon
-FLC-6C
+chassis:Falcon
+model:FLC-6C
 mul id:1029
 
 Config:Biped

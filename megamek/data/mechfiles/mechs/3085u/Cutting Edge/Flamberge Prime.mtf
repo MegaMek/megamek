@@ -1,6 +1,5 @@
-Version:1.0
-Flamberge
-Prime
+chassis:Flamberge
+model:Prime
 mul id:1119
 
 Config:Biped Omnimech

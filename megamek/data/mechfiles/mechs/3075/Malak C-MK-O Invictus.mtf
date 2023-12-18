@@ -1,6 +1,5 @@
-Version:1.1
-Malak
-C-MK-O Invictus
+chassis:Malak
+model:C-MK-O Invictus
 mul id:1994
 
 Config:Biped Omnimech

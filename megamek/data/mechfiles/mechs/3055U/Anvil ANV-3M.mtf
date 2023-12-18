@@ -1,6 +1,5 @@
-Version:1.3
-Anvil
-ANV-3M
+chassis:Anvil
+model:ANV-3M
 mul id:48
 Config:Biped
 techbase:Inner Sphere

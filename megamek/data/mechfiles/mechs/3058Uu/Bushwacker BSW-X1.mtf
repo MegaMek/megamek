@@ -1,6 +1,5 @@
-Version:1.0
-Bushwacker
-BSW-X1
+chassis:Bushwacker
+model:BSW-X1
 mul id:450
 
 Config:Biped

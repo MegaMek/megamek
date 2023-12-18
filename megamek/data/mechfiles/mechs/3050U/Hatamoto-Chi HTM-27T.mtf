@@ -1,6 +1,5 @@
-Version:1.0
-Hatamoto-Chi
-HTM-27T
+chassis:Hatamoto-Chi
+model:HTM-27T
 mul id:1398
 
 Config:Biped

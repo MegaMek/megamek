@@ -1,6 +1,5 @@
-Version:1.0
-Centurion
-CN9-Da
+chassis:Centurion
+model:CN9-Da
 mul id:524
 
 Config:Biped

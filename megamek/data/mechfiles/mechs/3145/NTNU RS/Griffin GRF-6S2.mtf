@@ -1,6 +1,5 @@
-Version:1.2
-Griffin
-GRF-6S2
+chassis:Griffin
+model:GRF-6S2
 mul id:6899
 
 Config:Biped

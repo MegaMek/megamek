@@ -1,6 +1,5 @@
-Version:1.0
-Commando
-COM-9S
+chassis:Commando
+model:COM-9S
 mul id:7439
 
 Config:Biped

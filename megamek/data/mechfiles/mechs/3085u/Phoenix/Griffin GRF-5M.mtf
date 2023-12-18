@@ -1,6 +1,5 @@
-Version:1.2
-Griffin
-GRF-5M
+chassis:Griffin
+model:GRF-5M
 mul id:1305
 
 Config:Biped

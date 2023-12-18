@@ -1,6 +1,5 @@
-Version:1.0
-Kintaro
-KTO-C
+chassis:Kintaro
+model:KTO-C
 mul id:1795
 
 Config:Biped

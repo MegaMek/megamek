@@ -1,6 +1,5 @@
-Version:1.1
-Warhammer
-WHM-10T
+chassis:Warhammer
+model:WHM-10T
 mul id:3481
 
 Config:Biped

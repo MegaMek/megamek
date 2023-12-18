@@ -1,6 +1,5 @@
-Version:1.0
-Starslayer
-STY-3D
+chassis:Starslayer
+model:STY-3D
 mul id:3050
 
 Config:Biped

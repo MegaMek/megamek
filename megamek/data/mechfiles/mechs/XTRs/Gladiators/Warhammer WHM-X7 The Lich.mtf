@@ -1,6 +1,5 @@
-Version:1.1
-Warhammer
-WHM-X7 'The Lich'
+chassis:Warhammer
+model:WHM-X7 'The Lich'
 mul id:3499
 
 Config:Biped

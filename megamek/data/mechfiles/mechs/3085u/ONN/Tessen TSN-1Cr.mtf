@@ -1,6 +1,5 @@
-Version:1.0
-Tessen
-TSN-1Cr
+chassis:Tessen
+model:TSN-1Cr
 mul id:3172
 
 Config:Biped

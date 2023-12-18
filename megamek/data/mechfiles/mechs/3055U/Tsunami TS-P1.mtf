@@ -1,6 +1,5 @@
-Version:1.0
-Tsunami
-TS-P1
+chassis:Tsunami
+model:TS-P1
 mul id:3311
 
 Config:Biped

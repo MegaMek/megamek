@@ -1,6 +1,5 @@
-Version:1.0
-Thug
-THG-12K
+chassis:Thug
+model:THG-12K
 mul id:3208
 
 Config:Biped

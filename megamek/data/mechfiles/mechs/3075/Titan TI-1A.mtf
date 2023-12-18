@@ -1,6 +1,5 @@
-Version:1.0
-Titan
-TI-1A
+chassis:Titan
+model:TI-1A
 mul id:3257
 
 Config:Biped

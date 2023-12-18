@@ -1,6 +1,5 @@
-Version:1.1
-King Crab
-KGC-008
+chassis:King Crab
+model:KGC-008
 mul id:1777
 
 Config:Biped

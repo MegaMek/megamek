@@ -1,6 +1,5 @@
-Version:1.1
-Seraph
-C-SRP-OC Comminus
+chassis:Seraph
+model:C-SRP-OC Comminus
 mul id:2872
 
 Config:Biped Omnimech

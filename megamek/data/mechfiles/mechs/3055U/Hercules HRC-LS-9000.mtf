@@ -1,6 +1,5 @@
-Version:1.0
-Hercules
-HRC-LS-9000
+chassis:Hercules
+model:HRC-LS-9000
 mul id:1482
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Flamberge
-D
+chassis:Flamberge
+model:D
 mul id:6873
 
 Config:Biped Omnimech

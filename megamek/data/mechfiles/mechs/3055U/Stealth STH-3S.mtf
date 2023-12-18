@@ -1,6 +1,5 @@
-Version:1.0
-Stealth
-STH-3S
+chassis:Stealth
+model:STH-3S
 mul id:3057
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.3
-Ryoken III-XP (Skinwalker)
-Prime
+chassis:Ryoken III-XP (Skinwalker)
+model:Prime
 mul id:7378
 Config:Biped Omnimech
 techbase:Mixed (Clan Chassis)

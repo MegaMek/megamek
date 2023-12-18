@@ -1,6 +1,5 @@
-Version:1.0
-Icarus II
-ICR-2S
+chassis:Icarus II
+model:ICR-2S
 mul id:1601
 
 Config:Biped

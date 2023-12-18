@@ -1,6 +1,5 @@
-Version:1.3
-Marauder II
-MAD-4A
+chassis:Marauder II
+model:MAD-4A
 mul id:2055
 Config:Biped
 techbase:Inner Sphere

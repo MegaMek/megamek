@@ -1,6 +1,5 @@
-Version:1.0
-Blitzkrieg
-BTZ-3F
+chassis:Blitzkrieg
+model:BTZ-3F
 mul id:394
 
 Config:Biped

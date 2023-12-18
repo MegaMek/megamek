@@ -1,6 +1,5 @@
-Version:1.0
-Rifleman
-RFL-5D
+chassis:Rifleman
+model:RFL-5D
 mul id:2699
 
 Config:Biped

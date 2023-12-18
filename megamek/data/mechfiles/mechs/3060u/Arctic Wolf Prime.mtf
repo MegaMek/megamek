@@ -1,6 +1,5 @@
-Version:1.0
-Arctic Wolf
-Prime
+chassis:Arctic Wolf
+model:Prime
 mul id:103
 
 Config:Biped Omnimech

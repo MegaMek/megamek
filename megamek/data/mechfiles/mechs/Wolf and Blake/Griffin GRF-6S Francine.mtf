@@ -1,6 +1,5 @@
-Version:1.0
-Griffin
-GRF-6S (Francine)
+chassis:Griffin
+model:GRF-6S (Francine)
 mul id:1309
 
 Config:Biped

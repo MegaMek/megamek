@@ -1,6 +1,5 @@
-Version:1.0
-Thunderbolt
-TDR-7M
+chassis:Thunderbolt
+model:TDR-7M
 mul id:3244
 
 Config:Biped

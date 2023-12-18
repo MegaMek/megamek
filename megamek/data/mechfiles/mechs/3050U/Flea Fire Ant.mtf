@@ -1,6 +1,5 @@
-Version:1.0
-Flea
-'Fire Ant'
+chassis:Flea
+model:'Fire Ant'
 mul id:1135
 
 Config:Biped

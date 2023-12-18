@@ -1,6 +1,5 @@
-Version:1.3
-Pouncer
-T
+chassis:Pouncer
+model:T
 mul id:9262
 Config:Biped Omnimech
 techbase:Mixed (Clan Chassis)

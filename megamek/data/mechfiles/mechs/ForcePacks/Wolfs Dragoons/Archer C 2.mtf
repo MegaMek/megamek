@@ -1,6 +1,5 @@
-Version:1.3
-Archer
-C 2
+chassis:Archer
+model:C 2
 mul id:8387
 Config:Biped
 techbase:Clan

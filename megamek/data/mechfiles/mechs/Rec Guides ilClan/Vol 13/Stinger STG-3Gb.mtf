@@ -1,6 +1,5 @@
-Version:1.0
-Stinger
-STG-3Gb
+chassis:Stinger
+model:STG-3Gb
 mul id:3059
 
 Config:Biped

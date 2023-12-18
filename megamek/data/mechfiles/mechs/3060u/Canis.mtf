@@ -1,6 +1,5 @@
-Version:1.0
-Canis
-
+chassis:Canis
+model:
 mul id:459
 
 Config:Biped

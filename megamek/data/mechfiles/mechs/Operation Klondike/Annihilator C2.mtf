@@ -1,6 +1,5 @@
-Version:1.1
-Annihilator
-C 2
+chassis:Annihilator
+model:C 2
 mul id:45
 
 Config:Biped

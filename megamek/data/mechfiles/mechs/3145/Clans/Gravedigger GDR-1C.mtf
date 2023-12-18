@@ -1,6 +1,5 @@
-Version:1.0
-Gravedigger
-GDR-1C
+chassis:Gravedigger
+model:GDR-1C
 mul id:6265
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Locust
-C
+chassis:Locust
+model:C
 mul id:7601
 
 Config:Biped

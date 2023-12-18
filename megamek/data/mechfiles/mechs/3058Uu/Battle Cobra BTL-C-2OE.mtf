@@ -1,6 +1,5 @@
-Version:1.0
-Battle Cobra
-BTL-C-2OE
+chassis:Battle Cobra
+model:BTL-C-2OE
 mul id:268
 
 Config:Biped Omnimech

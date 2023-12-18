@@ -1,6 +1,5 @@
-Version:1.0
-Mantis
-MTS-S
+chassis:Mantis
+model:MTS-S
 mul id:2023
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-BattleMaster
-C
+chassis:BattleMaster
+model:C
 mul id:303
 
 Config:Biped

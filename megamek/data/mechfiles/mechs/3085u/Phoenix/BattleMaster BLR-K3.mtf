@@ -1,6 +1,5 @@
-Version:1.0
-BattleMaster
-BLR-K3
+chassis:BattleMaster
+model:BLR-K3
 mul id:300
 
 Config:Biped

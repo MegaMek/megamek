@@ -1,6 +1,5 @@
-Version:1.1
-Mackie
-MSK-7A
+chassis:Mackie
+model:MSK-7A
 mul id:4556
 
 Config:Biped

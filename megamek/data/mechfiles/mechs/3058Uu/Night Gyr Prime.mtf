@@ -1,6 +1,5 @@
-Version:1.0
-Night Gyr
-Prime
+chassis:Night Gyr
+model:Prime
 mul id:2270
 
 Config:Biped Omnimech

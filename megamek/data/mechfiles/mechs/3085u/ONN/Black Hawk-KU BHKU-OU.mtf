@@ -1,6 +1,5 @@
-Version:1.0
-Black Hawk-KU
-BHKU-OU
+chassis:Black Hawk-KU
+model:BHKU-OU
 mul id:353
 
 Config:Biped Omnimech

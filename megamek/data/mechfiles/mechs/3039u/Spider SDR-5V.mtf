@@ -1,6 +1,5 @@
-Version:1.0
-Spider
-SDR-5V
+chassis:Spider
+model:SDR-5V
 mul id:3010
 
 Config:Biped

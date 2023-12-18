@@ -1,6 +1,5 @@
-Version:1.1
-Phoenix
-PX-1KC
+chassis:Phoenix
+model:PX-1KC
 mul id:7467
 
 Config:Biped

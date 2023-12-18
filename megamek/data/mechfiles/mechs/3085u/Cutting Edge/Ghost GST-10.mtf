@@ -1,6 +1,5 @@
-Version:1.0
-Ghost
-GST-10
+chassis:Ghost
+model:GST-10
 mul id:1193
 
 Config:Biped

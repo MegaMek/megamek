@@ -1,6 +1,5 @@
-Version:1.0
-Rifleman
-RFL-3N
+chassis:Rifleman
+model:RFL-3N
 mul id:2697
 
 Config:Biped

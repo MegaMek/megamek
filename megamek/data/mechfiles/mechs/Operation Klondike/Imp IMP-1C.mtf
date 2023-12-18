@@ -1,6 +1,5 @@
-Version:1.0
-Imp
-IMP-1C
+chassis:Imp
+model:IMP-1C
 mul id:1609
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Wolf Trap (Tora)
-WFT-B
+chassis:Wolf Trap (Tora)
+model:WFT-B
 mul id:3558
 
 Config:Biped

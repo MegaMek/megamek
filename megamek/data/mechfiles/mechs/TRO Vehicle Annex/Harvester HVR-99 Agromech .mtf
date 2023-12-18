@@ -1,6 +1,5 @@
-Version:1.1
-Harvester
-HVR-99 AgroMech
+chassis:Harvester
+model:HVR-99 AgroMech
 mul id:4264
 
 Config:Biped

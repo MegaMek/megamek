@@ -1,6 +1,5 @@
-Version:1.3
-Wolfhound IIC
-'Grinner'
+chassis:Wolfhound IIC
+model:'Grinner'
 mul id:3570
 Config:Biped
 techbase:Clan

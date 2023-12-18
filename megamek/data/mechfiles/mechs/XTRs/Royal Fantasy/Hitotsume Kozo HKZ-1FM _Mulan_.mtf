@@ -1,6 +1,5 @@
-Version:1.0
-Hitotsume Kozo
-HKZ-1FM 'Mulan'
+chassis:Hitotsume Kozo
+model:HKZ-1FM 'Mulan'
 mul id:8380
 
 Config:Biped

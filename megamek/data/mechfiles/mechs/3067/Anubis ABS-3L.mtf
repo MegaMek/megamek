@@ -1,6 +1,5 @@
-Version:1.0
-Anubis
-ABS-3L
+chassis:Anubis
+model:ABS-3L
 mul id:3702
 
 Config:Biped

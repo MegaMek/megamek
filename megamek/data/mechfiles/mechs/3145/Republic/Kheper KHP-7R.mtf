@@ -1,6 +1,5 @@
-Version:1.1
-Kheper
-KHP-7R
+chassis:Kheper
+model:KHP-7R
 mul id:6675
 
 Config:Biped

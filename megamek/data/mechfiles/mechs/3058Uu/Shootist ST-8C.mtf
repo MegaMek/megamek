@@ -1,6 +1,5 @@
-Version:1.0
-Shootist
-ST-8C
+chassis:Shootist
+model:ST-8C
 mul id:2940
 
 Config:Biped

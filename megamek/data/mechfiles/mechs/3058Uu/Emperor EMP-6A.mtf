@@ -1,6 +1,5 @@
-Version:1.0
-Emperor
-EMP-6A
+chassis:Emperor
+model:EMP-6A
 mul id:964
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.1
-Archangel
-C-ANG-O Invictus
+chassis:Archangel
+model:C-ANG-O Invictus
 mul id:65
 
 Config:Biped Omnimech

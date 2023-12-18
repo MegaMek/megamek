@@ -1,6 +1,5 @@
-Version:1.3
-Vanquisher
-VQR-7V (Pravuil)
+chassis:Vanquisher
+model:VQR-7V (Pravuil)
 mul id:7342
 Config:Biped
 techbase:Inner Sphere

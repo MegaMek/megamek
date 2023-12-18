@@ -1,6 +1,5 @@
-Version:1.0
-Hachiwara
-HCA-6P
+chassis:Hachiwara
+model:HCA-6P
 mul id:1363
 
 Config:Biped

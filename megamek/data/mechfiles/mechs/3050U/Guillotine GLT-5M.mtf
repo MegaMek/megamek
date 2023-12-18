@@ -1,6 +1,5 @@
-Version:1.0
-Guillotine
-GLT-5M
+chassis:Guillotine
+model:GLT-5M
 mul id:1341
 
 Config:Biped

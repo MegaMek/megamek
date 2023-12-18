@@ -1,6 +1,5 @@
-Version:1.0
-Talon
-TLN-5VNO
+chassis:Talon
+model:TLN-5VNO
 
 Config:Biped
 techbase:Inner Sphere

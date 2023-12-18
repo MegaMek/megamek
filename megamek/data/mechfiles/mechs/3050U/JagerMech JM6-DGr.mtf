@@ -1,6 +1,5 @@
-Version:1.3
-JagerMech
-JM6-DGr
+chassis:JagerMech
+model:JM6-DGr
 mul id:4389
 Config:Biped
 techbase:Inner Sphere

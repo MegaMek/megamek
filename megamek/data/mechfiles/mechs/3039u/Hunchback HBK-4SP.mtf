@@ -1,6 +1,5 @@
-Version:1.0
-Hunchback
-HBK-4SP
+chassis:Hunchback
+model:HBK-4SP
 mul id:1559
 
 Config:Biped

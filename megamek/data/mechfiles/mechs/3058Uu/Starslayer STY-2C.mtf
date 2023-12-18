@@ -1,6 +1,5 @@
-Version:1.0
-Starslayer
-STY-2C
+chassis:Starslayer
+model:STY-2C
 mul id:3048
 
 Config:Biped

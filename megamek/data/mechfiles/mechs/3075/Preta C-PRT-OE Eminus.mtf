@@ -1,6 +1,5 @@
-Version:1.1
-Preta
-C-PRT-OE Eminus
+chassis:Preta
+model:C-PRT-OE Eminus
 mul id:2578
 
 Config:Biped Omnimech

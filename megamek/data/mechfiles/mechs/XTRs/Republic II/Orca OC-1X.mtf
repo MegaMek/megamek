@@ -1,6 +1,5 @@
-Version:1.1
-Orca
-OC-1X
+chassis:Orca
+model:OC-1X
 mul id:7356
 
 Config:Biped

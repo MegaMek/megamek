@@ -1,6 +1,5 @@
-Version:1.0
-UrbanMech
-UM-R69
+chassis:UrbanMech
+model:UM-R69
 mul id:3358
 
 Config:Biped

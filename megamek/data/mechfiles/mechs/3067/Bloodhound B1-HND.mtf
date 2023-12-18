@@ -1,6 +1,5 @@
-Version:1.0
-Bloodhound
-B1-HND
+chassis:Bloodhound
+model:B1-HND
 mul id:3838
 
 Config:Biped

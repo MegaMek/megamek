@@ -1,6 +1,5 @@
-Version:1.0
-Lightray
-LGH-6W
+chassis:Lightray
+model:LGH-6W
 mul id:1885
 
 Config:Biped

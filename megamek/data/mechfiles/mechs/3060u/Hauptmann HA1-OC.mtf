@@ -1,6 +1,5 @@
-Version:1.0
-Hauptmann
-HA1-OC
+chassis:Hauptmann
+model:HA1-OC
 mul id:1423
 
 Config:Biped Omnimech

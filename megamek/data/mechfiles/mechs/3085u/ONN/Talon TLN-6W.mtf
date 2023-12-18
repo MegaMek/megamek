@@ -1,6 +1,5 @@
-Version:1.0
-Talon
-TLN-6W
+chassis:Talon
+model:TLN-6W
 mul id:3155
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Katana (Crockett)
-CRK-5003-C
+chassis:Katana (Crockett)
+model:CRK-5003-C
 mul id:1761
 
 Config:Biped

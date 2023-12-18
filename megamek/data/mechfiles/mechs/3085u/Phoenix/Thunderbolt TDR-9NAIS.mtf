@@ -1,6 +1,5 @@
-Version:1.0
-Thunderbolt
-TDR-9NAIS
+chassis:Thunderbolt
+model:TDR-9NAIS
 mul id:3247
 
 Config:Biped

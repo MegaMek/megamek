@@ -1,6 +1,5 @@
-Version:1.0
-Brahma
-BRM-5A
+chassis:Brahma
+model:BRM-5A
 mul id:426
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Tomahawk
-(Prime)
+chassis:Tomahawk
+model:(Prime)
 mul id:6298
 
 Config:Biped Omnimech

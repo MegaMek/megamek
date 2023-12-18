@@ -1,6 +1,5 @@
-Version:1.0
-Ymir
-BWP-3A
+chassis:Ymir
+model:BWP-3A
 mul id:3622
 
 Config:Biped

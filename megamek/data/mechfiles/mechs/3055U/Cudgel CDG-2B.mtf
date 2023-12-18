@@ -1,6 +1,5 @@
-Version:1.1
-Cudgel
-CDG-2B
+chassis:Cudgel
+model:CDG-2B
 mul id:768
 
 Config:Biped

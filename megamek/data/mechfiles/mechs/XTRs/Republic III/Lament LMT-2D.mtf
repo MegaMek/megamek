@@ -1,6 +1,5 @@
-Version:1.1
-Lament
-LMT-2D
+chassis:Lament
+model:LMT-2D
 mul id:7383
 
 Config:Biped

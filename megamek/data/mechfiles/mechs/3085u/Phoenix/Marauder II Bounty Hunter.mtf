@@ -1,6 +1,5 @@
-Version:1.0
-Marauder II
-(Bounty Hunter)
+chassis:Marauder II
+model:(Bounty Hunter)
 mul id:2053
 
 Config:Biped

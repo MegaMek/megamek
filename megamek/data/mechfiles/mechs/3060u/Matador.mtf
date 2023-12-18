@@ -1,6 +1,5 @@
-Version:1.0
-Matador
-
+chassis:Matador
+model:
 mul id:2098
 
 Config:Biped

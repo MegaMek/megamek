@@ -1,6 +1,5 @@
-Version:1.0
-Shrike
-
+chassis:Shrike
+model:
 mul id:6292
 
 Config:Biped

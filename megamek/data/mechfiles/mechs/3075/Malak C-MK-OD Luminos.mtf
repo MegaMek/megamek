@@ -1,6 +1,5 @@
-Version:1.1
-Malak
-C-MK-OD Luminos
+chassis:Malak
+model:C-MK-OD Luminos
 mul id:1998
 
 Config:Biped Omnimech

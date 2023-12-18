@@ -1,6 +1,5 @@
-Version:1.0
-Vulpes
-VLP-1DX 'Beast'
+chassis:Vulpes
+model:VLP-1DX 'Beast'
 mul id:8382
 
 Config:Biped

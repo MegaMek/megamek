@@ -1,6 +1,5 @@
-Version:1.1
-Harvester Ant
-KIC-3M-B AgroMech (LRM)
+chassis:Harvester Ant
+model:KIC-3M-B AgroMech (LRM)
 mul id:7153
 
 Config:Quad

@@ -1,6 +1,5 @@
-Version:1.0
-Griffin IIC
-8
+chassis:Griffin IIC
+model:8
 mul id:1317
 
 Config:Biped

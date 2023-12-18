@@ -1,6 +1,5 @@
-Version:1.0
-Victor
-VTR-11D
+chassis:Victor
+model:VTR-11D
 mul id:3406
 
 Config:Biped

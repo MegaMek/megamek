@@ -1,6 +1,5 @@
-Version:1.0
-Orion IIC
-
+chassis:Orion IIC
+model:
 mul id:2340
 
 Config:Biped

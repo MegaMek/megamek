@@ -1,6 +1,5 @@
-Version:1.0
-Marauder IIC
-8
+chassis:Marauder IIC
+model:8
 mul id:2072
 
 Config:Biped

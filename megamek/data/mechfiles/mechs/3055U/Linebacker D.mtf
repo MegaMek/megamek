@@ -1,6 +1,5 @@
-Version:1.0
-Linebacker
-D
+chassis:Linebacker
+model:D
 mul id:1889
 
 Config:Biped Omnimech

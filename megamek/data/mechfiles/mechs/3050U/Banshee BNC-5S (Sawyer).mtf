@@ -1,6 +1,5 @@
-Version:1.3
-Banshee
-BNC-5S (Sawyer)
+chassis:Banshee
+model:BNC-5S (Sawyer)
 mul id:3786
 Config:Biped
 techbase:Inner Sphere

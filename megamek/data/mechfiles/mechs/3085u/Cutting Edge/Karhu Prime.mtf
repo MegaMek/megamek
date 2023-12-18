@@ -1,6 +1,5 @@
-Version:1.0
-Karhu
-Prime
+chassis:Karhu
+model:Prime
 mul id:1752
 
 Config:Biped Omnimech

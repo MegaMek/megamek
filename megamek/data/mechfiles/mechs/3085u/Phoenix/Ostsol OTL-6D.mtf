@@ -1,6 +1,5 @@
-Version:1.0
-Ostsol
-OTL-6D
+chassis:Ostsol
+model:OTL-6D
 mul id:2375
 
 Config:Biped

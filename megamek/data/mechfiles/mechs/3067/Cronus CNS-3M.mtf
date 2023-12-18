@@ -1,6 +1,5 @@
-Version:1.0
-Cronus
-CNS-3M
+chassis:Cronus
+model:CNS-3M
 mul id:4020
 
 Config:Biped

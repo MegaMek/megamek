@@ -1,6 +1,5 @@
-Version:1.1
-Slagmaiden
-SLG-X
+chassis:Slagmaiden
+model:SLG-X
 mul id:5078
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Thorn
-THE-N1
+chassis:Thorn
+model:THE-N1
 mul id:3192
 
 Config:Biped

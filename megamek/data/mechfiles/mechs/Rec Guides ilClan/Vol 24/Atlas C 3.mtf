@@ -1,6 +1,5 @@
-Version:1.0
-Atlas
-C 3
+chassis:Atlas
+model:C 3
 mul id:8432
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Thug
-THG-10E
+chassis:Thug
+model:THG-10E
 mul id:3204
 
 Config:Biped

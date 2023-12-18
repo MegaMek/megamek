@@ -1,6 +1,5 @@
-Version:1.0
-Predator
-2
+chassis:Predator
+model:2
 mul id:2568
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Stalker
-STK-3Fk
+chassis:Stalker
+model:STK-3Fk
 mul id:5870
 
 Config:Biped

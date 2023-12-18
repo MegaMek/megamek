@@ -1,6 +1,5 @@
-Version:1.0
-Peacekeeper
-PKP-2K
+chassis:Peacekeeper
+model:PKP-2K
 mul id:6836
 
 Config:Biped

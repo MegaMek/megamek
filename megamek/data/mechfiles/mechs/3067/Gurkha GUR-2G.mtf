@@ -1,6 +1,5 @@
-Version:1.0
-Gurkha
-GUR-2G
+chassis:Gurkha
+model:GUR-2G
 mul id:1351
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Commando
-COM-2Dr
+chassis:Commando
+model:COM-2Dr
 mul id:671
 
 Config:Biped

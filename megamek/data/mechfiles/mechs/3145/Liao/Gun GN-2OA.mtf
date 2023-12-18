@@ -1,6 +1,5 @@
-Version:1.1
-Gun
-GN-2OA
+chassis:Gun
+model:GN-2OA
 mul id:6451
 
 Config:Biped Omnimech

@@ -1,6 +1,5 @@
-Version:1.0
-Great Wyrm
-2
+chassis:Great Wyrm
+model:2
 mul id:1285
 
 Config:Biped

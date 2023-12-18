@@ -1,6 +1,5 @@
-Version:1.0
-Ostscout
-OTT-9CS
+chassis:Ostscout
+model:OTT-9CS
 mul id:2369
 
 Config:Biped

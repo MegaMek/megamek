@@ -1,6 +1,5 @@
-Version:1.1
-Hatamoto-Suna
-HTM-30S
+chassis:Hatamoto-Suna
+model:HTM-30S
 mul id:6418
 
 Config:Biped

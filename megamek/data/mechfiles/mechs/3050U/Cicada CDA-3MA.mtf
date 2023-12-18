@@ -1,6 +1,5 @@
-Version:1.0
-Cicada
-CDA-3MA
+chassis:Cicada
+model:CDA-3MA
 mul id:597
 
 Config:Biped

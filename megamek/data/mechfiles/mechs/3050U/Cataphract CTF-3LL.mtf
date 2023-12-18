@@ -1,6 +1,5 @@
-Version:1.3
-Cataphract
-CTF-3LL
+chassis:Cataphract
+model:CTF-3LL
 mul id:471
 Config:Biped
 techbase:Inner Sphere

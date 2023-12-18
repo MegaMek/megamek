@@ -1,6 +1,5 @@
-Version:1.3
-Marauder IIC
-
+chassis:Marauder IIC
+model:
 mul id:2065
 Config:Biped
 techbase:Clan

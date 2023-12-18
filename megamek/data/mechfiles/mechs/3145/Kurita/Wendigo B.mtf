@@ -1,6 +1,5 @@
-Version:1.1
-Wendigo
-B
+chassis:Wendigo
+model:B
 mul id:6405
 
 Config:Biped Omnimech

@@ -1,6 +1,5 @@
-Version:1.0
-Sokuryou
-SKU-197 SurveyMech
+chassis:Sokuryou
+model:SKU-197 SurveyMech
 mul id:2983
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.3
-Archer
-ARC-2R
+chassis:Archer
+model:ARC-2R
 mul id:74
 Config:Biped
 techbase:Inner Sphere

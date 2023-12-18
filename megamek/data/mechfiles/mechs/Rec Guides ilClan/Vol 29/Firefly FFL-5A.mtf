@@ -1,6 +1,5 @@
-Version:1.3
-Firefly
-FFL-5A
+chassis:Firefly
+model:FFL-5A
 mul id:9394
 Config:Biped
 techbase:Inner Sphere

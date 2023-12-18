@@ -1,6 +1,5 @@
-Version:1.0
-Raijin II
-RJN-200-A
+chassis:Raijin II
+model:RJN-200-A
 mul id:2628
 
 Config:Biped

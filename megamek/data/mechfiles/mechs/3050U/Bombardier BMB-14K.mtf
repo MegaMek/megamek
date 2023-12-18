@@ -1,6 +1,5 @@
-Version:1.0
-Bombardier
-BMB-14K
+chassis:Bombardier
+model:BMB-14K
 mul id:425
 
 Config:Biped

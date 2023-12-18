@@ -1,6 +1,5 @@
-Version:1.0
-Sojourner
-B
+chassis:Sojourner
+model:B
 mul id:7445
 
 Config:Biped Omnimech

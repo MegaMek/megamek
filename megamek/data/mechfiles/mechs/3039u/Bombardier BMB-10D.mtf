@@ -1,6 +1,5 @@
-Version:1.0
-Bombardier
-BMB-10D
+chassis:Bombardier
+model:BMB-10D
 mul id:422
 
 Config:Biped

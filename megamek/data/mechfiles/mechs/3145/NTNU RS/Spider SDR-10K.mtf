@@ -1,6 +1,5 @@
-Version:1.0
-Spider
-SDR-10K
+chassis:Spider
+model:SDR-10K
 mul id:6934
 
 Config:Biped

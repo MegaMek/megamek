@@ -1,6 +1,5 @@
-Version:1.0
-Wraith
-TR2-P 'Pocahontas'
+chassis:Wraith
+model:TR2-P 'Pocahontas'
 mul id:8381
 
 Config:Biped

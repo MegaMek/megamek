@@ -1,6 +1,5 @@
-Version:1.0
-Wasp
-WSP-4W
+chassis:Wasp
+model:WSP-4W
 mul id:7497
 
 Config:Biped

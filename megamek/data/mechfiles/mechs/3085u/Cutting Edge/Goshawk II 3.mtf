@@ -1,6 +1,5 @@
-Version:1.3
-Goshawk II
-3
+chassis:Goshawk II
+model:3
 mul id:1248
 Config:Biped
 techbase:Clan

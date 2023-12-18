@@ -1,6 +1,5 @@
-Version:1.1
-Quickdraw
-QKD-8K
+chassis:Quickdraw
+model:QKD-8K
 mul id:2616
 
 Config:Biped

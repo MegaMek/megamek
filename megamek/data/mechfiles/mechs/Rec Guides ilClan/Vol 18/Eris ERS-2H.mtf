@@ -1,6 +1,5 @@
-Version:1.0
-Eris
-ERS-2H
+chassis:Eris
+model:ERS-2H
 mul id:9328
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.1
-St. Florian
-FLN-366-M FireMech MOD
+chassis:St. Florian
+model:FLN-366-M FireMech MOD
 mul id:7826
 
 Config:Biped

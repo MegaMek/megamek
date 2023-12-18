@@ -1,6 +1,5 @@
-Version:1.3
-Daikyu
-DAI-01 (Tabitha)
+chassis:Daikyu
+model:DAI-01 (Tabitha)
 mul id:798
 Config:Biped
 techbase:Mixed (IS Chassis)

@@ -1,6 +1,5 @@
-Version:1.0
-Grand Dragon
-DRG-9KC
+chassis:Grand Dragon
+model:DRG-9KC
 mul id:1263
 
 Config:Biped

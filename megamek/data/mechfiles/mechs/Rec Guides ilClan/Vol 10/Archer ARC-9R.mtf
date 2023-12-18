@@ -1,6 +1,5 @@
-Version:1.0
-Archer
-ARC-9R
+chassis:Archer
+model:ARC-9R
 mul id:7732
 
 Config:Biped

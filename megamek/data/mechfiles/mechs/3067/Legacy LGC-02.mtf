@@ -1,6 +1,5 @@
-Version:1.0
-Legacy
-LGC-02
+chassis:Legacy
+model:LGC-02
 mul id:4489
 
 Config:Biped

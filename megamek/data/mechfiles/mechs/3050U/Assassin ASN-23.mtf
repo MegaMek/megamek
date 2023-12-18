@@ -1,6 +1,5 @@
-Version:1.0
-Assassin
-ASN-23
+chassis:Assassin
+model:ASN-23
 mul id:128
 
 Config:Biped

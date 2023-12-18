@@ -1,6 +1,5 @@
-Version:1.0
-Jackrabbit
-JKR-9R 'Joker'
+chassis:Jackrabbit
+model:JKR-9R 'Joker'
 mul id:1657
 
 Config:Biped

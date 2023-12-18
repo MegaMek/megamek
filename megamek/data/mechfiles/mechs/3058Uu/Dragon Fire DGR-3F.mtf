@@ -1,6 +1,5 @@
-Version:1.0
-Dragon Fire
-DGR-3F
+chassis:Dragon Fire
+model:DGR-3F
 mul id:913
 
 Config:Biped

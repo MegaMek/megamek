@@ -1,6 +1,5 @@
-Version:1.3
-Templar III
-TLR2-OD
+chassis:Templar III
+model:TLR2-OD
 mul id:6357
 Config:Biped Omnimech
 techbase:Mixed (IS Chassis)

@@ -1,6 +1,5 @@
-Version:1.0
-Night Hawk
-NTK-2Q
+chassis:Night Hawk
+model:NTK-2Q
 mul id:2271
 
 Config:Biped

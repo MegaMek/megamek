@@ -1,6 +1,5 @@
-Version:1.0
-Rifleman
-RFL-6D
+chassis:Rifleman
+model:RFL-6D
 mul id:2701
 
 Config:Biped

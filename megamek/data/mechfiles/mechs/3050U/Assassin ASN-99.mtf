@@ -1,6 +1,5 @@
-Version:1.1
-Assassin
-ASN-99
+chassis:Assassin
+model:ASN-99
 mul id:130
 
 Config:Biped

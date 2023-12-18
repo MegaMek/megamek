@@ -1,6 +1,5 @@
-Version:1.0
-Hermes II
-HER-5SA
+chassis:Hermes II
+model:HER-5SA
 mul id:1502
 
 Config:Biped

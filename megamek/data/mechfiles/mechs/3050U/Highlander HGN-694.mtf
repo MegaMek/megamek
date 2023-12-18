@@ -1,6 +1,5 @@
-Version:1.0
-Highlander
-HGN-694
+chassis:Highlander
+model:HGN-694
 mul id:5493
 
 Config:Biped

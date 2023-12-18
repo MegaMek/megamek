@@ -1,6 +1,5 @@
-Version:1.0
-Scorpion
-SCP-12C
+chassis:Scorpion
+model:SCP-12C
 mul id:2834
 
 Config:Quad

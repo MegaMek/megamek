@@ -1,6 +1,5 @@
-Version:1.0
-Dragon
-DRG-1C
+chassis:Dragon
+model:DRG-1C
 mul id:908
 
 Config:Biped

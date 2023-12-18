@@ -1,6 +1,5 @@
-Version:1.0
-Ghost
-GST-11
+chassis:Ghost
+model:GST-11
 mul id:1194
 
 Config:Biped

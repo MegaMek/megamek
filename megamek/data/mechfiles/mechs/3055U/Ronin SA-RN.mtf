@@ -1,6 +1,5 @@
-Version:1.0
-Ronin
-SA-RN
+chassis:Ronin
+model:SA-RN
 mul id:2738
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.1
-Legacy
-LGC-04-WVR
+chassis:Legacy
+model:LGC-04-WVR
 mul id:5702
 
 Config:Biped

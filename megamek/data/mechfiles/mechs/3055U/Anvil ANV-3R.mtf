@@ -1,6 +1,5 @@
-Version:1.0
-Anvil
-ANV-3R
+chassis:Anvil
+model:ANV-3R
 mul id:49
 
 Config:Biped

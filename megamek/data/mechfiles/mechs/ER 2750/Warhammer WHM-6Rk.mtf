@@ -1,6 +1,5 @@
-Version:1.0
-Warhammer
-WHM-6Rk
+chassis:Warhammer
+model:WHM-6Rk
 mul id:5871
 
 Config:Biped

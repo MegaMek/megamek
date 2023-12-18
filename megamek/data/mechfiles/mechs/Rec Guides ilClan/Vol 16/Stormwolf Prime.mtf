@@ -1,6 +1,5 @@
-Version:1.0
-Stormwolf
-Prime
+chassis:Stormwolf
+model:Prime
 mul id:8204
 
 Config:Biped Omnimech

@@ -1,6 +1,5 @@
-Version:1.0
-Panther
-PNT-12KC
+chassis:Panther
+model:PNT-12KC
 mul id:6923
 
 Config:Biped

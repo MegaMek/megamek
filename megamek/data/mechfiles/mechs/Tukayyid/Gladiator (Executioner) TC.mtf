@@ -1,6 +1,5 @@
-Version:1.0
-Gladiator (Executioner)
-TC
+chassis:Gladiator (Executioner)
+model:TC
 mul id:7596
 
 Config:Biped Omnimech

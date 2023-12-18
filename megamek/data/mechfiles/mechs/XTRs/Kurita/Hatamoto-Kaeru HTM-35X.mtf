@@ -1,6 +1,5 @@
-Version:1.1
-Hatamoto-Kaeru
-HTM-35X
+chassis:Hatamoto-Kaeru
+model:HTM-35X
 mul id:1406
 
 Config:Biped

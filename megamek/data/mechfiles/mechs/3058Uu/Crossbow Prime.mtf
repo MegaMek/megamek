@@ -1,6 +1,5 @@
-Version:1.0
-Crossbow
-Prime
+chassis:Crossbow
+model:Prime
 mul id:739
 
 Config:Biped Omnimech

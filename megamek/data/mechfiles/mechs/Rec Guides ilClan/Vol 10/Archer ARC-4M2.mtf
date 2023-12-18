@@ -1,6 +1,5 @@
-Version:1.0
-Archer
-ARC-4M2
+chassis:Archer
+model:ARC-4M2
 mul id:7730
 
 Config:Biped

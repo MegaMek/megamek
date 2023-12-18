@@ -1,6 +1,5 @@
-Version:1.0
-Hollander II
-BZK-F7
+chassis:Hollander II
+model:BZK-F7
 mul id:1539
 
 Config:Biped

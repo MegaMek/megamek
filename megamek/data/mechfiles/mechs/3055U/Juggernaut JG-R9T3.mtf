@@ -1,6 +1,5 @@
-Version:1.0
-Juggernaut
-JG-R9T3
+chassis:Juggernaut
+model:JG-R9T3
 mul id:1715
 
 Config:Biped

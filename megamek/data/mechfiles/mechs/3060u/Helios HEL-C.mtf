@@ -1,6 +1,5 @@
-Version:1.0
-Helios
-HEL-C
+chassis:Helios
+model:HEL-C
 mul id:1467
 
 Config:Biped

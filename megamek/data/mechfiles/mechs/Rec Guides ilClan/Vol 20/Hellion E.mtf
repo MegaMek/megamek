@@ -1,6 +1,5 @@
-Version:1.0
-Hellion
-E
+chassis:Hellion
+model:E
 mul id:5658
 
 Config:Biped Omnimech

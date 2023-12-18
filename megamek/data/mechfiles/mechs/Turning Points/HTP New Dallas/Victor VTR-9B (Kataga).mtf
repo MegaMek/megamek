@@ -1,6 +1,5 @@
-Version:1.3
-Victor
-VTR-9B (Kataga)
+chassis:Victor
+model:VTR-9B (Kataga)
 mul id:6969
 Config:Biped
 techbase:Inner Sphere

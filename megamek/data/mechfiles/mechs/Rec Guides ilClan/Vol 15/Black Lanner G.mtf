@@ -1,6 +1,5 @@
-Version:1.0
-Black Lanner
-G
+chassis:Black Lanner
+model:G
 mul id:8186
 
 Config:Biped Omnimech

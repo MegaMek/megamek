@@ -1,6 +1,5 @@
-Version:1.0
-Behemoth (Stone Rhino)
-
+chassis:Behemoth (Stone Rhino)
+model:
 mul id:318
 
 Config:Biped

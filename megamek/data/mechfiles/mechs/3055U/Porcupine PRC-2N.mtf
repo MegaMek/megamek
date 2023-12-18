@@ -1,6 +1,5 @@
-Version:1.1
-Porcupine
-PRC-2N
+chassis:Porcupine
+model:PRC-2N
 mul id:2556
 
 Config:Biped

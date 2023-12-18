@@ -1,6 +1,5 @@
-Version:1.1
-Zeus
-ZEU-11S
+chassis:Zeus
+model:ZEU-11S
 mul id:7455
 
 Config:Biped

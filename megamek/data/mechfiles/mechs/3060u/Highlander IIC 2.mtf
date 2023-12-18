@@ -1,6 +1,5 @@
-Version:1.0
-Highlander IIC
-2
+chassis:Highlander IIC
+model:2
 mul id:1525
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Ostsol
-OTL-4F
+chassis:Ostsol
+model:OTL-4F
 mul id:2372
 
 Config:Biped

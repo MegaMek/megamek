@@ -1,6 +1,5 @@
-Version:1.0
-Crusader
-CRD-3K
+chassis:Crusader
+model:CRD-3K
 mul id:750
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Goliath
-GOL-3M
+chassis:Goliath
+model:GOL-3M
 mul id:1232
 
 Config:Quad

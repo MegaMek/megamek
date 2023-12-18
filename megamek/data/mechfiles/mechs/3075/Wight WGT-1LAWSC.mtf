@@ -1,6 +1,5 @@
-Version:1.0
-Wight
-WGT-1LAW/SC
+chassis:Wight
+model:WGT-1LAW/SC
 mul id:3546
 
 Config:Biped

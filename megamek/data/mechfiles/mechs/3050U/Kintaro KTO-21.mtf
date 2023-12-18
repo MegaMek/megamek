@@ -1,6 +1,5 @@
-Version:1.1
-Kintaro
-KTO-21
+chassis:Kintaro
+model:KTO-21
 mul id:1794
 
 Config:Biped

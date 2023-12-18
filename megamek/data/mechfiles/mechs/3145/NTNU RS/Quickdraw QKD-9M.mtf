@@ -1,6 +1,5 @@
-Version:1.0
-Quickdraw
-QKD-9M
+chassis:Quickdraw
+model:QKD-9M
 mul id:6887
 
 Config:Biped

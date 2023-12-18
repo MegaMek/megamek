@@ -1,6 +1,5 @@
-Version:1.0
-Assassin
-ASN-30
+chassis:Assassin
+model:ASN-30
 mul id:129
 
 Config:Biped

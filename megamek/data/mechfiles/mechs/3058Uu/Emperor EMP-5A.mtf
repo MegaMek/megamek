@@ -1,6 +1,5 @@
-Version:1.0
-Emperor
-EMP-5A
+chassis:Emperor
+model:EMP-5A
 mul id:963
 
 Config:Biped

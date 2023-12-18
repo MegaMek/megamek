@@ -1,6 +1,5 @@
-Version:1.3
-Raven
-RVN-5L
+chassis:Raven
+model:RVN-5L
 mul id:7524
 Config:Biped
 techbase:Inner Sphere

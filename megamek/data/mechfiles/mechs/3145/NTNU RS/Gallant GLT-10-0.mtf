@@ -1,6 +1,5 @@
-Version:1.0
-Gallant
-GLT-10-0
+chassis:Gallant
+model:GLT-10-0
 mul id:6872
 
 Config:Biped

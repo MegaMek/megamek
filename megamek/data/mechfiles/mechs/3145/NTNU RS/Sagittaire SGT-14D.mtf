@@ -1,6 +1,5 @@
-Version:1.1
-Sagittaire
-SGT-14D
+chassis:Sagittaire
+model:SGT-14D
 mul id:6835
 
 Config:Biped

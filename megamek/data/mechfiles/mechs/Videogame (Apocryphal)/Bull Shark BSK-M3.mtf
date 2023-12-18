@@ -1,6 +1,5 @@
-Version:1.0
-Bull Shark
-BSK-M3
+chassis:Bull Shark
+model:BSK-M3
 
 Config:Biped
 techbase:Mixed (IS Chassis)

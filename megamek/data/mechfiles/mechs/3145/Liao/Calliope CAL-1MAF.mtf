@@ -1,6 +1,5 @@
-Version:1.1
-Calliope
-CAL-1MAF
+chassis:Calliope
+model:CAL-1MAF
 mul id:6457
 
 Config:Biped

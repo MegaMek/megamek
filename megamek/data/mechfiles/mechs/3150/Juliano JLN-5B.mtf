@@ -1,6 +1,5 @@
-Version:1.3
-Juliano
-JLN-5B
+chassis:Juliano
+model:JLN-5B
 mul id:8064
 Config:Biped
 techbase:Inner Sphere

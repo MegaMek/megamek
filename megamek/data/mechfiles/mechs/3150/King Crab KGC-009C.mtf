@@ -1,6 +1,5 @@
-Version:1.3
-King Crab
-KGC-009C
+chassis:King Crab
+model:KGC-009C
 mul id:8066
 Config:Biped
 techbase:Mixed (IS Chassis)

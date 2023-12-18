@@ -1,6 +1,5 @@
-Version:1.0
-Phantom
-Prime
+chassis:Phantom
+model:Prime
 mul id:2487
 
 Config:Biped Omnimech

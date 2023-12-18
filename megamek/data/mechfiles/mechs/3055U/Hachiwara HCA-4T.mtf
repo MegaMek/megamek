@@ -1,6 +1,5 @@
-Version:1.1
-Hachiwara
-HCA-4T
+chassis:Hachiwara
+model:HCA-4T
 mul id:1361
 
 Config:Biped

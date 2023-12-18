@@ -1,6 +1,5 @@
-Version:1.0
-Corsair
-COR-5T
+chassis:Corsair
+model:COR-5T
 
 Config:Biped
 TechBase:Inner Sphere

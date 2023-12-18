@@ -1,6 +1,5 @@
-Version:1.1
-Daedalus
-DAD-DX
+chassis:Daedalus
+model:DAD-DX
 mul id:8105
 
 Config:Biped

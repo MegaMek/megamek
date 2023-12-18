@@ -1,6 +1,5 @@
-Version:1.0
-Colossus
-CLS-5S
+chassis:Colossus
+model:CLS-5S
 mul id:663
 
 Config:Biped

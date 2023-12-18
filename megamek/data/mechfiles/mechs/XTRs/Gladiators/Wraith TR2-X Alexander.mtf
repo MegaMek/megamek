@@ -1,6 +1,5 @@
-Version:1.1
-Wraith
-TR2-X 'Alexander'
+chassis:Wraith
+model:TR2-X 'Alexander'
 mul id:3590
 
 Config:Biped

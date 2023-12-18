@@ -1,6 +1,5 @@
-Version:1.1
-Marauder
-MAD-5D-DC
+chassis:Marauder
+model:MAD-5D-DC
 mul id:7529
 
 Config:Biped

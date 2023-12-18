@@ -1,6 +1,5 @@
-Version:1.0
-Archer
-ARC-5W
+chassis:Archer
+model:ARC-5W
 mul id:81
 
 Config:Biped

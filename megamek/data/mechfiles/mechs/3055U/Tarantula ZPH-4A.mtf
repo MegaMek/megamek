@@ -1,6 +1,5 @@
-Version:1.0
-Tarantula
-ZPH-4A
+chassis:Tarantula
+model:ZPH-4A
 mul id:3163
 
 Config:Quad

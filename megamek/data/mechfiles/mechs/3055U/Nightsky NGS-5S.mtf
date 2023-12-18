@@ -1,6 +1,5 @@
-Version:1.0
-Nightsky
-NGS-5S
+chassis:Nightsky
+model:NGS-5S
 mul id:2281
 
 Config:Biped

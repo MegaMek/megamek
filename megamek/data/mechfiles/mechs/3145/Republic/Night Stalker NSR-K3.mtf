@@ -1,6 +1,5 @@
-Version:1.1
-Night Stalker
-NSR-K3
+chassis:Night Stalker
+model:NSR-K3
 mul id:6674
 
 Config:Biped

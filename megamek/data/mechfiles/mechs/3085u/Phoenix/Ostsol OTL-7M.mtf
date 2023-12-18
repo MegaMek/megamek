@@ -1,6 +1,5 @@
-Version:1.0
-Ostsol
-OTL-7M
+chassis:Ostsol
+model:OTL-7M
 mul id:2376
 
 Config:Biped

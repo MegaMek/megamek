@@ -1,6 +1,5 @@
-Version:1.0
-Chameleon
-CLN-7VQ 'Q-'Mech' 
+chassis:Chameleon
+model:CLN-7VQ 'Q-'Mech' 
 mul id:5601
 
 Config:Biped

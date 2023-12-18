@@ -1,6 +1,5 @@
-Version:1.1
-Archangel
-C-ANG-O (Berith)
+chassis:Archangel
+model:C-ANG-O (Berith)
 mul id:64
 
 Config:Biped Omnimech

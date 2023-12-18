@@ -1,6 +1,5 @@
-Version:1.0
-Hatamoto-Hi
-HTM-C
+chassis:Hatamoto-Hi
+model:HTM-C
 mul id:1404
 
 Config:Biped

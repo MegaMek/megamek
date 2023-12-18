@@ -1,6 +1,5 @@
-Version:1.1
-Preta
-C-PRT-OD Luminos
+chassis:Preta
+model:C-PRT-OD Luminos
 mul id:2577
 
 Config:Biped Omnimech

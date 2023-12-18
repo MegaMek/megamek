@@ -1,6 +1,5 @@
-Version:1.0
-Argus
-AGS-8DX
+chassis:Argus
+model:AGS-8DX
 mul id:110
 
 Config:Biped

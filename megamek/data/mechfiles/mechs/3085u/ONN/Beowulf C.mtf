@@ -1,6 +1,5 @@
-Version:1.0
-Beowulf
-C
+chassis:Beowulf
+model:C
 mul id:8073
 
 Config:Biped

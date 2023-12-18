@@ -1,6 +1,5 @@
-Version:1.0
-Spector
-SPR-ST
+chassis:Spector
+model:SPR-ST
 mul id:3005
 
 Config:Biped

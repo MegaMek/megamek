@@ -1,6 +1,5 @@
-Version:1.0
-Brigand
-LDT-XPR4
+chassis:Brigand
+model:LDT-XPR4
 mul id:7316
 
 Config:Biped

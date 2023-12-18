@@ -1,6 +1,5 @@
-Version:1.1
-Cataphract
-CTF-5D
+chassis:Cataphract
+model:CTF-5D
 mul id:475
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Centurion
-CN10-W
+chassis:Centurion
+model:CN10-W
 mul id:7695
 
 Config:Biped

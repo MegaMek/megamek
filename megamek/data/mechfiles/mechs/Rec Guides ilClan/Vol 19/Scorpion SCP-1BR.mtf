@@ -1,6 +1,5 @@
-Version:1.0
-Scorpion
-SCP-1BR
+chassis:Scorpion
+model:SCP-1BR
 mul id:8314
 
 Config:Quad

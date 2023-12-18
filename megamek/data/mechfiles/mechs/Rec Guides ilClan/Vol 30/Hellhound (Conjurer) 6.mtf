@@ -1,6 +1,5 @@
-Version:1.3
-Hellhound (Conjurer)
-6
+chassis:Hellhound (Conjurer)
+model:6
 mul id:9429
 Config:Biped
 techbase:Clan

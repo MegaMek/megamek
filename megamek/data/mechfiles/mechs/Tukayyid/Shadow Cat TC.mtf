@@ -1,6 +1,5 @@
-Version:1.0
-Shadow Cat
-TC
+chassis:Shadow Cat
+model:TC
 mul id:7590
 
 Config:Biped Omnimech

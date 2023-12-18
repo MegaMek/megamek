@@ -1,6 +1,5 @@
-Version:1.0
-Raijin
-RJN-301-B
+chassis:Raijin
+model:RJN-301-B
 mul id:8416
 
 Config:Biped

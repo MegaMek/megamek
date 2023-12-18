@@ -1,6 +1,5 @@
-Version:1.0
-Legionnaire
-LGN-2D
+chassis:Legionnaire
+model:LGN-2D
 mul id:1863
 
 Config:Biped

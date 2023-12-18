@@ -1,6 +1,5 @@
-Version:1.3
-Akuma
-AKU-1XJ
+chassis:Akuma
+model:AKU-1XJ
 mul id:3692
 Config:Biped
 techbase:Inner Sphere

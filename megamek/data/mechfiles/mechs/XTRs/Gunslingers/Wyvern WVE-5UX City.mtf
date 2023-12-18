@@ -1,6 +1,5 @@
-Version:1.1
-Wyvern
-WVE-5UX
+chassis:Wyvern
+model:WVE-5UX
 mul id:7319
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Rattlesnake 
-JR7-31
+chassis:Rattlesnake 
+model:JR7-31
 
 Config:Biped
 techbase:Inner Sphere

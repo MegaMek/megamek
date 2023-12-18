@@ -1,6 +1,5 @@
-Version:1.0
-Scorpion
-SCP-1N (Wendall)
+chassis:Scorpion
+model:SCP-1N (Wendall)
 mul id:2838
 
 Config:Quad

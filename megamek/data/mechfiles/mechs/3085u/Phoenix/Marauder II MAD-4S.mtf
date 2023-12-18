@@ -1,6 +1,5 @@
-Version:1.0
-Marauder II
-MAD-4S
+chassis:Marauder II
+model:MAD-4S
 mul id:2058
 
 Config:Biped

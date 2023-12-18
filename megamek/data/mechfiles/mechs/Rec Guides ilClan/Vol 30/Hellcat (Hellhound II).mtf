@@ -1,6 +1,5 @@
-Version:1.3
-Hellcat (Hellhound II)
-
+chassis:Hellcat (Hellhound II)
+model:
 mul id:9409
 Config:Biped
 techbase:Clan

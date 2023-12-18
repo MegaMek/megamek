@@ -1,6 +1,5 @@
-Version:1.0
-Brigand
-LDT-X2
+chassis:Brigand
+model:LDT-X2
 mul id:3861
 
 Config:Biped

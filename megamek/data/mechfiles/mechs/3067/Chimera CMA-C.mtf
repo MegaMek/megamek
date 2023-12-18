@@ -1,6 +1,5 @@
-Version:1.0
-Chimera
-CMA-C
+chassis:Chimera
+model:CMA-C
 mul id:3951
 
 Config:Biped

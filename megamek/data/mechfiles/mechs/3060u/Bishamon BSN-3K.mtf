@@ -1,6 +1,5 @@
-Version:1.0
-Bishamon
-BSN-3K
+chassis:Bishamon
+model:BSN-3K
 mul id:332
 
 Config:Quad

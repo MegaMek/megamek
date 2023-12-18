@@ -1,6 +1,5 @@
-Version:1.1
-Crosscut
-ED-X4X LoggerMech
+chassis:Crosscut
+model:ED-X4X LoggerMech
 mul id:4026
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Helios
-HEL-6X
+chassis:Helios
+model:HEL-6X
 mul id:1466
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Firestorm
-
+chassis:Firestorm
+model:
 mul id:8129
 
 Config:Biped

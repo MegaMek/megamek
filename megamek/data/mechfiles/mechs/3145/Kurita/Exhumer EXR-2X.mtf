@@ -1,6 +1,5 @@
-Version:1.0
-Exhumer
-EXR-2X
+chassis:Exhumer
+model:EXR-2X
 mul id:6410
 
 Config:Biped

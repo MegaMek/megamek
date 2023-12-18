@@ -1,6 +1,5 @@
-Version:1.0
-Naginata
-NG-C3A
+chassis:Naginata
+model:NG-C3A
 mul id:2252
 
 Config:Biped

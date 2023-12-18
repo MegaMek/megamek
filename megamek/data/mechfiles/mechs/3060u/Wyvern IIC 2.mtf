@@ -1,6 +1,5 @@
-Version:1.0
-Wyvern IIC
-2
+chassis:Wyvern IIC
+model:2
 mul id:3602
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.2
-Axman
-AXM-3Sr
+chassis:Axman
+model:AXM-3Sr
 mul id:187
 
 Config:Biped

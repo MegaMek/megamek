@@ -1,6 +1,5 @@
-Version:1.1
-Firebee
-FRB-1E (WAM-B)
+chassis:Firebee
+model:FRB-1E (WAM-B)
 mul id:1078
 
 Config:Biped

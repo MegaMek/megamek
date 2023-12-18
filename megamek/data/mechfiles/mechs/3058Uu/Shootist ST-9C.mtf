@@ -1,6 +1,5 @@
-Version:1.0
-Shootist
-ST-9C
+chassis:Shootist
+model:ST-9C
 mul id:2941
 
 Config:Biped

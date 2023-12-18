@@ -1,6 +1,5 @@
-Version:1.0
-Catapult II
-CPLT-L7L
+chassis:Catapult II
+model:CPLT-L7L
 mul id:6465
 
 Config:Biped

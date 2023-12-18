@@ -1,6 +1,5 @@
-Version:1.0
-Caesar
-CES-4R
+chassis:Caesar
+model:CES-4R
 mul id:457
 
 Config:Biped

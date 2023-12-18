@@ -1,6 +1,5 @@
-Version:1.3
-Phantom
-G
+chassis:Phantom
+model:G
 mul id:9346
 Config:Biped Omnimech
 techbase:Clan

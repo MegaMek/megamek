@@ -1,6 +1,5 @@
-Version:1.0
-Clint IIC
-2
+chassis:Clint IIC
+model:2
 mul id:653
 
 Config:Biped

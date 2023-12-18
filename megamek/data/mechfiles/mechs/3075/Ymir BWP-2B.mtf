@@ -1,6 +1,5 @@
-Version:1.0
-Ymir
-BWP-2B
+chassis:Ymir
+model:BWP-2B
 mul id:3620
 
 Config:Biped

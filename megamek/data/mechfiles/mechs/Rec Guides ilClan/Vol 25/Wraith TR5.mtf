@@ -1,6 +1,5 @@
-Version:1.3
-Wraith
-TR5
+chassis:Wraith
+model:TR5
 mul id:9269
 Config:Biped
 techbase:Inner Sphere

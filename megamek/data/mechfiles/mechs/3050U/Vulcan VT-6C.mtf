@@ -1,6 +1,5 @@
-Version:1.0
-Vulcan
-VT-6C
+chassis:Vulcan
+model:VT-6C
 mul id:3464
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.3
-Caesar
-CES-5R
+chassis:Caesar
+model:CES-5R
 mul id:9321
 Config:Biped
 techbase:Inner Sphere

@@ -1,6 +1,5 @@
-Version:1.1
-Eisenfaust
-EFT-2
+chassis:Eisenfaust
+model:EFT-2
 mul id:5618
 
 Config:Biped

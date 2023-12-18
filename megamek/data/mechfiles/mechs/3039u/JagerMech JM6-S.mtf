@@ -1,6 +1,5 @@
-Version:1.0
-JagerMech
-JM6-S
+chassis:JagerMech
+model:JM6-S
 mul id:1670
 
 Config:Biped

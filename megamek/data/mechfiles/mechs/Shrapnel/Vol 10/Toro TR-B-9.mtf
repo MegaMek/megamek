@@ -1,6 +1,5 @@
-Version:1.3
-Toro
-TR-B-9
+chassis:Toro
+model:TR-B-9
 mul id:9249
 Config:Biped
 techbase:Inner Sphere

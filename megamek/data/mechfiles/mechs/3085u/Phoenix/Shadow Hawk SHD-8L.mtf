@@ -1,6 +1,5 @@
-Version:1.2
-Shadow Hawk
-SHD-8L
+chassis:Shadow Hawk
+model:SHD-8L
 mul id:2909
 
 Config:Biped

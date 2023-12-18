@@ -1,6 +1,5 @@
-Version:1.0
-Phoenix Hawk IIC
-2
+chassis:Phoenix Hawk IIC
+model:2
 mul id:2512
 
 Config:Biped

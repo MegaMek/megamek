@@ -1,6 +1,5 @@
-Version:1.0
-Regent
-Prime
+chassis:Regent
+model:Prime
 mul id:8359
 
 Config:Biped Omnimech

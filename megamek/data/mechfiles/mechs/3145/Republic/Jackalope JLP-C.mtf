@@ -1,6 +1,5 @@
-Version:1.0
-Jackalope
-JLP-C
+chassis:Jackalope
+model:JLP-C
 mul id:6711
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Arbalest
-
+chassis:Arbalest
+model:
 mul id:62
 
 Config:Biped

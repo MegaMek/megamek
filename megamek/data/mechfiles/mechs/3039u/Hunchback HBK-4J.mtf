@@ -1,6 +1,5 @@
-Version:1.0
-Hunchback
-HBK-4J
+chassis:Hunchback
+model:HBK-4J
 mul id:1556
 
 Config:Biped

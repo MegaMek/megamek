@@ -1,6 +1,5 @@
-Version:1.1
-Razorback
-RZK-10T
+chassis:Razorback
+model:RZK-10T
 mul id:5662
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Shugenja
-SJA-7D
+chassis:Shugenja
+model:SJA-7D
 mul id:2942
 
 Config:Biped

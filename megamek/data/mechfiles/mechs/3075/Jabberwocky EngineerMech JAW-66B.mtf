@@ -1,6 +1,5 @@
-Version:1.1
-Jabberwocky
-JAW-66B EngineerMech
+chassis:Jabberwocky
+model:JAW-66B EngineerMech
 mul id:1650
 
 Config:Biped

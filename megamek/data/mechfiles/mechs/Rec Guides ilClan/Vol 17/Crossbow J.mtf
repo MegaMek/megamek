@@ -1,6 +1,5 @@
-Version:1.0
-Crossbow
-J
+chassis:Crossbow
+model:J
 mul id:8245
 
 Config:Biped Omnimech

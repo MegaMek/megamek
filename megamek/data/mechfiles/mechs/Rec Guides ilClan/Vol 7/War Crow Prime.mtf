@@ -1,6 +1,5 @@
-Version:1.0
-War Crow
-Prime
+chassis:War Crow
+model:Prime
 mul id:7545
 
 Config:Biped Omnimech

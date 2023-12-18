@@ -1,6 +1,5 @@
-Version:1.0
-Mad Cat Mk IV (Savage Wolf)
-C
+chassis:Mad Cat Mk IV (Savage Wolf)
+model:C
 mul id:6573
 
 Config:Biped Omnimech

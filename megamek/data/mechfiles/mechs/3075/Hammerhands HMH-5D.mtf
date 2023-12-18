@@ -1,6 +1,5 @@
-Version:1.0
-Hammerhands
-HMH-5D
+chassis:Hammerhands
+model:HMH-5D
 mul id:1371
 
 Config:Biped

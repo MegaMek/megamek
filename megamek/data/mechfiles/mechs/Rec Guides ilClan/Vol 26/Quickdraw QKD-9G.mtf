@@ -1,6 +1,5 @@
-Version:1.3
-Quickdraw
-QKD-9G
+chassis:Quickdraw
+model:QKD-9G
 mul id:9320
 Config:Biped
 techbase:Mixed (IS Chassis)

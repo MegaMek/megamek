@@ -1,6 +1,5 @@
-Version:1.1
-Grigori
-C-GRG-O (Tamiel)
+chassis:Grigori
+model:C-GRG-O (Tamiel)
 mul id:1319
 
 Config:Biped Omnimech

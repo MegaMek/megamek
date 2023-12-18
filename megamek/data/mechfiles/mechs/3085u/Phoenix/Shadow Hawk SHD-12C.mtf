@@ -1,6 +1,5 @@
-Version:1.2
-Shadow Hawk
-SHD-12C
+chassis:Shadow Hawk
+model:SHD-12C
 mul id:2897
 
 Config:Biped

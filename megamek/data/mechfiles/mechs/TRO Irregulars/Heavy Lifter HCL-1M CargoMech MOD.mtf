@@ -1,6 +1,5 @@
-Version:1.1
-Heavy Lifter
-HCL-1M CargoMech MOD
+chassis:Heavy Lifter
+model:HCL-1M CargoMech MOD
 mul id:7869
 
 Config:Quad

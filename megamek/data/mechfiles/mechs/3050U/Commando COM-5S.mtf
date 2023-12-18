@@ -1,6 +1,5 @@
-Version:1.0
-Commando
-COM-5S
+chassis:Commando
+model:COM-5S
 mul id:674
 
 Config:Biped

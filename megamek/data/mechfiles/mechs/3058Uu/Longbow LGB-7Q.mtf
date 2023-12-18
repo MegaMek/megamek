@@ -1,6 +1,5 @@
-Version:1.0
-Longbow
-LGB-7Q
+chassis:Longbow
+model:LGB-7Q
 mul id:1936
 
 Config:Biped

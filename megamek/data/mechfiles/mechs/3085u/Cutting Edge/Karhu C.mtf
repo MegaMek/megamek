@@ -1,6 +1,5 @@
-Version:1.0
-Karhu
-C
+chassis:Karhu
+model:C
 mul id:1750
 
 Config:Biped Omnimech

@@ -1,6 +1,5 @@
-Version:1.1
-Lancelot
-C 2
+chassis:Lancelot
+model:C 2
 mul id:7627
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.1
-Seraph
-C-SRP-OA Dominus
+chassis:Seraph
+model:C-SRP-OA Dominus
 mul id:2870
 
 Config:Biped Omnimech

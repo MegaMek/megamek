@@ -1,6 +1,5 @@
-Version:1.0
-Rawhide
-RWD-R1
+chassis:Rawhide
+model:RWD-R1
 mul id:8189
 
 Config:Biped

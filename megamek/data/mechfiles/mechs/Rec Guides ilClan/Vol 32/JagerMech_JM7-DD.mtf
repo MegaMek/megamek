@@ -1,6 +1,5 @@
-Version:1.1
-JagerMech
-JM7-DD
+chassis:JagerMech
+model:JM7-DD
 
 Config:Biped
 techbase:Mixed (IS Chassis)

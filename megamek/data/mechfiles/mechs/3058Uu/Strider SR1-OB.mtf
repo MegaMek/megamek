@@ -1,6 +1,5 @@
-Version:1.0
-Strider
-SR1-OB
+chassis:Strider
+model:SR1-OB
 mul id:3086
 
 Config:Biped Omnimech

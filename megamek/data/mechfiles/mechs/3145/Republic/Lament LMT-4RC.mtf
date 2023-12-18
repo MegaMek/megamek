@@ -1,6 +1,5 @@
-Version:1.1
-Lament
-LMT-4RC
+chassis:Lament
+model:LMT-4RC
 mul id:6724
 
 Config:Biped

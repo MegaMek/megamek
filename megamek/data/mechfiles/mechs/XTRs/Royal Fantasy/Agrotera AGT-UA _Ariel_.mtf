@@ -1,6 +1,5 @@
-Version:1.0
-Agrotera 
-AGT-UA 'Ariel'
+chassis:Agrotera 
+model:AGT-UA 'Ariel'
 mul id:8365
 
 Config:Biped

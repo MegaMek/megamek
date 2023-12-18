@@ -1,6 +1,5 @@
-Version:1.1
-Wasp
-WSP-5A
+chassis:Wasp
+model:WSP-5A
 mul id:7495
 
 Config:Biped

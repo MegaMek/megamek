@@ -1,6 +1,5 @@
-Version:1.0
-BattleMaster
-BLR-4S (Calvin II)
+chassis:BattleMaster
+model:BLR-4S (Calvin II)
 mul id:295
 
 Config:Biped

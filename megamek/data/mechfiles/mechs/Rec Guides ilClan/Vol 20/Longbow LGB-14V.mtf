@@ -1,6 +1,5 @@
-Version:1.0
-Longbow
-LGB-14V
+chassis:Longbow
+model:LGB-14V
 mul id:8336
 
 Config:Biped

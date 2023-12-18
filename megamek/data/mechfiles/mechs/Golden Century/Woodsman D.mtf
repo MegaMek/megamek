@@ -1,6 +1,5 @@
-Version:1.0
-Woodsman
-D
+chassis:Woodsman
+model:D
 mul id:7645
 
 Config:Biped Omnimech

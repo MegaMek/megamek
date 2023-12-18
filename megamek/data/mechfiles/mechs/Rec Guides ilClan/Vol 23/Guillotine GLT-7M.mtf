@@ -1,6 +1,5 @@
-Version:1.0
-Guillotine
-GLT-7M
+chassis:Guillotine
+model:GLT-7M
 mul id:8420
 
 Config:Biped

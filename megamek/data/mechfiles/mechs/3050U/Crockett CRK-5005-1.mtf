@@ -1,6 +1,5 @@
-Version:1.0
-Crockett
-CRK-5005-1
+chassis:Crockett
+model:CRK-5005-1
 mul id:729
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.3
-Pillager
-PLG-3Z
+chassis:Pillager
+model:PLG-3Z
 mul id:2525
 Config:Biped
 techbase:Inner Sphere

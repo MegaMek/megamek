@@ -1,6 +1,5 @@
-Version:1.0
-Longbow
-LGB-8V
+chassis:Longbow
+model:LGB-8V
 mul id:1938
 
 Config:Biped

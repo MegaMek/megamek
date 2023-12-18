@@ -1,6 +1,5 @@
-Version:1.0
-Merlin
-MLN-SX
+chassis:Merlin
+model:MLN-SX
 mul id:2181
 
 Config:Biped

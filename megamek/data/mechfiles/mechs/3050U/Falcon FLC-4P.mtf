@@ -1,6 +1,5 @@
-Version:1.0
-Falcon
-FLC-4P
+chassis:Falcon
+model:FLC-4P
 mul id:1027
 
 Config:Biped

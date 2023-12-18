@@ -1,6 +1,5 @@
-Version:1.2
-Wolfhound
-WLF-6S
+chassis:Wolfhound
+model:WLF-6S
 mul id:8223
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Hunchback
-HBK-5M
+chassis:Hunchback
+model:HBK-5M
 mul id:1561
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.3
-Firestarter
-FS9-S1
+chassis:Firestarter
+model:FS9-S1
 mul id:1113
 Config:Biped
 techbase:Inner Sphere

@@ -1,6 +1,5 @@
-Version:1.2
-Shadow Hawk
-SHD-5D
+chassis:Shadow Hawk
+model:SHD-5D
 mul id:2905
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Firestarter
-FS9-K
+chassis:Firestarter
+model:FS9-K
 mul id:1097
 
 Config:Biped

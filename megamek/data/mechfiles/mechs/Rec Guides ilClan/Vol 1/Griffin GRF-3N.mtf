@@ -1,6 +1,5 @@
-Version:1.3
-Griffin
-GRF-3N
+chassis:Griffin
+model:GRF-3N
 mul id:7436
 Config:Biped
 techbase:Inner Sphere

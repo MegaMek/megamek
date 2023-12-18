@@ -1,6 +1,5 @@
-Version:1.0
-Rampage
-RMP-4G (Benboudaoud)
+chassis:Rampage
+model:RMP-4G (Benboudaoud)
 mul id:6974
 
 Config:Biped

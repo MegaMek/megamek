@@ -1,6 +1,5 @@
-Version:1.1
-MuckRaker
-GMMM-2 MiningMech
+chassis:MuckRaker
+model:GMMM-2 MiningMech
 mul id:4220
 
 Config:Biped

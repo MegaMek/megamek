@@ -1,6 +1,5 @@
-Version:1.0
-Thunderbolt
-TDR-5SS
+chassis:Thunderbolt
+model:TDR-5SS
 mul id:3241
 
 Config:Biped

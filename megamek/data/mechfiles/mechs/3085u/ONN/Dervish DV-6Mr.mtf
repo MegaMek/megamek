@@ -1,6 +1,5 @@
-Version:1.0
-Dervish
-DV-6Mr
+chassis:Dervish
+model:DV-6Mr
 mul id:879
 
 Config:Biped

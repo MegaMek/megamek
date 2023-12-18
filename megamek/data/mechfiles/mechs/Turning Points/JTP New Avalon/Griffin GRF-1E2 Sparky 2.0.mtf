@@ -1,6 +1,5 @@
-Version:1.0
-Griffin 
-GRF-1E2 'Sparky 2.0'
+chassis:Griffin 
+model:GRF-1E2 'Sparky 2.0'
 mul id:1296
 
 Config:Biped

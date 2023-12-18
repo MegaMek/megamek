@@ -1,6 +1,5 @@
-Version:1.0
-Fafnir
-FNR-6U
+chassis:Fafnir
+model:FNR-6U
 mul id:5720
 
 Config:Biped

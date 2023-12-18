@@ -1,6 +1,5 @@
-Version:1.0
-Morpheus
-MRP-3S
+chassis:Morpheus
+model:MRP-3S
 mul id:2226
 
 Config:Biped

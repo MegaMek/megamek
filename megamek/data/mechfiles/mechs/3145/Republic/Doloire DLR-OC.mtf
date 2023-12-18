@@ -1,6 +1,5 @@
-Version:1.0
-Doloire
-DLR-OC
+chassis:Doloire
+model:DLR-OC
 mul id:6681
 
 Config:Biped Omnimech

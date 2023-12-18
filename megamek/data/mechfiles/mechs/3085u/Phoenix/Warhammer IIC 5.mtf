@@ -1,6 +1,5 @@
-Version:1.0
-Warhammer IIC
-5
+chassis:Warhammer IIC
+model:5
 mul id:3504
 
 Config:Biped

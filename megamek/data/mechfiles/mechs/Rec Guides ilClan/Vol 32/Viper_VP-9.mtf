@@ -1,6 +1,5 @@
-Version:1.0
-Viper
-VP-9
+chassis:Viper
+model:VP-9
 
 Config:Biped
 techbase:Mixed (IS Chassis)

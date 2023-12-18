@@ -1,6 +1,5 @@
-Version:1.1
-Preta
-C-PRT-O Invictus
+chassis:Preta
+model:C-PRT-O Invictus
 mul id:2573
 
 Config:Biped Omnimech

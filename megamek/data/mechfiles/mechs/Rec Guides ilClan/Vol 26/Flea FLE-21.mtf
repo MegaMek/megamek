@@ -1,6 +1,5 @@
-Version:1.3
-Flea
-FLE-21
+chassis:Flea
+model:FLE-21
 mul id:9313
 Config:Biped
 techbase:Inner Sphere

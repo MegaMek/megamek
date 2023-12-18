@@ -1,6 +1,5 @@
-Version:1.1
-Archangel
-C-ANG-OE Eminus
+chassis:Archangel
+model:C-ANG-OE Eminus
 mul id:70
 
 Config:Biped Omnimech

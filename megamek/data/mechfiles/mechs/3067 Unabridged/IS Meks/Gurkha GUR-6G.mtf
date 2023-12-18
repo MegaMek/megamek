@@ -1,6 +1,5 @@
-Version:1.1
-Gurkha
-GUR-6G
+chassis:Gurkha
+model:GUR-6G
 mul id:5663
 
 Config:Biped

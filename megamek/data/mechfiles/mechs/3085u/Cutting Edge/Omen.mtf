@@ -1,6 +1,5 @@
-Version:1.0
-Omen
-
+chassis:Omen
+model:
 mul id:2318
 
 Config:Biped

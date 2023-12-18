@@ -1,6 +1,5 @@
-Version:1.0
-Catapult
-CPLT-C5A
+chassis:Catapult
+model:CPLT-C5A
 mul id:484
 
 Config:Biped

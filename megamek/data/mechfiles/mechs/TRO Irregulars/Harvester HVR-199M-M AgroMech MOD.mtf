@@ -1,6 +1,5 @@
-Version:1.0
-Harvester
-HVR-199M-M AgroMech MOD
+chassis:Harvester
+model:HVR-199M-M AgroMech MOD
 mul id:7864
 
 Config:Biped

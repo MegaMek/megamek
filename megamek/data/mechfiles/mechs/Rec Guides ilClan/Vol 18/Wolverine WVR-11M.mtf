@@ -1,6 +1,5 @@
-Version:1.0
-Wolverine
-WVR-11M
+chassis:Wolverine
+model:WVR-11M
 mul id:8258
 
 Config:Biped

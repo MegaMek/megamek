@@ -1,6 +1,5 @@
-Version:1.1
-Spider
-SDR-8M
+chassis:Spider
+model:SDR-8M
 mul id:3017
 
 Config:Biped

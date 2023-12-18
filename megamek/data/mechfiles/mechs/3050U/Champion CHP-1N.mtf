@@ -1,6 +1,5 @@
-Version:1.0
-Champion
-CHP-1N
+chassis:Champion
+model:CHP-1N
 mul id:548
 
 Config:Biped

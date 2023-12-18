@@ -1,6 +1,5 @@
-Version:1.1
-Scarecrow
-UCU-F4
+chassis:Scarecrow
+model:UCU-F4
 mul id:6336
 
 Config:Biped

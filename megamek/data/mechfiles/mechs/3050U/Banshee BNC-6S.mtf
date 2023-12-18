@@ -1,6 +1,5 @@
-Version:1.0
-Banshee
-BNC-6S
+chassis:Banshee
+model:BNC-6S
 mul id:248
 
 Config:Biped

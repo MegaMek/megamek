@@ -1,6 +1,5 @@
-Version:1.0
-Warwolf
-C
+chassis:Warwolf
+model:C
 mul id:6290
 
 Config:Biped Omnimech

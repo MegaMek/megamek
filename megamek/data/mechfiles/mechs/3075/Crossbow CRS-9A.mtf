@@ -1,6 +1,5 @@
-Version:1.0
-Crossbow
-CRS-9A
+chassis:Crossbow
+model:CRS-9A
 mul id:735
 
 Config:Biped

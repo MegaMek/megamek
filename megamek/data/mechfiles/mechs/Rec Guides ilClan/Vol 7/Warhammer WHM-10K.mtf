@@ -1,6 +1,5 @@
-Version:1.0
-Warhammer
-WHM-10K
+chassis:Warhammer
+model:WHM-10K
 mul id:7564
 
 Config:Biped

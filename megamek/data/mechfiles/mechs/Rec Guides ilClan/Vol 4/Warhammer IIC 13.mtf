@@ -1,6 +1,5 @@
-Version:1.0
-Warhammer IIC
-13
+chassis:Warhammer IIC
+model:13
 mul id:7498
 
 Config:Biped

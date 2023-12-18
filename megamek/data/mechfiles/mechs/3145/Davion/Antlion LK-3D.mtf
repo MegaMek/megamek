@@ -1,6 +1,5 @@
-Version:1.3
-Antlion
-LK-3D
+chassis:Antlion
+model:LK-3D
 mul id:6338
 Config:Quad
 techbase:Mixed (IS Chassis)

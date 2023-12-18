@@ -1,6 +1,5 @@
-Version:1.0
-Mastodon
-C
+chassis:Mastodon
+model:C
 mul id:8345
 
 Config:Biped Omnimech

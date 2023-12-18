@@ -1,6 +1,5 @@
-Version:1.0
-Marauder
-MAD-7S
+chassis:Marauder
+model:MAD-7S
 mul id:7533
 
 Config:Biped

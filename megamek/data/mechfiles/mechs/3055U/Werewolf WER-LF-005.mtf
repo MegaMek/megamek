@@ -1,6 +1,5 @@
-Version:1.0
-Werewolf
-WER-LF-005
+chassis:Werewolf
+model:WER-LF-005
 mul id:3536
 
 Config:Biped

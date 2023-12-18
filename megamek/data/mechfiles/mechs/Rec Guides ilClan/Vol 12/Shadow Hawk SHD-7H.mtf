@@ -1,6 +1,5 @@
-Version:1.0
-Shadow Hawk
-SHD-7H
+chassis:Shadow Hawk
+model:SHD-7H
 mul id:7789
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.1
-Grigori
-C-GRG-OA Dominus
+chassis:Grigori
+model:C-GRG-OA Dominus
 mul id:1321
 
 Config:Biped Omnimech

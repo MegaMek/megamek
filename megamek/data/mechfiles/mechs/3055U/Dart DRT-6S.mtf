@@ -1,6 +1,5 @@
-Version:1.0
-Dart
-DRT-6S
+chassis:Dart
+model:DRT-6S
 mul id:830
 
 Config:Biped

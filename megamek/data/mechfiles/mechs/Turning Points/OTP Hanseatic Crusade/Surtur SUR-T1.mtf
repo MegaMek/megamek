@@ -1,6 +1,5 @@
-Version:1.0
-Surtur
-SUR-T1
+chassis:Surtur
+model:SUR-T1
 mul id:7884
 
 Config:Biped

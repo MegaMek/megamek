@@ -1,6 +1,5 @@
-Version:1.0
-Victor
-VTR-9D
+chassis:Victor
+model:VTR-9D
 mul id:3410
 
 Config:Biped

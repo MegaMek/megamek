@@ -1,6 +1,5 @@
-Version:1.3
-Dragoon
-AEM-01
+chassis:Dragoon
+model:AEM-01
 mul id:6780
 Config:Biped
 techbase:Inner Sphere

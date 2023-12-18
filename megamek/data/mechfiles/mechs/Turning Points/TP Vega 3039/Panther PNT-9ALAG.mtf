@@ -1,6 +1,5 @@
-Version:1.0
-Panther
-PNT-9ALAG
+chassis:Panther
+model:PNT-9ALAG
 mul id:7417
 
 Config:Biped

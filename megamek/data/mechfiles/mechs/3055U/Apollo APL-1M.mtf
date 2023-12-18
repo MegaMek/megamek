@@ -1,6 +1,5 @@
-Version:1.0
-Apollo
-APL-1M
+chassis:Apollo
+model:APL-1M
 mul id:54
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Phoenix
-PX-3R
+chassis:Phoenix
+model:PX-3R
 mul id:2489
 
 Config:Biped

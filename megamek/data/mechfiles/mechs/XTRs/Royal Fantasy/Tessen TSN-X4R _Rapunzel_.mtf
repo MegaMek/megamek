@@ -1,6 +1,5 @@
-Version:1.0
-Tessen
-TSN-X4R 'Rapunzel'
+chassis:Tessen
+model:TSN-X4R 'Rapunzel'
 mul id:8377
 
 Config:Biped

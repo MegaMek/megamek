@@ -1,6 +1,5 @@
-Version:1.3
-Phantom
-K
+chassis:Phantom
+model:K
 mul id:9349
 Config:Biped Omnimech
 techbase:Clan

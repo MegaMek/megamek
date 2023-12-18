@@ -1,6 +1,5 @@
-Version:1.3
-BattleMaster
-C 2
+chassis:BattleMaster
+model:C 2
 mul id:7979
 Config:Biped
 techbase:Mixed (IS Chassis)

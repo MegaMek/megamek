@@ -1,6 +1,5 @@
-Version:1.0
-Gulon SecurityMech
-GLN-1B
+chassis:Gulon SecurityMech
+model:GLN-1B
 mul id:7845
 
 Config:Biped

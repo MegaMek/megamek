@@ -1,6 +1,5 @@
-Version:1.0
-Fennec
-FEC-5CM
+chassis:Fennec
+model:FEC-5CM
 mul id:6900
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.3
-Cestus
-CTS-6X
+chassis:Cestus
+model:CTS-6X
 mul id:532
 Config:Biped
 techbase:Inner Sphere

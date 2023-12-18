@@ -1,6 +1,5 @@
-Version:1.3
-Clint IIC
-
+chassis:Clint IIC
+model:
 mul id:652
 Config:Biped
 techbase:Clan

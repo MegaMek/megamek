@@ -1,6 +1,5 @@
-Version:1.0
-Ostsol
-C
+chassis:Ostsol
+model:C
 mul id:8163
 
 Config:Biped

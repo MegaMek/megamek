@@ -1,6 +1,5 @@
-Version:1.0
-SuburbanMech
-UM-R100
+chassis:SuburbanMech
+model:UM-R100
 mul id:7929
 
 Config:Biped

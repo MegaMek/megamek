@@ -1,6 +1,5 @@
-Version:1.3
-Enforcer III
-ENF-6R
+chassis:Enforcer III
+model:ENF-6R
 mul id:7985
 Config:Biped
 techbase:Inner Sphere

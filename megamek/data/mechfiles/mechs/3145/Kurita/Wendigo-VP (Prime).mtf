@@ -1,6 +1,5 @@
-Version:1.1
-Wendigo-VP
-(Prime)
+chassis:Wendigo-VP
+model:(Prime)
 mul id:6408
 
 Config:Biped Omnimech

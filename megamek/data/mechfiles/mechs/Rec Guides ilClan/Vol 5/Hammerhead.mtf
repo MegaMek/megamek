@@ -1,6 +1,5 @@
-Version:1.3
-Hammerhead
-
+chassis:Hammerhead
+model:
 mul id:7511
 Config:Biped
 techbase:Clan

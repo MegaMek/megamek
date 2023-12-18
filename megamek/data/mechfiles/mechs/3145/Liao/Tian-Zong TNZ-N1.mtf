@@ -1,6 +1,5 @@
-Version:1.0
-Tian-Zong
-TNZ-N1
+chassis:Tian-Zong
+model:TNZ-N1
 mul id:6469
 
 Config:Biped

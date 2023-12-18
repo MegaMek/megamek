@@ -1,6 +1,5 @@
-Version:1.3
-UrbanMech
-UM-R93
+chassis:UrbanMech
+model:UM-R93
 mul id:9499
 Config:Biped
 techbase:Inner Sphere

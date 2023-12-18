@@ -1,6 +1,5 @@
-Version:1.1
-Penthesilea
-PEN-2H
+chassis:Penthesilea
+model:PEN-2H
 mul id:2470
 
 Config:Biped

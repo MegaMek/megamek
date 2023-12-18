@@ -1,6 +1,5 @@
-Version:1.0
-Guillotine
-GLT-4P
+chassis:Guillotine
+model:GLT-4P
 mul id:1340
 
 Config:Biped

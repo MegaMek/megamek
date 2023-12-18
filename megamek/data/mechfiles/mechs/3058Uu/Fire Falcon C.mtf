@@ -1,6 +1,5 @@
-Version:1.0
-Fire Falcon
-C
+chassis:Fire Falcon
+model:C
 mul id:1065
 
 Config:Biped Omnimech

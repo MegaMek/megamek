@@ -1,6 +1,5 @@
-Version:1.0
-Raven
-RVN-3M
+chassis:Raven
+model:RVN-3M
 mul id:5444
 
 Config:Biped

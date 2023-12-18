@@ -1,6 +1,5 @@
-Version:1.0
-Shadow Hawk
-C
+chassis:Shadow Hawk
+model:C
 mul id:2895
 
 Config:Biped

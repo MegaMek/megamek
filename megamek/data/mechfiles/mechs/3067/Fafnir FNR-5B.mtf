@@ -1,6 +1,5 @@
-Version:1.0
-Fafnir
-FNR-5B
+chassis:Fafnir
+model:FNR-5B
 mul id:4153
 
 Config:Biped

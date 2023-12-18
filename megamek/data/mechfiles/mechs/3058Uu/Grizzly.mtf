@@ -1,6 +1,5 @@
-Version:1.3
-Grizzly
-
+chassis:Grizzly
+model:
 mul id:1332
 Config:Biped
 techbase:Clan

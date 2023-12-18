@@ -1,6 +1,5 @@
-Version:1.0
-Razorback
-RZK-9S
+chassis:Razorback
+model:RZK-9S
 mul id:4904
 
 Config:Biped

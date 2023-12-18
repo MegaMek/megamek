@@ -1,6 +1,5 @@
-Version:1.0
-Daishi (Dire Wolf)
-'Widowmaker'
+chassis:Daishi (Dire Wolf)
+model:'Widowmaker'
 mul id:811
 
 Config:Biped Omnimech

@@ -1,6 +1,5 @@
-Version:1.0
-Warhammer
-WHM-8K
+chassis:Warhammer
+model:WHM-8K
 mul id:3495
 
 Config:Biped

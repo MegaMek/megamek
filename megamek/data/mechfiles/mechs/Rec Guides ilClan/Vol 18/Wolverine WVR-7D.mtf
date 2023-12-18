@@ -1,6 +1,5 @@
-Version:1.0
-Wolverine
-WVR-7D
+chassis:Wolverine
+model:WVR-7D
 mul id:3574
 
 Config:Biped

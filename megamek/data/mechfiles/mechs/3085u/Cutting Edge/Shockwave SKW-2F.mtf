@@ -1,6 +1,5 @@
-Version:1.0
-Shockwave
-SKW-2F
+chassis:Shockwave
+model:SKW-2F
 mul id:2929
 
 Config:Biped

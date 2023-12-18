@@ -1,6 +1,5 @@
-Version:1.1
-Powerman
-SC XVI HaulerMech
+chassis:Powerman
+model:SC XVI HaulerMech
 mul id:4853
 
 Config:Biped

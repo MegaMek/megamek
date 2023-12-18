@@ -1,6 +1,5 @@
-Version:1.0
-Tempest
-TMP-3MA
+chassis:Tempest
+model:TMP-3MA
 mul id:5189
 
 Config:Biped

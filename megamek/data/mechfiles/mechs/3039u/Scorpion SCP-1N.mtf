@@ -1,6 +1,5 @@
-Version:1.0
-Scorpion
-SCP-1N
+chassis:Scorpion
+model:SCP-1N
 mul id:2837
 
 Config:Quad

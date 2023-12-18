@@ -1,6 +1,5 @@
-Version:1.0
-Zeus
-ZEU-9T
+chassis:Zeus
+model:ZEU-9T
 mul id:3645
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.1
-Targe
-TRG-3M
+chassis:Targe
+model:TRG-3M
 mul id:6915
 
 Config:Biped

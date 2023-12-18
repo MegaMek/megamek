@@ -1,6 +1,5 @@
-Version:1.0
-Spider
-SDR-7KC
+chassis:Spider
+model:SDR-7KC
 mul id:3013
 
 Config:Biped

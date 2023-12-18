@@ -1,6 +1,5 @@
-Version:1.1
-Crusader
-CRD-9R
+chassis:Crusader
+model:CRD-9R
 mul id:8233
 
 Config:Biped

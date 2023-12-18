@@ -1,6 +1,5 @@
-Version:1.3
-Starslayer
-STY-4C
+chassis:Starslayer
+model:STY-4C
 mul id:9315
 Config:Biped
 techbase:Mixed (IS Chassis)

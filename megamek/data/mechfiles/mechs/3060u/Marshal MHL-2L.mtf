@@ -1,6 +1,5 @@
-Version:1.0
-Marshal
-MHL-2L
+chassis:Marshal
+model:MHL-2L
 mul id:2088
 
 Config:Biped

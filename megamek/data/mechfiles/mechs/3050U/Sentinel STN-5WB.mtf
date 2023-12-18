@@ -1,6 +1,5 @@
-Version:1.0
-Sentinel
-STN-5WB
+chassis:Sentinel
+model:STN-5WB
 mul id:2864
 
 Config:Biped

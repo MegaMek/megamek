@@ -1,6 +1,5 @@
-Version:1.1
-Deep Lord MilitiaMech
-RCL-Z1M
+chassis:Deep Lord MilitiaMech
+model:RCL-Z1M
 mul id:4057
 
 Config:Biped

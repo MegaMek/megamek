@@ -1,6 +1,5 @@
-Version:1.1
-Celerity
-CLR-03-OC
+chassis:Celerity
+model:CLR-03-OC
 mul id:6706
 
 Config:Quad Omnimech

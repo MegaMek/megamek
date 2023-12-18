@@ -1,6 +1,5 @@
-Version:1.1
-JagerMech
-JM7-G
+chassis:JagerMech
+model:JM7-G
 mul id:4392
 
 Config:Biped

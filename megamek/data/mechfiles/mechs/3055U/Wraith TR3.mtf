@@ -1,6 +1,5 @@
-Version:1.0
-Wraith
-TR3
+chassis:Wraith
+model:TR3
 mul id:3591
 
 Config:Biped

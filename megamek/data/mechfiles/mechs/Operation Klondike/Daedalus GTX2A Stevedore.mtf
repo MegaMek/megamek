@@ -1,6 +1,5 @@
-Version:1.1
-Daedalus
-GTX2A 'Stevedore'
+chassis:Daedalus
+model:GTX2A 'Stevedore'
 mul id:794
 
 Config:Quad

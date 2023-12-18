@@ -1,6 +1,5 @@
-Version:1.0
-Crossbow
-G
+chassis:Crossbow
+model:G
 mul id:8237
 
 Config:Biped Omnimech

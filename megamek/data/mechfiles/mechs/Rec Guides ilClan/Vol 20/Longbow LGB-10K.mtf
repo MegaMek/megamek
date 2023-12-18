@@ -1,6 +1,5 @@
-Version:1.0
-Longbow
-LGB-10K
+chassis:Longbow
+model:LGB-10K
 mul id:8334
 
 Config:Biped

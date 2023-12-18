@@ -1,6 +1,5 @@
-Version:1.0
-Shogun
-C 3
+chassis:Shogun
+model:C 3
 
 Config:Biped
 techbase:Clan

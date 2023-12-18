@@ -1,6 +1,5 @@
-Version:1.3
-Gladiator
-GLD-1R
+chassis:Gladiator
+model:GLD-1R
 mul id:1198
 Config:Biped
 techbase:Inner Sphere

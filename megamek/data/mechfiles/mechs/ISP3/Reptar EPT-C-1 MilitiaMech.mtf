@@ -1,6 +1,5 @@
-Version:1.0
-Reptar
-EPT-C-1 MilitiaMech
+chassis:Reptar
+model:EPT-C-1 MilitiaMech
 mul id:5797
 
 Config:Biped

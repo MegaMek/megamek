@@ -1,6 +1,5 @@
-Version:1.0
-Linebacker
-C
+chassis:Linebacker
+model:C
 mul id:1888
 
 Config:Biped Omnimech

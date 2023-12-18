@@ -1,6 +1,5 @@
-Version:1.0
-Mantis
-SA-MN
+chassis:Mantis
+model:SA-MN
 mul id:2027
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Wolverine
-WVR-9W2
+chassis:Wolverine
+model:WVR-9W2
 mul id:3584
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.1
-Annihilator
-C 'Gausszilla'
+chassis:Annihilator
+model:C 'Gausszilla'
 mul id:44
 
 Config:Biped

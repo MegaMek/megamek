@@ -1,6 +1,5 @@
-Version:1.0
-Raptor
-RTX1-OU
+chassis:Raptor
+model:RTX1-OU
 mul id:2656
 
 Config:Biped Omnimech

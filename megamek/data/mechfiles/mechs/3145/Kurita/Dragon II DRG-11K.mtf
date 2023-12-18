@@ -1,6 +1,5 @@
-Version:1.1
-Dragon II
-DRG-11K
+chassis:Dragon II
+model:DRG-11K
 mul id:6414
 
 Config:Biped

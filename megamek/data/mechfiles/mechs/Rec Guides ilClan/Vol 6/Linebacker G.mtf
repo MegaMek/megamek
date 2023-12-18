@@ -1,6 +1,5 @@
-Version:1.0
-Linebacker
-G
+chassis:Linebacker
+model:G
 mul id:6880
 
 Config:Biped Omnimech

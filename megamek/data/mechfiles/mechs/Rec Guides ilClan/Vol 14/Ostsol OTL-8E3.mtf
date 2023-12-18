@@ -1,6 +1,5 @@
-Version:1.1
-Ostsol
-OTL-8E3
+chassis:Ostsol
+model:OTL-8E3
 mul id:8162
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Firebee
-FRB-2E
+chassis:Firebee
+model:FRB-2E
 mul id:1079
 
 Config:Biped

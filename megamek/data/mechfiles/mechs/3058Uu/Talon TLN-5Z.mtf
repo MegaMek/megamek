@@ -1,6 +1,5 @@
-Version:1.0
-Talon
-TLN-5Z
+chassis:Talon
+model:TLN-5Z
 mul id:3154
 
 Config:Biped

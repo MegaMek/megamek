@@ -1,6 +1,5 @@
-Version:1.3
-Sunder
-SD1-O
+chassis:Sunder
+model:SD1-O
 mul id:3123
 Config:Biped Omnimech
 techbase:Inner Sphere

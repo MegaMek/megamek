@@ -1,6 +1,5 @@
-Version:1.0
-Gallowglas
-WD
+chassis:Gallowglas
+model:WD
 mul id:1188
 
 Config:Biped

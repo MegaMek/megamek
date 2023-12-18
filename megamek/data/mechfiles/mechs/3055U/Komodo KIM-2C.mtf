@@ -1,6 +1,5 @@
-Version:1.0
-Komodo
-KIM-2C
+chassis:Komodo
+model:KIM-2C
 mul id:1812
 
 Config:Biped

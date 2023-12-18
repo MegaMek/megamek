@@ -1,6 +1,5 @@
-Version:1.1
-Targe
-TRG-2N
+chassis:Targe
+model:TRG-2N
 mul id:3165
 
 Config:Biped

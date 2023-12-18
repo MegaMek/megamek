@@ -1,6 +1,5 @@
-Version:1.0
-Marauder
-MAD-5D
+chassis:Marauder
+model:MAD-5D
 mul id:2039
 
 Config:Biped

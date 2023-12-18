@@ -1,6 +1,5 @@
-Version:1.1
-Wildfire
-P1-WF
+chassis:Wildfire
+model:P1-WF
 mul id:5409
 
 Config:Biped

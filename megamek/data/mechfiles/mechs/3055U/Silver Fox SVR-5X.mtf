@@ -1,6 +1,5 @@
-Version:1.0
-Silver Fox
-SVR-5X
+chassis:Silver Fox
+model:SVR-5X
 mul id:2944
 
 Config:Biped

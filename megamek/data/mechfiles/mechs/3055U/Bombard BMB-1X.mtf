@@ -1,6 +1,5 @@
-Version:1.0
-Bombard
-BMB-1X
+chassis:Bombard
+model:BMB-1X
 mul id:420
 
 Config:Biped

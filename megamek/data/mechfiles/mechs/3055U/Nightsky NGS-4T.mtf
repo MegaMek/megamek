@@ -1,6 +1,5 @@
-Version:1.0
-Nightsky
-NGS-4T
+chassis:Nightsky
+model:NGS-4T
 mul id:2280
 
 Config:Biped

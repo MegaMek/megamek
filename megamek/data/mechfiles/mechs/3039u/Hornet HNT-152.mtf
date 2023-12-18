@@ -1,6 +1,5 @@
-Version:1.0
-Hornet
-HNT-152
+chassis:Hornet
+model:HNT-152
 mul id:1546
 
 Config:Biped

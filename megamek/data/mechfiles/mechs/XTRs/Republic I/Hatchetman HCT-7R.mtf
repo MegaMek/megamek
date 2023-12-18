@@ -1,6 +1,5 @@
-Version:1.2
-Hatchetman
-HCT-7R
+chassis:Hatchetman
+model:HCT-7R
 mul id:7295
 
 Config:Biped

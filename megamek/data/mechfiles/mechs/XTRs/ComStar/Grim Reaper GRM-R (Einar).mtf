@@ -1,6 +1,5 @@
-Version:1.0
-Grim Reaper
-GRM-R (Einar)
+chassis:Grim Reaper
+model:GRM-R (Einar)
 mul id:5550
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Icestorm
-2
+chassis:Icestorm
+model:2
 mul id:1603
 
 Config:Biped

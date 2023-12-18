@@ -1,6 +1,5 @@
-Version:1.0
-Arctic Fox
-AF1U
+chassis:Arctic Fox
+model:AF1U
 mul id:98
 
 Config:Biped Omnimech

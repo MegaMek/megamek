@@ -1,6 +1,5 @@
-Version:1.0
-Hellspawn
-HSN-9F
+chassis:Hellspawn
+model:HSN-9F
 mul id:4309
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Vulpes
-VLP-1D
+chassis:Vulpes
+model:VLP-1D
 mul id:6346
 
 Config:Biped

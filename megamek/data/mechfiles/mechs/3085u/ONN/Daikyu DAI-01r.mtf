@@ -1,6 +1,5 @@
-Version:1.0
-Daikyu
-DAI-01r
+chassis:Daikyu
+model:DAI-01r
 mul id:799
 
 Config:Biped

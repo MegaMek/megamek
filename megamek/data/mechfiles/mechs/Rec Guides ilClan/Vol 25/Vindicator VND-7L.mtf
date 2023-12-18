@@ -1,6 +1,5 @@
-Version:1.3
-Vindicator
-VND-7L
+chassis:Vindicator
+model:VND-7L
 mul id:9266
 Config:Biped
 techbase:Mixed (IS Chassis)

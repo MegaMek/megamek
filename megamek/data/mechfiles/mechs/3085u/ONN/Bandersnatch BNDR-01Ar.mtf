@@ -1,6 +1,5 @@
-Version:1.0
-Bandersnatch
-BNDR-01Ar
+chassis:Bandersnatch
+model:BNDR-01Ar
 mul id:218
 
 Config:Biped

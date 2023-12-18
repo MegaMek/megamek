@@ -1,6 +1,5 @@
-Version:1.0
-Quickdraw
-QKD-5Mr
+chassis:Quickdraw
+model:QKD-5Mr
 mul id:2615
 
 Config:Biped

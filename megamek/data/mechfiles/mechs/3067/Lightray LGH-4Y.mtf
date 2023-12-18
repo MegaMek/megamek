@@ -1,6 +1,5 @@
-Version:1.0
-Lightray
-LGH-4Y
+chassis:Lightray
+model:LGH-4Y
 mul id:4520
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.1
-Ostsol
-OTL-9R
+chassis:Ostsol
+model:OTL-9R
 mul id:2380
 
 Config:Biped

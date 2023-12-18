@@ -1,6 +1,5 @@
-Version:1.0
-Hatamoto-Mizo
-HTM-27Y
+chassis:Hatamoto-Mizo
+model:HTM-27Y
 mul id:1409
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Stealth
-STH-5X
+chassis:Stealth
+model:STH-5X
 mul id:5130
 
 Config:Biped

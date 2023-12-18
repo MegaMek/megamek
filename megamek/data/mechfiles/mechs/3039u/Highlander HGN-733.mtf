@@ -1,6 +1,5 @@
-Version:1.0
-Highlander
-HGN-733
+chassis:Highlander
+model:HGN-733
 mul id:1517
 
 Config:Biped

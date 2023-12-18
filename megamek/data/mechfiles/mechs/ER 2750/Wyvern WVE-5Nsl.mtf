@@ -1,6 +1,5 @@
-Version:1.0
-Wyvern
-WVE-5Nsl
+chassis:Wyvern
+model:WVE-5Nsl
 mul id:5875
 
 Config:Biped

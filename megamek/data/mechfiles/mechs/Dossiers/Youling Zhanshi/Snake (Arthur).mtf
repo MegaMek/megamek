@@ -1,6 +1,5 @@
-Version:1.0
-Snake
-(Arthur)
+chassis:Snake
+model:(Arthur)
 mul id:6982
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.3
-Omega
-SHP-5R
+chassis:Omega
+model:SHP-5R
 mul id:7997
 Config:Biped
 techbase:Inner Sphere

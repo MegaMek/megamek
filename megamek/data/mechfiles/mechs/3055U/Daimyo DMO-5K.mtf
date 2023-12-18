@@ -1,6 +1,5 @@
-Version:1.0
-Daimyo
-DMO-5K
+chassis:Daimyo
+model:DMO-5K
 mul id:806
 
 Config:Biped

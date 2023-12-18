@@ -1,6 +1,5 @@
-Version:1.0
-Koschei
-KSC-6L
+chassis:Koschei
+model:KSC-6L
 mul id:6881
 
 Config:Biped

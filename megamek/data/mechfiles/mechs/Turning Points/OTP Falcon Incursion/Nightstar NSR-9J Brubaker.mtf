@@ -1,6 +1,5 @@
-Version:1.1
-Nightstar
-NSR-9J (Brubaker)
+chassis:Nightstar
+model:NSR-9J (Brubaker)
 mul id:4723
 
 Config:Biped

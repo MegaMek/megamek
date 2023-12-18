@@ -1,6 +1,5 @@
-Version:1.3
-Raider
-JL-3A
+chassis:Raider
+model:JL-3A
 mul id:8070
 Config:Biped
 techbase:Inner Sphere

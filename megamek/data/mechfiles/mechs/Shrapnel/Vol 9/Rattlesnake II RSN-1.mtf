@@ -1,6 +1,5 @@
-Version:1.3
-Rattlesnake II
-RSN-1
+chassis:Rattlesnake II
+model:RSN-1
 mul id:9241
 Config:Biped
 techbase:Mixed (IS Chassis)

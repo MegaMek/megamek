@@ -1,6 +1,5 @@
-Version:1.1
-Marauder
-MAD-9W
+chassis:Marauder
+model:MAD-9W
 mul id:2050
 
 Config:Biped

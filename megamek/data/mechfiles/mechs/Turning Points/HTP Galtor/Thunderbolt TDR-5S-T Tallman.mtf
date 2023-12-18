@@ -1,6 +1,5 @@
-Version:1.1
-Thunderbolt
-TDR-5S-T (Tallman)
+chassis:Thunderbolt
+model:TDR-5S-T (Tallman)
 mul id:3242
 
 Config:Biped

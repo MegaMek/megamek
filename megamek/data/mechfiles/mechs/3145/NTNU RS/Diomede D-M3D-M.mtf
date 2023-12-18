@@ -1,6 +1,5 @@
-Version:1.0
-Diomede
-D-M3D-M
+chassis:Diomede
+model:D-M3D-M
 mul id:6823
 
 Config:Biped

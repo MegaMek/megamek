@@ -1,6 +1,5 @@
-Version:1.0
-Dola
-DOL-1A2 'Yoh Ti Ts'angs'
+chassis:Dola
+model:DOL-1A2 'Yoh Ti Ts'angs'
 mul id:4087
 
 Config:Biped

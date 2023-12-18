@@ -1,6 +1,5 @@
-Version:1.0
-JagerMech
-JM7-D
+chassis:JagerMech
+model:JM7-D
 mul id:4390
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.3
-Hoplite
-HOP-4D
+chassis:Hoplite
+model:HOP-4D
 mul id:1543
 Config:Biped
 techbase:Inner Sphere

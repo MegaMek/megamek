@@ -1,6 +1,5 @@
-Version:1.0
-Hoplite
-HOP-4A
+chassis:Hoplite
+model:HOP-4A
 mul id:4329
 
 Config:Biped

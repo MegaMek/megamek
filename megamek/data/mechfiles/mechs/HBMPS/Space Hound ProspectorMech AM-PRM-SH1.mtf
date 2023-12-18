@@ -1,6 +1,5 @@
-Version:1.0
-Space Hound ProspectorMech
-AM-PRM-SH1
+chassis:Space Hound ProspectorMech
+model:AM-PRM-SH1
 mul id:5101
 
 Config:Biped

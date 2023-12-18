@@ -1,6 +1,5 @@
-Version:1.0
-Cossack
-C-SK1
+chassis:Cossack
+model:C-SK1
 mul id:703
 
 Config:Biped

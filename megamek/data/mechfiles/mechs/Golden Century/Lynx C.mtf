@@ -1,6 +1,5 @@
-Version:1.1
-Lynx
-C
+chassis:Lynx
+model:C
 mul id:7620
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.1
-Ostroc
-OSR-4K
+chassis:Ostroc
+model:OSR-4K
 mul id:2356
 
 Config:Biped

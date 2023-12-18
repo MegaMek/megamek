@@ -1,6 +1,5 @@
-Version:1.0
-Commando IIC
-
+chassis:Commando IIC
+model:
 mul id:678
 
 Config:Biped

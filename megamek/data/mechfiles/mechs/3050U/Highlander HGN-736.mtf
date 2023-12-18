@@ -1,6 +1,5 @@
-Version:1.1
-Highlander
-HGN-736
+chassis:Highlander
+model:HGN-736
 mul id:1521
 
 Config:Biped

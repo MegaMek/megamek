@@ -1,6 +1,5 @@
-Version:1.0
-Hammerhands
-HMH-4D
+chassis:Hammerhands
+model:HMH-4D
 mul id:1370
 
 Config:Biped

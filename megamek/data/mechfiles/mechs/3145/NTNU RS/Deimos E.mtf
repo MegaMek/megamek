@@ -1,6 +1,5 @@
-Version:1.0
-Deimos
-E
+chassis:Deimos
+model:E
 mul id:6855
 
 Config:Biped Omnimech

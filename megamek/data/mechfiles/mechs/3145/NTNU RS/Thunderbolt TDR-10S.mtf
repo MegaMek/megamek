@@ -1,6 +1,5 @@
-Version:1.0
-Thunderbolt
-TDR-10S
+chassis:Thunderbolt
+model:TDR-10S
 mul id:6877
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Opossum SalvageMech
-OPO-2 
+chassis:Opossum SalvageMech
+model:OPO-2 
 mul id:7847
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Naga
-C
+chassis:Naga
+model:C
 mul id:2249
 
 Config:Biped Omnimech

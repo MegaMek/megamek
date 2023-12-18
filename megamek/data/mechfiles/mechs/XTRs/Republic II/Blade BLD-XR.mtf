@@ -1,6 +1,5 @@
-Version:1.1
-Blade
-BLD-XR
+chassis:Blade
+model:BLD-XR
 mul id:7345
 
 Config:Biped

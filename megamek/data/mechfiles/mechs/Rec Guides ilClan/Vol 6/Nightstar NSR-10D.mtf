@@ -1,6 +1,5 @@
-Version:1.1
-Nightstar
-NSR-10D
+chassis:Nightstar
+model:NSR-10D
 mul id:7539
 
 Config:Biped

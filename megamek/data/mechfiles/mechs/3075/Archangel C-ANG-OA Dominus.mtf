@@ -1,6 +1,5 @@
-Version:1.1
-Archangel
-C-ANG-OA Dominus
+chassis:Archangel
+model:C-ANG-OA Dominus
 mul id:66
 
 Config:Biped Omnimech

@@ -1,6 +1,5 @@
-Version:1.0
-Firestarter
-FS9-M3
+chassis:Firestarter
+model:FS9-M3
 mul id:6610
 
 Config:Biped

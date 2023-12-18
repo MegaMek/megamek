@@ -1,6 +1,5 @@
-Version:1.0
-Javelin
-JVN-11D (Farrell)
+chassis:Javelin
+model:JVN-11D (Farrell)
 mul id:5808
 
 Config:Biped

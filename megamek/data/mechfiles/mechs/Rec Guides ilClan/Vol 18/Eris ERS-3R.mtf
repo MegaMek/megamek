@@ -1,6 +1,5 @@
-Version:1.0
-Eris
-ERS-3R
+chassis:Eris
+model:ERS-3R
 mul id:8252
 
 Config:Biped

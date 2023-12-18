@@ -1,6 +1,5 @@
-Version:1.0
-Shen Yi
-SHY-5B
+chassis:Shen Yi
+model:SHY-5B
 mul id:6878
 
 Config:Biped

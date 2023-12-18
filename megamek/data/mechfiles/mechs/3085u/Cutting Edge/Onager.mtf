@@ -1,6 +1,5 @@
-Version:1.0
-Onager
-
+chassis:Onager
+model:
 mul id:2319
 
 Config:Biped

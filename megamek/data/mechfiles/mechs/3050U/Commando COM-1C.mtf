@@ -1,6 +1,5 @@
-Version:1.0
-Commando
-COM-1C
+chassis:Commando
+model:COM-1C
 mul id:668
 
 Config:Biped

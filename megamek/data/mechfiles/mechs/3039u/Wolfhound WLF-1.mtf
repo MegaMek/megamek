@@ -1,6 +1,5 @@
-Version:1.3
-Wolfhound
-WLF-1
+chassis:Wolfhound
+model:WLF-1
 mul id:3560
 Config:Biped
 techbase:Inner Sphere

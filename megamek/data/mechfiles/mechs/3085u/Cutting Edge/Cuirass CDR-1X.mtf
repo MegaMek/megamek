@@ -1,6 +1,5 @@
-Version:1.1
-Cuirass
-CDR-1X
+chassis:Cuirass
+model:CDR-1X
 mul id:769
 
 Config:Biped

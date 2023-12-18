@@ -1,6 +1,5 @@
-Version:1.0
-Osprey
-OSP-15
+chassis:Osprey
+model:OSP-15
 mul id:2344
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Shadow Hawk
-SHD-3K
+chassis:Shadow Hawk
+model:SHD-3K
 mul id:2904
 
 Config:Biped

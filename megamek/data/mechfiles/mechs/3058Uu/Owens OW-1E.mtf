@@ -1,6 +1,5 @@
-Version:1.0
-Owens
-OW-1E
+chassis:Owens
+model:OW-1E
 mul id:2389
 
 Config:Biped Omnimech

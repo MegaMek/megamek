@@ -1,6 +1,5 @@
-Version:1.0
-Carbine
-CON-9M (Karenna)
+chassis:Carbine
+model:CON-9M (Karenna)
 mul id:7851
 
 Config:Biped

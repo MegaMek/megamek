@@ -1,6 +1,5 @@
-Version:1.3
-Hoplite
-HOP-5C
+chassis:Hoplite
+model:HOP-5C
 mul id:9431
 Config:Biped
 techbase:Mixed (IS Chassis)

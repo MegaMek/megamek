@@ -1,6 +1,5 @@
-Version:1.0
-Crab
-CRB-54
+chassis:Crab
+model:CRB-54
 mul id:7510
 
 Config:Biped

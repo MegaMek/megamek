@@ -1,6 +1,5 @@
-Version:1.0
-Cataphract
-CTF-4X
+chassis:Cataphract
+model:CTF-4X
 mul id:474
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.1
-Redback
-
+chassis:Redback
+model:
 mul id:7684
 
 Config:Biped

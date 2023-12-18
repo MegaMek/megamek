@@ -1,6 +1,5 @@
-Version:1.3
-Linebacker
-I
+chassis:Linebacker
+model:I
 mul id:7525
 Config:Biped Omnimech
 techbase:Clan

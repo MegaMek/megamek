@@ -1,6 +1,5 @@
-Version:1.0
-Sojourner
-Prime
+chassis:Sojourner
+model:Prime
 mul id:7443
 
 Config:Biped Omnimech

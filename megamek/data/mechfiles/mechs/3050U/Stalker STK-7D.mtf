@@ -1,6 +1,5 @@
-Version:1.0
-Stalker
-STK-7D
+chassis:Stalker
+model:STK-7D
 mul id:3043
 
 Config:Biped

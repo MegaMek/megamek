@@ -1,6 +1,5 @@
-Version:1.3
-Celerity
-CLR-02-X-D
+chassis:Celerity
+model:CLR-02-X-D
 mul id:5553
 Config:Quad
 techbase:Inner Sphere

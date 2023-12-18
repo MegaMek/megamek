@@ -1,6 +1,5 @@
-Version:1.0
-Bombardier
-BMB-12D
+chassis:Bombardier
+model:BMB-12D
 mul id:423
 
 Config:Biped

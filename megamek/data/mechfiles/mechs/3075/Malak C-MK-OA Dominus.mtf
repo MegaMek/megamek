@@ -1,6 +1,5 @@
-Version:1.1
-Malak
-C-MK-OA Dominus
+chassis:Malak
+model:C-MK-OA Dominus
 mul id:1995
 
 Config:Biped Omnimech

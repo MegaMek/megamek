@@ -1,6 +1,5 @@
-Version:1.3
-Mangonel
-MNL-4S
+chassis:Mangonel
+model:MNL-4S
 mul id:6871
 Config:Biped
 techbase:Mixed (IS Chassis)

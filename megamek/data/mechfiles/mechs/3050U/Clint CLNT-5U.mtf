@@ -1,6 +1,5 @@
-Version:1.0
-Clint
-CLNT-5U
+chassis:Clint
+model:CLNT-5U
 mul id:650
 
 Config:Biped

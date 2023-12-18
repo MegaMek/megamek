@@ -1,6 +1,5 @@
-Version:1.0
-Centurion
-CN9-YLW2 'Yen Lo Wang'
+chassis:Centurion
+model:CN9-YLW2 'Yen Lo Wang'
 mul id:3923
 
 Config:Biped

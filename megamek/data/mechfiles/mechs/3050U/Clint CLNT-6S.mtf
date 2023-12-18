@@ -1,6 +1,5 @@
-Version:1.0
-Clint
-CLNT-6S
+chassis:Clint
+model:CLNT-6S
 mul id:651
 
 Config:Biped

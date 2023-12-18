@@ -1,6 +1,5 @@
-Version:1.0
-Gyrfalcon
-4
+chassis:Gyrfalcon
+model:4
 mul id:6269
 
 Config:Biped

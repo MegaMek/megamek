@@ -1,6 +1,5 @@
-Version:1.0
-Diomede
-D-M3D-3 ConstructionMech
+chassis:Diomede
+model:D-M3D-3 ConstructionMech
 mul id:901
 
 Config:Biped

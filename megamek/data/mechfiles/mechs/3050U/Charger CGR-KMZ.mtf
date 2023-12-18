@@ -1,6 +1,5 @@
-Version:1.0
-Charger
-CGR-KMZ
+chassis:Charger
+model:CGR-KMZ
 mul id:568
 
 Config:Biped

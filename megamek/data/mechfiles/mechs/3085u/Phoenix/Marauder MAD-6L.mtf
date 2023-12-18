@@ -1,6 +1,5 @@
-Version:1.0
-Marauder
-MAD-6L
+chassis:Marauder
+model:MAD-6L
 mul id:2045
 
 Config:Biped

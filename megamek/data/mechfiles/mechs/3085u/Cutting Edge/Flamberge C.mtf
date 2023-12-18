@@ -1,6 +1,5 @@
-Version:1.0
-Flamberge
-C
+chassis:Flamberge
+model:C
 mul id:1118
 
 Config:Biped Omnimech

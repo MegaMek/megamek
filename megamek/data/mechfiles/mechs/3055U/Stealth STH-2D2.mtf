@@ -1,6 +1,5 @@
-Version:1.0
-Stealth
-STH-2D2
+chassis:Stealth
+model:STH-2D2
 mul id:3056
 
 Config:Biped

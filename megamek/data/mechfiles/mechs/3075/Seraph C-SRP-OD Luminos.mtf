@@ -1,6 +1,5 @@
-Version:1.1
-Seraph
-C-SRP-OD Luminos
+chassis:Seraph
+model:C-SRP-OD Luminos
 mul id:2873
 
 Config:Biped Omnimech

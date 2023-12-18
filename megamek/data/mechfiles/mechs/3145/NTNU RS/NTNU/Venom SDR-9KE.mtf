@@ -1,6 +1,5 @@
-Version:1.3
-Venom
-SDR-9KE
+chassis:Venom
+model:SDR-9KE
 mul id:8007
 Config:Biped
 techbase:Inner Sphere

@@ -1,6 +1,5 @@
-Version:1.1
-Victor
-VTR-12D
+chassis:Victor
+model:VTR-12D
 mul id:8259
 
 Config:Biped

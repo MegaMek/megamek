@@ -1,6 +1,5 @@
-Version:1.0
-DemolitionMech
-WI-DMM MOD
+chassis:DemolitionMech
+model:WI-DMM MOD
 mul id:7839
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Linebacker
-Prime
+chassis:Linebacker
+model:Prime
 mul id:1892
 
 Config:Biped Omnimech

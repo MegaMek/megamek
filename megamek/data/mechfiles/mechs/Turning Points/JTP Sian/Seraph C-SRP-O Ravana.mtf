@@ -1,6 +1,5 @@
-Version:1.1
-Seraph
-C-SRP-OR (Ravana)
+chassis:Seraph
+model:C-SRP-OR (Ravana)
 mul id:2875
 
 Config:Biped

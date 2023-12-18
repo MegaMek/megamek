@@ -1,6 +1,5 @@
-Version:1.0
-Champion
-C
+chassis:Champion
+model:C
 mul id:547
 
 Config:Biped

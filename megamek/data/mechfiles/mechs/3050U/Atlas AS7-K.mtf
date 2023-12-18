@@ -1,6 +1,5 @@
-Version:1.0
-Atlas
-AS7-K
+chassis:Atlas
+model:AS7-K
 mul id:144
 
 Config:Biped

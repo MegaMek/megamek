@@ -1,6 +1,5 @@
-Version:1.0
-Mauler
-MAL-1K
+chassis:Mauler
+model:MAL-1K
 mul id:2100
 
 Config:Biped

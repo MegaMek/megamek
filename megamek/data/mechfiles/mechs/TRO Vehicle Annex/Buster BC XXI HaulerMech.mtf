@@ -1,6 +1,5 @@
-Version:1.1
-Buster
-BC XXI HaulerMech
+chassis:Buster
+model:BC XXI HaulerMech
 mul id:7220
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.2
-Axman
-AXM-5N
+chassis:Axman
+model:AXM-5N
 mul id:7790
 
 Config:Biped

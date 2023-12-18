@@ -1,6 +1,5 @@
-Version:1.1
-Kraken-XR
-
+chassis:Kraken-XR
+model:
 mul id:4463
 
 Config:Biped

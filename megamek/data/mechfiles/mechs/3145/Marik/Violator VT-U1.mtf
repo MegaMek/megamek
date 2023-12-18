@@ -1,6 +1,5 @@
-Version:1.0
-Violator
-VT-U1
+chassis:Violator
+model:VT-U1
 mul id:6503
 
 Config:Biped

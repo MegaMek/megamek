@@ -1,6 +1,5 @@
-Version:1.0
-Panther
-PNT-12A
+chassis:Panther
+model:PNT-12A
 mul id:2418
 
 Config:Biped

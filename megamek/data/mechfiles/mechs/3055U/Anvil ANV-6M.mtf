@@ -1,6 +1,5 @@
-Version:1.0
-Anvil
-ANV-6M
+chassis:Anvil
+model:ANV-6M
 mul id:52
 
 Config:Biped

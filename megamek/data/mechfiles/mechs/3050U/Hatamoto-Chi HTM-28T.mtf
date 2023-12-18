@@ -1,6 +1,5 @@
-Version:1.1
-Hatamoto-Chi
-HTM-28T
+chassis:Hatamoto-Chi
+model:HTM-28T
 mul id:1401
 
 Config:Biped

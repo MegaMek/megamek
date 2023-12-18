@@ -1,6 +1,5 @@
-Version:1.0
-War Dog
-WR-DG-02FC
+chassis:War Dog
+model:WR-DG-02FC
 mul id:3476
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Avatar
-AV1-OC
+chassis:Avatar
+model:AV1-OC
 mul id:163
 
 Config:Biped Omnimech

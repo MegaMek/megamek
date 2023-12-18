@@ -1,6 +1,5 @@
-Version:1.0
-Cataphract
-CTF-3X (Sara)
+chassis:Cataphract
+model:CTF-3X (Sara)
 mul id:472
 
 Config:Biped

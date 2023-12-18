@@ -1,6 +1,5 @@
-Version:1.0
-Panther
-PNT-10K
+chassis:Panther
+model:PNT-10K
 mul id:2416
 
 Config:Biped

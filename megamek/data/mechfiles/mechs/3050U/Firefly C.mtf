@@ -1,6 +1,5 @@
-Version:1.0
-Firefly
-C
+chassis:Firefly
+model:C
 mul id:1082
 
 Config:Biped

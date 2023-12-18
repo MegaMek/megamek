@@ -1,6 +1,5 @@
-Version:1.1
-Spirit
-2
+chassis:Spirit
+model:2
 mul id:5665
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.1
-Griffin
-C
+chassis:Griffin
+model:C
 mul id:7437
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.1
-Guillotine
-GLT-6WB3
+chassis:Guillotine
+model:GLT-6WB3
 mul id:5492
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.1
-Eidolon
-C-EID-001
+chassis:Eidolon
+model:C-EID-001
 mul id:943
 
 Config:Biped

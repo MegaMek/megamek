@@ -1,6 +1,5 @@
-Version:1.3
-King Crab
-KGC-000
+chassis:King Crab
+model:KGC-000
 mul id:1770
 Config:Biped
 techbase:Inner Sphere

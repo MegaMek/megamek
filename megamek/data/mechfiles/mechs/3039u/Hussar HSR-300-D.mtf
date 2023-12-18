@@ -1,6 +1,5 @@
-Version:1.0
-Hussar
-HSR-300-D
+chassis:Hussar
+model:HSR-300-D
 mul id:1587
 
 Config:Biped

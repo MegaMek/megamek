@@ -1,6 +1,5 @@
-Version:1.3
-Atlas
-AS7-K-DC
+chassis:Atlas
+model:AS7-K-DC
 mul id:3749
 Config:Biped
 techbase:Inner Sphere

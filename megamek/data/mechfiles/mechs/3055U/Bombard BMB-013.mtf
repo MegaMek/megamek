@@ -1,6 +1,5 @@
-Version:1.0
-Bombard
-BMB-013
+chassis:Bombard
+model:BMB-013
 mul id:419
 
 Config:Biped

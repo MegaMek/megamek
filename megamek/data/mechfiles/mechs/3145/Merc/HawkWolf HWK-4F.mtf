@@ -1,6 +1,5 @@
-Version:1.0
-HawkWolf
-HWK-4F
+chassis:HawkWolf
+model:HWK-4F
 mul id:6576
 
 Config:Biped

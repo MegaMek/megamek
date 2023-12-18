@@ -1,6 +1,5 @@
-Version:1.1
-Panther
-PNT-13K
+chassis:Panther
+model:PNT-13K
 mul id:2421
 
 Config:Biped

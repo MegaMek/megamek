@@ -1,6 +1,5 @@
-Version:1.0
-Koto
-KT-P2
+chassis:Koto
+model:KT-P2
 mul id:1840
 
 Config:Biped

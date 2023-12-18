@@ -1,6 +1,5 @@
-Version:1.0
-Vulcan
-VT-5ML 'Aladdin'
+chassis:Vulcan
+model:VT-5ML 'Aladdin'
 mul id:8370
 
 Config:Biped

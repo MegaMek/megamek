@@ -1,6 +1,5 @@
-Version:1.1
-Hollander III
-BZK-D1
+chassis:Hollander III
+model:BZK-D1
 mul id:6333
 
 Config:Biped

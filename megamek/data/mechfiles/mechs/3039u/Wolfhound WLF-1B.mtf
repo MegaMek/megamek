@@ -1,6 +1,5 @@
-Version:1.2
-Wolfhound
-WLF-1B
+chassis:Wolfhound
+model:WLF-1B
 mul id:3562
 
 Config:Biped

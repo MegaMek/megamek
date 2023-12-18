@@ -1,6 +1,5 @@
-Version:1.0
-Anvil
-ANV-5M
+chassis:Anvil
+model:ANV-5M
 mul id:50
 
 Config:Biped

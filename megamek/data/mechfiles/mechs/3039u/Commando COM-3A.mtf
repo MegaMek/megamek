@@ -1,6 +1,5 @@
-Version:1.0
-Commando
-COM-3A
+chassis:Commando
+model:COM-3A
 mul id:672
 
 Config:Biped

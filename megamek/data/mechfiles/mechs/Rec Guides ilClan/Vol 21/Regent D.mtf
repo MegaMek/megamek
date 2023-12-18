@@ -1,6 +1,5 @@
-Version:1.0
-Regent
-D
+chassis:Regent
+model:D
 mul id:8363
 
 Config:Biped Omnimech

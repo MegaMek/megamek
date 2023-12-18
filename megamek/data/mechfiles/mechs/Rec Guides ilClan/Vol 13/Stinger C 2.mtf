@@ -1,6 +1,5 @@
-Version:1.0
-Stinger
-C 2
+chassis:Stinger
+model:C 2
 mul id:8128
 
 Config:Biped

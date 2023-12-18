@@ -1,6 +1,5 @@
-Version:1.2
-Gunsmith
-CH11-NG
+chassis:Gunsmith
+model:CH11-NG
 mul id:6332
 
 Config:Biped

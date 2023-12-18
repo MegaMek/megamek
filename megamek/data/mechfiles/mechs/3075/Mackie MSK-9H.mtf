@@ -1,6 +1,5 @@
-Version:1.3
-Mackie
-MSK-9H
+chassis:Mackie
+model:MSK-9H
 mul id:1975
 Config:Biped
 techbase:Inner Sphere

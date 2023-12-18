@@ -1,6 +1,5 @@
-Version:1.0
-Lightning
-LHN-C5
+chassis:Lightning
+model:LHN-C5
 mul id:8170
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Wasp
-WSP-3M
+chassis:Wasp
+model:WSP-3M
 mul id:3528
 
 Config:Biped

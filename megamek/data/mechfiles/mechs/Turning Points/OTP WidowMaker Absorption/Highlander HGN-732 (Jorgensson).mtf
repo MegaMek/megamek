@@ -1,6 +1,5 @@
-Version:1.0
-Highlander
-HGN-732 (Jorgensson)
+chassis:Highlander
+model:HGN-732 (Jorgensson)
 mul id:7309
 
 Config:Biped

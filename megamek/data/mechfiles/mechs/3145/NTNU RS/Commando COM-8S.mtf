@@ -1,6 +1,5 @@
-Version:1.0
-Commando
-COM-8S
+chassis:Commando
+model:COM-8S
 mul id:6945
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Spindrift Aquatic SecurityMech
-SDT-1
+chassis:Spindrift Aquatic SecurityMech
+model:SDT-1
 mul id:3021
 
 Config:Biped

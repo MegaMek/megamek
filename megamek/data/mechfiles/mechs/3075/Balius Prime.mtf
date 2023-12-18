@@ -1,6 +1,5 @@
-Version:1.3
-Balius
-Prime
+chassis:Balius
+model:Prime
 mul id:215
 Config:Quad Omnimech
 techbase:Clan

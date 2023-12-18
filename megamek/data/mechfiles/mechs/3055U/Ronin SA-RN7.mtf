@@ -1,6 +1,5 @@
-Version:1.0
-Ronin
-SA-RN7
+chassis:Ronin
+model:SA-RN7
 mul id:2739
 
 Config:Biped

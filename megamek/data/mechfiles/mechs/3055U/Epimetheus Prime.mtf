@@ -1,6 +1,5 @@
-Version:1.1
-Epimetheus
-Prime
+chassis:Epimetheus
+model:Prime
 mul id:4129
 
 Config:Biped

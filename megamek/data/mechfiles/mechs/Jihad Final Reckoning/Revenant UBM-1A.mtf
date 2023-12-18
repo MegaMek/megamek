@@ -1,6 +1,5 @@
-Version:1.3
-Revenant
-UBM-1A
+chassis:Revenant
+model:UBM-1A
 mul id:4911
 Config:Quad
 techbase:Inner Sphere

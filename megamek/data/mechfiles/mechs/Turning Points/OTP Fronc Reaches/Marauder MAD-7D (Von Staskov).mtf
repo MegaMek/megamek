@@ -1,6 +1,5 @@
-Version:1.0
-Marauder
-MAD-7D (Von Staskov)
+chassis:Marauder
+model:MAD-7D (Von Staskov)
 mul id:7697
 
 Config:Biped

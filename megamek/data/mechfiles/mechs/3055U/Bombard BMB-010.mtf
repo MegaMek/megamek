@@ -1,6 +1,5 @@
-Version:1.0
-Bombard
-BMB-010
+chassis:Bombard
+model:BMB-010
 mul id:418
 
 Config:Biped

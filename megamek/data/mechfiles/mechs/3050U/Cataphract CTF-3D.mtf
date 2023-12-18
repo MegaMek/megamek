@@ -1,6 +1,5 @@
-Version:1.0
-Cataphract
-CTF-3D
+chassis:Cataphract
+model:CTF-3D
 mul id:469
 
 Config:Biped

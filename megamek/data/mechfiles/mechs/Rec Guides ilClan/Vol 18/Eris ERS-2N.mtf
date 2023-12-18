@@ -1,6 +1,5 @@
-Version:1.0
-Eris
-ERS-2N
+chassis:Eris
+model:ERS-2N
 mul id:8251
 
 Config:Biped

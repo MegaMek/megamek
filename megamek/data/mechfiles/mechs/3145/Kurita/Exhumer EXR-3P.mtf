@@ -1,6 +1,5 @@
-Version:1.0
-Exhumer
-EXR-3P
+chassis:Exhumer
+model:EXR-3P
 mul id:6411
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Snake
-SNK-2Br
+chassis:Snake
+model:SNK-2Br
 mul id:2977
 
 Config:Biped

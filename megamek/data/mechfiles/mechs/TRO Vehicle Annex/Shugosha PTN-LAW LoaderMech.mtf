@@ -1,6 +1,5 @@
-Version:1.1
-Shugosha
-PTN-LAW LoaderMech
+chassis:Shugosha
+model:PTN-LAW LoaderMech
 mul id:7157
 
 Config:Biped

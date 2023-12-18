@@ -1,6 +1,5 @@
-Version:1.1
-Uraeus
-UAE-7R
+chassis:Uraeus
+model:UAE-7R
 mul id:6677
 
 Config:Biped

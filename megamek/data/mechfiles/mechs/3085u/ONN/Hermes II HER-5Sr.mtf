@@ -1,6 +1,5 @@
-Version:1.1
-Hermes II
-HER-5Sr
+chassis:Hermes II
+model:HER-5Sr
 mul id:1503
 
 Config:Biped

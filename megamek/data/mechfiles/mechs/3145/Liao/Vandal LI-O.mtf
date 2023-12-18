@@ -1,6 +1,5 @@
-Version:1.1
-Vandal
-LI-O
+chassis:Vandal
+model:LI-O
 mul id:6461
 
 Config:Biped Omnimech

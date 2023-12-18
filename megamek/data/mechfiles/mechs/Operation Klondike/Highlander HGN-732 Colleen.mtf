@@ -1,6 +1,5 @@
-Version:1.0
-Highlander
-HGN-732 (Colleen)
+chassis:Highlander
+model:HGN-732 (Colleen)
 mul id:4323
 
 Config:Biped

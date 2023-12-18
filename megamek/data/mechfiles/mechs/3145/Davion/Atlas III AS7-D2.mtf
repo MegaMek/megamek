@@ -1,6 +1,5 @@
-Version:1.0
-Atlas III
-AS7-D2
+chassis:Atlas III
+model:AS7-D2
 mul id:6359
 
 Config:Biped

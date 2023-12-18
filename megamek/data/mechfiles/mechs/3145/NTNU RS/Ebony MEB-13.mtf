@@ -1,6 +1,5 @@
-Version:1.1
-Ebony
-MEB-13
+chassis:Ebony
+model:MEB-13
 mul id:6943
 
 Config:Biped

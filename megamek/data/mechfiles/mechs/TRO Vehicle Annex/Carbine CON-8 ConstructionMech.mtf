@@ -1,6 +1,5 @@
-Version:1.1
-Carbine
-CON-8 ConstructionMech
+chassis:Carbine
+model:CON-8 ConstructionMech
 mul id:3895
 
 Config:Biped

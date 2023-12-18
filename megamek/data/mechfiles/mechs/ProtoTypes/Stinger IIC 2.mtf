@@ -1,6 +1,5 @@
-Version:1.0
-Stinger IIC
-2
+chassis:Stinger IIC
+model:2
 mul id:5136
 
 Config:Biped

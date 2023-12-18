@@ -1,6 +1,5 @@
-Version:1.0
-Mjolnir
-MLR-B2
+chassis:Mjolnir
+model:MLR-B2
 mul id:2194
 
 Config:Biped

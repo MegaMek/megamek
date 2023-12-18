@@ -1,6 +1,5 @@
-Version:1.0
-O-Bakemono
-OBK-M10
+chassis:O-Bakemono
+model:OBK-M10
 mul id:2310
 
 Config:Biped

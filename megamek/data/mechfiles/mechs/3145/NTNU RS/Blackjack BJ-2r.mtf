@@ -1,6 +1,5 @@
-Version:1.0
-Blackjack
-BJ-2r
+chassis:Blackjack
+model:BJ-2r
 mul id:6914
 
 Config:Biped

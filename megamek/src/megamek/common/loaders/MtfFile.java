@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022-2023 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -30,8 +30,11 @@ import java.io.InputStreamReader;
 import java.util.*;
 
 /**
+ * This class represents mtf files which are used to store Meks. The class contains the file reader while the
+ * mtf file generation is currently located in {@link Mech#getMtf()}.
+ *
  * @author Ben
- * @since April 7, 2002, 8:47 PM
+ * @author Simon (Juliez)
  */
 public class MtfFile implements IMechLoader {
 
@@ -89,6 +92,7 @@ public class MtfFile implements IMechLoader {
             {Mech.LOC_LT, Mech.LOC_RT, Mech.LOC_CT};
 
     public static final String COMMENT = "#";
+    public static final String MTF_VERSION = "Version:";
     public static final String CHASSIS = "chassis:";
     public static final String MODEL = "model:";
     public static final String COCKPIT = "cockpit:";
@@ -142,7 +146,7 @@ public class MtfFile implements IMechLoader {
         try (InputStreamReader isr = new InputStreamReader(is);
              BufferedReader r = new BufferedReader(isr)) {
             critData = new String[9][12];
-            readCrits(r);
+            readLines(r);
         } catch (IOException ex) {
             LogManager.getLogger().error("", ex);
             throw new EntityLoadingException("I/O Error reading file");
@@ -152,57 +156,6 @@ public class MtfFile implements IMechLoader {
         } catch (NumberFormatException ex) {
             LogManager.getLogger().error("", ex);
             throw new EntityLoadingException("NumberFormatException reading file (format error)");
-        }
-    }
-
-    private void readCrits(BufferedReader r) throws IOException {
-        int slot = 0;
-        int loc = 0;
-        int weaponsCount;
-        int armorLocation;
-        while (r.ready()) {
-            String line = r.readLine().trim();
-
-            if (line.isBlank() || line.startsWith(COMMENT)) {
-                continue;
-            }
-
-            if (isTitleLine(line)) {
-                continue;
-            }
-
-            if (isValidLocation(line)) {
-                loc = getLocation(line);
-                slot = 0;
-                continue;
-            }
-
-            if (isProcessedComponent(line)) {
-                continue;
-            }
-
-            weaponsCount = weaponsList(line);
-
-            if (weaponsCount > 0) {
-                for (int count = 0; count < weaponsCount; count++) {
-                    r.readLine();
-                }
-                continue;
-            }
-
-            armorLocation = getArmorLocation(line);
-
-            if (armorLocation >= 0) {
-                armorValues[armorLocation] = line;
-                continue;
-            }
-            if (critData.length <= loc) {
-                continue;
-            }
-            if (critData[loc].length <= slot) {
-                continue;
-            }
-            critData[loc][slot++] = line.trim();
         }
     }
 
@@ -532,6 +485,81 @@ public class MtfFile implements IMechLoader {
         } catch (Exception ex) {
             LogManager.getLogger().error("", ex);
             throw new Exception(ex);
+        }
+    }
+
+    private String readLineIgnoringComments(BufferedReader reader) throws IOException {
+        while (true) {
+            String line = reader.readLine();
+            if (line == null) {
+                return "";
+            } else if (!line.startsWith(COMMENT)) {
+                return line;
+            }
+        }
+    }
+
+    private void readLines(BufferedReader r) throws IOException {
+        int slot = 0;
+        int loc = 0;
+        int weaponsCount;
+        int armorLocation;
+        while (r.ready()) {
+            String line = r.readLine().trim();
+
+            if (line.isBlank() || line.startsWith(COMMENT)) {
+                continue;
+            }
+
+            if (line.startsWith(MTF_VERSION)) {
+                // Reading the version, chassis and model as the first three lines without header is kept
+                // for backward compatibility for user-generated units. However the version is no longer checked
+                // for correct values as that makes no difference so long as the unit can be loaded
+                // Version 1.0: Initial version.
+                // Version 1.1: Added level 3 cockpit and gyro options.
+                // version 1.2: added full head ejection
+                // Version 1.3: Added MUL ID
+                chassis = readLineIgnoringComments(r);
+                model = readLineIgnoringComments(r);
+                continue;
+            }
+
+            if (isTitleLine(line)) {
+                continue;
+            }
+
+            if (isValidLocation(line)) {
+                loc = getLocation(line);
+                slot = 0;
+                continue;
+            }
+
+            if (isProcessedComponent(line)) {
+                continue;
+            }
+
+            weaponsCount = weaponsList(line);
+
+            if (weaponsCount > 0) {
+                for (int count = 0; count < weaponsCount; count++) {
+                    r.readLine();
+                }
+                continue;
+            }
+
+            armorLocation = getArmorLocation(line);
+
+            if (armorLocation >= 0) {
+                armorValues[armorLocation] = line;
+                continue;
+            }
+            if (critData.length <= loc) {
+                continue;
+            }
+            if (critData[loc].length <= slot) {
+                continue;
+            }
+            critData[loc][slot++] = line.trim();
         }
     }
 

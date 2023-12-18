@@ -433,9 +433,6 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
                         .append(m.getCurrentDamageCapacity(en, m.getLocation())).append(')');
             }
         }
-        if (m.isInternalBomb()) {
-            sb.append(" " + Messages.getString("MechDisplay.isInternalBomb"));
-        }
         return sb.toString();
     }
 

@@ -550,6 +550,10 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         if (isArmored()) {
             desc.append(" (armored)");
         }
+
+        if (isInternalBomb()) {
+            desc.append(" (Int. Bay)");
+        }
         return desc.toString();
     }
 

@@ -1,6 +1,5 @@
-Version:1.0
-Rifleman
-RFL-7N
+chassis:Rifleman
+model:RFL-7N
 mul id:7574
 
 Config:Biped

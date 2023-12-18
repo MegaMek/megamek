@@ -1,6 +1,5 @@
-Version:1.0
-Spider
-SDR-C
+chassis:Spider
+model:SDR-C
 mul id:3020
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Hatamoto-Kaze
-HTM-27V
+chassis:Hatamoto-Kaze
+model:HTM-27V
 mul id:1407
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.1
-Uni
-ATAE-70T CargoMech
+chassis:Uni
+model:ATAE-70T CargoMech
 mul id:7175
 
 Config:Quad

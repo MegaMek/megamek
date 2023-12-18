@@ -1,6 +1,5 @@
-Version:1.0
-Battle Cobra
-G
+chassis:Battle Cobra
+model:G
 mul id:8390
 
 Config:Biped Omnimech

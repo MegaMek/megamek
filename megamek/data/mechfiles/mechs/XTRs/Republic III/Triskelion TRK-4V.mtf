@@ -1,6 +1,5 @@
-Version:1.1
-Triskelion
-TRK-4V
+chassis:Triskelion
+model:TRK-4V
 mul id:7384
 
 Config:Tripod

@@ -1,6 +1,5 @@
-Version:1.0
-Hoplite
-HOP-4C
+chassis:Hoplite
+model:HOP-4C
 mul id:4331
 
 Config:Biped

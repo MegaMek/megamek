@@ -1,6 +1,5 @@
-Version:1.0
-Cephalus
-Prime
+chassis:Cephalus
+model:Prime
 mul id:3930
 
 Config:Biped Omnimech

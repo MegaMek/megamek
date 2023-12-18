@@ -1,6 +1,5 @@
-Version:1.0
-Vindicator
-VND-1X
+chassis:Vindicator
+model:VND-1X
 mul id:3425
 
 Config:Biped

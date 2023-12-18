@@ -1,6 +1,5 @@
-Version:1.2
-Griffin
-GRF-6CS
+chassis:Griffin
+model:GRF-6CS
 mul id:1306
 
 Config:Biped

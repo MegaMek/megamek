@@ -1,6 +1,5 @@
-Version:1.0
-Blackjack
-BJ-1DC
+chassis:Blackjack
+model:BJ-1DC
 mul id:375
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.1
-Swordsman
-SWD-1
+chassis:Swordsman
+model:SWD-1
 mul id:7181
 
 Config:Biped

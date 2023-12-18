@@ -1,6 +1,5 @@
-Version:1.1
-Rook
-NH-1X 'Rook-X'
+chassis:Rook
+model:NH-1X 'Rook-X'
 mul id:4935
 
 Config:Biped

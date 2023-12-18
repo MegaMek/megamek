@@ -1,6 +1,5 @@
-Version:1.0
-Locust
-LCT-5T
+chassis:Locust
+model:LCT-5T
 mul id:1909
 
 Config:Biped

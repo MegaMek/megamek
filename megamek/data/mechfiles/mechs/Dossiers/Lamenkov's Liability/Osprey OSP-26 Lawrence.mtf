@@ -1,6 +1,5 @@
-Version:1.1
-Osprey
-OSP-26 (Lawrence)
+chassis:Osprey
+model:OSP-26 (Lawrence)
 mul id:2347
 
 Config:Biped

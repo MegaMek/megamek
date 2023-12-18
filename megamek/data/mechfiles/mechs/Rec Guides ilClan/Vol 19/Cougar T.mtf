@@ -1,6 +1,5 @@
-Version:1.0
-Cougar
-T
+chassis:Cougar
+model:T
 mul id:8325
 
 Config:Biped Omnimech

@@ -1,6 +1,5 @@
-Version:1.0
-Cobra
-CBR-02
+chassis:Cobra
+model:CBR-02
 mul id:655
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.3
-Hunchback
-HBK-7R
+chassis:Hunchback
+model:HBK-7R
 mul id:4338
 Config:Biped
 techbase:Inner Sphere

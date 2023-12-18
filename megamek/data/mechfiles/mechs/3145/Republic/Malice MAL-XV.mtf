@@ -1,6 +1,5 @@
-Version:1.0
-Malice
-MAL-XV
+chassis:Malice
+model:MAL-XV
 mul id:6726
 
 Config:Biped

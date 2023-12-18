@@ -1,6 +1,5 @@
-Version:1.0
-Ocelot
-2
+chassis:Ocelot
+model:2
 mul id:2314
 
 Config:Biped

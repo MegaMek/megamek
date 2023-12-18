@@ -1,6 +1,5 @@
-Version:1.0
-Arctic Wolf II
-C
+chassis:Arctic Wolf II
+model:C
 mul id:106
 
 Config:Biped Omnimech

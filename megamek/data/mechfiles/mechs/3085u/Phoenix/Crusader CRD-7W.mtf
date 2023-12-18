@@ -1,6 +1,5 @@
-Version:1.1
-Crusader
-CRD-7W
+chassis:Crusader
+model:CRD-7W
 mul id:763
 
 Config:Biped

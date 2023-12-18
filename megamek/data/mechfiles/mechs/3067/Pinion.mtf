@@ -1,6 +1,5 @@
-Version:1.0
-Pinion
-
+chassis:Pinion
+model:
 mul id:4829
 
 Config:Biped

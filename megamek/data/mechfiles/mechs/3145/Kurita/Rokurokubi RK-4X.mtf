@@ -1,6 +1,5 @@
-Version:1.1
-Rokurokubi
-RK-4X
+chassis:Rokurokubi
+model:RK-4X
 mul id:6394
 
 Config:Biped

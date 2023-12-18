@@ -1,6 +1,5 @@
-Version:1.1
-Marauder II
-MAD-6C
+chassis:Marauder II
+model:MAD-6C
 mul id:7521
 
 Config:Biped

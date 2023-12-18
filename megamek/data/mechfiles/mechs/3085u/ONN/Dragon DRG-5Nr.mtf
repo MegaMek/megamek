@@ -1,6 +1,5 @@
-Version:1.0
-Dragon
-DRG-5Nr
+chassis:Dragon
+model:DRG-5Nr
 mul id:912
 
 Config:Biped

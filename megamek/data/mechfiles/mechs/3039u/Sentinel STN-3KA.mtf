@@ -1,6 +1,5 @@
-Version:1.0
-Sentinel
-STN-3KA
+chassis:Sentinel
+model:STN-3KA
 mul id:2858
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Beowulf IIC
-PR
+chassis:Beowulf IIC
+model:PR
 mul id:7294
 
 Config:Biped

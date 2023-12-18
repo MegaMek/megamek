@@ -1,6 +1,5 @@
-Version:1.3
-Spector
-SPR-6F
+chassis:Spector
+model:SPR-6F
 mul id:9375
 Config:Biped
 techbase:Mixed (IS Chassis)

@@ -1,6 +1,5 @@
-Version:1.0
-Marshal
-MHL-3MC
+chassis:Marshal
+model:MHL-3MC
 mul id:6895
 
 Config:Biped

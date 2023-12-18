@@ -1,6 +1,5 @@
-Version:1.0
-Commando
-COM-4H
+chassis:Commando
+model:COM-4H
 mul id:673
 
 Config:Biped

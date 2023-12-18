@@ -1,6 +1,5 @@
-Version:1.0
-Mad Cat Mk IV (Savage Wolf)
-PR 2
+chassis:Mad Cat Mk IV (Savage Wolf)
+model:PR 2
 mul id:6575
 
 Config:Biped

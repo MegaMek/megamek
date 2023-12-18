@@ -1,6 +1,5 @@
-Version:1.3
-Banzai
-BNZ-X
+chassis:Banzai
+model:BNZ-X
 mul id:251
 Config:Biped
 techbase:Mixed (IS Chassis)

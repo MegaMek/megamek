@@ -1,6 +1,5 @@
-Version:1.0
-Hierofalcon
-Prime
+chassis:Hierofalcon
+model:Prime
 mul id:7484
 
 Config:Biped Omnimech

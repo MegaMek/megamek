@@ -1,6 +1,5 @@
-Version:1.3
-Vulcan
-VL-2T
+chassis:Vulcan
+model:VL-2T
 mul id:3458
 Config:Biped
 techbase:Inner Sphere

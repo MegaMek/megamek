@@ -1,6 +1,5 @@
-Version:1.0
-Jackal
-JA-KL-55
+chassis:Jackal
+model:JA-KL-55
 mul id:1655
 
 Config:Biped

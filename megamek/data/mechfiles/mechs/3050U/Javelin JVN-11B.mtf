@@ -1,6 +1,5 @@
-Version:1.0
-Javelin
-JVN-11B
+chassis:Javelin
+model:JVN-11B
 mul id:1678
 
 Config:Biped

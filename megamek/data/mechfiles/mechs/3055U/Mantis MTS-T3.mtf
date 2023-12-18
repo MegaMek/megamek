@@ -1,6 +1,5 @@
-Version:1.1
-Mantis
-MTS-T3
+chassis:Mantis
+model:MTS-T3
 mul id:2026
 
 Config:Biped

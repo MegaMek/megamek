@@ -1,6 +1,5 @@
-Version:1.0
-Valkyrie
-VLK-QT2
+chassis:Valkyrie
+model:VLK-QT2
 mul id:3380
 
 Config:Biped

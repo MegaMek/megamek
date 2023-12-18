@@ -1,6 +1,5 @@
-Version:1.0
-Copperhead
-CPR-HD-002
+chassis:Copperhead
+model:CPR-HD-002
 mul id:690
 
 Config:Biped

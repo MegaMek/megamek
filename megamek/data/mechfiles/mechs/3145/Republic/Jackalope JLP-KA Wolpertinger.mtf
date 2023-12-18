@@ -1,6 +1,5 @@
-Version:1.1
-Jackalope
-JLP-KW 'Wolpertinger'
+chassis:Jackalope
+model:JLP-KW 'Wolpertinger'
 mul id:6713
 
 Config:Biped

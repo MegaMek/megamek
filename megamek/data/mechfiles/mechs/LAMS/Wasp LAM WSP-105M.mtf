@@ -1,6 +1,5 @@
-Version:1.0
-Wasp LAM
-WSP-105M
+chassis:Wasp LAM
+model:WSP-105M
 mul id:5390
 
 Config:LAM

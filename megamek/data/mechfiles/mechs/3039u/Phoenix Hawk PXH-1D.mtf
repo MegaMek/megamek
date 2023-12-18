@@ -1,6 +1,5 @@
-Version:1.0
-Phoenix Hawk
-PXH-1D
+chassis:Phoenix Hawk
+model:PXH-1D
 mul id:2494
 
 Config:Biped

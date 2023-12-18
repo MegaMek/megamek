@@ -1,6 +1,5 @@
-Version:1.1
-Jabberwocky
-JAW-65A EngineerMech
+chassis:Jabberwocky
+model:JAW-65A EngineerMech
 mul id:4383
 
 Config:Biped

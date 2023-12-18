@@ -1,6 +1,5 @@
-Version:1.1
-Tessen
-TSN-C3M
+chassis:Tessen
+model:TSN-C3M
 mul id:5678
 
 Config:Biped

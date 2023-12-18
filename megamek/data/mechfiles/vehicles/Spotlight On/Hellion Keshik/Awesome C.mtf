@@ -1,6 +1,5 @@
-Version:1.3
-Awesome
-C
+chassis:Awesome
+model:C
 mul id:8470
 Config:Biped
 techbase:Clan

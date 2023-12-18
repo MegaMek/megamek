@@ -1,6 +1,5 @@
-Version:1.0
-Pompier
-GM-3CD Firemech 
+chassis:Pompier
+model:GM-3CD Firemech 
 mul id:4843
 
 Config:Biped

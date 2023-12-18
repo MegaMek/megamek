@@ -1,6 +1,5 @@
-Version:1.0
-Koschei
-KSC-4L
+chassis:Koschei
+model:KSC-4L
 mul id:1823
 
 Config:Biped

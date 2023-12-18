@@ -1,6 +1,5 @@
-Version:1.1
-Ostroc
-OSR-2C (Michi)
+chassis:Ostroc
+model:OSR-2C (Michi)
 mul id:2349
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Longshot
-LNG-3C
+chassis:Longshot
+model:LNG-3C
 mul id:1949
 
 Config:Biped

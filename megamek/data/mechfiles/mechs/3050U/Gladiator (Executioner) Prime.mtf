@@ -1,6 +1,5 @@
-Version:1.1
-Gladiator (Executioner)
-Prime
+chassis:Gladiator (Executioner)
+model:Prime
 mul id:1211
 
 Config:Biped Omnimech

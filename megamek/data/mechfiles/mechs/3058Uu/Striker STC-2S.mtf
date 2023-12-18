@@ -1,6 +1,5 @@
-Version:1.0
-Striker
-STC-2S
+chassis:Striker
+model:STC-2S
 mul id:3096
 
 Config:Biped

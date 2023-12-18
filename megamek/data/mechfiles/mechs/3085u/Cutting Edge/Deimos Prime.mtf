@@ -1,6 +1,5 @@
-Version:1.0
-Deimos
-Prime
+chassis:Deimos
+model:Prime
 mul id:856
 
 Config:Biped Omnimech

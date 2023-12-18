@@ -1,6 +1,5 @@
-Version:1.0
-Ostroc
-OSR-2D
+chassis:Ostroc
+model:OSR-2D
 mul id:2351
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Battle Cobra
-F
+chassis:Battle Cobra
+model:F
 mul id:271
 
 Config:Biped Omnimech

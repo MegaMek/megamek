@@ -1,6 +1,5 @@
-Version:1.0
-Wyvern
-WVE-6N
+chassis:Wyvern
+model:WVE-6N
 mul id:3599
 
 Config:Biped

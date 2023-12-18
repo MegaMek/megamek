@@ -1,6 +1,5 @@
-Version:1.0
-Viper
-VP-5
+chassis:Viper
+model:VP-5
 mul id:9488
 
 Config:Biped

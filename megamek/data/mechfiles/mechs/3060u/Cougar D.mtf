@@ -1,6 +1,5 @@
-Version:1.0
-Cougar
-D
+chassis:Cougar
+model:D
 mul id:707
 
 Config:Biped Omnimech

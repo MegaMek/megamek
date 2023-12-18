@@ -1,6 +1,5 @@
-Version:1.1
-Marauder
-MAD-SD (Douglass)
+chassis:Marauder
+model:MAD-SD (Douglass)
 mul id:2052
 
 Config:Biped

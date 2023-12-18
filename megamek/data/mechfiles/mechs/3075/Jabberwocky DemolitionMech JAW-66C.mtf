@@ -1,6 +1,5 @@
-Version:1.1
-Jabberwocky
-JAW-66C DemolitionMech
+chassis:Jabberwocky
+model:JAW-66C DemolitionMech
 mul id:1651
 
 Config:Biped

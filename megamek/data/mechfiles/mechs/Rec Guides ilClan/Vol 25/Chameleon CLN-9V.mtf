@@ -1,6 +1,5 @@
-Version:1.3
-Chameleon
-CLN-9V
+chassis:Chameleon
+model:CLN-9V
 mul id:9268
 Config:Biped
 techbase:Inner Sphere

@@ -1,6 +1,5 @@
-Version:1.3
-Spector
-SPR-4F
+chassis:Spector
+model:SPR-4F
 mul id:3002
 Config:Biped
 techbase:Inner Sphere

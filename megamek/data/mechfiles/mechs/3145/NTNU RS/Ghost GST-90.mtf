@@ -1,6 +1,5 @@
-Version:1.0
-Ghost
-GST-90
+chassis:Ghost
+model:GST-90
 mul id:6906
 
 Config:Biped

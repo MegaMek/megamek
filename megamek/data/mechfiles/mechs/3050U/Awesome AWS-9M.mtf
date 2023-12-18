@@ -1,6 +1,5 @@
-Version:1.0
-Awesome
-AWS-9M
+chassis:Awesome
+model:AWS-9M
 mul id:178
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.1
-Sentry
-SNT-W5
+chassis:Sentry
+model:SNT-W5
 mul id:2867
 
 Config:Biped

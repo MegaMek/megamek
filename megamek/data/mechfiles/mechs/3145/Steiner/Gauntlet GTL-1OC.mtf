@@ -1,6 +1,5 @@
-Version:1.0
-Gauntlet
-GTL-1OC
+chassis:Gauntlet
+model:GTL-1OC
 mul id:6624
 
 Config:Biped Omnimech

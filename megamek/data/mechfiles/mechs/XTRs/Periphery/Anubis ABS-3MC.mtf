@@ -1,6 +1,5 @@
-Version:1.3
-Anubis
-ABS-3MC
+chassis:Anubis
+model:ABS-3MC
 mul id:5562
 Config:Biped
 techbase:Inner Sphere

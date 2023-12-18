@@ -1,6 +1,5 @@
-Version:1.1
-Osteon
-(Jaguar)
+chassis:Osteon
+model:(Jaguar)
 mul id:5830
 
 Config:Biped Omnimech

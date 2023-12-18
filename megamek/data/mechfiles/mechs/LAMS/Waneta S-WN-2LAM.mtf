@@ -1,6 +1,5 @@
-Version:1.1
-Waneta
-S-WN-2LAM
+chassis:Waneta
+model:S-WN-2LAM
 mul id:5380
 
 Config:LAM

@@ -1,6 +1,5 @@
-Version:1.0
-Lynx
-LNX-9R
+chassis:Lynx
+model:LNX-9R
 mul id:1969
 
 Config:Biped

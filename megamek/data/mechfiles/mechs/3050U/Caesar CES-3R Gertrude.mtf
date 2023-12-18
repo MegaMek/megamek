@@ -1,6 +1,5 @@
-Version:1.0
-Caesar
-CES-3R (Gertrude)
+chassis:Caesar
+model:CES-3R (Gertrude)
 mul id:3884
 
 Config:Biped

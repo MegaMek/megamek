@@ -1,6 +1,5 @@
-Version:1.1
-Prowler
-PWR-1X1
+chassis:Prowler
+model:PWR-1X1
 mul id:2582
 
 Config:Biped

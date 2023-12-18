@@ -1,6 +1,5 @@
-Version:1.0
-Red Shift
-RDS-2B
+chassis:Red Shift
+model:RDS-2B
 mul id:4907
 
 Config:Biped

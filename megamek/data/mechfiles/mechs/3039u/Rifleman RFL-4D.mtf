@@ -1,6 +1,5 @@
-Version:1.0
-Rifleman
-RFL-4D
+chassis:Rifleman
+model:RFL-4D
 mul id:2698
 
 Config:Biped

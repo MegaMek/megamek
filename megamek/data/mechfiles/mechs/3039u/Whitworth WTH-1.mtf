@@ -1,6 +1,5 @@
-Version:1.0
-Whitworth
-WTH-1
+chassis:Whitworth
+model:WTH-1
 mul id:3538
 
 Config:Biped

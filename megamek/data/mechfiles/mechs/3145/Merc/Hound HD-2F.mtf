@@ -1,6 +1,5 @@
-Version:1.0
-Hound
-HD-2F
+chassis:Hound
+model:HD-2F
 mul id:6563
 
 Config:Biped

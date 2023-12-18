@@ -1,6 +1,5 @@
-Version:1.0
-Havoc
-HVC-P6
+chassis:Havoc
+model:HVC-P6
 mul id:6502
 
 Config:Biped

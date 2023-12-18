@@ -1,6 +1,5 @@
-Version:1.0
-Stiletto
-STO-6X
+chassis:Stiletto
+model:STO-6X
 mul id:5134
 
 Config:Biped

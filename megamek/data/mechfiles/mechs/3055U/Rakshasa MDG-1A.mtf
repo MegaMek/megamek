@@ -1,6 +1,5 @@
-Version:1.0
-Rakshasa
-MDG-1A
+chassis:Rakshasa
+model:MDG-1A
 mul id:2631
 
 Config:Biped

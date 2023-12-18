@@ -1,6 +1,5 @@
-Version:1.1
-BattleMaster
-BLR-10S
+chassis:BattleMaster
+model:BLR-10S
 mul id:280
 
 Config:Biped

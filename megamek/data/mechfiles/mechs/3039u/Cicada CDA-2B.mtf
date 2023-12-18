@@ -1,6 +1,5 @@
-Version:1.0
-Cicada
-CDA-2B
+chassis:Cicada
+model:CDA-2B
 mul id:592
 
 Config:Biped

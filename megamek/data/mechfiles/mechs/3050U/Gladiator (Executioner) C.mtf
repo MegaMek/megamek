@@ -1,6 +1,5 @@
-Version:1.2
-Gladiator (Executioner)
-C
+chassis:Gladiator (Executioner)
+model:C
 mul id:1205
 
 Config:Biped Omnimech

@@ -1,6 +1,5 @@
-Version:1.1
-Dig King
-RCL-1 MiningMech
+chassis:Dig King
+model:RCL-1 MiningMech
 
 mul id:4078
 

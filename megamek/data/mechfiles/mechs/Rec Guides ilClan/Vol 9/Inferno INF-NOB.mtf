@@ -1,6 +1,5 @@
-Version:1.1
-Inferno
-INF-NOB
+chassis:Inferno
+model:INF-NOB
 mul id:7717
 
 Config:Biped Omnimech

@@ -1,6 +1,5 @@
-Version:1.0
-Enfield
-END-6J
+chassis:Enfield
+model:END-6J
 mul id:972
 
 Config:Biped

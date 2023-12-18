@@ -1,6 +1,5 @@
-Version:1.0
-Archer
-ARC-2Rb
+chassis:Archer
+model:ARC-2Rb
 mul id:75
 
 Config:Biped

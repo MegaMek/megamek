@@ -1,6 +1,5 @@
-Version:1.0
-Argus
-AGS-4D
+chassis:Argus
+model:AGS-4D
 mul id:3730
 
 Config:Biped

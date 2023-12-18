@@ -1,6 +1,5 @@
-Version:1.0
-Rifleman
-RFL-8X
+chassis:Rifleman
+model:RFL-8X
 mul id:2706
 
 Config:Biped

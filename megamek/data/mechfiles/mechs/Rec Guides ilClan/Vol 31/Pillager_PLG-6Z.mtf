@@ -1,6 +1,5 @@
-Version:1.0
-Pillager
-PLG-6Z
+chassis:Pillager
+model:PLG-6Z
 
 Config:Biped
 techbase:Mixed (IS Chassis)

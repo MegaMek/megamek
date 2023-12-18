@@ -1,6 +1,5 @@
-Version:1.0
-Hollander
-BZK-G1
+chassis:Hollander
+model:BZK-G1
 mul id:1537
 
 Config:Biped

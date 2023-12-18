@@ -1,6 +1,5 @@
-Version:1.0
-Raijin
-RJN-101-C
+chassis:Raijin
+model:RJN-101-C
 mul id:2627
 
 Config:Biped

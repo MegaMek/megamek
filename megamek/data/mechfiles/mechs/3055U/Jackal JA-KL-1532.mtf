@@ -1,6 +1,5 @@
-Version:1.0
-Jackal
-JA-KL-1532
+chassis:Jackal
+model:JA-KL-1532
 mul id:1653
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Viking
-VKG-2G
+chassis:Viking
+model:VKG-2G
 mul id:3418
 
 Config:Biped

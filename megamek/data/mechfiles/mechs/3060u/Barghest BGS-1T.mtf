@@ -1,6 +1,5 @@
-Version:1.3
-Barghest
-BGS-1T
+chassis:Barghest
+model:BGS-1T
 mul id:252
 Config:Quad
 techbase:Inner Sphere

@@ -1,6 +1,5 @@
-Version:1.3
-Hunchback
-HBK-6P
+chassis:Hunchback
+model:HBK-6P
 mul id:7993
 Config:Biped
 techbase:Inner Sphere

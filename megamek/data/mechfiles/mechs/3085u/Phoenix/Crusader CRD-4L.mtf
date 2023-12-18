@@ -1,6 +1,5 @@
-Version:1.0
-Crusader
-CRD-4L
+chassis:Crusader
+model:CRD-4L
 mul id:757
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.3
-Devastator
-DVS-2-EC
+chassis:Devastator
+model:DVS-2-EC
 mul id:7686
 Config:Biped
 techbase:Mixed (Clan Chassis)

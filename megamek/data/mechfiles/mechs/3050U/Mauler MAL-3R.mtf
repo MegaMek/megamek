@@ -1,6 +1,5 @@
-Version:1.1
-Mauler
-MAL-3R
+chassis:Mauler
+model:MAL-3R
 mul id:2102
 
 Config:Biped

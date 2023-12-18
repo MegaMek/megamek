@@ -1,6 +1,5 @@
-Version:1.0
-Firebee
-WI-WAM MilitiaMech
+chassis:Firebee
+model:WI-WAM MilitiaMech
 mul id:7838
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Ursus
-
+chassis:Ursus
+model:
 mul id:3363
 
 Config:Biped

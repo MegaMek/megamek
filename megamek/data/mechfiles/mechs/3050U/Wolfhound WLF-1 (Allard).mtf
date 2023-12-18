@@ -1,6 +1,5 @@
-Version:1.2
-Wolfhound
-WLF-1 (Allard)
+chassis:Wolfhound
+model:WLF-1 (Allard)
 mul id:5416
 
 Config:Biped

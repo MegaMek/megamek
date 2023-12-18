@@ -1,6 +1,5 @@
-Version:1.1
-Shiro
-SH-1V
+chassis:Shiro
+model:SH-1V
 mul id:6416
 
 Config:Biped

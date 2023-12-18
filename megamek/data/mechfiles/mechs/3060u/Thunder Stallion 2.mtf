@@ -1,6 +1,5 @@
-Version:1.0
-Thunder Stallion
-2 'Fire Stallion'
+chassis:Thunder Stallion
+model:2 'Fire Stallion'
 mul id:3225
 
 Config:Quad

@@ -1,6 +1,5 @@
-Version:1.3
-Javelin
-JVN-10N
+chassis:Javelin
+model:JVN-10N
 mul id:1675
 Config:Biped
 techbase:Inner Sphere

@@ -1,6 +1,5 @@
-Version:1.0
-Viking IIC
-
+chassis:Viking IIC
+model:
 mul id:6634
 
 Config:Biped

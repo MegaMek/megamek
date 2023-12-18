@@ -1,6 +1,5 @@
-Version:1.0
-Grasshopper
-GHR-8K
+chassis:Grasshopper
+model:GHR-8K
 mul id:7450
 
 Config:Biped

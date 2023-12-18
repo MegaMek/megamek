@@ -1,6 +1,5 @@
-Version:1.1
-Coyotl
-B
+chassis:Coyotl
+model:B
 mul id:7606
 
 Config:Biped Omnimech

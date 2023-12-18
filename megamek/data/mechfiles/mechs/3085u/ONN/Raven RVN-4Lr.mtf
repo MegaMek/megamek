@@ -1,6 +1,5 @@
-Version:1.0
-Raven
-RVN-4Lr
+chassis:Raven
+model:RVN-4Lr
 mul id:2668
 
 Config:Biped

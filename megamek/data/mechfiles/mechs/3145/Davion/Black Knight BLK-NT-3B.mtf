@@ -1,6 +1,5 @@
-Version:1.0
-Black Knight
-BLK-NT-3B
+chassis:Black Knight
+model:BLK-NT-3B
 mul id:6349
 
 Config:Biped

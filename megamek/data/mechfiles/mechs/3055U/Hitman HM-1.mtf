@@ -1,6 +1,5 @@
-Version:1.0
-Hitman
-HM-1
+chassis:Hitman
+model:HM-1
 mul id:1533
 
 Config:Biped

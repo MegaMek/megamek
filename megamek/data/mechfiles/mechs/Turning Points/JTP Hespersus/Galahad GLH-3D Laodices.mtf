@@ -1,6 +1,5 @@
-Version:1.1
-Galahad
-GLH-3D (Laodices)
+chassis:Galahad
+model:GLH-3D (Laodices)
 mul id:6978
 
 Config:Biped

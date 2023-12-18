@@ -1,6 +1,5 @@
-Version:1.0
-Lightray
-LGH-5W
+chassis:Lightray
+model:LGH-5W
 mul id:4521
 
 Config:Biped

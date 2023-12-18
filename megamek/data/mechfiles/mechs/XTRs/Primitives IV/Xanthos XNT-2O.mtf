@@ -1,6 +1,5 @@
-Version:1.3
-Xanthos
-XNT-2O
+chassis:Xanthos
+model:XNT-2O
 mul id:3603
 Config:Quad
 techbase:Inner Sphere

@@ -1,6 +1,5 @@
-Version:1.0
-Wolverine
-WVR-6M
+chassis:Wolverine
+model:WVR-6M
 mul id:3572
 
 Config:Biped

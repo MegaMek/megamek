@@ -1,6 +1,5 @@
-Version:1.3
-Caesar
-CES-3R 'Archangel'
+chassis:Caesar
+model:CES-3R 'Archangel'
 mul id:3883
 Config:Biped
 techbase:Mixed (IS Chassis)

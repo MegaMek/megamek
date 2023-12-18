@@ -1,6 +1,5 @@
-Version:1.0
-Thunderbolt IIC
-
+chassis:Thunderbolt IIC
+model:
 mul id:5239
 
 Config:Biped

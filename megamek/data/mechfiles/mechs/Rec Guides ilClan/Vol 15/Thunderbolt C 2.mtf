@@ -1,6 +1,5 @@
-Version:1.0
-Thunderbolt
-C 2
+chassis:Thunderbolt
+model:C 2
 mul id:8195
 
 Config:Biped

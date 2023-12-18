@@ -1,6 +1,5 @@
-Version:1.1
-Pathfinder
-PFF-2
+chassis:Pathfinder
+model:PFF-2
 mul id:4790
 
 Config:Biped

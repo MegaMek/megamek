@@ -1,6 +1,5 @@
-Version:1.0
-Grim Reaper
-GRM-R-PR31
+chassis:Grim Reaper
+model:GRM-R-PR31
 mul id:1330
 
 Config:Biped

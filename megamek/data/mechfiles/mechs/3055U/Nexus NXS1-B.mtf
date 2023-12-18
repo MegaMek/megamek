@@ -1,6 +1,5 @@
-Version:1.0
-Nexus
-NXS1-B
+chassis:Nexus
+model:NXS1-B
 mul id:2260
 
 Config:Biped

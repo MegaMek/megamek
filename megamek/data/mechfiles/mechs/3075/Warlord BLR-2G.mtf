@@ -1,6 +1,5 @@
-Version:1.0
-Warlord
-BLR-2G
+chassis:Warlord
+model:BLR-2G
 mul id:3511
 
 Config:Biped

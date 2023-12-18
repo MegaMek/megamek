@@ -1,6 +1,5 @@
-Version:1.0
-UrbanMech IIC
-
+chassis:UrbanMech IIC
+model:
 mul id:3361
 
 Config:Biped

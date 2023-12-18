@@ -1,6 +1,5 @@
-Version:1.1
-Deva
-C-DVA-O Invictus
+chassis:Deva
+model:C-DVA-O Invictus
 mul id:885
 
 Config:Biped Omnimech

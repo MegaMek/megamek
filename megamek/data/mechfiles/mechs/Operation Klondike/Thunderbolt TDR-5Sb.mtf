@@ -1,6 +1,5 @@
-Version:1.1
-Thunderbolt
-TDR-5Sb
+chassis:Thunderbolt
+model:TDR-5Sb
 mul id:3239
 source:Historical: Operation Klondike
 

@@ -1,6 +1,5 @@
-Version:1.1
-Vindicator
-VND-5L
+chassis:Vindicator
+model:VND-5L
 mul id:3430
 
 Config:Biped

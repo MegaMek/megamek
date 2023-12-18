@@ -1,6 +1,5 @@
-Version:1.0
-Stiletto
-STO-4A
+chassis:Stiletto
+model:STO-4A
 mul id:5131
 
 Config:Biped

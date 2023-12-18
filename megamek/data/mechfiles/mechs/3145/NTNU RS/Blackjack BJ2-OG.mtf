@@ -1,6 +1,5 @@
-Version:1.0
-Blackjack
-BJ2-OG
+chassis:Blackjack
+model:BJ2-OG
 mul id:6908
 
 Config:Biped Omnimech

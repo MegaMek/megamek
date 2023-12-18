@@ -1,6 +1,5 @@
-Version:1.3
-Gladiator-B (Executioner-B)
-B
+chassis:Gladiator-B (Executioner-B)
+model:B
 mul id:8465
 Config:Biped Omnimech
 techbase:Clan

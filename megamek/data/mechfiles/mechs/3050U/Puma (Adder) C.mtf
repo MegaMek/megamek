@@ -1,6 +1,5 @@
-Version:1.2
-Puma (Adder)
-C
+chassis:Puma (Adder)
+model:C
 mul id:2593
 
 Config:Biped Omnimech

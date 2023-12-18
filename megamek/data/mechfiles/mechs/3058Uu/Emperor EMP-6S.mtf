@@ -1,6 +1,5 @@
-Version:1.0
-Emperor
-EMP-6S
+chassis:Emperor
+model:EMP-6S
 mul id:970
 
 Config:Biped

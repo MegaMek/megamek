@@ -1,6 +1,5 @@
-Version:1.0
-Wight
-WGT-2LAWC3
+chassis:Wight
+model:WGT-2LAWC3
 mul id:3549
 
 Config:Biped

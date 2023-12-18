@@ -1,6 +1,5 @@
-Version:1.3
-Ares
-ARS-V1 Zeus
+chassis:Ares
+model:ARS-V1 Zeus
 mul id:6685
 Config:Tripod Omnimech
 techbase:Mixed (IS Chassis)

@@ -1,6 +1,5 @@
-Version:1.0
-Strider
-SR1-OE
+chassis:Strider
+model:SR1-OE
 mul id:3089
 
 Config:Biped Omnimech

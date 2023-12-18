@@ -1,6 +1,5 @@
-Version:1.1
-Paladin
-PAL-2
+chassis:Paladin
+model:PAL-2
 mul id:2409
 
 Config:Biped

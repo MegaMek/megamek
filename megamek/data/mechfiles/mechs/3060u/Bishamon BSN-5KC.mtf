@@ -1,6 +1,5 @@
-Version:1.0
-Bishamon
-BSN-5KC
+chassis:Bishamon
+model:BSN-5KC
 mul id:334
 
 Config:Quad

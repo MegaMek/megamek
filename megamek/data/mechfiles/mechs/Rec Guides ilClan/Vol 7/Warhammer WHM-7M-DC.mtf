@@ -1,6 +1,5 @@
-Version:1.1
-Warhammer
-WHM-7M-DC
+chassis:Warhammer
+model:WHM-7M-DC
 mul id:5386
 
 Config:Biped

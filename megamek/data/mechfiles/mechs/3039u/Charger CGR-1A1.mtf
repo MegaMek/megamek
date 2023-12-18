@@ -1,6 +1,5 @@
-Version:1.3
-Charger
-CGR-1A1
+chassis:Charger
+model:CGR-1A1
 mul id:559
 Config:Biped
 techbase:Inner Sphere

@@ -1,6 +1,5 @@
-Version:1.0
-Black Knight
-BL-18-KNT
+chassis:Black Knight
+model:BL-18-KNT
 mul id:7791
 
 Config:Biped

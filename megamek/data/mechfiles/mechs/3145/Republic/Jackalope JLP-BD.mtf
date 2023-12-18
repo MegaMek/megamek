@@ -1,6 +1,5 @@
-Version:1.0
-Jackalope
-JLP-BD
+chassis:Jackalope
+model:JLP-BD
 mul id:6672
 
 Config:Biped

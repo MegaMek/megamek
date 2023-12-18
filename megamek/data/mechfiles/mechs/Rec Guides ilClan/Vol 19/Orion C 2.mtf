@@ -1,6 +1,5 @@
-Version:1.0
-Orion
-C 2
+chassis:Orion
+model:C 2
 mul id:8317
 
 Config:Biped

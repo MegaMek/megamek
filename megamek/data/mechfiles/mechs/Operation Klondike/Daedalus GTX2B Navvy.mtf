@@ -1,6 +1,5 @@
-Version:1.1
-Daedalus
-GTX2B 'Navvy'
+chassis:Daedalus
+model:GTX2B 'Navvy'
 mul id:795
 
 Config:Quad

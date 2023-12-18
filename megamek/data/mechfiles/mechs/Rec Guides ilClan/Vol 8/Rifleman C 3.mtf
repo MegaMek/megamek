@@ -1,6 +1,5 @@
-Version:1.0
-Rifleman
-C 3
+chassis:Rifleman
+model:C 3
 mul id:7576
 
 Config:Biped

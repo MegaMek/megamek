@@ -1,6 +1,5 @@
-Version:1.0
-War Dog
-WR-DG-03FC
+chassis:War Dog
+model:WR-DG-03FC
 mul id:3477
 
 Config:Biped

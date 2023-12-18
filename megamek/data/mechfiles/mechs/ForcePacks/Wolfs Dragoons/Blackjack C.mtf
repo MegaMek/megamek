@@ -1,6 +1,5 @@
-Version:1.0
-Blackjack
-C
+chassis:Blackjack
+model:C
 mul id:8388
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Panther
-PNT-9R
+chassis:Panther
+model:PNT-9R
 mul id:2425
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Vulture Mk IV (Mad Dog Mk IV)
-C
+chassis:Vulture Mk IV (Mad Dog Mk IV)
+model:C
 mul id:6561
 
 Config:Biped Omnimech

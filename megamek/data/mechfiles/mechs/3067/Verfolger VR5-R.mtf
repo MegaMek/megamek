@@ -1,6 +1,5 @@
-Version:1.0
-Verfolger
-VR5-R
+chassis:Verfolger
+model:VR5-R
 mul id:5346
 
 Config:Biped

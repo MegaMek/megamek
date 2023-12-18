@@ -1,6 +1,5 @@
-Version:1.0
-Osiris
-OSR-3D
+chassis:Osiris
+model:OSR-3D
 mul id:4763
 
 Config:Biped

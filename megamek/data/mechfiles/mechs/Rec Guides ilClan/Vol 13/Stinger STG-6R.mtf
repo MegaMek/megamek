@@ -1,6 +1,5 @@
-Version:1.0
-Stinger
-STG-6R
+chassis:Stinger
+model:STG-6R
 mul id:8124
 
 Config:Biped

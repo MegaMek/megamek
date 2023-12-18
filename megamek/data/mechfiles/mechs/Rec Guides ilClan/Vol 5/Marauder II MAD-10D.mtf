@@ -1,6 +1,5 @@
-Version:1.1
-Marauder II
-MAD-10D
+chassis:Marauder II
+model:MAD-10D
 mul id:7519
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Flashfire
-FLS-P5
+chassis:Flashfire
+model:FLS-P5
 mul id:1122
 
 Config:Biped

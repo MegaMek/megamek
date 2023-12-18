@@ -1,6 +1,5 @@
-Version:1.0
-Cougar
-Prime
+chassis:Cougar
+model:Prime
 mul id:712
 
 Config:Biped Omnimech

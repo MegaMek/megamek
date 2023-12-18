@@ -1,6 +1,5 @@
-Version:1.0
-Mercury
-MCY-105
+chassis:Mercury
+model:MCY-105
 mul id:8305
 
 Config:Biped

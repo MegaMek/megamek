@@ -1,6 +1,5 @@
-Version:1.3
-Hellhound II-P (Hellcat-P)
-
+chassis:Hellhound II-P (Hellcat-P)
+model:
 mul id:9430
 Config:Biped
 techbase:Clan

@@ -1,6 +1,5 @@
-Version:1.0
-Raven
-RVN-2X
+chassis:Raven
+model:RVN-2X
 mul id:2663
 
 Config:Biped

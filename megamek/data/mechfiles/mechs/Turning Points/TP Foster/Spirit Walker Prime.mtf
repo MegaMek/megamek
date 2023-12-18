@@ -1,6 +1,5 @@
-Version:1.0
-Spirit Walker
-Prime
+chassis:Spirit Walker
+model:Prime
 
 Config:Biped Omnimech
 techbase:Clan

@@ -1,6 +1,5 @@
-Version:1.0
-BattleAxe
-BKX-7NC
+chassis:BattleAxe
+model:BKX-7NC
 mul id:278
 
 Config:Biped

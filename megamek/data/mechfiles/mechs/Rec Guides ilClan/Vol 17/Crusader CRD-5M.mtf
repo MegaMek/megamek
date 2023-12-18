@@ -1,6 +1,5 @@
-Version:1.0
-Crusader
-CRD-5M
+chassis:Crusader
+model:CRD-5M
 mul id:759
 
 Config:Biped

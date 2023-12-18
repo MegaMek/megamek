@@ -1,6 +1,5 @@
-Version:1.1
-ForestryMech
-ED-X3
+chassis:ForestryMech
+model:ED-X3
 mul id:7160
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.3
-Assassin
-ASN-21
+chassis:Assassin
+model:ASN-21
 mul id:127
 Config:Biped
 techbase:Inner Sphere

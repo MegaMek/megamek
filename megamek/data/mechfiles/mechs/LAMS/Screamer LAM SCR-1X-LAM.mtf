@@ -1,6 +1,5 @@
-Version:1.0
-Screamer LAM
-SCR-1X-LAM
+chassis:Screamer LAM
+model:SCR-1X-LAM
 mul id:7320
 
 Config:LAM

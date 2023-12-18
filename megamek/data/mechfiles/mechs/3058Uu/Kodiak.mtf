@@ -1,6 +1,5 @@
-Version:1.0
-Kodiak
-
+chassis:Kodiak
+model:
 mul id:1805
 
 Config:Biped

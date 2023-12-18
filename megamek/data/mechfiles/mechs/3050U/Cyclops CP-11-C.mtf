@@ -1,6 +1,5 @@
-Version:1.0
-Cyclops
-CP-11-C
+chassis:Cyclops
+model:CP-11-C
 mul id:775
 
 Config:Biped

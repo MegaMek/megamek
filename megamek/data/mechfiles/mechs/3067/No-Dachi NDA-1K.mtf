@@ -1,6 +1,5 @@
-Version:1.1
-No-Dachi
-NDA-1K
+chassis:No-Dachi
+model:NDA-1K
 mul id:4730
 
 Config:Biped

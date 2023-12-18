@@ -1,6 +1,5 @@
-Version:1.3
-Cataphract
-CTF-0X
+chassis:Cataphract
+model:CTF-0X
 mul id:5795
 Config:Biped
 techbase:Inner Sphere

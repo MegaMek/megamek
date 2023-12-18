@@ -1,6 +1,5 @@
-Version:1.0
-Ghost
-GST-10A 'Aurora'
+chassis:Ghost
+model:GST-10A 'Aurora'
 mul id:8373
 
 Config:Biped

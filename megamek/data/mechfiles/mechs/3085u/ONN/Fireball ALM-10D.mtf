@@ -1,6 +1,5 @@
-Version:1.0
-Fireball
-ALM-10D
+chassis:Fireball
+model:ALM-10D
 mul id:1074
 
 Config:Biped

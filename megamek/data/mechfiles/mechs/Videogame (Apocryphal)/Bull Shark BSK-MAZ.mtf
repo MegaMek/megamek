@@ -1,6 +1,5 @@
-Version:1.0
-Bull Shark
-BSK-MAZ
+chassis:Bull Shark
+model:BSK-MAZ
 
 Config:Biped
 techbase:Mixed (Clan Chassis)

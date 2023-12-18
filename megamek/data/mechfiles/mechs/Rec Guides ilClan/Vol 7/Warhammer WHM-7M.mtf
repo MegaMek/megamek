@@ -1,6 +1,5 @@
-Version:1.0
-Warhammer
-WHM-7M
+chassis:Warhammer
+model:WHM-7M
 mul id:3492
 
 Config:Biped

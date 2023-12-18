@@ -1,6 +1,5 @@
-Version:1.0
-Karhu
-(Syngman)
+chassis:Karhu
+model:(Syngman)
 mul id:1747
 
 Config:Biped Omnimech

@@ -1,6 +1,5 @@
-Version:1.2
-Stinger
-STG-5R
+chassis:Stinger
+model:STG-5R
 mul id:3064
 
 Config:Biped

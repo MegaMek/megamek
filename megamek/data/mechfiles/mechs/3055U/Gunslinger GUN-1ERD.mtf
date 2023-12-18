@@ -1,6 +1,5 @@
-Version:1.3
-Gunslinger
-GUN-1ERD
+chassis:Gunslinger
+model:GUN-1ERD
 mul id:1347
 Config:Biped
 techbase:Inner Sphere

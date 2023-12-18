@@ -1,6 +1,5 @@
-Version:1.3
-Orochi
-OR-3K
+chassis:Orochi
+model:OR-3K
 mul id:7999
 Config:Biped
 techbase:Inner Sphere

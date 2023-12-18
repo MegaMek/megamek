@@ -1,6 +1,5 @@
-Version:1.0
-Black Knight
-BL-12-KNT
+chassis:Black Knight
+model:BL-12-KNT
 mul id:356
 
 Config:Biped

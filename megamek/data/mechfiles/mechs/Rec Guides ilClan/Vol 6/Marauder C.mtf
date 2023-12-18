@@ -1,6 +1,5 @@
-Version:1.0
-Marauder
-C
+chassis:Marauder
+model:C
 mul id:2032
 
 Config:Biped

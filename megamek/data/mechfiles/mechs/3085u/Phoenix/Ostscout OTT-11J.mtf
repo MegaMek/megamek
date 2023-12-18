@@ -1,6 +1,5 @@
-Version:1.0
-Ostscout
-OTT-11J
+chassis:Ostscout
+model:OTT-11J
 mul id:2365
 
 Config:Biped

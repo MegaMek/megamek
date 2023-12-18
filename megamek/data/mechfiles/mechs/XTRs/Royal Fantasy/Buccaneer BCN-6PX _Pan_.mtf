@@ -1,6 +1,5 @@
-Version:1.0
-Buccaneer
-BCN-6PX 'Pan'
+chassis:Buccaneer
+model:BCN-6PX 'Pan'
 mul id:8379
 
 Config:Biped

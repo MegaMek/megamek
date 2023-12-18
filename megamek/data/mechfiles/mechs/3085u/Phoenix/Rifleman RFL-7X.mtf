@@ -1,6 +1,5 @@
-Version:1.1
-Rifleman
-RFL-7X
+chassis:Rifleman
+model:RFL-7X
 mul id:2704
 
 Config:Biped

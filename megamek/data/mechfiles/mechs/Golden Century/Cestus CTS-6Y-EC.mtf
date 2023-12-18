@@ -1,6 +1,5 @@
-Version:1.1
-Cestus
-CTS-6Y-EC
+chassis:Cestus
+model:CTS-6Y-EC
 mul id:7681
 
 Config:Biped

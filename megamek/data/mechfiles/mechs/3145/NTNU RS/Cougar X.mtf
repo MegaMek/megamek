@@ -1,6 +1,5 @@
-Version:1.0
-Cougar
-X
+chassis:Cougar
+model:X
 mul id:6951
 
 Config:Biped

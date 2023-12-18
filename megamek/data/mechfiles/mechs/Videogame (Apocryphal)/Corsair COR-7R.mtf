@@ -1,6 +1,5 @@
-Version:1.0
-Corsair
-COR-7R
+chassis:Corsair
+model:COR-7R
 
 Config:Biped
 TechBase:Inner Sphere

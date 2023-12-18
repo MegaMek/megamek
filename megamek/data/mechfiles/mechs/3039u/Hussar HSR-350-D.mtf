@@ -1,6 +1,5 @@
-Version:1.0
-Hussar
-HSR-350-D
+chassis:Hussar
+model:HSR-350-D
 mul id:1588
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.2
-Hatchetman
-HCT-3F
+chassis:Hatchetman
+model:HCT-3F
 mul id:1410
 
 Config:Biped

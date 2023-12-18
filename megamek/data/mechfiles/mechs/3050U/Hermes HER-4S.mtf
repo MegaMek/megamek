@@ -1,6 +1,5 @@
-Version:1.0
-Hermes
-HER-4S
+chassis:Hermes
+model:HER-4S
 mul id:1494
 
 Config:Biped

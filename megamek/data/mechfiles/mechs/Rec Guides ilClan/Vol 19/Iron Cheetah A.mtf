@@ -1,6 +1,5 @@
-Version:1.3
-Iron Cheetah
-A
+chassis:Iron Cheetah
+model:A
 mul id:8320
 Config:Biped Omnimech
 techbase:Clan

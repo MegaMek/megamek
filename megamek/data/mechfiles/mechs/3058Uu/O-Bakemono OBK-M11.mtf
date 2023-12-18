@@ -1,6 +1,5 @@
-Version:1.0
-O-Bakemono
-OBK-M11
+chassis:O-Bakemono
+model:OBK-M11
 mul id:2311
 
 Config:Biped

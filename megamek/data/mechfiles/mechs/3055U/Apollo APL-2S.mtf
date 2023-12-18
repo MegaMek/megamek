@@ -1,6 +1,5 @@
-Version:1.0
-Apollo
-APL-2S
+chassis:Apollo
+model:APL-2S
 mul id:56
 
 Config:Biped

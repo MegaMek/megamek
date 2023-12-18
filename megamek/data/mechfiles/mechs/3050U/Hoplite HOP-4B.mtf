@@ -1,6 +1,5 @@
-Version:1.3
-Hoplite
-HOP-4B
+chassis:Hoplite
+model:HOP-4B
 mul id:4330
 Config:Biped
 techbase:Inner Sphere

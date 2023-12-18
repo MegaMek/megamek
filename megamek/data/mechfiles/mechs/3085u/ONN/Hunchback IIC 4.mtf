@@ -1,6 +1,5 @@
-Version:1.0
-Hunchback IIC
-4
+chassis:Hunchback IIC
+model:4
 mul id:1571
 
 Config:Biped

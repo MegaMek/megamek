@@ -1,6 +1,5 @@
-Version:1.0
-Koto
-KTO-2A
+chassis:Koto
+model:KTO-2A
 mul id:1837
 
 Config:Biped

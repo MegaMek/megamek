@@ -1,6 +1,5 @@
-Version:1.0
-Goliath
-GOL-7K
+chassis:Goliath
+model:GOL-7K
 mul id:8407
 
 Config:Quad

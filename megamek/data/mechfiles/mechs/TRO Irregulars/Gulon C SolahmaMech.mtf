@@ -1,6 +1,5 @@
-Version:1.0
-Gulon SolahmaMech
-C
+chassis:Gulon SolahmaMech
+model:C
 mul id:7846
 
 Config:Biped

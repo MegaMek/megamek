@@ -1,6 +1,5 @@
-Version:1.0
-Spartan
-SPT-N1
+chassis:Spartan
+model:SPT-N1
 mul id:2994
 
 Config:Biped

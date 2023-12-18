@@ -1,6 +1,5 @@
-Version:1.3
-Chameleon
-TRC-4C
+chassis:Chameleon
+model:TRC-4C
 mul id:9405
 Config:Biped
 techbase:Inner Sphere

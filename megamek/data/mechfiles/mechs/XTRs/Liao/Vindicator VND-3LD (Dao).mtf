@@ -1,6 +1,5 @@
-Version:1.3
-Vindicator
-VND-3LD (Dao)
+chassis:Vindicator
+model:VND-3LD (Dao)
 mul id:3427
 Config:Biped
 techbase:Mixed (IS Chassis)

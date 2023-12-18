@@ -1,6 +1,5 @@
-Version:1.1
-Exo HaulerMech
-HMX-3
+chassis:Exo HaulerMech
+model:HMX-3
 mul id:7842
 
 Config:Biped

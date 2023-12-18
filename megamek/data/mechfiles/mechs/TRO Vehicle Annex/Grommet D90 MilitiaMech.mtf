@@ -1,6 +1,5 @@
-Version:1.0
-Grommet D90 MilitiaMech
-
+chassis:Grommet D90 MilitiaMech
+model:
 mul id:7180
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Hellion
-G
+chassis:Hellion
+model:G
 mul id:6939
 
 Config:Biped Omnimech

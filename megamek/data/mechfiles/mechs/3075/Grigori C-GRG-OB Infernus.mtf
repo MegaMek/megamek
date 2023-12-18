@@ -1,6 +1,5 @@
-Version:1.1
-Grigori
-C-GRG-OB Infernus
+chassis:Grigori
+model:C-GRG-OB Infernus
 mul id:1322
 
 Config:Biped Omnimech

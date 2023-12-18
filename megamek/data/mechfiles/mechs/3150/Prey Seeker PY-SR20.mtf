@@ -1,6 +1,5 @@
-Version:1.1
-Prey Seeker
-PY-SR20
+chassis:Prey Seeker
+model:PY-SR20
 mul id:8068
 
 Config:Biped

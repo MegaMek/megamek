@@ -1,6 +1,5 @@
-Version:1.0
-Snake
-SNK-1V
+chassis:Snake
+model:SNK-1V
 mul id:2974
 
 Config:Biped

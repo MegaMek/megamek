@@ -1,6 +1,5 @@
-Version:1.0
-Catapult
-CPLT-K4
+chassis:Catapult
+model:CPLT-K4
 mul id:488
 
 Config:Biped

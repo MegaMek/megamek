@@ -1,6 +1,5 @@
-Version:1.0
-Fireball
-ALM-8D
+chassis:Fireball
+model:ALM-8D
 mul id:1076
 
 Config:Biped

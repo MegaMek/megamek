@@ -1,6 +1,5 @@
-Version:1.1
-Powerman
-SC XV HaulerMech
+chassis:Powerman
+model:SC XV HaulerMech
 mul id:4852
 
 Config:Biped

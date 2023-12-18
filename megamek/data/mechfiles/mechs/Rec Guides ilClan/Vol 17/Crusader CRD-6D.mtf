@@ -1,6 +1,5 @@
-Version:1.0
-Crusader
-CRD-6D
+chassis:Crusader
+model:CRD-6D
 mul id:8224
 
 Config:Biped

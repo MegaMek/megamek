@@ -1,6 +1,5 @@
-Version:1.3
-Templar III
-TLR2-O
+chassis:Templar III
+model:TLR2-O
 mul id:6353
 Config:Biped Omnimech
 techbase:Inner Sphere

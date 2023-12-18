@@ -1,6 +1,5 @@
-Version:1.1
-Toyama
-TYM-1C
+chassis:Toyama
+model:TYM-1C
 mul id:3280
 
 Config:Biped

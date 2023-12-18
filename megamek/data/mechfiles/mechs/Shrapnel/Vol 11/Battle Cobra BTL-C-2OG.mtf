@@ -1,6 +1,5 @@
-Version:1.3
-Battle Cobra
-BTL-C-2OG
+chassis:Battle Cobra
+model:BTL-C-2OG
 mul id:9492
 Config:Biped Omnimech
 techbase:Inner Sphere

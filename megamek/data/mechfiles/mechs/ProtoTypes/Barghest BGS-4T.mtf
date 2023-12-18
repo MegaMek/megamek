@@ -1,6 +1,5 @@
-Version:1.1
-Barghest
-BGS-4T
+chassis:Barghest
+model:BGS-4T
 mul id:3790
 
 Config:Quad

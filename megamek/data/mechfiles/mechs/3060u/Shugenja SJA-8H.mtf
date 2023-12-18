@@ -1,6 +1,5 @@
-Version:1.1
-Shugenja
-SJA-8H
+chassis:Shugenja
+model:SJA-8H
 mul id:2943
 
 Config:Biped

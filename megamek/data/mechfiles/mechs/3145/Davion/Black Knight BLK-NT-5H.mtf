@@ -1,6 +1,5 @@
-Version:1.0
-Black Knight
-BLK-NT-5H
+chassis:Black Knight
+model:BLK-NT-5H
 mul id:6351
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Devastator
-DVS-3
+chassis:Devastator
+model:DVS-3
 mul id:895
 
 Config:Biped

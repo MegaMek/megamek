@@ -1,6 +1,5 @@
-Version:1.0
-Cygnus
-3
+chassis:Cygnus
+model:3
 mul id:783
 
 Config:Biped

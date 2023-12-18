@@ -1,6 +1,5 @@
-Version:1.0
-Firestarter
-FS9-M 'Mirage'
+chassis:Firestarter
+model:FS9-M 'Mirage'
 mul id:1098
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Hatchetman
-HCT-5S
+chassis:Hatchetman
+model:HCT-5S
 mul id:1413
 
 Config:Biped

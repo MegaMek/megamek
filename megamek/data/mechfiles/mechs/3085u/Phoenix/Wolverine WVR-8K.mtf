@@ -1,6 +1,5 @@
-Version:1.0
-Wolverine
-WVR-8K
+chassis:Wolverine
+model:WVR-8K
 mul id:3579
 
 Config:Biped

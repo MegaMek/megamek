@@ -1,6 +1,5 @@
-Version:1.0
-Roughneck
-RGH-BLT Bolt
+chassis:Roughneck
+model:RGH-BLT Bolt
 
 Config:Biped
 techbase:Inner Sphere

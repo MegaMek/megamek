@@ -1,6 +1,5 @@
-Version:1.0
-Trebuchet
-TBT-7K
+chassis:Trebuchet
+model:TBT-7K
 mul id:3299
 
 Config:Biped

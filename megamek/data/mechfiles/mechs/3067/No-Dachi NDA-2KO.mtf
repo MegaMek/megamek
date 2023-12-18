@@ -1,6 +1,5 @@
-Version:1.0
-No-Dachi
-NDA-2KO
+chassis:No-Dachi
+model:NDA-2KO
 mul id:4733
 
 Config:Biped

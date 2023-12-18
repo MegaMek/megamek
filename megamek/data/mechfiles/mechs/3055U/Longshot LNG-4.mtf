@@ -1,6 +1,5 @@
-Version:1.0
-Longshot
-LNG-4
+chassis:Longshot
+model:LNG-4
 mul id:1950
 
 Config:Biped

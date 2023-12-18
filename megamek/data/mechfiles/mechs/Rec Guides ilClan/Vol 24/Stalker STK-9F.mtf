@@ -1,6 +1,5 @@
-Version:1.0
-Stalker
-STK-9F
+chassis:Stalker
+model:STK-9F
 mul id:8444
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Quasimodo
-QSM-3D
+chassis:Quasimodo
+model:QSM-3D
 mul id:6509
 
 Config:Biped

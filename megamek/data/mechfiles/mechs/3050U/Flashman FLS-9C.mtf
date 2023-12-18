@@ -1,6 +1,5 @@
-Version:1.0
-Flashman
-FLS-9C
+chassis:Flashman
+model:FLS-9C
 mul id:1126
 
 Config:Biped

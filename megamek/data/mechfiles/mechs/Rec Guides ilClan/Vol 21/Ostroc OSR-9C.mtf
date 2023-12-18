@@ -1,6 +1,5 @@
-Version:1.0
-Ostroc
-OSR-9C
+chassis:Ostroc
+model:OSR-9C
 mul id:8356
 
 Config:Biped

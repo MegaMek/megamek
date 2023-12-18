@@ -1,6 +1,5 @@
-Version:1.3
-Merlin
-MLN-1P
+chassis:Merlin
+model:MLN-1P
 mul id:9318
 Config:Biped
 techbase:Inner Sphere

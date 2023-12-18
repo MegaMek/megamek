@@ -1,6 +1,5 @@
-Version:1.0
-Black Knight
-BLK-NT-4D
+chassis:Black Knight
+model:BLK-NT-4D
 mul id:6350
 
 Config:Biped

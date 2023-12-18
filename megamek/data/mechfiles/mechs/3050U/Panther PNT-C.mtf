@@ -1,6 +1,5 @@
-Version:1.0
-Panther
-PNT-C
+chassis:Panther
+model:PNT-C
 mul id:2426
 
 Config:Biped

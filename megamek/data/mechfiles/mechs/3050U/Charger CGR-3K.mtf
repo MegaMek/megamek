@@ -1,6 +1,5 @@
-Version:1.0
-Charger
-CGR-3K
+chassis:Charger
+model:CGR-3K
 mul id:565
 
 Config:Biped

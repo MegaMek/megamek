@@ -1,6 +1,5 @@
-Version:1.0
-Grasshopper
-GHR-7K 'Gravedigger'
+chassis:Grasshopper
+model:GHR-7K 'Gravedigger'
 mul id:4233
 
 Config:Biped

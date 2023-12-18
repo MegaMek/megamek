@@ -1,6 +1,5 @@
-Version:1.0
-Initiate
-INI-02
+chassis:Initiate
+model:INI-02
 mul id:1620
 
 Config:Biped

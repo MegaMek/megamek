@@ -1,6 +1,5 @@
-Version:1.1
-Woodsman
-Prime
+chassis:Woodsman
+model:Prime
 mul id:3587
 
 Config:Biped Omnimech

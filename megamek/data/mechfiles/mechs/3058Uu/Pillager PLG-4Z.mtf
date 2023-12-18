@@ -1,6 +1,5 @@
-Version:1.0
-Pillager
-PLG-4Z
+chassis:Pillager
+model:PLG-4Z
 mul id:2527
 
 Config:Biped

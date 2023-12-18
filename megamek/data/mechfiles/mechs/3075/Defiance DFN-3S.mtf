@@ -1,6 +1,5 @@
-Version:1.0
-Defiance
-DFN-3S
+chassis:Defiance
+model:DFN-3S
 mul id:850
 
 Config:Biped

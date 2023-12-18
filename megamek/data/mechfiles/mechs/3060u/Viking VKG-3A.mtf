@@ -1,6 +1,5 @@
-Version:1.0
-Viking
-VKG-3A
+chassis:Viking
+model:VKG-3A
 mul id:3419
 
 Config:Biped

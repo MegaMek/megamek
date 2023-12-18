@@ -1,6 +1,5 @@
-Version:1.0
-Axman
-AXM-2N
+chassis:Axman
+model:AXM-2N
 mul id:185
 
 Config:Biped

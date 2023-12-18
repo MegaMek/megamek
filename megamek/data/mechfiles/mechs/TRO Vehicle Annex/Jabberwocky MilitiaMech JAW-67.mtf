@@ -1,6 +1,5 @@
-Version:1.0
-Jabberwocky
-JAW-67 MilitiaMech
+chassis:Jabberwocky
+model:JAW-67 MilitiaMech
 mul id:7176
 
 Config:Biped

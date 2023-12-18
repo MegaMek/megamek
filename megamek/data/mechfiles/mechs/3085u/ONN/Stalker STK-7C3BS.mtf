@@ -1,6 +1,5 @@
-Version:1.0
-Stalker
-STK-7C3BS
+chassis:Stalker
+model:STK-7C3BS
 mul id:3042
 
 Config:Biped

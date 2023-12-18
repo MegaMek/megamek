@@ -1,6 +1,5 @@
-Version:1.0
-Osprey
-OSP-25
+chassis:Osprey
+model:OSP-25
 mul id:2345
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Venom
-SDR-9KA
+chassis:Venom
+model:SDR-9KA
 mul id:3399
 
 Config:Biped

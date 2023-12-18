@@ -1,6 +1,5 @@
-Version:1.3
-Mackie
-MSK-5S
+chassis:Mackie
+model:MSK-5S
 mul id:1972
 Config:Biped
 techbase:Inner Sphere

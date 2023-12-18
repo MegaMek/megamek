@@ -1,6 +1,5 @@
-Version:1.0
-Hunchback
-HBK-LGN-Pin 'Drizella'
+chassis:Hunchback
+model:HBK-LGN-Pin 'Drizella'
 mul id:8375
 
 Config:Biped

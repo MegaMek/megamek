@@ -1,6 +1,5 @@
-Version:1.0
-Pompier
-GM-FL FireMech
+chassis:Pompier
+model:GM-FL FireMech
 mul id:5780
 
 Config:Biped

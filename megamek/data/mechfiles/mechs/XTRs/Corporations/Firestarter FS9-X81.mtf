@@ -1,6 +1,5 @@
-Version:1.1
-Firestarter
-FS9-X81
+chassis:Firestarter
+model:FS9-X81
 mul id:1092
 
 Config:Biped

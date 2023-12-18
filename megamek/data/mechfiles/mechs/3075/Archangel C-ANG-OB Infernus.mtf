@@ -1,6 +1,5 @@
-Version:1.1
-Archangel
-C-ANG-OB Infernus
+chassis:Archangel
+model:C-ANG-OB Infernus
 mul id:67
 
 Config:Biped Omnimech

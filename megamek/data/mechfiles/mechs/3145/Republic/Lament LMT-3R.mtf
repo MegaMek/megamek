@@ -1,6 +1,5 @@
-Version:1.1
-Lament
-LMT-3R
+chassis:Lament
+model:LMT-3R
 mul id:6723
 
 Config:Biped

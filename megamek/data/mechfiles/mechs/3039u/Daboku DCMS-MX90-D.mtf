@@ -1,6 +1,5 @@
-Version:1.0
-Daboku
-DCMS-MX90-D
+chassis:Daboku
+model:DCMS-MX90-D
 mul id:788
 
 Config:Biped

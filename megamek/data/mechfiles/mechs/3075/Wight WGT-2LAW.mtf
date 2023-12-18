@@ -1,6 +1,5 @@
-Version:1.0
-Wight
-WGT-2LAW
+chassis:Wight
+model:WGT-2LAW
 mul id:3548
 
 Config:Biped

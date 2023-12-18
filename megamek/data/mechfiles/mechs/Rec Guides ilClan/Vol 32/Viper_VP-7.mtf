@@ -1,6 +1,5 @@
-Version:1.0
-Viper
-VP-7
+chassis:Viper
+model:VP-7
 
 Config:Biped
 techbase:Mixed (IS Chassis)

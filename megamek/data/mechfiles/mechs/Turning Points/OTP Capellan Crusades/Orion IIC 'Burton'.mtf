@@ -1,6 +1,5 @@
-Version:1.0
-Orion IIC
-'Burton'
+chassis:Orion IIC
+model:'Burton'
 mul id:7403
 
 Config:Biped

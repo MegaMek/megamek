@@ -1,6 +1,5 @@
-Version:1.1
-Powerman
-SC XI LoaderMech
+chassis:Powerman
+model:SC XI LoaderMech
 Config:Biped
 TechBase:Inner Sphere
 Era:2764

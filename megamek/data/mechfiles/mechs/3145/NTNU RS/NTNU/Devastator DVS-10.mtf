@@ -1,6 +1,5 @@
-Version:1.3
-Devastator
-DVS-10
+chassis:Devastator
+model:DVS-10
 mul id:7984
 Config:Biped
 techbase:Inner Sphere

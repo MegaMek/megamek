@@ -1,6 +1,5 @@
-Version:1.0
-Bowman
-
+chassis:Bowman
+model:
 mul id:3857
 
 Config:Biped

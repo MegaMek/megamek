@@ -1,6 +1,5 @@
-Version:1.3
-Poseidon
-PSD-V2
+chassis:Poseidon
+model:PSD-V2
 mul id:6684
 
 Config:Tripod

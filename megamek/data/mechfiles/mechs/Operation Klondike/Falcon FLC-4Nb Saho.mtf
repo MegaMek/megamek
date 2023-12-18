@@ -1,6 +1,5 @@
-Version:1.1
-Falcon
-FLC-4Nb (Saho)
+chassis:Falcon
+model:FLC-4Nb (Saho)
 mul id:1024
 
 Config:Biped

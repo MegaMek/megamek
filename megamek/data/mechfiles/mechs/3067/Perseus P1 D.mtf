@@ -1,6 +1,5 @@
-Version:1.0
-Perseus
-P1D
+chassis:Perseus
+model:P1D
 mul id:4812
 
 Config:Biped Omnimech

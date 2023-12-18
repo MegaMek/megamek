@@ -1,6 +1,5 @@
-Version:1.0
-Vanquisher
-VQR-2A
+chassis:Vanquisher
+model:VQR-2A
 mul id:5338
 
 Config:Biped

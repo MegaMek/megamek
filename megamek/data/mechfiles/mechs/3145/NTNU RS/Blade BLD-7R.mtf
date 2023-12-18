@@ -1,6 +1,5 @@
-Version:1.0
-Blade
-BLD-7R
+chassis:Blade
+model:BLD-7R
 mul id:6929
 
 Config:Biped

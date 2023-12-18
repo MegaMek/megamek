@@ -1,6 +1,5 @@
-Version:1.0
-Baboon (Howler)
-3 'Devil'
+chassis:Baboon (Howler)
+model:3 'Devil'
 mul id:191
 
 Config:Biped

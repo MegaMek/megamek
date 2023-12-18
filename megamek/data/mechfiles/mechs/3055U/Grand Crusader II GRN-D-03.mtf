@@ -1,6 +1,5 @@
-Version:1.0
-Grand Crusader II
-GRN-D-03
+chassis:Grand Crusader II
+model:GRN-D-03
 mul id:1254
 
 Config:Biped

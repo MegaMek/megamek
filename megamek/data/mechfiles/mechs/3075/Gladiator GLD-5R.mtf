@@ -1,6 +1,5 @@
-Version:1.0
-Gladiator
-GLD-5R
+chassis:Gladiator
+model:GLD-5R
 mul id:1202
 
 Config:Biped

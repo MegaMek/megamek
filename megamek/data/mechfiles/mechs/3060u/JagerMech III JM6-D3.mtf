@@ -1,6 +1,5 @@
-Version:1.0
-JagerMech III
-JM6-D3
+chassis:JagerMech III
+model:JM6-D3
 mul id:1672
 
 Config:Biped

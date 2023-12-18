@@ -1,6 +1,5 @@
-Version:1.0
-Ostsol
-OTL-8M
+chassis:Ostsol
+model:OTL-8M
 mul id:2378
 
 Config:Biped

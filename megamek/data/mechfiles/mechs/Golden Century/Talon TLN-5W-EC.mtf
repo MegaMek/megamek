@@ -1,6 +1,5 @@
-Version:1.1
-Talon
-TLN-5W-EC
+chassis:Talon
+model:TLN-5W-EC
 mul id:7677
 
 Config:Biped

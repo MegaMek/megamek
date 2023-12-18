@@ -1,6 +1,5 @@
-Version:1.0
-Hermit Crab
-HMC-15
+chassis:Hermit Crab
+model:HMC-15
 mul id:7723
 
 Config:Biped

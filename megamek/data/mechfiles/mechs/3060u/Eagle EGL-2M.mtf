@@ -1,6 +1,5 @@
-Version:1.0
-Eagle
-EGL-2M
+chassis:Eagle
+model:EGL-2M
 mul id:937
 
 Config:Biped

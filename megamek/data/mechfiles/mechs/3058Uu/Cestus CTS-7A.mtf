@@ -1,6 +1,5 @@
-Version:1.0
-Cestus
-CTS-7A
+chassis:Cestus
+model:CTS-7A
 mul id:535
 
 Config:Biped

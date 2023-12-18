@@ -1,6 +1,5 @@
-Version:1.0
-Arana
-ARA-S-1 MilitiaMech
+chassis:Arana
+model:ARA-S-1 MilitiaMech
 mul id:5798
 
 Config:Quad

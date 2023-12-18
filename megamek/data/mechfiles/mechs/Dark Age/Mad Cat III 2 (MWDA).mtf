@@ -1,6 +1,5 @@
-Version:1.0
-Mad Cat III
-2 (MWDA)
+chassis:Mad Cat III
+model:2 (MWDA)
 mul id:6896
 
 Config:Biped

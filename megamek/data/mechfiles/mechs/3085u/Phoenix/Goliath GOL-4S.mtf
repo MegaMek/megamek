@@ -1,6 +1,5 @@
-Version:1.0
-Goliath
-GOL-4S
+chassis:Goliath
+model:GOL-4S
 mul id:1234
 
 Config:Quad

@@ -1,6 +1,5 @@
-Version:1.0
-Merlin
-MLN-1A
+chassis:Merlin
+model:MLN-1A
 mul id:2177
 
 Config:Biped

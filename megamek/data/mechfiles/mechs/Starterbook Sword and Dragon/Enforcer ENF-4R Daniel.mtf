@@ -1,6 +1,5 @@
-Version:1.0
-Enforcer
-ENF-4R (Daniel)
+chassis:Enforcer
+model:ENF-4R (Daniel)
 mul id:977
 
 Config:Biped

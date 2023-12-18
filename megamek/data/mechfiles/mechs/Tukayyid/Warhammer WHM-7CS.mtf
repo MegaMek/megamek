@@ -1,6 +1,5 @@
-Version:1.3
-Warhammer
-WHM-7CS
+chassis:Warhammer
+model:WHM-7CS
 mul id:7599
 Config:Biped
 techbase:Inner Sphere

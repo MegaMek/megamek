@@ -1,6 +1,5 @@
-Version:1.3
-Cricket
-RWN-01
+chassis:Cricket
+model:RWN-01
 mul id:7523
 Config:Biped
 techbase:Inner Sphere

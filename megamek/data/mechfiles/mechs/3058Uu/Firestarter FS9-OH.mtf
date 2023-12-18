@@ -1,6 +1,5 @@
-Version:1.0
-Firestarter
-FS9-OH
+chassis:Firestarter
+model:FS9-OH
 mul id:1107
 
 Config:Biped Omnimech

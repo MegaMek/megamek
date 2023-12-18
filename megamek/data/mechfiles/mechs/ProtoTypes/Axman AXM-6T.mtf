@@ -1,6 +1,5 @@
-Version:1.1
-Axman
-AXM-6T
+chassis:Axman
+model:AXM-6T
 mul id:3771
 
 Config:Biped

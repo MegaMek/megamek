@@ -1,6 +1,5 @@
-Version:1.0
-Tundra Wolf
-
+chassis:Tundra Wolf
+model:
 mul id:3315
 
 Config:Biped

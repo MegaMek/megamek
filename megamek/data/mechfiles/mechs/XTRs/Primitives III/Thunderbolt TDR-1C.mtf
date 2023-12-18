@@ -1,6 +1,5 @@
-Version:1.1
-Thunderbolt
-TDR-1C
+chassis:Thunderbolt
+model:TDR-1C
 mul id:5237
 
 Config:Biped

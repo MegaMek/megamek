@@ -1,6 +1,5 @@
-Version:1.1
-Deva
-C-DVA-OE Eminus
+chassis:Deva
+model:C-DVA-OE Eminus
 mul id:890
 
 Config:Biped Omnimech

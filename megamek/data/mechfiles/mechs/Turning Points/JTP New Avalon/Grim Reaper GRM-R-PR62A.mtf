@@ -1,6 +1,5 @@
-Version:1.0
-Grim Reaper
-GRM-R-PR62A
+chassis:Grim Reaper
+model:GRM-R-PR62A
 mul id:1331
 
 Config:Biped

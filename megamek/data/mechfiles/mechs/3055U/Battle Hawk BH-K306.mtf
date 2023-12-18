@@ -1,6 +1,5 @@
-Version:1.0
-Battle Hawk
-BH-K306
+chassis:Battle Hawk
+model:BH-K306
 mul id:276
 
 Config:Biped

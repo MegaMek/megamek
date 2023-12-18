@@ -1,6 +1,5 @@
-Version:1.0
-Awesome
-AWS-8T
+chassis:Awesome
+model:AWS-8T
 mul id:176
 
 Config:Biped

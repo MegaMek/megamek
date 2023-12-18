@@ -1,6 +1,5 @@
-Version:1.0
-Sirocco
-SRC-3C
+chassis:Sirocco
+model:SRC-3C
 mul id:2951
 
 Config:Quad

@@ -1,6 +1,5 @@
-Version:1.1
-Valiant
-VAL-NT-JX 'Hot Knife'
+chassis:Valiant
+model:VAL-NT-JX 'Hot Knife'
 mul id:3370
 
 Config:Biped

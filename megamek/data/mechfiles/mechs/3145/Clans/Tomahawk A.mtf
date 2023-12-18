@@ -1,6 +1,5 @@
-Version:1.0
-Tomahawk
-A
+chassis:Tomahawk
+model:A
 mul id:6299
 
 Config:Biped Omnimech

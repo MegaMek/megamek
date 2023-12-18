@@ -1,6 +1,5 @@
-Version:1.0
-Komodo
-KIM-3C
+chassis:Komodo
+model:KIM-3C
 mul id:1813
 
 Config:Biped

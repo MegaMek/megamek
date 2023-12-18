@@ -1,6 +1,5 @@
-Version:1.0
-Falcon Hawk
-FNHK-9K1B
+chassis:Falcon Hawk
+model:FNHK-9K1B
 mul id:1032
 
 Config:Biped

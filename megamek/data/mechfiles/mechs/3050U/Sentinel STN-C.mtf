@@ -1,6 +1,5 @@
-Version:1.0
-Sentinel
-STN-C
+chassis:Sentinel
+model:STN-C
 mul id:2865
 
 Config:Biped

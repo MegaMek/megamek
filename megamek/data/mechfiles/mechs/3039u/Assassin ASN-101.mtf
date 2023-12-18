@@ -1,6 +1,5 @@
-Version:1.0
-Assassin
-ASN-101
+chassis:Assassin
+model:ASN-101
 mul id:126
 
 Config:Biped

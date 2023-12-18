@@ -1,6 +1,5 @@
-Version:1.0
-Cerberus
-MR-6B
+chassis:Cerberus
+model:MR-6B
 mul id:527
 
 Config:Biped

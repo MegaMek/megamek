@@ -1,6 +1,5 @@
-Version:1.0
-Crossbow
-E
+chassis:Crossbow
+model:E
 mul id:737
 
 Config:Biped Omnimech

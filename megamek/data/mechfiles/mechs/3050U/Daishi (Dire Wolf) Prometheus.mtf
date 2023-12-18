@@ -1,6 +1,5 @@
-Version:1.0
-Daishi (Dire Wolf)
-'Prometheus'
+chassis:Daishi (Dire Wolf)
+model:'Prometheus'
 mul id:810
 
 Config:Biped Omnimech

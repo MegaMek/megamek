@@ -1,6 +1,5 @@
-Version:1.1
-Seraph
-C-SRP-OE Eminus
+chassis:Seraph
+model:C-SRP-OE Eminus
 mul id:2874
 
 Config:Biped Omnimech

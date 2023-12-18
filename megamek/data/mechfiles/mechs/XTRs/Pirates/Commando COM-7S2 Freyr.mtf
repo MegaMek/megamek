@@ -1,6 +1,5 @@
-Version:1.1
-Commando
-COM-7S2 (Freyr)
+chassis:Commando
+model:COM-7S2 (Freyr)
 mul id:677
 
 Config:Biped

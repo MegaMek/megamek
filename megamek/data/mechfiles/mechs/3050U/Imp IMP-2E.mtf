@@ -1,6 +1,5 @@
-Version:1.0
-Imp
-IMP-2E
+chassis:Imp
+model:IMP-2E
 mul id:4358
 
 Config:Biped

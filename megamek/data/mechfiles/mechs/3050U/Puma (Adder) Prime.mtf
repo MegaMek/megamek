@@ -1,6 +1,5 @@
-Version:1.0
-Puma (Adder)
-Prime
+chassis:Puma (Adder)
+model:Prime
 mul id:2598
 
 Config:Biped Omnimech

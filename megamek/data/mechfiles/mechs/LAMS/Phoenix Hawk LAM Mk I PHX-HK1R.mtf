@@ -1,6 +1,5 @@
-Version:1.0
-Phoenix Hawk LAM Mk I
-PHX-HK1R
+chassis:Phoenix Hawk LAM Mk I
+model:PHX-HK1R
 mul id:4825
 
 Config:LAM

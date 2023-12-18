@@ -1,6 +1,5 @@
-Version:1.1
-Hermes II
-HER-7S
+chassis:Hermes II
+model:HER-7S
 mul id:1505
 
 Config:Biped

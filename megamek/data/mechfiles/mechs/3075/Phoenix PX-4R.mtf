@@ -1,6 +1,5 @@
-Version:1.0
-Phoenix
-PX-4R
+chassis:Phoenix
+model:PX-4R
 mul id:2490
 
 Config:Biped

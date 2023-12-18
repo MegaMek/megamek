@@ -1,6 +1,5 @@
-Version:1.0
-Wolverine
-WVR-10D
+chassis:Wolverine
+model:WVR-10D
 mul id:8255
 
 Config:Biped

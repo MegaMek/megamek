@@ -1,6 +1,5 @@
-Version:1.0
-Champion
-CHP-3P
+chassis:Champion
+model:CHP-3P
 mul id:553
 
 Config:Biped

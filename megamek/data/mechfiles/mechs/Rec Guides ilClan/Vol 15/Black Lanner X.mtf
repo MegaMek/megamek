@@ -1,6 +1,5 @@
-Version:1.0
-Black Lanner
-X
+chassis:Black Lanner
+model:X
 mul id:370
 
 Config:Biped Omnimech

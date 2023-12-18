@@ -1,6 +1,5 @@
-Version:1.3
-Mad Cat Mk II
-Enhanced
+chassis:Mad Cat Mk II
+model:Enhanced
 mul id:4564
 Config:Biped
 techbase:Clan

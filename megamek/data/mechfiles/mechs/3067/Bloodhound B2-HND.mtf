@@ -1,6 +1,5 @@
-Version:1.0
-Bloodhound
-B2-HND
+chassis:Bloodhound
+model:B2-HND
 mul id:3839
 
 Config:Biped

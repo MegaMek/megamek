@@ -1,6 +1,5 @@
-Version:1.0
-Jenner IIC
-
+chassis:Jenner IIC
+model:
 mul id:1698
 
 Config:Biped

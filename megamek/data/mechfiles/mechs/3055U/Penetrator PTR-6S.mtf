@@ -1,6 +1,5 @@
-Version:1.0
-Penetrator
-PTR-6S
+chassis:Penetrator
+model:PTR-6S
 mul id:2468
 
 Config:Biped

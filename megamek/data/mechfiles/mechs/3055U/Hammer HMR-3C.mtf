@@ -1,6 +1,5 @@
-Version:1.0
-Hammer
-HMR-3C 'Claw-Hammer'
+chassis:Hammer
+model:HMR-3C 'Claw-Hammer'
 mul id:1365
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Shadow Hawk
-SHD-4H
+chassis:Shadow Hawk
+model:SHD-4H
 mul id:7785
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.1
-Verfolger
-VR6-T
+chassis:Verfolger
+model:VR6-T
 mul id:5689
 
 Config:Biped

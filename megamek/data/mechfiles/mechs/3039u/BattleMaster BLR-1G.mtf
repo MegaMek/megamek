@@ -1,6 +1,5 @@
-Version:1.0
-BattleMaster
-BLR-1G
+chassis:BattleMaster
+model:BLR-1G
 mul id:283
 
 Config:Biped

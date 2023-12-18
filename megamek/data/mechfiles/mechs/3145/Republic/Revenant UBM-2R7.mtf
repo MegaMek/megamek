@@ -1,6 +1,5 @@
-Version:1.1
-Revenant
-UBM-2R7
+chassis:Revenant
+model:UBM-2R7
 mul id:6717
 
 Config:Quad

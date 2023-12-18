@@ -1,6 +1,5 @@
-Version:1.0
-Stormwolf
-C
+chassis:Stormwolf
+model:C
 mul id:8207
 
 Config:Biped Omnimech

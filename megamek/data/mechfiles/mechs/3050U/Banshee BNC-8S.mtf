@@ -1,6 +1,5 @@
-Version:1.0
-Banshee
-BNC-8S
+chassis:Banshee
+model:BNC-8S
 mul id:250
 
 Config:Biped

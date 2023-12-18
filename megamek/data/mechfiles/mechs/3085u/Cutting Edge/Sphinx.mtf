@@ -1,6 +1,5 @@
-Version:1.0
-Sphinx
-
+chassis:Sphinx
+model:
 mul id:3007
 
 Config:Biped

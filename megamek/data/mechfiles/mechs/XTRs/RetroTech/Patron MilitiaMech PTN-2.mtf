@@ -1,6 +1,5 @@
-Version:1.1
-Patron MilitiaMech
-PTN-2
+chassis:Patron MilitiaMech
+model:PTN-2
 mul id:4794
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.1
-Griffin
-GRF-4N
+chassis:Griffin
+model:GRF-4N
 mul id:1301
 
 Config:Biped

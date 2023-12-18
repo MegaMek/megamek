@@ -1,6 +1,5 @@
-Version:1.0
-Vulcan
-VT-5S
+chassis:Vulcan
+model:VT-5S
 mul id:3462
 
 Config:Biped

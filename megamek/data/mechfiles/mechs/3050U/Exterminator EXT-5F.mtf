@@ -1,6 +1,5 @@
-Version:1.0
-Exterminator
-EXT-5F
+chassis:Exterminator
+model:EXT-5F
 mul id:1007
 
 Config:Biped

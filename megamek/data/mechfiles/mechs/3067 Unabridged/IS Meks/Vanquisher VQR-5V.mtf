@@ -1,6 +1,5 @@
-Version:1.1
-Vanquisher
-VQR-5V
+chassis:Vanquisher
+model:VQR-5V
 mul id:5340
 
 Config:Biped

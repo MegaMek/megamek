@@ -1,6 +1,5 @@
-Version:1.0
-Cyclops
-CP-10-Q
+chassis:Cyclops
+model:CP-10-Q
 mul id:771
 
 Config:Biped

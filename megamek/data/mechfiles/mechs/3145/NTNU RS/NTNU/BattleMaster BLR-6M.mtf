@@ -1,6 +1,5 @@
-Version:1.3
-BattleMaster
-BLR-6M
+chassis:BattleMaster
+model:BLR-6M
 mul id:7978
 Config:Biped
 techbase:Inner Sphere

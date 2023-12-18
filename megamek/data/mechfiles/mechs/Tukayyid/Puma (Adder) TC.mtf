@@ -1,6 +1,5 @@
-Version:1.0
-Puma (Adder)
-TC
+chassis:Puma (Adder)
+model:TC
 mul id:7589
 
 Config:Biped Omnimech

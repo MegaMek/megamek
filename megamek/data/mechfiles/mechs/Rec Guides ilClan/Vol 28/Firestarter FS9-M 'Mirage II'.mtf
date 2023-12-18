@@ -1,6 +1,5 @@
-Version:1.3
-Firestarter
-FS9-M 'Mirage II'
+chassis:Firestarter
+model:FS9-M 'Mirage II'
 mul id:9374
 Config:Biped
 techbase:Mixed (IS Chassis)

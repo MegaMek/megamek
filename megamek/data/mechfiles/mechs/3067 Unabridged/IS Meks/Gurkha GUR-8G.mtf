@@ -1,6 +1,5 @@
-Version:1.1
-Gurkha
-GUR-8G
+chassis:Gurkha
+model:GUR-8G
 mul id:5664
 
 Config:Biped

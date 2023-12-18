@@ -1,6 +1,5 @@
-Version:1.0
-Panther
-PNT-8Z
+chassis:Panther
+model:PNT-8Z
 mul id:2424
 
 Config:Biped

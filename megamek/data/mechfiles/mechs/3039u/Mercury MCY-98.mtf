@@ -1,6 +1,5 @@
-Version:1.0
-Mercury
-MCY-98
+chassis:Mercury
+model:MCY-98
 mul id:4624
 
 Config:Biped

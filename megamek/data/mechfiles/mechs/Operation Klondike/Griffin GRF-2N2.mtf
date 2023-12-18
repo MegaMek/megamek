@@ -1,6 +1,5 @@
-Version:1.0
-Griffin
-GRF-2N2
+chassis:Griffin
+model:GRF-2N2
 mul id:6767
 
 Config:Biped

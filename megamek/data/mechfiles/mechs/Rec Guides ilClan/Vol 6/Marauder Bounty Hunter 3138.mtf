@@ -1,6 +1,5 @@
-Version:1.0
-Marauder
-(Bounty Hunter-3138)
+chassis:Marauder
+model:(Bounty Hunter-3138)
 mul id:7535
 
 Config:Biped

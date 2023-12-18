@@ -1,6 +1,5 @@
-Version:1.1
-Merlin
-MLN-1B (Porter)
+chassis:Merlin
+model:MLN-1B (Porter)
 mul id:2179
 source:Record Sheets: Unique Mechs 
 

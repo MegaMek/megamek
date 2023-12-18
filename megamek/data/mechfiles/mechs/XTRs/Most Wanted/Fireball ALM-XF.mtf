@@ -1,6 +1,5 @@
-Version:1.1
-Fireball
-ALM-XF
+chassis:Fireball
+model:ALM-XF
 mul id:5781
 
 Config:Biped

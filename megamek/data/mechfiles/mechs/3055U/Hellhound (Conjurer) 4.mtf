@@ -1,6 +1,5 @@
-Version:1.0
-Hellhound (Conjurer)
-4
+chassis:Hellhound (Conjurer)
+model:4
 mul id:1476
 
 Config:Biped

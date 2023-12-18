@@ -1,6 +1,5 @@
-Version:1.0
-Stalker
-STK-4N
+chassis:Stalker
+model:STK-4N
 mul id:3039
 
 Config:Biped

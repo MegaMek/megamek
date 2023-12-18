@@ -1,6 +1,5 @@
-Version:1.0
-Flamberge
-2
+chassis:Flamberge
+model:2
 mul id:1114
 
 Config:Biped

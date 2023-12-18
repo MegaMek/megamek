@@ -1,6 +1,5 @@
-Version:1.0
-Porcupine
-PRC-3N
+chassis:Porcupine
+model:PRC-3N
 mul id:8102
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Thunder
-THR-1L
+chassis:Thunder
+model:THR-1L
 mul id:3214
 
 Config:Biped

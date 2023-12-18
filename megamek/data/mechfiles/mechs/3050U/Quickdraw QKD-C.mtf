@@ -1,6 +1,5 @@
-Version:1.0
-Quickdraw
-QKD-C
+chassis:Quickdraw
+model:QKD-C
 mul id:2618
 
 Config:Biped

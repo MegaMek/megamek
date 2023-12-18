@@ -1,6 +1,5 @@
-Version:1.3
-Nightsky
-NGS-7S
+chassis:Nightsky
+model:NGS-7S
 mul id:9352
 Config:Biped
 techbase:Mixed (IS Chassis)

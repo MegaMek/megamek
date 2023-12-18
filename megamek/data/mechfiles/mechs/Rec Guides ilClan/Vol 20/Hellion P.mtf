@@ -1,6 +1,5 @@
-Version:1.3
-Hellion
-P
+chassis:Hellion
+model:P
 mul id:8327
 Config:Biped Omnimech
 techbase:Clan

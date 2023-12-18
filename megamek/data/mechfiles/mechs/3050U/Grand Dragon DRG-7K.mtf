@@ -1,6 +1,5 @@
-Version:1.1
-Grand Dragon
-DRG-7K
+chassis:Grand Dragon
+model:DRG-7K
 mul id:1260
 
 Config:Biped

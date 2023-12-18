@@ -1,6 +1,5 @@
-Version:1.0
-Excalibur
-EXC-B2
+chassis:Excalibur
+model:EXC-B2
 mul id:998
 
 Config:Biped

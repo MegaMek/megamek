@@ -1,6 +1,5 @@
-Version:1.0
-Mercury
-MCY-104
+chassis:Mercury
+model:MCY-104
 mul id:2170
 
 Config:Biped

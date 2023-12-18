@@ -1,6 +1,5 @@
-Version:1.0
-Exterminator
-EXT-7X
+chassis:Exterminator
+model:EXT-7X
 mul id:8161
 
 Config:Biped

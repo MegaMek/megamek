@@ -1,6 +1,5 @@
-Version:1.3
-Albatross
-C 'Sooty Albatross' 
+chassis:Albatross
+model:C 'Sooty Albatross' 
 mul id:9508
 Config:Biped
 techbase:Mixed (IS Chassis)

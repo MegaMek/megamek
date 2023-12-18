@@ -1,6 +1,5 @@
-Version:1.0
-Avalanche
-AVL-1ON
+chassis:Avalanche
+model:AVL-1ON
 mul id:6400
 
 Config:Biped Omnimech

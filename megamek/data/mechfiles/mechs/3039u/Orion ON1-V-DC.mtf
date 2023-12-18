@@ -1,6 +1,5 @@
-Version:1.1
-Orion
-ON1-V-DC
+chassis:Orion
+model:ON1-V-DC
 mul id:2337
 
 Config:Biped

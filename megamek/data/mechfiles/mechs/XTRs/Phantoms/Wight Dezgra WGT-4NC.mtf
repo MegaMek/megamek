@@ -1,6 +1,5 @@
-Version:1.0
-Wight
-WGT-4NC 'Dezgra'
+chassis:Wight
+model:WGT-4NC 'Dezgra'
 mul id:5600
 
 Config:Biped

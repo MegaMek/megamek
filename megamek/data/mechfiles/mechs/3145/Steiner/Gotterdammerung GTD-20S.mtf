@@ -1,6 +1,5 @@
-Version:1.3
-Gotterdammerung
-GTD-20S
+chassis:Gotterdammerung
+model:GTD-20S
 mul id:6629
 Config:Biped
 techbase:Inner Sphere

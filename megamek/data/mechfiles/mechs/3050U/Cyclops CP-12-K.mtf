@@ -1,6 +1,5 @@
-Version:1.0
-Cyclops
-CP-12-K
+chassis:Cyclops
+model:CP-12-K
 mul id:780
 
 Config:Biped

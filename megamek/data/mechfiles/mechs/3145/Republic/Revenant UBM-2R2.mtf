@@ -1,6 +1,5 @@
-Version:1.1
-Revenant
-UBM-2R2
+chassis:Revenant
+model:UBM-2R2
 mul id:6714
 
 Config:Quad

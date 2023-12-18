@@ -1,6 +1,5 @@
-Version:1.0
-Arctic Wolf
-A
+chassis:Arctic Wolf
+model:A
 mul id:101
 
 Config:Biped Omnimech

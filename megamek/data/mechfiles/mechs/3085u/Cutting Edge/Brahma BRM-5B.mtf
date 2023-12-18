@@ -1,6 +1,5 @@
-Version:1.3
-Brahma
-BRM-5B
+chassis:Brahma
+model:BRM-5B
 mul id:427
 Config:Biped
 techbase:Inner Sphere

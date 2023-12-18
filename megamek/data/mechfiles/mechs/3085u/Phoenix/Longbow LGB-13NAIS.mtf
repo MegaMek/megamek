@@ -1,6 +1,5 @@
-Version:1.0
-Longbow
-LGB-13NAIS
+chassis:Longbow
+model:LGB-13NAIS
 mul id:1934
 
 Config:Biped

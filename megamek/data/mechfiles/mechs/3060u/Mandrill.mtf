@@ -1,6 +1,5 @@
-Version:1.0
-Mandrill
-
+chassis:Mandrill
+model:
 mul id:2011
 
 Config:Biped

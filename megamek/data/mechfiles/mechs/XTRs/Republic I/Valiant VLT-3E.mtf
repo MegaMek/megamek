@@ -1,6 +1,5 @@
-Version:1.1
-Valiant
-VLT-3E
+chassis:Valiant
+model:VLT-3E
 mul id:7293
 
 Config:Biped

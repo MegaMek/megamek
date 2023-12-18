@@ -1,6 +1,5 @@
-Version:1.3
-Tempest
-C
+chassis:Tempest
+model:C
 mul id:8005
 Config:Biped
 techbase:Mixed (IS Chassis)

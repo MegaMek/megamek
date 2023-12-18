@@ -1,6 +1,5 @@
-Version:1.1
-White Flame
-WHF-3C
+chassis:White Flame
+model:WHF-3C
 mul id:5405
 
 Config:Quad

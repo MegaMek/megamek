@@ -1,6 +1,5 @@
-Version:1.1
-Valkyrie
-C
+chassis:Valkyrie
+model:C
 mul id:7701
 
 Config:Biped

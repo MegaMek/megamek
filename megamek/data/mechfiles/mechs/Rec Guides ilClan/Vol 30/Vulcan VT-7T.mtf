@@ -1,6 +1,5 @@
-Version:1.3
-Vulcan
-VT-7T
+chassis:Vulcan
+model:VT-7T
 mul id:9427
 Config:Biped
 techbase:Inner Sphere

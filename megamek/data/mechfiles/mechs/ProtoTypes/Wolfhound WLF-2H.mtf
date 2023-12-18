@@ -1,6 +1,5 @@
-Version:1.2
-Wolfhound
-WLF-2H
+chassis:Wolfhound
+model:WLF-2H
 mul id:5417
 
 Config:Biped

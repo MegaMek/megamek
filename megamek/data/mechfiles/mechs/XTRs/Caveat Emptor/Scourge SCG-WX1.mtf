@@ -1,6 +1,5 @@
-Version:1.1
-Scourge
-SCG-WX1
+chassis:Scourge
+model:SCG-WX1
 mul id:8109
 
 Config:Biped

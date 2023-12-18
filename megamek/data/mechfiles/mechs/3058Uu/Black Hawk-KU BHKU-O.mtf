@@ -1,6 +1,5 @@
-Version:1.3
-Black Hawk-KU
-BHKU-O
+chassis:Black Hawk-KU
+model:BHKU-O
 mul id:345
 Config:Biped Omnimech
 techbase:Inner Sphere

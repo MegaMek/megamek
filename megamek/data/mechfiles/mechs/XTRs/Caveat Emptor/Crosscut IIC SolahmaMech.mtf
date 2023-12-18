@@ -1,6 +1,5 @@
-Version:1.0
-Crosscut
-IIC SolahmaMech
+chassis:Crosscut
+model:IIC SolahmaMech
 mul id:8099
 
 Config:Biped

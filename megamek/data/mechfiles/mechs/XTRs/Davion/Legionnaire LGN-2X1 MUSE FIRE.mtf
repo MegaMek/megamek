@@ -1,6 +1,5 @@
-Version:1.1
-Legionnaire
-LGN-2X1 MUSE FIRE
+chassis:Legionnaire
+model:LGN-2X1 MUSE FIRE
 mul id:1864
 
 Config:Biped

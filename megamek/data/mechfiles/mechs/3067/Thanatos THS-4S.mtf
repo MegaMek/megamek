@@ -1,6 +1,5 @@
-Version:1.0
-Thanatos
-TNS-4S
+chassis:Thanatos
+model:TNS-4S
 mul id:5218
 
 Config:Biped

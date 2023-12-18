@@ -1,6 +1,5 @@
-Version:1.1
-Ground Pounder
-DVM-2 MiningMech
+chassis:Ground Pounder
+model:DVM-2 MiningMech
 mul id:7872
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.3
-Whitworth
-WTH-1S
+chassis:Whitworth
+model:WTH-1S
 mul id:3540
 Config:Biped
 techbase:Inner Sphere

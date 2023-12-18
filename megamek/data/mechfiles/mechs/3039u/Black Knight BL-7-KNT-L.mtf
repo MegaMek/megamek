@@ -1,6 +1,5 @@
-Version:1.0
-Black Knight
-BL-7-KNT-L
+chassis:Black Knight
+model:BL-7-KNT-L
 mul id:361
 
 Config:Biped

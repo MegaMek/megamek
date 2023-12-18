@@ -1,6 +1,5 @@
-Version:1.1
-Centurion
-CN11-OC
+chassis:Centurion
+model:CN11-OC
 mul id:6343
 
 Config:Biped Omnimech

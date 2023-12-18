@@ -1,6 +1,5 @@
-Version:1.0
-Marshal
-MHL-X1
+chassis:Marshal
+model:MHL-X1
 mul id:2090
 
 Config:Biped

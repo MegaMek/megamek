@@ -1,6 +1,5 @@
-Version:1.0
-Colossus
-CL-P3
+chassis:Colossus
+model:CL-P3
 mul id:661
 
 Config:Biped

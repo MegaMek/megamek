@@ -1,6 +1,5 @@
-Version:1.0
-UrbanMech
-UM-R27
+chassis:UrbanMech
+model:UM-R27
 mul id:9498
 
 Config:Biped

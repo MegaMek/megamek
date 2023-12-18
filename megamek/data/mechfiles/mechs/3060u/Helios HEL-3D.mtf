@@ -1,6 +1,5 @@
-Version:1.0
-Helios
-HEL-3D
+chassis:Helios
+model:HEL-3D
 mul id:1464
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Flea
-FLE-16
+chassis:Flea
+model:FLE-16
 mul id:7427
 
 Config:Biped

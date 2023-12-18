@@ -1,6 +1,5 @@
-Version:1.0
-Victor
-VTR-C
+chassis:Victor
+model:VTR-C
 mul id:3415
 
 Config:Biped

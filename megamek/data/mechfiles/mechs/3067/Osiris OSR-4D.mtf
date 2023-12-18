@@ -1,6 +1,5 @@
-Version:1.0
-Osiris
-OSR-4D
+chassis:Osiris
+model:OSR-4D
 mul id:4764
 
 Config:Biped

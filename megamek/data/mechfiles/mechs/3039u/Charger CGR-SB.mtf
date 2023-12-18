@@ -1,6 +1,5 @@
-Version:1.0
-Charger
-CGR-SB 'Challenger'
+chassis:Charger
+model:CGR-SB 'Challenger'
 mul id:570
 
 Config:Biped

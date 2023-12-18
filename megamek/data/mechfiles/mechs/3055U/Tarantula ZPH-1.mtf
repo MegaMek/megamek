@@ -1,6 +1,5 @@
-Version:1.3
-Tarantula
-ZPH-1
+chassis:Tarantula
+model:ZPH-1
 mul id:3160
 Config:Quad
 techbase:Inner Sphere

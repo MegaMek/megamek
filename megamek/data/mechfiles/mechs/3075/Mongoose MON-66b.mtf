@@ -1,6 +1,5 @@
-Version:1.0
-Mongoose
-MON-66b
+chassis:Mongoose
+model:MON-66b
 mul id:2209
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.1
-Sarissa
-MN1-D
+chassis:Sarissa
+model:MN1-D
 mul id:2797
 
 Config:Biped

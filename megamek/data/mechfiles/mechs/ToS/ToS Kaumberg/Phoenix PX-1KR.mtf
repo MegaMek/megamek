@@ -1,6 +1,5 @@
-Version:1.1
-Phoenix
-PX-1KR
+chassis:Phoenix
+model:PX-1KR
 mul id:7469
 
 Config:Biped

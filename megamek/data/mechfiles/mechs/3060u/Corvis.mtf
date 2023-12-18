@@ -1,6 +1,5 @@
-Version:1.0
-Corvis
-
+chassis:Corvis
+model:
 mul id:700
 
 Config:Biped

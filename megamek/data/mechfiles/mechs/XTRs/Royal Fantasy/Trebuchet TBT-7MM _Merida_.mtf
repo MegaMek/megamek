@@ -1,6 +1,5 @@
-Version:1.0
-Trebuchet
-TBT-7MM 'Merida'
+chassis:Trebuchet
+model:TBT-7MM 'Merida'
 mul id:8378
 
 Config:Biped

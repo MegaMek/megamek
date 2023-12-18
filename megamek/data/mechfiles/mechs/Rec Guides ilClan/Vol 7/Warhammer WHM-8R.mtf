@@ -1,6 +1,5 @@
-Version:1.0
-Warhammer
-WHM-8R
+chassis:Warhammer
+model:WHM-8R
 mul id:7563
 
 Config:Biped

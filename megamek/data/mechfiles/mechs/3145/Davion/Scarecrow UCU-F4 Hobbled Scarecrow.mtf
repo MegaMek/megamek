@@ -1,6 +1,5 @@
-Version:1.1
-Scarecrow
-UCU-F4r 'Hobbled Scarecrow'
+chassis:Scarecrow
+model:UCU-F4r 'Hobbled Scarecrow'
 mul id:6337
 
 Config:Biped

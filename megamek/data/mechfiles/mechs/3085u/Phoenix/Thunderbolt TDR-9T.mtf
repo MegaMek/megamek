@@ -1,6 +1,5 @@
-Version:1.0
-Thunderbolt
-TDR-9T
+chassis:Thunderbolt
+model:TDR-9T
 mul id:3251
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.3
-Albatross
-ALB-4Ur
+chassis:Albatross
+model:ALB-4Ur
 mul id:9510
 Config:Biped
 techbase:Inner Sphere

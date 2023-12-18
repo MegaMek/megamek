@@ -1,6 +1,5 @@
-Version:1.0
-Snake
-SNK-2B
+chassis:Snake
+model:SNK-2B
 mul id:2976
 
 Config:Biped

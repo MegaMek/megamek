@@ -1,6 +1,5 @@
-Version:1.1
-Mongoose
-C 2
+chassis:Mongoose
+model:C 2
 mul id:7604
 
 Config:Biped

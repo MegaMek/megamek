@@ -1,6 +1,5 @@
-Version:1.3
-Warhammer
-C 3
+chassis:Warhammer
+model:C 3
 mul id:7566
 Config:Biped
 techbase:Clan

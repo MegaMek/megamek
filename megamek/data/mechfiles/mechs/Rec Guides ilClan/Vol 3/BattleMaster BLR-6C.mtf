@@ -1,6 +1,5 @@
-Version:1.1
-BattleMaster
-BLR-6C
+chassis:BattleMaster
+model:BLR-6C
 mul id:7476
 
 Config:Biped

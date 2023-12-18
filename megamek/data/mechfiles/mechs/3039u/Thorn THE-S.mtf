@@ -1,6 +1,5 @@
-Version:1.0
-Thorn
-THE-S
+chassis:Thorn
+model:THE-S
 mul id:3195
 
 Config:Biped

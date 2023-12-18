@@ -1,6 +1,5 @@
-Version:1.3
-Icarus
-ICR-1X
+chassis:Icarus
+model:ICR-1X
 mul id:1599
 Config:Biped
 techbase:Inner Sphere

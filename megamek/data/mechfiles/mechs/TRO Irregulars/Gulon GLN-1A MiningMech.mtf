@@ -1,6 +1,5 @@
-Version:1.1
-Gulon MiningMech
-GLN-1A 
+chassis:Gulon MiningMech
+model:GLN-1A 
 mul id:7844
 
 Config:Biped

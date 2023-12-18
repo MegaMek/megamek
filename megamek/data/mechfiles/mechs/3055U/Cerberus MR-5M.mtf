@@ -1,6 +1,5 @@
-Version:1.0
-Cerberus
-MR-5M
+chassis:Cerberus
+model:MR-5M
 mul id:526
 
 Config:Biped

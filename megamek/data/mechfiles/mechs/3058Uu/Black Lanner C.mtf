@@ -1,6 +1,5 @@
-Version:1.0
-Black Lanner
-C
+chassis:Black Lanner
+model:C
 mul id:365
 
 Config:Biped Omnimech

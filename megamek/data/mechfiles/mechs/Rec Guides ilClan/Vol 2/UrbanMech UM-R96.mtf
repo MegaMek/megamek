@@ -1,6 +1,5 @@
-Version:1.0
-UrbanMech
-UM-R96
+chassis:UrbanMech
+model:UM-R96
 mul id:7453
 
 Config:Biped

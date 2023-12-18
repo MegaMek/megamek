@@ -1,6 +1,5 @@
-Version:1.0
-Nyx
-NX-100
+chassis:Nyx
+model:NX-100
 mul id:6937
 
 Config:Biped

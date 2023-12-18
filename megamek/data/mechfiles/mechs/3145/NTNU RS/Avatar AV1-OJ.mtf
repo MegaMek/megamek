@@ -1,6 +1,5 @@
-Version:1.3
-Avatar
-AV1-OJ
+chassis:Avatar
+model:AV1-OJ
 mul id:6874
 Config:Biped Omnimech
 techbase:Mixed (IS Chassis)

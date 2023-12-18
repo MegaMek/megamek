@@ -1,6 +1,5 @@
-Version:1.3
-Albatross
-ALB-5U
+chassis:Albatross
+model:ALB-5U
 mul id:9511
 Config:Biped
 techbase:Inner Sphere

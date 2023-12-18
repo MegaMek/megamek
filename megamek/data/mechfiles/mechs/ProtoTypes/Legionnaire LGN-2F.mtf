@@ -1,6 +1,5 @@
-Version:1.1
-Legionnaire
-LGN-2F
+chassis:Legionnaire
+model:LGN-2F
 mul id:4491
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Shockwave
-SKW-4G
+chassis:Shockwave
+model:SKW-4G
 mul id:2930
 
 Config:Biped

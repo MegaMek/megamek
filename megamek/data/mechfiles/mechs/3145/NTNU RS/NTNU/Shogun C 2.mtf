@@ -1,6 +1,5 @@
-Version:1.3
-Shogun
-C 2
+chassis:Shogun
+model:C 2
 mul id:8002
 Config:Biped
 techbase:Clan

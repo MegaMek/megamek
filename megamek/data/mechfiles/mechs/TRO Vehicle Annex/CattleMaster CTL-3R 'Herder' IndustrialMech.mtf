@@ -1,6 +1,5 @@
-Version:1.1
-CattleMaster
-CTL-3R 'Herder' IndustrialMech
+chassis:CattleMaster
+model:CTL-3R 'Herder' IndustrialMech
 mul id:3905
 
 Config:Biped

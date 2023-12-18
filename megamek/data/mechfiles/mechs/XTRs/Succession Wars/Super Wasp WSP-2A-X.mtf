@@ -1,6 +1,5 @@
-Version:1.0
-Super-Wasp
-WSP-2A-X
+chassis:Super-Wasp
+model:WSP-2A-X
 mul id:5770
 
 Config:Biped

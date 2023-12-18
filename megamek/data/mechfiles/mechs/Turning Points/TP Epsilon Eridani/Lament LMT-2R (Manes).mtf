@@ -1,6 +1,5 @@
-Version:1.1
-Lament
-LMT-2R (Manes)
+chassis:Lament
+model:LMT-2R (Manes)
 mul id:7400
 
 Config:Biped

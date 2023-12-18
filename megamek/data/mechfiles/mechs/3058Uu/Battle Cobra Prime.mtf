@@ -1,6 +1,5 @@
-Version:1.0
-Battle Cobra
-Prime
+chassis:Battle Cobra
+model:Prime
 mul id:273
 
 Config:Biped Omnimech

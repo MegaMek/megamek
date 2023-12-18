@@ -1,6 +1,5 @@
-Version:1.1
-Annihilator
-ANH-1X
+chassis:Annihilator
+model:ANH-1X
 mul id:38
 
 Config:Biped

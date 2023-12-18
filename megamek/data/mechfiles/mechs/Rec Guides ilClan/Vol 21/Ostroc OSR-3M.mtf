@@ -1,6 +1,5 @@
-Version:1.0
-Ostroc
-OSR-3M
+chassis:Ostroc
+model:OSR-3M
 mul id:8354
 
 Config:Biped

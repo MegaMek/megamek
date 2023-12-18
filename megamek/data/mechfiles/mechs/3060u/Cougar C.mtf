@@ -1,6 +1,5 @@
-Version:1.0
-Cougar
-C
+chassis:Cougar
+model:C
 mul id:706
 
 Config:Biped Omnimech

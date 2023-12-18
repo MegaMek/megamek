@@ -1,6 +1,5 @@
-Version:1.0
-Emperor
-EMP-8L
+chassis:Emperor
+model:EMP-8L
 mul id:6851
 
 Config:Biped

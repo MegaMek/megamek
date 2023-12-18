@@ -1,6 +1,5 @@
-Version:1.0
-Hussar
-HSR-950-D
+chassis:Hussar
+model:HSR-950-D
 mul id:1592
 
 Config:Biped

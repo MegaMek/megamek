@@ -1,6 +1,5 @@
-Version:1.1
-DemolitionMech
-WI-DM
+chassis:DemolitionMech
+model:WI-DM
 mul id:868
 
 Config:Biped

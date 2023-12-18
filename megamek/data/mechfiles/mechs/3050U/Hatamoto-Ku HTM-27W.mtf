@@ -1,6 +1,5 @@
-Version:1.0
-Hatamoto-Ku
-HTM-27W
+chassis:Hatamoto-Ku
+model:HTM-27W
 mul id:1408
 
 Config:Biped

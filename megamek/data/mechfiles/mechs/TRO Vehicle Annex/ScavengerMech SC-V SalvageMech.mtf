@@ -1,6 +1,5 @@
-Version:1.1
-Scavenger
-SC-V SalvageMech
+chassis:Scavenger
+model:SC-V SalvageMech
 
 mul id:4987
 

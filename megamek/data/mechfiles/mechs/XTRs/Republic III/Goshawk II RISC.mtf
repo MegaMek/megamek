@@ -1,6 +1,5 @@
-Version:1.0
-Goshawk II
-RISC
+chassis:Goshawk II
+model:RISC
 mul id:7376
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Guillotine IIC
-
+chassis:Guillotine IIC
+model:
 mul id:1345
 
 Config:Biped

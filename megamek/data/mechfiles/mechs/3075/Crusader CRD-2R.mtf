@@ -1,6 +1,5 @@
-Version:1.0
-Crusader
-CRD-2R
+chassis:Crusader
+model:CRD-2R
 mul id:748
 
 Config:Biped

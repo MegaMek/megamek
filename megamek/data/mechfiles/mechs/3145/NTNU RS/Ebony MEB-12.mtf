@@ -1,6 +1,5 @@
-Version:1.1
-Ebony
-MEB-12
+chassis:Ebony
+model:MEB-12
 mul id:6942
 
 Config:Biped

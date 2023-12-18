@@ -1,6 +1,5 @@
-Version:1.0
-Eisenfaust
-EFT-4J
+chassis:Eisenfaust
+model:EFT-4J
 mul id:944
 
 Config:Biped

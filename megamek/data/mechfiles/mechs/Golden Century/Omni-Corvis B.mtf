@@ -1,6 +1,5 @@
-Version:1.1
-Omni-Corvis
-B
+chassis:Omni-Corvis
+model:B
 mul id:7612
 
 Config:Biped Omnimech

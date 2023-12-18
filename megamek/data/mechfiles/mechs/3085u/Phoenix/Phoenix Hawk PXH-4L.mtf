@@ -1,6 +1,5 @@
-Version:1.2
-Phoenix Hawk
-PXH-4L
+chassis:Phoenix Hawk
+model:PXH-4L
 mul id:2503
 
 Config:Biped

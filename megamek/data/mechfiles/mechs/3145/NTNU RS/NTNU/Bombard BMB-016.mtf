@@ -1,6 +1,5 @@
-Version:1.3
-Bombard
-BMB-016
+chassis:Bombard
+model:BMB-016
 mul id:7980
 Config:Biped
 techbase:Inner Sphere

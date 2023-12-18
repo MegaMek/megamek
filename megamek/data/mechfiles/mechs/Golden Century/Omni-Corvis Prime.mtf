@@ -1,6 +1,5 @@
-Version:1.1
-Omni-Corvis
-Prime
+chassis:Omni-Corvis
+model:Prime
 mul id:7610
 
 Config:Biped Omnimech

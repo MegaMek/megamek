@@ -1,6 +1,5 @@
-Version:1.0
-Zeus-X
-ZEU-X
+chassis:Zeus-X
+model:ZEU-X
 mul id:6631
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Charger
-CGR-C
+chassis:Charger
+model:CGR-C
 mul id:567
 
 Config:Biped

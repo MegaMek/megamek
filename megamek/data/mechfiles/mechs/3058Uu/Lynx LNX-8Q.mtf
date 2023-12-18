@@ -1,6 +1,5 @@
-Version:1.0
-Lynx
-LNX-8Q
+chassis:Lynx
+model:LNX-8Q
 mul id:1966
 
 Config:Biped

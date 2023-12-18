@@ -1,6 +1,5 @@
-Version:1.1
-Rattlesnake
-JR7-31R (Gideon)
+chassis:Rattlesnake
+model:JR7-31R (Gideon)
 
 Config:Biped
 techbase:Mixed (IS Chassis)

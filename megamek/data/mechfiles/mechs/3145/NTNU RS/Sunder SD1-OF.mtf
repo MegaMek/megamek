@@ -1,6 +1,5 @@
-Version:1.0
-Sunder
-SD1-OF
+chassis:Sunder
+model:SD1-OF
 mul id:6846
 
 Config:Biped Omnimech

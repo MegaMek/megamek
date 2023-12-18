@@ -1,6 +1,5 @@
-Version:1.1
-BattleMaster
-BLR-1G (Red Corsair)
+chassis:BattleMaster
+model:BLR-1G (Red Corsair)
 mul id:284
 
 Config:Biped

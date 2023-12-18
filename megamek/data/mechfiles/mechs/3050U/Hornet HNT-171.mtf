@@ -1,6 +1,5 @@
-Version:1.0
-Hornet
-HNT-171
+chassis:Hornet
+model:HNT-171
 mul id:1548
 
 Config:Biped

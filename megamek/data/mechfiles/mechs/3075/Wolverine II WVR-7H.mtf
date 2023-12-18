@@ -1,6 +1,5 @@
-Version:1.0
-Wolverine II
-WVR-7H
+chassis:Wolverine II
+model:WVR-7H
 mul id:3585
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Onslaught
-SA-OS3
+chassis:Onslaught
+model:SA-OS3
 mul id:2323
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Crab
-CRB-C
+chassis:Crab
+model:CRB-C
 mul id:720
 
 Config:Biped

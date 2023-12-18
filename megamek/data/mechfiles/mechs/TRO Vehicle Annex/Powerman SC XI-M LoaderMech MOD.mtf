@@ -1,6 +1,5 @@
-Version:1.0
-Powerman
-SC XI-M LoaderMech MOD
+chassis:Powerman
+model:SC XI-M LoaderMech MOD
 mul id:2565
 
 Config:Biped

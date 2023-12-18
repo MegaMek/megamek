@@ -1,6 +1,5 @@
-Version:1.0
-Locust
-LCT-3V
+chassis:Locust
+model:LCT-3V
 mul id:1907
 
 Config:Biped

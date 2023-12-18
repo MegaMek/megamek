@@ -1,6 +1,5 @@
-Version:1.1
-StrongArm
-SC CVI ConstructionMech
+chassis:StrongArm
+model:SC CVI ConstructionMech
 mul id:7859
 
 Config:Biped

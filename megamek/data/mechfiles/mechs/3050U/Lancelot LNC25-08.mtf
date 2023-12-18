@@ -1,6 +1,5 @@
-Version:1.1
-Lancelot
-LNC25-08
+chassis:Lancelot
+model:LNC25-08
 mul id:1860
 
 Config:Biped

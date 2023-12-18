@@ -1,6 +1,5 @@
-Version:1.2
-Beowulf
-BEO-X-7a
+chassis:Beowulf
+model:BEO-X-7a
 mul id:5548
 
 Config:Biped

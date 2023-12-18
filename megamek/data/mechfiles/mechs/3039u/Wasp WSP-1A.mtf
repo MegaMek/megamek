@@ -1,6 +1,5 @@
-Version:1.0
-Wasp
-WSP-1A
+chassis:Wasp
+model:WSP-1A
 mul id:3520
 
 Config:Biped

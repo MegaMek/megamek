@@ -1,6 +1,5 @@
-Version:1.0
-Jupiter
-
+chassis:Jupiter
+model:
 mul id:1725
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.2
-Wolfhound
-WLF-5
+chassis:Wolfhound
+model:WLF-5
 mul id:3569
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Peacemaker PM-6 PoliceMech
-
+chassis:Peacemaker PM-6 PoliceMech
+model:
 mul id:7173
 
 Config:Biped

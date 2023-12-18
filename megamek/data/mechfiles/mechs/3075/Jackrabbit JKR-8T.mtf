@@ -1,6 +1,5 @@
-Version:1.0
-Jackrabbit
-JKR-8T
+chassis:Jackrabbit
+model:JKR-8T
 mul id:1656
 
 Config:Biped

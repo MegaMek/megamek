@@ -1,6 +1,5 @@
-Version:1.0
-Shogun
-SHG-2E
+chassis:Shogun
+model:SHG-2E
 mul id:2932
 
 Config:Biped

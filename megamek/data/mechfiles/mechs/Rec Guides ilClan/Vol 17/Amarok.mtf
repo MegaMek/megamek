@@ -1,6 +1,5 @@
-Version:1.3
-Amarok
-
+chassis:Amarok
+model:
 mul id:8239
 Config:Biped
 techbase:Clan

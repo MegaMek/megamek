@@ -1,6 +1,5 @@
-Version:1.0
-Panther
-PNT-14R
+chassis:Panther
+model:PNT-14R
 mul id:8222
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.1
-Awesome
-AWS-10KM
+chassis:Awesome
+model:AWS-10KM
 mul id:172
 
 Config:Biped

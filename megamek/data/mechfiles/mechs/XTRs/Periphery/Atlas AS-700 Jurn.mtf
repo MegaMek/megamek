@@ -1,6 +1,5 @@
-Version:1.1
-Atlas
-AS7-00 (Jurn)
+chassis:Atlas
+model:AS7-00 (Jurn)
 mul id:5564
 
 Config:Biped
@@ -10,14 +9,10 @@ Source:XTR: Periphery
 Rules Level:4
 role:Sniper
 
-
-
-quirk:battle_fists_la
-quirk:battle_fists_ra
+quirk:prototype
+quirk:non_standard
 quirk:command_mech
 quirk:distracting
-quirk:imp_com
-
 
 Mass:100
 Engine:300 XL Engine(IS)

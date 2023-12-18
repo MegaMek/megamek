@@ -1,6 +1,5 @@
-Version:1.0
-Pouncer
-B
+chassis:Pouncer
+model:B
 mul id:2558
 
 Config:Biped Omnimech

@@ -1,6 +1,5 @@
-Version:1.0
-Ghost
-GST-50
+chassis:Ghost
+model:GST-50
 mul id:6907
 
 Config:Biped

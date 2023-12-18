@@ -1,6 +1,5 @@
-Version:1.0
-Phantom
-B
+chassis:Phantom
+model:B
 mul id:2482
 
 Config:Biped Omnimech

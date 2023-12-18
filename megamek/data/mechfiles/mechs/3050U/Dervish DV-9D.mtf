@@ -1,6 +1,5 @@
-Version:1.0
-Dervish
-DV-9D
+chassis:Dervish
+model:DV-9D
 mul id:883
 
 Config:Biped

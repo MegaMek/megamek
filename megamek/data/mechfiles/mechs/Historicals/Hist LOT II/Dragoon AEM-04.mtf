@@ -1,6 +1,5 @@
-Version:1.1
-Dragoon
-AEM-04
+chassis:Dragoon
+model:AEM-04
 mul id:6783
 
 Config:Biped

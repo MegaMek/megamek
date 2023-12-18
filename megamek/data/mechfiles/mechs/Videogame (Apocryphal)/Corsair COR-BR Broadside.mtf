@@ -1,6 +1,5 @@
-Version:1.0
-Corsair
-COR-BR Broadside
+chassis:Corsair
+model:COR-BR Broadside
 
 Config:Biped
 TechBase:Inner Sphere

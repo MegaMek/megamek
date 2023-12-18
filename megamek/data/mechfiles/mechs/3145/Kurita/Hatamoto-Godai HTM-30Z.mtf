@@ -1,6 +1,5 @@
-Version:1.3
-Hatamoto-Godai
-HTM-30Z
+chassis:Hatamoto-Godai
+model:HTM-30Z
 mul id:6419
 Config:Biped
 techbase:Mixed (IS Chassis)

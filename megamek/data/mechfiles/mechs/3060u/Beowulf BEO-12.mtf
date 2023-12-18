@@ -1,6 +1,5 @@
-Version:1.0
-Beowulf
-BEO-12
+chassis:Beowulf
+model:BEO-12
 mul id:327
 
 Config:Biped

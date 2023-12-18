@@ -1,6 +1,5 @@
-Version:1.0
-Albatross
-ALB-4U
+chassis:Albatross
+model:ALB-4U
 mul id:29
 
 Config:Biped

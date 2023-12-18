@@ -1,6 +1,5 @@
-Version:1.1
-Cuirass
-CDR-2BC
+chassis:Cuirass
+model:CDR-2BC
 mul id:6922
 
 Config:Biped

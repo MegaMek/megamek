@@ -1,6 +1,5 @@
-Version:1.0
-Helepolis
-HEP-3H
+chassis:Helepolis
+model:HEP-3H
 mul id:1462
 
 Config:Biped

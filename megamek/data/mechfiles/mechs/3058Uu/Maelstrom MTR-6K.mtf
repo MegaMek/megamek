@@ -1,6 +1,5 @@
-Version:1.0
-Maelstrom
-MTR-6K
+chassis:Maelstrom
+model:MTR-6K
 mul id:1990
 
 Config:Biped

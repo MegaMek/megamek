@@ -1,6 +1,5 @@
-Version:1.0
-Neanderthal
-NTL-AG
+chassis:Neanderthal
+model:NTL-AG
 mul id:6513
 
 Config:Biped

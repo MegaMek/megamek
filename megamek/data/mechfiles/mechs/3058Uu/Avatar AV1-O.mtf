@@ -1,6 +1,5 @@
-Version:1.3
-Avatar
-AV1-O
+chassis:Avatar
+model:AV1-O
 mul id:160
 Config:Biped Omnimech
 techbase:Inner Sphere

@@ -1,6 +1,5 @@
-Version:1.0
-Calliope
-CAL-1MAFSW 'Snow White'
+chassis:Calliope
+model:CAL-1MAFSW 'Snow White'
 mul id:8368
 
 Config:Biped

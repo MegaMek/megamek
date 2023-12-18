@@ -1,6 +1,5 @@
-Version:1.0
-Banshee
-BNC-3S (Reinesblatt)
+chassis:Banshee
+model:BNC-3S (Reinesblatt)
 mul id:246
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.1
-Koschei
-KSC-5MC
+chassis:Koschei
+model:KSC-5MC
 mul id:1825
 
 Config:Biped

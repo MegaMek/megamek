@@ -1,6 +1,5 @@
-Version:1.1
-Vanquisher
-VQR-7V
+chassis:Vanquisher
+model:VQR-7V
 mul id:5722
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Mackie
-MSK-8B
+chassis:Mackie
+model:MSK-8B
 mul id:1974
 
 Config:Biped

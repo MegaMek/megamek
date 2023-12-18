@@ -1,6 +1,5 @@
-Version:1.0
-Apollo
-APL-3T
+chassis:Apollo
+model:APL-3T
 mul id:57
 
 Config:Biped

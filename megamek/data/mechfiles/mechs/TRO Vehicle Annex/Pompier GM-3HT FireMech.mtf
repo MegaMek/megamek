@@ -1,6 +1,5 @@
-Version:1.1
-Pompier
-GM-3HT Firemech
+chassis:Pompier
+model:GM-3HT Firemech
 mul id:4844
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.1
-Marco
-MR-7 ExplorerMech
+chassis:Marco
+model:MR-7 ExplorerMech
 mul id:4595
 
 Config:Biped

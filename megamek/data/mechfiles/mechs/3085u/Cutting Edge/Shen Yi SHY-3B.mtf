@@ -1,6 +1,5 @@
-Version:1.0
-Shen Yi
-SHY-3B
+chassis:Shen Yi
+model:SHY-3B
 mul id:2922
 
 Config:Biped

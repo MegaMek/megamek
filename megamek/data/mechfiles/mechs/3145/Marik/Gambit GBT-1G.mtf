@@ -1,6 +1,5 @@
-Version:1.1
-Gambit
-GBT-1G
+chassis:Gambit
+model:GBT-1G
 mul id:6500
 
 Config:Biped

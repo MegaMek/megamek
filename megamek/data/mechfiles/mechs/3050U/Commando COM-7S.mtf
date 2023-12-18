@@ -1,6 +1,5 @@
-Version:1.0
-Commando
-COM-7S
+chassis:Commando
+model:COM-7S
 mul id:676
 
 Config:Biped

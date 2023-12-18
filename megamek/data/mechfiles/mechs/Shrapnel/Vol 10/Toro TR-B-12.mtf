@@ -1,6 +1,5 @@
-Version:1.3
-Toro
-TR-B-12
+chassis:Toro
+model:TR-B-12
 mul id:9250
 Config:Biped
 techbase:Inner Sphere

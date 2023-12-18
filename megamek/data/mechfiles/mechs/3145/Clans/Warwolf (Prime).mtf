@@ -1,6 +1,5 @@
-Version:1.0
-Warwolf
-(Prime)
+chassis:Warwolf
+model:(Prime)
 mul id:6287
 
 Config:Biped Omnimech

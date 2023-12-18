@@ -1,6 +1,5 @@
-Version:1.0
-Kintaro
-KTO-18
+chassis:Kintaro
+model:KTO-18
 mul id:1790
 
 Config:Biped

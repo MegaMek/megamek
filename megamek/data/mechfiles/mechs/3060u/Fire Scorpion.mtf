@@ -1,6 +1,5 @@
-Version:1.0
-Fire Scorpion
-
+chassis:Fire Scorpion
+model:
 mul id:1071
 
 Config:Quad

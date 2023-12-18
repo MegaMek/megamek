@@ -1,6 +1,5 @@
-Version:1.0
-Gunslinger
-GUN-2ERD
+chassis:Gunslinger
+model:GUN-2ERD
 mul id:1349
 
 Config:Biped

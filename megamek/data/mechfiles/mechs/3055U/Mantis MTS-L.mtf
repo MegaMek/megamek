@@ -1,6 +1,5 @@
-Version:1.1
-Mantis
-MTS-L
+chassis:Mantis
+model:MTS-L
 mul id:2022
 
 Config:Biped

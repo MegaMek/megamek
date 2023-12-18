@@ -1,6 +1,5 @@
-Version:1.0
-Hoplite
-C
+chassis:Hoplite
+model:C
 mul id:1540
 
 Config:Biped

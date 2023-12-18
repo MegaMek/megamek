@@ -1,6 +1,5 @@
-Version:1.0
-Firefly
-FFL-4C
+chassis:Firefly
+model:FFL-4C
 mul id:1089
 
 Config:Biped

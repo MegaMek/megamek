@@ -1,6 +1,5 @@
-Version:1.0
-Enforcer III
-ENF-6M
+chassis:Enforcer III
+model:ENF-6M
 mul id:982
 
 Config:Biped

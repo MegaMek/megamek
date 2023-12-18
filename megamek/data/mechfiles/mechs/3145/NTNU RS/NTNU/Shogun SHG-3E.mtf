@@ -1,6 +1,5 @@
-Version:1.3
-Shogun
-SHG-3E
+chassis:Shogun
+model:SHG-3E
 mul id:8003
 Config:Biped
 techbase:Inner Sphere

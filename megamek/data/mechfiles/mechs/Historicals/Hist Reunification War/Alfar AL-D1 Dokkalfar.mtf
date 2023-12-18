@@ -1,6 +1,5 @@
-Version:1.0
-Alfar
-AL-D1 'Dokkalfar'
+chassis:Alfar
+model:AL-D1 'Dokkalfar'
 mul id:3693
 
 Config:Biped

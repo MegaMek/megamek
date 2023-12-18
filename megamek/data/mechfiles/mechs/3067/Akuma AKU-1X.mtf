@@ -1,6 +1,5 @@
-Version:1.3
-Akuma
-AKU-1X
+chassis:Akuma
+model:AKU-1X
 mul id:3691
 Config:Biped
 techbase:Inner Sphere

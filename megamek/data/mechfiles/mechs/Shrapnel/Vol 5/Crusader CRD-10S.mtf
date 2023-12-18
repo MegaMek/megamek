@@ -1,6 +1,5 @@
-Version:1.0
-Crusader
-CRD-10S
+chassis:Crusader
+model:CRD-10S
 mul id:8234
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.1
-BattleMaster
-BLR-3M-DC
+chassis:BattleMaster
+model:BLR-3M-DC
 mul id:3806
 
 Config:Biped

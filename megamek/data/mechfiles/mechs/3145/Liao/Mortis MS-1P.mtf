@@ -1,6 +1,5 @@
-Version:1.0
-Mortis
-MS-1P
+chassis:Mortis
+model:MS-1P
 mul id:6467
 
 Config:Biped

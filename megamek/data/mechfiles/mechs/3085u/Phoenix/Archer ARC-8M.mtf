@@ -1,6 +1,5 @@
-Version:1.0
-Archer
-ARC-8M
+chassis:Archer
+model:ARC-8M
 mul id:86
 
 Config:Biped

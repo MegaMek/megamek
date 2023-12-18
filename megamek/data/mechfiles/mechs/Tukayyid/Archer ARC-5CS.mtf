@@ -1,6 +1,5 @@
-Version:1.0
-Archer
-ARC-5CS
+chassis:Archer
+model:ARC-5CS
 mul id:7598
 
 Config:Biped

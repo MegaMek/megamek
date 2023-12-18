@@ -1,6 +1,5 @@
-Version:1.2
-Cadaver
-CVR-T1
+chassis:Cadaver
+model:CVR-T1
 mul id:6551
 
 Config:Biped

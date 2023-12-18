@@ -1,6 +1,5 @@
-Version:1.0
-Grand Dragon
-DRG-12K
+chassis:Grand Dragon
+model:DRG-12K
 mul id:8446
 
 Config:Biped

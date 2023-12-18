@@ -1,6 +1,5 @@
-Version:1.0
-Longbow
-LGB-13C
+chassis:Longbow
+model:LGB-13C
 mul id:1933
 
 Config:Biped

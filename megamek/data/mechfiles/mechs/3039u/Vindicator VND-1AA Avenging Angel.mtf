@@ -1,6 +1,5 @@
-Version:1.0
-Vindicator
-VND-1AA 'Avenging Angel'
+chassis:Vindicator
+model:VND-1AA 'Avenging Angel'
 mul id:3421
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Victor
-VTR-9S
+chassis:Victor
+model:VTR-9S
 mul id:3414
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.3
-Blackjack
-BJ-1X
+chassis:Blackjack
+model:BJ-1X
 mul id:376
 Config:Biped
 techbase:Inner Sphere

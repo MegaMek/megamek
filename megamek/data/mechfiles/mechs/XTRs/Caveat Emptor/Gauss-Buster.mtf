@@ -1,6 +1,5 @@
-Version:1.0
-Gauss-Buster MilitiaMech
-
+chassis:Gauss-Buster MilitiaMech
+model:
 mul id:8100
 
 Config:Biped

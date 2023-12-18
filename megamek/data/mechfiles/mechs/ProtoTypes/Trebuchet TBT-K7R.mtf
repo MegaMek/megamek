@@ -1,6 +1,5 @@
-Version:1.0
-Trebuchet
-TBT-K7R
+chassis:Trebuchet
+model:TBT-K7R
 mul id:5275
 
 Config:Biped

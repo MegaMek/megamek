@@ -1,6 +1,5 @@
-Version:1.0
-Ostsol
-OTL-5M
+chassis:Ostsol
+model:OTL-5M
 mul id:2374
 
 Config:Biped

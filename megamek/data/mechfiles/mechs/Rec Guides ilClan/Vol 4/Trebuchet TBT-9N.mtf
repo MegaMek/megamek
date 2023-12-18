@@ -1,6 +1,5 @@
-Version:1.1
-Trebuchet
-TBT-9N
+chassis:Trebuchet
+model:TBT-9N
 mul id:7500
 
 Config:Biped

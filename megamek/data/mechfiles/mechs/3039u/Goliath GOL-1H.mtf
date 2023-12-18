@@ -1,6 +1,5 @@
-Version:1.0
-Goliath
-GOL-1H
+chassis:Goliath
+model:GOL-1H
 mul id:1229
 
 Config:Quad

@@ -1,6 +1,5 @@
-Version:1.1
-Daedalus
-DAD-3D
+chassis:Daedalus
+model:DAD-3D
 mul id:790
 
 Config:Biped

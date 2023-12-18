@@ -1,6 +1,5 @@
-Version:1.0
-Black Watch
-BKW-7R
+chassis:Black Watch
+model:BKW-7R
 mul id:371
 
 Config:Biped

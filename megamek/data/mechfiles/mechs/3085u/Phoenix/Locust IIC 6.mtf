@@ -1,6 +1,5 @@
-Version:1.0
-Locust IIC
-6
+chassis:Locust IIC
+model:6
 mul id:1919
 
 Config:Biped

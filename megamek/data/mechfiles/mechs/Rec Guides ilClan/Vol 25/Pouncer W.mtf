@@ -1,6 +1,5 @@
-Version:1.3
-Pouncer
-W
+chassis:Pouncer
+model:W
 mul id:9264
 Config:Biped Omnimech
 techbase:Clan

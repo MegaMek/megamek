@@ -1,6 +1,5 @@
-Version:1.0
-Grasshopper
-GHR-7K
+chassis:Grasshopper
+model:GHR-7K
 mul id:1270
 
 Config:Biped

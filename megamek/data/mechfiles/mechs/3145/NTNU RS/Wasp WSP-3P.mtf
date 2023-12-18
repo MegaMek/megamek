@@ -1,6 +1,5 @@
-Version:1.2
-Wasp
-WSP-3P
+chassis:Wasp
+model:WSP-3P
 mul id:6950
 
 Config:Biped

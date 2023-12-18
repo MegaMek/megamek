@@ -1,6 +1,5 @@
-Version:1.3
-Awesome
-AWS-8Q
+chassis:Awesome
+model:AWS-8Q
 mul id:174
 Config:Biped
 techbase:Inner Sphere

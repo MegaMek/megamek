@@ -1,6 +1,5 @@
-Version:1.0
-Templar
-TLR1-O (Tancred)
+chassis:Templar
+model:TLR1-O (Tancred)
 mul id:5193
 
 Config:Biped Omnimech

@@ -1,6 +1,5 @@
-Version:1.0
-Griffin
-GRF-1DS
+chassis:Griffin
+model:GRF-1DS
 mul id:1294
 
 Config:Biped

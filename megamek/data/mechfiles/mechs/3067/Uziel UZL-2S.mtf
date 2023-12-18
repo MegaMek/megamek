@@ -1,6 +1,5 @@
-Version:1.0
-Uziel
-UZL-2S
+chassis:Uziel
+model:UZL-2S
 mul id:5331
 
 Config:Biped

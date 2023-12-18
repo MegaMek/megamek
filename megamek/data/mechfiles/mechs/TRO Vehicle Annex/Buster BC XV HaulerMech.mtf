@@ -1,6 +1,5 @@
-Version:1.1
-Buster
-BC XV HaulerMech
+chassis:Buster
+model:BC XV HaulerMech
 mul id:452
 
 Config:Biped

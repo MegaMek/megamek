@@ -1,6 +1,5 @@
-Version:1.1
-Dola
-DOL-1A
+chassis:Dola
+model:DOL-1A
 mul id:903
 
 Config:Biped

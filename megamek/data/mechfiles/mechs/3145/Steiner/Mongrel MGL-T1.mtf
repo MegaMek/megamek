@@ -1,6 +1,5 @@
-Version:1.0
-Mongrel
-MGL-T1
+chassis:Mongrel
+model:MGL-T1
 mul id:6618
 
 Config:Biped

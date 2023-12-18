@@ -1,6 +1,5 @@
-Version:1.3
-Shrike
-'Black Rose'
+chassis:Shrike
+model:'Black Rose'
 mul id:9215
 Config:Biped
 techbase:Clan

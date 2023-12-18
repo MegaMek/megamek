@@ -1,6 +1,5 @@
-Version:1.1
-Exterminator
-EXT-4Db-EC
+chassis:Exterminator
+model:EXT-4Db-EC
 mul id:7682
 
 Config:Biped

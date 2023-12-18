@@ -1,6 +1,5 @@
-Version:1.0
-Grand Dragon
-DRG-C
+chassis:Grand Dragon
+model:DRG-C
 mul id:1264
 
 Config:Biped

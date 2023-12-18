@@ -1,6 +1,5 @@
-Version:1.3
-Banshee
-BNC-11X
+chassis:Banshee
+model:BNC-11X
 mul id:3784
 Config:Biped
 techbase:Mixed (IS Chassis)

@@ -1,6 +1,5 @@
-Version:1.0
-Tai-sho
-TSH-7S
+chassis:Tai-sho
+model:TSH-7S
 mul id:3150
 
 Config:Biped

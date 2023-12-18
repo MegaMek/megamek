@@ -1,6 +1,5 @@
-Version:1.2
-Valkyrie
-VLK-QD5
+chassis:Valkyrie
+model:VLK-QD5
 mul id:8104
 
 Config:Biped

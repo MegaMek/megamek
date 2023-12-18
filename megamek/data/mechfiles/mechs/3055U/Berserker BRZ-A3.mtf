@@ -1,6 +1,5 @@
-Version:1.0
-Berserker
-BRZ-A3
+chassis:Berserker
+model:BRZ-A3
 mul id:329
 
 Config:Biped

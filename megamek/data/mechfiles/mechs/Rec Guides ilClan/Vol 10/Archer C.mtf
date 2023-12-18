@@ -1,6 +1,5 @@
-Version:1.0
-Archer
-C
+chassis:Archer
+model:C
 mul id:90
 
 Config:Biped

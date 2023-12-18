@@ -1,6 +1,5 @@
-Version:1.3
-Thunderbolt
-TDR-5SE
+chassis:Thunderbolt
+model:TDR-5SE
 mul id:3240
 Config:Biped
 techbase:Inner Sphere

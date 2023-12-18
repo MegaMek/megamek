@@ -1,6 +1,5 @@
-Version:1.0
-Black Knight
-BL-10-KNT (Ross)
+chassis:Black Knight
+model:BL-10-KNT (Ross)
 mul id:355
 
 Config:Biped

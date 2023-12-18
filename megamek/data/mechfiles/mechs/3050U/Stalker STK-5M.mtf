@@ -1,6 +1,5 @@
-Version:1.0
-Stalker
-STK-5M
+chassis:Stalker
+model:STK-5M
 mul id:3040
 
 Config:Biped

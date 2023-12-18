@@ -1,6 +1,5 @@
-Version:1.0
-Thunderbolt
-TDR-5Sd
+chassis:Thunderbolt
+model:TDR-5Sd
 mul id:5868
 
 Config:Biped

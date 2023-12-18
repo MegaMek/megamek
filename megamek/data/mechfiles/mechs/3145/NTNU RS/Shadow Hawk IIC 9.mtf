@@ -1,6 +1,5 @@
-Version:1.0
-Shadow Hawk IIC
-9
+chassis:Shadow Hawk IIC
+model:9
 mul id:6911
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Nexus II
-NXS2-A
+chassis:Nexus II
+model:NXS2-A
 mul id:2261
 
 Config:Biped

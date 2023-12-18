@@ -1,6 +1,5 @@
-Version:1.3
-Wulfen
-(Prime)
+chassis:Wulfen
+model:(Prime)
 mul id:6256
 Config:Biped Omnimech
 techbase:Mixed (Clan Chassis)

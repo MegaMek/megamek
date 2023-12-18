@@ -1,6 +1,5 @@
-Version:1.1
-Kodiak
-(Cale)
+chassis:Kodiak
+model:(Cale)
 mul id:1804
 
 Config:Biped

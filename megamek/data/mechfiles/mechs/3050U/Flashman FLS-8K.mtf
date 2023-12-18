@@ -1,6 +1,5 @@
-Version:1.0
-Flashman
-FLS-8K
+chassis:Flashman
+model:FLS-8K
 mul id:1124
 
 Config:Biped

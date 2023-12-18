@@ -1,6 +1,5 @@
-Version:1.0
-Hauptmann
-HA1-OF
+chassis:Hauptmann
+model:HA1-OF
 mul id:6839
 
 Config:Biped Omnimech

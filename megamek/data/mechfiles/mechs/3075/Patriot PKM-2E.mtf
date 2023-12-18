@@ -1,6 +1,5 @@
-Version:1.1
-Patriot
-PKM-2E
+chassis:Patriot
+model:PKM-2E
 mul id:2449
 
 Config:Biped

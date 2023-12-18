@@ -1,6 +1,5 @@
-Version:1.0
-Crossbow
-CRS-6C
+chassis:Crossbow
+model:CRS-6C
 mul id:734
 
 Config:Biped

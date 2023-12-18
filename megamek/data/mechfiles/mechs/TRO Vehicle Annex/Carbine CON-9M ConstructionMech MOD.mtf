@@ -1,6 +1,5 @@
-Version:1.0
-Carbine
-CON-9M ConstructionMech MOD
+chassis:Carbine
+model:CON-9M ConstructionMech MOD
 mul id:7164
 
 Config:Biped

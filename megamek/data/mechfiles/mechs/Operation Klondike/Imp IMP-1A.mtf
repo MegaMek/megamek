@@ -1,6 +1,5 @@
-Version:1.1
-Imp
-IMP-1A
+chassis:Imp
+model:IMP-1A
 mul id:1607
 
 Config:Biped

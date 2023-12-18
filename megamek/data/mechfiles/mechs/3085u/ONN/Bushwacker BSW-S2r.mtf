@@ -1,6 +1,5 @@
-Version:1.0
-Bushwacker
-BSW-S2r
+chassis:Bushwacker
+model:BSW-S2r
 mul id:449
 
 Config:Biped

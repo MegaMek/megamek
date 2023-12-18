@@ -1,6 +1,5 @@
-Version:1.0
-Charger
-CGR-1A5
+chassis:Charger
+model:CGR-1A5
 mul id:560
 
 Config:Biped

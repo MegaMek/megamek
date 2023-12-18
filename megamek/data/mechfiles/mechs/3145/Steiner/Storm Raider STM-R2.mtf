@@ -1,6 +1,5 @@
-Version:1.0
-Storm Raider
-STM-R2
+chassis:Storm Raider
+model:STM-R2
 mul id:6616
 
 Config:Biped

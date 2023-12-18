@@ -1,6 +1,5 @@
-Version:1.0
-Gallowglas
-GAL-1GLS
+chassis:Gallowglas
+model:GAL-1GLS
 mul id:1182
 
 Config:Biped

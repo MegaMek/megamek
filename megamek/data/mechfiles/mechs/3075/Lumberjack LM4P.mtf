@@ -1,6 +1,5 @@
-Version:1.0
-Lumberjack
-LM4/P
+chassis:Lumberjack
+model:LM4/P
 mul id:1961
 
 Config:Biped

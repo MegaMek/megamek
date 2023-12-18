@@ -1,6 +1,5 @@
-Version:1.1
-Ebony
-MEB-9
+chassis:Ebony
+model:MEB-9
 mul id:942
 
 Config:Biped

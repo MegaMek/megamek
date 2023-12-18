@@ -1,6 +1,5 @@
-Version:1.0
-Malice
-MAL-XT
+chassis:Malice
+model:MAL-XT
 mul id:6683
 
 Config:Biped

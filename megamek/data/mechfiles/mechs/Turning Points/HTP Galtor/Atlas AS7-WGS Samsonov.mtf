@@ -1,6 +1,5 @@
-Version:1.1
-Atlas
-AS7-WGS (Samsonov)
+chassis:Atlas
+model:AS7-WGS (Samsonov)
 mul id:150
 
 Config:Biped

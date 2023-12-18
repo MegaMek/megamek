@@ -1,6 +1,5 @@
-Version:1.0
-Blood Reaper
-2
+chassis:Blood Reaper
+model:2
 mul id:407
 
 Config:Biped

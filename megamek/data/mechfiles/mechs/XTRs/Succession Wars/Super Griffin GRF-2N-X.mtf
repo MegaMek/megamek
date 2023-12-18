@@ -1,6 +1,5 @@
-Version:1.0
-Super-Griffin
-GRF-2N-X
+chassis:Super-Griffin
+model:GRF-2N-X
 mul id:5771
 
 Config:Biped

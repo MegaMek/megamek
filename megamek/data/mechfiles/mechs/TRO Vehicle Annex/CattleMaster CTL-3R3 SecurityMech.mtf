@@ -1,6 +1,5 @@
-Version:1.0
-CattleMaster
-CTL-3R3 SecurityMech
+chassis:CattleMaster
+model:CTL-3R3 SecurityMech
 mul id:7158
 
 Config:Biped

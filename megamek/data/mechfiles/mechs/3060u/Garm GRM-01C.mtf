@@ -1,6 +1,5 @@
-Version:1.0
-Garm
-GRM-01C
+chassis:Garm
+model:GRM-01C
 mul id:1192
 
 Config:Biped

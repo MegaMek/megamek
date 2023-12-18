@@ -1,6 +1,5 @@
-Version:1.1
-Ostscout
-OTT-10CS
+chassis:Ostscout
+model:OTT-10CS
 mul id:2364
 
 Config:Biped

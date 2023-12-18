@@ -1,6 +1,5 @@
-Version:1.1
-Scylla
-3
+chassis:Scylla
+model:3
 mul id:5724
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.1
-Crosscut
-ED-X4B DemolitionMech
+chassis:Crosscut
+model:ED-X4B DemolitionMech
 mul id:7168
 
 Config:Biped

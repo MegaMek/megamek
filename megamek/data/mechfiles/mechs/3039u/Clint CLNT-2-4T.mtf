@@ -1,6 +1,5 @@
-Version:1.0
-Clint
-CLNT-2-4T
+chassis:Clint
+model:CLNT-2-4T
 mul id:648
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.3
-Orion
-ON1-C
+chassis:Orion
+model:ON1-C
 mul id:4755
 Config:Biped
 techbase:Inner Sphere

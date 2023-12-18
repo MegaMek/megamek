@@ -1,6 +1,5 @@
-Version:1.0
-Ostwar
-OWR-2Mb
+chassis:Ostwar
+model:OWR-2Mb
 mul id:2382
 
 Config:Biped

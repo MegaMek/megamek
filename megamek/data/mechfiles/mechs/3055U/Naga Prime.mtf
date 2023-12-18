@@ -1,6 +1,5 @@
-Version:1.0
-Naga
-Prime
+chassis:Naga
+model:Prime
 mul id:2251
 
 Config:Biped Omnimech

@@ -1,6 +1,5 @@
-Version:1.0
-Avatar
-AV1-OBLO
+chassis:Avatar
+model:AV1-OBLO
 mul id:7634
 
 Config:Biped Omnimech

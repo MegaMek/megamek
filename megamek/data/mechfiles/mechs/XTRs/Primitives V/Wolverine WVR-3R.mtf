@@ -1,6 +1,5 @@
-Version:1.1
-Wolverine
-WVR-3R
+chassis:Wolverine
+model:WVR-3R
 mul id:7408
 
 Config:Biped

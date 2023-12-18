@@ -1,6 +1,5 @@
-Version:1.0
-Deimos
-A
+chassis:Deimos
+model:A
 mul id:853
 
 Config:Biped Omnimech

@@ -1,6 +1,5 @@
-Version:1.0
-Awesome
-AWS-11H
+chassis:Awesome
+model:AWS-11H
 mul id:7501
 
 Config:Biped

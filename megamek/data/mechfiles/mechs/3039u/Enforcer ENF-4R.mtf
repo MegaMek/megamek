@@ -1,6 +1,5 @@
-Version:1.0
-Enforcer
-ENF-4R
+chassis:Enforcer
+model:ENF-4R
 mul id:976
 
 Config:Biped

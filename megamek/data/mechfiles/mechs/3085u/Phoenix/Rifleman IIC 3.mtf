@@ -1,6 +1,5 @@
-Version:1.0
-Rifleman IIC
-3
+chassis:Rifleman IIC
+model:3
 mul id:2712
 
 Config:Biped

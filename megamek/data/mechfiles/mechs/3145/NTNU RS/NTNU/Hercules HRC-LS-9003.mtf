@@ -1,6 +1,5 @@
-Version:1.3
-Hercules
-HRC-LS-9003
+chassis:Hercules
+model:HRC-LS-9003
 mul id:7990
 Config:Biped
 techbase:Inner Sphere

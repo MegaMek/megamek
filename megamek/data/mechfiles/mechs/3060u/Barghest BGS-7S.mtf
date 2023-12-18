@@ -1,6 +1,5 @@
-Version:1.0
-Barghest
-BGS-7S
+chassis:Barghest
+model:BGS-7S
 mul id:255
 
 Config:Quad

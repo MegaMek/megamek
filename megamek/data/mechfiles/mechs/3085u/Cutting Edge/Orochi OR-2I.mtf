@@ -1,6 +1,5 @@
-Version:1.3
-Orochi
-OR-2I
+chassis:Orochi
+model:OR-2I
 mul id:2343
 Config:Biped
 techbase:Inner Sphere

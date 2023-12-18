@@ -1,6 +1,5 @@
-Version:1.0
-Chameleon
-CLN-7W
+chassis:Chameleon
+model:CLN-7W
 mul id:544
 
 Config:Biped

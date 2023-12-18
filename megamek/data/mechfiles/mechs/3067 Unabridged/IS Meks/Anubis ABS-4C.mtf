@@ -1,6 +1,5 @@
-Version:1.1
-Anubis
-ABS-4C
+chassis:Anubis
+model:ABS-4C
 mul id:5656
 
 Config:Biped

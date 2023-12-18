@@ -1,6 +1,5 @@
-Version:1.0
-Cauldron-Born (Ebon Jaguar)
-Prime
+chassis:Cauldron-Born (Ebon Jaguar)
+model:Prime
 mul id:496
 
 Config:Biped Omnimech

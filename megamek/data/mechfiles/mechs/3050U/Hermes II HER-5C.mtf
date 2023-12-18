@@ -1,6 +1,5 @@
-Version:1.0
-Hermes II
-HER-5C
+chassis:Hermes II
+model:HER-5C
 mul id:1499
 
 Config:Biped

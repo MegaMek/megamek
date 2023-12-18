@@ -1,6 +1,5 @@
-Version:1.3
-Penetrator
-PTR-8D
+chassis:Penetrator
+model:PTR-8D
 mul id:9353
 Config:Biped
 techbase:Inner Sphere

@@ -1,6 +1,5 @@
-Version:1.2
-Hatchetman
-HCT-6D
+chassis:Hatchetman
+model:HCT-6D
 mul id:1415
 
 Config:Biped

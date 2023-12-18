@@ -1,6 +1,5 @@
-Version:1.3
-Banshee
-BNC-1E
+chassis:Banshee
+model:BNC-1E
 mul id:3785
 Config:Biped
 techbase:Inner Sphere

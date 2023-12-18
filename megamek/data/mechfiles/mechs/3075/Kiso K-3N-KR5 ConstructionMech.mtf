@@ -1,6 +1,5 @@
-Version:1.1
-Kiso
-K-3N-KR5 ConstructionMech
+chassis:Kiso
+model:K-3N-KR5 ConstructionMech
 mul id:1803
 
 Config:Quad

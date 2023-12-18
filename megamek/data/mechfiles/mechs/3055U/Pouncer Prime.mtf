@@ -1,6 +1,5 @@
-Version:1.0
-Pouncer
-Prime
+chassis:Pouncer
+model:Prime
 mul id:2563
 
 Config:Biped Omnimech

@@ -1,6 +1,5 @@
-Version:1.0
-Thunderbolt
-TDR-8M
+chassis:Thunderbolt
+model:TDR-8M
 mul id:8191
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Firefly
-FFL-3A
+chassis:Firefly
+model:FFL-3A
 mul id:4172
 
 Config:Biped

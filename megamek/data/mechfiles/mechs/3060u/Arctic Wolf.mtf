@@ -1,6 +1,5 @@
-Version:1.0
-Arctic Wolf
-
+chassis:Arctic Wolf
+model:
 mul id:99
 
 Config:Biped

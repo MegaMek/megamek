@@ -1,6 +1,5 @@
-Version:1.1
-Initiate
-INI-04
+chassis:Initiate
+model:INI-04
 mul id:1621
 
 Config:Biped

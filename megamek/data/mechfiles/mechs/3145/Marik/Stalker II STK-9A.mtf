@@ -1,6 +1,5 @@
-Version:1.1
-Stalker II
-STK-9A
+chassis:Stalker II
+model:STK-9A
 mul id:6515
 
 Config:Biped

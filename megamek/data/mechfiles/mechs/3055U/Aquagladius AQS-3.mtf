@@ -1,6 +1,5 @@
-Version:1.0
-Aquagladius
-AQS-3
+chassis:Aquagladius
+model:AQS-3
 mul id:58
 
 Config:Biped

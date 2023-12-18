@@ -1,6 +1,5 @@
-Version:1.0
-Jupiter
-4
+chassis:Jupiter
+model:4
 mul id:6829
 
 Config:Biped

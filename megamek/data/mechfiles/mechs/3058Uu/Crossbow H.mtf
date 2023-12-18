@@ -1,6 +1,5 @@
-Version:1.0
-Crossbow
-H
+chassis:Crossbow
+model:H
 mul id:738
 
 Config:Biped Omnimech

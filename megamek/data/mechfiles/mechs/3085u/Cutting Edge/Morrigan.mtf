@@ -1,6 +1,5 @@
-Version:1.0
-Morrigan
-
+chassis:Morrigan
+model:
 mul id:2231
 
 Config:Biped

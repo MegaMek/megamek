@@ -1,6 +1,5 @@
-Version:1.1
-Tenshi
-TN-10-OB
+chassis:Tenshi
+model:TN-10-OB
 mul id:6423
 
 Config:Biped Omnimech

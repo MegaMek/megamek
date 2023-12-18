@@ -1,6 +1,5 @@
-Version:1.1
-Annihilator
-ANH-2AX
+chassis:Annihilator
+model:ANH-2AX
 mul id:40
 
 Config:Biped

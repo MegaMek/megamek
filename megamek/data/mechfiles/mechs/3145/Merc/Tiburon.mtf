@@ -1,6 +1,5 @@
-Version:1.3
-Tiburon
-
+chassis:Tiburon
+model:
 mul id:6552
 Config:Biped
 techbase:Clan

@@ -1,6 +1,5 @@
-Version:1.0
-Exterminator
-EXT-4DX
+chassis:Exterminator
+model:EXT-4DX
 mul id:7321
 
 Config:Biped

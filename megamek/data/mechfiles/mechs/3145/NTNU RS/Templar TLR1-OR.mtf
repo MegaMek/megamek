@@ -1,6 +1,5 @@
-Version:1.3
-Templar
-TLR1-OR
+chassis:Templar
+model:TLR1-OR
 mul id:6852
 Config:Biped Omnimech
 techbase:Mixed (IS Chassis)

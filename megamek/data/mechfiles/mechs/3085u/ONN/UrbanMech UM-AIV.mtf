@@ -1,6 +1,5 @@
-Version:1.1
-UrbanMech
-UM-AIV
+chassis:UrbanMech
+model:UM-AIV
 mul id:3353
 
 Config:Biped

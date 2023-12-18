@@ -1,6 +1,5 @@
-Version:1.0
-Archer
-ARC-7C
+chassis:Archer
+model:ARC-7C
 mul id:7731
 
 Config:Biped

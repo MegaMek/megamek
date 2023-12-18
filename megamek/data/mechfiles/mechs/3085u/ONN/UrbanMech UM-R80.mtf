@@ -1,6 +1,5 @@
-Version:1.0
-UrbanMech
-UM-R80
+chassis:UrbanMech
+model:UM-R80
 mul id:3360
 
 Config:Biped

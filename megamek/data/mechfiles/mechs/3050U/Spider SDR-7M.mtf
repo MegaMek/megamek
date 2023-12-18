@@ -1,6 +1,5 @@
-Version:1.0
-Spider
-SDR-7M
+chassis:Spider
+model:SDR-7M
 mul id:3015
 
 Config:Biped

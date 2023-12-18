@@ -1,6 +1,5 @@
-Version:1.3
-Exterminator
-EXT-4A
+chassis:Exterminator
+model:EXT-4A
 mul id:4147
 Config:Biped
 techbase:Inner Sphere

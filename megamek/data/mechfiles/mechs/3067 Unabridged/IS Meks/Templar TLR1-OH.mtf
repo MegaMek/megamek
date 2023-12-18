@@ -1,6 +1,5 @@
-Version:1.0
-Templar
-TLR1-OH
+chassis:Templar
+model:TLR1-OH
 mul id:5711
 
 Config:Biped Omnimech

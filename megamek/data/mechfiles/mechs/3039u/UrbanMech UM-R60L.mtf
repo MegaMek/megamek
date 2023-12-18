@@ -1,6 +1,5 @@
-Version:1.0
-UrbanMech
-UM-R60L
+chassis:UrbanMech
+model:UM-R60L
 mul id:3355
 
 Config:Biped

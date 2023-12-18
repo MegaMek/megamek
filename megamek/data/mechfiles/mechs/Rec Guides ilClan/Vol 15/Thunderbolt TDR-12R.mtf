@@ -1,6 +1,5 @@
-Version:1.0
-Thunderbolt
-TDR-12R
+chassis:Thunderbolt
+model:TDR-12R
 mul id:8194
 
 Config:Biped

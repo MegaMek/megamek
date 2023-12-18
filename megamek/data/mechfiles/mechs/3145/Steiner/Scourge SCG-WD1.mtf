@@ -1,6 +1,5 @@
-Version:1.0
-Scourge
-SCG-WD1
+chassis:Scourge
+model:SCG-WD1
 mul id:6626
 
 Config:Biped

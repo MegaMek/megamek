@@ -1,6 +1,5 @@
-Version:1.0
-Burrower
-DTM-1 MiningMech
+chassis:Burrower
+model:DTM-1 MiningMech
 mul id:7874
 
 Config:Biped

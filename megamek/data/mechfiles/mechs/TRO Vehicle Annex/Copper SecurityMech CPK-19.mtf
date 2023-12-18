@@ -1,6 +1,5 @@
-Version:1.0
-Copper SecurityMech
-CPK-19
+chassis:Copper SecurityMech
+model:CPK-19
 mul id:3993
 
 Config:Biped

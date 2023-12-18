@@ -1,6 +1,5 @@
-Version:1.0
-Boreas
-C
+chassis:Boreas
+model:C
 mul id:7354
 
 Config:QuadVee Omnimech

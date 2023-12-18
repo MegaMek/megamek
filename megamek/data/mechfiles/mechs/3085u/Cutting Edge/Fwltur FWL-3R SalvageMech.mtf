@@ -1,6 +1,5 @@
-Version:1.0
-Fwltur
-FWL-3R SalvageMech
+chassis:Fwltur
+model:FWL-3R SalvageMech
 mul id:1162
 
 Config:Biped

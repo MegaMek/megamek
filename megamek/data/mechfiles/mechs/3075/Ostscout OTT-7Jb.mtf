@@ -1,6 +1,5 @@
-Version:1.0
-Ostscout
-OTT-7Jb
+chassis:Ostscout
+model:OTT-7Jb
 mul id:2367
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.0
-Rifleman
-C 2
+chassis:Rifleman
+model:C 2
 mul id:2694
 
 Config:Biped

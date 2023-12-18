@@ -1,6 +1,5 @@
-Version:1.0
-Shogun
-SHG-2F (Trisha)
+chassis:Shogun
+model:SHG-2F (Trisha)
 mul id:5058
 
 Config:Biped

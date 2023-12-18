@@ -1,6 +1,5 @@
-Version:1.1
-Wulfen
-E
+chassis:Wulfen
+model:E
 mul id:6261
 
 Config:Biped Omnimech

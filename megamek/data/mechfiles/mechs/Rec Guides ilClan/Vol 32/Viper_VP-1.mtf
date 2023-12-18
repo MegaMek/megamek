@@ -1,6 +1,5 @@
-Version:1.0
-Viper
-VP-1
+chassis:Viper
+model:VP-1
 
 Config:Biped
 techbase:Inner Sphere

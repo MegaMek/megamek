@@ -1,6 +1,5 @@
-Version:1.0
-Hankyu (Arctic Cheetah)
-Prime
+chassis:Hankyu (Arctic Cheetah)
+model:Prime
 mul id:1384
 
 Config:Biped Omnimech

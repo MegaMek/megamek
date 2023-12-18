@@ -1,6 +1,5 @@
-Version:1.0
-Catapult
-CPLT-C2
+chassis:Catapult
+model:CPLT-C2
 mul id:5452
 
 Config:Biped

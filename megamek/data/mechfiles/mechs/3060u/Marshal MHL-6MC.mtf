@@ -1,6 +1,5 @@
-Version:1.3
-Marshal
-MHL-6MC
+chassis:Marshal
+model:MHL-6MC
 mul id:2089
 Config:Biped
 techbase:Inner Sphere

@@ -1,6 +1,5 @@
-Version:1.0
-Emperor
-EMP-7L
+chassis:Emperor
+model:EMP-7L
 mul id:971
 
 Config:Biped

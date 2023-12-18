@@ -1,6 +1,5 @@
-Version:1.0
-Inquisitor
-ITW-85 SecurityMech
+chassis:Inquisitor
+model:ITW-85 SecurityMech
 mul id:7825
 
 Config:Biped

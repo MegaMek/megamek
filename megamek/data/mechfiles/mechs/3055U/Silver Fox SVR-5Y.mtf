@@ -1,6 +1,5 @@
-Version:1.0
-Silver Fox
-SVR-5Y
+chassis:Silver Fox
+model:SVR-5Y
 mul id:2945
 
 Config:Biped

@@ -1,6 +1,5 @@
-Version:1.3
-Jenner
-JR10-X
+chassis:Jenner
+model:JR10-X
 mul id:1686
 Config:Biped
 techbase:Inner Sphere

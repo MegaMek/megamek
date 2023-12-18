@@ -1,6 +1,5 @@
-Version:1.3
-Hussar
-HSR-200-D
+chassis:Hussar
+model:HSR-200-D
 mul id:1585
 Config:Biped
 techbase:Inner Sphere

@@ -1,6 +1,5 @@
-Version:1.0
-Cerberus
-MR-V3
+chassis:Cerberus
+model:MR-V3
 mul id:529
 
 Config:Biped

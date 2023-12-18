@@ -1,6 +1,5 @@
-Version:1.3
-Blackjack
-BJ2-O
+chassis:Blackjack
+model:BJ2-O
 mul id:378
 Config:Biped Omnimech
 techbase:Inner Sphere

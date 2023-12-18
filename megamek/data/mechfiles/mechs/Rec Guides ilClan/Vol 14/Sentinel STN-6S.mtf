@@ -1,6 +1,5 @@
-Version:1.1
-Sentinel
-STN-6S
+chassis:Sentinel
+model:STN-6S
 mul id:8160
 
 Config:Biped

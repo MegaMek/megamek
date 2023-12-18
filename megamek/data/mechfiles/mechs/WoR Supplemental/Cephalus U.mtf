@@ -1,6 +1,5 @@
-Version:1.0
-Cephalus
-U
+chassis:Cephalus
+model:U
 mul id:5642
 
 Config:Biped Omnimech

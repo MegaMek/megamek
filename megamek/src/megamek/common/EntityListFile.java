@@ -858,16 +858,26 @@ public class EntityListFile {
             // Write the Bomb Data if needed
             if (entity.isBomber()) {
                 IBomber b = (IBomber) entity;
-                int[] bombChoices = b.getBombChoices();
-                if (bombChoices.length > 0) {
+                int[] intBombChoices = b.getIntBombChoices();
+                int[] extBombChoices = b.getExtBombChoices();
+                if (intBombChoices.length > 0 || extBombChoices.length > 0) {
                     output.write(indentStr(indentLvl + 1) + "<bombs>\n");
                     for (int type = 0; type < BombType.B_NUM; type++) {
                         String typeName = BombType.getBombInternalName(type);
-                        if (bombChoices[type] > 0) {
+                        if (intBombChoices[type] > 0) {
                             output.write(indentStr(indentLvl + 2) + "<bomb type=\"");
                             output.write(typeName);
                             output.write("\" load=\"");
-                            output.write(String.valueOf(bombChoices[type]));
+                            output.write(String.valueOf(intBombChoices[type]));
+                            output.write("\" Internal=\"true");
+                            output.write("\"/>\n");
+                        }
+                        if (extBombChoices[type] > 0) {
+                            output.write(indentStr(indentLvl + 2) + "<bomb type=\"");
+                            output.write(typeName);
+                            output.write("\" load=\"");
+                            output.write(String.valueOf(extBombChoices[type]));
+                            output.write("\" Internal=\"false");
                             output.write("\"/>\n");
                         }
                     }
@@ -879,6 +889,8 @@ public class EntityListFile {
                         output.write(m.getType().getShortName());
                         output.write("\" load=\"");
                         output.write(String.valueOf(m.getBaseShotsLeft()));
+                        output.write("\" Internal=\"");
+                        output.write(String.valueOf(m.isInternalBomb()));
                         output.write("\"/>\n");
                     }
                     output.write(indentStr(indentLvl + 1) + "</bombs>\n");

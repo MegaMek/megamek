@@ -770,6 +770,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     protected int consecutiveRHSUses = 0;
 
     private final Set<Integer> attackedByThisTurn = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    private final Set<Integer> groundAttackedByThisTurn = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     /**
      * Determines the sort order for weapons in the UnitDisplay weapon list.
@@ -14486,12 +14487,21 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         attackedByThisTurn.add(entityId);
     }
 
+    public void addGroundAttackedByThisTurn(int entityId) {
+        groundAttackedByThisTurn.add(entityId);
+    }
+
     public void clearAttackedByThisTurn() {
         attackedByThisTurn.clear();
+        groundAttackedByThisTurn.clear();
     }
 
     public Collection<Integer> getAttackedByThisTurn() {
         return new HashSet<>(attackedByThisTurn);
+    }
+
+    public Collection<Integer> getGroundAttackedByThisTurn() {
+        return new HashSet<>(groundAttackedByThisTurn);
     }
 
     public WeaponSortOrder getWeaponSortOrder() {

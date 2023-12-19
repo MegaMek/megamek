@@ -25044,10 +25044,10 @@ public class GameManager implements IGameManager {
                 break;
             case Aero.CRIT_BOMB:
                 // bomb destroyed
-                // go through bomb list and choose one
+                // go through bomb list and choose one (internal bay munitions are handled separately)
                 List<Mounted> bombs = new ArrayList<>();
                 for (Mounted bomb : aero.getBombs()) {
-                    if (bomb.getType().isHittable() && (bomb.getHittableShotsLeft() > 0)) {
+                    if (bomb.getType().isHittable() && (bomb.getHittableShotsLeft() > 0) && !bomb.isInternalBomb()) {
                         bombs.add(bomb);
                     }
                 }
@@ -25165,11 +25165,12 @@ public class GameManager implements IGameManager {
                         weapons.add(weapon);
                     }
                 }
-                // add in in hittable misc equipment
+                // add in in hittable misc equipment; internal bay munitions are handled separately.
                 for (Mounted misc : aero.getMisc()) {
                     if (misc.getType().isHittable()
                             && (misc.getLocation() == loc)
-                            && !misc.isDestroyed()) {
+                            && !misc.isDestroyed()
+                            && !misc.isInternalBomb()) {
                         weapons.add(misc);
                     }
                 }

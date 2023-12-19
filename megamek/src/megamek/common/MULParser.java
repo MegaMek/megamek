@@ -2250,17 +2250,24 @@ public class MULParser {
                 Element currEle = (Element) currNode;
                 String nodeName = currNode.getNodeName();
                 if (nodeName.equalsIgnoreCase(BOMB)) {
-                    int[] bombChoices = ((IBomber) entity).getBombChoices();
+                    int[] intBombChoices = ((IBomber) entity).getIntBombChoices();
+                    int[] extBombChoices = ((IBomber) entity).getExtBombChoices();
                     String type = currEle.getAttribute(TYPE);
                     String load = currEle.getAttribute(LOAD);
+                    boolean internal = Boolean.parseBoolean(currEle.getAttribute(INTERNAL));
                     if (!type.isBlank() && !load.isBlank()) {
                         int bombType = BombType.getBombTypeFromInternalName(type);
                         if ((bombType <= BombType.B_NONE) || (bombType >= BombType.B_NUM)) {
                             continue;
                         }
 
-                        bombChoices[bombType] += Integer.parseInt(load);
-                        ((IBomber) entity).setBombChoices(bombChoices);
+                        if (internal) {
+                            intBombChoices[bombType] += Integer.parseInt(load);
+                            ((IBomber) entity).setIntBombChoices(intBombChoices);
+                        } else {
+                            extBombChoices[bombType] += Integer.parseInt(load);
+                            ((IBomber) entity).setExtBombChoices(extBombChoices);
+                        }
                     }
                 }
             }

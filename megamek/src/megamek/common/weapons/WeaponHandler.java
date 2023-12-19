@@ -1780,6 +1780,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
         if (target instanceof Entity) {
             ((Entity) target).addAttackedByThisTurn(w.getEntityId());
+            if (!ae.isAirborne()) {
+                ((Entity) target).addGroundAttackedByThisTurn(w.getEntityId());
+            }
         }
     }
 

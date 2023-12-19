@@ -80,7 +80,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     private int swarmMissiles = 0;
 
     // bomb stuff
-    private int[] bombPayload = new int[BombType.B_NUM];
+    private HashMap<String, int[]> bombPayloads = new HashMap<String, int[]>();
 
     // equipment that affects this attack (AMS, ECM?, etc)
     // only used server-side
@@ -116,11 +116,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     public WeaponAttackAction(int entityId, int targetId, int weaponId) {
         super(entityId, targetId);
         this.weaponId = weaponId;
+        this.bombPayloads.put("internal", new int[BombType.B_NUM]);
+        this.bombPayloads.put("external", new int[BombType.B_NUM]);
     }
 
     public WeaponAttackAction(int entityId, int targetType, int targetId, int weaponId) {
         super(entityId, targetType, targetId);
         this.weaponId = weaponId;
+        this.bombPayloads.put("internal", new int[BombType.B_NUM]);
+        this.bombPayloads.put("external", new int[BombType.B_NUM]);
     }
 
     public int getWeaponId() {
@@ -2745,16 +2749,25 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     }
 
     public int[] getBombPayload() {
+        int[] bombPayload = new int[BombType.B_NUM];
+        for (int i=0; i<bombPayloads.get("internal").length; i++) {
+            bombPayload[i] = bombPayloads.get("internal")[i] + bombPayloads.get("external")[i];
+        }
         return bombPayload;
+    }
+
+    public HashMap<String, int[]> getBombPayloads() {
+        return bombPayloads;
     }
 
     /**
      *
-     * @param load This is the "bomb payload". It's an array indexed by the constants declared in BombType.
+     * @param bpls These are the "bomb payload" for internal and external bomb stores.
+     *             It's a HashMap of two arrays, each indexed by the constants declared in BombType.
      * Each element indicates how many types of that bomb should be fired.
      */
-    public void setBombPayload(int[] load) {
-        bombPayload = load;
+    public void setBombPayloads(HashMap<String, int[]> bpls) {
+        bombPayloads = (HashMap<String, int[]>) bpls.clone();
     }
 
     public boolean isStrafing() {

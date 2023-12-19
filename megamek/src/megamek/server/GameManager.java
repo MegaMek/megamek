@@ -20900,10 +20900,14 @@ public class GameManager implements IGameManager {
             return vReport;
         }
 
-        Report r;
-
         if (e.isAero()) {
+            // Only ground fire can hit internal bombs
+            if (e.getGroundAttackedByThisTurn().isEmpty()) {
+                return vReport;
+            }
+
             Aero b = (Aero) e;
+            Report r;
 
             if (b.getUsedInternalBombs() > 0) {
                 int id = e.getId();

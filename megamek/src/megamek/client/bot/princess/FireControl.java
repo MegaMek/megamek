@@ -1439,7 +1439,7 @@ public class FireControl {
                                        final boolean assumeUnderFlightPath,
                                        final boolean guessToHit) {
         return new WeaponFireInfo(shooter, flightPath, target, targetState,
-                weapon, game, assumeUnderFlightPath, guessToHit, owner, new int[0]);
+                weapon, game, assumeUnderFlightPath, guessToHit, owner, null);
     }
 
     /**
@@ -1465,9 +1465,9 @@ public class FireControl {
                                                final Game game,
                                                final boolean assumeUnderFlightPath,
                                                final boolean guessToHit,
-                                               final int[] bombPayload) {
+                                               final HashMap<String, int[]> bombPayloads) {
         return new WeaponFireInfo(shooter, flightPath, target, targetState,
-                weapon, game, assumeUnderFlightPath, guessToHit, owner, bombPayload);
+                weapon, game, assumeUnderFlightPath, guessToHit, owner, bombPayloads);
     }
 
     /**
@@ -1694,11 +1694,22 @@ public class FireControl {
         while (weaponIter.hasNext()) {
             final Mounted weapon = weaponIter.next();
             if (weapon.getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
-                final int[] bombPayload = new int[BombType.B_NUM];
+                final HashMap<String, int[]> bombPayloads = new HashMap<String, int[]>();
+                bombPayloads.put("internal", new int[BombType.B_NUM]);
+                bombPayloads.put("external", new int[BombType.B_NUM]);
+
                 // load up all droppable bombs, yeah baby! Mix thunder bombs and infernos 'cause why the hell not.
                 // seriously, though, TODO: more intelligent bomb drops
                 for (final Mounted bomb : shooter.getBombs(BombType.F_GROUND_BOMB)) {
-                    bombPayload[((BombType) bomb.getType()).getBombType()]++;
+                    int bType = ((BombType) bomb.getType()).getBombType();
+                    if (bomb.isInternalBomb()) {
+                        // Can only drop 6 internal bombs in one turn.
+                        if (bombPayloads.get("internal")[bType] < 6) {
+                            bombPayloads.get("internal")[bType]++;
+                        }
+                    } else {
+                        bombPayloads.get("external")[bType]++;
+                    }
                 }
 
                 final WeaponFireInfo diveBomb = buildWeaponFireInfo(shooter,
@@ -1709,7 +1720,7 @@ public class FireControl {
                                                                     game,
                                                                     passedOverTarget,
                                                                     guess,
-                                                                    bombPayload);
+                                                                    bombPayloads);
                 diveBombPlan.add(diveBomb);
             }
         }

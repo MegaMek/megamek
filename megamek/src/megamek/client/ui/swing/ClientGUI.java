@@ -1941,7 +1941,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                             // the movement turn are considered selectable
                             entity.setDone(true);
                             entity.setUnloaded(true);
-                            if (entity instanceof IBomber) {
+                            if (entity instanceof IBomber && (client.getGame().getPhase() != GamePhase.LOUNGE)) {
+                                // Only apply bombs when we're going straight into the game; doing this in the lounge
+                                // breaks the bombs completely.
                                 ((IBomber) entity).applyBombs();
                             }
                         }

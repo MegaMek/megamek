@@ -14477,7 +14477,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public void clearAttackedByThisTurn() {
         attackedByThisTurn.clear();
-        groundAttackedByThisTurn.clear();
+        if (groundAttackedByThisTurn != null) {
+            groundAttackedByThisTurn.clear();
+        }
     }
 
     public Collection<Integer> getAttackedByThisTurn() {

@@ -25147,13 +25147,14 @@ public class GameManager implements IGameManager {
                 r = new Report(9150);
                 r.subject = aero.getId();
                 List<Mounted> weapons = new ArrayList<>();
+                // Ignore internal bomb bay-mounted weapons
                 for (Mounted weapon : aero.getWeaponList()) {
-                    if ((weapon.getLocation() == loc) && !weapon.isDestroyed()
+                    if ((weapon.getLocation() == loc) && !weapon.isDestroyed() && !weapon.isInternalBomb()
                             && weapon.getType().isHittable()) {
                         weapons.add(weapon);
                     }
                 }
-                // add in in hittable misc equipment; internal bay munitions are handled separately.
+                // add in hittable misc equipment; internal bay munitions are handled separately.
                 for (Mounted misc : aero.getMisc()) {
                     if (misc.getType().isHittable()
                             && (misc.getLocation() == loc)
@@ -25611,6 +25612,7 @@ public class GameManager implements IGameManager {
                     destroyed--;
                 }
             }
+            // TODO: handle critical hit on internal bomb bay (cargo bay when internal bombs are loaded)
         } else {
             r = new Report(9167);
             r.subject = aero.getId();

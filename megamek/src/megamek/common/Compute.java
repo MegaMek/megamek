@@ -22,6 +22,7 @@ import megamek.common.enums.AimingMode;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.IlluminationLevel;
 import megamek.common.options.OptionsConstants;
+import megamek.common.weapons.DiveBombAttack;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
@@ -3845,6 +3846,14 @@ public class Compute {
             }
             if (moveSort > 0) {
                 tPos = ((Entity) t).getPriorPosition();
+            }
+        }
+
+        // Allow dive-bombing VTOLs to attack the hex they are in, if they didn't select one for bombing while moving.
+        if ((ae.getMovementMode() == EntityMovementMode.VTOL)
+                && aPos.equals(tPos)) {
+            if (ae.getEquipment(weaponId).getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
+                return true;
             }
         }
 

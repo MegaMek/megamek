@@ -19,6 +19,7 @@ import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.enums.AimingMode;
 import megamek.common.options.OptionsConstants;
+import megamek.common.weapons.DiveBombAttack;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
@@ -2158,7 +2159,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // Capital weapons fire by grounded units
             if (wtype.isSubCapital() || wtype.isCapital()) {
                 // Can't fire any but capital/subcapital missiles surface to surface
+                // (but VTOL dive bombing is allowed)
                 if (Compute.isGroundToGround(ae, target)
+                        && !((ae.getMovementMode() == EntityMovementMode.VTOL) && (wtype instanceof DiveBombAttack))
                         && !(wtype instanceof CapitalMissileWeapon)) {
                     return Messages.getString("WeaponAttackAction.NoS2SCapWeapons");
                 }

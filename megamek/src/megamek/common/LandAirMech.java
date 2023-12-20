@@ -1117,12 +1117,12 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     @Override
     public void setIntBombChoices(int[] bc) {
         if (bc.length == intBombChoices.length) {
-            intBombChoices = bc;
+            intBombChoices = bc.clone();
         }
     }
 
     public void setUsedInternalBombs(int b){
-        // Do nothing
+        // Do nothing; LAMs don't take internal bomb bay hits like this
     }
 
     public void increaseUsedInternalBombs(int b){

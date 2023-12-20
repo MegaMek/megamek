@@ -1070,7 +1070,7 @@ public class TestAero extends TestEntity {
     }
 
     @Override
-    public double calculateWeight() {
+    public double calculateWeightExact() {
         double weight = 0;
         weight += getWeightEngine();
         weight += getWeightControls();

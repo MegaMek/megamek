@@ -52,7 +52,7 @@ public class TestAero extends TestEntity {
      */
     public enum AeroArmor {
         STANDARD(EquipmentType.T_ARMOR_STANDARD, 0, 0, false),
-        CLAN_FERRO_ALUM(EquipmentType.T_ARMOR_ALUM, 1, 1, true),
+        CLAN_FERRO_ALUM(EquipmentType.T_ARMOR_ALUM, 2, 1, true),
         FERRO_LAMELLOR(EquipmentType.T_ARMOR_FERRO_LAMELLOR, 2, 1, true),
         CLAN_REACTIVE(EquipmentType.T_ARMOR_REACTIVE, 1, 1, true),
         CLAN_REFLECTIVE(EquipmentType.T_ARMOR_REFLECTIVE, 1, 1, true),

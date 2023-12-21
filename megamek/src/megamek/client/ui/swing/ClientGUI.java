@@ -585,7 +585,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
         Ruler.color1 = GUIP.getRulerColor1();
         Ruler.color2 = GUIP.getRulerColor2();
-        ruler = new Ruler(frame, client, bv);
+        ruler = new Ruler(frame, client, bv, client.getGame());
         ruler.setLocation(GUIP.getRulerPosX(), GUIP.getRulerPosY());
         ruler.setSize(GUIP.getRulerSizeHeight(), GUIP.getRulerSizeWidth());
         UIUtil.updateWindowBounds(ruler);
@@ -680,7 +680,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     }
 
     public void customizePlayer() {
-        PlayerSettingsDialog psd = new PlayerSettingsDialog(this, client);
+        PlayerSettingsDialog psd = new PlayerSettingsDialog(this, client, bv);
         psd.setVisible(true);
     }
 

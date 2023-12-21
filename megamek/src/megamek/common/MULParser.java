@@ -144,6 +144,10 @@ public class MULParser {
     private static final String DEPLOYMENT_ZONE = "deploymentZone";
     private static final String DEPLOYMENT_ZONE_WIDTH = "deploymentZoneWidth";
     private static final String DEPLOYMENT_ZONE_OFFSET = "deploymentZoneOffset";
+    public static final String DEPLOYMENT_ZONE_ANY_NWX = "deploymentZoneAnyNWx";
+    public static final String DEPLOYMENT_ZONE_ANY_NWY = "deploymentZoneAnyNWy";
+    public static final String DEPLOYMENT_ZONE_ANY_SEX = "deploymentZoneAnySEx";
+    public static final String DEPLOYMENT_ZONE_ANY_SEY = "deploymentZoneAnySEy";
     private static final String NEVER_DEPLOYED = "neverDeployed";
     private static final String VELOCITY = "velocity";
     public static final String ALTITUDE = "altitude";
@@ -708,6 +712,35 @@ public class MULParser {
             entity.setStartingOffset(deployZoneOffset);
         } catch (Exception e) {
             entity.setStartingOffset(0);
+        }
+
+        // deployment zone Any
+        try {
+            int deployZoneAnyNWx = Integer.parseInt(entityTag.getAttribute(DEPLOYMENT_ZONE_ANY_NWX));
+            entity.setStartingAnyNWx(deployZoneAnyNWx);
+        } catch (Exception e) {
+            entity.setStartingAnyNWx(Entity.STARTING_ANY_NONE);
+        }
+
+        try {
+            int deployZoneAnyNWy = Integer.parseInt(entityTag.getAttribute(DEPLOYMENT_ZONE_ANY_NWY));
+            entity.setStartingAnyNWy(deployZoneAnyNWy);
+        } catch (Exception e) {
+            entity.setStartingAnyNWy(Entity.STARTING_ANY_NONE);
+        }
+
+        try {
+            int deployZoneAnySEx = Integer.parseInt(entityTag.getAttribute(DEPLOYMENT_ZONE_ANY_SEX));
+            entity.setStartingAnySEx(deployZoneAnySEx);
+        } catch (Exception e) {
+            entity.setStartingAnySEx(Entity.STARTING_ANY_NONE);
+        }
+
+        try {
+            int deployZoneAnySEy = Integer.parseInt(entityTag.getAttribute(DEPLOYMENT_ZONE_ANY_SEY));
+            entity.setStartingAnySEy(deployZoneAnySEy);
+        } catch (Exception e) {
+            entity.setStartingAnySEy(Entity.STARTING_ANY_NONE);
         }
 
         // Was never deployed

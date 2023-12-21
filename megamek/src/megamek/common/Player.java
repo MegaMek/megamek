@@ -56,6 +56,10 @@ public final class Player extends TurnOrdered {
     private int startingPos = Board.START_ANY;
     private int startOffset = 0;
     private int startWidth = 3;
+    private int startingAnyNWx = Entity.STARTING_ANY_NONE;
+    private int startingAnyNWy = Entity.STARTING_ANY_NONE;
+    private int startingAnySEx = Entity.STARTING_ANY_NONE;
+    private int startingAnySEy = Entity.STARTING_ANY_NONE;
 
     // number of minefields
     private int numMfConv = 0;
@@ -382,6 +386,38 @@ public final class Player extends TurnOrdered {
 
     public void setStartWidth(int startWidth) {
         this.startWidth = startWidth;
+    }
+
+    public int getStartingAnyNWx() {
+        return startingAnyNWx;
+    }
+
+    public void setStartingAnyNWx(int i) {
+        this.startingAnyNWx = i;
+    }
+
+    public int getStartingAnyNWy() {
+        return startingAnyNWy;
+    }
+
+    public void setStartingAnyNWy(int i) {
+        this.startingAnyNWy = i;
+    }
+
+    public int getStartingAnySEx() {
+        return startingAnySEx;
+    }
+
+    public void setStartingAnySEx(int i) {
+        this.startingAnySEx = i;
+    }
+
+    public int getStartingAnySEy() {
+        return startingAnySEy;
+    }
+
+    public void setStartingAnySEy(int i) {
+        this.startingAnySEy = i;
     }
 
     /**
@@ -747,6 +783,11 @@ public final class Player extends TurnOrdered {
         copy.startingPos = startingPos;
         copy.startOffset = startOffset;
         copy.startWidth = startWidth;
+
+        copy.startingAnyNWx = startingAnyNWx;
+        copy.startingAnyNWy = startingAnyNWy;
+        copy.startingAnySEx = startingAnySEx;
+        copy.startingAnySEy = startingAnySEy;
 
         copy.numMfConv = numMfConv;
         copy.numMfCmd = numMfCmd;

@@ -482,7 +482,13 @@ public class GameManager implements IGameManager {
     public void disconnect(Player player) {
         // in the lounge, just remove all entities for that player
         if (getGame().getPhase().isLounge()) {
-            removeAllEntitiesOwnedBy(player);
+            List<Player> gms = game.getPlayersList().stream().filter(p -> p.isGameMaster()).collect(Collectors.toList());
+
+            if (gms.size() > 0) {
+                transferAllEnititiesOwnedBy(player, gms.get(0));
+            } else {
+                removeAllEntitiesOwnedBy(player);
+            }
         }
 
         // if a player has active entities, he becomes a ghost
@@ -538,6 +544,16 @@ public class GameManager implements IGameManager {
             Player p = e.nextElement();
             p.setObserver((!p.isGameMaster()) && (getGame().getEntitiesOwnedBy(p) < 1) && !getGame().getPhase().isLounge());
         }
+    }
+
+    private void transferAllEnititiesOwnedBy(Player pFrom, Player pTo) {
+        for (Entity entity : game.getEntitiesVector().stream().filter(e -> e.getOwner().equals(pFrom)).collect(Collectors.toList())) {
+            entity.setOwner(pTo);
+        }
+        game.getForces().correct();
+        ServerLobbyHelper.correctLoading(game);
+        ServerLobbyHelper.correctC3Connections(game);
+        send(createFullEntitiesPacket());
     }
 
     @Override

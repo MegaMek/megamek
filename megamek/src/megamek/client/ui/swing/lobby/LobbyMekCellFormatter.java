@@ -85,7 +85,8 @@ class LobbyMekCellFormatter {
         GameOptions options = game.getOptions();
         Player localPlayer = client.getLocalPlayer();
         Player owner = entity.getOwner();
-        boolean hideEntity = owner.isEnemyOf(localPlayer)
+        boolean localGM = localPlayer.isGameMaster();
+        boolean hideEntity = !localGM && owner.isEnemyOf(localPlayer)
                 && options.booleanOption(OptionsConstants.BASE_BLIND_DROP);
         if (hideEntity) {
             result.append(DOT_SPACER);
@@ -262,6 +263,16 @@ class LobbyMekCellFormatter {
             }
             String msg_start = Messages.getString("ChatLounge.Start");
             result.append(" " + msg_start + ":" + IStartingPositions.START_LOCATION_NAMES[sp]);
+            if (sp == 0) {
+                int NWx = entity.getStartingAnyNWx() + 1;
+                int NWy = entity.getStartingAnyNWy() + 1;
+                int SEx = entity.getStartingAnySEx() + 1;
+                int SEy = entity.getStartingAnySEy() + 1;
+                int hexes = (1 + SEx - NWx) * (1 + SEy - NWy);
+                if ((NWx + NWy + SEx + SEy) > 0) {
+                    result.append(" (" + NWx + ", " + NWy + ")-(" + SEx + ", " + SEy + ") (" + hexes + ")");
+                }
+            }
             int so = entity.getStartingOffset(true);
             int sw = entity.getStartingWidth(true);
             if ((so != 0) || (sw != 3)) {
@@ -483,7 +494,8 @@ class LobbyMekCellFormatter {
         GameOptions options = game.getOptions();
         Player localPlayer = client.getLocalPlayer();
         Player owner = entity.getOwner();
-        boolean hideEntity = owner.isEnemyOf(localPlayer)
+        boolean localGM = localPlayer.isGameMaster();
+        boolean hideEntity = !localGM && owner.isEnemyOf(localPlayer)
                 && options.booleanOption(OptionsConstants.BASE_BLIND_DROP);
         if (hideEntity) {
             String value = "<HTML><NOBR>&nbsp;&nbsp;";

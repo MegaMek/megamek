@@ -354,9 +354,11 @@ public class LobbyActions {
         if (editable) {
             c = client().localBots.get(entity.getOwner().getName());
         } else {
-            editable |= entity.getOwnerId() == localPlayer().getId();
+            boolean localGM = localPlayer().isGameMaster();
+            editable |= localGM || entity.getOwnerId() == localPlayer().getId();
             c = client();
         }
+
         // When we customize a single entity's C3 network setting,
         // **ALL** members of the network may get changed.
         Entity c3master = entity.getC3Master();
@@ -1192,7 +1194,9 @@ public class LobbyActions {
      * player is allowed to change everything.
      */
     boolean isEditable(Entity entity) {
-        return client().localBots.containsKey(entity.getOwner().getName())
+        boolean localGM = client().getLocalPlayer().isGameMaster();
+        return localGM
+                || client().localBots.containsKey(entity.getOwner().getName())
                 || (entity.getOwnerId() == localPlayer().getId())
                 || (entity.partOfForce() && isSelfOrLocalBot(game().getForces().getOwner(entity.getForceId())))
                 || (entity.partOfForce() && isEditable(game().getForces().getForce(entity)));
@@ -1222,7 +1226,8 @@ public class LobbyActions {
      * of the entities are not on his team.
      */
     boolean canSeeAll(Collection<Entity> entities) {
-        if (!isBlindDrop(game()) && !isRealBlindDrop(game())) {
+        boolean localGM = client().getLocalPlayer().isGameMaster();
+        if (localGM || (!isBlindDrop(game()) && !isRealBlindDrop(game()))) {
             return true;
         }
         return entities.stream().noneMatch(this::isLocalEnemy);

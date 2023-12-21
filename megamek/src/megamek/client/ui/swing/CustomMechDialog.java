@@ -85,6 +85,11 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
     private final JFormattedTextField txtDeploymentOffset = new JFormattedTextField(formatterFactory);
     private final JFormattedTextField txtDeploymentWidth = new JFormattedTextField(formatterFactory);
 
+    private JSpinner spinStartingAnyNWx;
+    private JSpinner spinStartingAnyNWy;
+    private JSpinner spinStartingAnySEx;
+    private JSpinner spinStartingAnySEy;
+
     private final JLabel labDeployShutdown = new JLabel(
             Messages.getString("CustomMechDialog.labDeployShutdown"), SwingConstants.RIGHT);
     private final JCheckBox chDeployShutdown = new JCheckBox();
@@ -472,6 +477,17 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
 
         txtDeploymentOffset.setText(Integer.toString(entity.getStartingOffset(false)));
         txtDeploymentWidth.setText(Integer.toString(entity.getStartingWidth(false)));
+
+        int bh = clientgui.getClient().getMapSettings().getBoardHeight();
+        int bw = clientgui.getClient().getMapSettings().getBoardWidth();
+        int x = Math.min(entity.getStartingAnyNWx(false) + 1, bw);
+        spinStartingAnyNWx.setValue(x);
+        int y = Math.min(entity.getStartingAnyNWy(false) + 1, bh);
+        spinStartingAnyNWy.setValue(y);
+        x = Math.min(entity.getStartingAnySEx(false) + 1, bw);
+        spinStartingAnySEy.setValue(x);
+        y = Math.min(entity.getStartingAnySEy(false) + 1, bh);
+        spinStartingAnySEy.setValue(y);
 
         boolean enableDeploymentZoneControls = choDeploymentZone.isEnabled() && (choDeploymentZone.getSelectedIndex() > 0);
         txtDeploymentOffset.setEnabled(enableDeploymentZoneControls);
@@ -881,6 +897,15 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
             entity.setStartingOffset(Integer.parseInt(txtDeploymentOffset.getText()));
             entity.setStartingWidth(Integer.parseInt(txtDeploymentWidth.getText()));
 
+            int x = Math.min((Integer) spinStartingAnyNWx.getValue(), (Integer) spinStartingAnySEx.getValue());
+            int y = Math.min((Integer) spinStartingAnyNWy.getValue(), (Integer) spinStartingAnySEy.getValue());
+            entity.setStartingAnyNWx(x - 1);
+            entity.setStartingAnyNWy(y - 1);
+            x = Math.max((Integer) spinStartingAnyNWx.getValue(), (Integer) spinStartingAnySEx.getValue());
+            y = Math.max((Integer) spinStartingAnyNWy.getValue(), (Integer) spinStartingAnySEy.getValue());
+            entity.setStartingAnySEx(x - 1);
+            entity.setStartingAnySEy(y - 1);
+
             // Should the entity begin the game shutdown?
             if (chDeployShutdown.isSelected() && gameOptions().booleanOption(OptionsConstants.RPG_BEGIN_SHUTDOWN)) {
                 entity.performManualShutdown();
@@ -1199,6 +1224,32 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
         panDeploy.add(txtDeploymentOffset, GBC.eol());
         panDeploy.add(labDeploymentWidth, GBC.std());
         panDeploy.add(txtDeploymentWidth, GBC.eol());
+
+        int bh = clientgui.getClient().getMapSettings().getBoardHeight();
+        int bw = clientgui.getClient().getMapSettings().getBoardWidth();
+
+        panDeploy.add(new JLabel(Messages.getString("CustomMechDialog.labDeploymentAnyNW")), GBC.std());
+        int x = Math.min(entity.getStartingAnyNWx(false) + 1, bw);
+        SpinnerNumberModel mStartingAnyNWx = new SpinnerNumberModel(x, 0,bw, 1);
+        spinStartingAnyNWx = new JSpinner(mStartingAnyNWx);
+        spinStartingAnyNWx.setValue(x);
+        panDeploy.add(spinStartingAnyNWx, GBC.std());
+        int y = Math.min(entity.getStartingAnyNWy(false) + 1, bh);
+        SpinnerNumberModel mStartingAnyNWy = new SpinnerNumberModel(y, 0, bh, 1);
+        spinStartingAnyNWy = new JSpinner(mStartingAnyNWy);
+        spinStartingAnyNWy.setValue(y);
+        panDeploy.add(spinStartingAnyNWy, GBC.eol());
+        panDeploy.add(new JLabel(Messages.getString("CustomMechDialog.labDeploymentAnySE")), GBC.std());
+        x = Math.min(entity.getStartingAnySEx(false) + 1, bw);
+        SpinnerNumberModel mStartingAnySEx = new SpinnerNumberModel(x, 0, bw, 1);
+        spinStartingAnySEx = new JSpinner(mStartingAnySEx);
+        spinStartingAnySEx.setValue(x);
+        panDeploy.add(spinStartingAnySEx, GBC.std());
+        y = Math.min(entity.getStartingAnySEy(false) + 1, bh);
+        SpinnerNumberModel mStartingAnySEy = new SpinnerNumberModel(y, -0, bh, 1);
+        spinStartingAnySEy = new JSpinner(mStartingAnySEy);
+        spinStartingAnySEy.setValue(y);
+        panDeploy.add(spinStartingAnySEy, GBC.eol());
 
         numFormatter.setMinimum(0);
         numFormatter.setCommitsOnValidEdit(true);

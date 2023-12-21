@@ -44,6 +44,7 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.enums.GamePhase;
 import megamek.common.event.*;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
@@ -753,11 +754,27 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         boardPreviewW.setLocationRelativeTo(clientgui.frame);
 
         try {
+            boardPreviewGame.setPhase(GamePhase.LOUNGE);
             previewBV = new BoardView(boardPreviewGame, null, null);
             previewBV.setDisplayInvalidHexInfo(false);
             previewBV.setUseLOSTool(false);
-            boardPreviewW.add(previewBV.getComponent(true));
+            JButton bpButton = new JButton(Messages.getString("BoardSelectionDialog.ViewGameBoardButton"));
+            bpButton.addActionListener(e -> previewGameBoard());
+            JPanel bpPanel = new JPanel();
+            bpPanel.setLayout(new BoxLayout(bpPanel, BoxLayout.PAGE_AXIS));
+            bpPanel.add(bpButton);
+            bpPanel.add(previewBV.getComponent(true));
+            boardPreviewW.add(bpPanel);
             boardPreviewW.setSize(clientgui.frame.getWidth() / 2, clientgui.frame.getHeight() / 2);
+
+            Ruler.color1 = GUIP.getRulerColor1();
+            Ruler.color2 = GUIP.getRulerColor2();
+            Ruler ruler = new Ruler(clientgui.frame, client(), previewBV, boardPreviewGame);
+            ruler.setLocation(GUIP.getRulerPosX(), GUIP.getRulerPosY());
+            ruler.setSize(GUIP.getRulerSizeHeight(), GUIP.getRulerSizeWidth());
+            ruler.setAlwaysOnTop(true);
+            UIUtil.updateWindowBounds(ruler);
+
             // Most boards will be far too large on the standard zoom
             previewBV.zoomOut();
             previewBV.zoomOut();
@@ -1138,6 +1155,16 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     public void previewGameBoard() {
         Board newBoard = getPossibleGameBoard(false);
         boardPreviewGame.setBoard(newBoard);
+        previewBV.setLocalPlayer(client().getLocalPlayer());
+        final GameOptions gOpts = game().getOptions();
+        boardPreviewGame.setOptions(gOpts);
+
+        for (Player player : game().getPlayersList()) {
+            boardPreviewGame.removePlayer(player.getId());
+        }
+        for (Player player : game().getPlayersList()) {
+            boardPreviewGame.setPlayer(player.getId(), player);
+        }
         boardPreviewW.setVisible(true);
     }
 
@@ -1251,7 +1278,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             boolean localUnit = entity.getOwner().equals(localPlayer());
             boolean teamUnit = !entity.getOwner().isEnemyOf(localPlayer());
             boolean realBlindDrop = opts.booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
-            if (localUnit || teamUnit || !realBlindDrop) {
+            boolean localGM = localPlayer().isGameMaster();
+            if (localUnit || teamUnit || !realBlindDrop || localGM) {
                 mekModel.addUnit(entity);
             }
         }
@@ -1486,8 +1514,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      * own units (and bots) though.
      */
     boolean isEditable(Entity entity) {
-        return clientgui.getLocalBots().containsKey(entity.getOwner().getName())
-                || (entity.getOwnerId() == localPlayer().getId());
+        boolean localGM = clientgui.getClient().getLocalPlayer().isGameMaster();
+        return localGM || (clientgui.getLocalBots().containsKey(entity.getOwner().getName())
+                || (entity.getOwnerId() == localPlayer().getId()));
     }
 
     /**
@@ -1528,38 +1557,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             return;
         }
 
-        PlayerSettingsDialog psd = new PlayerSettingsDialog(clientgui, c);
-        if (psd.showDialog().isConfirmed()) {
-            Player player = c.getLocalPlayer();
-            player.setConstantInitBonus(psd.getInit());
-            player.setNbrMFConventional(psd.getCnvMines());
-            player.setNbrMFVibra(psd.getVibMines());
-            player.setNbrMFActive(psd.getActMines());
-            player.setNbrMFInferno(psd.getInfMines());
-            psd.getSkillGenerationOptionsPanel().updateClient();
-            player.setEmail(psd.getEmail());
-
-            // The deployment position
-            int startPos = psd.getStartPos();
-            final GameOptions gOpts = clientgui.getClient().getGame().getOptions();
-
-            player.setStartingPos(startPos);
-            player.setStartOffset(psd.getStartOffset());
-            player.setStartWidth(psd.getStartWidth());
-            c.sendPlayerInfo();
-
-            // If the gameoption set_arty_player_homeedge is set, adjust the player's offboard
-            // arty units to be behind the newly selected home edge.
-            OffBoardDirection direction = OffBoardDirection.translateStartPosition(startPos);
-            if (direction != OffBoardDirection.NONE &&
-                    gOpts.booleanOption(OptionsConstants.BASE_SET_ARTY_PLAYER_HOMEEDGE)) {
-                for (Entity entity: c.getGame().getPlayerEntities(c.getLocalPlayer(), false)) {
-                    if (entity.getOffBoardDirection() != OffBoardDirection.NONE) {
-                        entity.setOffBoard(entity.getOffBoardDistance(), direction);
-                    }
-                }
-            }
-        }
+        PlayerSettingsDialog psd = new PlayerSettingsDialog(clientgui, c, previewBV);
+        psd.setModal(false);
+        psd.setAlwaysOnTop(true);
+        psd.showDialog();
     }
 
     /**

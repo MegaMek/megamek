@@ -25,6 +25,7 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.IStartingPositions;
 import megamek.common.Player;
+import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 
 import javax.swing.*;
@@ -195,8 +196,28 @@ class PlayerTable extends JTable {
             result.append(guiScaledFontHTML());
 
             String msg_start = Messages.getString("ChatLounge.Start");
-            if ((player.getStartingPos() >= 0) && (player.getStartingPos() <= IStartingPositions.START_LOCATION_NAMES.length)) {
+
+            final GameOptions gOpts = lobby.game().getOptions();
+            if (gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER0) && !player.isBot() && player.getId() != 0) {
+                result.append(msg_start + ": " + Messages.getString("ChatLounge.Player0"));
+            } else if ((!lobby.client().getLocalPlayer().isGameMaster()
+                    && (isEnemy)
+                    && (gOpts.booleanOption(OptionsConstants.BASE_BLIND_DROP)
+                    || gOpts.booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP)))) {
+                result.append(msg_start + ": " + Messages.getString("ChatLounge.Blind"));
+            } else if ((player.getStartingPos() >= 0)
+                    && (player.getStartingPos() <= IStartingPositions.START_LOCATION_NAMES.length)) {
                 result.append(msg_start + ": " + IStartingPositions.START_LOCATION_NAMES[player.getStartingPos()]);
+
+                if (player.getStartingPos() == 0) {
+                    int NWx = player.getStartingAnyNWx() + 1;
+                    int NWy = player.getStartingAnyNWy() + 1;
+                    int SEx = player.getStartingAnySEx() + 1;
+                    int SEy = player.getStartingAnySEy() + 1;
+                    if ((NWx + NWy + SEx + SEy) > 0) {
+                        result.append(" (" + NWx + ", " + NWy + ")-(" + SEx + ", " + SEy + ")");
+                    }
+                }
                 int so = player.getStartOffset();
                 int sw = player.getStartWidth();
                 if ((so != 0) || (sw != 3)) {

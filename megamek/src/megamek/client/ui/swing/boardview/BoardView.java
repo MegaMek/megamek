@@ -1136,7 +1136,8 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             drawDeployment(g);
         }
 
-        if (game.getPhase().isSetArtilleryAutohitHexes() && showAllDeployment) {
+        if ((game.getPhase().isSetArtilleryAutohitHexes() && showAllDeployment)
+                || (game.getPhase().isLounge())) {
             drawAllDeployment(g);
         }
 
@@ -1848,20 +1849,30 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         int drawWidth = (view.width / (int) (HEX_WC * scale)) + 3;
         int drawHeight = (view.height / (int) (HEX_H * scale)) + 3;
 
+        List<Player> players = game.getPlayersList();
+        final GameOptions gOpts = game.getOptions();
+
+        if (gOpts.booleanOption(OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER0)) {
+            players = players.stream().filter(p -> p.isBot() || p.getId() == 0).collect(Collectors.toList());
+        }
+
+        if (game.getPhase().isLounge() && !localPlayer.isGameMaster()
+                && (gOpts.booleanOption(OptionsConstants.BASE_BLIND_DROP)
+                || gOpts.booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP)) ) {
+            players = players.stream().filter(p -> !p.isEnemyOf(localPlayer)).collect(Collectors.toList());
+        }
+
         Board board = game.getBoard();
         // loop through the hexes
         for (int i = 0; i < drawHeight; i++) {
             for (int j = 0; j < drawWidth; j++) {
                 Coords c = new Coords(j + drawX, i + drawY);
-                Enumeration<Player> allP = game.getPlayers();
-                Player cp;
                 int pCount = 0;
                 int bThickness = 1 + 10 / game.getNoOfPlayers();
                 // loop through all players
-                while (allP.hasMoreElements()) {
-                    cp = allP.nextElement();
-                    if (board.isLegalDeployment(c, cp)) {
-                        Color bC = cp.getColour().getColour();
+                for (Player player : players) {
+                    if (board.isLegalDeployment(c, player)) {
+                        Color bC = player.getColour().getColour();
                         drawHexBorder(g, getHexLocation(c), bC, (bThickness + 2) * pCount, bThickness);
                         pCount++;
                     }
@@ -3143,6 +3154,14 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         rulerEndColor = ec;
 
         repaint();
+    }
+
+    public Coords getRulerStart() {
+        return rulerStart;
+    }
+
+    public Coords getRulerEnd() {
+        return rulerEnd;
     }
 
     /**

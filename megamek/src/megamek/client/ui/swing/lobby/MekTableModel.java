@@ -105,7 +105,8 @@ public class MekTableModel extends AbstractTableModel {
         if (col == COLS.BV.ordinal()) {
             boolean isEnemy = clientGui.getClient().getLocalPlayer().isEnemyOf(ownerOf(entity));
             boolean isBlindDrop = clientGui.getClient().getGame().getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP);
-            boolean hideEntity = isEnemy && isBlindDrop;
+            boolean localGM = clientGui.getClient().getLocalPlayer().isGameMaster();
+            boolean hideEntity = !localGM && isEnemy && isBlindDrop;
             float size = chatLounge.isCompact() ? 0 : 0.2f;
             return hideEntity ? "" : guiScaledFontHTML(size) + NumberFormat.getIntegerInstance().format(bv.get(row));
             
@@ -177,8 +178,10 @@ public class MekTableModel extends AbstractTableModel {
         // Note that units of a player's bots are obscured because they could be added from
         // a MekHQ AtB campaign. Thus, the player can still configure them and so can identify
         // the obscured units but has to actively decide to do it.
-        boolean hideEntity = clientGui.getClient().getLocalPlayer().isEnemyOf(owner)
+        boolean localGM = clientGui.getClient().getLocalPlayer().isGameMaster();
+        boolean hideEntity = !localGM && clientGui.getClient().getLocalPlayer().isEnemyOf(owner)
                 && clientGui.getClient().getGame().getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP);
+
         if (hideEntity) {
             unitTooltips.add(null);
             pilotTooltips.add(null);
@@ -296,7 +299,8 @@ public class MekTableModel extends AbstractTableModel {
             }
 
             Player owner = ownerOf(entity);
-            boolean showAsUnknown = clientGui.getClient().getLocalPlayer().isEnemyOf(owner)
+            boolean localGM = clientGui.getClient().getLocalPlayer().isGameMaster();
+            boolean showAsUnknown = !localGM && clientGui.getClient().getLocalPlayer().isEnemyOf(owner)
                     && clientGui.getClient().getGame().getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP);
             int size = UIUtil.scaleForGUI(MEKTABLE_IMGHEIGHT);
 

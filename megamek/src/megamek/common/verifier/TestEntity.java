@@ -1689,6 +1689,14 @@ public abstract class TestEntity implements TestEntityOption {
         return usesKgStandard(getEntity());
     }
 
+
+    public int totalCritSlotCount() {
+        int slotCount = 0;
+        for (int i = 0; i < getEntity().locations(); i++) {
+            slotCount += getEntity().getNumberOfCriticals(i);
+        }
+        return slotCount;
+    }
 } // End class TestEntity
 
 class Armor {

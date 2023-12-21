@@ -720,7 +720,7 @@ public class TestSupportVehicle extends TestEntity {
 
     @Override
     public double calculateWeightExact() {
-        return super.calculateWeight() + getFuelTonnage();
+        return super.calculateWeightExact() + getFuelTonnage();
     }
 
     @Override

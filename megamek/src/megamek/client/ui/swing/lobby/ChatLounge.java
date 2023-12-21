@@ -614,8 +614,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         rightSide.add(scrMekTable);
 
         panUnits.setLayout(new BoxLayout(panUnits, BoxLayout.LINE_AXIS));
-        panUnits.add(leftSide);
-        panUnits.add(rightSide);
+        JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        sp.setDividerLocation(400);
+        sp.setDividerSize(10);
+        sp.setLeftComponent(leftSide);
+        sp.setRightComponent(rightSide);
+        panUnits.add(sp);
     }
 
     private void setupMapPanel() {

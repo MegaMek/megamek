@@ -20900,7 +20900,8 @@ public class GameManager implements IGameManager {
             return vReport;
         }
 
-        if (e.isAero()) {
+        //
+        if (e.isAero() && !(e instanceof LandAirMech)) {
             // Only ground fire can hit internal bombs
             if (e.getGroundAttackedByThisTurn().isEmpty()) {
                 return vReport;
@@ -24874,7 +24875,9 @@ public class GameManager implements IGameManager {
             js = (Jumpship) aero;
         }
 
-        switch (cs.getIndex()) {
+        // For testing purposes
+        // switch (cs.getIndex()) {
+        switch (Aero.CRIT_CARGO) {
             case Aero.CRIT_NONE:
                 // no effect
                 r = new Report(6005);
@@ -25611,14 +25614,71 @@ public class GameManager implements IGameManager {
                             false, true));
                     destroyed--;
                 }
+            } else {
+                // TODO: handle critical hit on internal bomb bay (cargo bay when internal bombs are loaded)
+                // Ruling: calculate % of cargo space destroyed; user chooses that many bombs to destroy.
+                if(aero.hasQuirk(OptionsConstants.QUIRK_POS_INTERNAL_BOMB)) {
+                    // Prompt user, but just randomize bot's bombs to lose.
+                    destroyed = (int) percentDestroyed * aero.getMaxIntBombPoints();
+                    r = new Report(5605);
+                    r.choose(!aero.getOwner().isBot());
+                    r.subject = aero.getId();
+                    r.addDesc(aero);
+                    r.add((int) destroyed);
+                    reports.add(r);
+                    int bombsDestroyed = (int) (aero.getInternalBombsDamageTotal() / destroyed);
+                    if (destroyed >= aero.getBombPoints()) {
+                        // Actually, no prompt or randomization if all bombs will be destroyed; just do it.
+                        r = new Report(5608);
+                        r.subject = aero.getId();
+                        r.addDesc(aero);
+                        reports.add(r);
+                        for (Mounted bomb: ((IBomber) aero).getBombs()) {
+                            damageBomb(bomb);
+                        }
+                        aero.applyDamage();
+                    } else if (!aero.getOwner().isBot()) {
+                        // handle person choosing bombs to remove.
+                        // This will require firing an event to the End Phase to display a dialog;
+                        // for now just randomly dump bombs just like bots'.
+                        // TODO: fire event here to display dialog in end phase.
+                        for (Mounted bomb:randomlySubSelectList(((IBomber) aero).getBombs(), bombsDestroyed)) {
+                            damageBomb(bomb);
+                        }
+                        aero.applyDamage();
+                    } else {
+                        // This should always use the random method.
+                        for (Mounted bomb:randomlySubSelectList(((IBomber) aero).getBombs(), bombsDestroyed)) {
+                            damageBomb(bomb);
+                        }
+                        aero.applyDamage();
+                    }
+                }
             }
-            // TODO: handle critical hit on internal bomb bay (cargo bay when internal bombs are loaded)
+
         } else {
             r = new Report(9167);
             r.subject = aero.getId();
             r.choose(roll < 4); // cargo or transport
             reports.add(r);
         }
+    }
+
+    private void damageBomb(Mounted bomb) {
+        bomb.setHit(true);
+        if (bomb.getLinked() != null && (bomb.getLinked().getUsableShotsLeft() > 0)) {
+            bomb.getLinked().setHit(true);
+        }
+    }
+
+    // Randomly select subset of Mounted items.
+    private ArrayList<Mounted> randomlySubSelectList(List<Mounted> list, int size) {
+        ArrayList<Mounted> subset = new ArrayList<>();
+        Random random_method = new Random();
+        for (int i = 0; i < size; i++) {
+            subset.add(list.get(random_method.nextInt(list.size())));
+        }
+        return subset;
     }
 
     /**

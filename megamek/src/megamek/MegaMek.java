@@ -62,7 +62,6 @@ public class MegaMek {
         Thread.setDefaultUncaughtExceptionHandler((thread, t) -> {
             LogManager.getLogger().error("Uncaught Exception Detected", t);
             final String name = t.getClass().getName();
-            final StackTraceElement[] stack = t.getStackTrace();
             JOptionPane.showMessageDialog(null,
                     String.format("Uncaught %s detected. Please open up an issue containing all logs, the game save file, and customs at https://github.com/MegaMek/megamek/issues", name),
                     "Uncaught " + name, JOptionPane.ERROR_MESSAGE);

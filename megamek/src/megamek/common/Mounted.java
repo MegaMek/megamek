@@ -28,6 +28,7 @@ import org.apache.logging.log4j.LogManager;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This describes equipment mounted on a mech.
@@ -1461,11 +1462,6 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         return vibraSetting;
     }
 
-    @Override
-    public String toString() {
-        return "megamek.common.Mounted (" + typeName + ")";
-    }
-
     public int getBaseDamageAbsorptionRate() {
         return baseDamageAbsorptionRate;
     }
@@ -2127,5 +2123,62 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         AmmoType ammoType = (AmmoType) getType();
         return ammoType.getMunitionType().contains(AmmoType.Munitions.M_HOMING) &&
                 curMode().equals("Homing");
+    }
+
+    public int equipmentIndex() {
+        if (entity != null) {
+            return entity.getEquipmentNum(this);
+        } else {
+            return -1;
+        }
+    }
+
+    @Override
+    public String toString() {
+        List<String> locations = allLocations().stream().map(entity::getLocationAbbr).collect(Collectors.toList());
+        String intro = getType().getInternalName()
+                + " (" + String.join("/", locations)
+                + (rearMounted ? "-R" : "")
+                + (mechTurretMounted ? "-MTu" : "")
+                + (sponsonTurretMounted ? "-STu" : "")
+                + (pintleTurretMounted ? "-PTu" : "")
+                + (isDWPMounted ? "-DWP" : "")
+                + (isAPMMounted ? "-APM" : "")
+                + (squadSupportWeapon ? "-SSW" : "")
+                + (baMountLoc != -1 ? "-" + BattleArmor.MOUNT_LOC_NAMES[baMountLoc] : "")
+                + (omniPodMounted ? "-Pod" : "")
+
+                + ")";
+
+        List<String> state = new ArrayList<>();
+        if (linked != null) state.add("Linked: [" + entity.getEquipment().indexOf(linked) + "]");
+        if (linkedBy != null) state.add("LinkedBy: [" + entity.getEquipment().indexOf(linkedBy) + "]");
+        if (crossLinkedBy != null) state.add("CrossLinkedBy: [" + entity.getEquipment().indexOf(crossLinkedBy) + "]");
+        if (linkedBayId != -1) state.add("LinkedBay: [" + linkedBayId + "]");
+        if (!bayWeapons.isEmpty()) {
+            List<String> bayWeaponIds = bayWeapons.stream().map(id -> "[" + id + "]").collect(Collectors.toList());
+            state.add("Bay Weapons: " + String.join(", ", bayWeaponIds));
+        }
+        if (!bayAmmo.isEmpty()) {
+            List<String> bayAmmoIds = bayAmmo.stream().map(id -> "[" + id + "]").collect(Collectors.toList());
+            state.add("Bay Ammo: " + String.join(", ", bayAmmoIds));
+        }
+        if (type instanceof AmmoType) {
+            state.add("Shots: " + shotsLeft);
+        }
+        if (destroyed) state.add("Destroyed");
+        if (hit) state.add("Hit");
+        if (missing) state.add("Missing");
+        if (fired) state.add("Fired");
+        if (rapidfire) state.add("Rapidfire");
+        if (jammed) state.add("Jammed");
+        if (useless) state.add("Useless");
+        if (armoredComponent) state.add("Armored");
+        if (facing != -1) state.add("Facing: " + facing);
+        if (!quirks.activeQuirks().isEmpty()) state.add("Quirks: " + quirks.getOptionList("/"));
+        if (weaponGroup) state.add("Group");
+        if (nweapons != 1) state.add("#Weapons: " + nweapons);
+        if (size != 1) state.add("Size: " + size);
+        return intro + " { " + String.join(", ", state) + " }";
     }
 }

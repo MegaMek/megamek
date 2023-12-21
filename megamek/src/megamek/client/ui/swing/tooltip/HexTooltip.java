@@ -190,7 +190,7 @@ public final class HexTooltip {
     public static String getTerrainTip(Hex mhex, GUIPreferences GUIP, Game game)
     {
         Coords mcoords = mhex.getCoords();
-        String illuminated = IlluminationLevel.getIlluminationLevelIndicator(game, mcoords);
+        String illuminated = IlluminationLevel.getIlluminationLevelIndicator(game, mcoords, GUIP);
         String result = "";
         StringBuilder sTerrain = new StringBuilder(Messages.getString("BoardView1.Tooltip.Hex", mcoords.getBoardNum(), mhex.getLevel()) + illuminated + "<BR>");
 

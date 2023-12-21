@@ -18,6 +18,7 @@
  */
 package megamek.common.enums;
 
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Coords;
 import megamek.common.Game;
 import megamek.common.Hex;
@@ -91,14 +92,14 @@ public enum IlluminationLevel {
         return neighbouringFire ? IlluminationLevel.FIRE : IlluminationLevel.NONE;
     }
 
-    public static  String getIlluminationLevelIndicator(final Game game, final Coords coords) {
+    public static  String getIlluminationLevelIndicator(final Game game, final Coords coords, final GUIPreferences GUIP) {
         switch (IlluminationLevel.determineIlluminationLevel(game, coords)) {
             case FIRE:
-                return DOT_SPACER + guiScaledFontHTML(uiYellow()) + " \uD83D\uDD25" + "</FONT>";
+                return DOT_SPACER + guiScaledFontHTML(GUIP.getCautionColor()) + " \uD83D\uDD25" + "</FONT>";
             case FLARE:
-                return DOT_SPACER + guiScaledFontHTML(uiYellow()) + " \uD83C\uDF86" + "</FONT>";
+                return DOT_SPACER + guiScaledFontHTML(GUIP.getCautionColor()) + " \uD83C\uDF86" + "</FONT>";
             case SEARCHLIGHT:
-                return DOT_SPACER + guiScaledFontHTML(uiYellow()) + " \uD83D\uDD26" + "</FONT>";
+                return DOT_SPACER + guiScaledFontHTML(GUIP.getCautionColor()) + " \uD83D\uDD26" + "</FONT>";
             default:
                 return "";
         }

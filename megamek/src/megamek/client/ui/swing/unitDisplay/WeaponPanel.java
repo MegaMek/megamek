@@ -366,9 +366,6 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     public static  final int LINE_HEIGHT = 25;
     public static final Color COLOR_FG = Color.WHITE;
     public static final Color TEXT_BG = Color.DARK_GRAY;
-    public static final String BODY = "<body style=\"color:white; background-color:SlateGray;\">";
-    public static final String LOW_CONTRAST_FONT = "<font color=\"#D3D3D3\">";
-    public  static final String HTML_BODY = "<html>"+BODY+"%s<html>";
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
@@ -871,44 +868,58 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     }
 
     public void setToHit(ToHitData toHit, boolean natAptGunnery) {
+        String txt = "";
+
         switch (toHit.getValue()) {
             case TargetRoll.IMPOSSIBLE:
             case TargetRoll.AUTOMATIC_FAIL:
-                toHitText.setText(String.format("<html>%sTo Hit: (0%%) %s</body></html>", BODY, toHit.getDesc()));
+                txt = String.format("To Hit: (0%%) %s", toHit.getDesc());
                 break;
             case TargetRoll.AUTOMATIC_SUCCESS:
-                toHitText.setText(String.format("<html>%sTo Hit: (100%%) %s</body></html>", BODY, toHit.getDesc()));
+                txt = String.format("To Hit: (100%%) %s", toHit.getDesc());
                 break;
             default:
-                toHitText.setText(String.format("<html>%sTo Hit: <b>%2d (%2.0f%%)</b>%s = %s</font></body></html>", BODY,
-                        toHit.getValue(), Compute.oddsAbove(toHit.getValue(), natAptGunnery), LOW_CONTRAST_FONT, toHit.getDesc()));
+                txt = String.format("<font color=\"%s\">To Hit: <b>%2d (%2.0f%%)</b></font> = %s",
+                        GUIP.hexColor(GUIP.getUnitToolTipHighlightColor()),
+                        toHit.getValue(),
+                        Compute.oddsAbove(toHit.getValue(), natAptGunnery),
+                        toHit.getDesc());
                 break;
         }
+
+        toHitText.setText(UnitToolTip.wrapWithHTML(txt));
         toHitText.setCaretPosition(0);
     }
 
     public void setToHit(String message) {
-        toHitText.setText(String.format(HTML_BODY,message));
+        toHitText.setText(UnitToolTip.wrapWithHTML(message));
     }
 
     public void setTarget(@Nullable Targetable target, @Nullable String extraInfo) {
         this.target = target;
         updateTargetInfo();
+        String txt = "";
+
         if (extraInfo == null || extraInfo.isEmpty()) {
-            wTargetExtraInfo.setText("");
             wTargetExtraInfo.setOpaque(false);
         } else {
-            wTargetExtraInfo.setText(String.format(HTML_BODY, extraInfo));
+            txt = extraInfo;
             wTargetExtraInfo.setOpaque(true);
         }
+
+        wTargetExtraInfo.setText(UnitToolTip.wrapWithHTML(txt));
     }
 
     private void updateTargetInfo() {;
+        String txt = "";
+
         if (target == null) {
-            wTargetInfo.setText(String.format(HTML_BODY, Messages.getString("MechDisplay.NoTarget")));
+            txt = Messages.getString("MechDisplay.NoTarget");
         } else {
-            wTargetInfo.setText(String.format(HTML_BODY, UnitToolTip.getTargetTipDetail(target, client)));
+            txt = UnitToolTip.getTargetTipDetail(target, client);
         }
+
+        wTargetInfo.setText(UnitToolTip.wrapWithHTML(txt));
     }
 
     @Override

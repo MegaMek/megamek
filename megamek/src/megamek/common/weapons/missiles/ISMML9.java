@@ -21,6 +21,7 @@ package megamek.common.weapons.missiles;
 
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Mounted;
+import megamek.common.SimpleTechLevel;
 
 import static megamek.common.MountedHelper.isArtemisIV;
 import static megamek.common.MountedHelper.isArtemisProto;
@@ -54,14 +55,16 @@ public class ISMML9 extends MMLWeapon {
         longAV = 5;
         maxRange = RANGE_LONG;
         rulesRefs = "229, TM";
+        //March 2022 - CGL (Greekfire) requested MML adjustments to Tech Progression.
         techAdvancement.setTechBase(TECH_BASE_IS)
         	.setIntroLevel(false)
         	.setUnofficial(false)
             .setTechRating(RATING_D)
             .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
             .setISAdvancement(DATE_NONE, 3067, 3073, DATE_NONE, DATE_NONE)
-            .setISApproximate(false, false, true, false, false)
-            .setProductionFactions(F_MERC,F_WB);
+            .setISApproximate(false, true, false, false, false)
+            .setProductionFactions(F_MERC,F_WB)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
     @Override

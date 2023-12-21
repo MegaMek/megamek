@@ -230,7 +230,7 @@ public class Quirks extends AbstractOptions {
                             QUIRK_NEG_EM_INTERFERENCE_WHOLE,                        QUIRK_NEG_POOR_PERFORMANCE,
                             QUIRK_NEG_HARD_PILOT,       QUIRK_NEG_POOR_TARG_S,      QUIRK_NEG_POOR_TARG_M,
                             QUIRK_NEG_POOR_TARG_L,      QUIRK_NEG_POOR_WORK,        QUIRK_NEG_PROTOTYPE,
-                            QUIRK_NEG_SENSOR_GHOSTS);
+                            QUIRK_NEG_SENSOR_GHOSTS,    QUIRK_POS_UBIQUITOUS_IS,    QUIRK_POS_UBIQUITOUS_CLAN);
             }
         }
 

@@ -48,6 +48,10 @@ VERSION HISTORY:
 + PR #4956: Use foot/jump type modifier for beast-mounted infantry
 + PR #4963: In the heat report, heat effects are now shown after the affected unit (instead of before)
 + PR #4966: The mtf file format for Meks now uses chassis: and model: qualifiers and no longer includes the mtf version
++ Issue #4949: return impossible instead of raising an error
++ PR #4957: More tooltips colors (set FG color and BG color for more tooltips, add highlight, weapon, quirk client settings, consolidate some colors into existing client setting colors)
++ PR #4922: Add deployment options (There is a lot in this one see note from PR link for specifics)
+
 
 0.49.15 (2023-10-21 1530 UTC)
 + PR #4688: Round reports should no longer take increasingly long to load

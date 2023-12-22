@@ -13,9 +13,7 @@ public class ConstructionFactorWarningTest {
 	public void testDefaultPreferenceForCFWarningIndicator() {
 		// The default setting for Construction Factor warning indicators should be true.
 		GUIPreferences GUIP = GUIPreferences.getInstance();
-
-		boolean bCFWarning = GUIP.getShowCFWarnings();
-		assertTrue(bCFWarning);
+		assertTrue(GUIP.getDefaultBoolean(GUIPreferences.CONSTRUCTOR_FACTOR_WARNING));
 	}
 
 	@Test

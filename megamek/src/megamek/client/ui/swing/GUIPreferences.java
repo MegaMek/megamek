@@ -1003,6 +1003,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(FIRING_SOLUTIONS);
     }
 
+    public boolean getShowCFWarnings() {
+        return true;
+    }
+
     public boolean getMoveEnvelope() {
         return store.getBoolean(MOVE_ENVELOPE);
     }

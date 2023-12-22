@@ -191,6 +191,8 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
     private ArrayList<FiringSolutionSprite> firingSprites = new ArrayList<>();
 
+    private ArrayList<ConstructionWarningSprite> cfWarningSprites = new ArrayList<>();
+
     private ArrayList<MovementEnvelopeSprite> moveEnvSprites = new ArrayList<>();
     private ArrayList<MovementModifierEnvelopeSprite> moveModEnvSprites = new ArrayList<>();
 
@@ -1184,6 +1186,10 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             }
         }
 
+        // draw structure warning in the deployment or movement phases
+        if (game.getPhase().isDeployment() || game.getPhase().isMovement()) {
+            drawSprites(g, cfWarningSprites);
+        }
 
         // draw the ruler line
         if (rulerStart != null) {
@@ -2269,6 +2275,11 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 for (Coords c : strafingCoords) {
                     drawHexBorder(boardGraph, getHexLocation(c), Color.yellow, 0, 3);
                 }
+            }
+
+            // draw structure collapse warning sprites if in movement or deploy phase.
+            if (game.getPhase().isDeployment() || game.getPhase().isMovement()) {
+                drawSprites(boardGraph, cfWarningSprites);
             }
         }
         boardGraph.dispose();
@@ -5124,6 +5135,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         movementSprites.clear();
         fieldOfFireSprites.clear();
         sensorRangeSprites.clear();
+        cfWarningSprites.clear();
     }
 
     public synchronized void updateBoard() {

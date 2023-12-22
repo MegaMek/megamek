@@ -162,6 +162,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     public static final String VIEW_TOGGLE_FOV_DARKEN = "viewToggleFovDarken";
     public static final String VIEW_TOGGLE_FOV_HIGHLIGHT = "viewToggleFovHighlight";
     public static final String VIEW_TOGGLE_FIRING_SOLUTIONS = "viewToggleFiringSolutions";
+    public static final String VIEW_TOGGLE_CF_WARNING = "viewToggleCFWarnings";
     public static final String VIEW_MOVE_ENV = "viewMovementEnvelope";
     public static final String VIEW_TURN_DETAILS_OVERLAY = "viewTurnDetailsOverlay";
     public static final String VIEW_MOVE_MOD_ENV = "viewMovModEnvelope";
@@ -933,6 +934,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     }
                 }
                 bv.refreshDisplayables();
+                break;
+            case VIEW_TOGGLE_CF_WARNING:
+                GUIP.setShowCFWarnings(!GUIP.getShowCFWarnings());
                 break;
             case VIEW_MOVE_ENV:
                 if (curPanel instanceof MovementDisplay) {

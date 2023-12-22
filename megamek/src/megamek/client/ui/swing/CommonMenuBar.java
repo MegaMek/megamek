@@ -121,6 +121,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private JCheckBoxMenuItem toggleFovHighlight = new JCheckBoxMenuItem(getString("CommonMenuBar.viewToggleFovHighlight"));
     private JCheckBoxMenuItem toggleFovDarken = new JCheckBoxMenuItem(getString("CommonMenuBar.viewToggleFovDarken"));
     private JCheckBoxMenuItem toggleFiringSolutions = new JCheckBoxMenuItem(getString("CommonMenuBar.viewToggleFiringSolutions"));
+    private JCheckBoxMenuItem toggleCFWarning = new JCheckBoxMenuItem(getString("CommonMenuBar.viewToggleCFWarning"));
     private JCheckBoxMenuItem viewMovementEnvelope = new JCheckBoxMenuItem(getString("CommonMenuBar.movementEnvelope"));
     private JCheckBoxMenuItem viewTurnDetailsOverlay  = new JCheckBoxMenuItem(getString("CommonMenuBar.turnDetailsOverlay"));
     private JMenuItem viewMovModEnvelope = new JMenuItem(getString("CommonMenuBar.movementModEnvelope"));
@@ -304,6 +305,10 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         initMenuItem(toggleFiringSolutions, menu, VIEW_TOGGLE_FIRING_SOLUTIONS);
         toggleFiringSolutions.setToolTipText(Messages.getString("CommonMenuBar.viewToggleFiringSolutionsToolTip"));
         toggleFiringSolutions.setSelected(GUIP.getFiringSolutions());
+
+        initMenuItem(toggleCFWarning, menu, VIEW_TOGGLE_CF_WARNING);
+        toggleCFWarning.setToolTipText(Messages.getString("CommonMenuBar.viewToggleCFWarningToolTip"));
+        toggleCFWarning.setSelected(GUIP.getShowCFWarnings());
 
         /* TODO: moveTraitor = createMenuItem(menu, getString("CommonMenuBar.moveTraitor"), MovementDisplay.MOVE_TRAITOR);  */
 

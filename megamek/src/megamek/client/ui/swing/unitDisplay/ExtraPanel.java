@@ -628,7 +628,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener, IPrefer
             clientgui.getClient().sendActivateHidden(myMechId, (phase == null) ? GamePhase.UNKNOWN : phase);
         } else if (unitReadout.equals(ae.getSource())) {
             Entity entity = clientgui.getClient().getGame().getEntity(myMechId);
-            LobbyUtility.mechReadout(entity, 0, true, clientgui.getFrame());
+            LobbyUtility.mechReadout(entity, 0, false, clientgui.getFrame());
         }
     }
 

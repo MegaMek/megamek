@@ -93,7 +93,7 @@ public class MtfFile implements IMechLoader {
 
     public static final String COMMENT = "#";
     public static final String MTF_VERSION = "Version:";
-    public static final String GENERATOR = "Generator:";
+    public static final String GENERATOR = "generator:";
     public static final String CHASSIS = "chassis:";
     public static final String MODEL = "model:";
     public static final String COCKPIT = "cockpit:";
@@ -522,7 +522,7 @@ public class MtfFile implements IMechLoader {
                 // Version 1.3: Added MUL ID
 
                 String generatorOrChassis = readLineIgnoringComments(r);
-                if (generatorOrChassis.startsWith(GENERATOR)) {
+                if (generatorOrChassis.toLowerCase().startsWith(GENERATOR)) {
                     // Compatibility with SSW 0.7.6.1 - Generator: comes between Version and chassis
                     chassis = readLineIgnoringComments(r);
                 } else {

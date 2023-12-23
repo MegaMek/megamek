@@ -93,6 +93,7 @@ public class MtfFile implements IMechLoader {
 
     public static final String COMMENT = "#";
     public static final String MTF_VERSION = "Version:";
+    public static final String GENERATOR = "Generator:";
     public static final String CHASSIS = "chassis:";
     public static final String MODEL = "model:";
     public static final String COCKPIT = "cockpit:";
@@ -507,7 +508,7 @@ public class MtfFile implements IMechLoader {
         while (r.ready()) {
             String line = r.readLine().trim();
 
-            if (line.isBlank() || line.startsWith(COMMENT)) {
+            if (line.isBlank() || line.startsWith(COMMENT) || line.startsWith(GENERATOR)) {
                 continue;
             }
 
@@ -519,7 +520,14 @@ public class MtfFile implements IMechLoader {
                 // Version 1.1: Added level 3 cockpit and gyro options.
                 // version 1.2: added full head ejection
                 // Version 1.3: Added MUL ID
-                chassis = readLineIgnoringComments(r);
+
+                String generatorOrChassis = readLineIgnoringComments(r);
+                if (generatorOrChassis.startsWith(GENERATOR)) {
+                    // Compatibility with SSW 0.7.6.1 - Generator: comes between Version and chassis
+                    chassis = readLineIgnoringComments(r);
+                } else {
+                    chassis = generatorOrChassis;
+                }
                 model = readLineIgnoringComments(r);
                 continue;
             }

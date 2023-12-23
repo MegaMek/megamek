@@ -39,8 +39,8 @@ import megamek.common.Coords;
 public class ConstructionWarningSprite extends HexSprite {
 
 	private static final GUIPreferences GUIP = GUIPreferences.getInstance();
-    private static final int TEXT_SIZE = 40;
-    private static final Color TEXT_COLOR = new Color(255, 40, 40, 230);
+    private static final int TEXT_SIZE = 30;
+    private static final Color TEXT_COLOR = new Color(255, 255, 40, 128);
     private static final Color OUTLINE_COLOR = new Color(40, 40,40,200);
     
     private static final int HEX_CENTER_X = BoardView.HEX_W / 2;

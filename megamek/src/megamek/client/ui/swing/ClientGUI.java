@@ -936,7 +936,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 bv.refreshDisplayables();
                 break;
             case VIEW_TOGGLE_CF_WARNING:
-                GUIP.setShowCFWarnings(!GUIP.getShowCFWarnings());
+                ConstructionFactorWarning.handleActionPerformed(client.getGame(), bv);
                 break;
             case VIEW_MOVE_ENV:
                 if (curPanel instanceof MovementDisplay) {

@@ -781,6 +781,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
         clientgui.getBoardView().clearFieldOfFire();
         computeMovementEnvelope(ce);
+        List<Coords> warnList =
+        		ConstructionFactorWarning.findCFWarnings(clientgui.getBoardView().game, ce, null );
+
+        clientgui.getBoardView().setCFWarningSprites(warnList);
     }
 
     private MegamekButton getBtn(MoveCommand c) {

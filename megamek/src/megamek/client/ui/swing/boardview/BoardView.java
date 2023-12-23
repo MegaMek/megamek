@@ -1187,7 +1187,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         }
 
         // draw structure warning in the deployment or movement phases
-        if (game.getPhase().isDeployment() || game.getPhase().isMovement()) {
+        if (shouldShowCFWarning())  {
             drawSprites(g, cfWarningSprites);
         }
 
@@ -2278,7 +2278,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             }
 
             // draw structure collapse warning sprites if in movement or deploy phase.
-            if (game.getPhase().isDeployment() || game.getPhase().isMovement()) {
+            if (shouldShowCFWarning()) {
                 drawSprites(boardGraph, cfWarningSprites);
             }
         }
@@ -3879,6 +3879,10 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         firingSprites.clear();
         repaint();
     }
+
+	public void clearCFWarningData() {
+		cfWarningSprites.clear();
+	}
 
     public void addStrafingCoords(Coords c) {
         strafingCoords.add(c);
@@ -6047,6 +6051,10 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         for (FiringSolutionSprite sprite : firingSprites) {
             sprite.prepare();
         }
+
+        for (ConstructionWarningSprite sprite : cfWarningSprites) {
+        	sprite.prepare();
+        }
         this.setSize(boardSize);
 
         clearHexImageCache();
@@ -6707,4 +6715,18 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                         || game.getPhase().isOffboard());
     }
 
+    public boolean shouldShowCFWarning() {
+    	return ConstructionFactorWarning.shouldShow(game.getPhase(), GUIP.getShowCFWarnings());
+    }
+
+	public void setCFWarningSprites(List<Coords> warnList) {
+		// Clear existing sprites before setting new ones.
+		clearCFWarningData();
+
+		// Loops through list of coordinates, and create new CF warning sprite and add it to the sprites list.
+		for (Coords c : warnList) {
+			ConstructionWarningSprite cfws = new ConstructionWarningSprite(this, c);
+			cfWarningSprites.add(cfws);
+		}
+	}
 }

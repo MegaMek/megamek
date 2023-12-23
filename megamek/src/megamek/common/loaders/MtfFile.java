@@ -92,7 +92,7 @@ public class MtfFile implements IMechLoader {
             {Mech.LOC_LT, Mech.LOC_RT, Mech.LOC_CT};
 
     public static final String COMMENT = "#";
-    public static final String MTF_VERSION = "Version:";
+    public static final String MTF_VERSION = "version:";
     public static final String GENERATOR = "generator:";
     public static final String CHASSIS = "chassis:";
     public static final String MODEL = "model:";
@@ -512,7 +512,7 @@ public class MtfFile implements IMechLoader {
                 continue;
             }
 
-            if (line.startsWith(MTF_VERSION)) {
+            if (line.toLowerCase().startsWith(MTF_VERSION)) {
                 // Reading the version, chassis and model as the first three lines without header is kept
                 // for backward compatibility for user-generated units. However the version is no longer checked
                 // for correct values as that makes no difference so long as the unit can be loaded

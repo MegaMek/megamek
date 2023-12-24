@@ -19,6 +19,7 @@
 package megamek.common;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 
 import megamek.client.ui.swing.GUIPreferences;
@@ -52,6 +53,10 @@ public class ConstructionFactorWarning {
 		return shouldShow(gp, true);
 	}
 
+	/*
+	 *  Returns true if the show construction factor warning preference
+	 *  is enabled and in a phase that should show warnings.
+	 */
 	public static boolean shouldShow(GamePhase gp, boolean isEnabled) {
 		return (isEnabled && isCFWarningPhase(gp));
 	}
@@ -63,14 +68,82 @@ public class ConstructionFactorWarning {
 		return (GUIP.getShowCFWarnings());
 	}
 
-	public static List<Coords> findCFWarnings(Game g, Entity e, Board b) {
+	/*
+	 *  For the provided entity, find all hexes within movement range with
+	 *  buildings that would collapse if entered or landed upon.
+	 *
+	 *  Returns a list of Coords that should have a warning symbol added.
+	 */
+	public static List<Coords> findCFWarningsMovement(Game g, Entity e, Board b) {
 		List<Coords> warnList = new ArrayList<Coords>();
 
-		// test - put logic here that actually finds the hexes to put the warning based on the
-		// selected entity and surrounding building / bridges.
-		warnList.add(new Coords(10, 10));
-		warnList.add(new Coords(12, 12));
+		Coords pos = e.getPosition();
+		int range = (e.getJumpMP() > e.getRunMP()) ? e.getJumpMP() : e.getRunMP();
+
+		List<Coords> hexesToCheck = new ArrayList<Coords>();
+		if (pos != null) {
+			hexesToCheck = pos.allAtDistanceOrLess(range + 1);
+		} else {
+			return hexesToCheck;
+		}
+
+		// For each hex in jumping range, look for buildings, if found check for collapse.
+		for (Coords c : hexesToCheck) {
+			//is there a building at this location?  If so add it to hexes with buildings.
+			Building bld = b.getBuildingAt(c);
+
+			// If a building, compare total weight and add to warning list.
+			if (null != bld) {
+				if (calculateTotalTonnage(g, e, c) > bld.getCurrentCF(c)) {
+					warnList.add(c);
+				}
+			}
+		}
 
 		return warnList;
+	}
+
+	/*
+	 *  Looks for all building locations in a legal deploy zone that would collapse
+	 *  if the currently selected entity would deploy there.  This is used by
+	 *  DeploymentDisplay to render a warning sprite on danger hexes.
+	 */
+	public static List<Coords> findCFWarningsDeployment(Game g, Entity e, Board b) {
+		List<Coords> warnList = new ArrayList<Coords>();
+
+        Enumeration<Building> buildings = b.getBuildings();
+
+        // Enumerate through all the buildings
+        while (buildings.hasMoreElements()) {
+        	Building bld = buildings.nextElement();
+        	List<Coords> buildingList = bld.getCoordsList();
+
+        	// For each hex occupied by the bulding, check if it's a legal deploy hex.
+        	for (Coords c : buildingList) {
+        		if (b.isLegalDeployment(c, e)) {
+        			// Check for weight limtes for collapse and add a warning sprite.
+        			if (calculateTotalTonnage(g, e, c) > bld.getCurrentCF(c)) {
+        				warnList.add(c);
+    				}
+        		}
+        	}
+        }
+
+		return warnList;
+	}
+
+	/*
+	 *  Determine the total weight burden for a building hex at a location.
+	 *  This includes the entity current weight summed with any unit weights
+	 *  at the hex location that could cause a building to collapse.
+	 */
+	protected static double calculateTotalTonnage(Game g, Entity e, Coords c) {
+		// Calculate total weight of entity and all entities at the location.
+		double totalWeight = e.getWeight();
+		List<Entity> units = g.getEntitiesVector(c, true);
+		for (Entity ent : units) {
+			totalWeight += ent.getWeight();
+		}
+		return totalWeight;
 	}
 }

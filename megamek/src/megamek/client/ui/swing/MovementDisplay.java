@@ -781,10 +781,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
         clientgui.getBoardView().clearFieldOfFire();
         computeMovementEnvelope(ce);
-        List<Coords> warnList =
-        		ConstructionFactorWarning.findCFWarnings(clientgui.getBoardView().game, ce, null );
-
-        clientgui.getBoardView().setCFWarningSprites(warnList);
+        computeCFWarningHexes(ce);
     }
 
     private MegamekButton getBtn(MoveCommand c) {
@@ -4546,6 +4543,16 @@ public class MovementDisplay extends ActionPhaseDisplay {
         lpf.addStopCondition(timeoutCondition);
         lpf.run(mp);
         clientgui.getBoardView().setMovementModifierEnvelope(lpf.getLongestComputedPaths());
+    }
+
+    private void computeCFWarningHexes(Entity ce) {
+        List<Coords> warnList =
+        		ConstructionFactorWarning.findCFWarningsMovement(
+        				clientgui.getBoardView().game,
+        				ce,
+        				clientgui.getBoardView().game.getBoard());
+
+        clientgui.getBoardView().setCFWarningSprites(warnList);
     }
 
     //

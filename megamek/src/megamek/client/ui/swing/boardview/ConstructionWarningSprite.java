@@ -47,7 +47,7 @@ public class ConstructionWarningSprite extends HexSprite {
     private static final int HEX_CENTER_Y = BoardView.HEX_H / 2;
 
     //Draw a special character 'warning sign'.
-    private final StringDrawer xWriter = new StringDrawer("(\u26A0)")
+    private final StringDrawer xWriter = new StringDrawer("\u26A0")
     		.at(HEX_CENTER_X, HEX_CENTER_Y)
     		.color(TEXT_COLOR)
             .fontSize(TEXT_SIZE)

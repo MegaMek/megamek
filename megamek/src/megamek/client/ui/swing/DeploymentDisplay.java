@@ -231,12 +231,24 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             clientgui.getUnitDisplay().showPanel("movement");
             clientgui.getBoardView().setWeaponFieldOfFire(ce().getFacing(), ce().getPosition());
             clientgui.getBoardView().setSensorRange(ce(), ce().getPosition());
+            computeCFWarningHexes(ce());
         } else {
             disableButtons();
             setNextEnabled(true);
             clientgui.getBoardView().clearFieldOfFire();
             clientgui.getBoardView().clearSensorsRanges();
         }
+    }
+
+    private void computeCFWarningHexes(Entity ce) {
+        List<Coords> warnList =
+        		ConstructionFactorWarning.findCFWarningsDeployment(
+        				clientgui.getBoardView().game,
+        				ce,
+        				clientgui.getBoardView().game.getBoard());
+
+        clientgui.getBoardView().setCFWarningSprites(warnList);
+
     }
 
     /** Enables relevant buttons and sets up for your turn. */

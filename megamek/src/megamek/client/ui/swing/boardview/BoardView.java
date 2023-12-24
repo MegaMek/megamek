@@ -1158,6 +1158,12 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         // draw onscreen entities
         drawSprites(g, entitySprites);
 
+        // draw structure warning in the deployment or movement phases
+        // draw this before moving entities, so they show up under if overlapped.
+        if (shouldShowCFWarning())  {
+            drawSprites(g, cfWarningSprites);
+        }
+
         // draw moving onscreen entities
         drawSprites(g, movingEntitySprites);
 
@@ -1184,11 +1190,6 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             for (Coords c : strafingCoords) {
                 drawHexBorder(g, getHexLocation(c), Color.yellow, 0, 3);
             }
-        }
-
-        // draw structure warning in the deployment or movement phases
-        if (shouldShowCFWarning())  {
-            drawSprites(g, cfWarningSprites);
         }
 
         // draw the ruler line
@@ -2249,6 +2250,12 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             // draw onscreen entities
             drawSprites(boardGraph, entitySprites);
 
+            // draw structure collapse warning sprites if in movement or deploy phase.
+            // draw this before moving entities, so they show up under if overlapped.
+            if (shouldShowCFWarning()) {
+                drawSprites(boardGraph, cfWarningSprites);
+            }
+
             // draw moving onscreen entities
             drawSprites(boardGraph, movingEntitySprites);
 
@@ -2275,11 +2282,6 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 for (Coords c : strafingCoords) {
                     drawHexBorder(boardGraph, getHexLocation(c), Color.yellow, 0, 3);
                 }
-            }
-
-            // draw structure collapse warning sprites if in movement or deploy phase.
-            if (shouldShowCFWarning()) {
-                drawSprites(boardGraph, cfWarningSprites);
             }
         }
         boardGraph.dispose();

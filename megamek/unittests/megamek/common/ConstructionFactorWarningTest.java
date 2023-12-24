@@ -116,7 +116,7 @@ public class ConstructionFactorWarningTest {
 		Board b = mock(Board.class);
 		when(b.getBuildingsVector()).thenReturn(null);
 
-		List<Coords> warnList = ConstructionFactorWarning.findCFWarnings(g, e, b);
+		List<Coords> warnList = ConstructionFactorWarning.findCFWarningsMovement(g, e, b);
 
 		assertNotNull(warnList);
 	}

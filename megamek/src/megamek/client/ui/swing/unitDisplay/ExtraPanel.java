@@ -3,10 +3,8 @@ package megamek.client.ui.swing.unitDisplay;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.MMComboBox;
-import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.HeatEffects;
-import megamek.client.ui.swing.Slider;
+import megamek.client.ui.swing.*;
+import megamek.client.ui.swing.lobby.LobbyUtility;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.*;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
@@ -24,7 +22,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.Enumeration;
 
 /**
  * This class shows information about a unit that doesn't belong elsewhere.
@@ -48,6 +45,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener, IPrefer
     private JTextArea sinksR;
     private JButton sinks2B;
     private JButton dumpBombs;
+    private JButton unitReadout;
     private JList<String> narcList;
     private int myMechId;
 
@@ -155,6 +153,10 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener, IPrefer
             }
         });
 
+        unitReadout = new JButton(Messages.getString("MechDisplay.UnitReadout"));
+        unitReadout.setActionCommand("UnitReadout");
+        unitReadout.addActionListener(this);
+
         // layout choice panel
         GridBagLayout gridbag;
         GridBagConstraints c;
@@ -163,77 +165,75 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener, IPrefer
         c = new GridBagConstraints();
         panelMain = new JPanel(gridbag);
 
-        c.fill = GridBagConstraints.BOTH;
-        c.insets = new Insets(15, 9, 1, 9);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.insets = new Insets(5, 9, 1, 9);
         c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.CENTER;
-        c.weighty = 1.0;
+        c.anchor = GridBagConstraints.NORTHWEST;
+        c.weighty = 0;
+        c.gridy = 0;
+        c.gridx = 0;
+        panelMain.add(curSensorsL, c);
+        c.gridy++;
+        panelMain.add(chSensors, c);
 
-        gridbag.setConstraints(curSensorsL, c);
-        panelMain.add(curSensorsL);
-
-        gridbag.setConstraints(chSensors, c);
-        panelMain.add(chSensors);
-
-        gridbag.setConstraints(narcLabel, c);
-        panelMain.add(narcLabel);
-
+        c.gridy++;
+        panelMain.add(narcLabel, c);
+        c.gridy++;
         c.insets = new Insets(1, 9, 1, 9);
         scrollPane = new JScrollPane(narcList);
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        gridbag.setConstraints(scrollPane, c);
-        panelMain.add(scrollPane);
+        panelMain.add(scrollPane, c);
 
-        gridbag.setConstraints(unusedL, c);
-        panelMain.add(unusedL);
+        c.gridy++;
+        panelMain.add(unusedL, c);
+        c.gridy++;
+        panelMain.add(unusedR, c);
 
-        gridbag.setConstraints(unusedR, c);
-        panelMain.add(unusedR);
+        c.gridy++;
+        panelMain.add(carrysL, c);
+        c.gridy++;
+        panelMain.add(carrysR, c);
 
-        gridbag.setConstraints(carrysL, c);
-        panelMain.add(carrysL);
+        c.gridy++;
+        panelMain.add(dumpBombs, c);
 
-        gridbag.setConstraints(carrysR, c);
-        panelMain.add(carrysR);
+        c.gridy++;
+        panelMain.add(sinksL, c);
+        c.gridy++;
+        panelMain.add(sinksR, c);
+        c.gridy++;
+        panelMain.add(sinks2B, c);
 
-        gridbag.setConstraints(dumpBombs, c);
-        panelMain.add(dumpBombs);
+        c.gridy++;
+        panelMain.add(heatL, c);
+        c.gridy++;
+        c.insets = new Insets(1, 9, 5, 9);
+        panelMain.add(heatR, c);
 
-        gridbag.setConstraints(sinksL, c);
-        panelMain.add(sinksL);
-
-        gridbag.setConstraints(sinksR, c);
-        panelMain.add(sinksR);
-
-        gridbag.setConstraints(sinks2B, c);
-        panelMain.add(sinks2B);
-
-        gridbag.setConstraints(heatL, c);
-        panelMain.add(heatL);
-
-        c.insets = new Insets(1, 9, 18, 9);
-        gridbag.setConstraints(heatR, c);
-        panelMain.add(heatR);
-        
+        c.gridy++;
         c.insets = new Insets(0, 0, 0, 0);
-        gridbag.setConstraints(lblLastTarget, c);
-        panelMain.add(lblLastTarget);
-        
-        c.insets = new Insets(1, 9, 18, 9);
-        gridbag.setConstraints(lastTargetR, c);
-        panelMain.add(lastTargetR);
+        panelMain.add(lblLastTarget, c);
+        c.gridy++;
+        c.insets = new Insets(1, 9, 5, 9);
+        panelMain.add(lastTargetR, c);
 
-        c.insets = new Insets(1, 9, 1, 9);
-        gridbag.setConstraints(activateHidden, c);
+        c.gridy++;
         c.insets = new Insets(1, 9, 6, 9);
-        gridbag.setConstraints(comboActivateHiddenPhase, c);
-        panelMain.add(activateHidden);
-        panelMain.add(comboActivateHiddenPhase);
+        panelMain.add(activateHidden, c);
+        c.gridy++;
+        panelMain.add(comboActivateHiddenPhase, c);
+
+        c.gridy++;
+        panelMain.add(unitReadout, c);
+
+        c.weightx = 1;
+        c.weighty = 1;
+        panelMain.add(new Label(" "), c);
 
         adaptToGUIScale();
         GUIPreferences.getInstance().addPreferenceChangeListener(this);
         setLayout(new BorderLayout());
-        add(panelMain);
+        add(panelMain, BorderLayout.NORTH);
         panelMain.setOpaque(false);
 
         setBackGround();
@@ -626,6 +626,9 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener, IPrefer
         } else if (activateHidden.equals(ae.getSource()) && !dontChange) {
             final GamePhase phase = comboActivateHiddenPhase.getSelectedItem();
             clientgui.getClient().sendActivateHidden(myMechId, (phase == null) ? GamePhase.UNKNOWN : phase);
+        } else if (unitReadout.equals(ae.getSource())) {
+            Entity entity = clientgui.getClient().getGame().getEntity(myMechId);
+            LobbyUtility.mechReadout(entity, 0, false, clientgui.getFrame());
         }
     }
 

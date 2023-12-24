@@ -22,6 +22,7 @@ package megamek.client.ui.swing;
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.lobby.LobbyUtility;
 import megamek.common.*;
 import megamek.common.Building.DemolitionCharge;
 import megamek.common.actions.BAVibroClawAttackAction;
@@ -330,6 +331,23 @@ public class MapMenu extends JPopupMenu {
         return item;
     }
 
+    private JMenuItem viewReadoutJMenuItem(Entity en) {
+        JMenuItem item = new JMenuItem(Messages.getString("ClientGUI.viewReadoutMenuItem")
+                + en.getDisplayName());
+
+        item.setActionCommand(Integer.toString(en.getId()));
+        item.addActionListener(evt -> {
+            try {
+                selectedEntity = game.getEntity(Integer.parseInt(evt.getActionCommand()));
+                LobbyUtility.mechReadout(selectedEntity, 0, false, gui.getFrame());
+            } catch (Exception ex) {
+                LogManager.getLogger().error("", ex);
+            }
+        });
+
+        return item;
+    }
+
     private JMenu touchOffExplosivesMenu() {
         JMenu menu = new JMenu("Touch off explosives");
 
@@ -467,6 +485,7 @@ public class MapMenu extends JPopupMenu {
             //  With double blind on, the game may unseen units
             if (!entity.isSensorReturn(localPlayer) && entity.hasSeenEntity(localPlayer)) {
                 menu.add(viewJMenuItem(entity));
+                menu.add(viewReadoutJMenuItem(entity));
             }
         }
         return menu;

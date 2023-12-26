@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.common;
+package megamek.client.ui.swing;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -24,9 +24,11 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 
-import megamek.client.ui.swing.DeploymentDisplay;
-import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.MovementDisplay;
+import megamek.common.Board;
+import megamek.common.Building;
+import megamek.common.Coords;
+import megamek.common.Entity;
+import megamek.common.Game;
 import megamek.common.enums.GamePhase;
 
 /**
@@ -93,7 +95,7 @@ public class ConstructionFactorWarning {
             }
 
             Coords pos = e.getPosition();
-            int range = (e.getJumpMP() > e.getRunMP()) ? e.getJumpMP() : e.getRunMP();
+            int range = Math.max(e.getJumpMP(), e.getRunMP());
 
             List<Coords> hexesToCheck = new ArrayList<Coords>();
             if (pos != null) {

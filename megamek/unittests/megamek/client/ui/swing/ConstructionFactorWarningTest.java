@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.common;
+package megamek.client.ui.swing;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -31,7 +31,11 @@ import java.util.Vector;
 
 import org.junit.jupiter.api.Test;
 
-import megamek.client.ui.swing.GUIPreferences;
+import megamek.common.Board;
+import megamek.common.Building;
+import megamek.common.Coords;
+import megamek.common.Entity;
+import megamek.common.Game;
 import megamek.common.enums.GamePhase;
 
 public class ConstructionFactorWarningTest {

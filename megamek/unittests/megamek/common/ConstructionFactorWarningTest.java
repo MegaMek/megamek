@@ -25,7 +25,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import org.junit.jupiter.api.Test;
 
@@ -88,36 +90,271 @@ public class ConstructionFactorWarningTest {
 		assertFalse(actual);
 	}
 
-//	@Test
-//	public void testActionPerformedHandleToggleCFWarningFiring() {
-//		// If the current phase is Movement or Deploy, then signal BoardView to trigger
-//		// calculating and adding the sprites.
-//		BoardView bv = mock(BoardView.class);
-//		Game g = mock(Game.class);
-//		when(g.getPhase()).thenReturn(GamePhase.FIRING);
-//		GUIP.setShowCFWarnings(false);
-//
-//		ConstructionFactorWarning.handleActionPerformed(g, bv);
-//
-//		// ensure we are clearing CF warning data when in a non-valid phase.
-//		verify(bv, times(1)).clearCFWarningData();
-//	}
+	@Test
+	public void testConstructionFactorWarningFindMovementWarnings() {
+		// Test happy path for finding a bulding collapse warning.
+		Game g = mock(Game.class);
+
+		Entity e = createMockEntityWith(new Coords(3, 3), 4, 6, 45.0, true, false);
+
+		Coords buildingPosition = new Coords(3, 5);
+		Building bld = createMockBuildingWith(buildingPosition, 20);
+
+		Board b = createMockBoardWith(buildingPosition, bld);
+
+		List<Coords> warnList = ConstructionFactorWarning.findCFWarningsMovement(g, e, b);
+
+		assertTrue(warnList.size() > 0);
+		assertEquals(buildingPosition, warnList.get(0));
+}
 
 	@Test
-	public void testMovementDisplayEntititySelectedHandler() {
-		// Given an entity in the movement phase, calculate the hexes with 
-		// buildings within a movement radius of the entity that have buildings
-		// with CF lower than the sum of the entities tonnage and all other entities
-		// on that hex.
-
-		Entity e = mock(Entity.class);
-		when(e.getPosition()).thenReturn(new Coords(3, 3));
+	public void testConstructionFactorWarningFindMovementWarningsOffboard() {
+		// Test where entity is an offboad entity, should not create a warning.
 		Game g = mock(Game.class);
-		Board b = mock(Board.class);
-		when(b.getBuildingsVector()).thenReturn(null);
+
+		//Set offboard status to true.
+		Entity e = createMockEntityWith(new Coords(3, 3), 5, 3, 45.0, true, true);
+
+		Coords buildingPosition = new Coords(3, 5);
+		Building bld = createMockBuildingWith(buildingPosition, 20);
+
+		Board b = createMockBoardWith(buildingPosition, bld);
 
 		List<Coords> warnList = ConstructionFactorWarning.findCFWarningsMovement(g, e, b);
 
 		assertNotNull(warnList);
+		assertEquals(0, warnList.size());
+	}
+
+	@Test
+	public void testConstructionFactorWarningFindMovementWarningsNullEntityPos() {
+		// Test happy path for finding a bulding collapse warning.
+		Game g = mock(Game.class);
+
+		//Set entity position to null coordinate.
+		Entity e = createMockEntityWith(null, 5, 3, 45.0, true, false);
+
+		Coords buildingPosition = new Coords(3, 5);
+		Building bld = createMockBuildingWith(buildingPosition, 20);
+
+		Board b = createMockBoardWith(buildingPosition, bld);
+
+		List<Coords> warnList = ConstructionFactorWarning.findCFWarningsMovement(g, e, b);
+
+		assertNotNull(warnList);
+		assertEquals(0, warnList.size());
+	}
+
+	@Test
+	public void testConstructionFactorWarningFindMovementWarningsLightEntity() {
+		// Test where the unit is lighter than the building CF
+		Game g = mock(Game.class);
+
+		//Set entity to happy path - building CF will be set to larger value.
+		Entity e = createMockEntityWith(new Coords(3, 5), 5, 3, 45.0, true, false);
+
+		Coords buildingPosition = new Coords(3, 5);
+		Building bld = createMockBuildingWith(buildingPosition, 90);
+
+		Board b = createMockBoardWith(buildingPosition, bld);
+
+		List<Coords> warnList = ConstructionFactorWarning.findCFWarningsMovement(g, e, b);
+
+		assertNotNull(warnList);
+		assertEquals(0, warnList.size());
+	}
+
+	@Test
+	public void testConstructionFactorWarningFindMovementWarningsExceptionPath() {
+		// Test an internal null condition that should be caught and return an empty list.
+		Game g = null;
+
+		//Set entity to happy path.
+		Entity e = createMockEntityWith(new Coords(3, 5), 5, 3, 45.0, true, false);
+
+		Coords buildingPosition = new Coords(3, 5);
+		Building bld = createMockBuildingWith(buildingPosition, 20);
+
+		Board b = createMockBoardWith(buildingPosition, bld);
+
+		List<Coords> warnList = ConstructionFactorWarning.findCFWarningsMovement(g, e, b);
+
+		assertNotNull(warnList);
+		assertEquals(0, warnList.size());
+	}
+
+	@Test
+	public void testConstructionFactorWarningFindDeploymentWarnings() {
+		// Test happy bath for handler when in deployment phase for a eligible deployment hex.
+		Coords expectedHex = new Coords(3, 6);
+		Vector<Building> buildings = new Vector<Building>();
+		Building bld = createMockBuildingWith(expectedHex, 20);
+		buildings.add(bld);
+
+		Entity e = createMockEntityWith(null, 5, 3, 70, true, false);
+
+		// Set the mock board to return a building and say it's a deployable hex for the entity.
+		Board b = mock(Board.class);
+		when(b.getBuildings()).thenReturn(buildings.elements());
+		when(b.isLegalDeployment(expectedHex, e)).thenReturn(true);
+
+		Game g = mock(Game.class);
+
+		List<Coords> warnList = ConstructionFactorWarning.findCFWarningsDeployment(g, e, b);
+
+		assertNotNull(warnList);
+		assertEquals(expectedHex, warnList.get(0));
+	}
+
+	@Test
+	public void testConstructionFactorWarningFindDeploymentWarningsNotLegalHex() {
+		// Test happy bath for handler when in deployment phase for a eligible deployment hex.
+		Coords expectedHex = new Coords(3, 6);
+		Vector<Building> buildings = new Vector<Building>();
+		Building bld = createMockBuildingWith(expectedHex, 20);
+		buildings.add(bld);
+
+		Entity e = createMockEntityWith(null, 5, 3, 70, true, false);
+
+		// Set the mock board to return a building and say it's a deployable hex for the entity.
+		Board b = mock(Board.class);
+		when(b.getBuildings()).thenReturn(buildings.elements());
+		// This is not a legal deployment hex for the selected entity - no warning.
+		when(b.isLegalDeployment(expectedHex, e)).thenReturn(false);
+
+		Game g = mock(Game.class);
+
+		List<Coords> warnList = ConstructionFactorWarning.findCFWarningsDeployment(g, e, b);
+
+		assertNotNull(warnList);
+		assertEquals(0, warnList.size());
+	}
+
+	@Test
+	public void testConstructionFactorWarningFindDeploymentWarningsNotGroundUnit() {
+		// Test happy bath for handler when in deployment phase for a eligible deployment hex.
+		Coords expectedHex = new Coords(3, 6);
+		Vector<Building> buildings = new Vector<Building>();
+		Building bld = createMockBuildingWith(expectedHex, 20);
+		buildings.add(bld);
+
+		// Entity is not a ground unit.
+		Entity e = createMockEntityWith(null, 5, 3, 70, false, false);
+
+		// Set the mock board to return a building and say it's a deployable hex for the entity.
+		Board b = mock(Board.class);
+		when(b.getBuildings()).thenReturn(buildings.elements());
+		when(b.isLegalDeployment(expectedHex, e)).thenReturn(true);
+
+		Game g = mock(Game.class);
+
+		List<Coords> warnList = ConstructionFactorWarning.findCFWarningsDeployment(g, e, b);
+
+		// Entity is not a ground unit - no warning.
+		assertNotNull(warnList);
+		assertEquals(0, warnList.size());
+	}
+
+	@Test
+	public void testConstructionFactorWarningFindDeploymentWarningsLightEntity() {
+		// Test happy bath for handler when in deployment phase for a eligible deployment hex.
+		Coords expectedHex = new Coords(3, 6);
+		Vector<Building> buildings = new Vector<Building>();
+		Building bld = createMockBuildingWith(expectedHex, 90);
+		buildings.add(bld);
+
+		// Entity is lighter than the CF of the building in a legal deploy hex, no warning.
+		Entity e = createMockEntityWith(null, 5, 3, 35.0, true, false);
+
+		// Set the mock board to return a building and say it's a deployable hex for the entity.
+		Board b = mock(Board.class);
+		when(b.getBuildings()).thenReturn(buildings.elements());
+		when(b.isLegalDeployment(expectedHex, e)).thenReturn(true);
+
+		Game g = mock(Game.class);
+
+		List<Coords> warnList = ConstructionFactorWarning.findCFWarningsDeployment(g, e, b);
+
+		// No warning for a unit lighter than the CF.
+		assertNotNull(warnList);
+		assertEquals(0, warnList.size());
+	}
+
+	@Test
+	public void testConstructionFactorWarningFindDeploymentWarningsException() {
+		// Test a null pointer exception occurring in the handler - return an empty list and log an error.
+		List<Coords> warnList = ConstructionFactorWarning.findCFWarningsDeployment(null, null, null);
+
+		// No warning for a unit lighter than the CF.
+		assertNotNull(warnList);
+		assertEquals(0, warnList.size());
+	}
+
+	@Test
+	public void testConstructionFactorWarningWhiteList() {
+		Entity e = mock(Entity.class);
+
+		when(e.isGround()).thenReturn(true);
+		when(e.isOffBoard()).thenReturn(false);
+		assertTrue(ConstructionFactorWarning.entityTypeIsInWhiteList(e));
+
+		when(e.isGround()).thenReturn(true);
+		when(e.isOffBoard()).thenReturn(true);
+		assertFalse(ConstructionFactorWarning.entityTypeIsInWhiteList(e));
+
+		when(e.isGround()).thenReturn(false);
+		when(e.isOffBoard()).thenReturn(true);
+		assertFalse(ConstructionFactorWarning.entityTypeIsInWhiteList(e));
+	}
+
+	@Test
+	public void testConstructionFactorWarningCalcTotalWeightWithUnit() {
+		double entityWeight = 35.0;
+		double onBuildingWeight = 25.0;
+
+		Game g = mock(Game.class);
+		Entity e = createMockEntityWith(new Coords(3, 3), 5, 3, entityWeight, true, false);
+
+		// Mock a 25 ton entity already on the building hex.
+		Entity onBuiding = this.createMockEntityWith(new Coords(3, 7), 4, 6, onBuildingWeight, true, false);
+		List<Entity> entities = new ArrayList<Entity>();
+		entities.add(onBuiding);
+
+		when(g.getEntitiesVector(new Coords(3, 7), true)).thenReturn(entities);
+
+		double totalWeight = ConstructionFactorWarning.calculateTotalTonnage(g, e, new Coords(3,7));
+
+		assertEquals(entityWeight + onBuildingWeight, totalWeight);
+	}
+
+	// Helper function to setup a mock entity with various attributes.
+	private Entity createMockEntityWith(Coords pos, int run, int jump, double weight, boolean ground, boolean offboard) {
+		Entity e = mock(Entity.class);
+		when(e.getPosition()).thenReturn(pos);
+		when(e.isGround()).thenReturn(ground);
+		when(e.isOffBoard()).thenReturn(offboard);
+		when(e.getRunMP()).thenReturn(run);
+		when(e.getJumpMP()).thenReturn(jump);
+		when(e.getWeight()).thenReturn(weight);
+
+		return e;
+	}
+
+	// Helper function to setup mock building with position and construction factor.
+	private Building createMockBuildingWith(Coords pos, int cf) {
+		List<Coords> hexes = new ArrayList<Coords>();
+		Building building = mock(Building.class);
+		hexes.add(pos);
+		when(building.getCurrentCF(pos)).thenReturn(cf);
+		when(building.getCoordsList()).thenReturn(hexes);
+		return building;
+	}
+
+	// Helper function to create a mock board
+	private Board createMockBoardWith(Coords pos, Building bld) {
+		Board b = mock(Board.class);
+		when(b.getBuildingAt(pos)).thenReturn(bld);
+		return b;
 	}
 }

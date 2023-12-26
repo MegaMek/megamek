@@ -3882,6 +3882,21 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         repaint();
     }
 
+	public void setCFWarningSprites(List<Coords> warnList) {
+		// Clear existing sprites before setting new ones.
+		clearCFWarningData();
+
+		if (warnList == null) {
+			return;
+		}
+
+		// Loops through list of coordinates, and create new CF warning sprite and add it to the sprites list.
+		for (Coords c : warnList) {
+			ConstructionWarningSprite cfws = new ConstructionWarningSprite(this, c);
+			cfWarningSprites.add(cfws);
+		}
+	}
+
 	public void clearCFWarningData() {
 		cfWarningSprites.clear();
 	}
@@ -6720,15 +6735,4 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     public boolean shouldShowCFWarning() {
     	return ConstructionFactorWarning.shouldShow(game.getPhase(), GUIP.getShowCFWarnings());
     }
-
-	public void setCFWarningSprites(List<Coords> warnList) {
-		// Clear existing sprites before setting new ones.
-		clearCFWarningData();
-
-		// Loops through list of coordinates, and create new CF warning sprite and add it to the sprites list.
-		for (Coords c : warnList) {
-			ConstructionWarningSprite cfws = new ConstructionWarningSprite(this, c);
-			cfWarningSprites.add(cfws);
-		}
-	}
 }

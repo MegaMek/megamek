@@ -18,6 +18,7 @@ package megamek.common;
 import megamek.common.alphaStrike.ASUnitType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.conversion.ASConverter;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.*;
 import org.apache.logging.log4j.LogManager;
@@ -253,9 +254,17 @@ public class MechSummaryCache {
         boolean bNeedsUpdate = loadMechsFromDirectory(vMechs, sKnownFiles,
                 lLastCheck, Configuration.unitsDir(), ignoreUnofficial);
 
+        // load units from the MM internal user data dir
         File userDataUnits = new File(Configuration.userdataDir(), Configuration.unitsDir().toString());
         if (userDataUnits.isDirectory()) {
             bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, userDataUnits, ignoreUnofficial);
+        }
+
+        // load units from the external user data dir
+        String userDir = PreferenceManager.getClientPreferences().getUserDir();
+        File userDataUnits2 = new File(userDir, "");
+        if (!userDir.isBlank() && userDataUnits2.isDirectory()) {
+            bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, userDataUnits2, ignoreUnofficial);
         }
 
         // save updated cache back to disk
@@ -757,6 +766,11 @@ public class MechSummaryCache {
                     // recursion is fun
                     bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles,
                             lLastCheck, f, ignoreUnofficial);
+                    continue;
+                }
+                if (!f.getName().toLowerCase().endsWith(".mtf") && !f.getName().toLowerCase().endsWith(".blk")
+                        && !f.getName().toLowerCase().endsWith(".hmp") && !f.getName().toLowerCase().endsWith(".hmv")
+                        && !f.getName().toLowerCase().endsWith(".mep") && !f.getName().toLowerCase().endsWith(".tdb")) {
                     continue;
                 }
                 if (f.getName().indexOf('.') == -1) {

@@ -347,7 +347,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SBFSHEET_VALUEFONT = "SBFSheetValueFont";
     public static final String SUMMARY_FONT = "SummaryCardFont";
 
-
     // RAT dialog preferences
     public static String RAT_TECH_LEVEL = "RATTechLevel";
     public static String RAT_BV_MIN = "RATBVMin";
@@ -1529,6 +1528,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public boolean getBoardEdRndStart() {
         return store.getBoolean(BOARDEDIT_RNDDIALOG_START);
     }
+
+
 
     public void setShadowMap(boolean state) {
         store.setValue(SHADOWMAP, state);

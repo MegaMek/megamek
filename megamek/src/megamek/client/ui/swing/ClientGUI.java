@@ -648,7 +648,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             URL helpUrl = new URL(helpPath.toString());
 
             // Launch the help dialog.
-            HelpDialog helpDialog = new HelpDialog(Messages.getString("ClientGUI.skinningHelpPath.title"), helpUrl);
+            HelpDialog helpDialog = new HelpDialog(Messages.getString("ClientGUI.skinningHelpPath.title"), helpUrl, frame);
             helpDialog.setVisible(true);
         } catch (MalformedURLException ex) {
             LogManager.getLogger().error("", ex);

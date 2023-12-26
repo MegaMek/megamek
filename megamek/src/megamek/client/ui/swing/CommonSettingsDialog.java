@@ -47,8 +47,17 @@ import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 /** The Client Settings Dialog offering GUI options concerning tooltips, map display, keybinds etc. */
 public class CommonSettingsDialog extends AbstractButtonDialog implements ItemListener,
@@ -167,6 +176,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private final JCheckBox soundMuteOthersTurn = new JCheckBox(Messages.getString("CommonSettingsDialog.soundMuteOthersTurn"));
     private JTextField tfSoundMuteOthersFileName;
 
+    private JTextField userDir;
     private final JCheckBox keepGameLog = new JCheckBox(Messages.getString("CommonSettingsDialog.keepGameLog"));
     private JTextField gameLogFilename;
     private final JCheckBox stampFilenames = new JCheckBox(Messages.getString("CommonSettingsDialog.stampFilenames"));
@@ -1466,6 +1476,34 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         addLineSpacer(comps);
 
+        JLabel userDirLabel = new JLabel(Messages.getString("CommonSettingsDialog.userDir"));
+        userDirLabel.setToolTipText(Messages.getString("CommonSettingsDialog.userDir.tooltip"));
+        userDir = new JTextField(20);
+        userDir.setMaximumSize(new Dimension(250, 40));
+        userDir.setToolTipText(Messages.getString("CommonSettingsDialog.userDir.tooltip"));
+        JButton userDirChooser = new JButton("...");
+        userDirChooser.addActionListener(e -> fileChooseUserDir(userDir, getFrame()));
+        userDirChooser.setToolTipText(Messages.getString("CommonSettingsDialog.userDir.chooser.title"));
+        JButton userDirHelp = new JButton("Help");
+        try {
+            String helpTitle = Messages.getString("UserDirHelpDialog.title");
+            URL helpFile = new File(MMConstants.USER_DIR_README_FILE).toURI().toURL();
+            userDirHelp.addActionListener(e -> new HelpDialog(helpTitle, helpFile, getFrame()).setVisible(true));
+        } catch (MalformedURLException e) {
+            LogManager.getLogger().error("Could not find the user data directory readme file at "
+                    + MMConstants.USER_DIR_README_FILE);
+        }
+        row = new ArrayList<>();
+        row.add(userDirLabel);
+        row.add(userDir);
+        row.add(Box.createHorizontalStrut(10));
+        row.add(userDirChooser);
+        row.add(Box.createHorizontalStrut(10));
+        row.add(userDirHelp);
+        comps.add(row);
+
+        addLineSpacer(comps);
+
         // UI Theme
         uiThemes = new JComboBox<>();
         uiThemes.setMaximumSize(new Dimension(400, uiThemes.getMaximumSize().height));
@@ -1479,6 +1517,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         // Skin
         skinFiles = new JComboBox<>();
+        skinFiles.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                return super.getListCellRendererComponent(list, new File((String) value).getName(), index, isSelected, cellHasFocus);
+            }
+        });
         skinFiles.setMaximumSize(new Dimension(400, skinFiles.getMaximumSize().height));
         JLabel skinFileLabel = new JLabel(Messages.getString("CommonSettingsDialog.skinFile"));
         row = new ArrayList<>();
@@ -1648,6 +1692,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             keepGameLog.setSelected(CP.keepGameLog());
             gameLogFilename.setEnabled(keepGameLog.isSelected());
             gameLogFilename.setText(CP.getGameLogFilename());
+            userDir.setText(CP.getUserDir());
             stampFilenames.setSelected(CP.stampFilenames());
             stampFormat.setEnabled(stampFilenames.isSelected());
             stampFormat.setText(CP.getStampFormat());
@@ -1700,15 +1745,20 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
             gameSummaryMM.setSelected(GUIP.getGameSummaryMinimap());
 
             skinFiles.removeAllItems();
-            List<String> xmlFiles = new ArrayList<>(Arrays
-                    .asList(Configuration.skinsDir().list((directory, fileName) -> fileName.endsWith(".xml"))));
-            xmlFiles.addAll(userDataFiles(Configuration.skinsDir(), ".xml"));
-            Collections.sort(xmlFiles);
-            for (String file : xmlFiles) {
-                if (SkinXMLHandler.validSkinSpecFile(file)) {
-                    skinFiles.addItem(file);
-                }
+            ArrayList<String> xmlFiles = new ArrayList<>(filteredFiles(Configuration.skinsDir(), ".xml"));
+
+            String userDirName = PreferenceManager.getClientPreferences().getUserDir();
+            File userDir = new File(userDirName);
+            if (!userDirName.isBlank() && userDir.isDirectory()) {
+                xmlFiles.addAll(filteredFilesWithSubDirs(userDir, ".xml"));
             }
+
+            File internalUserDataDir = new File(Configuration.userdataDir(), Configuration.skinsDir().toString());
+            xmlFiles.addAll(filteredFiles(internalUserDataDir, ".xml"));
+            xmlFiles.removeIf(file -> !SkinXMLHandler.validSkinSpecFile(file));
+            Collections.sort(xmlFiles);
+            var model = new DefaultComboBoxModel<>(xmlFiles.toArray(new String[0]));
+            skinFiles.setModel(model);
             // Select the default file first
             skinFiles.setSelectedItem(SkinXMLHandler.defaultSkinXML);
             // If this select fails, the default skin will be selected
@@ -2086,6 +2136,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         CP.setKeepGameLog(keepGameLog.isSelected());
         CP.setGameLogFilename(gameLogFilename.getText());
+        CP.setUserDir(userDir.getText());
         CP.setStampFilenames(stampFilenames.isSelected());
         CP.setStampFormat(stampFormat.getText());
         CP.setReportKeywords(reportKeywordsTextPane.getText());
@@ -3035,7 +3086,43 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         return result;
     }
 
+    public static List<String> filteredFiles(File path, String fileEnding) {
+        List<String> result = new ArrayList<>();
+        String[] userDataFiles = path.list((direc, name) -> name.endsWith(fileEnding));
+        if (userDataFiles != null) {
+            Arrays.stream(userDataFiles).map(file -> path + "/" + file).forEach(result::add);
+        }
+        return result;
+    }
+
+    public static List<String> filteredFilesWithSubDirs(File path, String fileEnding) {
+        try (Stream<Path> entries = Files.walk(path.toPath())) {
+            return entries.map(Objects::toString).filter(name -> name.endsWith(fileEnding)).collect(toList());
+        } catch (IOException e) {
+            LogManager.getLogger().warn("Error while reading " + fileEnding + " files from " + path, e);
+            return new ArrayList<>();
+        }
+    }
+
     private void adaptToGUIScale() {
         UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
+    }
+
+    /**
+     * Shows a file chooser for selecting a user directory and sets the given text field to the
+     * result if one was chosen. This is for use with settings dialogs (also used in MML and MHQ)
+     *
+     * @param userDirTextField The textfield showing the user dir for manual change
+     * @param parent The parent JFrame of the settings dialog
+     */
+    public static void fileChooseUserDir(JTextField userDirTextField, JFrame parent) {
+        JFileChooser userDirChooser = new JFileChooser(userDirTextField.getText());
+        userDirChooser.setDialogTitle(Messages.getString("CommonSettingsDialog.userDir.chooser.title"));
+        userDirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        int returnVal = userDirChooser.showOpenDialog(parent);
+        if ((returnVal == JFileChooser.APPROVE_OPTION) && (userDirChooser.getSelectedFile() != null)
+                && userDirChooser.getSelectedFile().isDirectory()) {
+            userDirTextField.setText(userDirChooser.getSelectedFile().toString());
+        }
     }
 }

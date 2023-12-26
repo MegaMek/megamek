@@ -60,12 +60,9 @@ public class ConstructionFactorWarningTest {
 	public void testActionPerformedHandlerTogglesCFWarningPref() {
 		// Test logic used when an action is performed.
 		// When the action to toggle CF Warning is called, the state of the toggle should flip.
-		BoardView bv = mock(BoardView.class);
-		Game g = mock(Game.class);
-		when(g.getPhase()).thenReturn(GamePhase.DEPLOYMENT);
 		boolean expected = !GUIP.getShowCFWarnings();
 
-		ConstructionFactorWarning.handleActionPerformed(g, bv);
+		ConstructionFactorWarning.handleActionPerformed();
 
 		//Expect to see the toggle state for CF Warning toggled after the handler is called.
 		assertEquals(expected, GUIP.getShowCFWarnings());

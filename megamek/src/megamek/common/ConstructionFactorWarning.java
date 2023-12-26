@@ -39,7 +39,7 @@ public class ConstructionFactorWarning {
 	 * Handler for ClientGUI actionPerformed event. Encapsulates
 	 * as much Construction Factory Warning logic possible.
 	 */
-	public static void handleActionPerformed(Game g, BoardView bv) {
+	public static void handleActionPerformed() {
 		toggleCFWarning();
 	}
 

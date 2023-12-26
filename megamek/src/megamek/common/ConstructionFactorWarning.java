@@ -187,7 +187,9 @@ public class ConstructionFactorWarning {
 		double totalWeight = e.getWeight();
 		List<Entity> units = g.getEntitiesVector(c, true);
 		for (Entity ent : units) {
-			totalWeight += ent.getWeight();
+			if (e != ent) {
+				totalWeight += ent.getWeight();
+			}
 		}
 		return totalWeight;
 	}

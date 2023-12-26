@@ -328,6 +328,27 @@ public class ConstructionFactorWarningTest {
 		assertEquals(entityWeight + onBuildingWeight, totalWeight);
 	}
 
+	@Test
+	public void testConstructionFactorWarningCalcTotalWeightEntityOnBuilding() {
+		// This test simulates the selected entity on a building.  When
+		// calculating the weight we don't want to double count ourselves. (we
+		// are already accounting for our own weigh as the selected entity)
+		double entityWeight = 35.0;
+
+		Game g = mock(Game.class);
+		Entity e = createMockEntityWith(new Coords(3, 3), 5, 3, entityWeight, true, false);
+
+		// Mock a 25 ton entity already on the building hex.
+		List<Entity> entities = new ArrayList<Entity>();
+		entities.add(e);
+
+		when(g.getEntitiesVector(new Coords(3, 3), true)).thenReturn(entities);
+
+		double totalWeight = ConstructionFactorWarning.calculateTotalTonnage(g, e, new Coords(3,3));
+
+		assertEquals(entityWeight, totalWeight);
+	}
+
 	// Helper function to setup a mock entity with various attributes.
 	private Entity createMockEntityWith(Coords pos, int run, int jump, double weight, boolean ground, boolean offboard) {
 		Entity e = mock(Entity.class);

@@ -4176,8 +4176,8 @@ public abstract class Mech extends Entity {
         StringBuilder sb = new StringBuilder();
         String newLine = "\n";
 
-        sb.append(MtfFile.COMMENT).append("Saved from version ").append(SuiteConstants.VERSION);
-        sb.append(" on ").append(LocalDate.now()).append(newLine);
+        sb.append(MtfFile.GENERATOR).append(SuiteConstants.PROJECT_NAME)
+                .append(" ").append(SuiteConstants.VERSION).append(" on ").append(LocalDate.now()).append(newLine);
 
         boolean standard = (getCockpitType() == Mech.COCKPIT_STANDARD)
                 && (getGyroType() == Mech.GYRO_STANDARD);

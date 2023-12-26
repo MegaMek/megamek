@@ -4547,10 +4547,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
     private void computeCFWarningHexes(Entity ce) {
         List<Coords> warnList =
-        		ConstructionFactorWarning.findCFWarningsMovement(
-        				clientgui.getBoardView().game,
-        				ce,
-        				clientgui.getBoardView().game.getBoard());
+                ConstructionFactorWarning.findCFWarningsMovement(
+                        clientgui.getBoardView().game,
+                        ce,
+                        clientgui.getBoardView().game.getBoard());
 
         clientgui.getBoardView().setCFWarningSprites(warnList);
     }

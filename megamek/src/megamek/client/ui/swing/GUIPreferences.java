@@ -1789,9 +1789,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(FIRING_SOLUTIONS, state);
     }
 
-	public void setShowCFWarnings(boolean b) {
-	    store.setValue(CONSTRUCTOR_FACTOR_WARNING, b);
-	}
+    public void setShowCFWarnings(boolean b) {
+        store.setValue(CONSTRUCTOR_FACTOR_WARNING, b);
+    }
 
     public void setMoveEnvelope(boolean state) {
         store.setValue(MOVE_ENVELOPE, state);

@@ -48,48 +48,48 @@ public class ConstructionWarningSprite extends HexSprite {
 
     //Draw a special character 'warning sign'.
     private final StringDrawer xWriter = new StringDrawer("\u26A0")
-    		.at(HEX_CENTER_X, HEX_CENTER_Y)
-    		.color(TEXT_COLOR)
+            .at(HEX_CENTER_X, HEX_CENTER_Y)
+            .color(TEXT_COLOR)
             .fontSize(TEXT_SIZE)
             .center().outline(OUTLINE_COLOR, 1.5f);
 
-	/**
-	 * @param boardView1 - parent BoardView object this sprite will be displayed on.
-	 * @param loc - Hex location coordinates of building or bridge where warning will be visible.
-	 */
-	public ConstructionWarningSprite(BoardView boardView1, Coords loc) {
-		super(boardView1, loc);
-	}
+    /**
+     * @param boardView1 - parent BoardView object this sprite will be displayed on.
+     * @param loc - Hex location coordinates of building or bridge where warning will be visible.
+     */
+    public ConstructionWarningSprite(BoardView boardView1, Coords loc) {
+        super(boardView1, loc);
+    }
 
-	@Override
-	public void prepare() {
+    @Override
+    public void prepare() {
         Graphics2D graph = spriteSetup();
         xWriter.draw(graph);        
         graph.dispose();
-	}
-	
-	/* 
-	 * Standard Hex Sprite 2D Graphics setup.  Creates the context, base hex image
-	 * settings, scale, and fonts.
-	 */
-	private Graphics2D spriteSetup() {
+    }
+
+    /*
+     * Standard Hex Sprite 2D Graphics setup.  Creates the context, base hex image
+     * settings, scale, and fonts.
+     */
+    private Graphics2D spriteSetup() {
         updateBounds();
         image = createNewHexImage();
         Graphics2D graph = (Graphics2D) image.getGraphics();
         UIUtil.setHighQualityRendering(graph);
         graph.scale(bv.scale, bv.scale);
-        
+
         fontSetup(graph);
 
         return graph;
-	}
-	
-	/*
-	 * Sets the font name, style, and size from configured default parameters.
-	 */
-	private void fontSetup(Graphics2D graph) {
+    }
+
+    /*
+     * Sets the font name, style, and size from configured default parameters.
+     */
+    private void fontSetup(Graphics2D graph) {
         String fontName = GUIP.getMoveFontType();
         int fontStyle = GUIP.getMoveFontStyle();
         graph.setFont(new Font(fontName, fontStyle, TEXT_SIZE));		
-	}
+    }
 }

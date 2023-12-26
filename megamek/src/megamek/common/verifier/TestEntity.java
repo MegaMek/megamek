@@ -860,7 +860,32 @@ public abstract class TestEntity implements TestEntityOption {
         return heat;
     }
 
+    /**
+     * According to TM, unit weights are to be rounded up to the nearest half ton or kilo. This method
+     * returns the rounded weight.
+     *
+     * @return The weight of the unit, rounded up according to TM, p.22.
+     */
     public double calculateWeight() {
+        double weight = calculateWeightExact();
+        // If the unit used kg standard, we just need to get rid of floating-point math anomalies.
+        // Otherwise accumulated kg-scale equipment needs to be rounded up to the nearest half-ton.
+        weight = round(weight, Ceil.KILO);
+        if (usesKgStandard()) {
+            return weight;
+        } else {
+            return ceil(weight, Ceil.HALFTON);
+        }
+    }
+
+    /**
+     * According to TM p.22, unit weights are to be rounded up to the nearest half ton or kilo, but in MML
+     * for construction at least we should be able to show the exact weight. This method returns the unrounded
+     * weight.
+     *
+     * @return The unrounded weight of the unit.
+     */
+    public double calculateWeightExact() {
         double weight = 0;
         weight += getWeightEngine();
         weight += getWeightStructure();
@@ -877,14 +902,7 @@ public abstract class TestEntity implements TestEntityOption {
         weight += getWeightCarryingSpace();
 
         weight += getArmoredComponentWeight();
-        // If the unit used kg standard, we just need to get rid of floating-point math anomalies.
-        // Otherwise accumulated kg-scale equipment needs to be rounded up to the nearest half-ton.
-        weight = round(weight, Ceil.KILO);
-        if (usesKgStandard()) {
-            return weight;
-        } else {
-            return ceil(weight, Ceil.HALFTON);
-        }
+        return weight;
     }
 
     public String printWeightCalculation() {
@@ -1671,6 +1689,14 @@ public abstract class TestEntity implements TestEntityOption {
         return usesKgStandard(getEntity());
     }
 
+
+    public int totalCritSlotCount() {
+        int slotCount = 0;
+        for (int i = 0; i < getEntity().locations(); i++) {
+            slotCount += getEntity().getNumberOfCriticals(i);
+        }
+        return slotCount;
+    }
 } // End class TestEntity
 
 class Armor {

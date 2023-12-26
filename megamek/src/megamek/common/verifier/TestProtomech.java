@@ -244,9 +244,9 @@ public class TestProtomech extends TestEntity {
     @Override
     public double calculateWeight() {
         // Deal with some floating point precision issues
-        return round(super.calculateWeight(), Ceil.KILO);
+        return round(super.calculateWeightExact(), Ceil.KILO);
     }
-    
+
     @Override
     public double getWeightAllocatedArmor() {
         ProtomechArmor armor = ProtomechArmor.getArmor(proto);

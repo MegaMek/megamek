@@ -11079,6 +11079,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return engine;
     }
 
+    /** @return The type of engine if it has an engine, or Engine.NONE, if it has no engine. */
+    public int getEngineType() {
+        return hasEngine() ? getEngine().getEngineType() : Engine.NONE;
+    }
+
     public boolean hasEngine() {
         return (null != engine);
     }

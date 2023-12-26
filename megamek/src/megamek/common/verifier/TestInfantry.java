@@ -287,10 +287,9 @@ public class TestInfantry extends TestEntity {
     public double getWeightPowerAmp() {
         return 0;
     }
-    
+
     @Override
-    public double calculateWeight() {
+    public double calculateWeightExact() {
         return infantry.getWeight();
     }
-    
 }

@@ -1348,7 +1348,7 @@ public class TestBattleArmor extends TestEntity {
     }
 
     @Override
-    public double calculateWeight() {
+    public double calculateWeightExact() {
         double totalWeight = 0.0;
         for (int i = 0; i < ba.getTroopers(); i++) {
             totalWeight += calculateWeight(i);

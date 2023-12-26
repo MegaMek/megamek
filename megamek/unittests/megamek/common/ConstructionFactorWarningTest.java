@@ -345,6 +345,48 @@ public class ConstructionFactorWarningTest {
         assertEquals(entityWeight, totalWeight);
 	}
 
+    @Test
+    public void testConstructionFactorWarningCalcTotalWeightVTOLOverHex() {
+        // This tests a VTOL flying over a building the selected entity could enter.
+        double entityWeight = 35.0;
+
+        Game g = mock(Game.class);
+        Entity e = createMockEntityWith(new Coords(3, 3), 5, 3, entityWeight, true, false);
+        Entity vtol = createMockEntityWith(new Coords(3, 7), 10, 10, 20.0, true, false);
+        when(vtol.isAirborneVTOLorWIGE()).thenReturn(true);
+
+        // Mock a 25 ton entity already on the building hex.
+        List<Entity> entities = new ArrayList<Entity>();
+        entities.add(vtol);
+
+        when(g.getEntitiesVector(new Coords(3, 7), true)).thenReturn(entities);
+
+        double totalWeight = ConstructionFactorWarning.calculateTotalTonnage(g, e, new Coords(3,7));
+
+        assertEquals(entityWeight, totalWeight);
+    }
+
+    @Test
+    public void testConstructionFactorWarningCalcTotalWeightAeroOverHex() {
+        // This tests a VTOL flying over a building the selected entity could enter.
+        double entityWeight = 35.0;
+
+        Game g = mock(Game.class);
+        Entity e = createMockEntityWith(new Coords(3, 3), 5, 3, entityWeight, true, false);
+        // Say isGround() is false.  (same as isAerospace()).
+        Entity aero = createMockEntityWith(new Coords(3, 7), 10, 10, 50.0, false, false);
+
+        // Mock a 25 ton entity already on the building hex.
+        List<Entity> entities = new ArrayList<Entity>();
+        entities.add(aero);
+
+        when(g.getEntitiesVector(new Coords(3, 7), true)).thenReturn(entities);
+
+        double totalWeight = ConstructionFactorWarning.calculateTotalTonnage(g, e, new Coords(3,7));
+
+        assertEquals(entityWeight, totalWeight);
+    }
+
     // Helper function to setup a mock entity with various attributes.
     private Entity createMockEntityWith(Coords pos, int run, int jump, double weight, boolean ground, boolean offboard) {
         Entity e = mock(Entity.class);

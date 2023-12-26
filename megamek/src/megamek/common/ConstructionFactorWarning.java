@@ -183,15 +183,19 @@ public class ConstructionFactorWarning {
      *  This includes the entity current weight summed with any unit weights
      *  at the hex location that could cause a building to collapse.
      */
-    protected static double calculateTotalTonnage(Game g, Entity e, Coords c) {
+    protected static double calculateTotalTonnage(Game g, Entity selected, Coords c) {
         // Calculate total weight of entity and all entities at the location.
-        double totalWeight = e.getWeight();
+        double totalWeight = selected.getWeight();
         List<Entity> units = g.getEntitiesVector(c, true);
         for (Entity ent : units) {
-            if (e != ent) {
+            if (ConstructionFactorWarning.isEntityPartOfWeight(selected, ent)) {
                 totalWeight += ent.getWeight();
             }
         }
         return totalWeight;
+    }
+
+    protected static boolean isEntityPartOfWeight(Entity selected, Entity inHex) {
+        return ((selected != inHex) && inHex.isGround() && !inHex.isAirborneVTOLorWIGE());
     }
 }

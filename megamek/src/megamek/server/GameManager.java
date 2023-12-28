@@ -24890,7 +24890,9 @@ public class GameManager implements IGameManager {
             js = (Jumpship) aero;
         }
 
-        switch (cs.getIndex()) {
+        // For testing purposes
+        // switch (cs.getIndex()) {
+        switch (Aero.CRIT_CARGO) {
             case Aero.CRIT_NONE:
                 // no effect
                 r = new Report(6005);

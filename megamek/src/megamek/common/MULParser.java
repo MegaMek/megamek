@@ -2261,12 +2261,17 @@ public class MULParser {
                             continue;
                         }
 
-                        if (internal) {
-                            intBombChoices[bombType] += Integer.parseInt(load);
-                            ((IBomber) entity).setIntBombChoices(intBombChoices);
-                        } else {
-                            extBombChoices[bombType] += Integer.parseInt(load);
-                            ((IBomber) entity).setExtBombChoices(extBombChoices);
+                        try {
+                            if (internal) {
+                                intBombChoices[bombType] += Integer.parseInt(load);
+                                ((IBomber) entity).setIntBombChoices(intBombChoices);
+                            } else {
+                                extBombChoices[bombType] += Integer.parseInt(load);
+                                ((IBomber) entity).setExtBombChoices(extBombChoices);
+                            }
+                        } catch (NumberFormatException ignore) {
+                            // If something wrote bad bomb data, don't even bother with it - user
+                            // can fix it in configure menu
                         }
                     }
                 }

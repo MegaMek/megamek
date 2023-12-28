@@ -484,10 +484,12 @@ public class Aero extends Entity implements IAero, IBomber {
         return maxExtBombPoints + maxIntBombPoints;
     }
 
+    @Override
     public int getMaxIntBombPoints() {
         return (hasQuirk(OptionsConstants.QUIRK_POS_INTERNAL_BOMB)) ? maxIntBombPoints : 0;
     }
 
+    @Override
     public int getMaxExtBombPoints() {
         return maxExtBombPoints;
     }
@@ -533,14 +535,17 @@ public class Aero extends Entity implements IAero, IBomber {
         return t;
     }
 
+    @Override
     public void setUsedInternalBombs(int b){
         usedInternalBombs = b;
     }
 
+    @Override
     public void increaseUsedInternalBombs(int b){
         usedInternalBombs += b;
     }
 
+    @Override
     public int getUsedInternalBombs() {
         return usedInternalBombs;
     }
@@ -2765,34 +2770,6 @@ public class Aero extends Entity implements IAero, IBomber {
                 setArmor(0, loc);
             }
             damage -= damPerHit;
-        }
-    }
-
-    /**
-     * Damage a capital fighter's weapons. WeaponGroups are damaged by critical hits.
-     * This matches up the individual fighter's weapons and critical slots and damages those
-     * for MHQ resolution
-     * @param loc - Int corresponding to the location struck
-     */
-    public void damageCapFighterWeapons(int loc) {
-        for (Mounted weapon : weaponList) {
-            if (weapon.getLocation() == loc) {
-                //Damage the weapon
-                weapon.setHit(true);
-                //Damage the critical slot
-                for (int i = 0; i < getNumberOfCriticals(loc); i++) {
-                    CriticalSlot slot1 = getCritical(loc, i);
-                    if ((slot1 == null) ||
-                            (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
-                        continue;
-                    }
-                    Mounted mounted = slot1.getMount();
-                    if (mounted.equals(weapon)) {
-                        hitAllCriticals(loc, i);
-                        break;
-                    }
-                }
-            }
         }
     }
 

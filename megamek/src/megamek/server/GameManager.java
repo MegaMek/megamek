@@ -20896,8 +20896,8 @@ public class GameManager implements IGameManager {
     private Vector<Report> resolveInternalBombHits() {
         Vector<Report> vFullReport = new Vector<>();
         vFullReport.add(new Report(5600, Report.PUBLIC));
-        for (Iterator<Entity> i = game.getEntities(); i.hasNext(); ) {
-            Vector<Report> interim = resolveInternalBombHit(i.next());
+        for (Entity e : game.getEntitiesVector()) {
+            Vector<Report> interim = resolveInternalBombHit(e);
             if (!interim.isEmpty()) {
                 vFullReport.addAll(interim);
             }
@@ -20928,7 +20928,6 @@ public class GameManager implements IGameManager {
 
             if (b.getUsedInternalBombs() > 0) {
                 int id = e.getId();
-                Vector<TargetRoll> rolls = new Vector<>();
 
                 // Header
                 r = new Report(5601);
@@ -25103,11 +25102,12 @@ public class GameManager implements IGameManager {
                 }
             case Aero.CRIT_WEAPON:
                 if (aero.isCapitalFighter()) {
+                    FighterSquadron cf = (FighterSquadron) aero;
                     boolean destroyAll = false;
                     // CRIT_WEAPON damages the capital fighter/squadron's weapon groups
                     // Go ahead and map damage for the fighter's weapon criticals for MHQ
                     // resolution.
-                    aero.damageCapFighterWeapons(loc);
+                    cf.damageCapFighterWeapons(loc);
                     if ((loc == Aero.LOC_NOSE) || (loc == Aero.LOC_AFT)) {
                         destroyAll = true;
                     }
@@ -25118,13 +25118,13 @@ public class GameManager implements IGameManager {
                     }
 
                     if (loc == Aero.LOC_WINGS) {
-                        if (aero.areWingsHit()) {
+                        if (cf.areWingsHit()) {
                             destroyAll = true;
                         } else {
-                            aero.setWingsHit(true);
+                            cf.setWingsHit(true);
                         }
                     }
-                    for (Mounted weapon : aero.getWeaponList()) {
+                    for (Mounted weapon : cf.getWeaponList()) {
                         if (weapon.getLocation() == loc) {
                             if (destroyAll) {
                                 weapon.setHit(true);
@@ -25134,7 +25134,7 @@ public class GameManager implements IGameManager {
                         }
                     }
                     // also destroy any ECM or BAP in the location hit
-                    for (Mounted misc : aero.getMisc()) {
+                    for (Mounted misc : cf.getMisc()) {
                         if ((misc.getType().hasFlag(MiscType.F_ECM)
                                 || misc.getType().hasFlag(MiscType.F_ANGEL_ECM)
                                 || misc.getType().hasFlag(MiscType.F_BAP))
@@ -25143,23 +25143,23 @@ public class GameManager implements IGameManager {
                             //Taharqa: We should also damage the critical slot, or
                             //MM and MHQ won't remember that this weapon is damaged on the MUL
                             //file
-                            for (int i = 0; i < aero.getNumberOfCriticals(loc); i++) {
-                                CriticalSlot slot1 = aero.getCritical(loc, i);
+                            for (int i = 0; i < cf.getNumberOfCriticals(loc); i++) {
+                                CriticalSlot slot1 = cf.getCritical(loc, i);
                                 if ((slot1 == null) ||
                                         (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
                                     continue;
                                 }
                                 Mounted mounted = slot1.getMount();
                                 if (mounted.equals(misc)) {
-                                    aero.hitAllCriticals(loc, i);
+                                    cf.hitAllCriticals(loc, i);
                                     break;
                                 }
                             }
                         }
                     }
                     r = new Report(9152);
-                    r.subject = aero.getId();
-                    r.add(aero.getLocationName(loc));
+                    r.subject = cf.getId();
+                    r.add(cf.getLocationName(loc));
                     reports.add(r);
                     break;
                 }

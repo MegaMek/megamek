@@ -301,19 +301,6 @@ public class VTOL extends Tank implements IBomber {
         return Math.max(0, (t - (int) this.getBombs().stream().filter(m -> (m.getUsableShotsLeft() > 0)).count()));
     }
 
-    public void setUsedInternalBombs(int b){
-        // Do nothing
-    }
-
-    public void increaseUsedInternalBombs(int b){
-        // Do nothing
-    }
-
-    public int getUsedInternalBombs() {
-        // Currently not possible
-        return 0;
-    }
-
     @Override
     public void setUsedInternalBombs(int b){
         // Do nothing

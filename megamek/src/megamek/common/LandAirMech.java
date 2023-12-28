@@ -1121,28 +1121,6 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         }
     }
 
-    public void setUsedInternalBombs(int b){
-        // Do nothing; LAMs don't take internal bomb bay hits like this
-    }
-
-    public void increaseUsedInternalBombs(int b){
-        // Do nothing
-    }
-
-    public int getUsedInternalBombs() {
-        // Currently not possible
-        return 0;
-    }
-
-    @Override
-    public int[] getExtBombChoices() {
-        return extBombChoices;
-    }
-
-    @Override
-    public void setExtBombChoices(int[] bc) {
-    }
-
     @Override
     public void setUsedInternalBombs(int b){
         // Do nothing; LAMs don't take internal bomb bay hits like this

@@ -92,7 +92,7 @@ public class ConstructionFactorWarningTest {
 
     @Test
     public void testConstructionFactorWarningFindMovementWarnings() {
-        // Test happy path for finding a bulding collapse warning.
+        // Test happy path for finding a building collapse warning.
         Game g = mock(Game.class);
 
         Entity e = createMockEntityWith(new Coords(3, 3), 4, 6, 45.0, true, false);
@@ -217,7 +217,7 @@ public class ConstructionFactorWarningTest {
 
         Entity e = createMockEntityWith(null, 5, 3, 70, true, false);
 
-        // Set the mock board to return a building and say it's a deployable hex for the entity.
+        // Set the mock board to return a building and say it's not a deployable hex for the entity.
         Board b = mock(Board.class);
         when(b.getBuildings()).thenReturn(buildings.elements());
         // This is not a legal deployment hex for the selected entity - no warning.
@@ -286,7 +286,7 @@ public class ConstructionFactorWarningTest {
         // Test a null pointer exception occurring in the handler - return an empty list and log an error.
         List<Coords> warnList = ConstructionFactorWarning.findCFWarningsDeployment(null, null, null);
 
-        // No warning for a unit lighter than the CF.
+        // On exception return an non-null empty list so no warnings sprites are displayed.
         assertNotNull(warnList);
         assertEquals(0, warnList.size());
     }
@@ -338,7 +338,7 @@ public class ConstructionFactorWarningTest {
         Game g = mock(Game.class);
         Entity e = createMockEntityWith(new Coords(3, 3), 5, 3, entityWeight, true, false);
 
-        // Mock a 25 ton entity already on the building hex.
+        // The selected entity will show up in the entities vector for the building.
         List<Entity> entities = new ArrayList<Entity>();
         entities.add(e);
 
@@ -359,7 +359,8 @@ public class ConstructionFactorWarningTest {
         Entity vtol = createMockEntityWith(new Coords(3, 7), 10, 10, 20.0, true, false);
         when(vtol.isAirborneVTOLorWIGE()).thenReturn(true);
 
-        // Mock a 25 ton entity already on the building hex.
+        // An airborne VTOL is in the entity vector over the building not contributing to
+        // the total weight.
         List<Entity> entities = new ArrayList<Entity>();
         entities.add(vtol);
 
@@ -380,7 +381,7 @@ public class ConstructionFactorWarningTest {
         // Say isGround() is false.  (same as isAerospace()).
         Entity aero = createMockEntityWith(new Coords(3, 7), 10, 10, 50.0, false, false);
 
-        // Mock a 25 ton entity already on the building hex.
+        // Mock an aerospace unit flying over the building not contributing to the total weight.
         List<Entity> entities = new ArrayList<Entity>();
         entities.add(aero);
 

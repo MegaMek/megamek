@@ -441,6 +441,7 @@ public class MapMenu extends JPopupMenu {
         JMenuItem item = new JMenuItem(entity.getDisplayName());
         item.addActionListener(evt -> {
             CustomMechDialog med = new CustomMechDialog(gui, client, Collections.singletonList(entity), true, false);
+            med.refreshOptions();
             gui.getBoardView().setShouldIgnoreKeys(true);
             med.setVisible(true);
             client.sendUpdateEntity(entity);

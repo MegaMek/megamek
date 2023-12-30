@@ -16,7 +16,8 @@ package megamek.client.ui.swing.forceDisplay;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.lobby.ChatLounge;
+import megamek.client.ui.swing.lobby.LobbyUtility;
+import megamek.client.ui.swing.util.ScalingPopup;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
 import megamek.common.Game;
@@ -24,19 +25,25 @@ import megamek.common.force.Force;
 import megamek.common.force.Forces;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import static megamek.client.ui.swing.util.UIUtil.menuItem;
+
 /**
- * Shows reports, with an Okay JButton
+ * Shows force display
  */
 public class ForceDisplayPanel extends JPanel implements IPreferenceChangeListener {
 
@@ -162,6 +169,23 @@ public class ForceDisplayPanel extends JPanel implements IPreferenceChangeListen
         }
     }
 
+    private JMenuItem viewReadoutJMenuItem(Entity en) {
+        JMenuItem item = new JMenuItem(Messages.getString("ClientGUI.viewReadoutMenuItem")
+                + en.getDisplayName());
+
+        item.setActionCommand(Integer.toString(en.getId()));
+        item.addActionListener(evt -> {
+            try {
+                Entity entity = game.getEntity(Integer.parseInt(evt.getActionCommand()));
+                LobbyUtility.mechReadout(entity, 0, false, clientgui.getFrame());
+            } catch (Exception ex) {
+                LogManager.getLogger().error("", ex);
+            }
+        });
+
+        return item;
+    }
+
     public class ForceTreeMouseAdapter extends MouseInputAdapter {
 
         @Override
@@ -196,24 +220,14 @@ public class ForceDisplayPanel extends JPanel implements IPreferenceChangeListen
 
         /** Shows the right-click menu on the mek table */
         private void showPopup(MouseEvent e) {
-            TreePath[] selection = forceTree.getSelectionPaths();
-            List<Entity> entities = new ArrayList<>();
-            List<Force> selForces = new ArrayList<>();
-
-            if (selection != null) {
-                for (TreePath path: selection) {
-                    if (path != null) {
-                        Object selected = path.getLastPathComponent();
-                        if (selected instanceof Entity) {
-                            entities.add((Entity) selected);
-                        } else if (selected instanceof Force) {
-                            selForces.add((Force) selected);
-                        }
-                    }
-                }
+            int row = forceTree.getRowForLocation(e.getX(), e.getY());
+            TreePath path = forceTree.getPathForRow(row);
+            if (path != null && path.getLastPathComponent() instanceof Entity) {
+                Entity entity = (Entity) path.getLastPathComponent();
+                ScalingPopup popup = new ScalingPopup();
+                popup.add(viewReadoutJMenuItem(entity));
+                popup.show(e.getComponent(), e.getX(), e.getY());
             }
-            //ScalingPopup popup = LobbyMekPopup.getPopup(entities, selForces, new LobbyMekPopupActions(ChatLounge.this), ChatLounge.this);
-            //popup.show(e.getComponent(), e.getX(), e.getY());
         }
     }
 

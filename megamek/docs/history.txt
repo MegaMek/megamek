@@ -55,6 +55,7 @@ VERSION HISTORY:
 + PR #4961: User file directory
 + PR #4977: Add a split pane lobby between player and unit panels
 + PR #4980: Allow gm to configure spas in game
++ Issue #2595: Warn before collapsing buildings via movement due to weight
 
 0.49.15 (2023-10-21 1530 UTC)
 + PR #4688: Round reports should no longer take increasingly long to load

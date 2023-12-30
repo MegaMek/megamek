@@ -321,6 +321,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JButton btnFilterVTOL = new JButton("\u2610");
     private JLabel lblFilterSupportVTOL = new JLabel(Messages.getString("MechSelectorDialog.Search.SupportVTOL"));
     private JButton btnFilterSupportVTOL = new JButton("\u2610");
+    private JLabel lblFilterWiGE = new JLabel(Messages.getString("MechSelectorDialog.Search.WiGE"));
+    private JButton btnFilterWiGE = new JButton("\u2610");
     private JLabel lblFilterGunEmplacement = new JLabel(Messages.getString("MechSelectorDialog.Search.GunEmplacement"));
     private JButton btnFilterGunEmplacement = new JButton("\u2610");
     private JLabel lblFilterSupportTank = new JLabel(Messages.getString("MechSelectorDialog.Search.SupportTank"));
@@ -977,6 +979,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         btnFilterVTOL.addActionListener(this);
         btnFilterSupportVTOL.setBorder(emptyBorder);;
         btnFilterSupportVTOL.addActionListener(this);
+        btnFilterWiGE.setBorder(emptyBorder);
+        btnFilterWiGE.addActionListener(this);
         btnFilterGunEmplacement.setBorder(emptyBorder);
         btnFilterGunEmplacement.addActionListener(this);
         btnFilterSupportTank.setBorder(emptyBorder);
@@ -1071,13 +1075,13 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         filterAerospaceFighterPanel.add(btnFilterAerospaceFighter);
         filterAerospaceFighterPanel.add(lblFilterAerospaceFighter);
         unitTypePanel.add(filterAerospaceFighterPanel, c);
-
-        c.gridy++;
-        c.gridx = 1;
+        c.gridx = 2;
         JPanel filterConvFighterPanel = new JPanel();
         filterConvFighterPanel.add(btnFilterConvFighter);
         filterConvFighterPanel.add(lblFilterConvFighter);
         unitTypePanel.add(filterConvFighterPanel, c);
+
+        c.gridy++;
         c.gridx = 2;
         JPanel filterFixedWingSupportPanel = new JPanel();
         filterFixedWingSupportPanel.add(btnFilterFixedWingSupport);
@@ -1141,6 +1145,12 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         filterrSupportVTOLPanel.add(btnFilterSupportVTOL);
         filterrSupportVTOLPanel.add(lblFilterSupportVTOL);
         unitTypePanel.add(filterrSupportVTOLPanel, c);
+
+        c.gridx = 1; c.gridy++;
+        JPanel filterWiGEPanel = new JPanel();
+        filterWiGEPanel.add(btnFilterWiGE);
+        filterWiGEPanel.add(lblFilterWiGE);
+        unitTypePanel.add(filterWiGEPanel, c);
 
         c.gridy++;
         c.gridx = 1;
@@ -1684,6 +1694,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
             toggleText(btnFilterVTOL);
         } else if (ev.getSource().equals(btnFilterSupportVTOL)) {
             toggleText(btnFilterSupportVTOL);
+        } else if (ev.getSource().equals(btnFilterWiGE)) {
+            toggleText(btnFilterWiGE);
         } else if (ev.getSource().equals(btnFilterGunEmplacement)) {
             toggleText(btnFilterGunEmplacement);
         } else if (ev.getSource().equals(btnFilterFixedWingSupport)) {
@@ -2053,6 +2065,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         btnFilterTank.setText("\u2610");
         btnFilterVTOL.setText("\u2610");
         btnFilterSupportVTOL.setText("\u2610");
+        btnFilterWiGE.setText("\u2610");
         btnFilterGunEmplacement.setText("\u2610");
         btnFilterSupportTank.setText("\u2610");
         btnFilterLargeSupportTank.setText("\u2610");
@@ -2321,6 +2334,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         mechFilter.filterTank = getValue(btnFilterTank);
         mechFilter.filterVTOL = getValue(btnFilterVTOL);
         mechFilter.filterSupportVTOL = getValue(btnFilterSupportVTOL);
+        mechFilter.filterWiGE = getValue(btnFilterWiGE);
         mechFilter.filterGunEmplacement = getValue(btnFilterGunEmplacement);
         mechFilter.filterSupportTank = getValue(btnFilterSupportTank);
         mechFilter.filterLargeSupportTank = getValue(btnFilterLargeSupportTank);
@@ -2450,7 +2464,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
             if (row >= weaponClasses.size()) {
                 return null;
             }
-            
+
             switch (col) {
                 case COL_QTY:
                     return qty[row] + "";
@@ -2976,7 +2990,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
             if (this == PHYSICAL) {
                 String lName = name.toLowerCase();
 
-                if (lName.contains("backhoe") || 
+                if (lName.contains("backhoe") ||
                     lName.contains("saw") ||
                     lName.contains("whip") ||
                     lName.contains("claw") ||
@@ -3013,12 +3027,12 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
                 }
             } else if (this == MISSILE) {
                 if ((name.toLowerCase().contains("lrm") ||
-                    name.toLowerCase().contains("mrm") || 
-                    name.toLowerCase().contains("srm")) && 
+                    name.toLowerCase().contains("mrm") ||
+                    name.toLowerCase().contains("srm")) &&
                     !name.toLowerCase().contains("ammo")) {
                     return true;
                 }
-            } else if (this == RE_ENGINEERED) { 
+            } else if (this == RE_ENGINEERED) {
                 if (name.toLowerCase().contains("engineered")) {
                     return true;
                 }
@@ -3031,9 +3045,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
                     return true;
                 }
             } else if (this == BALLISTIC) {
-                return WeaponClass.AUTOCANNON.matches(name) || 
-                    WeaponClass.GAUSS.matches(name) || 
-                    WeaponClass.MISSILE.matches(name) || 
+                return WeaponClass.AUTOCANNON.matches(name) ||
+                    WeaponClass.GAUSS.matches(name) ||
+                    WeaponClass.MISSILE.matches(name) ||
                     WeaponClass.MACHINE_GUN.matches(name);
             } else if (this == RAC) {
                 if (name.toLowerCase().contains("rotary")) {

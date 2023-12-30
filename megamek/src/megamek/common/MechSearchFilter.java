@@ -139,6 +139,8 @@ public class MechSearchFilter {
     public String sEndTons;
     public String sStartBV;
     public String sEndBV;
+    public String sStartCost;
+    public String sEndCost;
     public boolean isDisabled;
     public List<String> engineType = new ArrayList<>();
     public List<String> engineTypeExclude = new ArrayList<>();
@@ -182,6 +184,7 @@ public class MechSearchFilter {
     public int filterInfantry;
     public int filterBattleArmor;
     public int filterTank;
+    public int filterWiGE;
     public int filterVTOL;
     public int filterSupportVTOL;
     public int filterGunEmplacement;
@@ -787,10 +790,6 @@ public class MechSearchFilter {
 
         long entityType = mech.getEntityType();
 
-        if (mech.isAerospaceFighter()) {
-            entityType = entityType | Entity.ETYPE_AEROSPACEFIGHTER;
-        }
-
         long entityTypes = 0;
 
         if (f.filterMech == 1) {
@@ -864,6 +863,9 @@ public class MechSearchFilter {
         }
         if (f.filterSuperHeavyTank == 1) {
             entityTypes = entityTypes | Entity.ETYPE_SUPER_HEAVY_TANK;
+        }
+        if (f.filterWiGE == 1) {
+            entityTypes = entityTypes | Entity.ETYPE_WIGE;
         }
         if (f.iAerospaceFighter == 1) {
             entityTypes = entityTypes | Entity.ETYPE_AEROSPACEFIGHTER;
@@ -949,6 +951,9 @@ public class MechSearchFilter {
         }
         if (f.iAerospaceFighter == 2) {
             entityTypes = entityTypes | Entity.ETYPE_AEROSPACEFIGHTER;
+        }
+        if (f.filterWiGE == 2) {
+            entityTypes = entityTypes | Entity.ETYPE_WIGE;
         }
 
         if (((entityType & entityTypes) > 0) && (entityTypes != 0)) {
@@ -1037,10 +1042,10 @@ public class MechSearchFilter {
                     } else if (currEq.equals(n.name) && n.qty == 0) {
                         return false;
                     }
-                    
+
                 }
 
-                // If we reach this point. It means that the MechSummary didn't have a weapon/equipment that matched the leaf node. 
+                // If we reach this point. It means that the MechSummary didn't have a weapon/equipment that matched the leaf node.
                 // If the leaf quantity is 0, that means that the mech is a match. If the leaf quantity is non-zero, that means the mech isn't
                 // a match.
                 if (n.qty == 0) {

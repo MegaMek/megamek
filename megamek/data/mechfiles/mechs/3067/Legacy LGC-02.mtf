@@ -1,7 +1,7 @@
+generator:MegaMek Suite 0.49.16-SNAPSHOT on 2023-12-29
 chassis:Legacy
 model:LGC-02
 mul id:4489
-
 Config:Biped
 techbase:Inner Sphere
 era:3064
@@ -9,19 +9,13 @@ source:TRO: 3067
 rules level:2
 role:Missile Boat
 
-
-
-quirk:directional_torso_mount
 quirk:bad_rep_is
+quirk:directional_torso_mount
+weaponquirk:direct_torso_mount:LT:0:LRM 20
+weaponquirk:direct_torso_mount:LT:5:ISMediumPulseLaser
 weaponquirk:direct_torso_mount:RT:0:LRM 20
 weaponquirk:direct_torso_mount:RT:5:ISStreakSRM4
 weaponquirk:direct_torso_mount:RT:6:ISMediumPulseLaser
-weaponquirk:direct_torso_mount:LT:0:LRM 20
-weaponquirk:direct_torso_mount:LT:8:ISMediumPulseLaser
-weaponquirk:direct_torso_mount:RA:4:ISERMediumLaser
-weaponquirk:direct_torso_mount:RA:5:ISERMediumLaser
-weaponquirk:direct_torso_mount:LA:7:ISERSmallLaser
-
 
 mass:80
 engine:240 Fusion Engine(IS)

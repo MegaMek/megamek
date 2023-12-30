@@ -1,17 +1,16 @@
-#building block data file
+#Saved from version 0.49.16-SNAPSHOT on 2023-12-17
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
-<Version>
-MAM0
-</Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Partisan Air Defense Tank
 </Name>
+
 <Model>
 (Cell)
 </Model>
@@ -19,61 +18,88 @@ Partisan Air Defense Tank
 <mul id:>
 2434
 </mul id:>
-<Tonnage>
-80
-</Tonnage>
-<cruiseMP>
-3
-</cruiseMP>
-<Armor>
-35
-26
-26
-21
-35
-</Armor>
-<Turret Equipment>
-ISLBXAC10
-ISLBXAC10
-ISAC2
-ISAC2
-IS AMS
-</Turret Equipment>
-<Front Equipment>
-ISMachine Gun
-ISMachine Gun
-</Front Equipment>
-<Body Equipment>
-ISLBXAC10 Ammo
-ISLBXAC10 Ammo
-ISLBXAC10 CL Ammo
-ISAC2 Ammo
-ISAMS Ammo
-ISMG Ammo (200)
-ISC3SlaveUnit
-</Body Equipment>
+
+<year>
+3078
+</year>
+
+<originalBuildYear>
+3078
+</originalBuildYear>
+
 <type>
-IS Level 3
+IS Level 2
 </type>
 
 <role>
 Sniper
 </role>
-<year>
-3075
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-6
-</engine_type>
+
 <motion_type>
 Tracked
 </motion_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<engine_type>
+6
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+35
+26
+26
+21
+35
+</armor>
+
+<Body Equipment>
+IS LB 10-X AC Ammo
+IS LB 10-X AC Ammo
+IS LB 10-X Cluster Ammo
+IS Ammo AC/2
+ISAMS Ammo
+IS Ammo MG - Full
+ISC3SlaveUnit
+</Body Equipment>
+
+<Front Equipment>
+Machine Gun
+Machine Gun
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+ISLBXAC10
+ISLBXAC10
+Autocannon/2
+Autocannon/2
+ISAntiMissileSystem
+</Turret Equipment>
+
 <source>
 TRO: 3085
 </source>
+
+<tonnage>
+80.0
+</tonnage>
+

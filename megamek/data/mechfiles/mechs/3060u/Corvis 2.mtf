@@ -1,43 +1,39 @@
+generator:MegaMek Suite 0.49.16-SNAPSHOT on 2023-12-29
 chassis:Corvis
 model:2
 mul id:701
-
 Config:Biped
-TechBase:Clan
-Era:3075
-Source:TRO: 3060
-Rules Level:2
+techbase:Clan
+era:3075
+source:TRO: 3060
+rules level:2
 role:Brawler
 
-weaponquirk:mod_weapons:RA:3:CLUltraAC10
-weaponquirk:mod_weapons:LA:4:CLMediumPulseLaser
-weaponquirk:mod_weapons:LA:5:CLMediumPulseLaser
-weaponquirk:mod_weapons:RA:3:CLHAG20
 weaponquirk:mod_weapons:LA:4:CLHeavyMediumLaser
 weaponquirk:mod_weapons:LA:6:CLHeavyMediumLaser
+weaponquirk:mod_weapons:RA:3:CLHAG20
 
+mass:40
+engine:160 Fusion (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
 
-Mass:40
-Engine:160 Fusion (Clan) Engine
-Structure:Endo Steel
-Myomer:Standard
+heat sinks:10 Clan Double
+walk mp:4
+jump mp:4
 
-Heat Sinks:10 Double
-Walk MP:4
-Jump MP:4
-
-Armor:Ferro-Fibrous(Clan)
-LA Armor:12
-RA Armor:12
-LT Armor:16
-RT Armor:16
-CT Armor:18
-HD Armor:8
-LL Armor:19
-RL Armor:19
-RTL Armor:4
-RTR Armor:4
-RTC Armor:6
+armor:Ferro-Fibrous(Clan)
+LA armor:12
+RA armor:12
+LT armor:16
+RT armor:16
+CT armor:18
+HD armor:8
+LL armor:19
+RL armor:19
+RTL armor:4
+RTR armor:4
+RTC armor:6
 
 Weapons:3
 Heavy Medium Laser, Left Arm
@@ -68,9 +64,9 @@ CLHAG20
 CLHAG20
 CLHAG20
 CLHAG20
-HAG/20 Ammo
-HAG/20 Ammo
-HAG/20 Ammo
+Hyper-Assault Gauss Rifle/20 Ammo
+Hyper-Assault Gauss Rifle/20 Ammo
+Hyper-Assault Gauss Rifle/20 Ammo
 
 Left Torso:
 Jump Jet
@@ -78,12 +74,12 @@ Jump Jet
 CLTargeting Computer
 CLTargeting Computer
 CLTargeting Computer
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 
 Right Torso:
@@ -93,12 +89,12 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 Jump Jet
 Jump Jet
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -111,8 +107,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Endo Steel
-Ferro-Fibrous
+Clan Endo Steel
+Clan Ferro-Fibrous
 
 Head:
 Life Support

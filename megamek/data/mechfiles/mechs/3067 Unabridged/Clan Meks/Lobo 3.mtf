@@ -1,7 +1,7 @@
+generator:MegaMek Suite 0.49.16-SNAPSHOT on 2023-12-29
 chassis:Lobo
 model:3
 mul id:5669
-
 Config:Biped
 techbase:Clan
 era:3077
@@ -11,8 +11,6 @@ role:Striker
 
 quirk:ext_twist
 quirk:difficult_maintain
-weaponquirk:direct_torso_mount:HD:3:CLAntiMissileSystem
-
 
 mass:40
 engine:240 XL (Clan) Engine(IS)
@@ -58,11 +56,11 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
+CLMG
+CLMG
+CLMG
+CLMG
 CLMGA
-CLMG
-CLMG
-CLMG
-CLMG
 Clan Endo Steel
 Clan Endo Steel
 Clan Ferro-Fibrous
@@ -72,11 +70,11 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
+CLMG
+CLMG
+CLMG
+CLMG
 CLMGA
-CLMG
-CLMG
-CLMG
-CLMG
 Clan Endo Steel
 Clan Endo Steel
 Clan Ferro-Fibrous
@@ -87,8 +85,8 @@ Fusion Engine
 Fusion Engine
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLMediumPulseLaser
 CLStreakSRM4
+CLMediumPulseLaser
 CLAPGaussRifle
 Clan Streak SRM 4 Ammo
 Clan Ferro-Fibrous
@@ -103,8 +101,8 @@ CLERPPC
 CLERPPC
 CLStreakSRM4
 CLAPGaussRifle
-CLAPGaussRifle Ammo
 Clan Machine Gun Ammo - Half
+CLAPGaussRifle Ammo
 Clan Endo Steel
 -Empty-
 -Empty-

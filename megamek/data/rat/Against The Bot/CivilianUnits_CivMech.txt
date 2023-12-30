@@ -60,10 +60,10 @@ Harvester Ant KIC-3M-B AgroMech MOD,18
 Harvester Ant KIC-3M AgroMech MOD,18
 Heavy Lifter HCL-1 CargoMech (Standard),9
 Hyena HYN-4A SalvageMech,9
-Jabberwocky EngineerMech JAW-65A,9
-Jabberwocky EngineerMech JAW-66B,3
-Jabberwocky DemolitionMech JAW-66C,3
-Jabberwocky ConstructionMech JAW-66D,9
+Jabberwocky JAW-65A EngineerMech,9
+Jabberwocky JAW-66B EngineerMech,3
+Jabberwocky JAW-66C DemolitionMech,3
+Jabberwocky JAW-66D ConstructionMech,9
 Lumberjack LM4/C,18
 Lumberjack LM4/P,18
 Marco MR-6 ExplorerMech,3

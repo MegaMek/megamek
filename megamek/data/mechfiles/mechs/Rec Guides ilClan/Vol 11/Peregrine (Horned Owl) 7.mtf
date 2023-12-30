@@ -1,23 +1,22 @@
+generator:MegaMek Suite 0.49.16-SNAPSHOT on 2023-12-29
 chassis:Peregrine (Horned Owl)
 model:7
 mul id:7749
-
 Config:Biped
 techbase:Clan
 era:3088
+source:Rec Guide:ilClan #11
 rules level:3
 role:Striker
-source:Rec Guide:ilClan #11
 
-weaponquirk:stable_weapon:CT:10:CLLargePulseLaser
-
+weaponquirk:stable_weapon:CT:11:CLERLargeLaser
 
 mass:35
 engine:175 Fusion (Clan) Engine(IS)
 structure:Clan Endo Steel
 myomer:Standard
 
-heat sinks:10 Double
+heat sinks:10 Clan Double
 walk mp:5
 jump mp:5
 
@@ -38,7 +37,7 @@ Weapons:4
 Medium Pulse Laser, Left Arm
 Medium Pulse Laser, Right Arm
 ER Large Laser, Center Torso
-Light TAG [Clan], Head
+Light TAG, Head
 
 Left Arm:
 Shoulder

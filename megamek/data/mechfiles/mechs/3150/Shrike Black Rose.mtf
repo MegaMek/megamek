@@ -1,3 +1,4 @@
+generator:MegaMek Suite 0.49.16-SNAPSHOT on 2023-12-29
 chassis:Shrike
 model:'Black Rose'
 mul id:9215
@@ -7,12 +8,11 @@ era:3134
 source:TRO: Dark Age
 rules level:3
 
-quirk:command_mech
 quirk:distracting
+quirk:command_mech
 quirk:reinforced_legs
-weaponquirk:exposed_linkage:LA:3:CLUltraAC5
-weaponquirk:exposed_linkage:LA:6:CLUltraAC5
-
+weaponquirk:exposed_linkage:LA:7:CLERPPC
+weaponquirk:exposed_linkage:LA:9:CLERPPC
 
 mass:95
 engine:380 XL (Clan) Engine(IS)
@@ -155,14 +155,10 @@ Clan Endo Steel
 -Empty-
 -Empty-
 
-overview:The Shrike's humble origins derive from Red Devil Industries' Onager, which was clearly inspired by the aesthetics of Olivetti's Flamberge and Eyrie.	
-
-capabilities:Despite being heavier than its spiritual forefather, the Shrike outperforms the Onager in every way. It can outmaneuver many heavy and assault 'Mechs, and jump jets combined with a partial wing allow the Shrike to reach regions where most 'Mechs in its weight class cannot. The Shrike's armaments and targeting computer let it to remain a safe distance from its opponents, perhaps keeping the pilot safe without sacrificing accuracy, and reinforced legs promote Death From Above strikes on those who get too close. The Shrike is a command 'Mech with heavy armor, a command station, and a terrifying falcon shape.		
-
+overview:The Shrike's humble origins derive from Red Devil Industries' Onager, which was clearly inspired by the aesthetics of Olivetti's Flamberge and Eyrie.
+capabilities:Despite being heavier than its spiritual forefather, the Shrike outperforms the Onager in every way. It can outmaneuver many heavy and assault 'Mechs, and jump jets combined with a partial wing allow the Shrike to reach regions where most 'Mechs in its weight class cannot. The Shrike's armaments and targeting computer let it to remain a safe distance from its opponents, perhaps keeping the pilot safe without sacrificing accuracy, and reinforced legs promote Death From Above strikes on those who get too close. The Shrike is a command 'Mech with heavy armor, a command station, and a terrifying falcon shape.
 deployment:No information on this variant
-
 history:At first appearance, one might mistake the ferocious Shrike for another falcon-themed BattleMech manufactured by Olivetti Weaponry.  Eagle Craft Group adopted the Onager concept and retooled it to fit the Clan Council's rejuvenation mandates and design philosophy, following in the footsteps of the Eyrie. The heavier Shrike, which debuted shortly after Olivetti's similarly fashioned Gyrfalcon, drew praise from the warrior caste when it outperformed the Onager in every category. Many Falcon fighters issued Trials of Possession for Shrikes after observing them struggle against fast, heavy 'Mechs. Because of its agility, thick armor, range, precision, and terrifying battlefield presence, the Shrike has quickly become a favorite among Galaxy and Cluster commanders. Although a few salvaged chassis have appeared on Lyran black markets, the Shrike remains a Jade Falcon asset.
-
 manufacturer:Eagle Craft Group
 primaryfactory:Erewhon
 systemmanufacturer:CHASSIS:DSAM Endo 4

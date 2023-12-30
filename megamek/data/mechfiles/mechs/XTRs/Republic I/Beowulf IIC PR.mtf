@@ -1,54 +1,59 @@
 generator:MegaMek Suite 0.49.16-SNAPSHOT on 2023-12-29
-chassis:Kuma
-model:4
-mul id:6888
+chassis:Beowulf IIC
+model:PR
+mul id:7294
 Config:Biped
-techbase:Clan
-era:3141
-source:Record Sheets: 3145 New Tech New Upgrades
+techbase:Mixed (Clan Chassis)
+era:3086
+source:XTR: Republic I
 rules level:3
-role:Skirmisher
+role:Striker
 
-quirk:hard_pilot
-weaponquirk:accurate:HD:3:CLERLargeLaser
+quirk:bad_rep_is
+quirk:ext_twist
+quirk:exp_actuator
+quirk:bad_rep_clan
+weaponquirk:em_interference:LA:4:CLERMediumPulseLaser
+weaponquirk:em_interference:LA:6:CLERMediumPulseLaser
+weaponquirk:em_interference:RA:4:CLERLargeLaser
 
-mass:60
-engine:360 XL (Clan) Engine(IS)
-structure:Clan Endo Steel
+mass:45
+engine:270 XL (Clan) Engine
+structure:IS Standard
 myomer:Standard
 
-heat sinks:11 Clan Double
+heat sinks:12 Clan Double
 walk mp:6
 jump mp:6
 
 armor:Ferro-Fibrous(Clan)
-LA armor:20
-RA armor:20
-LT armor:20
-RT armor:20
-CT armor:30
+LA armor:14
+RA armor:14
+LT armor:16
+RT armor:16
+CT armor:20
 HD armor:9
-LL armor:28
-RL armor:28
-RTL armor:8
-RTR armor:8
-RTC armor:10
+LL armor:22
+RL armor:22
+RTL armor:6
+RTR armor:6
+RTC armor:8
 
 Weapons:3
-ER Medium Laser, Left Leg
-ER Medium Laser, Right Leg
-ER Large Laser, Head
+ER Medium Pulse Laser, Left Arm
+ER Medium Pulse Laser, Left Arm
+ER Large Laser, Right Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-HarJel Repair Systems (HarJel II)
-Clan Endo Steel
-Clan Endo Steel
-Clan Endo Steel
-Clan Endo Steel
+CLERMediumPulseLaser
+CLERMediumPulseLaser
+CLERMediumPulseLaser
+CLERMediumPulseLaser
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -58,11 +63,11 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-HarJel Repair Systems (HarJel II)
+CLERLargeLaser
 Clan Ferro-Fibrous
-Clan Ferro-Fibrous
-Clan Ferro-Fibrous
-Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -73,11 +78,11 @@ Fusion Engine
 Jump Jet
 Jump Jet
 Jump Jet
-HarJel Repair Systems (HarJel II)
-Clan Endo Steel
-Clan Endo Steel
-Clan Endo Steel
--Empty-
+ISC3iUnit
+ISC3iUnit
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
@@ -87,11 +92,11 @@ Fusion Engine
 Jump Jet
 Jump Jet
 Jump Jet
-HarJel Repair Systems (HarJel II)
+CLMASC
+CLMASC
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
--Empty-
 -Empty-
 -Empty-
 
@@ -106,14 +111,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-HarJel Repair Systems (HarJel II)
--Empty-
+WatchdogECMSuite
+WatchdogECMSuite
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLERLargeLaser
+-Empty-
 Sensors
 Life Support
 -Empty-
@@ -128,8 +133,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLERMediumLaser
--Empty-
+CLDoubleHeatSink
+CLDoubleHeatSink
 -Empty-
 -Empty-
 -Empty-
@@ -142,8 +147,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLERMediumLaser
--Empty-
+CLDoubleHeatSink
+CLDoubleHeatSink
 -Empty-
 -Empty-
 -Empty-

@@ -1,7 +1,7 @@
+generator:MegaMek Suite 0.49.16-SNAPSHOT on 2023-12-29
 chassis:Peregrine (Horned Owl)
 model:2
 mul id:2473
-
 Config:Biped
 techbase:Clan
 era:2856
@@ -9,15 +9,13 @@ source:Rec Guide:ilClan #11
 rules level:2
 role:Missile Boat
 
-weaponquirk:stable_weapon:CT:10:CLLargePulseLaser
-
 
 mass:35
 engine:210 Fusion (Clan) Engine(IS)
 structure:Clan Endo Steel
 myomer:Standard
 
-heat sinks:10 Double
+heat sinks:10 Clan Double
 walk mp:6
 jump mp:6
 

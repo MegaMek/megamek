@@ -1,60 +1,59 @@
 generator:MegaMek Suite 0.49.16-SNAPSHOT on 2023-12-29
 chassis:Gladiator
-model:GLD-1R
-mul id:1198
+model:GLD-7R
+mul id:9539
 Config:Biped
 techbase:Inner Sphere
-era:2468
-source:XTR: Primitives II
+era:3117
+source:Shrapnel 15
 rules level:3
-role:Brawler
+role:Skirmisher
 
 quirk:bad_rep_is
-quirk:poor_sealing
 quirk:cowl
-quirk:unbalanced
-quirk:obsolete
-quirk:poor_work
 
 mass:55
-engine:265 Fusion Engine(IS)
+engine:220 Light Engine(IS)
 structure:IS Standard
-myomer:Standard
-cockpit:Primitive Cockpit
-gyro:Standard Gyro
+myomer:Triple-Strength
+cockpit:Standard Cockpit
+gyro:XL Gyro
 
-heat sinks:14 Single
+heat sinks:10 IS Double
 walk mp:4
-jump mp:0
+jump mp:6
 
-armor:Primitive(Inner Sphere)
-LA armor:17
-RA armor:17
-LT armor:19
-RT armor:19
-CT armor:26
+armor:Hardened(Inner Sphere)
+LA armor:12
+RA armor:12
+LT armor:15
+RT armor:15
+CT armor:19
 HD armor:9
-LL armor:24
-RL armor:24
+LL armor:16
+RL armor:16
 RTL armor:6
 RTR armor:6
-RTC armor:9
+RTC armor:6
 
-Weapons:3
-Medium Laser, Left Arm
-Medium Laser, Left Arm
-Large Laser, Right Arm
+Weapons:6
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+Plasma Rifle, Right Arm
+SRM 4, Right Torso
+ER Small Laser, Right Torso
+ER Small Laser, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Medium Laser
-Medium Laser
--Empty-
--Empty-
--Empty-
+ISERMediumLaser
+ISERMediumLaser
+Triple Strength Myomer
+Triple Strength Myomer
+Triple Strength Myomer
 -Empty-
 -Empty-
 -Empty-
@@ -64,41 +63,41 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Large Laser
-Large Laser
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
+ISPlasmaRifle
+ISPlasmaRifle
+ISPlasmaRifleAmmo
+ISPlasmaRifleAmmo
+Triple Strength Myomer
+Triple Strength Myomer
+Triple Strength Myomer
 -Empty-
 
 Left Torso:
-Heat Sink
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
 
 Right Torso:
-Heat Sink
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
+Fusion Engine
+Fusion Engine
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+SRM 4
+ISERSmallLaser
+ISERSmallLaser
+IS Ammo SRM-4
+ISCASEII
 -Empty-
 
 Center Torso:
@@ -109,11 +108,11 @@ Gyro
 Gyro
 Gyro
 Gyro
+Gyro
+Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
--Empty-
--Empty-
 
 Head:
 Life Support
@@ -134,8 +133,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Heat Sink
--Empty-
+Improved Jump Jet
+Improved Jump Jet
 -Empty-
 -Empty-
 -Empty-
@@ -148,8 +147,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Heat Sink
--Empty-
+Improved Jump Jet
+Improved Jump Jet
 -Empty-
 -Empty-
 -Empty-
@@ -159,14 +158,14 @@ Heat Sink
 
 overview:The Gladiator, the first homegrown BattleMech of the Draconis Combine, was a product of intense secrecy and innovation. Developed by a dedicated division of New Samarkand Metals under the watchful eyes of the Draconis Elite Strike Teams, the GLD-1R Gladiator represented House Kurita's foray into the BattleMech era. The project, overseen by Coordinator Kozo Von Rohrs, faced numerous challenges, including resource and personnel restrictions due to its secretive nature. This resulted in a prolonged development process, with the Gladiator not reaching full production until 2468. Its design and deployment marked a significant milestone in the technological advancement of the Draconis Combine, despite initial mechanical and technical problems.
 capabilities:The GLD-4R Gladiator was known for its straightforward yet effective weapons load-out. It featured a PPC for long-range combat, complemented by twin medium lasers and an SRM 6 rack for close-quarters engagements. The Gladiator was also notable for its impressive mobility, achieving a top speed of eighty-four kilometers per hour. The addition of jump jets in the -4R model further enhanced its maneuverability, allowing it to adapt to various combat situations with agility and effectiveness.
-deployment:The initial model of the Gladiator, employing primitive technology and limited armament consisting of a large laser and two medium lasers. It was slower, with a top speed under seventy kilometers per hour.
+deployment:No information on this variant
 history:<p>The history of the Gladiator is a saga of ingenuity, perseverance, and evolving military strategy within the Draconis Combine. Initiated in 2461, following a successful raid that netted BattleMech plans, the development of the Gladiator marked the Combine's ambitious entry into the era of BattleMech technology. Coordinated by Kozo Von Rohrs and meticulously overseen by the Draconis Elite Strike Teams, the project was shrouded in secrecy, leading to the establishment of New Samarkand Armor Works for its design and production. Despite significant challenges, including mechanical and electronic instabilities that sometimes caused the Gladiator to topple over or crippled its electronic systems, the GLD-1R model was pressed into service, with continuous field upgrades attempting to address these "minor technical difficulties."</p><p>The Gladiator's operational history was as tumultuous as its development. Early models, particularly the GLD-1R, were quickly pushed into service despite their flaws. The elite Second Sword of Light's failure to secure Nox in 2475, despite being equipped with refit kits, was a notable blot on the Gladiator's record. This episode and subsequent combat performances led to the design falling out of favor with Coordinator Von Rohrs and the Combine's military. While well-armed and armored, it struggled against the Terran Hegemony's larger mechs and lacked the finesse of more experienced Davion or Steiner MechWarriors. Production of the Gladiator officially ceased in 2488, giving way to the Von Rohrs as the new standard. However, the Gladiator lingered in second-line and militia services before fading into obscurity.</p><p>Despite its official retirement, the Gladiator's presence persisted across the Inner Sphere and Periphery, thanks to salvaged models and secondhand markets. Its resilience in various military capacities, even in the face of technological advancements and changing warfare dynamics, highlights its enduring legacy. The Gladiator's story is a reflection of the Draconis Combine's early struggles and eventual strides in the realm of BattleMech engineering, embodying a period of rapid technological adaptation and military innovation.</p>
-manufacturer:Sword of the Prophet Enterprises,Marian Arms Inc.,Metals of the Earth,Rastaban Agricultural Products,New Samarkand Armor Works,Freedom Foundries Inc.
-primaryfactory:Algedi,Alphard (MH),Bjarred,Duran,New Samarkand,Xanthe III
-systemmanufacturer:CHASSIS:Unknown
-systemmanufacturer:ENGINE:Unknown
-systemmanufacturer:ARMOR:Unknown
-systemmanufacturer:JUMPJET:Unknown
-systemmanufacturer:COMMUNICATIONS:Unknown
-systemmanufacturer:TARGETING:Unknown
+manufacturer:Unknown
+primaryfactory:Unknown
+systemmanufacturer:CHASSIS:MW240
+systemmanufacturer:ENGINE:220 Light
+systemmanufacturer:ARMOR:New Samarkand Teppeki Hardened
+systemmanufacturer:JUMPJET:GE-2200
+systemmanufacturer:COMMUNICATIONS:Fujika Multiband
+systemmanufacturer:TARGETING:General systems AV-12
 

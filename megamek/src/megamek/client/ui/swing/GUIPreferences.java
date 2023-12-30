@@ -203,6 +203,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String TEAM_COLORING = "EntityTeamLabelColor";
     public static final String FOCUS = "Focus";
     public static final String FIRING_SOLUTIONS = "FiringSolutions";
+    public static final String CONSTRUCTOR_FACTOR_WARNING = "ConstructionFactorWarning";
     public static final String MOVE_ENVELOPE = "MoveEnvelope";
     public static final String TURN_DETAILS_OVERLAY = "TurnDetailsOverlay";
     public static final String FOV_HIGHLIGHT = "FovHighlight";
@@ -601,6 +602,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(UNIT_LABEL_BORDER, true);
         store.setDefault(UNIT_LABEL_STYLE, LabelDisplayStyle.NICKNAME.name());
         store.setDefault(FIRING_SOLUTIONS, true);
+        store.setDefault(CONSTRUCTOR_FACTOR_WARNING, true);
         store.setDefault(GUI_SCALE, 1);
         store.setDefault(LOBBY_MEKTABLE_UNIT_WIDTH, 170);
         store.setDefault(LOBBY_MEKTABLE_PILOT_WIDTH, 80);
@@ -1000,6 +1002,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getFiringSolutions() {
         return store.getBoolean(FIRING_SOLUTIONS);
+    }
+
+    public boolean getShowCFWarnings() {
+        return store.getBoolean(CONSTRUCTOR_FACTOR_WARNING);
     }
 
     public boolean getMoveEnvelope() {
@@ -1782,6 +1788,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setFiringSolutions(boolean state) {
         store.setValue(FIRING_SOLUTIONS, state);
+    }
+
+    public void setShowCFWarnings(boolean b) {
+        store.setValue(CONSTRUCTOR_FACTOR_WARNING, b);
     }
 
     public void setMoveEnvelope(boolean state) {

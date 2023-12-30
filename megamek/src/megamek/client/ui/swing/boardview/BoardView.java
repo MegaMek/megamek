@@ -191,6 +191,8 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
     private ArrayList<FiringSolutionSprite> firingSprites = new ArrayList<>();
 
+    private ArrayList<ConstructionWarningSprite> cfWarningSprites = new ArrayList<>();
+
     private ArrayList<MovementEnvelopeSprite> moveEnvSprites = new ArrayList<>();
     private ArrayList<MovementModifierEnvelopeSprite> moveModEnvSprites = new ArrayList<>();
 
@@ -1156,6 +1158,12 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         // draw onscreen entities
         drawSprites(g, entitySprites);
 
+        // draw structure warning in the deployment or movement phases
+        // draw this before moving entities, so they show up under if overlapped.
+        if (shouldShowCFWarning())  {
+            drawSprites(g, cfWarningSprites);
+        }
+
         // draw moving onscreen entities
         drawSprites(g, movingEntitySprites);
 
@@ -1183,7 +1191,6 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 drawHexBorder(g, getHexLocation(c), Color.yellow, 0, 3);
             }
         }
-
 
         // draw the ruler line
         if (rulerStart != null) {
@@ -2242,6 +2249,12 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
             // draw onscreen entities
             drawSprites(boardGraph, entitySprites);
+
+            // draw structure collapse warning sprites if in movement or deploy phase.
+            // draw this before moving entities, so they show up under if overlapped.
+            if (shouldShowCFWarning()) {
+                drawSprites(boardGraph, cfWarningSprites);
+            }
 
             // draw moving onscreen entities
             drawSprites(boardGraph, movingEntitySprites);
@@ -3869,6 +3882,25 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         repaint();
     }
 
+    public void setCFWarningSprites(List<Coords> warnList) {
+        // Clear existing sprites before setting new ones.
+        clearCFWarningData();
+
+        if (warnList == null) {
+            return;
+        }
+
+        // Loops through list of coordinates, and create new CF warning sprite and add it to the sprites list.
+        for (Coords c : warnList) {
+            ConstructionWarningSprite cfws = new ConstructionWarningSprite(this, c);
+            cfWarningSprites.add(cfws);
+        }
+    }
+
+    public void clearCFWarningData() {
+        cfWarningSprites.clear();
+    }
+
     public void addStrafingCoords(Coords c) {
         strafingCoords.add(c);
     }
@@ -5124,6 +5156,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         movementSprites.clear();
         fieldOfFireSprites.clear();
         sensorRangeSprites.clear();
+        cfWarningSprites.clear();
     }
 
     public synchronized void updateBoard() {
@@ -6035,6 +6068,10 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         for (FiringSolutionSprite sprite : firingSprites) {
             sprite.prepare();
         }
+
+        for (ConstructionWarningSprite sprite : cfWarningSprites) {
+        	sprite.prepare();
+        }
         this.setSize(boardSize);
 
         clearHexImageCache();
@@ -6695,4 +6732,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                         || game.getPhase().isOffboard());
     }
 
+    public boolean shouldShowCFWarning() {
+    	return ConstructionFactorWarning.shouldShow(game.getPhase(), GUIP.getShowCFWarnings());
+    }
 }

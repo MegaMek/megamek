@@ -1,44 +1,42 @@
+generator:MegaMek Suite 0.49.16-SNAPSHOT on 2023-12-29
 chassis:Beowulf IIC
 model:
 mul id:3818
-
 Config:Biped
-TechBase:Clan
-Era:3084
-Source:TRO: Prototypes
-Rules Level:4
+techbase:Clan
+era:3084
+source:TRO: Prototypes
+rules level:2
 role:Scout
 
-
 quirk:ext_twist
-quirk:bad_rep_clan
 quirk:exp_actuator
-weaponquirk:em_interference:RA:4:CLERLargePulseLaser
+quirk:bad_rep_clan
 weaponquirk:em_interference:LA:4:CLERMediumPulseLaser
 weaponquirk:em_interference:LA:6:CLERMediumPulseLaser
+weaponquirk:em_interference:RA:4:CLERLargePulseLaser
 
+mass:45
+engine:270 XL (Clan) Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Mass:45
-Engine:270 XL (Clan) Engine(IS)
-Structure:IS Standard
-Myomer:Standard
+heat sinks:12 Clan Double
+walk mp:6
+jump mp:6
 
-Heat Sinks:12 Double
-Walk MP:6
-Jump MP:6
-
-Armor:Ferro-Fibrous(Clan)
-LA Armor:14
-RA Armor:14
-LT Armor:16
-RT Armor:16
-CT Armor:20
-HD Armor:9
-LL Armor:22
-RL Armor:22
-RTL Armor:6
-RTR Armor:6
-RTC Armor:8
+armor:Ferro-Fibrous(Clan)
+LA armor:14
+RA armor:14
+LT armor:16
+RT armor:16
+CT armor:20
+HD armor:9
+LL armor:22
+RL armor:22
+RTL armor:6
+RTR armor:6
+RTC armor:8
 
 Weapons:4
 ER Medium Pulse Laser, Left Arm

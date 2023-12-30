@@ -22,27 +22,23 @@ import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.lobby.sorters.MekTreeTopLevelSorter;
 import megamek.common.Entity;
 import megamek.common.ForceAssignable;
-import megamek.common.Game;
-import megamek.common.Player;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
-import megamek.common.options.OptionsConstants;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ForceDisplayMekTreeModel extends DefaultTreeModel {
     private ClientGUI clientGUI;
-    private Game game;
     /** A sorted list of all top-level objects: top-level forces and force-less entities. */
     private ArrayList<Object> allToplevel;
 
     public ForceDisplayMekTreeModel(ClientGUI clientGUI) {
         super(new DefaultMutableTreeNode("Root"));
         this.clientGUI = clientGUI;
-        this.game = clientGUI.getClient().getGame();
     }
     
     public void refreshData() {
@@ -67,10 +63,10 @@ public class ForceDisplayMekTreeModel extends DefaultTreeModel {
             return allToplevel.get(index);
 
         } else if (parent instanceof Force) {
-            Forces forces = game.getForces();
+            Forces forces = clientGUI.getClient().getGame().getForces();
             Force pnt = (Force) parent;
             if (index < pnt.entityCount()) {
-                return game.getEntity(pnt.getEntityId(index));
+                return clientGUI.getClient().getGame().getEntity(pnt.getEntityId(index));
             } else if (index < pnt.getChildCount()) {
                 return forces.getForce(pnt.getSubForceId(index - pnt.entityCount()));
             } 
@@ -100,17 +96,10 @@ public class ForceDisplayMekTreeModel extends DefaultTreeModel {
      * Removes those that aren't visible in real blind drop. 
      */
     private void createTopLevel() {
-        boolean realBD = game.getOptions().booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
-        Forces forces = game.getForces();
-        Player localPlayer = clientGUI.getClient().getLocalPlayer();
+        clientGUI.getClient().getGame().getForces().correct();
+        Forces forces = clientGUI.getClient().getGame().getForces();
         ArrayList<Force> toplevel = new ArrayList<>(forces.getTopLevelForces());
-        if (realBD) {
-            toplevel.removeIf(f -> localPlayer.isEnemyOf(forces.getOwner(f)));
-        }
         List<Entity> forceless = ForceAssignable.filterToEntityList(forces.forcelessEntities());
-        if (realBD) {
-            forceless.removeIf(e -> localPlayer.isEnemyOf(e.getOwner()));
-        }
         allToplevel = new ArrayList<>(toplevel);
         allToplevel.addAll(forceless);
         allToplevel.sort(new MekTreeTopLevelSorter(clientGUI.getClient()));

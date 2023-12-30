@@ -43,7 +43,6 @@ public class ForceDisplayMekTreeRenderer extends DefaultTreeCellRenderer {
             "unknown_unit.gif").toString();
 
     private ClientGUI clientGUI;
-    private Game game;
     private boolean isSelected;
     private Color selectionColor = Color.BLUE;
     private Entity entity;
@@ -76,7 +75,7 @@ public class ForceDisplayMekTreeRenderer extends DefaultTreeCellRenderer {
             setText(ForceDisplayMekCellFormatter.formatUnitCompact(entity, clientGUI, true));
             int size = UIUtil.scaleForGUI(20);
             boolean showAsUnknown = owner.isEnemyOf(localPlayer)
-                    && game.getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP);
+                    && entity.isHidden();
             if (showAsUnknown) {
                 setIcon(getToolkit().getImage(UNKNOWN_UNIT), size - 5);
             } else {
@@ -120,7 +119,6 @@ public class ForceDisplayMekTreeRenderer extends DefaultTreeCellRenderer {
 
     ForceDisplayMekTreeRenderer(ClientGUI clientGUI, JTree tree) {
         this.clientGUI = clientGUI;
-        this.game = clientGUI.getClient().getGame();
         this.tree = tree;
     }
 }

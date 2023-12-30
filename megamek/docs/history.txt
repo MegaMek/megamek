@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+0.49.17-SNAPSHOT
+
 0.49.16 (2023-12-30 2200 UTC)
 + Fix #4769: BA Tube Artillery should support smoke rounds
 + Fix #4854: Fix multiple end-of-game and end-of-phase hangs

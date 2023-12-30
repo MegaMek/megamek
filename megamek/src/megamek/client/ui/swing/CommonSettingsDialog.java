@@ -354,6 +354,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private JComboBox miniReportAutoDisplayNonReportCombo;
     private JComboBox playerListAutoDisplayReportCombo;
     private JComboBox playerListAutoDisplayNonReportCombo;
+    private JComboBox forceDisplayAutoDisplayReportCombo;
+    private JComboBox forceDisplayAutoDisplayNonReportCombo;
 
     // Report
     private JTextPane reportKeywordsTextPane;
@@ -1930,6 +1932,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         miniReportAutoDisplayNonReportCombo.setSelectedItem(GUIP.getMiniReportAutoDisplayNonReportPhase());
         playerListAutoDisplayReportCombo.setSelectedItem(GUIP.getPlayerListAutoDisplayReportPhase());
         playerListAutoDisplayNonReportCombo.setSelectedItem(GUIP.getPlayerListAutoDisplayNonReportPhase());
+        forceDisplayAutoDisplayReportCombo.setSelectedItem(GUIP.getForceDisplayAutoDisplayReportPhase());
+        forceDisplayAutoDisplayNonReportCombo.setSelectedItem(GUIP.getForceDisplayAutoDisplayNonReportPhase());
 
         csbUnitDisplayHeatLevel1.setColour(GUIP.getUnitDisplayHeatLevel1());
         csbUnitDisplayHeatLevel2.setColour(GUIP.getUnitDisplayHeatLevel2());
@@ -2337,6 +2341,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setMiniReportAutoDisplayNonReportPhase(miniReportAutoDisplayNonReportCombo.getSelectedIndex());
         GUIP.setPlayerListAutoDisplayReportPhase(playerListAutoDisplayReportCombo.getSelectedIndex());
         GUIP.setPlayerListAutoDisplayNonReportPhase(playerListAutoDisplayNonReportCombo.getSelectedIndex());
+        GUIP.setForceDisplayAutoDisplayReportPhase(forceDisplayAutoDisplayReportCombo.getSelectedIndex());
+        GUIP.setForceDisplayAutoDisplayNonReportPhase(forceDisplayAutoDisplayNonReportCombo.getSelectedIndex());
 
         GUIP.setUnitDisplayHeatColorLevel1(csbUnitDisplayHeatLevel1.getColour());
         GUIP.setUnitDisplayHeatColorLevel2(csbUnitDisplayHeatLevel2.getColour());
@@ -2827,6 +2833,37 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         playerListAutoDisplayNonReportCombo.setSelectedIndex(GUIP.getPlayerListAutoDisplayNonReportPhase());
         row.add(phaseLabel);
         row.add(playerListAutoDisplayNonReportCombo);
+        comps.add(row);
+
+        addLineSpacer(comps);
+
+        JLabel forceDiplayLabel = new JLabel(Messages.getString("CommonMenuBar.viewForceDisplay"));
+        row = new ArrayList<>();
+        row.add(forceDiplayLabel);
+        comps.add(row);
+
+        phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportPhases") + ": ");
+        forceDisplayAutoDisplayReportCombo = new JComboBox<>();
+        forceDisplayAutoDisplayReportCombo.addItem(Messages.getString("ClientGUI.Hide"));
+        forceDisplayAutoDisplayReportCombo.addItem(Messages.getString("ClientGUI.Show"));
+        forceDisplayAutoDisplayReportCombo.addItem(Messages.getString("ClientGUI.Manual"));
+        forceDisplayAutoDisplayReportCombo.setMaximumSize(new Dimension(150, 40));
+        row = new ArrayList<>();
+        forceDisplayAutoDisplayReportCombo.setSelectedIndex(GUIP.getForceDisplayAutoDisplayReportPhase());
+        row.add(phaseLabel);
+        row.add(forceDisplayAutoDisplayReportCombo);
+        comps.add(row);
+
+        phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.nonReportPhases") + ": ");
+        forceDisplayAutoDisplayNonReportCombo = new JComboBox<>();
+        forceDisplayAutoDisplayNonReportCombo.addItem(Messages.getString("ClientGUI.Hide"));
+        forceDisplayAutoDisplayNonReportCombo.addItem(Messages.getString("ClientGUI.Show"));
+        forceDisplayAutoDisplayNonReportCombo.addItem(Messages.getString("ClientGUI.Manual"));
+        forceDisplayAutoDisplayNonReportCombo.setMaximumSize(new Dimension(150, 40));
+        row = new ArrayList<>();
+        forceDisplayAutoDisplayNonReportCombo.setSelectedIndex(GUIP.getForceDisplayAutoDisplayNonReportPhase());
+        row.add(phaseLabel);
+        row.add(forceDisplayAutoDisplayNonReportCombo);
         comps.add(row);
 
         return createSettingsPanel(comps);

@@ -34,6 +34,8 @@ import megamek.client.ui.swing.audio.SoundType;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.dialog.AbstractUnitSelectorDialog;
 import megamek.client.ui.swing.dialog.MegaMekUnitSelectorDialog;
+import megamek.client.ui.swing.forceDisplay.ForceDisplayDialog;
+import megamek.client.ui.swing.forceDisplay.ForceDisplayPanel;
 import megamek.client.ui.swing.lobby.ChatLounge;
 import megamek.client.ui.swing.lobby.PlayerSettingsDialog;
 import megamek.client.ui.swing.minimap.Minimap;
@@ -146,6 +148,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     // region view menu
     public static final String VIEW_INCGUISCALE = "viewIncGUIScale";
     public static final String VIEW_DECGUISCALE = "viewDecGUIScale";
+    public static final String VIEW_FORCE_DISPLAY = "viewForceDisplay";
     public static final String VIEW_UNIT_DISPLAY = "viewMekDisplay";
     public static final String VIEW_ACCESSIBILITY_WINDOW = "viewAccessibilityWindow";
     public static final String VIEW_KEYBINDS_OVERLAY = "viewKeyboardShortcuts";
@@ -241,6 +244,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
     public UnitDisplay unitDisplay;
     private UnitDisplayDialog unitDisplayDialog;
+
+    public ForceDisplayPanel forceDisplayPanel;
+    private ForceDisplayDialog forceDisplayDialog;
+
     public JDialog minimapW;
     private MapMenu popup;
     private UnitOverview uo;
@@ -370,6 +377,22 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
     public void setUnitDisplayDialog(final UnitDisplayDialog unitDisplayDialog) {
         this.unitDisplayDialog = unitDisplayDialog;
+    }
+
+    public ForceDisplayPanel getForceDisplayPanel() {
+        return forceDisplayPanel;
+    }
+
+    public void setForceDisplayPanel(final ForceDisplayPanel forceDisplayPanel) {
+        this.forceDisplayPanel = forceDisplayPanel;
+    }
+
+    public ForceDisplayDialog getForceDisplayDialog() {
+        return forceDisplayDialog;
+    }
+
+    public void setForceDisplayDialog(final ForceDisplayDialog forceDisplayDialog) {
+        this.forceDisplayDialog = forceDisplayDialog;
     }
 
     public JDialog getMiniMapDialog() {
@@ -577,6 +600,11 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         setUnitDisplayDialog(new UnitDisplayDialog(getFrame(), this));
         getUnitDisplayDialog().setVisible(false);
 
+        setForceDisplayPanel(new ForceDisplayPanel(this));
+        setForceDisplayDialog(new ForceDisplayDialog(getFrame(), this));
+        getForceDisplayDialog().add(getForceDisplayPanel(), BorderLayout.CENTER);
+        getForceDisplayDialog().setVisible(false);
+
         setMiniReportDisplay(new MiniReportDisplay(this));
         setMiniReportDisplayDialog(new MiniReportDisplayDialog(getFrame(), this));
         getMiniReportDisplayDialog().setVisible(false);
@@ -739,6 +767,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         if (getUnitDisplayDialog() != null) {
             getUnitDisplayDialog().setBounds(0, 0, getUnitDisplay().getWidth(), getUnitDisplay().getHeight());
         }
+        if (getForceDisplayDialog() != null) {
+            getForceDisplayDialog().setBounds(0, 0, getForceDisplayPanel().getWidth(), getForceDisplayPanel().getHeight());
+        }
         if (getMiniReportDisplayDialog() != null) {
             getMiniReportDisplayDialog().setBounds(0, 0, getMiniReportDisplayDialog().getWidth(),
                     getMiniReportDisplayDialog().getHeight());
@@ -854,6 +885,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 break;
             case VIEW_UNIT_DISPLAY:
                 GUIP.toggleUnitDisplay();
+                break;
+            case VIEW_FORCE_DISPLAY:
+                GUIP.toggleForceDisplay();
                 break;
             case VIEW_MINI_MAP:
                 GUIP.toggleMinimapEnabled();
@@ -1033,6 +1067,11 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             saveSplitPaneLocations();
         }
 
+        // Force Display Dialog
+        if (getForceDisplayDialog() != null) {
+            getForceDisplayDialog().saveSettings();
+        }
+
         // Mini Report Dialog
         if (getMiniReportDisplayDialog() != null) {
             getMiniReportDisplayDialog().saveSettings();
@@ -1182,6 +1221,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
         maybeShowMinimap();
         maybeShowUnitDisplay();
+        maybeShowForceDisplay();
         maybeShowMiniReport();
         maybeShowPlayerList();
 
@@ -1568,6 +1608,29 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         }
     }
 
+    /** Shows or hides the Unit Display based on the current menu setting. */
+    public void maybeShowForceDisplay() {
+        GamePhase phase = getClient().getGame().getPhase();
+
+        if (phase.isReport()) {
+            int action = GUIP.getForceDisplayAutoDisplayReportPhase();
+            if (action == GUIPreferences.SHOW) {
+                GUIP.setForceDisplayEnabled(true);
+            } else if (action == GUIPreferences.HIDE) {
+                GUIP.setForceDisplayEnabled(false);
+            }
+        } else if (phase.isOnMap()) {
+            int action = GUIP.getForceDisplayAutoDisplayNonReportPhase();
+            if (action == GUIPreferences.SHOW) {
+                GUIP.setForceDisplayEnabled(true);
+            } else if (action == GUIPreferences.HIDE) {
+                GUIP.setForceDisplayEnabled(false);
+            }
+        } else {
+            GUIP.setForceDisplayEnabled(false);
+        }
+    }
+
     /**
      * Shows or hides the Unit Display based on the given visible. This works
      * independently
@@ -1602,6 +1665,13 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
     private void setsetDividerLocations() {
         splitPaneA.setDividerLocation(GUIP.getSplitPaneADividerLocaton());
+    }
+
+
+    public void setForceDisplayVisible(boolean visible) {
+        if (getForceDisplayDialog() != null) {
+            getForceDisplayDialog().setVisible(visible);
+        }
     }
 
     private void hideEmptyPanel(JPanel p, JSplitPane sp, Double d) {
@@ -2222,6 +2292,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             }
 
             menuBar.setPhase(phase);
+
+            getForceDisplayPanel().refreshTree();
+
             validate();
             cb.moveToEnd();
         }
@@ -2873,6 +2946,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             setPlayerListVisible(GUIP.getPlayerListEnabled());
         } else if (e.getName().equals(GUIPreferences.UNIT_DISPLAY_ENABLED)) {
             setUnitDisplayVisible(GUIP.getUnitDisplayEnabled());
+        } else if (e.getName().equals(GUIPreferences.FORCE_DISPLAY_ENABLED)) {
+            setForceDisplayVisible(GUIP.getForceDisplayEnabled());
         } else if (e.getName().equals(GUIPreferences.UNIT_DISPLAY_LOCATION)) {
             setUnitDisplayVisible(GUIP.getUnitDisplayEnabled());
         } else if (e.getName().equals(GUIPreferences.MINI_REPORT_ENABLED)) {

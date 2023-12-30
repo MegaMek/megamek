@@ -107,6 +107,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     // The View menu
     private JCheckBoxMenuItem viewMinimap = new JCheckBoxMenuItem(getString("CommonMenuBar.viewMinimap"));
     private JCheckBoxMenuItem viewMekDisplay = new JCheckBoxMenuItem(getString("CommonMenuBar.viewMekDisplay"));
+    private JCheckBoxMenuItem viewForceDisplay = new JCheckBoxMenuItem(getString("CommonMenuBar.viewForceDisplay"));
     private JMenuItem viewAccessibilityWindow = new JMenuItem(getString("CommonMenuBar.viewAccessibilityWindow"));
     private JCheckBoxMenuItem viewKeybindsOverlay = new JCheckBoxMenuItem(getString("CommonMenuBar.viewKeyboardShortcuts"));
     private JCheckBoxMenuItem viewPlanetaryConditionsOverlay = new JCheckBoxMenuItem(getString("CommonMenuBar.viewPlanetaryConditions"));
@@ -259,6 +260,9 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         initMenuItem(gamePlayerList, menu, VIEW_PLAYER_LIST);
         GUIP.setPlayerListEnabled(false);
         gamePlayerList.setSelected(false);
+        initMenuItem(viewForceDisplay, menu, VIEW_FORCE_DISPLAY);
+        GUIP.setForceDisplayEnabled(false);
+        viewForceDisplay.setSelected(false);
         menu.addSeparator();
 
         initMenuItem(viewKeybindsOverlay, menu, VIEW_KEYBINDS_OVERLAY);
@@ -336,6 +340,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         viewKeybindsOverlay.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.KEY_BINDS));
         viewPlanetaryConditionsOverlay.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.PLANETARY_CONDITIONS));
         viewTurnDetailsOverlay.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.TURN_DETAILS));
+        viewForceDisplay.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.FORCE_DISPLAY));
         viewMekDisplay.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.UNIT_DISPLAY));
         viewUnitOverview.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.UNIT_OVERVIEW));
         viewLOSSetting.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.LOS_SETTING));
@@ -484,6 +489,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         viewMovModEnvelope.setEnabled(isInGameBoardView);
         gameRoundReport.setEnabled((isInGame));
         viewMekDisplay.setEnabled(isInGameBoardView);
+        viewForceDisplay.setEnabled(isInGameBoardView);
         fireSaveWeaponOrder.setEnabled(isInGameBoardView);
     }
 
@@ -532,6 +538,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
             setKeyBinds();
         } else if (e.getName().equals(GUIPreferences.UNIT_DISPLAY_ENABLED)) {
             viewMekDisplay.setSelected(GUIP.getUnitDisplayEnabled());
+        } else if (e.getName().equals(GUIPreferences.FORCE_DISPLAY_ENABLED)) {
+            viewForceDisplay.setSelected(GUIP.getForceDisplayEnabled());
         } else if (e.getName().equals(GUIPreferences.MINI_REPORT_ENABLED)) {
             gameRoundReport.setSelected(GUIP.getMiniReportEnabled());
         } else if (e.getName().equals(GUIPreferences.PLAYER_LIST_ENABLED)) {

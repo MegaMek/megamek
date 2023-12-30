@@ -230,6 +230,7 @@ class LobbyMekCellFormatter {
             if (pilot.countOptions() > 0) {
                 result.append(DOT_SPACER + guiScaledFontHTML(uiQuirksColor()));
                 result.append(Messages.getString("ChatLounge.abilities"));
+                result.append("</FONT>");
             }
 
             // Owner

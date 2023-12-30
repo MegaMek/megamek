@@ -129,6 +129,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String CUSTOM_UNIT_HEIGHT = "CustomUnitDialogSizeHeight";
     public static final String CUSTOM_UNIT_WIDTH = "CustomUnitDialogSizeWidth";
 
+    public static final String FORCE_DISPLAY_POS_X = "ForceDisplayPosX";
+    public static final String FORCE_DISPLAY_POS_Y = "ForcetDisplayPosY";
+    public static final String FORCE_DISPLAY_SIZE_HEIGHT = "ForceDisplaySizeHeight";
+    public static final String FORCE_DISPLAY_SIZE_WIDTH = "ForceDisplaySizeWidth";
+    public static final String FORCE_DISPLAY_AUTO_DISPLAY_REPORT_PHASE = "ForceDisplayAutoDiplayReportPhase";
+    public static final String FORCE_DISPLAY_AUTO_DISPLAY_NONREPORT_PHASE = "ForceDisplayAutoDiplayNonReportPhase";
+    public static final String FORCE_DISPLAY_ENABLED = "ForceDisplayEnabled";
+
     public static final String UNIT_DISPLAY_POS_X = "UnitDisplayPosX";
     public static final String UNIT_DISPLAY_POS_Y = "UnitDisplayPosY";
     public static final String UNIT_DISPLAY_NONTABBED_POS_X = "UnitDisplayNontabbedPosX";
@@ -534,6 +542,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(CUSTOM_UNIT_HEIGHT, 400);
         store.setDefault(CUSTOM_UNIT_WIDTH, 600);
 
+        store.setDefault(FORCE_DISPLAY_AUTO_DISPLAY_REPORT_PHASE, 2);
+        store.setDefault(FORCE_DISPLAY_AUTO_DISPLAY_NONREPORT_PHASE, 2);
+        store.setDefault(FORCE_DISPLAY_ENABLED, false);
+
         store.setDefault(UNIT_DISPLAY_SIZE_HEIGHT, 500);
         store.setDefault(UNIT_DISPLAY_SIZE_WIDTH, 300);
         store.setDefault(UNIT_DISPLAY_NONTABBED_SIZE_HEIGHT, 900);
@@ -808,6 +820,34 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public int getCustomUnitWidth() {
         return store.getInt(CUSTOM_UNIT_WIDTH);
+    }
+
+    public int getForceDisplayPosX() {
+        return store.getInt(FORCE_DISPLAY_POS_X);
+    }
+
+    public int getForceDisplayPosY() {
+        return store.getInt(FORCE_DISPLAY_POS_Y);
+    }
+
+    public int getForceDisplaySizeHeight() {
+        return store.getInt(FORCE_DISPLAY_SIZE_HEIGHT);
+    }
+
+    public int getForceDisplaySizeWidth() {
+        return store.getInt(FORCE_DISPLAY_SIZE_WIDTH);
+    }
+
+    public int getForceDisplayAutoDisplayReportPhase() {
+        return store.getInt(FORCE_DISPLAY_AUTO_DISPLAY_REPORT_PHASE);
+    }
+
+    public int getForceDisplayAutoDisplayNonReportPhase() {
+        return store.getInt(FORCE_DISPLAY_AUTO_DISPLAY_NONREPORT_PHASE);
+    }
+
+    public boolean getForceDisplayEnabled() {
+        return store.getBoolean(FORCE_DISPLAY_ENABLED);
     }
 
     public int getUnitDisplayPosX() {
@@ -1579,6 +1619,38 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setCustomUnitWidth(int state) {
         store.setValue(CUSTOM_UNIT_WIDTH, state);
+    }
+
+    public void setForceDisplayPosX(int i) {
+        store.setValue(FORCE_DISPLAY_POS_X, i);
+    }
+
+    public void setForceDisplayPosY(int i) {
+        store.setValue(FORCE_DISPLAY_POS_Y, i);
+    }
+
+    public void setForceDisplaySizeHeight(int i) {
+        store.setValue(FORCE_DISPLAY_SIZE_HEIGHT, i);
+    }
+
+    public void setForceDisplaySizeWidth(int i) {
+        store.setValue(FORCE_DISPLAY_SIZE_WIDTH, i);
+    }
+
+    public void setForceDisplayAutoDisplayReportPhase(int i) {
+        store.setValue(FORCE_DISPLAY_AUTO_DISPLAY_REPORT_PHASE, i);
+    }
+
+    public void setForceDisplayAutoDisplayNonReportPhase(int i) {
+        store.setValue(FORCE_DISPLAY_AUTO_DISPLAY_NONREPORT_PHASE, i);
+    }
+
+    public void toggleForceDisplay() {
+        store.setValue(FORCE_DISPLAY_ENABLED, !getBoolean(FORCE_DISPLAY_ENABLED));
+    }
+
+    public void setForceDisplayEnabled(boolean b) {
+        store.setValue(FORCE_DISPLAY_ENABLED, b);
     }
 
     public void setUnitDisplayPosX(int i) {

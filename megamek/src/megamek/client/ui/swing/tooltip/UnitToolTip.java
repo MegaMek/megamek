@@ -1201,28 +1201,28 @@ public final class UnitToolTip {
                 + srh.maxSensorRange + ")";
     }
 
-    private static String getDamageLevelDesc(Entity entity) {
+    public static String getDamageLevelDesc(Entity entity) {
         String result;
         switch (entity.getDamageLevel()) {
             case Entity.DMG_CRIPPLED:
-                String msg_crippled = ' '+Messages.getString("BoardView1.Tooltip.Crippled");
-                result = guiScaledFontHTML(GUIP.getWarningColor()) + msg_crippled + "</FONT>";
+                String msg_crippled = Messages.getString("BoardView1.Tooltip.Crippled");
+                result = ' ' + guiScaledFontHTML(GUIP.getWarningColor()) + msg_crippled + "</FONT>";
                 break;
             case Entity.DMG_HEAVY:
                 String msg_heavydmg = Messages.getString("BoardView1.Tooltip.HeavyDmg");
-                result = ' '+guiScaledFontHTML(GUIP.getWarningColor()) + msg_heavydmg + "</FONT>";
+                result = ' ' + guiScaledFontHTML(GUIP.getWarningColor()) + msg_heavydmg + "</FONT>";
                 break;
             case Entity.DMG_MODERATE:
                 String msg_moderatedmg = Messages.getString("BoardView1.Tooltip.ModerateDmg");
-                result = ' '+msg_moderatedmg;
+                result = ' ' + msg_moderatedmg;
                 break;
             case Entity.DMG_LIGHT:
                 String msg_lightdmg = Messages.getString("BoardView1.Tooltip.LightDmg");
-                result = ' '+msg_lightdmg ;
+                result = ' ' + msg_lightdmg ;
                 break;
             default:
                 String msg_undamaged = Messages.getString("BoardView1.Tooltip.Undamaged");
-                result = "&nbsp;&nbsp;" + msg_undamaged;
+                result = ' ' + msg_undamaged;
                 break;
         }
         return result;

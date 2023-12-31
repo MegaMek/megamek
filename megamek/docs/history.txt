@@ -1,6 +1,6 @@
-VERSION HISTORY:
+MEGAMEK VERSION HISTORY:
 ----------------
-0.49.17-SNAPSHOT
+0.49.17 (2023-12-31 1900 UTC)
 + Fix #1031: Show structure collapse warning when deploying and moving.
 + PR #4990: FixedWingSupport: automatically set SI when walk MPs are set 
 

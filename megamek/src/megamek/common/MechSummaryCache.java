@@ -770,7 +770,8 @@ public class MechSummaryCache {
                 }
                 if (!f.getName().toLowerCase().endsWith(".mtf") && !f.getName().toLowerCase().endsWith(".blk")
                         && !f.getName().toLowerCase().endsWith(".hmp") && !f.getName().toLowerCase().endsWith(".hmv")
-                        && !f.getName().toLowerCase().endsWith(".mep") && !f.getName().toLowerCase().endsWith(".tdb")) {
+                        && !f.getName().toLowerCase().endsWith(".mep") && !f.getName().toLowerCase().endsWith(".tdb")
+                        && !f.getName().toLowerCase().endsWith(".zip")) {
                     continue;
                 }
                 if (f.getName().indexOf('.') == -1) {

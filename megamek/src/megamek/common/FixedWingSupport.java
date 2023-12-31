@@ -320,4 +320,10 @@ public class FixedWingSupport extends ConvFighter {
     public boolean isAerospaceSV() {
         return true;
     }
+
+    @Override
+    public void setOriginalWalkMP(int walkMP) {
+        super.setOriginalWalkMP(walkMP);
+        autoSetSI();
+    }
 }

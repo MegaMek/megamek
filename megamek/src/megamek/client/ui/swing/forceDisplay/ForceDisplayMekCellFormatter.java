@@ -98,11 +98,22 @@ class ForceDisplayMekCellFormatter {
         color = addGray(color, 128).brighter();
 
         if (entity.getForceId() == Force.NO_FORCE) {
-            result.append(guiScaledFontHTML(color) + "\u25AD </FONT>");
+            result.append(guiScaledFontHTML(color) + "\u25AD" + "</FONT>");
         }
 
         String id = MessageFormat.format("[{0}] ", entity.getId());
         result.append(guiScaledFontHTML(GUIP.getUnitToolTipHighlightColor()) + id + "</FONT>");
+
+        // Done
+        if (!game.getPhase().isReport()) {
+            String done = "";
+            if (!entity.isDone()) {
+                done = "\u2610 ";
+            } else {
+                done = "\u2611 ";
+            }
+            result.append(guiScaledFontHTML(color) + done + "</FONT>");
+        }
 
         // Unit name
         // Gray out if the unit is a fighter in a squadron

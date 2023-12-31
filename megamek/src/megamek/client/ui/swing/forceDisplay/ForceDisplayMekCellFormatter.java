@@ -46,14 +46,6 @@ class ForceDisplayMekCellFormatter {
 
     private ForceDisplayMekCellFormatter() {
     }
-
-    static String unitTableEntry(InGameObject unit, ClientGUI clientGUI) {
-        if (unit instanceof Entity) {
-            return formatUnitCompact((Entity) unit, clientGUI);
-        } else {
-            return "This type of object has currently no table entry.";
-        }
-    }
     
     /** 
      * Creates and returns the display content of the C3-MekTree cell for the given entity and 
@@ -65,9 +57,8 @@ class ForceDisplayMekCellFormatter {
         GameOptions options = game.getOptions();
         Player localPlayer = client.getLocalPlayer();
         Player owner = entity.getOwner();
-        boolean localGM = localPlayer.isGameMaster();
-        boolean hideEntity = !localGM && !entity.isVisibleToEnemy();
-        if (hideEntity) {
+
+        if (entity.isSensorReturn(localPlayer)) {
             String value = "<HTML><NOBR>&nbsp;&nbsp;";
             String uType = "";
 
@@ -89,6 +80,8 @@ class ForceDisplayMekCellFormatter {
                 uType = entity.getWeightClassName();
             }
             return value + guiScaledFontHTML() + DOT_SPACER + uType + DOT_SPACER + "</FONT></HTML>";
+        } else if (!entity.isVisibleToEnemy()) {
+           return "";
         }
 
         StringBuilder result = new StringBuilder("<HTML><NOBR>&nbsp;&nbsp;" + guiScaledFontHTML());
@@ -264,7 +257,7 @@ class ForceDisplayMekCellFormatter {
         if (entity.isOffBoard()) {
             result.append(DOT_SPACER + guiScaledFontHTML(uiGreen()) + "<I>"); 
             result.append(Messages.getString("ChatLounge.compact.deploysOffBoard") + "</I></FONT>");
-        } else if (entity.getDeployRound() > 0) {
+        } else if (!entity.isDeployed()) {
             result.append(DOT_SPACER + guiScaledFontHTML(uiGreen()) + "<I>");
             result.append(Messages.getString("ChatLounge.compact.deployRound", entity.getDeployRound()));
             if (entity.getStartingPos(false) != Board.START_NONE) {
@@ -281,7 +274,7 @@ class ForceDisplayMekCellFormatter {
                 result.append(DOT_SPACER + guiScaledFontHTML(uiGreen()) + "<I>"); 
                 result.append(Messages.getString("ChatLounge.compact.velocity") + ": ");
                 result.append(aero.getCurrentVelocity());
-                if (game.getBoard().inSpace()) {
+                if (!game.getBoard().inSpace()) {
                     result.append(", " + Messages.getString("ChatLounge.compact.altitude") + ": ");
                     result.append(aero.getAltitude());
                 } 
@@ -336,6 +329,7 @@ class ForceDisplayMekCellFormatter {
         color = addGray(color, 128).brighter();
 
         StringBuilder result = new StringBuilder("<HTML><NOBR>");
+
         result.append(guiScaledFontHTML(color, size));
         
         // A top-level / subforce special char

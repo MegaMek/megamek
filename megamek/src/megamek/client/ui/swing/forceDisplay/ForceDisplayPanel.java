@@ -21,6 +21,7 @@ import megamek.client.ui.swing.util.ScalingPopup;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
 import megamek.common.Game;
+import megamek.common.event.*;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
 import megamek.common.preference.IPreferenceChangeListener;
@@ -40,7 +41,7 @@ import java.util.List;
 /**
  * Shows force display
  */
-public class ForceDisplayPanel extends JPanel implements IPreferenceChangeListener {
+public class ForceDisplayPanel extends JPanel implements GameListener, IPreferenceChangeListener {
 
     private ForceDisplayMekTreeModel forceTreeModel;
     JTree forceTree;
@@ -64,6 +65,8 @@ public class ForceDisplayPanel extends JPanel implements IPreferenceChangeListen
         add(sp, BorderLayout.CENTER);
 
         forceTree.addMouseListener(mekForceTreeMouseListener);
+        clientgui.getClient().getGame().addGameListener(this);
+        GUIP.addPreferenceChangeListener(this);
 
         adaptToGUIScale();
     }
@@ -81,6 +84,10 @@ public class ForceDisplayPanel extends JPanel implements IPreferenceChangeListen
 
     /** Refreshes the Mek Tree, restoring expansion state and selection. */
     public void refreshTree() {
+        if (!GUIP.getForceDisplayEnabled()) {
+            return;
+        }
+
         // Refresh the force tree and restore selection/expand status
         HashSet<Object> selections = new HashSet<>();
         if (!forceTree.isSelectionEmpty()) {
@@ -229,6 +236,100 @@ public class ForceDisplayPanel extends JPanel implements IPreferenceChangeListen
         }
     }
 
+    @Override
+    public void gamePlayerConnected(GamePlayerConnectedEvent e) {
+        //noaction default
+    }
+
+    @Override
+    public void gamePlayerDisconnected(GamePlayerDisconnectedEvent e) {
+        //noaction default
+    }
+
+    @Override
+    public void gamePlayerChange(GamePlayerChangeEvent e) {
+        //noaction default
+    }
+
+    @Override
+    public void gamePlayerChat(GamePlayerChatEvent e) {
+        //noaction default
+    }
+
+    @Override
+    public void gamePhaseChange(GamePhaseChangeEvent e) {
+        refreshTree();
+    }
+
+    @Override
+    public void gameTurnChange(GameTurnChangeEvent e) {
+        refreshTree();
+    }
+
+    @Override
+    public void gameReport(GameReportEvent e) {
+        //noaction default
+    }
+
+    @Override
+    public void gameEnd(GameEndEvent e) {
+        //noaction default
+    }
+
+    @Override
+    public void gameBoardNew(GameBoardNewEvent e) {
+        //noaction default
+    }
+
+    @Override
+    public void gameBoardChanged(GameBoardChangeEvent e) {
+        //noaction default
+    }
+
+    @Override
+    public void gameSettingsChange(GameSettingsChangeEvent e) {
+        //noaction default
+    }
+
+    @Override
+    public void gameMapQuery(GameMapQueryEvent e) {
+        //noaction default
+    }
+
+    @Override
+    public void gameEntityNew(GameEntityNewEvent e) {
+        //noaction default
+    }
+
+    @Override
+    public void gameEntityNewOffboard(GameEntityNewOffboardEvent e) {
+        //noaction default
+    }
+
+    @Override
+    public void gameEntityRemove(GameEntityRemoveEvent e) {
+        //noaction default
+    }
+
+    @Override
+    public void gameEntityChange(GameEntityChangeEvent e) {
+        //noaction default
+    }
+
+    @Override
+    public void gameNewAction(GameNewActionEvent e) {
+        //noaction default
+    }
+
+    @Override
+    public void gameClientFeedbackRequest(GameCFREvent evt) {
+        //noaction default
+    }
+
+    @Override
+    public void gameVictory(GameVictoryEvent e) {
+        //noaction default
+    }
     private void adaptToGUIScale() {
         UIUtil.adjustContainer(this, UIUtil.FONT_SCALE1);
     }
@@ -238,6 +339,9 @@ public class ForceDisplayPanel extends JPanel implements IPreferenceChangeListen
         // Update the text size when the GUI scaling changes
         if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
             adaptToGUIScale();
+        }
+        if (e.getName().equals(GUIPreferences.FORCE_DISPLAY_ENABLED)) {
+            refreshTree();
         }
     }
 }

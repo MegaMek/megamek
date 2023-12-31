@@ -2293,8 +2293,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
             menuBar.setPhase(phase);
 
-            getForceDisplayPanel().refreshTree();
-
             validate();
             cb.moveToEnd();
         }

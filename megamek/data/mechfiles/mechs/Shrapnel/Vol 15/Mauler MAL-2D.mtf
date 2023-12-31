@@ -4,7 +4,7 @@ model:MAL-2D
 mul id:9547
 Config:Biped
 techbase:Inner Sphere
-era:3063
+era:3065
 source:Shrapnel 15
 rules level:3
 role:Juggernaut

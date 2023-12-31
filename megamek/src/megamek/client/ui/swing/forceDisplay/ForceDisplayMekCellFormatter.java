@@ -18,6 +18,7 @@
  */
 package megamek.client.ui.swing.forceDisplay;
 
+import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
@@ -33,6 +34,7 @@ import megamek.common.util.CollectionUtil;
 
 import java.awt.*;
 import java.text.MessageFormat;
+import java.text.NumberFormat;
 import java.util.List;
 
 import static megamek.client.ui.swing.lobby.MekTableModel.DOT_SPACER;
@@ -45,9 +47,9 @@ class ForceDisplayMekCellFormatter {
     private ForceDisplayMekCellFormatter() {
     }
 
-    static String unitTableEntry(InGameObject unit, boolean forceView, ClientGUI clientGUI) {
+    static String unitTableEntry(InGameObject unit, ClientGUI clientGUI) {
         if (unit instanceof Entity) {
-            return formatUnitCompact((Entity) unit, clientGUI, forceView);
+            return formatUnitCompact((Entity) unit, clientGUI);
         } else {
             return "This type of object has currently no table entry.";
         }
@@ -57,7 +59,7 @@ class ForceDisplayMekCellFormatter {
      * Creates and returns the display content of the C3-MekTree cell for the given entity and 
      * for the compact display mode. Assumes that no enemy or blind-drop-hidden units are provided. 
      */
-    static String formatUnitCompact(Entity entity, ClientGUI clientGUI, boolean forceView) {
+    static String formatUnitCompact(Entity entity, ClientGUI clientGUI) {
         Client client = clientGUI.getClient();
         Game game = client.getGame();
         GameOptions options = game.getOptions();
@@ -67,11 +69,8 @@ class ForceDisplayMekCellFormatter {
         boolean hideEntity = !localGM && !entity.isVisibleToEnemy();
         if (hideEntity) {
             String value = "<HTML><NOBR>&nbsp;&nbsp;";
-            if (PreferenceManager.getClientPreferences().getShowUnitId()) {
-                value += guiScaledFontHTML(uiGray());
-                value += MessageFormat.format("[{0}] </FONT>", entity.getId());
-            }
             String uType = "";
+
             if (entity instanceof Infantry) {
                 uType = Messages.getString("ChatLounge.0");
             } else if (entity instanceof Protomech) {
@@ -89,7 +88,7 @@ class ForceDisplayMekCellFormatter {
             } else {
                 uType = entity.getWeightClassName();
             }
-            return value + guiScaledFontHTML() + DOT_SPACER + uType + DOT_SPACER;
+            return value + guiScaledFontHTML() + DOT_SPACER + uType + DOT_SPACER + "</FONT></HTML>";
         }
 
         StringBuilder result = new StringBuilder("<HTML><NOBR>&nbsp;&nbsp;" + guiScaledFontHTML());
@@ -103,7 +102,7 @@ class ForceDisplayMekCellFormatter {
         }
         color = addGray(color, 128).brighter();
 
-        if (entity.getForceId() == Force.NO_FORCE && forceView) {
+        if (entity.getForceId() == Force.NO_FORCE) {
             result.append(guiScaledFontHTML(color));
             result.append("\u25AD </FONT>");
         }
@@ -140,14 +139,22 @@ class ForceDisplayMekCellFormatter {
         final boolean rpgSkills = options.booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
         result.append(" (" + pilot.getSkillsAsString(rpgSkills) + ")");
 
+        result.append(DOT_SPACER);
+        result.append(UnitToolTip.getDamageLevelDesc(entity).trim());
+
+        // Tonnage
+        result.append(guiScaledFontHTML());
+        result.append(DOT_SPACER);
+        NumberFormat formatter = NumberFormat.getNumberInstance(MegaMek.getMMOptions().getLocale());
+        result.append(formatter.format(entity.getWeight()));
+        result.append(Messages.getString("ChatLounge.Tons"));
+        result.append("</FONT>");
+
         // Alpha Strike Unit Role
         if (!entity.isUnitGroup()) {
             result.append(DOT_SPACER);
             result.append(entity.getRole().toString());
         }
-
-        result.append(DOT_SPACER);
-        result.append(UnitToolTip.getDamageLevelDesc(entity).trim());
 
         // Controls the separator dot character
         boolean firstEntry = true;
@@ -232,7 +239,7 @@ class ForceDisplayMekCellFormatter {
 
         // Deployment info, doesn't matter when the unit is carried
         if (!isCarried  && !entity.isDeployed()) {
-            if (entity.isHidden()) {
+            if (entity.isHidden() && (entity.getOwner().getTeam() == localPlayer.getTeam())) {
                 result.append(DOT_SPACER + guiScaledFontHTML(uiGreen()) + "<I>");
                 result.append(Messages.getString("ChatLounge.compact.hidden") + "</I></FONT>");
             }
@@ -299,6 +306,7 @@ class ForceDisplayMekCellFormatter {
         }
 
         result.append("</FONT>");
+        result.append("</HTML>");
         
         return result.toString();
     }

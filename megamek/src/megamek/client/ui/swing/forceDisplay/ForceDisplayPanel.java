@@ -32,15 +32,10 @@ import javax.swing.event.MouseInputAdapter;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-
-import static megamek.client.ui.swing.util.UIUtil.menuItem;
 
 /**
  * Shows force display
@@ -81,6 +76,7 @@ public class ForceDisplayPanel extends JPanel implements IPreferenceChangeListen
         forceTree.setCellRenderer(new ForceDisplayMekTreeRenderer(clientgui, forceTree));
         forceTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         forceTree.setExpandsSelectedPaths(true);
+        ToolTipManager.sharedInstance().registerComponent(forceTree);
     }
 
     /** Refreshes the Mek Tree, restoring expansion state and selection. */
@@ -97,7 +93,9 @@ public class ForceDisplayPanel extends JPanel implements IPreferenceChangeListen
         }
 
         Forces forces = game.getForces();
+        forces.correct();
         List<Integer> expandedForces = new ArrayList<>();
+
         for (int i = 0; i < forceTree.getRowCount(); i++) {
             TreePath currPath = forceTree.getPathForRow(i);
             if (forceTree.isExpanded(currPath)) {

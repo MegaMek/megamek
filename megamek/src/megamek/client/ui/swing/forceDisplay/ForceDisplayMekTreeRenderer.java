@@ -20,14 +20,14 @@ package megamek.client.ui.swing.forceDisplay;
 
 import megamek.MMConstants;
 import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.tooltip.PilotToolTip;
+import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Configuration;
 import megamek.common.Entity;
-import megamek.common.Game;
 import megamek.common.Player;
 import megamek.common.force.Force;
 import megamek.common.icons.Camouflage;
-import megamek.common.options.OptionsConstants;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import org.apache.logging.log4j.LogManager;
@@ -72,10 +72,10 @@ public class ForceDisplayMekTreeRenderer extends DefaultTreeCellRenderer {
             entity = (Entity) value;
             this.row = row; 
             Player owner = entity.getOwner();
-            setText(ForceDisplayMekCellFormatter.formatUnitCompact(entity, clientGUI, true));
+            setText(ForceDisplayMekCellFormatter.formatUnitCompact(entity, clientGUI));
             int size = UIUtil.scaleForGUI(20);
             boolean showAsUnknown = owner.isEnemyOf(localPlayer)
-                    && entity.isHidden();
+                    && !entity.isVisibleToEnemy();
             if (showAsUnknown) {
                 setIcon(getToolkit().getImage(UNKNOWN_UNIT), size - 5);
             } else {
@@ -100,11 +100,10 @@ public class ForceDisplayMekTreeRenderer extends DefaultTreeCellRenderer {
         if (entity == null) {
             return null;
         }
-        //Rectangle r = tree.getRowBounds(row);
-        //if (r != null && event.getPoint().x > r.getWidth() - UIUtil.scaleForGUI(50)) {
-        //    return "<HTML>" + UnitToolTip.getEntityTipLobby(entity, localPlayer, lobby.mapSettings);
-        //}
-        return null;
+
+        String txt = UnitToolTip.getEntityTipUnitDisplay(entity, localPlayer).toString();
+        txt += PilotToolTip.getCrewAdvs(entity, true).toString();
+        return UnitToolTip.wrapWithHTML(txt);
     }
 
     private void setIcon(Image image, int height) {

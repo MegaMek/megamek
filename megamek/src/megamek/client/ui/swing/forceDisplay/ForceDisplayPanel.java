@@ -343,5 +343,7 @@ public class ForceDisplayPanel extends JPanel implements GameListener, IPreferen
         if (e.getName().equals(GUIPreferences.FORCE_DISPLAY_ENABLED)) {
             refreshTree();
         }
+
+        forceTree.setBackground(GUIP.getUnitToolTipBGColor());
     }
 }

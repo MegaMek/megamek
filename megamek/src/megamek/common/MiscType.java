@@ -23,7 +23,6 @@ import megamek.common.weapons.ppc.ISHeavyPPC;
 import megamek.common.weapons.ppc.ISLightPPC;
 import megamek.common.weapons.ppc.ISPPC;
 import megamek.common.weapons.ppc.ISSnubNosePPC;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * @author Ben
@@ -1587,7 +1586,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISCASEII());
         EquipmentType.addType(MiscType.createCLCASEII());
         EquipmentType.addType(MiscType.createISAES());
-        EquipmentType.addType(MiscType.createISModularArmor());
+        EquipmentType.addType(MiscType.createModularArmor());
         EquipmentType.addType(MiscType.createCommsGear());
         EquipmentType.addType(MiscType.createISGroundMobileHPG());
         EquipmentType.addType(MiscType.createISMobileHPG());
@@ -2920,7 +2919,7 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createISModularArmor() {
+    public static MiscType createModularArmor() {
         MiscType misc = new MiscType();
 
         misc.name = "Modular Armor";
@@ -2931,12 +2930,13 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1;
         misc.criticals = 1;
         misc.cost = 100000;
-        misc.flags = misc.flags.or(F_MODULAR_ARMOR).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
+        misc.flags = misc.flags.or(F_MODULAR_ARMOR).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT)
+                .or(F_SUPPORT_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
         misc.bv = BV_VARIABLE;
         misc.damageTaken = 0;
         misc.baseDamageAbsorptionRate = 10;
         misc.baseDamageCapacity = 10;
-        misc.rulesRefs = "281, TO";
+        misc.rulesRefs = "93, TO:AUE";
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_D)
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)

@@ -8379,7 +8379,7 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "228, TM";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL)
                 .setTechRating(RATING_B).setAvailability(RATING_C, RATING_E, RATING_D, RATING_C)
-                .setISAdvancement(DATE_PS, DATE_PS).setStaticTechLevel(SimpleTechLevel.STANDARD);
+                .setAdvancement(DATE_PS, DATE_PS).setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
 

@@ -35,6 +35,7 @@ public class ThumperCannon extends ArtilleryCannonWeapon {
         addLookupName("CLThumper Cannon");
         addLookupName("CLThumperArtilleryCannon");
         addLookupName("CL Thumper Cannon");
+        sortingName = "Cannon Arty Thumper";
         heat = 5;
         rackSize = 5;
         ammoType = AmmoType.T_THUMPER_CANNON;

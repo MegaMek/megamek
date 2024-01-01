@@ -25,6 +25,7 @@ public class ISKinsSlaughterPPC extends PPCWeapon {
         this.name = "Kinslaughter H ER PPC";
         this.setInternalName("ISKinHERPPC");
         this.addLookupName("IS Kinslaughter H ER PPC");
+        sortingName = "PPC ER Kins";
         this.heat = 13;
         this.damage = 10;
         this.shortRange = 4;

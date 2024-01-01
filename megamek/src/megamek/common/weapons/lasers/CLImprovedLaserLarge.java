@@ -28,6 +28,7 @@ public class CLImprovedLaserLarge extends LaserWeapon {
         this.setInternalName(this.name);
         this.addLookupName("Improved Large Laser");
         this.addLookupName("ImpLargeLaser");
+        sortingName = "Laser Imp D";
         this.heat = 8;
         this.damage = 8;
         this.shortRange = 5;

@@ -25,6 +25,7 @@ public class CLERPPC extends PPCWeapon {
         this.name = "ER PPC";
         this.setInternalName("CLERPPC");
         this.addLookupName("Clan ER PPC");
+        sortingName = "PPC ER";
         this.heat = 15;
         this.damage = 15;
         this.shortRange = 7;

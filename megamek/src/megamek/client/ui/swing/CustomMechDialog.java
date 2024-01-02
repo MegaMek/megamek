@@ -1088,7 +1088,7 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
         spinStartingAnySEx = new JSpinner(mStartingAnySEx);
         spinStartingAnySEx.setValue(x);
         y = Math.min(entity.getStartingAnySEy(false) + 1, bh);
-        SpinnerNumberModel mStartingAnySEy = new SpinnerNumberModel(y, -0, bh, 1);
+        SpinnerNumberModel mStartingAnySEy = new SpinnerNumberModel(y, 0, bh, 1);
         spinStartingAnySEy = new JSpinner(mStartingAnySEy);
         spinStartingAnySEy.setValue(y);
 

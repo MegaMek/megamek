@@ -24890,9 +24890,7 @@ public class GameManager implements IGameManager {
             js = (Jumpship) aero;
         }
 
-        // For testing purposes
-        // switch (cs.getIndex()) {
-        switch (Aero.CRIT_CARGO) {
+        switch (cs.getIndex()) {
             case Aero.CRIT_NONE:
                 // no effect
                 r = new Report(6005);
@@ -25637,9 +25635,9 @@ public class GameManager implements IGameManager {
                     // Prompt user, but just randomize bot's bombs to lose.
                     destroyed = (int) percentDestroyed * aero.getMaxIntBombPoints();
                     r = new Report(5605);
-                    r.choose(!aero.getOwner().isBot());
                     r.subject = aero.getId();
                     r.addDesc(aero);
+                    r.choose(!aero.getOwner().isBot());
                     r.add((int) destroyed);
                     reports.add(r);
                     int bombsDestroyed = (int) (aero.getInternalBombsDamageTotal() / destroyed);
@@ -25681,6 +25679,7 @@ public class GameManager implements IGameManager {
     }
 
     private void damageBomb(Mounted bomb) {
+        bomb.setShotsLeft(0);
         bomb.setHit(true);
         if (bomb.getLinked() != null && (bomb.getLinked().getUsableShotsLeft() > 0)) {
             bomb.getLinked().setHit(true);

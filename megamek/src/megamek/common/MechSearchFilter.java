@@ -139,8 +139,6 @@ public class MechSearchFilter {
     public String sEndTons;
     public String sStartBV;
     public String sEndBV;
-    public String sStartCost;
-    public String sEndCost;
     public boolean isDisabled;
     public List<String> engineType = new ArrayList<>();
     public List<String> engineTypeExclude = new ArrayList<>();
@@ -184,7 +182,6 @@ public class MechSearchFilter {
     public int filterInfantry;
     public int filterBattleArmor;
     public int filterTank;
-    public int filterWiGE;
     public int filterVTOL;
     public int filterSupportVTOL;
     public int filterGunEmplacement;
@@ -864,9 +861,6 @@ public class MechSearchFilter {
         if (f.filterSuperHeavyTank == 1) {
             entityTypes = entityTypes | Entity.ETYPE_SUPER_HEAVY_TANK;
         }
-        if (f.filterWiGE == 1) {
-            entityTypes = entityTypes | Entity.ETYPE_WIGE;
-        }
         if (f.iAerospaceFighter == 1) {
             entityTypes = entityTypes | Entity.ETYPE_AEROSPACEFIGHTER;
         }
@@ -951,9 +945,6 @@ public class MechSearchFilter {
         }
         if (f.iAerospaceFighter == 2) {
             entityTypes = entityTypes | Entity.ETYPE_AEROSPACEFIGHTER;
-        }
-        if (f.filterWiGE == 2) {
-            entityTypes = entityTypes | Entity.ETYPE_WIGE;
         }
 
         if (((entityType & entityTypes) > 0) && (entityTypes != 0)) {

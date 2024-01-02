@@ -36,8 +36,23 @@ public interface IBomber {
     String DIVE_BOMB_ATTACK = "DiveBombAttack";
     String ALT_BOMB_ATTACK = "AltBombAttack";
 
+    /**
+     * Set count of internal bombs used; this is used to reset, revert, or increase count
+     * of internal bombs a unit has dropped during a turn.
+     * @param b
+     */
     void setUsedInternalBombs(int b);
+
+    /**
+     * Increase count of internal bombs used this turn.
+     * @param b
+     */
     void increaseUsedInternalBombs(int b);
+
+    /**
+     * @return the number of internal bombs used by this bomber during a turn, for
+     * IBB internal hit calculations.
+     */
     int getUsedInternalBombs();
 
 
@@ -65,9 +80,13 @@ public interface IBomber {
     }
 
     /**
-     * @return The number of each bomb type that was selected prior to deployment
+     * @return The number of each internally-mounted bomb type that was selected prior to deployment
      */
     int[] getIntBombChoices();
+
+    /**
+     * @return The number of each externally-mounted bomb type that was selected prior to deployment
+     */
     int[] getExtBombChoices();
 
     /**
@@ -76,6 +95,11 @@ public interface IBomber {
      * @param bc An array with the count of each bomb type as the value of the bomb type's index
      */
     void setIntBombChoices(int[] bc);
+
+    /**
+     * Sets the bomb type selections for external mounts.
+     * @param bc An array with the count of each bomb type as the value of the bomb type's index
+     */
     void setExtBombChoices(int[] bc);
 
     /**
@@ -89,6 +113,10 @@ public interface IBomber {
         return stream3.toArray();
     }
 
+    /**
+     * Backwards compatibility bomb choice setter that only affects external stores.
+     * @param ebc
+     */
     default void setBombChoices(int[] ebc) {
         setExtBombChoices(ebc);
     }
@@ -154,9 +182,6 @@ public interface IBomber {
             }
         }
 
-        // int total = getBombs().stream().filter(
-        //         b -> b.isInternalBomb()
-        // ).mapToInt(b -> b.getExplosionDamage()).sum();
         return total;
     }
 
@@ -242,6 +267,12 @@ public interface IBomber {
         clearBombChoices();
     }
 
+    /**
+     * Helper to apply equipment-type bombs, either externally or internally.
+     * @param type of bomb equipment.
+     * @param loc location where mounted.
+     * @param internal mounted internally or not.
+     */
     private void applyBombEquipment(int type, int loc, boolean internal){
         try {
             EquipmentType et = EquipmentType.get(BombType.getBombInternalName(type));
@@ -253,6 +284,12 @@ public interface IBomber {
 
     }
 
+    /**
+     * Helper to apply weapon-type bombs, either externally or internally.
+     * @param type of bomb equipment.
+     * @param loc location where mounted.
+     * @param internal mounted internally or not.
+     */
     private void applyBombWeapons(int type, int loc, boolean internal){
         Mounted m;
         try {
@@ -276,7 +313,13 @@ public interface IBomber {
 
     void clearBombs();
 
+    /**
+     * @return maximum number of bomb points this bomber can mount externally
+     */
     int getMaxExtBombPoints();
 
+    /**
+     * @return maximum number of bomb points this bomber can mount internally
+     */
     int getMaxIntBombPoints();
 }

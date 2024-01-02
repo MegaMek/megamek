@@ -711,7 +711,7 @@ public abstract class BVCalculator {
     }
 
     /**
-     * Forwards to {@link #maintainUsedSearchlight(Mounted, boolean, boolean, int)} with a weaponCount
+     * Forwards to {@link #processWeapon(Mounted, boolean, boolean, int)} with a weaponCount
      * parameter of 1 (single weapon).
      */
     protected double processWeapon(Mounted weapon, boolean showInReport,

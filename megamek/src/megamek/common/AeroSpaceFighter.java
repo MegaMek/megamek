@@ -1,16 +1,22 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2024 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
@@ -145,29 +151,17 @@ public class AeroSpaceFighter extends Aero {
         return true;
     }
 
-    /**
-     * Fighters may carry external ordnance;
-     * Other Aerospace units with cargo bays and the Internal Bomb Bay quirk may carry bombs internally.
-     * @return boolean
-     */
     @Override
     public boolean isBomber() {
         return true;
     }
 
     @Override
-    /**
-     * Returns true if this is an aerospace or conventional fighter
-     * but not a larger craft (i.e. "SmallCraft" or "Dropship" and bigger
-     */
     public boolean isFighter() {
         return true;
     }
 
     @Override
-    /**
-     * Returns true if and only if this is an aerospace fighter.
-     */
     public boolean isAerospaceFighter() {
         return true;
     }

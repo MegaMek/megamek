@@ -163,6 +163,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private ColourSelectorButton csbWarningColor;
     private ColourSelectorButton csbCautionColor;
     private ColourSelectorButton csbPrecautionColor;
+    private ColourSelectorButton csbMyUnitColor;
+    private ColourSelectorButton csbAllyUnitColor;
+    private ColourSelectorButton csbEnemyColor;
 
     ArrayList<PlayerColourHelper> playerColours;
 
@@ -1549,6 +1552,20 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         addLineSpacer(comps);
 
         row = new ArrayList<>();
+        csbMyUnitColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.myUnitColor"));
+        csbMyUnitColor.setColour(GUIP.getMyUnitColor());
+        row.add(csbMyUnitColor);
+        csbAllyUnitColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.allyUnitColor"));
+        csbAllyUnitColor.setColour(GUIP.getAllyUnitColor());
+        row.add(csbAllyUnitColor);
+        csbEnemyColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.enemyUnitColor"));
+        csbEnemyColor.setColour(GUIP.getEnemyUnitColor());
+        row.add(csbEnemyColor);
+        comps.add(row);
+
+        addLineSpacer(comps);
+
+        row = new ArrayList<>();
         row.add(getPlayerColourPanel());
         comps.add(row);
 
@@ -1868,6 +1885,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         csbCautionColor.setColour(GUIP.getCautionColor());
         csbPrecautionColor.setColour(GUIP.getPrecautionColor());
 
+        csbMyUnitColor.setColour(GUIP.getMyUnitColor());
+        csbAllyUnitColor.setColour(GUIP.getAllyUnitColor());
+        csbEnemyColor.setColour(GUIP.getEnemyUnitColor());
+
         for (PlayerColourHelper pch : playerColours) {
             pch.csb.setColour(GUIP.getColor(pch.pc.getText()));
         }
@@ -2038,6 +2059,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setWarningColor(csbWarningColor.getColour());
         GUIP.setCautionColor(csbCautionColor.getColour());
         GUIP.setPrecautionColor(csbPrecautionColor.getColour());
+
+        GUIP.setMyUnitColor(csbMyUnitColor.getColour());
+        GUIP.setAllyUnitColor(csbAllyUnitColor.getColour());
+        GUIP.setEnemyUnitColor(csbEnemyColor.getColour());
 
         for (PlayerColourHelper pch : playerColours) {
             GUIP.setColor(pch.pc.getText(), pch.csb.getColour());

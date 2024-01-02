@@ -309,7 +309,7 @@ class ForceDisplayMekCellFormatter {
         int ownerId = game.getForces().getOwnerId(force);
         Player owner = game.getPlayer(ownerId);
         
-        // Get the my / ally / enemy color and desaturate it
+        // Get the my / ally / enemy color
         Color color = GUIP.getEnemyUnitColor();
         if (ownerId == localPlayer.getId()) {
             color = GUIP.getMyUnitColor();
@@ -340,9 +340,6 @@ class ForceDisplayMekCellFormatter {
         // Display force owner
         if ((ownerId != client.getLocalPlayerNumber()) && (owner != null)) {
             result.append(DOT_SPACER);
-            
-            PlayerColour ownerColour = (owner.getColour() == null) ?
-                    PlayerColour.FIRE_BRICK : owner.getColour();
             String oName = "\u2691 " + owner.getName();
             result.append(guiScaledFontHTML(color, size) + oName + "</FONT>");
         }

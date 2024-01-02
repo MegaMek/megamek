@@ -1078,15 +1078,19 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
         int x = Math.min(entity.getStartingAnyNWx(false) + 1, bw);
         SpinnerNumberModel mStartingAnyNWx = new SpinnerNumberModel(x, 0,bw, 1);
         spinStartingAnyNWx = new JSpinner(mStartingAnyNWx);
+        spinStartingAnyNWx.setValue(x);
         int y = Math.min(entity.getStartingAnyNWy(false) + 1, bh);
         SpinnerNumberModel mStartingAnyNWy = new SpinnerNumberModel(y, 0, bh, 1);
         spinStartingAnyNWy = new JSpinner(mStartingAnyNWy);
+        spinStartingAnyNWy.setValue(y);
         x = Math.min(entity.getStartingAnySEx(false) + 1, bw);
         SpinnerNumberModel mStartingAnySEx = new SpinnerNumberModel(x, 0, bw, 1);
         spinStartingAnySEx = new JSpinner(mStartingAnySEx);
+        spinStartingAnySEx.setValue(x);
         y = Math.min(entity.getStartingAnySEy(false) + 1, bh);
         SpinnerNumberModel mStartingAnySEy = new SpinnerNumberModel(y, -0, bh, 1);
         spinStartingAnySEy = new JSpinner(mStartingAnySEy);
+        spinStartingAnySEy.setValue(y);
 
         for (Entity e : entities) {
             // TODO : This check is good for now, but at some point we want atmospheric flying
@@ -1241,14 +1245,10 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
         panDeploy.add(txtDeploymentWidth, GBC.eol());
 
         panDeploy.add(new JLabel(Messages.getString("CustomMechDialog.labDeploymentAnyNW")), GBC.std());
-        spinStartingAnyNWx.setValue(x);
         panDeploy.add(spinStartingAnyNWx, GBC.std());
-        spinStartingAnyNWy.setValue(y);
         panDeploy.add(spinStartingAnyNWy, GBC.eol());
         panDeploy.add(new JLabel(Messages.getString("CustomMechDialog.labDeploymentAnySE")), GBC.std());
-        spinStartingAnySEx.setValue(x);
         panDeploy.add(spinStartingAnySEx, GBC.std());
-        spinStartingAnySEy.setValue(y);
         panDeploy.add(spinStartingAnySEy, GBC.eol());
 
         numFormatter.setMinimum(0);

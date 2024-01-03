@@ -22,7 +22,10 @@ import megamek.common.options.OptionsConstants;
  */
 public class SpaceStation extends Jumpship {
     private static final long serialVersionUID = -3160156173650960985L;
-    
+
+    /** A station over this weight in may built as a modular station. */
+    public static final double MODULAR_MININUM_WEIGHT = 100000.0;
+
     // This only affects cost, but may have an effect in a large-scale strategic setting.
     private boolean modularOrKFAdapter = false;
     
@@ -92,11 +95,11 @@ public class SpaceStation extends Jumpship {
     }
 
     public boolean isModular() {
-        return modularOrKFAdapter && getWeight() > 100000;
+        return modularOrKFAdapter && getWeight() > MODULAR_MININUM_WEIGHT;
     }
 
     public boolean hasKFAdapter() {
-        return modularOrKFAdapter && getWeight() <= 100000;
+        return modularOrKFAdapter && getWeight() <= MODULAR_MININUM_WEIGHT;
     }
 
     @Override

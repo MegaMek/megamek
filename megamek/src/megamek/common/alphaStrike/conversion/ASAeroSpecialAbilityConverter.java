@@ -66,8 +66,8 @@ public class ASAeroSpecialAbilityConverter extends ASSpecialAbilityConverter {
             assign("Fighter Bombs", BOMB, element.getSize());
         }
 
-        if (aero.isVSTOL()) {
-            assign("VSTOL gear or capable", VSTOL);
+        if (aero.isVSTOL() || aero.isSTOL() || element.isType(AF)) {
+            assign("VSTOL or STOL gear or capable", VSTOL);
         }
         
         if (element.isType(AF)) {

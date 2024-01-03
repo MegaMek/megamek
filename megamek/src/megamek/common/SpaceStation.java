@@ -24,7 +24,7 @@ public class SpaceStation extends Jumpship {
     private static final long serialVersionUID = -3160156173650960985L;
     
     // This only affects cost, but may have an effect in a large-scale strategic setting.
-    private boolean modular = false;
+    private boolean modularOrKFAdapter = false;
     
     @Override
     public int getUnitType() {
@@ -52,7 +52,7 @@ public class SpaceStation extends Jumpship {
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
-        return modular? TA_SPACE_STATION_MODULAR : TA_SPACE_STATION;
+        return modularOrKFAdapter ? TA_SPACE_STATION_MODULAR : TA_SPACE_STATION;
     }
     
     public static TechAdvancement getModularTA() {
@@ -61,17 +61,22 @@ public class SpaceStation extends Jumpship {
     
     /**
      * Designates whether this is a modular space station
-     * @param modular
+     * @param modularOrKFAdapter Whether the space station can be transported by jumpship.
      */
-    public void setModular(boolean modular) {
-        this.modular = modular;
+    public void setModularOrKFAdapter(boolean modularOrKFAdapter) {
+        this.modularOrKFAdapter = modularOrKFAdapter;
     }
     
     /**
-     * @return True if this space station has a modular construction, otherwise false.
+     * @return True if this space station has a modular construction (or has a KF adapter for stations less than 100kt,
+     *         otherwise false.
      */
+    public boolean isModularOrKFAdapter() {
+        return modularOrKFAdapter;
+    }
+
     public boolean isModular() {
-        return modular;
+        return modularOrKFAdapter && getWeight() > 100000;
     }
 
     @Override
@@ -81,7 +86,13 @@ public class SpaceStation extends Jumpship {
 
     @Override
     public double getPriceMultiplier() {
-        return modular ? 50.0 : 5.0;
+        if (isModular()) {
+            return 50.0;
+        } else if (modularOrKFAdapter) {
+            return 20.0;
+        } else {
+            return 5.0;
+        }
     }
 
     /**

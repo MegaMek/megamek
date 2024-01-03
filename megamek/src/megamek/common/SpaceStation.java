@@ -43,6 +43,14 @@ public class SpaceStation extends Jumpship {
             .setAvailability(RATING_C, RATING_D, RATING_C, RATING_C)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
+    private static final TechAdvancement TA_SPACE_STATION_KF_ADAPTER = new TechAdvancement(TECH_BASE_ALL)
+            .setISAdvancement(2350, 2375, DATE_NONE, 2850, 3048).setClanAdvancement(2350, 2375)
+            .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+            // The adapter itself is tech rating C, but this is the base for a station with an adapter.
+            .setReintroductionFactions(F_FS).setTechRating(RATING_D)
+            .setAvailability(RATING_D, RATING_F, RATING_D, RATING_D)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+
     private static final TechAdvancement TA_SPACE_STATION_MODULAR = new TechAdvancement(TECH_BASE_ALL)
             .setISAdvancement(2565, 2585, DATE_NONE, 2790, 3090).setClanAdvancement(2565, 2585)
             .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
@@ -52,13 +60,21 @@ public class SpaceStation extends Jumpship {
 
     @Override
     public TechAdvancement getConstructionTechAdvancement() {
-        return modularOrKFAdapter ? TA_SPACE_STATION_MODULAR : TA_SPACE_STATION;
+        if (isModular()) {
+            return TA_SPACE_STATION_MODULAR;
+        } else if (hasKFAdapter()) {
+            return TA_SPACE_STATION_KF_ADAPTER;
+        } else {
+            return TA_SPACE_STATION;
+        }
     }
-    
+
+    public static TechAdvancement getKFAdapterTA() { return TA_SPACE_STATION_KF_ADAPTER; }
+
     public static TechAdvancement getModularTA() {
         return TA_SPACE_STATION_MODULAR;
     }
-    
+
     /**
      * Designates whether this is a modular space station
      * @param modularOrKFAdapter Whether the space station can be transported by jumpship.
@@ -79,6 +95,10 @@ public class SpaceStation extends Jumpship {
         return modularOrKFAdapter && getWeight() > 100000;
     }
 
+    public boolean hasKFAdapter() {
+        return modularOrKFAdapter && getWeight() <= 100000;
+    }
+
     @Override
     public double getCost(CalculationReport calcReport, boolean ignoreAmmo) {
         return SpaceStationCostCalculator.calculateCost(this, calcReport, ignoreAmmo);
@@ -88,7 +108,7 @@ public class SpaceStation extends Jumpship {
     public double getPriceMultiplier() {
         if (isModular()) {
             return 50.0;
-        } else if (modularOrKFAdapter) {
+        } else if (hasKFAdapter()) {
             return 20.0;
         } else {
             return 5.0;

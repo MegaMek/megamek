@@ -1,6 +1,11 @@
 MEGAMEK VERSION HISTORY:
 ----------------
 0.49.18-SNAPSHOT
++ Fix #5004: Prevents an error when configuring LAMs or quadvees in the lobby
++ PR #5002, #5001: AS conversion: fix BA medium and long range damage with SSW, STOL units and aerodyne DS/SC now receive VSTOL
++ PR #4993: Alpha Strike aero support vehicles (fixced wing support) will now find and display their fluff images if there are any
++ Fix #4998: ZIP files in the user directory will no longer generate errors when they contain files other than unit files
++ PR #5003: Implements the Internal Bomb Bay quirk
 
 0.49.17 (2023-12-31 1900 UTC)
 + Fix #1031: Show structure collapse warning when deploying and moving.

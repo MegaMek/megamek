@@ -210,8 +210,6 @@ public class FluffImageHelper {
                 return DIR_NAME_SPACESTATION;
             case JS:
                 return DIR_NAME_JUMPSHIP;
-            case CF:
-                return DIR_NAME_CONVFIGHTER;
             case DS:
             case DA:
                 return DIR_NAME_DROPSHIP;
@@ -228,6 +226,8 @@ public class FluffImageHelper {
                 if (!element.hasMovementMode("a")) {
                     return DIR_NAME_VEHICLE;
                 } // intentional fall through
+            case CF:
+                return DIR_NAME_CONVFIGHTER;
             case AF:
                 return DIR_NAME_FIGHTER;
             default:

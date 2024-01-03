@@ -449,8 +449,14 @@ public class ArtilleryTargetingControl {
 
             if ((aaa.getTurnsTilHit() == 0) && (aaa.getTarget(operator.getGame()) != null)) {
                 // damage for artillery weapons is, for some reason, derived from the weapon type's rack size
+                int damage = 0;
                 Mounted weapon = aaa.getEntity(operator.getGame()).getEquipment(aaa.getWeaponId());
-                int damage = ((WeaponType) weapon.getType()).getRackSize();
+                if (weapon.getType() instanceof BombType){
+                    damage = (weapon.getExplosionDamage());
+                } else {
+                    damage = ((WeaponType) weapon.getType()).getRackSize();
+                }
+
 
                 // distance from given coordinates reduces damage
                 Coords attackDestination = aaa.getTarget(operator.getGame()).getPosition();

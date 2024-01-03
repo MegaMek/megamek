@@ -16,6 +16,7 @@ package megamek.common.verifier;
 
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.options.OptionsConstants;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.capitalweapons.ScreenLauncherWeapon;
@@ -246,7 +247,7 @@ public class TestAero extends TestEntity {
             return TestSmallCraft.maxArmorPoints((SmallCraft) aero);
         } else if (aero.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
                 return (int) (tonnage * 1);
-        } else if (eType == Entity.ETYPE_AERO) {
+        } else if (aero.hasETypeFlag(Entity.ETYPE_AERO)) {
             return (int) (tonnage * 8);
         } else {
             return 0;
@@ -1098,6 +1099,19 @@ public class TestAero extends TestEntity {
                 + printWeightArmor() + printWeightMisc()
                 + printWeightCarryingSpace() + "Equipment:\n"
                 + printMiscEquip() + printWeapon() + printAmmo();
+    }
+
+    @Override
+    public double getWeightMiscEquip() {
+        double weightSum = super.getWeightMiscEquip();
+        for (Mounted m : getEntity().getMisc()) {
+            MiscType mt = (MiscType) m.getType();
+            if (mt.hasFlag(MiscType.F_CARGO) && aero.hasQuirk(OptionsConstants.QUIRK_POS_INTERNAL_BOMB)){
+                // This equipment will get counted as a cargo bay later, for IBB compatibility.
+                weightSum -= m.getTonnage();
+            }
+        }
+        return weightSum;
     }
 
     @Override

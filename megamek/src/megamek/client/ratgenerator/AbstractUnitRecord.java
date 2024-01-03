@@ -135,6 +135,8 @@ public class AbstractUnitRecord {
                 return UnitType.GUN_EMPLACEMENT;
             case "Conventional Fighter":
                 return UnitType.CONV_FIGHTER;
+            case "AeroSpaceFighter":
+                return UnitType.AEROSPACEFIGHTER;
             case "Aero":
                 return UnitType.AERO;
             case "Small Craft":

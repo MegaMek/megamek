@@ -52,8 +52,8 @@ public class VTOL extends Tank implements IBomber {
         // need to set elevation to something different than entity
         elevation = 1;
     }
-    
-    
+
+
     @Override
     public int getUnitType() {
         return UnitType.VTOL;
@@ -73,13 +73,15 @@ public class VTOL extends Tank implements IBomber {
     public int getLocTurret() {
         return LOC_TURRET;
     }
-    
+
     @Override
     public int getLocTurret2() {
         return LOC_TURRET_2;
     }
 
-    private int[] bombChoices = new int[BombType.B_NUM];
+    protected int[] intBombChoices = new int[BombType.B_NUM];
+    protected int[] extBombChoices = new int[BombType.B_NUM];
+
     private Targetable bombTarget = null;
     private List<Coords> strafingCoords = new ArrayList<>();
 
@@ -240,38 +242,57 @@ public class VTOL extends Tank implements IBomber {
     public boolean doomedInAtmosphere() {
         return true;
     }
-    
+
     @Override
     public boolean isBomber() {
         return (game != null)
-                && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VTOL_ATTACKS);
+                && (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VTOL_ATTACKS));
     }
-    
+
     @Override
     public int availableBombLocation(int cost) {
         return LOC_FRONT;
     }
-    
+
     @Override
-    public int getMaxBombPoints() {
+    public int getMaxExtBombPoints() {
         return (int) Math.round(getWeight() / 5);
     }
+    @Override
+    public int getMaxIntBombPoints() {
+        return 0;
+    }
+
 
     @Override
-    public int[] getBombChoices() {
-        return bombChoices.clone();
+    public int getMaxBombPoints() {
+        return getMaxExtBombPoints();
     }
 
     @Override
-    public void setBombChoices(int... bc) {
-        if (bc.length == bombChoices.length) {
-            bombChoices = bc;
+    public int[] getIntBombChoices() {
+        return intBombChoices.clone();
+    }
+
+    @Override
+    public void setIntBombChoices(int[] bc) {
+    }
+
+    @Override
+    public int[] getExtBombChoices() {
+        return extBombChoices.clone();
+    }
+
+    @Override
+    public void setExtBombChoices(int[] bc) {
+        if (bc.length == extBombChoices.length) {
+            extBombChoices = bc;
         }
     }
-    
+
     @Override
     public void clearBombChoices() {
-        Arrays.fill(bombChoices, 0);
+        Arrays.fill(extBombChoices, 0);
     }
 
     @Override
@@ -281,15 +302,31 @@ public class VTOL extends Tank implements IBomber {
     }
 
     @Override
+    public void setUsedInternalBombs(int b){
+        // Do nothing
+    }
+
+    @Override
+    public void increaseUsedInternalBombs(int b){
+        // Do nothing
+    }
+
+    @Override
+    public int getUsedInternalBombs() {
+        // Currently not possible
+        return 0;
+    }
+
+    @Override
     public Targetable getVTOLBombTarget() {
         return bombTarget;
     }
-    
+
     @Override
     public void setVTOLBombTarget(Targetable t) {
         bombTarget = t;
     }
-    
+
     public List<Coords> getStrafingCoords() {
         return strafingCoords;
     }
@@ -565,7 +602,7 @@ public class VTOL extends Tank implements IBomber {
     @Override
     public void newRound(int roundNumber) {
         super.newRound(roundNumber);
-        
+
         bombTarget = null;
         strafingCoords.clear();
     }

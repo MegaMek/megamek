@@ -1071,13 +1071,13 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         filterAerospaceFighterPanel.add(btnFilterAerospaceFighter);
         filterAerospaceFighterPanel.add(lblFilterAerospaceFighter);
         unitTypePanel.add(filterAerospaceFighterPanel, c);
-
-        c.gridy++;
-        c.gridx = 1;
+        c.gridx = 2;
         JPanel filterConvFighterPanel = new JPanel();
         filterConvFighterPanel.add(btnFilterConvFighter);
         filterConvFighterPanel.add(lblFilterConvFighter);
         unitTypePanel.add(filterConvFighterPanel, c);
+
+        c.gridy++;
         c.gridx = 2;
         JPanel filterFixedWingSupportPanel = new JPanel();
         filterFixedWingSupportPanel.add(btnFilterFixedWingSupport);
@@ -2450,7 +2450,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
             if (row >= weaponClasses.size()) {
                 return null;
             }
-            
+
             switch (col) {
                 case COL_QTY:
                     return qty[row] + "";
@@ -2976,7 +2976,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
             if (this == PHYSICAL) {
                 String lName = name.toLowerCase();
 
-                if (lName.contains("backhoe") || 
+                if (lName.contains("backhoe") ||
                     lName.contains("saw") ||
                     lName.contains("whip") ||
                     lName.contains("claw") ||
@@ -3013,12 +3013,12 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
                 }
             } else if (this == MISSILE) {
                 if ((name.toLowerCase().contains("lrm") ||
-                    name.toLowerCase().contains("mrm") || 
-                    name.toLowerCase().contains("srm")) && 
+                    name.toLowerCase().contains("mrm") ||
+                    name.toLowerCase().contains("srm")) &&
                     !name.toLowerCase().contains("ammo")) {
                     return true;
                 }
-            } else if (this == RE_ENGINEERED) { 
+            } else if (this == RE_ENGINEERED) {
                 if (name.toLowerCase().contains("engineered")) {
                     return true;
                 }
@@ -3031,9 +3031,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
                     return true;
                 }
             } else if (this == BALLISTIC) {
-                return WeaponClass.AUTOCANNON.matches(name) || 
-                    WeaponClass.GAUSS.matches(name) || 
-                    WeaponClass.MISSILE.matches(name) || 
+                return WeaponClass.AUTOCANNON.matches(name) ||
+                    WeaponClass.GAUSS.matches(name) ||
+                    WeaponClass.MISSILE.matches(name) ||
                     WeaponClass.MACHINE_GUN.matches(name);
             } else if (this == RAC) {
                 if (name.toLowerCase().contains("rotary")) {

@@ -51,7 +51,7 @@ public class RATGeneratorEditor extends JFrame {
     private static final FactionRecord GENERAL_FACTION = new FactionRecord("General", "General");
 
     private static RATGenerator rg;
-    
+
     private static Integer[] ERAS;
 
     private final JComboBox<String> cbUnitType = new JComboBox<>();
@@ -699,7 +699,7 @@ public class RATGeneratorEditor extends JFrame {
                         return data.get(row).getModel() + "[C]";
                     } else if (data.get(row).isSL()) {
                         return data.get(row).getModel() + "[*]";
-                    } 
+                    }
                     return data.get(row).getModel();
                 case COL_UNIT_TYPE:
                     if (data.get(row).getMechSummary() == null) {
@@ -713,13 +713,13 @@ public class RATGeneratorEditor extends JFrame {
                         System.err.println("Could not find mechsummary for " + data.get(row).getKey());
                     }
                     return data.get(row).getMechSummary().getYear();
-                    
+
                 case COL_EXTINCT_RANGE:
                     if (data.get(row).getMechSummary() == null) {
                         System.err.println("Could not find mechsummary for " + data.get(row).getKey());
                     }
                     return data.get(row).getMechSummary().getExtinctRange();
-                	
+
                 case COL_ROLE:
                     return data.get(row).getRoles().stream().map(Object::toString).collect(Collectors.joining(","));
                 case COL_CANON_ROLE:
@@ -746,7 +746,7 @@ public class RATGeneratorEditor extends JFrame {
                 if (!((String) val).isBlank()) {
                     for (String unit : ((String) val).split(",")) {
                         if (unit.startsWith("req:")) {
-                            data.get(row).getRequiredUnits().add(unit);             
+                            data.get(row).getRequiredUnits().add(unit);
                         } else {
                             data.get(row).getDeployedWith().add(unit);
                         }
@@ -867,7 +867,7 @@ public class RATGeneratorEditor extends JFrame {
                 return factions.get(row);
             } else {
                 return data.get(factions.get(row)).get(col - 1);
-            } 
+            }
         }
 
         @Override
@@ -894,13 +894,13 @@ public class RATGeneratorEditor extends JFrame {
             data.get(factions.get(row)).set(col - 1, stringValue);
             if (rg.getChassisRecord(getUnitKey()) != null) {
                 if (ar == null) {
-                    rg.removeChassisFactionRating(era, getUnitKey(), factions.get(row));                
+                    rg.removeChassisFactionRating(era, getUnitKey(), factions.get(row));
                 } else {
                     rg.setChassisFactionRating(era, getUnitKey(), ar);
                 }
             } else {
                 if (ar == null) {
-                    rg.removeModelFactionRating(era, getUnitKey(), factions.get(row));               
+                    rg.removeModelFactionRating(era, getUnitKey(), factions.get(row));
                 } else {
                     rg.setModelFactionRating(era, getUnitKey(), ar);
                 }
@@ -961,9 +961,9 @@ public class RATGeneratorEditor extends JFrame {
         public void removeEntry(int row) {
             for (int era : ERAS) {
                 if (mode == MODE_CHASSIS) {
-                    rg.removeChassisFactionRating(era, getUnitKey(), factions.get(row));                
+                    rg.removeChassisFactionRating(era, getUnitKey(), factions.get(row));
                 } else {
-                    rg.removeModelFactionRating(era, getUnitKey(), factions.get(row));                               
+                    rg.removeModelFactionRating(era, getUnitKey(), factions.get(row));
                 }
             }
             data.remove(factions.get(row));
@@ -982,7 +982,7 @@ public class RATGeneratorEditor extends JFrame {
             List<String> copyTo = new ArrayList<>();
             for (int i = 0; i < ERAS.length; i++) {
                 copyTo.add(copyFrom.get(i));
-            }       
+            }
             data.put(newFaction, copyTo);
             for (int i = 0; i < ERAS.length; i++) {
                 if (!copyFrom.get(i).isBlank()) {
@@ -1082,30 +1082,30 @@ public class RATGeneratorEditor extends JFrame {
         public static final int COL_RATINGS = 6;
         public static final int COL_USE_ALT_FACTION = 7;
         public static final int NUM_COLS = 8;
-        
+
         public final String[] colNames = {"Code", "Name", "Years", "Minor", "Clan",
             "Periphery", "Ratings", "Use Alt"};
-        
+
         private final ArrayList<FactionRecord> data;
-        
+
         public FactionListTableModel(Collection<FactionRecord> factionList) {
             data = new ArrayList<>();
             data.addAll(factionList);
             fillFactionChoosers();
         }
-        
+
         public void addRecord(FactionRecord rec) {
             data.add(rec);
             fireTableDataChanged();
             fillFactionChoosers();
         }
-        
+
         public void delRecord(FactionRecord rec) {
             data.remove(rec);
             fireTableDataChanged();
             fillFactionChoosers();
         }
-        
+
         @Override
         public String getColumnName(int column) {
             return colNames[column];
@@ -1115,7 +1115,7 @@ public class RATGeneratorEditor extends JFrame {
         public int getColumnCount() {
             return NUM_COLS;
         }
-        
+
         @Override
         public int getRowCount() {
             if (data == null) {
@@ -1123,12 +1123,12 @@ public class RATGeneratorEditor extends JFrame {
             }
             return data.size();
         }
-        
+
         @Override
         public boolean isCellEditable(int row, int col) {
             return col > COL_CODE;
         }
-        
+
         @Override
         public Class<?> getColumnClass(int col) {
             if (col == COL_MINOR || col == COL_CLAN || col == COL_PERIPHERY) {
@@ -1136,7 +1136,7 @@ public class RATGeneratorEditor extends JFrame {
             }
             return String.class;
         }
-        
+
         @Override
         public Object getValueAt(int row, int col) {
             switch (col) {
@@ -1160,7 +1160,7 @@ public class RATGeneratorEditor extends JFrame {
                     return "?";
             }
         }
-        
+
         @Override
         public void setValueAt(Object val, int row, int col) {
             switch (col) {
@@ -1190,13 +1190,13 @@ public class RATGeneratorEditor extends JFrame {
                     data.get(row).setParentFactions((String) val);
             }
         }
-        
+
         public FactionRecord getFactionRecord(int row) {
             return data.get(row);
         }
-        
+
     }
-    
+
     private static class FactionEditorTableModel extends DefaultTableModel {
         private static final int CAT_OMNI_PCT = 0;
         private static final int CAT_CLAN_PCT = 1;
@@ -1212,13 +1212,13 @@ public class RATGeneratorEditor extends JFrame {
             "Omni % (Aero)", "Clan % (Aero)", "SL % (Aero)",
             "Clan % (Vee)", "SL % (Vee)"
         };
-        
+
         private static final int[] WEIGHT_DIST_UNIT_TYPES = {
-                UnitType.MEK, UnitType.TANK, UnitType.AERO
+                UnitType.MEK, UnitType.TANK, UnitType.AEROSPACEFIGHTER, UnitType.AERO
         };
-        
+
         private FactionRecord factionRec;
-        
+
         public FactionEditorTableModel(FactionRecord rec) {
             factionRec = rec;
         }
@@ -1226,12 +1226,12 @@ public class RATGeneratorEditor extends JFrame {
         public void clearData() {
             setData(null);
         }
-        
+
         public void setData(FactionRecord rec) {
             factionRec = rec;
             fireTableDataChanged();
         }
-        
+
         @Override
         public String getColumnName(int column) {
             if (column == 0) {
@@ -1245,7 +1245,7 @@ public class RATGeneratorEditor extends JFrame {
         public int getColumnCount() {
             return ERAS.length + 1;
         }
-        
+
         @Override
         public int getRowCount() {
             if (factionRec == null) {
@@ -1254,17 +1254,17 @@ public class RATGeneratorEditor extends JFrame {
             return 1 + CATEGORIES.length * factionRec.getRatingLevels().size()
                     + WEIGHT_DIST_UNIT_TYPES.length;
         }
-        
+
         @Override
         public boolean isCellEditable(int row, int col) {
             return factionRec != null && col > 0;
         }
-        
+
         @Override
         public Class<?> getColumnClass(int col) {
             return String.class;
         }
-        
+
         @Override
         public Object getValueAt(int row, int col) {
             if (factionRec == null) {
@@ -1281,7 +1281,7 @@ public class RATGeneratorEditor extends JFrame {
                 }
             }
             int era = ERAS[col - 1];
-            
+
             if (row == 0) {
                 Integer pct = factionRec.getPctSalvage(era);
                 return (pct == null) ? "" : pct.toString();
@@ -1311,7 +1311,7 @@ public class RATGeneratorEditor extends JFrame {
                     return "?";
             }
         }
-        
+
         @Override
         public void setValueAt(Object val, int row, int col) {
             int era = ERAS[col - 1];
@@ -1366,14 +1366,14 @@ public class RATGeneratorEditor extends JFrame {
                 }
             }
         }
-        
+
     }
 
     private static class SalvageEditorTableModel extends DefaultTableModel {
         ArrayList<String> factions;
         HashMap<String, ArrayList<String>> data;
         private FactionRecord factionRec;
-        
+
         public SalvageEditorTableModel() {
             factions = new ArrayList<>();
             data = new HashMap<>();
@@ -1417,7 +1417,7 @@ public class RATGeneratorEditor extends JFrame {
             }
             return ERAS[col - 1] + " (" + getEra(ERAS[col - 1]) + ")";
         }
-        
+
         @Override
         public int getColumnCount() {
             if (data == null) {
@@ -1425,7 +1425,7 @@ public class RATGeneratorEditor extends JFrame {
             }
             return ERAS.length + 1;
         }
-        
+
         @Override
         public int getRowCount() {
             if (data == null) {
@@ -1433,26 +1433,26 @@ public class RATGeneratorEditor extends JFrame {
             }
             return data.size();
         }
-        
+
         @Override
         public Class<?> getColumnClass(int col) {
             return String.class;
         }
-        
+
         @Override
         public Object getValueAt(int row, int col) {
             if (col == 0) {
                 return factions.get(row);
             } else {
                 return data.get(factions.get(row)).get(col - 1);
-            } 
+            }
         }
-        
+
         @Override
         public boolean isCellEditable(int row, int col) {
             return col > 0;
         }
-        
+
         @Override
         public void setValueAt(Object value, int row, int col) {
             Integer wt;
@@ -1471,7 +1471,7 @@ public class RATGeneratorEditor extends JFrame {
                 factionRec.setSalvage(era, factions.get(row), wt);
             }
         }
-        
+
         public void addEntry(String faction) {
             factions.add(faction);
             ArrayList<String> list = new ArrayList<>();
@@ -1481,7 +1481,7 @@ public class RATGeneratorEditor extends JFrame {
             data.put(faction, list);
             fireTableDataChanged();
         }
-        
+
         public void removeEntry(int row) {
             for (int era : ERAS) {
                 factionRec.removeSalvage(era, factions.get(row));
@@ -1490,14 +1490,14 @@ public class RATGeneratorEditor extends JFrame {
             factions.remove(row);
             fireTableDataChanged();
         }
-        
+
         public void copyRow(int row, String newFaction) {
             ArrayList<String> copyFrom = data.get(factions.get(row));
             factions.add(newFaction);
             ArrayList<String> copyTo = new ArrayList<>();
             for (int i = 0; i < ERAS.length; i++) {
                 copyTo.add(copyFrom.get(i));
-            }       
+            }
             data.put(newFaction, copyTo);
             for (int i = 0; i < ERAS.length; i++) {
                 if (!copyFrom.get(i).isBlank()) {

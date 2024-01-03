@@ -1880,7 +1880,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      * Allow the player to select a MegaMek Unit List file to load. The
      * <code>Entity</code>s in the file will replace any that the player has
      * already selected. As such, this method should only be called in the chat
-     * lounge. The file can record damage sustained, non- standard munitions
+     * lounge. The file can record damage sustained, non-standard munitions
      * selected, and ammunition expended in a prior engagement.
      *
      * @param player
@@ -1945,7 +1945,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                             // the movement turn are considered selectable
                             entity.setDone(true);
                             entity.setUnloaded(true);
-                            if (entity instanceof IBomber) {
+                            if (entity instanceof IBomber && (client.getGame().getPhase() != GamePhase.LOUNGE)) {
+                                // Only apply bombs when we're going straight into the game; doing this in the lounge
+                                // breaks the bombs completely.
                                 ((IBomber) entity).applyBombs();
                             }
                         }

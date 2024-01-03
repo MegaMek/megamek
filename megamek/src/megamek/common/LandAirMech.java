@@ -125,7 +125,11 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     //Autoejection
     private boolean critThresh = false;
 
-    private int[] bombChoices = new int[BombType.B_NUM];
+    // Bomb choices
+
+    protected int[] intBombChoices = new int[BombType.B_NUM];
+    protected int[] extBombChoices = new int[BombType.B_NUM];
+
     private Targetable airmechBombTarget = null;
 
     private int fuel;
@@ -1083,31 +1087,68 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         return whoFirst;
     }
 
-    @Override
     public int getMaxBombPoints() {
-        return countWorkingMisc(MiscType.F_BOMB_BAY);
+        return getMaxExtBombPoints() + getMaxIntBombPoints();
     }
 
     @Override
-    public int getMaxBombSize() {
+    public int getMaxExtBombPoints() {
+        return 0;
+    }
+    @Override
+    public int getMaxIntBombPoints() {
+        return countWorkingMisc(MiscType.F_BOMB_BAY);
+    }
+
+    /**
+     *
+     * @return Largest empty bay size
+     */
+    @Override
+    public int getMaxIntBombSize() {
         return Math.max(emptyBaysInLoc(LOC_CT), Math.max(emptyBaysInLoc(LOC_RT), emptyBaysInLoc(LOC_LT)));
     }
 
     @Override
-    public int[] getBombChoices() {
-        return bombChoices.clone();
+    public int[] getIntBombChoices() {
+        return intBombChoices.clone();
     }
 
     @Override
-    public void setBombChoices(int[] bc) {
-        if (bc.length == bombChoices.length) {
-            bombChoices = bc;
+    public void setIntBombChoices(int[] bc) {
+        if (bc.length == intBombChoices.length) {
+            intBombChoices = bc.clone();
         }
     }
 
     @Override
+    public void setUsedInternalBombs(int b){
+        // Do nothing; LAMs don't take internal bomb bay hits like this
+    }
+
+    @Override
+    public void increaseUsedInternalBombs(int b){
+        // Do nothing
+    }
+
+    @Override
+    public int getUsedInternalBombs() {
+        // Currently not possible
+        return 0;
+    }
+
+    @Override
+    public int[] getExtBombChoices() {
+        return extBombChoices;
+    }
+
+    @Override
+    public void setExtBombChoices(int[] bc) {
+    }
+
+    @Override
     public void clearBombChoices() {
-        Arrays.fill(bombChoices, 0);
+        Arrays.fill(intBombChoices, 0);
     }
 
     @Override

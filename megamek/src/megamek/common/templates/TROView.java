@@ -404,6 +404,7 @@ public class TROView {
         final int structure = entity.getStructureType();
         final Map<String, Map<EquipmentKey, Integer>> equipment = new HashMap<>();
         int nameWidth = 20;
+        EquipmentKey eqk;
         for (final Mounted m : entity.getEquipment()) {
             if (skipMount(m, includeAmmo)) {
                 continue;
@@ -422,8 +423,8 @@ public class TROView {
             if (m.isOmniPodMounted() || !entity.isOmni()) {
                 final String loc = formatLocationTableEntry(entity, m);
                 equipment.putIfAbsent(loc, new HashMap<>());
-                equipment.get(loc).merge(new EquipmentKey(m.getType(), m.getSize(), m.isArmored()),
-                        1, Integer::sum);
+                eqk = new EquipmentKey(m.getType(), m.getSize(), m.isArmored(), m.isInternalBomb());
+                equipment.get(loc).merge(eqk,1, Integer::sum);
             }
         }
         final List<Map<String, Object>> eqList = new ArrayList<>();
@@ -434,6 +435,9 @@ public class TROView {
                 String name = stripNotes(entry.getKey().name());
                 if (entry.getKey().isArmored()) {
                     name += " (Armored)";
+                }
+                if (entry.getKey().internalBomb) {
+                    name += " (Int. Bay)";
                 }
                 if (eq instanceof AmmoType) {
                     name = String.format("%s (%d)", name, ((AmmoType) eq).getShots() * count);
@@ -782,15 +786,17 @@ public class TROView {
         private final EquipmentType etype;
         private final double size;
         private final boolean armored;
+        private final boolean internalBomb;
 
         EquipmentKey(EquipmentType etype, double size) {
-            this(etype, size, false);
+            this(etype, size, false, false);
         }
 
-        EquipmentKey(EquipmentType etype, double size, boolean armored) {
+        EquipmentKey(EquipmentType etype, double size, boolean armored, boolean internal) {
             this.etype = etype;
             this.size = size;
             this.armored = armored;
+            this.internalBomb = internal;
         }
 
         String name() {

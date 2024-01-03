@@ -787,10 +787,6 @@ public class MechSearchFilter {
 
         long entityType = mech.getEntityType();
 
-        if (mech.isAerospaceFighter()) {
-            entityType = entityType | Entity.ETYPE_AEROSPACEFIGHTER;
-        }
-
         long entityTypes = 0;
 
         if (f.filterMech == 1) {
@@ -1037,10 +1033,10 @@ public class MechSearchFilter {
                     } else if (currEq.equals(n.name) && n.qty == 0) {
                         return false;
                     }
-                    
+
                 }
 
-                // If we reach this point. It means that the MechSummary didn't have a weapon/equipment that matched the leaf node. 
+                // If we reach this point. It means that the MechSummary didn't have a weapon/equipment that matched the leaf node.
                 // If the leaf quantity is 0, that means that the mech is a match. If the leaf quantity is non-zero, that means the mech isn't
                 // a match.
                 if (n.qty == 0) {

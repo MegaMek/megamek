@@ -29,7 +29,7 @@ public class ISLaserSmall extends LaserWeapon {
         addLookupName("ClSmall Laser");
         addLookupName("CL Small Laser");
         addLookupName("CLSmallLaser");
-        sortingName = "Laser B";
+        sortingName = "Laser AA B";
         heat = 1;
         damage = 3;
         shortRange = 1;

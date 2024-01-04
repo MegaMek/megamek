@@ -90,7 +90,7 @@ public class QuirkEntry {
             throw new IllegalArgumentException("No location for " + code + " : " + unitId);
         } else if (StringUtility.isNullOrBlank(weaponName)) {
             throw new IllegalArgumentException("No weapon for " + code + " : " + unitId);
-        } else if ((slot < 0) || (slot > 11)) {
+        } else if (slot < 0) {
             throw new IllegalArgumentException("Invalid slot index (" + slot + ") for " + code + " : " + unitId);
         }
 
@@ -115,7 +115,7 @@ public class QuirkEntry {
             throw new IllegalArgumentException("Invalid location!");
         } else if (StringUtility.isNullOrBlank(weaponName)) {
             throw new IllegalArgumentException("Invalid weapon name!");
-        } else if ((slot < 0) || (slot > 11)) {
+        } else if (slot < 0) {
             throw new IllegalArgumentException("Invalid slot index!");
         }
 

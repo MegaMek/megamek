@@ -1091,7 +1091,7 @@ public class GameManager implements IGameManager {
             // If deployment phase, set Searchlight state based on startSearchLightsOn;
             if (phase.isDeployment()) {
                 boolean startSLOn = PreferenceManager.getClientPreferences().getStartSearchlightsOn()
-                        && game.getPlanetaryConditions().isIlluminationEffective();;
+                        && game.getPlanetaryConditions().isIlluminationEffective();
                 entity.setSearchlightState(startSLOn);
                 entity.setIlluminated(startSLOn);
             }

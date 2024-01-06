@@ -82,7 +82,7 @@ class ForceDisplayMekCellFormatter {
             uType = DOT_SPACER + uType + DOT_SPACER;
             value += guiScaledFontHTML() + uType + "</FONT>";;
             return UnitToolTip.wrapWithHTML(value);
-        } else if (!entity.isVisibleToEnemy() || entity.isDestroyed() || entity.isDoomed()) {
+        } else if (!entity.isVisibleToEnemy() || entity.isDestroyed() || entity.isDoomed() || entity.getPosition() == null) {
            return "";
         }
 

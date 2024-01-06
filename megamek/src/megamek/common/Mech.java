@@ -15,9 +15,7 @@
 */
 package megamek.common;
 
-import megamek.MegaMek;
 import megamek.SuiteConstants;
-import megamek.Version;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.MekCostCalculator;
 import megamek.common.enums.AimingMode;

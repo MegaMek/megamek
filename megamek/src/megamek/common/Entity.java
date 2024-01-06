@@ -38,7 +38,6 @@ import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
 import megamek.common.weapons.bombs.*;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.logging.log4j.LogManager;
 
 import java.math.BigInteger;

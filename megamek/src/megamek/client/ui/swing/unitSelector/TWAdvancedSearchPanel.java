@@ -427,16 +427,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         }
     }
 
-    private void loadTriStateItem(List<String> s, JList l, int count) {
-        DefaultListModel dlma = new DefaultListModel();
-
-        for (String desc : s) {
-            dlma.addElement(new TriStateItem("\u2610", desc));
-        }
-
-        l.setModel(dlma);
-
-        l.setVisibleRowCount(count);
+    private void jlistSetup(JList l) {
         l.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         l.setSelectionModel(new NoSelectionModel());
         l.addMouseListener(new MouseAdapter() {
@@ -452,6 +443,18 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         });
     }
 
+    private void loadTriStateItem(List<String> s, JList l, int count) {
+        DefaultListModel dlma = new DefaultListModel();
+
+        for (String desc : s) {
+            dlma.addElement(new TriStateItem("\u2610", desc));
+        }
+
+        l.setModel(dlma);
+        l.setVisibleRowCount(count);
+        jlistSetup(l);
+    }
+
     private void loadTriStateItem(Map<Integer, String> s, JList l, int count) {
         DefaultListModel dlma = new DefaultListModel();
 
@@ -460,21 +463,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         }
 
         l.setModel(dlma);
-
         l.setVisibleRowCount(count);
-        l.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        l.setSelectionModel(new NoSelectionModel());
-        l.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                if (e.getButton() == MouseEvent.BUTTON1) {
-                    JList list = (JList) e.getSource();
-                    int index = list.locationToIndex(e.getPoint());
-                    toggleText(list, index);
-                }
-            }
-        });
+        jlistSetup(l);
     }
 
     private void loadYesNo(JComboBox<String> cb) {

@@ -408,9 +408,16 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private static class TriStateItem {
         public String state;
         public String text;
+        public int code;
 
         public TriStateItem(String state, String text) {
             this.state = state;
+            this.text = text;
+        }
+
+        public TriStateItem(String state, int code, String text) {
+            this.state = state;
+            this.code = code;
             this.text = text;
         }
 
@@ -449,7 +456,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         DefaultListModel dlma = new DefaultListModel();
 
         for (Map.Entry<Integer, String> desc : s.entrySet()) {
-            dlma.addElement(new TriStateItem("\u2610", desc.getValue()));
+            dlma.addElement(new TriStateItem("\u2610", desc.getKey(), desc.getValue()));
         }
 
         l.setModel(dlma);
@@ -2197,12 +2204,10 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
 
         for (int i = 0; i < m.getSize(); i++) {
             TriStateItem ms = m.getElementAt(i);
-            List<Integer> keys = Entity.getGyroTypes().entrySet().stream().filter(e -> e.getValue() == ms.text).map(Map.Entry::getKey).collect(Collectors.toList());
-            int key = keys.get(0);
             if (ms.state.contains("\u2611")) {
-                include.put(key, ms.text);
+                include.put(ms.code, ms.text);
             } else if (ms.state.contains("\u2612")) {
-                exclude.put(key, ms.text);
+                exclude.put(ms.code, ms.text);
             }
         }
     }

@@ -18,6 +18,7 @@ import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
+import megamek.common.weapons.Weapon;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.infantry.InfantryWeaponHandler;
@@ -26,9 +27,7 @@ import org.apache.logging.log4j.LogManager;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * WeaponFireInfo is a wrapper around a WeaponAttackAction that includes
@@ -412,6 +411,12 @@ public class WeaponFireInfo {
             return 1;
         }
 
+        // Aero TAG usage needs to take into account incoming Indirect Fire shots from friendlies, homing
+        // weapons, and the disutility of foregoing its own other weapons.
+        if (weapon.getEntity().isAero() && weaponType.hasFlag(WeaponType.F_TAG)){
+            return computeAeroExpectedTAGDamage();
+        }
+
         if (getTarget() instanceof Entity) {
             double dmg = Compute.getExpectedDamage(getGame(), getAction(),
                     true, owner.getPrecognition().getECMInfo());
@@ -422,6 +427,30 @@ public class WeaponFireInfo {
         }
 
         return weaponType.getDamage();
+    }
+
+    /**
+     * Aerospace units need to think carefully before firing TAGs at ground targets, because this
+     * precludes firing _any_ other weapons this turn.
+     * May be a high-demand calculation so only use when appropriate.
+     * @return expected damage of firing a TAG weapon, in light of other options.
+     */
+    double computeAeroExpectedTAGDamage(){
+        int myWeaponsDamage = Compute.computeTotalDamage(shooter.getTotalWeaponList());
+
+        // Compile a list of all weapons involved in actual or potential guided fire this turn.
+        // All WAAs in this list are indirect-fire or homing / guided.
+        ArrayList<WeaponAttackAction> waal = shooter.getIncomingGuidedAttacks();
+        ArrayList<Mounted> incomingWeapons = new ArrayList<Mounted>();
+        for (WeaponAttackAction waa: waal) {
+            Mounted m = waa.getEntity(game).getEquipment(waa.getWeaponId());
+            incomingWeapons.add(m);
+        }
+
+        int incomingAttacksDamage = Compute.computeTotalDamage(incomingWeapons);
+
+        // If TAG damage exceeds the attacking unit's own max damage capacity, go for it!
+        return Math.min(incomingAttacksDamage - myWeaponsDamage, 0);
     }
 
     /**
@@ -570,6 +599,20 @@ public class WeaponFireInfo {
 
         if (debugging) {
             msg.append("\n\tMax Damage: ").append(LOG_DEC.format(maxDamage));
+        }
+
+        // If expected damage from Aero tagging is zero, return out - save attacks for later.
+        if (weapon.getType().hasFlag(WeaponType.F_TAG) && shooter.isAero() && getExpectedDamageOnHit() <= 0) {
+            if (debugging) {
+                LogManager.getLogger().debug(msg.append("\n\tAerospace TAG attack not advised at this juncture"));
+            }
+            setProbabilityToHit(0);
+            setMaxDamage(0);
+            setHeat(0);
+            setExpectedCriticals(0);
+            setKillProbability(0);
+            setExpectedDamageOnHit(0);
+            return;
         }
 
         final double expectedCriticalHitCount = ProbabilityCalculator.getExpectedCriticalHitCount();

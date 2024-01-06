@@ -815,6 +815,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private UnitRole role = UnitRole.UNDETERMINED;
 
     /**
+     * Vector storing references to friendly weapon attack actions this entity may need to support;
+     * Primarily used by Princess to speed up TAG utility calculations.
+     */
+    protected ArrayList<WeaponAttackAction> incomingGuidedAttacks;
+
+    /**
      * Generates a new, blank, entity.
      */
     public Entity() {
@@ -852,6 +858,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         externalId = UUID.randomUUID().toString();
         initTechAdvancement();
         offBoardShotObservers = new HashSet<>();
+        incomingGuidedAttacks = new ArrayList<WeaponAttackAction>();
     }
 
     /**
@@ -868,7 +875,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     protected boolean hasViableWeapons() {
-        int totalDmg = 0;
+        int totalDmg = Compute.computeTotalDamage(getTotalWeaponList());
+
+        // Find any weapons with range of 6+
         boolean hasRangeSixPlus = false;
         List<Mounted> weaponList = getTotalWeaponList();
         for (Mounted weapon : weaponList) {
@@ -876,22 +885,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 continue;
             }
             WeaponType type = (WeaponType) weapon.getType();
-            if (type.getDamage() == WeaponType.DAMAGE_VARIABLE) {
-
-            } else if (type.getDamage() == WeaponType.DAMAGE_ARTILLERY) {
-                return true;
-            } else if (type.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
-                totalDmg += type.getRackSize();
-            } else if (type.getDamage() == WeaponType.DAMAGE_SPECIAL) {
-                if (type instanceof ISBAPopUpMineLauncher) {
-                    totalDmg += 4;
-                }
-            } else {
-                totalDmg += type.getDamage();
-            }
-
             if (type.getLongRange() >= 6) {
                 hasRangeSixPlus = true;
+                break;
             }
         }
         return (totalDmg >= 5) || hasRangeSixPlus;
@@ -6322,6 +6318,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         if (isBomber()) {
             resetBombAttacks();
+        }
+
+        // Reset deployed or incoming weapons which need TAG guidance (mainly for bot computations)
+        if (incomingGuidedAttacks == null) {
+            incomingGuidedAttacks = new ArrayList<WeaponAttackAction>();
+        } else {
+            incomingGuidedAttacks.clear();
         }
 
         // reset evasion
@@ -12039,6 +12042,20 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public int getSensorCheck() {
         return sensorCheck;
+    }
+
+    /**
+     * @param attacksList of know or possible WAAs that might need TAG assistance this turn.
+     */
+    public void setIncomingGuidedAttacks(ArrayList<WeaponAttackAction> attacksList){
+        incomingGuidedAttacks = (ArrayList<WeaponAttackAction>) attacksList.clone();
+    }
+
+    /**
+     * @return the vector of possible WAAs that may need this entity's TAG support.
+     */
+    public ArrayList<WeaponAttackAction> getIncomingGuidedAttacks(){
+        return incomingGuidedAttacks;
     }
 
     /**

@@ -22,10 +22,10 @@ import megamek.common.enums.AimingMode;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.IlluminationLevel;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.DiveBombAttack;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
+import megamek.common.weapons.battlearmor.ISBAPopUpMineLauncher;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.gaussrifles.HAGWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -1089,6 +1089,21 @@ public class Compute {
         return null;
     }
 
+    public static boolean isIndirect(WeaponType wtype) {
+        return ((wtype.getAmmoType() == AmmoType.T_LRM)
+                || (wtype.getAmmoType() == AmmoType.T_LRM_IMP)
+                || (wtype.getAmmoType() == AmmoType.T_MML)
+                || (wtype.getAmmoType() == AmmoType.T_EXLRM)
+                || (wtype.getAmmoType() == AmmoType.T_TBOLT_5)
+                || (wtype.getAmmoType() == AmmoType.T_TBOLT_10)
+                || (wtype.getAmmoType() == AmmoType.T_TBOLT_15)
+                || (wtype.getAmmoType() == AmmoType.T_TBOLT_20)
+                || (wtype.getAmmoType() == AmmoType.T_IATM)
+                || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
+                || (wtype.getAmmoType() == AmmoType.T_MEK_MORTAR)
+                || (wtype instanceof ArtilleryCannonWeapon));
+    }
+
     /**
      * Determines the to-hit modifier due to range for an attack with the
      * specified parameters. Includes minimum range, infantry 0-range mods, and
@@ -1105,19 +1120,7 @@ public class Compute {
         boolean isAttackerBA = (ae instanceof BattleArmor);
         boolean isWeaponInfantry = (wtype instanceof InfantryWeapon) && !wtype.hasFlag(WeaponType.F_TAG);
         boolean isSwarmOrLegAttack = (wtype instanceof InfantryAttack);
-        boolean isIndirect = ((wtype.getAmmoType() == AmmoType.T_LRM)
-                || (wtype.getAmmoType() == AmmoType.T_LRM_IMP)
-                || (wtype.getAmmoType() == AmmoType.T_MML)
-                || (wtype.getAmmoType() == AmmoType.T_EXLRM)
-                || (wtype.getAmmoType() == AmmoType.T_TBOLT_5)
-                || (wtype.getAmmoType() == AmmoType.T_TBOLT_10)
-                || (wtype.getAmmoType() == AmmoType.T_TBOLT_15)
-                || (wtype.getAmmoType() == AmmoType.T_TBOLT_20)
-                || (wtype.getAmmoType() == AmmoType.T_IATM)
-                || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
-                || (wtype.getAmmoType() == AmmoType.T_MEK_MORTAR)
-                || (wtype instanceof ArtilleryCannonWeapon))
-                && weapon.curMode().equals("Indirect");
+        boolean isIndirect = isIndirect(wtype) && weapon.curMode().equals("Indirect");
         boolean useExtremeRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE);
         boolean useLOSRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE);
         //Naval C3 only provides full C3 range benefits to energy weapons and guided missiles
@@ -6485,6 +6488,34 @@ public class Compute {
                boolean isAttackThruBuilding, int attackerId, Vector<Report> vReport) {
         return directBlowInfantryDamage(damage, mos, damageType, isNonInfantryAgainstMechanized,
                 isAttackThruBuilding, attackerId, vReport, 1);
+    }
+
+    /**
+     * @return the maximum damage that a set of weapons can generate.
+     */
+    public static int computeTotalDamage(List<Mounted> weaponList){
+        int totalDmg = 0;
+        for (Mounted weapon : weaponList) {
+            if (weapon.isCrippled()) {
+                continue;
+            }
+            WeaponType type = (WeaponType) weapon.getType();
+            if (type.getDamage() == WeaponType.DAMAGE_VARIABLE) {
+                // Estimate rather than compute exact bay / trooper damage sum.
+                totalDmg += type.getRackSize();
+            } else if (type.getDamage() == WeaponType.DAMAGE_ARTILLERY
+                      || type.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
+                totalDmg += type.getRackSize();
+            } else if (type.getDamage() == WeaponType.DAMAGE_SPECIAL) {
+                if (type instanceof ISBAPopUpMineLauncher) {
+                    totalDmg += 4;
+                }
+            } else {
+                totalDmg += type.getDamage();
+            }
+        }
+
+        return totalDmg;
     }
 
     /**

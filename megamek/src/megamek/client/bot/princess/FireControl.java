@@ -299,7 +299,7 @@ public class FireControl {
 
         final int smokeLevel = targetHex.terrainLevel(Terrains.SMOKE);
         if (1 <= smokeLevel) {
-            // Smoke level doesn't necessary correspond to the to-hit modifier
+            // Smoke level doesn't necessarily correspond to the to-hit modifier
             // even levels are light smoke, odd are heavy smoke
             toHitData.addModifier((smokeLevel % 2) + 1, TH_SMOKE);
         }

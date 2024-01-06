@@ -35,11 +35,8 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
+import java.util.*;
 import java.util.List;
-import java.util.Vector;
 import java.util.stream.Collectors;
 
 /**
@@ -147,6 +144,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JLabel lblEngineType = new JLabel(Messages.getString("MechSelectorDialog.Search.Engine"));
     private JList<TriStateItem> listEngineType = new JList<>(new DefaultListModel<TriStateItem>());
     private JScrollPane spEngineType = new JScrollPane(listEngineType);
+    private JLabel lblGyroType = new JLabel(Messages.getString("MechSelectorDialog.Search.Gyro"));
+    private JList<TriStateItem> listGyroType = new JList<>(new DefaultListModel<TriStateItem>());
+    private JScrollPane spGyroType = new JScrollPane(listGyroType);
     private JLabel lblTechLevel = new JLabel(Messages.getString("MechSelectorDialog.Search.TechLevel"));
     private JList<TriStateItem> listTechLevel = new JList<>(new DefaultListModel<TriStateItem>());
     private JScrollPane spTechLevel = new JScrollPane(listTechLevel);
@@ -445,6 +445,31 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         });
     }
 
+    private void loadTriStateItem(Map<Integer, String> s, JList l, int count) {
+        DefaultListModel dlma = new DefaultListModel();
+
+        for (Map.Entry<Integer, String> desc : s.entrySet()) {
+            dlma.addElement(new TriStateItem("\u2610", desc.getValue()));
+        }
+
+        l.setModel(dlma);
+
+        l.setVisibleRowCount(count);
+        l.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        l.setSelectionModel(new NoSelectionModel());
+        l.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    JList list = (JList) e.getSource();
+                    int index = list.locationToIndex(e.getPoint());
+                    toggleText(list, index);
+                }
+            }
+        });
+    }
+
     private void loadYesNo(JComboBox<String> cb) {
         cb.addItem(Messages.getString("MechSelectorDialog.Search.Any"));
         cb.addItem(Messages.getString("MechSelectorDialog.Search.Yes"));
@@ -471,6 +496,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         loadTriStateItem(Mech.getCockpitDescrtiption(), listCockpitType, 7);
         loadTriStateItem(EquipmentType.getStructureNames(), listInternalsType, 7);
         loadTriStateItem(Engine.getEngineTypes(), listEngineType, 5);
+        loadTriStateItem(Entity.getGyroTypes(), listGyroType, 7);
         loadTriStateItem(SimpleTechLevel.getDescriptions(), listTechLevel, 5);
         loadTriStateItem(Entity.getTechBaseDescriptions(), listTechBase, 4);
 
@@ -578,16 +604,26 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         basePanel.add(armorPanel, c);
 
         c.gridx = 0; c.gridy++;;
-        c.gridwidth  = 1;
+        c.gridwidth = 1;
         JPanel cockpitPanel = new JPanel(new BorderLayout());
         cockpitPanel.add(lblCockpitType, BorderLayout.NORTH);
         cockpitPanel.add(spCockpitType, BorderLayout.CENTER);
         basePanel.add(cockpitPanel, c);
         c.gridx = 1;
-        JPanel internalsPanel = new JPanel(new BorderLayout());
-        internalsPanel.add(lblInternalsType, BorderLayout.NORTH);
-        internalsPanel.add(spInternalsType, BorderLayout.CENTER);
-        basePanel.add(internalsPanel, c);
+        JPanel sysPane = new JPanel();
+        JPanel enginePanel = new JPanel(new BorderLayout());
+        enginePanel.add(lblEngineType, BorderLayout.NORTH);
+        enginePanel.add(spEngineType, BorderLayout.CENTER);
+        JPanel clanEnginePanel = new JPanel();
+        clanEnginePanel.add(lblClanEngine);
+        clanEnginePanel.add(cClanEngine);
+        enginePanel.add(clanEnginePanel, BorderLayout.SOUTH);
+        sysPane.add(enginePanel);
+        JPanel gyroPanel = new JPanel(new BorderLayout());
+        gyroPanel.add(lblGyroType, BorderLayout.NORTH);
+        gyroPanel.add(spGyroType, BorderLayout.CENTER);
+        sysPane.add(gyroPanel);
+        basePanel.add(sysPane, c);
 
         c.gridx = 0; c.gridy++;;
         JPanel armorTypePanel = new JPanel(new BorderLayout());
@@ -599,14 +635,10 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         armorTypePanel.add(patchworkPanel, BorderLayout.SOUTH);
         basePanel.add(armorTypePanel, c);
         c.gridx = 1;
-        JPanel enginePanel = new JPanel(new BorderLayout());
-        enginePanel.add(lblEngineType, BorderLayout.NORTH);
-        enginePanel.add(spEngineType, BorderLayout.CENTER);
-        JPanel clanEnginePanel = new JPanel();
-        clanEnginePanel.add(lblClanEngine);
-        clanEnginePanel.add(cClanEngine);
-        enginePanel.add(clanEnginePanel, BorderLayout.SOUTH);
-        basePanel.add(enginePanel, c);
+        JPanel internalsPanel = new JPanel(new BorderLayout());
+        internalsPanel.add(lblInternalsType, BorderLayout.NORTH);
+        internalsPanel.add(spInternalsType, BorderLayout.CENTER);
+        basePanel.add(internalsPanel, c);
 
         c.gridx = 0; c.gridy++;;
         JPanel techLevelPanel = new JPanel(new BorderLayout());
@@ -1954,6 +1986,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         clearTriStateItem(listArmorType);
         clearTriStateItem(listCockpitType);
         clearTriStateItem(listEngineType);
+        clearTriStateItem(listGyroType);
         clearTriStateItem(listInternalsType);
         clearTriStateItem(listTechLevel);
         clearTriStateItem(listTechBase);
@@ -2159,6 +2192,21 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         }
     }
 
+    private void updateTriStateItemString(Map<Integer, String> include, Map<Integer, String> exclude, JList l) {
+        ListModel<TriStateItem> m = l.getModel();
+
+        for (int i = 0; i < m.getSize(); i++) {
+            TriStateItem ms = m.getElementAt(i);
+            List<Integer> keys = Entity.getGyroTypes().entrySet().stream().filter(e -> e.getValue() == ms.text).map(Map.Entry::getKey).collect(Collectors.toList());
+            int key = keys.get(0);
+            if (ms.state.contains("\u2611")) {
+                include.put(key, ms.text);
+            } else if (ms.state.contains("\u2612")) {
+                exclude.put(key, ms.text);
+            }
+        }
+    }
+
     private void updateBase() {
         mechFilter.sStartWalk = tStartWalk.getText();
         mechFilter.sEndWalk = tEndWalk.getText();
@@ -2197,6 +2245,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         updateTriStateItemInteger(mechFilter.cockpitType, mechFilter.cockpitTypeExclude, listCockpitType);
         updateTriStateItemInteger(mechFilter.internalsType, mechFilter.internalsTypeExclude, listInternalsType);
         updateTriStateItemString(mechFilter.engineType, mechFilter.engineTypeExclude, listEngineType);
+        updateTriStateItemString(mechFilter.gyroType, mechFilter.gyroTypeExclude, listGyroType);
         updateTriStateItemString(mechFilter.techLevel, mechFilter.techLevelExclude, listTechLevel);
         updateTriStateItemString(mechFilter.techBase, mechFilter.techBaseExclude, listTechBase);
     }

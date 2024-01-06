@@ -142,6 +142,8 @@ public class MechSearchFilter {
     public boolean isDisabled;
     public List<String> engineType = new ArrayList<>();
     public List<String> engineTypeExclude = new ArrayList<>();
+    public Map<Integer, String> gyroType = new HashMap();
+    public Map<Integer, String> gyroTypeExclude = new HashMap();
     public List<Integer> armorType = new ArrayList<>();
     public List<Integer> armorTypeExclude = new ArrayList<>();
     public List<Integer> internalsType = new ArrayList<>();
@@ -405,6 +407,13 @@ public class MechSearchFilter {
     }
     private static boolean allMatch(List<String> list, String search) {
         return list.stream().allMatch(search::contains);
+    }
+
+    private static boolean anyMatch(Map<Integer, String> list, int search) {
+        return list.entrySet().stream().anyMatch(e -> e.getKey() == search);
+    }
+    private static boolean allMatch(Map<Integer, String> list, int search) {
+        return list.entrySet().stream().allMatch(e -> e.getKey() == search);
     }
 
     private static boolean anyMatch(List<Integer> list, HashSet<Integer> search) {
@@ -726,6 +735,14 @@ public class MechSearchFilter {
         }
 
         if ((!f.engineTypeExclude.isEmpty()) && (anyMatch(f.engineTypeExclude, mech.getEngineName()))) {
+            return false;
+        }
+
+        if ((!f.gyroType.isEmpty()) && (!anyMatch(f.gyroType, mech.getGyroType()))) {
+            return false;
+        }
+
+        if ((!f.gyroTypeExclude.isEmpty()) && (anyMatch(f.gyroTypeExclude, mech.getGyroType()))) {
             return false;
         }
 

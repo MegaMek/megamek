@@ -38,6 +38,7 @@ import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
 import megamek.common.weapons.bombs.*;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.logging.log4j.LogManager;
 
 import java.math.BigInteger;
@@ -4731,6 +4732,20 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public int getGyroType() {
         return -1;
+    }
+
+    public static Map<Integer, String> getGyroTypes() {
+        Map<Integer, String> result = new HashMap();
+
+        result.put(Mech.GYRO_UNKNOWN, Mech.getGyroDisplayString(Mech.GYRO_UNKNOWN));
+        result.put(Mech.GYRO_STANDARD, Mech.getGyroDisplayString(Mech.GYRO_STANDARD));
+        result.put(Mech.GYRO_XL, Mech.getGyroDisplayString(Mech.GYRO_XL));
+        result.put(Mech.GYRO_COMPACT, Mech.getGyroDisplayString(Mech.GYRO_COMPACT));
+        result.put(Mech.GYRO_HEAVY_DUTY, Mech.getGyroDisplayString(Mech.GYRO_HEAVY_DUTY));
+        result.put(Mech.GYRO_NONE, Mech.getGyroDisplayString(Mech.GYRO_NONE));
+        result.put(Mech.GYRO_SUPERHEAVY, Mech.getGyroDisplayString(Mech.GYRO_SUPERHEAVY));
+
+        return result;
     }
 
     /**

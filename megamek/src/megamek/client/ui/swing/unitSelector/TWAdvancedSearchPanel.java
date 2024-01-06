@@ -1115,9 +1115,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         filterConvFighterPanel.add(btnFilterConvFighter);
         filterConvFighterPanel.add(lblFilterConvFighter);
         unitTypePanel.add(filterConvFighterPanel, c);
-
-        c.gridy++;
-        c.gridx = 2;
+        c.gridx = 3;
         JPanel filterFixedWingSupportPanel = new JPanel();
         filterFixedWingSupportPanel.add(btnFilterFixedWingSupport);
         filterFixedWingSupportPanel.add(lblFilterFixedWingSupport);

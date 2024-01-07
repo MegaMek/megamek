@@ -440,8 +440,7 @@ public class WeaponFireInfo {
 
         // Compile a list of all weapons involved in actual or potential guided fire this turn.
         // All WAAs in this list are indirect-fire or homing / guided.
-        owner.initializeGuidedWeaponAttacks(shooter);
-        ArrayList<WeaponAttackAction> waal = shooter.getIncomingGuidedAttacks();
+        ArrayList<WeaponAttackAction> waal = owner.computeGuidedWeaponAttacks(shooter);
         ArrayList<Mounted> incomingWeapons = new ArrayList<Mounted>();
         for (WeaponAttackAction waa: waal) {
             Mounted m = waa.getEntity(game).getEquipment(waa.getWeaponId());
@@ -451,7 +450,7 @@ public class WeaponFireInfo {
         int incomingAttacksDamage = Compute.computeTotalDamage(incomingWeapons);
 
         // If TAG damage exceeds the attacking unit's own max damage capacity, go for it!
-        return Math.min(incomingAttacksDamage - myWeaponsDamage, 0);
+        return Math.max(incomingAttacksDamage - myWeaponsDamage, 0);
     }
 
     /**

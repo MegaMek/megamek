@@ -6497,7 +6497,7 @@ public class Compute {
     public static int computeTotalDamage(List<Mounted> weaponList){
         int totalDmg = 0;
         for (Mounted weapon : weaponList) {
-            if (weapon.isCrippled()) {
+            if (!weapon.isBombMounted() && weapon.isCrippled()) {
                 continue;
             }
             WeaponType type = (WeaponType) weapon.getType();

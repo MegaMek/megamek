@@ -1673,7 +1673,7 @@ public class Princess extends BotClient {
      *      whether they want to TAG or reserve their activation for actual attacks.
      *  4. All info is cleared at the start of the next turn.
      */
-    public void initializeGuidedWeaponAttacks(Entity entityToFire){
+    public ArrayList<WeaponAttackAction> computeGuidedWeaponAttacks(Entity entityToFire){
         ArrayList<WeaponAttackAction> friendlyGuidedWAAs = new ArrayList<WeaponAttackAction>();
         boolean etfCares = false;
 
@@ -1688,6 +1688,9 @@ public class Princess extends BotClient {
 
         // Next find all friendly IFers, be-Guided-ers, and TAGgers in the sky.
         for (Entity f : new HashSet<Entity>(getEntitiesOwned())) {
+            if (f.equals(entityToFire)) {
+                continue; // This entity's weapons should not be considered for this calculation
+            }
             ArrayList<Mounted> fwl = new ArrayList<Mounted>(); // Add weapon accumulator set here
             Set<Mounted> candidateWeapons = new HashSet<Mounted>();
 
@@ -1706,9 +1709,6 @@ public class Princess extends BotClient {
                     if (((IBomber) f).getBombs().stream().anyMatch(b -> ((BombType) b.getType()).getBombType() == BombType.B_LG)) {
                         candidateWeapons.add(m);
                     }
-                } else if (w.hasFlag(WeaponType.F_TAG) && (f.getId() == entityToFire.getId())) {
-                    // This entity will need the list for its activation.
-                    etfCares = true;
                 }
             }
 
@@ -1719,11 +1719,7 @@ public class Princess extends BotClient {
                 );
             }
         }
-
-        // Only set the list of WAAs if this entity is concerned with them.
-        if (etfCares) {
-            entityToFire.setIncomingGuidedAttacks(friendlyGuidedWAAs);
-        }
+        return friendlyGuidedWAAs;
     }
 
     /**

@@ -543,7 +543,7 @@ public class MechView {
 
             if (!sb.toString().isEmpty()) {
                 sInvalid.add(new SingleLine());
-                sInvalid.add(new LabeledElement("Invalid Reasons", sb.toString()));
+                sInvalid.add(new LabeledElement(Messages.getString("MechView.InvalidReasons"), sb.toString()));
             }
         }
     }

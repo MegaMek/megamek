@@ -18,7 +18,6 @@ import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.Weapon;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.infantry.InfantryWeaponHandler;
@@ -438,16 +437,8 @@ public class WeaponFireInfo {
     double computeAeroExpectedTAGDamage(){
         int myWeaponsDamage = Compute.computeTotalDamage(shooter.getTotalWeaponList());
 
-        // Compile a list of all weapons involved in actual or potential guided fire this turn.
-        // All WAAs in this list are indirect-fire or homing / guided.
-        ArrayList<WeaponAttackAction> waal = owner.computeGuidedWeaponAttacks(shooter);
-        ArrayList<Mounted> incomingWeapons = new ArrayList<Mounted>();
-        for (WeaponAttackAction waa: waal) {
-            Mounted m = waa.getEntity(game).getEquipment(waa.getWeaponId());
-            incomingWeapons.add(m);
-        }
-
-        int incomingAttacksDamage = Compute.computeTotalDamage(incomingWeapons);
+        // Get a list of incoming or potentially incoming guidable weapons from the relevant Princess and compute damage.
+        int incomingAttacksDamage = Compute.computeTotalDamage(owner.computeGuidedWeapons(shooter));
 
         // If TAG damage exceeds the attacking unit's own max damage capacity, go for it!
         return Math.max(incomingAttacksDamage - myWeaponsDamage, 0);

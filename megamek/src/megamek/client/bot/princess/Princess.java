@@ -76,6 +76,7 @@ public class Princess extends BotClient {
      * Used to allocate damage more intelligently and avoid overkill.
      */
     private final ConcurrentHashMap<Integer, Double> damageMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Integer, ArrayList<Mounted>> incomingGuidablesMap = new ConcurrentHashMap<>();
     private final Set<Coords> strategicBuildingTargets = new HashSet<>();
     private boolean fallBack = false;
     private final ChatProcessor chatProcessor = new ChatProcessor();
@@ -369,6 +370,8 @@ public class Princess extends BotClient {
 
     @Override
     protected void initTargeting() {
+        // Reset incoming guided weapon lists for each friendly unit.
+        incomingGuidablesMap.clear();
         getArtilleryTargetingControl().initializeForTargetingPhase();
     }
 
@@ -1561,6 +1564,7 @@ public class Princess extends BotClient {
 
             // Reset last round's damageMap
             damageMap.clear();
+
             // Now add an ID for each possible target.
             final List<Targetable> potentialTargets = FireControl.getAllTargetableEnemyEntities(
                     getLocalPlayer(), getGame(), fireControlState);
@@ -1673,8 +1677,12 @@ public class Princess extends BotClient {
      *      whether they want to TAG or reserve their activation for actual attacks.
      *  4. All info is cleared at the start of the next turn.
      */
-    public ArrayList<WeaponAttackAction> computeGuidedWeaponAttacks(Entity entityToFire){
-        ArrayList<WeaponAttackAction> friendlyGuidedWAAs = new ArrayList<WeaponAttackAction>();
+    public ArrayList<Mounted> computeGuidedWeapons(Entity entityToFire){
+        if (incomingGuidablesMap.containsKey(entityToFire.getId())) {
+            return incomingGuidablesMap.get(entityToFire.getId());
+        }
+
+        ArrayList<Mounted> friendlyGuidedWeapons = new ArrayList<Mounted>();
         boolean etfCares = false;
 
         // First, friendly incoming homing artillery that will land this turn.  May include entity's own shots from prior
@@ -1682,7 +1690,7 @@ public class Princess extends BotClient {
         for (Enumeration<ArtilleryAttackAction> attacks = game.getArtilleryAttacks(); attacks.hasMoreElements(); ) {
             ArtilleryAttackAction a = attacks.nextElement();
             if (a.getTurnsTilHit() == 0 && a.getAmmoMunitionType().contains(AmmoType.Munitions.M_HOMING) && (!a.getEntity(game).isEnemyOf(entityToFire))) {
-                friendlyGuidedWAAs.add(a);
+                friendlyGuidedWeapons.add(a.getEntity(game).getEquipment(a.getWeaponId()));
             }
         }
 
@@ -1698,11 +1706,8 @@ public class Princess extends BotClient {
                 WeaponType w = (WeaponType) m.getType();
                 if (Compute.isIndirect(w) && !f.isAero()) {
                     // Only care about ground IF weapons.
-                    // create virtual WAA for this weapon and add to list of guided WAAs.
-                    // Target is immaterial; we just want the WAA's info for later.
                     candidateWeapons.add(m);
                 } else if (m.getLinked() != null && m.getLinked().isHomingAmmoInHomingMode()) {
-                    // create virtual WAA for this weapon and add to list of guided WAAs.
                     candidateWeapons.add(m);
                 } else if (m.isGroundBomb()) {
                     // Only care about Laser-Guided bombs here; Homing Arrow IV handled separately.
@@ -1712,14 +1717,11 @@ public class Princess extends BotClient {
                 }
             }
 
-            // Only add one attack per distinct weapon.
-            for (Mounted cw: candidateWeapons) {
-                friendlyGuidedWAAs.add(
-                        new WeaponAttackAction(f.getId(), -1, f.getEquipmentNum(cw))
-                );
-            }
+            // All candidate weapons should be unique instances.
+            friendlyGuidedWeapons.addAll(candidateWeapons);
         }
-        return friendlyGuidedWAAs;
+        incomingGuidablesMap.put(entityToFire.getId(), friendlyGuidedWeapons);
+        return friendlyGuidedWeapons;
     }
 
     /**

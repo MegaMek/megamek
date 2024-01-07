@@ -1683,7 +1683,6 @@ public class Princess extends BotClient {
         }
 
         ArrayList<Mounted> friendlyGuidedWeapons = new ArrayList<Mounted>();
-        boolean etfCares = false;
 
         // First, friendly incoming homing artillery that will land this turn.  May include entity's own shots from prior
         // turns, but not this one.
@@ -1699,7 +1698,6 @@ public class Princess extends BotClient {
             if (f.equals(entityToFire)) {
                 continue; // This entity's weapons should not be considered for this calculation
             }
-            ArrayList<Mounted> fwl = new ArrayList<Mounted>(); // Add weapon accumulator set here
             Set<Mounted> candidateWeapons = new HashSet<Mounted>();
 
             for (Mounted m : f.getTotalWeaponList()) {

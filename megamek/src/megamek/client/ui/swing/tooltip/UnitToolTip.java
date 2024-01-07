@@ -1205,8 +1205,7 @@ public final class UnitToolTip {
 
         if (entity.isDoomed() || entity.isDestroyed()) {
             String msg_destroyed = Messages.getString("BoardView1.Tooltip.Destroyed");
-            msg_destroyed = useHtml ? guiScaledFontHTML(GUIP.getWarningColor()) + msg_destroyed + "</FONT>" : msg_destroyed;
-            return msg_destroyed;
+            return useHtml ? guiScaledFontHTML(GUIP.getWarningColor()) + msg_destroyed + "</FONT>" : msg_destroyed;
         }
 
         switch (entity.getDamageLevel()) {

@@ -580,7 +580,6 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
         if (clientgui != null) {
             String enName = currentlyDisplaying.getShortName();
             enName += " [" + UnitToolTip.getDamageLevelDesc(currentlyDisplaying, false) + "]";
-            UnitToolTip.wrapWithHTML(enName);
             clientgui.getUnitDisplayDialog().setTitle(enName);
             labTitle.setText(enName);
         }

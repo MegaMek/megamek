@@ -143,7 +143,7 @@ class ForceDisplayMekCellFormatter {
         result.append(" (" + pilot.getSkillsAsString(rpgSkills) + ")");
 
         result.append(DOT_SPACER);
-        result.append(UnitToolTip.getDamageLevelDesc(entity).trim());
+        result.append(' ' + UnitToolTip.getDamageLevelDesc(entity, true));
 
         // Tonnage
         result.append(DOT_SPACER);

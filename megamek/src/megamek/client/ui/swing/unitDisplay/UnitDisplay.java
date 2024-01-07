@@ -21,6 +21,7 @@ import megamek.client.ui.dialogs.UnitDisplayDialog;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.UnitDisplayOrderPreferences;
+import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
@@ -578,23 +579,8 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
     protected void updateDisplay() {
         if (clientgui != null) {
             String enName = currentlyDisplaying.getShortName();
-            switch (currentlyDisplaying.getDamageLevel()) {
-                case Entity.DMG_CRIPPLED:
-                    enName += " [CRIPPLED]";
-                    break;
-                case Entity.DMG_HEAVY:
-                    enName += " [HEAVY DMG]";
-                    break;
-                case Entity.DMG_MODERATE:
-                    enName += " [MODERATE DMG]";
-                    break;
-                case Entity.DMG_LIGHT:
-                    enName += " [LIGHT DMG]";
-                    break;
-                default:
-                    enName += " [UNDAMAGED]";
-            }
-
+            enName += " [" + UnitToolTip.getDamageLevelDesc(currentlyDisplaying, false) + "]";
+            UnitToolTip.wrapWithHTML(enName);
             clientgui.getUnitDisplayDialog().setTitle(enName);
             labTitle.setText(enName);
         }

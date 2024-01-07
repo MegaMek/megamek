@@ -1170,8 +1170,7 @@ public final class UnitToolTip {
         String armorStr = entity.getTotalArmor() + " / " + entity.getTotalOArmor();
         String internalStr = entity.getTotalInternal() + " / " + entity.getTotalOInternal();
         result += Messages.getString("BoardView1.Tooltip.ArmorInternals",armorStr, internalStr);
-
-        result += getDamageLevelDesc(entity);
+        result += ' ' + getDamageLevelDesc(entity, true);
 
         if (!isGunEmplacement && entity.isImmobile()) {
             result += ' '+guiScaledFontHTML(GUIP.getWarningColor()) + Messages.getString("BoardView1.Tooltip.Immobile") + "</FONT>";
@@ -1201,34 +1200,35 @@ public final class UnitToolTip {
                 + srh.maxSensorRange + ")";
     }
 
-    public static String getDamageLevelDesc(Entity entity) {
+    public static String getDamageLevelDesc(Entity entity, boolean useHtml) {
         String result;
 
         if (entity.isDoomed() || entity.isDestroyed()) {
-            String msg_crippled = Messages.getString("BoardView1.Tooltip.Destroyed");
-            return ' ' + guiScaledFontHTML(GUIP.getWarningColor()) + msg_crippled + "</FONT>";
+            String msg_destroyed = Messages.getString("BoardView1.Tooltip.Destroyed");
+            msg_destroyed = useHtml ? guiScaledFontHTML(GUIP.getWarningColor()) + msg_destroyed + "</FONT>" : msg_destroyed;
+            return msg_destroyed;
         }
 
         switch (entity.getDamageLevel()) {
             case Entity.DMG_CRIPPLED:
                 String msg_crippled = Messages.getString("BoardView1.Tooltip.Crippled");
-                result = ' ' + guiScaledFontHTML(GUIP.getWarningColor()) + msg_crippled + "</FONT>";
+                result = useHtml ? guiScaledFontHTML(GUIP.getWarningColor()) + msg_crippled + "</FONT>" : msg_crippled;
                 break;
             case Entity.DMG_HEAVY:
                 String msg_heavydmg = Messages.getString("BoardView1.Tooltip.HeavyDmg");
-                result = ' ' + guiScaledFontHTML(GUIP.getWarningColor()) + msg_heavydmg + "</FONT>";
+                result = useHtml ? guiScaledFontHTML(GUIP.getWarningColor()) + msg_heavydmg + "</FONT>" : msg_heavydmg;
                 break;
             case Entity.DMG_MODERATE:
                 String msg_moderatedmg = Messages.getString("BoardView1.Tooltip.ModerateDmg");
-                result = ' ' + msg_moderatedmg;
+                result = msg_moderatedmg;
                 break;
             case Entity.DMG_LIGHT:
                 String msg_lightdmg = Messages.getString("BoardView1.Tooltip.LightDmg");
-                result = ' ' + msg_lightdmg ;
+                result = msg_lightdmg ;
                 break;
             default:
                 String msg_undamaged = Messages.getString("BoardView1.Tooltip.Undamaged");
-                result = ' ' + msg_undamaged;
+                result = msg_undamaged;
                 break;
         }
         return result;
@@ -1261,7 +1261,7 @@ public final class UnitToolTip {
             }
         }
 
-        result += getDamageLevelDesc(entity);
+        result += " " + getDamageLevelDesc(entity, true);
 
         // Actual Movement
         if (!isGunEmplacement) {

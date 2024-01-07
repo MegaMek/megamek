@@ -6506,7 +6506,7 @@ public class Compute {
             } else if (type.getDamage() == WeaponType.DAMAGE_ARTILLERY
                       || type.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
                 totalDmg += type.getRackSize();
-            } else if (type.getDamage() == WeaponType.DAMAGE_SPECIAL) {
+            } else if (type.getDamage() == WeaponType.DAMAGE_SPECIAL) {// Handle dive bomb attacks here!
                 if (type instanceof ISBAPopUpMineLauncher) {
                     totalDmg += 4;
                 }

@@ -440,6 +440,7 @@ public class WeaponFireInfo {
 
         // Compile a list of all weapons involved in actual or potential guided fire this turn.
         // All WAAs in this list are indirect-fire or homing / guided.
+        owner.initializeGuidedWeaponAttacks(shooter);
         ArrayList<WeaponAttackAction> waal = shooter.getIncomingGuidedAttacks();
         ArrayList<Mounted> incomingWeapons = new ArrayList<Mounted>();
         for (WeaponAttackAction waa: waal) {

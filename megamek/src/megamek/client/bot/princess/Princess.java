@@ -40,7 +40,6 @@ import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.StopSwarmAttack;
-import megamek.common.weapons.Weapon;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 
@@ -49,7 +48,6 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 public class Princess extends BotClient {
     private static final char PLUS = '+';
@@ -709,9 +707,6 @@ public class Princess extends BotClient {
         }
 
         FiringPlan firingPlan = getArtilleryTargetingControl().calculateIndirectArtilleryPlan(entityToFire, getGame(), this);
-
-        // Store up incoming artillery fire info in units that need to choose whether to use TAG or not.
-        initializeGuidedWeaponAttacks();
 
         sendAttackData(entityToFire.getId(), firingPlan.getEntityActionVector());
         sendDone(true);
@@ -1678,14 +1673,15 @@ public class Princess extends BotClient {
      *      whether they want to TAG or reserve their activation for actual attacks.
      *  4. All info is cleared at the start of the next turn.
      */
-    private void initializeGuidedWeaponAttacks(){
+    public void initializeGuidedWeaponAttacks(Entity entityToFire){
         ArrayList<WeaponAttackAction> friendlyGuidedWAAs = new ArrayList<WeaponAttackAction>();
-        HashSet<Entity> friendlyFlyingTAGgers = new HashSet<Entity>();
+        boolean etfCares = false;
 
-        // First, friendly incoming homing artillery that will land this turn.
+        // First, friendly incoming homing artillery that will land this turn.  May include entity's own shots from prior
+        // turns, but not this one.
         for (Enumeration<ArtilleryAttackAction> attacks = game.getArtilleryAttacks(); attacks.hasMoreElements(); ) {
             ArtilleryAttackAction a = attacks.nextElement();
-            if (a.getTurnsTilHit() == 0 && a.isHomingShot() && (a.getEntity(game).getOwner().equals(this))) {
+            if (a.getTurnsTilHit() == 0 && a.getAmmoMunitionType().contains(AmmoType.Munitions.M_HOMING) && (!a.getEntity(game).isEnemyOf(entityToFire))) {
                 friendlyGuidedWAAs.add(a);
             }
         }
@@ -1710,9 +1706,9 @@ public class Princess extends BotClient {
                     if (((IBomber) f).getBombs().stream().anyMatch(b -> ((BombType) b.getType()).getBombType() == BombType.B_LG)) {
                         candidateWeapons.add(m);
                     }
-                } else if (w.hasFlag(WeaponType.F_TAG) && f.isAero()) {
+                } else if (w.hasFlag(WeaponType.F_TAG) && (f.getId() == entityToFire.getId())) {
                     // This entity will need the list for its activation.
-                    friendlyFlyingTAGgers.add(f);
+                    etfCares = true;
                 }
             }
 
@@ -1724,8 +1720,9 @@ public class Princess extends BotClient {
             }
         }
 
-        for (Entity tagger : friendlyFlyingTAGgers) {
-            tagger.setIncomingGuidedAttacks(friendlyGuidedWAAs);
+        // Only set the list of WAAs if this entity is concerned with them.
+        if (etfCares) {
+            entityToFire.setIncomingGuidedAttacks(friendlyGuidedWAAs);
         }
     }
 

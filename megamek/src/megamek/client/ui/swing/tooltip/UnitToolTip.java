@@ -1203,6 +1203,12 @@ public final class UnitToolTip {
 
     public static String getDamageLevelDesc(Entity entity) {
         String result;
+
+        if (entity.isDoomed() || entity.isDestroyed()) {
+            String msg_crippled = Messages.getString("BoardView1.Tooltip.Destroyed");
+            return ' ' + guiScaledFontHTML(GUIP.getWarningColor()) + msg_crippled + "</FONT>";
+        }
+
         switch (entity.getDamageLevel()) {
             case Entity.DMG_CRIPPLED:
                 String msg_crippled = Messages.getString("BoardView1.Tooltip.Crippled");

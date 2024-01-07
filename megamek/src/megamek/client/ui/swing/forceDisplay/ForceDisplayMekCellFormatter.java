@@ -82,8 +82,8 @@ class ForceDisplayMekCellFormatter {
             uType = DOT_SPACER + uType + DOT_SPACER;
             value += guiScaledFontHTML() + uType + "</FONT>";;
             return UnitToolTip.wrapWithHTML(value);
-        } else if (!entity.isVisibleToEnemy() || entity.isDestroyed() || entity.isDoomed() || entity.getPosition() == null) {
-           return "";
+        } else if (!entity.isVisibleToEnemy()) {
+            return "";
         }
 
         StringBuilder result = new StringBuilder("<NOBR>&nbsp;&nbsp;" + guiScaledFontHTML());
@@ -275,7 +275,7 @@ class ForceDisplayMekCellFormatter {
                 }
                 msg_vel = "<I>" + msg_vel + msg_alt + msg_fuel + "</I>";
                 result.append(guiScaledFontHTML(GUIP.getUnitToolTipHighlightColor()) + msg_vel + "</FONT>");
-            } else if ((entity.getElevation() != 0) || (entity instanceof VTOL)) {
+            } else if (entity.getPosition() != null && ((entity.getElevation() != 0) || (entity instanceof VTOL))) {
                 result.append(DOT_SPACER);
                 String msg_ele = Messages.getString("ChatLounge.compact.elevation") + ": ";
                 msg_ele += entity.getElevation();

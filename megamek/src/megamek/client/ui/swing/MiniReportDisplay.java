@@ -36,6 +36,7 @@ import javax.swing.event.HyperlinkListener;
 import javax.swing.text.Document;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.Rectangle2D;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -158,8 +159,8 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
                         }
 
                         if (newPos != -1) {
-                            Rectangle r = textPane.modelToView(newPos);
-                            int y = UIUtil.calculateCenter(v.getExtentSize().height, v.getViewSize().height, r.height, r.y);
+                            Rectangle2D r = textPane.modelToView2D(newPos);
+                            int y = UIUtil.calculateCenter(v.getExtentSize().height, v.getViewSize().height, (int) r.getHeight(), (int) r.getY());
                             v.setViewPosition(new Point(0,y));
                             textPane.setCaretPosition(newPos);
                             textPane.moveCaretPosition(newPos + searchPattern.length());

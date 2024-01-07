@@ -22,6 +22,7 @@ import megamek.common.enums.AimingMode;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.IlluminationLevel;
 import megamek.common.options.OptionsConstants;
+import megamek.common.weapons.DiveBombAttack;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
@@ -6507,6 +6508,9 @@ public class Compute {
                       || type.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
                 totalDmg += type.getRackSize();
             } else if (type.getDamage() == WeaponType.DAMAGE_SPECIAL) {// Handle dive bomb attacks here!
+                if (type instanceof DiveBombAttack) {
+                    totalDmg += weapon.getEntity().bombList.stream().mapToInt(Mounted::getExplosionDamage).sum();
+                }
                 if (type instanceof ISBAPopUpMineLauncher) {
                     totalDmg += 4;
                 }

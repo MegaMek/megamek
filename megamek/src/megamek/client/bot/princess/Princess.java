@@ -1666,13 +1666,11 @@ public class Princess extends BotClient {
      * friendly TAG-equipped Aero (and possibly others) to know about all the possible
      * incoming Homing or IF attacks that could take advantage of their TAGs, for later calculations.
      *
-     * Note: this is a very rough first draft.  Currently order is O(n*w), near enough to O(n^2).
-     *
      * Steps are:
-     *  1. All relevant guidable attacks are added to a list.
+     *  1. All relevant guidable attacks (within range of the target) are added to a list.
      *  1a. All Homing Weapons landing this turn are added to the list.
      *  1b. All IF-capable, Semi-Guided, and Homing weapons that have not yet fired but _could_ are added as well.
-     *  2. Each TAG-capable Aerospace unit is given a reference to this list.
+     *  2. Each attacker-target location pair's expected homing/indirect fire damage is cached for later re-use.
      *  3. During the Indirect phase, when TAG attacks are announced, relevant units can use this info to decide
      *      whether they want to TAG or reserve their activation for actual attacks.
      *  4. All info is cleared at the start of the next turn.
@@ -1699,7 +1697,7 @@ public class Princess extends BotClient {
             }
         }
 
-        // Next find all friendly IFers, be-Guided-ers, and TAGgers in the sky.
+        // Next find all friendly Homing-weapon-havers, Indirect-Firers, and LG-Bombers within range.
         for (Entity f : new HashSet<Entity>(getEntitiesOwned())) {
             if (f.equals(entityToFire)) {
                 continue; // This entity's weapons should not be considered for this calculation
@@ -1709,8 +1707,8 @@ public class Princess extends BotClient {
 
             for (Mounted m : f.getTotalWeaponList()) {
                 WeaponType w = (WeaponType) m.getType();
-                // Ignore weapons outside of viable long range
-                if (fLoc.distance(location) > w.getLongRange() + f.getRunMP()) {
+                // Ignore weapons outside of viable long range; does not apply to bombs.
+                if (fLoc.distance(location) > w.getLongRange() + f.getRunMP() && !m.isGroundBomb()) {
                     continue;
                 }
                 if (Compute.isIndirect(w) && !f.isAero()) {

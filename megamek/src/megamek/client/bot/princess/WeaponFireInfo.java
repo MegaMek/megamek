@@ -431,7 +431,6 @@ public class WeaponFireInfo {
     /**
      * Aerospace units need to think carefully before firing TAGs at ground targets, because this
      * precludes firing _any_ other weapons this turn.
-     * May be a high-demand calculation so only use when appropriate.
      * @return expected damage of firing a TAG weapon, in light of other options.
      */
     double computeAeroExpectedTAGDamage(){

@@ -483,6 +483,24 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     }
                 });
 
+        // Register the action for UNDO_ILLEGAL_STEPS
+        controller.registerCommandAction(KeyCommandBind.UNDO_ILLEGAL_STEPS.cmd,
+                new CommandAction() {
+                    @Override
+                    public boolean shouldPerformAction() {
+                        return clientgui.getClient().isMyTurn()
+                                && !clientgui.getBoardView().getChatterBoxActive()
+                                && !display.isIgnoringEvents()
+                                && display.isVisible();
+                    }
+
+                    @Override
+                    public void performAction() {
+                        removeIllegalSteps();
+                        computeMovementEnvelope(ce());
+                    }
+                });
+
         // Register the action for NEXT_UNIT
         controller.registerCommandAction(KeyCommandBind.NEXT_UNIT.cmd,
                 new CommandAction() {
@@ -1434,6 +1452,23 @@ public class MovementDisplay extends ActionPhaseDisplay {
             }
         }
         updateButtons();
+    }
+
+    /**
+     * Removes all the trailing illegal movement steps and the end of the current entities movement path.
+     * (This is helpful for Aero movement, overshooting MP and wanting to evade etc.)
+     */
+    private void removeIllegalSteps() {
+        if (cmd == null) {
+            return;
+        }
+
+        // Keep removing last step until it's a valid movement step.
+        while ((cmd.getLastStepMovementType() != null) && (cmd.getLastStepMovementType() == EntityMovementType.MOVE_ILLEGAL)) {
+            removeLastStep();
+        }
+
+        return;
     }
 
     /**

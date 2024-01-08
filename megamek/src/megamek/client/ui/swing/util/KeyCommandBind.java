@@ -117,8 +117,8 @@ public enum KeyCommandBind {
     LOCAL_SAVE(true, "localSave", VK_S, CTRL_DOWN_MASK),
     REPLACE_PLAYER(true, "replacePlayer", VK_R, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
     MOD_ENVELOPE(true, "viewModEnvelope", VK_W, CTRL_DOWN_MASK),
-    SENSOR_RANGE(true, "sensorRange", VK_C);
-
+    SENSOR_RANGE(true, "sensorRange", VK_C),
+    UNDO_ILLEGAL_STEPS("undoIllegalSteps", VK_BACK_SPACE, CTRL_DOWN_MASK);
 
     /** The command associated with this binding. */
     public String cmd;

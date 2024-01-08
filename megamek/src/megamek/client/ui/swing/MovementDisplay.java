@@ -23,7 +23,6 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.boardview.AbstractBoardViewOverlay;
-import megamek.client.ui.swing.boardview.TurnDetailsOverlay;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
@@ -57,11 +56,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static megamek.client.ui.swing.util.UIUtil.colorString;
 import static megamek.common.MiscType.F_CHAFF_POD;
 import static megamek.common.options.OptionsConstants.ADVGRNDMOV_TACOPS_ZIPLINES;
 
-import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 
 public class MovementDisplay extends ActionPhaseDisplay {
     private static final long serialVersionUID = -7246715124042905688L;
@@ -416,9 +413,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                 || display.isIgnoringEvents()
                                 || !display.isVisible()) {
                             return false;
-                        } else {
-                            return true;
                         }
+                        return true;
                     }
 
                     @Override
@@ -446,9 +442,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                 || display.isIgnoringEvents()
                                 || !display.isVisible()) {
                             return false;
-                        } else {
-                            return true;
                         }
+                        return true;
                     }
 
                     @Override
@@ -512,9 +507,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
-                        } else {
-                            return true;
                         }
+                        return true;
                     }
 
                     @Override
@@ -534,9 +528,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
-                        } else {
-                            return true;
                         }
+                        return true;
                     }
 
                     @Override
@@ -556,9 +549,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
-                        } else {
-                            return true;
                         }
+                        return true;
                     }
 
                     @Override
@@ -579,9 +571,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
-                        } else {
-                            return true;
                         }
+                        return true;
                     }
 
                     @Override
@@ -1109,20 +1100,19 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if (cmd == null || cmd.length() == 0) {
             updateDonePanelButtons(Messages.getString("MovementDisplay.Move"), Messages.getString("MovementDisplay.Skip"), false, null);
             return;
+        }
+        MovePath possible = cmd.clone();
+        possible.clipToPossible();
+        if (possible.length() == 0) {
+            updateDonePanelButtons(Messages.getString("MovementDisplay.Move"), Messages.getString("MovementDisplay.Skip"), false, null);
+        } else if (!possible.isMoveLegal()) {
+            updateDonePanelButtons(Messages.getString("MovementDisplay.IllegalMove"), Messages.getString("MovementDisplay.Skip"), false, null);
         } else {
-            MovePath possible = cmd.clone();
-            possible.clipToPossible();
-            if (possible.length() == 0) {
-                updateDonePanelButtons(Messages.getString("MovementDisplay.Move"), Messages.getString("MovementDisplay.Skip"), false, null);
-            } else if (!possible.isMoveLegal()) {
-                updateDonePanelButtons(Messages.getString("MovementDisplay.IllegalMove"), Messages.getString("MovementDisplay.Skip"), false, null);
-            } else {
-                int mp = possible.countMp(possible.isJumping());
-                boolean psrCheck = (!SharedUtility.doPSRCheck(cmd.clone()).isBlank()) || (!SharedUtility.doThrustCheck(cmd.clone(), clientgui.getClient()).isBlank());
-                boolean damageCheck = cmd.shouldMechanicalJumpCauseFallDamage() || cmd.hasActiveMASC() || (!(ce() instanceof VTOL) && cmd.hasActiveSupercharger()) || cmd.willCrushBuildings();
-                String moveMsg = Messages.getString("MovementDisplay.Move") + " (" + mp + "MP)" + (psrCheck ? "*" : "") + (damageCheck ? "!" : "");
-                updateDonePanelButtons(moveMsg, Messages.getString("MovementDisplay.Skip"), true, computeTurnDetails());
-            }
+            int mp = possible.countMp(possible.isJumping());
+            boolean psrCheck = (!SharedUtility.doPSRCheck(cmd.clone()).isBlank()) || (!SharedUtility.doThrustCheck(cmd.clone(), clientgui.getClient()).isBlank());
+            boolean damageCheck = cmd.shouldMechanicalJumpCauseFallDamage() || cmd.hasActiveMASC() || (!(ce() instanceof VTOL) && cmd.hasActiveSupercharger()) || cmd.willCrushBuildings();
+            String moveMsg = Messages.getString("MovementDisplay.Move") + " (" + mp + "MP)" + (psrCheck ? "*" : "") + (damageCheck ? "!" : "");
+            updateDonePanelButtons(moveMsg, Messages.getString("MovementDisplay.Skip"), true, computeTurnDetails());
         }
     }
 
@@ -1822,9 +1812,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private synchronized Entity ce() {
         if (clientgui != null) {
             return clientgui.getClient().getGame().getEntity(cen);
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**

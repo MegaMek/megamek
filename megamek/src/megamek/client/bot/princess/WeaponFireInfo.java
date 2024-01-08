@@ -412,7 +412,7 @@ public class WeaponFireInfo {
 
         // Aero TAG usage needs to take into account incoming Indirect Fire shots from friendlies, homing
         // weapons, and the disutility of foregoing its own other weapons.
-        if (weapon.getEntity().isAero() && weaponType.hasFlag(WeaponType.F_TAG)){
+        if (weapon.getEntity().isAero() && weaponType.hasFlag(WeaponType.F_TAG) && !target.isAero()){
             return computeAeroExpectedTAGDamage();
         }
 
@@ -438,7 +438,7 @@ public class WeaponFireInfo {
         int myWeaponsDamage = Compute.computeTotalDamage(shooter.getTotalWeaponList());
 
         // Get a list of incoming or potentially incoming guidable weapons from the relevant Princess and compute damage.
-        int incomingAttacksDamage = Compute.computeTotalDamage(owner.computeGuidedWeapons(shooter));
+        int incomingAttacksDamage = Compute.computeTotalDamage(owner.computeGuidedWeapons(shooter, target.getPosition()));
 
         // If TAG damage exceeds the attacking unit's own max damage capacity, go for it!
         return Math.max(incomingAttacksDamage - myWeaponsDamage, 0);

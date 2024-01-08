@@ -40,6 +40,7 @@ import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.StopSwarmAttack;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 
@@ -76,7 +77,7 @@ public class Princess extends BotClient {
      * Used to allocate damage more intelligently and avoid overkill.
      */
     private final ConcurrentHashMap<Integer, Double> damageMap = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<Integer, ArrayList<Mounted>> incomingGuidablesMap = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Map.Entry<Integer, Coords>, ArrayList<Mounted>> incomingGuidablesMap = new ConcurrentHashMap<>();
     private final Set<Coords> strategicBuildingTargets = new HashSet<>();
     private boolean fallBack = false;
     private final ChatProcessor chatProcessor = new ChatProcessor();
@@ -1669,27 +1670,32 @@ public class Princess extends BotClient {
      *
      * Steps are:
      *  1. All relevant guidable attacks are added to a list.
-     *  1a. All Homing WAA landing this turn are added to the list.
-     *  1b. All IF-capable, Semi-Guided, and Homing weapons that have not yet fired but _could_ are added as
-     *      virtual WAAs (because actual attacks won't have been declared yet).
+     *  1a. All Homing Weapons landing this turn are added to the list.
+     *  1b. All IF-capable, Semi-Guided, and Homing weapons that have not yet fired but _could_ are added as well.
      *  2. Each TAG-capable Aerospace unit is given a reference to this list.
      *  3. During the Indirect phase, when TAG attacks are announced, relevant units can use this info to decide
      *      whether they want to TAG or reserve their activation for actual attacks.
      *  4. All info is cleared at the start of the next turn.
      */
-    public ArrayList<Mounted> computeGuidedWeapons(Entity entityToFire){
-        if (incomingGuidablesMap.containsKey(entityToFire.getId())) {
-            return incomingGuidablesMap.get(entityToFire.getId());
+    public ArrayList<Mounted> computeGuidedWeapons(Entity entityToFire, Coords location){
+        // Key cached entries to firing entity _and_ coordinates, as each shooter may have different targets and weapons
+        // to support.
+        Map.Entry<Integer, Coords> key = Map.entry(entityToFire.getId(), location);
+        if (incomingGuidablesMap.containsKey(key)) {
+            return incomingGuidablesMap.get(key);
         }
 
         ArrayList<Mounted> friendlyGuidedWeapons = new ArrayList<Mounted>();
 
         // First, friendly incoming homing artillery that will land this turn.  May include entity's own shots from prior
-        // turns, but not this one.
+        // turns, but not from this turn.
         for (Enumeration<ArtilleryAttackAction> attacks = game.getArtilleryAttacks(); attacks.hasMoreElements(); ) {
             ArtilleryAttackAction a = attacks.nextElement();
             if (a.getTurnsTilHit() == 0 && a.getAmmoMunitionType().contains(AmmoType.Munitions.M_HOMING) && (!a.getEntity(game).isEnemyOf(entityToFire))) {
-                friendlyGuidedWeapons.add(a.getEntity(game).getEquipment(a.getWeaponId()));
+                // Must be a shot that should land within 8 hexes of the target hex
+                if (a.getCoords().distance(location) <= 8) {
+                    friendlyGuidedWeapons.add(a.getEntity(game).getEquipment(a.getWeaponId()));
+                }
             }
         }
 
@@ -1699,9 +1705,14 @@ public class Princess extends BotClient {
                 continue; // This entity's weapons should not be considered for this calculation
             }
             Set<Mounted> candidateWeapons = new HashSet<Mounted>();
+            Coords fLoc = f.getPosition();
 
             for (Mounted m : f.getTotalWeaponList()) {
                 WeaponType w = (WeaponType) m.getType();
+                // Ignore weapons outside of viable long range
+                if (fLoc.distance(location) > w.getLongRange() + f.getRunMP()) {
+                    continue;
+                }
                 if (Compute.isIndirect(w) && !f.isAero()) {
                     // Only care about ground IF weapons.
                     candidateWeapons.add(m);
@@ -1718,7 +1729,8 @@ public class Princess extends BotClient {
             // All candidate weapons should be unique instances.
             friendlyGuidedWeapons.addAll(candidateWeapons);
         }
-        incomingGuidablesMap.put(entityToFire.getId(), friendlyGuidedWeapons);
+        // Cache result in case needed for later pathing / planning.
+        incomingGuidablesMap.put(key, friendlyGuidedWeapons);
         return friendlyGuidedWeapons;
     }
 

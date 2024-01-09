@@ -40,7 +40,6 @@ import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.StopSwarmAttack;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 
@@ -1711,7 +1710,7 @@ public class Princess extends BotClient {
                 if (fLoc.distance(location) > w.getLongRange() + f.getRunMP() && !m.isGroundBomb()) {
                     continue;
                 }
-                if (Compute.isIndirect(w) && !f.isAero()) {
+                if (WeaponType.isIndirect(w) && !f.isAero()) {
                     // Only care about ground IF weapons.
                     candidateWeapons.add(m);
                 } else if (m.getLinked() != null && m.getLinked().isHomingAmmoInHomingMode()) {

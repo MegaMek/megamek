@@ -308,6 +308,25 @@ public class WeaponType extends EquipmentType {
     protected boolean subCapital = false;
     protected int atClass = CLASS_NONE;
 
+    /**
+     * @param wtype type to check
+     * @return true if the wtype is able to be fired indirectly.
+     */
+    public static boolean isIndirect(WeaponType wtype) {
+        return ((wtype.getAmmoType() == AmmoType.T_LRM)
+                || (wtype.getAmmoType() == AmmoType.T_LRM_IMP)
+                || (wtype.getAmmoType() == AmmoType.T_MML)
+                || (wtype.getAmmoType() == AmmoType.T_EXLRM)
+                || (wtype.getAmmoType() == AmmoType.T_TBOLT_5)
+                || (wtype.getAmmoType() == AmmoType.T_TBOLT_10)
+                || (wtype.getAmmoType() == AmmoType.T_TBOLT_15)
+                || (wtype.getAmmoType() == AmmoType.T_TBOLT_20)
+                || (wtype.getAmmoType() == AmmoType.T_IATM)
+                || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
+                || (wtype.getAmmoType() == AmmoType.T_MEK_MORTAR)
+                || (wtype instanceof ArtilleryCannonWeapon));
+    }
+
     public void setDamage(int inD) {
         damage = inD;
     }

@@ -1090,21 +1090,6 @@ public class Compute {
         return null;
     }
 
-    public static boolean isIndirect(WeaponType wtype) {
-        return ((wtype.getAmmoType() == AmmoType.T_LRM)
-                || (wtype.getAmmoType() == AmmoType.T_LRM_IMP)
-                || (wtype.getAmmoType() == AmmoType.T_MML)
-                || (wtype.getAmmoType() == AmmoType.T_EXLRM)
-                || (wtype.getAmmoType() == AmmoType.T_TBOLT_5)
-                || (wtype.getAmmoType() == AmmoType.T_TBOLT_10)
-                || (wtype.getAmmoType() == AmmoType.T_TBOLT_15)
-                || (wtype.getAmmoType() == AmmoType.T_TBOLT_20)
-                || (wtype.getAmmoType() == AmmoType.T_IATM)
-                || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
-                || (wtype.getAmmoType() == AmmoType.T_MEK_MORTAR)
-                || (wtype instanceof ArtilleryCannonWeapon));
-    }
-
     /**
      * Determines the to-hit modifier due to range for an attack with the
      * specified parameters. Includes minimum range, infantry 0-range mods, and
@@ -1121,7 +1106,7 @@ public class Compute {
         boolean isAttackerBA = (ae instanceof BattleArmor);
         boolean isWeaponInfantry = (wtype instanceof InfantryWeapon) && !wtype.hasFlag(WeaponType.F_TAG);
         boolean isSwarmOrLegAttack = (wtype instanceof InfantryAttack);
-        boolean isIndirect = isIndirect(wtype) && weapon.curMode().equals("Indirect");
+        boolean isIndirect = WeaponType.isIndirect(wtype) && weapon.curMode().equals("Indirect");
         boolean useExtremeRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE);
         boolean useLOSRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE);
         //Naval C3 only provides full C3 range benefits to energy weapons and guided missiles

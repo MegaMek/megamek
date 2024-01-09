@@ -4883,10 +4883,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             te = (Entity) target;
         }
         if (atype.getMunitionType().contains(AmmoType.Munitions.M_ADA)){
-            // Air-Defense Arrow missiles use a much-simplified to-hit calculation because they:
+            // Air-Defense Arrow missiles use a simplified to-hit calculation because they:
             // A) are Flak; B) are not Artillery, C) use three ranges (same low-alt hex, 1 hex, 2 hexes)
             // as S/M/L
             // Per TO:AR 6th printing, p153, other mods are: Flak (-2), AMM, damage, intervening trees/jungle
+            // Per TW p
             int distance = Compute.effectiveDistance(game, ae, target);
             toHit = new ToHitData(ae.getCrew().getGunnery(), Messages.getString("WeaponAttackAction.GunSkill"));
 
@@ -4910,9 +4911,32 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (weapon != null) {
                 toHit.append(Compute.getDamageWeaponMods(ae, weapon));
             }
-            // Vs Aero, hits from below
-            if (Compute.isGroundToAir(ae, target) && ((ae.getAltitude() - target.getAltitude()) > 2)) {
-                toHit.setHitTable(ToHitData.HIT_BELOW);
+            // Vs airborne Aero specifically
+            if (Compute.isGroundToAir(ae, target)) {
+                int side = Compute.targetSideTable(ae.getPosition(), te);
+
+                // +1 if shooting at an aero approaching nose-on
+                if (side == ToHitData.SIDE_FRONT) {
+                    toHit.addModifier(+1, Messages.getString("WeaponAttackAction.AeroNoseAttack"));
+                }
+                // +2 if shooting at the side as it flashes by
+                if ((side == ToHitData.SIDE_LEFT) || (side == ToHitData.SIDE_RIGHT)) {
+                    toHit.addModifier(+2, Messages.getString("WeaponAttackAction.AeroSideAttack"));
+                }
+
+                // Ground-to-air attacks against a target flying at NOE
+                if (Compute.isGroundToAir(ae, target) && te.isNOE()) {
+                    if (te.passedWithin(ae.getPosition(), 1)) {
+                        toHit.addModifier(+1, Messages.getString("WeaponAttackAction.TeNoe"));
+                    } else {
+                        toHit.addModifier(+3, Messages.getString("WeaponAttackAction.TeNoe"));
+                    }
+                }
+
+                // Vs Aero, hits from below
+                if ((ae.getAltitude() - target.getAltitude()) > 2) {
+                    toHit.setHitTable(ToHitData.HIT_BELOW);
+                }
             }
 
             srt.setSpecialResolution(true);

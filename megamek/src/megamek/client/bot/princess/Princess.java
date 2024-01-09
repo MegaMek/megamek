@@ -1710,7 +1710,7 @@ public class Princess extends BotClient {
                 if (fLoc.distance(location) > w.getLongRange() + f.getRunMP() && !m.isGroundBomb()) {
                     continue;
                 }
-                if (WeaponType.isIndirect(w) && !f.isAero()) {
+                if (w.hasIndirectFire() && !f.isAero()) {
                     // Only care about ground IF weapons.
                     candidateWeapons.add(m);
                 } else if (m.getLinked() != null && m.getLinked().isHomingAmmoInHomingMode()) {

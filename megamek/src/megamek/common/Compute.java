@@ -1106,7 +1106,7 @@ public class Compute {
         boolean isAttackerBA = (ae instanceof BattleArmor);
         boolean isWeaponInfantry = (wtype instanceof InfantryWeapon) && !wtype.hasFlag(WeaponType.F_TAG);
         boolean isSwarmOrLegAttack = (wtype instanceof InfantryAttack);
-        boolean isIndirect = WeaponType.isIndirect(wtype) && weapon.curMode().equals("Indirect");
+        boolean isIndirect = wtype.hasIndirectFire() && weapon.curMode().equals("Indirect");
         boolean useExtremeRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE);
         boolean useLOSRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE);
         //Naval C3 only provides full C3 range benefits to energy weapons and guided missiles

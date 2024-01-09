@@ -745,7 +745,7 @@ public abstract class BVCalculator {
                     mgBV += mg.getType().getBV(entity);
                 }
             }
-            weaponBV = mgBV * (weapon.getType().isClan() ? 0.1 : 0.67);
+            weaponBV = mgBV * 0.67;
         }
 
         String multiplierText = (weaponCount > 1) ? weaponCount + " x " : "";

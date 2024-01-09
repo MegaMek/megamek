@@ -43,7 +43,7 @@ public class ISBATubeArtillery extends ArtilleryWeapon {
         rulesRefs = "284, TO";
         flags = flags.or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).or(F_MEK_MORTAR).or(F_MISSILE);
         damage = DAMAGE_BY_CLUSTERTABLE;
-        atClass = CLASS_NONE;
+        atClass = CLASS_ARTILLERY;
         infDamageClass = WEAPON_CLUSTER_MISSILE;
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setIntroLevel(false)
@@ -55,12 +55,12 @@ public class ISBATubeArtillery extends ArtilleryWeapon {
                 .setPrototypeFactions(F_CS)
                 .setProductionFactions(F_CS);
     }
-    
+
     @Override
     public boolean hasIndirectFire() {
         return true;
     }
-    
+
     @Override
     public void adaptToGameOptions(GameOptions gOp) {
         super.adaptToGameOptions(gOp);

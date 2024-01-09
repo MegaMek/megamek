@@ -47,7 +47,7 @@ public abstract class MekMortarWeapon extends AmmoWeapon {
         super();
         ammoType = AmmoType.T_MEK_MORTAR;
         damage = DAMAGE_BY_CLUSTERTABLE;
-        atClass = CLASS_NONE;
+        atClass = CLASS_MORTAR;
         flags = flags.or(F_MEK_MORTAR).or(F_MORTARTYPE_INDIRECT).or(F_MECH_WEAPON).or(F_MISSILE).or(F_TANK_WEAPON);
         infDamageClass = WEAPON_CLUSTER_MISSILE;
     }

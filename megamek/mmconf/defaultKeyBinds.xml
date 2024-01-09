@@ -469,4 +469,11 @@
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
+    <KeyBind>
+        <command>undoIllegalSteps</command> <!-- Ctrl+BackSpace -->
+        <keyCode>8</keyCode>
+        <modifier>128</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
 </KeyBindings>

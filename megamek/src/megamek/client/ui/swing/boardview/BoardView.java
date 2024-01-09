@@ -1160,7 +1160,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
         // draw structure warning in the deployment or movement phases
         // draw this before moving entities, so they show up under if overlapped.
-        if (shouldShowCFWarning())  {
+        if (!useIsometric() && shouldShowCFWarning())  {
             drawSprites(g, cfWarningSprites);
         }
 
@@ -2252,7 +2252,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
             // draw structure collapse warning sprites if in movement or deploy phase.
             // draw this before moving entities, so they show up under if overlapped.
-            if (shouldShowCFWarning()) {
+            if (!useIsometric() && shouldShowCFWarning()) {
                 drawSprites(boardGraph, cfWarningSprites);
             }
 
@@ -2334,6 +2334,9 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                             }
                             drawHexSpritesForHex(c, g, moveEnvSprites);
                             drawHexSpritesForHex(c, g, moveModEnvSprites);
+                            if (shouldShowCFWarning()) {
+                                drawHexSpritesForHex(c, g, cfWarningSprites);
+                            }
                             if ((en_Deployer != null)
                                     && board.isLegalDeployment(c, en_Deployer)) {
                                 drawHexBorder(g, getHexLocation(c), Color.YELLOW);
@@ -6188,6 +6191,11 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         for (Sprite spr : fieldOfFireSprites) {
             spr.prepare();
         }
+
+        for (Sprite spr : cfWarningSprites) {
+            spr.prepare();
+        }
+
         clearHexImageCache();
         updateBoard();
         for (MovementEnvelopeSprite sprite: moveEnvSprites) {

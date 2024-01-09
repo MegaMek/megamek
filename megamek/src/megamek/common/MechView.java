@@ -21,6 +21,8 @@ import megamek.common.annotations.Nullable;
 import megamek.common.eras.Era;
 import megamek.common.eras.Eras;
 import megamek.common.options.*;
+import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.common.verifier.*;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
@@ -78,6 +80,7 @@ public class MechView {
     private List<ViewElement> sBasic = new ArrayList<>();
     private List<ViewElement> sLoadout = new ArrayList<>();
     private List<ViewElement> sFluff = new ArrayList<>();
+    private List<ViewElement> sInvalid = new ArrayList<>();
 
     private final boolean html;
 
@@ -529,6 +532,51 @@ public class MechView {
             sFluff.add(new SingleLine());
             sFluff.add(new LabeledElement("History", entity.getFluff().getHistory()));
         }
+
+        EntityVerifier verifier = EntityVerifier.getInstance(new MegaMekFile(
+                Configuration.unitsDir(), EntityVerifier.CONFIG_FILENAME).getFile());
+        StringBuffer sb = new StringBuffer();
+        TestEntity testEntity = getTestEntity(entity, verifier);
+
+        if (testEntity != null) {
+            testEntity.correctEntity(sb, entity.getTechLevel());
+
+            if (!sb.toString().isEmpty()) {
+                sInvalid.add(new SingleLine());
+                sInvalid.add(new LabeledElement(Messages.getString("MechView.InvalidReasons"), sb.toString()));
+            }
+        }
+    }
+
+    /**
+     * copied from megameklab.util.UnitUtil.getEntityVerifier
+     * @param unit the supplied entity
+     * @param entityVerifier the entity verifier loaded from a UnitVerifierOptions.xml
+     * @return a TestEntity instance for the supplied Entity.
+     */
+    public static TestEntity getTestEntity(Entity unit, EntityVerifier entityVerifier) {
+        // FIXME move the same method from megameklab.util.UnitUtil.getEntityVerifier to common
+        TestEntity testEntity = null;
+        if (unit.hasETypeFlag(Entity.ETYPE_MECH)) {
+            testEntity = new TestMech((Mech) unit, entityVerifier.mechOption, null);
+        } else if (unit.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+            testEntity = new TestProtomech((Protomech) unit, entityVerifier.protomechOption, null);
+        } else if (unit.isSupportVehicle()) {
+            testEntity = new TestSupportVehicle(unit, entityVerifier.tankOption, null);
+        } else if (unit.hasETypeFlag(Entity.ETYPE_TANK)) {
+            testEntity = new TestTank((Tank) unit, entityVerifier.tankOption, null);
+        } else if (unit.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
+            testEntity = new TestSmallCraft((SmallCraft) unit, entityVerifier.aeroOption, null);
+        } else if (unit.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+            testEntity = new TestAdvancedAerospace((Jumpship) unit, entityVerifier.aeroOption, null);
+        } else if (unit.hasETypeFlag(Entity.ETYPE_AERO)) {
+            testEntity = new TestAero((Aero) unit, entityVerifier.aeroOption, null);
+        } else if (unit.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)) {
+            testEntity = new TestBattleArmor((BattleArmor) unit, entityVerifier.baOption, null);
+        } else if (unit.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
+            testEntity = new TestInfantry((Infantry)unit, entityVerifier.infOption, null);
+        }
+        return testEntity;
     }
 
     private String eraText(int startYear, int endYear) {
@@ -577,6 +625,14 @@ public class MechView {
     }
 
     /**
+     * The invalid section includes reasons why the unit is invalid
+     * @return The data from the invalid section
+     */
+    public String getMechReadoutInvalid() {
+        return getReadout(sInvalid);
+    }
+
+    /**
      * The loadout includes weapons, ammo, and other equipment broken down by location.
      * @return The data from the loadout section.
      */
@@ -612,7 +668,7 @@ public class MechView {
         }
         return docStart + getMechReadoutHead()
                 + getMechReadoutBasic() + getMechReadoutLoadout()
-                + getMechReadoutFluff() + docEnd;
+                + getMechReadoutFluff() + getMechReadoutInvalid() + docEnd;
     }
 
     private List<ViewElement> getInternalAndArmor() {

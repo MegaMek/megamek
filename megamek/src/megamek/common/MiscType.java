@@ -8596,14 +8596,14 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Mast Mount";
-        misc.setInternalName("ISMastMount");
+        misc.setInternalName(EquipmentTypeLookup.MAST_MOUNT);
         misc.addLookupName("CLMastMount");
         misc.tonnage = 0.5;
         misc.tankslots = 0;
         misc.cost = 50000;
         misc.flags = misc.flags.or(F_MAST_MOUNT).or(F_VTOL_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
         misc.bv = BV_VARIABLE;
-        misc.rulesRefs = "350, TO";
+        misc.rulesRefs = "162, TO:AUE";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
                 .setTechRating(RATING_C).setAvailability(RATING_F, RATING_F, RATING_F, RATING_F)
                 .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)

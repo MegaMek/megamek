@@ -358,13 +358,17 @@ public class TestTank extends TestEntity {
             correct = false;
         }
         if (tank instanceof VTOL) {
-            if (!tank.hasWorkingMisc(MiscType.F_MAST_MOUNT)) {
+            long mastMountCount = tank.countEquipment(EquipmentTypeLookup.MAST_MOUNT);
+            if (mastMountCount > 1) {
+                buff.append("Cannot mount more than one mast mount\n");
+                correct = false;
+            } else if (mastMountCount == 0) {
                 for (Mounted m : tank.getEquipment()) {
                     // Units with patchwork armor place any armor slots in the same location
                     // as the armor. This is for accounting convenience.
                     if ((m.getLocation() == VTOL.LOC_ROTOR)
                             && EquipmentType.getArmorType(m.getType()) == EquipmentType.T_ARMOR_UNKNOWN) {
-                        buff.append("rotor equipment must be placed in mast mount");
+                        buff.append("rotor equipment must be placed in mast mount\n");
                         correct = false;
                     }
                 }

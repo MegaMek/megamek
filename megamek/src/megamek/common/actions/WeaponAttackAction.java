@@ -4889,7 +4889,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             // Air-Defense Arrow missiles use a simplified to-hit calculation because they:
             // A) are Flak; B) are not Artillery, C) use three ranges (same low-alt hex, 1 hex, 2 hexes)
             // as S/M/L
-            // Per TO:AR 6th printing, p153, ADA Missils should use TW Flak rules rather than TO Artillery Flak rules.
+            // Per TO:AR 6th printing, p153, ADA Missiles should use TW Flak rules rather than TO Artillery Flak rules.
             // Per TW pg 114, all other mods _should_ be included.
 
             // Special range calc

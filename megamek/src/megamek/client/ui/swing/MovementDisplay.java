@@ -2996,7 +2996,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         final boolean canTow = ce.getHitchLocations().stream()
                 .flatMap(c -> game().getEntitiesVector(c).stream())
-                .anyMatch(ce::canTow);
+                .anyMatch(e -> ce.canTow(e.getId()));
         setTowEnabled(canTow);
     }
 

@@ -4925,7 +4925,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
 
                 // Ground-to-air attacks against a target flying at NOE
-                if (Compute.isGroundToAir(ae, target) && te.isNOE()) {
+                if (te.isNOE()) {
                     if (te.passedWithin(ae.getPosition(), 1)) {
                         toHit.addModifier(+1, Messages.getString("WeaponAttackAction.TeNoe"));
                     } else {
@@ -4933,8 +4933,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     }
                 }
 
-                // Vs Aero, hits from below
-                if ((ae.getAltitude() - target.getAltitude()) > 2) {
+                // evading bonuses
+                if (te.isEvading()) {
+                    toHit.addModifier(te.getEvasionBonus(), Messages.getString("WeaponAttackAction.TeEvading"));
+                }
+
+                // Vs Aero, hits from below; attacker _should_ always be below target.
+                if ((te.getAltitude() - ae.getAltitude()) > 2) {
                     toHit.setHitTable(ToHitData.HIT_BELOW);
                 }
             }

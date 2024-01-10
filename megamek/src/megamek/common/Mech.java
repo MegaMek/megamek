@@ -2730,7 +2730,8 @@ public abstract class Mech extends Entity {
         for (int i = 0; i < locations(); i++) {
             explosiveFound = false;
             for (Mounted m : getEquipment()) {
-                if (m.getType().isExplosive(m, true) && (m.getLocation() == i)) {
+                if (m.getType().isExplosive(m, true)
+                        && ((m.getLocation() == i) || (m.getSecondLocation() == i))) {
                     explosiveFound = true;
                 }
             }

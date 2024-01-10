@@ -274,6 +274,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         clientgui.getBoardView().cursor(null);
         clientgui.getBoardView().markDeploymentHexesFor(null);
         clientgui.setSelectedEntityNum(Entity.NONE);
+        clientgui.getBoardView().clearCFWarningData();
         disableButtons();
     }
 

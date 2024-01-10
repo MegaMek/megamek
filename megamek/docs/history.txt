@@ -13,6 +13,7 @@ MEGAMEK VERSION HISTORY:
 + PR #5012: QuirkEntry: remove maximum slot number check (fixes MegaMekLab#1364)
 + PR #4992: Don't display engine rating for SV engines
 + PR #5025: There is now a keybind for removing all invalid move steps at the end of a move path (default: Ctrl-Backspace)
++ Fix #5038: Add clan CASE in postLoadInit for explosive secondary locations
 
 0.49.17 (2023-12-31 1900 UTC)
 + Fix #1031: Show structure collapse warning when deploying and moving.

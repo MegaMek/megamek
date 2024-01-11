@@ -1003,10 +1003,14 @@ public class TestSupportVehicle extends TestEntity {
             }
         }
         if (supportVee instanceof VTOL) {
-            if (!supportVee.hasWorkingMisc(MiscType.F_MAST_MOUNT)) {
+            long mastMountCount = supportVee.countEquipment(EquipmentTypeLookup.MAST_MOUNT);
+            if (mastMountCount > 1) {
+                buff.append("Cannot mount more than one mast mount\n");
+                correct = false;
+            } else if (mastMountCount == 0) {
                 for (Mounted m : supportVee.getEquipment()) {
                     if (m.getLocation() == VTOL.LOC_ROTOR) {
-                        buff.append("rotor equipment must be placed in mast mount");
+                        buff.append("rotor equipment must be placed in mast mount\n");
                         correct = false;
                     }
                 }

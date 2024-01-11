@@ -4379,6 +4379,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
+     * Returns the number of equipment of the given internal name that are mounted on this unit, regardless of
+     * their working condition. Ideally use {@link EquipmentTypeLookup} for the internal name.
+     *
+     * @param internalName The {@link EquipmentType#internalName} of the equipment
+     * @return The equipment count on this unit
+     */
+    public long countEquipment(String internalName) {
+        return getEquipment().stream().filter(m -> m.is(internalName)).count();
+    }
+
+    /**
      * return how many misc equipments with the specified flag the unit has
      *
      * @param flag

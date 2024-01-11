@@ -63,6 +63,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
     public enum TargetingCommand implements PhaseCommand {
         FIRE_NEXT("fireNext"),
         FIRE_FIRE("fireFire"),
+        FIRE_TWIST("fireTwist"),
         FIRE_SKIP("fireSkip"),
         FIRE_NEXT_TARG("fireNextTarg"),
         FIRE_MODE("fireMode"),
@@ -105,6 +106,8 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
         public String getHotKeyDesc() {
             String result = "";
 
+            String msg_left = Messages.getString("Left");
+            String msg_right = Messages.getString("Right");
             String msg_next= Messages.getString("Next");
             String msg_previous = Messages.getString("Previous");
             String msg_valid = Messages.getString("TargetingPhaseDisplay.FireNextTarget.tooltip.Valid");
@@ -115,6 +118,11 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
                     result = "<BR>";
                     result += "&nbsp;&nbsp;" + msg_next + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT);
                     result += "&nbsp;&nbsp;" + msg_previous + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_UNIT);
+                    break;
+                case FIRE_TWIST:
+                    result = "<BR>";
+                    result += "&nbsp;&nbsp;" + msg_left + ": " + KeyCommandBind.getDesc(KeyCommandBind.TWIST_LEFT);
+                    result += "&nbsp;&nbsp;" + msg_right + ": " + KeyCommandBind.getDesc(KeyCommandBind.TWIST_RIGHT);
                     break;
                 case FIRE_FIRE:
                     result = "<BR>";
@@ -166,6 +174,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
 
     // is the shift key held?
     private boolean shiftheld;
+    protected boolean twisting;
 
     private final GamePhase phase;
 
@@ -245,6 +254,54 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
                     @Override
                     public void performAction() {
                         removeLastFiring();
+                    }
+                });
+
+        // Register the action for TWIST_LEFT
+        controller.registerCommandAction(KeyCommandBind.TWIST_LEFT.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (!clientgui.getClient().isMyTurn()
+                                || !phase.isOffboard()
+                                || clientgui.getBoardView().getChatterBoxActive()
+                                || !display.isVisible()
+                                || display.isIgnoringEvents()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        updateFlipArms(false);
+                        torsoTwist(0);
+                    }
+                });
+
+        // Register the action for TWIST_RIGHT
+        controller.registerCommandAction(KeyCommandBind.TWIST_RIGHT.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (!clientgui.getClient().isMyTurn()
+                                || !phase.isOffboard()
+                                || clientgui.getBoardView().getChatterBoxActive()
+                                || !display.isVisible()
+                                || display.isIgnoringEvents()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        updateFlipArms(false);
+                        torsoTwist(1);
                     }
                 });
 
@@ -563,6 +620,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
                 clientgui.getBoardView().centerOnHex(ce().getPosition());
             }
 
+            setTwistEnabled(phase.isOffboard() && ce().canChangeSecondaryFacing() && ce().getCrew().isActive());
             setFlipArmsEnabled(ce().canFlipArms() && ce().getCrew().isActive());
             updateSearchlight();
 
@@ -694,6 +752,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
      */
     private void disableButtons() {
         setFireEnabled(false);
+        setTwistEnabled(false);
         setSkipEnabled(false);
         setNextEnabled(false);
         butDone.setEnabled(false);
@@ -1183,6 +1242,48 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
     }
 
     /**
+     * Torso twist in the proper direction.
+     */
+    void torsoTwist(Coords twistTarget) {
+        int direction = ce().getFacing();
+
+        if (twistTarget != null) {
+            direction = ce().clipSecondaryFacing(ce().getPosition().direction(twistTarget));
+        }
+
+        if (direction != ce().getSecondaryFacing()) {
+            clearAttacks();
+            addAttack(new TorsoTwistAction(cen, direction));
+            ce().setSecondaryFacing(direction);
+            refreshAll();
+        }
+    }
+
+    /**
+     * Torso twist to the left or right
+     *
+     * @param twistDir An <code>int</code> specifying wether we're twisting left or
+     *                 right, 0 if we're twisting to the left, 1 if to the right.
+     */
+
+    void torsoTwist(int twistDir) {
+        int direction = ce().getSecondaryFacing();
+        if (twistDir == 0) {
+            clearAttacks();
+            direction = ce().clipSecondaryFacing((direction + 5) % 6);
+            addAttack(new TorsoTwistAction(cen, direction));
+            ce().setSecondaryFacing(direction);
+            refreshAll();
+        } else if (twistDir == 1) {
+            clearAttacks();
+            direction = ce().clipSecondaryFacing((direction + 7) % 6);
+            addAttack(new TorsoTwistAction(cen, direction));
+            ce().setSecondaryFacing(direction);
+            refreshAll();
+        }
+    }
+
+    /**
      * Returns the current entity.
      */
     Entity ce() {
@@ -1216,12 +1317,16 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
         }
 
         if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
-            if (shiftheld) {
+            if (shiftheld || twisting) {
                 updateFlipArms(false);
+                torsoTwist(b.getCoords());
             }
             clientgui.getBoardView().cursor(b.getCoords());
         } else if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
-            clientgui.getBoardView().select(b.getCoords());
+            twisting = false;
+            if (!shiftheld) {
+                clientgui.getBoardView().select(b.getCoords());
+            }
         }
     }
 
@@ -1238,6 +1343,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
                 && (ce() != null) && !b.getCoords().equals(ce().getPosition())) {
             if (shiftheld) {
                 updateFlipArms(false);
+                torsoTwist(b.getCoords());
             } else if (phase.isTargeting()) {
                 target(new HexTarget(b.getCoords(), Targetable.TYPE_HEX_ARTILLERY));
             } else {
@@ -1339,8 +1445,9 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
                 if (cen == Entity.NONE) {
                     beginMyTurn();
                 }
-
-                setStatusBarText(Messages.getString("TargetingPhaseDisplay.its_your_turn") + s);
+                String t = (phase.isTargeting()) ? Messages.getString("TargetingPhaseDisplay.its_your_turn") :
+                        Messages.getString("TargetingPhaseDisplay.its_your_tag_turn");
+                setStatusBarText(t + s);
                 clientgui.bingOthersTurn();
             } else {
                 endMyTurn();
@@ -1386,6 +1493,8 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
 
         if (ev.getActionCommand().equals(TargetingCommand.FIRE_FIRE.getCmd())) {
             fire();
+        } else if (ev.getActionCommand().equals(FiringCommand.FIRE_TWIST.getCmd())) {
+            twisting = true;
         } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_SKIP.getCmd())) {
             nextWeapon();
         } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_NEXT.getCmd())) {
@@ -1414,6 +1523,10 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
             return;
         }
 
+        twisting = false;
+
+        torsoTwist(null);
+
         clearAttacks();
         ce().setArmsFlipped(armsFlipped);
         addAttack(new FlipArmsAction(cen, armsFlipped));
@@ -1432,6 +1545,11 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
     private void setFireEnabled(boolean enabled) {
         buttons.get(TargetingCommand.FIRE_FIRE).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_FIRE.getCmd(), enabled);
+    }
+
+    protected void setTwistEnabled(boolean enabled) {
+        buttons.get(TargetingCommand.FIRE_TWIST).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_TWIST.getCmd(), enabled);
     }
 
     private void setSkipEnabled(boolean enabled) {

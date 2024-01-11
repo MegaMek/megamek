@@ -1231,6 +1231,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         clientgui.getBoardView().clearMovementData();
         clientgui.getBoardView().clearFieldOfFire();
         clientgui.getBoardView().clearSensorsRanges();
+        clientgui.getBoardView().clearCFWarningData();
     }
 
     /**

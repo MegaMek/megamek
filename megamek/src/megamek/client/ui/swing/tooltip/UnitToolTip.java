@@ -484,7 +484,7 @@ public final class UnitToolTip {
                     case Mech.LOC_RT:
                     case Mech.LOC_LT:
                         col3 = sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, loc, msg_abbr_engine).toString();
-                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, loc, msg_abbr_gyro).toString();
+                        col3 += sysCrits(entity, CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, loc, msg_abbr_lifesupport).toString();
                         break;
                     case Mech.LOC_RARM:
                     case Mech.LOC_LARM:

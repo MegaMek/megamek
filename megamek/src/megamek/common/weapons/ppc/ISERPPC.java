@@ -25,7 +25,7 @@ public class ISERPPC extends PPCWeapon {
         name = "ER PPC";
         setInternalName("ISERPPC");
         addLookupName("IS ER PPC");
-        sortingName = "PPC Y";
+        sortingName = "PPC ER";
         heat = 15;
         damage = 10;
         shortRange = 7;

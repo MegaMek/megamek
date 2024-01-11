@@ -170,8 +170,9 @@ public interface IAero {
     void autoSetCapArmor();
 
     void autoSetFatalThresh();
-    
+
     int getAltitude();
+
 
     /**
      * Iterate through current weapons and count the number in each capital

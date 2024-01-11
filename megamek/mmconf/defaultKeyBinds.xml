@@ -470,6 +470,13 @@
     </KeyBind>
 
     <KeyBind>
+         <command>undoIllegalSteps</command> <!-- Ctrl+BackSpace -->
+        <keyCode>8</keyCode>      
+        <modifier>128</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
          <command>toggleForceDisplay</command> <!-- Ctrl-F -->
         <keyCode>70</keyCode>
         <modifier>128</modifier>

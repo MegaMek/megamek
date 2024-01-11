@@ -560,9 +560,9 @@ Black Hawk (Nova) C|Nova (Black Hawk) C
 Black Hawk (Nova) D|Nova (Black Hawk) D
 Black Hawk (Nova) Prime|Nova (Black Hawk) Prime
 Black Hawk (Nova) S|Nova (Black Hawk) S
-Black Hawk (Standard)|Black Hawk (Standard)
 Black Hawk 2|Black Hawk (Standard) 2
 Black Hawk 3|Black Hawk (Standard) 3
+
 Blood Asp Prime|Star Adder (Blood Asp) Prime
 Blood Asp A|Star Adder (Blood Asp) A
 Blood Asp B|Star Adder (Blood Asp) B
@@ -573,6 +573,7 @@ Blood Asp F|Star Adder (Blood Asp) F
 Blood Asp G|Star Adder (Blood Asp) G
 Blood Asp I|Star Adder (Blood Asp) I
 Blood Asp T|Star Adder (Blood Asp) T
+
 Cauldron-Born (Ebon Jaguar) A|Ebon Jaguar (Cauldron-Born) A
 Cauldron-Born (Ebon Jaguar) B|Ebon Jaguar (Cauldron-Born) B
 Cauldron-Born (Ebon Jaguar) C|Ebon Jaguar (Cauldron-Born) C
@@ -745,6 +746,7 @@ Donovan-Miter Magellan Series Four|Magellan Series Four
 Falcon Hover Tank (Standard)|Falcon Hover Tank
 Federated-Boeing Longhaul FB-335|Longhaul Cargo Aircraft FB-335
 Hover Tank (Standard)|LTV-4 Hover Tank
+Iveco Burro Heavy Support Truck|Burro Heavy Support Truck
 Iveco Burro II Super Heavy Cargo Truck|Burro II Super Heavy Cargo Truck
 Kressly Dillinger Police Vehicle|Dillinger Police Vehicle
 LTV-4 Hover Tank (Standard)|Hawk Hover Tank (LTV-4)

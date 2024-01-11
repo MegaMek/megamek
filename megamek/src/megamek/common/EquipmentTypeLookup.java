@@ -90,6 +90,7 @@ public class EquipmentTypeLookup {
     @EquipmentName public static final String CLAN_MASC = "CLMASC";
     @EquipmentName public static final String SPONSON_TURRET = "SponsonTurret";
     @EquipmentName public static final String PINTLE_TURRET = "PintleTurret";
+    @EquipmentName public static final String MAST_MOUNT = "ISMastMount";
 
     @EquipmentName public static final String AMPHIBIOUS_CHASSIS_MOD = "AmphibiousChassisMod";
     @EquipmentName public static final String ARMORED_CHASSIS_MOD = "ArmoredChassisMod";

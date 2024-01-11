@@ -27,6 +27,7 @@ import org.apache.logging.log4j.LogManager;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -80,7 +81,7 @@ public class WeaponFireInfo {
                    final Game game,
                    final boolean guess,
                    final Princess owner) {
-        this(shooter, null, null, target, null, weapon, game, false, guess, owner, new int[0]);
+        this(shooter, null, null, target, null, weapon, game, false, guess, owner, null);
     }
 
     /**
@@ -102,7 +103,7 @@ public class WeaponFireInfo {
                    final Game game,
                    final boolean guess,
                    final Princess owner) {
-        this(shooter, shooterState, null, target, targetState, weapon, game, false, guess, owner, new int[0]);
+        this(shooter, shooterState, null, target, targetState, weapon, game, false, guess, owner, null);
     }
 
     /**
@@ -128,8 +129,8 @@ public class WeaponFireInfo {
                    final boolean assumeUnderFlightPath,
                    final boolean guess,
                    final Princess owner,
-                   final int[] bombPayload) {
-        this(shooter, null, shooterPath, target, targetState, weapon, game, assumeUnderFlightPath, guess, owner, bombPayload);
+                   final HashMap<String, int[]> bombPayloads) {
+        this(shooter, null, shooterPath, target, targetState, weapon, game, assumeUnderFlightPath, guess, owner, bombPayloads);
     }
 
     /**
@@ -159,7 +160,7 @@ public class WeaponFireInfo {
                            final boolean assumeUnderFlightPath,
                            final boolean guess,
                            final Princess owner,
-                           final int[] bombPayload) {
+                           final HashMap<String, int[]> bombPayloads) {
         this.owner = owner;
 
         setShooter(shooter);
@@ -168,7 +169,7 @@ public class WeaponFireInfo {
         setTargetState(targetState);
         setWeapon(weapon);
         setGame(game);
-        initDamage(shooterPath, assumeUnderFlightPath, guess, bombPayload);
+        initDamage(shooterPath, assumeUnderFlightPath, guess, bombPayloads);
     }
 
     protected WeaponAttackAction getAction() {
@@ -276,7 +277,7 @@ public class WeaponFireInfo {
     }
 
     private ToHitData calcRealToHit(final WeaponAttackAction weaponAttackAction) {
-        return weaponAttackAction.toHit(getGame(), 
+        return weaponAttackAction.toHit(getGame(),
                 owner.getPrecognition().getECMInfo());
     }
 
@@ -331,7 +332,7 @@ public class WeaponFireInfo {
     }
 
     WeaponAttackAction buildWeaponAttackAction() {
-        if (!(getWeapon().getType().hasFlag(WeaponType.F_ARTILLERY) 
+        if (!(getWeapon().getType().hasFlag(WeaponType.F_ARTILLERY)
                 || (getWeapon().getType() instanceof CapitalMissileWeapon
                         && Compute.isGroundToGround(shooter, target)))) {
             return new WeaponAttackAction(getShooter().getId(), getTarget().getTargetType(), getTarget().getId(),
@@ -342,14 +343,14 @@ public class WeaponFireInfo {
         }
     }
 
-    private WeaponAttackAction buildBombAttackAction(final int[] bombPayload) {
+    private WeaponAttackAction buildBombAttackAction(final HashMap<String, int[]> bombPayloads) {
         final WeaponAttackAction diveBomb = new WeaponAttackAction(getShooter().getId(),
                                                                    getTarget().getTargetType(),
                                                                    getTarget().getId(),
                                                                    getShooter().getEquipmentNum(getWeapon()));
-        
-        diveBomb.setBombPayload(bombPayload);
-        
+
+        diveBomb.setBombPayloads(bombPayloads);
+
         return diveBomb;
     }
 
@@ -358,7 +359,7 @@ public class WeaponFireInfo {
         if (weapon.isGroundBomb()) {
             return computeExpectedBombDamage(getShooter(), weapon, getTarget().getPosition());
         }
-        
+
         // bay weapons require special consideration, by looping through all weapons and adding up the damage
         // A bay's weapons may have different ranges, most noticeable in laser bays, where the damage potential
         // varies with distance to target.
@@ -370,9 +371,9 @@ public class WeaponFireInfo {
                 int maxRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
                         ? weaponType.getExtremeRange() : weaponType.getLongRange();
                 int targetDistance = getShooter().getPosition().distance(getTarget().getPosition());
-                
+
                 // if the particular weapon is within range or we're an aircraft strafing a ground unit
-                // then we can count it. Otherwise, it's not going to contribute to damage, and we want 
+                // then we can count it. Otherwise, it's not going to contribute to damage, and we want
                 // to avoid grossly overestimating damage.
                 if (targetDistance <= maxRange || shooter.isAirborne() && !target.isAirborne()) {
                     bayDamage += weaponType.getDamage();
@@ -390,27 +391,27 @@ public class WeaponFireInfo {
         }
 
         // artillery and cluster table use the rack size as the base damage amount
-        // a little inaccurate, but better than ignoring those weapons entirely       
+        // a little inaccurate, but better than ignoring those weapons entirely
         if ((weaponType.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE) ||
            (weaponType.getDamage() == WeaponType.DAMAGE_ARTILLERY)) {
             return weaponType.getRackSize();
         }
 
-        // infantry weapons use number of troopers multiplied by weapon damage, 
+        // infantry weapons use number of troopers multiplied by weapon damage,
         // with # troopers counting as 1 for support vehicles
         if ((weaponType.getDamage() == WeaponType.DAMAGE_VARIABLE) &&
                 (weaponType instanceof InfantryWeapon)) {
-            int numTroopers = (shooter instanceof Infantry) ? 
+            int numTroopers = (shooter instanceof Infantry) ?
                     ((Infantry) shooter).getShootingStrength() : 1;
             return InfantryWeaponHandler.calculateBaseDamage(shooter, weapon, weaponType) * numTroopers;
         }
-        
+
         // this is a special case - if we're considering hitting a swarmed target
         // that's basically our only option
         if (weaponType.getInternalName() == Infantry.SWARM_WEAPON_MEK) {
             return 1;
         }
-        
+
         if (getTarget() instanceof Entity) {
             double dmg = Compute.getExpectedDamage(getGame(), getAction(),
                     true, owner.getPrecognition().getECMInfo());
@@ -419,10 +420,10 @@ public class WeaponFireInfo {
             }
             return dmg;
         }
-                
+
         return weaponType.getDamage();
     }
-    
+
     /**
      * Compute the heat output by firing a given weapon.
      * Contains special logic for bay weapons when using individual bay heat.
@@ -441,13 +442,13 @@ public class WeaponFireInfo {
                 WeaponType weaponType = (WeaponType) bayWeapon.getType();
                 bayHeat += weaponType.getHeat();
             }
-            
+
             return bayHeat;
         } else {
             return weapon.getType().getHeat();
         }
     }
-    
+
     /**
      * Worker function to compute expected bomb damage given the shooter
      * @param shooter The unit making the attack.
@@ -458,35 +459,35 @@ public class WeaponFireInfo {
     private double computeExpectedBombDamage(final Entity shooter, final Mounted weapon,
                                              final Coords bombedHex) {
         double damage = 0D; //lol double damage I wish
-        
+
         // for dive attacks, we can pretty much assume that we're going to drop everything we've got on the poor scrubs in this hex
         if (weapon.getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
             for (final Mounted bomb : shooter.getBombs(BombType.F_GROUND_BOMB)) {
                 final int damagePerShot = ((BombType) bomb.getType()).getDamagePerShot();
-        
+
                 // some bombs affect a blast radius, so we take that into account
                 final List<Coords> affectedHexes = new ArrayList<>();
-                
-                int blastRadius = BombType.getBombBlastRadius(bomb.getType().getInternalName()); 
+
+                int blastRadius = BombType.getBombBlastRadius(bomb.getType().getInternalName());
                 for (int radius = 0; radius <= blastRadius; radius++) {
                     affectedHexes.addAll(bombedHex.allAtDistance(radius));
                 }
-                
+
                 // now we go through all affected hexes and add up the damage done
                 for (final Coords coords : affectedHexes) {
-                    for (final Entity currentVictim : game.getEntitiesVector(coords)) {                        
+                    for (final Entity currentVictim : game.getEntitiesVector(coords)) {
                         if (currentVictim.getOwner().getTeam() != shooter.getOwner().getTeam()) {
                             damage += damagePerShot;
                         } else { // we prefer not to blow up friendlies if we can help it
                             damage -= damagePerShot;
-                        }                    
+                        }
                     }
                 }
             }
         }
-        
+
         damage = damage * getProbabilityToHit();
-        
+
         return damage;
     }
 
@@ -501,9 +502,9 @@ public class WeaponFireInfo {
     void initDamage(@Nullable final MovePath shooterPath,
                     final boolean assumeUnderFlightPath,
                     final boolean guess,
-                    final int[] bombPayload) {
+                    final HashMap<String, int[]> bombPayloads) {
         boolean debugging = false;
-        
+
         final StringBuilder msg =
                 debugging ?
                         new StringBuilder("Initializing Damage for ").append(getShooter().getDisplayName())
@@ -513,12 +514,12 @@ public class WeaponFireInfo {
                         null;
 
         // Set up the attack action and calculate the chance to hit.
-        if ((null == bombPayload) || (0 == bombPayload.length)) {
+        if ((null == bombPayloads) || (0 == bombPayloads.get("external").length)) {
             setAction(buildWeaponAttackAction());
         } else {
-            setAction(buildBombAttackAction(bombPayload));
+            setAction(buildBombAttackAction(bombPayloads));
         }
-        
+
         if (!guess) {
             setToHit(calcRealToHit(getWeaponAttackAction()));
         } else if (null != shooterPath) {
@@ -539,13 +540,13 @@ public class WeaponFireInfo {
             setExpectedDamageOnHit(0);
             return;
         }
-        
+
         if (debugging && getShooterState().hasNaturalAptGun()) {
             msg.append("\n\tAttacker has Natural Aptitude Gunnery");
         }
-        
+
         setProbabilityToHit(Compute.oddsAbove(getToHit().getValue(), getShooterState().hasNaturalAptGun()) / 100);
-        
+
         if (debugging) {
             msg.append("\n\tHit Chance: ").append(LOG_PER.format(getProbabilityToHit()));
         }
@@ -557,16 +558,16 @@ public class WeaponFireInfo {
         if (!currentFireMode.equals(getWeapon().curMode().getName())) {
             setUpdatedFiringMode(spinMode);
         }
-        
+
         setHeat(computeHeat(weapon));
-        
+
         if (debugging) {
             msg.append("\n\tHeat: ").append(getHeat());
         }
 
         setExpectedDamageOnHit(computeExpectedDamage());
         setMaxDamage(getExpectedDamageOnHit());
-        
+
         if (debugging) {
             msg.append("\n\tMax Damage: ").append(LOG_DEC.format(maxDamage));
         }
@@ -637,7 +638,7 @@ public class WeaponFireInfo {
             LogManager.getLogger().debug(msg.toString());
         }
     }
-    
+
     WeaponAttackAction getWeaponAttackAction() {
         if (null != getAction()) {
             return getAction();
@@ -677,7 +678,7 @@ public class WeaponFireInfo {
     public Integer getUpdatedFiringMode() {
         return updatedFiringMode;
     }
-    
+
     public void setUpdatedFiringMode(int mode) {
         updatedFiringMode = mode;
     }

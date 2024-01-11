@@ -125,7 +125,7 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
         }
 
         if (dataFile.exists("modular")) {
-            a.setModular(true);
+            a.setModularOrKFAdapter(true);
         }
 
         // Grav Decks - two approaches

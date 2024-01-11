@@ -29,7 +29,7 @@ public class ISSnubNosePPC extends PPCWeapon {
         name = "Snub-Nose PPC";
         setInternalName("ISSNPPC");
         addLookupName("ISSnubNosedPPC");
-        sortingName = "PPC X";
+        sortingName = "PPC Snub";
         heat = 10;
         damage = DAMAGE_VARIABLE;
         minimumRange = 0;

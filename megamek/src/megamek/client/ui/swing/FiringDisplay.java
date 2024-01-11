@@ -188,6 +188,8 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
 
     protected boolean isStrafing = false;
 
+    protected int phaseInternalBombs = 0;
+
     /**
      * Keeps track of the Coords that are in a strafing run.
      */
@@ -1203,27 +1205,37 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
             }
         }
 
-        // We need to nag for overheat on capital fighters
-        if ((ce() != null) && ce().isCapitalFighter() && GUIP.getNagForOverheat()) {
-            int totalheat = 0;
-            for (EntityAction action : attacks) {
-                if (action instanceof WeaponAttackAction) {
-                    Mounted weapon = ce().getEquipment(((WeaponAttackAction) action).getWeaponId());
-                    totalheat += weapon.getCurrentHeat();
+        // Handle some entity bookkeeping
+        if (ce() != null) {
+            // Add internal bombs used this phase to all internal bombs used this round
+            if (ce().isBomber()) {
+                if (phaseInternalBombs > 0) {
+                    ((IBomber) ce()).increaseUsedInternalBombs(phaseInternalBombs);
                 }
+
             }
-
-            if (totalheat > ce().getHeatCapacity()) {
-                // confirm this action
-                String title = Messages.getString("FiringDisplay.OverheatNag.title");
-                String body = Messages.getString("FiringDisplay.OverheatNag.message");
-                ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
-                if (!response.getShowAgain()) {
-                    GUIP.setNagForOverheat(false);
+            // We need to nag for overheat on capital fighters
+            if (ce().isCapitalFighter() && GUIP.getNagForOverheat()) {
+                int totalheat = 0;
+                for (EntityAction action : attacks) {
+                    if (action instanceof WeaponAttackAction) {
+                        Mounted weapon = ce().getEquipment(((WeaponAttackAction) action).getWeaponId());
+                        totalheat += weapon.getCurrentHeat();
+                    }
                 }
 
-                if (!response.getAnswer()) {
-                    return;
+                if (totalheat > ce().getHeatCapacity()) {
+                    // confirm this action
+                    String title = Messages.getString("FiringDisplay.OverheatNag.title");
+                    String body = Messages.getString("FiringDisplay.OverheatNag.message");
+                    ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
+                    if (!response.getShowAgain()) {
+                        GUIP.setNagForOverheat(false);
+                    }
+
+                    if (!response.getAnswer()) {
+                        return;
+                    }
                 }
             }
         }
@@ -1257,7 +1269,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
                     waa2.setAmmoId(waa.getAmmoId());
                     waa2.setAmmoMunitionType(waa.getAmmoMunitionType());
                     waa2.setAmmoCarrier(waa.getAmmoCarrier());
-                    waa2.setBombPayload(waa.getBombPayload());
+                    waa2.setBombPayloads(waa.getBombPayloads());
                     waa2.setStrafing(waa.isStrafing());
                     waa2.setStrafingFirstShot(waa.isStrafingFirstShot());
                     newAttacks.addElement(waa2);
@@ -1287,7 +1299,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
                     waa2.setAmmoId(waa.getAmmoId());
                     waa2.setAmmoMunitionType(waa.getAmmoMunitionType());
                     waa2.setAmmoCarrier(waa.getAmmoCarrier());
-                    waa2.setBombPayload(waa.getBombPayload());
+                    waa2.setBombPayloads(waa.getBombPayloads());
                     waa2.setStrafing(waa.isStrafing());
                     waa2.setStrafingFirstShot(waa.isStrafingFirstShot());
                     newAttacks.addElement(waa2);
@@ -1496,38 +1508,64 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         clientgui.getUnitDisplay().wPan.setToHit(toHitBuff.toString());
     }
 
-    private int[] getBombPayload(boolean isSpace, int limit) {
-        int[] payload = new int[BombType.B_NUM];
-        if (!ce().isBomber()) {
-            return payload;
+    private HashMap<String, int[]> getBombPayloads(boolean isSpace, int limit) {
+        HashMap<String, int[]> payloads = new HashMap<String, int[]>();
+        HashMap<String, int[]> loadouts = new HashMap<String, int[]>();
+        String[] titles = new String[] {"internal", "external"};
+        for (String title: titles) {
+            payloads.put(title, new int[BombType.B_NUM]);
         }
-        int[] loadout = ce().getBombLoadout();
-        // this part is ugly, but we need to find any other bombing attacks by
-        // this
-        // entity in the attack list and subtract those payloads from the
-        // loadout
-        for (EntityAction o : attacks) {
-            if (o instanceof WeaponAttackAction) {
-                WeaponAttackAction waa = (WeaponAttackAction) o;
-                if (waa.getEntityId() == ce().getId()) {
-                    int[] priorLoad = waa.getBombPayload();
-                    for (int i = 0; i < priorLoad.length; i++) {
-                        loadout[i] = loadout[i] - priorLoad[i];
+
+        // Have to return after map is filled in, not before
+        if (!ce().isBomber()) {
+            return payloads;
+        }
+
+        loadouts.put("internal", ce().getInternalBombLoadout());
+        loadouts.put("external", ce().getExternalBombLoadout());
+
+        for (String title: titles){
+            int[] loadout = loadouts.get(title);
+
+            // this part is ugly, but we need to find any other bombing attacks by this
+            // entity in the attack list and subtract those payloads from the relevant loadout
+            for (EntityAction o : attacks) {
+                if (o instanceof WeaponAttackAction) {
+                    WeaponAttackAction waa = (WeaponAttackAction) o;
+                    if (waa.getEntityId() == ce().getId()) {
+                        int[] priorLoad = waa.getBombPayloads().get(title);
+                        for (int i = 0; i < priorLoad.length; i++) {
+                            loadout[i] = loadout[i] - priorLoad[i];
+                        }
                     }
                 }
             }
-        }
 
-        int numFighters = ce().getActiveSubEntities().size();
-        BombPayloadDialog bombsDialog = new BombPayloadDialog(
-                clientgui.frame,
-                Messages.getString("FiringDisplay.BombNumberDialog" + ".title"),
-                loadout, isSpace, false, limit, numFighters);
-        bombsDialog.setVisible(true);
-        if (bombsDialog.getAnswer()) {
-            payload = bombsDialog.getChoices();
+            // Don't bother preparing a dialog for bombs that don't exist.
+            if (Arrays.stream(loadout).sum() <= 0){
+                continue;
+            }
+
+            // Internal bay bombing is limited to 6 items per turn, but other limits may also apply
+            if ("internal".equals(title)) {
+                int usedBombs = ((IBomber) ce()).getUsedInternalBombs();
+                limit = (limit <= -1) ? 6 - usedBombs : Math.min(6 - usedBombs, limit);
+            }
+
+            int numFighters = ce().getActiveSubEntities().size();
+            BombPayloadDialog bombsDialog = new BombPayloadDialog(
+                    clientgui.frame,
+                    Messages.getString("FiringDisplay.BombNumberDialog" + ".title") + ", " + title,
+                    loadout, isSpace, false, limit, numFighters);
+            bombsDialog.setVisible(true);
+            if (bombsDialog.getAnswer()) {
+                int[] choices = bombsDialog.getChoices();
+                for (int i = 0; i < choices.length; i++) {
+                    payloads.get(title)[i] += choices[i];
+                }
+            }
         }
-        return payload;
+        return payloads;
     }
 
     /**
@@ -1621,15 +1659,11 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
 
             // check for a bomb payload dialog
             if (mounted.getType().hasFlag(WeaponType.F_SPACE_BOMB)) {
-                int[] payload = getBombPayload(true, -1);
-                waa.setBombPayload(payload);
+                waa.setBombPayloads(getBombPayloads(true, -1));
             } else if (mounted.getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
-                int[] payload = getBombPayload(false, -1);
-                waa.setBombPayload(payload);
+                waa.setBombPayloads(getBombPayloads(false, -1));
             } else if (mounted.getType().hasFlag(WeaponType.F_ALT_BOMB)) {
-                // if the user cancels, then return
-                int[] payload = getBombPayload(false, 2);
-                waa.setBombPayload(payload);
+                waa.setBombPayloads(getBombPayloads(false, 2));
             }
 
             if ((mounted.getLinked() != null)
@@ -1663,6 +1697,9 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
             waa.setStrafing(isStrafing);
             waa.setStrafingFirstShot(firstShot);
             firstShot = false;
+
+            // Handle incrementing internal-bay weapons that are not used in bomb bay attacks
+            incrementInternalBombs(waa);
 
             // Temporarily add attack into the game. On turn done
             // this will be recomputed from the local
@@ -1807,6 +1844,11 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         // restore any other movement to default
         ce().setSecondaryFacing(ce().getFacing());
         ce().setArmsFlipped(false);
+
+        // restore count of internal bombs dropped this phase.
+        if(ce().isBomber()) {
+            phaseInternalBombs = ((IBomber)ce()).getUsedInternalBombs();
+        }
     }
 
     /**
@@ -1827,6 +1869,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
             if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) o;
                 ce().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
+                decrementInternalBombs(waa);
                 removeAttack(o);
                 clientgui.getUnitDisplay().wPan.displayMech(ce());
                 clientgui.getClient().getGame().removeAction(o);
@@ -1965,6 +2008,9 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
                 setFireEnabled(false);
             } else if (m.isInBearingsOnlyMode()) {
                 clientgui.getUnitDisplay().wPan.setToHit(Messages.getString("FiringDisplay.bearingsOnlyWrongPhase"));
+                setFireEnabled(false);
+            } else if (m.isInternalBomb() && phaseInternalBombs >= 6) {
+                clientgui.getUnitDisplay().wPan.setToHit(Messages.getString("WeaponAttackAction.AlreadyUsedMaxInternalBombs"));
                 setFireEnabled(false);
             } else if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
                 clientgui.getUnitDisplay().wPan.setToHit(toHit);
@@ -2673,5 +2719,24 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
             }
         }
         return isConsecutive && isInaLine;
+    }
+
+    private void incrementInternalBombs(WeaponAttackAction waa) {
+        updateInternalBombs(waa, 1);
+    }
+    private void decrementInternalBombs(WeaponAttackAction waa) {
+        updateInternalBombs(waa, -1);
+    }
+    private void updateInternalBombs(WeaponAttackAction waa, int amt) {
+        if (ce().isBomber()) {
+            if (ce().getEquipment(waa.getWeaponId()).isInternalBomb()) {
+                int usedInternalBombs = ((IBomber) ce()).getUsedInternalBombs();
+                phaseInternalBombs += amt;
+                if (phaseInternalBombs < usedInternalBombs) {
+                    phaseInternalBombs = usedInternalBombs;
+                }
+            }
+        }
+
     }
 }

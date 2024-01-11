@@ -13,6 +13,7 @@ package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.FixedWingSupportCostCalculator;
+import megamek.common.options.OptionsConstants;
 
 /**
  * @author Jason Tighe
@@ -234,14 +235,20 @@ public class FixedWingSupport extends ConvFighter {
 
     @Override
     public void autoSetMaxBombPoints() {
-        // fixed wing support craft need external stores hardpoints to be able to carry bombs
+        // fixed wing support craft need external stores hardpoints or the Internal Bomb Bay quirk
+        // to be able to carry bombs.
         int bombpoints = 0;
         for (Mounted misc : getMisc()) {
             if (misc.getType().hasFlag(MiscType.F_EXTERNAL_STORES_HARDPOINT)) {
                 bombpoints++;
             }
         }
-        maxBombPoints = bombpoints;
+        maxExtBombPoints = bombpoints;
+
+        // fixed-wing support craft may also use internal transport bays as bomb bays with Internal Bomb Bay quirk.
+        maxIntBombPoints = getTransportBays().stream().mapToInt(
+                tb -> (tb instanceof CargoBay) ? (int) Math.floor(tb.getUnused()) : 0
+        ).sum();
     }
 
     @Override
@@ -319,5 +326,11 @@ public class FixedWingSupport extends ConvFighter {
     @Override
     public boolean isAerospaceSV() {
         return true;
+    }
+
+    @Override
+    public void setOriginalWalkMP(int walkMP) {
+        super.setOriginalWalkMP(walkMP);
+        autoSetSI();
     }
 }

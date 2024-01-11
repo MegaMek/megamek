@@ -61,8 +61,12 @@ public class BombAttackHandler extends WeaponHandler {
                 for (Mounted bomb : ae.getBombs()) {
                     if (!bomb.isDestroyed()
                             && (bomb.getUsableShotsLeft() > 0)
-                            && (((BombType) bomb.getType()).getBombType() == type)) {
+                            && (((BombType) bomb.getType()).getBombType() == type)
+                    ) {
                         bomb.setShotsLeft(0);
+                        if (bomb.isInternalBomb()) {
+                            ((IBomber) ae).increaseUsedInternalBombs(1);
+                        }
                         break;
                     }
                 }
@@ -73,7 +77,7 @@ public class BombAttackHandler extends WeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override

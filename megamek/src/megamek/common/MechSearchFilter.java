@@ -142,6 +142,8 @@ public class MechSearchFilter {
     public boolean isDisabled;
     public List<String> engineType = new ArrayList<>();
     public List<String> engineTypeExclude = new ArrayList<>();
+    public Map<Integer, String> gyroType = new HashMap();
+    public Map<Integer, String> gyroTypeExclude = new HashMap();
     public List<Integer> armorType = new ArrayList<>();
     public List<Integer> armorTypeExclude = new ArrayList<>();
     public List<Integer> internalsType = new ArrayList<>();
@@ -405,6 +407,13 @@ public class MechSearchFilter {
     }
     private static boolean allMatch(List<String> list, String search) {
         return list.stream().allMatch(search::contains);
+    }
+
+    private static boolean anyMatch(Map<Integer, String> list, int search) {
+        return list.entrySet().stream().anyMatch(e -> e.getKey() == search);
+    }
+    private static boolean allMatch(Map<Integer, String> list, int search) {
+        return list.entrySet().stream().allMatch(e -> e.getKey() == search);
     }
 
     private static boolean anyMatch(List<Integer> list, HashSet<Integer> search) {
@@ -729,6 +738,14 @@ public class MechSearchFilter {
             return false;
         }
 
+        if ((!f.gyroType.isEmpty()) && (!anyMatch(f.gyroType, mech.getGyroType()))) {
+            return false;
+        }
+
+        if ((!f.gyroTypeExclude.isEmpty()) && (anyMatch(f.gyroTypeExclude, mech.getGyroType()))) {
+            return false;
+        }
+
         if ((!f.techLevel.isEmpty()) && (!anyMatch(f.techLevel, mech.getTechLevel()))) {
             return false;
         }
@@ -786,10 +803,6 @@ public class MechSearchFilter {
         }
 
         long entityType = mech.getEntityType();
-
-        if (mech.isAerospaceFighter()) {
-            entityType = entityType | Entity.ETYPE_AEROSPACEFIGHTER;
-        }
 
         long entityTypes = 0;
 
@@ -1037,10 +1050,10 @@ public class MechSearchFilter {
                     } else if (currEq.equals(n.name) && n.qty == 0) {
                         return false;
                     }
-                    
+
                 }
 
-                // If we reach this point. It means that the MechSummary didn't have a weapon/equipment that matched the leaf node. 
+                // If we reach this point. It means that the MechSummary didn't have a weapon/equipment that matched the leaf node.
                 // If the leaf quantity is 0, that means that the mech is a match. If the leaf quantity is non-zero, that means the mech isn't
                 // a match.
                 if (n.qty == 0) {

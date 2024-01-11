@@ -44,6 +44,9 @@ public class MechSummaryCache {
     private static final String FILENAME_UNITS_CACHE = "units.cache";
     public static final String FILENAME_LOOKUP = "name_changes.txt";
 
+    private static final List<String> SUPPORTED_FILE_EXTENSIONS =
+            List.of(".mtf", ".blk", ".mep", ".hmv", ".tdb", ".hmp", ".zip");
+
     private static MechSummaryCache instance;
     private static boolean disposeInstance = false;
     private static boolean interrupted = false;
@@ -764,49 +767,18 @@ public class MechSummaryCache {
                         continue;
                     }
                     // recursion is fun
-                    bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles,
-                            lLastCheck, f, ignoreUnofficial);
+                    bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, f, ignoreUnofficial);
                     continue;
                 }
-                if (!f.getName().toLowerCase().endsWith(".mtf") && !f.getName().toLowerCase().endsWith(".blk")
-                        && !f.getName().toLowerCase().endsWith(".hmp") && !f.getName().toLowerCase().endsWith(".hmv")
-                        && !f.getName().toLowerCase().endsWith(".mep") && !f.getName().toLowerCase().endsWith(".tdb")) {
+                String lowerCaseName = f.getName().toLowerCase();
+                if (SUPPORTED_FILE_EXTENSIONS.stream().noneMatch(lowerCaseName::endsWith)) {
                     continue;
                 }
-                if (f.getName().indexOf('.') == -1) {
+                if (lowerCaseName.endsWith(".zip")) {
+                    bNeedsUpdate |= loadMechsFromZipFile(vMechs, sKnownFiles, lLastCheck, f);
                     continue;
                 }
-                if (f.getName().toLowerCase().endsWith(".gitignore")) {
-                    continue;
-                }
-                if (f.getName().toLowerCase().endsWith(".txt")) {
-                    continue;
-                }
-                if (f.getName().toLowerCase().endsWith(".log")) {
-                    continue;
-                }
-                if (f.getName().toLowerCase().endsWith(".svn-base")) {
-                    continue;
-                }
-                if (f.getName().toLowerCase().endsWith(".svn-work")) {
-                    continue;
-                }
-                if (f.getName().toLowerCase().endsWith(".ds_store")) {
-                    continue;
-                }
-                if (f.getName().toLowerCase().endsWith(".yml")) {
-                    continue;
-                }
-                if (f.getName().equals("UnitVerifierOptions.xml")) {
-                    continue;
-                }
-                if (f.getName().toLowerCase().endsWith(".zip")) {
-                    bNeedsUpdate |= loadMechsFromZipFile(vMechs, sKnownFiles,
-                            lLastCheck, f);
-                    continue;
-                }
-                if ((f.lastModified() < lLastCheck)
-                        && sKnownFiles.contains(f.toString())) {
+                if ((f.lastModified() < lLastCheck) && sKnownFiles.contains(f.toString())) {
                     continue;
                 }
                 try {
@@ -884,10 +856,8 @@ public class MechSummaryCache {
                 }
                 continue;
             }
-            if (zEntry.getName().toLowerCase().endsWith(".txt")) {
-                continue;
-            }
-            if (zEntry.getName().toLowerCase().endsWith(".yml")) {
+            String lowerCaseName = zEntry.getName().toLowerCase();
+            if (SUPPORTED_FILE_EXTENSIONS.stream().noneMatch(lowerCaseName::endsWith)) {
                 continue;
             }
             if ((Math.max(fZipFile.lastModified(), zEntry.getTime()) < lLastCheck)

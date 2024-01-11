@@ -28,17 +28,18 @@ public class UnitType {
     public static final int NAVAL = 6;
     public static final int GUN_EMPLACEMENT = 7;
     public static final int CONV_FIGHTER = 8;
-    public static final int AERO = 9;
+    public static final int AEROSPACEFIGHTER = 9;
     public static final int SMALL_CRAFT = 10;
     public static final int DROPSHIP = 11;
     public static final int JUMPSHIP = 12;
     public static final int WARSHIP = 13;
     public static final int SPACE_STATION = 14;
+    public static final int AERO = 15; // Non-differentiated Aerospace, like Escape Pods / Life Boats
 
     private static String[] names = { "Mek", "Tank", "BattleArmor", "Infantry",
             "ProtoMek", "VTOL", "Naval", "Gun Emplacement", "Conventional Fighter",
-            "Aero", "Small Craft", "Dropship",
-            "Jumpship", "Warship", "Space Station" };
+             "AeroSpaceFighter", "Small Craft", "Dropship",
+            "Jumpship", "Warship", "Space Station", "Aero"};
 
     public static final int SIZE = names.length;
 
@@ -50,7 +51,7 @@ public class UnitType {
 
     /**
      * Reverse lookup for type integer constant from name
-     * 
+     *
      * @param name  Unit type name
      * @return      The unit type constant. If no match can be found, returns -1.
      */
@@ -82,9 +83,9 @@ public class UnitType {
         }
         throw new IllegalArgumentException("Unknown unit type");
     }
-    
+
     // series of convenience methods to shorten unit type determination
-    
+
     /**
      * Whether the given entity is a VTOL
      * @param e the entity to examine
@@ -93,7 +94,7 @@ public class UnitType {
     public static boolean isVTOL(Entity e) {
         return e.getEntityType() == Entity.ETYPE_VTOL;
     }
-    
+
     /**
      * Whether the given entity is a Spheroid dropship
      * @param e the entity to examine

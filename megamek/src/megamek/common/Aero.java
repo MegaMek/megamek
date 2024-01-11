@@ -154,8 +154,12 @@ public class Aero extends Entity implements IAero, IBomber {
     // fixed and pod-mounted.
     private int podHeatSinks;
 
-    protected int maxBombPoints = 0;
-    protected int[] bombChoices = new int[BombType.B_NUM];
+    protected int maxIntBombPoints = 0;
+    protected int maxExtBombPoints = 0;
+    protected int[] intBombChoices = new int[BombType.B_NUM];
+    protected int[] extBombChoices = new int[BombType.B_NUM];
+
+    protected int usedInternalBombs = 0;
 
     // fuel - number of fuel points
     private int fuel = 0;
@@ -477,33 +481,73 @@ public class Aero extends Entity implements IAero, IBomber {
 
     @Override
     public int getMaxBombPoints() {
-        return maxBombPoints;
+        return maxExtBombPoints + maxIntBombPoints;
+    }
+
+    @Override
+    public int getMaxIntBombPoints() {
+        return (hasQuirk(OptionsConstants.QUIRK_POS_INTERNAL_BOMB)) ? maxIntBombPoints : 0;
+    }
+
+    @Override
+    public int getMaxExtBombPoints() {
+        return maxExtBombPoints;
     }
 
     public void autoSetMaxBombPoints() {
-        maxBombPoints = (int) Math.round(getWeight() / 5);
+        // Stock Aerospace units cannot carry bombs
+        maxExtBombPoints = maxIntBombPoints = 0;
     }
 
     @Override
-    public int[] getBombChoices() {
-        return bombChoices.clone();
+    public int[] getIntBombChoices() {
+        return intBombChoices.clone();
     }
 
     @Override
-    public void setBombChoices(int[] bc) {
-        if (bc.length == bombChoices.length) {
-            bombChoices = bc;
+    public void setIntBombChoices(int[] bc) {
+        if (bc.length == intBombChoices.length) {
+            intBombChoices = bc.clone();
+        }
+    }
+
+    @Override
+    public int[] getExtBombChoices() {
+        return extBombChoices.clone();
+    }
+
+    @Override
+    public void setExtBombChoices(int[] bc) {
+        if (bc.length == extBombChoices.length) {
+            extBombChoices = bc.clone();
         }
     }
 
     @Override
     public void clearBombChoices() {
-        Arrays.fill(bombChoices, 0);
+        Arrays.fill(intBombChoices, 0);
+        Arrays.fill(extBombChoices, 0);
     }
 
     @Override
     public int reduceMPByBombLoad(int t) {
-        return Math.max(0, t - (int) Math.ceil(getBombPoints() / 5.0));
+        // The base Aero cannot carry bombs so no MP reduction
+        return t;
+    }
+
+    @Override
+    public void setUsedInternalBombs(int b){
+        usedInternalBombs = b;
+    }
+
+    @Override
+    public void increaseUsedInternalBombs(int b){
+        usedInternalBombs += b;
+    }
+
+    @Override
+    public int getUsedInternalBombs() {
+        return usedInternalBombs;
     }
 
     public void setWhoFirst() {
@@ -985,6 +1029,9 @@ public class Aero extends Entity implements IAero, IBomber {
         setWhoFirst();
 
         resetAltLossThisRound();
+
+        // Reset usedInternalBombs
+        setUsedInternalBombs(0);
     }
 
     /**
@@ -2727,34 +2774,6 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     /**
-     * Damage a capital fighter's weapons. WeaponGroups are damaged by critical hits.
-     * This matches up the individual fighter's weapons and critical slots and damages those
-     * for MHQ resolution
-     * @param loc - Int corresponding to the location struck
-     */
-    public void damageCapFighterWeapons(int loc) {
-        for (Mounted weapon : weaponList) {
-            if (weapon.getLocation() == loc) {
-                //Damage the weapon
-                weapon.setHit(true);
-                //Damage the critical slot
-                for (int i = 0; i < getNumberOfCriticals(loc); i++) {
-                    CriticalSlot slot1 = getCritical(loc, i);
-                    if ((slot1 == null) ||
-                            (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
-                        continue;
-                    }
-                    Mounted mounted = slot1.getMount();
-                    if (mounted.equals(weapon)) {
-                        hitAllCriticals(loc, i);
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    /**
      * @return The total number of crew available to supplement marines on boarding actions.
      *         Includes officers, enlisted, and bay personnel, but not marines/ba or passengers.
      */
@@ -2990,7 +3009,7 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     public boolean isInASquadron() {
-        return game.getEntity(getTransportId()) instanceof FighterSquadron;
+        return false;
     }
 
     @Override
@@ -2998,9 +3017,14 @@ public class Aero extends Entity implements IAero, IBomber {
         return true;
     }
 
+    /**
+     * Fighters may carry external ordnance;
+     * Other Aerospace units with cargo bays and the Internal Bomb Bay quirk may carry bombs internally.
+     * @return boolean
+     */
     @Override
     public boolean isBomber() {
-        return isFighter();
+        return false;
     }
 
     @Override
@@ -3009,7 +3033,7 @@ public class Aero extends Entity implements IAero, IBomber {
      * but not a larger craft (i.e. "SmallCraft" or "Dropship" and bigger
      */
     public boolean isFighter() {
-        return true;
+        return false;
     }
 
     @Override
@@ -3017,7 +3041,7 @@ public class Aero extends Entity implements IAero, IBomber {
      * Returns true if and only if this is an aerospace fighter.
      */
     public boolean isAerospaceFighter() {
-        return true;
+        return false;
     }
 
     @Override

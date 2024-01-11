@@ -71,6 +71,8 @@ public class EntityWeightClass {
     public static double[] getWeightLimitByType(String type) {
         if (type.equals(UnitType.getTypeName(UnitType.MEK))) {
             return mechWeightLimits;
+        } else if (type.equals(UnitType.getTypeName(UnitType.AEROSPACEFIGHTER))) {
+            return ASFWeightLimits;
         } else if (type.equals(UnitType.getTypeName(UnitType.AERO))) {
             return ASFWeightLimits;
         } else if (type.equals(UnitType.getTypeName(UnitType.BATTLE_ARMOR))) {
@@ -150,7 +152,7 @@ public class EntityWeightClass {
             }
         } else if (type.equals(UnitType.getTypeName(UnitType.SMALL_CRAFT))) {
             return WEIGHT_SMALL_CRAFT;
-        } else if (type.equals("Aero") || type.equals("Conventional Fighter")) {
+        } else if (type.equals("AeroSpaceFighter") || type.equals("Aero") || type.equals("Conventional Fighter")) {
             for (i = WEIGHT_LIGHT; i < (ASFWeightLimits.length - 1); i++) { // Started late to bypass padding & save a loop execution
                 if (tonnage <= ASFWeightLimits[i]) {
                     break;

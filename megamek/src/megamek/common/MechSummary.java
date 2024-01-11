@@ -129,16 +129,16 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     /** The type of internal structure on this unit **/
     private int internalsType;
-    
+
     /**
      * Each location can have a separate armor type, but this is used for search purposes. We really
      * only care about which types are present.
      */
     private final HashSet<Integer> armorTypeSet;
-    
+
     /** The armor type for each location. */
     private int[] armorLoc;
-    
+
     /** The armor tech type for each location. */
     private int[] armorLocTech;
 
@@ -257,15 +257,17 @@ public class MechSummary implements Serializable, ASCardDisplayable {
             case "Jumpship":
             case "Dropship":
             case "Small Craft":
-            case "Conventional Fighter":
             case "Aero":
                 return Entity.getEntityMajorTypeName(Entity.ETYPE_AERO);
+            case "Conventional Fighter":
+            case "AeroSpaceFighter":
+                return Entity.getEntityMajorTypeName(Entity.ETYPE_AEROSPACEFIGHTER);
             case "Unknown":
                 return Entity.getEntityMajorTypeName(-1);
         }
         return Entity.getEntityMajorTypeName(-1);
     }
-    
+
     // This is here for legacy purposes to not break the API
     @Deprecated
     public static String determineUnitType(Entity e) {
@@ -307,11 +309,11 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     public int getType() {
         return type;
     }
-    
+
     public int[] getAltTypes() {
         return altTypes;
     }
-    
+
     public int getType(int year) {
         if (year >= stdTechYear) {
             return altTypes[0];
@@ -529,7 +531,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     public String getLevel() {
         return level;
     }
-    
+
     public int getAdvancedTechYear() {
         return advTechYear;
     }
@@ -537,7 +539,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     public int getStandardTechYear() {
         return stdTechYear;
     }
-    
+
     public String getLevel(int year) {
         if (level.equals("F")) {
             return level;
@@ -871,11 +873,11 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     public void setType(int nType) {
         this.type = nType;
     }
-    
+
     public void setAltTypes(int[] altTypes) {
         this.altTypes = altTypes;
     }
-    
+
     public void setTons(double nTons) {
         this.tons = nTons;
     }
@@ -911,11 +913,11 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     public void setLevel(String level) {
         this.level = level;
     }
-    
+
     public void setAdvancedYear(int year) {
         advTechYear = year;
     }
-    
+
     public void setStandardYear(int year) {
         stdTechYear = year;
     }
@@ -996,11 +998,11 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     public void setJumpMp(int jumpMp) {
         this.jumpMp = jumpMp;
     }
-    
+
     /**
      * Given the list of equipment mounted on this unit, parse it into a unique
      * list of names and the number of times that name appears.
-     * 
+     *
      * @param mountedList A collection of <code>Mounted</code> equipment
      */
     public void setEquipment(List<Mounted> mountedList)
@@ -1020,14 +1022,14 @@ public class MechSummary implements Serializable, ASCardDisplayable {
                 equipmentQuantities.add(1);
             } else { // We've seen this before, update count
                 equipmentQuantities.set(index, equipmentQuantities.get(index)+1);
-            }               
+            }
         }
     }
-    
+
     public Vector<String> getEquipmentNames() {
         return equipmentNames;
     }
-    
+
     public Vector<Integer> getEquipmentQuantities() {
         return equipmentQuantities;
     }
@@ -1084,9 +1086,9 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     }
 
     /**
-     * Takes the armor type at all locations and creates a set of the armor 
+     * Takes the armor type at all locations and creates a set of the armor
      * types.
-     * 
+     *
      * @param locsArmor  An array that stores the armor type at each location.
      */
     public void setArmorType(int[] locsArmor) {
@@ -1099,19 +1101,19 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     public HashSet<Integer> getArmorType() {
         return armorTypeSet;
     }
-    
+
     public int[] getArmorTypes() {
         return armorLoc;
     }
-    
+
     public void setArmorTypes(int[] al) {
         armorLoc = al;
     }
-    
+
     public int[] getArmorTechTypes() {
         return armorLocTech;
     }
-    
+
     public void setArmorTechTypes(int[] att) {
         armorLocTech = att;
     }
@@ -1249,7 +1251,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         return Objects.equals(chassis, other.chassis) && Objects.equals(model, other.model)
                 && Objects.equals(unitType, other.unitType) && Objects.equals(sourceFile, other.sourceFile);
     }
-    
+
     @Override
     public int hashCode() {
         return Objects.hash(chassis, model, unitType, sourceFile);

@@ -635,7 +635,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
                     waa2.setAmmoId(waa.getAmmoId());
                     waa2.setAmmoMunitionType(waa.getAmmoMunitionType());
                     waa2.setAmmoCarrier(waa.getAmmoCarrier());
-                    waa2.setBombPayload(waa.getBombPayload());
+                    waa2.setBombPayloads(waa.getBombPayloads());
                     waa2.setStrafing(waa.isStrafing());
                     waa2.setStrafingFirstShot(waa.isStrafingFirstShot());
                     waa2.setPointblankShot(waa.isPointblankShot());
@@ -669,7 +669,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
                     waa2.setAmmoId(waa.getAmmoId());
                     waa2.setAmmoMunitionType(waa.getAmmoMunitionType());
                     waa2.setAmmoCarrier(waa.getAmmoCarrier());
-                    waa2.setBombPayload(waa.getBombPayload());
+                    waa2.setBombPayloads(waa.getBombPayloads());
                     waa2.setStrafing(waa.isStrafing());
                     waa2.setStrafingFirstShot(waa.isStrafingFirstShot());
                     waa2.setPointblankShot(waa.isPointblankShot());

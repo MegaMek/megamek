@@ -2,7 +2,7 @@
 Quasit MilitiaMech QUA-51T,1
 Rock Hound ProspectorMech AM-PRM-RH7,2
 Buster BC XXI HaulerMech (Standard),3
-Jabberwocky EngineerMech JAW-66B,4
+Jabberwocky JAW-66B EngineerMech,4
 Quasit MilitiaMech QUA-51T,5
 Buster BC XXI HaulerMech (Standard),6
 Hyena HYN-4A SalvageMech,5

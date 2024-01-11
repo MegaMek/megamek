@@ -1073,6 +1073,25 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
         final boolean isGlider = entities.stream().allMatch(e -> (e instanceof Protomech) && e.getMovementMode().isWiGE());
         boolean eligibleForOffBoard = true;
 
+        int bh = clientgui.getClient().getMapSettings().getBoardHeight();
+        int bw = clientgui.getClient().getMapSettings().getBoardWidth();
+        int x = Math.min(entity.getStartingAnyNWx(false) + 1, bw);
+        SpinnerNumberModel mStartingAnyNWx = new SpinnerNumberModel(x, 0,bw, 1);
+        spinStartingAnyNWx = new JSpinner(mStartingAnyNWx);
+        spinStartingAnyNWx.setValue(x);
+        int y = Math.min(entity.getStartingAnyNWy(false) + 1, bh);
+        SpinnerNumberModel mStartingAnyNWy = new SpinnerNumberModel(y, 0, bh, 1);
+        spinStartingAnyNWy = new JSpinner(mStartingAnyNWy);
+        spinStartingAnyNWy.setValue(y);
+        x = Math.min(entity.getStartingAnySEx(false) + 1, bw);
+        SpinnerNumberModel mStartingAnySEx = new SpinnerNumberModel(x, 0, bw, 1);
+        spinStartingAnySEx = new JSpinner(mStartingAnySEx);
+        spinStartingAnySEx.setValue(x);
+        y = Math.min(entity.getStartingAnySEy(false) + 1, bh);
+        SpinnerNumberModel mStartingAnySEy = new SpinnerNumberModel(y, 0, bh, 1);
+        spinStartingAnySEy = new JSpinner(mStartingAnySEy);
+        spinStartingAnySEy.setValue(y);
+
         for (Entity e : entities) {
             // TODO : This check is good for now, but at some point we want atmospheric flying
             // TODO : droppers to be able to lob offboard missiles and we could use it in space for
@@ -1225,30 +1244,11 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
         panDeploy.add(labDeploymentWidth, GBC.std());
         panDeploy.add(txtDeploymentWidth, GBC.eol());
 
-        int bh = clientgui.getClient().getMapSettings().getBoardHeight();
-        int bw = clientgui.getClient().getMapSettings().getBoardWidth();
-
         panDeploy.add(new JLabel(Messages.getString("CustomMechDialog.labDeploymentAnyNW")), GBC.std());
-        int x = Math.min(entity.getStartingAnyNWx(false) + 1, bw);
-        SpinnerNumberModel mStartingAnyNWx = new SpinnerNumberModel(x, 0,bw, 1);
-        spinStartingAnyNWx = new JSpinner(mStartingAnyNWx);
-        spinStartingAnyNWx.setValue(x);
         panDeploy.add(spinStartingAnyNWx, GBC.std());
-        int y = Math.min(entity.getStartingAnyNWy(false) + 1, bh);
-        SpinnerNumberModel mStartingAnyNWy = new SpinnerNumberModel(y, 0, bh, 1);
-        spinStartingAnyNWy = new JSpinner(mStartingAnyNWy);
-        spinStartingAnyNWy.setValue(y);
         panDeploy.add(spinStartingAnyNWy, GBC.eol());
         panDeploy.add(new JLabel(Messages.getString("CustomMechDialog.labDeploymentAnySE")), GBC.std());
-        x = Math.min(entity.getStartingAnySEx(false) + 1, bw);
-        SpinnerNumberModel mStartingAnySEx = new SpinnerNumberModel(x, 0, bw, 1);
-        spinStartingAnySEx = new JSpinner(mStartingAnySEx);
-        spinStartingAnySEx.setValue(x);
         panDeploy.add(spinStartingAnySEx, GBC.std());
-        y = Math.min(entity.getStartingAnySEy(false) + 1, bh);
-        SpinnerNumberModel mStartingAnySEy = new SpinnerNumberModel(y, -0, bh, 1);
-        spinStartingAnySEy = new JSpinner(mStartingAnySEy);
-        spinStartingAnySEy.setValue(y);
         panDeploy.add(spinStartingAnySEy, GBC.eol());
 
         numFormatter.setMinimum(0);

@@ -2027,6 +2027,7 @@ public class GameManager implements IGameManager {
                 addReport(checkForTraitors());
                 // write End Phase header
                 addReport(new Report(5005, Report.PUBLIC));
+                addReport(resolveInternalBombHits());
                 checkLayExplosives();
                 resolveHarJelRepairs();
                 resolveEmergencyCoolantSystem();
@@ -3695,7 +3696,7 @@ public class GameManager implements IGameManager {
         // is loaded into the squadron, the squadrons bombing attacks are
         // adjusted based on the bomb loadout on the fighter.
         if (getGame().getPhase().isLounge() && (loader instanceof FighterSquadron)) {
-            ((IBomber) unit).setBombChoices(((FighterSquadron) loader).getBombChoices());
+            ((IBomber) unit).setBombChoices(((FighterSquadron) loader).getExtBombChoices());
             ((FighterSquadron) loader).updateSkills();
             ((FighterSquadron) loader).updateWeaponGroups();
         }
@@ -20888,6 +20889,88 @@ public class GameManager implements IGameManager {
     }
 
     /**
+     * Check all aircraft that may have used internal bomb bays for incidental explosions
+     * caused by ground fire.
+     * @return
+     */
+    private Vector<Report> resolveInternalBombHits() {
+        Vector<Report> vFullReport = new Vector<>();
+        vFullReport.add(new Report(5600, Report.PUBLIC));
+        for (Entity e : game.getEntitiesVector()) {
+            Vector<Report> interim = resolveInternalBombHit(e);
+            if (!interim.isEmpty()) {
+                vFullReport.addAll(interim);
+            }
+        }
+        // Return empty Vector if no reports (besides the header) are added.
+        return (vFullReport.size() == 1) ? new Vector<>() : vFullReport;
+    }
+
+    /**
+     * Resolves and reports all control skill rolls for a single aero or airborne LAM in airmech mode.
+     */
+    private Vector<Report> resolveInternalBombHit(Entity e) {
+        Vector<Report> vReport = new Vector<>();
+        // Only applies to surviving bombing craft that took damage this last round
+        if (!e.isBomber() || e.damageThisRound <= 0 || e.isDoomed() || e.isDestroyed() || !e.isDeployed()) {
+            return vReport;
+        }
+
+        //
+        if (e.isAero() && !(e instanceof LandAirMech)) {
+            // Only ground fire can hit internal bombs
+            if (e.getGroundAttackedByThisTurn().isEmpty()) {
+                return vReport;
+            }
+
+            Aero b = (Aero) e;
+            Report r;
+
+            if (b.getUsedInternalBombs() > 0) {
+                int id = e.getId();
+
+                // Header
+                r = new Report(5601);
+                r.subject = id;
+                r.addDesc(e);
+                vReport.add(r);
+
+                // Roll
+                int rollTarget = 10; //Testing purposes
+                int roll = Compute.d6(2);
+                boolean explosion = roll >= rollTarget;
+                r = new Report(5602);
+                r.indent();
+                r.subject = id;
+                r.addDesc(e);
+                r.add(rollTarget);
+                r.add(roll, false);
+                vReport.add(r);
+
+                // Outcome
+                r = (explosion) ? new Report(5603) : new Report(5604);
+                r.indent();
+                r.subject = id;
+                r.addDesc(e);
+                int bombsLeft = b.getBombs().stream().mapToInt(Mounted::getUsableShotsLeft).sum();
+                int bombDamage = b.getInternalBombsDamageTotal();
+                if (explosion) {
+                    r.add(bombDamage);
+                }
+                r.add(bombsLeft);
+                vReport.add(r);
+                // Deal damage
+                if (explosion) {
+                    HitData hd = new HitData(b.getBodyLocation(), false, HitData.EFFECT_NONE);
+                    vReport.addAll(damageEntity(e, hd, bombDamage, true, DamageType.NONE,true));
+                    e.applyDamage();
+                }
+            }
+        }
+        return vReport;
+    }
+
+    /**
      * Inflict damage on a pilot
      *
      * @param en     The <code>Entity</code> who's pilot gets damaged.
@@ -24965,10 +25048,10 @@ public class GameManager implements IGameManager {
                 break;
             case Aero.CRIT_BOMB:
                 // bomb destroyed
-                // go through bomb list and choose one
+                // go through bomb list and choose one (internal bay munitions are handled separately)
                 List<Mounted> bombs = new ArrayList<>();
                 for (Mounted bomb : aero.getBombs()) {
-                    if (bomb.getType().isHittable() && (bomb.getHittableShotsLeft() > 0)) {
+                    if (bomb.getType().isHittable() && (bomb.getHittableShotsLeft() > 0) && !bomb.isInternalBomb()) {
                         bombs.add(bomb);
                     }
                 }
@@ -25017,11 +25100,12 @@ public class GameManager implements IGameManager {
                 }
             case Aero.CRIT_WEAPON:
                 if (aero.isCapitalFighter()) {
+                    FighterSquadron cf = (FighterSquadron) aero;
                     boolean destroyAll = false;
                     // CRIT_WEAPON damages the capital fighter/squadron's weapon groups
                     // Go ahead and map damage for the fighter's weapon criticals for MHQ
                     // resolution.
-                    aero.damageCapFighterWeapons(loc);
+                    cf.damageCapFighterWeapons(loc);
                     if ((loc == Aero.LOC_NOSE) || (loc == Aero.LOC_AFT)) {
                         destroyAll = true;
                     }
@@ -25032,13 +25116,13 @@ public class GameManager implements IGameManager {
                     }
 
                     if (loc == Aero.LOC_WINGS) {
-                        if (aero.areWingsHit()) {
+                        if (cf.areWingsHit()) {
                             destroyAll = true;
                         } else {
-                            aero.setWingsHit(true);
+                            cf.setWingsHit(true);
                         }
                     }
-                    for (Mounted weapon : aero.getWeaponList()) {
+                    for (Mounted weapon : cf.getWeaponList()) {
                         if (weapon.getLocation() == loc) {
                             if (destroyAll) {
                                 weapon.setHit(true);
@@ -25048,7 +25132,7 @@ public class GameManager implements IGameManager {
                         }
                     }
                     // also destroy any ECM or BAP in the location hit
-                    for (Mounted misc : aero.getMisc()) {
+                    for (Mounted misc : cf.getMisc()) {
                         if ((misc.getType().hasFlag(MiscType.F_ECM)
                                 || misc.getType().hasFlag(MiscType.F_ANGEL_ECM)
                                 || misc.getType().hasFlag(MiscType.F_BAP))
@@ -25057,40 +25141,42 @@ public class GameManager implements IGameManager {
                             //Taharqa: We should also damage the critical slot, or
                             //MM and MHQ won't remember that this weapon is damaged on the MUL
                             //file
-                            for (int i = 0; i < aero.getNumberOfCriticals(loc); i++) {
-                                CriticalSlot slot1 = aero.getCritical(loc, i);
+                            for (int i = 0; i < cf.getNumberOfCriticals(loc); i++) {
+                                CriticalSlot slot1 = cf.getCritical(loc, i);
                                 if ((slot1 == null) ||
                                         (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
                                     continue;
                                 }
                                 Mounted mounted = slot1.getMount();
                                 if (mounted.equals(misc)) {
-                                    aero.hitAllCriticals(loc, i);
+                                    cf.hitAllCriticals(loc, i);
                                     break;
                                 }
                             }
                         }
                     }
                     r = new Report(9152);
-                    r.subject = aero.getId();
-                    r.add(aero.getLocationName(loc));
+                    r.subject = cf.getId();
+                    r.add(cf.getLocationName(loc));
                     reports.add(r);
                     break;
                 }
                 r = new Report(9150);
                 r.subject = aero.getId();
                 List<Mounted> weapons = new ArrayList<>();
+                // Ignore internal bomb bay-mounted weapons
                 for (Mounted weapon : aero.getWeaponList()) {
-                    if ((weapon.getLocation() == loc) && !weapon.isDestroyed()
+                    if ((weapon.getLocation() == loc) && !weapon.isDestroyed() && !weapon.isInternalBomb()
                             && weapon.getType().isHittable()) {
                         weapons.add(weapon);
                     }
                 }
-                // add in in hittable misc equipment
+                // add in hittable misc equipment; internal bay munitions are handled separately.
                 for (Mounted misc : aero.getMisc()) {
                     if (misc.getType().isHittable()
                             && (misc.getLocation() == loc)
-                            && !misc.isDestroyed()) {
+                            && !misc.isDestroyed()
+                            && !misc.isInternalBomb()) {
                         weapons.add(misc);
                     }
                 }
@@ -25542,13 +25628,72 @@ public class GameManager implements IGameManager {
                             false, true));
                     destroyed--;
                 }
+            } else {
+                // TODO: handle critical hit on internal bomb bay (cargo bay when internal bombs are loaded)
+                // Ruling: calculate % of cargo space destroyed; user chooses that many bombs to destroy.
+                if(aero.hasQuirk(OptionsConstants.QUIRK_POS_INTERNAL_BOMB)) {
+                    // Prompt user, but just randomize bot's bombs to lose.
+                    destroyed = (int) percentDestroyed * aero.getMaxIntBombPoints();
+                    r = new Report(5605);
+                    r.subject = aero.getId();
+                    r.addDesc(aero);
+                    r.choose(!aero.getOwner().isBot());
+                    r.add((int) destroyed);
+                    reports.add(r);
+                    int bombsDestroyed = (int) (aero.getInternalBombsDamageTotal() / destroyed);
+                    if (destroyed >= aero.getBombPoints()) {
+                        // Actually, no prompt or randomization if all bombs will be destroyed; just do it.
+                        r = new Report(5608);
+                        r.subject = aero.getId();
+                        r.addDesc(aero);
+                        reports.add(r);
+                        for (Mounted bomb: ((IBomber) aero).getBombs()) {
+                            damageBomb(bomb);
+                        }
+                        aero.applyDamage();
+                    } else if (!aero.getOwner().isBot()) {
+                        // handle person choosing bombs to remove.
+                        // This will require firing an event to the End Phase to display a dialog;
+                        // for now just randomly dump bombs just like bots'.
+                        // TODO: fire event here to display dialog in end phase.
+                        for (Mounted bomb:randomlySubSelectList(((IBomber) aero).getBombs(), bombsDestroyed)) {
+                            damageBomb(bomb);
+                        }
+                        aero.applyDamage();
+                    } else {
+                        // This should always use the random method.
+                        for (Mounted bomb:randomlySubSelectList(((IBomber) aero).getBombs(), bombsDestroyed)) {
+                            damageBomb(bomb);
+                        }
+                        aero.applyDamage();
+                    }
+                }
             }
+
         } else {
             r = new Report(9167);
             r.subject = aero.getId();
             r.choose(roll < 4); // cargo or transport
             reports.add(r);
         }
+    }
+
+    private void damageBomb(Mounted bomb) {
+        bomb.setShotsLeft(0);
+        bomb.setHit(true);
+        if (bomb.getLinked() != null && (bomb.getLinked().getUsableShotsLeft() > 0)) {
+            bomb.getLinked().setHit(true);
+        }
+    }
+
+    // Randomly select subset of Mounted items.
+    private ArrayList<Mounted> randomlySubSelectList(List<Mounted> list, int size) {
+        ArrayList<Mounted> subset = new ArrayList<>();
+        Random random_method = new Random();
+        for (int i = 0; i < size; i++) {
+            subset.add(list.get(random_method.nextInt(list.size())));
+        }
+        return subset;
     }
 
     /**
@@ -29635,7 +29780,7 @@ public class GameManager implements IGameManager {
                 fighter.setTransportId(fs.getId());
                 // If this is the lounge, we want to configure bombs
                 if (getGame().getPhase().isLounge()) {
-                    ((IBomber) fighter).setBombChoices(fs.getBombChoices());
+                    ((IBomber) fighter).setBombChoices(fs.getExtBombChoices());
                 }
                 entityUpdate(fighter.getId());
             }

@@ -2666,11 +2666,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return whether this entity already changed a secondary facing in an earlier phase
      */
     public boolean getAlreadyTwisted(){
-        boolean twisted = false;
-        if (twistedPhase != null && twistedPhase.isBefore(game.getPhase())) {
-            twisted = true;
-        }
-        return twisted;
+        return twistedPhase != null && twistedPhase.isBefore(game.getPhase());
     }
 
     /**

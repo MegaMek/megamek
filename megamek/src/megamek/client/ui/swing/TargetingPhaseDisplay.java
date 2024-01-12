@@ -62,8 +62,8 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
      */
     public enum TargetingCommand implements PhaseCommand {
         FIRE_NEXT("fireNext"),
-        FIRE_FIRE("fireFire"),
         FIRE_TWIST("fireTwist"),
+        FIRE_FIRE("fireFire"),
         FIRE_SKIP("fireSkip"),
         FIRE_NEXT_TARG("fireNextTarg"),
         FIRE_MODE("fireMode"),

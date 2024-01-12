@@ -99,3 +99,19 @@ Record Sheets: 3145 New Tech New Upgrades
 <tonnage>
 80.0
 </tonnage>
+
+<manufacturer>
+Jolassa Armored Vehicles
+</manufacturer>
+
+<primaryFactory>
+Tybalt
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:320 Pitban XL Fusion
+ARMOR:PyroTec ArmorSlab Hvy Ferro-Fibrous
+COMMUNICATIONS:HIV-13
+TARGETING:Quadrant XD
+</systemManufacturers>

@@ -1,44 +1,43 @@
+generator:MegaMek Suite 0.49.18-SNAPSHOT on 2024-01-06
 chassis:Gyrfalcon
 model:4
 mul id:6269
-
 Config:Biped
-TechBase:Mixed (Clan Chassis)
-Era:3112
-Source:TRO: 3145 The Clans
-Rules Level:4
+techbase:Mixed (Clan Chassis)
+era:3112
+source:TRO: 3145 The Clans
+rules level:3
 role:Skirmisher
 
 quirk:distracting
 quirk:reinforced_legs
 
+mass:55
+engine:275 XL (Clan) Engine
+structure:Clan Endo Steel
+myomer:Standard
 
-Mass:55
-Engine:275 XL (Clan) Engine
-Structure:Clan Endo Steel
-Myomer:Standard
+heat sinks:13 Laser
+walk mp:5
+jump mp:5
 
-Heat Sinks:13 Laser
-Walk MP:5
-Jump MP:5
-
-Armor:Ferro-Fibrous(Clan)
-LA Armor:15
-RA Armor:15
-LT Armor:16
-RT Armor:16
-CT Armor:21
-HD Armor:9
-LL Armor:18
-RL Armor:18
-RTL Armor:5
-RTR Armor:5
-RTC Armor:6
+armor:Ferro-Fibrous(Clan)
+LA armor:15
+RA armor:15
+LT armor:16
+RT armor:16
+CT armor:21
+HD armor:9
+LL armor:18
+RL armor:18
+RTL armor:5
+RTR armor:5
+RTC armor:6
 
 Weapons:4
-ER Large Laser, Right Arm
 ER Large Laser, Left Arm
 TSEMP Cannon, Left Arm
+ER Large Laser, Right Arm
 TSEMP Cannon, Right Arm
 
 Left Arm:
@@ -153,4 +152,21 @@ Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
+overview:he Gyrfalcon, a successor to Olivetti Weaponry’s Eyrie, was unveiled by the Jade Falcons twenty-five years after the Eyrie's introduction. Developed as part of a Clan Council initiative to rejuvenate the touman during Devlin Stone’s peace, the Gyrfalcon was designed to inspire both the new generation and veteran warriors of the Jade Falcons. It embodies the Clan’s principles of pride, patriotism, and culture, proving to be a resounding success in both its battlefield role and as a symbol of Clan identity.
+
+capabilities:The Gyrfalcon stands out for its maneuverability and offensive pressure, thanks to its MASC system and partial wing assembly. It maintains a balance between keeping adversaries at a distance with its weapons and relying on reflective armor for defense. For close-range engagements, the Gyrfalcon’s legs are reinforced to withstand the rigors of performing Death From Above assaults, making it a formidable opponent in various combat scenarios.
+
+deployment:Integrates a mix of Inner Sphere and Clan technologies, carrying two TSEMP cannons and additional laser heat sinks.
+
+history:The Gyrfalcon's journey from concept to battlefield dominance is a testament to Clan Jade Falcon's enduring pursuit of excellence in Mech design and combat strategy. Conceived during a period of relative peace, the Gyrfalcon was not just a response to immediate tactical needs but a forward-looking vision aimed at preparing the Clan for future conflicts. Its development paralleled the Clan's aspirations to uphold and enhance their proud warrior culture, with the Mech serving as both a literal and symbolic weapon of Clan Jade Falcon's might.</p>
+<p>After its successful debut on Chateau in 3113, the Gyrfalcon quickly gained a reputation for its effectiveness in various combat roles. Its adaptability and prowess were further tested in numerous skirmishes and significant engagements across the Inner Sphere. The Gyrfalcon proved particularly effective in raids and fast-paced battles, where its ability to execute swift, decisive strikes became a key factor in the Clan’s victories. The Mech's distinctive profile and fearsome combat capabilities made it an icon of Jade Falcon power, often striking fear into the hearts of adversaries before the battle had even begun.<p>As the Gyrfalcon's presence grew within the Jade Falcon touman, it began to influence the Clan's tactical doctrines and MechWarrior training methods. The Mech's versatility and reliability in various combat scenarios inspired new tactics and strategies, further enhancing the Clan's reputation for innovative warfare. The Gyrfalcon's role in high-profile Trials of Possession and other Clan rituals further solidified its status as a symbol of Jade Falcon strength and ingenuity.</p><p>Throughout its service, the Gyrfalcon has been a key asset in Clan Jade Falcon's quest for supremacy. From challenging rival Clans to asserting dominance over Inner Sphere adversaries, the Gyrfalcon has been at the forefront of many of the Clan’s most critical battles. Its continued evolution through various variants has ensured that it remains a cutting-edge tool in the Clan's arsenal, adapting to the changing tides of warfare while maintaining the fierce spirit of its namesake.</p>
+
+manufacturer:Olivetti Weaponry
+primaryfactory:Sudeten
+systemmanufacturer:CHASSIS:Olivetti Stage 3
+systemmanufacturer:ENGINE:275 Fusion XL
+systemmanufacturer:ARMOR:Compound Alpha ferro-fibrous
+systemmanufacturer:JUMPJET:Clan Standard Type A1 with Partial Wing
+systemmanufacturer:COMMUNICATIONS:Raptor X-T Type iii
+systemmanufacturer:TARGETING:Goshawk E-Series with Light Active Probe
 

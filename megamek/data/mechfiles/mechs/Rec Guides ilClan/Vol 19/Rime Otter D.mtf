@@ -1,7 +1,7 @@
+generator:MegaMek Suite 0.49.18-SNAPSHOT on 2024-01-09
 chassis:Rime Otter
 model:D
 mul id:8313
-
 Config:Biped Omnimech
 techbase:Clan
 era:3146
@@ -9,10 +9,9 @@ source:Rec Guide:ilClan #19
 rules level:2
 role:Scout
 
-quirk:imp_sensors
-quirk:rugged_1
 quirk:difficult_maintain
-
+quirk:rugged_1
+quirk:imp_sensors
 
 mass:55
 engine:275 XL (Clan) Engine(IS)
@@ -43,7 +42,7 @@ ER Medium Laser, Left Arm
 ER Medium Laser, Left Arm
 SRM 6, Right Arm
 Narc, Right Arm
-Light TAG [Clan], Right Arm
+Light TAG, Right Arm
 
 Left Arm:
 Shoulder
@@ -66,9 +65,9 @@ Lower Arm Actuator
 Hand Actuator
 CLSRM6 (OMNIPOD)
 CLNarcBeacon (OMNIPOD)
-CLNarc Pods (OMNIPOD)
-CLNarc Pods (OMNIPOD)
-Clan Ammo SRM-6 (OMNIPOD)
+ISNarc Pods (OMNIPOD)
+ISNarc Pods (OMNIPOD)
+Clan Ammo SRM-6 (Clan) Narc-capable (OMNIPOD)
 CLLightTAG (OMNIPOD)
 -Empty-
 -Empty-

@@ -1,12 +1,7 @@
-#building block data file
+#Saved from version 0.49.18-SNAPSHOT on 2024-01-07
 <BlockVersion>
 1
 </BlockVersion>
-
-# Write the version number just in case...
-<Version>
-MAM0
-</Version>
 
 <UnitType>
 Tank
@@ -28,9 +23,17 @@ SM1 'Telos'
 3077
 </year>
 
+<originalBuildYear>
+3077
+</originalBuildYear>
+
 <type>
-IS Level 4
+IS Level 3
 </type>
+
+<role>
+Missile Boat
+</role>
 
 <motion_type>
 Hover
@@ -64,6 +67,7 @@ Hover
 </armor>
 
 <Body Equipment>
+IS Vehicular Stealth
 ISGuardianECMSuite
 IS Ammo Extended LRM-15
 IS Ammo Extended LRM-15
@@ -75,7 +79,7 @@ ISCASE
 </Body Equipment>
 
 <Front Equipment>
-ISExtendedLRM15
+Extended LRM 15
 Machine Gun
 </Front Equipment>
 
@@ -88,16 +92,8 @@ Machine Gun
 <Rear Equipment>
 </Rear Equipment>
 
-<source>
-XTR: Phantoms
-</source>
-
-<tonnage>
-50.0
-</tonnage>
-
 <capabilities>
-The vehicle has unique "glass" dual cockpits on the front of the vehicle that are functionally identical while mounting a smaller anti-infantry turret just behind its left side cockpit.[5] The vehicle's unique split cockpit design allows the cockpit modules to eject from the vehicle. Due to its appearance, the SM1 was dubbed the "Suicide Machine" by its first pilots because they felt over-exposed with the tank's all ferro-glass cockpit.
+The vehicle has unique "glass" dual cockpits on the front of the vehicle that are functionally identical while mounting a smaller anti-infantry turret just behind its left side cockpit. The vehicle's unique split cockpit design allows the cockpit modules to eject from the vehicle. Due to its appearance, the SM1 was dubbed the "Suicide Machine" by its first pilots because they felt over-exposed with the tank's all ferro-glass cockpit.
 </capabilities>
 
 <overview>
@@ -120,10 +116,18 @@ LAW-Barcella
 Irece
 </primaryFactory>
 
-
 <systemManufacturers>
 ENGINE:165 Standard Fusion
 ARMOR:Advanced Compound Beta
 COMMUNICATIONS:Unit 2J2 “Basher”
 TARGETING:Able-Seven Sensor Suite
 </systemManufacturers>
+
+<source>
+XTR: Phantoms
+</source>
+
+<tonnage>
+50.0
+</tonnage>
+

@@ -74,3 +74,19 @@ Hover
 <source>
 TRO: 3085
 </source>
+
+<manufacturer>
+Cyclops Inc.
+</manufacturer>
+
+<primaryFactory>
+Skye
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:165 VOX Fusion
+ARMOR:	ArcShield Heavy Ferro-Fibrous with CASE
+COMMUNICATIONS:Cyclops Surelink
+TARGETING:Scarborough Tracky 3
+</systemManufacturers>

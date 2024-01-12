@@ -1,12 +1,7 @@
-#building block data file
+#Saved from version 0.49.18-SNAPSHOT on 2024-01-09
 <BlockVersion>
 1
 </BlockVersion>
-
-##Write the version number just in case...
-<Version>
-MAM0
-</Version>
 
 <UnitType>
 Tank
@@ -17,7 +12,7 @@ Pegasus Scout Hover Tank
 </Name>
 
 <Model>
-(Upgrade)
+(MML)
 </Model>
 
 <mul id:>
@@ -43,9 +38,6 @@ Scout
 <motion_type>
 Hover
 </motion_type>
-
-<transporters>
-</transporters>
 
 <cruiseMP>
 9
@@ -75,7 +67,7 @@ Hover
 BeagleActiveProbe
 Supercharger
 IS Ammo MML-3 LRM
-IS Ammo MML-3 LRM
+IS Ammo MML-3 SRM
 </Body Equipment>
 
 <Front Equipment>

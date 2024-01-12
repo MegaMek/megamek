@@ -1,0 +1,169 @@
+generator:MegaMek Suite 0.49.18-SNAPSHOT on 2024-01-06
+chassis:Spartan
+model:SPT-N4
+mul id:9579
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3148
+source:Rec Guide:ilClan #33
+rules level:3
+role:Brawler
+
+quirk:imp_sensors
+
+mass:80
+engine:400 XXL Engine(IS)
+structure:IS Reinforced
+myomer:Standard
+
+heat sinks:15 IS Double
+walk mp:5
+jump mp:0
+
+armor:Stealth(Inner Sphere)
+LA armor:26
+RA armor:26
+LT armor:26
+RT armor:26
+CT armor:31
+HD armor:9
+LL armor:26
+RL armor:26
+RTL armor:8
+RTR armor:8
+RTC armor:12
+
+Weapons:8
+Medium X-Pulse Laser, Right Arm
+Medium X-Pulse Laser, Right Arm
+Medium X-Pulse Laser, Right Arm
+ER PPC, Left Torso
+TAG, Left Torso
+Anti-Missile System, Right Torso
+Streak SRM 2, Center Torso
+Streak SRM 2, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+IS Stealth
+IS Stealth
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISMediumXPulseLaser
+ISMediumXPulseLaser
+ISMediumXPulseLaser
+IS Stealth
+IS Stealth
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLERPPC
+CLERPPC
+ISTAG
+IS Stealth
+IS Stealth
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Streak SRM 2 Ammo
+ISAMS Ammo
+ISAntiMissileSystem
+ISCASEII
+IS Stealth
+IS Stealth
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISStreakSRM2
+ISStreakSRM2
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLECMSuite
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Stealth
+IS Stealth
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Stealth
+IS Stealth
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Spartan, a Star League era BattleMech, began full production just before the Civil War at Terra's Martinson Armaments facility. Conceived as a general service 'Mech, the Spartan was known for its remarkable speed and diverse range capabilities, distinguishing it from similar weight class 'Mechs like the Crockett and Thug. Though only a little over 600 units were produced before the destruction of the manufacturing facility during Stefan Amaris' coup, the Spartan dispersed throughout the Inner Sphere, with a few remaining operational in Com Guards and other factions by 3042.
+capabilities:The Spartan's hallmark was its versatility across various combat ranges. Its primary long-range weapon, the Kinslaughter ER PPC, was notable for its lower heat generation and ease of maintenance. Medium-range combat was handled by three Blankenburg Technologies medium pulse lasers, offering greater damage output despite a slightly reduced range. For close engagements, it relied on two Streak SRM-2 packs located in the upper center torso. A unique feature was its auxiliary escape hatch, providing an alternate exit when standard ejection was compromised. Its superior speed, capable of reaching over 86 kph, allowed Spartan pilots to effectively control engagement ranges, using speed as a defensive asset.
+deployment:The Spartan SPT-N4, an advanced variant of the Spartan line, signifies a major advancement in BattleMech technology and combat effectiveness. This 80-ton Mech, optimized for brawling, is powered by a 400 XXL Engine, allowing it to achieve speeds of up to 54 kph. The XXL Engine, while offering remarkable speed for a Mech of this size, comes with the trade-off of increased vulnerability due to its compact size, making it more susceptible to critical damage.<p>The Spartan SPT-N4's reinforced Inner Sphere structure provides enhanced durability, ensuring it can withstand intense combat scenarios without sacrificing mobility. This balance of resilience and agility is essential for a brawler Mech.</p><p>One of the standout features of the SPT-N4 is its Stealth Armor. This advanced armor system greatly enhances its survivability on the battlefield by making it more difficult for enemy units to acquire and maintain a lock-on, a critical advantage for a frontline brawler. However, the Stealth Armor also increases the Mech's overall heat generation and requires more complex maintenance, demanding careful heat management in battle.</p><p>The Spartan SPT-N4's armament is tailored for close to medium-range combat. It is equipped with three Medium X-Pulse Lasers in the right arm, delivering higher damage output and enhanced accuracy. The right torso houses an Anti-Missile System, bolstering its defenses against missile attacks.</p><p>For additional firepower, the SPT-N4 carries two Streak SRM 2 launchers in the center torso, which ensure efficient missile strikes with minimal ammunition wastage. The inclusion of an ER PPC in the left torso provides a formidable long-range attack option, complementing its weapon suite. A TAG system is also integrated, augmenting its capability to designate targets for allied forces, making the SPT-N4 a valuable asset in coordinated team strategies.</p>
+history:The Spartan, initially produced in limited numbers by the Star League, saw a decline in deployment during the Succession Wars due to production cessation and battlefield attrition. Despite this, the 'Mech maintained a niche presence, particularly among mercenary groups and peripheral states where its balanced capabilities in assault roles were valued. The Spartan's rarity made it a target for salvage operations, and those that survived became prized assets for their owners.<p>Post-Star League, the Spartan's presence dwindled significantly, with only a few units known to be operational. Notably, Snord's Irregulars operated a few well-maintained Spartans, utilizing them effectively in various combat scenarios. This period marked the Spartan as a symbol of lost Star League technology, with its operational units being remnants of a bygone era.</p><p>The Word of Blake's period saw a brief attempt at reviving the Spartan, with efforts to produce new units on Terra. However, this initiative was short-lived and had minimal impact on the Spartan's overall presence in the Inner Sphere.</p><p>In the post-Jihad era, the discovery of Spartan blueprints by the Capellan Confederation led to a resurgence in interest. The Capellans developed the SPT-N4 variant, which incorporated modern technology into the classic design. This variant aimed to enhance the Spartan's battlefield utility while retaining its fundamental characteristics. The reintroduction of the Spartan into modern warfare, especially its sale to prominent units like the Wolf's Dragoons, indicated its enduring legacy as a versatile and reliable 'Mech, despite its historical scarcity and the challenges of modern mech combat.</p>
+manufacturer:Ceres Metals Industries
+primaryfactory:Capella
+systemmanufacturer:CHASSIS:Geometric 500 Reinforced
+systemmanufacturer:ENGINE:Hermes 400 XXL
+systemmanufacturer:ARMOR:Ceres Durallex Heavy Stealth
+systemmanufacturer:COMMUNICATIONS:Blow 300 SNA Net
+systemmanufacturer:TARGETING:Scope 40 RNDST
+

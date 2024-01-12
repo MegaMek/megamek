@@ -1,12 +1,7 @@
-﻿#building block data file
+#Saved from version 0.49.18-SNAPSHOT on 2024-01-07
 <BlockVersion>
 1
 </BlockVersion>
-
-#Write the version number just in case...
-<Version>
-MAM0
-</Version>
 
 <UnitType>
 Tank
@@ -16,62 +11,21 @@ Tank
 Gurteltier MBT
 </Name>
 
-<model>
+<Model>
 
-</model>
+</Model>
 
 <mul id:>
 4256
 </mul id:>
 
-<Tonnage>
-100
-</Tonnage>
+<year>
+3081
+</year>
 
-<cruiseMP>
-3
-</cruiseMP>
-
-#Order is Tank/VTOL/LST
-<Armor>
-109
-75
-75
-50
-67
-</Armor>
-
-<Left Equipment>
-ISMachine Gun
-</Left Equipment>
-
-<Right Equipment>
-ISMachine Gun
-</Right Equipment>
-
-<Rear Equipment>
-ISMachine Gun
-</Rear Equipment>
-
-<Turret Equipment>
-ISERPPC
-ISGaussRifle
-ISMML7
-</Turret Equipment>
-
-<Body Equipment>
-ISGauss Ammo
-ISGauss Ammo
-ISGauss Ammo
-ISMML7 LRM Ammo
-ISMML7 LRM Ammo
-ISMML7 SRM Ammo
-ISMG Ammo (100)
-ISGuardianECMSuite
-ISTargeting Computer
-ISC3SlaveUnit
-ISCASE
-</Body Equipment>
+<originalBuildYear>
+3081
+</originalBuildYear>
 
 <type>
 IS Level 2
@@ -81,26 +35,90 @@ IS Level 2
 Sniper
 </role>
 
-<year>
-3081
-</year>
+<motion_type>
+Tracked
+</motion_type>
 
-<source>
-TRO: 3085
-</source>
-
-<internal_type>
-0
-</internal_type>
-
-<armor_type>
-6
-</armor_type>
+<cruiseMP>
+3
+</cruiseMP>
 
 <engine_type>
 2
 </engine_type>
 
-<motion_type>
-Tracked
-</motion_type>
+<armor_type>
+6
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+109
+75
+75
+50
+67
+</armor>
+
+<Body Equipment>
+IS Gauss Ammo
+IS Gauss Ammo
+IS Gauss Ammo
+IS Ammo MML-7 LRM
+IS Ammo MML-7 LRM
+IS Ammo MML-7 SRM
+IS Machine Gun Ammo - Half
+ISGuardianECMSuite
+ISTargeting Computer
+ISC3SlaveUnit
+ISCASE
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+Machine Gun
+</Right Equipment>
+
+<Left Equipment>
+Machine Gun
+</Left Equipment>
+
+<Rear Equipment>
+Machine Gun
+</Rear Equipment>
+
+<Turret Equipment>
+ISERPPC
+ISGaussRifle
+ISMML7
+</Turret Equipment>
+
+<manufacturer>
+Defiance Industries
+</manufacturer>
+
+<primaryFactory>
+Hesperus II
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:300 Vlar XL Fusion
+ARMOR:StarSlab/4 Heavy Ferro-Fibrous with CASE
+COMMUNICATIONS:TharHes Muse 54-58K with C3
+TARGETING:TharHes Mars8.2
+</systemManufacturers>
+
+<source>
+TRO: 3085
+</source>
+
+<tonnage>
+100.0
+</tonnage>
+

@@ -1,16 +1,15 @@
+generator:MegaMek Suite 0.49.18-SNAPSHOT on 2024-01-09
 chassis:Butcherbird (Ion Sparrow)
 model:A
 mul id:7739
-
 Config:Biped Omnimech
 techbase:Clan
 era:3147
+source:Rec Guide:ilClan #11
 rules level:3
 role:Scout
-source:Rec Guide:ilClan #11
 
 quirk:easy_pilot
-
 
 mass:20
 engine:160 XL (Clan) Engine(IS)
@@ -19,7 +18,7 @@ myomer:Standard
 cockpit:Small Cockpit
 gyro:Standard Gyro
 
-heat sinks:10 Double
+heat sinks:10 Clan Double
 base chassis heat sinks:6
 walk mp:8
 jump mp:8
@@ -52,11 +51,11 @@ Machine Gun Array, Right Arm
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLMG (omnipod)
-CLMG (omnipod)
-CLMG (omnipod)
-CLMG (omnipod)
-CLMGA (omnipod)
+CLMG (OMNIPOD)
+CLMG (OMNIPOD)
+CLMG (OMNIPOD)
+CLMG (OMNIPOD)
+CLMGA (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -66,11 +65,11 @@ Clan Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLMG (omnipod)
-CLMG (omnipod)
-CLMG (omnipod)
-CLMG (omnipod)
-CLMGA (omnipod)
+CLMG (OMNIPOD)
+CLMG (OMNIPOD)
+CLMG (OMNIPOD)
+CLMG (OMNIPOD)
+CLMGA (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -85,11 +84,11 @@ CLPartialWing
 CLPartialWing
 CLDoubleHeatSink
 CLDoubleHeatSink
-Jump Jet (omnipod)
-Jump Jet (omnipod)
-Jump Jet (omnipod)
-Jump Jet (omnipod)
-CLActiveProbe (omnipod)
+Jump Jet (OMNIPOD)
+Jump Jet (OMNIPOD)
+Jump Jet (OMNIPOD)
+Jump Jet (OMNIPOD)
+CLActiveProbe (OMNIPOD)
 
 Right Torso:
 Fusion Engine
@@ -99,11 +98,11 @@ CLPartialWing
 CLPartialWing
 CLDoubleHeatSink
 CLDoubleHeatSink
-Jump Jet (omnipod)
-Jump Jet (omnipod)
-Jump Jet (omnipod)
-Jump Jet (omnipod)
-Clan Machine Gun Ammo - Half (omnipod)
+Jump Jet (OMNIPOD)
+Jump Jet (OMNIPOD)
+Jump Jet (OMNIPOD)
+Jump Jet (OMNIPOD)
+Clan Machine Gun Ammo - Half (OMNIPOD)
 
 Center Torso:
 Fusion Engine
@@ -162,14 +161,10 @@ Clan Ferro-Fibrous
 -Empty-
 
 overview:The Ion Sparrow was introduced by Clan Jade Falcon on Alyina as an experimental test bed for the advanced Partial Wing system.
- 
 capabilities:The Ion Sparrow uses an Endo Steel chassis, XL Engine, and Ferro-Fibrous armor to save weight. It also uses a Small Cockpit to save more weight. Eight jump jets have been mounted in the right and left torso; Paired with the Partial Wing, this allows the Ion Sparrow to cover 300 meters per jump. The wing also works with the double heat sinks to dissipate more heat. However, despite the weight saving equipment installed the 'Mech only has four tons of pod space available.
-
 deployment:An anti-infantry scout configuration carries an Active Probe in the left torso. Each arm carries four Light Machine Guns mounted in a Machine Gun Array. The right torso carries a half-ton of machine gun ammunition.
-
 history:A warrior assigned to the project determined that it would be very effective as a scout and a harasser, and petitioned for its inclusion in the touman. The Ion Sparrow is also frequently used as a trainer for new warrior sibkos. The Lyran Intelligence Corps named the 'Mech the Butcherbird prior to finding out the Jade Falcon's name for the 'Mech.
 manufacturer:CJF Factory Zone 4
-
 primaryfactory:Alyina
 systemmanufacturer:CHASSIS:JF 3B Light Endo Steel
 systemmanufacturer:ENGINE:JF 160 XL
@@ -177,3 +172,4 @@ systemmanufacturer:ARMOR:Compound JF Ferro-Fibrous
 systemmanufacturer:JUMPJET:Clan Standard Type A2 with Partial Wing
 systemmanufacturer:COMMUNICATIONS:JF Integrated
 systemmanufacturer:TARGETING:Series JFVIII KITT
+

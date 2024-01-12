@@ -96,3 +96,19 @@ Record Sheets: 3145 New Tech New Upgrades
 <tonnage>
 45.0
 </tonnage>
+
+<manufacturer>
+Brigadier Corporation
+</manufacturer>
+
+<primaryFactory>
+Oliver
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:295 GM Fusion
+ARMOR:Leopard II Heavy Ferro-Fibrous
+COMMUNICATIONS:Exeter LongScan
+TARGETING:Standard TargetTrack
+</systemManufacturers>

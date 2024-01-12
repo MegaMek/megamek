@@ -161,7 +161,15 @@ Clan Endo Steel
 -Empty-
 -Empty-
 
-overview:The Naga II is a revived relic from the Clans' early triumphs and setbacks in creating the OmniMech.
+
+overview:The Naga II is a refashioned version of the early Clan Woodsman OmniMech, developed by Clan Wolf. This model diverged from the initial Woodsman design due to technical challenges with its XL engine and endo-steel structure, which led to the creation of the Naga and eventually the Naga II. The Naga II's existence is primarily attributed to necessity, utilized when more advanced OmniMechs are not available.
+
+capabilities:Engineered with a focus on heavy firepower, the Naga II serves as a formidable artillery platform. Its design allows for significant weapon customization due to its ample pod space. Despite its notable firepower, the Naga II is encumbered by lighter armor compared to contemporary OmniMechs. This makes it a suitable choice for specific combat roles, particularly in scenarios requiring heavy bombardment from a distance.
+
+deployment:The Naga II Model B is a specialized Clan Omnimech designed for long-range missile support, weighing 80 tons and characterized by its superior missile capabilities. It operates on a powerful 400 XL Clan Engine and features a Clan Endo Steel structure, making it a formidable asset on the battlefield.<p>The armament of the Naga II B is primarily focused on missile warfare, equipped with four LRM 20s, two mounted in each arm, providing a massive barrage capability. This model also includes a Narc Beacon in the right torso for target marking, significantly enhancing the effectiveness of missile volleys. An Anti-Missile System in the left torso offers additional defensive capabilities, shooting down incoming missiles and protecting the mech from enemy fire. With 12 Clan Double Heat Sinks, it manages heat effectively, ensuring sustained missile fire without overheating concerns.</p><p>Although lacking in close-quarters combat weaponry, its extended twisting range allows it to reposition quickly, maintaining distance from foes. The Naga II B's focus on missile armament makes it a crucial component of any offensive operation, capable of delivering devastating long-range attacks while keeping a safe distance from direct combat. Its walking speed of 54 km/h allows it to maneuver efficiently on the battlefield, staying mobile while providing continuous missile support.</p>
+
+history:The Naga II saw initial use within Clan Wolf’s garrison clusters after Operation Revival. Its combat effectiveness, however, was questioned following a notable engagement in 3055, where its vulnerabilities were exposed during a raid on Icar. Despite this, conversions from Naga to Naga II continued as situational demands arose. The Exiled Wolves also utilized the Naga II, notably during conflicts like the fall of Arc-Royal, further indicating the continued, albeit limited, relevance of the Naga II in modern Clan warfare. Its deployment, while effective in certain contexts, often highlights the trade-off between its powerful offensive capabilities and its defensive shortcomings.
+
 manufacturer:Refit
 primaryfactory:Various
 systemmanufacturer:CHASSIS:Type BMH-7 Endo Steel
@@ -169,4 +177,5 @@ systemmanufacturer:ENGINE:Fusion 400 XL
 systemmanufacturer:ARMOR:Forged Type 34 Standard
 systemmanufacturer:COMMUNICATIONS:Type G3, Mk. XII
 systemmanufacturer:TARGETING:Version Kappa-III TTS
+
 

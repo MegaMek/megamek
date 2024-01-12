@@ -1,3 +1,4 @@
+generator:MegaMek Suite 0.49.18-SNAPSHOT on 2024-01-09
 chassis:Charger
 model:C
 mul id:9397
@@ -8,15 +9,12 @@ source:Rec Guide:ilClan #29
 rules level:3
 role:Scout
 
-
-
-quirk:barrel_fists_la
-quirk:easy_maintain
 quirk:bad_rep_is
-
+quirk:easy_maintain
+quirk:barrel_fists_la
 
 mass:80
-engine:400 XL Engine(IS)
+engine:400 XL (Clan) Engine
 structure:IS Standard
 myomer:Standard
 
@@ -75,7 +73,6 @@ Clan Ferro-Lamellor
 Left Torso:
 Fusion Engine
 Fusion Engine
-Fusion Engine
 CLImprovedMediumHeavyLaser
 CLImprovedMediumHeavyLaser
 Supercharger
@@ -85,9 +82,9 @@ CLMASC
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 -Empty-
+-Empty-
 
 Right Torso:
-Fusion Engine
 Fusion Engine
 Fusion Engine
 CLImprovedMediumHeavyLaser
@@ -97,6 +94,7 @@ BloodhoundActiveProbe
 BloodhoundActiveProbe
 CLTargeting Computer
 Clan Ferro-Lamellor
+-Empty-
 -Empty-
 -Empty-
 

@@ -109,3 +109,19 @@ TRO: 3085
 <motion_type>
 Tracked
 </motion_type>
+
+<manufacturer>
+Defiance Industries
+</manufacturer>
+
+<primaryFactory>
+Hesperus II
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:300 Vlar XL Fusion
+ARMOR:StarSlab/4 Heavy Ferro-Fibrous with CASE
+COMMUNICATIONS:TharHes Muse 54-58K with C3
+TARGETING:TharHes Mars8.2
+</systemManufacturers>

@@ -1,12 +1,7 @@
-#building block data file
+#Saved from version 0.49.18-SNAPSHOT on 2024-01-07
 <BlockVersion>
 1
 </BlockVersion>
-
-# Write the version number just in case...
-<Version>
-MAM0
-</Version>
 
 <UnitType>
 Tank
@@ -16,9 +11,9 @@ Tank
 Padilla Anti-Missile Tank
 </Name>
 
-<model>
+<Model>
 
-</model>
+</Model>
 
 <mul id:>
 7386
@@ -27,6 +22,10 @@ Padilla Anti-Missile Tank
 <year>
 3134
 </year>
+
+<originalBuildYear>
+3134
+</originalBuildYear>
 
 <type>
 IS Level 3
@@ -66,7 +65,6 @@ Wheeled
 
 <Body Equipment>
 IS Vehicular Stealth
-IS Vehicular Stealth
 ISGuardianECMSuite
 ISTargeting Computer
 IS Gauss Ammo
@@ -89,9 +87,25 @@ ISAPDS Ammo
 
 <Turret Equipment>
 ISGaussRifle
-ISBAAPDS
-ISBAAPDS
+ISAPDS
+ISAPDS
 </Turret Equipment>
+
+<manufacturer>
+Leopard Armor
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:145 Ragusson Light Fusion
+ARMOR:Krupp Stealth
+COMMUNICATIONS:Teldon 19
+TARGETING:Scope 30 RDNST
+</systemManufacturers>
 
 <source>
 XTR: Republic III
@@ -100,3 +114,4 @@ XTR: Republic III
 <tonnage>
 55.0
 </tonnage>
+

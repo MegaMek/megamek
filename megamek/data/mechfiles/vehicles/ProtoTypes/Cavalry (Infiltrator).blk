@@ -1,12 +1,7 @@
-#building block data file
+#Saved from version 0.49.18-SNAPSHOT on 2024-01-07
 <BlockVersion>
 1
 </BlockVersion>
-
-##Write the version number just in case...
-<Version>
-MAM0
-</Version>
 
 <UnitType>
 VTOL
@@ -39,6 +34,11 @@ IS Level 2
 <role>
 Scout
 </role>
+
+<quirks>
+hard_pilot
+easy_maintain
+</quirks>
 
 <motion_type>
 VTOL
@@ -100,6 +100,22 @@ ISMagshotGR
 ISMagshotGR
 </Turret Equipment>
 
+<manufacturer>
+Cal-Boeing of Dorwinion
+</manufacturer>
+
+<primaryFactory>
+Belladonna
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:10 GM 110 Fusion with Jet Boosters
+ARMOR:StarGuard DarkNova Stealth
+COMMUNICATIONS:Garret Supremesound with Guardian ECM
+TARGETING:Garret D2j
+</systemManufacturers>
+
 <source>
 TRO: Prototypes
 </source>
@@ -107,10 +123,4 @@ TRO: Prototypes
 <tonnage>
 25.0
 </tonnage>
-
-
-<quirks>
-hard_pilot
-easy_maintain
-</quirks>
 

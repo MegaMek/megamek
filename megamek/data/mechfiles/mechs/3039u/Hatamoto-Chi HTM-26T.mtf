@@ -1,44 +1,40 @@
+generator:MegaMek Suite 0.49.18-SNAPSHOT on 2024-01-06
 chassis:Hatamoto-Chi
 model:HTM-26T
 mul id:1397
-
 Config:Biped
-TechBase:Inner Sphere
-Era:3039
-Source:TRO: 3039
-Rules Level:1
+techbase:Inner Sphere
+era:3039
+source:TRO: 3039
+rules level:1
 role:Brawler
 
-
-
-
-quirk:barrel_fists_la
 quirk:easy_maintain
-weaponquirk:mod_weapons:RT:1:SRM 6
+quirk:barrel_fists_la
 weaponquirk:mod_weapons:LT:1:SRM 6
+weaponquirk:mod_weapons:RT:1:SRM 6
 
+mass:80
+engine:320 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Mass:80
-Engine:320 Fusion Engine
-Structure:Standard
-Myomer:Standard
+heat sinks:17 Single
+walk mp:4
+jump mp:0
 
-Heat Sinks:17 Single
-Walk MP:4
-Jump MP:0
-
-Armor:Standard(Inner Sphere)
-LA Armor:25
-RA Armor:25
-LT Armor:24
-RT Armor:24
-CT Armor:33
-HD Armor:9
-LL Armor:33
-RL Armor:33
-RTL Armor:8
-RTR Armor:8
-RTC Armor:10
+armor:Standard(Inner Sphere)
+LA armor:25
+RA armor:25
+LT armor:24
+RT armor:24
+CT armor:33
+HD armor:9
+LL armor:33
+RL armor:33
+RTL armor:8
+RTR armor:8
+RTC armor:10
 
 Weapons:4
 PPC, Left Arm
@@ -158,20 +154,22 @@ Heat Sink
 -Empty-
 -Empty-
 
+overview:The Hatamoto-Series BattleMechs represent a pinnacle of strategic innovation within the Draconis Combine, marking a fusion of advanced Star League technology with existing Combine frameworks. The development of this series was initiated to leverage the influx of SLDF BattleMechs gifted by ComStar, focusing on reverse-engineering efforts that combined the strengths of the Thug with the Charger chassis. Spearheaded by the foresight of the future Coordinator of the Draconis Combine, this endeavor aimed to create a long-term technological advantage. Integrating advanced weaponry onto a robust and readily available chassis, the Hatamoto-Series stands as a significant achievement in military engineering, reflecting a progressive approach to Mech warfare.
 
-Overview: The formation of the Free Rasalhague Republic was preceded by intense negotiations between ComStar and the Draconis Combine. As part of the resulting accord-and as the result of one of the greatest Kuritan intelligence coups of all time-the Combine was given hundreds of older SLDF BattleMechs mostly stripped of their LosTech components. A few advanced Thugs "accidentally" sent by ComStar were quickly sent to Luthien Armor Works, where the design was reverse-engineered and eventually duplicated on an existing chassis. In this way, the Hatamoto-Chi replaced the underperforming Charger, and quickly became one of the premier Kuritan Assault 'Mechs.
+capabilities:The Hatamoto-Series is characterized by its formidable balance of firepower and defensive capabilities. These Mechs are equipped with a diverse array of energy and missile weapons, enabling effective engagement at multiple ranges. Their considerable armor plating allows them to endure severe combat scenarios, solidifying their role as primary combat units. A key design focus of the Hatamoto-Series is the prioritization of armament strength and survivability, though this comes at the cost of limited heat management and reduced mobility. The series faces challenges in heat dissipation during high-intensity battles, necessitating strategic weapon use by pilots. Despite these constraints, the Hatamoto-Series remains a testament to the Draconis Combine's engineering acumen, blending lethal offensive power with robustness to fulfill various combat requirements effectively.
 
-Capabilities: The Hatamoto, with its roomy and easily modified torsos, went through many incarnations. The original -Chi, mimicking the Thug, was easily the most common design. LAW would experiment with many other variants, though, either in an attempt to replicate other 'Mechs or to reduce supply challenges. This would greatly confuse Federated Suns forces during the War of 3039, and would cause them fits when one of the easily-repared 'Mechs would reapper only days after its supposed destruction.
+deployment:The HTM-26T, the precursor in the Hatamoto-Series, features a standard chassis with moderate armor and a single ton of SRM ammunition. This variant balances its particle projection cannons with SRM racks, but operates with limited heat dissipation due to standard heat sinks. Designed for initial field-testing, it demonstrated effective firepower with a focus on versatility, setting the stage for subsequent advanced models in the series.
 
-Deployment: The Hatamoto-Chi is a Kuritan design that has never been sold to other powers. Some might field a few salvaged models, but the durability and deadliness of the Hatamoto makes such cases rare. The original -26T was only produced in limited numbers for field testing, and was rapidly replaced by the more advanced -27T as more and more advanced technology reappeared within Combine space.
+history:The Hatamoto-Chi's development and subsequent variants have played a pivotal role in the evolution of the Draconis Combine's military might. After the introduction of the HTM-26T and 27T models, the Hatamoto-Chi underwent a series of modifications, each tailored to specific tactical needs and technological advancements within the Combine. The HTM-27U, known as the Hatamoto-Hi, emerged as a response to the need for a more heat-efficient and close-combat capable Mech. The integration of Medium Pulse Lasers and an additional heat sink in the 27U variant made it a popular choice for MechWarriors engaging in more aggressive combat scenarios.<p>Similarly, the HTM-27V (Hatamoto-Kaze) and HTM-27W (Hatamoto-Ku) variants represented strategic shifts towards long-range and direct fire combat, respectively. The 27V's focus on missile weaponry and the 27W's implementation of an Autocannon/5 provided MechWarriors with greater versatility in battlefield engagements, enhancing the Hatamoto-Chi's adaptability across different combat situations.</p>
+<p>The introduction of the HTM-28T marked a significant advancement, featuring ER PPCs and Streak SRM-6 launchers, and the inclusion of a C3 slave unit, signifying the Combine's growing emphasis on network-centric warfare. This variant was particularly notable for its improved jumping capability, enhancing the Mech's mobility on the battlefield.</p>
+<p>As the Draconis Combine faced new challenges in the post-Clan Invasion era and beyond, the Hatamoto-Chi continued to evolve. The HTM-30S Hatamoto-Suna and HTM-30Z Hatomoto-Godai variants, with their advanced weapon systems and electronic warfare capabilities, showcased the Combine's response to the changing dynamics of interstellar warfare. The HTM-30Z, equipped for command roles, became a symbol of leadership and strategic command on the battlefield.</p>
+<p>In conclusion, the Hatamoto-Chi's history is not just a tale of technological innovation but also a reflection of the Draconis Combine's strategic adaptability and cultural evolution in Mech warfare. Each variant of the Hatamoto-Chi has contributed to its legacy as a formidable and versatile warrior on the battlefields of the Inner Sphere.</p>
 
-systemmanufacturer:CHASSIS:Earthwerks
-systemmode:CHASSIS:VOL
-systemmanufacturer:ENGINE:Pitban
-systemmode:ENGINE:320
-systemmanufacturer:ARMOR:Mitchell
-systemmode:ARMOR:Argon
-systemmanufacturer:COMMUNICATIONS:Colmax
-systemmode:COMMUNICATIONS:90
-systemmanufacturer:TARGETING:Garret
-systemmode:TARGETING:D2j
+manufacturer:Luthien Armor Works
+primaryfactory:Luthien
+systemmanufacturer:CHASSIS:Earthwerks VOL
+systemmanufacturer:ENGINE:Pitban 320
+systemmanufacturer:ARMOR:Mitchell Argon
+systemmanufacturer:COMMUNICATIONS:Colmax 90
+systemmanufacturer:TARGETING:Garret D2j
+

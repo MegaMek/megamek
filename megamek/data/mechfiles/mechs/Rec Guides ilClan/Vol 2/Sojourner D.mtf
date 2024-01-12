@@ -1,4 +1,4 @@
-generator:MegaMek Suite 0.49.16-SNAPSHOT on 2023-12-30
+generator:MegaMek Suite 0.49.18-SNAPSHOT on 2024-01-09
 chassis:Sojourner
 model:D
 mul id:7447
@@ -37,10 +37,10 @@ RTR armor:8
 RTC armor:10
 
 Weapons:4
-Medium Pulse Laser, Left Torso
-Medium Pulse Laser, Left Torso
-ER PPC, Right Arm
 Ultra AC/10, Right Arm
+ER PPC, Right Arm
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Left Torso
 
 Left Arm:
 Shoulder

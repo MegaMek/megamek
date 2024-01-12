@@ -1,0 +1,151 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Scorpion Light Tank
+</Name>
+
+<Model>
+(MRM)
+</Model>
+
+<year>
+3130
+</year>
+
+<originalBuildYear>
+3130
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<role>
+Brawler
+</role>
+
+<quirks>
+ubiquitous_clan
+ubiquitous_is
+poor_work
+</quirks>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+18
+13
+13
+11
+16
+</armor>
+
+<Body Equipment>
+IS Machine Gun Ammo - Half
+IS MRM 20 Ammo
+IS MRM 20 Ammo
+</Body Equipment>
+
+<Front Equipment>
+Machine Gun
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+MRM 20
+</Turret Equipment>
+
+<tonnage>
+25.0
+</tonnage>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+
+<source>
+Rec Guide:ilClan #33
+</source>
+
+<role>
+Brawler
+</role>
+
+<quirks>
+ubiquitous_clan
+ubiquitous_is
+poor_work
+</quirks>
+<capabilities>
+The Scorpion Light Tank's performance is modest, especially against similar light armor units. Its main weapon, the Deleon Autocannon, delivers limited damage at long ranges but struggles with accuracy at closer distances. The 20mm Gatling gun, though reliable, falls short compared to the secondary armaments typically found on other light tanks. The tank's lack of speed and weak armor present significant tactical challenges.<p>Complicating its operational efficacy is Quikscell Company's notorious reputation for inconsistent quality control. Many new Scorpions come with minor defects that require time-consuming troubleshooting and repairs, affecting their readiness for immediate deployment.</p>
+</capabilities>
+
+<overview>
+The Scorpion Light Tank, originating from the Quikscell Company, is widely recognized as the "Budget Tank" for its affordability. This cost-effectiveness makes it a favored choice for less affluent worlds. Despite its cost advantages, the Scorpion is often utilized in large groups to offset its relative inferiority in power and defense compared to other vehicles in its class.
+</overview>
+
+<deployment>
+The MRM Scorpion, emerging in 3060, represents an evolution in missile technology. By substituting the autocannon for an MRM-20 missile rack, along with increased ammunition storage, this variant becomes a formidable mid-range missile platform, balancing firepower with mobility.
+</deployment>
+
+<history>
+Since its inception in 2807, the Scorpion Light Tank has been a ubiquitous element in military engagements across the Inner Sphere. Renowned for its widespread manufacture and deployment, the Scorpion has served in numerous armies, planetary militias, mercenary commands, and even in the ranks of bandits and pirates. Its affordability and ease of production have made it a common choice, particularly on poorer worlds where more advanced or expensive vehicles are not feasible.
+<p>Despite its prevalence, the Scorpion's combat history is a mix of modest successes and notable shortcomings. In engagements like the "Scorpions Nest" on Santander V, the tank demonstrated its potential when deployed in large numbers. In this battle, a swarm of Scorpions ambushed a superior Kurita force, causing significant damage and highlighting the tank's capability in specific tactical scenarios.</p>
+<p>However, the Scorpion's fundamental design flaws were exposed in harsher combat realities. For example, during the defense of Ronel in 3133, the Scorpion's light armor and basic weaponry were inadequate against the Dragon's Fury, a more advanced and organized enemy. Similarly, on Willowick, DCMS forces easily overpowered defending Scorpions, with the tanks managing only minimal resistance against the Combine's hardened and ballistic-reinforced armor.</p>
+<p>The tank's extensive use over the centuries led to various modifications and upgrades, particularly in the early 32nd century, with the introduction of fuel cell engines. These enhancements somewhat improved its operational capabilities, but the Scorpion remained a low-tier combat vehicle. Even with occasional tactical successes, it continued to serve primarily as expendable cannon fodder in larger military operations.</p>
+<p>Despite its limitations, the Scorpion's role in the BattleTech universe is significant. It represents a class of vehicles crucial for less affluent forces and serves as a reminder of the diverse and complex nature of mechanized warfare, where even the most humble units can have a strategic impact in the right circumstances.</p>
+</history>
+
+<manufacturer>
+Unknown
+</manufacturer>
+
+<primaryFactory>
+Unknown
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:SitiCide 100 ICE
+ARMOR:Compound Alpha Ferro-Fibrous
+COMMUNICATIONS:Basix 200
+TARGETING:OptiSight-12
+</systemManufacturers>

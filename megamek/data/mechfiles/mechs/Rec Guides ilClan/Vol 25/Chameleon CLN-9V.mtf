@@ -1,3 +1,4 @@
+generator:MegaMek Suite 0.49.18-SNAPSHOT on 2024-01-09
 chassis:Chameleon
 model:CLN-9V
 mul id:9268
@@ -8,11 +9,8 @@ source:Rec Guide:ilClan #25
 rules level:2
 role:Striker
 
-
-
 quirk:easy_pilot
 quirk:distracting
-
 
 mass:50
 engine:300 Light Engine(IS)
@@ -120,7 +118,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-Reinforced
+-Empty-
 Sensors
 Life Support
 -Empty-
@@ -158,13 +156,10 @@ Jump Jet
 -Empty-
 -Empty-
 
-overview:Since the Terran Hegemony introduced it in 2510, the Chameleon has been the premiere training BattleMech for light- and medium-BattleMech MechWarriors. 
+overview:Since the Terran Hegemony introduced it in 2510, the Chameleon has been the premiere training BattleMech for light- and medium-BattleMech MechWarriors.
 capabilities:The Chameleon was designed to help a new MechWarrior master the skills of maneuvering and heat management, with a top speed of 97.2 km/h and a jumping distance of 180 meters. The 'Mech also had an almost all energy weapons loadout, but cooled only by 10 single heat sinks; this paucity of freezers forces MechWarriors to concentrate on the 'Mech's heat levels.
-
 deployment:No information on this variant
-
 history:In fact, with its role away from the battlefield, except in the most desperate of circumstances, the Chameleon has suffered relatively little attrition. Combined with its continuous production on Hesperus II, the Chameleon is one of the most common BattleMechs. Even in the 31st century, the Chameleon is widely used at academies and training cadres throughout the Inner Sphere. In some instances, the Chameleon had been forced into combat situations, notably during the Dragoon Civil War. Production of the Chameleon halted briefly in 3052 when Defiance Industries decided to switch its production to the Nightsky, but was quickly resumed when J.B. BattleMechs Incorporated purchased the rights to the design. J.B. BattleMechs also introduced two battleworthy variants of the Chameleon. The Chameleon is a training 'Mech, intended to simulate a variety of opponents by mounting a wide variety of weapon systems. While a medium 'Mech by design, it doesn't always look like one; it can be fitted out with extra plates to modify its appearance, and carries special electronics to falsify its signature. It is these special abilities that let it look and scan as something other than what it is, hence the machine's name.
-
 manufacturer:Defiance Industries
 primaryfactory:Hesperus II
 systemmanufacturer:CHASSIS:Enran TXS2R Reinforced

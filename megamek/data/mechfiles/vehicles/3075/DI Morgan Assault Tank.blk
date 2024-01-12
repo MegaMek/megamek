@@ -1,12 +1,7 @@
-#building block data file
+#Saved from version 0.49.18-SNAPSHOT on 2024-01-07
 <BlockVersion>
 1
 </BlockVersion>
-
-#Write the version number just in case...
-<Version>
-MAM0
-</Version>
 
 <UnitType>
 Tank
@@ -16,44 +11,21 @@ Tank
 DI Morgan Assault Tank
 </Name>
 
-<model>
+<Model>
 
-</model>
+</Model>
 
 <mul id:>
 900
 </mul id:>
 
-<Tonnage>
-100
-</Tonnage>
+<year>
+3073
+</year>
 
-<cruiseMP>
-3
-</cruiseMP>
-
-<Armor>
-57
-41
-41
-28
-41
-</Armor>
-
-<Front Equipment>
-ISMachine Gun
-ISMachine Gun
-</Front Equipment>
-
-<Turret Equipment>
-ISERPPC
-ISERPPC
-ISERPPC
-</Turret Equipment>
-
-<Body Equipment>
-IS Machine Gun Ammo - Half
-</Body Equipment>
+<originalBuildYear>
+3073
+</originalBuildYear>
 
 <type>
 IS Level 2
@@ -63,26 +35,79 @@ IS Level 2
 Sniper
 </role>
 
-<year>
-3073
-</year>
+<motion_type>
+Tracked
+</motion_type>
 
-<source>
-TRO: 3075
-</source>
-
-<internal_type>
-0
-</internal_type>
-
-<armor_type>
-6
-</armor_type>
+<cruiseMP>
+3
+</cruiseMP>
 
 <engine_type>
 2
 </engine_type>
 
-<motion_type>
-Tracked
-</motion_type>
+<armor_type>
+6
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+57
+41
+41
+28
+41
+</armor>
+
+<Body Equipment>
+IS Machine Gun Ammo - Half
+</Body Equipment>
+
+<Front Equipment>
+Machine Gun
+Machine Gun
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+ISERPPC
+ISERPPC
+ISERPPC
+</Turret Equipment>
+
+<manufacturer>
+Defiance Motors, Defiance Industries
+</manufacturer>
+
+<primaryFactory>
+Tharkad, Hesperus II
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:300 GM XL Fusion
+ARMOR:Durallex Super Hvy Ferro-Fibrous
+COMMUNICATIONS:Neil 6000V
+TARGETING:Angst ClearView 2AV
+</systemManufacturers>
+
+<source>
+TRO: 3075
+</source>
+
+<tonnage>
+100.0
+</tonnage>
+

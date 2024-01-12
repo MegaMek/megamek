@@ -249,6 +249,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     protected int facing = 0;
     protected int sec_facing = 0;
+    protected boolean alreadyTwisted = false;
 
     protected int walkMP = 0;
     protected int jumpMP = 0;
@@ -2656,6 +2657,21 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return the closest valid secondary facing.
      */
     public abstract int clipSecondaryFacing(int dir);
+
+    /**
+     * @return whether this entity already changed a secondary facing in an earlier phase
+     */
+    public boolean getAlreadyTwisted(){
+        return alreadyTwisted;
+    }
+
+    /**
+     * Used by TargetingPhaseDisplay.java and FiringDisplay.java
+     * @param value sets alreadyTwisted to true or false.
+     */
+    public void setAlreadyTwisted(boolean value) {
+        alreadyTwisted = value;
+    }
 
     /**
      * Returns true if the entity has an RAC which is jammed and not destroyed
@@ -6338,6 +6354,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         resetFiringArcs();
+
+        setAlreadyTwisted(false);
 
         resetBays();
 

@@ -287,6 +287,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
+                                || ce().getAlreadyTwisted()
                                 || clientgui.getBoardView().getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
@@ -310,6 +311,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
                     @Override
                     public boolean shouldPerformAction() {
                         if (!clientgui.getClient().isMyTurn()
+                                || ce().getAlreadyTwisted()
                                 || clientgui.getBoardView().getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
@@ -825,7 +827,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
             }
 
             // only twist if crew conscious
-            setTwistEnabled(ce().canChangeSecondaryFacing() && ce().getCrew().isActive());
+            setTwistEnabled(!ce().getAlreadyTwisted() && ce().canChangeSecondaryFacing() && ce().getCrew().isActive());
 
             setFindClubEnabled(FindClubAction.canMechFindClub(clientgui.getClient().getGame(), en));
             setFlipArmsEnabled(ce().canFlipArms());
@@ -2076,6 +2078,9 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
      * Torso twist in the proper direction.
      */
     void torsoTwist(Coords twistTarget) {
+        if (ce().getAlreadyTwisted()) {
+            return;
+        }
         int direction = ce().getFacing();
 
         if (twistTarget != null) {
@@ -2098,6 +2103,9 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
      */
 
     void torsoTwist(int twistDir) {
+        if (ce().getAlreadyTwisted()) {
+            return;
+        }
         int direction = ce().getSecondaryFacing();
         if (twistDir == 0) {
             clearAttacks();
@@ -2149,7 +2157,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         }
 
         if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
-            if (shiftheld || twisting) {
+            if (!ce().getAlreadyTwisted() && (shiftheld || twisting)) {
                 updateFlipArms(false);
                 torsoTwist(b.getCoords());
             }

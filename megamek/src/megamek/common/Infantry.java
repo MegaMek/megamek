@@ -334,7 +334,7 @@ public class Infantry extends Entity {
 
     @Override
     public boolean canChangeSecondaryFacing() {
-        return !hasActiveFieldArtillery();
+        return !(hasActiveFieldArtillery() || getAlreadyTwisted());
     }
 
     @Override

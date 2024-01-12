@@ -249,7 +249,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     protected int facing = 0;
     protected int sec_facing = 0;
-    protected boolean alreadyTwisted = false;
+    protected GamePhase twistedPhase = null;
 
     protected int walkMP = 0;
     protected int jumpMP = 0;
@@ -2619,6 +2619,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public void setSecondaryFacing(int sec_facing) {
+        GamePhase phase = getGame().getPhase();
+        if (phase != null && phase.isOffboard()) {
+            setAlreadyTwisted(true);
+        }
         setSecondaryFacing(sec_facing, true);
     }
 
@@ -2662,15 +2666,19 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return whether this entity already changed a secondary facing in an earlier phase
      */
     public boolean getAlreadyTwisted(){
-        return alreadyTwisted;
+        boolean twisted = false;
+        if (twistedPhase != null && twistedPhase.isBefore(game.getPhase())) {
+            twisted = true;
+        }
+        return twisted;
     }
 
     /**
      * Used by TargetingPhaseDisplay.java and FiringDisplay.java
-     * @param value sets alreadyTwisted to true or false.
+     * @param value true sets twistedPhase to current phase; false unsets twistedPhase
      */
     public void setAlreadyTwisted(boolean value) {
-        alreadyTwisted = value;
+        twistedPhase = (value) ? game.getPhase() : null;
     }
 
     /**

@@ -1262,7 +1262,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
     /**
      * Torso twist to the left or right
      *
-     * @param twistDir An <code>int</code> specifying wether we're twisting left or
+     * @param twistDir An <code>int</code> specifying whether we're twisting left or
      *                 right, 0 if we're twisting to the left, 1 if to the right.
      */
 
@@ -1317,7 +1317,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
         }
 
         if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
-            if (shiftheld || twisting) {
+            if (phase.isOffboard() && (shiftheld || twisting)) {
                 updateFlipArms(false);
                 torsoTwist(b.getCoords());
             }
@@ -1341,7 +1341,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements
 
         if (client.isMyTurn() && (b.getCoords() != null)
                 && (ce() != null) && !b.getCoords().equals(ce().getPosition())) {
-            if (shiftheld) {
+            if (shiftheld && phase.isOffboard()) {
                 updateFlipArms(false);
                 torsoTwist(b.getCoords());
             } else if (phase.isTargeting()) {

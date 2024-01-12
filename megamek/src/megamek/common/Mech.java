@@ -156,9 +156,9 @@ public abstract class Mech extends Entity {
     public static final int COCKPIT_QUADVEE = 13;
 
     public static final int COCKPIT_SUPERHEAVY_INDUSTRIAL = 14;
-    
+
     public static final int COCKPIT_SUPERHEAVY_COMMAND_CONSOLE = 15;
-    
+
     public static final int COCKPIT_SMALL_COMMAND_CONSOLE = 16;
 
     public static final String[] COCKPIT_STRING = { "Standard Cockpit",
@@ -167,14 +167,14 @@ public abstract class Mech extends Entity {
             "Primitive Industrial Cockpit", "Superheavy Cockpit",
             "Superheavy Tripod Cockpit", "Tripod Cockpit", "Interface Cockpit",
             "Virtual Reality Piloting Pod", "QuadVee Cockpit",
-            "Superheavy Industrial Cockpit", "Superheavy Command Console", 
+            "Superheavy Industrial Cockpit", "Superheavy Command Console",
         "Small Command Console"};
 
     public static final String[] COCKPIT_SHORT_STRING = { "Standard", "Small",
             "Command Console", "Torso Mounted", "Dual", "Industrial",
             "Primitive", "Primitive Industrial", "Superheavy",
             "Superheavy Tripod", "Tripod", "Interface", "VRRP", "Quadvee",
-            "Superheavy Industrial", "Superheavy Command", 
+            "Superheavy Industrial", "Superheavy Command",
             "Small Command"};
 
     public static final String FULL_HEAD_EJECT_STRING = "Full Head Ejection System";
@@ -1103,7 +1103,7 @@ public abstract class Mech extends Entity {
         if (!mpCalculationSetting.ignoreModularArmor && hasModularArmor()) {
             mp--;
         }
-        
+
         if (!mpCalculationSetting.ignoreGravity) {
             return Math.max(applyGravityEffectsOnMP(mp), 0);
         }
@@ -1531,7 +1531,7 @@ public abstract class Mech extends Entity {
                 return m.getName();
             }
         }
-        
+
         // if a mech has no heat sink equipment, we pretend like it has standard heat sinks.
         return "Heat Sink";
     }
@@ -1631,7 +1631,7 @@ public abstract class Mech extends Entity {
         }
         return sinksUnderwater;
     }
-    
+
     @Override
     public boolean tracksHeat() {
         return true;
@@ -1704,7 +1704,7 @@ public abstract class Mech extends Entity {
         if (hasQuirk(OptionsConstants.QUIRK_NEG_NO_TWIST)) {
             return false;
         }
-        return !isProne() && !isBracing();
+        return !(isProne() || isBracing() || getAlreadyTwisted());
     }
 
     /**
@@ -4783,7 +4783,7 @@ public abstract class Mech extends Entity {
         setCockpitType(COCKPIT_SUPERHEAVY_COMMAND_CONSOLE);
         return true;
     }
-    
+
     //The location of critical is based on small cockpit, but since command console requires two cockpit slots the second Sensor is return to the location 4.
     public boolean addSmallCommandConsole() {
         if (getEmptyCriticals(LOC_HEAD) < 5) {
@@ -4855,14 +4855,14 @@ public abstract class Mech extends Entity {
         }
         return success;
     }
-    
+
     /**
      * Convenience function that returns the critical slot containing the cockpit
      * @return
      */
     public List<CriticalSlot> getCockpit() {
         List<CriticalSlot> retVal = new ArrayList<>();
-        
+
         switch (cockpitType) {
             // these always occupy slots 2 and 3 in the head
             case Mech.COCKPIT_COMMAND_CONSOLE:
@@ -4885,7 +4885,7 @@ public abstract class Mech extends Entity {
                 retVal.add(getCritical(Mech.LOC_HEAD, 2));
                 break;
         }
-        
+
         return retVal;
     }
 
@@ -4917,7 +4917,7 @@ public abstract class Mech extends Entity {
 
     @Override
     public boolean hasCommandConsoleBonus() {
-        return ((getCockpitType() == COCKPIT_COMMAND_CONSOLE) 
+        return ((getCockpitType() == COCKPIT_COMMAND_CONSOLE)
         || (getCockpitType() == COCKPIT_SUPERHEAVY_COMMAND_CONSOLE)
         || (getCockpitType() == COCKPIT_SMALL_COMMAND_CONSOLE))
                 && getCrew().hasActiveCommandConsole()

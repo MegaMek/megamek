@@ -117,6 +117,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
     public BotConfigDialog(JFrame parent, @Nullable String botName,
             @Nullable BehaviorSettings behavior, @Nullable ClientGUI cg) {
         super(parent, "BotConfigDialog", "BotConfigDialog.title");
+        setAlwaysOnTop(true);
         fixedBotPlayerName = botName;
         isNewBot = botName == null;
         clientGui = cg;

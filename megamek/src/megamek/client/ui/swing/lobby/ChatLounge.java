@@ -162,6 +162,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private JButton butRemoveBot = new JButton(Messages.getString("ChatLounge.butRemoveBot"));
     private JButton butConfigPlayer = new JButton(Messages.getString("ChatLounge.butConfigPlayer"));
     private JButton butBotSettings = new JButton(Messages.getString("ChatLounge.butBotSettings"));
+    PlayerSettingsDialog psd;
 
     private MekTableMouseAdapter mekTableMouseAdapter = new MekTableMouseAdapter();
     private PlayerTableModel playerModel = new PlayerTableModel();
@@ -1561,7 +1562,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             return;
         }
 
-        PlayerSettingsDialog psd = new PlayerSettingsDialog(clientgui, c, previewBV);
+        if (psd != null) {
+            psd.dispose();
+        }
+
+        psd = new PlayerSettingsDialog(clientgui, c, previewBV);
         psd.setModal(false);
         psd.setAlwaysOnTop(true);
         psd.showDialog();

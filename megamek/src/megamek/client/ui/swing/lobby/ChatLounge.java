@@ -1164,7 +1164,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         final GameOptions gOpts = game().getOptions();
         boardPreviewGame.setOptions(gOpts);
 
-        for (Player player : game().getPlayersList()) {
+        for (Player player : boardPreviewGame.getPlayersList()) {
             boardPreviewGame.removePlayer(player.getId());
         }
         for (Player player : game().getPlayersList()) {

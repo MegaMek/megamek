@@ -543,7 +543,7 @@ public class MechView {
 
             if (!sb.toString().isEmpty()) {
                 sInvalid.add(new SingleLine());
-                sInvalid.add(new LabeledElement(Messages.getString("MechView.InvalidReasons"), sb.toString()));
+                sInvalid.add(new LabeledElement(Messages.getString("MechView.InvalidReasons"), "\n" + sb.toString()));
             }
         }
     }
@@ -662,13 +662,18 @@ public class MechView {
     public String getMechReadout(@Nullable String fontName) {
         String docStart = "";
         String docEnd = "";
+        String preStart = "";
+        String preEnd = "";
+
         if (html && (fontName != null)) {
             docStart = "<div style=\"font-family:" + fontName + ";\">";
             docEnd = "</div>";
+            preStart = "<PRE style=\"font-family:" + fontName + ";\">";
+            preEnd = "</PRE>";
         }
         return docStart + getMechReadoutHead()
                 + getMechReadoutBasic() + getMechReadoutLoadout()
-                + getMechReadoutFluff() + getMechReadoutInvalid() + docEnd;
+                + getMechReadoutFluff() + preStart + getMechReadoutInvalid() + preEnd + docEnd;
     }
 
     private List<ViewElement> getInternalAndArmor() {

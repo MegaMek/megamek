@@ -47,6 +47,7 @@ public class KeyBindingsOverlay extends AbstractBoardViewOverlay {
     private static final List<KeyCommandBind> BINDS_MOVE = Arrays.asList(
             KeyCommandBind.TOGGLE_MOVEMODE,
             KeyCommandBind.UNDO_LAST_STEP,
+            KeyCommandBind.UNDO_ILLEGAL_STEPS,
             KeyCommandBind.TOGGLE_CONVERSIONMODE,
             KeyCommandBind.DONE_NO_ACTION
     );

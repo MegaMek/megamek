@@ -5090,6 +5090,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 ready();
             }
         } else if (actionCmd.equals(MoveCommand.MOVE_EVADE_AERO.getCmd())) {
+            removeIllegalSteps();
             addStepToMovePath(MoveStepType.EVADE);
             setEvadeAeroEnabled(false);
         } else if (actionCmd.equals(MoveCommand.MOVE_ROLL.getCmd())) {

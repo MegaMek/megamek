@@ -26,9 +26,7 @@ import org.apache.logging.log4j.LogManager;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * WeaponFireInfo is a wrapper around a WeaponAttackAction that includes
@@ -412,6 +410,12 @@ public class WeaponFireInfo {
             return 1;
         }
 
+        // Aero TAG usage needs to take into account incoming Indirect Fire shots from friendlies, homing
+        // weapons, and the disutility of foregoing its own other weapons.
+        if (weapon.getEntity().isAero() && weaponType.hasFlag(WeaponType.F_TAG) && !target.isAero()){
+            return computeAeroExpectedTAGDamage();
+        }
+
         if (getTarget() instanceof Entity) {
             double dmg = Compute.getExpectedDamage(getGame(), getAction(),
                     true, owner.getPrecognition().getECMInfo());
@@ -422,6 +426,21 @@ public class WeaponFireInfo {
         }
 
         return weaponType.getDamage();
+    }
+
+    /**
+     * Aerospace units need to think carefully before firing TAGs at ground targets, because this
+     * precludes firing _any_ other weapons this turn.
+     * @return expected damage of firing a TAG weapon, in light of other options.
+     */
+    double computeAeroExpectedTAGDamage(){
+        int myWeaponsDamage = Compute.computeTotalDamage(shooter.getTotalWeaponList());
+
+        // Get a list of incoming or potentially incoming guidable weapons from the relevant Princess and compute damage.
+        int incomingAttacksDamage = Compute.computeTotalDamage(owner.computeGuidedWeapons(shooter, target.getPosition()));
+
+        // If TAG damage exceeds the attacking unit's own max damage capacity, go for it!
+        return Math.max(incomingAttacksDamage - myWeaponsDamage, 0);
     }
 
     /**
@@ -570,6 +589,20 @@ public class WeaponFireInfo {
 
         if (debugging) {
             msg.append("\n\tMax Damage: ").append(LOG_DEC.format(maxDamage));
+        }
+
+        // If expected damage from Aero tagging is zero, return out - save attacks for later.
+        if (weapon.getType().hasFlag(WeaponType.F_TAG) && shooter.isAero() && getExpectedDamageOnHit() <= 0) {
+            if (debugging) {
+                LogManager.getLogger().debug(msg.append("\n\tAerospace TAG attack not advised at this juncture"));
+            }
+            setProbabilityToHit(0);
+            setMaxDamage(0);
+            setHeat(0);
+            setExpectedCriticals(0);
+            setKillProbability(0);
+            setExpectedDamageOnHit(0);
+            return;
         }
 
         final double expectedCriticalHitCount = ProbabilityCalculator.getExpectedCriticalHitCount();

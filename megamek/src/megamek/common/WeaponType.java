@@ -309,6 +309,13 @@ public class WeaponType extends EquipmentType {
     protected boolean subCapital = false;
     protected int atClass = CLASS_NONE;
 
+    /**
+     * @return true if the wtype is able to be fired indirectly.
+     */
+    public boolean canIndirect() {
+        return false;
+    }
+
     public void setDamage(int inD) {
         damage = inD;
     }

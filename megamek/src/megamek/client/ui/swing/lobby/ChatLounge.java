@@ -2178,6 +2178,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             }
         }
 
+        if (psd != null) {
+            psd.dispose();
+        }
+
+        if (boardPreviewW != null) {
+            boardPreviewW.dispose();
+        }
+
         boolean done = !localPlayer().isDone();
         client.sendDone(done);
         refreshDoneButton(done);

@@ -521,11 +521,14 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         baseAttributesPanel.add(yearPanel, c);
         c.gridx = 1;
         JPanel p1bPanel = new JPanel();
-        p1bPanel.add(lblInvalid);
-        p1bPanel.add(cInvalid);
         p1bPanel.add(lblFailedToLoadEquipment);
         p1bPanel.add(cFailedToLoadEquipment);
         baseAttributesPanel.add(p1bPanel, c);
+        c.gridx = 2;
+        JPanel p1cPanel = new JPanel();
+        p1cPanel.add(lblInvalid);
+        p1cPanel.add(cInvalid);
+        baseAttributesPanel.add(p1cPanel, c);
 
         c.gridx = 0; c.gridy++;
         JPanel bvPanel = new JPanel();

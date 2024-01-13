@@ -61,6 +61,7 @@ public class MechSearchFilter {
     public int iCanon;
     public int iPatchwork;
     public String source;
+    public String mulid;
     public int iInvalid;
     public int iFailedToLoadEquipment;
     public String sStartTroopSpace;
@@ -457,6 +458,10 @@ public class MechSearchFilter {
         }
 
         if ((!f.source.isEmpty()) && (!mech.getSource().contains(f.source))) {
+            return false;
+        }
+
+        if ((!f.mulid.isEmpty()) && (mech.getMulId() != toInt(f.mulid, -2))) {
             return false;
         }
 

@@ -123,6 +123,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JLabel lblTableFilters = new JLabel(Messages.getString("MechSelectorDialog.Search.TableFilters"));
     private JLabel lblSource = new JLabel(Messages.getString("MechSelectorDialog.Search.Source"));
     private JTextField tSource = new JTextField(4);
+    private JLabel lblMULId = new JLabel(Messages.getString("MechSelectorDialog.Search.MULId"));
+    private JTextField tMULId = new JTextField(4);
     private JLabel lblYear = new JLabel(Messages.getString("MechSelectorDialog.Search.Year"));
     private JTextField tStartYear = new JTextField(4);
     private JTextField tEndYear = new JTextField(4);
@@ -473,20 +475,130 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         cb.addItem(Messages.getString("MechSelectorDialog.Search.No"));
     }
 
-    private JPanel createBasePanel() {
-        btnBaseClear.addActionListener(this);
+    private JPanel createBaseAttributes() {
+        loadYesNo(cOfficial);
+        loadYesNo(cCanon);
+        loadYesNo(cInvalid);
+        loadYesNo(cFailedToLoadEquipment);
 
+        JPanel baseAttributesPanel = new JPanel();
+        GridBagConstraints c = new GridBagConstraints();
+        baseAttributesPanel.setLayout(new GridBagLayout());
+
+        c.weighty = 0;
+        c.anchor = GridBagConstraints.NORTHWEST;
+        c.fill = GridBagConstraints.NONE;
+        c.gridwidth  = 1;
+        c.insets = new Insets(20, 10, 0, 0);
+        c.gridx = 0; c.gridy = 0;
+
+        JPanel p0Panel = new JPanel();
+        p0Panel.add(lblOfficial);
+        p0Panel.add(cOfficial);
+        p0Panel.add(lblCanon);
+        p0Panel.add(cCanon);
+        baseAttributesPanel.add(p0Panel, c);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 1;
+        JPanel sPanel = new JPanel(new BorderLayout());
+        sPanel.add(lblSource, BorderLayout.WEST);
+        sPanel.add(tSource, BorderLayout.CENTER);
+        baseAttributesPanel.add(sPanel, c);
+        c.gridx = 2;
+        JPanel mPanel = new JPanel(new BorderLayout());
+        mPanel.add(lblMULId, BorderLayout.WEST);
+        mPanel.add(tMULId, BorderLayout.CENTER);
+        baseAttributesPanel.add(mPanel, c);
+
+        c.fill = GridBagConstraints.NONE;
+        c.insets = new Insets(5, 10, 0, 0);
+        c.gridx = 0; c.gridy++;
+        JPanel yearPanel = new JPanel();
+        yearPanel.add(lblYear);
+        yearPanel.add(tStartYear);
+        yearPanel.add(new JLabel("-"));
+        yearPanel.add(tEndYear);
+        baseAttributesPanel.add(yearPanel, c);
+        c.gridx = 1;
+        JPanel p1bPanel = new JPanel();
+        p1bPanel.add(lblFailedToLoadEquipment);
+        p1bPanel.add(cFailedToLoadEquipment);
+        baseAttributesPanel.add(p1bPanel, c);
+        c.gridx = 2;
+        JPanel p1cPanel = new JPanel();
+        p1cPanel.add(lblInvalid);
+        p1cPanel.add(cInvalid);
+        baseAttributesPanel.add(p1cPanel, c);
+
+        c.gridx = 0; c.gridy++;
+        JPanel bvPanel = new JPanel();
+        bvPanel.add(lblBV);
+        bvPanel.add(tStartBV);
+        bvPanel.add(new JLabel("-"));
+        bvPanel.add(tEndBV);
+        baseAttributesPanel.add(bvPanel, c);
+        c.gridx = 1;
+        JPanel tonsPanel = new JPanel();
+        tonsPanel.add(lblTons);
+        tonsPanel.add(tStartTons);
+        tonsPanel.add(new JLabel("-"));
+        tonsPanel.add(tEndTons);
+        baseAttributesPanel.add(tonsPanel, c);
+
+        c.gridx = 0; c.gridy++;
+        JPanel walkPanel = new JPanel();
+        walkPanel.add(lblWalk);
+        walkPanel.add(tStartWalk);
+        walkPanel.add(new JLabel("-"));
+        walkPanel.add(tEndWalk);
+        baseAttributesPanel.add(walkPanel, c);
+        c.gridx = 1;
+        JPanel jumpPanel = new JPanel();
+        jumpPanel.add(lblJump);
+        jumpPanel.add(tStartJump);
+        jumpPanel.add(new JLabel("-"));
+        jumpPanel.add(tEndJump);
+        baseAttributesPanel.add(jumpPanel, c);
+
+        c.gridx = 0; c.gridy++;
+        JPanel lowerArmsPanel = new JPanel();
+        lowerArmsPanel.add(lblLowerArms);
+        lowerArmsPanel.add(tStartLowerArms);
+        lowerArmsPanel.add(new JLabel("-"));
+        lowerArmsPanel.add(tEndLowerArms);
+        baseAttributesPanel.add(lowerArmsPanel, c);
+        c.gridx = 1;
+        JPanel handsPanel = new JPanel();
+        handsPanel.add(lblHands);
+        handsPanel.add(tStartHands);
+        handsPanel.add(new JLabel("-"));
+        handsPanel.add(tEndHands);
+        baseAttributesPanel.add(handsPanel, c);
+
+        c.gridx = 0; c.gridy++;
+        JPanel p2Panel = new JPanel();
+        p2Panel.add(lblTankTurrets);
+        p2Panel.add(tStartTankTurrets);
+        p2Panel.add(new JLabel("-"));
+        p2Panel.add(tEndTankTurrets);
+        baseAttributesPanel.add(p2Panel, c);
+        c.gridx = 1;
+        JPanel armorPanel = new JPanel();
+        armorPanel.add(lblArmor);
+        armorPanel.add(cArmor);
+        baseAttributesPanel.add(armorPanel, c);
+
+        return baseAttributesPanel;
+    }
+
+    private JPanel createBaseComboBoxes() {
         cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Any"));
         cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor25"));
         cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor50"));
         cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor75"));
         cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor90"));
 
-        loadYesNo(cOfficial);
-        loadYesNo(cCanon);
         loadYesNo(cClanEngine);
-        loadYesNo(cInvalid);
-        loadYesNo(cFailedToLoadEquipment);
         loadYesNo(cPatchwork);
 
         loadTriStateItem(EquipmentType.getArmorNames(), listArmorType, 5);
@@ -497,10 +609,67 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         loadTriStateItem(SimpleTechLevel.getDescriptions(), listTechLevel, 5);
         loadTriStateItem(Entity.getTechBaseDescriptions(), listTechBase, 4);
 
-        for (int i = 1; i <= 20; i++) {
-            cboQty.addItem(Integer.toString(i));
-        }
-        cboQty.setSelectedIndex(0);
+        JPanel baseComboBoxesPanel = new JPanel();
+        GridBagConstraints c = new GridBagConstraints();
+        baseComboBoxesPanel.setLayout(new GridBagLayout());
+
+        c.weighty = 0;
+        c.anchor = GridBagConstraints.NORTHWEST;
+        c.fill = GridBagConstraints.NONE;
+        c.gridwidth  = 1;
+        c.insets = new Insets(5, 10, 0, 0);
+        c.gridx = 0; c.gridy = 0;
+
+        JPanel cockpitPanel = new JPanel(new BorderLayout());
+        cockpitPanel.add(lblCockpitType, BorderLayout.NORTH);
+        cockpitPanel.add(spCockpitType, BorderLayout.CENTER);
+        baseComboBoxesPanel.add(cockpitPanel, c);
+        c.gridx = 1;
+        JPanel enginePanel = new JPanel(new BorderLayout());
+        enginePanel.add(lblEngineType, BorderLayout.NORTH);
+        enginePanel.add(spEngineType, BorderLayout.CENTER);
+        JPanel clanEnginePanel = new JPanel();
+        clanEnginePanel.add(lblClanEngine);
+        clanEnginePanel.add(cClanEngine);
+        enginePanel.add(clanEnginePanel, BorderLayout.SOUTH);
+        baseComboBoxesPanel.add(enginePanel, c);
+        c.gridx = 2;
+        JPanel gyroPanel = new JPanel(new BorderLayout());
+        gyroPanel.add(lblGyroType, BorderLayout.NORTH);
+        gyroPanel.add(spGyroType, BorderLayout.CENTER);
+        baseComboBoxesPanel.add(gyroPanel, c);
+
+        c.gridx = 0; c.gridy++;;
+        JPanel armorTypePanel = new JPanel(new BorderLayout());
+        armorTypePanel.add(lblArmorType, BorderLayout.NORTH);
+        armorTypePanel.add(spArmorType, BorderLayout.CENTER);
+        JPanel patchworkPanel = new JPanel();
+        patchworkPanel.add(lblPatchwork);
+        patchworkPanel.add(cPatchwork);
+        armorTypePanel.add(patchworkPanel, BorderLayout.SOUTH);
+        baseComboBoxesPanel.add(armorTypePanel, c);
+        c.gridx = 1;
+        JPanel internalsPanel = new JPanel(new BorderLayout());
+        internalsPanel.add(lblInternalsType, BorderLayout.NORTH);
+        internalsPanel.add(spInternalsType, BorderLayout.CENTER);
+        baseComboBoxesPanel.add(internalsPanel, c);
+
+        c.gridx = 0; c.gridy++;;
+        JPanel techLevelPanel = new JPanel(new BorderLayout());
+        techLevelPanel.add(lblTechLevel, BorderLayout.NORTH);
+        techLevelPanel.add(spTechLevel, BorderLayout.CENTER);
+        baseComboBoxesPanel.add(techLevelPanel, c);
+        c.gridx = 1;
+        JPanel techBasePanel = new JPanel(new BorderLayout());
+        techBasePanel.add(lblTechBase, BorderLayout.NORTH);
+        techBasePanel.add(spTechBase, BorderLayout.CENTER);
+        baseComboBoxesPanel.add(techBasePanel, c);
+
+        return baseComboBoxesPanel;
+    }
+
+    private JPanel createBasePanel() {
+        btnBaseClear.addActionListener(this);
 
         JPanel basePanel = new JPanel();
         GridBagConstraints c = new GridBagConstraints();
@@ -512,147 +681,16 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         c.gridwidth  = 1;
         c.insets = new Insets(20, 10, 0, 0);
         c.gridx = 0; c.gridy = 0;
-        JPanel p0Panel = new JPanel();
-        p0Panel.add(lblOfficial);
-        p0Panel.add(cOfficial);
-        p0Panel.add(lblCanon);
-        p0Panel.add(cCanon);
-        basePanel.add(p0Panel, c);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 1;
-        JPanel sPanel = new JPanel(new BorderLayout());
-        sPanel.add(lblSource, BorderLayout.WEST);
-        sPanel.add(tSource, BorderLayout.CENTER);
-        basePanel.add(sPanel, c);
 
-        c.fill = GridBagConstraints.NONE;
-        c.insets = new Insets(5, 10, 0, 0);
-        c.gridx = 0; c.gridy++;
-        JPanel yearPanel = new JPanel();
-        yearPanel.add(lblYear);
-        yearPanel.add(tStartYear);
-        yearPanel.add(new JLabel("-"));
-        yearPanel.add(tEndYear);
-        basePanel.add(yearPanel, c);
-        c.gridx = 1;
-        JPanel p1bPanel = new JPanel();
-        p1bPanel.add(lblInvalid);
-        p1bPanel.add(cInvalid);
-        p1bPanel.add(lblFailedToLoadEquipment);
-        p1bPanel.add(cFailedToLoadEquipment);
-        basePanel.add(p1bPanel, c);
-
-        c.gridx = 0; c.gridy++;
-        JPanel bvPanel = new JPanel();
-        bvPanel.add(lblBV);
-        bvPanel.add(tStartBV);
-        bvPanel.add(new JLabel("-"));
-        bvPanel.add(tEndBV);
-        basePanel.add(bvPanel, c);
-        c.gridx = 1;
-        JPanel tonsPanel = new JPanel();
-        tonsPanel.add(lblTons);
-        tonsPanel.add(tStartTons);
-        tonsPanel.add(new JLabel("-"));
-        tonsPanel.add(tEndTons);
-        basePanel.add(tonsPanel, c);
-
-        c.gridx = 0; c.gridy++;
-        JPanel walkPanel = new JPanel();
-        walkPanel.add(lblWalk);
-        walkPanel.add(tStartWalk);
-        walkPanel.add(new JLabel("-"));
-        walkPanel.add(tEndWalk);
-        basePanel.add(walkPanel, c);
-        c.gridx = 1;
-        JPanel jumpPanel = new JPanel();
-        jumpPanel.add(lblJump);
-        jumpPanel.add(tStartJump);
-        jumpPanel.add(new JLabel("-"));
-        jumpPanel.add(tEndJump);
-        basePanel.add(jumpPanel, c);
-
-        c.gridx = 0; c.gridy++;
-        JPanel lowerArmsPanel = new JPanel();
-        lowerArmsPanel.add(lblLowerArms);
-        lowerArmsPanel.add(tStartLowerArms);
-        lowerArmsPanel.add(new JLabel("-"));
-        lowerArmsPanel.add(tEndLowerArms);
-        basePanel.add(lowerArmsPanel, c);
-        c.gridx = 1;
-        JPanel handsPanel = new JPanel();
-        handsPanel.add(lblHands);
-        handsPanel.add(tStartHands);
-        handsPanel.add(new JLabel("-"));
-        handsPanel.add(tEndHands);
-        basePanel.add(handsPanel, c);
-
-        c.gridx = 0; c.gridy++;
-        JPanel p2Panel = new JPanel();
-        p2Panel.add(lblTankTurrets);
-        p2Panel.add(tStartTankTurrets);
-        p2Panel.add(new JLabel("-"));
-        p2Panel.add(tEndTankTurrets);
-        basePanel.add(p2Panel, c);
-        c.gridx = 1;
-        JPanel armorPanel = new JPanel();
-        armorPanel.add(lblArmor);
-        armorPanel.add(cArmor);
-        basePanel.add(armorPanel, c);
-
+        basePanel.add(createBaseAttributes(), c);
         c.gridx = 0; c.gridy++;;
-        c.gridwidth = 1;
-        JPanel cockpitPanel = new JPanel(new BorderLayout());
-        cockpitPanel.add(lblCockpitType, BorderLayout.NORTH);
-        cockpitPanel.add(spCockpitType, BorderLayout.CENTER);
-        basePanel.add(cockpitPanel, c);
-        c.gridx = 1;
-        JPanel sysPane = new JPanel();
-        JPanel enginePanel = new JPanel(new BorderLayout());
-        enginePanel.add(lblEngineType, BorderLayout.NORTH);
-        enginePanel.add(spEngineType, BorderLayout.CENTER);
-        JPanel clanEnginePanel = new JPanel();
-        clanEnginePanel.add(lblClanEngine);
-        clanEnginePanel.add(cClanEngine);
-        enginePanel.add(clanEnginePanel, BorderLayout.SOUTH);
-        sysPane.add(enginePanel);
-        JPanel gyroPanel = new JPanel(new BorderLayout());
-        gyroPanel.add(lblGyroType, BorderLayout.NORTH);
-        gyroPanel.add(spGyroType, BorderLayout.CENTER);
-        sysPane.add(gyroPanel);
-        basePanel.add(sysPane, c);
-
-        c.gridx = 0; c.gridy++;;
-        JPanel armorTypePanel = new JPanel(new BorderLayout());
-        armorTypePanel.add(lblArmorType, BorderLayout.NORTH);
-        armorTypePanel.add(spArmorType, BorderLayout.CENTER);
-        JPanel patchworkPanel = new JPanel();
-        patchworkPanel.add(lblPatchwork);
-        patchworkPanel.add(cPatchwork);
-        armorTypePanel.add(patchworkPanel, BorderLayout.SOUTH);
-        basePanel.add(armorTypePanel, c);
-        c.gridx = 1;
-        JPanel internalsPanel = new JPanel(new BorderLayout());
-        internalsPanel.add(lblInternalsType, BorderLayout.NORTH);
-        internalsPanel.add(spInternalsType, BorderLayout.CENTER);
-        basePanel.add(internalsPanel, c);
-
-        c.gridx = 0; c.gridy++;;
-        JPanel techLevelPanel = new JPanel(new BorderLayout());
-        techLevelPanel.add(lblTechLevel, BorderLayout.NORTH);
-        techLevelPanel.add(spTechLevel, BorderLayout.CENTER);
-        basePanel.add(techLevelPanel, c);
-        c.gridx = 1;
-        JPanel techBasePanel = new JPanel(new BorderLayout());
-        techBasePanel.add(lblTechBase, BorderLayout.NORTH);
-        techBasePanel.add(spTechBase, BorderLayout.CENTER);
-        basePanel.add(techBasePanel, c);
+        basePanel.add(createBaseComboBoxes(), c);
 
         c.weighty = 1;
-        JPanel blankPanel = new JPanel();
+        JPanel clearPanel = new JPanel();
         c.gridx = 0; c.gridy++;;
-        blankPanel.add(btnBaseClear, c);
-        basePanel.add(blankPanel, c);
+        clearPanel.add(btnBaseClear, c);
+        basePanel.add(clearPanel, c);
 
         return basePanel;
     }
@@ -1262,6 +1300,11 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
 
         btnWEBack.setEnabled(false);
         btnWEAdd.setEnabled(false);
+
+        for (int i = 1; i <= 20; i++) {
+            cboQty.addItem(Integer.toString(i));
+        }
+        cboQty.setSelectedIndex(0);
 
         // Setup table filter combo boxes
         DefaultComboBoxModel<String> unitTypeModel = new DefaultComboBoxModel<>();
@@ -1977,6 +2020,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         tStartBV.setText("");
         tEndBV.setText("");
         tSource.setText("");
+        tMULId.setText("");
 
         clearTriStateItem(listArmorType);
         clearTriStateItem(listCockpitType);
@@ -2224,6 +2268,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         mechFilter.iPatchwork = cPatchwork.getSelectedIndex();
 
         mechFilter.source = tSource.getText();
+        mechFilter.mulid = tMULId.getText();
 
         mechFilter.sStartYear = tStartYear.getText();
         mechFilter.sEndYear = tEndYear.getText();

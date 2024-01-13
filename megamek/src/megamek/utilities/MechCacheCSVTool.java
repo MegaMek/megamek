@@ -18,17 +18,15 @@
  */
 package megamek.utilities;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
-
-import megamek.codeUtilities.ObjectUtility;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.templates.TROView;
 
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 import java.util.stream.Stream;
 
 /**
@@ -47,9 +45,9 @@ public final class MechCacheCSVTool {
     private static final List<String> HEADERS = List.of("Chassis", "Model", "MUL ID", "Combined", "Clan",
             "Source", "File Location", "Weight", "Intro Date", "Experimental year", "Advanced year",
             "Standard year", "Extinct Year", "Unit Type", "Role", "BV", "Cost", "Rules", "Engine Name",
-            "Internal Structure", "Myomer", "Cockpit Type", "Gyro Type", "Armor Types", "Equipment",
-            "Manufacturer", "Factory", "Targeting", "Comms", "Armor", "JJ", "Engine", "Chassis", "Capabilities",
-            "Overview", "History", "Deployment", "Notes");
+            "Internal Structure", "Myomer", "Cockpit Type", "Gyro Type", "Armor Types", "Equipment", "Tech Rating",
+            "Unit Quirks", "Weapon Quirks", "Manufacturer", "Factory", "Targeting", "Comms", "Armor", "JJ", "Engine",
+            "Chassis", "Capabilities", "Overview", "History", "Deployment", "Notes");
 
     public static void main(String... args) {
         try (PrintWriter pw = new PrintWriter(FILE_NAME);
@@ -189,8 +187,14 @@ public final class MechCacheCSVTool {
                 csvLine.append(String.join(",", equipmentNames)).append(DELIM);
 
                 Entity entity = loadEntity(unit.getSourceFile(), unit.getEntryName());
-                if ((entity != null)) {
+                if (entity != null) {
+                    csvLine.append(entity.getFullRatingName()).append(DELIM);
+                }
 
+                csvLine.append(unit.getQuirkNames()).append(DELIM);
+                csvLine.append(unit.getWeaponQuirkNames()).append(DELIM);
+
+                if (entity != null) {
                     if (!entity.getFluff().getManufacturer().isBlank()) {
                         csvLine.append(entity.getFluff().getManufacturer());
                     } else {

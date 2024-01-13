@@ -4364,10 +4364,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Add range mods - If the attacker and target are in the same building
         // & hex, range mods don't apply (and will cause the shot to fail)
         // Don't apply this to bomb attacks either, which are going to be at 0 range of necessity
+        // Also don't apply to ADA Missiles (range computed separately)
         if (((los.getThruBldg() == null) || !los.getTargetPosition().equals(ae.getPosition()))
                 && (wtype != null
-                    && (!(wtype.hasFlag(WeaponType.F_ALT_BOMB) || wtype.hasFlag(WeaponType.F_DIVE_BOMB))))
-                && weaponId > WeaponType.WEAPON_NA) {
+                    && (!(wtype.hasFlag(WeaponType.F_ALT_BOMB)
+                        || wtype.hasFlag(WeaponType.F_DIVE_BOMB)
+                        || (atype != null && atype.getMunitionType().contains(AmmoType.Munitions.M_ADA))))
+                && weaponId > WeaponType.WEAPON_NA)) {
             toHit.append(Compute.getRangeMods(game, ae, weaponId, target));
         }
 
@@ -4501,7 +4504,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // Ground-to-air attacks always hit from below
-        if (Compute.isGroundToAir(ae, target) && ((ae.getAltitude() - target.getAltitude()) > 2)) {
+        if (Compute.isGroundToAir(ae, target) && ((target.getAltitude() - ae.getAltitude()) > 2)) {
             toHit.setHitTable(ToHitData.HIT_BELOW);
         }
 
@@ -4883,39 +4886,17 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             te = (Entity) target;
         }
         if (atype.getMunitionType().contains(AmmoType.Munitions.M_ADA)){
-            // Air-Defense Arrow missiles use a much-simplified to-hit calculation because they:
+            // Air-Defense Arrow missiles use a simplified to-hit calculation because they:
             // A) are Flak; B) are not Artillery, C) use three ranges (same low-alt hex, 1 hex, 2 hexes)
             // as S/M/L
-            // Per TO:AR 6th printing, p153, other mods are: Flak (-2), AMM, damage, intervening trees/jungle
-            int distance = Compute.effectiveDistance(game, ae, target);
-            toHit = new ToHitData(ae.getCrew().getGunnery(), Messages.getString("WeaponAttackAction.GunSkill"));
+            // Per TO:AR 6th printing, p153, ADA Missiles should use TW Flak rules rather than TO Artillery Flak rules.
+            // Per TW pg 114, all other mods _should_ be included.
 
-            /// Re-apply quirks and SPAs after wiping out toHit
-            // Quirks
-            processAttackerQuirks(toHit, ae, te, weapon);
-
-            // SPAs
-            processAttackerSPAs(toHit, ae, te, weapon, game);
-            processDefenderSPAs(toHit, ae, te, weapon, game);
-
-            // Flak; ADA won't hit the later artillery flak check so add this modifier directly.
-            toHit.addModifier(-2, Messages.getString("WeaponAttackAction.Flak"));
-            // AMM
-            toHit.append(Compute.getAttackerMovementModifier(game, ae.getId()));
-            // LOS
-            toHit.append(losMods);
             // Special range calc
+            int distance = Compute.effectiveDistance(game, ae, target);
             toHit.addModifier(Compute.getADARangeModifier(distance), Messages.getString("WeaponAttackAction.ADARangeBracket"));
-            // actuator & sensor damage to attacker
-            if (weapon != null) {
-                toHit.append(Compute.getDamageWeaponMods(ae, weapon));
-            }
-            // Vs Aero, hits from below
-            if (Compute.isGroundToAir(ae, target) && ((ae.getAltitude() - target.getAltitude()) > 2)) {
-                toHit.setHitTable(ToHitData.HIT_BELOW);
-            }
 
-            srt.setSpecialResolution(true);
+            // Return without SRT set so that regular to-hit mods get applied.
             return toHit;
         }
         //If an airborne unit occupies the target hex, standard artillery ammo makes a flak attack against it

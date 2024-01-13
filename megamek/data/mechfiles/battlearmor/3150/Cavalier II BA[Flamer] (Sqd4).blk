@@ -21,15 +21,15 @@ Cavalier II Battle Armor
 </Model>
 
 <mul id:>
-8017
+9506
 </mul id:>
 
 <year>
-3150
+3142
 </year>
 
 <originalBuildYear>
-3150
+3142
 </originalBuildYear>
 
 <type>
@@ -37,7 +37,7 @@ Mixed (IS Chassis)
 </type>
 
 <role>
-None
+Ambusher
 </role>
 
 <motion_type>

@@ -21,8 +21,12 @@ Scorpion Light Tank
 </Model>
 
 <year>
-3130
+3089	
 </year>
+
+<mul id:>
+9556
+</mul id:>
 
 <originalBuildYear>
 3130

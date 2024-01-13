@@ -15,12 +15,16 @@ Scorpion Light Tank
 (RAC)
 </Model>
 
+<mul id:>
+9557
+</mul id:>
+
 <year>
-3065
+3063
 </year>
 
 <originalBuildYear>
-3065
+3063
 </originalBuildYear>
 
 <type>

@@ -20,12 +20,16 @@ Scorpion Light Tank
 (Rifle)
 </Model>
 
+<mul id:>
+9558
+</mul id:>
+
 <year>
-3130
+3088
 </year>
 
 <originalBuildYear>
-3130
+3088
 </originalBuildYear>
 
 <type>

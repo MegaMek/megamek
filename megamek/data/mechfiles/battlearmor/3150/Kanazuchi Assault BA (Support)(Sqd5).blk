@@ -20,12 +20,20 @@ Kanazuchi Assault Battle Armor
 (Support)(Sqd5)
 </Model>
 
+<mul id:>
+9532
+</mul id:>
+
+<role>
+Juggernaut
+</role>
+
 <year>
-3145
+3120
 </year>
 
 <originalBuildYear>
-3145
+3120
 </originalBuildYear>
 
 <type>

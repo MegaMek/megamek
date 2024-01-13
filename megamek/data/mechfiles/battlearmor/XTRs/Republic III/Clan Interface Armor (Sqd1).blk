@@ -1,12 +1,7 @@
-#building block data file
+#Saved from version 0.49.18-SNAPSHOT on 2024-01-13
 <BlockVersion>
 1
 </BlockVersion>
-
-##Write the version number just in case...
-<Version>
-MAM0
-</Version>
 
 <UnitType>
 BattleArmor
@@ -36,9 +31,9 @@ Clan Interface Armor
 Mixed (Clan Chassis) Experimental
 </type>
 
-<role>
-Scout
-</role>
+<quirks>
+non_standard
+</quirks>
 
 <motion_type>
 Leg
@@ -83,13 +78,10 @@ Mission Equipment Storage:RA:SIZE:30.0
 
 <deployment>
 <p>
-Currently, there are no known variants of the Clan Interface Armor. The technology, in its existing form, is a significant innovation in itself, representing a major advancement in the integration of MechWarrior and BattleMech. Future developments or adaptations of this technology may lead to various configurations or enhancements, but as of now, the focus remains on mastering and deploying the existing system across Clan forces.
-</p>
 </deployment>
 
 <history>
 <p>The emergence and deployment of the Clan Interface Armor signify a pivotal evolution in Clan warfare, rooted in a blend of innovation and necessity. Born from the remnants of the Word of Blake's "Machina Domini" program and the controversial legacy of interface technology, this armor represents a radical departure from traditional Clan warfare philosophies. Originally developed as a tool for terror and control, the Clans have repurposed the technology, focusing more on enhancing MechWarrior survivability and operational versatility.<p>
-The Interface Armor's debut on the battlefield, specifically in the skirmish on Parash, marked the beginning of a new chapter in Clan military tactics. This technology, which integrates MechWarriors with their machines at an unprecedented level, was initially met with cautious interest within the Clans. However, the changing dynamics of Clan society and the pressures of ongoing conflicts, particularly under the influence of leaders like Malvina Hazen, have accelerated its acceptance and deployment.<p>Notable for its involvement in various critical engagements, including a significant incident on Kalidasa, the Interface Armor has proven its worth in enhancing the combat effectiveness of Clan warriors. The incident, where a Wolf warrior equipped with the armor showcased exceptional combat capabilities, underscores the potential impact of this technology in reshaping the landscape of Clan warfare. As the Clans, particularly Clan Hell's Horses, continue to explore and refine this technology, its role in future Clan strategies remains a subject of keen interest and speculation.<p>In the current era, the Clan Interface Armor stands as a symbol of the Clans' willingness to embrace change and adapt to new challenges. While the technology is still in its relative infancy, with no known variants to date, its deployment has already begun to alter the traditional notions of MechWarrior engagement, signaling a significant shift in the Clans' approach to warfare and their valuation of warrior life and versatility on the battlefield.</p>
 </history>
 
 <manufacturer>
@@ -132,9 +124,4 @@ biped
 <weightclass>
 0
 </weightclass>
-
-
-<quirks>
-non_standard
-</quirks>
 

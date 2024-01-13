@@ -1,12 +1,7 @@
-#building block data file
+#Saved from version 0.49.18-SNAPSHOT on 2024-01-13
 <BlockVersion>
 1
 </BlockVersion>
-
-##Write the version number just in case...
-<Version>
-MAM0
-</Version>
 
 <UnitType>
 Tank
@@ -20,12 +15,16 @@ Partisan Heavy Tank
 (Light Gauss)
 </Model>
 
+<mul id:>
+9568
+</mul id:>
+
 <year>
-3130
+3145
 </year>
 
 <originalBuildYear>
-3130
+3145
 </originalBuildYear>
 
 <type>
@@ -107,15 +106,11 @@ COMMUNICATIONS:Kallon Secure Net with C3
 TARGETING:AntiAir Flak Systems-1
 </systemManufacturers>
 
-<tonnage>
-80.0
-</tonnage>
-
 <source>
 Rec Guide:ilClan #33
 </source>
 
-<role>
-Sniper
-</role>
+<tonnage>
+80.0
+</tonnage>
 

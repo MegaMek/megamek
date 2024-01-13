@@ -5,9 +5,11 @@ D
 
 Config:Biped Omnimech
 techbase:Clan
-era:3150
+era:3132
 rules level:2
 role:Skirmisher
+source:Rec Guide:ilClan #33
+mul id:9572
 
 
 mass:65

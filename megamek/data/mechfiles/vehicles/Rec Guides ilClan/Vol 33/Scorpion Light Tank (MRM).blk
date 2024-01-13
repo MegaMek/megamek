@@ -20,12 +20,16 @@ Scorpion Light Tank
 (MRM)
 </Model>
 
+<mul id:>
+2845
+</mul id:>
+
 <year>
-3130
+3060
 </year>
 
 <originalBuildYear>
-3130
+3060
 </originalBuildYear>
 
 <type>

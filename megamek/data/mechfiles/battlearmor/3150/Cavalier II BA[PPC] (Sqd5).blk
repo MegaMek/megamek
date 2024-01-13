@@ -17,11 +17,11 @@ Cavalier II Battle Armor
 </Name>
 
 <Model>
-[MRR](Sqd4)
+[PPC](Sqd5)
 </Model>
 
 <mul id:>
-8018
+9517
 </mul id:>
 
 <year>
@@ -60,7 +60,7 @@ Jump
 </armor_tech>
 
 <Squad Equipment>
-CLBAMedium Recoilless Rifle:RA
+ISBASupportPPC:RA
 InfantryAssaultRifle:APM
 SwarmMek
 SwarmWeaponMek
@@ -73,18 +73,6 @@ Clan BA Stealth (Basic):LA
 BAJumpBooster:Body
 BAAPMount:LA
 </Squad Equipment>
-
-<Trooper 1 Equipment>
-</Trooper 1 Equipment>
-
-<Trooper 2 Equipment>
-</Trooper 2 Equipment>
-
-<Trooper 3 Equipment>
-</Trooper 3 Equipment>
-
-<Trooper 4 Equipment>
-</Trooper 4 Equipment>
 
 <capabilities>
 Like the Inner Sphere Standard, the Cavalier has a Modular Weapon Mount in its right arm and a Battle Claw in the left. This mount can carry one standard battle armor weapon such as a Flamer, a Small Laser, a Machine Gun, or an SRM-1 with four missiles. Also like the Inner Sphere Standard, this weapon mount can instead accept two "secondary" weapons, such as Laser Rifles or Needler Rifles, for use against infantry. The Cavalier can run as fast as the Inner Sphere Standard, use jump jets to leap the same 90 meter distance, and is just as strong as the Standard. It's also protected by the same 450kg of armoring, although the shifting of armor plating between the two has increased protection around the thighs and calves while leaving the hand and arm joints more exposed to shrapnel. This armor configuration does give the Cavalier superior manual dexterity however.
@@ -127,7 +115,7 @@ biped
 </armor>
 
 <Trooper Count>
-4
+5
 </Trooper Count>
 
 <weightclass>

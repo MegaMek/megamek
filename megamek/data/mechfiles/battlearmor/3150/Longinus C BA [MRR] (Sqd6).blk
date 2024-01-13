@@ -1,7 +1,12 @@
-#Saved from version 0.49.18-SNAPSHOT on 2024-01-13
+#building block data file
 <BlockVersion>
 1
 </BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
 
 <UnitType>
 BattleArmor
@@ -12,11 +17,11 @@ Longinus C Battle Armor
 </Name>
 
 <Model>
-[PPC](Sqd5)
+[MMR](Sqd6)
 </Model>
 
 <mul id:>
-9214
+9529
 </mul id:>
 
 <year>
@@ -35,6 +40,9 @@ Mixed (IS Chassis)
 Jump
 </motion_type>
 
+<transporters>
+</transporters>
+
 <cruiseMP>
 1
 </cruiseMP>
@@ -48,31 +56,16 @@ Jump
 </armor_tech>
 
 <Squad Equipment>
-CLAdvancedSRM4OS:Body
+CLBAMedium Recoilless Rifle:RA
+InfantryAssaultRifle:APM
 SwarmMek
 SwarmWeaponMek
 StopSwarm
 LegAttack
 BABattleClaw:LA
 BAAPMount:LA
-InfantryAssaultRifle:APM
-ISBASupportPPC:RA
+CLAdvancedSRM4OS:Body
 </Squad Equipment>
-
-<Trooper 1 Equipment>
-</Trooper 1 Equipment>
-
-<Trooper 2 Equipment>
-</Trooper 2 Equipment>
-
-<Trooper 3 Equipment>
-</Trooper 3 Equipment>
-
-<Trooper 4 Equipment>
-</Trooper 4 Equipment>
-
-<Trooper 5 Equipment>
-</Trooper 5 Equipment>
 
 <capabilities>
 The Longinus came closest to mimicking the capabilities of the Elemental suit that inspired it, and was thus considered one of the best ever built by the Inner Sphere at the time. It was also revolutionary for carrying an advanced armor composite which almost perfectly matched the Clans' composite on their suits. The 360kg of plating covering the Longinus is enough to withstand a full blast from a Large Laser and keep the trooper wearing it alive. It was also responsible for the tremendous price increase of the suit as new manufacturing processes were required to supply enough of this material.
@@ -124,7 +117,7 @@ biped
 </armor>
 
 <Trooper Count>
-5
+6
 </Trooper Count>
 
 <weightclass>

@@ -5,9 +5,11 @@ C
 
 Config:Biped Omnimech
 techbase:Clan
-era:3150
+era:3130
 rules level:2
 role:Missile_Boat
+source:Rec Guide:ilClan #33
+mul id:9571
 
 
 mass:65

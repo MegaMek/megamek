@@ -1,0 +1,152 @@
+generator:MegaMek Suite 0.49.18-SNAPSHOT on 2024-01-13
+chassis:Inquisitor II
+model:ITW-205
+mul id:8063
+Config:Biped
+techbase:Inner Sphere
+era:3122
+source:RS 3150
+rules level:3
+role:Brawler
+
+
+mass:50
+engine:200 Fusion Engine(IS)
+structure:IS Industrial
+myomer:Standard
+
+heat sinks:10 Single
+walk mp:4
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:10
+RA armor:10
+LT armor:13
+RT armor:13
+CT armor:17
+HD armor:9
+LL armor:15
+RL armor:15
+RTL armor:3
+RTR armor:3
+RTC armor:4
+
+Weapons:3
+Light AC/5, Left Arm
+Light AC/5, Right Arm
+SRM 4, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Light Auto Cannon/5
+Light Auto Cannon/5
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Light Auto Cannon/5
+Light Auto Cannon/5
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Heat Sink
+IS Ammo LAC/5
+ISCASEII
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Heat Sink
+SRM 4
+IS Ammo SRM-4
+IS Ammo LAC/5
+IS Ammo LAC/5
+ISCASEII
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Ejection Seat (Industrial Mech)
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISAntiPersonnelPod
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISAntiPersonnelPod
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -21,6 +21,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #4648: The Sandblaster SPA now allows selecting Mek mortars
 + Fix #4520: Princess has undergone aerospace training sessions and is now better able to select between TAG and other weapons
 + PR #5009: Searchlights are no longer auto-enabled during daytime
++ Fix #5046: RFE: Search by MUL ID in advanced search. 
 
 0.49.17 (2023-12-31 1900 UTC)
 + Fix #1031: Show structure collapse warning when deploying and moving.

@@ -117,17 +117,17 @@ public class LobbyMekPopupActions implements ActionListener {
     private void forceAction(String command, Set<Entity> entities, String info) {
         switch (command) {
             case LMP_FCREATESUB:
-                int parentId = Integer.parseInt(info);
+                int parentId = toInt(info, -1);
                 lobby.lobbyActions.forceCreateSub(parentId);
                 break;
 
             case LMP_FADDTO:
-                int forceId = Integer.parseInt(info);
+                int forceId = toInt(info, -1);
                 lobby.lobbyActions.forceAddEntity(entities, forceId);
                 break;
 
             case LMP_FRENAME:
-                forceId = Integer.parseInt(info);
+                forceId = toInt(info, -2);
                 lobby.lobbyActions.forceRename(forceId);
                 break;
 
@@ -136,7 +136,7 @@ public class LobbyMekPopupActions implements ActionListener {
                 break;
 
             case LMP_FCDELETEEMPTY:
-                forceId = Integer.parseInt(info);
+                forceId = toInt(info, -1);
                 lobby.lobbyActions.forceDeleteEmpty(forceId);
                 break;
 
@@ -152,26 +152,38 @@ public class LobbyMekPopupActions implements ActionListener {
                 StringTokenizer fst = new StringTokenizer(info, ",");
                 Set<Integer> forceIds = new HashSet<>();
                 while (fst.hasMoreTokens()) {
-                    forceIds.add(Integer.parseInt(fst.nextToken()));
+                    forceIds.add(toInt(fst.nextToken(), -1));
                 }
                 lobby.lobbyActions.forcePromote(forceIds);
                 break;
 
             case LMP_FASSIGN:
                 StringTokenizer st = new StringTokenizer(info, ":");
-                int newOwnerId = Integer.parseInt(st.nextToken());
+                int newOwnerId = toInt(st.nextToken(), -1);
                 lobby.lobbyActions.forceAssignFull(LobbyUtility.getForces(lobby.game(), st.nextToken()), newOwnerId);
                 break;
 
             case LMP_FASSIGNONLY:
                 st = new StringTokenizer(info, ":");
-                newOwnerId = Integer.parseInt(st.nextToken());
+                newOwnerId = toInt(st.nextToken(), -1);
                 lobby.lobbyActions.forceAssignOnly(LobbyUtility.getForces(lobby.game(), st.nextToken()), newOwnerId);
                 break;
 
             case LMP_SBFFORMATION:
                 lobby.lobbyActions.showSbfView(LobbyUtility.getForces(lobby.game(), info));
                 break;
+        }
+    }
+
+    private static int toInt(String s, int i) {
+        if (s.isEmpty()) {
+            return i;
+        }
+
+        try {
+            return Integer.parseInt(s);
+        } catch (Exception ignored) {
+            return i;
         }
     }
 

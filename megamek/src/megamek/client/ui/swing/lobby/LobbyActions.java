@@ -495,6 +495,21 @@ public class LobbyActions {
     }
 
     /**
+     * deletes empty force
+     */
+    void forceDeleteEmpty(int forceId) {
+        Force force = client().getGame().getForces().getForce(forceId);
+
+        if (force.getChildCount() != 0) {
+            return;
+        }
+
+        List<Force> toDelete = new ArrayList<>();
+        toDelete.add(force);
+        client().sendDeleteForces(toDelete);
+    }
+
+    /**
      * Asks for a name and creates a new top-level force of that name with the
      * selected entities in it.
      */

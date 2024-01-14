@@ -104,12 +104,13 @@ public class MekTreeForceModel extends DefaultTreeModel {
         boolean realBD = game.getOptions().booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
         Forces forces = lobby.game().getForces();
         Player localPlayer = lobby.getClientgui().getClient().getLocalPlayer();
+        boolean localGM = localPlayer.isGameMaster();
         ArrayList<Force> toplevel = new ArrayList<>(forces.getTopLevelForces());
-        if (realBD) {
+        if (!localGM && realBD) {
             toplevel.removeIf(f -> localPlayer.isEnemyOf(forces.getOwner(f)));
         }
         List<Entity> forceless = ForceAssignable.filterToEntityList(forces.forcelessEntities());
-        if (realBD) {
+        if (!localGM && realBD) {
             forceless.removeIf(e -> localPlayer.isEnemyOf(e.getOwner()));
         }
         allToplevel = new ArrayList<>(toplevel);

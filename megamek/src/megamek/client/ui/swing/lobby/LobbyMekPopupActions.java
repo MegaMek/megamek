@@ -107,6 +107,7 @@ public class LobbyMekPopupActions implements ActionListener {
             case LMP_FASSIGNONLY:
             case LMP_FCREATEFROM:
             case LMP_SBFFORMATION:
+            case LMP_FCDELETEEMPTY:
                 forceAction(command, entities, info);
                 break;
         }
@@ -132,6 +133,11 @@ public class LobbyMekPopupActions implements ActionListener {
 
             case LMP_FCREATETOP:
                 lobby.lobbyActions.forceCreateEmpty();
+                break;
+
+            case LMP_FCDELETEEMPTY:
+                forceId = Integer.parseInt(info);
+                lobby.lobbyActions.forceDeleteEmpty(forceId);
                 break;
 
             case LMP_FCREATEFROM:

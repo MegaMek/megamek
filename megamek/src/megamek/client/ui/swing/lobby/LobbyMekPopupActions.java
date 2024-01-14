@@ -14,6 +14,7 @@
 package megamek.client.ui.swing.lobby;
 
 import megamek.common.Entity;
+import megamek.common.Player;
 import megamek.common.force.Force;
 
 import java.awt.event.ActionEvent;
@@ -160,13 +161,13 @@ public class LobbyMekPopupActions implements ActionListener {
 
             case LMP_FASSIGN:
                 StringTokenizer st = new StringTokenizer(info, ":");
-                int newOwnerId = toInt(st.nextToken(), Force.NO_FORCE);
+                int newOwnerId = toInt(st.nextToken(), Player.PLAYER_NONE);
                 lobby.lobbyActions.forceAssignFull(LobbyUtility.getForces(lobby.game(), st.nextToken()), newOwnerId);
                 break;
 
             case LMP_FASSIGNONLY:
                 st = new StringTokenizer(info, ":");
-                newOwnerId = toInt(st.nextToken(), Force.NO_FORCE);
+                newOwnerId = toInt(st.nextToken(), Player.PLAYER_NONE);
                 lobby.lobbyActions.forceAssignOnly(LobbyUtility.getForces(lobby.game(), st.nextToken()), newOwnerId);
                 break;
 

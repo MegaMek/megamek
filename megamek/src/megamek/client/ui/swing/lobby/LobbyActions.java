@@ -950,6 +950,9 @@ public class LobbyActions {
      * to only assign to team members of the former owner.
      */
     void forceAssignOnly(Collection<Force> forceList, int newOwnerId) {
+        if (newOwnerId == Player.PLAYER_NONE) {
+            return;
+        }
         Player newOwner = game().getPlayer(newOwnerId);
         if (newOwner == null) {
             return;
@@ -975,6 +978,9 @@ public class LobbyActions {
      * all subforces and units.
      */
     void forceAssignFull(Collection<Force> forceList, int newOwnerId) {
+        if (newOwnerId == Player.PLAYER_NONE) {
+            return;;
+        }
         Player newOwner = game().getPlayer(newOwnerId);
         if (newOwner == null) {
             return;

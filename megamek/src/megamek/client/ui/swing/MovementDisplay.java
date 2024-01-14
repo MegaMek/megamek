@@ -342,12 +342,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
     public static final int GEAR_STRAFE = 12;
     public static final String turnDetailsFormat = "%s%-3s %-14s %1s %2dMP%s";
 
-    // Keep track of acceleration for Aero units to dynamically update their move envelope.
-    private static final int ZERO_DELTA_V = 0;
-    private static final int INC_DELTA_V = 1;
-    private static final int DEC_DELTA_V = -1;
-    private int deltaV = 0;
-
     /**
      * Creates and lays out a new movement phase display for the specified
      * clientgui.getClient().
@@ -481,7 +475,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     public void performAction() {
                         removeLastStep();
                         if (ce() instanceof Aero) {
-                            computeAeroMovementEnvelope(ce(), ZERO_DELTA_V);
+                            computeAeroMovementEnvelope(ce());
                         } else {
                             computeMovementEnvelope(ce());
                         }
@@ -503,7 +497,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     public void performAction() {
                         removeIllegalSteps();
                         if (ce() instanceof Aero) {
-                            computeAeroMovementEnvelope(ce(), ZERO_DELTA_V);
+                            computeAeroMovementEnvelope(ce());
                         } else {
                             computeMovementEnvelope(ce());
                         }
@@ -1333,9 +1327,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().cursor(null);
         clientgui.getBoardView().clearMovementEnvelope();
-
-        // Clear Aero deltaV back to 0.
-        deltaV = ZERO_DELTA_V;
 
         if (ce == null) {
             return;
@@ -4572,18 +4563,15 @@ public class MovementDisplay extends ActionPhaseDisplay {
      * @return - This method will do nothing if the Entity passed in is null or
      *           is not an Aero based unity.
      */
-    private void computeAeroMovementEnvelope(Entity entity, int deltaV) {
-        if ((entity == null) || !(entity instanceof Aero)) {
+    private void computeAeroMovementEnvelope(Entity entity) {
+        if ((entity == null) || !(entity instanceof Aero) || (cmd == null)) {
             return;
         }
-
-        // Update deltaV with total change in velocity during movement.
-        this.deltaV += deltaV;
 
         // Increment the entity's delta-v then compute the movement envelope.
         Aero ae = (Aero)entity;
         int currentVelocity = ae.getCurrentVelocity();
-        ae.setCurrentVelocity(currentVelocity + this.deltaV);
+        ae.setCurrentVelocity(cmd.getFinalVelocity());
 
         // Refresh the new velocity envelope on the map.
         try {
@@ -5118,10 +5106,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
             addStepToMovePath(MoveStepType.DECN);
         } else if (actionCmd.equals(MoveCommand.MOVE_ACC.getCmd())) {
             addStepToMovePath(MoveStepType.ACC);
-            computeAeroMovementEnvelope(ce, INC_DELTA_V);
+            computeAeroMovementEnvelope(ce);
         } else if (actionCmd.equals(MoveCommand.MOVE_DEC.getCmd())) {
             addStepToMovePath(MoveStepType.DEC);
-            computeAeroMovementEnvelope(ce, DEC_DELTA_V);
+            computeAeroMovementEnvelope(ce);
         } else if (actionCmd.equals(MoveCommand.MOVE_EVADE.getCmd())) {
             addStepToMovePath(MoveStepType.EVADE);
         } else if (actionCmd.equals(MoveCommand.MOVE_BOOTLEGGER.getCmd())) {

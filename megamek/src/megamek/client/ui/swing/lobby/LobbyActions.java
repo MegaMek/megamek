@@ -498,6 +498,10 @@ public class LobbyActions {
      * deletes empty force
      */
     void forceDeleteEmpty(int forceId) {
+        if (forceId == Force.NO_FORCE) {
+            return;
+        }
+
         Force force = client().getGame().getForces().getForce(forceId);
 
         if (force.getChildCount() != 0) {

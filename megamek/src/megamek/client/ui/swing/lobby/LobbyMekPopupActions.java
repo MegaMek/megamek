@@ -127,7 +127,7 @@ public class LobbyMekPopupActions implements ActionListener {
                 break;
 
             case LMP_FRENAME:
-                forceId = toInt(info, -2);
+                forceId = toInt(info, -1);
                 lobby.lobbyActions.forceRename(forceId);
                 break;
 

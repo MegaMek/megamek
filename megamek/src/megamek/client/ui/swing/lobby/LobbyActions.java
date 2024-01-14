@@ -538,6 +538,9 @@ public class LobbyActions {
      * as the parentId.
      */
     void forceCreateSub(int parentId) {
+        if (parentId == Force.NO_FORCE) {
+            return;
+        }
         // Ask for a name
         String name = JOptionPane.showInputDialog(frame(), "Choose a force designation");
         if ((name == null) || name.isBlank()) {
@@ -650,6 +653,9 @@ public class LobbyActions {
 
     /** Asks for a new name for the provided forceId and applies it. */
     void forceRename(int forceId) {
+        if (forceId == Force.NO_FORCE) {
+            return;
+        }
         Forces forces = game().getForces();
         if (!forces.contains(forceId)) {
             return;
@@ -929,6 +935,9 @@ public class LobbyActions {
      * by the local player and be allied to the force's owner.
      */
     void forceAddEntity(Collection<Entity> entities, int forceId) {
+        if (forceId == Force.NO_FORCE) {
+            return;
+        }
         Forces forces = game().getForces();
         if (!validateUpdate(entities) || !forces.contains(forceId)) {
             return;

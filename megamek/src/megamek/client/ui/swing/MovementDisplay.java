@@ -4552,14 +4552,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
     /**
      * Computes possible moves for entities of Aero units.  This is similar to the
-     * `computeMovementEnvelope()` method; however, it keeps track of a deltaV so
-     * that a dynamic movement envelope can be calculated when an Aerospace unit
-     * accelerates or de-accelerates during the movement phase before the "move" button
-     * is pressed.
+     * `computeMovementEnvelope()` method; however, it uses the `MovePath`
+     * final velocity to temporarily set units velocity to draw the move envelope.
+     * This method always sets the original entity velocity back to it's orginial.
      *
      * @param entity - Suggested entity to use to compute Aero move envelope.
-     * @param deltaV - Delta Velocity from units current velocity.  The temporary
-     *                 deltaV will be updated by this amount (positive or negative)
      * @return - This method will do nothing if the Entity passed in is null or
      *           is not an Aero based unity.
      */

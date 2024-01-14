@@ -979,7 +979,7 @@ public class LobbyActions {
      */
     void forceAssignFull(Collection<Force> forceList, int newOwnerId) {
         if (newOwnerId == Player.PLAYER_NONE) {
-            return;;
+            return;
         }
         Player newOwner = game().getPlayer(newOwnerId);
         if (newOwner == null) {

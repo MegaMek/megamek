@@ -2838,7 +2838,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         row = new ArrayList<>();
         phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.nonReportPhases") + ": ");
         row.add(phaseLabel);
-        forceDisplayAutoDisplayNonReportCombo = createHideShowComboBox(GUIP.getForceDisplayAutoDisplayReportPhase());
+        forceDisplayAutoDisplayNonReportCombo = createHideShowComboBox(GUIP.getForceDisplayAutoDisplayNonReportPhase());
         row.add(forceDisplayAutoDisplayNonReportCombo);
         comps.add(row);
 

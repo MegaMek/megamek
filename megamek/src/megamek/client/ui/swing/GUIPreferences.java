@@ -133,8 +133,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String FORCE_DISPLAY_POS_Y = "ForcetDisplayPosY";
     public static final String FORCE_DISPLAY_SIZE_HEIGHT = "ForceDisplaySizeHeight";
     public static final String FORCE_DISPLAY_SIZE_WIDTH = "ForceDisplaySizeWidth";
-    public static final String FORCE_DISPLAY_AUTO_DISPLAY_REPORT_PHASE = "ForceDisplayAutoDiplayReportPhase";
-    public static final String FORCE_DISPLAY_AUTO_DISPLAY_NONREPORT_PHASE = "ForceDisplayAutoDiplayNonReportPhase";
+    public static final String FORCE_DISPLAY_AUTO_DISPLAY_REPORT_PHASE = "ForceDisplayAutoDisplayReportPhase";
+    public static final String FORCE_DISPLAY_AUTO_DISPLAY_NONREPORT_PHASE = "ForceDisplayAutoDisplayNonReportPhase";
     public static final String FORCE_DISPLAY_ENABLED = "ForceDisplayEnabled";
 
     public static final String UNIT_DISPLAY_POS_X = "UnitDisplayPosX";
@@ -151,8 +151,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String UNIT_DISPLAY_SIZE_WIDTH = "UnitDisplaySizeWidth";
     public static final String UNIT_DISPLAY_NONTABBED_SIZE_HEIGHT = "UnitDisplayNonTabbedSizeHeight";
     public static final String UNIT_DISPLAY_NONTABBED_SIZE_WIDTH = "UnitDisplayNontabbedSizeWidth";
-    public static final String UNIT_DISPLAY_AUTO_DISPLAY_REPORT_PHASE = "UnitDisplayAutoDiplayReportPhase";
-    public static final String UNIT_DISPLAY_AUTO_DISPLAY_NONREPORT_PHASE = "UnitDisplayAutoDiplayNonReportPhase";
+    public static final String UNIT_DISPLAY_AUTO_DISPLAY_REPORT_PHASE = "UnitDisplayAutoDisplayReportPhase";
+    public static final String UNIT_DISPLAY_AUTO_DISPLAY_NONREPORT_PHASE = "UnitDisplayAutoDisplayNonReportPhase";
     public static final String UNIT_DISPLAY_ENABLED = "UnitDisplayEnabled";
     public static final String UNIT_DISPLAY_LOCATION = "UnitDisplayLocation";
     public static final String UNIT_DISPLAY_HEAT_COLOR_1 = "UnitDisplayHeatColor1";
@@ -272,8 +272,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MINI_MAP_ZOOM = "MinimapZoom";
     public static final String MINI_MAP_HEIGHT_DISPLAY_MODE = "MinimapHeightDisplayMode";
     public static final String MINI_MAP_SYMBOLS_DISPLAY_MODE = "MinimapSymbolsDisplayMode";
-    public static final String MINI_MAP_AUTO_DISPLAY_REPORT_PHASE = "MinimapAutoDiplayReportPhase";
-    public static final String MINI_MAP_AUTO_DISPLAY_NONREPORT_PHASE = "MinimapAutoDiplayNonReportPhase";
+    public static final String MINI_MAP_AUTO_DISPLAY_REPORT_PHASE = "MinimapAutoDisplayReportPhase";
+    public static final String MINI_MAP_AUTO_DISPLAY_NONREPORT_PHASE = "MinimapAutoDisplayNonReportPhase";
     public static final String MINIMUM_SIZE_HEIGHT = "MinimumSizeHeight";
     public static final String MINIMUM_SIZE_WIDTH = "MinimumSizeWidth";
     public static final String MOUSE_WHEEL_ZOOM = "MouseWheelZoom";

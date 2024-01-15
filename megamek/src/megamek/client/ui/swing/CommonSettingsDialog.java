@@ -2826,8 +2826,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         addLineSpacer(comps);
 
         row = new ArrayList<>();
-        JLabel forceDiplayLabel = new JLabel(Messages.getString("CommonMenuBar.viewForceDisplay"));
-        row.add(forceDiplayLabel);
+        JLabel forceDisplayLabel = new JLabel(Messages.getString("CommonMenuBar.viewForceDisplay"));
+        row.add(forceDisplayLabel);
         comps.add(row);
         row = new ArrayList<>();
         phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportPhases") + ": ");

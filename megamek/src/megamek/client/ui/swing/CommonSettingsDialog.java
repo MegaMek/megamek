@@ -163,6 +163,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private ColourSelectorButton csbWarningColor;
     private ColourSelectorButton csbCautionColor;
     private ColourSelectorButton csbPrecautionColor;
+    private ColourSelectorButton csbMyUnitColor;
+    private ColourSelectorButton csbAllyUnitColor;
+    private ColourSelectorButton csbEnemyColor;
 
     ArrayList<PlayerColourHelper> playerColours;
 
@@ -354,6 +357,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private JComboBox miniReportAutoDisplayNonReportCombo;
     private JComboBox playerListAutoDisplayReportCombo;
     private JComboBox playerListAutoDisplayNonReportCombo;
+    private JComboBox forceDisplayAutoDisplayReportCombo;
+    private JComboBox forceDisplayAutoDisplayNonReportCombo;
 
     // Report
     private JTextPane reportKeywordsTextPane;
@@ -1547,6 +1552,20 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         addLineSpacer(comps);
 
         row = new ArrayList<>();
+        csbMyUnitColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.myUnitColor"));
+        csbMyUnitColor.setColour(GUIP.getMyUnitColor());
+        row.add(csbMyUnitColor);
+        csbAllyUnitColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.allyUnitColor"));
+        csbAllyUnitColor.setColour(GUIP.getAllyUnitColor());
+        row.add(csbAllyUnitColor);
+        csbEnemyColor = new ColourSelectorButton(Messages.getString("CommonSettingsDialog.colors.enemyUnitColor"));
+        csbEnemyColor.setColour(GUIP.getEnemyUnitColor());
+        row.add(csbEnemyColor);
+        comps.add(row);
+
+        addLineSpacer(comps);
+
+        row = new ArrayList<>();
         row.add(getPlayerColourPanel());
         comps.add(row);
 
@@ -1866,6 +1885,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         csbCautionColor.setColour(GUIP.getCautionColor());
         csbPrecautionColor.setColour(GUIP.getPrecautionColor());
 
+        csbMyUnitColor.setColour(GUIP.getMyUnitColor());
+        csbAllyUnitColor.setColour(GUIP.getAllyUnitColor());
+        csbEnemyColor.setColour(GUIP.getEnemyUnitColor());
+
         for (PlayerColourHelper pch : playerColours) {
             pch.csb.setColour(GUIP.getColor(pch.pc.getText()));
         }
@@ -1930,6 +1953,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         miniReportAutoDisplayNonReportCombo.setSelectedItem(GUIP.getMiniReportAutoDisplayNonReportPhase());
         playerListAutoDisplayReportCombo.setSelectedItem(GUIP.getPlayerListAutoDisplayReportPhase());
         playerListAutoDisplayNonReportCombo.setSelectedItem(GUIP.getPlayerListAutoDisplayNonReportPhase());
+        forceDisplayAutoDisplayReportCombo.setSelectedItem(GUIP.getForceDisplayAutoDisplayReportPhase());
+        forceDisplayAutoDisplayNonReportCombo.setSelectedItem(GUIP.getForceDisplayAutoDisplayNonReportPhase());
 
         csbUnitDisplayHeatLevel1.setColour(GUIP.getUnitDisplayHeatLevel1());
         csbUnitDisplayHeatLevel2.setColour(GUIP.getUnitDisplayHeatLevel2());
@@ -2034,6 +2059,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setWarningColor(csbWarningColor.getColour());
         GUIP.setCautionColor(csbCautionColor.getColour());
         GUIP.setPrecautionColor(csbPrecautionColor.getColour());
+
+        GUIP.setMyUnitColor(csbMyUnitColor.getColour());
+        GUIP.setAllyUnitColor(csbAllyUnitColor.getColour());
+        GUIP.setEnemyUnitColor(csbEnemyColor.getColour());
 
         for (PlayerColourHelper pch : playerColours) {
             GUIP.setColor(pch.pc.getText(), pch.csb.getColour());
@@ -2337,6 +2366,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         GUIP.setMiniReportAutoDisplayNonReportPhase(miniReportAutoDisplayNonReportCombo.getSelectedIndex());
         GUIP.setPlayerListAutoDisplayReportPhase(playerListAutoDisplayReportCombo.getSelectedIndex());
         GUIP.setPlayerListAutoDisplayNonReportPhase(playerListAutoDisplayNonReportCombo.getSelectedIndex());
+        GUIP.setForceDisplayAutoDisplayReportPhase(forceDisplayAutoDisplayReportCombo.getSelectedIndex());
+        GUIP.setForceDisplayAutoDisplayNonReportPhase(forceDisplayAutoDisplayNonReportCombo.getSelectedIndex());
 
         GUIP.setUnitDisplayHeatColorLevel1(csbUnitDisplayHeatLevel1.getColour());
         GUIP.setUnitDisplayHeatColorLevel2(csbUnitDisplayHeatLevel2.getColour());
@@ -2703,130 +2734,112 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         return outer;
     }
 
+    private JComboBox createHideShowComboBox(int i) {
+        JComboBox cb = new JComboBox<>();
+        cb.addItem(Messages.getString("ClientGUI.Hide"));
+        cb.addItem(Messages.getString("ClientGUI.Show"));
+        cb.addItem(Messages.getString("ClientGUI.Manual"));
+        cb.setMaximumSize(new Dimension(150, 40));
+        cb.setSelectedIndex(i);
+
+        return cb;
+    }
+
     private JPanel getPhasePanel() {
         List<List<Component>> comps = new ArrayList<>();
         ArrayList<Component> row;
 
-        JLabel unitDisplayLabel = new JLabel(Messages.getString("CommonMenuBar.viewMekDisplay"));
         row = new ArrayList<>();
+        JLabel unitDisplayLabel = new JLabel(Messages.getString("CommonMenuBar.viewMekDisplay"));
         row.add(unitDisplayLabel);
         comps.add(row);
-
-        JLabel phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportPhases") + ": ");
-        unitDisplayAutoDisplayReportCombo = new JComboBox<>();
-        unitDisplayAutoDisplayReportCombo.addItem(Messages.getString("ClientGUI.Hide"));
-        unitDisplayAutoDisplayReportCombo.addItem(Messages.getString("ClientGUI.Show"));
-        unitDisplayAutoDisplayReportCombo.addItem(Messages.getString("ClientGUI.Manual"));
-        unitDisplayAutoDisplayReportCombo.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
-        unitDisplayAutoDisplayReportCombo.setSelectedIndex(GUIP.getUnitDisplayAutoDisplayReportPhase());
+        JLabel phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportPhases") + ": ");
         row.add(phaseLabel);
+        unitDisplayAutoDisplayReportCombo = createHideShowComboBox(GUIP.getUnitDisplayAutoDisplayReportPhase());
         row.add(unitDisplayAutoDisplayReportCombo);
         comps.add(row);
-
-        phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.nonReportPhases") + ": ");
-        unitDisplayAutoDisplayNonReportCombo = new JComboBox<>();
-        unitDisplayAutoDisplayNonReportCombo.addItem(Messages.getString("ClientGUI.Hide"));
-        unitDisplayAutoDisplayNonReportCombo.addItem(Messages.getString("ClientGUI.Show"));
-        unitDisplayAutoDisplayNonReportCombo.addItem(Messages.getString("ClientGUI.Manual"));
-        unitDisplayAutoDisplayNonReportCombo.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
-        unitDisplayAutoDisplayNonReportCombo.setSelectedIndex(GUIP.getUnitDisplayAutoDisplayNonReportPhase());
+        phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.nonReportPhases") + ": ");
         row.add(phaseLabel);
+        unitDisplayAutoDisplayNonReportCombo = createHideShowComboBox(GUIP.getUnitDisplayAutoDisplayNonReportPhase());
         row.add(unitDisplayAutoDisplayNonReportCombo);
         comps.add(row);
 
         addLineSpacer(comps);
 
-        JLabel miniMapLabel = new JLabel(Messages.getString("CommonMenuBar.viewMinimap"));
         row = new ArrayList<>();
+        JLabel miniMapLabel = new JLabel(Messages.getString("CommonMenuBar.viewMinimap"));
         row.add(miniMapLabel);
         comps.add(row);
-
-        phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportPhases") + ": ");
-        miniMapAutoDisplayReportCombo = new JComboBox<>();
-        miniMapAutoDisplayReportCombo.addItem(Messages.getString("ClientGUI.Hide"));
-        miniMapAutoDisplayReportCombo.addItem(Messages.getString("ClientGUI.Show"));
-        miniMapAutoDisplayReportCombo.addItem(Messages.getString("ClientGUI.Manual"));
-        miniMapAutoDisplayReportCombo.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
-        miniMapAutoDisplayReportCombo.setSelectedIndex(GUIP.getMinimapAutoDisplayReportPhase());
+        phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportPhases") + ": ");
         row.add(phaseLabel);
+        miniMapAutoDisplayReportCombo = createHideShowComboBox(GUIP.getMinimapAutoDisplayReportPhase());
         row.add(miniMapAutoDisplayReportCombo);
         comps.add(row);
-
-        phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.nonReportPhases") + ": ");
-        miniMapAutoDisplayNonReportCombo = new JComboBox<>();
-        miniMapAutoDisplayNonReportCombo.addItem(Messages.getString("ClientGUI.Hide"));
-        miniMapAutoDisplayNonReportCombo.addItem(Messages.getString("ClientGUI.Show"));
-        miniMapAutoDisplayNonReportCombo.addItem(Messages.getString("ClientGUI.Manual"));
-        miniMapAutoDisplayNonReportCombo.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
-        miniMapAutoDisplayNonReportCombo.setSelectedIndex(GUIP.getMinimapAutoDisplayNonReportPhase());
+        phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.nonReportPhases") + ": ");
         row.add(phaseLabel);
+        miniMapAutoDisplayNonReportCombo = createHideShowComboBox(GUIP.getMiniReportAutoDisplayNonReportPhase());
         row.add(miniMapAutoDisplayNonReportCombo);
         comps.add(row);
 
         addLineSpacer(comps);
 
-        JLabel miniReportLabel = new JLabel(Messages.getString("CommonMenuBar.viewRoundReport"));
         row = new ArrayList<>();
+        JLabel miniReportLabel = new JLabel(Messages.getString("CommonMenuBar.viewRoundReport"));
         row.add(miniReportLabel);
         comps.add(row);
-
-        phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportPhases") + ": ");
-        miniReportAutoDisplayReportCombo = new JComboBox<>();
-        miniReportAutoDisplayReportCombo.addItem(Messages.getString("ClientGUI.Hide"));
-        miniReportAutoDisplayReportCombo.addItem(Messages.getString("ClientGUI.Show"));
-        miniReportAutoDisplayReportCombo.addItem(Messages.getString("ClientGUI.Manual"));
-        miniReportAutoDisplayReportCombo.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
-        miniReportAutoDisplayReportCombo.setSelectedIndex(GUIP.getMiniReportAutoDisplayReportPhase());
+        phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportPhases") + ": ");
         row.add(phaseLabel);
+        miniReportAutoDisplayReportCombo = createHideShowComboBox(GUIP.getMiniReportAutoDisplayReportPhase());
         row.add(miniReportAutoDisplayReportCombo);
         comps.add(row);
-
-        phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.nonReportPhases") + ": ");
-        miniReportAutoDisplayNonReportCombo = new JComboBox<>();
-        miniReportAutoDisplayNonReportCombo.addItem(Messages.getString("ClientGUI.Hide"));
-        miniReportAutoDisplayNonReportCombo.addItem(Messages.getString("ClientGUI.Show"));
-        miniReportAutoDisplayNonReportCombo.addItem(Messages.getString("ClientGUI.Manual"));
-        miniReportAutoDisplayNonReportCombo.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
-        miniReportAutoDisplayNonReportCombo.setSelectedIndex(GUIP.getMiniReportAutoDisplayNonReportPhase());
+        phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.nonReportPhases") + ": ");
         row.add(phaseLabel);
+        miniReportAutoDisplayNonReportCombo = createHideShowComboBox(GUIP.getMiniReportAutoDisplayNonReportPhase());
         row.add(miniReportAutoDisplayNonReportCombo);
         comps.add(row);
 
         addLineSpacer(comps);
 
-        JLabel playerListLabel = new JLabel(Messages.getString("CommonMenuBar.viewPlayerList"));
         row = new ArrayList<>();
+        JLabel playerListLabel = new JLabel(Messages.getString("CommonMenuBar.viewPlayerList"));
         row.add(playerListLabel);
         comps.add(row);
-
-        phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportPhases") + ": ");
-        playerListAutoDisplayReportCombo = new JComboBox<>();
-        playerListAutoDisplayReportCombo.addItem(Messages.getString("ClientGUI.Hide"));
-        playerListAutoDisplayReportCombo.addItem(Messages.getString("ClientGUI.Show"));
-        playerListAutoDisplayReportCombo.addItem(Messages.getString("ClientGUI.Manual"));
-        playerListAutoDisplayReportCombo.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
-        playerListAutoDisplayReportCombo.setSelectedIndex(GUIP.getPlayerListAutoDisplayReportPhase());
+        phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportPhases") + ": ");
         row.add(phaseLabel);
+        playerListAutoDisplayReportCombo = createHideShowComboBox(GUIP.getPlayerListAutoDisplayReportPhase());
         row.add(playerListAutoDisplayReportCombo);
         comps.add(row);
-
-        phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.nonReportPhases") + ": ");
-        playerListAutoDisplayNonReportCombo = new JComboBox<>();
-        playerListAutoDisplayNonReportCombo.addItem(Messages.getString("ClientGUI.Hide"));
-        playerListAutoDisplayNonReportCombo.addItem(Messages.getString("ClientGUI.Show"));
-        playerListAutoDisplayNonReportCombo.addItem(Messages.getString("ClientGUI.Manual"));
-        playerListAutoDisplayNonReportCombo.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
-        playerListAutoDisplayNonReportCombo.setSelectedIndex(GUIP.getPlayerListAutoDisplayNonReportPhase());
+        phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.nonReportPhases") + ": ");
         row.add(phaseLabel);
+        playerListAutoDisplayNonReportCombo = createHideShowComboBox(GUIP.getPlayerListAutoDisplayNonReportPhase());
         row.add(playerListAutoDisplayNonReportCombo);
+        comps.add(row);
+
+        addLineSpacer(comps);
+
+        row = new ArrayList<>();
+        JLabel forceDisplayLabel = new JLabel(Messages.getString("CommonMenuBar.viewForceDisplay"));
+        row.add(forceDisplayLabel);
+        comps.add(row);
+        row = new ArrayList<>();
+        phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.reportPhases") + ": ");
+        row.add(phaseLabel);
+        forceDisplayAutoDisplayReportCombo = createHideShowComboBox(GUIP.getForceDisplayAutoDisplayReportPhase());
+        row.add(forceDisplayAutoDisplayReportCombo);
+        comps.add(row);
+        row = new ArrayList<>();
+        phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.nonReportPhases") + ": ");
+        row.add(phaseLabel);
+        forceDisplayAutoDisplayNonReportCombo = createHideShowComboBox(GUIP.getForceDisplayAutoDisplayNonReportPhase());
+        row.add(forceDisplayAutoDisplayNonReportCombo);
         comps.add(row);
 
         return createSettingsPanel(comps);

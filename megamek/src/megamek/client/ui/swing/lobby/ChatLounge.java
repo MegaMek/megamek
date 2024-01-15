@@ -162,6 +162,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private JButton butRemoveBot = new JButton(Messages.getString("ChatLounge.butRemoveBot"));
     private JButton butConfigPlayer = new JButton(Messages.getString("ChatLounge.butConfigPlayer"));
     private JButton butBotSettings = new JButton(Messages.getString("ChatLounge.butBotSettings"));
+    PlayerSettingsDialog psd;
 
     private MekTableMouseAdapter mekTableMouseAdapter = new MekTableMouseAdapter();
     private PlayerTableModel playerModel = new PlayerTableModel();
@@ -1163,7 +1164,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         final GameOptions gOpts = game().getOptions();
         boardPreviewGame.setOptions(gOpts);
 
-        for (Player player : game().getPlayersList()) {
+        for (Player player : boardPreviewGame.getPlayersList()) {
             boardPreviewGame.removePlayer(player.getId());
         }
         for (Player player : game().getPlayersList()) {
@@ -1561,7 +1562,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             return;
         }
 
-        PlayerSettingsDialog psd = new PlayerSettingsDialog(clientgui, c, previewBV);
+        if (psd != null) {
+            psd.dispose();
+        }
+
+        psd = new PlayerSettingsDialog(clientgui, c, previewBV);
         psd.setModal(false);
         psd.setAlwaysOnTop(true);
         psd.showDialog();
@@ -2171,6 +2176,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 clientgui.doAlertDialog(Messages.getString("ChatLounge.noCmdr.title"), msg);
                 return;
             }
+        }
+
+        if (psd != null) {
+            psd.dispose();
+        }
+
+        if (boardPreviewW != null) {
+            boardPreviewW.dispose();
         }
 
         boolean done = !localPlayer().isDone();

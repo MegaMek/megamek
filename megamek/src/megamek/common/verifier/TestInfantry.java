@@ -14,12 +14,14 @@
  */
 package megamek.common.verifier;
 
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.Infantry;
-import megamek.common.InfantryMount;
+import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
+import megamek.client.ui.swing.calculationReport.TextCalculationReport;
+import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
+
+import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
 
 /**
  * @author Jay Lawson (Taharqa)
@@ -110,12 +112,22 @@ public class TestInfantry extends TestEntity {
 
     @Override
     public String printWeightMisc() {
-        return null;
+        return "";
     }
 
     @Override
     public String printWeightControls() {
-        return null;
+        return "";
+    }
+
+    @Override
+    public String printWeightStructure() {
+        return "";
+    }
+
+    @Override
+    public String printWeightArmor() {
+        return "";
     }
 
     @Override
@@ -275,7 +287,26 @@ public class TestInfantry extends TestEntity {
 
     @Override
     public StringBuffer printEntity() {
-        return null;
+        StringBuffer buff = new StringBuffer();
+        buff.append("Mech: ").append(infantry.getDisplayName()).append("\n");
+        buff.append("Found in: ").append(fileString).append("\n");
+        buff.append(printTechLevel());
+        buff.append("Intro year: ").append(infantry.getYear()).append("\n");
+        buff.append(printSource());
+        buff.append(printShortMovement());
+        if (correctWeight(buff, true, true)) {
+            buff.append("Weight: ").append(getWeight()).append("\n");
+        }
+        buff.append(printWeightCalculation()).append("\n");
+        printFailedEquipment(buff);
+        return buff;
+    }
+
+    @Override
+    public String printWeightCalculation() {
+        TextCalculationReport weightReport = new TextCalculationReport();
+        getWeightExact(infantry, weightReport);
+        return weightReport.toString();
     }
 
     @Override
@@ -290,6 +321,138 @@ public class TestInfantry extends TestEntity {
 
     @Override
     public double calculateWeightExact() {
-        return infantry.getWeight();
+        return getWeightExact(infantry, new DummyCalculationReport());
+    }
+
+    /**
+     * Calculates the weight of the given Conventional Infantry unit. Infantry weight
+     * is not fixed as in Meks and Vehicles but calculated from the infantry configuration.
+     *
+     * @param infantry The conventional infantry
+     * @return The rounded weight in tons
+     */
+    public static double getWeight(Infantry infantry) {
+        double weight = getWeightExact(infantry, new DummyCalculationReport());
+        return ceil(weight, Ceil.HALFTON);
+    }
+
+    /**
+     * Calculates the weight of the given Conventional Infantry unit. Infantry weight
+     * is not fixed as in Meks and Vehicles but calculated from the infantry configuration.
+     * The given CalculationReport will be filled in with the weight calculation (the
+     * report includes the final rounding step but the returned result does not).
+     *
+     * @param infantry The conventional infantry
+     * @param report A CalculationReport to fill in
+     * @return The exact weight in tons
+     */
+    public static double getWeightExact(Infantry infantry, CalculationReport report) {
+        String header = "Weight Calculation for ";
+        String fullName = infantry.getChassis() + " " + infantry.getModel();
+        if (fullName.length() < 20) {
+            report.addHeader(header + fullName);
+        } else if (fullName.length() < 50) {
+            report.addHeader(header);
+            report.addHeader(fullName);
+        } else {
+            report.addHeader(header);
+            report.addHeader(infantry.getChassis());
+            report.addHeader(infantry.getModel());
+        }
+        report.addEmptyLine();
+
+        InfantryMount mount = infantry.getMount();
+        int activeTroopers = infantry.getInternal(Infantry.LOC_INFANTRY);
+        double weight;
+
+        if (mount != null) {
+            String calculation;
+            report.addLine("Mounted: " + mount.getName() + ", "
+                    + mount.getSize().troopsPerCreature + " trooper(s) per mount", "");
+            if (mount.getSize().troopsPerCreature > 1) {
+                weight = (mount.getWeight() + 0.2 * infantry.getSquadSize()) * infantry.getSquadCount();
+                calculation = "(" + formatForReport(mount.getWeight()) + " + 0.2 x "
+                        + infantry.getSquadSize() + ") x " + infantry.getSquadCount();
+            } else {
+                weight = (mount.getWeight() + 0.2) * activeTroopers;
+                calculation = "(" + formatForReport(mount.getWeight()) + " + 0.2) x " + activeTroopers;
+            }
+            report.addLine("", calculation, formatForReport(weight) + " t");
+
+        } else { // not beast-mounted
+            double mult;
+            switch (infantry.getMovementMode()) {
+                case INF_MOTORIZED:
+                    mult = 0.195;
+                    break;
+                case HOVER:
+                case TRACKED:
+                case WHEELED:
+                    mult = 1.0;
+                    break;
+                case VTOL:
+                    mult = infantry.hasMicrolite() ? 1.4 : 1.9;
+                    break;
+                case INF_JUMP:
+                    mult = 0.165;
+                    break;
+                case INF_UMU:
+                    if (infantry.getActiveUMUCount() > 1) {
+                        mult = 0.295; // motorized + 0.1 for motorized scuba
+                    } else {
+                        mult = 0.135; // foot + 0.05 for scuba
+                    }
+                    break;
+                case SUBMARINE:
+                    mult = 0.9;
+                    break;
+                case INF_LEG:
+                default:
+                    mult = 0.085;
+            }
+            report.addLine("Weight multiplier: ", infantry.getMovementModeAsString(), formatForReport(mult));
+
+            if (infantry.hasSpecialization(Infantry.COMBAT_ENGINEERS)) {
+                mult += 0.1;
+                report.addLine("", "Combat Engineers", "+ 0.1");
+
+            }
+
+            if (infantry.hasSpecialization(Infantry.PARATROOPS)) {
+                mult += 0.05;
+                report.addLine("", "Paratroopers", "+ 0.05");
+            }
+
+            if (infantry.hasSpecialization(Infantry.PARAMEDICS)) {
+                mult += 0.05;
+                report.addLine("", "Paramedics", "+ 0.05");
+            }
+
+            if (infantry.isAntiMekTrained()) {
+                mult += .015;
+                report.addLine("", "Anti-Mek Training", "+ 0.015");
+            }
+
+            weight = activeTroopers * mult;
+            report.addLine("Trooper Weight:", activeTroopers + " x " + formatForReport(mult),
+                    formatForReport(weight) + " t");
+
+            weight += infantry.activeFieldWeapons().stream().mapToDouble(Mounted::getTonnage).sum();
+            weight += infantry.getAmmo().stream().mapToDouble(Mounted::getTonnage).sum();
+
+            infantry.activeFieldWeapons().forEach(mounted ->
+                    report.addLine(mounted.getName(), "",
+                            "+ " + formatForReport(mounted.getTonnage()) + " t"));
+            infantry.getAmmo().forEach(mounted ->
+                    report.addLine(mounted.getName(), "",
+                            "+ " + formatForReport(mounted.getTonnage()) + " t"));
+        }
+
+        report.addEmptyLine();
+        // Intentional: Add the final rounding to the report, but return the exact weight
+        double roundedWeight = ceil(weight, Ceil.HALFTON);
+        report.addLine("Final Weight:", "round up to nearest half ton",
+                formatForReport(roundedWeight) + " t");
+        return weight;
     }
 }

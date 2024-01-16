@@ -26,6 +26,7 @@ import megamek.common.cost.InfantryCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
+import megamek.common.verifier.TestInfantry;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import org.apache.logging.log4j.LogManager;
 
@@ -1693,64 +1694,7 @@ public class Infantry extends Entity {
 
     @Override
     public double getWeight() {
-        if (mount != null) {
-            if (mount.getSize().troopsPerCreature > 1) {
-                return (mount.getWeight() + 0.2 * getSquadSize()) * getSquadCount();
-            } else {
-                return (mount.getWeight() + 0.2) * activeTroopers;
-            }
-        }
-        double mult;
-        switch (getMovementMode()) {
-            case INF_MOTORIZED:
-                mult = 0.195;
-                break;
-            case HOVER:
-            case TRACKED:
-            case WHEELED:
-                mult = 1.0;
-                break;
-            case VTOL:
-                mult = hasMicrolite() ? 1.4 : 1.9;
-                break;
-            case INF_JUMP:
-                mult = 0.165;
-                break;
-            case INF_UMU:
-                if (getActiveUMUCount() > 1) {
-                    mult = 0.295; // motorized + 0.1 for motorized scuba
-                } else {
-                    mult = 0.135; // foot + 0.05 for scuba
-                }
-                break;
-            case SUBMARINE:
-                mult = 0.9;
-                break;
-            case INF_LEG:
-            default:
-                mult = 0.085;
-        }
-
-        if (hasSpecialization(COMBAT_ENGINEERS)) {
-            mult += 0.1;
-        }
-
-        if (hasSpecialization(PARATROOPS)) {
-            mult += 0.05;
-        }
-
-        if (hasSpecialization(PARAMEDICS)) {
-            mult += 0.05;
-        }
-
-        if (isAntiMekTrained()) {
-            mult +=.015;
-        }
-
-        double ton = activeTroopers * mult;
-        ton += activeFieldWeapons().stream().mapToDouble(Mounted::getTonnage).sum();
-        ton += getAmmo().stream().mapToDouble(Mounted::getTonnage).sum();
-        return RoundWeight.nearestHalfTon(ton);
+        return TestInfantry.getWeight(this);
     }
 
     public String getArmorDesc() {

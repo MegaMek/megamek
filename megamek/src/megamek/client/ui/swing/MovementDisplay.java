@@ -474,7 +474,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     @Override
                     public void performAction() {
                         removeLastStep();
-                        computeMovementEnvelope(ce());
+                        if (ce() instanceof Aero) {
+                            computeAeroMovementEnvelope(ce());
+                        } else {
+                            computeMovementEnvelope(ce());
+                        }
                     }
                 });
 
@@ -492,7 +496,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     @Override
                     public void performAction() {
                         removeIllegalSteps();
-                        computeMovementEnvelope(ce());
+                        if (ce() instanceof Aero) {
+                            computeAeroMovementEnvelope(ce());
+                        } else {
+                            computeMovementEnvelope(ce());
+                        }
                     }
                 });
 
@@ -4542,6 +4550,40 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 .getRunMP(), en.getJumpMP(), mvMode);
     }
 
+    /**
+     * Computes possible moves for entities of Aero units.  This is similar to the
+     * `computeMovementEnvelope()` method; however, it uses the `MovePath`
+     * final velocity to temporarily set units velocity to draw the move envelope.
+     * This method always sets the original entity velocity back to it's orginial.
+     *
+     * @param entity - Suggested entity to use to compute Aero move envelope.
+     * @return - This method will do nothing if the Entity passed in is null or
+     *           is not an Aero based unity.
+     */
+    private void computeAeroMovementEnvelope(Entity entity) {
+        if ((entity == null) || !(entity instanceof Aero) || (cmd == null)) {
+            return;
+        }
+
+        // Increment the entity's delta-v then compute the movement envelope.
+        Aero ae = (Aero)entity;
+        int currentVelocity = ae.getCurrentVelocity();
+        ae.setCurrentVelocity(cmd.getFinalVelocity());
+
+        // Refresh the new velocity envelope on the map.
+        try {
+            computeMovementEnvelope(ae);
+        } catch (Exception e) {
+            LogManager.getLogger().error("An error occured trying to compute the move envelope for an Aero.");
+        } finally {
+            // Reset the bird's velocity back to original velocity no-matter-what.  It will be updated when
+            // the 'move' button is clicked and the move is processed.
+            ae.setCurrentVelocity(currentVelocity);
+        }
+
+        return;
+    }
+
     public void computeModifierEnvelope() {
         if (ce() == null) {
             return;
@@ -5061,8 +5103,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
             addStepToMovePath(MoveStepType.DECN);
         } else if (actionCmd.equals(MoveCommand.MOVE_ACC.getCmd())) {
             addStepToMovePath(MoveStepType.ACC);
+            computeAeroMovementEnvelope(ce);
         } else if (actionCmd.equals(MoveCommand.MOVE_DEC.getCmd())) {
             addStepToMovePath(MoveStepType.DEC);
+            computeAeroMovementEnvelope(ce);
         } else if (actionCmd.equals(MoveCommand.MOVE_EVADE.getCmd())) {
             addStepToMovePath(MoveStepType.EVADE);
         } else if (actionCmd.equals(MoveCommand.MOVE_BOOTLEGGER.getCmd())) {

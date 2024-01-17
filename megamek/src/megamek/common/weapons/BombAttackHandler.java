@@ -94,6 +94,7 @@ public class BombAttackHandler extends WeaponHandler {
             typeModifiedToHit.setSideTable(toHit.getSideTable());
 
             // currently, only type of bomb with type-specific to-hit mods
+            // Laser-Guided Bombs are getting errata'ed to auto-hit a tagged hex
             boolean laserGuided = false;
             if (type == BombType.B_LG) {
                 for (TagInfo ti : game.getTagInfo()) {

@@ -1672,6 +1672,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         // Do nothing
     }
 
+    @Override
+    public void gameUnitDied(GameUnitDiedEvent evt){
+        // Do nothing
+    }
+
     private ActionListener lobbyListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent ev) {

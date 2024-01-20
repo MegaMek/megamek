@@ -26,8 +26,7 @@ import megamek.common.containers.PlayerIDandList;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.WeaponSortOrder;
-import megamek.common.event.GameListener;
-import megamek.common.event.GameVictoryEvent;
+import megamek.common.event.*;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
 import megamek.common.net.enums.PacketCommand;
@@ -63,6 +62,8 @@ import java.util.zip.GZIPOutputStream;
  * Manages the Game and processes player actions.
  */
 public class GameManager implements IGameManager {
+    private ArrayList<GameListenerAdapter> diedListenerList = new ArrayList<GameListenerAdapter>();
+
     private static class EntityTargetPair {
         Entity ent;
 
@@ -756,6 +757,8 @@ public class GameManager implements IGameManager {
                 Building.DemolitionCharge charge = (Building.DemolitionCharge) packet.getData()[0];
                 if (charge.playerId == connId) {
                     if (!explodingCharges.contains(charge)) {
+                        // TODO: @sleet01 Possibly add GameUnitDiedEvent GameListenerAdapter here!
+                        // ideally we can pass the attacker and damage of the attack, at least.
                         explodingCharges.add(charge);
                         Player p = game.getPlayer(connId);
                         sendServerChat(p.getName() + " has touched off explosives "
@@ -997,8 +1000,15 @@ public class GameManager implements IGameManager {
                 send(createTurnVectorPacket());
             }
             entityUpdate(entity.getId());
+
+            // Fire GameUnitDiedEvent here?
+            // @sleet01
+            GameUnitDiedEvent gude = new GameUnitDiedEvent(this, game, entity, entity.damageThisRound, "Doomed");
+            game.processGameEvent(gude);
+
             game.removeEntity(entity.getId(), condition);
             send(createRemoveEntityPacket(entity.getId(), condition));
+
         }
     }
 
@@ -2566,6 +2576,9 @@ public class GameManager implements IGameManager {
                 }
                 // Decrement the ASEWAffected counter
                 decrementASEWTurns();
+
+                // Remove death event listeners
+                clearDiedListeners();
 
                 break;
             case END_REPORT:
@@ -9688,6 +9701,8 @@ public class GameManager implements IGameManager {
                         if (ah != null) {
                             ah.setStrafing(waa.isStrafing());
                             ah.setStrafingFirstShot(waa.isStrafingFirstShot());
+                            // TODO: Possibly add GameUnitDiedEvent GameListenerAdapter here!
+                            // ideally we can pass the attacker and damage of the attack, at least.
                             game.addAttack(ah);
                         }
                     }
@@ -14195,12 +14210,29 @@ public class GameManager implements IGameManager {
                 if (ah != null) {
                     ah.setStrafing(waa.isStrafing());
                     ah.setStrafingFirstShot(waa.isStrafingFirstShot());
+                    // TODO: @sleet01 Possibly add GameUnitDiedEvent GameListenerAdapter here!
+                    // ideally we can pass the attacker and damage of the attack, at least.
+                    registerDiedListener(ae, waa);
                     game.addAttack(ah);
                 }
             }
         }
         // and clear the attacks Vector
         game.resetActions();
+    }
+
+    // We want to clear all the GameUnitDiedListenerAdapters at the end of a round... probably.
+    private void registerDiedListener(Entity ae, WeaponAttackAction waa){
+        GameUnitDiedListenerAdapter gudla = new GameUnitDiedListenerAdapter(ae, waa);
+        game.addGameListener(gudla);
+        diedListenerList.add(gudla);
+    }
+
+    private void clearDiedListeners(){
+        for(GameListenerAdapter gudla: diedListenerList ){
+            game.removeGameListener(gudla);
+        }
+        diedListenerList.clear();
     }
 
     /**
@@ -21066,6 +21098,10 @@ public class GameManager implements IGameManager {
                 } else {
                     r = new Report(6022);
                 }
+                // Fire GameUnitDiedEvent here?
+                // @sleet01
+                GameUnitDiedEvent gude = new GameUnitDiedEvent(this, game, en, damage, "Crew killed");
+                game.processGameEvent(gude);
             } else {
                 if (isPilot) {
                     r = new Report(6023);
@@ -27440,6 +27476,11 @@ public class GameManager implements IGameManager {
             vDesc.addElement(r);
 
             entity.setDoomed(true);
+
+            // Fire GameUnitDiedEvent here?
+            // @sleet01
+            GameUnitDiedEvent gude = new GameUnitDiedEvent(this, game, entity, entity.damageThisRound, reason);
+            game.processGameEvent(gude);
 
             // Kill any picked up MechWarriors
             Enumeration<Integer> iter = entity.getPickedUpMechWarriors().elements();
@@ -34728,6 +34769,9 @@ public class GameManager implements IGameManager {
                     handleAttackReports.addElement(r);
                     ah.setAnnouncedEntityFiring(true);
                     lastAttackerId = aId;
+                    // TODO: @sleet01 Possibly add GameUnitDiedEvent GameListenerAdapter here!
+                    // ideally we can pass the attacker and damage of the attack, at least.
+                    registerDiedListener(ah.getAttacker(), ah.getWaa());
                 }
                 boolean keep = ah.handle(game.getPhase(), handleAttackReports);
                 if (keep) {

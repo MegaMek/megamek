@@ -18,6 +18,7 @@ import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.event.GameUnitDiedEvent;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -249,6 +250,11 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
         }
 
         clientgui.bingMyTurn();
+    }
+
+    @Override
+    public void gameUnitDied(GameUnitDiedEvent evt){
+        // Do nothing
     }
 
     /**

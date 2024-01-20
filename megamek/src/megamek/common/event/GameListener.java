@@ -65,4 +65,6 @@ public interface GameListener extends java.util.EventListener {
     void gameClientFeedbackRequest(GameCFREvent e);
     
     void gameVictory(GameVictoryEvent e);
+
+    void gameUnitDied(GameUnitDiedEvent e);
 }

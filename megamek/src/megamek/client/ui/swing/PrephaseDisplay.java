@@ -44,6 +44,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.event.GameUnitDiedEvent;
 import org.apache.logging.log4j.LogManager;
 
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
@@ -507,6 +508,11 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         }
 
         refreshButtons();
+    }
+
+    @Override
+    public void gameUnitDied(GameUnitDiedEvent evt){
+        // Do nothing
     }
 
     // ActionListener

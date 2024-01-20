@@ -20,6 +20,7 @@ import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.*;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.event.GameUnitDiedEvent;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
@@ -413,6 +414,11 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         if (clientgui.getClient().getGame().getPhase().isDeployMinefields()) {
             setStatusBarText(Messages.getString("DeployMinefieldDisplay.waitingForDeploymentPhase"));
         }
+    }
+
+    @Override
+    public void gameUnitDied(GameUnitDiedEvent evt){
+        // Do nothing
     }
 
     //

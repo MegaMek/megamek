@@ -700,7 +700,15 @@ public class EquipmentType implements ITechnology {
         namesVector.addElement(s); // member variable
     }
 
-    public static EquipmentType get(String key) {
+    /**
+     * Returns an EquipmentType having the given internal name or lookup name (but not the "name" which
+     * is the display text unless it's equal to the internal name). Internal names may be taken from
+     * {@link EquipmentTypeLookup}. Returns null if there is none with that name.
+     *
+     * @param key The internal name or lookup name
+     * @return The EquipmentType with the given internal name or lookup name
+     */
+    public static @Nullable EquipmentType get(String key) {
         if (null == EquipmentType.lookupHash) {
             EquipmentType.initializeTypes();
         }

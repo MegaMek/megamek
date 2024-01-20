@@ -122,6 +122,7 @@ public class EquipmentTypeLookup {
     @EquipmentName public static final String DEMOLITION_CHARGE = "Demolition Charge";
     @EquipmentName public static final String INFANTRY_AMMO = "Infantry Ammo";
     @EquipmentName public static final String INFANTRY_INFERNO_AMMO = "Infantry Inferno Ammo";
+    @EquipmentName public static final String ANTI_MEK_GEAR = "AntiMekGear";
 
     @EquipmentName public static final String AC_BAY = "AC Bay";
     @EquipmentName public static final String AMS_BAY = "AMS Bay";

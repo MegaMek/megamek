@@ -495,6 +495,25 @@ public class LobbyActions {
     }
 
     /**
+     * deletes empty force
+     */
+    void forceDeleteEmpty(int forceId) {
+        if (forceId == Force.NO_FORCE) {
+            return;
+        }
+
+        Force force = client().getGame().getForces().getForce(forceId);
+
+        if (force.getChildCount() != 0) {
+            return;
+        }
+
+        List<Force> toDelete = new ArrayList<>();
+        toDelete.add(force);
+        client().sendDeleteForces(toDelete);
+    }
+
+    /**
      * Asks for a name and creates a new top-level force of that name with the
      * selected entities in it.
      */
@@ -519,6 +538,9 @@ public class LobbyActions {
      * as the parentId.
      */
     void forceCreateSub(int parentId) {
+        if (parentId == Force.NO_FORCE) {
+            return;
+        }
         // Ask for a name
         String name = JOptionPane.showInputDialog(frame(), "Choose a force designation");
         if ((name == null) || name.isBlank()) {
@@ -631,6 +653,9 @@ public class LobbyActions {
 
     /** Asks for a new name for the provided forceId and applies it. */
     void forceRename(int forceId) {
+        if (forceId == Force.NO_FORCE) {
+            return;
+        }
         Forces forces = game().getForces();
         if (!forces.contains(forceId)) {
             return;
@@ -910,6 +935,9 @@ public class LobbyActions {
      * by the local player and be allied to the force's owner.
      */
     void forceAddEntity(Collection<Entity> entities, int forceId) {
+        if (forceId == Force.NO_FORCE) {
+            return;
+        }
         Forces forces = game().getForces();
         if (!validateUpdate(entities) || !forces.contains(forceId)) {
             return;
@@ -931,6 +959,9 @@ public class LobbyActions {
      * to only assign to team members of the former owner.
      */
     void forceAssignOnly(Collection<Force> forceList, int newOwnerId) {
+        if (newOwnerId == Player.PLAYER_NONE) {
+            return;
+        }
         Player newOwner = game().getPlayer(newOwnerId);
         if (newOwner == null) {
             return;
@@ -956,6 +987,9 @@ public class LobbyActions {
      * all subforces and units.
      */
     void forceAssignFull(Collection<Force> forceList, int newOwnerId) {
+        if (newOwnerId == Player.PLAYER_NONE) {
+            return;
+        }
         Player newOwner = game().getPlayer(newOwnerId);
         if (newOwner == null) {
             return;

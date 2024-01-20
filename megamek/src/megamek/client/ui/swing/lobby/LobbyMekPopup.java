@@ -88,6 +88,7 @@ class LobbyMekPopup {
     static final String LMP_FCREATESUB = "FCREATESUB";
     static final String LMP_FCREATETOP = "FCREATETOP";
     static final String LMP_FCREATEFROM = "FCREATEFROM";
+    static final String LMP_FCDELETEEMPTY = "FCDELETEEMPTY";
     static final String LMP_SBFFORMATION = "SBFFORMATION";
     static final String LMP_DELETE = "DELETE";
     static final String LMP_UNLOADALL = "UNLOADALL";
@@ -252,6 +253,13 @@ class LobbyMekPopup {
             }
             menu.add(addMenu);
             menu.add(menuItem("Remove from Force", LMP_FREMOVE + NOINFO + enToken(entities), true, listener));
+        }
+
+        // If exactly one force is selected, offer force options
+        if ((forces.size() == 1) && entities.isEmpty()) {
+            Force force = forces.get(0);
+            boolean editable = lobby.lobbyActions.isEditable(force);
+            menu.add(menuItem("Delete empty Force...", LMP_FCDELETEEMPTY + "|" + foToken(forces) + NOINFO, (editable && force.getChildCount() == 0), listener));
         }
 
         menu.setEnabled(menu.getItemCount() > 0);

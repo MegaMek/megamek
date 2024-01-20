@@ -1723,8 +1723,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                             Messages.getString("ChatLounge.SelectBotOrPlayer"));
                     return;
                 }
-                clientgui.saveListFile(c.getGame().getPlayerEntities(c.getLocalPlayer(), false),
-                        c.getLocalPlayer().getName());
+                ArrayList<Entity> entities = c.getGame().getPlayerEntities(c.getLocalPlayer(), false);
+                for (Entity entity : entities) {
+                    entity.setForceString(game().getForces().forceStringFor(entity));
+                }
+                clientgui.saveListFile(entities, c.getLocalPlayer().getName());
 
             } else if (ev.getSource().equals(butAddBot)) {
                 configAndCreateBot(null);

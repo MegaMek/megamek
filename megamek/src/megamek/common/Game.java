@@ -1382,6 +1382,7 @@ public class Game extends AbstractGame implements Serializable {
         victoryTeam = Player.TEAM_NONE;
         lastEntityId = 0;
         planetaryConditions = new PlanetaryConditions();
+        forces = new Forces(this);
     }
 
     private void removeArtyAutoHitHexes() {

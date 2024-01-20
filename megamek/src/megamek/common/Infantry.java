@@ -296,15 +296,6 @@ public class Infantry extends Entity {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
-    public static TechAdvancement getAntiMekTA() {
-        return new TechAdvancement(TECH_BASE_ALL)
-                .setAdvancement(2456, 2460, 2500).setApproximate(true, false, false)
-                .setPrototypeFactions(F_LC).setProductionFactions(F_LC)
-                .setTechRating(RATING_D)
-                .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    }
-
     @Override
     protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
         super.addSystemTechAdvancement(ctl);
@@ -326,9 +317,6 @@ public class Infantry extends Entity {
         }
         if (hasSpecialization(TAG_TROOPS)) {
             ctl.addComponent(Infantry.getTAGTroopsTA());
-        }
-        if (isAntiMekTrained()) {
-            ctl.addComponent(Infantry.getAntiMekTA());
         }
     }
 
@@ -956,7 +944,7 @@ public class Infantry extends Entity {
         double priceMultiplier = 1.0;
 
         // Anti-Mek Trained Multiplier
-        if (isAntiMekTrained()) {
+        if (hasAntiMekGear()) {
             priceMultiplier *= 5.0;
         }
 
@@ -1219,17 +1207,13 @@ public class Infantry extends Entity {
     }
 
     /**
-     * Returns true if this unit has anti-mek training.  According to TM pg 155,
-     * any unit that has less than 8 anti-mek skill is assumed to have anti-mek
-     * training.  This implies that the unit carries the requisite equipment for
-     * properly performing anti-mek attacks (and the weight and cost that goes
-     * along with that).
-     * @return True when this infantry is Anti-Mek trained
+     * Returns true if this unit carries anti-mek gear. Only with this gear can it improve
+     * its anti-mek skill below 8.
+     *
+     * @return True when this infantry carries anti-mek gear
      */
-    public boolean isAntiMekTrained() {
-        // Anything below the antimech skill default is considered to be AM
-        // trained.  See TM pg 155
-        return getAntiMekSkill() < ANTI_MECH_SKILL_UNTRAINED;
+    public boolean hasAntiMekGear() {
+        return hasWorkingMisc(EquipmentTypeLookup.ANTI_MEK_GEAR);
     }
 
     public boolean isMechanized() {

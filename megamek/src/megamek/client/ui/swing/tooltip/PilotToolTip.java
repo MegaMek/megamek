@@ -119,6 +119,7 @@ public final class PilotToolTip {
         // Effective entity skill for the whole crew
         boolean rpg_skills = game.getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
         result += CrewSkillSummaryUtil.getSkillNames(entity) + ": " + crew.getSkillsAsString(rpg_skills);
+        result = UIUtil.guiScaledFontHTML() + result + "</FONT>";
         return new StringBuilder(result);
     }
 

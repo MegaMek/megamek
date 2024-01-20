@@ -470,7 +470,7 @@
     </KeyBind>
 
     <KeyBind>
-         <command>undoIllegalSteps</command> <!-- Ctrl+BackSpace -->
+         <command>undoSingleStep</command> <!-- Ctrl+BackSpace -->
         <keyCode>8</keyCode>      
         <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>

@@ -144,7 +144,7 @@ public abstract class AbstractSkillGenerator implements Serializable {
         // based on whether the unit has anti-mek training, which gets set in the BLK file.
         // We therefore check if they are anti-mek trained before setting
         if (entity.isConventionalInfantry() && !((Infantry) entity).hasAntiMekGear()) {
-            skills[1] = Infantry.ANTI_MECH_SKILL_UNTRAINED;
+            skills[1] = Infantry.ANTI_MECH_SKILL_NO_GEAR;
         } else if (isForceClose()) {
             skills[1] = skills[0] + 1;
         }

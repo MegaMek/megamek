@@ -194,6 +194,11 @@ public class TestInfantry extends TestEntity {
             correct = false;
         }
 
+        if (inf.countWorkingMisc(MiscType.F_ARMOR_KIT) > 1) {
+            buff.append("Infantry may not have more than one armor kit!\n");
+            correct = false;
+        }
+
         return correct;
     }
     

@@ -889,9 +889,7 @@ public class BLKFile {
             }
         }
         for (int i = 0; i < numLocs; i++) {
-//            if (!(t.isConventionalInfantry() && (i == Infantry.LOC_INFANTRY))) {
-                blk.writeBlockData(t.getLocationName(i) + " Equipment", eq.get(i));
-//            }
+            blk.writeBlockData(t.getLocationName(i) + " Equipment", eq.get(i));
         }
         if (!t.hasPatchworkArmor() && t.hasBARArmor(1)) {
             blk.writeBlockData("barrating", t.getBARRating(1));
@@ -1004,14 +1002,6 @@ public class BLKFile {
                         .getInternalName());
             }
 
-//            if (infantry.canMakeAntiMekAttacks()) {
-//                blk.writeBlockData("antimek", (infantry.getAntiMekSkill() + ""));
-//            }
-
-//            EquipmentType et = infantry.getArmorKit();
-//            if (et != null) {
-//                blk.writeBlockData("armorKit", et.getInternalName());
-//            }
             if (infantry.getArmorDamageDivisor() != 1) {
                 blk.writeBlockData("armordivisor",
                         Double.toString(infantry.getArmorDamageDivisor()));

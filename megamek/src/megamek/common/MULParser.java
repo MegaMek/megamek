@@ -55,14 +55,13 @@ public class MULParser {
     public static final String ELE_ENTITY = "entity";
     public static final String ELE_PILOT = "pilot";
     public static final String ELE_CREW = "crew";
-    public static final String CREWTYPE = "crewType";
     public static final String ELE_CREWMEMBER = "crewMember";
     public static final String ELE_KILLS = "kills";
     public static final String ELE_KILL = "kill";
     public static final String ELE_LOCATION = "location";
     public static final String ELE_ARMOR = "armor";
     public static final String ELE_SLOT = "slot";
-    public static final String ELE_MOVEMENT = "motive";
+    public static final String ELE_MOTIVE = "motive";
     public static final String ELE_TURRETLOCK = "turretlock";
     private static final String ELE_TURRET2LOCK = "turret2lock";
     public static final String ELE_SI = "structural";
@@ -224,6 +223,7 @@ public class MULParser {
     public static final String ATTR_GUNNERYAEROM = "gunneryAeroM";
     public static final String ATTR_GUNNERYAEROB = "gunneryAeroB";
     public static final String ATTR_PILOTINGAERO = "pilotingAero";
+    public static final String ATTR_CREWTYPE = "crewType";
 
 
 
@@ -541,8 +541,8 @@ public class MULParser {
                     parseCrew(currEle, options, entity);
                 } else if (nodeName.equalsIgnoreCase(ELE_LOCATION)) {
                     parseLocation(currEle, entity);
-                } else if (nodeName.equalsIgnoreCase(ELE_MOVEMENT)) {
-                    parseMovement(currEle, entity);
+                } else if (nodeName.equalsIgnoreCase(ELE_MOTIVE)) {
+                    parseMotive(currEle, entity);
                 } else if (nodeName.equalsIgnoreCase(ELE_TURRETLOCK)) {
                     parseTurretLock(currEle, entity);
                 } else if (nodeName.equalsIgnoreCase(ELE_TURRET2LOCK)) {
@@ -1012,9 +1012,9 @@ public class MULParser {
 
         Crew crew;
         CrewType crewType = null;
-        if (crewAttr.containsKey(CREWTYPE)) {
+        if (crewAttr.containsKey(ATTR_CREWTYPE)) {
             for (CrewType ct : CrewType.values()) {
-                if (ct.toString().equalsIgnoreCase(crewAttr.get(CREWTYPE))) {
+                if (ct.toString().equalsIgnoreCase(crewAttr.get(ATTR_CREWTYPE))) {
                     crewType = ct;
                     break;
                 }
@@ -1927,13 +1927,13 @@ public class MULParser {
     }
 
     /**
-     * Parse a movement tag for the given <code>Entity</code>.
+     * Parse a motive tag for the given <code>Entity</code>.
      *
-     * @param movementTag
+     * @param motiveTag
      * @param entity
      */
-    private void parseMovement(Element movementTag, Entity entity) {
-        String value = movementTag.getAttribute(ATTR_MDAMAGE);
+    private void parseMotive(Element motiveTag, Entity entity) {
+        String value = motiveTag.getAttribute(ATTR_MDAMAGE);
         try {
             int motiveDamage = Integer.parseInt(value);
             ((Tank) entity).setMotiveDamage(motiveDamage);
@@ -1944,7 +1944,7 @@ public class MULParser {
         } catch (Exception e) {
             warning.append("Invalid motive damage value in movement tag.\n");
         }
-        value = movementTag.getAttribute(ATTR_MPENALTY);
+        value = motiveTag.getAttribute(ATTR_MPENALTY);
         try {
             int motivePenalty = Integer.parseInt(value);
             ((Tank) entity).setMotivePenalty(motivePenalty);

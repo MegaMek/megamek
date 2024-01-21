@@ -811,7 +811,7 @@ public class EntityListFile {
             // Add the crew this entity.
             final Crew crew = entity.getCrew();
             if (crew.getSlotCount() > 1) {
-                output.write(indentStr(indentLvl + 1) + "<" + MULParser.ELE_CREW + " " + MULParser.CREWTYPE + "=\"");
+                output.write(indentStr(indentLvl + 1) + "<" + MULParser.ELE_CREW + " " + MULParser.ATTR_CREWTYPE + "=\"");
                 output.write(crew.getCrewType().toString().toLowerCase());
                 writeCrewAttributes(output, entity, crew);
                 output.write("\">\n");
@@ -1268,7 +1268,7 @@ public class EntityListFile {
     }
 
     private static String getMovementString(Tank e) {
-        String retVal = "      <" + MULParser.ELE_MOVEMENT + " " + MULParser.ATTR_MDAMAGE + "=\"";
+        String retVal = "      <" + MULParser.ELE_MOTIVE + " " + MULParser.ATTR_MDAMAGE + "=\"";
         retVal = retVal.concat(Integer.toString(e.getMotiveDamage()));
         retVal = retVal.concat("\" " + MULParser.ATTR_MPENALTY + "=\"");
         retVal = retVal.concat(Integer.toString(e.getMotivePenalty()));

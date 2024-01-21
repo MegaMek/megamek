@@ -27,7 +27,9 @@ MEGAMEK VERSION HISTORY:
 + Fix #5053: Update Aero movement envelope when accelerating or decelerating
 + PR #5059: Unit tooltip pilot updates
 + PR #5057: Lobby force updates
-+ PR #5041: Princess Ice & Infantry On Ice Fix 
++ PR #5041: Princess Ice & Infantry On Ice Fix
++ PR #5069: Reset forces when resetting game 
++ Fix #5064, Fix #5065: Aero movement envelope and acc/dec next optimizations.
 
 0.49.17 (2023-12-31 1900 UTC)
 + Fix #1031: Show structure collapse warning when deploying and moving.

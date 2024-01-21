@@ -96,6 +96,7 @@ public class MULParser {
     public static final String ELE_BA_MEA = "modularEquipmentMount";
     public static final String ELE_BA_APM = "antiPersonnelMount";
     public static final String ELE_LOADED = "loaded";
+    public static final String ELE_SHIP = "ship";
 
     /**
      * The names of attributes generally associated with Entity tags
@@ -215,6 +216,15 @@ public class MULParser {
     public static final String ATTR_NUMBER = "number";
     public static final String ATTR_FORCE = "force";
     public static final String ATTR_SLOT = "slot";
+    public static final String ATTR_IS_REAR = "isRear";
+    public static final String ATTR_IS_TURRETED = "isTurreted";
+    public static final String ATTR_IS_MISSING = "isMissing";
+    public static final String ATTR_GUNNERYAERO = "gunneryAero";
+    public static final String ATTR_GUNNERYAEROL = "gunneryAeroL";
+    public static final String ATTR_GUNNERYAEROM = "gunneryAeroM";
+    public static final String ATTR_GUNNERYAEROB = "gunneryAeroB";
+    public static final String ATTR_PILOTINGAERO = "pilotingAero";
+
 
 
     /**
@@ -228,6 +238,10 @@ public class MULParser {
     public static final String VALUE_INTERNAL = "Internal";
     public static final String VALUE_EMPTY = "Empty";
     public static final String VALUE_SYSTEM = "System";
+    public static final String VALUE_NONE = "None";
+    public static final String VALUE_HIT =  "hit";
+    public static final String VALUE_CONSOLE =  "console";
+
 
 
     /**
@@ -2209,18 +2223,18 @@ public class MULParser {
             t.setSensorHits(Integer.parseInt(sensors));
         }
 
-        if (engine.equalsIgnoreCase("hit")) {
+        if (engine.equalsIgnoreCase(VALUE_HIT)) {
             t.engineHit();
             t.applyDamage();
         }
 
-        if (driver.equalsIgnoreCase("hit")) {
+        if (driver.equalsIgnoreCase(VALUE_HIT)) {
             t.setDriverHit(true);
         }
 
-        if (commander.equalsIgnoreCase("console")) {
+        if (commander.equalsIgnoreCase(VALUE_CONSOLE)) {
             t.setUsingConsoleCommander(true);
-        } else if (commander.equalsIgnoreCase("hit")) {
+        } else if (commander.equalsIgnoreCase(VALUE_HIT)) {
             t.setCommanderHit(true);
         }
     }

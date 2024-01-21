@@ -5030,6 +5030,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     && !(((IAero) ce).isSpheroid() || clientgui.getClient()
                     .getGame().getPlanetaryConditions().isVacuum())) {
                 addStepToMovePath(MoveStepType.ACC, true);
+                computeAeroMovementEnvelope(ce);
             }
             addStepToMovePath(MoveStepType.DOWN);
         } else if (actionCmd.equals(MoveCommand.MOVE_CLIMB_MODE.getCmd())) {
@@ -5098,8 +5099,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
             cmd.compile(clientgui.getClient().getGame(), ce, false);
             updateMove();
         } else if (actionCmd.equals(MoveCommand.MOVE_ACCN.getCmd())) {
+            removeIllegalSteps();
             addStepToMovePath(MoveStepType.ACCN);
         } else if (actionCmd.equals(MoveCommand.MOVE_DECN.getCmd())) {
+            removeIllegalSteps();
             addStepToMovePath(MoveStepType.DECN);
         } else if (actionCmd.equals(MoveCommand.MOVE_ACC.getCmd())) {
             addStepToMovePath(MoveStepType.ACC);

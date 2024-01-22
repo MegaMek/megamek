@@ -94,11 +94,18 @@ public class BombAttackHandler extends WeaponHandler {
             typeModifiedToHit.setSideTable(toHit.getSideTable());
 
             // currently, only type of bomb with type-specific to-hit mods
-            // Laser-Guided Bombs are getting errata'ed to auto-hit a tagged hex
+            // Laser-Guided Bombs are getting errata'ed to get bonus from either A) a tagged hex or B) a tagged target
             boolean laserGuided = false;
             if (type == BombType.B_LG) {
                 for (TagInfo ti : game.getTagInfo()) {
-                    if (target.getId() == ti.target.getId()) {
+                    if (ti.missed || game.getEntity(waa.getEntityId()).isEnemyOf(game.getEntity(ti.attackerId))) {
+                        // Not a usable friendly TAG
+                        continue;
+                    }
+                    if (target.getId() == ti.target.getId()
+                        || ((ti.targetType != Targetable.TYPE_HEX_TAG)
+                            && target.getPosition().equals(ti.target.getPosition()))
+                    ) {
                         typeModifiedToHit.addModifier(-2,
                                 "laser-guided bomb against tagged target");
                         laserGuided = true;

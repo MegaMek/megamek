@@ -140,7 +140,11 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
         }
 
         if (dataFile.exists("specialization")) {
-            infantry.setSpecializations(Integer.parseInt(dataFile.getDataAsString("specialization")[0]));
+            try {
+                infantry.setSpecializations(Integer.parseInt(dataFile.getDataAsString("specialization")[0]));
+            } catch (NumberFormatException ex) {
+                throw new EntityLoadingException("Could not read specialization");
+            }
         }
         
         if (dataFile.exists("encumberingarmor")) {
@@ -164,7 +168,11 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
         }
 
         if (dataFile.exists("armordivisor")) {
-            infantry.setArmorDamageDivisor(Double.parseDouble(dataFile.getDataAsString("armordivisor")[0]));
+            try {
+                infantry.setArmorDamageDivisor(Double.parseDouble(dataFile.getDataAsString("armordivisor")[0]));
+            } catch (NumberFormatException ex) {
+                throw new EntityLoadingException("Could not read armor divisor");
+            }
         }
 
         loadEquipment(infantry, "Field Guns", Infantry.LOC_FIELD_GUNS);

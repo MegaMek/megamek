@@ -830,7 +830,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
             setTwistEnabled(!ce().getAlreadyTwisted() && ce().canChangeSecondaryFacing() && ce().getCrew().isActive());
 
             setFindClubEnabled(FindClubAction.canMechFindClub(clientgui.getClient().getGame(), en));
-            setFlipArmsEnabled(ce().canFlipArms());
+            setFlipArmsEnabled(!ce().getAlreadyTwisted() && ce().canFlipArms());
             updateSearchlight();
             updateClearTurret();
             updateClearWeaponJam();
@@ -2350,6 +2350,8 @@ public class FiringDisplay extends AttackPhaseDisplay implements ItemListener, L
         if (ce() == null) {
             return;
         } else if (armsFlipped == ce().getArmsFlipped()) {
+            return;
+        } else if (ce().getAlreadyTwisted()) {
             return;
         }
 

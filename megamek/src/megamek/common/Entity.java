@@ -1855,6 +1855,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Set whether or not the mech's arms are flipped to the rear
      */
     public void setArmsFlipped(boolean armsFlipped) {
+        GamePhase phase = getGame().getPhase();
+        if (phase != null) {
+            // If we already twisted/flipped in an earlier phase, return out
+            if (getAlreadyTwisted()) {
+                return;
+            }
+            if (phase.isOffboard() || phase.isFiring()) {
+                // Only Offboard and Firing phases could conceivably have later phases with twisting
+                setAlreadyTwisted(true);
+            }
+        }
         setArmsFlipped(armsFlipped, true);
     }
 

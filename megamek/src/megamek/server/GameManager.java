@@ -34511,13 +34511,16 @@ public class GameManager implements IGameManager {
         }
         Vector<Integer> alreadyHit = new Vector<>();
 
-        alreadyHit = artilleryDamageHex(centre, centre, damage, null,
+        // We need the actual ammo type in order to handle certain bomb issues correctly.
+        BombType ammo = BombType.createBombByType(type);
+
+        alreadyHit = artilleryDamageHex(centre, centre, damage, ammo,
                 subjectId, killer, null, false, 0, vPhaseReport, false,
                 alreadyHit, false);
         if (range > 0) {
             List<Coords> hexes = centre.allAtDistance(range);
             for (Coords c : hexes) {
-                alreadyHit = artilleryDamageHex(c, centre, damage, null,
+                alreadyHit = artilleryDamageHex(c, centre, damage, ammo,
                         subjectId, killer, null, false, 0, vPhaseReport, false,
                         alreadyHit, false);
             }

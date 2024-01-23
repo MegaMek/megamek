@@ -3686,11 +3686,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 // +4 Modifier for strafing
                 } else if (isStrafing) {
                     toHit.addModifier(+4, Messages.getString("WeaponAttackAction.Strafing"));
-                    // Additional +2 if flying at Nape-of-Earth
+                    // Additional +2 if flying at Nap-of-Earth
                     if (ae.getAltitude() == 1) {
                         toHit.addModifier(+2, Messages.getString("WeaponAttackAction.StrafingNoe"));
                     }
-                    // Additional Nape-of-Earth restrictions for strafing
+                    // Additional Nap-of-Earth restrictions for strafing
                     if (ae.getAltitude() == 1) {
                         Coords prevCoords = ae.passedThroughPrevious(target.getPosition());
                         Hex prevHex = game.getBoard().getHex(prevCoords);

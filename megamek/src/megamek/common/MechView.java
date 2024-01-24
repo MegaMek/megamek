@@ -159,7 +159,7 @@ public class MechView {
             sLoadout.addAll(getWeapons(showDetail));
         }
 
-        if ((!entity.usesWeaponBays() || !showDetail) && !entity.getAmmo().isEmpty()) {
+        if (showAmmoBlock(showDetail)) {
             sLoadout.add(new SingleLine());
             sLoadout.add(getAmmo());
         }
@@ -533,50 +533,22 @@ public class MechView {
             sFluff.add(new LabeledElement("History", entity.getFluff().getHistory()));
         }
 
-        EntityVerifier verifier = EntityVerifier.getInstance(new MegaMekFile(
-                Configuration.unitsDir(), EntityVerifier.CONFIG_FILENAME).getFile());
         StringBuffer sb = new StringBuffer();
-        TestEntity testEntity = getTestEntity(entity, verifier);
+        TestEntity testEntity = TestEntity.getEntityVerifier(entity);
 
         if (testEntity != null) {
             testEntity.correctEntity(sb, entity.getTechLevel());
 
             if (!sb.toString().isEmpty()) {
                 sInvalid.add(new SingleLine());
-                sInvalid.add(new LabeledElement(Messages.getString("MechView.InvalidReasons"), "\n" + sb.toString()));
+                sInvalid.add(new LabeledElement(Messages.getString("MechView.InvalidReasons"), "\n" + sb));
             }
         }
     }
 
-    /**
-     * copied from megameklab.util.UnitUtil.getEntityVerifier
-     * @param unit the supplied entity
-     * @param entityVerifier the entity verifier loaded from a UnitVerifierOptions.xml
-     * @return a TestEntity instance for the supplied Entity.
-     */
-    public static TestEntity getTestEntity(Entity unit, EntityVerifier entityVerifier) {
-        // FIXME move the same method from megameklab.util.UnitUtil.getEntityVerifier to common
-        TestEntity testEntity = null;
-        if (unit.hasETypeFlag(Entity.ETYPE_MECH)) {
-            testEntity = new TestMech((Mech) unit, entityVerifier.mechOption, null);
-        } else if (unit.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
-            testEntity = new TestProtomech((Protomech) unit, entityVerifier.protomechOption, null);
-        } else if (unit.isSupportVehicle()) {
-            testEntity = new TestSupportVehicle(unit, entityVerifier.tankOption, null);
-        } else if (unit.hasETypeFlag(Entity.ETYPE_TANK)) {
-            testEntity = new TestTank((Tank) unit, entityVerifier.tankOption, null);
-        } else if (unit.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
-            testEntity = new TestSmallCraft((SmallCraft) unit, entityVerifier.aeroOption, null);
-        } else if (unit.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
-            testEntity = new TestAdvancedAerospace((Jumpship) unit, entityVerifier.aeroOption, null);
-        } else if (unit.hasETypeFlag(Entity.ETYPE_AERO)) {
-            testEntity = new TestAero((Aero) unit, entityVerifier.aeroOption, null);
-        } else if (unit.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)) {
-            testEntity = new TestBattleArmor((BattleArmor) unit, entityVerifier.baOption, null);
-        } else if (unit.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
-            testEntity = new TestInfantry((Infantry)unit, entityVerifier.infOption, null);
-        }
-        return testEntity;
+    /** @return True when the unit requires an ammo block. */
+    private boolean showAmmoBlock(boolean showDetail) {
+        return (!entity.usesWeaponBays() || !showDetail) && !entity.getAmmo().stream().allMatch(this::hideAmmo);
     }
 
     private String eraText(int startYear, int endYear) {
@@ -1010,6 +982,11 @@ public class MechView {
         return (mounted.countQuirks() > 0) ? " (Q)" : "";
     }
 
+    private boolean hideAmmo(Mounted mounted) {
+        return ((mounted.getLinkedBy() != null) && mounted.getLinkedBy().isOneShot())
+                || (mounted.getSize() == 0) || (mounted.getLocation() == Entity.LOC_NONE);
+    }
+
     private ViewElement getAmmo() {
         TableElement ammoTable = new TableElement(4);
         ammoTable.setColNames("Ammo", "Loc", "Shots", entity.isOmni() ? "Omni" : "");
@@ -1017,17 +994,7 @@ public class MechView {
                 TableElement.JUSTIFIED_CENTER, TableElement.JUSTIFIED_CENTER);
 
         for (Mounted mounted : entity.getAmmo()) {
-            // Ignore ammo for one-shot launchers
-            if ((mounted.getLinkedBy() != null)
-                    && mounted.getLinkedBy().isOneShot()) {
-                continue;
-            }
-            // Ignore bay ammo bins for unused munition types
-            if (mounted.getSize() == 0) {
-                continue;
-            }
-
-            if (mounted.getLocation() == Entity.LOC_NONE) {
+            if (hideAmmo(mounted)) {
                 continue;
             }
 

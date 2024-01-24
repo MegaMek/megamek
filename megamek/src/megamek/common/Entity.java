@@ -249,6 +249,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     protected int facing = 0;
     protected int sec_facing = 0;
+    protected GamePhase twistedPhase = null;
 
     protected int walkMP = 0;
     protected int jumpMP = 0;
@@ -1844,6 +1845,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Set whether or not the mech's arms are flipped to the rear
      */
     public void setArmsFlipped(boolean armsFlipped) {
+        GamePhase phase = getGame().getPhase();
+        if (phase != null) {
+            // If we already twisted/flipped in an earlier phase, return out
+            if (getAlreadyTwisted()) {
+                return;
+            }
+            if (phase.isOffboard() || phase.isFiring()) {
+                // Only Offboard and Firing phases could conceivably have later phases with twisting
+                setAlreadyTwisted(true);
+            }
+        }
         setArmsFlipped(armsFlipped, true);
     }
 
@@ -2608,6 +2620,18 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public void setSecondaryFacing(int sec_facing) {
+        // Only allow changing secondary facing if we haven't done so in a prior phase
+        GamePhase phase = getGame().getPhase();
+        if (phase != null) {
+            // If we already twisted in an earlier phase, return out
+            if (getAlreadyTwisted()) {
+                return;
+            }
+            if (phase.isOffboard() || phase.isFiring()) {
+                // Only Offboard and Firing phases could conceivably have later phases with twisting
+                setAlreadyTwisted(true);
+            }
+        }
         setSecondaryFacing(sec_facing, true);
     }
 
@@ -2646,6 +2670,21 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return the closest valid secondary facing.
      */
     public abstract int clipSecondaryFacing(int dir);
+
+    /**
+     * @return whether this entity already changed a secondary facing in an earlier phase
+     */
+    public boolean getAlreadyTwisted(){
+        return twistedPhase != null && twistedPhase.isBefore(game.getPhase());
+    }
+
+    /**
+     * Used by TargetingPhaseDisplay.java and FiringDisplay.java
+     * @param value true sets twistedPhase to current phase (or leaves it if set); false unsets twistedPhase
+     */
+    public void setAlreadyTwisted(boolean value) {
+        twistedPhase = (value) ? (twistedPhase == null) ? game.getPhase() : twistedPhase : null;
+    }
 
     /**
      * Returns true if the entity has an RAC which is jammed and not destroyed
@@ -6328,6 +6367,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         resetFiringArcs();
+
+        setAlreadyTwisted(false);
 
         resetBays();
 

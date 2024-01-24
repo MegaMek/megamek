@@ -183,12 +183,14 @@ public class FireCommand extends ClientCommand {
         getClient().getGame().removeActionsFor(cen);
 
         // restore any other movement to default
-        ce().setSecondaryFacing(ce().getFacing());
-        ce().setArmsFlipped(false);
+        if (!ce().getAlreadyTwisted()) {
+            ce().setSecondaryFacing(ce().getFacing());
+            ce().setArmsFlipped(false);
 
-        int direction = ce().clipSecondaryFacing(target);
-        attacks.addElement(new TorsoTwistAction(cen, direction));
-        ce().setSecondaryFacing(direction);
+            int direction = ce().clipSecondaryFacing(target);
+            attacks.addElement(new TorsoTwistAction(cen, direction));
+            ce().setSecondaryFacing(direction);
+        }
     }
 
     private void fire(int weaponNum, Targetable target) {

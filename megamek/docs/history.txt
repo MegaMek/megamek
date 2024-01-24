@@ -12,7 +12,7 @@ MEGAMEK VERSION HISTORY:
 + PR #5014: Fix CF warning sprite to work with isometric view
 + PR #5012: QuirkEntry: remove maximum slot number check (fixes MegaMekLab#1364)
 + PR #4992: Don't display engine rating for SV engines
-+ PR #5025: There is now a keybind for removing all invalid move steps at the end of a move path (default: Ctrl-Backspace)
++ PR #5025, #5068: Using the keybind (default: Backspace) for removing the last movement step will now remove all illegal steps if there are any at the end of a move path
 + Fix #5038: Add clan CASE in postLoadInit for explosive secondary locations
 + Fix #5028: Tow button no longer working
 + PR #5036: CF Warning clean up sprites when turn ends

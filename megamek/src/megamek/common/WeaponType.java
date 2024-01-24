@@ -630,8 +630,19 @@ public class WeaponType extends EquipmentType {
         return atClass;
     }
 
-    // Probably not the best place for this
+    /**
+     * @return The type of weapon bay this weapon goes in
+     */
     public EquipmentType getBayType() {
+        return getBayType(false);
+    }
+
+    // Probably not the best place for this
+    /**
+     * @param capitalOnly If true, this will return the equivalent capital bay for subcapital weapons.
+     * @return The type of weapon bay this weapon goes in
+     */
+    public EquipmentType getBayType(boolean capitalOnly) {
         // Return the correct weapons bay for the given type of weapon
         switch (getAtClass()) {
             case CLASS_LASER:
@@ -667,19 +678,19 @@ public class WeaponType extends EquipmentType {
             case CLASS_ROCKET_LAUNCHER:
                 return EquipmentType.get(EquipmentTypeLookup.ROCKET_LAUNCHER_BAY);
             case CLASS_CAPITAL_LASER:
-                return isSubCapital() ? EquipmentType.get(EquipmentTypeLookup.SCL_BAY)
+                return (isSubCapital() && !capitalOnly) ? EquipmentType.get(EquipmentTypeLookup.SCL_BAY)
                         : EquipmentType.get(EquipmentTypeLookup.CAPITAL_LASER_BAY);
             case CLASS_CAPITAL_PPC:
                 return EquipmentType.get(EquipmentTypeLookup.CAPITAL_PPC_BAY);
             case CLASS_CAPITAL_AC:
-                return isSubCapital() ? EquipmentType.get(EquipmentTypeLookup.SCC_BAY)
+                return (isSubCapital() && !capitalOnly) ? EquipmentType.get(EquipmentTypeLookup.SCC_BAY)
                         : EquipmentType.get(EquipmentTypeLookup.CAPITAL_AC_BAY);
             case CLASS_CAPITAL_GAUSS:
                 return EquipmentType.get(EquipmentTypeLookup.CAPITAL_GAUSS_BAY);
             case CLASS_CAPITAL_MD:
                 return EquipmentType.get(EquipmentTypeLookup.CAPITAL_MASS_DRIVER_BAY);
             case CLASS_CAPITAL_MISSILE:
-                return isSubCapital() ? EquipmentType.get(EquipmentTypeLookup.SC_MISSILE_BAY)
+                return (isSubCapital() && !capitalOnly) ? EquipmentType.get(EquipmentTypeLookup.SC_MISSILE_BAY)
                         : EquipmentType.get(EquipmentTypeLookup.CAPITAL_MISSILE_BAY);
             case CLASS_TELE_MISSILE:
                 return EquipmentType.get(EquipmentTypeLookup.TELE_CAPITAL_MISSILE_BAY);

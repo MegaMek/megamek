@@ -48,12 +48,12 @@ public class SupportTank extends Tank {
 
     @Override
     public int getBARRating(int loc) {
-        return barRating[loc];
+        return (barRating == null) ? 0 : barRating[loc];
     }
 
     @Override
     public boolean hasBARArmor(int loc) {
-        return true;
+        return getArmorType(firstArmorIndex()) == EquipmentType.T_ARMOR_STANDARD;
     }
 
     @Override

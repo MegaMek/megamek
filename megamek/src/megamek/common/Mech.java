@@ -5380,14 +5380,7 @@ public abstract class Mech extends Entity {
      */
     @Override
     public int getBARRating(int loc) {
-        if (armorType[loc] == EquipmentType.T_ARMOR_COMMERCIAL) {
-            return 5;
-        }
-        if ((armorType[loc] == EquipmentType.T_ARMOR_INDUSTRIAL)
-                || (armorType[loc] == EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL)) {
-            return 10;
-        }
-        return 10;
+        return (armorType[loc] == EquipmentType.T_ARMOR_COMMERCIAL) ? 5 : 10;
     }
 
     /**

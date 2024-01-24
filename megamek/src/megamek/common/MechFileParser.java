@@ -627,30 +627,21 @@ public class MechFileParser {
         ent.addClanCase();
 
         if (ent instanceof BattleArmor) {
-            // now, depending on equipment and chassis, BA might be able to do
-            // leg
-            // and swarm attacks
+            // now, depending on equipment and chassis, BA might be able to do leg and swarm attacks
             if (((BattleArmor) ent).getChassisType() != BattleArmor.CHASSIS_TYPE_QUAD) {
-                int tBasicManipulatorCount = ent
-                        .countWorkingMisc(MiscType.F_BASIC_MANIPULATOR);
-                int tArmoredGloveCount = ent
-                        .countWorkingMisc(MiscType.F_ARMORED_GLOVE);
-                int tBattleClawCount = ent
-                        .countWorkingMisc(MiscType.F_BATTLE_CLAW);
+                int tBasicManipulatorCount = ent.countWorkingMisc(MiscType.F_BASIC_MANIPULATOR);
+                int tArmoredGloveCount = ent.countWorkingMisc(MiscType.F_ARMORED_GLOVE);
+                int tBattleClawCount = ent.countWorkingMisc(MiscType.F_BATTLE_CLAW);
                 boolean hasSwarm, hasSwarmStart, hasSwarmStop, hasLegAttack;
                 hasSwarm = hasSwarmStart = hasSwarmStop = hasLegAttack = false;
                 for (Mounted m : ent.getWeaponList()) {
-                    if (m.getType().getInternalName()
-                            .equals(Infantry.SWARM_WEAPON_MEK)) {
+                    if (m.getType().getInternalName().equals(Infantry.SWARM_WEAPON_MEK)) {
                         hasSwarm = true;
-                    } else if (m.getType().getInternalName()
-                            .equals(Infantry.SWARM_MEK)) {
+                    } else if (m.getType().getInternalName().equals(Infantry.SWARM_MEK)) {
                         hasSwarmStart = true;
-                    } else if (m.getType().getInternalName()
-                            .equals(Infantry.STOP_SWARM)) {
+                    } else if (m.getType().getInternalName().equals(Infantry.STOP_SWARM)) {
                         hasSwarmStop = true;
-                    } else if (m.getType().getInternalName()
-                            .equals(Infantry.LEG_ATTACK)) {
+                    } else if (m.getType().getInternalName().equals(Infantry.LEG_ATTACK)) {
                         hasLegAttack = true;
                     }
                 }

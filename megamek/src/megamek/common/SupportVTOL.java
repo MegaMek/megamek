@@ -46,7 +46,7 @@ public class SupportVTOL extends VTOL {
 
     @Override
     public int getBARRating(int loc) {
-        return barRating[loc];
+        return (barRating == null) ? 0 : barRating[loc];
     }
 
     @Override

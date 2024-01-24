@@ -1305,6 +1305,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 ctl.addComponent(EquipmentType.getArmorTechAdvancement(armorType[loc],
                         TechConstants.isClan(armorTechLevel[loc])));
             }
+        } else if (isSupportVehicle() && hasBARArmor(firstArmorIndex())) {
+            ctl.addComponent(EquipmentType.getSVArmorTechAdvancement(getBARRating(firstArmorIndex())));
         } else {
             ctl.addComponent(EquipmentType.getArmorTechAdvancement(armorType[0],
                     TechConstants.isClan(armorTechLevel[0])));

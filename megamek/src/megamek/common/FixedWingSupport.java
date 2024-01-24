@@ -73,7 +73,7 @@ public class FixedWingSupport extends ConvFighter {
      */
     @Override
     public boolean hasBARArmor(int loc) {
-        return true;
+        return getArmorType(firstArmorIndex()) == EquipmentType.T_ARMOR_STANDARD;
     }
 
     @Override

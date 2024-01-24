@@ -33,6 +33,7 @@ MEGAMEK VERSION HISTORY:
 + PR #5071: MUL parser updates
 + PR #5075: Laser-guided bombs now receive a -2 bonus on tagged units
 + PR #5074: Infantry no longer incorrectly applies a BV unit type modifier
++ PR #5040: Units with TAG weapons should now be able to torso twist in the Offboard / TAG phases in accordance with recent errata
 
 0.49.17 (2023-12-31 1900 UTC)
 + Fix #1031: Show structure collapse warning when deploying and moving.

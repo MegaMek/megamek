@@ -121,6 +121,12 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
                 }
             }
 
+            // If the movepath entity is an aerospace / conventional fighter type, don't 
+            // relax the edge.  See megamek issue #5088
+            if (v.getEntity().isAerospace()) {
+                return e;
+            }
+
             return comparator.compare(e, v) < 0 ? e : null;
         }
     }

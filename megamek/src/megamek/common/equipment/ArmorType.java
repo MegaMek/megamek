@@ -26,8 +26,6 @@ import java.util.Map;
 
 public class ArmorType extends MiscType {
 
-    private int armorType = T_ARMOR_UNKNOWN;
-
     private static final Map<Integer, ArmorType> armorTypeLookupIS = new HashMap<>();
     private static final Map<Integer, ArmorType> armorTypeLookupClan = new HashMap<>();
 
@@ -108,11 +106,39 @@ public class ArmorType extends MiscType {
         }
     }
 
+    private int armorType = T_ARMOR_UNKNOWN;
+    private int aeroslots = 0;
+    private int patchworkSlotsMechSV = 0;
+    private int patchworkSlotsCVFtr = 0;
+
     private ArmorType() {
         hittable = false;
         omniFixedOnly = true;
         spreadable = true;
         bv = 0;
+    }
+
+    /**
+     * @return The number of weapon slots taken by the armor on an aerospace fighter.
+     */
+    public int getAeroSlots() {
+        return aeroslots;
+    }
+
+    /**
+     * Space required by patchwork armor for Mechs and support vehicles
+     * @return The number of critical/item slots taken by the armor per location as patchwork armor.
+     */
+    public int getPatchworkSlotsMechSV() {
+        return patchworkSlotsMechSV;
+    }
+
+    /**
+     * Space required by patchwork armor for combat vehicles and conventional/aerospace fighters
+     * @return The number of item/weapon slots taken by the armor per location as patchwork armor.
+     */
+    public int getPatchworkSlotsCVFtr() {
+        return patchworkSlotsCVFtr;
     }
 
     private static ArmorType createStandardArmor() {
@@ -146,7 +172,11 @@ public class ArmorType extends MiscType {
         armor.addLookupName("IS Ferro-Fibrous Armor");
         armor.addLookupName("IS Ferro Fibre");
         armor.tonnage = TONNAGE_VARIABLE;
-        armor.criticals = CRITICALS_VARIABLE;
+        armor.criticals = 14;
+        armor.tankslots = 2;
+        armor.svslots = 2;
+        armor.patchworkSlotsMechSV = 2;
+        armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_FERRO_FIBROUS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
         armor.bv = 0;
         armor.rulesRefs = "205, TM";
@@ -167,7 +197,11 @@ public class ArmorType extends MiscType {
         armor.addLookupName("Clan Ferro-Fibrous Armor");
         armor.addLookupName("Clan Ferro Fibre");
         armor.tonnage = TONNAGE_VARIABLE;
-        armor.criticals = CRITICALS_VARIABLE;
+        armor.criticals = 7;
+        armor.tankslots = 1;
+        armor.svslots = 3;
+        armor.patchworkSlotsMechSV = 1;
+        armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_FERRO_FIBROUS).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
         armor.bv = 0;
         armor.rulesRefs = "205, TM";
@@ -190,7 +224,11 @@ public class ArmorType extends MiscType {
         armor.addLookupName("IS Light Ferro-Fibrous Armor");
         armor.addLookupName("IS LightFerro");
         armor.tonnage = TONNAGE_VARIABLE;
-        armor.criticals = CRITICALS_VARIABLE;
+        armor.criticals = 7;
+        armor.tankslots = 1;
+        armor.svslots = 1;
+        armor.patchworkSlotsMechSV = 1;
+        armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_LIGHT_FERRO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
         armor.rulesRefs = "205, TM";
         armor.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
@@ -211,7 +249,11 @@ public class ArmorType extends MiscType {
         armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HEAVY_FERRO, false));
         armor.addLookupName("IS Heavy Ferro-Fibrous Armor");
         armor.tonnage = TONNAGE_VARIABLE;
-        armor.criticals = CRITICALS_VARIABLE;
+        armor.criticals = 21;
+        armor.tankslots = 3;
+        armor.svslots = 3;
+        armor.patchworkSlotsMechSV = 3;
+        armor.patchworkSlotsCVFtr = 2;
         armor.flags = armor.flags.or(F_HEAVY_FERRO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
         armor.rulesRefs = "205, TM";
         armor.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
@@ -232,7 +274,11 @@ public class ArmorType extends MiscType {
         armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS_PROTO, false));
         armor.addLookupName("IS Ferro-Fibrous Armor Prototype");
         armor.tonnage = TONNAGE_VARIABLE;
-        armor.criticals = CRITICALS_VARIABLE;
+        armor.criticals = 16;
+        armor.tankslots = 3;
+        armor.svslots = 3;
+        armor.patchworkSlotsMechSV = 2;
+        armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_FERRO_FIBROUS_PROTO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT)
                 .or(F_VTOL_EQUIPMENT);
         armor.rulesRefs = "72, IO";
@@ -253,6 +299,8 @@ public class ArmorType extends MiscType {
         armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_ALUM);
         armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_ALUM, false));
         armor.addLookupName("IS Ferro-Aluminum Armor");
+        armor.aeroslots = 2;
+        armor.patchworkSlotsCVFtr = 1;
         armor.tonnage = TONNAGE_VARIABLE;
         armor.flags = armor.flags.or(F_FERRO_FIBROUS).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT);
         armor.rulesRefs = "205, TM";
@@ -272,6 +320,8 @@ public class ArmorType extends MiscType {
         armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_ALUM);
         armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_ALUM, true));
         armor.addLookupName("Clan Ferro-Aluminum Armor");
+        armor.aeroslots = 2;
+        armor.patchworkSlotsCVFtr = 1;
         armor.tonnage = TONNAGE_VARIABLE;
         armor.flags = armor.flags.or(F_FERRO_FIBROUS).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT);
         armor.rulesRefs = "205, TM";
@@ -292,6 +342,8 @@ public class ArmorType extends MiscType {
         armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LIGHT_ALUM);
         armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LIGHT_ALUM, false));
         armor.addLookupName("IS Light Ferro-Aluminum Armor");
+        armor.aeroslots = 1;
+        armor.patchworkSlotsCVFtr = 1;
         armor.tonnage = TONNAGE_VARIABLE;
         armor.flags = armor.flags.or(F_LIGHT_FERRO).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT);
         armor.rulesRefs = "205, TM";
@@ -312,6 +364,8 @@ public class ArmorType extends MiscType {
         armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HEAVY_ALUM);
         armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HEAVY_ALUM, false));
         armor.addLookupName("IS Heavy Ferro-Aluminum Armor");
+        armor.aeroslots = 4;
+        armor.patchworkSlotsCVFtr = 2;
         armor.tonnage = TONNAGE_VARIABLE;
         armor.flags = armor.flags.or(F_HEAVY_FERRO).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT);
         armor.rulesRefs = "205, TM";
@@ -332,6 +386,8 @@ public class ArmorType extends MiscType {
         armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_ALUM_PROTO);
         armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_ALUM_PROTO, false));
         armor.addLookupName("IS Ferro-Alum Armor Prototype");
+        armor.aeroslots = 3;
+        armor.patchworkSlotsCVFtr = 1;
         armor.tonnage = TONNAGE_VARIABLE;
         armor.flags = armor.flags.or(F_FERRO_FIBROUS_PROTO).or(F_FIGHTER_EQUIPMENT)
                 .or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT);
@@ -466,7 +522,12 @@ public class ArmorType extends MiscType {
         armor.addLookupName("IS Reactive Armor");
         armor.addLookupName("IS Reactive");
         armor.tonnage = 0;
-        armor.criticals = CRITICALS_VARIABLE;
+        armor.criticals = 14;
+        armor.tankslots = 2;
+        armor.svslots = 2;
+        armor.aeroslots = 3;
+        armor.patchworkSlotsMechSV = 2;
+        armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_REACTIVE).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT)
                 .or(F_SUPPORT_TANK_EQUIPMENT);
         armor.bv = 0;
@@ -491,7 +552,12 @@ public class ArmorType extends MiscType {
         armor.addLookupName("Clan Reactive Armor");
         armor.addLookupName("Clan Reactive");
         armor.tonnage = 0;
-        armor.criticals = CRITICALS_VARIABLE;
+        armor.criticals = 7;
+        armor.tankslots = 1;
+        armor.svslots = 1;
+        armor.aeroslots = 1;
+        armor.patchworkSlotsMechSV = 1;
+        armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_REACTIVE).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT)
                 .or(F_SUPPORT_TANK_EQUIPMENT);
         armor.rulesRefs = "94, TO: AU&E";
@@ -515,7 +581,12 @@ public class ArmorType extends MiscType {
         armor.addLookupName("IS Reflective Armor");
         armor.addLookupName("IS Reflective");
         armor.tonnage = 0;
-        armor.criticals = CRITICALS_VARIABLE;
+        armor.criticals = 10;
+        armor.tankslots = 1;
+        armor.svslots = 1;
+        armor.aeroslots = 1;
+        armor.patchworkSlotsMechSV = 2;
+        armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_REFLECTIVE).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT)
                 .or(F_SUPPORT_TANK_EQUIPMENT);
         armor.rulesRefs = "93, TO: AU&E";
@@ -539,7 +610,12 @@ public class ArmorType extends MiscType {
         armor.addLookupName("Clan Reflective Armor");
         armor.addLookupName("Clan Reflective");
         armor.tonnage = 0;
-        armor.criticals = CRITICALS_VARIABLE;
+        armor.criticals = 5;
+        armor.tankslots = 1;
+        armor.svslots = 1;
+        armor.aeroslots = 1;
+        armor.patchworkSlotsMechSV = 1;
+        armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_REFLECTIVE).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT)
                 .or(F_SUPPORT_TANK_EQUIPMENT);
         armor.rulesRefs = "93, TO: AU&E";
@@ -563,6 +639,7 @@ public class ArmorType extends MiscType {
         armor.addLookupName("Clan Hardened");
         armor.tonnage = TONNAGE_VARIABLE;
         armor.criticals = 0;
+        armor.tankslots = 1;
         armor.flags = armor.flags.or(F_HARDENED_ARMOR).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
         armor.rulesRefs = "93, TO: AU&E";
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
@@ -587,7 +664,8 @@ public class ArmorType extends MiscType {
         armor.addLookupName("IS Stealth Armor");
         armor.tonnage = TONNAGE_VARIABLE;
         armor.criticals = 12;
-        armor.tankslots = 0;
+        armor.patchworkSlotsMechSV = 2;
+        armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_STEALTH).or(F_MECH_EQUIPMENT);
         String[] saModes = { "Off", "On" };
         armor.setModes(saModes);
@@ -619,6 +697,8 @@ public class ArmorType extends MiscType {
         // When this was 2, it was ending up as 2*2=4 slots used on the tank.
         // Bad juju.
         armor.tankslots = 1;
+        armor.svslots = 1;
+        armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_STEALTH).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_VTOL_EQUIPMENT)
                 .or(F_SUPPORT_TANK_EQUIPMENT);
         String[] saModes = { "Off", "On" };
@@ -643,7 +723,12 @@ public class ArmorType extends MiscType {
         armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_LAMELLOR);
         armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_LAMELLOR, true));
         armor.tonnage = TONNAGE_VARIABLE;
-        armor.criticals = CRITICALS_VARIABLE;
+        armor.criticals = 14;
+        armor.tankslots = 1;
+        armor.svslots = 1;
+        armor.aeroslots = 2;
+        armor.patchworkSlotsMechSV = 2;
+        armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_FERRO_LAMELLOR).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
         armor.rulesRefs = "92, TO: AU&E";
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
@@ -665,12 +750,9 @@ public class ArmorType extends MiscType {
         armor.setInternalName("IS " + armor.name);
         armor.addLookupName("Clan Heat-Dissipating");
         armor.tonnage = TONNAGE_VARIABLE;
-        armor.criticals = CRITICALS_VARIABLE;
-        armor.hittable = false;
-        armor.spreadable = true;
+        armor.criticals = 6;
+        armor.patchworkSlotsMechSV = 1;
         armor.flags = armor.flags.or(F_HEAT_DISSIPATING).or(F_MECH_EQUIPMENT);
-        armor.omniFixedOnly = true;
-        armor.bv = 0;
         armor.rulesRefs = "87, IO";
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         armor.techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_E)
@@ -693,7 +775,8 @@ public class ArmorType extends MiscType {
         armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_IMPACT_RESISTANT);
         armor.setInternalName("IS " + armor.name);
         armor.tonnage = TONNAGE_VARIABLE;
-        armor.criticals = CRITICALS_VARIABLE;
+        armor.criticals = 10;
+        armor.patchworkSlotsMechSV = 2;
         armor.flags = armor.flags.or(F_IMPACT_RESISTANT).or(F_MECH_EQUIPMENT);
         armor.rulesRefs = "87, IO";
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
@@ -715,7 +798,11 @@ public class ArmorType extends MiscType {
         armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION);
         armor.setInternalName("IS " + armor.name);
         armor.tonnage = TONNAGE_VARIABLE;
-        armor.criticals = CRITICALS_VARIABLE;
+        armor.criticals = 6;
+        armor.tankslots = 1;
+        armor.svslots = 1;
+        armor.patchworkSlotsMechSV = 1;
+        armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_ANTI_PENETRATIVE_ABLATIVE).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT)
                 .or(F_VTOL_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
         armor.rulesRefs = "86, IO";
@@ -733,26 +820,31 @@ public class ArmorType extends MiscType {
     }
 
     private static ArmorType createBallisticReinforced() {
-        ArmorType misc = new ArmorType();
+        ArmorType armor = new ArmorType();
 
-        misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_BALLISTIC_REINFORCED);
-        misc.setInternalName("IS " + misc.name);
-        misc.tonnage = TONNAGE_VARIABLE;
-        misc.criticals = CRITICALS_VARIABLE;
-        misc.flags = misc.flags.or(F_BALLISTIC_REINFORCED).or(F_MECH_EQUIPMENT).or(F_FIGHTER_EQUIPMENT)
+        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_BALLISTIC_REINFORCED);
+        armor.setInternalName("IS " + armor.name);
+        armor.tonnage = TONNAGE_VARIABLE;
+        armor.criticals = 10;
+        armor.tankslots = 1;
+        armor.svslots = 1;
+        armor.aeroslots = 2;
+        armor.patchworkSlotsMechSV = 2;
+        armor.patchworkSlotsCVFtr = 1;
+        armor.flags = armor.flags.or(F_BALLISTIC_REINFORCED).or(F_MECH_EQUIPMENT).or(F_FIGHTER_EQUIPMENT)
                 .or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
-        misc.rulesRefs = "87, IO";
+        armor.rulesRefs = "87, IO";
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
+        armor.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_X, RATING_E)
                 .setISAdvancement(3120, 3131, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_DC)
                 .setProductionFactions(F_DC)
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
-        misc.armorType = T_ARMOR_BALLISTIC_REINFORCED;
+        armor.armorType = T_ARMOR_BALLISTIC_REINFORCED;
 
-        return misc;
+        return armor;
     }
 
     // Separate IS/Clan standard aerospace armor, which provides different points per ton.
@@ -942,6 +1034,7 @@ public class ArmorType extends MiscType {
         armor.addLookupName(EquipmentType.getArmorTypeName(T_ARMOR_EDP, true));
         armor.addLookupName(EquipmentType.getArmorTypeName(T_ARMOR_EDP));
         armor.shortName = "EDP";
+        armor.criticals = 1;
         armor.flags = armor.flags.or(F_PROTOMECH_EQUIPMENT).or(F_ELECTRIC_DISCHARGE_ARMOR);
         armor.bv = 32;
         String[] modes = { "not charging", "charging" };

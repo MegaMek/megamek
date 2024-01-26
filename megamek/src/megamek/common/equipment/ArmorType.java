@@ -25,6 +25,8 @@ import java.util.*;
 
 public class ArmorType extends MiscType {
 
+    private static final double BASE_POINTS_PER_TON = 16.0;
+
     private static final Map<Integer, ArmorType> armorTypeLookupIS = new HashMap<>();
     private static final Map<Integer, ArmorType> armorTypeLookupClan = new HashMap<>();
 
@@ -112,10 +114,25 @@ public class ArmorType extends MiscType {
         }
     }
 
+    private static final int[] spheroidDSThresholds = {
+            12500, 20000, 35000, 50000, 65000
+    };
+    private static final int[] aerodyneDSThresholds = {
+            6000, 9500, 12500, 17500, 25000
+    };
+    private static final int[] capitalShipThresholds = {
+            150000, 250000
+    };
+
     private int armorType = T_ARMOR_UNKNOWN;
     private int figherSlots = 0;
     private int patchworkSlotsMechSV = 0;
     private int patchworkSlotsCVFtr = 0;
+    private double pptMultiplier = 1.0;
+    private int kgPerPoint = 0;
+    private double[] pptDropship = { };
+    private double[] pptCapital = { };
+    private int bar = 10;
 
     private ArmorType() {
         hittable = false;
@@ -147,6 +164,35 @@ public class ArmorType extends MiscType {
         return patchworkSlotsCVFtr;
     }
 
+    public double getPointsPerTon(Entity entity) {
+        int[] threshold = null;
+        double[] ppt = null;
+        if (entity instanceof Jumpship) {
+            threshold = capitalShipThresholds;
+            ppt = pptCapital;
+        } else if (entity instanceof SmallCraft) {
+            threshold = entity.isSpheroid() ? spheroidDSThresholds : aerodyneDSThresholds;
+            ppt = pptDropship;
+        }
+        if ((threshold != null) && (ppt.length == threshold.length)) {
+            for (int i = 0; i < threshold.length; i++) {
+                if (entity.getWeight() < threshold[i]) {
+                    return ppt[i];
+                }
+            }
+            return ppt[ppt.length - 1];
+        }
+        return BASE_POINTS_PER_TON * pptMultiplier;
+    }
+
+    public double getKgPerPoint() {
+        return kgPerPoint;
+    }
+
+    public int getBAR() {
+        return bar;
+    }
+
     private static ArmorType createStandardArmor() {
         ArmorType armor = new ArmorType();
 
@@ -167,6 +213,7 @@ public class ArmorType extends MiscType {
                 .setStaticTechLevel(SimpleTechLevel.INTRO);
 
         armor.armorType = T_ARMOR_STANDARD;
+        armor.kgPerPoint = 50; // when used as protomech armor
 
         return armor;
     }
@@ -192,6 +239,7 @@ public class ArmorType extends MiscType {
                 .setProductionFactions(F_TH).setReintroductionFactions(F_DC);
 
         armor.armorType = T_ARMOR_FERRO_FIBROUS;
+        armor.pptMultiplier = 1.12;
 
         return armor;
     }
@@ -218,6 +266,7 @@ public class ArmorType extends MiscType {
                 .setProductionFactions(F_CSR);
 
         armor.armorType = T_ARMOR_FERRO_FIBROUS;
+        armor.pptMultiplier = 1.2;
 
         return armor;
     }
@@ -244,6 +293,7 @@ public class ArmorType extends MiscType {
                 .setProductionFactions(F_FW);
 
         armor.armorType = T_ARMOR_LIGHT_FERRO;
+        armor.pptMultiplier = 1.06;
 
         return armor;
     }
@@ -269,6 +319,7 @@ public class ArmorType extends MiscType {
                 .setProductionFactions(F_LC);
 
         armor.armorType = T_ARMOR_HEAVY_FERRO;
+        armor.pptMultiplier = 1.24;
 
         return armor;
     }
@@ -295,6 +346,7 @@ public class ArmorType extends MiscType {
                 .setReintroductionFactions(F_LC, F_DC);
 
         armor.armorType = T_ARMOR_FERRO_FIBROUS_PROTO;
+        armor.pptMultiplier = 1.12;
 
         return armor;
     }
@@ -316,6 +368,8 @@ public class ArmorType extends MiscType {
                 .setProductionFactions(F_TH).setReintroductionFactions(F_DC);
 
         armor.armorType = T_ARMOR_ALUM;
+        armor.pptMultiplier = 1.12;
+        armor.pptDropship = new double[] { 17.92, 15.68, 13.44, 11.2, 8.96, 6.72 };
 
         return armor;
     }
@@ -338,6 +392,8 @@ public class ArmorType extends MiscType {
                 .setProductionFactions(F_CSR);
 
         armor.armorType = T_ARMOR_ALUM;
+        armor.pptMultiplier = 1.2;
+        armor.pptDropship = new double[] { 24.0, 20.4, 16.8, 14.4, 12.0, 8.4 };
 
         return armor;
     }
@@ -360,6 +416,8 @@ public class ArmorType extends MiscType {
                 .setProductionFactions(F_FW);
 
         armor.armorType = T_ARMOR_LIGHT_ALUM;
+        armor.pptMultiplier = 1.06;
+        armor.pptDropship = new double[] { 16.96, 14.84, 12.72, 10.6, 8.48, 6.36 };
 
         return armor;
     }
@@ -382,6 +440,8 @@ public class ArmorType extends MiscType {
                 .setProductionFactions(F_LC);
 
         armor.armorType = T_ARMOR_HEAVY_ALUM;
+        armor.pptMultiplier = 1.24;
+        armor.pptDropship = new double[] { 19.84, 17.36, 14.88, 12.4, 9.92, 7.44 };
 
         return armor;
     }
@@ -405,6 +465,8 @@ public class ArmorType extends MiscType {
                 .setReintroductionFactions(F_LC, F_DC);
 
         armor.armorType = EquipmentType.T_ARMOR_FERRO_ALUM_PROTO;
+        armor.pptMultiplier = 1.12;
+        armor.pptDropship = new double[] { 17.92, 15.68, 13.44, 11.2, 8.96, 6.72 };
 
         return armor;
     }
@@ -428,6 +490,8 @@ public class ArmorType extends MiscType {
                 .setProductionFactions(F_TA);
 
         armor.armorType = T_ARMOR_COMMERCIAL;
+        armor.pptMultiplier = 1.5;
+        armor.bar = 5;
 
         return armor;
     }
@@ -452,6 +516,7 @@ public class ArmorType extends MiscType {
                 .setProductionFactions(F_TH);
 
         armor.armorType = T_ARMOR_INDUSTRIAL;
+        armor.pptMultiplier = 0.67;
 
         return armor;
     }
@@ -495,6 +560,7 @@ public class ArmorType extends MiscType {
                 .setProductionFactions(F_TH);
 
         armor.armorType = T_ARMOR_PRIMITIVE;
+        armor.pptMultiplier = 0.67;
 
         return armor;
     }
@@ -516,6 +582,7 @@ public class ArmorType extends MiscType {
                 .setProductionFactions(F_TH).setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_PRIMITIVE_FIGHTER;
+        armor.pptMultiplier = 0.67;
 
         return armor;
     }
@@ -658,6 +725,7 @@ public class ArmorType extends MiscType {
                 .setProductionFactions(F_LC).setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_HARDENED;
+        armor.pptMultiplier = 0.5;
 
         return armor;
     }
@@ -742,6 +810,7 @@ public class ArmorType extends MiscType {
                 .setProductionFactions(F_CSR).setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_FERRO_LAMELLOR;
+        armor.pptMultiplier = 0.875;
 
         return armor;
     }
@@ -768,6 +837,7 @@ public class ArmorType extends MiscType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_HEAT_DISSIPATING;
+        armor.pptMultiplier = 0.625;
 
         return armor;
     }
@@ -791,6 +861,7 @@ public class ArmorType extends MiscType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_IMPACT_RESISTANT;
+        armor.pptMultiplier = 0.875;
 
         return armor;
     }
@@ -818,6 +889,7 @@ public class ArmorType extends MiscType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_ANTI_PENETRATIVE_ABLATION;
+        armor.pptMultiplier = 0.75;
 
         return armor;
     }
@@ -846,6 +918,7 @@ public class ArmorType extends MiscType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_BALLISTIC_REINFORCED;
+        armor.pptMultiplier = 0.75;
 
         return armor;
     }
@@ -866,6 +939,8 @@ public class ArmorType extends MiscType {
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
         armor.armorType = T_ARMOR_AEROSPACE;
+        armor.pptDropship = new double[] { 16.0, 14.0, 12.0, 10.0, 8.0, 6.0 };
+        armor.pptCapital = new double[] { 0.8, 0.6, 0.4 };
 
         return armor;
     }
@@ -884,6 +959,8 @@ public class ArmorType extends MiscType {
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
         armor.armorType = T_ARMOR_AEROSPACE;
+        armor.pptDropship = new double[] { 20.0, 17.0, 14.0, 12.0, 10.0, 7.0 };
+        armor.pptCapital = new double[] { 1.0, 0.7, 0.5 };
 
         return armor;
     }
@@ -906,6 +983,7 @@ public class ArmorType extends MiscType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_LC_FERRO_IMP;
+        armor.pptCapital = new double[] { 1.0, 0.8, 0.6 };
 
         return armor;
     }
@@ -924,6 +1002,7 @@ public class ArmorType extends MiscType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_LC_FERRO_IMP;
+        armor.pptCapital = new double[] { 1.2, 0.9, 0.7};
 
         return armor;
     }
@@ -945,6 +1024,7 @@ public class ArmorType extends MiscType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_LC_FERRO_CARBIDE;
+        armor.pptCapital = new double[] { 1.2, 1.0, 0.8 };
 
         return armor;
     }
@@ -964,6 +1044,7 @@ public class ArmorType extends MiscType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_LC_FERRO_CARBIDE;
+        armor.pptCapital = new double[] { 1.4, 1.1, 0.9 };
 
         return armor;
     }
@@ -985,6 +1066,7 @@ public class ArmorType extends MiscType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE;
+        armor.pptCapital = new double[] { 1.4, 1.2, 1.0 };
 
         return armor;
     }
@@ -1004,6 +1086,7 @@ public class ArmorType extends MiscType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE;
+        armor.pptCapital = new double[] { 1.6, 1.3, 1.1 };
 
         return armor;
     }
@@ -1025,6 +1108,8 @@ public class ArmorType extends MiscType {
                 .setProductionFactions(F_TH).setStaticTechLevel(SimpleTechLevel.STANDARD);
 
         armor.armorType = T_ARMOR_PRIMITIVE_AERO;
+        armor.pptDropship = new double[] { 10.56, 9.24, 7.92, 6.6, 5.28, 3.96 };
+        armor.pptCapital = new double[] { 0.528, 0.396, 0.264 };
 
         return armor;
     }
@@ -1050,6 +1135,7 @@ public class ArmorType extends MiscType {
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
         armor.armorType = T_ARMOR_EDP;
+        armor.kgPerPoint = 75;
 
         return armor;
     }
@@ -1072,6 +1158,7 @@ public class ArmorType extends MiscType {
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
         armor.armorType = T_ARMOR_BA_STANDARD;
+        armor.kgPerPoint = 50;
 
         return armor;
     }
@@ -1093,29 +1180,31 @@ public class ArmorType extends MiscType {
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
         armor.armorType = T_ARMOR_BA_STANDARD;
+        armor.kgPerPoint = 25;
 
         return armor;
     }
 
     private static ArmorType createISBAStandardPrototypeArmor() {
-        ArmorType misc = new ArmorType();
+        ArmorType armor = new ArmorType();
 
-        misc.name = BattleArmor.STANDARD_PROTOTYPE;
-        misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_BA_STANDARD_PROTOTYPE));
-        misc.addLookupName("IS BA Standard (Prototype)");
-        misc.shortName = "Standard (Prototype)";
-        misc.criticals = 4;
-        misc.flags = misc.flags.or(F_BA_EQUIPMENT);
-        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        armor.name = BattleArmor.STANDARD_PROTOTYPE;
+        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_BA_STANDARD_PROTOTYPE));
+        armor.addLookupName("IS BA Standard (Prototype)");
+        armor.shortName = "Standard (Prototype)";
+        armor.criticals = 4;
+        armor.flags = armor.flags.or(F_BA_EQUIPMENT);
+        armor.techAdvancement.setTechBase(TECH_BASE_IS)
                 .setISAdvancement(3050, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_TH, F_FS, F_LC, F_DC)
                 .setProductionFactions(F_TH, F_FS, F_LC, F_DC).setTechRating(RATING_E)
                 .setAvailability(RATING_F, RATING_F, RATING_E, RATING_D)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
-        misc.armorType = T_ARMOR_BA_STANDARD_PROTOTYPE;
+        armor.armorType = T_ARMOR_BA_STANDARD_PROTOTYPE;
+        armor.kgPerPoint = 100;
 
-        return misc;
+        return armor;
     }
 
     private static ArmorType createISBAAdvancedArmor() {
@@ -1133,6 +1222,7 @@ public class ArmorType extends MiscType {
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E);
 
         armor.armorType = T_ARMOR_BA_STANDARD_ADVANCED;
+        armor.kgPerPoint = 40;
 
         return armor;
     }
@@ -1153,6 +1243,7 @@ public class ArmorType extends MiscType {
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E);
 
         armor.armorType = T_ARMOR_BA_FIRE_RESIST;
+        armor.kgPerPoint = 30;
 
         return armor;
     }
@@ -1174,6 +1265,7 @@ public class ArmorType extends MiscType {
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_X);
 
         armor.armorType = T_ARMOR_BA_STEALTH_PROTOTYPE;
+        armor.kgPerPoint = 100;
 
         return armor;
     }
@@ -1194,6 +1286,7 @@ public class ArmorType extends MiscType {
                 .setAvailability(RATING_F, RATING_F, RATING_E, RATING_D);
 
         armor.armorType = T_ARMOR_BA_STEALTH_BASIC;
+        armor.kgPerPoint = 55;
 
         return armor;
     }
@@ -1213,6 +1306,7 @@ public class ArmorType extends MiscType {
                 .setAvailability(RATING_F, RATING_F, RATING_E, RATING_D);
 
         armor.armorType = T_ARMOR_BA_STEALTH_BASIC;
+        armor.kgPerPoint = 30;
 
         return armor;
     }
@@ -1234,6 +1328,7 @@ public class ArmorType extends MiscType {
                 .setAvailability(RATING_F, RATING_X, RATING_E, RATING_D);
 
         armor.armorType = T_ARMOR_BA_STEALTH;
+        armor.kgPerPoint = 60;
 
         return armor;
     }
@@ -1255,6 +1350,7 @@ public class ArmorType extends MiscType {
                 .setAvailability(RATING_F, RATING_X, RATING_E, RATING_D);
 
         armor.armorType = T_ARMOR_BA_STEALTH;
+        armor.kgPerPoint = 35;
 
         return armor;
     }
@@ -1276,6 +1372,7 @@ public class ArmorType extends MiscType {
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E);
 
         armor.armorType = T_ARMOR_BA_STEALTH_IMP;
+        armor.kgPerPoint = 60;
 
         return armor;
     }
@@ -1297,6 +1394,7 @@ public class ArmorType extends MiscType {
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E);
 
         armor.armorType = T_ARMOR_BA_STEALTH_IMP;
+        armor.kgPerPoint = 35;
 
         return armor;
     }
@@ -1317,6 +1415,7 @@ public class ArmorType extends MiscType {
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E);
 
         armor.armorType = T_ARMOR_BA_MIMETIC;
+        armor.kgPerPoint = 50;
 
         return armor;
     }
@@ -1340,6 +1439,7 @@ public class ArmorType extends MiscType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_BA_REACTIVE;
+        armor.kgPerPoint = 60;
 
         return armor;
     }
@@ -1363,6 +1463,7 @@ public class ArmorType extends MiscType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_BA_REACTIVE;
+        armor.kgPerPoint = 35;
 
         return armor;
     }
@@ -1387,6 +1488,7 @@ public class ArmorType extends MiscType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_BA_REFLECTIVE;
+        armor.kgPerPoint = 55;
 
         return armor;
     }
@@ -1412,6 +1514,7 @@ public class ArmorType extends MiscType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_BA_REFLECTIVE;
+        armor.kgPerPoint = 30;
 
         return armor;
     }

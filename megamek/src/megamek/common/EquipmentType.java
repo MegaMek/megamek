@@ -12,6 +12,7 @@
 package megamek.common;
 
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.ArmorType;
 import megamek.common.options.GameOptions;
 import megamek.common.weapons.autocannons.HVACWeapon;
 import megamek.common.weapons.defensivepods.BPodWeapon;
@@ -721,6 +722,7 @@ public class EquipmentType implements ITechnology {
             MiscType.initializeTypes();
             BombType.initializeTypes();
             SmallWeaponAmmoType.initializeTypes();
+            ArmorType.initializeTypes();
             for (EquipmentType et : allTypes) {
                 if (et.getTechAdvancement().getStaticTechLevel() == null) {
                     et.getTechAdvancement().setStaticTechLevel(et.getTechAdvancement()

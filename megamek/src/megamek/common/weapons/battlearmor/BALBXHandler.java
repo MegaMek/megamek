@@ -105,10 +105,4 @@ public class BALBXHandler extends WeaponHandler {
         bSalvo = true;
         return missilesHit;
     }
-
-    @Override
-    public boolean allShotsHit() {
-        boolean swarming = (ae.getSwarmTargetId() == target.getId());
-        return (super.allShotsHit() || swarming);
-    }
 }

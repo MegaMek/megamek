@@ -16,6 +16,7 @@ package megamek.common.verifier;
 
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.ArmorType;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
@@ -670,37 +671,15 @@ public class TestTank extends TestEntity {
             buff.append(tank.getExtraCrewSeats()).append("\n");
         }
         // different armor types take different amount of slots
-        int armorSlots = 0;
         if (!tank.hasPatchworkArmor()) {
-            int type = tank.getArmorType(1);
-            switch (type) {
-                case EquipmentType.T_ARMOR_FERRO_FIBROUS:
-                case EquipmentType.T_ARMOR_REACTIVE:
-                    if (TechConstants.isClan(tank.getArmorTechLevel(1))) {
-                        armorSlots++;
-                    } else {
-                        armorSlots += 2;
-                    }
-                    break;
-                case EquipmentType.T_ARMOR_HEAVY_FERRO:
-                    armorSlots += 3;
-                    break;
-                case EquipmentType.T_ARMOR_LIGHT_FERRO:
-                case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
-                case EquipmentType.T_ARMOR_REFLECTIVE:
-                case EquipmentType.T_ARMOR_HARDENED:
-                    armorSlots++;
-                    break;
-                case EquipmentType.T_ARMOR_STEALTH:
-                    armorSlots += 2;
-                    break;
-                default:
-                    break;
-            }
-            if (armorSlots != 0) {
-                buff.append(StringUtil.makeLength(EquipmentType.getArmorTypeName(type,
-                        TechConstants.isClan(tank.getArmorTechLevel(1))), 30));
-                buff.append(armorSlots).append("\n");
+            ArmorType armor = ArmorType.of(tank.getArmorType(tank.firstArmorIndex()),
+                    TechConstants.isClan(tank.getArmorTechLevel(tank.firstArmorIndex())));
+            if (armor != null) {
+                int armorSlots = armor.getTankSlots(tank);
+                if (armorSlots != 0) {
+                    buff.append(StringUtil.makeLength(armor.getName(), 30));
+                    buff.append(armorSlots).append("\n");
+                }
             }
         }
 

@@ -21,16 +21,21 @@ package megamek.common.equipment;
 
 import megamek.common.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class ArmorType extends MiscType {
 
     private static final Map<Integer, ArmorType> armorTypeLookupIS = new HashMap<>();
     private static final Map<Integer, ArmorType> armorTypeLookupClan = new HashMap<>();
 
+    private static final List<ArmorType> allTypes = new ArrayList<>();
+
     public static ArmorType of(int type, boolean clan) {
         return clan ? armorTypeLookupClan.get(type) : armorTypeLookupIS.get(type);
+    }
+
+    public static List<ArmorType> allArmorTypes() {
+        return Collections.unmodifiableList(allTypes);
     }
 
     public static void initializeTypes() {
@@ -96,6 +101,7 @@ public class ArmorType extends MiscType {
 
     private static void addArmorType(ArmorType at) {
         EquipmentType.addType(at);
+        allTypes.add(at);
         if ((at.techAdvancement.getTechBase() == TechAdvancement.TECH_BASE_IS)
                 || (at.techAdvancement.getTechBase() == TechAdvancement.TECH_BASE_ALL)) {
             armorTypeLookupIS.put(at.armorType, at);
@@ -107,7 +113,7 @@ public class ArmorType extends MiscType {
     }
 
     private int armorType = T_ARMOR_UNKNOWN;
-    private int aeroslots = 0;
+    private int figherSlots = 0;
     private int patchworkSlotsMechSV = 0;
     private int patchworkSlotsCVFtr = 0;
 
@@ -121,8 +127,8 @@ public class ArmorType extends MiscType {
     /**
      * @return The number of weapon slots taken by the armor on an aerospace fighter.
      */
-    public int getAeroSlots() {
-        return aeroslots;
+    public int getFighterSlots() {
+        return figherSlots;
     }
 
     /**
@@ -299,7 +305,7 @@ public class ArmorType extends MiscType {
         armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_ALUM);
         armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_ALUM, false));
         armor.addLookupName("IS Ferro-Aluminum Armor");
-        armor.aeroslots = 2;
+        armor.figherSlots = 2;
         armor.patchworkSlotsCVFtr = 1;
         armor.tonnage = TONNAGE_VARIABLE;
         armor.flags = armor.flags.or(F_FERRO_FIBROUS).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT);
@@ -320,7 +326,7 @@ public class ArmorType extends MiscType {
         armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_ALUM);
         armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_ALUM, true));
         armor.addLookupName("Clan Ferro-Aluminum Armor");
-        armor.aeroslots = 2;
+        armor.figherSlots = 2;
         armor.patchworkSlotsCVFtr = 1;
         armor.tonnage = TONNAGE_VARIABLE;
         armor.flags = armor.flags.or(F_FERRO_FIBROUS).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT);
@@ -342,7 +348,7 @@ public class ArmorType extends MiscType {
         armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LIGHT_ALUM);
         armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LIGHT_ALUM, false));
         armor.addLookupName("IS Light Ferro-Aluminum Armor");
-        armor.aeroslots = 1;
+        armor.figherSlots = 1;
         armor.patchworkSlotsCVFtr = 1;
         armor.tonnage = TONNAGE_VARIABLE;
         armor.flags = armor.flags.or(F_LIGHT_FERRO).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT);
@@ -364,7 +370,7 @@ public class ArmorType extends MiscType {
         armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HEAVY_ALUM);
         armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HEAVY_ALUM, false));
         armor.addLookupName("IS Heavy Ferro-Aluminum Armor");
-        armor.aeroslots = 4;
+        armor.figherSlots = 4;
         armor.patchworkSlotsCVFtr = 2;
         armor.tonnage = TONNAGE_VARIABLE;
         armor.flags = armor.flags.or(F_HEAVY_FERRO).or(F_FIGHTER_EQUIPMENT).or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT);
@@ -386,7 +392,7 @@ public class ArmorType extends MiscType {
         armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_ALUM_PROTO);
         armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_ALUM_PROTO, false));
         armor.addLookupName("IS Ferro-Alum Armor Prototype");
-        armor.aeroslots = 3;
+        armor.figherSlots = 3;
         armor.patchworkSlotsCVFtr = 1;
         armor.tonnage = TONNAGE_VARIABLE;
         armor.flags = armor.flags.or(F_FERRO_FIBROUS_PROTO).or(F_FIGHTER_EQUIPMENT)
@@ -525,7 +531,7 @@ public class ArmorType extends MiscType {
         armor.criticals = 14;
         armor.tankslots = 2;
         armor.svslots = 2;
-        armor.aeroslots = 3;
+        armor.figherSlots = 3;
         armor.patchworkSlotsMechSV = 2;
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_REACTIVE).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT)
@@ -555,7 +561,7 @@ public class ArmorType extends MiscType {
         armor.criticals = 7;
         armor.tankslots = 1;
         armor.svslots = 1;
-        armor.aeroslots = 1;
+        armor.figherSlots = 1;
         armor.patchworkSlotsMechSV = 1;
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_REACTIVE).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT)
@@ -584,7 +590,7 @@ public class ArmorType extends MiscType {
         armor.criticals = 10;
         armor.tankslots = 1;
         armor.svslots = 1;
-        armor.aeroslots = 1;
+        armor.figherSlots = 1;
         armor.patchworkSlotsMechSV = 2;
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_REFLECTIVE).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT)
@@ -613,7 +619,7 @@ public class ArmorType extends MiscType {
         armor.criticals = 5;
         armor.tankslots = 1;
         armor.svslots = 1;
-        armor.aeroslots = 1;
+        armor.figherSlots = 1;
         armor.patchworkSlotsMechSV = 1;
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_REFLECTIVE).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT)
@@ -692,12 +698,9 @@ public class ArmorType extends MiscType {
         armor.addLookupName("IS Vehicular Stealth Armor");
         armor.shortName = "Stealth";
         armor.tonnage = TONNAGE_VARIABLE;
-        // Has to be 1, because we allocate 2 of them, so 2*1=2, which is
-        // correct
-        // When this was 2, it was ending up as 2*2=4 slots used on the tank.
-        // Bad juju.
-        armor.tankslots = 1;
-        armor.svslots = 1;
+        armor.tankslots = 2;
+        armor.svslots = 2;
+        armor.figherSlots = 2;
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_STEALTH).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_VTOL_EQUIPMENT)
                 .or(F_SUPPORT_TANK_EQUIPMENT);
@@ -726,7 +729,7 @@ public class ArmorType extends MiscType {
         armor.criticals = 14;
         armor.tankslots = 1;
         armor.svslots = 1;
-        armor.aeroslots = 2;
+        armor.figherSlots = 2;
         armor.patchworkSlotsMechSV = 2;
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_FERRO_LAMELLOR).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
@@ -828,7 +831,7 @@ public class ArmorType extends MiscType {
         armor.criticals = 10;
         armor.tankslots = 1;
         armor.svslots = 1;
-        armor.aeroslots = 2;
+        armor.figherSlots = 2;
         armor.patchworkSlotsMechSV = 2;
         armor.patchworkSlotsCVFtr = 1;
         armor.flags = armor.flags.or(F_BALLISTIC_REINFORCED).or(F_MECH_EQUIPMENT).or(F_FIGHTER_EQUIPMENT)

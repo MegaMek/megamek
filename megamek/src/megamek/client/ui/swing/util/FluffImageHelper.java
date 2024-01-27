@@ -14,6 +14,7 @@
  */
 package megamek.client.ui.swing.util;
 
+import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.alphaStrike.ASUnitType;
@@ -85,7 +86,7 @@ public class FluffImageHelper {
         String userDir = PreferenceManager.getClientPreferences().getUserDir();
         if (!userDir.isBlank()) {
             var userDirPath = new File(userDir + "/" + Configuration.fluffImagesDir(), getImagePath(entity));
-            Image image = loadFluffImageHeuristic(userDirPath, entity.getModel(), entity.getChassis());
+            Image image = loadFluffImageHeuristic(userDirPath, entity.getModel(), entity.getFullChassis());
             if (image != null) {
                 return image;
             }

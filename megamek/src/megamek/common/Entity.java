@@ -144,6 +144,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     protected String model;
 
     /**
+     * The additional name can be, e.g., the Clan name for Clan Meks (Timber Wolf).
+     */
+    protected String additionalName = "";
+
+    /**
      * If this is a unit from an official source, the MUL ID links it to its corresponding
      * entry in the online Master Unit List.
      */
@@ -1020,10 +1025,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Returns the chassis name for this entity.
+     * @return The pure chassis name without any additions, e.g. "Mad Cat"
      */
     public String getChassis() {
         return chassis;
+    }
+
+    /**
+     * @return The full chassis name plus the additional name, if any, e.g. Mad Cat (Timber Wolf)
+     */
+    public String getFullChassis() {
+        return chassis + (StringUtility.isNullOrBlank(additionalName) ? "" : " (" + additionalName + ")");
     }
 
     /**
@@ -1033,6 +1045,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public void setChassis(String chassis) {
         this.chassis = chassis;
+    }
+
+    /** Sets the {@link #additionalName} for this unit (e.g. IS name for Clan Meks or infantry designation). */
+    public void setAdditionalName(String name) {
+        additionalName = name;
+    }
+
+    /** @return The {@link #additionalName} for this unit (e.g. IS name for Clan Meks or infantry designation). */
+    public String getAdditionalName() {
+        return additionalName;
     }
 
     /**
@@ -2563,7 +2585,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public String getShortNameRaw() {
-        return StringUtility.isNullOrBlank(model) ? chassis : chassis + ' ' + model;
+        String unitName = chassis;
+        unitName += StringUtility.isNullOrBlank(additionalName) ? "" : " (" + additionalName + ")";
+        unitName += StringUtility.isNullOrBlank(model) ? "" : " " + model;
+        return unitName;
     }
 
     /**

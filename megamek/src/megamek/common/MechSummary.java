@@ -14,6 +14,7 @@
  */
 package megamek.common;
 
+import megamek.codeUtilities.StringUtility;
 import megamek.common.alphaStrike.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.*;
@@ -31,6 +32,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     private String name;
     private String chassis;
+    private String additionalName;
     private String model;
     private int mulId;
     private String unitType;
@@ -182,6 +184,14 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     @Override
     public String getChassis() {
         return chassis;
+    }
+
+    public void setAdditionalName(String name) {
+        additionalName = name;
+    }
+
+    public String getAdditionalName() {
+        return additionalName;
     }
 
     @Override

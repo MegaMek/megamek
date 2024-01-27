@@ -693,7 +693,7 @@ public class EntityListFile {
 
             // Start writing this entity to the file.
             output.write(indentStr(indentLvl) + "<" + MULParser.ELE_ENTITY + " " + MULParser.ATTR_CHASSIS + "=\"");
-            output.write(entity.getChassis().replaceAll("\"", "&quot;"));
+            output.write(entity.getFullChassis().replaceAll("\"", "&quot;"));
             output.write("\" " + MULParser.ATTR_MODEL + "=\"");
             output.write(entity.getModel().replaceAll("\"", "&quot;"));
             output.write("\" " + MULParser.ATTR_TYPE + "=\"");

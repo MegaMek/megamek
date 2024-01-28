@@ -40,7 +40,7 @@ public class MtfFile implements IMechLoader {
 
     private String chassis;
     private String model;
-    private String additionalName = "";
+    private String clanChassisName = "";
     private int mulId = -1;
 
     private String chassisConfig;
@@ -96,7 +96,7 @@ public class MtfFile implements IMechLoader {
     public static final String MTF_VERSION = "version:";
     public static final String GENERATOR = "generator:";
     public static final String CHASSIS = "chassis:";
-    public static final String ADDITIONAL_NAME = "additionalname:";
+    public static final String CLAN_CHASSIS_NAME = "additionalname:";
     public static final String MODEL = "model:";
     public static final String COCKPIT = "cockpit:";
     public static final String GYRO = "gyro:";
@@ -223,7 +223,7 @@ public class MtfFile implements IMechLoader {
             }
             mech.setFullHeadEject(fullHead);
             mech.setChassis(chassis.trim());
-            mech.setAdditionalName(additionalName);
+            mech.setClanChassisName(clanChassisName);
             mech.setModel(model.trim());
             mech.setMulId(mulId);
             mech.setYear(Integer.parseInt(techYear.substring(4).trim()));
@@ -1178,8 +1178,8 @@ public class MtfFile implements IMechLoader {
             return true;
         }
 
-        if (lineLower.startsWith(ADDITIONAL_NAME)) {
-            additionalName = line.substring(ADDITIONAL_NAME.length());
+        if (lineLower.startsWith(CLAN_CHASSIS_NAME)) {
+            clanChassisName = line.substring(CLAN_CHASSIS_NAME.length());
             return true;
         }
 

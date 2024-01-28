@@ -14,7 +14,6 @@
  */
 package megamek.common;
 
-import megamek.codeUtilities.StringUtility;
 import megamek.common.alphaStrike.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.*;
@@ -186,7 +185,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         return chassis;
     }
 
-    public void setAdditionalName(String name) {
+    public void setClanChassisName(String name) {
         additionalName = name;
     }
 

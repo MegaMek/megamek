@@ -31,7 +31,6 @@ import megamek.common.icons.Camouflage;
 import megamek.common.options.*;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.weapons.*;
-import megamek.common.weapons.battlearmor.ISBAPopUpMineLauncher;
 import megamek.common.weapons.bayweapons.AR10BayWeapon;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
@@ -144,9 +143,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     protected String model;
 
     /**
-     * The additional name can be, e.g., the Clan name for Clan Meks (Timber Wolf).
+     * The special chassis name for Clan Meks such as Timber Wolf for the Mad Cat. This is appended to the
+     * base chassis name to form the full chassis name such as Mad Cat (Timber Wolf) in
+     * {@link #getShortNameRaw()} and {@link #getFullChassis()}.
      */
-    protected String additionalName = "";
+    protected String clanChassisName = "";
 
     /**
      * If this is a unit from an official source, the MUL ID links it to its corresponding
@@ -1035,7 +1036,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @return The full chassis name plus the additional name, if any, e.g. Mad Cat (Timber Wolf)
      */
     public String getFullChassis() {
-        return chassis + (StringUtility.isNullOrBlank(additionalName) ? "" : " (" + additionalName + ")");
+        return chassis + (StringUtility.isNullOrBlank(clanChassisName) ? "" : " (" + clanChassisName + ")");
     }
 
     /**
@@ -1047,14 +1048,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         this.chassis = chassis;
     }
 
-    /** Sets the {@link #additionalName} for this unit (e.g. IS name for Clan Meks or infantry designation). */
-    public void setAdditionalName(String name) {
-        additionalName = name;
+    /** Sets the {@link #clanChassisName} for this unit, e.g. "Timber Wolf". */
+    public void setClanChassisName(String name) {
+        clanChassisName = Objects.requireNonNullElse(name, "");
     }
 
-    /** @return The {@link #additionalName} for this unit (e.g. IS name for Clan Meks or infantry designation). */
-    public String getAdditionalName() {
-        return additionalName;
+    /** @return The {@link #clanChassisName} for this unit, e.g. "Timber Wolf", or "" if there is none. */
+    public String getClanChassisName() {
+        return clanChassisName;
     }
 
     /**
@@ -2586,7 +2587,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public String getShortNameRaw() {
         String unitName = chassis;
-        unitName += StringUtility.isNullOrBlank(additionalName) ? "" : " (" + additionalName + ")";
+        unitName += StringUtility.isNullOrBlank(clanChassisName) ? "" : " (" + clanChassisName + ")";
         unitName += StringUtility.isNullOrBlank(model) ? "" : " " + model;
         return unitName;
     }

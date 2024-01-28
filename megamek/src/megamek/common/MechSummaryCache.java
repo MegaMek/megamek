@@ -389,7 +389,7 @@ public class MechSummaryCache {
         MechSummary ms = new MechSummary();
         ms.setName(e.getShortNameRaw());
         ms.setChassis(e.getFullChassis());
-        ms.setAdditionalName(e.getAdditionalName());
+        ms.setClanChassisName(e.getClanChassisName());
         ms.setModel(e.getModel());
         ms.setMulId(e.getMulId());
         ms.setUnitType(UnitType.getTypeName(e.getUnitType()));

@@ -99,18 +99,24 @@ public class ArmorType extends MiscType {
         addArmorType(createClanBAReflectiveArmor());
         addArmorType(createISBAReactiveArmor());
         addArmorType(createClanBAReactiveArmor());
+
+        addArmorType(createPatchworkArmor());
     }
 
     private static void addArmorType(ArmorType at) {
-        EquipmentType.addType(at);
-        allTypes.add(at);
-        if ((at.techAdvancement.getTechBase() == TechAdvancement.TECH_BASE_IS)
-                || (at.techAdvancement.getTechBase() == TechAdvancement.TECH_BASE_ALL)) {
-            armorTypeLookupIS.put(at.armorType, at);
+        if (at.getArmorType() != T_ARMOR_PATCHWORK) {
+            EquipmentType.addType(at);
+            allTypes.add(at);
         }
-        if ((at.techAdvancement.getTechBase() == TechAdvancement.TECH_BASE_CLAN)
-                || (at.techAdvancement.getTechBase() == TechAdvancement.TECH_BASE_ALL)) {
-            armorTypeLookupClan.put(at.armorType, at);
+        if (at.getArmorType() >= 0) {
+            if ((at.techAdvancement.getTechBase() == TechAdvancement.TECH_BASE_IS)
+                    || (at.techAdvancement.getTechBase() == TechAdvancement.TECH_BASE_ALL)) {
+                armorTypeLookupIS.put(at.armorType, at);
+            }
+            if ((at.techAdvancement.getTechBase() == TechAdvancement.TECH_BASE_CLAN)
+                    || (at.techAdvancement.getTechBase() == TechAdvancement.TECH_BASE_ALL)) {
+                armorTypeLookupClan.put(at.armorType, at);
+            }
         }
     }
 
@@ -139,6 +145,13 @@ public class ArmorType extends MiscType {
         omniFixedOnly = true;
         spreadable = true;
         bv = 0;
+    }
+
+    /**
+     * @return The EquipmentType.T_ARMOR_* constant for this armor.
+     */
+    public int getArmorType() {
+        return armorType;
     }
 
     /**
@@ -198,8 +211,8 @@ public class ArmorType extends MiscType {
 
         armor.name = "Standard";
         armor.setInternalName("Standard Armor");
-        armor.addLookupName(EquipmentType.getArmorTypeName(T_ARMOR_STANDARD, false));
-        armor.addLookupName(EquipmentType.getArmorTypeName(T_ARMOR_STANDARD, true));
+        armor.addLookupName("IS Standard");
+        armor.addLookupName("Clan Standard");
         armor.addLookupName("Regular");
         armor.addLookupName("IS Standard Armor");
         armor.addLookupName("Clan Standard Armor");
@@ -220,8 +233,9 @@ public class ArmorType extends MiscType {
 
     private static ArmorType createISFerroFibrous() {
         ArmorType armor = new ArmorType();
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS);
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS, false));
+
+        armor.name = "Ferro-Fibrous";
+        armor.setInternalName("IS Ferro-Fibrous");
         armor.addLookupName("IS Ferro-Fibrous Armor");
         armor.addLookupName("IS Ferro Fibre");
         armor.tonnage = TONNAGE_VARIABLE;
@@ -246,8 +260,9 @@ public class ArmorType extends MiscType {
 
     private static ArmorType createClanFerroFibrous() {
         ArmorType armor = new ArmorType();
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS);
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS, true));
+
+        armor.name = "Ferro-Fibrous";
+        armor.setInternalName("Clan Ferro-Fibrous");
         armor.addLookupName("Clan Ferro-Fibrous Armor");
         armor.addLookupName("Clan Ferro Fibre");
         armor.tonnage = TONNAGE_VARIABLE;
@@ -274,8 +289,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createLightFerroFibrous() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LIGHT_FERRO);
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LIGHT_FERRO, false));
+        armor.name = "Light Ferro-Fibrous";
+        armor.setInternalName("IS Light Ferro-Fibrous");
         armor.addLookupName("IS Light Ferro-Fibrous Armor");
         armor.addLookupName("IS LightFerro");
         armor.tonnage = TONNAGE_VARIABLE;
@@ -301,8 +316,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createHeavyFerroFibrous() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HEAVY_FERRO);
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HEAVY_FERRO, false));
+        armor.name = "Heavy Ferro-Fibrous";
+        armor.setInternalName("IS Heavy Ferro-Fibrous");
         armor.addLookupName("IS Heavy Ferro-Fibrous Armor");
         armor.tonnage = TONNAGE_VARIABLE;
         armor.criticals = 21;
@@ -327,8 +342,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createFerroFibrousPrototype() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS_PROTO);
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS_PROTO, false));
+        armor.name = "Ferro-Fibrous Prototype";
+        armor.setInternalName("IS Ferro-Fibrous Prototype");
         armor.addLookupName("IS Ferro-Fibrous Armor Prototype");
         armor.tonnage = TONNAGE_VARIABLE;
         armor.criticals = 16;
@@ -354,8 +369,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createISFerroAluminum() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_ALUM);
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_ALUM, false));
+        armor.name = "Ferro-Aluminum";
+        armor.setInternalName("IS Ferro-Aluminum");
         armor.addLookupName("IS Ferro-Aluminum Armor");
         armor.figherSlots = 2;
         armor.patchworkSlotsCVFtr = 1;
@@ -377,8 +392,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createClanFerroAluminum() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_ALUM);
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_ALUM, true));
+        armor.name = "Ferro-Aluminum";
+        armor.setInternalName("Clan Ferro-Aluminum");
         armor.addLookupName("Clan Ferro-Aluminum Armor");
         armor.figherSlots = 2;
         armor.patchworkSlotsCVFtr = 1;
@@ -401,8 +416,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createLightFerroAluminum() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LIGHT_ALUM);
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LIGHT_ALUM, false));
+        armor.name = "Light Ferro-Aluminum";
+        armor.setInternalName("IS Light Ferro-Aluminum");
         armor.addLookupName("IS Light Ferro-Aluminum Armor");
         armor.figherSlots = 1;
         armor.patchworkSlotsCVFtr = 1;
@@ -425,8 +440,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createHeavyFerroAluminum() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HEAVY_ALUM);
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HEAVY_ALUM, false));
+        armor.name = "Heavy Ferro-Aluminum";
+        armor.setInternalName("IS Heavy Ferro-Aluminum");
         armor.addLookupName("IS Heavy Ferro-Aluminum Armor");
         armor.figherSlots = 4;
         armor.patchworkSlotsCVFtr = 2;
@@ -449,8 +464,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createFerroAluminumPrototype() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_ALUM_PROTO);
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_ALUM_PROTO, false));
+        armor.name = "Prototype Ferro-Aluminum";
+        armor.setInternalName("IS Prototype Ferro-Aluminum");
         armor.addLookupName("IS Ferro-Alum Armor Prototype");
         armor.figherSlots = 3;
         armor.patchworkSlotsCVFtr = 1;
@@ -474,10 +489,10 @@ public class ArmorType extends MiscType {
     private static ArmorType createCommercialArmor() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_COMMERCIAL);
+        armor.name = "Commercial";
         armor.setInternalName(armor.name);
-        armor.addLookupName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_COMMERCIAL, false));
-        armor.addLookupName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_COMMERCIAL, true));
+        armor.addLookupName("IS Commercial");
+        armor.addLookupName("Clan Commercial");
         armor.tonnage = TONNAGE_VARIABLE;
         armor.industrial = true;
         armor.flags = armor.flags.or(F_COMMERCIAL_ARMOR).or(F_MECH_EQUIPMENT);
@@ -499,10 +514,10 @@ public class ArmorType extends MiscType {
     private static ArmorType createIndustrialArmor() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_INDUSTRIAL);
+        armor.name = "Industrial "; // extra space at the end on purpose
         armor.setInternalName(armor.name);
-        armor.addLookupName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_INDUSTRIAL, false));
-        armor.addLookupName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_INDUSTRIAL, true));
+        armor.addLookupName("IS Industrial ");
+        armor.addLookupName("Clan Industrial ");
         armor.addLookupName("Clan Industrial Armor");
         armor.tonnage = TONNAGE_VARIABLE;
         armor.industrial = true;
@@ -524,9 +539,9 @@ public class ArmorType extends MiscType {
     private static ArmorType createHeavyIndustrialArmor() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL);
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL, false));
-        armor.addLookupName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL, true));
+        armor.name = "Heavy Industrial";
+        armor.setInternalName("IS Heavy Industrial");
+        armor.addLookupName("Clan Heavy Industrial");
         armor.tonnage = TONNAGE_VARIABLE;
         armor.industrial = true;
         armor.flags = armor.flags.or(F_HEAVY_INDUSTRIAL_ARMOR).or(F_MECH_EQUIPMENT);
@@ -545,8 +560,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createPrimitiveArmor() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_PRIMITIVE);
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_PRIMITIVE, false));
+        armor.name = "Primitive";
+        armor.setInternalName("IS Primitive");
         armor.tonnage = TONNAGE_VARIABLE;
         armor.industrial = true;
         armor.flags = armor.flags.or(F_PRIMITIVE_ARMOR).or(F_MECH_EQUIPMENT);
@@ -568,8 +583,9 @@ public class ArmorType extends MiscType {
     private static ArmorType createPrimitiveFighterArmor() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_PRIMITIVE_FIGHTER);
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_PRIMITIVE_FIGHTER, false));
+        armor.name = "Primitive Fighter";
+        armor.setInternalName("IS Primitive Fighter");
+        armor.shortName = "Primitive";
         armor.tonnage = TONNAGE_VARIABLE;
         armor.industrial = true;
         armor.flags = armor.flags.or(F_PRIMITIVE_ARMOR).or(F_FIGHTER_EQUIPMENT);
@@ -590,8 +606,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createISReactive() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_REACTIVE);
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_REACTIVE, false));
+        armor.name = "Reactive";
+        armor.setInternalName("IS Reactive");
         armor.addLookupName("IS Reactive Armor");
         armor.addLookupName("IS Reactive");
         armor.tonnage = 0;
@@ -620,8 +636,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createClanReactive() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_REACTIVE);
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_REACTIVE, true));
+        armor.name = "Reactive";
+        armor.setInternalName("Clan Reactive");
         armor.addLookupName("Clan Reactive Armor");
         armor.addLookupName("Clan Reactive");
         armor.tonnage = 0;
@@ -649,8 +665,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createISReflective() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_REFLECTIVE);
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_REFLECTIVE, false));
+        armor.name = "Reflective";
+        armor.setInternalName("IS Reflective");
         armor.addLookupName("IS Reflective Armor");
         armor.addLookupName("IS Reflective");
         armor.tonnage = 0;
@@ -678,8 +694,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createClanReflective() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_REFLECTIVE);
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_REFLECTIVE, true));
+        armor.name = "Reflective";
+        armor.setInternalName("Clan Reflective");
         armor.addLookupName("Clan Reflective Armor");
         armor.addLookupName("Clan Reflective");
         armor.tonnage = 0;
@@ -707,8 +723,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createHardenedArmor() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HARDENED);
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HARDENED, false));
+        armor.name = "Hardened";
+        armor.setInternalName("IS Hardened");
         armor.addLookupName("Clan Hardened");
         armor.tonnage = TONNAGE_VARIABLE;
         armor.criticals = 0;
@@ -733,8 +749,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createMekStealth() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_STEALTH);
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_STEALTH, false));
+        armor.name = "Stealth";
+        armor.setInternalName("IS Stealth");
         armor.addLookupName("IS Stealth Armor");
         armor.tonnage = TONNAGE_VARIABLE;
         armor.criticals = 12;
@@ -761,8 +777,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createVehicularStealth() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_STEALTH_VEHICLE);
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_STEALTH_VEHICLE, false));
+        armor.name = "Vehicular Stealth";
+        armor.setInternalName("IS Vehicular Stealth");
         armor.addLookupName("IS Vehicular Stealth Armor");
         armor.shortName = "Stealth";
         armor.tonnage = TONNAGE_VARIABLE;
@@ -791,8 +807,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createFerroLamellorArmor() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_LAMELLOR);
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_LAMELLOR, true));
+        armor.name = "Ferro-Lamellor";
+        armor.setInternalName("Clan Ferro-Lamellor");
         armor.tonnage = TONNAGE_VARIABLE;
         armor.criticals = 14;
         armor.tankslots = 1;
@@ -818,8 +834,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createHeatDissipating() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_HEAT_DISSIPATING);
-        armor.setInternalName("IS " + armor.name);
+        armor.name = "Heat-Dissipating";
+        armor.setInternalName("IS Heat-Dissipating");
         armor.addLookupName("Clan Heat-Dissipating");
         armor.tonnage = TONNAGE_VARIABLE;
         armor.criticals = 6;
@@ -845,8 +861,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createImpactResistant() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_IMPACT_RESISTANT);
-        armor.setInternalName("IS " + armor.name);
+        armor.name = "Impact-Resistant";
+        armor.setInternalName("IS Impact-Resistant");
         armor.tonnage = TONNAGE_VARIABLE;
         armor.criticals = 10;
         armor.patchworkSlotsMechSV = 2;
@@ -869,8 +885,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createAntiPenetrativeAblation() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION);
-        armor.setInternalName("IS " + armor.name);
+        armor.name = "Anti-Penetrative Ablation";
+        armor.setInternalName("IS Anti-Penetrative Ablation");
         armor.tonnage = TONNAGE_VARIABLE;
         armor.criticals = 6;
         armor.tankslots = 1;
@@ -897,8 +913,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createBallisticReinforced() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_BALLISTIC_REINFORCED);
-        armor.setInternalName("IS " + armor.name);
+        armor.name = "Ballistic-Reinforced";
+        armor.setInternalName("IS Ballistic-Reinforced");
         armor.tonnage = TONNAGE_VARIABLE;
         armor.criticals = 10;
         armor.tankslots = 1;
@@ -927,8 +943,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createISAeroSpaceArmor() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_AEROSPACE);
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_AEROSPACE, false));
+        armor.name = "Standard Aerospace";
+        armor.setInternalName("IS Standard Aerospace");
         armor.flags = armor.flags.or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT)
                 .or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         armor.rulesRefs = "205, TM";
@@ -948,8 +964,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createClanAeroSpaceArmor() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_AEROSPACE);
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_AEROSPACE, true));
+        armor.name = "Standard Aerospace";
+        armor.setInternalName("Clan Standard Aerospace");
         armor.flags = armor.flags.or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT)
                 .or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         armor.rulesRefs = "205, TM";
@@ -968,8 +984,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createISImpFerroAluminumArmor() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LC_FERRO_IMP);
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LC_FERRO_IMP, false));
+        armor.name = "Improved Ferro-Aluminum";
+        armor.setInternalName("IS Improved Ferro-Aluminum");
         armor.addLookupName(armor.name);
         armor.addLookupName("ImprovedFerroAluminum");
         armor.bv = 0;
@@ -991,8 +1007,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createClanImpFerroAluminumArmor() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LC_FERRO_IMP);
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LC_FERRO_IMP, true));
+        armor.name = "Improved Ferro-Aluminum";
+        armor.setInternalName("Clan Improved Ferro-Aluminum");
         armor.flags = armor.flags.or(F_CAPITAL_ARMOR).or(F_IMP_FERRO).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         armor.rulesRefs = "152, SO";
         armor.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_E)
@@ -1010,8 +1026,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createISFerroCarbideArmor() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LC_FERRO_CARBIDE);
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LC_FERRO_CARBIDE, false));
+        armor.name = "Ferro-Carbide";
+        armor.setInternalName("IS Ferro-Carbide");
         armor.addLookupName("Ferro-Carbide");
         armor.tonnage = 0;
         armor.flags = armor.flags.or(F_CAPITAL_ARMOR).or(F_FERRO_CARBIDE).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
@@ -1032,8 +1048,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createClanFerroCarbideArmor() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LC_FERRO_CARBIDE);
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LC_FERRO_CARBIDE, true));
+        armor.name = "Ferro-Carbide";
+        armor.setInternalName("Clan Ferro-Carbide");
         armor.flags = armor.flags.or(F_CAPITAL_ARMOR).or(F_FERRO_CARBIDE).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         armor.rulesRefs = "152, SO";
         armor.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_E)
@@ -1052,8 +1068,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createISLamellorFerroCarbideArmor() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE);
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE, false));
+        armor.name = "Lamellor Ferro-Carbide";
+        armor.setInternalName("IS Lamellor Ferro-Carbide");
         armor.addLookupName(armor.name);
         armor.flags = armor.flags.or(F_CAPITAL_ARMOR).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         armor.rulesRefs = "152, SO";
@@ -1074,8 +1090,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createClanLamellorFerroCarbideArmor() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE);
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE, true));
+        armor.name = "Lamellor Ferro-Carbide";
+        armor.setInternalName("Clan Lamellor Ferro-Carbide");
         armor.flags = armor.flags.or(F_CAPITAL_ARMOR).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT);
         armor.rulesRefs = "152, SO";
         armor.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_E)
@@ -1094,8 +1110,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createPrimitiveLCAerospaceArmor() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_PRIMITIVE_AERO);
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_PRIMITIVE_AERO, false));
+        armor.name = "Primitive Aerospace";
+        armor.setInternalName("IS Primitive Aerospace");
         armor.shortName = "Primitive";
         armor.tonnage = TONNAGE_VARIABLE;
         armor.industrial = true;
@@ -1117,10 +1133,9 @@ public class ArmorType extends MiscType {
     private static ArmorType createElectricDischargeArmor() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(T_ARMOR_EDP);
-        armor.setInternalName("CLEDPArmor");
-        armor.addLookupName(EquipmentType.getArmorTypeName(T_ARMOR_EDP, true));
-        armor.addLookupName(EquipmentType.getArmorTypeName(T_ARMOR_EDP));
+        armor.name = "Electric Discharge ProtoMech";
+        armor.setInternalName("Clan Electric Discharge ProtoMech");
+        armor.addLookupName("CLEDPArmor");
         armor.shortName = "EDP";
         armor.criticals = 1;
         armor.flags = armor.flags.or(F_PROTOMECH_EQUIPMENT).or(F_ELECTRIC_DISCHARGE_ARMOR);
@@ -1143,9 +1158,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createISBAStandardArmor() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_BA_STANDARD);
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_BA_STANDARD, false));
-        armor.addLookupName("IS BA Standard (Basic)");
+        armor.name = "BA Standard (Basic)";
+        armor.setInternalName("IS BA Standard (Basic)");
         armor.shortName = "Standard (Basic)";
         armor.criticals = 0;
         armor.flags = armor.flags.or(F_BA_EQUIPMENT);
@@ -1166,9 +1180,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createClanBAStandardArmor() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_BA_STANDARD);
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_BA_STANDARD, true));
-        armor.addLookupName("Clan BA Standard (Basic)");
+        armor.name = "BA Standard (Basic)";
+        armor.setInternalName("Clan BA Standard (Basic)");
         armor.shortName = "Standard (Basic)";
         armor.criticals = 0;
         armor.flags = armor.flags.or(F_BA_EQUIPMENT);
@@ -1188,9 +1201,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createISBAStandardPrototypeArmor() {
         ArmorType armor = new ArmorType();
 
-        armor.name = BattleArmor.STANDARD_PROTOTYPE;
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_BA_STANDARD_PROTOTYPE));
-        armor.addLookupName("IS BA Standard (Prototype)");
+        armor.name = "BA Standard (Prototype)";
+        armor.setInternalName("IS BA Standard (Prototype)");
         armor.shortName = "Standard (Prototype)";
         armor.criticals = 4;
         armor.flags = armor.flags.or(F_BA_EQUIPMENT);
@@ -1210,9 +1222,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createISBAAdvancedArmor() {
         ArmorType armor = new ArmorType();
 
-        armor.name = BattleArmor.ADVANCED_ARMOR;
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_BA_STANDARD_ADVANCED));
-        armor.addLookupName("IS BA Advanced");
+        armor.name = "BA Advanced";
+        armor.setInternalName("IS BA Advanced");
         armor.shortName = "Advanced";
         armor.criticals = 5;
         armor.flags = armor.flags.or(F_BA_EQUIPMENT);
@@ -1230,9 +1241,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createClanBAFireResistantArmor() {
         ArmorType armor = new ArmorType();
 
-        armor.name = BattleArmor.FIRE_RESISTANT;
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_BA_FIRE_RESIST));
-        armor.addLookupName("Clan BA Fire Resistant");
+        armor.name = "BA Fire Resistant";
+        armor.setInternalName("Clan BA Fire Resistant");
         armor.shortName = "Fire Resistant";
         armor.criticals = 5;
         armor.flags = armor.flags.or(F_FIRE_RESISTANT).or(F_BA_EQUIPMENT);
@@ -1251,9 +1261,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createISBAStealthPrototype() {
         ArmorType armor = new ArmorType();
 
-        armor.name = BattleArmor.STEALTH_PROTOTYPE;
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_BA_STEALTH_PROTOTYPE));
-        armor.addLookupName("IS BA Stealth (Prototype)");
+        armor.name = "BA Stealth (Prototype)";
+        armor.setInternalName("IS BA Stealth (Prototype)");
         armor.addLookupName("Clan BA Stealth (Prototype)");
         armor.shortName = "Stealth (Prototype)";
         armor.criticals = 4;
@@ -1273,9 +1282,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createISBABasicStealth() {
         ArmorType armor = new ArmorType();
 
-        armor.name = BattleArmor.BASIC_STEALTH_ARMOR;
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_BA_STEALTH_BASIC, false));
-        armor.addLookupName("IS BA Stealth (Basic)");
+        armor.name = "BA Stealth (Basic)";
+        armor.setInternalName("IS BA Stealth (Basic)");
         armor.shortName = "Stealth (Basic)";
         armor.criticals = 3;
         armor.flags = armor.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
@@ -1294,9 +1302,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createClanBABasicStealth() {
         ArmorType armor = new ArmorType();
 
-        armor.name = BattleArmor.BASIC_STEALTH_ARMOR;
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_BA_STEALTH_BASIC, true));
-        armor.addLookupName("Clan BA Stealth (Basic)");
+        armor.name = "BA Stealth (Basic)";
+        armor.setInternalName("Clan BA Stealth (Basic)");
         armor.shortName = "Stealth (Basic)";
         armor.criticals = 3;
         armor.flags = armor.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
@@ -1314,9 +1321,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createISBAStandardStealth() {
         ArmorType armor = new ArmorType();
 
-        armor.name = BattleArmor.STANDARD_STEALTH_ARMOR;
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_BA_STEALTH, false));
-        armor.addLookupName("IS BA Stealth (Standard)");
+        armor.name = "BA Stealth (Standard)";
+        armor.setInternalName("IS BA Stealth (Standard)");
         armor.addLookupName("IS BA Stealth");
         armor.shortName = "Stealth";
         armor.criticals = 4;
@@ -1336,9 +1342,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createClanBAStandardStealth() {
         ArmorType armor = new ArmorType();
 
-        armor.name = BattleArmor.STANDARD_STEALTH_ARMOR;
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_BA_STEALTH, true));
-        armor.addLookupName("Clan BA Stealth (Standard)");
+        armor.name = "BA Stealth (Standard)";
+        armor.setInternalName("Clan BA Stealth (Standard)");
         armor.addLookupName("Clan BA Stealth");
         armor.shortName = "Stealth";
         armor.criticals = 4;
@@ -1358,9 +1363,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createISBAImprovedStealth() {
         ArmorType armor = new ArmorType();
 
-        armor.name = BattleArmor.IMPROVED_STEALTH_ARMOR;
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_BA_STEALTH_IMP, false));
-        armor.addLookupName("IS BA Stealth (Improved)");
+        armor.name = "BA Stealth (Improved)";
+        armor.setInternalName("IS BA Stealth (Improved)");
         armor.shortName = "Stealth (Improved)";
         armor.criticals = 5;
         armor.flags = armor.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
@@ -1380,9 +1384,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createClanBAImprovedStealth() {
         ArmorType armor = new ArmorType();
 
-        armor.name = BattleArmor.IMPROVED_STEALTH_ARMOR;
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_BA_STEALTH_IMP, true));
-        armor.addLookupName("Clan BA Stealth (Improved)");
+        armor.name = "BA Stealth (Improved)";
+        armor.setInternalName("Clan BA Stealth (Improved)");
         armor.shortName = "Stealth (Improved)";
         armor.criticals = 5;
         armor.flags = armor.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
@@ -1402,9 +1405,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createISBAMimeticCamo() {
         ArmorType armor = new ArmorType();
 
-        armor.name = BattleArmor.MIMETIC_ARMOR;
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_BA_MIMETIC));
-        armor.addLookupName("IS BA Mimetic");
+        armor.name = "BA Mimetic";
+        armor.setInternalName("IS BA Mimetic");
         armor.shortName = "Mimetic";
         armor.criticals = 7;
         armor.flags = armor.flags.or(F_STEALTH).or(F_VISUAL_CAMO).or(F_BA_EQUIPMENT);
@@ -1422,9 +1424,9 @@ public class ArmorType extends MiscType {
 
     private static ArmorType createISBAReactiveArmor() {
         ArmorType armor = new ArmorType();
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_BA_REACTIVE);
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_BA_REACTIVE, false));
-        armor.addLookupName("IS BA Reactive (Blazer)");
+
+        armor.name = "BA Reactive (Blazer)";
+        armor.setInternalName("IS BA Reactive (Blazer)");
         armor.addLookupName("IS BA Reactive");
         armor.shortName = "Reactive";
         armor.criticals = 7;
@@ -1447,9 +1449,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createClanBAReactiveArmor() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_BA_REACTIVE);
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_BA_REACTIVE, true));
-        armor.addLookupName("Clan BA Reactive (Blazer)");
+        armor.name = "BA Reactive (Blazer)";
+        armor.setInternalName("Clan BA Reactive (Blazer)");
         armor.addLookupName("Clan BA Reactive");
         armor.shortName = "Reactive";
         armor.criticals = 7;
@@ -1471,9 +1472,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createISBAReflectiveArmor() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_BA_REFLECTIVE);
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_BA_REFLECTIVE, false));
-        armor.addLookupName("IS BA Laser Reflective (Reflec/Glazed)");
+        armor.name = "BA Laser Reflective (Reflec/Glazed)";
+        armor.setInternalName("IS BA Laser Reflective (Reflec/Glazed)");
         armor.addLookupName("IS BA Reflective");
         armor.shortName = "Reflective";
         armor.criticals = 7;
@@ -1496,9 +1496,8 @@ public class ArmorType extends MiscType {
     private static ArmorType createClanBAReflectiveArmor() {
         ArmorType armor = new ArmorType();
 
-        armor.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_BA_REFLECTIVE);
-        armor.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_BA_REFLECTIVE, true));
-        armor.addLookupName("Clan BA Laser Reflective (Reflec/Glazed)");
+        armor.name = "BA Laser Reflective (Reflec/Glazed)";
+        armor.setInternalName("Clan BA Laser Reflective (Reflec/Glazed)");
         armor.addLookupName("Clan BA Reflective");
         armor.shortName = "Reflective";
         armor.criticals = 7;
@@ -1515,6 +1514,24 @@ public class ArmorType extends MiscType {
 
         armor.armorType = T_ARMOR_BA_REFLECTIVE;
         armor.kgPerPoint = 30;
+
+        return armor;
+    }
+
+    // Not a true armor type
+    private static ArmorType createPatchworkArmor() {
+        ArmorType armor = new ArmorType();
+
+        armor.name= "Patchwork";
+        armor.setInternalName(armor.name);
+        armor.flags = armor.flags.or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT)
+                .or(F_VTOL_EQUIPMENT).or(F_FIGHTER_EQUIPMENT);
+        armor.techAdvancement = new TechAdvancement(TECH_BASE_ALL)
+                .setAdvancement(ITechnology.DATE_PS, 3075, 3080).setApproximate(false, false, true)
+                .setTechRating(RATING_A).setAvailability(RATING_E, RATING_D, RATING_E, RATING_E)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+
+        armor.armorType = T_ARMOR_PATCHWORK;
 
         return armor;
     }

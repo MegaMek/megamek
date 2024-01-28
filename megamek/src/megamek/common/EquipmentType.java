@@ -755,43 +755,42 @@ public class EquipmentType implements ITechnology {
     }
 
     public static int getArmorType(EquipmentType et) {
-        if (null == et) {
+        if (et instanceof ArmorType) {
+            return ((ArmorType) et).getArmorType();
+        } else {
             return T_ARMOR_UNKNOWN;
         }
-        for (int x = 0; x < armorNames.length; x++) {
-            // Some armor names (Industrial), have a space in the name, so trim
-            if (armorNames[x].trim().equals(et.getName().trim())) {
-                return x;
-            }
-        }
-        return T_ARMOR_UNKNOWN;
     }
 
     public static String getArmorTypeName(int armorType) {
-        if ((armorType < 0) || (armorType >= armorNames.length)) {
+        ArmorType armor = ArmorType.of(armorType, false);
+        if (armor == null) {
+            armor = ArmorType.of(armorType, true);
+        }
+        if (armor != null) {
+            return armor.getName();
+        } else {
             return "UNKNOWN";
         }
-        return armorNames[armorType];
     }
 
     public static String getArmorTypeName(int armorType, boolean clan) {
-        if ((armorType < 0) || (armorType >= armorNames.length)) {
+        ArmorType armor = ArmorType.of(armorType, clan);
+        if (armor != null) {
+            return clan ? "Clan " + armor.getName() : "IS " + armor.getName();
+        } else {
             return "UNKNOWN";
         }
-        return clan ? "Clan " + armorNames[armorType] : "IS "
-                + armorNames[armorType];
     }
 
     /**
-     * Convenience method to test whether an EquipmentType instance is armor. This works
-     * by comparing the results of {@link #getName()} to the armor names array and returning
-     * {@code true} if there is a match.
+     * Convenience method to test whether an EquipmentType instance is armor.
      *
      * @param et The equipment instance to test
      * @return   Whether the equipment is an armor type
      */
     public static boolean isArmorType(EquipmentType et) {
-        return getArmorType(et) != T_ARMOR_UNKNOWN;
+        return et instanceof ArmorType;
     }
 
     public static int getStructureType(EquipmentType et) {
@@ -831,14 +830,6 @@ public class EquipmentType implements ITechnology {
      */
     public static boolean isStructureType(EquipmentType et) {
         return getStructureType(et) != T_STRUCTURE_UNKNOWN;
-    }
-
-    public static String getBaArmorTypeName(int armorType) {
-        return getArmorTypeName(armorType);
-    }
-
-    public static String getBaArmorTypeName(int armorType, boolean clan) {
-        return getArmorTypeName(armorType, clan);
     }
 
     public static double getBaArmorWeightPerPoint(int type, boolean isClan) {

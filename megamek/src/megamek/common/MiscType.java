@@ -2326,11 +2326,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_STANDARD));
         misc.addLookupName(EquipmentType.getStructureTypeName(T_STRUCTURE_STANDARD, false));
         misc.addLookupName(EquipmentType.getStructureTypeName(T_STRUCTURE_STANDARD, true));
-        misc.addLookupName(EquipmentType.getArmorTypeName(T_ARMOR_STANDARD, false));
-        misc.addLookupName(EquipmentType.getArmorTypeName(T_ARMOR_STANDARD, true));
         misc.addLookupName("Regular");
-        misc.addLookupName("IS Standard Armor");
-        misc.addLookupName("Clan Standard Armor");
         misc.flags = misc.flags.or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_VTOL_EQUIPMENT).or(F_FIGHTER_EQUIPMENT).or(F_PROTOMECH_EQUIPMENT);
         misc.criticals = 0;

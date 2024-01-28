@@ -712,8 +712,7 @@ public class MechView {
                                 .trim());
             }
             if (isBA) {
-                armor += " " + EquipmentType.getBaArmorTypeName(entity.getArmorType(1))
-                                .trim();
+                armor += " " + EquipmentType.getArmorTypeName(entity.getArmorType(1)).trim();
             }
             retVal.add(new LabeledElement(Messages.getString("MechView.Armor"),
                     armor));

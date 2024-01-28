@@ -975,7 +975,12 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             case VIEW_MOVE_ENV:
                 if (curPanel instanceof MovementDisplay) {
                     GUIP.setMoveEnvelope(!GUIP.getMoveEnvelope());
-                    ((MovementDisplay) curPanel).computeMovementEnvelope(getUnitDisplay().getCurrentEntity());
+                    Entity entity = getUnitDisplay().getCurrentEntity();
+                    if (!(entity instanceof Aero)) {
+                        ((MovementDisplay) curPanel).computeMovementEnvelope(entity);
+                    } else {
+                        ((MovementDisplay) curPanel).computeAeroMovementEnvelope(entity);
+                    }
                 }
                 break;
             case VIEW_MOVE_MOD_ENV:

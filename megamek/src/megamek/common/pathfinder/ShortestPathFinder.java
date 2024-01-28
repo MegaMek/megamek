@@ -121,12 +121,6 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
                 }
             }
 
-            // If the movepath entity is an aerospace / conventional fighter type, don't 
-            // relax the edge.  See megamek issue #5088
-            if (v.getEntity().isAerospace()) {
-                return e;
-            }
-
             return comparator.compare(e, v) < 0 ? e : null;
         }
     }
@@ -258,6 +252,24 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
                 new ShortestPathFinder(
                         new ShortestPathFinder.MovePathRelaxer(),
                         new ShortestPathFinder.MovePathMPCostComparator(),
+                        stepType, game);
+        spf.addFilter(new MovePathLengthFilter(maxMP));
+        spf.addFilter(new MovePathLegalityFilter(game));
+        return spf;
+    }
+
+    /**
+     * See {@link newInstanceOfOneToAll} - this returns a customized ShortestPathFinder to support Aerodyne units.
+     * @param maxMP maximum MP that entity can use
+     * @param stepType
+     * @param game The current {@link Game}
+     * @return - Customized ShortestPathFinder specifically for Aerodyne unit move envelope.
+     */
+    public static ShortestPathFinder newInstanceOfOneToAllAero(final int maxMP, final MoveStepType stepType, final Game game) {
+        final ShortestPathFinder spf =
+                new ShortestPathFinder(
+                        new ShortestPathFinder.AeroMovePathRelaxer(),
+                        new ShortestPathFinder.MovePathStepsComparator(),
                         stepType, game);
         spf.addFilter(new MovePathLengthFilter(maxMP));
         spf.addFilter(new MovePathLegalityFilter(game));

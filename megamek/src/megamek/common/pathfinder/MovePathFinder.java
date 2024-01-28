@@ -210,6 +210,20 @@ public class MovePathFinder<C> extends AbstractPathFinder<CoordsWithFacing, C, M
     }
 
     /**
+     * A MovePath comparator that compares the number of steps in the path.
+     *
+     * Order paths with fewer total steps first.
+     */
+    public static class MovePathStepsComparator implements Comparator<MovePath> {
+        @Override
+        public int compare(final MovePath first, final MovePath second) {
+            final int firstLength = first.getStepVector().size();
+            final int secondLength = second.getStepVector().size();
+            return firstLength - secondLength;
+        }
+    }
+
+    /**
      * A MovePath comparator that compares number of steps. Generally used for
      * spheroids, which don't have the same velocity expenditure restrictions as
      * Aerodynes, however they can't compare based on MP like ground units.

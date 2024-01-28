@@ -4548,7 +4548,14 @@ public class MovementDisplay extends ActionPhaseDisplay {
             mp.addStep(MoveStepType.START_JUMP);
         }
 
-        ShortestPathFinder pf = ShortestPathFinder.newInstanceOfOneToAll(maxMP, stepType, en.getGame());
+        // Create a path finder to find possible moves; if aerodyne, use a custom Aero path finder.
+        ShortestPathFinder pf = null;
+        if (!en.isAerodyne()) {
+            pf = ShortestPathFinder.newInstanceOfOneToAll(maxMP, stepType, en.getGame());
+        } else {
+            pf = ShortestPathFinder.newInstanceOfOneToAllAero(maxMP, stepType, en.getGame());
+        }
+
         pf.run(mp);
         mvEnvData = pf.getAllComputedPaths();
         Map<Coords, Integer> mvEnvMP = new HashMap<>((int) ((mvEnvData.size() * 1.25) + 1));
@@ -4569,7 +4576,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
      * @return - This method will do nothing if the Entity passed in is null or
      *           is not an Aero based unity.
      */
-    private void computeAeroMovementEnvelope(Entity entity) {
+    public void computeAeroMovementEnvelope(Entity entity) {
         if ((entity == null) || !(entity instanceof Aero) || (cmd == null)) {
             return;
         }

@@ -96,7 +96,7 @@ public class MtfFile implements IMechLoader {
     public static final String MTF_VERSION = "version:";
     public static final String GENERATOR = "generator:";
     public static final String CHASSIS = "chassis:";
-    public static final String CLAN_CHASSIS_NAME = "additionalname:";
+    public static final String CLAN_CHASSIS_NAME = "clanname:";
     public static final String MODEL = "model:";
     public static final String COCKPIT = "cockpit:";
     public static final String GYRO = "gyro:";

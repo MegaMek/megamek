@@ -31,7 +31,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     private String name;
     private String chassis;
-    private String additionalName;
+    private String clanChassisName;
     private String model;
     private int mulId;
     private String unitType;
@@ -186,11 +186,11 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     }
 
     public void setClanChassisName(String name) {
-        additionalName = name;
+        clanChassisName = name;
     }
 
-    public String getAdditionalName() {
-        return additionalName;
+    public String getClanChassisName() {
+        return clanChassisName;
     }
 
     @Override

@@ -145,7 +145,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * The special chassis name for Clan Meks such as Timber Wolf for the Mad Cat. This is appended to the
      * base chassis name to form the full chassis name such as Mad Cat (Timber Wolf) in
-     * {@link #getShortNameRaw()} and {@link #getFullChassis()}.
+     * {@link #getShortNameRaw()} and {@link #getFullChassis()}. This is only saved in mtf files (as of 2024).
      */
     protected String clanChassisName = "";
 

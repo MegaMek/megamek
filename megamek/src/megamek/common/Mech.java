@@ -4181,6 +4181,7 @@ public abstract class Mech extends Entity {
         boolean standard = (getCockpitType() == Mech.COCKPIT_STANDARD)
                 && (getGyroType() == Mech.GYRO_STANDARD);
         sb.append(MtfFile.CHASSIS).append(chassis).append(newLine);
+        sb.append(MtfFile.CLAN_CHASSIS_NAME).append(clanChassisName).append(newLine);
         sb.append(MtfFile.MODEL).append(model).append(newLine);
         if (hasMulId()) {
             sb.append(MtfFile.MUL_ID).append(mulId);

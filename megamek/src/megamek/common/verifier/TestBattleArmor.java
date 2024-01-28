@@ -480,9 +480,7 @@ public class TestBattleArmor extends TestEntity {
 
     @Override
     public double getWeightArmor() {
-        return ba.getOArmor(1)
-                * EquipmentType.getBaArmorWeightPerPoint(ba.getArmorType(1),
-                        TechConstants.isClan(ba.getArmorTechLevel(1)));
+        return ArmorType.forEntity(ba).getWeightPerPoint();
     }
 
     @Override

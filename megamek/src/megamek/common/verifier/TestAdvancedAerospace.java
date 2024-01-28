@@ -15,6 +15,7 @@
 package megamek.common.verifier;
 
 import megamek.common.*;
+import megamek.common.equipment.ArmorType;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.capitalweapons.ScreenLauncherWeapon;
@@ -109,7 +110,7 @@ public class TestAdvancedAerospace extends TestAero {
             // Deal with potential rounding errors
             ppt = Math.round(ppt * 10.0) / 10.0;
             if (type == EquipmentType.T_ARMOR_PRIMITIVE_AERO) {
-                ppt *= EquipmentType.armorPointMultipliers[EquipmentType.T_ARMOR_PRIMITIVE_AERO];
+                ppt *= ArmorType.of(EquipmentType.T_ARMOR_PRIMITIVE_AERO, false).getArmorPointsMultiplier();
             }
             return ppt;
         }

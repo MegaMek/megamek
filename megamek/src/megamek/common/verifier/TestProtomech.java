@@ -16,6 +16,7 @@ package megamek.common.verifier;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.ArmorType;
 import megamek.common.util.StringUtil;
 
 import javax.swing.text.Utilities;
@@ -139,7 +140,7 @@ public class TestProtomech extends TestEntity {
         }
         
         public double getWtPerPoint() {
-            return EquipmentType.getProtomechArmorWeightPerPoint(type);
+            return ArmorType.of(type, true).getWeightPerPoint();
         }
     }
     

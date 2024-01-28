@@ -821,25 +821,6 @@ public class EquipmentType implements ITechnology {
         return getStructureType(et) != T_STRUCTURE_UNKNOWN;
     }
 
-    public static double getBaArmorWeightPerPoint(int type, boolean isClan) {
-        ArmorType armor = ArmorType.of(type, isClan);
-        if (armor != null) {
-            return armor.getWeightPerPoint();
-        } else {
-            return isClan ? 0.025 : 0.05;
-        }
-    }
-
-    /**
-     * Computes protomech armor weight by point.
-     *
-     * @param type    The armor type
-     * @return        The weight of a point of armor in kg
-     */
-    public static double getProtomechArmorWeightPerPoint(int type) {
-        return getBaArmorWeightPerPoint(type, true);
-    }
-
     /**
      * Lookup method for protomech armor cost
      * @param type The type of armor.

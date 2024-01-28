@@ -56,8 +56,8 @@ public class TestAdvancedAerospace extends TestAero {
         // Primitive jumpships multiply the armor by a factor of 0.66. Per errata, the armor is calculated
         // based on standard armor then rounded down, and the free SI armor is rounded down separately.
         if (vessel.isPrimitive()) {
-            return (int) (Math.floor(ArmorType.of(EquipmentType.T_ARMOR_PRIMITIVE_AERO, false).getPointsPerTon(vessel)
-                    * maxArmorWeight(vessel) * 0.66)
+            return (int) (Math.floor(ArmorType.of(EquipmentType.T_ARMOR_PRIMITIVE_AERO, false)
+                    .getPointsPerTon(vessel) * maxArmorWeight(vessel))
                 + Math.floor(freeSI * 0.66));
         }
         return (int) Math.floor(ArmorType.forEntity(vessel).getPointsPerTon(vessel) * maxArmorWeight(vessel) + freeSI);

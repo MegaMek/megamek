@@ -211,7 +211,7 @@ public class ArmorType extends MiscType {
             threshold = entity.isSpheroid() ? spheroidDSThresholds : aerodyneDSThresholds;
             ppt = pptDropship;
         }
-        if ((threshold != null) && (ppt.length == threshold.length)) {
+        if ((threshold != null) && (ppt.length > threshold.length)) {
             for (int i = 0; i < threshold.length; i++) {
                 if (entity.getWeight() < threshold[i]) {
                     return ppt[i];

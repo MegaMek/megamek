@@ -1145,7 +1145,6 @@ public class Jumpship extends Aero {
             armorPoints -= Math.round(get0SI() / 10.0) * locCount;
         } else {
             armorPoints -= Math.floor(Math.round(get0SI() / 10.0) * locCount * 0.66);
-            armorPoints = Math.ceil(armorPoints / 0.66);
         }
 
         double baseArmor = ArmorType.forEntity(this).getPointsPerTon(this);

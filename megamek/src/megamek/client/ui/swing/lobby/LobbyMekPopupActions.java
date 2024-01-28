@@ -16,6 +16,7 @@ package megamek.client.ui.swing.lobby;
 import megamek.common.Entity;
 import megamek.common.Player;
 import megamek.common.force.Force;
+import megamek.common.util.StringUtil;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -119,17 +120,17 @@ public class LobbyMekPopupActions implements ActionListener {
     private void forceAction(String command, Set<Entity> entities, String info) {
         switch (command) {
             case LMP_FCREATESUB:
-                int parentId = toInt(info, Force.NO_FORCE);
+                int parentId = StringUtil.toInt(info, Force.NO_FORCE);
                 lobby.lobbyActions.forceCreateSub(parentId);
                 break;
 
             case LMP_FADDTO:
-                int forceId = toInt(info, Force.NO_FORCE);
+                int forceId = StringUtil.toInt(info, Force.NO_FORCE);
                 lobby.lobbyActions.forceAddEntity(entities, forceId);
                 break;
 
             case LMP_FRENAME:
-                forceId = toInt(info, Force.NO_FORCE);
+                forceId = StringUtil.toInt(info, Force.NO_FORCE);
                 lobby.lobbyActions.forceRename(forceId);
                 break;
 
@@ -138,7 +139,7 @@ public class LobbyMekPopupActions implements ActionListener {
                 break;
 
             case LMP_FCDELETEEMPTY:
-                forceId = toInt(info, Force.NO_FORCE);
+                forceId = StringUtil.toInt(info, Force.NO_FORCE);
                 lobby.lobbyActions.forceDeleteEmpty(forceId);
                 break;
 
@@ -154,38 +155,26 @@ public class LobbyMekPopupActions implements ActionListener {
                 StringTokenizer fst = new StringTokenizer(info, ",");
                 Set<Integer> forceIds = new HashSet<>();
                 while (fst.hasMoreTokens()) {
-                    forceIds.add(toInt(fst.nextToken(), Force.NO_FORCE));
+                    forceIds.add(StringUtil.toInt(fst.nextToken(), Force.NO_FORCE));
                 }
                 lobby.lobbyActions.forcePromote(forceIds);
                 break;
 
             case LMP_FASSIGN:
                 StringTokenizer st = new StringTokenizer(info, ":");
-                int newOwnerId = toInt(st.nextToken(), Player.PLAYER_NONE);
+                int newOwnerId = StringUtil.toInt(st.nextToken(), Player.PLAYER_NONE);
                 lobby.lobbyActions.forceAssignFull(LobbyUtility.getForces(lobby.game(), st.nextToken()), newOwnerId);
                 break;
 
             case LMP_FASSIGNONLY:
                 st = new StringTokenizer(info, ":");
-                newOwnerId = toInt(st.nextToken(), Player.PLAYER_NONE);
+                newOwnerId = StringUtil.toInt(st.nextToken(), Player.PLAYER_NONE);
                 lobby.lobbyActions.forceAssignOnly(LobbyUtility.getForces(lobby.game(), st.nextToken()), newOwnerId);
                 break;
 
             case LMP_SBFFORMATION:
                 lobby.lobbyActions.showSbfView(LobbyUtility.getForces(lobby.game(), info));
                 break;
-        }
-    }
-
-    private static int toInt(String s, int i) {
-        if (s.isEmpty()) {
-            return i;
-        }
-
-        try {
-            return Integer.parseInt(s);
-        } catch (Exception ignored) {
-            return i;
         }
     }
 

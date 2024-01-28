@@ -152,5 +152,20 @@ public class StringUtil {
         } catch (NumberFormatException ex) {
             return false;
         }
-    }    
+    }
+
+    /**
+     * Returns integer value from the passed string or default value if conversion fails.
+     */
+    public static int toInt(String s, int i) {
+        if (s.isEmpty()) {
+            return i;
+        }
+
+        try {
+            return Integer.parseInt(s);
+        } catch (Exception ignored) {
+            return i;
+        }
+    }
 }

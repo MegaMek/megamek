@@ -36,6 +36,14 @@ public class ArmorType extends MiscType {
         return clan ? armorTypeLookupClan.get(type) : armorTypeLookupIS.get(type);
     }
 
+    public static ArmorType forEntity(Entity entity, int loc) {
+        return ArmorType.of(entity.getArmorType(loc), TechConstants.isClan(entity.getArmorTechLevel(loc)));
+    }
+
+    public static ArmorType forEntity(Entity entity) {
+        return forEntity(entity, entity.firstArmorIndex());
+    }
+
     public static List<ArmorType> allArmorTypes() {
         return Collections.unmodifiableList(allTypes);
     }
@@ -135,7 +143,7 @@ public class ArmorType extends MiscType {
     private int patchworkSlotsMechSV = 0;
     private int patchworkSlotsCVFtr = 0;
     private double pptMultiplier = 1.0;
-    private int kgPerPoint = 0;
+    private double weightPerPoint = 0.0;
     private double[] pptDropship = { };
     private double[] pptCapital = { };
     private int bar = 10;
@@ -177,6 +185,22 @@ public class ArmorType extends MiscType {
         return patchworkSlotsCVFtr;
     }
 
+    /**
+     * Used for entities that do not vary the coverage by tonnage. For large craft, use
+     * {@link ArmorType#getPointsPerTon(Entity)}.
+     *
+     * @return The number of armor points per ton of armor.
+     */
+    public double getPointsPerTon() {
+        return BASE_POINTS_PER_TON * pptMultiplier;
+    }
+
+    /**
+     * Calculates the armor coverage per ton of armor. For large craft, this takes tonnage of the craft into account.
+     *
+     * @param entity The Entity the armor is mounted on
+     * @return       The number of armor points per ton of armor.
+     */
     public double getPointsPerTon(Entity entity) {
         int[] threshold = null;
         double[] ppt = null;
@@ -195,11 +219,15 @@ public class ArmorType extends MiscType {
             }
             return ppt[ppt.length - 1];
         }
-        return BASE_POINTS_PER_TON * pptMultiplier;
+        return getPointsPerTon();
     }
 
-    public double getKgPerPoint() {
-        return kgPerPoint;
+    public double getArmorPointsMultiplier() {
+        return pptMultiplier;
+    }
+
+    public double getWeightPerPoint() {
+        return weightPerPoint;
     }
 
     public int getBAR() {
@@ -226,7 +254,7 @@ public class ArmorType extends MiscType {
                 .setStaticTechLevel(SimpleTechLevel.INTRO);
 
         armor.armorType = T_ARMOR_STANDARD;
-        armor.kgPerPoint = 50; // when used as protomech armor
+        armor.weightPerPoint = 0.050; // when used as protomech armor
 
         return armor;
     }
@@ -1150,7 +1178,7 @@ public class ArmorType extends MiscType {
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
         armor.armorType = T_ARMOR_EDP;
-        armor.kgPerPoint = 75;
+        armor.weightPerPoint = 0.075;
 
         return armor;
     }
@@ -1172,7 +1200,7 @@ public class ArmorType extends MiscType {
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
         armor.armorType = T_ARMOR_BA_STANDARD;
-        armor.kgPerPoint = 50;
+        armor.weightPerPoint = 0.050;
 
         return armor;
     }
@@ -1193,7 +1221,7 @@ public class ArmorType extends MiscType {
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
         armor.armorType = T_ARMOR_BA_STANDARD;
-        armor.kgPerPoint = 25;
+        armor.weightPerPoint = 0.025;
 
         return armor;
     }
@@ -1214,7 +1242,7 @@ public class ArmorType extends MiscType {
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
         armor.armorType = T_ARMOR_BA_STANDARD_PROTOTYPE;
-        armor.kgPerPoint = 100;
+        armor.weightPerPoint = 0.100;
 
         return armor;
     }
@@ -1233,7 +1261,7 @@ public class ArmorType extends MiscType {
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E);
 
         armor.armorType = T_ARMOR_BA_STANDARD_ADVANCED;
-        armor.kgPerPoint = 40;
+        armor.weightPerPoint = 0.040;
 
         return armor;
     }
@@ -1253,7 +1281,7 @@ public class ArmorType extends MiscType {
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E);
 
         armor.armorType = T_ARMOR_BA_FIRE_RESIST;
-        armor.kgPerPoint = 30;
+        armor.weightPerPoint = 0.030;
 
         return armor;
     }
@@ -1274,7 +1302,7 @@ public class ArmorType extends MiscType {
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_X);
 
         armor.armorType = T_ARMOR_BA_STEALTH_PROTOTYPE;
-        armor.kgPerPoint = 100;
+        armor.weightPerPoint = 0.100;
 
         return armor;
     }
@@ -1294,7 +1322,7 @@ public class ArmorType extends MiscType {
                 .setAvailability(RATING_F, RATING_F, RATING_E, RATING_D);
 
         armor.armorType = T_ARMOR_BA_STEALTH_BASIC;
-        armor.kgPerPoint = 55;
+        armor.weightPerPoint = 0.055;
 
         return armor;
     }
@@ -1313,7 +1341,7 @@ public class ArmorType extends MiscType {
                 .setAvailability(RATING_F, RATING_F, RATING_E, RATING_D);
 
         armor.armorType = T_ARMOR_BA_STEALTH_BASIC;
-        armor.kgPerPoint = 30;
+        armor.weightPerPoint = 0.030;
 
         return armor;
     }
@@ -1334,7 +1362,7 @@ public class ArmorType extends MiscType {
                 .setAvailability(RATING_F, RATING_X, RATING_E, RATING_D);
 
         armor.armorType = T_ARMOR_BA_STEALTH;
-        armor.kgPerPoint = 60;
+        armor.weightPerPoint = 0.060;
 
         return armor;
     }
@@ -1355,7 +1383,7 @@ public class ArmorType extends MiscType {
                 .setAvailability(RATING_F, RATING_X, RATING_E, RATING_D);
 
         armor.armorType = T_ARMOR_BA_STEALTH;
-        armor.kgPerPoint = 35;
+        armor.weightPerPoint = 0.035;
 
         return armor;
     }
@@ -1376,7 +1404,7 @@ public class ArmorType extends MiscType {
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E);
 
         armor.armorType = T_ARMOR_BA_STEALTH_IMP;
-        armor.kgPerPoint = 60;
+        armor.weightPerPoint = 0.060;
 
         return armor;
     }
@@ -1397,7 +1425,7 @@ public class ArmorType extends MiscType {
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E);
 
         armor.armorType = T_ARMOR_BA_STEALTH_IMP;
-        armor.kgPerPoint = 35;
+        armor.weightPerPoint = 0.035;
 
         return armor;
     }
@@ -1417,7 +1445,7 @@ public class ArmorType extends MiscType {
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E);
 
         armor.armorType = T_ARMOR_BA_MIMETIC;
-        armor.kgPerPoint = 50;
+        armor.weightPerPoint = 0.050;
 
         return armor;
     }
@@ -1441,7 +1469,7 @@ public class ArmorType extends MiscType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_BA_REACTIVE;
-        armor.kgPerPoint = 60;
+        armor.weightPerPoint = 0.060;
 
         return armor;
     }
@@ -1464,7 +1492,7 @@ public class ArmorType extends MiscType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_BA_REACTIVE;
-        armor.kgPerPoint = 35;
+        armor.weightPerPoint = 0.035;
 
         return armor;
     }
@@ -1488,7 +1516,7 @@ public class ArmorType extends MiscType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_BA_REFLECTIVE;
-        armor.kgPerPoint = 55;
+        armor.weightPerPoint = 0.055;
 
         return armor;
     }
@@ -1513,7 +1541,7 @@ public class ArmorType extends MiscType {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         armor.armorType = T_ARMOR_BA_REFLECTIVE;
-        armor.kgPerPoint = 30;
+        armor.weightPerPoint = 0.030;
 
         return armor;
     }

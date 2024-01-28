@@ -580,8 +580,7 @@ public class TestSupportVehicle extends TestEntity {
             return EquipmentType.getSupportVehicleArmorWeightPerPoint(vee.getBARRating(vee.firstArmorIndex()),
                     vee.getArmorTechRating());
         } else {
-            final double ppt = 16.0 * EquipmentType.getArmorPointMultiplier(
-                    at, vee.getArmorTechLevel(vee.firstArmorIndex()));
+            final double ppt = ArmorType.forEntity(vee).getPointsPerTon(vee);
             return round(1.0 / ppt, Ceil.KILO);
         }
     }

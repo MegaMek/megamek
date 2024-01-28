@@ -17,6 +17,7 @@ package megamek.common.verifier;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.MPBoosters;
+import megamek.common.equipment.ArmorType;
 import megamek.common.util.StringUtil;
 
 import java.io.File;
@@ -1761,8 +1762,7 @@ class Armor {
         } else {
             techLevel = TechConstants.T_IS_TW_NON_BOX;
         }
-        double multiplier = EquipmentType.getArmorPointMultiplier(armorType,
-                techLevel);
+        double multiplier = ArmorType.of(armorType, TechConstants.isClan(techLevel)).getArmorPointsMultiplier();
         points /= multiplier;
         double pointsPerTon = 16.0f;
         return points / pointsPerTon;

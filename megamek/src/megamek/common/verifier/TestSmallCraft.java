@@ -15,6 +15,7 @@
 package megamek.common.verifier;
 
 import megamek.common.*;
+import megamek.common.equipment.ArmorType;
 import megamek.common.util.StringUtil;
 
 import java.math.BigInteger;
@@ -96,7 +97,7 @@ public class TestSmallCraft extends TestAero {
          * @return   The number of points of armor per ton
          */
         public double pointsPerTon(SmallCraft sc) {
-            return SmallCraft.armorPointsPerTon(sc.getWeight(), sc.isSpheroid(), type, isClan);
+            return ArmorType.of(type, isClan).getPointsPerTon(sc);
         }
 
         /**

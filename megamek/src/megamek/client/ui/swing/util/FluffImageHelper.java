@@ -14,10 +14,8 @@
  */
 package megamek.client.ui.swing.util;
 
-import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.alphaStrike.ASCardDisplayable;
-import megamek.common.alphaStrike.ASUnitType;
 import megamek.common.annotations.Nullable;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -46,7 +44,7 @@ public class FluffImageHelper {
     public static final String DIR_NAME_SPACESTATION = "Space Station";
     public static final String DIR_NAME_VEHICLE = "Vehicle";
     public static final String DIR_NAME_WARSHIP = "WarShip";
-    public static final String[] EXTENSIONS_FLUFF_IMAGE_FORMATS = { ".png", ".jpg", ".gif", ".PNG", ".JPG", ".GIF" };
+    public static final String[] EXTENSIONS_FLUFF_IMAGE_FORMATS = { ".PNG", ".png", ".JPG", ".JPEG", ".jpg", ".jpeg", ".GIF", ".gif" };
 
     /**
      * Get the fluff image for the specified unit, if available.
@@ -236,7 +234,7 @@ public class FluffImageHelper {
         }
     }
 
-    private static String getImagePath(final Entity unit) {
+    public static String getImagePath(final Entity unit) {
         if (unit instanceof Warship) {
             return DIR_NAME_WARSHIP;
         } else if (unit instanceof SpaceStation) {

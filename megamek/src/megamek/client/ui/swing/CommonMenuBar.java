@@ -61,11 +61,13 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private GamePhase phase = GamePhase.UNKNOWN;
 
     // The Game menu
+    private JMenuItem gameStart = new JMenuItem(getString("CommonMenuBar.fileGameStart"));
     private JMenuItem gameLoad = new JMenuItem(getString("CommonMenuBar.fileGameLoad"));
     private JMenuItem gameSave = new JMenuItem(getString("CommonMenuBar.fileGameSave"));
     private JMenuItem gameQSave = new JMenuItem(getString("CommonMenuBar.fileGameQuickSave"));
     private JMenuItem gameQLoad = new JMenuItem(getString("CommonMenuBar.fileGameQuickLoad"));
     private JMenuItem gameSaveServer = new JMenuItem(getString("CommonMenuBar.fileGameSaveServer"));
+    private JMenuItem gameConnect = new JMenuItem(getString("CommonMenuBar.fileGameConnect"));
     private JCheckBoxMenuItem gameRoundReport = new JCheckBoxMenuItem(getString("CommonMenuBar.viewRoundReport"));
     private JMenuItem gameEditBots = new JMenuItem(getString("CommonMenuBar.editBots"));
     private JCheckBoxMenuItem gamePlayerList = new JCheckBoxMenuItem(getString("CommonMenuBar.viewPlayerList"));
@@ -174,11 +176,13 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         JMenu menu = new JMenu(Messages.getString("CommonMenuBar.FileMenu"));
         menu.setMnemonic(VK_F);
         add(menu);
+        initMenuItem(gameStart, menu, FILE_GAME_NEW);
         initMenuItem(gameLoad, menu, FILE_GAME_LOAD, VK_L);
         initMenuItem(gameSave, menu, FILE_GAME_SAVE, VK_S);
         initMenuItem(gameQSave, menu, FILE_GAME_QSAVE);
         initMenuItem(gameQLoad, menu, FILE_GAME_QLOAD);
         initMenuItem(gameSaveServer, menu, FILE_GAME_SAVE_SERVER);
+        initMenuItem(gameConnect, menu, FILE_GAME_CONNECT);
 
         // Create the Unit List sub-menu.
         menu = new JMenu(Messages.getString("CommonMenuBar.GameMenu"));
@@ -451,6 +455,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         boardSourceFile.setEnabled(isBoardEditor);
         gameQLoad.setEnabled(isMainMenu);
         gameLoad.setEnabled(isMainMenu);
+        gameStart.setEnabled(isMainMenu);
+        gameConnect.setEnabled(isMainMenu);
 
         gameSave.setEnabled(isLobby || (isInGame && canSave));
         gameSaveServer.setEnabled(isLobby || (isInGame && canSave));

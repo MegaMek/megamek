@@ -24,6 +24,7 @@ import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.options.PilotOptions;
 import megamek.common.util.BuildingBlock;
+import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
@@ -830,7 +831,12 @@ public class BLKFile {
         for (Mounted m : t.getEquipment()) {
             // Ignore Mounteds that represent a WeaponGroup
             // BA anti-personnel weapons are written just after the mount
-            if (m.isWeaponGroup() || m.isAPMMounted()) {
+            if (m.isWeaponGroup() || m.isAPMMounted() || (m.getType() instanceof InfantryAttack)) {
+                continue;
+            }
+
+            // Infantry primary and secondary are written separately
+            if (t.isConventionalInfantry() && m.getType() instanceof InfantryWeapon) {
                 continue;
             }
 
@@ -883,9 +889,7 @@ public class BLKFile {
             }
         }
         for (int i = 0; i < numLocs; i++) {
-            if (!(t.isConventionalInfantry() && (i == Infantry.LOC_INFANTRY))) {
-                blk.writeBlockData(t.getLocationName(i) + " Equipment", eq.get(i));
-            }
+            blk.writeBlockData(t.getLocationName(i) + " Equipment", eq.get(i));
         }
         if (!t.hasPatchworkArmor() && t.hasBARArmor(1)) {
             blk.writeBlockData("barrating", t.getBARRating(1));
@@ -998,14 +1002,6 @@ public class BLKFile {
                         .getInternalName());
             }
 
-            if (infantry.canMakeAntiMekAttacks()) {
-                blk.writeBlockData("antimek", (infantry.getAntiMekSkill() + ""));
-            }
-
-            EquipmentType et = infantry.getArmorKit();
-            if (et != null) {
-                blk.writeBlockData("armorKit", et.getInternalName());
-            }
             if (infantry.getArmorDamageDivisor() != 1) {
                 blk.writeBlockData("armordivisor",
                         Double.toString(infantry.getArmorDamageDivisor()));

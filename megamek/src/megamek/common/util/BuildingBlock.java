@@ -380,11 +380,7 @@ public class BuildingBlock {
      */
     public boolean createNewBlock() {
         rawData.clear();
-
         writeBlockComment("Saved from version " + SuiteConstants.VERSION + " on " + LocalDate.now());
-
-        this.writeBlockData("BlockVersion", "" + BuildingBlock.version);
-
         return true;
     }
 

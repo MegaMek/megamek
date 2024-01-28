@@ -143,6 +143,12 @@ public class TestInfantry extends TestEntity {
             return true;
         }
 
+        // We currently have many unit introduction dates that are too early for their gear or anti-mek attacks
+        // enable this when dates have been straightened
+//        if (showIncorrectIntroYear() && hasIncorrectIntroYear(buff)) {
+//            correct = false;
+//        }
+
         int max = maxSecondaryWeapons(inf);
         if (inf.getSecondaryWeaponsPerSquad() > max) {
             buff.append("Number of secondary weapons exceeds maximum of " + max).append("\n\n");
@@ -165,7 +171,7 @@ public class TestInfantry extends TestEntity {
             }
             secondaryCrew = Math.max(secondaryCrew, 1);
             if (secondaryCrew * inf.getSecondaryWeaponsPerSquad() > inf.getSquadSize()) {
-                buff.append("Secondary weapon crew requirement exceeds squad size.").append("\n\n");
+                buff.append("Secondary weapon crew requirement exceeds squad size.\n\n");
                 correct = false;
             }
         }
@@ -180,6 +186,16 @@ public class TestInfantry extends TestEntity {
                 inf.hasSpecialization(Infantry.COMBAT_ENGINEERS | Infantry.MOUNTAIN_TROOPS), inf.getMount());
         if (inf.getShootingStrength() > max) {
             buff.append("Maximum platoon size is " + max + "\n\n");
+            correct = false;
+        }
+
+        if (inf.isMechanized() && inf.countEquipment(EquipmentTypeLookup.ANTI_MEK_GEAR) > 0) {
+            buff.append("Mechanized infantry may not have anti-mek gear!\n");
+            correct = false;
+        }
+
+        if (inf.countWorkingMisc(MiscType.F_ARMOR_KIT) > 1) {
+            buff.append("Infantry may not have more than one armor kit!\n");
             correct = false;
         }
 
@@ -410,31 +426,31 @@ public class TestInfantry extends TestEntity {
                 default:
                     mult = 0.085;
             }
-            report.addLine("Weight multiplier: ", infantry.getMovementModeAsString(), formatForReport(mult));
+            report.addLine("Base Weight: ", infantry.getMovementModeAsString(), formatForReport(mult) + " t");
 
             if (infantry.hasSpecialization(Infantry.COMBAT_ENGINEERS)) {
                 mult += 0.1;
-                report.addLine("", "Combat Engineers", "+ 0.1");
+                report.addLine("", "Combat Engineers", "+ 0.1 t");
 
             }
 
             if (infantry.hasSpecialization(Infantry.PARATROOPS)) {
                 mult += 0.05;
-                report.addLine("", "Paratroopers", "+ 0.05");
+                report.addLine("", "Paratroopers", "+ 0.05 t");
             }
 
             if (infantry.hasSpecialization(Infantry.PARAMEDICS)) {
                 mult += 0.05;
-                report.addLine("", "Paramedics", "+ 0.05");
+                report.addLine("", "Paramedics", "+ 0.05 t");
             }
 
-            if (infantry.isAntiMekTrained()) {
+            if (infantry.hasAntiMekGear()) {
                 mult += .015;
-                report.addLine("", "Anti-Mek Training", "+ 0.015");
+                report.addLine("", "Anti-Mek Gear", "+ 0.015 t");
             }
 
             weight = activeTroopers * mult;
-            report.addLine("Trooper Weight:", activeTroopers + " x " + formatForReport(mult),
+            report.addLine("Trooper Weight:", activeTroopers + " x " + formatForReport(mult) + " t",
                     formatForReport(weight) + " t");
 
             weight += infantry.activeFieldWeapons().stream().mapToDouble(Mounted::getTonnage).sum();
@@ -454,5 +470,44 @@ public class TestInfantry extends TestEntity {
         report.addLine("Final Weight:", "round up to nearest half ton",
                 formatForReport(roundedWeight) + " t");
         return weight;
+    }
+
+    public static void adaptAntiMekAttacks(Infantry infantry) {
+        try {
+            removeAntiMekAttacks(infantry);
+            if (infantry.canMakeAntiMekAttacks()) {
+                InfantryMount mount = infantry.getMount();
+                if ((mount == null) || mount.getSize().canMakeSwarmAttacks) {
+                    infantry.addEquipment(EquipmentType.get(Infantry.SWARM_MEK), Infantry.LOC_INFANTRY);
+                    infantry.addEquipment(EquipmentType.get(Infantry.STOP_SWARM), Infantry.LOC_INFANTRY);
+                }
+                if ((mount == null) || mount.getSize().canMakeLegAttacks) {
+                    infantry.addEquipment(EquipmentType.get(Infantry.LEG_ATTACK), Infantry.LOC_INFANTRY);
+                }
+            }
+        } catch (LocationFullException ignored) {
+            // not on Infantry
+        }
+    }
+
+
+    // The following methods are a condensed version of MML's UnitUtil.removeMounted
+    // and can be replaced if the latter is ever moved into MM
+    public static void removeAntiMekAttacks(Infantry unit) {
+        removeAntiMekAttack(unit, EquipmentType.get(Infantry.SWARM_MEK));
+        removeAntiMekAttack(unit, EquipmentType.get(Infantry.STOP_SWARM));
+        removeAntiMekAttack(unit, EquipmentType.get(Infantry.LEG_ATTACK));
+        unit.recalculateTechAdvancement();
+    }
+
+    public static void removeAntiMekAttack(Infantry unit, EquipmentType et) {
+        for (int pos = unit.getEquipment().size() - 1; pos >= 0; pos--) {
+            Mounted mount = unit.getEquipment().get(pos);
+            if (mount.getType().equals(et)) {
+                unit.getEquipment().remove(mount);
+                unit.getWeaponList().remove(mount);
+                unit.getTotalWeaponList().remove(mount);
+            }
+        }
     }
 }

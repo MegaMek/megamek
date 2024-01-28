@@ -32,31 +32,31 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
     @Override
     public Entity getEntity() throws EntityLoadingException {
 
-        Infantry t = new Infantry();
-        setBasicEntityData(t);
+        Infantry infantry = new Infantry();
+        setBasicEntityData(infantry);
 
         if (!dataFile.exists("squad_size")) {
             throw new EntityLoadingException("Could not find squad size.");
         }
-        t.setSquadSize(dataFile.getDataAsInt("squad_size")[0]);
+        infantry.setSquadSize(dataFile.getDataAsInt("squad_size")[0]);
         if (!dataFile.exists("squadn")) {
             throw new EntityLoadingException("Could not find number of squads.");
         }
-        t.setSquadCount(dataFile.getDataAsInt("squadn")[0]);
+        infantry.setSquadCount(dataFile.getDataAsInt("squadn")[0]);
 
-        t.autoSetInternal();
+        infantry.autoSetInternal();
 
         if (dataFile.exists("InfantryArmor")) {
-            t.setArmorDamageDivisor(dataFile.getDataAsInt("InfantryArmor")[0]);
+            infantry.setArmorDamageDivisor(dataFile.getDataAsInt("InfantryArmor")[0]);
         }
 
         if (!dataFile.exists("motion_type")) {
             throw new EntityLoadingException("Could not find movement block.");
         }
         String sMotion = dataFile.getDataAsString("motion_type")[0];
-        t.setMicrolite(sMotion.equalsIgnoreCase("microlite"));
+        infantry.setMicrolite(sMotion.equalsIgnoreCase("microlite"));
         if (sMotion.startsWith("Beast:")) {
-            t.setMount(InfantryMount.parse(sMotion));
+            infantry.setMount(InfantryMount.parse(sMotion));
         } else {
             EntityMovementMode nMotion = EntityMovementMode.parseFromString(sMotion);
             if (nMotion.isNone()) {
@@ -64,15 +64,15 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
             }
             if (nMotion == EntityMovementMode.INF_UMU
                     && sMotion.toLowerCase().contains("motorized")) {
-                t.setMotorizedScuba();
+                infantry.setMotorizedScuba();
             } else {
-                t.setMovementMode(nMotion);
+                infantry.setMovementMode(nMotion);
             }
         }
 
         // get primary and secondary weapons
         if (dataFile.exists("secondn")) {
-            t.setSecondaryWeaponsPerSquad(dataFile.getDataAsInt("secondn")[0]);
+            infantry.setSecondaryWeaponsPerSquad(dataFile.getDataAsInt("secondn")[0]);
         }
 
         if (!dataFile.exists("Primary")) {
@@ -83,7 +83,7 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
         if (!(ptype instanceof InfantryWeapon)) {
             throw new EntityLoadingException("primary weapon is not an infantry weapon");
         }
-        t.setPrimaryWeapon((InfantryWeapon) ptype);
+        infantry.setPrimaryWeapon((InfantryWeapon) ptype);
 
         EquipmentType stype = null;
         if (dataFile.exists("Secondary")) {
@@ -92,131 +92,123 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
             if (!(stype instanceof InfantryWeapon)) {
                 throw new EntityLoadingException("secondary weapon " + secondName + " is not an infantry weapon");
             }
-            t.setSecondaryWeapon((InfantryWeapon) stype);
+            infantry.setSecondaryWeapon((InfantryWeapon) stype);
         }
 
-        // if there is more than one secondary weapon per squad, then add that
-        // to the unit
+        // if there is more than one secondary weapon per squad, then add that to the unit
         // otherwise add the primary weapon
         Mounted m;
         try {
-            if ((t.getSecondaryWeaponsPerSquad() > 1)) {
-                m = new InfantryWeaponMounted(t, stype, (InfantryWeapon) ptype);
+            if ((infantry.getSecondaryWeaponsPerSquad() > 1)) {
+                m = new InfantryWeaponMounted(infantry, stype, (InfantryWeapon) ptype);
             } else if (stype != null) {
-                m = new InfantryWeaponMounted(t, ptype, (InfantryWeapon) stype);
+                m = new InfantryWeaponMounted(infantry, ptype, (InfantryWeapon) stype);
             } else {
-                m = new Mounted(t, ptype);
+                m = new Mounted(infantry, ptype);
             }
         } catch (ClassCastException ex) {
             throw new EntityLoadingException(ex.getMessage());
         }
         try {
-            t.addEquipment(m, Infantry.LOC_INFANTRY, false);
+            infantry.addEquipment(m, Infantry.LOC_INFANTRY, false);
         } catch (LocationFullException ex) {
             throw new EntityLoadingException(ex.getMessage());
         }
-        //TAG infantry have separate attacks for primary and secondary weapons.
+
+        // TAG infantry have separate attacks for primary and secondary weapons.
         if (null != stype && stype.hasFlag(WeaponType.F_TAG)) {
-            t.setSpecializations(t.getSpecializations() | Infantry.TAG_TROOPS);
+            infantry.setSpecializations(infantry.getSpecializations() | Infantry.TAG_TROOPS);
             try {
-                t.addEquipment(ptype, Infantry.LOC_INFANTRY);
+                infantry.addEquipment(ptype, Infantry.LOC_INFANTRY);
             } catch (LocationFullException ex) {
                 throw new EntityLoadingException(ex.getMessage());
             }
         }
-        
+
+        // backward compatibility: armor kits should now be saved and loaded as part of LOC_INFANTRY equipment
         if (dataFile.exists("armorKit")) {
             String kitName = dataFile.getDataAsString("armorKit")[0];
             EquipmentType kit = EquipmentType.get(kitName);
             if ((null == kit) || !(kit.hasFlag(MiscType.F_ARMOR_KIT))) {
                 throw new EntityLoadingException(kitName + " is not an infantry armor kit");
             }
-            t.setArmorKit(kit);
+            infantry.setArmorKit(kit);
         }
 
         if (dataFile.exists("dest")) {
-            t.setDEST(true);
+            infantry.setDEST(true);
         }
 
         if (dataFile.exists("specialization")) {
-            t.setSpecializations(Integer.parseInt(dataFile.getDataAsString("specialization")[0]));
+            try {
+                infantry.setSpecializations(Integer.parseInt(dataFile.getDataAsString("specialization")[0]));
+            } catch (NumberFormatException ex) {
+                throw new EntityLoadingException("Could not read specialization");
+            }
         }
         
         if (dataFile.exists("encumberingarmor")) {
-            t.setArmorEncumbering(true);
+            infantry.setArmorEncumbering(true);
         }
 
         if (dataFile.exists("spacesuit")) {
-            t.setSpaceSuit(true);
+            infantry.setSpaceSuit(true);
         }
 
         if (dataFile.exists("sneakcamo")) {
-            t.setSneakCamo(true);
+            infantry.setSneakCamo(true);
         }
 
         if (dataFile.exists("sneakir")) {
-            t.setSneakIR(true);
+            infantry.setSneakIR(true);
         }
 
         if (dataFile.exists("sneakecm")) {
-            t.setSneakECM(true);
+            infantry.setSneakECM(true);
         }
 
         if (dataFile.exists("armordivisor")) {
-            t.setArmorDamageDivisor(Double.parseDouble(dataFile.getDataAsString("armordivisor")[0]));
+            try {
+                infantry.setArmorDamageDivisor(Double.parseDouble(dataFile.getDataAsString("armordivisor")[0]));
+            } catch (NumberFormatException ex) {
+                throw new EntityLoadingException("Could not read armor divisor");
+            }
         }
-        // get field guns
-        loadEquipment(t, "Field Guns", Infantry.LOC_FIELD_GUNS);
 
+        loadEquipment(infantry, "Field Guns", Infantry.LOC_FIELD_GUNS);
+        loadEquipment(infantry, "Troopers", Infantry.LOC_INFANTRY);
+
+        // Update some internals if there's an armor kit
+        infantry.getMisc().stream()
+                .filter(misc -> misc.getType().hasFlag(MiscType.F_ARMOR_KIT))
+                .findFirst()
+                .ifPresent(mounted -> infantry.setArmorKit(mounted.getType()));
+
+        // backward compatibility: if an antimek better than 8 entry exists, assume anti-mek gear
         if (dataFile.exists("antimek")) {
-            int startIndex = dataFile.findStartIndex("antimek");
-            int endIndex = dataFile.findEndIndex("antimek");
-            int[] amSkill;
-            // If startIndex is the same as end, then tag is blank, use defaults
-            if (startIndex == endIndex) {
-                amSkill = new int[0];
-            } else {
-                String[] amSkillString = dataFile.getDataAsString("antimek");
-                if (amSkillString[0].equalsIgnoreCase("false")) {
-                    amSkill = new int[1];
-                    amSkill[0] = Infantry.ANTI_MECH_SKILL_UNTRAINED;
-                } else if (amSkillString[0].equalsIgnoreCase("true")) {
-                    amSkill = null;
-                } else {
-                    amSkill = dataFile.getDataAsInt("antimek");
+            int[] amSkill = dataFile.getDataAsInt("antimek");
+            if (amSkill[0] != 8) {
+                try {
+                    infantry.addEquipment(EquipmentType.get(EquipmentTypeLookup.ANTI_MEK_GEAR), Infantry.LOC_INFANTRY);
+                } catch (LocationFullException ex) {
+                    throw new EntityLoadingException(ex.getMessage());
                 }
             }
-            // If we just have the tag without values, take defaults
-            if ((amSkill == null) || (amSkill.length < 1)) {
-                // TM lists AM skill defaults on pg 40
-                if ((t.getMovementMode() == EntityMovementMode.INF_MOTORIZED) 
-                        || (t.getMovementMode() == EntityMovementMode.INF_JUMP)) {
-                    t.setAntiMekSkill(Infantry.ANTI_MECH_SKILL_JUMP);
-                } else {
-                    t.setAntiMekSkill(Infantry.ANTI_MECH_SKILL_FOOT);
-                }
-            } else {
-                t.setAntiMekSkill(amSkill[0]);
-            }
-        } else {
-            t.setAntiMekSkill(Infantry.ANTI_MECH_SKILL_UNTRAINED);
         }
         
-        /* Some units (mostly Manei Domini) have cybernetics/prosthetics as part of the official
-         * unit description.
-         */
+        // Some units (mostly Manei Domini) have cybernetics/prosthetics as part of the official unit description.
         if (dataFile.exists("augmentation")) {
             String[] augmentations = dataFile.getDataAsString("augmentation");
             for (String aug : augmentations) {
                 try {
-                    t.getCrew().getOptions().getOption(aug).setValue(true);
+                    infantry.getCrew().getOptions().getOption(aug).setValue(true);
                 } catch (NullPointerException ex) {
                     throw new EntityLoadingException("Could not locate pilot option " + aug);
                 }
             }
         }
-        t.recalculateTechAdvancement();
-        loadQuirks(t);
-        return t;
+        infantry.recalculateTechAdvancement();
+        loadQuirks(infantry);
+        return infantry;
     }
 }

@@ -17,6 +17,7 @@ package megamek.common;
 import java.math.BigInteger;
 import java.text.NumberFormat;
 
+import megamek.common.miscGear.AntiMekGear;
 import megamek.common.weapons.ppc.CLERPPC;
 import megamek.common.weapons.ppc.ISERPPC;
 import megamek.common.weapons.ppc.ISHeavyPPC;
@@ -1834,6 +1835,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createClanLamellorFerroCarbideArmor());
 
         // Infantry Equipment Packs
+        EquipmentType.addType(new AntiMekGear());
         EquipmentType.addType(MiscType.createISAblativeStandardInfArmor());
         EquipmentType.addType(MiscType.createISAblativeConcealedInfArmor());
         EquipmentType.addType(MiscType.createISAblativeFlakStandardArmorInfArmor());

@@ -17,6 +17,7 @@ package megamek.common;
 import megamek.common.loaders.*;
 import megamek.common.util.BuildingBlock;
 import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.common.verifier.TestInfantry;
 import megamek.common.weapons.ppc.*;
 import org.apache.logging.log4j.LogManager;
 
@@ -724,25 +725,8 @@ public class MechFileParser {
             }
         }
         // physical attacks for conventional infantry
-        else if ((ent instanceof Infantry) && ((Infantry) ent).canMakeAntiMekAttacks()) {
-            try {
-                InfantryMount mount = ((Infantry) ent).getMount();
-                if ((mount == null) || mount.getSize().canMakeSwarmAttacks) {
-                    ent.addEquipment(EquipmentType.get(Infantry.SWARM_MEK),
-                            Infantry.LOC_INFANTRY, false,
-                            BattleArmor.MOUNT_LOC_NONE, false);
-                    ent.addEquipment(EquipmentType.get(Infantry.STOP_SWARM),
-                            Infantry.LOC_INFANTRY, false,
-                            BattleArmor.MOUNT_LOC_NONE, false);
-                }
-                if ((mount == null) || mount.getSize().canMakeLegAttacks) {
-                    ent.addEquipment(EquipmentType.get(Infantry.LEG_ATTACK),
-                            Infantry.LOC_INFANTRY, false,
-                            BattleArmor.MOUNT_LOC_NONE, false);
-                }
-            } catch (LocationFullException ex) {
-                throw new EntityLoadingException(ex.getMessage());
-            }
+        else if (ent instanceof Infantry) {
+            TestInfantry.adaptAntiMekAttacks((Infantry) ent);
         }
 
         // Check if it's canon; if it is, mark it as such.

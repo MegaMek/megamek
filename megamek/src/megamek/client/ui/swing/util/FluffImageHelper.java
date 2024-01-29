@@ -103,14 +103,14 @@ public class FluffImageHelper {
         String userDir = PreferenceManager.getClientPreferences().getUserDir();
         if (!userDir.isBlank()) {
             var userDirPath = new File(userDir + "/" + Configuration.fluffImagesDir(), getImagePath(element));
-            Image image = loadFluffImageHeuristic(userDirPath, element.getModel(), element.getChassis());
+            Image image = loadFluffImageHeuristic(userDirPath, element.getModel(), element.getFullChassis());
             if (image != null) {
                 return image;
             }
         }
 
         var path = new MegaMekFile(Configuration.fluffImagesDir(), getImagePath(element));
-        return loadFluffImageHeuristic(path.getFile(), element.getModel(), element.getChassis());
+        return loadFluffImageHeuristic(path.getFile(), element.getModel(), element.getFullChassis());
     }
 
     private static @Nullable Image loadFluffImageHeuristic(File path, String model, String chassis) {

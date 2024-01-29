@@ -4201,6 +4201,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return ammoList;
     }
 
+    public ArrayList<Mounted> getAmmo(Mounted weapon) {
+        return (ArrayList<Mounted>) ammoList.stream()
+                .filter(
+                    ammo -> AmmoType.isAmmoValid(ammo, (WeaponType) weapon.getType())
+                )
+                .collect(Collectors.toList());
+    }
     public ArrayList<Mounted> getMisc() {
         return miscList;
     }

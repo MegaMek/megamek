@@ -317,7 +317,7 @@ public class ArtilleryTargetingControl {
                     }
 
                     WeaponFireInfo wfi = new WeaponFireInfo(shooter, hexTarget,
-                            currentWeapon, game, false, owner);
+                            currentWeapon, null, game, false, owner);
 
                     // factor the chance to hit when picking a target - if we've got a spotted hex or an auto-hit hex
                     // we should prefer to hit that over something that may scatter to who knows where
@@ -383,7 +383,7 @@ public class ArtilleryTargetingControl {
 
         // pretty simple logic here: take the best shot that you have
         for (Targetable target : FireControl.getAllTargetableEnemyEntities(owner.getLocalPlayer(), game, owner.getFireControlState())) {
-            WeaponFireInfo wfi = new WeaponFireInfo(shooter, target, weapon, game, false, owner);
+            WeaponFireInfo wfi = new WeaponFireInfo(shooter, target, weapon, null, game, false, owner);
             if (wfi.getProbabilityToHit() > hitOdds) {
                 hitOdds = wfi.getProbabilityToHit();
                 retval = wfi;

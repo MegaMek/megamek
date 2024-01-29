@@ -79,7 +79,7 @@ public class WeaponFireInfoTest {
 
         mockFireControl = mock(FireControl.class);
         when(mockFireControl.guessToHitModifierForWeapon(any(Entity.class), any(EntityState.class),
-                any(Targetable.class), any(EntityState.class), any(Mounted.class), any(Game.class)))
+                any(Targetable.class), any(EntityState.class), any(Mounted.class), any(Mounted.class), any(Game.class)))
                 .thenReturn(mockToHitEight);
 
         mockPrincess = mock(Princess.class);

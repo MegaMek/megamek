@@ -43,6 +43,7 @@ public class WeaponFireInfo {
     private Entity shooter;
     private Targetable target;
     private Mounted weapon;
+    private Mounted preferredAmmo;
     private double probabilityToHit;
     private int heat;
     private double maxDamage;
@@ -70,16 +71,18 @@ public class WeaponFireInfo {
      * @param shooter The {@link megamek.common.Entity} doing the attacking.
      * @param target  The {@link megamek.common.Targetable} of the attack.
      * @param weapon  The {@link megamek.common.Mounted} weapon used for the attack.
+     * @param ammo    The {@link megamek.common.Mounted} ammo to use for the attack; may be null.
      * @param game    The current {@link Game}
      * @param guess   Set TRUE to estimate the chance to hit rather than doing the full calculation.
      */
     WeaponFireInfo(final Entity shooter,
                    final Targetable target,
                    final Mounted weapon,
+                   final Mounted ammo,
                    final Game game,
                    final boolean guess,
                    final Princess owner) {
-        this(shooter, null, null, target, null, weapon, game, false, guess, owner, null);
+        this(shooter, null, null, target, null, weapon, ammo, game, false, guess, owner, null);
     }
 
     /**
@@ -98,10 +101,11 @@ public class WeaponFireInfo {
                    final Targetable target,
                    final EntityState targetState,
                    final Mounted weapon,
+                   final Mounted ammo,
                    final Game game,
                    final boolean guess,
                    final Princess owner) {
-        this(shooter, shooterState, null, target, targetState, weapon, game, false, guess, owner, null);
+        this(shooter, shooterState, null, target, targetState, weapon, ammo, game, false, guess, owner, null);
     }
 
     /**
@@ -123,12 +127,13 @@ public class WeaponFireInfo {
                    final Targetable target,
                    final EntityState targetState,
                    final Mounted weapon,
+                   final Mounted ammo,
                    final Game game,
                    final boolean assumeUnderFlightPath,
                    final boolean guess,
                    final Princess owner,
                    final HashMap<String, int[]> bombPayloads) {
-        this(shooter, null, shooterPath, target, targetState, weapon, game, assumeUnderFlightPath, guess, owner, bombPayloads);
+        this(shooter, null, shooterPath, target, targetState, weapon, ammo, game, assumeUnderFlightPath, guess, owner, bombPayloads);
     }
 
     /**
@@ -154,6 +159,7 @@ public class WeaponFireInfo {
                            final Targetable target,
                            final EntityState targetState,
                            final Mounted weapon,
+                           final Mounted ammo,
                            final Game game,
                            final boolean assumeUnderFlightPath,
                            final boolean guess,
@@ -166,6 +172,7 @@ public class WeaponFireInfo {
         setTarget(target);
         setTargetState(targetState);
         setWeapon(weapon);
+        setAmmo(ammo);
         setGame(game);
         initDamage(shooterPath, assumeUnderFlightPath, guess, bombPayloads);
     }
@@ -263,14 +270,15 @@ public class WeaponFireInfo {
     ToHitData calcToHit() {
         return owner.getFireControl(getShooter()).guessToHitModifierForWeapon(getShooter(), getShooterState(), getTarget(),
                                                                   getTargetState(),
-                                                                  getWeapon(), getGame());
+                                                                  getWeapon(), getAmmo(), getGame());
     }
 
     private ToHitData calcToHit(final MovePath shooterPath,
                                 final boolean assumeUnderFlightPath) {
         return owner.getFireControl(getShooter()).guessAirToGroundStrikeToHitModifier(getShooter(), null, getTarget(),
                                                                           getTargetState(),
-                                                                          shooterPath, getWeapon(), getGame(),
+                                                                          shooterPath, getWeapon(),
+                                                                          getAmmo(), getGame(),
                                                                           assumeUnderFlightPath);
     }
 
@@ -313,6 +321,10 @@ public class WeaponFireInfo {
         this.weapon = weapon;
     }
 
+    protected void setAmmo(final Mounted ammo) {
+        this.preferredAmmo = ammo;
+    }
+
     protected void setHeat(final int heat) {
         this.heat = heat;
     }
@@ -323,6 +335,10 @@ public class WeaponFireInfo {
 
     public Mounted getWeapon() {
         return weapon;
+    }
+
+    public Mounted getAmmo() {
+        return preferredAmmo;
     }
 
     public double getExpectedDamage() {

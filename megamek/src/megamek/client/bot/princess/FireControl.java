@@ -1140,10 +1140,21 @@ public class FireControl {
         final List<Targetable> enemies = getTargetableEnemyEntities(shooter, game, owner.getFireControlState());
         for (final Targetable enemy : enemies) {
             for (final Mounted weapon : shooter.getWeaponList()) {
-                for (final Mounted ammo : shooter.getAmmo(weapon)) {
-                    final String shootingCheck = checkGuess(shooter, enemy, weapon, ammo, game);
+                final WeaponType wtype = (WeaponType) weapon.getType();
+                String shootingCheck;
+
+                // Energy / ammo-independent weapons
+                if (AmmoType.T_NA == wtype.getAmmoType()) {
+                    shootingCheck = checkGuess(shooter, enemy, weapon, null, game);
                     if (null != shootingCheck) {
                         ret.append(shootingCheck);
+                    }
+                } else {
+                    for (final Mounted ammo : shooter.getAmmo(weapon)) {
+                        shootingCheck = checkGuess(shooter, enemy, weapon, ammo, game);
+                        if (null != shootingCheck) {
+                            ret.append(shootingCheck);
+                        }
                     }
                 }
             }
@@ -1552,19 +1563,32 @@ public class FireControl {
                 continue;
             }
 
-            for (final Mounted ammo: shooter.getAmmo(weapon)) {
-                final WeaponFireInfo shoot = buildWeaponFireInfo(shooter,
-                        shooterState,
-                        target,
-                        targetState,
-                        weapon,
-                        ammo,
-                        game,
-                        true);
+            final WeaponType wtype = (WeaponType) weapon.getType();
 
-                if (0 < shoot.getProbabilityToHit()) {
-                    myPlan.add(shoot);
+            WeaponFireInfo bestShoot = null;
+
+            // Energy / ammo-independent weapons
+            if (AmmoType.T_NA == wtype.getAmmoType()) {
+                bestShoot = buildWeaponFireInfo(shooter, target, weapon, null, game, false);
+            } else {
+                WeaponFireInfo shoot;
+                for (final Mounted ammo : shooter.getAmmo(weapon)) {
+                    shoot = buildWeaponFireInfo(shooter,
+                            shooterState,
+                            target,
+                            targetState,
+                            weapon,
+                            ammo,
+                            game,
+                            true);
+                    if (null == bestShoot || shoot.getProbabilityToHit() > bestShoot.getProbabilityToHit()) {
+                        bestShoot = shoot;
+                    }
                 }
+            }
+
+            if (0 < bestShoot.getProbabilityToHit()) {
+                myPlan.add(bestShoot);
             }
         }
 
@@ -1645,24 +1669,38 @@ public class FireControl {
                 continue;
             }
 
-            for (final Mounted ammo: shooter.getAmmo(weapon)) {
+            final WeaponType wtype = (WeaponType) weapon.getType();
 
-                final WeaponFireInfo shoot = buildWeaponFireInfo(shooter,
-                        flightPath,
-                        target,
-                        targetState,
-                        weapon,
-                        ammo,
-                        game,
-                        true,
-                        true);
+            WeaponFireInfo bestShoot = null;
 
-                // for now, just fire weapons that will do damage until we get to heat capacity
-                if (0 < shoot.getProbabilityToHit() &&
-                        myPlan.getHeat() + shoot.getHeat() + shooter.getHeat() <= shooter.getHeatCapacity() &&
-                        0 < shoot.getExpectedDamage()) {
-                    myPlan.add(shoot);
+            // Energy / ammo-independent weapons
+            if (AmmoType.T_NA == wtype.getAmmoType()) {
+                bestShoot = buildWeaponFireInfo(shooter, target, weapon, null, game, false);
+            } else {
+                WeaponFireInfo shoot;
+                for (final Mounted ammo : shooter.getAmmo(weapon)) {
+
+                    shoot = buildWeaponFireInfo(shooter,
+                            flightPath,
+                            target,
+                            targetState,
+                            weapon,
+                            ammo,
+                            game,
+                            true,
+                            true);
+
+                    if (null == bestShoot || shoot.getProbabilityToHit() > bestShoot.getProbabilityToHit()) {
+                        bestShoot = shoot;
+                    }
                 }
+            }
+
+            // for now, just fire weapons that will do damage until we get to heat capacity
+            if (0 < bestShoot.getProbabilityToHit() &&
+                    myPlan.getHeat() + bestShoot.getHeat() + shooter.getHeat() <= shooter.getHeatCapacity() &&
+                    0 < bestShoot.getExpectedDamage()) {
+                myPlan.add(bestShoot);
             }
         }
 
@@ -2425,26 +2463,41 @@ public class FireControl {
                 continue;
             }
 
-            // Iterate over all valid ammo for this weapon
-            for (final Mounted ammo : shooter.getAmmo(weapon)) {
-                final int bracket = RangeType.rangeBracket(range,
-                        weaponType.getRanges(weapon, ammo),
+            // Remember the best bracket for this weapon/set of ammo.
+            int bestBracket = RangeType.RANGE_OUT;
+
+            // For energy weapons / ammo-independent weapons
+            if (AmmoType.T_NA == weaponType.getAmmoType()) {
+                bestBracket = RangeType.rangeBracket(range,
+                        weaponType.getRanges(weapon),
                         useExtremeRange,
                         useLOSRange);
-
-                int weaponDamage = weaponType.getDamage();
-
-                // just a ball park estimate of missile and/or other cluster damage
-                // only a little over half of a cluster will generally hit
-                // but some cluster munitions do more than 1 point of damage per individual hit
-                // still better than just discounting them completely.
-                if (weaponDamage == WeaponType.DAMAGE_BY_CLUSTERTABLE || weaponType.hasFlag(WeaponType.F_ARTILLERY)) {
-                    weaponDamage = weaponType.getRackSize();
+            } else {
+                // Iterate over all valid ammo for this weapon
+                int bracket;
+                for (final Mounted ammo : shooter.getAmmo(weapon)) {
+                    bracket = RangeType.rangeBracket(range,
+                            weaponType.getRanges(weapon, ammo),
+                            useExtremeRange,
+                            useLOSRange);
+                    if (bracket < bestBracket) {
+                        bestBracket = bracket;
+                    }
                 }
+            }
 
-                if ((RangeType.RANGE_OUT != bracket) && (0 < weaponDamage)) {
-                    maxDamage += weaponDamage;
-                }
+            int weaponDamage = weaponType.getDamage();
+
+            // just a ball park estimate of missile and/or other cluster damage
+            // only a little over half of a cluster will generally hit
+            // but some cluster munitions do more than 1 point of damage per individual hit
+            // still better than just discounting them completely.
+            if (weaponDamage == WeaponType.DAMAGE_BY_CLUSTERTABLE || weaponType.hasFlag(WeaponType.F_ARTILLERY)) {
+                weaponDamage = weaponType.getRackSize();
+            }
+
+            if ((RangeType.RANGE_OUT != bestBracket) && (0 < weaponDamage)) {
+                maxDamage += weaponDamage;
             }
         }
 

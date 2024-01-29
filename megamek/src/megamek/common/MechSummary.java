@@ -14,6 +14,7 @@
  */
 package megamek.common;
 
+import megamek.codeUtilities.StringUtility;
 import megamek.common.alphaStrike.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.*;
@@ -183,6 +184,10 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     @Override
     public String getChassis() {
         return chassis;
+    }
+
+    public String getFullChassis() {
+        return chassis + (StringUtility.isNullOrBlank(clanChassisName) ? "" : " (" + clanChassisName + ")");
     }
 
     public void setClanChassisName(String name) {

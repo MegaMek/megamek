@@ -489,29 +489,8 @@ public class MechSummaryCache {
             ms.setCockpitType(-2);
         }
 
-        TestEntity testEntity = null;
-        if (e instanceof Mech) {
-            testEntity = new TestMech((Mech) e, entityVerifier.mechOption, null);
-        } else if (e instanceof Protomech) {
-            testEntity = new TestProtomech((Protomech) e, entityVerifier.protomechOption, null);
-        } else if (e.isSupportVehicle()) {
-            testEntity = new TestSupportVehicle(e, entityVerifier.tankOption, null);
-        } else if (e instanceof Tank && !(e instanceof GunEmplacement)) {
-            testEntity = new TestTank((Tank) e, entityVerifier.tankOption, null);
-        } else if (e instanceof BattleArmor) {
-            testEntity = new TestBattleArmor((BattleArmor) e, entityVerifier.baOption, null);
-        } else if (e instanceof Infantry) {
-            testEntity = new TestInfantry((Infantry) e, entityVerifier.infOption, null);
-        } else if (e instanceof Jumpship) {
-            testEntity = new TestAdvancedAerospace((Jumpship) e, entityVerifier.aeroOption, null);
-        } else if (e instanceof SmallCraft) {
-            testEntity = new TestSmallCraft((SmallCraft) e, entityVerifier.aeroOption, null);
-        } else if (e instanceof Aero) {
-            // FighterSquadron and TeleMissile are also instanceof Aero but they won't be showing up in the unit files
-            testEntity = new TestAero((Aero) e, entityVerifier.aeroOption, null);
-        }
-        if (testEntity != null &&
-                !testEntity.correctEntity(new StringBuffer())) {
+        TestEntity testEntity = TestEntity.getEntityVerifier(e);
+        if (testEntity != null && !testEntity.correctEntity(new StringBuffer())) {
             ms.setLevel("F");
             ms.setInvalid(true);
         } else {

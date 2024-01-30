@@ -110,8 +110,6 @@ public class GameManager implements IGameManager {
 
     private Vector<DynamicTerrainProcessor> terrainProcessors = new Vector<>();
 
-    private static EntityVerifier entityVerifier;
-
     private ArrayList<int[]> scheduledNukes = new ArrayList<>();
 
     /**
@@ -29489,34 +29487,9 @@ public class GameManager implements IGameManager {
         // Need to use a new ArrayLiut to prevent a concurrent modification exception when removing
         // illegal entities
         for (final Entity entity : new ArrayList<>(entities)) {
-            // Verify the entity's design
-            if (entityVerifier == null) {
-                entityVerifier = EntityVerifier.getInstance(new MegaMekFile(
-                        Configuration.unitsDir(), EntityVerifier.CONFIG_FILENAME).getFile());
-            }
-
             // Create a TestEntity instance for supported unit types
-            TestEntity testEntity = null;
+            TestEntity testEntity = TestEntity.getEntityVerifier(entity);
             entity.restore();
-            if (entity instanceof Mech) {
-                testEntity = new TestMech((Mech) entity, entityVerifier.mechOption, null);
-            } else if ((entity.getEntityType() == Entity.ETYPE_TANK)
-                    && (entity.getEntityType() != Entity.ETYPE_GUN_EMPLACEMENT)) {
-                if (entity.isSupportVehicle()) {
-                    testEntity = new TestSupportVehicle(entity, entityVerifier.tankOption, null);
-                } else {
-                    testEntity = new TestTank((Tank) entity, entityVerifier.tankOption, null);
-                }
-            } else if ((entity.getEntityType() == Entity.ETYPE_AERO)
-                    && (entity.getEntityType() != Entity.ETYPE_DROPSHIP)
-                    && (entity.getEntityType() != Entity.ETYPE_SMALL_CRAFT)
-                    && (entity.getEntityType() != Entity.ETYPE_FIGHTER_SQUADRON)
-                    && (entity.getEntityType() != Entity.ETYPE_JUMPSHIP)
-                    && (entity.getEntityType() != Entity.ETYPE_SPACE_STATION)) {
-                testEntity = new TestAero((Aero) entity, entityVerifier.aeroOption, null);
-            } else if (entity instanceof BattleArmor) {
-                testEntity = new TestBattleArmor((BattleArmor) entity, entityVerifier.baOption, null);
-            }
 
             if (testEntity != null) {
                 StringBuffer sb = new StringBuffer();

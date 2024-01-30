@@ -930,46 +930,13 @@ public class CustomMechDialog extends AbstractButtonDialog implements ActionList
         }
 
         // Check validity of units after customization
-        EntityVerifier verifier = EntityVerifier.getInstance(new MegaMekFile(
-                Configuration.unitsDir(), EntityVerifier.CONFIG_FILENAME).getFile());
         for (Entity entity : entities) {
-            TestEntity testEntity = getTestEntity(entity, verifier);
+            TestEntity testEntity = TestEntity.getEntityVerifier(entity);
             int gameTL = TechConstants.getGameTechLevel(client.getGame(), entity.isClan());
             entity.setDesignValid((testEntity == null) || testEntity.correctEntity(new StringBuffer(), gameTL));
         }
 
         setVisible(false);
-    }
-
-    /**
-     * copied from megameklab.util.UnitUtil.getEntityVerifier
-     * @param unit the supplied entity
-     * @param entityVerifier the entity verifier loaded from a UnitVerifierOptions.xml
-     * @return a TestEntity instance for the supplied Entity.
-     */
-    public static TestEntity getTestEntity(Entity unit, EntityVerifier entityVerifier) {
-        // FIXME move the same method from megameklab.util.UnitUtil.getEntityVerifier to common
-        TestEntity testEntity = null;
-        if (unit.hasETypeFlag(Entity.ETYPE_MECH)) {
-            testEntity = new TestMech((Mech) unit, entityVerifier.mechOption, null);
-        } else if (unit.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
-            testEntity = new TestProtomech((Protomech) unit, entityVerifier.protomechOption, null);
-        } else if (unit.isSupportVehicle()) {
-            testEntity = new TestSupportVehicle(unit, entityVerifier.tankOption, null);
-        } else if (unit.hasETypeFlag(Entity.ETYPE_TANK)) {
-            testEntity = new TestTank((Tank) unit, entityVerifier.tankOption, null);
-        } else if (unit.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
-            testEntity = new TestSmallCraft((SmallCraft) unit, entityVerifier.aeroOption, null);
-        } else if (unit.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
-            testEntity = new TestAdvancedAerospace((Jumpship) unit, entityVerifier.aeroOption, null);
-        } else if (unit.hasETypeFlag(Entity.ETYPE_AERO)) {
-            testEntity = new TestAero((Aero) unit, entityVerifier.aeroOption, null);
-        } else if (unit.hasETypeFlag(Entity.ETYPE_BATTLEARMOR)) {
-            testEntity = new TestBattleArmor((BattleArmor) unit, entityVerifier.baOption, null);
-        } else if (unit.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
-            testEntity = new TestInfantry((Infantry)unit, entityVerifier.infOption, null);
-        }
-        return testEntity;
     }
 
     @Override

@@ -106,30 +106,9 @@ public class EntityVerifier implements MechSummaryCache.Listener {
             boolean verbose, int ammoTechLvl, boolean failsOnly) {
         final NumberFormat FMT = NumberFormat.getNumberInstance(Locale.getDefault());
         boolean retVal = false;
-        TestEntity testEntity;
-        if (entity instanceof Mech) {
-            testEntity = new TestMech((Mech) entity, mechOption, fileString);
-        } else if (entity instanceof Protomech) {
-            testEntity = new TestProtomech((Protomech) entity, protomechOption, fileString);
-        } else if (entity.isSupportVehicle()) {
-            testEntity = new TestSupportVehicle(entity, tankOption, null);
-        } else if ((entity instanceof Tank) &&
-                !(entity instanceof GunEmplacement)) {
-            testEntity = new TestTank((Tank) entity, tankOption, null);
-        } else if (entity.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
-            testEntity = new TestSmallCraft((SmallCraft) entity, aeroOption, fileString);
-        } else if (entity.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
-            testEntity = new TestAdvancedAerospace((Jumpship) entity, aeroOption, fileString);
-        } else if (entity.hasETypeFlag(Entity.ETYPE_AERO)
-                && !entity.hasETypeFlag(Entity.ETYPE_FIGHTER_SQUADRON)) {
-            testEntity = new TestAero((Aero) entity, aeroOption, fileString);
-        } else if (entity instanceof BattleArmor) {
-            testEntity = new TestBattleArmor((BattleArmor) entity, baOption,
-                    fileString);
-        } else if (entity instanceof Infantry) {
-            testEntity = new TestInfantry((Infantry) entity, infOption,
-                    fileString);
-        } else {
+        TestEntity testEntity  = TestEntity.getEntityVerifier(entity);
+
+        if (testEntity == null) {
             System.err.println("UnknownType: " + entity.getDisplayName());
             System.err.println("Found in: " + fileString);
             return false;

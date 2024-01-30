@@ -90,7 +90,7 @@ public abstract class TestEntity implements TestEntityOption {
      */
     public static TestEntity getEntityVerifier(Entity unit) {
         EntityVerifier entityVerifier = EntityVerifier.getInstance(new File(
-                "data/mechfiles/UnitVerifierOptions.xml")); // TODO : Remove inline file path
+                Configuration.unitsDir(), EntityVerifier.CONFIG_FILENAME));
         TestEntity testEntity = null;
 
         if (unit.hasETypeFlag(Entity.ETYPE_MECH)) {
@@ -99,7 +99,7 @@ public abstract class TestEntity implements TestEntityOption {
             testEntity = new TestProtomech((Protomech) unit, entityVerifier.protomechOption, null);
         } else if (unit.isSupportVehicle()) {
             testEntity = new TestSupportVehicle(unit, entityVerifier.tankOption, null);
-        } else if (unit.hasETypeFlag(Entity.ETYPE_TANK)) {
+        } else if (unit.hasETypeFlag(Entity.ETYPE_TANK) && !unit.hasETypeFlag(Entity.ETYPE_GUN_EMPLACEMENT)) {
             testEntity = new TestTank((Tank) unit, entityVerifier.tankOption, null);
         } else if (unit.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
             testEntity = new TestSmallCraft((SmallCraft) unit, entityVerifier.aeroOption, null);

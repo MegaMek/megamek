@@ -1438,6 +1438,24 @@ public abstract class TestEntity implements TestEntityOption {
             } else if (m.getType().hasFlag(MiscType.F_APOLLO)) {
                 apollo++;
             }
+
+            if (m.getType().hasFlag(MiscType.F_LASER_INSULATOR) &&
+                    ((m.getLinked() == null)
+                        || (m.getLinked().getLocation() != m.getLocation())
+                        || !(m.getLinked().getType() instanceof WeaponType)
+                        || !m.getLinked().getType().hasFlag(WeaponType.F_LASER))) {
+                buff.append("Laser insulator requires a laser in the same location.\n");
+                illegal = true;
+            }
+            if (m.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE) &&
+                    ((m.getLinked() == null)
+                        || (m.getLinked().getLocation() != m.getLocation())
+                        || !(m.getLinked().getType() instanceof WeaponType)
+                        || !m.getLinked().getType().hasFlag(WeaponType.F_LASER)
+                        || m.getLinked().getType().hasFlag(WeaponType.F_PULSE))) {
+                buff.append("Laser insulator requires a non-pulse laser in the same location.\n");
+                illegal = true;
+            }
         }
         if ((networks > 0) && !countedC3) {
             for (Mounted m : getEntity().getIndividualWeaponList()) {

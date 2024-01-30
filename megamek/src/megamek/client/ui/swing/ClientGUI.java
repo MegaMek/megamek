@@ -976,7 +976,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 if (curPanel instanceof MovementDisplay) {
                     GUIP.setMoveEnvelope(!GUIP.getMoveEnvelope());
                     Entity entity = getUnitDisplay().getCurrentEntity();
-                    if (!(entity instanceof Aero)) {
+                    if (!entity.isAero()) {
                         ((MovementDisplay) curPanel).computeMovementEnvelope(entity);
                     } else {
                         ((MovementDisplay) curPanel).computeAeroMovementEnvelope(entity);

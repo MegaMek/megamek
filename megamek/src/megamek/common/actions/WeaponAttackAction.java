@@ -24,6 +24,8 @@ import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
 import megamek.common.weapons.artillery.ArtilleryWeapon;
+import megamek.common.weapons.autocannons.LBXACWeapon;
+import megamek.common.weapons.battlearmor.CLBALBX;
 import megamek.common.weapons.bayweapons.*;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
@@ -361,15 +363,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         boolean isFlakAttack = !game.getBoard().inSpace() && (te != null)
-                && (te.isAirborne() || te.isAirborneVTOLorWIGE()) && (atype != null)
-                && (
-                        (((atype.getAmmoType() == AmmoType.T_AC_LBX) || (atype.getAmmoType() == AmmoType.T_AC_LBX_THB)
-                            || (atype.getAmmoType() == AmmoType.T_SBGAUSS))
-                            && (munition.contains(AmmoType.Munitions.M_CLUSTER))
-                        )
-                        || munition.contains(AmmoType.Munitions.M_FLAK) || (atype.getAmmoType() == AmmoType.T_HAG)
-                        || atype.countsAsFlak()
-        );
+                && (te.isAirborne() || te.isAirborneVTOLorWIGE())
+                && (wtype instanceof CLBALBX
+                    || ((atype != null)
+                        && (
+                            (((atype.getAmmoType() == AmmoType.T_AC_LBX) || (atype.getAmmoType() == AmmoType.T_AC_LBX_THB)
+                                || (atype.getAmmoType() == AmmoType.T_SBGAUSS))
+                                && (munition.contains(AmmoType.Munitions.M_CLUSTER))
+                            )
+                            || munition.contains(AmmoType.Munitions.M_FLAK) || (atype.getAmmoType() == AmmoType.T_HAG)
+                            || atype.countsAsFlak()
+                        ))
+                );
 
         boolean isIndirect = weapon.hasModes() && (weapon.curMode().isIndirect());
 

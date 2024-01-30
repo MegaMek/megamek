@@ -16,6 +16,7 @@
 package megamek.common;
 
 import megamek.client.ui.swing.unitSelector.TWAdvancedSearchPanel;
+import megamek.common.util.StringUtil;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
@@ -366,25 +367,13 @@ public class MechSearchFilter {
 
     }
 
-    private static int toInt(String s, int i) {
-        if (s.isEmpty()) {
-            return i;
-        }
-
-        try {
-            return Integer.parseInt(s);
-        } catch (Exception ignored) {
-            return i;
-        }
-    }
-
     private static boolean isBetween(double value, String sStart, String sEnd) {
         if (sStart.isEmpty() && sEnd.isEmpty()) {
             return true;
         }
 
-        int iStart = toInt(sStart, Integer.MIN_VALUE);
-        int iEnd = toInt(sEnd, Integer.MAX_VALUE);
+        int iStart = StringUtil.toInt(sStart, Integer.MIN_VALUE);
+        int iEnd = StringUtil.toInt(sEnd, Integer.MAX_VALUE);
 
         if ((value < iStart) || (value > iEnd)) {
             return false;
@@ -461,7 +450,7 @@ public class MechSearchFilter {
             return false;
         }
 
-        if ((!f.mulid.isEmpty()) && (mech.getMulId() != toInt(f.mulid, -2))) {
+        if ((!f.mulid.isEmpty()) && (mech.getMulId() != StringUtil.toInt(f.mulid, -2))) {
             return false;
         }
 

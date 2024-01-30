@@ -38,6 +38,7 @@ MEGAMEK VERSION HISTORY:
 + Fix #4941: MechView Ammo Block
 + Fix #5070: CI Anti-Mek Gear - Implements proper Anti-Mek set up for Infantry
 + Fix #5078: BA LB-X should get flak bonus against airborne targets
++ Fix #5088: Inaccurate Movement Envelope for Aerospace Fighters on Ground Maps
 
 0.49.17 (2023-12-31 1900 UTC)
 + Fix #1031: Show structure collapse warning when deploying and moving.

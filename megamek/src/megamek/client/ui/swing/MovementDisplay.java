@@ -478,7 +478,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                             removeLastStep();
                         }
 
-                        if (ce() instanceof Aero) {
+                        if (ce() != null && ce().isAero()) {
                             computeAeroMovementEnvelope(ce());
                         } else {
                             computeMovementEnvelope(ce());
@@ -500,7 +500,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     @Override
                     public void performAction() {
                         removeLastStep();
-                        if (ce() instanceof Aero) {
+                        if (ce() != null && ce().isAero()) {
                             computeAeroMovementEnvelope(ce());
                         } else {
                             computeMovementEnvelope(ce());
@@ -4577,7 +4577,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
      *           is not an Aero based unity.
      */
     public void computeAeroMovementEnvelope(Entity entity) {
-        if ((entity == null) || !(entity instanceof Aero) || (cmd == null)) {
+        if ((entity == null) || !(entity.isAero()) || (cmd == null)) {
             return;
         }
 

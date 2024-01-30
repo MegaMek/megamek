@@ -197,45 +197,16 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
                         new IOException());
             } else {
                 try {
-                    Entity entity = new MechFileParser(ms.getSourceFile(),
-                            ms.getEntryName()).getEntity();
+                    Entity entity = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
                     LogManager.getLogger().info("Validating Entity: " + entity.getShortNameRaw());
-                    EntityVerifier entityVerifier = EntityVerifier.getInstance(
-                            new MegaMekFile(Configuration.unitsDir(),
-                                    EntityVerifier.CONFIG_FILENAME).getFile());
                     MechView mechView = new MechView(entity, false);
                     StringBuffer sb = new StringBuffer(mechView.getMechReadout());
-                    if ((entity instanceof Mech) || (entity instanceof Tank)
-                            || (entity instanceof Aero) || (entity instanceof BattleArmor)) {
-                        TestEntity testEntity = null;
-                        if (entity instanceof Mech) {
-                            testEntity = new TestMech((Mech) entity, entityVerifier.mechOption,
-                                    null);
-                        } else if ((entity instanceof Tank) && !(entity instanceof GunEmplacement)) {
-                            if (entity.isSupportVehicle()) {
-                                testEntity = new TestSupportVehicle(entity,
-                                        entityVerifier.tankOption, null);
-                            } else {
-                                testEntity = new TestTank((Tank) entity,
-                                        entityVerifier.tankOption, null);
-                            }
-                        } else if ((entity.getEntityType() == Entity.ETYPE_AERO)
-                                && (entity.getEntityType() != Entity.ETYPE_DROPSHIP)
-                                && (entity.getEntityType() != Entity.ETYPE_SMALL_CRAFT)
-                                && (entity.getEntityType() != Entity.ETYPE_FIGHTER_SQUADRON)
-                                && (entity.getEntityType() != Entity.ETYPE_JUMPSHIP)
-                                && (entity.getEntityType() != Entity.ETYPE_SPACE_STATION)) {
-                            testEntity = new TestAero((Aero) entity,
-                                    entityVerifier.aeroOption, null);
-                        } else if (entity instanceof BattleArmor) {
-                            testEntity = new TestBattleArmor((BattleArmor) entity,
-                                    entityVerifier.baOption, null);
-                        }
+                    TestEntity testEntity = TestEntity.getEntityVerifier(entity);
 
-                        if (testEntity != null) {
-                            testEntity.correctEntity(sb);
-                        }
+                    if (testEntity != null) {
+                        testEntity.correctEntity(sb);
                     }
+
                     LogManager.getLogger().info(sb.toString());
                 } catch (Exception ex) {
                     throw new ParseException("\"chassis model\" expected as input");

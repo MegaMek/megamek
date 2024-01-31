@@ -186,6 +186,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         return chassis;
     }
 
+    @Override
     public String getFullChassis() {
         return chassis + (StringUtility.isNullOrBlank(clanChassisName) ? "" : " (" + clanChassisName + ")");
     }

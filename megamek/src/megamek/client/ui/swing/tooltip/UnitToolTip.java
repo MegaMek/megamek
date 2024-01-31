@@ -1512,6 +1512,9 @@ public final class UnitToolTip {
                 }
                 result += addToTT("Visual", BR, visualRange);
             }
+            if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TACOPS_BAP) && entity.hasBAP()) {
+                result += addToTT("BAPRange", NOBR, entity.getBAPRange());
+            }
         }
 
         if (entity.hasAnyTypeNarcPodsAttached()) {

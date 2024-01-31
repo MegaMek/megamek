@@ -1097,7 +1097,6 @@ public class GameManager implements IGameManager {
             entity.setUsedSearchlight(false);
 
             entity.setCarefulStand(false);
-            entity.setNetworkBAP(false);
 
             // this flag is relevant only within the context of a single phase, but not between phases
             entity.setTurnInterrupted(false);

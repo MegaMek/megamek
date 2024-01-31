@@ -25,7 +25,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This is not a functional tool, just some template code to use when changing unit files programmatically.
@@ -34,35 +36,87 @@ import java.util.List;
  */
 public class UnitFileMigrationTool {
 
+    /*
+
+    Dragonfly (Viper)
+Mad Cat (Timber Wolf)
+Ryoken III (Skinwalker)
+Kraken (Bane)
+Baboon (Howler)
+Koshi (Mist Lynx)
+Vulture (Mad Dog)
+Hellcat (Hellhound II)
+Cauldron-Born (Ebon Jaguar)
+Puma (Adder)
+Mad Cat Mk IV (Savage Wolf)
+Roadrunner (Emerald Harrier)
+Dasher (Fire Moth)
+Ryoken III-XP (Skinwalker)
+Goshawk (Vapor Eagle)
+Viper (Black Python)
+Vixen (Incubus)
+#####################Pariah (Septicemia)
+Black Hawk (Nova)
+Fenris (Ice Ferret)
+Nobori-nin (Huntsman)
+Thor (Summoner)
+####################Snow Fox (Omni)
+Gladiator (Executioner)
+Hellhound (Conjurer)
+Galahad (Glass Spider)
+Behemoth (Stone Rhino)
+Peregrine (Horned Owl)
+Star Adder (Blood Asp)
+Ryoken (Stormcrow)
+Loki Mk II (Hel)
+Hellhound II-P (Hellcat-P)
+Daishi (Dire Wolf)
+#####################Black Hawk (Standard)
+Butcherbird (Ion Sparrow)
+Hankyu (Arctic Cheetah)
+Masakari (Warhawk)
+Vulture Mk IV (Mad Dog Mk IV)
+Uller (Kit Fox)
+####################Koshi (Standard)
+Vulture Mk III (Mad Dog Mk III)
+Thor II (Grand Summoner)
+Grendel (Mongrel)
+Gladiator-B (Executioner-B)
+Man O' War (Gargoyle)
+Loki (Hellbringer)
+
+
+     */
     public static void main(String... args) throws IOException {
         MechSummaryCache cache = MechSummaryCache.getInstance(true);
         MechSummary[] units = cache.getAllMechs();
+
         for (MechSummary unit : units) {
+            if (!unit.isClan() || !unit.isMek() || unit.getFullChassis().contains("Standard")
+                    ||unit.getFullChassis().contains("Pariah")||unit.getFullChassis().contains("Omni")) {
+                continue;
+            }
             File file = unit.getSourceFile();
             if (file.toString().toLowerCase().endsWith(".mtf")) {
                 List<String> lines = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
-                if (lines.get(0).startsWith("Version:")) {
-                    lines.remove(0);
-                } else {
-                    System.out.println(unit + " doesnt have Version");
-                    continue;
+                int chassisLine = -1;
+                for (String line : lines) {
+                    if (line.startsWith("chassis:") && line.contains("(")) {
+                        chassisLine = lines.indexOf(line);
+                    }
                 }
-                if (!lines.get(0).contains(":")) {
-                    String chassis = lines.remove(0);
-                    lines.add(0, MtfFile.CHASSIS + chassis);
-                } else {
-                    System.out.println(unit + " doesnt have chassis without :");
-                    continue;
-                }
-                if (!lines.get(1).contains(":")) {
-                    String model = lines.remove(1);
-                    lines.add(1, MtfFile.MODEL + model);
-                } else {
-                    System.out.println(unit + " doesnt have model without :");
-                    continue;
-                }
+                if (chassisLine > -1) {
+                    int bracket = unit.getFullChassis().indexOf("(");
+                    String chassis = unit.getFullChassis().substring(0, bracket).trim();
+                    String clanchassis = unit.getFullChassis().substring(bracket)
+                            .replace(")", "")
+                            .replace("(", "")
+                            .trim();
+                    lines.add(chassisLine, "chassis:" + chassis);
+                    lines.remove(chassisLine+1);
+                    lines.add(chassisLine + 1, "clanname:" + clanchassis);
                     Files.write(file.toPath(), lines, StandardCharsets.UTF_8);
-//                System.out.println(lines);
+                }
             }
         }
     }

@@ -130,6 +130,11 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable, ASSp
     }
 
     @Override
+    public String getFullChassis() {
+        return getChassis();
+    }
+
+    @Override
     public String getModel() {
         return model;
     }

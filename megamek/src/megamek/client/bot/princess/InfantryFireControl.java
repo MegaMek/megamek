@@ -261,7 +261,7 @@ public class InfantryFireControl extends FireControl {
                 }
 
                 // If best shot can hit, use it.
-                if (0 < bestShoot.getProbabilityToHit()) {
+                if (bestShoot != null && 0 < bestShoot.getProbabilityToHit()) {
                     myPlan.add(bestShoot);
                 }
             }

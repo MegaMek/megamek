@@ -1590,7 +1590,7 @@ public class FireControl {
                 }
             }
 
-            if (0 < bestShoot.getProbabilityToHit()) {
+            if (bestShoot != null && 0 < bestShoot.getProbabilityToHit()) {
                 myPlan.add(bestShoot);
             }
         }
@@ -1703,7 +1703,7 @@ public class FireControl {
             }
 
             // for now, just fire weapons that will do damage until we get to heat capacity
-            if (0 < bestShoot.getProbabilityToHit() &&
+            if (bestShoot != null && 0 < bestShoot.getProbabilityToHit() &&
                     myPlan.getHeat() + bestShoot.getHeat() + shooter.getHeat() <= shooter.getHeatCapacity() &&
                     0 < bestShoot.getExpectedDamage()) {
                 myPlan.add(bestShoot);
@@ -1867,14 +1867,15 @@ public class FireControl {
             }
 
             // Choose the best shot
-            if (null != bestShoot && (bestShoot.getProbabilityToHit() > toHitThreshold)) {
-                myPlan.add(bestShoot);
-                continue;
+            if (null != bestShoot) {
+                if (bestShoot.getProbabilityToHit() > toHitThreshold) {
+                    myPlan.add(bestShoot);
+                    continue;
+                }
+                LogManager.getLogger().debug("\nTo Hit Chance (" + DECF.format(bestShoot.getProbabilityToHit())
+                        + ") for " + weapon.getName() +
+                        " is less than threshold (" + DECF.format(toHitThreshold) + ")");
             }
-
-            LogManager.getLogger().debug("\nTo Hit Chance (" + DECF.format(bestShoot.getProbabilityToHit())
-                    + ") for " + weapon.getName() +
-                    " is less than threshold (" + DECF.format(toHitThreshold) + ")");
         }
 
         // Rank how useful this plan is.

@@ -117,7 +117,7 @@ public abstract class PathRanker implements IPathRanker {
                         game, maxRange, fallTolerance, enemies, friends);
             }
         } catch (Exception ignored) {
-            LogManager.getLogger().error(ignored.toString());
+            LogManager.getLogger().error(ignored.getMessage(), ignored);
             return returnPaths;
         }
 

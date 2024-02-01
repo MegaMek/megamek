@@ -198,6 +198,8 @@ public class EntityActionLog implements Collection<EntityAction> {
         final String buffer = toHit.getValueAsString() + ((!table.isEmpty()) ? ' ' + table : "");
         final Entity entity = game.getEntity(attack.getEntityId());
         final String weaponName = (entity.getEquipment(attack.getWeaponId()).getType()).getName();
+        final Mounted ammo = entity.getEquipment(attack.getAmmoId());
+        final String ammoName = (ammo == null) ? "" : " [" + ((AmmoType) ammo.getType()).getShortName() + "] ";
 
         //add to an existing entry if possible
         boolean found = false;
@@ -212,7 +214,7 @@ public class EntityActionLog implements Collection<EntityAction> {
         }
 
         if (!found) {
-            descriptions.add( weaponName + Messages.getString("BoardView1.needs") + buffer);
+            descriptions.add( weaponName + ammoName + Messages.getString("BoardView1.needs") + buffer);
         }
     }
 }

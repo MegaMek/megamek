@@ -688,7 +688,7 @@ public class Princess extends BotClient {
 
             sendAttackData(shooter.getId(), miscPlan);
         } catch (Exception ignored) {
-
+            LogManager.getLogger().error(ignored.getMessage(), ignored);
         }
     }
 
